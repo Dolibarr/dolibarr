@@ -431,6 +431,7 @@ Formula=Formule
 ## Reconcile
 LetteringAuto=Lettrage automatique
 LetteringManual=Lettrage manuel
+LetteringPartial=Lettrage partiel
 Unlettering=Annuler le lettrage
 UnletteringAuto=Annuler le lettrage automatique
 UnletteringManual=Annuler lettrage manuel

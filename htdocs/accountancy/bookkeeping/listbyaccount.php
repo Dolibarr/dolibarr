@@ -499,7 +499,17 @@ if (empty($reshook)) {
 			if ($result < 0) {
 				setEventMessages('', $lettering->errors, 'errors');
 			} else {
-				setEventMessages($langs->trans('AccountancyOneLetteringModifiedSuccessfully'), array(), 'mesgs');
+				setEventMessages($langs->trans($result == 0 ? 'AccountancyNoLetteringModified' : 'AccountancyOneLetteringModifiedSuccessfully'), array(), 'mesgs');
+				header('Location: ' . $_SERVER['PHP_SELF'] . '?noreset=1' . $param);
+				exit();
+			}
+		} elseif ($type == 'sub' && $massaction == 'letteringpartial') {
+			$lettering = new Lettering($db);
+			$result = $lettering->updateLettering($toselect, false, true);
+			if ($result < 0) {
+				setEventMessages('', $lettering->errors, 'errors');
+			} else {
+				setEventMessages($langs->trans($result == 0 ? 'AccountancyNoLetteringModified' : 'AccountancyOneLetteringModifiedSuccessfully'), array(), 'mesgs');
 				header('Location: ' . $_SERVER['PHP_SELF'] . '?noreset=1' . $param);
 				exit();
 			}
@@ -530,7 +540,7 @@ if (empty($reshook)) {
 			if ($result < 0) {
 				setEventMessages('', $lettering->errors, 'errors');
 			} else {
-				setEventMessages($langs->trans('AccountancyOneUnletteringModifiedSuccessfully'), array(), 'mesgs');
+				setEventMessages($langs->trans($result == 0 ? 'AccountancyNoUnletteringModified' : 'AccountancyOneUnletteringModifiedSuccessfully'), array(), 'mesgs');
 				header('Location: ' . $_SERVER['PHP_SELF'] . '?noreset=1' . $param);
 				exit();
 			}
@@ -641,6 +651,7 @@ if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && $user->hasRight('accountin
 	$arrayofmassactions['letteringauto'] = img_picto('', 'check', 'class="pictofixedwidth"') . $langs->trans('LetteringAuto');
 	$arrayofmassactions['preunletteringauto'] = img_picto('', 'uncheck', 'class="pictofixedwidth"') . $langs->trans('UnletteringAuto');
 	$arrayofmassactions['letteringmanual'] = img_picto('', 'check', 'class="pictofixedwidth"') . $langs->trans('LetteringManual');
+	if ($type == 'sub') $arrayofmassactions['letteringpartial'] = img_picto('', 'check', 'class="pictofixedwidth"') . $langs->trans('LetteringPartial');
 	$arrayofmassactions['preunletteringmanual'] = img_picto('', 'uncheck', 'class="pictofixedwidth"') . $langs->trans('UnletteringManual');
 }
 if ($user->hasRight('accounting', 'mouvements', 'supprimer')) {
@@ -747,6 +758,40 @@ if ($type == 'sub') {
 } else {
 	$moreforfilter .= $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), array(), 1, 1, 'maxwidth200');
 }
+$stringforfirstkey = $langs->trans("KeyboardShortcut");
+if ($conf->browser->name == 'chrome') {
+	$stringforfirstkey .= ' ALT +';
+} elseif ($conf->browser->name == 'firefox') {
+	$stringforfirstkey .= ' ALT + SHIFT +';
+} else {
+	$stringforfirstkey .= ' CTL +';
+}
+$moreforfilter .= '&nbsp;&nbsp;&nbsp;<a id="previous_account" accesskey="p" title="' . $stringforfirstkey . ' p" class="classfortooltip" href="#"><i class="fa fa-chevron-left"></i></a>';
+$moreforfilter .= '&nbsp;&nbsp;&nbsp;<a id="next_account" accesskey="n" title="' . $stringforfirstkey . ' n" class="classfortooltip" href="#"><i class="fa fa-chevron-right"></i></a>';
+$moreforfilter .= <<<SCRIPT
+<script type="text/javascript">
+	jQuery(document).ready(function() {
+		var searchFormList = $('#searchFormList');
+		var searchAccountancyCodeStart = $('#search_accountancy_code_start');
+		var searchAccountancyCodeEnd = $('#search_accountancy_code_end');
+		jQuery('#previous_account').on('click', function() {
+			var previousOption = searchAccountancyCodeStart.find('option:selected').prev('option');
+			if (previousOption.length == 1) searchAccountancyCodeStart.val(previousOption.attr('value'));
+			searchAccountancyCodeEnd.val(searchAccountancyCodeStart.val());
+			searchFormList.submit();
+		});
+		jQuery('#next_account').on('click', function() {
+			var nextOption = searchAccountancyCodeStart.find('option:selected').next('option');
+			if (nextOption.length == 1) searchAccountancyCodeStart.val(nextOption.attr('value'));
+			searchAccountancyCodeEnd.val(searchAccountancyCodeStart.val());
+			searchFormList.submit();
+		});
+		jQuery('input[name="search_mvt_num"]').on("keypress", function(event) {
+			console.log(event);
+		});
+	});
+</script>
+SCRIPT;
 $moreforfilter .= '</div>';
 $moreforfilter .= '</div>';
 
