@@ -331,6 +331,28 @@ class Product extends CommonObject
 	public $fk_default_bom;
 
 	/**
+	 * product_fourn_price_id indicates the fourn price id
+	 *
+	 * @var int
+	 */
+	public $product_fourn_price_id;
+
+	/**
+	 * buyprice indicates buy price off the product
+	 *
+	 * @var float
+	 */
+	public $buyprice;
+
+	/**
+	 * for backward compatibility
+	 *
+	 * @var int
+	 */
+	public $tobatch;
+
+
+	/**
 	 * We must manage lot/batch number, sell-by date and so on : '0':no, '1':yes, '2": yes with unique serial number
 	 *
 	 * @var int
