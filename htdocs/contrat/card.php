@@ -11,6 +11,7 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2023       Charlene Benke     		<charlene@patas-monkey.com>
+ * Copyright (C) 2023       Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
@@ -2165,17 +2167,25 @@ if ($action == 'create') {
 				if (isModEnabled('commande') && $object->status > 0 && $object->nbofservicesclosed < $nbofservices) {
 					$arrayofcreatebutton[] = array(
 						'url' => '/commande/card.php?action=create&token='.newToken().'&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id,
-						'label' => $langs->trans('CreateOrder'),
+						'label' => $langs->trans('Order'),
 						'lang' => 'orders',
 						'perm' => $user->hasRight('commande', 'creer')
 					);
 				}
-				if (isModEnabled('facture') && $object->status > 0) {
+				if (isModEnabled('facture') && $object->status > 0 && $soc->client ==1) {
 					$arrayofcreatebutton[] = array(
 						'url' => '/compta/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id,
-						'label' => $langs->trans('CreateBill'),
-						'lang' => 'orders',
+						'label' => $langs->trans('Bill'),
+						'lang' => 'bills',
 						'perm' => $user->hasRight('facture', 'creer')
+					);
+				}
+				if (isModEnabled('supplier_invoice') && $object->status > 0 && $soc->fournisseur == 1) {
+					$arrayofcreatebutton[] = array(
+						'url' => '/fourn/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id,
+						'label' => $langs->trans('SupplierInvoice'),
+						'lang' => 'bills',
+						'perm' => $user->hasRight('fournisseur', 'facture', 'creer')
 					);
 				}
 				if (count($arrayofcreatebutton)) {
