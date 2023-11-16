@@ -323,3 +323,4 @@ StockMovementNotYetRecorded=Stock movement will not be affected by this step
 WarningThisWIllAlsoDeleteStock=Warning, this will also destroy all quantities in stock in the warehouse
 DeleteBatch=Delete lot/serial
 ConfirmDeleteBatch=Are you sure you want to delete lot/serial ?
+WarningThisWIllAlsoDeleteStock=Warning, this will also destroy all quantities in stock in the warehouse
