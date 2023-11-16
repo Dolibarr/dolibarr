@@ -126,11 +126,10 @@ class Dolresource extends CommonObject
 	 *  Create object in database
 	 *
 	 * @param	User	$user		User that creates
-	 * @param	int		$notrigger	0=launch triggers after, 1=disable triggers
+	 * @param	int		$no_trigger	0=launch triggers after, 1=disable triggers
 	 * @return	int					if KO: <0, if OK: Id of created object
-
 	 */
-	public function create($user, $notrigger = 0)
+	public function create(User $user, int $no_trigger = 0): int
 	{
 		$error = 0;
 
@@ -163,6 +162,7 @@ class Dolresource extends CommonObject
 		$sql = rtrim($sql, ",");
 		$sql .= ")";
 
+		// Database session
 		$this->db->begin();
 		try {
 			dol_syslog(get_class($this) . "::create", LOG_DEBUG);
@@ -171,32 +171,22 @@ class Dolresource extends CommonObject
 		}
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error=-1; $this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
-		}
-
-		if (!$error) {
-			$action = 'create';
-
-			// Actions on extra fields
-			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error=-1;
 			}
 		}
 
-		if (!$error && !$notrigger) {
-			// Call trigger
+		if (!$error && !$no_trigger) {
 			$result = $this->call_trigger('RESOURCE_CREATE', $user);
 			if ($result < 0) {
-				$error++;
+				$error=-1;
 			}
-			// End call triggers
 		}
 
 		// Commit or rollback
@@ -210,7 +200,7 @@ class Dolresource extends CommonObject
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
-			return -1 * $error;
+			return $error;
 		} else {
 			$this->db->commit();
 			return $this->id;
