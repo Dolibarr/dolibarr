@@ -262,7 +262,7 @@ ErrorReplaceStringEmpty=Error, the string to replace into is empty
 ErrorProductNeedBatchNumber=Error, product '<b>%s</b>' need a lot/serial number
 ErrorProductDoesNotNeedBatchNumber=Error, product '<b>%s</b>' does not accept a lot/serial number
 ErrorFailedToReadObject=Error, failed to read object of type <b>%s</b>
-ErrorParameterMustBeEnabledToAllwoThisFeature=Error, parameter <b>%s</b> must be enabled into <b>conf/conf.php<b> to allow use of Command Line Interface by the internal job scheduler
+ErrorParameterMustBeEnabledToAllwoThisFeature=Error, parameter <b>%s</b> must be enabled into <b>conf/conf.php<> to allow use of Command Line Interface by the internal job scheduler
 ErrorLoginDateValidity=Error, this login is outside the validity date range
 ErrorValueLength=Length of field '<b>%s</b>' must be higher than '<b>%s</b>'
 ErrorReservedKeyword=The word '<b>%s</b>' is a reserved keyword
@@ -372,6 +372,7 @@ WarningPermissionAlreadyExist=Existing permissions for this object
 WarningGoOnAccountancySetupToAddAccounts=If this list is empty, go into menu %s - %s - %s to load or create accounts for your chart of account.  
 WarningCorrectedInvoiceNotFound=Corrected invoice not found
 WarningCommentNotFound=Please check placement of start and end comments for <b>%s</b> section in file <b>%s</b> before submitting your action
+WarningAlreadyReverse=Stock movement already reversed 
 
 SwissQrOnlyVIR = SwissQR invoice can only be added on invoices set to be paid with credit transfer payments.
 SwissQrCreditorAddressInvalid = Creditor address is invalid (are ZIP and city set? (%s)

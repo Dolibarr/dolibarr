@@ -1265,4 +1265,35 @@ class MouvementStock extends CommonObject
 
 		return $cpt;
 	}
+
+	/**
+	 * reverse mouvement for object by updating infos
+	 * @return int    1 if OK,-1 if KO
+	 */
+	public function reverseMouvement()
+	{
+
+		$formattedDate = "REVERTMV" .dol_print_date($this->datem, '%Y%m%d%His');
+		if ($this->label == 'Annulation mouvement ID'.$this->id) {
+			return -1;
+		}
+		if ($this->inventorycode == $formattedDate) {
+			return -1;
+		}
+
+		$sql = "UPDATE ".$this->db->prefix()."stock_mouvement SET";
+		$sql .= " label = 'Annulation mouvement ID ".((int) $this->id)."',";
+		$sql .= "inventorycode = '".($formattedDate)."'";
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
+		$resql = $this->db->query($sql);
+
+		if ($resql) {
+			$this->db->commit();
+			return 1;
+		} else {
+			$this->db->rollback();
+			return -1;
+		}
+	}
 }
