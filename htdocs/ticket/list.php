@@ -121,7 +121,6 @@ foreach ($object->fields as $key => $val) {
 		$search[$key.'_dtend'] = dol_mktime(23, 59, 59, GETPOST('search_'.$key.'_dtendmonth', 'int'), GETPOST('search_'.$key.'_dtendday', 'int'), GETPOST('search_'.$key.'_dtendyear', 'int'));
 	}
 }
-var_dump($search);
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
@@ -852,7 +851,7 @@ foreach ($object->fields as $key => $val) {
 			print '</td>';
 		} elseif ($key == 'type_code') {
 			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
-			$formTicket->selectTypesTickets(dol_escape_htmltag(empty($search[$key]) ? '' : $search[$key]), 'search_'.$key, '', 2, 1, 1, 0, (!empty($val['css']) ? $val['css'] : 'maxwidth150'), 1);
+			$formTicket->selectTypesTickets(empty($search[$key]) ? '' : $search[$key], 'search_'.$key, '', 2, 1, 1, 0, (!empty($val['css']) ? $val['css'] : 'maxwidth150'), 1);
 			print '</td>';
 		} elseif ($key == 'category_code') {
 			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
