@@ -124,6 +124,9 @@ if ($search_status != '') {
 			$search_status = $tmp[0];
 			$filter = 'expired';
 		}
+	} else {
+		$search_status = $tmp[0];
+		$filter = '';
 	}
 }
 
@@ -700,9 +703,6 @@ if (!empty($arrayfields['status']['checked'])) {
 		'5'=>$langs->trans("ServiceStatusClosed")
 	);
 	$search_status_new = GETPOST('search_status', 'alpha');
-	if ($filter == 'expired' && !preg_match('/expired/', $search_status_new)) {
-		$search_status_new .= '&filter=expired';
-	}
 	print $form->selectarray('search_status', $arrayofstatus, (strstr($search_status_new, ',') ?-1 : $search_status_new), 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
 	print '</td>';
 }
