@@ -55,6 +55,10 @@ class PaymentSalary extends CommonObject
 
 	public $datec = '';
 	public $tms = '';
+
+	/**
+	 * @var payment date
+	 */
 	public $datep = '';
 
 	/**
@@ -103,6 +107,26 @@ class PaymentSalary extends CommonObject
 	public $fk_user_modif;
 
 	/**
+	 * @var int Types paiement
+	 */
+	public $type_code;
+
+	/**
+	 * @var int Paiement label
+	 */
+	public $type_label;
+
+	/**
+	 * @var bank_account description]
+	 */
+	public $bank_account;
+
+	/**
+	 * @var validation date
+	 */
+	public $datev = '';
+
+	/**
 	 * @var array
 	 */
 	public $fields = array(
@@ -138,7 +162,7 @@ class PaymentSalary extends CommonObject
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 
 		// Validate parametres
-		if (!$this->datepaye) {
+		if (!$this->datep) {
 			$this->error = 'ErrorBadValueForParameterCreatePaymentSalary';
 			return -1;
 		}
@@ -171,10 +195,10 @@ class PaymentSalary extends CommonObject
 		if ($totalamount != 0) {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_salary (entity, fk_salary, datec, datep, amount,";
 			$sql .= " fk_typepayment, num_payment, note, fk_user_author, fk_bank)";
-			$sql .= " VALUES (".((int) $conf->entity).", ".((int) $this->chid).", '".$this->db->idate($now)."',";
-			$sql .= " '".$this->db->idate($this->datepaye)."',";
+			$sql .= " VALUES (".((int) $conf->entity).", ".((int) $this->fk_salary).", '".$this->db->idate($now)."',";
+			$sql .= " '".$this->db->idate($this->datep)."',";
 			$sql .= " ".price2num($totalamount).",";
-			$sql .= " ".((int) $this->paiementtype).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".((int) $user->id).",";
+			$sql .= " ".((int) $this->fk_typepayment).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".((int) $user->id).",";
 			$sql .= " 0)";
 
 			$resql = $this->db->query($sql);
@@ -511,8 +535,8 @@ class PaymentSalary extends CommonObject
 
 			// Insert payment into llx_bank
 			$bank_line_id = $acc->addline(
-				$this->datepaye,
-				$this->paiementtype, // Payment mode id or code ("CHQ or VIR for example")
+				$this->datep,
+				$this->fk_typepayment, // Payment mode id or code ("CHQ or VIR for example")
 				$label,
 				-$total,
 				$this->num_payment,
