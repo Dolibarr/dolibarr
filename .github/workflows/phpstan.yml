@@ -7,6 +7,9 @@ on:
   # Triggers the workflow on pull request events but only for the develop branch
   pull_request:
     branches: [ develop ]
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
