@@ -2497,19 +2497,19 @@ function htmlPrintOnlineFooter($fromcompany, $langs, $addformmessage = 0, $suffi
 		print '<br>';
 
 		$parammessageform = 'ONLINE_PAYMENT_MESSAGE_FORM_'.$suffix;
-		if (!empty($conf->global->$parammessageform)) {
-			print $langs->transnoentities($conf->global->$parammessageform);
-		} elseif (!empty($conf->global->ONLINE_PAYMENT_MESSAGE_FORM)) {
-			print $langs->transnoentities($conf->global->ONLINE_PAYMENT_MESSAGE_FORM);
+		if (getDolGlobalString($parammessageform) !== '') {
+			print $langs->transnoentities(getDolGlobalString($parammessageform));
+		} elseif (getDolGlobalString('ONLINE_PAYMENT_MESSAGE_FORM')  !== '') {
+			print $langs->transnoentities(getDolGlobalString('ONLINE_PAYMENT_MESSAGE_FORM'));
 		}
 
 		// Add other message if VAT exists
 		if (!empty($object->total_vat) || !empty($object->total_tva)) {
 			$parammessageform = 'ONLINE_PAYMENT_MESSAGE_FORMIFVAT_'.$suffix;
-			if (!empty($conf->global->$parammessageform)) {
-				print $langs->transnoentities($conf->global->$parammessageform);
-			} elseif (!empty($conf->global->ONLINE_PAYMENT_MESSAGE_FORMIFVAT)) {
-				print $langs->transnoentities($conf->global->ONLINE_PAYMENT_MESSAGE_FORMIFVAT);
+			if (getDolGlobalString($parammessageform)  !== '') {
+				print $langs->transnoentities(getDolGlobalString($parammessageform));
+			} elseif (getDolGlobalString('ONLINE_PAYMENT_MESSAGE_FORMIFVAT') !== '') {
+				print $langs->transnoentities(getDolGlobalString('ONLINE_PAYMENT_MESSAGE_FORMIFVAT'));
 			}
 		}
 	}
