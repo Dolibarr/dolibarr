@@ -1413,5 +1413,4 @@ class Paiement extends CommonObject
 		$accountline->fetch($this->bank_line);
 		return $accountline->rappro;
 	}
-
 }
