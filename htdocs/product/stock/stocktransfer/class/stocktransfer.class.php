@@ -155,7 +155,8 @@ class StockTransfer extends CommonObject
 	public $rowid;
 	public $ref;
 	public $label;
-	public $fk_soc;
+	public $socid;
+	public $fk_soc;	// deprecated
 	public $fk_project;
 	public $description;
 	public $note_public;
@@ -335,6 +336,9 @@ class StockTransfer extends CommonObject
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
+
+		$this->socid = $this->fk_soc;
+
 		if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
 		return $result;
 	}
@@ -473,8 +477,12 @@ class StockTransfer extends CommonObject
 	{
 		$this->tms = ''; // Will be done automatically because tms field is on update cascade
 		$res = $this->updateCommon($user, $notrigger);
-		if ($this->socid > 0 || $this->fk_soc > 0 && empty($this->thirdparty)) $this->fetch_thirdparty();
-		if (empty($this->socid) && empty($this->fk_soc)) unset($this->thirdparty);
+		if (($this->socid > 0 || $this->fk_soc > 0) && empty($this->thirdparty)) {
+			$this->fetch_thirdparty();
+		}
+		if (empty($this->socid) && empty($this->fk_soc)) {
+			unset($this->thirdparty);
+		}
 		return $res;
 	}
 

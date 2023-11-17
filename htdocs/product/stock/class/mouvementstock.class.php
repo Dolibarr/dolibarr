@@ -107,6 +107,8 @@ class MouvementStock extends CommonObject
 	 * @var string Origin type ('project', ...)
 	 */
 	public $origin_type;
+	public $line_id_oject_src;
+	public $line_id_oject_origin;
 
 
 	public $inventorycode;
@@ -114,6 +116,10 @@ class MouvementStock extends CommonObject
 
 	public $line_id_object_src;
 	public $line_id_object_origin;
+
+	public $eatby;
+	public $sellby;
+
 
 
 	public $fields = array(

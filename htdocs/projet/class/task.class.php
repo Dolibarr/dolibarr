@@ -1542,11 +1542,7 @@ class Task extends CommonObjectLine
 	 */
 	public function getSumOfAmount($fuser = '', $dates = '', $datee = '')
 	{
-		global $langs;
-
-		if (empty($id)) {
-			$id = $this->id;
-		}
+		$id = $this->id;
 
 		$result = array();
 

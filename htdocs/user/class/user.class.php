@@ -2784,6 +2784,7 @@ class User extends CommonObject
 	public function getTooltipContentArray($params)
 	{
 		global $conf, $langs, $menumanager;
+		global $dolibarr_main_demo;
 
 		$infologin = $params['infologin'] ?? 0;
 		$option = $params['option'] ?? '';
@@ -2832,10 +2833,11 @@ class User extends CommonObject
 		if (!empty($this->socid)) {	// Add thirdparty for external users
 			$thirdpartystatic = new Societe($this->db);
 			$thirdpartystatic->fetch($this->socid);
-			if (empty($hidethirdpartylogo)) {
-				$companylink = ' '.$thirdpartystatic->getNomUrl(2, (($option == 'nolink') ? 'nolink' : '')); // picto only of company
+			$companyimg = '';
+			if (empty($params['hidethirdpartylogo'])) {
+				$companyimg = ' '.$thirdpartystatic->getNomUrl(2, (($option == 'nolink') ? 'nolink' : '')); // picto only of company
 			}
-			$company = ' ('.$langs->trans("Company").': '.img_picto('', 'company').' '.dol_string_nohtmltag($thirdpartystatic->name).')';
+			$company = ' ('.$langs->trans("Company").': '.($companyimg ? $companyimg : img_picto('', 'company')).' '.dol_string_nohtmltag($thirdpartystatic->name).')';
 		}
 		$type = ($this->socid ? $langs->trans("ExternalUser").$company : $langs->trans("InternalUser"));
 		$datas['type'] = '<br><b>'.$langs->trans("Type").':</b> '.$type;

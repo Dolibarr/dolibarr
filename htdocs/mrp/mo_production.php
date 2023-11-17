@@ -814,7 +814,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Qty
 		print '<td class="right">'.$langs->trans("Qty").'</td>';
 		// Unit
-		if ($conf->global->PRODUCT_USE_UNITS) print '<td class="right">' . $langs->trans("Unit") . '</td>';
+		if ($conf->global->PRODUCT_USE_UNITS) {
+			print '<td class="right">' . $langs->trans("Unit") . '</td>';
+		}
 		// Cost price
 		if ($permissiontoupdatecost && !empty($conf->global->MRP_SHOW_COST_FOR_CONSUMPTION)) {
 			print '<td class="right">'.$langs->trans("UnitCost").'</td>';
@@ -865,7 +867,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// SplitAll
 		print '<td></td>';
 
-		//Edit Line
+		// Edit Line
 		if ($object->status == Mo::STATUS_DRAFT) {
 			print '<td></td>';
 		}
@@ -875,18 +877,21 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if ($action == 'addconsumeline') {
 			print '<!-- Add line to consume -->'."\n";
 			print '<tr class="liste_titre">';
+			// Product
 			print '<td>';
 			print $form->select_produits('', 'productidtoadd', '', 0, 0, -1, 2, '', 1, array(), 0, '1', 0, 'maxwidth300');
 			print '</td>';
 			// Qty
 			print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width50 right"></td>';
+			if ($conf->global->PRODUCT_USE_UNITS) {
+				print '<td></td>';
+			}
 			// Cost price
 			if ($permissiontoupdatecost && !empty($conf->global->MRP_SHOW_COST_FOR_CONSUMPTION)) {
 				print '<td></td>';
 			}
-			// Qty already consumed
+			// Qty already consumed + Warehouse
 			print '<td colspan="2">';
-			// Warehouse
 			print '<input type="submit" class="button buttongen button-add" name="addconsumelinebutton" value="'.$langs->trans("Add").'">';
 			print '<input type="submit" class="button buttongen button-cancel" name="canceladdconsumelinebutton" value="'.$langs->trans("Cancel").'">';
 			print '</td>';
@@ -905,6 +910,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '<td></td>';
 			// SplitAll
 			print '<td></td>';
+			// Edit Line
+			if ($object->status == Mo::STATUS_DRAFT) {
+				print '<td></td>';
+			}
 			print '</tr>';
 		}
 
