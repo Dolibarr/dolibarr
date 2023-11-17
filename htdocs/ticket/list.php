@@ -452,9 +452,9 @@ if ($search_dateclose_end) {
 	$sql .= " AND t.date_close <= '".$db->idate($search_dateclose_end)."'";
 }
 
-if (!$user->socid && ($mode == "mine" || (!$user->admin && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY))) {
+if (!$user->socid && ($mode == "mine" || (!$user->admin && getDolGlobalInt('TICKET_LIMIT_VIEW_ASSIGNED_ONLY')))) {
 	$sql .= " AND (t.fk_user_assign = ".((int) $user->id);
-	if (empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY)) {
+	if (!getDolGlobalInt('TICKET_LIMIT_VIEW_ASSIGNED_ONLY')) {
 		$sql .= " OR t.fk_user_create = ".((int) $user->id);
 	}
 	$sql .= ")";
@@ -503,7 +503,7 @@ if (!$resql) {
 $num = $db->num_rows($resql);
 
 // Direct jump if only one record found
-if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all && !$page) {
+if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	header("Location: ".DOL_URL_ROOT.'/ticket/card.php?id='.$id);
@@ -790,7 +790,7 @@ if ($massaction == 'presendonclose') {
 		"name" => "massaction",
 		"value" => "close"
 	]);
-	$selectedchoice = (!empty($conf->global->TICKET_NOTIFY_AT_CLOSING)) ? "yes" : "no";
+	$selectedchoice = getDolGlobalInt('TICKET_NOTIFY_AT_CLOSING') ? "yes" : "no";
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassTicketClosingSendEmail"), $langs->trans("ConfirmMassTicketClosingSendEmailQuestion"), 'confirm_send_close', $hidden_form, $selectedchoice, 0, 200, 500, 1);
 }
 
@@ -861,7 +861,7 @@ foreach ($object->fields as $key => $val) {
 			print '</td>';
 		} elseif ($key == 'type_code') {
 			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
-			$formTicket->selectTypesTickets(dol_escape_htmltag(empty($search[$key]) ? '' : $search[$key]), 'search_'.$key, '', 2, 1, 1, 0, (!empty($val['css']) ? $val['css'] : 'maxwidth150'), 1);
+			$formTicket->selectTypesTickets(empty($search[$key]) ? '' : $search[$key], 'search_'.$key, '', 2, 1, 1, 0, (!empty($val['css']) ? $val['css'] : 'maxwidth150'), 1);
 			print '</td>';
 		} elseif ($key == 'category_code') {
 			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';

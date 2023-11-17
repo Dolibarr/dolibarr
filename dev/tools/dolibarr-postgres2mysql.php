@@ -246,7 +246,7 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 	if (is_array($input)) {
 		$lines = $input;
 	} else {
-		$lines = split("\n", $input);
+		$lines = explode("\n", $input);
 	}
 
 	if ($header) {

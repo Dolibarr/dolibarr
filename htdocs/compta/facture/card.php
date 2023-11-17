@@ -5252,6 +5252,7 @@ if ($action == 'create') {
 						print dol_print_date($dateofpayment, 'dayhour', 'tzuser');
 					}
 					print '</td>';
+
 					$label = ($langs->trans("PaymentType".$objp->payment_code) != ("PaymentType".$objp->payment_code)) ? $langs->trans("PaymentType".$objp->payment_code) : $objp->payment_label;
 					print '<td class="tdoverflowmax80" title="'.dol_escape_htmltag($label.' '.$objp->num_payment).'">'.dol_escape_htmltag($label.' '.$objp->num_payment).'</td>';
 					if (isModEnabled("banque")) {
@@ -5277,7 +5278,10 @@ if ($action == 'create') {
 					}
 					print '<td class="right"><span class="amount">'.price($sign * $objp->amount).'</span></td>';
 					print '<td class="center">';
-					if ($object->status == Facture::STATUS_VALIDATED && $object->paye == 0 && $user->socid == 0) {
+
+					$paiement = new Paiement($db);
+					$paiement->fetch($objp->rowid);
+					if ($object->status == Facture::STATUS_VALIDATED && $object->paye == 0 && $user->socid == 0 && !$paiement->isReconciled()) {
 						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deletepayment&token='.newToken().'&paiement_id='.$objp->rowid.'">';
 						print img_delete();
 						print '</a>';

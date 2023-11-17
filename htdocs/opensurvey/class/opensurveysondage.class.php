@@ -26,8 +26,6 @@
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
-//require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
-//require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 
 
 /**
@@ -111,7 +109,7 @@ class Opensurveysondage extends CommonObject
 		'mail_admin' => array('type'=>'varchar(128)', 'label'=>'Mailadmin', 'enabled'=>'1', 'position'=>20, 'notnull'=>0, 'visible'=>-1,),
 		'nom_admin' => array('type'=>'varchar(64)', 'label'=>'Nomadmin', 'enabled'=>'1', 'position'=>25, 'notnull'=>0, 'visible'=>-1,),
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>-2, 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150',),
-		'titre' => array('type'=>'mediumtext', 'label'=>'Titre', 'enabled'=>'1', 'position'=>35, 'notnull'=>1, 'visible'=>-1,),
+		'title' => array('type'=>'mediumtext', 'label'=>'Titre', 'enabled'=>'1', 'position'=>35, 'notnull'=>1, 'visible'=>-1,),
 		'date_fin' => array('type'=>'datetime', 'label'=>'Datefin', 'enabled'=>'1', 'position'=>40, 'notnull'=>1, 'visible'=>-1,),
 		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>'1', 'position'=>500, 'notnull'=>0, 'visible'=>-1,),
 		'format' => array('type'=>'varchar(2)', 'label'=>'Format', 'enabled'=>'1', 'position'=>50, 'notnull'=>1, 'visible'=>-1,),
@@ -132,7 +130,7 @@ class Opensurveysondage extends CommonObject
 	public $mail_admin;
 	public $nom_admin;
 	public $fk_user_creat;
-	public $titre;
+	public $title;
 	public $date_fin = '';
 	public $status;
 	public $format;
@@ -311,7 +309,7 @@ class Opensurveysondage extends CommonObject
 				$this->sujet = $obj->sujet;
 				$this->fk_user_creat = $obj->fk_user_creat;
 
-				$this->date_m = $this->db->jdate(!empty($obj->tls) ? $obj->tls : "");
+				$this->date_m = $this->db->jdate(!empty($obj->tms) ? $obj->tms : "");
 				$ret = 1;
 			} else {
 				$sondage = ($id ? 'id='.$id : 'sondageid='.$numsurvey);
@@ -322,7 +320,7 @@ class Opensurveysondage extends CommonObject
 
 			$this->db->free($resql);
 		} else {
-			  $this->error = "Error ".$this->db->lasterror();
+			$this->error = "Error ".$this->db->lasterror();
 			$ret = -1;
 		}
 

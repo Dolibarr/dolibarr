@@ -123,18 +123,24 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 			$value = ''; // This is an explicit foreign key field
 		}
 
-		//var_dump($key.' '.$value.' '.$object->fields[$key]['type']);
+		//var_dump($key.' '.$value.' '.$object->fields[$key]['type'].' '.$object->fields[$key]['notnull']);
+
 		$object->$key = $value;
 		if (!empty($val['notnull']) && $val['notnull'] > 0 && $object->$key == '' && isset($val['default']) && $val['default'] == '(PROV)') {
 			$object->$key = '(PROV)';
 		}
-		if (!empty($val['notnull']) && $val['notnull'] > 0 && $object->$key == '' && !isset($val['default'])) {
-			$error++;
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label'])), null, 'errors');
+		if ($key == 'pass_crypted') {
+			$object->pass = GETPOST('pass', 'none');
+			// TODO Manadatory for password not yet managed
+		} else {
+			if (!empty($val['notnull']) && $val['notnull'] > 0 && $object->$key == '' && !isset($val['default'])) {
+				$error++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label'])), null, 'errors');
+			}
 		}
 
 		// Validation of fields values
-		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 || !empty($conf->global->MAIN_ACTIVATE_VALIDATION_RESULT)) {
+		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 || !empty($conf->global->MAIN_ACTIVATE_VALIDATION_RESULT)) {
 			if (!$error && !empty($val['validate']) && is_callable(array($object, 'validateField'))) {
 				if (!$object->validateField($object->fields, $key, $value)) {
 					$error++;
@@ -274,7 +280,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 		}
 
 		// Validation of fields values
-		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 || !empty($conf->global->MAIN_ACTIVATE_VALIDATION_RESULT)) {
+		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 || !empty($conf->global->MAIN_ACTIVATE_VALIDATION_RESULT)) {
 			if (!$error && !empty($val['validate']) && is_callable(array($object, 'validateField'))) {
 				if (!$object->validateField($object->fields, $key, $value)) {
 					$error++;
