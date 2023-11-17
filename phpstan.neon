@@ -49,6 +49,7 @@ parameters:
 		- '#Undefined variable: \$error#'
 		- '#Undefined variable: \$errors#'
 		- '#Undefined variable: \$form#'
+		- '#has an unused parameter \$param#'
 		- '#Result of function fieldList#'
 		- '#Caught class Stripe#'
 		- '#Function llxHeader invoked with#'
