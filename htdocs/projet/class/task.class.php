@@ -776,7 +776,7 @@ class Task extends CommonObjectLine
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $mode = 'task', $addlabel = 0, $sep = ' - ', $notooltip = 0, $save_lastsearch_value = -1)
 	{
-		global $conf, $langs, $user;
+		global $action, $conf, $hookmanager, $langs;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -835,6 +835,15 @@ class Task extends CommonObjectLine
 		$result .= $linkend;
 		if ($withpicto != 2) {
 			$result .= (($addlabel && $this->label) ? $sep.dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
+		}
+
+		$hookmanager->initHooks(['taskdao']);
+		$parameters = ['id'=>$this->id, 'getnomurl' => &$result];
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
 		}
 
 		return $result;
