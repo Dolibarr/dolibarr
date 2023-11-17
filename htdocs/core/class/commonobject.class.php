@@ -3407,7 +3407,7 @@ abstract class CommonObject
 	 *  @param		string		$suffix		'', '_public' or '_private'
 	 *  @return     int      		   		<0 if KO, >0 if OK
 	 */
-	public function update_note($note, $suffix = '')
+	public function update_note($note, $suffix = '', $call_trigger = 1)
 	{
 		// phpcs:enable
 		global $user;
@@ -3451,6 +3451,10 @@ abstract class CommonObject
 				$this->note = $note; // deprecated
 				$this->note_private = $note;
 			}
+            if(!empty($call_trigger)) {
+                $ret = $this->call_trigger('UPDATE_NOTE', $user);
+                if($ret < 0 ) { return - 1; }
+            }
 			return 1;
 		} else {
 			$this->error = $this->db->lasterror();
