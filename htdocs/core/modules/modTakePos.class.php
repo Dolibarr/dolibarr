@@ -323,6 +323,24 @@ class modTakePos extends DolibarrModules
 			}
 		}
 
+		//Create cash account if not exists
+		if (empty(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CASH'.$_SESSION["takeposterminal"]))) {
+			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+			$cashaccount = new Account($db);
+			$cashaccount->ref = "cash_pos";
+			$cashaccount->label = $langs->trans("DefaultCashPOSLabel");
+			$cashaccount->courant = 2;
+			$cashaccount->country_id = $mysoc->country_id ? $mysoc->country_id : 1;
+			$cashaccount->date_solde = dol_now();
+			$result = $cashaccount->create($user);
+			if ($result > 0) {
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+				dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CASH".$_SESSION["takeposterminal"], $result, 'chaine', 0, '', $conf->entity);
+			} else {
+				setEventMessages($societe->error, $category->errors, 'errors');
+			}
+		}
+
 		$result = $this->_load_tables('/install/mysql/', 'takepos');
 		if ($result < 0) {
 			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
