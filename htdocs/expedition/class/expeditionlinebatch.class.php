@@ -45,6 +45,7 @@ class ExpeditionLineBatch extends CommonObject
 	public $dluo_qty; // deprecated, use qty
 	public $entrepot_id;
 	public $fk_origin_stock;		// rowid in llx_product_batch table
+	public $fk_warehouse;			// for future use in v19
 	public $fk_expeditiondet;
 
 
@@ -123,6 +124,7 @@ class ExpeditionLineBatch extends CommonObject
 		$sql .= ", batch";
 		$sql .= ", qty";
 		$sql .= ", fk_origin_stock";
+		// TODO Add fk_warehouse here
 		$sql .= ") VALUES (";
 		$sql .= $id_line_expdet.",";
 		$sql .= " ".(!isset($this->sellby) || dol_strlen($this->sellby) == 0 ? 'NULL' : ("'".$this->db->idate($this->sellby))."'").",";

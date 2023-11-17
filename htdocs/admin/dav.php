@@ -189,7 +189,7 @@ $message .= '</div>';
 $message .= ajax_autoselect('webdavpublicurl');
 
 $message .= '<br>';
-if (!empty(getDolGlobalString('DAV_ALLOW_PUBLIC_DIR'))) {
+if (getDolGlobalString('DAV_ALLOW_PUBLIC_DIR')) {
 	$urlEntity = (isModEnabled('multicompany') ? '?entity=' . $conf->entity : '');
 	$url = '<a href="' . $urlwithroot . '/dav/fileserver.php/public/' . $urlEntity . '" target="_blank" rel="noopener noreferrer">' . $urlwithroot . '/dav/fileserver.php/public/' . $urlEntity . '</a>';
 

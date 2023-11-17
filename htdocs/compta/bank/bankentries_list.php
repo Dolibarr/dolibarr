@@ -66,24 +66,10 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
-$contextpage = 'banktransactionlist'.(empty($object->ref) ? '' : '-'.$object->id);
+$contextpage = 'banktransactionlist';
 $massaction = GETPOST('massaction', 'alpha');
 $optioncss = GETPOST('optioncss', 'aZ09');
 
-// Security check
-$fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
-$fieldtype = (!empty($ref) ? 'ref' : 'rowid');
-if ($fieldvalue) {
-	if ($user->socid) {
-		$socid = $user->socid;
-	}
-	$result = restrictedArea($user, 'banque', $fieldvalue, 'bank_account&bank_account', '', '', $fieldtype);
-} else {
-	if ($user->socid) {
-		$socid = $user->socid;
-	}
-	$result = restrictedArea($user, 'banque');
-}
 
 $dateop = dol_mktime(12, 0, 0, GETPOST("opmonth", 'int'), GETPOST("opday", 'int'), GETPOST("opyear", 'int'));
 $search_debit = GETPOST("search_debit", 'alpha');
@@ -143,6 +129,9 @@ if ($id > 0 || !empty($ref)) {
 	}
 }
 
+// redefine contextpage to depend on bank account
+$contextpage = 'banktransactionlist'.(empty($object->id) ? '' : '-'.$object->id);
+
 $mode_balance_ok = false;
 //if (($sortfield == 'b.datev' || $sortfield == 'b.datev,b.dateo,b.rowid'))    // TODO Manage balance when account not selected
 if (($sortfield == 'b.datev' || $sortfield == 'b.datev,b.dateo,b.rowid')) {
@@ -182,6 +171,22 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+
+// Security check
+$fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
+$fieldtype = (!empty($ref) ? 'ref' : 'rowid');
+if ($fieldvalue) {
+	if ($user->socid) {
+		$socid = $user->socid;
+	}
+	$result = restrictedArea($user, 'banque', $fieldvalue, 'bank_account&bank_account', '', '', $fieldtype);
+} else {
+	if ($user->socid) {
+		$socid = $user->socid;
+	}
+	$result = restrictedArea($user, 'banque');
+}
+
 
 /*
  * Actions
@@ -266,6 +271,9 @@ if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', '
 					}
 				}
 			}
+			if (!$error && count($rowids) > 0) {
+				setEventMessages($langs->trans("XNewLinesConciliated", count($rowids)), null);
+			}
 		} else {
 			$error++;
 			$langs->load("errors");
@@ -278,7 +286,7 @@ if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', '
 	}
 
 	if (!$error) {
-		$param = 'action=reconcile&contextpage=banktransactionlist&id='.((int) $id).'&search_account='.((int) $id);
+		$param = 'action=reconcile&contextpage=banktransactionlist&id='.((int) $object->id).'&search_account='.((int) $object->id);
 		if ($page) {
 			$param .= '&page='.urlencode($page);
 		}

@@ -226,10 +226,16 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
+			$db->begin();
+
 			$result = $object->validate($user, '', $idwarehouse);
 			if ($result < 0) {
+				$db->rollback();
+
 				setEventMessages($object->error, $object->errors, 'errors');
 			} else {
+				$db->commit();
+
 				// Define output language
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 					$outputlangs = $langs;
@@ -2596,6 +2602,7 @@ if ($action == 'create') {
 
 	// Vat reverse-charge by default
 	if (!empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 		print '<tr><td>' . $langs->trans('VATReverseCharge') . '</td><td>';
 		// Try to propose to use VAT reverse charge even if the VAT reverse charge is not activated in the supplier card, if this corresponds to the context of use, the activation is proposed
 		if ($vat_reverse_charge == 1 || $societe->vat_reverse_charge == 1 || ($societe->country_code != 'FR' && isInEEC($societe) && !empty($societe->tva_intra))) {
@@ -3798,7 +3805,7 @@ if ($action == 'create') {
 			$senderissupplier = 1;
 		}
 
-		// Show object lines
+		// Show object lines (result may vary according to hidden option MAIN_NO_INPUT_PRICE_WITH_TAX)
 		if (!empty($object->lines)) {
 			$object->printObjectLines($action, $societe, $mysoc, $lineid, 1);
 		}

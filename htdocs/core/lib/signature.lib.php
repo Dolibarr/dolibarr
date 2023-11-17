@@ -20,11 +20,12 @@
 /**
  * Return string with full online Url to accept and sign a quote
  *
- * @param   string	$type		Type of URL ('proposal', ...)
- * @param	string	$ref		Ref of object
- * @return	string				Url string
+ * @param   string			$type		Type of URL ('proposal', ...)
+ * @param	string			$ref		Ref of object
+ * @param   Object  		$obj  		object (needed to make multicompany good links)
+ * @return	string						Url string
  */
-function showOnlineSignatureUrl($type, $ref)
+function showOnlineSignatureUrl($type, $ref, $obj = null)
 {
 	global $conf, $langs;
 
@@ -34,7 +35,7 @@ function showOnlineSignatureUrl($type, $ref)
 	$servicename = 'Online';
 
 	$out = img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlineSignature", $servicename).'</span><br>';
-	$url = getOnlineSignatureUrl(0, $type, $ref);
+	$url = getOnlineSignatureUrl(0, $type, $ref, $obj);
 	$out .= '<div class="urllink">';
 	if ($url == $langs->trans("FeatureOnlineSignDisabled")) {
 		$out .= $url;
@@ -51,15 +52,27 @@ function showOnlineSignatureUrl($type, $ref)
 /**
  * Return string with full Url
  *
- * @param   int		$mode				0=True url, 1=Url formated with colors
- * @param   string	$type				Type of URL ('proposal', ...)
- * @param	string	$ref				Ref of object
- * @param   string  $localorexternal  	0=Url for browser, 1=Url for external access
- * @return	string						Url string
+ * @param   int				$mode				0=True url, 1=Url formated with colors
+ * @param   string			$type				Type of URL ('proposal', ...)
+ * @param	string			$ref				Ref of object
+ * @param   string  		$localorexternal  	0=Url for browser, 1=Url for external access
+ * @param   Object  		$obj  				object (needed to make multicompany good links)
+ * @return	string								Url string
  */
-function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1)
+function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $obj = null)
 {
-	global $conf, $object, $dolibarr_main_url_root;
+	global $conf, $dolibarr_main_url_root;
+
+	if (empty($obj)) {
+		// For compatibility with 15.0 -> 19.0
+		global $object;
+		if (empty($object)) {
+			$obj = new stdClass();
+		} else {
+			dol_syslog(__METHOD__." using global object is deprecated, please give obj as argument", LOG_WARNING);
+			$obj = $object;
+		}
+	}
 
 	$ref = str_replace(' ', '', $ref);
 	$out = '';
@@ -77,7 +90,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1)
 	$securekeyseed = '';
 
 	if ($type == 'proposal') {
-		$securekeyseed = isset($conf->global->PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN) ? $conf->global->PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN : '';
+		$securekeyseed = getDolGlobalString('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN');
 
 		$out = $urltouse.'/public/onlinesign/newonlinesign.php?source=proposal&ref='.($mode ? '<span style="color: #666666">' : '');
 		if ($mode == 1) {
@@ -90,7 +103,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1)
 		if ($mode == 1) {
 			$out .= "hash('".$securekeyseed."' + '".$type."' + proposal_ref)";
 		} else {
-			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (is_null($object) ? '' : $object->entity) : ''), '0');
+			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (empty($obj->entity) ? '' : $obj->entity) : ''), '0');
 		}
 		/*
 		if ($mode == 1) {
@@ -129,7 +142,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1)
 		if ($mode == 1) {
 			$out .= "hash('".$securekeyseed."' + '".$type."' + contract_ref)";
 		} else {
-			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (is_null($object) ? '' : $object->entity) : ''), '0');
+			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (empty($obj->entity) ? '' : (int) $obj->entity) : ''), '0');
 		}
 	} elseif ($type == 'fichinter') {
 		$securekeyseed = isset($conf->global->FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN) ? $conf->global->FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN : '';
@@ -144,13 +157,13 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1)
 		if ($mode == 1) {
 			$out .= "hash('".$securekeyseed."' + '".$type."' + fichinter_ref)";
 		} else {
-			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (is_null($object) ? '' : $object->entity) : ''), '0');
+			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (empty($obj->entity) ? '' : (int) $obj->entity) : ''), '0');
 		}
 	}
 
 	// For multicompany
 	if (!empty($out) && isModEnabled('multicompany')) {
-		$out .= "&entity=".(is_null($object) ? '' : $object->entity); // Check the entity because we may have the same reference in several entities
+		$out .= "&entity=".(empty($obj->entity) ? '' : (int) $obj->entity); // Check the entity because we may have the same reference in several entities
 	}
 
 	return $out;

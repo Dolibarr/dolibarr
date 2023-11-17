@@ -74,7 +74,7 @@ $group = GETPOST("group", "int", 3);
 $cancel		= GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'useracard'; // To manage different context of search
 
-if (empty($id)) {
+if (empty($id) && $action != 'create') {
 	$id = $user->id;
 }
 
@@ -350,7 +350,7 @@ if (empty($reshook)) {
 				if (GETPOST('password', 'none')) {
 					$resPass = $object->setPassword($user, GETPOST('password', 'none'));
 				}
-				if ($resPass < 0) {
+				if (is_int($resPass) && $resPass < 0) {
 					$langs->load("errors");
 					$db->rollback();
 					setEventMessages($object->error, $object->errors, 'errors');
@@ -663,7 +663,7 @@ if (empty($reshook)) {
 					$object->oldcopy = clone $object;
 
 					$ret = $object->setPassword($user, GETPOST("password", "none"));
-					if ($ret < 0) {
+					if (is_int($ret) && $ret < 0) {
 						setEventMessages($object->error, $object->errors, 'errors');
 					}
 				}
@@ -678,7 +678,7 @@ if (empty($reshook)) {
 		$object->fetch($id);
 
 		$newpassword = $object->setPassword($user, '');	// This will generate a new password
-		if ($newpassword < 0) {
+		if (is_int($newpassword) && $newpassword < 0) {
 			// Echec
 			setEventMessages($langs->trans("ErrorFailedToSetNewPassword"), null, 'errors');
 		} else {
@@ -781,7 +781,11 @@ if ($object->id > 0) {
 	$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
 	$title = $person_name." - ".$langs->trans('Card');
 } else {
-	$title = $langs->trans("NewUser");
+	if (GETPOST('employee', 'alphanohtml')) {
+		$title = $langs->trans("NewEmployee");
+	} else {
+		$title = $langs->trans("NewUser");
+	}
 }
 $help_url = '';
 
@@ -789,7 +793,7 @@ llxHeader('', $title, $help_url);
 
 
 if ($action == 'create' || $action == 'adduserldap') {
-	print load_fiche_titre($langs->trans("NewUser"), '', 'user');
+	print load_fiche_titre($title, '', 'user');
 
 	print '<span class="opacitymedium">'.$langs->trans("CreateInternalUserDesc")."</span><br>\n";
 	print "<br>";

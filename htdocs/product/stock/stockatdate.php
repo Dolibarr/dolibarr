@@ -325,7 +325,7 @@ if ($sortfield == 'stock' && !empty($search_fk_warehouse)) {
 }
 $sql .= $db->order($sortfield, $sortorder);
 
-$nbtotalofrecords = 0;
+$nbtotalofrecords = '';
 if ($date && $dateIsValid) {	// We avoid a heavy sql if mandatory parameter date not yet defined
 	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		$result = $db->query($sql);
@@ -487,7 +487,7 @@ if (!empty($search_fk_warehouse)) {
 
 // Lines of title
 print '<tr class="liste_titre">';
-print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], 'p.ref', $param, '', '', $sortfield, $sortorder);
+print_liste_field_titre('ProductRef', $_SERVER["PHP_SELF"], 'p.ref', $param, '', '', $sortfield, $sortorder);
 print_liste_field_titre('Label', $_SERVER["PHP_SELF"], 'p.label', $param, '', '', $sortfield, $sortorder);
 
 if ($mode == 'future') {
@@ -502,12 +502,13 @@ if ($mode == 'future') {
 	print_liste_field_titre('', $_SERVER["PHP_SELF"]);
 	print_liste_field_titre('CurrentStock', $_SERVER["PHP_SELF"], $fieldtosortcurrentstock, $param, '', '', $sortfield, $sortorder, 'right ');
 }
-print_liste_field_titre('', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
 
 // Hook fields
 $parameters = array('param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
+
+print_liste_field_titre('', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
 
 print "</tr>\n";
 
@@ -586,8 +587,8 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		print '<td class="nowrap">'.$prod->getNomUrl(1, '').'</td>';
 
 		// Product label
-		print '<td>'.$objp->label;
-		print '<input type="hidden" name="desc'.$i.'" value="'.dol_escape_htmltag($objp->description).'">'; // TODO Remove this and make a fetch to get description when creating order instead of a GETPOST
+		print '<td>';
+		print dol_escape_htmltag($objp->label);
 		print '</td>';
 
 		if ($mode == 'future') {
@@ -643,13 +644,13 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			$totalcurrentstock += $currentstock;
 		}
 
-		// Action
-		print '<td class="right"></td>';
-
 		// Fields from hook
 		$parameters = array('objp'=>$objp);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
+
+		// Action
+		print '<td class="right"></td>';
 
 		print '</tr>'."\n";
 	}

@@ -257,7 +257,7 @@ if ($action == 'updateMask') {
 		if (dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity)) {
 			// The constant that was read before the new set
 			// We therefore requires a variable to have a coherent view
-			$conf->global->$constforval = $value;
+			$conf->global->{$constforval} = $value;
 		}
 
 		// We disable/enable the document template (into llx_document_model table)

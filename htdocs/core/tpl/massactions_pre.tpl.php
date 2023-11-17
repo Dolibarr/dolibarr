@@ -31,7 +31,6 @@
 // $sendto
 // $withmaindocfilemail
 
-
 if ($massaction == 'predeletedraft') {
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassDraftDeletion"), $langs->trans("ConfirmMassDeletionQuestion", count($toselect)), "delete", null, '', 0, 200, 500, 1);
 }
@@ -94,7 +93,7 @@ if ($massaction == 'preaffecttag' && isModEnabled('category')) {
 	}
 }
 
-if ($massaction == 'preupdateprice' && isModEnabled('category')) {
+if ($massaction == 'preupdateprice') {
 	$formquestion = array();
 
 	$valuefield = '<div style="display: flex; align-items: center; justify-content: flex-end; padding-right: 150px">';

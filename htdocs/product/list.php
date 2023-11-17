@@ -91,6 +91,7 @@ $search_country = GETPOST("search_country", 'int');
 $search_state = GETPOST("state_id", 'int');
 $fourn_id = GETPOST("fourn_id", 'int');
 $search_tobatch = GETPOST("search_tobatch", 'int');
+$search_stockable_product = GETPOST('search_stockable_product', 'int');
 $search_accountancy_code_sell = GETPOST("search_accountancy_code_sell", 'alpha');
 $search_accountancy_code_sell_intra = GETPOST("search_accountancy_code_sell_intra", 'alpha');
 $search_accountancy_code_sell_export = GETPOST("search_accountancy_code_sell_export", 'alpha');
@@ -187,7 +188,7 @@ $fieldstosearchall = array(
 	'p.label'=>"ProductLabel",
 	'p.description'=>"Description",
 	"p.note"=>"Note",
-
+	'pfp.ref_fourn'=>'RefSupplier'
 );
 // multilang
 if (getDolGlobalInt('MAIN_MULTILANGS')) {
@@ -197,6 +198,7 @@ if (getDolGlobalInt('MAIN_MULTILANGS')) {
 }
 if (isModEnabled('barcode')) {
 	$fieldstosearchall['p.barcode'] = 'Gencod';
+	$fieldstosearchall['pfp.barcode'] = 'GencodBuyPrice';
 }
 // Personalized search criterias. Example: $conf->global->PRODUCT_QUICKSEARCH_ON_FIELDS = 'p.ref=ProductRef;p.label=ProductLabel;p.description=Description;p.note=Note;'
 if (!empty($conf->global->PRODUCT_QUICKSEARCH_ON_FIELDS)) {
@@ -217,7 +219,7 @@ $alias_product_perentity = empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ?
 // Definition of array of fields for columns
 $arrayfields = array(
 	'p.rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'noteditable'=>1, 'notnull'=> 1, 'index'=>1, 'position'=>1, 'comment'=>'Id', 'css'=>'left'),
-	'p.ref'=>array('label'=>"Ref", 'checked'=>1, 'position'=>10),
+	'p.ref'=>array('label'=>'ProductRef', 'checked'=>1, 'position'=>10),
 	//'pfp.ref_fourn'=>array('label'=>$langs->trans("RefSupplier"), 'checked'=>1, 'enabled'=>(isModEnabled('barcode'))),
 	'thumbnail'=>array('label'=>'Photo', 'checked'=>0, 'position'=>10),
 	'p.label'=>array('label'=>"Label", 'checked'=>1, 'position'=>10),
@@ -263,6 +265,19 @@ $arrayfields = array(
 	'p.tosell'=>array('label'=>$langs->transnoentitiesnoconv("Status").' ('.$langs->transnoentitiesnoconv("Sell").')', 'checked'=>1, 'position'=>1000),
 	'p.tobuy'=>array('label'=>$langs->transnoentitiesnoconv("Status").' ('.$langs->transnoentitiesnoconv("Buy").')', 'checked'=>1, 'position'=>1000)
 );
+
+if(! empty($conf->stock->enabled)) {
+	// service
+	if($type == 1) {
+		if(! empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+			$arrayfields['p.stockable_product'] = array('label' => $langs->trans('StockableProduct'), 'checked' => 0, 'position' => 1001);
+		}
+	}
+	else {
+		//product
+		$arrayfields['p.stockable_product'] = array('label' => $langs->trans('StockableProduct'), 'checked' => 0, 'position' => 1001);
+	}
+}
 /*foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
@@ -355,6 +370,7 @@ if (empty($reshook)) {
 		//$search_type='';						// There is 2 types of list: a list of product and a list of services. No list with both. So when we clear search criteria, we must keep the filter on type.
 
 		$show_childproducts = '';
+		$search_stockable_product = '';
 		$search_accountancy_code_sell = '';
 		$search_accountancy_code_sell_intra = '';
 		$search_accountancy_code_sell_export = '';
@@ -437,7 +453,7 @@ if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 	$sql .= " ppe.accountancy_code_sell, ppe.accountancy_code_sell_intra, ppe.accountancy_code_sell_export, ppe.accountancy_code_buy, ppe.accountancy_code_buy_intra, ppe.accountancy_code_buy_export,";
 }
 $sql .= ' p.datec as date_creation, p.tms as date_update, p.pmp, p.stock, p.cost_price,';
-$sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units, fk_country, fk_state,';
+$sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units, fk_country, fk_state, p.stockable_product,';
 if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 	$sql .= ' p.fk_unit, cu.label as cu_label,';
 }
@@ -461,7 +477,7 @@ $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 if (isModEnabled('workstation')) {
-	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "workstation_workstation ws ON (p.fk_default_workstation = ws.rowid)";
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "workstation_workstation as ws ON (p.fk_default_workstation = ws.rowid)";
 }
 if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
@@ -485,8 +501,13 @@ if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 
 $sql .= ' WHERE p.entity IN ('.getEntity('product').')';
 if ($sall) {
+	// Clean $fieldstosearchall
+	$newfieldstosearchall = $fieldstosearchall;
+	unset($newfieldstosearchall['pfp.ref_fourn']);
+	unset($newfieldstosearchall['pfp.barcode']);
+
 	$sql .= ' AND (';
-	$sql .= natural_search(array_keys($fieldstosearchall), $sall, 0, 1);
+	$sql .= natural_search(array_keys($newfieldstosearchall), $sall, 0, 1);
 	// Search also into a supplier reference 'pfp.ref_fourn'="RefSupplier"
 	$sql .= ' OR EXISTS (SELECT rowid FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp WHERE pfp.fk_product = p.rowid';
 	$sql .= ' AND ('.natural_search('pfp.ref_fourn', $sall, 0, 1);
@@ -529,6 +550,9 @@ if (isset($search_tosell) && dol_strlen($search_tosell) > 0 && $search_tosell !=
 }
 if (isset($search_tobuy) && dol_strlen($search_tobuy) > 0 && $search_tobuy != -1) {
 	$sql .= " AND p.tobuy = ".((int) $search_tobuy);
+}
+if (isset($search_stockable_product) && dol_strlen($search_stockable_product) > 0 && $search_stockable_product != -1) {
+	$sql .= " AND p.stockable_product = '". $search_stockable_product . "'";
 }
 if (isset($search_tobatch) && dol_strlen($search_tobatch) > 0 && $search_tobatch != -1) {
 	$sql .= " AND p.tobatch = ".((int) $search_tobatch);
@@ -614,7 +638,7 @@ if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 } else {
 	$sql .= " ppe.accountancy_code_sell, ppe.accountancy_code_sell_intra, ppe.accountancy_code_sell_export, ppe.accountancy_code_buy, ppe.accountancy_code_buy_intra, ppe.accountancy_code_buy_export,";
 }
-$sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units, p.fk_country, p.fk_state';
+$sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units, p.fk_country, p.fk_state, p.stockable_product';
 if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 	$sql .= ', p.fk_unit, cu.label';
 }
@@ -643,6 +667,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/'.preg_quote($linktopfp, '/').'/', '', $sqlforcount);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+
 	$resql = $db->query($sqlforcount);
 	if ($resql) {
 		$objforcount = $db->fetch_object($resql);
@@ -797,6 +822,9 @@ if ($search_accountancy_code_buy_export) {
 if ($search_finished) {
 	$param = "&search_finished=".urlencode($search_finished);
 }
+if($search_stockable_product != '') {
+	$param = "&search_stockable_product=".urlencode($search_stockable_product);
+}
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -840,16 +868,15 @@ if ($type === "") {
 if ($type === "") {
 	$params['forcenohideoftext'] = 1;
 }
-if ($type === "") {
-	$newcardbutton .= dolGetButtonTitle($langs->trans('NewProduct'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type=0', '', $perm, $params);
-	$type = Product::TYPE_SERVICE;
-}
-	$label = 'NewProduct';
-if ($type == Product::TYPE_SERVICE) {
-	$label = 'NewService';
-}
-	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type='.$type, '', $perm, $params);
 
+if ($type === "" || $type == Product::TYPE_PRODUCT) {
+	$label = 'NewProduct';
+	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type=0', '', $perm, $params);
+}
+if ($type === "" || $type == Product::TYPE_SERVICE) {
+	$label = 'NewService';
+	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type=1', '', $perm, $params);
+}
 
 print '<form id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">';
 if ($optioncss != '') {
@@ -1126,6 +1153,11 @@ if (!empty($arrayfields['p.seuil_stock_alerte']['checked'])) {
 	print '&nbsp;';
 	print '</td>';
 }
+// Managed_in_stock
+$array = array('-1'=>'&nbsp;', '0'=>$langs->trans('No'), '1'=>$langs->trans('Yes'));
+if (!empty($arrayfields['p.stockable_product']['checked'])){
+	print '<td class="liste_titre center">'.Form::selectarray('search_stockable_product', $array, $search_stockable_product).'</td>';
+}
 // Desired stock
 if (!empty($arrayfields['p.desiredstock']['checked'])) {
 	print '<td class="liste_titre">';
@@ -1362,6 +1394,9 @@ if (!empty($arrayfields['p.seuil_stock_alerte']['checked'])) {
 	print_liste_field_titre($arrayfields['p.seuil_stock_alerte']['label'], $_SERVER["PHP_SELF"], "p.seuil_stock_alerte", "", $param, '', $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['p.stockable_product']['checked'])) {
+	print_liste_field_titre($arrayfields['p.stockable_product']['label'], $_SERVER['PHP_SELF'], 'p.stockable_product', '', $param, '', $sortfield, $sortorder, 'center ');
+}
 if (!empty($arrayfields['p.desiredstock']['checked'])) {
 	print_liste_field_titre($arrayfields['p.desiredstock']['label'], $_SERVER["PHP_SELF"], "p.desiredstock", "", $param, '', $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
@@ -1506,6 +1541,7 @@ while ($i < $imaxinloop) {
 		$product_static->volume_units = $obj->volume_units;
 		$product_static->surface = $obj->surface;
 		$product_static->surface_units = $obj->surface_units;
+		$product_static->stockable_product = $obj->stockable_product;
 		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 			$product_static->fk_unit = $obj->fk_unit;
 		}
@@ -1975,6 +2011,14 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+
+		// not managed in stock
+		if(! empty($arrayfields['p.stockable_product']['checked'])) {
+			print '<td class="nowrap center">';
+			print ($product_static->stockable_product == '1') ? $langs->trans('Yes') : $langs->trans('No');
+			print '</td>';
+		}
+
 		// Desired stock
 		if (!empty($arrayfields['p.desiredstock']['checked'])) {
 			print '<td class="right">';

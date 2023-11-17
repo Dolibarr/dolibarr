@@ -1310,7 +1310,7 @@ jQuery(document).ready(function() {
 	}
 
 	// Code to set tooltip on search field
-	jQuery('table.liste tr.liste_titre_filter td.liste_titre input[name^="search"][type=text]:not("maxwidthdate")').attr('title', '<?php echo dol_escape_js($langs->transnoentities("SearchSyntaxTooltipForStringOrNum")) ?>');
+	jQuery('table.liste tr.liste_titre_filter td.liste_titre input[name^="search"][type=text]:not(".maxwidthdate")').attr('title', '<?php echo dol_escape_js($langs->transnoentities("SearchSyntaxTooltipForStringOrNum")) ?>');
 });
 
 

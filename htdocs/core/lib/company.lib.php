@@ -869,7 +869,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 
 						// Ref
 						print '<td class="nowraponall">';
-						print $projecttmp->getNomUrl(1);
+						print $projecttmp->getNomUrl(1, '', 0, '', '-', 0, 1, '', 'project:'.$_SERVER["PHP_SELF"].'?socid=__SOCID__');
 						print '</td>';
 
 						// Label

@@ -229,7 +229,7 @@ function invoice_admin_prepare_head()
 	$head[$h][2] = 'attributeslinesrec';
 	$h++;
 
-	if (!empty($conf->global->INVOICE_USE_SITUATION)) {	// Warning, implementation is seriously bugged and a new one not compatible is expected to become stable
+	if (getDolGlobalInt('INVOICE_USE_SITUATION') > 0) {	// Warning, implementation with value 1 is seriously bugged and a new one not compatible is expected to become stable
 		$head[$h][0] = DOL_URL_ROOT.'/admin/facture_situation.php';
 		$head[$h][1] = $langs->trans("InvoiceSituation");
 		$head[$h][2] = 'situation';
@@ -580,7 +580,7 @@ function getCustomerInvoiceDraftTable($maxCount = 500, $socid = 0)
 				$result .= '<td colspan="2" class="right">'.price($tot_ttc).'</td>';
 				$result .= '</tr>';
 			} else {
-				$result .= '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
+				$result .= '<tr class="oddeven"><td colspan="3"><span class="opacitymedium">'.$langs->trans("NoInvoice").'</span></td></tr>';
 			}
 			$result .= "</table></div>";
 			$db->free($resql);
@@ -712,7 +712,7 @@ function getDraftSupplierTable($maxCount = 500, $socid = 0)
 				$result .= '<td colspan="2" class="right">'.price($tot_ttc).'</td>';
 				$result .= '</tr>';
 			} else {
-				$result .= '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
+				$result .= '<tr class="oddeven"><td colspan="3"><span class="opacitymedium">'.$langs->trans("NoInvoice").'</span></td></tr>';
 			}
 			$result .= "</table></div>";
 			$db->free($resql);

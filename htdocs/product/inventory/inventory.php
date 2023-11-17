@@ -265,6 +265,7 @@ if (empty($reshook)) {
 		$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
 		$sql .= ' WHERE id.fk_inventory = '.((int) $object->id);
+		$sql .= $db->order('id.rowid', 'ASC');
 		$sql .= $db->plimit($limit, $offset);
 
 		$db->begin();

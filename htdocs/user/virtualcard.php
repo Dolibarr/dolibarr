@@ -186,8 +186,9 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 
 	print '<script type="text/javascript">
 	jQuery(document).ready(function() {
-		jQuery("#lnk").click(function() {
-			console.log("We click on link");
+		jQuery("#lnk").click(function(event) {
+			event.preventDefault();
+			console.log("We click on link to show virtual card options");
 			hideoptions(this);
 		});
 	});

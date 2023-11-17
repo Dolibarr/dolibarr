@@ -61,7 +61,7 @@ function jobPrepareHead($object)
 	$head[$h][2] = 'skill_tab';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/hrm/position.php?fk_job=".$object->id;
+	$head[$h][0] = DOL_URL_ROOT."/hrm/position.php?id=".$object->id;
 	$head[$h][1] = $langs->trans("PositionsWithThisProfile");
 	$nbResources = 0;
 	$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."hrm_job_user WHERE fk_job = ".((int) $object->id);

@@ -760,7 +760,11 @@ if (count($tasksarray) > 0) {
 		$projectstatic->loadTimeSpent($firstdaytoshow, 0, $usertoprocess->id); // Load time spent from table element_time for the project into this->weekWorkLoad and this->weekWorkLoadPerTask for all days of a week
 		for ($idw = 0; $idw < 7; $idw++) {
 			$tmpday = dol_time_plus_duree($firstdaytoshow, $idw, 'd');
-			$totalforeachday[$tmpday] += $projectstatic->weekWorkLoad[$tmpday];
+			if (empty($totalforeachday[$tmpday])) {
+				$totalforeachday[$tmpday] = empty($projectstatic->weekWorkLoad[$tmpday]) ? 0 : $projectstatic->weekWorkLoad[$tmpday];
+			} else {
+				$totalforeachday[$tmpday] +=  empty($projectstatic->weekWorkLoad[$tmpday]) ? 0 : $projectstatic->weekWorkLoad[$tmpday];
+			}
 		}
 	}
 

@@ -910,7 +910,7 @@ class PaiementFourn extends Paiement
 			if (!empty($billsarray)) {
 				$supplier_invoice = new FactureFournisseur($this->db);
 				if ($supplier_invoice->fetch($billsarray[0]) > 0) {
-					$force_thirdparty_id = $supplier_invoice->fk_soc;
+					$force_thirdparty_id = $supplier_invoice->socid;
 				}
 			}
 		}

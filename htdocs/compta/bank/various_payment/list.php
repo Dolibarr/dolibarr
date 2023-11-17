@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017-2022	Alexandre Spangaro      <aspangaro@open-dsi.fr>
+/* Copyright (C) 2017-2023	Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Tobias Sekan            <tobias.sekan@startmail.com>
@@ -424,6 +424,8 @@ if (!empty($socid)) {
 	$url .= '&socid='.urlencode($socid);
 }
 
+// List of mass actions available
+$arrayofmassactions = array();
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -822,9 +824,13 @@ while ($i < $imaxinloop) {
 
 		// Accounting account
 		if (!empty($arrayfields['account']['checked'])) {
-			$accountingaccount->fetch('', $obj->accountancy_code, 1);
-
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->accountancy_code.' '.$accountingaccount->label).'">'.$accountingaccount->getNomUrl(0, 1, 1, '', 1).'</td>';
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+			$result = $accountingaccount->fetch('', $obj->accountancy_code, 1);
+			if ($result > 0) {
+				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->accountancy_code.' '.$accountingaccount->label).'">'.$accountingaccount->getNomUrl(0, 1, 1, '', 1).'</td>';
+			} else {
+				print '<td></td>';
+			}
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

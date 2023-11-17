@@ -94,7 +94,7 @@ if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 }
 
 // Users/Groups management only in master entity if transverse mode
-if (isModEnabled('multicompany') && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE) {
+if (isModEnabled('multicompany') && $conf->entity > 1 && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 	accessforbidden();
 }
 
@@ -440,7 +440,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 
-		print '<td>';
+		print '<td class="tdoverflowmax125">';
 		print $object->getNomUrl(1);
 		if (isModEnabled('multicompany') && !$obj->entity) {
 			print img_picto($langs->trans("GlobalGroup"), 'redstar');
@@ -457,12 +457,12 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-		print '<td class="center">'.$obj->nb.'</td>';
+		print '<td class="center">'.dol_escape_htmltag($obj->nb).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 		print '<td class="center">';
-		print '<a href="'.DOL_URL_ROOT.'/user/group/perms.php?id='.$obj->rowid.'">'.$obj->nbpermissions.'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/user/group/perms.php?id='.$obj->rowid.'">'.dol_escape_htmltag($obj->nbpermissions).'</a>';
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -513,12 +513,7 @@ if ($num == 0) {
 			$colspan++;
 		}
 	}*/
-	$colspan = 1;
-	foreach ($arrayfields as $key => $val) {
-		if (!empty($val['checked'])) {
-			$colspan++;
-		}
-	}
+	$colspan = $savnbfield;
 	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 }
 

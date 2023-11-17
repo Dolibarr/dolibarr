@@ -1082,6 +1082,18 @@ if (!defined('NOLOGIN')) {
 					unset($_SESSION['lastsearch_mode_tmp_'.$relativepathstring]);
 				}
 			}
+			if (!empty($_GET['save_pageforbacktolist']) && !empty($_SERVER["HTTP_REFERER"])) {    // We must use $_GET here
+				if (empty($_SESSION['pageforbacktolist'])) {
+					$pageforbacktolistarray = array();
+				} else {
+					$pageforbacktolistarray = $_SESSION['pageforbacktolist'];
+				}
+				$tmparray = explode(':', $_GET['save_pageforbacktolist'], 2);
+				if (!empty($tmparray[0]) && !empty($tmparray[1])) {
+					$pageforbacktolistarray[$tmparray[0]] = $tmparray[1];
+					$_SESSION['pageforbacktolist'] = $pageforbacktolistarray;
+				}
+			}
 
 			$action = '';
 			$parameters = array();
@@ -1732,7 +1744,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		}
 		// Refresh value of MAIN_IHM_PARAMS_REV before forging the parameter line.
 		if (GETPOST('dol_resetcache')) {
-			dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", ((int) $conf->global->MAIN_IHM_PARAMS_REV) + 1, 'chaine', 0, '', $conf->entity);
+			dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 		}
 
 		$themeparam = '?lang='.$langs->defaultlang.'&amp;theme='.$conf->theme.(GETPOST('optioncss', 'aZ09') ? '&amp;optioncss='.GETPOST('optioncss', 'aZ09', 1) : '').(empty($user->id) ? '' : ('&amp;userid='.$user->id)).'&amp;entity='.$conf->entity;
@@ -1787,8 +1799,8 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 
 		if (!defined('DISABLE_FONT_AWSOME')) {
 			print '<!-- Includes CSS for font awesome -->'."\n";
-			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/fontawesome-5/css/all.min.css'.($ext ? '?'.$ext : '').'">'."\n";
-			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/fontawesome-5/css/v4-shims.min.css'.($ext ? '?'.$ext : '').'">'."\n";
+			$fontawesome_directory = getDolGlobalString('MAIN_FONTAWESOME_DIRECTORY', '/theme/common/fontawesome-5');
+			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.$fontawesome_directory.'/css/all.min.css'.($ext ? '?'.$ext : '').'">'."\n";
 		}
 
 		print '<!-- Includes CSS for Dolibarr theme -->'."\n";
@@ -2339,6 +2351,10 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	$dropdownBody .= '<br>';
 	$dropdownBody .= '<span id="topmenuloginmoreinfo-btn"><i class="fa fa-caret-right"></i> '.$langs->trans("ShowMoreInfos").'</span>';
 	$dropdownBody .= '<div id="topmenuloginmoreinfo" >';
+
+	$dropdownBody .= '<br><b>'.$langs->trans("Easya").'</b>: <i class="fa fa-code-branch"></i> '.$conf->global->EASYA_VERSION;
+	$dropdownBody .= '<br><b>'.$langs->trans("Dolibarr").'</b>: <i class="fa fa-heart"></i> '.$conf->global->MAIN_VERSION_LAST_UPGRADE;
+	$dropdownBody .= '<br>';
 
 	// login infos
 	if (!empty($user->admin)) {

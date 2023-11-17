@@ -163,7 +163,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 
 		// Scan directories
 		$nbofiles = count($listoffiles);
-		if (!empty(getDolGlobalString('MYMODULE_MYOBJECT_ADDON_PDF_ODT_PATH'))) {
+		if (getDolGlobalString('MYMODULE_MYOBJECT_ADDON_PDF_ODT_PATH')) {
 			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>';
 			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
 			$texte .= count($listoffiles);
@@ -283,8 +283,8 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 
 				// Get extension (ods or odt)
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
-				if (getDolGlobalInt('MAIN_DOC_USE_TIMING')) {
-					$format = getDolGlobalInt('MAIN_DOC_USE_TIMING');
+				if (getDolGlobalString('MAIN_DOC_USE_TIMING')) {
+					$format = getDolGlobalString('MAIN_DOC_USE_TIMING');
 					if ($format == '1') {
 						$format = '%Y%m%d%H%M%S';
 					}

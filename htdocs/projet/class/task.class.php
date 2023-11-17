@@ -1598,8 +1598,8 @@ class Task extends CommonObjectLine
 		if ($timespent->id > 0) {
 			$this->timespent_id = $timespent->id;
 			$this->id = $timespent->fk_element;
-			$this->timespent_date = $this->db->jdate($timespent->element_date);
-			$this->timespent_datehour   = $this->db->jdate($timespent->element_datehour);
+			$this->timespent_date = $timespent->element_date;
+			$this->timespent_datehour   = $timespent->element_datehour;
 			$this->timespent_withhour   = $timespent->element_date_withhour;
 			$this->timespent_duration = $timespent->element_duration;
 			$this->timespent_fk_user	= $timespent->fk_user;

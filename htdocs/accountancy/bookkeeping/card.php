@@ -497,7 +497,7 @@ if ($action == 'create') {
 
 		// Ref document
 		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('Piece');
 		print '</td>';
 		if ($action != 'editdocref') {

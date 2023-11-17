@@ -81,10 +81,10 @@ $list_account[] = '---Others---';
 $list_account[] = 'ACCOUNTING_VAT_SOLD_ACCOUNT';
 $list_account[] = 'ACCOUNTING_VAT_BUY_ACCOUNT';
 
-if ($mysoc->useRevenueStamp()) {
+/*if ($mysoc->useRevenueStamp()) {
 	$list_account[] = 'ACCOUNTING_REVENUESTAMP_SOLD_ACCOUNT';
-	//$list_account[] = 'ACCOUNTING_REVENUESTAMP_BUY_ACCOUNT';
-}
+	$list_account[] = 'ACCOUNTING_REVENUESTAMP_BUY_ACCOUNT';
+}*/
 
 $list_account[] = 'ACCOUNTING_VAT_PAY_ACCOUNT';
 
@@ -265,8 +265,8 @@ foreach ($list_account as $key) {
 			print img_picto('', 'payment_vat', 'class="pictofixedwidth"');
 		} elseif (preg_match('/^ACCOUNTING_VAT/', $key)) {
 			print img_picto('', 'vat', 'class="pictofixedwidth"');
-		} elseif (preg_match('/^ACCOUNTING_REVENUESTAMP/', $key)) {
-			print img_picto('', 'vat', 'class="pictofixedwidth"');
+			/*} elseif (preg_match('/^ACCOUNTING_REVENUESTAMP/', $key)) {
+			print img_picto('', 'vat', 'class="pictofixedwidth"');*/
 		} elseif (preg_match('/^ACCOUNTING_ACCOUNT_CUSTOMER/', $key)) {
 			print img_picto('', 'bill', 'class="pictofixedwidth"');
 		} elseif (preg_match('/^LOAN_ACCOUNTING_ACCOUNT/', $key)) {

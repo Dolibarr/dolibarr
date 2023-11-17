@@ -105,14 +105,15 @@ $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 
 $search_status = GETPOST('search_status', 'intcomma');
 $search_paymentmode = GETPOST('search_paymentmode', 'int');
 $search_paymentterms = GETPOST('search_paymentterms', 'int');
+$search_fk_input_reason = GETPOST('search_fk_input_reason', 'int');
 $search_module_source = GETPOST('search_module_source', 'alpha');
 $search_pos_source = GETPOST('search_pos_source', 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state");
 $search_country = GETPOST("search_country", 'alpha');
+$search_customer_code = GETPOST("search_customer_code", 'alphanohtml');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
-$search_company_code_client = GETPOST("search_type_thirdparty", 'alpha');
 $search_user = GETPOST('search_user', 'int');
 $search_sale = GETPOST('search_sale', 'int');
 $search_date_startday = GETPOST('search_date_startday', 'int');
@@ -145,8 +146,8 @@ $search_fac_rec_source_title = GETPOST("search_fac_rec_source_title", 'alpha');
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
 
-$option = GETPOST('search_option');
-if ($option == 'late') {
+$search_late = GETPOST('search_late');
+if ($search_late == 'late') {
 	$search_status = '1';
 }
 $filtre = GETPOST('filtre', 'alpha');
@@ -233,6 +234,7 @@ $arrayfields = array(
 	'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers, 'position'=>75),
 	'f.fk_mode_reglement'=>array('label'=>"PaymentMode", 'checked'=>1, 'position'=>80),
 	'f.fk_cond_reglement'=>array('label'=>"PaymentConditionsShort", 'checked'=>1, 'position'=>85),
+	'f.fk_input_reason'=>array('label'=>"Source", 'checked'=>0, 'enabled'=>1, 'position'=>88),
 	'f.module_source'=>array('label'=>"POSModule", 'langs'=>'cashdesk', 'checked'=>($contextpage == 'poslist' ? 1 : 0), 'enabled'=>"(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'position'=>90),
 	'f.pos_source'=>array('label'=>"POSTerminal", 'langs'=>'cashdesk', 'checked'=>($contextpage == 'poslist' ? 1 : 0), 'enabled'=>"(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'position'=>91),
 	'f.total_ht'=>array('label'=>"AmountHT", 'checked'=>1, 'position'=>95),
@@ -343,6 +345,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_status = '';
 	$search_paymentmode = '';
 	$search_paymentterms = '';
+	$search_fk_input_reason = '';
 	$search_module_source = '';
 	$search_pos_source = '';
 	$search_town = '';
@@ -350,6 +353,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_state = "";
 	$search_country = '';
 	$search_type_thirdparty = '';
+	$search_customer_code = '';
 	$search_date_startday = '';
 	$search_date_startmonth = '';
 	$search_date_startyear = '';
@@ -378,7 +382,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$toselect = array();
 	$search_array_options = array();
 	$search_categ_cus = 0;
-	$option = '';
+	$search_late = '';
 	$socid = 0;
 }
 
@@ -580,7 +584,9 @@ $sql .= ' f.rowid as id, f.ref, f.ref_client, f.fk_soc, f.type, f.note_private, 
 $sql .= ' f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,';
 $sql .= ' f.fk_user_author,';
 $sql .= ' f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva as multicurrency_total_vat, f.multicurrency_total_ttc,';
-$sql .= ' f.datef, f.date_valid, f.date_lim_reglement as datelimite, f.module_source, f.pos_source,';
+$sql .= ' f.datef, f.date_valid, f.date_lim_reglement as datelimite,';
+$sql .= " f.fk_input_reason,";
+$sql .= " f.module_source, f.pos_source,";
 $sql .= ' f.paye as paye, f.fk_statut, f.close_code,';
 $sql .= ' f.datec as date_creation, f.tms as date_update, f.date_closing as date_closing,';
 $sql .= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final, f.situation_cycle_ref, f.situation_counter,';
@@ -699,8 +705,8 @@ if (empty($arrayfields['s.name_alias']['checked']) && $search_company) {
 if ($search_parent_name) {
 	$sql .= natural_search('s2.nom', $search_parent_name);
 }
-if ($search_company_code_client) {
-	$sql .= natural_search('s.code_client', $search_company_code_client);
+if ($search_customer_code) {
+	$sql .= natural_search('s.code_client', $search_customer_code);
 }
 if ($search_town) {
 	$sql .= natural_search('s.town', $search_town);
@@ -793,6 +799,9 @@ if ($search_paymentmode > 0) {
 if ($search_paymentterms > 0) {
 	$sql .= " AND f.fk_cond_reglement = ".((int) $search_paymentterms);
 }
+if ($search_fk_input_reason > 0) {
+	$sql .= " AND f.fk_input_reason = ".((int) $search_fk_input_reason);
+}
 if ($search_module_source) {
 	$sql .= natural_search("f.module_source", $search_module_source);
 }
@@ -817,7 +826,7 @@ if ($search_datelimit_start) {
 if ($search_datelimit_end) {
 	$sql .= " AND f.date_lim_reglement <= '".$db->idate($search_datelimit_end)."'";
 }
-if ($option == 'late') {
+if ($search_late == 'late') {
 	$sql .= " AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->client->warning_delay)."'";
 }
 if ($search_sale > 0) {
@@ -942,7 +951,6 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
-	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
 	$resql = $db->query($sqlforcount);
 	if ($resql) {
 		$objforcount = $db->fetch_object($resql);
@@ -1095,6 +1103,9 @@ if ($resql) {
 	if ($search_type_thirdparty != '') {
 		$param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
 	}
+	if ($search_customer_code) {
+		$param .= '&search_customer_code='.urlencode($search_customer_code);
+	}
 	if ($search_sale > 0) {
 		$param .= '&search_sale='.urlencode($search_sale);
 	}
@@ -1146,6 +1157,9 @@ if ($resql) {
 	if ($search_paymentterms > 0) {
 		$param .= '&search_paymentterms='.urlencode($search_paymentterms);
 	}
+	if ($search_fk_input_reason > 0) {
+		$param .= '&search_fk_input_reason='.urlencode($search_fk_input_reason);
+	}
 	if ($search_module_source) {
 		$param .= '&search_module_source='.urlencode($search_module_source);
 	}
@@ -1155,8 +1169,8 @@ if ($resql) {
 	if ($show_files) {
 		$param .= '&show_files='.urlencode($show_files);
 	}
-	if ($option) {
-		$param .= "&search_option=".urlencode($option);
+	if ($search_late) {
+		$param .= "&search_late=".urlencode($search_late);
 	}
 	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);
@@ -1293,6 +1307,11 @@ if ($resql) {
 		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1, $tmptitle);
 		$moreforfilter .= '</div>';
 	}
+	// alert on due date
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= $langs->trans('Alert').' <input type="checkbox" name="search_late" value="late"'.($search_late == 'late' ? ' checked' : '').'>';
+	$moreforfilter .= '</div>';
+
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
@@ -1388,14 +1407,10 @@ if ($resql) {
 	if (!empty($arrayfields['f.date_lim_reglement']['checked'])) {
 		print '<td class="liste_titre center">';
 		print '<div class="nowrap">';
-		/*
-		 print $langs->trans('From').' ';
-		 print $form->selectDate($search_datelimit_start ? $search_datelimit_start : -1, 'search_datelimit_start', 0, 0, 1);
-		 print '</div>';
-		 print '<div class="nowrap">';
-		 print $langs->trans('to').' ';*/
-		print $form->selectDate($search_datelimit_end ? $search_datelimit_end : -1, 'search_datelimit_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("Before"));
-		print '<br><input type="checkbox" name="search_option" value="late"'.($option == 'late' ? ' checked' : '').'> '.$langs->trans("Alert");
+		print $form->selectDate($search_datelimit_start ? $search_datelimit_start : -1, 'search_datelimit_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+		print '</div>';
+		print '<div class="nowrap">';
+		print $form->selectDate($search_datelimit_end ? $search_datelimit_end : -1, 'search_datelimit_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 		print '</div>';
 		print '</td>';
 	}
@@ -1423,7 +1438,7 @@ if ($resql) {
 	}
 	// Customer Code
 	if (!empty($arrayfields['s.code_client']['checked'])) {
-		print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_company_code_client" value="'.dol_escape_htmltag($search_company_code_client).'"></td>';
+		print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_customer_code" value="'.dol_escape_htmltag($search_customer_code).'"></td>';
 	}
 	// Town
 	if (!empty($arrayfields['s.town']['checked'])) {
@@ -1461,6 +1476,12 @@ if ($resql) {
 	if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
 		print '<td class="liste_titre">';
 		print $form->getSelectConditionsPaiements($search_paymentterms, 'search_paymentterms', -1, 1, 1, 'minwidth100 maxwidth100');
+		print '</td>';
+	}
+	// Channel
+	if (!empty($arrayfields['f.fk_input_reason']['checked'])) {
+		print '<td class="liste_titre">';
+		$form->selectInputReason($search_fk_input_reason, 'search_fk_input_reason', '', 1, '', 1);
 		print '</td>';
 	}
 	// Module source
@@ -1700,6 +1721,9 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
 		print_liste_field_titre($arrayfields['f.fk_cond_reglement']['label'], $_SERVER["PHP_SELF"], "f.fk_cond_reglement", "", $param, "", $sortfield, $sortorder);
+	}
+	if (!empty($arrayfields['f.fk_input_reason']['checked'])) {
+		print_liste_field_titre($arrayfields['f.fk_input_reason']['label'], $_SERVER['PHP_SELF'], 'f.fk_input_reason', '', $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['f.module_source']['checked'])) {
 		print_liste_field_titre($arrayfields['f.module_source']['label'], $_SERVER["PHP_SELF"], "f.module_source", "", $param, "", $sortfield, $sortorder);
@@ -2209,6 +2233,16 @@ if ($resql) {
 					$s = $form->form_conditions_reglement($_SERVER['PHP_SELF'], $obj->fk_cond_reglement, 'none', 0, '', -1, -1, 1);
 					print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($s).'">';
 					print $s;
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+
+				// Channel
+				if (!empty($arrayfields['f.fk_input_reason']['checked'])) {
+					print '<td>';
+					$form->formInputReason($_SERVER['PHP_SELF'], $obj->fk_input_reason, 'none', '');
 					print '</td>';
 					if (!$i) {
 						$totalarray['nbfield']++;

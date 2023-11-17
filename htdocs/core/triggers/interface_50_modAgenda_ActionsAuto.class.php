@@ -86,11 +86,11 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 
 		$key = 'MAIN_AGENDA_ACTIONAUTO_'.$action;
-		//var_dump($action.' - '.$conf->global->$key);exit;
+		//var_dump($action.' - '.$key.' - '.$conf->global->$key);exit;
 
 		// Do not log events not enabled for this action
 		// GUI allow to set this option only if entry exists into table llx_c_action_trigger
-		if (empty($conf->global->$key)) {
+		if (!getDolGlobalString($key)) {
 			return 0;
 		}
 
@@ -964,6 +964,9 @@ class InterfaceActionsAuto extends DolibarrTriggers
 				} else {	// generic translation key
 					$tmp = explode('_', $action);
 					$object->actionmsg = $langs->transnoentities($tmp[count($tmp) - 1]."InDolibarr", (empty($object->newref) ? $object->ref : $object->newref));
+				}
+				if (isModEnabled('multicompany') && property_exists($object, 'entity') && $object->entity > 1) {
+					$object->actionmsg .= ' ('.$langs->trans("Entity").' '.$object->entity.')';
 				}
 			}
 

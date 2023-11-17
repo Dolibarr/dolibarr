@@ -471,6 +471,7 @@ class Productbatch extends CommonObject
 		if ($fk_product > 0) { $sql .= "pl.eatby ASC, pl.sellby ASC, "; }
 		$sql .= "t.eatby ASC, t.sellby ASC ";
 		$sql .= ", t.qty ".(empty($conf->global->DO_NOT_TRY_TO_DEFRAGMENT_STOCKS_WAREHOUSE)?'ASC':'DESC'); // Note : qty ASC is important for expedition card, to avoid stock fragmentation
+		$sql .= ", t.batch ASC";
 
 		dol_syslog("productbatch::findAll", LOG_DEBUG);
 

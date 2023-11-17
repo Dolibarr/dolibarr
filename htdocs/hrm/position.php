@@ -49,8 +49,16 @@ $cancel 	 = GETPOST('cancel', 'alpha'); // We click on a Cancel button
 $toselect 	 = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'jobpositionlist'; // To manage different context of search
 $optioncss 	 = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
-$id 		 = GETPOST('id', 'int');
-$fk_job 	 = GETPOST('fk_job', 'int');
+$backtopage  = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
+
+$id		 = GETPOST('id', 'int');
+$ref 	 = GETPOST('ref', 'alpha');
+$fk_job  = GETPOST('id', 'int');
+$fk_user = GETPOST('fk_user', 'int');
+//$start_date = date('Y-m-d', GETPOST('date_startyear', 'int').'-'.GETPOST('date_startmonth', 'int').'-'.GETPOST('date_startday', 'int'));
+$start_date = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
+
 
 // Load variable for pagination
 $limit 	     = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -65,18 +73,6 @@ $offset     = $limit * $page;
 $pageprev   = $page - 1;
 $pagenext   = $page + 1;
 
-// Get parameters
-$id 	 = GETPOST('fk_job', 'int');
-$ref 	= GETPOST('ref', 'alpha');
-$fk_job  = GETPOST('fk_job', 'int');
-$fk_user = GETPOST('fk_user', 'int');
-//$start_date = date('Y-m-d', GETPOST('date_startyear', 'int').'-'.GETPOST('date_startmonth', 'int').'-'.GETPOST('date_startday', 'int'));
-$start_date = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
-
-$action 	= GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
-$backtopage = GETPOST('backtopage', 'alpha');
-$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-$fk_job 	= GETPOST('fk_job', 'int');
 
 // Initialize technical objects
 $object = new Job($db);
@@ -181,11 +177,13 @@ if (empty($reshook)) {
 	$error = 0;
 
 	$backurlforlist = dol_buildpath('/hrm/position_list.php', 1);
-	//$backtopage = dol_buildpath('/hrm/position.php', 1) . '?fk_job=' . ($fk_job > 0 ? $fk_job : '__ID__');
-
-	if (empty($backtopage) || ($cancel && $fk_job <= 0)) {
+	$idBacktoPage = GETPOST('fk_job', 'aZ09');
+	if ($idBacktoPage > 0) {
+		$backtopage = dol_buildpath('/hrm/position.php', 1) . '?id=' . $idBacktoPage;
+	}
+	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
-			if ($fk_job == -1 && (($action != 'add' && $action != 'create') || $cancel)) {
+			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
 				if ($fk_job > 0) {
@@ -257,7 +255,6 @@ if ($action == 'create') {
 	if ($backtopage) {
 		print '<input type="hidden" name="backtopage" value="' . $backtopage . '">';
 	}
-
 	if ($backtopageforcancel) {
 		print '<input type="hidden" name="backtopageforcancel" value="' . $backtopageforcancel . '">';
 	}
@@ -282,7 +279,6 @@ if ($action == 'create') {
 
 	//dol_set_focus('input[name="ref"]');
 }
-
 if ($job->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
 	if ($backtopage) {
 		print '<input type="hidden" name="backtopage" value="' . $backtopage . '">';

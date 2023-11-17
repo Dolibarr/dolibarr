@@ -68,6 +68,12 @@ class Interfaces
 	public function run_triggers($action, $object, $user, $langs, $conf)
 	{
 		// phpcs:enable
+
+		if (getDolGlobalInt('MAIN_TRIGGER_DEBUG')) {
+			// This his too much verbose, enabled if const enabled only
+			dol_syslog(get_class($this)."::run_triggers action=".$action." Launch run_triggers", LOG_DEBUG);
+		}
+
 		// Check parameters
 		if (!is_object($object) || !is_object($conf)) {	// Error
 			$error = 'function run_triggers called with wrong parameters action='.$action.' object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf);
@@ -82,7 +88,6 @@ class Interfaces
 			dol_syslog(get_class($this).'::run_triggers was called with wrong parameters action='.$action.' object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf), LOG_WARNING);
 			$user = new User($this->db);
 		}
-		//dol_syslog(get_class($this)."::run_triggers action=".$action." Launch run_triggers", LOG_DEBUG);
 
 		$nbfile = $nbtotal = $nbok = $nbko = 0;
 

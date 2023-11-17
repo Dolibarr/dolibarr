@@ -25,9 +25,9 @@
  */
 
 /**
- * \file htdocs/expedition/dispatch.php
+ * \file 	htdocs/expedition/dispatch.php
  * \ingroup expedition
- * \brief Page to dispatch shipments
+ * \brief 	Page to dispatch shipments
  */
 
 // Load Dolibarr environment
@@ -40,15 +40,12 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
-
-
-
 if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("sendings", "companies", "bills", 'deliveries', 'orders', 'stocks', 'other', 'propal'));
+$langs->loadLangs(array("sendings", "companies", "bills", 'deliveries', 'orders', 'stocks', 'other', 'propal', 'receptions'));
 
 if (isModEnabled('productbatch')) {
 	$langs->load('productbatch');
@@ -62,6 +59,9 @@ $action = GETPOST('action', 'aZ09');
 $fk_default_warehouse = GETPOST('fk_default_warehouse', 'int');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
+
+$error = 0;
+$errors = array();
 
 if ($user->socid) {
 	$socid = $user->socid;
@@ -78,9 +78,10 @@ if (GETPOSTISSET("projectid")) {
 $object = new Expedition($db);
 $objectorder = new Commande($db);
 
+
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
-	if ($result < 0) {
+	if ($result <= 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 	$result = $object->fetch_thirdparty();
@@ -99,11 +100,12 @@ if ($id > 0 || !empty($ref)) {
 $result = restrictedArea($user, 'expedition', $object, '');
 
 if (!isModEnabled('stock')) {
-	accessforbidden();
+	accessforbidden('Module stock disabled');
 }
 
 $usercancreate = $user->hasRight('expedition', 'creer');
 $permissiontoadd = $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
+
 
 /*
  * Actions
@@ -150,71 +152,113 @@ if ($action == 'updatelines' && $usercancreate) {
 			$lot = '';
 			$dDLUO = '';
 			$dDLC = '';
-			if ($modebatch == "batch") { //TODO: Make impossible to input non existing batchcode
+			if ($modebatch == "batch") { //TODO: Make impossible to input non existing batch code
 				$lot = GETPOST('lot_number_'.$reg[1].'_'.$reg[2]);
 				$dDLUO = dol_mktime(12, 0, 0, GETPOST('dluo_'.$reg[1].'_'.$reg[2].'month', 'int'), GETPOST('dluo_'.$reg[1].'_'.$reg[2].'day', 'int'), GETPOST('dluo_'.$reg[1].'_'.$reg[2].'year', 'int'));
 				$dDLC = dol_mktime(12, 0, 0, GETPOST('dlc_'.$reg[1].'_'.$reg[2].'month', 'int'), GETPOST('dlc_'.$reg[1].'_'.$reg[2].'day', 'int'), GETPOST('dlc_'.$reg[1].'_'.$reg[2].'year', 'int'));
 			}
 
+			$newqty = price2num(GETPOST($qty, 'alpha'), 'MS');
+			//var_dump("modebatch=".$modebatch." newqty=".$newqty." ent=".$ent." idline=".$idline);
+
 			// We ask to move a qty
-			if (($modebatch == "batch" && GETPOST($qty) > 0) || ($modebatch == "barcode" && GETPOST($qty) != 0)) {
-				if (!(GETPOST($ent, 'int') > 0)) {
-					dol_syslog('No dispatch for line '.$key.' as no warehouse was chosen.');
-					$text = $langs->transnoentities('Warehouse').', '.$langs->transnoentities('Line').' '.($numline);
-					setEventMessages($langs->trans('ErrorFieldRequired', $text), null, 'errors');
-					$error++;
-				}
-				if ($modebatch == "batch") {
-					$sql = "SELECT pb.rowid ";
-					$sql .= " FROM ".MAIN_DB_PREFIX."product_batch as pb";
-					$sql .= " JOIN ".MAIN_DB_PREFIX."product_stock as ps";
-					$sql .= " ON ps.rowid = pb.fk_product_stock";
-					$sql .= " WHERE pb.batch ='".$db->escape($lot)."'";
-					$sql .= " AND ps.fk_product =".((int) GETPOST($prod, 'int')) ;
-					$sql .= " AND ps.fk_entrepot =".((int) GETPOST($ent, 'int')) ;
-					$resql = $db->query($sql);
-					if ($resql) {
-						$num = $db->num_rows($resql);
-						if ($num > 1) {
-							dol_syslog('No dispatch for line '.$key.' as too many combination warehouse, product, batch code was found ('.$num.').');
-							setEventMessages($langs->trans('ErrorTooManyCombinationBatchcode', $numline, $num), null, 'errors');
-							$error++;
-						} elseif ($num < 1) {
-							dol_syslog('No dispatch for line '.$key.' as no combination warehouse, product, batch code was found.');
-							setEventMessages($langs->trans('ErrorNoCombinationBatchcode', $numline), null, 'errors');
-							$error++;
+			if (($modebatch == "batch" && $newqty >= 0) || ($modebatch == "barcode" && $newqty != 0)) {
+				if ($newqty > 0) {	// If we want a qty, we make test on input data
+					if (!(GETPOST($ent, 'int') > 0)) {
+						dol_syslog('No dispatch for line '.$key.' as no warehouse was chosen.');
+						$text = $langs->transnoentities('Warehouse').', '.$langs->transnoentities('Line').' '.($numline);
+						setEventMessages($langs->trans('ErrorFieldRequired', $text), null, 'errors');
+						$error++;
+					}
+					if (!$error && $modebatch == "batch") {
+						$sql = "SELECT pb.rowid ";
+						$sql .= " FROM ".MAIN_DB_PREFIX."product_batch as pb";
+						$sql .= " JOIN ".MAIN_DB_PREFIX."product_stock as ps";
+						$sql .= " ON ps.rowid = pb.fk_product_stock";
+						$sql .= " WHERE pb.batch = '".$db->escape($lot)."'";
+						$sql .= " AND ps.fk_product = ".((int) GETPOST($prod, 'int')) ;
+						$sql .= " AND ps.fk_entrepot = ".((int) GETPOST($ent, 'int')) ;
+
+						$resql = $db->query($sql);
+						if ($resql) {
+							$num = $db->num_rows($resql);
+							if ($num > 1) {
+								dol_syslog('No dispatch for line '.$key.' as too many combination warehouse, product, batch code was found ('.$num.').');
+								setEventMessages($langs->trans('ErrorTooManyCombinationBatchcode', $numline, $num), null, 'errors');
+								$error++;
+							} elseif ($num < 1) {
+								dol_syslog('No dispatch for line '.$key.' as no combination warehouse, product, batch code was found.');
+								setEventMessages($langs->trans('ErrorNoCombinationBatchcode', $numline), null, 'errors');
+								$error++;
+							}
+							$db->free($resql);
 						}
-						$db->free($resql);
 					}
 				}
+				//var_dump($key.' '.$newqty.' '.$idline.' '.$error);
 
 				if (!$error) {
 					$qtystart = 0;
+
 					if ($idline > 0) {
-						$result = $expeditiondispatch->fetch($idline);
+						$result = $expeditiondispatch->fetch($idline);	// get line from llx_expeditiondet
 						if ($result < 0) {
 							setEventMessages($expeditiondispatch->error, $expeditiondispatch->errors, 'errors');
 							$error++;
 						} else {
 							$qtystart = $expeditiondispatch->qty;
-							$expeditiondispatch->qty = GETPOST($qty);
+							$expeditiondispatch->qty = $newqty;
 							$expeditiondispatch->entrepot_id = GETPOST($ent, 'int');
 
-							$result = $expeditiondispatch->update($user);
+							if ($newqty > 0) {
+								$result = $expeditiondispatch->update($user);
+							} else {
+								$result = $expeditiondispatch->delete($user);
+							}
 							if ($result < 0) {
 								setEventMessages($expeditiondispatch->error, $expeditiondispatch->errors, 'errors');
 								$error++;
 							}
 
 							if (!$error && $modebatch == "batch") {
-								$sql = "UPDATE ".MAIN_DB_PREFIX.$expeditionlinebatch->table_element." SET";
-								$sql .= " eatby = ".($eatby ? "'".$db->idate($eatby)."'" : "null");
-								$sql .= " , sellby = ".($sellby ? "'".$db->idate($sellby)."'" : "null");
-								$sql .= " , qty = ".((float) price2num(GETPOST($qty, 'int'), 'MS'));
-								$sql .= " WHERE fk_expeditiondet = ".((int) $idline);
-								$sql .= " AND batch = ".((int) $idline);
+								if ($newqty > 0) {
+									$suffixkeyfordate = preg_replace('/^product_batch/', '', $key);
+									$sellby = dol_mktime(0, 0, 0, GETPOST('dlc'.$suffixkeyfordate.'month'), GETPOST('dlc'.$suffixkeyfordate.'day'), GETPOST('dlc'.$suffixkeyfordate.'year'), '');
+									$eatby = dol_mktime(0, 0, 0, GETPOST('dluo'.$suffixkeyfordate.'month'), GETPOST('dluo'.$suffixkeyfordate.'day'), GETPOST('dluo'.$suffixkeyfordate.'year'));
+
+									$sqlsearchdet = "SELECT rowid FROM ".MAIN_DB_PREFIX.$expeditionlinebatch->table_element;
+									$sqlsearchdet .= " WHERE fk_expeditiondet = ".((int) $idline);
+									$sqlsearchdet .= " AND batch = '".$db->escape($lot)."'";
+									$resqlsearchdet = $db->query($sqlsearchdet);
+
+									if ($resqlsearchdet) {
+										$objsearchdet = $db->fetch_object($resqlsearchdet);
+									} else {
+										dol_print_error($db);
+									}
+
+									if ($objsearchdet) {
+										$sql = "UPDATE ".MAIN_DB_PREFIX.$expeditionlinebatch->table_element." SET";
+										$sql .= " eatby = ".($eatby ? "'".$db->idate($eatby)."'" : "null");
+										$sql .= " , sellby = ".($sellby ? "'".$db->idate($sellby)."'" : "null");
+										$sql .= " , qty = ".((float) $newqty);
+										// TODO Add a column fk_warehouse
+										$sql .= " WHERE rowid = ".((int) $objsearchdet->rowid);
+									} else {
+										$sql = "INSERT INTO ".MAIN_DB_PREFIX.$expeditionlinebatch->table_element." (";
+										$sql .= "fk_expeditiondet, eatby, sellby, batch, qty, fk_origin_stock)";
+										// TODO Add a column fk_warehouse
+										$sql .= " VALUES (".((int) $idline).", ".($eatby ? "'".$db->idate($eatby)."'" : "null").", ".($sellby ? "'".$db->idate($sellby)."'" : "null").", ";
+										$sql .= " '".$db->escape($lot)."', ".((float) $newqty).", 0)";
+									}
+								} else {
+									$sql = " DELETE FROM ".MAIN_DB_PREFIX.$expeditionlinebatch->table_element;
+									$sql .= " WHERE fk_expeditiondet = ".((int) $idline);
+									$sql .= " AND batch = '".$db->escape($lot)."'";
+								}
+
 								$resql = $db->query($sql);
-								if (!$db->query($sql)) {
+								if (!$resql) {
 									dol_print_error($db);
 									$error++;
 								}
@@ -224,34 +268,40 @@ if ($action == 'updatelines' && $usercancreate) {
 						$expeditiondispatch->fk_expedition = $object->id;
 						$expeditiondispatch->entrepot_id = GETPOST($ent, 'int');
 						$expeditiondispatch->fk_origin_line = GETPOST($fk_commandedet, 'int');
-						$expeditiondispatch->qty = GETPOST($qty, 'int');
-						$idline = $expeditiondispatch->insert($user);
-						if ($idline < 0) {
-							setEventMessages($expeditiondispatch->error, $expeditiondispatch->errors, 'errors');
-							$error++;
-						}
+						$expeditiondispatch->qty = $newqty;
 
-						if ($modebatch == "batch" && !$error) {
-							$expeditionlinebatch->sellby = $dDLUO;
-							$expeditionlinebatch->eatby = $dDLC;
-							$expeditionlinebatch->batch = $lot;
-							$expeditionlinebatch->qty = GETPOST($qty, 'int');
-							$expeditionlinebatch->fk_origin_stock = 0;
-							$result = $expeditionlinebatch->create($idline);
-							if ($result < 0) {
-								setEventMessages($expeditionlinebatch->error, $expeditionlinebatch->errors, 'errors');
+						if ($newqty > 0) {
+							$idline = $expeditiondispatch->insert($user);
+							if ($idline < 0) {
+								setEventMessages($expeditiondispatch->error, $expeditiondispatch->errors, 'errors');
 								$error++;
+							}
+
+							if ($modebatch == "batch" && !$error) {
+								$expeditionlinebatch->sellby = $dDLUO;
+								$expeditionlinebatch->eatby = $dDLC;
+								$expeditionlinebatch->batch = $lot;
+								$expeditionlinebatch->qty = $newqty;
+								$expeditionlinebatch->fk_origin_stock = 0;
+								$expeditionlinebatch->fk_warehouse = GETPOST($ent, 'int');
+
+								$result = $expeditionlinebatch->create($idline);
+								if ($result < 0) {
+									setEventMessages($expeditionlinebatch->error, $expeditionlinebatch->errors, 'errors');
+									$error++;
+								}
 							}
 						}
 					}
 
-					// If module stock is enabled and the stock increase is done on purchase order dispatching
-					if (!$error && GETPOST($ent, 'int') > 0 && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
+					// If module stock is enabled and the stock decrease is done on edtion of this page
+					/*
+					if (!$error && GETPOST($ent, 'int') > 0 && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_DISPATCH_ORDER)) {
 						$mouv = new MouvementStock($db);
 						$product = GETPOST($prod, 'int');
 						$entrepot = GETPOST($ent, 'int');
-						$qtymouv = GETPOST($qty) - $qtystart;
-						$price = GETPOST($pu);
+						$qtymouv = price2num(GETPOST($qty, 'alpha'), 'MS') - $qtystart;
+						$price = price2num(GETPOST($pu), 'MU');
 						$comment = GETPOST('comment');
 						$inventorycode = dol_print_date(dol_now(), 'dayhourlog');
 						$now = dol_now();
@@ -281,16 +331,21 @@ if ($action == 'updatelines' && $usercancreate) {
 							}
 						}
 					}
+					*/
 				}
 			}
 		}
 	}
+
 	if ($error > 0) {
 		$db->rollback();
 		setEventMessages($error, $errors, 'errors');
 	} else {
 		$db->commit();
 		setEventMessages($langs->trans("ReceptionUpdated"), null);
+
+		header("Location: ".DOL_URL_ROOT.'/expedition/dispatch.php?id='.$object->id);
+		exit;
 	}
 } elseif ($action == 'setdate_livraison' && $usercancreate) {
 	$datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
@@ -319,8 +374,9 @@ $morejs = array('/expedition/js/lib_dispatch.js.php');
 
 llxHeader('', $title, $help_url, '', 0, 0, $morejs);
 
-if ($id > 0 || !empty($ref)) {
-	$lines = $object->lines;
+if ($object->id > 0 || !empty($object->ref)) {
+	$lines = $object->lines;	// This is an array of detail of line, on line per source order line found intolines[]->fk_origin_line, then each line may have sub data
+	//var_dump($lines[0]->fk_origin_line); exit;
 
 	$num_prod = count($lines);
 
@@ -410,7 +466,7 @@ if ($id > 0 || !empty($ref)) {
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border tableforfield" width="100%">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Linked documents
 	if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('commande')) {
@@ -467,7 +523,7 @@ if ($id > 0 || !empty($ref)) {
 	print '<br>';
 	$disabled = 0;	// This is used to disable or not the bulk selection of target warehouse. No reason to have it disabled so forced to 0.
 
-	if ($object->statut == Reception::STATUS_DRAFT) {
+	if ($object->statut == Expedition::STATUS_DRAFT) {
 		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 		$formproduct = new FormProduct($db);
 		$formproduct->loadWarehouses();
@@ -484,7 +540,7 @@ if ($id > 0 || !empty($ref)) {
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 
-		// Get list of lines from the shipments $products_dispatched with qty dispatched for each product id
+		// Get list of lines of the shipment $products_dispatched, with qty dispatched for each product id
 		$products_dispatched = array();
 		$sql = "SELECT ed.fk_origin_line as rowid, sum(ed.qty) as qty";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
@@ -505,6 +561,7 @@ if ($id > 0 || !empty($ref)) {
 			}
 			$db->free($resql);
 		}
+
 		//$sql = "SELECT l.rowid, l.fk_product, l.subprice, l.remise_percent, l.ref AS sref, SUM(l.qty) as qty,";
 		$sql = "SELECT l.rowid, l.fk_product, l.subprice, l.remise_percent, '' AS sref, l.qty as qty,";
 		$sql .= " p.ref, p.label, p.tobatch, p.fk_default_warehouse";
@@ -567,8 +624,12 @@ if ($id > 0 || !empty($ref)) {
 					print '<td></td>';
 				}
 				print '<td class="right">'.$langs->trans("QtyOrdered").'</td>';
-				print '<td class="right">'.$langs->trans("QtyDispatchedShort").'</td>';
-				print ' <td class="right">'.$langs->trans("QtyToDispatchShort");
+				if ($object->status == Expedition::STATUS_DRAFT) {
+					print '<td class="right">'.$langs->trans("QtyToShip");	// Qty to dispatch (sum for all lines of batch detail if there is)
+				} else {
+					print '<td class="right">'.$langs->trans("QtyDispatchedShort").'</td>';
+				}
+				print '<td class="right">'.$langs->trans("Details");
 				print '<td width="32"></td>';
 
 				if (!empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
@@ -612,6 +673,7 @@ if ($id > 0 || !empty($ref)) {
 
 			$conf->cache['product'] = array();
 
+			// Loop on each line of origin order
 			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
 
@@ -707,7 +769,8 @@ if ($id > 0 || !empty($ref)) {
 						$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
 						$sql .= " WHERE cfd.fk_commandefourndet = ".(int) $objp->rowid;*/
 
-						$sql = "SELECT ed.rowid, ed.qty, ed.fk_entrepot, eb.batch, eb.eatby, eb.sellby, cd.fk_product FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
+						$sql = "SELECT ed.rowid, ed.qty, ed.fk_entrepot, eb.batch, eb.eatby, eb.sellby, cd.fk_product";
+						$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
 						$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet_batch as eb on ed.rowid = eb.fk_expeditiondet";
 						$sql .= " JOIN ".MAIN_DB_PREFIX."commandedet as cd on ed.fk_origin_line = cd.rowid";
 						$sql .= " WHERE ed.fk_origin_line =".(int) $objp->rowid;
@@ -723,7 +786,7 @@ if ($id > 0 || !empty($ref)) {
 								$suffix = "_".$j."_".$i;
 								$objd = $db->fetch_object($resultsql);
 
-								if (isModEnabled('productbatch') && !empty($objd->batch)) {
+								if (isModEnabled('productbatch') && (!empty($objd->batch) || (is_null($objd->batch) && $tmpproduct->status_batch > 0))) {
 									$type = 'batch';
 
 									// Enable hooks to append additional columns
@@ -760,8 +823,8 @@ if ($id > 0 || !empty($ref)) {
 									print '</td>';
 
 									print '<td>';
-									print '<input disabled="" type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.$objd->batch.'">';
-									//print '<input type="hidden" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.$objd->batch.'">';
+									print '<input type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.(GETPOSTISSET('lot_number'.$suffix) ? GETPOST('lot_number'.$suffix) : $objd->batch).'">';
+									//print '<input type="hidden" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.$objd->batch.'">';
 									print '</td>';
 									if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 										print '<td class="nowraponall">';
@@ -815,8 +878,10 @@ if ($id > 0 || !empty($ref)) {
 								}
 								// Qty to dispatch
 								print '<td class="right">';
-								print '<a href="#" id="reset'.$suffix.'" class="resetline">'.img_picto($langs->trans("Reset"), 'eraser', 'class="pictofixedwidth opacitymedium"').'</a>';
-								print '<input id="qty'.$suffix.'" onchange="onChangeDispatchLineQty($(this))" name="qty'.$suffix.'" data-type="'.$type.'" data-index="'.$i.'" class="width50 right qtydispatchinput" value="'.(GETPOSTISSET('qty'.$suffix) ? GETPOST('qty'.$suffix, 'int') : $objd->qty).'" data-expected="'.$objd->qty.'">';
+								print '<a href="" id="reset'.$suffix.'" class="resetline">'.img_picto($langs->trans("Reset"), 'eraser', 'class="pictofixedwidth opacitymedium"').'</a>';
+								$suggestedvalue = (GETPOSTISSET('qty'.$suffix) ? GETPOST('qty'.$suffix, 'int') : $objd->qty);
+								//var_dump($suggestedvalue);exit;
+								print '<input id="qty'.$suffix.'" onchange="onChangeDispatchLineQty($(this))" name="qty'.$suffix.'" data-type="'.$type.'" data-index="'.$i.'" class="width50 right qtydispatchinput" value="'.$suggestedvalue.'" data-expected="'.$objd->qty.'">';
 								print '</td>';
 								print '<td>';
 								if (isModEnabled('productbatch') && $objp->tobatch > 0) {
@@ -959,8 +1024,14 @@ if ($id > 0 || !empty($ref)) {
 							}
 							// Qty to dispatch
 							print '<td class="right">';
-							print '<a href="#" id="reset'.$suffix.'" class="resetline">'.img_picto($langs->trans("Reset"), 'eraser', 'class="pictofixedwidth opacitymedium"').'</a>';
-							print '<input id="qty'.$suffix.'" onchange="onChangeDispatchLineQty($(this))" name="qty'.$suffix.'" data-index="'.$i.'" data-type="text" class="width50 right qtydispatchinput" value="'.(GETPOSTISSET('qty'.$suffix) ? GETPOST('qty'.$suffix, 'int') : (empty($conf->global->SUPPLIER_ORDER_DISPATCH_FORCE_QTY_INPUT_TO_ZERO) ? $remaintodispatch : 0)).'" data-expected="'.$remaintodispatch.'">';
+							print '<a href="" id="reset'.$suffix.'" class="resetline">'.img_picto($langs->trans("Reset"), 'eraser', 'class="pictofixedwidth opacitymedium"').'</a>';
+							$amounttosuggest = (GETPOSTISSET('qty'.$suffix) ? GETPOST('qty'.$suffix, 'int') : (empty($conf->global->SUPPLIER_ORDER_DISPATCH_FORCE_QTY_INPUT_TO_ZERO) ? $remaintodispatch : 0));
+							if (count($products_dispatched)) {
+								// There is already existing lines into llx_expeditiondet, this means a plan for the shipment has already been started.
+								// In such a case, we do not suggest new values, we suggest the value known.
+								$amounttosuggest = (GETPOSTISSET('qty'.$suffix) ? GETPOST('qty'.$suffix, 'int') : (isset($products_dispatched[$objp->rowid]) ? $products_dispatched[$objp->rowid] : ''));
+							}
+							print '<input id="qty'.$suffix.'" onchange="onChangeDispatchLineQty($(this))" name="qty'.$suffix.'" data-index="'.$i.'" data-type="text" class="width50 right qtydispatchinput" value="'.$amounttosuggest.'" data-expected="'.$amounttosuggest.'">';
 							print '</td>';
 							print '<td>';
 							if (isModEnabled('productbatch') && $objp->tobatch > 0) {
@@ -1017,14 +1088,14 @@ if ($id > 0 || !empty($ref)) {
 		print '</div>';
 
 		if ($nbproduct) {
-			$checkboxlabel = $langs->trans("CloseReceivedSupplierOrdersAutomatically", $langs->transnoentitiesnoconv('StatusOrderReceivedAll'));
+			//$checkboxlabel = $langs->trans("CloseReceivedSupplierOrdersAutomatically", $langs->transnoentitiesnoconv('StatusOrderReceivedAll'));
 
 			print '<div class="center">';
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 			// modified by hook
 			if (empty($reshook)) {
-				if (empty($conf->reception->enabled)) {
+				/*if (empty($conf->reception->enabled)) {
 					print $langs->trans("Comment").' : ';
 					print '<input type="text" class="minwidth400" maxlength="128" name="comment" value="';
 					print GETPOSTISSET("comment") ? GETPOST("comment") : $langs->trans("DispatchSupplierOrder", $object->ref);
@@ -1037,6 +1108,8 @@ if ($id > 0 || !empty($ref)) {
 				$dispatchBt = empty($conf->reception->enabled) ? $langs->trans("Receive") : $langs->trans("CreateReception");
 
 				print '<br>';
+				*/
+
 				print '<input type="submit" id="submitform" class="button" name="dispatch" value="'.$langs->trans("Save").'"';
 				$disabled = 0;
 				if (!$usercancreate) {
@@ -1073,11 +1146,13 @@ if ($id > 0 || !empty($ref)) {
 	print '<script type="text/javascript">
 		$(document).ready(function () {
 			$("select[name=fk_default_warehouse]").change(function() {
+				console.log("warehouse is modified");
 				var fk_default_warehouse = $("option:selected", this).val();
 				$("select[name^=entrepot_]").val(fk_default_warehouse).change();
 			});
 
 			$("#autoreset").click(function() {
+				console.log("we click on autoreset");
 				$(".autoresettr").each(function(){
 					id = $(this).attr("name");
 					idtab = id.split("_");
@@ -1108,7 +1183,8 @@ if ($id > 0 || !empty($ref)) {
 				return false;
 			});
 
-			$(".resetline").click(function(){
+			$(".resetline").on("click", function(event) {
+				event.preventDefault();
 				id = $(this).attr("id");
 				id = id.split("reset_");
 				console.log("Reset trigger for id = qty_"+id[1]);

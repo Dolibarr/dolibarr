@@ -713,9 +713,10 @@ if ($object->fetch($id) >= 0) {
 		print '</td>';
 
 		//Statut
-		print '<td class="liste_titre right">';
-		print $formmailing->selectDestinariesStatus($search_dest_status, 'search_dest_status', 1);
+		print '<td class="liste_titre center parentonrightofpage">';
+		print $formmailing->selectDestinariesStatus($search_dest_status, 'search_dest_status', 1, 'width100 onrightofpage');
 		print '</td>';
+
 		// Action column
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="liste_titre maxwidthsearch">';
@@ -739,12 +740,12 @@ if ($object->fetch($id) >= 0) {
 		print_liste_field_titre("Lastname", $_SERVER["PHP_SELF"], "mc.lastname", $param, "", "", $sortfield, $sortorder);
 		print_liste_field_titre("Firstname", $_SERVER["PHP_SELF"], "mc.firstname", $param, "", "", $sortfield, $sortorder);
 		print_liste_field_titre("OtherInformations", $_SERVER["PHP_SELF"], "", $param, "", "", $sortfield, $sortorder);
-		print_liste_field_titre("Source", $_SERVER["PHP_SELF"], "", $param, "", 'align="center"', $sortfield, $sortorder);
+		print_liste_field_titre("Source", $_SERVER["PHP_SELF"], "", $param, "", '', $sortfield, $sortorder, 'center ');
 		// Date last update
-		print_liste_field_titre("DateLastModification", $_SERVER["PHP_SELF"], "mc.tms", $param, "", 'align="center"', $sortfield, $sortorder);
+		print_liste_field_titre("DateLastModification", $_SERVER["PHP_SELF"], "mc.tms", $param, "", '', $sortfield, $sortorder, 'center ');
 		// Date sending
-		print_liste_field_titre("DateSending", $_SERVER["PHP_SELF"], "mc.date_envoi", $param, '', 'align="center"', $sortfield, $sortorder);
-		print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "mc.statut", $param, '', 'class="right"', $sortfield, $sortorder);
+		print_liste_field_titre("DateSending", $_SERVER["PHP_SELF"], "mc.date_envoi", $param, '', '', $sortfield, $sortorder, 'center ');
+		print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "mc.statut", $param, '', '', $sortfield, $sortorder, 'center ');
 		// Action column
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
@@ -830,22 +831,22 @@ if ($object->fetch($id) >= 0) {
 				print dol_print_date(dol_stringtotime($obj->tms), 'dayhour');
 				print '</td>';
 
-				// Status of recipient sending email (Warning != status of emailing)
-				if ($obj->statut == $object::STATUS_DRAFT) {
+				// Date sent
+				print '<td class="center nowraponall">';
+				if ($obj->statut != $object::STATUS_DRAFT) {
 					// Date sent
-					print '<td align="center"></td>';
-
-					print '<td class="nowrap right">';
-					print $object::libStatutDest($obj->statut, 2, '');
-					print '</td>';
-				} else {
-					// Date sent
-					print '<td class="center nowraponall">'.$obj->date_envoi.'</td>';
-
-					print '<td class="nowrap right">';
-					print $object::libStatutDest($obj->statut, 2, $obj->error_text);
-					print '</td>';
+					print $obj->date_envoi;
 				}
+				print '</td>';
+
+				// Status of recipient sending email (Warning != status of emailing)
+				print '<td class="nowrap center">';
+				if ($obj->statut == $object::STATUS_DRAFT) {
+					print $object::libStatutDest($obj->statut, 2, '');
+				} else {
+					print $object::libStatutDest($obj->statut, 2, $obj->error_text);
+				}
+				print '</td>';
 
 				// Action column
 				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {

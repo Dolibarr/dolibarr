@@ -84,6 +84,7 @@ create table llx_facture
   note_public			text,
   model_pdf				varchar(255),
   last_main_doc			varchar(255),							-- relative filepath+filename of last main generated document
+  fk_input_reason		integer,						        -- id coming from c_input_reason
 
   fk_incoterms          integer,								-- for incoterms
   location_incoterms    varchar(255),							-- for incoterms

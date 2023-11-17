@@ -1185,7 +1185,7 @@ if ($num) {
 						print '<a class="reposition editfielda" href="'.$url.'&action=edit&token='.newToken().'">'.img_edit().'</a>';
 					}
 					if ($iserasable) {
-						print '<a class="marginleftonly" href="'.$url.'&action=delete&token='.newToken().'">'.img_delete().'</a>';
+						print '<a class="reposition marginleftonly" href="'.$url.'&action=delete&token='.newToken().'">'.img_delete().'</a>';
 						//else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
 					}
 					print '</td>';
@@ -1290,7 +1290,7 @@ if ($num) {
 						print '<a class="reposition editfielda" href="'.$url.'&action=edit&token='.newToken().'">'.img_edit().'</a>';
 					}
 					if ($iserasable) {
-						print '<a class="marginleftonly" href="'.$url.'&action=delete&token='.newToken().'">'.img_delete().'</a>';
+						print '<a class="reposition marginleftonly" href="'.$url.'&action=delete&token='.newToken().'">'.img_delete().'</a>';
 						//else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
 					}
 					print '</td>';

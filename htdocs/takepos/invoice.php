@@ -233,7 +233,12 @@ if (empty($reshook)) {
 			dol_htmloutput_errors($langs->trans("NoLinesToBill", "TakePos"), null, 1);
 		} elseif (isModEnabled('stock') && $conf->global->$constantforkey != "1") {
 			$savconst = $conf->global->STOCK_CALCULATE_ON_BILL;
-			$conf->global->STOCK_CALCULATE_ON_BILL = 1;
+
+			if (isModEnabled('productbatch') && !getDolGlobalInt('CASHDESK_FORCE_DECREASE_STOCK')) {
+				$conf->global->STOCK_CALCULATE_ON_BILL = 0;	// To not change the stock (not yet compatible with batch management)
+			} else {
+				$conf->global->STOCK_CALCULATE_ON_BILL = 1;	// To force the change of stock
+			}
 
 			$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
 			dol_syslog("Validate invoice with stock change into warehouse defined into constant ".$constantforkey." = ".$conf->global->$constantforkey);
@@ -1319,7 +1324,9 @@ print '<tr class="liste_titre nodrag nodrop">';
 print '<td class="linecoldescription">';
 // In phone version only show when it is invoice page
 if (empty($mobilepage) || $mobilepage == "invoice") {
+	print '<!-- hidden var used by some js functions -->';
 	print '<input type="hidden" name="invoiceid" id="invoiceid" value="'.$invoice->id.'">';
+	print '<input type="hidden" name="thirdpartyid" id="thirdpartyid" value="'.$invoice->socid.'">';
 }
 if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
 	$sql = "SELECT floor, label FROM ".MAIN_DB_PREFIX."takepos_floor_tables where rowid=".((int) $place);

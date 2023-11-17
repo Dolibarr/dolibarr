@@ -823,12 +823,35 @@ class Mo extends CommonObject
 	 *
 	 * @param User $user       User that deletes
 	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
+	 * @param	bool	$also_cancel_consumed_and_produced_lines  	true if the consumed and produced lines will be deleted (and stocks incremented/decremented back) (false by default)
 	 * @return int             <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false)
+	public function delete(User $user, $notrigger = false, $also_cancel_consumed_and_produced_lines = false)
 	{
-		return $this->deleteCommon($user, $notrigger);
-		//return $this->deleteCommon($user, $notrigger, 1);
+		$error = 0;
+		$this->db->begin();
+
+		if ($also_cancel_consumed_and_produced_lines) {
+			$result = $this->cancelConsumedAndProducedLines($user, 0, false, $notrigger);
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
+		if (!$error) {
+			$result = $this->deleteCommon($user, $notrigger);
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
+		if ($error) {
+			$this->db->rollback();
+			return -1;
+		} else {
+			$this->db->commit();
+			return 1;
+		}
 	}
 
 	/**
@@ -1044,6 +1067,12 @@ class Mo extends CommonObject
 				if (!$resql) {
 					$error++; $this->error = $this->db->lasterror();
 				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'mrp/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'mrp/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++; $this->error = $this->db->lasterror();
+				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
@@ -1113,9 +1142,10 @@ class Mo extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *  @param	bool	$also_cancel_consumed_and_produced_lines  	true if the consumed and produced lines will be deleted (and stocks incremented/decremented back) (false by default)
 	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
 	 */
-	public function cancel($user, $notrigger = 0)
+	public function cancel($user, $notrigger = 0, $also_cancel_consumed_and_produced_lines = false)
 	{
 		// Protection
 		if ($this->status != self::STATUS_VALIDATED && $this->status != self::STATUS_INPROGRESS) {
@@ -1129,7 +1159,30 @@ class Mo extends CommonObject
 		 return -1;
 		 }*/
 
-		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'MRP_MO_CANCEL');
+		$error = 0;
+		$this->db->begin();
+
+		if ($also_cancel_consumed_and_produced_lines) {
+			$result = $this->cancelConsumedAndProducedLines($user, 0, true, $notrigger);
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
+		if (!$error) {
+			$result = $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'MRP_MO_CANCEL');
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
+		if ($error) {
+			$this->db->rollback();
+			return -1;
+		} else {
+			$this->db->commit();
+			return 1;
+		}
 	}
 
 	/**
@@ -1154,6 +1207,115 @@ class Mo extends CommonObject
 		 }*/
 
 		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'MRP_MO_REOPEN');
+	}
+
+	/**
+	 *	Cancel consumed and produced lines (movement stocks)
+	 *
+	 *	@param	User	$user					Object user that modify
+	 *  @param  bool	$mode  					Type line supported (0 by default) (0: consumed and produced lines; 1: consumed lines; 2: produced lines)
+	 *  @param  bool	$also_delete_lines  	true if the consumed/produced lines is deleted (false by default)
+	 *  @param	int		$notrigger				1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int								<0 if KO, 0=Nothing done, >0 if OK
+	 */
+	public function cancelConsumedAndProducedLines($user, $mode = 0, $also_delete_lines = false, $notrigger = 0)
+	{
+		global $langs;
+
+		if (!isModEnabled('stock')) {
+			return 1;
+		}
+
+		require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/product/stock/class/mouvementstock.class.php';
+		$error = 0;
+		$langs->load('stocks');
+
+		$this->db->begin();
+
+		// Cancel consumed lines
+		if (empty($mode) || $mode == 1) {
+			$arrayoflines = $this->fetchLinesLinked('consumed');
+			if (!empty($arrayoflines)) {
+				foreach ($arrayoflines as $key => $lineDetails) {
+					$productstatic = new Product($this->db);
+					$productstatic->fetch($lineDetails['fk_product']);
+					$qtytoprocess = $lineDetails['qty'];
+
+					// Reverse stock movement
+					$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
+					$codemovementCancel = $langs->trans("StockIncrease");
+
+					$stockmove = new MouvementStock($this->db);
+					$stockmove->setOrigin($this->element, $this->id);
+					if ($qtytoprocess >= 0) {
+						$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, '', '', $lineDetails['batch'], dol_now(), 0, $codemovementCancel);
+					} else {
+						$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
+					}
+					if ($idstockmove < 0) {
+						$this->error = $stockmove->error;
+						$this->errors = $stockmove->errors;
+						$error++;
+						break;
+					}
+
+					if ($also_delete_lines) {
+						$result = $this->deleteLineCommon($user, $lineDetails['rowid'], $notrigger);
+						if ($result < 0) {
+							$error++;
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		// Cancel produced lines
+		if (empty($mode) || $mode == 2) {
+			$arrayoflines = $this->fetchLinesLinked('produced');
+			if (!empty($arrayoflines)) {
+				foreach ($arrayoflines as $key => $lineDetails) {
+					$productstatic = new Product($this->db);
+					$productstatic->fetch($lineDetails['fk_product']);
+					$qtytoprocess = $lineDetails['qty'];
+
+					// Reverse stock movement
+					$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
+					$codemovementCancel = $langs->trans("StockDecrease");
+
+					$stockmove = new MouvementStock($this->db);
+					$stockmove->setOrigin($this->element, $this->id);
+					if ($qtytoprocess >= 0) {
+						$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
+					} else {
+						$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, '', '', $lineDetails['batch'], dol_now(), 0, $codemovementCancel);
+					}
+					if ($idstockmove < 0) {
+						$this->error = $stockmove->error;
+						$this->errors = $stockmove->errors;
+						$error++;
+						break;
+					}
+
+					if ($also_delete_lines) {
+						$result = $this->deleteLineCommon($user, $lineDetails['rowid'], $notrigger);
+						if ($result < 0) {
+							$error++;
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		if ($error) {
+			$this->db->rollback();
+			return -1;
+		} else {
+			$this->db->commit();
+			return 1;
+		}
 	}
 
 	/**

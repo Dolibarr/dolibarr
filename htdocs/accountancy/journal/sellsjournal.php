@@ -206,7 +206,7 @@ if ($result) {
 			}
 		}
 
-		$compta_revenuestamp = getDolGlobalString('ACCOUNTING_REVENUESTAMP_SOLD_ACCOUNT', 'NotDefined');
+		//$compta_revenuestamp = getDolGlobalString('ACCOUNTING_REVENUESTAMP_SOLD_ACCOUNT', 'NotDefined');
 
 		$vatdata = getTaxesFromId($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), $mysoc, $mysoc, 0);
 		$compta_tva = (!empty($vatdata['accountancy_code_sell']) ? $vatdata['accountancy_code_sell'] : $cpttva);
@@ -292,6 +292,27 @@ if ($result) {
 		}
 		$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1 * $situation_ratio;
 		$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2 * $situation_ratio;
+
+		$compta_revenuestamp = 'NotDefined';
+		if (!empty($revenuestamp)) {
+			$sqlrevenuestamp = "SELECT accountancy_code_sell FROM ".MAIN_DB_PREFIX."c_revenuestamp";
+			$sqlrevenuestamp .= " WHERE fk_pays = ".((int) $mysoc->country_id);
+			$sqlrevenuestamp .= " AND taux = ".((double) $revenuestamp);
+			$sqlrevenuestamp .= " AND active = 1";
+			$resqlrevenuestamp = $db->query($sqlrevenuestamp);
+
+			if ($resqlrevenuestamp) {
+				$num_rows_revenuestamp = $db->num_rows($resqlrevenuestamp);
+				if ($num_rows_revenuestamp > 1) {
+					dol_print_error($db, 'Failed 2 or more lines for the revenue stamp of your country. Check the dictionary of revenue stamp.');
+				} else {
+					$objrevenuestamp = $db->fetch_object($resqlrevenuestamp);
+					if ($objrevenuestamp) {
+						$compta_revenuestamp = $objrevenuestamp->accountancy_code_sell;
+					}
+				}
+			}
+		}
 
 		if (empty($tabrevenuestamp[$obj->rowid][$compta_revenuestamp]) && !empty($revenuestamp)) {
 			// The revenue stamp was never seen for this invoice id=$obj->rowid
@@ -598,7 +619,12 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->numero_compte = $k;
 						$bookkeeping->label_compte = $label_account;
 
-						$bookkeeping->label_operation = dol_trunc($companystatic->name, 16).' - '.$invoicestatic->ref.' - '.$langs->trans("VAT").' '.join(', ', $def_tva[$key][$k]).' %'.($numtax ? ' - Localtax '.$numtax : '');
+
+						$bookkeeping->label_operation = dol_trunc($companystatic->name, 16).' - '.$invoicestatic->ref;
+						$tmpvatrate = (empty($def_tva[$key][$k]) ? (empty($arrayofvat[$key][$k]) ? '' : $arrayofvat[$key][$k]) : join(', ', $def_tva[$key][$k]));
+						$bookkeeping->label_operation .= ' - '.$langs->trans("Taxes").' '.$tmpvatrate.' %';
+						$bookkeeping->label_operation .= ($numtax ? ' - Localtax '.$numtax : '');
+
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
 						$bookkeeping->debit = ($mt < 0) ? -$mt : 0;
@@ -1159,6 +1185,7 @@ if (empty($action) || $action == 'view') {
 				$arrayofvat = $tablocaltax2;
 			}
 
+			// $key is id of invoice
 			foreach ($arrayofvat[$key] as $k => $mt) {
 				if ($mt) {
 					print '<tr class="oddeven">';
@@ -1177,7 +1204,12 @@ if (empty($action) || $action == 'view') {
 					// Subledger account
 					print "<td>";
 					print '</td>';
-					print "<td>".$companystatic->getNomUrl(0, 'customer', 16).' - '.$invoicestatic->ref.' - '.$langs->trans("VAT").' '.join(', ', $def_tva[$key][$k]).' %'.($numtax ? ' - Localtax '.$numtax : '');
+					print "<td>".$companystatic->getNomUrl(0, 'customer', 16).' - '.$invoicestatic->ref;
+					// $def_tva is array[invoiceid][accountancy_code_sell_of_vat_rate_found][vatrate]=vatrate
+					//var_dump($arrayofvat[$key]); var_dump($key); var_dump($k);
+					$tmpvatrate = (empty($def_tva[$key][$k]) ? (empty($arrayofvat[$key][$k]) ? '' : $arrayofvat[$key][$k]) : join(', ', $def_tva[$key][$k]));
+					print ' - '.$langs->trans("Taxes").' '.$tmpvatrate.' %';
+					print ($numtax ? ' - Localtax '.$numtax : '');
 					print "</td>";
 					print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
 					print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
