@@ -67,6 +67,7 @@ parameters:
 		- '#with no value type specified in iterable type array#'
 		- '#Empty array passed to foreach#'
 		- '#in isset\(\) is not nullable#'
+		- '#Sprain\\SwissQrBill\\#'
 	internalErrorsCountLimit: 50
 	cache:
 	    nodesByFileCountMax: 512
