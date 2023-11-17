@@ -58,6 +58,8 @@ class Interventions extends DolibarrApi
 	 */
 	public $fichinter;
 
+	private $commande;
+
 	/**
 	 * Constructor
 	 */
