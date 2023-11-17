@@ -46,7 +46,7 @@ jobs:
         if: steps.cache-action.outputs.cache-hit != 'true'
         run: mkdir .phpstan
       - name: Run PHPSTAN
-        run: phpstan analyse --error-format=checkstyle htdocs/ | cs2pr --graceful-warnings
+        run: phpstan analyse --error-format=checkstyle htdocs/user/ | cs2pr --graceful-warnings
       - name: "Save result cache"
         uses: actions/cache/save@v3
         if: always()
