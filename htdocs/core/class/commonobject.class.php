@@ -7632,7 +7632,12 @@ abstract class CommonObject
 			}
 		} elseif ($type == 'password') {
 			// If prefix is 'search_', field is used as a filter, we use a common text field.
-			$out = '<input type="'.($keyprefix == 'search_' ? 'text' : 'password').'" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').'>';
+			if ($keyprefix.$key.$keysuffix == 'pass_crypted') {
+				$out = '<input type="'.($keyprefix == 'search_' ? 'text' : 'password').'" class="flat '.$morecss.'" name="pass" id="pass" value="" '.($moreparam ? $moreparam : '').'>';
+				$out .= '<input type="hidden" name="pass_crypted" id="pass_crypted" value="'.$value.'" '.($moreparam ? $moreparam : '').'>';
+			} else {
+				$out = '<input type="'.($keyprefix == 'search_' ? 'text' : 'password').'" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').'>';
+			}
 		} elseif ($type == 'array') {
 			$newval = $val;
 			$newval['type'] = 'varchar(256)';
