@@ -122,12 +122,18 @@ if ($date_end !== '') {
 
 // Add prefix session
 $arrayfields = array(
-	'e.prefix_session' => array(
+	'e.user_agent' => array(
 		'label'=>'UserAgent',
+		'checked'=>(!getDolGlobalString('AUDIT_ENABLE_USER_AGENT') ? 0 : 1),
+		'enabled'=>(!getDolGlobalString('AUDIT_ENABLE_USER_AGENT') ? 0 : 1),
+		'position'=>110,
+	),
+	'e.prefix_session' => array(
+		'label'=>'Session',
 		'checked'=>(!getDolGlobalString('AUDIT_ENABLE_PREFIX_SESSION') ? 0 : 1),
 		'enabled'=>(!getDolGlobalString('AUDIT_ENABLE_PREFIX_SESSION') ? 0 : 1),
-		'position'=>110
-	)
+		'position'=>120,
+	),
 );
 
 
