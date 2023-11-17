@@ -137,6 +137,7 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'62','Group
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'63','Société coopérative agricole');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'64','Société d''assurance mutuelle');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'65','Société civile');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'66','Société publiques locales');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'69','Autre personne morale de droit privé inscrite au RCS');
 
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'71','Administration de l état');
