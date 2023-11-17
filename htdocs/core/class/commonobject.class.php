@@ -9500,6 +9500,7 @@ abstract class CommonObject
 	public function createCommon(User $user, $notrigger = false)
 	{
 		global $langs;
+
 		dol_syslog(get_class($this)."::createCommon create", LOG_DEBUG);
 
 		$error = 0;
@@ -9513,6 +9514,9 @@ abstract class CommonObject
 		}
 		if (array_key_exists('fk_user_creat', $fieldvalues) && !($fieldvalues['fk_user_creat'] > 0)) {
 			$fieldvalues['fk_user_creat'] = $user->id;
+		}
+		if (array_key_exists('pass_crypted', $fieldvalues)) {
+			$fieldvalues['pass_crypted'] = dol_hash($object->pass);
 		}
 		unset($fieldvalues['rowid']); // The field 'rowid' is reserved field name for autoincrement field so we don't need it into insert.
 		if (array_key_exists('ref', $fieldvalues)) {
