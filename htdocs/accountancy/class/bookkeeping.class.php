@@ -789,9 +789,9 @@ class BookKeeping extends CommonObject
 		$sql .= ' WHERE 1 = 1';
 		$sql .= " AND entity = " . ((int) $conf->entity); // Do not use getEntity for accounting features
 		if (null !== $ref) {
-			$sql .= " AND t.ref = '".$this->db->escape($ref)."'";
+			$sql .= " AND t.rowid = ".((int) $ref);
 		} else {
-			$sql .= ' AND t.rowid = '.((int) $id);
+			$sql .= " AND t.rowid = ".((int) $id);
 		}
 
 		$resql = $this->db->query($sql);
@@ -2602,7 +2602,7 @@ class BookKeeping extends CommonObject
 				$sql .= ' WHERE t.entity = ' . ((int)$conf->entity); // Do not use getEntity for accounting features
 				$sql .= " AND aa.entity = ".$conf->entity;
 				$sql .= ' AND aa.fk_pcg_version IN (SELECT pcg_version FROM '.MAIN_DB_PREFIX.'accounting_system WHERE rowid = '.((int) getDolGlobalInt('CHARTOFACCOUNTS')).')';
-				$sql .= ' AND aa.pcg_type IN (' . implode(',', $pcg_type_filter) . ')';
+				$sql .= ' AND aa.pcg_type IN (' . $this->db->sanitize(implode(',', $pcg_type_filter), 1) . ')';
 				$sql .= " AND DATE(t.doc_date) >= '" . $this->db->idate($fiscal_period->date_start) . "'";
 				$sql .= " AND DATE(t.doc_date) <= '" . $this->db->idate($fiscal_period->date_end) . "'";
 				$sql .= ' GROUP BY t.numero_compte, t.label_compte, aa.pcg_type';

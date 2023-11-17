@@ -461,7 +461,7 @@ ConfirmMassUnletteringManual=Confirmation de l'annulation du lettrage manuel
 ConfirmMassUnletteringQuestion=Voulez-vous vraiment annuler le lettrage des %s enregistrements sélectionnés ?
 ConfirmMassDeleteBookkeepingWriting=Confirmation de suppression en masse
 ConfirmMassDeleteBookkeepingWritingQuestion=Cela supprimera la transaction de la comptabilité (toutes les lignes liées à cette transaction seront supprimées). Êtes-vous sûr de vouloir supprimer les %s enregistrements sélectionnés ?
-AccountancyClosureConfirmClose=Êtes-vous sûr de vouloir clôturer la période fiscale actuelle ?
+AccountancyClosureConfirmClose=Êtes-vous sûr de vouloir clôturer la période fiscale actuelle ? <span class="warning">La clôture de la période fiscale est une action irréversible et elle bloquera de manière permanente toute modification ou suppression d'entrées au cours de cette période.</span>.
 AccountancyClosureConfirmAccountingReversal=Êtes-vous sûr de vouloir extourner les écritures ?
 
 ## Error
