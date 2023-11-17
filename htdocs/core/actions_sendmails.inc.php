@@ -370,7 +370,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 				$action = 'presend';
 			} else {
 				$result = $mailfile->sendfile();
-				if ((int)$result > 0) {
+				if ((int) $result > 0) {
 					// Initialisation of datas of object to call trigger
 					if (is_object($object)) {
 						if (empty($actiontypecode)) {
