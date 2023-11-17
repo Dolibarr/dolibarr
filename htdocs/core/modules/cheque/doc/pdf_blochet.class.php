@@ -45,6 +45,33 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	public $tab_height;
 
 	/**
+	 * @var int line_height
+	 */
+	public $line_height;
+
+	/**
+	 * @var int line per page
+	 */
+	public $line_per_page;
+
+	/**
+	 * @var Account bank account
+	 */
+	public $account;
+
+	public $amount;
+	public $date;
+	public $nbcheque;
+	public $ref;
+	public $ref_ext;
+
+
+	/**
+	 * @var array lines
+	 */
+	public $lines;
+
+	/**
 	 *	Constructor
 	 *
 	 *	@param	DoliDB	$db		Database handler

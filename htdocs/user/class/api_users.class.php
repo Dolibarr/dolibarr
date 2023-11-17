@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2020   Thibault FOUCART     	<support@ptibogxiv.net>
+ * Copyright (C) 2020   Thibault FOUCART		<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,12 +63,13 @@ class Users extends DolibarrApi
 	 * @param string	$sortorder	Sort order
 	 * @param int		$limit		Limit for list
 	 * @param int		$page		Page number
-	 * @param string   	$user_ids   User ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
+	 * @param string	$user_ids   User ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
 	 * @param int       $category   Use this param to filter list by category
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array               Array of User objects
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = 0, $category = 0, $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = 0, $category = 0, $sqlfilters = '', $properties = '')
 	{
 		global $conf;
 
@@ -126,7 +127,7 @@ class Users extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$user_static = new User($this->db);
 				if ($user_static->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($user_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($user_static), $properties);
 				}
 				$i++;
 			}
@@ -142,9 +143,9 @@ class Users extends DolibarrApi
 	/**
 	 * Get properties of an user object
 	 *
-	 * @param 	int 	$id 					ID of user
+	 * @param	int		$id						ID of user
 	 * @param	int		$includepermissions		Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
-	 * @return 	array|mixed 					data without useless information
+	 * @return	array|mixed						data without useless information
 	 *
 	 * @throws RestException 401 Insufficient rights
 	 * @throws RestException 404 User or group not found
@@ -178,15 +179,15 @@ class Users extends DolibarrApi
 	/**
 	 * Get properties of an user object by login
 	 *
-	 * @param 	string 	$login 					Login of user
+	 * @param	string	$login					Login of user
 	 * @param	int		$includepermissions		Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
-	 * @return 	array|mixed 					Data without useless information
+	 * @return	array|mixed						Data without useless information
 	 *
 	 * @url GET login/{login}
 	 *
 	 * @throws RestException 400    Bad request
-	 * @throws RestException 401 	Insufficient rights
-	 * @throws RestException 404 	User or group not found
+	 * @throws RestException 401	Insufficient rights
+	 * @throws RestException 404	User or group not found
 	 */
 	public function getByLogin($login, $includepermissions = 0)
 	{
@@ -217,9 +218,9 @@ class Users extends DolibarrApi
 	/**
 	 * Get properties of an user object by Email
 	 *
-	 * @param 	string 	$email 					Email of user
+	 * @param	string	$email					Email of user
 	 * @param	int		$includepermissions		Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
-	 * @return 	array|mixed 					Data without useless information
+	 * @return	array|mixed						Data without useless information
 	 *
 	 * @url GET email/{email}
 	 *
@@ -259,7 +260,7 @@ class Users extends DolibarrApi
 	 * @url	GET /info
 	 *
 	 * @param	int			$includepermissions		Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
-	 * @return  array|mixed 						Data without useless information
+	 * @return  array|mixed							Data without useless information
 	 *
 	 * @throws RestException 401     Insufficient rights
 	 * @throws RestException 404     User or group not found
@@ -346,9 +347,9 @@ class Users extends DolibarrApi
 	/**
 	 * Update user account
 	 *
-	 * @param 	int   		$id             	Id of account to update
-	 * @param	array 		$request_data   	Datas
-	 * @return 	array|mixed						Record after update
+	 * @param	int			$id					Id of account to update
+	 * @param	array		$request_data		Datas
+	 * @return	array|mixed						Record after update
 	 *
 	 * @throws RestException 401 Not allowed
 	 * @throws RestException 404 Not found
@@ -513,14 +514,15 @@ class Users extends DolibarrApi
 	 * @param string	$sortorder	Sort order
 	 * @param int		$limit		Limit for list
 	 * @param int		$page		Page number
-	 * @param string   	$group_ids   Groups ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
+	 * @param string	$group_ids   Groups ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array               Array of User objects
 	 *
 	 * @throws RestException 404 User not found
 	 * @throws RestException 503 Error
 	 */
-	public function listGroups($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $group_ids = 0, $sqlfilters = '')
+	public function listGroups($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $group_ids = 0, $sqlfilters = '', $properties = '')
 	{
 		global $conf;
 
@@ -569,7 +571,7 @@ class Users extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$group_static = new UserGroup($this->db);
 				if ($group_static->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($group_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($group_static), $properties);
 				}
 				$i++;
 			}
@@ -589,7 +591,7 @@ class Users extends DolibarrApi
 	 *
 	 * @url	GET /groups/{group}
 	 *
-	 * @param 	int 	$group ID of group
+	 * @param	int		$group ID of group
 	 * @param int       $load_members     Load members list or not {@min 0} {@max 1}
 	 * @return  object               object of User objects
 	 *
@@ -655,8 +657,8 @@ class Users extends DolibarrApi
 	/**
 	 * Clean sensible object datas
 	 *
-	 * @param   Object	$object    	Object to clean
-	 * @return  Object    			Object with cleaned properties
+	 * @param   Object	$object		Object to clean
+	 * @return  Object				Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{

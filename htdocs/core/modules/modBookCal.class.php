@@ -135,7 +135,7 @@ class modBookCal extends DolibarrModules
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
 
 		// The language file dedicated to your module
-		$this->langfiles = array("bookcal");
+		$this->langfiles = array("agenda");
 
 		// Prerequisites
 		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
@@ -301,7 +301,7 @@ class modBookCal extends DolibarrModules
 			'fk_menu'=>'', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'top', // This is a Top menu entry
 			'titre'=>'ModuleBookCalName',
-			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth valignmiddle"'),
+			'prefix' => img_picto('', $this->picto, 'class="pictofixedwidth valignmiddle"'),
 			'mainmenu'=>'bookcal',
 			'leftmenu'=>'',
 			'url'=>'/bookcal/bookcalindex.php',
@@ -464,7 +464,7 @@ class modBookCal extends DolibarrModules
 		$r = 1;
 		/* BEGIN MODULEBUILDER EXPORT AVAILABILITIES */
 		/*
-		$langs->load("bookcal@bookcal");
+		$langs->load("agenda");
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
 		$this->export_label[$r]='AvailabilitiesLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_icon[$r]='availabilities@bookcal';
@@ -495,7 +495,7 @@ class modBookCal extends DolibarrModules
 		$r = 1;
 		/* BEGIN MODULEBUILDER IMPORT AVAILABILITIES */
 		/*
-		$langs->load("bookcal@bookcal");
+		$langs->load("agenda");
 		$this->import_code[$r]=$this->rights_class.'_'.$r;
 		$this->import_label[$r]='AvailabilitiesLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->import_icon[$r]='availabilities@bookcal';

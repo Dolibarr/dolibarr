@@ -337,7 +337,7 @@ if ($socid > 0) {
 
 
 	if ($action == 'create_remise') {
-		if ($user->rights->societe->creer) {
+		if ($user->hasRight('societe', 'creer')) {
 			print '<br>';
 
 			$discount_type = GETPOSTISSET('discount_type') ? GETPOST('discount_type', 'alpha') : 0;
@@ -392,7 +392,7 @@ if ($socid > 0) {
 			print dol_get_fiche_end();
 		}
 
-		if ($user->rights->societe->creer) {
+		if ($user->hasRight('societe', 'creer')) {
 			print '<div class="center">';
 			print '<input type="submit" class="button" name="submit" value="'.$langs->trans("AddGlobalDiscount").'">';
 			if (!empty($backtopage)) {
@@ -534,7 +534,7 @@ if ($socid > 0) {
 					print $tmpuser->getNomUrl(-1);
 					print '</td>';
 
-					if ($user->rights->societe->creer || $user->rights->facture->creer) {
+					if ($user->hasRight('societe', 'creer') || $user->hasRight('facture', 'creer')) {
 						print '<td class="center nowrap">';
 						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=split&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_split($langs->trans("SplitDiscount")).'</a>';
 						print '<a class="reposition marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=remove&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_delete($langs->trans("RemoveDiscount")).'</a>';
@@ -681,7 +681,7 @@ if ($socid > 0) {
 					print $tmpuser->getNomUrl(-1);
 					print '</td>';
 
-					if ($user->rights->societe->creer || $user->rights->facture->creer) {
+					if ($user->hasRight('societe', 'creer') || $user->hasRight('facture', 'creer')) {
 						print '<td class="center nowrap">';
 						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=split&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_split($langs->trans("SplitDiscount")).'</a>';
 						print '<a class="reposition marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=remove&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_delete($langs->trans("RemoveDiscount")).'</a>';

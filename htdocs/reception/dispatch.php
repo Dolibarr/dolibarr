@@ -25,9 +25,9 @@
  */
 
 /**
- * \file htdocs/fourn/commande/dispatch.php
+ * \file 	htdocs/reception/dispatch.php
  * \ingroup commande
- * \brief Page to dispatch receiving
+ * \brief 	Page to dispatch receptions.
  */
 
 // Load Dolibarr environment
@@ -40,11 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/reception.lib.php';
-
-
-if (isModEnabled('project')) {
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-}
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("bills", "orders", "sendings", "companies", "deliveries", "products", "stocks", "receptions"));
@@ -61,6 +57,9 @@ $action = GETPOST('action', 'aZ09');
 $fk_default_warehouse = GETPOST('fk_default_warehouse', 'int');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
+
+$error = 0;
+$errors = array();
 
 if ($user->socid) {
 	$socid = $user->socid;
@@ -106,11 +105,11 @@ if (empty($conf->reception->enabled)) {
 	$permissiontocontrol = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->reception->creer)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->reception->reception_advance->validate)));
 }
 
-// $id is id of a purchase order.
-$result = restrictedArea($user, 'fournisseur', $object, 'reception');
+// $id is id of a reception
+$result = restrictedArea($user, 'reception', $object->id);
 
 if (!isModEnabled('stock')) {
-	accessforbidden();
+	accessforbidden('Module stock disabled');
 }
 
 $usercancreate = $user->hasRight('reception', 'creer');
@@ -206,7 +205,8 @@ if ($action == 'updatelines' && $permissiontoreceive) {
 								$error++;
 							}
 
-							// If module stock is enabled and the stock increase is done on purchase order dispatching
+							// If module stock is enabled and the stock decrease is done on edtion of this page
+							/*
 							if (!$error && GETPOST($ent, 'int') > 0 && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
 								$mouv = new MouvementStock($db);
 								$product = GETPOST($prod, 'int');
@@ -242,6 +242,7 @@ if ($action == 'updatelines' && $permissiontoreceive) {
 									}
 								}
 							}
+							*/
 						}
 					} else {
 						$result = $objectsrc->dispatchProduct($user, GETPOST($prod, 'int'), GETPOST($qty), GETPOST($ent, 'int'), GETPOST($pu), GETPOST('comment'), $dDLUO, $dDLC, $lot, GETPOST($fk_commandefourndet, 'int'), 0, $object->id);
@@ -282,6 +283,9 @@ if ($action == 'updatelines' && $permissiontoreceive) {
 	} else {
 		$db->commit();
 		setEventMessages($langs->trans("ReceptionUpdated"), null);
+
+		header("Location: ".DOL_URL_ROOT.'/reception/dispatch.php?id='.$object->id);
+		exit;
 	}
 }
 
@@ -427,7 +431,7 @@ if ($id > 0 || !empty($ref)) {
 	print '</tr>';
 	print '</table>';
 
-	print '<br><center>';
+	print '<br><br><center>';
 	print '<a href="#" id="resetalltoexpected" class="marginrightonly paddingright marginleftonly paddingleft">'.img_picto("", 'autofill', 'class="pictofixedwidth"').$langs->trans("RestoreWithCurrentQtySaved").'</a></td>';
 	// Link to clear qty
 	print '<a href="#" id="autoreset" class="marginrightonly paddingright marginleftonly paddingleft">'.img_picto("", 'eraser', 'class="pictofixedwidth"').$langs->trans("ClearQtys").'</a></td>';
@@ -436,13 +440,12 @@ if ($id > 0 || !empty($ref)) {
 	print '<br>';
 	$disabled = 0;	// This is used to disable or not the bulk selection of target warehouse. No reason to have it disabled so forced to 0.
 
-	if ($object->statut == Reception::STATUS_DRAFT) {
+	if ($object->statut == Reception::STATUS_DRAFT || ($object->statut == Reception::STATUS_VALIDATED && empty($conf->global->STOCK_CALCULATE_ON_RECEPTION))) {
 		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 		$formproduct = new FormProduct($db);
 		$formproduct->loadWarehouses();
 		$entrepot = new Entrepot($db);
 		$listwarehouses = $entrepot->list_array(1);
-
 
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 
@@ -538,9 +541,12 @@ if ($id > 0 || !empty($ref)) {
 				}
 				print '<td class="right">'.$langs->trans("SupplierRef").'</td>';
 				print '<td class="right">'.$langs->trans("QtyOrdered").'</td>';
-				print '<td class="right">'.$langs->trans("QtyDispatchedShort").'</td>';
-				print ' <td class="right">'.$langs->trans("QtyToDispatchShort");
-				//print '<br><a href="#" id="autoreset">'.img_picto($langs->trans("Reset"), 'eraser', 'class="pictofixedwidth opacitymedium"').$langs->trans("Reset").'</a></td>';
+				if ($object->status == Reception::STATUS_DRAFT) {
+					print '<td class="right">'.$langs->trans("QtyToReceive");	// Qty to dispatch (sum for all lines of batch detail if there is)
+				} else {
+					print '<td class="right">'.$langs->trans("QtyDispatchedShort").'</td>';
+				}
+				print '<td class="right">'.$langs->trans("Details");
 				print '<td width="32"></td>';
 
 				if (!empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
@@ -680,7 +686,7 @@ if ($id > 0 || !empty($ref)) {
 						print '<td></td>'; // Warehouse column
 
 						$sql = "SELECT cfd.rowid, cfd.qty, cfd.fk_entrepot, cfd.batch, cfd.eatby, cfd.sellby, cfd.fk_product";
-						$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
+						$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";	// commande_fournisseur_dispatch should be named receptiondet_batch
 						$sql .= " WHERE cfd.fk_reception = ".((int) $object->id);
 						$sql .= " AND cfd.fk_commande = ".((int) $objectsrc->id);
 						$sql .= " AND cfd.fk_commandefourndet = ".(int) $objp->rowid;
@@ -695,7 +701,7 @@ if ($id > 0 || !empty($ref)) {
 								$suffix = "_".$j."_".$i;
 								$objd = $db->fetch_object($resultsql);
 
-								if (isModEnabled('productbatch') && !empty($objd->batch)) {
+								if (isModEnabled('productbatch') && (!empty($objd->batch) || (is_null($objd->batch) && $tmpproduct->status_batch > 0))) {
 									$type = 'batch';
 
 									// Enable hooks to append additional columns
@@ -736,7 +742,7 @@ if ($id > 0 || !empty($ref)) {
 									print '</td>';
 
 									print '<td>';
-									print '<input disabled="" type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.$objd->batch.'">';
+									print '<input disabled="" type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.(GETPOSTISSET('lot_number'.$suffix) ? GETPOST('lot_number'.$suffix) : $objd->batch).'">';
 									print '</td>';
 									if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 										print '<td class="nowraponall">';
@@ -1046,13 +1052,13 @@ if ($id > 0 || !empty($ref)) {
 		print '</div>';
 
 		if ($nbproduct) {
-			$checkboxlabel = $langs->trans("CloseReceivedSupplierOrdersAutomatically", $langs->transnoentitiesnoconv('StatusOrderReceivedAll'));
-
 			print '<div class="center">';
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 			// modified by hook
 			if (empty($reshook)) {
+				/*$checkboxlabel = $langs->trans("CloseReceivedSupplierOrdersAutomatically", $langs->transnoentitiesnoconv('StatusOrderReceivedAll'));
+
 				if (empty($conf->reception->enabled)) {
 					print $langs->trans("Comment").' : ';
 					print '<input type="text" class="minwidth400" maxlength="128" name="comment" value="';
@@ -1066,6 +1072,8 @@ if ($id > 0 || !empty($ref)) {
 				$dispatchBt = empty($conf->reception->enabled) ? $langs->trans("Receive") : $langs->trans("CreateReception");
 
 				print '<br>';
+				*/
+
 				print '<input type="submit" id="submitform" class="button" name="dispatch" value="'.$langs->trans("Save").'"';
 				$disabled = 0;
 				if (!$permissiontoreceive) {
@@ -1137,11 +1145,13 @@ if ($id > 0 || !empty($ref)) {
 				return false;
 			});
 
-			$(".resetline").click(function(){
+			$(".resetline").click(function(e){
+				e.preventDefault();
 				id = $(this).attr("id");
 				id = id.split("reset_");
 				console.log("Reset trigger for id = qty_"+id[1]);
 				$("#qty_"+id[1]).val("");
+				return false;
 			});
 		});
 	</script>';

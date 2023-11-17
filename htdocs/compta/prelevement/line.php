@@ -202,7 +202,7 @@ if ($id) {
 		dol_print_error($db);
 	}
 
-	if ($action == 'rejet' && $user->rights->prelevement->bons->credit) {
+	if ($action == 'rejet' && $user->hasRight('prelevement', 'bons', 'credit')) {
 		$soc = new Societe($db);
 		$soc->fetch($lipre->socid);
 
@@ -255,7 +255,7 @@ if ($id) {
 	if ($action == '') {
 		if ($bon->statut == BonPrelevement::STATUS_CREDITED) {
 			if ($lipre->statut == 2) {
-				if ($user->rights->prelevement->bons->credit) {
+				if ($user->hasRight('prelevement', 'bons', 'credit')) {
 					print '<a class="butActionDelete" href="line.php?action=rejet&type='.$type.'&id='.$lipre->id.'">'.$langs->trans("StandingOrderReject").'</a>';
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("StandingOrderReject").'</a>';

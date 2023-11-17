@@ -158,6 +158,8 @@ TicketChooseProductCategory=Product category for ticket support
 TicketChooseProductCategoryHelp=Select the product category of ticket support. This will be used to automatically link a contract to a ticket.
 TicketUseCaptchaCode=Use graphical code (CAPTCHA) when creating a ticket
 TicketUseCaptchaCodeHelp=Adds CAPTCHA verification when creating a new ticket.
+TicketsAllowClassificationModificationIfClosed=Allow to modify classification of closed tickets
+TicketsAllowClassificationModificationIfClosedHelp=Allow to modify classification (type, ticket group, severity) even if tickets are closed.
 
 #
 # Index & list page

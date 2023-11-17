@@ -36,6 +36,16 @@ class Export
 	public $db;
 
 	/**
+	 * @var int
+	 */
+	public $id;
+
+	public $array_export_icon;
+
+	public $array_export_perms;
+
+
+	/**
 	 * @var string Last error message
 	 */
 	public $error;
@@ -44,7 +54,7 @@ class Export
 	 */
 	public $errno;
 	/**
-	 * @var string Error messages
+	 * @var string[] Error messages
 	 */
 	public $errors;
 
@@ -644,7 +654,7 @@ class Export
 		if ($resql) {
 			//$this->array_export_label[$indice]
 			if (!empty($conf->global->EXPORT_PREFIX_SPEC)) {
-				$filename = $conf->global->EXPORT_PREFIX_SPEC."_".$datatoexport;
+				$filename = getDolGlobalString('EXPORT_PREFIX_SPEC') . "_".$datatoexport;
 			} else {
 				$filename = "export_".$datatoexport;
 			}

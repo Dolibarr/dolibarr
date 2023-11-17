@@ -59,11 +59,11 @@ class Proposals extends DolibarrApi
 	 *
 	 * Return an array with commercial proposal informations
 	 *
-	 * @param   int         $id           	ID of commercial proposal
-	 * @param   int         $contact_list 	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
-	 * @return  Object              		Object with cleaned properties
+	 * @param   int         $id				ID of commercial proposal
+	 * @param   int         $contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
+	 * @return  Object						Object with cleaned properties
 	 *
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	public function get($id, $contact_list = 1)
 	{
@@ -76,12 +76,12 @@ class Proposals extends DolibarrApi
 	 * Return an array with proposal informations
 	 *
 	 * @param       string		$ref			Ref of object
-	 * @param       int         $contact_list  	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
-	 * @return  	Object              		Object with cleaned properties
+	 * @param       int         $contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
+	 * @return		Object						Object with cleaned properties
 	 *
 	 * @url GET    ref/{ref}
 	 *
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	public function getByRef($ref, $contact_list = 1)
 	{
@@ -94,12 +94,12 @@ class Proposals extends DolibarrApi
 	 * Return an array with proposal informations
 	 *
 	 * @param       string		$ref_ext		External reference of object
-	 * @param       int         $contact_list  	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
-	 * @return  	Object              		Object with cleaned properties
+	 * @param       int         $contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
+	 * @return		Object						Object with cleaned properties
 	 *
 	 * @url GET    ref_ext/{ref_ext}
 	 *
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	public function getByRefExt($ref_ext, $contact_list = 1)
 	{
@@ -114,10 +114,10 @@ class Proposals extends DolibarrApi
 	 * @param   int         $id             ID of order
 	 * @param	string		$ref			Ref of object
 	 * @param	string		$ref_ext		External reference of object
-	 * @param   int         $contact_list  	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
-	 * @return  Object              		Object with cleaned properties
+	 * @param   int         $contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
+	 * @return  Object						Object with cleaned properties
 	 *
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	private function _fetch($id, $ref = '', $ref_ext = '', $contact_list = 1)
 	{
@@ -150,15 +150,16 @@ class Proposals extends DolibarrApi
 	 *
 	 * Get a list of commercial proposals
 	 *
-	 * @param string	$sortfield	        Sort field
-	 * @param string	$sortorder	        Sort order
-	 * @param int		$limit		        Limit for list
-	 * @param int		$page		        Page number
-	 * @param string   	$thirdparty_ids	    Thirdparty ids to filter commercial proposals (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
+	 * @param string	$sortfield			Sort field
+	 * @param string	$sortorder			Sort order
+	 * @param int		$limit				Limit for list
+	 * @param int		$page				Page number
+	 * @param string	$thirdparty_ids		Thirdparty ids to filter commercial proposals (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.datec:<:'20160101')"
+	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                       Array of order objects
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '')
 	{
 		global $db, $conf;
 
@@ -237,7 +238,7 @@ class Proposals extends DolibarrApi
 					if (is_array($tmparray)) {
 						$proposal_static->contacts_ids = $tmparray;
 					}
-					$obj_ret[] = $this->_cleanObjectDatas($proposal_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($proposal_static), $properties);
 				}
 				$i++;
 			}
@@ -285,7 +286,7 @@ class Proposals extends DolibarrApi
 	 * Get lines of a commercial proposal
 	 *
 	 * @param int		$id				Id of commercial proposal
-	 * @param string    $sqlfilters 	Other criteria to filter answers separated by a comma. d is the alias for proposal lines table, p is the alias for product table. "Syntax example "(p.ref:like:'SO-%') and (d.date_start:<:'20220101')"
+	 * @param string    $sqlfilters		Other criteria to filter answers separated by a comma. d is the alias for proposal lines table, p is the alias for product table. "Syntax example "(p.ref:like:'SO-%') AND (d.date_start:<:'20220101')"
 	 *
 	 * @url	GET {id}/lines
 	 *
@@ -293,8 +294,6 @@ class Proposals extends DolibarrApi
 	 */
 	public function getLines($id, $sqlfilters = '')
 	{
-		$filters = "";
-
 		if (!DolibarrApiAccess::$user->hasRight('propal', 'lire')) {
 			throw new RestException(401);
 		}
@@ -308,6 +307,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		$sql = '';
 		if (!empty($sqlfilters)) {
 			$errormessage = '';
 			$sql = forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
@@ -471,10 +471,10 @@ class Proposals extends DolibarrApi
 	/**
 	 * Update a line of given commercial proposal
 	 *
-	 * @param 	int   			$id             Id of commercial proposal to update
-	 * @param 	int   			$lineid         Id of line to update
-	 * @param 	array 			$request_data   Commercial proposal line data
-	 * @return  Object|false    				Object with cleaned properties
+	 * @param	int				$id             Id of commercial proposal to update
+	 * @param	int				$lineid         Id of line to update
+	 * @param	array			$request_data   Commercial proposal line data
+	 * @return  Object|false					Object with cleaned properties
 	 *
 	 * @url	PUT {id}/lines/{lineid}
 	 */
@@ -547,9 +547,9 @@ class Proposals extends DolibarrApi
 	 * Delete a line of given commercial proposal
 	 *
 	 *
-	 * @param 	int   			$id             Id of commercial proposal to update
-	 * @param 	int   			$lineid         Id of line to delete
-	 * @return  Object|false    				Object with cleaned properties
+	 * @param	int				$id             Id of commercial proposal to update
+	 * @param	int				$lineid         Id of line to delete
+	 * @return  Object|false					Object with cleaned properties
 	 *
 	 * @url	DELETE {id}/lines/{lineid}
 	 *
@@ -629,10 +629,10 @@ class Proposals extends DolibarrApi
 	 /**
 	  * Delete a contact type of given commercial proposal
 	  *
-	  * @param 	int    $id             	Id of commercial proposal to update
-	  * @param 	int    $contactid      	Row key of the contact in the array contact_ids.
-	  * @param 	string $type           	Type of the contact (BILLING, SHIPPING, CUSTOMER).
-	  * @return Object    				Object with cleaned properties
+	  * @param	int    $id				Id of commercial proposal to update
+	  * @param	int    $contactid		Row key of the contact in the array contact_ids.
+	  * @param	string $type			Type of the contact (BILLING, SHIPPING, CUSTOMER).
+	  * @return Object					Object with cleaned properties
 	  *
 	  * @url	DELETE {id}/contact/{contactid}/{type}
 	  *
@@ -674,9 +674,9 @@ class Proposals extends DolibarrApi
 	/**
 	 * Update commercial proposal general fields (won't touch lines of commercial proposal)
 	 *
-	 * @param 	int   	$id             Id of commercial proposal to update
-	 * @param 	array 	$request_data   Datas
-	 * @return 	Object    				Object with cleaned properties
+	 * @param	int		$id             Id of commercial proposal to update
+	 * @param	array	$request_data   Datas
+	 * @return	Object					Object with cleaned properties
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -752,7 +752,7 @@ class Proposals extends DolibarrApi
 	 * Set a proposal to draft
 	 *
 	 * @param   int     $id             Order ID
-	 * @return 	Object    				Object with cleaned properties
+	 * @return	Object					Object with cleaned properties
 	 *
 	 * @url POST    {id}/settodraft
 	 */
@@ -803,7 +803,7 @@ class Proposals extends DolibarrApi
 	 *
 	 * @param   int     $id             Commercial proposal ID
 	 * @param   int     $notrigger      1=Does not execute triggers, 0= execute triggers
-	 * @return 	Object    				Object with cleaned properties
+	 * @return	Object					Object with cleaned properties
 	 *
 	 * @url POST    {id}/validate
 	 *
@@ -852,10 +852,10 @@ class Proposals extends DolibarrApi
 	 * Close (Accept or refuse) a quote / commercial proposal
 	 *
 	 * @param   int     $id             Commercial proposal ID
-	 * @param   int	    $status			Must be 2 (accepted) or 3 (refused)				{@min 2}{@max 3}
+	 * @param   int		$status			Must be 2 (accepted) or 3 (refused)				{@min 2}{@max 3}
 	 * @param   string  $note_private   Add this mention at end of private note
 	 * @param   int     $notrigger      Disabled triggers
-	 * @return 	Object    				Object with cleaned properties
+	 * @return	Object					Object with cleaned properties
 	 *
 	 * @url POST    {id}/close
 	 */
@@ -899,7 +899,7 @@ class Proposals extends DolibarrApi
 	 * Set a commercial proposal billed. Could be also called setbilled
 	 *
 	 * @param   int     $id             Commercial proposal ID
-	 * @return 	Object    				Object with cleaned properties
+	 * @return	Object					Object with cleaned properties
 	 *
 	 * @url POST    {id}/setinvoiced
 	 */

@@ -394,7 +394,7 @@ function getProductOrService($authentication, $id = '', $ref = '', $ref_ext = ''
 		$fuser->getrights();
 
 		$nbmax = 10;
-		if ($fuser->rights->produit->lire || $fuser->rights->service->lire) {
+		if ($fuser->hasRight('produit', 'lire') || $fuser->hasRight('service', 'lire')) {
 			$product = new Product($db);
 			$result = $product->fetch($id, $ref, $ref_ext);
 
@@ -1017,7 +1017,7 @@ function getProductsForCategory($authentication, $id, $lang = '')
 		$fuser->getrights();
 
 		$nbmax = 10;
-		if ($fuser->rights->produit->lire) {
+		if ($fuser->hasRight('produit', 'lire')) {
 			$categorie = new Categorie($db);
 			$result = $categorie->fetch($id);
 			if ($result > 0) {

@@ -80,7 +80,9 @@ if ("Notification" in window) {
 	/* Check if permission ok */
 	if (Notification.permission !== "granted") {
 		console.log("Ask Notification.permission");
-		Notification.requestPermission();
+		Notification.requestPermission(function(result) {
+			console.log("result for requestPermission is "+result);
+		});
 	}
 
 	/* Launch timer */
@@ -96,7 +98,7 @@ if ("Notification" in window) {
 	console.log("This browser in this context does not support Notification.");
 }
 
-
+/* The method called after time_first_execution on each page */
 function first_execution() {
 	console.log("Call first_execution of check_events()");
 	result = check_events();	//one check before setting the new time for other checks
@@ -106,6 +108,7 @@ function first_execution() {
 	}
 }
 
+/* the method call frequently every time_auto_update */
 function check_events() {
 	var result = 0;
 	dolnotif_nb_test_for_page += 1;
@@ -124,7 +127,7 @@ function check_events() {
 		console.log("Call ajax to check events with time_js_next_test = "+time_js_next_test+" dolnotif_nb_test_for_page="+dolnotif_nb_test_for_page);
 
 		$.ajax("<?php print DOL_URL_ROOT.'/core/ajax/check_notifications.php'; ?>", {
-			type: "post",   // Usually post or get
+			type: "POST",   // Usually post or get
 			async: true,
 			data: { time_js_next_test: time_js_next_test, forcechecknow: 1, token: currentToken, dolnotif_nb_test_for_page: dolnotif_nb_test_for_page },
 			dataType: "json",
@@ -147,6 +150,8 @@ function check_events() {
 						var url = "notdefined";
 						var title = "Not defined";
 						var body = value.label;
+						var icon = '<?php print DOL_URL_ROOT.'/theme/common/octicons/build/svg/bell.svg'; ?>';
+						var image = '<?php print DOL_URL_ROOT.'/theme/common/octicons/build/svg/bell.svg'; ?>';
 						if (value.type == 'agenda' && value.location != null && value.location != '') {
 							body += '\n' + value.location;
 						}
@@ -161,15 +166,17 @@ function check_events() {
 							title = '<?php print dol_escape_js($langs->transnoentities('EventReminder')) ?>';
 						}
 						var extra = {
-							icon: '<?php print DOL_URL_ROOT.'/theme/common/bell.png'; ?>',
-							//image: '<?php print DOL_URL_ROOT.'/theme/common/bell.png'; ?>',
+							icon: icon,
 							body: body,
+							lang: '<?php print dol_escape_js($langs->getDefaultLang(1)); ?>',
 							tag: value.id_agenda,
 							requireInteraction: true
+							/* only supported for persistent notification shown using ServiceWorkerRegistration.showNotification() so disabled */
+							/* actions: [{ action: 'action1', title: 'New Button Label' }, { action: 'action2', title: 'Another Button' }] */
 						};
 
 						// We release the notify
-						console.log("Send notification on browser");
+						console.log("Send notification on browser url="+url);
 						noti[index] = new Notification(title, extra);
 						if (index==0 && audio)
 						{
@@ -178,7 +185,8 @@ function check_events() {
 
 						if (noti[index]) {
 							noti[index].onclick = function (event) {
-								console.log("A click on notification on browser has been done");
+								/* If the use has clicked on button Activate */
+								console.log("A click on notification on browser has been done for url="+url);
 								event.preventDefault(); // prevent the browser from focusing the Notification's tab
 								window.focus();
 								window.open(url, '_blank');

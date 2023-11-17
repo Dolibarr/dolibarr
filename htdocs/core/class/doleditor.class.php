@@ -173,6 +173,9 @@ class DolEditor
 				if (empty($conf->global->FCKEDITOR_ENABLE_PDF)) {
 					$pluginstodisable .= ',exportpdf';
 				}
+				if (!empty($conf->global->MAIN_DISALLOW_URL_INTO_DESCRIPTIONS)) {
+					$this->uselocalbrowser = 0;	// Can't use browser to navigate into files. Only links with "<img src=data:..." are allowed.
+				}
 				$scaytautostartup = '';
 				if (!empty($conf->global->FCKEDITOR_ENABLE_SCAYT_AUTOSTARTUP)) {
 					$scaytautostartup = 'scayt_autoStartup: true,';

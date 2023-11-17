@@ -134,7 +134,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 		}
 
 		// Validation of fields values
-		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 || !empty($conf->global->MAIN_ACTIVATE_VALIDATION_RESULT)) {
+		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 || !empty($conf->global->MAIN_ACTIVATE_VALIDATION_RESULT)) {
 			if (!$error && !empty($val['validate']) && is_callable(array($object, 'validateField'))) {
 				if (!$object->validateField($object->fields, $key, $value)) {
 					$error++;
@@ -274,7 +274,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 		}
 
 		// Validation of fields values
-		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 || !empty($conf->global->MAIN_ACTIVATE_VALIDATION_RESULT)) {
+		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 || !empty($conf->global->MAIN_ACTIVATE_VALIDATION_RESULT)) {
 			if (!$error && !empty($val['validate']) && is_callable(array($object, 'validateField'))) {
 				if (!$object->validateField($object->fields, $key, $value)) {
 					$error++;
@@ -350,25 +350,28 @@ if (preg_match('/^set(\w+)$/', $action, $reg) && GETPOST('id', 'int') > 0 && !em
 if ($action == "update_extras" && GETPOST('id', 'int') > 0 && !empty($permissiontoadd)) {
 	$object->fetch(GETPOST('id', 'int'));
 
-	$attributekey = GETPOST('attribute', 'alpha');
-	$attributekeylong = 'options_'.$attributekey;
+	$object->oldcopy = dol_clone($object, 2);
 
-	if (GETPOSTISSET($attributekeylong.'day') && GETPOSTISSET($attributekeylong.'month') && GETPOSTISSET($attributekeylong.'year')) {
-		// This is properties of a date
-		$object->array_options['options_'.$attributekey] = dol_mktime(GETPOST($attributekeylong.'hour', 'int'), GETPOST($attributekeylong.'min', 'int'), GETPOST($attributekeylong.'sec', 'int'), GETPOST($attributekeylong.'month', 'int'), GETPOST($attributekeylong.'day', 'int'), GETPOST($attributekeylong.'year', 'int'));
-		//var_dump(dol_print_date($object->array_options['options_'.$attributekey]));exit;
-	} else {
-		$object->array_options['options_'.$attributekey] = GETPOST($attributekeylong, 'alpha');
-	}
+	$attribute = GETPOST('attribute', 'alphanohtml');
 
-	$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
-	if ($result > 0) {
-		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-		$action = 'view';
-	} else {
+	$error = 0;
+
+	// Fill array 'array_options' with data from update form
+	$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute);
+	if ($ret < 0) {
 		$error++;
-		setEventMessages($object->error, $object->errors, 'errors');
+		setEventMessages($extrafields->error, $object->errors, 'errors');
 		$action = 'edit_extras';
+	} else {
+		$result = $object->updateExtraField($attribute, empty($triggermodname) ? '' : $triggermodname, $user);
+		if ($result > 0) {
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+			$action = 'view';
+		} else {
+			$error++;
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = 'edit_extras';
+		}
 	}
 }
 
@@ -379,17 +382,27 @@ if ($action == 'confirm_delete' && !empty($permissiontodelete)) {
 		exit;
 	}
 
+	$db->begin();
+
 	$result = $object->delete($user);
 
 	if ($result > 0) {
+		$db->commit();
+
 		// Delete OK
 		setEventMessages("RecordDeleted", null, 'mesgs');
 
 		if (empty($noback)) {
+			if (empty($backurlforlist)) {
+				print 'Error backurlforlist is not defined';
+				exit;
+			}
 			header("Location: " . $backurlforlist);
 			exit;
 		}
 	} else {
+		$db->rollback();
+
 		$error++;
 		if (!empty($object->errors)) {
 			setEventMessages(null, $object->errors, 'errors');

@@ -20,7 +20,6 @@ CreateCreditNote=Aanmaak krediet nota
 DoPayment=Doe een betaling
 DoPaymentBack=Doe een terugbetaling
 ConvertToReduc=Markeren als beschikbaar tegoed
-StatusOfGeneratedInvoices=Lijst van genereerde facturen
 BillStatusDraft=Conceptfactuur (moet worden gevalideerd)
 BillShortStatusClosedUnpaid=Afgesloten
 ErrorVATIntraNotConfigured=Intracommunautair btw-nummer nog niet gedefinieerd

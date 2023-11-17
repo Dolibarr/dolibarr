@@ -34,7 +34,7 @@ if (!defined('DOL_APPLICATION_TITLE')) {
 	define('DOL_APPLICATION_TITLE', 'Dolibarr');
 }
 if (!defined('DOL_VERSION')) {
-	define('DOL_VERSION', '19.0.0-dev'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
+	define('DOL_VERSION', '19.0.0-beta'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
 }
 
 if (!defined('EURO')) {
@@ -80,7 +80,7 @@ $result = @include_once $conffile; // Keep @ because with some error reporting t
 
 // Disable some not used PHP stream
 $listofwrappers = stream_get_wrappers();
-// We need '.phar' for geoip2. TODO Replace phar with explode files so we can disable phar.
+// We need '.phar' for geoip2. TODO Replace phar in geoip with exploded files so we can disable phar.
 $arrayofstreamtodisable = array('compress.zlib', 'compress.bzip2', 'ftps', 'glob', 'data', 'expect', 'ftp', 'ogg', 'rar', 'zip', 'zlib');
 foreach ($arrayofstreamtodisable as $streamtodisable) {
 	if (!empty($listofwrappers) && in_array($streamtodisable, $listofwrappers)) {

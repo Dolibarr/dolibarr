@@ -203,7 +203,7 @@ print '<tr>';
 print '<td class="tdtop nopaddingleftimp">';
 
 print '<div class="centpercent center margintoponly marginbottomonly">';
-print img_picto('', 'setup', 'class="pictofixedwidth"').'<a id="lnk">'.$langs->trans("ShowAdvancedOptions").'...</a>';
+print img_picto('', 'setup', 'class="pictofixedwidth"').'<a class="classlink" id="lnk">'.$langs->trans("ShowAdvancedOptions").'...</a>';
 print '</div>';
 
 print '<script type="text/javascript">
@@ -235,7 +235,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 	print '<fieldset id="mysql_options">';
 
 	print '<fieldset class="formelementrow"><legend>'.$langs->trans("FullPathToMysqldumpCommand").'</legend>';
-	if (empty($conf->global->SYSTEMTOOLS_MYSQLDUMP)) {
+	if (!getDolGlobalString('SYSTEMTOOLS_MYSQLDUMP')) {
 		$fullpathofmysqldump = $db->getPathOfDump();
 	} else {
 		$fullpathofmysqldump = $conf->global->SYSTEMTOOLS_MYSQLDUMP;
@@ -246,7 +246,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 	print '<br>';
 	print '<fieldset><legend>'.$langs->trans("ExportOptions").'</legend>';
 
-	if (!empty($conf->global->MYSQL_OLD_OPTION_DISABLE_FK)) {
+	if (getDolGlobalString('MYSQL_OLD_OPTION_DISABLE_FK')) {
 		print '<div class="formelementrow">';
 		print '<input type="checkbox" name="disable_fk" value="yes" id="checkbox_disable_fk" checked>';
 		print '<label for="checkbox_disable_fk">'.$langs->trans("CommandsToDisableForeignKeysForImport").' '.img_info($langs->trans('CommandsToDisableForeignKeysForImportWarning')).'</label>';
@@ -280,7 +280,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 	print '<br>';
 
 	$execmethod = 0;
-	if (!empty($conf->global->MAIN_EXEC_USE_POPEN)) {
+	if (getDolGlobalString('MAIN_EXEC_USE_POPEN')) {
 		$execmethod = $conf->global->MAIN_EXEC_USE_POPEN;
 	}
 	if (empty($execmethod)) {
@@ -361,7 +361,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 	print '<label for="checkbox_use_transaction">'.$langs->trans("UseTransactionnalMode").'</label>';
 	print '</div>';
 
-	if (!empty($conf->global->MYSQL_OLD_OPTION_DISABLE_FK)) {
+	if (getDolGlobalString('MYSQL_OLD_OPTION_DISABLE_FK')) {
 		print '<div class="formelementrow">';
 		print '<input type="checkbox" name="nobin_disable_fk" value="yes" id="checkbox_disable_fk" checked />';
 		print '<label for="checkbox_disable_fk">'.$langs->trans("CommandsToDisableForeignKeysForImport").' '.img_info($langs->trans('CommandsToDisableForeignKeysForImportWarning')).'</label>';
@@ -406,7 +406,7 @@ if (in_array($type, array('pgsql'))) {
 
 
 	print '<fieldset class="formelementrow"><legend>'.$langs->trans("FullPathToPostgreSQLdumpCommand").'</legend>';
-	if (empty($conf->global->SYSTEMTOOLS_POSTGRESQLDUMP)) {
+	if (!getDolGlobalString('SYSTEMTOOLS_POSTGRESQLDUMP')) {
 		$fullpathofpgdump = $db->getPathOfDump();
 	} else {
 		$fullpathofpgdump = $conf->global->SYSTEMTOOLS_POSTGRESQLDUMP;

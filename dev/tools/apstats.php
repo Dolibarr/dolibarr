@@ -42,8 +42,8 @@ define('VERSION', "1.0");
 print '***** '.constant('PRODUCT').' - '.constant('VERSION').' *****'."\n";
 if (empty($argv[1])) {
 	print 'You must run this tool being into the root of the project.'."\n";
-	print 'Usage:   '.constant('PRODUCT').'.php pathto/index.html  [--dir-scc=pathtoscc] [--dir-phpstan=pathtophpstan]'."\n";
-	print 'Example: '.constant('PRODUCT').'.php dev/tools/apstats.php documents/apstats/index.html --dir-scc=/snap/bin --dir-phpstan=~/git/phpstan/htdocs/includes/bin';
+	print 'Usage:   '.constant('PRODUCT').'.php  pathto/outputfile.html  [--dir-scc=pathtoscc] [--dir-phpstan=pathtophpstan]'."\n";
+	print 'Example: '.constant('PRODUCT').'.php  documents/apstats/index.html --dir-scc=/snap/bin --dir-phpstan=~/git/phpstan/htdocs/includes/bin';
 	exit(0);
 }
 
@@ -174,9 +174,11 @@ foreach (array('proj', 'dep') as $source) {
  * View
  */
 
-$html = '<html>';
-$html .= '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css" integrity="sha512-q3eWabyZPc1XTCmF+8/LuE1ozpg5xxn7iO89yfSOd5/oKvyqLngoNGsx8jq92Y8eXJ/IRxQbEC+FGSYxtk2oiw==" crossorigin="anonymous" referrerpolicy="no-referrer" />';
-$html .= '<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>';
+$html = '<html>'."\n";
+$html .= '<meta charset="utf-8">'."\n";
+$html .= '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";
+$html .= '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css" integrity="sha512-q3eWabyZPc1XTCmF+8/LuE1ozpg5xxn7iO89yfSOd5/oKvyqLngoNGsx8jq92Y8eXJ/IRxQbEC+FGSYxtk2oiw==" crossorigin="anonymous" referrerpolicy="no-referrer" />'."\n";
+$html .= '<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>'."\n";
 $html .= '
 <style>
 body {
@@ -218,6 +220,9 @@ th,td {
 .right {
 	text-align: right;
 }
+.nowrap {
+	white-space: nowrap;
+}
 .opacity {
 	opacity: 0.5;
 }
@@ -253,18 +258,47 @@ th,td {
 	background-color: #664488;
 	color: #FFF;
 }
-</style>';
 
-$html .= '<body>';
+div.fiche>form>div.div-table-responsive {
+    min-height: 392px;
+}
+div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive-no-min {
+    overflow-x: auto;
+}
+.div-table-responsive {
+    line-height: 120%;
+}
+.div-table-responsive, .div-table-responsive-no-min {
+    overflow-x: auto;
+    min-height: 0.01%;
+}
 
-$html .= '<header>';
-$html .= '<h1>Advanced Project Statistics</h1>';
+
+/* Force values for small screen 767 */
+@media only screen and (max-width: 767px)
+{
+	body {
+		margin: 5px;
+		margin-left: 5px;
+		margin-right: 5px;
+	}
+}
+
+
+</style>'."\n";
+
+$html .= '<body>'."\n";
+
+$html .= '<header>'."\n";
+$html .= '<h1>Advanced Project Statistics</h1>'."\n";
 $currentDate = date("Y-m-d H:i:s"); // Format: Year-Month-Day Hour:Minute:Second
-$html .= '<span class="opacity">Generated on '.$currentDate.'</span>';
-$html .= '</header>';
+$html .= '<span class="opacity">Generated on '.$currentDate.'</span>'."\n";
+$html .= '</header>'."\n";
 
-$html .= '<section class="chapter">';
-$html .= '<h2>Lines of code</h2>';
+$html .= '<section class="chapter">'."\n";
+$html .= '<h2>Lines of code</h2>'."\n";
+
+$html .= '<div class="div-table-responsive">'."\n";
 $html .= '<table class="centpercent">';
 $html .= '<tr class="loc">';
 $html .= '<th class="left">Language</td>';
@@ -290,20 +324,20 @@ foreach (array('proj', 'dep') as $source) {
 	$html .= '<td class="right">'.formatNumber($arrayofmetrics[$source]['Blanks']).'</td>';
 	$html .= '<td class="right">'.formatNumber($arrayofmetrics[$source]['Comments']).'</td>';
 	$html .= '<td class="right">'.formatNumber($arrayofmetrics[$source]['Code']).'</td>';
-	$html .= '<td>TODO graph here...</td>';
+	$html .= '<td></td>';
 	$html .= '</tr>';
 	if (!empty($arrayoflineofcode[$source])) {
 		foreach ($arrayoflineofcode[$source] as $key => $val) {
 			$html .= '<tr class="loc hidden source'.$source.' language'.str_replace(' ', '', $key).'">';
 			$html .= '<td>'.$key.'</td>';
 			$html .= '<td class="right"></td>';
-			$html .= '<td class="right">'.(empty($val['Files']) ? '' : formatNumber($val['Files'])).'</td>';
-			$html .= '<td class="right">'.(empty($val['Lines']) ? '' : formatNumber($val['Lines'])).'</td>';
-			$html .= '<td class="right">'.(empty($val['Blanks']) ? '' : formatNumber($val['Blanks'])).'</td>';
-			$html .= '<td class="right">'.(empty($val['Comments']) ? '' : formatNumber($val['Comments'])).'</td>';
-			$html .= '<td class="right">'.(empty($val['Code']) ? '' : formatNumber($val['Code'])).'</td>';
+			$html .= '<td class="right nowrap">'.(empty($val['Files']) ? '' : formatNumber($val['Files'])).'</td>';
+			$html .= '<td class="right nowrap">'.(empty($val['Lines']) ? '' : formatNumber($val['Lines'])).'</td>';
+			$html .= '<td class="right nowrap">'.(empty($val['Blanks']) ? '' : formatNumber($val['Blanks'])).'</td>';
+			$html .= '<td class="right nowrap">'.(empty($val['Comments']) ? '' : formatNumber($val['Comments'])).'</td>';
+			$html .= '<td class="right nowrap">'.(empty($val['Code']) ? '' : formatNumber($val['Code'])).'</td>';
 			//$html .= '<td class="right">'.(empty($val['Complexity']) ? '' : $val['Complexity']).'</td>';
-			$html .= '<td>TODO graph here...</td>';
+			$html .= '<td class="nowrap">TODO graph here...</td>';
 			$html .= '</tr>';
 		}
 	}
@@ -311,35 +345,48 @@ foreach (array('proj', 'dep') as $source) {
 
 $html .= '<tr class="trgroup">';
 $html .= '<td class="left">Total</td>';
-$html .= '<td class="right">'.formatNumber($arrayofmetrics['proj']['Bytes'] + $arrayofmetrics['dep']['Bytes']).'</td>';
-$html .= '<td class="right">'.formatNumber($arrayofmetrics['proj']['Files'] + $arrayofmetrics['dep']['Files']).'</td>';
-$html .= '<td class="right">'.formatNumber($arrayofmetrics['proj']['Lines'] + $arrayofmetrics['dep']['Lines']).'</td>';
-$html .= '<td class="right">'.formatNumber($arrayofmetrics['proj']['Blanks'] + $arrayofmetrics['dep']['Blanks']).'</td>';
-$html .= '<td class="right">'.formatNumber($arrayofmetrics['proj']['Comments'] + $arrayofmetrics['dep']['Comments']).'</td>';
-$html .= '<td class="right">'.formatNumber($arrayofmetrics['proj']['Code'] + $arrayofmetrics['dep']['Code']).'</td>';
+$html .= '<td class="right nowrap">'.formatNumber($arrayofmetrics['proj']['Bytes'] + $arrayofmetrics['dep']['Bytes']).'</td>';
+$html .= '<td class="right nowrap">'.formatNumber($arrayofmetrics['proj']['Files'] + $arrayofmetrics['dep']['Files']).'</td>';
+$html .= '<td class="right nowrap">'.formatNumber($arrayofmetrics['proj']['Lines'] + $arrayofmetrics['dep']['Lines']).'</td>';
+$html .= '<td class="right nowrap">'.formatNumber($arrayofmetrics['proj']['Blanks'] + $arrayofmetrics['dep']['Blanks']).'</td>';
+$html .= '<td class="right nowrap">'.formatNumber($arrayofmetrics['proj']['Comments'] + $arrayofmetrics['dep']['Comments']).'</td>';
+$html .= '<td class="right nowrap">'.formatNumber($arrayofmetrics['proj']['Code'] + $arrayofmetrics['dep']['Code']).'</td>';
 //$html .= '<td>'.$arrayofmetrics['Complexity'].'</td>';
 $html .= '<td></td>';
 $html .= '</tr>';
 $html .= '</table>';
+$html .= '</div>';
 
-$html .= '</section>';
+$html .= '</section>'."\n";
 
-$html .= '<section class="chapter">';
-$html .= '<h2>Project value</h2><br>';
+$html .= '<section class="chapter">'."\n";
+$html .= '<h2>Project value</h2><br>'."\n";
 $html .= '<div class="box inline-box back1">';
 $html .= 'COCOMO (Basic organic model) value:<br>';
-$html .= '<b>$'.formatNumber($arraycocomo['proj']['currency'] + $arraycocomo['dep']['currency'], 2).'</b>';
+$html .= '<b>$'.formatNumber((empty($arraycocomo['proj']['currency']) ? 0 : $arraycocomo['proj']['currency']) + (empty($arraycocomo['dep']['currency']) ? 0 : $arraycocomo['dep']['currency']), 2).'</b>';
 $html .= '</div>';
 $html .= '<div class="box inline-box back2">';
 $html .= 'COCOMO (Basic organic model) effort<br>';
 $html .= '<b>'.formatNumber($arraycocomo['proj']['people'] * $arraycocomo['proj']['effort'] + $arraycocomo['dep']['people'] * $arraycocomo['dep']['effort']);
 $html .= ' monthes people</b><br>';
-$html .= '</section>';
+$html .= '</section>'."\n";
 
-$html .= '<section class="chapter">';
-$html .= '<h2>Technical debt ('.count($output_arrtd).')</h2><br>';
-$html .= join('<br>'."\n", $output_arrtd);
-$html .= '</section>';
+$html .= '<section class="chapter">'."\n";
+$html .= '<h2>Technical debt ('.count($output_arrtd).')</h2><br>'."\n";
+$html .= '<div class="div-table-responsive">'."\n";
+$html .= '<table class="list_technical_debt">'."\n";
+$html .= '<tr><td>File</td><td>Line</td><td>Type</td></tr>'."\n";
+foreach ($output_arrtd as $line) {
+	$reg = array();
+	//print $line."\n";
+	preg_match('/^::error file=(.*),line=(\d+),col=(\d+)::(.*)$/', $line, $reg);
+	if (!empty($reg[1])) {
+		$html .= '<tr><td>'.$reg[1].'</td><td>'.$reg[2].'</td><td>'.$reg[4].'</td></tr>'."\n";
+	}
+}
+$html .= '</table>';
+$html .= '</div>';
+$html .= '</section>'."\n";
 
 $html .= '
 <script>

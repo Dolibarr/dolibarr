@@ -13,8 +13,8 @@
  * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
  * Copyright (C) 2015-2018 Charlene Benke       <charlie@patas-monkey.com>
  * Copyright (C) 2016      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
- * Copyright (C) 2018       David Beniamine     <David.Beniamine@Tetras-Libre.fr>
+ * Copyright (C) 2018-2023 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018      David Beniamine      <David.Beniamine@Tetras-Libre.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +74,7 @@ $group = GETPOST("group", "int", 3);
 $cancel		= GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'useracard'; // To manage different context of search
 
-if (empty($id)) {
+if (empty($id) && $action != 'create') {
 	$id = $user->id;
 }
 
@@ -351,7 +351,7 @@ if (empty($reshook)) {
 				if (GETPOST('password', 'none')) {
 					$resPass = $object->setPassword($user, GETPOST('password', 'none'));
 				}
-				if ($resPass < 0) {
+				if (is_int($resPass) && $resPass < 0) {
 					$langs->load("errors");
 					$db->rollback();
 					setEventMessages($object->error, $object->errors, 'errors');
@@ -427,15 +427,11 @@ if (empty($reshook)) {
 				$object->civility_code = GETPOST("civility_code", 'aZ09');
 				$object->lastname = GETPOST("lastname", 'alphanohtml');
 				$object->firstname = GETPOST("firstname", 'alphanohtml');
-				/*
-				* Protection against deletion of ref_employee while the field is not present in the user tab
-				*/
+				// Protection against deletion of ref_employee while the field is not present in the user tab
 				if (GETPOSTISSET("ref_employee")) {
 					$object->ref_employee = GETPOST("ref_employee", 'alphanohtml');
 				}
-				/*
-				* Protection against deletion of national_registration_number while the field is not present in the user tab
-				*/
+				// Protection against deletion of national_registration_number while the field is not present in the user tab
 				if (GETPOSTISSET("national_registration_number")) {
 					$object->national_registration_number = GETPOST("national_registration_number", 'alphanohtml');
 				}
@@ -597,10 +593,11 @@ if (empty($reshook)) {
 				}
 
 				if (!$error && !count($object->errors)) {
-					if (GETPOST('deletephoto') && $object->oldcopy->photo) {
+					if (!empty($object->oldcopy->photo) && (GETPOST('deletephoto') || ($object->photo != $object->oldcopy->photo))) {
 						$fileimg = $conf->user->dir_output.'/'.get_exdir(0, 0, 0, 0, $object, 'user').'photos/'.$object->oldcopy->photo;
-						$dirthumbs = $conf->user->dir_output.'/'.get_exdir(0, 0, 0, 0, $object, 'user').'photos/thumbs';
 						dol_delete_file($fileimg);
+
+						$dirthumbs = $conf->user->dir_output.'/'.get_exdir(0, 0, 0, 0, $object, 'user').'photos/thumbs';
 						dol_delete_dir_recursive($dirthumbs);
 					}
 
@@ -664,7 +661,7 @@ if (empty($reshook)) {
 					$object->oldcopy = clone $object;
 
 					$ret = $object->setPassword($user, GETPOST("password", "none"));
-					if ($ret < 0) {
+					if (is_int($ret) && $ret < 0) {
 						setEventMessages($object->error, $object->errors, 'errors');
 					}
 				}
@@ -679,7 +676,7 @@ if (empty($reshook)) {
 		$object->fetch($id);
 
 		$newpassword = $object->setPassword($user, '');	// This will generate a new password
-		if ($newpassword < 0) {
+		if (is_int($newpassword) && $newpassword < 0) {
 			// Echec
 			setEventMessages($langs->trans("ErrorFailedToSetNewPassword"), null, 'errors');
 		} else {
@@ -734,17 +731,17 @@ if (empty($reshook)) {
 
 			if (is_array($ldapusers)) {
 				foreach ($ldapusers as $key => $attribute) {
-					$ldap_lastname = $attribute[$conf->global->LDAP_FIELD_NAME];
-					$ldap_firstname = $attribute[$conf->global->LDAP_FIELD_FIRSTNAME];
-					$ldap_login = $attribute[$conf->global->LDAP_FIELD_LOGIN];
-					$ldap_loginsmb = $attribute[$conf->global->LDAP_FIELD_LOGIN_SAMBA];
-					$ldap_pass = $attribute[$conf->global->LDAP_FIELD_PASSWORD];
-					$ldap_pass_crypted = $attribute[$conf->global->LDAP_FIELD_PASSWORD_CRYPTED];
-					$ldap_phone = $attribute[$conf->global->LDAP_FIELD_PHONE];
-					$ldap_fax = $attribute[$conf->global->LDAP_FIELD_FAX];
-					$ldap_mobile = $attribute[$conf->global->LDAP_FIELD_MOBILE];
-					$ldap_mail = $attribute[$conf->global->LDAP_FIELD_MAIL];
-					$ldap_sid = $attribute[$conf->global->LDAP_FIELD_SID];
+					$ldap_lastname = $attribute[getDolGlobalString('LDAP_FIELD_NAME')];
+					$ldap_firstname = $attribute[getDolGlobalString('LDAP_FIELD_FIRSTNAME')];
+					$ldap_login = $attribute[getDolGlobalString('LDAP_FIELD_LOGIN')];
+					$ldap_loginsmb = $attribute[getDolGlobalString('LDAP_FIELD_LOGIN_SAMBA')];
+					$ldap_pass = $attribute[getDolGlobalString('LDAP_FIELD_PASSWORD')];
+					$ldap_pass_crypted = $attribute[getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED')];
+					$ldap_phone = $attribute[getDolGlobalString('LDAP_FIELD_PHONE')];
+					$ldap_fax = $attribute[getDolGlobalString('LDAP_FIELD_FAX')];
+					$ldap_mobile = $attribute[getDolGlobalString('LDAP_FIELD_MOBILE')];
+					$ldap_mail = $attribute[getDolGlobalString('LDAP_FIELD_MAIL')];
+					$ldap_sid = $attribute[getDolGlobalString('LDAP_FIELD_SID')];
 
 					if (isModEnabled('socialnetworks')) {
 						$arrayofsocialnetworks = array('skype', 'twitter', 'facebook', 'linkedin');
@@ -790,7 +787,11 @@ if ($object->id > 0) {
 	$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
 	$title = $person_name." - ".$langs->trans('Card');
 } else {
-	$title = $langs->trans("NewUser");
+	if (GETPOST('employee', 'alphanohtml')) {
+		$title = $langs->trans("NewEmployee");
+	} else {
+		$title = $langs->trans("NewUser");
+	}
 }
 $help_url = '';
 
@@ -798,7 +799,7 @@ llxHeader('', $title, $help_url);
 
 
 if ($action == 'create' || $action == 'adduserldap') {
-	print load_fiche_titre($langs->trans("NewUser"), '', 'user');
+	print load_fiche_titre($title, '', 'user');
 
 	print '<span class="opacitymedium">'.$langs->trans("CreateInternalUserDesc")."</span><br>\n";
 	print "<br>";
@@ -962,7 +963,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 	// Administrator
 	if (!empty($user->admin)) {
-		print '<tr><td>'.$langs->trans("Administrator").'</td>';
+		print '<tr><td>'.$form->textwithpicto($langs->trans("Administrator"), $langs->trans("AdministratorDesc"), 1, 'star').'</td>';
 		print '<td>';
 		print $form->selectyesno('admin', GETPOST('admin'), 1, false, 0, 1);
 
@@ -1416,7 +1417,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			$ldap = new Ldap();
 			$result = $ldap->connect_bind();
 			if ($result > 0) {
-				$userSearchFilter = '('.$conf->global->LDAP_FILTER_CONNECTION.'('.$ldap->getUserIdentifier().'='.$object->login.'))';
+				$userSearchFilter = '(' . getDolGlobalString('LDAP_FILTER_CONNECTION').'('.$ldap->getUserIdentifier().'='.$object->login.'))';
 				$entries = $ldap->fetch($object->login, $userSearchFilter);
 				if (!$entries) {
 					setEventMessages($ldap->error, $ldap->errors, 'errors');
@@ -1497,7 +1498,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 		}
 
 		/*
-		 * Fiche en mode visu
+		 * View mode
 		 */
 		if ($action != 'edit') {
 			print dol_get_fiche_head($head, 'user', $title, -1, 'user');
@@ -2149,7 +2150,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 		}
 
 		/*
-		 * Card in edit mode
+		 * Edit mode
 		 */
 		if ($action == 'edit' && ($canedituser || $caneditpasswordandsee)) {
 			print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST" name="updateuser" enctype="multipart/form-data">';
@@ -2216,7 +2217,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</tr>';
 
 			// Administrator
-			print '<tr><td>'.$langs->trans("Administrator").'</td>';
+			print '<tr><td>'.$form->textwithpicto($langs->trans("Administrator"), $langs->trans("AdministratorDesc")).'</td>';
 			if ($object->socid > 0) {
 				$langs->load("admin");
 				print '<td>';

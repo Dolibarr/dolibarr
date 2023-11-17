@@ -29,9 +29,14 @@ if (empty($langs) || !is_object($langs)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
-
+global $action, $form, $langs;
 
 $langs->load("modulebuilder");
+
+if ($action == 'delete') {
+	$attributekey = GETPOST('attrname', 'aZ09');
+	print $form->formconfirm($_SERVER['PHP_SELF']."?attrname=$attributekey", $langs->trans("DeleteExtrafield"), $langs->trans("ConfirmDeleteExtrafield", $attributekey), "confirm_delete", '', 0, 1);
+}
 
 ?>
 
@@ -40,7 +45,8 @@ $langs->load("modulebuilder");
 
 $title = '<span class="opacitymedium">'.$langs->trans("DefineHereComplementaryAttributes", empty($textobject) ? '': $textobject).'</span><br>'."\n";
 //if ($action != 'create' && $action != 'edit') {
-$newcardbutton = dolGetButtonTitle($langs->trans('NewAttribute'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=create', '', (($action != 'create' && $action != 'edit') ? 1 : 1));
+$newcardbutton = '';
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewAttribute'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=create', '', (($action != 'create' && $action != 'edit') ? 1 : 1));
 /*} else {
 	$newcardbutton = '';
 }*/
@@ -59,6 +65,9 @@ print '<div class="div-table-responsive">';
 print '<table summary="listofattributes" class="noborder centpercent small">';
 
 print '<tr class="liste_titre">';
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td width="80">&nbsp;</td>';
+}
 print '<td class="left">'.$langs->trans("Position");
 print '<span class="nowrap">';
 print img_picto('A-Z', '1downarrow.png');
@@ -82,7 +91,10 @@ print '<td class="center">'.$form->textwithpicto($langs->trans("CssOnList"), $la
 if (isModEnabled('multicompany')) {
 	print '<td class="center">'.$langs->trans("Entity").'</td>';
 }
-print '<td width="80">&nbsp;</td>';
+// Action column
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td width="80">&nbsp;</td>';
+}
 print "</tr>\n";
 
 if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafields->attributes[$elementtype]['type']) && count($extrafields->attributes[$elementtype]['type'])) {
@@ -98,6 +110,16 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 		}
 
 		print '<tr class="oddeven">';
+		// Actions
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td class="center nowraponall">';
+			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&attrname='.urlencode($key).'#formeditextrafield">'.img_edit().'</a>';
+			print '&nbsp; <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&attrname='.urlencode($key).'">'.img_delete().'</a>';
+			if ($extrafields->attributes[$elementtype]['type'][$key] == 'password' && !empty($extrafields->attributes[$elementtype]['param'][$key]['options']) && array_key_exists('dolcrypt', $extrafields->attributes[$elementtype]['param'][$key]['options'])) {
+				print '&nbsp; <a class="aaa" href="'.$_SERVER["PHP_SELF"].'?action=encrypt&token='.newToken().'&attrname='.urlencode($key).'" title="'.dol_escape_htmltag($langs->trans("ReEncryptDesc")).'">'.img_picto('', 'refresh').'</a>';
+			}
+			print '</td>'."\n";
+		}
 		// Position
 		print "<td>".dol_escape_htmltag($extrafields->attributes[$elementtype]['pos'][$key])."</td>\n";
 		// Label
@@ -109,6 +131,7 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 		// Type
 		$typetoshow = $type2label[$extrafields->attributes[$elementtype]['type'][$key]];
 		print '<td title="'.dol_escape_htmltag($typetoshow).'" class="tdoverflowmax100">';
+		print getPictoForType($extrafields->attributes[$elementtype]['type'][$key]);
 		print dol_escape_htmltag($typetoshow);
 		print "</td>\n";
 		// Size
@@ -155,10 +178,15 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 			print '</td>';
 		}
 		// Actions
-		print '<td class="right nowraponall">';
-		print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&attrname='.urlencode($key).'#formeditextrafield">'.img_edit().'</a>';
-		print '&nbsp; <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&attrname='.urlencode($key).'">'.img_delete().'</a>';
-		print '</td>'."\n";
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td class="right nowraponall">';
+			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&attrname='.urlencode($key).'#formeditextrafield">'.img_edit().'</a>';
+			print '&nbsp; <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&attrname='.urlencode($key).'">'.img_delete().'</a>';
+			if ($extrafields->attributes[$elementtype]['type'][$key] == 'password' && !empty($extrafields->attributes[$elementtype]['param'][$key]['options']) && array_key_exists('dolcrypt', $extrafields->attributes[$elementtype]['param'][$key]['options'])) {
+				print '&nbsp; <a class="aaa" href="'.$_SERVER["PHP_SELF"].'?action=encrypt&token='.newToken().'&attrname='.urlencode($key).'" title="'.dol_escape_htmltag($langs->trans("ReEncryptDesc")).'">'.img_picto('', 'refresh').'</a>';
+			}
+			print '</td>'."\n";
+		}
 		print "</tr>";
 	}
 } else {

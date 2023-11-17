@@ -82,7 +82,7 @@ $tmp=dol_getdate(dol_now());
 $tables=array(
 	'propal'=>array(0=>'datep', 1=>'fin_validite', 2=>'date_valid', 3=>'date_cloture'),
 	'commande'=>array(0=>'date_commande', 1=>'date_valid', 2=>'date_cloture'),
-	'facture'=>array(0=>'datec', 0=>'datef', 1=>'date_valid', 2=>'date_lim_reglement'),
+	'facture'=>array(0=>'datec', 1=>'datef', 2=>'date_valid', 3=>'date_lim_reglement'),
 	'paiement'=>array(0=>'datep'),
 	'bank'=>array(0=>'datev', 1=>'dateo'),
 	'commande_fournisseur'=>array(0=>'date_commande', 1=>'date_valid', 3=>'date_creation', 4=>'date_approve', 5=>'date_approve2', 6=>'date_livraison'),
