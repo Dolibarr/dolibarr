@@ -184,6 +184,18 @@ class Fichinter extends CommonObject
 	 */
 	const STATUS_CLOSED = 3;
 
+	/**
+	 * Date delivery
+	 * @var string
+	 */
+	public int $date_delivery;
+
+	/**
+	 * Author Id
+	 * @var int
+	 */
+	private int $user_author_id;
+
 
 	/**
 	 *	Constructor
