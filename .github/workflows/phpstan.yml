@@ -21,7 +21,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
          fetch-depth: '0'
       - name: Setup PHP
@@ -39,12 +39,9 @@ jobs:
         uses: actions/cache/restore@v3
         with:
           path: .phpstan
-          key: "result-cache-v1-7.4-${{ github.event.pull_request.number || github.ref }}"
+          key: "result-cache-v1-7.4-${{ github.run_id }}"
           restore-keys: |
             result-cache-v1-7.4-
-      - name: Use or generate the cache
-        if: steps.cache-action.outputs.cache-hit != 'true'
-        run: mkdir .phpstan
       - name: Run PHPSTAN
         run: phpstan analyse --error-format=checkstyle htdocs/ | cs2pr --graceful-warnings
       - name: "Save result cache"
@@ -52,4 +49,4 @@ jobs:
         if: always()
         with:
           path: .phpstan
-          key: "result-cache-v1-7.4-${{ github.event.pull_request.number || github.ref }}"
+          key: "result-cache-v1-7.4-${{ github.run_id }}"
