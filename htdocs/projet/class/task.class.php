@@ -911,6 +911,11 @@ class Task extends CommonObjectLine
 					$sql .= ($extrafields->attributes['projet']['type'][$key] != 'separate' ? ",efp.".$key." as options_".$key : '');
 				}
 			}
+			if (!empty($extrafields->attributes['projet_task']['label'])) {
+				foreach ($extrafields->attributes['projet_task']['label'] as $key => $val) {
+					$sql .= ($extrafields->attributes['projet_task']['type'][$key] != 'separate' ? ",efpt.".$key." as options_".$key : '');
+				}
+			}
 		}
 		if ($includebilltime) {
 			$sql .= ", SUM(tt.element_duration * ".$this->db->ifsql("invoice_id IS NULL", "1", "0").") as tobill, SUM(tt.element_duration * ".$this->db->ifsql("invoice_id IS NULL", "0", "1").") as billed";
@@ -928,6 +933,9 @@ class Task extends CommonObjectLine
 				$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as ctc";
 			}
 			$sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
+			if ($loadextras) {
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_extrafields as efpt ON (t.rowid = efpt.fk_object)";
+			}
 			if ($includebilltime) {
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_time as tt ON (tt.fk_element = t.rowid AND tt.elementtype='task')";
 			}
@@ -1016,6 +1024,11 @@ class Task extends CommonObjectLine
 						$sql .= ($extrafields->attributes['projet']['type'][$key] != 'separate' ? ",efp.".$key : '');
 					}
 				}
+				if (!empty($extrafields->attributes['projet_task']['label'])) {
+					foreach ($extrafields->attributes['projet_task']['label'] as $key => $val) {
+						$sql .= ($extrafields->attributes['projet_task']['type'][$key] != 'separate' ? ",efpt.".$key : '');
+					}
+				}
 			}
 		}
 
@@ -1102,20 +1115,11 @@ class Task extends CommonObjectLine
 						}
 					}
 
-					/* Removed, already included into the $tasks[$i]->fetch_optionals(); just after
-					if (!empty($extrafields->attributes['projet_task']['label'])) {
-						foreach ($extrafields->attributes['projet_task']['label'] as $key => $val) {
-							if ($extrafields->attributes['projet_task']['type'][$key] != 'separate') {
-								$tmpvar = 'options_'.$key;
-								$tasks[$i]->array_options['options_'.$key] = $obj->$tmpvar;
-							}
-						}
-					}
-					*/
-
 					if ($loadextras) {
 						$tasks[$i]->fetch_optionals();
 					}
+
+					$tasks[$i]->obj = $obj; // Needed for tpl/extrafields_list_print
 				}
 
 				$i++;
