@@ -162,6 +162,8 @@ class Productlot extends CommonObject
 	 */
 	public $import_key;
 
+	public $stats_supplier_order=array();
+
 
 	/**
 	 * Constructor

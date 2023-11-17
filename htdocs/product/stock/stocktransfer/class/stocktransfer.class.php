@@ -473,8 +473,12 @@ class StockTransfer extends CommonObject
 	{
 		$this->tms = ''; // Will be done automatically because tms field is on update cascade
 		$res = $this->updateCommon($user, $notrigger);
-		if ($this->socid > 0 || $this->fk_soc > 0 && empty($this->thirdparty)) $this->fetch_thirdparty();
-		if (empty($this->socid) && empty($this->fk_soc)) unset($this->thirdparty);
+		if (($this->socid > 0 || $this->fk_soc > 0) && empty($this->thirdparty)) {
+			$this->fetch_thirdparty();
+		}
+		if (empty($this->socid) && empty($this->fk_soc)) {
+			unset($this->thirdparty);
+		}
 		return $res;
 	}
 
