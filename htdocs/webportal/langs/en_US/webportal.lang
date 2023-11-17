@@ -31,6 +31,7 @@ Settings = Settings
 WebPortalSetupPage = WebPortal setup page
 WEBPORTAL_ROOT_URL = Public access url
 WebPortalRootUrlHelp = Public access url (http or https) if you have a virtual host or keep empty
+WEBPORTAL_TITLE = Brand name on header of public page
 UserAccountForWebPortalAreInThirdPartyTabHelp = Users accounts for WebPortal can be set on each third party card in Website accounts tab
 WebPortalAccessHidden = Hidden
 WebPortalAccessVisible = Visible
