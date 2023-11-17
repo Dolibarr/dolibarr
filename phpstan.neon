@@ -1,11 +1,13 @@
 parameters:
+	bootstrapFiles:
+		- build/phpstan/bootstrap.php
 	customRulesetUsed: true
 	level: 1
 	fileExtensions:
 		- php
 	paths:
-	    - htdocs
-	    - scripts
+		- htdocs
+		- scripts
 	excludePaths:
 		analyseAndScan:
 		- htdocs/custom

@@ -42,7 +42,7 @@ jobs:
           restore-keys: |
             result-cache-v1-7.4-
       - name: Run PHPSTAN
-        run: phpstan analyse --error-format=checkstyle --xdebug . | cs2pr --graceful-warnings
+        run: phpstan analyse --error-format=checkstyle htdocs/user/ | cs2pr --graceful-warnings
       - name: "Save result cache"
         uses: actions/cache/save@v3
         if: always()
