@@ -1213,7 +1213,6 @@ class CMailFile
 		}
 
 		error_reporting($errorlevel); // Reactive niveau erreur origine
-
 		return $res;
 	}
 
