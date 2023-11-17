@@ -592,7 +592,7 @@ if ($action == 'confirm_reverse') {
 	$idList = implode(',', array_map('intval', $toselect));
 	$sql = "SELECT rowid, label, inventorycode, datem";
 	$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement";
-	$sql .= " WHERE rowid IN (".($idList).")";
+	$sql .= " WHERE rowid IN (".((int) $idList).")";
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
