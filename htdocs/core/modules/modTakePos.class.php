@@ -324,7 +324,7 @@ class modTakePos extends DolibarrModules
 		}
 
 		//Create cash account if not exists
-		if (empty(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CASH'.$_SESSION["takeposterminal"]))) {
+		if (!getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CASH1')) {
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 			$cashaccount = new Account($db);
 			$cashaccount->ref = "cash_pos";
@@ -335,7 +335,7 @@ class modTakePos extends DolibarrModules
 			$result = $cashaccount->create($user);
 			if ($result > 0) {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-				dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CASH".$_SESSION["takeposterminal"], $result, 'chaine', 0, '', $conf->entity);
+				dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CASH1", $result, 'chaine', 0, '', $conf->entity);
 			} else {
 				setEventMessages($societe->error, $category->errors, 'errors');
 			}
