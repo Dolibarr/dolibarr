@@ -589,10 +589,17 @@ if ($action == "transfert_stock" && !$cancel) {
 // reverse mouvement of stock
 if ($action == 'confirm_reverse') {
 	$listMouvement = array();
-	$idList = implode(',', array_map('intval', $toselect));
+	$toselect = array_map('intval', $toselect);
+
 	$sql = "SELECT rowid, label, inventorycode, datem";
 	$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement";
-	$sql .= " WHERE rowid IN (".((int) $idList).")";
+	$sql .= " WHERE rowid IN (";
+	foreach ($toselect as $id) {
+		$sql .= ((int) $id).",";
+	}
+	$sql = rtrim($sql, ',');
+	$sql .= ")";
+
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
