@@ -259,4 +259,4 @@ lockInstallation
 #   set -- apache2-foreground "$@"
 # fi
 
-# exec "$@"
+exec "$@"
