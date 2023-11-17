@@ -115,7 +115,7 @@ BoxLastCustomerShipments=Last customer shipments
 BoxTitleLastCustomerShipments=Latest %s customer shipments
 BoxTitleLastLeaveRequests=Latest %s modified leave requests
 NoRecordedShipments=No recorded customer shipment
-BoxCustomersOutstandingBillReached=Customers with oustanding limit reached
+BoxCustomersOutstandingBillReached=Customers with outstanding limit reached
 # Pages
 UsersHome=Home users and groups
 MembersHome=Home Membership
