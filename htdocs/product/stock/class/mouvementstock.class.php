@@ -1039,8 +1039,8 @@ class MouvementStock extends CommonObject
 	{
 		$this->origin_type = $origin_element;
 		$this->origin_id = $origin_id;
-		$this->line_id_oject_src = $line_id_object_src;
-		$this->line_id_oject_origin = $line_id_object_origin;
+		$this->line_id_object_src = $line_id_object_src;
+		$this->line_id_object_origin = $line_id_object_origin;
 		// For backward compatibility
 		$this->origintype = $origin_element;
 		$this->fk_origin = $origin_id;

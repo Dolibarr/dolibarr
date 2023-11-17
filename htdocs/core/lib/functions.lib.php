@@ -223,7 +223,9 @@ function isModEnabled($module)
 		'bank' => 'banque',
 		'category' => 'categorie',
 		'contract' => 'contrat',
-		'project' => 'projet'
+		'project' => 'projet',
+		'bank' => 'banque',
+		'category' => 'categorie'
 	);
 	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
 		$arrayconv['supplier_order'] = 'fournisseur';
