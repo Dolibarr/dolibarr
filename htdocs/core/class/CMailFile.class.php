@@ -1156,7 +1156,6 @@ class CMailFile
 					if (!empty($failedRecipients)) {
 						$this->errors[] = 'Transport failed for the following addresses: "' . join('", "', $failedRecipients) . '".';
 					}
-					$this->error .= join(' ', $this->errors);
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					$res = false;
 
