@@ -149,7 +149,7 @@ class PaymentSalary extends CommonObject
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 
 		//deprecatd
-		if(!empty($this->datepaye) && empty($this->datep)) {
+		if (!empty($this->datepaye) && empty($this->datep)) {
 			dol_syslog(__METHOD__.": using datepaye is deprecated, please use datep instead", LOG_WARNING);
 			$this->datep = $this->datepaye;
 		}
