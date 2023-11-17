@@ -44,6 +44,7 @@ htdocs/includes/webmozart/
 htdocs/.well-known/apple-developer-merchantid-domain-association
 /factory/
 /output/
+/vendor/
 
 # Node Modules
 build/yarn-error.log
