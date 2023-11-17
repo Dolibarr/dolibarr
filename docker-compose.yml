@@ -6,7 +6,7 @@ services:
           context: .
           dockerfile: Dockerfile
       volumes:
-          - ./:/var/www/html
+          - ./:/var/www/
       ports:
           - "80:80"
       networks:
