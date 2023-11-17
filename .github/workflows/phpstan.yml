@@ -35,12 +35,12 @@ jobs:
           node-version: 14.x
           registry-url: 'https://registry.npmjs.org'
       - name: "Restore result cache"
-          uses: actions/cache/restore@v3
-          with:
-            path: ./tmp
-            key: "result-cache-v1-${{ matrix.php-version }}-${{ github.run_id }}"
-            restore-keys: |
-              result-cache-v1-${{ matrix.php-version }}-
+        uses: actions/cache/restore@v3
+        with:
+          path: ./tmp
+          key: "result-cache-v1-${{ matrix.php-version }}-${{ github.run_id }}"
+          restore-keys: |
+            result-cache-v1-${{ matrix.php-version }}-
       - name: Run PHPSTAN
         run: phpstan analyse --error-format=checkstyle --xdebug . | cs2pr --graceful-warnings
       - name: "Save result cache"
