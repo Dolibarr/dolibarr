@@ -407,15 +407,21 @@ if ($action == 'afteradd') {
 		$todayarray = dol_getdate($now, 'fast');
 		$todaytms = dol_mktime(0, 0, 0, $todayarray['mon'], $todayarray['mday'], $todayarray['year']);
 
-		// TODO Load into an array all days with availabilities of the calendar for the current month $todayarray['mon'] and $todayarray['year']
+		// Load into an array all days with availabilities of the calendar for the current month $todayarray['mon'] and $todayarray['year']
 		$arrayofavailabledays = array();
 
-		$arrayofavailabledays[dol_mktime(0, 0, 0, 4, 9, 2024)] = dol_mktime(0, 0, 0, 4, 9, 2023);
-		$arrayofavailabledays[dol_mktime(0, 0, 0, 11, 9, 2024)] = dol_mktime(0, 0, 0, 11, 9, 2023);
+		$arrayofavailabilities = $availability->fetchAll('', '', 0, 0, array('status' => '1', 'fk_bookcal_calendar' => $id));
 
-		// TODO Now complete the array with units already reserved and set transparency to 0
-		// select in actioncomm all events for user linked to an availability range into the calendar $id
+		foreach ($arrayofavailabilities as $key => $value) {
+			$startarray = dol_getdate($value->start);
+			$endarray = dol_getdate($value->end);
 
+			for ($i = $startarray['mday']; $i < $endarray['mday']; $i++) {
+				if ($todayarray['mon'] >= $startarray['mon'] && $todayarray['mon'] <= $endarray['mon']) {
+					$arrayofavailabledays[dol_mktime(0, 0, 0, $todayarray['mon'], $i, $todayarray['year'])] = dol_mktime(0, 0, 0, $todayarray['mon'], $i, $todayarray['year']);
+				}
+			}
+		}
 
 		for ($iter_week = 0; $iter_week < 6; $iter_week++) {
 			echo " <tr>\n";

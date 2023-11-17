@@ -86,10 +86,24 @@ if ($action == 'verifyavailability') {
 
 	// First get all ranges for the calendar
 	if (!$error) {
-		// TODO Select in database all availabilities
+		// Select in database all availabilities
+		$availabilitytab = array();
+		$sql = "SELECT ba.rowid as id, ba.duration, ba.startHour, ba.endHour";
+		$sql .= " FROM ".MAIN_DB_PREFIX."bookcal_availabilities as ba";
+		$sql .= " WHERE ba.fk_bookcal_calendar = ".((int) $id);
+		$sql .= " AND ba.status = 1";
+		$resql = $db->query($sql);
+		if ($resql) {
+			$num = $db->num_rows($resql);
+			$i = 0;
+			while ($i < $num) {
+				$obj = $db->fetch_object($resql);
+				$availabilitytab[$obj->id] = array("id" => $obj->id, "duration" => $obj->duration);
+				$i++;
+			}
+		}
 
 		// TODO Select also all not available ranges
-
 		// Build the list of hours available (key = hour, value = duration)
 		$hour = '08'; $min = '00';
 		$response["availability"][$hour.":".$min] = 30;
