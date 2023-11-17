@@ -1233,6 +1233,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 			jQuery("#multicurrency_price_ttc").val('').hide();
 			jQuery("#title_up_ttc, #title_up_ttc_currency").hide();
 		<?php } ?>
+		jQuery("#fourn_ref").hide();
 		/* jQuery("#tva_tx, #title_vat").hide(); */
 		/* jQuery("#title_fourn_ref").hide(); */
 		jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate, #units, #title_units").hide();
