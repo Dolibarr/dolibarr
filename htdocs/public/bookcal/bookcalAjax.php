@@ -123,6 +123,7 @@ if ($action == 'verifyavailability') {
 				}
 				$i++;
 			}
+			$response["code"] = "SUCCESS";
 		}
 
 		// TODO Select also all not available ranges
