@@ -749,7 +749,6 @@ class FormCardWebPortal
 		$ref = $this->ref;
 		$titleKey = $this->titleKey;
 		$title = $langs->trans($titleKey);
-		$url_file = $context->getControllerUrl($context->controller);
 
 		// Part to edit record
 		if (($id || $ref) && $action == 'edit') {
@@ -759,6 +758,7 @@ class FormCardWebPortal
 			$html .= '<h2>' . $title . '</h2>';
 			$html .= '</header>';
 
+			$url_file = $context->getControllerUrl($context->controller, '', false);
 			$html .= '<form method="POST" action="' . $url_file . '">';
 			$html .= $context->getFormToken();
 			$html .= '<input type="hidden" name="action" value="update">';
@@ -832,6 +832,7 @@ class FormCardWebPortal
 
 				if (empty($reshook)) {
 					if ($permissiontoadd) {
+						$url_file = $context->getControllerUrl($context->controller, '', false);
 						$html .= '<a href="' . $url_file . '&id=' . $object->id . '&action=edit" role="button">' . $langs->trans('Modify') . '</a>';
 					}
 				}

@@ -1,11 +1,35 @@
 <?php
 if (!defined('WEBPORTAL')) { define('WEBPORTAL', 1); }
-if (!defined('NOSESSION')) { define('NOSESSION', 1); }
 if (!defined('NOLOGIN')) { define('NOLOGIN', 1); }
 if (!defined('NOREQUIREUSER')) { define('NOREQUIREUSER', 1); }
 if (!defined('NOREQUIREMENU')) { define('NOREQUIREMENU', 1); }
 if (!defined('NOREQUIRESOC')) { define('NOREQUIRESOC', 1); }
 if (!defined('EVEN_IF_ONLY_LOGIN_ALLOWED')) { define('EVEN_IF_ONLY_LOGIN_ALLOWED', 1); }
+if (!defined('NOIPCHECK')) { define('NOIPCHECK', 1); }
+
+
+if (!function_exists('dol_getprefix')) {
+	/**
+	 * @return string|void
+	 */
+	function dol_getprefix()
+	{
+		global $dolibarr_main_instance_unique_id,
+			   $dolibarr_main_cookie_cryptkey; // This is loaded by filefunc.inc.php
+
+		$tmp_instance_unique_id = empty($dolibarr_main_instance_unique_id) ?
+			(empty($dolibarr_main_cookie_cryptkey) ? '' :
+				$dolibarr_main_cookie_cryptkey) : $dolibarr_main_instance_unique_id;
+		// Unique id of instance
+
+		// The recommended value (may be not defined for old versions)
+		if (!empty($tmp_instance_unique_id)) {
+			return sha1('webportal' . $tmp_instance_unique_id);
+		} else {
+			return sha1('webportal' . $_SERVER['SERVER_NAME'].$_SERVER['DOCUMENT_ROOT'].DOL_DOCUMENT_ROOT);
+		}
+	}
+}
 
 
 // Change this following line to use the correct relative path (../, ../../, etc)
@@ -33,13 +57,8 @@ if (!empty($_COOKIE[$sessiontimeout])) {
 	ini_set('session.gc_maxlifetime', $_COOKIE[$sessiontimeout]);
 }
 
-// This create lock, released by session_write_close() or end of page.
-// We need this lock as long as we read/write $_SESSION ['vars']. We can remove lock when finished.
-session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie (same as setting session.cookie_httponly into php.ini). Must be called before the session_start.
-session_name($sessionname);
-session_start();
-
 $context = Context::getInstance();
+
 
 $hookmanager->initHooks(array('main'));
 
