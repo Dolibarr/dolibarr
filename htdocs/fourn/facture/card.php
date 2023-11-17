@@ -226,10 +226,16 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
+			$db->begin();
+
 			$result = $object->validate($user, '', $idwarehouse);
 			if ($result < 0) {
+				$db->rollback();
+
 				setEventMessages($object->error, $object->errors, 'errors');
 			} else {
+				$db->commit();
+
 				// Define output language
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 					$outputlangs = $langs;
@@ -696,8 +702,11 @@ if (empty($reshook)) {
 			$paiementfourn = new PaiementFourn($db);
 			$result = $paiementfourn->fetch(GETPOST('paiement_id'));
 			if ($result > 0) {
-				$result = $paiementfourn->delete(); // If fetch ok and found
-				header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+				$result = $paiementfourn->delete();
+				if ($result > 0) {
+					header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+					exit;
+				}
 			}
 			if ($result < 0) {
 				setEventMessages($paiementfourn->error, $paiementfourn->errors, 'errors');
@@ -2596,6 +2605,7 @@ if ($action == 'create') {
 
 	// Vat reverse-charge by default
 	if (!empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 		print '<tr><td>' . $langs->trans('VATReverseCharge') . '</td><td>';
 		// Try to propose to use VAT reverse charge even if the VAT reverse charge is not activated in the supplier card, if this corresponds to the context of use, the activation is proposed
 		if ($vat_reverse_charge == 1 || $societe->vat_reverse_charge == 1 || ($societe->country_code != 'FR' && isInEEC($societe) && !empty($societe->tva_intra))) {
@@ -3541,7 +3551,10 @@ if ($action == 'create') {
 					}
 					print '<td class="right">'.price($sign * $objp->amount).'</td>';
 					print '<td class="center">';
-					if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0 && $user->socid == 0) {
+
+					$paiementfourn = new PaiementFourn($db);
+					$paiementfourn->fetch($objp->rowid);
+					if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0 && $user->socid == 0 && !$paiementfourn->isReconciled()) {
 						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deletepayment&token='.newToken().'&paiement_id='.$objp->rowid.'">';
 						print img_delete();
 						print '</a>';

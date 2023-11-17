@@ -790,6 +790,12 @@ class Expedition extends CommonObject
 				if (!$resql) {
 					$error++; $this->error = $this->db->lasterror();
 				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'expedition/sending/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'expedition/sending/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++; $this->error = $this->db->lasterror();
+				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
@@ -1587,6 +1593,10 @@ class Expedition extends CommonObject
 			$this->total_localtax1 = 0;
 			$this->total_localtax2 = 0;
 
+			$this->multicurrency_total_ht = 0;
+			$this->multicurrency_total_tva = 0;
+			$this->multicurrency_total_ttc = 0;
+
 			$shipmentlinebatch = new ExpeditionLineBatch($this->db);
 
 			while ($i < $num) {
@@ -1676,10 +1686,14 @@ class Expedition extends CommonObject
 				// Multicurrency
 				$this->fk_multicurrency = $obj->fk_multicurrency;
 				$this->multicurrency_code = $obj->multicurrency_code;
-				$this->multicurrency_subprice 	= $obj->multicurrency_subprice;
-				$this->multicurrency_total_ht 	= $obj->multicurrency_total_ht;
-				$this->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
-				$this->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
+				$line->multicurrency_subprice 	= $obj->multicurrency_subprice;
+				$line->multicurrency_total_ht 	= $obj->multicurrency_total_ht;
+				$line->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
+				$line->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
+
+				$this->multicurrency_total_ht 	+= $obj->multicurrency_total_ht;
+				$this->multicurrency_total_tva 	+= $obj->multicurrency_total_tva;
+				$this->multicurrency_total_ttc 	+= $obj->multicurrency_total_ttc;
 
 				if ($originline != $obj->fk_origin_line) {
 					$line->detail_batch = array();

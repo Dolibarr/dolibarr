@@ -153,7 +153,7 @@ class MouvementStock extends CommonObject
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *	Add a movement of stock (in one direction only).
-	 *  This is the lowest level method to record a stock change.
+	 *  This is the lowest level method to record a stock change. There is no control if warehouse is open or not.
 	 *  $this->origin_type and $this->origin_id can be also be set to save the source object of movement.
 	 *
 	 *	@param		User			$user				User object

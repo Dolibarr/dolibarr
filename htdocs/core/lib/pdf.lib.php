@@ -645,7 +645,12 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 
 			// Intra VAT
 			if (empty($conf->global->MAIN_TVAINTRA_NOT_IN_ADDRESS)) {
-				if ($targetcompany->tva_intra) {
+				if ($usecontact && is_object($targetcontact) && getDolGlobalInt('MAIN_USE_COMPANY_NAME_OF_CONTACT')) {
+					$targetcontact->fetch_thirdparty();
+					if (!empty($targetcontact->thirdparty->id) && $targetcontact->thirdparty->tva_intra) {
+						$stringaddress .= ($stringaddress ? "\n" : '') . $outputlangs->transnoentities("VATIntraShort") . ': ' . $outputlangs->convToOutputCharset($targetcontact->thirdparty->tva_intra);
+					}
+				} elseif ($targetcompany->tva_intra) {
 					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($targetcompany->tva_intra);
 				}
 			}

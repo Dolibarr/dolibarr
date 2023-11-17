@@ -1017,13 +1017,15 @@ class Societe extends CommonObject
 					$this->add_commercial($user, $user->id);
 				}
 
-				if ($ret >= 0 && !$notrigger) {
-					// Call trigger
-					$result = $this->call_trigger('COMPANY_CREATE', $user);
-					if ($result < 0) {
-						$error++;
+				if ($ret >= 0) {
+					if (! $notrigger) {
+						// Call trigger
+						$result = $this->call_trigger('COMPANY_CREATE', $user);
+						if ($result < 0) {
+							$error++;
+						}
+						// End call triggers
 					}
-					// End call triggers
 				} else {
 					$error++;
 				}

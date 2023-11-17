@@ -352,6 +352,7 @@ PackagingForThisProductDesc=Vous achèterez automatiquement un multiple de cette
 QtyRecalculatedWithPackaging=La quantité de la ligne a été recalculée en fonction de l'emballage du fournisseur
 
 #Attributes
+Attributes=Attributs
 VariantAttributes=Attributs de variante
 ProductAttributes=Attributs de variantes pour les produits
 ProductAttributeName=Attribut de variante %s
