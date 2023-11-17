@@ -732,17 +732,17 @@ class Expedition extends CommonObject
 
 		// Define new ref
 		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
-			$numref = $this->getNextNumRef($soc);
+			$num = $this->getNextNumRef($soc);
 		} else {
-			$numref = "EXP".$this->id;
+			$num = $this->ref;
 		}
-		$this->newref = dol_sanitizeFileName($numref);
+		$this->newref = dol_sanitizeFileName($num);
 
 		$now = dol_now();
 
 		// Validate
 		$sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET";
-		$sql .= " ref='".$this->db->escape($numref)."'";
+		$sql .= " ref='".$this->db->escape($num)."'";
 		$sql .= ", fk_statut = 1";
 		$sql .= ", date_valid = '".$this->db->idate($now)."'";
 		$sql .= ", fk_user_valid = ".$user->id;
@@ -799,7 +799,7 @@ class Expedition extends CommonObject
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
-				$newref = dol_sanitizeFileName($numref);
+				$newref = dol_sanitizeFileName($num);
 				$dirsource = $conf->expedition->dir_output.'/sending/'.$oldref;
 				$dirdest = $conf->expedition->dir_output.'/sending/'.$newref;
 				if (!$error && file_exists($dirsource)) {
@@ -823,7 +823,7 @@ class Expedition extends CommonObject
 
 		// Set new ref and current status
 		if (!$error) {
-			$this->ref = $numref;
+			$this->ref = $num;
 			$this->statut = self::STATUS_VALIDATED;
 		}
 
