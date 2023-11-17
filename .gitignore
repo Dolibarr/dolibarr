@@ -65,4 +65,4 @@ doc/install.lock
 
 /build/phpstan/phpstan
 /build/phpstan/bootstrap_custom.php
-./phpstan_custom.neon
+phpstan_custom.neon
