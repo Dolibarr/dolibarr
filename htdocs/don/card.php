@@ -877,7 +877,9 @@ if (!empty($id) && $action != 'edit') {
 	// Actions buttons
 
 	print '<div class="tabsAction">';
-
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);
+	if (empty($reshook)) {
 	// Re-open
 	if ($permissiontoadd && $object->statut == $object::STATUS_CANCELED) {
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_reopen&confirm=yes&token='.newToken().'">'.$langs->trans("ReOpen").'</a>';
@@ -916,6 +918,7 @@ if (!empty($id) && $action != 'edit') {
 		}
 	} else {
 		print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans("Delete")."</a></div>";
+	}
 	}
 
 	print "</div>";
