@@ -37,7 +37,7 @@ jobs:
       - name: "Restore result cache"
         uses: actions/cache/restore@v3
         with:
-          path: ./tmp
+          path: ~/.phpstan/cache
           key: "result-cache-v1-7.4-${{ github.event.pull_request.number || github.ref }}"
           restore-keys: |
             result-cache-v1-7.4-
@@ -47,5 +47,5 @@ jobs:
         uses: actions/cache/save@v3
         if: always()
         with:
-          path: ./tmp
+          path: ~/.phpstan/cache
           key: "result-cache-v1-7.4-${{ github.event.pull_request.number || github.ref }}"
