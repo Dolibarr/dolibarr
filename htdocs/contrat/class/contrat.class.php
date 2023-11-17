@@ -94,6 +94,7 @@ class Contrat extends CommonObject
 	 * @var string
 	 */
 	public $ref_customer;
+	public $from;
 
 	/**
 	 * Supplier reference of the contract
@@ -149,6 +150,7 @@ class Contrat extends CommonObject
 	 */
 	public $user_author_id;
 
+
 	/**
 	 * @var User 	Object user that create the contract. Set by the info method.
 	 * @deprecated
@@ -181,7 +183,9 @@ class Contrat extends CommonObject
 	public $date_contrat;
 
 	public $commercial_signature_id;
+	public $fk_commercial_signature;
 	public $commercial_suivi_id;
+	public $fk_commercial_suivi;
 
 	/**
 	 * @deprecated Use fk_project instead
