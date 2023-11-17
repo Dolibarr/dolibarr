@@ -81,7 +81,13 @@ class Reception extends CommonObject
 	public $tracking_number;
 	public $tracking_url;
 	public $billed;
-	public $model_pdf;
+
+	public $user_author_id;
+	public $livraison_id;
+	public $commande_id;
+	public $commande;
+
+
 
 	public $weight;
 	public $trueWeight;

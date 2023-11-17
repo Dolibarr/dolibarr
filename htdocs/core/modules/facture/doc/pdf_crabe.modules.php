@@ -954,9 +954,9 @@ class pdf_crabe extends ModelePDFFactures
 					$y = 0;
 					$current_page++;
 					$pdf->AddPage('', '', true);
-					if (!empty($tplidx)) {
+					/*if (!empty($tplidx)) {
 						$pdf->useTemplate($tplidx);
-					}
+					}*/
 					if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 						$top_shift = $this->_pagehead($pdf, $object, 0, $outputlangs);
 						$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
@@ -1018,9 +1018,9 @@ class pdf_crabe extends ModelePDFFactures
 					$y = 0;
 					$current_page++;
 					$pdf->AddPage('', '', true);
-					if (!empty($tplidx)) {
+					/*if (!empty($tplidx)) {
 						$pdf->useTemplate($tplidx);
-					}
+					}*/
 					if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 						$top_shift = $this->_pagehead($pdf, $object, 0, $outputlangs);
 						$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
