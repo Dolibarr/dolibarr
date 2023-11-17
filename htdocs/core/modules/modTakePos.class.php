@@ -267,7 +267,7 @@ class modTakePos extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf, $db, $langs, $user;
+		global $conf, $db, $langs, $user, $mysoc;
 		$langs->load("cashdesk");
 
 		dolibarr_set_const($db, "TAKEPOS_PRINT_METHOD", "browser", 'chaine', 0, '', $conf->entity);
