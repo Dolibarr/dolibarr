@@ -327,7 +327,7 @@ class modTakePos extends DolibarrModules
 		if (!getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CASH1')) {
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 			$cashaccount = new Account($db);
-			$cashaccount->ref = "cash_pos";
+			$cashaccount->ref = "CASH-POS";
 			$cashaccount->label = $langs->trans("DefaultCashPOSLabel");
 			$cashaccount->courant = 2;
 			$cashaccount->country_id = $mysoc->country_id ? $mysoc->country_id : 1;
