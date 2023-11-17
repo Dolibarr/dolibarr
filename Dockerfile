@@ -27,6 +27,6 @@ RUN apt-get update -y \
     && mv ${PHP_INI_DIR}/php.ini-production ${PHP_INI_DIR}/php.ini \
     && rm -rf /var/lib/apt/lists/*
 
-    COPY . .
-    COPY docker-run.sh /usr/local/bin/
-    CMD ["docker-run.sh"]
+COPY . .
+COPY docker-run.sh /usr/local/bin/
+ENTRYPOINT ["docker-run.sh"]
