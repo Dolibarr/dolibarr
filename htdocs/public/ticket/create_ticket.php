@@ -154,7 +154,6 @@ if (empty($reshook)) {
 			array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Email")));
 			$action = '';
 		} else {
-
 			// Search company saved with email
 			$searched_companies = $object->searchSocidByEmail($origin_email, '0');
 
@@ -164,13 +163,13 @@ if (empty($reshook)) {
 
 			// Ensure that contact is active and select first active contact
 			$cid = -1;
-
 			foreach ($contacts as $key => $contact) {
 				if ((int) $contact->statut == 1) {
 					$cid = $key;
 					break;
 				}
 			}
+
 			// Option to require email exists to create ticket
 			if (getDolGlobalInt('TICKET_EMAIL_MUST_EXISTS') && ($cid < 0 || empty($contacts[$cid]->socid))) {
 				$error++;
@@ -178,7 +177,6 @@ if (empty($reshook)) {
 				$action = '';
 			}
 		}
-
 
 		$contact_lastname = '';
 		$contact_firstname = '';
@@ -367,7 +365,6 @@ if (empty($reshook)) {
 					$object->db->rollback();
 					setEventMessages($object->error, $object->errors, 'errors');
 					$action = 'create_ticket';
-
 				}
 
 				if (!$error) {
@@ -492,8 +489,6 @@ if (empty($reshook)) {
 if (!empty($object->errors) || !empty($object->error)) {
 	setEventMessages($object->error, $object->errors, 'errors');
 }
-
-
 
 
 /*
