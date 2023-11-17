@@ -28,3 +28,5 @@ RUN apt-get update -y \
     && rm -rf /var/lib/apt/lists/*
 
     COPY . .
+    COPY docker-run.sh /usr/local/bin/
+    ENTRYPOINT ["docker-run.sh"]
