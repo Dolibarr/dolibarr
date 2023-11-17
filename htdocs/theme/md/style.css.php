@@ -2775,7 +2775,7 @@ div#tmenu_tooltip {
 <?php } ?>
 }
 
-li.tmenusel::after, li.tmenu:hover::after {
+li.tmenusel::after, li.tmenusel:hover::after {
 	content: "";
 	position: absolute;
 	bottom: 0px;
