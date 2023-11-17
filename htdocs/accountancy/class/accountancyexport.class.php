@@ -340,6 +340,10 @@ class AccountancyExport
 		$completefilename = '';
 		$exportFile = null;
 		$exportFileName = '';
+		$exportFileFullName = '';
+		$downloadFileFullName = '';
+		$downloadFileMimeType = '';
+		$downloadFilePath = '';
 		$exportFilePath = '';
 		$archiveFullName = '';
 		$archivePath = '';
