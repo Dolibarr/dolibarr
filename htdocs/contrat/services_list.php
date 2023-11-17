@@ -232,11 +232,14 @@ $title = $langs->trans("ListOfServices");
 if ($search_status == "0") {
 	$title = $langs->trans("ListOfInactiveServices"); // Must use == "0"
 }
-if ($search_status == "4" && $filter != "expired") {
+if ($search_status == "4") {
 	$title = $langs->trans("ListOfRunningServices");
 }
+if ($search_status == "4" && $filter == "notexpired") {
+	$title = $langs->trans("ListOfNotExpiredRunningServices");
+}
 if ($search_status == "4" && $filter == "expired") {
-	$title = $langs->trans("ListOfExpiredServices");
+	$title = $langs->trans("ListOfExpiredRunningServices");
 }
 if ($search_status == "5") {
 	$title = $langs->trans("ListOfClosedServices");
