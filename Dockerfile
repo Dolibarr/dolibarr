@@ -30,4 +30,3 @@ RUN apt-get update -y \
     COPY . .
     COPY docker-run.sh /usr/local/bin/
     ENTRYPOINT ["docker-run.sh"]
-    CMD ["apache2-foreground"]

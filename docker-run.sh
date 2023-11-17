@@ -243,19 +243,20 @@ DOLI_CRON_KEY=$(get_env_value 'DOLI_CRON_KEY' '')
 DOLI_CRON_USER=$(get_env_value 'DOLI_CRON_USER' '')
 DOLI_INSTANCE_UNIQUE_ID=$(get_env_value 'DOLI_INSTANCE_UNIQUE_ID' '')
 
-run
+# run
+lockInstallation
 
-set -e
+# set -e
 
-if [[ ${DOLI_CRON} -eq 1 ]]; then
-    echo "PATH=\$PATH:/usr/local/bin" > /etc/cron.d/dolibarr
-    echo "*/5 * * * * root /bin/su www-data -s /bin/sh -c '/var/www/scripts/cron/cron_run_jobs.php ${DOLI_CRON_KEY} ${DOLI_CRON_USER}' > /proc/1/fd/1 2> /proc/1/fd/2" >> /etc/cron.d/dolibarr
-    cron -f
-    exit 0
-fi
+# if [[ ${DOLI_CRON} -eq 1 ]]; then
+#     echo "PATH=\$PATH:/usr/local/bin" > /etc/cron.d/dolibarr
+#     echo "*/5 * * * * root /bin/su www-data -s /bin/sh -c '/var/www/scripts/cron/cron_run_jobs.php ${DOLI_CRON_KEY} ${DOLI_CRON_USER}' > /proc/1/fd/1 2> /proc/1/fd/2" >> /etc/cron.d/dolibarr
+#     cron -f
+#     exit 0
+# fi
 
-if [ "${1#-}" != "$1" ]; then
-  set -- apache2-foreground "$@"
-fi
+# if [ "${1#-}" != "$1" ]; then
+#   set -- apache2-foreground "$@"
+# fi
 
-exec "$@"
+# exec "$@"
