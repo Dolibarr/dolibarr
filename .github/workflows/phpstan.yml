@@ -35,7 +35,6 @@ jobs:
           node-version: 14.x
           registry-url: 'https://registry.npmjs.org'
       - name: "Restore result cache"
-        id: cache-action
         uses: actions/cache/restore@v3
         with:
           path: .phpstan
@@ -43,7 +42,7 @@ jobs:
           restore-keys: |
             result-cache-v1-7.4-
       - name: Run PHPSTAN
-        run: phpstan analyse --error-format=checkstyle htdocs/ | cs2pr --graceful-warnings
+        run: phpstan -v analyse --error-format=checkstyle htdocs/ | cs2pr --graceful-warnings
       - name: "Save result cache"
         uses: actions/cache/save@v3
         if: always()
