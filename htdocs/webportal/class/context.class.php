@@ -271,6 +271,7 @@ class Context
 	 */
 	public function getControllerUrl($controller = false, $moreParams = '', $addToken = true)
 	{
+		// TODO : addToken parameter on auto to detect (create or edit) action and add token on url
 		$url = $this->rootUrl;
 
 		if (empty($controller)) {
