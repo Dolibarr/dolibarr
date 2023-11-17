@@ -194,7 +194,7 @@ class Fichinter extends CommonObject
 	 * Author Id
 	 * @var int
 	 */
-	private int $user_author_id;
+	public int $user_author_id;
 
 
 	/**
