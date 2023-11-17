@@ -40,11 +40,7 @@ parameters:
 	reportMagicMethods: false
 	reportMagicProperties: false
 	ignoreErrors:
-		- '#Constant DOL_URL_ROOT not found#'
 		- '#Constant DOL_MAIN_URL_ROOT not found#'
-		- '#Constant DOL_DATAL_ROOT not found#'
-		- '#Constant DOL_DOCUMENT_ROOT not found#'
-		- '#Constant MAIN_DB_PREFIX not found#'
 		- '#Undefined variable: \$langs#'
 		- '#Undefined variable: \$user#'
 		- '#Undefined variable: \$db#'
