@@ -3405,9 +3405,10 @@ abstract class CommonObject
 	 *
 	 *  @param      string		$note		New value for note
 	 *  @param		string		$suffix		'', '_public' or '_private'
+     *  @param      int         $notrigger  1=Does not execute triggers, 0=execute triggers
 	 *  @return     int      		   		<0 if KO, >0 if OK
 	 */
-	public function update_note($note, $suffix = '')
+	public function update_note($note, $suffix = '', $notrigger = 0)
 	{
 		// phpcs:enable
 		global $user;
@@ -3451,6 +3452,32 @@ abstract class CommonObject
 				$this->note = $note; // deprecated
 				$this->note_private = $note;
 			}
+            if(empty($notrigger)) {
+                switch($this->element) {
+                    case 'societe':
+                        $trigger_name = 'COMPANY_MODIFY';
+                        break;
+                    case 'commande':
+                        $trigger_name = 'ORDER_MODIFY';
+                        break;
+                    case 'facture':
+                        $trigger_name = 'BILL_MODIFY';
+                        break;
+                    case 'invoice_supplier':
+                        $trigger_name = 'BILL_SUPPLIER_MODIFY';
+                        break;
+                    case 'facturerec':
+                        $trigger_name = 'BILLREC_MODIFIY';
+                        break;
+                    case 'expensereport':
+                        $trigger_name = 'EXPENSE_REPORT_MODIFY';
+                        break;
+                    default:
+                        $trigger_name = strtoupper($this->element) . '_MODIFY';
+                }
+                $ret = $this->call_trigger($trigger_name, $user);
+                if($ret < 0 ) { return -1; }
+            }
 			return 1;
 		} else {
 			$this->error = $this->db->lasterror();
