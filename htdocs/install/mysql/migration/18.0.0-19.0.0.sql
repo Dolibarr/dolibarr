@@ -198,3 +198,5 @@ ALTER TABLE llx_salary ADD COLUMN note_public text;
 ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN element_type varchar(50) DEFAULT 'supplier_order' NOT NULL;
 
 ALTER TABLE llx_expensereport DROP INDEX idx_expensereport_fk_refuse, ADD INDEX idx_expensereport_fk_refuse(fk_user_refuse);
+
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (1,'66','Société publique locale');
