@@ -124,9 +124,30 @@ function waitForDataBase()
 
 function lockInstallation()
 {
+  local CURRENT_UID=$(id -u www-data)
+  local CURRENT_GID=$(id -g www-data)
+  usermod -u ${WWW_USER_ID} www-data
+  groupmod -g ${WWW_GROUP_ID} www-data
+
+  if [[ ! -d /var/www/documents ]]; then
+    echo "[INIT] => create volume directory /var/www/documents ..."
+    mkdir -p /var/www/documents
+  fi
+
+
   touch /var/www/documents/install.lock
   chown www-data:www-data /var/www/documents/install.lock
   chmod 400 /var/www/documents/install.lock
+
+  if [[ ${CURRENT_UID} -ne ${WWW_USER_ID} || ${CURRENT_GID} -ne ${WWW_GROUP_ID} ]]; then
+    # Refresh file ownership cause it has changed
+    echo "[INIT] => As UID / GID have changed from default, update ownership for files in /var/ww ..."
+    chown -R www-data:www-data /var/www
+  else
+    # Reducing load on init : change ownership only for volumes declared in docker
+    echo "[INIT] => update ownership for files in /var/www/documents ..."
+    chown -R www-data:www-data /var/www/documents
+  fi
 }
 
 function initializeDatabase()
