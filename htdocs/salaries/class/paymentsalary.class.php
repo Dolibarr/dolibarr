@@ -55,6 +55,17 @@ class PaymentSalary extends CommonObject
 
 	public $datec = '';
 	public $tms = '';
+
+	/**
+	 * @var date date of payment
+	 * @deprecated
+	 * @see datep
+	 */
+	public $datepaye = '';
+
+	/**
+	 * @var date date of payment
+	 */
 	public $datep = '';
 
 	/**
@@ -137,8 +148,14 @@ class PaymentSalary extends CommonObject
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 
+		//deprecatd
+		if(!empty($this->datepaye) && empty($this->datep)) {
+			dol_syslog(__METHOD__.": using datepaye is deprecated, please use datep instead", LOG_WARNING);
+			$this->datep = $this->datepaye;
+		}
+
 		// Validate parametres
-		if (!$this->datepaye) {
+		if (empty($this->datep)) {
 			$this->error = 'ErrorBadValueForParameterCreatePaymentSalary';
 			return -1;
 		}
@@ -267,7 +284,7 @@ class PaymentSalary extends CommonObject
 				$this->fk_salary = $obj->fk_salary;
 				$this->datec = $this->db->jdate($obj->datec);
 				$this->tms = $this->db->jdate($obj->tms);
-				$this->datep = $this->db->jdate($obj->datep);
+				$this->datepaye = $this->db->jdate($obj->datep);
 				$this->amount = $obj->amount;
 				$this->fk_typepayment = $obj->fk_typepayment;
 				$this->num_paiement = $obj->num_payment;
@@ -326,7 +343,7 @@ class PaymentSalary extends CommonObject
 		$sql .= " fk_salary=".(isset($this->fk_salary) ? $this->fk_salary : "null").",";
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
 		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
-		$sql .= " datep=".(dol_strlen($this->datep) != 0 ? "'".$this->db->idate($this->datep)."'" : 'null').",";
+		$sql .= " datep=".(dol_strlen($this->datepaye) != 0 ? "'".$this->db->idate($this->datepaye)."'" : 'null').",";
 		$sql .= " amount=".(isset($this->amount) ? $this->amount : "null").",";
 		$sql .= " fk_typepayment=".(isset($this->fk_typepayment) ? $this->fk_typepayment : "null").",";
 		$sql .= " num_payment=".(isset($this->num_payment) ? "'".$this->db->escape($this->num_payment)."'" : "null").",";
@@ -468,7 +485,7 @@ class PaymentSalary extends CommonObject
 		$this->fk_salary = '';
 		$this->datec = '';
 		$this->tms = '';
-		$this->datep = '';
+		$this->datepaye = '';
 		$this->amount = '';
 		$this->fk_typepayment = '';
 		$this->num_payment = '';
@@ -653,7 +670,7 @@ class PaymentSalary extends CommonObject
 			}
 
 			if (!$error) {
-				$this->datep = $date;
+				$this->datepaye = $date;
 
 				$this->db->commit();
 				return 0;
@@ -882,8 +899,8 @@ class PaymentSalary extends CommonObject
 			if (!empty($this->total_ttc)) {
 				$datas['AmountTTC'] = '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
 			}
-			if (!empty($this->datep)) {
-				$datas['Date'] = '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->datep, 'day');
+			if (!empty($this->datepaye)) {
+				$datas['Date'] = '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->datepaye, 'day');
 			}
 		}
 
