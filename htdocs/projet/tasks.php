@@ -923,7 +923,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	// Show the massaction checkboxes only when this page is not opend from the Extended POS
 	if ($massactionbutton && $contextpage != 'poslist') {
-		$selectedfields = $form->showCheckAddButtons('checkforselect', 1);
+		$selectedfields.= $form->showCheckAddButtons('checkforselect', 1);
 	}
 
 	print '<div class="div-table-responsive">';
