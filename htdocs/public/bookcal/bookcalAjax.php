@@ -88,7 +88,7 @@ if ($action == 'verifyavailability') {
 	if (!$error) {
 		// Select in database all availabilities
 		$availabilitytab = array();
-		$sql = "SELECT ba.rowid as id, ba.duration, ba.startHour, ba.endHour";
+		$sql = "SELECT ba.rowid as id, ba.duration, ba.startHour, ba.endHour, ba.start, ba.end";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bookcal_availabilities as ba";
 		$sql .= " WHERE ba.fk_bookcal_calendar = ".((int) $id);
 		$sql .= " AND ba.status = 1";
@@ -98,20 +98,40 @@ if ($action == 'verifyavailability') {
 			$i = 0;
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
-				$availabilitytab[$obj->id] = array("id" => $obj->id, "duration" => $obj->duration);
+				$starttime = dol_stringtotime($obj->start, 0);
+				$endtime = dol_stringtotime($obj->end, 0);
+				$offsetmin = $obj->duration % 60;
+				if ($offsetmin == 0) {
+					$offsetmin = 60;
+				}
+				$offsethour = round($obj->duration / 60);
+				// Creation of array of availabilties range
+				if ($datetocheckbooking >= $starttime && $datetocheckbooking < $endtime) {
+					for ($hour=$obj->startHour; $hour < $obj->endHour; $hour+= $offsethour) {
+						for ($min=0; $min < 60; $min += $offsetmin) {
+							$hourstring = $hour;
+							$minstring = $min;
+							if ($hour < 10) {
+								$hourstring = "0".$hourstring;
+							}
+							if ($min < 10) {
+								$minstring = "0".$minstring;
+							}
+							$response["availability"][$hourstring.":".$minstring] = intval($obj->duration);
+						}
+					}
+				}
 				$i++;
 			}
 		}
 
 		// TODO Select also all not available ranges
 		// Build the list of hours available (key = hour, value = duration)
-		$hour = '08'; $min = '00';
-		$response["availability"][$hour.":".$min] = 30;
 	}
 
 	// Now get ranges already reserved
 	// TODO Remove this
-	if (!$error) {
+	/*if (!$error) {
 		$datetocheckbooking_end = dol_time_plus_duree($datetocheckbooking, 1, 'd');
 
 		$sql = "SELECT b.datep, b.id";
@@ -145,7 +165,7 @@ if ($action == 'verifyavailability') {
 		} else {
 			dol_print_error($db);
 		}
-	}
+	}*/
 	$result = $response;
 }
 
