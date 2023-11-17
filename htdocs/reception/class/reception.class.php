@@ -81,13 +81,7 @@ class Reception extends CommonObject
 	public $tracking_number;
 	public $tracking_url;
 	public $billed;
-
-	public $user_author_id;
-	public $livraison_id;
-	public $commande_id;
-	public $commande;
-
-
+	public $model_pdf;
 
 	public $weight;
 	public $trueWeight;
@@ -722,19 +716,20 @@ class Reception extends CommonObject
 	 */
 	public function getStatusDispatch()
 	{
-		global $conf;
-
 		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
 
 		$status = CommandeFournisseur::STATUS_RECEIVED_PARTIALLY;
 
 		if (!empty($this->origin) && $this->origin_id > 0 && ($this->origin == 'order_supplier' || $this->origin == 'commandeFournisseur')) {
-			if (empty($this->commandeFournisseur)) {
+			if (empty($this->origin_object)) {
 				$this->fetch_origin();
-				if (empty($this->commandeFournisseur->lines)) {
-					$res = $this->commandeFournisseur->fetch_lines();
-					if ($res < 0)	return $res;
+				if (empty($this->origin_object->lines)) {
+					$res = $this->origin_object->fetch_lines();
+					$this->commandeFournisseur = $this->origin_object;	// deprecated
+					if ($res < 0) {
+						return $res;
+					}
 				}
 			}
 
@@ -1381,7 +1376,6 @@ class Reception extends CommonObject
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
 		$this->statut               = 1;
-		$this->livraison_id         = 0;
 		$this->date                 = $now;
 		$this->date_creation        = $now;
 		$this->date_valid           = $now;
@@ -1391,11 +1385,10 @@ class Reception extends CommonObject
 		$this->entrepot_id          = 0;
 		$this->socid                = 1;
 
-		$this->commande_id          = 0;
-		$this->commande             = $order;
-
 		$this->origin_id            = 1;
 		$this->origin               = 'commande';
+		$this->origin_object        = $order;
+		$this->commandeFournisseur  = $order;	// deprecated
 
 		$this->note_private = 'Private note';
 		$this->note_public = 'Public note';
@@ -1409,7 +1402,7 @@ class Reception extends CommonObject
 			$line->label = $langs->trans("Description")." ".$xnbp;
 			$line->qty = 10;
 
-			$line->fk_product = $this->commande->lines[$xnbp]->fk_product;
+			$line->fk_product = $this->origin_object->lines[$xnbp]->fk_product;
 
 			$this->lines[] = $line;
 			$xnbp++;
