@@ -124,15 +124,16 @@ class PaymentSalary extends CommonObject
 	public $type_label;
 
 	/**
-	 * @var bank_account description]
+	 * @var int			bank account description
 	 */
 	public $bank_account;
 
 	/**
-	 * @var validation date
+	 * @var int|string	validation date
 	 */
 	public $datev = '';
 
+	/**
 	 * @var int chid
 	 * @deprecated
 	 * @see $id from CommonObject
