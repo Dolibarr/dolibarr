@@ -206,6 +206,12 @@ class CommandeFournisseur extends CommonOrder
 	public $origin;
 	public $origin_id;
 	public $linked_objects = array();
+	public $remise_percent;
+	public $methode_commande_id;
+	public $methode_commande;
+	public $rang;
+	public $date_lim_reglement;
+	public $receptions = array();
 
 	// Multicurrency
 	/**
@@ -2840,9 +2846,10 @@ class CommandeFournisseur extends CommonOrder
 			if (empty($txlocaltax2)) {
 				$txlocaltax2 = 0;
 			}
-			if (empty($remise)) {
+			//Code seems useless,$remise is not a parameter of the function and is not used.
+			/*if (empty($remise)) {
 				$remise = 0;
-			}
+			}*/
 			if (empty($remise_percent)) {
 				$remise_percent = 0;
 			}
@@ -3720,6 +3727,8 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	public $ref_fourn;
 
 	public $remise;
+	public $fk_fournprice;
+	public $packaging;
 
 
 	/**
@@ -3730,6 +3739,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	public function __construct($db)
 	{
 		$this->db = $db;
+		$this->fk_parent_line =0;
 	}
 
 	/**
