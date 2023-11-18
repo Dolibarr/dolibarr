@@ -480,7 +480,7 @@ class StockTransfer extends CommonObject
 		if (($this->socid > 0 || $this->fk_soc > 0) && empty($this->thirdparty)) {
 			$this->fetch_thirdparty();
 		}
-		if (empty($this->socid) && empty($this->fk_soc)) {
+		if (empty($this->socid) && empty($this->fk_soc)) {
 			unset($this->thirdparty);
 		}
 		return $res;
