@@ -98,8 +98,8 @@ if ($action == 'verifyavailability') {
 			$i = 0;
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
-				$starttime = dol_stringtotime($obj->start, 0);
-				$endtime = dol_stringtotime($obj->end, 0);
+				$starttime = $db->jdate($obj->start);
+				$endtime = $db->jdate($obj->end);
 				$offsetmin = $obj->duration % 60;
 				if ($offsetmin == 0) {
 					$offsetmin = 60;

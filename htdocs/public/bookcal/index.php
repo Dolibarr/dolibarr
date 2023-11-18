@@ -414,8 +414,7 @@ if ($action == 'afteradd') {
 		foreach ($arrayofavailabilities as $key => $value) {
 			$startarray = dol_getdate($value->start);
 			$endarray = dol_getdate($value->end);
-
-			for ($i = $startarray['mday']; $i < $endarray['mday']; $i++) {
+			for ($i = $startarray['mday']; $i <= $endarray['mday']; $i++) {
 				if ($todayarray['mon'] >= $startarray['mon'] && $todayarray['mon'] <= $endarray['mon']) {
 					$arrayofavailabledays[dol_mktime(0, 0, 0, $todayarray['mon'], $i, $todayarray['year'])] = dol_mktime(0, 0, 0, $todayarray['mon'], $i, $todayarray['year']);
 				}
@@ -523,10 +522,10 @@ if ($action == 'afteradd') {
 			let hour = new Date("2000-01-01T" + index + ":00");
 			duration = timearray[index];
 			hour.setMinutes(hour.getMinutes() + duration);
-		
+
 			let hours = hour.getHours().toString().padStart(2, "0"); // Formater pour obtenir deux chiffres
 			let mins = hour.getMinutes().toString().padStart(2, "0"); // Formater pour obtenir deux chiffres
-		
+
 			timerange = index + " - " + `${hours}:${mins}`;
 			str += "<input class=\'button btnsubmitbooking\' type=\'submit\' name=\'timebooking\' value=\'"+timerange+"\' data-duration=\'"+duration+"\'><br>";
 		}
