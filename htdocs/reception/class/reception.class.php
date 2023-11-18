@@ -95,6 +95,7 @@ class Reception extends CommonObject
 	// A denormalized value
 	public $trueSize;
 	public $size_units;
+	public $user_author_id;
 
 	public $date_delivery; // Date delivery planed
 
