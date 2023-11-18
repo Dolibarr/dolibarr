@@ -17,7 +17,12 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version:
+          - "7.4"
+          - "8.2"
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -28,8 +33,9 @@ jobs:
         id: setup-php
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.4'
+          php-version: "${{ matrix.php-version }}"
           tools: phpstan, cs2pr
+          extensions: intl
       - uses: actions/setup-node@v3
         with:
           node-version: 14.x
@@ -38,16 +44,16 @@ jobs:
         uses: actions/cache/restore@v3
         with:
           path: ./tmp
-          key: "result-cache-v1-7.4-${{ github.run_id }}"
+          key: "result-cache-v1-${{ matrix.php-version }}-${{ github.run_id }}"
           restore-keys: |
-            result-cache-v1-7.4-
+            result-cache-v1-${{ matrix.php-version }}-
       - name: Debug
         run: cd ./tmp && ls -al
       - name: Run PHPSTAN
-        run: phpstan -vvv analyse --error-format=checkstyle -c phpstan.neon htdocs/ | cs2pr --graceful-warnings
+        run: phpstan -vvv analyse --error-format=checkstyle --debug -c phpstan.neon htdocs/ | cs2pr --graceful-warnings
       - name: "Save result cache"
         uses: actions/cache/save@v3
         if: always()
         with:
           path: ./tmp
-          key: "result-cache-v1-7.4-${{ github.run_id }}"
+          key: "result-cache-v1-${{ matrix.php-version }}-${{ github.run_id }}"
