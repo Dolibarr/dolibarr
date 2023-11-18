@@ -9,7 +9,7 @@ parameters:
 		minimumNumberOfJobsPerProcess: 2
 		buffer: 134217728 # 128 MB
 	customRulesetUsed: true
-	level: 0
+	level: 1
 	fileExtensions:
 		- php
 	paths:
