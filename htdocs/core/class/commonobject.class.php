@@ -731,6 +731,16 @@ abstract class CommonObject
 	 */
 	public $product;
 
+	/**
+	 * @var int Populate by setPaymentTerms()
+	 */
+	public $cond_reglement_supplier_id;
+
+	/**
+	 * @var string Populate by setPaymentTerms()
+	 */
+	public $deposit_percent;
+
 
 	// No constructor as it is an abstract class
 
