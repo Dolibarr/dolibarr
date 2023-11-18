@@ -260,7 +260,11 @@ class Facture extends CommonInvoice
 	 */
 	public $source;
 
-
+	/**
+	 * @var int
+	 */
+	public $remise_percent;
+	
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')

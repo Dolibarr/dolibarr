@@ -119,6 +119,11 @@ class Delivery extends CommonObject
 	 */
 	public $lines = array();
 
+	/**
+	 * @var int user_author_id
+	 */
+	public $user_author_id;
+
 
 	/**
 	 * Constructor
