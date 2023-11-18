@@ -809,7 +809,7 @@ class Mo extends CommonObject
 					if ($moLine->role == 'toconsume' || $moLine->role == 'toproduce') {
 						if (empty($moLine->qty_frozen)) {
 							$qty = $newQty * $moLine->qty / $oldQty;
-							$moLine->qty = price2num($qty * (!empty($moline->efficiency) ? $moline->efficiency : 1 ), 'MS'); // Calculate with Qty to produce and efficiency
+							$moLine->qty = price2num($qty * (!empty($moLine->efficiency) ? $moLine->efficiency : 1 ), 'MS'); // Calculate with Qty to produce and efficiency
 							$res = $moLine->update($user);
 							if (!$res) $error++;
 						}
