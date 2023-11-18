@@ -100,6 +100,7 @@ $facid = GETPOST('facid', 'int');
 $ref_client = GETPOST('ref_client', 'int');
 $rank = (GETPOST('rank', 'int') > 0) ? GETPOST('rank', 'int') : -1;
 $projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : 0);
+$selectedLines = GETPOST('toselect', 'array');
 
 // PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -325,7 +326,7 @@ if (empty($reshook)) {
 		// We check invoice sign
 		if ($object->type == Facture::TYPE_CREDIT_NOTE) {
 			// If a credit note, the sign must be negative
-			if ($object->total_ht >= 0) {
+			if ($object->total_ht > 0) {
 				setEventMessages($langs->trans("ErrorInvoiceAvoirMustBeNegative"), null, 'errors');
 				$action = '';
 			}
@@ -997,7 +998,6 @@ if (empty($reshook)) {
 		if ($socid > 0) {
 			$object->socid = GETPOST('socid', 'int');
 		}
-		$selectedLines = GETPOST('toselect', 'array');
 
 		if (GETPOST('type', 'int') === '') {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
@@ -5252,6 +5252,7 @@ if ($action == 'create') {
 						print dol_print_date($dateofpayment, 'dayhour', 'tzuser');
 					}
 					print '</td>';
+
 					$label = ($langs->trans("PaymentType".$objp->payment_code) != ("PaymentType".$objp->payment_code)) ? $langs->trans("PaymentType".$objp->payment_code) : $objp->payment_label;
 					print '<td class="tdoverflowmax80" title="'.dol_escape_htmltag($label.' '.$objp->num_payment).'">'.dol_escape_htmltag($label.' '.$objp->num_payment).'</td>';
 					if (isModEnabled("banque")) {
@@ -5277,7 +5278,10 @@ if ($action == 'create') {
 					}
 					print '<td class="right"><span class="amount">'.price($sign * $objp->amount).'</span></td>';
 					print '<td class="center">';
-					if ($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $user->socid == 0) {
+
+					$paiement = new Paiement($db);
+					$paiement->fetch($objp->rowid);
+					if ($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $user->socid == 0 && !$paiement->isReconciled()) {
 						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deletepayment&token='.newToken().'&paiement_id='.$objp->rowid.'">';
 						print img_delete();
 						print '</a>';
@@ -5767,7 +5771,7 @@ if ($action == 'create') {
 				}
 				// For credit note
 				if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $usercancreate
-					&& (!empty($conf->global->INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED) || $sumofpayment == 0)
+					&& (!empty($conf->global->INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED) || $sumofpayment == 0) && $object->total_ht < 0
 					) {
 					print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc" title="'.dol_escape_htmltag($langs->trans("ConfirmConvertToReduc2")).'">'.$langs->trans('ConvertToReduc').'</a>';
 				}
