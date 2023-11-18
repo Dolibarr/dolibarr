@@ -127,21 +127,30 @@ class FactureFournisseur extends CommonInvoice
 	 * @see FactureFournisseur::STATUS_DRAFT, FactureFournisseur::STATUS_VALIDATED, FactureFournisseur::STATUS_PAID, FactureFournisseur::STATUS_ABANDONED
 	 */
 	public $statut;
+	public $fk_statut;
 
 	/**
 	 * Supplier invoice status
 	 * @var int
 	 * @see FactureFournisseur::STATUS_DRAFT, FactureFournisseur::STATUS_VALIDATED, FactureFournisseur::STATUS_PAID, FactureFournisseur::STATUS_ABANDONED
+	 * @deprecated	Use $fk_statut
 	 */
 	public $status;
 
 	/**
 	 * Set to 1 if the invoice is completely paid, otherwise is 0
-	 * @var int
+	 * @var int deprecated
 	 */
 	public $paye;
+	/**
+	 * Set to 1 if the invoice is completely paid, otherwise is 0
+	 * @var int
+	 */
+	public $paid;
 
 	public $author;
+	public $fk_user_author;
+	public $fk_user_valid;
 
 	/**
 	 * Date creation record (datec)
@@ -190,6 +199,11 @@ class FactureFournisseur extends CommonInvoice
 	public $total_localtax1;
 	public $total_localtax2;
 	public $total_ttc;
+	/**
+	 * @deprecated
+	 * @see $total_ttc
+	 */
+	public $amout_ht;
 
 	/**
 	 * @deprecated
@@ -247,7 +261,11 @@ class FactureFournisseur extends CommonInvoice
 	public $fk_facture_source;
 
 	public $fac_rec;
-
+	public $fk_fac_rec_source;
+	public $fk_soc;
+	public $socnom;
+	public $special_code;
+	public $date_lim_reglement;
 
 	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
@@ -3474,6 +3492,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 
 	public $date_start;
 	public $date_end;
+	public $datep;
 
 	public $skip_update_total; // Skip update price total for special lines
 
@@ -3625,6 +3644,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $multicurrency_total_ht;
 	public $multicurrency_total_tva;
 	public $multicurrency_total_ttc;
+	public $tva_npr;
 
 
 	/**
@@ -4070,12 +4090,13 @@ class SupplierInvoiceLine extends CommonObjectLine
 					if ($result > 0) {
 						// Check if discount not already affected to another invoice
 						if ($discount->fk_facture_line > 0) {
-							if (empty($noerrorifdiscountalreadylinked)) {
+							//if condition is useless ->$noerrorifdiscountalreadylinked not intialesed et never used
+							//if (empty($noerrorifdiscountalreadylinked)) {
 								$this->error = $langs->trans("ErrorDiscountAlreadyUsed", $discount->id);
 								dol_syslog(get_class($this)."::insert Error ".$this->error, LOG_ERR);
 								$this->db->rollback();
 								return -3;
-							}
+							//}
 						} else {
 							$result = $discount->link_to_invoice($this->rowid, 0);
 							if ($result < 0) {
