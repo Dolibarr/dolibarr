@@ -1149,9 +1149,8 @@ class Product extends CommonObject
 		if ($result >= 0) {
 			// $this->oldcopy should have been set by the caller of update (here properties were already modified)
 			if (empty($this->oldcopy)) {
-				$this->oldcopy = dol_clone($this);
+				$this->oldcopy = dol_clone($this, 1);
 			}
-
 			// Test if batch management is activated on existing product
 			// If yes, we create missing entries into product_batch
 			if ($this->hasbatch() && !$this->oldcopy->hasbatch()) {
