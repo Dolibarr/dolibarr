@@ -63,3 +63,7 @@ doc/install.lock
 .idea
 /composer.json
 /composer.lock
+
+/build/phpstan/phpstan
+/build/phpstan/bootstrap_custom.php
+phpstan_custom.neon
