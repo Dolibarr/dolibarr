@@ -104,7 +104,6 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	
 	// Add action
 	if ($action == 'add' && $user->rights->categorie->creer) {
 		// Action add a category
@@ -138,8 +137,6 @@ if (empty($reshook)) {
 				exit;
 			}
 		}
-	
-	
 	
 		$object->label			= $label;
 		$object->color			= $color;
