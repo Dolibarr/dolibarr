@@ -130,7 +130,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 			$object->$key = '(PROV)';
 		}
 		if ($key == 'pass_crypted') {
-			$object->pass = GETPOST('pass', 'none');
+			$object->pass = GETPOST("pass", "none");
 			// TODO Manadatory for password not yet managed
 		} else {
 			if (!empty($val['notnull']) && $val['notnull'] > 0 && $object->$key == '' && !isset($val['default'])) {

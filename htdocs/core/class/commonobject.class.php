@@ -3468,7 +3468,7 @@ abstract class CommonObject
 	 *
 	 *  @param      string		$note		New value for note
 	 *  @param		string		$suffix		'', '_public' or '_private'
-     *  @param      int         $notrigger  1=Does not execute triggers, 0=execute triggers
+	 *  @param      int         $notrigger  1=Does not execute triggers, 0=execute triggers
 	 *  @return     int      		   		<0 if KO, >0 if OK
 	 */
 	public function update_note($note, $suffix = '', $notrigger = 0)
@@ -3515,32 +3515,34 @@ abstract class CommonObject
 				$this->note = $note; // deprecated
 				$this->note_private = $note;
 			}
-            if(empty($notrigger)) {
-                switch($this->element) {
-                    case 'societe':
-                        $trigger_name = 'COMPANY_MODIFY';
-                        break;
-                    case 'commande':
-                        $trigger_name = 'ORDER_MODIFY';
-                        break;
-                    case 'facture':
-                        $trigger_name = 'BILL_MODIFY';
-                        break;
-                    case 'invoice_supplier':
-                        $trigger_name = 'BILL_SUPPLIER_MODIFY';
-                        break;
-                    case 'facturerec':
-                        $trigger_name = 'BILLREC_MODIFIY';
-                        break;
-                    case 'expensereport':
-                        $trigger_name = 'EXPENSE_REPORT_MODIFY';
-                        break;
-                    default:
-                        $trigger_name = strtoupper($this->element) . '_MODIFY';
-                }
-                $ret = $this->call_trigger($trigger_name, $user);
-                if($ret < 0 ) { return -1; }
-            }
+			if (empty($notrigger)) {
+				switch ($this->element) {
+					case 'societe':
+						$trigger_name = 'COMPANY_MODIFY';
+						break;
+					case 'commande':
+						$trigger_name = 'ORDER_MODIFY';
+						break;
+					case 'facture':
+						$trigger_name = 'BILL_MODIFY';
+						break;
+					case 'invoice_supplier':
+						$trigger_name = 'BILL_SUPPLIER_MODIFY';
+						break;
+					case 'facturerec':
+						$trigger_name = 'BILLREC_MODIFIY';
+						break;
+					case 'expensereport':
+						$trigger_name = 'EXPENSE_REPORT_MODIFY';
+						break;
+					default:
+						$trigger_name = strtoupper($this->element) . '_MODIFY';
+				}
+				$ret = $this->call_trigger($trigger_name, $user);
+				if($ret < 0 ) {
+					return -1;
+				}
+			}
 			return 1;
 		} else {
 			$this->error = $this->db->lasterror();
@@ -8690,8 +8692,8 @@ abstract class CommonObject
 							var val = $("select[name=\""+parent_list+"\"]").val();
 							var parentVal = parent_list + ":" + val;
 							if(typeof val == "string"){
-				    		    if(val != "") {
-					    			var options = orig_select.find("option[parent=\""+parentVal+"\"]").clone();
+								if(val != "") {
+									var options = orig_select.find("option[parent=\""+parentVal+"\"]").clone();
 									$("select[name=\""+child_list+"\"] option[parent]").remove();
 									$("select[name=\""+child_list+"\"]").append(options);
 								} else {
@@ -8699,7 +8701,7 @@ abstract class CommonObject
 									$("select[name=\""+child_list+"\"] option[parent]").remove();
 									$("select[name=\""+child_list+"\"]").append(options);
 								}
-				    		} else if(val > 0) {
+							} else if(val > 0) {
 								var options = orig_select.find("option[parent=\""+parentVal+"\"]").clone();
 								$("select[name=\""+child_list+"\"] option[parent]").remove();
 								$("select[name=\""+child_list+"\"]").append(options);
@@ -8720,15 +8722,15 @@ abstract class CommonObject
 
 								//Hide daughters lists
 								if ($("#"+child_list).val() == 0 && $("#"+parent_list).val() == 0){
-								    $("#"+child_list).hide();
+									$("#"+child_list).hide();
 								//Show mother lists
 								} else if ($("#"+parent_list).val() != 0){
-								    $("#"+parent_list).show();
+									$("#"+parent_list).show();
 								}
 								//Show the child list if the parent list value is selected
 								$("select[name=\""+parent_list+"\"]").click(function() {
-								    if ($(this).val() != 0){
-								        $("#"+child_list).show()
+									if ($(this).val() != 0){
+										$("#"+child_list).show()
 									}
 								});
 

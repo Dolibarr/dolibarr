@@ -161,6 +161,10 @@ class SocieteAccount extends CommonObject
 	// END MODULEBUILDER PROPERTIES
 
 
+	const STATUS_ENABLED = 1;
+	const STATUS_DISABLED = 0;
+
+
 	/**
 	 * Constructor
 	 *
@@ -501,57 +505,29 @@ class SocieteAccount extends CommonObject
 	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return string 			       	Label of status
 	 */
-	public static function LibStatut($status, $mode = 0)
+	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		global $langs;
-
-		if ($mode == 0) {
-			$prefix = '';
-			if ($status == 1) {
-				return $langs->trans('Enabled');
-			} elseif ($status == 0) {
-				return $langs->trans('Disabled');
-			}
-		} elseif ($mode == 1) {
-			if ($status == 1) {
-				return $langs->trans('Enabled');
-			} elseif ($status == 0) {
-				return $langs->trans('Disabled');
-			}
-		} elseif ($mode == 2) {
-			if ($status == 1) {
-				return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
-			} elseif ($status == 0) {
-				return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
-			}
-		} elseif ($mode == 3) {
-			if ($status == 1) {
-				return img_picto($langs->trans('Enabled'), 'statut4');
-			} elseif ($status == 0) {
-				return img_picto($langs->trans('Disabled'), 'statut5');
-			}
-		} elseif ($mode == 4) {
-			if ($status == 1) {
-				return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
-			} elseif ($status == 0) {
-				return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
-			}
-		} elseif ($mode == 5) {
-			if ($status == 1) {
-				return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
-			} elseif ($status == 0) {
-				return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
-			}
-		} elseif ($mode == 6) {
-			if ($status == 1) {
-				return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
-			} elseif ($status == 0) {
-				return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
-			}
+		if (is_null($status)) {
+			return '';
 		}
 
-		return '';
+		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
+			global $langs;
+			//$langs->load("mymodule@mymodule");
+			$this->labelStatus[self::STATUS_ENABLED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatus[self::STATUS_DISABLED] = $langs->transnoentitiesnoconv('Disabled');
+			$this->labelStatusShort[self::STATUS_ENABLED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatusShort[self::STATUS_DISABLED] = $langs->transnoentitiesnoconv('Disabled');
+		}
+
+		$statusType = 'status4';
+		//if ($status == self::STATUS_VALIDATED) $statusType = 'status1';
+		if ($status == self::STATUS_DISABLED) {
+			$statusType = 'status6';
+		}
+
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 
 	/**
