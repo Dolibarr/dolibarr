@@ -742,6 +742,16 @@ abstract class CommonObject
 	public $deposit_percent;
 
 
+	/**
+	 * @var string Populate by setRetainedWarrantyPaymentTerms()
+	 */
+	public $retained_warranty_fk_cond_reglement;
+
+	/**
+	 * @var int Populate by setWarehouse()
+	 */
+	public $warehouse_id;
+
 	// No constructor as it is an abstract class
 
 
