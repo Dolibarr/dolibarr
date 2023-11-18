@@ -381,11 +381,9 @@ if ($result) {
 	//print '<input class="flat maxwidth100" type="text" size="10" name="search_desc" value="'.$search_desc.'">';
 	print '</td>';
 
-	if (!empty($arrayfields['e.user_agent']['checked'])) {
-		print '<td class="liste_titre left">';
-		print '<input class="flat maxwidth100" type="text" name="search_ua" value="'.dol_escape_htmltag($search_ua).'">';
-		print '</td>';
-	}
+	print '<td class="liste_titre left">';
+	print '<input class="flat maxwidth100" type="text" name="search_ua" value="'.dol_escape_htmltag($search_ua).'">';
+	print '</td>';
 
 	if (!empty($arrayfields['e.prefix_session']['checked'])) {
 		print '<td class="liste_titre left">';
@@ -415,9 +413,7 @@ if ($result) {
 	print_liste_field_titre("IP", $_SERVER["PHP_SELF"], "e.ip", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("User", $_SERVER["PHP_SELF"], "u.login", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "e.description", "", $param, '', $sortfield, $sortorder);
-	if (!empty($arrayfields['e.user_agent']['checked'])) {
-		print_liste_field_titre("UserAgent", $_SERVER["PHP_SELF"], "e.user_agent", "", $param, '', $sortfield, $sortorder);
-	}
+	print_liste_field_titre("UserAgent", $_SERVER["PHP_SELF"], "e.user_agent", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['e.prefix_session']['checked'])) {
 		print_liste_field_titre("SuffixSessionName", $_SERVER["PHP_SELF"], "e.prefix_session", "", $param, '', $sortfield, $sortorder);
 	}
@@ -493,19 +489,15 @@ if ($result) {
 		print dol_escape_htmltag($text);
 		print '</td>';
 
-		if (!empty($arrayfields['e.user_agent']['checked'])) {
 			// User agent
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->user_agent).'">';
 			print dol_escape_htmltag($obj->user_agent);
 			print '</td>';
-		}
 
-		if (!empty($arrayfields['e.prefix_session']['checked'])) {
 			// User agent
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->prefix_session).'">';
 			print dol_escape_htmltag($obj->prefix_session);
 			print '</td>';
-		}
 
 		// Action column
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
