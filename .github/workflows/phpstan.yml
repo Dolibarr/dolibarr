@@ -40,20 +40,20 @@ jobs:
         with:
           node-version: 14.x
           registry-url: 'https://registry.npmjs.org'
-      - name: Restore result cache
+      - name: Restore phpstan cache
         uses: actions/cache/restore@v3
         with:
           path: ./tmp
-          key: "result-cache-v1-${{ matrix.php-version }}-${{ github.run_id }}"
+          key: "phpstan-cache-PR-${{ matrix.php-version }}-${{ github.run_id }}"
           restore-keys: |
-            result-cache-v1-${{ matrix.php-version }}-
+            phpstan-cache-PR-${{ matrix.php-version }}-
       - name: Debug
         run: cd ./tmp && ls -al
       - name: Run PHPSTAN
-        run: phpstan -vvv analyse --error-format=checkstyle --debug -c phpstan.neon htdocs/ | cs2pr --graceful-warnings
-      - name: "Save result cache"
+        run: phpstan -vvv analyse --error-format=checkstyle -c phpstan.neon htdocs/ | cs2pr --graceful-warnings
+      - name: "Save phpstan cache"
         uses: actions/cache/save@v3
         if: always()
         with:
           path: ./tmp
-          key: "result-cache-v1-${{ matrix.php-version }}-${{ github.run_id }}"
+          key: "phpstan-cache-PR-${{ matrix.php-version }}-${{ github.run_id }}"
