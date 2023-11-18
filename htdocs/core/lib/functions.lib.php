@@ -215,10 +215,16 @@ function isModEnabled($module)
 		'bank' => 'banque',
 		'category' => 'categorie'
 	);
-	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
+	
+	if (empty(getDolGlobalInt('MAIN_USE_NEW_SUPPLIERMOD'))) {
 		$arrayconv['supplier_order'] = 'fournisseur';
 		$arrayconv['supplier_invoice'] = 'fournisseur';
 	}
+	
+	if (!empty(getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION')) && !empty(getDolGlobalInt('MAIN_SUBMODULE_DELIVERY'))) {
+		$arrayconv['delivery_note'] = 'expedition';
+	}
+	
 	if (!empty($arrayconv[$module])) {
 		$module = $arrayconv[$module];
 	}
