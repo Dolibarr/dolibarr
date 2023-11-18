@@ -137,29 +137,29 @@ if (empty($reshook)) {
 				exit;
 			}
 		}
-	
+
 		$object->label			= $label;
 		$object->color			= $color;
 		$object->description = dol_htmlcleanlastbr($description);
 		$object->socid			= ($socid > 0 ? $socid : 0);
 		$object->visible = $visible;
 		$object->type = $type;
-	
+
 		if ($parent != "-1") {
 			$object->fk_parent = $parent;
 		}
-	
+
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) {
 			$error++;
 		}
-	
+
 		if (!$object->label) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
 			$action = 'create';
 		}
-	
+
 		// Create category in database
 		if (!$error) {
 			$result = $object->create($user);
@@ -171,7 +171,7 @@ if (empty($reshook)) {
 			}
 		}
 	}
-	
+
 	// Confirm action
 	if (($action == 'add' || $action == 'confirmed') && $user->rights->categorie->creer) {
 		// Action confirmation of creation category
@@ -201,7 +201,7 @@ if (empty($reshook)) {
 				header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProjectOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 				exit;
 			}
-	
+
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$result.'&type='.$type);
 			exit;
 		}
