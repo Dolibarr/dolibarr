@@ -295,6 +295,7 @@ if ($action == 'add' && empty($cancel)) {
 			// Create a line of payments
 			$paiement = new PaymentSalary($db);
 			$paiement->id           = $object->id;
+			$paiement->chid         = $object->id;	// deprecated
 			$paiement->datepaye     = $datep;
 			$paiement->datev		= $datev;
 			$paiement->amounts      = array($object->id=>$amount); // Tableau de montant
