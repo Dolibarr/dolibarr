@@ -327,14 +327,16 @@ class modTakePos extends DolibarrModules
 		if (!getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CASH1')) {
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 			$cashaccount = new Account($db);
-			$cashaccount->ref = "CASH-POS";
-			$cashaccount->label = $langs->trans("DefaultCashPOSLabel");
-			$cashaccount->courant = 2;
-			$cashaccount->country_id = $mysoc->country_id ? $mysoc->country_id : 1;
-			$cashaccount->date_solde = dol_now();
-			$result = $cashaccount->create($user);
-			if ($result > 0) {
-				require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+			$searchaccountid = $cashaccount->fetch(0, "CASH-POS");
+			if ($searchaccountid == 0) {
+				$cashaccount->ref = "CASH-POS";
+				$cashaccount->label = $langs->trans("DefaultCashPOSLabel");
+				$cashaccount->courant = 2;
+				$cashaccount->country_id = $mysoc->country_id ? $mysoc->country_id : 1;
+				$cashaccount->date_solde = dol_now();
+				$searchaccountid = $cashaccount->create($user);
+			}
+			if ($searchaccountid > 0) {
 				dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CASH1", $result, 'chaine', 0, '', $conf->entity);
 			} else {
 				setEventMessages($societe->error, $category->errors, 'errors');
