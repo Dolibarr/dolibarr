@@ -697,6 +697,7 @@ class Mo extends CommonObject
 			$moline->qty = $this->qty;
 			$moline->fk_product = $this->fk_product;
 			$moline->position = 1;
+			include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 			$tmpproduct = new Product($this->db);
 			$tmpproduct->fetch($this->fk_product);
 			$moline->fk_unit = $tmpproduct->fk_unit;
@@ -809,7 +810,7 @@ class Mo extends CommonObject
 					if ($moLine->role == 'toconsume' || $moLine->role == 'toproduce') {
 						if (empty($moLine->qty_frozen)) {
 							$qty = $newQty * $moLine->qty / $oldQty;
-							$moLine->qty = price2num($qty * (!empty($line->efficiency) ? $line->efficiency : 1 ), 'MS'); // Calculate with Qty to produce and efficiency
+							$moLine->qty = price2num($qty * (!empty($moLine->efficiency) ? $moLine->efficiency : 1 ), 'MS'); // Calculate with Qty to produce and efficiency
 							$res = $moLine->update($user);
 							if (!$res) $error++;
 						}
@@ -817,7 +818,6 @@ class Mo extends CommonObject
 				}
 			}
 		}
-
 		if (!$error) {
 			$this->db->commit();
 			return 1;
@@ -881,7 +881,6 @@ class Mo extends CommonObject
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
 			return -2;
 		}
-
 		$productstatic = new Product($this->db);
 		$fk_movement = GETPOST('fk_movement', 'int');
 		$arrayoflines = $this->fetchLinesLinked('consumed', $idline);
@@ -1668,7 +1667,7 @@ class Mo extends CommonObject
 	 */
 	public function printOriginLinesList($restrictlist = '', $selectedLines = array())
 	{
-		global $langs, $hookmanager, $conf, $form;
+		global $langs, $hookmanager, $conf, $form, $action;
 
 		$langs->load('stocks');
 		$text_stock_options = $langs->trans("RealStockDesc").'<br>';
@@ -1972,7 +1971,7 @@ class MoLine extends CommonObjectLine
 	/**
 	 * @var int  Does moline support extrafields ? 0=No, 1=Yes
 	 */
-	public $isextrafieldmanaged = 0;
+	public $isextrafieldmanaged = 1;
 
 	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'ID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
