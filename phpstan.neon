@@ -18,14 +18,11 @@ parameters:
 	excludePaths:
 		analyseAndScan:
 		- htdocs/custom
-		- htdocs/dev/*
-		- htdocs/doc/*
 		- htdocs/documents/*
 		- htdocs/install/doctemplates/*
 		- htdocs/langs/*
 		- htdocs/modulebuilder/template/test/*
 		- htdocs/support/*
-		- htdocs/test/*
 		analyse:
 		- htdocs/includes/*
 	checkAlwaysTrueCheckTypeFunctionCall: false
@@ -78,7 +75,7 @@ parameters:
 		- '#Empty array passed to foreach#'
 		- '#in isset\(\) is not nullable#'
 		- '#Sprain\\SwissQrBill\\#'
-	internalErrorsCountLimit: 100
+	internalErrorsCountLimit: 500
 	cache:
 	    nodesByFileCountMax: 512
 	    nodesByStringCountMax: 512
