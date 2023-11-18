@@ -785,16 +785,15 @@ class SupplierProposal extends CommonObject
 			$this->line->fk_unit = $fk_unit;
 
 			// infos marge
-			// code seems useles fk_product is nerver defined and empty ....
-			/*if (!empty($fk_product) && $fk_product > 0 && empty($fk_fournprice) && empty($pa_ht)) {
+			if (!empty($this->line->fk_product) && $this->line->fk_product > 0 && empty($fk_fournprice) && empty($pa_ht)) {
 				// by external module, take lowest buying price
 				include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 				$productFournisseur = new ProductFournisseur($this->db);
-				$productFournisseur->find_min_price_product_fournisseur($fk_product);
+				$productFournisseur->find_min_price_product_fournisseur($this->line->fk_product);
 				$this->line->fk_fournprice = $productFournisseur->product_fourn_price_id;
-			/} else {*/
+			} else {
 				$this->line->fk_fournprice = $fk_fournprice;
-			//}
+			}
 			$this->line->pa_ht = $pa_ht;
 
 			if (is_array($array_options) && count($array_options) > 0) {
