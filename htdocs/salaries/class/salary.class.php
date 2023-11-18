@@ -808,7 +808,7 @@ class Salary extends CommonObject
 	public function demande_prelevement($fuser, $amount = 0, $type = 'direct-debit', $sourcetype = 'salaire', $checkduplicateamongall = 0)
 	{
 		// phpcs:enable
-		global $conf;
+		global $conf, $mysoc;
 
 		$error = 0;
 
@@ -816,7 +816,7 @@ class Salary extends CommonObject
 		if ($this->paye == 0) {
 			require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 			$bac = new CompanyBankAccount($this->db);
-			$bac->fetch(0, $this->socid);
+			$bac->fetch(0, $mysoc->id);
 
 			$sql = "SELECT count(rowid) as nb";
 			$sql .= " FROM ".$this->db->prefix()."prelevement_demande";

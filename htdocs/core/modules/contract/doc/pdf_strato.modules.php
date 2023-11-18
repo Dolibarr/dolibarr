@@ -588,9 +588,9 @@ class pdf_strato extends ModelePDFContract
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null, $titlekey = "Contract")
 	{
 		// phpcs:enable
-		global $conf, $langs, $hookmanager;
+		global $conf;
 
-		$top_shift = $this->_pagehead($pdf, $object, 1, $outputlangs, (is_object($outputlangsbis) ? $outputlangsbis : null));
+		$top_shift = 0;
 
 		$ltrdirection = 'L';
 		if ($outputlangs->trans("DIRECTION") == 'rtl') {

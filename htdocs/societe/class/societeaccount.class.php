@@ -81,7 +81,7 @@ class SocieteAccount extends CommonObject
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'visible'=>0, 'enabled'=>1, 'position'=>5, 'default'=>1),
 		'login' => array('type'=>'varchar(64)', 'label'=>'Login', 'visible'=>1, 'enabled'=>1, 'notnull'=>1, 'position'=>10, 'showoncombobox'=>1),
 		'pass_encoding' => array('type'=>'varchar(24)', 'label'=>'PassEncoding', 'visible'=>0, 'enabled'=>1, 'position'=>30),
-		'pass_crypted' => array('type'=>'varchar(128)', 'label'=>'Password', 'visible'=>1, 'enabled'=>1, 'position'=>31, 'notnull'=>1),
+		'pass_crypted' => array('type'=>'password', 'label'=>'Password', 'visible'=>1, 'enabled'=>1, 'position'=>31, 'notnull'=>1),
 		'pass_temp'    => array('type'=>'varchar(128)', 'label'=>'Temp', 'visible'=>0, 'enabled'=>0, 'position'=>32, 'notnull'=>-1,),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>40, 'notnull'=>-1, 'index'=>1, 'picto'=>'company', 'css'=>'maxwidth300 widthcentpercentminusxx'),
 		'site' => array('type'=>'varchar(128)', 'label'=>'WebsiteTypeLabel', 'visible'=>0, 'enabled'=>0, 'position'=>41, 'notnull'=>1, 'default' => '', 'help'=>'Name of the website or service if this is account on an external website or service'),
@@ -159,6 +159,10 @@ class SocieteAccount extends CommonObject
 	public $status;
 
 	// END MODULEBUILDER PROPERTIES
+
+
+	const STATUS_ENABLED = 1;
+	const STATUS_DISABLED = 0;
 
 
 	/**
@@ -501,57 +505,29 @@ class SocieteAccount extends CommonObject
 	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return string 			       	Label of status
 	 */
-	public static function LibStatut($status, $mode = 0)
+	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		global $langs;
-
-		if ($mode == 0) {
-			$prefix = '';
-			if ($status == 1) {
-				return $langs->trans('Enabled');
-			} elseif ($status == 0) {
-				return $langs->trans('Disabled');
-			}
-		} elseif ($mode == 1) {
-			if ($status == 1) {
-				return $langs->trans('Enabled');
-			} elseif ($status == 0) {
-				return $langs->trans('Disabled');
-			}
-		} elseif ($mode == 2) {
-			if ($status == 1) {
-				return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
-			} elseif ($status == 0) {
-				return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
-			}
-		} elseif ($mode == 3) {
-			if ($status == 1) {
-				return img_picto($langs->trans('Enabled'), 'statut4');
-			} elseif ($status == 0) {
-				return img_picto($langs->trans('Disabled'), 'statut5');
-			}
-		} elseif ($mode == 4) {
-			if ($status == 1) {
-				return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
-			} elseif ($status == 0) {
-				return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
-			}
-		} elseif ($mode == 5) {
-			if ($status == 1) {
-				return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
-			} elseif ($status == 0) {
-				return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
-			}
-		} elseif ($mode == 6) {
-			if ($status == 1) {
-				return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
-			} elseif ($status == 0) {
-				return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
-			}
+		if (is_null($status)) {
+			return '';
 		}
 
-		return '';
+		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
+			global $langs;
+			//$langs->load("mymodule@mymodule");
+			$this->labelStatus[self::STATUS_ENABLED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatus[self::STATUS_DISABLED] = $langs->transnoentitiesnoconv('Disabled');
+			$this->labelStatusShort[self::STATUS_ENABLED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatusShort[self::STATUS_DISABLED] = $langs->transnoentitiesnoconv('Disabled');
+		}
+
+		$statusType = 'status4';
+		//if ($status == self::STATUS_VALIDATED) $statusType = 'status1';
+		if ($status == self::STATUS_DISABLED) {
+			$statusType = 'status6';
+		}
+
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 
 	/**

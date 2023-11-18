@@ -30,12 +30,12 @@ Permission56006=Export tickets
 
 Tickets=Tickets
 TicketDictType=Ticket - Types
-TicketDictCategory=Ticket - Groupes
+TicketDictCategory=Ticket - Groups
 TicketDictSeverity=Ticket - Severities
 TicketDictResolution=Ticket - Resolution
 
 TicketTypeShortCOM=Commercial question
-TicketTypeShortHELP=Request for functionnal help
+TicketTypeShortHELP=Request for functional help
 TicketTypeShortISSUE=Issue or bug
 TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Change or enhancement request

@@ -114,6 +114,12 @@ class StockTransferLine extends CommonObjectLine
 	public $fk_stocktransfer;
 	public $fk_product;
 	public $batch;
+
+	/**
+	 * @var double pmp
+	 */
+	public $pmp;
+
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -447,7 +453,7 @@ class StockTransferLine extends CommonObjectLine
 											 $code_inv);
 
 			if ($result < 0) {
-				setEventMessages($p->errors, $p->errorss, 'errors');
+				setEventMessages($p->error, $p->errors, 'errors');
 				return 0;
 			}
 		} else {
@@ -490,7 +496,7 @@ class StockTransferLine extends CommonObjectLine
 												 $this->batch);
 
 				if ($result < 0) {
-					setEventMessages($p->errors, $p->errorss, 'errors');
+					setEventMessages($p->error, $p->errors, 'errors');
 					return 0;
 				}
 			} else {

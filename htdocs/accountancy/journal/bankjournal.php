@@ -277,7 +277,7 @@ if ($result) {
 		);
 
 		// Variable bookkeeping ($obj->rowid is Bank Id)
-		$tabpay[$obj->rowid]["date"] = $obj->do;
+		$tabpay[$obj->rowid]["date"] = $db->jdate($obj->do);
 		$tabpay[$obj->rowid]["type_payment"] = $obj->fk_type; // CHQ, VIR, LIQ, CB, ...
 		$tabpay[$obj->rowid]["ref"] = $obj->label; // By default. Not unique. May be changed later
 		$tabpay[$obj->rowid]["fk_bank"] = $obj->rowid;
@@ -436,7 +436,7 @@ if ($result) {
 
 					// This part of code is no more required. it is here to solve case where a link were missing (ith v14.0.0) and keep writing in accountancy complete.
 					// Note: A better way to fix this is to delete payment of salary and recreate it, or to fix the bookkeeping table manually after.
-					if (getDolGlobalString('ACCOUNTANCY_AUTOFIX_MISSING_LINK_TO_USEr_ON_SALARY_BANK_PAYMENT')) {
+					if (getDolGlobalString('ACCOUNTANCY_AUTOFIX_MISSING_LINK_TO_USER_ON_SALARY_BANK_PAYMENT')) {
 						$tmpsalary = new Salary($db);
 						$tmpsalary->fetch($paymentsalstatic->id);
 						$tmpsalary->fetch_user($tmpsalary->fk_user);
@@ -599,7 +599,7 @@ if (!$error && $action == 'writebookkeeping') {
 
 	$error = 0;
 	foreach ($tabpay as $key => $val) {		// $key is rowid into llx_bank
-		$date = dol_print_date($db->jdate($val["date"]), 'day');
+		$date = dol_print_date($val["date"], 'day');
 
 		$ref = getSourceDocRef($val, $tabtype[$key]);
 
@@ -928,7 +928,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	print "\n";
 
 	foreach ($tabpay as $key => $val) {
-		$date = dol_print_date($db->jdate($val["date"]), 'day');
+		$date = dol_print_date($val["date"], 'day');
 
 		$ref = getSourceDocRef($val, $tabtype[$key]);
 
@@ -1152,7 +1152,7 @@ if (empty($action) || $action == 'view') {
 	$r = '';
 
 	foreach ($tabpay as $key => $val) {			  // $key is rowid in llx_bank
-		$date = dol_print_date($db->jdate($val["date"]), 'day');
+		$date = dol_print_date($val["date"], 'day');
 
 		$ref = getSourceDocRef($val, $tabtype[$key]);
 
