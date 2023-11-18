@@ -3476,7 +3476,7 @@ abstract class CommonObject
 						$trigger_name = strtoupper($this->element) . '_MODIFY';
 				}
 				$ret = $this->call_trigger($trigger_name, $user);
-				if($ret < 0 ) {
+				if ($ret < 0) {
 					return -1;
 				}
 			}
