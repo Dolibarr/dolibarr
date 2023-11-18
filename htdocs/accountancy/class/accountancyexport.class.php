@@ -341,6 +341,10 @@ class AccountancyExport
 		$exportFile = null;
 		$exportFileName = '';
 		$exportFilePath = '';
+		$exportFileFullName='';
+		$downloadFileMimeType='';
+		$downloadFileFullName = '';
+		$downloadFilePath = '';
 		$archiveFullName = '';
 		$archivePath = '';
 		$archiveFileList = array();
