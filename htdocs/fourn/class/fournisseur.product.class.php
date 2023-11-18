@@ -69,6 +69,7 @@ class ProductFournisseur extends Product
 
 	public $product_id;
 	public $product_ref;
+	public $fk_product;
 
 	public $fourn_id; //supplier id
 	public $fourn_name;	// supplier name
