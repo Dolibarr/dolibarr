@@ -61,36 +61,46 @@ if (is_numeric($type)) {
 	$type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
 }
 
+$hookmanager->initHooks(array('categorycard'));
+
 $upload_dir = $conf->categorie->multidir_output[$object->entity];
 
 /*
  * Actions
  */
+$parameters = array('id' => $id,  'label' => $label, 'confirm' => $confirm, 'type' => $type, 'uploaddir' => $upload_dir, 'sendfile' => (GETPOST("sendit")?true:false));
+// Note that $action and $object may be modified by some hooks
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-if (isset($_FILES['userfile']) && $_FILES['userfile']['size'] > 0 && GETPOST("sendit") && !empty($conf->global->MAIN_UPLOAD_DOC)) {
-	if ($object->id) {
-		$file = $_FILES['userfile'];
-		if (is_array($file['name']) && count($file['name']) > 0) {
-			foreach ($file['name'] as $i => $name) {
-				if (empty($file['tmp_name'][$i]) || intval($conf->global->MAIN_UPLOAD_DOC) * 1000 <= filesize($file['tmp_name'][$i])) {
-					setEventMessage($file['name'][$i].' : '.$langs->trans(empty($file['tmp_name'][$i]) ? 'ErrorFailedToSaveFile' : 'MaxSizeForUploadedFiles'));
-					unset($file['name'][$i], $file['type'][$i], $file['tmp_name'][$i], $file['error'][$i], $file['size'][$i]);
+if (empty($reshook)) {
+	if (isset($_FILES['userfile']) && $_FILES['userfile']['size'] > 0 && GETPOST("sendit") && !empty($conf->global->MAIN_UPLOAD_DOC)) {
+		if ($object->id) {
+			$file = $_FILES['userfile'];
+			if (is_array($file['name']) && count($file['name']) > 0) {
+				foreach ($file['name'] as $i => $name) {
+					if (empty($file['tmp_name'][$i]) || intval($conf->global->MAIN_UPLOAD_DOC) * 1000 <= filesize($file['tmp_name'][$i])) {
+						setEventMessage($file['name'][$i].' : '.$langs->trans(empty($file['tmp_name'][$i]) ? 'ErrorFailedToSaveFile' : 'MaxSizeForUploadedFiles'));
+						unset($file['name'][$i], $file['type'][$i], $file['tmp_name'][$i], $file['error'][$i], $file['size'][$i]);
+					}
 				}
 			}
-		}
 
-		if (!empty($file['tmp_name'])) {
-			$object->add_photo($upload_dir, $file);
+			if (!empty($file['tmp_name'])) {
+				$object->add_photo($upload_dir, $file);
+			}
 		}
 	}
-}
 
-if ($action == 'confirm_delete' && $_GET["file"] && $confirm == 'yes' && $user->rights->categorie->creer) {
-	$object->delete_photo($upload_dir."/".$_GET["file"]);
-}
+	if ($action == 'confirm_delete' && $_GET["file"] && $confirm == 'yes' && $user->rights->categorie->creer) {
+		$object->delete_photo($upload_dir."/".$_GET["file"]);
+	}
 
-if ($action == 'addthumb' && $_GET["file"]) {
-	$object->addThumbs($upload_dir."/".$_GET["file"]);
+	if ($action == 'addthumb' && $_GET["file"]) {
+		$object->addThumbs($upload_dir."/".$_GET["file"]);
+	}
 }
 
 
