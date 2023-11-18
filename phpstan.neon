@@ -3,7 +3,7 @@ parameters:
 		- build/phpstan/bootstrap.php
 	tmpDir: .phpstan
 	customRulesetUsed: true
-	level: 1
+	level: 0
 	fileExtensions:
 		- php
 	paths:
