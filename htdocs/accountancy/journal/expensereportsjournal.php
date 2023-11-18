@@ -155,6 +155,7 @@ if ($result) {
 	// Variables
 	$account_salary = (!empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT)) ? $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT : 'NotDefined';
 	$account_vat = (!empty($conf->global->ACCOUNTING_VAT_BUY_ACCOUNT)) ? $conf->global->ACCOUNTING_VAT_BUY_ACCOUNT : 'NotDefined';
+	$group_tax_with_lines = getDolGlobalInt('ER_JOURNAL_GROUP_TAX_WITH_LINES'); //If enabled, Tax will NOT get split off from the base entry and credited to a separate tax account
 
 	$i = 0;
 	while ($i < $num) {
@@ -197,10 +198,14 @@ if ($result) {
 		}
 
 		$tabttc[$obj->rowid][$compta_user] += $obj->total_ttc;
-		$tabht[$obj->rowid][$compta_fees] += $obj->total_ht;
-		$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva;
-		$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1;
-		$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2;
+		if($group_tax_with_lines){ //case where all taxes paid should be grouped with the same account as the main expense (best for USA)
+			$tabht[$obj->rowid][$compta_fees] += $obj->total_ttc;
+		} else { //case where every tax paid should be broken out into its own account for future recovery (best for VAT countries)
+			$tabht[$obj->rowid][$compta_fees] += $obj->total_ht;
+			$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva;
+			$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1;
+			$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2;
+		}
 		$tabuser[$obj->rowid] = array(
 				'id' => $obj->uid,
 				'name' => dolGetFirstLastname($obj->firstname, $obj->lastname),
