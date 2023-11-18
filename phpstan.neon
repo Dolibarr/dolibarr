@@ -78,7 +78,7 @@ parameters:
 		- '#Empty array passed to foreach#'
 		- '#in isset\(\) is not nullable#'
 		- '#Sprain\\SwissQrBill\\#'
-	internalErrorsCountLimit: 50
+	internalErrorsCountLimit: 100
 	cache:
 	    nodesByFileCountMax: 512
 	    nodesByStringCountMax: 512
