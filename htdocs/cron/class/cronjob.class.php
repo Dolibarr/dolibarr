@@ -148,11 +148,32 @@ class Cronjob extends CommonObject
 		"pid" => array("type"=>"integer", "label"=>"Pid", "enabled"=>"1", 'position'=>185, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
 	);
 	public $rowid;
+
+	/**
+	 * @var string|int     Date for last cron object update
+	 */
 	public $tms;
+
+	/**
+	 * @var string|int     Date for cron job create
+	 */
 	public $datec;
+
+	/**
+	 * @var string Job type
+	 */
 	public $jobtype;
+
+	/**
+	 * @var string Cron Job label
+	 */
 	public $label;
+
+	/**
+	 * @var string Job command
+	 */
 	public $command;
+
 	public $classesname;
 	public $objectname;
 	public $methodename;
@@ -160,28 +181,111 @@ class Cronjob extends CommonObject
 	public $md5params;
 	public $module_name;
 	public $priority;
-	public $datelastrun;
-	public $datenextrun;
-	public $datestart;
-	public $dateend;
-	public $datelastresult;
+
+	/**
+	 * @var string|int     Date for last job execution
+	 */
+	public $datelastrun= '';
+
+	/**
+	 * @var string|int     Date for next job execution
+	 */
+	public $datenextrun='';
+
+	/**
+	 * @var string|int     Date for first start job execution
+	 */
+	public $datestart='';
+
+	/**
+	 * @var string|int     Date for end job execution
+	 */
+	public $dateend='';
+
+	/**
+	 * @var string|int     Date for last result job execution
+	 */
+	public $datelastresult='';
+
+	/**
+	 * @var string 			Last result from end job execution
+	 */
 	public $lastresult;
+
+	/**
+	 * @var string 			Last output from end job execution
+	 */
 	public $lastoutput;
+
+	/**
+	 * @var string 			Unit frequency of job execution
+	 */
 	public $unitfrequency;
+
+	/**
+	 * @var int 			Frequency of job execution
+	 */
 	public $frequency;
+
+	/**
+	 * @var int 			Number of run job execution
+	 */
 	public $nbrun;
+
+	/**
+	 * @var int 			Status
+	 */
 	public $status;
+
+
+	/**
+	 * @var int 			User ID of creation
+	 */
 	public $fk_user_author;
+
+	/**
+	 * @var int 			User ID of last modification
+	 */
 	public $fk_user_mod;
+
 	public $note;
+
+	/**
+	 * @var string 			Libname
+	 */
 	public $libname;
+
+	/**
+	 * @var int Entity
+	 */
 	public $entity;
+
+	/**
+	 * @var int 			Maximum run job execution
+	 */
 	public $maxrun;
+
 	public $autodelete;
 	public $fk_mailing;
+
+	/**
+	 * @var string 			A test condition to know if job is visible/qualified
+	 */
 	public $test;
+
+	/**
+	 * @var int 			Is job running ?
+	 */
 	public $processing;
+
+	/**
+	 * @var string 			Email when an error occurs
+	 */
 	public $email_alert;
+
+	/**
+	* @var int 			The job current PID
+	 */
 	public $pid;
 
 
