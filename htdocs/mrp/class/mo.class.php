@@ -817,7 +817,6 @@ class Mo extends CommonObject
 				}
 			}
 		}
-
 		if (!$error) {
 			$this->db->commit();
 			return 1;
@@ -881,7 +880,6 @@ class Mo extends CommonObject
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
 			return -2;
 		}
-
 		$productstatic = new Product($this->db);
 		$fk_movement = GETPOST('fk_movement', 'int');
 		$arrayoflines = $this->fetchLinesLinked('consumed', $idline);
@@ -1972,7 +1970,7 @@ class MoLine extends CommonObjectLine
 	/**
 	 * @var int  Does moline support extrafields ? 0=No, 1=Yes
 	 */
-	public $isextrafieldmanaged = 0;
+	public $isextrafieldmanaged = 1;
 
 	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'ID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
