@@ -125,7 +125,6 @@ class EcmDirectory extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
-		return 1;
 	}
 
 

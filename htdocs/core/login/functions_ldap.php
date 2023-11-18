@@ -205,7 +205,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 
 					// On recherche le user dolibarr en fonction de son SID ldap (only for Active Directory)
 					$sid = null;
-					if ($conf->global->LDAP_SERVER_TYPE == "activedirectory") {
+					if (getDolGlobalString('LDAP_SERVER_TYPE') == "activedirectory") {
 						$sid = $ldap->getObjectSid($login);
 						if ($ldapdebug) {
 							print "DEBUG: sid = ".$sid."<br>\n";

@@ -60,7 +60,7 @@ if ($reshook < 0) {
 
 
 //var_dump($extrafields->attributes[$object->table_element]);
-if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label'])) {
+if (empty($reshook) && !empty($object->table_element) && isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label'])) {
 	$lastseparatorkeyfound = '';
 	$extrafields_collapse_num = '';
 	$extrafields_collapse_num_old = '';

@@ -53,7 +53,7 @@ $listoflastname = array("Joe","Marc","Steve","Laurent","Nico","Isabelle","Doroth
  * Parametre
  */
 
-define(GEN_NUMBER_SOCIETE, 10);
+define('GEN_NUMBER_SOCIETE', $argv[1] ?? 10);
 
 
 $ret=$user->fetch('', 'admin');
@@ -122,7 +122,7 @@ for ($s = 0; $s < GEN_NUMBER_SOCIETE; $s++) {
 	}
 	print "> client=".$soc->client.", fournisseur=".$soc->fournisseur.", remise=".$soc->remise_percent."\n";
 	$soc->note_private = 'Company created by the script generate-societe.php';
-	$socid = $soc->create();
+	$socid = $soc->create($user);
 
 	if ($socid >= 0) {
 		$rand = mt_rand(1, 4);

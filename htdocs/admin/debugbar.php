@@ -96,13 +96,13 @@ print "</tr>\n";
 
 print '<tr class="oddeven"><td class="nowrap">'.$langs->trans("DEBUGBAR_USE_LOG_FILE").'</td>';
 print '<td>';
-print $form->selectyesno('DEBUGBAR_USE_LOG_FILE', !empty($conf->global->DEBUGBAR_USE_LOG_FILE), 1);
+print $form->selectyesno('DEBUGBAR_USE_LOG_FILE', getDolGlobalString('DEBUGBAR_USE_LOG_FILE'), 1);
 print '</td><td>';
 print '<span class="opacitymedium"> '.$langs->trans("UsingLogFileShowAllRecordOfSubrequestButIsSlower").'</span>';
 print '</td></tr>';
 
 print '<tr class="oddeven"><td class="nowrap">'.$langs->trans("DEBUGBAR_LOGS_LINES_NUMBER").'</td>';
-print '<td><input type="text" class="flat width75" name="DEBUGBAR_LOGS_LINES_NUMBER" value="'.(empty($conf->global->DEBUGBAR_LOGS_LINES_NUMBER) ? 250 : $conf->global->DEBUGBAR_LOGS_LINES_NUMBER).'">'; // This slow seriously output
+print '<td><input type="text" class="flat width75" name="DEBUGBAR_LOGS_LINES_NUMBER" value="'.(!getDolGlobalString('DEBUGBAR_LOGS_LINES_NUMBER') ? 250 : $conf->global->DEBUGBAR_LOGS_LINES_NUMBER).'">'; // This slow seriously output
 print '</td><td>';
 print '<span class="opacitymedium">'.$langs->trans("WarningValueHigherSlowsDramaticalyOutput").'</span>';
 print '</td></tr>';

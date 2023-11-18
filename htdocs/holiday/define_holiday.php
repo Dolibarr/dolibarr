@@ -82,7 +82,7 @@ if ($user->socid > 0) {
 }
 
 // If the user does not have perm to read the page
-if (empty($user->rights->holiday->read)) {
+if (!$user->hasRight('holiday', 'read')) {
 	accessforbidden();
 }
 
@@ -292,7 +292,7 @@ $filters = '';
 
 // Filter on array of ids of all childs
 $userchilds = array();
-if (empty($user->rights->holiday->readall)) {
+if (!$user->hasRight('holiday', 'readall')) {
 	$userchilds = $user->getAllChildIds(1);
 	$filters .= ' AND u.rowid IN ('.$db->sanitize(join(', ', $userchilds)).')';
 }
@@ -320,7 +320,7 @@ if (count($typeleaves) == 0) {
 	//print '</div>';
 } else {
 	$canedit = 0;
-	if (!empty($user->rights->holiday->define_holiday)) {
+	if ($user->hasRight('holiday', 'define_holiday')) {
 		$canedit = 1;
 	}
 
@@ -405,7 +405,7 @@ if (count($typeleaves) == 0) {
 		}
 	}
 	if (!empty($arrayfields['cp.note_public']['checked'])) {
-		print_liste_field_titre((empty($user->rights->holiday->define_holiday) ? '' : 'Note'), $_SERVER["PHP_SELF"]);
+		print_liste_field_titre((!$user->hasRight('holiday', 'define_holiday') ? '' : 'Note'), $_SERVER["PHP_SELF"]);
 	}
 	print_liste_field_titre('');
 	// Action column
@@ -419,7 +419,7 @@ if (count($typeleaves) == 0) {
 		$arrayofselected = is_array($toselect) ? $toselect : array();
 
 		// If user has not permission to edit/read all, we must see only subordinates
-		if (empty($user->rights->holiday->readall)) {
+		if (!$user->hasRight('holiday', 'readall')) {
 			if (($users['rowid'] != $user->id) && (!in_array($users['rowid'], $userchilds))) {
 				continue; // This user is not into hierarchy of current user, we hide it.
 			}
@@ -504,7 +504,7 @@ if (count($typeleaves) == 0) {
 
 		// Button modify
 		print '<td class="center">';
-		if (!empty($user->rights->holiday->define_holiday)) {	// Allowed to set the balance of any user
+		if ($user->hasRight('holiday', 'define_holiday')) {	// Allowed to set the balance of any user
 			print '<input type="submit" name="update_cp['.$users['rowid'].']" value="'.dol_escape_htmltag($langs->trans("Save")).'" class="button smallpaddingimp"/>';
 		}
 		print '</td>'."\n";

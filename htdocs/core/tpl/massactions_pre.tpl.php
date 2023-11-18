@@ -73,12 +73,12 @@ if ($massaction == 'preaffecttag' && isModEnabled('category')) {
 	$formquestion = array();
 	if (!empty($categ_types)) {
 		foreach ($categ_types as $categ_type) {
-			$categ_arbo_tmp = $form->select_all_categories($categ_type['code'], null, 'parent', null, null, 2);
+			$categ_arbo_tmp = $form->select_all_categories($categ_type['code'], '', 'parent', 0, 0, 3);
 			$formquestion[] = array(
 				'type' => 'other',
 				'name' => 'affecttag_'.$categ_type['code'],
 				'label' => '',
-				'value' => $form->multiselectarray('contcats_'.$categ_type['code'], $categ_arbo_tmp, GETPOST('contcats_'.$categ_type['code'], 'array'), null, null, '', 0, '60%', '', '', $langs->trans("SelectTheTagsToAssign"))
+				'value' => $form->multiselectarray('contcats_'.$categ_type['code'], $categ_arbo_tmp, GETPOST('contcats_'.$categ_type['code'], 'array'), null, null, '', 0, '60%', '', '', $langs->transnoentitiesnoconv("SelectTheTagsToAssign"))
 			);
 		}
 		$formquestion[] = array(

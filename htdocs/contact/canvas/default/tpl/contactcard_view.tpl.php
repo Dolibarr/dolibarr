@@ -138,7 +138,7 @@ if (!empty($this->control->tpl['action_delete'])) {
 
 if (empty($user->socid)) {
 	print '<div class="tabsAction">';
-	if ($user->rights->societe->contact->creer) {
+	if ($user->hasRight('societe', 'contact', 'creer')) {
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&action=edit&token='.newToken().'&canvas='.$canvas.'">'.$langs->trans('Modify').'</a>';
 	}
 
@@ -146,7 +146,7 @@ if (empty($user->socid)) {
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&action=create_user&token='.newToken().'&canvas='.$canvas.'">'.$langs->trans("CreateDolibarrLogin").'</a>';
 	}
 
-	if ($user->rights->societe->contact->supprimer) {
+	if ($user->hasRight('societe', 'contact', 'supprimer')) {
 		print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&action=delete&token='.newToken().'&canvas='.$canvas.'">'.$langs->trans('Delete').'</a>';
 	}
 

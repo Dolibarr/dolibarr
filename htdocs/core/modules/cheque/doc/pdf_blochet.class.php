@@ -59,6 +59,13 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 */
 	public $account;
 
+	public $amount;
+	public $date;
+	public $nbcheque;
+	public $ref;
+	public $ref_ext;
+
+
 	/**
 	 * @var array lines
 	 */

@@ -164,21 +164,21 @@ print "</tr>\n";
 
 print '<tr class="oddeven"><td>';
 print '<span class="fieldrequired">'.$langs->trans("PAYBOX_PBX_SITE").'</span></td><td>';
-print '<input size="32" type="text" name="PAYBOX_IBS_SITE" value="'.$conf->global->PAYBOX_IBS_SITE.'">';
+print '<input size="32" type="text" name="PAYBOX_IBS_SITE" value="' . getDolGlobalString('PAYBOX_IBS_SITE').'">';
 print '<span class="opacitymedium"><br>'.$langs->trans("Example").': 1999888 ('.$langs->trans("Test").')</span>';
 print '</td></tr>';
 
 
 print '<tr class="oddeven"><td>';
 print '<span class="fieldrequired">'.$langs->trans("PAYBOX_PBX_RANG").'</span></td><td>';
-print '<input size="32" type="text" name="PAYBOX_IBS_RANG" value="'.$conf->global->PAYBOX_IBS_RANG.'">';
+print '<input size="32" type="text" name="PAYBOX_IBS_RANG" value="' . getDolGlobalString('PAYBOX_IBS_RANG').'">';
 print '<span class="opacitymedium"><br>'.$langs->trans("Example").': 99 ('.$langs->trans("Test").')</span>';
 print '</td></tr>';
 
 
 print '<tr class="oddeven"><td>';
 print '<span class="fieldrequired">'.$langs->trans("PAYBOX_PBX_IDENTIFIANT").'</span></td><td>';
-print '<input size="32" type="text" name="PAYBOX_PBX_IDENTIFIANT" value="'.$conf->global->PAYBOX_PBX_IDENTIFIANT.'">';
+print '<input size="32" type="text" name="PAYBOX_PBX_IDENTIFIANT" value="' . getDolGlobalString('PAYBOX_PBX_IDENTIFIANT').'">';
 print '<span class="opacitymedium"><br>'.$langs->trans("Example").': 2 ('.$langs->trans("Test").')</span>';
 print '</td></tr>';
 
@@ -214,7 +214,7 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print '<span class="fieldrequired">'.$langs->trans("PAYBOX_CGI_URL_V2").'</span></td><td>';
-print '<input size="64" type="text" name="PAYBOX_CGI_URL_V2" value="'.$conf->global->PAYBOX_CGI_URL_V2.'">';
+print '<input size="64" type="text" name="PAYBOX_CGI_URL_V2" value="' . getDolGlobalString('PAYBOX_CGI_URL_V2').'">';
 print '<span class="opacitymedium"><br>'.$langs->trans("Example").' (preprod): https://preprod-tpeweb.paybox.com/php/';
 print '<br>'.$langs->trans("Example").' (prod): https://tpeweb.paybox.com/php/</span>';
 print '</td></tr>';
@@ -222,7 +222,7 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("PublicVendorName").'</td><td>';
-print '<input type="text" class="minwidth300" name="ONLINE_PAYMENT_CREDITOR" value="'.$conf->global->ONLINE_PAYMENT_CREDITOR.'">';
+print '<input type="text" class="minwidth300" name="ONLINE_PAYMENT_CREDITOR" value="' . getDolGlobalString('ONLINE_PAYMENT_CREDITOR').'">';
 print '<br><span class="opacitymedium">'.$langs->trans("Example").': '.$mysoc->name.'</span>';
 print '</td></tr>';
 
@@ -237,7 +237,7 @@ if (isModEnabled("banque")) {
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("CSSUrlForPaymentForm").'</td><td>';
-print '<input size="64" type="text" name="ONLINE_PAYMENT_CSS_URL" value="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'">';
+print '<input size="64" type="text" name="ONLINE_PAYMENT_CSS_URL" value="' . getDolGlobalString('ONLINE_PAYMENT_CSS_URL').'">';
 print '<span class="opacitymedium"><br>'.$langs->trans("Example").': http://mysite/mycss.css</span>';
 print '</td></tr>';
 
@@ -264,14 +264,14 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td class="fieldrequired">';
 print $langs->trans("ONLINE_PAYMENT_SENDEMAIL").'</td><td>';
-print '<input size="32" type="text" name="ONLINE_PAYMENT_SENDEMAIL" value="'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'">';
+print '<input size="32" type="text" name="ONLINE_PAYMENT_SENDEMAIL" value="' . getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL').'">';
 print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': myemail@myserver.com, Payment service &lt;myemail2@myserver2.com&gt;</span>';
 print '</td></tr>';
 
 // Payment token for URL
 print '<tr class="oddeven"><td>';
 print $langs->trans("SecurityToken").'</td><td>';
-print '<input size="48" type="text" id="PAYMENT_SECURITY_TOKEN" name="PAYMENT_SECURITY_TOKEN" value="'.$conf->global->PAYMENT_SECURITY_TOKEN.'">';
+print '<input size="48" type="text" id="PAYMENT_SECURITY_TOKEN" name="PAYMENT_SECURITY_TOKEN" value="' . getDolGlobalString('PAYMENT_SECURITY_TOKEN').'">';
 if (!empty($conf->use_javascript_ajax)) {
 	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 }

@@ -83,6 +83,7 @@ class Reception extends CommonObject
 	public $billed;
 	public $model_pdf;
 
+	public $weight;
 	public $trueWeight;
 	public $weight_units;
 	public $trueWidth;
@@ -94,6 +95,7 @@ class Reception extends CommonObject
 	// A denormalized value
 	public $trueSize;
 	public $size_units;
+	public $user_author_id;
 
 	public $date_delivery; // Date delivery planed
 
@@ -370,7 +372,7 @@ class Reception extends CommonObject
 			return -1;
 		}
 
-		$sql = "SELECT e.rowid, e.entity, e.ref, e.fk_soc as socid, e.date_creation, e.ref_supplier, e.ref_ext, e.fk_user_author, e.fk_statut as status";
+		$sql = "SELECT e.rowid, e.entity, e.ref, e.fk_soc as socid, e.date_creation, e.ref_supplier, e.ref_ext, e.fk_user_author, e.fk_statut as status, e.billed";
 		$sql .= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
 		$sql .= ", e.date_reception as date_reception, e.model_pdf,  e.date_delivery";
 		$sql .= ", e.fk_shipping_method, e.tracking_number";
@@ -383,13 +385,13 @@ class Reception extends CommonObject
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON e.fk_incoterms = i.rowid';
 		$sql .= " WHERE e.entity IN (".getEntity('reception').")";
 		if ($id) {
-			$sql .= " AND e.rowid=".((int) $id);
+			$sql .= " AND e.rowid = ".((int) $id);
 		}
 		if ($ref) {
-			$sql .= " AND e.ref='".$this->db->escape($ref)."'";
+			$sql .= " AND e.ref = '".$this->db->escape($ref)."'";
 		}
 		if ($ref_ext) {
-			$sql .= " AND e.ref_ext='".$this->db->escape($ref_ext)."'";
+			$sql .= " AND e.ref_ext = '".$this->db->escape($ref_ext)."'";
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -406,18 +408,18 @@ class Reception extends CommonObject
 				$this->ref_ext = $obj->ref_ext;
 				$this->statut               = $obj->status;
 				$this->status               = $obj->status;
+				$this->billed               = $obj->billed;
+
 				$this->user_author_id       = $obj->fk_user_author;
 				$this->date_creation        = $this->db->jdate($obj->date_creation);
 				$this->date = $this->db->jdate($obj->date_reception); // TODO deprecated
 				$this->date_reception = $this->db->jdate($obj->date_reception); // Date real
 				$this->date_delivery        = $this->db->jdate($obj->date_delivery); // Date planed
 				$this->model_pdf            = $obj->model_pdf;
-				$this->modelpdf             = $obj->model_pdf; // deprecated
 				$this->shipping_method_id = $obj->fk_shipping_method;
 				$this->tracking_number      = $obj->tracking_number;
 				$this->origin               = ($obj->origin ? $obj->origin : 'commande'); // For compatibility
 				$this->origin_id            = $obj->origin_id;
-				$this->billed = ($obj->fk_statut == 2 ? 1 : 0);
 
 				$this->trueWeight           = $obj->weight;
 				$this->weight_units         = $obj->weight_units;
@@ -503,8 +505,8 @@ class Reception extends CommonObject
 			return 0;
 		}
 
-		if (!((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->reception->creer))
-		|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->reception->reception_advance->validate)))) {
+		if (!((!getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->reception->creer))
+		|| (getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->reception->reception_advance->validate)))) {
 			$this->error = 'Permission denied';
 			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
 			return -1;
@@ -545,7 +547,7 @@ class Reception extends CommonObject
 		}
 
 		// If stock increment is done on reception (recommanded choice)
-		if (!$error && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION)) {
+		if (!$error && isModEnabled('stock') && getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION')) {
 			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
 			$langs->load("agenda");
@@ -657,6 +659,12 @@ class Reception extends CommonObject
 				if (!$resql) {
 					$error++; $this->error = $this->db->lasterror();
 				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'reception/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'reception/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++; $this->error = $this->db->lasterror();
+				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
@@ -685,7 +693,8 @@ class Reception extends CommonObject
 		// Set new ref and current status
 		if (!$error) {
 			$this->ref = $numref;
-			$this->statut = 1;
+			$this->statut = self::STATUS_VALIDATED;
+			$this->status = self::STATUS_VALIDATED;
 		}
 
 		if (!$error) {
@@ -708,19 +717,20 @@ class Reception extends CommonObject
 	 */
 	public function getStatusDispatch()
 	{
-		global $conf;
-
 		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
 
 		$status = CommandeFournisseur::STATUS_RECEIVED_PARTIALLY;
 
 		if (!empty($this->origin) && $this->origin_id > 0 && ($this->origin == 'order_supplier' || $this->origin == 'commandeFournisseur')) {
-			if (empty($this->commandeFournisseur)) {
+			if (empty($this->origin_object)) {
 				$this->fetch_origin();
-				if (empty($this->commandeFournisseur->lines)) {
-					$res = $this->commandeFournisseur->fetch_lines();
-					if ($res < 0)	return $res;
+				if (empty($this->origin_object->lines)) {
+					$res = $this->origin_object->fetch_lines();
+					$this->commandeFournisseur = $this->origin_object;	// deprecated
+					if ($res < 0) {
+						return $res;
+					}
 				}
 			}
 
@@ -729,7 +739,7 @@ class Reception extends CommonObject
 
 			$supplierorderdispatch = new CommandeFournisseurDispatch($this->db);
 			$filter = array('t.fk_commande'=>$this->origin_id);
-			if (!empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) {
+			if (getDolGlobalInt('SUPPLIER_ORDER_USE_DISPATCH_STATUS')) {
 				$filter['t.status'] = 1; // Restrict to lines with status validated
 			}
 
@@ -743,13 +753,15 @@ class Reception extends CommonObject
 				foreach ($supplierorderdispatch->lines as $dispatch_line) {
 					if (array_key_exists($dispatch_line->fk_product, $qty_received)) {
 						$qty_received[$dispatch_line->fk_product] += $dispatch_line->qty;
+					} else {
+						$qty_received[$dispatch_line->fk_product] = $dispatch_line->qty;
 					}
 				}
 
 				// qty wished in order supplier (origin)
 				foreach ($this->commandeFournisseur->lines as $origin_line) {
 					// exclude lines not qualified for reception
-					if (empty($conf->global->STOCK_SUPPORTS_SERVICES) && $origin_line->product_type > 0) {
+					if (!getDolGlobalInt('STOCK_SUPPORTS_SERVICES') && $origin_line->product_type > 0) {
 						continue;
 					}
 
@@ -763,7 +775,7 @@ class Reception extends CommonObject
 
 				if (count($diff_array) == 0 && count($keys_in_wished_not_in_received) == 0 && count($keys_in_received_not_in_wished) == 0) { // no diff => mean everything is received
 					$status = CommandeFournisseur::STATUS_RECEIVED_COMPLETELY;
-				} elseif (!empty($conf->global->SUPPLIER_ORDER_MORE_THAN_WISHED)) {
+				} elseif (getDolGlobalInt('SUPPLIER_ORDER_MORE_THAN_WISHED')) {
 					// set totally received if more products received than ordered
 					$close = 0;
 
@@ -828,7 +840,7 @@ class Reception extends CommonObject
 		if (isModEnabled('stock') && !empty($supplierorderline->fk_product)) {
 			$fk_product = $supplierorderline->fk_product;
 
-			if (!($entrepot_id > 0) && empty($conf->global->STOCK_WAREHOUSE_NOT_REQUIRED_FOR_RECEPTIONS)) {
+			if (!($entrepot_id > 0) && !getDolGlobalInt('STOCK_WAREHOUSE_NOT_REQUIRED_FOR_RECEPTIONS')) {
 				$langs->load("errors");
 				$this->error = $langs->trans("ErrorWarehouseRequiredIntoReceptionLine");
 				return -1;
@@ -852,7 +864,7 @@ class Reception extends CommonObject
 
 		// extrafields
 		$line->array_options = $supplierorderline->array_options;
-		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options) > 0) {
+		if (!getDolGlobalInt('MAIN_EXTRAFIELDS_DISABLED') && is_array($array_options) && count($array_options) > 0) {
 			foreach ($array_options as $key => $value) {
 				$line->array_options[$key] = $value;
 			}
@@ -1026,7 +1038,7 @@ class Reception extends CommonObject
 		$this->db->begin();
 
 		// Stock control
-		if (isModEnabled('stock') && $conf->global->STOCK_CALCULATE_ON_RECEPTION && $this->statut > 0) {
+		if (isModEnabled('stock') && !getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION') && $this->statut > 0) {
 			require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
 
 			$langs->load("agenda");
@@ -1249,7 +1261,7 @@ class Reception extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("Reception");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -1365,7 +1377,6 @@ class Reception extends CommonObject
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
 		$this->statut               = 1;
-		$this->livraison_id         = 0;
 		$this->date                 = $now;
 		$this->date_creation        = $now;
 		$this->date_valid           = $now;
@@ -1375,11 +1386,10 @@ class Reception extends CommonObject
 		$this->entrepot_id          = 0;
 		$this->socid                = 1;
 
-		$this->commande_id          = 0;
-		$this->commande             = $order;
-
 		$this->origin_id            = 1;
 		$this->origin               = 'commande';
+		$this->origin_object        = $order;
+		$this->commandeFournisseur  = $order;	// deprecated
 
 		$this->note_private = 'Private note';
 		$this->note_public = 'Public note';
@@ -1393,7 +1403,7 @@ class Reception extends CommonObject
 			$line->label = $langs->trans("Description")." ".$xnbp;
 			$line->qty = 10;
 
-			$line->fk_product = $this->commande->lines[$xnbp]->fk_product;
+			$line->fk_product = $this->origin_object->lines[$xnbp]->fk_product;
 
 			$this->lines[] = $line;
 			$xnbp++;
@@ -1555,7 +1565,7 @@ class Reception extends CommonObject
 				foreach ($order->lines as $line) {
 					$lineid = $line->id;
 					$qty = $line->qty;
-					if (($line->product_type == 0 || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) && $order->receptions[$lineid] < $qty) {
+					if (($line->product_type == 0 || getDolGlobalInt('STOCK_SUPPORTS_SERVICES')) && $order->receptions[$lineid] < $qty) {
 						$receptions_match_order = 0;
 						$text = 'Qty for order line id '.$lineid.' is '.$qty.'. However in the receptions with status Reception::STATUS_CLOSED='.self::STATUS_CLOSED.' we have qty = '.$order->receptions[$lineid].', so we can t close order';
 						dol_syslog($text);
@@ -1572,7 +1582,7 @@ class Reception extends CommonObject
 			$this->status = self::STATUS_CLOSED;
 
 			// If stock increment is done on closing
-			if (!$error && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
+			if (!$error && isModEnabled('stock') && getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION_CLOSE')) {
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
 				$langs->load("agenda");
@@ -1721,11 +1731,12 @@ class Reception extends CommonObject
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$this->statut = 1;
+			$this->statut = self::STATUS_VALIDATED;
+			$this->status = self::STATUS_VALIDATED;
 			$this->billed = 0;
 
 			// If stock increment is done on closing
-			if (!$error && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
+			if (!$error && isModEnabled('stock') && getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION_CLOSE')) {
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 				$numref = $this->ref;
 				$langs->load("agenda");
@@ -1842,8 +1853,8 @@ class Reception extends CommonObject
 			return 0;
 		}
 
-		if (!((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->reception->creer))
-		|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->reception->reception_advance->validate)))) {
+		if (!((!getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->reception->creer))
+		|| (getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->reception->reception_advance->validate)))) {
 			$this->error = 'Permission denied';
 			return -1;
 		}
@@ -1857,7 +1868,7 @@ class Reception extends CommonObject
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		if ($this->db->query($sql)) {
 			// If stock increment is done on closing
-			if (!$error && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION)) {
+			if (!$error && isModEnabled('stock') && getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION')) {
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
 				$langs->load("agenda");
@@ -1957,6 +1968,7 @@ class Reception extends CommonObject
 
 			if (!$error) {
 				$this->statut = self::STATUS_DRAFT;
+				$this->status = self::STATUS_DRAFT;
 				$this->db->commit();
 				return 1;
 			} else {

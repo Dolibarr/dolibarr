@@ -234,9 +234,10 @@ class SkillRank extends CommonObject
 	 *
 	 * @param  	User 	$user      	User that creates
 	 * @param  	int 	$fromid     Id of object to clone
+	 * @param   int     $fk_object  id of Job object (if new job object)
 	 * @return 	mixed 				New object created, <0 if KO
 	 */
-	public function createFromClone(User $user, $fromid)
+	public function createFromClone(User $user, $fromid, $fk_object = 0)
 	{
 		global $langs, $extrafields;
 		$error = 0;
@@ -261,6 +262,10 @@ class SkillRank extends CommonObject
 		unset($object->id);
 		unset($object->fk_user_creat);
 		unset($object->import_key);
+		if (!empty($fk_object) && $fk_object > 0) {
+			unset($object->fk_object);
+		}
+
 
 		// Clear fields
 		if (property_exists($object, 'ref')) {
@@ -277,6 +282,11 @@ class SkillRank extends CommonObject
 		}
 		if (property_exists($object, 'date_modification')) {
 			$object->date_modification = null;
+		}
+		if (!empty($fk_object) && $fk_object > 0) {
+			if (property_exists($object, 'fk_object')) {
+				$object->fk_object = ($fk_object = 0 ? $this->fk_object : $fk_object);
+			}
 		}
 		// ...
 		// Clear extrafields that are unique
@@ -570,7 +580,7 @@ class SkillRank extends CommonObject
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('SKILLRANK_VALIDATE', $user);
+				$result = $this->call_trigger('HRM_SKILLRANK_VALIDATE', $user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -586,6 +596,12 @@ class SkillRank extends CommonObject
 				// Now we rename also files into index
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'skillrank/".$this->db->escape($this->newref)."'";
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'skillrank/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++; $this->error = $this->db->lasterror();
+				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'skillrank/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'skillrank/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++; $this->error = $this->db->lasterror();
@@ -876,6 +892,7 @@ class SkillRank extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_creat;
@@ -948,7 +965,7 @@ class SkillRank extends CommonObject
 		if (!empty($conf->global->hrm_SKILLRANK_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->hrm_SKILLRANK_ADDON.".php";
+			$file = getDolGlobalString('hrm_SKILLRANK_ADDON') . ".php";
 			$classname = $conf->global->hrm_SKILLRANK_ADDON;
 
 			// Include file with class
