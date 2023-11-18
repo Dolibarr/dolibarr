@@ -1755,7 +1755,14 @@ abstract class CommonObject
 
 		$result = $this->db->fetch_object($query);
 
-		return $this->fetch($result->rowid);
+		if (method_exists($this, 'fetch')) {
+			return $this->fetch($result->rowid);
+		} else {
+			$this->error = 'Fetch method not implemented on '.get_class($this);
+			dol_syslog(get_class($this).'::fetchOneLike Error='.$this->error, LOG_ERR);
+			array_push($this->errors, $this->error);
+			return -1;
+		}
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
