@@ -23,7 +23,7 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
         with:
-         fetch-depth: '0'
+         fetch-depth: 0
       - name: Setup PHP
         id: setup-php
         uses: shivammathur/setup-php@v2
@@ -37,17 +37,17 @@ jobs:
       - name: Restore result cache
         uses: actions/cache/restore@v3
         with:
-          path: .phpstan
+          path: ./tmp
           key: "result-cache-v1-7.4-${{ github.run_id }}"
           restore-keys: |
             result-cache-v1-7.4-
       - name: Debug
-        run: cd .phpstan && ls -alR
+        run: cd ./tmp && ls -al
       - name: Run PHPSTAN
-        run: phpstan -vvv analyse --error-format=checkstyle htdocs/ | cs2pr --graceful-warnings
+        run: phpstan -vvv analyse --error-format=checkstyle -c phpstan.neon htdocs/ | cs2pr --graceful-warnings
       - name: "Save result cache"
         uses: actions/cache/save@v3
         if: always()
         with:
-          path: .phpstan
+          path: ./tmp
           key: "result-cache-v1-7.4-${{ github.run_id }}"

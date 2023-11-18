@@ -1,7 +1,7 @@
 parameters:
 	bootstrapFiles:
 		- build/phpstan/bootstrap.php
-	tmpDir: .phpstan
+	tmpDir: ./tmp
 	customRulesetUsed: true
 	level: 0
 	fileExtensions:
