@@ -414,7 +414,9 @@ if ($result) {
 	print_liste_field_titre("User", $_SERVER["PHP_SELF"], "u.login", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "e.description", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("UserAgent", $_SERVER["PHP_SELF"], "e.user_agent", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("SuffixSessionName", $_SERVER["PHP_SELF"], "e.prefix_session", "", $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields['e.prefix_session']['checked'])) {
+		print_liste_field_titre("SuffixSessionName", $_SERVER["PHP_SELF"], "e.prefix_session", "", $param, '', $sortfield, $sortorder);
+	}
 	// Action column
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print_liste_field_titre('');
