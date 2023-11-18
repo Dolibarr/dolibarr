@@ -1884,6 +1884,20 @@ function version_php()
 }
 
 /**
+ * 	Return DB version
+ *
+ * 	@return		string			PHP version
+ */
+function version_db()
+{
+	global $db;
+	if (is_object($db, 'getVersion')) {
+		return $db->getVersion();
+	}
+	return '';
+}
+
+/**
  * 	Return Dolibarr version
  *
  * 	@return		string			Dolibarr version

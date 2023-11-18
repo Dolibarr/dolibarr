@@ -106,7 +106,8 @@ if (($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == '
 
 			// Create a line of payments
 			$paiement = new PaymentSalary($db);
-			$paiement->chid         = $id;
+			$paiement->id           = $id;
+			$paiement->chid         = $id;	// deprecated
 			$paiement->datep        = $datepaye;
 			$paiement->amounts      = $amounts; // Tableau de montant
 			$paiement->paiementtype = GETPOST("paiementtype", 'alphanohtml');
