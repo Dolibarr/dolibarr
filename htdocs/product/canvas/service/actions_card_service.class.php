@@ -34,6 +34,11 @@ class ActionsCardService
 	public $db;
 
 	public $dirmodule;
+	public $module;
+	public $label;
+	public $price_base_type;
+	public $accountancy_code_sell;
+	public $accountancy_code_buy;
 	public $targetmodule;
 	public $canvas;
 	public $card;

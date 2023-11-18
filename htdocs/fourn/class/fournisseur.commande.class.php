@@ -2063,7 +2063,7 @@ class CommandeFournisseur extends CommonOrder
 			$result = $this->line->insert($notrigger);
 			if ($result > 0) {
 				// Reorder if child line
-				if (!empty($fk_parent_line)) {
+				if (!empty($this->line->fk_parent_line)) {
 					$this->line_order(true, 'DESC');
 				} elseif ($rang > 0 && $rang <= count($this->lines)) { // Update all rank of all other lines
 					$linecount = count($this->lines);
