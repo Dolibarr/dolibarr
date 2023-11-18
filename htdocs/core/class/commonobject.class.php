@@ -752,6 +752,16 @@ abstract class CommonObject
 	 */
 	public $warehouse_id;
 
+	/**
+	 * @var int img width
+	 */
+	public $imgWidth;
+
+	/**
+	 * @var int img height
+	 */
+	public $imgHeight;
+
 	// No constructor as it is an abstract class
 
 
