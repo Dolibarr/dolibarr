@@ -1149,11 +1149,11 @@ class Product extends CommonObject
 		if ($result >= 0) {
 			// $this->oldcopy should have been set by the caller of update (here properties were already modified)
 			if (empty($this->oldcopy)) {
-				$this->oldcopy = dol_clone($this);
+				$this->oldcopy = dol_clone($this, 1);
 			}
 			// Test if batch management is activated on existing product
 			// If yes, we create missing entries into product_batch
-			if ($this->hasbatch() && get_class($this->oldcopy)==get_class($this) && !$this->oldcopy->hasbatch()) {
+			if ($this->hasbatch() && !$this->oldcopy->hasbatch()) {
 				//$valueforundefinedlot = 'Undefined';  // In previous version, 39 and lower
 				$valueforundefinedlot = '000000';
 				if (!empty($conf->global->STOCK_DEFAULT_BATCH)) {
