@@ -2920,7 +2920,7 @@ function top_menu_search()
 		$stringforfirstkey .= ' CTL +';
 	}
 
-	$searchInput = '<input name="search_all"'.($stringforfirstkey ? ' title="'.dol_escape_htmltag($stringforfirstkey.' s').'"' : '').' id="top-global-search-input" class="dropdown-search-input search_component_input" placeholder="'.$langs->trans('Search').'" autocomplete="off">';
+	$searchInput = '<input type="search" name="search_all"'.($stringforfirstkey ? ' title="'.dol_escape_htmltag($stringforfirstkey.' s').'"' : '').' id="top-global-search-input" class="dropdown-search-input search_component_input" placeholder="'.$langs->trans('Search').'" autocomplete="off">';
 
 	$defaultAction = '';
 	$buttonList = '<div class="dropdown-global-search-button-list" >';
@@ -2935,7 +2935,7 @@ function top_menu_search()
 	}
 	$buttonList .= '</div>';
 
-	$dropDownHtml = '<form id="top-menu-action-search" name="actionsearch" method="GET" action="'.$defaultAction.'">';
+	$dropDownHtml = '<form role="search" id="top-menu-action-search" name="actionsearch" method="GET" action="'.$defaultAction.'">';
 
 	$dropDownHtml .= '
         <!-- search input -->
@@ -2967,7 +2967,7 @@ function top_menu_search()
 	$html .= '<!-- div for Global Search -->
     <div id="topmenu-global-search-dropdown" class="atoplogin dropdown inline-block">
         <a accesskey="s" class="dropdown-toggle login-dropdown-a nofocusvisible" data-toggle="dropdown" href="#" title="'.$langs->trans('Search').' ('.$stringforfirstkey.' s)">
-            <i class="fa fa-search" ></i>
+            <i class="fa fa-search" aria-hidden="true" ></i>
         </a>
         <div class="dropdown-menu dropdown-search">
             '.$dropDownHtml.'
