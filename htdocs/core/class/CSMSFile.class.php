@@ -69,6 +69,8 @@ class CSMSFile
 
 	public $fk_project;
 
+	public $deliveryreceipt;
+
 
 	/**
 	 *	CSMSFile
@@ -109,6 +111,7 @@ class CSMSFile
 		$this->deferred = $deferred;
 		$this->priority = $priority;
 		$this->class = $class;
+		$this->deliveryreceipt = $deliveryreceipt;
 		$this->message = $msg;
 		$this->nostop = false;
 	}
@@ -161,6 +164,7 @@ class CSMSFile
 						$sms->class = $this->class;
 						$sms->message = $this->message;
 						$sms->nostop = $this->nostop;
+						$sms->deliveryreceipt = $this->deliveryreceipt;
 
 						$sms->socid = $this->socid;
 						$sms->contact_id = $this->contact_id;
@@ -226,6 +230,7 @@ class CSMSFile
 			fputs($fp, "Class: ".$this->class."\n");
 			fputs($fp, "Deferred: ".$this->deferred."\n");
 			fputs($fp, "DisableStop: ".$this->nostop."\n");
+			fputs($fp, "DeliveryReceipt: ".$this->deliveryreceipt."\n");
 			fputs($fp, "Message:\n".$this->message);
 
 			fclose($fp);
