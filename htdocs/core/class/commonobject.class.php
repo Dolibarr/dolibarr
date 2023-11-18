@@ -726,6 +726,31 @@ abstract class CommonObject
 	 */
 	protected $childtablesoncascade = array();
 
+	/**
+	 * @var Product Populate by fetch_product()
+	 */
+	public $product;
+
+	/**
+	 * @var int Populate by setPaymentTerms()
+	 */
+	public $cond_reglement_supplier_id;
+
+	/**
+	 * @var string Populate by setPaymentTerms()
+	 */
+	public $deposit_percent;
+
+
+	/**
+	 * @var string Populate by setRetainedWarrantyPaymentTerms()
+	 */
+	public $retained_warranty_fk_cond_reglement;
+
+	/**
+	 * @var int Populate by setWarehouse()
+	 */
+	public $warehouse_id;
 
 	// No constructor as it is an abstract class
 
@@ -1950,7 +1975,14 @@ abstract class CommonObject
 			$obj = $this->db->fetch_object($resql);
 			// Test for avoid error -1
 			if ($obj) {
-				$result = $this->fetch($obj->rowid);
+				if (method_exists($this, 'fetch')) {
+					return $this->fetch($obj->rowid);
+				} else {
+					$this->error = 'fetch() method not implemented on '.get_class($this);
+					dol_syslog(get_class($this).'::fetchOneLike Error='.$this->error, LOG_ERR);
+					array_push($this->errors, $this->error);
+					return -1;
+				}
 			}
 		}
 
