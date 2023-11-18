@@ -2371,36 +2371,6 @@ class CommandeFournisseur extends CommonOrder
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *	Get list of order methods
-	 *
-	 *	@return int 0 if OK, <0 if KO
-	 */
-	public function get_methodes_commande()
-	{
-		// phpcs:enable
-		$sql = "SELECT rowid, libelle";
-		$sql .= " FROM ".$this->db->prefix()."c_input_method";
-		$sql .= " WHERE active = 1";
-
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$i = 0;
-			$num = $this->db->num_rows($resql);
-			$this->methodes_commande = array();
-			while ($i < $num) {
-				$row = $this->db->fetch_row($resql);
-
-				$this->methodes_commande[$row[0]] = $row[1];
-
-				$i++;
-			}
-			return 0;
-		} else {
-			return -1;
-		}
-	}
 
 	/**
 	 * Return array of dispatched lines waiting to be approved for this order
