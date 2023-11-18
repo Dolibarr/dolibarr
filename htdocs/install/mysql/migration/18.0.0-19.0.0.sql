@@ -177,22 +177,10 @@ ALTER TABLE llx_mrp_production ADD COLUMN fk_unit integer DEFAULT NULL;
 -- VMYSQL4.1 UPDATE llx_mrp_production as mp INNER JOIN llx_bom_bomline as bbl ON mp.origin_id = bbl.rowid SET mp.fk_unit = bbl.fk_unit WHERE mp.origin_type = 'bomline' AND mk.fk_unit IS NULL;
 -- VMYSQL4.1 UPDATE llx_bom_bomline as bbl INNER JOIN llx_product as p ON p.rowid = bbl.fk_product SET bbl.fk_unit = p.fk_unit WHERE bbl.fk_unit IS NULL;
 
--- Virtual products (kits) with shipment dispatcher
-CREATE TABLE llx_expeditiondet_dispatch
-(
-    rowid             integer AUTO_INCREMENT PRIMARY KEY,
-    fk_expeditiondet  integer NOT NULL,
-    fk_product        integer NOT NULL,
-    fk_product_parent integer NOT NULL,
-    fk_entrepot       integer NOT NULL,
-    qty               real
-)ENGINE=innodb;
-ALTER TABLE llx_expeditiondet_dispatch ADD INDEX idx_expeditiondet_dispatch_fk_expeditiondet (fk_expeditiondet);
-ALTER TABLE llx_expeditiondet_dispatch ADD INDEX idx_expeditiondet_dispatch_fk_product (fk_product);
-ALTER TABLE llx_expeditiondet_dispatch ADD INDEX idx_expeditiondet_dispatch_fk_product_parent (fk_product_parent);
-ALTER TABLE llx_expeditiondet_dispatch ADD INDEX idx_expeditiondet_dispatch_fk_entrepot (fk_entrepot);
-ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_fk_expeditiondet FOREIGN KEY (fk_expeditiondet) REFERENCES llx_expeditiondet (rowid);
-ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
-ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_fk_product_parent FOREIGN KEY (fk_product_parent) REFERENCES llx_product (rowid);
-ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_fk_entrepot FOREIGN KEY (fk_entrepot) REFERENCES llx_entrepot (rowid);
-
+-- Dispatcher for virtual products
+ALTER TABLE llx_expeditiondet ADD COLUMN fk_parent integer NULL AFTER fk_origin_line;
+ALTER TABLE llx_expeditiondet ADD COLUMN fk_product integer NULL AFTER fk_parent;
+ALTER TABLE llx_expeditiondet ADD INDEX idx_expeditiondet_fk_parent (fk_parent);
+ALTER TABLE llx_expeditiondet ADD INDEX idx_expeditiondet_fk_poduct (fk_product);
+ALTER TABLE llx_expeditiondet ADD CONSTRAINT fk_expeditiondet_fk_parent FOREIGN KEY (fk_parent) REFERENCES llx_expeditiondet (rowid);
+ALTER TABLE llx_expeditiondet ADD CONSTRAINT fk_expeditiondet_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
