@@ -74,9 +74,9 @@ class AdherentType extends CommonObject
 
 	public $duration;
 
-	/*
-	* type expiration
-	*/
+	/**
+	 * type expiration
+	 */
 	public $duration_value;
 
 	/**
