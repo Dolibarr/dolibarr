@@ -45,6 +45,7 @@ htdocs/.well-known/apple-developer-merchantid-domain-association
 /factory/
 /output/
 /vendor/
+/tmp/
 
 # Node Modules
 build/yarn-error.log

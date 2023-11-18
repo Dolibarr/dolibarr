@@ -9,7 +9,7 @@ parameters:
 		minimumNumberOfJobsPerProcess: 2
 		buffer: 134217728 # 128 MB
 	customRulesetUsed: true
-	level: 0
+	level: 1
 	fileExtensions:
 		- php
 	paths:
@@ -17,7 +17,8 @@ parameters:
 		- scripts
 	excludePaths:
 		analyseAndScan:
-		- htdocs/custom
+		- htdocs/custom/*
+		- htdocs/core/db/DoliDB.class.php
 		- htdocs/documents/*
 		- htdocs/install/doctemplates/*
 		- htdocs/langs/*
@@ -47,6 +48,9 @@ parameters:
 	reportMagicProperties: false
 	ignoreErrors:
 		- '#Constant DOL_MAIN_URL_ROOT not found#'
+		- '#Parameter \$db of method [a-zA-Z0-9\\_]+::__construct\(\) has invalid type DoliDB#'
+		- '#Parameter \$db of method [a-zA-Z0-9\\_]+::[a-zA-Z0-9\\_]+\(\) has invalid type DoliDB#'
+		- '#Parameter \$dbs of method [a-zA-Z0-9\\_]+::[a-zA-Z0-9\\_]+\(\) has invalid type DoliDB#'
 		- '#Undefined variable: \$langs#'
 		- '#Undefined variable: \$user#'
 		- '#Undefined variable: \$db#'
