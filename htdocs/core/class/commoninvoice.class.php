@@ -143,6 +143,13 @@ abstract class CommonInvoice extends CommonObject
 
 
 	/**
+	 * ! Populate by Payment module like stripe
+	 * @var string message return by Online Payment module
+	 */
+	public $postactionmessages;
+
+
+	/**
 	 * Standard invoice
 	 */
 	const TYPE_STANDARD = 0;
@@ -689,13 +696,13 @@ abstract class CommonInvoice extends CommonObject
 	{
 		$subtypeLabel = '';
 		if ($table === 'facture' || $table === 'facture_fourn') {
-			$sql = "SELECT s.label FROM " . MAIN_DB_PREFIX . $table . " AS f";
-			$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "c_invoice_subtype AS s ON f.subtype = s.rowid";
+			$sql = "SELECT s.label FROM " . $this->db->prefix() . $table . " AS f";
+			$sql .= " INNER JOIN " . $this->db->prefix() . "c_invoice_subtype AS s ON f.subtype = s.rowid";
 			$sql .= " WHERE f.ref = '".$this->db->escape($this->ref)."'";
 		} elseif ($table === 'facture_rec' || $table === 'facture_fourn_rec') {
-			$sql = "SELECT s.label FROM " . MAIN_DB_PREFIX . $table . " AS f";
-			$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "c_invoice_subtype AS s ON f.subtype = s.rowid";
-			$sql .= " WHERE f.titre = '".$this->db->escape($this->titre)."'";
+			$sql = "SELECT s.label FROM " . $this->db->prefix() . $table . " AS f";
+			$sql .= " INNER JOIN " . $this->db->prefix() . "c_invoice_subtype AS s ON f.subtype = s.rowid";
+			$sql .= " WHERE f.titre = '".$this->db->escape($this->title)."'";
 		} else {
 			return -1;
 		}

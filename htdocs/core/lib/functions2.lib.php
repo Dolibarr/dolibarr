@@ -1891,7 +1891,7 @@ function version_php()
 function version_db()
 {
 	global $db;
-	if (is_object($db, 'getVersion')) {
+	if (is_object($db) && method_exists($db, 'getVersion')) {
 		return $db->getVersion();
 	}
 	return '';
