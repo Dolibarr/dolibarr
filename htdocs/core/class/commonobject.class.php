@@ -318,6 +318,15 @@ abstract class CommonObject
 	 */
 	public $status;
 
+	/**
+	 * @var int status buy
+	 */
+	public $status_buy;
+
+	/**
+	 * @var array tpl
+	 */
+	public $tpl;
 
 	/**
 	 * @var string

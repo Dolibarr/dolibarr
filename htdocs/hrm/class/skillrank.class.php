@@ -118,6 +118,7 @@ class SkillRank extends CommonObject
 	public $rowid;
 	public $fk_skill;
 	public $rank;
+	public $rankorder;
 	public $fk_object;
 	public $date_creation;
 	public $tms;
@@ -381,7 +382,7 @@ class SkillRank extends CommonObject
 		global $user;
 
 		$this->fk_skill 		= $currentSkill->fk_skill;
-		$this->rankorder 			= $currentSkill->rankorder;
+		$this->rankorder 		= $currentSkill->rankorder;
 		$this->fk_object		= $fk_user;
 		$this->date_creation 	= dol_now();
 		$this->fk_user_creat 	= $user->id;
