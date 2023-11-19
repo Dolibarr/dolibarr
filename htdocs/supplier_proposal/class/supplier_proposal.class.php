@@ -101,7 +101,14 @@ class SupplierProposal extends CommonObject
 	 */
 	public $author;
 
+	/**
+	 * @var string supplier ref in a line
+	 */
 	public $ref_fourn; //Reference saisie lors de l'ajout d'une ligne à la demande
+
+	/**
+	 * @var string supplier ref in a line
+	 */
 	public $ref_supplier; //Reference saisie lors de l'ajout d'une ligne à la demande
 
 	/**
@@ -166,7 +173,15 @@ class SupplierProposal extends CommonObject
 	public $mode_reglement_code;
 
 	public $extraparams = array();
+
+	/**
+	 * @var SupplierProposalLine[]
+	 */
 	public $lines = array();
+
+	/**
+	 * @var SupplierProposal
+	 */
 	public $line;
 
 	public $labelStatus = array();
@@ -754,10 +769,10 @@ class SupplierProposal extends CommonObject
 				$this->line->rang = $rangmax + 1;
 			}
 
-			$this->line->id					= $rowid;
+			$this->line->id = $rowid;
 			$this->line->label = $label;
 			$this->line->desc = $desc;
-			$this->line->qty				= $qty;
+			$this->line->qty = $qty;
 			$this->line->product_type = $type;
 
 			$this->line->vat_src_code = $vat_src_code;
@@ -2923,7 +2938,14 @@ class SupplierProposalLine extends CommonObjectLine
 
 	public $skip_update_total; // Skip update price total for special lines
 
+	/**
+	 * @var string supplier ref in a line
+	 */
 	public $ref_fourn;
+
+	/**
+	 * @var string supplier ref in a line
+	 */
 	public $ref_supplier;
 
 	// Multicurrency
