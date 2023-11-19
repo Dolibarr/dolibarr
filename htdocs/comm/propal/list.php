@@ -562,12 +562,12 @@ $sql = 'SELECT';
 if ($sall || $search_user > 0) {
 	$sql = 'SELECT DISTINCT';
 }
-$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax , s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, ';
+$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax , s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client,';
 $sql .= " typent.code as typent_code,";
 $sql .= " ava.rowid as availability,";
 $sql .= " country.code as country_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
-$sql .= ' p.rowid, p.entity as propal_entity, p.note_private, p.total_ht, p.total_tva, p.total_ttc, p.localtax1, p.localtax2, p.ref, p.ref_client, p.fk_statut as status, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,p.date_livraison as ddelivery,';
+$sql .= ' p.rowid, p.entity as propal_entity, p.note_private, p.total_ht, p.total_tva, p.total_ttc, p.localtax1, p.localtax2, p.ref, p.ref_client, p.fk_statut as status, p.fk_user_author, p.datep as dp, p.fin_validite as dfv, p.date_livraison as ddelivery,';
 $sql .= ' p.fk_multicurrency, p.multicurrency_code, p.multicurrency_tx, p.multicurrency_total_ht, p.multicurrency_total_tva, p.multicurrency_total_ttc,';
 $sql .= ' p.datec as date_creation, p.tms as date_update, p.date_cloture as date_cloture,';
 $sql .= ' p.date_signature as dsignature,';
@@ -575,12 +575,12 @@ $sql .= ' p.note_public, p.note_private,';
 $sql .= ' p.fk_cond_reglement,p.deposit_percent,p.fk_mode_reglement,p.fk_shipping_method,p.fk_input_reason,';
 $sql .= " pr.rowid as project_id, pr.ref as project_ref, pr.title as project_label,";
 $sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity as user_entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender';
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+/*if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= ", sc.fk_soc, sc.fk_user";
-}
-if (!empty($search_categ_cus) && $search_categ_cus != '-1') {
+}*/
+/*if (!empty($search_categ_cus) && $search_categ_cus != '-1') {
 	$sql .= ", cc.fk_categorie, cc.fk_soc";
-}
+}*/
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -599,25 +599,27 @@ $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
-if (!empty($search_categ_cus) && $search_categ_cus != '-1') {
+/*if (!empty($search_categ_cus) && $search_categ_cus != '-1') {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cc ON s.rowid = cc.fk_soc"; // We'll need this table joined to the select in order to filter by categ
-}
+}*/
 $sql .= ', '.MAIN_DB_PREFIX.'propal as p';
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (p.rowid = ef.fk_object)";
 }
 if ($sall) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'propaldet as pd ON p.rowid=pd.fk_propal';
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'propaldet as pd ON p.rowid = pd.fk_propal';
 }
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON p.fk_user_author = u.rowid';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as pr ON pr.rowid = p.fk_projet";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_availability as ava on (ava.rowid = p.fk_availability)";
 // We'll need this table joined to the select in order to filter by sale
+/*
 if ($search_sale == -2) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON (sc.fk_soc = p.fk_soc)";
 } elseif ($search_sale > 0 || (!$user->hasRight('societe', 'client', 'voir') && !$socid)) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
+*/
 if ($search_user > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_contact as c";
 	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
@@ -630,10 +632,11 @@ $sql .= $hookmanager->resPrint;
 
 $sql .= ' WHERE p.fk_soc = s.rowid';
 $sql .= ' AND p.entity IN ('.getEntity('propal').')';
+/*
 if (!$user->hasRight('societe', 'client', 'voir') && !$socid) { //restriction
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
-
+*/
 if ($search_town) {
 	$sql .= natural_search('s.town', $search_town);
 }
@@ -707,14 +710,14 @@ if ($search_multicurrency_montant_ttc != '') {
 if ($sall) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
-
+/*
 if ($search_categ_cus > 0) {
 	$sql .= " AND cc.fk_categorie = ".((int) $search_categ_cus);
 }
 if ($search_categ_cus == -2) {
 	$sql .= " AND cc.fk_categorie IS NULL";
 }
-
+*/
 if ($search_fk_cond_reglement > 0) {
 	$sql .= " AND p.fk_cond_reglement = ".((int) $search_fk_cond_reglement);
 }
@@ -751,11 +754,13 @@ if ($search_date_delivery_start) {
 if ($search_date_delivery_end) {
 	$sql .= " AND p.date_livraison <= '".$db->idate($search_date_delivery_end)."'";
 }
+/*
 if ($search_sale == -2) {
 	$sql .= " AND sc.fk_user IS NULL";
 } elseif ($search_sale > 0) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);
 }
+*/
 if ($search_user > 0) {
 	$sql .= " AND c.fk_c_type_contact = tc.rowid AND tc.element='propal' AND tc.source='internal' AND c.element_id = p.rowid AND c.fk_socpeople = ".((int) $search_user);
 }
@@ -764,6 +769,44 @@ if ($search_date_signature_start) {
 }
 if ($search_date_signature_end) {
 	$sql .= " AND p.date_signature <= '".$db->idate($search_date_signature_end)."'";
+}
+// Search on sale representative
+if ($search_sale && $search_sale != '-1') {
+	if ($search_sale == -2) {
+		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc)";
+	} elseif ($search_sale > 0 && !$user->hasRight('societe', 'client', 'voir')) {
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+	}
+}
+// Search for tag/category ($searchCategoryCustomerList is an array of ID)
+$searchCategoryCustomerOperator = -1;
+$searchCategoryCustomerList = array($search_categ_cus);
+if (!empty($searchCategoryCustomerList)) {
+	$searchCategoryCustomerSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
+		if (intval($searchCategoryCustomer) == -2) {
+			$searchCategoryCustomerSqlList[] = "NOT EXISTS (SELECT cs.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as cs WHERE s.rowid = cs.fk_soc)";
+		} elseif (intval($searchCategoryCustomer) > 0) {
+			if ($searchCategoryCustomerOperator == 0) {
+				$searchCategoryCustomerSqlList[] = " EXISTS (SELECT cs.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as cs WHERE s.rowid = cs.fk_soc AND cs.fk_categorie = ".((int) $searchCategoryCustomer).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryCustomer);
+			}
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategoryCustomerSqlList[] = " EXISTS (SELECT cs.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as cs WHERE s.rowid = cs.fk_soc AND cs.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategoryCustomerOperator == 1) {
+		if (!empty($searchCategoryCustomerSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategoryCustomerSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategoryCustomerSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategoryCustomerSqlList).")";
+		}
+	}
 }
 // Search for tag/category ($searchCategoryProductList is an array of ID)
 $searchCategoryProductOperator = -1;
@@ -797,6 +840,7 @@ if (!empty($searchCategoryProductList)) {
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
+//print $sql;
 
 // Add where from hooks
 $parameters = array();

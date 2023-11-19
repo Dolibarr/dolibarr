@@ -94,6 +94,7 @@ class Contrat extends CommonObject
 	 * @var string
 	 */
 	public $ref_customer;
+	public $from;
 
 	/**
 	 * Supplier reference of the contract
@@ -149,6 +150,7 @@ class Contrat extends CommonObject
 	 */
 	public $user_author_id;
 
+
 	/**
 	 * @var User 	Object user that create the contract. Set by the info method.
 	 * @deprecated
@@ -181,7 +183,9 @@ class Contrat extends CommonObject
 	public $date_contrat;
 
 	public $commercial_signature_id;
+	public $fk_commercial_signature;
 	public $commercial_suivi_id;
+	public $fk_commercial_suivi;
 
 	/**
 	 * @deprecated Use fk_project instead
@@ -507,7 +511,7 @@ class Contrat extends CommonObject
 		$this->fetch_thirdparty();
 
 		// A contract is validated so we can move thirdparty to status customer
-		if (empty($conf->global->CONTRACT_DISABLE_AUTOSET_AS_CLIENT_ON_CONTRACT_VALIDATION)) {
+		if (empty($conf->global->CONTRACT_DISABLE_AUTOSET_AS_CLIENT_ON_CONTRACT_VALIDATION) && $this->thirdparty->fournisseur == 0) {
 			$result = $this->thirdparty->setAsCustomer();
 		}
 

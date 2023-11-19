@@ -176,7 +176,7 @@ $search_date_modif_endyear = GETPOST('search_date_modif_endyear', 'int');
 $search_date_modif_endday = GETPOST('search_date_modif_endday', 'int');
 $search_date_modif_end = dol_mktime(23, 59, 59, $search_date_modif_endmonth, $search_date_modif_endday, $search_date_modif_endyear);	// Use tzserver
 
-$search_category_array = GETPOST("search_category_".Categorie::TYPE_PROJECT."_list", "array");
+$search_category_array = array();
 
 if (isModEnabled('categorie')) {
 	$search_category_array = GETPOST("search_category_".Categorie::TYPE_PROJECT."_list", "array");

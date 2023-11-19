@@ -7,12 +7,12 @@ Bug reports and feature requests
 <a name="not-a-support-forum"></a>*Note*: **GitHub Issues is not a support forum.** If you have questions about Dolibarr / need help using the software, please use [the forums](https://www.dolibarr.org/forum.php). Forums exist in different languages.
 
 Issues are managed on [GitHub](https://github.com/Dolibarr/dolibarr/issues). 
-Default **language here is english**. So please prepare your contributions in english.
+Default **language here is English**. So please prepare your contributions in English.
 
 1. Please [use the search engine](https://help.github.com/articles/searching-issues) to check if nobody's already reported your problem.
 2. [Create an issue](https://help.github.com/articles/creating-an-issue). Choose an appropriate title. Prepend appropriately with Bug or Feature Request.
 3. Tell us the version you are using!   (look at  /htdocs/admin/system/dolibarr.php?  and check if you are using the latest version) 
-4. Write a report with as much detail as possible (Use [screenshots](https://help.github.com/articles/issue-attachments) or even screencasts and provide logging and debugging informations whenever possible).
+4. Write a report with as much detail as possible (Use [screenshots](https://help.github.com/articles/issue-attachments) or even screencasts and provide logging and debugging information whenever possible).
 5. Delete unnecessary submissions.
 6. **Check your Message at Preview before sending.**
 
@@ -45,12 +45,12 @@ The rule N - 2 is just a tip if you don't know which version to choose to get th
 and number of potential beneficiaries of the correction.
 
 ### General rules
-Please don't edit the ChangeLog file. File will be generated from all commit messages during release process by the project manager.
+Please don't edit the ChangeLog file. This file is generated from all commit messages during release process by the project manager.
 
 ### <a name="commits"></a>Commits
 Use clear commit messages with the following structure:
 
-```
+```plaintext
 [KEYWORD] [ISSUENUM] DESC
 
 LONGDESC
@@ -68,12 +68,12 @@ where
 #### Keyword
 In uppercase if you want to have the log comment appears into the generated ChangeLog file.
 
-The keyword can be ommitted if your commit does not fit in any of the following categories:
+The keyword can be omitted if your commit does not fit in any of the following categories:
 
 - Fix/FIX: for a bug fix
 - Close/CLOSE: for closing a referenced feature request
-- New/NEW: for an unreferenced new feature (Opening a feature request and using close is prefered)
-- Perf/PERF: for performance enhancement
+- New/NEW: for an unreferenced new feature (Opening a feature request and using close is preferred)
+- Perf/PERF: for a performance enhancement
 - Qual/QUAL: for quality code enhancement or re-engineering
 
 #### Issuenum
@@ -150,7 +150,7 @@ All other translations are managed online at [Transifex](https://www.transifex.c
 
 Translations done on transifex are available in the next major release.
 
-Note: Sometimes, the source text (english) is modified. In such a case, the translation is reset. Transifex assume that if the original source
+Note: Sometimes, the source text (English) is modified. In such a case, the translation is reset. Transifex assume that if the original source
 has changed, the translation is surely no more correct so must be done again. But old translation is not lost and you can use the tab "History"
 to retrieve all old translation of a source text, and restore the translation in one click with no need to retranslate it if there is no need to.
 
