@@ -73,7 +73,7 @@ class DolEditor
 	{
 		global $conf, $langs;
 
-		dol_syslog(get_class($this)."::DolEditor htmlname=".$htmlname." width=".$width." height=".$height." toolbarname=".$toolbarname);
+		dol_syslog(get_class($this)."::DolEditor htmlname=".$htmlname." width=".$width." height=".$height." toolbarname=".$toolbarname." toolbarlocation=".$toolbarlocation);
 
 		if (!$rows) {
 			$rows = round($height / 20);

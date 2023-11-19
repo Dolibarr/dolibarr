@@ -248,6 +248,10 @@ class FactureFournisseur extends CommonInvoice
 
 	public $fac_rec;
 
+	/**
+	 * @var int ID invoice model source
+	 */
+	public $fk_fac_rec_source;
 
 	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
@@ -3613,6 +3617,11 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 * @var float
 	 */
 	public $localtax2_type;
+
+	/**
+	 * @var float tva npr
+	 */
+	public $tva_npr;
 
 	// Multicurrency
 	/**
