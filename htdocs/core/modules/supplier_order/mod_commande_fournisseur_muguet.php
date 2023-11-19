@@ -54,7 +54,7 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 	 */
 	public $name = 'Muguet';
 
-	public $prefix = 'CF';
+	public $prefix = 'PO';	// PO for "Purchase Order"
 
 
 	/**
@@ -62,10 +62,8 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 	 */
 	public function __construct()
 	{
-		global $conf;
-
-		if ((float) $conf->global->MAIN_VERSION_LAST_INSTALL >= 5.0) {
-			$this->prefix = 'PO'; // We use correct standard code "PO = Purchase Order"
+		if (getDolGlobalInt('MAIN_VERSION_LAST_INSTALL') < 5) {
+			$this->prefix = 'CF'; // We use old prefix
 		}
 	}
 
