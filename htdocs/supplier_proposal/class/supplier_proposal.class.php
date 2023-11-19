@@ -169,6 +169,19 @@ class SupplierProposal extends CommonObject
 	 */
 	public $total;
 
+	/**
+	 * @var int
+	 * @deprecated
+	 * @see $socid
+	 */
+	public $fk_soc;
+
+	/**
+	 * @var int
+	 */
+	public $fk_supplier_proposal;
+	public $mode_reglement;
+	public $cond_reglement_doc;
 	public $cond_reglement_code;
 	public $mode_reglement_code;
 

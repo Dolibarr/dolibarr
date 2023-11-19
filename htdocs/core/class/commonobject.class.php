@@ -173,6 +173,11 @@ abstract class CommonObject
 	public $oldref;
 
 	/**
+	 * @var int		Type of invoice (See TYPE_XXX constants)
+	 */
+	public $type;
+
+	/**
 	 * @var string		Column name of the ref field.
 	 */
 	protected $table_ref_field = '';
