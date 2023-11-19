@@ -98,7 +98,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 
  Product Management
 
-- Products and/or Services catalog
+- Products and/or Services catalogue
 - Stock / Warehouse management + Inventory
 - Barcodes
 - Batches / Lots / Serials
@@ -239,7 +239,7 @@ See [COPYRIGHT](https://github.com/Dolibarr/dolibarr/blob/develop/COPYRIGHT) fil
 Follow Dolibarr project on:
 
 - [Facebook](https://www.facebook.com/dolibarr)
-- [Twitter](https://www.twitter.com/dolibarr)
+- [X](https://x.com/dolibarr)
 - [LinkedIn](https://www.linkedin.com/company/association-dolibarr)
 - [Reddit](https://www.reddit.com/r/Dolibarr_ERP_CRM/)
 - [YouTube](https://www.youtube.com/user/DolibarrERPCRM)

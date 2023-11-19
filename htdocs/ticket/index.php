@@ -452,7 +452,6 @@ $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardTickets', $parameters, $object); // Note that $action and $object may have been modified by hook
 
 
-
 // End of page
-llxFooter('');
+llxFooter();
 $db->close();

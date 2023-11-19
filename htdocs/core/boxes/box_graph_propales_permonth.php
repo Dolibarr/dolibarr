@@ -184,14 +184,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 				//$datatype2 = array('lines','bars');
 
 				$filenamenb = $dir."/".$prefix."propalsamountinyear-".$endyear.".png";
-				if (!empty($mode)) {
-					if ($mode == 'customer') {
-						$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&amp;file=propalsamountinyear-'.$endyear.'.png';
-					}
-					if ($mode == 'supplier') {
-						$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstatssupplier&amp;file=propalsamountinyear-'.$endyear.'.png';
-					}
-				}
+				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&amp;file=propalsamountinyear-'.$endyear.'.png';
 
 				$px2 = new DolGraph();
 				$mesg = $px2->isGraphKo();
