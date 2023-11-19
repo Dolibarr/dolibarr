@@ -910,7 +910,7 @@ class BonPrelevement extends CommonObject
 			$sql .= ", pd.code_banque, pd.code_guichet, pd.number, pd.cle_rib";
 			$sql .= ", pd.amount";
 			$sql .= ", s.nom as name";
-			$sql .= ", f.ref, sr.bic, sr.intermediary_bic, sr.iban_prefix, sr.frstrecur";
+			$sql .= ", f.ref, sr.bic, sr.iban_prefix, sr.frstrecur";
 			if ($sourcetype != 'salary') {
 				if ($type != 'bank-transfer') {
 					$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
