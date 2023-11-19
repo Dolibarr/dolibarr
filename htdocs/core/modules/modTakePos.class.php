@@ -267,14 +267,14 @@ class modTakePos extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf, $db, $langs, $user, $mysoc;
+		global $conf, $langs, $user, $mysoc;
 		$langs->load("cashdesk");
 
-		dolibarr_set_const($db, "TAKEPOS_PRINT_METHOD", "browser", 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($this->db, "TAKEPOS_PRINT_METHOD", "browser", 'chaine', 0, '', $conf->entity);
 
 		// Default customer for Point of sale
 		if (!getDolGlobalInt('CASHDESK_ID_THIRDPARTY1')) {	// If a customer has already ben set into the TakePos setup page
-			$societe = new Societe($db);
+			$societe = new Societe($this->db);
 			$nametouse = $langs->trans("DefaultPOSThirdLabel");
 
 			$searchcompanyid = $societe->fetch(0, $nametouse);
@@ -289,7 +289,7 @@ class modTakePos extends DolibarrModules
 			}
 			if ($searchcompanyid > 0) {
 				// We already have or we have create a thirdparty with id = $searchcompanyid, so we link use it into setup
-				dolibarr_set_const($db, "CASHDESK_ID_THIRDPARTY1", $searchcompanyid, 'chaine', 0, '', $conf->entity);
+				dolibarr_set_const($this->db, "CASHDESK_ID_THIRDPARTY1", $searchcompanyid, 'chaine', 0, '', $conf->entity);
 			} else {
 				setEventMessages($societe->error, $societe->errors, 'errors');
 			}
@@ -300,7 +300,7 @@ class modTakePos extends DolibarrModules
 		$cate_arbo = $categories->get_full_arbo('product', 0, 1);
 		if (is_array($cate_arbo)) {
 			if (!count($cate_arbo)) {
-				$category = new Categorie($db);
+				$category = new Categorie($this->db);
 
 				$category->label = $langs->trans("DefaultPOSCatLabel");
 				$category->type = Categorie::TYPE_PRODUCT;
@@ -310,7 +310,7 @@ class modTakePos extends DolibarrModules
 				if ($result > 0) {
 					/* TODO Create a generic product only if there is no product yet. If 0 product,  we create 1. If there is already product, it is better to show a message to ask to add product in the category */
 					/*
-					$product = new Product($db);
+					$product = new Product($this->db);
 					$product->status = 1;
 					$product->ref = "takepos";
 					$product->label = $langs->trans("DefaultPOSProductLabel");
@@ -326,7 +326,7 @@ class modTakePos extends DolibarrModules
 		//Create cash account if not exists
 		if (!getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CASH1')) {
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-			$cashaccount = new Account($db);
+			$cashaccount = new Account($this->db);
 			$searchaccountid = $cashaccount->fetch(0, "CASH-POS");
 			if ($searchaccountid == 0) {
 				$cashaccount->ref = "CASH-POS";
@@ -337,7 +337,7 @@ class modTakePos extends DolibarrModules
 				$searchaccountid = $cashaccount->create($user);
 			}
 			if ($searchaccountid > 0) {
-				dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CASH1", $result, 'chaine', 0, '', $conf->entity);
+				dolibarr_set_const($this->db, "CASHDESK_ID_BANKACCOUNT_CASH1", $result, 'chaine', 0, '', $conf->entity);
 			} else {
 				setEventMessages($societe->error, $category->errors, 'errors');
 			}

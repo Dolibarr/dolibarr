@@ -1170,7 +1170,7 @@ class SupplierProposal extends CommonObject
 
 		// Set ref
 		require_once DOL_DOCUMENT_ROOT."/core/modules/supplier_proposal/" . getDolGlobalString('SUPPLIER_PROPOSAL_ADDON').'.php';
-		$obj = $conf->global->SUPPLIER_PROPOSAL_ADDON;
+		$obj = getDolGlobalString('SUPPLIER_PROPOSAL_ADDON');
 		$modSupplierProposal = new $obj;
 		$this->ref = $modSupplierProposal->getNextValue($objsoc, $this);
 
@@ -1349,7 +1349,7 @@ class SupplierProposal extends CommonObject
 						$line->total_localtax1	= $objp->total_localtax1;
 						$line->total_localtax2	= $objp->total_localtax2;
 						$line->total_ttc        = $objp->total_ttc;
-						  $line->fk_fournprice 	= $objp->fk_fournprice;
+						$line->fk_fournprice 	= $objp->fk_fournprice;
 						$marginInfos = getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $line->fk_fournprice, $objp->pa_ht);
 						$line->pa_ht = $marginInfos[0];
 						$line->marge_tx			= $marginInfos[1];

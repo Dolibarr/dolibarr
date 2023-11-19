@@ -362,7 +362,7 @@ $server->register(
  * @param   string      $lang               Lang to force
  * @return	mixed
  */
-function getProductOrService($authentication, $id = '', $ref = '', $ref_ext = '', $lang = '')
+function getProductOrService($authentication, $id = 0, $ref = '', $ref_ext = '', $lang = '')
 {
 	global $db, $conf, $langs;
 
@@ -981,7 +981,7 @@ function getListOfProductsOrServices($authentication, $filterproduct)
  *
  * @param	array		$authentication		Array of authentication information
  * @param	int			$id					Category id
- * @param	Translate	$lang				Force lang
+ * @param	string  	$lang				Force lang
  * @return	array							Array result
  */
 function getProductsForCategory($authentication, $id, $lang = '')
