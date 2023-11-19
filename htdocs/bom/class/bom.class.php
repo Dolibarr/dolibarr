@@ -781,6 +781,7 @@ class BOM extends CommonObject
 			$line->import_key = $import_key;
 			$line->position = $rankToUse;
 
+
 			if (!empty($fk_unit)) $line->fk_unit = $fk_unit;
 
 
@@ -1471,9 +1472,9 @@ class BOM extends CommonObject
 					$unitforline = measuringUnitString($line->fk_unit, '', '', 1);
 					$qtyhourforline = convertDurationtoHour($line->qty, $unitforline);
 
-					if (isModEnabled('workstation') && !empty($tmpproduct->fk_default_workstation)) {
+					if (isModEnabled('workstation') && !empty($line->fk_default_workstation)) {
 						$workstation = new Workstation($this->db);
-						$res = $workstation->fetch($tmpproduct->fk_default_workstation);
+						$res = $workstation->fetch($line->fk_default_workstation);
 
 						if ($res > 0) $line->total_cost = price2num($qtyhourforline * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated), 'MT');
 						else {
