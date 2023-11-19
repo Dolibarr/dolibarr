@@ -60,6 +60,7 @@ class DoliDBMysqli extends DoliDB
 	{
 		global $conf, $langs;
 
+		$type = $type; // for phpstan
 		// Note that having "static" property for "$forcecharset" and "$forcecollate" will make error here in strict mode, so they are not static
 		if (!empty($conf->db->character_set)) {
 			$this->forcecharset = $conf->db->character_set;
