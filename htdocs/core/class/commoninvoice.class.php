@@ -49,7 +49,29 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public $socid;
 
+	/**
+	 * @var int paid
+	 */
+	public $paid;
+
+	/**
+	 * @var int paid
+	 * @deprecated
+	 * @see $paid
+	 */
 	public $paye;
+
+	/**
+	 * @var string title of invoice model
+	 */
+	public $title;
+
+	/**
+	 * @var string title of invoice model
+	 * @deprecated
+	 * @see $title
+	 */
+	public $titre;
 
 	/**
 	 * Invoice date (date)
