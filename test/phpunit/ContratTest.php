@@ -150,7 +150,7 @@ class ContratTest extends PHPUnit\Framework\TestCase
 		$result=$localobject->create($user);
 
 		print __METHOD__." result=".$result."\n";
-		$this->assertLessThan($result, 0);
+		$this->assertLessThan($result, 0, $localobject->errorsToString());
 
 		return $result;
 	}
