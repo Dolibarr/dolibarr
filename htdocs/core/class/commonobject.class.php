@@ -6175,6 +6175,7 @@ abstract class CommonObject
 		$savDisableCompute = $conf->disable_compute;
 		$conf->disable_compute = 1;
 
+		// @phpstan-ignore-next-line
 		$ret = $this->fetch($id);
 
 		$conf->disable_compute = $savDisableCompute;
@@ -10124,14 +10125,17 @@ abstract class CommonObject
 				$error++;
 			} else {
 				while ($obj = $this->db->fetch_object($resql)) {
+					// @phpstan-ignore-next-line
 					$result = $this->fetch($obj->rowid);
 					if ($result < 0) {
 						$error++;
 						$this->errors[] = $this->error;
 					} else {
 						if (get_class($this) == 'Contact') { // TODO special code because delete() for contact has not been standardized like other delete.
+							// @phpstan-ignore-next-line
 							$result = $this->delete();
 						} else {
+							// @phpstan-ignore-next-line
 							$result = $this->delete($user);
 						}
 						if ($result < 0) {
