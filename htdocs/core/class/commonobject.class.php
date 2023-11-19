@@ -756,6 +756,80 @@ abstract class CommonObject
 
 
 	/**
+	 * @var type
+	 */
+	public $type;
+
+	/**
+	 * @var status_buy
+	 */public $status_buy;
+
+	/**
+	 * @var string tpl
+	 */public $tpl;
+
+	/**
+	 * @var int socid
+	 */public $socid;
+
+	/**
+	 * @var status_buy
+	 */public $status_buy;
+
+
+	/**
+	 * @var float imgHeight
+	 */
+	public $imgHeight;
+
+	/**
+	 * @var float imgWidth
+	 */
+	public $imgWidth;
+
+	/**
+	 * @var int nbphoto
+	 */
+	public $nbphoto;
+
+	/**
+	 * @var string pass
+	 */
+	public $pass;
+
+	/**
+	 * @var date date
+	 */
+	public $date;
+
+	/**
+	 * @var string description
+	 */
+	public $description;
+
+	/**
+	 * @var int fk_user_creat
+	 */
+	public $fk_user_creat;
+
+	/**
+	 * @var int fk_user_modif
+	 */
+	public $fk_user_modif;
+
+	/**
+	 * @var string label
+	 */
+	public $label;
+
+	/**
+	 * @var float qty
+	 */
+	public $qty;
+
+
+
+	/**
 	 * Check an object id/ref exists
 	 * If you don't need/want to instantiate object and just need to know if object exists, use this method instead of fetch
 	 *

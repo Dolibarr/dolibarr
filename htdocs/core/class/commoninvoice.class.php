@@ -208,6 +208,7 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	const STATUS_ABANDONED = 3;
 
+	public $title;
 
 
 	/**
