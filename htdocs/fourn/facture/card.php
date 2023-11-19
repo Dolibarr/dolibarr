@@ -2706,7 +2706,7 @@ if ($action == 'create') {
 		// Help of substitution key
 		$htmltext = '';
 		if ($fac_recid > 0) {
-			$dateexample = $newdateinvoice ? $newdateinvoice : $dateinvoice;
+			$dateexample = $dateinvoice;
 			if (empty($dateexample)) {
 				$dateexample = dol_now();
 			}
