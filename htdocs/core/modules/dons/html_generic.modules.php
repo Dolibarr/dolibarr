@@ -72,6 +72,7 @@ class html_generic extends ModeleDon
 	private function loadTranslationFiles($outputlangs)
 	{
 		if (!is_object($outputlangs)) {
+			global $langs;
 			$outputlangs = $langs;
 		}
 
