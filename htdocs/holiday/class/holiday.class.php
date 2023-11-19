@@ -64,6 +64,11 @@ class Holiday extends CommonObject
 	 */
 	public $fk_user;
 
+	/**
+	 * @var int User ID create
+	 */
+	public $fk_user_create;
+
 	public $date_create = '';
 
 	/**
@@ -87,6 +92,11 @@ class Holiday extends CommonObject
 	 * @var int 	Date of validation or approval. TODO: Use date_valid instead for validation.
 	 */
 	public $date_valid = '';
+
+	/**
+	 * @var int User ID approve
+	 */
+	public $user_approve;
 
 	/**
 	 * @var int 	ID of user that has validated

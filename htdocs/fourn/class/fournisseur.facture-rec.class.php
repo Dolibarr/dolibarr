@@ -81,6 +81,7 @@ class FactureFournisseurRec extends CommonInvoice
 	public $title;
 
 	public $ref_supplier;
+	public $fk_soc;
 	public $socid;
 
 	public $suspended; // status
