@@ -82,7 +82,7 @@ AccountancyAreaDescSal=STEP %s: Define default accounting accounts for payment o
 AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for Taxes (special expenses). For this, use the menu entry %s.
 AccountancyAreaDescDonation=STEP %s: Define default accounting accounts for donation. For this, use the menu entry %s.
 AccountancyAreaDescSubscription=STEP %s: Define default accounting accounts for member subscription. For this, use the menu entry %s.
-AccountancyAreaDescMisc=STEP %s: Define mandatory default account and default accounting accounts for miscellaneous transactions. For this, use the menu entry %s.
+AccountancyAreaDescMisc=STEP %s: Define mandatory default accounts and default accounting accounts for miscellaneous transactions. For this, use the menu entry %s.
 AccountancyAreaDescLoan=STEP %s: Define default accounting accounts for loans. For this, use the menu entry %s.
 AccountancyAreaDescBank=STEP %s: Define accounting accounts and journal code for each bank and financial accounts. For this, use the menu entry %s.
 AccountancyAreaDescProd=STEP %s: Define accounting accounts on your Products/Services. For this, use the menu entry %s.
@@ -481,7 +481,7 @@ AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
 AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
 ErrorAccountNumberAlreadyExists=The accounting number %s already exists
 ErrorArchiveAddFile=Can't put "%s" file in archive
-ErrorNoFiscalPeriodActiveFound=No fiscal period active found
+ErrorNoFiscalPeriodActiveFound=No active fiscal period found
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=The bookkeeping doc date is not on active fiscal period
 
 ## Import
