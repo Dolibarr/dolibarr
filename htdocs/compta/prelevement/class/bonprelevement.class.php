@@ -910,7 +910,7 @@ class BonPrelevement extends CommonObject
 			$sql .= ", pd.code_banque, pd.code_guichet, pd.number, pd.cle_rib";
 			$sql .= ", pd.amount";
 			$sql .= ", s.nom as name";
-			$sql .= ", f.ref, sr.bic, sr.iban_prefix, sr.frstrecur";
+			$sql .= ", f.ref, sr.bic, sr.intermediary_bic, sr.iban_prefix, sr.frstrecur";
 			if ($sourcetype != 'salary') {
 				if ($type != 'bank-transfer') {
 					$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
@@ -1607,7 +1607,7 @@ class BonPrelevement extends CommonObject
 				$sql = "SELECT soc.rowid as socid, soc.code_client as code, soc.address, soc.zip, soc.town, c.code as country_code,";
 				$sql .= " pl.client_nom as nom, pl.code_banque as cb, pl.code_guichet as cg, pl.number as cc, pl.amount as somme,";
 				$sql .= " f.ref as reffac, pf.fk_facture as idfac,";
-				$sql .= " rib.rowid, rib.datec, rib.iban_prefix as iban, rib.bic as bic, rib.rowid as drum, rib.rum, rib.date_rum";
+				$sql .= " rib.rowid, rib.datec, rib.iban_prefix as iban, rib.bic as bic, rib.intermediary_bic as intermediary_bic, rib.rowid as drum, rib.rum, rib.date_rum";
 				$sql .= " FROM";
 				$sql .= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
 				$sql .= " ".MAIN_DB_PREFIX."facture as f,";
@@ -1725,7 +1725,7 @@ class BonPrelevement extends CommonObject
 				if (!empty($user_dest)) {
 					$sql = "SELECT u.rowid as userId, c.code as country_code, CONCAT(u.firstname,' ',u.lastname) as nom,";
 					$sql .= " pl.code_banque as cb, pl.code_guichet as cg, pl.number as cc, pl.amount as somme,";
-					$sql .= " s.rowid as idSalary,rib.datec, rib.iban_prefix as iban, rib.bic as bic, rib.rowid as drum";
+					$sql .= " s.rowid as idSalary,rib.datec, rib.iban_prefix as iban, rib.bic as bic, rib.intermediary_bic as intermediary_bic, rib.rowid as drum";
 					$sql .= " FROM";
 					$sql .= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
 					$sql .= " ".MAIN_DB_PREFIX."salary as s,";
@@ -1743,7 +1743,7 @@ class BonPrelevement extends CommonObject
 					$sql = "SELECT soc.rowid as socid, soc.code_client as code, soc.address, soc.zip, soc.town, c.code as country_code,";
 					$sql .= " pl.client_nom as nom, pl.code_banque as cb, pl.code_guichet as cg, pl.number as cc, pl.amount as somme,";
 					$sql .= " f.ref as reffac, pf.fk_facture_fourn as idfac, f.ref_supplier as fac_ref_supplier,";
-					$sql .= " rib.rowid, rib.datec, rib.iban_prefix as iban, rib.bic as bic, rib.rowid as drum, rib.rum, rib.date_rum";
+					$sql .= " rib.rowid, rib.datec, rib.iban_prefix as iban, rib.bic as bic, rib.intermediary_bic as intermediary_bic, rib.rowid as drum, rib.rum, rib.date_rum";
 					$sql .= " FROM";
 					$sql .= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
 					$sql .= " ".MAIN_DB_PREFIX."facture_fourn as f,";
@@ -1999,26 +1999,27 @@ class BonPrelevement extends CommonObject
 	/**
 	 *	Write recipient (thirdparty concerned by request)
 	 *
-	 *	@param	string		$row_code_client	soc.code_client as code,
-	 *	@param	string		$row_nom			pl.client_nom AS name,
-	 *	@param	string		$row_address		soc.address AS adr,
-	 *	@param	string		$row_zip			soc.zip
-	 *  @param	string		$row_town			soc.town
-	 *	@param	string		$row_country_code	c.code AS country,
-	 *	@param	string		$row_cb				pl.code_banque AS cb,		Not used for SEPA
-	 *	@param	string		$row_cg				pl.code_guichet AS cg,		Not used for SEPA
-	 *	@param	string		$row_cc				pl.number AS cc,			Not used for SEPA
-	 *	@param	string		$row_somme			pl.amount AS somme,
-	 *	@param	string		$row_ref			Invoice ref (f.ref)
-	 *	@param	string		$row_idfac			pf.fk_facture AS idfac,
-	 *	@param	string		$row_iban			rib.iban_prefix AS iban,
-	 *	@param	string		$row_bic			rib.bic AS bic,
-	 *	@param	string		$row_datec			rib.datec,
-	 *	@param	string		$row_drum			rib.rowid used to generate rum
-	 * 	@param	string		$row_rum			rib.rum Rum defined on company bank account
-	 *  @param	string		$type				'direct-debit' or 'bank-transfer'
-	 *  @param  string      $row_comment		A free text string for the Unstructured data field
-	 *	@return	string							Return string with SEPA part DrctDbtTxInf
+	 *	@param	string		$row_code_client	  soc.code_client as code,
+	 *	@param	string		$row_nom			  pl.client_nom AS name,
+	 *	@param	string		$row_address		  soc.address AS adr,
+	 *	@param	string		$row_zip			  soc.zip
+	 *  @param	string		$row_town			  soc.town
+	 *	@param	string		$row_country_code	  c.code AS country,
+	 *	@param	string		$row_cb				  pl.code_banque AS cb,		Not used for SEPA
+	 *	@param	string		$row_cg				  pl.code_guichet AS cg,		Not used for SEPA
+	 *	@param	string		$row_cc				  pl.number AS cc,			Not used for SEPA
+	 *	@param	string		$row_somme			  pl.amount AS somme,
+	 *	@param	string		$row_ref			  Invoice ref (f.ref)
+	 *	@param	string		$row_idfac			  pf.fk_facture AS idfac,
+	 *	@param	string		$row_iban			  rib.iban_prefix AS iban,
+	 *	@param	string		$row_bic			  rib.bic AS bic,
+	 *	@param	string		$row_intermediary_bic rib.intermediary_bic AS intermediary_bic,
+	 *	@param	string		$row_datec			  rib.datec,
+	 *	@param	string		$row_drum			  rib.rowid used to generate rum
+	 * 	@param	string		$row_rum			  rib.rum Rum defined on company bank account
+	 *  @param	string		$type				  'direct-debit' or 'bank-transfer'
+	 *  @param  string      $row_comment		  A free text string for the Unstructured data field
+	 *	@return	string							  Return string with SEPA part DrctDbtTxInf
 	 *  @see EnregDestinataire()
 	 */
 	public function EnregDestinataireSEPA($row_code_client, $row_nom, $row_address, $row_zip, $row_town, $row_country_code, $row_cb, $row_cg, $row_cc, $row_somme, $row_ref, $row_idfac, $row_iban, $row_bic, $row_datec, $row_drum, $row_rum, $type = 'direct-debit', $row_comment = '')
