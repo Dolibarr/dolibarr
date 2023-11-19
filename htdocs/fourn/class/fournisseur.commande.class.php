@@ -211,9 +211,7 @@ class CommandeFournisseur extends CommonOrder
 	public $origin;
 	public $origin_id;
 	public $linked_objects = array();
-	public $remise_percent;
-	public $methode_commande_id;
-	public $methode_commande;
+
 	public $rang;
 	public $date_lim_reglement;
 	public $receptions = array();
