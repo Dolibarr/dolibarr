@@ -55,6 +55,17 @@ class PaymentSalary extends CommonObject
 
 	public $datec = '';
 	public $tms = '';
+
+	/**
+	 * @var date date of payment
+	 * @deprecated
+	 * @see datep
+	 */
+	public $datepaye = '';
+
+	/**
+	 * @var date date of payment
+	 */
 	public $datep = '';
 
 	/**
@@ -103,6 +114,33 @@ class PaymentSalary extends CommonObject
 	public $fk_user_modif;
 
 	/**
+	 * @var int Types paiement
+	 */
+	public $type_code;
+
+	/**
+	 * @var int Paiement label
+	 */
+	public $type_label;
+
+	/**
+	 * @var int			bank account description
+	 */
+	public $bank_account;
+
+	/**
+	 * @var int|string	validation date
+	 */
+	public $datev = '';
+
+	/**
+	 * @var int chid
+	 * @deprecated
+	 * @see $id from CommonObject
+	 */
+	public $chid;
+
+	/**
 	 * @var array
 	 */
 	public $fields = array(
@@ -137,8 +175,14 @@ class PaymentSalary extends CommonObject
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 
+		//deprecatd
+		if (!empty($this->datepaye) && empty($this->datep)) {
+			dol_syslog(__METHOD__.": using datepaye is deprecated, please use datep instead", LOG_WARNING);
+			$this->datep = $this->datepaye;
+		}
+
 		// Validate parametres
-		if (!$this->datepaye) {
+		if (empty($this->datep)) {
 			$this->error = 'ErrorBadValueForParameterCreatePaymentSalary';
 			return -1;
 		}
@@ -171,10 +215,10 @@ class PaymentSalary extends CommonObject
 		if ($totalamount != 0) {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_salary (entity, fk_salary, datec, datep, amount,";
 			$sql .= " fk_typepayment, num_payment, note, fk_user_author, fk_bank)";
-			$sql .= " VALUES (".((int) $conf->entity).", ".((int) $this->chid).", '".$this->db->idate($now)."',";
-			$sql .= " '".$this->db->idate($this->datepaye)."',";
+			$sql .= " VALUES (".((int) $conf->entity).", ".((int) $this->fk_salary).", '".$this->db->idate($now)."',";
+			$sql .= " '".$this->db->idate($this->datep)."',";
 			$sql .= " ".price2num($totalamount).",";
-			$sql .= " ".((int) $this->paiementtype).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".((int) $user->id).",";
+			$sql .= " ".((int) $this->fk_typepayment).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".((int) $user->id).",";
 			$sql .= " 0)";
 
 			$resql = $this->db->query($sql);
@@ -199,7 +243,7 @@ class PaymentSalary extends CommonObject
 							$alreadypayed = price2num($paiement + $creditnotes + $deposits, 'MT');
 							$remaintopay = price2num($tmpsalary->amount - $paiement - $creditnotes - $deposits, 'MT');
 							if ($remaintopay == 0) {
-								$result = $tmpsalary->set_paid($user);
+								$result = $tmpsalary->setPaid($user);
 							} else {
 								dol_syslog("Remain to pay for conrib ".$contribid." not null. We do nothing.");
 							}
@@ -267,7 +311,7 @@ class PaymentSalary extends CommonObject
 				$this->fk_salary = $obj->fk_salary;
 				$this->datec = $this->db->jdate($obj->datec);
 				$this->tms = $this->db->jdate($obj->tms);
-				$this->datep = $this->db->jdate($obj->datep);
+				$this->datepaye = $this->db->jdate($obj->datep);
 				$this->amount = $obj->amount;
 				$this->fk_typepayment = $obj->fk_typepayment;
 				$this->num_paiement = $obj->num_payment;
@@ -326,7 +370,7 @@ class PaymentSalary extends CommonObject
 		$sql .= " fk_salary=".(isset($this->fk_salary) ? $this->fk_salary : "null").",";
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
 		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
-		$sql .= " datep=".(dol_strlen($this->datep) != 0 ? "'".$this->db->idate($this->datep)."'" : 'null').",";
+		$sql .= " datep=".(dol_strlen($this->datepaye) != 0 ? "'".$this->db->idate($this->datepaye)."'" : 'null').",";
 		$sql .= " amount=".(isset($this->amount) ? $this->amount : "null").",";
 		$sql .= " fk_typepayment=".(isset($this->fk_typepayment) ? $this->fk_typepayment : "null").",";
 		$sql .= " num_payment=".(isset($this->num_payment) ? "'".$this->db->escape($this->num_payment)."'" : "null").",";
@@ -468,7 +512,7 @@ class PaymentSalary extends CommonObject
 		$this->fk_salary = '';
 		$this->datec = '';
 		$this->tms = '';
-		$this->datep = '';
+		$this->datepaye = '';
 		$this->amount = '';
 		$this->fk_typepayment = '';
 		$this->num_payment = '';
@@ -511,8 +555,8 @@ class PaymentSalary extends CommonObject
 
 			// Insert payment into llx_bank
 			$bank_line_id = $acc->addline(
-				$this->datepaye,
-				$this->paiementtype, // Payment mode id or code ("CHQ or VIR for example")
+				$this->datep,
+				$this->fk_typepayment, // Payment mode id or code ("CHQ or VIR for example")
 				$label,
 				-$total,
 				$this->num_payment,
@@ -653,7 +697,7 @@ class PaymentSalary extends CommonObject
 			}
 
 			if (!$error) {
-				$this->datep = $date;
+				$this->datepaye = $date;
 
 				$this->db->commit();
 				return 0;
@@ -882,8 +926,8 @@ class PaymentSalary extends CommonObject
 			if (!empty($this->total_ttc)) {
 				$datas['AmountTTC'] = '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
 			}
-			if (!empty($this->datep)) {
-				$datas['Date'] = '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->datep, 'day');
+			if (!empty($this->datepaye)) {
+				$datas['Date'] = '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->datepaye, 'day');
 			}
 		}
 
@@ -910,7 +954,9 @@ class PaymentSalary extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'fk_bank')) {
 			$return .= ' |  <span class="info-box-label">'.$this->fk_bank.'</span>';
 		}

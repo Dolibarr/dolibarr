@@ -171,6 +171,7 @@ fi
 
 if [ -s "$mydir/initdemopostsql.sql" ]; then
 	echo A file initdemopostsql.sql was found, we execute it.
+	echo "mysql -P$port $base < \"$mydir/initdemopostsql.sql\""
 	mysql -P$port $base < "$mydir/initdemopostsql.sql"
 else
 	echo No file initdemopostsql.sql found, so no extra sql action done.

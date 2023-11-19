@@ -123,18 +123,24 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 			$value = ''; // This is an explicit foreign key field
 		}
 
-		//var_dump($key.' '.$value.' '.$object->fields[$key]['type']);
+		//var_dump($key.' '.$value.' '.$object->fields[$key]['type'].' '.$object->fields[$key]['notnull']);
+
 		$object->$key = $value;
 		if (!empty($val['notnull']) && $val['notnull'] > 0 && $object->$key == '' && isset($val['default']) && $val['default'] == '(PROV)') {
 			$object->$key = '(PROV)';
 		}
-		if (!empty($val['notnull']) && $val['notnull'] > 0 && $object->$key == '' && !isset($val['default'])) {
-			$error++;
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label'])), null, 'errors');
+		if ($key == 'pass_crypted') {
+			$object->pass = GETPOST("pass", "none");
+			// TODO Manadatory for password not yet managed
+		} else {
+			if (!empty($val['notnull']) && $val['notnull'] > 0 && $object->$key == '' && !isset($val['default'])) {
+				$error++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label'])), null, 'errors');
+			}
 		}
 
 		// Validation of fields values
-		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 || !empty($conf->global->MAIN_ACTIVATE_VALIDATION_RESULT)) {
+		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 || !empty($conf->global->MAIN_ACTIVATE_VALIDATION_RESULT)) {
 			if (!$error && !empty($val['validate']) && is_callable(array($object, 'validateField'))) {
 				if (!$object->validateField($object->fields, $key, $value)) {
 					$error++;
@@ -274,7 +280,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 		}
 
 		// Validation of fields values
-		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 || !empty($conf->global->MAIN_ACTIVATE_VALIDATION_RESULT)) {
+		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 || !empty($conf->global->MAIN_ACTIVATE_VALIDATION_RESULT)) {
 			if (!$error && !empty($val['validate']) && is_callable(array($object, 'validateField'))) {
 				if (!$object->validateField($object->fields, $key, $value)) {
 					$error++;
@@ -350,15 +356,20 @@ if (preg_match('/^set(\w+)$/', $action, $reg) && GETPOST('id', 'int') > 0 && !em
 if ($action == "update_extras" && GETPOST('id', 'int') > 0 && !empty($permissiontoadd)) {
 	$object->fetch(GETPOST('id', 'int'));
 
+	$object->oldcopy = dol_clone($object, 2);
+
+	$attribute = GETPOST('attribute', 'alphanohtml');
+
 	$error = 0;
 
-	$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
+	// Fill array 'array_options' with data from update form
+	$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute);
 	if ($ret < 0) {
 		$error++;
 		setEventMessages($extrafields->error, $object->errors, 'errors');
 		$action = 'edit_extras';
 	} else {
-		$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
+		$result = $object->updateExtraField($attribute, empty($triggermodname) ? '' : $triggermodname, $user);
 		if ($result > 0) {
 			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 			$action = 'view';
@@ -377,17 +388,27 @@ if ($action == 'confirm_delete' && !empty($permissiontodelete)) {
 		exit;
 	}
 
+	$db->begin();
+
 	$result = $object->delete($user);
 
 	if ($result > 0) {
+		$db->commit();
+
 		// Delete OK
 		setEventMessages("RecordDeleted", null, 'mesgs');
 
 		if (empty($noback)) {
+			if (empty($backurlforlist)) {
+				print 'Error backurlforlist is not defined';
+				exit;
+			}
 			header("Location: " . $backurlforlist);
 			exit;
 		}
 	} else {
+		$db->rollback();
+
 		$error++;
 		if (!empty($object->errors)) {
 			setEventMessages(null, $object->errors, 'errors');

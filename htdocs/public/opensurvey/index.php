@@ -164,7 +164,7 @@ if ($urllogo) {
 
 if (!empty($conf->global->OPENSURVEY_IMAGE_PUBLIC_INTERFACE)) {
 	print '<div class="backimagepublicrecruitment">';
-	print '<img id="idOPENSURVEY_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->OPENSURVEY_IMAGE_PUBLIC_INTERFACE.'">';
+	print '<img id="idOPENSURVEY_IMAGE_PUBLIC_INTERFACE" src="' . getDolGlobalString('OPENSURVEY_IMAGE_PUBLIC_INTERFACE').'">';
 	print '</div>';
 }
 
@@ -197,7 +197,7 @@ if (is_array($results)) {
 
 			// Label
 			print $langs->trans("Label").' : ';
-			print '<b>'.dol_escape_htmltag($object->titre).'</b><br>';
+			print '<b>'.dol_escape_htmltag($object->title).'</b><br>';
 
 			// Date
 			print  $langs->trans("DateExpected").' : ';

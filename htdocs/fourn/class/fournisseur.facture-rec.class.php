@@ -273,7 +273,8 @@ class FactureFournisseurRec extends CommonInvoice
 		$now = dol_now();
 
 		// Clean parameters
-		$this->titre = empty($this->titre) ? '' : $this->titre;
+		$this->titre = empty($this->titre) ? '' : $this->titre;	// deprecated
+		$this->title = empty($this->title) ? '' : $this->title;
 		$keyforref = $this->table_ref_field;
 		$this->ref = $this->$keyforref;
 		$this->ref_supplier = empty($this->ref_supplier) ? '' : $this->ref_supplier;
@@ -327,7 +328,7 @@ class FactureFournisseurRec extends CommonInvoice
 			$sql .= ', auto_validate';
 			$sql .= ', generate_pdf';
 			$sql .= ') VALUES (';
-			$sql .= "'".$this->db->escape($this->titre)."'";
+			$sql .= "'".$this->db->escape($this->title)."'";
 			$sql .= ", '".$this->db->escape($this->ref_supplier)."'";
 			$sql .= ", ".((int) $conf->entity);
 			$sql .= ", ".((int) $facfourn_src->socid);
@@ -496,7 +497,7 @@ class FactureFournisseurRec extends CommonInvoice
 		$error = 0;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_rec SET";
-		$sql .= " titre = '" . (!empty($this->titre) ? $this->db->escape($this->titre) : "")."'," ;
+		$sql .= " titre = '" . (!empty($this->title) ? $this->db->escape($this->title) : "")."'," ;
 		$sql .= " ref_supplier = '". (!empty($this->ref_supplier) ? $this->db->escape($this->ref_supplier) : "")."',";
 		$sql .= " entity = ". (!empty($this->entity) ? ((int) $this->entity) : 1) . ',';
 		if ($this->fk_soc > 0) $sql .= " fk_soc = ". (int) $this->fk_soc. ',';
@@ -571,7 +572,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 */
 	public function fetch($rowid, $ref = '', $ref_ext = '')
 	{
-		$sql = 'SELECT f.rowid, f.titre, f.ref_supplier, f.entity, f.fk_soc';
+		$sql = 'SELECT f.rowid, f.titre as title, f.ref_supplier, f.entity, f.fk_soc';
 		$sql .= ', f.datec, f.tms, f.suspended';
 		$sql .= ', f.libelle as label';
 		$sql .= ', f.vat_src_code, f.localtax1, f.localtax2';
@@ -581,7 +582,7 @@ class FactureFournisseurRec extends CommonInvoice
 		$sql .= ', f.fk_mode_reglement, p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql .= ', f.fk_cond_reglement, c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
 		$sql .= ', f.date_lim_reglement';
-		$sql .= ', f.note_private, f.note_public, f.modelpdf';
+		$sql .= ', f.note_private, f.note_public, f.modelpdf as model_pdf';
 		$sql .= ', f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc';
 		$sql .= ', f.usenewprice, f.frequency, f.unit_frequency, f.date_when, f.date_last_gen, f.nb_gen_done, f.nb_gen_max, f.auto_validate';
 		$sql .= ', f.generate_pdf';
@@ -605,7 +606,8 @@ class FactureFournisseurRec extends CommonInvoice
 				$keyforref = $this->table_ref_field;
 
 				$this->id                       = $obj->rowid;
-				$this->titre                    = $obj->titre;
+				$this->titre                    = $obj->title;
+				$this->title                    = $obj->title;
 				$this->ref                      = $obj->$keyforref;
 				$this->ref_supplier             = $obj->ref_supplier;
 				$this->entity                   = $obj->entity;
@@ -635,7 +637,7 @@ class FactureFournisseurRec extends CommonInvoice
 				$this->date_lim_reglement       = $this->db->jdate($obj->date_lim_reglement);
 				$this->note_private             = $obj->note_private;
 				$this->note_public              = $obj->note_public;
-				$this->model_pdf                = $obj->modelpdf;
+				$this->model_pdf                = $obj->model_pdf;
 
 				// Multicurrency
 				$this->fk_multicurrency         = $obj->fk_multicurrency;
@@ -1054,10 +1056,10 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @param string	$ref				Ref
 	 * @param string 	$label 				Label of the line
 	 * @param string 	$desc 				Description de la ligne
-	 * @param double 	$pu_ht 				Prix unitaire HT (> 0 even for credit note)
+	 * @param double 	$pu_ht 				Unit price HT (> 0 even for credit note)
 	 * @param double 	$qty 				Quantity
 	 * @param int 		$remise_percent 	Percentage discount of the line
-	 * @param double 	$txtva 				Taux de tva force, sinon -1
+	 * @param double 	$txtva 				VAT rate forced with format '5.0 (XXX)', or -1
 	 * @param int 		$txlocaltax1 		Local tax 1 rate (deprecated)
 	 * @param int 		$txlocaltax2 		Local tax 2 rate (deprecated)
 	 * @param string 	$price_base_type 	HT or TTC
@@ -1068,17 +1070,18 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @param int 		$special_code 		Special code
 	 * @param int 		$rang 				Position of line
 	 * @param string 	$fk_unit 			Unit
-	 * @param int 		$pu_ht_devise 		Unit price in currency
+	 * @param double	$pu_ht_devise 		Unit price in currency
+	 * @param double    $pu_ttc             Unit price TTC (> 0 even for credit note)
 	 * @return int  		                <0 if KO, Id of line if OK
 	 * @throws Exception
 	 */
-	public function updateline($rowid, $fk_product, $ref, $label, $desc, $pu_ht, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $type = 0, $date_start = 0, $date_end = 0, $info_bits = 0, $special_code = 0, $rang = -1, $fk_unit = null, $pu_ht_devise = 0)
+	public function updateline($rowid, $fk_product, $ref, $label, $desc, $pu_ht, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $type = 0, $date_start = 0, $date_end = 0, $info_bits = 0, $special_code = 0, $rang = -1, $fk_unit = null, $pu_ht_devise = 0, $pu_ttc = 0)
 	{
 		global $mysoc, $user;
 
 		$facid = $this->id;
 
-		dol_syslog(get_class($this). '::updateline facid=' .$facid." rowid=$rowid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ttc=$pu_ttc, type=$type, fk_unit=$fk_unit, pu_ht_devise=$pu_ht_devise", LOG_DEBUG);
+		dol_syslog(get_class($this). '::updateline facid=' .$facid." rowid=$rowid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, price_base_type=$price_base_type, pu_ttc=$pu_ttc, type=$type, fk_unit=$fk_unit, pu_ht_devise=$pu_ht_devise", LOG_DEBUG);
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 		// Check parameters
@@ -1303,6 +1306,7 @@ class FactureFournisseurRec extends CommonInvoice
 			}
 
 			$saventity = $conf->entity;
+			$laststep="None";
 
 			while ($i < $num) {     // Loop on each template invoice. If $num = 0, test is false at first pass.
 				$line = $this->db->fetch_object($resql);
@@ -1313,6 +1317,7 @@ class FactureFournisseurRec extends CommonInvoice
 
 				$new_fac_fourn = null;
 				$facturerec = new FactureFournisseurRec($this->db);
+				$laststep="Fetch {$line->rowid}";
 				$facturerec->fetch($line->rowid);
 
 				if ($facturerec->id > 0) {
@@ -1338,6 +1343,7 @@ class FactureFournisseurRec extends CommonInvoice
 					$new_fac_fourn->libelle = $facturerec->label;	// deprecated
 
 					$invoiceidgenerated = $new_fac_fourn->create($user);
+					$laststep="Create invoiceidgenerated $invoiceidgenerated";
 					if ($invoiceidgenerated <= 0) {
 						$this->errors = $new_fac_fourn->errors;
 						$this->error = $new_fac_fourn->error;
@@ -1345,6 +1351,7 @@ class FactureFournisseurRec extends CommonInvoice
 					}
 					if (!$error && ($facturerec->auto_validate || $forcevalidation)) {
 						$result = $new_fac_fourn->validate($user);
+						$laststep="Validate by user $user";
 						if ($result <= 0) {
 							$this->errors = $new_fac_fourn->errors;
 							$this->error = $new_fac_fourn->error;
@@ -1354,7 +1361,9 @@ class FactureFournisseurRec extends CommonInvoice
 
 					if (!$error && $facturerec->generate_pdf) {
 						// We refresh the object in order to have all necessary data (like date_lim_reglement)
+						$laststep="Refresh {$new_fac_fourn->id}";
 						$new_fac_fourn->fetch($new_fac_fourn->id);
+						$laststep="GenerateDocument {$new_fac_fourn->id}";
 						$result = $new_fac_fourn->generateDocument($facturerec->model_pdf, $langs);
 						if ($result < 0) {
 							$this->errors = $new_fac_fourn->errors;
@@ -1374,12 +1383,12 @@ class FactureFournisseurRec extends CommonInvoice
 					$facturerec->date_last_gen = dol_now();
 					$facturerec->date_when= $facturerec->getNextDate();
 					$facturerec->update($user);
-					$this->db->commit('createRecurringInvoices Process invoice template id=' .$facturerec->id. ', title=' .$facturerec->titre);
-					dol_syslog('createRecurringInvoices Process invoice template ' .$facturerec->titre. ' is finished with a success generation');
+					$this->db->commit('createRecurringInvoices Process invoice template id=' .$facturerec->id. ', title=' .$facturerec->title);
+					dol_syslog('createRecurringInvoices Process invoice template ' .$facturerec->title. ' is finished with a success generation');
 					$nb_create++;
-					$this->output .= $langs->trans('InvoiceGeneratedFromTemplate', $new_fac_fourn->ref, $facturerec->titre)."\n";
+					$this->output .= $langs->trans('InvoiceGeneratedFromTemplate', $new_fac_fourn->ref, $facturerec->title)."\n";
 				} else {
-					$this->db->rollback('createRecurringInvoices Process invoice template id=' .$facturerec->id. ', title=' .$facturerec->titre);
+					$this->db->rollback('createRecurringInvoices Process invoice template error='.$error.' invoiceidgenerated='.$invoiceidgenerated.' LastStep='.$laststep.' id=' .$facturerec->id. ', title=' .$facturerec->title);
 				}
 
 				$parameters = array(
@@ -1770,7 +1779,7 @@ class FactureFournisseurRec extends CommonInvoice
 	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
-			'facture_rec'
+			'facture_fourn_rec'
 		);
 
 		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);

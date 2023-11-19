@@ -122,6 +122,7 @@ if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
 	$object->fetch_thirdparty();
 
+	$typeobject = '';
 	if (!empty($object->origin)) {
 		$origin = $object->origin;
 
@@ -129,11 +130,10 @@ if ($id > 0 || !empty($ref)) {
 		$typeobject = $object->origin;
 	}
 
-	// Linked documents
-	if ($origin == 'order_supplier' && $object->$typeobject->id && isModEnabled("supplier_order")) {
-		$origin_id = $object->$typeobject->id;
-		$objectsrc = new CommandeFournisseur($db);
-		$objectsrc->fetch($object->$typeobject->id);
+	// Set $origin_id and $objectsrc
+	if (($origin == 'order_supplier' || $origin == 'supplier_order') && is_object($object->origin_object) && isModEnabled("supplier_order")) {
+		$origin_id = $object->origin_object->id;
+		$objectsrc = $object->origin_object;
 	}
 }
 
@@ -262,7 +262,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'update_extras' && $permissiontoadd) {
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
@@ -1074,7 +1074,7 @@ if ($action == 'create') {
 				if (getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION') || getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION_CLOSE')) {
 					print '<td>'.$langs->trans("BuyingPrice").'</td>';
 				}
-				if (isModEnabled('productbatch')) {
+				if (!isModEnabled('productbatch')) {
 					print ' <br><center><a href="#" id="autofill"><span class="fas fa-fill pictofixedwidth" style=""></span> '.$langs->trans("Fill").'</a>';
 					print ' &nbsp; &nbsp; <a href="#" id="autoreset"><span class="fas fa-eraser pictofixedwidth" style=""></span>'.$langs->trans("Reset").'</a></center><br>';
 				}

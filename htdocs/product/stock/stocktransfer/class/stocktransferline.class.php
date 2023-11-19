@@ -114,6 +114,12 @@ class StockTransferLine extends CommonObjectLine
 	public $fk_stocktransfer;
 	public $fk_product;
 	public $batch;
+
+	/**
+	 * @var double pmp
+	 */
+	public $pmp;
+
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -447,7 +453,7 @@ class StockTransferLine extends CommonObjectLine
 											 $code_inv);
 
 			if ($result < 0) {
-				setEventMessages($p->errors, $p->errorss, 'errors');
+				setEventMessages($p->error, $p->errors, 'errors');
 				return 0;
 			}
 		} else {
@@ -490,7 +496,7 @@ class StockTransferLine extends CommonObjectLine
 												 $this->batch);
 
 				if ($result < 0) {
-					setEventMessages($p->errors, $p->errorss, 'errors');
+					setEventMessages($p->error, $p->errors, 'errors');
 					return 0;
 				}
 			} else {
@@ -577,7 +583,15 @@ class StockTransferLine extends CommonObjectLine
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'stocktransferline/".$this->db->escape($this->newref)."'";
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'stocktransferline/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
-				if (!$resql) { $error++; $this->error = $this->db->lasterror(); }
+				if (!$resql) {
+					$error++; $this->error = $this->db->lasterror();
+				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'stocktransferline/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'stocktransferline/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++; $this->error = $this->db->lasterror();
+				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
@@ -885,7 +899,7 @@ class StockTransferLine extends CommonObjectLine
 		if (!empty($conf->global->STOCKTRANSFER_STOCKTRANSFERLINE_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->STOCKTRANSFER_STOCKTRANSFERLINE_ADDON.".php";
+			$file = getDolGlobalString('STOCKTRANSFER_STOCKTRANSFERLINE_ADDON') . ".php";
 			$classname = $conf->global->STOCKTRANSFER_STOCKTRANSFERLINE_ADDON;
 
 			// Include file with class

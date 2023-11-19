@@ -1576,7 +1576,7 @@ class FormTicket
 		// Attached files
 		if (!empty($this->withfile)) {
 			$out = '<tr>';
-			$out .= '<td width="180">'.$langs->trans("MailFile").'</td>';
+			$out .= '<td>'.$langs->trans("MailFile").'</td>';
 			$out .= '<td>';
 			// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
 			$out .= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
@@ -1662,7 +1662,7 @@ class FormTicket
 		//$toolbarname = 'dolibarr_details';
 		$toolbarname = 'dolibarr_notes';
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('message', $defaultmessage, '100%', 200, $toolbarname, '', false, $uselocalbrowser, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_5, 70);
+		$doleditor = new DolEditor('message', $defaultmessage, '100%', 200, $toolbarname, '', false, $uselocalbrowser, getDolGlobalInt('FCKEDITOR_ENABLE_TICKET'), ROWS_5, '90%');
 		$doleditor->Create();
 		print '</td></tr>';
 
@@ -1682,7 +1682,7 @@ class FormTicket
 
 		print '</table>';
 
-		print '<center><br>';
+		print '<br><center>';
 		print '<input type="submit" class="button" name="btn_add_message" value="'.$langs->trans("Add").'"';
 		// Add a javascript test to avoid to forget to submit file before sending email
 		if ($this->withfile == 2 && !empty($conf->use_javascript_ajax)) {
@@ -1697,7 +1697,7 @@ class FormTicket
 
 		print '<input type="hidden" name="page_y">'."\n";
 
-		print "</form>\n";
+		print "</form><br>\n";
 
 		// Disable enter key if option MAIN_MAILFORM_DISABLE_ENTERKEY is set
 		if (!empty($conf->global->MAIN_MAILFORM_DISABLE_ENTERKEY)) {

@@ -114,7 +114,7 @@ if (empty($conf->bookmark->enabled)) {
 		}
 
 		$newcardbutton = '';
-		$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/bookmarks/card.php?action=create&backtopage='.urlencode(DOL_URL_ROOT.'/bookmarks/list.php'), '', !empty($user->rights->bookmark->creer));
+		$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/bookmarks/card.php?action=create&backtopage='.urlencode(DOL_URL_ROOT.'/bookmarks/list.php'), '', $user->hasRight('bookmark', 'creer'));
 
 		// Url to list bookmark
 		$bookmarkList .= '<br>';

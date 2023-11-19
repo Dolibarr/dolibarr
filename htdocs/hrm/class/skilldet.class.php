@@ -531,7 +531,7 @@ class Skilldet extends CommonObjectLine
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('SKILLDET_VALIDATE', $user);
+				$result = $this->call_trigger('HRM_SKILLDET_VALIDATE', $user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -547,6 +547,12 @@ class Skilldet extends CommonObjectLine
 				// Now we rename also files into index
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'skilldet/".$this->db->escape($this->newref)."'";
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'skilldet/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++; $this->error = $this->db->lasterror();
+				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'skilldet/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'skilldet/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++; $this->error = $this->db->lasterror();
@@ -837,6 +843,7 @@ class Skilldet extends CommonObjectLine
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_creat;
@@ -884,7 +891,7 @@ class Skilldet extends CommonObjectLine
 		if (!empty($conf->global->hrm_SKILLDET_ADDON)) {
 			$mybool = false;
 
-			$file = $conf->global->hrm_SKILLDET_ADDON.".php";
+			$file = getDolGlobalString('hrm_SKILLDET_ADDON') . ".php";
 			$classname = $conf->global->hrm_SKILLDET_ADDON;
 
 			// Include file with class

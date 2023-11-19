@@ -36,7 +36,7 @@
  */
 function bank_prepare_head(Account $object)
 {
-	global $db, $langs, $conf, $user;
+	global $db, $langs, $conf;
 	$h = 0;
 	$head = array();
 
@@ -131,7 +131,9 @@ function bank_prepare_head(Account $object)
  */
 function bank_admin_prepare_head($object)
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $db;
+
+	$langs->loadLangs(array("compta"));
 
 	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('bank_account');
@@ -191,7 +193,7 @@ function bank_admin_prepare_head($object)
  */
 function account_statement_prepare_head($object, $num)
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $db;
 	$h = 0;
 	$head = array();
 
