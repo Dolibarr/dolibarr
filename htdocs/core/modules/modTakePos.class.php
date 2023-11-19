@@ -337,7 +337,7 @@ class modTakePos extends DolibarrModules
 				$searchaccountid = $cashaccount->create($user);
 			}
 			if ($searchaccountid > 0) {
-				dolibarr_set_const($this->db, "CASHDESK_ID_BANKACCOUNT_CASH1", $result, 'chaine', 0, '', $conf->entity);
+				dolibarr_set_const($this->db, "CASHDESK_ID_BANKACCOUNT_CASH1", $searchaccountid, 'chaine', 0, '', $conf->entity);
 			} else {
 				setEventMessages($societe->error, $category->errors, 'errors');
 			}
