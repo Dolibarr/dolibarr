@@ -2371,36 +2371,6 @@ class CommandeFournisseur extends CommonOrder
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *	Get list of order methods
-	 *
-	 *	@return int 0 if OK, <0 if KO
-	 */
-	public function get_methodes_commande()
-	{
-		// phpcs:enable
-		$sql = "SELECT rowid, libelle";
-		$sql .= " FROM ".$this->db->prefix()."c_input_method";
-		$sql .= " WHERE active = 1";
-
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$i = 0;
-			$num = $this->db->num_rows($resql);
-			$this->methodes_commande = array();
-			while ($i < $num) {
-				$row = $this->db->fetch_row($resql);
-
-				$this->methodes_commande[$row[0]] = $row[1];
-
-				$i++;
-			}
-			return 0;
-		} else {
-			return -1;
-		}
-	}
 
 	/**
 	 * Return array of dispatched lines waiting to be approved for this order
@@ -3924,9 +3894,8 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		$sql .= " fk_product, product_type, special_code, rang,";
 		$sql .= " qty, vat_src_code, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, remise_percent, subprice, ref,";
 		$sql .= " total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, fk_unit,";
-		$sql .= " fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc";
-		$sql .= " ,fk_parent_line)";
-		$sql .= " )";
+		$sql .= " fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc,";
+		$sql .= " fk_parent_line)";
 		$sql .= " VALUES (".$this->fk_commande.", '".$this->db->escape($this->label)."','".$this->db->escape($this->desc)."',";
 		$sql .= " ".($this->date_start ? "'".$this->db->idate($this->date_start)."'" : "null").",";
 		$sql .= " ".($this->date_end ? "'".$this->db->idate($this->date_end)."'" : "null").",";
@@ -4008,13 +3977,12 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	 */
 	public function update($notrigger = 0)
 	{
-		global $conf, $user;
+		global $user;
 
 		$error = 0;
 
 		$this->db->begin();
 
-		// Mise a jour ligne en base
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element." SET";
 		$sql .= "  description='".$this->db->escape($this->desc)."'";
 		$sql .= ", ref='".$this->db->escape($this->ref_supplier)."'";

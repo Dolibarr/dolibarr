@@ -529,7 +529,8 @@ function isAValidEAN13($ean)
 		return false;
 	};
 
-	for ($i = 0; $i < count($eanAsArray)-1; $i++) {
+	$num = (count($eanAsArray) - 1);
+	for ($i = 0; $i < $num; $i++) {
 		if ($i % 2 === 0) {
 			$sumOddIndexes  += $eanAsArray[$i];
 		} else {
