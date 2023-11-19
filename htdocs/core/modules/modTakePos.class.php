@@ -267,7 +267,7 @@ class modTakePos extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf, $db, $langs, $user;
+		global $conf, $db, $langs, $user, $mysoc;
 		$langs->load("cashdesk");
 
 		dolibarr_set_const($db, "TAKEPOS_PRINT_METHOD", "browser", 'chaine', 0, '', $conf->entity);
@@ -320,6 +320,26 @@ class modTakePos extends DolibarrModules
 				} else {
 					setEventMessages($category->error, $category->errors, 'errors');
 				}
+			}
+		}
+
+		//Create cash account if not exists
+		if (!getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CASH1')) {
+			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+			$cashaccount = new Account($db);
+			$searchaccountid = $cashaccount->fetch(0, "CASH-POS");
+			if ($searchaccountid == 0) {
+				$cashaccount->ref = "CASH-POS";
+				$cashaccount->label = $langs->trans("DefaultCashPOSLabel");
+				$cashaccount->courant = 2;
+				$cashaccount->country_id = $mysoc->country_id ? $mysoc->country_id : 1;
+				$cashaccount->date_solde = dol_now();
+				$searchaccountid = $cashaccount->create($user);
+			}
+			if ($searchaccountid > 0) {
+				dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CASH1", $result, 'chaine', 0, '', $conf->entity);
+			} else {
+				setEventMessages($societe->error, $category->errors, 'errors');
 			}
 		}
 
