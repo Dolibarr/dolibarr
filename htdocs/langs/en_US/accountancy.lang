@@ -482,7 +482,8 @@ AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transac
 ErrorAccountNumberAlreadyExists=The accounting number %s already exists
 ErrorArchiveAddFile=Can't put "%s" file in archive
 ErrorNoFiscalPeriodActiveFound=No active fiscal period found
-ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=The bookkeeping doc date is not on active fiscal period
+ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=The bookkeeping doc date is not inside the active fiscal period
+ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=The bookkeeping doc date is inside a closed fiscal period
 
 ## Import
 ImportAccountingEntries=Accounting entries

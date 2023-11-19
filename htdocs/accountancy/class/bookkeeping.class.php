@@ -301,7 +301,11 @@ class BookKeeping extends CommonObject
 		if ($result < 0) {
 			return -1;
 		} elseif ($result == 0) {
-			$this->errors[] = $langs->trans('ErrorBookkeepingDocDateNotOnActiveFiscalPeriod');
+			if (getDolGlobalString('ACCOUNTANCY_FISCAL_PERIOD_MODE') == 'blockedonclosed') {
+				$this->errors[] = $langs->trans('ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod');
+			} else {
+				$this->errors[] = $langs->trans('ErrorBookkeepingDocDateNotOnActiveFiscalPeriod');
+			}
 			return -1;
 		}
 
@@ -654,7 +658,11 @@ class BookKeeping extends CommonObject
 		if ($result < 0) {
 			return -1;
 		} elseif ($result == 0) {
-			$this->errors[] = $langs->trans('ErrorBookkeepingDocDateNotOnActiveFiscalPeriod');
+			if (getDolGlobalString('ACCOUNTANCY_FISCAL_PERIOD_MODE') == 'blockedonclosed') {
+				$this->errors[] = $langs->trans('ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod');
+			} else {
+				$this->errors[] = $langs->trans('ErrorBookkeepingDocDateNotOnActiveFiscalPeriod');
+			}
 			return -1;
 		}
 
@@ -1372,7 +1380,11 @@ class BookKeeping extends CommonObject
 		if ($result < 0) {
 			return -1;
 		} elseif ($result == 0) {
-			$this->errors[] = $langs->trans('ErrorBookkeepingDocDateNotOnActiveFiscalPeriod');
+			if (getDolGlobalString('ACCOUNTANCY_FISCAL_PERIOD_MODE') == 'blockedonclosed') {
+				$this->errors[] = $langs->trans('ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod');
+			} else {
+				$this->errors[] = $langs->trans('ErrorBookkeepingDocDateNotOnActiveFiscalPeriod');
+			}
 			return -1;
 		}
 
@@ -1497,7 +1509,11 @@ class BookKeeping extends CommonObject
 		if ($result < 0) {
 			return -1;
 		} elseif ($result == 0) {
-			$this->errors[] = $langs->trans('ErrorBookkeepingDocDateNotOnActiveFiscalPeriod');
+			if (getDolGlobalString('ACCOUNTANCY_FISCAL_PERIOD_MODE') == 'blockedonclosed') {
+				$this->errors[] = $langs->trans('ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod');
+			} else {
+				$this->errors[] = $langs->trans('ErrorBookkeepingDocDateNotOnActiveFiscalPeriod');
+			}
 			return -1;
 		}
 
@@ -2316,22 +2332,29 @@ class BookKeeping extends CommonObject
 	}
 
 	/**
-	 * Is the bookkeeping date is valid ?
+	 * Is the bookkeeping date valid (on an open period or not on a closed period) ?
 	 *
 	 * @param 	int		$date		Bookkeeping date
-	 * @return 	int					<0 if KO, == 0 if No, == 1 if Yes
+	 * @return 	int					<0 if KO, == 0 if No, == 1 if date is valid for a transfer
 	 */
 	public function validBookkeepingDate($date)
 	{
-		$result = $this->loadFiscalPeriods(false, 'active');
-		if ($result < 0) {
-			return -1;
-		}
+		if (getDolGlobalString('ACCOUNTANCY_FISCAL_PERIOD_MODE') == 'blockedonclosed') {
+			$result = $this->loadFiscalPeriods(false, 'closed');
 
-		if (is_array(self::$active_fiscal_period_cached)) {
-			foreach (self::$active_fiscal_period_cached as $fiscal_period) {
-				if ($fiscal_period['date_start'] <= $date && $date <= $fiscal_period['date_end']) {
-					return 1;
+			// TODO
+			return 1;
+		} else {
+			$result = $this->loadFiscalPeriods(false, 'active');
+			if ($result < 0) {
+				return -1;
+			}
+
+			if (is_array(self::$active_fiscal_period_cached)) {
+				foreach (self::$active_fiscal_period_cached as $fiscal_period) {
+					if ($fiscal_period['date_start'] <= $date && $date <= $fiscal_period['date_end']) {
+						return 1;
+					}
 				}
 			}
 		}
