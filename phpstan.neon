@@ -68,6 +68,7 @@ parameters:
 		- '#Empty array passed to foreach#'
 		- '#in isset\(\) is not nullable#'
 		- '#in isset\(\) is never defined#'
+		- '#(\$force_dolibarr_lib|\$dolibarr_main_db).*in empty\(\) is never defined.#'
 		- '#Sprain\\SwissQrBill\\#'
 	internalErrorsCountLimit: 50
 	cache:
