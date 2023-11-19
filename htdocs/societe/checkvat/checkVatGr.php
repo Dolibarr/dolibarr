@@ -70,6 +70,7 @@ function checkVATGR($username, $password, $AFMcalledfor, $AFMcalledby = '')
 	*/
 
 	// TODO Replace this with code using nusoap_client()
+	// @phpstan-ignore-next-line
 	$client = new SoapClient("https://www1.gsis.gr/webtax2/wsgsis/RgWsPublic/RgWsPublicPort?WSDL", array('trace' => true));
 	$authHeader = new stdClass();
 	$authHeader->UsernameToken = new stdClass();
