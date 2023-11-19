@@ -1607,7 +1607,7 @@ class BonPrelevement extends CommonObject
 				$sql = "SELECT soc.rowid as socid, soc.code_client as code, soc.address, soc.zip, soc.town, c.code as country_code,";
 				$sql .= " pl.client_nom as nom, pl.code_banque as cb, pl.code_guichet as cg, pl.number as cc, pl.amount as somme,";
 				$sql .= " f.ref as reffac, pf.fk_facture as idfac,";
-				$sql .= " rib.rowid, rib.datec, rib.iban_prefix as iban, rib.bic as bic, rib.intermediary_bic as intermediary_bic, rib.rowid as drum, rib.rum, rib.date_rum";
+				$sql .= " rib.rowid, rib.datec, rib.iban_prefix as iban, rib.bic as bic, rib.rowid as drum, rib.rum, rib.date_rum";
 				$sql .= " FROM";
 				$sql .= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
 				$sql .= " ".MAIN_DB_PREFIX."facture as f,";
@@ -1725,7 +1725,7 @@ class BonPrelevement extends CommonObject
 				if (!empty($user_dest)) {
 					$sql = "SELECT u.rowid as userId, c.code as country_code, CONCAT(u.firstname,' ',u.lastname) as nom,";
 					$sql .= " pl.code_banque as cb, pl.code_guichet as cg, pl.number as cc, pl.amount as somme,";
-					$sql .= " s.rowid as idSalary,rib.datec, rib.iban_prefix as iban, rib.bic as bic, rib.intermediary_bic as intermediary_bic, rib.rowid as drum";
+					$sql .= " s.rowid as idSalary,rib.datec, rib.iban_prefix as iban, rib.bic as bic, rib.rowid as drum";
 					$sql .= " FROM";
 					$sql .= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
 					$sql .= " ".MAIN_DB_PREFIX."salary as s,";
@@ -1743,7 +1743,7 @@ class BonPrelevement extends CommonObject
 					$sql = "SELECT soc.rowid as socid, soc.code_client as code, soc.address, soc.zip, soc.town, c.code as country_code,";
 					$sql .= " pl.client_nom as nom, pl.code_banque as cb, pl.code_guichet as cg, pl.number as cc, pl.amount as somme,";
 					$sql .= " f.ref as reffac, pf.fk_facture_fourn as idfac, f.ref_supplier as fac_ref_supplier,";
-					$sql .= " rib.rowid, rib.datec, rib.iban_prefix as iban, rib.bic as bic, rib.intermediary_bic as intermediary_bic, rib.rowid as drum, rib.rum, rib.date_rum";
+					$sql .= " rib.rowid, rib.datec, rib.iban_prefix as iban, rib.bic as bic, rib.rowid as drum, rib.rum, rib.date_rum";
 					$sql .= " FROM";
 					$sql .= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
 					$sql .= " ".MAIN_DB_PREFIX."facture_fourn as f,";
@@ -2013,7 +2013,6 @@ class BonPrelevement extends CommonObject
 	 *	@param	string		$row_idfac			  pf.fk_facture AS idfac,
 	 *	@param	string		$row_iban			  rib.iban_prefix AS iban,
 	 *	@param	string		$row_bic			  rib.bic AS bic,
-	 *	@param	string		$row_intermediary_bic rib.intermediary_bic AS intermediary_bic,
 	 *	@param	string		$row_datec			  rib.datec,
 	 *	@param	string		$row_drum			  rib.rowid used to generate rum
 	 * 	@param	string		$row_rum			  rib.rum Rum defined on company bank account
