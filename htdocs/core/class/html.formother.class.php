@@ -996,7 +996,7 @@ class FormOther
 
 		$file = $conf->$module->dir_temp.'/'.$name.'.png';
 
-		// On cree le repertoire contenant les icones
+		// We create temp directory
 		if (!file_exists($conf->$module->dir_temp)) {
 			dol_mkdir($conf->$module->dir_temp);
 		}

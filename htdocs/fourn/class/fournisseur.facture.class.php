@@ -1108,6 +1108,7 @@ class FactureFournisseur extends CommonInvoice
 			return 1;
 		} else {
 			$this->error = $this->db->error();
+			dol_syslog(get_class($this)."::fetch_lines - No lines:{$this->error} Error:{$this->error}", LOG_DEBUG);
 			return -3;
 		}
 	}
@@ -3907,12 +3908,13 @@ class SupplierInvoiceLine extends CommonObjectLine
 	/**
 	 *	Insert line into database
 	 *
-	 *	@param      int		$notrigger		1 no triggers
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@param      int		$notrigger							1 no triggers
+	 *  @param      int     $noerrorifdiscountalreadylinked  	1=Do not make error if lines is linked to a discount and discount already linked to another
+	 *	@return		int											<0 if KO, >0 if OK
 	 */
-	public function insert($notrigger = 0)
+	public function insert($notrigger = 0, $noerrorifdiscountalreadylinked = 0)
 	{
-		global $user, $conf, $langs;
+		global $user, $langs;
 
 		$error = 0;
 

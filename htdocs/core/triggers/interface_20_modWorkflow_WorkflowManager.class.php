@@ -533,7 +533,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			if (isModEnabled('ficheinter') && isModEnabled('ticket') && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_TICKET_CREATE_INTERVENTION)) {
 				$fichinter = new Fichinter($this->db);
 				$fichinter->socid = (int) $object->fk_soc;
-				$fichinter->fk_project = $projectid;
+				$fichinter->fk_project = (int) $object->fk_project;
 				$fichinter->fk_contrat = (int) $object->fk_contract;
 				$fichinter->author = $user->id;
 				$fichinter->model_pdf = (!empty($conf->global->FICHEINTER_ADDON_PDF)) ? $conf->global->FICHEINTER_ADDON_PDF : 'soleil';

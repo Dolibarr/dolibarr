@@ -223,7 +223,9 @@ function isModEnabled($module)
 		'bank' => 'banque',
 		'category' => 'categorie',
 		'contract' => 'contrat',
-		'project' => 'projet'
+		'project' => 'projet',
+		'bank' => 'banque',
+		'category' => 'categorie'
 	);
 	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
 		$arrayconv['supplier_order'] = 'fournisseur';
@@ -1261,7 +1263,7 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
  *	Create a clone of instance of object (new instance with same value for each properties)
  *  With native = 0: Property that are reference are different memory area in the new object (full isolation clone). This means $this->db of new object may not be valid.
  *  With native = 1: Use PHP clone. Property that are reference are same pointer. This means $this->db of new object is still valid but point to same this->db than original object.
- *  With native = 2: Property that are reference are different memory area in the new object (full isolation clone). Only scalar and array values are cloned. This means $this->db of new object is not valid.
+ *  With native = 2: Property that are reference are different memory area in the new object (full isolation clone). Only scalar and array values are cloned. This means method are not availables and $this->db of new object is not valid.
  *
  * 	@param	object	$object		Object to clone
  *  @param	int		$native		0=Full isolation method, 1=Native PHP method, 2=Full isolation method keeping only scalar and array properties (recommended)
@@ -5874,7 +5876,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
  *	@param	int		        $totalnboflines		Total number of records/lines for all pages (if known)
  *  @param  int             $hideselectlimit    Force to hide select limit
  *  @param	string			$beforearrows		HTML content to show before arrows. Must NOT contains '<li> </li>' tags.
- *  @param  int        		$hidenavigation     Force to hide the switch mode view and the navigation tool (select limit, arrows $betweenarrows and $afterarrows but not $beforearrows)
+ *  @param  int        		$hidenavigation     Force to hide the switch mode view and the navigation tool (hide limit section, html in $betweenarrows and $afterarrows but not $beforearrows)
  *	@return	void
  */
 function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $betweenarrows = '', $afterarrows = '', $limit = -1, $totalnboflines = 0, $hideselectlimit = 0, $beforearrows = '', $hidenavigation = 0)
@@ -7635,19 +7637,20 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 		} while ($oldstringtoclean != $out);
 
 		// Check the limit of external links that are automatically executed in a Rich text content. We count:
-		// '<img' to avoid <img src="http...">
+		// '<img' to avoid <img src="http...">,  we can only accept "<img src="data:..."
 		// 'url(' to avoid inline style like background: url(http...
 		// '<link' to avoid <link href="http...">
 		$reg = array();
-		preg_match_all('/(<img|url\(|<link)/i', $out, $reg);
-		$nbextlink = count($reg[0]);
-		if ($nbextlink > getDolGlobalInt("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", 1000)) {
-			$out = 'TooManyLinksIntoHTMLString';
+		$tmpout = preg_replace('/<img src="data:/mi', '<__IMG_SRC_DATA__ src="data:', $out);
+		preg_match_all('/(<img|url\(|<link)/i', $tmpout, $reg);
+		$nblinks = count($reg[0]);
+		if ($nblinks > getDolGlobalInt("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", 1000)) {
+			$out = 'ErrorTooManyLinksIntoHTMLString';
 		}
 		//
-		if (!empty($conf->global->MAIN_DISALLOW_EXT_URL_INTO_DESCRIPTIONS) || $check == 'restricthtmlnolink') {
-			if ($nbextlink > 0) {
-				$out = 'ExternalLinksNotAllowed';
+		if (!empty($conf->global->MAIN_DISALLOW_URL_INTO_DESCRIPTIONS) || $check == 'restricthtmlnolink') {
+			if ($nblinks > 0) {
+				$out = 'ErrorHTMLLinksNotAllowed';
 			}
 		}
 
@@ -8157,6 +8160,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
 			$substitutionarray['__SUPPLIER_ORDER_DATE_DELIVERY__'] = (isset($object->delivery_date) ? dol_print_date($object->delivery_date, 'day', 0, $outputlangs) : '');
 			$substitutionarray['__SUPPLIER_ORDER_DELAY_DELIVERY__'] = (isset($object->availability_code) ? ($outputlangs->transnoentities("AvailabilityType".$object->availability_code) != ('AvailabilityType'.$object->availability_code) ? $outputlangs->transnoentities("AvailabilityType".$object->availability_code) : $outputlangs->convToOutputCharset(isset($object->availability) ? $object->availability : '')) : '');
+			$substitutionarray['__EXPIRATION_DATE__'] = (isset($object->fin_validite) ? dol_print_date($object->fin_validite, 'daytext') : '');
 
 			if (is_object($object) && ($object->element == 'adherent' || $object->element == 'member') && $object->id > 0) {
 				$birthday = (empty($object->birth) ? '' : dol_print_date($object->birth, 'day'));

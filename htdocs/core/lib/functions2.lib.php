@@ -1884,6 +1884,20 @@ function version_php()
 }
 
 /**
+ * 	Return DB version
+ *
+ * 	@return		string			PHP version
+ */
+function version_db()
+{
+	global $db;
+	if (is_object($db) && method_exists($db, 'getVersion')) {
+		return $db->getVersion();
+	}
+	return '';
+}
+
+/**
  * 	Return Dolibarr version
  *
  * 	@return		string			Dolibarr version
@@ -2885,7 +2899,7 @@ function acceptLocalLinktoMedia()
 		if (!$allowPrivateNetworkIP && !filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
 			// If ip of public url is a private network IP, we do not allow this.
 			$acceptlocallinktomedia = 0;
-			setEventMessage("WYSIWYG Editor : local media not allowed (checked IP: {$iptocheck}). Use {$allowParamName} = 1 to allow local network ip", 'warnings');
+			//dol_syslog("WYSIWYG Editor : local media not allowed (checked IP: {$iptocheck}). Use {$allowParamName} = 1 to allow local URL into WYSIWYG html content");
 		}
 
 		if (preg_match('/http:/i', $urlwithouturlroot)) {

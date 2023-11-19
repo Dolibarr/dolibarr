@@ -68,7 +68,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		$classname = 'class="tmenu menuhider nohover"';
 		$idsel = 'menu';
 
-		$menu->add('#', (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1 ? '<span class="fas fa-bars"></span>' : ''), 0, $showmode, $atarget, "xxx", '', 0, $id, $idsel, $classname, '<span class="fas fa-bars"></span>');
+		$menu->add('#', (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1 ? '<span class="fas fa-bars size12x"></span>' : ''), 0, $showmode, $atarget, "xxx", '', 0, $id, $idsel, $classname, '<span class="fas fa-bars size12x"></span>');
 	}
 
 	$menu_arr = array();
@@ -1653,10 +1653,8 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 				global $mysoc;
 				$newmenu->add("/accountancy/admin/index.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("General"), 1, $user->hasRight('accounting',  'chartofaccount'), '', $mainmenu, 'accountancy_admin_general', 10);
 
-				// Fiscal year - Not really yet used. In a future will lock some periods.
-				if ($conf->global->MAIN_FEATURES_LEVEL > 1) {
-					$newmenu->add("/accountancy/admin/fiscalyear.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("FiscalPeriod"), 1, $user->hasRight('accounting',  'fiscalyear', 'write'), '', $mainmenu, 'fiscalyear', 20);
-				}
+				// Fiscal year
+				$newmenu->add("/accountancy/admin/fiscalyear.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("FiscalPeriod"), 1, $user->hasRight('accounting',  'fiscalyear', 'write'), '', $mainmenu, 'fiscalyear', 20);
 
 				$newmenu->add("/accountancy/admin/journals_list.php?id=35&mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("AccountingJournals"), 1, $user->hasRight('accounting',  'chartofaccount'), '', $mainmenu, 'accountancy_admin_journal', 30);
 				$newmenu->add("/accountancy/admin/accountmodel.php?id=31&mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("Pcg_version"), 1, $user->hasRight('accounting',  'chartofaccount'), '', $mainmenu, 'accountancy_admin_chartmodel', 40);
@@ -1676,9 +1674,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 					$newmenu->add("/admin/dict.php?id=17&from=accountancy&mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuExpenseReportAccounts"), 1, $user->hasRight('accounting',  'chartofaccount'), '', $mainmenu, 'accountancy_admin_default', 100);
 				}
 				$newmenu->add("/accountancy/admin/productaccount.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuProductsAccounts"), 1, $user->hasRight('accounting',  'chartofaccount'), '', $mainmenu, 'accountancy_admin_product', 110);
-				if ($conf->global->MAIN_FEATURES_LEVEL > 1) {
-					$newmenu->add("/accountancy/admin/closure.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuClosureAccounts"), 1, $user->hasRight('accounting',  'chartofaccount'), '', $mainmenu, 'accountancy_admin_closure', 120);
-				}
+				$newmenu->add("/accountancy/admin/closure.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuClosureAccounts"), 1, $user->hasRight('accounting',  'chartofaccount'), '', $mainmenu, 'accountancy_admin_closure', 120);
 				$newmenu->add("/accountancy/admin/categories_list.php?id=32&search_country_id=".$mysoc->country_id."&mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("AccountingCategory"), 1, $user->hasRight('accounting',  'chartofaccount'), '', $mainmenu, 'accountancy_admin_chart', 125);
 				$newmenu->add("/accountancy/admin/export.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("ExportOptions"), 1, $user->hasRight('accounting',  'chartofaccount'), '', $mainmenu, 'accountancy_admin_export', 130);
 			}
@@ -2381,7 +2377,7 @@ function get_left_menu_hrm($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
 				$newmenu->add("/expensereport/list.php?search_status=4&amp;leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("Canceled"), 2, $user->hasRight('expensereport',  'lire'));
 				$newmenu->add("/expensereport/list.php?search_status=99&amp;leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("Refused"), 2, $user->hasRight('expensereport',  'lire'));
 			}
-			$newmenu->add("/expensereport/payment/list.php?leftmenu=expensereport_payments&amp;mainmenu=hrm", $langs->trans("Payments"), 1, $user->hasRight('expensereport',  'lire'));
+			$newmenu->add("/expensereport/payment/list.php?leftmenu=expensereport_payments&amp;mainmenu=hrm", $langs->trans("Payments"), 1, ($user->hasRight('expensereport',  'lire')) && isModEnabled('banque'));
 			$newmenu->add("/expensereport/stats/index.php?leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("Statistics"), 1, $user->hasRight('expensereport',  'lire'));
 		}
 

@@ -107,6 +107,8 @@ class MouvementStock extends CommonObject
 	 * @var string Origin type ('project', ...)
 	 */
 	public $origin_type;
+	public $line_id_oject_src;
+	public $line_id_oject_origin;
 
 
 	public $inventorycode;
@@ -114,6 +116,10 @@ class MouvementStock extends CommonObject
 
 	public $line_id_object_src;
 	public $line_id_object_origin;
+
+	public $eatby;
+	public $sellby;
+
 
 
 	public $fields = array(
@@ -541,7 +547,7 @@ class MouvementStock extends CommonObject
 			// Update stock quantity
 			if (!$error) {
 				if ($alreadyarecord > 0) {
-					$sql = "UPDATE ".$this->db->prefix()."product_stock SET reel = COALESCE(reel, 0) + ".((float) $qty);
+					$sql = "UPDATE ".$this->db->prefix()."product_stock SET reel = " . ((float) $oldqtywarehouse + (float) $qty);
 					$sql .= " WHERE fk_entrepot = ".((int) $entrepot_id)." AND fk_product = ".((int) $fk_product);
 				} else {
 					$sql = "INSERT INTO ".$this->db->prefix()."product_stock";
@@ -1033,8 +1039,8 @@ class MouvementStock extends CommonObject
 	{
 		$this->origin_type = $origin_element;
 		$this->origin_id = $origin_id;
-		$this->line_id_oject_src = $line_id_object_src;
-		$this->line_id_oject_origin = $line_id_object_origin;
+		$this->line_id_object_src = $line_id_object_src;
+		$this->line_id_object_origin = $line_id_object_origin;
 		// For backward compatibility
 		$this->origintype = $origin_element;
 		$this->fk_origin = $origin_id;
@@ -1264,5 +1270,36 @@ class MouvementStock extends CommonObject
 		}
 
 		return $cpt;
+	}
+
+	/**
+	 * reverse mouvement for object by updating infos
+	 * @return int    1 if OK,-1 if KO
+	 */
+	public function reverseMouvement()
+	{
+
+		$formattedDate = "REVERTMV" .dol_print_date($this->datem, '%Y%m%d%His');
+		if ($this->label == 'Annulation mouvement ID'.$this->id) {
+			return -1;
+		}
+		if ($this->inventorycode == $formattedDate) {
+			return -1;
+		}
+
+		$sql = "UPDATE ".$this->db->prefix()."stock_mouvement SET";
+		$sql .= " label = 'Annulation mouvement ID ".((int) $this->id)."',";
+		$sql .= "inventorycode = '".($formattedDate)."'";
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
+		$resql = $this->db->query($sql);
+
+		if ($resql) {
+			$this->db->commit();
+			return 1;
+		} else {
+			$this->db->rollback();
+			return -1;
+		}
 	}
 }

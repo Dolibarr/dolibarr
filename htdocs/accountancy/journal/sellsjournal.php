@@ -999,7 +999,7 @@ if (empty($action) || $action == 'view') {
 		print $desc;
 		print '</div>';
 	}
-	print '<div class="tabsAction tabsActionNoBottom centerimp">';
+	print '<br><div class="tabsAction tabsActionNoBottom centerimp">';
 	if (getDolGlobalString('ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL') && $in_bookkeeping == 'notyet') {
 		print '<input type="button" class="butAction" name="exportcsv" value="'.$langs->trans("ExportDraftJournal").'" onclick="launch_export();" />';
 	}
@@ -1292,7 +1292,7 @@ if (empty($action) || $action == 'view') {
 	}
 
 	if (!$i) {
-		print '<tr class="oddeven"><td colspan="6"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+		print '<tr class="oddeven"><td colspan="7"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 
 	print "</table>";

@@ -124,6 +124,7 @@ $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture', 
 $usercanread = ($user->hasRight("fournisseur", "facture", "lire") || $user->hasRight("supplier_invoice", "lire"));
 $usercancreate = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"));
 $usercandelete = ($user->hasRight("fournisseur", "facture", "supprimer") || $user->hasRight("supplier_invoice", "supprimer"));
+$usercancreatecontract = $user->hasRight("contrat", "creer");
 
 // Advanced permissions
 $usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($usercancreate)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight("fournisseur", "supplier_invoice_advance", "validate")));
@@ -2221,6 +2222,16 @@ if ($action == 'create') {
 	$note_public = $object->getDefaultCreateValueFor('note_public', ((!empty($origin) && !empty($originid) && is_object($objectsrc) && !empty($conf->global->FACTUREFOURN_REUSE_NOTES_ON_CREATE_FROM)) ? $objectsrc->note_public : null));
 	$note_private = $object->getDefaultCreateValueFor('note_private', ((!empty($origin) && !empty($originid) && is_object($objectsrc) && !empty($conf->global->FACTUREFOURN_REUSE_NOTES_ON_CREATE_FROM)) ? $objectsrc->note_private : null));
 
+	if ($origin == 'contrat') {
+		$langs->load("admin");
+		$text = $langs->trans("ToCreateARecurringInvoice");
+		$text .= ' '.$langs->trans("ToCreateARecurringInvoiceGene", $langs->transnoentitiesnoconv("MenuFinancial"), $langs->transnoentitiesnoconv("SupplierBills"), $langs->transnoentitiesnoconv("ListOfTemplates"));
+		if (empty($conf->global->INVOICE_DISABLE_AUTOMATIC_RECURRING_INVOICE)) {
+			$text .= ' '.$langs->trans("ToCreateARecurringInvoiceGeneAuto", $langs->transnoentitiesnoconv('Module2300Name'));
+		}
+		print info_admin($text, 0, 0, 0, 'opacitymedium').'<br>';
+	}
+
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
@@ -3213,8 +3224,10 @@ if ($action == 'create') {
 			print '<tr><td class="titlefield">'.$langs->trans('Type').'</td><td>';
 			print '<span class="badgeneutral">';
 			print $object->getLibType();
-			print $object->getSubtypeLabel('facture_fourn');
 			print '</span>';
+			if ($object->subtype > 0) {
+				print ' '.$object->getSubtypeLabel('facture_fourn');
+			}
 			if ($object->type == FactureFournisseur::TYPE_REPLACEMENT) {
 				$facreplaced = new FactureFournisseur($db);
 				$facreplaced->fetch($object->fk_facture_source);

@@ -190,7 +190,23 @@ abstract class DolibarrTriggers
 	}
 
 	/**
-	 *  Function called when a Dolibarr business event is done.
+	 * setErrorsFromObject
+	 *
+	 * @param CommonObject $object commonobject
+	 * @return void
+	 */
+	public function setErrorsFromObject($object)
+	{
+		if (!empty($object->error)) {
+			$this->errors = array_merge($this->errors, array($object->error));
+		}
+		if (!empty($object->errors)) {
+			$this->errors = array_merge($this->errors, $object->errors);
+		}
+	}
+
+	/**
+	 *  Function called when a Dolibarrr business event is done.
 	 *  All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers or htdocs/module/code/triggers (and declared)
 	 *
 	 *  @param string       $action     Event action code

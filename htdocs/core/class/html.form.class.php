@@ -3799,6 +3799,7 @@ class Form
 					$optstart .= ' data-tvatx="' . dol_escape_htmltag(price2num($objp->tva_tx)) . '"';
 					$optstart .= ' data-tvatx-formated="' . dol_escape_htmltag(price($objp->tva_tx, 0, $langs, 1, -1, 2)) . '"';
 					$optstart .= ' data-default-vat-code="' . dol_escape_htmltag($objp->default_vat_code) . '"';
+					$optstart .= ' data-supplier-ref="' . dol_escape_htmltag($objp->ref_fourn) . '"';
 				}
 				$optstart .= ' data-description="' . dol_escape_htmltag($objp->description, 0, 1) . '"';
 
@@ -9209,17 +9210,17 @@ class Form
 					'label' => 'LinkToIntervention',
 					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "fichinter as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('intervention') . ')'),
 				'supplier_proposal' => array(
-					'enabled' => (isModEnabled('supplier_proposal') ? $conf->supplier_proposal->enabled : 0),
+					'enabled' => isModEnabled('supplier_proposal'),
 					'perms' => 1,
 					'label' => 'LinkToSupplierProposal',
 					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, '' as ref_supplier, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "supplier_proposal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('supplier_proposal') . ')'),
 				'order_supplier' => array(
-					'enabled' => (isModEnabled("supplier_order") ? $conf->supplier_order->enabled : 0),
+					'enabled' => isModEnabled("supplier_order"),
 					'perms' => 1,
 					'label' => 'LinkToSupplierOrder',
 					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "commande_fournisseur as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('commande_fournisseur') . ')'),
 				'invoice_supplier' => array(
-					'enabled' => (isModEnabled("supplier_invoice") ? $conf->supplier_invoice->enabled : 0),
+					'enabled' => isModEnabled("supplier_invoice"),
 					'perms' => 1, 'label' => 'LinkToSupplierInvoice',
 					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "facture_fourn as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('facture_fourn') . ')'),
 				'ticket' => array(

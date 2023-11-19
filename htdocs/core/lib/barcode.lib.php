@@ -511,3 +511,38 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
 		imagepng($im);
 	}
 }
+
+/**
+ * Check if EAN13 code is valid
+ *
+ * @param string $ean	Code
+ * @return bool
+ */
+function isAValidEAN13($ean)
+{
+	$sumEvenIndexes = 0;
+	$sumOddIndexes  = 0;
+
+	$eanAsArray = array_map('intval', str_split($ean));
+
+	if (!(count($eanAsArray) === 13)) {
+		return false;
+	};
+
+	$num = (count($eanAsArray) - 1);
+	for ($i = 0; $i < $num; $i++) {
+		if ($i % 2 === 0) {
+			$sumOddIndexes  += $eanAsArray[$i];
+		} else {
+			$sumEvenIndexes += $eanAsArray[$i];
+		}
+	}
+
+	$rest = ($sumOddIndexes + (3 * $sumEvenIndexes)) % 10;
+
+	if ($rest !== 0) {
+		$rest = 10 - $rest;
+	}
+
+	return $rest === $eanAsArray[12];
+}

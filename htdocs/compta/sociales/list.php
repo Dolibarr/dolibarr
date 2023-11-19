@@ -457,7 +457,7 @@ if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
 // Filter: Ref
 if (!empty($arrayfields['cs.rowid']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input class="flat maxwidth75" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
+	print '<input class="flat maxwidth50" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 	print '</td>';
 }
 

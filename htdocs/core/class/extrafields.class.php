@@ -87,6 +87,7 @@ class ExtraFields
 		'mail'=>'ExtrafieldMail',
 		'url'=>'ExtrafieldUrl',
 		'ip'=>'ExtrafieldIP',
+		'icon'=>'Icon',
 		'password' => 'ExtrafieldPassword',
 		'select' => 'ExtrafieldSelect',
 		'sellist' => 'ExtrafieldSelectList',
@@ -225,7 +226,7 @@ class ExtraFields
 			} elseif ($type == 'phone') {
 				$typedb = 'varchar';
 				$lengthdb = '20';
-			} elseif ($type == 'mail' || $type == 'ip') {
+			} elseif ($type == 'mail' || $type == 'ip' || $type == 'icon') {
 				$typedb = 'varchar';
 				$lengthdb = '128';
 			} elseif ($type == 'url') {
@@ -579,7 +580,7 @@ class ExtraFields
 			} elseif ($type == 'phone') {
 				$typedb = 'varchar';
 				$lengthdb = '20';
-			} elseif ($type == 'mail' || $type == 'ip') {
+			} elseif ($type == 'mail' || $type == 'ip' || $type == 'icon') {
 				$typedb = 'varchar';
 				$lengthdb = '128';
 			} elseif ($type == 'url') {
@@ -1070,6 +1071,26 @@ class ExtraFields
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$size.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
 		} elseif (in_array($type, array('mail', 'ip', 'phone', 'url'))) {
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
+		} elseif ($type == 'icon') {
+			$out ='<link rel="stylesheet" href="'.dol_buildpath('/myfield/css/fontawesome-iconpicker.min.css', 1).'">';
+			$out.='<script src="'.dol_buildpath('/myfield/js/fontawesome-iconpicker.min.js', 1).'"></script>';
+			$out.= '<input type="text" class="form-control icp icp-auto iconpicker-element iconpicker-input flat '.$morecss.' maxwidthonsmartphone"';
+			$out.= ' name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
+			$out.='<script>';
+			$options="{ title: '<b>".$langs->trans("IconFieldSelector")."</b>', placement: 'right', showFooter: false, templates: {";
+			$options.="iconpicker: '<div class=\"iconpicker\"><div style=\"background-color:#EFEFEF;\" class=\"iconpicker-items\"></div></div>',";
+			$options.="iconpickerItem: '<a role=\"button\" href=\"#\" class=\"iconpicker-item\" style=\"background-color:#DDDDDD;\"><i></i></a>',";
+			// $options.="buttons: '<button style=\"background-color:#FFFFFF;\" class=\"iconpicker-btn iconpicker-btn-cancel btn btn-default btn-sm\">".$langs->trans("Cancel")."</button>";
+			// $options.="<button style=\"background-color:#FFFFFF;\" class=\"iconpicker-btn iconpicker-btn-accept btn btn-primary btn-sm\">".$langs->trans("Save")."</button>',";
+			$options.="footer: '<div class=\"popover-footer\" style=\"background-color:#EFEFEF;\"></div>',";
+			$options.="search: '<input type=\"search\" class\"form-control iconpicker-search\" placeholder=\"".$langs->trans("TypeToFilter")."\" />',";
+			$options.="popover: '<div class=\"iconpicker-popover popover\">";
+			$options.="   <div class=\"arrow\" ></div>";
+			$options.="   <div class=\"popover-title\" style=\"text-align:center;background-color:#EFEFEF;\"></div>";
+			$options.="   <div class=\"popover-content \" ></div>";
+			$options.="</div>'}}";
+			$out.="$('#".$keyprefix.$key.$keysuffix."').iconpicker(".$options.");";
+			$out.='</script>';
 		} elseif ($type == 'text') {
 			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -1652,6 +1673,8 @@ class ExtraFields
 			$value = dol_print_email($value, 0, 0, 0, 64, 1, 1);
 		} elseif ($type == 'ip') {
 			$value = dol_print_ip($value, 0);
+		} elseif ($type == 'icon') {
+			$value = '<span class="'.$value.'"></span>';
 		} elseif ($type == 'url') {
 			$value = dol_print_url($value, '_blank', 32, 1);
 		} elseif ($type == 'phone') {
@@ -1948,11 +1971,11 @@ class ExtraFields
 
 		$cssstring = '';
 
-		if (in_array($type, array('date', 'datetime', 'datetimegmt'))) {
+		if (in_array($type, array('date', 'datetime', 'datetimegmt',))) {
 			$cssstring = "center";
 		} elseif (in_array($type, array('int', 'price', 'double'))) {
 			$cssstring = "right";
-		} elseif (in_array($type, array('boolean', 'radio', 'checkbox', 'ip'))) {
+		} elseif (in_array($type, array('boolean', 'radio', 'checkbox', 'ip', 'icon'))) {
 			$cssstring = "center";
 		}
 
