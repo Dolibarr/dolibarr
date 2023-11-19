@@ -139,9 +139,11 @@ class FactureFournisseur extends CommonInvoice
 
 	/**
 	 * Set to 1 if the invoice is completely paid, otherwise is 0
-	 * @var int deprecated
+	 * @var int
+	 * @deprecated Use $paid
 	 */
 	public $paye;
+
 	/**
 	 * Set to 1 if the invoice is completely paid, otherwise is 0
 	 * @var int
@@ -203,7 +205,7 @@ class FactureFournisseur extends CommonInvoice
 	 * @deprecated
 	 * @see $total_ttc
 	 */
-	public $amout_ht;
+	public $amount_ht;
 
 	/**
 	 * @deprecated
