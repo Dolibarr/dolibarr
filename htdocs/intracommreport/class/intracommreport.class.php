@@ -58,7 +58,7 @@ class IntracommReport extends CommonObject
 
 	public $label; 		// ref ???
 
-	public $period;
+	public $periode;
 
 	public $declaration;
 
@@ -80,6 +80,11 @@ class IntracommReport extends CommonObject
 	 * @var string export type
 	 */
 	public $exporttype;
+
+	/**
+	 * @var string xml content
+	 */
+	public $content_xml;
 
 	/**
 	 * DEB - Product
