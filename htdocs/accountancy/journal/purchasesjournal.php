@@ -307,9 +307,9 @@ if ($result) {
 		}
 
 		$tabttc[$obj->rowid][$compta_soc] += $obj->total_ttc;
-		if($group_tax_with_lines){ //case where all taxes paid should be grouped with the same account as the main expense (best for USA)
+		if ($group_tax_with_lines) { //case where all taxes paid should be grouped with the same account as the main expense (best for USA)
 			$tabht[$obj->rowid][$compta_prod] += $obj->total_ttc;
-		}else{ //case where every tax paid should be broken out into its own account for future recovery (best for VAT countries)
+		} else { //case where every tax paid should be broken out into its own account for future recovery (best for VAT countries)
 			$tabht[$obj->rowid][$compta_prod] += $obj->total_ht;
 			$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva;
 			$tva_npr = (($obj->info_bits & 1 == 1) ? 1 : 0);

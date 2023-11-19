@@ -201,7 +201,7 @@ if ($result) {
 		}
 
 		$tabttc[$obj->rowid][$compta_user] += $obj->total_ttc;
-		if($group_tax_with_lines){ //case where all taxes paid should be grouped with the same account as the main expense (best for USA)
+		if ($group_tax_with_lines) { //case where all taxes paid should be grouped with the same account as the main expense (best for USA)
 			$tabht[$obj->rowid][$compta_fees] += $obj->total_ttc;
 		} else { //case where every tax paid should be broken out into its own account for future recovery (best for VAT countries)
 			$tabht[$obj->rowid][$compta_fees] += $obj->total_ht;
