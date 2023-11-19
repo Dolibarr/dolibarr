@@ -2398,7 +2398,6 @@ class BookKeeping extends CommonObject
 		}
 		if ($mode == 'closed') {
 			// TODO
-
 		}
 
 		return 1;
