@@ -182,7 +182,7 @@ trait CommonPeople
 		// If MAIN_FORCE_STATE_INTO_ADDRESS is on, state is already returned previously with getFullAddress
 		if (!in_array($this->country_code, $countriesusingstate) && empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)
 				&& empty($conf->global->SOCIETE_DISABLE_STATE) && $this->state) {
-			if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 && $this->region) {
+			if (getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1 && $this->region) {
 				$out .= ($outdone ? ' - ' : '').$this->region.' - '.$this->state;
 			} else {
 				$out .= ($outdone ? ' - ' : '').$this->state;
@@ -272,7 +272,7 @@ trait CommonPeople
 	/**
 	 * Set to upper or ucwords/lower if needed
 	 *
-	 * @return void;
+	 * @return void
 	 */
 	public function setUpperOrLowerCase()
 	{

@@ -46,15 +46,20 @@ class MultiCurrencies extends DolibarrApi
 	 * @param string	$sortfield		Sort field
 	 * @param string	$sortorder		Sort order
 	 * @param int		$limit			Limit for list
+	 * @param int	    $page			Page number
 	 * @param string    $sqlfilters		Other criteria to filter answers separated by a comma. Syntax example "(t.product_id:=:1) and (t.date_creation:<:'20160101')"
 	 * @param string    $properties		Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return array					Array of warehouse objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
 		global $db;
+
+		if (!DolibarrApiAccess::$user->rights->multicurrency->currency->read) {
+			throw new RestException(401, "Insufficient rights to read currency");
+		}
 
 		$obj_ret = array();
 

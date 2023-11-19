@@ -576,7 +576,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
 		$result=GETPOST("param15", 'restricthtml');		// param15 = <img onerror<=alert(document.domain)> src=>0xbeefed that is a dangerous string
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('InvalidHTMLStringCantBeCleaned', $result, 'Test 15b');					// With some PHP and libxml version, we got this result when parsing invalid HTML, but ...
+		//      $this->assertEquals('InvalidHTMLStringCantBeCleaned', $result, 'Test 15b');                 // With some PHP and libxml version, we got this result when parsing invalid HTML, but ...
 		//$this->assertEquals('<img onerror> src=&gt;0xbeefed', $result, 'Test 15b');	// ... on other PHP and libxml versions, we got a HTML that has been cleaned
 
 
@@ -641,7 +641,22 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$_POST["pagecontentwithlinks"]='<img src="aaa"><img src="bbb"><img src="ccc"><span style="background: url(/ddd)"></span>';
 		$result=GETPOST("pagecontentwithlinks", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('TooManyLinksIntoHTMLString', $result, 'Test on limit on GETPOST fails');
+		$this->assertEquals('ErrorTooManyLinksIntoHTMLString', $result, 'Test on limit on GETPOST fails');
+
+		// Test that img src="data:..." is excluded from the count of external links
+		$conf->global->MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT = 3;
+		$_POST["pagecontentwithlinks"]='<img src="data:abc"><img src="bbb"><img src="ccc"><span style="background: url(/ddd)"></span>';
+		$result=GETPOST("pagecontentwithlinks", 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('<img src="data:abc"><img src="bbb"><img src="ccc"><span style="background: url(/ddd)"></span>', $result, 'Test on limit on GETPOST fails');
+
+		// Test that no links is allowed
+		$conf->global->MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 1;
+		$_POST["pagecontentwithlinks"]='<img src="data:abc"><img src="bbb"><img src="ccc"><span style="background: url(/ddd)"></span>';
+		$result=GETPOST("pagecontentwithlinks", 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('ErrorHTMLLinksNotAllowed', $result, 'Test on limit on GETPOST fails');
+
 
 		return $result;
 	}

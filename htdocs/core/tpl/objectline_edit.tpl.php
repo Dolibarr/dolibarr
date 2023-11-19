@@ -303,7 +303,7 @@ $coldisplay++;
 	}
 
 	if (!empty($usemargins)) {
-		if (!empty($user->rights->margins->creer)) {
+		if ($user->hasRight('margins', 'creer')) {
 			$coldisplay++;
 			?>
 		<td class="margininfos right">
@@ -316,7 +316,7 @@ $coldisplay++;
 		</td>
 		<?php }
 
-		if ($user->rights->margins->creer) {
+		if ($user->hasRight('margins', 'creer')) {
 			if (!empty($conf->global->DISPLAY_MARGIN_RATES)) {
 				$margin_rate = (GETPOSTISSET("np_marginRate") ? GETPOST("np_marginRate", "alpha", 2) : (($line->pa_ht == 0) ? '' : price($line->marge_tx)));
 				// if credit note, dont allow to modify margin
@@ -362,12 +362,12 @@ $coldisplay++;
 	print '<script>';
 	if (!$line->date_start) {
 		if (isset($conf->global->MAIN_DEFAULT_DATE_START_HOUR)) {
-			print 'jQuery("#date_starthour").val("'.$conf->global->MAIN_DEFAULT_DATE_START_HOUR.'");';
+			print 'jQuery("#date_starthour").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_START_HOUR').'");';
 		}
 
 
 		if (isset($conf->global->MAIN_DEFAULT_DATE_START_MIN)) {
-			print 'jQuery("#date_startmin").val("'.$conf->global->MAIN_DEFAULT_DATE_START_MIN.'");';
+			print 'jQuery("#date_startmin").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_START_MIN').'");';
 		}
 
 		$res = $line->fetch_product();
@@ -379,10 +379,10 @@ $coldisplay++;
 	}
 	if (!$line->date_end) {
 		if (isset($conf->global->MAIN_DEFAULT_DATE_END_HOUR)) {
-			print 'jQuery("#date_endhour").val("'.$conf->global->MAIN_DEFAULT_DATE_END_HOUR.'");';
+			print 'jQuery("#date_endhour").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_END_HOUR').'");';
 		}
 		if (isset($conf->global->MAIN_DEFAULT_DATE_END_MIN)) {
-			print 'jQuery("#date_endmin").val("'.$conf->global->MAIN_DEFAULT_DATE_END_MIN.'");';
+			print 'jQuery("#date_endmin").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_END_MIN').'");';
 		}
 
 		$res = $line->fetch_product();
@@ -404,7 +404,7 @@ $coldisplay++;
 <script>
 
 <?php
-if (!empty($usemargins) && $user->rights->margins->creer) {
+if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 	?>
 	/* Some js test when we click on button "Add" */
 	jQuery(document).ready(function() {

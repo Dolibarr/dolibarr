@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 $langs->load("opensurvey");
 
 // Security check
-if (empty($user->rights->opensurvey->read)) {
+if (!$user->hasRight('opensurvey', 'read')) {
 	accessforbidden();
 }
 

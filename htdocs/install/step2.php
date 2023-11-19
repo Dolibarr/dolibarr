@@ -87,7 +87,7 @@ if (@file_exists($forcedfile)) {
 	}
 }
 
-dolibarr_install_syslog("- step2: entering step2.php page");
+dolibarr_install_syslog("--- step2: entering step2.php page");
 
 
 /*
@@ -153,9 +153,10 @@ if ($action == "set") {
 	$createdata = GETPOSTISSET('createdata') ? GETPOST('createdata') : 1;
 
 
-	// To say sql requests are escaped for mysql so we need to unescape them
-	$db->unescapeslashquot = true;
-
+	// To say that SQL we pass to query are already escaped for mysql, so we need to unescape them
+	if (property_exists($db, 'unescapeslashquot')) {
+		$db->unescapeslashquot = true;
+	}
 
 	/**************************************************************************************
 	 *
@@ -585,7 +586,7 @@ $conf->file->instance_unique_id = (empty($dolibarr_main_instance_unique_id) ? (e
 
 $hash_unique_id = md5('dolibarr'.$conf->file->instance_unique_id);
 
-$out  = '<input type="checkbox" name="dolibarrpingno" id="dolibarrpingno"'.((!empty($conf->global->MAIN_FIRST_PING_OK_ID) && $conf->global->MAIN_FIRST_PING_OK_ID == 'disabled') ? '' : ' value="checked" checked="true"').'> ';
+$out  = '<input type="checkbox" name="dolibarrpingno" id="dolibarrpingno"'.((getDolGlobalString('MAIN_FIRST_PING_OK_ID') == 'disabled') ? '' : ' value="checked" checked="true"').'> ';
 $out .= '<label for="dolibarrpingno">'.$langs->trans("MakeAnonymousPing").'</label>';
 
 $out .= '<!-- Add js script to manage the uncheck of option to not send the ping -->';

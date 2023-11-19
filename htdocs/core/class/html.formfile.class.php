@@ -1259,7 +1259,7 @@ class FormFile
 					if ($user->hasRight('produit', 'creer') && $object->type == Product::TYPE_PRODUCT) {
 						$permtoeditline = 1;
 					}
-					if ($user->rights->service->creer && $object->type == Product::TYPE_SERVICE) {
+					if ($user->hasRight('service', 'creer') && $object->type == Product::TYPE_SERVICE) {
 						$permtoeditline = 1;
 					}
 				}

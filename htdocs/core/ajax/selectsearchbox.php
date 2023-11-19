@@ -187,7 +187,7 @@ if (empty($reshook)) {
 
 // This pushes a search entry to the top
 if (!empty($conf->global->DEFAULT_SEARCH_INTO_MODULE)) {
-	$key = 'searchinto'.$conf->global->DEFAULT_SEARCH_INTO_MODULE;
+	$key = 'searchinto' . getDolGlobalString('DEFAULT_SEARCH_INTO_MODULE');
 	if (array_key_exists($key, $arrayresult)) {
 		$arrayresult[$key]['position'] = -1000;
 	}
