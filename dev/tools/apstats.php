@@ -302,7 +302,7 @@ $html .= '<h2>Lines of code</h2>'."\n";
 $html .= '<div class="div-table-responsive">'."\n";
 $html .= '<table class="centpercent">';
 $html .= '<tr class="loc">';
-$html .= '<th class="left">Language</td>';
+$html .= '<th class="left">Language</th>';
 $html .= '<th class="right">Bytes</th>';
 $html .= '<th class="right">Files</th>';
 $html .= '<th class="right">Lines</th>';
@@ -400,7 +400,7 @@ $( ".seedetail" ).on( "click", function() {
 });
 </script>
 ';
-$html .= '</boby>';
+$html .= '</body>';
 $html .= '</html>';
 
 $fh = fopen($outputpath, 'w');
