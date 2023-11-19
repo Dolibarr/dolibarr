@@ -180,9 +180,10 @@ class SupplierProposal extends CommonObject
 	 * @var int
 	 */
 	public $fk_supplier_proposal;
-	public $mode_reglement;
 	public $cond_reglement_doc;
 	public $cond_reglement_code;
+
+	public $mode_reglement;
 	public $mode_reglement_code;
 
 	public $extraparams = array();
@@ -809,6 +810,7 @@ class SupplierProposal extends CommonObject
 			$this->line->fk_unit = $fk_unit;
 
 			// infos marge
+			global $fk_product;
 			if (!empty($fk_product) && $fk_product > 0 && empty($fk_fournprice) && empty($pa_ht)) {
 				// by external module, take lowest buying price
 				include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
