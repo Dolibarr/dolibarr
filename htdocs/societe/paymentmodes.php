@@ -1634,6 +1634,15 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			}
 			print dol_escape_htmltag($rib->bic);
 			print '</td>';
+			// Intermediary BIC
+			print '<td>';
+			if (!empty($rib->intermediary_bic)) {
+				if (!checkIntermediarySwiftForAccount($rib)) {
+					print img_picto($langs->trans("IntermediarySwiftNotValid"), 'warning').' ';
+				}
+			}
+			print dol_escape_htmltag($rib->intermediary_bic);
+			print '</td>';
 
 			if (isModEnabled('prelevement')) {
 				// RUM

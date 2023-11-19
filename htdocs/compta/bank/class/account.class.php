@@ -1586,6 +1586,10 @@ class Account extends CommonObject
 			$error++;
 			$this->error_message = 'SwiftNotValid';
 		}
+		if (!checkIntermediarySwiftForAccount($this)) {
+			$error++;
+			$this->error_message = 'IntermediarySwiftNotValid';
+		}
 
 		if (! $error) {
 			return 1;

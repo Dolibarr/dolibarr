@@ -816,10 +816,10 @@ if ($action == 'create') {
 			print '<tr><td>'.$langs->trans($intermediary_bickey).'</td>';
 			print '<td>'.$object->intermediary_bic.'&nbsp;';
 			if (!empty($object->intermediary_bic)) {
-				if (!checkSwiftForAccount($object)) {
-					print img_picto($langs->trans("SwiftNotValid"), 'warning');
+				if (!checkIntermediarySwiftForAccount($object)) {
+					print img_picto($langs->trans("IntermediarySwiftNotValid"), 'warning');
 				} else {
-					print img_picto($langs->trans("SwiftValid"), 'info');
+					print img_picto($langs->trans("IntermediarySwiftValid"), 'info');
 				}
 			}
 			print '</td></tr>';
