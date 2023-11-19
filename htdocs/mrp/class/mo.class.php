@@ -697,6 +697,7 @@ class Mo extends CommonObject
 			$moline->qty = $this->qty;
 			$moline->fk_product = $this->fk_product;
 			$moline->position = 1;
+			include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 			$tmpproduct = new Product($this->db);
 			$tmpproduct->fetch($this->fk_product);
 			$moline->fk_unit = $tmpproduct->fk_unit;
@@ -817,7 +818,6 @@ class Mo extends CommonObject
 				}
 			}
 		}
-
 		if (!$error) {
 			$this->db->commit();
 			return 1;
@@ -881,7 +881,6 @@ class Mo extends CommonObject
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
 			return -2;
 		}
-
 		$productstatic = new Product($this->db);
 		$fk_movement = GETPOST('fk_movement', 'int');
 		$arrayoflines = $this->fetchLinesLinked('consumed', $idline);
@@ -1386,7 +1385,7 @@ class Mo extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $conf, $langs, $hookmanager;
+		global $conf, $langs, $action, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -1451,7 +1450,6 @@ class Mo extends CommonObject
 		$result .= $linkend;
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 
-		global $action, $hookmanager;
 		$hookmanager->initHooks(array('modao'));
 		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
@@ -1972,7 +1970,7 @@ class MoLine extends CommonObjectLine
 	/**
 	 * @var int  Does moline support extrafields ? 0=No, 1=Yes
 	 */
-	public $isextrafieldmanaged = 0;
+	public $isextrafieldmanaged = 1;
 
 	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'ID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),

@@ -2981,14 +2981,14 @@ function top_menu_search()
 
         // prevent submiting form on press ENTER
         jQuery("#top-global-search-input").keydown(function (e) {
-            if (e.keyCode == 13 || e.keyCode == 40) { 
+            if (e.keyCode == 13 || e.keyCode == 40) {
                 var inputs = $(this).parents("form").eq(0).find(":button");
                 if (inputs[inputs.index(this) + 1] != null) {
                     inputs[inputs.index(this) + 1].focus();
 					 if (e.keyCode == 13){
 						 inputs[inputs.index(this) + 1].trigger("click");
 					 }
-					 
+
                 }
                 e.preventDefault();
                 return false;
@@ -3695,6 +3695,7 @@ if (!function_exists("llxFooter")) {
 										  country_code: '<?php echo $mysoc->country_code ? dol_escape_js($mysoc->country_code) : 'unknown'; ?>',
 										  php_version: '<?php echo dol_escape_js(phpversion()); ?>',
 										  os_version: '<?php echo dol_escape_js(version_os('smr')); ?>',
+										  db_version: '<?php echo dol_escape_js(version_db()); ?>',
 										  distrib: '<?php echo $distrib ? dol_escape_js($distrib) : 'unknown'; ?>',
 										  token: 'notrequired'
 									  },
