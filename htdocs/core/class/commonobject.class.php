@@ -726,6 +726,31 @@ abstract class CommonObject
 	 */
 	protected $childtablesoncascade = array();
 
+	/**
+	 * @var Product Populate by fetch_product()
+	 */
+	public $product;
+
+	/**
+	 * @var int Populate by setPaymentTerms()
+	 */
+	public $cond_reglement_supplier_id;
+
+	/**
+	 * @var string Populate by setPaymentTerms()
+	 */
+	public $deposit_percent;
+
+
+	/**
+	 * @var string Populate by setRetainedWarrantyPaymentTerms()
+	 */
+	public $retained_warranty_fk_cond_reglement;
+
+	/**
+	 * @var int Populate by setWarehouse()
+	 */
+	public $warehouse_id;
 
 	// No constructor as it is an abstract class
 
@@ -1755,7 +1780,14 @@ abstract class CommonObject
 
 		$result = $this->db->fetch_object($query);
 
-		return $this->fetch($result->rowid);
+		if (method_exists($this, 'fetch')) {
+			return $this->fetch($result->rowid);
+		} else {
+			$this->error = 'Fetch method not implemented on '.get_class($this);
+			dol_syslog(get_class($this).'::fetchOneLike Error='.$this->error, LOG_ERR);
+			array_push($this->errors, $this->error);
+			return -1;
+		}
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1943,7 +1975,14 @@ abstract class CommonObject
 			$obj = $this->db->fetch_object($resql);
 			// Test for avoid error -1
 			if ($obj) {
-				$result = $this->fetch($obj->rowid);
+				if (method_exists($this, 'fetch')) {
+					return $this->fetch($obj->rowid);
+				} else {
+					$this->error = 'fetch() method not implemented on '.get_class($this);
+					dol_syslog(get_class($this).'::fetchOneLike Error='.$this->error, LOG_ERR);
+					array_push($this->errors, $this->error);
+					return -1;
+				}
 			}
 		}
 
@@ -3468,7 +3507,7 @@ abstract class CommonObject
 	 *
 	 *  @param      string		$note		New value for note
 	 *  @param		string		$suffix		'', '_public' or '_private'
-     *  @param      int         $notrigger  1=Does not execute triggers, 0=execute triggers
+	 *  @param      int         $notrigger  1=Does not execute triggers, 0=execute triggers
 	 *  @return     int      		   		<0 if KO, >0 if OK
 	 */
 	public function update_note($note, $suffix = '', $notrigger = 0)
@@ -3515,32 +3554,34 @@ abstract class CommonObject
 				$this->note = $note; // deprecated
 				$this->note_private = $note;
 			}
-            if(empty($notrigger)) {
-                switch($this->element) {
-                    case 'societe':
-                        $trigger_name = 'COMPANY_MODIFY';
-                        break;
-                    case 'commande':
-                        $trigger_name = 'ORDER_MODIFY';
-                        break;
-                    case 'facture':
-                        $trigger_name = 'BILL_MODIFY';
-                        break;
-                    case 'invoice_supplier':
-                        $trigger_name = 'BILL_SUPPLIER_MODIFY';
-                        break;
-                    case 'facturerec':
-                        $trigger_name = 'BILLREC_MODIFIY';
-                        break;
-                    case 'expensereport':
-                        $trigger_name = 'EXPENSE_REPORT_MODIFY';
-                        break;
-                    default:
-                        $trigger_name = strtoupper($this->element) . '_MODIFY';
-                }
-                $ret = $this->call_trigger($trigger_name, $user);
-                if($ret < 0 ) { return -1; }
-            }
+			if (empty($notrigger)) {
+				switch ($this->element) {
+					case 'societe':
+						$trigger_name = 'COMPANY_MODIFY';
+						break;
+					case 'commande':
+						$trigger_name = 'ORDER_MODIFY';
+						break;
+					case 'facture':
+						$trigger_name = 'BILL_MODIFY';
+						break;
+					case 'invoice_supplier':
+						$trigger_name = 'BILL_SUPPLIER_MODIFY';
+						break;
+					case 'facturerec':
+						$trigger_name = 'BILLREC_MODIFIY';
+						break;
+					case 'expensereport':
+						$trigger_name = 'EXPENSE_REPORT_MODIFY';
+						break;
+					default:
+						$trigger_name = strtoupper($this->element) . '_MODIFY';
+				}
+				$ret = $this->call_trigger($trigger_name, $user);
+				if ($ret < 0) {
+					return -1;
+				}
+			}
 			return 1;
 		} else {
 			$this->error = $this->db->lasterror();
@@ -8690,8 +8731,8 @@ abstract class CommonObject
 							var val = $("select[name=\""+parent_list+"\"]").val();
 							var parentVal = parent_list + ":" + val;
 							if(typeof val == "string"){
-				    		    if(val != "") {
-					    			var options = orig_select.find("option[parent=\""+parentVal+"\"]").clone();
+								if(val != "") {
+									var options = orig_select.find("option[parent=\""+parentVal+"\"]").clone();
 									$("select[name=\""+child_list+"\"] option[parent]").remove();
 									$("select[name=\""+child_list+"\"]").append(options);
 								} else {
@@ -8699,7 +8740,7 @@ abstract class CommonObject
 									$("select[name=\""+child_list+"\"] option[parent]").remove();
 									$("select[name=\""+child_list+"\"]").append(options);
 								}
-				    		} else if(val > 0) {
+							} else if(val > 0) {
 								var options = orig_select.find("option[parent=\""+parentVal+"\"]").clone();
 								$("select[name=\""+child_list+"\"] option[parent]").remove();
 								$("select[name=\""+child_list+"\"]").append(options);
@@ -8720,15 +8761,15 @@ abstract class CommonObject
 
 								//Hide daughters lists
 								if ($("#"+child_list).val() == 0 && $("#"+parent_list).val() == 0){
-								    $("#"+child_list).hide();
+									$("#"+child_list).hide();
 								//Show mother lists
 								} else if ($("#"+parent_list).val() != 0){
-								    $("#"+parent_list).show();
+									$("#"+parent_list).show();
 								}
 								//Show the child list if the parent list value is selected
 								$("select[name=\""+parent_list+"\"]").click(function() {
-								    if ($(this).val() != 0){
-								        $("#"+child_list).show()
+									if ($(this).val() != 0){
+										$("#"+child_list).show()
 									}
 								});
 
@@ -9516,7 +9557,7 @@ abstract class CommonObject
 			$fieldvalues['fk_user_creat'] = $user->id;
 		}
 		if (array_key_exists('pass_crypted', $fieldvalues)) {
-			$fieldvalues['pass_crypted'] = dol_hash($object->pass);
+			$fieldvalues['pass_crypted'] = dol_hash($this->pass);
 		}
 		unset($fieldvalues['rowid']); // The field 'rowid' is reserved field name for autoincrement field so we don't need it into insert.
 		if (array_key_exists('ref', $fieldvalues)) {

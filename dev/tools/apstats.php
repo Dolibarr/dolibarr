@@ -176,6 +176,7 @@ foreach (array('proj', 'dep') as $source) {
 
 $html = '<html>'."\n";
 $html .= '<meta charset="utf-8">'."\n";
+$html .= '<meta http-equiv="refresh" content="300">'."\n";
 $html .= '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";
 $html .= '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css" integrity="sha512-q3eWabyZPc1XTCmF+8/LuE1ozpg5xxn7iO89yfSOd5/oKvyqLngoNGsx8jq92Y8eXJ/IRxQbEC+FGSYxtk2oiw==" crossorigin="anonymous" referrerpolicy="no-referrer" />'."\n";
 $html .= '<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>'."\n";
@@ -295,7 +296,7 @@ $currentDate = date("Y-m-d H:i:s"); // Format: Year-Month-Day Hour:Minute:Second
 $html .= '<span class="opacity">Generated on '.$currentDate.'</span>'."\n";
 $html .= '</header>'."\n";
 
-$html .= '<section class="chapter">'."\n";
+$html .= '<section class="chapter" id="linesofcode">'."\n";
 $html .= '<h2>Lines of code</h2>'."\n";
 
 $html .= '<div class="div-table-responsive">'."\n";
@@ -359,7 +360,7 @@ $html .= '</div>';
 
 $html .= '</section>'."\n";
 
-$html .= '<section class="chapter">'."\n";
+$html .= '<section class="chapter" id="projectvalue">'."\n";
 $html .= '<h2>Project value</h2><br>'."\n";
 $html .= '<div class="box inline-box back1">';
 $html .= 'COCOMO (Basic organic model) value:<br>';
@@ -371,7 +372,7 @@ $html .= '<b>'.formatNumber($arraycocomo['proj']['people'] * $arraycocomo['proj'
 $html .= ' monthes people</b><br>';
 $html .= '</section>'."\n";
 
-$html .= '<section class="chapter">'."\n";
+$html .= '<section class="chapter" id="technicaldebt">'."\n";
 $html .= '<h2>Technical debt ('.count($output_arrtd).')</h2><br>'."\n";
 $html .= '<div class="div-table-responsive">'."\n";
 $html .= '<table class="list_technical_debt">'."\n";
