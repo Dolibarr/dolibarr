@@ -420,7 +420,7 @@ class Account extends CommonObject
 				$string .= $this->cle_rib.' ';
 			} elseif ($val == 'BIC') {
 				$string .= $this->bic.' ';
-			} elseif ($val == 'BIC') {
+			} elseif ($val == 'IntermediaryBIC') {
 				$string .= $this->intermediary_bic.' ';
 			} elseif ($val == 'IBAN') {
 				$string .= $this->iban.' ';
@@ -761,6 +761,7 @@ class Account extends CommonObject
 		$sql .= ", '".$this->db->escape($this->number)."'";
 		$sql .= ", '".$this->db->escape($this->cle_rib)."'";
 		$sql .= ", '".$this->db->escape($this->bic)."'";
+		$sql .= ", '".$this->db->escape($this->intermediary_bic)."'";
 		$sql .= ", '".$this->db->escape($this->iban)."'";
 		$sql .= ", '".$this->db->escape($this->domiciliation)."'";
 		$sql .= ", ".((int) $this->pti_in_ctti);
@@ -1042,39 +1043,40 @@ class Account extends CommonObject
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 
-				$this->id            = $obj->rowid;
-				$this->rowid         = $obj->rowid;
-				$this->ref           = $obj->ref;
-				$this->label         = $obj->label;
-				$this->type          = $obj->courant;
-				$this->courant       = $obj->courant;
-				$this->bank          = $obj->bank;
-				$this->clos          = $obj->clos;
-				$this->rappro        = $obj->rappro;
-				$this->url           = $obj->url;
+				$this->id           	= $obj->rowid;
+				$this->rowid         	= $obj->rowid;
+				$this->ref         	  	= $obj->ref;
+				$this->label        	= $obj->label;
+				$this->type         	= $obj->courant;
+				$this->courant       	= $obj->courant;
+				$this->bank          	= $obj->bank;
+				$this->clos          	= $obj->clos;
+				$this->rappro        	= $obj->rappro;
+				$this->url          	= $obj->url;
 
-				$this->code_banque   = $obj->code_banque;
-				$this->code_guichet  = $obj->code_guichet;
-				$this->number        = $obj->number;
-				$this->cle_rib       = $obj->cle_rib;
-				$this->bic           = $obj->bic;
-				$this->iban          = $obj->iban;
-				$this->domiciliation = $obj->address;
-				$this->address       = $obj->address;
-				$this->pti_in_ctti   = $obj->pti_in_ctti;
-				$this->proprio       = $obj->proprio;
-				$this->owner_address = $obj->owner_address;
-				$this->owner_zip     = $obj->owner_zip;
-				$this->owner_town    = $obj->owner_town;
+				$this->code_banque   	= $obj->code_banque;
+				$this->code_guichet  	= $obj->code_guichet;
+				$this->number           = $obj->number;
+				$this->cle_rib          = $obj->cle_rib;
+				$this->bic              = $obj->bic;
+				$this->intermediary_bic = $obj->intermediary_bic;
+				$this->iban          	= $obj->iban;
+				$this->domiciliation	= $obj->address;
+				$this->address       	= $obj->address;
+				$this->pti_in_ctti   	= $obj->pti_in_ctti;
+				$this->proprio       	= $obj->proprio;
+				$this->owner_address 	= $obj->owner_address;
+				$this->owner_zip     	= $obj->owner_zip;
+				$this->owner_town    	= $obj->owner_town;
 				$this->owner_country_id = $obj->owner_country_id;
 
-				$this->state_id        = $obj->state_id;
-				$this->state_code      = $obj->state_code;
-				$this->state           = $obj->state;
+				$this->state_id        	= $obj->state_id;
+				$this->state_code      	= $obj->state_code;
+				$this->state          	= $obj->state;
 
-				$this->country_id    = $obj->country_id;
-				$this->country_code  = $obj->country_code;
-				$this->country       = $obj->country;
+				$this->country_id    	= $obj->country_id;
+				$this->country_code  	= $obj->country_code;
+				$this->country       	= $obj->country;
 
 				$this->account_number = $obj->account_number;
 				$this->fk_accountancy_journal = $obj->fk_accountancy_journal;
@@ -1763,6 +1765,7 @@ class Account extends CommonObject
 		if ($includeibanbic) {
 			$fieldarray[] = 'IBAN';
 			$fieldarray[] = 'BIC';
+			$fieldarray[] = 'IntermediaryBIC';
 		}
 		//}
 
@@ -1824,25 +1827,26 @@ class Account extends CommonObject
 	public function initAsSpecimen()
 	{
 		// Example of IBAN FR7630001007941234567890185
-		$this->specimen        = 1;
-		$this->ref             = 'MBA';
-		$this->label           = 'My Big Company Bank account';
-		$this->bank            = 'MyBank';
-		$this->courant         = Account::TYPE_CURRENT;
-		$this->clos            = Account::STATUS_OPEN;
-		$this->code_banque     = '30001';
-		$this->code_guichet    = '00794';
-		$this->number          = '12345678901';
-		$this->cle_rib         = '85';
-		$this->bic             = 'AA12';
-		$this->iban            = 'FR7630001007941234567890185';
-		$this->domiciliation   = 'Banque de France';
-		$this->proprio         = 'Owner';
-		$this->owner_address   = 'Owner address';
-		$this->owner_zip       = 'Owner zip';
-		$this->owner_town      = 'Owner town';
+		$this->specimen         = 1;
+		$this->ref              = 'MBA';
+		$this->label            = 'My Big Company Bank account';
+		$this->bank             = 'MyBank';
+		$this->courant          = Account::TYPE_CURRENT;
+		$this->clos             = Account::STATUS_OPEN;
+		$this->code_banque      = '30001';
+		$this->code_guichet     = '00794';
+		$this->number           = '12345678901';
+		$this->cle_rib          = '85';
+		$this->bic              = 'AA12';
+		$this->intermediary_bic = 'AA13';
+		$this->iban             = 'FR7630001007941234567890185';
+		$this->domiciliation    = 'Banque de France';
+		$this->proprio          = 'Owner';
+		$this->owner_address    = 'Owner address';
+		$this->owner_zip        = 'Owner zip';
+		$this->owner_town       = 'Owner town';
 		$this->owner_country_id = 'Owner country_id';
-		$this->country_id      = 1;
+		$this->country_id       = 1;
 	}
 
 	/**
