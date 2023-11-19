@@ -67,8 +67,19 @@ class IntracommReport extends CommonObject
 	 */
 	public $declaration_number;
 
+	/**
+	 * @var string declaration number
+	 * @deprecated
+	 * @see $declaration_number
+	 */
+	public $numero_declaration;
+
 	public $type_declaration;		// deb or des
 
+	/**
+	 * @var string export type
+	 */
+	public $exporttype;
 
 	/**
 	 * DEB - Product
@@ -80,7 +91,7 @@ class IntracommReport extends CommonObject
 	 */
 	const TYPE_DES = 1;
 
-	public static $type = array(
+	public static $intratype = array(
 		'introduction'=>'Introduction',
 		'expedition'=>'Expédition'
 	);

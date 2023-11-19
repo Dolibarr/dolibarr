@@ -566,9 +566,9 @@ while ($i < $imaxinloop) {
 	$intracommreport_static->ref = $obj->ref;
 	$intracommreport_static->ref_fourn = $obj->ref_supplier;
 	$intracommreport_static->label = $obj->label;
-	$intracommreport_static->type = $obj->fk_product_type;
+	$intracommreport_static->intratype = $obj->fk_product_type;
 	$intracommreport_static->status_buy = $obj->tobuy;
-	$intracommreport_static->status     = $obj->tosell;
+	$intracommreport_static->status = $obj->tosell;
 	$intracommreport_static->status_batch = $obj->tobatch;
 	$intracommreport_static->entity = $obj->entity;
 
