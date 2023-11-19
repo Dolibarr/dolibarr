@@ -339,7 +339,7 @@ class modTakePos extends DolibarrModules
 			if ($searchaccountid > 0) {
 				dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CASH1", $searchaccountid, 'chaine', 0, '', $conf->entity);
 			} else {
-				setEventMessages($societe->error, $category->errors, 'errors');
+				setEventMessages($cashaccount->error, $cashaccount->errors, 'errors');
 			}
 		}
 
