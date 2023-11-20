@@ -806,7 +806,7 @@ function createOrder($authentication, $order)
  * @param	int			$id_warehouse		Id of warehouse to use for stock decrease
  * @return	array							Array result
  */
-function validOrder($authentication, $id = '', $id_warehouse = 0)
+function validOrder($authentication, $id = 0, $id_warehouse = 0)
 {
 	global $db, $conf, $langs;
 
