@@ -2159,7 +2159,7 @@ abstract class CommonObject
 		}
 
 		// For backward compatibility
-		if ($this->table_element == 'facture_rec' && $fieldid == 'title') {
+		if (in_array($this->table_element, array('facture_rec', 'facture_fourn_rec')) && $fieldid == 'title') {
 			$fieldid = 'titre';
 		}
 
