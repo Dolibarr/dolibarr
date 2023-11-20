@@ -45,6 +45,7 @@ OutOfProject=Out of project
 NoProject=No project defined or owned
 NbOfProjects=Number of projects
 NbOfTasks=Number of tasks
+TimeEntry=Time tracking
 TimeSpent=Time spent
 TimeSpentByYou=Time spent by you
 TimeSpentByUser=Time spent by user
