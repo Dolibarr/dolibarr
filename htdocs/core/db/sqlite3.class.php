@@ -87,7 +87,7 @@ class DoliDBSqlite3 extends DoliDB
 			$this->ok = false;
 			$this->error="Sqlite PHP functions for using Sqlite driver are not available in this version of PHP. Try to use another driver.";
 			dol_syslog(get_class($this)."::DoliDBSqlite3 : Sqlite PHP functions for using Sqlite driver are not available in this version of PHP. Try to use another driver.",LOG_ERR);
-			return $this->ok;
+			return;
 		}*/
 
 		/*if (! $host)
@@ -96,7 +96,7 @@ class DoliDBSqlite3 extends DoliDB
 			$this->ok = false;
 			$this->error=$langs->trans("ErrorWrongHostParameter");
 			dol_syslog(get_class($this)."::DoliDBSqlite3 : Erreur Connect, wrong host parameters",LOG_ERR);
-			return $this->ok;
+			return;
 		}*/
 
 		// Essai connexion serveur
@@ -127,8 +127,6 @@ class DoliDBSqlite3 extends DoliDB
 			//$this->error=sqlite_connect_error();
 			dol_syslog(get_class($this)."::DoliDBSqlite3 : Error Connect ".$this->error, LOG_ERR);
 		}
-
-		return $this->ok;
 	}
 
 

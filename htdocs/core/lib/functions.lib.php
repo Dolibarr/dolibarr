@@ -224,6 +224,7 @@ function isModEnabled($module)
 		'category' => 'categorie',
 		'contract' => 'contrat',
 		'project' => 'projet',
+		'delivery_note' => 'expedition'
 	);
 	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
 		$arrayconv['supplier_order'] = 'fournisseur';
