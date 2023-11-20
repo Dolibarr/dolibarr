@@ -215,7 +215,7 @@ function isModEnabled($module)
 		'bank' => 'banque',
 		'category' => 'categorie'
 	);
-	if (empty(getDolGlobalInt('MAIN_USE_NEW_SUPPLIERMOD'))) {
+	if (!getDolGlobalInt('MAIN_USE_NEW_SUPPLIERMOD')) {
 		$arrayconv['supplier_order'] = 'fournisseur';
 		$arrayconv['supplier_invoice'] = 'fournisseur';
 	}
