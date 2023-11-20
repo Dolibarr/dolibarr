@@ -139,7 +139,7 @@ class FactureFournisseur extends CommonInvoice
 	/**
 	 * Supplier invoice status
 	 * @var int
-  	 * @deprecated
+	 * @deprecated
 	 * @see $status
 	 */
 	public $fk_statut;
