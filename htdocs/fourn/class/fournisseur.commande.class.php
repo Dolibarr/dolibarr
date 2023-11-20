@@ -225,6 +225,11 @@ class CommandeFournisseur extends CommonOrder
 	public $multicurrency_total_ttc;
 
 	/**
+	 * @var array
+	 */
+	public $receptions;
+
+	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:Sortfield]]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
@@ -3009,7 +3014,7 @@ class CommandeFournisseur extends CommonOrder
 		$this->socid = 1;
 		$this->date = $now;
 		$this->date_commande = $now;
-		$this->date_lim_reglement = $this->date + 3600 * 24 * 30;
+		// $this->date_lim_reglement = $this->date + 3600 * 24 * 30;
 		$this->cond_reglement_code = 'RECEP';
 		$this->mode_reglement_code = 'CHQ';
 

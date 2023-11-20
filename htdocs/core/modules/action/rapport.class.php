@@ -76,6 +76,11 @@ class CommActionRapport
 
 	public $page_largeur;
 
+	/**
+	 * @var array
+	 */
+	public $result;
+
 
 	/**
 	 * Constructor

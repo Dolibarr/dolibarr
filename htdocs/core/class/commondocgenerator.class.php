@@ -109,6 +109,11 @@ abstract class CommonDocGenerator
 	public $option_escompte;
 	public $option_credit_note;
 
+	/**
+	 * @var int
+	 */
+	public $option_codeproduitservice;
+
 	public $tva;
 	public $tva_array;
 	public $localtax1;

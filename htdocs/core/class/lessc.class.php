@@ -1341,7 +1341,7 @@ class Lessc
 	 *
 	 * http://lesscss.org/functions/#color-operations-tint
 	 *
-	 * @return array Color
+	 * @return array|void Color
 	 */
 	protected function lib_tint($args)
 	{
@@ -1364,7 +1364,7 @@ class Lessc
 	 *
 	 * http://lesscss.org/functions/#color-operations-shade
 	 *
-	 * @return array Color
+	 * @return array|void Color
 	 */
 	protected function lib_shade($args)
 	{
