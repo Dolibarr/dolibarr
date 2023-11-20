@@ -39,6 +39,11 @@ class pdf_standard extends CommonStickerGenerator
 	 */
 	public $version = 'dolibarr';
 
+	/**
+	 * @var array
+	 */
+	public $_Avery_Labels;
+
 
 	/**
 	 *	Constructor
@@ -291,7 +296,7 @@ class pdf_standard extends CommonStickerGenerator
 
 			// List of values to scan for a replacement
 			$substitutionarray = array(
-				'__ID__' => $object->rowid,
+				'__ID__' => $object->id,
 				'__REF__' => $object->ref,
 				'__LOGIN__' => empty($object->login) ? '' : $object->login,
 				'__FIRSTNAME__' => empty($object->firstname) ? '' : $object->firstname,
@@ -331,7 +336,7 @@ class pdf_standard extends CommonStickerGenerator
 					'textheader'=>$textheader,
 					'textfooter'=>$textfooter,
 					'textright'=>$textright,
-					'id'=>(isset($object->rowid) ? $object->rowid : ""),
+					'id'=>(isset($object->id) ? $object->id : ""),
 					'photo'=>(isset($object->photo) ? $object->photo : "")
 				);
 			}
