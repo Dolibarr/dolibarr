@@ -168,6 +168,7 @@ abstract class CommonDocGenerator
 	public $atleastonephoto;
 	public $atleastoneratenotnull;
 	public $atleastonediscount;
+	public $posxweightvol;
 
 	/**
 	 *	Constructor

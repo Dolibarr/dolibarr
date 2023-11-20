@@ -47,7 +47,6 @@ parameters:
 	reportMagicMethods: false
 	reportMagicProperties: false
 	ignoreErrors:
-		- '#Constant DOL_MAIN_URL_ROOT not found#'
 		- '#Undefined variable: \$langs#'
 		- '#Undefined variable: \$user#'
 		- '#Undefined variable: \$db#'
