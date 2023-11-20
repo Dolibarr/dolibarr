@@ -18,7 +18,6 @@ parameters:
 	excludePaths:
 		analyseAndScan:
 		- htdocs/custom/*
-		#- htdocs/core/db/DoliDB.class.php
 		- htdocs/documents/*
 		- htdocs/install/doctemplates/*
 		- htdocs/langs/*
