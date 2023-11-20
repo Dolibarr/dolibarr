@@ -219,7 +219,7 @@ function isModEnabled($module)
 		$arrayconv['supplier_order'] = 'fournisseur';
 		$arrayconv['supplier_invoice'] = 'fournisseur';
 	}
-	if (!empty(getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION')) && !empty(getDolGlobalInt('MAIN_SUBMODULE_DELIVERY'))) {
+	if (getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
 		$arrayconv['delivery_note'] = 'expedition';
 	}
 	if (!empty($arrayconv[$module])) {
