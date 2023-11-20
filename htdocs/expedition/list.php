@@ -940,8 +940,8 @@ while ($i < min($num, $limit)) {
 
 		// Ref customer
 		if (!empty($arrayfields['e.ref_customer']['checked'])) {
-			print "<td>";
-			print $obj->ref_customer;
+			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->ref_customer).'">';
+			print dol_escape_htmltag($obj->ref_customer);
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
