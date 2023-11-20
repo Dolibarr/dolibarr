@@ -39,10 +39,12 @@ class pdf_standard extends CommonStickerGenerator
 	 */
 	public $version = 'dolibarr';
 
+	// phpcs:disable PEAR.NamingConventions.ValidVariableName.PublicUnderscore
 	/**
 	 * @var array
 	 */
 	public $_Avery_Labels;
+	// phpcs:enable
 
 
 	/**

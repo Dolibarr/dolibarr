@@ -331,8 +331,8 @@ class InterfaceTicketEmail extends DolibarrTriggers
 			}
 		}
 		if ($object->fk_soc > 0) {
-					$object->fetch_thirdparty();
-					$message_admin .= '<li>'.$langs->trans('Company').' : '.$object->thirdparty->name.'</li>';
+			$object->fetch_thirdparty();
+			$message_admin .= '<li>'.$langs->trans('Company').' : '.$object->thirdparty->name.'</li>';
 		}
 		$message_admin .= '</ul>';
 
