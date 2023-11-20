@@ -163,7 +163,7 @@ class UserGroup extends CommonObject
 	 *  @param		boolean	$load_members	Load all members of the group
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	public function fetch($id = '', $groupname = '', $load_members = false)
+	public function fetch($id = 0, $groupname = '', $load_members = false)
 	{
 		global $conf;
 
