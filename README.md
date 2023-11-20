@@ -104,7 +104,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Batches / Lots / Serials
 - Product Variants
 - Bill of Materials (BOM)
-- Manufacturing Orders
+- Manufacturing Orders (MO)
 
  Customer/Sales Management
 
@@ -114,7 +114,8 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Customer Orders management
 - Contracts/Subscription management
 - Interventions management
-- Ticket System
+- Ticket System  (+ Knowledge management)
+- Partnership management
 - Shipping management
 - Customer Invoices/Credit notes and payment management
 - Point of Sale (POS)
@@ -143,14 +144,16 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 
 - Shared calendar/agenda (with ical and vcal import/export for third-party tools integration)
 - Projects & Tasks management
+- Event organization
 - Ticket System
 - Surveys
 
- HR
+ HR - Human Resources Management
 
 - Employee's leaves management
 - Expense reports
 - Recruitment management
+- Employee/staff management
 - Timesheets
 
 ### Other application/modules
@@ -168,7 +171,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Payment platforms integration (PayPal, Stripe, Paybox...)
 - Email-Collector
 
-(around 100 modules available by default, 1000+ on the addon marketplace)
+(around 100 modules available by default, 1000+ addons at the official marketplace Dolistore.com)
 
 ### Other general features
 
