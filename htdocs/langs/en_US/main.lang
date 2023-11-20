@@ -719,6 +719,7 @@ RecordModifiedSuccessfully=Record modified successfully
 RecordsModified=%s record(s) modified
 RecordsDeleted=%s record(s) deleted
 RecordsGenerated=%s record(s) generated
+ValidatedRecordWhereFound = Some of the selected records have already been validated. No records have been deleted.
 AutomaticCode=Automatic code
 FeatureDisabled=Feature disabled
 MoveBox=Move widget

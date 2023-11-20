@@ -717,6 +717,7 @@ RecordModifiedSuccessfully=Enregistrement modifié avec succès
 RecordsModified=%s enregistrements modifiés
 RecordsDeleted=%s enregistrement(s) supprimé(s)
 RecordsGenerated=%s enregistrement(s) généré(s)
+ValidatedRecordWhereFound = Certains des enregistrements sélectionnés ont déjà été validés. Aucun enregistrement n'a été supprimé.
 AutomaticCode=Création automatique du code
 FeatureDisabled=Fonction désactivée
 MoveBox=Déplacer le widget
