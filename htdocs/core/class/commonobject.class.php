@@ -9195,6 +9195,7 @@ abstract class CommonObject
 			}
 		}
 
+		// @phpstan-ignore-next-line
 		$this->nbphoto = $nbphoto;
 
 		return $return;
