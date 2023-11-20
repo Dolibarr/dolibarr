@@ -195,7 +195,7 @@ if (empty($reshook)) {
 			$line->pmp = $prod->pmp;
 			if ($line->id > 0) $line->update($user);
 			else {
-				$line->rang = count($object->lines) + 1;
+				$line->rang = (is_array($object->lines) || $object->lines instanceof Countable) ? count($object->lines) + 1 : 1;
 				$line->create($user);
 			}
 			$object->fetchLines();
