@@ -756,25 +756,25 @@ abstract class CommonObject
 
 
 	/**
-	 * @var type
+	 * @var int type
 	 */
 	public $type;
 
 	/**
 	 * @var status_buy
-	 */public $status_buy;
+	 */
+	public $status_buy;
 
 	/**
 	 * @var string tpl
-	 */public $tpl;
+	 */
+	public $tpl;
 
 	/**
 	 * @var int socid
-	 */public $socid;
+	 */
+	public $socid;
 
-	/**
-	 * @var status_buy
-	 */public $status_buy;
 
 
 	/**
