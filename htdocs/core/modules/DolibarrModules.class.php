@@ -2139,6 +2139,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		global $langs, $conf;
 
 		$err = 0;
+		$name = '';
 
 		if (isset($this->dirs) && is_array($this->dirs)) {
 			foreach ($this->dirs as $key => $value) {
