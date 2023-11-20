@@ -419,11 +419,11 @@ class User extends CommonObject
 	 *	@param  string	$sid				If defined, sid to used for search
 	 * 	@param	int		$loadpersonalconf	1=also load personal conf of user (in $user->conf->xxx), 0=do not load personal conf.
 	 *  @param  int     $entity             If a value is >= 0, we force the search on a specific entity. If -1, means search depens on default setup.
-	 *  @param	int		$email       		If defined, email to used for search
+	 *  @param	string	$email       		If defined, email to used for search
 	 *  @param	int		$fk_socpeople		If defined, id of contact for search
 	 * 	@return	int							<0 if KO, 0 not found, >0 if OK
 	 */
-	public function fetch($id = '', $login = '', $sid = '', $loadpersonalconf = 0, $entity = -1, $email = '', $fk_socpeople = 0)
+	public function fetch($id = 0, $login = '', $sid = '', $loadpersonalconf = 0, $entity = -1, $email = '', $fk_socpeople = 0)
 	{
 		global $conf, $user;
 
