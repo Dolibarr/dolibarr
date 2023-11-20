@@ -577,6 +577,6 @@ class PropalmergepdfproductLine
 	 */
 	public function __construct()
 	{
-		return 1;
+		return;
 	}
 }
