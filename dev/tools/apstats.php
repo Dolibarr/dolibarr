@@ -310,7 +310,7 @@ $html .= '<th class="right">Blanks</th>';
 $html .= '<th class="right">Comments</th>';
 $html .= '<th class="right">Code</th>';
 //$html .= '<td class="right">'.$val['Complexity'].'</td>';
-$html .= '</th>';
+$html .= '</tr>';
 foreach (array('proj', 'dep') as $source) {
 	$html .= '<tr class="trgroup" id="source'.$source.'">';
 	if ($source == 'proj') {
