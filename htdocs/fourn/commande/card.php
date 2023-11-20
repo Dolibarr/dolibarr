@@ -787,7 +787,7 @@ if (empty($reshook)) {
 			}
 
 			$ttc = price2num(GETPOST('price_ttc'), '', 2);
-			$ht = $ttc / (1 + ($vatratecleaned / 100));
+			$ht = (float) $ttc / (1 + ($vatratecleaned / 100));
 			$price_base_type = 'HT';
 		}
 
