@@ -21,21 +21,21 @@
 /**
  *	\file       htdocs/core/boxes/box_clients.php
  *	\ingroup    societes
- *	\brief      Module de generation de l'affichage de la box clients
+ *	\brief      Module for generating box to show last customers
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last thirdparties
+ * Class to manage the box to show last customers
  */
 class box_clients extends ModeleBoxes
 {
-	public $boxcode = "lastcustomers";
-	public $boximg = "object_company";
+	public $boxcode  = "lastcustomers";
+	public $boximg   = "object_company";
 	public $boxlabel = "BoxLastCustomers";
-	public $depends = array("societe");
+	public $depends  = array("societe");
 
 	/**
 	 * @var DoliDB Database handler.
@@ -92,12 +92,12 @@ class box_clients extends ModeleBoxes
 			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= ", s.datec, s.tms, s.status";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE s.client IN (1, 3)";
 			$sql .= " AND s.entity IN (".getEntity('societe').")";
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			// Add where from hooks

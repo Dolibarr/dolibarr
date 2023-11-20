@@ -214,7 +214,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 	if (isModEnabled('ticket') && $user->hasRight('ticket', 'read')) {
 		require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 		$Tickettatic = new Ticket($db);
-		$nbTicket = count($Tickettatic->getAllItemsLinkedByObjectID($project->id, '*', 'fk_project', 'ticket'));
+		$nbTicket = $Tickettatic->getCountOfItemsLinkedByObjectID($project->id, 'fk_project', 'ticket');
 		$head[$h][0] = DOL_URL_ROOT.'/ticket/list.php?projectid='.((int) $project->id);
 		$head[$h][1] = $langs->trans("Ticket");
 		if ($nbTicket > 0) {
@@ -312,7 +312,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 	} else {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-		$upload_dir = $conf->project->multidir_output[$project->entity]."/".dol_sanitizeFileName($project->ref);
+		$upload_dir = $conf->project->multidir_output[empty($project->entity) ? 1 : $project->entity]."/".dol_sanitizeFileName($project->ref);
 		$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 		$nbLinks = Link::count($db, $project->element, $project->id);
 		$totalAttached = $nbFiles + $nbLinks;
@@ -651,7 +651,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 			} else {
 				// Caller did not ask to filter on tasks of a specific user (this probably means he want also tasks of all users, into public project
 				// or into all other projects if user has permission to).
-				if (empty($user->rights->projet->all->lire)) {
+				if (!$user->hasRight('projet', 'all', 'lire')) {
 					// User is not allowed on this project and project is not public, so we hide line
 					if (!in_array($lines[$i]->fk_project, $projectsArrayId)) {
 						// Note that having a user assigned to a task into a project user has no permission on, should not be possible
@@ -706,7 +706,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					// Project ref
 					print '<td class="nowraponall">';
 					//if ($showlineingray) print '<i>';
-					if ($lines[$i]->public || in_array($lines[$i]->fk_project, $projectsArrayId) || !empty($user->rights->projet->all->lire)) {
+					if ($lines[$i]->public || in_array($lines[$i]->fk_project, $projectsArrayId) || $user->hasRight('projet', 'all', 'lire')) {
 						print $projectstatic->getNomUrl(1);
 					} else {
 						print $projectstatic->getNomUrl(1, 'nolink');
@@ -932,7 +932,8 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 				// Extra fields
 				$extrafieldsobjectkey = $taskstatic->table_element;
-				$obj = $lines[$i];
+				$extrafieldsobjectprefix = 'efpt.';
+				$obj = $lines[$i]->obj;
 				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 				// Fields from hook
 				$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$lines[$i]);
@@ -1111,13 +1112,15 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		}
 
 		// Check if Extrafields is totalizable
-		foreach ($extrafields->attributes['projet_task']['totalizable'] as $key => $value) {
-			if (!empty($arrayfields['ef.'.$key]['checked']) && $arrayfields['ef.'.$key]['checked'] == 1) {
-				print '<td class="right">';
-				if ($value == 1) {
-					print empty($totalarray['totalizable'][$key]['total']) ? '' : $totalarray['totalizable'][$key]['total'];
+		if (!empty($extrafields->attributes['projet_task']['totalizable'])) {
+			foreach ($extrafields->attributes['projet_task']['totalizable'] as $key => $value) {
+				if (!empty($arrayfields['efpt.'.$key]['checked']) && $arrayfields['ef.'.$key]['checked'] == 1) {
+					print '<td class="right">';
+					if ($value == 1) {
+						print empty($totalarray['totalizable'][$key]['total']) ? '' : $totalarray['totalizable'][$key]['total'];
+					}
+					print '</td>';
 				}
-				print '</td>';
 			}
 		}
 
@@ -1262,20 +1265,17 @@ function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projec
 
 			// Ref
 			print '<td>';
-			print '<!-- Task id = '.$lines[$i]->id.' -->';
+			print '<!-- Task id = '.$lines[$i]->id.' (projectlinesperaction) -->';
 			for ($k = 0; $k < $level; $k++) {
-				print "&nbsp;&nbsp;&nbsp;";
+				print '<div class="marginleftonly">';
 			}
 			print $taskstatic->getNomUrl(1, 'withproject', 'time');
 			// Label task
 			print '<br>';
+			print '<div class="opacitymedium tdoverflowmax500" title="'.dol_escape_htmltag($taskstatic->label).'">'.dol_escape_htmltag($taskstatic->label).'</div>';
 			for ($k = 0; $k < $level; $k++) {
-				print "&nbsp;&nbsp;&nbsp;";
+				print "</div>";
 			}
-			print $taskstatic->label;
-			//print "<br>";
-			//for ($k = 0 ; $k < $level ; $k++) print "&nbsp;&nbsp;&nbsp;";
-			//print get_date_range($lines[$i]->date_start,$lines[$i]->date_end,'',$langs,0);
 			print "</td>\n";
 
 			// Date
@@ -1289,7 +1289,7 @@ function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projec
 			//var_dump($lines[$i]);
 			//var_dump($projectsrole[$lines[$i]->fk_project]);
 			// If at least one role for project
-			if ($lines[$i]->public || !empty($projectsrole[$lines[$i]->fk_project]) || $user->rights->projet->all->creer) {
+			if ($lines[$i]->public || !empty($projectsrole[$lines[$i]->fk_project]) || $user->hasRight('projet', 'all', 'creer')) {
 				$disabledproject = 0;
 				$disabledtask = 0;
 			}
@@ -1580,14 +1580,14 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 
 				// Ref
 				print '<td>';
-				print '<!-- Task id = '.$lines[$i]->id.' -->';
+				print '<!-- Task id = '.$lines[$i]->id.' (projectlinesperday) -->';
 				for ($k = 0; $k < $level; $k++) {
 					print '<div class="marginleftonly">';
 				}
 				print $taskstatic->getNomUrl(1, 'withproject', 'time');
 				// Label task
 				print '<br>';
-				print '<span class="opacitymedium">'.$taskstatic->label.'</a>';
+				print '<div class="opacitymedium tdoverflowmax500" title="'.dol_escape_htmltag($taskstatic->label).'">'.dol_escape_htmltag($taskstatic->label).'</div>';
 				for ($k = 0; $k < $level; $k++) {
 					print "</div>";
 				}
@@ -1646,7 +1646,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				//var_dump($lines[$i]);
 				//var_dump($projectsrole[$lines[$i]->fk_project]);
 				// If at least one role for project
-				if ($lines[$i]->public || !empty($projectsrole[$lines[$i]->fk_project]) || $user->rights->projet->all->creer) {
+				if ($lines[$i]->public || !empty($projectsrole[$lines[$i]->fk_project]) || $user->hasRight('projet', 'all', 'creer')) {
 					$disabledproject = 0;
 					$disabledtask = 0;
 				}
@@ -1978,15 +1978,15 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				}
 
 				// Ref
-				print '<td class="nowrap">';
-				print '<!-- Task id = '.$lines[$i]->id.' -->';
+				print '<td class="tdoverflowmax300">';
+				print '<!-- Task id = '.$lines[$i]->id.' (projectlinesperweek) -->';
 				for ($k = 0; $k < $level; $k++) {
 					print '<div class="marginleftonly">';
 				}
 				print $taskstatic->getNomUrl(1, 'withproject', 'time');
 				// Label task
 				print '<br>';
-				print '<span class="opacitymedium">'.$taskstatic->label.'</span>';
+				print '<div class="opacitymedium tdoverflowmax500" title="'.dol_escape_htmltag($taskstatic->label).'">'.dol_escape_htmltag($taskstatic->label).'</div>';
 				for ($k = 0; $k < $level; $k++) {
 					print "</div>";
 				}
@@ -2020,7 +2020,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 					print '<td class="right">';
 					// $lines[$i]->duration_effective is a denormalised field = summ of time spent by everybody for task. What we need is time consumed by user
 					if ($lines[$i]->duration_effective) {
-						print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.'">';
+						print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.((int) $lines[$i]->id).'">';
 						print convertSecondToTime($lines[$i]->duration_effective, 'allhourmin');
 						print '</a>';
 					} else {
@@ -2032,7 +2032,9 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 					print '<td class="right">';
 					$tmptimespent = $taskstatic->getSummaryOfTimeSpent($fuser->id);
 					if ($tmptimespent['total_duration']) {
+						print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.((int) $lines[$i]->id).'&search_user='.((int) $fuser->id).'">';
 						print convertSecondToTime($tmptimespent['total_duration'], 'allhourmin');
+						print '</a>';
 					} else {
 						print '--:--';
 					}
@@ -2045,7 +2047,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				//var_dump($lines[$i]);
 				//var_dump($projectsrole[$lines[$i]->fk_project]);
 				// If at least one role for project
-				if ($lines[$i]->public || !empty($projectsrole[$lines[$i]->fk_project]) || $user->rights->projet->all->creer) {
+				if ($lines[$i]->public || !empty($projectsrole[$lines[$i]->fk_project]) || $user->hasRight('projet', 'all', 'creer')) {
 					$disabledproject = 0;
 					$disabledtask = 0;
 				}
@@ -2283,14 +2285,14 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 
 				// Ref
 				print '<td class="nowrap">';
-				print '<!-- Task id = '.$lines[$i]->id.' -->';
+				print '<!-- Task id = '.$lines[$i]->id.' (projectlinespermonth)  -->';
 				for ($k = 0; $k < $level; $k++) {
 					print '<div class="marginleftonly">';
 				}
 				print $taskstatic->getNomUrl(1, 'withproject', 'time');
 				// Label task
 				print '<br>';
-				print '<span class="opacitymedium">'.$taskstatic->label.'</span>';
+				print '<div class="opacitymedium tdoverflowmax500" title="'.dol_escape_htmltag($taskstatic->label).'">'.dol_escape_htmltag($taskstatic->label).'</div>';
 				for ($k = 0; $k < $level; $k++) {
 					print "</div>";
 				}
@@ -2338,7 +2340,7 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 				//var_dump($lines[$i]);
 				//var_dump($projectsrole[$lines[$i]->fk_project]);
 				// If at least one role for project
-				if ($lines[$i]->public || !empty($projectsrole[$lines[$i]->fk_project]) || $user->rights->projet->all->creer) {
+				if ($lines[$i]->public || !empty($projectsrole[$lines[$i]->fk_project]) || $user->hasRight('projet', 'all', 'creer')) {
 					$disabledproject = 0;
 					$disabledtask = 0;
 				}

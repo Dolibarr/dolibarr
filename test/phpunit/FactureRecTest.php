@@ -153,7 +153,7 @@ class FactureRecTest extends PHPUnit\Framework\TestCase
 		$result = $localobject->create($user, $localobjectinv->id);
 
 		print __METHOD__." result=".$result."\n";
-		$this->assertGreaterThan(0, $result, 'Create recurring invoice from common invoice');
+		$this->assertGreaterThan(0, $result, 'Create recurring invoice from common invoice: '.$localobject->error);
 
 		return $result;
 	}

@@ -172,9 +172,9 @@ $css = $extrafields->attributes[$elementtype]['css'][$attrname];
 $cssview = $extrafields->attributes[$elementtype]['cssview'][$attrname];
 $csslist = $extrafields->attributes[$elementtype]['csslist'][$attrname];
 
+$param_chain = '';
 if (is_array($param)) {
 	if (($type == 'select') || ($type == 'checkbox') || ($type == 'radio')) {
-		$param_chain = '';
 		foreach ($param['options'] as $key => $value) {
 			if (strlen($key)) {
 				$param_chain .= $key.','.$value."\n";
@@ -216,23 +216,14 @@ if ($size <= 255 && in_array($type, array('text', 'html'))) {
 }*/
 
 if (in_array($type, array_keys($typewecanchangeinto))) {
-	$newarray = array();
-	print '<select id="type" class="flat type" name="type">';
-	foreach ($type2label as $key => $val) {
-		$selected = '';
-		if ($key == (GETPOST('type', 'alpha') ?GETPOST('type', 'alpha') : $type)) {
-			$selected = ' selected="selected"';
-		}
-		if (in_array($key, $typewecanchangeinto[$type])) {
-			print '<option value="'.$key.'"'.$selected.'>'.$val.'</option>';
-		} else {
-			print '<option value="'.$key.'" disabled="disabled"'.$selected.'>'.$val.'</option>';
-		}
+	// Combo with list of fields
+	if (empty($formadmin)) {
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+		$formadmin = new FormAdmin($db);
 	}
-	print '</select>';
-	print ajax_combobox('type');
+	print $formadmin->selectTypeOfFields('type', GETPOST('type', 'alpha') ? GETPOST('type', 'alpha') : $type, $typewecanchangeinto);
 } else {
-	print $type2label[$type];
+	print getPictoForType($type).$type2label[$type];
 	print '<input type="hidden" name="type" id="type" value="'.$type.'">';
 }
 ?>

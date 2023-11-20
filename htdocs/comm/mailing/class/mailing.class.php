@@ -128,6 +128,7 @@ class Mailing extends CommonObject
 
 	/**
 	 * @var int id of user create
+	 * @deprecated
 	 */
 	public $user_creation;
 
@@ -139,6 +140,7 @@ class Mailing extends CommonObject
 
 	/**
 	 * @var int id of user validate
+	 * @deprecated
 	 */
 	public $user_validation;
 
@@ -169,6 +171,11 @@ class Mailing extends CommonObject
 	 * @var int date validate
 	 */
 	public $date_validation;
+
+	/**
+	 * @var int date sending
+	 */
+	public $date_envoi;
 
 	/**
 	 * @var array extraparams
@@ -408,10 +415,8 @@ class Mailing extends CommonObject
 				$this->email_replyto = $obj->email_replyto;
 				$this->email_errorsto = $obj->email_errorsto;
 
-				$this->user_creat = $obj->fk_user_creat;
-				$this->user_creation = $obj->fk_user_creat;
-				$this->user_valid = $obj->fk_user_valid;
-				$this->user_validation = $obj->fk_user_valid;
+				$this->user_creation_id = $obj->fk_user_creat;
+				$this->user_validation_id = $obj->fk_user_valid;
 
 				$this->date_creat = $this->db->jdate($obj->date_creat);
 				$this->date_creation = $this->db->jdate($obj->date_creat);
@@ -474,8 +479,8 @@ class Mailing extends CommonObject
 			$object->email_replyto      = '';
 			$object->email_errorsto     = '';
 
-			$object->user_creat         = $user->id;
-			$object->user_valid         = '';
+			$object->user_creation_id = $user->id;
+			$object->user_validation_id = '';
 
 			$object->date_creat         = '';
 			$object->date_valid         = '';
@@ -816,7 +821,7 @@ class Mailing extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {

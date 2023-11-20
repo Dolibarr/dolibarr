@@ -37,11 +37,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
 class doc_generic_ticket_odt extends ModelePDFTicket
 {
 	/**
-	 * @var Societe Issuer
-	 */
-	public $emetteur;
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
@@ -55,7 +50,7 @@ class doc_generic_ticket_odt extends ModelePDFTicket
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("main", "companies"));
@@ -97,7 +92,7 @@ class doc_generic_ticket_odt extends ModelePDFTicket
 	 */
 	public function info($langs)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array('companies', 'errors'));
@@ -135,17 +130,18 @@ class doc_generic_ticket_odt extends ModelePDFTicket
 			}
 		}
 		$texthelp = $langs->trans("ListOfDirectoriesForModelGenODT");
+		$texthelp .= '<br><br><span class="opacitymedium">'.$langs->trans("ExampleOfDirectoriesForModelGen").'</span>';
 		// Add list of substitution keys
 		$texthelp .= '<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
 		$texthelp .= $langs->transnoentitiesnoconv("FullListOnOnlineDocumentation"); // This contains an url, we don't modify it
 
-		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1);
+		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
 		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
 		$texte .= '<textarea class="flat" cols="60" name="value1">';
 		$texte .= getDolGlobalString('TICKET_ADDON_PDF_ODT_PATH');
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button small reposition" name="modify" value="'.$langs->trans("Modify").'">';
+		$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
 		$texte .= '<br></div></div>';
 
 		// Scan directories
@@ -163,23 +159,18 @@ class doc_generic_ticket_odt extends ModelePDFTicket
 		}
 		// Add input to upload a new template file.
 		$texte .= '<div>'.$langs->trans("UploadNewTemplate");
-		$texte .= ' <input type="file" name="uploadfile">';
 		$maxfilesizearray = getMaxFileSizeArray();
 		$maxmin = $maxfilesizearray['maxmin'];
 		if ($maxmin > 0) {
 			$texte .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
 		}
+		$texte .= ' <input type="file" name="uploadfile">';
 		$texte .= '<input type="hidden" value="TICKET_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
-		$texte .= '<input type="submit" class="button small reposition" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
+		$texte .= '<input type="submit" class="button smallpaddingimp reposition" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
 		$texte .= '</div>';
 
 		$texte .= '</td>';
 
-		$texte .= '<td rowspan="2" class="tdtop hideonsmartphone">';
-		$texte .= '<span class="opacitymedium">';
-		$texte .= $langs->trans("ExampleOfDirectoriesForModelGen");
-		$texte .= '</span>';
-		$texte .= '</td>';
 		$texte .= '</tr>';
 
 		$texte .= '</table>';

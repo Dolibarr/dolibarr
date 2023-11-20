@@ -86,50 +86,45 @@ $setupnotempty = 0;
 $useFormSetup = 1;
 
 if (!class_exists('FormSetup')) {
-	// For retrocompatibility Dolibarr < 16.0
-	if (floatval(DOL_VERSION) < 16.0 && !class_exists('FormSetup')) {
-		require_once __DIR__.'/../backport/v16/core/class/html.formsetup.class.php';
-	} else {
-		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
-	}
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
 }
-
 $formSetup = new FormSetup($db);
 
 
-// HTTP HOST
-$item = $formSetup->newItem('NO_PARAM_JUST_TEXT');
+// Enter here all parameters in your setup page
+
+// Setup conf for selection of an URL
+$item = $formSetup->newItem('MYMODULE_MYPARAM1');
 $item->fieldOverride = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'];
 $item->cssClass = 'minwidth500';
 
-// Setup conf MYMODULE_MYPARAM1 as a simple string input
-$item = $formSetup->newItem('MYMODULE_MYPARAM1');
+// Setup conf for selection of a simple string input
+$item = $formSetup->newItem('MYMODULE_MYPARAM2');
 $item->defaultFieldValue = 'default value';
 
-// Setup conf MYMODULE_MYPARAM2 as a simple textarea input but we replace the text of field title
-$item = $formSetup->newItem('MYMODULE_MYPARAM2');
+// Setup conf for selection of a simple textarea input but we replace the text of field title
+$item = $formSetup->newItem('MYMODULE_MYPARAM3');
 $item->nameText = $item->getNameText().' more html text ';
 
-// Setup conf MYMODULE_MYPARAM3
-$item = $formSetup->newItem('MYMODULE_MYPARAM3');
+// Setup conf for a selection of a thirdparty
+$item = $formSetup->newItem('MYMODULE_MYPARAM4');
 $item->setAsThirdpartyType();
 
-// Setup conf MYMODULE_MYPARAM4 : exemple of quick define write style
-$formSetup->newItem('MYMODULE_MYPARAM4')->setAsYesNo();
+// Setup conf for a selection of a boolean
+$formSetup->newItem('MYMODULE_MYPARAM5')->setAsYesNo();
 
-// Setup conf MYMODULE_MYPARAM5
-$formSetup->newItem('MYMODULE_MYPARAM5')->setAsEmailTemplate('thirdparty');
+// Setup conf for a selection of an email template of type thirdparty
+$formSetup->newItem('MYMODULE_MYPARAM6')->setAsEmailTemplate('thirdparty');
 
-// Setup conf MYMODULE_MYPARAM6
-$formSetup->newItem('MYMODULE_MYPARAM6')->setAsSecureKey()->enabled = 0; // disabled
+// Setup conf for a selection of a secured key
+//$formSetup->newItem('MYMODULE_MYPARAM7')->setAsSecureKey();
 
-// Setup conf MYMODULE_MYPARAM7
-$formSetup->newItem('MYMODULE_MYPARAM7')->setAsProduct();
+// Setup conf for a selection of a product
+$formSetup->newItem('MYMODULE_MYPARAM8')->setAsProduct();
 
-$formSetup->newItem('Title')->setAsTitle();
+// Add a title for a new section
+$formSetup->newItem('NewSection')->setAsTitle();
 
-// Setup conf MYMODULE_MYPARAM8
-$item = $formSetup->newItem('MYMODULE_MYPARAM8');
 $TField = array(
 	'test01' => $langs->trans('test01'),
 	'test02' => $langs->trans('test02'),
@@ -138,12 +133,15 @@ $TField = array(
 	'test05' => $langs->trans('test05'),
 	'test06' => $langs->trans('test06'),
 );
-$item->setAsMultiSelect($TField);
-$item->helpText = $langs->transnoentities('MYMODULE_MYPARAM8');
 
-
-// Setup conf MYMODULE_MYPARAM9
+// Setup conf for a simple combo list
 $formSetup->newItem('MYMODULE_MYPARAM9')->setAsSelect($TField);
+
+// Setup conf for a multiselect combo list
+$item = $formSetup->newItem('MYMODULE_MYPARAM10');
+$item->setAsMultiSelect($TField);
+$item->helpText = $langs->transnoentities('MYMODULE_MYPARAM10');
+
 
 
 // Setup conf MYMODULE_MYPARAM10
@@ -171,7 +169,7 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
  */
 
 // For retrocompatibility Dolibarr < 15.0
-if ( versioncompare(explode('.', DOL_VERSION), array(15)) < 0 && $action == 'update' && !empty($user->admin)) {
+if (versioncompare(explode('.', DOL_VERSION), array(15)) < 0 && $action == 'update' && !empty($user->admin)) {
 	$formSetup->saveConfFromPost();
 }
 
@@ -365,7 +363,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								dol_include_once('/'.$moduledir.'/class/'.strtolower($myTmpObjectKey).'.class.php');
 
 								print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-								print $module->info();
+								print $module->info($langs);
 								print '</td>';
 
 								// Show example of numbering model
@@ -456,8 +454,8 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 			dol_print_error($db);
 		}
 
-		print "<table class=\"noborder\" width=\"100%\">\n";
-		print "<tr class=\"liste_titre\">\n";
+		print '<table class="noborder centpercent">'."\n";
+		print '<tr class="liste_titre">'."\n";
 		print '<td>'.$langs->trans("Name").'</td>';
 		print '<td>'.$langs->trans("Description").'</td>';
 		print '<td class="center" width="60">'.$langs->trans("Status")."</td>\n";

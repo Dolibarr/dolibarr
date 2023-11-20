@@ -40,6 +40,7 @@ $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'inventorycard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
+$include_sub_warehouse = !empty(GETPOST('include_sub_warehouse')) ? GETPOST('include_sub_warehouse') : 0;
 
 if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 	$result = restrictedArea($user, 'stock', $id);
@@ -92,7 +93,7 @@ if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 } else {
 	$permissiontoread = $user->rights->stock->inventory_advance->read;
 	$permissiontoadd = $user->rights->stock->inventory_advance->write;
-	$permissiontodelete = $user->rights->stock->inventory_advance->write;
+	$permissiontodelete = $user->rights->stock->inventory_advance->delete;
 	$permissionnote = $user->rights->stock->inventory_advance->write; // Used by the include of actions_setnotes.inc.php
 	$permissiondellink = $user->rights->stock->inventory_advance->write; // Used by the include of actions_dellink.inc.php
 	$upload_dir = $conf->stock->multidir_output[isset($object->entity) ? $object->entity : 1];
@@ -289,6 +290,18 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('XXX'), $text, 'confirm_xxx', $formquestion, 0, 1, 220);
 	}
 
+
+	if ($action == 'validate') {
+		$form = new Form($db);
+		$formquestion = '';
+		if (getDolGlobalInt('INVENTORY_INCLUDE_SUB_WAREHOUSE') && !empty($object->fk_warehouse)) {
+			$formquestion = array(
+				array('type' => 'checkbox', 'name' => 'include_sub_warehouse', 'label' => $langs->trans("IncludeSubWarehouse"), 'value' => 1, 'size' => '10'),
+			);
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateInventory'), $langs->trans('IncludeSubWarehouseExplanation'), 'confirm_validate', $formquestion, '', 1);
+		}
+	}
+
 	// Call Hook formConfirm
 	$parameters = array('formConfirm' => $formconfirm);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -412,7 +425,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Validate
 			if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_CANCELED) {
 				if ($permissiontoadd) {
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes&token='.newToken().'">'.$langs->trans("Validate").' ('.$langs->trans("ToStart").')</a>';
+					if (getDolGlobalInt('INVENTORY_INCLUDE_SUB_WAREHOUSE') && !empty($object->fk_warehouse)) {
+						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=validate&token='.newToken().'">'.$langs->trans("Validate").' ('.$langs->trans("Start").')</a>';
+					} else {
+						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes&token='.newToken().'">'.$langs->trans("Validate").' ('.$langs->trans("Start").')</a>';
+					}
 				}
 			}
 

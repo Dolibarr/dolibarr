@@ -79,47 +79,6 @@ class pdf_azur extends ModelePDFPropales
 	 */
 	public $version = 'dolibarr';
 
-	/**
-	 * @var int page_largeur
-	 */
-	public $page_largeur;
-
-	/**
-	 * @var int page_hauteur
-	 */
-	public $page_hauteur;
-
-	/**
-	 * @var array format
-	 */
-	public $format;
-
-	/**
-	 * @var int marge_gauche
-	 */
-	public $marge_gauche;
-
-	/**
-	 * @var int marge_droite
-	 */
-	public $marge_droite;
-
-	/**
-	 * @var int marge_haute
-	 */
-	public $marge_haute;
-
-	/**
-	 * @var int marge_basse
-	 */
-	public $marge_basse;
-
-	/**
-	 * Issuer
-	 * @var Societe Object that emits
-	 */
-	public $emetteur;
-
 
 	/**
 	 *	Constructor
@@ -359,7 +318,7 @@ class pdf_azur extends ModelePDFPropales
 					if (!empty($conf->mycompany->multidir_output[$object->entity])) {
 						$logodir = $conf->mycompany->multidir_output[$object->entity];
 					}
-					$pagecount = $pdf->setSourceFile($logodir.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+					$pagecount = $pdf->setSourceFile($logodir.'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
 				}
 
@@ -1313,6 +1272,7 @@ class pdf_azur extends ModelePDFPropales
 
 		$pdf->SetTextColor(0, 0, 0);
 
+		$resteapayer = 0;
 		/*
 		$resteapayer = $object->total_ttc - $deja_regle;
 		if (!empty($object->paye)) $resteapayer=0;
@@ -1328,8 +1288,7 @@ class pdf_azur extends ModelePDFPropales
 			$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle, 0, $outputlangs), 0, 'R', 0);
 
 			/*
-			if ($object->close_code == 'discount_vat')
-			{
+			if ($object->close_code == 'discount_vat') {
 				$index++;
 				$pdf->SetFillColor(255,255,255);
 

@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2007  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2019       Frédéric France             <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2023  Frédéric France             <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
  * \brief      File containing class for advanced numbering model of Partnership
  */
 
-dol_include_once('/partnership/core/modules/partnership/modules_partnership.php');
+require_once DOL_DOCUMENT_ROOT.'/partnership/core/modules/partnership/modules_partnership.php';
 
 
 /**
@@ -54,22 +54,23 @@ class mod_partnership_advanced extends ModeleNumRefPartnership
 	/**
 	 *  Returns the description of the numbering model
 	 *
+	 *  @param  Translate	$langs      Lang object to use for output
 	 *  @return     string      Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
-		global $conf, $langs, $db;
+		global $db;
 
 		$langs->load("bills");
 
 		$form = new Form($db);
 
-		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
-		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
-		$texte .= '<input type="hidden" name="action" value="updateMask">';
-		$texte .= '<input type="hidden" name="maskconst" value="PARTNERSHIP_ADVANCED_MASK">';
-		$texte .= '<table class="nobordernopadding" width="100%">';
+		$text = $langs->trans('GenericNumRefModelDesc')."<br>\n";
+		$text .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		$text .= '<input type="hidden" name="token" value="'.newToken().'">';
+		$text .= '<input type="hidden" name="action" value="updateMask">';
+		$text .= '<input type="hidden" name="maskconst" value="PARTNERSHIP_ADVANCED_MASK">';
+		$text .= '<table class="nobordernopadding" width="100%">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Partnership"), $langs->transnoentities("Partnership"));
 		$tooltip .= $langs->trans("GenericMaskCodes2");
@@ -78,17 +79,17 @@ class mod_partnership_advanced extends ModeleNumRefPartnership
 		$tooltip .= $langs->trans("GenericMaskCodes5");
 
 		// Parametrage du prefix
-		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskPartnership" value="'.getDolGlobalString('PARTNERSHIP_ADVANCED_MASK').'">', $tooltip, 1, 1).'</td>';
+		$text .= '<tr><td>'.$langs->trans("Mask").':</td>';
+		$text .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskPartnership" value="'.getDolGlobalString('PARTNERSHIP_ADVANCED_MASK').'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$text .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
-		$texte .= '</tr>';
+		$text .= '</tr>';
 
-		$texte .= '</table>';
-		$texte .= '</form>';
+		$text .= '</table>';
+		$text .= '</form>';
 
-		return $texte;
+		return $text;
 	}
 
 	/**

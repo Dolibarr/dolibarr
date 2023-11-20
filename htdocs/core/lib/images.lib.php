@@ -621,7 +621,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 	}
 
 	// Before PHP8, img was a resource, With PHP8, it is a GdImage
-	if (!is_resource($img) && !($img instanceof GdImage)) {
+	if (!is_resource($img) && class_exists('GdImage') && !($img instanceof GdImage)) {
 		dol_syslog('Failed to detect type of image. We found infoImg[2]='.$infoImg[2], LOG_WARNING);
 		return 0;
 	}

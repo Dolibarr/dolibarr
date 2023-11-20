@@ -192,7 +192,7 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 		}
 		// Page reloaded, we need a new Xpath
 		$module_status_image = $this->byXPath($module_status_image_path);
-		$this->assertContains('switch_on.png', $module_status_image->attribute('src'), "Module enabled");
+		$this->assertStringContainsString('switch_on.png', $module_status_image->attribute('src'), "Module enabled");
 	}
 
 	/**
@@ -206,7 +206,7 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	{
 		$this->url('/custom/takepos/admin/setup.php');
 		$this->authenticate();
-		$this->assertContains('takepos/admin/setup.php', $this->url(), 'Configuration page');
+		$this->assertStringContainsString('takepos/admin/setup.php', $this->url(), 'Configuration page');
 	}
 
 	/**
@@ -220,7 +220,7 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	{
 		$this->url('/custom/takepos/admin/about.php');
 		$this->authenticate();
-		$this->assertContains('takepos/admin/about.php', $this->url(), 'About page');
+		$this->assertStringContainsString('takepos/admin/about.php', $this->url(), 'About page');
 	}
 
 	/**
@@ -252,7 +252,7 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	{
 		$this->url('/admin/boxes.php');
 		$this->authenticate();
-		$this->assertContains('takeposwidget1', $this->source(), "Box enabled");
+		$this->assertStringContainsString('takeposwidget1', $this->source(), "Box enabled");
 	}
 
 	/**
@@ -266,7 +266,7 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	{
 		$this->url('/admin/triggers.php');
 		$this->authenticate();
-		$this->assertContains(
+		$this->assertStringContainsString(
 			'interface_99_modTakePos_TakePosTriggers.class.php',
 			$this->byTag('body')->text(),
 			"Trigger declared"
@@ -284,7 +284,7 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	{
 		$this->url('/admin/triggers.php');
 		$this->authenticate();
-		$this->assertContains(
+		$this->assertStringContainsString(
 			'tick.png',
 			$this->byXPath('//td[text()="interface_99_modTakePos_MyTrigger.class.php"]/following::img')->attribute('src'),
 			"Trigger enabled"

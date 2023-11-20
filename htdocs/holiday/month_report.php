@@ -317,7 +317,7 @@ if (!empty($arrayfields['cp.fk_type']['checked'])) {
 	print_liste_field_titre($arrayfields['cp.fk_type']['label'], $_SERVER["PHP_SELF"], 'cp.fk_type', '', '', '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cp.fk_user']['checked'])) {
-	print_liste_field_titre($arrayfields['cp.fk_user']['label'], $_SERVER["PHP_SELF"], 'cp.fk_user', '', '', '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cp.fk_user']['label'], $_SERVER["PHP_SELF"], 'u.lastname', '', '', '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['ct.label']['checked'])) {
 	print_liste_field_titre($arrayfields['ct.label']['label'], $_SERVER["PHP_SELF"], 'ct.label', '', '', '', $sortfield, $sortorder);

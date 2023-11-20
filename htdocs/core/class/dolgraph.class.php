@@ -1150,7 +1150,8 @@ class DolGraph
 		if (isset($this->type[$firstlot])) {
 			$cssfordiv .= ' dolgraphchar' . $this->type[$firstlot];
 		}
-		$this->stringtoshow .= '<div id="placeholder_' . $tag . '" style="min-height: ' . $this->height . (strpos($this->height, '%') > 0 ? '' : 'px').'; max-height: ' . (strpos($this->height, '%') > 0 ? $this->height : ($this->height + 100) . 'px').'; width:' . $this->width . (strpos($this->width, '%') > 0 ? '' : 'px') . ';" class="' . $cssfordiv . ' dolgraph' . (empty($dolxaxisvertical) ? '' : ' ' . $dolxaxisvertical) . (empty($this->cssprefix) ? '' : ' dolgraph' . $this->cssprefix) . ' center"><canvas id="canvas_' . $tag . '"></canvas></div>' . "\n";
+		$this->stringtoshow .= '<div id="placeholder_'.$tag.'" style="min-height: '.$this->height.(strpos($this->height, '%') > 0 ? '' : 'px').'; max-height: '.(strpos($this->height, '%') > 0 ? $this->height : ($this->height + 100) . 'px').'; width:'.$this->width.(strpos($this->width, '%') > 0 ? '' : 'px').';" class="'.$cssfordiv.' dolgraph'.(empty($dolxaxisvertical) ? '' : ' '.$dolxaxisvertical).(empty($this->cssprefix) ? '' : ' dolgraph'.$this->cssprefix).' center">'."\n";
+		$this->stringtoshow .= '<canvas id="canvas_'.$tag.'"></canvas></div>'."\n";
 
 		$this->stringtoshow .= '<script nonce="'.getNonce().'" id="' . $tag . '">' . "\n";
 		$i = $firstlot;
@@ -1441,11 +1442,14 @@ class DolGraph
 					$color = 'rgb(' . $newcolor[0] . ', ' . $newcolor[1] . ', ' . $newcolor[2] . ', 0.9)';
 					$bordercolor = 'rgb(' . $newcolor[0] . ', ' . $newcolor[1] . ', ' . $newcolor[2] . ')';
 				} else { // We do not use a 'group by'
-					if (!empty($this->datacolor[$i]) && is_array($this->datacolor[$i])) {
-						$color = 'rgb(' . $this->datacolor[$i][0] . ', ' . $this->datacolor[$i][1] . ', ' . $this->datacolor[$i][2] . ', 0.9)';
-					} else {
-						$color = $this->datacolor[$i];
+					if (!empty($this->datacolor[$i])) {
+						if (is_array($this->datacolor[$i])) {
+							$color = 'rgb(' . $this->datacolor[$i][0] . ', ' . $this->datacolor[$i][1] . ', ' . $this->datacolor[$i][2] . ', 0.9)';
+						} else {
+							$color = $this->datacolor[$i];
+						}
 					}
+					// else: $color will be undefined
 					if (!empty($this->bordercolor[$i]) && is_array($this->bordercolor[$i])) {
 						$bordercolor = 'rgb(' . $this->bordercolor[$i][0] . ', ' . $this->bordercolor[$i][1] . ', ' . $this->bordercolor[$i][2] . ', 0.9)';
 					} else {

@@ -76,7 +76,7 @@ if ($cancel == $langs->trans("Cancel")) {
 // validation of addition
 if ($action == 'vadd' &&
 $cancel != $langs->trans("Cancel") &&
-($user->rights->categorie->creer)) {
+($user->hasRight('categorie', 'creer'))) {
 	$object->fetch($id);
 	$current_lang = $langs->getDefaultLang();
 
@@ -125,7 +125,7 @@ $cancel != $langs->trans("Cancel") &&
 // validation of the edition
 if ($action == 'vedit' &&
 $cancel != $langs->trans("Cancel") &&
-($user->rights->categorie->creer)) {
+($user->hasRight('categorie', 'creer'))) {
 	$object->fetch($id);
 	$current_lang = $langs->getDefaultLang();
 

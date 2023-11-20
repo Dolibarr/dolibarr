@@ -75,7 +75,7 @@ class FormExpenseReport
 		}
 		foreach ($arrayoflabels as $key => $val) {
 			if ($selected != '' && $selected == $key) {
-				$html .= '<option value="'.$key.'" selected>';;
+				$html .= '<option value="'.$key.'" selected>';
 			} else {
 				$html .=  '<option value="'.$key.'">';
 			}

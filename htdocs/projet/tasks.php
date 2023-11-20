@@ -172,6 +172,7 @@ if ($object->usage_bill_time) {
 
 // Extra fields
 $extrafieldsobjectkey = $taskstatic->table_element;
+$extrafieldsobjectprefix = 'efpt.';
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -305,7 +306,7 @@ if (count($morewherefilterarray) > 0) {
 	$morewherefilter = ' AND '.implode(' AND ', $morewherefilterarray);
 }
 
-if ($action == 'createtask' && $user->rights->projet->creer) {
+if ($action == 'createtask' && $user->hasRight('projet', 'creer')) {
 	$error = 0;
 
 	// If we use user timezone, we must change also view/list to use user timezone everywhere
@@ -584,7 +585,7 @@ if ($id > 0 || !empty($ref)) {
 	$morehtmlref .= '</div>';
 
 	// Define a complementary filter for search of next/prev ref.
-	if (empty($user->rights->projet->all->lire)) {
+	if (!$user->hasRight('projet', 'all', 'lire')) {
 		$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
 		$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 	}
@@ -695,7 +696,7 @@ if ($id > 0 || !empty($ref)) {
 }
 
 
-if ($action == 'create' && $user->rights->projet->creer && (empty($object->thirdparty->id) || $userWrite > 0)) {
+if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object->thirdparty->id) || $userWrite > 0)) {
 	if ($id > 0 || !empty($ref)) {
 		print '<br>';
 	}
@@ -734,8 +735,8 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	$defaultref = '';
 	$obj = empty($conf->global->PROJECT_TASK_ADDON) ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
-	if (!empty($conf->global->PROJECT_TASK_ADDON) && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/".$conf->global->PROJECT_TASK_ADDON.".php")) {
-		require_once DOL_DOCUMENT_ROOT."/core/modules/project/task/".$conf->global->PROJECT_TASK_ADDON.'.php';
+	if (!empty($conf->global->PROJECT_TASK_ADDON) && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').".php")) {
+		require_once DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').'.php';
 		$modTask = new $obj;
 		$defaultref = $modTask->getNextValue($object->thirdparty, null);
 	}
@@ -893,7 +894,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	// Get list of tasks in tasksarray and taskarrayfiltered
 	// We need all tasks (even not limited to a user because a task to user can have a parent that is not affected to him).
 	$filteronthirdpartyid = $socid;
-	$tasksarray = $taskstatic->getTasksArray(0, 0, $object->id, $filteronthirdpartyid, 0, '', -1, $morewherefilter, 0, 0, $extrafields, 1, $search_array_options, 0, 1, $sortfield, $sortorder);
+	$tasksarray = $taskstatic->getTasksArray(0, 0, $object->id, $filteronthirdpartyid, 0, '', -1, $morewherefilter, 0, 0, $extrafields, 1, $search_array_options, 1, 1, $sortfield, $sortorder);
 
 	// We load also tasks limited to a particular user
 	$tmpuser = new User($db);
@@ -923,7 +924,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	// Show the massaction checkboxes only when this page is not opend from the Extended POS
 	if ($massactionbutton && $contextpage != 'poslist') {
-		$selectedfields = $form->showCheckAddButtons('checkforselect', 1);
+		$selectedfields.= $form->showCheckAddButtons('checkforselect', 1);
 	}
 
 	print '<div class="div-table-responsive">';
@@ -1151,7 +1152,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	// Test if database is clean. If not we clean it.
 	//print 'mode='.$_REQUEST["mode"].' $nboftaskshown='.$nboftaskshown.' count($tasksarray)='.count($tasksarray).' count($tasksrole)='.count($tasksrole).'<br>';
-	if (!empty($user->rights->projet->all->lire)) {	// We make test to clean only if user has permission to see all (test may report false positive otherwise)
+	if ($user->hasRight('projet', 'all', 'lire')) {	// We make test to clean only if user has permission to see all (test may report false positive otherwise)
 		if ($search_user_id == $user->id) {
 			if ($nboftaskshown < count($tasksrole)) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';

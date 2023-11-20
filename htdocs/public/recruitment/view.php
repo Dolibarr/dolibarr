@@ -143,8 +143,6 @@ if ($action == "view" || $action == "presend" || $action == "dosubmit") {
 		}
 	}
 }
-//var_dump($action);
-//$object->doActions($action);
 
 // Actions to send emails (for ticket, we need to manage the addfile and removefile only)
 $triggersendname = 'CANDIDATURE_SENTBYMAIL';
@@ -163,7 +161,7 @@ $now = dol_now();
 
 $head = '';
 if (!empty($conf->global->MAIN_RECRUITMENT_CSS_URL)) {
-	$head = '<link rel="stylesheet" type="text/css" href="'.$conf->global->MAIN_RECRUITMENT_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+	$head = '<link rel="stylesheet" type="text/css" href="' . getDolGlobalString('MAIN_RECRUITMENT_CSS_URL').'?lang='.$langs->defaultlang.'">'."\n";
 }
 
 $conf->dol_hide_topmenu = 1;
@@ -236,7 +234,7 @@ if ($urllogo) {
 
 if (!empty($conf->global->RECRUITMENT_IMAGE_PUBLIC_INTERFACE)) {
 	print '<div class="backimagepublicrecruitment">';
-	print '<img id="idRECRUITMENT_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->RECRUITMENT_IMAGE_PUBLIC_INTERFACE.'">';
+	print '<img id="idRECRUITMENT_IMAGE_PUBLIC_INTERFACE" src="' . getDolGlobalString('RECRUITMENT_IMAGE_PUBLIC_INTERFACE').'">';
 	print '</div>';
 }
 
@@ -250,7 +248,7 @@ if (!empty($conf->global->RECRUITMENT_NEWFORM_TEXT)) {
 	if (preg_match('/^\((.*)\)$/', $conf->global->RECRUITMENT_NEWFORM_TEXT, $reg)) {
 		$text .= $langs->trans($reg[1])."<br>\n";
 	} else {
-		$text .= $conf->global->RECRUITMENT_NEWFORM_TEXT."<br>\n";
+		$text .= getDolGlobalString('RECRUITMENT_NEWFORM_TEXT') . "<br>\n";
 	}
 	$text = '<tr><td align="center"><br>'.$text.'<br></td></tr>'."\n";
 }

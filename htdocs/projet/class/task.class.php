@@ -166,6 +166,11 @@ class Task extends CommonObjectLine
 	public $thirdparty_name;
 	public $thirdparty_email;
 
+	// store parent ref and position
+	public $task_parent_ref;
+	public $task_parent_position;
+
+
 
 	/**
 	 * @var float budget_amount
@@ -776,7 +781,7 @@ class Task extends CommonObjectLine
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $mode = 'task', $addlabel = 0, $sep = ' - ', $notooltip = 0, $save_lastsearch_value = -1)
 	{
-		global $conf, $langs, $user;
+		global $action, $conf, $hookmanager, $langs;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -800,7 +805,7 @@ class Task extends CommonObjectLine
 		$url = DOL_URL_ROOT.'/projet/tasks/'.$mode.'.php?id='.$this->id.($option == 'withproject' ? '&withproject=1' : '');
 		// Add param to save lastsearch_values or not
 		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-		if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+		if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 			$add_save_lastsearch_values = 1;
 		}
 		if ($add_save_lastsearch_values) {
@@ -835,6 +840,14 @@ class Task extends CommonObjectLine
 		$result .= $linkend;
 		if ($withpicto != 2) {
 			$result .= (($addlabel && $this->label) ? $sep.dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
+		}
+
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
 		}
 
 		return $result;
@@ -911,6 +924,11 @@ class Task extends CommonObjectLine
 					$sql .= ($extrafields->attributes['projet']['type'][$key] != 'separate' ? ",efp.".$key." as options_".$key : '');
 				}
 			}
+			if (!empty($extrafields->attributes['projet_task']['label'])) {
+				foreach ($extrafields->attributes['projet_task']['label'] as $key => $val) {
+					$sql .= ($extrafields->attributes['projet_task']['type'][$key] != 'separate' ? ",efpt.".$key." as options_".$key : '');
+				}
+			}
 		}
 		if ($includebilltime) {
 			$sql .= ", SUM(tt.element_duration * ".$this->db->ifsql("invoice_id IS NULL", "1", "0").") as tobill, SUM(tt.element_duration * ".$this->db->ifsql("invoice_id IS NULL", "0", "1").") as billed";
@@ -928,6 +946,9 @@ class Task extends CommonObjectLine
 				$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as ctc";
 			}
 			$sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
+			if ($loadextras) {
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_extrafields as efpt ON (t.rowid = efpt.fk_object)";
+			}
 			if ($includebilltime) {
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_time as tt ON (tt.fk_element = t.rowid AND tt.elementtype='task')";
 			}
@@ -1016,6 +1037,11 @@ class Task extends CommonObjectLine
 						$sql .= ($extrafields->attributes['projet']['type'][$key] != 'separate' ? ",efp.".$key : '');
 					}
 				}
+				if (!empty($extrafields->attributes['projet_task']['label'])) {
+					foreach ($extrafields->attributes['projet_task']['label'] as $key => $val) {
+						$sql .= ($extrafields->attributes['projet_task']['type'][$key] != 'separate' ? ",efpt.".$key : '');
+					}
+				}
 			}
 		}
 
@@ -1102,20 +1128,11 @@ class Task extends CommonObjectLine
 						}
 					}
 
-					/* Removed, already included into the $tasks[$i]->fetch_optionals(); just after
-					if (!empty($extrafields->attributes['projet_task']['label'])) {
-						foreach ($extrafields->attributes['projet_task']['label'] as $key => $val) {
-							if ($extrafields->attributes['projet_task']['type'][$key] != 'separate') {
-								$tmpvar = 'options_'.$key;
-								$tasks[$i]->array_options['options_'.$key] = $obj->$tmpvar;
-							}
-						}
-					}
-					*/
-
 					if ($loadextras) {
 						$tasks[$i]->fetch_optionals();
 					}
+
+					$tasks[$i]->obj = $obj; // Needed for tpl/extrafields_list_print
 				}
 
 				$i++;
@@ -1537,11 +1554,7 @@ class Task extends CommonObjectLine
 	 */
 	public function getSumOfAmount($fuser = '', $dates = '', $datee = '')
 	{
-		global $langs;
-
-		if (empty($id)) {
-			$id = $this->id;
-		}
+		$id = $this->id;
 
 		$result = array();
 
@@ -1936,8 +1949,8 @@ class Task extends CommonObjectLine
 
 		$defaultref = '';
 		$obj = empty($conf->global->PROJECT_TASK_ADDON) ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
-		if (!empty($conf->global->PROJECT_TASK_ADDON) && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/".$conf->global->PROJECT_TASK_ADDON.".php")) {
-			require_once DOL_DOCUMENT_ROOT."/core/modules/project/task/".$conf->global->PROJECT_TASK_ADDON.'.php';
+		if (!empty($conf->global->PROJECT_TASK_ADDON) && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').".php")) {
+			require_once DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').'.php';
 			$modTask = new $obj;
 			$defaultref = $modTask->getNextValue(0, $clone_task);
 		}
@@ -2222,8 +2235,6 @@ class Task extends CommonObjectLine
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($this->modelpdf)) {	// deprecated
-				$modele = $this->modelpdf;
 			} elseif (!empty($conf->global->PROJECT_TASK_ADDON_PDF)) {
 				$modele = $conf->global->PROJECT_TASK_ADDON_PDF;
 			}
@@ -2266,7 +2277,7 @@ class Task extends CommonObjectLine
 		$sql .= " AND p.fk_statut = 1";
 		$sql .= " AND t.fk_projet = p.rowid";
 		$sql .= " AND (t.progress IS NULL OR t.progress < 100)"; // tasks to do
-		if (empty($user->rights->projet->all->lire)) {
+		if (!$user->hasRight('projet', 'all', 'lire')) {
 			$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")";
 		}
 		// No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
@@ -2331,13 +2342,13 @@ class Task extends CommonObjectLine
 		$sql = "SELECT count(p.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
 		}
 		$sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
 		$sql .= " WHERE p.entity IN (".getEntity('project', 0).')';
 		$sql .= " AND t.fk_projet = p.rowid"; // tasks to do
-		if ($mine || empty($user->rights->projet->all->lire)) {
+		if ($mine || !$user->hasRight('projet', 'all', 'lire')) {
 			$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")";
 		}
 		// No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
@@ -2345,7 +2356,7 @@ class Task extends CommonObjectLine
 		if ($socid) {
 			$sql .= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
 		}
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id).") OR (s.rowid IS NULL))";
 		}
 
@@ -2403,7 +2414,9 @@ class Task extends CommonObjectLine
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (!empty($arraydata['projectlink'])) {
 			//$tmpproject = $arraydata['project'];
 			//$return .= '<br><span class="info-box-status ">'.$tmpproject->getNomProject().'</span>';

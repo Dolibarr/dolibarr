@@ -47,7 +47,7 @@ CKEDITOR.editorConfig = function( config )
 	    ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
 	    ['BidiLtr', 'BidiRtl'],
 	    ['Link','Unlink'],
-	    ['Image','Table','HorizontalRule','Smiley'],
+	    ['Image','Table','HorizontalRule','Smiley','SpecialChar'],
 	    ['Styles','Format','Font','FontSize'],
 	    ['TextColor','BGColor'],
 	 	['Source']
@@ -64,7 +64,7 @@ CKEDITOR.editorConfig = function( config )
 	 	['Bold','Italic','Underline','Strike','-','TextColor','RemoveFormat'],
 	 	['NumberedList','BulletedList','Outdent','Indent'],
 	 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
-	 	['Link','Unlink','Image','Table','HorizontalRule'],
+	 	['Link','Unlink','Image','Table','HorizontalRule','SpecialChar'],
 	 	['Source']
 	 ];
 
@@ -78,7 +78,7 @@ CKEDITOR.editorConfig = function( config )
 	 	['Bold','Italic','Underline','Strike','-','TextColor','RemoveFormat'],
 	 	['NumberedList','BulletedList','Outdent','Indent'],
 	 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
-	    ['Link','Unlink','Image','Table','HorizontalRule'],
+	    ['Link','Unlink','Image','Table','HorizontalRule','SpecialChar'],
 	 	['Source']
 	];
 
@@ -102,6 +102,7 @@ CKEDITOR.editorConfig = function( config )
 	 	['Find'],
 	 	['Image'],
 	 	['Source']
+		['SpecialChar'],
 	];
 };
 

@@ -33,6 +33,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
  */
 class ICal
 {
+	/**
+	 * @var string	Name of remote HTTP file to read
+	 */
+	public $file;
+
 	// Text in file
 	public $file_text;
 	public $cal; // Array to save iCalendar parse data

@@ -406,7 +406,7 @@ llxHeader("", $title);
 
 if (!empty($id) || !empty($ref)) {
 	$showbarcode = isModEnabled('barcode');
-	if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) {
+	if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->hasRight('barcode', 'lire_advance')) {
 		$showbarcode = 0;
 	}
 
@@ -689,7 +689,7 @@ if (!empty($id) || !empty($ref)) {
 			if (is_array($productCombination2ValuePairs1) && count($productCombination2ValuePairs1)) {
 				?>
 				<tr>
-					<td class="titlefieldcreate tdtop"><label for="features"><?php echo $langs->trans('Combination') ?></label></td>
+					<td class="titlefieldcreate tdtop"><label for="features"><?php echo $langs->trans('Attributes') ?></label></td>
 					<td class="tdtop">
 						<div class="inline-block valignmiddle quatrevingtpercent">
 					<?php
@@ -698,7 +698,7 @@ if (!empty($id) || !empty($ref)) {
 						$result2 = $prodattr_val->fetch($val->fk_prod_attr_val);
 						//print 'rr'.$result1.' '.$result2;
 						if ($result1 > 0 && $result2 > 0) {
-							print $prodattr->label.' - '.$prodattr_val->value.'<br>';
+							print $prodattr->label.' : '.$prodattr_val->value.'<br>';
 							// TODO Add delete link
 						}
 					}
@@ -732,10 +732,12 @@ if (!empty($id) || !empty($ref)) {
 				$prodcomb->fetchCombinationPriceLevels();
 
 				for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
+					$keyforlabel = 'PRODUIT_MULTIPRICES_LABEL'.$i;
+					$text = $langs->trans('ImpactOnPriceLevel', $i).' - '.getDolGlobalString($keyforlabel);
 					print '<tr>';
-					print '<td><label for="level_price_impact_'.$i.'">'.$langs->trans('ImpactOnPriceLevel', $i).'</label>';
+					print '<td><label for="level_price_impact_'.$i.'">'.$text.'</label>';
 					if ($i === 1) {
-						print ' <a id="apply-price-impact-to-all-level" class="classfortooltip" href="#" title="'.$langs->trans('ApplyToAllPriceImpactLevelHelp').'">('.$langs->trans('ApplyToAllPriceImpactLevel').')</a>';
+						print '<br/><a id="apply-price-impact-to-all-level" class="classfortooltip" href="#" title="'.$langs->trans('ApplyToAllPriceImpactLevelHelp').'">('.$langs->trans('ApplyToAllPriceImpactLevel').')</a>';
 					}
 					print '</td>';
 					print '<td><input type="text" class="level_price_impact" id="level_price_impact_'.$i.'" name="level_price_impact['.$i.']" value="'.price($prodcomb->combination_price_levels[$i]->variation_price).'">';
@@ -910,7 +912,7 @@ if (!empty($id) || !empty($ref)) {
 				}
 				?>
 				<td class="liste_titre"><?php echo $langs->trans('Product') ?></td>
-				<td class="liste_titre"><?php echo $langs->trans('Combination') ?></td>
+				<td class="liste_titre"><?php echo $langs->trans('Attributes') ?></td>
 				<td class="liste_titre right"><?php echo $langs->trans('PriceImpact') ?></td>
 				<?php if ($object->isProduct()) {
 					print'<td class="liste_titre right">'.$langs->trans('WeightImpact').'</td>';

@@ -55,7 +55,6 @@ $pagenext = $page + 1;
 $optioncss = GETPOST('optioncss', 'alpha');
 $param = "";
 $num = 0;
-$totalnboflines = 0;
 
 $result = restrictedArea($user, 'banque');
 
@@ -85,6 +84,9 @@ $stripeacc = $stripe->getStripeAccount($service);
 	print $langs->trans('ErrorStripeAccountNotDefined');
 }*/
 
+$moreforfilter = '';
+$totalnboflines = -1;
+
 if (!$rowid) {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') {
@@ -107,9 +109,6 @@ if (!$rowid) {
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
-	//print_liste_field_titre("StripeCustomerId",$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
-	//print_liste_field_titre("CustomerId", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
-	//print_liste_field_titre("Origin", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
 	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("DateOperation", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'left ');

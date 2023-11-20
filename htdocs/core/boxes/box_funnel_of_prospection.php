@@ -27,14 +27,14 @@
 include_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
 
 /**
- * Class to manage the box to show last projet
+ * Class to manage the box to show funnel of prospections
  */
 class box_funnel_of_prospection extends ModeleBoxes
 {
-	public $boxcode = "FunnelOfProspection";
-	public $boximg = "object_projectpub";
+	public $boxcode  = "FunnelOfProspection";
+	public $boximg   = "object_projectpub";
 	public $boxlabel = "BoxTitleFunnelOfProspection";
-	public $depends = array("projet");
+	public $depends  = array("projet");
 
 	public $version = 'development';
 

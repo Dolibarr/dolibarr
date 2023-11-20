@@ -65,15 +65,6 @@ class modGeneratePassPerso extends ModeleGenPassword
 	 */
 	public $WithoutAmbi = 0;
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $conf;
-	public $lang;
-	public $user;
-
 	public $Maj;
 	public $Min;
 	public $Nb;

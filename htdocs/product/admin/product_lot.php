@@ -214,7 +214,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 
 						if ($module->isEnabled()) {
 							print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-							print $module->info();
+							print $module->info($langs);
 							print '</td>';
 
 							// Show example of numbering model
@@ -306,7 +306,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 
 						if ($module->isEnabled()) {
 							print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-							print $module->info();
+							print $module->info($langs);
 							print '</td>';
 
 							// Show example of numbering model

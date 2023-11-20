@@ -224,6 +224,7 @@ if (GETPOST('action', 'aZ09') == 'confirm_remove' && GETPOST("confirm") == 'yes'
 $form = new Form($db);
 $facturestatic = new Facture($db);
 $facturefournstatic = new FactureFournisseur($db);
+$tmpuser = new User($db);
 
 llxHeader('', $langs->trans("GlobalDiscount"));
 
@@ -336,7 +337,7 @@ if ($socid > 0) {
 
 
 	if ($action == 'create_remise') {
-		if ($user->rights->societe->creer) {
+		if ($user->hasRight('societe', 'creer')) {
 			print '<br>';
 
 			$discount_type = GETPOSTISSET('discount_type') ? GETPOST('discount_type', 'alpha') : 0;
@@ -391,7 +392,7 @@ if ($socid > 0) {
 			print dol_get_fiche_end();
 		}
 
-		if ($user->rights->societe->creer) {
+		if ($user->hasRight('societe', 'creer')) {
 			print '<div class="center">';
 			print '<input type="submit" class="button" name="submit" value="'.$langs->trans("AddGlobalDiscount").'">';
 			if (!empty($backtopage)) {
@@ -438,7 +439,7 @@ if ($socid > 0) {
 		$sql .= " rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
 		$sql .= " rc.datec as dc, rc.description,";
 		$sql .= " rc.fk_facture_source,";
-		$sql .= " u.login, u.rowid as user_id,";
+		$sql .= " u.login, u.rowid as user_id, u.statut as status, u.firstname, u.lastname, u.photo,";
 		$sql .= " fa.ref as ref, fa.type as type";
 		$sql .= " FROM  ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."societe_remise_except as rc";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as fa ON rc.fk_facture_source = fa.rowid";
@@ -477,6 +478,13 @@ if ($socid > 0) {
 			if ($num > 0) {
 				while ($i < $num) {
 					$obj = $db->fetch_object($resql);
+
+					$tmpuser->id = $obj->user_id;
+					$tmpuser->login = $obj->login;
+					$tmpuser->firstname = $obj->firstname;
+					$tmpuser->lastname = $obj->lastname;
+					$tmpuser->photo = $obj->photo;
+					$tmpuser->status = $obj->status;
 
 					print '<tr class="oddeven">';
 
@@ -521,10 +529,12 @@ if ($socid > 0) {
 					if (isModEnabled('multicompany')) {
 						print '<td class="right nowraponall amount">'.price($obj->multicurrency_amount_ttc).'</td>';
 					}
-					print '<td class="center">';
-					print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a>';
+					print '<td class="tdoverflowmax100">';
+					//print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a>';
+					print $tmpuser->getNomUrl(-1);
 					print '</td>';
-					if ($user->rights->societe->creer || $user->rights->facture->creer) {
+
+					if ($user->hasRight('societe', 'creer') || $user->hasRight('facture', 'creer')) {
 						print '<td class="center nowrap">';
 						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=split&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_split($langs->trans("SplitDiscount")).'</a>';
 						print '<a class="reposition marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=remove&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_delete($langs->trans("RemoveDiscount")).'</a>';
@@ -582,7 +592,7 @@ if ($socid > 0) {
 		$sql .= " rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
 		$sql .= " rc.datec as dc, rc.description,";
 		$sql .= " rc.fk_invoice_supplier_source,";
-		$sql .= " u.login, u.rowid as user_id,";
+		$sql .= " u.login, u.rowid as user_id, u.statut as status, u.firstname, u.lastname, u.photo,";
 		$sql .= " fa.ref, fa.type as type";
 		$sql .= " FROM  ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."societe_remise_except as rc";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as fa ON rc.fk_invoice_supplier_source = fa.rowid";
@@ -622,6 +632,13 @@ if ($socid > 0) {
 				while ($i < $num) {
 					$obj = $db->fetch_object($resql);
 
+					$tmpuser->id = $obj->user_id;
+					$tmpuser->login = $obj->login;
+					$tmpuser->firstname = $obj->firstname;
+					$tmpuser->lastname = $obj->lastname;
+					$tmpuser->photo = $obj->photo;
+					$tmpuser->status = $obj->status;
+
 					print '<tr class="oddeven">';
 					print '<td>'.dol_print_date($db->jdate($obj->dc), 'dayhour', 'tzuserrel').'</td>';
 					if (preg_match('/\(CREDIT_NOTE\)/', $obj->description)) {
@@ -660,10 +677,11 @@ if ($socid > 0) {
 					if (isModEnabled('multicompany')) {
 						print '<td class="right nowraponall amount">'.price($obj->multicurrency_amount_ttc).'</td>';
 					}
-					print '<td class="center">';
-					print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a>';
+					print '<td class="tdoverflowmax100">';
+					print $tmpuser->getNomUrl(-1);
 					print '</td>';
-					if ($user->rights->societe->creer || $user->rights->facture->creer) {
+
+					if ($user->hasRight('societe', 'creer') || $user->hasRight('facture', 'creer')) {
 						print '<td class="center nowrap">';
 						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=split&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_split($langs->trans("SplitDiscount")).'</a>';
 						print '<a class="reposition marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=remove&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_delete($langs->trans("RemoveDiscount")).'</a>';
@@ -730,7 +748,7 @@ if ($socid > 0) {
 		$sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx, rc.vat_src_code,";
 		$sql .= " rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
 		$sql .= " rc.datec as dc, rc.description, rc.fk_facture_line, rc.fk_facture_source,";
-		$sql .= " u.login, u.rowid as user_id,";
+		$sql .= " u.login, u.rowid as user_id, u.statut as status, u.firstname, u.lastname, u.photo,";
 		$sql .= " f.rowid as invoiceid, f.ref,";
 		$sql .= " fa.ref as invoice_source_ref, fa.type as type";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
@@ -749,7 +767,7 @@ if ($socid > 0) {
 		$sql2 = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx, rc.vat_src_code,";
 		$sql2 .= " rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
 		$sql2 .= " rc.datec as dc, rc.description, rc.fk_facture, rc.fk_facture_source,";
-		$sql2 .= " u.login, u.rowid as user_id,";
+		$sql2 .= " u.login, u.rowid as user_id, u.statut as status, u.firstname, u.lastname, u.photo,";
 		$sql2 .= " f.rowid as invoiceid, f.ref,";
 		$sql2 .= " fa.ref as invoice_source_ref, fa.type as type";
 		$sql2 .= " FROM ".MAIN_DB_PREFIX."facture as f";
@@ -814,6 +832,14 @@ if ($socid > 0) {
 				$i = 0;
 				while ($i < $num) {
 					$obj = array_shift($tab_sqlobj);
+
+					$tmpuser->id = $obj->user_id;
+					$tmpuser->login = $obj->login;
+					$tmpuser->firstname = $obj->firstname;
+					$tmpuser->lastname = $obj->lastname;
+					$tmpuser->photo = $obj->photo;
+					$tmpuser->status = $obj->status;
+
 					print '<tr class="oddeven">';
 					print '<td>'.dol_print_date($db->jdate($obj->dc), 'dayhour').'</td>';
 					if (preg_match('/\(CREDIT_NOTE\)/', $obj->description)) {
@@ -856,9 +882,10 @@ if ($socid > 0) {
 					if (isModEnabled('multicompany')) {
 						print '<td class="right">'.price($obj->multicurrency_amount_ttc).'</td>';
 					}
-					print '<td class="center">';
-					print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a>';
+					print '<td class="tdoverflowmax100">';
+					print $tmpuser->getNomUrl(-1);
 					print '</td>';
+
 					print '<td>&nbsp;</td>';
 					print '</tr>';
 					$i++;
@@ -890,7 +917,7 @@ if ($socid > 0) {
 		$sql .= " rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
 		$sql .= " rc.datec as dc, rc.description, rc.fk_invoice_supplier_line,";
 		$sql .= " rc.fk_invoice_supplier_source,";
-		$sql .= " u.login, u.rowid as user_id,";
+		$sql .= " u.login, u.rowid as user_id, u.statut as user_status, u.firstname, u.lastname, u.photo,";
 		$sql .= " f.rowid as invoiceid, f.ref as ref,";
 		$sql .= " fa.ref as invoice_source_ref, fa.type as type";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
@@ -910,7 +937,7 @@ if ($socid > 0) {
 		$sql2 .= " rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
 		$sql2 .= " rc.datec as dc, rc.description, rc.fk_invoice_supplier,";
 		$sql2 .= " rc.fk_invoice_supplier_source,";
-		$sql2 .= " u.login, u.rowid as user_id,";
+		$sql2 .= " u.login, u.rowid as user_id, u.statut as user_status, u.firstname, u.lastname, u.photo,";
 		$sql2 .= " f.rowid as invoiceid, f.ref as ref,";
 		$sql2 .= " fa.ref as invoice_source_ref, fa.type as type";
 		$sql2 .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
@@ -975,6 +1002,14 @@ if ($socid > 0) {
 				$i = 0;
 				while ($i < $num) {
 					$obj = array_shift($tab_sqlobj);
+
+					$tmpuser->id = $obj->user_id;
+					$tmpuser->login = $obj->login;
+					$tmpuser->firstname = $obj->firstname;
+					$tmpuser->lastname = $obj->lastname;
+					$tmpuser->photo = $obj->photo;
+					$tmpuser->status = $obj->status;
+
 					print '<tr class="oddeven">';
 					print '<td>'.dol_print_date($db->jdate($obj->dc), 'dayhour').'</td>';
 					if (preg_match('/\(CREDIT_NOTE\)/', $obj->description)) {
@@ -1017,10 +1052,12 @@ if ($socid > 0) {
 					if (isModEnabled('multicompany')) {
 						print '<td class="right nowraponall amount">'.price($obj->multicurrency_amount_ttc).'</td>';
 					}
-					print '<td class="center">';
-					print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a>';
+					print '<td class="tdoverflowmax100">';
+					print $tmpuser->getNomUrl(-1);
 					print '</td>';
+
 					print '<td>&nbsp;</td>';
+
 					print '</tr>';
 					$i++;
 				}

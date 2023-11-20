@@ -85,7 +85,7 @@ if (!isModEnabled('adherent')) {
 	httponly_accessforbidden('Module Membership not enabled');
 }
 
-if (empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
+if (!getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	httponly_accessforbidden("Auto subscription form for public visitors has not been enabled");
 }
 
@@ -145,7 +145,7 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
 	if (!empty($conf->global->MEMBER_IMAGE_PUBLIC_REGISTRATION)) {
 		print '<div class="backimagepublicregistration">';
-		print '<img id="idEVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->MEMBER_IMAGE_PUBLIC_REGISTRATION.'">';
+		print '<img id="idEVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE" src="' . getDolGlobalString('MEMBER_IMAGE_PUBLIC_REGISTRATION').'">';
 		print '</div>';
 	}
 
@@ -169,7 +169,7 @@ function llxFooterVierge()
 
 	if (!empty($conf->use_javascript_ajax)) {
 		print "\n".'<!-- Includes JS Footer of Dolibarr -->'."\n";
-		print '<script src="'.DOL_URL_ROOT.'/core/js/lib_foot.js.php?lang='.$langs->defaultlang.(!empty($ext) ? '&'.$ext : '').'"></script>'."\n";
+		print '<script src="'.DOL_URL_ROOT.'/core/js/lib_foot.js.php?lang='.$langs->defaultlang.'"></script>'."\n";
 	}
 
 	print "</body>\n";
@@ -408,7 +408,7 @@ if (empty($reshook) && $action == 'add') {
 					$to = $adh->makeSubstitution($conf->global->MAIN_INFO_SOCIETE_MAIL);
 					$from = getDolGlobalString('ADHERENT_MAIL_FROM');
 					$mailfile = new CMailFile(
-						'['.$appli.'] '.$conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT,
+						'['.$appli.'] ' . getDolGlobalString('ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT'),
 						$to,
 						$from,
 						$adh->makeSubstitution($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL),
@@ -593,7 +593,7 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 		print '</td></tr>'."\n";
 	} else {
 		$adht->fetch($conf->global->MEMBER_NEWFORM_FORCETYPE);
-		print '<input type="hidden" id="typeid" name="typeid" value="'.$conf->global->MEMBER_NEWFORM_FORCETYPE.'">';
+		print '<input type="hidden" id="typeid" name="typeid" value="' . getDolGlobalString('MEMBER_NEWFORM_FORCETYPE').'">';
 	}
 
 	// Moral/Physic attribute
@@ -605,7 +605,7 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 		print '</td></tr>'."\n";
 	} else {
 		//print $morphys[$conf->global->MEMBER_NEWFORM_FORCEMORPHY];
-		print '<input type="hidden" id="morphy" name="morphy" value="'.$conf->global->MEMBER_NEWFORM_FORCEMORPHY.'">';
+		print '<input type="hidden" id="morphy" name="morphy" value="' . getDolGlobalString('MEMBER_NEWFORM_FORCEMORPHY').'">';
 	}
 
 	// Company   // TODO : optional hide
@@ -778,7 +778,7 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 		// $conf->global->MEMBER_NEWFORM_PAYONLINE is 'paypal', 'paybox' or 'stripe'
 		print '<tr><td>'.$langs->trans("Subscription");
 		if (!empty($conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO)) {
-			print ' - <a href="'.$conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO.'" rel="external" target="_blank" rel="noopener noreferrer">'.$langs->trans("SeeHere").'</a>';
+			print ' - <a href="' . getDolGlobalString('MEMBER_EXT_URL_SUBSCRIPTION_INFO').'" rel="external" target="_blank" rel="noopener noreferrer">'.$langs->trans("SeeHere").'</a>';
 		}
 		print '</td><td class="nowrap">';
 
@@ -872,17 +872,20 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 			$objp = $db->fetch_object($result);	// Load the member type and information on it
 
 			print '<tr class="oddeven">';
+			// Label
 			print '<td>'.dol_escape_htmltag($objp->label).'</td>';
-			print '<td class="nowrap">';
+			// Duration
+			print '<td class="center">';
 			$unit = preg_replace("/[^a-zA-Z]+/", "", $objp->duration);
 			print max(1, intval($objp->duration)).' '.$units[$unit];
 			print '</td>';
+			// Amount
 			print '<td class="center"><span class="amount nowrap">';
 			$displayedamount = max(intval($objp->amount), intval(getDolGlobalInt("MEMBER_MIN_AMOUNT")));
 			$caneditamount = $objp->caneditamount;
 			if ($objp->subscription) {
 				if ($displayedamount > 0 || !$caneditamount) {
-					print $displayedamount.' '.strtoupper($conf->currency);
+					print price($displayedamount, 1, $langs, 1, 0, -1, $conf->currency);
 				}
 				if ($caneditamount && $displayedamount>0) {
 					print $form->textwithpicto('', $langs->transnoentities("CanEditAmountShortForValues"), 1, 'help', '', 0, 3);

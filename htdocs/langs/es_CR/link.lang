@@ -1,8 +1,0 @@
-# Dolibarr language file - Source file is en_US - link
-NoLinkFound=No hay enlaces registrados
-LinkComplete=El archivo se ha vinculado con éxito.
-ErrorFileNotLinked=No se pudo vincular el archivo
-LinkRemoved=El enlace %s ha sido eliminado
-ErrorFailedToDeleteLink=Error al eliminar el enlace ' <b> %s </b> '
-ErrorFailedToUpdateLink=Error al actualizar el enlace '<b> %s </b>'
-URLToLink=URL para vincular

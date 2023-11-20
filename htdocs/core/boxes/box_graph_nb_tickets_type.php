@@ -26,13 +26,13 @@
 require_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
 
 /**
- * Class to manage the box
+ * Class to manage the box to show number of ticket types
  */
 class box_graph_nb_tickets_type extends ModeleBoxes
 {
 
 	public $boxcode = "box_graph_nb_tickets_type";
-	public $boximg = "ticket";
+	public $boximg  = "ticket";
 	public $boxlabel;
 	public $depends = array("ticket");
 
@@ -83,7 +83,7 @@ class box_graph_nb_tickets_type extends ModeleBoxes
 		$listofopplabel = array();
 		$listofoppcode = array();
 		$colorseriesstat = array();
-		if ($user->rights->ticket->read) {
+		if ($user->hasRight('ticket', 'read')) {
 			$sql = "SELECT ctt.rowid, ctt.label, ctt.code";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "c_ticket_type as ctt";
 			$sql .= " WHERE ctt.active = 1";

@@ -51,7 +51,6 @@ if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'contrat', $id);
 
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -86,6 +85,8 @@ $hookmanager->initHooks(array('contractcard', 'globalcard'));
 
 $permissiontoadd = $user->hasRight('contrat', 'creer');	// Used by the include of actions_dellink.inc.php
 
+$result = restrictedArea($user, 'contrat', $object->id);
+
 
 /*
  * Actions
@@ -100,7 +101,10 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("Contract"), "");
+$title = $langs->trans("Contract");
+$help_url = 'EN:Module_Contracts|FR:Module_Contrat';
+
+llxHeader('', $title, $help_url);
 
 
 if ($object->id) {

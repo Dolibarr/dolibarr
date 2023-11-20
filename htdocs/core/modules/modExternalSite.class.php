@@ -103,7 +103,7 @@ class modExternalSite extends DolibarrModules
 			'fk_menu'=>0,
 			'type'=>'top',
 			'titre'=>'__[EXTERNALSITE_LABEL]__',
-			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em092"'),
+			'prefix' => img_picto('', $this->picto, 'class="pictofixedwidth em092"'),
 			'mainmenu'=>'externalsite',
 			'url'=>'/externalsite/frames.php',
 			'langs'=>'other',
