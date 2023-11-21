@@ -212,6 +212,9 @@ class CommandeFournisseur extends CommonOrder
 	public $origin_id;
 	public $linked_objects = array();
 
+	public $date_lim_reglement;
+	public $receptions = array();
+
 	// Multicurrency
 	/**
 	 * @var int ID
