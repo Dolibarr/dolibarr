@@ -1121,33 +1121,35 @@ if (empty($action) || $action == 'view') {
 		}
 
 		// Warranty
-		foreach ($tabwarranty[$key] as $k => $mt) {
-			print '<tr class="oddeven">';
-			print "<!-- Thirdparty warranty -->";
-			print "<td>".$date."</td>";
-			print "<td>".$invoicestatic->getNomUrl(1)."</td>";
-			// Account
-			print "<td>";
-			$accountoshow = length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY'));
-			if (($accountoshow == "") || $accountoshow == 'NotDefined') {
-				print '<span class="error">'.$langs->trans("MainAccountForRetainedWarrantyNotDefined").'</span>';
-			} else {
-				print $accountoshow;
+		if (is_iterable($tabwarranty[$key])) {
+			foreach ($tabwarranty[$key] as $k => $mt) {
+				print '<tr class="oddeven">';
+				print "<!-- Thirdparty warranty -->";
+				print "<td>" . $date . "</td>";
+				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
+				// Account
+				print "<td>";
+				$accountoshow = length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY'));
+				if (($accountoshow == "") || $accountoshow == 'NotDefined') {
+					print '<span class="error">' . $langs->trans("MainAccountForRetainedWarrantyNotDefined") . '</span>';
+				} else {
+					print $accountoshow;
+				}
+				print '</td>';
+				// Subledger account
+				print "<td>";
+				$accountoshow = length_accounta($k);
+				if (($accountoshow == "") || $accountoshow == 'NotDefined') {
+					print '<span class="error">' . $langs->trans("ThirdpartyAccountNotDefined") . '</span>';
+				} else {
+					print $accountoshow;
+				}
+				print '</td>';
+				print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("Retainedwarranty") . "</td>";
+				print '<td class="right nowraponall amount">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+				print '<td class="right nowraponall amount">' . ($mt < 0 ? price(-$mt) : '') . "</td>";
+				print "</tr>";
 			}
-			print '</td>';
-			// Subledger account
-			print "<td>";
-			$accountoshow = length_accounta($k);
-			if (($accountoshow == "") || $accountoshow == 'NotDefined') {
-				print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
-			} else {
-				print $accountoshow;
-			}
-			print '</td>';
-			print "<td>".$companystatic->getNomUrl(0, 'customer', 16).' - '.$invoicestatic->ref.' - '.$langs->trans("Retainedwarranty")."</td>";
-			print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
-			print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
-			print "</tr>";
 		}
 
 		// Third party
@@ -1266,28 +1268,30 @@ if (empty($action) || $action == 'view') {
 			}
 		}
 
-		// Warranty
-		foreach ($tabrevenuestamp[$key] as $k => $mt) {
-			print '<tr class="oddeven">';
-			print "<!-- Thirdparty revenuestamp -->";
-			print "<td>".$date."</td>";
-			print "<td>".$invoicestatic->getNomUrl(1)."</td>";
-			// Account
-			print "<td>";
-			$accountoshow = length_accountg($k);
-			if (($accountoshow == "") || $accountoshow == 'NotDefined') {
-				print '<span class="error">'.$langs->trans("MainAccountForRevenueStampSaleNotDefined").'</span>';
-			} else {
-				print $accountoshow;
+		// Revenue stamp
+		if (is_iterable($tabrevenuestamp[$key])) {
+			foreach ($tabrevenuestamp[$key] as $k => $mt) {
+				print '<tr class="oddeven">';
+				print "<!-- Thirdparty revenuestamp -->";
+				print "<td>" . $date . "</td>";
+				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
+				// Account
+				print "<td>";
+				$accountoshow = length_accountg($k);
+				if (($accountoshow == "") || $accountoshow == 'NotDefined') {
+					print '<span class="error">' . $langs->trans("MainAccountForRevenueStampSaleNotDefined") . '</span>';
+				} else {
+					print $accountoshow;
+				}
+				print '</td>';
+				// Subledger account
+				print "<td>";
+				print '</td>';
+				print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("RevenueStamp") . "</td>";
+				print '<td class="right nowraponall amount">' . ($mt < 0 ? price(-$mt) : '') . "</td>";
+				print '<td class="right nowraponall amount">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+				print "</tr>";
 			}
-			print '</td>';
-			// Subledger account
-			print "<td>";
-			print '</td>';
-			print "<td>".$companystatic->getNomUrl(0, 'customer', 16).' - '.$invoicestatic->ref.' - '.$langs->trans("RevenueStamp")."</td>";
-			print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
-			print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
-			print "</tr>";
 		}
 	}
 
