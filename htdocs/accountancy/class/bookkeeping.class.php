@@ -198,10 +198,6 @@ class BookKeeping extends CommonObject
 	public $picto = 'generic';
 
 	/**
-	 * @var array List of active fiscal periods cached [[date_start, date_end], ...]
-	 */
-	public static $active_fiscal_period_cached;
-	/**
 	 * @var string[]	SQL filter used for check if the bookkeeping record can be created/inserted/modified/deleted (cached)
 	 */
 	public static $can_modify_bookkeeping_sql_cached;
@@ -301,7 +297,11 @@ class BookKeeping extends CommonObject
 		if ($result < 0) {
 			return -1;
 		} elseif ($result == 0) {
-			$this->errors[] = $langs->trans('ErrorBookkeepingDocDateNotOnActiveFiscalPeriod');
+			if (getDolGlobalString('ACCOUNTANCY_FISCAL_PERIOD_MODE') == 'blockedonclosed') {
+				$this->errors[] = $langs->trans('ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod');
+			} else {
+				$this->errors[] = $langs->trans('ErrorBookkeepingDocDateNotOnActiveFiscalPeriod');
+			}
 			return -1;
 		}
 
@@ -654,7 +654,11 @@ class BookKeeping extends CommonObject
 		if ($result < 0) {
 			return -1;
 		} elseif ($result == 0) {
-			$this->errors[] = $langs->trans('ErrorBookkeepingDocDateNotOnActiveFiscalPeriod');
+			if (getDolGlobalString('ACCOUNTANCY_FISCAL_PERIOD_MODE') == 'blockedonclosed') {
+				$this->errors[] = $langs->trans('ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod');
+			} else {
+				$this->errors[] = $langs->trans('ErrorBookkeepingDocDateNotOnActiveFiscalPeriod');
+			}
 			return -1;
 		}
 
@@ -1372,7 +1376,11 @@ class BookKeeping extends CommonObject
 		if ($result < 0) {
 			return -1;
 		} elseif ($result == 0) {
-			$this->errors[] = $langs->trans('ErrorBookkeepingDocDateNotOnActiveFiscalPeriod');
+			if (getDolGlobalString('ACCOUNTANCY_FISCAL_PERIOD_MODE') == 'blockedonclosed') {
+				$this->errors[] = $langs->trans('ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod');
+			} else {
+				$this->errors[] = $langs->trans('ErrorBookkeepingDocDateNotOnActiveFiscalPeriod');
+			}
 			return -1;
 		}
 
@@ -1497,7 +1505,11 @@ class BookKeeping extends CommonObject
 		if ($result < 0) {
 			return -1;
 		} elseif ($result == 0) {
-			$this->errors[] = $langs->trans('ErrorBookkeepingDocDateNotOnActiveFiscalPeriod');
+			if (getDolGlobalString('ACCOUNTANCY_FISCAL_PERIOD_MODE') == 'blockedonclosed') {
+				$this->errors[] = $langs->trans('ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod');
+			} else {
+				$this->errors[] = $langs->trans('ErrorBookkeepingDocDateNotOnActiveFiscalPeriod');
+			}
 			return -1;
 		}
 
@@ -2264,18 +2276,20 @@ class BookKeeping extends CommonObject
 	 */
 	public function getCanModifyBookkeepingSQL($alias = '', $force = false)
 	{
+		global $conf;
+
 		$alias = trim($alias);
 		$alias = !empty($alias) && strpos($alias, '.') < 0 ? $alias . "." : $alias;
 
 		if (!isset(self::$can_modify_bookkeeping_sql_cached[$alias]) || $force) {
-			$result = $this->loadActiveFiscalPeriods($force);
+			$result = $this->loadFiscalPeriods($force, 'active');
 			if ($result < 0) {
 				return null;
 			}
 
 			$sql_list = array();
-			if (is_array(self::$active_fiscal_period_cached)) {
-				foreach (self::$active_fiscal_period_cached as $fiscal_period) {
+			if (!empty($conf->cache['active_fiscal_period_cached']) && is_array($conf->cache['active_fiscal_period_cached'])) {
+				foreach ($conf->cache['active_fiscal_period_cached'] as $fiscal_period) {
 					$sql_list[] = "('" . $this->db->idate($fiscal_period['date_start']) . "' <= {$alias}doc_date AND {$alias}doc_date <= '" . $this->db->idate($fiscal_period['date_end']) . "')";
 				}
 			}
@@ -2293,82 +2307,154 @@ class BookKeeping extends CommonObject
 	 */
 	public function canModifyBookkeeping($id)
 	{
-		$result = $this->loadActiveFiscalPeriods();
-		if ($result < 0) {
-			return -1;
-		}
+		global $conf;
 
-		$bookkeeping = new BookKeeping($this->db);
-		$result = $bookkeeping->fetch($id);
-		if ($result <= 0) {
-			return $result;
-		}
+		if (getDolGlobalString('ACCOUNTANCY_FISCAL_PERIOD_MODE') == 'blockedonclosed') {
+			$result = $this->loadFiscalPeriods(false, 'closed');
 
-		if (is_array(self::$active_fiscal_period_cached)) {
-			foreach (self::$active_fiscal_period_cached as $fiscal_period) {
-				if ($fiscal_period['date_start'] <= $bookkeeping->doc_date && $bookkeeping->doc_date <= $fiscal_period['date_end']) {
-					return 1;
+			if ($result < 0) {
+				return -1;
+			}
+
+			$bookkeeping = new BookKeeping($this->db);
+			$result = $bookkeeping->fetch($id);
+			if ($result <= 0) {
+				return $result;
+			}
+
+			if (!empty($conf->cache['closed_fiscal_period_cached']) && is_array($conf->cache['closed_fiscal_period_cached'])) {
+				foreach ($conf->cache['closed_fiscal_period_cached'] as $fiscal_period) {
+					if ($fiscal_period['date_start'] <= $bookkeeping->doc_date && $bookkeeping->doc_date <= $fiscal_period['date_end']) {
+						return 0;
+					}
 				}
 			}
-		}
 
-		return 0;
+			return 1;
+		} else {
+			$result = $this->loadFiscalPeriods(false, 'active');
+			if ($result < 0) {
+				return -1;
+			}
+
+			$bookkeeping = new BookKeeping($this->db);
+			$result = $bookkeeping->fetch($id);
+			if ($result <= 0) {
+				return $result;
+			}
+
+			if (!empty($conf->cache['active_fiscal_period_cached']) && is_array($conf->cache['active_fiscal_period_cached'])) {
+				foreach ($conf->cache['active_fiscal_period_cached'] as $fiscal_period) {
+					if ($fiscal_period['date_start'] <= $bookkeeping->doc_date && $bookkeeping->doc_date <= $fiscal_period['date_end']) {
+						return 1;
+					}
+				}
+			}
+
+			return 0;
+		}
 	}
 
 	/**
-	 * Is the bookkeeping date is valid ?
+	 * Is the bookkeeping date valid (on an open period or not on a closed period) ?
 	 *
 	 * @param 	int		$date		Bookkeeping date
-	 * @return 	int					<0 if KO, == 0 if No, == 1 if Yes
+	 * @return 	int					<0 if KO, == 0 if No, == 1 if date is valid for a transfer
 	 */
 	public function validBookkeepingDate($date)
 	{
-		$result = $this->loadActiveFiscalPeriods();
-		if ($result < 0) {
-			return -1;
-		}
+		global $conf;
 
-		if (is_array(self::$active_fiscal_period_cached)) {
-			foreach (self::$active_fiscal_period_cached as $fiscal_period) {
-				if ($fiscal_period['date_start'] <= $date && $date <= $fiscal_period['date_end']) {
-					return 1;
+		if (getDolGlobalString('ACCOUNTANCY_FISCAL_PERIOD_MODE') == 'blockedonclosed') {
+			$result = $this->loadFiscalPeriods(false, 'closed');
+
+			if ($result < 0) {
+				return -1;
+			}
+
+			if (!empty($conf->cache['closed_fiscal_period_cached']) && is_array($conf->cache['closed_fiscal_period_cached'])) {
+				foreach ($conf->cache['closed_fiscal_period_cached'] as $fiscal_period) {
+					if ($fiscal_period['date_start'] <= $date && $date <= $fiscal_period['date_end']) {
+						return 0;
+					}
 				}
 			}
-		}
 
-		return 0;
+			return 1;
+		} else {
+			$result = $this->loadFiscalPeriods(false, 'active');
+			if ($result < 0) {
+				return -1;
+			}
+
+			if (!empty($conf->cache['active_fiscal_period_cached']) && is_array($conf->cache['active_fiscal_period_cached'])) {
+				foreach ($conf->cache['active_fiscal_period_cached'] as $fiscal_period) {
+					if ($fiscal_period['date_start'] <= $date && $date <= $fiscal_period['date_end']) {
+						return 1;
+					}
+				}
+			}
+
+			return 0;
+		}
 	}
 
 	/**
 	 * Load list of active fiscal period
 	 *
 	 * @param 	bool	$force		Force reload
+	 * @param	string	$mode		active or closed ?
 	 * @return 	int					<0 if KO, >0 if OK
 	 */
-	public function loadActiveFiscalPeriods($force = false)
+	public function loadFiscalPeriods($force = false, $mode = 'active')
 	{
 		global $conf;
 
-		if (!isset(self::$active_fiscal_period_cached) || $force) {
-			$sql = "SELECT date_start, date_end";
-			$sql .= " FROM " . $this->db->prefix() . "accounting_fiscalyear";
-			$sql .= " WHERE entity = " . ((int) $conf->entity);
-			$sql .= " AND statut = 0";
+		if ($mode == 'active') {
+			if (!isset($conf->cache['active_fiscal_period_cached']) || $force) {
+				$sql = "SELECT date_start, date_end";
+				$sql .= " FROM " . $this->db->prefix() . "accounting_fiscalyear";
+				$sql .= " WHERE entity = " . ((int) $conf->entity);
+				$sql .= " AND statut = 0";
 
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$this->errors[] = $this->db->lasterror();
-				return -1;
-			}
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$this->errors[] = $this->db->lasterror();
+					return -1;
+				}
 
-			$list = array();
-			while ($obj = $this->db->fetch_object($resql)) {
-				$list[] = array(
-					'date_start' => $this->db->jdate($obj->date_start),
-					'date_end' => $this->db->jdate($obj->date_end),
-				);
+				$list = array();
+				while ($obj = $this->db->fetch_object($resql)) {
+					$list[] = array(
+						'date_start' => $this->db->jdate($obj->date_start),
+						'date_end' => $this->db->jdate($obj->date_end),
+					);
+				}
+				$conf->cache['active_fiscal_period_cached'] = $list;
 			}
-			self::$active_fiscal_period_cached = $list;
+		}
+		if ($mode == 'closed') {
+			if (!isset($conf->cache['closed_fiscal_period_cached']) || $force) {
+				$sql = "SELECT date_start, date_end";
+				$sql .= " FROM " . $this->db->prefix() . "accounting_fiscalyear";
+				$sql .= " WHERE entity = " . ((int) $conf->entity);
+				$sql .= " AND statut = 1";
+
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$this->errors[] = $this->db->lasterror();
+					return -1;
+				}
+
+				$list = array();
+				while ($obj = $this->db->fetch_object($resql)) {
+					$list[] = array(
+						'date_start' => $this->db->jdate($obj->date_start),
+						'date_end' => $this->db->jdate($obj->date_end),
+					);
+				}
+				$conf->cache['closed_fiscal_period_cached'] = $list;
+			}
 		}
 
 		return 1;
