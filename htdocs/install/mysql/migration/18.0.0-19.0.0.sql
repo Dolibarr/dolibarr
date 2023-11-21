@@ -93,6 +93,7 @@ ALTER TABLE llx_user ADD COLUMN email_oauth2 varchar(255);
 
 ALTER TABLE llx_prelevement_demande ADD INDEX idx_prelevement_demande_ext_payment_id (ext_payment_id);
 
+ALTER TABLE llx_actioncomm CHANGE COLUMN fk_bookcal_availability fk_bookcal_calendar integer;
 ALTER TABLE llx_actioncomm ADD COLUMN fk_bookcal_calendar integer DEFAULT NULL;
 
 ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_entity (entity);
