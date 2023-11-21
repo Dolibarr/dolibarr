@@ -442,24 +442,34 @@ abstract class CommonObject
 	 */
 	public $shipping_method;
 
+	// Multicurrency
 	/**
-	 * @var string multicurrency code
+	 * @var int ID
+	 */
+	public $fk_multicurrency;
+
+	/**
+	 * @var string Multicurrency code
 	 */
 	public $multicurrency_code;
+
 	/**
-	 * @var string multicurrency tx
+	 * @var float Multicurrency rate
 	 */
 	public $multicurrency_tx;
+
 	/**
-	 * @var string multicurrency total_ht
+	 * @var float Multicurrency total without tax
 	 */
 	public $multicurrency_total_ht;
+
 	/**
-	 * @var string multicurrency total_tva
+	 * @var float Multicurrency total vat
 	 */
 	public $multicurrency_total_tva;
+
 	/**
-	 * @var string multicurrency total_ttc
+	 * @var float Multicurrency total with tax
 	 */
 	public $multicurrency_total_ttc;
 
