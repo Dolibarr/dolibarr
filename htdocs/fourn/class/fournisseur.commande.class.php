@@ -212,7 +212,6 @@ class CommandeFournisseur extends CommonOrder
 	public $origin_id;
 	public $linked_objects = array();
 
-	public $rang;
 	public $date_lim_reglement;
 	public $receptions = array();
 
