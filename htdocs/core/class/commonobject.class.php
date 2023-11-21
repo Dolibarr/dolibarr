@@ -10293,6 +10293,7 @@ abstract class CommonObject
 		);
 		foreach ($fields as $key => $value) {
 			if (array_key_exists($key, $this->fields)) {
+				// @phpstan-ignore-next-line
 				$this->{$key} = $value;
 			}
 		}
