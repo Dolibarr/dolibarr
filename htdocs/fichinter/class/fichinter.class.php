@@ -186,15 +186,15 @@ class Fichinter extends CommonObject
 
 	/**
 	 * Date delivery
-	 * @var string
+	 * @var string|int		Delivery int
 	 */
-	public string $date_delivery;
+	public $date_delivery;
 
 	/**
 	 * Author Id
 	 * @var int
 	 */
-	public int $user_author_id;
+	public $user_author_id;
 
 
 	/**

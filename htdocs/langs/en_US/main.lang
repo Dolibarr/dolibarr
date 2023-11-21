@@ -1082,6 +1082,7 @@ CommentPage=Comments space
 CommentAdded=Comment added
 CommentDeleted=Comment deleted
 Everybody=Everybody
+EverybodySmall=Everybody
 PayedBy=Paid by
 PayedTo=Paid to
 Monthly=Monthly
@@ -1256,3 +1257,6 @@ URLToLink=URL to link
 OverwriteIfExists=Overwrite if file exists
 AmountSalary=Salary amount
 InvoiceSubtype=Invoice subtype
+ConfirmMassReverse=Bulk Reverse confirmation
+ConfirmMassReverseQuestion=Are you sure you want to reverse the %s selected record(s)?
+

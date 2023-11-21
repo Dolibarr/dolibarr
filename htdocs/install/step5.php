@@ -366,6 +366,11 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 					dol_print_error($db, 'Error in setup program');
 				}
 
+				// May fail if parameter already defined
+				dolibarr_install_syslog('step5: set the default language');
+				$resql = $db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) VALUES (".$db->encrypt('MAIN_LANG_DEFAULT').", ".$db->encrypt($setuplang).", 'chaine', 0, 'Default language', 1)");
+				//if (! $resql) dol_print_error($db,'Error in setup program');
+
 				$db->commit();
 			}
 		} else {
@@ -414,11 +419,6 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 					dol_print_error($db, 'Error in setup program');
 				}
 			}
-
-			// May fail if parameter already defined
-			dolibarr_install_syslog('step5: set the default language');
-			$resql = $db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) VALUES (".$db->encrypt('MAIN_LANG_DEFAULT').", ".$db->encrypt($setuplang).", 'chaine', 0, 'Default language', 1)");
-			//if (! $resql) dol_print_error($db,'Error in setup program');
 		} else {
 			print $langs->trans("ErrorFailedToConnect")."<br>";
 		}

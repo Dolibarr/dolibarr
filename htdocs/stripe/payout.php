@@ -55,7 +55,6 @@ $pagenext = $page + 1;
 $optioncss = GETPOST('optioncss', 'alpha');
 $param = "";
 $num = 0;
-$totalnboflines = 0;
 
 $result = restrictedArea($user, 'banque');
 
@@ -84,6 +83,9 @@ $stripeacc = $stripe->getStripeAccount($service);
 {
 	print $langs->trans('ErrorStripeAccountNotDefined');
 }*/
+
+$moreforfilter = '';
+$totalnboflines = -1;
 
 if (!$rowid) {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
