@@ -682,8 +682,8 @@ if ($num > 0) {
 		}
 		print '</td>';
 
-		// Next run
-		print '<td class="center minwidth100">';
+		// Next run date
+		print '<td class="center nowraponall">';
 		if (!empty($obj->datenextrun)) {
 			$datenextrun = $db->jdate($obj->datenextrun);
 			if (empty($obj->status)) {

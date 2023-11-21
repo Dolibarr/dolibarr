@@ -1502,8 +1502,12 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			} else {
 				$textwasnotmodified = ($desc == $prodser->description);
 			}
-			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["description"]) && ($textwasnotmodified || $translatealsoifmodified)) {
-				$desc = $prodser->multilangs[$outputlangs->defaultlang]["description"];
+			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["description"])) {
+				if ($textwasnotmodified) {
+					$desc = str_replace($prodser->description, $prodser->multilangs[$outputlangs->defaultlang]["description"], $desc);
+				} elseif ($translatealsoifmodified) {
+					$desc = $prodser->multilangs[$outputlangs->defaultlang]["description"];
+				}
 			}
 
 			// Set note
