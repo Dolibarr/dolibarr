@@ -71,20 +71,20 @@ class DolGeoIP
 			}
 		} else {
 			print 'ErrorBadParameterInConstructor';
-			return 0;
+			return;
 		}
 
 		// Here, function exists (embedded into PHP or exists because we made include)
 		if (empty($type) || empty($datfile)) {
 			$this->errorlabel = 'Constructor was called with no datafile parameter';
 			dol_syslog('DolGeoIP '.$this->errorlabel, LOG_ERR);
-			return 0;
+			return;
 		}
 		if (!file_exists($datfile) || !is_readable($datfile)) {
 			$this->error = 'ErrorGeoIPClassNotInitialized';
 			$this->errorlabel = "Datafile ".$datfile." not found";
 			dol_syslog('DolGeoIP '.$this->errorlabel, LOG_ERR);
-			return 0;
+			return;
 		}
 
 		if ($geoipversion == '2') {
@@ -93,7 +93,7 @@ class DolGeoIP
 			} catch (Exception $e) {
 				$this->error = $e->getMessage();
 				dol_syslog('DolGeoIP '.$this->errorlabel, LOG_ERR);
-				return 0;
+				return;
 			}
 		} elseif (function_exists('geoip_open') && defined('GEOIP_STANDARD')) {
 			$this->gi = geoip_open($datfile, constant('GEOIP_STANDARD'));

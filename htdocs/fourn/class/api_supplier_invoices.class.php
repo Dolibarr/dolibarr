@@ -24,7 +24,7 @@ require_once DOL_DOCUMENT_ROOT . '/fourn/class/paiementfourn.class.php';
 /**
  * API class for supplier invoices
  *
- * @property DoliDB db
+ * @property DoliDB $db
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
