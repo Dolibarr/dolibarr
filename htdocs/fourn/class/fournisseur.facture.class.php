@@ -229,17 +229,6 @@ class FactureFournisseur extends CommonInvoice
 	 */
 	public $fournisseur;
 
-	// Multicurrency
-	/**
-	 * @var int ID
-	 */
-	public $fk_multicurrency;
-
-	public $multicurrency_code;
-	public $multicurrency_tx;
-	public $multicurrency_total_ht;
-	public $multicurrency_total_tva;
-	public $multicurrency_total_ttc;
 	//! id of source invoice if replacement invoice or credit note
 	/**
 	 * @var int ID
@@ -3614,18 +3603,6 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 */
 	public $localtax2_type;
 
-	// Multicurrency
-	/**
-	 * @var int ID
-	 */
-	public $fk_multicurrency;
-
-	public $multicurrency_code;
-	public $multicurrency_subprice;
-	public $multicurrency_total_ht;
-	public $multicurrency_total_tva;
-	public $multicurrency_total_ttc;
-
 
 	/**
 	 *	Constructor
@@ -3908,12 +3885,13 @@ class SupplierInvoiceLine extends CommonObjectLine
 	/**
 	 *	Insert line into database
 	 *
-	 *	@param      int		$notrigger		1 no triggers
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@param      int		$notrigger							1 no triggers
+	 *  @param      int     $noerrorifdiscountalreadylinked  	1=Do not make error if lines is linked to a discount and discount already linked to another
+	 *	@return		int											<0 if KO, >0 if OK
 	 */
-	public function insert($notrigger = 0)
+	public function insert($notrigger = 0, $noerrorifdiscountalreadylinked = 0)
 	{
-		global $user, $conf, $langs;
+		global $user, $langs;
 
 		$error = 0;
 

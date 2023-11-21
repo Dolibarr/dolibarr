@@ -122,14 +122,6 @@ class FactureFournisseurRec extends CommonInvoice
 
 	public $date_lim_reglement;
 
-	public $fk_multicurrency;
-	public $multicurrency_code;
-	public $multicurrency_tx;
-	public $multicurrency_subprice;
-	public $multicurrency_total_ht;
-	public $multicurrency_total_tva;
-	public $multicurrency_total_ttc;
-
 	public $usenewprice = 0;
 	public $frequency;
 	public $unit_frequency;
@@ -2022,7 +2014,6 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 
 	public $fk_user_author;
 	public $fk_user_modif;
-	public $fk_multicurrency;
 
 
 	/**
