@@ -41,12 +41,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonphoto.class.php';
 
 /**
  * Class to manage products or services
  */
 class Product extends CommonObject
 {
+	use CommonPhoto;
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -453,8 +455,6 @@ class Product extends CommonObject
 
 	//! Product ID already linked to a reference supplier
 	public $product_id_already_linked;
-
-	public $nbphoto = 0;
 
 	//! Contains detail of stock of product into each warehouse
 	public $stock_warehouse = array();

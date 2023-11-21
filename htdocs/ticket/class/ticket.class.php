@@ -30,13 +30,14 @@
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
-
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonphoto.class.php';
 
 /**
  *    Class to manage ticket
  */
 class Ticket extends CommonObject
 {
+	use CommonPhoto;
 
 	/**
 	 * @var DoliDb Database handler
