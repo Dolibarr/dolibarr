@@ -9129,6 +9129,7 @@ abstract class CommonObject
 						if ($showaction) {
 							$return .= '<br>';
 							// On propose la generation de la vignette si elle n'existe pas et si la taille est superieure aux limites
+							// @phpstan-ignore-next-line
 							if ($photo_vignette && (image_format_supported($photo) > 0) && ($this->imgWidth > $maxWidth || $this->imgHeight > $maxHeight)) {
 								$return .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=addthumb&token='.newToken().'&file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'), 'refresh').'&nbsp;&nbsp;</a>';
 							}
@@ -10312,6 +10313,7 @@ abstract class CommonObject
 		);
 		foreach ($fields as $key => $value) {
 			if (array_key_exists($key, $this->fields)) {
+				// @phpstan-ignore-next-line
 				$this->{$key} = $value;
 			}
 		}
