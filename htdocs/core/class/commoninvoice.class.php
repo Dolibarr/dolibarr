@@ -94,10 +94,29 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public $fk_multicurrency;
 
+	/**
+	 * @var string Multicurrency code
+	 */
 	public $multicurrency_code;
-	public $multicurrency_tx;
+
+	/**
+	 * @var float Multicurrency subprice
+	 */
+	public $multicurrency_subprice;
+
+	/**
+	 * @var float Multicurrency total without tax
+	 */
 	public $multicurrency_total_ht;
+
+	/**
+	 * @var float Multicurrency total vat
+	 */
 	public $multicurrency_total_tva;
+
+	/**
+	 * @var float Multicurrency total with tax
+	 */
 	public $multicurrency_total_ttc;
 
 	/**
@@ -1984,11 +2003,34 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 
 	public $special_code = 0;
 
+	/**
+	 * @var int multicurrency id
+	 */
 	public $fk_multicurrency;
+
+	/**
+	 * @var string Multicurrency code
+	 */
 	public $multicurrency_code;
+
+	/**
+	 * @var float Multicurrency subprice
+	 */
 	public $multicurrency_subprice;
+
+	/**
+	 * @var float Multicurrency total without tax
+	 */
 	public $multicurrency_total_ht;
+
+	/**
+	 * @var float Multicurrency total vat
+	 */
 	public $multicurrency_total_tva;
+
+	/**
+	 * @var float Multicurrency total with tax
+	 */
 	public $multicurrency_total_ttc;
 
 	public $fk_user_author;
