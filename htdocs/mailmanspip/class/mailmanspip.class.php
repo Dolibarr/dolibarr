@@ -287,7 +287,7 @@ class MailmanSpip
 	 *  Subscribe an email to all mailing-lists
 	 *
 	 *	@param	Adherent	$object		Object with data (->email, ->pass, ->element, ->type)
-	 *  @param	array		$listes    	To force mailing-list (string separated with ,)
+	 *  @param	string		$listes    	To force mailing-list (string separated with ,)
 	 *  @return	int		  				<0 if KO, >=0 if OK
 	 */
 	public function add_to_mailman($object, $listes = '')
@@ -357,8 +357,8 @@ class MailmanSpip
 	 *  Used when a user is resiliated
 	 *
 	 *	@param	Adherent	$object		Object with data (->email, ->pass, ->element, ->type)
-	 *  @param	array	$listes     To force mailing-list (string separated with ,)
-	 *  @return int         		<0 if KO, >=0 if OK
+	 *  @param	string	    $listes     To force mailing-list (string separated with ,)
+	 *  @return int         		    <0 if KO, >=0 if OK
 	 */
 	public function del_to_mailman($object, $listes = '')
 	{

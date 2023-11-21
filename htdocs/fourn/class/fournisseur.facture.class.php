@@ -229,17 +229,6 @@ class FactureFournisseur extends CommonInvoice
 	 */
 	public $fournisseur;
 
-	// Multicurrency
-	/**
-	 * @var int ID
-	 */
-	public $fk_multicurrency;
-
-	public $multicurrency_code;
-	public $multicurrency_tx;
-	public $multicurrency_total_ht;
-	public $multicurrency_total_tva;
-	public $multicurrency_total_ttc;
 	//! id of source invoice if replacement invoice or credit note
 	/**
 	 * @var int ID
@@ -3622,18 +3611,6 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 * @var float tva npr
 	 */
 	public $tva_npr;
-
-	// Multicurrency
-	/**
-	 * @var int ID
-	 */
-	public $fk_multicurrency;
-
-	public $multicurrency_code;
-	public $multicurrency_subprice;
-	public $multicurrency_total_ht;
-	public $multicurrency_total_tva;
-	public $multicurrency_total_ttc;
 
 
 	/**
