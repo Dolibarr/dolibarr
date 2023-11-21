@@ -295,7 +295,6 @@ class CActionComm
                                 $TModule['id'][$idforallfornewmodule] = $langs->trans("ActionAC_ALL_".strtoupper($module));
                                 $TModule['code']['AC_ALL_'.strtoupper($module)] = '-- '.$langs->trans("Module").' '.ucfirst($module);
 							}
-
 						}
                         if($typecalendar == 'system' || $typecalendar == 'user') {
                             $TSystem['id'][$obj->id] = $label;
