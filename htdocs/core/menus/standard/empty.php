@@ -39,6 +39,8 @@ class MenuManager
 
 	public $tabMenu;
 
+	public $topmenu;
+	public $leftmenu;
 
 	/**
 	 *  Constructor
@@ -218,8 +220,7 @@ class MenuManager
 
 					$canonrelurl = preg_replace('/\?.*$/', '', $relurl);
 					$canonnexturl = preg_replace('/\?.*$/', '', $nexturl);
-					//var_dump($canonrelurl);
-					//var_dump($canonnexturl);
+
 					print '<ul>'."\n";
 					if (($canonrelurl != $canonnexturl && !in_array($val['mainmenu'], array('tools')))
 						|| (strpos($canonrelurl, '/product/index.php') !== false || strpos($canonrelurl, '/compta/bank/list.php') !== false)) {
@@ -305,8 +306,6 @@ class MenuManager
 									$lastlevel2[$val2['level']] = 'greyed';
 								}
 							}
-							//var_dump($val2['level']);
-							//var_dump($lastlevel2);
 							print $val2['titre'];
 							if ($relurl2) {
 								if ($val2['enabled']) {
@@ -320,7 +319,6 @@ class MenuManager
 							print '</li>'."\n";
 						}
 					}
-					//var_dump($submenu);
 					print '</ul>';
 				}
 				if ($val['enabled'] == 2) {
