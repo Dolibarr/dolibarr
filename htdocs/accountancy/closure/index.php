@@ -269,12 +269,18 @@ if (empty($reshook)) {
 print $formconfirm;
 
 $fiscal_period_nav_text = $langs->trans("FiscalPeriod");
+
 $fiscal_period_nav_text .= '&nbsp;<a href="' . (isset($last_fiscal_period) ? $_SERVER["PHP_SELF"] . '?fiscal_period_id=' . $last_fiscal_period['id'] : '#" class="disabled') . '">' . img_previous() . '</a>';
 $fiscal_period_nav_text .= '&nbsp;<a href="' . (isset($next_fiscal_period) ? $_SERVER["PHP_SELF"] . '?fiscal_period_id=' . $next_fiscal_period['id'] : '#" class="disabled') . '">' . img_next() . '</a>';
-$fiscal_period_nav_text .= '&nbsp;:&nbsp;' . (isset($current_fiscal_period) ? $current_fiscal_period['label'] : $langs->trans('ErrorNoFiscalPeriodActiveFound'));
-$fiscal_period_nav_text .= '&nbsp;(' . (isset($current_fiscal_period) ? dol_print_date($current_fiscal_period['date_start'], 'day') . '&nbsp;-&nbsp;' . dol_print_date($current_fiscal_period['date_end'], 'day') . ')' : '');
+if (!empty($current_fiscal_period)) {
+	$fiscal_period_nav_text .= $current_fiscal_period['label'].' &nbsp;(' . (isset($current_fiscal_period) ? dol_print_date($current_fiscal_period['date_start'], 'day') . '&nbsp;-&nbsp;' . dol_print_date($current_fiscal_period['date_end'], 'day') . ')' : '');
+}
 
 print load_fiche_titre($langs->trans("Closure") . " - " . $fiscal_period_nav_text, '', 'title_accountancy');
+
+if (empty($current_fiscal_period)) {
+	print $langs->trans('ErrorNoFiscalPeriodActiveFound');
+}
 
 if (isset($current_fiscal_period)) {
 	// Step 1

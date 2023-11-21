@@ -231,6 +231,7 @@ WARNING:
 --------
 
 The following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* The hook changeHelpURL is replaced by llxHeader
 * The property ->brouillon has been removed from all classes. It was not reliable and was a duplicate of ->status == self::STATUS_DRAFT.
 * The duplicated and deprecated property ->date_livraison that was renamed into ->delivery_date has been completely removed.
 * The property ->user_close to store ID of closing user has been renamed into ->user_closing_id.
@@ -245,7 +246,7 @@ The following changes may create regressions for some external modules, but were
 * It was possible to use a variable $soc or $right inside a PHP code condition of some extrafields properties, this is no more true (this 2 variables are no more global variables).
 * New hook files of modules actions_mymodule.class.php should now "extends CommonHookActions"
 * Endpoint for API /partnershipapi and /recruitment has been renamed into /partnerships and /recruitments to follow name conventions.
-
+* Hidden option ACCOUNTANCY_AUTOFIX_MISSING_LINK_TO_USEr_ON_SALARY_BANK_PAYMENT has been renamed into ACCOUNTANCY_AUTOFIX_MISSING_LINK_TO_USER_ON_SALARY_BANK_PAYMENT
 
 ***** ChangeLog for 18.0.3 compared to 18.0.2 *****
 FIX: #25793 Cannot add time spent (#26405)
