@@ -201,13 +201,12 @@ class FactureFournisseur extends CommonInvoice
 	public $total_ttc;
 
 	/**
+	 * @var float
 	 * @deprecated
-	 * @see $note_private, $note_public
+	 * @see $total_ht
 	 */
-	public $note;
+	public $amount_ht;
 
-	public $note_private;
-	public $note_public;
 	public $propalid;
 
 	/**
