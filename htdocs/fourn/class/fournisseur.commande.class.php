@@ -3706,7 +3706,6 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	public function __construct($db)
 	{
 		$this->db = $db;
-		$this->fk_parent_line =0;
 	}
 
 	/**
