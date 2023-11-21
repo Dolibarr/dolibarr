@@ -213,24 +213,12 @@ class CommandeFournisseur extends CommonOrder
 	public $linked_objects = array();
 
 	public $date_lim_reglement;
-	public $receptions = array();
-
-	// Multicurrency
-	/**
-	 * @var int ID
-	 */
-	public $fk_multicurrency;
-
-	public $multicurrency_code;
-	public $multicurrency_tx;
-	public $multicurrency_total_ht;
-	public $multicurrency_total_tva;
-	public $multicurrency_total_ttc;
 
 	/**
 	 * @var array
 	 */
-	public $receptions;
+	public $receptions = array();
+
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:Sortfield]]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -479,9 +467,9 @@ class CommandeFournisseur extends CommonOrder
 			$this->label_incoterms = $obj->label_incoterms;
 
 			// Multicurrency
-			$this->fk_multicurrency 		= $obj->fk_multicurrency;
+			$this->fk_multicurrency = $obj->fk_multicurrency;
 			$this->multicurrency_code = $obj->multicurrency_code;
-			$this->multicurrency_tx 		= $obj->multicurrency_tx;
+			$this->multicurrency_tx = $obj->multicurrency_tx;
 			$this->multicurrency_total_ht = $obj->multicurrency_total_ht;
 			$this->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
 			$this->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
