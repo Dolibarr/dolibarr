@@ -51,6 +51,16 @@ if (!$user->admin) {
 
 $error = 0;
 
+// Logo small - Variable by default
+$maxwidthsmall = '160';
+$maxheightsmall = '120';
+$qualitysmall = '50';
+
+// Logo mini - Variable by default
+$maxwidthmini = '160';
+$maxheightmini = '120';
+$qualitymini = '50';
+
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('admincompany', 'globaladmin'));
 
@@ -145,9 +155,6 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 
 
 						// Create small thumb, Used on logon for example
-						$maxwidthsmall = '160';
-						$maxheightsmall = '120';
-						$qualitysmall = '50';
 						$imgThumbSmall = vignette($dirforimage.$original_file, $maxwidthsmall, $maxheightsmall, '_small', $qualitysmall);
 						if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i', $imgThumbSmall, $reg)) {
 							$imgThumbSmall = $reg[1]; // Save only basename
@@ -157,9 +164,6 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 						}
 
 						// Create mini thumb, Used on menu or for setup page for example
-						$maxwidthmini = '160';
-						$maxheightmini = '120';
-						$qualitymini = '50';
 						$imgThumbMini = vignette($dirforimage.$original_file, $maxwidthmini, $maxheightmini, '_mini', $qualitymini);
 						if (image_format_supported($imgThumbMini) >= 0 && preg_match('/([^\\/:]+)$/i', $imgThumbMini, $reg)) {
 							$imgThumbMini = $reg[1]; // Save only basename
@@ -288,9 +292,6 @@ if ($action == 'addthumb' || $action == 'addthumbsquarred') {  // Regenerate thu
 			//$object->addThumbs($newfile);    // We can't use addThumbs here yet because we need name of generated thumbs to add them into constants. TODO Check if need such constants. We should be able to retrieve value with get...
 
 			// Create small thumb. Used on logon for example
-			$maxwidthsmall = '160';
-			$maxheightsmall = '120';
-			$qualitysmall = '50';
 			$imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.$_GET["file"], $maxwidthsmall, $maxheightsmall, '_small', $qualitysmall);
 			if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i', $imgThumbSmall, $reg)) {
 				$imgThumbSmall = $reg[1]; // Save only basename
@@ -300,9 +301,6 @@ if ($action == 'addthumb' || $action == 'addthumbsquarred') {  // Regenerate thu
 			}
 
 			// Create mini thumbs. Used on menu or for setup page for example
-			$maxwidthmini = '160';
-			$maxheightmini = '120';
-			$qualitymini = '50';
 			$imgThumbMini = vignette($conf->mycompany->dir_output.'/logos/'.$_GET["file"], $maxwidthmini, $maxheightmini, '_mini', $qualitymini);
 			if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i', $imgThumbMini, $reg)) {
 				$imgThumbMini = $reg[1]; // Save only basename
@@ -529,9 +527,9 @@ if (!empty($mysoc->logo_small)) {
 		print '</div>';
 	} elseif (!empty($mysoc->logo)) {
 		if (!file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini)) {
-			$imgThumbMini = vignette($conf->mycompany->dir_output.'/logos/'.$mysoc->logo, $maxwidthmini, $maxheightmini, '_mini', $quality);
+			$imgThumbMini = vignette($conf->mycompany->dir_output.'/logos/'.$mysoc->logo, $maxwidthmini, $maxheightmini, '_mini', $qualitymini);
 		}
-		$imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.$mysoc->logo, $maxwidthmini, $maxheightmini, '_small', $quality);
+		$imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.$mysoc->logo, $maxwidthmini, $maxheightmini, '_small', $qualitymini);
 		print '<div class="inline-block valignmiddle">';
 		print '<img style="max-height: 80px; max-width: 200px;" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.basename($imgThumbSmall)).'">';
 		print '</div>';
@@ -571,9 +569,9 @@ if (!empty($mysoc->logo_squarred_small)) {
 		print '</div>';
 	} elseif (!empty($mysoc->logo_squarred)) {
 		if (!file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_mini)) {
-			$imgThumbMini = vignette($conf->mycompany->dir_output.'/logos/'.$mysoc->logo_squarred, $maxwidthmini, $maxheightmini, '_mini', $quality);
+			$imgThumbMini = vignette($conf->mycompany->dir_output.'/logos/'.$mysoc->logo_squarred, $maxwidthmini, $maxheightmini, '_mini', $qualitymini);
 		}
-		$imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.$mysoc->logo_squarred, $maxwidthmini, $maxheightmini, '_small', $quality);
+		$imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.$mysoc->logo_squarred, $maxwidthmini, $maxheightmini, '_small', $qualitymini);
 		print '<div class="inline-block valignmiddle">';
 		print '<img style="max-height: 80px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&file='.urlencode('logos/thumbs/'.basename($imgThumbSmall)).'">';
 		print '</div>';
