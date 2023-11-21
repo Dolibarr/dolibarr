@@ -5355,6 +5355,7 @@ abstract class CommonObject
 
 		if (($line->info_bits & 2) == 2) {  // TODO Not sure this is used for source object
 			$discount = new DiscountAbsolute($this->db);
+			// @phpstan-ignore-next-line
 			$discount->fk_soc = $this->socid;
 			$this->tpl['label'] .= $discount->getNomUrl(0, 'discount');
 		} elseif (!empty($line->fk_product)) {
@@ -9584,6 +9585,7 @@ abstract class CommonObject
 			$fieldvalues['fk_user_creat'] = $user->id;
 		}
 		if (array_key_exists('pass_crypted', $fieldvalues)) {
+			// @phpstan-ignore-next-line
 			$fieldvalues['pass_crypted'] = dol_hash($this->pass);
 		}
 		unset($fieldvalues['rowid']); // The field 'rowid' is reserved field name for autoincrement field so we don't need it into insert.
