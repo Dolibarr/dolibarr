@@ -1072,8 +1072,8 @@ class ExtraFields
 		} elseif (in_array($type, array('mail', 'ip', 'phone', 'url'))) {
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 		} elseif ($type == 'icon') {
-			$out ='<link rel="stylesheet" href="'.dol_buildpath('/myfield/css/fontawesome-iconpicker.min.css', 1).'">';
-			$out.='<script src="'.dol_buildpath('/myfield/js/fontawesome-iconpicker.min.js', 1).'"></script>';
+			$out= '<link rel="stylesheet" href="'.dol_buildpath('includes/jquery/plugins/fontawesome-iconepicker/css/fontawesome-iconpicker.min.css', 1).'">';
+			$out.= '<script src="'.dol_buildpath('includes/jquery/plugins/fontawesome-iconepicker/js/fontawesome-iconpicker.min.js', 1).'"></script>';
 			$out.= '<input type="text" class="form-control icp icp-auto iconpicker-element iconpicker-input flat '.$morecss.' maxwidthonsmartphone"';
 			$out.= ' name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 			$out.='<script>';
