@@ -11878,7 +11878,7 @@ function getElementProperties($element_type)
 	} elseif ($element_type == 'delivery') {
 		$classpath = 'delivery/class';
 		$subelement = 'delivery';
-		$module = 'delivery_note';
+		$module = 'expedition';
 	} elseif ($element_type == 'contract') {
 		$classpath = 'contrat/class';
 		$module = 'contrat';
