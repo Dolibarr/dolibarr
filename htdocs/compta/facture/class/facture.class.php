@@ -260,6 +260,10 @@ class Facture extends CommonInvoice
 	 */
 	public $source;
 
+	/**
+	 * @var int
+	 */
+	public $remise_percent;
 
 
 	/**

@@ -3799,6 +3799,7 @@ class Form
 					$optstart .= ' data-tvatx="' . dol_escape_htmltag(price2num($objp->tva_tx)) . '"';
 					$optstart .= ' data-tvatx-formated="' . dol_escape_htmltag(price($objp->tva_tx, 0, $langs, 1, -1, 2)) . '"';
 					$optstart .= ' data-default-vat-code="' . dol_escape_htmltag($objp->default_vat_code) . '"';
+					$optstart .= ' data-supplier-ref="' . dol_escape_htmltag($objp->ref_fourn) . '"';
 				}
 				$optstart .= ' data-description="' . dol_escape_htmltag($objp->description, 0, 1) . '"';
 
@@ -3994,57 +3995,8 @@ class Form
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-
-	/**
-	 *    Return list of delivery address
-	 *
-	 * @param string $selected Id contact pre-selectionn
-	 * @param int $socid Id of company
-	 * @param string $htmlname Name of HTML field
-	 * @param int $showempty Add an empty field
-	 * @return    integer
-	 */
-	public function select_address($selected, $socid, $htmlname = 'address_id', $showempty = 0)
-	{
-		// phpcs:enable
-		// looking for users
-		$sql = "SELECT a.rowid, a.label";
-		$sql .= " FROM " . $this->db->prefix() . "societe_address as a";
-		$sql .= " WHERE a.fk_soc = " . ((int) $socid);
-		$sql .= " ORDER BY a.label ASC";
-
-		dol_syslog(get_class($this) . "::select_address", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			print '<select class="flat" id="select_' . $htmlname . '" name="' . $htmlname . '">';
-			if ($showempty) {
-				print '<option value="0">&nbsp;</option>';
-			}
-			$num = $this->db->num_rows($resql);
-			$i = 0;
-			if ($num) {
-				while ($i < $num) {
-					$obj = $this->db->fetch_object($resql);
-
-					if ($selected && $selected == $obj->rowid) {
-						print '<option value="' . $obj->rowid . '" selected>' . $obj->label . '</option>';
-					} else {
-						print '<option value="' . $obj->rowid . '">' . $obj->label . '</option>';
-					}
-					$i++;
-				}
-			}
-			print '</select>';
-			return $num;
-		} else {
-			dol_print_error($this->db);
-			return -1;
-		}
-	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-
 	/**
 	 *      Load into cache list of payment terms
 	 *

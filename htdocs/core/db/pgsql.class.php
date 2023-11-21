@@ -101,7 +101,7 @@ class DoliDBPgsql extends DoliDB
 			$this->ok = false;
 			$this->error = "Pgsql PHP functions are not available in this version of PHP";
 			dol_syslog(get_class($this)."::DoliDBPgsql : Pgsql PHP functions are not available in this version of PHP", LOG_ERR);
-			return $this->ok;
+			return;
 		}
 
 		if (!$host) {
@@ -109,7 +109,7 @@ class DoliDBPgsql extends DoliDB
 			$this->ok = false;
 			$this->error = $langs->trans("ErrorWrongHostParameter");
 			dol_syslog(get_class($this)."::DoliDBPgsql : Erreur Connect, wrong host parameters", LOG_ERR);
-			return $this->ok;
+			return;
 		}
 
 		// Essai connexion serveur
@@ -144,8 +144,6 @@ class DoliDBPgsql extends DoliDB
 			// Pas de selection de base demandee, ok ou ko
 			$this->database_selected = false;
 		}
-
-		return $this->ok;
 	}
 
 

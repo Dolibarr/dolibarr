@@ -81,7 +81,7 @@ PurchasedAmount=Purchased amount
 NewPrice=New price
 MinPrice=Min. selling price
 MinPriceHT=Min. selling price (excl. tax)
-MinPriceTTC=Prix de vente min (inc. tax)
+MinPriceTTC=Min. selling price (inc. tax)
 EditSellingPriceLabel=Edit selling price label
 CantBeLessThanMinPrice=The selling price can't be lower than minimum allowed for this product (%s without tax). This message can also appear if you type a significant discount.
 CantBeLessThanMinPriceInclTax=The selling price can't be lower than minimum allowed for this product (%s including taxes). This message can also appears if you type a too important discount.
@@ -354,6 +354,7 @@ PackagingForThisProductDesc=You will automatically purchase a multiple of this q
 QtyRecalculatedWithPackaging=The quantity of the line were recalculated according to supplier packaging
 
 #Attributes
+Attributes=Attributes
 VariantAttributes=Variant attributes
 ProductAttributes=Variant attributes for products
 ProductAttributeName=Variant attribute %s

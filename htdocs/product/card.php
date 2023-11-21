@@ -738,7 +738,8 @@ if (empty($reshook)) {
 			$action = '';
 		} else {
 			if ($object->id > 0) {
-				$object->oldcopy = clone $object;
+				//Need dol_clone methode 1 (same object class) because update product use hasbatch() method on oldcopy
+				$object->oldcopy = dol_clone($object, 1);
 
 				if (empty($conf->global->PRODUCT_GENERATE_REF_AFTER_FORM)) {
 					$object->ref                = $ref;

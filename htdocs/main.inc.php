@@ -1460,6 +1460,28 @@ if (!function_exists("llxHeader")) {
 	{
 		global $conf, $hookmanager;
 
+		$parameters = array(
+			'head' =>& $head,
+			'title' =>& $title,
+			'help_url' =>& $help_url,
+			'target' =>& $target,
+			'disablej' =>& $disablej,
+			'disablehea' =>& $disablehea,
+			'arrayofjs' =>& $arrayofjs,
+			'arrayofcss' =>& $arrayofcss,
+			'morequerystring' =>& $morequerystring,
+			'morecssonbody' =>& $morecssonbody,
+			'replacemainareaby' =>& $replacemainareaby,
+			'disablenofollow' =>& $disablenofollow,
+			'disablenoindex' =>& $disablenoindex
+
+		);
+		$reshook = $hookmanager->executeHooks('llxHeader', $parameters);
+		if ($reshook > 0) {
+			print $hookmanager->resPrint;
+			return;
+		}
+
 		// html header
 		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss, 0, $disablenofollow, $disablenoindex);
 
@@ -1477,12 +1499,6 @@ if (!function_exists("llxHeader")) {
 		}
 
 		print '<body id="mainbody" class="'.$tmpcsstouse.'">'."\n";
-
-		$parameters = array('help_url' => $help_url);
-		$reshook = $hookmanager->executeHooks('changeHelpURL', $parameters);
-		if ($reshook > 0) {
-			$help_url = $hookmanager->resPrint;
-		}
 
 		// top menu and left menu area
 		if ((empty($conf->dol_hide_topmenu) || GETPOST('dol_invisible_topmenu', 'int')) && !GETPOST('dol_openinpopup', 'aZ09')) {
@@ -2920,7 +2936,7 @@ function top_menu_search()
 		$stringforfirstkey .= ' CTL +';
 	}
 
-	$searchInput = '<input name="search_all"'.($stringforfirstkey ? ' title="'.dol_escape_htmltag($stringforfirstkey.' s').'"' : '').' id="top-global-search-input" class="dropdown-search-input search_component_input" placeholder="'.$langs->trans('Search').'" autocomplete="off">';
+	$searchInput = '<input type="search" name="search_all"'.($stringforfirstkey ? ' title="'.dol_escape_htmltag($stringforfirstkey.' s').'"' : '').' id="top-global-search-input" class="dropdown-search-input search_component_input" placeholder="'.$langs->trans('Search').'" autocomplete="off">';
 
 	$defaultAction = '';
 	$buttonList = '<div class="dropdown-global-search-button-list" >';
@@ -2935,7 +2951,7 @@ function top_menu_search()
 	}
 	$buttonList .= '</div>';
 
-	$dropDownHtml = '<form id="top-menu-action-search" name="actionsearch" method="GET" action="'.$defaultAction.'">';
+	$dropDownHtml = '<form role="search" id="top-menu-action-search" name="actionsearch" method="GET" action="'.$defaultAction.'">';
 
 	$dropDownHtml .= '
         <!-- search input -->
@@ -2967,7 +2983,7 @@ function top_menu_search()
 	$html .= '<!-- div for Global Search -->
     <div id="topmenu-global-search-dropdown" class="atoplogin dropdown inline-block">
         <a accesskey="s" class="dropdown-toggle login-dropdown-a nofocusvisible" data-toggle="dropdown" href="#" title="'.$langs->trans('Search').' ('.$stringforfirstkey.' s)">
-            <i class="fa fa-search" ></i>
+            <i class="fa fa-search" aria-hidden="true" ></i>
         </a>
         <div class="dropdown-menu dropdown-search">
             '.$dropDownHtml.'
@@ -2981,10 +2997,14 @@ function top_menu_search()
 
         // prevent submiting form on press ENTER
         jQuery("#top-global-search-input").keydown(function (e) {
-            if (e.keyCode == 13) {
+            if (e.keyCode == 13 || e.keyCode == 40) {
                 var inputs = $(this).parents("form").eq(0).find(":button");
                 if (inputs[inputs.index(this) + 1] != null) {
                     inputs[inputs.index(this) + 1].focus();
+					 if (e.keyCode == 13){
+						 inputs[inputs.index(this) + 1].trigger("click");
+					 }
+
                 }
                 e.preventDefault();
                 return false;
@@ -3691,6 +3711,7 @@ if (!function_exists("llxFooter")) {
 										  country_code: '<?php echo $mysoc->country_code ? dol_escape_js($mysoc->country_code) : 'unknown'; ?>',
 										  php_version: '<?php echo dol_escape_js(phpversion()); ?>',
 										  os_version: '<?php echo dol_escape_js(version_os('smr')); ?>',
+										  db_version: '<?php echo dol_escape_js(version_db()); ?>',
 										  distrib: '<?php echo $distrib ? dol_escape_js($distrib) : 'unknown'; ?>',
 										  token: 'notrequired'
 									  },

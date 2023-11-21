@@ -104,7 +104,6 @@ class Societe extends CommonObject
 	 */
 	protected $childtablesoncascade = array(
 		'societe_prices',
-		'societe_address',
 		'product_fournisseur_price',
 		'product_customer_price_log',
 		'product_customer_price',
@@ -5208,7 +5207,6 @@ class Societe extends CommonObject
 		 * Do not include llx_societe because it will be replaced later
 		 */
 		$tables = array(
-			'societe_address',
 			'societe_commerciaux',
 			'societe_prices',
 			'societe_remise',
