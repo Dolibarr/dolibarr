@@ -9896,6 +9896,13 @@ class Form
 						$disableline = 1;
 					}
 
+					$label = $obj->name;
+					$labelhtml = $obj->name;
+					if (isModEnabled('multicompany') && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1) {
+						$label .= " (" . $obj->label . ")";
+						$labelhtml .= ' <span class="opacitymedium">(' . $obj->label . ')</span>';
+					}
+
 					$out .= '<option value="' . $obj->rowid . '"';
 					if ($disableline) {
 						$out .= ' disabled';
@@ -9903,12 +9910,10 @@ class Form
 					if ((isset($selected[0]) && is_object($selected[0]) && $selected[0]->id == $obj->rowid) || ((!isset($selected[0]) || !is_object($selected[0])) && !empty($selected) && in_array($obj->rowid, $selected))) {
 						$out .= ' selected';
 					}
+					$out .= ' data-html="'.dol_escape_htmltag($labelhtml).'"';
 					$out .= '>';
 
-					$out .= $obj->name;
-					if (isModEnabled('multicompany') && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1) {
-						$out .= " (" . $obj->label . ")";
-					}
+					$out .= $label;
 
 					$out .= '</option>';
 					$i++;
