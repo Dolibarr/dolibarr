@@ -353,9 +353,9 @@ abstract class Stats
 			dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
 			$data = json_decode(file_get_contents($newpathofdestfile), true);
 		} else {
-			// @phpstan-ignore-next-line
+			// This method is defined in parent object only, not into abstract, so we disable phpstan warning
+			/** @phpstan-ignore-next-line */
 			$data = $this->getAllByProduct($year, $limit);
-			// $data[$i][]=$datay[$year][$i][1];	// set yval for x=i
 		}
 
 		// Save cache file
