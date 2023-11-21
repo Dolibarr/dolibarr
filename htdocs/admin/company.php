@@ -143,8 +143,12 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 						// Create thumbs
 						//$object->addThumbs($newfile);    // We can't use addThumbs here yet because we need name of generated thumbs to add them into constants. TODO Check if need such constants. We should be able to retrieve value with get...
 
+
 						// Create small thumb, Used on logon for example
-						$imgThumbSmall = vignette($dirforimage.$original_file, $maxwidthsmall, $maxheightsmall, '_small', $quality);
+						$maxwidthsmall = '160';
+						$maxheightsmall = '120';
+						$qualitysmall = '50';
+						$imgThumbSmall = vignette($dirforimage.$original_file, $maxwidthsmall, $maxheightsmall, '_small', $qualitysmall);
 						if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i', $imgThumbSmall, $reg)) {
 							$imgThumbSmall = $reg[1]; // Save only basename
 							dolibarr_set_const($db, $constant."_SMALL", $imgThumbSmall, 'chaine', 0, '', $conf->entity);
@@ -153,7 +157,10 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 						}
 
 						// Create mini thumb, Used on menu or for setup page for example
-						$imgThumbMini = vignette($dirforimage.$original_file, $maxwidthmini, $maxheightmini, '_mini', $quality);
+						$maxwidthmini = '160';
+						$maxheightmini = '120';
+						$qualitymini = '50';
+						$imgThumbMini = vignette($dirforimage.$original_file, $maxwidthmini, $maxheightmini, '_mini', $qualitymini);
 						if (image_format_supported($imgThumbMini) >= 0 && preg_match('/([^\\/:]+)$/i', $imgThumbMini, $reg)) {
 							$imgThumbMini = $reg[1]; // Save only basename
 							dolibarr_set_const($db, $constant."_MINI", $imgThumbMini, 'chaine', 0, '', $conf->entity);
