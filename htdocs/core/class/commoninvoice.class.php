@@ -105,11 +105,6 @@ abstract class CommonInvoice extends CommonObject
 	public $multicurrency_tx;
 
 	/**
-	 * @var float Multicurrency subprice
-	 */
-	public $multicurrency_subprice;
-
-	/**
 	 * @var float Multicurrency total without tax
 	 */
 	public $multicurrency_total_ht;
