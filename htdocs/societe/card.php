@@ -3224,7 +3224,7 @@ function GRVAT(a, u, p, myafm) {
 
   $.ajax({
 	type: "GET",
-	url: './checkvat/checkVatGr.php',
+	url: '<?php echo DOL_URL_ROOT ?>/societe/checkvat/checkVatGr.php',
 	data: { afm }, // Set request parameters
 	success: function(data) {
 		var obj = data; // Parse response data as JSON
