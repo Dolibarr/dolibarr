@@ -521,13 +521,18 @@ if ($action == 'afteradd') {
 		for(index in timearray){
 			let hour = new Date("2000-01-01T" + index + ":00");
 			duration = timearray[index];
+			isalreadybooked = false;
+			if (duration < 0) {
+				duration *= -1;
+				isalreadybooked = true;
+			}
 			hour.setMinutes(hour.getMinutes() + duration);
 
 			let hours = hour.getHours().toString().padStart(2, "0"); // Formater pour obtenir deux chiffres
 			let mins = hour.getMinutes().toString().padStart(2, "0"); // Formater pour obtenir deux chiffres
 
 			timerange = index + " - " + `${hours}:${mins}`;
-			str += "<input class=\'button btnsubmitbooking\' type=\'submit\' name=\'timebooking\' value=\'"+timerange+"\' data-duration=\'"+duration+"\'><br>";
+			str += "<input class=\'button btnsubmitbooking "+(isalreadybooked == true ? "btnbookcalbooked" : "")+"\' type=\'submit\' name=\'timebooking\' value=\'"+timerange+"\' data-duration=\'"+duration+"\'><br>";
 		}
 		$("#buttonlistbooking").html(str);
 		$(".btnsubmitbooking").on("click", function(){
@@ -558,6 +563,7 @@ if ($action == 'afteradd') {
 					timearray = data["availability"];
 					console.log(timearray);
 					generateBookingButtons(timearray, datestring);
+					$(".btnbookcalbooked").prop("disabled", true);
 				} else {
 					if(data["code"] == "NO_DATA_FOUND"){
 						console.log("No booking to hide");
