@@ -3698,7 +3698,6 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	public $remise;
 
 
-
 	/**
 	 *	Constructor
 	 *
