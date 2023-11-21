@@ -1020,7 +1020,7 @@ while ($i < $imaxinloop) {
 	// Store properties in $object
 	$object->setVarsFromFetchObj($obj);
 	$object->type_code = $obj->type_code;
-	$object->status = $object->fk_statut; // for backwad compatibility
+	$object->status = $object->fk_statut; // because field name is fk_statut
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
