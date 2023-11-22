@@ -524,7 +524,6 @@ class pdf_espadon extends ModelePdfExpedition
 					$showpricebeforepagebreak = 1;
 					$posYAfterImage = 0;
 					$posYAfterDescription = 0;
-					$heightforsignature = 0;
 
 					if ($this->getColumnStatus('photo')) {
 						// We start with Photo of product line
