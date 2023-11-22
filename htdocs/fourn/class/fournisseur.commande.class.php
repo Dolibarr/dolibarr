@@ -2862,7 +2862,7 @@ class CommandeFournisseur extends CommonOrder
 			$this->line->total_localtax2 = $total_localtax2;
 			$this->line->total_ttc      = $total_ttc;
 			$this->line->product_type   = $type;
-			$this->line->special_code   = $this->special_code;
+			$this->line->special_code   = $oldline->special_code;
 			$this->line->origin         = $this->origin;
 			$this->line->fk_unit        = $fk_unit;
 
