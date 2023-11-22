@@ -464,48 +464,50 @@ if ($action == 'writebookkeeping' && !$error) {
 
 		// Warranty
 		if (!$errorforline) {
-			foreach ($tabwarranty[$key] as $k => $mt) {
-				$bookkeeping = new BookKeeping($db);
-				$bookkeeping->doc_date = $val["date"];
-				$bookkeeping->date_lim_reglement = $val["datereg"];
-				$bookkeeping->doc_ref = $val["ref"];
-				$bookkeeping->date_creation = $now;
-				$bookkeeping->doc_type = 'customer_invoice';
-				$bookkeeping->fk_doc = $key;
-				$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
-				$bookkeeping->thirdparty_code = $companystatic->code_client;
+			if (is_iterable($tabwarranty[$key])) {
+				foreach ($tabwarranty[$key] as $k => $mt) {
+					$bookkeeping = new BookKeeping($db);
+					$bookkeeping->doc_date = $val["date"];
+					$bookkeeping->date_lim_reglement = $val["datereg"];
+					$bookkeeping->doc_ref = $val["ref"];
+					$bookkeeping->date_creation = $now;
+					$bookkeeping->doc_type = 'customer_invoice';
+					$bookkeeping->fk_doc = $key;
+					$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
+					$bookkeeping->thirdparty_code = $companystatic->code_client;
 
-				$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
-				$bookkeeping->subledger_label = $tabcompany[$key]['name'];
+					$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
+					$bookkeeping->subledger_label = $tabcompany[$key]['name'];
 
-				$bookkeeping->numero_compte = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY');
-				$bookkeeping->label_compte = $accountingaccountcustomerwarranty->label;
+					$bookkeeping->numero_compte = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY');
+					$bookkeeping->label_compte = $accountingaccountcustomerwarranty->label;
 
-				$bookkeeping->label_operation = dol_trunc($companystatic->name, 16).' - '.$invoicestatic->ref.' - '.$langs->trans("Retainedwarranty");
-				$bookkeeping->montant = $mt;
-				$bookkeeping->sens = ($mt >= 0) ? 'D' : 'C';
-				$bookkeeping->debit = ($mt >= 0) ? $mt : 0;
-				$bookkeeping->credit = ($mt < 0) ? -$mt : 0;
-				$bookkeeping->code_journal = $journal;
-				$bookkeeping->journal_label = $langs->transnoentities($journal_label);
-				$bookkeeping->fk_user_author = $user->id;
-				$bookkeeping->entity = $conf->entity;
+					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("Retainedwarranty");
+					$bookkeeping->montant = $mt;
+					$bookkeeping->sens = ($mt >= 0) ? 'D' : 'C';
+					$bookkeeping->debit = ($mt >= 0) ? $mt : 0;
+					$bookkeeping->credit = ($mt < 0) ? -$mt : 0;
+					$bookkeeping->code_journal = $journal;
+					$bookkeeping->journal_label = $langs->transnoentities($journal_label);
+					$bookkeeping->fk_user_author = $user->id;
+					$bookkeeping->entity = $conf->entity;
 
-				$totaldebit += $bookkeeping->debit;
-				$totalcredit += $bookkeeping->credit;
+					$totaldebit += $bookkeeping->debit;
+					$totalcredit += $bookkeeping->credit;
 
-				$result = $bookkeeping->create($user);
-				if ($result < 0) {
-					if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists') {	// Already exists
-						$error++;
-						$errorforline++;
-						$errorforinvoice[$key] = 'alreadyjournalized';
-						//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
-					} else {
-						$error++;
-						$errorforline++;
-						$errorforinvoice[$key] = 'other';
-						setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+					$result = $bookkeeping->create($user);
+					if ($result < 0) {
+						if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists') {    // Already exists
+							$error++;
+							$errorforline++;
+							$errorforinvoice[$key] = 'alreadyjournalized';
+							//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
+						} else {
+							$error++;
+							$errorforline++;
+							$errorforinvoice[$key] = 'other';
+							setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+						}
 					}
 				}
 			}
@@ -704,52 +706,54 @@ if ($action == 'writebookkeeping' && !$error) {
 
 		// Revenue stamp
 		if (!$errorforline) {
-			foreach ($tabrevenuestamp[$key] as $k => $mt) {
-				if ($mt) {
-					$accountingaccount->fetch(null, $k, true);	// TODO Use a cache for label
-					$label_account = $accountingaccount->label;
+			if (is_iterable($tabrevenuestamp[$key])) {
+				foreach ($tabrevenuestamp[$key] as $k => $mt) {
+					if ($mt) {
+						$accountingaccount->fetch(null, $k, true);    // TODO Use a cache for label
+						$label_account = $accountingaccount->label;
 
-					$bookkeeping = new BookKeeping($db);
-					$bookkeeping->doc_date = $val["date"];
-					$bookkeeping->date_lim_reglement = $val["datereg"];
-					$bookkeeping->doc_ref = $val["ref"];
-					$bookkeeping->date_creation = $now;
-					$bookkeeping->doc_type = 'customer_invoice';
-					$bookkeeping->fk_doc = $key;
-					$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
-					$bookkeeping->thirdparty_code = $companystatic->code_client;
+						$bookkeeping = new BookKeeping($db);
+						$bookkeeping->doc_date = $val["date"];
+						$bookkeeping->date_lim_reglement = $val["datereg"];
+						$bookkeeping->doc_ref = $val["ref"];
+						$bookkeeping->date_creation = $now;
+						$bookkeeping->doc_type = 'customer_invoice';
+						$bookkeeping->fk_doc = $key;
+						$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
+						$bookkeeping->thirdparty_code = $companystatic->code_client;
 
-					$bookkeeping->subledger_account = '';
-					$bookkeeping->subledger_label = '';
+						$bookkeeping->subledger_account = '';
+						$bookkeeping->subledger_label = '';
 
-					$bookkeeping->numero_compte = $k;
-					$bookkeeping->label_compte = $label_account;
+						$bookkeeping->numero_compte = $k;
+						$bookkeeping->label_compte = $label_account;
 
-					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16).' - '.$invoicestatic->ref.' - '.$langs->trans("RevenueStamp");
-					$bookkeeping->montant = $mt;
-					$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
-					$bookkeeping->debit = ($mt < 0) ? -$mt : 0;
-					$bookkeeping->credit = ($mt >= 0) ? $mt : 0;
-					$bookkeeping->code_journal = $journal;
-					$bookkeeping->journal_label = $langs->transnoentities($journal_label);
-					$bookkeeping->fk_user_author = $user->id;
-					$bookkeeping->entity = $conf->entity;
+						$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("RevenueStamp");
+						$bookkeeping->montant = $mt;
+						$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
+						$bookkeeping->debit = ($mt < 0) ? -$mt : 0;
+						$bookkeeping->credit = ($mt >= 0) ? $mt : 0;
+						$bookkeeping->code_journal = $journal;
+						$bookkeeping->journal_label = $langs->transnoentities($journal_label);
+						$bookkeeping->fk_user_author = $user->id;
+						$bookkeeping->entity = $conf->entity;
 
-					$totaldebit += $bookkeeping->debit;
-					$totalcredit += $bookkeeping->credit;
+						$totaldebit += $bookkeeping->debit;
+						$totalcredit += $bookkeeping->credit;
 
-					$result = $bookkeeping->create($user);
-					if ($result < 0) {
-						if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists') {	// Already exists
-							$error++;
-							$errorforline++;
-							$errorforinvoice[$key] = 'alreadyjournalized';
-							//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
-						} else {
-							$error++;
-							$errorforline++;
-							$errorforinvoice[$key] = 'other';
-							setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+						$result = $bookkeeping->create($user);
+						if ($result < 0) {
+							if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists') {    // Already exists
+								$error++;
+								$errorforline++;
+								$errorforinvoice[$key] = 'alreadyjournalized';
+								//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
+							} else {
+								$error++;
+								$errorforline++;
+								$errorforinvoice[$key] = 'other';
+								setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+							}
 						}
 					}
 				}
@@ -1121,33 +1125,35 @@ if (empty($action) || $action == 'view') {
 		}
 
 		// Warranty
-		foreach ($tabwarranty[$key] as $k => $mt) {
-			print '<tr class="oddeven">';
-			print "<!-- Thirdparty warranty -->";
-			print "<td>".$date."</td>";
-			print "<td>".$invoicestatic->getNomUrl(1)."</td>";
-			// Account
-			print "<td>";
-			$accountoshow = length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY'));
-			if (($accountoshow == "") || $accountoshow == 'NotDefined') {
-				print '<span class="error">'.$langs->trans("MainAccountForRetainedWarrantyNotDefined").'</span>';
-			} else {
-				print $accountoshow;
+		if (is_iterable($tabwarranty[$key])) {
+			foreach ($tabwarranty[$key] as $k => $mt) {
+				print '<tr class="oddeven">';
+				print "<!-- Thirdparty warranty -->";
+				print "<td>" . $date . "</td>";
+				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
+				// Account
+				print "<td>";
+				$accountoshow = length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY'));
+				if (($accountoshow == "") || $accountoshow == 'NotDefined') {
+					print '<span class="error">' . $langs->trans("MainAccountForRetainedWarrantyNotDefined") . '</span>';
+				} else {
+					print $accountoshow;
+				}
+				print '</td>';
+				// Subledger account
+				print "<td>";
+				$accountoshow = length_accounta($k);
+				if (($accountoshow == "") || $accountoshow == 'NotDefined') {
+					print '<span class="error">' . $langs->trans("ThirdpartyAccountNotDefined") . '</span>';
+				} else {
+					print $accountoshow;
+				}
+				print '</td>';
+				print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("Retainedwarranty") . "</td>";
+				print '<td class="right nowraponall amount">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+				print '<td class="right nowraponall amount">' . ($mt < 0 ? price(-$mt) : '') . "</td>";
+				print "</tr>";
 			}
-			print '</td>';
-			// Subledger account
-			print "<td>";
-			$accountoshow = length_accounta($k);
-			if (($accountoshow == "") || $accountoshow == 'NotDefined') {
-				print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
-			} else {
-				print $accountoshow;
-			}
-			print '</td>';
-			print "<td>".$companystatic->getNomUrl(0, 'customer', 16).' - '.$invoicestatic->ref.' - '.$langs->trans("Retainedwarranty")."</td>";
-			print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
-			print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
-			print "</tr>";
 		}
 
 		// Third party
@@ -1266,28 +1272,30 @@ if (empty($action) || $action == 'view') {
 			}
 		}
 
-		// Warranty
-		foreach ($tabrevenuestamp[$key] as $k => $mt) {
-			print '<tr class="oddeven">';
-			print "<!-- Thirdparty revenuestamp -->";
-			print "<td>".$date."</td>";
-			print "<td>".$invoicestatic->getNomUrl(1)."</td>";
-			// Account
-			print "<td>";
-			$accountoshow = length_accountg($k);
-			if (($accountoshow == "") || $accountoshow == 'NotDefined') {
-				print '<span class="error">'.$langs->trans("MainAccountForRevenueStampSaleNotDefined").'</span>';
-			} else {
-				print $accountoshow;
+		// Revenue stamp
+		if (is_iterable($tabrevenuestamp[$key])) {
+			foreach ($tabrevenuestamp[$key] as $k => $mt) {
+				print '<tr class="oddeven">';
+				print "<!-- Thirdparty revenuestamp -->";
+				print "<td>" . $date . "</td>";
+				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
+				// Account
+				print "<td>";
+				$accountoshow = length_accountg($k);
+				if (($accountoshow == "") || $accountoshow == 'NotDefined') {
+					print '<span class="error">' . $langs->trans("MainAccountForRevenueStampSaleNotDefined") . '</span>';
+				} else {
+					print $accountoshow;
+				}
+				print '</td>';
+				// Subledger account
+				print "<td>";
+				print '</td>';
+				print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("RevenueStamp") . "</td>";
+				print '<td class="right nowraponall amount">' . ($mt < 0 ? price(-$mt) : '') . "</td>";
+				print '<td class="right nowraponall amount">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+				print "</tr>";
 			}
-			print '</td>';
-			// Subledger account
-			print "<td>";
-			print '</td>';
-			print "<td>".$companystatic->getNomUrl(0, 'customer', 16).' - '.$invoicestatic->ref.' - '.$langs->trans("RevenueStamp")."</td>";
-			print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
-			print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
-			print "</tr>";
 		}
 	}
 
