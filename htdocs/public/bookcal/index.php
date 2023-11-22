@@ -240,7 +240,7 @@ if ($action == 'add') {
 		$actioncomm->datef = $dateend;
 		$actioncomm->note_private = GETPOST("description");
 		$actioncomm->percentage = -1;
-		$actioncomm->fk_bookcal_availability = GETPOST("id_availability", 'int');
+		$actioncomm->fk_bookcal_calendar = $id;
 		$actioncomm->userownerid = $calendar->visibility;
 		$actioncomm->contact_id = $contact->id;
 		$actioncomm->socpeopleassigned = $contact->id;

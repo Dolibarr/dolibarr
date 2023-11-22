@@ -141,7 +141,7 @@ if ($action == 'verifyavailability') {
 			$sql .= " AND b.datep < '".$db->idate($datetocheckbooking_end)."'";
 			$sql .= " AND b.code = 'AC_RDV'";
 			$sql .= " AND b.status = 0";
-			//$sql .= " AND b.fk_bookcal_calendar = 0";
+			$sql .= " AND b.fk_bookcal_calendar = ".((int) $id);
 			$resql = $db->query($sql);
 			if ($resql) {
 				$num = $db->num_rows($resql);
