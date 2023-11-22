@@ -1090,7 +1090,12 @@ class CMailFile
 					$keyforsupportedoauth2array = preg_replace('/-.*$/', '', $keyforsupportedoauth2array);
 					$keyforsupportedoauth2array = 'OAUTH_'.$keyforsupportedoauth2array.'_NAME';
 
-					$OAUTH_SERVICENAME = (empty($supportedoauth2array[$keyforsupportedoauth2array]['name']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['name'].($keyforprovider ? '-'.$keyforprovider : ''));
+					$OAUTH_SERVICENAME = 'Unknown';
+					if ( array_key_exists($keyforsupportedoauth2array, $supportedoauth2array)
+						&& array_key_exists('name', $supportedoauth2array[$keyforsupportedoauth2array])
+						&& !empty($supportedoauth2array[$keyforsupportedoauth2array]['name'])) {
+						$OAUTH_SERVICENAME = $supportedoauth2array[$keyforsupportedoauth2array]['name'].(!empty($keyforprovider) ? '-'.$keyforprovider : '');
+					}
 
 					require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 
