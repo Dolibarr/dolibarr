@@ -2946,6 +2946,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				if ($object->email) {
 					print yn($object->no_email);
 				} else {
+					$langs->load("mails");
 					print '<span class="opacitymedium">'.$langs->trans("EMailNotDefined").'</span>';
 				}
 

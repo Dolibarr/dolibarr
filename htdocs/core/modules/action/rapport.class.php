@@ -44,7 +44,6 @@ class CommActionRapport
 
 	public $errors;
 
-
 	/**
 	 * @var string description
 	 */
@@ -76,6 +75,10 @@ class CommActionRapport
 
 	public $page_largeur;
 
+	/**
+	 * @var array
+	 */
+	public $result;
 
 	/**
 	 * Constructor

@@ -756,6 +756,8 @@ class Delivery extends CommonObject
 	{
 		global $langs;
 
+		$langs->load('deliveries');
+
 		$datas = [];
 
 		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("ShowReceiving").'</u>:<br>';
