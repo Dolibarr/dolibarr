@@ -88,7 +88,7 @@ class FormSetup
 	 * @param DoliDB $db Database handler
 	 * @param Translate $outputLangs if needed can use another lang
 	 */
-	public function __construct($db, $outputLangs = false)
+	public function __construct($db, $outputLangs = null)
 	{
 		global $langs;
 		$this->db = $db;
@@ -446,7 +446,7 @@ class FormSetup
 	 * @param bool		$insertAfterTarget		insert before or after target item ?
 	 * @return FormSetupItem the new setup item created
 	 */
-	public function newItem($confKey, $targetItemKey = false, $insertAfterTarget = false)
+	public function newItem($confKey, $targetItemKey = '', $insertAfterTarget = false)
 	{
 		$item = new FormSetupItem($confKey);
 
