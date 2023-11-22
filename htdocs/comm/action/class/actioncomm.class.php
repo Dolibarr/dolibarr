@@ -301,9 +301,9 @@ class ActionComm extends CommonObject
 	public $elementtype;
 
 	/**
-	 * @var int id of availability
+	 * @var int id of calendar
 	 */
-	public $fk_bookcal_availability;
+	public $fk_bookcal_calendar;
 
 	/**
 	 * @var string Ical name
@@ -544,7 +544,7 @@ class ActionComm extends CommonObject
 		$sql .= "transparency,";
 		$sql .= "fk_element,";
 		$sql .= "elementtype,";
-		$sql .= "fk_bookcal_availability,";
+		$sql .= "fk_bookcal_calendar,";
 		$sql .= "entity,";
 		$sql .= "extraparams,";
 		// Fields emails
@@ -587,7 +587,7 @@ class ActionComm extends CommonObject
 		$sql .= "'".$this->db->escape($this->transparency)."', ";
 		$sql .= (!empty($this->fk_element) ? ((int) $this->fk_element) : "null").", ";
 		$sql .= (!empty($this->elementtype) ? "'".$this->db->escape($this->elementtype)."'" : "null").", ";
-		$sql .= (!empty($this->fk_bookcal_availability) ? "'".$this->db->escape($this->fk_bookcal_availability)."'" : "null").", ";
+		$sql .= (!empty($this->fk_bookcal_calendar) ? "'".$this->db->escape($this->fk_bookcal_calendar)."'" : "null").", ";
 		$sql .= ((int) $conf->entity).",";
 		$sql .= (!empty($this->extraparams) ? "'".$this->db->escape($this->extraparams)."'" : "null").", ";
 		// Fields emails
