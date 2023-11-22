@@ -7,7 +7,7 @@
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes		<bafbes@gmail.com>
  * Copyright (C) 2016-2017	Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2019-2022  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2023  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,7 +83,7 @@ class FormFile
 	 *  @param	int			$nooutput		0=Output result with print, 1=Return result
 	 * 	@return	int|string					<0 if KO, >0 if OK, or string if $noouput=1
 	 */
-	public function form_attach_new_file($url, $title = '', $addcancel = 0, $sectionid = 0, $perm = 1, $size = 50, $object = '', $options = '', $useajax = 1, $savingdocmask = '', $linkfiles = 1, $htmlname = 'formuserfile', $accept = '', $sectiondir = '', $usewithoutform = 0, $capture = 0, $disablemulti = 0, $nooutput = 0)
+	public function form_attach_new_file($url, $title = '', $addcancel = 0, $sectionid = 0, $perm = 1, $size = 50, $object = null, $options = '', $useajax = 1, $savingdocmask = '', $linkfiles = 1, $htmlname = 'formuserfile', $accept = '', $sectiondir = '', $usewithoutform = 0, $capture = 0, $disablemulti = 0, $nooutput = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs, $hookmanager;
@@ -1039,7 +1039,7 @@ class FormFile
 	 *	@param	string	$filedir		Full path to directory to scan
 	 *  @param	string	$filter			Filter filenames on this regex string (Example: '\.pdf$')
 	 *  @param	string	$morecss		Add more css to the download picto
-	 *  @param	string	$allfiles		0=Only generated docs, 1=All files
+	 *  @param	int 	$allfiles		0=Only generated docs, 1=All files
 	 *	@return	string              	Output string with HTML link of documents (might be empty string). This also fill the array ->infofiles
 	 */
 	public function getDocumentsLink($modulepart, $modulesubdir, $filedir, $filter = '', $morecss = 'valignmiddle', $allfiles = 0)
@@ -1632,7 +1632,7 @@ class FormFile
 	 *  @param  string	$relativepath       Relative path of docs (autodefined if not provided)
 	 *  @param  int		$permissiontodelete       Permission to delete
 	 *  @param  int		$useinecm           Change output for use in ecm module
-	 *  @param  int		$textifempty        Text to show if filearray is empty
+	 *  @param  string	$textifempty        Text to show if filearray is empty
 	 *  @param  int		$maxlength          Maximum length of file name shown
 	 *  @param	string 	$url				Full url to use for click links ('' = autodetect)
 	 *  @param	int		$addfilterfields	Add line with filters

@@ -124,7 +124,8 @@ class FactureFournisseur extends CommonInvoice
 	/**
 	 * Supplier invoice status
 	 * @var int
-	 * @see FactureFournisseur::STATUS_DRAFT, FactureFournisseur::STATUS_VALIDATED, FactureFournisseur::STATUS_PAID, FactureFournisseur::STATUS_ABANDONED
+	 * @deprecated
+	 * @see $status
 	 */
 	public $statut;
 
@@ -134,6 +135,14 @@ class FactureFournisseur extends CommonInvoice
 	 * @see FactureFournisseur::STATUS_DRAFT, FactureFournisseur::STATUS_VALIDATED, FactureFournisseur::STATUS_PAID, FactureFournisseur::STATUS_ABANDONED
 	 */
 	public $status;
+
+	/**
+	 * Supplier invoice status
+	 * @var int
+	 * @deprecated
+	 * @see $status
+	 */
+	public $fk_statut;
 
 	/**
 	 * Set to 1 if the invoice is completely paid, otherwise is 0
@@ -192,13 +201,12 @@ class FactureFournisseur extends CommonInvoice
 	public $total_ttc;
 
 	/**
+	 * @var float
 	 * @deprecated
-	 * @see $note_private, $note_public
+	 * @see $total_ht
 	 */
-	public $note;
+	public $amount_ht;
 
-	public $note_private;
-	public $note_public;
 	public $propalid;
 
 	/**
@@ -229,17 +237,6 @@ class FactureFournisseur extends CommonInvoice
 	 */
 	public $fournisseur;
 
-	// Multicurrency
-	/**
-	 * @var int ID
-	 */
-	public $fk_multicurrency;
-
-	public $multicurrency_code;
-	public $multicurrency_tx;
-	public $multicurrency_total_ht;
-	public $multicurrency_total_tva;
-	public $multicurrency_total_ttc;
 	//! id of source invoice if replacement invoice or credit note
 	/**
 	 * @var int ID
@@ -3622,18 +3619,6 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 * @var float tva npr
 	 */
 	public $tva_npr;
-
-	// Multicurrency
-	/**
-	 * @var int ID
-	 */
-	public $fk_multicurrency;
-
-	public $multicurrency_code;
-	public $multicurrency_subprice;
-	public $multicurrency_total_ht;
-	public $multicurrency_total_tva;
-	public $multicurrency_total_ttc;
 
 
 	/**

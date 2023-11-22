@@ -44,7 +44,6 @@ class CommActionRapport
 
 	public $errors;
 
-
 	/**
 	 * @var string description
 	 */

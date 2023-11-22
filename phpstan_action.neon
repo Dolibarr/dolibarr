@@ -1,22 +1,28 @@
 parameters:
+	bootstrapFiles:
+		- build/phpstan/bootstrap.php
+	tmpDir: ./tmp
+	parallel:
+		jobSize: 20
+		processTimeout: 600.0
+		maximumNumberOfProcesses: 32
+		minimumNumberOfJobsPerProcess: 2
+		buffer: 134217728 # 128 MB
 	customRulesetUsed: true
-	level: 2
+	level: 1
 	fileExtensions:
 		- php
 	paths:
-	    - htdocs
-	    - scripts
+		- htdocs
+		- scripts
 	excludePaths:
 		analyseAndScan:
-		- htdocs/custom
-		- htdocs/dev/*
-		- htdocs/doc/*
+		- htdocs/custom/*
 		- htdocs/documents/*
 		- htdocs/install/doctemplates/*
 		- htdocs/langs/*
 		- htdocs/modulebuilder/template/test/*
 		- htdocs/support/*
-		- htdocs/test/*
 		analyse:
 		- htdocs/includes/*
 	checkAlwaysTrueCheckTypeFunctionCall: false

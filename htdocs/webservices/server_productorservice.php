@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      JF FERRY             <jfefe@aternatik.fr>
- * Copyright (C) 2020		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2020-2023	Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -981,7 +981,7 @@ function getListOfProductsOrServices($authentication, $filterproduct)
  *
  * @param	array		$authentication		Array of authentication information
  * @param	int			$id					Category id
- * @param	string  	$lang				Force lang
+* @param	string		$lang				Force lang
  * @return	array							Array result
  */
 function getProductsForCategory($authentication, $id, $lang = '')

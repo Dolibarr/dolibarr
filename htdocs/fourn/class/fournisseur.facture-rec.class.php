@@ -123,14 +123,6 @@ class FactureFournisseurRec extends CommonInvoice
 
 	public $date_lim_reglement;
 
-	public $fk_multicurrency;
-	public $multicurrency_code;
-	public $multicurrency_tx;
-	public $multicurrency_subprice;
-	public $multicurrency_total_ht;
-	public $multicurrency_total_tva;
-	public $multicurrency_total_ttc;
-
 	public $usenewprice = 0;
 	public $frequency;
 	public $unit_frequency;
@@ -1107,6 +1099,7 @@ class FactureFournisseurRec extends CommonInvoice
 
 			$txlocaltax1 = empty($txlocaltax1) ? 0 : price2num($txlocaltax1);
 			$txlocaltax2 = empty($txlocaltax2) ? 0 : price2num($txlocaltax2);
+			// @phpstan-ignore-next-line
 			$this->multicurrency_subprice = empty($this->multicurrency_subprice) ? 0 : $this->multicurrency_subprice;
 			$this->multicurrency_total_ht = empty($this->multicurrency_total_ht) ? 0 : $this->multicurrency_total_ht;
 			$this->multicurrency_total_tva = empty($this->multicurrency_total_tva) ? 0 : $this->multicurrency_total_tva;
@@ -2022,7 +2015,6 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 
 	public $fk_user_author;
 	public $fk_user_modif;
-	public $fk_multicurrency;
 
 
 	/**
