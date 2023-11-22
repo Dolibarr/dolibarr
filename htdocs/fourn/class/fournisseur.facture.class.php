@@ -124,18 +124,25 @@ class FactureFournisseur extends CommonInvoice
 	/**
 	 * Supplier invoice status
 	 * @var int
-	 * @see FactureFournisseur::STATUS_DRAFT, FactureFournisseur::STATUS_VALIDATED, FactureFournisseur::STATUS_PAID, FactureFournisseur::STATUS_ABANDONED
+	 * @deprecated
+	 * @see $status
 	 */
 	public $statut;
-	public $fk_statut;
 
 	/**
 	 * Supplier invoice status
 	 * @var int
 	 * @see FactureFournisseur::STATUS_DRAFT, FactureFournisseur::STATUS_VALIDATED, FactureFournisseur::STATUS_PAID, FactureFournisseur::STATUS_ABANDONED
-	 * @deprecated	Use $fk_statut
 	 */
 	public $status;
+
+	/**
+	 * Supplier invoice status
+	 * @var int
+	 * @deprecated
+	 * @see $status
+	 */
+	public $fk_statut;
 
 	/**
 	 * Set to 1 if the invoice is completely paid, otherwise is 0
