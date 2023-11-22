@@ -1465,8 +1465,8 @@ if (!function_exists("llxHeader")) {
 			'title' =>& $title,
 			'help_url' =>& $help_url,
 			'target' =>& $target,
-			'disablej' =>& $disablej,
-			'disablehea' =>& $disablehea,
+			'disablejs' =>& $disablejs,
+			'disablehead' =>& $disablehead,
 			'arrayofjs' =>& $arrayofjs,
 			'arrayofcss' =>& $arrayofcss,
 			'morequerystring' =>& $morequerystring,
@@ -2070,7 +2070,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
  */
 function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $helppagename = '')
 {
-	global $user, $conf, $langs, $db;
+	global $user, $conf, $langs, $db, $form;
 	global $dolibarr_main_authentication, $dolibarr_main_demo;
 	global $hookmanager, $menumanager;
 
