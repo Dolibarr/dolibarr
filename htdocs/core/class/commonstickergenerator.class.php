@@ -104,8 +104,12 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 	protected $_First = 1;
 	public $Tformat;
 
-
+	/**
+	 * @var array
+	 */
+	public $_Avery_Labels;
 	// phpcs:enable
+
 	/**
 	 *	Constructor
 	 *
