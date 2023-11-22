@@ -723,7 +723,7 @@ if (!empty($arrayfields['cp.tms']['checked'])) {
 
 // Status
 if (!empty($arrayfields['cp.statut']['checked'])) {
-	print '<td class="liste_titre right parentonrightofpage">';
+	print '<td class="liste_titre center parentonrightofpage">';
 	print $object->selectStatutCP($search_status, 'search_status', 'search_status width100 onrightofpage');
 	print '</td>';
 }
@@ -799,7 +799,7 @@ if (!empty($arrayfields['cp.tms']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['cp.statut']['checked'])) {
-	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "cp.statut", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "cp.statut", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 // Action column
@@ -1017,8 +1017,9 @@ if ($id && !$user->hasRight('holiday', 'readall') && !in_array($id, $childids)) 
 					$totalarray['nbfield']++;
 				}
 			}
+			// Status
 			if (!empty($arrayfields['cp.statut']['checked'])) {
-				print '<td class="right nowrap">'.$holidaystatic->getLibStatut(5).'</td>';
+				print '<td class="center nowrap">'.$holidaystatic->getLibStatut(5).'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
