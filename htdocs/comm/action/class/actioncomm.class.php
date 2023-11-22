@@ -291,7 +291,7 @@ class ActionComm extends CommonObject
 	public $fk_element; // Id of record
 
 	/**
-	 * @var int 		Id of record alternative for API
+	 * @var int 		Id of linked object, alternative for API or other
 	 */
 	public $elementid;
 
@@ -435,7 +435,7 @@ class ActionComm extends CommonObject
 
 		// Check parameters
 		if (!isset($this->userownerid) || (string) $this->userownerid === '') {	// $this->userownerid may be 0 (anonymous event) or > 0
-			dol_syslog("You tried to create an event but mandatory property ownerid was not defined", LOG_WARNING);
+			dol_syslog("You tried to create an event but mandatory property userownerid was empty (you can define it to 0 for anonymous event)", LOG_WARNING);
 			$this->errors[] = 'ErrorActionCommPropertyUserowneridNotDefined';
 			return -1;
 		}
@@ -480,6 +480,9 @@ class ActionComm extends CommonObject
 		}
 		if ($this->elementtype == 'contrat') {
 			$this->elementtype = 'contract';
+		}
+		if (empty($this->fk_element) && !empty($this->elementid)) {
+			$this->fk_element = $this->elementid;
 		}
 
 		if (!is_array($this->userassigned) && !empty($this->userassigned)) {	// For backward compatibility when userassigned was an int instead of an array
