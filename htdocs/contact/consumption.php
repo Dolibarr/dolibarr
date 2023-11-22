@@ -451,10 +451,11 @@ if ($sql_select) {
 		$documentstatic->id = $objp->doc_id;
 		$documentstatic->ref = $objp->doc_number;
 		$documentstatic->type = $objp->doc_type;
+
 		$documentstatic->fk_statut = $objp->status;
-		$documentstatic->fk_status = $objp->status;
 		$documentstatic->statut = $objp->status;
 		$documentstatic->status = $objp->status;
+
 		$documentstatic->paye = $objp->paid;
 		$documentstatic->paid = $objp->paid;
 

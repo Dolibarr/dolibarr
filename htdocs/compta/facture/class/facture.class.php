@@ -231,6 +231,9 @@ class Facture extends CommonInvoice
 	 */
 	public $tab_next_situation_invoice = array();
 
+	/**
+	 * @var Facture object oldcopy
+	 */
 	public $oldcopy;
 
 	/**
@@ -6072,14 +6075,6 @@ class FactureLigne extends CommonInvoiceLine
 	 * @var int Previous situation line id reference
 	 */
 	public $fk_prev_id;
-
-	// Multicurrency
-	public $fk_multicurrency;
-	public $multicurrency_code;
-	public $multicurrency_subprice;
-	public $multicurrency_total_ht;
-	public $multicurrency_total_tva;
-	public $multicurrency_total_ttc;
 
 	/**
 	 *      Constructor
