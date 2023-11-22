@@ -465,12 +465,21 @@ class Stripe extends CommonObject
 				$paymentmethodtypes = array("card_present");
 			}
 
+			global $dolibarr_main_url_root;
+
 			$dataforintent = array(
-				"confirm" => $confirmnow, // Do not confirm immediatly during creation of intent
+				"confirm" => $confirmnow, // try to confirm immediatly after create (if conditions are ok)
 				"confirmation_method" => $mode,
 				"amount" => $stripeamount,
 				"currency" => $currency_code,
-				"payment_method_types" => $paymentmethodtypes,
+				"payment_method_types" => $paymentmethodtypes,	// When payment_method_types is set, return_url is not required but payment mode can't be managed from dashboard
+				/*
+				'return_url' => $dolibarr_main_url_root.'/public/payment/paymentok.php',
+				'automatic_payment_methods' => array(
+					'enabled' => true,
+					'allow_redirects' => 'never',
+				),
+				*/
 				"description" => $description,
 				//"save_payment_method" => true,
 				"setup_future_usage" => "on_session",
@@ -683,9 +692,18 @@ class Stripe extends CommonObject
 				$paymentmethodtypes[] = "sofort";
 			}
 
+			global $dolibarr_main_url_root;
+
 			$dataforintent = array(
 				"confirm" => $confirmnow, // Do not confirm immediatly during creation of intent
-				"payment_method_types" => $paymentmethodtypes,
+				"payment_method_types" => $paymentmethodtypes,	// When payment_method_types is set, return_url is not required but payment mode can't be managed from dashboard
+				/*
+				 'return_url' => $dolibarr_main_url_root.'/public/payment/paymentok.php',
+				 'automatic_payment_methods' => array(
+				 'enabled' => true,
+				 'allow_redirects' => 'never',
+				 ),
+				 */
 				"usage" => "off_session",
 				"metadata" => $metadata
 			);
@@ -710,7 +728,7 @@ class Stripe extends CommonObject
 
 				dol_syslog("getSetupIntent ".$stripearrayofkeysbyenv[$status]['publishable_key'], LOG_DEBUG);
 
-				// Note: If all data for payment intent are same than a previous on, even if we use 'create', Stripe will return ID of the old existing payment intent.
+				// Note: If all data for payment intent are same than a previous one, even if we use 'create', Stripe will return ID of the old existing payment intent.
 				if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
 					//$setupintent = \Stripe\SetupIntent::create($dataforintent, array("idempotency_key" => "$description"));
 					$setupintent = \Stripe\SetupIntent::create($dataforintent, array());
