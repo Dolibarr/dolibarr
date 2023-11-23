@@ -91,6 +91,7 @@ WarningCronDelayed=Attention, for performance purpose, whatever is next date of 
 DATAPOLICYJob=Data cleaner and anonymizer
 JobXMustBeEnabled=Job %s must be enabled
 EmailIfError=Email for warning on error
+JobNotFound=Job %s not found in list of jobs (try to disable/enabled module)
 ErrorInBatch=Error when running the job %s
 
 # Cron Boxes

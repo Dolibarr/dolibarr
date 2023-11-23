@@ -212,6 +212,9 @@ class CommandeFournisseur extends CommonOrder
 	public $origin_id;
 	public $linked_objects = array();
 
+	public $date_lim_reglement;
+	public $receptions = array();
+
 	// Multicurrency
 	/**
 	 * @var int ID
@@ -2913,7 +2916,6 @@ class CommandeFournisseur extends CommonOrder
 			$this->line->localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 			$this->line->remise_percent = $remise_percent;
 			$this->line->subprice       = $pu_ht;
-			$this->line->rang           = $this->rang;
 			$this->line->info_bits      = $info_bits;
 			$this->line->total_ht       = $total_ht;
 			$this->line->total_tva      = $total_tva;
@@ -2921,7 +2923,8 @@ class CommandeFournisseur extends CommonOrder
 			$this->line->total_localtax2 = $total_localtax2;
 			$this->line->total_ttc      = $total_ttc;
 			$this->line->product_type   = $type;
-			$this->line->special_code   = (!empty($this->special_code) ? $this->special_code : 0);
+			$this->line->special_code   = $oldline->special_code;
+			$this->line->rang           = $oldline->rang;
 			$this->line->origin         = $this->origin;
 			$this->line->fk_unit        = $fk_unit;
 
@@ -3927,7 +3930,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		$sql .= ", ".($this->multicurrency_total_ht ? price2num($this->multicurrency_total_ht) : '0');
 		$sql .= ", ".($this->multicurrency_total_tva ? price2num($this->multicurrency_total_tva) : '0');
 		$sql .= ", ".($this->multicurrency_total_ttc ? price2num($this->multicurrency_total_ttc) : '0');
-		$sql .= ", ".($this->fk_parent_line > 0 ? $this->fk_parent_line : 'null');
+		$sql .= ", ".((!empty($this->fk_parent_line) && $this->fk_parent_line > 0) ? $this->fk_parent_line : 'null');
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::insert", LOG_DEBUG);

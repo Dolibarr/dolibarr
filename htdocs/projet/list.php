@@ -1843,8 +1843,6 @@ while ($i < $imaxinloop) {
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
-			}
-			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'opp_weighted_amount';
 			}
 		}
@@ -1862,8 +1860,6 @@ while ($i < $imaxinloop) {
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
-			}
-			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'p.budget_amount';
 			}
 		}

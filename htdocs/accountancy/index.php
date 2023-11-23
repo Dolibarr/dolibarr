@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2016-2020  Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2016-2019  Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2016-2023  Alexandre Spangaro		<aspangaro@easya.solutions>
  * Copyright (C) 2019-2021  Frédéric France			<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -92,7 +92,7 @@ if (isModEnabled('accounting')) {
 	$showtutorial = '';
 
 	if (!$helpisexpanded) {
-		$showtutorial  = '<div align="right"><a href="#" id="show_hide">';
+		$showtutorial  = '<div class="right"><a href="#" id="show_hide">';
 		$showtutorial .= img_picto('', 'chevron-down');
 		$showtutorial .= ' '.$langs->trans("ShowTutorial");
 		$showtutorial .= '</a></div>';
@@ -145,6 +145,14 @@ if (isModEnabled('accounting')) {
 		print $langs->trans("AccountancyAreaDescActionOnceBis");
 		print "<br>\n";
 		print "<br>\n";
+
+		if (getDolGlobalString('ACCOUNTANCY_FISCAL_PERIOD_MODE') != 'blockedonclosed') {
+			$step++;
+			$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescFiscalPeriod", $step, '{s}');
+			$s = str_replace('{s}', '<a href="'.DOL_URL_ROOT.'/accountancy/admin/fiscalyear.php"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("FiscalPeriod").'</strong></a>', $s);
+			print $s;
+			print "<br>\n";
+		}
 
 		$step++;
 		$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescDefault", $step, '{s}');
