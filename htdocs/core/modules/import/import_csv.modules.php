@@ -76,7 +76,6 @@ class ImportCsv extends ModeleImports
 
 	public $charset = '';
 
-	public $col;
 
 
 	/**
