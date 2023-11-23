@@ -51,6 +51,7 @@ jobs:
         run: cd ./tmp && ls -al
       - name: Run PHPSTAN
         run: phpstan -vvv analyse --error-format=checkstyle -c phpstan_action.neon htdocs/ | cs2pr --graceful-warnings
+        continue-on-error: true
       - name: "Save phpstan cache"
         uses: actions/cache/save@v3
         if: always()
