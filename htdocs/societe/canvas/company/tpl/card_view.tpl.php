@@ -203,7 +203,7 @@ for ($i = 1; $i <= 4; $i++) {
 		<tr>
 			<td><?php echo $langs->trans('RIB'); ?></td>
 			<td class="right">
-			<?php if ($user->rights->societe->creer) { ?>
+			<?php if ($user->hasRight('societe', 'creer')) { ?>
 			<a href="<?php echo DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$this->control->tpl['id']; ?>"><?php echo $this->control->tpl['image_edit']; ?></a>
 			<?php } else { ?>
 			&nbsp;
@@ -235,7 +235,7 @@ for ($i = 1; $i <= 4; $i++) {
 		<tr>
 			<td><?php echo $langs->trans('SalesRepresentatives'); ?></td>
 			<td class="right">
-			<?php if ($user->rights->societe->creer) { ?>
+			<?php if ($user->hasRight('societe', 'creer')) { ?>
 			<a href="<?php echo DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$this->control->tpl['id']; ?>"><?php echo $this->control->tpl['image_edit']; ?></a>
 			<?php } else { ?>
 			&nbsp;
@@ -259,7 +259,7 @@ for ($i = 1; $i <= 4; $i++) {
 <?php print dol_get_fiche_end(); ?>
 
 <div class="tabsAction">
-<?php if ($user->rights->societe->creer) { ?>
+<?php if ($user->hasRight('societe', 'creer')) { ?>
 <a class="butAction" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&action=edit&token='.newToken().'&canvas='.urlencode($canvas); ?>"><?php echo $langs->trans("Modify"); ?></a>
 <?php } ?>
 

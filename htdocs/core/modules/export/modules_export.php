@@ -37,12 +37,43 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 
 	public $driverlabel = array();
 
+	public $driverdesc = array();
+
 	public $driverversion = array();
 
 	public $liblabel = array();
 
 	public $libversion = array();
 
+	/**
+	 * @var string picto
+	 */
+	public $picto;
+
+	/**
+	 * @var string description
+	 */
+	public $desc;
+
+	/**
+	 * @var string escape
+	 */
+	public $escape;
+
+	/**
+	 * @var string enclosure
+	 */
+	public $enclosure;
+
+	/**
+	 * @var int col
+	 */
+	public $col;
+
+	/**
+	 * @var int disabled
+	 */
+	public $disabled;
 
 	/**
 	 *  Load into memory list of available export format
@@ -76,6 +107,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 					require_once $file;
 					if (class_exists($classname)) {
 						$module = new $classname($db);
+						// var_dump($classname);
 
 						// Picto
 						$this->picto[$module->id] = $module->picto;

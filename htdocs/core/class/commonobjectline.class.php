@@ -108,6 +108,35 @@ abstract class CommonObjectLine extends CommonObject
 	public $subprice;
 	public $tva_tx;
 
+	/**
+	 * @var int multicurrency id
+	 */
+	public $fk_multicurrency;
+
+	/**
+	 * @var string Multicurrency code
+	 */
+	public $multicurrency_code;
+
+	/**
+	 * @var float Multicurrency subprice
+	 */
+	public $multicurrency_subprice;
+
+	/**
+	 * @var float Multicurrency total without tax
+	 */
+	public $multicurrency_total_ht;
+
+	/**
+	 * @var float Multicurrency total vat
+	 */
+	public $multicurrency_total_tva;
+
+	/**
+	 * @var float Multicurrency total with tax
+	 */
+	public $multicurrency_total_ttc;
 
 
 	/**

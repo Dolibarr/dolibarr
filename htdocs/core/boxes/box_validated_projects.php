@@ -94,7 +94,7 @@ class box_validated_projects extends ModeleBoxes
 		$this->info_box_head = array('text' => $textHead, 'limit'=> dol_strlen($textHead));
 
 		// list the summary of the orders
-		if ($user->rights->projet->lire) {
+		if ($user->hasRight('projet', 'lire')) {
 			include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 			$projectstatic = new Project($this->db);
 
@@ -103,7 +103,7 @@ class box_validated_projects extends ModeleBoxes
 
 			// Get list of project id allowed to user (in a string list separated by coma)
 			$projectsListId = '';
-			if (empty($user->rights->projet->all->lire)) {
+			if (!$user->hasRight('projet', 'all', 'lire')) {
 				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 			}
 

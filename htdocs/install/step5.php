@@ -209,7 +209,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 					}
 				}
 
-				dolibarr_install_syslog('step5: DATABASE_PWD_ENCRYPTED = '.$conf->global->DATABASE_PWD_ENCRYPTED.' MAIN_SECURITY_HASH_ALGO = '.$conf->global->MAIN_SECURITY_HASH_ALGO, LOG_INFO);
+				dolibarr_install_syslog('step5: DATABASE_PWD_ENCRYPTED = ' . getDolGlobalString('DATABASE_PWD_ENCRYPTED').' MAIN_SECURITY_HASH_ALGO = ' . getDolGlobalString('MAIN_SECURITY_HASH_ALGO'), LOG_INFO);
 			}
 
 			// Create user used to create the admin user
@@ -366,6 +366,11 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 					dol_print_error($db, 'Error in setup program');
 				}
 
+				// May fail if parameter already defined
+				dolibarr_install_syslog('step5: set the default language');
+				$resql = $db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) VALUES (".$db->encrypt('MAIN_LANG_DEFAULT').", ".$db->encrypt($setuplang).", 'chaine', 0, 'Default language', 1)");
+				//if (! $resql) dol_print_error($db,'Error in setup program');
+
 				$db->commit();
 			}
 		} else {
@@ -405,7 +410,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 				}
 				$conf->global->MAIN_VERSION_LAST_UPGRADE = $targetversion;
 			} else {
-				dolibarr_install_syslog('step5: we run an upgrade to version '.$targetversion.' but database was already upgraded to '.$conf->global->MAIN_VERSION_LAST_UPGRADE.'. We keep MAIN_VERSION_LAST_UPGRADE as it is.');
+				dolibarr_install_syslog('step5: we run an upgrade to version '.$targetversion.' but database was already upgraded to ' . getDolGlobalString('MAIN_VERSION_LAST_UPGRADE').'. We keep MAIN_VERSION_LAST_UPGRADE as it is.');
 
 				// Force the delete of the flag that say installation is not complete
 				dolibarr_install_syslog('step5: remove MAIN_NOT_INSTALLED const after upgrade process (should not exists but this is a security)');
@@ -414,11 +419,6 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 					dol_print_error($db, 'Error in setup program');
 				}
 			}
-
-			// May fail if parameter already defined
-			dolibarr_install_syslog('step5: set the default language');
-			$resql = $db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) VALUES (".$db->encrypt('MAIN_LANG_DEFAULT').", ".$db->encrypt($setuplang).", 'chaine', 0, 'Default language', 1)");
-			//if (! $resql) dol_print_error($db,'Error in setup program');
 		} else {
 			print $langs->trans("ErrorFailedToConnect")."<br>";
 		}
@@ -473,7 +473,7 @@ if ($action == "set") {
 			print '</a></div><br>';
 		} else {
 			// If here MAIN_VERSION_LAST_UPGRADE is not empty
-			print $langs->trans("VersionLastUpgrade").': <b><span class="ok">'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</span></b><br>';
+			print $langs->trans("VersionLastUpgrade").': <b><span class="ok">' . getDolGlobalString('MAIN_VERSION_LAST_UPGRADE').'</span></b><br>';
 			print $langs->trans("VersionProgram").': <b><span class="ok">'.DOL_VERSION.'</span></b><br>';
 			print $langs->trans("MigrationNotFinished").'<br>';
 			print "<br>";
@@ -523,7 +523,7 @@ if ($action == "set") {
 		$morehtml .= '</a></div><br>';
 	} else {
 		// If here MAIN_VERSION_LAST_UPGRADE is not empty
-		print $langs->trans("VersionLastUpgrade").': <b><span class="ok">'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</span></b><br>';
+		print $langs->trans("VersionLastUpgrade").': <b><span class="ok">' . getDolGlobalString('MAIN_VERSION_LAST_UPGRADE').'</span></b><br>';
 		print $langs->trans("VersionProgram").': <b><span class="ok">'.DOL_VERSION.'</span></b>';
 
 		print "<br>";

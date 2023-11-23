@@ -339,7 +339,7 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '', $bar
 	if (!$error) {
 		$fuser->getrights();
 
-		if ($fuser->rights->societe->lire) {
+		if ($fuser->hasRight('societe', 'lire')) {
 			$thirdparty = new Societe($db);
 			$result = $thirdparty->fetch($id, $ref, $ref_ext, $barcode, $profid1, $profid2);
 			if ($result > 0) {
@@ -352,11 +352,11 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '', $bar
 						'supplier' => $thirdparty->fournisseur,
 						'customer_code' => $thirdparty->code_client,
 						'supplier_code' => $thirdparty->code_fournisseur,
-						'customer_code_accountancy' => $thirdparty->code_compta,
+						'customer_code_accountancy' => $thirdparty->code_compta_client,
 						'supplier_code_accountancy' => $thirdparty->code_compta_fournisseur,
-						'user_creation' => $thirdparty->user_creation,
+						'user_creation_id' => $thirdparty->user_creation_id,
 						'date_creation' => dol_print_date($thirdparty->date_creation, 'dayhourrfc'),
-						'user_modification' => $thirdparty->user_modification,
+						'user_modification_id' => $thirdparty->user_modification_id,
 						'date_modification' => dol_print_date($thirdparty->date_modification, 'dayhourrfc'),
 						'address' => $thirdparty->address,
 						'zip' => $thirdparty->zip,
@@ -831,7 +831,7 @@ function deleteThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 	if (!$error) {
 		$fuser->getrights();
 
-		if ($fuser->rights->societe->lire && $fuser->rights->societe->supprimer) {
+		if ($fuser->hasRight('societe', 'lire') && $fuser->hasRight('societe', 'supprimer')) {
 			$thirdparty = new Societe($db);
 			$result = $thirdparty->fetch($id, $ref, $ref_ext);
 

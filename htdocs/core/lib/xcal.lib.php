@@ -497,7 +497,7 @@ function calEncode($line)
 
 		for ($j = 0; $j < $strlength; $j++) {
 			// Take char at position $j
-			$char = mb_substr($line, $j, 1, "UTF-8");
+			$char = dol_substr($line, $j, 1, "UTF-8");
 
 			if ((mb_strlen($newpara, "UTF-8") + mb_strlen($char, "UTF-8")) >= 75) {
 				// CRLF + Space for cal

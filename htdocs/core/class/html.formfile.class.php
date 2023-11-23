@@ -7,7 +7,7 @@
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes		<bafbes@gmail.com>
  * Copyright (C) 2016-2017	Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2019-2022  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2023  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,7 +83,7 @@ class FormFile
 	 *  @param	int			$nooutput		0=Output result with print, 1=Return result
 	 * 	@return	int|string					<0 if KO, >0 if OK, or string if $noouput=1
 	 */
-	public function form_attach_new_file($url, $title = '', $addcancel = 0, $sectionid = 0, $perm = 1, $size = 50, $object = '', $options = '', $useajax = 1, $savingdocmask = '', $linkfiles = 1, $htmlname = 'formuserfile', $accept = '', $sectiondir = '', $usewithoutform = 0, $capture = 0, $disablemulti = 0, $nooutput = 0)
+	public function form_attach_new_file($url, $title = '', $addcancel = 0, $sectionid = 0, $perm = 1, $size = 50, $object = null, $options = '', $useajax = 1, $savingdocmask = '', $linkfiles = 1, $htmlname = 'formuserfile', $accept = '', $sectiondir = '', $usewithoutform = 0, $capture = 0, $disablemulti = 0, $nooutput = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs, $hookmanager;
@@ -585,7 +585,8 @@ class FormFile
 					$modellist = $genallowed;
 				} else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
-					$modellist = ModeleExports::liste_modeles($this->db);
+					//$modellist = ModeleExports::liste_modeles($this->db);		// liste_modeles() does not exists. We are using listOfAvailableExportFormat() method instead that return a different array format.
+					$modellist = array();
 				}
 			} elseif ($modulepart == 'commande_fournisseur' || $modulepart == 'supplier_order') {
 				if (is_array($genallowed)) {
@@ -703,6 +704,9 @@ class FormFile
 			$out .= '<table class="liste formdoc noborder centpercent">';
 
 			$out .= '<tr class="liste_titre">';
+			$addcolumforpicto = ($delallowed || $printer || $morepicto);
+			$colspan = (4 + ($addcolumforpicto ? 1 : 0));
+			$colspanmore = 0;
 
 			$out .= '<th colspan="'.$colspan.'" class="formdoc liste_titre maxwidthonsmartphone center">';
 
@@ -718,7 +722,40 @@ class FormFile
 				if ($conf->browser->layout == 'phone') {
 					$morecss = 'maxwidth100';
 				}
-				$out .= $form->selectarray('model', $modellist, $modelselected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss);
+				$out .= $form->selectarray('model', $modellist, $modelselected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1, '', 0, 0);
+				// script for select the separator
+				/* TODO This must appear on export feature only
+				$out .= '<label class="forhide" for="delimiter">Delimiter:</label>';
+				$out .= '<input type="radio" class="testinput forhide" name="delimiter" value="," id="comma" checked><label class="forhide" for="comma">,</label>';
+				$out .= '<input type="radio" class="testinput forhide" name="delimiter" value=";" id="semicolon"><label class="forhide" for="semicolon">;</label>';
+
+				$out .= '<script>
+							jQuery(document).ready(function() {
+								$(".selectformat").on("change", function() {
+									var separator;
+									var selected = $(this).val();
+									if (selected == "excel2007" || selected == "tsv") {
+										$("input.testinput").prop("disabled", true);
+										$(".forhide").hide();
+									} else {
+										$("input.testinput").prop("disabled", false);
+										$(".forhide").show();
+									}
+
+									if ($("#semicolon").is(":checked")) {
+										separator = ";";
+									} else {
+										separator = ",";
+									}
+								});
+								if ("' . $conf->global->EXPORT_CSV_SEPARATOR_TO_USE . '" == ";") {
+									$("#semicolon").prop("checked", true);
+								} else {
+									$("#comma").prop("checked", true);
+								}
+							});
+						</script>';
+				*/
 				if ($conf->use_javascript_ajax) {
 					$out .= ajax_combobox('model');
 				}
@@ -976,6 +1013,18 @@ class FormFile
 			}
 		}
 		$out .= '<!-- End show_document -->'."\n";
+
+		$out .= '<script>
+		jQuery(document).ready(function() {
+			var selectedValue = $(".selectformat").val();
+
+			if (selectedValue === "excel2007" || selectedValue === "tsv") {
+			  $(".forhide").prop("disabled", true).hide();
+			} else {
+			  $(".forhide").prop("disabled", false).show();
+			}
+		  });
+			</script>';
 		//return ($i?$i:$headershown);
 		return $out;
 	}
@@ -990,7 +1039,7 @@ class FormFile
 	 *	@param	string	$filedir		Full path to directory to scan
 	 *  @param	string	$filter			Filter filenames on this regex string (Example: '\.pdf$')
 	 *  @param	string	$morecss		Add more css to the download picto
-	 *  @param	string	$allfiles		0=Only generated docs, 1=All files
+	 *  @param	int 	$allfiles		0=Only generated docs, 1=All files
 	 *	@return	string              	Output string with HTML link of documents (might be empty string). This also fill the array ->infofiles
 	 */
 	public function getDocumentsLink($modulepart, $modulesubdir, $filedir, $filter = '', $morecss = 'valignmiddle', $allfiles = 0)
@@ -1210,7 +1259,7 @@ class FormFile
 					if ($user->hasRight('produit', 'creer') && $object->type == Product::TYPE_PRODUCT) {
 						$permtoeditline = 1;
 					}
-					if ($user->rights->service->creer && $object->type == Product::TYPE_SERVICE) {
+					if ($user->hasRight('service', 'creer') && $object->type == Product::TYPE_SERVICE) {
 						$permtoeditline = 1;
 					}
 				}
@@ -1583,7 +1632,7 @@ class FormFile
 	 *  @param  string	$relativepath       Relative path of docs (autodefined if not provided)
 	 *  @param  int		$permissiontodelete       Permission to delete
 	 *  @param  int		$useinecm           Change output for use in ecm module
-	 *  @param  int		$textifempty        Text to show if filearray is empty
+	 *  @param  string	$textifempty        Text to show if filearray is empty
 	 *  @param  int		$maxlength          Maximum length of file name shown
 	 *  @param	string 	$url				Full url to use for click links ('' = autodetect)
 	 *  @param	int		$addfilterfields	Add line with filters
@@ -1593,7 +1642,7 @@ class FormFile
 	public function list_of_autoecmfiles($upload_dir, $filearray, $modulepart, $param, $forcedownload = 0, $relativepath = '', $permissiontodelete = 1, $useinecm = 0, $textifempty = '', $maxlength = 0, $url = '', $addfilterfields = 0)
 	{
 		// phpcs:enable
-		global $user, $conf, $langs, $hookmanager, $form;
+		global $conf, $langs, $hookmanager, $form;
 		global $sortfield, $sortorder;
 		global $search_doc_ref;
 		global $dolibarr_main_url_root;
@@ -1814,7 +1863,7 @@ class FormFile
 				}
 
 				$found = 0;
-				if (!empty($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) {
+				if (!empty($conf->cache['modulepartobject'][$modulepart.'_'.$id.'_'.$ref])) {
 					$found = 1;
 				} else {
 					//print 'Fetch '.$id." - ".$ref.' class='.get_class($object_instance).'<br>';
@@ -1839,24 +1888,24 @@ class FormFile
 
 					if ($result > 0) {  // Save object loaded into a cache
 						$found = 1;
-						$this->cache_objects[$modulepart.'_'.$id.'_'.$ref] = clone $object_instance;
+						$conf->cache['modulepartobject'][$modulepart.'_'.$id.'_'.$ref] = clone $object_instance;
 					}
 					if ($result == 0) {
 						$found = 1;
-						$this->cache_objects[$modulepart.'_'.$id.'_'.$ref] = 'notfound';
+						$conf->cache['modulepartobject'][$modulepart.'_'.$id.'_'.$ref] = 'notfound';
 						unset($filearray[$key]);
 					}
 				}
 
-				if ($found <= 0 || !is_object($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) {
+				if ($found <= 0 || !is_object($conf->cache['modulepartobject'][$modulepart.'_'.$id.'_'.$ref])) {
 					continue; // We do not show orphelins files
 				}
 
 				print '<!-- Line list_of_autoecmfiles key='.$key.' -->'."\n";
 				print '<tr class="oddeven">';
 				print '<td>';
-				if ($found > 0 && is_object($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) {
-					$tmpobject = $this->cache_objects[$modulepart.'_'.$id.'_'.$ref];
+				if ($found > 0 && is_object($conf->cache['modulepartobject'][$modulepart.'_'.$id.'_'.$ref])) {
+					$tmpobject = $conf->cache['modulepartobject'][$modulepart.'_'.$id.'_'.$ref];
 					//if (! in_array($tmpobject->element, array('expensereport'))) {
 					print $tmpobject->getNomUrl(1, 'document');
 					//} else {

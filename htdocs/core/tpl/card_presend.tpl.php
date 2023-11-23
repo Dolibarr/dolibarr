@@ -208,6 +208,7 @@ if ($action == 'presend') {
 		$fuser->fetch($object->fk_user);
 		$liste['thirdparty'] = $fuser->getFullName($outputlangs)." <".$fuser->email.">";
 	} else {
+		// For exemple if element is project
 		if (!empty($object->socid) && $object->socid > 0 && !is_object($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) {
 			$object->fetch_thirdparty();
 		}
@@ -276,7 +277,6 @@ if ($action == 'presend') {
 		$checkRead.='" width="1" height="1" style="width:1px;height:1px" border="0"/>';
 		$substitutionarray['__CHECK_READ__'] = $checkRead;
 	}
-	$substitutionarray['__PERSONALIZED__'] = ''; // deprecated
 	$substitutionarray['__CONTACTCIVNAME__'] = '';
 	$parameters = array(
 		'mode' => 'formemail'

@@ -45,11 +45,6 @@ class mailing_contacts1 extends MailingTargets
 	 */
 	public $picto = 'contact';
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
 
 	/**
 	 *  Constructor

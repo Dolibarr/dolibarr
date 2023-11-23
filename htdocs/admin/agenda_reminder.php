@@ -171,7 +171,7 @@ print '<td>'.$langs->trans('AGENDA_REMINDER_BROWSER').'</td>'."\n";
 print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right nowraponall">'."\n";
 
-if (empty($conf->global->AGENDA_REMINDER_BROWSER)) {
+if (!getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
 	if (!isHTTPS()) {
 		$langs->load("errors");
 		print img_warning($langs->trans("WarningAvailableOnlyForHTTPSServers"), '', 'valignmiddle size15x').' ';
@@ -191,7 +191,7 @@ if (empty($conf->global->AGENDA_REMINDER_BROWSER)) {
 	print '<td class="center">&nbsp;</td>'."\n";
 	print '<td class="right">'."\n";
 
-	if (empty($conf->global->AGENDA_REMINDER_BROWSER_SOUND)) {
+	if (!getDolGlobalString('AGENDA_REMINDER_BROWSER_SOUND')) {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_BROWSER_SOUND&token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
 	} else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_BROWSER_SOUND&token='.newToken().'">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
@@ -207,7 +207,7 @@ $job->fetch(0, 'ActionComm', 'sendEmailsReminder');
 print '<tr class="oddeven">'."\n";
 print '<td>'.$langs->trans('AGENDA_REMINDER_EMAIL', $langs->transnoentities("Module2300Name"));
 if (isModEnabled('cron')) {
-	if (!empty($conf->global->AGENDA_REMINDER_EMAIL)) {
+	if (getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
 		if ($job->id > 0) {
 			if ($job->status == $job::STATUS_ENABLED) {
 				print '<br><span class="opacitymedium">'.$langs->trans("AGENDA_REMINDER_EMAIL_NOTE", $langs->transnoentitiesnoconv("sendEmailsReminder")).'</span>';
@@ -222,7 +222,7 @@ print '<td class="right nowraponall">'."\n";
 if (!isModEnabled('cron')) {
 	print '<span class="opacitymedium">'.$langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("Module2300Name")).'</span>';
 } else {
-	if (empty($conf->global->AGENDA_REMINDER_EMAIL)) {
+	if (!getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_EMAIL&token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
 	} else {
 		// Get the max frequency of reminder

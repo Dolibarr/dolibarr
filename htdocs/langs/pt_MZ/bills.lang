@@ -90,7 +90,6 @@ EnterPaymentReceivedFromCustomer=Entrar pagamento recebido de cliente
 EnterPaymentDueToCustomer=Realizar pagamento devido para cliente
 DisabledBecauseRemainderToPayIsZero=Desabilitado porque o restante a pagar é zero
 BillStatus=Status de fatura
-StatusOfGeneratedInvoices=Situação das faturas geradas
 BillStatusDraft=Rascunho (precisa ser validada)
 BillStatusPaid=Pago
 BillStatusConverted=Pago (Pronto para consumo na fatura final)

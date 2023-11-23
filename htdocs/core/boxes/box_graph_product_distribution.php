@@ -110,10 +110,10 @@ class box_graph_product_distribution extends ModeleBoxes
 		if (!isModEnabled('facture') || !$user->hasRight('facture', 'lire')) {
 			$showinvoicenb = 0;
 		}
-		if (isModEnabled('propal') || empty($user->rights->propal->lire)) {
+		if (isModEnabled('propal') || !$user->hasRight('propal', 'lire')) {
 			$showpropalnb = 0;
 		}
-		if (!isModEnabled('commande') || empty($user->rights->commande->lire)) {
+		if (!isModEnabled('commande') || !$user->hasRight('commande', 'lire')) {
 			$showordernb = 0;
 		}
 

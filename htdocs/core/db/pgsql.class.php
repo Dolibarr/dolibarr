@@ -50,11 +50,19 @@ class DoliDBPgsql extends DoliDB
 	//! Version min database
 	const VERSIONMIN = '9.0.0'; // Version min database
 
+	/**
+	 * @var boolean $unescapeslashquot  			Set this to 1 when calling SQL queries, to say that SQL is not standard but already escaped for Mysql. Used by Postgresql driver
+	 */
+	public $unescapeslashquot = false;
+	/**
+	 * @var boolean $standard_conforming_string		Set this to true if postgres accept only standard encoding of sting using '' and not \'
+	 */
+	public $standard_conforming_strings = false;
+
+
 	/** @var resource|boolean Resultset of last query */
 	private $_results;
 
-	public $unescapeslashquot;
-	public $standard_conforming_strings;
 
 
 	/**
@@ -93,7 +101,7 @@ class DoliDBPgsql extends DoliDB
 			$this->ok = false;
 			$this->error = "Pgsql PHP functions are not available in this version of PHP";
 			dol_syslog(get_class($this)."::DoliDBPgsql : Pgsql PHP functions are not available in this version of PHP", LOG_ERR);
-			return $this->ok;
+			return;
 		}
 
 		if (!$host) {
@@ -101,7 +109,7 @@ class DoliDBPgsql extends DoliDB
 			$this->ok = false;
 			$this->error = $langs->trans("ErrorWrongHostParameter");
 			dol_syslog(get_class($this)."::DoliDBPgsql : Erreur Connect, wrong host parameters", LOG_ERR);
-			return $this->ok;
+			return;
 		}
 
 		// Essai connexion serveur
@@ -136,8 +144,6 @@ class DoliDBPgsql extends DoliDB
 			// Pas de selection de base demandee, ok ou ko
 			$this->database_selected = false;
 		}
-
-		return $this->ok;
 	}
 
 
@@ -146,10 +152,10 @@ class DoliDBPgsql extends DoliDB
 	 *
 	 *  @param  string	$line   			SQL request line to convert
 	 *  @param  string	$type				Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
-	 *  @param	bool	$unescapeslashquot	Unescape slash quote with quote quote
+	 *  @param	bool	$unescapeslashquot	Unescape "slash quote" with "quote quote"
 	 *  @return string   					SQL request line converted
 	 */
-	public static function convertSQLFromMysql($line, $type = 'auto', $unescapeslashquot = false)
+	public function convertSQLFromMysql($line, $type = 'auto', $unescapeslashquot = false)
 	{
 		global $conf;
 

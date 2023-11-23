@@ -85,7 +85,7 @@ $search_user = trim(GETPOST("search_user"));
 $search_batch = trim(GETPOST("search_batch"));
 $search_qty = trim(GETPOST("search_qty"));
 $search_type_mouvement = GETPOST('search_type_mouvement', 'int');
-$search_fk_projet=GETPOST("search_fk_projet", 'int');
+$search_fk_project=GETPOST("search_fk_project", 'int');
 
 $type = GETPOST("type", "int");
 
@@ -167,7 +167,7 @@ if ($id > 0 || !empty($ref)) {
 $result = restrictedArea($user, 'stock');
 
 // Security check
-if (!$user->rights->stock->mouvement->lire) {
+if (!$user->hasRight('stock', 'mouvement', 'lire')) {
 	accessforbidden();
 }
 
@@ -226,7 +226,7 @@ if (empty($reshook)) {
 		$search_user = "";
 		$search_batch = "";
 		$search_qty = '';
-		$search_fk_projet=0;
+		$search_fk_project = "";
 		$search_all = "";
 		$toselect = array();
 		$search_array_options = array();
@@ -586,6 +586,45 @@ if ($action == "transfert_stock" && !$cancel) {
 	}
 }
 
+// reverse mouvement of stock
+if ($action == 'confirm_reverse') {
+	$listMouvement = array();
+	$toselect = array_map('intval', $toselect);
+
+	$sql = "SELECT rowid, label, inventorycode, datem";
+	$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement";
+	$sql .= " WHERE rowid IN (";
+	foreach ($toselect as $id) {
+		$sql .= ((int) $id).",";
+	}
+	$sql = rtrim($sql, ',');
+	$sql .= ")";
+
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num = $db->num_rows($resql);
+		$i = 0;
+		while ($i < $num) {
+			$obj = $db->fetch_object($resql);
+			$object->fetch($obj->rowid);
+			$reverse = $object->reverseMouvement();
+			if ($reverse < 0) {
+				$hasError = true;
+			} else {
+				$hasSuccess = true;
+			}
+			$i++;
+		}
+		if ($hasError) {
+			setEventMessages($langs->trans("WarningAlreadyReverse", $langs->transnoentities($idAlreadyReverse)), null, 'warnings');
+		}
+		if ($hasSuccess) {
+			setEventMessages($langs->trans("ReverseConfirmed"), null);
+		}
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	}
+}
 
 /*
  * View
@@ -690,8 +729,8 @@ if (!empty($search_batch)) {
 if (!empty($product_id) && $product_id != '-1') {
 	$sql .= natural_search('p.rowid', $product_id);
 }
-if (!empty($search_fk_projet) && $search_fk_projet != '-1') {
-	$sql .= natural_search('m.fk_projet', $search_fk_projet);
+if (!empty($search_fk_project) && $search_fk_project != '-1') {
+	$sql .= natural_search('m.fk_projet', $search_fk_project);
 }
 if ($search_qty != '') {
 	$sql .= natural_search('m.value', $search_qty, 1);
@@ -936,11 +975,11 @@ if ((empty($action) || $action == 'list') && $id > 0) {
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 																								   // modified by hook
 	if (empty($reshook)) {
-		if ($user->rights->stock->mouvement->creer) {
+		if ($user->hasRight('stock', 'mouvement', 'creer')) {
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=correction">'.$langs->trans("CorrectStock").'</a>';
 		}
 
-		if ($user->rights->stock->mouvement->creer) {
+		if ($user->hasRight('stock', 'mouvement', 'creer')) {
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert">'.$langs->trans("TransferStock").'</a>';
 		}
 	}
@@ -1008,6 +1047,9 @@ if ($search_user) {
 if ($idproduct > 0) {
 	$param .= '&idproduct='.urlencode($idproduct);
 }
+if ($search_fk_project != '' && $search_fk_project != '-1') {
+	$param .= '&search_fk_project='.urlencode($search_fk_project);
+}
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
@@ -1024,9 +1066,13 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 if (!empty($conf->global->STOCK_ALLOW_DELETE_OF_MOVEMENT) && $permissiontodelete) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
+if (!empty($permissiontoadd)) {
+	$arrayofmassactions['prereverse'] = img_picto('', 'add', 'class="pictofixedwidth"').$langs->trans("Reverse");
+}
+if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'prereverse'))) {
 	$arrayofmassactions = array();
 }
+
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -1062,6 +1108,10 @@ $modelmail = "movementstock";
 $objecttmp = new MouvementStock($db);
 $trackid = 'mov'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+if ($massaction == 'prereverse') {
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassReverse"), $langs->trans("ConfirmMassReverseQuestion", count($toselect)), "confirm_reverse", null, '', 0, 200, 500, 1, 'Yes');
+}
+
 
 if ($search_all) {
 	$setupstring = '';
@@ -1181,7 +1231,7 @@ if (!empty($arrayfields['origin']['checked'])) {
 if (!empty($arrayfields['m.fk_projet']['checked'])) {
 	// fk_project
 	print '<td class="liste_titre" align="left">';
-	print '&nbsp; ';
+	print $object->showInputField($object->fields['fk_project'], 'fk_project', $search_fk_project, '', '', 'search_', 'maxwidth125', 1);
 	print '</td>';
 }
 if (!empty($arrayfields['m.type_mouvement']['checked'])) {
@@ -1399,13 +1449,14 @@ while ($i < $imaxinloop) {
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
+		$selected = -1;
 		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
 			if (in_array($object->id, $arrayofselected)) {
 				$selected = 1;
 			}
 		}
-		print $object->getKanbanView('', array('selected' => in_array($warehousestatic->id, $arrayofselected)));
+		print $object->getKanbanView('', array('selected' => $selected));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';

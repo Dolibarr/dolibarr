@@ -190,17 +190,7 @@ class FormActions
 
 		$num = count($listofactions);
 		if ($num || $forceshowtitle) {
-			if ($typeelement == 'invoice_supplier' || $typeelement == 'supplier_invoice') {
-				$title = $langs->trans('ActionsOnBill');
-			} elseif ($typeelement == 'supplier_proposal') {
-				$title = $langs->trans('ActionsOnSupplierProposal');
-			} elseif ($typeelement == 'order_supplier' || $typeelement == 'supplier_order') {
-				$title = $langs->trans('ActionsOnOrder');
-			} elseif ($typeelement == 'shipping') {
-				$title = $langs->trans('ActionsOnShipping');
-			} else {
-				$title = $langs->trans("LatestLinkedEvents", $max ? $max : '');
-			}
+			$title = $langs->trans("LatestLinkedEvents", $max ? $max : '');
 
 			$urlbacktopage = $_SERVER['PHP_SELF'].'?id='.$object->id.($moreparambacktopage ? '&'.$moreparambacktopage : '');
 
@@ -306,7 +296,7 @@ class FormActions
 					print '</td>';
 
 					// Label
-					print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($actioncomm->label).'">'.$actioncomm->getNomUrl(0, 36).'</td>';
+					print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($actioncomm->label).'">'.$actioncomm->getNomUrl(0).'</td>';
 
 					// Date
 					print '<td class="center nowraponall">'.dol_print_date($actioncomm->datep, 'dayhour', 'tzuserrel');

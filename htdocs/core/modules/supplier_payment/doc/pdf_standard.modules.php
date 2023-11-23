@@ -70,12 +70,6 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	 */
 	public $version = 'dolibarr';
 
-	/**
-	 * Issuer
-	 * @var Societe
-	 */
-	public $emetteur;
-
 	public $posxdate;
 	public $posxreffacturefourn;
 	public $posxreffacture;
@@ -252,7 +246,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 				$pdf->SetFont(pdf_getPDFFont($outputlangs));
 				// Set path to the background PDF File
 				if (!empty($conf->global->MAIN_ADD_PDF_BACKGROUND)) {
-					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
 				}
 
@@ -531,7 +525,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 
 		// To
 		$pdf->SetXY($this->marge_gauche + 50, $posy);
-		$pdf->MultiCell(150, 4, $object->thirdparty->nom, 0, 'L', 1);
+		$pdf->MultiCell(150, 4, $object->thirdparty->name, 0, 'L', 1);
 
 		$LENGTHAMOUNT = 35;
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - $LENGTHAMOUNT, $posy);

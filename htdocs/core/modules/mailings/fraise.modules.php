@@ -48,10 +48,6 @@ class mailing_fraise extends MailingTargets
 	 */
 	public $picto = 'user';
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
 
 	/**
 	 *    Constructor

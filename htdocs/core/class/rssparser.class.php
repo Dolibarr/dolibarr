@@ -52,6 +52,11 @@ class RssParser
 	private $_rssarray = array();
 
 	private $current_namespace;
+	public $items = array();
+	public $current_item = array();
+	public $channel = array();
+	public $textinput = array();
+	public $image = array();
 
 	private $initem;
 	private $intextinput;

@@ -41,6 +41,7 @@ class Dolistore
 
 	public $per_page; // pagination: display per page
 	public $categorie; // the current categorie
+	public $categories; // an array of categories
 	public $search; // the search keywords
 
 	// setups
@@ -49,6 +50,8 @@ class Dolistore
 	public $lang; // the integer representing the lang in the store
 	public $debug_api; // usefull if no dialog
 
+	public $api;
+	public $products;
 
 	/**
 	 * Constructor
@@ -57,7 +60,7 @@ class Dolistore
 	 */
 	public function __construct($debug = false)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->url       = DOL_URL_ROOT.'/admin/modules.php?mode=marketplace';
 		$this->shop_url  = 'https://www.dolistore.com/index.php?controller=product&id_product=';
@@ -105,7 +108,7 @@ class Dolistore
 			} elseif ($trace[0]['args'][0] == 401) {
 				die('Bad auth key');
 			} else {
-				print 'Can not access to '.$conf->global->MAIN_MODULE_DOLISTORE_API_SRV.'<br>';
+				print 'Can not access to ' . getDolGlobalString('MAIN_MODULE_DOLISTORE_API_SRV').'<br>';
 				print $e->getMessage();
 			}
 		}
@@ -144,7 +147,7 @@ class Dolistore
 
 			// make a search to limit the id returned.
 			if ($this->search != '') {
-				$opt2['url'] = $conf->global->MAIN_MODULE_DOLISTORE_API_SRV.'/api/search?query='.$this->search.'&language='.$this->lang; // It seems for search, key start with
+				$opt2['url'] = getDolGlobalString('MAIN_MODULE_DOLISTORE_API_SRV') . '/api/search?query='.$this->search.'&language='.$this->lang; // It seems for search, key start with
 
 				// Call
 				dol_syslog("Call API with opt2 = ".var_export($opt2, true));
@@ -188,7 +191,7 @@ class Dolistore
 			} elseif ($trace[0]['args'][0] == 401) {
 				die('Bad auth key');
 			} else {
-				print 'Can not access to '.$conf->global->MAIN_MODULE_DOLISTORE_API_SRV.'<br>';
+				print 'Can not access to ' . getDolGlobalString('MAIN_MODULE_DOLISTORE_API_SRV').'<br>';
 				print $e->getMessage();
 			}
 		}
