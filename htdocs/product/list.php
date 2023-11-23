@@ -746,10 +746,10 @@ foreach ($searchCategoryProductList as $searchCategoryProduct) {
 	$param .= "&search_category_product_list[]=".urlencode($searchCategoryProduct);
 }
 if ($search_ref) {
-	$param = "&search_ref=".urlencode($search_ref);
+	$param .= "&search_ref=".urlencode($search_ref);
 }
 if ($search_ref_supplier) {
-	$param = "&search_ref_supplier=".urlencode($search_ref_supplier);
+	$param .= "&search_ref_supplier=".urlencode($search_ref_supplier);
 }
 if ($search_barcode) {
 	$param .= ($search_barcode ? "&search_barcode=".urlencode($search_barcode) : "");
@@ -767,7 +767,7 @@ if ($search_tobuy != '') {
 	$param .= "&search_tobuy=".urlencode($search_tobuy);
 }
 if ($search_tobatch) {
-	$param = "&search_tobatch=".urlencode($search_tobatch);
+	$param .= "&search_tobatch=".urlencode($search_tobatch);
 }
 if ($search_country != '') {
 	$param .= "&search_country=".urlencode($search_country);
@@ -776,7 +776,7 @@ if ($search_state != '') {
 	$param .= "&search_state=".urlencode($search_state);
 }
 if ($search_vatrate) {
-	$param = "&search_vatrate=".urlencode($search_vatrate);
+	$param .= "&search_vatrate=".urlencode($search_vatrate);
 }
 if ($fourn_id > 0) {
 	$param .= "&fourn_id=".urlencode($fourn_id);
@@ -791,25 +791,25 @@ if ($search_type != '') {
 	$param .= '&search_type='.urlencode($search_type);
 }
 if ($search_accountancy_code_sell) {
-	$param = "&search_accountancy_code_sell=".urlencode($search_accountancy_code_sell);
+	$param .= "&search_accountancy_code_sell=".urlencode($search_accountancy_code_sell);
 }
 if ($search_accountancy_code_sell_intra) {
-	$param = "&search_accountancy_code_sell_intra=".urlencode($search_accountancy_code_sell_intra);
+	$param .= "&search_accountancy_code_sell_intra=".urlencode($search_accountancy_code_sell_intra);
 }
 if ($search_accountancy_code_sell_export) {
-	$param = "&search_accountancy_code_sell_export=".urlencode($search_accountancy_code_sell_export);
+	$param .= "&search_accountancy_code_sell_export=".urlencode($search_accountancy_code_sell_export);
 }
 if ($search_accountancy_code_buy) {
-	$param = "&search_accountancy_code_buy=".urlencode($search_accountancy_code_buy);
+	$param .= "&search_accountancy_code_buy=".urlencode($search_accountancy_code_buy);
 }
 if ($search_accountancy_code_buy_intra) {
-	$param = "&search_accountancy_code_buy_intra=".urlencode($search_accountancy_code_buy_intra);
+	$param .= "&search_accountancy_code_buy_intra=".urlencode($search_accountancy_code_buy_intra);
 }
 if ($search_accountancy_code_buy_export) {
-	$param = "&search_accountancy_code_buy_export=".urlencode($search_accountancy_code_buy_export);
+	$param .= "&search_accountancy_code_buy_export=".urlencode($search_accountancy_code_buy_export);
 }
 if ($search_finished) {
-	$param = "&search_finished=".urlencode($search_finished);
+	$param .= "&search_finished=".urlencode($search_finished);
 }
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -943,9 +943,6 @@ if (empty($reshook)) {
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
 	print '</div>';
 }
 
