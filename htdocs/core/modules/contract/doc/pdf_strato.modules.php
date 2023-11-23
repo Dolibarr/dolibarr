@@ -89,7 +89,7 @@ class pdf_strato extends ModelePDFContract
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		$this->db = $db;
 		$this->name = 'strato';
@@ -513,8 +513,7 @@ class pdf_strato extends ModelePDFContract
 			$hidetop = -1;
 		}
 
-		$currency = !empty($currency) ? $currency : $conf->currency;
-		$default_font_size = pdf_getPDFFontSize($outputlangs);
+		//$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		/*
 		$pdf->SetXY($this->marge_gauche, $tab_top);
