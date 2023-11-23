@@ -505,7 +505,7 @@ class pdf_strato extends ModelePDFContract
 	 */
 	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
 	{
-		global $conf, $currency;
+		global $conf;
 
 		// Force to disable hidetop and hidebottom
 		$hidebottom = 0;
@@ -513,7 +513,6 @@ class pdf_strato extends ModelePDFContract
 			$hidetop = -1;
 		}
 
-		$currency = !empty($currency) ? $currency : $conf->currency;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		/*
