@@ -80,7 +80,6 @@ class CommActionRapport
 	 */
 	public $result;
 
-
 	/**
 	 * Constructor
 	 *
