@@ -388,7 +388,7 @@ if ($user->hasRight('ticket', 'read')) {
 
 				// Creation date
 				print '<td class="left">';
-				print dol_print_date($db->jdate($objp->datec), 'dayhour');
+				print dol_print_date($db->jdate($objp->datec), 'dayhour', 'tzuser');
 				print "</td>";
 
 				// Subject
