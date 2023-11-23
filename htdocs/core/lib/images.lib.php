@@ -498,9 +498,9 @@ function correctExifImageOrientation($fileSource, $fileDest, $quality = 95)
  *      If file is myfile.jpg, new file may be myfile_small.jpg
  *
  *    	@param     string	$file           	Path of source file to resize
- *    	@param     int		$maxWidth       	Largeur maximum que dois faire la miniature (-1=unchanged, 160 by default)
- *    	@param     int		$maxHeight      	Hauteur maximum que dois faire l'image (-1=unchanged, 120 by default)
- *    	@param     string	$extName        	Extension to differenciate thumb file name ('_small', '_mini')
+ *    	@param     int		$maxWidth       	Maximum width of the thumbnail (-1=unchanged, 160 by default)
+ *    	@param     int		$maxHeight      	Maximum height of the thumbnail (-1=unchanged, 120 by default)
+ *    	@param     string	$extName        	Extension to differentiate thumb file name ('_small', '_mini')
  *    	@param     int		$quality        	Quality of compression (0=worst, 100=best)
  *      @param     string	$outdir           	Directory where to store thumb
  *      @param     int		$targetformat     	New format of target (IMAGETYPE_GIF, IMAGETYPE_JPG, IMAGETYPE_PNG, IMAGETYPE_BMP, IMAGETYPE_WBMP ... or 0 to keep old format)
@@ -519,21 +519,21 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 
 	// Check parameters
 	if (!$file) {
-		// Si le fichier n'a pas ete indique
+		// If the file has not been indicated
 		return 'ErrorBadParameters';
 	} elseif (!file_exists($file)) {
-		// Si le fichier passe en parametre n'existe pas
+		// If the file passed in parameter does not exist
 		dol_syslog($langs->trans("ErrorFileNotFound", $file), LOG_ERR);
 		return $langs->trans("ErrorFileNotFound", $file);
 	} elseif (image_format_supported($file) < 0) {
 		dol_syslog('This file '.$file.' does not seem to be an image format file name.', LOG_WARNING);
 		return 'ErrorBadImageFormat';
 	} elseif (!is_numeric($maxWidth) || empty($maxWidth) || $maxWidth < -1) {
-		// Si la largeur max est incorrecte (n'est pas numerique, est vide, ou est inferieure a 0)
+		// If max width is incorrect (not numeric, empty, or less than 0)
 		dol_syslog('Wrong value for parameter maxWidth', LOG_ERR);
 		return 'Error: Wrong value for parameter maxWidth';
 	} elseif (!is_numeric($maxHeight) || empty($maxHeight) || $maxHeight < -1) {
-		// Si la hauteur max est incorrecte (n'est pas numerique, est vide, ou est inferieure a 0)
+		// If max height is incorrect (not numeric, empty, or less than 0)
 		dol_syslog('Wrong value for parameter maxHeight', LOG_ERR);
 		return 'Error: Wrong value for parameter maxHeight';
 	}
@@ -559,7 +559,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 		$maxHeight = $infoImg[1]; // If size is -1, we keep unchanged
 	}
 
-	// Si l'image est plus petite que la largeur et la hauteur max, on ne cree pas de vignette
+	// If the image is smaller than the maximum width and height, no thumbnail is created.
 	if ($infoImg[0] < $maxWidth && $infoImg[1] < $maxHeight) {
 		// On cree toujours les vignettes
 		dol_syslog("File size is smaller than thumb size", LOG_DEBUG);
@@ -586,16 +586,16 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 	}
 	if ($imgfonction) {
 		if (!function_exists($imgfonction)) {
-			// Fonctions de conversion non presente dans ce PHP
+			// Conversion functions not present in this PHP
 			return 'Error: Creation of thumbs not possible. This PHP does not support GD function '.$imgfonction;
 		}
 	}
 
-	// On cree le repertoire contenant les vignettes
-	$dirthumb = dirname($file).($outdir ? '/'.$outdir : ''); // Chemin du dossier contenant les vignettes
+	// We create the directory containing the thumbnails
+	$dirthumb = dirname($file).($outdir ? '/'.$outdir : ''); // Path to thumbnail folder
 	dol_mkdir($dirthumb);
 
-	// Initialisation des variables selon l'extension de l'image
+	// Variable initialization according to image extension
 	$img = null;
 	switch ($infoImg[2]) {
 		case IMAGETYPE_GIF:	    // 1
@@ -668,7 +668,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 		}
 	}
 
-	// Initialisation des dimensions de la vignette si elles sont superieures a l'original
+	// Initialize thumbnail dimensions if larger than original
 	if ($maxWidth > $imgWidth) {
 		$maxWidth = $imgWidth;
 	}
@@ -676,16 +676,16 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 		$maxHeight = $imgHeight;
 	}
 
-	$whFact = $maxWidth / $maxHeight; // Facteur largeur/hauteur des dimensions max de la vignette
-	$imgWhFact = $imgWidth / $imgHeight; // Facteur largeur/hauteur de l'original
+	$whFact = $maxWidth / $maxHeight; // Width/height factor for maximum label dimensions
+	$imgWhFact = $imgWidth / $imgHeight; // Original width/height factor
 
-	// Fixe les dimensions de la vignette
+	// Set label dimensions
 	if ($whFact < $imgWhFact) {
-		// Si largeur determinante
+		// If determining width
 		$thumbWidth  = $maxWidth;
 		$thumbHeight = $thumbWidth / $imgWhFact;
 	} else {
-		// Si hauteur determinante
+		// If determining height
 		$thumbHeight = $maxHeight;
 		$thumbWidth  = $thumbHeight * $imgWhFact;
 	}
@@ -715,11 +715,11 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 		imagesavealpha($imgThumb, true);
 	}
 
-	// Initialisation des variables selon l'extension de l'image
+	// Variable initialization according to image extension
 	// $targetformat is 0 by default, in such case, we keep original extension
 	switch ($targetformat) {
 		case IMAGETYPE_GIF:	    // 1
-			$trans_colour = imagecolorallocate($imgThumb, 255, 255, 255); // On procede autrement pour le format GIF
+			$trans_colour = imagecolorallocate($imgThumb, 255, 255, 255); // The GIF format works differently
 			imagecolortransparent($imgThumb, $trans_colour);
 			$extImgTarget = '.gif';
 			$newquality = 'NU';
@@ -730,7 +730,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			$newquality = $quality;
 			break;
 		case IMAGETYPE_PNG:	    // 3
-			imagealphablending($imgThumb, false); // Pour compatibilite sur certain systeme
+			imagealphablending($imgThumb, false); // For compatibility on certain systems
 			$trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 127); // Keep transparent channel
 			$extImgTarget = '.png';
 			$newquality = $quality - 100;
@@ -752,10 +752,10 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 	}
 
 	dol_syslog("vignette: convert image from ($imgWidth x $imgHeight) to ($thumbWidth x $thumbHeight) as $extImg, newquality=$newquality");
-	//imagecopyresized($imgThumb, $img, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $imgWidth, $imgHeight); // Insere l'image de base redimensionnee
-	imagecopyresampled($imgThumb, $img, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $imgWidth, $imgHeight); // Insere l'image de base redimensionnee
+	//imagecopyresized($imgThumb, $img, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $imgWidth, $imgHeight); // Insert resized base image
+	imagecopyresampled($imgThumb, $img, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $imgWidth, $imgHeight); // Insert resized base image
 
-	$fileName = preg_replace('/(\.gif|\.jpeg|\.jpg|\.png|\.bmp)$/i', '', $file); // On enleve extension quelquesoit la casse
+	$fileName = preg_replace('/(\.gif|\.jpeg|\.jpg|\.png|\.bmp)$/i', '', $file); // We remove any extension box
 	$fileName = basename($fileName);
 	//$imgThumbName = $dirthumb.'/'.getImageFileNameForSize(basename($file), $extName, $extImgTarget);   // Full path of thumb file
 	$imgThumbName = getImageFileNameForSize($file, $extName, $extImgTarget); // Full path of thumb file
