@@ -74,6 +74,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 	 */
 	public $version = 'dolibarr';
 
+
 	/**
 	 *	Constructor
 	 *
@@ -257,7 +258,6 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 				$heightforinfotot = 40; // Height reserved to output the info and total part
 				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + (empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 12 : 22); // Height reserved to output the footer (value include bottom margin)
-				$tab_height = 0;
 
 				if (class_exists('TCPDF')) {
 					$pdf->setPrintHeader(false);
@@ -429,7 +429,8 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
 						$height_note = $posyafter - $tab_top_newpage;
 						$pdf->Rect($this->marge_gauche, $tab_top_newpage - 1, $tab_width, $height_note + 1);
-					} else { // No pagebreak
+					} else // No pagebreak
+					{
 						$pdf->commitTransaction();
 						$posyafter = $pdf->GetY();
 						$height_note = $posyafter - $tab_top;
