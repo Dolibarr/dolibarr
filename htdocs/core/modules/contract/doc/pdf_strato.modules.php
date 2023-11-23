@@ -513,7 +513,6 @@ class pdf_strato extends ModelePDFContract
 			$hidetop = -1;
 		}
 
-		$currency = !empty($currency) ? $currency : $conf->currency;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		/*
