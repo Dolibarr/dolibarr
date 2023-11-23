@@ -104,10 +104,18 @@ if ($action == 'verifyavailability') {
 				if ($offsetmin == 0) {
 					$offsetmin = 60;
 				}
+				$startHourstring = $obj->startHour;
+				$endHourstring = $obj->endHour;
+				if ($startHourstring <= 0) {
+					$startHourstring = 0;
+				}
+				if ($endHourstring >= 24) {
+					$endHourstring = 24;
+				}
 				$offsethour = round($obj->duration / 60);
 				// Creation of array of availabilties range
 				if ($datetocheckbooking >= $starttime && $datetocheckbooking <= $endtime) {
-					for ($hour=$obj->startHour; $hour < $obj->endHour; $hour+= $offsethour) {
+					for ($hour=$startHourstring; $hour < $endHourstring; $hour+= $offsethour) {
 						for ($min=0; $min < 60; $min += $offsetmin) {
 							$hourstring = $hour;
 							$minstring = $min;
