@@ -3710,7 +3710,7 @@ if ($action == 'create') {
 				}
 				$text = $tmp.'<label class="opacitymedium" for="radio_creditnote">'.$langs->trans("InvoiceAvoir").'</label> ';
 				//$text .= '<span class="opacitymedium hideonsmartphone">('.$langs->trans("YouMustCreateInvoiceFromThird").')</span> ';
-				$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc").'<br><br>'.$langs->trans("YouMustCreateInvoiceFromThird"), 1, 'help', '', 0, 3, 'creditnoteonsmartphone');
+				$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc").'<br><br>'.$langs->trans("CreateCreditNoteWhenClientInvoiceExists"), 1, 'help', '', 0, 3, 'creditnoteonsmartphone');
 				print $desc;
 				print '</div></div>'."\n";
 			}
