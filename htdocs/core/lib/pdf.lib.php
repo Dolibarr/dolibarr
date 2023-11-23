@@ -2440,9 +2440,9 @@ function pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails = 0)
  * 	Return linked objects to use for document generation.
  *  Warning: To save space, this function returns only one link per link type (all links are concated on same record string). This function is used by pdf_writeLinkedObjects
  *
- * 	@param	object		$object			Object
- * 	@param	Translate	$outputlangs	Object lang for output
- * 	@return	array                       Linked objects
+ * 	@param	CommonObject	$object			Object
+ * 	@param	Translate		$outputlangs	Object lang for output
+ * 	@return	array                       	Linked objects
  */
 function pdf_getLinkedObjects(&$object, $outputlangs)
 {
