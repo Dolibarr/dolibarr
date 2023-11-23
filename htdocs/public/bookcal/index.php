@@ -233,7 +233,7 @@ if ($action == 'add') {
 	if (!$error) {
 		$dateend = dol_time_plus_duree(GETPOST("datetimebooking", 'int'), GETPOST("durationbooking"), 'i');
 
-		$actioncomm->label = "test";
+		$actioncomm->label = $langs->trans("BookcalBookingTitle");
 		$actioncomm->type = 'AC_RDV';
 		$actioncomm->type_id = 5;
 		$actioncomm->datep = GETPOST("datetimebooking", 'int');
