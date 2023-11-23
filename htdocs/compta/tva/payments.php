@@ -292,14 +292,14 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 		// Total
 		print '<tr class="liste_total"><td colspan="3" class="liste_total">' . $langs->trans("Total") . '</td>';
 		print '<td class="liste_total right"></td>'; // A total here has no sense
-		print '<td class="center" class="liste_total">&nbsp;</td>';
-		print '<td class="center" class="liste_total">&nbsp;</td>';
+		print '<td class="center liste_total">&nbsp;</td>';
+		print '<td class="center liste_total">&nbsp;</td>';
 		if (isModEnabled("banque")) {
-			print '<td class="center" class="liste_total">&nbsp;</td>';
-			print '<td class="center" class="liste_total">&nbsp;</td>';
+			print '<td class="center liste_total">&nbsp;</td>';
+			print '<td class="center liste_total">&nbsp;</td>';
 		}
-		print '<td class="center" class="liste_total">&nbsp;</td>';
-		print '<td class="center" class="liste_total">&nbsp;</td>';
+		print '<td class="center liste_total">&nbsp;</td>';
+		print '<td class="center liste_total">&nbsp;</td>';
 		print '<td class="liste_total right">' . price($totalpaid) . "</td>";
 		print "</tr>";
 	}
