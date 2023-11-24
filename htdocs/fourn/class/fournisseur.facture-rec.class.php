@@ -81,7 +81,6 @@ class FactureFournisseurRec extends CommonInvoice
 	public $title;
 
 	public $ref_supplier;
-	public $fk_soc;
 	public $socid;
 
 	public $suspended; // status
@@ -1099,7 +1098,6 @@ class FactureFournisseurRec extends CommonInvoice
 
 			$txlocaltax1 = empty($txlocaltax1) ? 0 : price2num($txlocaltax1);
 			$txlocaltax2 = empty($txlocaltax2) ? 0 : price2num($txlocaltax2);
-			// @phpstan-ignore-next-line
 			$this->multicurrency_subprice = empty($this->multicurrency_subprice) ? 0 : $this->multicurrency_subprice;
 			$this->multicurrency_total_ht = empty($this->multicurrency_total_ht) ? 0 : $this->multicurrency_total_ht;
 			$this->multicurrency_total_tva = empty($this->multicurrency_total_tva) ? 0 : $this->multicurrency_total_tva;

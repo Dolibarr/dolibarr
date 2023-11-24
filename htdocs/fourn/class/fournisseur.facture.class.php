@@ -201,12 +201,13 @@ class FactureFournisseur extends CommonInvoice
 	public $total_ttc;
 
 	/**
-	 * @var float
 	 * @deprecated
-	 * @see $total_ht
+	 * @see $note_private, $note_public
 	 */
-	public $amount_ht;
+	public $note;
 
+	public $note_private;
+	public $note_public;
 	public $propalid;
 
 	/**
@@ -245,10 +246,6 @@ class FactureFournisseur extends CommonInvoice
 
 	public $fac_rec;
 
-	/**
-	 * @var int ID invoice model source
-	 */
-	public $fk_fac_rec_source;
 
 	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
@@ -3613,11 +3610,6 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 * @var float
 	 */
 	public $localtax2_type;
-
-	/**
-	 * @var float tva npr
-	 */
-	public $tva_npr;
 
 
 	/**
