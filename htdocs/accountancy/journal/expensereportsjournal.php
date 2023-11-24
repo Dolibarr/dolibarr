@@ -216,7 +216,7 @@ if ($result) {
 	dol_print_error($db);
 }
 
-// Load all unbound lines
+// New way, single query, load all unbound lines
 $sql = "SELECT fk_expensereport, COUNT(erd.rowid) as nb";
 $sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as erd";
 $sql .= " WHERE erd.fk_code_ventilation <= 0";

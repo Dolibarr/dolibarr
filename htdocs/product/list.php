@@ -456,6 +456,9 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
+
+$sqlfields = $sql; // $sql fields to remove for count total
+
 $sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 if (isModEnabled('workstation')) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "workstation_workstation ws ON (p.fk_default_workstation = ws.rowid)";
@@ -469,7 +472,8 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 if (!empty($searchCategoryProductList) || !empty($catid)) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product"; // We'll need this table joined to the select in order to filter by categ
 }
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
+$linktopfp = " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
+$sql .= $linktopfp;
 // multilang
 if (!empty($conf->global->MAIN_MULTILANGS)) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang = '".$db->escape($langs->getDefaultLang())."'";
@@ -634,8 +638,24 @@ $sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/'.preg_quote($linktopfp, '/').'/', '', $sqlforcount);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
+
+	/*
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
+	*/
+
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;

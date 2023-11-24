@@ -26,7 +26,7 @@
 -- To set a field as NOT NULL:                 -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET NOT NULL;
 -- To set a field as default NULL:             -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET DEFAULT NULL;
 -- Note: fields with type BLOB/TEXT can't have default value.
--- To rebuild sequence for postgresql after insert by forcing id autoincrement fields: 
+-- To rebuild sequence for postgresql after insert by forcing id autoincrement fields:
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
@@ -96,21 +96,21 @@ ALTER TABLE llx_product_fournisseur_price ADD COLUMN packaging real DEFAULT NULL
 --Fix bad sign on multicompany column for customer invoice lines
 UPDATE llx_facturedet SET multicurrency_subprice = -multicurrency_subprice WHERE ((multicurrency_subprice < 0 and subprice > 0) OR (multicurrency_subprice > 0 and subprice < 0));
 UPDATE llx_facturedet SET multicurrency_total_ht = -multicurrency_total_ht WHERE ((multicurrency_total_ht < 0 and total_ht > 0) OR (multicurrency_total_ht > 0 and total_ht < 0));
-UPDATE llx_facturedet SET multicurrency_total_tva = -multicurrency_total_tva WHERE ((multicurrency_total_tva < 0 and total_tva > 0) OR (multicurrency_total_tva > 0 and total_tva < 0)); 
-UPDATE llx_facturedet SET multicurrency_total_ttc = -multicurrency_total_ttc WHERE ((multicurrency_total_ttc < 0 and total_ttc > 0) OR (multicurrency_total_ttc > 0 and total_ttc < 0));  
+UPDATE llx_facturedet SET multicurrency_total_tva = -multicurrency_total_tva WHERE ((multicurrency_total_tva < 0 and total_tva > 0) OR (multicurrency_total_tva > 0 and total_tva < 0));
+UPDATE llx_facturedet SET multicurrency_total_ttc = -multicurrency_total_ttc WHERE ((multicurrency_total_ttc < 0 and total_ttc > 0) OR (multicurrency_total_ttc > 0 and total_ttc < 0));
 --Fix bad sign on multicompany column for customer invoices
-UPDATE llx_facture SET multicurrency_total_ht = -multicurrency_total_ht WHERE ((multicurrency_total_ht < 0 and total_ht > 0) OR (multicurrency_total_ht > 0 and total_ht < 0));  
-UPDATE llx_facture SET multicurrency_total_tva = -multicurrency_total_tva WHERE ((multicurrency_total_tva < 0 and total_tva > 0) OR (multicurrency_total_tva > 0 and total_tva < 0));  
-UPDATE llx_facture SET multicurrency_total_ttc = -multicurrency_total_ttc WHERE ((multicurrency_total_ttc < 0 and total_ttc > 0) OR (multicurrency_total_ttc > 0 and total_ttc < 0));  
+UPDATE llx_facture SET multicurrency_total_ht = -multicurrency_total_ht WHERE ((multicurrency_total_ht < 0 and total_ht > 0) OR (multicurrency_total_ht > 0 and total_ht < 0));
+UPDATE llx_facture SET multicurrency_total_tva = -multicurrency_total_tva WHERE ((multicurrency_total_tva < 0 and total_tva > 0) OR (multicurrency_total_tva > 0 and total_tva < 0));
+UPDATE llx_facture SET multicurrency_total_ttc = -multicurrency_total_ttc WHERE ((multicurrency_total_ttc < 0 and total_ttc > 0) OR (multicurrency_total_ttc > 0 and total_ttc < 0));
 --Fix bad sign on multicurrency column for supplier invoice lines
 UPDATE llx_facture_fourn_det SET multicurrency_subprice = -multicurrency_subprice WHERE ((multicurrency_subprice < 0 and pu_ht > 0) OR (multicurrency_subprice > 0 and pu_ht < 0));
 UPDATE llx_facture_fourn_det SET multicurrency_total_ht = -multicurrency_total_ht WHERE ((multicurrency_total_ht < 0 and total_ht > 0) OR (multicurrency_total_ht > 0 and total_ht < 0));
-UPDATE llx_facture_fourn_det SET multicurrency_total_tva = -multicurrency_total_tva WHERE ((multicurrency_total_tva < 0 and tva > 0) OR (multicurrency_total_tva > 0 and tva < 0)); 
-UPDATE llx_facture_fourn_det SET multicurrency_total_ttc = -multicurrency_total_ttc WHERE ((multicurrency_total_ttc < 0 and total_ttc > 0) OR (multicurrency_total_ttc > 0 and total_ttc < 0));  
+UPDATE llx_facture_fourn_det SET multicurrency_total_tva = -multicurrency_total_tva WHERE ((multicurrency_total_tva < 0 and tva > 0) OR (multicurrency_total_tva > 0 and tva < 0));
+UPDATE llx_facture_fourn_det SET multicurrency_total_ttc = -multicurrency_total_ttc WHERE ((multicurrency_total_ttc < 0 and total_ttc > 0) OR (multicurrency_total_ttc > 0 and total_ttc < 0));
 --Fix bad sign on multicompany column for customer invoices
-UPDATE llx_facture_fourn SET multicurrency_total_ht = -multicurrency_total_ht WHERE ((multicurrency_total_ht < 0 and total_ht > 0) OR (multicurrency_total_ht > 0 and total_ht < 0));  
-UPDATE llx_facture_fourn SET multicurrency_total_tva = -multicurrency_total_tva WHERE ((multicurrency_total_tva < 0 and total_tva > 0) OR (multicurrency_total_tva > 0 and total_tva < 0));  
-UPDATE llx_facture_fourn SET multicurrency_total_ttc = -multicurrency_total_ttc WHERE ((multicurrency_total_ttc < 0 and total_ttc > 0) OR (multicurrency_total_ttc > 0 and total_ttc < 0));  
+UPDATE llx_facture_fourn SET multicurrency_total_ht = -multicurrency_total_ht WHERE ((multicurrency_total_ht < 0 and total_ht > 0) OR (multicurrency_total_ht > 0 and total_ht < 0));
+UPDATE llx_facture_fourn SET multicurrency_total_tva = -multicurrency_total_tva WHERE ((multicurrency_total_tva < 0 and total_tva > 0) OR (multicurrency_total_tva > 0 and total_tva < 0));
+UPDATE llx_facture_fourn SET multicurrency_total_ttc = -multicurrency_total_ttc WHERE ((multicurrency_total_ttc < 0 and total_ttc > 0) OR (multicurrency_total_ttc > 0 and total_ttc < 0));
 
 
 UPDATE llx_c_ticket_type set label = 'Issue or bug' WHERE code = 'ISSUE';
@@ -294,7 +294,7 @@ INSERT INTO llx_payment_vat (rowid, fk_tva, datec, datep, amount, fk_typepaiemen
 ALTER TABLE llx_tva ALTER COLUMN paye SET DEFAULT 0;
 
 
--- Event organization 
+-- Event organization
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'conferenceorbooth', '', 0, null, null, '(EventOrganizationEmailAskConf)',       10, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationEmailAskConf)__', '__(Hello)__,<br /><br />__(OrganizationEventConfRequestWasReceived)__<br /><br /><br />__(Sincerely)__<br />__USER_SIGNATURE__', null, '1', null);
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'conferenceorbooth', '', 0, null, null, '(EventOrganizationEmailAskBooth)',      20, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationEmailAskBooth)__', '__(Hello)__,<br /><br />__(OrganizationEventBoothRequestWasReceived)__<br /><br /><br />__(Sincerely)__<br />__USER_SIGNATURE__', null, '1', null);
 -- TODO Add message for registration only to event  __ONLINE_PAYMENT_TEXT_AND_URL__
@@ -505,22 +505,22 @@ insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) v
 
 
 CREATE TABLE llx_partnership(
-	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-	ref varchar(128) DEFAULT '(PROV)' NOT NULL, 
-	status smallint NOT NULL DEFAULT '0', 
-	fk_soc integer, 
-	fk_member integer, 
-	date_partnership_start date NOT NULL, 
-	date_partnership_end date NULL, 
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	ref varchar(128) DEFAULT '(PROV)' NOT NULL,
+	status smallint NOT NULL DEFAULT '0',
+	fk_soc integer,
+	fk_member integer,
+	date_partnership_start date NOT NULL,
+	date_partnership_end date NULL,
 	entity integer	DEFAULT 1 NOT NULL,	-- multi company id, 0 = all
 	reason_decline_or_cancel text NULL,
-	date_creation datetime NOT NULL, 
-	fk_user_creat integer NOT NULL, 
-	tms timestamp, 
-	fk_user_modif integer, 
-	note_private text, 
-	note_public text, 
-	last_main_doc varchar(255), 
+	date_creation datetime NOT NULL,
+	fk_user_creat integer NOT NULL,
+	tms timestamp,
+	fk_user_modif integer,
+	note_private text,
+	note_public text,
+	last_main_doc varchar(255),
 	count_last_url_check_error integer DEFAULT '0',
 	last_check_backlink datetime NULL,
 	import_key varchar(14),
@@ -571,17 +571,17 @@ ALTER TABLE llx_facture_fourn_det ADD UNIQUE INDEX uk_fk_remise_except (fk_remis
 
 CREATE TABLE llx_knowledgemanagement_knowledgerecord(
 	-- BEGIN MODULEBUILDER FIELDS
-	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-	ref varchar(128) NOT NULL, 
-	date_creation datetime NOT NULL, 
-	tms timestamp, 
-	last_main_doc varchar(255), 
-	fk_user_creat integer NOT NULL, 
-	fk_user_modif integer, 
-	fk_user_valid integer, 
-	import_key varchar(14), 
-	model_pdf varchar(255), 
-	question text NOT NULL, 
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	ref varchar(128) NOT NULL,
+	date_creation datetime NOT NULL,
+	tms timestamp,
+	last_main_doc varchar(255),
+	fk_user_creat integer NOT NULL,
+	fk_user_modif integer,
+	fk_user_valid integer,
+	import_key varchar(14),
+	model_pdf varchar(255),
+	question text NOT NULL,
 	answer text,
 	url varchar(255),
 	fk_ticket integer,
@@ -798,3 +798,9 @@ INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) value
 -- Product/service managed in stock
 ALTER TABLE llx_product ADD COLUMN stockable_product integer DEFAULT 1 NOT NULL;
 UPDATE llx_product set stockable_product = 0 WHERE type = 1;
+
+-- Prelevement / SEPA
+ALTER TABLE llx_prelevement_bons ADD COLUMN fk_account integer DEFAULT NULL AFTER credite;
+ALTER TABLE llx_prelevement_facture_demande ADD COLUMN fk_soc_rib integer DEFAULT NULL AFTER fk_user_demande;
+ALTER TABLE llx_prelevement_lignes ADD COLUMN fk_soc_rib integer DEFAULT NULL AFTER amount;
+
