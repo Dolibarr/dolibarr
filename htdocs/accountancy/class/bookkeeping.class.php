@@ -173,6 +173,16 @@ class BookKeeping extends CommonObject
 	public $piece_num;
 
 	/**
+	 * @var BookKeepingLine[] Movement line array
+	 */
+	public $linesmvt = array();
+
+	/**
+	 * @var BookKeepingLine[] export line array
+	 */
+	public $linesexport = array();
+
+	/**
 	 * @var integer|string date of movement validated & lock
 	 */
 	public $date_validation;
@@ -291,7 +301,11 @@ class BookKeeping extends CommonObject
 		if ($result < 0) {
 			return -1;
 		} elseif ($result == 0) {
-			$this->errors[] = $langs->trans('ErrorBookkeepingDocDateNotOnActiveFiscalPeriod');
+			if (getDolGlobalString('ACCOUNTANCY_FISCAL_PERIOD_MODE') == 'blockedonclosed') {
+				$this->errors[] = $langs->trans('ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod');
+			} else {
+				$this->errors[] = $langs->trans('ErrorBookkeepingDocDateNotOnActiveFiscalPeriod');
+			}
 			return -1;
 		}
 
@@ -325,7 +339,7 @@ class BookKeeping extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " WHERE doc_type = '".$this->db->escape($this->doc_type)."'";
 		$sql .= " AND fk_doc = ".((int) $this->fk_doc);
-		if (!empty($conf->global->ACCOUNTANCY_ENABLE_FKDOCDET)) {
+		if (getDolGlobalString('ACCOUNTANCY_ENABLE_FKDOCDET')) {
 			// DO NOT USE THIS IN PRODUCTION. This will generate a lot of trouble into reports and will corrupt database (by generating duplicate entries.
 			$sql .= " AND fk_docdet = ".((int) $this->fk_docdet); // This field can be 0 if record is for several lines
 		}
@@ -343,7 +357,7 @@ class BookKeeping extends CommonObject
 				$sqlnum .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 				$sqlnum .= " WHERE doc_type = '".$this->db->escape($this->doc_type)."'"; // For example doc_type = 'bank'
 				$sqlnum .= " AND fk_doc = ".((int) $this->fk_doc);
-				if (!empty($conf->global->ACCOUNTANCY_ENABLE_FKDOCDET)) {
+				if (getDolGlobalString('ACCOUNTANCY_ENABLE_FKDOCDET')) {
 					// fk_docdet is rowid into llx_bank or llx_facturedet or llx_facturefourndet, or ...
 					$sqlnum .= " AND fk_docdet = ".((int) $this->fk_docdet);
 				}
@@ -508,7 +522,7 @@ class BookKeeping extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -518,7 +532,7 @@ class BookKeeping extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowTransaction");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -644,7 +658,11 @@ class BookKeeping extends CommonObject
 		if ($result < 0) {
 			return -1;
 		} elseif ($result == 0) {
-			$this->errors[] = $langs->trans('ErrorBookkeepingDocDateNotOnActiveFiscalPeriod');
+			if (getDolGlobalString('ACCOUNTANCY_FISCAL_PERIOD_MODE') == 'blockedonclosed') {
+				$this->errors[] = $langs->trans('ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod');
+			} else {
+				$this->errors[] = $langs->trans('ErrorBookkeepingDocDateNotOnActiveFiscalPeriod');
+			}
 			return -1;
 		}
 
@@ -826,7 +844,7 @@ class BookKeeping extends CommonObject
 				$this->piece_num = $obj->piece_num;
 				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->date_export = $this->db->jdate($obj->date_export);
-				$this->date_validation = isset($obj->date_validated) ? $this->db->jdate($obj->date_validated) : '';
+				$this->date_validation = isset($obj->date_validation) ? $this->db->jdate($obj->date_validation) : '';
 			}
 			$this->db->free($resql);
 
@@ -1182,7 +1200,7 @@ class BookKeeping extends CommonObject
 	 * @param 	int 	$offset 		offset limit
 	 * @param 	array 	$filter 		filter array
 	 * @param 	string 	$filtermode 	filter mode (AND or OR)
-	 * @param 	int 	$option 		option (0: general account or 1: subaccount)
+	 * @param 	int 	$option 		option (0: aggregate by general account or 1: aggreegate by subaccount)
 	 * @return 	int 					<0 if KO, >0 if OK
 	 */
 	public function fetchAllBalance($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND', $option = 0)
@@ -1195,7 +1213,6 @@ class BookKeeping extends CommonObject
 
 		$sql = 'SELECT';
 		$sql .= " t.numero_compte,";
-		$sql .= " t.label_compte,";
 		if (!empty($option)) {
 			$sql .= " t.subledger_account,";
 			$sql .= " t.subledger_label,";
@@ -1238,13 +1255,13 @@ class BookKeeping extends CommonObject
 		}
 
 		if (!empty($option)) {
-			$sql .= ' AND t.subledger_account IS NOT NULL';
-			$sql .= ' AND t.subledger_account != ""';
-			$sql .= ' GROUP BY t.numero_compte, t.label_compte, t.subledger_account, t.subledger_label';
+			$sql .= " AND t.subledger_account IS NOT NULL";
+			$sql .= " AND t.subledger_account <> ''";
+			$sql .= " GROUP BY t.numero_compte, t.subledger_account, t.subledger_label";
 			$sortfield = 't.subledger_account'.($sortfield ? ','.$sortfield : '');
 			$sortorder = 'ASC'.($sortfield ? ','.$sortfield : '');
 		} else {
-			$sql .= ' GROUP BY t.numero_compte, t.label_compte';
+			$sql .= ' GROUP BY t.numero_compte';
 			$sortfield = 't.numero_compte'.($sortfield ? ','.$sortfield : '');
 			$sortorder = 'ASC'.($sortorder ? ','.$sortorder : '');
 		}
@@ -1265,9 +1282,11 @@ class BookKeeping extends CommonObject
 				$line = new BookKeepingLine();
 
 				$line->numero_compte = $obj->numero_compte;
-				$line->label_compte = $obj->label_compte;
-				$line->subledger_account = $obj->subledger_account;
-				$line->subledger_label = $obj->subledger_label;
+				//$line->label_compte = $obj->label_compte;
+				if (!empty($option)) {
+					$line->subledger_account = $obj->subledger_account;
+					$line->subledger_label = $obj->subledger_label;
+				}
 				$line->debit = $obj->debit;
 				$line->credit = $obj->credit;
 
@@ -1361,7 +1380,11 @@ class BookKeeping extends CommonObject
 		if ($result < 0) {
 			return -1;
 		} elseif ($result == 0) {
-			$this->errors[] = $langs->trans('ErrorBookkeepingDocDateNotOnActiveFiscalPeriod');
+			if (getDolGlobalString('ACCOUNTANCY_FISCAL_PERIOD_MODE') == 'blockedonclosed') {
+				$this->errors[] = $langs->trans('ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod');
+			} else {
+				$this->errors[] = $langs->trans('ErrorBookkeepingDocDateNotOnActiveFiscalPeriod');
+			}
 			return -1;
 		}
 
@@ -1486,7 +1509,11 @@ class BookKeeping extends CommonObject
 		if ($result < 0) {
 			return -1;
 		} elseif ($result == 0) {
-			$this->errors[] = $langs->trans('ErrorBookkeepingDocDateNotOnActiveFiscalPeriod');
+			if (getDolGlobalString('ACCOUNTANCY_FISCAL_PERIOD_MODE') == 'blockedonclosed') {
+				$this->errors[] = $langs->trans('ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod');
+			} else {
+				$this->errors[] = $langs->trans('ErrorBookkeepingDocDateNotOnActiveFiscalPeriod');
+			}
 			return -1;
 		}
 
@@ -1532,9 +1559,10 @@ class BookKeeping extends CommonObject
 	 * Delete bookkeeping by importkey
 	 *
 	 * @param  string		$importkey		Import key
+	 * @param string $mode Mode
 	 * @return int Result
 	 */
-	public function deleteByImportkey($importkey)
+	public function deleteByImportkey($importkey, $mode = '')
 	{
 		$this->db->begin();
 
@@ -1545,7 +1573,7 @@ class BookKeeping extends CommonObject
 
 		// first check if line not yet in bookkeeping
 		$sql = "DELETE";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element.$mode;
 		$sql .= " WHERE import_key = '".$this->db->escape($importkey)."'";
 		$sql .= $sql_filter;
 
@@ -1626,9 +1654,10 @@ class BookKeeping extends CommonObject
 	 * Delete bookkeeping by piece number
 	 *
 	 * @param 	int 	$piecenum 	Piecenum to delete
+	 * @param string $mode Mode
 	 * @return 	int 				Result
 	 */
-	public function deleteMvtNum($piecenum)
+	public function deleteMvtNum($piecenum, $mode = '')
 	{
 		global $conf;
 
@@ -1641,7 +1670,7 @@ class BookKeeping extends CommonObject
 
 		// first check if line not yet in bookkeeping
 		$sql = "DELETE";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element.$mode;
 		$sql .= " WHERE piece_num = ".(int) $piecenum;
 		$sql .= " AND date_validated IS NULL";		// For security, exclusion of validated entries at the time of deletion
 		$sql .= " AND entity = " . ((int) $conf->entity); // Do not use getEntity for accounting features
@@ -2249,20 +2278,22 @@ class BookKeeping extends CommonObject
 	 * @param 	bool		$force		Force reload
 	 * @return 	string					SQL filter
 	 */
-	function getCanModifyBookkeepingSQL($alias = '', $force = false)
+	public function getCanModifyBookkeepingSQL($alias = '', $force = false)
 	{
+		global $conf;
+
 		$alias = trim($alias);
 		$alias = !empty($alias) && strpos($alias, '.') < 0 ? $alias . "." : $alias;
 
 		if (!isset(self::$can_modify_bookkeeping_sql_cached[$alias]) || $force) {
-			$result = $this->loadActiveFiscalPeriods($force);
+			$result = $this->loadFiscalPeriods($force, 'active');
 			if ($result < 0) {
 				return null;
 			}
 
 			$sql_list = array();
-			if (is_array(self::$active_fiscal_period_cached)) {
-				foreach (self::$active_fiscal_period_cached as $fiscal_period) {
+			if (!empty($conf->cache['active_fiscal_period_cached']) && is_array($conf->cache['active_fiscal_period_cached'])) {
+				foreach ($conf->cache['active_fiscal_period_cached'] as $fiscal_period) {
 					$sql_list[] = "('" . $this->db->idate($fiscal_period['date_start']) . "' <= {$alias}doc_date AND {$alias}doc_date <= '" . $this->db->idate($fiscal_period['date_end']) . "')";
 				}
 			}
@@ -2278,84 +2309,156 @@ class BookKeeping extends CommonObject
 	 * @param 	int		$id		Bookkeeping ID
 	 * @return 	int				<0 if KO, == 0 if No, == 1 if Yes
 	 */
-	function canModifyBookkeeping($id)
+	public function canModifyBookkeeping($id)
 	{
-		$result = $this->loadActiveFiscalPeriods();
-		if ($result < 0) {
-			return -1;
-		}
+		global $conf;
 
-		$bookkeeping = new BookKeeping($this->db);
-		$result = $bookkeeping->fetch($id);
-		if ($result <= 0) {
-			return $result;
-		}
+		if (getDolGlobalString('ACCOUNTANCY_FISCAL_PERIOD_MODE') == 'blockedonclosed') {
+			$result = $this->loadFiscalPeriods(false, 'closed');
 
-		if (is_array(self::$active_fiscal_period_cached)) {
-			foreach (self::$active_fiscal_period_cached as $fiscal_period) {
-				if ($fiscal_period['date_start'] <= $bookkeeping->doc_date && $bookkeeping->doc_date <= $fiscal_period['date_end']) {
-					return 1;
+			if ($result < 0) {
+				return -1;
+			}
+
+			$bookkeeping = new BookKeeping($this->db);
+			$result = $bookkeeping->fetch($id);
+			if ($result <= 0) {
+				return $result;
+			}
+
+			if (!empty($conf->cache['closed_fiscal_period_cached']) && is_array($conf->cache['closed_fiscal_period_cached'])) {
+				foreach ($conf->cache['closed_fiscal_period_cached'] as $fiscal_period) {
+					if ($fiscal_period['date_start'] <= $bookkeeping->doc_date && $bookkeeping->doc_date <= $fiscal_period['date_end']) {
+						return 0;
+					}
 				}
 			}
-		}
 
-		return 0;
+			return 1;
+		} else {
+			$result = $this->loadFiscalPeriods(false, 'active');
+			if ($result < 0) {
+				return -1;
+			}
+
+			$bookkeeping = new BookKeeping($this->db);
+			$result = $bookkeeping->fetch($id);
+			if ($result <= 0) {
+				return $result;
+			}
+
+			if (!empty($conf->cache['active_fiscal_period_cached']) && is_array($conf->cache['active_fiscal_period_cached'])) {
+				foreach ($conf->cache['active_fiscal_period_cached'] as $fiscal_period) {
+					if ($fiscal_period['date_start'] <= $bookkeeping->doc_date && $bookkeeping->doc_date <= $fiscal_period['date_end']) {
+						return 1;
+					}
+				}
+			}
+
+			return 0;
+		}
 	}
 
 	/**
-	 * Is the bookkeeping date is valid ?
+	 * Is the bookkeeping date valid (on an open period or not on a closed period) ?
 	 *
 	 * @param 	int		$date		Bookkeeping date
-	 * @return 	int					<0 if KO, == 0 if No, == 1 if Yes
+	 * @return 	int					<0 if KO, == 0 if No, == 1 if date is valid for a transfer
 	 */
-	function validBookkeepingDate($date)
+	public function validBookkeepingDate($date)
 	{
-		$result = $this->loadActiveFiscalPeriods();
-		if ($result < 0) {
-			return -1;
-		}
+		global $conf;
 
-		if (is_array(self::$active_fiscal_period_cached)) {
-			foreach (self::$active_fiscal_period_cached as $fiscal_period) {
-				if ($fiscal_period['date_start'] <= $date && $date <= $fiscal_period['date_end']) {
-					return 1;
+		if (getDolGlobalString('ACCOUNTANCY_FISCAL_PERIOD_MODE') == 'blockedonclosed') {
+			$result = $this->loadFiscalPeriods(false, 'closed');
+
+			if ($result < 0) {
+				return -1;
+			}
+
+			if (!empty($conf->cache['closed_fiscal_period_cached']) && is_array($conf->cache['closed_fiscal_period_cached'])) {
+				foreach ($conf->cache['closed_fiscal_period_cached'] as $fiscal_period) {
+					if ($fiscal_period['date_start'] <= $date && $date <= $fiscal_period['date_end']) {
+						return 0;
+					}
 				}
 			}
-		}
 
-		return 0;
+			return 1;
+		} else {
+			$result = $this->loadFiscalPeriods(false, 'active');
+			if ($result < 0) {
+				return -1;
+			}
+
+			if (!empty($conf->cache['active_fiscal_period_cached']) && is_array($conf->cache['active_fiscal_period_cached'])) {
+				foreach ($conf->cache['active_fiscal_period_cached'] as $fiscal_period) {
+					if ($fiscal_period['date_start'] <= $date && $date <= $fiscal_period['date_end']) {
+						return 1;
+					}
+				}
+			}
+
+			return 0;
+		}
 	}
 
 	/**
 	 * Load list of active fiscal period
 	 *
 	 * @param 	bool	$force		Force reload
+	 * @param	string	$mode		active or closed ?
 	 * @return 	int					<0 if KO, >0 if OK
 	 */
-	function loadActiveFiscalPeriods($force = false)
+	public function loadFiscalPeriods($force = false, $mode = 'active')
 	{
 		global $conf;
 
-		if (!isset(self::$active_fiscal_period_cached) || $force) {
-			$sql = "SELECT date_start, date_end";
-			$sql .= " FROM " . $this->db->prefix() . "accounting_fiscalyear";
-			$sql .= " WHERE entity = " . ((int)$conf->entity);
-			$sql .= " AND statut = 0";
+		if ($mode == 'active') {
+			if (!isset($conf->cache['active_fiscal_period_cached']) || $force) {
+				$sql = "SELECT date_start, date_end";
+				$sql .= " FROM " . $this->db->prefix() . "accounting_fiscalyear";
+				$sql .= " WHERE entity = " . ((int) $conf->entity);
+				$sql .= " AND statut = 0";
 
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$this->errors[] = $this->db->lasterror();
-				return -1;
-			}
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$this->errors[] = $this->db->lasterror();
+					return -1;
+				}
 
-			$list = array();
-			while ($obj = $this->db->fetch_object($resql)) {
-				$list[] = array(
-					'date_start' => $this->db->jdate($obj->date_start),
-					'date_end' => $this->db->jdate($obj->date_end),
-				);
+				$list = array();
+				while ($obj = $this->db->fetch_object($resql)) {
+					$list[] = array(
+						'date_start' => $this->db->jdate($obj->date_start),
+						'date_end' => $this->db->jdate($obj->date_end),
+					);
+				}
+				$conf->cache['active_fiscal_period_cached'] = $list;
 			}
-			self::$active_fiscal_period_cached = $list;
+		}
+		if ($mode == 'closed') {
+			if (!isset($conf->cache['closed_fiscal_period_cached']) || $force) {
+				$sql = "SELECT date_start, date_end";
+				$sql .= " FROM " . $this->db->prefix() . "accounting_fiscalyear";
+				$sql .= " WHERE entity = " . ((int) $conf->entity);
+				$sql .= " AND statut = 1";
+
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$this->errors[] = $this->db->lasterror();
+					return -1;
+				}
+
+				$list = array();
+				while ($obj = $this->db->fetch_object($resql)) {
+					$list[] = array(
+						'date_start' => $this->db->jdate($obj->date_start),
+						'date_end' => $this->db->jdate($obj->date_end),
+					);
+				}
+				$conf->cache['closed_fiscal_period_cached'] = $list;
+			}
 		}
 
 		return 1;
@@ -2367,14 +2470,14 @@ class BookKeeping extends CommonObject
 	 * @param 	string	$filter		Filter
 	 * @return 	array|int			<0 if KO, Fiscal periods : [[id, date_start, date_end, label], ...]
 	 */
-	function getFiscalPeriods($filter = '')
+	public function getFiscalPeriods($filter = '')
 	{
 		global $conf;
 		$list = array();
 
 		$sql = "SELECT rowid, label, date_start, date_end, statut";
 		$sql .= " FROM " . $this->db->prefix() . "accounting_fiscalyear";
-		$sql .= " WHERE entity = " . ((int)$conf->entity);
+		$sql .= " WHERE entity = " . ((int) $conf->entity);
 		if (!empty($filter)) $sql .= " AND (" . $filter . ')';
 		$sql .= $this->db->order('date_start', 'ASC');
 
@@ -2404,7 +2507,7 @@ class BookKeeping extends CommonObject
 	 * @param 	int			$date_end		Date end
 	 * @return 	array|int					<0 if KO, Fiscal periods : [[id, date_start, date_end, label], ...]
 	 */
-	function getCountByMonthForFiscalPeriod($date_start, $date_end)
+	public function getCountByMonthForFiscalPeriod($date_start, $date_end)
 	{
 		$total = 0;
 		$list = array();
@@ -2447,7 +2550,7 @@ class BookKeeping extends CommonObject
 				'total' => (int) $obj->total,
 			);
 			for ($i = 1; $i <= 12; $i++) {
-				$year_list['count'][$i] = (int)$obj->{'month' . $i};
+				$year_list['count'][$i] = (int) $obj->{'month' . $i};
 			}
 
 			$list[] = $year_list;
@@ -2468,7 +2571,7 @@ class BookKeeping extends CommonObject
 	 * @param 	int		$date_end		Date end
 	 * @return	int						int <0 if KO, >0 if OK
 	 */
-	function validateMovementForFiscalPeriod($date_start, $date_end)
+	public function validateMovementForFiscalPeriod($date_start, $date_end)
 	{
 		global $conf;
 
@@ -2477,7 +2580,7 @@ class BookKeeping extends CommonObject
 		// Specify as export : update field date_validated on selected month/year
 		$sql = " UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping";
 		$sql .= " SET date_validated = '" . $this->db->idate($now) . "'";
-		$sql .= " WHERE entity = " . ((int)$conf->entity);
+		$sql .= " WHERE entity = " . ((int) $conf->entity);
 		$sql .= " AND DATE(doc_date) >= '" . $this->db->idate($date_start) . "'";
 		$sql .= " AND DATE(doc_date) <= '" . $this->db->idate($date_end) . "'";
 		$sql .= " AND date_validated IS NULL";
@@ -2497,11 +2600,11 @@ class BookKeeping extends CommonObject
 	 *
 	 * @param 	int		$fiscal_period_id				Fiscal year ID
 	 * @param 	int		$new_fiscal_period_id			New fiscal year ID
-	 * @param 	bool	$separate_auxiliary_account		Separate auxiliary account
+	 * @param	bool	$separate_auxiliary_account		Separate auxiliary account
 	 * @param 	bool	$generate_bookkeeping_records	Generate closure bookkeeping records
 	 * @return	int										int <0 if KO, >0 if OK
 	 */
-	function closeFiscalPeriod($fiscal_period_id, $new_fiscal_period_id, $separate_auxiliary_account = false, $generate_bookkeeping_records = true)
+	public function closeFiscalPeriod($fiscal_period_id, $new_fiscal_period_id, $separate_auxiliary_account = false, $generate_bookkeeping_records = true)
 	{
 		global $conf, $langs, $user;
 
@@ -2590,7 +2693,6 @@ class BookKeeping extends CommonObject
 
 				$sql = 'SELECT';
 				$sql .= " t.numero_compte,";
-				$sql .= " t.label_compte,";
 				if ($separate_auxiliary_account) {
 					$sql .= " t.subledger_account,";
 					$sql .= " t.subledger_label,";
@@ -2599,13 +2701,13 @@ class BookKeeping extends CommonObject
 				$sql .= " (SUM(t.credit) - SUM(t.debit)) as opening_balance";
 				$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 				$sql .= ' LEFT JOIN  ' . MAIN_DB_PREFIX . 'accounting_account as aa ON aa.account_number = t.numero_compte';
-				$sql .= ' WHERE t.entity = ' . ((int)$conf->entity); // Do not use getEntity for accounting features
-				$sql .= " AND aa.entity = ".$conf->entity;
+				$sql .= ' WHERE t.entity = ' . ((int) $conf->entity); // Do not use getEntity for accounting features
+				$sql .= " AND aa.entity = ". ((int) $conf->entity);
 				$sql .= ' AND aa.fk_pcg_version IN (SELECT pcg_version FROM '.MAIN_DB_PREFIX.'accounting_system WHERE rowid = '.((int) getDolGlobalInt('CHARTOFACCOUNTS')).')';
 				$sql .= ' AND aa.pcg_type IN (' . $this->db->sanitize(implode(',', $pcg_type_filter), 1) . ')';
 				$sql .= " AND DATE(t.doc_date) >= '" . $this->db->idate($fiscal_period->date_start) . "'";
 				$sql .= " AND DATE(t.doc_date) <= '" . $this->db->idate($fiscal_period->date_end) . "'";
-				$sql .= ' GROUP BY t.numero_compte, t.label_compte, aa.pcg_type';
+				$sql .= ' GROUP BY t.numero_compte, aa.pcg_type';
 				if ($separate_auxiliary_account) {
 					$sql .= ' ,t.subledger_account, t.subledger_label';
 				}
@@ -2619,10 +2721,10 @@ class BookKeeping extends CommonObject
 					$error++;
 				} else {
 					$now = dol_now();
-                    $income_statement_amount = 0;
+					$income_statement_amount = 0;
 					while ($obj = $this->db->fetch_object($resql)) {
 						if (in_array($obj->pcg_type, $accounting_groups_used_for_income_statement)) {
-                            $income_statement_amount += $obj->opening_balance;
+							$income_statement_amount += $obj->opening_balance;
 						} else {
 							// Insert bookkeeping record for balance sheet account
 							$mt = $obj->opening_balance;
@@ -2630,10 +2732,10 @@ class BookKeeping extends CommonObject
 							$bookkeeping = new BookKeeping($this->db);
 							$bookkeeping->doc_date = $new_fiscal_period->date_start;
 							$bookkeeping->date_lim_reglement = '';
-							$bookkeeping->doc_ref = $new_fiscal_period->label;
+							$bookkeeping->doc_ref = $fiscal_period->label;
 							$bookkeeping->date_creation = $now;
 							$bookkeeping->doc_type = 'closure';
-							$bookkeeping->fk_doc = $new_fiscal_period->id;
+							$bookkeeping->fk_doc = $fiscal_period->id;
 							$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
 							$bookkeeping->thirdparty_code = '';
 
@@ -2648,7 +2750,7 @@ class BookKeeping extends CommonObject
 							$bookkeeping->numero_compte = $obj->numero_compte;
 							$bookkeeping->label_compte = $obj->label_compte;
 
-							$bookkeeping->label_operation = $new_fiscal_period->label;
+							$bookkeeping->label_operation = $fiscal_period->label;
 							$bookkeeping->montant = $mt;
 							$bookkeeping->sens = ($mt >= 0) ? 'C' : 'D';
 							$bookkeeping->debit = ($mt < 0) ? -$mt : 0;
@@ -2677,14 +2779,15 @@ class BookKeeping extends CommonObject
 						$bookkeeping = new BookKeeping($this->db);
 						$bookkeeping->doc_date = $new_fiscal_period->date_start;
 						$bookkeeping->date_lim_reglement = '';
-						$bookkeeping->doc_ref = $new_fiscal_period->label;
+						$bookkeeping->doc_ref = $fiscal_period->label;
 						$bookkeeping->date_creation = $now;
 						$bookkeeping->doc_type = 'closure';
-						$bookkeeping->fk_doc = $new_fiscal_period->id;
+						$bookkeeping->fk_doc = $fiscal_period->id;
 						$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
 						$bookkeeping->thirdparty_code = '';
 
 						if ($separate_auxiliary_account) {
+							$bookkeeping->subledger_label = '';
 							$bookkeeping->subledger_account = $obj->subledger_account;
 							$bookkeeping->subledger_label = $obj->subledger_label;
 						} else {
@@ -2695,7 +2798,7 @@ class BookKeeping extends CommonObject
 						$bookkeeping->numero_compte = $accountingaccount->account_number;
 						$bookkeeping->label_compte = $accountingaccount->label;
 
-						$bookkeeping->label_operation = $new_fiscal_period->label;
+						$bookkeeping->label_operation = $fiscal_period->label;
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt >= 0) ? 'C' : 'D';
 						$bookkeeping->debit = ($mt < 0) ? -$mt : 0;
@@ -2736,7 +2839,7 @@ class BookKeeping extends CommonObject
 	 * @param 	int		$date_end				Date end
 	 * @return	int								int <0 if KO, >0 if OK
 	 */
-	function insertAccountingReversal($fiscal_period_id, $inventory_journal_id, $new_fiscal_period_id, $date_start, $date_end)
+	public function insertAccountingReversal($fiscal_period_id, $inventory_journal_id, $new_fiscal_period_id, $date_start, $date_end)
 	{
 		global $conf, $langs, $user;
 
@@ -2803,7 +2906,7 @@ class BookKeeping extends CommonObject
 
 		$sql = 'SELECT t.rowid';
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
-		$sql .= ' WHERE t.entity = ' . ((int)$conf->entity); // Do not use getEntity for accounting features
+		$sql .= ' WHERE t.entity = ' . ((int) $conf->entity); // Do not use getEntity for accounting features
 		$sql .= " AND code_journal = '" . $this->db->escape($inventory_journal->code) . "'";
 		$sql .= " AND DATE(t.doc_date) >= '" . $this->db->idate($date_start) . "'";
 		$sql .= " AND DATE(t.doc_date) <= '" . $this->db->idate($date_end) . "'";
@@ -2843,7 +2946,7 @@ class BookKeeping extends CommonObject
 
 				$bookkeeping->montant = -$bookkeeping->montant;
 				$bookkeeping->sens = ($bookkeeping->montant >= 0) ? 'C' : 'D';
-                $old_debit = $bookkeeping->debit;
+				$old_debit = $bookkeeping->debit;
 				$bookkeeping->debit = $bookkeeping->credit;
 				$bookkeeping->credit = $old_debit;
 
