@@ -4,7 +4,7 @@
  * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
- * Copyright (C) 2013-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2023  Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
@@ -993,6 +993,25 @@ if (empty($action) || $action == 'view') {
 	$varlink = 'id_journal='.$id_journal;
 
 	journalHead($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
+
+	if (getDolGlobalString('ACCOUNTANCY_FISCAL_PERIOD_MODE') != 'blockedonclosed') {
+		// Test that setup is complete (we are in accounting, so test on entity is always on $conf->entity only, no sharing allowed)
+		// Fiscal period test
+		$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_fiscalyear WHERE entity = ".((int) $conf->entity);
+		$resql = $db->query($sql);
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			if ($obj->nb == 0) {
+				print '<br><div class="warning">'.img_warning().' '.$langs->trans("TheFiscalPeriodIsNotDefined");
+				$desc = ' : '.$langs->trans("AccountancyAreaDescFiscalPeriod", 4, '{link}');
+				$desc = str_replace('{link}', '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("FiscalPeriod").'</strong>', $desc);
+				print $desc;
+				print '</div>';
+			}
+		} else {
+			dol_print_error($db);
+		}
+	}
 
 	// Button to write into Ledger
 	$acctCustomerNotConfigured = in_array(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER'), ['','-1']);
