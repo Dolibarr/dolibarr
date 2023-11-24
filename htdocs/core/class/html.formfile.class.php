@@ -573,6 +573,13 @@ class FormFile
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/stock/modules_stock.php';
 					$modellist = ModelePDFStock::liste_modeles($this->db);
 				}
+			} elseif ($modulepart == 'hrm') {
+				if (is_array($genallowed)) {
+					$modellist = $genallowed;
+				} else {
+					include_once DOL_DOCUMENT_ROOT.'/core/modules/hrm/modules_evaluation.php';
+					$modellist = ModelePDFEvaluation::liste_modeles($this->db);
+				}
 			} elseif ($modulepart == 'movement') {
 				if (is_array($genallowed)) {
 					$modellist = $genallowed;

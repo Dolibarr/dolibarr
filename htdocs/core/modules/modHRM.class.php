@@ -294,7 +294,10 @@ class modHRM extends DolibarrModules
 			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
 		}
 
-		$sql = array();
+		$sql = array(
+			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard' AND type='evaluation' AND entity = ".((int) $conf->entity),
+			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard','evaluation',".((int) $conf->entity).")"
+		);
 
 		return $this->_init($sql, $options);
 	}
