@@ -242,7 +242,7 @@ $server->register(
  * @param	string		$ref_ext			Ref_ext
  * @return	array							Array result
  */
-function getSupplierInvoice($authentication, $id = 0, $ref = '', $ref_ext = '')
+function getSupplierInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
 {
 	global $db, $conf;
 
