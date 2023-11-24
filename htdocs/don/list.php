@@ -342,7 +342,7 @@ if (isModEnabled('project')) {
 	print '</td>';
 }
 print '<td class="liste_titre right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
-print '<td class="liste_titre right parentonrightofpage">';
+print '<td class="liste_titre center parentonrightofpage">';
 $liststatus = array(
 	Don::STATUS_DRAFT=>$langs->trans("DonationStatusPromiseNotValidated"),
 	Don::STATUS_VALIDATED=>$langs->trans("DonationStatusPromiseValidated"),
@@ -390,7 +390,7 @@ if (isModEnabled('project')) {
 }
 print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "d.amount", "", $param, '', $sortfield, $sortorder, 'right ');
 $totalarray['nbfield']++;
-print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "d.fk_statut", "", $param, '', $sortfield, $sortorder, 'right ');
+print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "d.fk_statut", "", $param, '', $sortfield, $sortorder, 'center ');
 $totalarray['nbfield']++;
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print_liste_field_titre('');
@@ -479,7 +479,9 @@ while ($i < $imaxinloop) {
 			print "</td>\n";
 		}
 		print '<td class="right"><span class="amount">'.price($obj->amount).'</span></td>';
-		print '<td class="right">'.$donationstatic->LibStatut($obj->status, 5).'</td>';
+
+		// Status
+		print '<td class="center">'.$donationstatic->LibStatut($obj->status, 5).'</td>';
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td></td>';
 		}
