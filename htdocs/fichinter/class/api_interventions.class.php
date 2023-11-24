@@ -444,9 +444,8 @@ class Interventions extends DolibarrApi
 		// phpcs:enable
 		$object = parent::_cleanObjectDatas($object);
 
-		unset($object->statuts_short);
-		unset($object->statuts_logo);
-		unset($object->statuts);
+		unset($object->labelStatus);
+		unset($object->labelStatusShort);
 
 		return $object;
 	}
