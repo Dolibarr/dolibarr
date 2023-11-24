@@ -54,7 +54,7 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 $id		 = GETPOST('id', 'int');
 $ref 	 = GETPOST('ref', 'alpha');
-$fk_job  = GETPOST('fk_job', 'int');
+$fk_job  = GETPOST('id', 'int');
 $fk_user = GETPOST('fk_user', 'int');
 //$start_date = date('Y-m-d', GETPOST('date_startyear', 'int').'-'.GETPOST('date_startmonth', 'int').'-'.GETPOST('date_startday', 'int'));
 $start_date = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
@@ -177,8 +177,10 @@ if (empty($reshook)) {
 	$error = 0;
 
 	$backurlforlist = dol_buildpath('/hrm/position_list.php', 1);
-	//$backtopage = dol_buildpath('/hrm/position.php', 1) . '?fk_job=' . ($fk_job > 0 ? $fk_job : '__ID__');
-
+	$idBacktoPage = GETPOST('fk_job', 'aZ09');
+	if ($idBacktoPage > 0) {
+		$backtopage = dol_buildpath('/hrm/position.php', 1) . '?id=' . $idBacktoPage;
+	}
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
@@ -253,7 +255,6 @@ if ($action == 'create') {
 	if ($backtopage) {
 		print '<input type="hidden" name="backtopage" value="' . $backtopage . '">';
 	}
-
 	if ($backtopageforcancel) {
 		print '<input type="hidden" name="backtopageforcancel" value="' . $backtopageforcancel . '">';
 	}
@@ -278,7 +279,6 @@ if ($action == 'create') {
 
 	//dol_set_focus('input[name="ref"]');
 }
-
 if ($job->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
 	if ($backtopage) {
 		print '<input type="hidden" name="backtopage" value="' . $backtopage . '">';
