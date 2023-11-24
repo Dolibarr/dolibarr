@@ -227,8 +227,6 @@ class CommandeFournisseur extends CommonOrder
 	public $multicurrency_total_tva;
 	public $multicurrency_total_ttc;
 
-
-
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:Sortfield]]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
@@ -476,9 +474,9 @@ class CommandeFournisseur extends CommonOrder
 			$this->label_incoterms = $obj->label_incoterms;
 
 			// Multicurrency
-			$this->fk_multicurrency = $obj->fk_multicurrency;
+			$this->fk_multicurrency 		= $obj->fk_multicurrency;
 			$this->multicurrency_code = $obj->multicurrency_code;
-			$this->multicurrency_tx = $obj->multicurrency_tx;
+			$this->multicurrency_tx 		= $obj->multicurrency_tx;
 			$this->multicurrency_total_ht = $obj->multicurrency_total_ht;
 			$this->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
 			$this->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
@@ -2791,11 +2789,9 @@ class CommandeFournisseur extends CommonOrder
 	 * 	@param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param		double		$pu_ht_devise		Unit price in currency
 	 *  @param		string		$ref_supplier		Supplier ref
-	 *  @param		int			$rang				Rank
-	 * 	@param		int			$special_code		Special code
 	 *	@return    	int         	    			< 0 if error, > 0 if ok
 	 */
-	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $info_bits = 0, $type = 0, $notrigger = 0, $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $ref_supplier = '', $rang = -1, $special_code = 0)
+	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $info_bits = 0, $type = 0, $notrigger = 0, $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $ref_supplier = '')
 	{
 		global $mysoc, $conf, $langs;
 		dol_syslog(get_class($this)."::updateline $rowid, $desc, $pu, $qty, $remise_percent, $txtva, $price_base_type, $info_bits, $type, $fk_unit");
@@ -2927,7 +2923,7 @@ class CommandeFournisseur extends CommonOrder
 			$this->line->total_localtax2 = $total_localtax2;
 			$this->line->total_ttc      = $total_ttc;
 			$this->line->product_type   = $type;
-			$this->line->special_code   = (!empty($special_code) ? $special_code : $oldline->special_code);
+			$this->line->special_code   = $oldline->special_code;
 			$this->line->rang           = $oldline->rang;
 			$this->line->origin         = $this->origin;
 			$this->line->fk_unit        = $fk_unit;
@@ -3014,7 +3010,7 @@ class CommandeFournisseur extends CommonOrder
 		$this->socid = 1;
 		$this->date = $now;
 		$this->date_commande = $now;
-		// $this->date_lim_reglement = $this->date + 3600 * 24 * 30;
+		$this->date_lim_reglement = $this->date + 3600 * 24 * 30;
 		$this->cond_reglement_code = 'RECEP';
 		$this->mode_reglement_code = 'CHQ';
 
