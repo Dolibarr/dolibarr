@@ -3030,7 +3030,6 @@ class CommandeFournisseur extends CommonOrder
 			$line->desc = $langs->trans("Description")." ".$xnbp;
 			$line->qty = 1;
 			$line->subprice = 100;
-			$line->price = 100;
 			$line->tva_tx = 19.6;
 			$line->localtax1_tx = 0;
 			$line->localtax2_tx = 0;

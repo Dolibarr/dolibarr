@@ -52,7 +52,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	 *      All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers
 	 *
 	 *      @param  string    $action Event action code
-	 *      @param  Object    $object Object
+	 *      @param  Ticket    $object Object
 	 *      @param  User      $user   Object user
 	 *      @param  Translate $langs  Object langs
 	 *      @param  conf      $conf   Object conf
@@ -304,7 +304,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	 */
 	private function composeAndSendAdminMessage($sendto, $base_subject, $body, Ticket $object, Translate $langs)
 	{
-		global $conf;
+		global $conf, $mysoc;
 
 		// Init to avoid errors
 		$filepath = array();
@@ -331,8 +331,8 @@ class InterfaceTicketEmail extends DolibarrTriggers
 			}
 		}
 		if ($object->fk_soc > 0) {
-					$object->fetch_thirdparty();
-					$message_admin .= '<li>'.$langs->trans('Company').' : '.$object->thirdparty->name.'</li>';
+			$object->fetch_thirdparty();
+			$message_admin .= '<li>'.$langs->trans('Company').' : '.$object->thirdparty->name.'</li>';
 		}
 		$message_admin .= '</ul>';
 

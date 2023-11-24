@@ -81,6 +81,11 @@ class pdf_standard extends ModeleExpenseReport
 	public $posxup;
 	public $posxqty;
 	public $posxtype;
+
+	/**
+	 * @var int posx date
+	 */
+	public $posxdate;
 	public $posxprojet;
 	public $postotalht;
 	public $postotalttc;
