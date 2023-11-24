@@ -72,6 +72,7 @@ class html_generic extends ModeleDon
 	private function loadTranslationFiles($outputlangs)
 	{
 		if (!is_object($outputlangs)) {
+			global $langs;
 			$outputlangs = $langs;
 		}
 
@@ -175,7 +176,7 @@ class html_generic extends ModeleDon
 		$handle = fopen($path, "w");
 		fwrite($handle, $contents);
 		fclose($handle);
-		dolChmod($file);
+		dolChmod($path);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

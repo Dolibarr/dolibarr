@@ -1353,6 +1353,7 @@ class Lessc
 		} else {
 			$this->throwError("tint expects (color, weight)");
 		}
+		return array();
 	}
 
 	/**
@@ -1376,6 +1377,7 @@ class Lessc
 		} else {
 			$this->throwError("shade expects (color, weight)");
 		}
+		return array();
 	}
 
 	/**
