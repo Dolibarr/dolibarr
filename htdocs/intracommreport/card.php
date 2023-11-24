@@ -117,7 +117,7 @@ if ($permissiontodelete && $action == 'confirm_delete' && $confirm == 'yes') {
 
 if ($action == 'add' && $permissiontoadd) {
 	$object->label = trim($label);
-	$object->intratype = trim($exporttype);
+	$object->type = trim($exporttype);
 	$object->type_declaration =  $type_declaration;
 	//$object->subscription = (int) $subscription;
 
