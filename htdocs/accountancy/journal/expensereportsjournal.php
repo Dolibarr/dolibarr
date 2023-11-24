@@ -481,7 +481,7 @@ $userstatic = new User($db);
 
 // Export
 if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
-	$sep = getDolGlobalString('ACCOUNTING_EXPORT_SEPARATORCSV');
+	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 
 	$filename = 'journal';
 	$type_export = 'journal';
