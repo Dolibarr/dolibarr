@@ -54,7 +54,7 @@ class Interventions extends DolibarrApi
 	);
 
 	/**
-	 * @var Fichinter $fichinter {@type fichinter}
+	 * @var fichinter $fichinter {@type fichinter}
 	 */
 	public $fichinter;
 
@@ -366,7 +366,7 @@ class Interventions extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating Intervention: '.$this->fichinter->error);
+			throw new RestException(500, 'Error when validating Intervention: '.$this->commande->error);
 		}
 
 		$this->fichinter->fetchObjectLinked();
