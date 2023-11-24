@@ -1109,7 +1109,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$useridtocheck = 0;
 			if ($feature == 'holiday') {
 				$useridtocheck = $object->fk_user;
-				if (!in_array($object->fk_user, $childids) && !in_array($object->fk_validator, $childids)) {
+				if (!$user->hasRight('holiday', 'readall') && !in_array($useridtocheck, $childids) && !in_array($object->fk_validator, $childids)) {
 					return false;
 				}
 			}

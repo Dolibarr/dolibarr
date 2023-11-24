@@ -224,8 +224,7 @@ function isModEnabled($module)
 		'category' => 'categorie',
 		'contract' => 'contrat',
 		'project' => 'projet',
-		'bank' => 'banque',
-		'category' => 'categorie'
+		'delivery_note' => 'expedition'
 	);
 	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
 		$arrayconv['supplier_order'] = 'fournisseur';
@@ -11880,7 +11879,7 @@ function getElementProperties($element_type)
 	} elseif ($element_type == 'delivery') {
 		$classpath = 'delivery/class';
 		$subelement = 'delivery';
-		$module = 'delivery_note';
+		$module = 'expedition';
 	} elseif ($element_type == 'contract') {
 		$classpath = 'contrat/class';
 		$module = 'contrat';

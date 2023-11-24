@@ -1665,17 +1665,23 @@ if ($action == 'create') {
 							$("#selectremindertype").select2();
 							$("#select_offsetunittype_duration").select2("destroy");
 							$("#select_offsetunittype_duration").select2();
+							selectremindertype();
 	            		 });
 
 	            		$("#selectremindertype").change(function(){
-							console.log("Change on selectremindertype");
+							selectremindertype();
+	            		});
+
+						function selectremindertype() {
+							console.log("Call selectremindertype");
 	            	        var selected_option = $("#selectremindertype option:selected").val();
 	            		    if(selected_option == "email") {
 	            		        $("#select_actioncommsendmodel_mail").closest("tr").show();
 	            		    } else {
 	            			    $("#select_actioncommsendmodel_mail").closest("tr").hide();
 	            		    }
-	            		});
+						}
+
                    })';
 		print '</script>'."\n";
 	}

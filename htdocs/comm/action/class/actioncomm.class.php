@@ -291,7 +291,7 @@ class ActionComm extends CommonObject
 	public $fk_element; // Id of record
 
 	/**
-	 * @var int 		Id of record alternative for API
+	 * @var int 		Id of linked object, alternative for API or other
 	 */
 	public $elementid;
 
@@ -301,9 +301,9 @@ class ActionComm extends CommonObject
 	public $elementtype;
 
 	/**
-	 * @var int id of availability
+	 * @var int id of calendar
 	 */
-	public $fk_bookcal_availability;
+	public $fk_bookcal_calendar;
 
 	/**
 	 * @var string Ical name
@@ -435,7 +435,7 @@ class ActionComm extends CommonObject
 
 		// Check parameters
 		if (!isset($this->userownerid) || (string) $this->userownerid === '') {	// $this->userownerid may be 0 (anonymous event) or > 0
-			dol_syslog("You tried to create an event but mandatory property ownerid was not defined", LOG_WARNING);
+			dol_syslog("You tried to create an event but mandatory property userownerid was empty (you can define it to 0 for anonymous event)", LOG_WARNING);
 			$this->errors[] = 'ErrorActionCommPropertyUserowneridNotDefined';
 			return -1;
 		}
@@ -480,6 +480,9 @@ class ActionComm extends CommonObject
 		}
 		if ($this->elementtype == 'contrat') {
 			$this->elementtype = 'contract';
+		}
+		if (empty($this->fk_element) && !empty($this->elementid)) {
+			$this->fk_element = $this->elementid;
 		}
 
 		if (!is_array($this->userassigned) && !empty($this->userassigned)) {	// For backward compatibility when userassigned was an int instead of an array
@@ -544,7 +547,7 @@ class ActionComm extends CommonObject
 		$sql .= "transparency,";
 		$sql .= "fk_element,";
 		$sql .= "elementtype,";
-		$sql .= "fk_bookcal_availability,";
+		$sql .= "fk_bookcal_calendar,";
 		$sql .= "entity,";
 		$sql .= "extraparams,";
 		// Fields emails
@@ -587,7 +590,7 @@ class ActionComm extends CommonObject
 		$sql .= "'".$this->db->escape($this->transparency)."', ";
 		$sql .= (!empty($this->fk_element) ? ((int) $this->fk_element) : "null").", ";
 		$sql .= (!empty($this->elementtype) ? "'".$this->db->escape($this->elementtype)."'" : "null").", ";
-		$sql .= (!empty($this->fk_bookcal_availability) ? "'".$this->db->escape($this->fk_bookcal_availability)."'" : "null").", ";
+		$sql .= (!empty($this->fk_bookcal_calendar) ? "'".$this->db->escape($this->fk_bookcal_calendar)."'" : "null").", ";
 		$sql .= ((int) $conf->entity).",";
 		$sql .= (!empty($this->extraparams) ? "'".$this->db->escape($this->extraparams)."'" : "null").", ";
 		// Fields emails
@@ -2502,7 +2505,7 @@ class ActionComm extends CommonObject
 		$now = dol_now();
 		$actionCommReminder = new ActionCommReminder($this->db);
 
-		dol_syslog(__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__." start", LOG_INFO);
 
 		$this->db->begin();
 
@@ -2632,10 +2635,16 @@ class ActionComm extends CommonObject
 		if (!$error) {
 			$this->output = 'Nb of emails sent : '.$nbMailSend;
 			$this->db->commit();
+
+			dol_syslog(__METHOD__." end - ".$this->output, LOG_INFO);
+
 			return 0;
 		} else {
 			$this->db->commit(); // We commit also on error, to have the error message recorded.
 			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg)) ? join(', ', $errorsMsg) : $error;
+
+			dol_syslog(__METHOD__." end - ".$this->error, LOG_INFO);
+
 			return $error;
 		}
 	}
