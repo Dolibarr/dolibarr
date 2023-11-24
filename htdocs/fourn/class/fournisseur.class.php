@@ -35,7 +35,6 @@ class Fournisseur extends Societe
 {
 	public $next_prev_filter = "te.fournisseur = 1"; // Used to add a filter in Form::showrefnav method
 
-	public $single_open_commande;
 
 	/**
 	 *	Constructor
