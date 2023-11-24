@@ -643,7 +643,7 @@ class Shipments extends DolibarrApi
 			throw new RestException(404, 'Shipment not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('expedition', $this->commande->id)) {
+		if (!DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -652,7 +652,7 @@ class Shipments extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already closed');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when closing Order: '.$this->commande->error);
+			throw new RestException(500, 'Error when closing Order: '.$this->shipment->error);
 		}
 
 		// Reload shipment

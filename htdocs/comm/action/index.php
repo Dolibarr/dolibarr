@@ -716,7 +716,7 @@ $sql .= ' a.datep2,';
 $sql .= ' a.percent,';
 $sql .= ' a.fk_user_author,a.fk_user_action,';
 $sql .= ' a.transparency, a.priority, a.fulldayevent, a.location,';
-$sql .= ' a.fk_soc, a.fk_contact, a.fk_project, a.fk_bookcal_availability,';
+$sql .= ' a.fk_soc, a.fk_contact, a.fk_project, a.fk_bookcal_calendar,';
 $sql .= ' a.fk_element, a.elementtype,';
 $sql .= ' ca.code as type_code, ca.libelle as type_label, ca.color as type_color, ca.type as type_type, ca.picto as type_picto';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm as ca, '.MAIN_DB_PREFIX."actioncomm as a";
@@ -905,8 +905,8 @@ if ($resql) {
 
 		$event->socid = $obj->fk_soc;
 		$event->contact_id = $obj->fk_contact;
-		$event->fk_bookcal_availability = $obj->fk_bookcal_availability;
-		if (!empty($event->fk_bookcal_availability)) {
+		$event->fk_bookcal_calendar = $obj->fk_bookcal_calendar;
+		if (!empty($event->fk_bookcal_calendar)) {
 			$event->type = "bookcal_calendar";
 		}
 
@@ -1868,7 +1868,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					} elseif ($event->type == 'bookcal_calendar') {
 						$numbirthday++;
 						$colorindex = 3;
-						$cssclass = 'family_bookcal_calendar_'.(!empty($bookcalcalendarsarray["availabilitieslink"]) ? $bookcalcalendarsarray["availabilitieslink"][$event->fk_bookcal_availability] : "");
+						$cssclass = 'family_bookcal_calendar_'.(!empty($bookcalcalendarsarray["availabilitieslink"]) ? $bookcalcalendarsarray["availabilitieslink"][$event->fk_bookcal_calendar] : "");
 						$color = sprintf("%02x%02x%02x", $theme_datacolor[$colorindex][0], $theme_datacolor[$colorindex][1], $theme_datacolor[$colorindex][2]);
 					} else {
 						$numother++;
@@ -1957,7 +1957,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					if ($event->type == 'holiday' && !GETPOST('check_holiday')) {
 						$morecss = 'hidden';
 					}
-					if ($event->type == 'bookcal_calendar' && !GETPOST('check_bookcal_calendar_'.$bookcalcalendarsarray["availabilitieslink"][$event->fk_bookcal_availability])) {
+					if ($event->type == 'bookcal_calendar' && !GETPOST('check_bookcal_calendar_'.$bookcalcalendarsarray["availabilitieslink"][$event->fk_bookcal_calendar])) {
 						$morecss = 'hidden';
 					}
 					if ($morecss != 'hidden') {
@@ -1968,7 +1968,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					}
 					//var_dump($event->type.' - '.$morecss.' - '.$cssclass.' - '.$i.' - '.$ireallyshown.' - '.$itoshow);
 					if (isModEnabled("bookcal") && $event->type == 'bookcal_calendar') {
-						print '<div id="event_'.$ymd.'_'.$i.'" class="event family_'.$event->type.'_'.$bookcalcalendarsarray["availabilitieslink"][$event->fk_bookcal_availability].' '.$cssclass.($morecss ? ' '.$morecss : '').'"';
+						print '<div id="event_'.$ymd.'_'.$i.'" class="event family_'.$event->type.'_'.$bookcalcalendarsarray["availabilitieslink"][$event->fk_bookcal_calendar].' '.$cssclass.($morecss ? ' '.$morecss : '').'"';
 					} else {
 						print '<div id="event_'.$ymd.'_'.$i.'" class="event family_'.$event->type.' '.$cssclass.($morecss ? ' '.$morecss : '').'"';
 					}
