@@ -2488,7 +2488,7 @@ class ActionComm extends CommonObject
 		$now = dol_now();
 		$actionCommReminder = new ActionCommReminder($this->db);
 
-		dol_syslog(__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__." start", LOG_INFO);
 
 		$this->db->begin();
 
@@ -2618,10 +2618,16 @@ class ActionComm extends CommonObject
 		if (!$error) {
 			$this->output = 'Nb of emails sent : '.$nbMailSend;
 			$this->db->commit();
+
+			dol_syslog(__METHOD__." end - ".$this->output, LOG_INFO);
+
 			return 0;
 		} else {
 			$this->db->commit(); // We commit also on error, to have the error message recorded.
 			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg)) ? join(', ', $errorsMsg) : $error;
+
+			dol_syslog(__METHOD__." end - ".$this->error, LOG_INFO);
+
 			return $error;
 		}
 	}

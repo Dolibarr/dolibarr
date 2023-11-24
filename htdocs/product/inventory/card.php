@@ -92,7 +92,7 @@ if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 } else {
 	$permissiontoread = $user->rights->stock->inventory_advance->read;
 	$permissiontoadd = $user->rights->stock->inventory_advance->write;
-	$permissiontodelete = $user->rights->stock->inventory_advance->write;
+	$permissiontodelete = $user->rights->stock->inventory_advance->delete;
 	$permissionnote = $user->rights->stock->inventory_advance->write; // Used by the include of actions_setnotes.inc.php
 	$permissiondellink = $user->rights->stock->inventory_advance->write; // Used by the include of actions_dellink.inc.php
 	$upload_dir = $conf->stock->multidir_output[isset($object->entity) ? $object->entity : 1];

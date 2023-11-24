@@ -407,7 +407,7 @@ if (empty($reshook)) {
 	}
 
 	// Add a product line
-	if ($action == 'addline' && GETPOST('submitforalllines', 'aZ09') && GETPOST('vatforalllines', 'alpha') && $usercancreate) {
+	if ($action == 'addline' && GETPOST('submitforalllines', 'aZ09') && GETPOST('vatforalllines', 'alpha') !== '' && $usercancreate) {
 		// Define new vat_rate for all lines
 		$vat_rate = (GETPOST('vatforalllines') ? GETPOST('vatforalllines') : 0);
 		$vat_rate = str_replace('*', '', $vat_rate);
@@ -787,7 +787,7 @@ if (empty($reshook)) {
 			}
 
 			$ttc = price2num(GETPOST('price_ttc'), '', 2);
-			$ht = $ttc / (1 + ($vatratecleaned / 100));
+			$ht = (float) $ttc / (1 + ($vatratecleaned / 100));
 			$price_base_type = 'HT';
 		}
 

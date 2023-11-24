@@ -3690,6 +3690,7 @@ class Form
 					$optstart .= ' data-tvatx="' . dol_escape_htmltag(price2num($objp->tva_tx)) . '"';
 					$optstart .= ' data-tvatx-formated="' . dol_escape_htmltag(price($objp->tva_tx, 0, $langs, 1, -1, 2)) . '"';
 					$optstart .= ' data-default-vat-code="' . dol_escape_htmltag($objp->default_vat_code) . '"';
+					$optstart .= ' data-supplier-ref="' . dol_escape_htmltag($objp->ref_fourn) . '"';
 				}
 				$optstart .= ' data-description="' . dol_escape_htmltag($objp->description, 0, 1) . '"';
 
@@ -9896,6 +9897,13 @@ class Form
 						$disableline = 1;
 					}
 
+					$label = $obj->name;
+					$labelhtml = $obj->name;
+					if (isModEnabled('multicompany') && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1) {
+						$label .= " (" . $obj->label . ")";
+						$labelhtml .= ' <span class="opacitymedium">(' . $obj->label . ')</span>';
+					}
+
 					$out .= '<option value="' . $obj->rowid . '"';
 					if ($disableline) {
 						$out .= ' disabled';
@@ -9903,12 +9911,10 @@ class Form
 					if ((isset($selected[0]) && is_object($selected[0]) && $selected[0]->id == $obj->rowid) || ((!isset($selected[0]) || !is_object($selected[0])) && !empty($selected) && in_array($obj->rowid, $selected))) {
 						$out .= ' selected';
 					}
+					$out .= ' data-html="'.dol_escape_htmltag($labelhtml).'"';
 					$out .= '>';
 
-					$out .= $obj->name;
-					if (isModEnabled('multicompany') && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1) {
-						$out .= " (" . $obj->label . ")";
-					}
+					$out .= $label;
 
 					$out .= '</option>';
 					$i++;
