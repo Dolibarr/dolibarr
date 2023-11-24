@@ -74,7 +74,6 @@ if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 $error = 0;
 $errorforinvoice = array();
 
-
 /*
  * Actions
  */

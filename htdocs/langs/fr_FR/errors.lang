@@ -32,6 +32,7 @@ ErrorBadThirdPartyName=Nom de tiers incorrect
 ForbiddenBySetupRules=Interdit par les règles de configuration
 ErrorProdIdIsMandatory=Le %s est obligatoire
 ErrorAccountancyCodeCustomerIsMandatory=Le code comptable du client %s est obligatoire
+ErrorAccountancyCodeSupplierIsMandatory=Le code comptable du fournisseur %s est obligatoire
 ErrorBadCustomerCodeSyntax=La syntaxe du code client est incorrecte
 ErrorBadBarCodeSyntax=Mauvaise syntaxe pour le code barre. Peut être que vous avez défini un mauvais type de code-barres ou que vous avez défini un masque de code à barres pour la numérotation qui ne correspond pas à la valeur scannée.
 ErrorCustomerCodeRequired=Code client obligatoire
