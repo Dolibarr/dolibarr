@@ -62,10 +62,6 @@ class Cronjob extends CommonObject
 	 */
 	public $picto = 'cron';
 
-	const STATUS_DISABLED = 0;
-	const STATUS_ENABLED = 1;
-	const STATUS_ARCHIVED = 2;
-
 	/**
 	 *  'type' field format:
 	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
@@ -149,20 +145,26 @@ class Cronjob extends CommonObject
 	);
 	public $rowid;
 
-	/**
-	 * @var string|int     Date for last cron object update
-	 */
-	public $tms;
 
 	/**
-	 * @var string|int     Date for cron job create
+	 * @var int Entity
 	 */
-	public $datec;
+	public $entity;
 
 	/**
 	 * @var string Job type
 	 */
 	public $jobtype;
+
+	/**
+	 * @var string|int     Date for last cron object update
+	 */
+	public $tms = '';
+
+	/**
+	 * @var string|int     Date for cron job create
+	 */
+	public $datec = '';
 
 	/**
 	 * @var string Cron Job label
@@ -173,7 +175,6 @@ class Cronjob extends CommonObject
 	 * @var string Job command
 	 */
 	public $command;
-
 	public $classesname;
 	public $objectname;
 	public $methodename;
@@ -193,14 +194,14 @@ class Cronjob extends CommonObject
 	public $datenextrun='';
 
 	/**
+	 * @var string|int     Date for end job execution
+	 */
+	public $dateend = '';
+
+	/**
 	 * @var string|int     Date for first start job execution
 	 */
 	public $datestart='';
-
-	/**
-	 * @var string|int     Date for end job execution
-	 */
-	public $dateend='';
 
 	/**
 	 * @var string|int     Date for last result job execution
@@ -228,15 +229,24 @@ class Cronjob extends CommonObject
 	public $frequency;
 
 	/**
-	 * @var int 			Number of run job execution
-	 */
-	public $nbrun;
-
-	/**
 	 * @var int 			Status
 	 */
 	public $status;
 
+	/**
+	 * @var int 			Is job running ?
+	 */
+	public $processing;
+
+	/**
+	 * @var int 			The job current PID
+	 */
+	public $pid;
+
+	/**
+	 * @var string 			Email when an error occurs
+	 */
+	public $email_alert;
 
 	/**
 	 * @var int 			User ID of creation
@@ -251,21 +261,20 @@ class Cronjob extends CommonObject
 	public $note;
 
 	/**
-	 * @var string 			Libname
+	 * @var int 			Number of run job execution
 	 */
-	public $libname;
-
-	/**
-	 * @var int Entity
-	 */
-	public $entity;
+	public $nbrun;
 
 	/**
 	 * @var int 			Maximum run job execution
 	 */
 	public $maxrun;
 
-	public $autodelete;
+	/**
+	 * @var string 			Libname
+	 */
+	public $libname;
+
 	public $fk_mailing;
 
 	/**
@@ -274,19 +283,14 @@ class Cronjob extends CommonObject
 	public $test;
 
 	/**
-	 * @var int 			Is job running ?
+	 * @var string 			Autodelete
 	 */
-	public $processing;
+	public $autodelete;
 
-	/**
-	 * @var string 			Email when an error occurs
-	 */
-	public $email_alert;
 
-	/**
-	* @var int 			The job current PID
-	 */
-	public $pid;
+	const STATUS_DISABLED = 0;
+	const STATUS_ENABLED = 1;
+	const STATUS_ARCHIVED = 2;
 
 
 	/**
