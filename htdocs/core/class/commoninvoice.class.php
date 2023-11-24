@@ -68,11 +68,6 @@ abstract class CommonInvoice extends CommonObject
 
 	/**
 	 * @var string title of invoice model
-	 */
-	public $title;
-
-	/**
-	 * @var string title of invoice model
 	 * @deprecated
 	 * @see $title
 	 */

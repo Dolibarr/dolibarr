@@ -79,7 +79,6 @@ class ImportCsv extends ModeleImports
 	public $col;
 
 
-
 	/**
 	 *	Constructor
 	 *

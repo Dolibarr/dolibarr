@@ -324,11 +324,6 @@ abstract class CommonObject
 	public $status_buy;
 
 	/**
-	 * @var array tpl
-	 */
-	public $tpl;
-
-	/**
 	 * @var string
 	 * @see getFullAddress()
 	 */
