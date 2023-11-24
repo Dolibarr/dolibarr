@@ -914,7 +914,7 @@ if (!empty($arrayfields['s.name_alias']['checked'])) {
 if (!empty($arrayfields['p.fk_statut']['checked'])) {
 	print '<td class="liste_titre center">';
 	$arrayofstatus = array();
-	foreach ($projectstatic->statuts_short as $key => $val) {
+	foreach ($projectstatic->labelStatusShort as $key => $val) {
 		$arrayofstatus[$key] = $langs->trans($val);
 	}
 	$arrayofstatus['99'] = $langs->trans("NotClosed").' ('.$langs->trans('Draft').'+'.$langs->trans('Opened').')';

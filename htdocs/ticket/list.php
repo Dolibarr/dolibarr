@@ -878,7 +878,7 @@ foreach ($object->fields as $key => $val) {
 		} elseif ($key == 'fk_statut') {
 			$arrayofstatus = array();
 			$arrayofstatus['openall'] = '-- '.$langs->trans('OpenAll').' --';
-			foreach ($object->statuts_short as $key2 => $val2) {
+			foreach ($object->labelStatusShort as $key2 => $val2) {
 				if ($key2 == Ticket::STATUS_CLOSED) {
 					$arrayofstatus['closeall'] = '-- '.$langs->trans('ClosedAll').' --';
 				}

@@ -138,12 +138,12 @@ class Task extends CommonObjectLine
 	/**
 	 * @var array
 	 */
-	public $statuts;
+	public $labelStatus;
 
 	/**
 	 * @var array
 	 */
-	public $statuts_short;
+	public $labelStatusShort;
 
 	// Properties calculated from sum of llx_element_time linked to task
 	public $tobill;
@@ -2133,80 +2133,80 @@ class Task extends CommonObjectLine
 		global $langs;
 
 		// list of Statut of the task
-		$this->statuts[0] = 'Draft';
-		$this->statuts[1] = 'ToDo';
-		$this->statuts[2] = 'Running';
-		$this->statuts[3] = 'Finish';
-		$this->statuts[4] = 'Transfered';
-		$this->statuts_short[0] = 'Draft';
-		$this->statuts_short[1] = 'ToDo';
-		$this->statuts_short[2] = 'Running';
-		$this->statuts_short[3] = 'Completed';
-		$this->statuts_short[4] = 'Transfered';
+		$this->labelStatus[0] = 'Draft';
+		$this->labelStatus[1] = 'ToDo';
+		$this->labelStatus[2] = 'Running';
+		$this->labelStatus[3] = 'Finish';
+		$this->labelStatus[4] = 'Transfered';
+		$this->labelStatusShort[0] = 'Draft';
+		$this->labelStatusShort[1] = 'ToDo';
+		$this->labelStatusShort[2] = 'Running';
+		$this->labelStatusShort[3] = 'Completed';
+		$this->labelStatusShort[4] = 'Transfered';
 
 		if ($mode == 0) {
-			return $langs->trans($this->statuts[$status]);
+			return $langs->trans($this->labelStatus[$status]);
 		} elseif ($mode == 1) {
-			return $langs->trans($this->statuts_short[$status]);
+			return $langs->trans($this->labelStatusShort[$status]);
 		} elseif ($mode == 2) {
 			if ($status == 0) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut0').' '.$langs->trans($this->statuts_short[$status]);
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut0').' '.$langs->trans($this->labelStatusShort[$status]);
 			} elseif ($status == 1) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut1').' '.$langs->trans($this->statuts_short[$status]);
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut1').' '.$langs->trans($this->labelStatusShort[$status]);
 			} elseif ($status == 2) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut3').' '.$langs->trans($this->statuts_short[$status]);
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut3').' '.$langs->trans($this->labelStatusShort[$status]);
 			} elseif ($status == 3) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut6').' '.$langs->trans($this->statuts_short[$status]);
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut6').' '.$langs->trans($this->labelStatusShort[$status]);
 			} elseif ($status == 4) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut6').' '.$langs->trans($this->statuts_short[$status]);
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut6').' '.$langs->trans($this->labelStatusShort[$status]);
 			} elseif ($status == 5) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut5').' '.$langs->trans($this->statuts_short[$status]);
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut5').' '.$langs->trans($this->labelStatusShort[$status]);
 			}
 		} elseif ($mode == 3) {
 			if ($status == 0) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut0');
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut0');
 			} elseif ($status == 1) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut1');
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut1');
 			} elseif ($status == 2) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut3');
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut3');
 			} elseif ($status == 3) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut6');
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut6');
 			} elseif ($status == 4) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut6');
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut6');
 			} elseif ($status == 5) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut5');
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut5');
 			}
 		} elseif ($mode == 4) {
 			if ($status == 0) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut0').' '.$langs->trans($this->statuts[$status]);
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut0').' '.$langs->trans($this->labelStatus[$status]);
 			} elseif ($status == 1) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut1').' '.$langs->trans($this->statuts[$status]);
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut1').' '.$langs->trans($this->labelStatus[$status]);
 			} elseif ($status == 2) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut3').' '.$langs->trans($this->statuts[$status]);
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut3').' '.$langs->trans($this->labelStatus[$status]);
 			} elseif ($status == 3) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut6').' '.$langs->trans($this->statuts[$status]);
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut6').' '.$langs->trans($this->labelStatus[$status]);
 			} elseif ($status == 4) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut6').' '.$langs->trans($this->statuts[$status]);
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut6').' '.$langs->trans($this->labelStatus[$status]);
 			} elseif ($status == 5) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut5').' '.$langs->trans($this->statuts[$status]);
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut5').' '.$langs->trans($this->labelStatus[$status]);
 			}
 		} elseif ($mode == 5) {
-			/*if ($status==0) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut0');
-			elseif ($status==1) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut1');
-			elseif ($status==2) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut3');
-			elseif ($status==3) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut6');
-			elseif ($status==4) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut6');
-			elseif ($status==5) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut5');
+			/*if ($status==0) return $langs->trans($this->labelStatusShort[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut0');
+			elseif ($status==1) return $langs->trans($this->labelStatusShort[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut1');
+			elseif ($status==2) return $langs->trans($this->labelStatusShort[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut3');
+			elseif ($status==3) return $langs->trans($this->labelStatusShort[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut6');
+			elseif ($status==4) return $langs->trans($this->labelStatusShort[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut6');
+			elseif ($status==5) return $langs->trans($this->labelStatusShort[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut5');
 			*/
 			//else return $this->progress.' %';
 			return '&nbsp;';
 		} elseif ($mode == 6) {
-			/*if ($status==0) return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut0');
-			elseif ($status==1) return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut1');
-			elseif ($status==2) return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut3');
-			elseif ($status==3) return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut6');
-			elseif ($status==4) return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut6');
-			elseif ($status==5) return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut5');
+			/*if ($status==0) return $langs->trans($this->labelStatus[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut0');
+			elseif ($status==1) return $langs->trans($this->labelStatus[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut1');
+			elseif ($status==2) return $langs->trans($this->labelStatus[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut3');
+			elseif ($status==3) return $langs->trans($this->labelStatus[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut6');
+			elseif ($status==4) return $langs->trans($this->labelStatus[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut6');
+			elseif ($status==5) return $langs->trans($this->labelStatus[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut5');
 			*/
 			//else return $this->progress.' %';
 			return '&nbsp;';

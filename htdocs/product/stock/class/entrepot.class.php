@@ -116,7 +116,7 @@ class Entrepot extends CommonObject
 	/**
 	 * @var array List of short language codes for status
 	 */
-	public $statuts = array();
+	public $labelStatus = array();
 
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
@@ -177,12 +177,12 @@ class Entrepot extends CommonObject
 		global $conf;
 		$this->db = $db;
 
-		$this->statuts[self::STATUS_CLOSED] = 'Closed2';
+		$this->labelStatus[self::STATUS_CLOSED] = 'Closed2';
 		if (!empty($conf->global->ENTREPOT_EXTRA_STATUS)) {
-			$this->statuts[self::STATUS_OPEN_ALL] = 'OpenAnyMovement';
-			$this->statuts[self::STATUS_OPEN_INTERNAL] = 'OpenInternal';
+			$this->labelStatus[self::STATUS_OPEN_ALL] = 'OpenAnyMovement';
+			$this->labelStatus[self::STATUS_OPEN_INTERNAL] = 'OpenInternal';
 		} else {
-			$this->statuts[self::STATUS_OPEN_ALL] = 'Opened';
+			$this->labelStatus[self::STATUS_OPEN_ALL] = 'Opened';
 		}
 	}
 
@@ -701,8 +701,8 @@ class Entrepot extends CommonObject
 		}
 
 		$langs->load('stocks');
-		$label = $langs->transnoentitiesnoconv($this->statuts[$status]);
-		$labelshort = $langs->transnoentitiesnoconv($this->statuts[$status]);
+		$label = $langs->transnoentitiesnoconv($this->labelStatus[$status]);
+		$labelshort = $langs->transnoentitiesnoconv($this->labelStatus[$status]);
 
 		return dolGetStatus($label, $labelshort, '', $statusType, $mode);
 	}
