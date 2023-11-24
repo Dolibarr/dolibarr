@@ -682,25 +682,17 @@ abstract class CommonObject
 	/**
 	 * @var array		Array with label of status
 	 */
-	public $labelStatus;
-
-	/**
-	 * @var array array of status string
-	 * @deprecated 	Use instead labelStatus
-	 */
-	public $statuts = array();
+	public $labelStatus = array();
 
 	/**
 	 * @var array		Array with short label of status
 	 */
-	protected $labelStatusShort;
+	public $labelStatusShort = array();
 
 	/**
-	 * @var array array of short status string
-	 * @deprecated 	Use instead labelStatusShort
+	 * @var array		Array to store list of tpl
 	 */
-	public $statuts_short = array();
-
+	public $tpl;
 
 
 	/**
@@ -3837,7 +3829,7 @@ abstract class CommonObject
 			// Situations totals
 			if (!empty($this->situation_cycle_ref) && !empty($this->situation_counter) && $this->situation_counter > 1 && method_exists($this, 'get_prev_sits')) {
 				include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-				if ($this->type != Facture::TYPE_CREDIT_NOTE) {
+				if ($this->type != Facture::TYPE_CREDIT_NOTE) {	// @phpstan-ignore-line
 					$prev_sits = $this->get_prev_sits();
 
 					foreach ($prev_sits as $sit) {				// $sit is an object Facture loaded with a fetch.
@@ -4597,7 +4589,7 @@ abstract class CommonObject
 					if ($fieldstatus == 'tosell') {
 						$this->status = $status;
 					} elseif ($fieldstatus == 'tobuy') {
-						$this->status_buy = $status;
+						$this->status_buy = $status;	// @phpstan-ignore-line
 					} else {
 						$this->statut = $status;
 						$this->status = $status;
@@ -4991,8 +4983,7 @@ abstract class CommonObject
 	 */
 	public function formAddObjectLine($dateSelector, $seller, $buyer, $defaulttpldir = '/core/tpl')
 	{
-		global $conf, $user, $langs, $object, $hookmanager, $extrafields;
-		global $form;
+		global $conf, $user, $langs, $object, $hookmanager, $extrafields, $form;
 
 		// Line extrafield
 		if (!is_object($extrafields)) {
@@ -10295,8 +10286,7 @@ abstract class CommonObject
 		);
 		foreach ($fields as $key => $value) {
 			if (array_key_exists($key, $this->fields)) {
-				// @phpstan-ignore-next-line
-				$this->{$key} = $value;
+				$this->{$key} = $value;		// @phpstan-ignore-line
 			}
 		}
 

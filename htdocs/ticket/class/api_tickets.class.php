@@ -520,8 +520,8 @@ class Tickets extends DolibarrApi
 			"cache_types_tickets",
 			"cache_category_tickets",
 			"regeximgext",
-			"statuts_short",
-			"statuts"
+			"labelStatus",
+			"labelStatusShort"
 		);
 		foreach ($attr2clean as $toclean) {
 			unset($object->$toclean);
