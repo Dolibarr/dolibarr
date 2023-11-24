@@ -68,7 +68,6 @@ class ProductFournisseur extends Product
 	public $vatrate_supplier; // default vat rate for this supplier/qty/product (can be set by get_buyprice)
 
 	public $product_id;
-	public $fk_product;
 	public $product_ref;
 
 	public $fourn_id; //supplier id
