@@ -191,7 +191,6 @@ class ActionsTicket extends CommonHookActions
 		print '<!-- initial message of ticket -->'."\n";
 		if ($user->hasRight('ticket', 'manage') && $action == 'edit_message_init') {
 			// MESSAGE
-
 			print '<form action="'.$_SERVER['PHP_SELF'].'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="track_id" value="'.$object->track_id.'">';
@@ -199,9 +198,8 @@ class ActionsTicket extends CommonHookActions
 		}
 
 		// Initial message
-		print '<div class="underbanner clearboth"></div>';
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
-		print '<table class="noborder centpercent margintable margintablenotop">';
+		print '<table class="noborder centpercent margintable margintable">';
 		print '<tr class="liste_titre trforfield"><td class="nowrap titlefield">';
 		print $langs->trans("InitialMessage");
 		print '</td><td>';
