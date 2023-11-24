@@ -324,7 +324,7 @@ if ($user->hasRight('ticket', 'read')) {
 
 	$max = 10;
 
-	$sql = "SELECT t.rowid, t.ref, t.track_id, t.datec, t.subject, t.type_code, t.category_code, t.severity_code, t.fk_statut, t.progress,";
+	$sql = "SELECT t.rowid, t.ref, t.track_id, t.datec, t.subject, t.type_code, t.category_code, t.severity_code, t.fk_statut as status, t.progress,";
 	$sql .= " type.code as type_code, type.label as type_label,";
 	$sql .= " category.code as category_code, category.label as category_label,";
 	$sql .= " severity.code as severity_code, severity.label as severity_label";
@@ -337,7 +337,7 @@ if ($user->hasRight('ticket', 'read')) {
 	}
 
 	$sql .= ' WHERE t.entity IN ('.getEntity('ticket').')';
-	$sql .= " AND t.fk_statut=0";
+	$sql .= " AND t.fk_statut = 0";
 	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
@@ -374,7 +374,8 @@ if ($user->hasRight('ticket', 'read')) {
 				$object->id = $objp->rowid;
 				$object->ref = $objp->ref;
 				$object->track_id = $objp->track_id;
-				$object->fk_statut = $objp->fk_statut;
+				$object->fk_statut = $objp->status;
+				$object->status = $objp->status;
 				$object->progress = $objp->progress;
 				$object->subject = $objp->subject;
 

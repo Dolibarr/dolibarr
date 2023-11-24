@@ -23,7 +23,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 /**
  * API class for accounts
  *
- * @property DoliDB db
+ * @property DoliDB $db
  * @access protected
  * @class DolibarrApiAccess {@requires user,external}
  */

@@ -376,12 +376,14 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	 */
 	private function composeAndSendCustomerMessage($sendto, $base_subject, $body, $see_ticket, Ticket $object, Translate $langs)
 	{
-		global $conf, $user;
+		global $conf, $extrafields, $mysoc, $user;
 
 		// Init to avoid errors
 		$filepath = array();
 		$filename = array();
 		$mimetype = array();
+
+		$appli = $mysoc->name;
 
 		$subject = '['.$appli.'] '.$langs->transnoentities($base_subject);
 		$message_customer = $langs->transnoentities($body, $object->track_id).'<br>';
@@ -391,15 +393,15 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		$message_customer .= '<li>'.$langs->trans('Severity').' : '.$langs->getLabelFromKey($this->db, 'TicketSeverityShort'.$object->severity_code, 'c_ticket_severity', 'code', 'label', $object->severity_code).'</li>';
 
 		// Extrafields
-		if (is_array($this->attributes[$object->table_element]['label'])) {
-			foreach ($this->attributes[$object->table_element]['label'] as $key => $value) {
+		if (is_array($extrafields->attributes[$object->table_element]['label'])) {
+			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $value) {
 				$enabled = 1;
-				if ($enabled && isset($this->attributes[$object->table_element]['list'][$key])) {
-					$enabled = dol_eval($this->attributes[$object->table_element]['list'][$key], 1);
+				if ($enabled && isset($extrafields->attributes[$object->table_element]['list'][$key])) {
+					$enabled = dol_eval($extrafields->attributes[$object->table_element]['list'][$key], 1);
 				}
 				$perms = 1;
-				if ($perms && isset($this->attributes[$object->table_element]['perms'][$key])) {
-					$perms = dol_eval($this->attributes[$object->table_element]['perms'][$key], 1);
+				if ($perms && isset($extrafields->attributes[$object->table_element]['perms'][$key])) {
+					$perms = dol_eval($extrafields->attributes[$object->table_element]['perms'][$key], 1);
 				}
 
 				$qualified = true;

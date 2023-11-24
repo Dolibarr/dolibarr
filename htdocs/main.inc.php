@@ -1460,6 +1460,28 @@ if (!function_exists("llxHeader")) {
 	{
 		global $conf, $hookmanager;
 
+		$parameters = array(
+			'head' =>& $head,
+			'title' =>& $title,
+			'help_url' =>& $help_url,
+			'target' =>& $target,
+			'disablejs' =>& $disablejs,
+			'disablehead' =>& $disablehead,
+			'arrayofjs' =>& $arrayofjs,
+			'arrayofcss' =>& $arrayofcss,
+			'morequerystring' =>& $morequerystring,
+			'morecssonbody' =>& $morecssonbody,
+			'replacemainareaby' =>& $replacemainareaby,
+			'disablenofollow' =>& $disablenofollow,
+			'disablenoindex' =>& $disablenoindex
+
+		);
+		$reshook = $hookmanager->executeHooks('llxHeader', $parameters);
+		if ($reshook > 0) {
+			print $hookmanager->resPrint;
+			return;
+		}
+
 		// html header
 		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss, 0, $disablenofollow, $disablenoindex);
 
@@ -1477,12 +1499,6 @@ if (!function_exists("llxHeader")) {
 		}
 
 		print '<body id="mainbody" class="'.$tmpcsstouse.'">'."\n";
-
-		$parameters = array('help_url' => $help_url);
-		$reshook = $hookmanager->executeHooks('changeHelpURL', $parameters);
-		if ($reshook > 0) {
-			$help_url = $hookmanager->resPrint;
-		}
 
 		// top menu and left menu area
 		if ((empty($conf->dol_hide_topmenu) || GETPOST('dol_invisible_topmenu', 'int')) && !GETPOST('dol_openinpopup', 'aZ09')) {
@@ -2054,7 +2070,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
  */
 function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $helppagename = '')
 {
-	global $user, $conf, $langs, $db;
+	global $user, $conf, $langs, $db, $form;
 	global $dolibarr_main_authentication, $dolibarr_main_demo;
 	global $hookmanager, $menumanager;
 

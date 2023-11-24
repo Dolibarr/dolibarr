@@ -124,7 +124,8 @@ class FactureFournisseur extends CommonInvoice
 	/**
 	 * Supplier invoice status
 	 * @var int
-	 * @see FactureFournisseur::STATUS_DRAFT, FactureFournisseur::STATUS_VALIDATED, FactureFournisseur::STATUS_PAID, FactureFournisseur::STATUS_ABANDONED
+	 * @deprecated
+	 * @see $status
 	 */
 	public $statut;
 
@@ -134,6 +135,14 @@ class FactureFournisseur extends CommonInvoice
 	 * @see FactureFournisseur::STATUS_DRAFT, FactureFournisseur::STATUS_VALIDATED, FactureFournisseur::STATUS_PAID, FactureFournisseur::STATUS_ABANDONED
 	 */
 	public $status;
+
+	/**
+	 * Supplier invoice status
+	 * @var int
+	 * @deprecated
+	 * @see $status
+	 */
+	public $fk_statut;
 
 	/**
 	 * Set to 1 if the invoice is completely paid, otherwise is 0
@@ -229,17 +238,6 @@ class FactureFournisseur extends CommonInvoice
 	 */
 	public $fournisseur;
 
-	// Multicurrency
-	/**
-	 * @var int ID
-	 */
-	public $fk_multicurrency;
-
-	public $multicurrency_code;
-	public $multicurrency_tx;
-	public $multicurrency_total_ht;
-	public $multicurrency_total_tva;
-	public $multicurrency_total_ttc;
 	//! id of source invoice if replacement invoice or credit note
 	/**
 	 * @var int ID
@@ -423,8 +421,7 @@ class FactureFournisseur extends CommonInvoice
 			$this->entity = $_facrec->entity; // Invoice created in same entity than template
 
 			// Fields coming from GUI (priority on template). TODO Value of template should be used as default value on GUI so we can use here always value from GUI
-			$this->fk_project = GETPOST('projectid', 'int') > 0 ? ((int) GETPOST('projectid', 'int')) : $_facrec->fk_projet;
-			$this->fk_projet = $this->fk_project;
+			$this->fk_project = GETPOST('projectid', 'int') > 0 ? ((int) GETPOST('projectid', 'int')) : $_facrec->fk_project;
 			$this->note_public = GETPOST('note_public', 'restricthtml') ? GETPOST('note_public', 'restricthtml') : $_facrec->note_public;
 			$this->note_private = GETPOST('note_private', 'restricthtml') ? GETPOST('note_private', 'restricthtml') : $_facrec->note_private;
 			$this->model_pdf = GETPOST('model', 'alpha') ? GETPOST('model', 'alpha') : $_facrec->model_pdf;
@@ -3613,18 +3610,6 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 * @var float
 	 */
 	public $localtax2_type;
-
-	// Multicurrency
-	/**
-	 * @var int ID
-	 */
-	public $fk_multicurrency;
-
-	public $multicurrency_code;
-	public $multicurrency_subprice;
-	public $multicurrency_total_ht;
-	public $multicurrency_total_tva;
-	public $multicurrency_total_ttc;
 
 
 	/**

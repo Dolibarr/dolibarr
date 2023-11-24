@@ -1790,8 +1790,8 @@ if (empty($reshook)) {
 											$lines[$i]->pa_ht,
 											$label,
 											$array_options,
-											$lines[$i]->situation_percent,
-											$lines[$i]->fk_prev_id,
+											$lines[$i]->situation_percent ?? 100,
+											$lines[$i]->fk_prev_id ?? 0,
 											$lines[$i]->fk_unit,
 											0,
 											'',
@@ -3710,7 +3710,7 @@ if ($action == 'create') {
 				}
 				$text = $tmp.'<label class="opacitymedium" for="radio_creditnote">'.$langs->trans("InvoiceAvoir").'</label> ';
 				//$text .= '<span class="opacitymedium hideonsmartphone">('.$langs->trans("YouMustCreateInvoiceFromThird").')</span> ';
-				$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc").'<br><br>'.$langs->trans("YouMustCreateInvoiceFromThird"), 1, 'help', '', 0, 3, 'creditnoteonsmartphone');
+				$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc").'<br><br>'.$langs->trans("CreateCreditNoteWhenClientInvoiceExists"), 1, 'help', '', 0, 3, 'creditnoteonsmartphone');
 				print $desc;
 				print '</div></div>'."\n";
 			}
@@ -5780,8 +5780,8 @@ if ($action == 'create') {
 				}
 				// For down payment invoice (deposit)
 				if ($object->type == Facture::TYPE_DEPOSIT && $usercancreate && $object->statut > Facture::STATUS_DRAFT && empty($discount->id)) {
-					if (price2num($object->total_ttc, 'MT') == price2num($sumofpaymentall, 'MT') || ($object->type == Facture::STATUS_ABANDONED && in_array($object->close_code, array('bankcharge', 'discount_vat', 'other')))) {
-						// We can close a down payment only if paid amount is same than amount of down payment (by definition)
+					// We can close a down payment only if paid amount is same than amount of down payment (by definition). We can bypass this if hidden and unstable option DEPOSIT_AS_CREDIT_AVAILABLE_EVEN_UNPAID is set.
+					if (price2num($object->total_ttc, 'MT') == price2num($sumofpaymentall, 'MT') || getDolGlobalInt('DEPOSIT_AS_CREDIT_AVAILABLE_EVEN_UNPAID') || ($object->type == Facture::STATUS_ABANDONED && in_array($object->close_code, array('bankcharge', 'discount_vat', 'other')))) {
 						print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertToReduc').'</a>';
 					} else {
 						print '<span class="butActionRefused" title="'.$langs->trans("AmountPaidMustMatchAmountOfDownPayment").'">'.$langs->trans('ConvertToReduc').'</span>';

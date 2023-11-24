@@ -302,7 +302,7 @@ $html .= '<h2>Lines of code</h2>'."\n";
 $html .= '<div class="div-table-responsive">'."\n";
 $html .= '<table class="centpercent">';
 $html .= '<tr class="loc">';
-$html .= '<th class="left">Language</td>';
+$html .= '<th class="left">Language</th>';
 $html .= '<th class="right">Bytes</th>';
 $html .= '<th class="right">Files</th>';
 $html .= '<th class="right">Lines</th>';
@@ -310,7 +310,7 @@ $html .= '<th class="right">Blanks</th>';
 $html .= '<th class="right">Comments</th>';
 $html .= '<th class="right">Code</th>';
 //$html .= '<td class="right">'.$val['Complexity'].'</td>';
-$html .= '</th>';
+$html .= '</tr>';
 foreach (array('proj', 'dep') as $source) {
 	$html .= '<tr class="trgroup" id="source'.$source.'">';
 	if ($source == 'proj') {
@@ -400,7 +400,7 @@ $( ".seedetail" ).on( "click", function() {
 });
 </script>
 ';
-$html .= '</boby>';
+$html .= '</body>';
 $html .= '</html>';
 
 $fh = fopen($outputpath, 'w');

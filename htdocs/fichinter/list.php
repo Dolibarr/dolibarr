@@ -674,7 +674,7 @@ if (!empty($arrayfields['f.note_private']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['f.fk_statut']['checked'])) {
-	print_liste_field_titre($arrayfields['f.fk_statut']['label'], $_SERVER["PHP_SELF"], "f.fk_statut", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($arrayfields['f.fk_statut']['label'], $_SERVER["PHP_SELF"], "f.fk_statut", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['fd.description']['checked'])) {
@@ -902,7 +902,7 @@ while ($i < $imaxinloop) {
 		}
 		// Status
 		if (!empty($arrayfields['f.fk_statut']['checked'])) {
-			print '<td class="right">'.$objectstatic->getLibStatut(5).'</td>';
+			print '<td class="center">'.$objectstatic->getLibStatut(5).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

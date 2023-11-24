@@ -57,14 +57,14 @@ class PaymentSalary extends CommonObject
 	public $tms = '';
 
 	/**
-	 * @var date date of payment
+	 * @var int|string date of payment
 	 * @deprecated
 	 * @see datep
 	 */
 	public $datepaye = '';
 
 	/**
-	 * @var date date of payment
+	 * @var int|string date of payment
 	 */
 	public $datep = '';
 
