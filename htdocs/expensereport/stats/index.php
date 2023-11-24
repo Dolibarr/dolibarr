@@ -239,7 +239,7 @@ print $form->select_dolusers($userid, 'userid', 1, '', 0, $include, '', 0, 0, 0,
 print '</td></tr>';
 // Status
 print '<tr><td class="left">'.$langs->trans("Status").'</td><td class="left">';
-$liststatus = $tmpexpensereport->statuts;
+$liststatus = $tmpexpensereport->labelStatus;
 print $form->selectarray('object_status', $liststatus, GETPOST('object_status', 'intcomma'), -4, 0, 0, '', 1);
 print '</td></tr>';
 // Year

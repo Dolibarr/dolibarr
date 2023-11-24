@@ -483,7 +483,7 @@ class ActionsTicket extends CommonHookActions
 		// Sort results to be similar to status object list
 		//sort($exclude_status);
 
-		foreach ($object->statuts_short as $status => $status_label) {
+		foreach ($object->labelStatusShort as $status => $status_label) {
 			if (!in_array($status, $exclude_status)) {
 				print '<div class="inline-block center marginbottomonly">';
 
@@ -495,8 +495,8 @@ class ActionsTicket extends CommonHookActions
 
 				print '<a class="butAction butStatus marginbottomonly" href="'.$urlforbutton.'">';
 				print $object->LibStatut($status, 3, 1).' ';
-				//print img_picto($langs->trans($object->statuts_short[$status]), 'statut'.$status.'.png@ticket', '', false, 0, 0, '', 'valignmiddle').' ';
-				print $langs->trans($object->statuts_short[$status]);
+				//print img_picto($langs->trans($object->labelStatusShort[$status]), 'statut'.$status.'.png@ticket', '', false, 0, 0, '', 'valignmiddle').' ';
+				print $langs->trans($object->labelStatusShort[$status]);
 				print '</a>';
 				print '</div>';
 			}
