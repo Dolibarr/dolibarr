@@ -1877,10 +1877,10 @@ class FormFile
 						} else {
 							if (!($result = $object_instance->fetch('', $ref))) {
 								//fetchOneLike looks for objects with wildcards in its reference.
-								//It is useful for those masks who get underscores instead of their actual symbols (because the _ had replaced a forbiddn char)
-								//fetchOneLike requires some info in the object. If it doesn't have it, then 0 is returned
-								//that's why we look only into fetchOneLike when fetch returns 0
-								// TODO Remove this part ?
+								//It is useful for those masks who get underscores instead of their actual symbols (because the _ had replaced all forbidden chars into filename)
+								// TODO Example when this is needed ?
+								// This may find when ref is 'A_B' and date was stored as 'A~B' into database, but in which case do we have this ?
+								// May be we can add hidden option to enable this.
 								$result = $object_instance->fetchOneLike($ref);
 							}
 						}

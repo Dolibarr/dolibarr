@@ -645,3 +645,4 @@ Salaries=Salaries
 InvoiceSubtype=Invoice Subtype
 SalaryInvoice=Salary 
 BillsAndSalaries=Bills & Salaries
+CreateCreditNoteWhenClientInvoiceExists=This option is enabled only when validated invoice(s) exist for a customer or when constant INVOICE_CREDIT_NOTE_STANDALONE is used(useful for some countries)
