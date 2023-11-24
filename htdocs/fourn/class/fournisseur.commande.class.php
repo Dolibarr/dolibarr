@@ -213,11 +213,20 @@ class CommandeFournisseur extends CommonOrder
 	public $linked_objects = array();
 
 	public $date_lim_reglement;
-
-	/**
-	 * @var array
-	 */
 	public $receptions = array();
+
+	// Multicurrency
+	/**
+	 * @var int ID
+	 */
+	public $fk_multicurrency;
+
+	public $multicurrency_code;
+	public $multicurrency_tx;
+	public $multicurrency_total_ht;
+	public $multicurrency_total_tva;
+	public $multicurrency_total_ttc;
+
 
 
 	/**
@@ -2034,7 +2043,7 @@ class CommandeFournisseur extends CommonOrder
 			$this->line->total_localtax2 = $total_localtax2;
 			$this->line->total_ttc = $total_ttc;
 			$this->line->product_type = $type;
-			$this->line->special_code   = (!empty($special_code) ? $special_code : 0);
+			$this->line->special_code   = (!empty($this->special_code) ? $this->special_code : 0);
 			$this->line->origin = $origin;
 			$this->line->origin_id = $origin_id;
 			$this->line->fk_unit = $fk_unit;
