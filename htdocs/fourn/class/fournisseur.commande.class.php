@@ -124,12 +124,12 @@ class CommandeFournisseur extends CommonOrder
 	/**
 	 * @var array List of status
 	 */
-	public $statuts;
+	public $labelStatus;
 
 	/**
 	 * @var array List of status short
 	 */
-	public $statuts_short;
+	public $labelStatusShort;
 
 	public $billed;
 
@@ -781,33 +781,33 @@ class CommandeFournisseur extends CommonOrder
 		// phpcs:enable
 		global $conf, $langs, $hookmanager;
 
-		if (empty($this->statuts) || empty($this->statuts_short)) {
+		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			$langs->load('orders');
 
-			$this->statuts[0] = 'StatusSupplierOrderDraft';
-			$this->statuts[1] = 'StatusSupplierOrderValidated';
-			$this->statuts[2] = 'StatusSupplierOrderApproved';
+			$this->labelStatus[0] = 'StatusSupplierOrderDraft';
+			$this->labelStatus[1] = 'StatusSupplierOrderValidated';
+			$this->labelStatus[2] = 'StatusSupplierOrderApproved';
 			if (empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) {
-				$this->statuts[3] = 'StatusSupplierOrderOnProcess';
+				$this->labelStatus[3] = 'StatusSupplierOrderOnProcess';
 			} else {
-				$this->statuts[3] = 'StatusSupplierOrderOnProcessWithValidation';
+				$this->labelStatus[3] = 'StatusSupplierOrderOnProcessWithValidation';
 			}
-			$this->statuts[4] = 'StatusSupplierOrderReceivedPartially';
-			$this->statuts[5] = 'StatusSupplierOrderReceivedAll';
-			$this->statuts[6] = 'StatusSupplierOrderCanceled'; // Approved->Canceled
-			$this->statuts[7] = 'StatusSupplierOrderCanceled'; // Process running->canceled
-			$this->statuts[9] = 'StatusSupplierOrderRefused';
+			$this->labelStatus[4] = 'StatusSupplierOrderReceivedPartially';
+			$this->labelStatus[5] = 'StatusSupplierOrderReceivedAll';
+			$this->labelStatus[6] = 'StatusSupplierOrderCanceled'; // Approved->Canceled
+			$this->labelStatus[7] = 'StatusSupplierOrderCanceled'; // Process running->canceled
+			$this->labelStatus[9] = 'StatusSupplierOrderRefused';
 
 			// List of language codes for status
-			$this->statuts_short[0] = 'StatusSupplierOrderDraftShort';
-			$this->statuts_short[1] = 'StatusSupplierOrderValidatedShort';
-			$this->statuts_short[2] = 'StatusSupplierOrderApprovedShort';
-			$this->statuts_short[3] = 'StatusSupplierOrderOnProcessShort';
-			$this->statuts_short[4] = 'StatusSupplierOrderReceivedPartiallyShort';
-			$this->statuts_short[5] = 'StatusSupplierOrderReceivedAllShort';
-			$this->statuts_short[6] = 'StatusSupplierOrderCanceledShort';
-			$this->statuts_short[7] = 'StatusSupplierOrderCanceledShort';
-			$this->statuts_short[9] = 'StatusSupplierOrderRefusedShort';
+			$this->labelStatusShort[0] = 'StatusSupplierOrderDraftShort';
+			$this->labelStatusShort[1] = 'StatusSupplierOrderValidatedShort';
+			$this->labelStatusShort[2] = 'StatusSupplierOrderApprovedShort';
+			$this->labelStatusShort[3] = 'StatusSupplierOrderOnProcessShort';
+			$this->labelStatusShort[4] = 'StatusSupplierOrderReceivedPartiallyShort';
+			$this->labelStatusShort[5] = 'StatusSupplierOrderReceivedAllShort';
+			$this->labelStatusShort[6] = 'StatusSupplierOrderCanceledShort';
+			$this->labelStatusShort[7] = 'StatusSupplierOrderCanceledShort';
+			$this->labelStatusShort[9] = 'StatusSupplierOrderRefusedShort';
 		}
 
 		$statustrans = array(
@@ -835,8 +835,8 @@ class CommandeFournisseur extends CommonOrder
 			$statusClass = 'status6';
 		}
 
-		$statusLong = $langs->transnoentitiesnoconv($this->statuts[$status]).$billedtext;
-		$statusShort = $langs->transnoentitiesnoconv($this->statuts_short[$status]);
+		$statusLong = $langs->transnoentitiesnoconv($this->labelStatus[$status]).$billedtext;
+		$statusShort = $langs->transnoentitiesnoconv($this->labelStatusShort[$status]);
 
 		$parameters = array('status' => $status, 'mode' => $mode, 'billed' => $billed);
 		$reshook = $hookmanager->executeHooks('LibStatut', $parameters, $this); // Note that $action and $object may have been modified by hook
@@ -3025,7 +3025,6 @@ class CommandeFournisseur extends CommonOrder
 			$line->desc = $langs->trans("Description")." ".$xnbp;
 			$line->qty = 1;
 			$line->subprice = 100;
-			$line->price = 100;
 			$line->tva_tx = 19.6;
 			$line->localtax1_tx = 0;
 			$line->localtax2_tx = 0;

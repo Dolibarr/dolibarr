@@ -110,9 +110,9 @@ class Delivery extends CommonObject
 	public $commande_id;
 
 	/**
-	 * @var array statuts labels
+	 * @var array 	Status labels
 	 */
-	public $statuts;
+	public $labelStatus;
 
 	/**
 	 * @var DeliveryLine[] lines
@@ -135,9 +135,9 @@ class Delivery extends CommonObject
 		$this->db = $db;
 
 		// List of short language codes for status
-		$this->statuts[-1] = 'StatusDeliveryCanceled';
-		$this->statuts[0]  = 'StatusDeliveryDraft';
-		$this->statuts[1]  = 'StatusDeliveryValidated';
+		$this->labelStatus[-1] = 'StatusDeliveryCanceled';
+		$this->labelStatus[0]  = 'StatusDeliveryDraft';
+		$this->labelStatus[1]  = 'StatusDeliveryValidated';
 	}
 
 	/**

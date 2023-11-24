@@ -202,8 +202,8 @@ class Project extends CommonObject
 	 */
 	public $max_attendees;
 
-	public $statuts_short;
-	public $statuts_long;
+	public $labelStatusShort;
+	public $labelStatus;
 
 	public $statut; // 0=draft, 1=opened, 2=closed
 
@@ -363,8 +363,8 @@ class Project extends CommonObject
 
 		$this->db = $db;
 
-		$this->statuts_short = array(0 => 'Draft', 1 => 'Opened', 2 => 'Closed');
-		$this->statuts_long = array(0 => 'Draft', 1 => 'Opened', 2 => 'Closed');
+		$this->labelStatusShort = array(0 => 'Draft', 1 => 'Opened', 2 => 'Closed');
+		$this->labelStatus = array(0 => 'Draft', 1 => 'Opened', 2 => 'Closed');
 
 		global $conf;
 
@@ -1309,7 +1309,7 @@ class Project extends CommonObject
 			$statusClass = $statustrans[$status];
 		}
 
-		return dolGetStatus($langs->transnoentitiesnoconv($this->statuts_long[$status]), $langs->transnoentitiesnoconv($this->statuts_short[$status]), '', $statusClass, $mode);
+		return dolGetStatus($langs->transnoentitiesnoconv($this->labelStatus[$status]), $langs->transnoentitiesnoconv($this->labelStatusShort[$status]), '', $statusClass, $mode);
 	}
 
 	/**

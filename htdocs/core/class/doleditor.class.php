@@ -57,9 +57,7 @@ class DolEditor
 	 *  @param	int		$width							Width in pixel of edit area (auto by default)
 	 *  @param 	int		$height			       		 	Height in pixel of edit area (200px by default)
 	 *  @param 	string	$toolbarname	       		 	Name of bar set to use ('Full', 'dolibarr_notes[_encoded]', 'dolibarr_details[_encoded]'=the less featured, 'dolibarr_mailings[_encoded]', 'dolibarr_readonly').
-	 *  @param  string	$toolbarlocation       			Where bar is stored :
-	 *                       		                    'In' = each window has its own toolbar
-	 *                              		            'Out:name' = share toolbar into the div called 'name'
+	 *  @param  string	$toolbarlocation       			Deprecated. Not used
 	 *  @param  boolean	$toolbarstartexpanded  			Bar is visible or not at start
 	 *  @param	boolean|int		$uselocalbrowser		Enabled to add links to local object with local browser. If false, only external images can be added in content.
 	 *  @param  boolean|string	$okforextendededitor    True=Allow usage of extended editor tool if qualified (like ckeditor). If 'textarea', force use of simple textarea. If 'ace', force use of Ace.
@@ -71,7 +69,7 @@ class DolEditor
 	 */
 	public function __construct($htmlname, $content, $width = '', $height = 200, $toolbarname = 'Basic', $toolbarlocation = 'In', $toolbarstartexpanded = false, $uselocalbrowser = 1, $okforextendededitor = true, $rows = 0, $cols = 0, $readonly = 0, $poscursor = array())
 	{
-		global $conf, $langs;
+		global $conf;
 
 		dol_syslog(get_class($this)."::DolEditor htmlname=".$htmlname." width=".$width." height=".$height." toolbarname=".$toolbarname);
 

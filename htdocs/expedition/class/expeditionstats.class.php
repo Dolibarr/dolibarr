@@ -39,7 +39,14 @@ class ExpeditionStats extends Stats
 	 */
 	public $table_element;
 
+	/**
+	 * @var int ID thirdparty
+	 */
 	public $socid;
+
+	/**
+	 * @var int ID user
+	 */
 	public $userid;
 
 	/**
