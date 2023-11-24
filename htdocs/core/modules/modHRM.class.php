@@ -287,7 +287,6 @@ class modHRM extends DolibarrModules
 	public function init($options = '')
 	{
 		global $conf;
-		
 		// Permissions
 		$this->remove($options);
 
