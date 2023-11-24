@@ -241,7 +241,6 @@ class pdf_espadon extends ModelePdfExpedition
 				$heightforinfotot = 8; // Height reserved to output the info and total part
 				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
-				$heightforsignature = 0;
 				if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)) {
 					$heightforfooter += 6;
 				}
@@ -524,6 +523,7 @@ class pdf_espadon extends ModelePdfExpedition
 					$showpricebeforepagebreak = 1;
 					$posYAfterImage = 0;
 					$posYAfterDescription = 0;
+					$heightforsignature = 0;
 
 					if ($this->getColumnStatus('photo')) {
 						// We start with Photo of product line
@@ -878,7 +878,7 @@ class pdf_espadon extends ModelePdfExpedition
 	 */
 	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
 	{
-		global $conf, $currency;
+		global $conf;
 
 		// Force to disable hidetop and hidebottom
 		$hidebottom = 0;
