@@ -33,6 +33,9 @@
  */
 class DolGeoIP
 {
+	/**
+	 * @var GeoIp2\Database\Reader
+	 */
 	public $gi;
 
 	public $error;
@@ -89,6 +92,7 @@ class DolGeoIP
 
 		if ($geoipversion == '2') {
 			try {
+				// @phpstan-ignore-next-line
 				$this->gi = new GeoIp2\Database\Reader($datfile); // '/usr/local/share/GeoIP/GeoIP2-City.mmdb'
 			} catch (Exception $e) {
 				$this->error = $e->getMessage();

@@ -1780,7 +1780,9 @@ abstract class CommonObject
 			return 0;
 		}
 
-		$sql = "SELECT rowid FROM ".$this->db->prefix().$this->table_element." WHERE ".$this->table_ref_field." LIKE '".$this->db->escape($ref)."' LIMIT 1";
+		$sql = "SELECT rowid FROM ".$this->db->prefix().$this->table_element;
+		$sql .= " WHERE ".$this->table_ref_field." LIKE '".$this->db->escape($ref)."'";	// no escapeforlike here
+		$sql .= " LIMIT 1";
 
 		$query = $this->db->query($sql);
 

@@ -2473,14 +2473,14 @@ class Contrat extends CommonObject
 		$this->ref_customer = 'SPECIMENCUST';
 		$this->ref_supplier = 'SPECIMENSUPP';
 		$this->socid = 1;
-		$this->statut = 0;
+		$this->status = 0;
 		$this->date_creation = (dol_now() - 3600 * 24 * 7);
 		$this->date_contrat = dol_now();
 		$this->commercial_signature_id = 1;
 		$this->commercial_suivi_id = 1;
 		$this->note_private = 'This is a comment (private)';
 		$this->note_public = 'This is a comment (public)';
-		$this->fk_projet = 0;
+		$this->fk_project = 0;
 		// Lines
 		$nbp = 5;
 		$xnbp = 0;
@@ -2488,7 +2488,6 @@ class Contrat extends CommonObject
 			$line = new ContratLigne($this->db);
 			$line->qty = 1;
 			$line->subprice = 100;
-			$line->price = 100;
 			$line->tva_tx = 19.6;
 			$line->remise_percent = 10;
 			$line->total_ht = 90;
