@@ -41,16 +41,6 @@ class pdf_ban extends ModeleBankAccountDoc
 	public $version = 'development';
 
 	/**
-	 * @var int posx datestart
-	 */
-	public $posxdatestart;
-
-	/**
-	 * @var int posx dateend
-	 */
-	public $posxdateend;
-
-	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
