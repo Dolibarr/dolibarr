@@ -77,7 +77,7 @@ AccountancyAreaDescJournalSetup=Étape %s : Créer ou vérifier le contenu de la
 AccountancyAreaDescChartModel=Étape %s : Vérifiez qu'il existe un modèle de plan comptable ou créez-en un à partir du menu %s
 AccountancyAreaDescChart=Étape %s : Sélectionnez et | ou complétez votre plan de compte dans le menu %s
 
-AccountancyAreaDescFiscalPeriod=Étape %s: Définissez une période fiscale par défait pour intégrer vos écritures comptables. Pour cela, suivez le menu suivant %s.
+AccountancyAreaDescFiscalPeriod=Étape %s: Définissez une période fiscale par défaut pour intégrer vos écritures comptables. Pour cela, suivez le menu suivant %s.
 AccountancyAreaDescVat=Étape %s : Définissez les comptes comptables de chaque taux de TVA utilisé. Pour cela, suivez le menu suivant %s.
 AccountancyAreaDescDefault=Étape %s : Définissez les comptes de comptabilité par défaut. Pour cela, utilisez l'entrée de menu %s.
 AccountancyAreaDescExpenseReport=Étape %s : Définissez les comptes comptables par défaut des dépenses des notes de frais. Pour cela, suivez le menu %s.
@@ -311,7 +311,7 @@ DescValidateMovements=Toute modification ou suppression d'écriture, de lettrage
 
 ValidateHistory=Lier automatiquement
 AutomaticBindingDone=Liaisons automatiques effectuées (%s) - Liaison automatique impossible pour certains enregistrements (%s)
-DoManualBindingForFailedRecord=Vous devez réaliser un lettrage manuel pour la/les %s ligne·s non lettré·es automatiquement.
+DoManualBindingForFailedRecord=Vous devez réaliser la liaison avec le compte comptable manuellement pour la ou les %s lignes non liées automatiquement.
 
 ErrorAccountancyCodeIsAlreadyUse=Erreur, vous ne pouvez pas supprimer ou désactiver ce compte comptable car il est utilisé
 MvtNotCorrectlyBalanced=Mouvement non équilibré. Débit = %s & Crédit = %s
