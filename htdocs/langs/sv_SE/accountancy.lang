@@ -298,7 +298,7 @@ DescVentilExpenseReportMore=Om du ställer in bokföringskonto på typ av kostna
 DescVentilDoneExpenseReport=Här kan du se listan över raderna för kostnadsrapporter och deras bokföringskonto
 
 Closure=Årlig nedläggning
-DescClosure=Se här antalet rörelser per månad som ännu inte har validerats och låst
+AccountancyClosureStep1Desc=Se här antalet rörelser per månad som ännu inte har validerats och låst
 OverviewOfMovementsNotValidated=Översikt över rörelser som inte är validerade och låsta
 AllMovementsWereRecordedAsValidated=Alla rörelser registrerades som validerade och låsta
 NotAllMovementsCouldBeRecordedAsValidated=Alla rörelser kunde inte registreras som validerade och låsta

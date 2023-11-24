@@ -88,14 +88,14 @@ $list_account[] = 'ACCOUNTING_VAT_BUY_ACCOUNT';
 
 $list_account[] = 'ACCOUNTING_VAT_PAY_ACCOUNT';
 
-if (!empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
+if (getDolGlobalString('ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE')) {
 	$list_account[] = 'ACCOUNTING_VAT_BUY_REVERSE_CHARGES_CREDIT';
 	$list_account[] = 'ACCOUNTING_VAT_BUY_REVERSE_CHARGES_DEBIT';
 }
 if (isModEnabled('banque')) {
 	$list_account[] = 'ACCOUNTING_ACCOUNT_TRANSFER_CASH';
 }
-if (!empty($conf->global->INVOICE_USE_RETAINED_WARRANTY)) {
+if (getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
 	$list_account[] = 'ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY';
 }
 if (isModEnabled('don')) {

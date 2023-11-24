@@ -214,6 +214,23 @@ $varlink = 'id_journal=' . $id_journal;
 
 journalHead($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
 
+// Test that setup is complete (we are in accounting, so test on entity is always on $conf->entity only, no sharing allowed)
+// Fiscal period test
+$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_fiscalyear WHERE entity = ".((int) $conf->entity);
+$resql = $db->query($sql);
+if ($resql) {
+	$obj = $db->fetch_object($resql);
+	if ($obj->nb == 0) {
+		print '<br><div class="warning">'.img_warning().' '.$langs->trans("TheFiscalPeriodIsNotDefined");
+		$desc = ' : '.$langs->trans("AccountancyAreaDescFiscalPeriod", 4, '{link}');
+		$desc = str_replace('{link}', '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("FiscalPeriod").'</strong>', $desc);
+		print $desc;
+		print '</div>';
+	}
+} else {
+	dol_print_error($db);
+}
+
 if ($object->nature == 4) { // Bank journal
 	// Test that setup is complete (we are in accounting, so test on entity is always on $conf->entity only, no sharing allowed)
 	$sql = "SELECT COUNT(rowid) as nb";

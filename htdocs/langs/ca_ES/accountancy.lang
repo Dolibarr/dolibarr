@@ -298,7 +298,7 @@ DescVentilExpenseReportMore=Si poseu el compte comptable sobre les línies de l'
 DescVentilDoneExpenseReport=Consulteu aquí la llista de les línies d'informes de despeses i el seu compte comptable de comissions
 
 Closure=Tancament anual
-DescClosure=Consulta aquí el nombre de moviments per mesos encara no validats i bloquejats
+AccountancyClosureStep1Desc=Consulta aquí el nombre de moviments per mesos encara no validats i bloquejats
 OverviewOfMovementsNotValidated=Visió general dels moviments no validats i bloquejats
 AllMovementsWereRecordedAsValidated=Tots els moviments es van registrar com a validats i bloquejats
 NotAllMovementsCouldBeRecordedAsValidated=No tots els moviments es van poder registrar com a validats i bloquejats
