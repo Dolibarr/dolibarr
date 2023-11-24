@@ -3244,7 +3244,7 @@ class Product extends CommonObject
 	 *  Charge tableau des stats commande fournisseur pour le produit/service
 	 *
 	 * @param	int		$socid				Id societe pour filtrer sur une societe
-	 * @param	string	$filtrestatut		Id des statuts pour filtrer sur des statuts
+	 * @param	string	$filtrestatut		Id of status to filter on status
 	 * @param	int		$forVirtualStock	Ignore rights filter for virtual stock calculation.
 	 * @param	int		$dateofvirtualstock	Date of virtual stock
 	 * @return	int							Array of stats in $this->stats_commande_fournisseur, <0 if ko or >0 if ok

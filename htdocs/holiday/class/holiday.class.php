@@ -1496,7 +1496,7 @@ class Holiday extends CommonObject
 
 
 	/**
-	 *   Affiche un select HTML des statuts de congés payés
+	 *   Show select with list of leave status
 	 *
 	 *   @param 	int		$selected   	Id of preselected status
 	 *   @param		string	$htmlname		Name of HTML select field
@@ -1507,7 +1507,7 @@ class Holiday extends CommonObject
 	{
 		global $langs;
 
-		// Liste des statuts
+		// List of status label
 		$name = array('DraftCP', 'ToReviewCP', 'ApprovedCP', 'CancelCP', 'RefuseCP');
 		$nb = count($name) + 1;
 
@@ -1515,7 +1515,7 @@ class Holiday extends CommonObject
 		$out = '<select name="'.$htmlname.'" id="'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'">'."\n";
 		$out .= '<option value="-1">&nbsp;</option>'."\n";
 
-		// Boucle des statuts
+		// Loop on status
 		for ($i = 1; $i < $nb; $i++) {
 			if ($i == $selected) {
 				$out .= '<option value="'.$i.'" selected>'.$langs->trans($name[$i - 1]).'</option>'."\n";

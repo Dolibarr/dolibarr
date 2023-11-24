@@ -853,7 +853,7 @@ if ($action == 'create' || $action == 'presend') {
 		if ($action == 'set_status') {
 			$new_status = GETPOST('new_status');
 			//var_dump($url_page_current . "?track_id=" . $object->track_id);
-			print $form->formconfirm($url_page_current."?track_id=".$object->track_id."&new_status=".GETPOST('new_status'), $langs->trans("TicketChangeStatus"), $langs->trans("TicketConfirmChangeStatus", $langs->transnoentities($object->statuts_short[$new_status])), "confirm_set_status", '', '', 1);
+			print $form->formconfirm($url_page_current."?track_id=".$object->track_id."&new_status=".GETPOST('new_status'), $langs->trans("TicketChangeStatus"), $langs->trans("TicketConfirmChangeStatus", $langs->transnoentities($object->labelStatusShort[$new_status])), "confirm_set_status", '', '', 1);
 		}
 
 		// project info
@@ -1189,10 +1189,9 @@ if ($action == 'create' || $action == 'presend') {
 		print '<input type="hidden" name="track_id" value="'.$track_id.'">';
 		print '<input type="hidden" name="trackid" value="'.$trackid.'">';
 
-		print '<div class="underbanner clearboth"></div>';
-
 		// Categories
 		if (isModEnabled('categorie')) {
+			print '<div class="underbanner clearboth"></div>';
 			print '<table class="border centpercent tableforfield">';
 			print '<tr>';
 			print '<td class="valignmiddle titlefield">';

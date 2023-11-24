@@ -974,7 +974,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		// Status
 		print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td><td>';
 		print '<select class="flat" name="status" id="status">';
-		foreach ($object->statuts_short as $key => $val) {
+		foreach ($object->labelStatusShort as $key => $val) {
 			print '<option value="'.$key.'"'.((GETPOSTISSET('status') ? GETPOST('status') : $object->statut) == $key ? ' selected="selected"' : '').'>'.$langs->trans($val).'</option>';
 		}
 		print '</select>';
