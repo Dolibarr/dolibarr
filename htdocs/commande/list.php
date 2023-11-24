@@ -91,7 +91,6 @@ $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all'
 $socid = GETPOST('socid', 'int');
 $search_user = GETPOST('search_user', 'int');
 $search_sale = GETPOST('search_sale', 'int');
-
 $search_total_ht  = GETPOST('search_total_ht', 'alpha');
 $search_total_vat = GETPOST('search_total_vat', 'alpha');
 $search_total_ttc = GETPOST('search_total_ttc', 'alpha');
@@ -217,6 +216,10 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 //$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+
+if (!$user->hasRight('societe', 'client', 'voir') || $user->socid) {
+	$search_sale = $user->id;
+}
 
 // Security check
 $id = (GETPOST('orderid') ?GETPOST('orderid', 'int') : GETPOST('id', 'int'));
@@ -861,9 +864,10 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = c.fk_projet";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON c.fk_user_author = u.rowid';
 
 // We'll need this table joined to the select in order to filter by sale
+/*
 if ($search_sale > 0 || (!$user->hasRight('societe', 'client', 'voir') && !$socid)) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-}
+}*/
 if ($search_user > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
 	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
@@ -959,9 +963,9 @@ if (empty($arrayfields['s.name_alias']['checked']) && $search_company) {
 if ($search_parent_name) {
 	$sql .= natural_search('s2.nom', $search_parent_name);
 }
-if ($search_sale > 0) {
+/*if ($search_sale > 0) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);
-}
+}*/
 if ($search_user > 0) {
 	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".((int) $search_user);
 }
@@ -1019,6 +1023,14 @@ if ($search_fk_mode_reglement > 0) {
 if ($search_fk_input_reason > 0) {
 	$sql .= " AND c.fk_input_reason = ".((int) $search_fk_input_reason);
 }
+// Search on sale representative
+if ($search_sale && $search_sale != '-1') {
+	if ($search_sale == -2) {
+		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc =c.fk_soc)";
+	} elseif ($search_sale > 0) {
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+	}
+}
 // Search for tag/category ($searchCategoryProductList is an array of ID)
 $searchCategoryProductOperator = -1;
 $searchCategoryProductList = array($search_product_category);
@@ -1060,6 +1072,7 @@ $sql .= $hookmanager->resPrint;
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+print $sql;
 
 // Count total nb of records
 $nbtotalofrecords = '';

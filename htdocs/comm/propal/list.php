@@ -281,6 +281,10 @@ foreach ($object->fields as $key => $val) {
 	}
 }*/
 
+if (!$user->hasRight('societe', 'client', 'voir') || $user->socid) {
+	$search_sale = $user->id;
+}
+
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
@@ -774,7 +778,7 @@ if ($search_date_signature_end) {
 if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
 		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc)";
-	} elseif ($search_sale > 0 && !$user->hasRight('societe', 'client', 'voir')) {
+	} elseif ($search_sale > 0) {
 		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
 	}
 }

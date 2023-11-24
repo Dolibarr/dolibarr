@@ -173,13 +173,6 @@ if (!$sortfield) {
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Security check
-$fieldid = (!empty($ref) ? 'ref' : 'rowid');
-if (!empty($user->socid)) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid);
-
 $diroutputmassaction = $conf->facture->dir_output.'/temp/massgeneration/'.$user->id;
 
 $now = dol_now();
@@ -295,6 +288,17 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+
+if (!$user->hasRight('societe', 'client', 'voir') || $user->socid) {
+	$search_sale = $user->id;
+}
+
+// Security check
+$fieldid = (!empty($ref) ? 'ref' : 'rowid');
+if (!empty($user->socid)) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid);
 
 
 /*
@@ -650,9 +654,10 @@ if (!empty($search_fac_rec_source_title)) {
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = f.fk_projet";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON f.fk_user_author = u.rowid';
 // We'll need this table joined to the select in order to filter by sale
+/*
 if ($search_sale > 0 || (!$user->hasRight('societe', 'client', 'voir') && !$socid)) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-}
+}*/
 if ($search_user > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
 	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
@@ -829,14 +834,22 @@ if ($search_datelimit_end) {
 if ($search_late == 'late') {
 	$sql .= " AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->client->warning_delay)."'";
 }
-if ($search_sale > 0) {
+/*if ($search_sale > 0) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);
-}
+}*/
 if ($search_user > 0) {
 	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='facture' AND tc.source='internal' AND ec.element_id = f.rowid AND ec.fk_socpeople = ".((int) $search_user);
 }
 if (!empty($search_fac_rec_source_title)) {
 	$sql .= natural_search('facrec.titre', $search_fac_rec_source_title);
+}
+// Search on sale representative
+if ($search_sale && $search_sale != '-1') {
+	if ($search_sale == -2) {
+		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc =f.fk_soc)";
+	} elseif ($search_sale > 0) {
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+	}
 }
 // Search for tag/category ($searchCategoryProductList is an array of ID)
 $searchCategoryProductList = $search_product_category ? array($search_product_category) : array();
