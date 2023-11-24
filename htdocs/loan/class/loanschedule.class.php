@@ -77,16 +77,6 @@ class LoanSchedule extends CommonObject
 	public $fk_bank;
 
 	/**
-	 * @var int
-	 */
-	public $bank_account;
-
-	/**
-	 * @var int
-	 */
-	public $bank_line;
-
-	/**
 	 * @var int Loan Payment ID
 	 */
 	public $fk_payment_loan;
