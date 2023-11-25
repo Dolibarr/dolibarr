@@ -202,3 +202,4 @@ AppointmentDuration = Appointment Duration : %s
 BookingSuccessfullyBooked=Your booking has been saved
 BookingReservationHourAfter=We confirm the reservation of your meeting at the date %s
 BookcalBookingTitle=Online appointment
+OrderDisapprovedInDolibarr=Order %s disapproved
