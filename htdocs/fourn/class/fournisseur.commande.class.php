@@ -13,6 +13,7 @@
  * Copyright (C) 2018-2022  Ferran Marcet         	<fmarcet@2byte.es>
  * Copyright (C) 2021       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2022       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023       Antonin Marchal         <antonin@letempledujeu.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1238,7 +1239,53 @@ class CommandeFournisseur extends CommonOrder
 		}
 		return -1;
 	}
+	
+	/**
+	 * Create reverse Stock Moves and apply them on disapproval
+	 * 
+	 * @return int 		<0 if KO, >0 if OK
+	 */
+	public function rollbackStockMovesOnDisapproval()
+	{
+		global $langs, $conf;
 
+		require_once DOL_DOCUMENT_ROOT . '/product/stock/class/mouvementstock.class.php';
+		$langs->load("agenda");
+		$error = 0;
+
+		$cpt = count($this->lines);
+		for ($i = 0; $i < $cpt; $i++) {
+			// Product with reference
+			if ($this->lines[$i]->fk_product > 0) {
+				$this->line = $this->lines[$i];
+				$mouvP = new MouvementStock($this->db);
+				$mouvP->origin = &$this;
+				$mouvP->setOrigin($this->element, $this->id);
+				// We decrement stock of product (and sub-products)
+				$up_ht_disc = $this->lines[$i]->subprice;
+				if (!empty($this->lines[$i]->remise_percent) && empty($conf->global->STOCK_EXCLUDE_DISCOUNT_FOR_PMP)) {
+					$up_ht_disc = price2num($up_ht_disc * (100 - $this->lines[$i]->remise_percent) / 100, 'MU');
+				}
+				$originEntrepot = "SELECT fk_entrepot FROM " . MAIN_DB_PREFIX . "stock_mouvement ";
+				$originEntrepot .= "WHERE fk_origin = " . $this->id . " AND origintype = '" . $this->element . "' AND value = " . $this->lines[$i]->qty . " AND price = " . $up_ht_disc . " ";
+				$originEntrepot .= "AND fk_product = " . $this->lines[$i]->fk_product . " ORDER BY rowid DESC LIMIT 1";
+				$resEntrepot = $this->db->query($originEntrepot);
+				$fk_entrepot = $this->db->fetch_object($resEntrepot)->fk_entrepot;
+
+				$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $fk_entrepot, $this->lines[$i]->qty, $up_ht_disc, $langs->trans("OrderDisapprovedInDolibarr", $this->ref));
+				if ($result < 0) {
+					$error++;
+				}
+				unset($this->line);
+			}
+		}
+		if ($error > 0) {
+			return -1;
+		} else {
+			return 1;
+		}
+	}
+	
 	/**
 	 * 	Refuse an order
 	 *
