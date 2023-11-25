@@ -1243,7 +1243,7 @@ class CommandeFournisseur extends CommonOrder
 	/**
 	 * Create reverse Stock Moves and apply them on disapproval
 	 *
-  	 *	@param	User	$user			Object user
+  	 * @param User	$user	Object user
 	 * @return int 		<0 if KO, >0 if OK
 	 */
 	public function rollbackStockMovesOnDisapproval($user)
