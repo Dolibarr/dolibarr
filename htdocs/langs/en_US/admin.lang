@@ -1871,6 +1871,7 @@ ClickToDialUseTelLinkDesc=Use this method if your users have a softphone or a so
 CashDesk=Point of Sale
 CashDeskSetup=Point of Sales module setup
 CashDeskThirdPartyForSell=Default generic third party to use for sales
+ForbidSalesToTheDefaultCustomer=Forbid sales to the generic third party
 CashDeskBankAccountForSell=Default account to use to receive cash payments
 CashDeskBankAccountForCheque=Default account to use to receive payments by check
 CashDeskBankAccountForCB=Default account to use to receive payments by credit cards
