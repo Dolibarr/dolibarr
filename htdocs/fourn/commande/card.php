@@ -375,7 +375,7 @@ if (empty($reshook)) {
 			$result = $object->setStatus($user, $newstatus);
 			// If stock is incremented on validate order, we must create inverse stock movements
 			if ($result > 0 && $reverseStockMoves) {
-				$resStock = $object->rollbackStockMovesOnDisapproval();
+				$resStock = $object->rollbackStockMovesOnDisapproval($user);
 			}
 
 			if ($result > 0 && (!$reverseStockMoves || $resStock > 0)) {
