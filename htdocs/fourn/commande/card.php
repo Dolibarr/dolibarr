@@ -12,6 +12,7 @@
  * Copyright (C) 2022      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022      Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2023 	   Joachim Kueter       <git-jk@bloxera.com>
+ * Copyright (C) 2023 	   Antonin Marchal      <antonin@letempledujeu.fr>
  *
  * This	program	is free	software; you can redistribute it and/or modify
  * it under	the	terms of the GNU General Public	License	as published by
@@ -340,10 +341,14 @@ if (empty($reshook)) {
 
 	if ($action == 'reopen') {	// no test on permission here, permission to use will depends on status
 		if (in_array($object->statut, array(1, 2, 3, 4, 5, 6, 7, 9))) {
+			$reverseStockMoves = false;
 			if ($object->statut == 1) {
 				$newstatus = 0; // Validated->Draft
 			} elseif ($object->statut == 2) {
 				$newstatus = 0; // Approved->Draft
+				if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER)) { //This constant has an ambiguous name. It should be STOCK_CALCULATE_ON_SUPPLIER_APPROVE_ORDER
+					$reverseStockMoves = true;
+				}
 			} elseif ($object->statut == 3) {
 				$newstatus = 2; // Ordered->Approved
 			} elseif ($object->statut == 4) {
@@ -368,7 +373,12 @@ if (empty($reshook)) {
 			$db->begin();
 
 			$result = $object->setStatus($user, $newstatus);
-			if ($result > 0) {
+			// If stock is incremented on validate order, we must create inverse stock movements
+			if ($result > 0 && $reverseStockMoves) {
+				$resStock = $object->rollbackStockMovesOnDisapproval();
+			}
+
+			if ($result > 0 && (!$reverseStockMoves || $resStock > 0)) {
 				// Currently the "Re-open" also remove the billed flag because there is no button "Set unpaid" yet.
 				$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur';
 				$sql .= ' SET billed = 0';
