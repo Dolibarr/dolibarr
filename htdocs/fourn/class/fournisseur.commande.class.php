@@ -1268,7 +1268,8 @@ class CommandeFournisseur extends CommonOrder
 					$up_ht_disc = price2num($up_ht_disc * (100 - $this->lines[$i]->remise_percent) / 100, 'MU');
 				}
 				$originEntrepot = "SELECT fk_entrepot FROM " . MAIN_DB_PREFIX . "stock_mouvement ";
-				$originEntrepot .= "WHERE fk_origin = " . (int) $this->id . " AND origintype = '" . $this->db->sanitize($this->element) . "' AND value = " . (int) $this->lines[$i]->qty . " AND price = " . $up_ht_disc . " ";
+				$originEntrepot .= "WHERE fk_origin = " . (int) $this->id . " AND origintype = '" . $this->db->sanitize($this->element) . "' ";
+				$originEntrepot .= "AND value = " . (int) $this->lines[$i]->qty . " AND price = " . (float) $up_ht_disc . " ";
 				$originEntrepot .= "AND fk_product = " . (int) $this->lines[$i]->fk_product . " ORDER BY rowid DESC LIMIT 1";
 				$resEntrepot = $this->db->query($originEntrepot);
 				$fk_entrepot = $this->db->fetch_object($resEntrepot)->fk_entrepot;
