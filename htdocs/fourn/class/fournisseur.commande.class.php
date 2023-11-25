@@ -1239,10 +1239,10 @@ class CommandeFournisseur extends CommonOrder
 		}
 		return -1;
 	}
-	
+
 	/**
 	 * Create reverse Stock Moves and apply them on disapproval
-	 * 
+	 *
 	 * @return int 		<0 if KO, >0 if OK
 	 */
 	public function rollbackStockMovesOnDisapproval()
@@ -1285,7 +1285,7 @@ class CommandeFournisseur extends CommonOrder
 			return 1;
 		}
 	}
-	
+
 	/**
 	 * 	Refuse an order
 	 *
