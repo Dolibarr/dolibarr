@@ -10,10 +10,10 @@
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013       Adolfo segura           <adolfo.segura@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2016       Ferran Marcet		        <fmarcet@2byte.es>
- * Copyright (C) 2020-2021	Open-DSI				        <support@open-dsi.fr>
- * Copyright (C) 2022		    Charlene Benke			    <charlene@patas-monkey.com>
- * Copyright (C) 2020-2023	Alexandre Spangaro		  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2016       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2020-2021	Open-DSI                <support@open-dsi.fr>
+ * Copyright (C) 2022		Charlene Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2020-2023	Alexandre Spangaro      <aspangaro@easya.solutions>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1125,7 +1125,7 @@ if (!empty($arrayfields['p.numbuyprice']['checked'])) {
 	print '&nbsp;';
 	print '</td>';
 }
-// Sell price
+// VAT or Sell Tax Rate
 if (!empty($arrayfields['p.tva_tx']['checked'])) {
 	print '<td class="liste_titre right">';
 	print '<input class="right flat maxwidth50" placeholder="%" type="text" name="search_vatrate" size="1" value="'.dol_escape_htmltag($search_vatrate).'">';
@@ -1275,6 +1275,10 @@ if (!empty($arrayfields['p.label']['checked'])) {
 }
 if (!empty($arrayfields['p.fk_product_type']['checked'])) {
 	print_liste_field_titre($arrayfields['p.fk_product_type']['label'], $_SERVER["PHP_SELF"], "p.fk_product_type", "", $param, "", $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['p.description']['checked'])) {
+	print_liste_field_titre($arrayfields['p.description']['label'], $_SERVER["PHP_SELF"], "p.description", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.barcode']['checked'])) {
@@ -1667,6 +1671,18 @@ while ($i < $imaxinloop) {
 			}
 		}
 
+		// Description
+		if (!empty($arrayfields['p.description']['checked'])) {
+			print '<td class="left">';
+			// Since description can be very large (several pages of HTML-
+			// code) we limit to the first two rows
+			print dolGetFirstLineofText($product_static->description, 2);
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
 		// Barcode
 		if (!empty($arrayfields['p.barcode']['checked'])) {
 			print '<td>'.$product_static->barcode.'</td>';
@@ -1721,17 +1737,6 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['p.finished']['checked'])) {
 			print '<td class="center">';
 			print $product_static->getLibFinished();
-			print '</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-		}
-		// Description
-		if (!empty($arrayfields['p.description']['checked'])) {
-			print '<td class="left">';
-			// Since description can be very large (several pages of HTML-
-			// code) we limit to the first two rows
-			print dolGetFirstLineofText($product_static->description, 2);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1900,7 +1905,6 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-
 
 		// Multiprices
 		if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
