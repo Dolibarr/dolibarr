@@ -2267,16 +2267,16 @@ if ($num > 0) {
 			}
 			// State
 			if (!empty($arrayfields['state.nom']['checked'])) {
-				print "<td>".dol_escape_htmltag($obj->state_name)."</td>\n";
+				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->state_name).'">'.dol_escape_htmltag($obj->state_name)."</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
 			}
 			// Country
 			if (!empty($arrayfields['country.code_iso']['checked'])) {
-				print '<td class="center">';
 				$tmparray = getCountry($obj->fk_pays, 'all');
-				print $tmparray['label'];
+				print '<td class="center tdoverflowmax100" title="'.dol_escape_htmltag($tmparray['label']).'">';
+				print dol_escape_htmltag($tmparray['label']);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;

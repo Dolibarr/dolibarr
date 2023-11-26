@@ -704,6 +704,10 @@ abstract class CommonObject
 	 */
 	public $nb = array();
 
+	/**
+	 * @var int			used for the return of show_photos()
+	 */
+	public $nbphoto;
 
 	/**
 	 * @var string output
@@ -5333,8 +5337,14 @@ abstract class CommonObject
 
 		if (($line->info_bits & 2) == 2) {  // TODO Not sure this is used for source object
 			$discount = new DiscountAbsolute($this->db);
+<<<<<<< HEAD
 			// @phpstan-ignore-next-line
 			$discount->fk_soc = $this->socid;
+=======
+			if (property_exists($this, 'socid')) {
+				$discount->fk_soc = $this->socid;
+			}
+>>>>>>> upstream/develop
 			$this->tpl['label'] .= $discount->getNomUrl(0, 'discount');
 		} elseif (!empty($line->fk_product)) {
 			$productstatic = new Product($this->db);
@@ -6163,8 +6173,12 @@ abstract class CommonObject
 		$savDisableCompute = $conf->disable_compute;
 		$conf->disable_compute = 1;
 
+<<<<<<< HEAD
 		// @phpstan-ignore-next-line
 		$ret = $this->fetch($id);
+=======
+		$ret = $this->fetch($id);	/* @phpstan-ignore-line */
+>>>>>>> upstream/develop
 
 		$conf->disable_compute = $savDisableCompute;
 

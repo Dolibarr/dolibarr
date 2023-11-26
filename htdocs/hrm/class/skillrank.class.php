@@ -125,6 +125,7 @@ class SkillRank extends CommonObject
 	public $fk_user_modif;
 	public $objecttype;
 	// END MODULEBUILDER PROPERTIES
+	public $rankorder;
 
 
 	// If this object has a subtable with lines

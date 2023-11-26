@@ -1004,12 +1004,11 @@ class Evaluation extends CommonObject
 		global $conf, $langs;
 
 		$result = 0;
-		$includedocgeneration = 0;
 
 		$langs->load("hrm");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'standard_evaluation';
+			$modele = 'standard';
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
@@ -1020,7 +1019,7 @@ class Evaluation extends CommonObject
 
 		$modelpath = "core/modules/hrm/doc/";
 
-		if ($includedocgeneration && !empty($modele)) {
+		if (!empty($modele)) {
 			$result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 		}
 
