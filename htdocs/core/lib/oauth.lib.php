@@ -320,32 +320,33 @@ $list = array(
 );
 
 
+if (!function_exists('oauthadmin_prepare_head')) {
+	/**
+	 * Return array of tabs to used on pages to setup cron module.
+	 *
+	 * @return 	array				Array of tabs
+	 */
+	function oauthadmin_prepare_head()
+	{
+		global $langs, $conf;
+		$h = 0;
+		$head = array();
 
-/**
- * Return array of tabs to used on pages to setup cron module.
- *
- * @return 	array				Array of tabs
- */
-function oauthadmin_prepare_head()
-{
-	global $langs, $conf;
-	$h = 0;
-	$head = array();
+		$head[$h][0] = dol_buildpath('/admin/oauth.php', 1);
+		$head[$h][1] = $langs->trans("OAuthServices");
+		$head[$h][2] = 'services';
+		$h++;
 
-	$head[$h][0] = dol_buildpath('/admin/oauth.php', 1);
-	$head[$h][1] = $langs->trans("OAuthServices");
-	$head[$h][2] = 'services';
-	$h++;
+		$head[$h][0] = dol_buildpath('/admin/oauthlogintokens.php', 1);
+		$head[$h][1] = $langs->trans("TokenManager");
+		$head[$h][2] = 'tokengeneration';
+		$h++;
 
-	$head[$h][0] = dol_buildpath('/admin/oauthlogintokens.php', 1);
-	$head[$h][1] = $langs->trans("TokenManager");
-	$head[$h][2] = 'tokengeneration';
-	$h++;
+		complete_head_from_modules($conf, $langs, null, $head, $h, 'oauthadmin');
 
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'oauthadmin');
-
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'oauthadmin', 'remove');
+		complete_head_from_modules($conf, $langs, null, $head, $h, 'oauthadmin', 'remove');
 
 
-	return $head;
+		return $head;
+	}
 }
