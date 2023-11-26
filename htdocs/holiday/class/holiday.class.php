@@ -123,6 +123,11 @@ class Holiday extends CommonObject
 	 */
 	public $fk_user_cancel;
 
+	/**
+	 * @var int 	ID for creation
+	 */
+	public $fk_user_create;
+
 
 	public $detail_refuse = '';
 

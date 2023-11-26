@@ -9,6 +9,7 @@ For users:
 ----------
 NEW: Compatibility with PHP 8.2
 NEW: Module for Advanced stock transfert is now stable (#26594)
+NEW: Module Workstation (used to enhance the module BOM and Manufacturing Order) is now stable
 NEW: Add a confirmation popup when deleting extrafields
 NEW: Add type 'icon' type for extrafields
 NEW: Close #20930 Use ajax for state loading after country change
