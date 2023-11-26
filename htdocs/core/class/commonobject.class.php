@@ -705,6 +705,10 @@ abstract class CommonObject
 	 */
 	public $nb = array();
 
+	/**
+	 * @var int			used for the return of show_photos()
+	 */
+	public $nbphoto;
 
 	/**
 	 * @var string output
@@ -6165,7 +6169,7 @@ abstract class CommonObject
 		$savDisableCompute = $conf->disable_compute;
 		$conf->disable_compute = 1;
 
-		$ret = $this->fetch($id);
+		$ret = $this->fetch($id);	/* @phpstan-ignore-line */
 
 		$conf->disable_compute = $savDisableCompute;
 
