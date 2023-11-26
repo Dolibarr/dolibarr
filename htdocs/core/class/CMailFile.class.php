@@ -924,7 +924,7 @@ class CMailFile
 				if (getDolGlobalString($keyforsmtpauthtype) === "XOAUTH2") {
 					$supportedoauth2array = array();
 
-					require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
+					include DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
 
 					$keyforsupportedoauth2array = $conf->global->$keyforsmtpoauthservice;
 					if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
@@ -1079,7 +1079,7 @@ class CMailFile
 				if (getDolGlobalString($keyforsmtpauthtype) === "XOAUTH2") {
 					$supportedoauth2array = array();
 
-					require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
+					include DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
 
 					$keyforsupportedoauth2array = getDolGlobalString($keyforsmtpoauthservice);
 					if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
