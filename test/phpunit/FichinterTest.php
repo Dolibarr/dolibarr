@@ -139,8 +139,14 @@ class FichinterTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
+		$soc = new Societe($db);
+		$soc->name = "FichinterTest Unittest";
+		$socid = $soc->create($user);
+		$this->assertLessThan($socid, 0, $soc->errorsToString());
+
 		$localobject=new Fichinter($db);
 		$localobject->initAsSpecimen();
+		$localobject->socid = $socid;
 		$result=$localobject->create($user);
 
 		print __METHOD__." result=".$result."\n";
