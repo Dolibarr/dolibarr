@@ -141,6 +141,18 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public $postactionmessages;
 
+	// Multicurrency
+	/**
+	 * @var int ID
+	 */
+	public $fk_multicurrency;
+
+	public $multicurrency_code;
+	public $multicurrency_tx;
+	public $multicurrency_total_ht;
+	public $multicurrency_total_tva;
+	public $multicurrency_total_ttc;
+
 
 	/**
 	 * Standard invoice
@@ -1981,4 +1993,16 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	public $fk_user_modif;
 
 	public $fk_accounting_account;
+
+	// Multicurrency
+	/**
+	 * @var int ID
+	 */
+	public $fk_multicurrency;
+
+	public $multicurrency_code;
+	public $multicurrency_subprice;
+	public $multicurrency_total_ht;
+	public $multicurrency_total_tva;
+	public $multicurrency_total_ttc;
 }
