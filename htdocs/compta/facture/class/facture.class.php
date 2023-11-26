@@ -147,13 +147,6 @@ class Facture extends CommonInvoice
 
 	/**
 	 * @var string customer ref
-	 * @deprecated
-	 * @see $ref_customer
-	 */
-	public $ref_client;
-
-	/**
-	 * @var string customer ref
 	 */
 	public $ref_customer;
 
@@ -162,14 +155,9 @@ class Facture extends CommonInvoice
 	public $total_localtax1;
 	public $total_localtax2;
 	public $total_ttc;
-	public $revenuestamp;
 
 	public $resteapayer;
 
-	/**
-	 * 1 if invoice paid COMPLETELY, 0 otherwise (do not use it anymore, use statut and close_code)
-	 */
-	public $paye;
 
 	//! key of module source when invoice generated from a dedicated module ('cashdesk', 'takepos', ...)
 	public $module_source;
@@ -205,11 +193,6 @@ class Facture extends CommonInvoice
 	public $fac_rec;
 
 	public $date_pointoftax;
-
-	/**
-	 * @var int Situation cycle reference number
-	 */
-	public $situation_cycle_ref;
 
 	/**
 	 * @var int Situation counter inside the cycle
@@ -363,64 +346,6 @@ class Facture extends CommonInvoice
 		'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Validated', 2=>'Paid', 3=>'Abandonned')),
 	);
 	// END MODULEBUILDER PROPERTIES
-
-	/**
-	 * Standard invoice
-	 */
-	const TYPE_STANDARD = 0;
-
-	/**
-	 * Replacement invoice
-	 */
-	const TYPE_REPLACEMENT = 1;
-
-	/**
-	 * Credit note invoice
-	 */
-	const TYPE_CREDIT_NOTE = 2;
-
-	/**
-	 * Deposit invoice
-	 */
-	const TYPE_DEPOSIT = 3;
-
-	/**
-	 * Proforma invoice (should not be used. a proforma is an order)
-	 */
-	const TYPE_PROFORMA = 4;
-
-	/**
-	 * Situation invoice
-	 */
-	const TYPE_SITUATION = 5;
-
-	/**
-	 * Draft status
-	 */
-	const STATUS_DRAFT = 0;
-
-	/**
-	 * Validated (need to be paid)
-	 */
-	const STATUS_VALIDATED = 1;
-
-	/**
-	 * Classified paid.
-	 * If paid partially, $this->close_code can be:
-	 * - CLOSECODE_DISCOUNTVAT
-	 * - CLOSECODE_BADDEBT
-	 * If paid completely, this->close_code will be null
-	 */
-	const STATUS_CLOSED = 2;
-
-	/**
-	 * Classified abandoned and no payment done.
-	 * $this->close_code can be:
-	 * - CLOSECODE_BADDEBT
-	 * - CLOSECODE_ABANDONED
-	 * - CLOSECODE_REPLACED
-	 */
-	const STATUS_ABANDONED = 3;
 
 	const CLOSECODE_DISCOUNTVAT = 'discount_vat'; // Abandonned remain - escompte
 	const CLOSECODE_BADDEBT = 'badcustomer'; // Abandonned remain - bad customer
@@ -6021,32 +5946,15 @@ class FactureLigne extends CommonInvoiceLine
 	//! Description ligne
 	public $desc;
 	public $ref_ext; // External reference of the line
-
-	public $localtax1_type; // Local tax 1 type
-	public $localtax2_type; // Local tax 2 type
 	public $fk_remise_except; // Link to line into llx_remise_except
 	public $rang = 0;
 
 	public $fk_fournprice;
-	public $pa_ht;
-	public $marge_tx;
-	public $marque_tx;
 
 	/**
 	 * @var int
 	 */
 	public $tva_npr;
-
-	public $remise_percent;
-
-	/**
-	 * List of special options to define line:
-	 * 1: shipment cost lines
-	 * 2: ecotaxe
-	 * 3: ??
-	 * idofmodule: a meaning for the module
-	 */
-	public $special_code;
 
 	/**
 	 * @var string		To store the batch to consume in stock when using a POS module

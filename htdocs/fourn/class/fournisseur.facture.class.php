@@ -118,9 +118,6 @@ class FactureFournisseur extends CommonInvoice
 	 */
 	public $label;
 
-	//Check constants for types
-	public $type = self::TYPE_STANDARD;
-
 	/**
 	 * Supplier invoice status
 	 * @var int
@@ -143,13 +140,6 @@ class FactureFournisseur extends CommonInvoice
 	 * @see $status
 	 */
 	public $fk_statut;
-
-	/**
-	 * Set to 1 if the invoice is completely paid, otherwise is 0
-	 * @var int
-	 * @deprecated Use $paid
-	 */
-	public $paye;
 
 	/**
 	 * Set to 1 if the invoice is completely paid, otherwise is 0
@@ -317,55 +307,6 @@ class FactureFournisseur extends CommonInvoice
 		'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Status', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>900),
 	);
-
-
-	/**
-	 * Standard invoice
-	 */
-	const TYPE_STANDARD = 0;
-
-	/**
-	 * Replacement invoice
-	 */
-	const TYPE_REPLACEMENT = 1;
-
-	/**
-	 * Credit note invoice
-	 */
-	const TYPE_CREDIT_NOTE = 2;
-
-	/**
-	 * Deposit invoice
-	 */
-	const TYPE_DEPOSIT = 3;
-
-	/**
-	 * Draft
-	 */
-	const STATUS_DRAFT = 0;
-
-	/**
-	 * Validated (need to be paid)
-	 */
-	const STATUS_VALIDATED = 1;
-
-	/**
-	 * Classified paid.
-	 * If paid partially, $this->close_code can be:
-	 * - CLOSECODE_DISCOUNTVAT
-	 * - CLOSECODE_BADCREDIT
-	 * If paid completelly, this->close_code will be null
-	 */
-	const STATUS_CLOSED = 2;
-
-	/**
-	 * Classified abandoned and no payment done.
-	 * $this->close_code can be:
-	 * - CLOSECODE_BADCREDIT
-	 * - CLOSECODE_ABANDONED
-	 * - CLOSECODE_REPLACED
-	 */
-	const STATUS_ABANDONED = 3;
 
 	const CLOSECODE_DISCOUNTVAT = 'discount_vat';
 	const CLOSECODE_BADCREDIT = 'badsupplier';
@@ -3424,29 +3365,11 @@ class SupplierInvoiceLine extends CommonInvoiceLine
 	public $oldline;
 
 	/**
-	 * @deprecated
-	 * @see $product_ref
-	 */
-	public $ref;
-
-	/**
-	 * Internal ref
-	 * @var string
-	 */
-	public $product_ref;
-
-	/**
 	 * Supplier reference of price when we added the line. May have been changed after line was added.
 	 * TODO Rename field ref to ref_supplier into table llx_facture_fourn_det and llx_commande_fournisseurdet and update fields into updateline
 	 * @var string
 	 */
 	public $ref_supplier;
-
-	/**
-	 * Product description
-	 * @var string
-	 */
-	public $product_desc;
 
 	/**
 	 * Unit price before taxes
@@ -3455,12 +3378,6 @@ class SupplierInvoiceLine extends CommonInvoiceLine
 	 * @see $subprice
 	 */
 	public $pu_ht;
-
-	/**
-	 * Unit price excluded taxes
-	 * @var float
-	 */
-	public $subprice;
 
 	/**
 	 * Unit price included taxes
@@ -3475,12 +3392,6 @@ class SupplierInvoiceLine extends CommonInvoiceLine
 	 */
 	public $fk_facture_fourn;
 
-	/**
-	 * This field may contains label of line (when invoice create from order)
-	 * @var string
-	 * @deprecated
-	 */
-	public $label;
 
 	/**
 	 * Description of the line
@@ -3505,103 +3416,6 @@ class SupplierInvoiceLine extends CommonInvoiceLine
 	public $fk_prev_id;
 
 	/**
-	 * VAT code
-	 * @var string
-	 */
-	public $vat_src_code;
-
-	/**
-	 * VAT %
-	 * @var float
-	 */
-	public $tva_tx;
-
-	/**
-	 * Local tax 1 %
-	 * @var float
-	 */
-	public $localtax1_tx;
-
-	/**
-	 * Local tax 2 %
-	 * @var float
-	 */
-	public $localtax2_tx;
-
-	/**
-	 * Quantity
-	 * @var double
-	 */
-	public $qty;
-
-	/**
-	 * Percent of discount
-	 * @var float
-	 */
-	public $remise_percent;
-
-	/**
-	 * Buying price value
-	 * @var float
-	 */
-	public $pa_ht;
-
-	/**
-	 * Total amount without taxes
-	 * @var float
-	 */
-	public $total_ht;
-
-	/**
-	 * Total amount with taxes
-	 * @var float
-	 */
-	public $total_ttc;
-
-	/**
-	 * Total amount of taxes
-	 * @var float
-	 */
-	public $total_tva;
-
-	/**
-	 * Total local tax 1 amount
-	 * @var float
-	 */
-	public $total_localtax1;
-
-	/**
-	 * Total local tax 2 amount
-	 * @var float
-	 */
-	public $total_localtax2;
-
-	/**
-	 * @var int ID
-	 */
-	public $fk_product;
-
-	/**
-	 * Type of the product. 0 for product 1 for service
-	 * @var int
-	 */
-	public $product_type;
-
-	/**
-	 * Label of the product
-	 * @var string
-	 */
-	public $product_label;
-
-	/**
-	 * List of cumulative options:
-	 * Bit 0:	0 si TVA normal - 1 si TVA NPR
-	 * Bit 1:	0 si ligne normal - 1 si bit discount (link to line into llx_remise_except)
-	 * @var int
-	 */
-	public $info_bits;
-
-	/**
 	 * Link to line into llx_remise_except
 	 * @var int
 	 */
@@ -3612,25 +3426,10 @@ class SupplierInvoiceLine extends CommonInvoiceLine
 	 */
 	public $fk_parent_line;
 
-	public $special_code;
-
 	/**
 	 * @var int rank of line
 	 */
 	public $rang;
-
-	/**
-	 * Total local tax 1 amount
-	 * @var float
-	 */
-	public $localtax1_type;
-
-	/**
-	 * Total local tax 2 amount
-	 * @var float
-	 */
-	public $localtax2_type;
-
 
 	/**
 	 *	Constructor

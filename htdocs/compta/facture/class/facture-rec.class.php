@@ -76,10 +76,6 @@ class FactureRec extends CommonInvoice
 	 */
 	protected $table_ref_field = 'titre';
 
-	/**
-	 * @var string The label of recurring invoice
-	 */
-	public $title;
 
 	/**
 	 * @var string 	The label of recurring invoice
@@ -91,12 +87,7 @@ class FactureRec extends CommonInvoice
 	 * @var double
 	 */
 	public $multicurrency_subprice;
-	public $socid;
 	public $number;
-	public $date;
-	//public $remise;
-	//public $remise_absolue;
-	//public $remise_percent;
 
 	/**
 	 * @deprecated
@@ -133,8 +124,6 @@ class FactureRec extends CommonInvoice
 	public $usenewprice = 0;
 
 	public $date_lim_reglement;
-	public $cond_reglement_code; // Code in llx_c_paiement
-	public $mode_reglement_code; // Code in llx_c_paiement
 
 	public $suspended; // status
 

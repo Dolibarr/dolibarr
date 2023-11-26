@@ -75,13 +75,8 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @deprecated	Use $title
 	 */
 	public $titre;
-	/**
-	 * @var string The label of recurring invoice
-	 */
-	public $title;
 
 	public $ref_supplier;
-	public $socid;
 
 	public $suspended; // status
 
@@ -113,12 +108,6 @@ class FactureFournisseurRec extends CommonInvoice
 	public $user_author;
 	public $user_modif;
 	public $fk_project;
-
-	public $mode_reglement_id;
-	public $mode_reglement_code;
-	public $cond_reglement_code;
-	public $cond_reglement_doc;
-	public $cond_reglement_id;
 
 	public $date_lim_reglement;
 
