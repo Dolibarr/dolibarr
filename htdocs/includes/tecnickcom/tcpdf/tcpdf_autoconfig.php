@@ -59,7 +59,7 @@ if (substr($_SERVER['DOCUMENT_ROOT'], -1) != '/') {
 // Load main configuration file only if the K_TCPDF_EXTERNAL_CONFIG constant is set to false.
 if (!defined('K_TCPDF_EXTERNAL_CONFIG') OR !K_TCPDF_EXTERNAL_CONFIG) {
 	// define a list of default config files in order of priority
-	$tcpdf_config_files = array(dirname(__FILE__).'/config/tcpdf_config.php', '/etc/php-tcpdf/tcpdf_config.php', '/etc/tcpdf/tcpdf_config.php', '/etc/tcpdf_config.php');
+	$tcpdf_config_files = array(__DIR__.'/config/tcpdf_config.php', '/etc/php-tcpdf/tcpdf_config.php', '/etc/tcpdf/tcpdf_config.php', '/etc/tcpdf_config.php');
 	foreach ($tcpdf_config_files as $tcpdf_config) {
 		if (@file_exists($tcpdf_config) AND is_readable($tcpdf_config)) {
 			require_once($tcpdf_config);
@@ -69,7 +69,7 @@ if (!defined('K_TCPDF_EXTERNAL_CONFIG') OR !K_TCPDF_EXTERNAL_CONFIG) {
 }
 
 if (!defined('K_PATH_MAIN')) {
-	define ('K_PATH_MAIN', dirname(__FILE__).'/');
+	define ('K_PATH_MAIN', __DIR__.'/');
 }
 
 if (!defined('K_PATH_FONTS')) {
