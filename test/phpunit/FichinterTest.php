@@ -144,7 +144,7 @@ class FichinterTest extends PHPUnit\Framework\TestCase
 		$result=$localobject->create($user);
 
 		print __METHOD__." result=".$result."\n";
-		$this->assertLessThan($result, 0);
+		$this->assertLessThan($result, 0, $localobject->errorsToString());
 
 		return $result;
 	}
@@ -170,7 +170,7 @@ class FichinterTest extends PHPUnit\Framework\TestCase
 		$result=$localobject->fetch($id);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
-		$this->assertLessThan($result, 0);
+		$this->assertLessThan($result, 0, $localobject->errorsToString());
 
 		return $localobject;
 	}
@@ -195,7 +195,7 @@ class FichinterTest extends PHPUnit\Framework\TestCase
 		$result=$localobject->setValid($user);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
-		$this->assertLessThan($result, 0);
+		$this->assertLessThan($result, 0, $localobject->errorsToString());
 		return $localobject;
 	}
 
@@ -223,7 +223,7 @@ class FichinterTest extends PHPUnit\Framework\TestCase
 
 		$localobject->info($localobject->id);
 		print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
-		$this->assertNotEquals($localobject->date_creation, '');
+		$this->assertNotEquals($localobject->date_creation, '', $localobject->errorsToString());
 
 		return $localobject->id;
 	}
@@ -250,7 +250,7 @@ class FichinterTest extends PHPUnit\Framework\TestCase
 		$result=$localobject->delete($user);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
-		$this->assertLessThan($result, 0);
+		$this->assertLessThan($result, 0, $localobject->errorsToString());
 		return $result;
 	}
 }
