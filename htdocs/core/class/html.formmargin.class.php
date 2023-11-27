@@ -225,7 +225,7 @@ class FormMargin
 		if ($reshook < 0) {
 			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 		} elseif (empty($reshook)) {
-			if (!empty($conf->global->MARGIN_ADD_SHOWHIDE_BUTTON)) {
+			if (getDolGlobalString('MARGIN_ADD_SHOWHIDE_BUTTON')) {
 				print $langs->trans('ShowMarginInfos') . ' ';
 				$hidemargininfos = preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE['DOLUSER_MARGININFO_HIDE_SHOW']); // Clean cookie
 				print '<span id="showMarginInfos" class="linkobject valignmiddle ' . (!empty($hidemargininfos) ? '' : 'hideobject') . '">' . img_picto($langs->trans("Disabled"), 'switch_off') . '</span>';
@@ -253,10 +253,10 @@ class FormMargin
 				print '<td class="liste_titre right">' . $langs->trans('CostPrice') . '</td>';
 			}
 			print '<td class="liste_titre right">' . $langs->trans('Margin') . '</td>';
-			if (!empty($conf->global->DISPLAY_MARGIN_RATES)) {
+			if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
 				print '<td class="liste_titre right">' . $langs->trans('MarginRate') . '</td>';
 			}
-			if (!empty($conf->global->DISPLAY_MARK_RATES)) {
+			if (getDolGlobalString('DISPLAY_MARK_RATES')) {
 				print '<td class="liste_titre right">' . $langs->trans('MarkRate') . '</td>';
 			}
 			print '</tr>';
@@ -268,10 +268,10 @@ class FormMargin
 				print '<td class="right">' . price($marginInfo['pv_products']) . '</td>';
 				print '<td class="right">' . price($marginInfo['pa_products']) . '</td>';
 				print '<td class="right">' . price($marginInfo['margin_on_products']) . '</td>';
-				if (!empty($conf->global->DISPLAY_MARGIN_RATES)) {
+				if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
 					print '<td class="right">' . (($marginInfo['margin_rate_products'] == '') ? '' : price($marginInfo['margin_rate_products'], null, null, null, null, 2) . '%') . '</td>';
 				}
-				if (!empty($conf->global->DISPLAY_MARK_RATES)) {
+				if (getDolGlobalString('DISPLAY_MARK_RATES')) {
 					print '<td class="right">' . (($marginInfo['mark_rate_products'] == '') ? '' : price($marginInfo['mark_rate_products'], null, null, null, null, 2) . '%') . '</td>';
 				}
 				print '</tr>';
@@ -283,10 +283,10 @@ class FormMargin
 				print '<td class="right">' . price($marginInfo['pv_services']) . '</td>';
 				print '<td class="right">' . price($marginInfo['pa_services']) . '</td>';
 				print '<td class="right">' . price($marginInfo['margin_on_services']) . '</td>';
-				if (!empty($conf->global->DISPLAY_MARGIN_RATES)) {
+				if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
 					print '<td class="right">' . (($marginInfo['margin_rate_services'] == '') ? '' : price($marginInfo['margin_rate_services'], null, null, null, null, 2) . '%') . '</td>';
 				}
-				if (!empty($conf->global->DISPLAY_MARK_RATES)) {
+				if (getDolGlobalString('DISPLAY_MARK_RATES')) {
 					print '<td class="right">' . (($marginInfo['mark_rate_services'] == '') ? '' : price($marginInfo['mark_rate_services'], null, null, null, null, 2) . '%') . '</td>';
 				}
 				print '</tr>';
@@ -298,10 +298,10 @@ class FormMargin
 				print '<td class="right">' . price($marginInfo['pv_total']) . '</td>';
 				print '<td class="right">' . price($marginInfo['pa_total']) . '</td>';
 				print '<td class="right">' . price($marginInfo['total_margin']) . '</td>';
-				if (!empty($conf->global->DISPLAY_MARGIN_RATES)) {
+				if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
 					print '<td class="right">' . (($marginInfo['total_margin_rate'] == '') ? '' : price($marginInfo['total_margin_rate'], null, null, null, null, 2) . '%') . '</td>';
 				}
-				if (!empty($conf->global->DISPLAY_MARK_RATES)) {
+				if (getDolGlobalString('DISPLAY_MARK_RATES')) {
 					print '<td class="right">' . (($marginInfo['total_mark_rate'] == '') ? '' : price($marginInfo['total_mark_rate'], null, null, null, null, 2) . '%') . '</td>';
 				}
 				print '</tr>';

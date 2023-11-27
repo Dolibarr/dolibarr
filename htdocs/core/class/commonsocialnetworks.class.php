@@ -21,6 +21,8 @@
  *       \brief      File of the superclass of object classes that support socialnetworks
  */
 
+namespace Dolibarr\Traits;
+
 
 /**
  *      Superclass for social networks
