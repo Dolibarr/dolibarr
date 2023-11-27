@@ -393,9 +393,7 @@ class Cronjob extends CommonObject
 			$resultcreate = $this->createCommon($user, $notrigger);
 			return $resultcreate;
 		}
-
 	}
-
 
 	/**
 	 *  Load object in memory from the database
