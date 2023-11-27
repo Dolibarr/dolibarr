@@ -2866,7 +2866,6 @@ class ExpenseReportLine extends CommonObjectLine
 
 	public $vatrate;
 	public $vat_src_code;
-	public $tva_tx;
 	public $localtax1_tx;
 	public $localtax2_tx;
 	public $localtax1_type;

@@ -2635,8 +2635,6 @@ class ExpeditionLigne extends CommonObjectLine
 	public $rang;
 
 	// Invoicing
-	public $tva_tx;
-
 	/**
 	 * @var float total without tax
 	 */

@@ -136,12 +136,6 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $vat_src_code;
 
 	/**
-	 * VAT %
-	 * @var float
-	 */
-	public $tva_tx;
-
-	/**
 	 * Local tax 1 %
 	 * @var float
 	 */

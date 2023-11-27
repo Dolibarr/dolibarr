@@ -1994,7 +1994,6 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 	public $pu_ttc;
 	public $fk_remise_except;
 	public $vat_src_code;
-	public $tva_tx;
 	public $localtax1_tx;
 	public $localtax1_type;
 	public $localtax2_tx;

@@ -140,6 +140,11 @@ abstract class CommonObjectLine extends CommonObject
 	 * @var float
 	 */
 	public $subprice;
+
+	/**
+	 * VAT %
+	 * @var float
+	 */
 	public $tva_tx;
 
 	/**
