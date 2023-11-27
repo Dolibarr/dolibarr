@@ -204,10 +204,10 @@ foreach ($dirmodels as $reldir) {
 					$module = new $file($db);
 
 					// Show modules according to features level
-					if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 						continue;
 					}
-					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+					if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 						continue;
 					}
 
@@ -281,7 +281,7 @@ print '<br>';
  *  Documents models for Holidays
  */
 
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 	print load_fiche_titre($langs->trans("TemplatePDFHolidays"), '', '');
 
 	// Defined model definition table
@@ -341,10 +341,10 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 								$module = new $classname($db);
 
 								$modulequalified = 1;
-								if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+								if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 									$modulequalified = 0;
 								}
-								if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+								if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 									$modulequalified = 0;
 								}
 
@@ -525,7 +525,7 @@ if ($conf->use_javascript_ajax) {
 print "</td>";
 print "</tr>";
 
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 	$substitutionarray = pdf_getSubstitutionArray($langs, array('objectamount'), null, 2);
 	$substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
 	$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';

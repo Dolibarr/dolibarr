@@ -411,7 +411,7 @@ class doc_generic_task_odt extends ModelePDFTask
 
 		// Scan directories
 		$nbofiles = count($listoffiles);
-		if (!empty($conf->global->PROJECT_TASK_ADDON_PDF_ODT_PATH)) {
+		if (getDolGlobalString('PROJECT_TASK_ADDON_PDF_ODT_PATH')) {
 			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>';
 			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
 			$texte .= $nbofiles;
@@ -823,7 +823,7 @@ class doc_generic_task_odt extends ModelePDFTask
 
 
 				// Write new file
-				if (!empty($conf->global->MAIN_ODT_AS_PDF)) {
+				if (getDolGlobalString('MAIN_ODT_AS_PDF')) {
 					try {
 						$odfHandler->exportAsAttachedPDF($file);
 					} catch (Exception $e) {

@@ -159,7 +159,7 @@ if ($sourcetype != 'salary') {
 		$sql .= " AND pd.traite = ".((int) $status);
 	}
 	$sql .= " AND f.total_ttc > 0";
-	if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {
+	if (!getDolGlobalString('WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS')) {
 		$sql .= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
 	}
 	if ($type != 'bank-transfer') {

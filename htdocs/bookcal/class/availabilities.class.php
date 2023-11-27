@@ -202,7 +202,7 @@ class Availabilities extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid']) && !empty($this->fields['ref'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid']) && !empty($this->fields['ref'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
@@ -749,7 +749,7 @@ class Availabilities extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowAvailabilities");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -997,11 +997,11 @@ class Availabilities extends CommonObject
 		global $langs, $conf;
 		$langs->load("agenda");
 
-		if (empty($conf->global->BOOKCAL_AVAILABILITIES_ADDON)) {
+		if (!getDolGlobalString('BOOKCAL_AVAILABILITIES_ADDON')) {
 			$conf->global->BOOKCAL_AVAILABILITIES_ADDON = 'mod_availabilities_standard';
 		}
 
-		if (!empty($conf->global->BOOKCAL_AVAILABILITIES_ADDON)) {
+		if (getDolGlobalString('BOOKCAL_AVAILABILITIES_ADDON')) {
 			$mybool = false;
 
 			$file = getDolGlobalString('BOOKCAL_AVAILABILITIES_ADDON') . ".php";
@@ -1067,7 +1067,7 @@ class Availabilities extends CommonObject
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->AVAILABILITIES_ADDON_PDF)) {
+			} elseif (getDolGlobalString('AVAILABILITIES_ADDON_PDF')) {
 				$modele = $conf->global->AVAILABILITIES_ADDON_PDF;
 			}
 		}

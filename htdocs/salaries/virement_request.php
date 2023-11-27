@@ -91,10 +91,10 @@ if ($id > 0 || !empty($ref)) {
 
 	// Check current user can read this salary
 	$canread = 0;
-	if (!empty($user->rights->salaries->readall)) {
+	if ($user->hasRight('salaries', 'readall')) {
 		$canread = 1;
 	}
-	if (!empty($user->rights->salaries->read) && $object->fk_user > 0 && in_array($object->fk_user, $childids)) {
+	if ($user->hasRight('salaries', 'read') && $object->fk_user > 0 && in_array($object->fk_user, $childids)) {
 		$canread = 1;
 	}
 	if (!$canread) {
@@ -133,13 +133,13 @@ restrictedArea($user, 'salaries', $object->id, 'salary', '');
  */
 
 // Link to a project
-if ($action == 'classin' && $user->rights->banque->modifier) {
+if ($action == 'classin' && $user->hasRight('banque', 'modifier')) {
 	$object->fetch($id);
 	$object->setProject($projectid);
 }
 
 // set label
-if ($action == 'setlabel' && $user->rights->salaries->write) {
+if ($action == 'setlabel' && $user->hasRight('salaries', 'write')) {
 	$object->fetch($id);
 	$object->label = $label;
 	$object->update($user);
@@ -217,7 +217,7 @@ $userstatic->fetch($object->fk_user);
 
 // Label
 if ($action != 'editlabel') {
-	$morehtmlref .= $form->editfieldkey("Label", 'label', $object->label, $object, $user->rights->salaries->write, 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldkey("Label", 'label', $object->label, $object, $user->hasRight('salaries', 'write'), 'string', '', 0, 1);
 	$morehtmlref .= $object->label;
 } else {
 	$morehtmlref .= $langs->trans('Label').' :&nbsp;';
@@ -317,7 +317,7 @@ if (isModEnabled("banque")) {
 	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 	print $langs->trans('DefaultBankAccount');
 	print '<td>';
-	if ($action != 'editbankaccount' && $user->rights->salaries->write) {
+	if ($action != 'editbankaccount' && $user->hasRight('salaries', 'write')) {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 	}
 	print '</tr></table>';
@@ -611,7 +611,7 @@ if ($resql) {
 			}
 
 			if ($type != 'bank-transfer') {
-				if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) {
+				if (getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT')) {
 					$langs->load("stripe");
 					if ($obj->fk_prelevement_bons > 0) {
 						print ' &nbsp; ';
@@ -619,7 +619,7 @@ if ($resql) {
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripedirectdebit&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequestDirectDebitWithStripe").'</a>';
 				}
 			} else {
-				if (!empty($conf->global->STRIPE_SEPA_CREDIT_TRANSFER)) {
+				if (getDolGlobalString('STRIPE_SEPA_CREDIT_TRANSFER')) {
 					$langs->load("stripe");
 					if ($obj->fk_prelevement_bons > 0) {
 						print ' &nbsp; ';

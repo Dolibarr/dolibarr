@@ -347,7 +347,7 @@ class printing_printgcp extends PrintingDriver
 			if ($obj) {
 				$printer_id = $obj->printer_id;
 			} else {
-				if (!empty($conf->global->PRINTING_GCP_DEFAULT)) {
+				if (getDolGlobalString('PRINTING_GCP_DEFAULT')) {
 					$printer_id = $conf->global->PRINTING_GCP_DEFAULT;
 				} else {
 					$this->errors[] = 'NoDefaultPrinterDefined';

@@ -286,14 +286,14 @@ if (empty($reshook)) {
 				}
 
 				// Auto mark as read if created from backend
-				if (!empty($conf->global->TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND) && $user->hasRight('ticket', 'write')) {
+				if (getDolGlobalString('TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND') && $user->hasRight('ticket', 'write')) {
 					if ( ! $object->markAsRead($user) > 0) {
 						setEventMessages($object->error, $object->errors, 'errors');
 					}
 				}
 
 				// Auto assign user
-				if (!empty($conf->global->TICKET_AUTO_ASSIGN_USER_CREATE)) {
+				if (getDolGlobalString('TICKET_AUTO_ASSIGN_USER_CREATE')) {
 					$result = $object->assignUser($user, $user->id, 1);
 					$object->add_contact($user->id, "SUPPORTTEC", 'internal');
 				}
@@ -742,7 +742,7 @@ if ($action == 'create' || $action == 'presend') {
 	$formticket->withfromsocid = $socid ? $socid : $user->socid;
 	$formticket->withfromcontactid = $contactid ? $contactid : '';
 	$formticket->withtitletopic = 1;
-	$formticket->withnotifytiersatcreate = ($notifyTiers ? 1 : (empty($conf->global->TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION) ? 0 : 1));
+	$formticket->withnotifytiersatcreate = ($notifyTiers ? 1 : (!getDolGlobalString('TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION') ? 0 : 1));
 	$formticket->withusercreate = 0;
 	$formticket->withref = 1;
 	$formticket->fk_user_create = $user->id;
@@ -808,7 +808,7 @@ if ($action == 'create' || $action == 'presend') {
 	|| $action== 'edit_contrat' || $action == 'editsubject' || $action == 'edit_extras' || $action == 'update_extras' || $action == 'edit_extrafields' || $action == 'set_extrafields' || $action == 'classify' || $action == 'sel_contract' || $action == 'edit_message_init' || $action == 'set_status' || $action == 'dellink') {
 	if ($res > 0) {
 		// or for unauthorized internals users
-		if (!$user->socid && (!empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && $object->fk_user_assign != $user->id) && !$user->hasRight('ticket', 'manage')) {
+		if (!$user->socid && (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && $object->fk_user_assign != $user->id) && !$user->hasRight('ticket', 'manage')) {
 			accessforbidden('', 0, 1);
 		}
 
@@ -824,7 +824,7 @@ if ($action == 'create' || $action == 'presend') {
 			}
 
 			// Default select all or no contact
-			$default = (!empty($conf->global->TICKET_NOTIFY_AT_CLOSING)) ? -2 : -3;
+			$default = (getDolGlobalString('TICKET_NOTIFY_AT_CLOSING')) ? -2 : -3;
 			$formquestion = array(
 				array(
 					'name' => 'contactid',
@@ -930,7 +930,7 @@ if ($action == 'create' || $action == 'presend') {
 			print dol_get_fiche_end();
 		}
 
-		if (!$user->socid && !empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY)) {
+		if (!$user->socid && getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY')) {
 			$object->next_prev_filter = "te.fk_user_assign = ".((int) $user->id);
 		} elseif ($user->socid > 0) {
 			$object->next_prev_filter = "te.fk_soc = ".((int) $user->socid);
@@ -1249,7 +1249,7 @@ if ($action == 'create' || $action == 'presend') {
 			print '<input type="submit" class="button small" name="btn_update_ticket_prop" value="'.$langs->trans("Modify").'" />';
 		} else {
 			// Button to edit Properties
-			if (isset($object->status) && ($object->status < $object::STATUS_NEED_MORE_INFO || !empty($conf->global->TICKET_ALLOW_CLASSIFICATION_MODIFICATION_EVEN_IF_CLOSED)) && $user->hasRight('ticket', 'write')) {
+			if (isset($object->status) && ($object->status < $object::STATUS_NEED_MORE_INFO || getDolGlobalString('TICKET_ALLOW_CLASSIFICATION_MODIFICATION_EVEN_IF_CLOSED')) && $user->hasRight('ticket', 'write')) {
 				print ' <a class="editfielda" href="card.php?track_id='.$object->track_id.'&set=properties">'.img_edit($langs->trans('Modify')).'</a>';
 			}
 		}
@@ -1315,7 +1315,7 @@ if ($action == 'create' || $action == 'presend') {
 		}
 
 
-		if (!empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
+		if (getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
 			print load_fiche_titre($langs->trans('Contacts'), '', 'title_companies.png');
 
 			print '<div class="div-table-responsive-no-min">';
@@ -1563,7 +1563,7 @@ if ($action == 'create' || $action == 'presend') {
 		}
 
 		// Show messages on card (Note: this is a duplicate of the view Events/Agenda but on the main tab)
-		if (!empty($conf->global->TICKET_SHOW_MESSAGES_ON_CARD)) {
+		if (getDolGlobalString('TICKET_SHOW_MESSAGES_ON_CARD')) {
 			$param = '&id='.$object->id;
 			if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 				$param .= '&contextpage='.$contextpage;
@@ -1616,7 +1616,7 @@ if ($action == 'create' || $action == 'presend') {
 			print showDirectPublicLink($object).'<br>';
 			print '</div>';
 
-			if (empty($conf->global->TICKET_SHOW_MESSAGES_ON_CARD)) {
+			if (!getDolGlobalString('TICKET_SHOW_MESSAGES_ON_CARD')) {
 				print '<div class="fichehalfright">';
 
 				$MAXEVENT = 10;

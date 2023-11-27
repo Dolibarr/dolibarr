@@ -182,7 +182,7 @@ class ExportExcel2007 extends ModeleExports
 		// phpcs:enable
 		global $user, $conf, $langs;
 
-		if (!empty($conf->global->MAIN_USE_PHP_WRITEEXCEL)) {
+		if (getDolGlobalString('MAIN_USE_PHP_WRITEEXCEL')) {
 			$outputlangs->charset_output = 'ISO-8859-1'; // Because Excel 5 format is ISO
 		}
 
@@ -256,7 +256,7 @@ class ExportExcel2007 extends ModeleExports
 		$selectlabel = array();
 
 		$this->col = 1;
-		if (!empty($conf->global->MAIN_USE_PHP_WRITEEXCEL)) {
+		if (getDolGlobalString('MAIN_USE_PHP_WRITEEXCEL')) {
 			$this->col = 0;
 		}
 		foreach ($array_selected_sorted as $code => $value) {
@@ -270,7 +270,7 @@ class ExportExcel2007 extends ModeleExports
 			if (preg_match('/^Select:/i', $typefield) && $typefield = substr($typefield, 7)) {
 				$selectlabel[$code."_label"] = $alias."_label";
 			}
-			if (!empty($conf->global->MAIN_USE_PHP_WRITEEXCEL)) {
+			if (getDolGlobalString('MAIN_USE_PHP_WRITEEXCEL')) {
 				$this->worksheet->write($this->row, $this->col, $outputlangs->transnoentities($alias), $formatheader);
 			} else {
 				$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, $outputlangs->transnoentities($alias));
@@ -281,7 +281,7 @@ class ExportExcel2007 extends ModeleExports
 			$this->col++;
 		}
 		foreach ($selectlabel as $key => $value) {
-			if (!empty($conf->global->MAIN_USE_PHP_WRITEEXCEL)) {
+			if (getDolGlobalString('MAIN_USE_PHP_WRITEEXCEL')) {
 				$this->worksheet->write($this->row, $this->col, $outputlangs->transnoentities($value), $formatheader);
 			} else {
 				$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, $outputlangs->transnoentities($value));
@@ -312,7 +312,7 @@ class ExportExcel2007 extends ModeleExports
 
 		// Define first row
 		$this->col = 1;
-		if (!empty($conf->global->MAIN_USE_PHP_WRITEEXCEL)) {
+		if (getDolGlobalString('MAIN_USE_PHP_WRITEEXCEL')) {
 			$this->col = 0;
 		}
 

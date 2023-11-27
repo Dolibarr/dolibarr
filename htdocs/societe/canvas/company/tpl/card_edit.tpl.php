@@ -53,7 +53,7 @@ $contact = $GLOBALS['objcanvas']->control->object;
 	<td colspan="3"><input type="text" size="40" maxlength="60" name="nom" value="<?php echo $this->control->tpl['nom']; ?>"></td>
 </tr>
 
-<?php if (!empty($conf->global->SOCIETE_USEPREFIX)) { ?>
+<?php if (getDolGlobalString('SOCIETE_USEPREFIX')) { ?>
 <tr>
 	<td><?php echo $langs->trans("Prefix"); ?></td>
 	<td colspan="3">

@@ -63,7 +63,7 @@ class box_prospect extends ModeleBoxes
 		$this->db = $db;
 
 		// disable box for such cases
-		if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) {
+		if (getDolGlobalString('SOCIETE_DISABLE_PROSPECTS')) {
 			$this->enabled = 0; // disabled by this option
 		}
 
