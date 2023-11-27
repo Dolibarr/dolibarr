@@ -2671,7 +2671,6 @@ class ExpeditionLigne extends CommonObjectLine
 	 * @var int rang of line
 	 */
 	public $rang;
-	public $weight_units;
 
 	/**
 	 * @var float weight
