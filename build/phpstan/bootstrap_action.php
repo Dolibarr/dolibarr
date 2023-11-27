@@ -10,4 +10,4 @@ define('MAIN_DB_PREFIX', 'llx_');
 if (! defined("NOLOGIN")) define("NOLOGIN", '1');
 if (! defined("NOHTTPSREDIRECT")) define("NOHTTPSREDIRECT", '1');
 global $conf, $langs, $user, $db;
-include_once __DIR__ . '/../../htdocs/main.inc.php';
+// include_once __DIR__ . '/../../htdocs/main.inc.php';

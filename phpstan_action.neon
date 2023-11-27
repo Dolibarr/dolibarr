@@ -1,11 +1,11 @@
 parameters:
 	bootstrapFiles:
-		- build/phpstan/bootstrap.php
+		- build/phpstan/bootstrap_action.php
 	tmpDir: ./tmp
 	parallel:
 		jobSize: 20
 		processTimeout: 600.0
-		maximumNumberOfProcesses: 32
+		maximumNumberOfProcesses: 8
 		minimumNumberOfJobsPerProcess: 2
 		buffer: 134217728 # 128 MB
 	customRulesetUsed: true
