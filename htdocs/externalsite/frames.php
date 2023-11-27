@@ -49,7 +49,7 @@ if (!isModEnabled("externalsite")) {
  * View
  */
 
-if (empty($keyforcontent) && empty($conf->global->EXTERNALSITE_URL)) {
+if (empty($keyforcontent) && !getDolGlobalString('EXTERNALSITE_URL')) {
 	llxHeader();
 	print '<div class="error">'.$langs->trans('ExternalSiteModuleNotComplete').'</div>';
 	llxFooter();
@@ -117,7 +117,7 @@ if (!empty($keyforcontent)) {
 	<title>Dolibarr frame for external web site</title>
 	</head>
 
-	<frameset ".(empty($conf->global->MAIN_MENU_INVERT) ? "rows" : "cols")."=\"".$heightforframes.",*\" border=0 framespacing=0 frameborder=0>
+	<frameset ".(!getDolGlobalString('MAIN_MENU_INVERT') ? "rows" : "cols")."=\"".$heightforframes.",*\" border=0 framespacing=0 frameborder=0>
 	    <frame name=\"barre\" src=\"frametop.php?mainmenu=".$mainmenu."&leftmenu=".$leftmenu."&idmenu=".$idmenu.($theme ? '&theme='.$theme : '').($codelang ? '&lang='.$codelang : '')."&nobackground=1\" noresize scrolling=\"NO\" noborder>
 	  ";
 		print '<frame name="main" src="';

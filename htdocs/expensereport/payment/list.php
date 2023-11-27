@@ -190,7 +190,7 @@ $sql .= ' WHERE ndf.entity IN ('.getEntity("expensereport").')';
 
 // RESTRICT RIGHTS
 if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
-	&& (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance))) {
+	&& (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || empty($user->rights->expensereport->writeall_advance))) {
 	$sql .= " AND ndf.fk_user_author IN (".$db->sanitize(join(',', $childids)).")\n";
 }
 
@@ -445,7 +445,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print_liste_field_titre($selectedfields, $_SERVER['PHP_SELF'], '', '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 	$totalarray['nbfield']++;
 }
-if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 	print_liste_field_titre('#', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
@@ -546,7 +546,7 @@ while ($i < $imaxinloop) {
 		}
 
 		// No
-		if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+		if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 			print '<td>'.(($offset * $limit) + $i).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

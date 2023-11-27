@@ -89,7 +89,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."expensereport as d, ".MAIN_DB_PREFIX."expensere
 $sql .= " WHERE de.fk_expensereport = d.rowid AND d.entity IN (".getEntity('expensereport').") AND de.fk_c_type_fees = tf.id";
 // RESTRICT RIGHTS
 if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
-	&& (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance))) {
+	&& (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || empty($user->rights->expensereport->writeall_advance))) {
 	$childids = $user->getAllChildIds();
 	$childids[] = $user->id;
 	$sql .= " AND d.fk_user_author IN (".$db->sanitize(join(',', $childids)).")\n";
@@ -164,7 +164,7 @@ if ($conf->use_javascript_ajax) {
 	$dolgraph = new DolGraph();
 	$dolgraph->SetData($dataseries);
 	$dolgraph->setHeight(350);
-	$dolgraph->combine = empty($conf->global->MAIN_EXPENSEREPORT_COMBINE_GRAPH_STAT) ? 0.05 : $conf->global->MAIN_EXPENSEREPORT_COMBINE_GRAPH_STAT;
+	$dolgraph->combine = !getDolGlobalString('MAIN_EXPENSEREPORT_COMBINE_GRAPH_STAT') ? 0.05 : $conf->global->MAIN_EXPENSEREPORT_COMBINE_GRAPH_STAT;
 	$dolgraph->setShowLegend(2);
 	$dolgraph->setShowPercent(1);
 	$dolgraph->SetType(array('pie'));
@@ -199,7 +199,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."expensereport as d, ".MAIN_DB_PREFIX."user as u
 $sql .= " WHERE u.rowid = d.fk_user_author";
 // RESTRICT RIGHTS
 if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
-	&& (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance))) {
+	&& (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || empty($user->rights->expensereport->writeall_advance))) {
 	$childids = $user->getAllChildIds();
 	$childids[] = $user->id;
 	$sql .= " AND d.fk_user_author IN (".$db->sanitize(join(',', $childids)).")\n";

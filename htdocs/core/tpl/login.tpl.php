@@ -117,7 +117,7 @@ if (getDolGlobalString('ADD_UNSPLASH_LOGIN_BACKGROUND')) {
 	// For example $conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND = 'https://source.unsplash.com/random'
 	?>
 	<body class="body bodylogin" style="background-image: url('<?php echo dol_escape_htmltag($conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND); ?>'); background-repeat: no-repeat; background-position: center center; background-attachment: fixed; background-size: cover; background-color: #ffffff;">
-<?php
+	<?php
 } else {
 	?>
 	<body class="body bodylogin"<?php print !getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? '' : ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file=logos/'.urlencode($conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
@@ -249,7 +249,7 @@ if (!empty($captcha)) {
 	</span>
 
 	</div></div>
-<?php
+	<?php
 }
 
 if (!empty($morelogincontent)) {

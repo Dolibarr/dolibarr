@@ -179,7 +179,7 @@ if ($permission) {
 		</div>
 	</form>
 
-<?php
+		<?php
 	}
 
 	print "</div>";

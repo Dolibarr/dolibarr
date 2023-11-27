@@ -70,7 +70,7 @@ $socid = GETPOST('socid', 'int') ?GETPOST('socid', 'int') : GETPOST('socid_id', 
 
 $childids = $user->getAllChildIds(1);
 
-if (!empty($conf->global->EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH)) {
+if (getDolGlobalString('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH')) {
 	if (empty($date_start)) {
 		$date_start = dol_mktime(0, 0, 0, (int) dol_print_date(dol_now(), '%m'),  1, (int) dol_print_date(dol_now(), '%Y'));
 	}
@@ -96,9 +96,9 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 // PDF
-$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
-$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
-$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
+$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0));
+$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0));
+$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0));
 
 
 $object = new ExpenseReport($db);
@@ -119,8 +119,8 @@ $permissiontoadd = $user->rights->expensereport->creer; // Used by the include o
 
 $upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
-$projectRequired = isModEnabled('project') && !empty($conf->global->EXPENSEREPORT_PROJECT_IS_REQUIRED);
-$fileRequired = !empty($conf->global->EXPENSEREPORT_FILE_IS_REQUIRED);
+$projectRequired = isModEnabled('project') && getDolGlobalString('EXPENSEREPORT_PROJECT_IS_REQUIRED');
+$fileRequired = getDolGlobalString('EXPENSEREPORT_FILE_IS_REQUIRED');
 
 if ($object->id > 0) {
 	// Check current user can read this expense report
@@ -265,13 +265,13 @@ if (empty($reshook)) {
 		}
 
 		// Check that expense report is for a user inside the hierarchy, or that advanced permission for all is set
-		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->expensereport->creer))
-			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->expensereport->creer) && empty($user->rights->expensereport->writeall_advance))) {
+		if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && empty($user->rights->expensereport->creer))
+			|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && empty($user->rights->expensereport->creer) && empty($user->rights->expensereport->writeall_advance))) {
 			$error++;
 			setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
 		}
 		if (!$error) {
-			if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)) {
+			if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || empty($user->rights->expensereport->writeall_advance)) {
 				if (!in_array($object->fk_user_author, $childids)) {
 					$error++;
 					setEventMessages($langs->trans("UserNotInHierachy"), null, 'errors');
@@ -295,7 +295,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (!$error && empty($conf->global->EXPENSEREPORT_ALLOW_OVERLAPPING_PERIODS)) {
+		if (!$error && !getDolGlobalString('EXPENSEREPORT_ALLOW_OVERLAPPING_PERIODS')) {
 			$overlappingExpenseReportID = $object->periode_existe($fuser, $object->date_debut, $object->date_fin);
 
 			if ($overlappingExpenseReportID > 0) {
@@ -385,7 +385,7 @@ if (empty($reshook)) {
 
 		if ($result >= 0) {
 			// Define output language
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -426,7 +426,7 @@ if (empty($reshook)) {
 
 				// SUBJECT
 				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
-				if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+				if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 					$societeName = $conf->global->MAIN_APPLICATION_TITLE;
 				}
 
@@ -495,7 +495,7 @@ if (empty($reshook)) {
 
 		if ($result > 0) {
 			// Define output language
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -533,7 +533,7 @@ if (empty($reshook)) {
 
 				// SUBJECT
 				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
-				if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+				if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 					$societeName = $conf->global->MAIN_APPLICATION_TITLE;
 				}
 
@@ -605,7 +605,7 @@ if (empty($reshook)) {
 
 		if ($result > 0) {
 			// Define output language
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -649,7 +649,7 @@ if (empty($reshook)) {
 
 				// SUBJECT
 				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
-				if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+				if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 					$societeName = $conf->global->MAIN_APPLICATION_TITLE;
 				}
 
@@ -719,7 +719,7 @@ if (empty($reshook)) {
 
 		if ($result > 0) {
 			// Define output language
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -757,7 +757,7 @@ if (empty($reshook)) {
 
 				// SUBJECT
 				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
-				if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+				if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 					$societeName = $conf->global->MAIN_APPLICATION_TITLE;
 				}
 
@@ -833,7 +833,7 @@ if (empty($reshook)) {
 
 				if ($result > 0) {
 					// Define output language
-					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+					if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 						$outputlangs = $langs;
 						$newlang = '';
 						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -871,7 +871,7 @@ if (empty($reshook)) {
 
 						// SUBJECT
 						$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
-						if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+						if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 							$societeName = $conf->global->MAIN_APPLICATION_TITLE;
 						}
 
@@ -945,7 +945,7 @@ if (empty($reshook)) {
 
 			if ($result > 0) {
 				// Define output language
-				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+				if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 					$outputlangs = $langs;
 					$newlang = '';
 					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -984,7 +984,7 @@ if (empty($reshook)) {
 
 		if ($result > 0) {
 			// Define output language
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -1013,7 +1013,7 @@ if (empty($reshook)) {
 
 		if ($result > 0) {
 			// Define output language
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -1051,7 +1051,7 @@ if (empty($reshook)) {
 
 				// SUBJECT
 				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
-				if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+				if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 					$societeName = $conf->global->MAIN_APPLICATION_TITLE;
 				}
 
@@ -1186,7 +1186,7 @@ if (empty($reshook)) {
 			if ($result > 0) {
 				$ret = $object->fetch($object->id); // Reload to get new records
 
-				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+				if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 					// Define output language
 					$outputlangs = $langs;
 					$newlang = GETPOST('lang_id', 'alpha');
@@ -1239,7 +1239,7 @@ if (empty($reshook)) {
 		if ($result >= 0) {
 			if ($result > 0) {
 				// Define output language
-				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+				if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 					$outputlangs = $langs;
 					$newlang = '';
 					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -1331,7 +1331,7 @@ if (empty($reshook)) {
 			if ($result >= 0) {
 				if ($result > 0) {
 					// Define output language
-					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+					if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 						$outputlangs = $langs;
 						$newlang = '';
 						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -1440,7 +1440,7 @@ if ($action == 'create') {
 		$defaultselectuser = GETPOST('fk_user_author', 'int');
 	}
 	$include_users = 'hierarchyme';
-	if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expensereport->writeall_advance)) {
+	if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->expensereport->writeall_advance)) {
 		$include_users = array();
 	}
 	$s = $form->select_dolusers($defaultselectuser, "fk_user_author", 0, "", 0, $include_users, '', '0,'.$conf->entity);
@@ -1458,20 +1458,20 @@ if ($action == 'create') {
 		print img_warning().' '.$langs->trans("NobodyHasPermissionToValidateExpenseReport");
 	} else {
 		$defaultselectuser = (empty($user->fk_user_expense_validator) ? $user->fk_user : $user->fk_user_expense_validator); // Will work only if supervisor has permission to approve so is inside include_users
-		if (!empty($conf->global->EXPENSEREPORT_DEFAULT_VALIDATOR)) {
+		if (getDolGlobalString('EXPENSEREPORT_DEFAULT_VALIDATOR')) {
 			$defaultselectuser = $conf->global->EXPENSEREPORT_DEFAULT_VALIDATOR; // Can force default approver
 		}
 		if (GETPOST('fk_user_validator', 'int') > 0) {
 			$defaultselectuser = GETPOST('fk_user_validator', 'int');
 		}
-		$s = $form->select_dolusers($defaultselectuser, "fk_user_validator", 1, "", ((empty($defaultselectuser) || empty($conf->global->EXPENSEREPORT_DEFAULT_VALIDATOR_UNCHANGEABLE)) ? 0 : 1), $include_users);
+		$s = $form->select_dolusers($defaultselectuser, "fk_user_validator", 1, "", ((empty($defaultselectuser) || !getDolGlobalString('EXPENSEREPORT_DEFAULT_VALIDATOR_UNCHANGEABLE')) ? 0 : 1), $include_users);
 		print $form->textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
 	}
 	print '</td>';
 	print '</tr>';
 
 	// Payment mode
-	if (!empty($conf->global->EXPENSEREPORT_ASK_PAYMENTMODE_ON_CREATION)) {
+	if (getDolGlobalString('EXPENSEREPORT_ASK_PAYMENTMODE_ON_CREATION')) {
 		print '<tr>';
 		print '<td>'.$langs->trans("ModePaiement").'</td>';
 		print '<td>';
@@ -1487,7 +1487,7 @@ if ($action == 'create') {
 	print '<td class="tdtop">'.$langs->trans('NotePublic').'</td>';
 	print '<td>';
 
-	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
+	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
 	print $doleditor->Create(1);
 	print '</td></tr>';
 
@@ -1499,7 +1499,7 @@ if ($action == 'create') {
 		print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
 		print '<td>';
 
-		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
+		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td></tr>';
 	}
@@ -1526,7 +1526,7 @@ if ($action == 'create') {
 	if ($result > 0) {
 		if (!in_array($object->fk_user_author, $user->getAllChildIds(1))) {
 			if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
-				&& (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance))) {
+				&& (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || empty($user->rights->expensereport->writeall_advance))) {
 					print load_fiche_titre($langs->trans('TripCard'), '', 'trip');
 
 					print '<div class="tabBar">';
@@ -1589,7 +1589,7 @@ if ($action == 'create') {
 			print '</td>';
 			print '</tr>';
 
-			if (!empty($conf->global->EXPENSEREPORT_ASK_PAYMENTMODE_ON_CREATION)) {
+			if (getDolGlobalString('EXPENSEREPORT_ASK_PAYMENTMODE_ON_CREATION')) {
 				print '<tr>';
 				print '<td>'.$langs->trans("ModePaiement").'</td>';
 				print '<td>';
@@ -1639,7 +1639,7 @@ if ($action == 'create') {
 
 			print '</form>';
 		} else {
-			$taxlessUnitPriceDisabled = !empty($conf->global->EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY) ? ' disabled' : '';
+			$taxlessUnitPriceDisabled = getDolGlobalString('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY') ? ' disabled' : '';
 
 			print dol_get_fiche_head($head, 'card', $langs->trans("ExpenseReport"), -1, 'trip');
 
@@ -1737,7 +1737,7 @@ if ($action == 'create') {
 			print get_date_range($object->date_debut, $object->date_fin, 'day', $langs, 0);
 			print '</td>';
 			print '</tr>';
-			if (!empty($conf->global->EXPENSEREPORT_ASK_PAYMENTMODE_ON_CREATION)) {
+			if (getDolGlobalString('EXPENSEREPORT_ASK_PAYMENTMODE_ON_CREATION')) {
 				print '<tr>';
 				print '<td>'.$langs->trans("ModePaiement").'</td>';
 				print '<td>'.$object->fk_c_paiement.'</td>';
@@ -2047,7 +2047,7 @@ if ($action == 'create') {
 					print '<td class="minwidth100imp linecolproject">'.$langs->trans('Project').'</td>';
 				}
 				print '<td class="center linecoltype">'.$langs->trans('Type').'</td>';
-				if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
+				if (getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 					print '<td class="center linecolcarcategory">'.$langs->trans('CarCategory').'</td>';
 				}
 				print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
@@ -2121,7 +2121,7 @@ if ($action == 'create') {
 						print '</td>';
 
 						// IK
-						if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
+						if (getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 							print '<td class="fk_c_exp_tax_cat linecoltaxcat">';
 							$exp_tax_cat_label = dol_getIdFromCode($db, $line->fk_c_exp_tax_cat, 'c_exp_tax_cat', 'rowid', 'label');
 							print $langs->trans($exp_tax_cat_label);
@@ -2191,7 +2191,7 @@ if ($action == 'create') {
 										if ($pdfexists) {
 											// Conversion du PDF en image png si fichier png non existant
 											if (!file_exists($fileimage) || (filemtime($fileimage) < filemtime($filepdf))) {
-												if (empty($conf->global->MAIN_DISABLE_PDF_THUMBS)) {		// If you experience trouble with pdf thumb generation and imagick, you can disable here.
+												if (!getDolGlobalString('MAIN_DISABLE_PDF_THUMBS')) {		// If you experience trouble with pdf thumb generation and imagick, you can disable here.
 													include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 													$ret = dol_convert_file($filepdf, 'png', $fileimage, '0'); // Convert first page of PDF into a file _preview.png
 													if ($ret < 0) {
@@ -2252,7 +2252,7 @@ if ($action == 'create') {
 						if (isModEnabled('project')) {
 							$colspan++;
 						}
-						if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
+						if (getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 							$colspan++;
 						}
 
@@ -2267,7 +2267,7 @@ if ($action == 'create') {
 						print '<a href="" class="commonlink auploadnewfilenow reposition">'.$langs->trans("UploadANewFileNow");
 						print img_picto($langs->trans("UploadANewFileNow"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
 						print '</a>';
-						if (empty($conf->global->EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES)) {
+						if (!getDolGlobalString('EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES')) {
 							print ' &nbsp; - &nbsp; <a href="" class="commonlink aattachtodoc reposition">'.$langs->trans("AttachTheNewLineToTheDocument");
 							print img_picto($langs->trans("AttachTheNewLineToTheDocument"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
 							print '</a>';
@@ -2335,7 +2335,7 @@ if ($action == 'create') {
 						print $formexpensereport->selectTypeExpenseReport($line->fk_c_type_fees, 'fk_c_type_fees');
 						print '</td>';
 
-						if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
+						if (getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 							print '<td class="fk_c_exp_tax_cat">';
 							$params = array('fk_expense' => $object->id, 'fk_expense_det' => $line->id, 'date' => $line->date);
 							print $form->selectExpenseCategories($line->fk_c_exp_tax_cat, 'fk_c_exp_tax_cat', 1, array(), 'fk_c_type_fees', $userauthor->default_c_exp_tax_cat, $params);
@@ -2394,7 +2394,7 @@ if ($action == 'create') {
 			 // Add a new line
 			if (($object->status == ExpenseReport::STATUS_DRAFT || $object->status == ExpenseReport::STATUS_REFUSED) && $action != 'editline' && $user->rights->expensereport->creer) {
 				$colspan = 12;
-				if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
+				if (getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 					$colspan++;
 				}
 				if (isModEnabled('project')) {
@@ -2406,7 +2406,7 @@ if ($action == 'create') {
 
 				$nbFiles = $nbLinks = 0;
 				$arrayoffiles = array();
-				if (empty($conf->global->EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES)) {
+				if (!getDolGlobalString('EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES')) {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 					require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
@@ -2422,7 +2422,7 @@ if ($action == 'create') {
 				print '<a href="" class="commonlink auploadnewfilenow reposition">'.$langs->trans("UploadANewFileNow");
 				print img_picto($langs->trans("UploadANewFileNow"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
 				print '</a>';
-				if (empty($conf->global->EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES)) {
+				if (!getDolGlobalString('EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES')) {
 					print ' &nbsp; - &nbsp; <a href="" class="commonlink aattachtodoc reposition">'.$langs->trans("AttachTheNewLineToTheDocument");
 					print img_picto($langs->trans("AttachTheNewLineToTheDocument"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
 					print '</a>';
@@ -2481,7 +2481,7 @@ if ($action == 'create') {
 					print '<td class="minwidth100imp">'.$form->textwithpicto($langs->trans('Project'), $langs->trans("ClosedProjectsAreHidden")).'</td>';
 				}
 				print '<td class="center expensereportcreatetype">'.$langs->trans('Type').'</td>';
-				if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
+				if (getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 					print '<td>'.$langs->trans('CarCategory').'</td>';
 				}
 				print '<td class="expensereportcreatedescription">'.$langs->trans('Description').'</td>';
@@ -2517,7 +2517,7 @@ if ($action == 'create') {
 					print $formexpensereport->selectTypeExpenseReport(!empty($fk_c_type_fees) ? $fk_c_type_fees : "", 'fk_c_type_fees', 1);
 					print '</td>';
 
-				if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
+				if (getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 					print '<td class="fk_c_exp_tax_cat">';
 					$params = array('fk_expense' => $object->id);
 					print $form->selectExpenseCategories('', 'fk_c_exp_tax_cat', 1, array(), 'fk_c_type_fees', $userauthor->default_c_exp_tax_cat, $params, 0);
@@ -2532,7 +2532,7 @@ if ($action == 'create') {
 				// Select VAT
 				print '<td class="right inputvat">';
 				$defaultvat = -1;
-				if (!empty($conf->global->EXPENSEREPORT_NO_DEFAULT_VAT)) {
+				if (getDolGlobalString('EXPENSEREPORT_NO_DEFAULT_VAT')) {
 					// If option to have no default VAT on expense report is on, we force MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS
 					$conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS = 'none';
 				}
@@ -2590,7 +2590,7 @@ if ($action == 'create') {
 				});
 			';
 
-			if (! empty($conf->global->MAIN_USE_EXPENSE_IK)) {
+			if (getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 				print '
 
                 /* unit price coef calculation */
@@ -2620,7 +2620,7 @@ if ($action == 'create') {
 							success: function(response) {
 								if (response.response_status == "success"){';
 
-				if (!empty($conf->global->EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY)) {
+				if (getDolGlobalString('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY')) {
 					print '
 									jQuery("#value_unit").val(parseFloat(response.data) * (100 + parseFloat(tva)) / 100);
 									jQuery("#value_unit").trigger("change");
