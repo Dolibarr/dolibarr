@@ -27,9 +27,7 @@
 // Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php';
-
-// $supportedoauth2array is defined into oauth.lib.php
+require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php';	// define $supportedoauth2array
 
 // Define $urlwithroot
 $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
