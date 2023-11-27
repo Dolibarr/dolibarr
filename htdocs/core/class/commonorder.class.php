@@ -150,6 +150,5 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $localtax1_type;
 	public $localtax2_type;
 
-	public $multicurrency_total_tva;
 	public $multicurrency_total_ttc;
 }

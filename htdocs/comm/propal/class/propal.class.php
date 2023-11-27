@@ -4114,7 +4114,6 @@ class PropaleLigne extends CommonObjectLine
 	public $skip_update_total; // Skip update price total for special lines
 
 	// Multicurrency
-	public $multicurrency_total_tva;
 	public $multicurrency_total_ttc;
 
 
