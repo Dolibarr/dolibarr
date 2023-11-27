@@ -96,7 +96,7 @@ print '<tr class="oddeven"><td>';
 print $langs->trans("ColorTheme");
 print '</td><td>';
 $array = array(0=>"Eldy", 1=>$langs->trans("Colorful"));
-print $form->selectarray('TAKEPOS_COLOR_THEME', $array, (empty($conf->global->TAKEPOS_COLOR_THEME) ? '0' : $conf->global->TAKEPOS_COLOR_THEME), 0);
+print $form->selectarray('TAKEPOS_COLOR_THEME', $array, (!getDolGlobalString('TAKEPOS_COLOR_THEME') ? '0' : $conf->global->TAKEPOS_COLOR_THEME), 0);
 print "</td></tr>\n";
 
 // Don't display category section

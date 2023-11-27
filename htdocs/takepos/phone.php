@@ -74,7 +74,7 @@ if (!$user->hasRight('takepos', 'run') && !defined('INCLUDE_PHONEPAGE_FROM_PUBLI
 if (empty($action)) {
 	// Code for llxHeader()
 	$title = 'TakePOS - Dolibarr '.DOL_VERSION;
-	if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+	if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 		$title = 'TakePOS - ' . getDolGlobalString('MAIN_APPLICATION_TITLE');
 	}
 	$head = '<meta name="apple-mobile-web-app-title" content="TakePOS"/>

@@ -39,7 +39,7 @@ if (!$user->hasRight('user', 'user', 'lire') && !$user->admin) {
 $langs->load("users");
 
 $canreadperms = true;
-if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$canreadperms = ($user->admin || $user->rights->user->group_advance->read);
 }
 
