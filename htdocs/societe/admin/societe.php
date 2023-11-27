@@ -394,10 +394,10 @@ foreach ($dirsociete as $dirroot) {
 				$modCodeTiers = new $file;
 
 				// Show modules according to features level
-				if ($modCodeTiers->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+				if ($modCodeTiers->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 					continue;
 				}
-				if ($modCodeTiers->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+				if ($modCodeTiers->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 					continue;
 				}
 
@@ -570,9 +570,9 @@ foreach ($dirsociete as $dirroot) {
 
 				$modulequalified = 1;
 				if (!empty($module->version)) {
-					if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 						$modulequalified = 0;
-					} elseif ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+					} elseif ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 						$modulequalified = 0;
 					}
 				}
