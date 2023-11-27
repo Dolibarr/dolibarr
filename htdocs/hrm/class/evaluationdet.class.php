@@ -115,7 +115,6 @@ class EvaluationLine extends CommonObjectLine
 		'required_rank' => array('type'=>'integer', 'label'=>'requiredRank', 'enabled'=>'1', 'position'=>5, 'notnull'=>1, 'visible'=>1,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
 	);
-	public $rowid;
 	public $date_creation;
 	public $tms;
 	public $fk_user_creat;

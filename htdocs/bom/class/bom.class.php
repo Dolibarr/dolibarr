@@ -1730,11 +1730,6 @@ class BOMLine extends CommonObjectLine
 	);
 
 	/**
-	 * @var int rowid
-	 */
-	public $rowid;
-
-	/**
 	 * @var int fk_bom
 	 */
 	public $fk_bom;

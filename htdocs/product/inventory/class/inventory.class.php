@@ -838,12 +838,6 @@ class InventoryLine extends CommonObjectLine
 		'pmp_real'      => array('type'=>'double', 'label'=>'PMPReal', 'visible'=>1, 'enabled'=>1, 'position'=>35),
 		'pmp_expected'  => array('type'=>'double', 'label'=>'PMPExpected', 'visible'=>1, 'enabled'=>1, 'position'=>36),
 	);
-
-	/**
-	 * @var int ID
-	 */
-	public $rowid;
-
 	public $fk_inventory;
 	public $fk_warehouse;
 	public $fk_product;

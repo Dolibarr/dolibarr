@@ -106,7 +106,6 @@ class StockTransferLine extends CommonObjectLine
 		'pmp' => array('type'=>'double'/*, 'help'=>'THMEstimatedHelp'*/, 'label'=>'PMP', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1,),
 		'rang' => array('type'=>'integer', 'label'=>'Qty', 'enabled'=>'1', 'position'=>45, 'notnull'=>0, 'visible'=>0, 'default'=>'0', 'isameasure'=>'1', 'css'=>'maxwidth75imp', 'help'=>"Help text for quantity",),
 	);
-	public $rowid;
 	public $amount;
 	public $qty;
 	public $fk_warehouse_destination;

@@ -2827,11 +2827,6 @@ class ExpenseReportLine extends CommonObjectLine
 	 */
 	public $error = '';
 
-	/**
-	 * @var int ID
-	 */
-	public $rowid;
-
 	public $comments;
 	public $qty;
 	public $value_unit;

@@ -1995,8 +1995,6 @@ class MoLine extends CommonObjectLine
 		'fk_default_workstation' =>array('type'=>'integer', 'label'=>'DefaultWorkstation', 'enabled'=>1, 'visible'=>1, 'notnull'=>0, 'position'=>185),
 		'fk_unit' =>array('type'=>'int', 'label'=>'Unit', 'enabled'=>1, 'visible'=>1, 'notnull'=>0, 'position'=>186)
 	);
-
-	public $rowid;
 	public $fk_mo;
 	public $origin_id;
 	public $origin_type;
