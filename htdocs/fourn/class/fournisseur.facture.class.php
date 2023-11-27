@@ -3467,7 +3467,6 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 * Description of the line
 	 * @var string
 	 */
-	public $description;
 
 	public $date_start;
 	public $date_end;

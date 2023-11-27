@@ -1990,7 +1990,6 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 	public $fk_parent;
 	public $ref_supplier;
 	public $label;
-	public $description;
 	public $pu_ht;
 	public $pu_ttc;
 	public $qty;

@@ -78,7 +78,6 @@ class Task extends CommonObjectLine
 	/**
 	 * @var string description
 	 */
-	public $description;
 
 	public $duration_effective; // total of time spent on this task
 	public $planned_workload;

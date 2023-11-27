@@ -112,7 +112,6 @@ class Skilldet extends CommonObjectLine
 	);
 	public $fk_skill;
 	public $rankorder;
-	public $description;
 	public $fk_user_creat;
 	public $fk_user_modif;
 	// END MODULEBUILDER PROPERTIES

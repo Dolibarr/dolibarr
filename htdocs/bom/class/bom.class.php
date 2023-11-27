@@ -1740,10 +1740,6 @@ class BOMLine extends CommonObjectLine
 	 */
 	public $fk_bom_child;
 
-	/**
-	 * @var string description
-	 */
-	public $description;
 	public $qty;
 
 	/**

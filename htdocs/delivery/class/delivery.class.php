@@ -1197,11 +1197,6 @@ class DeliveryLine extends CommonObjectLine
 	public $label;
 
 	/**
-	 * @var string product description
-	 */
-	public $description;
-
-	/**
 	 * @deprecated
 	 * @see $product_ref
 	 */

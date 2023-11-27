@@ -2160,8 +2160,6 @@ class FactureLigneRec extends CommonInvoiceLine
 
 	public $rang;
 
-	public $description;
-
 	public $fk_product_type; // Use instead product_type
 
 	public $fk_contract_line;
