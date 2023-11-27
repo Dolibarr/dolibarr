@@ -1941,8 +1941,9 @@ if ($search_date_signature_endyear) {
 				}
 
 				print '<td class="center">';
-				if (!empty($obj->typent_code))
+				if (!empty($obj->typent_code)) {
 					print $typenArray[$obj->typent_code];
+				}
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
