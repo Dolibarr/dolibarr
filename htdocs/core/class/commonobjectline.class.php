@@ -255,7 +255,8 @@ abstract class CommonObjectLine extends CommonObject
 	 * @param string $picto picto name off the object
 	 * @return int 1
 	 */
-	public function setPicto(String $picto) {
+	public function setPicto(String $picto)
+	{
 		$this->picto = $picto;
 		return 1;
 	}
