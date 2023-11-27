@@ -73,7 +73,7 @@ if (!$sortfield) {
 	$sortfield = "erd.date, erd.rowid";
 }
 if (!$sortorder) {
-	if ($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE > 0) {
+	if (getDolGlobalInt('ACCOUNTING_LIST_SORT_VENTILATION_DONE') > 0) {
 		$sortorder = "DESC";
 	} else {
 		$sortorder = "ASC";

@@ -506,7 +506,7 @@ if ($id > 0) {		// For user tab
 
 	dol_banner_tab($fuser, 'id', $linkback, $user->hasRight('user', 'user', 'lire') || $user->admin);
 
-	if (empty($conf->global->HOLIDAY_HIDE_BALANCE)) {
+	if (!getDolGlobalString('HOLIDAY_HIDE_BALANCE')) {
 		print '<div class="underbanner clearboth"></div>';
 
 		print '<br>';
@@ -611,7 +611,7 @@ if (!empty($arrayfields['cp.ref']['checked'])) {
 
 if (!empty($arrayfields['cp.fk_user']['checked'])) {
 	$morefilter = '';
-	if (!empty($conf->global->HOLIDAY_HIDE_FOR_NON_SALARIES)) {
+	if (getDolGlobalString('HOLIDAY_HIDE_FOR_NON_SALARIES')) {
 		$morefilter = 'AND employee = 1';
 	}
 

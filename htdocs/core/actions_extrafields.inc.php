@@ -317,7 +317,7 @@ if ($action == 'update') {
 		}
 
 		if (!$error) {
-			if (strlen(GETPOST('attrname', 'aZ09')) < 3 && empty($conf->global->MAIN_DISABLE_EXTRAFIELDS_CHECK_FOR_UPDATE)) {
+			if (strlen(GETPOST('attrname', 'aZ09')) < 3 && !getDolGlobalString('MAIN_DISABLE_EXTRAFIELDS_CHECK_FOR_UPDATE')) {
 				$error++;
 				$langs->load("errors");
 				$mesg[] = $langs->trans("ErrorValueLength", $langs->transnoentitiesnoconv("AttributeCode"), 3);
@@ -327,7 +327,7 @@ if ($action == 'update') {
 
 		// Check reserved keyword with more than 3 characters
 		if (!$error) {
-			if (in_array(strtoupper(GETPOST('attrname', 'aZ09')), $listofreservedwords) && empty($conf->global->MAIN_DISABLE_EXTRAFIELDS_CHECK_FOR_UPDATE)) {
+			if (in_array(strtoupper(GETPOST('attrname', 'aZ09')), $listofreservedwords) && !getDolGlobalString('MAIN_DISABLE_EXTRAFIELDS_CHECK_FOR_UPDATE')) {
 				$error++;
 				$langs->load("errors");
 				$mesg[] = $langs->trans("ErrorReservedKeyword", GETPOST('attrname', 'aZ09'));

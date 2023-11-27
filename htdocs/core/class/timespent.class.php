@@ -164,7 +164,7 @@ class TimeSpent extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid']) && !empty($this->fields['ref'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid']) && !empty($this->fields['ref'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -658,7 +658,7 @@ class TimeSpent extends CommonObject
 
 		$datas = [];
 
-		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			return ['optimize' => $langs->trans("ShowTimeSpent")];
 		}
 		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("TimeSpent").'</u>';
@@ -719,7 +719,7 @@ class TimeSpent extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowTimeSpent");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -943,11 +943,11 @@ class TimeSpent extends CommonObject
 		global $langs, $conf;
 		$langs->load("timespent@timespent");
 
-		if (empty($conf->global->TIMESPENT_timespent_ADDON)) {
+		if (!getDolGlobalString('TIMESPENT_timespent_ADDON')) {
 			$conf->global->TIMESPENT_timespent_ADDON = 'mod_timespent_standard';
 		}
 
-		if (!empty($conf->global->TIMESPENT_timespent_ADDON)) {
+		if (getDolGlobalString('TIMESPENT_timespent_ADDON')) {
 			$mybool = false;
 
 			$file = getDolGlobalString('TIMESPENT_timespent_ADDON') . ".php";
@@ -1013,7 +1013,7 @@ class TimeSpent extends CommonObject
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->timespent_ADDON_PDF)) {
+			} elseif (getDolGlobalString('timespent_ADDON_PDF')) {
 				$modele = $conf->global->timespent_ADDON_PDF;
 			}
 		}

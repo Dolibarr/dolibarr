@@ -89,7 +89,7 @@ if ("Notification" in window) {
 
 	// We set a delay before launching first test so next check will arrive after the time_auto_update compared to previous one.
 	//var time_first_execution = (time_auto_update + (time_js_next_test - nowtime)) * 1000;	//need milliseconds
-	var time_first_execution = <?php echo max(3, empty($conf->global->MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION) ? 0 : $conf->global->MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION); ?>;
+	var time_first_execution = <?php echo max(3, !getDolGlobalString('MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION') ? 0 : $conf->global->MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION); ?>;
 
 	setTimeout(first_execution, time_first_execution * 1000);	// Launch a first execution after a time_first_execution delay
 	time_js_next_test = nowtime + time_first_execution;
@@ -138,7 +138,7 @@ function check_events() {
 					console.log("Retrieved "+arrayofpastreminders.length+" reminders to do.");
 					var audio = null;
 					<?php
-					if (!empty($conf->global->AGENDA_REMINDER_BROWSER_SOUND)) {
+					if (getDolGlobalString('AGENDA_REMINDER_BROWSER_SOUND')) {
 						print 'audio = new Audio(\''.DOL_URL_ROOT.'/theme/common/sound/notification_agenda.wav\');';
 					}
 					?>
