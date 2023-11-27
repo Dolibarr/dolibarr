@@ -65,7 +65,7 @@ $error = 0;
 // Ne fonctionne que si on est pas en safe_mode.
 $err = error_reporting();
 error_reporting(0);
-if (!empty($conf->global->MAIN_OVERRIDE_TIME_LIMIT)) {
+if (getDolGlobalString('MAIN_OVERRIDE_TIME_LIMIT')) {
 	@set_time_limit((int) $conf->global->MAIN_OVERRIDE_TIME_LIMIT);
 } else {
 	@set_time_limit(600);

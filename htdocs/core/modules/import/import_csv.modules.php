@@ -92,7 +92,7 @@ class ImportCsv extends ModeleImports
 		parent::__construct();
 		$this->db = $db;
 
-		$this->separator = (GETPOST('separator') ?GETPOST('separator') : (empty($conf->global->IMPORT_CSV_SEPARATOR_TO_USE) ? ',' : $conf->global->IMPORT_CSV_SEPARATOR_TO_USE));
+		$this->separator = (GETPOST('separator') ?GETPOST('separator') : (!getDolGlobalString('IMPORT_CSV_SEPARATOR_TO_USE') ? ',' : $conf->global->IMPORT_CSV_SEPARATOR_TO_USE));
 		$this->enclosure = '"';
 		$this->escape = '"';
 
@@ -251,7 +251,7 @@ class ImportCsv extends ModeleImports
 		$newarrayres = array();
 		if ($arrayres && is_array($arrayres)) {
 			foreach ($arrayres as $key => $val) {
-				if (!empty($conf->global->IMPORT_CSV_FORCE_CHARSET)) {	// Forced charset
+				if (getDolGlobalString('IMPORT_CSV_FORCE_CHARSET')) {	// Forced charset
 					if (strtolower($conf->global->IMPORT_CSV_FORCE_CHARSET) == 'utf8') {
 						$newarrayres[$key]['val'] = $val;
 						$newarrayres[$key]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we considere it's null
@@ -658,7 +658,7 @@ class ImportCsv extends ModeleImports
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'numeric') {
 									$newval = price2num($newval);
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'accountingaccount') {
-									if (empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
+									if (!getDolGlobalString('ACCOUNTING_MANAGE_ZERO')) {
 										$newval = rtrim(trim($newval), "0");
 									} else {
 										$newval = trim($newval);

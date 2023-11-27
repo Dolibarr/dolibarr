@@ -62,7 +62,7 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 	$usemenuhider = 1;
 
 	// Show/Hide vertical menu. The hamburger icon for .menuhider action.
-	if ($mode != 'jmobile' && $mode != 'topnb' && $usemenuhider && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+	if ($mode != 'jmobile' && $mode != 'topnb' && $usemenuhider && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 		$showmode = 1;
 		$classname = 'class="tmenu menuhider nohover"';
 		$idsel = 'menu';
@@ -137,12 +137,12 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 
 	// Output menu entries
 	// Show logo company
-	if (empty($conf->global->MAIN_MENU_INVERT) && empty($noout) && !empty($conf->global->MAIN_SHOW_LOGO) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+	if (!getDolGlobalString('MAIN_MENU_INVERT') && empty($noout) && getDolGlobalString('MAIN_SHOW_LOGO') && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 		//$mysoc->logo_mini=(empty($conf->global->MAIN_INFO_SOCIETE_LOGO_MINI)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI);
-		$mysoc->logo_squarred_mini = (empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI) ? '' : $conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI);
+		$mysoc->logo_squarred_mini = (!getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI') ? '' : $conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI);
 
 		$logoContainerAdditionalClass = 'backgroundforcompanylogo';
-		if (!empty($conf->global->MAIN_INFO_SOCIETE_LOGO_NO_BACKGROUND)) {
+		if (getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_NO_BACKGROUND')) {
 			$logoContainerAdditionalClass = '';
 		}
 
@@ -196,7 +196,7 @@ function print_start_menu_array_auguria()
 	global $conf;
 
 	print '<div class="tmenudiv">';
-	print '<ul role="navigation" class="tmenu"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '' : ' title="Top menu"').'>';
+	print '<ul role="navigation" class="tmenu"'.(!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '' : ' title="Top menu"').'>';
 }
 
 /**
@@ -247,7 +247,7 @@ function print_text_menu_entry_auguria($text, $showmode, $url, $id, $idsel, $cla
 		}
 		print '</div>';
 		print '</a>';
-		if (empty($conf->global->THEME_TOPMENU_DISABLE_TEXT)) {
+		if (!getDolGlobalString('THEME_TOPMENU_DISABLE_TEXT')) {
 			print '<a '.$classnametxt.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'.dol_escape_htmltag($text).'">';
 			print '<span class="mainmenuaspan">';
 			print $text;
@@ -264,7 +264,7 @@ function print_text_menu_entry_auguria($text, $showmode, $url, $id, $idsel, $cla
 		}
 		print '</div>';
 		print '</div>';
-		if (empty($conf->global->THEME_TOPMENU_DISABLE_TEXT)) {
+		if (!getDolGlobalString('THEME_TOPMENU_DISABLE_TEXT')) {
 			print '<span '.$classnametxt.' id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($text.' - '.$langs->trans("NotAllowed")).'">';
 			print '<span class="mainmenuaspan">';
 			print $text;
@@ -410,18 +410,18 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					$nature = '';
 
 					// Must match array $sourceList defined into journals_list.php
-					if ($objp->nature == 2 && isModEnabled('facture') && empty($conf->global->ACCOUNTING_DISABLE_BINDING_ON_SALES)) {
+					if ($objp->nature == 2 && isModEnabled('facture') && !getDolGlobalString('ACCOUNTING_DISABLE_BINDING_ON_SALES')) {
 						$nature = "sells";
 					}
 					if ($objp->nature == 3
 						&& isModEnabled('supplier_invoice')
-						&& empty($conf->global->ACCOUNTING_DISABLE_BINDING_ON_PURCHASES)) {
+						&& !getDolGlobalString('ACCOUNTING_DISABLE_BINDING_ON_PURCHASES')) {
 						$nature = "purchases";
 					}
 					if ($objp->nature == 4 && isModEnabled('banque')) {
 						$nature = "bank";
 					}
-					if ($objp->nature == 5 && isModEnabled('expensereport') && empty($conf->global->ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS)) {
+					if ($objp->nature == 5 && isModEnabled('expensereport') && !getDolGlobalString('ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS')) {
 						$nature = "expensereports";
 					}
 					if ($objp->nature == 1) {
@@ -435,7 +435,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					}
 
 					// To enable when page exists
-					if (empty($conf->global->ACCOUNTANCY_SHOW_DEVELOP_JOURNAL)) {
+					if (!getDolGlobalString('ACCOUNTANCY_SHOW_DEVELOP_JOURNAL')) {
 						if ($nature == 'hasnew' || $nature == 'inventory') {
 							$nature = '';
 						}
@@ -513,7 +513,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 	}
 
 	// Show menu
-	$invert = empty($conf->global->MAIN_MENU_INVERT) ? "" : "invert";
+	$invert = !getDolGlobalString('MAIN_MENU_INVERT') ? "" : "invert";
 	if (empty($noout)) {
 		$altok = 0;
 		$blockvmenuopened = false;
@@ -521,7 +521,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 		$num = count($menu_array);
 		for ($i = 0; $i < $num; $i++) {     // Loop on each menu entry
 			$showmenu = true;
-			if (!empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED) && empty($menu_array[$i]['enabled'])) {
+			if (getDolGlobalString('MAIN_MENU_HIDE_UNAUTHORIZED') && empty($menu_array[$i]['enabled'])) {
 				$showmenu = false;
 			}
 
@@ -711,7 +711,7 @@ function dol_auguria_showmenu($type_user, &$menuentry, &$listofmodulesforexterna
 	if (!$menuentry['perms'] && $type_user) {
 		return 0; // No permissions and user is external
 	}
-	if (!$menuentry['perms'] && !empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED)) {
+	if (!$menuentry['perms'] && getDolGlobalString('MAIN_MENU_HIDE_UNAUTHORIZED')) {
 		return 0; // No permissions and option to hide when not allowed, even for internal user, is on
 	}
 	if (!$menuentry['perms']) {

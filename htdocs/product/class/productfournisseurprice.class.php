@@ -177,7 +177,7 @@ class ProductFournisseurPrice extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) $this->fields['rowid']['visible'] = 0;
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) $this->fields['rowid']['visible'] = 0;
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) $this->fields['entity']['enabled'] = 0;
 
 		// Unset fields that are disabled
@@ -607,7 +607,7 @@ class ProductFournisseurPrice extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowProductFournisseurPrice");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -756,11 +756,11 @@ class ProductFournisseurPrice extends CommonObject
 		global $langs, $conf;
 		$langs->load("buypricehistory@buypricehistory");
 
-		if (empty($conf->global->BUYPRICEHISTORY_PRODUCTFOURNISSEURPRICE_ADDON)) {
+		if (!getDolGlobalString('BUYPRICEHISTORY_PRODUCTFOURNISSEURPRICE_ADDON')) {
 			$conf->global->BUYPRICEHISTORY_PRODUCTFOURNISSEURPRICE_ADDON = 'mod_productfournisseurprice_standard';
 		}
 
-		if (!empty($conf->global->BUYPRICEHISTORY_PRODUCTFOURNISSEURPRICE_ADDON)) {
+		if (getDolGlobalString('BUYPRICEHISTORY_PRODUCTFOURNISSEURPRICE_ADDON')) {
 			$mybool = false;
 
 			$file = getDolGlobalString('BUYPRICEHISTORY_PRODUCTFOURNISSEURPRICE_ADDON') . ".php";
@@ -826,7 +826,7 @@ class ProductFournisseurPrice extends CommonObject
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->PRODUCTFOURNISSEURPRICE_ADDON_PDF)) {
+			} elseif (getDolGlobalString('PRODUCTFOURNISSEURPRICE_ADDON_PDF')) {
 				$modele = $conf->global->PRODUCTFOURNISSEURPRICE_ADDON_PDF;
 			}
 		}

@@ -781,7 +781,7 @@ class Fichinter extends CommonObject
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->FICHEINTER_ADDON_PDF)) {
+			} elseif (getDolGlobalString('FICHEINTER_ADDON_PDF')) {
 				$modele = $conf->global->FICHEINTER_ADDON_PDF;
 			}
 		}
@@ -907,7 +907,7 @@ class Fichinter extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowIntervention");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -966,7 +966,7 @@ class Fichinter extends CommonObject
 		global $conf, $db, $langs;
 		$langs->load("interventions");
 
-		if (!empty($conf->global->FICHEINTER_ADDON)) {
+		if (getDolGlobalString('FICHEINTER_ADDON')) {
 			$mybool = false;
 
 			$file = "mod_" . getDolGlobalString('FICHEINTER_ADDON').".php";

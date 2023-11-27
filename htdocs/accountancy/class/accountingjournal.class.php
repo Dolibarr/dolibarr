@@ -619,7 +619,7 @@ class AccountingJournal extends CommonObject
 					$disposal_amount = $pre_data_info['disposal']['amount'];
 					$disposal_subject_to_vat = $pre_data_info['disposal']['subject_to_vat'];
 					$disposal_date_formatted = dol_print_date($disposal_date, 'day');
-					$disposal_vat = $conf->global->ASSET_DISPOSAL_VAT > 0 ? $conf->global->ASSET_DISPOSAL_VAT : 20;
+					$disposal_vat = getDolGlobalInt('ASSET_DISPOSAL_VAT') > 0 ? $conf->global->ASSET_DISPOSAL_VAT : 20;
 
 					// Get accountancy codes
 					//---------------------------

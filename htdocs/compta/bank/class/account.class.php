@@ -433,7 +433,7 @@ class Account extends CommonObject
 		if (empty($this->rappro)) {
 			return -1;
 		}
-		if ($this->courant == Account::TYPE_CASH && empty($conf->global->BANK_CAN_RECONCILIATE_CASHACCOUNT)) {
+		if ($this->courant == Account::TYPE_CASH && !getDolGlobalString('BANK_CAN_RECONCILIATE_CASHACCOUNT')) {
 			return -2;
 		}
 		if ($this->clos) {
@@ -1399,7 +1399,7 @@ class Account extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE ba.rappro > 0 and ba.clos = 0";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		if (empty($conf->global->BANK_CAN_RECONCILIATE_CASHACCOUNT)) {
+		if (!getDolGlobalString('BANK_CAN_RECONCILIATE_CASHACCOUNT')) {
 			$sql .= " AND ba.courant != 2";
 		}
 		$resql = $this->db->query($sql);
@@ -1652,7 +1652,7 @@ class Account extends CommonObject
 	{
 		global $conf;
 
-		if (!empty($conf->global->MAIN_IBAN_IS_NEVER_MANDATORY)) {
+		if (getDolGlobalString('MAIN_IBAN_IS_NEVER_MANDATORY')) {
 			return 0;
 		}
 
@@ -1774,7 +1774,7 @@ class Account extends CommonObject
 				'BankAccountNumberKey'
 		);
 
-		if (!empty($conf->global->BANK_SHOW_ORDER_OPTION)) {
+		if (getDolGlobalString('BANK_SHOW_ORDER_OPTION')) {
 			if (is_numeric($conf->global->BANK_SHOW_ORDER_OPTION)) {
 				if (getDolGlobalString('BANK_SHOW_ORDER_OPTION') == '1') {
 					$fieldlists = array(
@@ -2199,7 +2199,7 @@ class AccountLine extends CommonObjectLine
 		}
 
 		// Protection to avoid any delete of accounted lines. Protection on by default
-		if (empty($conf->global->BANK_ALLOW_TRANSACTION_DELETION_EVEN_IF_IN_ACCOUNTING)) {
+		if (!getDolGlobalString('BANK_ALLOW_TRANSACTION_DELETION_EVEN_IF_IN_ACCOUNTING')) {
 			$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping WHERE doc_type = 'bank' AND fk_doc = ".((int) $this->id);
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -2336,7 +2336,7 @@ class AccountLine extends CommonObjectLine
 		$this->db->begin();
 
 		// Check statement field
-		if (!empty($conf->global->BANK_STATEMENT_REGEX_RULE)) {
+		if (getDolGlobalString('BANK_STATEMENT_REGEX_RULE')) {
 			if (!preg_match('/' . getDolGlobalString('BANK_STATEMENT_REGEX_RULE').'/', $this->num_releve)) {
 				$this->errors[] = $langs->trans("ErrorBankStatementNameMustFollowRegex", $conf->global->BANK_STATEMENT_REGEX_RULE);
 				return -1;

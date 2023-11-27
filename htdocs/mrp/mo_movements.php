@@ -137,10 +137,10 @@ $arrayfields = array(
 	//'m.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
 	//'m.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500)
 );
-if (!empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+if (getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 	unset($arrayfields['pl.sellby']);
 }
-if (!empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+if (getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 	unset($arrayfields['pl.eatby']);
 }
 $objectlist->fields = dol_sort_array($objectlist->fields, 'position');
@@ -331,7 +331,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Thirdparty
 	if (is_object($object->thirdparty)) {
 		$morehtmlref .= $object->thirdparty->getNomUrl(1, 'customer');
-		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
+		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
 			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
 		}
 	}
@@ -452,7 +452,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 	$sql .= " AND m.fk_entrepot = e.rowid";
 	$sql .= " AND e.entity IN (".getEntity('stock').")";
-	if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+	if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 		$sql .= " AND p.fk_product_type = 0";
 	}
 	$sql .= dolSqlDateFilter('m.datem', 0, $month, $year);

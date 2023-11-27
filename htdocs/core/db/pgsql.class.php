@@ -323,7 +323,7 @@ class DoliDBPgsql extends DoliDB
 			// To have postgresql case sensitive
 			$count_like = 0;
 			$line = str_replace(' LIKE \'', ' ILIKE \'', $line, $count_like);
-			if (!empty($conf->global->PSQL_USE_UNACCENT) && $count_like > 0) {
+			if (getDolGlobalString('PSQL_USE_UNACCENT') && $count_like > 0) {
 				// @see https://docs.postgresql.fr/11/unaccent.html : 'unaccent()' function must be installed before
 				$line = preg_replace('/\s+(\(+\s*)([a-zA-Z0-9\-\_\.]+) ILIKE /', ' \1unaccent(\2) ILIKE ', $line);
 			}
@@ -521,7 +521,7 @@ class DoliDBPgsql extends DoliDB
 		$query = $this->convertSQLFromMysql($query, $type, ($this->unescapeslashquot && $this->standard_conforming_strings));
 		//print "After convertSQLFromMysql:\n".$query."<br>\n";
 
-		if (!empty($conf->global->MAIN_DB_AUTOFIX_BAD_SQL_REQUEST)) {
+		if (getDolGlobalString('MAIN_DB_AUTOFIX_BAD_SQL_REQUEST')) {
 			// Fix bad formed requests. If request contains a date without quotes, we fix this but this should not occurs.
 			$loop = true;
 			while ($loop) {

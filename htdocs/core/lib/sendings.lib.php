@@ -68,7 +68,7 @@ function shipping_prepare_head($object)
 		}
 	}
 
-	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
+	if (!getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
 		$objectsrc = $object;
 		if ($object->origin == 'commande' && $object->origin_id > 0) {
 			$objectsrc = new Commande($db);
@@ -169,7 +169,7 @@ function delivery_prepare_head($object)
 		$tmpobject = $object;
 	}
 
-	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
+	if (!getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
 		$objectsrc = $tmpobject;
 		if ($tmpobject->origin == 'commande' && $tmpobject->origin_id > 0) {
 			$objectsrc = new Commande($db);
@@ -319,7 +319,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 				// Description
 				if ($objp->fk_product > 0) {
 					// Define output language
-					if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
 						$object = new $origin($db);
 						$object->fetch($origin_id);
 						$object->fetch_thirdparty();

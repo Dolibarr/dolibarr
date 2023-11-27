@@ -168,7 +168,7 @@ class EvaluationLine extends CommonObjectLine
 		$this->db = $db;
 		$this->setPicto('evaluationdet@hrm');
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -718,7 +718,7 @@ class EvaluationLine extends CommonObjectLine
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowEvaluationdet");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -911,11 +911,11 @@ class EvaluationLine extends CommonObjectLine
 		global $langs, $conf;
 		$langs->load("hrm");
 
-		if (empty($conf->global->hrm_EVALUATIONLINE_ADDON)) {
+		if (!getDolGlobalString('hrm_EVALUATIONLINE_ADDON')) {
 			$conf->global->hrm_EVALUATIONLINE_ADDON = 'mod_evaluationdet_standard';
 		}
 
-		if (!empty($conf->global->hrm_EVALUATIONLINE_ADDON)) {
+		if (getDolGlobalString('hrm_EVALUATIONLINE_ADDON')) {
 			$mybool = false;
 
 			$file = getDolGlobalString('hrm_EVALUATIONLINE_ADDON') . ".php";
@@ -981,7 +981,7 @@ class EvaluationLine extends CommonObjectLine
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->EVALUATIONLINE_ADDON_PDF)) {
+			} elseif (getDolGlobalString('EVALUATIONLINE_ADDON_PDF')) {
 				$modele = $conf->global->EVALUATIONLINE_ADDON_PDF;
 			}
 		}

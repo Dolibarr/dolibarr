@@ -269,7 +269,7 @@ class BOM extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -873,7 +873,7 @@ class BOM extends CommonObject
 		global $langs, $conf;
 		$langs->load("mrp");
 
-		if (!empty($conf->global->BOM_ADDON)) {
+		if (getDolGlobalString('BOM_ADDON')) {
 			$mybool = false;
 
 			$file = getDolGlobalString('BOM_ADDON') . ".php";
@@ -1120,7 +1120,7 @@ class BOM extends CommonObject
 
 		$datas = [];
 
-		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			return ['optimize' => $langs->trans("ShowBillOfMaterials")];
 		}
 		$picto = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("BillOfMaterials").'</u>';
@@ -1193,7 +1193,7 @@ class BOM extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowBillOfMaterials");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -1347,7 +1347,7 @@ class BOM extends CommonObject
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->BOM_ADDON_PDF)) {
+			} elseif (getDolGlobalString('BOM_ADDON_PDF')) {
 				$modele = $conf->global->BOM_ADDON_PDF;
 			}
 		}
@@ -1787,7 +1787,7 @@ class BOMLine extends CommonObjectLine
 		$this->db = $db;
 		$this->setPicto('bomline');
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -1983,7 +1983,7 @@ class BOMLine extends CommonObjectLine
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowBillOfMaterialsLine");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}

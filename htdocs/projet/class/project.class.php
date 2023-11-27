@@ -368,18 +368,18 @@ class Project extends CommonObject
 
 		global $conf;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID')) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 
-		if (empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+		if (!getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 			$this->fields['fk_opp_status']['enabled'] = 0;
 			$this->fields['opp_percent']['enabled'] = 0;
 			$this->fields['opp_amount']['enabled'] = 0;
 			$this->fields['usage_opportunity']['enabled'] = 0;
 		}
 
-		if (!empty($conf->global->PROJECT_HIDE_TASKS)) {
+		if (getDolGlobalString('PROJECT_HIDE_TASKS')) {
 			$this->fields['usage_bill_time']['visible'] = 0;
 			$this->fields['usage_task']['visible'] = 0;
 		}
@@ -420,7 +420,7 @@ class Project extends CommonObject
 			dol_syslog(get_class($this)."::create error -1 ref null", LOG_ERR);
 			return -1;
 		}
-		if (!empty($conf->global->PROJECT_THIRDPARTY_REQUIRED) && !($this->socid > 0)) {
+		if (getDolGlobalString('PROJECT_THIRDPARTY_REQUIRED') && !($this->socid > 0)) {
 			$this->error = 'ErrorFieldsRequired';
 			dol_syslog(get_class($this)."::create error -1 thirdparty not defined and option PROJECT_THIRDPARTY_REQUIRED is set", LOG_ERR);
 			return -1;
@@ -1236,7 +1236,7 @@ class Project extends CommonObject
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			$sql .= " AND fk_statut = ".self::STATUS_VALIDATED;
 
-			if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+			if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 				// TODO What to do if fk_opp_status is not code 'WON' or 'LOST'
 			}
 
@@ -1379,7 +1379,7 @@ class Project extends CommonObject
 		}
 
 		$result = '';
-		if (!empty($conf->global->PROJECT_OPEN_ALWAYS_ON_TAB)) {
+		if (getDolGlobalString('PROJECT_OPEN_ALWAYS_ON_TAB')) {
 			$option = $conf->global->PROJECT_OPEN_ALWAYS_ON_TAB;
 		}
 		$params = [
@@ -1427,7 +1427,7 @@ class Project extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip) && $user->hasRight('projet', 'lire')) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowProject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -1731,7 +1731,7 @@ class Project extends CommonObject
 
 		//Generate next ref
 		$defaultref = '';
-		$obj = empty($conf->global->PROJECT_ADDON) ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
+		$obj = !getDolGlobalString('PROJECT_ADDON') ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
 		// Search template files
 		$file = ''; $classname = ''; $filefound = 0;
 		$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -2055,7 +2055,7 @@ class Project extends CommonObject
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->PROJECT_ADDON_PDF)) {
+			} elseif (getDolGlobalString('PROJECT_ADDON_PDF')) {
 				$modele = $conf->global->PROJECT_ADDON_PDF;
 			}
 		}

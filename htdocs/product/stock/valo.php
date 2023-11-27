@@ -118,7 +118,7 @@ if ($result) {
 			print '</td>';
 			// Selling value
 			print '<td class="right">';
-			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 				print price(price2num($objp->sellvalue, 'MT'), 1);
 			} else {
 				print $langs->trans("Variable");

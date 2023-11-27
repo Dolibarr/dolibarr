@@ -67,7 +67,7 @@ require_once DOL_DOCUMENT_ROOT."/comm/mailing/class/mailing.class.php";
 $version = DOL_VERSION;
 $error = 0;
 
-if (empty($conf->global->MAILING_LIMIT_SENDBYCLI)) {
+if (!getDolGlobalString('MAILING_LIMIT_SENDBYCLI')) {
 	$conf->global->MAILING_LIMIT_SENDBYCLI = 0;
 }
 
@@ -86,7 +86,7 @@ if (!isModEnabled('mailing')) {
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 
-if (!empty($conf->global->MAILING_DELAY)) {
+if (getDolGlobalString('MAILING_DELAY')) {
 	print 'A delay of '.((float) $conf->global->MAILING_DELAY).' seconds has been set between each email'."\n";
 }
 
@@ -150,9 +150,9 @@ if ($resql) {
 			$sql2 = "SELECT mc.rowid, mc.fk_mailing, mc.lastname, mc.firstname, mc.email, mc.other, mc.source_url, mc.source_id, mc.source_type, mc.tag";
 			$sql2 .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 			$sql2 .= " WHERE mc.statut < 1 AND mc.fk_mailing = ".((int) $id);
-			if ($conf->global->MAILING_LIMIT_SENDBYCLI > 0 && empty($max)) {
+			if (getDolGlobalInt('MAILING_LIMIT_SENDBYCLI') > 0 && empty($max)) {
 				$sql2 .= " LIMIT " . getDolGlobalString('MAILING_LIMIT_SENDBYCLI');
-			} elseif ($conf->global->MAILING_LIMIT_SENDBYCLI > 0 && $max > 0) {
+			} elseif (getDolGlobalInt('MAILING_LIMIT_SENDBYCLI') > 0 && $max > 0) {
 				$sql2 .= " LIMIT ".min($conf->global->MAILING_LIMIT_SENDBYCLI, $max);
 			} elseif ($max > 0) {
 				$sql2 .= " LIMIT ".((int) $max);
@@ -201,7 +201,7 @@ if ($resql) {
 						$other4 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
 						$tmpfield = explode('=', $other[4], 2);
 						$other5 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
-						$signature = ((!empty($user->signature) && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? $user->signature : '');
+						$signature = ((!empty($user->signature) && !getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? $user->signature : '');
 
 						$object = null; // Not defined with mass emailing
 						$parameters = array('mode' => 'emailing');
@@ -243,9 +243,9 @@ if ($resql) {
 						if (isModEnabled('stripe')) {
 							$onlinepaymentenabled++;
 						}
-						if ($onlinepaymentenabled && !empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
+						if ($onlinepaymentenabled && getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
 							$substitutionarray['__SECUREKEYPAYMENT__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
-							if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
+							if (!getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
 								$substitutionarray['__SECUREKEYPAYMENT_MEMBER__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
 								$substitutionarray['__SECUREKEYPAYMENT_ORDER__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
 								$substitutionarray['__SECUREKEYPAYMENT_INVOICE__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
@@ -258,28 +258,28 @@ if ($resql) {
 							}
 						}
 						/* For backward compatibility */
-						if (isModEnabled('paypal') && !empty($conf->global->PAYPAL_SECURITY_TOKEN)) {
+						if (isModEnabled('paypal') && getDolGlobalString('PAYPAL_SECURITY_TOKEN')) {
 							$substitutionarray['__SECUREKEYPAYPAL__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
 
-							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) {
+							if (!getDolGlobalString('PAYPAL_SECURITY_TOKEN_UNIQUE')) {
 								$substitutionarray['__SECUREKEYPAYPAL_MEMBER__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
 							} else {
 								$substitutionarray['__SECUREKEYPAYPAL_MEMBER__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN') . 'membersubscription'.$obj->source_id, 2);
 							}
 
-							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) {
+							if (!getDolGlobalString('PAYPAL_SECURITY_TOKEN_UNIQUE')) {
 								$substitutionarray['__SECUREKEYPAYPAL_ORDER__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
 							} else {
 								$substitutionarray['__SECUREKEYPAYPAL_ORDER__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN') . 'order'.$obj->source_id, 2);
 							}
 
-							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) {
+							if (!getDolGlobalString('PAYPAL_SECURITY_TOKEN_UNIQUE')) {
 								$substitutionarray['__SECUREKEYPAYPAL_INVOICE__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
 							} else {
 								$substitutionarray['__SECUREKEYPAYPAL_INVOICE__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN') . 'invoice'.$obj->source_id, 2);
 							}
 
-							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) {
+							if (!getDolGlobalString('PAYPAL_SECURITY_TOKEN_UNIQUE')) {
 								$substitutionarray['__SECUREKEYPAYPAL_CONTRACTLINE__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
 							} else {
 								$substitutionarray['__SECUREKEYPAYPAL_CONTRACTLINE__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN') . 'contractline'.$obj->source_id, 2);
@@ -383,7 +383,7 @@ if ($resql) {
 									}
 								}
 
-								if (!empty($conf->global->MAILING_DELAY)) {
+								if (getDolGlobalString('MAILING_DELAY')) {
 									usleep((float) $conf->global->MAILING_DELAY * 1000000);
 								}
 							}

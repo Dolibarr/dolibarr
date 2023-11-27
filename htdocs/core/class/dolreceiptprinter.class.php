@@ -694,7 +694,7 @@ class dolReceiptPrinter extends Printer
 		//print '<pre>'.print_r($vals, true).'</pre>';
 		// print ticket
 		$level = 0;
-		$nbcharactbyline = (!empty($conf->global->RECEIPT_PRINTER_NB_CHARACT_BY_LINE) ? $conf->global->RECEIPT_PRINTER_NB_CHARACT_BY_LINE : 48);
+		$nbcharactbyline = (getDolGlobalString('RECEIPT_PRINTER_NB_CHARACT_BY_LINE') ? $conf->global->RECEIPT_PRINTER_NB_CHARACT_BY_LINE : 48);
 		$ret = $this->initPrinter($printerid);
 		if ($ret > 0) {
 			setEventMessages($this->error, $this->errors, 'errors');

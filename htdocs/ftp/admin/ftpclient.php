@@ -206,7 +206,7 @@ if (!function_exists('ftp_connect')) {
 	print '<td>'.$langs->trans("FTPPassiveMode").'</td>';
 	$defaultpassive = GETPOST("FTP_PASSIVE_".($lastftpentry + 1));
 	if (!GETPOSTISSET("FTP_PASSIVE_".($lastftpentry + 1))) {
-		$defaultpassive = empty($conf->global->FTP_SUGGEST_PASSIVE_BYDEFAULT) ? 0 : 1;
+		$defaultpassive = !getDolGlobalString('FTP_SUGGEST_PASSIVE_BYDEFAULT') ? 0 : 1;
 	}
 	print '<td>'.$form->selectyesno('FTP_PASSIVE_'.($lastftpentry + 1), $defaultpassive, 2).'</td>';
 	print '<td>'.$langs->trans("No").'</td>';

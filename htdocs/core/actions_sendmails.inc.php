@@ -210,7 +210,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 			}
 		}
 
-		if (!empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)) {
+		if (getDolGlobalString('MAIN_MAIL_ENABLED_USER_DEST_SELECT')) {
 			$receiveruser = GETPOST('receiveruser', 'alphawithlgt');
 			if (is_array($receiveruser) && count($receiveruser) > 0) {
 				$fuserdest = new User($db);
@@ -251,7 +251,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 				}
 			}
 		}
-		if (!empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)) {
+		if (getDolGlobalString('MAIN_MAIL_ENABLED_USER_DEST_SELECT')) {
 			$receiverccuser = GETPOST('receiverccuser', 'alphawithlgt');
 
 			if (is_array($receiverccuser) && count($receiverccuser) > 0) {
@@ -390,7 +390,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 						$object->actiontypecode = $actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 						$object->actionmsg = $message; // Long text
 						$object->actionmsg2 = $actionmsg2; // Short text ($langs->transnoentities('MailSentBy')...);
-						if (!empty($conf->global->MAIN_MAIL_REPLACE_EVENT_TITLE_BY_EMAIL_SUBJECT)) {
+						if (getDolGlobalString('MAIN_MAIL_REPLACE_EVENT_TITLE_BY_EMAIL_SUBJECT')) {
 							$object->actionmsg2		= $subject; // Short text
 						}
 
@@ -400,7 +400,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 						if (is_array($attachedfiles) && count($attachedfiles) > 0) {
 							$object->attachedfiles = $attachedfiles;
 						}
-						if (is_array($sendtouserid) && count($sendtouserid) > 0 && !empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)) {
+						if (is_array($sendtouserid) && count($sendtouserid) > 0 && getDolGlobalString('MAIN_MAIL_ENABLED_USER_DEST_SELECT')) {
 							$object->sendtouserid = $sendtouserid;
 						}
 
@@ -452,7 +452,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 						}
 					} else {
 						$mesg .= $langs->transnoentities('ErrorFailedToSendMail', dol_escape_htmltag($from), dol_escape_htmltag($sendto));
-						if (!empty($conf->global->MAIN_DISABLE_ALL_MAILS)) {
+						if (getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
 							$mesg .= '<br>Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
 						} else {
 							$mesg .= '<br>Unkown Error, please refers to your administrator';
