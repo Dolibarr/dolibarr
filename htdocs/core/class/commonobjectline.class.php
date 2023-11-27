@@ -111,6 +111,11 @@ abstract class CommonObjectLine extends CommonObject
 	 */
 	public $qty;
 	public $duree;
+
+	/**
+	 * Percent of discount
+	 * @var float
+	 */
 	public $remise_percent;
 	public $info_bits;
 	public $special_code;

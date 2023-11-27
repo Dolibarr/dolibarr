@@ -2635,7 +2635,6 @@ class ExpeditionLigne extends CommonObjectLine
 	public $rang;
 
 	// Invoicing
-	public $remise_percent;
 	public $tva_tx;
 
 	/**

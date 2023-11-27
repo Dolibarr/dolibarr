@@ -136,12 +136,6 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $subprice;
 
 	/**
-	 * Percent line discount
-	 * @var float
-	 */
-	public $remise_percent;
-
-	/**
 	 * VAT code
 	 * @var string
 	 */

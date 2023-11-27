@@ -2818,7 +2818,6 @@ class SupplierProposalLine extends CommonObjectLine
 	public $vat_src_code;
 
 	public $subprice;
-	public $remise_percent;
 
 	/**
 	 * @var int ID

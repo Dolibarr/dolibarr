@@ -1879,12 +1879,6 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	public $localtax2_type;
 
 	/**
-	 * Percent of discount
-	 * @var float
-	 */
-	public $remise_percent;
-
-	/**
 	 * Fixed discount
 	 * @var float
 	 * @deprecated

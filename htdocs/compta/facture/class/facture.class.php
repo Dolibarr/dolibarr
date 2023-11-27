@@ -6033,8 +6033,6 @@ class FactureLigne extends CommonInvoiceLine
 	 */
 	public $tva_npr;
 
-	public $remise_percent;
-
 	/**
 	 * List of special options to define line:
 	 * 1: shipment cost lines

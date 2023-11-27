@@ -3008,7 +3008,6 @@ class ContratLigne extends CommonObjectLine
 	public $localtax2_tx;
 	public $localtax1_type; // Local tax 1 type
 	public $localtax2_type; // Local tax 2 type
-	public $remise_percent;
 	public $remise;
 
 	/**
