@@ -248,6 +248,7 @@ if ($user->hasRight('banque', 'consolidate') && ($action == 'num_releve' || $act
 		$object->fetch($rowid);
 		$oldNum_rel = $object->num_releve;
 		$id = $object->fk_account;
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
 		$sql .= " SET num_releve = ".($num_rel ? "'".$db->escape($num_rel)."'" : "null");
 		if (empty($num_rel)) {
@@ -261,12 +262,26 @@ if ($user->hasRight('banque', 'consolidate') && ($action == 'num_releve' || $act
 		$result = $db->query($sql);
 		if ($result) {
 			$filepath = "bank/".$id."/statement/".dol_sanitizeFileName($num_rel);
+			$getFullPath = "SELECT fullpath_orig FROM ".MAIN_DB_PREFIX."ecm_files";
+			$getFullPath .= " WHERE filepath = 'bank/".$id."/statement/".$oldNum_rel."'";
+			$rslt = $db->query($getFullPath);
+
+			if ($rslt) {
+				$obj = $db->fetch_object($rslt);
+				$fullpath = $obj->fullpath_orig;
+			}
+
+			$fullpathUpdated = str_replace($oldNum_rel, dol_sanitizeFileName($num_rel), $fullpath);
+
 			$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_files";
 			$sql .= " SET filepath = '".($filepath)."'";
+			$sql .= ", fullpath_orig = '".($fullpathUpdated)."'";
 			$sql .= " WHERE filepath = 'bank/".$id."/statement/".$oldNum_rel."'";
 			$updatePathFile = $db->query($sql);
+
 			$srcdir = DOL_DATA_ROOT."/bank/".$id."/statement/".dol_sanitizeFileName($oldNum_rel);
 			$destdir = DOL_DATA_ROOT."/bank/".$id."/statement/".dol_sanitizeFileName($num_rel)."/";
+
 			if (dol_is_dir($srcdir)) {
 				$update_dir = dol_move_dir($srcdir, $destdir, 1);
 			} else {
