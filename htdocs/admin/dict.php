@@ -531,7 +531,7 @@ $tabcond[39] = (isModEnabled("societe") && !getDolGlobalString('SOCIETE_DISABLE_
 $tabcond[40] = (isModEnabled("societe") && getDolGlobalString('THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES'));
 $tabcond[41] = isModEnabled('intracommreport');
 $tabcond[42] = isModEnabled("product");
-$tabcond[43] = isModEnabled("product") && isModEnabled('productbatch') && $conf->global->MAIN_FEATURES_LEVEL >= 2;
+$tabcond[43] = isModEnabled("product") && isModEnabled('productbatch') && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2;
 $tabcond[44] = isModEnabled('asset');
 
 // List of help for fields (no more used, help is defined into tabcomplete)
@@ -662,7 +662,7 @@ if ($id == 11) {
 		'order_supplier' => img_picto('', 'supplier_order', 'class="pictofixedwidth"').$langs->trans('SupplierOrder'),
 		'invoice_supplier' => img_picto('', 'supplier_invoice', 'class="pictofixedwidth"').$langs->trans('SupplierBill'),
 	);
-	if (getDolGlobalString('MAIN_FEATURES_LEVEL') && $conf->global->MAIN_FEATURES_LEVEL >= 2) {
+	if (getDolGlobalString('MAIN_FEATURES_LEVEL') && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		$elementList['conferenceorbooth'] = img_picto('', 'eventorganization', 'class="pictofixedwidth"').$langs->trans('ConferenceOrBooth');
 	}
 

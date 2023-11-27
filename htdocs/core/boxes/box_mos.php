@@ -132,7 +132,7 @@ class box_mos extends ModeleBoxes
 						'asis' => 1,
 					);
 
-					if (!empty($conf->global->MRP_BOX_LAST_MOS_SHOW_VALIDATE_USER)) {
+					if (getDolGlobalString('MRP_BOX_LAST_MOS_SHOW_VALIDATE_USER')) {
 						if ($objp->fk_user_valid > 0) {
 							$userstatic->fetch($objp->fk_user_valid);
 						}

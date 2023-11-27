@@ -221,7 +221,7 @@ class modPropale extends DolibarrModules
 			'p.rowid'=>'ProductId', 'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel'
 		));
 		// Add multicompany field
-		if (!empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {
+		if (getDolGlobalString('MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED')) {
 			$nbofallowedentities = count(explode(',', getEntity('propal')));
 			if (isModEnabled('multicompany') && $nbofallowedentities > 1) {
 				$this->export_fields_array[$r]['c.entity'] = 'Entity';
@@ -368,8 +368,8 @@ class modPropale extends DolibarrModules
 		$this->import_convertvalue_array[$r] = array(
 			'c.ref' => array(
 				'rule'=>'getrefifauto',
-				'class'=>(empty($conf->global->PROPALE_ADDON) ? 'mod_propale_marbre' : $conf->global->PROPALE_ADDON),
-				'path'=>"/core/modules/propale/".(empty($conf->global->PROPALE_ADDON) ? 'mod_propale_marbre' : $conf->global->PROPALE_ADDON).'.php',
+				'class'=>(!getDolGlobalString('PROPALE_ADDON') ? 'mod_propale_marbre' : $conf->global->PROPALE_ADDON),
+				'path'=>"/core/modules/propale/".(!getDolGlobalString('PROPALE_ADDON') ? 'mod_propale_marbre' : $conf->global->PROPALE_ADDON).'.php',
 				'classobject'=>'Propal',
 				'pathobject'=>'/comm/propal/class/propal.class.php',
 			),

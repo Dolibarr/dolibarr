@@ -45,7 +45,7 @@ function facture_prepare_head($object)
 	$head[$h][2] = 'compta';
 	$h++;
 
-	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
+	if (!getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
 		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
 		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/contact.php?id='.urlencode($object->id);
 		$head[$h][1] = $langs->trans('ContactsAddresses');
@@ -88,7 +88,7 @@ function facture_prepare_head($object)
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'invoice', 'add', 'core');
 
-	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
+	if (!getDolGlobalString('MAIN_DISABLE_NOTES_TAB')) {
 		$nbNote = 0;
 		if (!empty($object->note_private)) {
 			$nbNote++;
@@ -491,7 +491,7 @@ function getCustomerInvoiceDraftTable($maxCount = 500, $socid = 0)
 	$result = '';
 
 	if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
-		$maxofloop = (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD);
+		$maxofloop = (!getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD);
 
 		$tmpinvoice = new Facture($db);
 
@@ -641,7 +641,7 @@ function getDraftSupplierTable($maxCount = 500, $socid = 0)
 	$result = '';
 
 	if ((isModEnabled('fournisseur') || isModEnabled('supplier_invoice')) && $user->hasRight('facture', 'lire')) {
-		$maxofloop = (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD);
+		$maxofloop = (!getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD);
 
 		$facturesupplierstatic = new FactureFournisseur($db);
 
@@ -1043,7 +1043,7 @@ function getCustomerInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 			print '</th>';
 
 			print '<th class="right">'.$langs->trans("DateDue").'</th>';
-			if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
+			if (getDolGlobalString('MAIN_SHOW_HT_ON_SUMMARY')) {
 				print '<th class="right">'.$langs->trans("AmountHT").'</th>';
 			}
 			print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
@@ -1110,7 +1110,7 @@ function getCustomerInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 						print img_warning($langs->trans("Late"));
 					}
 					print '</td>';
-					if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
+					if (getDolGlobalString('MAIN_SHOW_HT_ON_SUMMARY')) {
 						print '<td class="right"><span class="amount">'.price($obj->total_ht).'</span></td>';
 					}
 					print '<td class="nowrap right"><span class="amount">'.price($obj->total_ttc).'</span></td>';
@@ -1127,7 +1127,7 @@ function getCustomerInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 
 				if ($othernb) {
 					$colspan = 6;
-					if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
+					if (getDolGlobalString('MAIN_SHOW_HT_ON_SUMMARY')) {
 						$colspan++;
 					}
 					print '<tr class="oddeven">';
@@ -1139,7 +1139,7 @@ function getCustomerInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 
 				print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <span style="font-weight: normal">('.$langs->trans("RemainderToTake").': '.price($total_ttc - $totalam).')</span> </td>';
 				print '<td>&nbsp;</td>';
-				if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
+				if (getDolGlobalString('MAIN_SHOW_HT_ON_SUMMARY')) {
 					print '<td class="right"><span class="amount">'.price($total).'</span></td>';
 				}
 				print '<td class="nowrap right"><span class="amount">'.price($total_ttc).'</span></td>';
@@ -1148,7 +1148,7 @@ function getCustomerInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 				print '</tr>';
 			} else {
 				$colspan = 6;
-				if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
+				if (getDolGlobalString('MAIN_SHOW_HT_ON_SUMMARY')) {
 					$colspan++;
 				}
 				print '<tr class="oddeven"><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
@@ -1230,7 +1230,7 @@ function getPurchaseInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 			print '</th>';
 
 			print '<th class="right">'.$langs->trans("DateDue").'</th>';
-			if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
+			if (getDolGlobalString('MAIN_SHOW_HT_ON_SUMMARY')) {
 				print '<th class="right">'.$langs->trans("AmountHT").'</th>';
 			}
 			print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
@@ -1277,7 +1277,7 @@ function getPurchaseInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 					print '</td>';
 					print '<td class="nowrap tdoverflowmax100">'.$societestatic->getNomUrl(1, 'supplier').'</td>';
 					print '<td class="right">'.dol_print_date($db->jdate($obj->date_lim_reglement), 'day').'</td>';
-					if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
+					if (getDolGlobalString('MAIN_SHOW_HT_ON_SUMMARY')) {
 						print '<td class="right"><span class="amount">'.price($obj->total_ht).'</span></td>';
 					}
 					print '<td class="nowrap right"><span class="amount">'.price($obj->total_ttc).'</span></td>';
@@ -1292,7 +1292,7 @@ function getPurchaseInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 
 				if ($othernb) {
 					$colspan = 6;
-					if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
+					if (getDolGlobalString('MAIN_SHOW_HT_ON_SUMMARY')) {
 						$colspan++;
 					}
 					print '<tr class="oddeven">';
@@ -1304,7 +1304,7 @@ function getPurchaseInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 
 				print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <span style="font-weight: normal">('.$langs->trans("RemainderToPay").': '.price($total_ttc - $totalam).')</span> </td>';
 				print '<td>&nbsp;</td>';
-				if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
+				if (getDolGlobalString('MAIN_SHOW_HT_ON_SUMMARY')) {
 					print '<td class="right">'.price($total).'</td>';
 				}
 				print '<td class="nowrap right">'.price($total_ttc).'</td>';
@@ -1313,7 +1313,7 @@ function getPurchaseInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 				print '</tr>';
 			} else {
 				$colspan = 6;
-				if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
+				if (getDolGlobalString('MAIN_SHOW_HT_ON_SUMMARY')) {
 					$colspan++;
 				}
 				print '<tr class="oddeven"><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';

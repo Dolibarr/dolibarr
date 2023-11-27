@@ -1024,7 +1024,7 @@ class Don extends CommonObject
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->DON_ADDON_MODEL)) {
+			} elseif (getDolGlobalString('DON_ADDON_MODEL')) {
 				$modele = $conf->global->DON_ADDON_MODEL;
 			}
 		}

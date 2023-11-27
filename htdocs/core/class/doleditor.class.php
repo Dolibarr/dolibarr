@@ -83,7 +83,7 @@ class DolEditor
 
 		// Name of extended editor to use (FCKEDITOR_EDITORNAME can be 'ckeditor' or 'fckeditor')
 		$defaulteditor = 'ckeditor';
-		$this->tool = empty($conf->global->FCKEDITOR_EDITORNAME) ? $defaulteditor : $conf->global->FCKEDITOR_EDITORNAME;
+		$this->tool = !getDolGlobalString('FCKEDITOR_EDITORNAME') ? $defaulteditor : $conf->global->FCKEDITOR_EDITORNAME;
 		$this->uselocalbrowser = $uselocalbrowser;
 		$this->readonly = $readonly;
 
@@ -136,7 +136,7 @@ class DolEditor
 
 		$fullpage = false;
 		if (isset($conf->global->FCKEDITOR_ALLOW_ANY_CONTENT)) {
-			$disallowAnyContent = empty($conf->global->FCKEDITOR_ALLOW_ANY_CONTENT); // Only predefined list of html tags are allowed or all
+			$disallowAnyContent = !getDolGlobalString('FCKEDITOR_ALLOW_ANY_CONTENT'); // Only predefined list of html tags are allowed or all
 		}
 
 		$found = 0;
@@ -165,17 +165,17 @@ class DolEditor
 				if (!empty($conf->dol_optimize_smallscreen)) {
 					$pluginstodisable .= ',scayt,wsc,find,undo';
 				}
-				if (empty($conf->global->FCKEDITOR_ENABLE_WSC)) {	// spellchecker has end of life december 2021
+				if (!getDolGlobalString('FCKEDITOR_ENABLE_WSC')) {	// spellchecker has end of life december 2021
 					$pluginstodisable .= ',wsc';
 				}
-				if (empty($conf->global->FCKEDITOR_ENABLE_PDF)) {
+				if (!getDolGlobalString('FCKEDITOR_ENABLE_PDF')) {
 					$pluginstodisable .= ',exportpdf';
 				}
-				if (!empty($conf->global->MAIN_DISALLOW_URL_INTO_DESCRIPTIONS)) {
+				if (getDolGlobalString('MAIN_DISALLOW_URL_INTO_DESCRIPTIONS')) {
 					$this->uselocalbrowser = 0;	// Can't use browser to navigate into files. Only links with "<img src=data:..." are allowed.
 				}
 				$scaytautostartup = '';
-				if (!empty($conf->global->FCKEDITOR_ENABLE_SCAYT_AUTOSTARTUP)) {
+				if (getDolGlobalString('FCKEDITOR_ENABLE_SCAYT_AUTOSTARTUP')) {
 					$scaytautostartup = 'scayt_autoStartup: true,';
 					$scaytautostartup .= 'scayt_sLang: \''.dol_escape_js($langs->getDefaultLang()).'\',';
 				} else {
@@ -222,7 +222,7 @@ class DolEditor
                                                     });
                                                 }
                                           },
-									disableNativeSpellChecker: '.(empty($conf->global->CKEDITOR_NATIVE_SPELLCHECKER) ? 'true' : 'false');
+									disableNativeSpellChecker: '.(!getDolGlobalString('CKEDITOR_NATIVE_SPELLCHECKER') ? 'true' : 'false');
 
 				if ($this->uselocalbrowser) {
 					$out .= ','."\n";

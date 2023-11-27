@@ -61,7 +61,7 @@ class box_customers_outstanding_bill_reached extends ModeleBoxes
 		$this->db = $db;
 
 		// disable box for such cases
-		if (!empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
+		if (getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS')) {
 			$this->enabled = 0; // disabled by this option
 		}
 

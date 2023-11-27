@@ -99,7 +99,7 @@ function length_accountg($account)
 		return '';
 	}
 
-	if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
+	if (getDolGlobalString('ACCOUNTING_MANAGE_ZERO')) {
 		return $account;
 	}
 
@@ -138,7 +138,7 @@ function length_accounta($accounta)
 		return '';
 	}
 
-	if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
+	if (getDolGlobalString('ACCOUNTING_MANAGE_ZERO')) {
 		return $accounta;
 	}
 

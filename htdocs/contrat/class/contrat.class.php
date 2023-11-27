@@ -296,7 +296,7 @@ class Contrat extends CommonObject
 		global $db, $langs, $conf;
 		$langs->load("contracts");
 
-		if (!empty($conf->global->CONTRACT_ADDON)) {
+		if (getDolGlobalString('CONTRACT_ADDON')) {
 			$mybool = false;
 
 			$file = getDolGlobalString('CONTRACT_ADDON') . ".php";
@@ -511,7 +511,7 @@ class Contrat extends CommonObject
 		$this->fetch_thirdparty();
 
 		// A contract is validated so we can move thirdparty to status customer
-		if (empty($conf->global->CONTRACT_DISABLE_AUTOSET_AS_CLIENT_ON_CONTRACT_VALIDATION) && $this->thirdparty->fournisseur == 0) {
+		if (!getDolGlobalString('CONTRACT_DISABLE_AUTOSET_AS_CLIENT_ON_CONTRACT_VALIDATION') && $this->thirdparty->fournisseur == 0) {
 			$result = $this->thirdparty->setAsCustomer();
 		}
 
@@ -1027,7 +1027,7 @@ class Contrat extends CommonObject
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."contrat");
 
 			// Load object modContract
-			$module = (!empty($conf->global->CONTRACT_ADDON) ? $conf->global->CONTRACT_ADDON : 'mod_contract_serpis');
+			$module = (getDolGlobalString('CONTRACT_ADDON') ? $conf->global->CONTRACT_ADDON : 'mod_contract_serpis');
 			if (substr($module, 0, 13) == 'mod_contract_' && substr($module, -3) == 'php') {
 				$module = substr($module, 0, dol_strlen($module) - 4);
 			}
@@ -1097,7 +1097,7 @@ class Contrat extends CommonObject
 					}
 				}
 
-				if (!$error && $this->id && !empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN) && !empty($this->origin) && !empty($this->origin_id)) {   // Get contact from origin object
+				if (!$error && $this->id && getDolGlobalString('MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN') && !empty($this->origin) && !empty($this->origin_id)) {   // Get contact from origin object
 					$originforcontact = $this->origin;
 					$originidforcontact = $this->origin_id;
 					if ($originforcontact == 'shipping') {     // shipment and order share the same contacts. If creating from shipment we take data of order
@@ -2041,7 +2041,7 @@ class Contrat extends CommonObject
 		$datas = [];
 		$nofetch = !empty($params['nofetch']);
 
-		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			return ['optimize' => $langs->trans("ShowContract")];
 		}
 		if ($user->hasRight('contrat', 'lire')) {
@@ -2127,7 +2127,7 @@ class Contrat extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip) && $user->hasRight('contrat', 'lire')) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowContract");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -2552,7 +2552,7 @@ class Contrat extends CommonObject
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->CONTRACT_ADDON_PDF)) {
+			} elseif (getDolGlobalString('CONTRACT_ADDON_PDF')) {
 				$modele = $conf->global->CONTRACT_ADDON_PDF;
 			}
 		}
@@ -2645,7 +2645,7 @@ class Contrat extends CommonObject
 			}
 		}
 
-		if (empty($conf->global->CONTRACT_ADDON) || !is_readable(DOL_DOCUMENT_ROOT."/core/modules/contract/" . getDolGlobalString('CONTRACT_ADDON').".php")) {
+		if (!getDolGlobalString('CONTRACT_ADDON') || !is_readable(DOL_DOCUMENT_ROOT."/core/modules/contract/" . getDolGlobalString('CONTRACT_ADDON').".php")) {
 			$this->error = 'ErrorSetupNotComplete';
 			dol_syslog($this->error);
 			return -1;
@@ -3558,7 +3558,7 @@ class ContratLigne extends CommonObjectLine
 		}
 
 		// If we change a planned date (start or end) of one contract line, sync dates for all other services too
-		if (!$error && !empty($conf->global->CONTRACT_SYNC_PLANNED_DATE_OF_SERVICES)) {
+		if (!$error && getDolGlobalString('CONTRACT_SYNC_PLANNED_DATE_OF_SERVICES')) {
 			dol_syslog(get_class($this)."::update CONTRACT_SYNC_PLANNED_DATE_OF_SERVICES is on so we update date for all lines", LOG_DEBUG);
 
 			if ($this->date_start != $this->oldcopy->date_start) {
