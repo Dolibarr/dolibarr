@@ -253,9 +253,10 @@ abstract class CommonObjectLine extends CommonObject
 	 * Empty function to prevent errors on call of this function must be overload if usefull
 	 *
 	 * @param string $picto picto name off the object
-	 * @return Void
+	 * @return int 1
 	 */
 	public function setPicto(String $picto) {
 		$this->picto = $picto;
+		return 1;
 	}
 }
