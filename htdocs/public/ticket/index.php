@@ -75,7 +75,7 @@ if (!isModEnabled('ticket')) {
 $form = new Form($db);
 $formticket = new FormTicket($db);
 
-if (empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
+if (!getDolGlobalString('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 	print $langs->trans('TicketPublicInterfaceForbidden');
 	exit;
 }

@@ -241,7 +241,7 @@ if ($id > 0 || !empty($ref)) {
 
 		dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', '');
 
-		if ($object->type != Product::TYPE_SERVICE || !empty($conf->global->STOCK_SUPPORTS_SERVICES) || empty($conf->global->PRODUIT_MULTIPRICES)) {
+		if ($object->type != Product::TYPE_SERVICE || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || !getDolGlobalString('PRODUIT_MULTIPRICES')) {
 			print '<div class="fichecenter">';
 			print '<div class="fichehalfleft">';
 			print '<div class="underbanner clearboth"></div>';
@@ -252,7 +252,7 @@ if ($id > 0 || !empty($ref)) {
 			if (isModEnabled("product") && isModEnabled("service")) {
 				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 				print '<tr><td class="titlefield">';
-				print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat) : $langs->trans('Type');
+				print (!getDolGlobalString('PRODUCT_DENY_CHANGE_PRODUCT_TYPE')) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat) : $langs->trans('Type');
 				print '</td><td>';
 				print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat);
 				print '</td></tr>';
@@ -267,7 +267,7 @@ if ($id > 0 || !empty($ref)) {
 
 			// Nature
 			if ($object->type != Product::TYPE_SERVICE) {
-				if (empty($conf->global->PRODUCT_DISABLE_NATURE)) {
+				if (!getDolGlobalString('PRODUCT_DISABLE_NATURE')) {
 					print '<tr><td>'.$form->textwithpicto($langs->trans("NatureOfProductShort"), $langs->trans("NatureOfProductDesc")).'</td><td>';
 					print $object->getLibFinished();
 					//print $formproduct->selectProductNature('finished', $object->finished);
@@ -275,7 +275,7 @@ if ($id > 0 || !empty($ref)) {
 				}
 			}
 
-			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 				// Price
 				print '<tr><td class="titlefield">'.$langs->trans("SellingPrice").'</td><td>';
 				if ($object->price_base_type == 'TTC') {
@@ -445,7 +445,7 @@ if ($id > 0 || !empty($ref)) {
 
 					// Best selling price
 					$pricesell = $productstatic->price;
-					if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+					if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 						$pricesell = 'Variable';
 					} else {
 						$totallinesell = price2num($value['nb'] * ($pricesell), 'MT');
@@ -480,7 +480,7 @@ if ($id > 0 || !empty($ref)) {
 					print '</tr>'."\n";
 				} else {
 					$hide = '';
-					if (empty($conf->global->PRODUCT_SHOW_SUB_SUB_PRODUCTS)) {
+					if (!getDolGlobalString('PRODUCT_SHOW_SUB_SUB_PRODUCTS')) {
 						$hide = ' hideobject'; // By default, we do not show this. It makes screen very difficult to understand
 					}
 

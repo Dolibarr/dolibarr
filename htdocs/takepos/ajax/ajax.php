@@ -219,7 +219,7 @@ if ($action == 'getProducts') {
 						$objProd->fetch($obj->rowid);
 
 						$ig = '../public/theme/common/nophoto.png';
-						if (empty($conf->global->TAKEPOS_HIDE_PRODUCT_IMAGES)) {
+						if (!getDolGlobalString('TAKEPOS_HIDE_PRODUCT_IMAGES')) {
 							$image = $objProd->show_photos('product', $conf->product->multidir_output[$objProd->entity], 'small', 1);
 
 							$match = array();

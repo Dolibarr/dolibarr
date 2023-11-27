@@ -91,8 +91,8 @@ if ($conf->browser->layout == 'phone') {
 		exit;
 	}
 }
-$MAXCATEG = (empty($conf->global->TAKEPOS_NB_MAXCATEG) ? $maxcategbydefaultforthisdevice : $conf->global->TAKEPOS_NB_MAXCATEG);
-$MAXPRODUCT = (empty($conf->global->TAKEPOS_NB_MAXPRODUCT) ? $maxproductbydefaultforthisdevice : $conf->global->TAKEPOS_NB_MAXPRODUCT);
+$MAXCATEG = (!getDolGlobalString('TAKEPOS_NB_MAXCATEG') ? $maxcategbydefaultforthisdevice : $conf->global->TAKEPOS_NB_MAXCATEG);
+$MAXPRODUCT = (!getDolGlobalString('TAKEPOS_NB_MAXPRODUCT') ? $maxproductbydefaultforthisdevice : $conf->global->TAKEPOS_NB_MAXPRODUCT);
 
 /*
  $constforcompanyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
@@ -124,7 +124,7 @@ if (getDolGlobalInt('TAKEPOS_COLOR_THEME') == 1) {
 
 // Title
 $title = 'TakePOS - Dolibarr '.DOL_VERSION;
-if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 	$title = 'TakePOS - ' . getDolGlobalString('MAIN_APPLICATION_TITLE');
 }
 $head = '<meta name="apple-mobile-web-app-title" content="TakePOS"/>
@@ -492,7 +492,7 @@ function ClickProduct(position, qty = 1) {
 		if (idproduct=="") return;
 		// Call page invoice.php to generate the section with product lines
 		$("#poslines").load("invoice.php?action=addline&token=<?php echo newToken() ?>&place="+place+"&idproduct="+idproduct+"&selectedline="+selectedline+"&qty="+qty, function() {
-			<?php if (!empty($conf->global->TAKEPOS_CUSTOMER_DISPLAY)) echo "CustomerDisplay();";?>
+			<?php if (getDolGlobalString('TAKEPOS_CUSTOMER_DISPLAY')) echo "CustomerDisplay();";?>
 		});
 	}
 
@@ -1031,7 +1031,7 @@ $keyCodeForEnter = getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION
 <div class="container">
 
 <?php
-if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
+if (!getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 	?>
 	<div class="header">
 		<div id="topnav" class="topnav">
@@ -1105,7 +1105,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 	<div class="modal-content">
 		<div class="modal-header">
 		<?php
-		if (empty($conf->global->TAKEPOS_FORCE_TERMINAL_SELECT)) {
+		if (!getDolGlobalString('TAKEPOS_FORCE_TERMINAL_SELECT')) {
 			?>
 			<span class="close" href="#" onclick="document.getElementById('ModalTerminal').style.display = 'none';">&times;</span>
 		<?php } ?>
@@ -1175,7 +1175,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 </div>
 </div>
 
-	<div class="row1<?php if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
+	<div class="row1<?php if (!getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 		print 'withhead';
 					} ?>">
 
@@ -1250,14 +1250,14 @@ if (count($maincategories) == 0) {
 $menus = array();
 $r = 0;
 
-if (empty($conf->global->TAKEPOS_BAR_RESTAURANT)) {
+if (!getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
 	$menus[$r++] = array('title'=>'<span class="fa fa-layer-group paddingrightonly"></span><div class="trunc">'.$langs->trans("New").'</div>', 'action'=>'New();');
 } else {
 	// BAR RESTAURANT specific menu
 	$menus[$r++] = array('title'=>'<span class="fa fa-layer-group paddingrightonly"></span><div class="trunc">'.$langs->trans("Place").'</div>', 'action'=>'Floors();');
 }
 
-if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
+if (getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 	if (getDolGlobalString('TAKEPOS_CHOOSE_CONTACT')) {
 		$menus[$r++] = array('title'=>'<span class="far fa-building paddingrightonly"></span><div class="trunc">'.$langs->trans("Contact").'</div>', 'action'=>'Contact();');
 	} else {
@@ -1356,11 +1356,11 @@ if ($r % 3 == 2) {
 	$menus[$r++] = array('title'=>'', 'style'=>'visibility: hidden;');
 }
 
-if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
+if (getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 	$menus[$r++] = array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Logout").'</div>', 'action'=>'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php?token='.newToken().'\';');
 }
 
-if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
+if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
 	$menus[$r++] = array('title'=>'<span class="fa fa-balance-scale paddingrightonly"></span><div class="trunc">'.$langs->trans("WeighingScale").'</div>', 'action'=>'WeighingScale();');
 }
 
@@ -1381,7 +1381,7 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 			}
 		}
 
-		if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
+		if (getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 			print '<!-- Show the search input text -->'."\n";
 			print '<div class="margintoponly">';
 			print '<input type="text" id="search" class="input-nobottom" name="search" onkeyup="Search2(\''.dol_escape_js($keyCodeForEnter).'\', null);" style="width: 80%; width:calc(100% - 51px); font-size: 150%;" placeholder="'.dol_escape_htmltag($langs->trans("Search")).'" autofocus> ';
@@ -1392,7 +1392,7 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 		</div>
 	</div>
 
-	<div class="row2<?php if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
+	<div class="row2<?php if (!getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 		print 'withhead';
 					} ?>">
 

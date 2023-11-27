@@ -166,7 +166,7 @@ class Reception extends CommonObject
 		global $langs, $conf;
 		$langs->load("receptions");
 
-		if (!empty($conf->global->RECEPTION_ADDON_NUMBER)) {
+		if (getDolGlobalString('RECEPTION_ADDON_NUMBER')) {
 			$mybool = false;
 
 			$file = $conf->global->RECEPTION_ADDON_NUMBER.".php";
@@ -2003,7 +2003,7 @@ class Reception extends CommonObject
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->RECEPTION_ADDON_PDF)) {
+			} elseif (getDolGlobalString('RECEPTION_ADDON_PDF')) {
 				$modele = $conf->global->RECEPTION_ADDON_PDF;
 			}
 		}

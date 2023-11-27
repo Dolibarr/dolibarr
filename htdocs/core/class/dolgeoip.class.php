@@ -52,7 +52,7 @@ class DolGeoIP
 		global $conf;
 
 		$geoipversion = '2'; // 'php', or geoip version '2'
-		if (!empty($conf->global->GEOIP_VERSION)) {
+		if (getDolGlobalString('GEOIP_VERSION')) {
 			$geoipversion = $conf->global->GEOIP_VERSION;
 		}
 
@@ -121,7 +121,7 @@ class DolGeoIP
 		global $conf;
 
 		$geoipversion = '2'; // 'php', or '2'
-		if (!empty($conf->global->GEOIP_VERSION)) {
+		if (getDolGlobalString('GEOIP_VERSION')) {
 			$geoipversion = $conf->global->GEOIP_VERSION;
 		}
 
@@ -179,7 +179,7 @@ class DolGeoIP
 		global $conf;
 
 		$geoipversion = '2'; // 'php', or '2'
-		if (!empty($conf->global->GEOIP_VERSION)) {
+		if (getDolGlobalString('GEOIP_VERSION')) {
 			$geoipversion = $conf->global->GEOIP_VERSION;
 		}
 
@@ -210,7 +210,7 @@ class DolGeoIP
 		global $conf;
 
 		$geoipversion = '2'; // 'php', or '2'
-		if (!empty($conf->global->GEOIP_VERSION)) {
+		if (getDolGlobalString('GEOIP_VERSION')) {
 			$geoipversion = $conf->global->GEOIP_VERSION;
 		}
 

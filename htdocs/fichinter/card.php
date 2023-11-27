@@ -47,7 +47,7 @@ if (isModEnabled('contrat')) {
 	require_once DOL_DOCUMENT_ROOT."/core/class/html.formcontract.class.php";
 	require_once DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php";
 }
-if (!empty($conf->global->FICHEINTER_ADDON) && is_readable(DOL_DOCUMENT_ROOT."/core/modules/fichinter/mod_" . getDolGlobalString('FICHEINTER_ADDON').".php")) {
+if (getDolGlobalString('FICHEINTER_ADDON') && is_readable(DOL_DOCUMENT_ROOT."/core/modules/fichinter/mod_" . getDolGlobalString('FICHEINTER_ADDON').".php")) {
 	require_once DOL_DOCUMENT_ROOT."/core/modules/fichinter/mod_" . getDolGlobalString('FICHEINTER_ADDON').'.php';
 }
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -76,9 +76,9 @@ $lineid = GETPOST('line_id', 'int');
 $error = 0;
 
 //PDF
-$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
-$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
-$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
+$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0));
+$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0));
+$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0));
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('interventioncard', 'globalcard'));
@@ -177,7 +177,7 @@ if (empty($reshook)) {
 		$result = $object->setValid($user);
 
 		if ($result >= 0) {
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				// Define output language
 				$outputlangs = $langs;
 				$newlang = '';
@@ -202,7 +202,7 @@ if (empty($reshook)) {
 	} elseif ($action == 'confirm_modify' && $confirm == 'yes' && $user->hasRight('ficheinter', 'creer')) {
 		$result = $object->setDraft($user);
 		if ($result >= 0) {
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				// Define output language
 				$outputlangs = $langs;
 				$newlang = '';
@@ -228,7 +228,7 @@ if (empty($reshook)) {
 		$result = $object->setClose($user);
 
 		if ($result >= 0) {
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				// Define output language
 				$outputlangs = $langs;
 				$newlang = '';
@@ -335,7 +335,7 @@ if (empty($reshook)) {
 
 								$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : Product::TYPE_PRODUCT);
 
-								if ($product_type == Product::TYPE_SERVICE || !empty($conf->global->FICHINTER_PRINT_PRODUCTS)) { //only services except if config includes products
+								if ($product_type == Product::TYPE_SERVICE || getDolGlobalString('FICHINTER_PRINT_PRODUCTS')) { //only services except if config includes products
 									$duration = 3600; // Default to one hour
 
 									// Predefined products & services
@@ -344,7 +344,7 @@ if (empty($reshook)) {
 										$prod->id = $lines[$i]->fk_product;
 
 										// Define output language
-										if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+										if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
 											$prod->getMultiLangs();
 											// We show if duration is present on service (so we get it)
 											$prod->fetch($lines[$i]->fk_product);
@@ -515,15 +515,15 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == "addline" && $user->hasRight('ficheinter', 'creer')) {
 		// Add line
-		if (!GETPOST('np_desc', 'restricthtml') && empty($conf->global->FICHINTER_EMPTY_LINE_DESC)) {
+		if (!GETPOST('np_desc', 'restricthtml') && !getDolGlobalString('FICHINTER_EMPTY_LINE_DESC')) {
 			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Description"));
 			$error++;
 		}
-		if (empty($conf->global->FICHINTER_WITHOUT_DURATION) && !GETPOST('durationhour', 'int') && !GETPOST('durationmin', 'int')) {
+		if (!getDolGlobalString('FICHINTER_WITHOUT_DURATION') && !GETPOST('durationhour', 'int') && !GETPOST('durationmin', 'int')) {
 			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Duration"));
 			$error++;
 		}
-		if (empty($conf->global->FICHINTER_WITHOUT_DURATION) && GETPOST('durationhour', 'int') >= 24 && GETPOST('durationmin', 'int') > 0) {
+		if (!getDolGlobalString('FICHINTER_WITHOUT_DURATION') && GETPOST('durationhour', 'int') >= 24 && GETPOST('durationmin', 'int') > 0) {
 			$mesg = $langs->trans("ErrorValueTooHigh");
 			$error++;
 		}
@@ -532,7 +532,7 @@ if (empty($reshook)) {
 
 			$desc = GETPOST('np_desc', 'restricthtml');
 			$date_intervention = dol_mktime(GETPOST('dihour', 'int'), GETPOST('dimin', 'int'), 0, GETPOST('dimonth', 'int'), GETPOST('diday', 'int'), GETPOST('diyear', 'int'));
-			$duration = empty($conf->global->FICHINTER_WITHOUT_DURATION) ? convertTime2Seconds(GETPOST('durationhour', 'int'), GETPOST('durationmin', 'int')) : 0;
+			$duration = !getDolGlobalString('FICHINTER_WITHOUT_DURATION') ? convertTime2Seconds(GETPOST('durationhour', 'int'), GETPOST('durationmin', 'int')) : 0;
 
 			// Extrafields
 			$extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -564,7 +564,7 @@ if (empty($reshook)) {
 			if ($result >= 0) {
 				$db->commit();
 
-				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+				if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 					fichinter_create($db, $object, $object->model_pdf, $outputlangs);
 				}
 				header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
@@ -649,7 +649,7 @@ if (empty($reshook)) {
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+		if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 			fichinter_create($db, $object, $object->model_pdf, $outputlangs);
 		}
 
@@ -682,7 +682,7 @@ if (empty($reshook)) {
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+		if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 			fichinter_create($db, $object, $object->model_pdf, $outputlangs);
 		}
 	} elseif ($action == 'up' && $user->hasRight('ficheinter', 'creer')) {
@@ -702,7 +702,7 @@ if (empty($reshook)) {
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+		if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 			fichinter_create($db, $object, $object->model_pdf, $outputlangs);
 		}
 
@@ -724,7 +724,7 @@ if (empty($reshook)) {
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+		if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 			fichinter_create($db, $object, $object->model_pdf, $outputlangs);
 		}
 
@@ -769,7 +769,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if (!empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->hasRight('ficheinter', 'creer')) {
+	if (getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB') && $user->hasRight('ficheinter', 'creer')) {
 		if ($action == 'addcontact') {
 			if ($result > 0 && $id > 0) {
 				$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
@@ -979,7 +979,7 @@ if ($action == 'create') {
 		print '<tr>';
 		print '<td class="tdtop">'.$langs->trans('NotePublic').'</td>';
 		print '<td>';
-		$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
+		$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		//print '<textarea name="note_public" cols="80" rows="'.ROWS_3.'">'.$note_public.'</textarea>';
 		print '</td></tr>';
@@ -989,7 +989,7 @@ if ($action == 'create') {
 			print '<tr>';
 			print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
 			print '<td>';
-			$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
+			$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
 			print $doleditor->Create(1);
 			//print '<textarea name="note_private" cols="80" rows="'.ROWS_3.'">'.$note_private.'</textarea>';
 			print '</td></tr>';
@@ -1057,7 +1057,7 @@ if ($action == 'create') {
 			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">';
 
-			$objectsrc->printOriginLinesList(empty($conf->global->FICHINTER_PRINT_PRODUCTS) ? 'services' : ''); // Show only service, except if option FICHINTER_PRINT_PRODUCTS is on
+			$objectsrc->printOriginLinesList(!getDolGlobalString('FICHINTER_PRINT_PRODUCTS') ? 'services' : ''); // Show only service, except if option FICHINTER_PRINT_PRODUCTS is on
 
 			print '</table>';
 			print '</div>';
@@ -1225,7 +1225,7 @@ if ($action == 'create') {
 
 	print '<table class="border tableforfield centpercent">';
 
-	if (!empty($conf->global->FICHINTER_USE_PLANNED_AND_DONE_DATES)) {
+	if (getDolGlobalString('FICHINTER_USE_PLANNED_AND_DONE_DATES')) {
 		// Date Start
 		print '<tr><td class="titlefield">'.$langs->trans("Dateo").'</td>';
 		print '<td>';
@@ -1301,7 +1301,7 @@ if ($action == 'create') {
 
 	print '<table class="border tableforfield centpercent">';
 
-	if (empty($conf->global->FICHINTER_DISABLE_DETAILS)) {
+	if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS')) {
 		// Duration in time
 		print '<tr><td class="titlefield">'.$langs->trans("TotalDuration").'</td>';
 		print '<td>'.convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).' ('.convertDurationtoHour($object->duration, "s").' '.$langs->trans("h").')</td>';
@@ -1316,20 +1316,20 @@ if ($action == 'create') {
 	print '<div class="clearboth"></div><br>';
 
 
-	if (!empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
+	if (getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
 		$blocname = 'contacts';
 		$title = $langs->trans('ContactsAddresses');
 		include DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php';
 	}
 
-	if (!empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
+	if (getDolGlobalString('MAIN_DISABLE_NOTES_TAB')) {
 		$blocname = 'notes';
 		$title = $langs->trans('Notes');
 		include DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php';
 	}
 
 	// Line of interventions
-	if (empty($conf->global->FICHINTER_DISABLE_DETAILS)) {
+	if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS')) {
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" name="addinter" method="post">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -1346,7 +1346,7 @@ if ($action == 'create') {
 		$sql .= ' ft.date as date_intervention';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'fichinterdet as ft';
 		$sql .= ' WHERE ft.fk_fichinter = '.((int) $object->id);
-		if (!empty($conf->global->FICHINTER_HIDE_EMPTY_DURATION)) {
+		if (getDolGlobalString('FICHINTER_HIDE_EMPTY_DURATION')) {
 			$sql .= ' AND ft.duree <> 0';
 		}
 		$sql .= ' ORDER BY ft.rang ASC, ft.date ASC, ft.rowid';
@@ -1362,13 +1362,13 @@ if ($action == 'create') {
 				print '<tr class="liste_titre">';
 
 				// No.
-				if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+				if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 					print '<td width="5" class="center linecolnum"></td>';
 				}
 
 				print '<td class="liste_titre">'.$langs->trans('Description').'</td>';
 				print '<td class="liste_titre center">'.$langs->trans('Date').'</td>';
-				print '<td class="liste_titre right">'.(empty($conf->global->FICHINTER_WITHOUT_DURATION) ? $langs->trans('Duration') : '').'</td>';
+				print '<td class="liste_titre right">'.(!getDolGlobalString('FICHINTER_WITHOUT_DURATION') ? $langs->trans('Duration') : '').'</td>';
 				print '<td class="liste_titre">&nbsp;</td>';
 				print '<td class="liste_titre">&nbsp;</td>';
 				print "</tr>\n";
@@ -1381,7 +1381,7 @@ if ($action == 'create') {
 					print '<tr class="oddeven">';
 
 					// No.
-					if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+					if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 						print '<td class="center linecolnum">'.($i + 1).'</td>';
 					}
 
@@ -1407,10 +1407,10 @@ if ($action == 'create') {
 					print '</td>';
 
 					// Date
-					print '<td class="center" width="150">'.(empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR) ?dol_print_date($db->jdate($objp->date_intervention), 'dayhour') : dol_print_date($db->jdate($objp->date_intervention), 'day')).'</td>';
+					print '<td class="center" width="150">'.(!getDolGlobalString('FICHINTER_DATE_WITHOUT_HOUR') ?dol_print_date($db->jdate($objp->date_intervention), 'dayhour') : dol_print_date($db->jdate($objp->date_intervention), 'day')).'</td>';
 
 					// Duration
-					print '<td class="right" width="150">'.(empty($conf->global->FICHINTER_WITHOUT_DURATION) ?convertSecondToTime($objp->duree) : '').'</td>';
+					print '<td class="right" width="150">'.(!getDolGlobalString('FICHINTER_WITHOUT_DURATION') ?convertSecondToTime($objp->duree) : '').'</td>';
 
 					print "</td>\n";
 
@@ -1449,7 +1449,7 @@ if ($action == 'create') {
 					print '<tr class="oddeven nohover">';
 
 					// No.
-					if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+					if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 						print '<td class="center linecolnum">'.($i + 1).'</td>';
 					}
 
@@ -1480,7 +1480,7 @@ if ($action == 'create') {
 
 					// Date d'intervention
 					print '<td class="center nowrap">';
-					if (!empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR)) {
+					if (getDolGlobalString('FICHINTER_DATE_WITHOUT_HOUR')) {
 						print $form->selectDate($db->jdate($objp->date_intervention), 'di', 0, 0, 0, "date_intervention");
 					} else {
 						print $form->selectDate($db->jdate($objp->date_intervention), 'di', 1, 1, 0, "date_intervention");
@@ -1489,9 +1489,9 @@ if ($action == 'create') {
 
 					// Duration
 					print '<td class="right">';
-					if (empty($conf->global->FICHINTER_WITHOUT_DURATION)) {
+					if (!getDolGlobalString('FICHINTER_WITHOUT_DURATION')) {
 						$selectmode = 'select';
-						if (!empty($conf->global->INTERVENTION_ADDLINE_FREEDUREATION)) {
+						if (getDolGlobalString('INTERVENTION_ADDLINE_FREEDUREATION')) {
 							$selectmode = 'text';
 						}
 						$form->select_duration('duration', $objp->duree, 0, $selectmode);
@@ -1510,14 +1510,14 @@ if ($action == 'create') {
 			$db->free($resql);
 
 			// Add new line
-			if ($object->statut == 0 && $user->hasRight('ficheinter', 'creer') && $action <> 'editline' && empty($conf->global->FICHINTER_DISABLE_DETAILS)) {
+			if ($object->statut == 0 && $user->hasRight('ficheinter', 'creer') && $action <> 'editline' && !getDolGlobalString('FICHINTER_DISABLE_DETAILS')) {
 				if (!$num) {
 					print '<br>';
 					print '<table class="noborder centpercent">';
 					print '<tr class="liste_titre">';
 
 					// No.
-					if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+					if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 						print '<td width="5" class="center linecolnum"></td>';
 					}
 
@@ -1525,7 +1525,7 @@ if ($action == 'create') {
 					print '<a name="add"></a>'; // ancre
 					print $langs->trans('Description').'</td>';
 					print '<td class="center">'.$langs->trans('Date').'</td>';
-					print '<td class="right">'.(empty($conf->global->FICHINTER_WITHOUT_DURATION) ? $langs->trans('Duration') : '').'</td>';
+					print '<td class="right">'.(!getDolGlobalString('FICHINTER_WITHOUT_DURATION') ? $langs->trans('Duration') : '').'</td>';
 					print '<td colspan="3">&nbsp;</td>';
 					print "</tr>\n";
 				}
@@ -1533,15 +1533,15 @@ if ($action == 'create') {
 				print '<tr class="oddeven nohover">'."\n";
 
 				// No.
-				if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+				if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 					print '<td class="center linecolnum">'.($i + 1).'</td>';
 				}
 
 				print '<td>';
 				// editeur wysiwyg
-				if (empty($conf->global->FICHINTER_EMPTY_LINE_DESC)) {
+				if (!getDolGlobalString('FICHINTER_EMPTY_LINE_DESC')) {
 					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-					$doleditor = new DolEditor('np_desc', GETPOST('np_desc', 'restricthtml'), '', 100, 'dolibarr_details', '', false, true, !empty($conf->global->FCKEDITOR_ENABLE_DETAILS), ROWS_2, '90%');
+					$doleditor = new DolEditor('np_desc', GETPOST('np_desc', 'restricthtml'), '', 100, 'dolibarr_details', '', false, true, getDolGlobalString('FCKEDITOR_ENABLE_DETAILS'), ROWS_2, '90%');
 					$doleditor->Create();
 				}
 
@@ -1582,9 +1582,9 @@ if ($action == 'create') {
 
 				// Duration
 				print '<td class="right">';
-				if (empty($conf->global->FICHINTER_WITHOUT_DURATION)) {
+				if (!getDolGlobalString('FICHINTER_WITHOUT_DURATION')) {
 					$selectmode = 'select';
-					if (!empty($conf->global->INTERVENTION_ADDLINE_FREEDUREATION)) {
+					if (getDolGlobalString('INTERVENTION_ADDLINE_FREEDUREATION')) {
 						$selectmode = 'text';
 					}
 					$form->select_duration('duration', (!GETPOST('durationhour', 'int') && !GETPOST('durationmin', 'int')) ? 3600 : (60 * 60 * GETPOST('durationhour', 'int') + 60 * GETPOST('durationmin', 'int')), 0, $selectmode);
@@ -1627,8 +1627,8 @@ if ($action == 'create') {
 		if ($user->socid == 0) {
 			if ($action != 'editdescription' && ($action != 'presend')) {
 				// Validate
-				if ($object->statut == Fichinter::STATUS_DRAFT && (count($object->lines) > 0 || !empty($conf->global->FICHINTER_DISABLE_DETAILS))) {
-					if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('ficheinter', 'creer')) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('ficheinter', 'ficheinter_advance', 'validate'))) {
+				if ($object->statut == Fichinter::STATUS_DRAFT && (count($object->lines) > 0 || getDolGlobalString('FICHINTER_DISABLE_DETAILS'))) {
+					if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'creer')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'ficheinter_advance', 'validate'))) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a></div>';
 					} else {
 						print '<div class="inline-block divButActionRefused"><span class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Validate").'</span></div>';
@@ -1636,9 +1636,9 @@ if ($action == 'create') {
 				}
 
 				// Modify
-				if ($object->statut == Fichinter::STATUS_VALIDATED && ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('ficheinter', 'creer')) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('ficheinter', 'ficheinter_advance', 'unvalidate')))) {
+				if ($object->statut == Fichinter::STATUS_VALIDATED && ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'creer')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'ficheinter_advance', 'unvalidate')))) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=modify">';
-					if (empty($conf->global->FICHINTER_DISABLE_DETAILS)) {
+					if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS')) {
 						print $langs->trans("Modify");
 					} else {
 						print $langs->trans("SetToDraft");
@@ -1658,7 +1658,7 @@ if ($action == 'create') {
 				// Send
 				if (empty($user->socid)) {
 					if ($object->statut > Fichinter::STATUS_DRAFT) {
-						if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->hasRight('ficheinter', 'ficheinter_advance', 'send')) {
+						if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || $user->hasRight('ficheinter', 'ficheinter_advance', 'send')) {
 							print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
 						} else {
 							print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans('SendMail').'</a></div>';
@@ -1696,7 +1696,7 @@ if ($action == 'create') {
 						}
 					}
 
-					if (!empty($conf->global->FICHINTER_CLASSIFY_BILLED)) {    // Option deprecated. In a future, billed must be managed with a dedicated field to 0 or 1
+					if (getDolGlobalString('FICHINTER_CLASSIFY_BILLED')) {    // Option deprecated. In a future, billed must be managed with a dedicated field to 0 or 1
 						if ($object->statut != Fichinter::STATUS_BILLED) {
 							print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=classifybilled&token='.newToken().'">'.$langs->trans("InterventionClassifyBilled").'</a></div>';
 						} else {
@@ -1706,7 +1706,7 @@ if ($action == 'create') {
 				}
 
 				// Done
-				if (empty($conf->global->FICHINTER_CLASSIFY_BILLED) && $object->statut > Fichinter::STATUS_DRAFT && $object->statut < Fichinter::STATUS_CLOSED) {
+				if (!getDolGlobalString('FICHINTER_CLASSIFY_BILLED') && $object->statut > Fichinter::STATUS_DRAFT && $object->statut < Fichinter::STATUS_CLOSED) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=classifydone&token='.newToken().'">'.$langs->trans("InterventionClassifyDone").'</a></div>';
 				}
 
@@ -1741,13 +1741,13 @@ if ($action == 'create') {
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 		// Show direct download link
-		if ($object->statut != Fichinter::STATUS_DRAFT && !empty($conf->global->FICHINTER_ALLOW_EXTERNAL_DOWNLOAD)) {
+		if ($object->statut != Fichinter::STATUS_DRAFT && getDolGlobalString('FICHINTER_ALLOW_EXTERNAL_DOWNLOAD')) {
 			print '<br><!-- Link to download main doc -->'."\n";
 			print showDirectDownloadLink($object).'<br>';
 		}
 
 		// Show online signature link
-		if ($object->statut != Fichinter::STATUS_DRAFT && !empty($conf->global->FICHINTER_ALLOW_ONLINE_SIGN)) {
+		if ($object->statut != Fichinter::STATUS_DRAFT && getDolGlobalString('FICHINTER_ALLOW_ONLINE_SIGN')) {
 			print '<br><!-- Link to sign -->';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 

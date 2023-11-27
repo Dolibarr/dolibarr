@@ -90,7 +90,7 @@ class box_activity extends ModeleBoxes
 		$savMAIN_ACTIVATE_FILECACHE = getDolGlobalInt('MAIN_ACTIVATE_FILECACHE');
 		$conf->global->MAIN_ACTIVATE_FILECACHE = 1;
 
-		if (!empty($conf->global->MAIN_BOX_ACTIVITY_DURATION)) {
+		if (getDolGlobalString('MAIN_BOX_ACTIVITY_DURATION')) {
 			$nbofperiod = $conf->global->MAIN_BOX_ACTIVITY_DURATION;
 		}
 

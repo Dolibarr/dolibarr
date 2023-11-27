@@ -611,7 +611,7 @@ if ($resql) {
 			}
 
 			if ($type != 'bank-transfer') {
-				if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) {
+				if (getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT')) {
 					$langs->load("stripe");
 					if ($obj->fk_prelevement_bons > 0) {
 						print ' &nbsp; ';
@@ -619,7 +619,7 @@ if ($resql) {
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripedirectdebit&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequestDirectDebitWithStripe").'</a>';
 				}
 			} else {
-				if (!empty($conf->global->STRIPE_SEPA_CREDIT_TRANSFER)) {
+				if (getDolGlobalString('STRIPE_SEPA_CREDIT_TRANSFER')) {
 					$langs->load("stripe");
 					if ($obj->fk_prelevement_bons > 0) {
 						print ' &nbsp; ';

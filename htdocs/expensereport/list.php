@@ -334,7 +334,7 @@ if ($search_status != '' && $search_status >= 0) {
 }
 // RESTRICT RIGHTS
 if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
-	&& (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance))) {
+	&& (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || empty($user->rights->expensereport->writeall_advance))) {
 	$sql .= " AND d.fk_user_author IN (".$db->sanitize(join(',', $childids)).")\n";
 }
 // Add where from extra fields

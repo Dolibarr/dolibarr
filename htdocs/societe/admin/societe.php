@@ -738,7 +738,7 @@ foreach ($profid as $key => $val) {
 print '<tr class="oddeven">';
 print '<td colspan="2">'.$langs->trans('VATIntra')."</td>\n";
 
-if (!empty($conf->global->SOCIETE_VAT_INTRA_UNIQUE)) {
+if (getDolGlobalString('SOCIETE_VAT_INTRA_UNIQUE')) {
 	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setvatintraunique&token='.newToken().'&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 	print '</a></td>';
@@ -821,7 +821,7 @@ print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("AddRefInList").'</td>';
 print '<td>&nbsp;</td>';
 print '<td class="center">';
-if (!empty($conf->global->SOCIETE_ADD_REF_IN_LIST)) {
+if (getDolGlobalString('SOCIETE_ADD_REF_IN_LIST')) {
 	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&token='.newToken().'&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 } else {
@@ -835,7 +835,7 @@ print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("AddVatInList").'</td>';
 print '<td>&nbsp;</td>';
 print '<td class="center">';
-if (!empty($conf->global->SOCIETE_SHOW_VAT_IN_LIST)) {
+if (getDolGlobalString('SOCIETE_SHOW_VAT_IN_LIST')) {
 	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setvatinlist&token='.newToken().'&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 } else {
@@ -849,7 +849,7 @@ print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("AddAdressInList").'</td>';
 print '<td>&nbsp;</td>';
 print '<td class="center">';
-if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
+if (getDolGlobalString('COMPANY_SHOW_ADDRESS_SELECTLIST')) {
 	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaddadressinlist&token='.newToken().'&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 } else {
@@ -863,7 +863,7 @@ print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("AddEmailPhoneTownInContactList").'</td>';
 print '<td>&nbsp;</td>';
 print '<td class="center">';
-if (!empty($conf->global->CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST)) {
+if (getDolGlobalString('CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST')) {
 	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaddemailphonetownincontactlist&token='.newToken().'&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 } else {
@@ -879,7 +879,7 @@ if (isModEnabled("expedition")) {
 		print '<td width="80%">'.$langs->trans("AskForPreferredShippingMethod").'</td>';
 		print '<td>&nbsp;</td>';
 		print '<td class="center">';
-		if (!empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD)) {
+		if (getDolGlobalString('SOCIETE_ASK_FOR_SHIPPING_METHOD')) {
 			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaskforshippingmet&token='.newToken().'&value=0">';
 			print img_picto($langs->trans("Activated"), 'switch_on');
 		} else {
@@ -896,7 +896,7 @@ print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("DisableProspectCustomerType").'</td>';
 print '<td>&nbsp;</td>';
 print '<td class="center">';
-if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) {
+if (getDolGlobalString('SOCIETE_DISABLE_PROSPECTSCUSTOMERS')) {
 	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisableprospectcustomer&token='.newToken().'&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 } else {
@@ -906,7 +906,7 @@ if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) {
 print '</a></td>';
 print '</tr>';
 
-if (empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) {
+if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTSCUSTOMERS')) {
 	// Default Prospect/Customer thirdparty type on customer création
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("DefaultCustomerType").'</td>';

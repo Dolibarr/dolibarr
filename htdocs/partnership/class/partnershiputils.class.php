@@ -72,7 +72,7 @@ class PartnershipUtils
 		}
 
 		$partnership = new Partnership($this->db);
-		$MAXPERCALL = (empty($conf->global->PARTNERSHIP_MAX_EXPIRATION_CANCEL_PER_CALL) ? 25 : $conf->global->PARTNERSHIP_MAX_EXPIRATION_CANCEL_PER_CALL); // Limit to 25 per call
+		$MAXPERCALL = (!getDolGlobalString('PARTNERSHIP_MAX_EXPIRATION_CANCEL_PER_CALL') ? 25 : $conf->global->PARTNERSHIP_MAX_EXPIRATION_CANCEL_PER_CALL); // Limit to 25 per call
 
 		$langs->loadLangs(array("partnership", "member"));
 
@@ -201,7 +201,7 @@ class PartnershipUtils
 									$object->actiontypecode = $actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 									$object->actionmsg = $arraydefaultmessage->topic."\n".$arraydefaultmessage->content; // Long text
 									$object->actionmsg2 = $langs->transnoentities("PartnershipSentByEMail", $object->ref);; // Short text ($langs->transnoentities('MailSentBy')...);
-									if (!empty($conf->global->MAIN_MAIL_REPLACE_EVENT_TITLE_BY_EMAIL_SUBJECT)) {
+									if (getDolGlobalString('MAIN_MAIL_REPLACE_EVENT_TITLE_BY_EMAIL_SUBJECT')) {
 										$object->actionmsg2		= $subject; // Short text
 									}
 
@@ -415,7 +415,7 @@ class PartnershipUtils
 											$object->actiontypecode = $actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 											$object->actionmsg = $arraydefaultmessage->topic."\n".$arraydefaultmessage->content; // Long text
 											$object->actionmsg2 = $langs->transnoentities("PartnershipSentByEMail", $object->ref);; // Short text ($langs->transnoentities('MailSentBy')...);
-											if (!empty($conf->global->MAIN_MAIL_REPLACE_EVENT_TITLE_BY_EMAIL_SUBJECT)) {
+											if (getDolGlobalString('MAIN_MAIL_REPLACE_EVENT_TITLE_BY_EMAIL_SUBJECT')) {
 												$object->actionmsg2		= $subject; // Short text
 											}
 
@@ -523,7 +523,7 @@ class PartnershipUtils
 			}
 		}
 
-		if ($webcontent && !empty($conf->global->PARTNERSHIP_BACKLINKS_TO_CHECK) && preg_match('/' . getDolGlobalString('PARTNERSHIP_BACKLINKS_TO_CHECK').'/', $webcontent)) {
+		if ($webcontent && getDolGlobalString('PARTNERSHIP_BACKLINKS_TO_CHECK') && preg_match('/' . getDolGlobalString('PARTNERSHIP_BACKLINKS_TO_CHECK').'/', $webcontent)) {
 			$found = 1;
 		}
 
