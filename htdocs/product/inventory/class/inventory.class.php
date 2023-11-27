@@ -845,8 +845,12 @@ class InventoryLine extends CommonObjectLine
 	public $pmp_expected;
 
 
-
-	public function __construct($db)
+	/**
+	 *  Constructor
+	 *
+	 *  @param      DoliDB		$db      Database handler
+	 */
+	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
 		$this->setPicto('stock');

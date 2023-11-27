@@ -184,7 +184,7 @@ abstract class CommonObjectLine extends CommonObject
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	public function __construct($db)
+	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
 	}
@@ -249,8 +249,13 @@ abstract class CommonObjectLine extends CommonObject
 	{
 		return 0;
 	}
-
-	public function setPicto($picto) {
+	/**
+	 * Empty function to prevent errors on call of this function must be overload if usefull
+	 *
+	 * @param string $picto picto name off the object
+	 * @return Void
+	 */
+	public function setPicto(String $picto) {
 		$this->picto = $picto;
 	}
 }
