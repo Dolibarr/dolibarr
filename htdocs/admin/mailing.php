@@ -190,7 +190,7 @@ print '<td class="hideonsmartphone"></td>';
 print '</tr>';
 
 
-if (!empty($conf->use_javascript_ajax) && $conf->global->MAIN_FEATURES_LEVEL >= 1) {
+if (!empty($conf->use_javascript_ajax) && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("MailAdvTargetRecipients").'</td><td>';
 	print ajax_constantonoff('EMAILING_USE_ADVANCED_SELECTOR');

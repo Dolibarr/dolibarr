@@ -8901,7 +8901,7 @@ abstract class CommonObject
 
 		$buyPrice = 0;
 
-		if (($unitPrice > 0) && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull > 0)) {
+		if (($unitPrice > 0) && (isset($conf->global->ForceBuyingPriceIfNull) && getDolGlobalInt('ForceBuyingPriceIfNull') > 0)) {
 			 // When ForceBuyingPriceIfNull is set
 			$buyPrice = $unitPrice * (1 - $discountPercent / 100);
 		} else {

@@ -1367,7 +1367,7 @@ function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $left
 				//$newmenu->add("/commande/list.php?leftmenu=orders&search_status=4", $langs->trans("StatusOrderProcessed"), 2, $user->hasRight('commande',  'lire'));
 				$newmenu->add("/commande/list.php?leftmenu=orders&search_status=-1", $langs->trans("StatusOrderCanceledShort"), 2, $user->hasRight('commande',  'lire'));
 			}
-			if ($conf->global->MAIN_FEATURES_LEVEL >= 2 && empty($user->socid)) {
+			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 && empty($user->socid)) {
 				$newmenu->add("/commande/list_det.php?leftmenu=orders", $langs->trans("ListOrderLigne"), 1, $user->hasRight('commande',  'lire'));
 			}
 			if (getDolGlobalInt('MAIN_NEED_EXPORT_PERMISSION_TO_READ_STATISTICS')) {
@@ -1435,7 +1435,7 @@ function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $left
 			$newmenu->add("/fichinter/index.php?leftmenu=ficheinter", $langs->trans("Interventions"), 0, $user->hasRight('ficheinter',  'lire'), '', $mainmenu, 'ficheinter', 2200, '', '', '', img_picto('', 'intervention', 'class="paddingright pictofixedwidth"'));
 			$newmenu->add("/fichinter/card.php?action=create&amp;leftmenu=ficheinter", $langs->trans("NewIntervention"), 1, $user->hasRight('ficheinter',  'creer'), '', '', '', 201);
 			$newmenu->add("/fichinter/list.php?leftmenu=ficheinter", $langs->trans("List"), 1, $user->hasRight('ficheinter',  'lire'), '', '', '', 202);
-			if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 				$newmenu->add("/fichinter/card-rec.php?leftmenu=ficheinter", $langs->trans("ListOfTemplates"), 1, $user->hasRight('ficheinter',  'lire'), '', '', '', 203);
 			}
 			$newmenu->add("/fichinter/stats/index.php?leftmenu=ficheinter", $langs->trans("Statistics"), 1, $user->hasRight('ficheinter',  'lire'));

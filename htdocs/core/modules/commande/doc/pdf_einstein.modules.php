@@ -807,7 +807,7 @@ class pdf_einstein extends ModelePDFCommandes
 		if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'CHQ') {
 			// Si mode reglement non force ou si force a CHQ
 			if (getDolGlobalString('FACTURE_CHQ_NUMBER')) {
-				if ($conf->global->FACTURE_CHQ_NUMBER > 0) {
+				if (getDolGlobalInt('FACTURE_CHQ_NUMBER') > 0) {
 					$account = new Account($this->db);
 					$account->fetch($conf->global->FACTURE_CHQ_NUMBER);
 

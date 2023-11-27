@@ -1359,7 +1359,7 @@ class pdf_sponge extends ModelePDFFactures
 				if (getDolGlobalInt('FACTURE_CHQ_NUMBER')) {
 					$diffsizetitle = (!getDolGlobalString('PDF_DIFFSIZE_TITLE') ? 3 : $conf->global->PDF_DIFFSIZE_TITLE);
 
-					if ($conf->global->FACTURE_CHQ_NUMBER > 0) {
+					if (getDolGlobalInt('FACTURE_CHQ_NUMBER') > 0) {
 						$account = new Account($this->db);
 						$account->fetch(getDolGlobalInt('FACTURE_CHQ_NUMBER'));
 

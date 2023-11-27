@@ -149,14 +149,14 @@ class html_generic extends ModeleDon
 		$form = str_replace('__PaymentMode__', $outputlangs->trans("PaymentMode"), $form);
 
 		$notePublic = '';
-		if ($conf->global->DONATION_NOTE_PUBLIC >= 1 && !empty($don->note_public)) {
+		if (getDolGlobalInt('DONATION_NOTE_PUBLIC') >= 1 && !empty($don->note_public)) {
 			$notePublic = '<div id="note-public"><p>'.$don->note_public.'</p></div>';
 		}
 		$form = str_replace('__NOTE_PUBLIC__', $notePublic, $form);
 
 		$donationMessage = '';
 		if (getDolGlobalString('DONATION_MESSAGE')) {
-			$donationMessage = '<div id="donation-message"><p>'.$conf->global->DONATION_MESSAGE.'</p></div>';
+			$donationMessage = '<div id="donation-message"><p>' . getDolGlobalString('DONATION_MESSAGE').'</p></div>';
 		}
 		$form = str_replace('__DONATION_MESAGE__', $donationMessage, $form);
 

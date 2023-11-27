@@ -341,7 +341,7 @@ for ($annee = $year_start; $annee <= $year_end; $annee++) {
 		print '<a href="casoc.php?year='.$annee.'">';
 	}
 	print $annee;
-	if ($conf->global->SOCIETE_FISCAL_MONTH_START > 1) {
+	if (getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') > 1) {
 		print '-'.($annee + 1);
 	}
 	if ($modecompta != 'BOOKKEEPING') {

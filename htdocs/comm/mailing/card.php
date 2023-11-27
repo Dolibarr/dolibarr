@@ -158,7 +158,7 @@ if (empty($reshook)) {
 			setEventMessages('<textarea cols="70" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.'</textarea>', null, 'warnings');
 			setEventMessages($langs->trans("MailingNeedCommand2"), null, 'warnings');
 			$action = '';
-		} elseif ($conf->global->MAILING_LIMIT_SENDBYWEB < 0) {
+		} elseif (getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') < 0) {
 			setEventMessages($langs->trans("NotEnoughPermissions"), null, 'warnings');
 			$action = '';
 		} else {
@@ -876,7 +876,7 @@ if ($action == 'create') {
 						setEventMessages($langs->trans("MailSendSetupIs3", $conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS), null, 'warnings');
 					}
 					$_GET["action"] = '';
-				} elseif ($conf->global->MAILING_LIMIT_SENDBYWEB < 0) {
+				} elseif (getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') < 0) {
 					if (getDolGlobalString('MAILING_LIMIT_WARNING_PHPMAIL') && $sendingmode == 'mail') {
 						setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_PHPMAIL), null, 'warnings');
 					}
@@ -901,14 +901,14 @@ if ($action == 'create') {
 
 					$text = '';
 
-					if (isset($conf->global->MAILING_LIMIT_SENDBYDAY) && $conf->global->MAILING_LIMIT_SENDBYDAY >= 0) {
+					if (isset($conf->global->MAILING_LIMIT_SENDBYDAY) && getDolGlobalInt('MAILING_LIMIT_SENDBYDAY') >= 0) {
 						$text .= $langs->trans('WarningLimitSendByDay', $conf->global->MAILING_LIMIT_SENDBYDAY);
 						$text .= '<br><br>';
 					}
 					$text .= $langs->trans('ConfirmSendingEmailing').'<br>';
 					$text .= $langs->trans('LimitSendingEmailing', $conf->global->MAILING_LIMIT_SENDBYWEB);
 
-					if (!isset($conf->global->MAILING_LIMIT_SENDBYCLI) || $conf->global->MAILING_LIMIT_SENDBYCLI >= 0) {
+					if (!isset($conf->global->MAILING_LIMIT_SENDBYCLI) || getDolGlobalInt('MAILING_LIMIT_SENDBYCLI') >= 0) {
 						$text .= '<br><br>';
 						$text .= $langs->trans("MailingNeedCommand");
 						$text .= '<br><textarea class="quatrevingtpercent" rows="'.ROWS_2.'" wrap="soft" disabled>php ./scripts/emailings/mailing-send.php '.$object->id.' '.$user->login.'</textarea>';
@@ -993,7 +993,7 @@ if ($action == 'create') {
 			if (is_numeric($nbemail)) {
 				$text = '';
 				if ((getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) && ($object->statut == 1 || ($object->statut == 2 && $nbtry < $nbemail))) {
-					if ($conf->global->MAILING_LIMIT_SENDBYWEB > 0) {
+					if (getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') > 0) {
 						$text .= $langs->trans('LimitSendingEmailing', $conf->global->MAILING_LIMIT_SENDBYWEB);
 					} else {
 						$text .= $langs->trans('SendingFromWebInterfaceIsNotAllowed');
@@ -1093,7 +1093,7 @@ if ($action == 'create') {
 				}
 
 				if (($object->statut == 1 || $object->statut == 2) && $object->nbemail > 0 && $user->hasRight('mailing', 'valider')) {
-					if ($conf->global->MAILING_LIMIT_SENDBYWEB < 0) {
+					if (getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') < 0) {
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("SendingFromWebInterfaceIsNotAllowed")).'">'.$langs->trans("SendMailing").'</a>';
 					} elseif (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('mailing', 'mailing_advance', 'send')) {
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("SendMailing").'</a>';
@@ -1283,7 +1283,7 @@ if ($action == 'create') {
 			if (is_numeric($nbemail)) {
 				$text = '';
 				if ((getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) && ($object->statut == 1 || $object->statut == 2)) {
-					if ($conf->global->MAILING_LIMIT_SENDBYWEB > 0) {
+					if (getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') > 0) {
 						$text .= $langs->trans('LimitSendingEmailing', $conf->global->MAILING_LIMIT_SENDBYWEB);
 					} else {
 						$text .= $langs->trans('SendingFromWebInterfaceIsNotAllowed');

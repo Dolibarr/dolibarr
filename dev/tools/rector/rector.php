@@ -42,8 +42,8 @@ return static function (RectorConfig $rectorConfig): void {
 	//$rectorConfig->rule(ReplaceEachAssignmentWithKeyCurrentRector::class);
 	//$rectorConfig->rule(Rector\Php72\Rector\FuncCall\StringifyDefineRector::class);
 
-	//$rectorConfig->rule(Dolibarr\Rector\Renaming\GlobalToFunction::class);
-	//$rectorConfig->rule(Dolibarr\Rector\Renaming\UserRightsToFunction::class);
+	$rectorConfig->rule(Dolibarr\Rector\Renaming\GlobalToFunction::class);
+	$rectorConfig->rule(Dolibarr\Rector\Renaming\UserRightsToFunction::class);
 	$rectorConfig->rule(Dolibarr\Rector\Renaming\EmptyGlobalToFunction::class);
 
 	// Add all predefined rules to migrate to up to php 71
