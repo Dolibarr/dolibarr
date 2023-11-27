@@ -127,7 +127,7 @@ $form = new Form($db);
 $dirsrootforscan = array($dirread);
 
 // Add also the core modules into the list of modules to show/edit
-if ($dirread != DOL_DOCUMENT_ROOT && ($conf->global->MAIN_FEATURES_LEVEL >= 2 || getDolGlobalString('MODULEBUILDER_ADD_DOCUMENT_ROOT'))) {
+if ($dirread != DOL_DOCUMENT_ROOT && (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 || getDolGlobalString('MODULEBUILDER_ADD_DOCUMENT_ROOT'))) {
 	$dirsrootforscan[] = DOL_DOCUMENT_ROOT;
 }
 

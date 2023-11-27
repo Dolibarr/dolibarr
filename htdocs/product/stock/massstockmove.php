@@ -685,7 +685,7 @@ $filtertype = 0;
 if (getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 	$filtertype = '';
 }
-if ($conf->global->PRODUIT_LIMIT_SIZE <= 0) {
+if (getDolGlobalInt('PRODUIT_LIMIT_SIZE') <= 0) {
 	$limit = '';
 } else {
 	$limit = $conf->global->PRODUIT_LIMIT_SIZE;

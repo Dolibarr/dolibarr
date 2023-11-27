@@ -116,7 +116,7 @@ print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 	// What is use case of this 2 options ?
 
 	print '<tr class="oddeven">';
@@ -148,7 +148,7 @@ print '<input type="text" name="MODULEBUILDER_SPECIFIC_EDITOR_URL" value="'.getD
 print '</td>';
 print '</tr>';
 
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("UseSpecificFamily").'</td>';
 	print '<td>';

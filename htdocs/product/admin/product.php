@@ -60,11 +60,11 @@ $select_pricing_rules = array(
 	'PRODUIT_CUSTOMER_PRICES'=>$langs->trans('PriceByCustomer'), // Different price for each customer
 );
 $keyforparam = 'PRODUIT_CUSTOMER_PRICES_BY_QTY';
-if ($conf->global->MAIN_FEATURES_LEVEL >= 1 || !empty($conf->global->$keyforparam)) {
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 || !empty($conf->global->$keyforparam)) {
 	$select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY'] = $langs->trans('PriceByQuantity').' ('.$langs->trans("VersionExperimental").')'; // TODO If this is enabled, price must be hidden when price by qty is enabled, also price for quantity must be used when adding product into order/propal/invoice
 }
 $keyforparam = 'PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES';
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2 || !empty($conf->global->$keyforparam)) {
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 || !empty($conf->global->$keyforparam)) {
 	$select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES'] = $langs->trans('MultiPricesAbility').'+'.$langs->trans('PriceByQuantity').' ('.$langs->trans("VersionExperimental").')';
 }
 
@@ -324,10 +324,10 @@ foreach ($dirproduct as $dirroot) {
 				$modCodeProduct = new $file;
 
 				// Show modules according to features level
-				if ($modCodeProduct->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+				if ($modCodeProduct->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 					continue;
 				}
-				if ($modCodeProduct->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+				if ($modCodeProduct->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 					continue;
 				}
 
@@ -427,10 +427,10 @@ foreach ($dirmodels as $reldir) {
 							$module = new $classname($db);
 
 							$modulequalified = 1;
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								$modulequalified = 0;
 							}
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 								$modulequalified = 0;
 							}
 

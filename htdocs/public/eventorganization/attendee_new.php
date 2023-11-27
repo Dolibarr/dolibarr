@@ -515,7 +515,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			$productforinvoicerow->id = 0;
 
 			$resultprod = 0;
-			if ($conf->global->SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION > 0) {
+			if (getDolGlobalInt('SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION') > 0) {
 				$resultprod = $productforinvoicerow->fetch($conf->global->SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION);
 			}
 

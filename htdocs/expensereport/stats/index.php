@@ -147,7 +147,7 @@ if (!$mesg) {
 
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
-if (empty($user->rights->societe->client->voir) || $user->socid) {
+if (!$user->hasRight('societe', 'client', 'voir') || $user->socid) {
 	$filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
 	if ($mode == 'customer') {
 		$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$user->id.'-'.$year.'.png';
@@ -231,7 +231,7 @@ print '</td></tr>';
 // User
 print '<tr><td>'.$langs->trans("User").'</td><td>';
 $include = '';
-if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)) {
+if (!$user->hasRight('expensereport', 'readall') && !$user->hasRight('expensereport', 'lire_tous')) {
 	$include = 'hierarchy';
 }
 print img_picto('', 'user', 'class="pictofixedwidth"');
