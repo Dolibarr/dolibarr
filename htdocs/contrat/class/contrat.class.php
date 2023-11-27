@@ -3039,8 +3039,6 @@ class ContratLigne extends CommonObjectLine
 
 	public $pa_ht;
 
-	public $info_bits;
-
 	/**
 	 * @var int ID
 	 */

@@ -3532,14 +3532,6 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $total_localtax2;
 
 	/**
-	 * List of cumulative options:
-	 * Bit 0:	0 si TVA normal - 1 si TVA NPR
-	 * Bit 1:	0 si ligne normal - 1 si bit discount (link to line into llx_remise_except)
-	 * @var int
-	 */
-	public $info_bits;
-
-	/**
 	 * Link to line into llx_remise_except
 	 * @var int
 	 */

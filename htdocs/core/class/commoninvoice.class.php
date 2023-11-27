@@ -1925,14 +1925,6 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	public $marge_tx;
 	public $marque_tx;
 
-	/**
-	 * List of cumulative options:
-	 * Bit 0:	0 for common VAT - 1 if VAT french NPR
-	 * Bit 1:	0 si ligne normal - 1 si bit discount (link to line into llx_remise_except)
-	 * @var int
-	 */
-	public $info_bits = 0;
-
 	public $special_code = 0;
 
 	public $fk_user_author;

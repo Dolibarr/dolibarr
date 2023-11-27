@@ -2840,10 +2840,6 @@ class SupplierProposalLine extends CommonObjectLine
 	// 2: ecotaxe
 	// 3: option line (when qty = 0)
 
-	public $info_bits = 0; // Liste d'options cumulables:
-	// Bit 0: 	0 si TVA normal - 1 si TVA NPR
-	// Bit 1:	0 ligne normale - 1 si ligne de remise fixe
-
 	public $total_ht; // Total HT de la ligne toute quantite et incluant la remise ligne
 	public $total_tva; // Total TVA de la ligne toute quantite et incluant la remise ligne
 	public $total_ttc; // Total TTC de la ligne toute quantite et incluant la remise ligne
