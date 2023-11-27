@@ -220,7 +220,7 @@ class box_actions_future extends ModeleBoxes
 		global $langs, $conf;
 		$out = parent::showBox($this->info_box_head, $this->info_box_contents, 1);
 
-		if (!empty($conf->global->SHOW_DIALOG_HOMEPAGE)) {
+		if (getDolGlobalString('SHOW_DIALOG_HOMEPAGE')) {
 			$actioncejour = false;
 			$contents = $this->info_box_contents;
 			if (is_countable($contents) && count($contents) > 0) {

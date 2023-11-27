@@ -154,7 +154,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	$name = $langs->trans("Turnover");
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear - 2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");
 	$description = $langs->trans("RulesCADue");
-	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 		$description .= $langs->trans("DepositsAreNotIncluded");
 	} else {
 		$description .= $langs->trans("DepositsAreIncluded");
@@ -216,7 +216,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql = "SELECT date_format(f.datef,'%Y-%m') as dm, sum(f.total_ht) as amount, sum(f.total_ttc) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql .= " WHERE f.fk_statut in (1,2)";
-	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 		$sql .= " AND f.type IN (0,1,2,5)";
 	} else {
 		$sql .= " AND f.type IN (0,1,2,3,5)";
@@ -383,7 +383,7 @@ $now = dol_now();
 $casenow = dol_print_date($now, "%Y-%m");
 
 // Loop on each month
-$nb_mois_decalage = GETPOSTISSET('date_startmonth') ? (GETPOST('date_startmonth', 'int') - 1) : (empty($conf->global->SOCIETE_FISCAL_MONTH_START) ? 0 : ($conf->global->SOCIETE_FISCAL_MONTH_START - 1));
+$nb_mois_decalage = GETPOSTISSET('date_startmonth') ? (GETPOST('date_startmonth', 'int') - 1) : (!getDolGlobalString('SOCIETE_FISCAL_MONTH_START') ? 0 : ($conf->global->SOCIETE_FISCAL_MONTH_START - 1));
 for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 	$mois_modulo = $mois; // ajout
 	if ($mois > 12) {

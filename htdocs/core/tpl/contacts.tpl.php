@@ -49,13 +49,13 @@ if ($module == 'propal') {
 } elseif ($module == 'fichinter') {
 	$permission = $user->hasRight('ficheinter', 'creer');
 } elseif ($module == 'order_supplier') {
-	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
+	if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 		$permission = $user->hasRight('fournisseur', 'commande', 'creer');
 	} else {
 		$permission = $user->hasRight('supplier_order', 'creer');
 	}
-} elseif ($module == 'invoice_supplier' && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
-	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
+} elseif ($module == 'invoice_supplier' && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
+	if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 		$permission = $user->hasRight('fournisseur', 'facture', 'creer');
 	} else {
 		$permission = $user->hasRight('supplier_invoice', 'creer');
@@ -179,7 +179,7 @@ if ($permission) {
 		</div>
 	</form>
 
-		<?php
+<?php
 	}
 
 	print "</div>";

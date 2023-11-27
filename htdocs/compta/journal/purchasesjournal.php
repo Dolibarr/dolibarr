@@ -95,7 +95,7 @@ $periodlink = '';
 $exportlink = '';
 $builddate = dol_now();
 $description = $langs->trans("DescPurchasesJournal").'<br>';
-if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
 	$description .= $langs->trans("DepositsAreNotIncluded");
 } else {
 	$description .= $langs->trans("DepositsAreIncluded");
@@ -119,7 +119,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = fd.fk_product";
 $sql .= " JOIN ".MAIN_DB_PREFIX."facture_fourn as f ON f.rowid = fd.fk_facture_fourn";
 $sql .= " JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
 $sql .= " WHERE f.fk_statut > 0 AND f.entity IN (".getEntity('invoice').")";
-if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
 	$sql .= " AND f.type IN (0,1,2)";
 } else {
 	$sql .= " AND f.type IN (0,1,2,3)";
@@ -138,7 +138,7 @@ if ($result) {
 	$num = $db->num_rows($result);
 	// les variables
 	$cptfour = (($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER != "") ? $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER : $langs->trans("CodeNotDef"));
-	$cpttva = (!empty($conf->global->ACCOUNTING_VAT_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_VAT_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+	$cpttva = (getDolGlobalString('ACCOUNTING_VAT_BUY_ACCOUNT') ? $conf->global->ACCOUNTING_VAT_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
 
 	$tabfac = array();
 	$tabht = array();
@@ -156,9 +156,9 @@ if ($result) {
 		$compta_prod = $obj->accountancy_code_buy;
 		if (empty($compta_prod)) {
 			if ($obj->product_type == 0) {
-				$compta_prod = (!empty($conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prod = (getDolGlobalString('ACCOUNTING_PRODUCT_BUY_ACCOUNT') ? $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
 			} else {
-				$compta_prod = (!empty($conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prod = (getDolGlobalString('ACCOUNTING_SERVICE_BUY_ACCOUNT') ? $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
 			}
 		}
 		$compta_tva = (!empty($obj->account_tva) ? $obj->account_tva : $cpttva);

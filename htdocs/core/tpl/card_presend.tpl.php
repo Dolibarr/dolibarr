@@ -94,10 +94,10 @@ if ($action == 'presend') {
 	if (in_array($object->element, array('user', 'member'))) {
 		$forcebuilddoc = false;
 	}
-	if ($object->element == 'invoice_supplier' && empty($conf->global->INVOICE_SUPPLIER_ADDON_PDF)) {
+	if ($object->element == 'invoice_supplier' && !getDolGlobalString('INVOICE_SUPPLIER_ADDON_PDF')) {
 		$forcebuilddoc = false;
 	}
-	if ($object->element == 'societe' && empty($conf->global->COMPANY_ADDON_PDF)) {
+	if ($object->element == 'societe' && !getDolGlobalString('COMPANY_ADDON_PDF')) {
 		$forcebuilddoc = false;
 	}
 	if ($forcebuilddoc) {    // If there is no default value for supplier invoice, we do not generate file, even if modelpdf was set by a manual generation
@@ -129,39 +129,39 @@ if ($action == 'presend') {
 	$formmail = new FormMail($db);
 
 	$formmail->param['langsmodels'] = (empty($newlang) ? $langs->defaultlang : $newlang);
-	$formmail->fromtype = (GETPOST('fromtype') ?GETPOST('fromtype') : (!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE) ? $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE : 'user'));
+	$formmail->fromtype = (GETPOST('fromtype') ?GETPOST('fromtype') : (getDolGlobalString('MAIN_MAIL_DEFAULT_FROMTYPE') ? $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE : 'user'));
 
 	if ($formmail->fromtype === 'user') {
 		$formmail->fromid = $user->id;
 	}
-	if ($object->element == 'salary' && !empty($conf->global->INVOICE_EMAIL_SENDER)) {
+	if ($object->element == 'salary' && getDolGlobalString('INVOICE_EMAIL_SENDER')) {
 		$formmail->frommail = $conf->global->SINVOICE_EMAIL_SENDER;
-		$formmail->fromname = (!empty($conf->global->INVOICE_EMAIL_SENDER_NAME) ? $conf->global->INVOICE_EMAIL_SENDER_NAME : '');
+		$formmail->fromname = (getDolGlobalString('INVOICE_EMAIL_SENDER_NAME') ? $conf->global->INVOICE_EMAIL_SENDER_NAME : '');
 		$formmail->fromtype = 'special';
 	}
-	if ($object->element === 'facture' && !empty($conf->global->INVOICE_EMAIL_SENDER)) {
+	if ($object->element === 'facture' && getDolGlobalString('INVOICE_EMAIL_SENDER')) {
 		$formmail->frommail = $conf->global->INVOICE_EMAIL_SENDER;
-		$formmail->fromname = (!empty($conf->global->INVOICE_EMAIL_SENDER_NAME) ? $conf->global->INVOICE_EMAIL_SENDER_NAME : '');
+		$formmail->fromname = (getDolGlobalString('INVOICE_EMAIL_SENDER_NAME') ? $conf->global->INVOICE_EMAIL_SENDER_NAME : '');
 		$formmail->fromtype = 'special';
 	}
-	if ($object->element === 'shipping' && !empty($conf->global->SHIPPING_EMAIL_SENDER)) {
+	if ($object->element === 'shipping' && getDolGlobalString('SHIPPING_EMAIL_SENDER')) {
 		$formmail->frommail = $conf->global->SHIPPING_EMAIL_SENDER;
-		$formmail->fromname = (!empty($conf->global->SHIPPING_EMAIL_SENDER_NAME) ? $conf->global->SHIPPING_EMAIL_SENDER_NAME : '');
+		$formmail->fromname = (getDolGlobalString('SHIPPING_EMAIL_SENDER_NAME') ? $conf->global->SHIPPING_EMAIL_SENDER_NAME : '');
 		$formmail->fromtype = 'special';
 	}
-	if ($object->element === 'commande' && !empty($conf->global->COMMANDE_EMAIL_SENDER)) {
+	if ($object->element === 'commande' && getDolGlobalString('COMMANDE_EMAIL_SENDER')) {
 		$formmail->frommail = $conf->global->COMMANDE_EMAIL_SENDER;
-		$formmail->fromname = (!empty($conf->global->COMMANDE_EMAIL_SENDER_NAME) ? $conf->global->COMMANDE_EMAIL_SENDER_NAME : '');
+		$formmail->fromname = (getDolGlobalString('COMMANDE_EMAIL_SENDER_NAME') ? $conf->global->COMMANDE_EMAIL_SENDER_NAME : '');
 		$formmail->fromtype = 'special';
 	}
-	if ($object->element === 'order_supplier' && !empty($conf->global->ORDER_SUPPLIER_EMAIL_SENDER)) {
+	if ($object->element === 'order_supplier' && getDolGlobalString('ORDER_SUPPLIER_EMAIL_SENDER')) {
 		$formmail->frommail = $conf->global->ORDER_SUPPLIER_EMAIL_SENDER;
-		$formmail->fromname = (!empty($conf->global->ORDER_SUPPLIER_EMAIL_SENDER_NAME) ? $conf->global->ORDER_SUPPLIER_EMAIL_SENDER_NAME : '');
+		$formmail->fromname = (getDolGlobalString('ORDER_SUPPLIER_EMAIL_SENDER_NAME') ? $conf->global->ORDER_SUPPLIER_EMAIL_SENDER_NAME : '');
 		$formmail->fromtype = 'special';
 	}
 	if ($object->element === 'recruitmentcandidature' ) {
-		$formmail->frommail = (!empty($conf->global->RECRUITMENT_EMAIL_SENDER) ? $conf->global->RECRUITMENT_EMAIL_SENDER : $recruitermail);
-		$formmail->fromname = (!empty($conf->global->RECRUITMENT_EMAIL_SENDER_NAME) ? $conf->global->RECRUITMENT_EMAIL_SENDER_NAME : (!empty($recruitername) ? $recruitername : ''));
+		$formmail->frommail = (getDolGlobalString('RECRUITMENT_EMAIL_SENDER') ? $conf->global->RECRUITMENT_EMAIL_SENDER : $recruitermail);
+		$formmail->fromname = (getDolGlobalString('RECRUITMENT_EMAIL_SENDER_NAME') ? $conf->global->RECRUITMENT_EMAIL_SENDER_NAME : (!empty($recruitername) ? $recruitername : ''));
 		$formmail->fromtype = 'special';
 	}
 
@@ -218,7 +218,7 @@ if ($action == 'presend') {
 			}
 		}
 	}
-	if (!empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)) {
+	if (getDolGlobalString('MAIN_MAIL_ENABLED_USER_DEST_SELECT')) {
 		$listeuser = array();
 		$fuserdest = new User($db);
 

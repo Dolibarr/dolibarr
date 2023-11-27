@@ -259,8 +259,8 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'y
 
 	if ($type == 'free') {
 		$out = $urltouse.'/public/payment/newpayment.php?amount='.($mode ? '<span style="color: #666666">' : '').$amount.($mode ? '</span>' : '').'&tag='.($mode ? '<span style="color: #666666">' : '').$freetag.($mode ? '</span>' : '');
-		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
+		if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
+			if (!getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
 				$out .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 			} else {
 				$out .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2));
@@ -276,8 +276,8 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'y
 			$out .= urlencode($ref);
 		}
 		$out .= ($mode ? '</span>' : '');
-		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
+		if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
+			if (!getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
 				$out .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 			} else {
 				$out .= '&securekey='.($mode ? '<span style="color: #666666">' : '');
@@ -299,8 +299,8 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'y
 			$out .= urlencode($ref);
 		}
 		$out .= ($mode ? '</span>' : '');
-		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
+		if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
+			if (!getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
 				$out .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 			} else {
 				$out .= '&securekey='.($mode ? '<span style="color: #666666">' : '');
@@ -322,8 +322,8 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'y
 			$out .= urlencode($ref);
 		}
 		$out .= ($mode ? '</span>' : '');
-		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
+		if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
+			if (!getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
 				$out .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 			} else {
 				$out .= '&securekey='.($mode ? '<span style="color: #666666">' : '');
@@ -348,8 +348,8 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'y
 			$out .= urlencode($ref);
 		}
 		$out .= ($mode ? '</span>' : '');
-		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
+		if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
+			if (!getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
 				$out .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 			} else {
 				$out .= '&securekey='.($mode ? '<span style="color: #666666">' : '');
@@ -371,8 +371,8 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'y
 			$out .= urlencode($ref);
 		}
 		$out .= ($mode ? '</span>' : '');
-		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
+		if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
+			if (!getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
 				$out .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 			} else {
 				$out .= '&securekey='.($mode ? '<span style="color: #666666">' : '');
@@ -394,8 +394,8 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'y
 			$out .= urlencode($ref);
 		}
 		$out .= ($mode ? '</span>' : '');
-		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
+		if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
+			if (!getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
 				$out .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 			} else {
 				$out .= '&securekey='.($mode ? '<span style="color: #666666">' : '');
