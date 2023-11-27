@@ -191,8 +191,8 @@ class SupplierProposal extends CommonObject
 	public $cond_reglement_doc;
 
 	/**
- 	 * @deprecated
-     */
+	 *  @deprecated
+	 *  */
 	public $fk_soc;
 
 	/**
