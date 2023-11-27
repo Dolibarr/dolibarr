@@ -2814,8 +2814,6 @@ class SupplierProposalLine extends CommonObjectLine
 	 */
 	public $fk_parent_line;
 
-	public $desc; // Description ligne
-
 	/**
 	 * @deprecated
 	 * @see $product_type

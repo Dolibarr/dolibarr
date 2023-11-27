@@ -2159,9 +2159,7 @@ class FactureLigneRec extends CommonInvoiceLine
 	public $fk_fournprice; // For backward compatibility
 
 	public $rang;
-	//public $situation_percent;	// Not supported on recurring invoice line
 
-	public $desc;
 	public $description;
 
 	public $fk_product_type; // Use instead product_type

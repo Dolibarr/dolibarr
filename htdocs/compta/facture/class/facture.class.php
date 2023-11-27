@@ -6017,11 +6017,7 @@ class FactureLigne extends CommonInvoiceLine
 	public $fk_facture;
 	//! Id parent line
 	public $fk_parent_line;
-
-	//! Description ligne
-	public $desc;
 	public $ref_ext; // External reference of the line
-
 	public $localtax1_type; // Local tax 1 type
 	public $localtax2_type; // Local tax 2 type
 	public $fk_remise_except; // Link to line into llx_remise_except

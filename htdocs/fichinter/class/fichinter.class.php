@@ -1615,8 +1615,6 @@ class FichinterLigne extends CommonObjectLine
 	 */
 	public $fk_fichinter;
 
-	public $desc; 		// Description ligne
-
 	/**
 	 * @var int Date of intervention
 	 */

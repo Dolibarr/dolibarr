@@ -2646,13 +2646,6 @@ class ExpeditionLigne extends CommonObjectLine
 
 	/**
 	 * @var string product description
-	 * @deprecated
-	 * @see $product_desc
-	 */
-	public $desc;
-
-	/**
-	 * @var string product description
 	 */
 	public $product_desc;
 
