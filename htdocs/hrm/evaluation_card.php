@@ -686,7 +686,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$includedocgeneration = 1;
 
 		// Documents
-		if ($user->rights->hrm->evaluation->read) {
+		if ($user->hasRight('hrm', 'evaluation', 'read')) {
 			$objref = dol_sanitizeFileName($object->ref);
 			$relativepath = $objref.'/'.$objref.'.pdf';
 			$filedir = $conf->hrm->dir_output.'/'.$object->element.'/'.$objref;

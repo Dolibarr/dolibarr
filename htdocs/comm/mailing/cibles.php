@@ -347,7 +347,7 @@ if ($object->fetch($id) >= 0) {
 	if (is_numeric($nbemail)) {
 		$text = '';
 		if ((getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) && ($object->statut == 1 || ($object->statut == 2 && $nbtry < $nbemail))) {
-			if ($conf->global->MAILING_LIMIT_SENDBYWEB > 0) {
+			if (getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') > 0) {
 				$text .= $langs->trans('LimitSendingEmailing', $conf->global->MAILING_LIMIT_SENDBYWEB);
 			} else {
 				$text .= $langs->trans('SendingFromWebInterfaceIsNotAllowed');

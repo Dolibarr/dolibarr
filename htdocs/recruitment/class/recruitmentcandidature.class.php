@@ -951,7 +951,7 @@ class RecruitmentCandidature extends CommonObject
 		if (getDolGlobalString('RECRUITMENT_RECRUITMENTCANDIDATURE_ADDON')) {
 			$mybool = false;
 
-			$file = $conf->global->RECRUITMENT_RECRUITMENTCANDIDATURE_ADDON.".php";
+			$file = getDolGlobalString('RECRUITMENT_RECRUITMENTCANDIDATURE_ADDON') . ".php";
 			$classname = $conf->global->RECRUITMENT_RECRUITMENTCANDIDATURE_ADDON;
 
 			// Include file with class

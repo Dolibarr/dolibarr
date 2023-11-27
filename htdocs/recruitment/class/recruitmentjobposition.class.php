@@ -1008,7 +1008,7 @@ class RecruitmentJobPosition extends CommonObject
 		if (getDolGlobalString('RECRUITMENT_RECRUITMENTJOBPOSITION_ADDON')) {
 			$mybool = false;
 
-			$file = $conf->global->RECRUITMENT_RECRUITMENTJOBPOSITION_ADDON.".php";
+			$file = getDolGlobalString('RECRUITMENT_RECRUITMENTJOBPOSITION_ADDON') . ".php";
 			$classname = $conf->global->RECRUITMENT_RECRUITMENTJOBPOSITION_ADDON;
 
 			// Include file with class

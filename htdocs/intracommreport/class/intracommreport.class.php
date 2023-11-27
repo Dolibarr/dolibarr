@@ -254,7 +254,7 @@ class IntracommReport extends CommonObject
 				return 0;
 			}
 
-			if ($exporttype == 'deb' && $conf->global->INTRACOMMREPORT_CATEG_FRAISDEPORT > 0) {
+			if ($exporttype == 'deb' && getDolGlobalInt('INTRACOMMREPORT_CATEG_FRAISDEPORT') > 0) {
 				$categ_fraisdeport = new Categorie($this->db);
 				$categ_fraisdeport->fetch($conf->global->INTRACOMMREPORT_CATEG_FRAISDEPORT);
 				$TLinesFraisDePort = array();
@@ -268,7 +268,7 @@ class IntracommReport extends CommonObject
 						// We don't stop the loop because we want to know all the third parties who don't have an informed country
 						$this->errors[] = 'Country not filled in for the third party <a href="'.dol_buildpath('/societe/soc.php', 1).'?socid='.$res->id_client.'">'.$res->nom.'</a>';
 					} else {
-						if ($conf->global->INTRACOMMREPORT_CATEG_FRAISDEPORT > 0 && $categ_fraisdeport->containsObject('product', $res->id_prod)) {
+						if (getDolGlobalInt('INTRACOMMREPORT_CATEG_FRAISDEPORT') > 0 && $categ_fraisdeport->containsObject('product', $res->id_prod)) {
 							$TLinesFraisDePort[] = $res;
 						} else {
 							$this->addItemXMl($declaration, $res, $i, '');

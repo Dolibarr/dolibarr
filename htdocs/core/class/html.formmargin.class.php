@@ -93,7 +93,7 @@ class FormMargin
 
 			// If buy price is not defined (null), we will use the sell price. If defined to 0 (it means it was forced to 0 during insert, for example for a free to get product), we must still use 0.
 			//if ((!isset($line->pa_ht) || $line->pa_ht == 0) && $line->subprice > 0 && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull > 0)) {
-			if ((!isset($line->pa_ht)) && $line->subprice > 0 && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull > 0)) {
+			if ((!isset($line->pa_ht)) && $line->subprice > 0 && (isset($conf->global->ForceBuyingPriceIfNull) && getDolGlobalInt('ForceBuyingPriceIfNull') > 0)) {
 				$line->pa_ht = $line->subprice * (1 - ($line->remise_percent / 100));
 			}
 

@@ -98,7 +98,7 @@ if (isModEnabled("reception")) {
  * Actions
  */
 
-if ($action == 'addcontact' && $user->rights->reception->creer) {
+if ($action == 'addcontact' && $user->hasRight('reception', 'creer')) {
 	if ($result > 0 && $id > 0) {
 		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
@@ -118,10 +118,10 @@ if ($action == 'addcontact' && $user->rights->reception->creer) {
 		}
 		setEventMessages($mesg, $mesgs, 'errors');
 	}
-} elseif ($action == 'swapstatut' && $user->rights->reception->creer) {
+} elseif ($action == 'swapstatut' && $user->hasRight('reception', 'creer')) {
 	// bascule du statut d'un contact
 	$result = $objectsrc->swapContactStatus(GETPOST('ligne', 'int'));
-} elseif ($action == 'deletecontact' && $user->rights->reception->creer) {
+} elseif ($action == 'deletecontact' && $user->hasRight('reception', 'creer')) {
 	// Efface un contact
 	$result = $objectsrc->delete_contact(GETPOST("lineid", 'int'));
 
@@ -161,8 +161,8 @@ if ($id > 0 || !empty($ref)) {
 
 	$morehtmlref = '<div class="refidno">';
 	// Ref customer reception
-	$morehtmlref .= $form->editfieldkey("RefSupplier", '', $object->ref_supplier, $object, $user->rights->reception->creer, 'string', '', 0, 1);
-	$morehtmlref .= $form->editfieldval("RefSupplier", '', $object->ref_supplier, $object, $user->rights->reception->creer, 'string', '', null, null, '', 1);
+	$morehtmlref .= $form->editfieldkey("RefSupplier", '', $object->ref_supplier, $object, $user->hasRight('reception', 'creer'), 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldval("RefSupplier", '', $object->ref_supplier, $object, $user->hasRight('reception', 'creer'), 'string', '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 	// Project

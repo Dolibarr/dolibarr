@@ -22,7 +22,7 @@
 
 /**
  *		\file       htdocs/theme/eldy/manifest.json.php
- *		\brief      File for The Web App
+ *		\brief      File for The Web App (PWA)
  */
 
 if (!defined('NOREQUIREUSER')) {

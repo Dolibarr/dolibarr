@@ -84,10 +84,10 @@ $result = restrictedArea($user, 'expensereport', $id, 'expensereport');
 if ($object->id > 0) {
 	// Check current user can read this expense report
 	$canread = 0;
-	if (!empty($user->rights->expensereport->readall)) {
+	if ($user->hasRight('expensereport', 'readall')) {
 		$canread = 1;
 	}
-	if (!empty($user->rights->expensereport->lire) && in_array($object->fk_user_author, $childids)) {
+	if ($user->hasRight('expensereport', 'lire') && in_array($object->fk_user_author, $childids)) {
 		$canread = 1;
 	}
 	if (!$canread) {

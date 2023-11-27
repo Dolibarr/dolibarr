@@ -59,7 +59,7 @@ class PaymentSalary extends CommonObject
 	/**
 	 * @var int|string date of payment
 	 * @deprecated
-	 * @see datep
+	 * @see $datep
 	 */
 	public $datepaye = '';
 

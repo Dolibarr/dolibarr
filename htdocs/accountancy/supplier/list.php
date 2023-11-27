@@ -91,7 +91,7 @@ if (!$sortfield) {
 	$sortfield = "f.datef, f.ref, l.rowid";
 }
 if (!$sortorder) {
-	if ($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO > 0) {
+	if (getDolGlobalInt('ACCOUNTING_LIST_SORT_VENTILATION_TODO') > 0) {
 		$sortorder = "DESC";
 	} else {
 		$sortorder = "ASC";

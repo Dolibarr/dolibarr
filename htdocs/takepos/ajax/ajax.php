@@ -150,7 +150,7 @@ if ($action == 'getProducts') {
 
 	// Define $filteroncategids, the filter on category ID if there is a Root category defined.
 	$filteroncategids = '';
-	if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) {	// A root category is defined, we must filter on products inside this category tree
+	if (getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') > 0) {	// A root category is defined, we must filter on products inside this category tree
 		$object = new Categorie($db);
 		//$result = $object->fetch($conf->global->TAKEPOS_ROOT_CATEGORY_ID);
 		$arrayofcateg = $object->get_full_arbo('product', $conf->global->TAKEPOS_ROOT_CATEGORY_ID, 1);
