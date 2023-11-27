@@ -78,8 +78,8 @@ parameters:
 		- '#Sprain\\SwissQrBill\\#'
 	internalErrorsCountLimit: 50
 	cache:
-	    nodesByFileCountMax: 512
-	    nodesByStringCountMax: 512
+		nodesByFileCountMax: 512
+		nodesByStringCountMax: 512
 	reportUnmatchedIgnoredErrors: false
 	universalObjectCratesClasses:
 		- stdClass

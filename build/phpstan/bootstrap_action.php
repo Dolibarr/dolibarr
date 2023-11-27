@@ -7,7 +7,7 @@ define('DOL_MAIN_URL_ROOT', '/');
 define('MAIN_DB_PREFIX', 'llx_');
 
 // Load the main.inc.php file to have functions env defined
-if (! defined("NOLOGIN")) define("NOLOGIN", '1');
-if (! defined("NOHTTPSREDIRECT")) define("NOHTTPSREDIRECT", '1');
+define("NOLOGIN", '1');
+define("NOHTTPSREDIRECT", '1');
 global $conf, $langs, $user, $db;
-// include_once __DIR__ . '/../../htdocs/main.inc.php';
+include_once DOL_DOCUMENT_ROOT . '/master.inc.php';
