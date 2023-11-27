@@ -2969,11 +2969,6 @@ class ContratLigne extends CommonObjectLine
 	public $element_for_permission = 'contrat';
 
 	/**
-	 * @var int ID
-	 */
-	public $id;
-
-	/**
 	 * @var string Ref
 	 */
 	public $ref;

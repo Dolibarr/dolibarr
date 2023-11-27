@@ -62,11 +62,6 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 	/**
 	 * @var int ID
 	 */
-	public $id;
-
-	/**
-	 * @var int ID
-	 */
 	public $fk_commande;
 
 	/**

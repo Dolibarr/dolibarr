@@ -2807,11 +2807,6 @@ class SupplierProposalLine extends CommonObjectLine
 	/**
 	 * @var int ID
 	 */
-	public $id;
-
-	/**
-	 * @var int ID
-	 */
 	public $fk_supplier_proposal;
 
 	/**

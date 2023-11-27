@@ -741,11 +741,6 @@ class CurrencyRate extends CommonObjectLine
 	public $table_element = 'multicurrency_rate';
 
 	/**
-	 * @var int ID
-	 */
-	public $id;
-
-	/**
 	 * @var double Rate
 	 */
 	public $rate;

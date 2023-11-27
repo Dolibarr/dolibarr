@@ -1923,11 +1923,6 @@ class AccountLine extends CommonObjectLine
 	public $picto = 'accountline';
 
 	/**
-	 * @var int ID
-	 */
-	public $id;
-
-	/**
 	 * @var string Ref
 	 */
 	public $ref;
