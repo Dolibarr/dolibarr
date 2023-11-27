@@ -228,7 +228,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	$calcmode = $langs->trans("CalcModeDebt");
 	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 	$description = $langs->trans("RulesCADue");
-	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 		$description .= $langs->trans("DepositsAreNotIncluded");
 	} else {
 		$description .= $langs->trans("DepositsAreIncluded");
@@ -278,7 +278,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_societe as cs";
 	}
 	$sql .= " WHERE f.fk_statut in (1,2)";
-	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 		$sql .= " AND f.type IN (0,1,2,5)";
 	} else {
 		$sql .= " AND f.type IN (0,1,2,3,5)";

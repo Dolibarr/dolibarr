@@ -68,7 +68,7 @@ if ($user->socid > 0) {
 	accessforbidden();
 }
 
-if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY)) {
+if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY')) {
 	$setupcompanynotcomplete = 1;
 }
 
@@ -112,7 +112,7 @@ if (!empty($setupcompanynotcomplete)) {
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is useless due to the global search combo
+if (getDolGlobalString('MAIN_SEARCH_FORM_ON_HOME_AREAS')) {     // This is useless due to the global search combo
 	if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 		$langs->load("holiday");
 		$listofsearchfields['search_holiday'] = array('text'=>'TitreRequestCP');
@@ -152,7 +152,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is usel
 
 
 if (isModEnabled('holiday')) {
-	if (empty($conf->global->HOLIDAY_HIDE_BALANCE)) {
+	if (!getDolGlobalString('HOLIDAY_HIDE_BALANCE')) {
 		$holidaystatic = new Holiday($db);
 		$user_id = $user->id;
 

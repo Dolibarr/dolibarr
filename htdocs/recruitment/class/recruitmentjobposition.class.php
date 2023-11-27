@@ -194,7 +194,7 @@ class RecruitmentJobPosition extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -704,7 +704,7 @@ class RecruitmentJobPosition extends CommonObject
 				$modelpdf = $this->model_pdf;
 			}
 
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				// Define output language
 				$outputlangs = $langs;
 				if (getDolGlobalInt('MAIN_MULTILANGS')) {
@@ -714,9 +714,9 @@ class RecruitmentJobPosition extends CommonObject
 				}
 
 				// PDF
-				$hidedetails = (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0);
-				$hidedesc = (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0);
-				$hideref = (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0);
+				$hidedetails = (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0);
+				$hidedesc = (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0);
+				$hideref = (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0);
 
 				//$ret=$object->fetch($id);    // Reload to get new records
 				$this->generateDocument($modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -823,7 +823,7 @@ class RecruitmentJobPosition extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowRecruitmentJobPosition");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -1001,14 +1001,14 @@ class RecruitmentJobPosition extends CommonObject
 		global $langs, $conf;
 		$langs->load("recruitment");
 
-		if (empty($conf->global->RECRUITMENT_RECRUITMENTJOBPOSITION_ADDON)) {
+		if (!getDolGlobalString('RECRUITMENT_RECRUITMENTJOBPOSITION_ADDON')) {
 			$conf->global->RECRUITMENT_RECRUITMENTJOBPOSITION_ADDON = 'mod_recruitmentjobposition_standard';
 		}
 
-		if (!empty($conf->global->RECRUITMENT_RECRUITMENTJOBPOSITION_ADDON)) {
+		if (getDolGlobalString('RECRUITMENT_RECRUITMENTJOBPOSITION_ADDON')) {
 			$mybool = false;
 
-			$file = $conf->global->RECRUITMENT_RECRUITMENTJOBPOSITION_ADDON.".php";
+			$file = getDolGlobalString('RECRUITMENT_RECRUITMENTJOBPOSITION_ADDON') . ".php";
 			$classname = $conf->global->RECRUITMENT_RECRUITMENTJOBPOSITION_ADDON;
 
 			// Include file with class
@@ -1067,7 +1067,7 @@ class RecruitmentJobPosition extends CommonObject
 		$langs->load("recruitment");
 
 		if (!dol_strlen($modele)) {
-			if (!empty($conf->global->RECRUITMENTJOBPOSITION_ADDON_PDF)) {
+			if (getDolGlobalString('RECRUITMENTJOBPOSITION_ADDON_PDF')) {
 				$modele = $conf->global->RECRUITMENTJOBPOSITION_ADDON_PDF;
 			} else {
 				$modele = ''; // No default value. For job position, we allow to disable all PDF generation

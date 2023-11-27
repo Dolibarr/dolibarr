@@ -261,7 +261,7 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 
 <!-- Computed value -->
 <tr class="extra_computed_value">
-<?php if (empty($conf->global->MAIN_STORE_COMPUTED_EXTRAFIELDS)) { ?>
+<?php if (!getDolGlobalString('MAIN_STORE_COMPUTED_EXTRAFIELDS')) { ?>
 	<td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc"), 1, 'help', '', 0, 2, 'tooltipcompute'); ?></td>
 <?php } else { ?>
 	<td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc")).$form->textwithpicto($langs->trans("Computedpersistent"), $langs->trans("ComputedpersistentDesc"), 1, 'warning'); ?></td>

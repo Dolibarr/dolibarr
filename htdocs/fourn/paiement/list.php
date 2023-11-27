@@ -127,8 +127,8 @@ if ($user->socid) {
 if (!isModEnabled('supplier_invoice')) {
 	accessforbidden();
 }
-if ((!$user->hasRight("fournisseur", "facture", "lire") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))
-	|| (!$user->hasRight("supplier_invoice", "lire") && !empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))) {
+if ((!$user->hasRight("fournisseur", "facture", "lire") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD'))
+	|| (!$user->hasRight("supplier_invoice", "lire") && getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD'))) {
 	accessforbidden();
 }
 
@@ -371,7 +371,7 @@ if (getDolGlobalInt('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '</td>';
 }
 
-if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
@@ -456,7 +456,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
-if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 	print_liste_field_titre('#', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
@@ -534,7 +534,7 @@ while ($i < min($num, $limit)) {
 	}
 
 	// No
-	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+	if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 		print '<td class="nowraponall">'.(($offset * $limit) + $i).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;

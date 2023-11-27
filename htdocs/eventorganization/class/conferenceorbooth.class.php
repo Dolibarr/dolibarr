@@ -159,7 +159,7 @@ class ConferenceOrBooth extends ActionComm
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['id']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -559,7 +559,7 @@ class ConferenceOrBooth extends ActionComm
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowConferenceOrBooth");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -781,7 +781,7 @@ class ConferenceOrBooth extends ActionComm
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->CONFERENCEORBOOTH_ADDON_PDF)) {
+			} elseif (getDolGlobalString('CONFERENCEORBOOTH_ADDON_PDF')) {
 				$modele = $conf->global->CONFERENCEORBOOTH_ADDON_PDF;
 			}
 		}

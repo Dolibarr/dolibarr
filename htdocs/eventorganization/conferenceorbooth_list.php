@@ -293,7 +293,7 @@ if ($projectid > 0 || $projectref) {
 
 	$help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 	$title = $langs->trans("Project") . ' - ' . $langs->trans("EventOrganizationConfOrBoothes") . ' - ' . $project->ref . ' ' . $project->name;
-	if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $project->name) {
+	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $project->name) {
 		$title = $project->ref . ' ' . $project->name . ' - ' . $langs->trans("ListOfConferencesOrBooths");
 	}
 }
@@ -341,24 +341,24 @@ if ($projectid > 0) {
 	print '<table class="border tableforfield centpercent">';
 
 	// Usage
-	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || isModEnabled('eventorganization')) {
+	if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') || !getDolGlobalString('PROJECT_HIDE_TASKS') || isModEnabled('eventorganization')) {
 		print '<tr><td class="tdtop">';
 		print $langs->trans("Usage");
 		print '</td>';
 		print '<td>';
-		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+		if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 			print '<input type="checkbox" disabled name="usage_opportunity"'.($project->usage_opportunity ? ' checked="checked"' : '').'"> ';
 			$htmltext = $langs->trans("ProjectFollowOpportunity");
 			print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
 			print '<br>';
 		}
-		if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+		if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 			print '<input type="checkbox" disabled name="usage_task"'.($project->usage_task ? ' checked="checked"' : '').'"> ';
 			$htmltext = $langs->trans("ProjectFollowTasks");
 			print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
 			print '<br>';
 		}
-		if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
+		if (!getDolGlobalString('PROJECT_HIDE_TASKS') && getDolGlobalString('PROJECT_BILL_TIME_SPENT')) {
 			print '<input type="checkbox" disabled name="usage_bill_time"'.($project->usage_bill_time ? ' checked="checked"' : '').'"> ';
 			$htmltext = $langs->trans("ProjectBillTimeDescription");
 			print $form->textwithpicto($langs->trans("BillTime"), $htmltext);

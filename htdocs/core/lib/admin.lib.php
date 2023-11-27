@@ -843,7 +843,7 @@ function security_prepare_head()
 	$sql .= " WHERE r.libelle NOT LIKE 'tou%'"; // On ignore droits "tous"
 	$sql .= " AND entity = ".((int) $conf->entity);
 	$sql .= " AND bydefault = 1";
-	if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+	if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 		$sql .= " AND r.perms NOT LIKE '%_advance'"; // Hide advanced perms if option is not enabled
 	}
 	$resql = $db->query($sql);
@@ -859,7 +859,7 @@ function security_prepare_head()
 	$head[$h][0] = DOL_URL_ROOT."/admin/perms.php";
 	$head[$h][1] = $langs->trans("DefaultRights");
 	if ($nbPerms > 0) {
-		$head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">'.$nbPerms.'</span>' : '');
+		$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.$nbPerms.'</span>' : '');
 	}
 	$head[$h][2] = 'default';
 	$h++;

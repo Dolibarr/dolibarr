@@ -89,7 +89,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($action == 'add' && $user->rights->resource->write) {
+	if ($action == 'add' && $user->hasRight('resource', 'write')) {
 		if (!$cancel) {
 			$error = '';
 
@@ -126,7 +126,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update' && !$cancel && $user->rights->resource->write) {
+	if ($action == 'update' && !$cancel && $user->hasRight('resource', 'write')) {
 		$error = 0;
 
 		if (empty($ref)) {
@@ -167,7 +167,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'confirm_delete_resource' && $user->rights->resource->delete && $confirm === 'yes') {
+	if ($action == 'confirm_delete_resource' && $user->hasRight('resource', 'delete') && $confirm === 'yes') {
 		$res = $object->fetch($id);
 		if ($res > 0) {
 			$result = $object->delete($id);
@@ -206,7 +206,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 	}
 
 	if ($action == 'create' || $action == 'edit') {
-		if (!$user->rights->resource->write) {
+		if (!$user->hasRight('resource', 'write')) {
 			accessforbidden('', 0, 1);
 		}
 
@@ -341,7 +341,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 	if (empty($reshook)) {
 		if ($action != "create" && $action != "edit") {
 			// Edit resource
-			if ($user->rights->resource->write) {
+			if ($user->hasRight('resource', 'write')) {
 				print '<div class="inline-block divButAction">';
 				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&action=edit&token='.newToken().'" class="butAction">'.$langs->trans('Modify').'</a>';
 				print '</div>';

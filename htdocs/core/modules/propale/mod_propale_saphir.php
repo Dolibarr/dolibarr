@@ -86,7 +86,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$mask = empty($conf->global->PROPALE_SAPHIR_MASK) ? '' : $conf->global->PROPALE_SAPHIR_MASK;
+		$mask = !getDolGlobalString('PROPALE_SAPHIR_MASK') ? '' : $conf->global->PROPALE_SAPHIR_MASK;
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskpropal" value="'.$mask.'">', $tooltip, 1, 1).'</td>';
 
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
@@ -136,7 +136,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// On defini critere recherche compteur
-		$mask = empty($conf->global->PROPALE_SAPHIR_MASK) ? '' : $conf->global->PROPALE_SAPHIR_MASK;
+		$mask = !getDolGlobalString('PROPALE_SAPHIR_MASK') ? '' : $conf->global->PROPALE_SAPHIR_MASK;
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';

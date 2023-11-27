@@ -775,7 +775,7 @@ class Cronjob extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowCronJob");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}

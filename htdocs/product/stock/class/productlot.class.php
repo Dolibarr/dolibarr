@@ -964,10 +964,10 @@ class Productlot extends CommonObject
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Batch").'</u>';
 		//$datas['divopen'] = '<div width="100%">';
 		$datas['batch'] = '<br><b>'.$langs->trans('Batch').':</b> '.$this->batch;
-		if ($this->eatby && empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+		if ($this->eatby && !getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 			$datas['eatby'] = '<br><b>'.$langs->trans('EatByDate').':</b> '.dol_print_date($this->db->jdate($this->eatby), 'day');
 		}
-		if ($this->sellby && empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+		if ($this->sellby && !getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 			$datas['sellby'] = '<br><b>'.$langs->trans('SellByDate').':</b> '.dol_print_date($this->db->jdate($this->sellby), 'day');
 		}
 		//$datas['divclose'] = '</div>';
@@ -1022,7 +1022,7 @@ class Productlot extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -1117,7 +1117,7 @@ class Productlot extends CommonObject
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->PRODUCT_BATCH_ADDON_PDF)) {
+			} elseif (getDolGlobalString('PRODUCT_BATCH_ADDON_PDF')) {
 				$modele = $conf->global->PRODUCT_BATCH_ADDON_PDF;
 			}
 		}
