@@ -2995,8 +2995,6 @@ class ContratLigne extends CommonObjectLine
 	 */
 	public $libelle;
 
-	public $product_label;
-
 	public $date_commande;
 
 	public $date_start; // date start planned

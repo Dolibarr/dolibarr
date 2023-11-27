@@ -4114,11 +4114,7 @@ class PropaleLigne extends CommonObjectLine
 	 * @see $product_label
 	 */
 	public $label;
-	/**
-	 *  Product label
-	 * @var string
-	 */
-	public $product_label;
+
 	/**
 	 * Product description
 	 * @var string

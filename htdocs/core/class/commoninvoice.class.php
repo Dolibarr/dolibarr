@@ -1830,12 +1830,6 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	public $libelle; // Product label (deprecated)
 
 	/**
-	 * Product label
-	 * @var string
-	 */
-	public $product_label;
-
-	/**
 	 * Product description
 	 * @var string
 	 */

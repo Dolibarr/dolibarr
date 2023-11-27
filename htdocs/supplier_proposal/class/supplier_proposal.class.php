@@ -2873,12 +2873,6 @@ class SupplierProposalLine extends CommonObjectLine
 	public $libelle;
 
 	/**
-	 *  Product label
-	 * @var string
-	 */
-	public $product_label;
-
-	/**
 	 * Custom label
 	 * @var string
 	 */
