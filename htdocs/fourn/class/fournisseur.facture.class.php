@@ -3557,12 +3557,6 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $total_localtax2;
 
 	/**
-	 * @var int ID
-	 */
-	public $fk_product;
-
-
-	/**
 	 * Label of the product
 	 * @var string
 	 */

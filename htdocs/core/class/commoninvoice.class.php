@@ -1867,12 +1867,6 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	public $price;
 
 	/**
-	 * Id of corresponding product
-	 * @var int
-	 */
-	public $fk_product;
-
-	/**
 	 * VAT code
 	 * @var string
 	 */

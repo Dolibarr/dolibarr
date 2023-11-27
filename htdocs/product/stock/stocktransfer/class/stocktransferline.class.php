@@ -111,7 +111,6 @@ class StockTransferLine extends CommonObjectLine
 	public $fk_warehouse_destination;
 	public $fk_warehouse_source;
 	public $fk_stocktransfer;
-	public $fk_product;
 	public $batch;
 
 	/**

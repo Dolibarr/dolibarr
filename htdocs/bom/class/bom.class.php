@@ -1734,10 +1734,6 @@ class BOMLine extends CommonObjectLine
 	 */
 	public $fk_bom;
 
-	/**
-	 * @var int Id of product
-	 */
-	public $fk_product;
 
 	/**
 	 * @var int Id of parent bom

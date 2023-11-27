@@ -4051,7 +4051,6 @@ class PropaleLigne extends CommonObjectLine
 	public $fk_propal;
 	public $fk_parent_line;
 	public $desc; // Description ligne
-	public $fk_product; // Id produit predefini
 	/**
 	 * @deprecated
 	 * @see $product_type

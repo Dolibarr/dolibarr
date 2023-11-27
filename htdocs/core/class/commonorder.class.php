@@ -166,12 +166,6 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $subprice;
 
 	/**
-	 * Id of corresponding product
-	 * @var int
-	 */
-	public $fk_product;
-
-	/**
 	 * Percent line discount
 	 * @var float
 	 */

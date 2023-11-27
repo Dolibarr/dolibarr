@@ -2980,11 +2980,6 @@ class ContratLigne extends CommonObjectLine
 	 */
 	public $fk_contrat;
 
-	/**
-	 * @var int ID
-	 */
-	public $fk_product;
-
 	public $statut; // 0 inactive, 4 active, 5 closed
 	public $type; // 0 for product, 1 for service
 

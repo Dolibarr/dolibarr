@@ -2817,11 +2817,6 @@ class SupplierProposalLine extends CommonObjectLine
 	public $desc; // Description ligne
 
 	/**
-	 * @var int ID
-	 */
-	public $fk_product; // Id produit predefini
-
-	/**
 	 * @deprecated
 	 * @see $product_type
 	 */

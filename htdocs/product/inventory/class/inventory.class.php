@@ -840,7 +840,6 @@ class InventoryLine extends CommonObjectLine
 	);
 	public $fk_inventory;
 	public $fk_warehouse;
-	public $fk_product;
 	public $batch;
 	public $datec;
 	public $tms;
