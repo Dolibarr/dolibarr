@@ -2015,7 +2015,6 @@ class MoLine extends CommonObjectLine
 	public $fk_user_modif;
 	public $import_key;
 	public $fk_parent_line;
-	public $fk_unit;
 
 	/**
 	 * @var int Service Workstation
