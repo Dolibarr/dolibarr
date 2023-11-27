@@ -4116,12 +4116,6 @@ class PropaleLigne extends CommonObjectLine
 	public $label;
 
 	/**
-	 * Product description
-	 * @var string
-	 */
-	public $product_desc;
-
-	/**
 	 * Product use lot
 	 * @var string
 	 */

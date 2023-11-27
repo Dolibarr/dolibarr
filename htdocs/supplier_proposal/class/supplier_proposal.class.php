@@ -2878,12 +2878,6 @@ class SupplierProposalLine extends CommonObjectLine
 	 */
 	public $label;
 
-	/**
-	 * Product description
-	 * @var string
-	 */
-	public $product_desc;
-
 	public $localtax1_tx; // Local tax 1
 	public $localtax2_tx; // Local tax 2
 	public $localtax1_type; // Local tax 1 type

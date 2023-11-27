@@ -1211,7 +1211,6 @@ class DeliveryLine extends CommonObjectLine
 	public $qty;
 	public $qty_asked;
 	public $qty_shipped;
-	public $product_desc;
 	public $price;
 
 	public $fk_origin_line;

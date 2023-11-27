@@ -3418,12 +3418,6 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $ref_supplier;
 
 	/**
-	 * Product description
-	 * @var string
-	 */
-	public $product_desc;
-
-	/**
 	 * Unit price before taxes
 	 * @var float
 	 * @deprecated Use $subprice

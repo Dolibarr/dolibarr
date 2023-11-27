@@ -2635,11 +2635,6 @@ class ExpeditionLigne extends CommonObjectLine
 	public $libelle;
 
 	/**
-	 * @var string product description
-	 */
-	public $product_desc;
-
-	/**
 	 * @var int rang of line
 	 */
 	public $rang;

@@ -117,12 +117,6 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $product_tobuy=0;
 
 	/**
-	 * Product description
-	 * @var string
-	 */
-	 public $product_desc;
-
-	/**
 	 * Product use lot
 	 * @var string
 	 */
