@@ -2817,8 +2817,6 @@ class SupplierProposalLine extends CommonObjectLine
 	public $tva_tx;
 	public $vat_src_code;
 
-	public $subprice;
-
 	/**
 	 * @var int ID
 	 */

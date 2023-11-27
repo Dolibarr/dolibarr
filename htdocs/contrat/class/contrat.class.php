@@ -3015,8 +3015,6 @@ class ContratLigne extends CommonObjectLine
 	 */
 	public $fk_remise_except;
 
-	public $subprice; // Unit price HT
-
 	/**
 	 * @var float
 	 * @deprecated Use $price_ht instead

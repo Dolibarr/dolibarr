@@ -130,12 +130,6 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $price;
 
 	/**
-	 * Unit price before taxes
-	 * @var float
-	 */
-	public $subprice;
-
-	/**
 	 * VAT code
 	 * @var string
 	 */

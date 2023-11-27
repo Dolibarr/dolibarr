@@ -134,6 +134,11 @@ abstract class CommonObjectLine extends CommonObject
 	 * idofmodule: a meaning for the module
 	 */
 	public $special_code=0;
+
+	/**
+	 * Unit price before taxes
+	 * @var float
+	 */
 	public $subprice;
 	public $tva_tx;
 

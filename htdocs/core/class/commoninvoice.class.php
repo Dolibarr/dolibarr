@@ -1832,12 +1832,6 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	/**
 	 * Unit price before taxes
 	 * @var float
-	 */
-	public $subprice;
-
-	/**
-	 * Unit price before taxes
-	 * @var float
 	 * @deprecated
 	 */
 	public $price;

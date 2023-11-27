@@ -3426,12 +3426,6 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $pu_ht;
 
 	/**
-	 * Unit price excluded taxes
-	 * @var float
-	 */
-	public $subprice;
-
-	/**
 	 * Unit price included taxes
 	 * @var float
 	 */

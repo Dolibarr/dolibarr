@@ -4054,7 +4054,6 @@ class PropaleLigne extends CommonObjectLine
 	public $tva_tx;
 	public $vat_src_code;
 
-	public $subprice;
 	public $fk_remise_except;
 
 	public $rang = 0;
