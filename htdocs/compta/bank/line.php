@@ -36,6 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'compta', 'bills', 'other'));
@@ -244,7 +245,9 @@ if ($user->hasRight('banque', 'consolidate') && ($action == 'num_releve' || $act
 
 	if (!$error) {
 		$db->begin();
-
+		$object->fetch($rowid);
+		$oldNum_rel = $object->num_releve;
+		$id = $object->fk_account;
 		$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
 		$sql .= " SET num_releve = ".($num_rel ? "'".$db->escape($num_rel)."'" : "null");
 		if (empty($num_rel)) {
@@ -257,9 +260,24 @@ if ($user->hasRight('banque', 'consolidate') && ($action == 'num_releve' || $act
 		dol_syslog("line.php", LOG_DEBUG);
 		$result = $db->query($sql);
 		if ($result) {
+			$filepath = "bank/".$id."/statement/".dol_sanitizeFileName($num_rel);
+			$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_files";
+			$sql .= " SET filepath = '".($filepath)."'";
+			$sql .= " WHERE filepath = 'bank/".$id."/statement/".$oldNum_rel."'";
+			$updatePathFile = $db->query($sql);
+			$srcdir = DOL_DATA_ROOT."/bank/".$id."/statement/".dol_sanitizeFileName($oldNum_rel);
+			$destdir = DOL_DATA_ROOT."/bank/".$id."/statement/".dol_sanitizeFileName($num_rel)."/";
+			if (dol_is_dir($srcdir)) {
+				$update_dir = dol_move_dir($srcdir, $destdir, 1);
+			} else {
+				$update_dir = false;
+			}
+		}
+		if ($result && $updatePathFile && $update_dir) {
 			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			$db->commit();
 		} else {
+			setEventMessages($langs->trans("ErrorPathNotExist"), null, 'errors');
 			$db->rollback();
 			dol_print_error($db);
 		}
