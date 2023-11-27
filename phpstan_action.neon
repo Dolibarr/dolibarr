@@ -47,7 +47,6 @@ parameters:
 	reportMagicProperties: false
 	ignoreErrors:
 		- '#Undefined variable: \$langs#'
-		- '#Undefined variable: \$user#'
 		- '#Undefined variable: \$db#'
 		- '#Undefined variable: \$conf#'
 		- '#Undefined variable: \$hookmanager#'

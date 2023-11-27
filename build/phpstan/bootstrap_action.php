@@ -10,4 +10,4 @@ define('MAIN_DB_PREFIX', 'llx_');
 define("NOLOGIN", '1');
 define("NOHTTPSREDIRECT", '1');
 global $conf, $langs, $user, $db;
-include_once DOL_DOCUMENT_ROOT . '/master.inc.php';
+// include_once DOL_DOCUMENT_ROOT . '/../../htdocs/main.inc.php';
