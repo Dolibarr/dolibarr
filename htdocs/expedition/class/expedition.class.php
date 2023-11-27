@@ -2672,18 +2672,6 @@ class ExpeditionLigne extends CommonObjectLine
 	 */
 	public $rang;
 
-	/**
-	 * @var float weight
-	 */
-	public $surface;
-	public $surface_units;
-
-	/**
-	 * @var float weight
-	 */
-	public $volume;
-	public $volume_units;
-
 	// Invoicing
 	public $remise_percent;
 	public $tva_tx;
