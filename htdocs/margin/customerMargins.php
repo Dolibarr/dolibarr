@@ -192,14 +192,14 @@ print '<span id="totalMargin" class="amount"></span> <span class="amount">'.$lan
 print '</td></tr>';
 
 // Margin Rate
-if (!empty($conf->global->DISPLAY_MARGIN_RATES)) {
+if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
 	print '<tr><td>'.$langs->trans("MarginRate").'</td><td colspan="4">';
 	print '<span id="marginRate"></span>'; // set by jquery (see below)
 	print '</td></tr>';
 }
 
 // Mark Rate
-if (!empty($conf->global->DISPLAY_MARK_RATES)) {
+if (getDolGlobalString('DISPLAY_MARK_RATES')) {
 	print '<tr><td>'.$langs->trans("MarkRate").'</td><td colspan="4">';
 	print '<span id="markRate"></span>'; // set by jquery (see below)
 	print '</td></tr>';
@@ -327,10 +327,10 @@ if ($result) {
 	print_liste_field_titre("SellingPrice", $_SERVER["PHP_SELF"], "selling_price", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "buying_price", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre("Margin", $_SERVER["PHP_SELF"], "marge", "", $param, 'align="right"', $sortfield, $sortorder);
-	if (!empty($conf->global->DISPLAY_MARGIN_RATES)) {
+	if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
 		print_liste_field_titre("MarginRate", $_SERVER["PHP_SELF"], "", "", $param, 'align="right"', $sortfield, $sortorder);
 	}
-	if (!empty($conf->global->DISPLAY_MARK_RATES)) {
+	if (getDolGlobalString('DISPLAY_MARK_RATES')) {
 		print_liste_field_titre("MarkRate", $_SERVER["PHP_SELF"], "", "", $param, 'align="right"', $sortfield, $sortorder);
 	}
 	print "</tr>\n";
@@ -377,10 +377,10 @@ if ($result) {
 			print '<td class="nowrap right"><span class="amount">'.price(price2num($pv, 'MT')).'</span></td>';
 			print '<td class="nowrap right"><span class="amount">'.price(price2num($pa, 'MT')).'</span></td>';
 			print '<td class="nowrap right"><span class="amount">'.price(price2num($marge, 'MT')).'</span></td>';
-			if (!empty($conf->global->DISPLAY_MARGIN_RATES)) {
+			if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
 				print '<td class="nowrap right">'.(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%").'</td>';
 			}
-			if (!empty($conf->global->DISPLAY_MARK_RATES)) {
+			if (getDolGlobalString('DISPLAY_MARK_RATES')) {
 				print '<td class="nowrap right">'.(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%").'</td>';
 			}
 			print "</tr>\n";
@@ -415,10 +415,10 @@ if ($result) {
 	print '<td class="nowrap right">'.price(price2num($cumul_vente, 'MT')).'</td>';
 	print '<td class="nowrap right">'.price(price2num($cumul_achat, 'MT')).'</td>';
 	print '<td class="nowrap right">'.price(price2num($totalMargin, 'MT')).'</td>';
-	if (!empty($conf->global->DISPLAY_MARGIN_RATES)) {
+	if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
 		print '<td class="nowrap right">'.(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%").'</td>';
 	}
-	if (!empty($conf->global->DISPLAY_MARK_RATES)) {
+	if (getDolGlobalString('DISPLAY_MARK_RATES')) {
 		print '<td class="nowrap right">'.(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%").'</td>';
 	}
 	print '</tr>';

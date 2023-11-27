@@ -64,7 +64,7 @@ $accountid = GETPOST('accountid', 'int') > 0 ? GETPOST('accountid', 'int') : 0;
 if (GETPOSTISSET('auto_create_paiement') || $action === 'add') {
 	$auto_create_paiement = GETPOST("auto_create_paiement", "int");
 } else {
-	$auto_create_paiement = empty($conf->global->CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT);
+	$auto_create_paiement = !getDolGlobalString('CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT');
 }
 
 $datep = dol_mktime(12, 0, 0, GETPOST("datepmonth", 'int'), GETPOST("datepday", 'int'), GETPOST("datepyear", 'int'));

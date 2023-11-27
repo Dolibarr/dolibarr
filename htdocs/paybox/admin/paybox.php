@@ -121,15 +121,15 @@ if ($action == 'setvalue' && $user->admin) {
  */
 
 $IBS_SITE = "1999888"; // Site test
-if (empty($conf->global->PAYBOX_IBS_SITE)) {
+if (!getDolGlobalString('PAYBOX_IBS_SITE')) {
 	$conf->global->PAYBOX_IBS_SITE = $IBS_SITE;
 }
 $IBS_RANG = "99"; // Rang test
-if (empty($conf->global->PAYBOX_IBS_RANG)) {
+if (!getDolGlobalString('PAYBOX_IBS_RANG')) {
 	$conf->global->PAYBOX_IBS_RANG = $IBS_RANG;
 }
 $IBS_DEVISE = "978"; // Euro
-if (empty($conf->global->PAYBOX_IBS_DEVISE)) {
+if (!getDolGlobalString('PAYBOX_IBS_DEVISE')) {
 	$conf->global->PAYBOX_IBS_DEVISE = $IBS_DEVISE;
 }
 
@@ -279,7 +279,7 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("SecurityTokenIsUnique").'</td><td>';
-print $form->selectyesno("PAYMENT_SECURITY_TOKEN_UNIQUE", (empty($conf->global->PAYMENT_SECURITY_TOKEN) ? 0 : $conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE), 1);
+print $form->selectyesno("PAYMENT_SECURITY_TOKEN_UNIQUE", (!getDolGlobalString('PAYMENT_SECURITY_TOKEN') ? 0 : $conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE), 1);
 print '</td></tr>';
 
 print '</table>';

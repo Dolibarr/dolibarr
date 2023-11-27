@@ -251,7 +251,7 @@ class EmailCollector extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -590,7 +590,7 @@ class EmailCollector extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowEmailCollector");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -788,9 +788,9 @@ class EmailCollector extends CommonObject
 
 		// Connect to IMAP
 		$flags = '/service=imap'; // IMAP
-		if (!empty($conf->global->IMAP_FORCE_TLS)) {
+		if (getDolGlobalString('IMAP_FORCE_TLS')) {
 			$flags .= '/tls';
-		} elseif (empty($this->imap_encryption) || ($this->imap_encryption == 'ssl' && !empty($conf->global->IMAP_FORCE_NOSSL))) {
+		} elseif (empty($this->imap_encryption) || ($this->imap_encryption == 'ssl' && getDolGlobalString('IMAP_FORCE_NOSSL'))) {
 			$flags .= '';
 		} else {
 			$flags .= '/' . $this->imap_encryption;
@@ -799,7 +799,7 @@ class EmailCollector extends CommonObject
 		$flags .= '/novalidate-cert';
 		//$flags.='/readonly';
 		//$flags.='/debug';
-		if (!empty($this->norsh) || !empty($conf->global->IMAP_FORCE_NORSH)) {
+		if (!empty($this->norsh) || getDolGlobalString('IMAP_FORCE_NORSH')) {
 			$flags .= '/norsh';
 		}
 		//Used in shared mailbox from Office365
@@ -1086,7 +1086,7 @@ class EmailCollector extends CommonObject
 		//$conf->global->SYSLOG_FILE = 'DOL_DATA_ROOT/dolibarr_mydedicatedlofile.log';
 
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 			require_once DOL_DOCUMENT_ROOT.'/includes/webklex/php-imap/vendor/autoload.php';
 		}
 
@@ -1129,7 +1129,7 @@ class EmailCollector extends CommonObject
 		$this->fetchFilters();
 		$this->fetchActions();
 
-		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 			if ($this->acces_type == 1) {
 				// Mode OAUth2 with PHP-IMAP
 				$supportedoauth2array = array();
@@ -1263,7 +1263,7 @@ class EmailCollector extends CommonObject
 			//$search='ALL';
 		}
 
-		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 			// Use PHPIMAP external library
 			$criteria = array(array('UNDELETED')); // Seems not supported by some servers
 			foreach ($this->filters as $rule) {
@@ -1529,7 +1529,7 @@ class EmailCollector extends CommonObject
 		$nbactiondone = 0;
 		$charset = ($this->hostcharset ? $this->hostcharset : "UTF-8");
 
-		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 			try {
 				//$criteria = [['ALL']];
 				//$Query = $client->getFolders()[0]->messages()->where($criteria);
@@ -1606,7 +1606,7 @@ class EmailCollector extends CommonObject
 
 
 				// GET header and overview datas
-				if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+				if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 					$header = $imapemail->getHeader()->raw;
 					$overview = $imapemail->getAttributes();
 				} else {
@@ -1734,7 +1734,7 @@ class EmailCollector extends CommonObject
 				$candidaturefoundby = '';
 
 
-				if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+				if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 					dol_syslog("msgid=".$overview['message_id']." date=".dol_print_date($overview['date'], 'dayrfc', 'gmt')." from=".$overview['from']." to=".$overview['to']." subject=".$overview['subject']);
 
 					// Removed emojis
@@ -1853,7 +1853,7 @@ class EmailCollector extends CommonObject
 				$fromstring = '';
 				$replytostring = '';
 
-				if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+				if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 					$fromstring = $overview['from'];
 					//$replytostring = empty($overview['reply-to']) ? '' : $overview['reply-to'];
 
@@ -2558,7 +2558,7 @@ class EmailCollector extends CommonObject
 								$description = dol_concatdesc($description, $messagetext);
 
 								$descriptionfull = $description;
-								if (empty($conf->global->MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER)) {
+								if (!getDolGlobalString('MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER')) {
 									$descriptionfull = dol_concatdesc($descriptionfull, "----- Header");
 									$descriptionfull = dol_concatdesc($descriptionfull, $header);
 								}
@@ -2622,7 +2622,7 @@ class EmailCollector extends CommonObject
 							}
 						} elseif ($operation['type'] == 'recordjoinpiece') {
 							$data = [];
-							if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+							if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 								foreach ($attachments as $attachment) {
 									if ($attachment->getName() === 'undefined') {
 										continue;
@@ -2822,7 +2822,7 @@ class EmailCollector extends CommonObject
 								$description = dol_concatdesc($description, $messagetext);
 
 								$descriptionfull = $description;
-								if (empty($conf->global->MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER)) {
+								if (!getDolGlobalString('MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER')) {
 									$descriptionfull = dol_concatdesc($descriptionfull, "----- Header");
 									$descriptionfull = dol_concatdesc($descriptionfull, $header);
 								}
@@ -2850,7 +2850,7 @@ class EmailCollector extends CommonObject
 								if (empty($projecttocreate->ref)) {
 									// Get next Ref
 									$defaultref = '';
-									$modele = empty($conf->global->PROJECT_ADDON) ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
+									$modele = !getDolGlobalString('PROJECT_ADDON') ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
 
 									// Search template files
 									$file = ''; $classname = ''; $filefound = 0; $reldir = '';
@@ -2907,7 +2907,7 @@ class EmailCollector extends CommonObject
 												if (!dol_is_dir($destdir)) {
 													dol_mkdir($destdir);
 												}
-												if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+												if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 													foreach ($attachments as $attachment) {
 														// $attachment->save($destdir.'/');
 														$typeattachment = (string) $attachment->getDisposition();
@@ -2958,16 +2958,16 @@ class EmailCollector extends CommonObject
 								$description = dol_concatdesc($description, $messagetext);
 
 								$descriptionfull = $description;
-								if (empty($conf->global->MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER)) {
+								if (!getDolGlobalString('MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER')) {
 									$descriptionfull = dol_concatdesc($descriptionfull, "----- Header");
 									$descriptionfull = dol_concatdesc($descriptionfull, $header);
 								}
 
 								$tickettocreate->subject = $subject;
 								$tickettocreate->message = $description;
-								$tickettocreate->type_code = (!empty($conf->global->MAIN_EMAILCOLLECTOR_TICKET_TYPE_CODE) ? $conf->global->MAIN_EMAILCOLLECTOR_TICKET_TYPE_CODE : dol_getIdFromCode($this->db, 1, 'c_ticket_type', 'use_default', 'code', 1));
-								$tickettocreate->category_code = (!empty($conf->global->MAIN_EMAILCOLLECTOR_TICKET_CATEGORY_CODE) ? $conf->global->MAIN_EMAILCOLLECTOR_TICKET_CATEGORY_CODE : dol_getIdFromCode($this->db, 1, 'c_ticket_category', 'use_default', 'code', 1));
-								$tickettocreate->severity_code = (!empty($conf->global->MAIN_EMAILCOLLECTOR_TICKET_SEVERITY_CODE) ? $conf->global->MAIN_EMAILCOLLECTOR_TICKET_SEVERITY_CODE : dol_getIdFromCode($this->db, 1, 'c_ticket_severity', 'use_default', 'code', 1));
+								$tickettocreate->type_code = (getDolGlobalString('MAIN_EMAILCOLLECTOR_TICKET_TYPE_CODE') ? $conf->global->MAIN_EMAILCOLLECTOR_TICKET_TYPE_CODE : dol_getIdFromCode($this->db, 1, 'c_ticket_type', 'use_default', 'code', 1));
+								$tickettocreate->category_code = (getDolGlobalString('MAIN_EMAILCOLLECTOR_TICKET_CATEGORY_CODE') ? $conf->global->MAIN_EMAILCOLLECTOR_TICKET_CATEGORY_CODE : dol_getIdFromCode($this->db, 1, 'c_ticket_category', 'use_default', 'code', 1));
+								$tickettocreate->severity_code = (getDolGlobalString('MAIN_EMAILCOLLECTOR_TICKET_SEVERITY_CODE') ? $conf->global->MAIN_EMAILCOLLECTOR_TICKET_SEVERITY_CODE : dol_getIdFromCode($this->db, 1, 'c_ticket_severity', 'use_default', 'code', 1));
 								$tickettocreate->origin_email = $from;
 								$tickettocreate->fk_user_create = $user->id;
 								$tickettocreate->datec = dol_now();
@@ -2989,7 +2989,7 @@ class EmailCollector extends CommonObject
 								if (empty($tickettocreate->ref)) {
 									// Get next Ref
 									$defaultref = '';
-									$modele = empty($conf->global->TICKET_ADDON) ? 'mod_ticket_simple' : $conf->global->TICKET_ADDON;
+									$modele = !getDolGlobalString('TICKET_ADDON') ? 'mod_ticket_simple' : $conf->global->TICKET_ADDON;
 
 									// Search template files
 									$file = ''; $classname = ''; $filefound = 0; $reldir = '';
@@ -3041,7 +3041,7 @@ class EmailCollector extends CommonObject
 												if (!dol_is_dir($destdir)) {
 													dol_mkdir($destdir);
 												}
-												if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+												if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 													foreach ($attachments as $attachment) {
 														// $attachment->save($destdir.'/');
 														$typeattachment = (string) $attachment->getDisposition();
@@ -3204,7 +3204,7 @@ class EmailCollector extends CommonObject
 				// Error for email or not ?
 				if (!$errorforactions) {
 					if (!empty($targetdir)) {
-						if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+						if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 							// Move mail using PHP-IMAP
 							dol_syslog("EmailCollector::doCollectOneCollector move message ".($imapemail->getHeader()->get('subject'))." to ".$targetdir, LOG_DEBUG);
 							if (empty($mode)) {
@@ -3217,7 +3217,7 @@ class EmailCollector extends CommonObject
 							$arrayofemailtodelete[$imapemail] = $msgid;
 						}
 					} else {
-						if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+						if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 							dol_syslog("EmailCollector::doCollectOneCollector message '".($imapemail->getHeader()->get('subject'))."' using this->host=".$this->host.", this->access_type=".$this->acces_type." was set to read", LOG_DEBUG);
 						} else {
 							dol_syslog("EmailCollector::doCollectOneCollector message ".((string) $imapemail)." to ".$connectstringtarget." was set to read", LOG_DEBUG);
@@ -3267,7 +3267,7 @@ class EmailCollector extends CommonObject
 		}
 
 		// Disconnect
-		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 			$client->disconnect();
 		} else {
 			foreach ($arrayofemailtodelete as $imapemail => $msgid) {

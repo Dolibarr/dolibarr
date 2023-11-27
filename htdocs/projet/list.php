@@ -119,7 +119,7 @@ $search_import_key = GETPOST('search_import_key', 'alpha');
 $searchCategoryCustomerOperator = 0;
 if (GETPOSTISSET('formfilteraction')) {
 	$searchCategoryCustomerOperator = GETPOST('search_category_customer_operator', 'int');
-} elseif (!empty($conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT)) {
+} elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
 	$searchCategoryCustomerOperator = $conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT;
 }
 $searchCategoryCustomerList = GETPOST('search_category_customer_list', 'array');
@@ -242,7 +242,7 @@ $arrayfields['s.nom'] = array('label'=>$langs->trans("ThirdParty"), 'checked'=>1
 $arrayfields['s.name_alias'] = array('label'=>"AliasNameShort", 'checked'=>0, 'position'=>22);
 $arrayfields['commercial'] = array('label'=>$langs->trans("SaleRepresentativesOfThirdParty"), 'checked'=>0, 'position'=>23);
 $arrayfields['c.assigned'] = array('label'=>$langs->trans("AssignedTo"), 'checked'=>1, 'position'=>120);
-$arrayfields['opp_weighted_amount'] = array('label'=>$langs->trans('OpportunityWeightedAmountShort'), 'checked'=>0, 'enabled'=>(empty($conf->global->PROJECT_USE_OPPORTUNITIES) ? 0 : 1), 'position'=>106);
+$arrayfields['opp_weighted_amount'] = array('label'=>$langs->trans('OpportunityWeightedAmountShort'), 'checked'=>0, 'enabled'=>(!getDolGlobalString('PROJECT_USE_OPPORTUNITIES') ? 0 : 1), 'position'=>106);
 $arrayfields['u.login'] = array('label'=>"Author", 'checked'=>-1, 'position'=>165);
 // Force some fields according to search_usage filter...
 if (GETPOST('search_usage_opportunity')) {
@@ -427,7 +427,7 @@ $userstatic = new User($db);
 
 $help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 $title = $langs->trans("LeadsOrProjects");
-if (empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+if (!getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 	$title = $langs->trans("Projects");
 }
 if (getDolGlobalInt('PROJECT_USE_OPPORTUNITIES') == 2) {	// 2 = leads only
@@ -781,7 +781,7 @@ if (!$resql) {
 $num = $db->num_rows($resql);
 
 // Direct jump if only one record found
-if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all && !$page) {
+if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	header("Location: ".DOL_URL_ROOT.'/projet/card.php?id='.$obj->id);
 	exit;
@@ -1125,7 +1125,7 @@ if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PROJECT, $search_category_array, 'minwidth300imp minwidth300 widthcentpercentminusx');
 }
 // Filter on customer categories
-if (!empty($conf->global->MAIN_SEARCH_CATEGORY_CUSTOMER_ON_PROJECT_LIST) && isModEnabled("categorie") && $user->hasRight('categorie', 'lire')) {
+if (getDolGlobalString('MAIN_SEARCH_CATEGORY_CUSTOMER_ON_PROJECT_LIST') && isModEnabled("categorie") && $user->hasRight('categorie', 'lire')) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->transnoentities('CustomersProspectsCategoriesShort');
 	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
@@ -1163,7 +1163,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -1369,7 +1369,7 @@ if (!empty($arrayfields['p.fk_statut']['checked'])) {
 	print '</td>';
 }
 // Action column
-if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;

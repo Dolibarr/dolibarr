@@ -113,7 +113,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$filter = array();
 }
 
-if (empty($user->rights->resource->read)) {
+if (!$user->hasRight('resource', 'read')) {
 	accessforbidden();
 }
 
@@ -217,7 +217,7 @@ if ($ret == -1) {
 	exit;
 } else {
 	$newcardbutton = '';
-	if ($user->rights->resource->write) {
+	if ($user->hasRight('resource', 'write')) {
 		$newcardbutton .= dolGetButtonTitle($langs->trans('MenuResourceAdd'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/resource/card.php?action=create');
 	}
 

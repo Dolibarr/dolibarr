@@ -131,7 +131,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 }
 
 $warehouseStatus = array();
-if (!empty($conf->global->ENTREPOT_EXTRA_STATUS)) {
+if (getDolGlobalString('ENTREPOT_EXTRA_STATUS')) {
 	//$warehouseStatus[] = Entrepot::STATUS_CLOSED;
 	$warehouseStatus[] = Entrepot::STATUS_OPEN_ALL;
 	$warehouseStatus[] = Entrepot::STATUS_OPEN_INTERNAL;
@@ -148,7 +148,7 @@ if ($date && $dateIsValid) {	// Avoid heavy sql if mandatory date is not defined
 	$sql .= ", ".MAIN_DB_PREFIX."product as p";
 	$sql .= " WHERE w.entity IN (".getEntity('stock').")";
 	$sql .= " AND w.rowid = ps.fk_entrepot AND p.rowid = ps.fk_product";
-	if (!empty($conf->global->ENTREPOT_EXTRA_STATUS) && count($warehouseStatus)) {
+	if (getDolGlobalString('ENTREPOT_EXTRA_STATUS') && count($warehouseStatus)) {
 		$sql .= " AND w.statut IN (".$db->sanitize(implode(',', $warehouseStatus)).")";
 	}
 	if ($productid > 0) {
@@ -205,7 +205,7 @@ if ($date && $dateIsValid) {
 	$sql .= ", ".MAIN_DB_PREFIX."product as p";
 	$sql .= " WHERE w.entity IN (".getEntity('stock').")";
 	$sql .= " AND w.rowid = sm.fk_entrepot AND p.rowid = sm.fk_product ";
-	if (!empty($conf->global->ENTREPOT_EXTRA_STATUS) && count($warehouseStatus)) {
+	if (getDolGlobalString('ENTREPOT_EXTRA_STATUS') && count($warehouseStatus)) {
 		$sql .= " AND w.statut IN (".$db->sanitize(implode(',', $warehouseStatus)).")";
 	}
 	if ($mode == 'future') {
@@ -298,7 +298,7 @@ $sql .= ' WHERE p.entity IN ('.getEntity('product').')';
 if ($productid > 0) {
 	$sql .= " AND p.rowid = ".((int) $productid);
 }
-if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 	$sql .= " AND p.fk_product_type = 0";
 }
 if (!empty($canvas)) {
@@ -521,7 +521,7 @@ $i = 0;
 while ($i < ($limit ? min($num, $limit) : $num)) {
 	$objp = $db->fetch_object($resql);
 
-	if (!empty($conf->global->STOCK_SUPPORTS_SERVICES) || $objp->fk_product_type == 0) {
+	if (getDolGlobalString('STOCK_SUPPORTS_SERVICES') || $objp->fk_product_type == 0) {
 		$prod->fetch($objp->rowid);
 
 		// Multilangs
@@ -622,7 +622,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 			// Selling value
 			print '<td class="right">';
-			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 				print '<span class="amount">';
 				if ($stock || (float) ($stock * $objp->price)) {
 					print price(price2num($stock * $objp->price, 'MT'), 1);
@@ -688,7 +688,7 @@ if (empty($date) || !$dateIsValid) {
 	} else {
 		print '<td></td>';
 		print '<td class="right">'.price(price2num($totalbuyingprice, 'MT')).'</td>';
-		if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+		if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 			print '<td class="right">'.price(price2num($totalsellingprice, 'MT')).'</td>';
 		} else {
 			print '<td></td>';

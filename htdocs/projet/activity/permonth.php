@@ -428,7 +428,7 @@ if (!$user->hasRight('user', 'user', 'lire')) {
 $moreforfilter .= img_picto($langs->trans('Filter').' '.$langs->trans('User'), 'user', 'class="paddingright pictofixedwidth"').$form->select_dolusers($search_usertoprocessid ? $search_usertoprocessid : $usertoprocess->id, 'search_usertoprocessid', $user->hasRight('user', 'user', 'lire') ? 0 : 0, null, 0, $includeonly, null, 0, 0, 0, '', 0, '', 'maxwidth200');
 $moreforfilter .= '</div>';
 
-if (empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) {
+if (!getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT')) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= '<div class="inline-block"></div>';
 	$moreforfilter .= img_picto($langs->trans('Filter').' '.$langs->trans('Project'), 'project', 'class="paddingright pictofixedwidth"').'<input type="text" name="search_project_ref" class="maxwidth100" value="'.dol_escape_htmltag($search_project_ref).'">';
@@ -454,10 +454,10 @@ print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'" id="tablelines3">'."\n";
 
 print '<tr class="liste_titre_filter">';
-if (!empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) {
+if (getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT')) {
 	print '<td class="liste_titre"><input type="text" size="4" name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'"></td>';
 }
-if (!empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) {
+if (getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT')) {
 	print '<td class="liste_titre"><input type="text" size="4" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
 }
 print '<td class="liste_titre"><input type="text" size="4" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
@@ -476,10 +476,10 @@ print '</td>';
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
-if (!empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) {
+if (getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT')) {
 	print '<td>'.$langs->trans("Project").'</td>';
 }
-if (!empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) {
+if (getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT')) {
 	print '<td>'.$langs->trans("ThirdParty").'</td>';
 }
 print '<td>'.$langs->trans("Task").'</td>';
@@ -505,7 +505,7 @@ print "</tr>\n";
 $colspan = 5;
 
 // By default, we can edit only tasks we are assigned to
-$restrictviewformytask = (empty($conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED) ? 1 : 0);
+$restrictviewformytask = (!getDolGlobalString('PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED') ? 1 : 0);
 
 // Get if user is available or not for each day
 $isavailable = array();

@@ -615,10 +615,10 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 0) {
 			$array_version['deprecated'] = $langs->trans("Deprecated");
 		}
-		if ($conf->global->MAIN_FEATURES_LEVEL > 0) {
+		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') > 0) {
 			$array_version['experimental'] = $langs->trans("Experimental");
 		}
-		if ($conf->global->MAIN_FEATURES_LEVEL > 1) {
+		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') > 1) {
 			$array_version['development'] = $langs->trans("Development");
 		}
 		$moreforfilter .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline-block">';
@@ -1106,7 +1106,7 @@ if ($mode == 'marketplace') {
 
 	print '<br>';
 
-	if (!getDolGlobalString('MAIN_DISABLE_DOLISTORE_SEARCH') && $conf->global->MAIN_FEATURES_LEVEL >= 1) {
+	if (!getDolGlobalString('MAIN_DISABLE_DOLISTORE_SEARCH') && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
 		// $options is array with filter criterias
 		//var_dump($options);
 		$dolistore->getRemoteCategories();

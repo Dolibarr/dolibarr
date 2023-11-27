@@ -64,7 +64,7 @@ if (preg_match('/\.(html|htm)$/i', $original_file)) {
 if (isset($_GET["attachment"])) {
 	$attachment = (GETPOST("attachment", 'alphanohtml') ? true : false);
 }
-if (!empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS_WEBSITE)) {
+if (getDolGlobalString('MAIN_DISABLE_FORCE_SAVEAS_WEBSITE')) {
 	$attachment = false;
 }
 

@@ -133,7 +133,7 @@ class pdf_espadon extends ModelePdfExpedition
 			$outputlangs = $langs;
 		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!empty($conf->global->MAIN_USE_FPDF)) {
+		if (getDolGlobalString('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
@@ -141,13 +141,13 @@ class pdf_espadon extends ModelePdfExpedition
 		$outputlangs->loadLangs(array("main", "bills", "orders", "products", "dict", "companies", "propal", "deliveries", "sendings", "productbatch"));
 
 		// Show Draft Watermark
-		if ($object->statut == $object::STATUS_DRAFT && (!empty($conf->global->SHIPPING_DRAFT_WATERMARK))) {
+		if ($object->statut == $object::STATUS_DRAFT && (getDolGlobalString('SHIPPING_DRAFT_WATERMARK'))) {
 			$this->watermark = $conf->global->SHIPPING_DRAFT_WATERMARK;
 		}
 
 		global $outputlangsbis;
 		$outputlangsbis = null;
-		if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && $outputlangs->defaultlang != $conf->global->PDF_USE_ALSO_LANGUAGE_CODE) {
+		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != $conf->global->PDF_USE_ALSO_LANGUAGE_CODE) {
 			$outputlangsbis = new Translate('', $conf);
 			$outputlangsbis->setDefaultLang($conf->global->PDF_USE_ALSO_LANGUAGE_CODE);
 			$outputlangsbis->loadLangs(array("main", "bills", "orders", "products", "dict", "companies", "propal", "deliveries", "sendings", "productbatch"));
@@ -158,7 +158,7 @@ class pdf_espadon extends ModelePdfExpedition
 		// Loop on each lines to detect if there is at least one image to show
 		$realpatharray = array();
 		$this->atleastonephoto = false;
-		if (!empty($conf->global->MAIN_GENERATE_SHIPMENT_WITH_PICTURE)) {
+		if (getDolGlobalString('MAIN_GENERATE_SHIPMENT_WITH_PICTURE')) {
 			$objphoto = new Product($this->db);
 
 			for ($i = 0; $i < $nblines; $i++) {
@@ -241,7 +241,7 @@ class pdf_espadon extends ModelePdfExpedition
 				$heightforinfotot = 8; // Height reserved to output the info and total part
 				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
-				if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)) {
+				if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
 					$heightforfooter += 6;
 				}
 				$pdf->SetAutoPageBreak(1, 0);
@@ -252,7 +252,7 @@ class pdf_espadon extends ModelePdfExpedition
 				}
 				$pdf->SetFont(pdf_getPDFFont($outputlangs));
 				// Set path to the background PDF File
-				if (!empty($conf->global->MAIN_ADD_PDF_BACKGROUND)) {
+				if (getDolGlobalString('MAIN_ADD_PDF_BACKGROUND')) {
 					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
 				}
@@ -538,7 +538,7 @@ class pdf_espadon extends ModelePdfExpedition
 							$curY = $tab_top_newpage;
 
 							// Allows data in the first page if description is long enough to break in multiples pages
-							if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE)) {
+							if (getDolGlobalString('MAIN_PDF_DATA_ON_FIRST_PAGE')) {
 								$showpricebeforepagebreak = 1;
 							} else {
 								$showpricebeforepagebreak = 0;
@@ -580,7 +580,7 @@ class pdf_espadon extends ModelePdfExpedition
 							} else {
 								// We found a page break
 								// Allows data in the first page if description is long enough to break in multiples pages
-								if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE)) {
+								if (getDolGlobalString('MAIN_PDF_DATA_ON_FIRST_PAGE')) {
 									$showpricebeforepagebreak = 1;
 								} else {
 									$showpricebeforepagebreak = 0;
@@ -663,7 +663,7 @@ class pdf_espadon extends ModelePdfExpedition
 					}
 
 					// Add line
-					if (!empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1)) {
+					if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1)) {
 						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1', 'color'=>array(80, 80, 80)));
 						//$pdf->SetDrawColor(190,190,200);
@@ -788,7 +788,7 @@ class pdf_espadon extends ModelePdfExpedition
 		{
 			$col2x-=20;
 		}*/
-		if (empty($conf->global->SHIPPING_PDF_HIDE_ORDERED)) {
+		if (!getDolGlobalString('SHIPPING_PDF_HIDE_ORDERED')) {
 			$largcol2 = ($this->posxqtyordered - $this->posxweightvol);
 		} else {
 			$largcol2 = ($this->posxqtytoship - $this->posxweightvol);
@@ -895,7 +895,7 @@ class pdf_espadon extends ModelePdfExpedition
 
 		if (empty($hidetop)) {
 			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
-			if (!empty($conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR)) {
+			if (getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')) {
 				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, $this->tabTitleHeight, 'F', null, explode(',', $conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR));
 			}
 		}
@@ -1016,7 +1016,7 @@ class pdf_espadon extends ModelePdfExpedition
 				$pdf->MultiCell($w, 4, $outputlangs->transnoentities("DateDeliveryPlanned")." : ".dol_print_date($object->date_delivery, "day", false, $outputlangs, true), '', 'R');
 		}
 
-		if (empty($conf->global->MAIN_PDF_HIDE_CUSTOMER_CODE) && !empty($object->thirdparty->code_client)) {
+		if (!getDolGlobalString('MAIN_PDF_HIDE_CUSTOMER_CODE') && !empty($object->thirdparty->code_client)) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
@@ -1086,17 +1086,17 @@ class pdf_espadon extends ModelePdfExpedition
 			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
 
 			// Show sender
-			$posy = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 40 : 42;
+			$posy = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 40 : 42;
 			$posx = $this->marge_gauche;
-			if (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) {
+			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->page_largeur - $this->marge_droite - 80;
 			}
 
-			$hautcadre = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 38 : 40;
-			$widthrecbox = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 92 : 82;
+			$hautcadre = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 38 : 40;
+			$widthrecbox = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 92 : 82;
 
 			// Show sender frame
-			if (empty($conf->global->MAIN_PDF_NO_SENDER_FRAME)) {
+			if (!getDolGlobalString('MAIN_PDF_NO_SENDER_FRAME')) {
 				$pdf->SetTextColor(0, 0, 0);
 				$pdf->SetFont('', '', $default_font_size - 2);
 				$pdf->SetXY($posx, $posy - 5);
@@ -1109,7 +1109,7 @@ class pdf_espadon extends ModelePdfExpedition
 			}
 
 			// Show sender name
-			if (empty($conf->global->MAIN_PDF_HIDE_SENDER_NAME)) {
+			if (!getDolGlobalString('MAIN_PDF_HIDE_SENDER_NAME')) {
 				$pdf->SetXY($posx + 2, $posy + 3);
 				$pdf->SetFont('', 'B', $default_font_size);
 				$pdf->MultiCell($widthrecbox - 2, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
@@ -1131,7 +1131,7 @@ class pdf_espadon extends ModelePdfExpedition
 			}
 
 			// Recipient name
-			if ($usecontact && ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
+			if ($usecontact && ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT')))) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $object->thirdparty;
@@ -1142,18 +1142,18 @@ class pdf_espadon extends ModelePdfExpedition
 			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, (!empty($object->contact) ? $object->contact : null), $usecontact, 'targetwithdetails', $object);
 
 			// Show recipient
-			$widthrecbox = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 92 : 100;
+			$widthrecbox = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 92 : 100;
 			if ($this->page_largeur < 210) {
 				$widthrecbox = 84; // To work with US executive format
 			}
-			$posy = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 40 : 42;
+			$posy = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 40 : 42;
 			$posx = $this->page_largeur - $this->marge_droite - $widthrecbox;
-			if (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) {
+			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->marge_gauche;
 			}
 
 			// Show recipient frame
-			if (empty($conf->global->MAIN_PDF_NO_RECIPENT_FRAME)) {
+			if (!getDolGlobalString('MAIN_PDF_NO_RECIPENT_FRAME')) {
 				$pdf->SetTextColor(0, 0, 0);
 				$pdf->SetFont('', '', $default_font_size - 2);
 				$pdf->SetXY($posx + 2, $posy - 5);
@@ -1258,7 +1258,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$rank = $rank + 10;
 		$this->cols['photo'] = array(
 			'rank' => $rank,
-			'width' => (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH) ? 20 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH), // in mm
+			'width' => (!getDolGlobalString('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH') ? 20 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH), // in mm
 			'status' => false,
 			'title' => array(
 				'textkey' => 'Photo',
@@ -1270,7 +1270,7 @@ class pdf_espadon extends ModelePdfExpedition
 			'border-left' => false, // remove left line separator
 		);
 
-		if (!empty($conf->global->MAIN_GENERATE_SHIPMENT_WITH_PICTURE) && !empty($this->atleastonephoto)) {
+		if (getDolGlobalString('MAIN_GENERATE_SHIPMENT_WITH_PICTURE') && !empty($this->atleastonephoto)) {
 			$this->cols['photo']['status'] = true;
 		}
 
@@ -1290,7 +1290,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$this->cols['subprice'] = array(
 			'rank' => $rank,
 			'width' => 19, // in mm
-			'status' => !empty($conf->global->SHIPPING_PDF_DISPLAY_AMOUNT_HT) ? 1 : 0,
+			'status' => getDolGlobalString('SHIPPING_PDF_DISPLAY_AMOUNT_HT') ? 1 : 0,
 			'title' => array(
 				'textkey' => 'PriceUHT'
 			),
@@ -1301,7 +1301,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$this->cols['totalexcltax'] = array(
 			'rank' => $rank,
 			'width' => 26, // in mm
-			'status' => !empty($conf->global->SHIPPING_PDF_DISPLAY_AMOUNT_HT) ? 1 : 0,
+			'status' => getDolGlobalString('SHIPPING_PDF_DISPLAY_AMOUNT_HT') ? 1 : 0,
 			'title' => array(
 				'textkey' => 'TotalHT'
 			),
@@ -1312,7 +1312,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$this->cols['qty_asked'] = array(
 			'rank' => $rank,
 			'width' => 30, // in mm
-			'status' => empty($conf->global->SHIPPING_PDF_HIDE_ORDERED) ? 1 : 0,
+			'status' => !getDolGlobalString('SHIPPING_PDF_HIDE_ORDERED') ? 1 : 0,
 			'title' => array(
 				'textkey' => 'QtyOrdered'
 			),
@@ -1326,7 +1326,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$this->cols['unit_order'] = array(
 			'rank' => $rank,
 			'width' => 15, // in mm
-			'status' => empty($conf->global->PRODUCT_USE_UNITS) ? 0 : 1,
+			'status' => !getDolGlobalString('PRODUCT_USE_UNITS') ? 0 : 1,
 			'title' => array(
 				'textkey' => 'Unit'
 			),

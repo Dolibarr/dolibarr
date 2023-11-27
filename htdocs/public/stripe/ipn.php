@@ -87,7 +87,7 @@ if (empty($endpoint_secret)) {
 	httponly_accessforbidden('Error: Setup of module Stripe not complete for mode '.dol_escape_htmltag($service).'. The WEBHOOK_KEY is not defined.', 400, 1);
 }
 
-if (!empty($conf->global->STRIPE_USER_ACCOUNT_FOR_ACTIONS)) {
+if (getDolGlobalString('STRIPE_USER_ACCOUNT_FOR_ACTIONS')) {
 	// We set the user to use for all ipn actions in Dolibarr
 	$user = new User($db);
 	$user->fetch($conf->global->STRIPE_USER_ACCOUNT_FOR_ACTIONS);
@@ -163,7 +163,7 @@ $stripe = new Stripe($db);
 
 // Subject
 $societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
-if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 	$societeName = $conf->global->MAIN_APPLICATION_TITLE;
 }
 
@@ -186,7 +186,7 @@ if ($event->type == 'payout.created') {
 		}
 		$replyto = $sendto;
 		$sendtocc = '';
-		if (!empty($conf->global->ONLINE_PAYMENT_SENDEMAIL)) {
+		if (getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL')) {
 			$sendtocc = getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL') . '" <' . getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL').'>';
 		}
 
@@ -276,7 +276,7 @@ if ($event->type == 'payout.created') {
 		}
 		$replyto = $sendto;
 		$sendtocc = '';
-		if (!empty($conf->global->ONLINE_PAYMENT_SENDEMAIL)) {
+		if (getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL')) {
 			$sendtocc = getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL') . '" <' . getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL').'>';
 		}
 

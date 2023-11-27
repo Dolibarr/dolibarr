@@ -126,7 +126,7 @@ if ($id > 0) {
 			print '<tr><td class="titlefield fieldrequired">ClickToDial URL</td>';
 			print '<td class="valeur">';
 			print '<input name="url" value="'.(!empty($object->clicktodial_url) ? $object->clicktodial_url : '').'" size="92">';
-			if (empty($conf->global->CLICKTODIAL_URL) && empty($object->clicktodial_url)) {
+			if (!getDolGlobalString('CLICKTODIAL_URL') && empty($object->clicktodial_url)) {
 				$langs->load("errors");
 				print '<span class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("ClickToDial")).'</span>';
 			} else {
@@ -159,7 +159,7 @@ if ($id > 0) {
 		if (!empty($user->admin)) {
 			print '<tr><td class="">ClickToDial URL</td>';
 			print '<td class="valeur">';
-			if (!empty($conf->global->CLICKTODIAL_URL)) {
+			if (getDolGlobalString('CLICKTODIAL_URL')) {
 				$url = $conf->global->CLICKTODIAL_URL;
 			}
 			if (!empty($object->clicktodial_url)) {
