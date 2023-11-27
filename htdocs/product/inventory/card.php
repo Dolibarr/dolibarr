@@ -42,7 +42,7 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'inv
 $backtopage = GETPOST('backtopage', 'alpha');
 $include_sub_warehouse = !empty(GETPOST('include_sub_warehouse')) ? GETPOST('include_sub_warehouse') : 0;
 
-if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$result = restrictedArea($user, 'stock', $id);
 } else {
 	$result = restrictedArea($user, 'stock', $id, '', 'inventory_advance');
@@ -83,7 +83,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 //if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'mymodule', $id);
 
-if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$permissiontoread = $user->rights->stock->lire;
 	$permissiontoadd = $user->rights->stock->creer;
 	$permissiontodelete = $user->rights->stock->supprimer;

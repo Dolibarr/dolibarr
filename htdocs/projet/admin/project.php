@@ -386,7 +386,7 @@ foreach ($dirmodels as $reldir) {
 print '</table><br>';
 
 
-if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 	// Task numbering module
 	print load_fiche_titre($langs->trans("TasksNumberingModules"), '', '');
 
@@ -622,7 +622,7 @@ print '</table><br>';
 
 
 
-if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 	/*
 	 * Modeles documents for Task
 	 */

@@ -147,10 +147,10 @@ $arrayfields = array(
 
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
-if (!empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+if (getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 	unset($arrayfields['pl.sellby']);
 }
-if (!empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+if (getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 	unset($arrayfields['pl.eatby']);
 }
 
@@ -687,7 +687,7 @@ if ($msid > 0) {
 }
 $sql .= " AND m.fk_entrepot = e.rowid";
 $sql .= " AND e.entity IN (".getEntity('stock').")";
-if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 	$sql .= " AND p.fk_product_type = 0";
 }
 if ($id > 0) {
@@ -1063,7 +1063,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 	$arrayofmassactions['builddoc'] = img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("GeneratePDF");
 }
 // By default, we should never accept deletion of stock movement
-if (!empty($conf->global->STOCK_ALLOW_DELETE_OF_MOVEMENT) && $permissiontodelete) {
+if (getDolGlobalString('STOCK_ALLOW_DELETE_OF_MOVEMENT') && $permissiontodelete) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 if (!empty($permissiontoadd)) {

@@ -110,7 +110,7 @@ $FILEFLAG = 'modulebuilder.txt';
 
 $now = dol_now();
 $newmask = 0;
-if (empty($newmask) && !empty($conf->global->MAIN_UMASK)) {
+if (empty($newmask) && getDolGlobalString('MAIN_UMASK')) {
 	$newmask = $conf->global->MAIN_UMASK;
 }
 if (empty($newmask)) {	// This should no happen
@@ -127,7 +127,7 @@ $form = new Form($db);
 $dirsrootforscan = array($dirread);
 
 // Add also the core modules into the list of modules to show/edit
-if ($dirread != DOL_DOCUMENT_ROOT && ($conf->global->MAIN_FEATURES_LEVEL >= 2 || !empty($conf->global->MODULEBUILDER_ADD_DOCUMENT_ROOT))) {
+if ($dirread != DOL_DOCUMENT_ROOT && ($conf->global->MAIN_FEATURES_LEVEL >= 2 || getDolGlobalString('MODULEBUILDER_ADD_DOCUMENT_ROOT'))) {
 	$dirsrootforscan[] = DOL_DOCUMENT_ROOT;
 }
 
@@ -275,7 +275,7 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 			}
 		}
 
-		if (!empty($conf->global->MODULEBUILDER_USE_ABOUT)) {
+		if (getDolGlobalString('MODULEBUILDER_USE_ABOUT')) {
 			dol_delete_file($destdir.'/admin/about.php');
 		}
 
@@ -352,7 +352,7 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 				'500000'=>$idmodule
 			);
 
-			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_AUTHOR)) {
+			if (getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR')) {
 				$arrayreplacement['---Put here your own copyright and developer email---'] = dol_print_date($now, '%Y').' ' . getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR');
 			}
 
@@ -363,7 +363,7 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 			}
 		}
 
-		if (!empty($conf->global->MODULEBUILDER_SPECIFIC_README)) {
+		if (getDolGlobalString('MODULEBUILDER_SPECIFIC_README')) {
 			setEventMessages($langs->trans("ContentOfREADMECustomized"), null, 'warnings');
 			dol_delete_file($destdir.'/README.md');
 			file_put_contents($destdir.'/README.md', $conf->global->MODULEBUILDER_SPECIFIC_README);
@@ -1511,7 +1511,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 				'---Put here your own copyright and developer email---'=>dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
 			);
 
-			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_AUTHOR)) {
+			if (getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR')) {
 				$arrayreplacement['---Put here your own copyright and developer email---'] = dol_print_date($now, '%Y').' ' . getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR');
 			}
 
