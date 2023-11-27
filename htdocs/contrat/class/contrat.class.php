@@ -3005,7 +3005,6 @@ class ContratLigne extends CommonObjectLine
 	 */
 	public $description;
 
-	public $product_type; // 0 for product, 1 for service
 	public $product_ref;
 	public $product_label;
 

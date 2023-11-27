@@ -1219,7 +1219,6 @@ class DeliveryLine extends CommonObjectLine
 
 	public $fk_product;
 	public $product_desc;
-	public $product_type;
 	public $product_ref;
 	public $product_label;
 

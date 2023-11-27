@@ -2662,12 +2662,6 @@ class ExpeditionLigne extends CommonObjectLine
 	public $product_desc;
 
 	/**
-	 * Type of the product. 0 for product, 1 for service
-	 * @var int
-	 */
-	public $product_type = 0;
-
-	/**
 	 * @var int rang of line
 	 */
 	public $rang;

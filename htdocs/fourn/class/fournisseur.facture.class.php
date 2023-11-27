@@ -3561,11 +3561,6 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 */
 	public $fk_product;
 
-	/**
-	 * Type of the product. 0 for product 1 for service
-	 * @var int
-	 */
-	public $product_type;
 
 	/**
 	 * Label of the product

@@ -2826,12 +2826,6 @@ class SupplierProposalLine extends CommonObjectLine
 	 * @see $product_type
 	 */
 	public $fk_product_type;
-	/**
-	 * Product type
-	 * @var int
-	 * @see Product::TYPE_PRODUCT, Product::TYPE_SERVICE
-	 */
-	public $product_type = Product::TYPE_PRODUCT;
 
 	public $qty;
 	public $tva_tx;

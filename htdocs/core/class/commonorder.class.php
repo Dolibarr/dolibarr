@@ -166,12 +166,6 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $subprice;
 
 	/**
-	 * Type of the product. 0 for product 1 for service
-	 * @var int
-	 */
-	public $product_type = 0;
-
-	/**
 	 * Id of corresponding product
 	 * @var int
 	 */

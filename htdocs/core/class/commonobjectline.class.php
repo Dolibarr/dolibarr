@@ -76,7 +76,7 @@ abstract class CommonObjectLine extends CommonObject
 
 	public $multilangs;
 
-	public $product_type;		// type in line
+	public $product_type = 0;		// type in line
 	public $fk_product;			// product id in line (when line is linked to a product)
 
 	/**

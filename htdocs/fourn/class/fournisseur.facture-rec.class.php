@@ -2004,7 +2004,6 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 	public $localtax2_tx;
 	public $localtax2_type;
 
-	public $product_type;
 	public $date_start;
 	public $date_end;
 	public $info_bits;
