@@ -62,12 +62,6 @@ class EvaluationLine extends CommonObjectLine
 	 */
 	public $isextrafieldmanaged = 1;
 
-	/**
-	 * @var string String with name of icon for evaluationdet. Must be the part after the 'object_' into object_evaluationdet.png
-	 */
-	public $picto = 'evaluationdet@hrm';
-
-
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
 	const STATUS_CANCELED = 9;
@@ -172,6 +166,7 @@ class EvaluationLine extends CommonObjectLine
 		global $conf, $langs;
 
 		$this->db = $db;
+		$this->setPicto('evaluationdet@hrm');
 
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;

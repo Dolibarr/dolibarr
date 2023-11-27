@@ -54,12 +54,6 @@ class StockTransferLine extends CommonObjectLine
 	 */
 	public $isextrafieldmanaged = 1;
 
-	/**
-	 * @var string String with name of icon for stocktransferline. Must be the part after the 'object_' into object_stocktransferline.png
-	 */
-	public $picto = 'stocktransferline@stocktransfer';
-
-
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
 	const STATUS_CANCELED = 9;
@@ -130,6 +124,7 @@ class StockTransferLine extends CommonObjectLine
 		global $conf, $langs;
 
 		$this->db = $db;
+		$this->setPicto('stocktransferline@stocktransfer');
 
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) $this->fields['rowid']['visible'] = 0;
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) $this->fields['entity']['enabled'] = 0;

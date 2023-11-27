@@ -248,4 +248,8 @@ abstract class CommonObjectLine extends CommonObject
 	{
 		return 0;
 	}
+
+	public function setPicto($picto) {
+		$this->picto = $picto;
+	}
 }

@@ -799,11 +799,6 @@ class InventoryLine extends CommonObjectLine
 	public $isextrafieldmanaged = 0;
 
 	/**
-	 * @var string String with name of icon for inventory
-	 */
-	public $picto = 'stock';
-
-	/**
 	 *  'type' if the field format.
 	 *  'label' the translation key.
 	 *  'enabled' is a condition when the field must be managed.
@@ -849,6 +844,13 @@ class InventoryLine extends CommonObjectLine
 	public $pmp_real;
 	public $pmp_expected;
 
+
+
+	public function __construct($db)
+	{
+		$this->db = $db;
+		$this->setPicto('stock');
+	}
 
 	/**
 	 * Create object in database

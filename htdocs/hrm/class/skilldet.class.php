@@ -61,12 +61,6 @@ class Skilldet extends CommonObjectLine
 	 */
 	public $isextrafieldmanaged = 1;
 
-	/**
-	 * @var string String with name of icon for skilldet. Must be the part after the 'object_' into object_skilldet.png
-	 */
-	public $picto = 'skilldet@hrm';
-
-
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
 	const STATUS_CANCELED = 9;
@@ -163,6 +157,7 @@ class Skilldet extends CommonObjectLine
 		global $conf, $langs;
 
 		$this->db = $db;
+		$this->setPicto('skilldet@hrm');
 
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;

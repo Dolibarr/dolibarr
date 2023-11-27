@@ -1685,12 +1685,6 @@ class BOMLine extends CommonObjectLine
 	public $isextrafieldmanaged = 1;
 
 	/**
-	 * @var string String with name of icon for bomline. Must be the part after the 'object_' into object_bomline.png
-	 */
-	public $picto = 'bomline';
-
-
-	/**
 	 *  'type' if the field format.
 	 *  'label' the translation key.
 	 *  'enabled' is a condition when the field must be managed.
@@ -1791,6 +1785,7 @@ class BOMLine extends CommonObjectLine
 		global $conf, $langs;
 
 		$this->db = $db;
+		$this->setPicto('bomline');
 
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
