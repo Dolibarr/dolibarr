@@ -3411,12 +3411,6 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $ref;
 
 	/**
-	 * Internal ref
-	 * @var string
-	 */
-	public $product_ref;
-
-	/**
 	 * Supplier reference of price when we added the line. May have been changed after line was added.
 	 * TODO Rename field ref to ref_supplier into table llx_facture_fourn_det and llx_commande_fournisseurdet and update fields into updateline
 	 * @var string

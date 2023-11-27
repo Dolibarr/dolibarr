@@ -105,12 +105,6 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $libelle;
 
 	/**
-	 * Product ref
-	 * @var string
-	 */
-	public $product_ref;
-
-	/**
 	 * Product label
 	 * @var string
 	 */

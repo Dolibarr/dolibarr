@@ -2867,12 +2867,6 @@ class SupplierProposalLine extends CommonObjectLine
 	public $ref;
 
 	/**
-	 * Product reference
-	 * @var string
-	 */
-	public $product_ref;
-
-	/**
 	 * @deprecated
 	 * @see $product_label
 	 */
