@@ -249,9 +249,9 @@ abstract class CommonObjectLine extends CommonObject
 	{
 		return 0;
 	}
+
 	/**
-	 * Empty function to prevent errors on call of this function must be overload if usefull
-	 *
+	 *Funtion to override picto property
 	 * @param string $picto picto name off the object
 	 * @return int 1
 	 */
