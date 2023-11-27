@@ -1901,6 +1901,8 @@ if ($num > 0) {
 	$totalarray['val']['f.total_localtax1']=0;
 	$totalarray['val']['f.total_localtax1']=0;
 	$totalarray['val']['f.total_ttc'] = 0;
+	$totalarray['val']['totalam'] = 0;
+	$totalarray['val']['rtp'] = 0;
 
 	$typenArray = $formcompany->typent_array(1);
 
@@ -2288,7 +2290,8 @@ if ($num > 0) {
 				if (!is_array($typenArray) || count($typenArray) == 0) {
 					$typenArray = $formcompany->typent_array(1);
 				}
-				print $typenArray[$obj->typent_code];
+				if(!empty($obj->typent_code))
+					print $typenArray[$obj->typent_code];
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
