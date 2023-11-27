@@ -11,7 +11,7 @@
  * Copyright (C) 2013      Cédric Salvador			<csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2016-2021 Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2017-20238 Charlene Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2017-2023 Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2018	   Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2019-2021 Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2021	   Anthony Berton			<anthony.berton@bb2a.fr>
@@ -2018,8 +2018,9 @@ if ($search_date_signature_endyear) {
 				if ($obj->fk_input_reason > 0) {
 					print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($form->cache_demand_reason[$obj->fk_input_reason]['label']).'">';
 					print $form->cache_demand_reason[$obj->fk_input_reason]['label'];
-				} else
+				} else {
 					print '<td class="tdoverflowmax125">';
+				}
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
