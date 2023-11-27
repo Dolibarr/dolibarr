@@ -1740,8 +1740,6 @@ class BOMLine extends CommonObjectLine
 	 */
 	public $fk_bom_child;
 
-	public $qty;
-
 	/**
 	 * @var int qty frozen
 	 */

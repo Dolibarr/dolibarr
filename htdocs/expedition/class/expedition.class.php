@@ -2593,11 +2593,6 @@ class ExpeditionLigne extends CommonObjectLine
 	public $db;
 
 	/**
-	 * @var float qty asked From llx_expeditiondet
-	 */
-	public $qty;
-
-	/**
 	 * @var float qty shipped
 	 */
 	public $qty_shipped;

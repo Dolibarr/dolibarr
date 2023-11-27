@@ -2000,7 +2000,6 @@ class MoLine extends CommonObjectLine
 	public $origin_type;
 	public $position;
 	public $fk_warehouse;
-	public $qty;
 	public $qty_frozen;
 	public $disable_stock_change;
 	public $efficiency;

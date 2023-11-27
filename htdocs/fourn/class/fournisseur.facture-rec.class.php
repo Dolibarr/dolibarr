@@ -1992,7 +1992,6 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 	public $label;
 	public $pu_ht;
 	public $pu_ttc;
-	public $qty;
 	public $remise_percent;
 	public $fk_remise_except;
 	public $vat_src_code;

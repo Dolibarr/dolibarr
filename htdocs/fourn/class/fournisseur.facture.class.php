@@ -3496,12 +3496,6 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $localtax2_tx;
 
 	/**
-	 * Quantity
-	 * @var double
-	 */
-	public $qty;
-
-	/**
 	 * Percent of discount
 	 * @var float
 	 */

@@ -107,7 +107,6 @@ class StockTransferLine extends CommonObjectLine
 		'rang' => array('type'=>'integer', 'label'=>'Qty', 'enabled'=>'1', 'position'=>45, 'notnull'=>0, 'visible'=>0, 'default'=>'0', 'isameasure'=>'1', 'css'=>'maxwidth75imp', 'help'=>"Help text for quantity",),
 	);
 	public $amount;
-	public $qty;
 	public $fk_warehouse_destination;
 	public $fk_warehouse_source;
 	public $fk_stocktransfer;

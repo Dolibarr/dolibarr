@@ -2828,7 +2828,6 @@ class ExpenseReportLine extends CommonObjectLine
 	public $error = '';
 
 	public $comments;
-	public $qty;
 	public $value_unit;
 	public $date;
 

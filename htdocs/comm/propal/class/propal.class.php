@@ -4051,8 +4051,6 @@ class PropaleLigne extends CommonObjectLine
 	public $fk_propal;
 	public $fk_parent_line;
 
-	public $qty;
-
 	public $tva_tx;
 	public $vat_src_code;
 

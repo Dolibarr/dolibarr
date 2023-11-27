@@ -123,12 +123,6 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $product_tobatch;
 
 	/**
-	 * Quantity
-	 * @var float
-	 */
-	public $qty;
-
-	/**
 	 * Unit price
 	 * @deprecated
 	 * @see $subprice

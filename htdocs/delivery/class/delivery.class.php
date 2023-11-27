@@ -1208,7 +1208,6 @@ class DeliveryLine extends CommonObjectLine
 	public $libelle;
 
 	// From llx_expeditiondet
-	public $qty;
 	public $qty_asked;
 	public $qty_shipped;
 	public $price;
