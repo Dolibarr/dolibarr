@@ -162,8 +162,6 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $localtax1_type;
 	public $localtax2_type;
 
-	public $special_code = 0;
-
 	public $fk_multicurrency;
 	public $multicurrency_code;
 	public $multicurrency_subprice;

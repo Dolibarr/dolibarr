@@ -2835,11 +2835,6 @@ class SupplierProposalLine extends CommonObjectLine
 	public $marge_tx;
 	public $marque_tx;
 
-	public $special_code; // Tag for special lines (exlusive tags)
-	// 1: frais de port
-	// 2: ecotaxe
-	// 3: option line (when qty = 0)
-
 	public $total_ht; // Total HT de la ligne toute quantite et incluant la remise ligne
 	public $total_tva; // Total TVA de la ligne toute quantite et incluant la remise ligne
 	public $total_ttc; // Total TTC de la ligne toute quantite et incluant la remise ligne

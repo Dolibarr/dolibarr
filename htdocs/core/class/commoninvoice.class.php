@@ -1925,8 +1925,6 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	public $marge_tx;
 	public $marque_tx;
 
-	public $special_code = 0;
-
 	public $fk_user_author;
 	public $fk_user_modif;
 

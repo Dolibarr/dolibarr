@@ -3542,8 +3542,6 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 */
 	public $fk_parent_line;
 
-	public $special_code;
-
 	/**
 	 * @var int rank of line
 	 */

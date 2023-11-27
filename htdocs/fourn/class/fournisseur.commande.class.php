@@ -3665,7 +3665,6 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	public $fk_facture;
 
 	public $rang = 0;
-	public $special_code = 0;
 
 	/**
 	 * Unit price without taxes

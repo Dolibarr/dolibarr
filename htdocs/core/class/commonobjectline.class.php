@@ -125,7 +125,15 @@ abstract class CommonObjectLine extends CommonObject
 	 * @var int
 	 */
 	public $info_bits=0;
-	public $special_code;
+
+	/**
+	 * List of special options to define line:
+	 * 1: shipment cost lines
+	 * 2: ecotaxe
+	 * 3: ??
+	 * idofmodule: a meaning for the module
+	 */
+	public $special_code=0;
 	public $subprice;
 	public $tva_tx;
 
