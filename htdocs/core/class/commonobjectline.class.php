@@ -97,7 +97,12 @@ abstract class CommonObjectLine extends CommonObject
 	public $product_ref;		// ref in product table
 	public $product_label;		// label in product table
 	public $product_barcode;	// barcode in product table
-	public $product_desc;		// desc in product table
+	public $product_desc;
+
+	/**
+	 * @deprecated
+	 * @see $product_type
+	 */// desc in product table
 	public $fk_product_type;	// type in product table
 
 	public $qty;

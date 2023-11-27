@@ -2814,12 +2814,6 @@ class SupplierProposalLine extends CommonObjectLine
 	 */
 	public $fk_parent_line;
 
-	/**
-	 * @deprecated
-	 * @see $product_type
-	 */
-	public $fk_product_type;
-
 	public $qty;
 	public $tva_tx;
 	public $vat_src_code;
