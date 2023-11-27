@@ -118,7 +118,7 @@ if ($action == "add") {
 // Title
 $head = '';
 $title = 'TakePOS - Dolibarr '.DOL_VERSION;
-if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 	$title = 'TakePOS - ' . getDolGlobalString('MAIN_APPLICATION_TITLE');
 }
 $arrayofcss = array('/takepos/css/pos.css.php?a=xxx');

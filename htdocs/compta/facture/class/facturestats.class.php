@@ -98,14 +98,14 @@ class FactureStats extends Stats
 			$this->where .= ' AND f.fk_user_author = '.((int) $this->userid);
 		}
 		if ($mode == 'customer') {
-			if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+			if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 				$this->where .= " AND f.type IN (0,1,2,5)";
 			} else {
 				$this->where .= " AND f.type IN (0,1,2,3,5)";
 			}
 		}
 		if ($mode == 'supplier') {
-			if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+			if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
 				$this->where .= " AND f.type IN (0,1,2,5)";
 			} else {
 				$this->where .= " AND f.type IN (0,1,2,3,5)";

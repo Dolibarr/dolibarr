@@ -259,7 +259,7 @@ if ($action == 'builddoc' && $user->hasRight('banque', 'cheque')) {
 		dol_print_error($db, $object->error);
 		exit;
 	} else {
-		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#builddoc'));
+		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(!getDolGlobalString('MAIN_JUMP_TAG') ? '' : '#builddoc'));
 		exit;
 	}
 } elseif ($action == 'remove_file' && $user->hasRight('banque', 'cheque')) {

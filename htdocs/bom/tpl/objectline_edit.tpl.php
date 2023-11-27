@@ -63,7 +63,7 @@ print "<!-- BEGIN PHP TEMPLATE objectline_edit.tpl.php -->\n";
 $coldisplay = 0;
 print '<tr class="oddeven tredited">';
 // Adds a line numbering column
-if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 	print '<td class="linecolnum center">'.($i + 1).'</td>';
 	$coldisplay++;
 }

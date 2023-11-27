@@ -63,7 +63,7 @@ function getListOfPossibleImageExt($acceptsvg = 0)
 	global $conf;
 
 	$regeximgext = '\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.webp|\.xpm|\.xbm'; // See also into product.class.php
-	if ($acceptsvg || !empty($conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES)) {
+	if ($acceptsvg || getDolGlobalString('MAIN_ALLOW_SVG_FILES_AS_IMAGES')) {
 		$regeximgext .= '|\.svg'; // Not allowed by default. SVG can contains javascript
 	}
 
@@ -627,7 +627,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 	}
 
 	$exifAngle = false;
-	if ($ort && !empty($conf->global->MAIN_USE_EXIF_ROTATION)) {
+	if ($ort && getDolGlobalString('MAIN_USE_EXIF_ROTATION')) {
 		switch ($ort) {
 			case 3: // 180 rotate left
 				$exifAngle = 180;

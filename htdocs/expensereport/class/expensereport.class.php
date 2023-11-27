@@ -948,7 +948,7 @@ class ExpenseReport extends CommonObject
 
 		$langs->load('trips');
 
-		if ($user->rights->expensereport->lire) {
+		if ($user->hasRight('expensereport', 'lire')) {
 			$sql = "SELECT de.fk_expensereport, de.date, de.comments, de.total_ht, de.total_ttc";
 			$sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as de";
 			$sql .= " WHERE de.fk_projet = ".((int) $projectid);
@@ -1061,7 +1061,7 @@ class ExpenseReport extends CommonObject
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON de.fk_c_type_fees = ctf.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as p ON de.fk_projet = p.rowid';
 		$sql .= " WHERE de.".$this->fk_element." = ".((int) $this->id);
-		if (!empty($conf->global->EXPENSEREPORT_LINES_SORTED_BY_ROWID)) {
+		if (getDolGlobalString('EXPENSEREPORT_LINES_SORTED_BY_ROWID')) {
 			$sql .= ' ORDER BY de.rang ASC, de.rowid ASC';
 		} else {
 			$sql .= ' ORDER BY de.rang ASC, de.date ASC';
@@ -1657,10 +1657,10 @@ class ExpenseReport extends CommonObject
 		global $langs, $conf;
 		$langs->load("trips");
 
-		if (!empty($conf->global->EXPENSEREPORT_ADDON)) {
+		if (getDolGlobalString('EXPENSEREPORT_ADDON')) {
 			$mybool = false;
 
-			$file = $conf->global->EXPENSEREPORT_ADDON.".php";
+			$file = getDolGlobalString('EXPENSEREPORT_ADDON') . ".php";
 			$classname = $conf->global->EXPENSEREPORT_ADDON;
 
 			// Include file with class
@@ -1793,7 +1793,7 @@ class ExpenseReport extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowExpenseReport");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -2063,7 +2063,7 @@ class ExpenseReport extends CommonObject
 	{
 		global $conf, $mysoc;
 
-		if (empty($conf->global->MAIN_USE_EXPENSE_IK)) {
+		if (!getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 			return false;
 		}
 
@@ -2089,7 +2089,7 @@ class ExpenseReport extends CommonObject
 			return false;
 		}
 
-		if (!empty($conf->global->MAIN_EXPENSE_APPLY_ENTIRE_OFFSET)) {
+		if (getDolGlobalString('MAIN_EXPENSE_APPLY_ENTIRE_OFFSET')) {
 			$ikoffset = $range->ikoffset;
 		} else {
 			$ikoffset = $range->ikoffset / 12; // The amount of offset is a global value for the year
@@ -2431,7 +2431,7 @@ class ExpenseReport extends CommonObject
 		if (!dol_strlen($modele)) {
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->EXPENSEREPORT_ADDON_PDF)) {
+			} elseif (getDolGlobalString('EXPENSEREPORT_ADDON_PDF')) {
 				$modele = $conf->global->EXPENSEREPORT_ADDON_PDF;
 			}
 		}
@@ -2491,7 +2491,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as ex";
 		$sql .= " WHERE ex.fk_statut > 0";
 		$sql .= " AND ex.entity IN (".getEntity('expensereport').")";
-		if (empty($user->rights->expensereport->readall)) {
+		if (!$user->hasRight('expensereport', 'readall')) {
 			$userchildids = $user->getAllChildIds(1);
 			$sql .= " AND (ex.fk_user_author IN (".$this->db->sanitize(join(',', $userchildids)).")";
 			$sql .= " OR ex.fk_user_validator IN (".$this->db->sanitize(join(',', $userchildids))."))";
@@ -2538,7 +2538,7 @@ class ExpenseReport extends CommonObject
 			$sql .= " WHERE ex.fk_statut = ".self::STATUS_APPROVED;
 		}
 		$sql .= " AND ex.entity IN (".getEntity('expensereport').")";
-		if (empty($user->rights->expensereport->readall)) {
+		if (!$user->hasRight('expensereport', 'readall')) {
 			$userchildids = $user->getAllChildIds(1);
 			$sql .= " AND (ex.fk_user_author IN (".$this->db->sanitize(join(',', $userchildids)).")";
 			$sql .= " OR ex.fk_user_validator IN (".$this->db->sanitize(join(',', $userchildids))."))";

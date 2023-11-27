@@ -45,7 +45,7 @@ $nolinesbefore = (count($this->lines) == 0 || $forcetoshowtitlelines);
 	<?php
 	$coldisplay = 0;
 	// Adds a line numbering column
-	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+	if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 		$coldisplay++;
 		echo '<td class="nobottom linecolnum center"></td>';
 	}

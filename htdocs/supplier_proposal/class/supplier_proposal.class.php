@@ -450,7 +450,7 @@ class SupplierProposal extends CommonObject
 			$this->db->begin();
 
 			if ($fk_product > 0) {
-				if (!empty($conf->global->SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY)) {
+				if (getDolGlobalString('SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY')) {
 					// Check quantity is enough
 					dol_syslog(get_class($this)."::addline we check supplier prices fk_product=".$fk_product." fk_fournprice=".$fk_fournprice." qty=".$qty." ref_supplier=".$ref_supplier);
 					$productsupplier = new ProductFournisseur($this->db);
@@ -1136,7 +1136,7 @@ class SupplierProposal extends CommonObject
 		$this->id = 0;
 		$this->statut = 0;
 
-		if (empty($conf->global->SUPPLIER_PROPOSAL_ADDON) || !is_readable(DOL_DOCUMENT_ROOT."/core/modules/supplier_proposal/" . getDolGlobalString('SUPPLIER_PROPOSAL_ADDON').".php")) {
+		if (!getDolGlobalString('SUPPLIER_PROPOSAL_ADDON') || !is_readable(DOL_DOCUMENT_ROOT."/core/modules/supplier_proposal/" . getDolGlobalString('SUPPLIER_PROPOSAL_ADDON').".php")) {
 			$this->error = 'ErrorSetupNotComplete';
 			return -1;
 		}
@@ -1396,8 +1396,8 @@ class SupplierProposal extends CommonObject
 		$error = 0;
 		$now = dol_now();
 
-		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('supplier_proposal', 'creer'))
-		   || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('supplier_proposal', 'validate_advance'))) {
+		if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('supplier_proposal', 'creer'))
+		   || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('supplier_proposal', 'validate_advance'))) {
 			$this->db->begin();
 
 			// Numbering module definition
@@ -1701,7 +1701,7 @@ class SupplierProposal extends CommonObject
 				$triggerName = 'PROPOSAL_SUPPLIER_CLOSE_SIGNED';
 				$modelpdf = $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL ? $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL : (empty($this->model_pdf) ? '' : $this->model_pdf);
 
-				if (!empty($conf->global->SUPPLIER_PROPOSAL_UPDATE_PRICE_ON_SUPPlIER_PROPOSAL)) {     // TODO This option was not tested correctly. Error if product ref does not exists
+				if (getDolGlobalString('SUPPLIER_PROPOSAL_UPDATE_PRICE_ON_SUPPlIER_PROPOSAL')) {     // TODO This option was not tested correctly. Error if product ref does not exists
 					$result = $this->updateOrCreatePriceFournisseur($user);
 				}
 			}
@@ -1709,7 +1709,7 @@ class SupplierProposal extends CommonObject
 				$triggerName = 'PROPOSAL_SUPPLIER_CLASSIFY_BILLED';
 			}
 
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				// Define output language
 				$outputlangs = $langs;
 				if (getDolGlobalInt('MAIN_MULTILANGS')) {
@@ -2407,7 +2407,7 @@ class SupplierProposal extends CommonObject
 		global $conf, $db, $langs;
 		$langs->load("supplier_proposal");
 
-		if (!empty($conf->global->SUPPLIER_PROPOSAL_ADDON)) {
+		if (getDolGlobalString('SUPPLIER_PROPOSAL_ADDON')) {
 			$mybool = false;
 
 			$file = getDolGlobalString('SUPPLIER_PROPOSAL_ADDON') . ".php";
@@ -2457,7 +2457,7 @@ class SupplierProposal extends CommonObject
 
 		$langs->load('supplier_proposal');
 
-		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			return ['optimize' => $langs->trans("ShowSupplierProposal")];
 		}
 
@@ -2543,7 +2543,7 @@ class SupplierProposal extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip) && $user->hasRight('propal', 'lire')) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowSupplierProposal");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -2695,7 +2695,7 @@ class SupplierProposal extends CommonObject
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->SUPPLIER_PROPOSAL_ADDON_PDF)) {
+			} elseif (getDolGlobalString('SUPPLIER_PROPOSAL_ADDON_PDF')) {
 				$modele = $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF;
 			}
 		}

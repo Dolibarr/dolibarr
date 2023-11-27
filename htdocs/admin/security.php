@@ -225,10 +225,10 @@ $tabConf = explode(";", getDolGlobalString('USER_PASSWORD_PATTERN'));
 
 foreach ($arrayhandler as $key => $module) {
 	// Show modules according to features level
-	if (!empty($module->version) && $module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+	if (!empty($module->version) && $module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 		continue;
 	}
-	if (!empty($module->version) && $module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+	if (!empty($module->version) && $module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 		continue;
 	}
 

@@ -855,7 +855,7 @@ while ($i < $imaxinloop) {
 		if ($obj->pid > 0) {
 			print $productstatic->getNomUrl(1, '', 24);
 			print $obj->label ? ' - '.dol_trunc($obj->label, 16) : '';
-			if (!empty($obj->description) && !empty($conf->global->PRODUCT_DESC_IN_LIST)) {
+			if (!empty($obj->description) && getDolGlobalString('PRODUCT_DESC_IN_LIST')) {
 				print '<br><span class="small">'.dol_nl2br($obj->description).'</span>';
 			}
 		} else {

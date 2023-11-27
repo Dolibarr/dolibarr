@@ -96,7 +96,7 @@ if ($result < 0) {
 }
 
 // Security check
-if (!$user->hasRight('mailing', 'lire') || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) {
+if (!$user->hasRight('mailing', 'lire') || (!getDolGlobalString('EXTERNAL_USERS_ARE_AUTHORIZED') && $user->socid > 0)) {
 	accessforbidden();
 }
 //$result = restrictedArea($user, 'mailing');
@@ -446,7 +446,7 @@ if ($object->fetch($id) >= 0) {
 	print $langs->trans("TotalNbOfDistinctRecipients");
 	print '</td><td colspan="3">';
 	$nbemail = ($object->nbemail ? $object->nbemail : '0');
-	if (!empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) {
+	if (getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) {
 		$text = $langs->trans('LimitSendingEmailing', $conf->global->MAILING_LIMIT_SENDBYWEB);
 		print $form->textwithpicto($nbemail, $text, 1, 'warning');
 	} else {

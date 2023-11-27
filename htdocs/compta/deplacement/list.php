@@ -155,7 +155,7 @@ if ($resql) {
 	print '&nbsp;';
 	print '</td>';
 	print '<td class="liste_titre" align="center">';
-	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
+	if (getDolGlobalString('MAIN_LIST_FILTER_ON_DAY')) {
 		print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
 	}
 	print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
