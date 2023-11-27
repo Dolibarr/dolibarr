@@ -2870,9 +2870,6 @@ class SupplierProposalLine extends CommonObjectLine
 	public $ref_fourn;
 	public $ref_supplier;
 
-	// Multicurrency
-	public $multicurrency_total_ttc;
-
 	/**
 	 * 	Class line Contructor
 	 *

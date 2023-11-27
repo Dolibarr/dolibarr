@@ -2882,7 +2882,6 @@ class ExpenseReportLine extends CommonObjectLine
 	 * @var string multicurrency code
 	 */
 	public $multicurrency_tx;
-	public $multicurrency_total_ttc;
 
 	/**
 	 * @var int ID into llx_ecm_files table to link line to attached file
