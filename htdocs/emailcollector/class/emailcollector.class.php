@@ -1133,8 +1133,8 @@ class EmailCollector extends CommonObject
 			if ($this->acces_type == 1) {
 				// Mode OAUth2 with PHP-IMAP
 				$supportedoauth2array = array();
-
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
+
 				$keyforsupportedoauth2array = $this->oauth_service;
 				if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
 					$keyforprovider = preg_replace('/^.*-/', '', $keyforsupportedoauth2array);
