@@ -4127,12 +4127,6 @@ class PropaleLigne extends CommonObjectLine
 	 */
 	public $product_tobatch;
 
-	/**
-	 * Product barcode
-	 * @var string
-	 */
-	public $product_barcode;
-
 	public $localtax1_tx; // Local tax 1
 	public $localtax2_tx; // Local tax 2
 	public $localtax1_type; // Local tax 1 type
