@@ -251,7 +251,7 @@ abstract class CommonObjectLine extends CommonObject
 	}
 
 	/**
-	 *Funtion to override picto property
+	 * Funtion to override picto property
 	 * @param string $picto picto name off the object
 	 * @return int 1
 	 */
