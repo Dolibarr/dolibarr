@@ -2871,7 +2871,6 @@ class SupplierProposalLine extends CommonObjectLine
 	public $ref_supplier;
 
 	// Multicurrency
-	public $multicurrency_subprice;
 	public $multicurrency_total_ht;
 	public $multicurrency_total_tva;
 	public $multicurrency_total_ttc;
