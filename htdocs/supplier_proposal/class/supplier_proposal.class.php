@@ -2871,11 +2871,6 @@ class SupplierProposalLine extends CommonObjectLine
 	public $ref_supplier;
 
 	// Multicurrency
-	/**
-	 * @var int ID
-	 */
-	public $fk_multicurrency;
-
 	public $multicurrency_code;
 	public $multicurrency_subprice;
 	public $multicurrency_total_ht;

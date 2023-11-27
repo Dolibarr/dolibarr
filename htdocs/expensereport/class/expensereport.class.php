@@ -2879,11 +2879,6 @@ class ExpenseReportLine extends CommonObjectLine
 
 	// Multicurrency
 	/**
-	 * @var int Currency ID
-	 */
-	public $fk_multicurrency;
-
-	/**
 	 * @var string multicurrency code
 	 */
 	public $multicurrency_code;

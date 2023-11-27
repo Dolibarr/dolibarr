@@ -756,11 +756,6 @@ class CurrencyRate extends CommonObjectLine
 	public $date_sync;
 
 	/**
-	 * @var int Id of currency
-	 */
-	public $fk_multicurrency;
-
-	/**
 	 * @var int Id of entity
 	 */
 	public $entity;
