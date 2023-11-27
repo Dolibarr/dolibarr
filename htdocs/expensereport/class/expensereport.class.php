@@ -2881,7 +2881,6 @@ class ExpenseReportLine extends CommonObjectLine
 	/**
 	 * @var string multicurrency code
 	 */
-	public $multicurrency_code;
 	public $multicurrency_tx;
 	public $multicurrency_total_ht;
 	public $multicurrency_total_tva;
