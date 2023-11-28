@@ -342,7 +342,7 @@ class Interfaces
 						$module = preg_replace('/^mod/i', '', $reg[2]);
 						if (strtolower($module) == 'all') {
 							$disabledbymodule = 0;
-						} elseif (!isModEnabled(strtoupper($module))) {
+						} elseif (!isModEnabled(strtolower($module))) {
 							$disabledbymodule = 2;
 						}
 						$triggers[$j]['module'] = strtolower($module);
