@@ -3875,13 +3875,12 @@ class SupplierInvoiceLine extends CommonInvoiceLine
 					if ($result > 0) {
 						// Check if discount not already affected to another invoice
 						if ($discount->fk_facture_line > 0) {
-							//if condition is useless ->$noerrorifdiscountalreadylinked not intialesed et never used
-							//if (empty($noerrorifdiscountalreadylinked)) {
+							if (empty($noerrorifdiscountalreadylinked)) {
 								$this->error = $langs->trans("ErrorDiscountAlreadyUsed", $discount->id);
 								dol_syslog(get_class($this)."::insert Error ".$this->error, LOG_ERR);
 								$this->db->rollback();
 								return -3;
-							//}
+							}
 						} else {
 							$result = $discount->link_to_invoice($this->rowid, 0);
 							if ($result < 0) {
