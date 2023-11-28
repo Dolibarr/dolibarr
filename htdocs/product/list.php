@@ -858,7 +858,7 @@ if ($type === "") {
 if ($type === "") {
 	$params['forcenohideoftext'] = 1;
 }
-
+$newcardbutton .= dolGetButtonTitleSeparator();
 if ($type === "" || $type == Product::TYPE_PRODUCT) {
 	$label = 'NewProduct';
 	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type=0', '', $perm, $params);

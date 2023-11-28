@@ -405,7 +405,7 @@ class ReceptionTest extends PHPUnit\Framework\TestCase
 		$this->assertLessThanOrEqual($result, 0);
 
 		$soc = new Societe($db);
-		$result = $soc->delete($localobject->socid);
+		$result = $soc->delete($localobject->socid, $user);
 		$this->assertLessThanOrEqual($result, 0);
 
 		return $result;

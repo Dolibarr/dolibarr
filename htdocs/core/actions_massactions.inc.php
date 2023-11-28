@@ -1088,7 +1088,7 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 			if (in_array($objecttmp->element, array('societe', 'member'))) {
 				$result = $objecttmp->delete($objecttmp->id, $user, 1);
 			} elseif (in_array($objecttmp->element, array('action'))) {
-				$result = $objecttmp->delete();
+				$result = $objecttmp->delete();	// TODO Add User $user as first param
 			} else {
 				$result = $objecttmp->delete($user);
 			}

@@ -590,7 +590,7 @@ if ($action == 'edit') {
 			}
 			print '</td></tr>';
 		}
-		
+
 		// STARTTLS
 		if ($linuxlike && (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') == 'mail')) {
 			// Nothing
@@ -607,7 +607,7 @@ if ($action == 'edit') {
 			}
 			print '</td></tr>';
 		}
-		
+
 		// SMTP_ALLOW_SELF_SIGNED_EMAILING
 		if ($linuxlike && (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') == 'mail')) {
 			// Nothing

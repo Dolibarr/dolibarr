@@ -583,7 +583,7 @@ class AdherentTest extends PHPUnit\Framework\TestCase
 
 		$localobjectat=new AdherentType($db);
 		$result=$localobjectat->fetch($localobject->typeid);
-		$result=$localobjectat->delete();
+		$result=$localobjectat->delete($user);
 		print __METHOD__." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 

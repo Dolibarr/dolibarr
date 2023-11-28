@@ -1021,6 +1021,7 @@ class ActionComm extends CommonObject
 
 	/**
 	 *    Delete event from database
+	 *    @TODO Add User $user as first param
 	 *
 	 *    @param    int		$notrigger		1 = disable triggers, 0 = enable triggers
 	 *    @return   int 					<0 if KO, >0 if OK

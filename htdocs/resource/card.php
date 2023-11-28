@@ -266,8 +266,8 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		$formconfirm = '';
 
 		// Confirm deleting resource line
-		if ($action == 'delete') {
-			$formconfirm = $form->formconfirm("card.php?&id=".$object->id, $langs->trans("DeleteResource"), $langs->trans("ConfirmDeleteResource"), "confirm_delete_resource", '', '', 1);
+		if ($action == 'delete' || ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile))) {
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("DeleteResource"), $langs->trans("ConfirmDeleteResource"), "confirm_delete_resource", '', 0, "action-delete");
 		}
 
 		// Print form confirm
@@ -347,8 +347,14 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 				print '</div>';
 			}
 		}
-		if ($action != "delete" && $action != "create" && $action != "edit") {
-			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
+		if ($action != "create" && $action != "edit") {
+			$deleteUrl = $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken();
+			$buttonId = 'action-delete-no-ajax';
+			if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile)) {	// We can't use preloaded confirm form with jmobile
+				$deleteUrl = '';
+				$buttonId = 'action-delete';
+			}
+			print dolGetButtonAction('', $langs->trans("Delete"), 'delete', $deleteUrl, $buttonId, $permissiontodelete);
 		}
 	}
 	print '</div>';
