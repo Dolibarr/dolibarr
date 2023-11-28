@@ -1549,13 +1549,16 @@ if ($action == 'create') {
 								}
 							}
 
-							usort($batchlist, function($a, $b) {
-								global $conf;
+							$fk_default_warehouse = $product->fk_default_warehouse;
+							usort($batchlist, function($a, $b) use ($conf, $fk_default_warehouse) {
+								if ($a->warehouse_id != $b->warehouse_id && $a->warehouse_id == $fk_default_warehouse) return -1; // Set default warehouse to first position
 								$rdiff = $a->eatby - $b->eatby;
 								if ($rdiff) return $rdiff;
 								$rdiff = $a->sellby - $b->sellby;
 								if ($rdiff) return $rdiff;
-								return !empty($conf->global->DO_NOT_TRY_TO_DEFRAGMENT_STOCKS_WAREHOUSE) ? $b->qty - $a->qty : $a->qty - $b->qty;
+								$rdiff = !empty($conf->global->DO_NOT_TRY_TO_DEFRAGMENT_STOCKS_WAREHOUSE) ? $b->qty - $a->qty : $a->qty - $b->qty;
+								if ($rdiff) return $rdiff;
+								return strcmp($a->batch, $b->batch);
 							});
 
 							foreach ($batchlist as $dbatch) {
