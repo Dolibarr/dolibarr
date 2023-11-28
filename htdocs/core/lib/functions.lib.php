@@ -12412,3 +12412,16 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 		print $out;
 	}
 }
+
+/**
+ * Remove leading, trailing and repeated spaces from CSS class list.
+ * Example input: '  list_titre right  my_column '
+ * Example output: 'list_titre right my_column'
+ *
+ * @param string $cssClass  Parameter 'class' of an HTML tag that needs reformatting
+ * @return string
+ */
+function normalizeCSSClass($cssClass): string
+{
+	return preg_replace('/^ +| +$|( ) +/', '$1', $cssClass);
+}
