@@ -953,7 +953,7 @@ while ($i < min($num, $limit)) {
 	if (!empty($arrayfields['t.doc_ref']['checked'])) { $colspan++; }
 	if (!empty($arrayfields['t.label_operation']['checked'])) { $colspan++; }
 	if (!empty($arrayfields['t.date_export']['checked'])) { $colspanend++; }
-	if (!empty($arrayfields['t.date_validating']['checked'])) { $colspanend++; }
+	if (!empty($arrayfields['t.date_validated']['checked'])) { $colspanend++; }
 	if (!empty($arrayfields['t.lettering_code']['checked'])) { $colspanend++; }
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		$colspan++;
