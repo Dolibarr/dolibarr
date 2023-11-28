@@ -10118,15 +10118,15 @@ abstract class CommonObject
 				$error++;
 			} else {
 				while ($obj = $this->db->fetch_object($resql)) {
-					$result = $this->fetch($obj->rowid);
+					$result = $this->fetchCommon($obj->rowid);
 					if ($result < 0) {
 						$error++;
 						$this->errors[] = $this->error;
 					} else {
 						if (get_class($this) == 'Contact') { // TODO special code because delete() for contact has not been standardized like other delete.
-							$result = $this->delete();
+							$result = $this->deleteCommon($user);
 						} else {
-							$result = $this->delete($user);
+							$result = $this->deleteCommon($user);
 						}
 						if ($result < 0) {
 							$error++;
