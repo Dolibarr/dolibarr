@@ -163,7 +163,14 @@ class SupplierProposal extends CommonObject
 	public $total;
 
 	public $cond_reglement_code;
+	public $cond_reglement_doc;		// label doc
+
 	public $mode_reglement_code;
+	/**
+	 * @deprecated
+	 * @var string	Mode reglement
+	 */
+	public $mode_reglement;
 
 	public $extraparams = array();
 	public $lines = array();
@@ -813,8 +820,6 @@ class SupplierProposal extends CommonObject
 				}
 
 				$this->update_price(1);
-
-				$this->fk_supplier_proposal = $this->id;
 
 				$this->db->commit();
 				return $result;
