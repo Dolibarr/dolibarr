@@ -810,7 +810,6 @@ class SupplierProposal extends CommonObject
 			$this->line->fk_unit = $fk_unit;
 
 			// infos marge
-			global $fk_product;
 			if (!empty($fk_product) && $fk_product > 0 && empty($fk_fournprice) && empty($pa_ht)) {
 				// by external module, take lowest buying price
 				include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
