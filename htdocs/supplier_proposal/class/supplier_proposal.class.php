@@ -453,7 +453,7 @@ class SupplierProposal extends CommonObject
 
 						// We use 'none' instead of $ref_supplier, because fourn_ref may not exists anymore. So we will take the first supplier price ok.
 						// If we want a dedicated supplier price, we must provide $fk_prod_fourn_price.
-						$result = $productsupplier->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', ($this->fk_soc ? $this->fk_soc : $this->socid)); // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$ref_supplier/$this->fk_soc
+						$result = $productsupplier->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', $this->socid); // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$ref_supplier/$this->socid
 						if ($result > 0) {
 							$pu = $productsupplier->fourn_pu; // Unit price supplier price set by get_buyprice
 							$ref_supplier = $productsupplier->ref_supplier; // Ref supplier price set by get_buyprice
@@ -1931,26 +1931,22 @@ class SupplierProposal extends CommonObject
 	public function liste_array($shortlist = 0, $draft = 0, $notcurrentuser = 0, $socid = 0, $limit = 0, $offset = 0, $sortfield = 'p.datec', $sortorder = 'DESC')
 	{
 		// phpcs:enable
-		global $conf, $user;
+		global $user;
 
 		$ga = array();
+
+		$search_sale = 0;
+		if (!$user->hasRight('societe', 'client', 'voir')) {
+			$search_sale = $user->id;
+		}
 
 		$sql = "SELECT s.rowid, s.nom as name, s.client,";
 		$sql .= " p.rowid as supplier_proposalid, p.fk_statut, p.total_ht, p.ref, p.remise, ";
 		$sql .= " p.datep as dp, p.fin_validite as datelimite";
-		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-			$sql .= ", sc.fk_soc, sc.fk_user";
-		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."supplier_proposal as p, ".MAIN_DB_PREFIX."c_propalst as c";
-		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		}
 		$sql .= " WHERE p.entity IN (".getEntity('supplier_proposal').")";
 		$sql .= " AND p.fk_soc = s.rowid";
 		$sql .= " AND p.fk_statut = c.id";
-		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) { //restriction
-			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
-		}
 		if ($socid) {
 			$sql .= " AND s.rowid = ".((int) $socid);
 		}
@@ -1958,7 +1954,15 @@ class SupplierProposal extends CommonObject
 			$sql .= " AND p.fk_statut = 0";
 		}
 		if ($notcurrentuser > 0) {
-			$sql .= " AND p.fk_user_author <> ".$user->id;
+			$sql .= " AND p.fk_user_author <> ".((int) $user->id);
+		}
+		// Search on sale representative
+		if ($search_sale && $search_sale != '-1') {
+			if ($search_sale == -2) {
+				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc)";
+			} elseif ($search_sale > 0) {
+				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+			}
 		}
 		$sql .= $this->db->order($sortfield, $sortorder);
 		$sql .= $this->db->plimit($limit, $offset);
