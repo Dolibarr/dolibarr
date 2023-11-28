@@ -413,7 +413,7 @@ class Thirdparties extends DolibarrApi
 	 * @param	int		$priceLevel		Price level to apply to thirdparty
 	 * @return	object					Thirdparty data without useless information
 	 *
-	 * @url PUT {id}/setpricelevel
+	 * @url PUT {id}/setpricelevel/{priceLevel}
 	 *
 	 * @throws RestException 400 Price level out of bounds
 	 * @throws RestException 401 Access not allowed for your login
