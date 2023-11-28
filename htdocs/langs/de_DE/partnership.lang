@@ -93,4 +93,5 @@ ReasonDeclineOrCancel=Ablehnungsgrund
 
 NewPartnershipRequest=Neue Partnerschaftsanfrage
 NewPartnershipRequestDesc=Mit diesem Formular können Sie die Teilnahme an einem unserer Partnerprogramme beantragen. Wenn Sie Hilfe beim Ausfüllen dieses Formulars benötigen, wenden Sie sich bitte per E-Mail an <b>%s</b> .
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Diese Seite muss mindestens einen Link zu einer der folgenden Domains enthalten: %s
 

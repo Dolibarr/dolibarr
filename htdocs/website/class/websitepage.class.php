@@ -113,6 +113,9 @@ class WebsitePage extends CommonObject
 	 */
 	public $date_modification;
 
+	public $fk_user_creat;
+	public $fk_user_modif;
+
 	/**
 	 * @var string author_alias
 	 */
@@ -766,7 +769,7 @@ class WebsitePage extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}

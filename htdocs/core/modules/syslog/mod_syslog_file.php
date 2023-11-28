@@ -52,7 +52,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	public function isActive()
 	{
 		global $conf;
-		return empty($conf->global->SYSLOG_DISABLE_LOGHANDLER_FILE) ? 1 : 0; // Set SYSLOG_DISABLE_LOGHANDLER_FILE to 1 to disable this loghandler
+		return !getDolGlobalString('SYSLOG_DISABLE_LOGHANDLER_FILE') ? 1 : 0; // Set SYSLOG_DISABLE_LOGHANDLER_FILE to 1 to disable this loghandler
 	}
 
 	/**
@@ -106,22 +106,22 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	{
 		global $conf;
 
-		if (empty($conf->global->SYSLOG_FILE)) {
+		if (!getDolGlobalString('SYSLOG_FILE')) {
 			$tmp = DOL_DATA_ROOT.'/dolibarr.log';
 		} else {
 			$tmp = str_replace('DOL_DATA_ROOT', DOL_DATA_ROOT, $conf->global->SYSLOG_FILE);
 		}
 
-		if (!empty($conf->global->SYSLOG_FILE_ONEPERSESSION)) {
+		if (getDolGlobalString('SYSLOG_FILE_ONEPERSESSION')) {
 			if (is_numeric($conf->global->SYSLOG_FILE_ONEPERSESSION)) {
-				if ($conf->global->SYSLOG_FILE_ONEPERSESSION == 1) {	// file depend on instance session key name (Note that session name is same for the instance so for all users and is not a per user value)
+				if (getDolGlobalInt('SYSLOG_FILE_ONEPERSESSION') == 1) {	// file depend on instance session key name (Note that session name is same for the instance so for all users and is not a per user value)
 					$suffixinfilename .= '_'.session_name();
 				}
-				if ($conf->global->SYSLOG_FILE_ONEPERSESSION == 2) {	// file depend on instance session key name + ip so nearly per user
+				if (getDolGlobalInt('SYSLOG_FILE_ONEPERSESSION') == 2) {	// file depend on instance session key name + ip so nearly per user
 					$suffixinfilename .= '_'.session_name().'_'.$_SERVER["REMOTE_ADDR"];
 				}
 			} else {
-				$suffixinfilename .= '_'.$conf->global->SYSLOG_FILE_ONEPERSESSION;
+				$suffixinfilename .= '_' . getDolGlobalString('SYSLOG_FILE_ONEPERSESSION');
 			}
 		}
 
@@ -139,7 +139,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	{
 		global $conf, $dolibarr_main_prod;
 
-		if (!empty($conf->global->MAIN_SYSLOG_DISABLE_FILE)) {
+		if (getDolGlobalString('MAIN_SYSLOG_DISABLE_FILE')) {
 			return; // Global option to disable output of this handler
 		}
 
@@ -171,7 +171,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 			);
 
 			$delay = "";
-			if (!empty($conf->global->MAIN_SYSLOG_SHOW_DELAY)) {
+			if (getDolGlobalString('MAIN_SYSLOG_SHOW_DELAY')) {
 				$now = microtime(true);
 				$delay = " ".sprintf("%05.3f", $this->lastTime != 0 ? $now - $this->lastTime : 0);
 				$this->lastTime = $now;

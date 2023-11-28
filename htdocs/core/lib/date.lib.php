@@ -159,7 +159,7 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforend
 	}
 
 	$date = new DateTime();
-	if (!empty($conf->global->MAIN_DATE_IN_MEMORY_ARE_GMT)) {
+	if (getDolGlobalString('MAIN_DATE_IN_MEMORY_ARE_GMT')) {
 		$date->setTimezone(new DateTimeZone('UTC'));
 	}
 	$date->setTimestamp($time);
@@ -219,7 +219,8 @@ function convertTime2Seconds($iHours = 0, $iMinutes = 0, $iSeconds = 0)
  *      Can be used to show a duration.
  *
  *    	@param      int		$iSecond		Number of seconds
- *    	@param      string	$format		    Output format ('all': total delay days hour:min like "2 days 12:30",
+ *    	@param      string	$format		    Output format
+ *    										- 'all': total delay days hour:min like "2 days 12:30",
  *                                          - 'allwithouthour': total delay days without hour part like "2 days",
  *                                          - 'allhourmin': total delay with format hours:min like "60:30",
  *                                          - 'allhourminsec': total delay with format hours:min:sec like "60:30:10",
@@ -788,6 +789,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 		$sql = "SELECT code, entity, fk_country, dayrule, year, month, day, active";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_hrm_public_holiday";
 		$sql .= " WHERE active = 1 and fk_country IN (0".($country_id > 0 ? ", ".$country_id : 0).")";
+		$sql .= " AND entity IN (0," .getEntity('holiday') .")";
 
 		$resql = $db->query($sql);
 		if ($resql) {

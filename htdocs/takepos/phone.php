@@ -62,7 +62,7 @@ if ($setterminal > 0) {
 
 $langs->loadLangs(array("bills", "orders", "commercial", "cashdesk", "receiptprinter"));
 
-if (empty($user->rights->takepos->run) && !defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+if (!$user->hasRight('takepos', 'run') && !defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 	accessforbidden();
 }
 
@@ -74,8 +74,8 @@ if (empty($user->rights->takepos->run) && !defined('INCLUDE_PHONEPAGE_FROM_PUBLI
 if (empty($action)) {
 	// Code for llxHeader()
 	$title = 'TakePOS - Dolibarr '.DOL_VERSION;
-	if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
-		$title = 'TakePOS - '.$conf->global->MAIN_APPLICATION_TITLE;
+	if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
+		$title = 'TakePOS - ' . getDolGlobalString('MAIN_APPLICATION_TITLE');
 	}
 	$head = '<meta name="apple-mobile-web-app-title" content="TakePOS"/>
 	<meta name="apple-mobile-web-app-capable" content="yes">
@@ -115,7 +115,7 @@ if ($action == "productinfo") {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$printer = new dolReceiptPrinter($db);
-		$printer->initPrinter($conf->global->{'TAKEPOS_PRINTER_TO_USE'.$_SESSION["takeposterminal"]});
+		$printer->initPrinter(getDolGlobalString('TAKEPOS_PRINTER_TO_USE'.$_SESSION["takeposterminal"]));
 		$printer->printer->feed();
 		$printer->printer->feed();
 		$printer->printer->text($langs->trans('IM'));
@@ -158,12 +158,12 @@ if ($action == "productinfo") {
 <script type="text/javascript">
 	<?php
 	$categorie = new Categorie($db);
-	$categories = $categorie->get_full_arbo('product', (($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) ? $conf->global->TAKEPOS_ROOT_CATEGORY_ID : 0), 1);
+	$categories = $categorie->get_full_arbo('product', ((getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') > 0) ? $conf->global->TAKEPOS_ROOT_CATEGORY_ID : 0), 1);
 
 	// Search root category to know its level
 	//$conf->global->TAKEPOS_ROOT_CATEGORY_ID=0;
 	$levelofrootcategory = 0;
-	if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) {
+	if (getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') > 0) {
 		foreach ($categories as $key => $categorycursor) {
 			if ($categorycursor['id'] == $conf->global->TAKEPOS_ROOT_CATEGORY_ID) {
 				$levelofrootcategory = $categorycursor['level'];

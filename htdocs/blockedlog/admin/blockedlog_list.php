@@ -71,8 +71,12 @@ $search_code = GETPOST('search_code', 'alpha');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 
-if (($search_start == -1 || empty($search_start)) && !GETPOSTISSET('search_startmonth')) {
+if (($search_start == -1 || empty($search_start)) && !GETPOSTISSET('search_startmonth') && !GETPOSTISSET('begin')) {
 	$search_start = dol_time_plus_duree(dol_now(), '-1', 'w');
+	$tmparray = dol_getdate($search_start);
+	$search_startday = $tmparray['mday'];
+	$search_startmonth = $tmparray['mon'];
+	$search_startyear = $tmparray['year'];
 }
 
 // Load variable for pagination
@@ -100,7 +104,7 @@ $block_static->loadTrackedEvents();
 $result = restrictedArea($user, 'blockedlog', 0, '');
 
 // Execution Time
-$max_execution_time_for_importexport = (empty($conf->global->EXPORT_MAX_EXECUTION_TIME) ? 300 : $conf->global->EXPORT_MAX_EXECUTION_TIME); // 5mn if not defined
+$max_execution_time_for_importexport = (!getDolGlobalString('EXPORT_MAX_EXECUTION_TIME') ? 300 : $conf->global->EXPORT_MAX_EXECUTION_TIME); // 5mn if not defined
 $max_time = @ini_get("max_execution_time");
 if ($max_time && $max_time < $max_execution_time_for_importexport) {
 	dol_syslog("max_execution_time=".$max_time." is lower than max_execution_time_for_importexport=".$max_execution_time_for_importexport.". We try to increase it dynamically.");
@@ -122,6 +126,12 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_ref = '';
 	$search_amount = '';
 	$search_showonlyerrors = 0;
+	$search_startyear = '';
+	$search_startmonth = '';
+	$search_startday = '';
+	$search_endyear = '';
+	$search_endmonth = '';
+	$search_endday = '';
 	$toselect = array();
 	$search_array_options = array();
 }
@@ -384,7 +394,7 @@ print $retstring;
 print '<input type="text" name="yeartoexport" class="valignmiddle maxwidth50imp" value="'.GETPOST('yeartoexport', 'int').'">';
 print '<input type="hidden" name="withtab" value="'.GETPOST('withtab', 'alpha').'">';
 print '<input type="submit" name="downloadcsv" class="button" value="'.$langs->trans('DownloadLogCSV').'">';
-if (!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY)) {
+if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
 	print ' | <a href="?action=downloadblockchain'.(GETPOST('withtab', 'alpha') ? '&withtab='.GETPOST('withtab', 'alpha') : '').'">'.$langs->trans('DownloadBlockChain').'</a>';
 }
 print ' </div><br>';
@@ -392,8 +402,6 @@ print ' </div><br>';
 print '</form>';
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
-
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -407,10 +415,19 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="withtab" value="'.GETPOST('withtab', 'alpha').'">';
 
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 print '<table class="noborder centpercent">';
 
 // Line of filters
 print '<tr class="liste_titre_filter">';
+
+// Action column
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td class="liste_titre center">';
+	$searchpicto = $form->showFilterButtons();
+	print $searchpicto;
+	print '</td>';
+}
 
 print '<td class="liste_titre"><input type="text" class="maxwidth50" name="search_id" value="'.dol_escape_htmltag($search_id).'"></td>';
 
@@ -429,7 +446,6 @@ print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, '', 
 print '</td>';
 
 // Actions code
-$langs->load("blockedlog");
 print '<td class="liste_titre">';
 print $form->selectarray('search_code', $block_static->trackedevents, $search_code, 1, 0, 0, '', 1, 0, 0, 'ASC', 'maxwidth200', 1);
 print '</td>';
@@ -459,29 +475,38 @@ print '</td>';
 print '<td class="liste_titre"></td>';
 
 // Action column
-print '<td class="liste_titre" align="middle">';
-$searchpicto = $form->showFilterButtons();
-print $searchpicto;
-print '</td>';
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td class="liste_titre center">';
+	$searchpicto = $form->showFilterButtons();
+	print $searchpicto;
+	print '</td>';
+}
 
 print '</tr>';
 
 print '<tr class="liste_titre">';
+// Action column
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print getTitleFieldOfList('<span id="blockchainstatus"></span>', 0, $_SERVER["PHP_SELF"], '', '', $param, 'class="center"', $sortfield, $sortorder, '')."\n";
+}
 print getTitleFieldOfList($langs->trans('#'), 0, $_SERVER["PHP_SELF"], 'rowid', '', $param, '', $sortfield, $sortorder, 'minwidth50 ')."\n";
 print getTitleFieldOfList($langs->trans('Date'), 0, $_SERVER["PHP_SELF"], 'date_creation', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($langs->trans('Author'), 0, $_SERVER["PHP_SELF"], 'user_fullname', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($langs->trans('Action'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($langs->trans('Ref'), 0, $_SERVER["PHP_SELF"], 'ref_object', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
-print getTitleFieldOfList($langs->trans('Amount'), 0, $_SERVER["PHP_SELF"], '', '', $param, 'class="right"', $sortfield, $sortorder, '')."\n";
-print getTitleFieldOfList($langs->trans('DataOfArchivedEvent'), 0, $_SERVER["PHP_SELF"], '', '', $param, 'align="center"', $sortfield, $sortorder, '')."\n";
+print getTitleFieldOfList($langs->trans('Amount'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ')."\n";
+print getTitleFieldOfList($langs->trans('DataOfArchivedEvent'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
 print getTitleFieldOfList($langs->trans('Fingerprint'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
-print getTitleFieldOfList($langs->trans('Status'), 0, $_SERVER["PHP_SELF"], '', '', $param, 'align="center"', $sortfield, $sortorder, '')."\n";
-print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, 'align="center"', $sortfield, $sortorder, '')."\n";
-print getTitleFieldOfList('<span id="blockchainstatus"></span>', 0, $_SERVER["PHP_SELF"], '', '', $param, 'align="center"', $sortfield, $sortorder, '')."\n";
+print getTitleFieldOfList($langs->trans('Status'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
+print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
+// Action column
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print getTitleFieldOfList('<span id="blockchainstatus"></span>', 0, $_SERVER["PHP_SELF"], '', '', $param, 'class="center"', $sortfield, $sortorder, '')."\n";
+}
 print '</tr>';
 
-if (!empty($conf->global->BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR)) {
+if (getDolGlobalString('BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR')) {
 	// This is version that is faster but require more memory and report errors that are outside the filter range
 
 	// TODO Make a full scan of table in reverse order of id of $block, so we can use the parameter $previoushash into checkSignature to save requests
@@ -515,6 +540,7 @@ if (is_array($blocks)) {
 	$nbshown = 0;
 	$MAXFORSHOWLINK = 100;
 	$object_link = '';
+	$object_link_title = '';
 
 	foreach ($blocks as &$block) {
 		//if (empty($search_showonlyerrors) || ! $checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror))
@@ -523,11 +549,19 @@ if (is_array($blocks)) {
 
 			if ($nbshown < $MAXFORSHOWLINK) {	// For performance and memory purpose, we get/show the link of objects only for the 100 first output
 				$object_link = $block->getObjectLink();
+				$object_link_title = '';
 			} else {
 				$object_link = $block->element.'/'.$block->fk_object;
+				$object_link_title = $langs->trans('LinkHasBeenDisabledForPerformancePurpose');
 			}
 
 			print '<tr class="oddeven">';
+
+			// Action column
+			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print '<td class="liste_titre">';
+				print '</td>';
+			}
 
 			// ID
 			print '<td>'.dol_escape_htmltag($block->id).'</td>';
@@ -550,7 +584,7 @@ if (is_array($blocks)) {
 			print '</td>';
 
 			// Link to source object
-			print '<td class="tdoverflowmax150"'.(preg_match('/<a/', $object_link) ? '' : 'title="'.dol_escape_htmltag(dol_string_nohtmltag($object_link)).'"').'>';
+			print '<td class="tdoverflowmax150"'.(preg_match('/<a/', $object_link) ? '' : 'title="'.dol_escape_htmltag(dol_string_nohtmltag($object_link.' - '.$object_link_title)).'"').'>';
 			print '<!-- object_link -->';	// $object_link can be a '<a href' link or a text
 			print $object_link;
 			print '</td>';
@@ -559,7 +593,7 @@ if (is_array($blocks)) {
 			print '<td class="right nowraponall">'.price($block->amounts).'</td>';
 
 			// Details link
-			print '<td align="center"><a href="#" data-blockid="'.$block->id.'" rel="show-info">'.img_info($langs->trans('ShowDetails')).'</a></td>';
+			print '<td class="center"><a href="#" data-blockid="'.$block->id.'" rel="show-info">'.img_info($langs->trans('ShowDetails')).'</a></td>';
 
 			// Fingerprint
 			print '<td class="nowrap">';
@@ -591,12 +625,16 @@ if (is_array($blocks)) {
 				}
 			}
 
-			if (!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY) && !empty($conf->global->BLOCKEDLOG_AUTHORITY_URL)) {
+			if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY') && getDolGlobalString('BLOCKEDLOG_AUTHORITY_URL')) {
 				print ' '.($block->certified ? img_picto($langs->trans('AddedByAuthority'), 'info') : img_picto($langs->trans('NotAddedByAuthorityYet'), 'info_black'));
 			}
 			print '</td>';
 
-			print '<td></td>';
+			// Action column
+			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print '<td class="liste_titre">';
+				print '</td>';
+			}
 
 			print '</tr>';
 		}
@@ -644,7 +682,7 @@ jQuery(document).ready(function () {
 </script>'."\n";
 
 
-if (!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY) && !empty($conf->global->BLOCKEDLOG_AUTHORITY_URL)) {
+if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY') && getDolGlobalString('BLOCKEDLOG_AUTHORITY_URL')) {
 	?>
 		<script type="text/javascript">
 

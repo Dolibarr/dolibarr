@@ -269,7 +269,8 @@ if ($step == 1 || $action == 'cleanselect') {
 }
 
 if ($action == 'builddoc') {
-	$max_execution_time_for_importexport = (empty($conf->global->EXPORT_MAX_EXECUTION_TIME) ? 300 : $conf->global->EXPORT_MAX_EXECUTION_TIME); // 5mn if not defined
+	$separator = GETPOST('delimiter', 'alpha');
+	$max_execution_time_for_importexport = (!getDolGlobalString('EXPORT_MAX_EXECUTION_TIME') ? 300 : $conf->global->EXPORT_MAX_EXECUTION_TIME); // 5mn if not defined
 	$max_time = @ini_get("max_execution_time");
 	if ($max_time && $max_time < $max_execution_time_for_importexport) {
 		dol_syslog("max_execution_time=".$max_time." is lower than max_execution_time_for_importexport=".$max_execution_time_for_importexport.". We try to increase it dynamically.");
@@ -277,7 +278,7 @@ if ($action == 'builddoc') {
 	}
 
 	// Build export file
-	$result = $objexport->build_file($user, GETPOST('model', 'alpha'), $datatoexport, $array_selected, $array_filtervalue);
+	$result = $objexport->build_file($user, GETPOST('model', 'alpha'), $datatoexport, $array_selected, $array_filtervalue, '', $separator);
 	if ($result < 0) {
 		setEventMessages($objexport->error, $objexport->errors, 'errors');
 		$sqlusedforexport = $objexport->sqlusedforexport;
@@ -1032,7 +1033,7 @@ if ($step == 4 && $datatoexport) {
 		$sql = "SELECT rowid, label, fk_user, entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."export_model";
 		$sql .= " WHERE type = '".$db->escape($datatoexport)."'";
-		if (empty($conf->global->EXPORTS_SHARE_MODELS)) {	// EXPORTS_SHARE_MODELS means all templates are visible, whatever is owner.
+		if (!getDolGlobalString('EXPORTS_SHARE_MODELS')) {	// EXPORTS_SHARE_MODELS means all templates are visible, whatever is owner.
 			$sql .= " AND fk_user IN (0, ".((int) $user->id).")";
 		}
 		$sql .= " ORDER BY rowid";

@@ -133,8 +133,8 @@ class pdf_standard extends CommonStickerGenerator
 
 		// Define background image
 		$backgroundimage = '';
-		if (!empty($conf->global->ADHERENT_CARD_BACKGROUND) && file_exists($conf->adherent->dir_output.'/'.$conf->global->ADHERENT_CARD_BACKGROUND)) {
-			$backgroundimage = $conf->adherent->dir_output.'/'.$conf->global->ADHERENT_CARD_BACKGROUND;
+		if (getDolGlobalString('ADHERENT_CARD_BACKGROUND') && file_exists($conf->adherent->dir_output.'/' . getDolGlobalString('ADHERENT_CARD_BACKGROUND'))) {
+			$backgroundimage = $conf->adherent->dir_output.'/' . getDolGlobalString('ADHERENT_CARD_BACKGROUND');
 		}
 
 		// Print lines
@@ -292,24 +292,25 @@ class pdf_standard extends CommonStickerGenerator
 			// List of values to scan for a replacement
 			$substitutionarray = array(
 				'__ID__' => $object->id,
-				'__LOGIN__'=>$object->login,
-				'__FIRSTNAME__'=>$object->firstname,
-				'__LASTNAME__'=>$object->lastname,
-				'__FULLNAME__'=>$object->getFullName($langs),
-				'__COMPANY__'=>$object->company,
-				'__ADDRESS__'=>$object->address,
-				'__ZIP__'=>$object->zip,
-				'__TOWN__'=>$object->town,
-				'__COUNTRY__'=>$object->country,
-				'__COUNTRY_CODE__'=>$object->country_code,
-				'__EMAIL__'=>$object->email,
-				'__BIRTH__'=>dol_print_date($object->birth, 'day'),
-				'__TYPE__'=>$object->type,
-				'__YEAR__'=>$year,
-				'__MONTH__'=>$month,
-				'__DAY__'=>$day,
-				'__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT,
-				'__SERVER__'=>"https://".$_SERVER["SERVER_NAME"]."/"
+				'__REF__' => $object->ref,
+				'__LOGIN__' => empty($object->login) ? '' : $object->login,
+				'__FIRSTNAME__' => empty($object->firstname) ? '' : $object->firstname,
+				'__LASTNAME__' => empty($object->lastname) ? '' : $object->lastname,
+				'__FULLNAME__' => $object->getFullName($langs),
+				'__COMPANY__' => empty($object->company) ? '' : $object->company,
+				'__ADDRESS__' => empty($object->address) ? '' : $object->address,
+				'__ZIP__' => empty($object->zip) ? '' : $object->zip,
+				'__TOWN__' => empty($object->town) ? '' : $object->town,
+				'__COUNTRY__' => empty($object->country) ? '' : $object->country,
+				'__COUNTRY_CODE__' => empty($object->country_code) ? '' : $object->country_code,
+				'__EMAIL__' => empty($object->email) ? '' : $object->email,
+				'__BIRTH__' => dol_print_date($object->birth, 'day'),
+				'__TYPE__' => empty($object->type) ? '' : $object->type,
+				'__YEAR__' => $year,
+				'__MONTH__' => $month,
+				'__DAY__' => $day,
+				'__DOL_MAIN_URL_ROOT__' => DOL_MAIN_URL_ROOT,
+				'__SERVER__' => "https://".$_SERVER["SERVER_NAME"]."/"
 			);
 			complete_substitutions_array($substitutionarray, $langs);
 
@@ -330,17 +331,16 @@ class pdf_standard extends CommonStickerGenerator
 					'textheader'=>$textheader,
 					'textfooter'=>$textfooter,
 					'textright'=>$textright,
-					'id'=>(isset($object->rowid) ? $object->rowid : ""),
+					'id'=>(isset($object->id) ? $object->id : ""),
 					'photo'=>(isset($object->photo) ? $object->photo : "")
 				);
 			}
 
 			$arrayofrecords = $arrayofmembers;
 		} else {
+			// Old usage
 			$arrayofrecords = $object;
 		}
-
-		//var_dump($arrayofrecords);exit;
 
 		$this->Tformat = $_Avery_Labels[$this->code];
 		if (empty($this->Tformat)) {
@@ -364,7 +364,7 @@ class pdf_standard extends CommonStickerGenerator
 			$outputlangs = $langs;
 		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!empty($conf->global->MAIN_USE_FPDF)) {
+		if (getDolGlobalString('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
@@ -464,7 +464,7 @@ class pdf_standard extends CommonStickerGenerator
 			clearstatcache();
 
 			$attachment = true;
-			if (!empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) {
+			if (getDolGlobalString('MAIN_DISABLE_FORCE_SAVEAS')) {
 				$attachment = false;
 			}
 			$type = dol_mimetype($filename);

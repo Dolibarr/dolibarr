@@ -21,8 +21,8 @@
 
 /**
  *	    \file       htdocs/core/boxes/modules_boxes.php
- *		\ingroup    facture
- *		\brief      Fichier contenant la classe mere des boites
+ *		\ingroup    core
+ *		\brief      File containing the parent class of boxes
  */
 
 
@@ -261,7 +261,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 					$label = $head['text'];
 					//if (!empty($head['graph'])) $label.=' ('.$langs->trans("Graph").')';
 					if (!empty($head['graph'])) {
-						$label .= ' <span class="opacitymedium fa fa-bar-chart"></span>';
+						$label .= ' <span class="opacitymedium fas fa-chart-bar"></span>';
 					}
 					$out .= '<input type="hidden" id="boxlabelentry'.$this->box_id.'" value="'.dol_escape_htmltag($label).'">';
 					//$out.= '</td></tr></table>';
@@ -374,7 +374,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 			$out .= "</div>\n";
 
 			$out .= "<!-- Box ".get_class($this)." end -->\n\n";
-			if (!empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
+			if (getDolGlobalString('MAIN_ACTIVATE_FILECACHE')) {
 				dol_filecache($cachedir, $filename, $out);
 			}
 		} else {

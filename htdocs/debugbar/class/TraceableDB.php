@@ -164,9 +164,9 @@ class TraceableDB extends DoliDB
 	 * @param   string $type   Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
 	 * @return  string         SQL request line converted
 	 */
-	public static function convertSQLFromMysql($line, $type = 'ddl')
+	public function convertSQLFromMysql($line, $type = 'ddl')
 	{
-		return self::$db->convertSQLFromMysql($line);
+		return $this->db->convertSQLFromMysql($line);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -720,8 +720,8 @@ class TraceableDB extends DoliDB
 	/**
 	 * Returns the current line (as an object) for the resultset cursor
 	 *
-	 * @param   resource|Connection	 		$resultset    	Handler of the desired SQL request
-	 * @return  Object                 						Object result line or false if KO or end of cursor
+	 * @param   resource|PgSql\Connection	 	$resultset    	Handler of the desired SQL request
+	 * @return  Object                 							Object result line or false if KO or end of cursor
 	 */
 	public function fetch_object($resultset)
 	{

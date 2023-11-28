@@ -149,7 +149,7 @@ if ($resql) {
 			if ($startbreak) {
 				// Break onto sales representative (new email or cid)
 				if (dol_strlen($oldemail) && $oldemail != 'none' && empty($trackthirdpartiessent[$oldsid.'|'.$oldemail])) {
-					envoi_mail($mode, $oldemail, $message, $total, $oldlang, $oldtarget, $duration_value);
+					sendEmailTo($mode, $oldemail, $message, $total, $oldlang, $oldtarget, $duration_value);
 					$trackthirdpartiessent[$oldsid.'|'.$oldemail] = 'contact id '.$oldcid;
 				} else {
 					if ($oldemail != 'none') {
@@ -203,7 +203,7 @@ if ($resql) {
 		// Si il reste des envois en buffer
 		if ($foundtoprocess) {
 			if (dol_strlen($oldemail) && $oldemail != 'none' && empty($trackthirdpartiessent[$oldsid.'|'.$oldemail])) { // Break onto email (new email)
-				envoi_mail($mode, $oldemail, $message, $total, $oldlang, $oldtarget, $duration_value);
+				sendEmailTo($mode, $oldemail, $message, $total, $oldlang, $oldtarget, $duration_value);
 				$trackthirdpartiessent[$oldsid.'|'.$oldemail] = 'contact id '.$oldcid;
 			} else {
 				if ($oldemail != 'none') {
@@ -230,16 +230,16 @@ if ($resql) {
 /**
  * Send email
  *
- * @param string $mode			Mode (test | confirm)
- * @param string $oldemail		Target email
- * @param string $message		Message to send
- * @param string $total			Total amount of unpayed invoices
- * @param string $userlang		Code lang to use for email output.
- * @param string $oldtarget		Target name
- * @param int $duration_value	duration value
- * @return int 					<0 if KO, >0 if OK
+ * @param string 	$mode				Mode (test | confirm)
+ * @param string 	$oldemail			Target email
+ * @param string 	$message			Message to send
+ * @param string 	$total				Total amount of unpayed invoices
+ * @param string 	$userlang			Code lang to use for email output.
+ * @param string 	$oldtarget			Target name
+ * @param int 		$duration_value		duration value
+ * @return int 							Int <0 if KO, >0 if OK
  */
-function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldtarget, $duration_value)
+function sendEmailTo($mode, $oldemail, $message, $total, $userlang, $oldtarget, $duration_value)
 {
 	global $conf, $langs;
 
@@ -248,7 +248,7 @@ function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldtarget, $
 	}
 
 	$newlangs = new Translate('', $conf);
-	$newlangs->setDefaultLang(empty($userlang) ? (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT) : $userlang);
+	$newlangs->setDefaultLang(empty($userlang) ? (!getDolGlobalString('MAIN_LANG_DEFAULT') ? 'auto' : $conf->global->MAIN_LANG_DEFAULT) : $userlang);
 	$newlangs->load("main");
 	$newlangs->load("contracts");
 
@@ -262,7 +262,7 @@ function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldtarget, $
 		$title = $newlangs->transnoentities("ListOfServicesToExpire");
 	}
 
-	$subject = (empty($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_SUBJECT) ? $title : $conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_SUBJECT);
+	$subject = (!getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_SUBJECT') ? $title : $conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_SUBJECT);
 	$sendto = $oldemail;
 	$from = $conf->global->MAIN_MAIL_EMAIL_FROM;
 	$errorsto = $conf->global->MAIN_MAIL_ERRORS_TO;
@@ -280,7 +280,7 @@ function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldtarget, $
 	}
 
 	$allmessage = '';
-	if (!empty($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_HEADER)) {
+	if (getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_HEADER')) {
 		$allmessage .= $conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_HEADER;
 	} else {
 		$allmessage .= "Dear customer".($usehtml ? "<br>\n" : "\n").($usehtml ? "<br>\n" : "\n");
@@ -288,7 +288,7 @@ function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldtarget, $
 	}
 	$allmessage .= $message.($usehtml ? "<br>\n" : "\n");
 	// $allmessage.= $langs->trans("Total")." = ".price($total,0,$userlang,0,0,-1,$conf->currency).($usehtml?"<br>\n":"\n");
-	if (!empty($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_FOOTER)) {
+	if (getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_FOOTER')) {
 		$allmessage .= $conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_FOOTER;
 		if (dol_textishtml($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_FOOTER)) {
 			$usehtml += 1;

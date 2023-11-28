@@ -94,6 +94,7 @@ class AssetAccountancyCodes extends CommonObject
 				$this->accountancy_codes[$mode_key][$field_key] = $accountancy_code;
 			}
 		}
+		return $this->accountancy_codes;
 	}
 
 	/**

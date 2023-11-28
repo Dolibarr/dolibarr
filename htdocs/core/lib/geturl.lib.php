@@ -42,11 +42,11 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 {
 	//declaring of global variables
 	global $conf;
-	$USE_PROXY = empty($conf->global->MAIN_PROXY_USE) ? 0 : $conf->global->MAIN_PROXY_USE;
-	$PROXY_HOST = empty($conf->global->MAIN_PROXY_HOST) ? 0 : $conf->global->MAIN_PROXY_HOST;
-	$PROXY_PORT = empty($conf->global->MAIN_PROXY_PORT) ? 0 : $conf->global->MAIN_PROXY_PORT;
-	$PROXY_USER = empty($conf->global->MAIN_PROXY_USER) ? 0 : $conf->global->MAIN_PROXY_USER;
-	$PROXY_PASS = empty($conf->global->MAIN_PROXY_PASS) ? 0 : $conf->global->MAIN_PROXY_PASS;
+	$USE_PROXY = !getDolGlobalString('MAIN_PROXY_USE') ? 0 : $conf->global->MAIN_PROXY_USE;
+	$PROXY_HOST = !getDolGlobalString('MAIN_PROXY_HOST') ? 0 : $conf->global->MAIN_PROXY_HOST;
+	$PROXY_PORT = !getDolGlobalString('MAIN_PROXY_PORT') ? 0 : $conf->global->MAIN_PROXY_PORT;
+	$PROXY_USER = !getDolGlobalString('MAIN_PROXY_USER') ? 0 : $conf->global->MAIN_PROXY_USER;
+	$PROXY_PASS = !getDolGlobalString('MAIN_PROXY_PASS') ? 0 : $conf->global->MAIN_PROXY_PASS;
 
 	dol_syslog("getURLContent postorget=".$postorget." URL=".$url." param=".$param);
 
@@ -71,7 +71,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 	// By default use tls decied by PHP.
 	// You can force, if supported a version like TLSv1 or TLSv1.2
-	if (!empty($conf->global->MAIN_CURL_SSLVERSION)) {
+	if (getDolGlobalString('MAIN_CURL_SSLVERSION')) {
 		curl_setopt($ch, CURLOPT_SSLVERSION, $conf->global->MAIN_CURL_SSLVERSION);
 	}
 	//curl_setopt($ch, CURLOPT_SSLVERSION, 6); for tls 1.2
@@ -81,7 +81,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		global $dolibarr_main_prod;
 		$ssl_verifypeer =  ($dolibarr_main_prod ? true : false);
 	}
-	if (!empty($conf->global->MAIN_CURL_DISABLE_VERIFYPEER)) {
+	if (getDolGlobalString('MAIN_CURL_DISABLE_VERIFYPEER')) {
 		$ssl_verifypeer = 0;
 	}
 
@@ -104,8 +104,8 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		curl_setopt($ch, CURLOPT_REDIR_PROTOCOLS, $protocols);
 	}
 
-	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, empty($conf->global->MAIN_USE_CONNECT_TIMEOUT) ? 5 : $conf->global->MAIN_USE_CONNECT_TIMEOUT);
-	curl_setopt($ch, CURLOPT_TIMEOUT, empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT) ? 30 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT);
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, !getDolGlobalString('MAIN_USE_CONNECT_TIMEOUT') ? 5 : $conf->global->MAIN_USE_CONNECT_TIMEOUT);
+	curl_setopt($ch, CURLOPT_TIMEOUT, !getDolGlobalString('MAIN_USE_RESPONSE_TIMEOUT') ? 30 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT);
 
 	// limit size of downloaded files. TODO Add MAIN_SECURITY_MAXFILESIZE_DOWNLOADED
 	$maxsize = getDolGlobalInt('MAIN_SECURITY_MAXFILESIZE_DOWNLOADED');
@@ -238,9 +238,10 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	$request = curl_getinfo($ch, CURLINFO_HEADER_OUT); // Reading of request must be done after sending request
 
 	dol_syslog("getURLContent request=".$request);
-	if (!empty($conf->global->MAIN_GETURLCONTENT_OUTPUT_RESPONSE)) {
+	if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
 		// This may contains binary data, so we dont output reponse by default.
-		dol_syslog("getURLContent response =".$response);
+		dol_syslog("getURLContent request=".$request, LOG_DEBUG, 0, '_curl');
+		dol_syslog("getURLContent response =".$response, LOG_DEBUG, 0, '_curl');
 	}
 	dol_syslog("getURLContent response size=".strlen($response)); // This may contains binary data, so we dont output it
 
@@ -298,7 +299,7 @@ function isIPAllowed($iptocheck, $localurl)
 			$errormsg = 'Error bad hostname IP (IP is a local IP). Must be an external URL.';
 			return $errormsg;
 		}
-		if (!empty($conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP) && in_array($iptocheck, explode(',', $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP))) {
+		if (getDolGlobalString('MAIN_SECURITY_ANTI_SSRF_SERVER_IP') && in_array($iptocheck, explode(',', $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP))) {
 			$errormsg = 'Error bad hostname IP (IP is a local IP defined into MAIN_SECURITY_SERVER_IP). Must be an external URL.';
 			return $errormsg;
 		}
@@ -309,7 +310,7 @@ function isIPAllowed($iptocheck, $localurl)
 			$errormsg = 'Error bad hostname '.$iptocheck.'. Must be a local URL.';
 			return $errormsg;
 		}
-		if (!empty($conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP) && !in_array($iptocheck, explode(',', $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP))) {
+		if (getDolGlobalString('MAIN_SECURITY_ANTI_SSRF_SERVER_IP') && !in_array($iptocheck, explode(',', $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP))) {
 			$errormsg = 'Error bad hostname IP (IP is not a local IP defined into list MAIN_SECURITY_SERVER_IP). Must be a local URL in allowed list.';
 			return $errormsg;
 		}

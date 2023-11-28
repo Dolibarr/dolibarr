@@ -22,7 +22,6 @@ ClassCredited=Classificar Acreditados
 ClassCreditedConfirm=Você tem certeza que querer marcar este pagamento como realizado em a sua conta bancaria?
 TransData=Data da transferência
 TransMetod=Método de transferência
-StandingOrderReject=Emitir uma recusa
 WithdrawalRefused=Retirada recusada
 WithdrawalRefusedConfirm=Você tem certeza que quer entrar com uma rejeição de retirada para a sociedade
 RefusedInvoicing=Cobrança da rejeição

@@ -111,7 +111,7 @@ $taskstatic = new Task($db);
 $extrafields = new ExtraFields($db);
 
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once
-if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) {
+if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($object, 'fetchComments') && empty($object->comments)) {
 	$object->fetchComments();
 }
 
@@ -172,6 +172,7 @@ if ($object->usage_bill_time) {
 
 // Extra fields
 $extrafieldsobjectkey = $taskstatic->table_element;
+$extrafieldsobjectprefix = 'efpt.';
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -288,26 +289,24 @@ if (!empty($search_timespend)) {
 	$morewherefilterarray[] = natural_search('t.duration_effective', $search_timespend, 1, 1);
 }
 
-if (!empty($search_progresscalc)) {
-	$filterprogresscalc = 'if '.natural_search('round(100 * $line->duration / $line->planned_workload,2)', $search_progresscalc, 1, 1).'{return 1;} else {return 0;}';
-} else {
-	$filterprogresscalc = '';
-}
-
 if (!empty($search_progressdeclare)) {
 	$morewherefilterarray[] = natural_search('t.progress', $search_progressdeclare, 1, 1);
 }
-
+if (!empty($search_progresscalc)) {
+	$morewherefilterarray[] = '(planned_workload IS NULL OR planned_workload = 0 OR '.natural_search('ROUND(100 * duration_effective / planned_workload, 2)', $search_progresscalc, 1, 1).')';
+	//natural_search('round(100 * $line->duration_effective / $line->planned_workload,2)', $filterprogresscalc, 1, 1).' {return 1;} else {return 0;}';
+}
 if ($search_task_budget_amount) {
 	$morewherefilterarray[]= natural_search('t.budget_amount', $search_task_budget_amount, 1, 1);
 }
+//var_dump($morewherefilterarray);
 
 $morewherefilter = '';
 if (count($morewherefilterarray) > 0) {
 	$morewherefilter = ' AND '.implode(' AND ', $morewherefilterarray);
 }
 
-if ($action == 'createtask' && $user->rights->projet->creer) {
+if ($action == 'createtask' && $user->hasRight('projet', 'creer')) {
 	$error = 0;
 
 	// If we use user timezone, we must change also view/list to use user timezone everywhere
@@ -412,7 +411,7 @@ $taskstatic = new Task($db);
 $userstatic = new User($db);
 
 $title = $langs->trans("Tasks").' - '.$object->ref.' '.$object->name;
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->ref.' '.$object->name.' - '.$langs->trans("Tasks");
 }
 if ($action == 'create') {
@@ -556,7 +555,7 @@ if ($id > 0 || !empty($ref)) {
 
 	$arrayofmassactions = array();
 	if ($user->hasRight('projet', 'creer')) {
-		$arrayofmassactions['preclonetasks'] = img_picto('', 'rightarrow', 'class="pictofixedwidth"').$langs->trans("Clone");
+		$arrayofmassactions['preclonetasks'] = img_picto('', 'clone', 'class="pictofixedwidth"').$langs->trans("Clone");
 	}
 	if ($permissiontodelete) {
 		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
@@ -568,7 +567,13 @@ if ($id > 0 || !empty($ref)) {
 
 	// Project card
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	if (!empty($_SESSION['pageforbacktolist']) && !empty($_SESSION['pageforbacktolist']['project'])) {
+		$tmpurl = $_SESSION['pageforbacktolist']['project'];
+		$tmpurl = preg_replace('/__SOCID__/', $object->socid, $tmpurl);
+		$linkback = '<a href="'.$tmpurl.(preg_match('/\?/', $tmpurl) ? '&' : '?'). 'restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	} else {
+		$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	}
 
 	$morehtmlref = '<div class="refidno">';
 	// Title
@@ -580,9 +585,9 @@ if ($id > 0 || !empty($ref)) {
 	$morehtmlref .= '</div>';
 
 	// Define a complementary filter for search of next/prev ref.
-	if (empty($user->rights->projet->all->lire)) {
+	if (!$user->hasRight('projet', 'all', 'lire')) {
 		$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-		$object->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
+		$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 	}
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -594,24 +599,24 @@ if ($id > 0 || !empty($ref)) {
 	print '<table class="border tableforfield centpercent">';
 
 	// Usage
-	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || isModEnabled('eventorganization')) {
+	if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') || !getDolGlobalString('PROJECT_HIDE_TASKS') || isModEnabled('eventorganization')) {
 		print '<tr><td class="tdtop">';
 		print $langs->trans("Usage");
 		print '</td>';
 		print '<td>';
-		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+		if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 			print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
 			$htmltext = $langs->trans("ProjectFollowOpportunity");
 			print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
 			print '<br>';
 		}
-		if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+		if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 			print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_task ? ' checked="checked"' : '')).'"> ';
 			$htmltext = $langs->trans("ProjectFollowTasks");
 			print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
 			print '<br>';
 		}
-		if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
+		if (!getDolGlobalString('PROJECT_HIDE_TASKS') && getDolGlobalString('PROJECT_BILL_TIME_SPENT')) {
 			print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_bill_time ? ' checked="checked"' : '')).'"> ';
 			$htmltext = $langs->trans("ProjectBillTimeDescription");
 			print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
@@ -691,7 +696,7 @@ if ($id > 0 || !empty($ref)) {
 }
 
 
-if ($action == 'create' && $user->rights->projet->creer && (empty($object->thirdparty->id) || $userWrite > 0)) {
+if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object->thirdparty->id) || $userWrite > 0)) {
 	if ($id > 0 || !empty($ref)) {
 		print '<br>';
 	}
@@ -725,12 +730,13 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	print dol_get_fiche_head('');
 
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="border centpercent">';
 
 	$defaultref = '';
-	$obj = empty($conf->global->PROJECT_TASK_ADDON) ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
-	if (!empty($conf->global->PROJECT_TASK_ADDON) && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/".$conf->global->PROJECT_TASK_ADDON.".php")) {
-		require_once DOL_DOCUMENT_ROOT."/core/modules/project/task/".$conf->global->PROJECT_TASK_ADDON.'.php';
+	$obj = !getDolGlobalString('PROJECT_TASK_ADDON') ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
+	if (getDolGlobalString('PROJECT_TASK_ADDON') && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').".php")) {
+		require_once DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').'.php';
 		$modTask = new $obj;
 		$defaultref = $modTask->getNextValue($object->thirdparty, null);
 	}
@@ -751,7 +757,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	// Label
 	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td>';
-	print '<input type="text" name="label" autofocus class="minwidth500 maxwidthonsmartphone" value="'.$label.'">';
+	print '<input type="text" name="label" autofocus class="minwidth500" value="'.$label.'">';
 	print '</td></tr>';
 
 	// Project
@@ -770,12 +776,12 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';
 	print img_picto('', 'user', 'class="pictofixedwidth"');
 	if (is_array($contactsofproject) && count($contactsofproject)) {
-		print $form->select_dolusers($user->id, 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, '', 'maxwidth300');
+		print $form->select_dolusers($user->id, 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, '', 'maxwidth500 widthcentpercentminusx');
 	} else {
 		if ((isset($projectid) && $projectid > 0) || $object->id > 0) {
 			print '<span class="opacitymedium">'.$langs->trans("NoUserAssignedToTheProject").'</span>';
 		} else {
-			print $form->select_dolusers($user->id, 'userid', 0, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+			print $form->select_dolusers($user->id, 'userid', 0, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth500 widthcentpercentminusx');
 		}
 	}
 	print '</td></tr>';
@@ -810,12 +816,12 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	// WYSIWYG editor
 	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$cked_enabled = (!empty($conf->global->FCKEDITOR_ENABLE_SOCIETE) ? $conf->global->FCKEDITOR_ENABLE_SOCIETE : 0);
+	$cked_enabled = (getDolGlobalString('FCKEDITOR_ENABLE_SOCIETE') ? $conf->global->FCKEDITOR_ENABLE_SOCIETE : 0);
 	$nbrows = 0;
-	if (!empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) {
+	if (getDolGlobalString('MAIN_INPUT_DESC_HEIGHT')) {
 		$nbrows = $conf->global->MAIN_INPUT_DESC_HEIGHT;
 	}
-	$doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_details', '', false, true, $cked_enabled, $nbrows);
+	$doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_details', '', false, true, $cked_enabled, $nbrows, '90%');
 	print $doleditor->Create();
 
 	print '</td></tr>';
@@ -835,6 +841,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	}
 
 	print '</table>';
+	print '</div>';
 
 	print dol_get_fiche_end();
 
@@ -887,7 +894,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	// Get list of tasks in tasksarray and taskarrayfiltered
 	// We need all tasks (even not limited to a user because a task to user can have a parent that is not affected to him).
 	$filteronthirdpartyid = $socid;
-	$tasksarray = $taskstatic->getTasksArray(0, 0, $object->id, $filteronthirdpartyid, 0, '', -1, $morewherefilter, 0, 0, $extrafields, 1, $search_array_options, 0, 1, $sortfield, $sortorder);
+	$tasksarray = $taskstatic->getTasksArray(0, 0, $object->id, $filteronthirdpartyid, 0, '', -1, $morewherefilter, 0, 0, $extrafields, 1, $search_array_options, 1, 1, $sortfield, $sortorder);
 
 	// We load also tasks limited to a particular user
 	$tmpuser = new User($db);
@@ -903,14 +910,12 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 		include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 	}
 
-	// Filter on categories
+	// Filter on assigned users
 	$moreforfilter = '';
-	if (count($tasksarray) > 0) {
-		$moreforfilter .= '<div class="divsearchfield">';
-		$moreforfilter .= img_picto('', 'user', 'class="pictofixedwidth"');
-		$moreforfilter .= $form->select_dolusers($tmpuser->id > 0 ? $tmpuser->id : '', 'search_user_id', $langs->trans("TasksAssignedTo"), null, 0, '', '');
-		$moreforfilter .= '</div>';
-	}
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= img_picto('', 'user', 'class="pictofixedwidth"');
+	$moreforfilter .= $form->select_dolusers($tmpuser->id > 0 ? $tmpuser->id : '', 'search_user_id', $langs->trans("TasksAssignedTo"), null, 0, '', '');
+	$moreforfilter .= '</div>';
 	if ($moreforfilter) {
 		print '<div class="liste_titre liste_titre_bydiv centpercent">';
 		print $moreforfilter;
@@ -919,7 +924,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	// Show the massaction checkboxes only when this page is not opend from the Extended POS
 	if ($massactionbutton && $contextpage != 'poslist') {
-		$selectedfields = $form->showCheckAddButtons('checkforselect', 1);
+		$selectedfields.= $form->showCheckAddButtons('checkforselect', 1);
 	}
 
 	print '<div class="div-table-responsive">';
@@ -1007,7 +1012,9 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	}
 
 	// progress resume not searchable
-	print '<td class="liste_titre right"></td>';
+	if (!empty($arrayfields['t.progress_summary']['checked'])) {
+		print '<td class="liste_titre right"></td>';
+	}
 
 	if ($object->usage_bill_time) {
 		if (!empty($arrayfields['t.tobill']['checked'])) {
@@ -1128,7 +1135,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	if (count($tasksarray) > 0) {
 		// Show all lines in taskarray (recursive function to go down on tree)
 		$j = 0; $level = 0;
-		$nboftaskshown = projectLinesa($j, 0, $tasksarray, $level, true, 0, $tasksrole, $object->id, 1, $object->id, $filterprogresscalc, ($object->usage_bill_time ? 1 : 0), $arrayfields, $arrayofselected);
+		$nboftaskshown = projectLinesa($j, 0, $tasksarray, $level, true, 0, $tasksrole, $object->id, 1, $object->id, '', ($object->usage_bill_time ? 1 : 0), $arrayfields, $arrayofselected);
 	} else {
 		$colspan = count($arrayfields);
 		if ($object->usage_bill_time) {
@@ -1145,7 +1152,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	// Test if database is clean. If not we clean it.
 	//print 'mode='.$_REQUEST["mode"].' $nboftaskshown='.$nboftaskshown.' count($tasksarray)='.count($tasksarray).' count($tasksrole)='.count($tasksrole).'<br>';
-	if (!empty($user->rights->projet->all->lire)) {	// We make test to clean only if user has permission to see all (test may report false positive otherwise)
+	if ($user->hasRight('projet', 'all', 'lire')) {	// We make test to clean only if user has permission to see all (test may report false positive otherwise)
 		if ($search_user_id == $user->id) {
 			if ($nboftaskshown < count($tasksrole)) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';

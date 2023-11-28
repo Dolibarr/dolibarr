@@ -95,7 +95,7 @@ $form = new Form($db);
 $formother = new FormOther($db);
 
 if ($id > 0 || !empty($ref)) {
-	$object = new ProductLot($db);
+	$object = new Productlot($db);
 	if ($ref) {
 		$tmp = explode('_', $ref);
 		$objectid = $tmp[0];
@@ -173,7 +173,7 @@ if ($id > 0 || !empty($ref)) {
 		//          print '</tr>';
 		//      }
 		//
-		//      if (!empty($conf->global->PRODUCT_LOT_ENABLE_TRACEABOLITY)) {
+		//      if (!empty($conf->global->PRODUCT_LOT_ENABLE_TRACEABILITY)) {
 		//          print '<tr><td>'.$form->editfieldkey($langs->trans('ManufacturingDate'), 'manufacturing_date', $object->manufacturing_date, $object, $user->rights->stock->creer).'</td>';
 		//          print '<td>'.$form->editfieldval($langs->trans('ManufacturingDate'), 'manufacturing_date', $object->manufacturing_date, $object, $user->rights->stock->creer, 'datepicker').'</td>';
 		//          print '</tr>';
@@ -211,19 +211,19 @@ if ($id > 0 || !empty($ref)) {
 
 		if ($showmessage && $nboflines > 1) {
 			print '<span class="opacitymedium">'.$langs->trans("ClinkOnALinkOfColumn", $langs->transnoentitiesnoconv("Referers")).'</span>';
-		} elseif ($user->rights->fournisseur->commande->lire) {
+		} elseif ($user->hasRight('fournisseur', 'commande', 'lire')) {
 			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_fournisseur,";
 			$sql .= " cf.ref, cf.date_commande, cf.date_livraison as delivery_date, cf.fk_statut as statut, cf.rowid as facid,";
 			$sql .= " cfd.rowid, SUM(cfdi.qty) as qty";
 			//          $sql.= ", cfd.total_ht * SUM(cfdi.qty) / cfd.qty as total_ht_pondere";
-			if (empty($user->rights->societe->client->voir) && !$socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 				$sql .= ", sc.fk_soc, sc.fk_user ";
 			}
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."commande_fournisseur as cf ON (cf.fk_soc = s.rowid)";
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."commande_fournisseurdet as cfd ON (cfd.fk_commande = cf.rowid)";
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfdi ON (cfdi.fk_commandefourndet = cfd.rowid)";
-			if (empty($user->rights->societe->client->voir) && !$socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE cf.entity IN (".getEntity('product').")";
@@ -234,7 +234,7 @@ if ($id > 0 || !empty($ref)) {
 			if (!empty($search_year)) {
 				$sql .= ' AND YEAR(cf.date_commande) IN ('.$db->sanitize($search_year).')';
 			}
-			if (empty($user->rights->societe->client->voir) && !$socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($socid) {

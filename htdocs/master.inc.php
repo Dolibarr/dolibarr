@@ -137,7 +137,7 @@ if (!defined('NOREQUIRETRAN')) {
  */
 $db = null;
 if (!defined('NOREQUIREDB')) {
-	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
+	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
 
 	if ($db->error) {
 		// If we were into a website context
@@ -191,9 +191,9 @@ if (session_id() && !empty($_SESSION["dol_entity"])) {
 } elseif (!empty($_ENV["dol_entity"])) {
 	// Entity inside a CLI script
 	$conf->entity = $_ENV["dol_entity"];
-} elseif (GETPOSTISSET("loginfunction") && GETPOST("entity", 'int')) {
+} elseif (GETPOSTISSET("loginfunction") && (GETPOST("entity", 'int') || GETPOST("switchentity", 'int'))) {
 	// Just after a login page
-	$conf->entity = GETPOST("entity", 'int');
+	$conf->entity = (GETPOSTISSET("entity") ? GETPOST("entity", 'int') : GETPOST("switchentity", 'int'));
 } elseif (defined('DOLENTITY') && is_numeric(constant('DOLENTITY'))) {
 	// For public page with MultiCompany module
 	$conf->entity = constant('DOLENTITY');
@@ -241,6 +241,14 @@ if (!defined('NOREQUIREDB') && !defined('NOREQUIRESOC')) {
 		// The deposit invoice type is not allowed in Greece.
 		$conf->global->INVOICE_DISABLE_DEPOSIT = 1;
 	}
+	if ($mysoc->country_code == 'GR' && !isset($conf->global->INVOICE_CREDIT_NOTE_STANDALONE)) {
+		// Standalone credit note is compulsory in Greece.
+		$conf->global->INVOICE_CREDIT_NOTE_STANDALONE = 1;
+	}
+	if ($mysoc->country_code == 'GR' && !isset($conf->global->INVOICE_SUBTYPE_ENABLED)) {
+		// Invoice subtype is a requirement for Greece.
+		$conf->global->INVOICE_SUBTYPE_ENABLED = 1;
+	}
 	if (($mysoc->localtax1_assuj || $mysoc->localtax2_assuj) && !isset($conf->global->MAIN_NO_INPUT_PRICE_WITH_TAX)) {
 		// For countries using the 2nd or 3rd tax, we disable input/edit of lines using the price including tax (because 2nb and 3rd tax not yet taken into account).
 		// Work In Progress to support all taxes into unit price entry when MAIN_UNIT_PRICE_WITH_TAX_IS_FOR_ALL_TAXES is set.
@@ -251,7 +259,7 @@ if (!defined('NOREQUIREDB') && !defined('NOREQUIRESOC')) {
 
 // Set default language (must be after the setValues setting global $conf->global->MAIN_LANG_DEFAULT. Page main.inc.php will overwrite langs->defaultlang with user value later)
 if (!defined('NOREQUIRETRAN')) {
-	$langcode = (GETPOST('lang', 'aZ09') ? GETPOST('lang', 'aZ09', 1) : (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT));
+	$langcode = (GETPOST('lang', 'aZ09') ? GETPOST('lang', 'aZ09', 1) : getDolGlobalString('MAIN_LANG_DEFAULT', 'auto'));
 	if (defined('MAIN_LANG_DEFAULT')) {	// So a page can force the language whatever is setup and parameters in URL
 		$langcode = constant('MAIN_LANG_DEFAULT');
 	}

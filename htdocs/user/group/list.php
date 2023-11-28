@@ -87,14 +87,14 @@ foreach ($object->fields as $key => $val) {
 	}
 }
 
-if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	if (!$user->hasRight("user", "group_advance", "read") && !$user->admin) {
 		accessforbidden();
 	}
 }
 
 // Users/Groups management only in master entity if transverse mode
-if (isModEnabled('multicompany') && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE) {
+if (isModEnabled('multicompany') && $conf->entity > 1 && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 	accessforbidden();
 }
 
@@ -106,7 +106,7 @@ if (!$user->hasRight("user", "user", "read") && !$user->admin) {
 $caneditperms = ($user->admin || $user->hasRight("user", "user", "write"));
 $permissiontodelete = ($user->admin || $user->hasRight("user", "user", "write"));
 // Advanced permissions
-if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$caneditperms = ($user->admin || $user->hasRight("user", "group_advance", "write"));
 }
 
@@ -352,7 +352,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 print_liste_field_titre("Group", $_SERVER["PHP_SELF"], "g.nom", $param, "", "", $sortfield, $sortorder);
 $totalarray['nbfield']++;
 //multicompany
-if (isModEnabled('multicompany') && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1) {
+if (isModEnabled('multicompany') && !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1) {
 	print_liste_field_titre("Entity", $_SERVER["PHP_SELF"], "g.entity", $param, "", '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
@@ -405,17 +405,18 @@ while ($i < $imaxinloop) {
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="'.$savnbfield.'">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
+		$selected = -1;
 		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
 			if (in_array($object->id, $arrayofselected)) {
 				$selected = 1;
 			}
 		}
-		print $object->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
+		print $object->getKanbanView('', array('selected' => $selected));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
@@ -440,7 +441,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 
-		print '<td>';
+		print '<td class="tdoverflowmax125">';
 		print $object->getNomUrl(1);
 		if (isModEnabled('multicompany') && !$obj->entity) {
 			print img_picto($langs->trans("GlobalGroup"), 'redstar');
@@ -450,19 +451,19 @@ while ($i < $imaxinloop) {
 			$totalarray['nbfield']++;
 		}
 		//multicompany
-		if (isModEnabled('multicompany') && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1) {
+		if (isModEnabled('multicompany') && is_object($mc) && !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1) {
 			$mc->getInfo($obj->entity);
 			print '<td class="center">'.dol_escape_htmltag($mc->label).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
-		print '<td class="center">'.$obj->nb.'</td>';
+		print '<td class="center">'.dol_escape_htmltag($obj->nb).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 		print '<td class="center">';
-		print '<a href="'.DOL_URL_ROOT.'/user/group/perms.php?id='.$obj->rowid.'">'.$obj->nbpermissions.'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/user/group/perms.php?id='.$obj->rowid.'">'.dol_escape_htmltag($obj->nbpermissions).'</a>';
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -513,12 +514,7 @@ if ($num == 0) {
 			$colspan++;
 		}
 	}*/
-	$colspan = 1;
-	foreach ($arrayfields as $key => $val) {
-		if (!empty($val['checked'])) {
-			$colspan++;
-		}
-	}
+	$colspan = $savnbfield;
 	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 }
 

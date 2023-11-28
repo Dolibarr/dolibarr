@@ -98,7 +98,7 @@ interface Database
 	 * @param   string $type Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
 	 * @return  string        SQL request line converted
 	 */
-	public static function convertSQLFromMysql($line, $type = 'ddl');
+	public function convertSQLFromMysql($line, $type = 'ddl');
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -154,7 +154,7 @@ interface Database
 	 * @param   string $sortorder Sort order
 	 * @return  string            String to provide syntax of a sort sql string
 	 */
-	public function order($sortfield = null, $sortorder = null);
+	public function order($sortfield = '', $sortorder = '');
 
 	/**
 	 * Decrypt sensitive data in database
@@ -190,7 +190,8 @@ interface Database
 	public function escape($stringtoencode);
 
 	/**
-	 *	Escape a string to insert data into a like
+	 *	Escape a string to insert data into a like.
+	 *  Can be used this way: LIKE '%".dbhandler->escapeforlike(dbhandler->escape(...))."%'
 	 *
 	 *	@param	string	$stringtoencode		String to escape
 	 *	@return	string						String escaped
@@ -514,7 +515,7 @@ interface Database
 	/**
 	 * Returns the current line (as an object) for the resultset cursor
 	 *
-	 * @param   resource|Connection		$resultset 		Handler of the desired request
+	 * @param   resource|PgSql\Connection		$resultset 		Handler of the desired request
 	 * @return  Object                  				Object result line or false if KO or end of cursor
 	 */
 	public function fetch_object($resultset);

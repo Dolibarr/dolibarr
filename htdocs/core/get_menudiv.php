@@ -122,7 +122,7 @@ print '
     }
 
 	ul li.lilevel2 {
-		padding-left: 42px;
+		padding-left: 40px;	/* width = 20 for level0, 20 for level1 */
 	}
 
     a.alilevel0, span.spanlilevel0 {
@@ -134,7 +134,7 @@ if ($langs->trans("DIRECTION") == 'rtl') {
 	print 'background-position-x: 10px;';
 }
 	print '
-        background-position-y: 16px;
+        background-position-y: 18px;
         padding: 1em 15px 1em 40px;
 		display: block;
     }
@@ -237,10 +237,10 @@ $(document).ready(function(){
 
 
 if (empty($user->socid)) {	// If internal user or not defined
-	$conf->standard_menu = (empty($conf->global->MAIN_MENU_STANDARD_FORCED) ? (empty($conf->global->MAIN_MENU_STANDARD) ? 'eldy_menu.php' : $conf->global->MAIN_MENU_STANDARD) : $conf->global->MAIN_MENU_STANDARD_FORCED);
+	$conf->standard_menu = (!getDolGlobalString('MAIN_MENU_STANDARD_FORCED') ? (!getDolGlobalString('MAIN_MENU_STANDARD') ? 'eldy_menu.php' : $conf->global->MAIN_MENU_STANDARD) : $conf->global->MAIN_MENU_STANDARD_FORCED);
 } else // If external user
 {
-	$conf->standard_menu = (empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED) ? (empty($conf->global->MAIN_MENUFRONT_STANDARD) ? 'eldy_menu.php' : $conf->global->MAIN_MENUFRONT_STANDARD) : $conf->global->MAIN_MENUFRONT_STANDARD_FORCED);
+	$conf->standard_menu = (!getDolGlobalString('MAIN_MENUFRONT_STANDARD_FORCED') ? (!getDolGlobalString('MAIN_MENUFRONT_STANDARD') ? 'eldy_menu.php' : $conf->global->MAIN_MENUFRONT_STANDARD) : $conf->global->MAIN_MENUFRONT_STANDARD_FORCED);
 }
 
 // Load the menu manager (only if not already done)

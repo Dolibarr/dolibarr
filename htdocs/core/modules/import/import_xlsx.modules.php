@@ -42,18 +42,6 @@ class ImportXlsx extends ModeleImports
 	 */
 	public $db;
 
-	public $datatoimport;
-
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
-
 	/**
 	 * @var string Code of driver
 	 */
@@ -128,7 +116,7 @@ class ImportXlsx extends ModeleImports
 		if (!class_exists('ZipArchive')) {	// For Excel2007
 			$langs->load("errors");
 			$this->error = $langs->trans('ErrorPHPNeedModule', 'zip');
-			return -1;
+			return;
 		}
 		$this->label_lib = 'PhpSpreadSheet';
 		$this->version_lib = '1.8.0';
@@ -698,11 +686,21 @@ class ImportXlsx extends ModeleImports
 									}
 									$classinstance = new $class($this->db);
 									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $arrayfield, $key));
-									$newval = $res; 	// We get new value computed.
+									if (empty($classinstance->error) && empty($classinstance->errors)) {
+										$newval = $res; 	// We get new value computed.
+									} else {
+										$this->errors[$error]['type'] = 'CLASSERROR';
+										$this->errors[$error]['lib'] = implode(
+											"\n",
+											array_merge([$classinstance->error], $classinstance->errors)
+											);
+										$errorforthistable++;
+										$error++;
+									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'numeric') {
 									$newval = price2num($newval);
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'accountingaccount') {
-									if (empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
+									if (!getDolGlobalString('ACCOUNTING_MANAGE_ZERO')) {
 										$newval = rtrim(trim($newval), "0");
 									} else {
 										$newval = trim($newval);
@@ -863,6 +861,14 @@ class ImportXlsx extends ModeleImports
 									}
 									$listfields[] = $fieldname;
 									$listvalues[] = $res;
+								} else {
+									$this->errors[$error]['type'] = 'CLASSERROR';
+									$this->errors[$error]['lib'] = implode(
+										"\n",
+										array_merge([$classinstance->error], $classinstance->errors)
+										);
+									$errorforthistable++;
+									$error++;
 								}
 							}
 						} else {

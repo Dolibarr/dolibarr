@@ -52,3 +52,6 @@ ReceptionExist=O recepţie există
 ReceptionBackToDraftInDolibarr=Recepţia %s readusă la schiţă
 ReceptionClassifyClosedInDolibarr=Recepţia %s a fost clasificată ca Închisă
 ReceptionUnClassifyCloseddInDolibarr=Recepţia %s re-deschisă
+RestoreWithCurrentQtySaved=Completează cantitățile cu cele mai recente valori salvate
+ReceptionUpdated=Recepție actualizată cu succes
+ReceptionDistribution=Recepție distribuție

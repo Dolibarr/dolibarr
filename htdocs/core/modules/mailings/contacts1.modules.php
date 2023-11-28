@@ -45,11 +45,6 @@ class mailing_contacts1 extends MailingTargets
 	 */
 	public $picto = 'contact';
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
 
 	/**
 	 *  Constructor
@@ -219,7 +214,8 @@ class mailing_contacts1 extends MailingTargets
 				if ($level == $obj->code) {
 					$level = $langs->trans($obj->label);
 				}
-				$s .= '<option value="prospectslevel'.$obj->code.'">'.$langs->trans("ThirdPartyProspects").' ('.$langs->trans("ProspectLevelShort").'='.$level.')</option>';
+				$labeltoshow = $langs->trans("ThirdPartyProspects").' <span class="opacitymedium">('.$langs->trans("ProspectLevelShort").'='.$level.')</span>';
+				$s .= '<option value="prospectslevel'.$obj->code.'" data-html="'.dol_escape_htmltag($labeltoshow).'">'.$labeltoshow.'</option>';
 				$i++;
 			}
 		} else {
@@ -311,7 +307,7 @@ class mailing_contacts1 extends MailingTargets
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 			$formadmin = new FormAdmin($this->db);
 			$s .= img_picto($langs->trans("DefaultLang"), 'language', 'class="pictofixedwidth"');
-			$s .= $formadmin->select_language($langs->getDefaultLang(1), 'filter_lang', 0, null, $langs->trans("DefaultLang"), 0, 0, '', 0, 0, 0, null, 1);
+			$s .= $formadmin->select_language(GETPOST('filter_lang', 'aZ09'), 'filter_lang', 0, null, $langs->trans("DefaultLang"), 0, 0, '', 0, 0, 0, null, 1);
 		}
 
 		return $s;
@@ -412,7 +408,7 @@ class mailing_contacts1 extends MailingTargets
 		}
 
 		// Filter on language
-		if (!empty($filter_lang)) {
+		if (!empty($filter_lang) && $filter_lang != '-1') {
 			$sql .= " AND sp.default_lang LIKE '".$this->db->escape($filter_lang)."%'";
 		}
 
@@ -442,8 +438,9 @@ class mailing_contacts1 extends MailingTargets
 		}
 
 		$sql .= " ORDER BY sp.email";
-		// print "wwwwwwx".$sql;
-		// Stocke destinataires dans cibles
+		//print "wwwwwwx".$sql;
+
+		// Store recipients in target tables
 		$result = $this->db->query($sql);
 		if ($result) {
 			$num = $this->db->num_rows($result);

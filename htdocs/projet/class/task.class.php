@@ -136,6 +136,43 @@ class Task extends CommonObjectLine
 	public $comments = array();
 
 	/**
+	 * @var array
+	 */
+	public $labelStatus;
+
+	/**
+	 * @var array
+	 */
+	public $labelStatusShort;
+
+	// Properties calculated from sum of llx_element_time linked to task
+	public $tobill;
+	public $billed;
+
+	// Properties to store project informations
+	public $projectref;
+	public $projectstatus;
+	public $projectlabel;
+	public $opp_amount;
+	public $opp_percent;
+	public $fk_opp_status;
+	public $usage_bill_time;
+	public $public;
+	public $array_options_project;
+
+	// Properties to store thirdparty of project information
+	public $socid;
+	public $thirdparty_id;
+	public $thirdparty_name;
+	public $thirdparty_email;
+
+	// store parent ref and position
+	public $task_parent_ref;
+	public $task_parent_position;
+
+
+
+	/**
 	 * @var float budget_amount
 	 */
 	public $budget_amount;
@@ -145,7 +182,6 @@ class Task extends CommonObjectLine
 	 */
 	public $project_budget_amount;
 
-	public $oldcopy;
 
 
 	/**
@@ -445,7 +481,7 @@ class Task extends CommonObjectLine
 			}
 		}
 
-		if (!$error && !empty($conf->global->PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE)) {
+		if (!$error && getDolGlobalString('PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE')) {
 			// Close the parent project if it is open (validated) and its tasks are 100% completed
 			$project = new Project($this->db);
 			if ($project->fetch($this->fk_project) > 0) {
@@ -745,7 +781,7 @@ class Task extends CommonObjectLine
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $mode = 'task', $addlabel = 0, $sep = ' - ', $notooltip = 0, $save_lastsearch_value = -1)
 	{
-		global $conf, $langs, $user;
+		global $action, $conf, $hookmanager, $langs;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -769,7 +805,7 @@ class Task extends CommonObjectLine
 		$url = DOL_URL_ROOT.'/projet/tasks/'.$mode.'.php?id='.$this->id.($option == 'withproject' ? '&withproject=1' : '');
 		// Add param to save lastsearch_values or not
 		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-		if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+		if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 			$add_save_lastsearch_values = 1;
 		}
 		if ($add_save_lastsearch_values) {
@@ -778,7 +814,7 @@ class Task extends CommonObjectLine
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowTask");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -804,6 +840,14 @@ class Task extends CommonObjectLine
 		$result .= $linkend;
 		if ($withpicto != 2) {
 			$result .= (($addlabel && $this->label) ? $sep.dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
+		}
+
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
 		}
 
 		return $result;
@@ -835,24 +879,24 @@ class Task extends CommonObjectLine
 	 * Return list of tasks for all projects or for one particular project
 	 * Sort order is on project, then on position of task, and last on start date of first level task
 	 *
-	 * @param	User	$usert				Object user to limit tasks affected to a particular user
-	 * @param	User	$userp				Object user to limit projects of a particular user and public projects
-	 * @param	int		$projectid			Project id
-	 * @param	int		$socid				Third party id
-	 * @param	int		$mode				0=Return list of tasks and their projects, 1=Return projects and tasks if exists
-	 * @param	string	$filteronproj    	Filter on project ref or label
-	 * @param	string	$filteronprojstatus	Filter on project status ('-1'=no filter, '0,1'=Draft+Validated only)
-	 * @param	string	$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
-	 * @param	string	$filteronprojuser	Filter on user that is a contact of project
-	 * @param	string	$filterontaskuser	Filter on user assigned to task
-	 * @param	array	$extrafields	    Show additional column from project or task
-	 * @param   int     $includebilltime    Calculate also the time to bill and billed
-	 * @param   array   $search_array_options Array of search
-	 * @param   int     $loadextras         Fetch all Extrafields on each task
-	 * @param	int		$loadRoleMode		1= will test Roles on task;  0 used in delete project action
-	 * @param	string	$sortfield			Sort field
-	 * @param	string	$sortorder			Sort order
-	 * @return 	array|string				Array of tasks
+	 * @param	User	$usert					Object user to limit tasks affected to a particular user
+	 * @param	User	$userp					Object user to limit projects of a particular user and public projects
+	 * @param	int		$projectid				Project id
+	 * @param	int		$socid					Third party id
+	 * @param	int		$mode					0=Return list of tasks and their projects, 1=Return projects and tasks if exists
+	 * @param	string	$filteronproj    		Filter on project ref or label
+	 * @param	string	$filteronprojstatus		Filter on project status ('-1'=no filter, '0,1'=Draft+Validated only)
+	 * @param	string	$morewherefilter		Add more filter into where SQL request (must start with ' AND ...')
+	 * @param	string	$filteronprojuser		Filter on user that is a contact of project
+	 * @param	string	$filterontaskuser		Filter on user assigned to task
+	 * @param	Extrafields	$extrafields	    Show additional column from project or task
+	 * @param   int     $includebilltime    	Calculate also the time to bill and billed
+	 * @param   array   $search_array_options 	Array of search filters. Not Used yet.
+	 * @param   int     $loadextras         	Fetch all Extrafields on each project and task
+	 * @param	int		$loadRoleMode			1= will test Roles on task;  0 used in delete project action
+	 * @param	string	$sortfield				Sort field
+	 * @param	string	$sortorder				Sort order
+	 * @return 	array|string					Array of tasks
 	 */
 	public function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0, $extrafields = array(), $includebilltime = 0, $search_array_options = array(), $loadextras = 0, $loadRoleMode = 1, $sortfield = '', $sortorder = '')
 	{
@@ -874,14 +918,16 @@ class Task extends CommonObjectLine
 		$sql .= " t.budget_amount, ";
 		$sql .= " s.rowid as thirdparty_id, s.nom as thirdparty_name, s.email as thirdparty_email,";
 		$sql .= " p.fk_opp_status, p.opp_amount, p.opp_percent, p.budget_amount as project_budget_amount";
-		if (!empty($extrafields->attributes['projet']['label'])) {
-			foreach ($extrafields->attributes['projet']['label'] as $key => $val) {
-				$sql .= ($extrafields->attributes['projet']['type'][$key] != 'separate' ? ",efp.".$key." as options_".$key : '');
+		if ($loadextras) {	// TODO Replace this with a fetch_optionnal() on the project after the fetch_object of line.
+			if (!empty($extrafields->attributes['projet']['label'])) {
+				foreach ($extrafields->attributes['projet']['label'] as $key => $val) {
+					$sql .= ($extrafields->attributes['projet']['type'][$key] != 'separate' ? ",efp.".$key." as options_".$key : '');
+				}
 			}
-		}
-		if (!empty($extrafields->attributes['projet_task']['label'])) {
-			foreach ($extrafields->attributes['projet_task']['label'] as $key => $val) {
-				$sql .= ($extrafields->attributes['projet_task']['type'][$key] != 'separate' ? ",efpt.".$key." as options_".$key : '');
+			if (!empty($extrafields->attributes['projet_task']['label'])) {
+				foreach ($extrafields->attributes['projet_task']['label'] as $key => $val) {
+					$sql .= ($extrafields->attributes['projet_task']['type'][$key] != 'separate' ? ",efpt.".$key." as options_".$key : '');
+				}
 			}
 		}
 		if ($includebilltime) {
@@ -890,7 +936,9 @@ class Task extends CommonObjectLine
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_extrafields as efp ON (p.rowid = efp.fk_object)";
+		if ($loadextras) {
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_extrafields as efp ON (p.rowid = efp.fk_object)";
+		}
 
 		if ($mode == 0) {
 			if ($filteronprojuser > 0) {
@@ -898,6 +946,9 @@ class Task extends CommonObjectLine
 				$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as ctc";
 			}
 			$sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
+			if ($loadextras) {
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_extrafields as efpt ON (t.rowid = efpt.fk_object)";
+			}
 			if ($includebilltime) {
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_time as tt ON (tt.fk_element = t.rowid AND tt.elementtype='task')";
 			}
@@ -905,7 +956,6 @@ class Task extends CommonObjectLine
 				$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec2";
 				$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as ctc2";
 			}
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_extrafields as efpt ON (t.rowid = efpt.fk_object)";
 			$sql .= " WHERE p.entity IN (".getEntity('project').")";
 			$sql .= " AND t.fk_projet = p.rowid";
 		} elseif ($mode == 1) {
@@ -926,7 +976,6 @@ class Task extends CommonObjectLine
 					$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_time as tt ON (tt.fk_element = t.rowid AND tt.elementtype = 'task')";
 				}
 			}
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_extrafields as efpt ON (t.rowid = efpt.fk_object)";
 			$sql .= " WHERE p.entity IN (".getEntity('project').")";
 		} else {
 			return 'BadValueForParameterMode';
@@ -982,14 +1031,16 @@ class Task extends CommonObjectLine
 			$sql .= " t.budget_amount, ";
 			$sql .= " s.rowid, s.nom, s.email,";
 			$sql .= " p.fk_opp_status, p.opp_amount, p.opp_percent, p.budget_amount";
-			if (!empty($extrafields->attributes['projet']['label'])) {
-				foreach ($extrafields->attributes['projet']['label'] as $key => $val) {
-					$sql .= ($extrafields->attributes['projet']['type'][$key] != 'separate' ? ",efp.".$key : '');
+			if ($loadextras) {
+				if (!empty($extrafields->attributes['projet']['label'])) {
+					foreach ($extrafields->attributes['projet']['label'] as $key => $val) {
+						$sql .= ($extrafields->attributes['projet']['type'][$key] != 'separate' ? ",efp.".$key : '');
+					}
 				}
-			}
-			if (!empty($extrafields->attributes['projet_task']['label'])) {
-				foreach ($extrafields->attributes['projet_task']['label'] as $key => $val) {
-					$sql .= ($extrafields->attributes['projet_task']['type'][$key] != 'separate' ? ",efpt.".$key : '');
+				if (!empty($extrafields->attributes['projet_task']['label'])) {
+					foreach ($extrafields->attributes['projet_task']['label'] as $key => $val) {
+						$sql .= ($extrafields->attributes['projet_task']['type'][$key] != 'separate' ? ",efpt.".$key : '');
+					}
 				}
 			}
 		}
@@ -1029,11 +1080,12 @@ class Task extends CommonObjectLine
 					$tasks[$i] = new Task($this->db);
 					$tasks[$i]->id = $obj->taskid;
 					$tasks[$i]->ref = $obj->taskref;
-					$tasks[$i]->fk_project		= $obj->projectid;
-					$tasks[$i]->projectref		= $obj->ref;
+					$tasks[$i]->fk_project = $obj->projectid;
+
+					// Data from project
+					$tasks[$i]->projectref = $obj->ref;
 					$tasks[$i]->projectlabel = $obj->plabel;
 					$tasks[$i]->projectstatus = $obj->projectstatus;
-
 					$tasks[$i]->fk_opp_status = $obj->fk_opp_status;
 					$tasks[$i]->opp_amount = $obj->opp_amount;
 					$tasks[$i]->opp_percent = $obj->opp_percent;
@@ -1043,12 +1095,12 @@ class Task extends CommonObjectLine
 
 					$tasks[$i]->label = $obj->label;
 					$tasks[$i]->description = $obj->description;
-					$tasks[$i]->fk_parent = $obj->fk_task_parent; // deprecated
 					$tasks[$i]->fk_task_parent = $obj->fk_task_parent;
-					$tasks[$i]->duration		= $obj->duration_effective;
+					$tasks[$i]->duration_effective = $obj->duration_effective;
 					$tasks[$i]->planned_workload = $obj->planned_workload;
 
 					if ($includebilltime) {
+						// Data summed from element_time linked to task
 						$tasks[$i]->tobill = $obj->tobill;
 						$tasks[$i]->billed = $obj->billed;
 					}
@@ -1065,20 +1117,13 @@ class Task extends CommonObjectLine
 					$tasks[$i]->thirdparty_name	= $obj->thirdparty_name;
 					$tasks[$i]->thirdparty_email = $obj->thirdparty_email;
 
-					if (!empty($extrafields->attributes['projet']['label'])) {
-						foreach ($extrafields->attributes['projet']['label'] as $key => $val) {
-							if ($extrafields->attributes['projet']['type'][$key] != 'separate') {
-								$tmpvar = 'options_'.$key;
-								$tasks[$i]->{'options_'.$key} = $obj->$tmpvar;
-							}
-						}
-					}
-
-					if (!empty($extrafields->attributes['projet_task']['label'])) {
-						foreach ($extrafields->attributes['projet_task']['label'] as $key => $val) {
-							if ($extrafields->attributes['projet_task']['type'][$key] != 'separate') {
-								$tmpvar = 'options_'.$key;
-								$tasks[$i]->{'options_'.$key} = $obj->$tmpvar;
+					if ($loadextras) {
+						if (!empty($extrafields->attributes['projet']['label'])) {
+							foreach ($extrafields->attributes['projet']['label'] as $key => $val) {
+								if ($extrafields->attributes['projet']['type'][$key] != 'separate') {
+									$tmpvar = 'options_'.$key;
+									$tasks[$i]->array_options_project['options_'.$key] = $obj->$tmpvar;
+								}
 							}
 						}
 					}
@@ -1086,6 +1131,8 @@ class Task extends CommonObjectLine
 					if ($loadextras) {
 						$tasks[$i]->fetch_optionals();
 					}
+
+					$tasks[$i]->obj = $obj; // Needed for tpl/extrafields_list_print
 				}
 
 				$i++;
@@ -1255,7 +1302,7 @@ class Task extends CommonObjectLine
 			$this->timespent_datehour = $this->timespent_date;
 		}
 
-		if (!empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
+		if (getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
 
@@ -1281,10 +1328,11 @@ class Task extends CommonObjectLine
 		$timespent->note = $this->timespent_note;
 		$timespent->datec = $this->db->idate($now);
 
-		if ($timespent->create($user) > 0) {
-			$tasktime_id = $this->db->last_insert_id(MAIN_DB_PREFIX."element_time");
-			$ret = $tasktime_id;
-			$this->timespent_id = $ret;
+		$result = $timespent->create($user);
+
+		if ($result > 0) {
+			$ret = $result;
+			$this->timespent_id = $result;
 
 			if (!$notrigger) {
 				// Call trigger
@@ -1506,11 +1554,7 @@ class Task extends CommonObjectLine
 	 */
 	public function getSumOfAmount($fuser = '', $dates = '', $datee = '')
 	{
-		global $langs;
-
-		if (empty($id)) {
-			$id = $this->id;
-		}
+		$id = $this->id;
 
 		$result = array();
 
@@ -1567,8 +1611,8 @@ class Task extends CommonObjectLine
 		if ($timespent->id > 0) {
 			$this->timespent_id = $timespent->id;
 			$this->id = $timespent->fk_element;
-			$this->timespent_date = $this->db->jdate($timespent->element_date);
-			$this->timespent_datehour   = $this->db->jdate($timespent->element_datehour);
+			$this->timespent_date = $timespent->element_date;
+			$this->timespent_datehour   = $timespent->element_datehour;
 			$this->timespent_withhour   = $timespent->element_date_withhour;
 			$this->timespent_duration = $timespent->element_duration;
 			$this->timespent_fk_user	= $timespent->fk_user;
@@ -1702,7 +1746,7 @@ class Task extends CommonObjectLine
 			$this->timespent_note = trim($this->timespent_note);
 		}
 
-		if (!empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
+		if (getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
 
@@ -1748,7 +1792,7 @@ class Task extends CommonObjectLine
 			$ret = -1;
 		}
 
-		if ($ret == 1 && (($this->timespent_old_duration != $this->timespent_duration) || !empty($conf->global->TIMESPENT_ALWAYS_UPDATE_THM))) {
+		if ($ret == 1 && (($this->timespent_old_duration != $this->timespent_duration) || getDolGlobalString('TIMESPENT_ALWAYS_UPDATE_THM'))) {
 			if ($this->timespent_old_duration != $this->timespent_duration) {
 				// Recalculate amount of time spent for task and update denormalized field
 				$sql = "UPDATE " . MAIN_DB_PREFIX . "projet_task";
@@ -1768,7 +1812,7 @@ class Task extends CommonObjectLine
 
 			// Update hourly rate of this time spent entry, but only if it was not set initialy
 			$res_update = 1;
-			if (empty($timespent->thm) || !empty($conf->global->TIMESPENT_ALWAYS_UPDATE_THM)) {
+			if (empty($timespent->thm) || getDolGlobalString('TIMESPENT_ALWAYS_UPDATE_THM')) {
 				$resql_thm_user = $this->db->query("SELECT thm FROM " . MAIN_DB_PREFIX . "user WHERE rowid = " . ((int) $timespent->fk_user));
 				if (!empty($resql_thm_user)) {
 					$obj_thm_user = $this->db->fetch_object($resql_thm_user);
@@ -1803,7 +1847,7 @@ class Task extends CommonObjectLine
 
 		$error = 0;
 
-		if (!empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
+		if (getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
 
@@ -1904,9 +1948,9 @@ class Task extends CommonObjectLine
 		$origin_task->fetch($fromid);
 
 		$defaultref = '';
-		$obj = empty($conf->global->PROJECT_TASK_ADDON) ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
-		if (!empty($conf->global->PROJECT_TASK_ADDON) && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/".$conf->global->PROJECT_TASK_ADDON.".php")) {
-			require_once DOL_DOCUMENT_ROOT."/core/modules/project/task/".$conf->global->PROJECT_TASK_ADDON.'.php';
+		$obj = !getDolGlobalString('PROJECT_TASK_ADDON') ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
+		if (getDolGlobalString('PROJECT_TASK_ADDON') && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').".php")) {
+			require_once DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').'.php';
 			$modTask = new $obj;
 			$defaultref = $modTask->getNextValue(0, $clone_task);
 		}
@@ -2089,84 +2133,85 @@ class Task extends CommonObjectLine
 		global $langs;
 
 		// list of Statut of the task
-		$this->statuts[0] = 'Draft';
-		$this->statuts[1] = 'ToDo';
-		$this->statuts[2] = 'Running';
-		$this->statuts[3] = 'Finish';
-		$this->statuts[4] = 'Transfered';
-		$this->statuts_short[0] = 'Draft';
-		$this->statuts_short[1] = 'ToDo';
-		$this->statuts_short[2] = 'Running';
-		$this->statuts_short[3] = 'Completed';
-		$this->statuts_short[4] = 'Transfered';
+		$this->labelStatus[0] = 'Draft';
+		$this->labelStatus[1] = 'ToDo';
+		$this->labelStatus[2] = 'Running';
+		$this->labelStatus[3] = 'Finish';
+		$this->labelStatus[4] = 'Transfered';
+		$this->labelStatusShort[0] = 'Draft';
+		$this->labelStatusShort[1] = 'ToDo';
+		$this->labelStatusShort[2] = 'Running';
+		$this->labelStatusShort[3] = 'Completed';
+		$this->labelStatusShort[4] = 'Transfered';
 
 		if ($mode == 0) {
-			return $langs->trans($this->statuts[$status]);
+			return $langs->trans($this->labelStatus[$status]);
 		} elseif ($mode == 1) {
-			return $langs->trans($this->statuts_short[$status]);
+			return $langs->trans($this->labelStatusShort[$status]);
 		} elseif ($mode == 2) {
 			if ($status == 0) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut0').' '.$langs->trans($this->statuts_short[$status]);
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut0').' '.$langs->trans($this->labelStatusShort[$status]);
 			} elseif ($status == 1) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut1').' '.$langs->trans($this->statuts_short[$status]);
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut1').' '.$langs->trans($this->labelStatusShort[$status]);
 			} elseif ($status == 2) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut3').' '.$langs->trans($this->statuts_short[$status]);
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut3').' '.$langs->trans($this->labelStatusShort[$status]);
 			} elseif ($status == 3) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut6').' '.$langs->trans($this->statuts_short[$status]);
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut6').' '.$langs->trans($this->labelStatusShort[$status]);
 			} elseif ($status == 4) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut6').' '.$langs->trans($this->statuts_short[$status]);
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut6').' '.$langs->trans($this->labelStatusShort[$status]);
 			} elseif ($status == 5) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut5').' '.$langs->trans($this->statuts_short[$status]);
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut5').' '.$langs->trans($this->labelStatusShort[$status]);
 			}
 		} elseif ($mode == 3) {
 			if ($status == 0) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut0');
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut0');
 			} elseif ($status == 1) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut1');
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut1');
 			} elseif ($status == 2) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut3');
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut3');
 			} elseif ($status == 3) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut6');
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut6');
 			} elseif ($status == 4) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut6');
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut6');
 			} elseif ($status == 5) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut5');
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut5');
 			}
 		} elseif ($mode == 4) {
 			if ($status == 0) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut0').' '.$langs->trans($this->statuts[$status]);
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut0').' '.$langs->trans($this->labelStatus[$status]);
 			} elseif ($status == 1) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut1').' '.$langs->trans($this->statuts[$status]);
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut1').' '.$langs->trans($this->labelStatus[$status]);
 			} elseif ($status == 2) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut3').' '.$langs->trans($this->statuts[$status]);
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut3').' '.$langs->trans($this->labelStatus[$status]);
 			} elseif ($status == 3) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut6').' '.$langs->trans($this->statuts[$status]);
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut6').' '.$langs->trans($this->labelStatus[$status]);
 			} elseif ($status == 4) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut6').' '.$langs->trans($this->statuts[$status]);
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut6').' '.$langs->trans($this->labelStatus[$status]);
 			} elseif ($status == 5) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut5').' '.$langs->trans($this->statuts[$status]);
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut5').' '.$langs->trans($this->labelStatus[$status]);
 			}
 		} elseif ($mode == 5) {
-			/*if ($status==0) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut0');
-			elseif ($status==1) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut1');
-			elseif ($status==2) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut3');
-			elseif ($status==3) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut6');
-			elseif ($status==4) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut6');
-			elseif ($status==5) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut5');
+			/*if ($status==0) return $langs->trans($this->labelStatusShort[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut0');
+			elseif ($status==1) return $langs->trans($this->labelStatusShort[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut1');
+			elseif ($status==2) return $langs->trans($this->labelStatusShort[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut3');
+			elseif ($status==3) return $langs->trans($this->labelStatusShort[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut6');
+			elseif ($status==4) return $langs->trans($this->labelStatusShort[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut6');
+			elseif ($status==5) return $langs->trans($this->labelStatusShort[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut5');
 			*/
 			//else return $this->progress.' %';
 			return '&nbsp;';
 		} elseif ($mode == 6) {
-			/*if ($status==0) return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut0');
-			elseif ($status==1) return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut1');
-			elseif ($status==2) return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut3');
-			elseif ($status==3) return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut6');
-			elseif ($status==4) return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut6');
-			elseif ($status==5) return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut5');
+			/*if ($status==0) return $langs->trans($this->labelStatus[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut0');
+			elseif ($status==1) return $langs->trans($this->labelStatus[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut1');
+			elseif ($status==2) return $langs->trans($this->labelStatus[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut3');
+			elseif ($status==3) return $langs->trans($this->labelStatus[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut6');
+			elseif ($status==4) return $langs->trans($this->labelStatus[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut6');
+			elseif ($status==5) return $langs->trans($this->labelStatus[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut5');
 			*/
 			//else return $this->progress.' %';
 			return '&nbsp;';
 		}
+		return "";
 	}
 
 	/**
@@ -2190,9 +2235,7 @@ class Task extends CommonObjectLine
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($this->modelpdf)) {	// deprecated
-				$modele = $this->modelpdf;
-			} elseif (!empty($conf->global->PROJECT_TASK_ADDON_PDF)) {
+			} elseif (getDolGlobalString('PROJECT_TASK_ADDON_PDF')) {
 				$modele = $conf->global->PROJECT_TASK_ADDON_PDF;
 			}
 		}
@@ -2234,7 +2277,7 @@ class Task extends CommonObjectLine
 		$sql .= " AND p.fk_statut = 1";
 		$sql .= " AND t.fk_projet = p.rowid";
 		$sql .= " AND (t.progress IS NULL OR t.progress < 100)"; // tasks to do
-		if (empty($user->rights->projet->all->lire)) {
+		if (!$user->hasRight('projet', 'all', 'lire')) {
 			$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")";
 		}
 		// No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
@@ -2299,13 +2342,13 @@ class Task extends CommonObjectLine
 		$sql = "SELECT count(p.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
 		}
 		$sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
 		$sql .= " WHERE p.entity IN (".getEntity('project', 0).')';
 		$sql .= " AND t.fk_projet = p.rowid"; // tasks to do
-		if ($mine || empty($user->rights->projet->all->lire)) {
+		if ($mine || !$user->hasRight('projet', 'all', 'lire')) {
 			$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")";
 		}
 		// No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
@@ -2313,7 +2356,7 @@ class Task extends CommonObjectLine
 		if ($socid) {
 			$sql .= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
 		}
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id).") OR (s.rowid IS NULL))";
 		}
 
@@ -2371,7 +2414,9 @@ class Task extends CommonObjectLine
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (!empty($arraydata['projectlink'])) {
 			//$tmpproject = $arraydata['project'];
 			//$return .= '<br><span class="info-box-status ">'.$tmpproject->getNomProject().'</span>';

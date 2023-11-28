@@ -24,7 +24,7 @@
  * Put detailed description here.
  */
 
-namespace test\functional;
+namespace Dolibarr\test\functional;
 
 use PHPUnit_Extensions_Selenium2TestCase_WebDriverException;
 
@@ -48,12 +48,12 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	protected static $base_url = 'http://dev.zenfusion.fr';
 	/**
 	 * @var string Dolibarr admin username
-	 * @see authenticate
+	 * @see authenticate()
 	 */
 	protected static $dol_admin_user = 'admin';
 	/**
 	 * @var string Dolibarr admin password
-	 * @see authenticate
+	 * @see authenticate()
 	 */
 	protected static $dol_admin_pass = 'admin';
 	/** @var int Dolibarr module ID */

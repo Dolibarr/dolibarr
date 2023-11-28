@@ -8,7 +8,7 @@
  * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2017-2021  Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2017-2023  Alexandre Spangaro		<aspangaro@easya.solutions>
  * Copyright (C) 2018-2021	Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
  * Copyright (C) 2021		Ferran Marcet			<fmarcet@2byte.es>
@@ -127,8 +127,8 @@ if ($user->socid) {
 if (!isModEnabled('supplier_invoice')) {
 	accessforbidden();
 }
-if ((empty($user->rights->fournisseur->facture->lire) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))
-	|| (empty($user->rights->supplier_invoice->lire) && !empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))) {
+if ((!$user->hasRight("fournisseur", "facture", "lire") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD'))
+	|| (!$user->hasRight("supplier_invoice", "lire") && getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD'))) {
 	accessforbidden();
 }
 
@@ -180,7 +180,7 @@ $sql = 'SELECT p.rowid, p.ref, p.datep, p.amount as pamount, p.num_paiement';
 $sql .= ', s.rowid as socid, s.nom as name, s.email';
 $sql .= ', c.code as paiement_type, c.libelle as paiement_libelle';
 $sql .= ', ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.fk_accountancy_journal as accountancy_journal';
-if (empty($user->rights->societe->client->voir)) {
+if (!$user->hasRight("societe", "client", "voir")) {
 	$sql .= ', sc.fk_soc, sc.fk_user';
 }
 $sql .= ', SUM(pf.amount)';
@@ -192,12 +192,12 @@ $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement AS c ON p.fk_paiement = c.id';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe AS s ON s.rowid = f.fk_soc';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
-if (empty($user->rights->societe->client->voir)) {
+if (!$user->hasRight("societe", "client", "voir")) {
 	$sql .= ', '.MAIN_DB_PREFIX.'societe_commerciaux as sc';
 }
 
 $sql .= ' WHERE f.entity = '.$conf->entity;
-if (empty($user->rights->societe->client->voir)) {
+if (!$user->hasRight("societe", "client", "voir")) {
 	$sql .= ' AND s.rowid = sc.fk_soc AND sc.fk_user = '.((int) $user->id);
 }
 if ($socid > 0) {
@@ -237,7 +237,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
 $sql .= ' GROUP BY p.rowid, p.ref, p.datep, p.amount, p.num_paiement, s.rowid, s.nom, s.email, c.code, c.libelle,';
 $sql .= ' ba.rowid, ba.ref, ba.label, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.fk_accountancy_journal';
-if (empty($user->rights->societe->client->voir)) {
+if (!$user->hasRight("societe", "client", "voir")) {
 	$sql .= ', sc.fk_soc, sc.fk_user';
 }
 
@@ -351,7 +351,7 @@ if ($moreforfilter) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER['PHP_SELF'] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
 if (!empty($massactionbutton)) {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 }
@@ -359,7 +359,22 @@ if (!empty($massactionbutton)) {
 print '<div class="div-table-responsive">';
 print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : '').'">';
 
+// Fields title search
+// --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
+
+// Action column
+if (getDolGlobalInt('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td class="liste_titre center maxwidthsearch">';
+	$searchpicto = $form->showFilterButtons('left');
+	print $searchpicto;
+	print '</td>';
+}
+
+if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
+	print '<td class="liste_titre">';
+	print '</td>';
+}
 
 // Filter: Ref
 if (!empty($arrayfields['p.ref']['checked'])) {
@@ -420,37 +435,58 @@ $parameters = array('arrayfields'=>$arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
-// Buttons
-print '<td class="liste_titre maxwidthsearch">';
-print $form->showFilterAndCheckAddButtons(0);
-print '</td>';
+// Action column
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td class="liste_titre center maxwidthsearch">';
+	$searchpicto = $form->showFilterButtons();
+	print $searchpicto;
+	print '</td>';
+}
 
-print '</tr>';
+print '</tr>'."\n";
 
+$totalarray = array();
+$totalarray['nbfield'] = 0;
+
+// Fields title label
+// --------------------------------------------------------------------
 print '<tr class="liste_titre">';
-if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+// Action column
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+	$totalarray['nbfield']++;
+}
+if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 	print_liste_field_titre('#', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"], 'p.rowid', '', $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.datep']['checked'])) {
 	print_liste_field_titre($arrayfields['p.datep']['label'], $_SERVER["PHP_SELF"], 'p.datep', '', $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], 's.nom', '', $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['c.libelle']['checked'])) {
 	print_liste_field_titre($arrayfields['c.libelle']['label'], $_SERVER["PHP_SELF"], 'c.libelle', '', $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.num_paiement']['checked'])) {
 	print_liste_field_titre($arrayfields['p.num_paiement']['label'], $_SERVER["PHP_SELF"], "p.num_paiement", '', $param, '', $sortfield, $sortorder, '', $arrayfields['p.num_paiement']['tooltip']);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['ba.label']['checked'])) {
 	print_liste_field_titre($arrayfields['ba.label']['label'], $_SERVER["PHP_SELF"], 'ba.label', '', $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.amount']['checked'])) {
 	print_liste_field_titre($arrayfields['p.amount']['label'], $_SERVER["PHP_SELF"], 'p.amount', '', $param, '', $sortfield, $sortorder, 'right ');
+	$totalarray['nbfield']++;
 }
 
 // Hook fields
@@ -458,7 +494,10 @@ $parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
-print_liste_field_titre($selectedfields, $_SERVER['PHP_SELF'], '', '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+// Action column
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+}
 print '</tr>';
 
 $checkedCount = 0;
@@ -468,23 +507,34 @@ foreach ($arrayfields as $column) {
 	}
 }
 
+// Loop on record
+// --------------------------------------------------------------------
 $i = 0;
 $totalarray = array();
+$totalarray['nbfield'] = 0;
 while ($i < min($num, $limit)) {
 	$objp = $db->fetch_object($resql);
 
 	$paymentfournstatic->id = $objp->rowid;
 	$paymentfournstatic->ref = $objp->ref;
-	$paymentfournstatic->datepaye = $objp->datep;
+	$paymentfournstatic->datepaye = $db->jdate($objp->datep);
 
 	$companystatic->id = $objp->socid;
 	$companystatic->name = $objp->name;
 	$companystatic->email = $objp->email;
 
-	print '<tr class="oddeven">';
+	print '<tr data-rowid="'.$object->id.'" class="oddeven">';
+
+	// Action column
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td></td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
 
 	// No
-	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+	if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 		print '<td class="nowraponall">'.(($offset * $limit) + $i).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -574,22 +624,24 @@ while ($i < min($num, $limit)) {
 		$totalarray['val']['amount'] += $objp->pamount;
 	}
 
-	// Buttons
-	print '<td></td>';
-	if (!$i) {
-		$totalarray['nbfield']++;
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td></td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
-	print '</tr>';
+	print '</tr>'."\n";
 	$i++;
 }
 
 // Show total line
 include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
-print '</table>';
-print '</div>';
-print '</form>';
+print '</table>'."\n";
+print '</div>'."\n";
+
+print '</form>'."\n";
 
 // End of page
 llxFooter();

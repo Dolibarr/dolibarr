@@ -102,7 +102,7 @@ if ($id > 0) {
 
 	$linkback = '';
 
-	if ($user->rights->user->user->lire || $user->admin) {
+	if ($user->hasRight('user', 'user', 'lire') || $user->admin) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
@@ -113,7 +113,7 @@ if ($id > 0) {
 	$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
 	$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->trans("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
 
-	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin, 'rowid', 'ref', $morehtmlref);
+	dol_banner_tab($object, 'id', $linkback, $user->hasRight('user', 'user', 'lire') || $user->admin, 'rowid', 'ref', $morehtmlref);
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
@@ -126,11 +126,11 @@ if ($id > 0) {
 			print '<tr><td class="titlefield fieldrequired">ClickToDial URL</td>';
 			print '<td class="valeur">';
 			print '<input name="url" value="'.(!empty($object->clicktodial_url) ? $object->clicktodial_url : '').'" size="92">';
-			if (empty($conf->global->CLICKTODIAL_URL) && empty($object->clicktodial_url)) {
+			if (!getDolGlobalString('CLICKTODIAL_URL') && empty($object->clicktodial_url)) {
 				$langs->load("errors");
 				print '<span class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("ClickToDial")).'</span>';
 			} else {
-				print '<br>'.$form->textwithpicto('<span class="opacitymedium">'.$langs->trans("KeepEmptyToUseDefault").'</span>:<br>'.$conf->global->CLICKTODIAL_URL, $langs->trans("ClickToDialUrlDesc"));
+				print '<br>'.$form->textwithpicto('<span class="opacitymedium">'.$langs->trans("KeepEmptyToUseDefault").'</span>:<br>' . getDolGlobalString('CLICKTODIAL_URL'), $langs->trans("ClickToDialUrlDesc"));
 			}
 			print '</td>';
 			print '</tr>';
@@ -159,7 +159,7 @@ if ($id > 0) {
 		if (!empty($user->admin)) {
 			print '<tr><td class="">ClickToDial URL</td>';
 			print '<td class="valeur">';
-			if (!empty($conf->global->CLICKTODIAL_URL)) {
+			if (getDolGlobalString('CLICKTODIAL_URL')) {
 				$url = $conf->global->CLICKTODIAL_URL;
 			}
 			if (!empty($object->clicktodial_url)) {

@@ -4,6 +4,7 @@
  * Copyright (C) 2019-2022 Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021      Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2021      Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2023      Charlene Benke	       <charlene.r@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -445,7 +446,7 @@ class FormTicket
 		$doleditor->Create();
 		print '</td></tr>';
 
-		if ($public && !empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA_TICKET)) {
+		if ($public && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_TICKET')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 			print '<tr><td class="titlefield"><label for="email"><span class="fieldrequired">'.$langs->trans("SecurityCode").'</span></label></td><td>';
 			print '<span class="span-icon-security inline-block">';
@@ -554,7 +555,7 @@ class FormTicket
 				print img_picto('', 'company', 'class="paddingright"');
 				print $form->select_company($this->withfromsocid, 'socid', '', 1, 1, '', $events, 0, 'minwidth200');
 				print '</td></tr>';
-				if (!empty($conf->use_javascript_ajax) && !empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) {
+				if (!empty($conf->use_javascript_ajax) && getDolGlobalString('COMPANY_USE_SEARCH_TO_SELECT')) {
 					$htmlname = 'socid';
 					print '<script nonce="'.getNonce().'" type="text/javascript">
                     $(document).ready(function () {
@@ -647,6 +648,16 @@ class FormTicket
 				$formproject = new FormProjets($this->db);
 				print '<tr><td><label for="project"><span class="">'.$langs->trans("Project").'</span></label></td><td>';
 				print img_picto('', 'project').$formproject->select_projects(-1, GETPOST('projectid', 'int'), 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
+				print '</td></tr>';
+			}
+		}
+
+		if ($subelement != 'contract') {
+			if (isModEnabled('contract') && !$this->ispublic) {
+				$formcontract = new FormContract($this->db);
+				print '<tr><td><label for="contract"><span class="">'.$langs->trans("Contract").'</span></label></td><td>';
+				print img_picto('', 'contract');
+				print $formcontract->select_contract(-1, GETPOST('contactid', 'int'), 'contractid', 0, 1, 1);
 				print '</td></tr>';
 			}
 		}
@@ -903,7 +914,8 @@ class FormTicket
 			$child_id=GETPOST($htmlname.'_child_id', 'aZ09')?GETPOST($htmlname.'_child_id', 'aZ09'):0;
 			if (!empty($groupticket)) {
 				$tmpgroupticket = $groupticket;
-				$sql = "SELECT ctc.rowid, ctc.fk_parent, ctc.code FROM ".$this->db->prefix()."c_ticket_category as ctc WHERE ctc.code = '".$this->db->escape($tmpgroupticket)."'";
+				$sql = "SELECT ctc.rowid, ctc.fk_parent, ctc.code";
+				$sql .= " FROM ".$this->db->prefix()."c_ticket_category as ctc WHERE ctc.code = '".$this->db->escape($tmpgroupticket)."'";
 				$resql = $this->db->query($sql);
 				if ($resql) {
 					$obj = $this->db->fetch_object($resql);
@@ -1374,8 +1386,9 @@ class FormTicket
 		';
 
 		// If constant set, allow to send private messages as email
-		if (empty($conf->global->TICKET_SEND_PRIVATE_EMAIL)) {
+		if (!getDolGlobalString('TICKET_SEND_PRIVATE_EMAIL')) {
 			print 'jQuery("#send_msg_email").click(function() {
+					console.log("Click send_msg_email");
 					if(jQuery(this).is(":checked")) {
 						if (jQuery("#private_message").is(":checked")) {
 							jQuery("#private_message").prop("checked", false).trigger("change");
@@ -1388,6 +1401,7 @@ class FormTicket
 				});
 
 				jQuery("#private_message").click(function() {
+					console.log("Click private_message");
 					if (jQuery(this).is(":checked")) {
 						if (jQuery("#send_msg_email").is(":checked")) {
 							jQuery("#send_msg_email").prop("checked", false).trigger("change");
@@ -1443,7 +1457,12 @@ class FormTicket
 			$checkbox_selected = (GETPOST('send_email') == "1" ? ' checked' : (getDolGlobalInt('TICKETS_MESSAGE_FORCE_MAIL')?'checked':''));
 			print '<input type="checkbox" name="send_email" value="1" id="send_msg_email" '.$checkbox_selected.'/> ';
 			print '<label for="send_msg_email">'.$langs->trans('SendMessageByEmail').'</label>';
-			$texttooltip = $langs->trans("TicketMessageSendEmailHelp", '{s1}');
+			$texttooltip = $langs->trans("TicketMessageSendEmailHelp");
+			if (!getDolGlobalString('TICKET_SEND_PRIVATE_EMAIL')) {
+				$texttooltip .= ' '.$langs->trans("TicketMessageSendEmailHelp2b");
+			} else {
+				$texttooltip .= ' '.$langs->trans("TicketMessageSendEmailHelp2a", '{s1}');
+			}
 			$texttooltip = str_replace('{s1}', $langs->trans('MarkMessageAsPrivate'), $texttooltip);
 			print ' '.$form->textwithpicto('', $texttooltip, 1, 'help');
 			print '</td></tr>';
@@ -1469,10 +1488,20 @@ class FormTicket
 				print '<input type="submit" class="button" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
 				print '</div></td>';
 			}
-
-			// Subject
+			// Subject/topic
+			$topic = "";
+			foreach ($formmail->lines_model as $line) {
+				if ($this->param['models_id'] == $line->id) {
+					$topic = $line->topic;
+					break;
+				}
+			}
 			print '<tr class="email_line"><td>'.$langs->trans('Subject').'</td>';
-			print '<td><input type="text" class="text minwidth500" name="subject" value="['.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '.$langs->trans('TicketNewMessage').'" />';
+			if (empty($topic)) {
+				print '<td><input type="text" class="text minwidth500" name="subject" value="['.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '.$langs->trans('TicketNewMessage').'" />';
+			} else {
+				print '<td><input type="text" class="text minwidth500" name="subject" value="['.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '.$topic.'" />';
+			}
 			print '</td></tr>';
 
 			// Recipients / adressed-to
@@ -1547,7 +1576,7 @@ class FormTicket
 		// Attached files
 		if (!empty($this->withfile)) {
 			$out = '<tr>';
-			$out .= '<td width="180">'.$langs->trans("MailFile").'</td>';
+			$out .= '<td>'.$langs->trans("MailFile").'</td>';
 			$out .= '<td>';
 			// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
 			$out .= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
@@ -1633,7 +1662,7 @@ class FormTicket
 		//$toolbarname = 'dolibarr_details';
 		$toolbarname = 'dolibarr_notes';
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('message', $defaultmessage, '100%', 200, $toolbarname, '', false, $uselocalbrowser, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_5, 70);
+		$doleditor = new DolEditor('message', $defaultmessage, '100%', 200, $toolbarname, '', false, $uselocalbrowser, getDolGlobalInt('FCKEDITOR_ENABLE_TICKET'), ROWS_5, '90%');
 		$doleditor->Create();
 		print '</td></tr>';
 
@@ -1653,7 +1682,7 @@ class FormTicket
 
 		print '</table>';
 
-		print '<center><br>';
+		print '<br><center>';
 		print '<input type="submit" class="button" name="btn_add_message" value="'.$langs->trans("Add").'"';
 		// Add a javascript test to avoid to forget to submit file before sending email
 		if ($this->withfile == 2 && !empty($conf->use_javascript_ajax)) {
@@ -1668,10 +1697,10 @@ class FormTicket
 
 		print '<input type="hidden" name="page_y">'."\n";
 
-		print "</form>\n";
+		print "</form><br>\n";
 
 		// Disable enter key if option MAIN_MAILFORM_DISABLE_ENTERKEY is set
-		if (!empty($conf->global->MAIN_MAILFORM_DISABLE_ENTERKEY)) {
+		if (getDolGlobalString('MAIN_MAILFORM_DISABLE_ENTERKEY')) {
 			print '<script type="text/javascript">';
 			print 'jQuery(document).ready(function () {';
 			print '		$(document).on("keypress", \'#ticket\', function (e) {		/* Note this is called at every key pressed ! */

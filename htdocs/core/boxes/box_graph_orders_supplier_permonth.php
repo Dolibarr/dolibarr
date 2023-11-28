@@ -76,7 +76,7 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
 		$startmonth = $conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1;
-		if (empty($conf->global->GRAPH_USE_FISCAL_YEAR)) {
+		if (!getDolGlobalString('GRAPH_USE_FISCAL_YEAR')) {
 			$startmonth = 1;
 		}
 
@@ -98,11 +98,11 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
 		if ($user->socid) {
 			$socid = $user->socid;
 		}
-		if (empty($user->rights->societe->client->voir) || $socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') || $socid) {
 			$prefix .= 'private-'.$user->id.'-'; // If user has no permission to see all, output dir is specific to user
 		}
 
-		if ($user->rights->fournisseur->commande->lire) {
+		if ($user->hasRight('fournisseur', 'commande', 'lire')) {
 			$langs->load("orders");
 
 			$param_year = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_year';
@@ -130,7 +130,7 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
 			if (empty($endyear)) {
 				$endyear = $nowarray['year'];
 			}
-			$startyear = $endyear - (empty($conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH) ? 2 : ($conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH - 1));
+			$startyear = $endyear - (!getDolGlobalString('MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH') ? 2 : ($conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH - 1));
 
 			$mode = 'supplier';
 			$WIDTH = (($shownb && $showtot) || !empty($conf->dol_optimize_smallscreen)) ? '256' : '320';

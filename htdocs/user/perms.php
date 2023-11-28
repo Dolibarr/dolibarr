@@ -56,7 +56,7 @@ $canreaduser = ($user->admin || $user->hasRight("user", "user", "read"));
 // Define if user can modify other users and permissions
 $caneditperms = ($user->admin || $user->hasRight("user", "user", "write"));
 // Advanced permissions
-if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$canreaduser = ($user->admin || ($user->hasRight("user", "user", "read") && $user->hasRight("user", "user_advance", "readperms")));
 	$caneditselfperms = ($user->id == $id && $user->hasRight("user", "self_advance", "writeperms"));
 	$caneditperms = (($caneditperms || $caneditselfperms) ? 1 : 0);
@@ -69,7 +69,7 @@ if (isset($user->socid) && $user->socid > 0) {
 }
 $feature2 = (($socid && $user->hasRight("user", "self", "write")) ? '' : 'user');
 // A user can always read its own card if not advanced perms enabled, or if he has advanced perms, except for admin
-if ($user->id == $id && (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->hasRight("user", "self_advance", "readperms") && empty($user->admin))) {
+if ($user->id == $id && (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight("user", "self_advance", "readperms") && empty($user->admin))) {
 	accessforbidden();
 }
 
@@ -193,7 +193,7 @@ foreach ($modulesdir as $dir) {
 
 $db->commit();
 
-// Read permissions of user
+// Read permissions of edited user
 $permsuser = array();
 
 $sql = "SELECT DISTINCT ur.fk_id";
@@ -222,23 +222,8 @@ $permsgroupbyentity = array();
 $sql = "SELECT DISTINCT gr.fk_id, gu.entity";	// fk_id are permission id and entity is entity of the group
 $sql .= " FROM ".MAIN_DB_PREFIX."usergroup_rights as gr,";
 $sql .= " ".MAIN_DB_PREFIX."usergroup_user as gu";	// all groups of a user
-$sql .= " WHERE 1 = 1";
-// A very strange business rules. Must be same than into user->getrights() user/perms.php and user/group/perms.php
-if (!empty($conf->global->MULTICOMPANY_BACKWARD_COMPATIBILITY)) {
-	if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-		$sql .= " AND gu.entity IN (0,".$conf->entity.")";
-	} else {
-		//$sql .= " AND r.entity = ".((int) $conf->entity);
-	}
-} else {
-	$sql .= " AND gr.entity = ".((int) $conf->entity);	// Only groups created in current entity
-	// The entity on the table usergroup_user should be useless and should never be used because it is alreay into gr and r.
-	// but when using MULTICOMPANY_TRANSVERSE_MODE, we may insert record that make rubbish result due to duplicate record of
-	// other entities, so we are forced to add a filter here
-	$sql .= " AND gu.entity IN (0,".$conf->entity.")";
-	//$sql .= " AND r.entity = ".((int) $conf->entity);	// Only permission of modules enabled in current entity
-}
-// End of strange business rule
+$sql .= " WHERE gr.entity = ".((int) $entity);
+$sql .= " AND gu.entity =".((int) $entity);
 $sql .= " AND gr.fk_usergroup = gu.fk_usergroup";
 $sql .= " AND gu.fk_user = ".((int) $object->id);
 
@@ -442,7 +427,7 @@ $sql = "SELECT r.id, r.libelle as label, r.module, r.perms, r.subperms, r.module
 $sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r";
 $sql .= " WHERE r.libelle NOT LIKE 'tou%'"; // On ignore droits "tous"
 $sql .= " AND r.entity = ".((int) $entity);
-if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$sql .= " AND r.perms NOT LIKE '%_advance'"; // Hide advanced perms if option is not enabled
 }
 $sql .= " ORDER BY r.family_position, r.module_position, r.module, r.id";
@@ -606,7 +591,7 @@ if ($result) {
 		// Permission and tick (2 columns)
 		if (!empty($object->admin) && !empty($objMod->rights_admin_allowed)) {    // Permission granted because admin
 			if ($caneditperms) {
-				print '<td class="center">'.img_picto($langs->trans("Administrator"), 'star').'</td>';
+				print '<td class="center">'.img_picto($langs->trans("AdministratorDesc"), 'star').'</td>';
 			} else {
 				print '<td>&nbsp;</td>';
 			}
@@ -634,17 +619,17 @@ if ($result) {
 			print '</td>';
 		} elseif (isset($permsgroupbyentitypluszero) && is_array($permsgroupbyentitypluszero)) {
 			if (in_array($obj->id, $permsgroupbyentitypluszero)) {	// Permission granted by group
-				if ($caneditperms) {
-					print '<td class="center">';
-					print $form->textwithtooltip($langs->trans("Inherited"), $langs->trans("PermissionInheritedFromAGroup"));
-					print '</td>';
-				} else {
-					print '<td>&nbsp;</td>';
-				}
 				print '<td class="center nowrap">';
 				print img_picto($langs->trans("Active"), 'switch_on', '', false, 0, 0, '', 'opacitymedium');
 				//print img_picto($langs->trans("Active"), 'tick');
 				print '</td>';
+				if ($caneditperms) {
+					print '<td class="">';
+					print $form->textwithtooltip($langs->trans("Inherited"), $langs->trans("PermissionInheritedFromAGroup"));
+					print '</td>';
+				} else {
+					print '<td>c&nbsp;</td>';
+				}
 			} else {
 				// Do not own permission
 				if ($caneditperms) {
@@ -669,27 +654,41 @@ if ($result) {
 				print img_picto($langs->trans("Add"), 'switch_off');
 				print '</a></td>';
 			} else {
-				print '<td>&nbsp;</td>';
+				print '<td>aa';
+				print img_picto($langs->trans("Disabled"), 'switch_off', '', false, 0, 0, '', 'opacitymedium');
+				print '</td>';
 			}
 			print '<td class="center">';
-			if (!$caneditperms) {
-				print img_picto($langs->trans("Disabled"), 'switch_off', '', false, 0, 0, '', 'opacitymedium');
-			}
-			//print '&nbsp;';
 			print '</td>';
 		}
 
 		// Description of permission (2 columns)
-		$permlabel = (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ($langs->trans("PermissionAdvanced".$obj->id) != ("PermissionAdvanced".$obj->id)) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != ("Permission".$obj->id)) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
+		$permlabel = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && ($langs->trans("PermissionAdvanced".$obj->id) != ("PermissionAdvanced".$obj->id)) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != ("Permission".$obj->id)) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
 		if (!$user->admin) {
 			print '<td colspan="2">';
 		} else {
 			print '<td>';
 		}
 		print $permlabel;
-		if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+		if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 			if (preg_match('/_advance$/', $obj->perms)) {
 				print ' <span class="opacitymedium">('.$langs->trans("AdvancedModeOnly").')</span>';
+			}
+		}
+		// Special warning case for the permission "Allow to modify other users password"
+		if ($obj->module == 'user' && $obj->perms == 'user' && $obj->subperms == 'password') {
+			if ((!empty($object->admin) && !empty($objMod->rights_admin_allowed)) ||
+				in_array($obj->id, $permsuser) /* if edited user owns this permissions */ ||
+				(isset($permsgroupbyentitypluszero) && is_array($permsgroupbyentitypluszero) && in_array($obj->id, $permsgroupbyentitypluszero))) {
+					print ' '.img_warning($langs->trans("AllowPasswordResetBySendingANewPassByEmail"));
+			}
+		}
+		// Special warning case for the permission "Create/modify other users, groups and permissions"
+		if ($obj->module == 'user' && $obj->perms == 'user' && ($obj->subperms == 'creer' || $obj->subperms == 'create')) {
+			if ((!empty($object->admin) && !empty($objMod->rights_admin_allowed)) ||
+				in_array($obj->id, $permsuser) /* if edited user owns this permissions */ ||
+				(isset($permsgroupbyentitypluszero) && is_array($permsgroupbyentitypluszero) && in_array($obj->id, $permsgroupbyentitypluszero))) {
+					print ' '.img_warning($langs->trans("AllowAnyPrivileges"));
 			}
 		}
 		print '</td>';

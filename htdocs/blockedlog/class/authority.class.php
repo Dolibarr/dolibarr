@@ -27,10 +27,15 @@ class BlockedLogAuthority
 	public $db;
 
 	/**
-	 * Id of the log
+	 * Id of the authority
 	 * @var int
 	 */
 	public $id;
+
+	/**
+	 * @var string	Ref of the authority
+	 */
+	public $ref;
 
 	/**
 	 * Unique fingerprint of the blockchain to store
@@ -158,7 +163,6 @@ class BlockedLogAuthority
 	 */
 	public function fetch($id, $signature = '')
 	{
-
 		global $langs;
 
 		dol_syslog(get_class($this)."::fetch id=".((int) $id), LOG_DEBUG);
@@ -297,7 +301,7 @@ class BlockedLogAuthority
 
 		//TODO create cron task on activation
 
-		if (empty($conf->global->BLOCKEDLOG_AUTHORITY_URL) || empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY)) {
+		if (!getDolGlobalString('BLOCKEDLOG_AUTHORITY_URL') || !getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
 			$this->error = $langs->trans('NoAuthorityURLDefined');
 			return -2;
 		}
@@ -312,7 +316,7 @@ class BlockedLogAuthority
 
 		if (is_array($blocks)) {
 			foreach ($blocks as &$block) {
-				$url = $conf->global->BLOCKEDLOG_AUTHORITY_URL.'/blockedlog/ajax/authority.php?s='.$signature.'&b='.$block->signature;
+				$url = getDolGlobalString('BLOCKEDLOG_AUTHORITY_URL') . '/blockedlog/ajax/authority.php?s='.$signature.'&b='.$block->signature;
 
 				$res = getURLContent($url);
 				echo $block->signature.' '.$url.' '.$res['content'].'<br>';

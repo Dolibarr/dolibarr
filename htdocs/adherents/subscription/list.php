@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -195,7 +195,7 @@ $sqlfields = $sql; // $sql fields to remove for count total
 $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
 $sql .= " JOIN ".MAIN_DB_PREFIX."subscription as c on d.rowid = c.fk_adherent";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent_extrafields as ef on (d.rowid = ef.fk_object)";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON c.fk_bank=b.rowid";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON c.fk_bank = b.rowid";
 $sql .= " WHERE d.entity IN (".getEntity('adherent').")";
 if (isset($date_select) && $date_select != '') {
 	$sql .= " AND c.dateadh >= '".((int) $date_select)."-01-01 00:00:00'";
@@ -276,7 +276,7 @@ $num = $db->num_rows($resql);
 
 
 // Direct jump if only one record found
-if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all && !$page) {
+if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	header("Location: ".DOL_URL_ROOT.'/adherents/subscription/card.php?id='.$id);
@@ -431,7 +431,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '</td>';
 }
 // Line numbering
-if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
+if (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID')) {
 	print '<td class="liste_titre">&nbsp;</td>';
 }
 
@@ -604,6 +604,8 @@ while ($i < $imaxinloop) {
 	$subscription->id = $obj->crowid;
 	$subscription->dateh = $db->jdate($obj->dateadh);
 	$subscription->datef = $db->jdate($obj->datef);
+	$subscription->amount = $obj->subscription;
+	$subscription->fk_adherent = $obj->rowid;
 
 	$adherent->lastname = $obj->lastname;
 	$adherent->firstname = $obj->firstname;
@@ -626,7 +628,7 @@ while ($i < $imaxinloop) {
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="'.$savnbfield.'">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
@@ -638,16 +640,13 @@ while ($i < $imaxinloop) {
 		}
 
 		//fetch informations needs on this mode
-		$subscription->fk_adherent = $adherent->getNomUrl(1);
-		$subscription->fk_type = $adht->getNomUrl(1);
-		$subscription->amount = $obj->subscription;
+
 		if ($obj->fk_account > 0) {
 			$accountstatic->id = $obj->fk_account;
 			$accountstatic->fetch($obj->fk_account);
-			$subscription->fk_bank = $accountstatic->getNomUrl(1);
 		}
 		// Output Kanban
-		print $subscription->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
+		print $subscription->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected), 'adherent_type' => $adht, 'member' => $adherent, 'bank'=>($obj->fk_account > 0 ? $accountstatic : null)));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';

@@ -37,12 +37,43 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 
 	public $driverlabel = array();
 
+	public $driverdesc = array();
+
 	public $driverversion = array();
 
 	public $liblabel = array();
 
 	public $libversion = array();
 
+	/**
+	 * @var string picto
+	 */
+	public $picto;
+
+	/**
+	 * @var string description
+	 */
+	public $desc;
+
+	/**
+	 * @var string escape
+	 */
+	public $escape;
+
+	/**
+	 * @var string enclosure
+	 */
+	public $enclosure;
+
+	/**
+	 * @var int col
+	 */
+	public $col;
+
+	/**
+	 * @var int disabled
+	 */
+	public $disabled;
 
 	/**
 	 *  Load into memory list of available export format
@@ -62,8 +93,12 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 		$i = 0;
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
+				$reg = array();
 				if (preg_match("/^export_(.*)\.modules\.php$/i", $file, $reg)) {
 					$moduleid = $reg[1];
+					if ($moduleid == 'csv') {
+						continue;	// This may happen if on old file export_csv.modules.php was not correctly deleted
+					}
 
 					// Loading Class
 					$file = $dir."export_".$moduleid.".modules.php";
@@ -72,6 +107,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 					require_once $file;
 					if (class_exists($classname)) {
 						$module = new $classname($db);
+						// var_dump($classname);
 
 						// Picto
 						$this->picto[$module->id] = $module->picto;

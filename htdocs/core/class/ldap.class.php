@@ -54,6 +54,11 @@ class Ldap
 	public $connectedServer;
 
 	/**
+	 * @var int server port
+	 */
+	public $serverPort;
+
+	/**
 	 * Base DN (e.g. "dc=foo,dc=com")
 	 */
 	public $dn;
@@ -71,6 +76,11 @@ class Ldap
 	public $domain;
 
 	public $domainFQDN;
+
+	/**
+	 * @var int bind
+	 */
+	public $bind;
 
 	/**
 	 * User administrateur Ldap
@@ -99,13 +109,74 @@ class Ldap
 	 */
 	public $ldapErrorText;
 
+	/**
+	 * @var string
+	 */
+	public $filter;
+	/**
+	 * @var string
+	 */
+	public $filtergroup;
+	/**
+	 * @var string
+	 */
+	public $filtermember;
+
+	/**
+	 * @var string attr_login
+	 */
+	public $attr_login;
+
+	/**
+	 * @var string attr_sambalogin
+	 */
+	public $attr_sambalogin;
+
+	/**
+	 * @var string attr_name
+	 */
+	public $attr_name;
+
+	/**
+	 * @var string attr_firstname
+	 */
+	public $attr_firstname;
+
+	/**
+	 * @var string attr_mail
+	 */
+	public $attr_mail;
+
+	/**
+	 * @var string attr_phone
+	 */
+	public $attr_phone;
+
+	/**
+	 * @var string attr_fax
+	 */
+	public $attr_fax;
+
+	/**
+	 * @var string attr_mobile
+	 */
+	public $attr_mobile;
+
+	/**
+	 * @var int badpwdtime
+	 */
+	public $badpwdtime;
+
+	/**
+	 * @var string ladpUserDN
+	 */
+	public $ldapUserDN;
 
 	//Fetch user
 	public $name;
 	public $firstname;
 	public $login;
 	public $phone;
-	public $skype;
 	public $fax;
 	public $mail;
 	public $mobile;
@@ -149,10 +220,10 @@ class Ldap
 		global $conf;
 
 		// Server
-		if (!empty($conf->global->LDAP_SERVER_HOST)) {
+		if (getDolGlobalString('LDAP_SERVER_HOST')) {
 			$this->server[] = $conf->global->LDAP_SERVER_HOST;
 		}
-		if (!empty($conf->global->LDAP_SERVER_HOST_SLAVE)) {
+		if (getDolGlobalString('LDAP_SERVER_HOST_SLAVE')) {
 			$this->server[] = $conf->global->LDAP_SERVER_HOST_SLAVE;
 		}
 		$this->serverPort          = getDolGlobalInt('LDAP_SERVER_PORT', 389);
@@ -177,7 +248,6 @@ class Ldap
 		$this->attr_firstname  = getDolGlobalString('LDAP_FIELD_FIRSTNAME');
 		$this->attr_mail       = getDolGlobalString('LDAP_FIELD_MAIL');
 		$this->attr_phone      = getDolGlobalString('LDAP_FIELD_PHONE');
-		$this->attr_skype      = getDolGlobalString('LDAP_FIELD_SKYPE');
 		$this->attr_fax        = getDolGlobalString('LDAP_FIELD_FAX');
 		$this->attr_mobile     = getDolGlobalString('LDAP_FIELD_MOBILE');
 	}
@@ -257,7 +327,7 @@ class Ldap
 					}
 
 					// Upgrade connexion to TLS, if requested by the configuration
-					if (!empty($conf->global->LDAP_SERVER_USE_TLS)) {
+					if (getDolGlobalString('LDAP_SERVER_USE_TLS')) {
 						// For test/debug
 						//ldap_set_option($this->connection, LDAP_OPT_DEBUG_LEVEL, 7);
 						//ldap_set_option($this->connection, LDAP_OPT_PROTOCOL_VERSION, 3);
@@ -458,7 +528,7 @@ class Ldap
 	 */
 	public function add($dn, $info, $user)
 	{
-		dol_syslog(get_class($this)."::add dn=".$dn." info=".json_encode($info));
+		dol_syslog(get_class($this)."::add dn=".$dn." info=".print_r($info, true));
 
 		// Check parameters
 		if (!$this->connection) {
@@ -506,7 +576,7 @@ class Ldap
 	 */
 	public function modify($dn, $info, $user)
 	{
-		dol_syslog(get_class($this)."::modify dn=".$dn." info=".join(',', $info));
+		dol_syslog(get_class($this)."::modify dn=".$dn." info=".print_r($info, true));
 
 		// Check parameters
 		if (!$this->connection) {
@@ -1389,17 +1459,17 @@ class Ldap
 	public function parseSAT($samtype)
 	{
 		$stypes = array(
-			805306368    =>    "NORMAL_ACCOUNT",
-			805306369    =>    "WORKSTATION_TRUST",
-			805306370    =>    "INTERDOMAIN_TRUST",
-			268435456    =>    "SECURITY_GLOBAL_GROUP",
-			268435457    =>    "DISTRIBUTION_GROUP",
-			536870912    =>    "SECURITY_LOCAL_GROUP",
-			536870913    =>    "DISTRIBUTION_LOCAL_GROUP"
+			805306368 => "NORMAL_ACCOUNT",
+			805306369 => "WORKSTATION_TRUST",
+			805306370 => "INTERDOMAIN_TRUST",
+			268435456 => "SECURITY_GLOBAL_GROUP",
+			268435457 => "DISTRIBUTION_GROUP",
+			536870912 => "SECURITY_LOCAL_GROUP",
+			536870913 => "DISTRIBUTION_LOCAL_GROUP"
 		);
 
 		$retval = "";
-		while (list($sat, $val) = each($stypes)) {
+		foreach ($stypes as $sat => $val) {
 			if ($samtype == $sat) {
 				$retval = $val;
 				break;
@@ -1483,7 +1553,7 @@ class Ldap
 			$keygroup = 'LDAP_KEY_GROUPS';
 		}
 
-		$search = '('.$conf->global->$keygroup.'=*)';
+		$search = '(' . getDolGlobalString($keygroup).'=*)';
 		$result = $this->search($this->groups, $search);
 		if ($result) {
 			$c = $result['count'];

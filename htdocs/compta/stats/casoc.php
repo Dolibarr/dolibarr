@@ -228,7 +228,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	$calcmode = $langs->trans("CalcModeDebt");
 	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 	$description = $langs->trans("RulesCADue");
-	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 		$description .= $langs->trans("DepositsAreNotIncluded");
 	} else {
 		$description .= $langs->trans("DepositsAreIncluded");
@@ -278,7 +278,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_societe as cs";
 	}
 	$sql .= " WHERE f.fk_statut in (1,2)";
-	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 		$sql .= " AND f.type IN (0,1,2,5)";
 	} else {
 		$sql .= " AND f.type IN (0,1,2,3,5)";
@@ -630,18 +630,18 @@ if (count($amount)) {
 		} else {
 			$linkname = $langs->trans("PaymentsNotLinkedToInvoice");
 		}
-		print "<td>".$linkname."</td>\n";
+		print '<td class="tdoverflowmax150">'.$linkname."</td>\n";
 
 		print '<td>';
-		print $address_zip[$key];
+		print $address_pays($address_zip[$key]);
 		print '</td>';
 
-		print '<td>';
-		print $address_town[$key];
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($address_town[$key]).'">';
+		print $address_pays($address_town[$key]);
 		print '</td>';
 
-		print '<td>';
-		print $address_pays[$key];
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($address_pays[$key]).'">';
+		print $address_pays($address_pays[$key]);
 		print '</td>';
 
 		// Amount w/o VAT

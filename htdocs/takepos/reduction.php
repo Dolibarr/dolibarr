@@ -46,7 +46,7 @@ $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is
 
 $invoiceid = GETPOST('invoiceid', 'int');
 
-if (empty($user->rights->takepos->run)) {
+if (!$user->hasRight('takepos', 'run')) {
 	accessforbidden();
 }
 
@@ -80,7 +80,7 @@ top_htmlhead($head, '', 0, 0, $arrayofjs, $arrayofcss);
 
 $langs->loadLangs(array('main', 'bills', 'cashdesk'));
 
-if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || !empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON)) {
+if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || getDolGlobalString('TAKEPOS_NUMPAD_USE_PAYMENT_ICON')) {
 	$htmlReductionPercent = '<span class="fa fa-2x fa-percent"></span>';
 	$htmlReductionAmount = '<span class="fa fa-2x fa-money"></span><br>'.$langs->trans('Amount');
 } else {

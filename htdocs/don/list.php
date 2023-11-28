@@ -284,7 +284,8 @@ print '<input type="hidden" name="type" value="'.$type.'">';
 $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
-if ($user->rights->don->creer) {
+if ($user->hasRight('don', 'creer')) {
+	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewDonation'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/don/card.php?action=create');
 }
 
@@ -320,7 +321,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 print '<td class="liste_titre">';
 print '<input class="flat" size="10" type="text" name="search_ref" value="'.$search_ref.'">';
 print '</td>';
-if (!empty($conf->global->DONATION_USE_THIRDPARTIES)) {
+if (getDolGlobalString('DONATION_USE_THIRDPARTIES')) {
 	print '<td class="liste_titre">';
 	print '<input class="flat" size="10" type="text" name="search_thirdparty" value="'.$search_thirdparty.'">';
 	print '</td>';
@@ -341,7 +342,7 @@ if (isModEnabled('project')) {
 	print '</td>';
 }
 print '<td class="liste_titre right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
-print '<td class="liste_titre right parentonrightofpage">';
+print '<td class="liste_titre center parentonrightofpage">';
 $liststatus = array(
 	Don::STATUS_DRAFT=>$langs->trans("DonationStatusPromiseNotValidated"),
 	Don::STATUS_VALIDATED=>$langs->trans("DonationStatusPromiseValidated"),
@@ -371,7 +372,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "d.rowid", "", $param, "", $sortfield, $sortorder);
 $totalarray['nbfield']++;
-if (!empty($conf->global->DONATION_USE_THIRDPARTIES)) {
+if (getDolGlobalString('DONATION_USE_THIRDPARTIES')) {
 	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "d.fk_soc", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 } else {
@@ -389,7 +390,7 @@ if (isModEnabled('project')) {
 }
 print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "d.amount", "", $param, '', $sortfield, $sortorder, 'right ');
 $totalarray['nbfield']++;
-print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "d.fk_statut", "", $param, '', $sortfield, $sortorder, 'right ');
+print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "d.fk_statut", "", $param, '', $sortfield, $sortorder, 'center ');
 $totalarray['nbfield']++;
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print_liste_field_titre('');
@@ -412,7 +413,7 @@ while ($i < $imaxinloop) {
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="'.$savnbfield.'">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
@@ -452,7 +453,7 @@ while ($i < $imaxinloop) {
 		$donationstatic->lastname = $obj->lastname;
 		$donationstatic->firstname = $obj->firstname;
 		print "<td>".$donationstatic->getNomUrl(1)."</td>";
-		if (!empty($conf->global->DONATION_USE_THIRDPARTIES)) {
+		if (getDolGlobalString('DONATION_USE_THIRDPARTIES')) {
 			if (!empty($obj->socid) && $company->id > 0) {
 				print "<td>".$company->getNomUrl(1)."</td>";
 			} else {
@@ -478,7 +479,9 @@ while ($i < $imaxinloop) {
 			print "</td>\n";
 		}
 		print '<td class="right"><span class="amount">'.price($obj->amount).'</span></td>';
-		print '<td class="right">'.$donationstatic->LibStatut($obj->status, 5).'</td>';
+
+		// Status
+		print '<td class="center">'.$donationstatic->LibStatut($obj->status, 5).'</td>';
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td></td>';
 		}

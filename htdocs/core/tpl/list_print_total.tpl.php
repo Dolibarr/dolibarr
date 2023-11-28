@@ -31,7 +31,7 @@ if (isset($totalarray['pos'])) {
 					break;
 				default;
 					print '<td class="right">';
-					print price(!empty($totalarray['val'][$totalarray['pos'][$i]]) ? $totalarray['val'][$totalarray['pos'][$i]]:0);
+					print price(!empty($totalarray['val'][$totalarray['pos'][$i]]) ? $totalarray['val'][$totalarray['pos'][$i]] : 0);
 					print '</td>';
 					break;
 			}

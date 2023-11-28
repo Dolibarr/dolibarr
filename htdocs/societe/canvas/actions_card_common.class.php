@@ -39,6 +39,7 @@ abstract class ActionsCardCommon
 
 	//! Template container
 	public $tpl = array();
+
 	//! Object container
 	public $object;
 
@@ -46,7 +47,6 @@ abstract class ActionsCardCommon
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
-
 
 	/**
 	 * @var string[] Error codes (or messages)
@@ -153,7 +153,7 @@ abstract class ActionsCardCommon
 			}
 
 			// Load object modCodeClient
-			$module = (!empty($conf->global->SOCIETE_CODECLIENT_ADDON) ? $conf->global->SOCIETE_CODECLIENT_ADDON : 'mod_codeclient_leopard');
+			$module = (getDolGlobalString('SOCIETE_CODECLIENT_ADDON') ? $conf->global->SOCIETE_CODECLIENT_ADDON : 'mod_codeclient_leopard');
 			if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php') {
 				$module = substr($module, 0, dol_strlen($module) - 4);
 			}
@@ -249,7 +249,7 @@ abstract class ActionsCardCommon
 
 			// Language
 			if (getDolGlobalInt('MAIN_MULTILANGS')) {
-				$this->tpl['select_lang'] = $formadmin->select_language(($this->object->default_lang ? $this->object->default_lang : $conf->global->MAIN_LANG_DEFAULT), 'default_lang', 0, 0, 1);
+				$this->tpl['select_lang'] = $formadmin->select_language((empty($this->object->default_lang) ? getDolGlobalString('MAIN_LANG_DEFAULT') : $this->object->default_lang), 'default_lang', 0, 0, 1);
 			}
 
 			// VAT
@@ -313,7 +313,7 @@ abstract class ActionsCardCommon
 				//$s=picto_from_langcode($this->default_lang);
 				//print ($s?$s.' ':'');
 				$langs->load("languages");
-				$this->tpl['default_lang'] = ($this->default_lang ? $langs->trans('Language_'.$this->object->default_lang) : '');
+				$this->tpl['default_lang'] = (empty($this->object->default_lang) ? '' : $langs->trans('Language_'.$this->object->default_lang));
 			}
 
 			$this->tpl['image_edit'] = img_edit();

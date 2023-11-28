@@ -39,11 +39,6 @@ class mailing_eventorganization extends MailingTargets
 	 */
 	public $picto = 'conferenceorbooth';
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
 	public $enabled = 'isModEnabled("eventorganization")';
 
 

@@ -62,6 +62,26 @@ class PaymentSocialContribution extends CommonObject
 	public $datep = '';
 
 	/**
+	 * @var string
+	 */
+	public $type_code;
+
+	/**
+	 * @var string
+	 */
+	public $type_label;
+
+	/**
+	 * @var int
+	 */
+	public $bank_account;
+
+	/**
+	 * @var int
+	 */
+	public $bank_line;
+
+	/**
 	 * @deprecated
 	 * @see $amount
 	 */

@@ -56,6 +56,9 @@ class Lessc
 
 	public $scope;
 	public $formatter;
+	public $formatterName;
+	public $parser;
+	public $_parseFile;
 	public $env;
 	public $count;
 
@@ -1350,6 +1353,7 @@ class Lessc
 		} else {
 			$this->throwError("tint expects (color, weight)");
 		}
+		return array();
 	}
 
 	/**
@@ -1373,23 +1377,30 @@ class Lessc
 		} else {
 			$this->throwError("shade expects (color, weight)");
 		}
+		return array();
 	}
 
-	// mixes two colors by weight
-	// mix(@color1, @color2, [@weight: 50%]);
-	// http://sass-lang.com/docs/yardoc/Sass/Script/Functions.html#mix-instance_method
+	/**
+	 * lib_mix
+	 * mixes two colors by weight
+	 * mix(@color1, @color2, [@weight: 50%]);
+	 * http://sass-lang.com/docs/yardoc/Sass/Script/Functions.html#mix-instance_method
+	 *
+	 * @param array		$args	Args
+	 * @return array
+	 */
 	protected function lib_mix($args)
 	{
 		if ($args[0] != "list" || count($args[2]) < 2) {
 			$this->throwError("mix expects (color1, color2, weight)");
 		}
 
-			list($first, $second) = $args[2];
-			$first = $this->assertColor($first);
-			$second = $this->assertColor($second);
+		list($first, $second) = $args[2];
+		$first = $this->assertColor($first);
+		$second = $this->assertColor($second);
 
-			$first_a = $this->lib_alpha($first);
-			$second_a = $this->lib_alpha($second);
+		$first_a = $this->lib_alpha($first);
+		$second_a = $this->lib_alpha($second);
 
 		if (isset($args[2][2])) {
 			$weight = $args[2][2][1] / 100.0;
@@ -1397,25 +1408,31 @@ class Lessc
 			$weight = 0.5;
 		}
 
-			$w = $weight * 2 - 1;
-			$a = $first_a - $second_a;
+		$w = $weight * 2 - 1;
+		$a = $first_a - $second_a;
 
-			$w1 = (($w * $a == -1 ? $w : ($w + $a) / (1 + $w * $a)) + 1) / 2.0;
-			$w2 = 1.0 - $w1;
+		$w1 = (($w * $a == -1 ? $w : ($w + $a) / (1 + $w * $a)) + 1) / 2.0;
+		$w2 = 1.0 - $w1;
 
-			$new = array('color',
-				$w1 * $first[1] + $w2 * $second[1],
-				$w1 * $first[2] + $w2 * $second[2],
-				$w1 * $first[3] + $w2 * $second[3],
-			);
+		$new = array('color',
+			$w1 * $first[1] + $w2 * $second[1],
+			$w1 * $first[2] + $w2 * $second[2],
+			$w1 * $first[3] + $w2 * $second[3],
+		);
 
-			if ($first_a != 1.0 || $second_a != 1.0) {
-				$new[] = $first_a * $weight + $second_a * ($weight - 1);
-			}
+		if ($first_a != 1.0 || $second_a != 1.0) {
+			$new[] = $first_a * $weight + $second_a * ($weight - 1);
+		}
 
-			return $this->fixColor($new);
+		return $this->fixColor($new);
 	}
 
+	/**
+	 * lib_contrast
+	 *
+	 * @param array 	$args	Args
+	 * @return array
+	 */
 	protected function lib_contrast($args)
 	{
 		$darkColor  = array('color', 0, 0, 0);
@@ -2640,7 +2657,16 @@ class lessc_parser
 	protected static $literalCache = array();
 
 	public $env;
+	public $buffer;
 	public $count;
+	public $line;
+	public $eatWhiteDefault;
+	public $lessc;
+	public $sourceName;
+	public $writeComments;
+	public $seenComments;
+	public $currentProperty;
+	public $inExp;
 
 
 	public function __construct($lessc, $sourceName = null)
@@ -2660,9 +2686,9 @@ class lessc_parser
 				array_keys(self::$precedence)
 			)).')';
 
-				$commentSingle = lessc::preg_quote(self::$commentSingle);
-				$commentMultiLeft = lessc::preg_quote(self::$commentMultiLeft);
-				$commentMultiRight = lessc::preg_quote(self::$commentMultiRight);
+				$commentSingle = Lessc::preg_quote(self::$commentSingle);
+				$commentMultiLeft = Lessc::preg_quote(self::$commentMultiLeft);
+				$commentMultiRight = Lessc::preg_quote(self::$commentMultiRight);
 
 				self::$commentMulti = $commentMultiLeft.'.*?'.$commentMultiRight;
 				self::$whitePattern = '/'.$commentSingle.'[^\n]*\s*|('.self::$commentMulti.')\s*|\s+/Ais';
@@ -2959,7 +2985,7 @@ class lessc_parser
 			return false;
 		}
 
-		$exps = lessc::compressList($values, ' ');
+		$exps = Lessc::compressList($values, ' ');
 		return true;
 	}
 
@@ -2992,9 +3018,9 @@ class lessc_parser
 		return false;
 	}
 
-		/**
-		 * recursively parse infix equation with $lhs at precedence $minP
-		 */
+	/**
+	 * recursively parse infix equation with $lhs at precedence $minP
+	 */
 	protected function expHelper($lhs, $minP)
 	{
 		$next = null;
@@ -3080,7 +3106,7 @@ class lessc_parser
 			return false;
 		}
 
-		$value = lessc::compressList($values, ', ');
+		$value = Lessc::compressList($values, ', ');
 		return true;
 	}
 
@@ -3373,7 +3399,7 @@ class lessc_parser
 
 		// look for either ending delim , escape, or string interpolation
 		$patt = '([^\n]*?)(@\{|\\\\|'.
-			lessc::preg_quote($delim).')';
+			Lessc::preg_quote($delim).')';
 
 			$oldWhite = $this->eatWhiteDefault;
 			$this->eatWhiteDefault = false;
@@ -3971,7 +3997,7 @@ class lessc_parser
 		}
 
 		if (!isset(self::$literalCache[$what])) {
-			self::$literalCache[$what] = lessc::preg_quote($what);
+			self::$literalCache[$what] = Lessc::preg_quote($what);
 		}
 
 		$m = array();
@@ -4019,7 +4045,7 @@ class lessc_parser
 			$validChars = $allowNewline ? "." : "[^\n]";
 		}
 		$m = array();
-		if (!$this->match('('.$validChars.'*?)'.lessc::preg_quote($what), $m, !$until)) {
+		if (!$this->match('('.$validChars.'*?)'.Lessc::preg_quote($what), $m, !$until)) {
 			return false;
 		}
 		if ($until) {
@@ -4245,6 +4271,7 @@ class lessc_formatter_classic
 	public $breakSelectors = false;
 
 	public $compressColors = false;
+	public $indentLevel;
 
 	public function __construct()
 	{

@@ -207,7 +207,7 @@ class html_cerfafr extends ModeleDon
 
 				$art200 = '';
 				if ($mysoc->country_code == 'FR') {
-					if ($conf->global->DONATION_ART200 >= 1) {
+					if (getDolGlobalInt('DONATION_ART200') >= 1) {
 						$art200 = '<input type="checkbox" disabled="true" checked="checked" >200 du CGI';
 					} else {
 						$art200 = '<input type="checkbox" disabled="true">200 du CGI';
@@ -217,7 +217,7 @@ class html_cerfafr extends ModeleDon
 
 				$art238 = '';
 				if ($mysoc->country_code == 'FR') {
-					if ($conf->global->DONATION_ART238 >= 1) {
+					if (getDolGlobalInt('DONATION_ART238') >= 1) {
 						$art238 = '<input type="checkbox" disabled="true" checked="checked" >238 bis du CGI';
 					} else {
 						$art238 = '<input type="checkbox" disabled="true">238 bis du CGI';
@@ -227,7 +227,7 @@ class html_cerfafr extends ModeleDon
 
 				$art978 = '';
 				if ($mysoc->country_code == 'FR') {
-					if ($conf->global->DONATION_ART978 >= 1) {
+					if (getDolGlobalInt('DONATION_ART978') >= 1) {
 						$art978 = '<input type="checkbox" disabled="true" checked="checked" >978 du CGI';
 					} else {
 						$art978 = '<input type="checkbox" disabled="true">978 du CGI';

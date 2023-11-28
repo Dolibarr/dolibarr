@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2007-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+/* Copyright (C) 2007-2019	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2023		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,6 +82,11 @@ class Events // extends CommonObject
 	public $user_agent;
 
 	/**
+	 * @var string label
+	 */
+	public $label;
+
+	/**
 	 * @var string description
 	 */
 	public $description;
@@ -89,6 +95,12 @@ class Events // extends CommonObject
 	 * @var string	Prefix session obtained with method dol_getprefix()
 	 */
 	public $prefix_session;
+
+	/**
+	 * @var string	Authentication method used for USER_LOGIN with success
+	 */
+	public $authentication_method;
+
 
 	// List of all Audit/Security events supported by triggers
 	public $eventstolog = array(

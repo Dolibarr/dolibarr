@@ -386,20 +386,20 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	$result = $object->fetch($facid);
 
 	$datefacture = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-	$dateinvoice = ($datefacture == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '') : $datefacture);
+	$dateinvoice = ($datefacture == '' ? (!getDolGlobalString('MAIN_AUTOFILL_DATE') ?-1 : '') : $datefacture);
 
 	$sql = 'SELECT s.nom as name, s.rowid as socid,';
 	$sql .= ' f.rowid, f.ref, f.ref_supplier, f.total_ttc as total, f.fk_mode_reglement, f.fk_account';
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 		$sql .= ", sc.fk_soc, sc.fk_user ";
 	}
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'facture_fourn as f';
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= ' WHERE f.fk_soc = s.rowid';
 	$sql .= ' AND f.rowid = '.((int) $facid);
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	$resql = $db->query($sql);

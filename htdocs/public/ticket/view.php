@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,7 +94,7 @@ if ($cancel) {
 	$action = 'view_ticket';
 }
 
-if ($action == "view_ticket" || $action == "presend" || $action == "close" || $action == "confirm_public_close" || $action == "add_message") {
+if ($action == "view_ticket" || $action == "presend" || $action == "close" || $action == "confirm_public_close" || $action == "add_message" || $action == "add_contact") {
 	$error = 0;
 	$display_ticket = false;
 	if (!strlen($track_id)) {
@@ -181,16 +182,23 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 	}
 
 	if (!$error && $action == "add_message" && $display_ticket && GETPOSTISSET('btn_add_message')) {
-		// TODO Add message...
 		$ret = $object->dao->newMessage($user, $action, 0, 1);
-
 
 		if (!$error) {
 			$action = 'view_ticket';
 		}
 	}
 
-	if ($error || $errors) {
+	// Add a new external contributor to a ticket
+	if (!$error && $action == "add_contact" && $display_ticket && GETPOSTISSET('btn_add_contact')) {
+		$ret = $object->dao->add_contact(GETPOSTINT('contactid'), 'CONTRIBUTOR');
+
+		if (!$error) {
+			$action = 'view_ticket';
+		}
+	}
+
+	if ($error || !empty($object->errors)) {
 		setEventMessages($object->error, $object->errors, 'errors');
 		if ($action == "add_message") {
 			$action = 'presend';
@@ -199,8 +207,6 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		}
 	}
 }
-//var_dump($action);
-//$object->doActions($action);
 
 // Actions to send emails (for ticket, we need to manage the addfile and removefile only)
 $triggersendname = 'TICKET_SENTBYMAIL';
@@ -232,10 +238,12 @@ $arrayofcss = array('/ticket/css/styles.css.php');
 
 llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
-print '<div class="ticketpublicarea ticketlargemargin centpercent">';
 
 if ($action == "view_ticket" || $action == "presend" || $action == "close" || $action == "confirm_public_close") {
 	if ($display_ticket) {
+		print '<!-- public view ticket -->';
+		print '<div class="ticketpublicarea ticketlargemargin centpercent">';
+
 		// Confirmation close
 		if ($action == 'close') {
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?track_id=".$track_id.(!empty($entity) && isModEnabled('multicompany')?'&entity='.$entity:''), $langs->trans("CloseATicket"), $langs->trans("ConfirmCloseAticket"), "confirm_public_close", '', '', 1);
@@ -326,12 +334,37 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 			$fuser = new User($db);
 			$fuser->fetch($object->dao->fk_user_assign);
 			print img_picto('', 'user', 'class="pictofixedwidth"');
-			print $fuser->getFullName($langs, 1);
+			print $fuser->getFullName($langs, 0);
 		}
 		print '</td></tr>';
 
+		// External contributors
+		if (getDolGlobalInt('TICKET_PUBLIC_DISPLAY_EXTERNAL_CONTRIBUTORS')) {
+			print '<tr><td>'.$langs->trans("ExternalContributors").'</td><td>';
+			if ($object->dao->id > 0) {
+				$contactlist = $object->dao->liste_contact(-1, 'external');
+				foreach ($contactlist as $externalContributor) {
+					print img_picto('', 'contact', 'class="pictofixedwidth"');
+					print $externalContributor["lastname"]." ".$externalContributor["firstname"]."<br>";
+				}
+			}
+			print '</td></tr>';
+		}
+
+		// Add new external contributor
+		if (getDolGlobalInt('TICKET_PUBLIC_SELECT_EXTERNAL_CONTRIBUTORS') && !empty($object->dao->fk_soc)) {
+			print '<form method="post" id="form_view_add_contact" name="form_view_add_contact" action="'.$_SERVER['PHP_SELF'].'?track_id='.$object->dao->track_id.'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="action" value="add_contact">';
+			print '<input type="hidden" name="email" value="'.$_SESSION['email_customer'].'">';
+			print '<tr><td>'.$langs->trans("AddContributor").'</td><td>';
+			print $form->selectcontacts($object->dao->fk_soc, '', 'contactid', 3, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth400');
+			print '<input type="submit" class="button smallpaddingimp reposition" name="btn_add_contact" value="'.$langs->trans('Add').'" />';
+			print '</td></tr></form>';
+		}
+
 		// Progression
-		if (!empty($conf->global->TICKET_SHOW_PROGRESSION)) {
+		if (getDolGlobalString('TICKET_SHOW_PROGRESSION')) {
 			print '<tr><td>'.$langs->trans("Progression").'</td><td>';
 			print ($object->dao->progress > 0 ? dol_escape_htmltag($object->dao->progress) : '0').'%';
 			print '</td></tr>';
@@ -347,6 +380,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		print '<div style="clear: both; margin-top: 1.5em;"></div>';
 
 		if ($action == 'presend') {
+			print '<br>';
 			print load_fiche_titre($langs->trans('TicketAddMessage'), '', 'conversation');
 
 			$formticket = new FormTicket($db);
@@ -391,13 +425,26 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 			print '</div>';
 		}
 
+		print '</div>';
+
 		// Message list
+		print '<div class="ticketpublicarea ticketlargemargin centpercent">';
 		print load_fiche_titre($langs->trans('TicketMessagesList'), '', 'conversation');
+		print '</div>';
+
 		$object->viewTicketMessages(false, true, $object->dao);
 	} else {
+		print '<!-- public view ticket -->';
+		print '<div class="ticketpublicarea ticketlargemargin centpercent">';
+
 		print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?track_id='.$object->dao->track_id.(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'" rel="nofollow noopener">'.$langs->trans('Back').'</a></div>';
+
+		print '</div>';
 	}
 } else {
+	print '<!-- public view ticket -->';
+	print '<div class="ticketpublicarea ticketlargemargin centpercent">';
+
 	print '<div class="center opacitymedium margintoponly marginbottomonly ticketlargemargin">'.$langs->trans("TicketPublicMsgViewLogIn").'</div>';
 
 	print '<div id="form_view_ticket">';
@@ -422,12 +469,14 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
 	print "</form>\n";
 	print "</div>\n";
+
+	print '</div>';
 }
 
-print "</div>";
-
-// End of page
-htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix, $object);
+if (getDolGlobalInt('TICKET_SHOW_COMPANY_FOOTER')) {
+	// End of page
+	htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix, $object);
+}
 
 llxFooter('', 'public');
 

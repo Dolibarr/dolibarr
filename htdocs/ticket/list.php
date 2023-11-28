@@ -4,6 +4,7 @@
  * Copyright (C) 2018		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2019-2021	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2019-2020  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2023		Charlene Benke		<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,10 +55,13 @@ $mode = GETPOST('mode', 'alpha');
 $id = GETPOST('id', 'int');
 $msg_id     = GETPOST('msg_id', 'int');
 $socid      = GETPOST('socid', 'int');
+$contractid  = GETPOST('contractid', 'int');
 $projectid  = GETPOST('projectid', 'int');
 $project_ref = GETPOST('project_ref', 'alpha');
 $search_societe = GETPOST('search_societe', 'alpha');
 $search_fk_project = GETPOST('search_fk_project', 'int') ?GETPOST('search_fk_project', 'int') : GETPOST('projectid', 'int');
+$search_fk_contract = GETPOST('search_fk_contract', 'int') ?GETPOST('search_fk_contract', 'int') : GETPOST('contractid', 'int');
+
 $search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
 $search_date_end = dol_mktime(23, 59, 59, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
 $search_dateread_start = dol_mktime(0, 0, 0, GETPOST('search_dateread_startmonth', 'int'), GETPOST('search_dateread_startday', 'int'), GETPOST('search_dateread_startyear', 'int'));
@@ -84,9 +88,9 @@ $object = new Ticket($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->ticket->dir_output.'/temp/massgeneration/'.$user->id;
 if ($socid > 0) {
-	$hookmanager->initHooks(array('thirdpartyticket'));
+	$hookmanager->initHooks(array('thirdpartyticket', 'globalcard'));
 } elseif ($projectid > 0) {
-	$hookmanager->initHooks(array('projectticket'));
+	$hookmanager->initHooks(array('projectticket', 'globalcard'));
 } else {
 	$hookmanager->initHooks(array('ticketlist'));
 }
@@ -112,6 +116,8 @@ $search = array();
 foreach ($object->fields as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha') !== '') {
 		$search[$key] = GETPOST('search_'.$key, 'alpha');
+	} else {
+		$search[$key] = "";
 	}
 	if (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
 		$search[$key.'_dtstart'] = dol_mktime(0, 0, 0, GETPOST('search_'.$key.'_dtstartmonth', 'int'), GETPOST('search_'.$key.'_dtstartday', 'int'), GETPOST('search_'.$key.'_dtstartyear', 'int'));
@@ -153,7 +159,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 
 
 // Security check
-if (!$user->rights->ticket->read) {
+if (!$user->hasRight('ticket', 'read')) {
 	accessforbidden();
 }
 // restrict view to current user's company
@@ -424,6 +430,9 @@ if ($search_societe) {
 if ($search_fk_project > 0) {
 	$sql .= natural_search('fk_project', $search_fk_project, 2);
 }
+if ($search_fk_contract > 0) {
+	$sql .= natural_search('fk_contract', $search_fk_contract, 2);
+}
 if ($search_date_start) {
 	$sql .= " AND t.datec >= '".$db->idate($search_date_start)."'";
 }
@@ -443,9 +452,9 @@ if ($search_dateclose_end) {
 	$sql .= " AND t.date_close <= '".$db->idate($search_dateclose_end)."'";
 }
 
-if (!$user->socid && ($mode == "mine" || (!$user->admin && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY))) {
+if (!$user->socid && ($mode == "mine" || (!$user->admin && getDolGlobalInt('TICKET_LIMIT_VIEW_ASSIGNED_ONLY')))) {
 	$sql .= " AND (t.fk_user_assign = ".((int) $user->id);
-	if (empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY)) {
+	if (!getDolGlobalInt('TICKET_LIMIT_VIEW_ASSIGNED_ONLY')) {
 		$sql .= " OR t.fk_user_create = ".((int) $user->id);
 	}
 	$sql .= ")";
@@ -494,7 +503,7 @@ if (!$resql) {
 $num = $db->num_rows($resql);
 
 // Direct jump if only one record found
-if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all && !$page) {
+if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	header("Location: ".DOL_URL_ROOT.'/ticket/card.php?id='.$id);
@@ -593,9 +602,9 @@ if ($projectid > 0 || $project_ref) {
 		$morehtmlref .= '</div>';
 
 		// Define a complementary filter for search of next/prev ref.
-		if (empty($user->rights->projet->all->lire)) {
+		if (!$user->hasRight('projet', 'all', 'lire')) {
 			$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-			$object->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
+			$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
 		}
 
 		dol_banner_tab($object, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -671,6 +680,9 @@ if ($search_societe) {
 }
 if ($projectid > 0) {
 	$param .= '&projectid='.urlencode($projectid);
+}
+if ($contractid > 0) {
+	$param .= '&contractid='.urlencode($contractid);
 }
 if ($search_date_start) {
 	$tmparray = dol_getdate($search_date_start);
@@ -751,7 +763,8 @@ if (!empty($socid)) {
 $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('NewTicket'), '', 'fa fa-plus-circle', $url, '', $user->rights->ticket->write);
+$newcardbutton .= dolGetButtonTitleSeparator();
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewTicket'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('ticket', 'write'));
 
 $picto = 'ticket';
 if ($socid > 0) {
@@ -777,7 +790,7 @@ if ($massaction == 'presendonclose') {
 		"name" => "massaction",
 		"value" => "close"
 	]);
-	$selectedchoice = (!empty($conf->global->TICKET_NOTIFY_AT_CLOSING)) ? "yes" : "no";
+	$selectedchoice = getDolGlobalInt('TICKET_NOTIFY_AT_CLOSING') ? "yes" : "no";
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassTicketClosingSendEmail"), $langs->trans("ConfirmMassTicketClosingSendEmailQuestion"), 'confirm_send_close', $hidden_form, $selectedchoice, 0, 200, 500, 1);
 }
 
@@ -838,7 +851,7 @@ foreach ($object->fields as $key => $val) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
 	} elseif (in_array($val['type'], array('timestamp'))) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
-	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $key != 'rowid' && $val['label'] != 'TechnicalID' && empty($val['arrayofkeyval'])) {
+	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('id', 'rowid', 'ref', 'status')) && $val['label'] != 'TechnicalID' && empty($val['arrayofkeyval'])) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'right';
 	}
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
@@ -848,7 +861,7 @@ foreach ($object->fields as $key => $val) {
 			print '</td>';
 		} elseif ($key == 'type_code') {
 			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
-			$formTicket->selectTypesTickets(dol_escape_htmltag(empty($search[$key]) ? '' : $search[$key]), 'search_'.$key, '', 2, 1, 1, 0, (!empty($val['css']) ? $val['css'] : 'maxwidth150'), 1);
+			$formTicket->selectTypesTickets(empty($search[$key]) ? '' : $search[$key], 'search_'.$key, '', 2, 1, 1, 0, (!empty($val['css']) ? $val['css'] : 'maxwidth150'), 1);
 			print '</td>';
 		} elseif ($key == 'category_code') {
 			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
@@ -865,7 +878,7 @@ foreach ($object->fields as $key => $val) {
 		} elseif ($key == 'fk_statut') {
 			$arrayofstatus = array();
 			$arrayofstatus['openall'] = '-- '.$langs->trans('OpenAll').' --';
-			foreach ($object->statuts_short as $key2 => $val2) {
+			foreach ($object->labelStatusShort as $key2 => $val2) {
 				if ($key2 == Ticket::STATUS_CLOSED) {
 					$arrayofstatus['closeall'] = '-- '.$langs->trans('ClosedAll').' --';
 				}
@@ -915,7 +928,7 @@ foreach ($object->fields as $key => $val) {
 			if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 				print $form->selectarray('search_'.$key, $val['arrayofkeyval'], $search[$key], $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
 			} elseif (strpos($val['type'], 'integer:') === 0) {
-				print $object->showInputField($val, $key, $search[$key], '', '', 'search_', 'maxwidth150', 1);
+				print $object->showInputField($val, $key, !empty($search[$key])?$search[$key]:"", '', '', 'search_', 'maxwidth150', 1);
 			} elseif (!preg_match('/^(date|timestamp)/', $val['type'])) {
 				print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag(empty($search[$key]) ? '' : $search[$key]).'">';
 			}
@@ -957,7 +970,7 @@ foreach ($object->fields as $key => $val) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
 	} elseif (in_array($val['type'], array('timestamp'))) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
-	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $key != 'rowid' && $val['label'] != 'TechnicalID' && empty($val['arrayofkeyval'])) {
+	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('id', 'rowid', 'ref', 'status')) && $val['label'] != 'TechnicalID' && empty($val['arrayofkeyval'])) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'right';
 	}
 	$cssforfield = preg_replace('/small\s*/', '', $cssforfield);	// the 'small' css must not be used for the title label
@@ -983,7 +996,7 @@ print '</tr>'."\n";
 $needToFetchEachLine = 0;
 if (isset($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
-		if ($val && preg_match('/\$object/', $val)) {
+		if (!is_null($val) && preg_match('/\$object/', $val)) {
 			$needToFetchEachLine++; // There is at least one compute field that use $object
 		}
 	}
@@ -1007,11 +1020,11 @@ while ($i < $imaxinloop) {
 	// Store properties in $object
 	$object->setVarsFromFetchObj($obj);
 	$object->type_code = $obj->type_code;
-	$object->status = $object->fk_statut; // fk_statut is deprecated
+	$object->status = $object->fk_statut; // because field name is fk_statut
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr><td colspan="'.$savnbfield.'">';
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 
@@ -1132,7 +1145,7 @@ while ($i < $imaxinloop) {
 
 					// display a warning on untreated tickets
 					$is_open = ($object->status != Ticket::STATUS_CLOSED && $object->status != Ticket::STATUS_CANCELED );
-					$should_show_warning = (!empty($conf->global->TICKET_DELAY_SINCE_LAST_RESPONSE) || !empty($conf->global->TICKET_DELAY_BEFORE_FIRST_RESPONSE));
+					$should_show_warning = (getDolGlobalString('TICKET_DELAY_SINCE_LAST_RESPONSE') || getDolGlobalString('TICKET_DELAY_BEFORE_FIRST_RESPONSE'));
 					if ($is_open && $should_show_warning) {
 						$date_last_msg_sent = (int) $object->date_last_msg_sent;
 						$hour_diff = ($now - $date_last_msg_sent) / 3600 ;
@@ -1143,7 +1156,7 @@ while ($i < $imaxinloop) {
 							if ($hour_diff_creation > $conf->global->TICKET_DELAY_BEFORE_FIRST_RESPONSE) {
 								print " " . img_picto($langs->trans('Late') . ' : ' . $langs->trans('TicketsDelayForFirstResponseTooLong', $conf->global->TICKET_DELAY_BEFORE_FIRST_RESPONSE), 'warning', 'style="color: red;"', false, 0, 0, '', '');
 							}
-						} elseif (!empty($conf->global->TICKET_DELAY_SINCE_LAST_RESPONSE) && $hour_diff > $conf->global->TICKET_DELAY_SINCE_LAST_RESPONSE) {
+						} elseif (getDolGlobalString('TICKET_DELAY_SINCE_LAST_RESPONSE') && $hour_diff > $conf->global->TICKET_DELAY_SINCE_LAST_RESPONSE) {
 							print " " . img_picto($langs->trans('Late') . ' : ' . $langs->trans('TicketsDelayFromLastResponseTooLong', $conf->global->TICKET_DELAY_SINCE_LAST_RESPONSE), 'warning');
 						}
 					}

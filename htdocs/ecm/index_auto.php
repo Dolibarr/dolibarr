@@ -104,7 +104,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 
 
 // Add directory
-if ($action == 'add' && $user->rights->ecm->setup) {
+if ($action == 'add' && $user->hasRight('ecm', 'setup')) {
 	$ecmdir->ref                = 'NOTUSEDYET';
 	$ecmdir->label              = GETPOST("label");
 	$ecmdir->description        = GETPOST("desc");
@@ -295,7 +295,7 @@ $moreheadjs = '';
 
 //$morejs=array();
 $morejs = array('includes/jquery/plugins/blockUI/jquery.blockUI.js', 'core/js/blockUI.js'); // Used by ecm/tpl/enabledfiletreeajax.tpl.pgp
-if (empty($conf->global->MAIN_ECM_DISABLE_JS)) {
+if (!getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
 	$morejs[] = "includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js";
 }
 
@@ -309,7 +309,7 @@ llxHeader($moreheadcss.$moreheadjs, $langs->trans("ECMArea"), '', '', '', '', $m
 // Add sections to manage
 $rowspan = 0;
 $sectionauto = array();
-if (empty($conf->global->ECM_AUTO_TREE_HIDEN)) {
+if (!getDolGlobalString('ECM_AUTO_TREE_HIDEN')) {
 	if (isModEnabled("product") || isModEnabled("service")) {
 		$langs->load("products");
 		$rowspan++; $sectionauto[] = array('position'=>10, 'level'=>1, 'module'=>'product', 'test'=>(isModEnabled("product") || isModEnabled("service")), 'label'=>$langs->trans("ProductsAndServices"), 'desc'=>$langs->trans("ECMDocsByProducts"));
@@ -344,7 +344,7 @@ if (empty($conf->global->ECM_AUTO_TREE_HIDEN)) {
 		$rowspan++; $sectionauto[] = array('position'=>100, 'level'=>1, 'module'=>'tax', 'test'=>isModEnabled('tax'), 'label'=>$langs->trans("SocialContributions"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SocialContributions")));
 		$rowspan++; $sectionauto[] = array('position'=>110, 'level'=>1, 'module'=>'tax-vat', 'test'=>isModEnabled('tax'), 'label'=>$langs->trans("VAT"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("VAT")));
 	}
-	if (!empty($conf->salaries->enabled)) {
+	if (isModEnabled('salaries')) {
 		$langs->load("compta");
 		$rowspan++; $sectionauto[] = array('position'=>120, 'level'=>1, 'module'=>'salaries', 'test'=>isModEnabled('salaries'), 'label'=>$langs->trans("Salaries"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Salaries")));
 	}
@@ -408,7 +408,7 @@ if ($action == 'deletefile' && empty($conf->use_javascript_ajax)) {
 print '<div class="inline-block toolbarbutton centpercent">';
 
 // Toolbar
-$url = ((!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) ? '#' : ($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module ? '&amp;module='.$module : '').($section ? '&amp;section='.$section : '')));
+$url = ((!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) ? '#' : ($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module ? '&amp;module='.$module : '').($section ? '&amp;section='.$section : '')));
 print '<a href="'.$url.'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans('Refresh')).'">';
 print img_picto('', 'refresh', 'id="refreshbutton"', false, 0, 0, '', 'size15x marginrightonly');
 print '</a>';
@@ -459,7 +459,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i', $act
 			}
 
 			print '<li class="directory collapsed">';
-			if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) {
+			if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
 				print '<a class="fmdirlia jqft ecmjqft" href="'.$_SERVER["PHP_SELF"].'?module='.urlencode($val['module']).'">';
 				print $val['label'];
 				print '</a>';
@@ -514,7 +514,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php';
 <?php
 // End of page
 
-if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) {
+if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
 	include DOL_DOCUMENT_ROOT.'/ecm/tpl/enablefiletreeajax.tpl.php';
 }
 

@@ -44,6 +44,7 @@ $rowid  = GETPOST('rowid', 'int');
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
+$toselect 	= GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $mode = GETPOST('mode', 'alopha');
@@ -186,7 +187,7 @@ if ($action == 'add' && $user->hasRight('adherent', 'configurer')) {
 if ($action == 'update' && $user->hasRight('adherent', 'configurer')) {
 	$object->fetch($rowid);
 
-	$object->oldcopy = dol_clone($object);
+	$object->oldcopy = dol_clone($object, 2);
 
 	$object->label= trim($label);
 	$object->morphy	= trim($morphy);
@@ -245,11 +246,13 @@ $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_M
 
 llxHeader('', $langs->trans("MembersTypeSetup"), $help_url);
 
+$arrayofselected = is_array($toselect) ? $toselect : array();
+
 // List of members type
 if (!$rowid && $action != 'create' && $action != 'edit') {
 	//print dol_get_fiche_head('');
 
-	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.amount, d.caneditamount, d.vote, d.statut as status, d.morphy";
+	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.amount, d.caneditamount, d.vote, d.statut as status, d.morphy, d.duration";
 	$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
 	$sql .= " WHERE d.entity IN (".getEntity('member_type').")";
 
@@ -277,6 +280,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
 
 		if ($user->hasRight('adherent', 'configurer')) {
+			$newcardbutton .= dolGetButtonTitleSeparator();
 			$newcardbutton .= dolGetButtonTitle($langs->trans('NewMemberType'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/type.php?action=create');
 		}
 
@@ -306,6 +310,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		print '<th>'.$langs->trans("Ref").'</th>';
 		print '<th>'.$langs->trans("Label").'</th>';
 		print '<th class="center">'.$langs->trans("MembersNature").'</th>';
+		print '<th class="center">'.$langs->trans("MembershipDuration").'</th>';
 		print '<th class="center">'.$langs->trans("SubscriptionRequired").'</th>';
 		print '<th class="center">'.$langs->trans("Amount").'</th>';
 		print '<th class="center">'.$langs->trans("CanEditAmountShort").'</th>';
@@ -319,6 +324,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		$membertype = new AdherentType($db);
 
 		$i = 0;
+		$savnbfield = 9;
 		/*$savnbfield = $totalarray['nbfield'];
 		$totalarray = array();
 		$totalarray['nbfield'] = 0;*/
@@ -337,7 +343,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 
 			if ($mode == 'kanban') {
 				if ($i == 0) {
-					print '<tr><td colspan="12">';
+					print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 					print '<div class="box-flex-container kanban">';
 				}
 				//output kanban
@@ -366,6 +372,18 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 					print $langs->trans("Moral");
 				} else {
 					print $langs->trans("MorAndPhy");
+				}
+				print '</td>';
+				print '<td class="center nowrap">';
+				if ($objp->duration) {
+					$duration_value = intval($objp->duration);
+					if ($duration_value > 1) {
+						$dur = array("i"=>$langs->trans("Minutes"), "h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
+					} else {
+						$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
+					}
+					$unit = preg_replace("/[^a-zA-Z]+/", "", $objp->duration);
+					print max(1, $duration_value).' '.$dur[$unit];
 				}
 				print '</td>';
 				print '<td class="center">'.yn($objp->subscription).'</td>';

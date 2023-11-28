@@ -155,7 +155,7 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 		$price_impact = price2num($price_impact);
 
 		// for conf PRODUIT_MULTIPRICES
-		if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+		if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 			$level_price_impact = array_map('price2num', $level_price_impact);
 		} else {
 			$level_price_impact = array(1 => $price_impact);
@@ -280,7 +280,7 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 	$prodcomb->variation_weight = price2num($weight_impact);
 
 	// for conf PRODUIT_MULTIPRICES
-	if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+	if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 		$level_price_impact = array_map('price2num', $level_price_impact);
 
 		$prodcomb->variation_price = $level_price_impact[1];
@@ -293,7 +293,7 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 		$prodcomb->variation_price_percentage = $price_impact_percent;
 	}
 
-	if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+	if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 		$prodcomb->combination_price_levels = array();
 		for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
 			$productCombinationLevel = new ProductCombinationLevel($db);
@@ -406,7 +406,7 @@ llxHeader("", $title);
 
 if (!empty($id) || !empty($ref)) {
 	$showbarcode = isModEnabled('barcode');
-	if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) {
+	if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('barcode', 'lire_advance')) {
 		$showbarcode = 0;
 	}
 
@@ -416,8 +416,8 @@ if (!empty($id) || !empty($ref)) {
 
 	print dol_get_fiche_head($head, 'combinations', $titre, -1, $picto);
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
-	$object->next_prev_filter = " fk_product_type = ".$object->type;
+	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.((int) $object->type).'">'.$langs->trans("BackToList").'</a>';
+	$object->next_prev_filter = "fk_product_type = ".((int) $object->type);
 
 	dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', '', '', '', 0, '', '');
 
@@ -430,7 +430,7 @@ if (!empty($id) || !empty($ref)) {
 	if (isModEnabled("product") && isModEnabled("service")) {
 		$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 		print '<tr><td class="titlefieldcreate">';
-		print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat) : $langs->trans('Type');
+		print (!getDolGlobalString('PRODUCT_DENY_CHANGE_PRODUCT_TYPE')) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat) : $langs->trans('Type');
 		print '</td><td>';
 		print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat);
 		print '</td></tr>';
@@ -689,7 +689,7 @@ if (!empty($id) || !empty($ref)) {
 			if (is_array($productCombination2ValuePairs1) && count($productCombination2ValuePairs1)) {
 				?>
 				<tr>
-					<td class="titlefieldcreate tdtop"><label for="features"><?php echo $langs->trans('Combination') ?></label></td>
+					<td class="titlefieldcreate tdtop"><label for="features"><?php echo $langs->trans('Attributes') ?></label></td>
 					<td class="tdtop">
 						<div class="inline-block valignmiddle quatrevingtpercent">
 					<?php
@@ -698,7 +698,7 @@ if (!empty($id) || !empty($ref)) {
 						$result2 = $prodattr_val->fetch($val->fk_prod_attr_val);
 						//print 'rr'.$result1.' '.$result2;
 						if ($result1 > 0 && $result2 > 0) {
-							print $prodattr->label.' - '.$prodattr_val->value.'<br>';
+							print $prodattr->label.' : '.$prodattr_val->value.'<br>';
 							// TODO Add delete link
 						}
 					}
@@ -719,7 +719,7 @@ if (!empty($id) || !empty($ref)) {
 				<td><input type="text" id="reference" name="reference" value="<?php echo trim($reference) ?>"></td>
 			</tr>
 			<?php
-			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 				?>
 			<tr>
 				<td><label for="price_impact"><?php echo $langs->trans('PriceImpact') ?></label></td>
@@ -732,10 +732,12 @@ if (!empty($id) || !empty($ref)) {
 				$prodcomb->fetchCombinationPriceLevels();
 
 				for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
+					$keyforlabel = 'PRODUIT_MULTIPRICES_LABEL'.$i;
+					$text = $langs->trans('ImpactOnPriceLevel', $i).' - '.getDolGlobalString($keyforlabel);
 					print '<tr>';
-					print '<td><label for="level_price_impact_'.$i.'">'.$langs->trans('ImpactOnPriceLevel', $i).'</label>';
+					print '<td><label for="level_price_impact_'.$i.'">'.$text.'</label>';
 					if ($i === 1) {
-						print ' <a id="apply-price-impact-to-all-level" class="classfortooltip" href="#" title="'.$langs->trans('ApplyToAllPriceImpactLevelHelp').'">('.$langs->trans('ApplyToAllPriceImpactLevel').')</a>';
+						print '<br/><a id="apply-price-impact-to-all-level" class="classfortooltip" href="#" title="'.$langs->trans('ApplyToAllPriceImpactLevelHelp').'">('.$langs->trans('ApplyToAllPriceImpactLevel').')</a>';
 					}
 					print '</td>';
 					print '<td><input type="text" class="level_price_impact" id="level_price_impact_'.$i.'" name="level_price_impact['.$i.']" value="'.price($prodcomb->combination_price_levels[$i]->variation_price).'">';
@@ -756,7 +758,7 @@ if (!empty($id) || !empty($ref)) {
 			print '</table>';
 		}
 
-		if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+		if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 			?>
 			<script>
 				$(document).ready(function() {
@@ -900,8 +902,17 @@ if (!empty($id) || !empty($ref)) {
 		?>
 		<table class="liste">
 			<tr class="liste_titre">
+				<?php
+				// Action column
+				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="liste_titre center">';
+					$searchpicto = $form->showCheckAddButtons('checkforselect', 1);
+					print $searchpicto;
+					print '</td>';
+				}
+				?>
 				<td class="liste_titre"><?php echo $langs->trans('Product') ?></td>
-				<td class="liste_titre"><?php echo $langs->trans('Combination') ?></td>
+				<td class="liste_titre"><?php echo $langs->trans('Attributes') ?></td>
 				<td class="liste_titre right"><?php echo $langs->trans('PriceImpact') ?></td>
 				<?php if ($object->isProduct()) {
 					print'<td class="liste_titre right">'.$langs->trans('WeightImpact').'</td>';
@@ -910,10 +921,13 @@ if (!empty($id) || !empty($ref)) {
 				<td class="liste_titre center"><?php echo $langs->trans('OnBuy') ?></td>
 				<td class="liste_titre"></td>
 				<?php
-				print '<td class="liste_titre center">';
-				$searchpicto = $form->showCheckAddButtons('checkforselect', 1);
-				print $searchpicto;
-				print '</td>';
+				// Action column
+				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="liste_titre center">';
+					$searchpicto = $form->showCheckAddButtons('checkforselect', 1);
+					print $searchpicto;
+					print '</td>';
+				}
 				?>
 			</tr>
 		<?php
@@ -922,9 +936,22 @@ if (!empty($id) || !empty($ref)) {
 			foreach ($productCombinations as $currcomb) {
 				$prodstatic->fetch($currcomb->fk_product_child);
 				print '<tr class="oddeven">';
+
+				// Action column
+				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="nowrap center">';
+					if (!empty($productCombinations) || $massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+						$selected = 0;
+						if (in_array($prodstatic->id, $arrayofselected)) {
+							$selected = 1;
+						}
+						print '<input id="cb'.$prodstatic->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$prodstatic->id.'"'.($selected ? ' checked="checked"' : '').'>';
+					}
+					print '</td>';
+				}
+
 				print '<td>'.$prodstatic->getNomUrl(1).'</td>';
 				print '<td>';
-
 				$productCombination2ValuePairs = $comb2val->fetchByFkCombination($currcomb->id);
 				$iMax = count($productCombination2ValuePairs);
 
@@ -941,19 +968,25 @@ if (!empty($id) || !empty($ref)) {
 				}
 				print '<td class="center">'.$prodstatic->getLibStatut(2, 0).'</td>';
 				print '<td class="center">'.$prodstatic->getLibStatut(2, 1).'</td>';
+
 				print '<td class="right">';
 				print '<a class="paddingleft paddingright editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=edit&token='.newToken().'&valueid='.$currcomb->id.'">'.img_edit().'</a>';
 				print '<a class="paddingleft paddingright" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=delete&token='.newToken().'&valueid='.$currcomb->id.'">'.img_delete().'</a>';
 				print '</td>';
-				print '<td class="nowrap center">';
-				if (!empty($productCombinations) || $massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-					$selected = 0;
-					if (in_array($prodstatic->id, $arrayofselected)) {
-						$selected = 1;
+
+				// Action column
+				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="nowrap center">';
+					if (!empty($productCombinations) || $massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+						$selected = 0;
+						if (in_array($prodstatic->id, $arrayofselected)) {
+							$selected = 1;
+						}
+						print '<input id="cb'.$prodstatic->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$prodstatic->id.'"'.($selected ? ' checked="checked"' : '').'>';
 					}
-					print '<input id="cb'.$prodstatic->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$prodstatic->id.'"'.($selected ? ' checked="checked"' : '').'>';
+					print '</td>';
 				}
-				print '</td>';
+
 				print '</tr>';
 			}
 		} else {

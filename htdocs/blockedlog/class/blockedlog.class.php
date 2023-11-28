@@ -26,6 +26,11 @@
 class BlockedLog
 {
 	/**
+	 * @var DoliDB	Database handler
+	 */
+	public $db;
+
+	/**
 	 * Id of the log
 	 * @var int
 	 */
@@ -198,14 +203,14 @@ class BlockedLog
 
 		// Cashdesk
 		// $conf->global->BANK_ENABLE_POS_CASHCONTROL must be set to 1 by all external POS modules
-		$moduleposenabled = (!empty($conf->cashdesk->enabled) || !empty($conf->takepos->enabled) || !empty($conf->global->BANK_ENABLE_POS_CASHCONTROL));
+		$moduleposenabled = (!empty($conf->cashdesk->enabled) || !empty($conf->takepos->enabled) || getDolGlobalString('BANK_ENABLE_POS_CASHCONTROL'));
 		if ($moduleposenabled) {
 			$this->trackedevents['CASHCONTROL_VALIDATE'] = 'logCASHCONTROL_VALIDATE';
 		}
 
 		// Add more action to track from a conf variable
 		// For example: STOCK_MOVEMENT,...
-		if (!empty($conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED)) {
+		if (getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED')) {
 			$tmparrayofmoresupportedevents = explode(',', $conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED);
 			foreach ($tmparrayofmoresupportedevents as $val) {
 				$this->trackedevents[$val] = 'log'.$val;
@@ -751,15 +756,14 @@ class BlockedLog
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
 			if ($obj) {
-				$this->id = $obj->rowid;
-				$this->entity = $obj->entity;
-				$this->ref				= $obj->rowid;
+				$this->id 				= $obj->rowid;
+				$this->entity 			= $obj->entity;
 
-				$this->date_creation = $this->db->jdate($obj->date_creation);
-				$this->tms				= $this->db->jdate($obj->tms);
+				$this->date_creation 	= $this->db->jdate($obj->date_creation);
+				$this->date_modification = $this->db->jdate($obj->tms);
 
 				$this->amounts			= (double) $obj->amounts;
-				$this->action = $obj->action;
+				$this->action 			= $obj->action;
 				$this->element			= $obj->element;
 
 				$this->fk_object = $obj->fk_object;
@@ -773,7 +777,7 @@ class BlockedLog
 				$this->object_version = $obj->object_version;
 
 				$this->signature		= $obj->signature;
-				$this->signature_line = $obj->signature_line;
+				$this->signature_line 	= $obj->signature_line;
 				$this->certified		= ($obj->certified == 1);
 
 				return 1;
@@ -1170,7 +1174,7 @@ class BlockedLog
 	{
 		global $db, $conf, $mysoc;
 
-		if (empty($conf->global->BLOCKEDLOG_ENTITY_FINGERPRINT)) { // creation of a unique fingerprint
+		if (!getDolGlobalString('BLOCKEDLOG_ENTITY_FINGERPRINT')) { // creation of a unique fingerprint
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';

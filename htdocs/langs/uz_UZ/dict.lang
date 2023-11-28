@@ -137,7 +137,7 @@ CountryLV=Latviya
 CountryLB=Livan
 CountryLS=Lesoto
 CountryLR=Liberiya
-CountryLY=Liviya
+CountryLY=Libya
 CountryLI=Lixtenshteyn
 CountryLT=Litva
 CountryLU=Lyuksemburg
@@ -247,10 +247,13 @@ CountryJE=Jersi
 CountryME=Chernogoriya
 CountryBL=Sankt-Barthelemey
 CountryMF=Avliyo Martin
+CountryXK=Kosovo
 
 ##### Civilities #####
 CivilityMME=Xonim.
+CivilityMMEShort=Mrs.
 CivilityMR=Janob.
+CivilityMRShort=Mr.
 CivilityMLE=Xonim.
 CivilityMTRE=Ustoz
 CivilityDR=Doktor

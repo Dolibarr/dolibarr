@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2021-2022  Open-DSI            <support@open-dsi.fr>
+/* Copyright (C) 2021-2023  Alexandre Spangaro  <aspangaro@easya.solutions>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -165,20 +165,20 @@ if ($reload) {
 $form = new Form($db);
 
 if ($object->nature == 2) {
-	$some_mandatory_steps_of_setup_were_not_done = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == "" || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1';
-	$account_accounting_not_defined = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == "" || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1';
+	$some_mandatory_steps_of_setup_were_not_done = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == '-1';
+	$account_accounting_not_defined = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == '-1';
 } elseif ($object->nature == 3) {
-	$some_mandatory_steps_of_setup_were_not_done = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == "" || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1';
-	$account_accounting_not_defined = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == "" || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1';
+	$some_mandatory_steps_of_setup_were_not_done = getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') == '-1';
+	$account_accounting_not_defined = getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') == '-1';
 } elseif ($object->nature == 4) {
-	$some_mandatory_steps_of_setup_were_not_done = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == "" || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1'
-		|| $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == "" || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1'
-		|| empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) || $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT == '-1';
-	$account_accounting_not_defined = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == "" || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1'
-		|| $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == "" || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1';
+	$some_mandatory_steps_of_setup_were_not_done = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == '-1'
+		|| getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') == '-1'
+		|| !getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') || getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') == '-1';
+	$account_accounting_not_defined = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == '-1'
+		|| getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') == '-1';
 } elseif ($object->nature == 5) {
-	$some_mandatory_steps_of_setup_were_not_done = empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) || $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT == '-1';
-	$account_accounting_not_defined = empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) || $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT == '-1';
+	$some_mandatory_steps_of_setup_were_not_done = !getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') || getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') == '-1';
+	$account_accounting_not_defined = !getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') || getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') == '-1';
 } else {
 	$title = $object->getLibType();
 	$some_mandatory_steps_of_setup_were_not_done = false;
@@ -196,12 +196,12 @@ $exportlink = '';
 $builddate = dol_now();
 $description = $langs->trans("DescJournalOnlyBindedVisible") . '<br>';
 if ($object->nature == 2 || $object->nature == 3) {
-	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 		$description .= $langs->trans("DepositsAreNotIncluded");
 	} else {
 		$description .= $langs->trans("DepositsAreIncluded");
 	}
-	if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
 		$description .= $langs->trans("SupplierDepositsAreNotIncluded");
 	}
 }
@@ -213,6 +213,25 @@ $period .= ' -  ' . $langs->trans("JournalizationInLedgerStatus") . ' ' . $form-
 $varlink = 'id_journal=' . $id_journal;
 
 journalHead($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
+
+if (getDolGlobalString('ACCOUNTANCY_FISCAL_PERIOD_MODE') != 'blockedonclosed') {
+	// Test that setup is complete (we are in accounting, so test on entity is always on $conf->entity only, no sharing allowed)
+	// Fiscal period test
+	$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_fiscalyear WHERE entity = ".((int) $conf->entity);
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj = $db->fetch_object($resql);
+		if ($obj->nb == 0) {
+			print '<br><div class="warning">'.img_warning().' '.$langs->trans("TheFiscalPeriodIsNotDefined");
+			$desc = ' : '.$langs->trans("AccountancyAreaDescFiscalPeriod", 4, '{link}');
+			$desc = str_replace('{link}', '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("FiscalPeriod").'</strong>', $desc);
+			print $desc;
+			print '</div>';
+		}
+	} else {
+		dol_print_error($db);
+	}
+}
 
 if ($object->nature == 4) { // Bank journal
 	// Test that setup is complete (we are in accounting, so test on entity is always on $conf->entity only, no sharing allowed)
@@ -237,8 +256,8 @@ if ($some_mandatory_steps_of_setup_were_not_done) {
 	print ' : ' . $langs->trans("AccountancyAreaDescMisc", 4, '<strong>' . $langs->transnoentitiesnoconv("MenuAccountancy") . '-' . $langs->transnoentitiesnoconv("Setup") . "-" . $langs->transnoentitiesnoconv("MenuDefaultAccounts") . '</strong>');
 	print '</div>';
 }
-print '<div class="tabsAction tabsActionNoBottom centerimp">';
-if (!empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL) && $in_bookkeeping == 'notyet') {
+print '<br><div class="tabsAction tabsActionNoBottom centerimp">';
+if (getDolGlobalString('ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL') && $in_bookkeeping == 'notyet') {
 	print '<input type="button" class="butAction" name="exportcsv" value="' . $langs->trans("ExportDraftJournal") . '" onclick="launch_export();" />';
 }
 if ($account_accounting_not_defined) {

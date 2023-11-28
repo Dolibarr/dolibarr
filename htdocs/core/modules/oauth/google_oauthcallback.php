@@ -162,7 +162,7 @@ if (!GETPOST('code')) {
 	$_SESSION['oauthstateanticsrf'] = $state;
 
 	// Save more data into session
-	// Not required. All data are savec into $_SESSION['datafromloginform'] when form is posted with a click on Login with
+	// Not required. All data are saved into $_SESSION['datafromloginform'] when form is posted with a click on Login with
 	// Google with param actionlogin=login and beforeoauthloginredirect=1, by the functions_googleoauth.php.
 	/*
 	if (!empty($_POST["tz"])) {
@@ -263,6 +263,7 @@ if (!GETPOST('code')) {
 				dol_syslog("userinfo=".var_export($userinfo, true));
 
 				$useremail = $userinfo['email'];
+
 				/*
 				 $useremailverified = $userinfo['email_verified'];
 				 $useremailuniq = $userinfo['sub'];
@@ -279,6 +280,12 @@ if (!GETPOST('code')) {
 
 				// Verify that the ID token is properly signed by the issuer. Google-issued tokens are signed using one of the certificates found at the URI specified in the jwks_uri metadata value of the Discovery document.
 				// TODO
+
+				// Verify that email is a verified email
+				/*if (empty($userinfo['email_verified'])) {
+					setEventMessages($langs->trans('Bad value for email, emai lwas not verified by Google'), null, 'errors');
+					$errorincheck++;
+				}*/
 
 				// Verify that the value of the iss claim in the ID token is equal to https://accounts.google.com or accounts.google.com.
 				if ($userinfo['iss'] != 'accounts.google.com' && $userinfo['iss'] != 'https://accounts.google.com') {

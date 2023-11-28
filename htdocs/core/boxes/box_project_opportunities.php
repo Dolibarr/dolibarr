@@ -22,17 +22,17 @@
 /**
  *  \file       htdocs/core/boxes/box_project_opportunities.php
  *  \ingroup    project
- *  \brief      Module to show Projet activity of the current Year
+ *  \brief      Module to show Project opportunities of the current Year
  */
 include_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
 
 /**
- * Class to manage the box to show last projet
+ * Class to manage the box to show project opportunities
  */
 class box_project_opportunities extends ModeleBoxes
 {
 	public $boxcode = "project_opportunities";
-	public $boximg = "object_projectpub";
+	public $boximg  = "object_projectpub";
 	public $boxlabel;
 	//var $depends = array("projet");
 
@@ -94,7 +94,7 @@ class box_project_opportunities extends ModeleBoxes
 
 			// Get list of project id allowed to user (in a string list separated by coma)
 			$projectsListId = '';
-			if (empty($user->rights->projet->all->lire)) {
+			if (!$user->hasRight('projet', 'all', 'lire')) {
 				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 			}
 
@@ -109,7 +109,7 @@ class box_project_opportunities extends ModeleBoxes
 			$sql .= " AND p.fk_opp_status > 0";
 			$sql .= " AND p.fk_statut IN (".$this->db->sanitize($projectstatic::STATUS_DRAFT.",".$projectstatic::STATUS_VALIDATED).")"; // draft and open projects
 			//$sql .= " AND p.fk_statut = ".((int) $projectstatic::STATUS_VALIDATED); // Only open projects
-			if (empty($user->rights->projet->all->lire)) {
+			if (!$user->hasRight('projet', 'all', 'lire')) {
 				$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users
 			}
 

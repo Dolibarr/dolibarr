@@ -25,9 +25,9 @@
  */
 
 /**
- * \file htdocs/fourn/commande/dispatch.php
+ * \file 	htdocs/reception/dispatch.php
  * \ingroup commande
- * \brief Page to dispatch receiving
+ * \brief 	Page to dispatch receptions.
  */
 
 // Load Dolibarr environment
@@ -40,11 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/reception.lib.php';
-
-
-if (isModEnabled('project')) {
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-}
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("bills", "orders", "sendings", "companies", "deliveries", "products", "stocks", "receptions"));
@@ -61,6 +57,9 @@ $action = GETPOST('action', 'aZ09');
 $fk_default_warehouse = GETPOST('fk_default_warehouse', 'int');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
+
+$error = 0;
+$errors = array();
 
 if ($user->socid) {
 	$socid = $user->socid;
@@ -91,7 +90,7 @@ if ($id > 0 || !empty($ref)) {
 		$object->fetch_origin();
 		$typeobject = $object->origin;
 	}
-	if ($origin == 'order_supplier' && $object->$typeobject->id && (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || isModEnabled("supplier_order"))) {
+	if ($origin == 'order_supplier' && $object->$typeobject->id && (isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') || isModEnabled("supplier_order"))) {
 		$origin_id = $object->$typeobject->id;
 		$objectsrc = new CommandeFournisseur($db);
 		$objectsrc->fetch($object->$typeobject->id);
@@ -100,17 +99,17 @@ if ($id > 0 || !empty($ref)) {
 
 if (empty($conf->reception->enabled)) {
 	$permissiontoreceive = $user->rights->fournisseur->commande->receptionner;
-	$permissiontocontrol = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->commande->receptionner)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->commande_advance->check)));
+	$permissiontocontrol = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->fournisseur->commande->receptionner)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->fournisseur->commande_advance->check)));
 } else {
 	$permissiontoreceive = $user->rights->reception->creer;
-	$permissiontocontrol = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->reception->creer)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->reception->reception_advance->validate)));
+	$permissiontocontrol = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->reception->creer)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->reception->reception_advance->validate)));
 }
 
-// $id is id of a purchase order.
-$result = restrictedArea($user, 'fournisseur', $object, 'reception');
+// $id is id of a reception
+$result = restrictedArea($user, 'reception', $object->id);
 
 if (!isModEnabled('stock')) {
-	accessforbidden();
+	accessforbidden('Module stock disabled');
 }
 
 $usercancreate = $user->hasRight('reception', 'creer');
@@ -166,7 +165,7 @@ if ($action == 'updatelines' && $permissiontoreceive) {
 				$dDLC = dol_mktime(12, 0, 0, GETPOST('dlc_'.$reg[1].'_'.$reg[2].'month', 'int'), GETPOST('dlc_'.$reg[1].'_'.$reg[2].'day', 'int'), GETPOST('dlc_'.$reg[1].'_'.$reg[2].'year', 'int'));
 			}
 
-			if (!empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
+			if (getDolGlobalString('SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT')) {
 				if (!isModEnabled("multicurrency") && empty($conf->dynamicprices->enabled)) {
 					$dto = GETPOST("dto_".$reg[1].'_'.$reg[2], 'int');
 					if (!empty($dto)) {
@@ -206,7 +205,8 @@ if ($action == 'updatelines' && $permissiontoreceive) {
 								$error++;
 							}
 
-							// If module stock is enabled and the stock increase is done on purchase order dispatching
+							// If module stock is enabled and the stock decrease is done on edtion of this page
+							/*
 							if (!$error && GETPOST($ent, 'int') > 0 && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
 								$mouv = new MouvementStock($db);
 								$product = GETPOST($prod, 'int');
@@ -242,6 +242,7 @@ if ($action == 'updatelines' && $permissiontoreceive) {
 									}
 								}
 							}
+							*/
 						}
 					} else {
 						$result = $objectsrc->dispatchProduct($user, GETPOST($prod, 'int'), GETPOST($qty), GETPOST($ent, 'int'), GETPOST($pu), GETPOST('comment'), $dDLUO, $dDLC, $lot, GETPOST($fk_commandefourndet, 'int'), 0, $object->id);
@@ -251,7 +252,7 @@ if ($action == 'updatelines' && $permissiontoreceive) {
 						}
 					}
 
-					if (!$error && !empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
+					if (!$error && getDolGlobalString('SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT')) {
 						if (!isModEnabled("multicurrency") && empty($conf->dynamicprices->enabled)) {
 							$dto = price2num(GETPOST("dto_".$reg[1].'_'.$reg[2], 'int'), '');
 							if (empty($dto)) {
@@ -282,6 +283,9 @@ if ($action == 'updatelines' && $permissiontoreceive) {
 	} else {
 		$db->commit();
 		setEventMessages($langs->trans("ReceptionUpdated"), null);
+
+		header("Location: ".DOL_URL_ROOT.'/reception/dispatch.php?id='.$object->id);
+		exit;
 	}
 }
 
@@ -348,8 +352,8 @@ if ($id > 0 || !empty($ref)) {
 	$morehtmlref = '<div class="refidno">';
 	// Ref customer reception
 
-	$morehtmlref .= $form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->reception->creer, 'string', '', 0, 1);
-	$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->reception->creer, 'string', '', null, null, '', 1);
+	$morehtmlref .= $form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->hasRight('reception', 'creer'), 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->hasRight('reception', 'creer'), 'string', '', null, null, '', 1);
 
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
@@ -362,7 +366,7 @@ if ($id > 0 || !empty($ref)) {
 			if ($action != 'classify' && $permissiontoadd) {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
 				$proj = new Project($db);
@@ -427,7 +431,7 @@ if ($id > 0 || !empty($ref)) {
 	print '</tr>';
 	print '</table>';
 
-	print '<br><center>';
+	print '<br><br><center>';
 	print '<a href="#" id="resetalltoexpected" class="marginrightonly paddingright marginleftonly paddingleft">'.img_picto("", 'autofill', 'class="pictofixedwidth"').$langs->trans("RestoreWithCurrentQtySaved").'</a></td>';
 	// Link to clear qty
 	print '<a href="#" id="autoreset" class="marginrightonly paddingright marginleftonly paddingleft">'.img_picto("", 'eraser', 'class="pictofixedwidth"').$langs->trans("ClearQtys").'</a></td>';
@@ -436,13 +440,12 @@ if ($id > 0 || !empty($ref)) {
 	print '<br>';
 	$disabled = 0;	// This is used to disable or not the bulk selection of target warehouse. No reason to have it disabled so forced to 0.
 
-	if ($object->statut == Reception::STATUS_DRAFT) {
+	if ($object->statut == Reception::STATUS_DRAFT || ($object->statut == Reception::STATUS_VALIDATED && !getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION'))) {
 		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 		$formproduct = new FormProduct($db);
 		$formproduct->loadWarehouses();
 		$entrepot = new Entrepot($db);
 		$listwarehouses = $entrepot->list_array(1);
-
 
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 
@@ -495,7 +498,7 @@ if ($id > 0 || !empty($ref)) {
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as l";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product=p.rowid";
 		$sql .= " WHERE l.fk_commande = ".((int) $objectsrc->id);
-		if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+		if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 			$sql .= " AND l.product_type = 0";
 		}
 		// Enable hooks to alter the SQL query (WHERE)
@@ -525,10 +528,10 @@ if ($id > 0 || !empty($ref)) {
 				print '<td>'.$langs->trans("Description").'</td>';
 				if (isModEnabled('productbatch')) {
 					print '<td class="dispatch_batch_number_title">'.$langs->trans("batch_number").'</td>';
-					if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+					if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 						print '<td class="dispatch_dlc_title">'.$langs->trans("SellByDate").'</td>';
 					}
-					if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+					if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 						print '<td class="dispatch_dluo_title">'.$langs->trans("EatByDate").'</td>';
 					}
 				} else {
@@ -538,12 +541,15 @@ if ($id > 0 || !empty($ref)) {
 				}
 				print '<td class="right">'.$langs->trans("SupplierRef").'</td>';
 				print '<td class="right">'.$langs->trans("QtyOrdered").'</td>';
-				print '<td class="right">'.$langs->trans("QtyDispatchedShort").'</td>';
-				print ' <td class="right">'.$langs->trans("QtyToDispatchShort");
-				//print '<br><a href="#" id="autoreset">'.img_picto($langs->trans("Reset"), 'eraser', 'class="pictofixedwidth opacitymedium"').$langs->trans("Reset").'</a></td>';
+				if ($object->status == Reception::STATUS_DRAFT) {
+					print '<td class="right">'.$langs->trans("QtyToReceive");	// Qty to dispatch (sum for all lines of batch detail if there is)
+				} else {
+					print '<td class="right">'.$langs->trans("QtyDispatchedShort").'</td>';
+				}
+				print '<td class="right">'.$langs->trans("Details");
 				print '<td width="32"></td>';
 
-				if (!empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
+				if (getDolGlobalString('SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT')) {
 					if (!isModEnabled("multicurrency") && empty($conf->dynamicprices->enabled)) {
 						print '<td class="right">'.$langs->trans("Price").'</td>';
 						print '<td class="right">'.$langs->trans("ReductionShort").' (%)</td>';
@@ -594,11 +600,11 @@ if ($id > 0 || !empty($ref)) {
 				} else {
 					$alreadydispatched = isset($products_dispatched[$objp->rowid])?$products_dispatched[$objp->rowid]:0;
 					$remaintodispatch = price2num($objp->qty, 5); // Calculation of dispatched
-					if ($remaintodispatch < 0 && empty($conf->global->SUPPLIER_ORDER_ALLOW_NEGATIVE_QTY_FOR_SUPPLIER_ORDER_RETURN)) {
+					if ($remaintodispatch < 0 && !getDolGlobalString('SUPPLIER_ORDER_ALLOW_NEGATIVE_QTY_FOR_SUPPLIER_ORDER_RETURN')) {
 						$remaintodispatch = 0;
 					}
 
-					if ($remaintodispatch || empty($conf->global->SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED)) {
+					if ($remaintodispatch || !getDolGlobalString('SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED')) {
 						$nbproduct++;
 
 						// To show detail cref and description value, we must make calculation by cref
@@ -631,10 +637,10 @@ if ($id > 0 || !empty($ref)) {
 								print $linktoprod;
 								print "</td>";
 								print '<td class="dispatch_batch_number"></td>';
-								if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+								if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 									print '<td class="dispatch_dlc"></td>';
 								}
-								if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+								if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 									print '<td class="dispatch_dluo"></td>';
 								}
 							} else {
@@ -645,10 +651,10 @@ if ($id > 0 || !empty($ref)) {
 								print '<td class="dispatch_batch_number">';
 								print '<span class="opacitymedium small">'.$langs->trans("ProductDoesNotUseBatchSerial").'</small>';
 								print '</td>';
-								if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+								if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 									print '<td class="dispatch_dlc"></td>';
 								}
-								if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+								if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 									print '<td class="dispatch_dluo"></td>';
 								}
 							}
@@ -660,7 +666,7 @@ if ($id > 0 || !empty($ref)) {
 
 						// Define unit price for PMP calculation
 						$up_ht_disc = $objp->subprice;
-						if (!empty($objp->remise_percent) && empty($conf->global->STOCK_EXCLUDE_DISCOUNT_FOR_PMP)) {
+						if (!empty($objp->remise_percent) && !getDolGlobalString('STOCK_EXCLUDE_DISCOUNT_FOR_PMP')) {
 							$up_ht_disc = price2num($up_ht_disc * (100 - $objp->remise_percent) / 100, 'MU');
 						}
 
@@ -680,7 +686,7 @@ if ($id > 0 || !empty($ref)) {
 						print '<td></td>'; // Warehouse column
 
 						$sql = "SELECT cfd.rowid, cfd.qty, cfd.fk_entrepot, cfd.batch, cfd.eatby, cfd.sellby, cfd.fk_product";
-						$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
+						$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";	// commande_fournisseur_dispatch should be named receptiondet_batch
 						$sql .= " WHERE cfd.fk_reception = ".((int) $object->id);
 						$sql .= " AND cfd.fk_commande = ".((int) $objectsrc->id);
 						$sql .= " AND cfd.fk_commandefourndet = ".(int) $objp->rowid;
@@ -695,7 +701,7 @@ if ($id > 0 || !empty($ref)) {
 								$suffix = "_".$j."_".$i;
 								$objd = $db->fetch_object($resultsql);
 
-								if (isModEnabled('productbatch') && !empty($objd->batch)) {
+								if (isModEnabled('productbatch') && (!empty($objd->batch) || (is_null($objd->batch) && $tmpproduct->status_batch > 0))) {
 									$type = 'batch';
 
 									// Enable hooks to append additional columns
@@ -727,7 +733,7 @@ if ($id > 0 || !empty($ref)) {
 									print '<input name="product_batch'.$suffix.'" type="hidden" value="'.$objd->fk_product.'">';
 
 									print '<!-- This is a U.P. (may include discount or not depending on STOCK_EXCLUDE_DISCOUNT_FOR_PMP. will be used for PMP calculation) -->';
-									if (!empty($conf->global->SUPPLIER_ORDER_EDIT_BUYINGPRICE_DURING_RECEIPT)) { // Not tested !
+									if (getDolGlobalString('SUPPLIER_ORDER_EDIT_BUYINGPRICE_DURING_RECEIPT')) { // Not tested !
 										print $langs->trans("BuyingPrice").': <input class="maxwidth75" name="pu'.$suffix.'" type="text" value="'.price2num($up_ht_disc, 'MU').'">';
 									} else {
 										print '<input class="maxwidth75" name="pu'.$suffix.'" type="hidden" value="'.price2num($up_ht_disc, 'MU').'">';
@@ -736,15 +742,15 @@ if ($id > 0 || !empty($ref)) {
 									print '</td>';
 
 									print '<td>';
-									print '<input disabled="" type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.$objd->batch.'">';
+									print '<input disabled="" type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.(GETPOSTISSET('lot_number'.$suffix) ? GETPOST('lot_number'.$suffix) : $objd->batch).'">';
 									print '</td>';
-									if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+									if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 										print '<td class="nowraponall">';
 										$dlcdatesuffix = !empty($objd->sellby) ? dol_stringtotime($objd->sellby) : dol_mktime(0, 0, 0, GETPOST('dlc'.$suffix.'month'), GETPOST('dlc'.$suffix.'day'), GETPOST('dlc'.$suffix.'year'));
 										print $form->selectDate($dlcdatesuffix, 'dlc'.$suffix, '', '', 1, '');
 										print '</td>';
 									}
-									if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+									if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 										print '<td class="nowraponall">';
 										$dluodatesuffix = !empty($objd->eatby) ? dol_stringtotime($objd->eatby) : dol_mktime(0, 0, 0, GETPOST('dluo'.$suffix.'month'), GETPOST('dluo'.$suffix.'day'), GETPOST('dluo'.$suffix.'year'));
 										print $form->selectDate($dluodatesuffix, 'dluo'.$suffix, '', '', 1, '');
@@ -754,8 +760,8 @@ if ($id > 0 || !empty($ref)) {
 								} else {
 									$type = 'dispatch';
 									$colspan = 7;
-									$colspan = (!empty($conf->global->PRODUCT_DISABLE_SELLBY)) ? --$colspan : $colspan;
-									$colspan = (!empty($conf->global->PRODUCT_DISABLE_EATBY)) ? --$colspan : $colspan;
+									$colspan = (getDolGlobalString('PRODUCT_DISABLE_SELLBY')) ? --$colspan : $colspan;
+									$colspan = (getDolGlobalString('PRODUCT_DISABLE_EATBY')) ? --$colspan : $colspan;
 
 									// Enable hooks to append additional columns
 									$parameters = array(
@@ -786,7 +792,7 @@ if ($id > 0 || !empty($ref)) {
 									print '<input name="product'.$suffix.'" type="hidden" value="'.$objd->fk_product.'">';
 
 									print '<!-- This is a up (may include discount or not depending on STOCK_EXCLUDE_DISCOUNT_FOR_PMP. will be used for PMP calculation) -->';
-									if (!empty($conf->global->SUPPLIER_ORDER_EDIT_BUYINGPRICE_DURING_RECEIPT)) { // Not tested !
+									if (getDolGlobalString('SUPPLIER_ORDER_EDIT_BUYINGPRICE_DURING_RECEIPT')) { // Not tested !
 										print $langs->trans("BuyingPrice").': <input class="maxwidth75" name="pu'.$suffix.'" type="text" value="'.price2num($up_ht_disc, 'MU').'">';
 									} else {
 										print '<input class="maxwidth75" name="pu'.$suffix.'" type="hidden" value="'.price2num($up_ht_disc, 'MU').'">';
@@ -810,7 +816,7 @@ if ($id > 0 || !empty($ref)) {
 
 								print '</td>';
 
-								if (!empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
+								if (getDolGlobalString('SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT')) {
 									if (!isModEnabled("multicurrency") && empty($conf->dynamicprices->enabled)) {
 										// Price
 										print '<td class="right">';
@@ -900,7 +906,7 @@ if ($id > 0 || !empty($ref)) {
 								print '<input name="product_batch'.$suffix.'" type="hidden" value="'.$objp->fk_product.'">';
 
 								print '<!-- This is a up (may include discount or not depending on STOCK_EXCLUDE_DISCOUNT_FOR_PMP. will be used for PMP calculation) -->';
-								if (!empty($conf->global->SUPPLIER_ORDER_EDIT_BUYINGPRICE_DURING_RECEIPT)) { // Not tested !
+								if (getDolGlobalString('SUPPLIER_ORDER_EDIT_BUYINGPRICE_DURING_RECEIPT')) { // Not tested !
 									print $langs->trans("BuyingPrice").': <input class="maxwidth75" name="pu'.$suffix.'" type="text" value="'.price2num($up_ht_disc, 'MU').'">';
 								} else {
 									print '<input class="maxwidth75" name="pu'.$suffix.'" type="hidden" value="'.price2num($up_ht_disc, 'MU').'">';
@@ -911,13 +917,13 @@ if ($id > 0 || !empty($ref)) {
 								print '<td>';
 								print '<input type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.GETPOST('lot_number'.$suffix).'">';
 								print '</td>';
-								if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+								if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 									print '<td class="nowraponall">';
 									$dlcdatesuffix = dol_mktime(0, 0, 0, GETPOST('dlc'.$suffix.'month'), GETPOST('dlc'.$suffix.'day'), GETPOST('dlc'.$suffix.'year'));
 									print $form->selectDate($dlcdatesuffix, 'dlc'.$suffix, '', '', 1, '');
 									print '</td>';
 								}
-								if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+								if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 									print '<td class="nowraponall">';
 									$dluodatesuffix = dol_mktime(0, 0, 0, GETPOST('dluo'.$suffix.'month'), GETPOST('dluo'.$suffix.'day'), GETPOST('dluo'.$suffix.'year'));
 									print $form->selectDate($dluodatesuffix, 'dluo'.$suffix, '', '', 1, '');
@@ -927,8 +933,8 @@ if ($id > 0 || !empty($ref)) {
 							} else {
 								$type = 'dispatch';
 								$colspan = 7;
-								$colspan = (!empty($conf->global->PRODUCT_DISABLE_SELLBY)) ? --$colspan : $colspan;
-								$colspan = (!empty($conf->global->PRODUCT_DISABLE_EATBY)) ? --$colspan : $colspan;
+								$colspan = (getDolGlobalString('PRODUCT_DISABLE_SELLBY')) ? --$colspan : $colspan;
+								$colspan = (getDolGlobalString('PRODUCT_DISABLE_EATBY')) ? --$colspan : $colspan;
 
 								// Enable hooks to append additional columns
 								$parameters = array(
@@ -959,7 +965,7 @@ if ($id > 0 || !empty($ref)) {
 								print '<input name="product'.$suffix.'" type="hidden" value="'.$objp->fk_product.'">';
 
 								print '<!-- This is a up (may include discount or not depending on STOCK_EXCLUDE_DISCOUNT_FOR_PMP. will be used for PMP calculation) -->';
-								if (!empty($conf->global->SUPPLIER_ORDER_EDIT_BUYINGPRICE_DURING_RECEIPT)) { // Not tested !
+								if (getDolGlobalString('SUPPLIER_ORDER_EDIT_BUYINGPRICE_DURING_RECEIPT')) { // Not tested !
 									print $langs->trans("BuyingPrice").': <input class="maxwidth75" name="pu'.$suffix.'" data-type="text" value="'.price2num($up_ht_disc, 'MU').'">';
 								} else {
 									print '<input class="maxwidth75" name="pu'.$suffix.'" type="hidden" value="'.price2num($up_ht_disc, 'MU').'">';
@@ -970,7 +976,7 @@ if ($id > 0 || !empty($ref)) {
 							// Qty to dispatch
 							print '<td class="right">';
 							print '<a href="#" id="reset'.$suffix.'" class="resetline">'.img_picto($langs->trans("Reset"), 'eraser', 'class="pictofixedwidth opacitymedium"').'</a>';
-							print '<input id="qty'.$suffix.'" onchange="onChangeDispatchLineQty($(this))" name="qty'.$suffix.'" data-index="'.$i.'" data-type="text" class="width50 right qtydispatchinput" value="'.(GETPOSTISSET('qty'.$suffix) ? GETPOST('qty'.$suffix, 'int') : (empty($conf->global->SUPPLIER_ORDER_DISPATCH_FORCE_QTY_INPUT_TO_ZERO) ? $remaintodispatch : 0)).'" data-expected="'.$remaintodispatch.'">';
+							print '<input id="qty'.$suffix.'" onchange="onChangeDispatchLineQty($(this))" name="qty'.$suffix.'" data-index="'.$i.'" data-type="text" class="width50 right qtydispatchinput" value="'.(GETPOSTISSET('qty'.$suffix) ? GETPOST('qty'.$suffix, 'int') : (!getDolGlobalString('SUPPLIER_ORDER_DISPATCH_FORCE_QTY_INPUT_TO_ZERO') ? $remaintodispatch : 0)).'" data-expected="'.$remaintodispatch.'">';
 							print '</td>';
 							print '<td>';
 							if (isModEnabled('productbatch') && $objp->tobatch > 0) {
@@ -983,7 +989,7 @@ if ($id > 0 || !empty($ref)) {
 
 							print '</td>';
 
-							if (!empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
+							if (getDolGlobalString('SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT')) {
 								if (!isModEnabled("multicurrency") && empty($conf->dynamicprices->enabled)) {
 									// Price
 									print '<td class="right">';
@@ -1046,13 +1052,13 @@ if ($id > 0 || !empty($ref)) {
 		print '</div>';
 
 		if ($nbproduct) {
-			$checkboxlabel = $langs->trans("CloseReceivedSupplierOrdersAutomatically", $langs->transnoentitiesnoconv('StatusOrderReceivedAll'));
-
 			print '<div class="center">';
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 			// modified by hook
 			if (empty($reshook)) {
+				/*$checkboxlabel = $langs->trans("CloseReceivedSupplierOrdersAutomatically", $langs->transnoentitiesnoconv('StatusOrderReceivedAll'));
+
 				if (empty($conf->reception->enabled)) {
 					print $langs->trans("Comment").' : ';
 					print '<input type="text" class="minwidth400" maxlength="128" name="comment" value="';
@@ -1066,6 +1072,8 @@ if ($id > 0 || !empty($ref)) {
 				$dispatchBt = empty($conf->reception->enabled) ? $langs->trans("Receive") : $langs->trans("CreateReception");
 
 				print '<br>';
+				*/
+
 				print '<input type="submit" id="submitform" class="button" name="dispatch" value="'.$langs->trans("Save").'"';
 				$disabled = 0;
 				if (!$permissiontoreceive) {
@@ -1086,7 +1094,7 @@ if ($id > 0 || !empty($ref)) {
 		// Message if nothing to dispatch
 		if (!$nbproduct) {
 			print "<br>\n";
-			if (empty($conf->global->SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED)) {
+			if (!getDolGlobalString('SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED')) {
 				print '<div class="opacitymedium">'.$langs->trans("NoPredefinedProductToDispatch").'</div>'; // No predefined line at all
 			} else {
 				print '<div class="opacitymedium">'.$langs->trans("NoMorePredefinedProductToDispatch").'</div>'; // No predefined line that remain to be dispatched.
@@ -1137,11 +1145,13 @@ if ($id > 0 || !empty($ref)) {
 				return false;
 			});
 
-			$(".resetline").click(function(){
+			$(".resetline").click(function(e){
+				e.preventDefault();
 				id = $(this).attr("id");
 				id = id.split("reset_");
 				console.log("Reset trigger for id = qty_"+id[1]);
 				$("#qty_"+id[1]).val("");
+				return false;
 			});
 		});
 	</script>';

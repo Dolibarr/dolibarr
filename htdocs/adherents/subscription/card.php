@@ -202,7 +202,7 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'edit') {
 	$adh->ref = $adh->getFullName($langs);
 	print '<tr>';
 	print '<td>'.$langs->trans("Member").'</td>';
-	print '<td class="valeur">'.$adh->getNomUrl(1, 0, 'subscription').'</td>';
+	print '<td class="valeur">'.$adh->getNomUrl(-1, 0, 'subscription').'</td>';
 	print '</tr>';
 
 	// Type
@@ -237,7 +237,7 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'edit') {
 	print '<input type="text" class="flat" name="note" value="'.$object->note_private.'"></td></tr>';
 
 	// Bank line
-	if (isModEnabled("banque") && (!empty($conf->global->ADHERENT_BANK_USE) || $object->fk_bank)) {
+	if (isModEnabled("banque") && (getDolGlobalString('ADHERENT_BANK_USE') || $object->fk_bank)) {
 		print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur">';
 		if ($object->fk_bank) {
 			$bankline = new AccountLine($db);
@@ -278,7 +278,7 @@ if ($rowid && $action != 'edit') {
 		$formquestion=array();
 		//$formquestion['text']='<b>'.$langs->trans("ThisWillAlsoDeleteBankRecord").'</b>';
 		$text = $langs->trans("ConfirmDeleteSubscription");
-		if (isModEnabled("banque") && !empty($conf->global->ADHERENT_BANK_USE)) {
+		if (isModEnabled("banque") && getDolGlobalString('ADHERENT_BANK_USE')) {
 			$text .= '<br>'.img_warning().' '.$langs->trans("ThisWillAlsoDeleteBankRecord");
 		}
 		print $form->formconfirm($_SERVER["PHP_SELF"]."?rowid=".$object->id, $langs->trans("DeleteSubscription"), $text, "confirm_delete", $formquestion, 0, 1);
@@ -300,7 +300,7 @@ if ($rowid && $action != 'edit') {
 	// Member
 	$adh->ref = $adh->getFullName($langs);
 	print '<tr>';
-	print '<td class="titlefield">'.$langs->trans("Member").'</td><td class="valeur">'.$adh->getNomUrl(1, 0, 'subscription').'</td>';
+	print '<td class="titlefield">'.$langs->trans("Member").'</td><td class="valeur">'.$adh->getNomUrl(-1, 0, 'subscription').'</td>';
 	print '</tr>';
 
 	// Type
@@ -333,7 +333,7 @@ if ($rowid && $action != 'edit') {
 	print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur sensiblehtmlcontent">'.dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_private)).'</td></tr>';
 
 	// Bank line
-	if (isModEnabled("banque") && (!empty($conf->global->ADHERENT_BANK_USE) || $object->fk_bank)) {
+	if (isModEnabled("banque") && (getDolGlobalString('ADHERENT_BANK_USE') || $object->fk_bank)) {
 		print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur">';
 		if ($object->fk_bank) {
 			$bankline = new AccountLine($db);

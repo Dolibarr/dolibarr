@@ -219,7 +219,7 @@ button.item_value.selected {
 
 div[aria-describedby="dialog-info"] button:before {
 	content: "\f788";
-	font-family: "Font Awesome 5 Free";
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
 	font-weight: 900;
 	padding-right: 5px;
 }

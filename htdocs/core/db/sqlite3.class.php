@@ -86,7 +86,7 @@ class DoliDBSqlite3 extends DoliDB
 			$this->ok = false;
 			$this->error="Sqlite PHP functions for using Sqlite driver are not available in this version of PHP. Try to use another driver.";
 			dol_syslog(get_class($this)."::DoliDBSqlite3 : Sqlite PHP functions for using Sqlite driver are not available in this version of PHP. Try to use another driver.",LOG_ERR);
-			return $this->ok;
+			return;
 		}*/
 
 		/*if (! $host)
@@ -95,7 +95,7 @@ class DoliDBSqlite3 extends DoliDB
 			$this->ok = false;
 			$this->error=$langs->trans("ErrorWrongHostParameter");
 			dol_syslog(get_class($this)."::DoliDBSqlite3 : Erreur Connect, wrong host parameters",LOG_ERR);
-			return $this->ok;
+			return;
 		}*/
 
 		// Essai connexion serveur
@@ -126,8 +126,6 @@ class DoliDBSqlite3 extends DoliDB
 			//$this->error=sqlite_connect_error();
 			dol_syslog(get_class($this)."::DoliDBSqlite3 : Error Connect ".$this->error, LOG_ERR);
 		}
-
-		return $this->ok;
 	}
 
 
@@ -138,7 +136,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *  @param     string	$type	Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
 	 *  @return    string   		SQL request line converted
 	 */
-	public static function convertSQLFromMysql($line, $type = 'ddl')
+	public function convertSQLFromMysql($line, $type = 'ddl')
 	{
 		// Removed empty line if this is a comment line for SVN tagging
 		if (preg_match('/^--\s\$Id/i', $line)) {
