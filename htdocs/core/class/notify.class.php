@@ -558,7 +558,7 @@ class Notify
 								$dir_output = $conf->fournisseur->commande->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object);
 								$object_type = 'order_supplier';
 								$mesg = $outputlangs->transnoentitiesnoconv("Hello").",\n\n";
-								$mesg .= $outputlangs->transnoentitiesnoconv("EMailTextOrderValidatedBy", $link, $user->getFullName($outputlangs));
+								$mesg .= $outputlangs->transnoentitiesnoconv("EMailTexSuppliertOrderValidatedBy", $link, $user->getFullName($outputlangs));
 								$mesg .= "\n\n".$outputlangs->transnoentitiesnoconv("Sincerely").".\n\n";
 								break;
 							case 'ORDER_SUPPLIER_APPROVE':
@@ -566,7 +566,7 @@ class Notify
 								$dir_output = $conf->fournisseur->commande->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object);
 								$object_type = 'order_supplier';
 								$mesg = $outputlangs->transnoentitiesnoconv("Hello").",\n\n";
-								$mesg .= $outputlangs->transnoentitiesnoconv("EMailTextOrderApprovedBy", $link, $user->getFullName($outputlangs));
+								$mesg .= $outputlangs->transnoentitiesnoconv("EMailTextSupplierOrderApprovedBy", $link, $user->getFullName($outputlangs));
 								$mesg .= "\n\n".$outputlangs->transnoentitiesnoconv("Sincerely").".\n\n";
 								break;
 							case 'ORDER_SUPPLIER_SUBMIT':
