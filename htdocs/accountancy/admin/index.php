@@ -127,62 +127,6 @@ if ($action == 'update') {
 	}
 }
 
-if ($action == 'setmanagezero') {
-	$setmanagezero = GETPOST('value', 'int');
-	$res = dolibarr_set_const($db, "ACCOUNTING_MANAGE_ZERO", $setmanagezero, 'yesno', 0, '', $conf->entity);
-	if (!($res > 0)) {
-		$error++;
-	}
-
-	if (!$error) {
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	} else {
-		setEventMessages($langs->trans("Error"), null, 'mesgs');
-	}
-}
-
-if ($action == 'setdisabledirectinput') {
-	$setdisabledirectinput = GETPOST('value', 'int');
-	$res = dolibarr_set_const($db, "BANK_DISABLE_DIRECT_INPUT", $setdisabledirectinput, 'yesno', 0, '', $conf->entity);
-	if (!($res > 0)) {
-		$error++;
-	}
-
-	if (!$error) {
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	} else {
-		setEventMessages($langs->trans("Error"), null, 'mesgs');
-	}
-}
-
-if ($action == 'setenabledraftexport') {
-	$setenabledraftexport = GETPOST('value', 'int');
-	$res = dolibarr_set_const($db, "ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL", $setenabledraftexport, 'yesno', 0, '', $conf->entity);
-	if (!($res > 0)) {
-		$error++;
-	}
-
-	if (!$error) {
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	} else {
-		setEventMessages($langs->trans("Error"), null, 'mesgs');
-	}
-}
-
-if ($action == 'setenablesubsidiarylist') {
-	$setenablesubsidiarylist = GETPOST('value', 'int');
-	$res = dolibarr_set_const($db, "ACCOUNTANCY_COMBO_FOR_AUX", $setenablesubsidiarylist, 'yesno', 0, '', $conf->entity);
-	if (!($res > 0)) {
-		$error++;
-	}
-
-	if (!$error) {
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	} else {
-		setEventMessages($langs->trans("Error"), null, 'mesgs');
-	}
-}
-
 if ($action == 'setdisablebindingonsales') {
 	$setdisablebindingonsales = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "ACCOUNTING_DISABLE_BINDING_ON_SALES", $setdisablebindingonsales, 'yesno', 0, '', $conf->entity);
