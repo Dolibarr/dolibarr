@@ -819,7 +819,7 @@ class EmailCollector extends CommonObject
 	}
 
 	/**
-	 * Convert str to UTF-7 imap default mailbox names
+	 * Convert str to UTF-7 imap. Used to forge mailbox names.
 	 *
 	 * @param 	string $str			String to encode
 	 * @return 	string				Encode string
