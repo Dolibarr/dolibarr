@@ -262,20 +262,9 @@ if ($user->hasRight('banque', 'consolidate') && ($action == 'num_releve' || $act
 		$result = $db->query($sql);
 		if ($result) {
 			$filepath = "bank/".$id."/statement/".dol_sanitizeFileName($num_rel);
-			$getFullPath = "SELECT fullpath_orig FROM ".MAIN_DB_PREFIX."ecm_files";
-			$getFullPath .= " WHERE filepath = 'bank/".$id."/statement/".$oldNum_rel."'";
-			$rslt = $db->query($getFullPath);
-
-			if ($rslt) {
-				$obj = $db->fetch_object($rslt);
-				$fullpath = $obj->fullpath_orig;
-			}
-
-			$fullpathUpdated = str_replace($oldNum_rel, dol_sanitizeFileName($num_rel), $fullpath);
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_files";
-			$sql .= " SET filepath = '".($filepath)."'";
-			$sql .= ", fullpath_orig = '".($fullpathUpdated)."'";
+			$sql .= " SET filepath = '".$db->escape($filepath)."'";
 			$sql .= " WHERE filepath = 'bank/".$id."/statement/".$oldNum_rel."'";
 			$updatePathFile = $db->query($sql);
 
