@@ -220,7 +220,7 @@ if ($resql) {
 	dol_print_error($db);
 }
 
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 	print load_fiche_titre($langs->trans("AgendaModelModule"), '', '');
 
 	print '<table class="noborder centpercent">'."\n";

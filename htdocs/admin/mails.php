@@ -397,7 +397,7 @@ if ($action == 'edit') {
 	print '</td></tr>';
 
 	// Host server
-	print '<tr class="oddeven">';
+	print '<tr class="oddeven hideonmodemail">';
 	if (!$conf->use_javascript_ajax && $linuxlike && getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') == 'mail') {
 		print '<td>';
 		print $langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike");
@@ -431,7 +431,7 @@ if ($action == 'edit') {
 	print '</tr>';
 
 	// Port
-	print '<tr class="oddeven"><td>';
+	print '<tr class="oddeven hideonmodemail"><td>';
 	if (!$conf->use_javascript_ajax && $linuxlike && getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') == 'mail') {
 		print $langs->trans("MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike");
 		print '</td><td>';
@@ -529,8 +529,9 @@ if ($action == 'edit') {
 		}
 		print '</td></tr>';
 	}
+
 	// TLS
-	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_TLS").'</td><td>';
+	print '<tr class="oddeven hideonmodemail"><td>'.$langs->trans("MAIN_MAIL_EMAIL_TLS").'</td><td>';
 	if (!empty($conf->use_javascript_ajax) || (in_array(getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail'), array('smtps', 'swiftmailer')))) {
 		if (function_exists('openssl_open')) {
 			print $form->selectyesno('MAIN_MAIL_EMAIL_TLS', (getDolGlobalString('MAIN_MAIL_EMAIL_TLS') ? $conf->global->MAIN_MAIL_EMAIL_TLS : 0), 1);
@@ -543,7 +544,7 @@ if ($action == 'edit') {
 	print '</td></tr>';
 
 	// STARTTLS
-	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_STARTTLS").'</td><td>';
+	print '<tr class="oddeven hideonmodemail"><td>'.$langs->trans("MAIN_MAIL_EMAIL_STARTTLS").'</td><td>';
 	if (!empty($conf->use_javascript_ajax) || (in_array(getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail'), array('smtps', 'swiftmailer')))) {
 		if (function_exists('openssl_open')) {
 			print $form->selectyesno('MAIN_MAIL_EMAIL_STARTTLS', (getDolGlobalString('MAIN_MAIL_EMAIL_STARTTLS') ? $conf->global->MAIN_MAIL_EMAIL_STARTTLS : 0), 1);
@@ -556,7 +557,7 @@ if ($action == 'edit') {
 	print '</td></tr>';
 
 	// SMTP_ALLOW_SELF_SIGNED
-	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED").'</td><td>';
+	print '<tr class="oddeven hideonmodemail"><td>'.$langs->trans("MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED").'</td><td>';
 	if (!empty($conf->use_javascript_ajax) || (in_array(getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail'), array('smtps', 'swiftmailer')))) {
 		if (function_exists('openssl_open')) {
 			print $form->selectyesno('MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED', (getDolGlobalString('MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED') ? $conf->global->MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED : 0), 1);
@@ -604,8 +605,11 @@ if ($action == 'edit') {
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("OtherOptions").'</td><td></td></tr>';
 
 	// From
-	$help = img_help(1, $langs->trans("EMailHelpMsgSPFDKIM"));
-	print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("MAIN_MAIL_EMAIL_FROM", ini_get('sendmail_from') ?ini_get('sendmail_from') : $langs->transnoentities("Undefined")).' '.$help.'</td>';
+	$help = $form->textwithpicto('', $langs->trans("EMailHelpMsgSPFDKIM"));
+	print '<tr class="oddeven"><td class="fieldrequired">';
+	print $langs->trans("MAIN_MAIL_EMAIL_FROM", ini_get('sendmail_from') ?ini_get('sendmail_from') : $langs->transnoentities("Undefined"));
+	print ' '.$help;
+	print '</td>';
 	print '<td><input class="flat minwidth200" name="MAIN_MAIL_EMAIL_FROM" value="'.(getDolGlobalString('MAIN_MAIL_EMAIL_FROM') ? $conf->global->MAIN_MAIL_EMAIL_FROM : '');
 	print '"></td></tr>';
 
@@ -701,7 +705,7 @@ if ($action == 'edit') {
 
 		// Host server
 		if ($linuxlike && (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') == 'mail')) {
-			print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike").'</td><td><span class="opacitymedium">'.$langs->trans("SeeLocalSendMailSetup").'</span></td></tr>';
+			//print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike").'</td><td><span class="opacitymedium">'.$langs->trans("SeeLocalSendMailSetup").'</span></td></tr>';
 		} else {
 			print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTP_SERVER", ini_get('SMTP') ?ini_get('SMTP') : $langs->transnoentities("Undefined")).'</td><td>'.(getDolGlobalString('MAIN_MAIL_SMTP_SERVER') ? $conf->global->MAIN_MAIL_SMTP_SERVER : '').'</td></tr>';
 		}
@@ -709,7 +713,7 @@ if ($action == 'edit') {
 
 		// Port
 		if ($linuxlike && (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') == 'mail')) {
-			print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike").'</td><td><span class="opacitymedium">'.$langs->trans("SeeLocalSendMailSetup").'</span></td></tr>';
+			//print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike").'</td><td><span class="opacitymedium">'.$langs->trans("SeeLocalSendMailSetup").'</span></td></tr>';
 		} else {
 			print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTP_PORT", ini_get('smtp_port') ?ini_get('smtp_port') : $langs->transnoentities("Undefined")).'</td><td>'.(getDolGlobalString('MAIN_MAIL_SMTP_PORT') ? $conf->global->MAIN_MAIL_SMTP_PORT : '').'</td></tr>';
 		}
@@ -741,44 +745,55 @@ if ($action == 'edit') {
 		}
 
 		// TLS
-		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_TLS").'</td><td>';
-		if (in_array(getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail'), array('smtps', 'swiftmailer'))) {
-			if (function_exists('openssl_open')) {
-				print yn($conf->global->MAIN_MAIL_EMAIL_TLS);
-			} else {
-				print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
-			}
+		if ($linuxlike && (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') == 'mail')) {
+			// Nothing
 		} else {
-			print '<span class="opacitymedium">'.yn(0).' ('.$langs->trans("NotSupported").')</span>';
+			print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_TLS").'</td><td>';
+			if (in_array(getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail'), array('smtps', 'swiftmailer'))) {
+				if (function_exists('openssl_open')) {
+					print yn($conf->global->MAIN_MAIL_EMAIL_TLS);
+				} else {
+					print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
+				}
+			} else {
+				print '<span class="opacitymedium">'.yn(0).' ('.$langs->trans("NotSupported").')</span>';
+			}
+			print '</td></tr>';
 		}
-		print '</td></tr>';
 
 		// STARTTLS
-		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_STARTTLS").'</td><td>';
-		if (in_array(getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail'), array('smtps', 'swiftmailer'))) {
-			if (function_exists('openssl_open')) {
-				print yn($conf->global->MAIN_MAIL_EMAIL_STARTTLS);
-			} else {
-				print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
-			}
+		if ($linuxlike && (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') == 'mail')) {
+			// Nothing
 		} else {
-			print '<span class="opacitymedium">'.yn(0).' ('.$langs->trans("NotSupported").')</span>';
+			print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_STARTTLS").'</td><td>';
+			if (in_array(getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail'), array('smtps', 'swiftmailer'))) {
+				if (function_exists('openssl_open')) {
+					print yn($conf->global->MAIN_MAIL_EMAIL_STARTTLS);
+				} else {
+					print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
+				}
+			} else {
+				//print '<span class="opacitymedium">'.yn(0).' ('.$langs->trans("NotSupported").')</span>';
+			}
+			print '</td></tr>';
 		}
-		print '</td></tr>';
 
 		// SMTP_ALLOW_SELF_SIGNED
-		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED").'</td><td>';
-		if (in_array(getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail'), array('smtps', 'swiftmailer'))) {
-			if (function_exists('openssl_open')) {
-				print yn($conf->global->MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED);
-			} else {
-				print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
-			}
+		if ($linuxlike && (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') == 'mail')) {
+			// Nothing
 		} else {
-			print '<span class="opacitymedium">'.yn(0).' ('.$langs->trans("NotSupported").')</span>';
+			print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED").'</td><td>';
+			if (in_array(getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail'), array('smtps', 'swiftmailer'))) {
+				if (function_exists('openssl_open')) {
+					print yn($conf->global->MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED);
+				} else {
+					print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
+				}
+			} else {
+				print '<span class="opacitymedium">'.yn(0).' ('.$langs->trans("NotSupported").')</span>';
+			}
+			print '</td></tr>';
 		}
-		print '</td></tr>';
-
 
 		if (getDolGlobalString('MAIN_MAIL_SENDMODE') == 'swiftmailer') {
 			// DKIM
@@ -830,8 +845,11 @@ if ($action == 'edit') {
 		print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("OtherOptions").'</td><td></td></tr>';
 
 		// From
-		$help = img_help(1, $langs->trans("EMailHelpMsgSPFDKIM"));
-		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_FROM", ini_get('sendmail_from') ?ini_get('sendmail_from') : $langs->transnoentities("Undefined")).' '.$help.'</td>';
+		$help = $form->textwithpicto('', $langs->trans("EMailHelpMsgSPFDKIM"));
+		print '<tr class="oddeven"><td>';
+		print $langs->trans("MAIN_MAIL_EMAIL_FROM", ini_get('sendmail_from') ?ini_get('sendmail_from') : $langs->transnoentities("Undefined"));
+		print ' '.$help;
+		print '</td>';
 		print '<td>' . getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 		if (!getDolGlobalString('MAIN_MAIL_EMAIL_FROM')) {
 			print img_warning($langs->trans("Mandatory"));
@@ -991,7 +1009,7 @@ if ($action == 'edit') {
 		}
 		$companyemail = getDolGlobalString('MAIN_INFO_SOCIETE_MAIL');
 		$dnsinfo = false;
-		if (!empty($companyemail) && function_exists('dns_get_record') && empty($conf->global->MAIN_DISABLE_DNS_GET_RECORD)) {
+		if (!empty($companyemail) && function_exists('dns_get_record') && !getDolGlobalString('MAIN_DISABLE_DNS_GET_RECORD')) {
 			$arrayofemailparts = explode('@', $companyemail);
 			if (count($arrayofemailparts) == 2) {
 				$domain = $arrayofemailparts[1];

@@ -94,7 +94,7 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 
 	// Positionne le modele sur le nom du modele a utiliser
 	if (!dol_strlen($modele)) {
-		if (!empty($conf->global->ADHERENT_ETIQUETTE_TYPE)) {
+		if (getDolGlobalString('ADHERENT_ETIQUETTE_TYPE')) {
 			$code = $conf->global->ADHERENT_ETIQUETTE_TYPE;
 		} else {
 			$code = $modele;
@@ -157,7 +157,7 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 			clearstatcache();
 
 			$attachment = true;
-			if (!empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) {
+			if (getDolGlobalString('MAIN_DISABLE_FORCE_SAVEAS')) {
 				$attachment = false;
 			}
 			$type = dol_mimetype($filename);

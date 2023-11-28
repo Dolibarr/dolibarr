@@ -437,7 +437,7 @@ if ($job->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'
 	}
 
 	// Direct jump if only one record found
-	if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all && !$page) {
+	if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 		$obj = $db->fetch_object($resql);
 		$id = $obj->rowid;
 		header("Location: " . dol_buildpath('/hrm/position.php', 1) . '?id=' . $id);

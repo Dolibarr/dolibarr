@@ -144,8 +144,8 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/contactnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->lastname) {
+$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/contactnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->lastname) {
 	$title = $object->lastname;
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas|DE:Modul_Partner';
@@ -201,7 +201,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Show tabs
 		$head = contact_prepare_head($object);
 
-		$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+		$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 	}
 
 	if (!empty($id) && $action != 'edit' && $action != 'create') {
@@ -222,7 +222,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$morehtmlref .= '</a>';
 
 		$morehtmlref .= '<div class="refidno">';
-		if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+		if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
 			$objsoc = new Societe($db);
 			$objsoc->fetch($object->socid);
 			// Thirdparty

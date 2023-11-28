@@ -399,7 +399,7 @@ class RemiseCheque extends CommonObject
 		$langs->load("bills");
 
 		// Clean parameters (if not defined or using deprecated value)
-		if (empty($conf->global->CHEQUERECEIPTS_ADDON)) {
+		if (!getDolGlobalString('CHEQUERECEIPTS_ADDON')) {
 			$conf->global->CHEQUERECEIPTS_ADDON = 'mod_chequereceipt_mint';
 		} elseif (getDolGlobalString('CHEQUERECEIPTS_ADDON') == 'thyme') {
 			$conf->global->CHEQUERECEIPTS_ADDON = 'mod_chequereceipt_thyme';
@@ -407,7 +407,7 @@ class RemiseCheque extends CommonObject
 			$conf->global->CHEQUERECEIPTS_ADDON = 'mod_chequereceipt_mint';
 		}
 
-		if (!empty($conf->global->CHEQUERECEIPTS_ADDON)) {
+		if (getDolGlobalString('CHEQUERECEIPTS_ADDON')) {
 			$mybool = false;
 
 			$file = getDolGlobalString('CHEQUERECEIPTS_ADDON') . ".php";
@@ -925,7 +925,7 @@ class RemiseCheque extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowCheckReceipt");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}

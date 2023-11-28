@@ -533,7 +533,7 @@ class MultiCurrency extends CommonObject
 		$sql1 .= " WHERE m.code = '".$dbs->escape($code)."'";
 		$sql1 .= " AND m.entity IN (".getEntity('multicurrency').")";
 		$sql2 = '';
-		if (!empty($conf->global->MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE) && !empty($date_document)) {	// Use last known rate compared to document date
+		if (getDolGlobalString('MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE') && !empty($date_document)) {	// Use last known rate compared to document date
 			$tmparray = dol_getdate($date_document);
 			$sql2 .= " AND mc.date_sync <= '".$dbs->idate(dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['year'], true))."'";
 		}
@@ -545,7 +545,7 @@ class MultiCurrency extends CommonObject
 		if ($resql && $obj = $dbs->fetch_object($resql)) {
 			return array($obj->rowid, $obj->rate);
 		} else {
-			if (!empty($conf->global->MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE)) {
+			if (getDolGlobalString('MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE')) {
 				$resql = $dbs->query($sql1.$sql3);
 				if ($resql && $obj = $dbs->fetch_object($resql)) {
 					return array($obj->rowid, $obj->rate);
@@ -663,7 +663,7 @@ class MultiCurrency extends CommonObject
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
 		$urlendpoint = 'http://api.currencylayer.com/live?access_key='.$key;
-		$urlendpoint .= '&source=' . (empty($conf->global->MULTICURRENCY_APP_SOURCE) ? 'USD' : $conf->global->MULTICURRENCY_APP_SOURCE);
+		$urlendpoint .= '&source=' . (!getDolGlobalString('MULTICURRENCY_APP_SOURCE') ? 'USD' : $conf->global->MULTICURRENCY_APP_SOURCE);
 
 		dol_syslog("Call url endpoint ".$urlendpoint);
 

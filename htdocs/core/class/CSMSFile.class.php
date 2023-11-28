@@ -136,11 +136,11 @@ class CSMSFile
 
 		$this->message = stripslashes($this->message);
 
-		if (!empty($conf->global->MAIN_SMS_DEBUG)) {
+		if (getDolGlobalString('MAIN_SMS_DEBUG')) {
 			$this->dump_sms();
 		}
 
-		if (empty($conf->global->MAIN_DISABLE_ALL_SMS)) {
+		if (!getDolGlobalString('MAIN_DISABLE_ALL_SMS')) {
 			// Action according to the choosed sending method
 			if (getDolGlobalString('MAIN_SMS_SENDMODE')) {
 				$sendmode = getDolGlobalString('MAIN_SMS_SENDMODE');	// $conf->global->MAIN_SMS_SENDMODE looks like a value 'module'
@@ -180,7 +180,7 @@ class CSMSFile
 						} else {
 							dol_syslog("CSMSFile::sendfile: sms send success with id=".$res, LOG_DEBUG);
 							//var_dump($res);        // 1973128
-							if (!empty($conf->global->MAIN_SMS_DEBUG)) {
+							if (getDolGlobalString('MAIN_SMS_DEBUG')) {
 								$this->dump_sms_result($res);
 							}
 						}
