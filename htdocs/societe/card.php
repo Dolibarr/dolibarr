@@ -3142,7 +3142,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						$deleteUrl = '';
 						$buttonId = 'action-delete';
 					}
-					print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $deleteUrl, $buttonId, $permissiontodelete);
+					print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $deleteUrl, $buttonId, $permissiontodelete);
 				}
 			}
 
