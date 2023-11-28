@@ -452,9 +452,9 @@ if ($search_dateclose_end) {
 	$sql .= " AND t.date_close <= '".$db->idate($search_dateclose_end)."'";
 }
 
-if (!$user->socid && ($mode == "mine" || (!$user->admin && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY))) {
+if (!$user->socid && ($mode == "mine" || (!$user->admin && getDolGlobalInt('TICKET_LIMIT_VIEW_ASSIGNED_ONLY')))) {
 	$sql .= " AND (t.fk_user_assign = ".((int) $user->id);
-	if (empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY)) {
+	if (!getDolGlobalInt('TICKET_LIMIT_VIEW_ASSIGNED_ONLY')) {
 		$sql .= " OR t.fk_user_create = ".((int) $user->id);
 	}
 	$sql .= ")";
@@ -503,7 +503,7 @@ if (!$resql) {
 $num = $db->num_rows($resql);
 
 // Direct jump if only one record found
-if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all && !$page) {
+if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	header("Location: ".DOL_URL_ROOT.'/ticket/card.php?id='.$id);
@@ -790,7 +790,7 @@ if ($massaction == 'presendonclose') {
 		"name" => "massaction",
 		"value" => "close"
 	]);
-	$selectedchoice = (!empty($conf->global->TICKET_NOTIFY_AT_CLOSING)) ? "yes" : "no";
+	$selectedchoice = getDolGlobalInt('TICKET_NOTIFY_AT_CLOSING') ? "yes" : "no";
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassTicketClosingSendEmail"), $langs->trans("ConfirmMassTicketClosingSendEmailQuestion"), 'confirm_send_close', $hidden_form, $selectedchoice, 0, 200, 500, 1);
 }
 
@@ -861,7 +861,7 @@ foreach ($object->fields as $key => $val) {
 			print '</td>';
 		} elseif ($key == 'type_code') {
 			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
-			$formTicket->selectTypesTickets(dol_escape_htmltag(empty($search[$key]) ? '' : $search[$key]), 'search_'.$key, '', 2, 1, 1, 0, (!empty($val['css']) ? $val['css'] : 'maxwidth150'), 1);
+			$formTicket->selectTypesTickets(empty($search[$key]) ? '' : $search[$key], 'search_'.$key, '', 2, 1, 1, 0, (!empty($val['css']) ? $val['css'] : 'maxwidth150'), 1);
 			print '</td>';
 		} elseif ($key == 'category_code') {
 			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
@@ -878,7 +878,7 @@ foreach ($object->fields as $key => $val) {
 		} elseif ($key == 'fk_statut') {
 			$arrayofstatus = array();
 			$arrayofstatus['openall'] = '-- '.$langs->trans('OpenAll').' --';
-			foreach ($object->statuts_short as $key2 => $val2) {
+			foreach ($object->labelStatusShort as $key2 => $val2) {
 				if ($key2 == Ticket::STATUS_CLOSED) {
 					$arrayofstatus['closeall'] = '-- '.$langs->trans('ClosedAll').' --';
 				}
@@ -1020,7 +1020,7 @@ while ($i < $imaxinloop) {
 	// Store properties in $object
 	$object->setVarsFromFetchObj($obj);
 	$object->type_code = $obj->type_code;
-	$object->status = $object->fk_statut; // for backwad compatibility
+	$object->status = $object->fk_statut; // because field name is fk_statut
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
@@ -1145,7 +1145,7 @@ while ($i < $imaxinloop) {
 
 					// display a warning on untreated tickets
 					$is_open = ($object->status != Ticket::STATUS_CLOSED && $object->status != Ticket::STATUS_CANCELED );
-					$should_show_warning = (!empty($conf->global->TICKET_DELAY_SINCE_LAST_RESPONSE) || !empty($conf->global->TICKET_DELAY_BEFORE_FIRST_RESPONSE));
+					$should_show_warning = (getDolGlobalString('TICKET_DELAY_SINCE_LAST_RESPONSE') || getDolGlobalString('TICKET_DELAY_BEFORE_FIRST_RESPONSE'));
 					if ($is_open && $should_show_warning) {
 						$date_last_msg_sent = (int) $object->date_last_msg_sent;
 						$hour_diff = ($now - $date_last_msg_sent) / 3600 ;
@@ -1156,7 +1156,7 @@ while ($i < $imaxinloop) {
 							if ($hour_diff_creation > $conf->global->TICKET_DELAY_BEFORE_FIRST_RESPONSE) {
 								print " " . img_picto($langs->trans('Late') . ' : ' . $langs->trans('TicketsDelayForFirstResponseTooLong', $conf->global->TICKET_DELAY_BEFORE_FIRST_RESPONSE), 'warning', 'style="color: red;"', false, 0, 0, '', '');
 							}
-						} elseif (!empty($conf->global->TICKET_DELAY_SINCE_LAST_RESPONSE) && $hour_diff > $conf->global->TICKET_DELAY_SINCE_LAST_RESPONSE) {
+						} elseif (getDolGlobalString('TICKET_DELAY_SINCE_LAST_RESPONSE') && $hour_diff > $conf->global->TICKET_DELAY_SINCE_LAST_RESPONSE) {
 							print " " . img_picto($langs->trans('Late') . ' : ' . $langs->trans('TicketsDelayFromLastResponseTooLong', $conf->global->TICKET_DELAY_SINCE_LAST_RESPONSE), 'warning');
 						}
 					}

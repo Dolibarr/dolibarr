@@ -40,3 +40,4 @@ CurrencyCodeId=ID de devise
 CurrencyCode=Code de devise
 CurrencyUnitPrice=Prix unitaire en devise étrangère
 CurrencyPrice=Prix en devise étrangère
+MutltiCurrencyAutoUpdateCurrencies=Mettre à jour tous les taux de devises

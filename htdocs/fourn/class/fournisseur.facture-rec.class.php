@@ -122,14 +122,6 @@ class FactureFournisseurRec extends CommonInvoice
 
 	public $date_lim_reglement;
 
-	public $fk_multicurrency;
-	public $multicurrency_code;
-	public $multicurrency_tx;
-	public $multicurrency_subprice;
-	public $multicurrency_total_ht;
-	public $multicurrency_total_tva;
-	public $multicurrency_total_ttc;
-
 	public $usenewprice = 0;
 	public $frequency;
 	public $unit_frequency;
@@ -273,7 +265,8 @@ class FactureFournisseurRec extends CommonInvoice
 		$now = dol_now();
 
 		// Clean parameters
-		$this->titre = empty($this->titre) ? '' : $this->titre;
+		$this->titre = empty($this->titre) ? '' : $this->titre;	// deprecated
+		$this->title = empty($this->title) ? '' : $this->title;
 		$keyforref = $this->table_ref_field;
 		$this->ref = $this->$keyforref;
 		$this->ref_supplier = empty($this->ref_supplier) ? '' : $this->ref_supplier;
@@ -327,7 +320,7 @@ class FactureFournisseurRec extends CommonInvoice
 			$sql .= ', auto_validate';
 			$sql .= ', generate_pdf';
 			$sql .= ') VALUES (';
-			$sql .= "'".$this->db->escape($this->titre)."'";
+			$sql .= "'".$this->db->escape($this->title)."'";
 			$sql .= ", '".$this->db->escape($this->ref_supplier)."'";
 			$sql .= ", ".((int) $conf->entity);
 			$sql .= ", ".((int) $facfourn_src->socid);
@@ -496,7 +489,7 @@ class FactureFournisseurRec extends CommonInvoice
 		$error = 0;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_rec SET";
-		$sql .= " titre = '" . (!empty($this->titre) ? $this->db->escape($this->titre) : "")."'," ;
+		$sql .= " titre = '" . (!empty($this->title) ? $this->db->escape($this->title) : "")."'," ;
 		$sql .= " ref_supplier = '". (!empty($this->ref_supplier) ? $this->db->escape($this->ref_supplier) : "")."',";
 		$sql .= " entity = ". (!empty($this->entity) ? ((int) $this->entity) : 1) . ',';
 		if ($this->fk_soc > 0) $sql .= " fk_soc = ". (int) $this->fk_soc. ',';
@@ -571,7 +564,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 */
 	public function fetch($rowid, $ref = '', $ref_ext = '')
 	{
-		$sql = 'SELECT f.rowid, f.titre, f.ref_supplier, f.entity, f.fk_soc';
+		$sql = 'SELECT f.rowid, f.titre as title, f.ref_supplier, f.entity, f.fk_soc';
 		$sql .= ', f.datec, f.tms, f.suspended';
 		$sql .= ', f.libelle as label';
 		$sql .= ', f.vat_src_code, f.localtax1, f.localtax2';
@@ -605,7 +598,8 @@ class FactureFournisseurRec extends CommonInvoice
 				$keyforref = $this->table_ref_field;
 
 				$this->id                       = $obj->rowid;
-				$this->titre                    = $obj->titre;
+				$this->titre                    = $obj->title;
+				$this->title                    = $obj->title;
 				$this->ref                      = $obj->$keyforref;
 				$this->ref_supplier             = $obj->ref_supplier;
 				$this->entity                   = $obj->entity;
@@ -1304,6 +1298,7 @@ class FactureFournisseurRec extends CommonInvoice
 			}
 
 			$saventity = $conf->entity;
+			$laststep="None";
 
 			while ($i < $num) {     // Loop on each template invoice. If $num = 0, test is false at first pass.
 				$line = $this->db->fetch_object($resql);
@@ -1314,6 +1309,7 @@ class FactureFournisseurRec extends CommonInvoice
 
 				$new_fac_fourn = null;
 				$facturerec = new FactureFournisseurRec($this->db);
+				$laststep="Fetch {$line->rowid}";
 				$facturerec->fetch($line->rowid);
 
 				if ($facturerec->id > 0) {
@@ -1339,6 +1335,7 @@ class FactureFournisseurRec extends CommonInvoice
 					$new_fac_fourn->libelle = $facturerec->label;	// deprecated
 
 					$invoiceidgenerated = $new_fac_fourn->create($user);
+					$laststep="Create invoiceidgenerated $invoiceidgenerated";
 					if ($invoiceidgenerated <= 0) {
 						$this->errors = $new_fac_fourn->errors;
 						$this->error = $new_fac_fourn->error;
@@ -1346,6 +1343,7 @@ class FactureFournisseurRec extends CommonInvoice
 					}
 					if (!$error && ($facturerec->auto_validate || $forcevalidation)) {
 						$result = $new_fac_fourn->validate($user);
+						$laststep="Validate by user $user";
 						if ($result <= 0) {
 							$this->errors = $new_fac_fourn->errors;
 							$this->error = $new_fac_fourn->error;
@@ -1355,7 +1353,9 @@ class FactureFournisseurRec extends CommonInvoice
 
 					if (!$error && $facturerec->generate_pdf) {
 						// We refresh the object in order to have all necessary data (like date_lim_reglement)
+						$laststep="Refresh {$new_fac_fourn->id}";
 						$new_fac_fourn->fetch($new_fac_fourn->id);
+						$laststep="GenerateDocument {$new_fac_fourn->id}";
 						$result = $new_fac_fourn->generateDocument($facturerec->model_pdf, $langs);
 						if ($result < 0) {
 							$this->errors = $new_fac_fourn->errors;
@@ -1375,12 +1375,12 @@ class FactureFournisseurRec extends CommonInvoice
 					$facturerec->date_last_gen = dol_now();
 					$facturerec->date_when= $facturerec->getNextDate();
 					$facturerec->update($user);
-					$this->db->commit('createRecurringInvoices Process invoice template id=' .$facturerec->id. ', title=' .$facturerec->titre);
-					dol_syslog('createRecurringInvoices Process invoice template ' .$facturerec->titre. ' is finished with a success generation');
+					$this->db->commit('createRecurringInvoices Process invoice template id=' .$facturerec->id. ', title=' .$facturerec->title);
+					dol_syslog('createRecurringInvoices Process invoice template ' .$facturerec->title. ' is finished with a success generation');
 					$nb_create++;
-					$this->output .= $langs->trans('InvoiceGeneratedFromTemplate', $new_fac_fourn->ref, $facturerec->titre)."\n";
+					$this->output .= $langs->trans('InvoiceGeneratedFromTemplate', $new_fac_fourn->ref, $facturerec->title)."\n";
 				} else {
-					$this->db->rollback('createRecurringInvoices Process invoice template id=' .$facturerec->id. ', title=' .$facturerec->titre);
+					$this->db->rollback('createRecurringInvoices Process invoice template error='.$error.' invoiceidgenerated='.$invoiceidgenerated.' LastStep='.$laststep.' id=' .$facturerec->id. ', title=' .$facturerec->title);
 				}
 
 				$parameters = array(
@@ -1771,7 +1771,7 @@ class FactureFournisseurRec extends CommonInvoice
 	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
-			'facture_rec'
+			'facture_fourn_rec'
 		);
 
 		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
@@ -2013,7 +2013,6 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 
 	public $fk_user_author;
 	public $fk_user_modif;
-	public $fk_multicurrency;
 
 
 	/**

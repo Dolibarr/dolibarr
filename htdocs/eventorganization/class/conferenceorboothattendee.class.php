@@ -197,14 +197,14 @@ class ConferenceOrBoothAttendee extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
 
-		if (!empty($conf->global->EVENTORGANIZATION_FILTERATTENDEES_CAT)) {
+		if (getDolGlobalString('EVENTORGANIZATION_FILTERATTENDEES_CAT')) {
 			$this->fields['fk_soc']['type'] .= ' AND rowid IN (SELECT DISTINCT c.fk_soc FROM '.MAIN_DB_PREFIX.'categorie_societe as c WHERE c.fk_categorie='.(int) $conf->global->EVENTORGANIZATION_FILTERATTENDEES_CAT.')';
 		}
 		if (isset($conf->global->EVENTORGANIZATION_FILTERATTENDEES_TYPE)
@@ -608,6 +608,12 @@ class ConferenceOrBoothAttendee extends CommonObject
 				if (!$resql) {
 					$error++; $this->error = $this->db->lasterror();
 				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'conferenceorboothattendee/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'conferenceorboothattendee/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++; $this->error = $this->db->lasterror();
+				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
@@ -802,7 +808,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowConferenceOrBoothAttendee");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -986,11 +992,11 @@ class ConferenceOrBoothAttendee extends CommonObject
 		global $langs, $conf;
 		$langs->load("eventorganization@eventorganization");
 
-		if (empty($conf->global->EVENTORGANIZATION_CONFERENCEORBOOTHATTENDEE_ADDON)) {
+		if (!getDolGlobalString('EVENTORGANIZATION_CONFERENCEORBOOTHATTENDEE_ADDON')) {
 			$conf->global->EVENTORGANIZATION_CONFERENCEORBOOTHATTENDEE_ADDON = 'mod_conferenceorboothattendee_standard';
 		}
 
-		if (!empty($conf->global->EVENTORGANIZATION_CONFERENCEORBOOTHATTENDEE_ADDON)) {
+		if (getDolGlobalString('EVENTORGANIZATION_CONFERENCEORBOOTHATTENDEE_ADDON')) {
 			$mybool = false;
 
 			$file = getDolGlobalString('EVENTORGANIZATION_CONFERENCEORBOOTHATTENDEE_ADDON') . ".php";
@@ -1056,7 +1062,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->CONFERENCEORBOOTHATTENDEE_ADDON_PDF)) {
+			} elseif (getDolGlobalString('CONFERENCEORBOOTHATTENDEE_ADDON_PDF')) {
 				$modele = $conf->global->CONFERENCEORBOOTHATTENDEE_ADDON_PDF;
 			}
 		}

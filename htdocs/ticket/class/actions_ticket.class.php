@@ -191,7 +191,6 @@ class ActionsTicket extends CommonHookActions
 		print '<!-- initial message of ticket -->'."\n";
 		if ($user->hasRight('ticket', 'manage') && $action == 'edit_message_init') {
 			// MESSAGE
-
 			print '<form action="'.$_SERVER['PHP_SELF'].'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="track_id" value="'.$object->track_id.'">';
@@ -199,9 +198,8 @@ class ActionsTicket extends CommonHookActions
 		}
 
 		// Initial message
-		print '<div class="underbanner clearboth"></div>';
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
-		print '<table class="noborder centpercent margintable margintablenotop">';
+		print '<table class="noborder centpercent margintable margintable">';
 		print '<tr class="liste_titre trforfield"><td class="nowrap titlefield">';
 		print $langs->trans("InitialMessage");
 		print '</td><td>';
@@ -277,10 +275,15 @@ class ActionsTicket extends CommonHookActions
 
 		$action = GETPOST('action', 'aZ09');
 
+		print '<div class="ticketpublicarea ticketlargemargin centpercent" style="padding-top: 0">';
 		$this->viewTicketOriginalMessage($user, $action, $object);
+		print '</div>';
 
 		if (is_array($this->dao->cache_msgs_ticket) && count($this->dao->cache_msgs_ticket) > 0) {
-			print '<table class="border" style="width:100%;">';
+			print '<div class="ticketpublicarea ticketlargemargin centpercent">';
+
+			print '<div class="div-table-responsive-no-min">';
+			print '<table class="border centpercent">';
 
 			print '<tr class="liste_titre">';
 
@@ -391,8 +394,12 @@ class ActionsTicket extends CommonHookActions
 			}
 
 			print '</table>';
+			print '</div>';
+			print '</div>';
 		} else {
+			print '<div class="ticketpublicarea ticketlargemargin centpercent">';
 			print '<div class="info">'.$langs->trans('NoMsgForThisTicket').'</div>';
+			print '</div>';
 		}
 	}
 
@@ -474,7 +481,7 @@ class ActionsTicket extends CommonHookActions
 		// Sort results to be similar to status object list
 		//sort($exclude_status);
 
-		foreach ($object->statuts_short as $status => $status_label) {
+		foreach ($object->labelStatusShort as $status => $status_label) {
 			if (!in_array($status, $exclude_status)) {
 				print '<div class="inline-block center marginbottomonly">';
 
@@ -486,8 +493,8 @@ class ActionsTicket extends CommonHookActions
 
 				print '<a class="butAction butStatus marginbottomonly" href="'.$urlforbutton.'">';
 				print $object->LibStatut($status, 3, 1).' ';
-				//print img_picto($langs->trans($object->statuts_short[$status]), 'statut'.$status.'.png@ticket', '', false, 0, 0, '', 'valignmiddle').' ';
-				print $langs->trans($object->statuts_short[$status]);
+				//print img_picto($langs->trans($object->labelStatusShort[$status]), 'statut'.$status.'.png@ticket', '', false, 0, 0, '', 'valignmiddle').' ';
+				print $langs->trans($object->labelStatusShort[$status]);
 				print '</a>';
 				print '</div>';
 			}

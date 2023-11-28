@@ -44,14 +44,19 @@ class DiscountAbsolute
 	public $errors = array();
 
 	/**
-	 * @var int ID discount
+	 * @var int 	ID discount
 	 */
 	public $id;
 
 	/**
-	 * @var int Thirdparty ID
+	 * @var int 	Thirdparty ID
+	 * @deprecated
 	 */
 	public $fk_soc;
+	/**
+	 * @var int 	Thirdparty ID
+	 */
+	public $socid;
 
 	public $discount_type; // 0 => customer discount, 1 => supplier discount
 
@@ -68,6 +73,21 @@ class DiscountAbsolute
 	public $multicurrency_amount_ht;	// deprecated
 	public $multicurrency_amount_tva;	// deprecated
 	public $multicurrency_amount_ttc;	// deprecated
+
+	/**
+	 * @var double
+	 */
+	public $multicurrency_subprice;
+
+	/**
+	 * @var int
+	 */
+	public $fk_invoice_supplier;
+
+	/**
+	 * @var int
+	 */
+	public $fk_invoice_supplier_line;
 
 	// Vat rate
 	public $tva_tx;
@@ -735,9 +755,8 @@ class DiscountAbsolute
 	 */
 	public function initAsSpecimen()
 	{
-		global $user, $langs, $conf;
-
 		$this->fk_soc         = 1;
+		$this->socid          = 1;
 		$this->amount_ht      = 10;
 		$this->amount_tva     = 1.96;
 		$this->amount_ttc     = 11.96;

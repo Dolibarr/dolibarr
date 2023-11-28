@@ -689,7 +689,7 @@ class PaymentVarious extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -747,9 +747,9 @@ class PaymentVarious extends CommonObject
 
 				$this->id = $obj->rowid;
 				$this->user_creation = $obj->fk_user_author;
-				$this->user_modif = $obj->fk_user_modif;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation = $this->db->jdate($obj->datec);
-				$this->date_modif = $this->db->jdate($obj->tms);
+				$this->date_modification = $this->db->jdate($obj->tms);
 			}
 			$this->db->free($result);
 		} else {

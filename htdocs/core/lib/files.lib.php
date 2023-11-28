@@ -689,7 +689,7 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask 
 		dol_syslog("files.lib.php::dolReplaceInFile failed to move tmp file to final dest", LOG_WARNING);
 		return -3;
 	}
-	if (empty($newmask) && !empty($conf->global->MAIN_UMASK)) {
+	if (empty($newmask) && getDolGlobalString('MAIN_UMASK')) {
 		$newmask = $conf->global->MAIN_UMASK;
 	}
 	if (empty($newmask)) {	// This should no happen
@@ -760,7 +760,7 @@ function dol_copy($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $te
 		dol_syslog("files.lib.php::dol_copy failed to copy", LOG_WARNING);
 		return -3;
 	}
-	if (empty($newmask) && !empty($conf->global->MAIN_UMASK)) {
+	if (empty($newmask) && getDolGlobalString('MAIN_UMASK')) {
 		$newmask = $conf->global->MAIN_UMASK;
 	}
 	if (empty($newmask)) {	// This should no happen
@@ -862,7 +862,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
 		// We must set mask just before creating dir, becaause it can be set differently by dol_copy
 		umask(0);
 		$dirmaskdec = octdec($newmask);
-		if (empty($newmask) && !empty($conf->global->MAIN_UMASK)) {
+		if (empty($newmask) && getDolGlobalString('MAIN_UMASK')) {
 			$dirmaskdec = octdec($conf->global->MAIN_UMASK);
 		}
 		$dirmaskdec |= octdec('0200'); // Set w bit required to be able to create content for recursive subdirs files
@@ -942,10 +942,11 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
  * @param   int		$overwriteifexists  Overwrite file if exists (1 by default)
  * @param   int     $testvirus          Do an antivirus test. Move is canceled if a virus is found.
  * @param	int		$indexdatabase		Index new file into database.
+ * @param	int		$moreinfo			Array with more information
  * @return  boolean 		            True if OK, false if KO
  * @see dol_move_uploaded_file()
  */
-function dol_move($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $testvirus = 0, $indexdatabase = 1)
+function dol_move($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $testvirus = 0, $indexdatabase = 1, $moreinfo = array())
 {
 	global $user, $db, $conf;
 	$result = false;
@@ -1037,10 +1038,31 @@ function dol_move($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $te
 					$ecmfile->filepath = $rel_dir;
 					$ecmfile->filename = $filename;
 					$ecmfile->label = md5_file(dol_osencode($destfile)); // $destfile is a full path to file
-					$ecmfile->fullpath_orig = $srcfile;
-					$ecmfile->gen_or_uploaded = 'unknown';
-					$ecmfile->description = ''; // indexed content
-					$ecmfile->keywords = ''; // keyword content
+					$ecmfile->fullpath_orig = basename($srcfile);
+					$ecmfile->gen_or_uploaded = 'uploaded';
+					if (!empty($moreinfo) && !empty($moreinfo['description'])) {
+						$ecmfile->description = $moreinfo['description']; // indexed content
+					} else {
+						$ecmfile->description = ''; // indexed content
+					}
+					if (!empty($moreinfo) && !empty($moreinfo['keywords'])) {
+						$ecmfile->keywords = $moreinfo['keywords']; // indexed content
+					} else {
+						$ecmfile->keywords = ''; // keyword content
+					}
+					if (!empty($moreinfo) && !empty($moreinfo['note_private'])) {
+						$ecmfile->note_private = $moreinfo['note_private'];
+					}
+					if (!empty($moreinfo) && !empty($moreinfo['note_public'])) {
+						$ecmfile->note_public = $moreinfo['note_public'];
+					}
+					if (!empty($moreinfo) && !empty($moreinfo['src_object_type'])) {
+						$ecmfile->src_object_type = $moreinfo['src_object_type'];
+					}
+					if (!empty($moreinfo) && !empty($moreinfo['src_object_id'])) {
+						$ecmfile->src_object_id = $moreinfo['src_object_id'];
+					}
+
 					$resultecm = $ecmfile->create($user);
 					if ($resultecm < 0) {
 						setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
@@ -1058,7 +1080,7 @@ function dol_move($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $te
 		}
 
 		if (empty($newmask)) {
-			$newmask = empty($conf->global->MAIN_UMASK) ? '0755' : $conf->global->MAIN_UMASK;
+			$newmask = !getDolGlobalString('MAIN_UMASK') ? '0755' : $conf->global->MAIN_UMASK;
 		}
 
 		// Currently method is restricted to files (dol_delete_files previously used is for files, and mask usage if for files too)
@@ -1159,7 +1181,7 @@ function dolCheckVirus($src_file)
 {
 	global $conf, $db;
 
-	if (!empty($conf->global->MAIN_ANTIVIRUS_COMMAND)) {
+	if (getDolGlobalString('MAIN_ANTIVIRUS_COMMAND')) {
 		if (!class_exists('AntiVir')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/antivir.class.php';
 		}
@@ -1244,7 +1266,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		// Security:
 		// Disallow file with some extensions. We rename them.
 		// Because if we put the documents directory into a directory inside web root (very bad), this allows to execute on demand arbitrary code.
-		if (isAFileWithExecutableContent($dest_file) && empty($conf->global->MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED)) {
+		if (isAFileWithExecutableContent($dest_file) && !getDolGlobalString('MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED')) {
 			// $upload_dir ends with a slash, so be must be sure the medias dir to compare to ends with slash too.
 			$publicmediasdirwithslash = $conf->medias->multidir_output[$conf->entity];
 			if (!preg_match('/\/$/', $publicmediasdirwithslash)) {
@@ -1559,7 +1581,8 @@ function dol_delete_preview($object)
 	}
 
 	if (empty($dir)) {
-		return 'ErrorObjectNoSupportedByFunction';
+		$object->error = $langs->trans('ErrorObjectNoSupportedByFunction');
+		return 0;
 	}
 
 	$refsan = dol_sanitizeFileName($object->ref);
@@ -1617,7 +1640,7 @@ function dol_meta_create($object)
 	global $conf;
 
 	// Create meta file
-	if (empty($conf->global->MAIN_DOC_CREATE_METAFILE)) {
+	if (!getDolGlobalString('MAIN_DOC_CREATE_METAFILE')) {
 		return 0; // By default, no metafile.
 	}
 
@@ -1846,7 +1869,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 					// Update index table of files (llx_ecm_files)
 					if ($donotupdatesession == 1) {
 						$sharefile = 0;
-						if ($TFile['type'][$i] == 'application/pdf' && strpos($_SERVER["REQUEST_URI"], 'product') !== false && !empty($conf->global->PRODUCT_ALLOW_EXTERNAL_DOWNLOAD)) $sharefile = 1;
+						if ($TFile['type'][$i] == 'application/pdf' && strpos($_SERVER["REQUEST_URI"], 'product') !== false && getDolGlobalString('PRODUCT_ALLOW_EXTERNAL_DOWNLOAD')) $sharefile = 1;
 						$result = addFileIntoDatabaseIndex($upload_dir, basename($destfile).($resupload == 2 ? '.noexe' : ''), $TFile['name'][$i], 'uploaded', $sharefile, $object);
 						if ($result < 0) {
 							if ($allowoverwrite) {
@@ -2005,7 +2028,7 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 			if (isset($object->src_object_keywords)) $ecmfile->keywords = $object->src_object_keywords;
 		}
 
-		if (!empty($conf->global->MAIN_FORCE_SHARING_ON_ANY_UPLOADED_FILE)) {
+		if (getDolGlobalString('MAIN_FORCE_SHARING_ON_ANY_UPLOADED_FILE')) {
 			$setsharekey = 1;
 		}
 
@@ -2169,7 +2192,7 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring 
 			$foundhandler = 1;
 			$compressdata = zstd_compress($data, 9);
 		} elseif ($mode == 'zip') {
-			if (class_exists('ZipArchive') && !empty($conf->global->MAIN_USE_ZIPARCHIVE_FOR_ZIP_COMPRESS)) {
+			if (class_exists('ZipArchive') && getDolGlobalString('MAIN_USE_ZIPARCHIVE_FOR_ZIP_COMPRESS')) {
 				$foundhandler = 1;
 
 				$rootPath = realpath($inputfile);
@@ -2284,7 +2307,7 @@ function dol_uncompress($inputfile, $outputdir)
 	$fileinfo["extension"] = strtolower($fileinfo["extension"]);
 
 	if ($fileinfo["extension"] == "zip") {
-		if (defined('ODTPHP_PATHTOPCLZIP') && empty($conf->global->MAIN_USE_ZIPARCHIVE_FOR_ZIP_UNCOMPRESS)) {
+		if (defined('ODTPHP_PATHTOPCLZIP') && !getDolGlobalString('MAIN_USE_ZIPARCHIVE_FOR_ZIP_UNCOMPRESS')) {
 			dol_syslog("Constant ODTPHP_PATHTOPCLZIP for pclzip library is set to ".ODTPHP_PATHTOPCLZIP.", so we use Pclzip to unzip into ".$outputdir);
 			include_once ODTPHP_PATHTOPCLZIP.'/pclzip.lib.php';
 			$archive = new PclZip($inputfile);
@@ -2480,7 +2503,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 				// Zip archive will be created only after closing object
 				$zip->close();
 
-				if (empty($newmask) && !empty($conf->global->MAIN_UMASK)) {
+				if (empty($newmask) && getDolGlobalString('MAIN_UMASK')) {
 					$newmask = $conf->global->MAIN_UMASK;
 				}
 				if (empty($newmask)) {	// This should no happen
@@ -2860,7 +2883,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		//$original_file=$conf->barcode->dir_temp.'/'.$original_file;
 		$original_file = '';
 	} elseif ($modulepart == 'iconmailing' && !empty($conf->mailing->dir_temp)) {
-		// Wrapping pour les icones de background des mailings
+		// Wrapping for icon of background of mailings
 		$accessallowed = 1;
 		$original_file = $conf->mailing->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'scanner_user_temp' && !empty($conf->scanner->dir_temp)) {

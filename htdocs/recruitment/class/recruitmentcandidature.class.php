@@ -173,7 +173,7 @@ class RecruitmentCandidature extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -559,6 +559,12 @@ class RecruitmentCandidature extends CommonObject
 				if (!$resql) {
 					$error++; $this->error = $this->db->lasterror();
 				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'recruitmentcandidature/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'recruitmentcandidature/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++; $this->error = $this->db->lasterror();
+				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
@@ -740,7 +746,7 @@ class RecruitmentCandidature extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowRecruitmentCandidature");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -938,14 +944,14 @@ class RecruitmentCandidature extends CommonObject
 		global $langs, $conf;
 		$langs->load("recruitment@recruitment");
 
-		if (empty($conf->global->RECRUITMENT_RECRUITMENTCANDIDATURE_ADDON)) {
+		if (!getDolGlobalString('RECRUITMENT_RECRUITMENTCANDIDATURE_ADDON')) {
 			$conf->global->RECRUITMENT_RECRUITMENTCANDIDATURE_ADDON = 'mod_recruitmentcandidature_standard';
 		}
 
-		if (!empty($conf->global->RECRUITMENT_RECRUITMENTCANDIDATURE_ADDON)) {
+		if (getDolGlobalString('RECRUITMENT_RECRUITMENTCANDIDATURE_ADDON')) {
 			$mybool = false;
 
-			$file = $conf->global->RECRUITMENT_RECRUITMENTCANDIDATURE_ADDON.".php";
+			$file = getDolGlobalString('RECRUITMENT_RECRUITMENTCANDIDATURE_ADDON') . ".php";
 			$classname = $conf->global->RECRUITMENT_RECRUITMENTCANDIDATURE_ADDON;
 
 			// Include file with class
@@ -1004,7 +1010,7 @@ class RecruitmentCandidature extends CommonObject
 		$langs->load("recruitment@recruitment");
 
 		if (!dol_strlen($modele)) {
-			if (!empty($conf->global->RECRUITMENTCANDIDATURE_ADDON_PDF)) {
+			if (getDolGlobalString('RECRUITMENTCANDIDATURE_ADDON_PDF')) {
 				$modele = $conf->global->RECRUITMENTCANDIDATURE_ADDON_PDF;
 			} else {
 				$modele = ''; // No default value. For job application, we allow to disable all PDF generation

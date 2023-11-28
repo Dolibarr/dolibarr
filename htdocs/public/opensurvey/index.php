@@ -136,7 +136,7 @@ $logo = $mysoc->logo;
 $paramlogo = 'ONLINE_OPENSURVEY_LOGO_'.$suffix;
 if (!empty($conf->global->$paramlogo)) {
 	$logosmall = $conf->global->$paramlogo;
-} elseif (!empty($conf->global->ONLINE_OPENSURVEY_LOGO)) {
+} elseif (getDolGlobalString('ONLINE_OPENSURVEY_LOGO')) {
 	$logosmall = $conf->global->ONLINE_OPENSURVEY_LOGO_;
 }
 //print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
@@ -156,13 +156,13 @@ if ($urllogo) {
 	print '<div class="logopublicpayment">';
 	print '<img id="dolpaymentlogo" src="'.$urllogo.'">';
 	print '</div>';
-	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
+	if (!getDolGlobalString('MAIN_HIDE_POWERED_BY')) {
 		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 	}
 	print '</div>';
 }
 
-if (!empty($conf->global->OPENSURVEY_IMAGE_PUBLIC_INTERFACE)) {
+if (getDolGlobalString('OPENSURVEY_IMAGE_PUBLIC_INTERFACE')) {
 	print '<div class="backimagepublicrecruitment">';
 	print '<img id="idOPENSURVEY_IMAGE_PUBLIC_INTERFACE" src="' . getDolGlobalString('OPENSURVEY_IMAGE_PUBLIC_INTERFACE').'">';
 	print '</div>';
@@ -197,7 +197,7 @@ if (is_array($results)) {
 
 			// Label
 			print $langs->trans("Label").' : ';
-			print '<b>'.dol_escape_htmltag($object->titre).'</b><br>';
+			print '<b>'.dol_escape_htmltag($object->title).'</b><br>';
 
 			// Date
 			print  $langs->trans("DateExpected").' : ';

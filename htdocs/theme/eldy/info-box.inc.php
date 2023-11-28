@@ -225,7 +225,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	transform: translate(-50%, -50%);
 }
 
-<?php if (empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS) && !empty($conf->global->MAIN_INCLUDE_GLOBAL_STATS_IN_OPENED_DASHBOARD)) { ?>
+<?php if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_BOXSTATS') && getDolGlobalString('MAIN_INCLUDE_GLOBAL_STATS_IN_OPENED_DASHBOARD')) { ?>
 .info-box-icon-text{
 	opacity: 1;
 }
@@ -305,7 +305,7 @@ a.info-box-text{ text-decoration: none;}
 include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $prefix = '';
-if (!empty($conf->global->THEME_INFOBOX_COLOR_ON_BACKGROUND)) {
+if (getDolGlobalString('THEME_INFOBOX_COLOR_ON_BACKGROUND')) {
 	$prefix = 'background-';
 }
 
@@ -503,21 +503,21 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	/*justify-content: space-between;*/
 }
 
-.box-flex-grow-zero{
+.box-flex-grow-zero {
 	flex-grow: 0 !important;
 }
 
-.box-flex-item{
+.box-flex-item {
 	flex-grow : 1;
 	flex-shrink: 1;
 	flex-basis: auto;
-
 	width: 280px;
-	margin: 5px 10px 0px 10px;
 }
-.box-flex-item.filler{
-	margin: 0px 0px 0px 15px !important;
+.box-flex-item.filler {
 	height: 0;
+}
+.box-flex-item, .box-flex-item.filler {
+	margin: 5px 10px 0px 10px;
 }
 
 .info-box-title {

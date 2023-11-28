@@ -186,7 +186,7 @@ class Skill extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -251,7 +251,7 @@ class Skill extends CommonObject
 		global $conf, $user, $langs;
 
 		$MaxNumberSkill = isset($conf->global->HRM_MAXRANK) ? $conf->global->HRM_MAXRANK : self::DEFAULT_MAX_RANK_PER_SKILL;
-		$defaultSkillDesc = !empty($conf->global->HRM_DEFAULT_SKILL_DESCRIPTION) ? $conf->global->HRM_DEFAULT_SKILL_DESCRIPTION : $langs->trans("NoDescription");
+		$defaultSkillDesc = getDolGlobalString('HRM_DEFAULT_SKILL_DESCRIPTION') ? $conf->global->HRM_DEFAULT_SKILL_DESCRIPTION : $langs->trans("NoDescription");
 
 		$error = 0;
 
@@ -628,6 +628,12 @@ class Skill extends CommonObject
 				if (!$resql) {
 					$error++; $this->error = $this->db->lasterror();
 				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'skill/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'skill/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++; $this->error = $this->db->lasterror();
+				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
@@ -794,7 +800,7 @@ class Skill extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowSkill");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -991,11 +997,11 @@ class Skill extends CommonObject
 		global $langs, $conf;
 		$langs->load("hrm");
 
-		if (empty($conf->global->hrm_SKILL_ADDON)) {
+		if (!getDolGlobalString('hrm_SKILL_ADDON')) {
 			$conf->global->hrm_SKILL_ADDON = 'mod_skill_standard';
 		}
 
-		if (!empty($conf->global->hrm_SKILL_ADDON)) {
+		if (getDolGlobalString('hrm_SKILL_ADDON')) {
 			$mybool = false;
 
 			$file = getDolGlobalString('hrm_SKILL_ADDON') . ".php";
@@ -1061,7 +1067,7 @@ class Skill extends CommonObject
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->SKILL_ADDON_PDF)) {
+			} elseif (getDolGlobalString('SKILL_ADDON_PDF')) {
 				$modele = $conf->global->SKILL_ADDON_PDF;
 			}
 		}

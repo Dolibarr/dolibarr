@@ -55,8 +55,8 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 			$date_start = dol_get_first_day($year_start, GETPOST("month"), false);
 			$date_end = dol_get_last_day($year_start, GETPOST("month"), false);
 		} else {
-			$date_start = dol_get_first_day($year_start, empty($conf->global->SOCIETE_FISCAL_MONTH_START) ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START, false);
-			if (empty($conf->global->MAIN_INFO_VAT_RETURN) || getDolGlobalInt('MAIN_INFO_VAT_RETURN') == 2) {
+			$date_start = dol_get_first_day($year_start, !getDolGlobalString('SOCIETE_FISCAL_MONTH_START') ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START, false);
+			if (!getDolGlobalString('MAIN_INFO_VAT_RETURN') || getDolGlobalInt('MAIN_INFO_VAT_RETURN') == 2) {
 				$date_end = dol_time_plus_duree($date_start, 3, 'm') - 1;
 			} elseif (getDolGlobalInt('MAIN_INFO_VAT_RETURN') == 3) {
 				$date_end = dol_time_plus_duree($date_start, 1, 'y') - 1;

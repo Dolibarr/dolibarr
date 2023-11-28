@@ -401,6 +401,7 @@ class AccountingAccount extends CommonObject
 	{
 		global $langs;
 
+		// TODO Looks a stupid check
 		$sql = "(SELECT fk_code_ventilation FROM ".MAIN_DB_PREFIX."facturedet";
 		$sql .= " WHERE fk_code_ventilation=".((int) $this->id).")";
 		$sql .= "UNION";
@@ -496,7 +497,7 @@ class AccountingAccount extends CommonObject
 		$url = '';
 		$labelurl = '';
 		if (empty($option) || $option == 'ledger') {
-			$url = DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?search_accountancy_code_start=' . urlencode($this->account_number) . '&search_accountancy_code_end=' . urlencode($this->account_number);
+			$url = DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?search_accountancy_code_start=' . urlencode((isset($this->account_number) ? $this->account_number : '')) . '&search_accountancy_code_end=' . urlencode((isset($this->account_number) ? $this->account_number : ''));
 			$labelurl = $langs->trans("ShowAccountingAccountInLedger");
 		} elseif ($option == 'journals') {
 			$url = DOL_URL_ROOT . '/accountancy/bookkeeping/list.php?search_accountancy_code_start=' . urlencode($this->account_number) . '&search_accountancy_code_end=' . urlencode($this->account_number);

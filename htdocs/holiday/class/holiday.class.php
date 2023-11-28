@@ -123,6 +123,11 @@ class Holiday extends CommonObject
 	 */
 	public $fk_user_cancel;
 
+	/**
+	 * @var int 	ID for creation
+	 */
+	public $fk_user_create;
+
 
 	public $detail_refuse = '';
 
@@ -184,11 +189,11 @@ class Holiday extends CommonObject
 		global $langs, $conf;
 		$langs->load("order");
 
-		if (empty($conf->global->HOLIDAY_ADDON)) {
+		if (!getDolGlobalString('HOLIDAY_ADDON')) {
 			$conf->global->HOLIDAY_ADDON = 'mod_holiday_madonna';
 		}
 
-		if (!empty($conf->global->HOLIDAY_ADDON)) {
+		if (getDolGlobalString('HOLIDAY_ADDON')) {
 			$mybool = false;
 
 			$file = getDolGlobalString('HOLIDAY_ADDON') . ".php";
@@ -786,6 +791,12 @@ class Holiday extends CommonObject
 				if (!$resql) {
 					$error++;
 					$this->error = $this->db->lasterror();
+				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'holiday/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'holiday/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++; $this->error = $this->db->lasterror();
 				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
@@ -1479,10 +1490,10 @@ class Holiday extends CommonObject
 			$statusType = 'status1';
 		}
 		if ($status == self::STATUS_CANCELED) {
-			$statusType = 'status5';
+			$statusType = 'status9';
 		}
 		if ($status == self::STATUS_REFUSED) {
-			$statusType = 'status5';
+			$statusType = 'status9';
 		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode, '', $params);
@@ -1490,7 +1501,7 @@ class Holiday extends CommonObject
 
 
 	/**
-	 *   Affiche un select HTML des statuts de congés payés
+	 *   Show select with list of leave status
 	 *
 	 *   @param 	int		$selected   	Id of preselected status
 	 *   @param		string	$htmlname		Name of HTML select field
@@ -1501,7 +1512,7 @@ class Holiday extends CommonObject
 	{
 		global $langs;
 
-		// Liste des statuts
+		// List of status label
 		$name = array('DraftCP', 'ToReviewCP', 'ApprovedCP', 'CancelCP', 'RefuseCP');
 		$nb = count($name) + 1;
 
@@ -1509,7 +1520,7 @@ class Holiday extends CommonObject
 		$out = '<select name="'.$htmlname.'" id="'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'">'."\n";
 		$out .= '<option value="-1">&nbsp;</option>'."\n";
 
-		// Boucle des statuts
+		// Loop on status
 		for ($i = 1; $i < $nb; $i++) {
 			if ($i == $selected) {
 				$out .= '<option value="'.$i.'" selected>'.$langs->trans($name[$i - 1]).'</option>'."\n";
@@ -1797,13 +1808,13 @@ class Holiday extends CommonObject
 			if ($type) {
 				// If user of Dolibarr
 				$sql = "SELECT";
-				if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+				if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 					$sql .= " DISTINCT";
 				}
 				$sql .= " u.rowid";
 				$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 
-				if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+				if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 					$sql .= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
 					$sql .= " WHERE ((ug.fk_user = u.rowid";
 					$sql .= " AND ug.entity IN (".getEntity('usergroup')."))";
@@ -1887,13 +1898,13 @@ class Holiday extends CommonObject
 			if ($type) {
 				// If we need users of Dolibarr
 				$sql = "SELECT";
-				if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+				if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 					$sql .= " DISTINCT";
 				}
 				$sql .= " u.rowid, u.lastname, u.firstname, u.gender, u.photo, u.employee, u.statut, u.fk_user";
 				$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 
-				if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+				if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 					$sql .= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
 					$sql .= " WHERE ((ug.fk_user = u.rowid";
 					$sql .= " AND ug.entity IN (".getEntity('usergroup')."))";

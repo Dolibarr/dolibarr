@@ -52,7 +52,7 @@ $canedituser = (!empty($user->admin) || $user->hasRight("user", "user", "write")
 $candisableuser = (!empty($user->admin) || $user->hasRight("user", "user", "delete"));
 $canreadgroup = $canreaduser;
 $caneditgroup = $canedituser;
-if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$canreadgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "read"));
 	$caneditgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "write"));
 }

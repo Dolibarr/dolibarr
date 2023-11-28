@@ -1,11 +1,11 @@
 <?php
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2016 Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2011-2014 Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+/* Copyright (C) 2001-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2023  Alexandre Spangaro      <aspangaro@easya.solutions>
+ * Copyright (C) 2011-2014  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 /**
  *      \file       htdocs/compta/tva/payments.php
  *      \ingroup    compta
- *        \brief      Page to list payments of special expenses
+ *      \brief      Page to list payments of special expenses
  */
 
 // Load Dolibarr environment
@@ -285,7 +285,6 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 			print '</tr>';
 
 			$total = $total + $obj->total;
-			$totalnb = $totalnb + $obj->nb;
 			$totalpaid = $totalpaid + $obj->totalpaid;
 			$i++;
 		}
@@ -293,14 +292,14 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 		// Total
 		print '<tr class="liste_total"><td colspan="3" class="liste_total">' . $langs->trans("Total") . '</td>';
 		print '<td class="liste_total right"></td>'; // A total here has no sense
-		print '<td align="center" class="liste_total">&nbsp;</td>';
-		print '<td align="center" class="liste_total">&nbsp;</td>';
+		print '<td class="center liste_total">&nbsp;</td>';
+		print '<td class="center liste_total">&nbsp;</td>';
 		if (isModEnabled("banque")) {
-			print '<td align="center" class="liste_total">&nbsp;</td>';
-			print '<td align="center" class="liste_total">&nbsp;</td>';
+			print '<td class="center liste_total">&nbsp;</td>';
+			print '<td class="center liste_total">&nbsp;</td>';
 		}
-		print '<td align="center" class="liste_total">&nbsp;</td>';
-		print '<td align="center" class="liste_total">&nbsp;</td>';
+		print '<td class="center liste_total">&nbsp;</td>';
+		print '<td class="center liste_total">&nbsp;</td>';
 		print '<td class="liste_total right">' . price($totalpaid) . "</td>";
 		print "</tr>";
 	}

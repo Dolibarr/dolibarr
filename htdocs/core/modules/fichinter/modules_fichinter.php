@@ -91,7 +91,7 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0,
 
 	// Positionne modele sur le nom du modele de fichinter a utiliser
 	if (!dol_strlen($modele)) {
-		if (!empty($conf->global->FICHEINTER_ADDON_PDF)) {
+		if (getDolGlobalString('FICHEINTER_ADDON_PDF')) {
 			$modele = $conf->global->FICHEINTER_ADDON_PDF;
 		} else {
 			$modele = 'soleil';

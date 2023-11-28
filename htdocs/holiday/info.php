@@ -39,7 +39,7 @@ $ref = GETPOST('ref', 'alpha');
 $childids = $user->getAllChildIds(1);
 
 $morefilter = '';
-if (!empty($conf->global->HOLIDAY_HIDE_FOR_NON_SALARIES)) {
+if (getDolGlobalString('HOLIDAY_HIDE_FOR_NON_SALARIES')) {
 	$morefilter = 'AND employee = 1';
 }
 

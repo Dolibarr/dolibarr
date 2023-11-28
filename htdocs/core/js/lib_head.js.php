@@ -253,14 +253,15 @@ function dpChangeDay(dateFieldID, format)
 
 /*
  * =================================================================
- * Function:
- * formatDate (javascript object Date(), format) Purpose: Returns a date in the
- * output format specified. The format string can use the following tags: Field |
- * Tags -------------+------------------------------- Year | yyyy (4 digits), yy
- * (2 digits) Month | MM (2 digits) Day of Month | dd (2 digits) Hour (1-12) |
- * hh (2 digits) Hour (0-23) | HH (2 digits) Minute | mm (2 digits) Second | ss
- * (2 digits) Author: Laurent Destailleur Author: Matelli (see
- * http://matelli.fr/showcases/patchs-dolibarr/update-date-input-in-action-form.html)
+ * Function: formatDate(javascript object Date(), format)
+ * Purpose: Returns a date in the output format specified. The format string can use the following tags:
+ * Year | yyyy (4 digits), yy (2 digits)
+ * Month | MM (2 digits)
+ * Day of Month | dd (2 digits)
+ * Hour (1-12) | hh (2 digits) Hour (0-23) | HH (2 digits)
+ * Minute | mm (2 digits)
+ * Second | ss (2 digits)
+ * Author: Laurent Destailleur Author: Matelli (see http://matelli.fr/showcases/patchs-dolibarr/update-date-input-in-action-form.html)
  * Licence: GPL
  * ==================================================================
  */
@@ -1276,7 +1277,7 @@ function price2numjs(amount) {
 
 
 <?php
-if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && !defined('DISABLE_JQUERY_JNOTIFY')) {
+if (!getDolGlobalString('MAIN_DISABLE_JQUERY_JNOTIFY') && !defined('DISABLE_JQUERY_JNOTIFY')) {
 	?>
 // Defined properties for JNotify
 $(document).ready(function() {
@@ -1325,7 +1326,7 @@ jQuery(document).ready(function() {
  */
 
 <?php
-if (empty($conf->global->MAIN_DISABLE_SELECT2_FOCUS_PROTECTION) && !defined('DISABLE_SELECT2_FOCUS_PROTECTION')) {
+if (!getDolGlobalString('MAIN_DISABLE_SELECT2_FOCUS_PROTECTION') && !defined('DISABLE_SELECT2_FOCUS_PROTECTION')) {
 	?>
 $(document).on('select2:open', (e) => {
 	console.log("Execute the focus (click on combo or use space when on component");

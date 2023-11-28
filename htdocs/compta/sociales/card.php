@@ -334,7 +334,7 @@ if (isModEnabled('project')) {
 $now = dol_now();
 
 $title = $langs->trans("SocialContribution").' - '.$langs->trans("Card");
-$help_url = 'EN:Module_Taxes_and_social_contributions|FR:Module Taxes et dividendes|ES:M&oacute;dulo Impuestos y cargas sociales (IVA, impuestos)';
+$help_url = 'EN:Module_Taxes_and_social_contributions|FR:Module_Taxes_et_charges_spéciales|ES:M&oacute;dulo Impuestos y cargas sociales (IVA, impuestos)';
 llxHeader("", $title, $help_url);
 
 
@@ -455,7 +455,7 @@ if ($id > 0) {
 			$formquestion = array(
 				array('type' => 'text', 'name' => 'clone_label', 'label' => $langs->trans("Label"), 'value' => $langs->trans("CopyOf").' '.$object->label, 'tdclass'=>'fieldrequired'),
 			);
-			if (!empty($conf->global->TAX_ADD_CLONE_FOR_NEXT_MONTH_CHECKBOX)) {
+			if (getDolGlobalString('TAX_ADD_CLONE_FOR_NEXT_MONTH_CHECKBOX')) {
 				$formquestion[] = array('type' => 'checkbox', 'name' => 'clone_for_next_month', 'label' => $langs->trans("CloneTaxForNextMonth"), 'value' => 1);
 			} else {
 				$formquestion[] = array('type' => 'date', 'datenow'=>1, 'name' => 'clone_date_ech', 'label' => $langs->trans("Date"), 'value' => -1);
@@ -549,7 +549,7 @@ if ($id > 0) {
 				if ($action != 'classify') {
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.((int) $object->id).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'fk_project' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'fk_project' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);
@@ -748,14 +748,14 @@ if ($id > 0) {
 				print '</tr>';
 			}
 
-			print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid").' :</td><td class="right">'.price($totalpaid)."</td></tr>\n";
-			print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected").' :</td><td class="right">'.price($object->amount)."</td></tr>\n";
+			print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid").' :</td><td class="right nowraponall">'.price($totalpaid)."</td></tr>\n";
+			print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected").' :</td><td class="right nowraponall">'.price($object->amount)."</td></tr>\n";
 
 			$resteapayer = $object->amount - $totalpaid;
 			$cssforamountpaymentcomplete = 'amountpaymentcomplete';
 
 			print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("RemainderToPay")." :</td>";
-			print '<td class="right'.($resteapayer ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.price($resteapayer)."</td></tr>\n";
+			print '<td class="right nowraponall'.($resteapayer ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.price($resteapayer)."</td></tr>\n";
 
 			print "</table>";
 			print '</div>';

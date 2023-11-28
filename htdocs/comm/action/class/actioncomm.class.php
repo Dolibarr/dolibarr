@@ -291,7 +291,7 @@ class ActionComm extends CommonObject
 	public $fk_element; // Id of record
 
 	/**
-	 * @var int 		Id of record alternative for API
+	 * @var int 		Id of linked object, alternative for API or other
 	 */
 	public $elementid;
 
@@ -301,9 +301,9 @@ class ActionComm extends CommonObject
 	public $elementtype;
 
 	/**
-	 * @var int id of availability
+	 * @var int id of calendar
 	 */
-	public $fk_bookcal_availability;
+	public $fk_bookcal_calendar;
 
 	/**
 	 * @var string Ical name
@@ -435,7 +435,7 @@ class ActionComm extends CommonObject
 
 		// Check parameters
 		if (!isset($this->userownerid) || (string) $this->userownerid === '') {	// $this->userownerid may be 0 (anonymous event) or > 0
-			dol_syslog("You tried to create an event but mandatory property ownerid was not defined", LOG_WARNING);
+			dol_syslog("You tried to create an event but mandatory property userownerid was empty (you can define it to 0 for anonymous event)", LOG_WARNING);
 			$this->errors[] = 'ErrorActionCommPropertyUserowneridNotDefined';
 			return -1;
 		}
@@ -480,6 +480,9 @@ class ActionComm extends CommonObject
 		}
 		if ($this->elementtype == 'contrat') {
 			$this->elementtype = 'contract';
+		}
+		if (empty($this->fk_element) && !empty($this->elementid)) {
+			$this->fk_element = $this->elementid;
 		}
 
 		if (!is_array($this->userassigned) && !empty($this->userassigned)) {	// For backward compatibility when userassigned was an int instead of an array
@@ -544,7 +547,7 @@ class ActionComm extends CommonObject
 		$sql .= "transparency,";
 		$sql .= "fk_element,";
 		$sql .= "elementtype,";
-		$sql .= "fk_bookcal_availability,";
+		$sql .= "fk_bookcal_calendar,";
 		$sql .= "entity,";
 		$sql .= "extraparams,";
 		// Fields emails
@@ -587,7 +590,7 @@ class ActionComm extends CommonObject
 		$sql .= "'".$this->db->escape($this->transparency)."', ";
 		$sql .= (!empty($this->fk_element) ? ((int) $this->fk_element) : "null").", ";
 		$sql .= (!empty($this->elementtype) ? "'".$this->db->escape($this->elementtype)."'" : "null").", ";
-		$sql .= (!empty($this->fk_bookcal_availability) ? "'".$this->db->escape($this->fk_bookcal_availability)."'" : "null").", ";
+		$sql .= (!empty($this->fk_bookcal_calendar) ? "'".$this->db->escape($this->fk_bookcal_calendar)."'" : "null").", ";
 		$sql .= ((int) $conf->entity).",";
 		$sql .= (!empty($this->extraparams) ? "'".$this->db->escape($this->extraparams)."'" : "null").", ";
 		// Fields emails
@@ -1594,9 +1597,10 @@ class ActionComm extends CommonObject
 		// Set label of type
 		$labeltype = '';
 		if ($this->type_code) {
+			$langs->load("commercial");
 			$labeltype = ($langs->transnoentities("Action".$this->type_code) != "Action".$this->type_code) ? $langs->transnoentities("Action".$this->type_code) : $this->type_label;
 		}
-		if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
+		if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 			if ($this->type_code != 'AC_OTH_AUTO') {
 				$labeltype = $langs->trans('ActionAC_MANUAL');
 			}
@@ -1697,9 +1701,10 @@ class ActionComm extends CommonObject
 		// Set label of type
 		$labeltype = '';
 		if ($this->type_code) {
+			$langs->load("commercial");
 			$labeltype = ($langs->transnoentities("Action".$this->type_code) != "Action".$this->type_code) ? $langs->transnoentities("Action".$this->type_code) : $this->type_label;
 		}
-		if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
+		if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 			if ($this->type_code != 'AC_OTH_AUTO') {
 				$labeltype = $langs->trans('ActionAC_MANUAL');
 			}
@@ -1760,7 +1765,7 @@ class ActionComm extends CommonObject
 		//if (!empty($conf->global->AGENDA_USE_EVENT_TYPE) && $this->type_color)
 		//	$linkclose = ' style="background-color:#'.$this->type_color.'"';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowAction");
 				$linkclose .= ' alt="'.dol_escape_htmltag($tooltip, 1).'"';
 			}
@@ -1800,12 +1805,12 @@ class ActionComm extends CommonObject
 		}
 
 		if ($withpicto == 2) {
-			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
+			if (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 				$label = $labeltype;
 			}
 			$labelshort = '';
 		} else {
-			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($label)) {
+			if (getDolGlobalString('AGENDA_USE_EVENT_TYPE') && empty($label)) {
 				$label = $labeltype;
 			}
 			if ($maxlength < 0) {
@@ -1816,7 +1821,7 @@ class ActionComm extends CommonObject
 		}
 
 		if ($withpicto) {
-			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {	// Add code into ()
+			if (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {	// Add code into ()
 				if ($labeltype) {
 					$label .= (preg_match('/'.preg_quote($labeltype, '/').'/', $label) ? '' : ' ('.$langs->transnoentities("Action".$this->type_code).')');
 				}
@@ -1855,7 +1860,7 @@ class ActionComm extends CommonObject
 		global $conf;
 
 		$imgpicto = '';
-		if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
+		if (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 			$color = '';
 			if ($this->type_color) {
 				$color = 'style="color: #'.$this->type_color.' !important;"';
@@ -2120,11 +2125,11 @@ class ActionComm extends CommonObject
 					$event['uid'] = 'dolibarragenda-'.$this->db->database_name.'-'.$obj->id."@".$_SERVER["SERVER_NAME"];
 					$event['type'] = $type;
 
-					$datestart = $this->db->jdate($obj->datep) - (empty($conf->global->AGENDA_EXPORT_FIX_TZ) ? 0 : ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600));
+					$datestart = $this->db->jdate($obj->datep) - (!getDolGlobalString('AGENDA_EXPORT_FIX_TZ') ? 0 : ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600));
 
 					// fix for -> Warning: A non-numeric value encountered
 					if (is_numeric($this->db->jdate($obj->datep2))) {
-						$dateend = $this->db->jdate($obj->datep2) - (empty($conf->global->AGENDA_EXPORT_FIX_TZ) ? 0 : ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600));
+						$dateend = $this->db->jdate($obj->datep2) - (!getDolGlobalString('AGENDA_EXPORT_FIX_TZ') ? 0 : ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600));
 					} else {
 						// use start date as fall-back to avoid pb with empty end date on ICS readers
 						$dateend = $datestart;
@@ -2150,8 +2155,8 @@ class ActionComm extends CommonObject
 					//$urlwithroot=DOL_MAIN_URL_ROOT;						// This is to use same domain name than current
 					$url = $urlwithroot.'/comm/action/card.php?id='.$obj->id;
 					$event['url'] = $url;
-					$event['created'] = $this->db->jdate($obj->datec) - (empty($conf->global->AGENDA_EXPORT_FIX_TZ) ? 0 : ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600));
-					$event['modified'] = $this->db->jdate($obj->datem) - (empty($conf->global->AGENDA_EXPORT_FIX_TZ) ? 0 : ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600));
+					$event['created'] = $this->db->jdate($obj->datec) - (!getDolGlobalString('AGENDA_EXPORT_FIX_TZ') ? 0 : ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600));
+					$event['modified'] = $this->db->jdate($obj->datem) - (!getDolGlobalString('AGENDA_EXPORT_FIX_TZ') ? 0 : ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600));
 					$event['num_vote'] = $this->num_vote;
 					$event['event_paid'] = $this->event_paid;
 					$event['status'] = $this->status;
@@ -2223,7 +2228,7 @@ class ActionComm extends CommonObject
 							$timestampEnd   = dol_stringtotime($obj->date_end." 23:59:59", 0);
 						}
 
-						if (!empty($conf->global->AGENDA_EXPORT_FIX_TZ)) {
+						if (getDolGlobalString('AGENDA_EXPORT_FIX_TZ')) {
 							$timestampStart = $timestampStart - ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600);
 							$timestampEnd   = $timestampEnd - ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600);
 						}
@@ -2438,10 +2443,10 @@ class ActionComm extends CommonObject
 		if ($fk_user > 0) {
 			$sql .= " AND fk_user = ".((int) $fk_user);
 		}
-		if (empty($conf->global->AGENDA_REMINDER_EMAIL)) {
+		if (!getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
 			$sql .= " AND typeremind != 'email'";
 		}
-		if (empty($conf->global->AGENDA_REMINDER_BROWSER)) {
+		if (!getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
 			$sql .= " AND typeremind != 'browser'";
 		}
 
@@ -2491,7 +2496,7 @@ class ActionComm extends CommonObject
 			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Agenda"));
 			return 0;
 		}
-		if (empty($conf->global->AGENDA_REMINDER_EMAIL)) {
+		if (!getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
 			$langs->load("agenda");
 			$this->output = $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Agenda"));
 			return 0;
@@ -2500,7 +2505,7 @@ class ActionComm extends CommonObject
 		$now = dol_now();
 		$actionCommReminder = new ActionCommReminder($this->db);
 
-		dol_syslog(__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__." start", LOG_INFO);
 
 		$this->db->begin();
 
@@ -2630,10 +2635,16 @@ class ActionComm extends CommonObject
 		if (!$error) {
 			$this->output = 'Nb of emails sent : '.$nbMailSend;
 			$this->db->commit();
+
+			dol_syslog(__METHOD__." end - ".$this->output, LOG_INFO);
+
 			return 0;
 		} else {
 			$this->db->commit(); // We commit also on error, to have the error message recorded.
 			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg)) ? join(', ', $errorsMsg) : $error;
+
+			dol_syslog(__METHOD__." end - ".$this->error, LOG_INFO);
+
 			return $error;
 		}
 	}

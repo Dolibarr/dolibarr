@@ -107,6 +107,8 @@ class MouvementStock extends CommonObject
 	 * @var string Origin type ('project', ...)
 	 */
 	public $origin_type;
+	public $line_id_oject_src;
+	public $line_id_oject_origin;
 
 
 	public $inventorycode;
@@ -114,6 +116,10 @@ class MouvementStock extends CommonObject
 
 	public $line_id_object_src;
 	public $line_id_object_origin;
+
+	public $eatby;
+	public $sellby;
+
 
 
 	public $fields = array(
@@ -153,7 +159,7 @@ class MouvementStock extends CommonObject
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *	Add a movement of stock (in one direction only).
-	 *  This is the lowest level method to record a stock change.
+	 *  This is the lowest level method to record a stock change. There is no control if warehouse is open or not.
 	 *  $this->origin_type and $this->origin_id can be also be set to save the source object of movement.
 	 *
 	 *	@param		User			$user				User object
@@ -274,7 +280,7 @@ class MouvementStock extends CommonObject
 		// Define if we must make the stock change (If product type is a service or if stock is used also for services)
 		// Only record into stock tables wil be disabled by this (the rest like writing into lot table or movement of subproucts are done)
 		$movestock = 0;
-		if ($product->type != Product::TYPE_SERVICE || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) $movestock = 1;
+		if ($product->type != Product::TYPE_SERVICE || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) $movestock = 1;
 
 		$this->db->begin();
 
@@ -516,7 +522,7 @@ class MouvementStock extends CommonObject
 					// After a stock increase
 					// Note: PMP is calculated on stock input only (type of movement = 0 or 3). If type == 0 or 3, qty should be > 0.
 					// Note: Price should always be >0 or 0. PMP should be always >0 (calculated on input)
-					if ($price > 0 || (!empty($conf->global->STOCK_UPDATE_AWP_EVEN_WHEN_ENTRY_PRICE_IS_NULL) && $price == 0)) {
+					if ($price > 0 || (getDolGlobalString('STOCK_UPDATE_AWP_EVEN_WHEN_ENTRY_PRICE_IS_NULL') && $price == 0 && in_array($this->origin_type, array('order_supplier', 'invoice_supplier')))) {
 						$oldqtytouse = ($oldqty >= 0 ? $oldqty : 0);
 						// We make a test on oldpmp>0 to avoid to use normal rule on old data with no pmp field defined
 						if ($oldpmp > 0) {
@@ -541,7 +547,7 @@ class MouvementStock extends CommonObject
 			// Update stock quantity
 			if (!$error) {
 				if ($alreadyarecord > 0) {
-					$sql = "UPDATE ".$this->db->prefix()."product_stock SET reel = COALESCE(reel, 0) + ".((float) $qty);
+					$sql = "UPDATE ".$this->db->prefix()."product_stock SET reel = " . ((float) $oldqtywarehouse + (float) $qty);
 					$sql .= " WHERE fk_entrepot = ".((int) $entrepot_id)." AND fk_product = ".((int) $fk_product);
 				} else {
 					$sql = "INSERT INTO ".$this->db->prefix()."product_stock";
@@ -605,7 +611,7 @@ class MouvementStock extends CommonObject
 		}
 
 		// Add movement for sub products (recursive call)
-		if (!$error && !empty($conf->global->PRODUIT_SOUSPRODUITS) && empty($conf->global->INDEPENDANT_SUBPRODUCT_STOCK) && empty($disablestockchangeforsubproduct)) {
+		if (!$error && getDolGlobalString('PRODUIT_SOUSPRODUITS') && !getDolGlobalString('INDEPENDANT_SUBPRODUCT_STOCK') && empty($disablestockchangeforsubproduct)) {
 			$error = $this->_createSubProduct($user, $fk_product, $entrepot_id, $qty, $type, 0, $label, $inventorycode, $datem); // we use 0 as price, because AWP must not change for subproduct
 		}
 
@@ -1033,8 +1039,8 @@ class MouvementStock extends CommonObject
 	{
 		$this->origin_type = $origin_element;
 		$this->origin_id = $origin_id;
-		$this->line_id_oject_src = $line_id_object_src;
-		$this->line_id_oject_origin = $line_id_object_origin;
+		$this->line_id_object_src = $line_id_object_src;
+		$this->line_id_object_origin = $line_id_object_origin;
 		// For backward compatibility
 		$this->origintype = $origin_element;
 		$this->fk_origin = $origin_id;
@@ -1210,7 +1216,7 @@ class MouvementStock extends CommonObject
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->MOUVEMENT_ADDON_PDF)) {
+			} elseif (getDolGlobalString('MOUVEMENT_ADDON_PDF')) {
 				$modele = $conf->global->MOUVEMENT_ADDON_PDF;
 			}
 		}
@@ -1264,5 +1270,36 @@ class MouvementStock extends CommonObject
 		}
 
 		return $cpt;
+	}
+
+	/**
+	 * reverse mouvement for object by updating infos
+	 * @return int    1 if OK,-1 if KO
+	 */
+	public function reverseMouvement()
+	{
+
+		$formattedDate = "REVERTMV" .dol_print_date($this->datem, '%Y%m%d%His');
+		if ($this->label == 'Annulation mouvement ID'.$this->id) {
+			return -1;
+		}
+		if ($this->inventorycode == $formattedDate) {
+			return -1;
+		}
+
+		$sql = "UPDATE ".$this->db->prefix()."stock_mouvement SET";
+		$sql .= " label = 'Annulation mouvement ID ".((int) $this->id)."',";
+		$sql .= "inventorycode = '".($formattedDate)."'";
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
+		$resql = $this->db->query($sql);
+
+		if ($resql) {
+			$this->db->commit();
+			return 1;
+		} else {
+			$this->db->rollback();
+			return -1;
+		}
 	}
 }

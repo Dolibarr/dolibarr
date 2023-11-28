@@ -223,7 +223,7 @@ if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords) {
 }
 
 // Direct jump if only one record found
-if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all) {
+if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	header("Location: ".dol_buildpath('/opensurvey/card.php', 1).'?id='.$id);
@@ -245,7 +245,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
-$fieldtosortuser = empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION) ? 'firstname' : 'lastname';
+$fieldtosortuser = !getDolGlobalString('MAIN_FIRSTNAME_NAME_POSITION') ? 'firstname' : 'lastname';
 
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
@@ -281,7 +281,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('NewSurvey'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/opensurvey/wizard/index.php', '', $user->rights->opensurvey->write);
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewSurvey'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/opensurvey/wizard/index.php', '', $user->hasRight('opensurvey', 'write'));
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'poll', 0, $newcardbutton, '', $limit, 0, 0, 1);
 

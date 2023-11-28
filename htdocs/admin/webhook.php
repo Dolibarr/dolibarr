@@ -55,12 +55,7 @@ $setupnotempty = 0;
 $useFormSetup = 1;
 
 if (!class_exists('FormSetup')) {
-	// For retrocompatibility Dolibarr < 16.0
-	if (floatval(DOL_VERSION) < 16.0 && !class_exists('FormSetup')) {
-		require_once __DIR__.'/../backport/v16/core/class/html.formsetup.class.php';
-	} else {
-		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
-	}
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
 }
 
 $formSetup = new FormSetup($db);
@@ -421,10 +416,10 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 							$module = new $file($db);
 
 							// Show modules according to features level
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								continue;
 							}
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 								continue;
 							}
 
@@ -558,10 +553,10 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 									$module = new $classname($db);
 
 									$modulequalified = 1;
-									if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+									if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 										$modulequalified = 0;
 									}
-									if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+									if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 										$modulequalified = 0;
 									}
 

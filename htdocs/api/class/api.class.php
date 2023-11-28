@@ -179,11 +179,6 @@ class DolibarrApi
 		unset($object->alreadypaid);
 		unset($object->openid);
 
-		unset($object->statuts);
-		unset($object->statuts_short);
-		unset($object->statuts_logo);
-		unset($object->statuts_long);
-
 		//unset($object->labelStatus);
 		//unset($object->labelStatusShort);
 

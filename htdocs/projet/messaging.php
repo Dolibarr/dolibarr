@@ -36,6 +36,7 @@ $id     = GETPOST('id', 'int');
 $ref    = GETPOST('ref', 'alpha');
 $socid  = GETPOST('socid', 'int');
 $action = GETPOST('action', 'aZ09');
+$contextpage = GETPOST('contextpage', 'aZ09');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", "aZ09comma");
@@ -106,14 +107,14 @@ $object = new Project($db);
 if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
 	$object->fetch_thirdparty();
-	if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) {
+	if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($object, 'fetchComments') && empty($object->comments)) {
 		$object->fetchComments();
 	}
 	$object->info($object->id);
 }
 $agenda = (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) ? '/'.$langs->trans("Agenda") : '';
 $title = $langs->trans('Events').$agenda.' - '.$object->ref.' '.$object->name;
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->ref.' '.$object->name.' - '.$langs->trans("Info");
 }
 $help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
@@ -180,15 +181,15 @@ if (!empty($object->id)) {
 	print '<br>';
 
 	//print '<div class="tabsAction">';
-	$morehtmlcenter = '';
+	$morehtmlright = '';
 
 	// Show link to change view in message
 	$messagingUrl = DOL_URL_ROOT.'/projet/messaging.php?id='.$object->id;
-	$morehtmlcenter .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 2);
+	$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 2);
 
 	// Show link to change view in agenda
 	$messagingUrl = DOL_URL_ROOT.'/projet/agenda.php?id='.$object->id;
-	$morehtmlcenter .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 1);
+	$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 1);
 
 
 	// // Show link to send an email (if read and not closed)
@@ -204,7 +205,7 @@ if (!empty($object->id)) {
 	// Show link to add event
 	if (isModEnabled('agenda')) {
 		$addActionBtnRight = $user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create');
-		$morehtmlcenter .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&socid='.$object->socid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $addActionBtnRight);
+		$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&socid='.$object->socid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $addActionBtnRight);
 	}
 
 	$param = '&id='.$object->id;
@@ -221,7 +222,7 @@ if (!empty($object->id)) {
 
 	$titlelist = $langs->trans("ActionsOnProject").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>': '');
 
-	print_barre_liste($titlelist, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlcenter, '', 0, 1, 0);
+	print_barre_liste($titlelist, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);
 
 	// List of all actions
 	$filters = array();

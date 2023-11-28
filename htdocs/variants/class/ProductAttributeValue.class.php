@@ -102,7 +102,7 @@ class ProductAttributeValue extends CommonObjectLine
 		$this->db = $db;
 		$this->entity = $conf->entity;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -287,6 +287,8 @@ class ProductAttributeValue extends CommonObjectLine
 		if ($only_used) {
 			$sql .= " AND c2v.rowid IS NOT NULL AND p.tosell = 1";
 		}
+
+		$sql .= " ORDER BY v.position ASC";
 
 		$query = $this->db->query($sql);
 

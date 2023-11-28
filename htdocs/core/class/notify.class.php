@@ -119,7 +119,7 @@ class Notify
 		// Get full list of all notifications subscribed for $action, $socid and $object
 		$listofnotiftodo = $this->getNotificationsArray($action, $socid, $object, 0);
 
-		if (!empty($conf->global->NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_USER)) {
+		if (getDolGlobalString('NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_USER')) {
 			foreach ($listofnotiftodo as $val) {
 				if ($val['type'] == 'touser') {
 					unset($listofnotiftodo[$val['email']]);
@@ -127,7 +127,7 @@ class Notify
 				}
 			}
 		}
-		if (!empty($conf->global->NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_CONTACT)) {
+		if (getDolGlobalString('NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_CONTACT')) {
 			foreach ($listofnotiftodo as $val) {
 				if ($val['type'] == 'tocontact') {
 					unset($listofnotiftodo[$val['email']]);
@@ -135,7 +135,7 @@ class Notify
 				}
 			}
 		}
-		if (!empty($conf->global->NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_FIX)) {
+		if (getDolGlobalString('NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_FIX')) {
 			foreach ($listofnotiftodo as $val) {
 				if ($val['type'] == 'tofixedemail') {
 					unset($listofnotiftodo[$val['email']]);
@@ -396,7 +396,7 @@ class Notify
 
 		// Define some vars
 		$application = 'Dolibarr';
-		if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+		if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 			$application = $conf->global->MAIN_APPLICATION_TITLE;
 		}
 		$dir_output = getOutputDir($object, true);
@@ -905,7 +905,7 @@ class Notify
 				}
 
 				if ($sendto) {
-					$parameters = array('notifcode'=>$notifcode, 'sendto'=>$sendto, 'replyto'=>$replyto, 'file'=>$filename_list, 'mimefile'=>$mimetype_list, 'filename'=>$mimefilename_list);
+					$parameters = array('notifcode'=>$notifcode, 'sendto'=>$sendto, 'replyto'=>$replyto, 'file'=>$filename_list, 'mimefile'=>$mimetype_list, 'filename'=>$mimefilename_list, 'subject'=>&$subject, 'message'=>&$message);
 					$reshook = $hookmanager->executeHooks('formatNotificationMessage', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 					if (empty($reshook)) {
 						if (!empty($hookmanager->resArray['files'])) {

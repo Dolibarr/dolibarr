@@ -442,7 +442,7 @@ class SupplierProposal extends CommonObject
 			$this->db->begin();
 
 			if ($fk_product > 0) {
-				if (!empty($conf->global->SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY)) {
+				if (getDolGlobalString('SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY')) {
 					// Check quantity is enough
 					dol_syslog(get_class($this)."::addline we check supplier prices fk_product=".$fk_product." fk_fournprice=".$fk_fournprice." qty=".$qty." ref_supplier=".$ref_supplier);
 					$productsupplier = new ProductFournisseur($this->db);
@@ -1128,7 +1128,7 @@ class SupplierProposal extends CommonObject
 		$this->id = 0;
 		$this->statut = 0;
 
-		if (empty($conf->global->SUPPLIER_PROPOSAL_ADDON) || !is_readable(DOL_DOCUMENT_ROOT."/core/modules/supplier_proposal/" . getDolGlobalString('SUPPLIER_PROPOSAL_ADDON').".php")) {
+		if (!getDolGlobalString('SUPPLIER_PROPOSAL_ADDON') || !is_readable(DOL_DOCUMENT_ROOT."/core/modules/supplier_proposal/" . getDolGlobalString('SUPPLIER_PROPOSAL_ADDON').".php")) {
 			$this->error = 'ErrorSetupNotComplete';
 			return -1;
 		}
@@ -1187,7 +1187,7 @@ class SupplierProposal extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT p.rowid, p.entity, p.ref, p.fk_soc";
+		$sql = "SELECT p.rowid, p.entity, p.ref, p.fk_soc as socid";
 		$sql .= ", p.total_ttc, p.total_tva, p.localtax1, p.localtax2, p.total_ht";
 		$sql .= ", p.datec";
 		$sql .= ", p.date_valid as datev";
@@ -1230,7 +1230,7 @@ class SupplierProposal extends CommonObject
 				$this->total_localtax1		= $obj->localtax1;
 				$this->total_localtax2		= $obj->localtax2;
 				$this->total_ttc            = $obj->total_ttc;
-				$this->socid                = $obj->fk_soc;
+				$this->socid                = $obj->socid;
 				$this->fk_project           = $obj->fk_project;
 				$this->model_pdf            = $obj->model_pdf;
 				$this->note                 = $obj->note_private; // TODO deprecated
@@ -1388,8 +1388,8 @@ class SupplierProposal extends CommonObject
 		$error = 0;
 		$now = dol_now();
 
-		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('supplier_proposal', 'creer'))
-		   || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('supplier_proposal', 'validate_advance'))) {
+		if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('supplier_proposal', 'creer'))
+		   || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('supplier_proposal', 'validate_advance'))) {
 			$this->db->begin();
 
 			// Numbering module definition
@@ -1438,6 +1438,12 @@ class SupplierProposal extends CommonObject
 					// Now we rename also files into index
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'supplier_proposal/".$this->db->escape($this->newref)."'";
 					$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'supplier_proposal/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$resql = $this->db->query($sql);
+					if (!$resql) {
+						$error++; $this->error = $this->db->lasterror();
+					}
+					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'supplier_proposal/".$this->db->escape($this->newref)."'";
+					$sql .= " WHERE filepath = 'supplier_proposal/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 					$resql = $this->db->query($sql);
 					if (!$resql) {
 						$error++; $this->error = $this->db->lasterror();
@@ -1533,6 +1539,7 @@ class SupplierProposal extends CommonObject
 	 *	@param      double	$remise      Amount discount
 	 *	@return     int         		<0 if ko, >0 if ok
 	 */
+	/*
 	public function set_remise_percent($user, $remise)
 	{
 		// phpcs:enable
@@ -1555,7 +1562,7 @@ class SupplierProposal extends CommonObject
 		}
 		return 0;
 	}
-
+	*/
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -1615,7 +1622,7 @@ class SupplierProposal extends CommonObject
 		if (!empty($note)) {
 			$sql .= " note_private = '".$this->db->escape($note)."',";
 		}
-		$sql .= " date_cloture=NULL, fk_user_cloture=NULL";
+		$sql .= " date_cloture = NULL, fk_user_cloture = NULL";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
@@ -1686,7 +1693,7 @@ class SupplierProposal extends CommonObject
 				$triggerName = 'PROPOSAL_SUPPLIER_CLOSE_SIGNED';
 				$modelpdf = $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL ? $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL : (empty($this->model_pdf) ? '' : $this->model_pdf);
 
-				if (!empty($conf->global->SUPPLIER_PROPOSAL_UPDATE_PRICE_ON_SUPPlIER_PROPOSAL)) {     // TODO This option was not tested correctly. Error if product ref does not exists
+				if (getDolGlobalString('SUPPLIER_PROPOSAL_UPDATE_PRICE_ON_SUPPlIER_PROPOSAL')) {     // TODO This option was not tested correctly. Error if product ref does not exists
 					$result = $this->updateOrCreatePriceFournisseur($user);
 				}
 			}
@@ -1694,7 +1701,7 @@ class SupplierProposal extends CommonObject
 				$triggerName = 'PROPOSAL_SUPPLIER_CLASSIFY_BILLED';
 			}
 
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				// Define output language
 				$outputlangs = $langs;
 				if (getDolGlobalInt('MAIN_MULTILANGS')) {
@@ -2023,7 +2030,8 @@ class SupplierProposal extends CommonObject
 
 					if (!$error) {
 						// Delete record into ECM index (Note that delete is also done when deleting files with the dol_delete_dir_recursive
-						$this->deleteEcmFiles();
+						$this->deleteEcmFiles(0); // Deleting files physically is done later with the dol_delete_dir_recursive
+						$this->deleteEcmFiles(1); // Deleting files physically is done later with the dol_delete_dir_recursive
 
 						// We remove directory
 						$ref = dol_sanitizeFileName($this->ref);
@@ -2391,7 +2399,7 @@ class SupplierProposal extends CommonObject
 		global $conf, $db, $langs;
 		$langs->load("supplier_proposal");
 
-		if (!empty($conf->global->SUPPLIER_PROPOSAL_ADDON)) {
+		if (getDolGlobalString('SUPPLIER_PROPOSAL_ADDON')) {
 			$mybool = false;
 
 			$file = getDolGlobalString('SUPPLIER_PROPOSAL_ADDON') . ".php";
@@ -2441,7 +2449,7 @@ class SupplierProposal extends CommonObject
 
 		$langs->load('supplier_proposal');
 
-		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			return ['optimize' => $langs->trans("ShowSupplierProposal")];
 		}
 
@@ -2527,7 +2535,7 @@ class SupplierProposal extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip) && $user->hasRight('propal', 'lire')) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowSupplierProposal");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -2679,7 +2687,7 @@ class SupplierProposal extends CommonObject
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->SUPPLIER_PROPOSAL_ADDON_PDF)) {
+			} elseif (getDolGlobalString('SUPPLIER_PROPOSAL_ADDON_PDF')) {
 				$modele = $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF;
 			}
 		}
@@ -2893,6 +2901,12 @@ class SupplierProposalLine extends CommonObjectLine
 	 * @var string
 	 */
 	public $product_label;
+
+	/**
+	 * Custom label
+	 * @var string
+	 */
+	public $label;
 
 	/**
 	 * Product description
