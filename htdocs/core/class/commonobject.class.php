@@ -758,6 +758,12 @@ abstract class CommonObject
 	 */
 	public $warehouse_id;
 
+	/**
+	 * @var string		Contain password crypted or not.
+	 */
+	public $pass;
+
+
 	// No constructor as it is an abstract class
 
 
