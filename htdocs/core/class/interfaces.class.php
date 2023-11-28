@@ -167,7 +167,7 @@ class Interfaces
 			}
 		}
 
-		asort($orders);
+		asort($orders, SORT_NATURAL);
 
 		// Loop on each trigger
 		foreach ($orders as $key => $value) {
@@ -305,7 +305,7 @@ class Interfaces
 			}
 		}
 
-		asort($orders);
+		asort($orders, SORT_NATURAL);
 
 		$triggers = array();
 		$j = 0;
