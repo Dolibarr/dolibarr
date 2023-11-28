@@ -313,6 +313,7 @@ abstract class CommonObject
 	 */
 	public $status;
 
+
 	/**
 	 * @var string
 	 * @see getFullAddress()
@@ -9112,7 +9113,6 @@ abstract class CommonObject
 						if ($showaction) {
 							$return .= '<br>';
 							// If $photo_vignette set, we add link to generate thumbs if file is an image and ->imgWidth or->imgHeight higher than limits
-							// @phpstan-ignore-next-line
 							if ($photo_vignette && (image_format_supported($photo) > 0) && ((isset($this->imgWidth) && $this->imgWidth > $maxWidth) || (isset($this->imgHeight) && $this->imgHeight > $maxHeight))) {
 								$return .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=addthumb&token='.newToken().'&file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'), 'refresh').'&nbsp;&nbsp;</a>';
 							}
@@ -9179,7 +9179,6 @@ abstract class CommonObject
 			}
 		}
 
-		// @phpstan-ignore-next-line
 		$this->nbphoto = $nbphoto;
 
 		return $return;
@@ -9567,7 +9566,6 @@ abstract class CommonObject
 			$fieldvalues['fk_user_creat'] = $user->id;
 		}
 		if (array_key_exists('pass_crypted', $fieldvalues)) {
-			// @phpstan-ignore-next-line
 			$fieldvalues['pass_crypted'] = dol_hash($this->pass);
 		}
 		unset($fieldvalues['rowid']); // The field 'rowid' is reserved field name for autoincrement field so we don't need it into insert.
@@ -10120,17 +10118,14 @@ abstract class CommonObject
 				$error++;
 			} else {
 				while ($obj = $this->db->fetch_object($resql)) {
-					// @phpstan-ignore-next-line
 					$result = $this->fetch($obj->rowid);
 					if ($result < 0) {
 						$error++;
 						$this->errors[] = $this->error;
 					} else {
 						if (get_class($this) == 'Contact') { // TODO special code because delete() for contact has not been standardized like other delete.
-							// @phpstan-ignore-next-line
 							$result = $this->delete();
 						} else {
-							// @phpstan-ignore-next-line
 							$result = $this->delete($user);
 						}
 						if ($result < 0) {
