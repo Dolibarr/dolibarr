@@ -922,11 +922,11 @@ class CMailFile
 				}
 
 				if (getDolGlobalString($keyforsmtpauthtype) === "XOAUTH2") {
-					$supportedoauth2array = array();
-
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
 
-					$keyforsupportedoauth2array = $conf->global->$keyforsmtpoauthservice;
+					$supportedoauth2array = getSupportedOauth2Array();
+
+					$keyforsupportedoauth2array = getDolGlobalString($keyforsmtpoauthservice);
 					if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
 						$keyforprovider = preg_replace('/^.*-/', '', $keyforsupportedoauth2array);
 					} else {
@@ -1077,9 +1077,9 @@ class CMailFile
 					$this->transport->setPassword($conf->global->$keyforsmtppw);
 				}
 				if (getDolGlobalString($keyforsmtpauthtype) === "XOAUTH2") {
-					$supportedoauth2array = array();
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php';
 
-					require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
+					$supportedoauth2array = getSupportedOauth2Array();
 
 					$keyforsupportedoauth2array = getDolGlobalString($keyforsmtpoauthservice);
 					if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
