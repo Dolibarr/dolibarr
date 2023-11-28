@@ -58,7 +58,7 @@ $lineid = GETPOST('lineid', 'int');
 $batch = GETPOST('batch', 'alphanohtml');
 $totalExpectedValuation = 0;
 $totalRealValuation = 0;
-if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$result = restrictedArea($user, 'stock', $id);
 } else {
 	$result = restrictedArea($user, 'stock', $id, '', 'inventory_advance');
@@ -103,7 +103,7 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 }
 
 
-if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$permissiontoadd = $user->rights->stock->creer;
 	$permissiontodelete = $user->rights->stock->supprimer;
 } else {
@@ -197,7 +197,7 @@ if (empty($reshook)) {
 						//$inventorycode = 'INV'.$object->id;
 						$inventorycode = 'INV-'.$object->ref;
 						$price = 0;
-						if (!empty($line->pmp_real) && !empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) $price = $line->pmp_real;
+						if (!empty($line->pmp_real) && getDolGlobalString('INVENTORY_MANAGE_REAL_PMP')) $price = $line->pmp_real;
 
 						$idstockmove = $stockmovment->_create($user, $line->fk_product, $line->fk_warehouse, $stock_movement_qty, $movement_type, $price, $langs->trans('LabelOfInventoryMovemement', $object->ref), $inventorycode, $datemovement, '', '', $line->batch);
 						if ($idstockmove < 0) {
@@ -221,7 +221,7 @@ if (empty($reshook)) {
 						}
 					}
 
-					if (!empty($line->pmp_real) && !empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
+					if (!empty($line->pmp_real) && getDolGlobalString('INVENTORY_MANAGE_REAL_PMP')) {
 						$sqlpmp = 'UPDATE '.MAIN_DB_PREFIX.'product SET pmp = '.((float) $line->pmp_real).' WHERE rowid = '.((int) $line->fk_product);
 						$resqlpmp = $db->query($sqlpmp);
 						if (! $resqlpmp) {
@@ -229,7 +229,7 @@ if (empty($reshook)) {
 							setEventMessages($db->lasterror(), null, 'errors');
 							break;
 						}
-						if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+						if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 							$sqlpmp = 'UPDATE '.MAIN_DB_PREFIX.'product_perentity SET pmp = '.((float) $line->pmp_real).' WHERE fk_product = '.((int) $line->fk_product).' AND entity='.$conf->entity;
 							$resqlpmp = $db->query($sqlpmp);
 							if (! $resqlpmp) {
@@ -925,7 +925,7 @@ if (isModEnabled('productbatch')) {
 	print '</td>';
 }
 print '<td class="right">'.$langs->trans("ExpectedQty").'</td>';
-if (!empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
+if (getDolGlobalString('INVENTORY_MANAGE_REAL_PMP')) {
 	print '<td class="right">'.$langs->trans('PMPExpected').'</td>';
 	print '<td class="right">'.$langs->trans('ExpectedValuation').'</td>';
 	print '<td class="right">'.$form->textwithpicto($langs->trans("RealQty"), $langs->trans("InventoryRealQtyHelp")).'</td>';
@@ -963,7 +963,7 @@ if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STAT
 		print '</td>';
 	}
 	print '<td class="right"></td>';
-	if (!empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
+	if (getDolGlobalString('INVENTORY_MANAGE_REAL_PMP')) {
 		print '<td class="right">';
 		print '</td>';
 		print '<td class="right">';
@@ -1081,7 +1081,7 @@ if ($resql) {
 				$hasinput = true;
 			}
 
-			if (!empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
+			if (getDolGlobalString('INVENTORY_MANAGE_REAL_PMP')) {
 				//PMP Expected
 				if (!empty($obj->pmp_expected)) $pmp_expected = $obj->pmp_expected;
 				else $pmp_expected = $product_static->pmp;
@@ -1132,7 +1132,7 @@ if ($resql) {
 			print '<input type="hidden" class="maxwidth50 right realqty" name="id_'.$obj->rowid.'_input_tmp" id="id_'.$obj->rowid.'_input_tmp" value="'.$qty_tmp.'">';
 			print '</td>';
 		} else {
-			if (!empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
+			if (getDolGlobalString('INVENTORY_MANAGE_REAL_PMP')) {
 				//PMP Expected
 				if (!empty($obj->pmp_expected)) $pmp_expected = $obj->pmp_expected;
 				else $pmp_expected = $product_static->pmp;
@@ -1182,7 +1182,7 @@ if ($resql) {
 } else {
 	dol_print_error($db);
 }
-if (!empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
+if (getDolGlobalString('INVENTORY_MANAGE_REAL_PMP')) {
 	print '<tr class="liste_total">';
 	print '<td colspan="4">'.$langs->trans("Total").'</td>';
 	print '<td class="right" colspan="2">'.price($totalExpectedValuation).'</td>';
@@ -1258,7 +1258,7 @@ print '<script type="text/javascript">
 </script>';
 
 
-if (!empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
+if (getDolGlobalString('INVENTORY_MANAGE_REAL_PMP')) {
 	?>
 <script type="text/javascript">
 $('.realqty').on('change', function () {

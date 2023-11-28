@@ -45,7 +45,7 @@ $mine 		= (GETPOST('mode', 'alpha') == 'mine' ? 1 : 0);
 $object = new Project($db);
 
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once
-if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) {
+if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($object, 'fetchComments') && empty($object->comments)) {
 	$object->fetchComments();
 }
 
@@ -65,10 +65,10 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-if (!empty($conf->global->MAIN_DOC_SORT_FIELD)) {
+if (getDolGlobalString('MAIN_DOC_SORT_FIELD')) {
 	$sortfield = $conf->global->MAIN_DOC_SORT_FIELD;
 }
-if (!empty($conf->global->MAIN_DOC_SORT_ORDER)) {
+if (getDolGlobalString('MAIN_DOC_SORT_ORDER')) {
 	$sortorder = $conf->global->MAIN_DOC_SORT_ORDER;
 }
 
@@ -99,7 +99,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
  */
 
 $title = $langs->trans('Documents').' - '.$object->ref.' '.$object->name;
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->ref.' '.$object->name.' - '.$langs->trans('Document');
 }
 

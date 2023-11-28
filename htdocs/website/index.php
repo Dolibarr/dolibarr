@@ -2576,7 +2576,7 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 				$url->appendChild($loc);
 				$url->appendChild($lastmod);
 				// Add suggested frequency for refresh
-				if (!empty($conf->global->WEBSITE_SITEMAPS_ADD_WEEKLY_FREQ)) {
+				if (getDolGlobalString('WEBSITE_SITEMAPS_ADD_WEEKLY_FREQ')) {
 					$changefreq = $domtree->createElement('changefreq', 'weekly');	// TODO Manage other values
 					$url->appendChild($changefreq);
 				}
@@ -2681,7 +2681,7 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 				$url->appendChild($loc);
 				$url->appendChild($lastmod);
 				// Add suggested frequency for refresh
-				if (!empty($conf->global->WEBSITE_SITEMAPS_ADD_WEEKLY_FREQ)) {
+				if (getDolGlobalString('WEBSITE_SITEMAPS_ADD_WEEKLY_FREQ')) {
 					$changefreq = $domtree->createElement('changefreq', 'weekly');	// TODO Manage other values
 					$url->appendChild($changefreq);
 				}
@@ -2752,7 +2752,7 @@ $moreheadjs = '';
 
 $arrayofjs[] = 'includes/jquery/plugins/blockUI/jquery.blockUI.js';
 $arrayofjs[] = 'core/js/blockUI.js'; // Used by ecm/tpl/enabledfiletreeajax.tpl.php
-if (empty($conf->global->MAIN_ECM_DISABLE_JS)) {
+if (!getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
 	$arrayofjs[] = "includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js";
 }
 
@@ -3035,7 +3035,7 @@ if (!GETPOST('hide_websitemenu')) {
 		} else {
 			$htmltext .= '<br><center>'.$langs->trans("GoTo").' <a href="'.$virtualurl.'" target="_website">'.$virtualurl.'</a></center><br>';
 		}
-		if (!empty($conf->global->WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER)) {
+		if (getDolGlobalString('WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER')) {
 			$htmltext .= '<!-- Message defined translate key set into WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER -->';
 			$htmltext .= '<br>'.$langs->trans($conf->global->WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER);
 		} else {
@@ -3296,7 +3296,7 @@ if (!GETPOST('hide_websitemenu')) {
 
 				print '<div class="inline-block marginrightonly">';	// Button include dynamic contant
 				print $langs->trans("ShowSubcontainers");
-				if (empty($conf->global->WEBSITE_SUBCONTAINERSINLINE)) {
+				if (!getDolGlobalString('WEBSITE_SUBCONTAINERSINLINE')) {
 					print '<a class="nobordertransp nohoverborder marginleftonlyshort valignmiddle"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=setshowsubcontainers&token='.newToken().'">'.img_picto($langs->trans("ShowSubContainersOnOff", $langs->transnoentitiesnoconv("Off")), 'switch_off', '', false, 0, 0, '', 'nomarginleft').'</a>';
 				} else {
 					print '<a class="nobordertransp nohoverborder marginleftonlyshort valignmiddle"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=unsetshowsubcontainers&token='.newToken().'">'.img_picto($langs->trans("ShowSubContainersOnOff", $langs->transnoentitiesnoconv("On")), 'switch_on', '', false, 0, 0, '', 'nomarginleft').'</a>';
@@ -3388,7 +3388,7 @@ if (!GETPOST('hide_websitemenu')) {
 					print '<a class="nobordertransp opacitymedium nohoverborder marginleftonlyshort"'.$disabled.' href="#" disabled="disabled" title="'.dol_escape_htmltag($langs->trans("OnlyEditionOfSourceForGrabbedContent")).'">'.img_picto($langs->trans("OnlyEditionOfSourceForGrabbedContent"), 'switch_off', '', false, 0, 0, '', 'nomarginleft').'</a>';
 				} else {
 					//print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditWithEditor")).'" name="editcontent">';
-					if (empty($conf->global->WEBSITE_EDITINLINE)) {
+					if (!getDolGlobalString('WEBSITE_EDITINLINE')) {
 						print '<a class="nobordertransp nohoverborder marginleftonlyshort valignmiddle"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=seteditinline&token='.newToken().'">'.img_picto($langs->trans("EditInLineOnOff", $langs->transnoentitiesnoconv("Off")), 'switch_off', '', false, 0, 0, '', 'nomarginleft').'</a>';
 					} else {
 						print '<a class="nobordertransp nohoverborder marginleftonlyshort valignmiddle"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=unseteditinline&token='.newToken().'">'.img_picto($langs->trans("EditInLineOnOff", $langs->transnoentitiesnoconv("On")), 'switch_on', '', false, 0, 0, '', 'nomarginleft').'</a>';
@@ -4323,7 +4323,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		print "</td></tr>";
 	}
 
-	if (!empty($conf->global->WEBSITE_PAGE_SHOW_INTERNAL_LINKS_TO_OBJECT)) {	// TODO Replace this with link into element_element ?
+	if (getDolGlobalString('WEBSITE_PAGE_SHOW_INTERNAL_LINKS_TO_OBJECT')) {	// TODO Replace this with link into element_element ?
 		print '<tr><td class="titlefieldcreate">';
 		print 'ObjectClass';
 		print '</td><td>';
@@ -5054,7 +5054,7 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 		$newcontent = $objectpage->content;
 
 		// If mode WEBSITE_SUBCONTAINERSINLINE is on
-		if (!empty($conf->global->WEBSITE_SUBCONTAINERSINLINE)) {
+		if (getDolGlobalString('WEBSITE_SUBCONTAINERSINLINE')) {
 			// TODO Check file $filephp exists, if not create it.
 
 			//var_dump($filetpl);
@@ -5073,7 +5073,7 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 		}
 
 		// Change the contenteditable to "true" or "false" when mode Edit Inline is on or off
-		if (empty($conf->global->WEBSITE_EDITINLINE)) {
+		if (!getDolGlobalString('WEBSITE_EDITINLINE')) {
 			// Remove the contenteditable="true"
 			$newcontent = preg_replace('/(div|section)(\s[^\>]*)contenteditable="true"/', '\1\2', $newcontent);
 		} else {

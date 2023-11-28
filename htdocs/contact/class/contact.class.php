@@ -361,20 +361,20 @@ class Contact extends CommonObject
 		$this->db = $db;
 		$this->statut = 1; // By default, status is enabled
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID')) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('mailing')) {
 			$this->fields['no_email']['enabled'] = 0;
 		}
 		// typical ['s.nom'] is used for third-parties
-		if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+		if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
 			$this->fields['fk_soc']['enabled'] = 0;
 			$this->fields['fk_soc']['searchall'] = 0;
 		}
 
 		// If THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES not set, there is no prospect level on contact level, only on thirdparty
-		if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES)) {	// Default behaviour
+		if (getDolGlobalString('SOCIETE_DISABLE_PROSPECTS') || !getDolGlobalString('THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES')) {	// Default behaviour
 			$this->fields['fk_stcommcontact']['enabled'] = 0;
 			$this->fields['fk_prospectcontactlevel']['enabled'] = 0;
 		}
@@ -786,13 +786,13 @@ class Contact extends CommonObject
 		$this->fullname = $this->getFullName($langs);
 
 		// Fields
-		if ($this->fullname && !empty($conf->global->LDAP_CONTACT_FIELD_FULLNAME)) {
+		if ($this->fullname && getDolGlobalString('LDAP_CONTACT_FIELD_FULLNAME')) {
 			$info[getDolGlobalString('LDAP_CONTACT_FIELD_FULLNAME')] = $this->fullname;
 		}
-		if ($this->lastname && !empty($conf->global->LDAP_CONTACT_FIELD_NAME)) {
+		if ($this->lastname && getDolGlobalString('LDAP_CONTACT_FIELD_NAME')) {
 			$info[getDolGlobalString('LDAP_CONTACT_FIELD_NAME')] = $this->lastname;
 		}
-		if ($this->firstname && !empty($conf->global->LDAP_CONTACT_FIELD_FIRSTNAME)) {
+		if ($this->firstname && getDolGlobalString('LDAP_CONTACT_FIELD_FIRSTNAME')) {
 			$info[getDolGlobalString('LDAP_CONTACT_FIELD_FIRSTNAME')] = $this->firstname;
 		}
 
@@ -814,34 +814,34 @@ class Contact extends CommonObject
 				$info["businessCategory"] = "Suppliers";
 			}
 		}
-		if ($this->address && !empty($conf->global->LDAP_CONTACT_FIELD_ADDRESS)) {
+		if ($this->address && getDolGlobalString('LDAP_CONTACT_FIELD_ADDRESS')) {
 			$info[getDolGlobalString('LDAP_CONTACT_FIELD_ADDRESS')] = $this->address;
 		}
-		if ($this->zip && !empty($conf->global->LDAP_CONTACT_FIELD_ZIP)) {
+		if ($this->zip && getDolGlobalString('LDAP_CONTACT_FIELD_ZIP')) {
 			$info[getDolGlobalString('LDAP_CONTACT_FIELD_ZIP')] = $this->zip;
 		}
-		if ($this->town && !empty($conf->global->LDAP_CONTACT_FIELD_TOWN)) {
+		if ($this->town && getDolGlobalString('LDAP_CONTACT_FIELD_TOWN')) {
 			$info[getDolGlobalString('LDAP_CONTACT_FIELD_TOWN')] = $this->town;
 		}
-		if ($this->country_code && !empty($conf->global->LDAP_CONTACT_FIELD_COUNTRY)) {
+		if ($this->country_code && getDolGlobalString('LDAP_CONTACT_FIELD_COUNTRY')) {
 			$info[getDolGlobalString('LDAP_CONTACT_FIELD_COUNTRY')] = $this->country_code;
 		}
-		if ($this->phone_pro && !empty($conf->global->LDAP_CONTACT_FIELD_PHONE)) {
+		if ($this->phone_pro && getDolGlobalString('LDAP_CONTACT_FIELD_PHONE')) {
 			$info[getDolGlobalString('LDAP_CONTACT_FIELD_PHONE')] = $this->phone_pro;
 		}
-		if ($this->phone_perso && !empty($conf->global->LDAP_CONTACT_FIELD_HOMEPHONE)) {
+		if ($this->phone_perso && getDolGlobalString('LDAP_CONTACT_FIELD_HOMEPHONE')) {
 			$info[getDolGlobalString('LDAP_CONTACT_FIELD_HOMEPHONE')] = $this->phone_perso;
 		}
-		if ($this->phone_mobile && !empty($conf->global->LDAP_CONTACT_FIELD_MOBILE)) {
+		if ($this->phone_mobile && getDolGlobalString('LDAP_CONTACT_FIELD_MOBILE')) {
 			$info[getDolGlobalString('LDAP_CONTACT_FIELD_MOBILE')] = $this->phone_mobile;
 		}
-		if ($this->fax && !empty($conf->global->LDAP_CONTACT_FIELD_FAX)) {
+		if ($this->fax && getDolGlobalString('LDAP_CONTACT_FIELD_FAX')) {
 			$info[getDolGlobalString('LDAP_CONTACT_FIELD_FAX')] = $this->fax;
 		}
-		if ($this->note_private && !empty($conf->global->LDAP_CONTACT_FIELD_DESCRIPTION)) {
+		if ($this->note_private && getDolGlobalString('LDAP_CONTACT_FIELD_DESCRIPTION')) {
 			$info[getDolGlobalString('LDAP_CONTACT_FIELD_DESCRIPTION')] = dol_string_nohtmltag($this->note_private, 2);
 		}
-		if ($this->email && !empty($conf->global->LDAP_CONTACT_FIELD_MAIL)) {
+		if ($this->email && getDolGlobalString('LDAP_CONTACT_FIELD_MAIL')) {
 			$info[getDolGlobalString('LDAP_CONTACT_FIELD_MAIL')] = $this->email;
 		}
 
@@ -1398,7 +1398,7 @@ class Contact extends CommonObject
 
 		$datas = [];
 
-		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			return ['optimize' => $langs->trans("ShowContact")];
 		}
 		if (!empty($this->photo) && class_exists('Form')) {
@@ -1486,7 +1486,7 @@ class Contact extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowContact");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}

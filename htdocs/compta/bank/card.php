@@ -621,7 +621,7 @@ if ($action == 'create') {
 	print '<table class="border centpercent">';
 	// Accountancy code
 	$fieldrequired = '';
-	if (!empty($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED)) {
+	if (getDolGlobalString('MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED')) {
 		$fieldrequired = 'fieldrequired ';
 	}
 
@@ -1078,7 +1078,7 @@ if ($action == 'create') {
 		// Accountancy code
 		$tdextra = ' class="titlefieldcreate"';
 
-		if (!empty($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED)) {
+		if (getDolGlobalString('MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED')) {
 			$tdextra = ' class="fieldrequired titlefieldcreate"';
 		}
 

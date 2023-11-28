@@ -406,7 +406,7 @@ if ($sourcetype != 'salary') {
 	$sql .= " ".MAIN_DB_PREFIX."prelevement_demande as pd";
 	$sql .= " WHERE s.rowid = f.fk_soc";
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
-	if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {
+	if (!getDolGlobalString('WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS')) {
 		$sql .= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
 	}
 	//$sql .= " AND pd.amount > 0";

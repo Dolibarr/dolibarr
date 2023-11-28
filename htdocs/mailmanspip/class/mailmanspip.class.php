@@ -307,8 +307,8 @@ class MailmanSpip
 		}
 
 		if (isModEnabled('adherent')) {	// Synchro for members
-			if (!empty($conf->global->ADHERENT_MAILMAN_URL)) {
-				if ($listes == '' && !empty($conf->global->ADHERENT_MAILMAN_LISTS)) {
+			if (getDolGlobalString('ADHERENT_MAILMAN_URL')) {
+				if ($listes == '' && getDolGlobalString('ADHERENT_MAILMAN_LISTS')) {
 					$lists = explode(',', $conf->global->ADHERENT_MAILMAN_LISTS);
 				} else {
 					$lists = explode(',', $listes);
@@ -377,8 +377,8 @@ class MailmanSpip
 		}
 
 		if (isModEnabled('adherent')) {	// Synchro for members
-			if (!empty($conf->global->ADHERENT_MAILMAN_UNSUB_URL)) {
-				if ($listes == '' && !empty($conf->global->ADHERENT_MAILMAN_LISTS)) {
+			if (getDolGlobalString('ADHERENT_MAILMAN_UNSUB_URL')) {
+				if ($listes == '' && getDolGlobalString('ADHERENT_MAILMAN_LISTS')) {
 					$lists = explode(',', $conf->global->ADHERENT_MAILMAN_LISTS);
 				} else {
 					$lists = explode(',', $listes);

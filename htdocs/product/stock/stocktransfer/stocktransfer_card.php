@@ -840,8 +840,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Product
 		print '<td class="titlefield">';
 		$filtertype = 0;
-		if (!empty($conf->global->STOCK_SUPPORTS_SERVICES)) $filtertype = '';
-		if ($conf->global->PRODUIT_LIMIT_SIZE <= 0) {
+		if (getDolGlobalString('STOCK_SUPPORTS_SERVICES')) $filtertype = '';
+		if (getDolGlobalInt('PRODUIT_LIMIT_SIZE') <= 0) {
 			$limit = '';
 		} else {
 			$limit = $conf->global->PRODUIT_LIMIT_SIZE;

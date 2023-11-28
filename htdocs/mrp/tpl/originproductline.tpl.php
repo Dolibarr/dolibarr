@@ -52,7 +52,7 @@ if ($res) {
 		print ' ' . $langs->trans("or") . ' ';
 		print $tmpbom->getNomUrl(1);
 		print ' <a class="collapse_bom" id="collapse-' . $line->id . '" href="#">';
-		print (empty($conf->global->BOM_SHOW_ALL_BOM_BY_DEFAULT) ? img_picto('', 'folder') : img_picto('', 'folder-open'));
+		print (!getDolGlobalString('BOM_SHOW_ALL_BOM_BY_DEFAULT') ? img_picto('', 'folder') : img_picto('', 'folder-open'));
 	}
 	print '</a>';
 } else {
@@ -115,7 +115,7 @@ if ($resql) {
 		$sub_bom_line->fetch($obj->rowid);
 
 		//If hidden conf is set, we show directly all the sub-BOM lines
-		if (empty($conf->global->BOM_SHOW_ALL_BOM_BY_DEFAULT)) {
+		if (!getDolGlobalString('BOM_SHOW_ALL_BOM_BY_DEFAULT')) {
 			print '<tr style="display:none" class="sub_bom_lines" parentid="'.$line->id.'">';
 		} else {
 			print '<tr class="sub_bom_lines" parentid="'.$line->id.'">';

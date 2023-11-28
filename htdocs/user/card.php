@@ -120,7 +120,7 @@ $canedituser = (!empty($user->admin) || $user->hasRight("user", "user", "write")
 $candisableuser = (!empty($user->admin) || $user->hasRight("user", "user", "delete"));
 $canreadgroup = $canreaduser;
 $caneditgroup = $canedituser;
-if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$canreadgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "read"));
 	$caneditgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "write"));
 }
@@ -330,7 +330,7 @@ if (empty($reshook)) {
 				if (GETPOST('superadmin', 'int')) {
 					$object->entity = 0;
 				} else {
-					if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+					if (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 						$object->entity = 1; // all users are forced into master entity
 					} else {
 						$object->entity = ($entity == '' ? 1 : $entity);
@@ -507,7 +507,7 @@ if (empty($reshook)) {
 					if (GETPOST('superadmin', 'int')) {
 						$object->entity = 0;
 					} else {
-						if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+						if (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 							$object->entity = 1; // all users are in master entity
 						} else {
 							// We try to change the entity of user
@@ -1150,7 +1150,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print '</td></tr>';
 
 	// State
-	if (empty($conf->global->USER_DISABLE_STATE)) {
+	if (!getDolGlobalString('USER_DISABLE_STATE')) {
 		print '<tr><td>'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
 		print img_picto('', 'state', 'class="pictofixedwidth"');
 		print $formcompany->select_state_ajax('country_id', $object->state_id, $object->country_id, 'state_id');
@@ -1194,7 +1194,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print '</td></tr>';
 
 	// EMail
-	print '<tr><td'.(!empty($conf->global->USER_MAIL_REQUIRED) ? ' class="fieldrequired"' : '').'>'.$langs->trans("EMail").'</td>';
+	print '<tr><td'.(getDolGlobalString('USER_MAIL_REQUIRED') ? ' class="fieldrequired"' : '').'>'.$langs->trans("EMail").'</td>';
 	print '<td>';
 	print img_picto('', 'object_email', 'class="pictofixedwidth"');
 	if (!empty($ldap_mail)) {
@@ -1269,7 +1269,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	if (isModEnabled('multicompany') && is_object($mc)) {
 		// This is now done with hook formObjectOptions. Keep this code for backward compatibility with old multicompany module
 		if (!method_exists($mc, 'formObjectOptions')) {
-			if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && !$user->entity) {	// condition must be same for create and edit mode
+			if (!getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1 && $user->admin && !$user->entity) {	// condition must be same for create and edit mode
 				print "<tr>".'<td>'.$langs->trans("Entity").'</td>';
 				 print "<td>".$mc->select_entities($conf->entity);
 				 print "</td></tr>\n";
@@ -1288,7 +1288,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print '<td class="wordbreak">';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
-	$doleditor = new DolEditor('signature', GETPOST('signature', 'restricthtml'), '', 138, 'dolibarr_notes', 'In', true, $acceptlocallinktomedia, empty($conf->global->FCKEDITOR_ENABLE_USERSIGN) ? 0 : 1, ROWS_4, '90%');
+	$doleditor = new DolEditor('signature', GETPOST('signature', 'restricthtml'), '', 138, 'dolibarr_notes', 'In', true, $acceptlocallinktomedia, !getDolGlobalString('FCKEDITOR_ENABLE_USERSIGN') ? 0 : 1, ROWS_4, '90%');
 	print $doleditor->Create(1);
 	print '</td></tr>';
 
@@ -1316,7 +1316,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	// TODO Move this into tab RH (HierarchicalResponsible must be on both tab)
 
 	// Default warehouse
-	if (isModEnabled('stock') && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) {
+	if (isModEnabled('stock') && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) {
 		print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
 		print $formproduct->selectWarehouses($object->fk_warehouse, 'fk_warehouse', 'warehouseopen', 1);
 		print '</td></tr>';
@@ -1404,7 +1404,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 		$res = $object->fetch_optionals();
 
 		// Check if user has rights
-		if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+		if (!getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 			$object->getrights();
 			if (empty($object->nb_rights) && $object->statut != 0 && empty($object->admin)) {
 				setEventMessages($langs->trans('UserHasNoPermissions'), null, 'warnings');
@@ -1688,7 +1688,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print "</tr>\n";
 
 			// Default warehouse
-			if (isModEnabled('stock') && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) {
+			if (isModEnabled('stock') && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) {
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 				print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
 				if ($object->fk_warehouse > 0) {
@@ -1740,7 +1740,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '</td></tr>';
 			}
 
-			if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->file->main_authentication) && !empty($conf->global->MAIN_OPENIDURL_PERUSER)) {
+			if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->file->main_authentication) && getDolGlobalString('MAIN_OPENIDURL_PERUSER')) {
 				print '<tr><td>'.$langs->trans("OpenIDURL").'</td>';
 				print '<td>'.$object->openid.'</td>';
 				print "</tr>\n";
@@ -1750,7 +1750,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			if (isModEnabled('multicompany') && is_object($mc)) {
 				// This is now done with hook formObjectOptions. Keep this code for backward compatibility with old multicompany module
 				if (!method_exists($mc, 'formObjectOptions')) {
-					if (isModEnabled('multicompany') && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && !$user->entity) {
+					if (isModEnabled('multicompany') && !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1 && $user->admin && !$user->entity) {
 						print '<tr><td>'.$langs->trans("Entity").'</td><td>';
 						if (empty($object->entity)) {
 							print $langs->trans("AllEntities");
@@ -1969,7 +1969,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 							'class' => 'classfortooltip'
 						)
 					);
-					if (!empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) {
+					if (getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')) {
 						$params['attr']['title'] = $langs->trans('DisabledInMonoUserMode');
 						print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'].'#', '', false, $params);
 					} else {
@@ -2163,7 +2163,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '<table class="border centpercent">';
 
 			// Ref/ID
-			if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
+			if (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID')) {
 				print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td>';
 				print '<td>';
 				print $object->id;
@@ -2489,7 +2489,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			// OpenID url
-			if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->file->main_authentication) && !empty($conf->global->MAIN_OPENIDURL_PERUSER)) {
+			if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->file->main_authentication) && getDolGlobalString('MAIN_OPENIDURL_PERUSER')) {
 				print "<tr>".'<td>'.$langs->trans("OpenIDURL").'</td>';
 				print '<td>';
 				if ($caneditfield) {
@@ -2549,7 +2549,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</td></tr>';
 
 			// State
-			if (empty($conf->global->USER_DISABLE_STATE)) {
+			if (!getDolGlobalString('USER_DISABLE_STATE')) {
 				print '<tr><td class="tdoverflow">'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td>';
 				if ($caneditfield) {
 					print img_picto('', 'state', 'class="pictofixedwidth"');
@@ -2597,7 +2597,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</td></tr>';
 
 			// EMail
-			print "<tr>".'<td'.(!empty($conf->global->USER_MAIL_REQUIRED) ? ' class="fieldrequired"' : '').'>'.$langs->trans("EMail").'</td>';
+			print "<tr>".'<td'.(getDolGlobalString('USER_MAIL_REQUIRED') ? ' class="fieldrequired"' : '').'>'.$langs->trans("EMail").'</td>';
 			print '<td>';
 			print img_picto('', 'object_email', 'class="pictofixedwidth"');
 			if ($caneditfield && empty($object->ldap_sid)) {
@@ -2633,7 +2633,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</table><hr><table class="border centpercent">';
 
 			// Default warehouse
-			if (isModEnabled('stock') && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) {
+			if (isModEnabled('stock') && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) {
 				print '<tr><td class="titlefield">'.$langs->trans("DefaultWarehouse").'</td><td>';
 				print $formproduct->selectWarehouses($object->fk_warehouse, 'fk_warehouse', 'warehouseopen', 1);
 				print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&token='.newToken().'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken()).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span></a>';
@@ -2781,7 +2781,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			if ($caneditfield) {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
-				$doleditor = new DolEditor('signature', $object->signature, '', 138, 'dolibarr_notes', 'In', false, $acceptlocallinktomedia, empty($conf->global->FCKEDITOR_ENABLE_USERSIGN) ? 0 : 1, ROWS_4, '90%');
+				$doleditor = new DolEditor('signature', $object->signature, '', 138, 'dolibarr_notes', 'In', false, $acceptlocallinktomedia, !getDolGlobalString('FCKEDITOR_ENABLE_USERSIGN') ? 0 : 1, ROWS_4, '90%');
 				print $doleditor->Create(1);
 			} else {
 				print dol_htmlentitiesbr($object->signature);

@@ -131,7 +131,7 @@ if (isModEnabled('supplier_invoice')) {
 	$sql .= " WHERE s.rowid = f.fk_soc";
 	$sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
 	$sql .= " AND f.total_ttc > 0";
-	if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {
+	if (!getDolGlobalString('WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS')) {
 		$sql .= " AND f.fk_statut = ".FactureFournisseur::STATUS_VALIDATED;
 	}
 	$sql .= " AND pfd.traite = 0";

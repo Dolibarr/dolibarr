@@ -159,7 +159,7 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforend
 	}
 
 	$date = new DateTime();
-	if (!empty($conf->global->MAIN_DATE_IN_MEMORY_ARE_GMT)) {
+	if (getDolGlobalString('MAIN_DATE_IN_MEMORY_ARE_GMT')) {
 		$date->setTimezone(new DateTimeZone('UTC'));
 	}
 	$date->setTimestamp($time);

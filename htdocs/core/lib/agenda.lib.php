@@ -73,11 +73,11 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	print '<div class="divsearchfield">';
 	// Type
 	$multiselect = 0;
-	if (!empty($conf->global->MAIN_ENABLE_MULTISELECT_TYPE)) {     // We use an option here because it adds bugs when used on agenda page "peruser" and "list"
-		$multiselect = (!empty($conf->global->AGENDA_USE_EVENT_TYPE));
+	if (getDolGlobalString('MAIN_ENABLE_MULTISELECT_TYPE')) {     // We use an option here because it adds bugs when used on agenda page "peruser" and "list"
+		$multiselect = (getDolGlobalString('AGENDA_USE_EVENT_TYPE'));
 	}
 	print img_picto($langs->trans("ActionType"), 'square', 'class="pictofixedwidth inline-block" style="color: #ddd;"');
-	print $formactions->select_type_actions($actioncode, "search_actioncode", $excludetype, (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1), 0, $multiselect, 0, 'maxwidth500 widthcentpercentminusx');
+	print $formactions->select_type_actions($actioncode, "search_actioncode", $excludetype, (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? 1 : -1), 0, $multiselect, 0, 'maxwidth500 widthcentpercentminusx');
 	print '</div>';
 
 	if ($canedit) {
@@ -441,7 +441,7 @@ function actions_prepare_head($object)
 		$nbResources = (is_array($listofresourcelinked) ?count($listofresourcelinked) : 0);
 		$head[$h][1] = $langs->trans("Resources");
 		if ($nbResources > 0) {
-			$head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">'.($nbResources).'</span>' : '');
+			$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.($nbResources).'</span>' : '');
 		}
 		$head[$h][2] = 'resources';
 		$h++;
@@ -456,7 +456,7 @@ function actions_prepare_head($object)
 	$head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Documents");
 	if (($nbFiles + $nbLinks) > 0) {
-		$head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>' : '');
+		$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>' : '');
 	}
 	$head[$h][2] = 'documents';
 	$h++;
@@ -508,7 +508,7 @@ function calendars_prepare_head($param)
 	$h++;
 
 	//if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
-	if (!empty($conf->global->AGENDA_SHOW_PERTYPE)) {
+	if (getDolGlobalString('AGENDA_SHOW_PERTYPE')) {
 		$head[$h][0] = DOL_URL_ROOT.'/comm/action/pertype.php'.($param ? '?'.$param : '');
 		$head[$h][1] = $langs->trans("ViewPerType");
 		$head[$h][2] = 'cardpertype';

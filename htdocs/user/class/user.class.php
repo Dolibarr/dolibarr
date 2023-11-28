@@ -471,14 +471,14 @@ class User extends CommonObject
 		$sql .= " LEFT JOIN ".$this->db->prefix()."c_departements as d ON u.fk_state = d.rowid";
 
 		if ($entity < 0) {
-			if ((!isModEnabled('multicompany') || empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) && (!empty($user->entity))) {
+			if ((!isModEnabled('multicompany') || !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) && (!empty($user->entity))) {
 				$sql .= " WHERE u.entity IN (0, ".((int) $conf->entity).")";
 			} else {
 				$sql .= " WHERE u.entity IS NOT NULL"; // multicompany is on in transverse mode or user making fetch is on entity 0, so user is allowed to fetch anywhere into database
 			}
 		} else {
 			// The fetch was forced on an entity
-			if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+			if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 				$sql .= " WHERE u.entity IS NOT NULL"; // multicompany is on in transverse mode or user making fetch is on entity 0, so user is allowed to fetch anywhere into database
 			} else {
 				$sql .= " WHERE u.entity IN (0, ".((int) (($entity != '' && $entity >= 0) ? $entity : $conf->entity)).")"; // search in entity provided in parameter
@@ -679,7 +679,7 @@ class User extends CommonObject
 	{
 		global $conf;
 
-		if (!empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES)) {
+		if (getDolGlobalString('MAIN_ENABLE_DEFAULT_VALUES')) {
 			// Load user->default_values for user. TODO Save this in memcached ?
 			require_once DOL_DOCUMENT_ROOT.'/core/class/defaultvalues.class.php';
 
@@ -1170,9 +1170,9 @@ class User extends CommonObject
 		$sql .= " FROM ".$this->db->prefix()."user_rights as ur,";
 		$sql .= " ".$this->db->prefix()."rights_def as r";
 		$sql .= " WHERE r.id = ur.fk_id";
-		if (!empty($conf->global->MULTICOMPANY_BACKWARD_COMPATIBILITY)) {
+		if (getDolGlobalString('MULTICOMPANY_BACKWARD_COMPATIBILITY')) {
 			// on old version, we use entity defined into table r only
-			$sql .= " AND r.entity IN (0,".(isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) ? "1," : "").$conf->entity.")";
+			$sql .= " AND r.entity IN (0,".(isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') ? "1," : "").$conf->entity.")";
 		} else {
 			// On table r=rights_def, the unique key is (id, entity) because id is hard coded into module descriptor and insert during module activation.
 			// So we must include the filter on entity on both table r. and ur.
@@ -1230,8 +1230,8 @@ class User extends CommonObject
 		$sql .= " ".$this->db->prefix()."rights_def as r";
 		$sql .= " WHERE r.id = gr.fk_id";
 		// A very strange business rules. Must be same than into user->getrights() user/perms.php and user/group/perms.php
-		if (!empty($conf->global->MULTICOMPANY_BACKWARD_COMPATIBILITY)) {
-			if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+		if (getDolGlobalString('MULTICOMPANY_BACKWARD_COMPATIBILITY')) {
+			if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 				$sql .= " AND gu.entity IN (0,".$conf->entity.")";
 			} else {
 				$sql .= " AND r.entity = ".((int) $conf->entity);
@@ -1317,7 +1317,7 @@ class User extends CommonObject
 				}
 			}
 			// Add test on advanced permissions
-			if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+			if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 				if (empty($this->rights->user->user_advance)) {
 					$this->rights->user->user_advance = new stdClass();
 				}
@@ -1552,7 +1552,7 @@ class User extends CommonObject
 		$badCharUnauthorizedIntoLoginName = getDolGlobalString('MAIN_LOGIN_BADCHARUNAUTHORIZED', ',@<>"\'');
 
 		// Check parameters
-		if (!empty($conf->global->USER_MAIL_REQUIRED) && !isValidEMail($this->email)) {
+		if (getDolGlobalString('USER_MAIL_REQUIRED') && !isValidEMail($this->email)) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorBadEMail", $this->email);
 			return -1;
@@ -1620,7 +1620,7 @@ class User extends CommonObject
 				return -5;
 			}
 
-			if (!empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER) && !empty($conf->global->STOCK_USERSTOCK_AUTOCREATE)) {
+			if (getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER') && getDolGlobalString('STOCK_USERSTOCK_AUTOCREATE')) {
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 				$langs->load("stocks");
 
@@ -1953,7 +1953,7 @@ class User extends CommonObject
 		// Check parameters
 		$badCharUnauthorizedIntoLoginName = getDolGlobalString('MAIN_LOGIN_BADCHARUNAUTHORIZED', ',@<>"\'');
 
-		if (!empty($conf->global->USER_MAIL_REQUIRED) && !isValidEMail($this->email)) {
+		if (getDolGlobalString('USER_MAIL_REQUIRED') && !isValidEMail($this->email)) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorBadEMail", $this->email);
 			return -1;
@@ -2302,7 +2302,7 @@ class User extends CommonObject
 
 		// Check and encrypt the password
 		if (empty($passwordalreadycrypted)) {
-			if (!empty($conf->global->USER_PASSWORD_GENERATED)) {
+			if (getDolGlobalString('USER_PASSWORD_GENERATED')) {
 				// Add a check on rules for password syntax using the setup of the password generator
 				$modGeneratePassClass = 'modGeneratePass'.ucfirst($conf->global->USER_PASSWORD_GENERATED);
 
@@ -2341,7 +2341,7 @@ class User extends CommonObject
 			if (!empty($flagdelsessionsbefore)) {
 				$sql .= ", flagdelsessionsbefore = '".$this->db->idate(dol_now() - 5, 'gmt')."'";
 			}
-			if (!empty($conf->global->DATABASE_PWD_ENCRYPTED)) {
+			if (getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {
 				$sql .= ", pass = null";
 			} else {
 				$sql .= ", pass = '".$this->db->escape($password)."'";
@@ -2365,7 +2365,7 @@ class User extends CommonObject
 						$result = $adh->fetch($this->fk_member);
 
 						if ($result >= 0) {
-							$result = $adh->setPassword($user, $this->pass, (empty($conf->global->DATABASE_PWD_ENCRYPTED) ? 0 : 1), 1); // Cryptage non gere dans module adherent
+							$result = $adh->setPassword($user, $this->pass, (!getDolGlobalString('DATABASE_PWD_ENCRYPTED') ? 0 : 1), 1); // Cryptage non gere dans module adherent
 							if (is_int($result) && $result < 0) {
 								$this->error = $adh->error;
 								dol_syslog(get_class($this)."::setPassword ".$this->error, LOG_ERR);
@@ -2465,7 +2465,7 @@ class User extends CommonObject
 
 		if (!$changelater) {
 			$url = $urlwithroot.'/';
-			if (!empty($conf->global->URL_REDIRECTION_AFTER_CHANGEPASSWORD)) {
+			if (getDolGlobalString('URL_REDIRECTION_AFTER_CHANGEPASSWORD')) {
 				$url = $conf->global->URL_REDIRECTION_AFTER_CHANGEPASSWORD;
 			}
 
@@ -2847,7 +2847,7 @@ class User extends CommonObject
 			$datas['newlinelogin'] = '<br>';
 			$datas['session'] = '<br><u>'.$langs->trans("Session").'</u>';
 			$datas['ip'] = '<br><b>'.$langs->trans("IPAddress").'</b>: '.dol_string_nohtmltag(getUserRemoteIP());
-			if (!empty($conf->global->MAIN_MODULE_MULTICOMPANY)) {
+			if (getDolGlobalString('MAIN_MODULE_MULTICOMPANY')) {
 				$datas['multicompany'] = '<br><b>'.$langs->trans("ConnectedOnMultiCompany").':</b> '.$conf->entity.' (User entity '.$this->entity.')';
 			}
 			$datas['authentication'] = '<br><b>'.$langs->trans("AuthenticationMode").':</b> '.dol_string_nohtmltag($_SESSION["dol_authmode"].(empty($dolibarr_main_demo) ? '' : ' (demo)'));
@@ -2895,7 +2895,7 @@ class User extends CommonObject
 			$option = 'nolink';
 		}
 
-		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpictoimg) {
+		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') && $withpictoimg) {
 			$withpictoimg = 0;
 		}
 
@@ -2948,7 +2948,7 @@ class User extends CommonObject
 		$linkstart = '<a href="'.$url.'"';
 		$linkclose = "";
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$langs->load("users");
 				$label = $langs->trans("ShowUser");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
@@ -2979,7 +2979,7 @@ class User extends CommonObject
 			$result .= $picto;
 		}
 		if ($withpictoimg > -2 && $withpictoimg != 2) {
-			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$result .= '<span class="nopadding usertext'.((!isset($this->status) || $this->status) ? '' : ' strikefordisabled').($morecss ? ' '.$morecss : '').'">';
 			}
 			if ($mode == 'login') {
@@ -2987,7 +2987,7 @@ class User extends CommonObject
 			} else {
 				$result .= dol_string_nohtmltag($this->getFullName($langs, '', ($mode == 'firstelselast' ? 3 : ($mode == 'firstname' ? 2 : -1)), $maxlen));
 			}
-			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$result .= '</span>';
 			}
 		}
@@ -3245,7 +3245,7 @@ class User extends CommonObject
 				$info[getDolGlobalString($constname)] = $this->$varname;
 
 				// Check if it is the LDAP key and if its value has been changed
-				if (!empty($conf->global->LDAP_KEY_USERS) && $conf->global->LDAP_KEY_USERS == getDolGlobalString($constname)) {
+				if (getDolGlobalString('LDAP_KEY_USERS') && $conf->global->LDAP_KEY_USERS == getDolGlobalString($constname)) {
 					if (!empty($this->oldcopy) && $this->$varname != $this->oldcopy->$varname) {
 						$keymodified = true; // For check if LDAP key has been modified
 					}
@@ -3257,16 +3257,16 @@ class User extends CommonObject
 				$info[getDolGlobalString('LDAP_FIELD_'.strtoupper($value['label']))] = $this->socialnetworks[$value['label']];
 			}
 		}
-		if ($this->address && !empty($conf->global->LDAP_FIELD_ADDRESS)) {
+		if ($this->address && getDolGlobalString('LDAP_FIELD_ADDRESS')) {
 			$info[getDolGlobalString('LDAP_FIELD_ADDRESS')] = $this->address;
 		}
-		if ($this->zip && !empty($conf->global->LDAP_FIELD_ZIP)) {
+		if ($this->zip && getDolGlobalString('LDAP_FIELD_ZIP')) {
 			$info[getDolGlobalString('LDAP_FIELD_ZIP')] = $this->zip;
 		}
-		if ($this->town && !empty($conf->global->LDAP_FIELD_TOWN)) {
+		if ($this->town && getDolGlobalString('LDAP_FIELD_TOWN')) {
 			$info[getDolGlobalString('LDAP_FIELD_TOWN')] = $this->town;
 		}
-		if ($this->note_public && !empty($conf->global->LDAP_FIELD_DESCRIPTION)) {
+		if ($this->note_public && getDolGlobalString('LDAP_FIELD_DESCRIPTION')) {
 			$info[getDolGlobalString('LDAP_FIELD_DESCRIPTION')] = dol_string_nohtmltag($this->note_public, 2);
 		}
 		if ($this->socid > 0) {
@@ -3287,28 +3287,28 @@ class User extends CommonObject
 
 		// When password is modified
 		if (!empty($this->pass)) {
-			if (!empty($conf->global->LDAP_FIELD_PASSWORD)) {
+			if (getDolGlobalString('LDAP_FIELD_PASSWORD')) {
 				$info[getDolGlobalString('LDAP_FIELD_PASSWORD')] = $this->pass; // this->pass = mot de passe non crypte
 			}
-			if (!empty($conf->global->LDAP_FIELD_PASSWORD_CRYPTED)) {
+			if (getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED')) {
 				$info[getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED')] = dol_hash($this->pass, 'openldap'); // Create OpenLDAP password (see LDAP_PASSWORD_HASH_TYPE)
 			}
 		} elseif ($conf->global->LDAP_SERVER_PROTOCOLVERSION !== '3') {
 			// Set LDAP password if possible
 			// If ldap key is modified and LDAPv3 we use ldap_rename function for avoid lose encrypt password
-			if (!empty($conf->global->DATABASE_PWD_ENCRYPTED)) {
+			if (getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {
 				// Just for the default MD5 !
-				if (empty($conf->global->MAIN_SECURITY_HASH_ALGO)) {
-					if ($this->pass_indatabase_crypted && !empty($conf->global->LDAP_FIELD_PASSWORD_CRYPTED)) {
+				if (!getDolGlobalString('MAIN_SECURITY_HASH_ALGO')) {
+					if ($this->pass_indatabase_crypted && getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED')) {
 						$info[getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED')] = dolGetLdapPasswordHash($this->pass_indatabase_crypted, 'md5frommd5'); // Create OpenLDAP MD5 password from Dolibarr MD5 password
 					}
 				}
 			} elseif (!empty($this->pass_indatabase)) {
 				// Use $this->pass_indatabase value if exists
-				if (!empty($conf->global->LDAP_FIELD_PASSWORD)) {
+				if (getDolGlobalString('LDAP_FIELD_PASSWORD')) {
 					$info[getDolGlobalString('LDAP_FIELD_PASSWORD')] = $this->pass_indatabase; // $this->pass_indatabase = mot de passe non crypte
 				}
-				if (!empty($conf->global->LDAP_FIELD_PASSWORD_CRYPTED)) {
+				if (getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED')) {
 					$info[getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED')] = dol_hash($this->pass_indatabase, 'openldap'); // Create OpenLDAP password (see LDAP_PASSWORD_HASH_TYPE)
 				}
 			}
@@ -3341,10 +3341,10 @@ class User extends CommonObject
 			}
 		}
 
-		if (!empty($conf->global->LDAP_FIELD_USERID)) {
+		if (getDolGlobalString('LDAP_FIELD_USERID')) {
 			$info[getDolGlobalString('LDAP_FIELD_USERID')] = $this->id;
 		}
-		if (!empty($conf->global->LDAP_FIELD_GROUPID)) {
+		if (getDolGlobalString('LDAP_FIELD_GROUPID')) {
 			$usergroup = new UserGroup($this->db);
 			$groupslist = $usergroup->listGroupsForUser($this->id);
 			$info[getDolGlobalString('LDAP_FIELD_GROUPID')] = '65534';
@@ -3355,7 +3355,7 @@ class User extends CommonObject
 				}
 			}
 		}
-		if (!empty($conf->global->LDAP_FIELD_HOMEDIRECTORY) && !empty($conf->global->LDAP_FIELD_HOMEDIRECTORYPREFIX)) {
+		if (getDolGlobalString('LDAP_FIELD_HOMEDIRECTORY') && getDolGlobalString('LDAP_FIELD_HOMEDIRECTORYPREFIX')) {
 			$info[getDolGlobalString('LDAP_FIELD_HOMEDIRECTORY')] = "{$conf->global->LDAP_FIELD_HOMEDIRECTORYPREFIX}/$this->login";
 		}
 
@@ -3842,7 +3842,7 @@ class User extends CommonObject
 
 		$sql = "SELECT COUNT(DISTINCT u.rowid) as nb";
 		$sql .= " FROM ".$this->db->prefix()."user as u";
-		if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+		if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 			$sql .= ", ".$this->db->prefix()."usergroup_user as ug";
 			$sql .= " WHERE ug.entity IN (".getEntity('usergroup').")";
 			$sql .= " AND ug.fk_user = u.rowid";
@@ -3885,7 +3885,7 @@ class User extends CommonObject
 
 		// Positionne le modele sur le nom du modele a utiliser
 		if (!dol_strlen($modele)) {
-			if (!empty($conf->global->USER_ADDON_PDF)) {
+			if (getDolGlobalString('USER_ADDON_PDF')) {
 				$modele = $conf->global->USER_ADDON_PDF;
 			} else {
 				$modele = 'bluesky';
@@ -3991,7 +3991,7 @@ class User extends CommonObject
 		$sql .= ' FROM '.$this->db->prefix().$this->table_element.' as t ';
 
 		if ($entityfilter) {
-			if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+			if (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 				if (!empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
 					$sql .= " WHERE t.entity IS NOT NULL"; // Show all users
 				} else {
@@ -4084,7 +4084,7 @@ class User extends CommonObject
 
 		$sql = 'SELECT rowid';
 		$sql .= ' FROM '.$this->db->prefix().'user';
-		if (!empty($conf->global->AGENDA_DISABLE_EXACT_USER_EMAIL_COMPARE_FOR_EXTERNAL_CALENDAR)) {
+		if (getDolGlobalString('AGENDA_DISABLE_EXACT_USER_EMAIL_COMPARE_FOR_EXTERNAL_CALENDAR')) {
 			$sql .= " WHERE email LIKE '%".$this->db->escape($email)."%'";
 		} else {
 			$sql .= " WHERE email = '".$this->db->escape($email)."'";

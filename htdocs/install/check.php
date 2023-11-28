@@ -392,8 +392,8 @@ if (!file_exists($conffile)) {
 		}
 
 		// Show title
-		if (!empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || !empty($conf->global->MAIN_VERSION_LAST_INSTALL)) {
-			print $langs->trans("VersionLastUpgrade").': <b><span class="ok">'.(empty($conf->global->MAIN_VERSION_LAST_UPGRADE) ? $conf->global->MAIN_VERSION_LAST_INSTALL : $conf->global->MAIN_VERSION_LAST_UPGRADE).'</span></b> - ';
+		if (getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') || getDolGlobalString('MAIN_VERSION_LAST_INSTALL')) {
+			print $langs->trans("VersionLastUpgrade").': <b><span class="ok">'.(!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') ? $conf->global->MAIN_VERSION_LAST_INSTALL : $conf->global->MAIN_VERSION_LAST_UPGRADE).'</span></b> - ';
 			print $langs->trans("VersionProgram").': <b><span class="ok">'.DOL_VERSION.'</span></b>';
 			//print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired"));
 			print '<br>';

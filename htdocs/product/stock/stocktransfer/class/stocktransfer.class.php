@@ -192,7 +192,7 @@ class StockTransfer extends CommonObject
 		$this->db = $db;
 		$this->origin_type = 'StockTransfer@product/stock/stocktransfer';
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) $this->fields['rowid']['visible'] = 0;
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) $this->fields['rowid']['visible'] = 0;
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) $this->fields['entity']['enabled'] = 0;
 
 		// Example to show how to set values of fields definition dynamically
@@ -760,7 +760,7 @@ class StockTransfer extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowStockTransfer");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -931,11 +931,11 @@ class StockTransfer extends CommonObject
 		global $langs, $conf;
 		$langs->load("stocks");
 
-		if (empty($conf->global->STOCKTRANSFER_STOCKTRANSFER_ADDON)) {
+		if (!getDolGlobalString('STOCKTRANSFER_STOCKTRANSFER_ADDON')) {
 			$conf->global->STOCKTRANSFER_STOCKTRANSFER_ADDON = 'mod_stocktransfer_standard';
 		}
 
-		if (!empty($conf->global->STOCKTRANSFER_STOCKTRANSFER_ADDON)) {
+		if (getDolGlobalString('STOCKTRANSFER_STOCKTRANSFER_ADDON')) {
 			$mybool = false;
 
 			$file = getDolGlobalString('STOCKTRANSFER_STOCKTRANSFER_ADDON') . ".php";
@@ -1001,7 +1001,7 @@ class StockTransfer extends CommonObject
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->STOCKTRANSFER_ADDON_PDF)) {
+			} elseif (getDolGlobalString('STOCKTRANSFER_ADDON_PDF')) {
 				$modele = $conf->global->STOCKTRANSFER_ADDON_PDF;
 			}
 		}

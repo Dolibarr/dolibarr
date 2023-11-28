@@ -87,11 +87,11 @@ if (!empty($canvas)) {
 
 // Define virtualdiffersfromphysical
 $virtualdiffersfromphysical = 0;
-if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
-	|| !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)
-	|| !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)
-	|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION)
-	|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)
+if (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')
+	|| getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER')
+	|| getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')
+	|| getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION')
+	|| getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION_CLOSE')
 	|| isModEnabled('mrp')) {
 	$virtualdiffersfromphysical = 1; // According to increase/decrease stock options, virtual and physical stock may differs.
 }
@@ -140,7 +140,7 @@ $sql = 'SELECT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price
 $sql .= ' p.fk_product_type, p.tms as datem,';
 $sql .= ' p.duration, p.tosell as statut, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
 $sql .= ' SUM(s.reel) as stock_physique';
-if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	$sql .= ', u.short_label as unit_short';
 }
 // Add fields from hooks
@@ -149,7 +149,7 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $obje
 $sql .= $hookmanager->resPrint;
 $sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as s ON p.rowid = s.fk_product';
-if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_units as u on p.fk_unit = u.rowid';
 }
 // Add table from hooks
@@ -173,7 +173,7 @@ if (!empty($search_categ) && $search_categ != '-1') {
 	}
 	$sql .= ")";
 }
-if (empty($conf->global->PRODUCT_STOCK_LIST_SHOW_VIRTUAL_WITH_NO_PHYSICAL)) {
+if (!getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_VIRTUAL_WITH_NO_PHYSICAL')) {
 	$sql .= " AND EXISTS (SELECT e.rowid FROM ".MAIN_DB_PREFIX."entrepot as e WHERE e.rowid = s.fk_entrepot AND e.entity IN (".getEntity('stock')."))";
 } else {
 	$sql .= " AND 
@@ -412,7 +412,7 @@ if ($resql) {
 	$warehouses_list = $formProduct->cache_warehouses;
 	$nb_warehouse = count($warehouses_list);
 	$colspan_warehouse = 1;
-	if (!empty($conf->global->STOCK_DETAIL_ON_WAREHOUSE)) {
+	if (getDolGlobalString('STOCK_DETAIL_ON_WAREHOUSE')) {
 		$colspan_warehouse = $nb_warehouse > 1 ? $nb_warehouse + 1 : 1;
 	}
 
@@ -422,7 +422,7 @@ if ($resql) {
 	// Fields title search
 	print '<tr class="liste_titre_filter">';
 	// Action column
-	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td class="liste_titre maxwidthsearch">';
 		$searchpicto = $form->showFilterAndCheckAddButtons(0);
 		print $searchpicto;
@@ -456,7 +456,7 @@ if ($resql) {
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td class="liste_titre maxwidthsearch">';
 		$searchpicto = $form->showFilterAndCheckAddButtons(0);
 		print $searchpicto;
@@ -467,7 +467,7 @@ if ($resql) {
 	// Line for column titles
 	print '<tr class="liste_titre">';
 	// Action column
-	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print_liste_field_titre('');
 	}
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref", '', $param, "", $sortfield, $sortorder);
@@ -479,7 +479,7 @@ if ($resql) {
 	print_liste_field_titre("DesiredStock", $_SERVER["PHP_SELF"], "p.desiredstock", '', $param, "", $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("PhysicalStock", $_SERVER["PHP_SELF"], "stock_physique", '', $param, "", $sortfield, $sortorder, 'right ');
 	// Details per warehouse
-	if (!empty($conf->global->STOCK_DETAIL_ON_WAREHOUSE)) {	// TODO This should be moved into the selection of fields on page product/list (page product/stock will be removed and replaced with product/list with its own context)
+	if (getDolGlobalString('STOCK_DETAIL_ON_WAREHOUSE')) {	// TODO This should be moved into the selection of fields on page product/list (page product/stock will be removed and replaced with product/list with its own context)
 		if ($nb_warehouse > 1) {
 			foreach ($warehouses_list as &$wh) {
 				print_liste_field_titre($wh['label'], '', '', '', '', '', '', '', 'right ');
@@ -490,7 +490,7 @@ if ($resql) {
 		print_liste_field_titre("VirtualStock", $_SERVER["PHP_SELF"], "", '', $param, "", $sortfield, $sortorder, 'right ', 'VirtualStockDesc');
 	}
 	// Units
-	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+	if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 		print_liste_field_titre("Unit", $_SERVER["PHP_SELF"], "unit_short", '', $param, 'align="right"', $sortfield, $sortorder);
 	}
 	print_liste_field_titre('');
@@ -501,7 +501,7 @@ if ($resql) {
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Action column
-	if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print_liste_field_titre('');
 	}
 	print "</tr>\n";
@@ -515,7 +515,7 @@ if ($resql) {
 
 		print '<tr>';
 		// Action column
-		if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td></td>';
 		}
 		print '<td class="nowrap">';
@@ -555,7 +555,7 @@ if ($resql) {
 		print '</td>';
 
 		// Details per warehouse
-		if (!empty($conf->global->STOCK_DETAIL_ON_WAREHOUSE)) {	// TODO This should be moved into the selection of fields on page product/list (page product/stock will be removed and replaced with product/list with its own context)
+		if (getDolGlobalString('STOCK_DETAIL_ON_WAREHOUSE')) {	// TODO This should be moved into the selection of fields on page product/list (page product/stock will be removed and replaced with product/list with its own context)
 			if ($nb_warehouse > 1) {
 				foreach ($warehouses_list as &$wh) {
 					print '<td class="right">';
@@ -577,7 +577,7 @@ if ($resql) {
 			print '</td>';
 		}
 		// Units
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 			print '<td class="left">'.dol_escape_htmltag($objp->unit_short).'</td>';
 		}
 		print '<td class="center nowraponall">';
@@ -591,7 +591,7 @@ if ($resql) {
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $product); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Action column
-		if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td></td>';
 		}
 

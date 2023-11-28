@@ -481,7 +481,7 @@ class Task extends CommonObjectLine
 			}
 		}
 
-		if (!$error && !empty($conf->global->PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE)) {
+		if (!$error && getDolGlobalString('PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE')) {
 			// Close the parent project if it is open (validated) and its tasks are 100% completed
 			$project = new Project($this->db);
 			if ($project->fetch($this->fk_project) > 0) {
@@ -814,7 +814,7 @@ class Task extends CommonObjectLine
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowTask");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -1302,7 +1302,7 @@ class Task extends CommonObjectLine
 			$this->timespent_datehour = $this->timespent_date;
 		}
 
-		if (!empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
+		if (getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
 
@@ -1746,7 +1746,7 @@ class Task extends CommonObjectLine
 			$this->timespent_note = trim($this->timespent_note);
 		}
 
-		if (!empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
+		if (getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
 
@@ -1792,7 +1792,7 @@ class Task extends CommonObjectLine
 			$ret = -1;
 		}
 
-		if ($ret == 1 && (($this->timespent_old_duration != $this->timespent_duration) || !empty($conf->global->TIMESPENT_ALWAYS_UPDATE_THM))) {
+		if ($ret == 1 && (($this->timespent_old_duration != $this->timespent_duration) || getDolGlobalString('TIMESPENT_ALWAYS_UPDATE_THM'))) {
 			if ($this->timespent_old_duration != $this->timespent_duration) {
 				// Recalculate amount of time spent for task and update denormalized field
 				$sql = "UPDATE " . MAIN_DB_PREFIX . "projet_task";
@@ -1812,7 +1812,7 @@ class Task extends CommonObjectLine
 
 			// Update hourly rate of this time spent entry, but only if it was not set initialy
 			$res_update = 1;
-			if (empty($timespent->thm) || !empty($conf->global->TIMESPENT_ALWAYS_UPDATE_THM)) {
+			if (empty($timespent->thm) || getDolGlobalString('TIMESPENT_ALWAYS_UPDATE_THM')) {
 				$resql_thm_user = $this->db->query("SELECT thm FROM " . MAIN_DB_PREFIX . "user WHERE rowid = " . ((int) $timespent->fk_user));
 				if (!empty($resql_thm_user)) {
 					$obj_thm_user = $this->db->fetch_object($resql_thm_user);
@@ -1847,7 +1847,7 @@ class Task extends CommonObjectLine
 
 		$error = 0;
 
-		if (!empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
+		if (getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
 
@@ -1948,8 +1948,8 @@ class Task extends CommonObjectLine
 		$origin_task->fetch($fromid);
 
 		$defaultref = '';
-		$obj = empty($conf->global->PROJECT_TASK_ADDON) ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
-		if (!empty($conf->global->PROJECT_TASK_ADDON) && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').".php")) {
+		$obj = !getDolGlobalString('PROJECT_TASK_ADDON') ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
+		if (getDolGlobalString('PROJECT_TASK_ADDON') && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').".php")) {
 			require_once DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').'.php';
 			$modTask = new $obj;
 			$defaultref = $modTask->getNextValue(0, $clone_task);
@@ -2235,7 +2235,7 @@ class Task extends CommonObjectLine
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->PROJECT_TASK_ADDON_PDF)) {
+			} elseif (getDolGlobalString('PROJECT_TASK_ADDON_PDF')) {
 				$modele = $conf->global->PROJECT_TASK_ADDON_PDF;
 			}
 		}
