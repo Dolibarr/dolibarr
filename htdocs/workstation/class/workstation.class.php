@@ -158,7 +158,7 @@ class Workstation extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
@@ -633,7 +633,7 @@ class Workstation extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowWorkstation");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -788,11 +788,11 @@ class Workstation extends CommonObject
 		global $langs, $conf;
 		$langs->load("workstation");
 
-		if (empty($conf->global->WORKSTATION_WORKSTATION_ADDON)) {
+		if (!getDolGlobalString('WORKSTATION_WORKSTATION_ADDON')) {
 			$conf->global->WORKSTATION_WORKSTATION_ADDON = 'mod_workstation_standard';
 		}
 
-		if (!empty($conf->global->WORKSTATION_WORKSTATION_ADDON)) {
+		if (getDolGlobalString('WORKSTATION_WORKSTATION_ADDON')) {
 			$mybool = false;
 
 			$file = getDolGlobalString('WORKSTATION_WORKSTATION_ADDON') . ".php";
@@ -860,7 +860,7 @@ class Workstation extends CommonObject
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->WORKSTATION_ADDON_PDF)) {
+			} elseif (getDolGlobalString('WORKSTATION_ADDON_PDF')) {
 				$modele = $conf->global->WORKSTATION_ADDON_PDF;
 			}
 		}

@@ -235,7 +235,7 @@ class modFournisseur extends DolibarrModules
 		$this->rights[$r][4] = 'commande';
 		$this->rights[$r][5] = 'supprimer';
 
-		if (!empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED)) {
+		if (getDolGlobalString('SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED')) {
 			$r++;
 			$this->rights[$r][0] = 1190;
 			$this->rights[$r][1] = 'Approve supplier order (second level)'; // $langs->trans("Permission1190");
@@ -313,7 +313,7 @@ class modFournisseur extends DolibarrModules
 
 		$langs->loadLangs(array("suppliers", "multicurrency"));
 
-		$alias_product_perentity = empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p" : "ppe";
+		$alias_product_perentity = !getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED') ? "p" : "ppe";
 
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
@@ -480,7 +480,7 @@ class modFournisseur extends DolibarrModules
 			$this->export_fields_array[$r]['f.multicurrency_total_tva'] = 'MulticurrencyAmountVAT';
 			$this->export_fields_array[$r]['f.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
 		}
-		if (empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED)) {
+		if (!getDolGlobalString('SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED')) {
 			unset($this->export_fields_array['f.date_approve2']);
 			unset($this->export_fields_array['ua2.login']);
 		}
@@ -632,8 +632,8 @@ class modFournisseur extends DolibarrModules
 		$this->import_convertvalue_array[$r] = array(
 			'f.ref' => array(
 				'rule'=>'getrefifauto',
-				'class'=>(empty($conf->global->INVOICE_SUPPLIER_ADDON_NUMBER) ? 'mod_facture_fournisseur_cactus' : $conf->global->INVOICE_SUPPLIER_ADDON_NUMBER),
-				'path'=>"/core/modules/supplier_invoice/".(empty($conf->global->INVOICE_SUPPLIER_ADDON_NUMBER) ? 'mod_facture_fournisseur_cactus' : $conf->global->INVOICE_SUPPLIER_ADDON_NUMBER).'.php',
+				'class'=>(!getDolGlobalString('INVOICE_SUPPLIER_ADDON_NUMBER') ? 'mod_facture_fournisseur_cactus' : $conf->global->INVOICE_SUPPLIER_ADDON_NUMBER),
+				'path'=>"/core/modules/supplier_invoice/".(!getDolGlobalString('INVOICE_SUPPLIER_ADDON_NUMBER') ? 'mod_facture_fournisseur_cactus' : $conf->global->INVOICE_SUPPLIER_ADDON_NUMBER).'.php',
 				'classobject'=>'FactureFournisseur',
 				'pathobject'=>'/fourn/class/fournisseur.facture.class.php',
 			),
@@ -785,8 +785,8 @@ class modFournisseur extends DolibarrModules
 		$this->import_convertvalue_array[$r] = array(
 			'c.ref' => array(
 				'rule'=>'getrefifauto',
-				'class'=>(empty($conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER) ? 'mod_commande_fournisseur_muguet' : $conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER),
-				'path'=>"/core/modules/supplier_order/".(empty($conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER) ? 'mod_commande_fournisseur_muguet' : $conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER).'.php',
+				'class'=>(!getDolGlobalString('COMMANDE_SUPPLIER_ADDON_NUMBER') ? 'mod_commande_fournisseur_muguet' : $conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER),
+				'path'=>"/core/modules/supplier_order/".(!getDolGlobalString('COMMANDE_SUPPLIER_ADDON_NUMBER') ? 'mod_commande_fournisseur_muguet' : $conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER).'.php',
 				'classobject'=>'CommandeFournisseur',
 				'pathobject'=>'/fourn/class/fournisseur.commande.class.php',
 			),

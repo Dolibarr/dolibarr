@@ -95,7 +95,7 @@ foreach ($object->fields as $key => $val) {
 $searchCategoryProductOperator = 0;
 if (GETPOSTISSET('formfilteraction')) {
 	$searchCategoryProductOperator = GETPOST('search_category_product_operator', 'int');
-} elseif (!empty($conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT)) {
+} elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
 	$searchCategoryProductOperator = $conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT;
 }
 $searchCategoryProductList = GETPOST('search_category_product_list', 'array');
@@ -139,7 +139,7 @@ if ($user->socid > 0) {	// Protection if external user
 	//$socid = $user->socid;
 	accessforbidden();
 }
-if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$result = restrictedArea($user, 'stock');
 } else {
 	$result = restrictedArea($user, 'stock', 0, '', 'inventory_advance');
@@ -363,7 +363,7 @@ if (!$resql) {
 $num = $db->num_rows($resql);
 
 // Direct jump if only one record found
-if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all && !$page) {
+if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	header("Location: ".DOL_URL_ROOT.'/inventory/card.php?id='.$id);
@@ -476,7 +476,7 @@ $moreforfilter.= $langs->trans('MyFilter') . ': <input type="text" name="search_
 $moreforfilter.= '</div>';*/
 
 // Filter on categories
-if (!empty($conf->global->MAIN_SEARCH_CATEGORY_PRODUCT_ON_LISTS) && isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
+if (getDolGlobalString('MAIN_SEARCH_CATEGORY_PRODUCT_ON_LISTS') && isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->transnoentities('ProductsCategoriesShort');
 	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');

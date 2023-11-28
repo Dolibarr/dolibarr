@@ -149,7 +149,7 @@ if (empty($reshook)) {
 
 	// Execute jobs
 	if ($action == 'confirm_execute' && $confirm == "yes" && $permissiontoexecute) {
-		if (!empty($conf->global->CRON_KEY) && $conf->global->CRON_KEY != $securitykey) {
+		if (getDolGlobalString('CRON_KEY') && $conf->global->CRON_KEY != $securitykey) {
 			setEventMessages('Security key '.$securitykey.' is wrong', null, 'errors');
 			$action = '';
 		} else {
@@ -411,7 +411,7 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 // Line with explanation and button new
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('New'), $langs->trans('CronCreateJob'), 'fa fa-plus-circle', DOL_URL_ROOT.'/cron/card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF'].'?mode=modulesetup'), '', $user->rights->cron->create);
+$newcardbutton .= dolGetButtonTitle($langs->trans('New'), $langs->trans('CronCreateJob'), 'fa fa-plus-circle', DOL_URL_ROOT.'/cron/card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF'].'?mode=modulesetup'), '', $user->hasRight('cron', 'create'));
 
 
 if ($mode == 'modulesetup') {
@@ -431,7 +431,7 @@ $trackid = 'cron'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 $text = $langs->trans("HoursOnThisPageAreOnServerTZ").' '.$stringcurrentdate.'<br>';
-if (!empty($conf->global->CRON_WARNING_DELAY_HOURS)) {
+if (getDolGlobalString('CRON_WARNING_DELAY_HOURS')) {
 	$text .= $langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS);
 }
 print info_admin($text);
@@ -724,7 +724,7 @@ if ($num > 0) {
 		if ($user->hasRight('cron', 'execute')) {
 			if (!empty($obj->status)) {
 				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=execute';
-				print (empty($conf->global->CRON_KEY) ? '' : '&securitykey=' . getDolGlobalString('CRON_KEY'));
+				print (!getDolGlobalString('CRON_KEY') ? '' : '&securitykey=' . getDolGlobalString('CRON_KEY'));
 				print ($sortfield ? '&sortfield='.$sortfield : '');
 				print ($sortorder ? '&sortorder='.$sortorder : '');
 				print $param."\" title=\"".dol_escape_htmltag($langs->trans('CronExecute'))."\">".img_picto($langs->trans('CronExecute'), "play", '', false, 0, 0, '', 'marginleftonly').'</a>';

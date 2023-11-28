@@ -653,12 +653,12 @@ class Export
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			//$this->array_export_label[$indice]
-			if (!empty($conf->global->EXPORT_PREFIX_SPEC)) {
+			if (getDolGlobalString('EXPORT_PREFIX_SPEC')) {
 				$filename = getDolGlobalString('EXPORT_PREFIX_SPEC') . "_".$datatoexport;
 			} else {
 				$filename = "export_".$datatoexport;
 			}
-			if (!empty($conf->global->EXPORT_NAME_WITH_DT)) {
+			if (getDolGlobalString('EXPORT_NAME_WITH_DT')) {
 				$filename .= dol_print_date(dol_now(), '%Y%m%d%_%H%M');
 			}
 			$filename .= '.'.$objmodel->getDriverExtension();

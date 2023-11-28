@@ -104,7 +104,7 @@ $block_static->loadTrackedEvents();
 $result = restrictedArea($user, 'blockedlog', 0, '');
 
 // Execution Time
-$max_execution_time_for_importexport = (empty($conf->global->EXPORT_MAX_EXECUTION_TIME) ? 300 : $conf->global->EXPORT_MAX_EXECUTION_TIME); // 5mn if not defined
+$max_execution_time_for_importexport = (!getDolGlobalString('EXPORT_MAX_EXECUTION_TIME') ? 300 : $conf->global->EXPORT_MAX_EXECUTION_TIME); // 5mn if not defined
 $max_time = @ini_get("max_execution_time");
 if ($max_time && $max_time < $max_execution_time_for_importexport) {
 	dol_syslog("max_execution_time=".$max_time." is lower than max_execution_time_for_importexport=".$max_execution_time_for_importexport.". We try to increase it dynamically.");
@@ -394,7 +394,7 @@ print $retstring;
 print '<input type="text" name="yeartoexport" class="valignmiddle maxwidth50imp" value="'.GETPOST('yeartoexport', 'int').'">';
 print '<input type="hidden" name="withtab" value="'.GETPOST('withtab', 'alpha').'">';
 print '<input type="submit" name="downloadcsv" class="button" value="'.$langs->trans('DownloadLogCSV').'">';
-if (!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY)) {
+if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
 	print ' | <a href="?action=downloadblockchain'.(GETPOST('withtab', 'alpha') ? '&withtab='.GETPOST('withtab', 'alpha') : '').'">'.$langs->trans('DownloadBlockChain').'</a>';
 }
 print ' </div><br>';
@@ -506,7 +506,7 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 print '</tr>';
 
-if (!empty($conf->global->BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR)) {
+if (getDolGlobalString('BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR')) {
 	// This is version that is faster but require more memory and report errors that are outside the filter range
 
 	// TODO Make a full scan of table in reverse order of id of $block, so we can use the parameter $previoushash into checkSignature to save requests
@@ -625,7 +625,7 @@ if (is_array($blocks)) {
 				}
 			}
 
-			if (!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY) && !empty($conf->global->BLOCKEDLOG_AUTHORITY_URL)) {
+			if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY') && getDolGlobalString('BLOCKEDLOG_AUTHORITY_URL')) {
 				print ' '.($block->certified ? img_picto($langs->trans('AddedByAuthority'), 'info') : img_picto($langs->trans('NotAddedByAuthorityYet'), 'info_black'));
 			}
 			print '</td>';
@@ -682,7 +682,7 @@ jQuery(document).ready(function () {
 </script>'."\n";
 
 
-if (!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY) && !empty($conf->global->BLOCKEDLOG_AUTHORITY_URL)) {
+if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY') && getDolGlobalString('BLOCKEDLOG_AUTHORITY_URL')) {
 	?>
 		<script type="text/javascript">
 

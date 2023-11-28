@@ -420,7 +420,7 @@ class Commande extends CommonOrder
 		global $langs, $conf;
 		$langs->load("order");
 
-		if (!empty($conf->global->COMMANDE_ADDON)) {
+		if (getDolGlobalString('COMMANDE_ADDON')) {
 			$mybool = false;
 
 			$file = getDolGlobalString('COMMANDE_ADDON') . ".php";
@@ -479,8 +479,8 @@ class Commande extends CommonOrder
 			return 0;
 		}
 
-		if (!((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('commande', 'creer'))
-			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('commande', 'order_advance', 'validate')))) {
+		if (!((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('commande', 'creer'))
+			|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('commande', 'order_advance', 'validate')))) {
 			$this->error = 'NotEnoughPermissions';
 			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
 			return -1;
@@ -637,8 +637,8 @@ class Commande extends CommonOrder
 			return 0;
 		}
 
-		if (!((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('commande', 'creer'))
-			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('commande', 'order_advance', 'validate')))) {
+		if (!((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('commande', 'creer'))
+			|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('commande', 'order_advance', 'validate')))) {
 			$this->error = 'Permission denied';
 			return -1;
 		}
@@ -772,8 +772,8 @@ class Commande extends CommonOrder
 
 		$error = 0;
 
-		$usercanclose = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->commande->creer))
-			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->commande->order_advance->close)));
+		$usercanclose = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->commande->creer))
+			|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->commande->order_advance->close)));
 
 		if ($usercanclose) {
 			if ($this->statut == self::STATUS_CLOSED) {
@@ -942,7 +942,7 @@ class Commande extends CommonOrder
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -2;
 		}
-		if (!empty($conf->global->ORDER_REQUIRE_SOURCE) && $this->source < 0) {
+		if (getDolGlobalString('ORDER_REQUIRE_SOURCE') && $this->source < 0) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Source"));
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -1;
@@ -1024,7 +1024,7 @@ class Commande extends CommonOrder
 						$vatrate .= ' ('.$line->vat_src_code.')';
 					}
 
-					if (!empty($conf->global->MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION)) {
+					if (getDolGlobalString('MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION')) {
 						$originid = $line->origin_id;
 						$origintype = $line->origin;
 					} else {
@@ -1121,7 +1121,7 @@ class Commande extends CommonOrder
 						}
 					}
 
-					if (!$error && $this->id && !empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN) && !empty($this->origin) && !empty($this->origin_id)) {   // Get contact from origin object
+					if (!$error && $this->id && getDolGlobalString('MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN') && !empty($this->origin) && !empty($this->origin_id)) {   // Get contact from origin object
 						$originforcontact = $this->origin;
 						$originidforcontact = $this->origin_id;
 						if ($originforcontact == 'shipping') {     // shipment and order share the same contacts. If creating from shipment we take data of order
@@ -1245,7 +1245,7 @@ class Commande extends CommonOrder
 		$this->date_commande = dol_now();
 		$this->date_creation      = '';
 		$this->date_validation    = '';
-		if (empty($conf->global->MAIN_KEEP_REF_CUSTOMER_ON_CLONING)) {
+		if (!getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING')) {
 			$this->ref_client = '';
 			$this->ref_customer = '';
 		}
@@ -1387,7 +1387,7 @@ class Commande extends CommonOrder
 		$this->ref_client           = $object->ref_client;
 		$this->ref_customer         = $object->ref_client;
 
-		if (empty($conf->global->MAIN_DISABLE_PROPAGATE_NOTES_FROM_ORIGIN)) {
+		if (!getDolGlobalString('MAIN_DISABLE_PROPAGATE_NOTES_FROM_ORIGIN')) {
 			$this->note_private         = $object->note_private;
 			$this->note_public          = $object->note_public;
 		}
@@ -1400,7 +1400,7 @@ class Commande extends CommonOrder
 			if (!empty($object->multicurrency_code)) {
 				$this->multicurrency_code = $object->multicurrency_code;
 			}
-			if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($object->multicurrency_tx)) {
+			if (getDolGlobalString('MULTICURRENCY_USE_ORIGIN_TX') && !empty($object->multicurrency_tx)) {
 				$this->multicurrency_tx = $object->multicurrency_tx;
 			}
 
@@ -1451,7 +1451,7 @@ class Commande extends CommonOrder
 
 			if (!$error) {
 				// Validate immediatly the order
-				if (!empty($conf->global->ORDER_VALID_AFTER_CLOSE_PROPAL)) {
+				if (getDolGlobalString('ORDER_VALID_AFTER_CLOSE_PROPAL')) {
 					$this->fetch($ret);
 					$this->valid($user);
 				}
@@ -1588,7 +1588,7 @@ class Commande extends CommonOrder
 				$result = $product->fetch($fk_product);
 				$product_type = $product->type;
 
-				if (!empty($conf->global->STOCK_MUST_BE_ENOUGH_FOR_ORDER) && $product_type == 0 && $product->stock_reel < $qty) {
+				if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_ORDER') && $product_type == 0 && $product->stock_reel < $qty) {
 					$langs->load("errors");
 					$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnOrder', $product->ref);
 					$this->errors[] = $this->error;
@@ -3214,7 +3214,7 @@ class Commande extends CommonOrder
 				$result = $product->fetch($line->fk_product);
 				$product_type = $product->type;
 
-				if (!empty($conf->global->STOCK_MUST_BE_ENOUGH_FOR_ORDER) && $product_type == 0 && $product->stock_reel < $qty) {
+				if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_ORDER') && $product_type == 0 && $product->stock_reel < $qty) {
 					$langs->load("errors");
 					$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnOrder', $product->ref);
 					$this->errors[] = $this->error;
@@ -3754,7 +3754,7 @@ class Commande extends CommonOrder
 		$datas = [];
 		$nofetch = !empty($params['nofetch']);
 
-		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			return ['optimize' => $langs->trans("Order")];
 		}
 
@@ -3866,7 +3866,7 @@ class Commande extends CommonOrder
 
 		$linkclose = '';
 		if (empty($notooltip) && $user->hasRight('commande', 'lire')) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("Order");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -4127,7 +4127,7 @@ class Commande extends CommonOrder
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->COMMANDE_ADDON_PDF)) {
+			} elseif (getDolGlobalString('COMMANDE_ADDON_PDF')) {
 				$modele = $conf->global->COMMANDE_ADDON_PDF;
 			}
 		}

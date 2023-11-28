@@ -109,7 +109,7 @@ $arrayfields = array(
 	'ba.label'			=> array('label'=>"Account", 'checked'=>1, 'position'=>60, 'enabled'=>(isModEnabled("banque"))),
 	'p.num_paiement'	=> array('label'=>"Numero", 'checked'=>1, 'position'=>70, 'tooltip'=>"ChequeOrTransferNumber"),
 	'p.amount'			=> array('label'=>"Amount", 'checked'=>1, 'position'=>80),
-	'p.statut'			=> array('label'=>"Status", 'checked'=>1, 'position'=>90, 'enabled'=>(!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))),
+	'p.statut'			=> array('label'=>"Status", 'checked'=>1, 'position'=>90, 'enabled'=>(getDolGlobalString('BILL_ADD_PAYMENT_VALIDATION'))),
 );
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -391,7 +391,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 
 // Filters: Lines (placeholder)
-if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
@@ -468,7 +468,7 @@ $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // N
 print $hookmanager->resPrint;
 
 // Action column
-if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '<td class="liste_titre center maxwidthsearch actioncolumn">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -483,7 +483,7 @@ print '<tr class="liste_titre">';
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 }
-if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 	print_liste_field_titre('#', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['p.ref']['checked'])) {
@@ -556,7 +556,7 @@ while ($i < min($num, $limit)) {
 	}
 
 	// No
-	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+	if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 		print '<td>'.(($offset * $limit) + $i).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;

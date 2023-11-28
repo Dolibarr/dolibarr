@@ -601,7 +601,7 @@ class AdvanceTargetingMailing extends CommonObject
 			}
 
 			//Standard Extrafield feature
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
+			if (!getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED')) {
 				$socstatic = new Societe($this->db);
 				$elementtype = $socstatic->table_element;
 
@@ -739,7 +739,7 @@ class AdvanceTargetingMailing extends CommonObject
 			}
 
 			//Standard Extrafield feature
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
+			if (!getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED')) {
 				$contactstatic = new Contact($this->db);
 				$elementtype = $contactstatic->table_element;
 
@@ -842,7 +842,7 @@ class AdvanceTargetingMailing extends CommonObject
 					}
 
 					//Standard Extrafield feature
-					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
+					if (!getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED')) {
 						$socstatic = new Societe($this->db);
 						$elementtype = $socstatic->table_element;
 

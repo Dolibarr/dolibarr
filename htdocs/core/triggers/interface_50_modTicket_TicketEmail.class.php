@@ -78,7 +78,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 						$res = $userstat->fetch($object->fk_user_assign);
 						if ($res > 0) {
 							// Send email to notification email
-							if (empty($conf->global->TICKET_DISABLE_ALL_MAILS)) {
+							if (!getDolGlobalString('TICKET_DISABLE_ALL_MAILS')) {
 								// Init to avoid errors
 								$filepath = array();
 								$filename = array();
@@ -109,7 +109,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 								$message = dol_nl2br($message);
 
-								if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
+								if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
 									$old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
 									$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 								}
@@ -120,7 +120,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 								} else {
 									$result = $mailfile->sendfile();
 								}
-								if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
+								if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
 									$conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
 								}
 							}
@@ -131,7 +131,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 					}
 
 					// Send an email to the Customer to inform him that his ticket has been taken in charge.
-					if (!empty($conf->global->TICKET_NOTIFY_CUSTOMER_TICKET_ASSIGNED) && empty($object->oldcopy->fk_user_assign)) {
+					if (getDolGlobalString('TICKET_NOTIFY_CUSTOMER_TICKET_ASSIGNED') && empty($object->oldcopy->fk_user_assign)) {
 						$langs->load('ticket');
 
 						$subject_customer = 'TicketAssignedCustomerEmail';
@@ -182,15 +182,15 @@ class InterfaceTicketEmail extends DolibarrTriggers
 				$see_ticket_customer = 'TicketNewEmailBodyInfosTrackUrlCustomer';
 
 				// Send email to notification email
-				if (!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) && empty($object->context['disableticketemail'])) {
-					$sendto = empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) ? '' : $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
+				if (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO') && empty($object->context['disableticketemail'])) {
+					$sendto = !getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO') ? '' : $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
 					if ($sendto) {
 						$this->composeAndSendAdminMessage($sendto, $subject_admin, $body_admin, $object, $langs);
 					}
 				}
 
 				// Send email to customer
-				if (empty($conf->global->TICKET_DISABLE_CUSTOMER_MAILS) && empty($object->context['disableticketemail']) && $object->notify_tiers_at_create) {
+				if (!getDolGlobalString('TICKET_DISABLE_CUSTOMER_MAILS') && empty($object->context['disableticketemail']) && $object->notify_tiers_at_create) {
 					$sendto = '';
 
 					//if contact selected send to email's contact else send to email's thirdparty
@@ -237,18 +237,18 @@ class InterfaceTicketEmail extends DolibarrTriggers
 				$see_ticket_customer = 'TicketCloseEmailBodyInfosTrackUrlCustomer';
 
 				// Send email to notification email
-				if (!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) && empty($object->context['disableticketemail'])) {
-					$sendto = empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) ? '' : $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
+				if (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO') && empty($object->context['disableticketemail'])) {
+					$sendto = !getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO') ? '' : $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
 					if ($sendto) {
 						$this->composeAndSendAdminMessage($sendto, $subject_admin, $body_admin, $object, $langs);
 					}
 				}
 
 				// Send email to customer.
-				if (empty($conf->global->TICKET_DISABLE_CUSTOMER_MAILS) && empty($object->context['disableticketemail'])) {
+				if (!getDolGlobalString('TICKET_DISABLE_CUSTOMER_MAILS') && empty($object->context['disableticketemail'])) {
 					$linked_contacts = $object->listeContact(-1, 'thirdparty');
 					$linked_contacts = array_merge($linked_contacts, $object->listeContact(-1, 'internal'));
-					if (empty($linked_contacts) && !empty($conf->global->TICKET_NOTIFY_AT_CLOSING) && !empty($object->fk_soc)) {
+					if (empty($linked_contacts) && getDolGlobalString('TICKET_NOTIFY_AT_CLOSING') && !empty($object->fk_soc)) {
 						$object->fetch_thirdparty();
 						$linked_contacts[] = $object->thirdparty->email;
 					}
@@ -347,7 +347,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 		$trackid = 'tic'.$object->id;
 
-		if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
+		if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
 			$old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
 			$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 		}
@@ -358,7 +358,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		} else {
 			$result = $mailfile->sendfile();
 		}
-		if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
+		if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
 			$conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
 		}
 	}
@@ -429,13 +429,13 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		$message_customer .= '<p>'.$langs->trans($see_ticket).' : <a href="'.$url_public_ticket.'">'.$url_public_ticket.'</a></p>';
 		$message_customer .= '<p>'.$langs->trans('TicketEmailPleaseDoNotReplyToThisEmail').'</p>';
 
-		$from = (empty($conf->global->MAIN_INFO_SOCIETE_NOM) ? '' : getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' ').'<' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';
+		$from = (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') ? '' : getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' ').'<' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';
 
 		$trackid = 'tic'.$object->id;
 
 		$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO');
 
-		if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
+		if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
 			$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 		}
 
@@ -452,7 +452,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 				$object->update($user);
 			}
 		}
-		if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
+		if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
 			$conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
 		}
 	}

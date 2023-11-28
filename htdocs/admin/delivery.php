@@ -258,10 +258,10 @@ if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 
 						if ($module->isEnabled()) {
 							// Show modules according to features level
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								continue;
 							}
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 								continue;
 							}
 
@@ -387,10 +387,10 @@ if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 							$module = new $classname($db);
 
 							$modulequalified = 1;
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								$modulequalified = 0;
 							}
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 								$modulequalified = 0;
 							}
 

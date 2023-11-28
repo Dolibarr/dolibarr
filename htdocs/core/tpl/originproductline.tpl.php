@@ -37,7 +37,7 @@ if (isModEnabled("multicurrency")) {
 }
 
 print '<td class="linecolqty right">'.$this->tpl['qty'].'</td>';
-if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	print '<td class="linecoluseunit left">'.$langs->trans($this->tpl['unit']).'</td>';
 }
 
