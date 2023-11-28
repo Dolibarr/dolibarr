@@ -192,17 +192,7 @@ $search_status = $status;
  * Actions
  */
 
-/*
-if ($action == 'delete_action' && $user->rights->agenda->delete) {
-	$event = new ActionComm($db);
-	$event->fetch($actionid);
-	$event->fetch_optionals();
-	$event->fetch_userassigned();
-	$event->oldcopy = dol_clone($event);
-
-	$result = $event->delete();
-}
-*/
+// None
 
 
 /*
