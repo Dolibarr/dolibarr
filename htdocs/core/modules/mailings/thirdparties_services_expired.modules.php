@@ -55,7 +55,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 		// List of services
 		$sql = "SELECT ref FROM ".MAIN_DB_PREFIX."product";
 		$sql .= " WHERE entity IN (".getEntity('product').")";
-		if (empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) {
+		if (!getDolGlobalString('CONTRACT_SUPPORT_PRODUCTS')) {
 			$sql .= " AND fk_product_type = 1"; // By default, only services
 		}
 		$sql .= " ORDER BY ref";

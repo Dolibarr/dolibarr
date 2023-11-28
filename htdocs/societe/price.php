@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 
 	$prodcustprice = new ProductCustomerPrice($db);
@@ -222,7 +222,7 @@ print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><t
 print $object->getTypeUrl(1);
 print '</td></tr>';
 
-if (!empty($conf->global->SOCIETE_USEPREFIX)) { // Old not used prefix field
+if (getDolGlobalString('SOCIETE_USEPREFIX')) { // Old not used prefix field
 	print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
 }
 
@@ -256,7 +256,7 @@ print dol_get_fiche_end();
 
 
 
-if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 	$prodcustprice = new ProductCustomerPrice($db);
 
 	$sortfield = GETPOST('sortfield', 'aZ09comma');

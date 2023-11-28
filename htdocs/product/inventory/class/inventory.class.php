@@ -230,7 +230,7 @@ class Inventory extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID')) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany')) {
@@ -286,7 +286,7 @@ class Inventory extends CommonObject
 			$sql .= " ".$this->db->prefix()."product as p, ".$this->db->prefix()."entrepot as e";
 			$sql .= " WHERE p.entity IN (".getEntity('product').")";
 			$sql .= " AND ps.fk_product = p.rowid AND ps.fk_entrepot = e.rowid";
-			if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+			if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 				$sql .= " AND p.fk_product_type = 0";
 			}
 			if ($this->fk_product > 0) {
@@ -593,7 +593,7 @@ class Inventory extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowInventory");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}

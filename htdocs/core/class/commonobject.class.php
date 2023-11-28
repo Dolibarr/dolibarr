@@ -682,25 +682,17 @@ abstract class CommonObject
 	/**
 	 * @var array		Array with label of status
 	 */
-	public $labelStatus;
-
-	/**
-	 * @var array array of status string
-	 * @deprecated 	Use instead labelStatus
-	 */
-	public $statuts = array();
+	public $labelStatus = array();
 
 	/**
 	 * @var array		Array with short label of status
 	 */
-	protected $labelStatusShort;
+	public $labelStatusShort = array();
 
 	/**
-	 * @var array array of short status string
-	 * @deprecated 	Use instead labelStatusShort
+	 * @var array		Array to store list of tpl
 	 */
-	public $statuts_short = array();
-
+	public $tpl;
 
 
 	/**
@@ -713,6 +705,10 @@ abstract class CommonObject
 	 */
 	public $nb = array();
 
+	/**
+	 * @var int			used for the return of show_photos()
+	 */
+	public $nbphoto;
 
 	/**
 	 * @var string output
@@ -1756,7 +1752,7 @@ abstract class CommonObject
 			$this->thirdparty = $thirdparty;
 
 			// Use first price level if level not defined for third party
-			if (!empty($conf->global->PRODUIT_MULTIPRICES) && empty($this->thirdparty->price_level)) {
+			if (getDolGlobalString('PRODUIT_MULTIPRICES') && empty($this->thirdparty->price_level)) {
 				$this->thirdparty->price_level = 1;
 			}
 
@@ -1780,7 +1776,9 @@ abstract class CommonObject
 			return 0;
 		}
 
-		$sql = "SELECT rowid FROM ".$this->db->prefix().$this->table_element." WHERE ".$this->table_ref_field." LIKE '".$this->db->escape($ref)."' LIMIT 1";
+		$sql = "SELECT rowid FROM ".$this->db->prefix().$this->table_element;
+		$sql .= " WHERE ".$this->table_ref_field." LIKE '".$this->db->escape($ref)."'";	// no escapeforlike here
+		$sql .= " LIMIT 1";
 
 		$query = $this->db->query($sql);
 
@@ -1817,7 +1815,7 @@ abstract class CommonObject
 
 		$idtype = $this->barcode_type;
 		if (empty($idtype) && $idtype != '0') {	// If type of barcode no set, we try to guess. If set to '0' it means we forced to have type remain not defined
-			if ($this->element == 'product' && !empty($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE)) {
+			if ($this->element == 'product' && getDolGlobalString('PRODUIT_DEFAULT_BARCODE_TYPE')) {
 				$idtype = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
 			} elseif ($this->element == 'societe') {
 				$idtype = $conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY;
@@ -3835,7 +3833,7 @@ abstract class CommonObject
 			// Situations totals
 			if (!empty($this->situation_cycle_ref) && !empty($this->situation_counter) && $this->situation_counter > 1 && method_exists($this, 'get_prev_sits')) {
 				include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-				if ($this->type != Facture::TYPE_CREDIT_NOTE) {
+				if ($this->type != Facture::TYPE_CREDIT_NOTE) {	// @phpstan-ignore-line
 					$prev_sits = $this->get_prev_sits();
 
 					foreach ($prev_sits as $sit) {				// $sit is an object Facture loaded with a fetch.
@@ -4595,7 +4593,7 @@ abstract class CommonObject
 					if ($fieldstatus == 'tosell') {
 						$this->status = $status;
 					} elseif ($fieldstatus == 'tobuy') {
-						$this->status_buy = $status;
+						$this->status_buy = $status;	// @phpstan-ignore-line
 					} else {
 						$this->statut = $status;
 						$this->status = $status;
@@ -4630,7 +4628,7 @@ abstract class CommonObject
 		if (empty($id) && empty($ref)) {
 			return 0;
 		}
-		if (!empty($conf->global->MAIN_DISABLE_CANVAS)) {
+		if (getDolGlobalString('MAIN_DISABLE_CANVAS')) {
 			return 0; // To increase speed. Not enabled by default.
 		}
 
@@ -4989,8 +4987,7 @@ abstract class CommonObject
 	 */
 	public function formAddObjectLine($dateSelector, $seller, $buyer, $defaulttpldir = '/core/tpl')
 	{
-		global $conf, $user, $langs, $object, $hookmanager, $extrafields;
-		global $form;
+		global $conf, $user, $langs, $object, $hookmanager, $extrafields, $form;
 
 		// Line extrafield
 		if (!is_object($extrafields)) {
@@ -5170,7 +5167,7 @@ abstract class CommonObject
 					if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
-					if (!empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE) && empty($newlang) && is_object($this->thirdparty)) {
+					if (getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE') && empty($newlang) && is_object($this->thirdparty)) {
 						$newlang = $this->thirdparty->default_lang; // To use language of customer
 					}
 					if (!empty($newlang)) {
@@ -5341,7 +5338,9 @@ abstract class CommonObject
 
 		if (($line->info_bits & 2) == 2) {  // TODO Not sure this is used for source object
 			$discount = new DiscountAbsolute($this->db);
-			$discount->fk_soc = $this->socid;
+			if (property_exists($this, 'socid')) {
+				$discount->fk_soc = $this->socid;
+			}
 			$this->tpl['label'] .= $discount->getNomUrl(0, 'discount');
 		} elseif (!empty($line->fk_product)) {
 			$productstatic = new Product($this->db);
@@ -6170,7 +6169,7 @@ abstract class CommonObject
 		$savDisableCompute = $conf->disable_compute;
 		$conf->disable_compute = 1;
 
-		$ret = $this->fetch($id);
+		$ret = $this->fetch($id);	/* @phpstan-ignore-line */
 
 		$conf->disable_compute = $savDisableCompute;
 
@@ -6307,7 +6306,7 @@ abstract class CommonObject
 	{
 		global $conf;
 
-		if (!empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
+		if (getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED')) {
 			return 0;
 		}
 
@@ -6347,7 +6346,7 @@ abstract class CommonObject
 	{
 		global $conf, $langs, $user;
 
-		if (!empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
+		if (getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED')) {
 			return 0;
 		}
 
@@ -6404,7 +6403,7 @@ abstract class CommonObject
 				//dol_syslog("attributeType=".$attributeType, LOG_DEBUG);
 
 				if (!empty($attrfieldcomputed)) {
-					if (!empty($conf->global->MAIN_STORE_COMPUTED_EXTRAFIELDS)) {
+					if (getDolGlobalString('MAIN_STORE_COMPUTED_EXTRAFIELDS')) {
 						$value = dol_eval($attrfieldcomputed, 1, 0, '2');
 						dol_syslog($langs->trans("Extrafieldcomputed")." on ".$attributeLabel."(".$value.")", LOG_DEBUG);
 						$new_array_options[$key] = $value;
@@ -6651,7 +6650,7 @@ abstract class CommonObject
 
 		$error = 0;
 
-		if (!empty($conf->global->MAIN_EXTRALANGUAGES_DISABLED)) {
+		if (getDolGlobalString('MAIN_EXTRALANGUAGES_DISABLED')) {
 			return 0; // For avoid conflicts if trigger used
 		}
 
@@ -6763,7 +6762,7 @@ abstract class CommonObject
 	{
 		global $conf, $langs, $user;
 
-		if (!empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
+		if (getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED')) {
 			return 0;
 		}
 
@@ -6810,7 +6809,7 @@ abstract class CommonObject
 			//dol_syslog("attributeLabel=".$attributeLabel, LOG_DEBUG);
 			//dol_syslog("attributeType=".$attributeType, LOG_DEBUG);
 			if (!empty($attrfieldcomputed)) {
-				if (!empty($conf->global->MAIN_STORE_COMPUTED_EXTRAFIELDS)) {
+				if (getDolGlobalString('MAIN_STORE_COMPUTED_EXTRAFIELDS')) {
 					$value = dol_eval($attrfieldcomputed, 1, 0, '2');
 					dol_syslog($langs->trans("Extrafieldcomputed")." sur ".$attributeLabel."(".$value.")", LOG_DEBUG);
 					$this->array_options["options_".$key] = $value;
@@ -7046,7 +7045,7 @@ abstract class CommonObject
 
 		$error = 0;
 
-		if (!empty($conf->global->MAIN_EXTRALANGUAGES_DISABLED)) {
+		if (getDolGlobalString('MAIN_EXTRALANGUAGES_DISABLED')) {
 			return 0; // For avoid conflicts if trigger used
 		}
 
@@ -7261,7 +7260,7 @@ abstract class CommonObject
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').'> ';
 		} elseif ($type == 'select') {	// combo list
 			$out = '';
-			if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_EXTRAFIELDS_DISABLE_SELECT2)) {
+			if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_EXTRAFIELDS_DISABLE_SELECT2')) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 				$out .= ajax_combobox($keyprefix.$key.$keysuffix, array(), 0);
 			}
@@ -7285,7 +7284,7 @@ abstract class CommonObject
 			$out .= '</select>';
 		} elseif ($type == 'sellist') {
 			$out = '';
-			if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_EXTRAFIELDS_DISABLE_SELECT2)) {
+			if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_EXTRAFIELDS_DISABLE_SELECT2')) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 				$out .= ajax_combobox($keyprefix.$key.$keysuffix, array(), 0);
 			}
@@ -8587,7 +8586,7 @@ abstract class CommonObject
 
 						$html_id = (empty($this->id) ? '' : 'extrarow-'.$this->element.'_'.$key.'_'.$this->id);
 						if ($display_type=='card') {
-							if (!empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0) {
+							if (getDolGlobalString('MAIN_EXTRAFIELDS_USE_TWO_COLUMS') && ($e % 2) == 0) {
 								$colspan = 0;
 							}
 
@@ -8640,7 +8639,7 @@ abstract class CommonObject
 
 						if ($display_type == 'card') {
 							$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="field_options_'.$key.' '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$collapse_group.'" '.$domData.' >';
-							if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER) && ($action == 'view' || $action == 'valid' || $action == 'editline' || $action == 'confirm_valid' || $action == 'confirm_cancel')) {
+							if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER') && ($action == 'view' || $action == 'valid' || $action == 'editline' || $action == 'confirm_valid' || $action == 'confirm_cancel')) {
 								$out .= '<td></td>';
 							}
 							$out .= '<td class="'.(empty($params['tdclass']) ? 'titlefieldcreate' : $params['tdclass']).' wordbreak';
@@ -8699,7 +8698,7 @@ abstract class CommonObject
 
 						$out .= ($display_type=='card' ? '</td>' : '</div>');
 
-						if (!empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && (($e % 2) == 1)) {
+						if (getDolGlobalString('MAIN_EXTRAFIELDS_USE_TWO_COLUMS') && (($e % 2) == 1)) {
 							$out .= ($display_type=='card' ? '</tr>' : '</div>');
 						} else {
 							$out .= ($display_type=='card' ? '</tr>' : '</div>');
@@ -8902,7 +8901,7 @@ abstract class CommonObject
 
 		$buyPrice = 0;
 
-		if (($unitPrice > 0) && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull > 0)) {
+		if (($unitPrice > 0) && (isset($conf->global->ForceBuyingPriceIfNull) && getDolGlobalInt('ForceBuyingPriceIfNull') > 0)) {
 			 // When ForceBuyingPriceIfNull is set
 			$buyPrice = $unitPrice * (1 - $discountPercent / 100);
 		} else {
@@ -9113,8 +9112,8 @@ abstract class CommonObject
 						}
 						if ($showaction) {
 							$return .= '<br>';
-							// On propose la generation de la vignette si elle n'existe pas et si la taille est superieure aux limites
-							if ($photo_vignette && (image_format_supported($photo) > 0) && ($this->imgWidth > $maxWidth || $this->imgHeight > $maxHeight)) {
+							// If $photo_vignette set, we add link to generate thumbs if file is an image and ->imgWidth or->imgHeight higher than limits
+							if ($photo_vignette && (image_format_supported($photo) > 0) && ((isset($this->imgWidth) && $this->imgWidth > $maxWidth) || (isset($this->imgHeight) && $this->imgHeight > $maxHeight))) {
 								$return .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=addthumb&token='.newToken().'&file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'), 'refresh').'&nbsp;&nbsp;</a>';
 							}
 							// Special cas for product
@@ -10293,8 +10292,7 @@ abstract class CommonObject
 		);
 		foreach ($fields as $key => $value) {
 			if (array_key_exists($key, $this->fields)) {
-				// @phpstan-ignore-next-line
-				$this->{$key} = $value;
+				$this->{$key} = $value;		// @phpstan-ignore-line
 			}
 		}
 

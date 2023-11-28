@@ -80,8 +80,6 @@ class FichinterRec extends Fichinter
 
 	public $id_origin;
 
-	public $statuts_logo;
-
 	/**
 	 * @var string Unit frequency
 	 */
@@ -123,14 +121,11 @@ class FichinterRec extends Fichinter
 		$this->db = $db;
 
 		//status dans l'ordre de l'intervention
-		$this->statuts[0] = 'Draft';
-		$this->statuts[1] = 'Closed';
+		$this->labelStatus[0] = 'Draft';
+		$this->labelStatus[1] = 'Closed';
 
-		$this->statuts_short[0] = 'Draft';
-		$this->statuts_short[1] = 'Closed';
-
-		$this->statuts_logo[0] = 'statut0';
-		$this->statuts_logo[1] = 'statut1';
+		$this->labelStatusShort[0] = 'Draft';
+		$this->labelStatusShort[1] = 'Closed';
 	}
 
 	/**

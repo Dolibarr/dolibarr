@@ -205,7 +205,7 @@ if ($object->id > 0) {
 	print '<table class="border tableforfield centpercent">';
 
 	// Type of event
-	if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
+	if (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 		print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td colspan="3">';
 		print $object->getTypePicto();
 		print $langs->trans("Action".$object->type_code);
@@ -243,7 +243,7 @@ if ($object->id > 0) {
 	print '</td></tr>';
 
 	// Location
-	if (empty($conf->global->AGENDA_DISABLE_LOCATION)) {
+	if (!getDolGlobalString('AGENDA_DISABLE_LOCATION')) {
 		print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3">'.$object->location.'</td></tr>';
 	}
 

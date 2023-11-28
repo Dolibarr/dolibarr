@@ -46,7 +46,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 
 	// Force master entity in transversal mode
 	$entity = $entitytotest;
-	if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+	if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 		$entity = 1;
 	}
 
@@ -155,7 +155,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 				dol_syslog("functions_ldap::check_user_password_ldap $login authentication ok");
 				// For the case, we search the user id using a search key without the login (but using other fields like id),
 				// we need to get the real login to use in the ldap answer.
-				if (!empty($conf->global->LDAP_FIELD_LOGIN) && !empty($ldap->login)) {
+				if (getDolGlobalString('LDAP_FIELD_LOGIN') && !empty($ldap->login)) {
 					$login = $ldap->login;
 					dol_syslog("functions_ldap::check_user_password_ldap login is now $login (LDAP_FIELD_LOGIN=".getDolGlobalString('LDAP_FIELD_LOGIN').")");
 				}

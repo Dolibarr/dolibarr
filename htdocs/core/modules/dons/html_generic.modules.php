@@ -72,6 +72,7 @@ class html_generic extends ModeleDon
 	private function loadTranslationFiles($outputlangs)
 	{
 		if (!is_object($outputlangs)) {
+			global $langs;
 			$outputlangs = $langs;
 		}
 
@@ -131,7 +132,7 @@ class html_generic extends ModeleDon
 		$form = str_replace('__PAYMENTMODE_LABEL__', $this->getDonationPaymentType($don), $form);
 		$form = str_replace('__AMOUNT__', price($don->amount), $form);
 		$form = str_replace('__CURRENCY_CODE__', $conf->currency, $form);
-		if (isModEnabled("societe") && !empty($conf->global->DONATION_USE_THIRDPARTIES) && $don->socid > 0 && $don->thirdparty) {
+		if (isModEnabled("societe") && getDolGlobalString('DONATION_USE_THIRDPARTIES') && $don->socid > 0 && $don->thirdparty) {
 			$form = str_replace('__DONOR_FULL_NAME__', $don->thirdparty->name, $form);
 			$form = str_replace('__DONOR_FULL_ADDRESS__', $don->thirdparty->getFullAddress(1, ", ", 1), $form);
 		} else {
@@ -148,14 +149,14 @@ class html_generic extends ModeleDon
 		$form = str_replace('__PaymentMode__', $outputlangs->trans("PaymentMode"), $form);
 
 		$notePublic = '';
-		if ($conf->global->DONATION_NOTE_PUBLIC >= 1 && !empty($don->note_public)) {
+		if (getDolGlobalInt('DONATION_NOTE_PUBLIC') >= 1 && !empty($don->note_public)) {
 			$notePublic = '<div id="note-public"><p>'.$don->note_public.'</p></div>';
 		}
 		$form = str_replace('__NOTE_PUBLIC__', $notePublic, $form);
 
 		$donationMessage = '';
-		if (!empty($conf->global->DONATION_MESSAGE)) {
-			$donationMessage = '<div id="donation-message"><p>'.$conf->global->DONATION_MESSAGE.'</p></div>';
+		if (getDolGlobalString('DONATION_MESSAGE')) {
+			$donationMessage = '<div id="donation-message"><p>' . getDolGlobalString('DONATION_MESSAGE').'</p></div>';
 		}
 		$form = str_replace('__DONATION_MESAGE__', $donationMessage, $form);
 
@@ -175,7 +176,7 @@ class html_generic extends ModeleDon
 		$handle = fopen($path, "w");
 		fwrite($handle, $contents);
 		fclose($handle);
-		dolChmod($file);
+		dolChmod($path);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

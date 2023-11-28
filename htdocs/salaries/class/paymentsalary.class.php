@@ -57,14 +57,14 @@ class PaymentSalary extends CommonObject
 	public $tms = '';
 
 	/**
-	 * @var date date of payment
+	 * @var int|string date of payment
 	 * @deprecated
-	 * @see datep
+	 * @see $datep
 	 */
 	public $datepaye = '';
 
 	/**
-	 * @var date date of payment
+	 * @var int|string date of payment
 	 */
 	public $datep = '';
 
@@ -913,7 +913,7 @@ class PaymentSalary extends CommonObject
 		$langs->load('salaries');
 		$datas = [];
 
-		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			return ['optimize' => $langs->trans("SalaryPayment")];
 		}
 
