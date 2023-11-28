@@ -1593,7 +1593,7 @@ if ($action == 'create') {
 							}
 
 							$fk_default_warehouse = (int) $product->fk_default_warehouse;
-							usort($batchlist, function($a, $b) use ($conf, $fk_default_warehouse) {
+							usort($batchlist, function ($a, $b) use ($conf, $fk_default_warehouse) {
 								if ($a->warehouse_id != $b->warehouse_id && $a->warehouse_id == $fk_default_warehouse) return -1; // Set default warehouse to first position
 								$rdiff = $a->eatby - $b->eatby;
 								if ($rdiff) return $rdiff;
