@@ -676,13 +676,15 @@ class Delivery extends CommonObject
 	/**
 	 * Delete object
 	 *
+	 * @param	User		$user		User making the deletion
 	 * @return	integer
 	 */
-	public function delete()
+	public function delete($user = null)
 	{
-		global $conf, $langs, $user;
+		global $conf, $langs;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
 		$this->db->begin();
 
 		$error = 0;

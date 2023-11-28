@@ -838,13 +838,15 @@ class SupplierProposal extends CommonObject
 	 */
 	public function deleteline($lineid)
 	{
+		global $user;
+
 		if ($this->statut == 0) {
 			$line = new SupplierProposalLine($this->db);
 
 			// For triggers
 			$line->fetch($lineid);
 
-			if ($line->delete() > 0) {
+			if ($line->delete($user) > 0) {
 				$this->update_price(1);
 
 				return 1;
@@ -3124,19 +3126,20 @@ class SupplierProposalLine extends CommonObjectLine
 	}
 
 	/**
-	 * 	Delete line in database
+	 * Delete line in database
 	 *
-	 *	@return	 int  <0 if ko, >0 if ok
+	 * @param	User	$user		User making the deletion
+	 * @return	int  				<0 if KO, >0 if OK
 	 */
-	public function delete()
+	public function delete($user)
 	{
-		global $conf, $langs, $user;
-
 		$error = 0;
+
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."supplier_proposaldet WHERE rowid = ".((int) $this->id);
-		dol_syslog("SupplierProposalLine::delete", LOG_DEBUG);
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."supplier_proposaldet";
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
 		if ($this->db->query($sql)) {
 			// Remove extrafields
 			if (!$error) {

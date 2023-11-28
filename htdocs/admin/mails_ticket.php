@@ -566,7 +566,7 @@ if ($action == 'edit') {
 			}
 			print '</td></tr>';
 		}
-		
+
 		// STARTTLS
 		if ($linuxlike && (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') == 'mail')) {
 			// Nothing
@@ -584,10 +584,10 @@ if ($action == 'edit') {
 			print '</td></tr>';
 		}
 	}
-	
+
 	print '</table>';
 	print '</div>';
-	
+
 	print dol_get_fiche_end();
 
 
