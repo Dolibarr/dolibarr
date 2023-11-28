@@ -2172,7 +2172,7 @@ if ($action == 'create') {
 						'perm' => $user->hasRight('commande', 'creer')
 					);
 				}
-				if (isModEnabled('facture') && $object->status > 0 && $soc->client ==1) {
+				if (isModEnabled('facture') && $object->status > 0 && $soc->client > 0) {
 					$arrayofcreatebutton[] = array(
 						'url' => '/compta/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id,
 						'label' => $langs->trans('Bill'),
