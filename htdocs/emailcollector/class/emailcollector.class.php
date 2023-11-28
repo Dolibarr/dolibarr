@@ -1139,6 +1139,8 @@ class EmailCollector extends CommonObject
 		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 			if ($this->acces_type == 1) {
 				// Mode OAUth2 (access_type == 1) with PHP-IMAP
+				$this->debuginfo .= 'doCollectOneCollector is using method MAIN_IMAP_USE_PHPIMAP=1, access_type=1 (OAUTH2)<br>';
+
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php';
 
 				$supportedoauth2array = getSupportedOauth2Array();
@@ -1218,7 +1220,9 @@ class EmailCollector extends CommonObject
 					'authentication' => "oauth",
 				]);
 			} else {
-				// Mode login/pass with PHP-IMAP
+				// Mode LOGIN (login/pass) with PHP-IMAP
+				$this->debuginfo .= 'doCollectOneCollector is using method MAIN_IMAP_USE_PHPIMAP=1, access_type=0 (LOGIN)<br>';
+
 				$cm = new ClientManager();
 				$client = $cm->make([
 					'host'           => $this->host,
@@ -1244,6 +1248,8 @@ class EmailCollector extends CommonObject
 			$host = dol_getprefix('email');
 		} else {
 			// Use native IMAP functions
+			$this->debuginfo .= 'doCollectOneCollector is using method MAIN_IMAP_USE_PHPIMAP=0 (native PHP imap, LOGIN)<br>';
+
 			if (!function_exists('imap_open')) {
 				$this->error = 'IMAP function not enabled on your PHP';
 				return -2;
@@ -1252,6 +1258,8 @@ class EmailCollector extends CommonObject
 			$connectstringserver = $this->getConnectStringIMAP();
 			$connectstringsource = $connectstringserver.imap_utf7_encode($sourcedir);
 			$connectstringtarget = $connectstringserver.imap_utf7_encode($targetdir);
+
+			$this->debuginfo .= 'connectstringsource = '.$connectstringsource.', $connectstringtarget='.$connectstringtarget.'<br>';
 
 			$connection = imap_open($connectstringsource, $this->login, $this->password);
 			if (!$connection) {
