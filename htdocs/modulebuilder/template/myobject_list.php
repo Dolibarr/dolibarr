@@ -287,10 +287,24 @@ $morecss = [];
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = 'SELECT ';
-$sql .= implode(', ',
-				array_keys(array_filter($arrayfields, function ($f) {
-					return $f['checked'] ?? 0;
-				})));
+
+
+$fieldsforselect = ['t.rowid'];
+foreach ($arrayfields as $sqlField => $columnConf) {
+	if ($columnConf['checked'] && $columnConf['enabled']) {
+		if (isset($columnConf['sqlselect']) && is_array($columnConf['sqlselect'])) {
+			array_push($fieldsforselect, ...$columnConf['sqlselect']);
+			continue;
+		}
+		if (preg_match('/^\w+\./', $sqlField)) {
+			$fieldsforselect[] = $sqlField;
+			continue;
+		}
+		// if we reach this line, there is no field to add for this column
+	}
+}
+$sql .= implode(', ', array_unique($fieldsforselect));
+
 // Add fields from extrafields
 if (! empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
