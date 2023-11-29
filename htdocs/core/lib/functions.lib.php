@@ -1703,7 +1703,7 @@ function dolPrintPassword($s)
 function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapetags = '', $escapeonlyhtmltags = 0, $cleanalsojavascript = 0)
 {
 	if ($noescapetags == 'common') {
-		$noescapetags = 'html,body,a,b,em,hr,i,u,ul,li,br,div,img,font,p,span,strong,table,tr,td,th,tbody';
+		$noescapetags = 'html,body,a,b,em,hr,i,u,ul,li,br,div,img,font,p,span,strong,table,tr,td,th,tbody,h1,h2,h3,h4,h5,h6,h7,h8,h9';
 	}
 	if ($cleanalsojavascript) {
 		$stringtoescape = dol_string_onlythesehtmltags($stringtoescape, 0, 0, $cleanalsojavascript, 0, array(), 0);
@@ -7561,7 +7561,8 @@ function dol_nl2br($stringtoencode, $nl2brmode = 0, $forxml = false)
 }
 
 /**
- * Sanitize a HTML to remove js and dangerous content
+ * Sanitize a HTML to remove js and dangerous content.
+ * This function is used by dolPrintHTML... function for example.
  *
  * @param	string	$stringtoencode				String to encode
  * @param	int     $nouseofiframesandbox		0=Default, 1=Allow use of option MAIN_SECURITY_USE_SANDBOX_FOR_HTMLWITHNOJS for html sanitizing (not yet working)
@@ -7570,8 +7571,6 @@ function dol_nl2br($stringtoencode, $nl2brmode = 0, $forxml = false)
  */
 function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = 'restricthtml')
 {
-	global $conf;
-
 	if (empty($nouseofiframesandbox) && getDolGlobalString('MAIN_SECURITY_USE_SANDBOX_FOR_HTMLWITHNOJS')) {
 		// TODO using sandbox on inline html content is not possible yet with current browsers
 		//$s = '<iframe class="iframewithsandbox" sandbox><html><body>';
