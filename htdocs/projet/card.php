@@ -1612,7 +1612,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 				$params = array('backtopage' => $_SERVER["PHP_SELF"].'?id='.$object->id);
 
-				print dolGetButtonAction($langs->trans("Create"), '', 'default', $arrayforbutaction, '', 1, $params);
+				print dolGetButtonAction('', $langs->trans("Create"), 'default', $arrayforbutaction, '', 1, $params);
 			}
 
 			// Clone
