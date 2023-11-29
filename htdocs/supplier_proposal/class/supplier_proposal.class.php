@@ -193,9 +193,7 @@ class SupplierProposal extends CommonObject
 	public $multicurrency_total_ht;
 	public $multicurrency_total_tva;
 	public $multicurrency_total_ttc;
-	public $fk_supplier_proposal;
-	public $mode_reglement;
-	public $cond_reglement_doc;
+
 
 	/**
 	 *  @deprecated
