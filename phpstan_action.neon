@@ -46,11 +46,6 @@ parameters:
 	reportMagicMethods: false
 	reportMagicProperties: false
 	ignoreErrors:
-		- '#Undefined variable: \$hookmanager#'
-		- '#Undefined variable: \$mysoc#'
-		- '#Undefined variable: \$error#'
-		- '#Undefined variable: \$errors#'
-		- '#Undefined variable: \$form#'
 		- '#has an unused parameter \$param#'
 		- '#Result of function fieldList#'
 		- '#Caught class Stripe#'
