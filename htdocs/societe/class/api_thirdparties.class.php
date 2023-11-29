@@ -263,8 +263,14 @@ class Thirdparties extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->company->context['caller'] = $request_data['caller'];
+				continue;
+			}
 			$this->company->$field = $value;
 		}
+
 		if ($this->company->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, 'Error creating thirdparty', array_merge(array($this->company->error), $this->company->errors));
 		}
