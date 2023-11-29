@@ -59,7 +59,6 @@ parameters:
 		- '#is always true#'
 		- '#is always fal#'
 		- '#always exists and is not nullable#'
-		- '#PHPDoc tag @return has invalid value#'
 		- '#type has no value type specified in iterable type array#'
 		- '#with no value type specified in iterable type array#'
 		- '#Empty array passed to foreach#'
