@@ -9,5 +9,5 @@ define('MAIN_DB_PREFIX', 'llx_');
 // Load the main.inc.php file to have functions env defined
 define("NOLOGIN", '1');
 define("NOHTTPSREDIRECT", '1');
-global $conf, $langs, $user, $db;
+global $conf, $db, $langs, $user;
 // include_once DOL_DOCUMENT_ROOT . '/../../htdocs/main.inc.php';
