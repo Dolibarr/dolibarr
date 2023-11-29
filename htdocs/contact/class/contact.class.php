@@ -1218,15 +1218,13 @@ class Contact extends CommonObject
 
 	/**
 	 *	Delete a contact from database
-	 *  // TODO Add $user as first param
 	 *
+	 *  @param		User	$user			User making the delete
 	 *  @param		int		$notrigger		Disable all trigger
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	public function delete($notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs, $user;
-
 		$error = 0;
 
 		$this->db->begin();

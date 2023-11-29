@@ -2426,8 +2426,9 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 				// User
 				$userstatic = new User($db);
 				$userstatic->fetch($line->fk_user);
+				// @TODO Add a cache on $users object
 				print '<td class="right">';
-				print $userstatic->getNomUrl(1, '', 0, 0, 24, 0, 'login');
+				print $userstatic->getNomUrl(-1, '', 0, 0, 24, 0, 'login');
 				print '</td>';
 
 				// Todo Edit or delete button

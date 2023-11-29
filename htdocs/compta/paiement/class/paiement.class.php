@@ -540,16 +540,17 @@ class Paiement extends CommonObject
 
 
 	/**
-	 *  Delete a payment and generated links into account
+	 * Delete a payment and generated links into account
 	 *  - Si le paiement porte sur un ecriture compte qui est rapprochee, on refuse
 	 *  - Si le paiement porte sur au moins une facture a "payee", on refuse
+	 * @TODO Add first param User $user
 	 *
-	 *  @param	int		$notrigger		No trigger
-	 *  @return int     				<0 si ko, >0 si ok
+	 * @param	int		$notrigger		No trigger
+	 * @return 	int     				<0 if KO, >0 if OK
 	 */
 	public function delete($notrigger = 0)
 	{
-		global $conf, $user, $langs;
+		global $user;
 
 		$error = 0;
 

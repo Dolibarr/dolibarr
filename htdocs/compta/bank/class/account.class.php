@@ -2177,7 +2177,7 @@ class AccountLine extends CommonObjectLine
 	}
 
 	/**
-	 *      Delete bank transaction record
+	 * Delete bank transaction record
 	 *
 	 * @param	User|null	$user		User object that delete
 	 * @param	int			$notrigger	1=Does not execute triggers, 0= execute triggers
@@ -2185,8 +2185,6 @@ class AccountLine extends CommonObjectLine
 	 */
 	public function delete(User $user = null, $notrigger = 0)
 	{
-		global $conf;
-
 		$nbko = 0;
 
 		if ($this->rappro) {

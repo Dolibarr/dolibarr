@@ -10118,16 +10118,12 @@ abstract class CommonObject
 				$error++;
 			} else {
 				while ($obj = $this->db->fetch_object($resql)) {
-					$result = $this->fetch($obj->rowid);
+					$result = $this->fetch($obj->rowid);	// @phpstan-ignore-line
 					if ($result < 0) {
 						$error++;
 						$this->errors[] = $this->error;
 					} else {
-						if (get_class($this) == 'Contact') { // TODO special code because delete() for contact has not been standardized like other delete.
-							$result = $this->delete();
-						} else {
-							$result = $this->delete($user);
-						}
+						$result = $this->delete($user);	// @phpstan-ignore-line
 						if ($result < 0) {
 							$error++;
 							$this->errors[] = $this->error;
