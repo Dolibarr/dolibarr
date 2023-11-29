@@ -7604,7 +7604,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 				} catch (Exception $e) {
 					// If error, invalid HTML string with no way to clean it
 					//print $e->getMessage();
-					$out = 'InvalidHTMLStringCantBeCleaned';
+					$out = 'InvalidHTMLStringCantBeCleaned '.$e->getMessage();
 				}
 			}
 
@@ -7640,7 +7640,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 				} catch (Exception $e) {
 					// If error, invalid HTML string with no way to clean it
 					//print $e->getMessage();
-					$out = 'InvalidHTMLStringCantBeCleaned';
+					$out = 'InvalidHTMLStringCantBeCleaned '.$e->getMessage();
 				}
 			}
 
