@@ -296,6 +296,7 @@ class RemiseCheque extends CommonObject
 		global $conf;
 
 		$this->errno = 0;
+
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bordereau_cheque";

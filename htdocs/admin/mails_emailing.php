@@ -310,7 +310,7 @@ if ($action == 'edit') {
 	clearstatcache();
 
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td></td></tr>';
 
 	// Method
 
@@ -518,7 +518,7 @@ if ($action == 'edit') {
 
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td></td></tr>';
 
 	// Method
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td>';
@@ -590,7 +590,7 @@ if ($action == 'edit') {
 			}
 			print '</td></tr>';
 		}
-		
+
 		// STARTTLS
 		if ($linuxlike && (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') == 'mail')) {
 			// Nothing
@@ -607,7 +607,7 @@ if ($action == 'edit') {
 			}
 			print '</td></tr>';
 		}
-		
+
 		// SMTP_ALLOW_SELF_SIGNED_EMAILING
 		if ($linuxlike && (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') == 'mail')) {
 			// Nothing
@@ -705,7 +705,7 @@ if ($action == 'edit') {
 		print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
 		print load_fiche_titre($action == 'testhtml' ? $langs->trans("DoTestSendHTML") : $langs->trans("DoTestSend"));
 
-		print dol_get_fiche_head('');
+		print dol_get_fiche_head(array(), '', '', -1);
 
 		// Cree l'objet formulaire mail
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';

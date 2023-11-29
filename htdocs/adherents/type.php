@@ -222,7 +222,7 @@ if ($action == 'update' && $user->hasRight('adherent', 'configurer')) {
 
 if ($action == 'confirm_delete' && $user->hasRight('adherent', 'configurer')) {
 	$object->fetch($rowid);
-	$res = $object->delete();
+	$res = $object->delete($user);
 
 	if ($res > 0) {
 		setEventMessages($langs->trans("MemberTypeDeleted"), null, 'mesgs');
