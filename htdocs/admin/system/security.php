@@ -633,7 +633,7 @@ print '<strong>MAIN_SECURITY_MAXFILESIZE_DOWNLOADED</strong> = '.getDolGlobalStr
 print '<br>';
 
 print '<strong>MAIN_RESTRICTHTML_ONLY_VALID_HTML</strong> = '.(getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML') ? '1' : '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
-print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": 1)</span><br>";
+print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": 0 - does not work on HTML5 with some old libxml libs)</span><br>";
 print '<br>';
 
 print '<strong>MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY</strong> = '.(getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY') ? '1' : '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
