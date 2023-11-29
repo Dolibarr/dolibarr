@@ -48,21 +48,20 @@ if ($action == 'test' || ($action == 'send' && $trackid = 'test')) {
 }
 
 $substitutionarrayfortest = array(
-	'__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT,
-	'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag=undefinedtag&securitykey='.dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-undefinedtag", 'md5').'" width="1" height="1" style="width:1px;height:1px" border="0" />',
 	'__USER_LOGIN__' => $user->login,
 	'__USER_EMAIL__' => $user->email,
 	'__USER_SIGNATURE__' => (($user->signature && !getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? $usersignature : ''), // Done into actions_sendmails
 	'__SENDEREMAIL_SIGNATURE__' => (($user->signature && !getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? $usersignature : ''), // Done into actions_sendmails
-	'__ID__' => 'RecipientIdRecord',
+	'__ID__' => 'RecipientID',
 	//'__EMAIL__' => 'RecipientEMail',				// Done into actions_sendmails
-	'__LOGIN__' => $user->login,
 	'__LASTNAME__' => 'RecipientLastname',
 	'__FIRSTNAME__' => 'RecipientFirstname',
 	'__ADDRESS__'=> 'RecipientAddress',
 	'__ZIP__'=> 'RecipientZip',
 	'__TOWN_'=> 'RecipientTown',
-	'__COUNTRY__'=> 'RecipientCountry'
+	'__COUNTRY__'=> 'RecipientCountry',
+	'__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT,
+	'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag=undefinedtag&securitykey='.dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-undefinedtag", 'md5').'" width="1" height="1" style="width:1px;height:1px" border="0" />',
 );
 complete_substitutions_array($substitutionarrayfortest, $langs);
 
@@ -359,25 +358,9 @@ if ($action == 'edit') {
 
 	clearstatcache();
 
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
-
-	// Disable
-	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_MAILS").'</td><td>';
-	print $form->selectyesno('MAIN_DISABLE_ALL_MAILS', getDolGlobalString('MAIN_DISABLE_ALL_MAILS'), 1);
-	print '</td></tr>';
-
-	// Force e-mail recipient
-	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_FORCE_SENDTO").'</td><td>';
-	print '<input class="flat" name="MAIN_MAIL_FORCE_SENDTO" size="32" value="'.(getDolGlobalString('MAIN_MAIL_FORCE_SENDTO') ? $conf->global->MAIN_MAIL_FORCE_SENDTO : '').'" />';
-	print '</td></tr>';
-
-	print '</table>';
-
-	print '<br>';
 
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td></td></tr>';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td></td></tr>';
 
 	// Method
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td>';
@@ -599,7 +582,28 @@ if ($action == 'edit') {
 
 	print '</table>';
 
+
 	print '<br>';
+
+
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("ParametersForTestEnvironment").'</td><td>'.$langs->trans("Value").'</td></tr>';
+
+	// Disable
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_MAILS").'</td><td>';
+	print $form->selectyesno('MAIN_DISABLE_ALL_MAILS', getDolGlobalString('MAIN_DISABLE_ALL_MAILS'), 1);
+	print '</td></tr>';
+
+	// Force e-mail recipient
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_FORCE_SENDTO").'</td><td>';
+	print '<input class="flat" name="MAIN_MAIL_FORCE_SENDTO" size="32" value="'.(getDolGlobalString('MAIN_MAIL_FORCE_SENDTO') ? $conf->global->MAIN_MAIL_FORCE_SENDTO : '').'" />';
+	print '</td></tr>';
+
+	print '</table>';
+
+
+	print '<br>';
+
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("OtherOptions").'</td><td></td></tr>';
@@ -654,39 +658,10 @@ if ($action == 'edit') {
 	print '<span class="opacitymedium">'.$langs->trans("EMailsDesc")."</span><br>\n";
 	print "<br><br>\n";
 
-	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
-
-	// Disable
-	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_MAILS").'</td><td>'.yn(getDolGlobalString('MAIN_DISABLE_ALL_MAILS'));
-	if (getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
-		print img_warning($langs->trans("Disabled"));
-	}
-	print '</td></tr>';
-
 	if (!getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
-		// Force e-mail recipient
-		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_FORCE_SENDTO").'</td><td>'.getDolGlobalString('MAIN_MAIL_FORCE_SENDTO');
-		if (getDolGlobalString('MAIN_MAIL_FORCE_SENDTO')) {
-			if (!isValidEmail(getDolGlobalString('MAIN_MAIL_FORCE_SENDTO'))) {
-				print img_warning($langs->trans("ErrorBadEMail"));
-			} else {
-				print img_warning($langs->trans("RecipientEmailsWillBeReplacedWithThisValue"));
-			}
-		}
-		print '</td></tr>';
-	}
-
-	print '</table>';
-	print '</div>';
-
-	if (!getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
-		print '<br>';
-
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td></td></tr>';
+		print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td></td></tr>';
 
 		// Method
 		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td>';
@@ -698,7 +673,7 @@ if ($action == 'edit') {
 
 		if (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') == 'mail' && !getDolGlobalString('MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP')) {
 			$textwarning = $langs->trans("WarningPHPMail").'<br>'.$langs->trans("WarningPHPMailA").'<br>'.$langs->trans("WarningPHPMailB").'<br>'.$langs->trans("WarningPHPMailC").'<br><br>'.$langs->trans("WarningPHPMailD");
-			print $form->textwithpicto('', '<span class="small">'.$textwarning.'</span>', 1, 'warning');
+			print $form->textwithpicto('', '<span class="small">'.$textwarning.'</span>', 1, 'warning', 'nomargintop');
 		}
 
 		print '</td></tr>';
@@ -835,10 +810,43 @@ if ($action == 'edit') {
 			$linktosetvar2 = '</a>';
 			$messagetoshow = str_replace('{s1}', $linktosetvar1, $messagetoshow);
 			$messagetoshow = str_replace('{s2}', $linktosetvar2, $messagetoshow);
-			print info_admin($messagetoshow, 0, 0, 'warning');
+
+			print info_admin($messagetoshow, 0, 0, 'warning nomargintop');
 		}
 
 		print '<br>';
+
+
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<table class="noborder centpercent">';
+		print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("ParametersForTestEnvironment").'</td><td>'.$langs->trans("Value").'</td></tr>';
+
+		// Disable
+		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_MAILS").'</td><td>'.yn(getDolGlobalString('MAIN_DISABLE_ALL_MAILS'));
+		if (getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
+			print img_warning($langs->trans("Disabled"));
+		}
+		print '</td></tr>';
+
+		if (!getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
+			// Force e-mail recipient
+			print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_FORCE_SENDTO").'</td><td>'.getDolGlobalString('MAIN_MAIL_FORCE_SENDTO');
+			if (getDolGlobalString('MAIN_MAIL_FORCE_SENDTO')) {
+				if (!isValidEmail(getDolGlobalString('MAIN_MAIL_FORCE_SENDTO'))) {
+					print img_warning($langs->trans("ErrorBadEMail"));
+				} else {
+					print img_warning($langs->trans("RecipientEmailsWillBeReplacedWithThisValue"));
+				}
+			}
+			print '</td></tr>';
+		}
+
+		print '</table>';
+		print '</div>';
+
+
+		print '<br>';
+
 
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 		print '<table class="noborder centpercent">';
