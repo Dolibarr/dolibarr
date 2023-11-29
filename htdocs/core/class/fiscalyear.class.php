@@ -358,7 +358,7 @@ class Fiscalyear extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip) && $user->hasRight('accounting', 'fiscalyear', 'write')) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("FiscalYear");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}

@@ -410,7 +410,7 @@ if ($id > 0 || $ref) {
 			if (isModEnabled("product") && isModEnabled("service")) {
 				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 				print '<tr><td class="">';
-				print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, 0, $typeformat) : $langs->trans('Type');
+				print (!getDolGlobalString('PRODUCT_DENY_CHANGE_PRODUCT_TYPE')) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, 0, $typeformat) : $langs->trans('Type');
 				print '</td><td>';
 				print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, 0, $typeformat);
 				print '</td></tr>';
@@ -428,7 +428,7 @@ if ($id > 0 || $ref) {
 
 			// PMP
 			$usercaneditpmp = 0;
-			if (!empty($conf->global->PRODUCT_CAN_EDIT_WAP)) {
+			if (getDolGlobalString('PRODUCT_CAN_EDIT_WAP')) {
 				$usercaneditpmp = $usercancreate;
 			}
 			print '<tr><td class="titlefieldcreate">';
@@ -588,7 +588,7 @@ if ($id > 0 || $ref) {
 					print '<input class="flat" name="qty" size="5" value="'.$quantity.'">';
 				}
 				// Units
-				if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+				if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 					$unit = $object->getLabelOfUnit();
 					if ($unit !== '') {
 						print '&nbsp;&nbsp;'.$langs->trans($unit);
@@ -596,7 +596,7 @@ if ($id > 0 || $ref) {
 				}
 				print '</td></tr>';
 
-				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
+				if (getDolGlobalString('PRODUCT_USE_SUPPLIER_PACKAGING')) {
 					// Packaging/Conditionnement
 					print '<tr>';
 
@@ -606,7 +606,7 @@ if ($id > 0 || $ref) {
 					print '<input class="flat" name="packaging" size="5" value="'.$packaging.'">';
 
 					// Units
-					if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+					if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 						$unit = $object->getLabelOfUnit();
 						if ($unit !== '') {
 							print '&nbsp;&nbsp;'.$langs->trans($unit);
@@ -816,7 +816,7 @@ END;
 				}
 
 				// Product description of the supplier
-				if (!empty($conf->global->PRODUIT_FOURN_TEXTS)) {
+				if (getDolGlobalString('PRODUIT_FOURN_TEXTS')) {
 					//WYSIWYG Editor
 					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
@@ -952,7 +952,7 @@ END;
 					'pfp.quantity'=>array('label'=>$langs->trans("QtyMin"), 'checked'=>1, 'position'=>5),
 					'pfp.unitprice'=>array('label'=>$langs->trans("UnitPriceHT"), 'checked'=>1, 'position'=>9),
 					'pfp.multicurrency_unitprice'=>array('label'=>$langs->trans("UnitPriceHTCurrency"), 'enabled' => isModEnabled('multicurrency'), 'checked'=>0, 'position'=>10),
-					'pfp.charges'=>array('label'=>$langs->trans("Charges"), 'enabled' => !empty($conf->global->PRODUCT_CHARGES), 'checked'=>0, 'position'=>11),
+					'pfp.charges'=>array('label'=>$langs->trans("Charges"), 'enabled' => getDolGlobalString('PRODUCT_CHARGES'), 'checked'=>0, 'position'=>11),
 					'pfp.delivery_time_days'=>array('label'=>$langs->trans("NbDaysToDelivery"), 'checked'=>-1, 'position'=>13),
 					'pfp.supplier_reputation'=>array('label'=>$langs->trans("ReputationForThisProduct"), 'checked'=>-1, 'position'=>14),
 					'pfp.fk_barcode_type'=>array('label'=>$langs->trans("BarcodeType"), 'enabled' => isModEnabled('barcode'), 'checked'=>0, 'position'=>15),
@@ -1143,7 +1143,7 @@ END;
 							print '<td class="right">';
 							print $productfourn->fourn_qty;
 							// Units
-							if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+							if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 								$unit = $object->getLabelOfUnit();
 								if ($unit !== '') {
 									print '&nbsp;&nbsp;'.$langs->trans($unit);

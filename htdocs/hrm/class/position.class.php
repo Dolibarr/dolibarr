@@ -185,7 +185,7 @@ class Position extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			//$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -732,7 +732,7 @@ class Position extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowPosition");
 				$linkclose .= ' alt="' . dol_escape_htmltag($label, 1) . '"';
 			}
@@ -1001,11 +1001,11 @@ class Position extends CommonObject
 		global $langs, $conf;
 		$langs->load("hrm");
 
-		if (empty($conf->global->hrm_POSITION_ADDON)) {
+		if (!getDolGlobalString('hrm_POSITION_ADDON')) {
 			$conf->global->hrm_POSITION_ADDON = 'mod_position_standard';
 		}
 
-		if (!empty($conf->global->hrm_POSITION_ADDON)) {
+		if (getDolGlobalString('hrm_POSITION_ADDON')) {
 			$mybool = false;
 
 			$file = getDolGlobalString('hrm_POSITION_ADDON') . ".php";
@@ -1086,7 +1086,7 @@ class Position extends CommonObject
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->POSITION_ADDON_PDF)) {
+			} elseif (getDolGlobalString('POSITION_ADDON_PDF')) {
 				$modele = $conf->global->POSITION_ADDON_PDF;
 			}
 		}

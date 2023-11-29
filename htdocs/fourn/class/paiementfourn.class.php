@@ -363,7 +363,7 @@ class PaiementFourn extends Paiement
 							}
 
 							// Regenerate documents of invoices
-							if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+							if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 								$newlang = '';
 								$outputlangs = $langs;
 								if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -426,13 +426,14 @@ class PaiementFourn extends Paiement
 	 *	Delete a payment and lines generated into accounts
 	 *	Si le paiement porte sur un ecriture compte qui est rapprochee, on refuse
 	 *	Si le paiement porte sur au moins une facture a "payee", on refuse
+	 *	@TODO Add User $user as first param
 	 *
 	 *	@param		int		$notrigger		No trigger
 	 *	@return     int     <0 si ko, >0 si ok
 	 */
 	public function delete($notrigger = 0)
 	{
-		global $conf, $user, $langs;
+		global $user;
 
 		$bank_line_id = $this->bank_line;
 
@@ -683,7 +684,7 @@ class PaiementFourn extends Paiement
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("Payment");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -757,7 +758,7 @@ class PaiementFourn extends Paiement
 		$langs->load("bills");
 
 		// Clean parameters (if not defined or using deprecated value)
-		if (empty($conf->global->SUPPLIER_PAYMENT_ADDON)) {
+		if (!getDolGlobalString('SUPPLIER_PAYMENT_ADDON')) {
 			$conf->global->SUPPLIER_PAYMENT_ADDON = 'mod_supplier_payment_bronan';
 		} elseif (getDolGlobalString('SUPPLIER_PAYMENT_ADDON') == 'brodator') {
 			$conf->global->SUPPLIER_PAYMENT_ADDON = 'mod_supplier_payment_brodator';
@@ -765,7 +766,7 @@ class PaiementFourn extends Paiement
 			$conf->global->SUPPLIER_PAYMENT_ADDON = 'mod_supplier_payment_bronan';
 		}
 
-		if (!empty($conf->global->SUPPLIER_PAYMENT_ADDON)) {
+		if (getDolGlobalString('SUPPLIER_PAYMENT_ADDON')) {
 			$mybool = false;
 
 			$file = getDolGlobalString('SUPPLIER_PAYMENT_ADDON') . ".php";
@@ -844,7 +845,7 @@ class PaiementFourn extends Paiement
 
 		// Set the model on the model name to use
 		if (empty($modele)) {
-			if (!empty($conf->global->SUPPLIER_PAYMENT_ADDON_PDF)) {
+			if (getDolGlobalString('SUPPLIER_PAYMENT_ADDON_PDF')) {
 				$modele = $conf->global->SUPPLIER_PAYMENT_ADDON_PDF;
 			} else {
 				$modele = ''; // No default value. For supplier invoice, we allow to disable all PDF generation

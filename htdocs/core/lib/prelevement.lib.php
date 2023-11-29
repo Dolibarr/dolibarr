@@ -87,19 +87,19 @@ function prelevement_check_config($type = 'direct-debit')
 {
 	global $conf, $db;
 	if ($type == 'bank-transfer') {
-		if (empty($conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT)) {
+		if (!getDolGlobalString('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT')) {
 			return -1;
 		}
 		//if (empty($conf->global->PRELEVEMENT_ICS)) return -1;
-		if (empty($conf->global->PAYMENTBYBANKTRANSFER_USER)) {
+		if (!getDolGlobalString('PAYMENTBYBANKTRANSFER_USER')) {
 			return -1;
 		}
 	} else {
-		if (empty($conf->global->PRELEVEMENT_ID_BANKACCOUNT)) {
+		if (!getDolGlobalString('PRELEVEMENT_ID_BANKACCOUNT')) {
 			return -1;
 		}
 		//if (empty($conf->global->PRELEVEMENT_ICS)) return -1;
-		if (empty($conf->global->PRELEVEMENT_USER)) {
+		if (!getDolGlobalString('PRELEVEMENT_USER')) {
 			return -1;
 		}
 	}

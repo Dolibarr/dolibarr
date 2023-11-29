@@ -110,9 +110,9 @@ class Delivery extends CommonObject
 	public $commande_id;
 
 	/**
-	 * @var array statuts labels
+	 * @var array 	Status labels
 	 */
-	public $statuts;
+	public $labelStatus;
 
 	/**
 	 * @var DeliveryLine[] lines
@@ -135,9 +135,9 @@ class Delivery extends CommonObject
 		$this->db = $db;
 
 		// List of short language codes for status
-		$this->statuts[-1] = 'StatusDeliveryCanceled';
-		$this->statuts[0]  = 'StatusDeliveryDraft';
-		$this->statuts[1]  = 'StatusDeliveryValidated';
+		$this->labelStatus[-1] = 'StatusDeliveryCanceled';
+		$this->labelStatus[0]  = 'StatusDeliveryDraft';
+		$this->labelStatus[1]  = 'StatusDeliveryValidated';
 	}
 
 	/**
@@ -409,9 +409,9 @@ class Delivery extends CommonObject
 
 		$error = 0;
 
-		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('expedition', 'delivery', 'creer'))
-			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('expedition', 'delivery_advance', 'validate'))) {
-			if (!empty($conf->global->DELIVERY_ADDON_NUMBER)) {
+		if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'delivery', 'creer'))
+			|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'delivery_advance', 'validate'))) {
+			if (getDolGlobalString('DELIVERY_ADDON_NUMBER')) {
 				// Setting the command numbering module name
 				$modName = $conf->global->DELIVERY_ADDON_NUMBER;
 
@@ -569,7 +569,7 @@ class Delivery extends CommonObject
 			$line->description       = $expedition->lines[$i]->description;
 			$line->qty               = $expedition->lines[$i]->qty_shipped;
 			$line->fk_product        = $expedition->lines[$i]->fk_product;
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($expedition->lines[$i]->array_options) && count($expedition->lines[$i]->array_options) > 0) { // For avoid conflicts if trigger used
+			if (!getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED') && is_array($expedition->lines[$i]->array_options) && count($expedition->lines[$i]->array_options) > 0) { // For avoid conflicts if trigger used
 				$line->array_options = $expedition->lines[$i]->array_options;
 			}
 			$this->lines[$i] = $line;
@@ -606,7 +606,7 @@ class Delivery extends CommonObject
 		global $conf;
 		$error = 0;
 
-		if ($id > 0 && !$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options) > 0) { // For avoid conflicts if trigger used
+		if ($id > 0 && !$error && !getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED') && is_array($array_options) && count($array_options) > 0) { // For avoid conflicts if trigger used
 			$line = new DeliveryLine($this->db);
 			$line->array_options = $array_options;
 			$line->id = $id;
@@ -643,7 +643,7 @@ class Delivery extends CommonObject
 
 		$line->origin_id = $origin_id;
 		$line->qty = $qty;
-		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options) > 0) { // For avoid conflicts if trigger used
+		if (!getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED') && is_array($array_options) && count($array_options) > 0) { // For avoid conflicts if trigger used
 			$line->array_options = $array_options;
 		}
 		$this->lines[$num] = $line;
@@ -676,13 +676,15 @@ class Delivery extends CommonObject
 	/**
 	 * Delete object
 	 *
+	 * @param	User		$user		User making the deletion
 	 * @return	integer
 	 */
-	public function delete()
+	public function delete($user = null)
 	{
-		global $conf, $langs, $user;
+		global $conf, $langs;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
 		$this->db->begin();
 
 		$error = 0;
@@ -1125,7 +1127,7 @@ class Delivery extends CommonObject
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->DELIVERY_ADDON_PDF)) {
+			} elseif (getDolGlobalString('DELIVERY_ADDON_PDF')) {
 				$modele = $conf->global->DELIVERY_ADDON_PDF;
 			}
 		}

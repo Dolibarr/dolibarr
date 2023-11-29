@@ -63,7 +63,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		}
 
 		// Test if event/record is qualified
-		if (empty($conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED) || !in_array($action, explode(',', $conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED))) {
+		if (!getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED') || !in_array($action, explode(',', $conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED))) {
 			// If custom actions are not set or if action not into custom actions, we can exclude action if object->elementis not valid
 			$listofqualifiedelement = array('facture', 'don', 'payment', 'payment_donation', 'subscription', 'payment_various', 'cashcontrol');
 			if (!in_array($object->element, $listofqualifiedelement)) {
@@ -92,7 +92,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			|| $action === 'CASHCONTROL_VALIDATE'
 			|| (in_array($object->element, array('facture', 'supplier_invoice')) && $action === 'DOC_DOWNLOAD' && $object->statut != 0)
 			|| (in_array($object->element, array('facture', 'supplier_invoice')) && $action === 'DOC_PREVIEW' && $object->statut != 0)
-			|| (!empty($conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED) && in_array($action, explode(',', $conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED)))
+			|| (getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED') && in_array($action, explode(',', $conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED)))
 		) {
 			$qualified++;
 

@@ -98,7 +98,7 @@ class FormFile
 			$useajax = 0;
 		}
 
-		if ((!empty($conf->global->MAIN_USE_JQUERY_FILEUPLOAD) && $useajax) || ($useajax == 2)) {
+		if ((getDolGlobalString('MAIN_USE_JQUERY_FILEUPLOAD') && $useajax) || ($useajax == 2)) {
 			// TODO: Check this works with 2 forms on same page
 			// TODO: Check this works with GED module, otherwise, force useajax to 0
 			// TODO: This does not support option savingdocmask
@@ -108,7 +108,7 @@ class FormFile
 			return 'Feature too bugged so removed';
 		} else {
 			//If there is no permission and the option to hide unauthorized actions is enabled, then nothing is printed
-			if (!$perm && !empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) {
+			if (!$perm && getDolGlobalString('MAIN_BUTTON_HIDE_UNAUTHORIZED')) {
 				if ($nooutput) {
 					return '';
 				} else {
@@ -158,8 +158,8 @@ class FormFile
 				$out .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
 			}
 			$out .= '<input class="flat minwidth400 maxwidth200onsmartphone" type="file"';
-			$out .= ((!empty($conf->global->MAIN_DISABLE_MULTIPLE_FILEUPLOAD) || $disablemulti) ? ' name="userfile"' : ' name="userfile[]" multiple');
-			$out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm) ? ' disabled' : '');
+			$out .= ((getDolGlobalString('MAIN_DISABLE_MULTIPLE_FILEUPLOAD') || $disablemulti) ? ' name="userfile"' : ' name="userfile[]" multiple');
+			$out .= (!getDolGlobalString('MAIN_UPLOAD_DOC') || empty($perm) ? ' disabled' : '');
 			$out .= (!empty($accept) ? ' accept="'.$accept.'"' : ' accept=""');
 			$out .= (!empty($capture) ? ' capture="capture"' : '');
 			$out .= '>';
@@ -169,7 +169,7 @@ class FormFile
 				$out .= '<span class="nowraponsmartphone"><input style="margin-right: 2px;" type="checkbox" id="overwritefile" name="overwritefile" value="1"><label for="overwritefile">'.$langs->trans("OverwriteIfExists").'</label></span>';
 			}
 			$out .= '<input type="submit" class="button small reposition" name="sendit" value="'.$langs->trans("Upload").'"';
-			$out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm) ? ' disabled' : '');
+			$out .= (!getDolGlobalString('MAIN_UPLOAD_DOC') || empty($perm) ? ' disabled' : '');
 			$out .= '>';
 
 			if ($addcancel) {
@@ -177,7 +177,7 @@ class FormFile
 				$out .= '<input type="submit" class="button small button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			}
 
-			if (!empty($conf->global->MAIN_UPLOAD_DOC)) {
+			if (getDolGlobalString('MAIN_UPLOAD_DOC')) {
 				if ($perm) {
 					$menudolibarrsetupmax = $langs->transnoentitiesnoconv("Home").' - '.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Security");
 					$langs->load('other');
@@ -191,7 +191,7 @@ class FormFile
 
 			if ($savingdocmask) {
 				//add a global variable for disable the auto renaming on upload
-				$rename = (empty($conf->global->MAIN_DOC_UPLOAD_NOT_RENAME_BY_DEFAULT) ? 'checked' : '');
+				$rename = (!getDolGlobalString('MAIN_DOC_UPLOAD_NOT_RENAME_BY_DEFAULT') ? 'checked' : '');
 
 				$out .= '<tr>';
 				if (!empty($options)) {
@@ -233,13 +233,13 @@ class FormFile
 
 				$out .= '<div class="valignmiddle">';
 				$out .= '<div class="inline-block" style="padding-right: 10px;">';
-				if (!empty($conf->global->OPTIMIZEFORTEXTBROWSER)) {
+				if (getDolGlobalString('OPTIMIZEFORTEXTBROWSER')) {
 					$out .= '<label for="link">'.$langs->trans("URLToLink").':</label> ';
 				}
 				$out .= '<input type="text" name="link" class="flat minwidth400imp" id="link" placeholder="'.dol_escape_htmltag($langs->trans("URLToLink")).'">';
 				$out .= '</div>';
 				$out .= '<div class="inline-block" style="padding-right: 10px;">';
-				if (!empty($conf->global->OPTIMIZEFORTEXTBROWSER)) {
+				if (getDolGlobalString('OPTIMIZEFORTEXTBROWSER')) {
 					$out .= '<label for="label">'.$langs->trans("Label").':</label> ';
 				}
 				$out .= '<input type="text" class="flat" name="label" id="label" placeholder="'.dol_escape_htmltag($langs->trans("Label")).'">';
@@ -248,7 +248,7 @@ class FormFile
 				$out .= '</div>';
 				$out .= '<div class="inline-block" style="padding-right: 10px;">';
 				$out .= '<input type="submit" class="button small reposition" name="linkit" value="'.$langs->trans("ToLink").'"';
-				$out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm) ? ' disabled' : '');
+				$out .= (!getDolGlobalString('MAIN_UPLOAD_DOC') || empty($perm) ? ' disabled' : '');
 				$out .= '>';
 				$out .= '</div>';
 				$out .= '</div>';
@@ -572,6 +572,13 @@ class FormFile
 				} else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/stock/modules_stock.php';
 					$modellist = ModelePDFStock::liste_modeles($this->db);
+				}
+			} elseif ($modulepart == 'hrm') {
+				if (is_array($genallowed)) {
+					$modellist = $genallowed;
+				} else {
+					include_once DOL_DOCUMENT_ROOT.'/core/modules/hrm/modules_evaluation.php';
+					$modellist = ModelePDFEvaluation::liste_modeles($this->db);
 				}
 			} elseif ($modulepart == 'movement') {
 				if (is_array($genallowed)) {
@@ -1061,7 +1068,7 @@ class FormFile
 		}
 
 		// Get list of files starting with name of ref (Note: files with '^ref\.extension' are generated files, files with '^ref-...' are uploaded files)
-		if ($allfiles || !empty($conf->global->MAIN_SHOW_ALL_FILES_ON_DOCUMENT_TOOLTIP)) {
+		if ($allfiles || getDolGlobalString('MAIN_SHOW_ALL_FILES_ON_DOCUMENT_TOOLTIP')) {
 			$filterforfilesearch = '^'.preg_quote(basename($modulesubdir), '/');
 		} else {
 			$filterforfilesearch = '^'.preg_quote(basename($modulesubdir), '/').'\.';
@@ -1264,7 +1271,7 @@ class FormFile
 					}
 				}
 			}
-			if (empty($conf->global->MAIN_UPLOAD_DOC)) {
+			if (!getDolGlobalString('MAIN_UPLOAD_DOC')) {
 				$permtoeditline = 0;
 				$permonobject = 0;
 			}
@@ -1548,7 +1555,7 @@ class FormFile
 							if (empty($conf->use_javascript_ajax)) {
 								$useajax = 0;
 							}
-							if (!empty($conf->global->MAIN_ECM_DISABLE_JS)) {
+							if (getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
 								$useajax = 0;
 							}
 							print '<a href="'.((($useinecm && $useinecm != 6) && $useajax) ? '#' : ($url.'?action=deletefile&token='.newToken().'&urlfile='.urlencode($filepath).$param)).'" class="reposition deletefilelink" rel="'.$filepath.'">'.img_delete().'</a>';

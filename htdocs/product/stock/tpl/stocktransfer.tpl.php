@@ -82,7 +82,7 @@ if ($object->element == 'stock') {
 	print '<td class="fieldrequired">'.$langs->trans("Product").'</td>';
 	print '<td>';
 	print img_picto('', 'product');
-	$form->select_produits(GETPOST('product_id', 'int'), 'product_id', (empty($conf->global->STOCK_SUPPORTS_SERVICES) ? '0' : ''), 0, 0, -1, 2, '', 0, null, 0, 1, 0, 'maxwidth500');
+	$form->select_produits(GETPOST('product_id', 'int'), 'product_id', (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') ? '0' : ''), 0, 0, -1, 2, '', 0, null, 0, 1, 0, 'maxwidth500');
 	print '</td>';
 }
 
@@ -110,12 +110,12 @@ if (isModEnabled('productbatch') &&
 	print '</tr>';
 
 	print '<tr>';
-	if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+	if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 		print '<td>'.$langs->trans("SellByDate").'</td><td>';
 		print $form->selectDate((!empty($d_sellby) ? $d_sellby : $pdluo->sellby), 'sellby', '', '', 1, "", 1, 0, ($pdluoid > 0 ? 1 : 0)); // If form was opened for a specific pdluoid, field is disabled
 		print '</td>';
 	}
-	if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+	if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 		print '<td>'.$langs->trans("EatByDate").'</td><td>';
 		print $form->selectDate((!empty($d_eatby) ? $d_eatby : $pdluo->eatby), 'eatby', '', '', 1, "", 1, 0, ($pdluoid > 0 ? 1 : 0)); // If form was opened for a specific pdluoid, field is disabled
 		print '</td>';

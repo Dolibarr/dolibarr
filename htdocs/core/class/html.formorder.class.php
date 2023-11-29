@@ -37,9 +37,10 @@ class FormOrder extends Form
 	 *  @param	string	$selected   Preselected value
 	 *  @param	int		$short		Use short labels
 	 *  @param	string	$hmlname	Name of HTML select element
+	 *  @param	string	$morecss	More CSS
 	 *  @return	void
 	 */
-	public function selectSupplierOrderStatus($selected = '', $short = 0, $hmlname = 'order_status')
+	public function selectSupplierOrderStatus($selected = '', $short = 0, $hmlname = 'order_status', $morecss = '')
 	{
 		$options = array();
 
@@ -68,7 +69,7 @@ class FormOrder extends Form
 			$selectedarray = explode(',', $selected);
 		}
 
-		print Form::multiselectarray($hmlname, $options, $selectedarray, 0);
+		print Form::multiselectarray($hmlname, $options, $selectedarray, 0, 0, $morecss);
 	}
 
 	/**

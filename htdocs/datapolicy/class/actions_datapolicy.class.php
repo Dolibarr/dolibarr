@@ -171,7 +171,7 @@ class ActionsDatapolicy extends CommonHookActions
 		global $conf, $langs;
 		$langs->load('datapolicy@datapolicy');
 
-		if (!empty($conf->global->DATAPOLICY_ENABLE_EMAILS)) {
+		if (getDolGlobalString('DATAPOLICY_ENABLE_EMAILS')) {
 			$dialog = '<div id="dialogdatapolicy" style="display:none;" title="'.$langs->trans('DATAPOLICY_PORTABILITE_TITLE').'">';
 			$dialog .= '<div class="confirmmessage">'.img_help('', '').' '.$langs->trans('DATAPOLICY_PORTABILITE_CONFIRMATION').'</div>';
 			$dialog .= "</div>";

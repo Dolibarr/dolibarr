@@ -45,7 +45,7 @@ if (!isset($conf->global->AGENDA_MAX_EVENTS_DAY_VIEW)) {
 	$conf->global->AGENDA_MAX_EVENTS_DAY_VIEW = 3;
 }
 
-if (empty($conf->global->AGENDA_EXT_NB)) {
+if (!getDolGlobalString('AGENDA_EXT_NB')) {
 	$conf->global->AGENDA_EXT_NB = 5;
 }
 $MAXAGENDA = $conf->global->AGENDA_EXT_NB;
@@ -60,7 +60,7 @@ $usergroup = GETPOST("search_usergroup", "int", 3) ? GETPOST("search_usergroup",
 $showbirthday = empty($conf->use_javascript_ajax) ? GETPOST("showbirthday", "int") : 1;
 
 // If not choice done on calendar owner (like on left menu link "Agenda"), we filter on user.
-if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS)) {
+if (empty($filtert) && !getDolGlobalString('AGENDA_ALL_CALENDARS')) {
 	$filtert = $user->id;
 }
 
@@ -132,14 +132,14 @@ if (GETPOST('search_actioncode', 'array:aZ09')) {
 		$actioncode = '0';
 	}
 } else {
-	$actioncode = GETPOST("search_actioncode", "alpha", 3) ?GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode") == '0' ? '0' : ((empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE) || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE));
+	$actioncode = GETPOST("search_actioncode", "alpha", 3) ?GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode") == '0' ? '0' : ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE') || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE));
 }
 
 if ($status == '' && !GETPOSTISSET('search_status')) {
-	$status = ((empty($conf->global->AGENDA_DEFAULT_FILTER_STATUS) || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_STATUS);
+	$status = ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_STATUS') || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_STATUS);
 }
 
-$defaultview = (empty($conf->global->AGENDA_DEFAULT_VIEW) ? 'show_month' : $conf->global->AGENDA_DEFAULT_VIEW);
+$defaultview = (!getDolGlobalString('AGENDA_DEFAULT_VIEW') ? 'show_month' : $conf->global->AGENDA_DEFAULT_VIEW);
 $defaultview = (empty($user->conf->AGENDA_DEFAULT_VIEW) ? $defaultview : $user->conf->AGENDA_DEFAULT_VIEW);
 if (empty($mode) && !GETPOSTISSET('mode')) {
 	$mode = $defaultview;
@@ -208,18 +208,6 @@ if (GETPOST("viewperuser", 'alpha') || $mode == 'show_peruser') {
 	exit;
 }
 
-/*
- if ($action == 'delete_action' && $user->rights->agenda->delete) {
- $event = new ActionComm($db);
- $event->fetch($actionid);
- $event->fetch_optionals();
- $event->fetch_userassigned();
- $event->oldcopy = dol_clone($event);
-
- $result = $event->delete();
- }
- */
-
 
 /*
  * View
@@ -265,7 +253,7 @@ $nowday = $nowarray['mday'];
 $listofextcals = array();
 
 // Define list of external calendars (global admin setup)
-if (empty($conf->global->AGENDA_DISABLE_EXT)) {
+if (!getDolGlobalString('AGENDA_DISABLE_EXT')) {
 	$i = 0;
 	while ($i < $MAXAGENDA) {
 		$i++;
@@ -738,7 +726,7 @@ $sql .= ' WHERE a.fk_action = ca.id';
 $sql .= ' AND a.entity IN ('.getEntity('agenda').')';
 // Condition on actioncode
 if (!empty($actioncode)) {
-	if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
+	if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 		if ($actioncode == 'AC_NON_AUTO') {
 			$sql .= " AND ca.type != 'systemauto'";
 		} elseif ($actioncode == 'AC_ALL_AUTO') {
@@ -854,7 +842,7 @@ if ($resql) {
 		$obj = $db->fetch_object($resql);
 
 		// Discard auto action if option is on
-		if (!empty($conf->global->AGENDA_ALWAYS_HIDE_AUTO) && $obj->type_code == 'AC_OTH_AUTO') {
+		if (getDolGlobalString('AGENDA_ALWAYS_HIDE_AUTO') && $obj->type_code == 'AC_OTH_AUTO') {
 			$i++;
 			continue;
 		}
@@ -1829,7 +1817,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
 		if ($day == $jour && $month == $mois && $year == $annee) {
 			foreach ($eventarray[$daykey] as $index => $event) {
-				if ($i < $maxprint || $maxprint == 0 || !empty($conf->global->MAIN_JS_SWITCH_AGENDA)) {
+				if ($i < $maxprint || $maxprint == 0 || getDolGlobalString('MAIN_JS_SWITCH_AGENDA')) {
 					$keysofuserassigned = array_keys($event->userassigned);
 					$ponct = ($event->date_start_in_calendar == $event->date_end_in_calendar);
 
@@ -1985,7 +1973,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					print '" style="'.$h;
 					$colortouse = $color;
 					// If colortouse is similar than background, we force to change it.
-					if (empty($event->transparency) && empty($conf->global->AGENDA_NO_TRANSPARENT_ON_NOT_BUSY)) {
+					if (empty($event->transparency) && !getDolGlobalString('AGENDA_NO_TRANSPARENT_ON_NOT_BUSY')) {
 						print 'background: #f0f0f0;';
 						print 'border-left: 5px solid #'.$colortouse.';';
 					} else {
@@ -2159,7 +2147,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 								$linerelatedto .= $contact->getNomUrl(1, '', 0);
 							}
 						}
-						if (!empty($event->fk_element) && $event->fk_element > 0 && !empty($event->elementtype) && !empty($conf->global->AGENDA_SHOW_LINKED_OBJECT)) {
+						if (!empty($event->fk_element) && $event->fk_element > 0 && !empty($event->elementtype) && getDolGlobalString('AGENDA_SHOW_LINKED_OBJECT')) {
 							include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 							if ($linerelatedto) {
 								$linerelatedto .= '<br>';
@@ -2219,7 +2207,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 		print '&nbsp;';
 	}
 
-	if (!empty($conf->global->MAIN_JS_SWITCH_AGENDA) && $itoshow > $ireallyshown && $maxprint) {
+	if (getDolGlobalString('MAIN_JS_SWITCH_AGENDA') && $itoshow > $ireallyshown && $maxprint) {
 		print '<div class="center cursorpointer" id="more_'.$ymd.'">'.img_picto("All", "angle-double-down", 'class="warning"').' +'.($itoshow - $ireallyshown).'</div>';
 		//print ' +'.(count($eventarray[$daykey])-$maxprint);
 

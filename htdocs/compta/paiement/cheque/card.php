@@ -188,7 +188,7 @@ if ($action == 'remove' && $id > 0 && GETPOST("lineid", 'int') > 0 && $user->has
 
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('banque', 'cheque')) {
 	$object->id = $id;
-	$result = $object->delete();
+	$result = $object->delete($user);
 	if ($result == 0) {
 		header("Location: index.php");
 		exit;
@@ -259,7 +259,7 @@ if ($action == 'builddoc' && $user->hasRight('banque', 'cheque')) {
 		dol_print_error($db, $object->error);
 		exit;
 	} else {
-		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#builddoc'));
+		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(!getDolGlobalString('MAIN_JUMP_TAG') ? '' : '#builddoc'));
 		exit;
 	}
 } elseif ($action == 'remove_file' && $user->hasRight('banque', 'cheque')) {

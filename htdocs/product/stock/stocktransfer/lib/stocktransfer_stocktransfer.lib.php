@@ -42,7 +42,7 @@ function stocktransferPrepareHead($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
+	if (!getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
 		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
 		$head[$h][0] = dol_buildpath('/product/stock/stocktransfer/stocktransfer_contact.php', 1).'?id='.$object->id;
 		$head[$h][1] = $langs->trans('ContactsAddresses');
@@ -57,7 +57,7 @@ function stocktransferPrepareHead($object)
 		if (!empty($object->note_public)) $nbNote++;
 		$head[$h][0] = dol_buildpath('/product/stock/stocktransfer/stocktransfer_note.php', 1).'?id='.$object->id;
 		$head[$h][1] = $langs->trans('Notes');
-		if ($nbNote > 0) $head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">'.$nbNote.'</span>' : '');
+		if ($nbNote > 0) $head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.$nbNote.'</span>' : '');
 		$head[$h][2] = 'note';
 		$h++;
 	}

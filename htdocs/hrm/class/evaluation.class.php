@@ -186,7 +186,7 @@ class Evaluation extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -750,7 +750,7 @@ class Evaluation extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowEvaluation");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -943,11 +943,11 @@ class Evaluation extends CommonObject
 		global $langs, $conf;
 		$langs->load("hrm");
 
-		if (empty($conf->global->HRMTEST_EVALUATION_ADDON)) {
+		if (!getDolGlobalString('HRMTEST_EVALUATION_ADDON')) {
 			$conf->global->HRMTEST_EVALUATION_ADDON = 'mod_evaluation_standard';
 		}
 
-		if (!empty($conf->global->HRMTEST_EVALUATION_ADDON)) {
+		if (getDolGlobalString('HRMTEST_EVALUATION_ADDON')) {
 			$mybool = false;
 
 			$file = getDolGlobalString('HRMTEST_EVALUATION_ADDON') . ".php";
@@ -1004,23 +1004,22 @@ class Evaluation extends CommonObject
 		global $conf, $langs;
 
 		$result = 0;
-		$includedocgeneration = 0;
 
 		$langs->load("hrm");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'standard_evaluation';
+			$modele = 'standard';
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->EVALUATION_ADDON_PDF)) {
+			} elseif (getDolGlobalString('EVALUATION_ADDON_PDF')) {
 				$modele = $conf->global->EVALUATION_ADDON_PDF;
 			}
 		}
 
 		$modelpath = "core/modules/hrm/doc/";
 
-		if ($includedocgeneration && !empty($modele)) {
+		if (!empty($modele)) {
 			$result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 		}
 

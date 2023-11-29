@@ -40,7 +40,7 @@ print "<!-- BEGIN PHP TEMPLATE productattributevalueline_edit.tpl.php -->\n";
 $coldisplay = 0;
 ?>
 <tr class="oddeven tredited">
-<?php if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
+<?php if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) { ?>
 		<td class="linecolnum center"><?php $coldisplay++; ?><?php echo ($i + 1); ?></td>
 <?php }
 
