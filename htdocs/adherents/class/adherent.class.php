@@ -1030,8 +1030,6 @@ class Adherent extends CommonObject
 	 */
 	public function delete($rowid, $user, $notrigger = 0)
 	{
-		global $conf, $langs;
-
 		$result = 0;
 		$error = 0;
 		$errorflag = 0;

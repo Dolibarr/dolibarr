@@ -208,18 +208,6 @@ if (GETPOST("viewperuser", 'alpha') || $mode == 'show_peruser') {
 	exit;
 }
 
-/*
- if ($action == 'delete_action' && $user->rights->agenda->delete) {
- $event = new ActionComm($db);
- $event->fetch($actionid);
- $event->fetch_optionals();
- $event->fetch_userassigned();
- $event->oldcopy = dol_clone($event);
-
- $result = $event->delete();
- }
- */
-
 
 /*
  * View
