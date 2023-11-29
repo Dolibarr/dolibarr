@@ -111,7 +111,7 @@ print '<span class="opacitymedium">'.$langs->trans("LeadPublicFormDesc").'</span
 $param = '';
 
 $enabledisablehtml = $langs->trans("EnablePublicLeadForm").' ';
-if (empty($conf->global->PROJECT_ENABLE_PUBLIC)) {
+if (!getDolGlobalString('PROJECT_ENABLE_PUBLIC')) {
 	// Button off, click to enable
 	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setPROJECT_ENABLE_PUBLIC&token='.newToken().'&value=1'.$param.'">';
 	$enabledisablehtml .= img_picto($langs->trans("Disabled"), 'switch_off');
@@ -123,11 +123,11 @@ if (empty($conf->global->PROJECT_ENABLE_PUBLIC)) {
 	$enabledisablehtml .= '</a>';
 }
 print $enabledisablehtml;
-print '<input type="hidden" id="PROJECT_ENABLE_PUBLIC" name="PROJECT_ENABLE_PUBLIC" value="'.(empty($conf->global->PROJECT_ENABLE_PUBLIC) ? 0 : 1).'">';
+print '<input type="hidden" id="PROJECT_ENABLE_PUBLIC" name="PROJECT_ENABLE_PUBLIC" value="'.(!getDolGlobalString('PROJECT_ENABLE_PUBLIC') ? 0 : 1).'">';
 
 print '<br>';
 
-if (!empty($conf->global->PROJECT_ENABLE_PUBLIC)) {
+if (getDolGlobalString('PROJECT_ENABLE_PUBLIC')) {
 	print '<br>';
 
 	print '<div class="div-table-responsive-no-min">';
@@ -167,7 +167,7 @@ print dol_get_fiche_end();
 print '</form>';
 
 
-if (!empty($conf->global->PROJECT_ENABLE_PUBLIC)) {
+if (getDolGlobalString('PROJECT_ENABLE_PUBLIC')) {
 	print '<br>';
 	//print $langs->trans('FollowingLinksArePublic').'<br>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans('BlankSubscriptionForm').'</span><br>';

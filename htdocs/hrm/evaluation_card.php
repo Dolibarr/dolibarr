@@ -83,7 +83,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 // Permissions
 $permissiontoread = $user->rights->hrm->evaluation->read;
 $permissiontoadd = $user->rights->hrm->evaluation->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontovalidate = (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->hrm->evaluation_advance->validate) || (empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $permissiontoadd);
+$permissiontovalidate = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->rights->hrm->evaluation_advance->validate) || (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $permissiontoadd);
 $permissiontoClose = $user->rights->hrm->evaluation->write;
 $permissiontodelete = $user->rights->hrm->evaluation->delete/* || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT)*/;
 $permissiondellink = $user->rights->hrm->evaluation->write; // Used by the include of actions_dellink.inc.php
@@ -139,8 +139,6 @@ if (empty($reshook)) {
 	// Action to move up and down lines of object
 	//include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';
 
-	// Action to build doc
-	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
 		$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, $triggermodname);
@@ -215,6 +213,24 @@ if (empty($reshook)) {
 	if ($action == 'reopen' ) {
 		// no update here we just change the evaluation status
 		$object->setStatut(Evaluation::STATUS_VALIDATED);
+	}
+
+	// Action to build doc
+	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+
+	// action to remove file
+	if ($action == 'remove_file_comfirm') {
+		// Delete file in doc form
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+		$upload_dir = $conf->hrm->dir_output;
+		$file = $upload_dir.'/'.GETPOST('file');
+		$ret = dol_delete_file($file, 0, 0, 0, $object);
+		if ($ret) {
+			setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
+		}
 	}
 }
 
@@ -667,17 +683,17 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<div class="fichecenter"><div class="fichehalfleft">';
 		print '<a name="builddoc"></a>'; // ancre
 
-		$includedocgeneration = 0;
+		$includedocgeneration = 1;
 
 		// Documents
-		if ($includedocgeneration) {
+		if ($user->hasRight('hrm', 'evaluation', 'read')) {
 			$objref = dol_sanitizeFileName($object->ref);
 			$relativepath = $objref.'/'.$objref.'.pdf';
 			$filedir = $conf->hrm->dir_output.'/'.$object->element.'/'.$objref;
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 			$genallowed = $user->rights->hrm->evaluation->read; // If you can read, you can build the PDF to read content
 			$delallowed = $user->rights->hrm->evaluation->write; // If you can create/edit, you can remove a file on card
-			print $formfile->showdocuments('hrm:Evaluation', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
+			print $formfile->showdocuments('hrm:Evaluation', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang, '', $object, 0, 'remove_file_comfirm');
 		}
 
 		// Show links to link elements
@@ -700,9 +716,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	//Select mail models is same action as presend
-	if (GETPOST('modelselected')) {
-		$action = 'presend';
-	}
+	/*if (GETPOST('modelselected')) {
+		// $action = 'presend';
+	}*/ // To delete.
 
 	// Presend form
 	$modelmail = 'evaluation';

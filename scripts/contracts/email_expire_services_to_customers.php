@@ -248,7 +248,7 @@ function sendEmailTo($mode, $oldemail, $message, $total, $userlang, $oldtarget, 
 	}
 
 	$newlangs = new Translate('', $conf);
-	$newlangs->setDefaultLang(empty($userlang) ? (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT) : $userlang);
+	$newlangs->setDefaultLang(empty($userlang) ? (!getDolGlobalString('MAIN_LANG_DEFAULT') ? 'auto' : $conf->global->MAIN_LANG_DEFAULT) : $userlang);
 	$newlangs->load("main");
 	$newlangs->load("contracts");
 
@@ -262,7 +262,7 @@ function sendEmailTo($mode, $oldemail, $message, $total, $userlang, $oldtarget, 
 		$title = $newlangs->transnoentities("ListOfServicesToExpire");
 	}
 
-	$subject = (empty($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_SUBJECT) ? $title : $conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_SUBJECT);
+	$subject = (!getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_SUBJECT') ? $title : $conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_SUBJECT);
 	$sendto = $oldemail;
 	$from = $conf->global->MAIN_MAIL_EMAIL_FROM;
 	$errorsto = $conf->global->MAIN_MAIL_ERRORS_TO;
@@ -280,7 +280,7 @@ function sendEmailTo($mode, $oldemail, $message, $total, $userlang, $oldtarget, 
 	}
 
 	$allmessage = '';
-	if (!empty($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_HEADER)) {
+	if (getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_HEADER')) {
 		$allmessage .= $conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_HEADER;
 	} else {
 		$allmessage .= "Dear customer".($usehtml ? "<br>\n" : "\n").($usehtml ? "<br>\n" : "\n");
@@ -288,7 +288,7 @@ function sendEmailTo($mode, $oldemail, $message, $total, $userlang, $oldtarget, 
 	}
 	$allmessage .= $message.($usehtml ? "<br>\n" : "\n");
 	// $allmessage.= $langs->trans("Total")." = ".price($total,0,$userlang,0,0,-1,$conf->currency).($usehtml?"<br>\n":"\n");
-	if (!empty($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_FOOTER)) {
+	if (getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_FOOTER')) {
 		$allmessage .= $conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_FOOTER;
 		if (dol_textishtml($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_FOOTER)) {
 			$usehtml += 1;

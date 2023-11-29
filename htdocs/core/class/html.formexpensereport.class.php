@@ -69,9 +69,9 @@ class FormExpenseReport
 		if ($useempty) {
 			$html.='<option value="-1">&nbsp;</option>';
 		}
-		$arrayoflabels = $tmpep->statuts;
+		$arrayoflabels = $tmpep->labelStatus;
 		if ($useshortlabel) {
-			$arrayoflabels = $tmpep->statuts_short;
+			$arrayoflabels = $tmpep->labelStatusShort;
 		}
 		foreach ($arrayoflabels as $key => $val) {
 			if ($selected != '' && $selected == $key) {

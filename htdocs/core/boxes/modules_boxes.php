@@ -374,7 +374,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 			$out .= "</div>\n";
 
 			$out .= "<!-- Box ".get_class($this)." end -->\n\n";
-			if (!empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
+			if (getDolGlobalString('MAIN_ACTIVATE_FILECACHE')) {
 				dol_filecache($cachedir, $filename, $out);
 			}
 		} else {

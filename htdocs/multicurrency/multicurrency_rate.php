@@ -100,7 +100,7 @@ $fieldstosearchall = array(
 $arrayfields = array(
 	'cr.date_sync'=>array('label'=>'Date', 'checked'=>1),
 	'cr.rate'=>array('label'=>'Rate', 'checked'=>1),
-	'cr.rate_indirect'=>array('label'=>'RateIndirect', 'checked'=>0, 'enabled'=>(empty($conf->global->MULTICURRENCY_USE_RATE_INDIRECT) ? 0 : 1)),
+	'cr.rate_indirect'=>array('label'=>'RateIndirect', 'checked'=>0, 'enabled'=>(!getDolGlobalString('MULTICURRENCY_USE_RATE_INDIRECT') ? 0 : 1)),
 	'm.code'=>array('label'=>'Code', 'checked'=>1),
 );
 
@@ -205,7 +205,7 @@ if ($action == "confirm_delete") {
 	$current_rate = new CurrencyRate($db);
 	$current_rate->fetch(intval($id_rate_selected));
 	if ($current_rate) {
-		$result = $current_rate->delete();
+		$result = $current_rate->delete($user);
 		if ($result) {
 			setEventMessages($langs->trans('successRateDelete'), null);
 		} else {
@@ -286,7 +286,7 @@ if (!in_array($action, array("updateRate", "deleteRate"))) {
 	print ' <td>'.$langs->trans('Rate').' / '.$langs->getCurrencySymbol($conf->currency).'</td>';
 	print ' <td><input type="text" min="0" step="any" class="maxwidth75" id="rateinput" name="rateinput" value="'.dol_escape_htmltag($rateinput).'"></td>';
 
-	if (!empty($conf->global->MULTICURRENCY_USE_RATE_INDIRECT)) {
+	if (getDolGlobalString('MULTICURRENCY_USE_RATE_INDIRECT')) {
 		print ' <td>'.$langs->trans('RateIndirect').' / '.$langs->getCurrencySymbol($conf->currency).'</td>';
 		print ' <td><input type="text" min="0" step="any" class="maxwidth75" id="rateindirectinput" name="rateindirectinput" value="'.dol_escape_htmltag($rateindirectinput).'"></td>';
 		// LRR Calculate Rate Direct

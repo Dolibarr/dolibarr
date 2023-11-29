@@ -90,7 +90,7 @@ class InterfaceLogevents extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf): int
 	{
-		if (!empty($conf->global->MAIN_LOGEVENTS_DISABLE_ALL)) {
+		if (getDolGlobalString('MAIN_LOGEVENTS_DISABLE_ALL')) {
 			return 0; // Log events is disabled (hidden features)
 		}
 

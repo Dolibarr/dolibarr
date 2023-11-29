@@ -125,6 +125,7 @@ class SkillRank extends CommonObject
 	public $fk_user_modif;
 	public $objecttype;
 	// END MODULEBUILDER PROPERTIES
+	public $rankorder;
 
 
 	// If this object has a subtable with lines
@@ -174,7 +175,7 @@ class SkillRank extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -761,7 +762,7 @@ class SkillRank extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowSkillRank");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -958,11 +959,11 @@ class SkillRank extends CommonObject
 		global $langs, $conf;
 		$langs->load("hrm");
 
-		if (empty($conf->global->hrm_SKILLRANK_ADDON)) {
+		if (!getDolGlobalString('hrm_SKILLRANK_ADDON')) {
 			$conf->global->hrm_SKILLRANK_ADDON = 'mod_skillrank_standard';
 		}
 
-		if (!empty($conf->global->hrm_SKILLRANK_ADDON)) {
+		if (getDolGlobalString('hrm_SKILLRANK_ADDON')) {
 			$mybool = false;
 
 			$file = getDolGlobalString('hrm_SKILLRANK_ADDON') . ".php";
@@ -1028,7 +1029,7 @@ class SkillRank extends CommonObject
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->SKILLRANK_ADDON_PDF)) {
+			} elseif (getDolGlobalString('SKILLRANK_ADDON_PDF')) {
 				$modele = $conf->global->SKILLRANK_ADDON_PDF;
 			}
 		}

@@ -322,7 +322,7 @@ if ($islocked) {	// Pages are locked
 		print $langs->trans("YouTryUpgradeDisabledByMissingFileUnLock").'<br>';
 	}
 	if (!empty($dolibarr_main_url_root)) {
-		if (GETPOST('action') != 'upgrade') {
+		if (GETPOST('action') != 'upgrade' && (!file_exists($conffile) || !isset($dolibarr_main_url_root))) {
 			print $langs->trans("ClickOnLinkOrRemoveManualy").'<br>';
 		} else {
 			print $langs->trans("ClickOnLinkOrCreateUnlockFileManualy").'<br>';
