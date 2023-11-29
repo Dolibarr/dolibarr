@@ -34,12 +34,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class AdherentType extends CommonObject
 {
-
-	/**
-	 * @var string ID of module.
-	 */
-	public $module = 'member';
-
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
@@ -49,6 +43,11 @@ class AdherentType extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'adherent_type';
+
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto = 'members';
 
 	/**
 	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -61,11 +60,6 @@ class AdherentType extends CommonObject
 	 * @var int  Does object support extrafields ? 0=No, 1=Yes
 	 */
 	public $isextrafieldmanaged = 1;
-
-	/**
-	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
-	 */
-	public $picto = 'members';
 
 	//TODO : rename BDD field libelle into label before being able to use arrayfields.
 
