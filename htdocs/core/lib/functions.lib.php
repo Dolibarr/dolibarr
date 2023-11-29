@@ -1648,6 +1648,8 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 {
 	if ($noescapetags == 'common') {
 		$noescapetags = 'html,body,a,b,em,hr,i,u,ul,li,br,div,img,font,p,span,strong,table,tr,td,th,tbody';
+		// Add also html5 tags
+		$noescapetags .= ',header,footer,nav,section,menu,menuitem';
 	}
 	if ($cleanalsojavascript) {
 		$stringtoescape = dol_string_onlythesehtmltags($stringtoescape, 0, 0, $cleanalsojavascript, 0, array(), 0);
@@ -7174,7 +7176,8 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 	if (empty($allowed_tags)) {
 		$allowed_tags = array(
 			"html", "head", "meta", "body", "article", "a", "abbr", "b", "blockquote", "br", "cite", "div", "dl", "dd", "dt", "em", "font", "img", "ins", "hr", "i", "li",
-			"ol", "p", "q", "s", "section", "span", "strike", "strong", "title", "table", "tr", "th", "td", "u", "ul", "sup", "sub", "blockquote", "pre", "h1", "h2", "h3", "h4", "h5", "h6"
+			"ol", "p", "q", "s", "span", "strike", "strong", "title", "table", "tr", "th", "td", "u", "ul", "sup", "sub", "blockquote", "pre", "h1", "h2", "h3", "h4", "h5", "h6",
+			"header", "footer", "nav", "section", "menu", "menuitem"	// html5 tags
 		);
 	}
 	$allowed_tags[] = "comment";		// this tags is added to manage comment <!--...--> that are replaced into <comment>...</comment>
@@ -7443,6 +7446,42 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 					// Remove the trick added to solve pb with text without parent tag
 					$out = preg_replace('/^<div class="tricktoremove">/', '', $out);
 					$out = preg_replace('/<\/div>$/', '', $out);
+				} catch (Exception $e) {
+					// If error, invalid HTML string with no way to clean it
+					//print $e->getMessage();
+					$out = 'InvalidHTMLStringCantBeCleaned';
+				}
+			}
+
+			if (!empty($out) && getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY') && $check != 'restricthtmlallowunvalid') {
+				try {
+					// Try cleaning using tidy
+					if (extension_loaded('tidy') && class_exists("tidy")) {
+						//print "aaa".$out."\n";
+
+						// See options at https://tidy.sourceforge.net/docs/quickref.html
+						$config = array(
+							'clean' => false,
+							'quote-marks' => false,		// do not replace " that are used for real text content (not a string symbol for html attribute) into &quot;
+							'doctype'     => 'strict',
+							'show-body-only' => true,
+							"indent-attributes" => false,
+							"vertical-space" => false,
+							'ident' => false,
+							"wrap" => 0
+							// HTML5 tags
+							//'new-blocklevel-tags' => 'article aside audio bdi canvas details dialog figcaption figure footer header hgroup main menu menuitem nav section source summary template track video',
+							//'new-blocklevel-tags' => 'footer header section menu menuitem'
+							//'new-empty-tags' => 'command embed keygen source track wbr',
+							//'new-inline-tags' => 'audio command datalist embed keygen mark menuitem meter output progress source time video wbr',
+						);
+
+						// Tidy
+						$tidy = new tidy();
+						$out = $tidy->repairString($out, $config, 'utf8');
+
+						//print "xxx".$out;exit;
+					}
 				} catch (Exception $e) {
 					// If error, invalid HTML string with no way to clean it
 					//print $e->getMessage();

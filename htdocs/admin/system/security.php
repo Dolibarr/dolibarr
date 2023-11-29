@@ -641,10 +641,16 @@ print '<br>';
 print '<strong>MAIN_SECURITY_MAXFILESIZE_DOWNLOADED</strong> = '.getDolGlobalString('MAIN_SECURITY_MAXFILESIZE_DOWNLOADED', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 100000000)</span>')."<br>";
 print '<br>';
 
-print '<strong>MAIN_RESTRICTHTML_ONLY_VALID_HTML</strong> = '.getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 1)</span>')."<br>";
+print '<strong>MAIN_RESTRICTHTML_ONLY_VALID_HTML</strong> = '.(getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML') ? '1' : '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
+print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": 1)</span><br>";
 print '<br>';
 
-print '<strong>MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES</strong> = '.getDolGlobalString('MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 1)</span>')."<br>";
+print '<strong>MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY</strong> = '.(getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY') ? '1' : '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
+print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 1) &nbsp; - &nbsp; Module "tidy" must be enabled (currently: '.((extension_loaded('tidy') && class_exists("tidy")) ? 'Enabled' : 'Not available').")</span><br>";
+print '<br>';
+
+print '<strong>MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES</strong> = '.(getDolGlobalString('MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES') ? '1' : '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
+print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": 1)</span><br>";
 print '<br>';
 
 print '<strong>MAIN_DISALLOW_EXT_URL_INTO_DESCRIPTIONS</strong> = '.getDolGlobalString('MAIN_DISALLOW_EXT_URL_INTO_DESCRIPTIONS', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 0)</span>')."<br>";
