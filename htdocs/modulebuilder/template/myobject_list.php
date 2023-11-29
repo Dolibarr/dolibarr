@@ -284,6 +284,10 @@ $title = $langs->trans("MyObjects");
 $morejs = [];
 $morecss = [];
 
+// multiSelectArrayWithCheckbox changes $arrayfields[…]['checked'] according to columns selected (stored in llx_user_param)
+$varpage = empty($contextpage) ? $_SERVER['PHP_SELF'] : $contextpage;
+$selectedfields = Form::multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', ''));
+
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = 'SELECT ';
@@ -589,8 +593,6 @@ if (! empty($moreforfilter)) {
 	print '</div>';
 }
 
-$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = Form::multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
