@@ -1152,7 +1152,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		global $conf;
 
 		// Set options for cleaning data
-		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 1;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;	// disabled, does not work on HTML5
 		// Enabled option MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY if possible
 		if (extension_loaded('tidy') && class_exists("tidy")) {
 			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
