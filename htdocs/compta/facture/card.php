@@ -3074,6 +3074,7 @@ if ($action == 'create') {
 	$cond_reglement_id = GETPOST('cond_reglement_id', 'int');
 	$mode_reglement_id = GETPOST('mode_reglement_id', 'int');
 	$fk_account = GETPOST('fk_account', 'int');
+	$selectedLines = GETPOST('toselect', 'array');
 
 	// Load objectsrc
 	//$remise_absolue = 0;
