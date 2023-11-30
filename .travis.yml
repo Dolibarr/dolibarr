@@ -34,24 +34,24 @@ jobs:
   #allow_failures:
   #- php: nightly
   include:
-    - stage: PHP 7.1-8.1
+    - stage: PHP min and max
       if: type = push
       php: '7.1'
       env: 
       - DB=postgresql
       - TRAVIS_PHP_VERSION=7.1
-    - stage: PHP 7.1-8.1
+    - stage: PHP min and max
       if: type = pull_request OR type = push
-      php: '8.1'
+      php: '8.2'
       env:
       - DB=mysql
-      - TRAVIS_PHP_VERSION=8.1
-    - stage: PHP 8.2
+      - TRAVIS_PHP_VERSION=8.2
+    - stage: PHP 8.3
       if: type = push AND branch = develop
-      php: '8.2'
+      php: '8.3'
       env: 
       - DB=mysql
-      - TRAVIS_PHP_VERSION=8.2
+      - TRAVIS_PHP_VERSION=8.3
 
 notifications:
   email:
