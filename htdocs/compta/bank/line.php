@@ -282,7 +282,6 @@ if ($user->hasRight('banque', 'consolidate') && ($action == 'num_releve' || $act
 			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			$db->commit();
 		} else {
-			setEventMessages($langs->trans("ErrorPathNotExist"), null, 'errors');
 			$db->rollback();
 			dol_print_error($db);
 		}
