@@ -2731,7 +2731,7 @@ class FactureFournisseur extends CommonInvoice
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $mysoc;
 
 		$langs->load('bills');
 
