@@ -1104,8 +1104,6 @@ function dol_move($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $te
 */
 function dol_move_dir($srcdir, $destdir, $overwriteifexists = 1, $indexdatabase = 1, $renamedircontent = 1)
 {
-
-	global $user, $db, $conf;
 	$result = false;
 
 	dol_syslog("files.lib.php::dol_move_dir srcdir=".$srcdir." destdir=".$destdir." overwritifexists=".$overwriteifexists." indexdatabase=".$indexdatabase." renamedircontent=".$renamedircontent);
@@ -1124,6 +1122,7 @@ function dol_move_dir($srcdir, $destdir, $overwriteifexists = 1, $indexdatabase 
 
 		$result = @rename($newpathofsrcdir, $newpathofdestdir);
 
+		// Now we rename also contents inside dir after the move to match new destination name
 		if ($result && $renamedircontent) {
 			if (file_exists($newpathofdestdir)) {
 				$destbasename = basename($newpathofdestdir);
