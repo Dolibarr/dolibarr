@@ -246,7 +246,7 @@ class SupplierProposal extends CommonObject
 	 * 	@param  int		$idproduct       	Product Id to add
 	 * 	@param  int		$qty             	Quantity
 	 * 	@param  int		$remise_percent  	Discount effected on Product
-	 *  @return	int							<0 if KO, >0 if OK
+	 *  @return	int							Return integer <0 if KO, >0 if OK
 	 *
 	 *	TODO	Remplacer les appels a cette fonction par generation objet Ligne
 	 */
@@ -1615,7 +1615,7 @@ class SupplierProposal extends CommonObject
 	 *	@param      int		$statut		Statut
 	 *	@param      string	$note		Comment
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return     int         		<0 if KO, >0 if OK
+	 *	@return     int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function reopen($user, $statut, $note = '', $notrigger = 0)
 	{
@@ -1673,7 +1673,7 @@ class SupplierProposal extends CommonObject
 	 *	@param      User	$user		Object user that close
 	 *	@param      int		$status		Status
 	 *	@param      string	$note		Comment
-	 *	@return     int         		<0 if KO, >0 if OK
+	 *	@return     int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function cloture($user, $status, $note)
 	{
@@ -1787,7 +1787,7 @@ class SupplierProposal extends CommonObject
 	 * 	@param		int 	$idProductFournPrice	id of llx_product_fournisseur_price
 	 * 	@param		Product $product				contain informations to update
 	 *	@param      User	$user					Object user
-	 *	@return     int         					<0 if KO, >0 if OK
+	 *	@return     int         					Return integer <0 if KO, >0 if OK
 	 */
 	public function updatePriceFournisseur($idProductFournPrice, $product, $user)
 	{
@@ -1810,7 +1810,7 @@ class SupplierProposal extends CommonObject
 	  *
 	  *	@param		Product 	$product	Object Product
 	  *	@param      User		$user		Object user
-	  *	@return     int         			<0 if KO, >0 if OK
+	  *	@return     int         			Return integer <0 if KO, >0 if OK
 	  */
 	public function createPriceFournisseur($product, $user)
 	{
@@ -1873,7 +1873,7 @@ class SupplierProposal extends CommonObject
 	 *  Set draft status
 	 *
 	 *	@param		User	$user		Object user that modify
-	 *	@return		int					<0 if KO, >0 if OK
+	 *	@return		int					Return integer <0 if KO, >0 if OK
 	 */
 	public function setDraft($user)
 	{
@@ -2963,7 +2963,7 @@ class SupplierProposalLine extends CommonObjectLine
 	 *	Retrieve the propal line object
 	 *
 	 *	@param	int		$rowid		Propal line id
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($rowid)
 	{
@@ -3042,7 +3042,7 @@ class SupplierProposalLine extends CommonObjectLine
 	 *  Insert object line propal in database
 	 *
 	 *	@param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function insert($notrigger = 0)
 	{
@@ -3206,7 +3206,7 @@ class SupplierProposalLine extends CommonObjectLine
 	 * Delete line in database
 	 *
 	 * @param	User	$user		User making the deletion
-	 * @return	int  				<0 if KO, >0 if OK
+	 * @return	int  				Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user)
 	{

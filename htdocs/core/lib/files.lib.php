@@ -2168,7 +2168,7 @@ function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '', $page = ''
  * @param 	string	$outputfile		Target file name
  * @param 	string	$mode			'gz' or 'bz' or 'zip'
  * @param	string	$errorstring	Error string
- * @return	int						<0 if KO, >0 if OK
+ * @return	int						Return integer <0 if KO, >0 if OK
  * @see dol_uncompress(), dol_compress_dir()
  */
 function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring = null)
@@ -2421,7 +2421,7 @@ function dol_uncompress($inputfile, $outputdir)
  * @param	string	$excludefiles   A regex pattern. For example: '/\.log$|\/temp\//'
  * @param	string	$rootdirinzip	Add a root dir level in zip file
  * @param	string	$newmask		Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
- * @return	int						<0 if KO, >0 if OK
+ * @return	int						Return integer <0 if KO, >0 if OK
  * @see dol_uncompress(), dol_compress_file()
  */
 function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles = '', $rootdirinzip = '', $newmask = 0)

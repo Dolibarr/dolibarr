@@ -508,7 +508,7 @@ class CommandeFournisseur extends CommonOrder
 	 * Load array lines
 	 *
 	 * @param		int		$only_product	Return only physical products
-	 * @return		int						<0 if KO, >0 if OK
+	 * @return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_lines($only_product = 0)
 	{
@@ -649,7 +649,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	@param	User	$user			Validator User
 	 *	@param	int		$idwarehouse	Id of warehouse to use for stock decrease
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function valid($user, $idwarehouse = 0, $notrigger = 0)
 	{
@@ -1100,7 +1100,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	@param	User	$user			Object user
 	 *	@param	int		$idwarehouse	Id of warhouse for stock change
 	 *  @param	int		$secondlevel	0=Standard approval, 1=Second level approval (used when option SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED is set)
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function approve($user, $idwarehouse = 0, $secondlevel = 0)
 	{
@@ -1347,7 +1347,7 @@ class CommandeFournisseur extends CommonOrder
 	 * 	@param		integer	$date		Date
 	 * 	@param		int		$methode	Method
 	 * 	@param		string	$comment	Comment
-	 * 	@return		int			        <0 if KO, >0 if OK
+	 * 	@return		int			        Return integer <0 if KO, >0 if OK
 	 */
 	public function commande($user, $date, $methode, $comment = '')
 	{
@@ -1618,7 +1618,7 @@ class CommandeFournisseur extends CommonOrder
 	 *
 	 *	@param      User	$user        	User that modify
 	 *	@param      int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *	@return     int      			   	<0 if KO, >0 if OK
+	 *	@return     int      			   	Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -2114,7 +2114,7 @@ class CommandeFournisseur extends CommonOrder
 	 * @param	int			$fk_commandefourndet	Id of supplier order line
 	 * @param	int			$notrigger          	1 = notrigger
 	 * @param	int			$fk_reception          	Id of reception to link
-	 * @return 	int						<0 if KO, >0 if OK
+	 * @return 	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function dispatchProduct($user, $product, $qty, $entrepot, $price = 0, $comment = '', $eatby = '', $sellby = '', $batch = '', $fk_commandefourndet = 0, $notrigger = 0, $fk_reception = 0)
 	{
@@ -2210,7 +2210,7 @@ class CommandeFournisseur extends CommonOrder
 	 *
 	 *	@param	int		$idline		Id of line to delete
 	 *	@param	int		$notrigger	1=Disable call to triggers
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function deleteline($idline, $notrigger = 0)
 	{
@@ -2249,7 +2249,7 @@ class CommandeFournisseur extends CommonOrder
 	 *
 	 *	@param	User	$user		Object user
 	 *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
@@ -2435,7 +2435,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	@param	integer	$date		Date of reception
 	 *	@param	string	$type		Type of receipt ('tot' = total/done, 'par' = partial, 'nev' = never, 'can' = cancel)
 	 *	@param	string	$comment	Comment
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function Livraison($user, $date, $type, $comment)
 	{
@@ -2563,7 +2563,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	@param      User			$user        		Objet user making change
 	 *	@param      integer  		$delivery_date     Planned delivery date
 	 *  @param     	int				$notrigger			1=Does not execute triggers, 0= execute triggers
-	 *	@return     int         						<0 if KO, >0 if OK
+	 *	@return     int         						Return integer <0 if KO, >0 if OK
 	 */
 	public function setDeliveryDate($user, $delivery_date, $notrigger = 0)
 	{
@@ -2678,7 +2678,7 @@ class CommandeFournisseur extends CommonOrder
 	 *  @param  User	$user           User that create
 	 *  @param  int		$idc			Id of purchase order to update
 	 *  @param	int		$comclientid	Id of sale order to use as template
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function updateFromCommandeClient($user, $idc, $comclientid)
 	{
@@ -2718,7 +2718,7 @@ class CommandeFournisseur extends CommonOrder
 	 *
 	 *  @param      User	$user       Object user that change status
 	 *  @param      int		$status		New status
-	 *  @return     int         		<0 if KO, >0 if OK
+	 *  @return     int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function setStatus($user, $status)
 	{
@@ -3711,7 +3711,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	 *  Load line order
 	 *
 	 *  @param  int		$rowid      Id line order
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($rowid)
 	{
@@ -3822,7 +3822,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	 *	Insert line into database
 	 *
 	 *	@param      int		$notrigger		1 = disable triggers
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function insert($notrigger = 0)
 	{
@@ -4057,7 +4057,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	 * 	Delete line in database
 	 *
 	 *	@param      int     $notrigger  1=Disable call to triggers
-	 *	@return     int                 <0 if KO, >0 if OK
+	 *	@return     int                 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($notrigger = 0)
 	{

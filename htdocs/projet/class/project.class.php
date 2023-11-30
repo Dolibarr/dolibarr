@@ -2295,7 +2295,7 @@ class Project extends CommonObject
 	/**
 	 * Charge indicateurs this->nb pour le tableau de bord
 	 *
-	 * @return     int         <0 if KO, >0 if OK
+	 * @return     int         Return integer <0 if KO, >0 if OK
 	 */
 	public function load_state_board()
 	{
@@ -2392,7 +2392,7 @@ class Project extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param 	int[]|int 	$categories 	Category or categories IDs
-	 * @return 	int							<0 if KO, >0 if OK
+	 * @return 	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function setCategories($categories)
 	{
@@ -2432,7 +2432,7 @@ class Project extends CommonObject
 	 *  @param	string	$errors_to			erros to
 	 *  @param	string	$moreinheader		Add more html headers
 	 *  @since V18
-	 *  @return	int							<0 if KO, >0 if OK
+	 *  @return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function sendEmail($text, $subject, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $addr_cc = "", $addr_bcc = "", $deliveryreceipt = 0, $msgishtml = -1, $errors_to = '', $moreinheader = '')
 	{

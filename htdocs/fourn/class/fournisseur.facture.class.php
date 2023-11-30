@@ -839,7 +839,7 @@ class FactureFournisseur extends CommonInvoice
 	 *  @param	int		$id         Id supplier invoice
 	 *  @param	string	$ref		Ref supplier invoice
 	 * 	@param	string	$ref_ext	External reference of invoice
-	 *  @return int  	   			<0 if KO, >0 if OK, 0 if not found
+	 *  @return int  	   			Return integer <0 if KO, >0 if OK, 0 if not found
 	 */
 	public function fetch($id = '', $ref = '', $ref_ext = '')
 	{
@@ -1116,7 +1116,7 @@ class FactureFournisseur extends CommonInvoice
 	 *
 	 *  @param	User	$user            User that modify
 	 *  @param  int		$notrigger       0=launch triggers after, 1=disable triggers
-	 *  @return int 			         <0 if KO, >0 if OK
+	 *  @return int 			         Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -1405,7 +1405,7 @@ class FactureFournisseur extends CommonInvoice
 	 *
 	 *  @param      User	$user		    User object
 	 *	@param	    int		$notrigger	    1=Does not execute triggers, 0= execute triggers
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
@@ -1683,7 +1683,7 @@ class FactureFournisseur extends CommonInvoice
 	 *	@param	User	$user        	Object user making change
 	 *	@param	string	$close_code		Code of closing invoice (CLOSECODE_REPLACED, CLOSECODE_...)
 	 *	@param	string	$close_note		Comment
-	 *	@return int         			<0 if KO, >0 if OK
+	 *	@return int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function setCanceled($user, $close_code = '', $close_note = '')
 	{
@@ -1951,7 +1951,7 @@ class FactureFournisseur extends CommonInvoice
 	 *	@param	User	$user			Object user that modify
 	 *	@param	int		$idwarehouse	Id warehouse to use for stock change.
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setDraft($user, $idwarehouse = -1, $notrigger = 0)
 	{
@@ -2317,7 +2317,7 @@ class FactureFournisseur extends CommonInvoice
 	 * @param		double		$pu_devise			Amount in currency
 	 * @param		string		$ref_supplier		Supplier ref
 	 * @param	integer	$rang	line rank
-	 * @return    	int           					<0 if KO, >0 if OK
+	 * @return    	int           					Return integer <0 if KO, >0 if OK
 	 */
 	public function updateline($id, $desc, $pu, $vatrate, $txlocaltax1 = 0, $txlocaltax2 = 0, $qty = 1, $idproduct = 0, $price_base_type = 'HT', $info_bits = 0, $type = 0, $remise_percent = 0, $notrigger = false, $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $pu_devise = 0, $ref_supplier = '', $rang = 0)
 	{
@@ -2474,7 +2474,7 @@ class FactureFournisseur extends CommonInvoice
 	 *
 	 * 	@param  int		$rowid      	Id of line to delete
 	 *	@param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 * 	@return	int						<0 if KO, >0 if OK
+	 * 	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function deleteline($rowid, $notrigger = 0)
 	{
@@ -3078,7 +3078,7 @@ class FactureFournisseur extends CommonInvoice
 	/**
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
-	 *      @return         int     <0 if KO, >0 if OK
+	 *      @return         int     Return integer <0 if KO, >0 if OK
 	 */
 	public function load_state_board()
 	{
@@ -3759,7 +3759,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 * Update a supplier invoice line
 	 *
 	 * @param int $notrigger Disable triggers
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function update($notrigger = 0)
 	{
@@ -3895,7 +3895,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 *
 	 *	@param      int		$notrigger							1 no triggers
 	 *  @param      int     $noerrorifdiscountalreadylinked  	1=Do not make error if lines is linked to a discount and discount already linked to another
-	 *	@return		int											<0 if KO, >0 if OK
+	 *	@return		int											Return integer <0 if KO, >0 if OK
 	 */
 	public function insert($notrigger = 0, $noerrorifdiscountalreadylinked = 0)
 	{

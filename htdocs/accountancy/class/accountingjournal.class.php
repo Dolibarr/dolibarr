@@ -168,7 +168,7 @@ class AccountingJournal extends CommonObject
 	 * @param array $filter filter array
 	 * @param string $filtermode filter mode (AND or OR)
 	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
@@ -379,7 +379,7 @@ class AccountingJournal extends CommonObject
 	 * @param 	int				$date_start			Filter 'start date'
 	 * @param 	int				$date_end			Filter 'end date'
 	 * @param 	string			$in_bookkeeping		Filter 'in bookkeeping' ('already', 'notyet')
-	 * @return 	array|int							<0 if KO, >0 if OK
+	 * @return 	array|int							Return integer <0 if KO, >0 if OK
 	 */
 	public function getData(User $user, $type = 'view', $date_start = null, $date_end = null, $in_bookkeeping = 'notyet')
 	{
@@ -423,7 +423,7 @@ class AccountingJournal extends CommonObject
 	 * @param 	int				$date_start			Filter 'start date'
 	 * @param 	int				$date_end			Filter 'end date'
 	 * @param 	string			$in_bookkeeping		Filter 'in bookkeeping' ('already', 'notyet')
-	 * @return 	array|int							<0 if KO, >0 if OK
+	 * @return 	array|int							Return integer <0 if KO, >0 if OK
 	 */
 	public function getAssetData(User $user, $type = 'view', $date_start = null, $date_end = null, $in_bookkeeping = 'notyet')
 	{
@@ -778,7 +778,7 @@ class AccountingJournal extends CommonObject
 	 *                                          ),
 	 * 											);
 	 * @param	int		$max_nb_errors			Nb error authorized before stop the process
-	 * @return 	int								<0 if KO, >0 if OK
+	 * @return 	int								Return integer <0 if KO, >0 if OK
 	 */
 	public function writeIntoBookkeeping(User $user, &$journal_data = array(), $max_nb_errors = 10)
 	{
@@ -919,7 +919,7 @@ class AccountingJournal extends CommonObject
 	 * 													);
 	 * @param	int				$search_date_end		Search date end
 	 * @param	string			$sep					CSV separator
-	 * @return 	int|string								<0 if KO, >0 if OK
+	 * @return 	int|string								Return integer <0 if KO, >0 if OK
 	 */
 	public function exportCsv(&$journal_data = array(), $search_date_end = 0, $sep = '')
 	{

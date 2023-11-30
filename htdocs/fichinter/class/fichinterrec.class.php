@@ -422,7 +422,7 @@ class FichinterRec extends Fichinter
 	 *
 	 *	@param      User	$user			Object user who delete
 	 *	@param		int		$notrigger		Disable trigger
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
@@ -724,7 +724,7 @@ class FichinterRec extends Fichinter
 	 *
 	 *	@param	 	int		$frequency		value of frequency
 	 *	@param	 	string	$unit 			unit of frequency  (d, m, y)
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setFrequencyAndUnit($frequency, $unit)
 	{
@@ -763,7 +763,7 @@ class FichinterRec extends Fichinter
 	 *
 	 *	@param	 	datetime	$date					date of execution
 	 *	@param	 	int			$increment_nb_gen_done	0 do nothing more, >0 increment nb_gen_done
-	 *	@return		int									<0 if KO, >0 if OK
+	 *	@return		int									Return integer <0 if KO, >0 if OK
 	 */
 	public function setNextDate($date, $increment_nb_gen_done = 0)
 	{
@@ -795,7 +795,7 @@ class FichinterRec extends Fichinter
 	 *	Update the maximum period
 	 *
 	 *	@param	 	int		$nb		number of maximum period
-	 *	@return		int				<0 if KO, >0 if OK
+	 *	@return		int				Return integer <0 if KO, >0 if OK
 	 */
 	public function setMaxPeriod($nb)
 	{
@@ -826,7 +826,7 @@ class FichinterRec extends Fichinter
 	 *	Update the auto validate fichinter
 	 *
 	 *	@param	 	int		$validate		0 to create in draft, 1 to create and validate fichinter
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setAutoValidate($validate)
 	{
@@ -852,7 +852,7 @@ class FichinterRec extends Fichinter
 	/**
 	 *	Update the Number of Generation Done
 	 *
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function updateNbGenDone()
 	{

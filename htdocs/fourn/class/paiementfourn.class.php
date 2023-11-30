@@ -891,7 +891,7 @@ class PaiementFourn extends Paiement
 	 *  Load the third party of object, from id into this->thirdparty
 	 *
 	 *	@param		int		$force_thirdparty_id	Force thirdparty id
-	 *	@return		int								<0 if KO, >0 if OK
+	 *	@return		int								Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_thirdparty($force_thirdparty_id = 0)
 	{
