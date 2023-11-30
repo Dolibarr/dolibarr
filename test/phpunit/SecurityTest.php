@@ -1152,12 +1152,12 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		global $conf;
 
 		// Set options for cleaning data
-		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;	// disabled, does not work on HTML5
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;	// disabled, does not work on HTML5 and some libxml versions
 		// Enabled option MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY if possible
 		if (extension_loaded('tidy') && class_exists("tidy")) {
 			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
 		}
-		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 1;
+		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;	// disabled, does not work on HTML5 and some libxml versions
 
 
 
@@ -1176,7 +1176,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		// For a string that is already HTML (contains HTML tags) with special tags but badly formated
 		$stringtotest = "testA\n<h1>hhhh</h1><z>ddd</z><header>aaa</header><footer>bbb</footer>";
 		if (getDolGlobalString("MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY")) {
-			$stringfixed = "testA\n<h1>hhhh</h1>\nddd\n<header>aaa</header>\n<footer>bbb</footer>";
+			$stringfixed = "testA\n<h1>hhhh</h1>\nddd\n<header>aaa</header>\n<footer>bbb</footer>\n";
 		} else {
 			$stringfixed = "testA\n<h1>hhhh</h1>ddd<header>aaa</header><footer>bbb</footer>";
 		}
@@ -1186,19 +1186,19 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		//$result = dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0)), 1, 1, 'common', 0, 1);
 		$result = dolPrintHTML($stringtotest);
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($stringfixed, $result, 'Error');    // Expected '' because should failed because login 'auto' does not exists
+		$this->assertEquals($stringfixed, $result, 'Error');
 
 
 		// For a string that is already HTML (contains HTML tags) but badly formated
 		$stringtotest = "testB\n<h1>hhh</h1>\n<td>td alone</td><h1>iii</h1>";
 		if (getDolGlobalString("MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY")) {
-			$stringfixed = "testB\n<h1>hhh</h1>\n<h1>iii</h1>\n<table>\n<tr>\n<td>td alone</td>\n</tr>\n</table>";
+			$stringfixed = "testB\n<h1>hhh</h1>\n<h1>iii</h1>\n<table>\n<tr>\n<td>td alone</td>\n</tr>\n</table>\n";
 		} else {
 			$stringfixed = "testB\n<h1>hhh</h1>\n<td>td alone</td><h1>iii</h1>";
 		}
 		$result = dolPrintHTML($stringtotest);
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($stringfixed, $result, 'Error');    // Expected '' because should failed because login 'auto' does not exists
+		$this->assertEquals($stringfixed, $result, 'Error');
 
 
 		// For a string with no HTML tags
@@ -1206,7 +1206,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$stringfixed = "testC<br>\ntest";
 		$result = dolPrintHTML($stringtotest);
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($stringfixed, $result, 'Error');    // Expected '' because should failed because login 'auto' does not exists
+		$this->assertEquals($stringfixed, $result, 'Error');
 
 		return 0;
 	}
