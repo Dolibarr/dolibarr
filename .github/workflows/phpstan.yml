@@ -35,7 +35,7 @@ jobs:
         with:
           php-version: "${{ matrix.php-version }}"
           tools: phpstan, cs2pr
-          extensions: mbstring, intl, opcache
+          extensions: json, imagick, gd, zip, mbstring, intl, opcache, imap, mysql, pgsql, sqlite3, ldap, xml
       - uses: actions/setup-node@v3
         with:
           node-version: 14.x
