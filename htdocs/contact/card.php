@@ -317,7 +317,7 @@ if (empty($reshook)) {
 		$result = $object->fetch($id);
 		$object->oldcopy = clone $object;
 
-		$result = $object->delete(); // TODO Add $user as first param
+		$result = $object->delete($user);
 		if ($result > 0) {
 			setEventMessages("RecordDeleted", null, 'mesgs');
 			if ($backurlforlist) {

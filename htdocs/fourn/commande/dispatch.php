@@ -39,6 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 
 if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -327,6 +328,8 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 
 			// We ask to move a qty
 			if (GETPOST($qty) > 0) {
+				$productId = GETPOSTINT($prod);
+
 				if (!(GETPOST($ent, 'int') > 0)) {
 					dol_syslog('No dispatch for line '.$key.' as no warehouse was chosen.');
 					$text = $langs->transnoentities('Warehouse').', '.$langs->transnoentities('Line').' '.($numline).'-'.($reg[1] + 1);
@@ -342,7 +345,7 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 				}
 
 				if (!$error) {
-					$result = $object->dispatchProduct($user, GETPOST($prod, 'int'), GETPOST($qty), GETPOST($ent, 'int'), GETPOST($pu), GETPOST('comment'), $dDLUO, $dDLC, GETPOST($lot, 'alpha'), GETPOST($fk_commandefourndet, 'int'), $notrigger);
+					$result = $object->dispatchProduct($user, $productId, GETPOST($qty), GETPOST($ent, 'int'), GETPOST($pu), GETPOST('comment'), $dDLUO, $dDLC, GETPOST($lot, 'alpha'), GETPOST($fk_commandefourndet, 'int'), $notrigger);
 					if ($result < 0) {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$error++;
@@ -359,7 +362,7 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 								$sql .= ", price = ".price2num(GETPOST($pu), 'MU', 2)." * quantity";
 								$sql .= ", remise_percent = ".price2num((empty($dto) ? 0 : $dto), 3, 2)."'";
 								$sql .= " WHERE fk_soc = ".((int) $object->socid);
-								$sql .= " AND fk_product=".((int) GETPOST($prod, 'int'));
+								$sql .= " AND fk_product=".((int) $productId);
 
 								$resql = $db->query($sql);
 							}

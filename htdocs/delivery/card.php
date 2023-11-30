@@ -166,7 +166,7 @@ if ($action == 'add') {
 
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('expedition', 'delivery', 'supprimer')) {
 	$db->begin();
-	$result = $object->delete();
+	$result = $object->delete($user);
 
 	if ($result > 0) {
 		$db->commit();
