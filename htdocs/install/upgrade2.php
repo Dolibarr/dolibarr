@@ -1922,6 +1922,8 @@ function migrate_price_commande($db, $langs, $conf)
  */
 function migrate_price_commande_fournisseur($db, $langs, $conf)
 {
+	global $mysoc;
+
 	$db->begin();
 
 	$tmpmysoc = new Societe($db);
