@@ -5170,8 +5170,6 @@ class Facture extends CommonInvoice
 								$joinFileMime[] = dol_mimetype(DOL_DATA_ROOT.$tmpinvoice->last_main_doc);
 							}
 
-							// print_r($joinFile);exit;
-
 							// Mail Creation
 							$cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, $joinFile, $joinFileMime, $joinFileName, '', "", 0, 1, $errors_to, '', $trackid, '', '', '');
 
