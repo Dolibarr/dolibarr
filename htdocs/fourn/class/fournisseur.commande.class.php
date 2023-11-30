@@ -382,7 +382,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql = "SELECT c.rowid, c.entity, c.ref, ref_supplier, c.fk_soc, c.fk_statut as status, c.amount_ht, c.total_ht, c.total_ttc, c.total_tva,";
 		$sql .= " c.localtax1, c.localtax2, ";
 		$sql .= " c.date_creation, c.date_valid, c.date_approve, c.date_approve2,";
-		$sql .= " c.fk_user_author, c.fk_user_valid, c.fk_user_approve, c.fk_user_approve2,";
+		$sql .= " c.fk_user_author as user_author_id, c.fk_user_valid as user_validation_id, c.fk_user_approve as user_approve_id, c.fk_user_approve2 as user_approve_id2,";
 		$sql .= " c.date_commande as date_commande, c.date_livraison as delivery_date, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_projet as fk_project, c.remise_percent, c.source, c.fk_input_method,";
 		$sql .= " c.fk_account,";
 		$sql .= " c.note_private, c.note_public, c.model_pdf, c.extraparams, c.billed,";
@@ -428,10 +428,10 @@ class CommandeFournisseur extends CommonOrder
 			$this->statut = $obj->status;	// deprecated
 			$this->status = $obj->status;
 			$this->billed = $obj->billed;
-			$this->user_author_id = $obj->fk_user_author;
-			$this->user_validation_id = $obj->fk_user_valid;
-			$this->user_approve_id = $obj->fk_user_approve;
-			$this->user_approve_id2 = $obj->fk_user_approve2;
+			$this->user_author_id = $obj->user_author_id;
+			$this->user_validation_id = $obj->user_validation_id;
+			$this->user_approve_id = $obj->user_approve_id;
+			$this->user_approve_id2 = $obj->user_approve_id2;
 			$this->total_ht				= $obj->total_ht;
 			$this->total_tva			= $obj->total_tva;
 			$this->total_localtax1		= $obj->localtax1;

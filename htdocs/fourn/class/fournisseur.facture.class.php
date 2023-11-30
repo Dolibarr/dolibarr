@@ -147,9 +147,18 @@ class FactureFournisseur extends CommonInvoice
 	/**
 	 * Set to 1 if the invoice is completely paid, otherwise is 0
 	 * @var int
+	 * @deprecated Use $paid
 	 */
 	public $paye;
+	/**
+	 * Set to 1 if the invoice is completely paid, otherwise is 0
+	 * @var int
+	 */
+	public $paid;
 
+	/**
+	 * @deprecated	Use $user_creation_id
+	 */
 	public $author;
 
 	/**
@@ -942,9 +951,9 @@ class FactureFournisseur extends CommonInvoice
 				$this->status				= $obj->status;
 				$this->statut				= $obj->status;	// For backward compatibility
 				$this->fk_statut			= $obj->status;	// For backward compatibility
-				$this->fk_user_author       = $obj->fk_user_author;
-				$this->author				= $obj->fk_user_author;
-				$this->fk_user_valid        = $obj->fk_user_valid;
+				$this->user_creation_id     = $obj->fk_user_author;
+				$this->author				= $obj->fk_user_author;	// deprecated
+				$this->user_validation_id   = $obj->fk_user_valid;
 				$this->fk_facture_source	= $obj->fk_facture_source;
 				$this->vat_reverse_charge	= empty($obj->vat_reverse_charge) ? '0' : '1';
 				$this->fk_fac_rec_source	= $obj->fk_fac_rec_source;
@@ -982,7 +991,6 @@ class FactureFournisseur extends CommonInvoice
 				$this->extraparams = isset($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 				$this->socid  = $obj->socid;
-				$this->socnom = $obj->socnom;
 
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
