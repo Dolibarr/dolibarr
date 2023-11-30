@@ -1063,9 +1063,9 @@ if ($resql) {
 		// For inventory not yet close, we overwrite with the real value in stock now
 		if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_VALIDATED) {
 			if (isModEnabled('productbatch') && $product_static->hasbatch()) {
-				$valuetoshow = $product_static->stock_warehouse[$obj->fk_warehouse]->detail_batch[$obj->batch]->qty;
+				$valuetoshow = $product_static->stock_warehouse[$obj->fk_warehouse]->detail_batch[$obj->batch]->qty ?? 0;
 			} else {
-				$valuetoshow = $product_static->stock_warehouse[$obj->fk_warehouse]->real;
+				$valuetoshow = $product_static->stock_warehouse[$obj->fk_warehouse]->real ?? 0;
 			}
 		}
 		print price2num($valuetoshow, 'MS');
