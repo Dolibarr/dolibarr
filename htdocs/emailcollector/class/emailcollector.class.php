@@ -137,9 +137,9 @@ class EmailCollector extends CommonObject
 		'login'         => array('type'=>'varchar(128)', 'label'=>'Login', 'visible'=>-1, 'enabled'=>1, 'position'=>102, 'notnull'=>-1, 'index'=>1, 'comment'=>"IMAP login", 'help'=>'Example: myaccount@gmail.com'),
 		'password'      => array('type'=>'password', 'label'=>'Password', 'visible'=>-1, 'enabled'=>"1", 'position'=>103, 'notnull'=>-1, 'comment'=>"IMAP password", 'help'=>'WithGMailYouCanCreateADedicatedPassword'),
 		'oauth_service' => array('type'=>'varchar(128)', 'label'=>'oauthService', 'visible'=>-1, 'enabled'=>"getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')", 'position'=>104, 'notnull'=>0, 'index'=>1, 'comment'=>"IMAP login oauthService", 'arrayofkeyval'=>array(), 'help'=>'TokenMustHaveBeenCreated'),
-		'source_directory' => array('type'=>'varchar(255)', 'label'=>'MailboxSourceDirectory', 'visible'=>-1, 'enabled'=>1, 'position'=>104, 'notnull'=>1, 'default' => 'Inbox', 'help'=>'Example: INBOX'),
+		'source_directory' => array('type'=>'varchar(255)', 'label'=>'MailboxSourceDirectory', 'visible'=>-1, 'enabled'=>1, 'position'=>104, 'notnull'=>1, 'default' => 'Inbox', 'help'=>'Example: INBOX, [Gmail]/Spam, [Gmail]/Draft, [Gmail]/Brouillons, [Gmail]/Sent Mail, [Gmail]/Messages envoyés, ...'),
 		'target_directory' => array('type'=>'varchar(255)', 'label'=>'MailboxTargetDirectory', 'visible'=>1, 'enabled'=>1, 'position'=>110, 'notnull'=>0, 'help'=>"EmailCollectorTargetDir"),
-		'maxemailpercollect' => array('type'=>'integer', 'label'=>'MaxEmailCollectPerCollect', 'visible'=>-1, 'enabled'=>1, 'position'=>111, 'default'=>100),
+		'maxemailpercollect' => array('type'=>'integer', 'label'=>'MaxEmailCollectPerCollect', 'visible'=>-1, 'enabled'=>1, 'position'=>111, 'default'=>50),
 		'datelastresult' => array('type'=>'datetime', 'label'=>'DateLastCollectResult', 'visible'=>1, 'enabled'=>'$action != "create" && $action != "edit"', 'position'=>121, 'notnull'=>-1, 'csslist'=>'nowraponall'),
 		'codelastresult' => array('type'=>'varchar(16)', 'label'=>'CodeLastResult', 'visible'=>1, 'enabled'=>'$action != "create" && $action != "edit"', 'position'=>122, 'notnull'=>-1,),
 		'lastresult' => array('type'=>'varchar(255)', 'label'=>'LastResult', 'visible'=>1, 'enabled'=>'$action != "create" && $action != "edit"', 'position'=>123, 'notnull'=>-1, 'cssview'=>'small', 'csslist'=>'small tdoverflowmax200'),
@@ -380,6 +380,11 @@ class EmailCollector extends CommonObject
 		unset($object->fk_user_creat);
 		unset($object->import_key);
 		unset($object->password);
+		unset($object->lastresult);
+		unset($object->codelastresult);
+		unset($object->datelastresult);
+		unset($object->datelastok);
+		unset($object->debuginfo);
 
 		// Clear fields
 		$object->ref = "copy_of_".$object->ref;
@@ -814,7 +819,7 @@ class EmailCollector extends CommonObject
 	}
 
 	/**
-	 * Convert str to UTF-7 imap default mailbox names
+	 * Convert str to UTF-7 imap. Used to forge mailbox names.
 	 *
 	 * @param 	string $str			String to encode
 	 * @return 	string				Encode string
@@ -823,13 +828,16 @@ class EmailCollector extends CommonObject
 	{
 		if (function_exists('mb_convert_encoding')) {
 			// change spaces by entropy because mb_convert fail with spaces
-			$str = preg_replace("/ /", "xyxy", $str);
+			$str = preg_replace("/ /", "xxxSPACExxx", $str);		// the replacement string must be valid in utf7 so _ can't be used
+			$str = preg_replace("/\[Gmail\]/", "xxxGMAILxxx", $str);	// the replacement string must be valid in utf7 so _ can't be used
 			// if mb_convert work
 			if ($str = mb_convert_encoding($str, "UTF-7")) {
 				// change characters
 				$str = preg_replace("/\+A/", "&A", $str);
 				// change to spaces again
-				$str = preg_replace("/xyxy/", " ", $str);
+				$str = preg_replace("/xxxSPACExxx/", " ", $str);
+				// change to [Gmail] again
+				$str = preg_replace("/xxxGMAILxxx/", "[Gmail]", $str);
 				return $str;
 			} else {
 				// print error and return false
@@ -1112,7 +1120,6 @@ class EmailCollector extends CommonObject
 
 		$now = dol_now();
 
-
 		if (empty($this->host)) {
 			$this->error = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('EMailHost'));
 			return -1;
@@ -1126,15 +1133,21 @@ class EmailCollector extends CommonObject
 			return -1;
 		}
 
+		$sourcedir = $this->source_directory;
+		$targetdir = ($this->target_directory ? $this->target_directory : ''); // Can be '[Gmail]/Trash' or 'mytag'
+
 		$this->fetchFilters();
 		$this->fetchActions();
 
 		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 			if ($this->acces_type == 1) {
-				// Mode OAUth2 with PHP-IMAP
-				$supportedoauth2array = array();
+				// Mode OAUth2 (access_type == 1) with PHP-IMAP
+				$this->debuginfo .= 'doCollectOneCollector is using method MAIN_IMAP_USE_PHPIMAP=1, access_type=1 (OAUTH2)<br>';
 
-				require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php';
+
+				$supportedoauth2array = getSupportedOauth2Array();
+
 				$keyforsupportedoauth2array = $this->oauth_service;
 				if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
 					$keyforprovider = preg_replace('/^.*-/', '', $keyforsupportedoauth2array);
@@ -1210,7 +1223,9 @@ class EmailCollector extends CommonObject
 					'authentication' => "oauth",
 				]);
 			} else {
-				// Mode login/pass with PHP-IMAP
+				// Mode LOGIN (login/pass) with PHP-IMAP
+				$this->debuginfo .= 'doCollectOneCollector is using method MAIN_IMAP_USE_PHPIMAP=1, access_type=0 (LOGIN)<br>';
+
 				$cm = new ClientManager();
 				$client = $cm->make([
 					'host'           => $this->host,
@@ -1236,16 +1251,18 @@ class EmailCollector extends CommonObject
 			$host = dol_getprefix('email');
 		} else {
 			// Use native IMAP functions
+			$this->debuginfo .= 'doCollectOneCollector is using method MAIN_IMAP_USE_PHPIMAP=0 (native PHP imap, LOGIN)<br>';
+
 			if (!function_exists('imap_open')) {
 				$this->error = 'IMAP function not enabled on your PHP';
 				return -2;
 			}
-			$sourcedir = $this->source_directory;
-			$targetdir = ($this->target_directory ? $this->target_directory : ''); // Can be '[Gmail]/Trash' or 'mytag'
 
 			$connectstringserver = $this->getConnectStringIMAP();
-			$connectstringsource = $connectstringserver.imap_utf7_encode($sourcedir);
-			$connectstringtarget = $connectstringserver.imap_utf7_encode($targetdir);
+			$connectstringsource = $connectstringserver.$this->getEncodedUtf7($sourcedir);
+			$connectstringtarget = $connectstringserver.$this->getEncodedUtf7($targetdir);
+
+			$this->debuginfo .= 'connectstringsource = '.$connectstringsource.', $connectstringtarget='.$connectstringtarget.'<br>';
 
 			$connection = imap_open($connectstringsource, $this->login, $this->password);
 			if (!$connection) {
@@ -1533,7 +1550,7 @@ class EmailCollector extends CommonObject
 			try {
 				//$criteria = [['ALL']];
 				//$Query = $client->getFolders()[0]->messages()->where($criteria);
-				$f = $client->getFolders(false, $this->source_directory);
+				$f = $client->getFolders(false, $sourcedir);
 				$Query = $f[0]->messages()->where($criteria);
 			} catch (InvalidWhereQueryCriteriaException $e) {
 				$this->error = $e->getMessage();
@@ -1561,7 +1578,7 @@ class EmailCollector extends CommonObject
 				return -1;
 			}
 		} else {
-			// Scan IMAP inbox
+			// Scan IMAP inbox (for native IMAP, the source dir is inside the $connection variable)
 			$arrayofemail = imap_search($connection, $search, SE_UID, $charset);
 
 			if ($arrayofemail === false) {
@@ -2207,7 +2224,7 @@ class EmailCollector extends CommonObject
 
 						$actioncode = 'EMAIL_IN';
 						// If we scan the Sent box, we use the code for out email
-						if ($this->source_directory == 'Sent') {
+						if (preg_match('/Sent$/', $sourcedir)) {
 							$actioncode = 'EMAIL_OUT';
 						}
 
@@ -3207,7 +3224,7 @@ class EmailCollector extends CommonObject
 						if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 							// Move mail using PHP-IMAP
 							dol_syslog("EmailCollector::doCollectOneCollector move message ".($imapemail->getHeader()->get('subject'))." to ".$targetdir, LOG_DEBUG);
-							if (empty($mode)) {
+							if (empty($mode)) {	// $mode > 0 is test
 								$imapemail->move($targetdir);
 							}
 						} else {
@@ -3215,6 +3232,7 @@ class EmailCollector extends CommonObject
 							$operationslog .= '<br>Move mail '.((string) $imapemail).' - '.$msgid;
 
 							$arrayofemailtodelete[$imapemail] = $msgid;
+							// Note: Real move is done later using $arrayofemailtodelete
 						}
 					} else {
 						if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {

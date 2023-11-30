@@ -332,13 +332,12 @@ class MultiCurrency extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param bool $trigger true=launch triggers after, false=disable triggers
-	 * @return int <0 if KO, >0 if OK
+	 * @param	User	$user		User making the deletion
+	 * @param 	bool 	$trigger 	true=launch triggers after, false=disable triggers
+	 * @return 	int 				<0 if KO, >0 if OK
 	 */
-	public function delete($trigger = true)
+	public function delete($user, $trigger = true)
 	{
-		global $user;
-
 		dol_syslog('MultiCurrency::delete', LOG_DEBUG);
 
 		$error = 0;
@@ -391,8 +390,10 @@ class MultiCurrency extends CommonObject
 	 */
 	public function deleteRates()
 	{
+		global $user;
+
 		foreach ($this->rates as &$rate) {
-			if ($rate->delete() <= 0) {
+			if ($rate->delete($user) <= 0) {
 				return false;
 			}
 		}
@@ -952,13 +953,12 @@ class CurrencyRate extends CommonObjectLine
 	/**
 	 * Delete object in database
 	 *
-	 * @param 	bool $trigger 	true=launch triggers after, false=disable triggers
-	 * @return 	int 			<0 if KO, >0 if OK
+	 * @param	User	$user		User making the deletion
+	 * @param 	bool 	$trigger 	true=launch triggers after, false=disable triggers
+	 * @return 	int 				<0 if KO, >0 if OK
 	 */
-	public function delete($trigger = true)
+	public function delete($user, $trigger = true)
 	{
-		global $user;
-
 		dol_syslog('CurrencyRate::delete', LOG_DEBUG);
 
 		$error = 0;

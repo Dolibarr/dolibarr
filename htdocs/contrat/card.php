@@ -2167,15 +2167,15 @@ if ($action == 'create') {
 				if (isModEnabled('commande') && $object->status > 0 && $object->nbofservicesclosed < $nbofservices) {
 					$arrayofcreatebutton[] = array(
 						'url' => '/commande/card.php?action=create&token='.newToken().'&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id,
-						'label' => $langs->trans('Order'),
+						'label' => $langs->trans('AddOrder'),
 						'lang' => 'orders',
 						'perm' => $user->hasRight('commande', 'creer')
 					);
 				}
-				if (isModEnabled('facture') && $object->status > 0 && $soc->client ==1) {
+				if (isModEnabled('facture') && $object->status > 0 && $soc->client > 0) {
 					$arrayofcreatebutton[] = array(
 						'url' => '/compta/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id,
-						'label' => $langs->trans('Bill'),
+						'label' => $langs->trans('CreateBill'),
 						'lang' => 'bills',
 						'perm' => $user->hasRight('facture', 'creer')
 					);
@@ -2183,13 +2183,13 @@ if ($action == 'create') {
 				if (isModEnabled('supplier_invoice') && $object->status > 0 && $soc->fournisseur == 1) {
 					$arrayofcreatebutton[] = array(
 						'url' => '/fourn/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id,
-						'label' => $langs->trans('SupplierInvoice'),
+						'label' => $langs->trans('AddSupplierInvoice'),
 						'lang' => 'bills',
 						'perm' => $user->hasRight('fournisseur', 'facture', 'creer')
 					);
 				}
 				if (count($arrayofcreatebutton)) {
-					print dolGetButtonAction($langs->trans("Create"), '', 'default', $arrayofcreatebutton, '', true, $params);
+					print dolGetButtonAction('', $langs->trans("Create"), 'default', $arrayofcreatebutton, '', true, $params);
 				}
 
 				if ($object->nbofservicesclosed > 0 || $object->nbofserviceswait > 0) {
