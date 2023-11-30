@@ -261,8 +261,8 @@ if ($user->hasRight('banque', 'consolidate') && ($action == 'num_releve' || $act
 		dol_syslog("line.php", LOG_DEBUG);
 		$result = $db->query($sql);
 		if ($result) {
-			$filepath = dol_sanitizePathName("bank/".((int) $id)."/statement/".$num_rel);
 			$oldfilepath = dol_sanitizePathName("bank/".((int) $id)."/statement/".$oldNum_rel);
+			$filepath = dol_sanitizePathName("bank/".((int) $id)."/statement/".$num_rel);
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_files";
 			$sql .= " SET filepath = '".$db->escape($filepath)."'";
@@ -272,18 +272,18 @@ if ($user->hasRight('banque', 'consolidate') && ($action == 'num_releve' || $act
 			$srcdir = dol_sanitizePathName(DOL_DATA_ROOT."/bank/".((int) $id)."/statement/".$oldNum_rel);
 			$destdir = dol_sanitizePathName(DOL_DATA_ROOT."/bank/".((int) $id)."/statement/".$num_rel);
 
+			$update_dir = true;
 			if (dol_is_dir($srcdir)) {
 				$update_dir = dol_move_dir($srcdir, $destdir, 1);
-			} else {
-				$update_dir = false;
 			}
 		}
 		if ($result && $updatePathFile && $update_dir) {
 			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			$db->commit();
 		} else {
+			$langs->load("errors");
+			setEventMessages($langs->trans("ErrorFailToRenameDir", $oldfilepath, $filepath), null, 'mesgs');
 			$db->rollback();
-			dol_print_error($db);
 		}
 	}
 }
