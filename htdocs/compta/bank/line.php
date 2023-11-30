@@ -261,15 +261,16 @@ if ($user->hasRight('banque', 'consolidate') && ($action == 'num_releve' || $act
 		dol_syslog("line.php", LOG_DEBUG);
 		$result = $db->query($sql);
 		if ($result) {
-			$filepath = "bank/".$id."/statement/".dol_sanitizeFileName($num_rel);
+			$filepath = "bank/".(int) $id."/statement/".dol_sanitizeFileName($num_rel);
+			$oldfilepath = dol_sanitizePathName("bank/".(int) $id."/statement/".$oldNum_rel);
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_files";
 			$sql .= " SET filepath = '".$db->escape($filepath)."'";
-			$sql .= " WHERE filepath = 'bank/".$id."/statement/".$oldNum_rel."'";
+			$sql .= " WHERE filepath = '".$db->escape($oldfilepath)."'";
 			$updatePathFile = $db->query($sql);
 
-			$srcdir = DOL_DATA_ROOT."/bank/".$id."/statement/".dol_sanitizeFileName($oldNum_rel);
-			$destdir = DOL_DATA_ROOT."/bank/".$id."/statement/".dol_sanitizeFileName($num_rel)."/";
+			$srcdir = dol_sanitizePathName(DOL_DATA_ROOT."/bank/".(int) $id."/statement/".dol_sanitizeFileName($oldNum_rel));
+			$destdir = dol_sanitizePathName(DOL_DATA_ROOT."/bank/".(int) $id."/statement/".dol_sanitizeFileName($num_rel));
 
 			if (dol_is_dir($srcdir)) {
 				$update_dir = dol_move_dir($srcdir, $destdir, 1);
