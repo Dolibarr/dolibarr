@@ -1578,13 +1578,35 @@ if ($action == 'create') {
 
 							// Define nb of lines suggested for this order line
 							$nbofsuggested = 0;
+							$batchlist = array();
 							foreach ($product->stock_warehouse as $warehouse_id => $stock_warehouse) {
 								if (($stock_warehouse->real > 0) && (count($stock_warehouse->detail_batch))) {
 									$nbofsuggested+=count($stock_warehouse->detail_batch);
 								}
+								if (!empty($stock_warehouse->detail_batch)) {
+									foreach ($stock_warehouse->detail_batch as $dbatch) {
+										$dbatch->warehouse_id = $warehouse_id;
+										$dbatch->stock_warehouse = $stock_warehouse;
+										$batchlist[] = $dbatch;
+									}
+								}
 							}
 
-							foreach ($product->stock_warehouse as $warehouse_id => $stock_warehouse) {
+							$fk_default_warehouse = (int) $product->fk_default_warehouse;
+							usort($batchlist, function ($a, $b) use ($conf, $fk_default_warehouse) {
+								if ($a->warehouse_id != $b->warehouse_id && $a->warehouse_id == $fk_default_warehouse) return -1; // Set default warehouse to first position
+								$rdiff = $a->eatby - $b->eatby;
+								if ($rdiff) return $rdiff;
+								$rdiff = $a->sellby - $b->sellby;
+								if ($rdiff) return $rdiff;
+								$rdiff = getDolGlobalInt('DO_NOT_TRY_TO_DEFRAGMENT_STOCKS_WAREHOUSE') ? $b->qty - $a->qty : $a->qty - $b->qty;
+								if ($rdiff) return $rdiff;
+								return strcmp($a->batch, $b->batch);
+							});
+
+							foreach ($batchlist as $dbatch) {
+								$warehouse_id = $dbatch->warehouse_id;
+								$stock_warehouse = $dbatch->stock_warehouse;
 								$var = $subj % 2;
 								if (!empty($warehousePicking) && !in_array($warehouse_id, $warehousePicking)) {
 									// if a warehouse was selected by user, picking is limited to this warehouse and his children
@@ -1593,76 +1615,74 @@ if ($action == 'create') {
 
 								$tmpwarehouseObject->fetch($warehouse_id);
 								if (($stock_warehouse->real > 0) && (count($stock_warehouse->detail_batch))) {
-									foreach ($stock_warehouse->detail_batch as $dbatch) {
-										$batchStock = + $dbatch->qty; // To get a numeric
-										if (isset($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)])) {
-											$deliverableQty = min($quantityToBeDelivered, $batchStock - $alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)]);
-										} else {
-											if (!isset($alreadyQtyBatchSetted[$line->fk_product])) {
-												$alreadyQtyBatchSetted[$line->fk_product] = array();
-											}
-
-											if (!isset($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch])) {
-												$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch] = array();
-											}
-
-											$deliverableQty = min($quantityToBeDelivered, $batchStock);
+									$batchStock = +$dbatch->qty; // To get a numeric
+									if (isset($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)])) {
+										$deliverableQty = min($quantityToBeDelivered, $batchStock - $alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)]);
+									} else {
+										if (!isset($alreadyQtyBatchSetted[$line->fk_product])) {
+											$alreadyQtyBatchSetted[$line->fk_product] = array();
 										}
 
-										if ($deliverableQty < 0) $deliverableQty = 0;
-
-										$inputName = 'qtyl'.$indiceAsked.'_'.$subj;
-										if (GETPOSTISSET($inputName)) {
-											$deliverableQty = GETPOST($inputName, 'int');
+										if (!isset($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch])) {
+											$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch] = array();
 										}
 
-										$tooltipClass = $tooltipTitle = '';
-										if (!empty($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)])) {
-											$tooltipClass = ' classfortooltip';
-											$tooltipTitle = $langs->trans('StockQuantitiesAlreadyAllocatedOnPreviousLines').' : '.$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)];
-										} else {
-											$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)] = 0 ;
-										}
-										$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)] = $deliverableQty + $alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)];
-
-										print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested) ?'oddeven' : '').'><td colspan="3"></td><td class="center">';
-										print '<input class="qtyl '.$tooltipClass.'" title="'.$tooltipTitle.'" name="'.$inputName.'" id="'.$inputName.'" type="text" size="4" value="'.$deliverableQty.'">';
-										print '</td>';
-
-										print '<td class="left">';
-
-										print $tmpwarehouseObject->getNomUrl(0).' / ';
-
-										print '<!-- Show details of lot -->';
-										print '<input name="batchl'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$dbatch->id.'">';
-
-										//print '|'.$line->fk_product.'|'.$dbatch->batch.'|<br>';
-										print $langs->trans("Batch").': ';
-										$result = $productlotObject->fetch(0, $line->fk_product, $dbatch->batch);
-										if ($result > 0) {
-											print $productlotObject->getNomUrl(1);
-										} else {
-											print $langs->trans("TableLotIncompleteRunRepairWithParamStandardEqualConfirmed");
-										}
-										if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY') && !empty($dbatch->sellby)) {
-											print ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby, "day");
-										}
-										if (!getDolGlobalString('PRODUCT_DISABLE_EATBY') && !empty($dbatch->eatby)) {
-											print ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby, "day");
-										}
-										print ' ('.$dbatch->qty.')';
-										$quantityToBeDelivered -= $deliverableQty;
-										if ($quantityToBeDelivered < 0) {
-											$quantityToBeDelivered = 0;
-										}
-										//dol_syslog('deliverableQty = '.$deliverableQty.' batchStock = '.$batchStock);
-										$subj++;
-										print '</td>';
-										if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
-											print '<td class="left">'.dol_print_date($dbatch->context['stock_entry_date'], 'day').'</td>';
-										}
-										print '</tr>';
+										$deliverableQty = min($quantityToBeDelivered, $batchStock);
 									}
+
+									if ($deliverableQty < 0) $deliverableQty = 0;
+
+									$inputName = 'qtyl' . $indiceAsked . '_' . $subj;
+									if (GETPOSTISSET($inputName)) {
+										$deliverableQty = GETPOST($inputName, 'int');
+									}
+
+									$tooltipClass = $tooltipTitle = '';
+									if (!empty($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)])) {
+										$tooltipClass = ' classfortooltip';
+										$tooltipTitle = $langs->trans('StockQuantitiesAlreadyAllocatedOnPreviousLines') . ' : ' . $alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)];
+									} else {
+										$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)] = 0;
+									}
+									$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)] = $deliverableQty + $alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)];
+
+									print '<!-- subj=' . $subj . '/' . $nbofsuggested . ' --><tr ' . ((($subj + 1) == $nbofsuggested) ? 'oddeven' : '') . '><td colspan="3"></td><td class="center">';
+									print '<input class="qtyl ' . $tooltipClass . '" title="' . $tooltipTitle . '" name="' . $inputName . '" id="' . $inputName . '" type="text" size="4" value="' . $deliverableQty . '">';
+									print '</td>';
+
+									print '<td class="left">';
+
+									print $tmpwarehouseObject->getNomUrl(0) . ' / ';
+
+									print '<!-- Show details of lot -->';
+									print '<input name="batchl' . $indiceAsked . '_' . $subj . '" type="hidden" value="' . $dbatch->id . '">';
+
+									//print '|'.$line->fk_product.'|'.$dbatch->batch.'|<br>';
+									print $langs->trans("Batch") . ': ';
+									$result = $productlotObject->fetch(0, $line->fk_product, $dbatch->batch);
+									if ($result > 0) {
+										print $productlotObject->getNomUrl(1);
+									} else {
+										print $langs->trans("TableLotIncompleteRunRepairWithParamStandardEqualConfirmed");
+									}
+									if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY') && !empty($dbatch->sellby)) {
+										print ' - ' . $langs->trans("SellByDate") . ': ' . dol_print_date($dbatch->sellby, "day");
+									}
+									if (!getDolGlobalString('PRODUCT_DISABLE_EATBY') && !empty($dbatch->eatby)) {
+										print ' - ' . $langs->trans("EatByDate") . ': ' . dol_print_date($dbatch->eatby, "day");
+									}
+									print ' (' . $dbatch->qty . ')';
+									$quantityToBeDelivered -= $deliverableQty;
+									if ($quantityToBeDelivered < 0) {
+										$quantityToBeDelivered = 0;
+									}
+									//dol_syslog('deliverableQty = '.$deliverableQty.' batchStock = '.$batchStock);
+									$subj++;
+									print '</td>';
+									if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+										print '<td class="left">' . dol_print_date($dbatch->context['stock_entry_date'], 'day') . '</td>';
+									}
+									print '</tr>';
 								}
 							}
 						}
