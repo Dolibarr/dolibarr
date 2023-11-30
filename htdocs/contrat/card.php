@@ -67,6 +67,12 @@ $ref = GETPOST('ref', 'alpha');
 $origin = GETPOST('origin', 'alpha');
 $originid = GETPOST('originid', 'int');
 
+// PDF
+$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
+$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
+$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
+
+
 $datecontrat = '';
 $usehm = (getDolGlobalString('MAIN_USE_HOURMIN_IN_DATE_RANGE') ? $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE : 0);
 
@@ -502,14 +508,14 @@ if (empty($reshook)) {
 				/*$tva_tx = get_default_tva($mysoc, $object->thirdparty, $prod->id);
 				$tva_npr = get_default_npr($mysoc, $object->thirdparty, $prod->id);
 				if (empty($tva_tx)) {
-					$tva_npr = 0;
 				}*/
+				$tva_npr = 0;
 
 				$price_min = $prod->price_min;
 				$price_min_ttc = $prod->price_min_ttc;
 
 				// On defini prix unitaire
-				if ($conf->global->PRODUIT_MULTIPRICES && $object->thirdparty->price_level) {
+				if (getDolGlobalString('PRODUIT_MULTIPRICES') && $object->thirdparty->price_level) {
 					$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
 					$price_min_ttc = $prod->multiprices_min_ttc[$object->thirdparty->price_level];
 				} elseif (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
