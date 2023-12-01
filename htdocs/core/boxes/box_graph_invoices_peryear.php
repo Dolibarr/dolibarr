@@ -75,7 +75,7 @@ class box_graph_invoices_peryear extends ModeleBoxes
 		//$facturestatic=new Facture($this->db);
 
 		$startmonth = $conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1;
-		if (empty($conf->global->GRAPH_USE_FISCAL_YEAR)) $startmonth = 1;
+		if (!getDolGlobalString('GRAPH_USE_FISCAL_YEAR')) $startmonth = 1;
 
 		$text = $langs->trans("Turnover", $max);
 		$this->info_box_head = array(
@@ -115,7 +115,7 @@ class box_graph_invoices_peryear extends ModeleBoxes
 			if (empty($showtot)) { $showtot = 1; }
 			$nowarray = dol_getdate(dol_now(), true);
 			if (empty($endyear)) $endyear = $nowarray['year'];
-			$numberyears = (empty($conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH) ? 5 : $conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH);
+			$numberyears = (!getDolGlobalString('MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH') ? 5 : $conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH);
 			$startyear = $endyear - $numberyears;
 
 			$mode = 'customer';

@@ -105,14 +105,14 @@ class Productlot extends CommonObject
 		'fk_product'    => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>5, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'picto' => 'product', 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'maxwidth150'),
 		'batch'         => array('type'=>'varchar(30)', 'label'=>'Batch', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'comment'=>'Batch', 'searchall'=>1, 'picto'=>'lot'),
 		'entity'        => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'notnull'=>1, 'index'=>1, 'position'=>20),
-		'sellby'        => array('type'=>'date', 'label'=>'SellByDate', 'enabled'=>'empty($conf->global->PRODUCT_DISABLE_SELLBY)?1:0', 'visible'=>5, 'position'=>60),
+		'sellby'        => array('type'=>'date', 'label'=>'SellByDate', 'enabled'=>'empty($conf->global->PRODUCT_DISABLE_SELLBY)?1:0', 'visible'=>1, 'notnull'=>0, 'position'=>60),
+		'eatby'         => array('type'=>'date', 'label'=>'EatByDate', 'enabled'=>'empty($conf->global->PRODUCT_DISABLE_EATBY)?1:0', 'visible'=>1, 'notnull'=>0, 'position'=>62),
 		'eol_date'        => array('type'=>'date', 'label'=>'EndOfLife', 'enabled'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL")?1:0', 'visible'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL")?5:0', 'position'=>70),
 		'manufacturing_date' => array('type'=>'date', 'label'=>'ManufacturingDate', 'enabled'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_TRACEABILITY")?1:0', 'visible'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_TRACEABILITY")?5:0', 'position'=>80),
 		'scrapping_date'     => array('type'=>'date', 'label'=>'DestructionDate', 'enabled'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_TRACEABILITY")?1:0', 'visible'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_TRACEABILITY")?5:0', 'position'=>90),
 		//'commissionning_date'        => array('type'=>'date', 'label'=>'FirstUseDate', 'enabled'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_TRACEABILITY", 0)', 'visible'=>5, 'position'=>100),
 		'qc_frequency'        => array('type'=>'integer', 'label'=>'QCFrequency', 'enabled'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL")?1:0', 'visible'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL")?5:0', 'position'=>110),
 		'lifetime'        => array('type'=>'integer', 'label'=>'Lifetime', 'enabled'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL")?1:0', 'visible'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL")?5:0', 'position'=>110),
-		'eatby'         => array('type'=>'date', 'label'=>'EatByDate', 'enabled'=>'empty($conf->global->PRODUCT_DISABLE_EATBY)?1:0', 'visible'=>5, 'position'=>62),
 		'model_pdf'		=> array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 215),
 		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'LastMainDoc', 'enabled' => 1, 'visible' => -2, 'position' => 310),
 		'datec'         => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>500),
@@ -162,6 +162,8 @@ class Productlot extends CommonObject
 	 */
 	public $import_key;
 
+	public $stats_supplier_order=array();
+
 
 	/**
 	 * Constructor
@@ -172,6 +174,125 @@ class Productlot extends CommonObject
 	{
 		$this->db = $db;
 	}
+
+	/**
+	 * Check sell or eat by date is mandatory
+	 *
+	 * @param	string 		$onlyFieldName		[=''] check all fields by default or only one field name ("sellby", "eatby")
+	 * @return 	int			<0 if KO, 0 nothing done, >0 if OK
+	 */
+	public function checkSellOrEatByMandatory($onlyFieldName = '')
+	{
+		if (getDolGlobalString('PRODUCT_DISABLE_SELLBY') && getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
+			return 0;
+		}
+
+		$errorMsgArr = array();
+		if ($this->fk_product > 0) {
+			$res = $this->fetch_product();
+			$product = $this->product;
+			if ($res <= 0) {
+				$errorMsgArr[] = $product->errorsToString();
+			}
+
+			if (empty($errorMsgArr)) {
+				$errorMsgArr = self::checkSellOrEatByMandatoryFromProductAndDates($product, $this->sellby, $this->eatby, $onlyFieldName, true);
+			}
+		}
+
+		if (!empty($errorMsgArr)) {
+			$this->errors = array_merge($this->errors, $errorMsgArr);
+			return -1;
+		} else {
+			return 1;
+		}
+	}
+
+	/**
+	 * Check sell or eat by date is mandatory from product id and sell-by and eat-by dates
+	 *
+	 * @param 	int 		$productId			Product id
+	 * @param	int			$sellBy				Sell by date
+	 * @param 	int			$eatBy				Eat by date
+	 * @param	string 		$onlyFieldName		[=''] check all fields by default or only one field name ("sellby", "eatby")
+	 * @return 	array|null	Array of errors or null if nothing done
+	 */
+	public static function checkSellOrEatByMandatoryFromProductIdAndDates($productId, $sellBy, $eatBy, $onlyFieldName = '')
+	{
+		global $db;
+
+		if (getDolGlobalString('PRODUCT_DISABLE_SELLBY') && getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
+			return null;
+		}
+
+		$errorMsgArr = array();
+		if ($productId > 0) {
+			$product = new Product($db);
+			$res = $product->fetch($productId);
+			if ($res <= 0) {
+				$errorMsgArr[] = $product->errorsToString();
+			}
+
+			if (empty($errorMsgArr)) {
+				$errorMsgArr = self::checkSellOrEatByMandatoryFromProductAndDates($product, $sellBy, $eatBy, $onlyFieldName, true);
+			}
+		}
+
+		return $errorMsgArr;
+	}
+
+	/**
+	 * Check sell or eat by date is mandatory from product and sell-by and eat-by dates
+	 *
+	 * @param 	Product 	$product			Product object
+	 * @param	int			$sellBy				Sell by date
+	 * @param 	int			$eatBy				Eat by date
+	 * @param	string 		$onlyFieldName		[=''] check all fields by default or only one field name ("sellby", "eatby")
+	 * @param	bool		$alreadyCheckConf	[=false] conf hasn't been already checked by default or true not to check conf
+	 * @return 	array|null	Array of errors or null if nothing done
+	 */
+	public static function checkSellOrEatByMandatoryFromProductAndDates($product, $sellBy, $eatBy, $onlyFieldName = '', $alreadyCheckConf = false)
+	{
+		global $langs;
+
+		if ($alreadyCheckConf === false && getDolGlobalString('PRODUCT_DISABLE_SELLBY') && getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
+			return null;
+		}
+
+		$errorMsgArr = array();
+		$checkSellByMandatory = false;
+		$checkEatByMandatory = false;
+
+		$sellOrEatByMandatoryId = $product->sell_or_eat_by_mandatory;
+		if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY') && $sellOrEatByMandatoryId == Product::SELL_OR_EAT_BY_MANDATORY_ID_SELL_BY && ($onlyFieldName == '' || $onlyFieldName == 'sellby')) {
+			$checkSellByMandatory = true;
+		} elseif (!getDolGlobalString('PRODUCT_DISABLE_EATBY') && $sellOrEatByMandatoryId == Product::SELL_OR_EAT_BY_MANDATORY_ID_EAT_BY && ($onlyFieldName == '' || $onlyFieldName == 'eatby')) {
+			$checkEatByMandatory = true;
+		} elseif ($sellOrEatByMandatoryId == Product::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT) {
+			if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY') && ($onlyFieldName == '' || $onlyFieldName == 'sellby')) {
+				$checkSellByMandatory = true;
+			}
+			if (!getDolGlobalString('PRODUCT_DISABLE_EATBY') && ($onlyFieldName == '' || $onlyFieldName == 'eatby')) {
+				$checkEatByMandatory = true;
+			}
+		}
+
+		if ($checkSellByMandatory === true) {
+			if (!isset($sellBy) || dol_strlen($sellBy) == 0) {
+				// error : sell by is mandatory
+				$errorMsgArr[] = $langs->trans('ErrorFieldRequired', $langs->transnoentities('SellByDate'));
+			}
+		}
+		if ($checkEatByMandatory === true) {
+			if (!isset($eatBy) || dol_strlen($eatBy) == 0) {
+				// error : eat by is mandatory
+				$errorMsgArr[] = $langs->trans('ErrorFieldRequired', $langs->transnoentities('EatByDate'));
+			}
+		}
+
+		return $errorMsgArr;
+	}
+
 
 	/**
 	 * Create object into database
@@ -962,10 +1083,10 @@ class Productlot extends CommonObject
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Batch").'</u>';
 		//$datas['divopen'] = '<div width="100%">';
 		$datas['batch'] = '<br><b>'.$langs->trans('Batch').':</b> '.$this->batch;
-		if ($this->eatby && empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+		if ($this->eatby && !getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 			$datas['eatby'] = '<br><b>'.$langs->trans('EatByDate').':</b> '.dol_print_date($this->db->jdate($this->eatby), 'day');
 		}
-		if ($this->sellby && empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+		if ($this->sellby && !getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 			$datas['sellby'] = '<br><b>'.$langs->trans('SellByDate').':</b> '.dol_print_date($this->db->jdate($this->sellby), 'day');
 		}
 		//$datas['divclose'] = '</div>';
@@ -1020,7 +1141,7 @@ class Productlot extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -1115,7 +1236,7 @@ class Productlot extends CommonObject
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->PRODUCT_BATCH_ADDON_PDF)) {
+			} elseif (getDolGlobalString('PRODUCT_BATCH_ADDON_PDF')) {
 				$modele = $conf->global->PRODUCT_BATCH_ADDON_PDF;
 			}
 		}

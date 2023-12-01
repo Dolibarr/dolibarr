@@ -116,7 +116,7 @@ class Entrepot extends CommonObject
 	/**
 	 * @var array List of short language codes for status
 	 */
-	public $statuts = array();
+	public $labelStatus = array();
 
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
@@ -177,12 +177,12 @@ class Entrepot extends CommonObject
 		global $conf;
 		$this->db = $db;
 
-		$this->statuts[self::STATUS_CLOSED] = 'Closed2';
-		if (!empty($conf->global->ENTREPOT_EXTRA_STATUS)) {
-			$this->statuts[self::STATUS_OPEN_ALL] = 'OpenAnyMovement';
-			$this->statuts[self::STATUS_OPEN_INTERNAL] = 'OpenInternal';
+		$this->labelStatus[self::STATUS_CLOSED] = 'Closed2';
+		if (getDolGlobalString('ENTREPOT_EXTRA_STATUS')) {
+			$this->labelStatus[self::STATUS_OPEN_ALL] = 'OpenAnyMovement';
+			$this->labelStatus[self::STATUS_OPEN_INTERNAL] = 'OpenInternal';
 		} else {
-			$this->statuts[self::STATUS_OPEN_ALL] = 'Opened';
+			$this->labelStatus[self::STATUS_OPEN_ALL] = 'Opened';
 		}
 	}
 
@@ -637,7 +637,7 @@ class Entrepot extends CommonObject
 
 		//For MultiCompany PMP per entity
 		$separatedPMP = false;
-		if (!empty($conf->global->MULTICOMPANY_PRODUCT_SHARING_ENABLED) && !empty($conf->global->MULTICOMPANY_PMP_PER_ENTITY_ENABLED)) {
+		if (getDolGlobalString('MULTICOMPANY_PRODUCT_SHARING_ENABLED') && getDolGlobalString('MULTICOMPANY_PMP_PER_ENTITY_ENABLED')) {
 			$separatedPMP = true;
 		}
 
@@ -701,8 +701,8 @@ class Entrepot extends CommonObject
 		}
 
 		$langs->load('stocks');
-		$label = $langs->transnoentitiesnoconv($this->statuts[$status]);
-		$labelshort = $langs->transnoentitiesnoconv($this->statuts[$status]);
+		$label = $langs->transnoentitiesnoconv($this->labelStatus[$status]);
+		$labelshort = $langs->transnoentitiesnoconv($this->labelStatus[$status]);
 
 		return dolGetStatus($label, $labelshort, '', $statusType, $mode);
 	}
@@ -725,7 +725,7 @@ class Entrepot extends CommonObject
 		$option = $params['option'] ?? '';
 		$nofetch = !empty($params['nofetch']);
 
-		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			return ['optimize' => $langs->trans("Warehouse")];
 		}
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Warehouse").'</u>';
@@ -766,7 +766,7 @@ class Entrepot extends CommonObject
 			$notooltip = 1; // Force disable tooltips
 		}
 
-		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpicto) {
+		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') && $withpicto) {
 			$withpicto = 0;
 		}
 
@@ -802,7 +802,7 @@ class Entrepot extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("Warehouse");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -819,7 +819,7 @@ class Entrepot extends CommonObject
 			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
-			$result .= (($showfullpath || !empty($conf->global->STOCK_ALWAYS_SHOW_FULL_ARBO)) ? $this->get_full_arbo() : $this->label);
+			$result .= (($showfullpath || getDolGlobalString('STOCK_ALWAYS_SHOW_FULL_ARBO')) ? $this->get_full_arbo() : $this->label);
 		}
 		$result .= $linkend;
 
@@ -954,7 +954,7 @@ class Entrepot extends CommonObject
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->STOCK_ADDON_PDF)) {
+			} elseif (getDolGlobalString('STOCK_ADDON_PDF')) {
 				$modele = $conf->global->STOCK_ADDON_PDF;
 			}
 		}

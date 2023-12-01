@@ -63,6 +63,26 @@ class Tva extends CommonObject
 	public $num_payment;
 
 	/**
+	 * @var DateTime
+	 */
+	public $datec;
+
+	/**
+	 * @var int ID
+	 */
+	public $fk_type;
+
+	/**
+	 * @var int
+	 */
+	public $paye;
+
+	/**
+	 * @var int
+	 */
+	public $rappro;
+
+	/**
 	 * @var integer|string totalpaid
 	 */
 	public $totalpaid;
@@ -743,7 +763,7 @@ class Tva extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -826,7 +846,6 @@ class Tva extends CommonObject
 				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->tms);
-				$this->import_key        = $obj->import_key;
 			}
 
 			$this->db->free($result);

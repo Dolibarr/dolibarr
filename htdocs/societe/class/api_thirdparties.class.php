@@ -58,7 +58,7 @@ class Thirdparties extends DolibarrApi
 
 		$this->company = new Societe($this->db);
 
-		if (!empty($conf->global->SOCIETE_EMAIL_MANDATORY)) {
+		if (getDolGlobalString('SOCIETE_EMAIL_MANDATORY')) {
 			static::$FIELDS[] = 'email';
 		}
 	}
@@ -263,8 +263,14 @@ class Thirdparties extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->company->context['caller'] = $request_data['caller'];
+				continue;
+			}
 			$this->company->$field = $value;
 		}
+
 		if ($this->company->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, 'Error creating thirdparty', array_merge(array($this->company->error), $this->company->errors));
 		}
@@ -413,7 +419,7 @@ class Thirdparties extends DolibarrApi
 	 * @param	int		$priceLevel		Price level to apply to thirdparty
 	 * @return	object					Thirdparty data without useless information
 	 *
-	 * @url PUT {id}/setpricelevel
+	 * @url PUT {id}/setpricelevel/{priceLevel}
 	 *
 	 * @throws RestException 400 Price level out of bounds
 	 * @throws RestException 401 Access not allowed for your login
@@ -433,7 +439,7 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(501, 'Module "Products" needed for this request');
 		}
 
-		if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+		if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 			throw new RestException(501, 'Multiprices features activation needed for this request');
 		}
 
@@ -1743,7 +1749,7 @@ class Thirdparties extends DolibarrApi
 			$this->company->getNoEmail();
 		}
 
-		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+		if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 			$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 			$filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 		} else {

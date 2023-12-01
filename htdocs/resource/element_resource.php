@@ -80,7 +80,7 @@ if ($socid > 0) { // Special for thirdparty
 	$element = 'societe';
 }
 
-if (!$user->rights->resource->read) {
+if (!$user->hasRight('resource', 'read')) {
 	accessforbidden();
 }
 
@@ -124,7 +124,7 @@ if (empty($reshook)) {
 
 			// TODO : add this check at update_linked_resource and when modifying event start or end date
 			// check if an event resource is already in use
-			if (!empty($conf->global->RESOURCE_USED_IN_EVENT_CHECK) && $objstat->element == 'action' && $resource_type == 'dolresource' && intval($busy) == 1) {
+			if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') && $objstat->element == 'action' && $resource_type == 'dolresource' && intval($busy) == 1) {
 				$eventDateStart = $objstat->datep;
 				$eventDateEnd   = $objstat->datef;
 				$isFullDayEvent = $objstat->fulldayevent;
@@ -193,13 +193,13 @@ if (empty($reshook)) {
 	}
 
 	// Update ressource
-	if ($action == 'update_linked_resource' && $user->rights->resource->write && !GETPOST('cancel', 'alpha')) {
+	if ($action == 'update_linked_resource' && $user->hasRight('resource', 'write') && !GETPOST('cancel', 'alpha')) {
 		$res = $object->fetch_element_resource($lineid);
 		if ($res) {
 			$object->busy = $busy;
 			$object->mandatory = $mandatory;
 
-			if (!empty($conf->global->RESOURCE_USED_IN_EVENT_CHECK) && $object->element_type == 'action' && $object->resource_type == 'dolresource' && intval($object->busy) == 1) {
+			if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') && $object->element_type == 'action' && $object->resource_type == 'dolresource' && intval($object->busy) == 1) {
 				$eventDateStart = $object->objelement->datep;
 				$eventDateEnd   = $object->objelement->datef;
 				$isFullDayEvent = $objstat->fulldayevent;
@@ -272,7 +272,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete a resource linked to an element
-	if ($action == 'confirm_delete_linked_resource' && $user->rights->resource->delete && $confirm === 'yes') {
+	if ($action == 'confirm_delete_linked_resource' && $user->hasRight('resource', 'delete') && $confirm === 'yes') {
 		$result = $object->delete_resource($lineid, $element);
 
 		if ($result >= 0) {
@@ -396,7 +396,7 @@ if (!$ret) {
 			print '<table class="border tableforfield centpercent">';
 
 			// Type
-			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
+			if (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 				print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td>';
 				print $act->getTypePicto();
 				print $langs->trans("Action".$act->type_code);
@@ -434,7 +434,7 @@ if (!$ret) {
 			print '</td></tr>';
 
 			// Location
-			if (empty($conf->global->AGENDA_DISABLE_LOCATION)) {
+			if (!getDolGlobalString('AGENDA_DISABLE_LOCATION')) {
 				print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3">'.$act->location.'</td></tr>';
 			}
 

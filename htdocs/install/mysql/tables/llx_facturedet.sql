@@ -55,6 +55,9 @@ create table llx_facturedet
   buy_price_ht					double(24,8) DEFAULT 0,				-- buying price. Note: this value is saved as an always positive value, even on credit notes (it is price we bought the product before selling it).
   fk_product_fournisseur_price	integer      DEFAULT NULL,			-- reference of supplier price when line was added (may be used to update buy_price_ht current price when future invoice will be created)
 
+  batch                         varchar(128) NULL,					-- To store the batch to consume in stock when using a POS module
+  fk_warehouse					integer NULL,						-- To store the warehouse where to consume stock when using a POS module
+  
   special_code					integer    DEFAULT 0,				-- code for special lines (may be 1=transport, 2=ecotax, 3=option, moduleid=...)
   rang							integer    DEFAULT 0,				-- position of line
   fk_contract_line  			integer NULL,						-- id of contract line when invoice comes from contract lines

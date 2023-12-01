@@ -380,7 +380,7 @@ if (GETPOST('save') && !$cancel && $user->hasRight('banque', 'modifier')) {
 		$error++;
 	}*/
 
-	if (!$error && !empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT)) {
+	if (!$error && getDolGlobalString('BANK_USE_OLD_VARIOUS_PAYMENT')) {
 		$objecttmp = new Account($db);
 		$objecttmp->fetch($bankaccountid);
 		$insertid = $objecttmp->addline($dateop, $operation, $label, $amount, $num_chq, ($cat1 > 0 ? $cat1 : 0), $user, '', '', $search_accountancy_code);
@@ -882,7 +882,7 @@ if ($resql) {
 		}
 
 		// Using BANK_REPORT_LAST_NUM_RELEVE to automatically report last num (or not)
-		if (!empty($conf->global->BANK_REPORT_LAST_NUM_RELEVE)) {
+		if (getDolGlobalString('BANK_REPORT_LAST_NUM_RELEVE')) {
 			print '
 			    <script type="text/javascript">
 			    	$("#num_releve").val("' . $last_releve.'");
@@ -893,7 +893,7 @@ if ($resql) {
 	}
 
 	// Form to add a transaction with no invoice
-	if ($user->hasRight('banque', 'modifier') && $action == 'addline' && !empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT)) {
+	if ($user->hasRight('banque', 'modifier') && $action == 'addline' && getDolGlobalString('BANK_USE_OLD_VARIOUS_PAYMENT')) {
 		print load_fiche_titre($langs->trans("AddBankRecordLong"), '', '');
 
 		print '<table class="noborder centpercent">';
@@ -987,8 +987,8 @@ if ($resql) {
 
 	$newcardbutton = '';
 	if ($action != 'addline' && $action != 'reconcile') {
-		if (empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) {
-			if (empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT)) {	// Default is to record miscellaneous direct entries using miscellaneous payments
+		if (!getDolGlobalString('BANK_DISABLE_DIRECT_INPUT')) {
+			if (!getDolGlobalString('BANK_USE_OLD_VARIOUS_PAYMENT')) {	// Default is to record miscellaneous direct entries using miscellaneous payments
 				$newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&accountid='.urlencode($search_account).'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.urlencode($search_account)), '', $user->rights->banque->modifier);
 			} else // If direct entries is not done using miscellaneous payments
 			{
@@ -1393,7 +1393,7 @@ if ($resql) {
 			$bankaccount = $cachebankaccount[$objp->bankid];
 		}
 
-		if (empty($conf->global->BANK_COLORIZE_MOVEMENT)) {
+		if (!getDolGlobalString('BANK_COLORIZE_MOVEMENT')) {
 			$backgroundcolor = "class='oddeven'";
 		} else {
 			if ($objp->amount < 0) {

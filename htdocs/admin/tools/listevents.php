@@ -28,6 +28,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_20_all_Logevents.class.php';
 
 if (!$user->admin) {
 	accessforbidden();
@@ -380,11 +381,9 @@ if ($result) {
 	//print '<input class="flat maxwidth100" type="text" size="10" name="search_desc" value="'.$search_desc.'">';
 	print '</td>';
 
-	if (!empty($arrayfields['e.user_agent']['checked'])) {
-		print '<td class="liste_titre left">';
-		print '<input class="flat maxwidth100" type="text" name="search_ua" value="'.dol_escape_htmltag($search_ua).'">';
-		print '</td>';
-	}
+	print '<td class="liste_titre left">';
+	print '<input class="flat maxwidth100" type="text" name="search_ua" value="'.dol_escape_htmltag($search_ua).'">';
+	print '</td>';
 
 	if (!empty($arrayfields['e.prefix_session']['checked'])) {
 		print '<td class="liste_titre left">';
@@ -414,9 +413,7 @@ if ($result) {
 	print_liste_field_titre("IP", $_SERVER["PHP_SELF"], "e.ip", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("User", $_SERVER["PHP_SELF"], "u.login", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "e.description", "", $param, '', $sortfield, $sortorder);
-	if (!empty($arrayfields['e.user_agent']['checked'])) {
-		print_liste_field_titre("UserAgent", $_SERVER["PHP_SELF"], "e.user_agent", "", $param, '', $sortfield, $sortorder);
-	}
+	print_liste_field_titre("UserAgent", $_SERVER["PHP_SELF"], "e.user_agent", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['e.prefix_session']['checked'])) {
 		print_liste_field_titre("SuffixSessionName", $_SERVER["PHP_SELF"], "e.prefix_session", "", $param, '', $sortfield, $sortorder);
 	}
@@ -477,6 +474,10 @@ if ($result) {
 		// Description
 		$text = $langs->trans($obj->description);
 		$reg = array();
+		if (InterfaceLogevents::isEventActionTextKey($obj->description)) {
+			$val = explode(' : ', $obj->description);
+			$text = $langs->trans($val[0], isset($val[1]) ? $val[1] : '', isset($val[2]) ? $val[2] : '', isset($val[3]) ? $val[3] : '', isset($val[4]) ? $val[4] : '');
+		}
 		if (preg_match('/\((.*)\)(.*)/i', $obj->description, $reg)) {
 			$val = explode(',', $reg[1]);
 			$text = $langs->trans($val[0], isset($val[1]) ? $val[1] : '', isset($val[2]) ? $val[2] : '', isset($val[3]) ? $val[3] : '', isset($val[4]) ? $val[4] : '');
@@ -488,19 +489,15 @@ if ($result) {
 		print dol_escape_htmltag($text);
 		print '</td>';
 
-		if (!empty($arrayfields['e.user_agent']['checked'])) {
 			// User agent
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->user_agent).'">';
 			print dol_escape_htmltag($obj->user_agent);
 			print '</td>';
-		}
 
-		if (!empty($arrayfields['e.prefix_session']['checked'])) {
 			// User agent
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->prefix_session).'">';
 			print dol_escape_htmltag($obj->prefix_session);
 			print '</td>';
-		}
 
 		// Action column
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {

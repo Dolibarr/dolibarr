@@ -113,6 +113,26 @@ class PaymentVAT extends CommonObject
 	 */
 	public $datepaye;
 
+		/**
+	 * @var string
+	 */
+	public $type_code;
+
+	/**
+	 * @var string
+	 */
+	public $type_label;
+
+	/**
+	 * @var int
+	 */
+	public $bank_account;
+
+	/**
+	 * @var int
+	 */
+	public $bank_line;
+
 	/**
 	 * @var integer|string paiementtype
 	 */
@@ -347,9 +367,6 @@ class PaymentVAT extends CommonObject
 		if (isset($this->fk_typepaiement)) {
 			$this->fk_typepaiement = (int) $this->fk_typepaiement;
 		}
-		if (isset($this->num_paiement)) {
-			$this->num_paiement = trim($this->num_paiement); // deprecated
-		}
 		if (isset($this->num_payment)) {
 			$this->num_payment = trim($this->num_payment);
 		}
@@ -417,7 +434,6 @@ class PaymentVAT extends CommonObject
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		dol_syslog(get_class($this)."::delete");
@@ -427,7 +443,7 @@ class PaymentVAT extends CommonObject
 		if ($this->bank_line > 0) {
 			$accline = new AccountLine($this->db);
 			$accline->fetch($this->bank_line);
-			$result = $accline->delete();
+			$result = $accline->delete($user);
 			if ($result < 0) {
 				$this->errors[] = $accline->error;
 				$error++;
@@ -547,8 +563,6 @@ class PaymentVAT extends CommonObject
 	 */
 	public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
 	{
-		global $conf;
-
 		// Clean data
 		$this->num_payment = trim($this->num_payment ? $this->num_payment : $this->num_paiement);
 
