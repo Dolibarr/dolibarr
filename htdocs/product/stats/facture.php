@@ -75,12 +75,42 @@ if (!$sortfield) {
 	$sortfield = "f.datef";
 }
 
-$search_month = GETPOST('search_month', 'int');
-$search_year = GETPOST('search_year', 'int');
+$search_date_startday = GETPOSTINT('search_date_startday');
+if (!empty($search_date_startday)) {
+	$option .= '&search_date_startday='.$search_date_startday;
+}
+$search_date_startmonth = GETPOSTINT('search_date_startmonth');
+if (!empty($search_date_startmonth)) {
+	$option .= '&search_date_startmonth='.$search_date_startmonth;
+}
+$search_date_startyear = GETPOSTINT('search_date_startyear');
+if (!empty($search_date_startyear)) {
+	$option .= '&search_date_startyear='.$search_date_startyear;
+}
+$search_date_endday = GETPOSTINT('search_date_endday');
+if (!empty($search_date_endday)) {
+	$option .= '&search_date_endday='.$search_date_endday;
+}
+$search_date_endmonth = GETPOSTINT('search_date_endmonth');
+if (!empty($search_date_endmonth)) {
+	$option .= '&search_date_endmonth='.$search_date_endmonth;
+}
+$search_date_endyear = GETPOSTINT('search_date_endyear');
+if (!empty($search_date_endyear)) {
+	$option .= '&search_date_endyear='.$search_date_endyear;
+}
+$search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
+$search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
-	$search_month = '';
-	$search_year = '';
+	$search_date_startday = '';
+	$search_date_startmonth = '';
+	$search_date_startyear = '';
+	$search_date_endday = '';
+	$search_date_endmonth = '';
+	$search_date_endyear = '';
+	$search_date_start = '';
+	$search_date_end = '';
 }
 
 $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
@@ -196,11 +226,11 @@ if ($id > 0 || !empty($ref)) {
 			$sql .= " AND f.entity IN (".getEntity('invoice').")";
 			$sql .= " AND d.fk_facture = f.rowid";
 			$sql .= " AND d.fk_product = ".((int) $product->id);
-			if (!empty($search_month)) {
-				$sql .= ' AND MONTH(f.datef) IN ('.$db->sanitize($search_month).')';
+			if ($search_date_start) {
+				$sql .= " AND f.datef >= '".$db->idate($search_date_start)."'";
 			}
-			if (!empty($search_year)) {
-				$sql .= ' AND YEAR(f.datef) IN ('.$db->sanitize($search_year).')';
+			if ($search_date_end) {
+				$sql .= " AND f.datef <= '".$db->idate($search_date_end)."'";
 			}
 			if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
@@ -276,8 +306,8 @@ if ($id > 0 || !empty($ref)) {
 				print '<div class="liste_titre liste_titre_bydiv centpercent">';
 				print '<div class="divsearchfield">';
 				print $langs->trans('Period').' ('.$langs->trans("DateInvoice").') - ';
-				print $langs->trans('Month').':<input class="flat" type="text" size="4" name="search_month" value="'.$search_month.'"> ';
-				print $langs->trans('Year').':'.$formother->selectyear($search_year ? $search_year : - 1, 'search_year', 1, 20, 5);
+				print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+				print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 				print $hookmanager->resPrint;

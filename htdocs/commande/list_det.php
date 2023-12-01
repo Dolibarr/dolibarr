@@ -84,7 +84,7 @@ if (isModEnabled('categorie')) {
 	$searchCategoryProductOperator = 0;
 	if (GETPOSTISSET('formfilteraction')) {
 		$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator');
-	} elseif (!empty($conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT)) {
+	} elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
 		$searchCategoryProductOperator = $conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT;
 	}
 }
@@ -203,7 +203,7 @@ $arrayfields = array(
 	'country.code_iso'=>array('label'=>"Country", 'checked'=>0, 'position'=>50),
 	'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers, 'position'=>55),
 	'c.date_commande'=>array('label'=>"OrderDateShort", 'checked'=>1, 'position'=>60),
-	'c.date_delivery'=>array('label'=>"DateDeliveryPlanned", 'checked'=>1, 'enabled'=>empty($conf->global->ORDER_DISABLE_DELIVERY_DATE), 'position'=>65),
+	'c.date_delivery'=>array('label'=>"DateDeliveryPlanned", 'checked'=>1, 'enabled'=>!getDolGlobalString('ORDER_DISABLE_DELIVERY_DATE'), 'position'=>65),
 	'c.fk_shipping_method'=>array('label'=>"SendingMethod", 'checked'=>-1, 'position'=>66 , 'enabled'=>isModEnabled('expedition')),
 	'c.fk_cond_reglement'=>array('label'=>"PaymentConditionsShort", 'checked'=>-1, 'position'=>67),
 	'c.fk_mode_reglement'=>array('label'=>"PaymentMode", 'checked'=>-1, 'position'=>68),
@@ -216,18 +216,18 @@ $arrayfields = array(
 	'c.multicurrency_total_ht'=>array('label'=>'MulticurrencyAmountHT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>100),
 	'c.multicurrency_total_vat'=>array('label'=>'MulticurrencyAmountVAT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>105),
 	'c.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>110),
-	'c.fk_warehouse'=>array('label'=>'Warehouse', 'checked'=>0, 'enabled'=>(!isModEnabled('stock') && empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER) ? 0 : 1), 'position'=>110),
+	'c.fk_warehouse'=>array('label'=>'Warehouse', 'checked'=>0, 'enabled'=>(!isModEnabled('stock') && !getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER') ? 0 : 1), 'position'=>110),
 	'u.login'=>array('label'=>"Author", 'checked'=>1, 'position'=>115),
 	'sale_representative'=>array('label'=>"SaleRepresentativesOfThirdParty", 'checked'=>0, 'position'=>116),
 	'total_pa' => array('label' => (getDolGlobalString('MARGIN_TYPE') == '1' ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (!isModEnabled('margin') || !$user->rights->margins->liretous ? 0 : 1)),
 	'total_margin' => array('label' => 'Margin', 'checked' => 0, 'position' => 301, 'enabled' => (!isModEnabled('margin') || !$user->rights->margins->liretous ? 0 : 1)),
-	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (!isModEnabled('margin') || !$user->rights->margins->liretous || empty($conf->global->DISPLAY_MARGIN_RATES) ? 0 : 1)),
-	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (!isModEnabled('margin') || !$user->rights->margins->liretous || empty($conf->global->DISPLAY_MARK_RATES) ? 0 : 1)),
+	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (!isModEnabled('margin') || !$user->rights->margins->liretous || !getDolGlobalString('DISPLAY_MARGIN_RATES') ? 0 : 1)),
+	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (!isModEnabled('margin') || !$user->rights->margins->liretous || !getDolGlobalString('DISPLAY_MARK_RATES') ? 0 : 1)),
 	'c.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>120),
 	'c.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>125),
 	'c.date_cloture'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>130),
-	'c.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PUBLIC_NOTES)), 'position'=>135),
-	'c.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PRIVATE_NOTES)), 'position'=>140),
+	'c.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'enabled'=>(!getDolGlobalString('MAIN_LIST_ALLOW_PUBLIC_NOTES')), 'position'=>135),
+	'c.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'enabled'=>(!getDolGlobalString('MAIN_LIST_ALLOW_PRIVATE_NOTES')), 'position'=>140),
 	'shippable'=>array('label'=>"Shippable", 'checked'=>1,'enabled'=>(isModEnabled('expedition')), 'position'=>990),
 	'c.facture'=>array('label'=>"Billed", 'checked'=>1, 'enabled'=>(!getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT')), 'position'=>995),
 	'c.import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>999),
@@ -326,7 +326,7 @@ if (empty($reshook)) {
 	$permissiontoadd = $user->hasRight("commande", "creer");
 	$permissiontodelete = $user->hasRight("commande", "supprimer");
 	$permissiontoexport = $user->hasRight("commande", "commande", "export");
-	if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+	if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 		$permissiontovalidate = $user->hasRight("commande", "order_advance", "validate");
 		$permissiontoclose = $user->hasRight("commande", "order_advance", "close");
 		$permissiontocancel = $user->hasRight("commande", "order_advance", "annuler");
@@ -698,7 +698,7 @@ if ($resql) {
 
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 
-	if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall) {
+	if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sall) {
 		$obj = $db->fetch_object($resql);
 		$id = $obj->rowid;
 		header("Location: ".DOL_URL_ROOT.'/commande/card.php?id='.$id);
@@ -944,7 +944,7 @@ if ($resql) {
 		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1, $tmptitle, 'maxwidth300 widthcentpercentminusx');
 		$moreforfilter .= '</div>';
 	}
-	if (isModEnabled('stock') && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
+	if (isModEnabled('stock') && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER')) {
 		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 		$formproduct = new FormProduct($db);
 		$moreforfilter .= '<div class="divsearchfield">';
@@ -1072,7 +1072,7 @@ if ($resql) {
 	// Company type
 	if (!empty($arrayfields['typent.code']['checked'])) {
 		print '<td class="liste_titre maxwidthonsmartphone" align="center">';
-		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
+		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (!getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
 		print '</td>';
 	}
 	// Date order
@@ -1238,7 +1238,7 @@ if ($resql) {
 	if (!empty($arrayfields['shippable']['checked'])) {
 		print '<td class="liste_titre maxwidthonsmartphone" align="center">';
 		//print $form->selectyesno('search_shippable', $search_shippable, 1, 0, 1, 1);
-		if (!empty($conf->global->ORDER_SHIPABLE_STATUS_DISABLED_BY_DEFAULT)) {
+		if (getDolGlobalString('ORDER_SHIPABLE_STATUS_DISABLED_BY_DEFAULT')) {
 			print '<input type="checkbox" name="show_shippable_command" value="1"'.($show_shippable_command ? ' checked' : '').'>';
 			print $langs->trans('ShowShippableStatus');
 		} else {
@@ -1673,7 +1673,7 @@ if ($resql) {
 			print $getNomUrl_cache[$obj->socid];
 
 			// If module invoices enabled and user with invoice creation permissions
-			if (isModEnabled('facture') && !empty($conf->global->ORDER_BILLING_ALL_CUSTOMER)) {
+			if (isModEnabled('facture') && getDolGlobalString('ORDER_BILLING_ALL_CUSTOMER')) {
 				if ($user->hasRight('facture', 'creer')) {
 					if (($obj->fk_statut > 0 && $obj->fk_statut < 3) || ($obj->fk_statut == 3 && $obj->billed == 0)) {
 						print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$companystatic->id.'&search_billed=0&autoselectall=1">';
@@ -2105,7 +2105,7 @@ if ($resql) {
 						if ($reliquat > $generic_product->stock_reel) {
 							$notshippable++;
 						}
-						if (empty($conf->global->SHIPPABLE_ORDER_ICON_IN_LIST)) {  // Default code. Default should be this case.
+						if (!getDolGlobalString('SHIPPABLE_ORDER_ICON_IN_LIST')) {  // Default code. Default should be this case.
 							$text_info .= $reliquat.' x '.$obj->product_ref.'&nbsp;'.dol_trunc($obj->product_label, 20);
 							$text_info .= ' - '.$langs->trans("Stock").': <span class="'.($generic_product->stock_reel > 0 ? 'ok' : 'error').'">'.$generic_product->stock_reel.'</span>';
 							$text_info .= ' - '.$langs->trans("VirtualStock").': <span class="'.($generic_product->stock_theorique > 0 ? 'ok' : 'error').'">'.$generic_product->stock_theorique.'</span>';
@@ -2118,7 +2118,7 @@ if ($resql) {
 							// stock order and stock order_supplier
 							$stock_order = 0;
 							$stock_order_supplier = 0;
-							if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {    // What about other options ?
+							if (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT') || getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) {    // What about other options ?
 								if (isModEnabled('commande')) {
 									if (empty($productstat_cache[$obj->fk_product]['stats_order_customer'])) {
 										$generic_product->load_stats_commande(0, '1,2');

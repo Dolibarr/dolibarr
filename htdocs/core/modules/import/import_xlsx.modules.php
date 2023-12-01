@@ -116,7 +116,7 @@ class ImportXlsx extends ModeleImports
 		if (!class_exists('ZipArchive')) {	// For Excel2007
 			$langs->load("errors");
 			$this->error = $langs->trans('ErrorPHPNeedModule', 'zip');
-			return -1;
+			return;
 		}
 		$this->label_lib = 'PhpSpreadSheet';
 		$this->version_lib = '1.8.0';
@@ -700,7 +700,7 @@ class ImportXlsx extends ModeleImports
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'numeric') {
 									$newval = price2num($newval);
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'accountingaccount') {
-									if (empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
+									if (!getDolGlobalString('ACCOUNTING_MANAGE_ZERO')) {
 										$newval = rtrim(trim($newval), "0");
 									} else {
 										$newval = trim($newval);

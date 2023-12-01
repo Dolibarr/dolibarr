@@ -44,7 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/authority.class.php';
 
 
-if (empty($conf->global->BLOCKEDLOG_AUTHORITY_URL)) {
+if (!getDolGlobalString('BLOCKEDLOG_AUTHORITY_URL')) {
 	exit('BLOCKEDLOG_AUTHORITY_URL not set');
 }
 

@@ -63,7 +63,7 @@ print "<!-- BEGIN PHP TEMPLATE objectline_edit.tpl.php -->\n";
 $coldisplay = 0;
 print '<tr class="oddeven tredited">';
 // Adds a line numbering column
-if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 	print '<td class="linecolnum center">'.($i + 1).'</td>';
 	$coldisplay++;
 }
@@ -128,7 +128,8 @@ print '</td>';
 if ($filtertype != 1) {
 	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		$coldisplay++;
-		print '<td class="nobottom linecoluseunit left">';
+		print '<td class="nobottom nowrap linecolunit right">';
+		print  $formproduct->selectMeasuringUnits("fk_unit",  '',  (($line->fk_unit) ? $line->fk_unit : ''),  0,  0);
 		print '</td>';
 	}
 

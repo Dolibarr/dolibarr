@@ -77,3 +77,5 @@ ExtrafieldsApplication=Attributs complémentaires (candidature)
 MakeOffer=Faire un offre
 WeAreRecruiting=Nous recrutons. Voici une liste de postes à pourvoir...
 NoPositionOpen=Aucun poste ouvert pour le moment
+ConfirmClose=Confirmer l'annulation
+ConfirmCloseAsk=Êtes-vous sûr de à annuler cette candidature de recrutement

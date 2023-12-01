@@ -184,6 +184,18 @@ class Fichinter extends CommonObject
 	 */
 	const STATUS_CLOSED = 3;
 
+	/**
+	 * Date delivery
+	 * @var string|int		Delivery int
+	 */
+	public $date_delivery;
+
+	/**
+	 * Author Id
+	 * @var int
+	 */
+	public $user_author_id;
+
 
 	/**
 	 *	Constructor
@@ -622,6 +634,12 @@ class Fichinter extends CommonObject
 					if (!$resql) {
 						$error++; $this->error = $this->db->lasterror();
 					}
+					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'ficheinter/".$this->db->escape($this->newref)."'";
+					$sql .= " WHERE filepath = 'ficheinter/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$resql = $this->db->query($sql);
+					if (!$resql) {
+						$error++; $this->error = $this->db->lasterror();
+					}
 
 					// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 					$oldref = dol_sanitizeFileName($this->ref);
@@ -763,7 +781,7 @@ class Fichinter extends CommonObject
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->FICHEINTER_ADDON_PDF)) {
+			} elseif (getDolGlobalString('FICHEINTER_ADDON_PDF')) {
 				$modele = $conf->global->FICHEINTER_ADDON_PDF;
 			}
 		}
@@ -889,7 +907,7 @@ class Fichinter extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowIntervention");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -948,7 +966,7 @@ class Fichinter extends CommonObject
 		global $conf, $db, $langs;
 		$langs->load("interventions");
 
-		if (!empty($conf->global->FICHEINTER_ADDON)) {
+		if (getDolGlobalString('FICHEINTER_ADDON')) {
 			$mybool = false;
 
 			$file = "mod_" . getDolGlobalString('FICHEINTER_ADDON').".php";
@@ -1110,7 +1128,8 @@ class Fichinter extends CommonObject
 
 		if (!$error) {
 			// Delete record into ECM index (Note that delete is also done when deleting files with the dol_delete_dir_recursive
-			$this->deleteEcmFiles();
+			$this->deleteEcmFiles(0); // Deleting files physically is done later with the dol_delete_dir_recursive
+			$this->deleteEcmFiles(1); // Deleting files physically is done later with the dol_delete_dir_recursive
 
 			// Remove directory with files
 			$fichinterref = dol_sanitizeFileName($this->ref);

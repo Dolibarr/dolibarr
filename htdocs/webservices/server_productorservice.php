@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      JF FERRY             <jfefe@aternatik.fr>
- * Copyright (C) 2020		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2020-2023	Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ dol_syslog("Call Dolibarr webservices interfaces");
 $langs->load("main");
 
 // Enable and test if module web services is enabled
-if (empty($conf->global->MAIN_MODULE_WEBSERVICES)) {
+if (!getDolGlobalString('MAIN_MODULE_WEBSERVICES')) {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
 	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
@@ -362,13 +362,13 @@ $server->register(
  * @param   string      $lang               Lang to force
  * @return	mixed
  */
-function getProductOrService($authentication, $id = '', $ref = '', $ref_ext = '', $lang = '')
+function getProductOrService($authentication, $id = 0, $ref = '', $ref_ext = '', $lang = '')
 {
 	global $db, $conf, $langs;
 
 	dol_syslog("Function: getProductOrService login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
 
-	$langcode = ($lang ? $lang : (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT));
+	$langcode = ($lang ? $lang : (!getDolGlobalString('MAIN_LANG_DEFAULT') ? 'auto' : $conf->global->MAIN_LANG_DEFAULT));
 	$langs->setDefaultLang($langcode);
 
 	if ($authentication['entity']) {
@@ -388,7 +388,7 @@ function getProductOrService($authentication, $id = '', $ref = '', $ref_ext = ''
 	}
 
 	if (!$error) {
-		$langcode = ($lang ? $lang : (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT));
+		$langcode = ($lang ? $lang : (!getDolGlobalString('MAIN_LANG_DEFAULT') ? 'auto' : $conf->global->MAIN_LANG_DEFAULT));
 		$langs->setDefaultLang($langcode);
 
 		$fuser->getrights();
@@ -981,14 +981,14 @@ function getListOfProductsOrServices($authentication, $filterproduct)
  *
  * @param	array		$authentication		Array of authentication information
  * @param	int			$id					Category id
- * @param	Translate	$lang				Force lang
+ * @param	string		$lang				Force lang
  * @return	array							Array result
  */
 function getProductsForCategory($authentication, $id, $lang = '')
 {
 	global $db, $conf, $langs;
 
-	$langcode = ($lang ? $lang : (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT));
+	$langcode = ($lang ? $lang : (!getDolGlobalString('MAIN_LANG_DEFAULT') ? 'auto' : $conf->global->MAIN_LANG_DEFAULT));
 	$langs->setDefaultLang($langcode);
 
 	dol_syslog("Function: getProductsForCategory login=".$authentication['login']." id=".$id);
@@ -1011,7 +1011,7 @@ function getProductsForCategory($authentication, $id, $lang = '')
 
 
 	if (!$error) {
-		$langcode = ($lang ? $lang : (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT));
+		$langcode = ($lang ? $lang : (!getDolGlobalString('MAIN_LANG_DEFAULT') ? 'auto' : $conf->global->MAIN_LANG_DEFAULT));
 		$langs->setDefaultLang($langcode);
 
 		$fuser->getrights();

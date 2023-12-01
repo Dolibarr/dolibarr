@@ -446,7 +446,7 @@ class FormTicket
 		$doleditor->Create();
 		print '</td></tr>';
 
-		if ($public && !empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA_TICKET)) {
+		if ($public && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_TICKET')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 			print '<tr><td class="titlefield"><label for="email"><span class="fieldrequired">'.$langs->trans("SecurityCode").'</span></label></td><td>';
 			print '<span class="span-icon-security inline-block">';
@@ -555,7 +555,7 @@ class FormTicket
 				print img_picto('', 'company', 'class="paddingright"');
 				print $form->select_company($this->withfromsocid, 'socid', '', 1, 1, '', $events, 0, 'minwidth200');
 				print '</td></tr>';
-				if (!empty($conf->use_javascript_ajax) && !empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) {
+				if (!empty($conf->use_javascript_ajax) && getDolGlobalString('COMPANY_USE_SEARCH_TO_SELECT')) {
 					$htmlname = 'socid';
 					print '<script nonce="'.getNonce().'" type="text/javascript">
                     $(document).ready(function () {
@@ -1386,7 +1386,7 @@ class FormTicket
 		';
 
 		// If constant set, allow to send private messages as email
-		if (empty($conf->global->TICKET_SEND_PRIVATE_EMAIL)) {
+		if (!getDolGlobalString('TICKET_SEND_PRIVATE_EMAIL')) {
 			print 'jQuery("#send_msg_email").click(function() {
 					console.log("Click send_msg_email");
 					if(jQuery(this).is(":checked")) {
@@ -1458,7 +1458,7 @@ class FormTicket
 			print '<input type="checkbox" name="send_email" value="1" id="send_msg_email" '.$checkbox_selected.'/> ';
 			print '<label for="send_msg_email">'.$langs->trans('SendMessageByEmail').'</label>';
 			$texttooltip = $langs->trans("TicketMessageSendEmailHelp");
-			if (empty($conf->global->TICKET_SEND_PRIVATE_EMAIL)) {
+			if (!getDolGlobalString('TICKET_SEND_PRIVATE_EMAIL')) {
 				$texttooltip .= ' '.$langs->trans("TicketMessageSendEmailHelp2b");
 			} else {
 				$texttooltip .= ' '.$langs->trans("TicketMessageSendEmailHelp2a", '{s1}');
@@ -1576,7 +1576,7 @@ class FormTicket
 		// Attached files
 		if (!empty($this->withfile)) {
 			$out = '<tr>';
-			$out .= '<td width="180">'.$langs->trans("MailFile").'</td>';
+			$out .= '<td>'.$langs->trans("MailFile").'</td>';
 			$out .= '<td>';
 			// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
 			$out .= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
@@ -1662,7 +1662,7 @@ class FormTicket
 		//$toolbarname = 'dolibarr_details';
 		$toolbarname = 'dolibarr_notes';
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('message', $defaultmessage, '100%', 200, $toolbarname, '', false, $uselocalbrowser, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_5, 70);
+		$doleditor = new DolEditor('message', $defaultmessage, '100%', 200, $toolbarname, '', false, $uselocalbrowser, getDolGlobalInt('FCKEDITOR_ENABLE_TICKET'), ROWS_5, '90%');
 		$doleditor->Create();
 		print '</td></tr>';
 
@@ -1682,7 +1682,7 @@ class FormTicket
 
 		print '</table>';
 
-		print '<center><br>';
+		print '<br><center>';
 		print '<input type="submit" class="button" name="btn_add_message" value="'.$langs->trans("Add").'"';
 		// Add a javascript test to avoid to forget to submit file before sending email
 		if ($this->withfile == 2 && !empty($conf->use_javascript_ajax)) {
@@ -1697,10 +1697,10 @@ class FormTicket
 
 		print '<input type="hidden" name="page_y">'."\n";
 
-		print "</form>\n";
+		print "</form><br>\n";
 
 		// Disable enter key if option MAIN_MAILFORM_DISABLE_ENTERKEY is set
-		if (!empty($conf->global->MAIN_MAILFORM_DISABLE_ENTERKEY)) {
+		if (getDolGlobalString('MAIN_MAILFORM_DISABLE_ENTERKEY')) {
 			print '<script type="text/javascript">';
 			print 'jQuery(document).ready(function () {';
 			print '		$(document).on("keypress", \'#ticket\', function (e) {		/* Note this is called at every key pressed ! */

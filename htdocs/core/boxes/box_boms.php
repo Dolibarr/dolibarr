@@ -135,7 +135,7 @@ class box_boms extends ModeleBoxes
 						'asis' => 1,
 					);
 
-					if (!empty($conf->global->BOM_BOX_LAST_BOMS_SHOW_VALIDATE_USER)) {
+					if (getDolGlobalString('BOM_BOX_LAST_BOMS_SHOW_VALIDATE_USER')) {
 						if ($objp->fk_user_valid > 0) {
 							$userstatic->fetch($objp->fk_user_valid);
 						}

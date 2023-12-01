@@ -99,7 +99,7 @@ if (empty($force_install_nophpinfo)) {
 print "<br>\n";
 
 // Check PHP version max
-$arrayphpmaxversionwarning = array(8, 1, 0);
+$arrayphpmaxversionwarning = array(8, 2, 0);
 if (versioncompare(versionphparray(), $arrayphpmaxversionwarning) > 0 && versioncompare(versionphparray(), $arrayphpmaxversionwarning) < 3) {        // Maximum to use (warning if higher)
 	print '<img src="../theme/eldy/img/error.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPVersionTooHigh", versiontostring($arrayphpmaxversionwarning));
 	$checksok = 1; // 0=error, 1=warning
@@ -392,8 +392,8 @@ if (!file_exists($conffile)) {
 		}
 
 		// Show title
-		if (!empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || !empty($conf->global->MAIN_VERSION_LAST_INSTALL)) {
-			print $langs->trans("VersionLastUpgrade").': <b><span class="ok">'.(empty($conf->global->MAIN_VERSION_LAST_UPGRADE) ? $conf->global->MAIN_VERSION_LAST_INSTALL : $conf->global->MAIN_VERSION_LAST_UPGRADE).'</span></b> - ';
+		if (getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') || getDolGlobalString('MAIN_VERSION_LAST_INSTALL')) {
+			print $langs->trans("VersionLastUpgrade").': <b><span class="ok">'.(!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') ? $conf->global->MAIN_VERSION_LAST_INSTALL : $conf->global->MAIN_VERSION_LAST_UPGRADE).'</span></b> - ';
 			print $langs->trans("VersionProgram").': <b><span class="ok">'.DOL_VERSION.'</span></b>';
 			//print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired"));
 			print '<br>';

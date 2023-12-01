@@ -1110,21 +1110,22 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
 
 				$val_actuel = $menu;
 				$next_val = empty($menus[$index + 1]) ? null : $menus[$index + 1];
+				//var_dump(dol_escape_php($menu['perms'], 1)); exit;
 
 				$str_menu .= $start."\n";
 				$str_menu.= "\t\t\$this->menu[\$r++]=array(\n";
-				$str_menu.= "\t\t\t 'fk_menu' =>'".$menu['fk_menu']."',\n";
-				$str_menu.= "\t\t\t 'type' =>'".$menu['type']."',\n";
-				$str_menu.= "\t\t\t 'titre' =>'".$menu['titre']."',\n";
-				$str_menu.= "\t\t\t 'mainmenu' =>'".$menu['mainmenu']."',\n";
-				$str_menu.= "\t\t\t 'leftmenu' =>'".$menu['leftmenu']."',\n";
-				$str_menu.= "\t\t\t 'url' =>'".$menu['url']."',\n";
-				$str_menu.= "\t\t\t 'langs' =>'".$menu['langs']."',\n";
-				$str_menu.= "\t\t\t 'position' =>".$menu['position'].",\n";
-				$str_menu.= "\t\t\t 'enabled' =>'".$menu['enabled']."',\n";
-				$str_menu.= "\t\t\t 'perms' =>'".$menu['perms']."',\n";
-				$str_menu.= "\t\t\t 'target' =>'".$menu['target']."',\n";
-				$str_menu.= "\t\t\t 'user' =>".$menu['user'].",\n";
+				$str_menu.= "\t\t\t 'fk_menu' => '".dol_escape_php($menu['fk_menu'], 1)."',\n";
+				$str_menu.= "\t\t\t 'type' => '".dol_escape_php($menu['type'], 1)."',\n";
+				$str_menu.= "\t\t\t 'titre' => '".dol_escape_php($menu['titre'], 1)."',\n";
+				$str_menu.= "\t\t\t 'mainmenu' => '".dol_escape_php($menu['mainmenu'], 1)."',\n";
+				$str_menu.= "\t\t\t 'leftmenu' => '".dol_escape_php($menu['leftmenu'], 1)."',\n";
+				$str_menu.= "\t\t\t 'url' => '".dol_escape_php($menu['url'], 1)."',\n";
+				$str_menu.= "\t\t\t 'langs' => '".dol_escape_php($menu['langs'], 1)."',\n";
+				$str_menu.= "\t\t\t 'position' => ".((int) $menu['position']).",\n";
+				$str_menu.= "\t\t\t 'enabled' => '".dol_escape_php($menu['enabled'], 1)."',\n";
+				$str_menu.= "\t\t\t 'perms' => '".dol_escape_php($menu['perms'], 1)."',\n";
+				$str_menu.= "\t\t\t 'target' => '".dol_escape_php($menu['target'], 1)."',\n";
+				$str_menu.= "\t\t\t 'user' => ".((int) $menu['user']).",\n";
 				$str_menu.= "\t\t);\n";
 
 				if (is_null($next_val) || $val_actuel['leftmenu'] !== $next_val['leftmenu']) {

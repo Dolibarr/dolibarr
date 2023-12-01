@@ -150,7 +150,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 
-$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 if ($type == "p") {
 	if (empty($contextpage) || $contextpage == 'contactlist') {
 		$contextpage = 'contactprospectlist';
@@ -204,7 +204,7 @@ foreach ($object->fields as $key => $val) {
 }
 
 // Add none object fields for "search in all"
-if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
 	$fieldstosearchall['s.nom'] = "ThirdParty";
 	$fieldstosearchall['s.name_alias'] = "AliasNames";
 }
@@ -235,7 +235,7 @@ foreach ($object->fields as $key => $val) {
 
 // Add none object fields to fields for list
 $arrayfields['country.code_iso'] = array('label'=>"Country", 'position'=>66, 'checked'=>0);
-if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
 	$arrayfields['s.nom'] = array('label'=>"ThirdParty", 'position'=>113, 'checked'=> 1);
 	$arrayfields['s.name_alias'] = array('label'=>"AliasNameShort", 'position'=>114, 'checked'=> 1);
 }
@@ -433,7 +433,7 @@ $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas';
 $morejs = array();
 $morecss = array();
 
-if (!empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES)) {
+if (getDolGlobalString('THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES')) {
 	$contactstatic->loadCacheOfProspStatus();
 }
 
@@ -787,7 +787,7 @@ if (!$resql) {
 $num = $db->num_rows($resql);
 
 // Direct jump if only one record found
-if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && ($search_all != '' || $search_cti != '') && !$page) {
+if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && ($search_all != '' || $search_cti != '') && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	header("Location: ".DOL_URL_ROOT.'/contact/card.php?id='.$id);
@@ -1340,7 +1340,7 @@ if (!empty($arrayfields['p.import_key']['checked'])) {
 	print_liste_field_titre($arrayfields['p.import_key']['label'], $_SERVER["PHP_SELF"], "p.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
-if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	$totalarray['nbfield']++;
 }

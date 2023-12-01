@@ -88,7 +88,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 $result = restrictedArea($user, 'resource', $object->id, 'resource');
 
 // Security check
-if (!$user->rights->resource->read) {
+if (!$user->hasRight('resource', 'read')) {
 	accessforbidden();
 }
 
@@ -133,7 +133,7 @@ if ($object->id > 0) {
 	$picto = 'resource';
 
 	$title = $langs->trans("Agenda");
-	if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/productnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/productnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 		$title = $object->ref." - ".$title;
 	}
 	llxHeader('', $title);

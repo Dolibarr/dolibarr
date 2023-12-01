@@ -626,7 +626,7 @@ class ChargeSociales extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip) && $user->hasRight("facture", "read")) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("SocialContribution");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -741,9 +741,9 @@ class ChargeSociales extends CommonObject
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
 		$this->paye = 0;
-		$this->date = dol_now();
-		$this->date_ech = $this->date + 3600 * 24 * 30;
-		$this->periode = $this->date + 3600 * 24 * 30;
+		$this->date_creation = dol_now();
+		$this->date_ech = $this->date_creation + 3600 * 24 * 30;
+		$this->periode = $this->date_creation + 3600 * 24 * 30;
 		$this->amount = 100;
 		$this->label = 'Social contribution label';
 		$this->type = 1;

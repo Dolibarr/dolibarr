@@ -114,6 +114,12 @@ class StockTransferLine extends CommonObjectLine
 	public $fk_stocktransfer;
 	public $fk_product;
 	public $batch;
+
+	/**
+	 * @var double pmp
+	 */
+	public $pmp;
+
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -128,7 +134,7 @@ class StockTransferLine extends CommonObjectLine
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) $this->fields['rowid']['visible'] = 0;
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) $this->fields['rowid']['visible'] = 0;
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) $this->fields['entity']['enabled'] = 0;
 
 		// Example to show how to set values of fields definition dynamically
@@ -147,7 +153,7 @@ class StockTransferLine extends CommonObjectLine
 		// Translate some data of arrayofkeyval
 		if (is_object($langs)) {
 			foreach ($this->fields as $key => $val) {
-				if (is_array($val['arrayofkeyval'])) {
+				if (isset($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 					foreach ($val['arrayofkeyval'] as $key2 => $val2) {
 						$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
 					}
@@ -447,7 +453,7 @@ class StockTransferLine extends CommonObjectLine
 											 $code_inv);
 
 			if ($result < 0) {
-				setEventMessages($p->errors, $p->errorss, 'errors');
+				setEventMessages($p->error, $p->errors, 'errors');
 				return 0;
 			}
 		} else {
@@ -490,7 +496,7 @@ class StockTransferLine extends CommonObjectLine
 												 $this->batch);
 
 				if ($result < 0) {
-					setEventMessages($p->errors, $p->errorss, 'errors');
+					setEventMessages($p->error, $p->errors, 'errors');
 					return 0;
 				}
 			} else {
@@ -577,7 +583,15 @@ class StockTransferLine extends CommonObjectLine
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'stocktransferline/".$this->db->escape($this->newref)."'";
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'stocktransferline/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
-				if (!$resql) { $error++; $this->error = $this->db->lasterror(); }
+				if (!$resql) {
+					$error++; $this->error = $this->db->lasterror();
+				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'stocktransferline/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'stocktransferline/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++; $this->error = $this->db->lasterror();
+				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
@@ -731,7 +745,7 @@ class StockTransferLine extends CommonObjectLine
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowStockTransferLine");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -878,11 +892,11 @@ class StockTransferLine extends CommonObjectLine
 		global $langs, $conf;
 		$langs->load("stocks");
 
-		if (empty($conf->global->STOCKTRANSFER_STOCKTRANSFERLINE_ADDON)) {
+		if (!getDolGlobalString('STOCKTRANSFER_STOCKTRANSFERLINE_ADDON')) {
 			$conf->global->STOCKTRANSFER_STOCKTRANSFERLINE_ADDON = 'mod_stocktransferline_standard';
 		}
 
-		if (!empty($conf->global->STOCKTRANSFER_STOCKTRANSFERLINE_ADDON)) {
+		if (getDolGlobalString('STOCKTRANSFER_STOCKTRANSFERLINE_ADDON')) {
 			$mybool = false;
 
 			$file = getDolGlobalString('STOCKTRANSFER_STOCKTRANSFERLINE_ADDON') . ".php";
@@ -948,7 +962,7 @@ class StockTransferLine extends CommonObjectLine
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->STOCKTRANSFERLINE_ADDON_PDF)) {
+			} elseif (getDolGlobalString('STOCKTRANSFERLINE_ADDON_PDF')) {
 				$modele = $conf->global->STOCKTRANSFERLINE_ADDON_PDF;
 			}
 		}

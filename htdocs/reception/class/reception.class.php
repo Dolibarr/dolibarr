@@ -95,6 +95,7 @@ class Reception extends CommonObject
 	// A denormalized value
 	public $trueSize;
 	public $size_units;
+	public $user_author_id;
 
 	public $date_delivery; // Date delivery planed
 
@@ -165,10 +166,10 @@ class Reception extends CommonObject
 		global $langs, $conf;
 		$langs->load("receptions");
 
-		if (!empty($conf->global->RECEPTION_ADDON_NUMBER)) {
+		if (getDolGlobalString('RECEPTION_ADDON_NUMBER')) {
 			$mybool = false;
 
-			$file = $conf->global->RECEPTION_ADDON_NUMBER.".php";
+			$file = getDolGlobalString('RECEPTION_ADDON_NUMBER') . ".php";
 			$classname = $conf->global->RECEPTION_ADDON_NUMBER;
 
 			// Include file with class
@@ -504,8 +505,8 @@ class Reception extends CommonObject
 			return 0;
 		}
 
-		if (!((!getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->reception->creer))
-		|| (getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->reception->reception_advance->validate)))) {
+		if (!((!getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('reception', 'creer'))
+		|| (getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('reception', 'reception_advance', 'validate')))) {
 			$this->error = 'Permission denied';
 			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
 			return -1;
@@ -658,6 +659,12 @@ class Reception extends CommonObject
 				if (!$resql) {
 					$error++; $this->error = $this->db->lasterror();
 				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'reception/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'reception/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++; $this->error = $this->db->lasterror();
+				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
@@ -710,19 +717,20 @@ class Reception extends CommonObject
 	 */
 	public function getStatusDispatch()
 	{
-		global $conf;
-
 		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
 
 		$status = CommandeFournisseur::STATUS_RECEIVED_PARTIALLY;
 
 		if (!empty($this->origin) && $this->origin_id > 0 && ($this->origin == 'order_supplier' || $this->origin == 'commandeFournisseur')) {
-			if (empty($this->commandeFournisseur)) {
+			if (empty($this->origin_object)) {
 				$this->fetch_origin();
-				if (empty($this->commandeFournisseur->lines)) {
-					$res = $this->commandeFournisseur->fetch_lines();
-					if ($res < 0)	return $res;
+				if (empty($this->origin_object->lines)) {
+					$res = $this->origin_object->fetch_lines();
+					$this->commandeFournisseur = $this->origin_object;	// deprecated
+					if ($res < 0) {
+						return $res;
+					}
 				}
 			}
 
@@ -1369,7 +1377,6 @@ class Reception extends CommonObject
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
 		$this->statut               = 1;
-		$this->livraison_id         = 0;
 		$this->date                 = $now;
 		$this->date_creation        = $now;
 		$this->date_valid           = $now;
@@ -1379,11 +1386,10 @@ class Reception extends CommonObject
 		$this->entrepot_id          = 0;
 		$this->socid                = 1;
 
-		$this->commande_id          = 0;
-		$this->commande             = $order;
-
 		$this->origin_id            = 1;
 		$this->origin               = 'commande';
+		$this->origin_object        = $order;
+		$this->commandeFournisseur  = $order;	// deprecated
 
 		$this->note_private = 'Private note';
 		$this->note_public = 'Public note';
@@ -1397,7 +1403,7 @@ class Reception extends CommonObject
 			$line->label = $langs->trans("Description")." ".$xnbp;
 			$line->qty = 10;
 
-			$line->fk_product = $this->commande->lines[$xnbp]->fk_product;
+			$line->fk_product = $this->origin_object->lines[$xnbp]->fk_product;
 
 			$this->lines[] = $line;
 			$xnbp++;
@@ -1414,7 +1420,7 @@ class Reception extends CommonObject
 	public function setDeliveryDate($user, $delivery_date)
 	{
 		// phpcs:enable
-		if ($user->rights->reception->creer) {
+		if ($user->hasRight('reception', 'creer')) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."reception";
 			$sql .= " SET date_delivery = ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : 'null');
 			$sql .= " WHERE rowid = ".((int) $this->id);
@@ -1847,8 +1853,8 @@ class Reception extends CommonObject
 			return 0;
 		}
 
-		if (!((!getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->reception->creer))
-		|| (getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->reception->reception_advance->validate)))) {
+		if (!((!getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('reception', 'creer'))
+		|| (getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('reception', 'reception_advance', 'validate')))) {
 			$this->error = 'Permission denied';
 			return -1;
 		}
@@ -1997,7 +2003,7 @@ class Reception extends CommonObject
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->RECEPTION_ADDON_PDF)) {
+			} elseif (getDolGlobalString('RECEPTION_ADDON_PDF')) {
 				$modele = $conf->global->RECEPTION_ADDON_PDF;
 			}
 		}

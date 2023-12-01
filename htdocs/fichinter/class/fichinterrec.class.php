@@ -50,12 +50,13 @@ class FichinterRec extends Fichinter
 	/**
 	 * {@inheritdoc}
 	 */
-	protected $table_ref_field = 'titre';
+	protected $table_ref_field = 'title';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'intervention';
+
 
 	/**
 	 * @var string title
@@ -66,6 +67,23 @@ class FichinterRec extends Fichinter
 	public $amount;
 	public $tva;
 	public $total;
+
+	/**
+	 * @var int
+	 */
+	public $auto_validate;
+
+	/**
+	 * @var int Frequency
+	 */
+	public $frequency;
+
+	public $id_origin;
+
+	/**
+	 * @var string Unit frequency
+	 */
+	public $unit_frequency;
 
 	/**
 	 * @var int Proposal Id
@@ -103,14 +121,11 @@ class FichinterRec extends Fichinter
 		$this->db = $db;
 
 		//status dans l'ordre de l'intervention
-		$this->statuts[0] = 'Draft';
-		$this->statuts[1] = 'Closed';
+		$this->labelStatus[0] = 'Draft';
+		$this->labelStatus[1] = 'Closed';
 
-		$this->statuts_short[0] = 'Draft';
-		$this->statuts_short[1] = 'Closed';
-
-		$this->statuts_logo[0] = 'statut0';
-		$this->statuts_logo[1] = 'statut1';
+		$this->labelStatusShort[0] = 'Draft';
+		$this->labelStatusShort[1] = 'Closed';
 	}
 
 	/**
@@ -156,7 +171,7 @@ class FichinterRec extends Fichinter
 
 		if ($result > 0) {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."fichinter_rec (";
-			$sql .= "titre";
+			$sql .= "title";
 			$sql .= ", fk_soc";
 			$sql .= ", entity";
 			$sql .= ", datec";
@@ -268,7 +283,7 @@ class FichinterRec extends Fichinter
 	 */
 	public function fetch($rowid = 0, $ref = '', $ref_ext = '')
 	{
-		$sql = 'SELECT f.titre as title, f.fk_soc';
+		$sql = 'SELECT f.title as title, f.fk_soc';
 		$sql .= ', f.datec, f.duree, f.fk_projet, f.fk_contrat, f.description';
 		$sql .= ', f.note_private, f.note_public, f.fk_user_author';
 		$sql .= ', f.frequency, f.unit_frequency, f.date_when, f.date_last_gen, f.nb_gen_done, f.nb_gen_max, f.auto_validate';
@@ -277,7 +292,7 @@ class FichinterRec extends Fichinter
 		if ($rowid > 0) {
 			$sql .= " WHERE f.rowid = ".((int) $rowid);
 		} elseif ($ref) {
-			$sql .= " WHERE f.titre = '".$this->db->escape($ref)."'";
+			$sql .= " WHERE f.title = '".$this->db->escape($ref)."'";
 		}
 
 		dol_syslog(get_class($this)."::fetch rowid=".$rowid, LOG_DEBUG);
@@ -288,9 +303,8 @@ class FichinterRec extends Fichinter
 				$obj = $this->db->fetch_object($result);
 
 				$this->id = $rowid;
-				$this->titre				= $obj->title;
 				$this->title				= $obj->title;
-				$this->ref = $obj->title;
+				$this->ref                  = $obj->title;
 				$this->description = $obj->description;
 				$this->datec				= $obj->datec;
 				$this->duration = $obj->duree;

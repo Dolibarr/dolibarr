@@ -136,7 +136,7 @@ class DolGraph
 
 		$this->_library = $library;
 		if ($this->_library == 'auto') {
-			$this->_library = (empty($conf->global->MAIN_JS_GRAPH) ? 'chart' : $conf->global->MAIN_JS_GRAPH);
+			$this->_library = (!getDolGlobalString('MAIN_JS_GRAPH') ? 'chart' : $conf->global->MAIN_JS_GRAPH);
 		}
 	}
 
@@ -1150,7 +1150,8 @@ class DolGraph
 		if (isset($this->type[$firstlot])) {
 			$cssfordiv .= ' dolgraphchar' . $this->type[$firstlot];
 		}
-		$this->stringtoshow .= '<div id="placeholder_' . $tag . '" style="min-height: ' . $this->height . (strpos($this->height, '%') > 0 ? '' : 'px').'; max-height: ' . (strpos($this->height, '%') > 0 ? $this->height : ($this->height + 100) . 'px').'; width:' . $this->width . (strpos($this->width, '%') > 0 ? '' : 'px') . ';" class="' . $cssfordiv . ' dolgraph' . (empty($dolxaxisvertical) ? '' : ' ' . $dolxaxisvertical) . (empty($this->cssprefix) ? '' : ' dolgraph' . $this->cssprefix) . ' center"><canvas id="canvas_' . $tag . '"></canvas></div>' . "\n";
+		$this->stringtoshow .= '<div id="placeholder_'.$tag.'" style="min-height: '.$this->height.(strpos($this->height, '%') > 0 ? '' : 'px').'; max-height: '.(strpos($this->height, '%') > 0 ? $this->height : ($this->height + 100) . 'px').'; width:'.$this->width.(strpos($this->width, '%') > 0 ? '' : 'px').';" class="'.$cssfordiv.' dolgraph'.(empty($dolxaxisvertical) ? '' : ' '.$dolxaxisvertical).(empty($this->cssprefix) ? '' : ' dolgraph'.$this->cssprefix).' center">'."\n";
+		$this->stringtoshow .= '<canvas id="canvas_'.$tag.'"></canvas></div>'."\n";
 
 		$this->stringtoshow .= '<script nonce="'.getNonce().'" id="' . $tag . '">' . "\n";
 		$i = $firstlot;

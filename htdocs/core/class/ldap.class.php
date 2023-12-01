@@ -220,10 +220,10 @@ class Ldap
 		global $conf;
 
 		// Server
-		if (!empty($conf->global->LDAP_SERVER_HOST)) {
+		if (getDolGlobalString('LDAP_SERVER_HOST')) {
 			$this->server[] = $conf->global->LDAP_SERVER_HOST;
 		}
-		if (!empty($conf->global->LDAP_SERVER_HOST_SLAVE)) {
+		if (getDolGlobalString('LDAP_SERVER_HOST_SLAVE')) {
 			$this->server[] = $conf->global->LDAP_SERVER_HOST_SLAVE;
 		}
 		$this->serverPort          = getDolGlobalInt('LDAP_SERVER_PORT', 389);
@@ -327,7 +327,7 @@ class Ldap
 					}
 
 					// Upgrade connexion to TLS, if requested by the configuration
-					if (!empty($conf->global->LDAP_SERVER_USE_TLS)) {
+					if (getDolGlobalString('LDAP_SERVER_USE_TLS')) {
 						// For test/debug
 						//ldap_set_option($this->connection, LDAP_OPT_DEBUG_LEVEL, 7);
 						//ldap_set_option($this->connection, LDAP_OPT_PROTOCOL_VERSION, 3);

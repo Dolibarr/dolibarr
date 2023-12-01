@@ -97,9 +97,9 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 //PDF
-$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
-$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
-$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
+$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0));
+$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0));
+$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0));
 
 $object = new Reception($db);
 $objectorder = new CommandeFournisseur($db);
@@ -122,6 +122,7 @@ if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
 	$object->fetch_thirdparty();
 
+	$typeobject = '';
 	if (!empty($object->origin)) {
 		$origin = $object->origin;
 
@@ -129,11 +130,10 @@ if ($id > 0 || !empty($ref)) {
 		$typeobject = $object->origin;
 	}
 
-	// Linked documents
-	if ($origin == 'order_supplier' && $object->$typeobject->id && isModEnabled("supplier_order")) {
-		$origin_id = $object->$typeobject->id;
-		$objectsrc = new CommandeFournisseur($db);
-		$objectsrc->fetch($object->$typeobject->id);
+	// Set $origin_id and $objectsrc
+	if (($origin == 'order_supplier' || $origin == 'supplier_order') && is_object($object->origin_object) && isModEnabled("supplier_order")) {
+		$origin_id = $object->origin_object->id;
+		$objectsrc = $object->origin_object;
 	}
 }
 
@@ -159,13 +159,13 @@ if (isModEnabled("reception")) {
 	$permissiontoread = $user->rights->reception->lire;
 	$permissiontoadd = $user->rights->reception->creer;
 	$permissiondellink = $user->rights->reception->creer; // Used by the include of actions_dellink.inc.php
-	$permissiontovalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->reception->creer)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->reception->reception_advance->validate)));
+	$permissiontovalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->reception->creer)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->reception->reception_advance->validate)));
 	$permissiontodelete = $user->rights->reception->supprimer;
 } else {
 	$permissiontoread = $user->rights->fournisseur->commande->receptionner;
 	$permissiontoadd = $user->rights->fournisseur->commande->receptionner;
 	$permissiondellink = $user->rights->fournisseur->commande->receptionner; // Used by the include of actions_dellink.inc.php
-	$permissiontovalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->commande->receptionner)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->commande_advance->check)));
+	$permissiontovalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->fournisseur->commande->receptionner)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->fournisseur->commande_advance->check)));
 	$permissiontodelete = $user->rights->fournisseur->commande->receptionner;
 }
 
@@ -219,7 +219,7 @@ if (empty($reshook)) {
 		$result = $object->setDraft($user);
 		if ($result >= 0) {
 			// Define output language
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -404,7 +404,7 @@ if (empty($reshook)) {
 					if ($entrepot_id < 0) {
 						$entrepot_id = '';
 					}
-					if (!($fk_product > 0) && empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+					if (!($fk_product > 0) && !getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 						$entrepot_id = 0;
 					}
 
@@ -413,7 +413,7 @@ if (empty($reshook)) {
 					$eatbydate = str_replace('/', '-', $eatby);
 					$sellbydate = str_replace('/', '-', $sellby);
 
-					if (!empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
+					if (getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION') || getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION_CLOSE')) {
 						$ret = $object->addline($entrepot_id, GETPOST($idl, 'int'), GETPOST($qty, 'int'), $array_options[$i], GETPOST($comment, 'alpha'), strtotime($eatbydate), strtotime($sellbydate), GETPOST($batch, 'alpha'), price2num(GETPOST($cost_price, 'double'), 'MU'));
 					} else {
 						$ret = $object->addline($entrepot_id, GETPOST($idl, 'int'), GETPOST($qty, 'int'), $array_options[$i], GETPOST($comment, 'alpha'), strtotime($eatbydate), strtotime($sellbydate), GETPOST($batch, 'alpha'));
@@ -462,7 +462,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans($object->error), null, 'errors');
 		} else {
 			// Define output language
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -697,7 +697,7 @@ if (empty($reshook)) {
 		unset($_POST["lineid"]);
 
 		if (!$error) {
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				// Define output language
 				$outputlangs = $langs;
 				$newlang = '';
@@ -849,7 +849,7 @@ if ($action == 'create') {
 				print '<tr>';
 				print '<td>'.$langs->trans("Project").'</td><td colspan="2">';
 				print img_picto('', 'project', 'class="paddingright"');
-				print $formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $soc->id : -1), $projectid, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1, 0, 'maxwidth500');
+				print $formproject->select_projects((!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $soc->id : -1), $projectid, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1, 0, 'maxwidth500');
 				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
 				print '</td>';
 				print '</tr>';
@@ -866,7 +866,7 @@ if ($action == 'create') {
 			// Note Public
 			print '<tr><td>'.$langs->trans("NotePublic").'</td>';
 			print '<td colspan="3">';
-			$doleditor = new DolEditor('note_public', $objectsrc->note_public, '', 60, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
+			$doleditor = new DolEditor('note_public', $objectsrc->note_public, '', 60, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
 			print $doleditor->Create(1);
 			print "</td></tr>";
 
@@ -874,7 +874,7 @@ if ($action == 'create') {
 			if ($objectsrc->note_private && !$user->socid) {
 				print '<tr><td>'.$langs->trans("NotePrivate").'</td>';
 				print '<td colspan="3">';
-				$doleditor = new DolEditor('note_private', $objectsrc->note_private, '', 60, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
+				$doleditor = new DolEditor('note_private', $objectsrc->note_private, '', 60, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
 				print $doleditor->Create(1);
 				print "</td></tr>";
 			}
@@ -1208,7 +1208,7 @@ if ($action == 'create') {
 				print '</td>';
 
 
-				if ($line->product_type == 1 && empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+				if ($line->product_type == 1 && !getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 					$quantityToBeDelivered = 0;
 				} else {
 					$quantityToBeDelivered = $dispatchLines[$indiceAsked]['qty'];
@@ -1228,7 +1228,7 @@ if ($action == 'create') {
 
 					// Quantity to send
 					print '<td class="center">';
-					if ($line->product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+					if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 						if (GETPOST('qtyl'.$indiceAsked, 'int')) {
 							$defaultqty = GETPOST('qtyl'.$indiceAsked, 'int');
 						}
@@ -1239,7 +1239,7 @@ if ($action == 'create') {
 					}
 					print '</td>';
 
-					if (!empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
+					if (getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION') || getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION_CLOSE')) {
 						print '<td>';
 						print '<input class="width75 right" name="cost_price'.$indiceAsked.'" id="cost_price'.$indiceAsked.'" value="'.$cost_price.'">';
 						print '</td>';
@@ -1248,7 +1248,7 @@ if ($action == 'create') {
 					// Stock
 					if (isModEnabled('stock')) {
 						print '<td class="left">';
-						if ($line->product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {   // Type of product need stock change ?
+						if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {   // Type of product need stock change ?
 							// Show warehouse combo list
 							$ent = "entl".$indiceAsked;
 							$idl = "idl".$indiceAsked;
@@ -1266,12 +1266,12 @@ if ($action == 'create') {
 					if (isModEnabled('productbatch')) {
 						if (!empty($product->status_batch)) {
 							print '<td><input name="batch'.$indiceAsked.'" value="'.$dispatchLines[$indiceAsked]['lot'].'"></td>';
-							if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+							if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 								print '<td class="nowraponall">';
 								print $form->selectDate($dispatchLines[$indiceAsked]['DLC'], 'dlc'.$indiceAsked, '', '', 1, "");
 								print '</td>';
 							}
-							if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+							if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 								print '<td class="nowraponall">';
 								print $form->selectDate($dispatchLines[$indiceAsked]['DLUO'], 'dluo'.$indiceAsked, '', '', 1, "");
 								print '</td>';
@@ -1292,10 +1292,10 @@ if ($action == 'create') {
 					$colspan = 5;
 					if (isModEnabled('productbatch')) {
 						$colspan += 2;
-						if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+						if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 							$colspan += 1;
 						}
-						if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+						if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 							$colspan += 1;
 						}
 					}
@@ -1438,8 +1438,8 @@ if ($action == 'create') {
 	$morehtmlref = '<div class="refidno">';
 	// Ref customer reception
 
-	$morehtmlref .= $form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->reception->creer, 'string', '', 0, 1);
-	$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->reception->creer, 'string', '', null, null, '', 1);
+	$morehtmlref .= $form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->hasRight('reception', 'creer'), 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->hasRight('reception', 'creer'), 'string', '', null, null, '', 1);
 
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
@@ -1452,7 +1452,7 @@ if ($action == 'create') {
 			if ($action != 'classify' && $permissiontoadd) {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
 				$proj = new Project($db);
@@ -1532,7 +1532,7 @@ if ($action == 'create') {
 
 	// Weight
 	print '<tr><td>';
-	print $form->editfieldkey("Weight", 'trueWeight', $object->trueWeight, $object, $user->rights->reception->creer);
+	print $form->editfieldkey("Weight", 'trueWeight', $object->trueWeight, $object, $user->hasRight('reception', 'creer'));
 	print '</td><td colspan="3">';
 
 	if ($action == 'edittrueWeight') {
@@ -1563,13 +1563,13 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Width
-	print '<tr><td>'.$form->editfieldkey("Width", 'trueWidth', $object->trueWidth, $object, $user->rights->reception->creer).'</td><td colspan="3">';
-	print $form->editfieldval("Width", 'trueWidth', $object->trueWidth, $object, $user->rights->reception->creer);
+	print '<tr><td>'.$form->editfieldkey("Width", 'trueWidth', $object->trueWidth, $object, $user->hasRight('reception', 'creer')).'</td><td colspan="3">';
+	print $form->editfieldval("Width", 'trueWidth', $object->trueWidth, $object, $user->hasRight('reception', 'creer'));
 	print ($object->trueWidth && $object->width_units != '') ? ' '.measuringUnitString(0, "size", $object->width_units) : '';
 	print '</td></tr>';
 
 	// Height
-	print '<tr><td>'.$form->editfieldkey("Height", 'trueHeight', $object->trueHeight, $object, $user->rights->reception->creer).'</td><td colspan="3">';
+	print '<tr><td>'.$form->editfieldkey("Height", 'trueHeight', $object->trueHeight, $object, $user->hasRight('reception', 'creer')).'</td><td colspan="3">';
 	if ($action == 'edittrueHeight') {
 		print '<form name="settrueHeight" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 		print '<input name="action" value="settrueHeight" type="hidden">';
@@ -1588,8 +1588,8 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Depth
-	print '<tr><td>'.$form->editfieldkey("Depth", 'trueDepth', $object->trueDepth, $object, $user->rights->reception->creer).'</td><td colspan="3">';
-	print $form->editfieldval("Depth", 'trueDepth', $object->trueDepth, $object, $user->rights->reception->creer);
+	print '<tr><td>'.$form->editfieldkey("Depth", 'trueDepth', $object->trueDepth, $object, $user->hasRight('reception', 'creer')).'</td><td colspan="3">';
+	print $form->editfieldval("Depth", 'trueDepth', $object->trueDepth, $object, $user->hasRight('reception', 'creer'));
 	print ($object->trueDepth && $object->depth_units != '') ? ' '.measuringUnitString(0, "size", $object->depth_units) : '';
 	print '</td></tr>';
 
@@ -1671,8 +1671,8 @@ if ($action == 'create') {
 	print '</tr>';
 
 	// Tracking Number
-	print '<tr><td class="titlefield">'.$form->editfieldkey("TrackingNumber", 'tracking_number', $object->tracking_number, $object, $user->rights->reception->creer).'</td><td colspan="3">';
-	print $form->editfieldval("TrackingNumber", 'tracking_number', $object->tracking_url, $object, $user->rights->reception->creer, 'safehtmlstring', $object->tracking_number);
+	print '<tr><td class="titlefield">'.$form->editfieldkey("TrackingNumber", 'tracking_number', $object->tracking_number, $object, $user->hasRight('reception', 'creer')).'</td><td colspan="3">';
+	print $form->editfieldval("TrackingNumber", 'tracking_number', $object->tracking_url, $object, $user->hasRight('reception', 'creer'), 'safehtmlstring', $object->tracking_number);
 	print '</td></tr>';
 
 	// Incoterms
@@ -1681,7 +1681,7 @@ if ($action == 'create') {
 		print '<table width="100%" class="nobordernopadding"><tr><td>';
 		print $langs->trans('IncotermLabel');
 		print '<td><td class="right">';
-		if ($user->rights->reception->creer) {
+		if ($user->hasRight('reception', 'creer')) {
 			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/reception/card.php?id='.$object->id.'&action=editincoterm&token='.newToken().'">'.img_edit().'</a>';
 		} else {
 			print '&nbsp;';
@@ -1720,7 +1720,7 @@ if ($action == 'create') {
 	print '<thead>';
 	print '<tr class="liste_titre">';
 	// #
-	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+	if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 		print '<td width="5" class="center">&nbsp;</td>';
 	}
 	// Product/Service
@@ -1786,7 +1786,7 @@ if ($action == 'create') {
 
 	$var = false;
 
-	if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+	if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
 		$object->fetch_thirdparty();
 		$outputlangs = $langs;
 		$newlang = '';
@@ -1854,14 +1854,14 @@ if ($action == 'create') {
 		print '<tr class="oddeven" id="row-'.$lines[$i]->id.'" data-id="'.$lines[$i]->id.'" data-element="'.$lines[$i]->element.'">';
 
 		// #
-		if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+		if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 			print '<td class="center">'.($i + 1).'</td>';
 		}
 
 		// Predefined product or service
 		if ($lines[$i]->fk_product > 0) {
 			// Define output language
-			if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
 				$prod = new Product($db);
 				$prod->fetch($lines[$i]->fk_product);
 				$label = (!empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $lines[$i]->product->label;
@@ -1971,11 +1971,11 @@ if ($action == 'create') {
 					// Batch number managment
 					if ($conf->productbatch->enabled && !empty($lines[$i]->product->status_batch)) {
 						print '<td class="nowraponall left"><input name="batch'.$line_id.'" id="batch'.$line_id.'" type="text" value="'.$lines[$i]->batch.'"><br>';
-						if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+						if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 							print $langs->trans('SellByDate').' : ';
 							print $form->selectDate($lines[$i]->sellby, 'dlc'.$line_id, '', '', 1, "").'</br>';
 						}
-						if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+						if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 							print $langs->trans('EatByDate').' : ';
 							print $form->selectDate($lines[$i]->eatby, 'dluo'.$line_id, '', '', 1, "");
 						}
@@ -2028,10 +2028,10 @@ if ($action == 'create') {
 						} else {
 							// lot is not created and info is only in reception lines
 							$batchinfo = $langs->trans("Batch").': '.$lines[$i]->batch;
-							if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+							if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 								$batchinfo .= ' - '.$langs->trans("SellByDate").': '.dol_print_date($lines[$i]->sellby, "day");
 							}
-							if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+							if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 								$batchinfo .= ' - '.$langs->trans("EatByDate").': '.dol_print_date($lines[$i]->eatby, "day");
 							}
 							$detail = $form->textwithtooltip(img_picto('', 'object_barcode').' '.$langs->trans("DetailBatchNumber"), $batchinfo);
@@ -2131,28 +2131,28 @@ if ($action == 'create') {
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) {
 			if ($object->statut == Reception::STATUS_DRAFT && $num_prod > 0) {
-				if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->reception->creer))
-				 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->reception->reception_advance->validate))) {
+				if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('reception', 'creer'))
+				 || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('reception', 'reception_advance', 'validate'))) {
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=valid&token='.newToken().'">'.$langs->trans("Validate").'</a>';
 				} else {
 					print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Validate").'</a>';
 				}
 			}
 			// Back to draft
-			if ($object->statut == Reception::STATUS_VALIDATED && $user->rights->reception->creer) {
+			if ($object->statut == Reception::STATUS_VALIDATED && $user->hasRight('reception', 'creer')) {
 				print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=modif&token='.newToken().'">'.$langs->trans('SetToDraft').'</a></div>';
 			}
 
 			// TODO add alternative status
 			// 0=draft, 1=validated, 2=billed, we miss a status "delivered" (only available on order)
-			if ($object->statut == Reception::STATUS_CLOSED && $user->rights->reception->creer) {
+			if ($object->statut == Reception::STATUS_CLOSED && $user->hasRight('reception', 'creer')) {
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("ReOpen").'</a>';
 			}
 
 			// Send
 			if (empty($user->socid)) {
 				if ($object->statut > 0) {
-					if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->reception->reception_advance->send) {
+					if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || $user->hasRight('reception', 'reception_advance', 'send')) {
 						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendByMail').'</a>';
 					} else {
 						print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';

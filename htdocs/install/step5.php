@@ -366,6 +366,11 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 					dol_print_error($db, 'Error in setup program');
 				}
 
+				// May fail if parameter already defined
+				dolibarr_install_syslog('step5: set the default language');
+				$resql = $db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) VALUES (".$db->encrypt('MAIN_LANG_DEFAULT').", ".$db->encrypt($setuplang).", 'chaine', 0, 'Default language', 1)");
+				//if (! $resql) dol_print_error($db,'Error in setup program');
+
 				$db->commit();
 			}
 		} else {
@@ -383,7 +388,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 
 			// Define if we need to update the MAIN_VERSION_LAST_UPGRADE value in database
 			$tagdatabase = false;
-			if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE)) {
+			if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')) {
 				$tagdatabase = true; // We don't know what it was before, so now we consider we are version choosed.
 			} else {
 				$mainversionlastupgradearray = preg_split('/[.-]/', $conf->global->MAIN_VERSION_LAST_UPGRADE);
@@ -414,11 +419,6 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 					dol_print_error($db, 'Error in setup program');
 				}
 			}
-
-			// May fail if parameter already defined
-			dolibarr_install_syslog('step5: set the default language');
-			$resql = $db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) VALUES (".$db->encrypt('MAIN_LANG_DEFAULT').", ".$db->encrypt($setuplang).", 'chaine', 0, 'Default language', 1)");
-			//if (! $resql) dol_print_error($db,'Error in setup program');
 		} else {
 			print $langs->trans("ErrorFailedToConnect")."<br>";
 		}
@@ -436,7 +436,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 // If first install
 if ($action == "set") {
 	if ($success) {
-		if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || ($conf->global->MAIN_VERSION_LAST_UPGRADE == DOL_VERSION)) {
+		if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') || ($conf->global->MAIN_VERSION_LAST_UPGRADE == DOL_VERSION)) {
 			// Install is finished (database is on same version than files)
 			print '<br>'.$langs->trans("SystemIsInstalled")."<br>";
 
@@ -444,7 +444,7 @@ if ($action == "set") {
 			// No need for the moment to create it automatically, creation by web assistant means permissions are given
 			// to the web user, it is better to show a warning to say to create it manually with correct user/permission (not erasable by a web process)
 			$createlock = 0;
-			if (!empty($force_install_lockinstall) || !empty($conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE)) {
+			if (!empty($force_install_lockinstall) || getDolGlobalString('MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE')) {
 				// Install is finished, we create the "install.lock" file, so install won't be possible anymore.
 				// TODO Upgrade will be still be possible if a file "upgrade.unlock" is present
 				$lockfile = DOL_DATA_ROOT.'/install.lock';
@@ -485,7 +485,7 @@ if ($action == "set") {
 	}
 } elseif (empty($action) || preg_match('/upgrade/i', $action)) {
 	// If upgrade
-	if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || ($conf->global->MAIN_VERSION_LAST_UPGRADE == DOL_VERSION)) {
+	if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') || ($conf->global->MAIN_VERSION_LAST_UPGRADE == DOL_VERSION)) {
 		// Upgrade is finished (database is on the same version than files)
 		print '<img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/checklist.svg" width="20" alt="Configuration">';
 		print ' <span class="valignmiddle">'.$langs->trans("SystemIsUpgraded")."</span><br>";
@@ -493,7 +493,7 @@ if ($action == "set") {
 		// Create install.lock file if it does not exists.
 		// Note: it should always exists. A better solution to allow upgrade will be to add an upgrade.unlock file
 		$createlock = 0;
-		if (!empty($force_install_lockinstall) || !empty($conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE)) {
+		if (!empty($force_install_lockinstall) || getDolGlobalString('MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE')) {
 			// Upgrade is finished, we modify the lock file
 			$lockfile = DOL_DATA_ROOT.'/install.lock';
 			$fp = @fopen($lockfile, "w");
