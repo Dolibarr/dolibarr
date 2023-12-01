@@ -457,7 +457,6 @@ class modMyModule extends DolibarrModules
 		}
 
 		// Create extrafields during init
-		$extrafieldfile = dol_buildpath('/mymodule/json/extrafields.json');
 		if (!empty($this->module_parts['extrafields'])) {
 			$tocreate = $this->module_parts['extrafields'];
 			include_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
