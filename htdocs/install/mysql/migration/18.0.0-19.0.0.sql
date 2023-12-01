@@ -144,3 +144,4 @@ UPDATE llx_product set stockable_product = 0 WHERE type = 1;
 
 ALTER TABLE llx_prelevement_lignes ADD COLUMN fk_user integer NULL;
 
+ALTER TABLE llx_propal ADD COLUMN model_pdf_pos_sign VARCHAR(32) DEFAULT NULL AFTER last_main_doc;
