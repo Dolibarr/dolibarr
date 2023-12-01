@@ -2657,3 +2657,48 @@ function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails =
 	}
 	return 0;
 }
+
+/**
+ * Define signing position
+ *
+ * @param	real		$p				Number page to print sign
+ * @param	real		$x				Posx to print sign
+ * @param	real		$y				Posy to print sign
+ * @param	real		$height			Height sign
+ * @param	real		$width			Width sign
+ * @return	int							<0 if KO, >0 if OK
+ */
+function pdf_setPosSign($p, $x, $y, $height, $width)
+{
+	global $conf, $db, $object;
+	$error = 0;
+
+	$db->begin();
+
+	$possign = $p.":".$x.":".$y.":".$height.":".$width;
+
+	$sql = "UPDATE ".MAIN_DB_PREFIX.$object->element;
+	$sql .= " SET model_pdf_pos_sign = '".$possign."'";
+	$sql .= " WHERE rowid = ".((int) $object->id);
+
+	dol_syslog(__METHOD__, LOG_DEBUG);
+	$resql = $db->query($sql);
+
+	if (!$resql) {
+		$object->errors[] = $db->error();
+		$error++;
+	}
+
+	if (!$error) {
+		$db->commit();
+		return 1;
+	} else {
+		foreach ($object->errors as $errmsg) {
+			dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
+			$object->error .= ($object->error ? ', '.$errmsg : $errmsg);
+		}
+		$db->rollback();
+		return -1 * $error;
+	}
+	return 0;
+}
