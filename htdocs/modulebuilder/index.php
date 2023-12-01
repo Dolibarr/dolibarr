@@ -121,6 +121,30 @@ $result = restrictedArea($user, 'modulebuilder', null);
 
 $error = 0;
 
+$fieldsToManage = [
+	'attrname' => 'text',
+	'label' => 'text',
+	'type' => 'selecttype',
+	'pos' => 'text',
+	'size' => 'text',
+	'elementtype' => 'text',
+	'unique' => 'text',
+	'required' => 'text',
+	'default_value' => 'text',
+	'param' => 'text',
+	'alwayseditable' => 'text',
+	'perms' => 'text',
+	'list' => 'text',
+	'help' => 'text',
+	'computed' => 'text',
+	'entity' => 'text',
+	'langfile' => 'text',
+	'enabled' => 'text',
+	'totalizable' => 'text',
+	'printable' => 'text',
+	'moreparams' => 'array'
+];
+
 $form = new Form($db);
 
 // Define $listofmodules
@@ -885,6 +909,72 @@ if ($dirins && $action == 'addlanguage' && !empty($module)) {
 		}
 	} else {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Language")), null, 'errors');
+	}
+}
+
+// add Extrafield definition
+if ($dirins && $action == 'addextrafield' && !empty($module)) {
+	$extrafieldkey = GETPOST('extrafieldkey', 'int');
+	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+	$destdir = $dirins.'/'.strtolower($module);
+	$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
+	$extrafieldstocreate = [];
+	foreach ($fieldsToManage as $keyfield => $valuefield) {
+		if ($valuefield == 'text') {
+			$filter = 'alpha';
+		} else {
+			$filter = '';
+		}
+		$$keyfield = GETPOST($keyfield, $filter);
+	}
+
+	if (!GETPOST('attrname')) {
+		$error++;
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Attrname")), null, 'errors');
+	}
+	if (!GETPOST('label')) {
+		$error++;
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
+	}
+	if (!$error) {
+		dol_include_once($pathtofile);
+		$class = 'mod' . $module;
+
+		if (class_exists($class)) {
+			try {
+				$moduleobj = new $class($db);
+			} catch (Exception $e) {
+				$error++;
+				dol_print_error($db, $e->getMessage());
+			}
+		} else {
+			$error++;
+			$langs->load("errors");
+			dol_print_error($db, $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
+			exit;
+		}
+		$extrafieldstocreate = $moduleobj->module_parts['extrafields'];
+	}
+	if (!$error) {
+		$extratoadd = [];
+		foreach ($fieldsToManage as $keyfield => $valuefield) {
+			$extratoadd[$keyfield] = $$keyfield;
+		}
+		$extrafieldstocreate[] = $extratoadd;
+
+		$modulelowercase = strtolower($module);
+
+		// Dir for module
+		$dirofjson = dol_buildpath($modulelowercase, 0);
+
+		if ($dirofjson == $dolibarr_main_document_root.'/'.$modulelowercase) {
+			// This is not a custom module, we force diroflang to htdocs root
+			$dirofjson = $dolibarr_main_document_root;
+			$srcfile = $dirofjson.'/json/extrafields.json';
+		} else {
+			$srcdir = $dirofjson.'/json/extrafields.json';
+			file_put_contents($srcdir, json_encode($extrafieldstocreate, JSON_PRETTY_PRINT));
+		}
 	}
 }
 
@@ -4991,6 +5081,144 @@ if ($module == 'initmodule') {
 
 				print '</form>';
 			}
+		}
+
+		if ($tab == 'extrafields') {
+			print '<!-- tab=menus -->'."\n";
+			$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+
+			$extrafieldsToCreate = $moduleobj->module_parts['extrafields'];
+
+			$types = ExtraFields::$type2label;
+
+			$action = GETPOST('action', 'alpha');
+
+			if ($action == 'deleteextrafield') {
+				$formconfirm = $form->formconfirm(
+					$_SERVER["PHP_SELF"].'?extrafieldskey='.urlencode(GETPOST('extrafieldskey', 'int')).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj),
+					$langs->trans('Delete'),
+					$langs->trans('Confirm Delete Extrafield', GETPOST('extrafieldskey', 'alpha')),
+					'confirm_deleteextrafield',
+					'',
+					0,
+					1
+				);
+				print $formconfirm;
+			}
+
+			print '<!-- Tab to manage extrafields -->'."\n";
+			print '<span class="opacitymedium">';
+			$htmlhelp = $langs->trans("ExtrafieldsDefDescTooltip", '{s1}');
+			$htmlhelp = str_replace('{s1}', '<a target="adminbis" class="nofocusvisible" href="'.DOL_URL_ROOT.'/admin/perms.php">'.$langs->trans('DefaultRights').'</a>', $htmlhelp);
+			print $form->textwithpicto($langs->trans("ExtrafieldsDefDesc"), $htmlhelp, 1, 'help', '', 0, 2, 'helpondesc').'<br>';
+			print '</span>';
+
+			print load_fiche_titre($langs->trans("ListOfExtrafieldsDefined"), '', '');
+
+			print '<!-- form to add extrafields -->'."\n";
+			print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="action" value="addextrafield">';
+			print '<input type="hidden" name="tab" value="extrafields">';
+			print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
+			print '<input type="hidden" name="tabobj" value="'.dol_escape_htmltag($tabobj).'">';
+
+			print '<div class="div-table-responsive">';
+			print '<table class="noborder">';
+
+			print '<tr class="liste_titre">';
+			foreach ($fieldsToManage as $keytype => $field) {
+				print_liste_field_titre($keytype, '', '', '', '', '', '', '', 'center');
+			}
+			// add column
+			print_liste_field_titre("", '', '', '', '', '', '', '', 'center');
+			print "</tr>\n";
+
+			// form for add new extrafield
+			print '<tr class="small">';
+			foreach ($fieldsToManage as $keytype => $fieldtype) {
+				if ($fieldtype == 'selecttype') {
+					print '<td><select class="minwidth100" name="type" id="type">';
+					print '<option value=""></option>';
+					foreach ($types as $typekey => $type) {
+						print '<option value="'.$typekey.'">'.$langs->trans($type).'</option>';
+					}
+					print '</select></td>';
+				} else {
+					print '<td><input type="text" name="'.$keytype.'" class="width75"></td>';
+				}
+			}
+			print '<td class="center minwidth75 tdstickyright tdstickyghostwhite">';
+			print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
+			print '</td>';
+			print '</tr>';
+
+			if (count($extrafieldsToCreate)) {
+				foreach ($extrafieldsToCreate as $extrakey => $extra) {
+					// section for editing extrafield
+					if ($action == 'edit_extrafield' && $extrakey == (int) GETPOST('extrafieldskey', 'int')) {
+						print '<tr class="oddeven">';
+						print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="updateExtrafields">';
+						print '<input type="hidden" name="token" value="'.newToken().'">';
+						print '<input type="hidden" name="tab" value="extrafields">';
+						print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
+						print '<input type="hidden" name="tabobj" value="'.dol_escape_htmltag($tabobj).'">';
+						print '<input type="hidden" name="action" value="update_extrafield">';
+						print '<input type="hidden" name="counter" value="'.$i.'">';
+
+						print '<input type="hidden" name="extrafieldskey" value="'.$extrakey.'">';
+						foreach ($fieldsToManage as $keytype => $fieldtype) {
+							if ($fieldtype == 'selecttype') {
+								print '<td class="tdsticky tdstickygray"><select class="minwidth100" name="type" id="type">';
+								foreach ($types as $typekey => $type) {
+									print '<option value="'.$typekey.'" '.($typekey==$extra['type'] ? 'selected':'').'>'.$type.'</option>';
+								}
+								print '</select></td>';
+							} else {
+								print '<td class="tdsticky tdstickygray">';
+								print '<input class="width75" type="text" value="'.dol_escape_htmltag($extra[$keytype]).'"/>';
+								print '</td>';
+							}
+						}
+
+						print '<td class="center minwidth75 tdstickyright tdstickyghostwhite">';
+						print '<input id ="modifyPerm" class="reposition button smallpaddingimp" type="submit" name="modifyextrafield" value="'.$langs->trans("Modify").'"/>';
+						print '<br>';
+						print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"/>';
+						print '</td>';
+
+						print '</form>';
+						print '</tr>';
+					} else {
+						print '<tr class="oddeven">';
+						foreach ($fieldsToManage as $keytype => $fieldtype) {
+							if ($fieldtype == 'selecttype') {
+								print '<td>';
+								print dol_escape_htmltag($types[$extra['type']]);
+								print '</td>';
+							} else {
+								print '<td>';
+								print dol_escape_htmltag($extra[$keytype]);
+								print '</td>';
+							}
+						}
+
+						print '<td class="center minwidth75 tdstickyright tdstickyghostwhite">';
+						print '<a class="editfielda reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=edit_extrafield&token='.newToken().'&extrafieldskey='.urlencode($extrakey).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_edit().'</a>';
+						print '<a class="marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=deleteextrafield&token='.newToken().'&extrafieldskey='.urlencode($extrakey).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_delete().'</a>';
+						print '</td>';
+
+						print '</tr>';
+					}
+				}
+			} else {
+				print '<tr><td colspan="5"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+			}
+
+			print '</table>';
+			print '</div>';
+
+			print '</form>';
 		}
 
 		if ($tab == 'menus') {

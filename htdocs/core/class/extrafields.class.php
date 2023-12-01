@@ -129,7 +129,7 @@ class ExtraFields
 	 *  @param	string			$list				Visibility ('0'=never visible, '1'=visible on list+forms, '2'=list only, '3'=form only or 'eval string')
 	 *  @param	string			$help				Text with help tooltip
 	 *  @param  string  		$computed           Computed value
-	 *  @param  string  		$entity    		 	Entity of extrafields (for multicompany modules)
+	 *  @param  string|int      $entity     	    Entity of extrafields (for multicompany modules), empty string for current entity or int
 	 *  @param  string  		$langfile  		 	Language file
 	 *  @param  string  		$enabled  		 	Condition to have the field enabled or not
 	 *  @param	int				$totalizable		Is a measure. Must show a total on lists
@@ -294,7 +294,7 @@ class ExtraFields
 	 *  @param	string			$help			Help on tooltip
 	 *  @param  string          $default        Default value (in database. use the default_value feature for default value on screen).
 	 *  @param  string          $computed       Computed value
-	 *  @param  string          $entity     	Entity of extrafields
+	 *  @param  string|int      $entity     	Entity of extrafields, empty string for current entity or int
 	 *  @param	string			$langfile		Language file
 	 *  @param  string  		$enabled  		Condition to have the field enabled or not
 	 *  @param	int				$totalizable	Is a measure. Must show a total on lists
@@ -393,7 +393,7 @@ class ExtraFields
 			$sql .= " '".$this->db->escape($type)."',";
 			$sql .= " ".((int) $pos).",";
 			$sql .= " '".$this->db->escape($size)."',";
-			$sql .= " ".($entity === '' ? $conf->entity : $entity).",";
+			$sql .= " ".((int) ($entity === '' ? $conf->entity : $entity)).",";
 			$sql .= " '".$this->db->escape($elementtype)."',";
 			$sql .= " ".((int) $unique).",";
 			$sql .= " ".((int) $required).",";

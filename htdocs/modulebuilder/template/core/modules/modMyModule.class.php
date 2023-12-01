@@ -478,12 +478,12 @@ class modMyModule extends DolibarrModules
 					$extra['list'],
 					$extra['help'],
 					$extra['computed'],
-					$extra['entity'],
-					$extra['langfile'],
-					$extra['enabled'],
-					$extra['totalizable'],
-					$extra['printable'],
-					$extra['moreparams']
+					$extra['entity'] ?? '',
+					$extra['langfile'] ?? '',
+					$extra['enabled'] ?? '1',
+					$extra['totalizable'] ?? 0,
+					$extra['printable'] ?? 0,
+					$extra['moreparams'] ?? []
 				);
 			}
 		}
