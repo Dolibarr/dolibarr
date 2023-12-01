@@ -85,6 +85,14 @@ class modMyModule extends DolibarrModules
 		// To use a supported fa-xxx css style of font awesome, use this->picto='xxx'
 		$this->picto = 'generic';
 
+		// check if we have extrafields to create
+		$extrafieldfile = dol_buildpath('/mymodule/json/extrafields.json');
+		$tocreate = [];
+		if (file_exists($extrafieldfile)) {
+			$extras = file_get_contents($extrafieldfile);
+			$tocreate = json_decode($extras, true);
+		}
+
 		// Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
 		$this->module_parts = array(
 			// Set this to 1 if module has its own trigger directory (core/triggers)
@@ -123,6 +131,7 @@ class modMyModule extends DolibarrModules
 			),
 			// Set this to 1 if features of module are opened to external users
 			'moduleforexternal' => 0,
+			'extrafields' => $tocreate,
 		);
 
 		// Data directories to create when module is enabled.
@@ -448,13 +457,37 @@ class modMyModule extends DolibarrModules
 		}
 
 		// Create extrafields during init
-		//include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-		//$extrafields = new ExtraFields($this->db);
-		//$result1=$extrafields->addExtraField('mymodule_myattr1', "New Attr 1 label", 'boolean', 1,  3, 'thirdparty',   0, 0, '', '', 1, '', 0, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")');
-		//$result2=$extrafields->addExtraField('mymodule_myattr2', "New Attr 2 label", 'varchar', 1, 10, 'project',      0, 0, '', '', 1, '', 0, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")');
-		//$result3=$extrafields->addExtraField('mymodule_myattr3', "New Attr 3 label", 'varchar', 1, 10, 'bank_account', 0, 0, '', '', 1, '', 0, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")');
-		//$result4=$extrafields->addExtraField('mymodule_myattr4', "New Attr 4 label", 'select',  1,  3, 'thirdparty',   0, 1, '', array('options'=>array('code1'=>'Val1','code2'=>'Val2','code3'=>'Val3')), 1,'', 0, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")');
-		//$result5=$extrafields->addExtraField('mymodule_myattr5', "New Attr 5 label", 'text',    1, 10, 'user',         0, 0, '', '', 1, '', 0, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")');
+		$extrafieldfile = dol_buildpath('/mymodule/json/extrafields.json');
+		if (!empty($this->module_parts['extrafields'])) {
+			$tocreate = $this->module_parts['extrafields'];
+			include_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
+			$extrafields = new ExtraFields($this->db);
+			foreach ($tocreate as $extra) {
+				$extrafields->addExtraField(
+					$extra['attrname'],
+					$extra['label'],
+					$extra['type'],
+					$extra['pos'],
+					$extra['size'],
+					$extra['elementtype'],
+					$extra['unique'],
+					$extra['required'],
+					$extra['default_value'],
+					$extra['param'],
+					$extra['alwayseditable'],
+					$extra['perms'],
+					$extra['list'],
+					$extra['help'],
+					$extra['computed'],
+					$extra['entity'],
+					$extra['langfile'],
+					$extra['enabled'],
+					$extra['totalizable'],
+					$extra['printable'],
+					$extra['moreparams']
+				);
+			}
+		}
 
 		// Permissions
 		$this->remove($options);

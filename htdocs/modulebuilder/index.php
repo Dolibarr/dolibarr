@@ -3294,6 +3294,7 @@ if ($module == 'initmodule') {
 		$diroflang = dol_buildpath($modulelowercase, 0)."/langs";
 		$countLangs = countItemsInDirectory($diroflang, 2);
 		$countDictionaries = (!empty($moduleobj->dictionaries) ? count($moduleobj->dictionaries['tabname']) : 0);
+		$countExtrafields = (!empty($moduleobj->module_parts['extrafields']) ? count($moduleobj->module_parts['extrafields']) : 0);
 		$countRights = count($moduleobj->rights);
 		$countMenus = count($moduleobj->menu);
 		$countTriggers = countItemsInDirectory(dol_buildpath($modulelowercase, 0)."/core/triggers");
@@ -3324,6 +3325,11 @@ if ($module == 'initmodule') {
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=dictionaries&module='.$module.($forceddirread ? '@'.$dirread : '');
 		$head2[$h][1] = ($countDictionaries == 0  ? $langs->trans("Dictionaries") : $langs->trans('Dictionaries').'<span class="marginleftonlyshort badge">'.$countDictionaries."</span>");
 		$head2[$h][2] = 'dictionaries';
+		$h++;
+
+		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=extrafields&module='.$module.($forceddirread ? '@'.$dirread : '');
+		$head2[$h][1] = $langs->trans("Extrafields") . ($countExtrafields == 0  ? '' : '<span class="marginleftonlyshort badge">'.$countExtrafields."</span>");
+		$head2[$h][2] = 'extrafields';
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=permissions&module='.$module.($forceddirread ? '@'.$dirread : '');
