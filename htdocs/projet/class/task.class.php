@@ -200,7 +200,7 @@ class Task extends CommonObjectLine
 	 *
 	 *  @param	User	$user        	User that create
 	 *  @param 	int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return int 		        	<0 if KO, Id of created object if OK
+	 *  @return int 		        	Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -306,7 +306,7 @@ class Task extends CommonObjectLine
 	 *  @param	int		$id					Id object
 	 *  @param	int		$ref				ref object
 	 *  @param	int		$loadparentdata		Also load parent data
-	 *  @return int 		        		<0 if KO, 0 if not found, >0 if OK
+	 *  @return int 		        		Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = '', $loadparentdata = 0)
 	{
@@ -559,7 +559,7 @@ class Task extends CommonObjectLine
 	 *
 	 *	@param	User	$user        	User that delete
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -1597,7 +1597,7 @@ class Task extends CommonObjectLine
 	 *  Load properties of timespent of a task from the time spent ID.
 	 *
 	 *  @param	int		$id 	Id in time spent table
-	 *  @return int		        <0 if KO, >0 if OK
+	 *  @return int		        Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchTimeSpent($id)
 	{
@@ -1720,7 +1720,7 @@ class Task extends CommonObjectLine
 	 *
 	 *  @param	User	$user           User id
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return	int						<0 if KO, >0 if OK
+	 *  @return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function updateTimeSpent($user, $notrigger = 0)
 	{
@@ -1839,7 +1839,7 @@ class Task extends CommonObjectLine
 	 *
 	 *  @param	User	$user        	User that delete
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return	int						<0 if KO, >0 if OK
+	 *  @return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function delTimeSpent($user, $notrigger = 0)
 	{

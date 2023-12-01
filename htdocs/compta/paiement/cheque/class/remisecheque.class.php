@@ -142,7 +142,7 @@ class RemiseCheque extends CommonObject
 	 *	@param  int		$account_id 	Bank account for cheque receipt
 	 *  @param  int		$limit          Limit ref of cheque to this
 	 *  @param	array	$toRemise		array with cheques to remise
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user, $account_id, $limit, $toRemise)
 	{
@@ -339,7 +339,7 @@ class RemiseCheque extends CommonObject
 	 *  Validate a receipt
 	 *
 	 *  @param	User	$user 		User
-	 *  @return int      			<0 if KO, >0 if OK
+	 *  @return int      			Return integer <0 if KO, >0 if OK
 	 */
 	public function validate($user)
 	{
@@ -568,7 +568,7 @@ class RemiseCheque extends CommonObject
 	 *
 	 *	@param	string		$model 			Model name
 	 *	@param 	Translate	$outputlangs	Object langs
-	 * 	@return int        					<0 if KO, >0 if OK
+	 * 	@return int        					Return integer <0 if KO, >0 if OK
 	 */
 	public function generatePdf($model, $outputlangs)
 	{
@@ -815,7 +815,7 @@ class RemiseCheque extends CommonObject
 	 *
 	 *      @param	User		$user           Object user
 	 *      @param  int   $date           Date creation
-	 *      @return int                 		<0 if KO, >0 if OK
+	 *      @return int                 		Return integer <0 if KO, >0 if OK
 	 */
 	public function set_date($user, $date)
 	{
@@ -845,7 +845,7 @@ class RemiseCheque extends CommonObject
 	 *
 	 *      @param	User		$user           Object user
 	 *      @param  int   $ref         ref of bordereau
-	 *      @return int                 		<0 if KO, >0 if OK
+	 *      @return int                 		Return integer <0 if KO, >0 if OK
 	 */
 	public function set_number($user, $ref)
 	{

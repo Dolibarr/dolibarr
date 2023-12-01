@@ -153,7 +153,7 @@ class AccountancyCategory // extends CommonObject
 	 *
 	 *  @param      User	$user        User that create
 	 *  @param      int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return     int      		   	 <0 if KO, Id of created object if OK
+	 *  @return     int      		   	 Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -252,7 +252,7 @@ class AccountancyCategory // extends CommonObject
 	 *  @param      int		$id    	Id object
 	 *  @param		string	$code	Code
 	 *  @param		string	$label	Label
-	 *  @return     int          	<0 if KO, >0 if OK
+	 *  @return     int          	Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $code = '', $label = '')
 	{
@@ -311,7 +311,7 @@ class AccountancyCategory // extends CommonObject
 	 *
 	 *  @param      User	$user        User that modify
 	 *  @param      int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return     int     		   	 <0 if KO, >0 if OK
+	 *  @return     int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -392,7 +392,7 @@ class AccountancyCategory // extends CommonObject
 	 *
 	 *	@param  User	$user        User that delete
 	 *  @param	int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 <0 if KO, >0 if OK
+	 *  @return	int					 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -429,7 +429,7 @@ class AccountancyCategory // extends CommonObject
 	 * Function to select into ->lines_display all accounting accounts for a given custom accounting group
 	 *
 	 * @param 	int 	$id 	Id
-	 * @return 	int 			<0 if KO, 0 if not found, >0 if OK
+	 * @return 	int 			Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function display($id)
 	{
@@ -464,7 +464,7 @@ class AccountancyCategory // extends CommonObject
 	 * Function to fill ->lines_cptbk with accounting account (defined in chart of account) and not yet into a custom group
 	 *
 	 * @param 	int $id     Id of category to know which account to exclude
-	 * @return 	int 		<0 if KO, 0 if not found, >0 if OK
+	 * @return 	int 		Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function getAccountsWithNoCategory($id)
 	{
@@ -508,7 +508,7 @@ class AccountancyCategory // extends CommonObject
 	 * @param int $id_cat Id category
 	 * @param array $cpts list of accounts array
 	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function updateAccAcc($id_cat, $cpts = array())
 	{
@@ -579,7 +579,7 @@ class AccountancyCategory // extends CommonObject
 	 *
 	 * @param int $cpt_id Id of accounting account
 	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function deleteCptCat($cpt_id)
 	{

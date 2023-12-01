@@ -175,7 +175,7 @@ llxHeader('', $langs->trans('ListPayment'));
 
 if (GETPOST("orphelins", "alpha")) {
 	// Payments not linked to an invoice. Should not happend. For debug only.
-	$sql = "SELECT p.rowid, p.ref, p.datep, p.amount, p.statut, p.num_paiement,";
+	$sql = "SELECT p.rowid, p.ref, p.datep, p.amount, p.statut, p.num_paiement as num_payment,";
 	$sql .= " c.code as paiement_code";
 
 	// Add fields from hooks
@@ -192,7 +192,7 @@ if (GETPOST("orphelins", "alpha")) {
 	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
 } else {
-	$sql = "SELECT p.rowid, p.ref, p.datep, p.fk_bank, p.amount, p.statut, p.num_paiement";
+	$sql = "SELECT p.rowid, p.ref, p.datep, p.fk_bank, p.amount, p.statut, p.num_paiement as num_payment";
 	$sql .= ", c.code as paiement_code";
 	$sql .= ", ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.fk_accountancy_journal as accountancy_journal";
 	$sql .= ", s.rowid as socid, s.nom as name, s.email";
@@ -384,7 +384,7 @@ if ($massactionbutton) {
 
 $moreforfilter = '';
 print '<div class="div-table-responsive">';
-print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : '').'">';
+print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : '').'">';
 
 // Fields title search
 // --------------------------------------------------------------------
@@ -392,13 +392,13 @@ print '<tr class="liste_titre_filter">';
 
 // Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print '<td class="liste_titre center maxwidthsearch actioncolumn">';
+	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
 	print '</td>';
 }
 
-// Filters: Lines (placeholder)
+// #
 if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 	print '<td class="liste_titre">';
 	print '</td>';
@@ -623,7 +623,7 @@ while ($i < $imaxinloop) {
 
 		// No
 		if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
-			print '<td>'.(($offset * $limit) + $i).'</td>';
+			print '<td class="nowraponall">'.(($offset * $limit) + $i).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -631,7 +631,7 @@ while ($i < $imaxinloop) {
 
 		// Ref
 		if (!empty($arrayfields['p.ref']['checked'])) {
-			print '<td>'.$object->getNomUrl(1).'</td>';
+			print '<td class="nowraponall">'.$object->getNomUrl(1).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -640,7 +640,7 @@ while ($i < $imaxinloop) {
 		// Date
 		if (!empty($arrayfields['p.datep']['checked'])) {
 			$dateformatforpayment = 'dayhour';
-			print '<td class="center">'.dol_print_date($db->jdate($objp->datep), $dateformatforpayment, 'tzuser').'</td>';
+			print '<td class="nowraponall center">'.dol_print_date($db->jdate($objp->datep), $dateformatforpayment, 'tzuser').'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -648,7 +648,7 @@ while ($i < $imaxinloop) {
 
 		// Thirdparty
 		if (!empty($arrayfields['s.nom']['checked'])) {
-			print '<td>';
+			print '<td class="tdoverflowmax125">';
 			if ($objp->socid > 0) {
 				print $companystatic->getNomUrl(1, '', 24);
 			}
@@ -668,7 +668,7 @@ while ($i < $imaxinloop) {
 
 		// Filter: Cheque number (fund transfer)
 		if (!empty($arrayfields['p.num_paiement']['checked'])) {
-			print '<td>'.$objp->num_paiement.'</td>';
+			print '<td>'.$objp->num_payment.'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -676,7 +676,7 @@ while ($i < $imaxinloop) {
 
 		// Bank transaction
 		if (!empty($arrayfields['transaction']['checked'])) {
-			print '<td>';
+			print '<td class="tdoverflowmax125">';
 			if ($objp->fk_bank > 0) {
 				$bankline->fetch($objp->fk_bank);
 				print $bankline->getNomUrl(1, 0);

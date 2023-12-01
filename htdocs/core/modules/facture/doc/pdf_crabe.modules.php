@@ -907,7 +907,7 @@ class pdf_crabe extends ModelePDFFactures
 	 *  @param  int			$posy           	Position y in PDF
 	 *  @param  Translate	$outputlangs    	Object langs for output
 	 *  @param  int			$heightforfooter 	Height for footer
-	 *  @return int             				<0 if KO, >0 if OK
+	 *  @return int             				Return integer <0 if KO, >0 if OK
 	 */
 	protected function _tableau_versements(&$pdf, $object, $posy, $outputlangs, $heightforfooter = 0)
 	{
