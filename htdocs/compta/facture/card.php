@@ -127,6 +127,9 @@ if ($id > 0 || !empty($ref)) {
 			$fetch_situation = true;
 		}
 		$ret = $object->fetch($id, $ref, '', '', $fetch_situation);
+		if ($ret > 0 && isset($object->fk_project)) {
+			$ret = $object->fetch_project();
+		}
 	}
 }
 
@@ -2363,11 +2366,11 @@ if (empty($reshook)) {
 
 			// Check price is not lower than minimum (check is done only for standard or replacement invoices)
 			if ($usermustrespectpricemin && ($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT)) {
-				if ($pu_equivalent && $price_min && ((price2num($pu_equivalent) * (1 - $remise_percent / 100)) < price2num($price_min))) {
+				if ($pu_equivalent && $price_min && ((price2num($pu_equivalent) * (1 - $remise_percent / 100)) < price2num($price_min)) && $price_base_type == 'HT') {
 					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
-				} elseif ($pu_equivalent_ttc && $price_min_ttc && ((price2num($pu_equivalent_ttc) * (1 - $remise_percent / 100)) < price2num($price_min_ttc))) {
+				} elseif ($pu_equivalent_ttc && $price_min_ttc && ((price2num($pu_equivalent_ttc) * (1 - $remise_percent / 100)) < price2num($price_min_ttc)) && $price_base_type == 'TTC') {
 					$mesg = $langs->trans("CantBeLessThanMinPriceInclTax", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
@@ -2582,12 +2585,12 @@ if (empty($reshook)) {
 
 			// Check price is not lower than minimum (check is done only for standard or replacement invoices)
 			if ($usermustrespectpricemin && ($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT)) {
-				if ($pu_equivalent && $price_min && (((float) price2num($pu_equivalent) * (1 - (float) $remise_percent / 100)) < (float) price2num($price_min))) {
+				if ($pu_equivalent && $price_min && (((float) price2num($pu_equivalent) * (1 - (float) $remise_percent / 100)) < (float) price2num($price_min)) && $price_base_type == 'HT') {
 					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
 					$action = 'editline';
-				} elseif ($pu_equivalent_ttc && $price_min_ttc && ((price2num($pu_equivalent_ttc) * (1 - (float) $remise_percent / 100)) < price2num($price_min_ttc))) {
+				} elseif ($pu_equivalent_ttc && $price_min_ttc && ((price2num($pu_equivalent_ttc) * (1 - (float) $remise_percent / 100)) < price2num($price_min_ttc)) && $price_base_type == 'TTC') {
 					$mesg = $langs->trans("CantBeLessThanMinPriceInclTax", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
@@ -3757,7 +3760,7 @@ if ($action == 'create') {
 	// Payment term
 	print '<tr><td class="nowrap fieldrequired">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
 	print img_picto('', 'payment', 'class="pictofixedwidth"');
-	print $form->getSelectConditionsPaiements((GETPOSTISSET('cond_reglement_id') && GETPOST('cond_reglement_id', 'int') != 0) ? GETPOST('cond_reglement_id', 'int') : $cond_reglement_id, 'cond_reglement_id', -1, 1, 0, 'maxwidth500 widthcentpercentminusx');
+	print $form->getSelectConditionsPaiements((GETPOSTISSET('cond_reglement_id') && !empty(GETPOST('cond_reglement_id', 'int'))) ? GETPOST('cond_reglement_id', 'int') : $cond_reglement_id, 'cond_reglement_id', -1, 1, 0, 'maxwidth500 widthcentpercentminusx');
 	print '</td></tr>';
 
 
@@ -3814,7 +3817,7 @@ if ($action == 'create') {
 	// Payment mode
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
 	print img_picto('', 'bank', 'class="pictofixedwidth"');
-	print $form->select_types_paiements((GETPOSTISSET('mode_reglement_id') && GETPOST('mode_reglement_id') != 0)? GETPOST('mode_reglement_id') : $mode_reglement_id, 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
+	print $form->select_types_paiements((GETPOSTISSET('mode_reglement_id') && !empty(GETPOST('mode_reglement_id')))? GETPOST('mode_reglement_id') : $mode_reglement_id, 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
 	print '</td></tr>';
 
 	// Bank Account
@@ -5247,7 +5250,10 @@ if ($action == 'create') {
 				}
 				print '<td class="right"><span class="amount">'.price($sign * $objp->amount).'</span></td>';
 				print '<td class="center">';
-				if ($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $user->socid == 0) {
+
+				$paiement = new Paiement($db);
+				$paiement->fetch($objp->rowid);
+				if ($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $user->socid == 0  && !$paiement->isReconciled()) {
 					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deletepayment&token='.newToken().'&paiement_id='.$objp->rowid.'">';
 					print img_delete();
 					print '</a>';

@@ -298,7 +298,7 @@ DescVentilExpenseReportMore=Ukisanidi akaunti ya uhasibu kwa aina ya njia za rip
 DescVentilDoneExpenseReport=Angalia hapa orodha ya mistari ya ripoti za gharama na akaunti ya uhasibu wa ada
 
 Closure=Kufungwa kwa mwaka
-DescClosure=Angalia hapa idadi ya miondoko kwa mwezi ambayo bado haijathibitishwa na kufungwa
+AccountancyClosureStep1Desc=Angalia hapa idadi ya miondoko kwa mwezi ambayo bado haijathibitishwa na kufungwa
 OverviewOfMovementsNotValidated=Muhtasari wa harakati ambazo hazijathibitishwa na kufungwa
 AllMovementsWereRecordedAsValidated=Vitendo vyote vilirekodiwa kama vilivyothibitishwa na kufungwa
 NotAllMovementsCouldBeRecordedAsValidated=Sio miondoko yote ingeweza kurekodiwa kama iliyothibitishwa na kufungwa

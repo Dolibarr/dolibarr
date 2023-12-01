@@ -401,6 +401,7 @@ class AccountingAccount extends CommonObject
 	{
 		global $langs;
 
+		// TODO Looks a stupid check
 		$sql = "(SELECT fk_code_ventilation FROM ".MAIN_DB_PREFIX."facturedet";
 		$sql .= " WHERE fk_code_ventilation=".((int) $this->id).")";
 		$sql .= "UNION";

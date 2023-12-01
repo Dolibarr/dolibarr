@@ -210,9 +210,11 @@ function isModEnabled($module)
 
 	// Fix special cases
 	$arrayconv = array(
-		'project' => 'projet',
+		'bank' => 'banque',
+		'category' => 'categorie',
 		'contract' => 'contrat',
-		'bank' => 'banque'
+		'project' => 'projet',
+		'delivery_note' => 'expedition'
 	);
 	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
 		$arrayconv['supplier_order'] = 'fournisseur';
@@ -5278,7 +5280,9 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		print 'This website or feature is currently temporarly not available or failed after a technical error.<br><br>This may be due to a maintenance operation. Current status of operation ('.dol_print_date(dol_now(), 'dayhourrfc').') are on next line...<br><br>'."\n";
 		print $langs->trans("DolibarrHasDetectedError").'. ';
 		print $langs->trans("YouCanSetOptionDolibarrMainProdToZero");
-		define("MAIN_CORE_ERROR", 1);
+		if (!defined("MAIN_CORE_ERROR")) {
+			define("MAIN_CORE_ERROR", 1);
+		}
 	}
 
 	dol_syslog("Error ".$syslog, LOG_ERR);
@@ -5724,7 +5728,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
  *	@param	int		        $totalnboflines		Total number of records/lines for all pages (if known)
  *  @param  int             $hideselectlimit    Force to hide select limit
  *  @param	string			$beforearrows		HTML content to show before arrows. Must NOT contains '<li> </li>' tags.
- *  @param  int        		$hidenavigation     Force to hide the switch mode view and the navigation tool (select limit, arrows $betweenarrows and $afterarrows but not $beforearrows)
+ *  @param  int        		$hidenavigation     Force to hide the switch mode view and the navigation tool (hide limit section, html in $betweenarrows and $afterarrows but not $beforearrows)
  *	@return	void
  */
 function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $betweenarrows = '', $afterarrows = '', $limit = -1, $totalnboflines = 0, $hideselectlimit = 0, $beforearrows = '', $hidenavigation = 0)
@@ -7997,6 +8001,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
 			$substitutionarray['__SUPPLIER_ORDER_DATE_DELIVERY__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, 'day', 0, $outputlangs) : '');
 			$substitutionarray['__SUPPLIER_ORDER_DELAY_DELIVERY__'] = (isset($object->availability_code) ? ($outputlangs->transnoentities("AvailabilityType".$object->availability_code) != ('AvailabilityType'.$object->availability_code) ? $outputlangs->transnoentities("AvailabilityType".$object->availability_code) : $outputlangs->convToOutputCharset(isset($object->availability) ? $object->availability : '')) : '');
+			$substitutionarray['__EXPIRATION_DATE__'] = (isset($object->fin_validite) ? dol_print_date($object->fin_validite, 'daytext') : '');
 
 			if (is_object($object) && ($object->element == 'adherent' || $object->element == 'member') && $object->id > 0) {
 				$birthday = (empty($object->birth) ? '' : dol_print_date($object->birth, 'day'));

@@ -298,7 +298,7 @@ DescVentilExpenseReportMore=If you setup accounting account on type of expense r
 DescVentilDoneExpenseReport=在此查阅费用报销单行清单及其费用会计科目
 
 Closure=Annual closure
-DescClosure=请在此处查阅尚未验证和锁定的每月调拨次数
+AccountancyClosureStep1Desc=请在此处查阅尚未验证和锁定的每月调拨次数
 OverviewOfMovementsNotValidated=未验证和锁定的调拨概览
 AllMovementsWereRecordedAsValidated=所有调拨均被记录为已验证和已锁定
 NotAllMovementsCouldBeRecordedAsValidated=并非所有调拨都可以被记录为已验证和已锁定

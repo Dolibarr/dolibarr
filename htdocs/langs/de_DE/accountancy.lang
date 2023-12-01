@@ -298,7 +298,7 @@ DescVentilExpenseReportMore=Wenn Sie im Modul Buchhaltung Konten für die Spesen
 DescVentilDoneExpenseReport=Liste der Aufwendungen aus Spesenabrechnungen und ihre zugeordneten Buchungskonten
 
 Closure=Festschreibung
-DescClosure=Informieren Sie sich hier über die Anzahl der Buchungen pro Monat, die noch nicht freigegeben und festgeschrieben sind.
+AccountancyClosureStep1Desc=Informieren Sie sich hier über die Anzahl der Buchungen pro Monat, die noch nicht freigegeben und festgeschrieben sind.
 OverviewOfMovementsNotValidated=Übersicht der noch nicht festgeschriebenen Buchungen
 AllMovementsWereRecordedAsValidated=Alle Buchungen wurden als freigegeben und festgeschrieben registriert
 NotAllMovementsCouldBeRecordedAsValidated=Nicht alle Buchungen konnten als freigegeben und festgeschrieben registriert werden

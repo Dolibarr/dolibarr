@@ -298,7 +298,7 @@ DescVentilExpenseReportMore=Ja jūs izveidojat grāmatvedības kontu uz izdevumu
 DescVentilDoneExpenseReport=Konsultējieties šeit ar izdevumu pārskatu rindu sarakstu un to maksu grāmatvedības kontu
 
 Closure=Gada slēgšana
-DescClosure=Šeit skatiet kustību skaitu pa mēnešiem, kas vēl nav apstiprinātas un bloķētas
+AccountancyClosureStep1Desc=Šeit skatiet kustību skaitu pa mēnešiem, kas vēl nav apstiprinātas un bloķētas
 OverviewOfMovementsNotValidated=Pārskats par kustībām, kas nav apstiprinātas un bloķētas
 AllMovementsWereRecordedAsValidated=Visas kustības tika reģistrētas kā apstiprinātas un bloķētas
 NotAllMovementsCouldBeRecordedAsValidated=Ne visas kustības varēja reģistrēt kā apstiprinātas un bloķētas

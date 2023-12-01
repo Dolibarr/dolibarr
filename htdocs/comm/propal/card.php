@@ -1322,11 +1322,11 @@ if (empty($reshook)) {
 
 			// Check price is not lower than minimum
 			if ($usermustrespectpricemin) {
-				if ($pu_equivalent && $price_min && ((price2num($pu_equivalent) * (1 - $remise_percent / 100)) < price2num($price_min))) {
+				if ($pu_equivalent && $price_min && ((price2num($pu_equivalent) * (1 - $remise_percent / 100)) < price2num($price_min)) && $price_base_type == 'HT') {
 					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
-				} elseif ($pu_equivalent_ttc && $price_min_ttc && ((price2num($pu_equivalent_ttc) * (1 - $remise_percent / 100)) < price2num($price_min_ttc))) {
+				} elseif ($pu_equivalent_ttc && $price_min_ttc && ((price2num($pu_equivalent_ttc) * (1 - $remise_percent / 100)) < price2num($price_min_ttc)) && $price_base_type == 'TTC') {
 					$mesg = $langs->trans("CantBeLessThanMinPriceInclTax", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
@@ -1495,12 +1495,12 @@ if (empty($reshook)) {
 
 			// Check price is not lower than minimum
 			if ($usermustrespectpricemin) {
-				if ($pu_equivalent && $price_min && ((price2num($pu_equivalent) * (1 - (float) $remise_percent / 100)) < price2num($price_min))) {
+				if ($pu_equivalent && $price_min && ((price2num($pu_equivalent) * (1 - (float) $remise_percent / 100)) < price2num($price_min)) && $price_base_type == 'HT') {
 					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
 					$action = 'editline';
-				} elseif ($pu_equivalent_ttc && $price_min_ttc && ((price2num($pu_equivalent_ttc) * (1 - (float) $remise_percent / 100)) < price2num($price_min_ttc))) {
+				} elseif ($pu_equivalent_ttc && $price_min_ttc && ((price2num($pu_equivalent_ttc) * (1 - (float) $remise_percent / 100)) < price2num($price_min_ttc)) && $price_base_type == 'TTC') {
 					$mesg = $langs->trans("CantBeLessThanMinPriceInclTax", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
@@ -2062,7 +2062,27 @@ if ($action == 'create') {
 	}
 
 	// Other attributes
-	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+	$parameters = array();
+	if (!empty($origin) && !empty($originid) && is_object($objectsrc)) {
+		$parameters['objectsrc'] =  $objectsrc;
+	}
+	$parameters['socid'] = $socid;
+
+	// Note that $action and $object may be modified by hook
+	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);
+	print $hookmanager->resPrint;
+	if (empty($reshook)) {
+		if (!empty($conf->global->THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_PROPAL) && !empty($soc->id)) {
+			// copy from thirdparty
+			$tpExtrafields = new Extrafields($db);
+			$tpExtrafieldLabels = $tpExtrafields->fetch_name_optionals_label($soc->table_element);
+			if ($soc->fetch_optionals() > 0) {
+				$object->array_options = array_merge($object->array_options, $soc->array_options);
+			}
+		}
+
+		print $object->showOptionals($extrafields, 'create', $parameters);
+	}
 
 	// Lines from source
 	if (!empty($origin) && !empty($originid) && is_object($objectsrc)) {

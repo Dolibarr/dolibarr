@@ -57,15 +57,15 @@ WarningDataDisappearsWhenDataIsExported=Attention, cette liste ne contient que l
 VueByAccountAccounting=Vue par comptes comptables
 VueBySubAccountAccounting=Affichage par compte auxiliaire
 
-MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
-MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
-MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
-MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
-MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
-MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
-MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
-MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
-UserAccountNotDefined=Compte comptable pour l'utilisateur non défini dans la configuration
+MainAccountForCustomersNotDefined=Compte comptable pour les clients non défini dans la configuration
+MainAccountForSuppliersNotDefined=Compte comptable pour les fournisseurs non défini dans la configuration
+MainAccountForUsersNotDefined=Compte comptable pour les utilisateurs non défini dans la configuration
+MainAccountForRevenueStampSaleNotDefined=Compte comptable pour les timbres fiscaux (ventes) non défini dans la configuration
+MainAccountForRevenueStampPurchaseNotDefined=Compte comptable pour les timbres fiscaux (achats) non défini dans la configuration
+MainAccountForVatPaymentNotDefined=Compte comptable pour les paiements de TVA non défini dans la configuration
+MainAccountForSubscriptionPaymentNotDefined=Compte comptable pour les adhésions non défini dans la configuration
+MainAccountForRetainedWarrantyNotDefined=Compte comptable pour les retenues de garantie client non défini dans la configuration
+UserAccountNotDefined=Compte comptable pour les utilisateurs non défini dans la configuration
 
 AccountancyArea=Espace comptabilité
 AccountancyAreaDescIntro=L'utilisation du module de comptabilité se fait en plusieurs étapes:
@@ -77,8 +77,9 @@ AccountancyAreaDescJournalSetup=Étape %s : Créer ou vérifier le contenu de la
 AccountancyAreaDescChartModel=Étape %s : Vérifiez qu'il existe un modèle de plan comptable ou créez-en un à partir du menu %s
 AccountancyAreaDescChart=Étape %s : Sélectionnez et | ou complétez votre plan de compte dans le menu %s
 
+AccountancyAreaDescFiscalPeriod=Étape %s: Définissez une période fiscale par défaut pour intégrer vos écritures comptables. Pour cela, suivez le menu suivant %s.
 AccountancyAreaDescVat=Étape %s : Définissez les comptes comptables de chaque taux de TVA utilisé. Pour cela, suivez le menu suivant %s.
-AccountancyAreaDescDefault=Étape %s : Définir les comptes de comptabilité par défaut. Pour cela, utilisez l'entrée de menu %s.
+AccountancyAreaDescDefault=Étape %s : Définissez les comptes de comptabilité par défaut. Pour cela, utilisez l'entrée de menu %s.
 AccountancyAreaDescExpenseReport=Étape %s : Définissez les comptes comptables par défaut des dépenses des notes de frais. Pour cela, suivez le menu %s.
 AccountancyAreaDescSal=Étape %s : Définissez les comptes comptables de paiements de salaires. Pour cela, suivez le menu suivant %s.
 AccountancyAreaDescContrib=Étape %s : Définissez les comptes comptables des dépenses spéciales (taxes diverses). Pour cela, suivez le menu suivant %s.
@@ -90,11 +91,12 @@ AccountancyAreaDescBank=Étape %s : Définissez les comptes comptables et les co
 AccountancyAreaDescProd=Étape %s : Définissez les comptes comptables sur vos produits/services. Pour cela, utilisez la page suivante %s.
 
 AccountancyAreaDescBind=Étape %s : Vérifier que la liaison entre les %s lignes existantes et le compte comptable est faite, ainsi l'application sera capable d'inscrire les transaction dans le grand livre en un seul clic. Compléter les liaisons manquantes. Pour cela, suivez le menu suivant %s.
-AccountancyAreaDescWriteRecords=Étape %s: Ecrire les transactions dans le grand livre. Pour cela, suivez le menu <strong>%s</strong>, et cliquer sur le bouton <strong>%s</strong>.
+AccountancyAreaDescWriteRecords=Étape %s: Écrire les transactions dans le grand livre. Pour cela, suivez le menu <strong>%s</strong>, et cliquer sur le bouton <strong>%s</strong>.
 AccountancyAreaDescAnalyze=Étape %s : Ajouter ou modifier les opérations existantes et générer des rapports et des exportations.
 
 AccountancyAreaDescClosePeriod=Étape %s : Fermer la période pour ne plus pouvoir faire de modification à l'avenir.
 
+TheFiscalPeriodIsNotDefined=Une étape obligatoire dans la configuration n'a pas été terminée (Période fiscale non définie)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=Une étape obligatoire dans la configuration n'a pas été terminée (journal de code de comptabilité non défini pour tous les comptes bancaires)
 Selectchartofaccounts=Sélectionnez le plan de compte actif
 ChangeAndLoad=Changer et charger
@@ -186,6 +188,8 @@ ACCOUNTING_SOCIAL_JOURNAL=Paie
 ACCOUNTING_RESULT_PROFIT=Compte de résultat (Profit)
 ACCOUNTING_RESULT_LOSS=Compte de résultat (perte)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Journal de fermeture
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=Groupes comptables utilisés pour le compte de bilan (séparé par une virgule)
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=Groupes comptables utilisés pour le compte de résultat (séparé par une virgule)
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Compte comptable par défaut pour les virements internes
 TransitionalAccount=Compte transitoire de virement bancaire
@@ -267,8 +271,8 @@ UnknownAccountForThirdparty=Compte de tiers inconnu. %s sera utilisé
 UnknownAccountForThirdpartyBlocking=Compte de tiers inconnu. Erreur bloquante.
 ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Compte auxiliaire non défini ou tiers ou utilisateur inconnu. Nous utiliserons %s
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Tiers inconnu et code comptable auxiliaire non défini sur le paiement. Nous conserverons la valeur du compte auxiliaire vide.
-ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Compte auxiliaire non défini ou tiers ou utilisateur inconnu. Erreur blocante.
-UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Compte tiers inconnu et compte d'attente non défini. Erreur blocante.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Compte auxiliaire non défini ou tiers ou utilisateur inconnu. Erreur bloquante.
+UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Compte tiers inconnu et compte d'attente non défini. Erreur bloquante.
 PaymentsNotLinkedToProduct=Paiement non lié à un produit / service
 OpeningBalance=Solde d'ouverture
 ShowOpeningBalance=Afficher balance d'ouverture
@@ -298,7 +302,7 @@ DescVentilExpenseReportMore=Si vous avez défini des comptes comptables au nivea
 DescVentilDoneExpenseReport=Consultez ici la liste des lignes des notes de frais et leur compte comptable
 
 Closure=Clôture annuelle
-DescClosure=Consultez ici le nombre de mouvements par mois non encore validés & verrouillés
+AccountancyClosureStep1Desc=Consultez ici le nombre de mouvements par mois non encore validés & verrouillés
 OverviewOfMovementsNotValidated=Aperçu des mouvements non validés et verrouillés
 AllMovementsWereRecordedAsValidated=Tous les mouvements ont été enregistrés comme validés et ont été verrouillés
 NotAllMovementsCouldBeRecordedAsValidated=Certains mouvements n'ont pas pu être enregistrés comme validés et n'ont pas été verrouillés
@@ -307,7 +311,7 @@ DescValidateMovements=Toute modification ou suppression d'écriture, de lettrage
 
 ValidateHistory=Lier automatiquement
 AutomaticBindingDone=Liaisons automatiques effectuées (%s) - Liaison automatique impossible pour certains enregistrements (%s)
-DoManualBindingForFailedRecord=Vous devez réaliser un lettrage manuel pour la/les %s ligne·s non lettré·es automatiquement.
+DoManualBindingForFailedRecord=Vous devez réaliser la liaison avec le compte comptable manuellement pour la ou les %s lignes non liées automatiquement.
 
 ErrorAccountancyCodeIsAlreadyUse=Erreur, vous ne pouvez pas supprimer ou désactiver ce compte comptable car il est utilisé
 MvtNotCorrectlyBalanced=Mouvement non équilibré. Débit = %s & Crédit = %s
@@ -431,6 +435,7 @@ Formula=Formule
 ## Reconcile
 LetteringAuto=Lettrage automatique
 LetteringManual=Lettrage manuel
+LetteringPartial=Lettrage partiel
 Unlettering=Annuler le lettrage
 UnletteringAuto=Annuler le lettrage automatique
 UnletteringManual=Annuler lettrage manuel
@@ -441,12 +446,26 @@ AccountancyNoUnletteringModified=Aucune annulation de lettrage modifiée
 AccountancyOneUnletteringModifiedSuccessfully=Une annulation de lettrage modifiée avec succès
 AccountancyUnletteringModifiedSuccessfully=%s annulations de lettrage modifiées avec succès
 
+## Closure
+AccountancyClosureStep1=Étape 1 : Valider et verrouiller les mouvements
+AccountancyClosureStep2=Étape 2 : Clôturer la période fiscale
+AccountancyClosureStep3=Étape 3 : Extourner les écritures (Optionnel)
+AccountancyClosureClose=Clôturer la période fiscale
+AccountancyClosureAccountingReversal=Extourner les écritures
+AccountancyClosureStep3NewFiscalPeriod=Prochaine période fiscale
+AccountancyClosureGenerateClosureBookkeepingRecords=Générer l'écriture d'à-nouveaux sur le nouvel exercice
+AccountancyClosureSeparateAuxiliaryAccounts=Séparer les comptes auxiliaires
+AccountancyClosureCloseSuccessfully=La période fiscale actuelle a été clôturée avec succès
+AccountancyClosureInsertAccountingReversalSuccessfully=Les écritures ont été extournées avec succès
+
 ## Confirm box
 ConfirmMassUnletteringAuto=Confirmation de l'annulation du lettrage automatique
 ConfirmMassUnletteringManual=Confirmation de l'annulation du lettrage manuel
 ConfirmMassUnletteringQuestion=Voulez-vous vraiment annuler le lettrage des %s enregistrements sélectionnés ?
 ConfirmMassDeleteBookkeepingWriting=Confirmation de suppression en masse
 ConfirmMassDeleteBookkeepingWritingQuestion=Cela supprimera la transaction de la comptabilité (toutes les lignes liées à cette transaction seront supprimées). Êtes-vous sûr de vouloir supprimer les %s enregistrements sélectionnés ?
+AccountancyClosureConfirmClose=Êtes-vous sûr de vouloir clôturer la période fiscale actuelle ? <span class="warning">La clôture de la période fiscale est une action irréversible et elle bloquera de manière permanente toute modification ou suppression d'entrées au cours de cette période.</span>.
+AccountancyClosureConfirmAccountingReversal=Êtes-vous sûr de vouloir extourner les écritures ?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Certaines étapes obligatoires de la configuration n'ont pas été réalisées, merci de compléter cette dernière
@@ -465,6 +484,8 @@ AccountancyErrorMismatchBalanceAmount=Le solde (%s) n'est pas égal à 0
 AccountancyErrorLetteringBookkeeping=Des erreurs sont survenues concernant les transactions : %s
 ErrorAccountNumberAlreadyExists=Le code comptable %s existe déjà
 ErrorArchiveAddFile=Impossible de mettre le fichier "%s" dans l'archive
+ErrorNoFiscalPeriodActiveFound=Aucune période fiscale active trouvée
+ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=La date d'opération n'est pas sur une période fiscale active
 
 ## Import
 ImportAccountingEntries=Écritures comptables
