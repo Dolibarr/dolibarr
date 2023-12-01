@@ -50,7 +50,7 @@ class Workstation extends CommonObject
 	 * @var int  Does this object support multicompany module ?
 	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
 	 */
-	public $ismultientitymanaged = 0;
+	public $ismultientitymanaged = 1;
 
 	/**
 	 * @var int  Does object support extrafields ? 0=No, 1=Yes
@@ -99,6 +99,7 @@ class Workstation extends CommonObject
 	 */
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
+		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'position'=>5, 'notnull'=>1, 'default'=>'1', 'index'=>1),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>1, 'noteditable'=>'0', 'default'=>'', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth300', 'csslist'=>'tdoverflowmax125', 'showoncombobox'=>'2',),
 		'type' => array('type'=>'varchar(8)', 'label'=>'Type', 'enabled'=>'1', 'position'=>32, 'default'=>1, 'notnull'=>1, 'visible'=>1, 'arrayofkeyval'=>array('HUMAN'=>'Human', 'MACHINE'=>'Machine', 'BOTH'=>'HumanMachine'),),
@@ -157,7 +158,7 @@ class Workstation extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
@@ -632,7 +633,7 @@ class Workstation extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowWorkstation");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -751,6 +752,7 @@ class Workstation extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_creat;
@@ -786,14 +788,14 @@ class Workstation extends CommonObject
 		global $langs, $conf;
 		$langs->load("workstation");
 
-		if (empty($conf->global->WORKSTATION_WORKSTATION_ADDON)) {
+		if (!getDolGlobalString('WORKSTATION_WORKSTATION_ADDON')) {
 			$conf->global->WORKSTATION_WORKSTATION_ADDON = 'mod_workstation_standard';
 		}
 
-		if (!empty($conf->global->WORKSTATION_WORKSTATION_ADDON)) {
+		if (getDolGlobalString('WORKSTATION_WORKSTATION_ADDON')) {
 			$mybool = false;
 
-			$file = $conf->global->WORKSTATION_WORKSTATION_ADDON.".php";
+			$file = getDolGlobalString('WORKSTATION_WORKSTATION_ADDON') . ".php";
 			$classname = $conf->global->WORKSTATION_WORKSTATION_ADDON;
 
 			// Include file with class
@@ -858,7 +860,7 @@ class Workstation extends CommonObject
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->WORKSTATION_ADDON_PDF)) {
+			} elseif (getDolGlobalString('WORKSTATION_ADDON_PDF')) {
 				$modele = $conf->global->WORKSTATION_ADDON_PDF;
 			}
 		}

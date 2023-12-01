@@ -329,7 +329,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->rights->banque->configurer) {
+	if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->hasRight('banque', 'configurer')) {
 		// Delete
 		$object = new Account($db);
 		$object->fetch(GETPOST("id", "int"));
@@ -581,9 +581,11 @@ if ($action == 'create') {
 		}
 
 		if (isModEnabled('paymentbybanktransfer')) {
-			print '<tr><td>'.$form->textwithpicto($langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation"), $langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp")).'</td>';
-			print '<td><input type="checkbox" class="flat" name="pti_in_ctti"'. (empty(GETPOST('pti_in_ctti')) ? '' : ' checked ') . '>';
-			print '</td></tr>';
+			if ($mysoc->isInEEC()) {
+				print '<tr><td>'.$form->textwithpicto($langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation"), $langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp")).'</td>';
+				print '<td><input type="checkbox" class="flat" name="pti_in_ctti"'. (empty(GETPOST('pti_in_ctti')) ? '' : ' checked ') . '>';
+				print '</td></tr>';
+			}
 		}
 		print '</table>';
 		print '<hr>';
@@ -619,7 +621,7 @@ if ($action == 'create') {
 	print '<table class="border centpercent">';
 	// Accountancy code
 	$fieldrequired = '';
-	if (!empty($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED)) {
+	if (getDolGlobalString('MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED')) {
 		$fieldrequired = 'fieldrequired ';
 	}
 
@@ -830,15 +832,17 @@ if ($action == 'create') {
 				print '</tr>';
 			}
 
-			// TODO ICS is not used with bank transfer !
 			if (isModEnabled('paymentbybanktransfer')) {
-				print '<tr><td>'.$form->textwithpicto($langs->trans("IDS"), $langs->trans("IDS").' ('.$langs->trans("UsedFor", $langs->transnoentitiesnoconv("BankTransfer")).')').'</td>';
-				print '<td>'.$object->ics_transfer.'</td>';
-				print '</tr>';
-
-				print '<tr><td>'.$form->textwithpicto($langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation"), $langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp")).'</td><td>';
-				print (empty($object->pti_in_ctti) ? $langs->trans("No") : $langs->trans("Yes"));
-				print "</td></tr>\n";
+				if (getDolGlobalString("SEPA_USE_IDS")) {	// ICS is not used with bank transfer !
+					print '<tr><td>'.$form->textwithpicto($langs->trans("IDS"), $langs->trans("IDS").' ('.$langs->trans("UsedFor", $langs->transnoentitiesnoconv("BankTransfer")).')').'</td>';
+					print '<td>'.$object->ics_transfer.'</td>';
+					print '</tr>';
+				}
+				if ($mysoc->isInEEC()) {
+					print '<tr><td>'.$form->textwithpicto($langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation"), $langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp")).'</td><td>';
+					print (empty($object->pti_in_ctti) ? $langs->trans("No") : $langs->trans("Yes"));
+					print "</td></tr>\n";
+				}
 			}
 
 			print '<tr><td>'.$langs->trans("BankAccountOwner").'</td><td>';
@@ -880,12 +884,12 @@ if ($action == 'create') {
 		 */
 		print '<div class="tabsAction">';
 
-		if ($user->rights->banque->configurer) {
+		if ($user->hasRight('banque', 'configurer')) {
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Modify").'</a>';
 		}
 
 		$canbedeleted = $object->can_be_deleted(); // Renvoi vrai si compte sans mouvements
-		if ($user->rights->banque->configurer && $canbedeleted) {
+		if ($user->hasRight('banque', 'configurer') && $canbedeleted) {
 			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Delete").'</a>';
 		}
 
@@ -898,7 +902,7 @@ if ($action == 'create') {
 	/*                                                                            */
 	/* ************************************************************************** */
 
-	if (GETPOST('id', 'int') && $action == 'edit' && $user->rights->banque->configurer) {
+	if (GETPOST('id', 'int') && $action == 'edit' && $user->hasRight('banque', 'configurer')) {
 		print load_fiche_titre($langs->trans("EditFinancialAccount"), '', 'bank_account');
 
 		if ($conf->use_javascript_ajax) {
@@ -1074,7 +1078,7 @@ if ($action == 'create') {
 		// Accountancy code
 		$tdextra = ' class="titlefieldcreate"';
 
-		if (!empty($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED)) {
+		if (getDolGlobalString('MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED')) {
 			$tdextra = ' class="fieldrequired titlefieldcreate"';
 		}
 
@@ -1123,14 +1127,14 @@ if ($action == 'create') {
 			// IBAN
 			print '<tr><td>';
 			$tooltip = $langs->trans("Example").':<br>CH93 0076 2011 6238 5295 7<br>LT12 1000 0111 0100 1000<br>FR14 2004 1010 0505 0001 3M02 606<br>LU28 0019 4006 4475 0000<br>DE89 3704 0044 0532 0130 00';
-			print $form->textwithpicto($langs->trans($ibankey), $tooltip);
+			print $form->textwithpicto($langs->trans($ibankey), $tooltip, 1, 'help', '', 0, 3, 'iban');
 			print '</td>';
 			print '<td><input class="minwidth300 maxwidth200onsmartphone" maxlength="34" type="text" class="flat" name="iban" value="'.(GETPOSTISSET('iban') ? GETPOST('iban',  'alphanohtml') : $object->iban).'"></td></tr>';
 
 			// BIC
 			print '<tr><td>';
 			$tooltip = $langs->trans("Example").': LIABLT2XXXX';
-			print $form->textwithpicto($langs->trans($bickey), $tooltip);
+			print $form->textwithpicto($langs->trans($bickey), $tooltip, 1, 'help', '', 0, 3, 'bic');
 			print '</td>';
 			print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="11" type="text" class="flat" name="bic" value="'.(GETPOSTISSET('bic') ? GETPOST('bic',  'alphanohtml') : $object->bic).'"></td></tr>';
 
@@ -1166,12 +1170,15 @@ if ($action == 'create') {
 			}
 
 			if (isModEnabled('paymentbybanktransfer')) {
-				print '<tr><td>'.$form->textwithpicto($langs->trans("IDS"), $langs->trans("IDS").' ('.$langs->trans("UsedFor", $langs->transnoentitiesnoconv("BankTransfer")).')').'</td>';
-				print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="32" type="text" class="flat" name="ics_transfer" value="'.(GETPOSTISSET('ics_transfer') ? GETPOST('ics_transfer', 'alphanohtml') : $object->ics_transfer).'"></td></tr>';
-
-				print '<tr><td>'.$form->textwithpicto($langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation"), $langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp")).'</td>';
-				print '<td><input type="checkbox" class="flat" name="pti_in_ctti"'. ($object->pti_in_ctti ? ' checked ' : '') . '>';
-				print '</td></tr>';
+				if (getDolGlobalString("SEPA_USE_IDS")) {	// ICS is not used with bank transfer !
+					print '<tr><td>'.$form->textwithpicto($langs->trans("IDS"), $langs->trans("IDS").' ('.$langs->trans("UsedFor", $langs->transnoentitiesnoconv("BankTransfer")).')').'</td>';
+					print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="32" type="text" class="flat" name="ics_transfer" value="'.(GETPOSTISSET('ics_transfer') ? GETPOST('ics_transfer', 'alphanohtml') : $object->ics_transfer).'"></td></tr>';
+				}
+				if ($mysoc->isInEEC()) {
+					print '<tr><td>'.$form->textwithpicto($langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation"), $langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp")).'</td>';
+					print '<td><input type="checkbox" class="flat" name="pti_in_ctti"'. ($object->pti_in_ctti ? ' checked ' : '') . '>';
+					print '</td></tr>';
+				}
 			}
 
 			print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';

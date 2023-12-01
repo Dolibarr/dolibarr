@@ -449,7 +449,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 
 // Filters: Line number (placeholder)
-if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
@@ -457,7 +457,7 @@ if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
 // Filter: Ref
 if (!empty($arrayfields['cs.rowid']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input class="flat maxwidth75" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
+	print '<input class="flat maxwidth50" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 	print '</td>';
 }
 
@@ -568,7 +568,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	$totalarray['nbfield']++;
 }
 
-if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 	print_liste_field_titre('#', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
@@ -634,7 +634,7 @@ $i = 0;
 $savnbfield = $totalarray['nbfield'];
 $totalarray = array();
 $totalarray['nbfield'] = 0;
-$totalarray['val'] = array();
+$totalarray['val'] = array('totalttcfield'=>0);
 $imaxinloop = ($limit ? min($num, $limit) : $num);
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
@@ -685,7 +685,7 @@ while ($i < $imaxinloop) {
 		}
 
 		// Line number
-		if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+		if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 			print '<td>'.(($offset * $limit) + $i).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -800,7 +800,9 @@ while ($i < $imaxinloop) {
 				print $bankstatic->getNomUrl(1);
 			}
 			print '</td>';
-			if (!$i) $totalarray['nbfield']++;
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		// Amount
@@ -808,8 +810,6 @@ while ($i < $imaxinloop) {
 			print '<td class="nowraponall amount right">'.price($obj->amount).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
-			}
-			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'totalttcfield';
 			}
 			$totalarray['val']['totalttcfield'] += $obj->amount;

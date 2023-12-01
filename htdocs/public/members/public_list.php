@@ -110,15 +110,15 @@ if (!$sortfield) {
  * View
  */
 
-if (empty($conf->global->MEMBER_PUBLIC_ENABLED)) {
+if (!getDolGlobalString('MEMBER_PUBLIC_ENABLED')) {
 	httponly_accessforbidden('Public access of list of members is not enabled');
 }
 
 $form = new Form($db);
 
 $morehead = '';
-if (!empty($conf->global->MEMBER_PUBLIC_CSS)) {
-	$morehead = '<link rel="stylesheet" type="text/css" href="'.$conf->global->MEMBER_PUBLIC_CSS.'">';
+if (getDolGlobalString('MEMBER_PUBLIC_CSS')) {
+	$morehead = '<link rel="stylesheet" type="text/css" href="' . getDolGlobalString('MEMBER_PUBLIC_CSS').'">';
 } else {
 	$morehead = '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/eldy/style.css.php">';
 }

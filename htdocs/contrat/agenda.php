@@ -82,7 +82,6 @@ if (!$sortorder) {
 
 
 $object = new Contrat($db);
-
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
 }
@@ -91,6 +90,8 @@ if ($id > 0 || !empty($ref)) {
 $hookmanager->initHooks(array('agendacontract', 'globalcard'));
 
 $permissiontoadd = $user->hasRight('contrat', 'creer');     //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+
+$result = restrictedArea($user, 'contrat', $object->id);
 
 
 /*
@@ -130,7 +131,7 @@ if (isModEnabled('project')) {
 
 if ($object->id > 0) {
 	// Load object modContract
-	$module = (!empty($conf->global->CONTRACT_ADDON) ? $conf->global->CONTRACT_ADDON : 'mod_contract_serpis');
+	$module = (getDolGlobalString('CONTRACT_ADDON') ? $conf->global->CONTRACT_ADDON : 'mod_contract_serpis');
 	if (substr($module, 0, 13) == 'mod_contract_' && substr($module, -3) == 'php') {
 		$module = substr($module, 0, dol_strlen($module) - 4);
 	}
@@ -145,7 +146,7 @@ if ($object->id > 0) {
 	$object->fetch_thirdparty();
 
 	$title = $langs->trans("Agenda");
-	if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/contractrefonly/', $conf->global->MAIN_HTML_TITLE) && $object->ref) {
+	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/contractrefonly/', $conf->global->MAIN_HTML_TITLE) && $object->ref) {
 		$title = $object->ref." - ".$title;
 	}
 	$help_url = 'EN:Module_Contracts|FR:Module_Contrat';
@@ -165,8 +166,8 @@ if ($object->id > 0) {
 	if (!empty($modCodeContract->code_auto)) {
 		$morehtmlref .= $object->ref;
 	} else {
-		$morehtmlref .= $form->editfieldkey("", 'ref', $object->ref, $object, $user->rights->contrat->creer, 'string', '', 0, 3);
-		$morehtmlref .= $form->editfieldval("", 'ref', $object->ref, $object, $user->rights->contrat->creer, 'string', '', 0, 2);
+		$morehtmlref .= $form->editfieldkey("", 'ref', $object->ref, $object, $user->hasRight('contrat', 'creer'), 'string', '', 0, 3);
+		$morehtmlref .= $form->editfieldval("", 'ref', $object->ref, $object, $user->hasRight('contrat', 'creer'), 'string', '', 0, 2);
 	}
 
 	$permtoedit = 0;
@@ -181,7 +182,7 @@ if ($object->id > 0) {
 	$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $permtoedit, 'string', '', null, null, '', 1, 'getFormatedSupplierRef');
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
-	if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
+	if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
 		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.$object->thirdparty->id.'&search_name='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherContracts").'</a>)';
 	}
 	// Project

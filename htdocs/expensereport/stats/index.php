@@ -56,7 +56,7 @@ $result = restrictedArea($user, 'expensereport', $id, '');
 
 $nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 $year = GETPOST('year') > 0 ? GETPOST('year', 'int') : $nowyear;
-$startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
+$startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
 $endyear = $year;
 
 
@@ -147,7 +147,7 @@ if (!$mesg) {
 
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
-if (empty($user->rights->societe->client->voir) || $user->socid) {
+if (!$user->hasRight('societe', 'client', 'voir') || $user->socid) {
 	$filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
 	if ($mode == 'customer') {
 		$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$user->id.'-'.$year.'.png';
@@ -231,7 +231,7 @@ print '</td></tr>';
 // User
 print '<tr><td>'.$langs->trans("User").'</td><td>';
 $include = '';
-if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)) {
+if (!$user->hasRight('expensereport', 'readall') && !$user->hasRight('expensereport', 'lire_tous')) {
 	$include = 'hierarchy';
 }
 print img_picto('', 'user', 'class="pictofixedwidth"');
@@ -239,7 +239,7 @@ print $form->select_dolusers($userid, 'userid', 1, '', 0, $include, '', 0, 0, 0,
 print '</td></tr>';
 // Status
 print '<tr><td class="left">'.$langs->trans("Status").'</td><td class="left">';
-$liststatus = $tmpexpensereport->statuts;
+$liststatus = $tmpexpensereport->labelStatus;
 print $form->selectarray('object_status', $liststatus, GETPOST('object_status', 'intcomma'), -4, 0, 0, '', 1);
 print '</td></tr>';
 // Year

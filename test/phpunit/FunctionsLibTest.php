@@ -684,13 +684,19 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testDolStringNoSpecial()
 	{
-		$text="A string with space and special char like ' or ° and more...\n";
-		$after=dol_string_nospecial($text, '_', '', '', 0);
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
+		$text = "A string with space and special char like ' or ° and more...\n";
+		$after = dol_string_nospecial($text, '_', '', '', 0);
 		$this->assertEquals("A_string_with_space_and_special_char_like___or___and_more...\n", $after, "testDolStringNoSpecial 1");
 
-		$text="A string with space and special char like ' or ° and more...\n";
-		$after=dol_string_nospecial($text, '_', '', '', 1);
+		$text = "A string with space and special char like ' or ° and more...\n";
+		$after = dol_string_nospecial($text, '_', '', '', 1);
 		$this->assertEquals("A string with space and special char like _ or _ and more...\n", $after, "testDolStringNoSpecial 2");
+
+		$text = 'Bahnhofstraße';
+		$after = dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($text), ' '), 70, 'right', 'UTF-8', 1));
+		$this->assertEquals("Bahnhofstraße", $after, "testDolStringNoSpecial with german char");
 
 		return true;
 	}
@@ -1669,6 +1675,45 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		return true;
 	}
 
+	/**
+	 * testUtf8Check
+	 *
+	 * @return boolean
+	 */
+	public function testUtf8Check()
+	{
+		global $conf, $langs;
+
+		$chaine = 'This is an UTF8 string with a é.';
+		$result = utf8_check($chaine);
+		$this->assertEquals(true, $result);
+
+		$chaine = mb_convert_encoding('This is an UTF8 with a é.', 'ISO-8859-1', 'UTF-8');
+		$result = utf8_check($chaine);
+		$this->assertEquals(false, $result);
+
+		return true;
+	}
+
+	/**
+	 * testUtf8Valid
+	 *
+	 * @return boolean
+	 */
+	public function testUtf8Valid()
+	{
+		global $conf, $langs;
+
+		$chaine = 'This is an UTF8 string with a é.';
+		$result = utf8_valid($chaine);
+		$this->assertEquals(true, $result);
+
+		$chaine = mb_convert_encoding('This is an UTF8 with a é.', 'ISO-8859-1', 'UTF-8');
+		$result = utf8_valid($chaine);
+		$this->assertEquals(false, $result);
+
+		return true;
+	}
 
 	/**
 	 * testGetUserRemoteIP

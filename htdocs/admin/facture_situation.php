@@ -111,7 +111,7 @@ $item->fieldAttr = array(
 $item = $formSetup->newItem('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID');
 $item->nameText = $langs->trans('PaymentConditionsShortRetainedWarranty');
 $form->load_cache_conditions_paiements();
-if (!empty($conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID) && isset($form->cache_conditions_paiements[getDolGlobalString('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID')]['label'])) {
+if (getDolGlobalString('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID') && isset($form->cache_conditions_paiements[getDolGlobalString('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID')]['label'])) {
 	$item->fieldOutputOverride = $form->cache_conditions_paiements[getDolGlobalString('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID')]['label'];
 }
 $item->fieldInputOverride = $form->getSelectConditionsPaiements($conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID, 'INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID', -1, 1);

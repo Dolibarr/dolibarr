@@ -292,7 +292,7 @@ for ($annee = $year_start; $annee <= $year_end; $annee++) {
 		print '<a href="supplier_turnover_by_thirdparty.php?year='.$annee.($modecompta ? '&modecompta='.$modecompta : '').'">';
 	}
 	print $annee;
-	if ($conf->global->SOCIETE_FISCAL_MONTH_START > 1) {
+	if (getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') > 1) {
 		print '-'.($annee + 1);
 	}
 	if ($modecompta != 'BOOKKEEPING') {

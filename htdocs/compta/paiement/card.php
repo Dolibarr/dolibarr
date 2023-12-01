@@ -79,7 +79,7 @@ if (isModEnabled('stripe')) {
 
 	$service = 'StripeTest';
 	$servicestatus = 0;
-	if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha')) {
+	if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'alpha')) {
 		$service = 'StripeLive';
 		$servicestatus = 1;
 	}
@@ -145,16 +145,16 @@ if (empty($reshook)) {
 			$db->commit();
 
 			// Loop on each invoice linked to this payment to rebuild PDF
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				if (GETPOST('lang_id', 'aZ09')) {
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang(GETPOST('lang_id', 'aZ09'));
 				}
 
-				$hidedetails = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0;
-				$hidedesc = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0;
-				$hideref = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0;
+				$hidedetails = getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0;
+				$hidedesc = getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0;
+				$hideref = getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0;
 
 				$sql = 'SELECT f.rowid as facid';
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf,'.MAIN_DB_PREFIX.'facture as f,'.MAIN_DB_PREFIX.'societe as s';
@@ -486,7 +486,7 @@ if ($resql) {
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('Bill').'</td>';
 	print '<td>'.$langs->trans('Company').'</td>';
-	if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED)) {
+	if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_INVOICE_SHARING_ENABLED')) {
 		print '<td>'.$langs->trans('Entity').'</td>';
 	}
 	//Add Margin
@@ -539,7 +539,7 @@ if ($resql) {
 			print '</td>';
 
 			// Expected to pay
-			if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED)) {
+			if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_INVOICE_SHARING_ENABLED')) {
 				print '<td>';
 				$mc->getInfo($objp->entity);
 				print $mc->label;
@@ -569,7 +569,7 @@ if ($resql) {
 			print "</tr>\n";
 
 			// If at least one invoice is paid, disable delete. INVOICE_CAN_DELETE_PAYMENT_EVEN_IF_INVOICE_CLOSED Can be use for maintenance purpose. Never use this in production
-			if ($objp->paye == 1 && empty($conf->global->INVOICE_CAN_DELETE_PAYMENT_EVEN_IF_INVOICE_CLOSED)) {
+			if ($objp->paye == 1 && !getDolGlobalString('INVOICE_CAN_DELETE_PAYMENT_EVEN_IF_INVOICE_CLOSED')) {
 				$disable_delete = 1;
 				$title_button = dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemovePaymentWithOneInvoicePaid"));
 			}
@@ -596,7 +596,7 @@ if ($resql) {
 
 print '<div class="tabsAction">';
 
-if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) {
+if (getDolGlobalString('BILL_ADD_PAYMENT_VALIDATION')) {
 	if ($user->socid == 0 && $object->statut == 0 && $action == '') {
 		if ($user->hasRight('facture', 'paiement')) {
 			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&action=valide&token='.newToken().'">'.$langs->trans('Valid').'</a>';

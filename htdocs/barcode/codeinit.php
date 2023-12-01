@@ -48,7 +48,7 @@ $thirdpartytmp = new Societe($db);
 $modBarCodeProduct = '';
 $modBarCodeThirdparty = '';
 
-$maxperinit = empty($conf->global->BARCODE_INIT_MAX) ? 1000 : $conf->global->BARCODE_INIT_MAX;
+$maxperinit = !getDolGlobalString('BARCODE_INIT_MAX') ? 1000 : $conf->global->BARCODE_INIT_MAX;
 
 // Security check (enable the most restrictive one)
 //if ($user->socid > 0) accessforbidden();
@@ -67,7 +67,7 @@ if (empty($user->admin)) {
  */
 
 // Define barcode template for third-party
-if (!empty($conf->global->BARCODE_THIRDPARTY_ADDON_NUM)) {
+if (getDolGlobalString('BARCODE_THIRDPARTY_ADDON_NUM')) {
 	$dirbarcodenum = array_merge(array('/core/modules/barcode/'), $conf->modules_parts['barcode']);
 
 	foreach ($dirbarcodenum as $dirroot) {
@@ -167,7 +167,7 @@ if ($action == 'initbarcodethirdparties') {
 }
 
 // Define barcode template for products
-if (!empty($conf->global->BARCODE_PRODUCT_ADDON_NUM)) {
+if (getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM')) {
 	$dirbarcodenum = array_merge(array('/core/modules/barcode/'), $conf->modules_parts['barcode']);
 
 	foreach ($dirbarcodenum as $dirroot) {

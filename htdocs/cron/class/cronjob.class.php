@@ -1067,7 +1067,7 @@ class Cronjob extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowCronJob");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -1113,6 +1113,7 @@ class Cronjob extends CommonObject
 		if ($resql) {
 			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
+
 				$this->id = $obj->rowid;
 
 				$this->user_modification_id = $obj->fk_user_mod;
@@ -1633,6 +1634,5 @@ class Cronjobline
 	 */
 	public function __construct()
 	{
-		return 1;
 	}
 }

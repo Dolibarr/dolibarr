@@ -159,7 +159,7 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforend
 	}
 
 	$date = new DateTime();
-	if (!empty($conf->global->MAIN_DATE_IN_MEMORY_ARE_GMT)) {
+	if (getDolGlobalString('MAIN_DATE_IN_MEMORY_ARE_GMT')) {
 		$date->setTimezone(new DateTimeZone('UTC'));
 	}
 	$date->setTimestamp($time);
@@ -789,6 +789,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 		$sql = "SELECT code, entity, fk_country, dayrule, year, month, day, active";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_hrm_public_holiday";
 		$sql .= " WHERE active = 1 and fk_country IN (0".($country_id > 0 ? ", ".$country_id : 0).")";
+		$sql .= " AND entity IN (0," .getEntity('holiday') .")";
 
 		$resql = $db->query($sql);
 		if ($resql) {

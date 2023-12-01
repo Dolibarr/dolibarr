@@ -45,7 +45,6 @@ TicketsLogEnableEmailHelp=Con cada cambio, se enviará un correo electrónico **
 TicketsShowModuleLogo=Mostrar el logotipo del módulo en la interfaz pública.
 TicketsShowModuleLogoHelp=Habilite esta opción para ocultar el módulo de logotipo en las páginas de la interfaz pública
 TicketsShowCompanyLogo=Mostrar el logotipo de la empresa en la interfaz pública.
-TicketsShowCompanyLogoHelp=Enable this option to show the logo of the main company in the pages of the public interface
 TicketsLimitViewAssignedOnly=Restringir la visualización a los tickets asignados al usuario actual (no es efectivo para usuarios externos, siempre se limitará al tercero del que dependen)
 TicketsLimitViewAssignedOnlyHelp=Solo serán visibles los tickets asignados al usuario actual. No se aplica a un usuario con derechos de gestión de tickets.
 TicketsActivatePublicInterface=Activar interfaz pública

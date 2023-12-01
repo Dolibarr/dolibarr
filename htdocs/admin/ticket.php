@@ -87,7 +87,7 @@ if ($action == 'updateMask') {
 } elseif (preg_match('/set_(.*)/', $action, $reg)) {
 	$code = $reg[1];
 	$value = GETPOSTISSET($code) ? GETPOST($code, 'int') : 1;
-	if ($code == 'TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS' && $conf->global->MAIN_FEATURES_LEVEL >= 2) {
+	if ($code == 'TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS' && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		$param_notification_also_main_addressemail = GETPOST('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', 'alpha');
 		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', $param_notification_also_main_addressemail, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
@@ -219,7 +219,7 @@ if ($action == 'updateMask') {
 	}
 
 	// For compatibility when javascript is not enabled
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 2 && empty($conf->use_javascript_ajax)) {
+	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 && empty($conf->use_javascript_ajax)) {
 		$param_notification_also_main_addressemail = GETPOST('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', 'alpha');
 		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', $param_notification_also_main_addressemail, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
@@ -291,11 +291,11 @@ foreach ($dirmodels as $reldir) {
 					$module = new $file;
 
 					// Show modules according to features level
-					if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 						continue;
 					}
 
-					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+					if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 						continue;
 					}
 
@@ -424,10 +424,10 @@ foreach ($dirmodels as $reldir) {
 							$module = new $classname($db);
 
 							$modulequalified = 1;
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								$modulequalified = 0;
 							}
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 								$modulequalified = 0;
 							}
 
@@ -646,7 +646,7 @@ print '<td colspan="2">'.$langs->trans("Email").'</td>';
 print '<td class="center" width="40">'.$langs->trans("ShortInfo").'</td>';
 print "</tr>\n";
 
-if (empty($conf->global->FCKEDITOR_ENABLE_MAIL)) {
+if (!getDolGlobalString('FCKEDITOR_ENABLE_MAIL')) {
 	print '<tr>';
 	print '<td colspan="2"><div class="info">'.$langs->trans("TicketCkEditorEmailNotActivated").'</div></td>';
 	print '<td class="center" width="40">'.$langs->trans("ShortInfo").'</td>';
@@ -667,14 +667,14 @@ print '</tr>';
 // Email for notification of TICKET_CREATE
 print '<tr class="oddeven"><td>'.$langs->trans("TicketEmailNotificationTo").'</td>';
 print '<td class="left">';
-print '<input type="text" class="minwidth200" name="TICKET_NOTIFICATION_EMAIL_TO" value="'.(!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) ? $conf->global->TICKET_NOTIFICATION_EMAIL_TO : '').'"></td>';
+print '<input type="text" class="minwidth200" name="TICKET_NOTIFICATION_EMAIL_TO" value="'.(getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO') ? $conf->global->TICKET_NOTIFICATION_EMAIL_TO : '').'"></td>';
 print '<td class="center">';
 print $formcategory->textwithpicto('', $langs->trans("TicketEmailNotificationToHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
 
 // Also send to TICKET_NOTIFICATION_EMAIL_TO for responses (not only creation)
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 	print '<tr class="oddeven"><td>'.$langs->trans("TicketsEmailAlsoSendToMainAddress").'</td>';
 	print '<td class="left">';
 	if ($conf->use_javascript_ajax) {

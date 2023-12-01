@@ -222,7 +222,7 @@ if ($action == 'update' && $user->hasRight('adherent', 'configurer')) {
 
 if ($action == 'confirm_delete' && $user->hasRight('adherent', 'configurer')) {
 	$object->fetch($rowid);
-	$res = $object->delete();
+	$res = $object->delete($user);
 
 	if ($res > 0) {
 		setEventMessages($langs->trans("MemberTypeDeleted"), null, 'mesgs');
@@ -280,6 +280,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
 
 		if ($user->hasRight('adherent', 'configurer')) {
+			$newcardbutton .= dolGetButtonTitleSeparator();
 			$newcardbutton .= dolGetButtonTitle($langs->trans('NewMemberType'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/type.php?action=create');
 		}
 

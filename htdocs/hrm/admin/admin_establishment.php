@@ -112,8 +112,8 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 $sql .= $db->order($sortfield, $sortorder);
 $sql .= $db->plimit($limit + 1, $offset);
 
-
-$newcardbutton = dolGetButtonTitle($langs->trans('NewEstablishment'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/hrm/establishment/card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
+$newcardbutton = '';
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewEstablishment'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/hrm/establishment/card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', 0, $nbtotalofrecords, '', 0, $newcardbutton, '', $limit, 0, 0, 1);
 

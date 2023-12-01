@@ -55,7 +55,6 @@ $pagenext = $page + 1;
 $optioncss = GETPOST('optioncss', 'alpha');
 $param = "";
 $num = 0;
-$totalnboflines = 0;
 
 $result = restrictedArea($user, 'banque');
 
@@ -70,7 +69,7 @@ $stripe = new Stripe($db);
 
 llxHeader('', $langs->trans("StripePayoutList"));
 
-if (isModEnabled('stripe') && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
+if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('forcesandbox', 'alpha'))) {
 	$service = 'StripeTest';
 	$servicestatus = '0';
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
@@ -84,6 +83,9 @@ $stripeacc = $stripe->getStripeAccount($service);
 {
 	print $langs->trans('ErrorStripeAccountNotDefined');
 }*/
+
+$moreforfilter = '';
+$totalnboflines = -1;
 
 if (!$rowid) {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';

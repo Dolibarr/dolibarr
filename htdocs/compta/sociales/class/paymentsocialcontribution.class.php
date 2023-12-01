@@ -62,6 +62,26 @@ class PaymentSocialContribution extends CommonObject
 	public $datep = '';
 
 	/**
+	 * @var string
+	 */
+	public $type_code;
+
+	/**
+	 * @var string
+	 */
+	public $type_label;
+
+	/**
+	 * @var int
+	 */
+	public $bank_account;
+
+	/**
+	 * @var int
+	 */
+	public $bank_line;
+
+	/**
 	 * @deprecated
 	 * @see $amount
 	 */
@@ -411,7 +431,6 @@ class PaymentSocialContribution extends CommonObject
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		dol_syslog(get_class($this)."::delete");
@@ -421,7 +440,7 @@ class PaymentSocialContribution extends CommonObject
 		if ($this->bank_line > 0) {
 			$accline = new AccountLine($this->db);
 			$accline->fetch($this->bank_line);
-			$result = $accline->delete();
+			$result = $accline->delete($user);
 			if ($result < 0) {
 				$this->errors[] = $accline->error;
 				$error++;

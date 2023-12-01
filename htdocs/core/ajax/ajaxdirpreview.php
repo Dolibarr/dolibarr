@@ -402,7 +402,7 @@ if (!empty($conf->dol_use_jmobile)) {
 if (empty($conf->use_javascript_ajax)) {
 	$useajax = 0;
 }
-if (!empty($conf->global->MAIN_ECM_DISABLE_JS)) {
+if (getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
 	$useajax = 0;
 }
 

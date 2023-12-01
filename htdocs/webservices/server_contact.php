@@ -53,7 +53,7 @@ require_once DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php";
 dol_syslog("Call Contact webservices interfaces");
 
 // Enable and test if module web services is enabled
-if (empty($conf->global->MAIN_MODULE_WEBSERVICES)) {
+if (!getDolGlobalString('MAIN_MODULE_WEBSERVICES')) {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
 	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
@@ -292,8 +292,8 @@ function getContact($authentication, $id, $ref_ext)
 		if ($result > 0) {
 			// Only internal user who have contact read permission
 			// Or for external user who have contact read permission, with restrict on socid
-			if ($fuser->rights->societe->contact->lire && !$fuser->socid
-				|| ($fuser->rights->societe->contact->lire && ($fuser->socid == $contact->socid))
+			if ($fuser->hasRight('societe', 'contact', 'lire') && !$fuser->socid
+				|| ($fuser->hasRight('societe', 'contact', 'lire') && ($fuser->socid == $contact->socid))
 			) {
 				$contact_result_fields = array(
 					'id' => $contact->id,

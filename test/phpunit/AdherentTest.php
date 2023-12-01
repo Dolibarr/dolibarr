@@ -87,14 +87,14 @@ class AdherentTest extends PHPUnit\Framework\TestCase
 		global $conf,$user,$langs,$db;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
-		if (!empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)) {
+		if (getDolGlobalString('MAIN_FIRSTNAME_NAME_POSITION')) {
 			print "\n".__METHOD__." Company must be setup to have name-firstname in order 'Firstname Lastname'\n";
 			die(1);
 		}
-		if (!empty($conf->global->MAIN_MODULE_LDAP)) {
+		if (getDolGlobalString('MAIN_MODULE_LDAP')) {
 			print "\n".__METHOD__." module LDAP must be disabled.\n"; die(1);
 		}
-		if (!empty($conf->global->MAIN_MODULE_MAILMANSPIP)) {
+		if (getDolGlobalString('MAIN_MODULE_MAILMANSPIP')) {
 			print "\n".__METHOD__." module MailmanSpip must be disabled.\n"; die(1);
 		}
 
@@ -583,7 +583,7 @@ class AdherentTest extends PHPUnit\Framework\TestCase
 
 		$localobjectat=new AdherentType($db);
 		$result=$localobjectat->fetch($localobject->typeid);
-		$result=$localobjectat->delete();
+		$result=$localobjectat->delete($user);
 		print __METHOD__." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 

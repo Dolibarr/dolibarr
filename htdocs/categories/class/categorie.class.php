@@ -343,8 +343,6 @@ class Categorie extends CommonObject
 	 */
 	public function fetch($id, $label = '', $type = null, $ref_ext = '')
 	{
-		global $conf;
-
 		// Check parameters
 		if (empty($id) && empty($label) && empty($ref_ext)) {
 			$this->error = "No category to search for";
@@ -389,8 +387,6 @@ class Categorie extends CommonObject
 				$this->date_modification = $this->db->jdate($res['tms']);
 				$this->user_creation_id = (int) $res['fk_user_creat'];
 				$this->user_modification_id = (int) $res['fk_user_modif'];
-				$this->user_creation = (int) $res['fk_user_creat'];
-				$this->user_modification = (int) $res['fk_user_modif'];
 
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
@@ -465,7 +461,7 @@ class Categorie extends CommonObject
 		$sql .= " label,";
 		$sql .= " description,";
 		$sql .= " color,";
-		if (!empty($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)) {
+		if (getDolGlobalString('CATEGORY_ASSIGNED_TO_A_CUSTOMER')) {
 			$sql .= "fk_soc,";
 		}
 		$sql .= " visible,";
@@ -480,7 +476,7 @@ class Categorie extends CommonObject
 		$sql .= "'".$this->db->escape($this->label)."', ";
 		$sql .= "'".$this->db->escape($this->description)."', ";
 		$sql .= "'".$this->db->escape($this->color)."', ";
-		if (!empty($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)) {
+		if (getDolGlobalString('CATEGORY_ASSIGNED_TO_A_CUSTOMER')) {
 			$sql .= ($this->socid > 0 ? $this->socid : 'null').", ";
 		}
 		$sql .= "'".$this->db->escape($this->visible)."', ";
@@ -570,7 +566,7 @@ class Categorie extends CommonObject
 		$sql .= " description = '".$this->db->escape($this->description)."',";
 		$sql .= " ref_ext = '".$this->db->escape($this->ref_ext)."',";
 		$sql .= " color = '".$this->db->escape($this->color)."'";
-		if (!empty($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)) {
+		if (getDolGlobalString('CATEGORY_ASSIGNED_TO_A_CUSTOMER')) {
 			$sql .= ", fk_soc = ".($this->socid > 0 ? $this->socid : 'null');
 		}
 		$sql .= ", visible = ".(int) $this->visible;
@@ -594,14 +590,18 @@ class Categorie extends CommonObject
 				// Call trigger
 				$result = $this->call_trigger('CATEGORY_MODIFY', $user);
 				if ($result < 0) {
-					$error++; $this->db->rollback(); return -1;
+					$error++;
 				}
 				// End call triggers
 			}
 
-			$this->db->commit();
-
-			return 1;
+			if (!$error) {
+				$this->db->commit();
+				return 1;
+			} else {
+				$this->db->rollback();
+				return -1;
+			}
 		} else {
 			$this->db->rollback();
 			dol_print_error($this->db);
@@ -735,7 +735,7 @@ class Categorie extends CommonObject
 		$sql .= " VALUES (".((int) $this->id).", ".((int) $obj->id).")";
 
 		if ($this->db->query($sql)) {
-			if (!empty($conf->global->CATEGORIE_RECURSIV_ADD)) {
+			if (getDolGlobalString('CATEGORIE_RECURSIV_ADD')) {
 				$sql = 'SELECT fk_parent FROM '.MAIN_DB_PREFIX.'categorie';
 				$sql .= " WHERE rowid = ".((int) $this->id);
 

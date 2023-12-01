@@ -163,7 +163,7 @@ class UserGroup extends CommonObject
 	 *  @param		boolean	$load_members	Load all members of the group
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	public function fetch($id = '', $groupname = '', $load_members = false)
+	public function fetch($id = 0, $groupname = '', $load_members = false)
 	{
 		global $conf;
 
@@ -776,7 +776,7 @@ class UserGroup extends CommonObject
 		$option = $params['option'] ?? '';
 
 		$datas = [];
-		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			$langs->load("users");
 			return ['optimize' => $langs->trans("ShowGroup")];
 		}
@@ -804,7 +804,7 @@ class UserGroup extends CommonObject
 	{
 		global $langs, $conf, $db, $hookmanager;
 
-		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpicto) {
+		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') && $withpicto) {
 			$withpicto = 0;
 		}
 
@@ -843,7 +843,7 @@ class UserGroup extends CommonObject
 
 		$linkclose = "";
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$langs->load("users");
 				$label = $langs->trans("ShowGroup");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1, 1).'"';
@@ -895,13 +895,13 @@ class UserGroup extends CommonObject
 		global $conf;
 		$dn = '';
 		if ($mode == 0) {
-			$dn = $conf->global->LDAP_KEY_GROUPS."=".$info[$conf->global->LDAP_KEY_GROUPS].",".$conf->global->LDAP_GROUP_DN;
+			$dn = getDolGlobalString('LDAP_KEY_GROUPS') . "=".$info[getDolGlobalString('LDAP_KEY_GROUPS')]."," . getDolGlobalString('LDAP_GROUP_DN');
 		}
 		if ($mode == 1) {
 			$dn = $conf->global->LDAP_GROUP_DN;
 		}
 		if ($mode == 2) {
-			$dn = $conf->global->LDAP_KEY_GROUPS."=".$info[$conf->global->LDAP_KEY_GROUPS];
+			$dn = getDolGlobalString('LDAP_KEY_GROUPS') . "=".$info[getDolGlobalString('LDAP_KEY_GROUPS')];
 		}
 		return $dn;
 	}
@@ -925,14 +925,14 @@ class UserGroup extends CommonObject
 		$info["objectclass"] = explode(',', $conf->global->LDAP_GROUP_OBJECT_CLASS);
 
 		// Champs
-		if ($this->name && !empty($conf->global->LDAP_GROUP_FIELD_FULLNAME)) {
-			$info[$conf->global->LDAP_GROUP_FIELD_FULLNAME] = $this->name;
+		if ($this->name && getDolGlobalString('LDAP_GROUP_FIELD_FULLNAME')) {
+			$info[getDolGlobalString('LDAP_GROUP_FIELD_FULLNAME')] = $this->name;
 		}
 		//if ($this->name && !empty($conf->global->LDAP_GROUP_FIELD_NAME)) $info[$conf->global->LDAP_GROUP_FIELD_NAME] = $this->name;
-		if ($this->note && !empty($conf->global->LDAP_GROUP_FIELD_DESCRIPTION)) {
-			$info[$conf->global->LDAP_GROUP_FIELD_DESCRIPTION] = dol_string_nohtmltag($this->note, 2);
+		if ($this->note && getDolGlobalString('LDAP_GROUP_FIELD_DESCRIPTION')) {
+			$info[getDolGlobalString('LDAP_GROUP_FIELD_DESCRIPTION')] = dol_string_nohtmltag($this->note, 2);
 		}
-		if (!empty($conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS)) {
+		if (getDolGlobalString('LDAP_GROUP_FIELD_GROUPMEMBERS')) {
 			$valueofldapfield = array();
 			foreach ($this->members as $key => $val) {    // This is array of users for group into dolibarr database.
 				$muser = new User($this->db);
@@ -940,10 +940,10 @@ class UserGroup extends CommonObject
 				$info2 = $muser->_load_ldap_info();
 				$valueofldapfield[] = $muser->_load_ldap_dn($info2);
 			}
-			$info[$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS] = (!empty($valueofldapfield) ? $valueofldapfield : '');
+			$info[getDolGlobalString('LDAP_GROUP_FIELD_GROUPMEMBERS')] = (!empty($valueofldapfield) ? $valueofldapfield : '');
 		}
-		if (!empty($conf->global->LDAP_GROUP_FIELD_GROUPID)) {
-			$info[$conf->global->LDAP_GROUP_FIELD_GROUPID] = $this->id;
+		if (getDolGlobalString('LDAP_GROUP_FIELD_GROUPID')) {
+			$info[getDolGlobalString('LDAP_GROUP_FIELD_GROUPID')] = $this->id;
 		}
 		return $info;
 	}
@@ -995,7 +995,7 @@ class UserGroup extends CommonObject
 
 		// Positionne le modele sur le nom du modele a utiliser
 		if (!dol_strlen($modele)) {
-			if (!empty($conf->global->USERGROUP_ADDON_PDF)) {
+			if (getDolGlobalString('USERGROUP_ADDON_PDF')) {
 				$modele = $conf->global->USERGROUP_ADDON_PDF;
 			} else {
 				$modele = 'grass';
@@ -1027,7 +1027,9 @@ class UserGroup extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'members')) {
 			$return .= '<br><span class="info-box-status opacitymedium">'.(empty($this->nb_users) ? 0 : $this->nb_users).' '.$langs->trans('Users').'</span>';
 		}

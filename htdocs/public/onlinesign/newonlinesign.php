@@ -180,7 +180,7 @@ if ($action == 'confirm_refusepropal' && $confirm == 'yes') {
 	$sql .= " SET fk_statut = ".((int) $object::STATUS_NOTSIGNED).", note_private = '".$db->escape($object->note_private)."', date_signature='".$db->idate(dol_now())."'";
 	$sql .= " WHERE rowid = ".((int) $object->id);
 
-	dol_syslog(__METHOD__, LOG_DEBUG);
+	dol_syslog(__FILE__, LOG_DEBUG);
 	$resql = $db->query($sql);
 	if (!$resql) {
 		$error++;
@@ -194,7 +194,7 @@ if ($action == 'confirm_refusepropal' && $confirm == 'yes') {
 		if (method_exists($object, 'call_trigger')) {
 			// Online customer is not a user, so we use the use that validates the documents
 			$user = new User($db);
-			$user->fetch($object->user_valid_id);
+			$user->fetch($object->user_validation_id);
 			$object->context = array('closedfromonlinesignature' => 'closedfromonlinesignature');
 			$result = $object->call_trigger('PROPAL_CLOSE_REFUSED', $user);
 			if ($result < 0) {
@@ -215,8 +215,8 @@ if ($action == 'confirm_refusepropal' && $confirm == 'yes') {
 
 $form = new Form($db);
 $head = '';
-if (!empty($conf->global->MAIN_SIGN_CSS_URL)) {
-	$head = '<link rel="stylesheet" type="text/css" href="'.$conf->global->MAIN_SIGN_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+if (getDolGlobalString('MAIN_SIGN_CSS_URL')) {
+	$head = '<link rel="stylesheet" type="text/css" href="' . getDolGlobalString('MAIN_SIGN_CSS_URL').'?lang='.$langs->defaultlang.'">'."\n";
 }
 
 $conf->dol_hide_topmenu = 1;
@@ -263,7 +263,7 @@ $logo = $mysoc->logo;
 $paramlogo = 'ONLINE_SIGN_LOGO_'.$suffix;
 if (!empty($conf->global->$paramlogo)) {
 	$logosmall = $conf->global->$paramlogo;
-} elseif (!empty($conf->global->ONLINE_SIGN_LOGO)) {
+} elseif (getDolGlobalString('ONLINE_SIGN_LOGO')) {
 	$logosmall = $conf->global->ONLINE_SIGN_LOGO;
 }
 //print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
@@ -284,25 +284,25 @@ if ($urllogo) {
 	print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
 	print '>';
 	print '</div>';
-	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
+	if (!getDolGlobalString('MAIN_HIDE_POWERED_BY')) {
 		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 	}
 	print '</div>';
 }
-if ($source == 'proposal' && !empty($conf->global->PROPOSAL_IMAGE_PUBLIC_SIGN)) {
+if ($source == 'proposal' && getDolGlobalString('PROPOSAL_IMAGE_PUBLIC_SIGN')) {
 	print '<div class="backimagepublicproposalsign">';
-	print '<img id="idPROPOSAL_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->PROPOSAL_IMAGE_PUBLIC_SIGN.'">';
+	print '<img id="idPROPOSAL_IMAGE_PUBLIC_INTERFACE" src="' . getDolGlobalString('PROPOSAL_IMAGE_PUBLIC_SIGN').'">';
 	print '</div>';
 }
 
 // Output introduction text
 $text = '';
-if (!empty($conf->global->ONLINE_SIGN_NEWFORM_TEXT)) {
+if (getDolGlobalString('ONLINE_SIGN_NEWFORM_TEXT')) {
 	$reg = array();
 	if (preg_match('/^\((.*)\)$/', $conf->global->ONLINE_SIGN_NEWFORM_TEXT, $reg)) {
 		$text .= $langs->trans($reg[1])."<br>\n";
 	} else {
-		$text .= $conf->global->ONLINE_SIGN_NEWFORM_TEXT."<br>\n";
+		$text .= getDolGlobalString('ONLINE_SIGN_NEWFORM_TEXT') . "<br>\n";
 	}
 	$text = '<tr><td align="center"><br>'.$text.'<br></td></tr>'."\n";
 }

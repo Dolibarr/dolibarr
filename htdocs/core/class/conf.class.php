@@ -29,8 +29,7 @@
 /**
  *  Class to stock current configuration
  */
-#[AllowDynamicProperties]
-class Conf
+class Conf extends stdClass
 {
 	/**
 	 * @var Object 	Associative array with properties found in conf file
@@ -395,11 +394,14 @@ class Conf
 									$modulename = 'supplier_proposal';
 								}
 								$this->modules[$modulename] = $modulename; // Add this module in list of enabled modules
+
 								// deprecated in php 8.2
+								//if (version_compare(phpversion(), '8.2') < 0) {
 								if (!isset($this->$modulename) || !is_object($this->$modulename)) {
-									$this->$modulename = new stdClass();
+									$this->$modulename = new stdClass();	// We need this to use the ->enabled and the ->multidir, ->dir...
 								}
-								$this->$modulename->enabled = true;
+								$this->$modulename->enabled = true;	// TODO Remove this
+								//}
 							}
 						}
 					}

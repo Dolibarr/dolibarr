@@ -114,7 +114,7 @@ if (!$permissiontoread) {
  */
 
 // Upload file
-if (GETPOST("sendit") && !empty($conf->global->MAIN_UPLOAD_DOC) && $permissiontoupload) {
+if (GETPOST("sendit") && getDolGlobalString('MAIN_UPLOAD_DOC') && $permissiontoupload) {
 	if (dol_mkdir($upload_dir) >= 0) {
 		$resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir."/".dol_unescapefile($_FILES['userfile']['name']), 0, 0, $_FILES['userfile']['error']);
 		if (is_numeric($resupload) && $resupload > 0) {

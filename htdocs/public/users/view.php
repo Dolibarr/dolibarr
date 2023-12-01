@@ -187,8 +187,8 @@ if ($mode == 'vcard') {
 }
 
 $head = '';
-if (!empty($conf->global->MAIN_USER_PROFILE_CSS_URL)) {
-	$head = '<link rel="stylesheet" type="text/css" href="'.$conf->global->MAIN_USER_PROFILE_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+if (getDolGlobalString('MAIN_USER_PROFILE_CSS_URL')) {
+	$head = '<link rel="stylesheet" type="text/css" href="' . getDolGlobalString('MAIN_USER_PROFILE_CSS_URL').'?lang='.$langs->defaultlang.'">'."\n";
 }
 
 $conf->dol_hide_topmenu = 1;
@@ -254,9 +254,9 @@ print '</div>';
 print '</div>';
 
 
-if (!empty($conf->global->USER_IMAGE_PUBLIC_INTERFACE)) {
+if (getDolGlobalString('USER_IMAGE_PUBLIC_INTERFACE')) {
 	print '<div class="backimagepublicrecruitment">';
-	print '<img id="idUSER_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->USER_IMAGE_PUBLIC_INTERFACE.'">';
+	print '<img id="idUSER_IMAGE_PUBLIC_INTERFACE" src="' . getDolGlobalString('USER_IMAGE_PUBLIC_INTERFACE').'">';
 	print '</div>';
 }
 
@@ -404,7 +404,7 @@ if (!getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
 	$paramlogo = 'ONLINE_USER_LOGO_'.$suffix;
 	if (!empty($conf->global->$paramlogo)) {
 		$logosmall = $conf->global->$paramlogo;
-	} elseif (!empty($conf->global->ONLINE_USER_LOGO)) {
+	} elseif (getDolGlobalString('ONLINE_USER_LOGO')) {
 		$logosmall = $conf->global->ONLINE_USER_LOGO;
 	}
 	//print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";

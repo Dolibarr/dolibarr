@@ -76,7 +76,7 @@ $domData .= ' data-qty="'.$line->qty.'"';
 $domData .= ' data-product_type="'.$line->product_type.'"';
 
 $sign = 1;
-if (!empty($conf->global->INVOICE_POSITIVE_CREDIT_NOTE_SCREEN) && in_array($object->element, array('facture', 'invoice_supplier')) && $object->type == $object::TYPE_CREDIT_NOTE) {
+if (getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE_SCREEN') && in_array($object->element, array('facture', 'invoice_supplier')) && $object->type == $object::TYPE_CREDIT_NOTE) {
 	$sign = -1;
 }
 
@@ -85,7 +85,7 @@ $coldisplay = 0;
 ?>
 <!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->
 <tr  id="row-<?php print $line->id?>" class="drag drop oddeven" <?php print $domData; ?> >
-<?php if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
+<?php if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) { ?>
 	<td class="linecolnum center"><span class="opacitymedium"><?php $coldisplay++; ?><?php print ($i + 1); ?></span></td>
 <?php } ?>
 	<td class="linecoldescription minwidth300imp"><?php $coldisplay++; ?><div id="line_<?php print $line->id; ?>"></div>
@@ -116,7 +116,7 @@ if (($line->info_bits & 2) == 2) {
 			$discount->fetch($line->fk_remise_except);
 			print ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromDeposit", $discount->getNomUrl(0));
 			// Add date of deposit
-			if (!empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) {
+			if (getDolGlobalString('INVOICE_ADD_DEPOSIT_DATE')) {
 				print ' ('.dol_print_date($discount->datec).')';
 			}
 		} elseif ($line->description == '(EXCESS RECEIVED)' && $objp->fk_remise_except > 0)	{
@@ -134,7 +134,7 @@ if (($line->info_bits & 2) == 2) {
 		}
 	}
 } else {
-	$format = (!empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 'dayhour' : 'day');
+	$format = (getDolGlobalString('MAIN_USE_HOURMIN_IN_DATE_RANGE') ? 'dayhour' : 'day');
 
 	if ($line->fk_product > 0) {
 		print $form->textwithtooltip($text, $description, 3, 0, '', $i, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
@@ -235,7 +235,7 @@ if (($line->info_bits & 2) == 2) {
 	}
 }
 
-if ($user->hasRight('fournisseur', 'lire') && isset($line->fk_fournprice) && $line->fk_fournprice > 0 && empty($conf->global->SUPPLIER_HIDE_SUPPLIER_OBJECTLINES)) {
+if ($user->hasRight('fournisseur', 'lire') && isset($line->fk_fournprice) && $line->fk_fournprice > 0 && !getDolGlobalString('SUPPLIER_HIDE_SUPPLIER_OBJECTLINES')) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 	$productfourn = new ProductFournisseur($this->db);
 	$productfourn->fetch_product_fournisseur_price($line->fk_fournprice);
@@ -265,7 +265,7 @@ if ($object->element == 'supplier_proposal' || $object->element == 'order_suppli
 
 $tooltiponprice = '';
 $tooltiponpriceend = '';
-if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 	$tooltiponprice = $langs->transcountry("TotalHT", $mysoc->country_code).'='.price($line->total_ht);
 	$tooltiponprice .= '<br>'.$langs->transcountry("TotalVAT", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_tva);
 	if (is_object($object->thirdparty)) {
@@ -348,7 +348,7 @@ if ((($line->info_bits & 2) != 2) && $line->special_code != 3) {
 }
 print '</td>';
 
-if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	print '<td class="linecoluseunit nowrap left">';
 	$label = $line->getLabelOfUnit('short');
 	if ($label !== '') {
@@ -379,13 +379,13 @@ if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 }
 
 if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
-	if (!empty($user->rights->margins->creer)) { ?>
+	if ($user->hasRight('margins', 'creer')) { ?>
 		<td class="linecolmargin1 nowrap margininfos right"><?php $coldisplay++; ?><?php print price($line->pa_ht); ?></td>
 	<?php }
-	if (!empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous) { ?>
+	if (getDolGlobalString('DISPLAY_MARGIN_RATES') && $user->hasRight('margins', 'liretous')) { ?>
 		<td class="linecolmargin2 nowrap margininfos right"><?php $coldisplay++; ?><?php print (($line->pa_ht == 0) ? 'n/a' : price(price2num($line->marge_tx, 'MT')).'%'); ?></td>
 	<?php }
-	if (!empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous) {?>
+	if (getDolGlobalString('DISPLAY_MARK_RATES') && $user->hasRight('margins', 'liretous')) {?>
 		<td class="linecolmargin2 nowrap margininfos right"><?php $coldisplay++; ?><?php print price(price2num($line->marque_tx, 'MT')).'%'; ?></td>
 	<?php }
 }

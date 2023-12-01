@@ -165,7 +165,7 @@ print dol_get_fiche_head($head, 'supplierpayment', $langs->trans("Suppliers"), -
  *  Numbering module
  */
 
-if (empty($conf->global->SUPPLIER_PAYMENT_ADDON)) {
+if (!getDolGlobalString('SUPPLIER_PAYMENT_ADDON')) {
 	$conf->global->SUPPLIER_PAYMENT_ADDON = 'mod_supplier_payment_bronan';
 }
 
@@ -229,10 +229,10 @@ foreach ($dirmodels as $reldir) {
 						$module = new $classname($db);
 
 						// Show modules according to features level
-						if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 							continue;
 						}
-						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+						if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 							continue;
 						}
 

@@ -158,20 +158,12 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 <!-- Type -->
 <tr><td class="fieldrequired"><?php echo $langs->trans("Type"); ?></td><td class="valeur">
 <?php
-print '<select id="type" class="flat type" name="type">';
-foreach ($type2label as $key => $val) {
-	$selected = '';
-	if ($key == GETPOST('type', 'alpha')) {
-		$selected = ' selected="selected"';
-	}
-
-	// Set $valhtml with the picto for the type
-	$valhtml = ($key ? getPictoForType($key) : '').$val;
-
-	print '<option value="'.$key.'"'.$selected.' data-html="'.dol_escape_htmltag($valhtml).'">'.($val ? $val : '&nbsp;').'</option>';
+// Combo with list of fields
+if (empty($formadmin)) {
+	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+	$formadmin = new FormAdmin($db);
 }
-print '</select>';
-print ajax_combobox('type');
+print $formadmin->selectTypeOfFields('type', GETPOST('type', 'alpha'));
 ?>
 </td></tr>
 <!-- Size -->
@@ -202,7 +194,7 @@ print ajax_combobox('type');
 <tr><td class="titlefield"><?php echo $langs->trans("LanguageFile"); ?></td><td class="valeur"><input type="text" id="langfile" name="langfile" class="minwidth200" value="<?php echo dol_escape_htmltag(GETPOST('langfile', 'alpha')); ?>"></td></tr>
 <!-- Computed Value -->
 <tr class="extra_computed_value">
-<?php if (empty($conf->global->MAIN_STORE_COMPUTED_EXTRAFIELDS)) { ?>
+<?php if (!getDolGlobalString('MAIN_STORE_COMPUTED_EXTRAFIELDS')) { ?>
 	<td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc"), 1, 'help', '', 0, 2, 'tooltipcompute'); ?></td>
 <?php } else { ?>
 	<td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc")).$form->textwithpicto($langs->trans("Computedpersistent"), $langs->trans("ComputedpersistentDesc"), 1, 'warning'); ?></td>
