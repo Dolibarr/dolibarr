@@ -357,6 +357,36 @@ class ReceptionTest extends PHPUnit\Framework\TestCase
 	}
 
 	/**
+	 * testReceptionMergeCompanies
+	 *
+	 * Check that a Reception referencing a Societe object being merged into
+	 * another is correctly migrated to use the new Societe object.
+	 *
+	 * @param $localobject An existing validated Reception object to mark as Draft.
+	 *
+	 * @depends testReceptionSetDraft
+	 * @return Reception a Reception object with data fetched
+	 */
+	public function testReceptionMergeCompanies($localobject)
+	{
+		global $db, $user;
+		$soc2 = new Societe($db);
+		$soc2->name = "Test reception";
+		$soc2_id = $soc2->create($user);
+		$this->assertLessThanOrEqual($soc2_id, 0, "Cannot create second Societe object:\n".
+									 $soc2->errorsToString());
+
+		$result = $soc2->mergeCompany($localobject->id);
+		$this->assertLessThanOrEqual($result, 0, "Cannot merge Societe object:\n".
+									 $soc2->errorsToString());
+
+		print __METHOD__." result=".$result."\n";
+		$this->assertLessThanOrEqual($result, 0);
+
+		return $result;
+	}
+
+	/**
 	 * testReceptionDelete
 	 *
 	 * Check that a Reception object can be deleted.
@@ -375,7 +405,7 @@ class ReceptionTest extends PHPUnit\Framework\TestCase
 		$this->assertLessThanOrEqual($result, 0);
 
 		$soc = new Societe($db);
-		$result = $soc->delete($localobject->socid);
+		$result = $soc->delete($localobject->socid, $user);
 		$this->assertLessThanOrEqual($result, 0);
 
 		return $result;

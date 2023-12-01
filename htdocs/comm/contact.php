@@ -129,7 +129,7 @@ if ($resql) {
 
 	$param = "&type=".$type;
 
-	$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ListOfContacts") : $langs->trans("ListOfContactsAddresses"));
+	$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("ListOfContacts") : $langs->trans("ListOfContactsAddresses"));
 	print_barre_liste($title.($label ? " (".$label.")" : ""), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num);
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'?type='.GETPOST("type", "alpha").'" method="GET">';

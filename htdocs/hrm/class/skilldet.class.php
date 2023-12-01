@@ -166,7 +166,7 @@ class Skilldet extends CommonObjectLine
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -551,6 +551,12 @@ class Skilldet extends CommonObjectLine
 				if (!$resql) {
 					$error++; $this->error = $this->db->lasterror();
 				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'skilldet/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'skilldet/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++; $this->error = $this->db->lasterror();
+				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
@@ -706,7 +712,7 @@ class Skilldet extends CommonObjectLine
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowSkilldet");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -878,11 +884,11 @@ class Skilldet extends CommonObjectLine
 		global $langs, $conf;
 		$langs->load("hrm");
 
-		if (empty($conf->global->hrm_SKILLDET_ADDON)) {
+		if (!getDolGlobalString('hrm_SKILLDET_ADDON')) {
 			$conf->global->hrm_SKILLDET_ADDON = 'mod_skilldet_standard';
 		}
 
-		if (!empty($conf->global->hrm_SKILLDET_ADDON)) {
+		if (getDolGlobalString('hrm_SKILLDET_ADDON')) {
 			$mybool = false;
 
 			$file = getDolGlobalString('hrm_SKILLDET_ADDON') . ".php";
@@ -948,7 +954,7 @@ class Skilldet extends CommonObjectLine
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->SKILLDET_ADDON_PDF)) {
+			} elseif (getDolGlobalString('SKILLDET_ADDON_PDF')) {
 				$modele = $conf->global->SKILLDET_ADDON_PDF;
 			}
 		}

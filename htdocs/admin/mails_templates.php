@@ -934,7 +934,7 @@ foreach ($fieldlist as $field => $value) {
 	if ($value == 'module') {
 		print '<td class="liste_titre"><input type="text" name="search_module" class="maxwidth75" value="'.dol_escape_htmltag($search_module).'"></td>';
 	} elseif ($value == 'label') {
-		print '<td class="liste_titre"><input type="text" name="search_label" class="maxwidth200" value="'.dol_escape_htmltag($search_label).'"></td>';
+		print '<td class="liste_titre"><input type="text" name="search_label" class="maxwidth75" value="'.dol_escape_htmltag($search_label).'"></td>';
 	} elseif ($value == 'lang') {
 		print '<td class="liste_titre">';
 		print $formadmin->select_language($search_lang, 'search_lang', 0, null, 1, 0, 0, 'maxwidth100');
@@ -1227,7 +1227,7 @@ if ($num) {
 							$valuetoshow = dol_escape_htmltag($valuetoshow);
 						}
 						if ($value == 'label') {
-							$class .= ' tdoverflowmax100';
+							$class .= ' tdoverflowmax200';
 						}
 						if ($value == 'topic') {
 							$class .= ' tdoverflowmax200 small';

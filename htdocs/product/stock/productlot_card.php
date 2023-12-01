@@ -456,7 +456,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '</td></tr>';
 
 	// Sell by
-	if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+	if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 		print '<tr><td>';
 		print $form->editfieldkey($langs->trans('SellByDate'), 'sellby', $object->sellby, $object, $user->hasRight('stock', 'creer'), 'datepicker');
 		print '</td><td>';
@@ -466,7 +466,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	// Eat by
-	if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+	if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 		print '<tr><td>';
 		print $form->editfieldkey($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $user->hasRight('stock', 'creer'), 'datepicker');
 		print '</td><td>';
@@ -475,7 +475,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '</tr>';
 	}
 
-	if (!empty($conf->global->PRODUCT_LOT_ENABLE_TRACEABILITY)) {
+	if (getDolGlobalString('PRODUCT_LOT_ENABLE_TRACEABILITY')) {
 		print '<tr><td>'.$form->editfieldkey($langs->trans('ManufacturingDate'), 'manufacturing_date', $object->manufacturing_date, $object, $user->hasRight('stock', 'creer')).'</td>';
 		print '<td>'.$form->editfieldval($langs->trans('ManufacturingDate'), 'manufacturing_date', $object->manufacturing_date, $object, $user->hasRight('stock', 'creer'), 'datepicker').'</td>';
 		print '</tr>';
@@ -488,7 +488,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	// Quality control
-	if (!empty($conf->global->PRODUCT_LOT_ENABLE_QUALITY_CONTROL)) {
+	if (getDolGlobalString('PRODUCT_LOT_ENABLE_QUALITY_CONTROL')) {
 		print '<tr><td>'.$form->editfieldkey($langs->trans('EndOfLife'), 'eol_date', $object->eol_date, $object, $user->hasRight('stock', 'creer')).'</td>';
 		print '<td>'.$form->editfieldval($langs->trans('EndOfLife'), 'eol_date', $object->eol_date, $object, $user->hasRight('stock', 'creer'), 'datepicker').'</td>';
 		print '</tr>';

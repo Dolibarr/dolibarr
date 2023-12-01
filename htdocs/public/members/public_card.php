@@ -79,7 +79,7 @@ $extrafields = new ExtraFields($db);
  */
 
 $morehead = '';
-if (!empty($conf->global->MEMBER_PUBLIC_CSS)) {
+if (getDolGlobalString('MEMBER_PUBLIC_CSS')) {
 	$morehead = '<link rel="stylesheet" type="text/css" href="' . getDolGlobalString('MEMBER_PUBLIC_CSS').'">';
 } else {
 	$morehead = '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/eldy/style.css.php">';

@@ -307,7 +307,7 @@ DescValidateMovements=Toute modification ou suppression d'écriture, de lettrage
 
 ValidateHistory=Lier automatiquement
 AutomaticBindingDone=Liaisons automatiques effectuées (%s) - Liaison automatique impossible pour certains enregistrements (%s)
-DoManualBindingForFailedRecord=Vous devez réaliser un lettrage manuel pour la/les %s ligne·s non lettré·es automatiquement.
+DoManualBindingForFailedRecord=Vous devez réaliser la liaison avec le compte comptable manuellement pour la ou les %s lignes non liées automatiquement.
 
 ErrorAccountancyCodeIsAlreadyUse=Erreur, vous ne pouvez pas supprimer ou désactiver ce compte comptable car il est utilisé
 MvtNotCorrectlyBalanced=Mouvement non équilibré. Débit = %s & Crédit = %s

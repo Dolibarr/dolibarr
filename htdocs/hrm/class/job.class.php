@@ -175,7 +175,7 @@ class Job extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -560,6 +560,12 @@ class Job extends CommonObject
 				if (!$resql) {
 					$error++; $this->error = $this->db->lasterror();
 				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'job/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'job/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++; $this->error = $this->db->lasterror();
+				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
@@ -750,7 +756,7 @@ class Job extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowJob");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -947,11 +953,11 @@ class Job extends CommonObject
 		global $langs, $conf;
 		$langs->load("hrm");
 
-		if (empty($conf->global->hrm_JOB_ADDON)) {
+		if (!getDolGlobalString('hrm_JOB_ADDON')) {
 			$conf->global->hrm_JOB_ADDON = 'mod_job_standard';
 		}
 
-		if (!empty($conf->global->hrm_JOB_ADDON)) {
+		if (getDolGlobalString('hrm_JOB_ADDON')) {
 			$mybool = false;
 
 			$file = getDolGlobalString('hrm_JOB_ADDON') . ".php";
@@ -1017,7 +1023,7 @@ class Job extends CommonObject
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->JOB_ADDON_PDF)) {
+			} elseif (getDolGlobalString('JOB_ADDON_PDF')) {
 				$modele = $conf->global->JOB_ADDON_PDF;
 			}
 		}
@@ -1096,6 +1102,36 @@ class Job extends CommonObject
 		$return .= '</div>';
 		$return .= '</div>';
 		return $return;
+	}
+	/**
+	 * function for get required skills associate to job object
+	 * @param int  $id  Id of object
+	 * @return array|int     list of ids skillranks
+	 */
+	public function getSkillRankForJob($id)
+	{
+		if (empty($id)) {
+			return -1;
+		}
+		$skillranks = array();
+		$sql = "SELECT rowid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."hrm_skillrank";
+		$sql .= " WHERE fk_object = ".((int) $id);
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($resql);
+				$skillranks[] = $obj;
+				$i++;
+			}
+			$this->db->free($resql);
+		} else {
+			dol_print_error($this->db);
+		}
+		return $skillranks;
 	}
 }
 

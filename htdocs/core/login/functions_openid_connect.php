@@ -40,7 +40,7 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 
 	// Force master entity in transversal mode
 	$entity = $entitytotest;
-	if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+	if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 		$entity = 1;
 	}
 
@@ -81,7 +81,7 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 
 			// Get the user attribute (claim) matching the Dolibarr login
 			$login_claim = 'email'; // default
-			if (!empty($conf->global->MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM)) {
+			if (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM')) {
 				$login_claim = $conf->global->MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM;
 			}
 

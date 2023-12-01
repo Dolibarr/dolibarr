@@ -6,6 +6,7 @@
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019      Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -854,7 +855,7 @@ while ($i < $imaxinloop) {
 		if ($obj->pid > 0) {
 			print $productstatic->getNomUrl(1, '', 24);
 			print $obj->label ? ' - '.dol_trunc($obj->label, 16) : '';
-			if (!empty($obj->description) && !empty($conf->global->PRODUCT_DESC_IN_LIST)) {
+			if (!empty($obj->description) && getDolGlobalString('PRODUCT_DESC_IN_LIST')) {
 				print '<br><span class="small">'.dol_nl2br($obj->description).'</span>';
 			}
 		} else {
@@ -896,9 +897,6 @@ while ($i < $imaxinloop) {
 		}
 		if (!$i) {
 			$totalarray['pos'][$totalarray['nbfield']] = 'cd.qty';
-		}
-		if (!$i) {
-			$totalarray['val']['cd.qty'] = $obj->qty;
 		}
 		$totalarray['val']['cd.qty'] += $obj->qty;
 	}

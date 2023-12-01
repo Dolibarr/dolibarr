@@ -53,6 +53,18 @@ abstract class ModeleBarCode
  */
 abstract class ModeleNumRefBarCode extends CommonNumRefGenerator
 {
+
+	/**
+	 * @var int Code facultatif
+	 */
+	public $code_null;
+
+	/**
+	 * @var int Automatic numbering
+	 */
+	public $code_auto;
+
+
 	/**
 	 *  Return next value available
 	 *
@@ -90,33 +102,33 @@ abstract class ModeleNumRefBarCode extends CommonNumRefGenerator
 		$s .= '<u>'.$langs->trans("ThisIsModuleRules").':</u><br>';
 		if ($type == 0) {
 			$s .= $langs->trans("RequiredIfProduct").': ';
-			if (!empty($conf->global->MAIN_BARCODE_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) {
+			if (getDolGlobalString('MAIN_BARCODE_CODE_ALWAYS_REQUIRED') && !empty($this->code_null)) {
 				$s .= '<strike>';
 			}
 			$s .= yn(!$this->code_null, 1, 2);
-			if (!empty($conf->global->MAIN_BARCODE_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) {
+			if (getDolGlobalString('MAIN_BARCODE_CODE_ALWAYS_REQUIRED') && !empty($this->code_null)) {
 				$s .= '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
 			}
 			$s .= '<br>';
 		}
 		if ($type == 1) {
 			$s .= $langs->trans("RequiredIfService").': ';
-			if (!empty($conf->global->MAIN_BARCODE_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) {
+			if (getDolGlobalString('MAIN_BARCODE_CODE_ALWAYS_REQUIRED') && !empty($this->code_null)) {
 				$s .= '<strike>';
 			}
 			$s .= yn(!$this->code_null, 1, 2);
-			if (!empty($conf->global->MAIN_BARCODE_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) {
+			if (getDolGlobalString('MAIN_BARCODE_CODE_ALWAYS_REQUIRED') && !empty($this->code_null)) {
 				$s .= '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
 			}
 			$s .= '<br>';
 		}
 		if ($type == -1) {
 			$s .= $langs->trans("Required").': ';
-			if (!empty($conf->global->MAIN_BARCODE_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) {
+			if (getDolGlobalString('MAIN_BARCODE_CODE_ALWAYS_REQUIRED') && !empty($this->code_null)) {
 				$s .= '<strike>';
 			}
 			$s .= yn(!$this->code_null, 1, 2);
-			if (!empty($conf->global->MAIN_BARCODE_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) {
+			if (getDolGlobalString('MAIN_BARCODE_CODE_ALWAYS_REQUIRED') && !empty($this->code_null)) {
 				$s .= '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
 			}
 			$s .= '<br>';

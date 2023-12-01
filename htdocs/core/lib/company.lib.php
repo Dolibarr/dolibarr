@@ -52,8 +52,8 @@ function societe_prepare_head(Societe $object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if (empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES)) {
-		if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->hasRight('societe', 'contact', 'lire')) {
+	if (!getDolGlobalString('MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES')) {
+		if (!getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB') && $user->hasRight('societe', 'contact', 'lire')) {
 			//$nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
 			$nbContact = 0;
 			// Enable caching of thirdrparty count Contacts
@@ -106,19 +106,19 @@ function societe_prepare_head(Societe $object)
 	if ($object->client == 1 || $object->client == 2 || $object->client == 3) {
 		$head[$h][0] = DOL_URL_ROOT.'/comm/card.php?socid='.$object->id;
 		$head[$h][1] = '';
-		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && ($object->client == 2 || $object->client == 3)) {
+		if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTS') && ($object->client == 2 || $object->client == 3)) {
 			$head[$h][1] .= $langs->trans("Prospect");
 		}
-		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && $object->client == 3) {
+		if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTS') && !getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS') && $object->client == 3) {
 			$head[$h][1] .= ' | ';
 		}
-		if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && ($object->client == 1 || $object->client == 3)) {
+		if (!getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS') && ($object->client == 1 || $object->client == 3)) {
 			$head[$h][1] .= $langs->trans("Customer");
 		}
 		$head[$h][2] = 'customer';
 		$h++;
 
-		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 			$langs->load("products");
 			// price
 			$head[$h][0] = DOL_URL_ROOT.'/societe/price.php?socid='.$object->id;
@@ -171,7 +171,7 @@ function societe_prepare_head(Societe $object)
 	}
 
 	// Tab to link resources
-	if (isModEnabled('resource') && !empty($conf->global->RESOURCE_ON_THIRDPARTIES)) {
+	if (isModEnabled('resource') && getDolGlobalString('RESOURCE_ON_THIRDPARTIES')) {
 		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=societe&element_id='.$object->id;
 		$head[$h][1] = $langs->trans("Resources");
 		$head[$h][2] = 'resources';
@@ -180,7 +180,7 @@ function societe_prepare_head(Societe $object)
 
 	// Related items
 	if ((isModEnabled('commande') || isModEnabled('propal') || isModEnabled('facture') || isModEnabled('ficheinter') || isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))
-		&& empty($conf->global->THIRDPARTIES_DISABLE_RELATED_OBJECT_TAB)) {
+		&& !getDolGlobalString('THIRDPARTIES_DISABLE_RELATED_OBJECT_TAB')) {
 		$head[$h][0] = DOL_URL_ROOT.'/societe/consumption.php?socid='.$object->id;
 		$head[$h][1] = $langs->trans("Referers");
 		$head[$h][2] = 'consumption';
@@ -200,7 +200,7 @@ function societe_prepare_head(Societe $object)
 			//$title = $langs->trans("BankAccountsAndGateways");
 
 			$servicestatus = 0;
-			if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha')) {
+			if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'alpha')) {
 				$servicestatus = 1;
 			}
 
@@ -243,7 +243,7 @@ function societe_prepare_head(Societe $object)
 	}
 
 	if (
-		((isModEnabled('website') && !empty($conf->global->WEBSITE_USE_WEBSITE_ACCOUNTS)) || isModEnabled('webportal'))
+		((isModEnabled('website') && getDolGlobalString('WEBSITE_USE_WEBSITE_ACCOUNTS')) || isModEnabled('webportal'))
 		&& $user->hasRight('societe', 'lire')
 	) {
 		$site_filter_list = array();
@@ -857,6 +857,12 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 			$num = $db->num_rows($result);
 
 			print '<tr class="liste_titre">';
+			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print '<td class="center">';
+				$selectedfields = (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
+				print $selectedfields;
+				print '</td>';
+			}
 			print '<td>'.$langs->trans("Ref").'</td>';
 			print '<td>'.$langs->trans("Name").'</td>';
 			print '<td class="center">'.$langs->trans("DateStart").'</td>';
@@ -865,10 +871,12 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 			print '<td class="center">'.$langs->trans("OpportunityStatusShort").'</td>';
 			print '<td class="right">'.$langs->trans("OpportunityProbabilityShort").'</td>';
 			print '<td class="right">'.$langs->trans("Status").'</td>';
-			print '<td class="center">';
-			$selectedfields = (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
-			print $selectedfields;
-			print '</td>';
+			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print '<td class="center">';
+				$selectedfields = (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
+				print $selectedfields;
+				print '</td>';
+			}
 			print '</tr>';
 
 			if ($num > 0) {
@@ -888,6 +896,17 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 					if ($user->hasRight('projet', 'lire') && $userAccess > 0) {
 						print '<tr class="oddeven">';
 
+						if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+							print '<td class="nowrap center actioncolumn">';
+							if ($massactionbutton || $massaction) {
+								$selected = 0;
+								if (in_array($obj->id, $arrayofselected)) {
+									$selected = 1;
+								}
+								print '<input id="cb'.$obj->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->id.'"'.($selected ? ' checked="checked"' : '').'>';
+							}
+							print '</td>';
+						}
 						// Ref
 						print '<td class="nowraponall">';
 						print $projecttmp->getNomUrl(1, '', 0, '', '-', 0, 1, '', 'project:'.$_SERVER["PHP_SELF"].'?socid=__SOCID__');
@@ -922,7 +941,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 
 						// Action column
 						if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-							print '<td class="nowrap center">';
+							print '<td class="nowrap center actioncolumn">';
 							if ($massactionbutton || $massaction) {
 								$selected = 0;
 								if (in_array($obj->id, $arrayofselected)) {
@@ -1044,7 +1063,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$extrafields->fetch_name_optionals_label($contactstatic->table_element);
 
 	$contactstatic->fields = array(
-		'rowid'     =>array('type'=>'integer', 'label'=>"TechnicalID", 'enabled'=>(!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) ? 1 : 0), 'visible'=>(!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) ? 1 : 0), 'position'=>1),
+		'rowid'     =>array('type'=>'integer', 'label'=>"TechnicalID", 'enabled'=>(getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') ? 1 : 0), 'visible'=>(getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') ? 1 : 0), 'position'=>1),
 		'name'      =>array('type'=>'varchar(128)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1),
 		'poste'     =>array('type'=>'varchar(128)', 'label'=>'PostOrFunction', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>2, 'index'=>1, 'position'=>20),
 		'address'   =>array('type'=>'varchar(128)', 'label'=>'Address', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>3, 'index'=>1, 'position'=>30),
@@ -1056,7 +1075,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 
 	// Definition of fields for list
 	$arrayfields = array(
-		't.rowid'=>array('label'=>"TechnicalID", 'checked'=>(!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) ? 1 : 0), 'enabled'=>(!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) ? 1 : 0), 'position'=>1),
+		't.rowid'=>array('label'=>"TechnicalID", 'checked'=>(getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') ? 1 : 0), 'enabled'=>(getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') ? 1 : 0), 'position'=>1),
 		't.name'=>array('label'=>"Name", 'checked'=>1, 'position'=>10),
 		't.poste'=>array('label'=>"PostOrFunction", 'checked'=>1, 'position'=>20),
 		't.address'=>array('label'=>(empty($conf->dol_optimize_smallscreen) ? $langs->trans("Address").' / '.$langs->trans("Phone").' / '.$langs->trans("Email") : $langs->trans("Address")), 'checked'=>1, 'position'=>30),
@@ -1113,13 +1132,13 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 
 	$newcardbutton = '';
 	if ($user->hasRight('societe', 'contact', 'creer')) {
-		$addcontact = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
+		$addcontact = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
 		$newcardbutton .= dolGetButtonTitle($addcontact, '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contact/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage));
 	}
 
 	print "\n";
 
-	$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ContactsForCompany") : $langs->trans("ContactsAddressesForCompany"));
+	$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("ContactsForCompany") : $langs->trans("ContactsAddressesForCompany"));
 	print load_fiche_titre($title, $newcardbutton, '');
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
@@ -1183,6 +1202,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as t";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as ef on (t.rowid = ef.fk_object)";
 	$sql .= " WHERE t.fk_soc = ".((int) $object->id);
+	$sql .= " AND t.entity IN (" .getEntity('socpeople') .")";
 	$sql .= " AND ((t.fk_user_creat = ".((int) $user->id)." AND t.priv = 1) OR t.priv = 0)";
 	if ($search_rowid) {
 		$sql .= natural_search('t.rowid', $search_rowid);
@@ -1963,7 +1983,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		$out .= '<td class="liste_titre"><input type="text" class="width50" name="search_rowid" value="'.(isset($filters['search_rowid']) ? $filters['search_rowid'] : '').'"></td>';
 		$out .= '<td class="liste_titre"></td>';
 		$out .= '<td class="liste_titre">';
-		$out .= $formactions->select_type_actions($actioncode, "actioncode", '', empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1, 0, (empty($conf->global->AGENDA_USE_MULTISELECT_TYPE) ? 0 : 1), 1, 'minwidth100 maxwidth150');
+		$out .= $formactions->select_type_actions($actioncode, "actioncode", '', !getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? 1 : -1, 0, (!getDolGlobalString('AGENDA_USE_MULTISELECT_TYPE') ? 0 : 1), 1, 'minwidth100 maxwidth150');
 		$out .= '</td>';
 		$out .= '<td class="liste_titre maxwidth100onsmartphone"><input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="'.$filters['search_agenda_label'].'"></td>';
 		$out .= '<td class="liste_titre center">';
@@ -2016,7 +2036,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 		$caction = new CActionComm($db);
-		$arraylist = $caction->liste_array(1, 'code', '', (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : 0), '', 1);
+		$arraylist = $caction->liste_array(1, 'code', '', (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? 1 : 0), '', 1);
 
 		foreach ($histo as $key => $value) {
 			$actionstatic->fetch($histo[$key]['id']); // TODO Do we need this, we already have a lot of data of line into $histo
@@ -2064,7 +2084,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 
 			// Type
 			$labeltype = $actionstatic->type_code;
-			if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($arraylist[$labeltype])) {
+			if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') && empty($arraylist[$labeltype])) {
 				$labeltype = 'AC_OTH';
 			}
 			if (!empty($actionstatic->code) && preg_match('/^TICKET_MSG/', $actionstatic->code)) {
@@ -2306,7 +2326,7 @@ function addEventTypeSQL(&$sql, $actioncode, $sqlANDOR = "AND")
 	global $conf, $db;
 	// Condition on actioncode
 
-	if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
+	if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 		if ($actioncode == 'AC_NON_AUTO') {
 			$sql .= " $sqlANDOR c.type != 'systemauto'";
 		} elseif ($actioncode == 'AC_ALL_AUTO') {
@@ -2477,19 +2497,19 @@ function htmlPrintOnlineFooter($fromcompany, $langs, $addformmessage = 0, $suffi
 		print '<br>';
 
 		$parammessageform = 'ONLINE_PAYMENT_MESSAGE_FORM_'.$suffix;
-		if (!empty($conf->global->$parammessageform)) {
-			print $langs->transnoentities($conf->global->$parammessageform);
-		} elseif (!empty($conf->global->ONLINE_PAYMENT_MESSAGE_FORM)) {
-			print $langs->transnoentities($conf->global->ONLINE_PAYMENT_MESSAGE_FORM);
+		if (getDolGlobalString($parammessageform) !== '') {
+			print $langs->transnoentities(getDolGlobalString($parammessageform));
+		} elseif (getDolGlobalString('ONLINE_PAYMENT_MESSAGE_FORM')  !== '') {
+			print $langs->transnoentities(getDolGlobalString('ONLINE_PAYMENT_MESSAGE_FORM'));
 		}
 
 		// Add other message if VAT exists
 		if (!empty($object->total_vat) || !empty($object->total_tva)) {
 			$parammessageform = 'ONLINE_PAYMENT_MESSAGE_FORMIFVAT_'.$suffix;
-			if (!empty($conf->global->$parammessageform)) {
-				print $langs->transnoentities($conf->global->$parammessageform);
-			} elseif (!empty($conf->global->ONLINE_PAYMENT_MESSAGE_FORMIFVAT)) {
-				print $langs->transnoentities($conf->global->ONLINE_PAYMENT_MESSAGE_FORMIFVAT);
+			if (getDolGlobalString($parammessageform)  !== '') {
+				print $langs->transnoentities(getDolGlobalString($parammessageform));
+			} elseif (getDolGlobalString('ONLINE_PAYMENT_MESSAGE_FORMIFVAT') !== '') {
+				print $langs->transnoentities(getDolGlobalString('ONLINE_PAYMENT_MESSAGE_FORMIFVAT'));
 			}
 		}
 	}

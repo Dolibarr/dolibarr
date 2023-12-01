@@ -196,6 +196,66 @@ if (empty($reshook)) {
 		}
 	}
 
+	if ($action == 'confirm_delete' && !empty($permissiontodelete)) {
+		if (!($object->id > 0)) {
+			dol_print_error('', 'Error, object must be fetched before being deleted');
+			exit;
+		}
+
+		$error = 0;
+		$deleteChilds = GETPOST('deletechilds', 'boolean');
+
+		// Start the database transaction
+		$db->begin();
+
+		if ($deleteChilds === 'on') {
+			$TMoChildren = $object->getAllMoChilds();
+
+			foreach ($TMoChildren as $id => $childObject) {
+				if ($childObject->delete($user) == -1) {
+					$error++;
+					if (!empty($childObject->errors)) {
+						setEventMessages(null, $childObject->errors, 'errors');
+					} else {
+						setEventMessages($childObject->error, null, 'errors');
+					}
+				}
+			}
+		}
+
+		if (!$error) {
+			$result = $object->delete($user);
+
+			if ($result > 0) {
+				setEventMessages("RecordDeleted", null, 'mesgs');
+
+				if ($deleteChilds === 'on') {
+					setEventMessages("MoChildsDeleted", null, 'mesgs');
+				}
+
+				if (empty($noback)) {
+					header("Location: " . $backurlforlist);
+					exit;
+				}
+			} else {
+				$error++;
+				if (!empty($object->errors)) {
+					setEventMessages(null, $object->errors, 'errors');
+				} else {
+					setEventMessages($object->error, null, 'errors');
+				}
+			}
+		}
+
+		// Commit or rollback the database transaction based on whether there was an error
+		if ($error) {
+			$db->rollback();
+		} else {
+			$db->commit();
+		}
+	}
+
+
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
@@ -229,7 +289,7 @@ if (empty($reshook)) {
 		$result = $object->setStatut($object::STATUS_PRODUCED, 0, '', 'MRP_MO_PRODUCED');
 		if ($result >= 0) {
 			// Define output language
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -434,15 +494,21 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Confirmation to delete
 	if ($action == 'delete') {
+		$numberofmochilds = count($object->getAllMoChilds());
+
+		if ($numberofmochilds > 0)$label = $langs->trans("DeleteMoChild", '('.strval($numberofmochilds).')');
+		else $label = $langs->trans("DeleteMoChild");
+
 		$formquestion = array(
+			array('type' => 'checkbox', 'name' => 'deletechilds', 'label' => $label, 'value' => 0),
 			array(
 				'label' => $langs->trans('MoCancelConsumedAndProducedLines'),
 				'name' => 'alsoCancelConsumedAndProducedLines',
 				'type' => 'checkbox',
-				'value' => empty($conf->global->MO_ALSO_CANCEL_CONSUMED_AND_PRODUCED_LINES_BY_DEFAULT) ? 0 : 1
-			),
+				'value' => !getDolGlobalString('MO_ALSO_CANCEL_CONSUMED_AND_PRODUCED_LINES_BY_DEFAULT') ? 0 : 1
+			)
 		);
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteMo'), $langs->trans('ConfirmDeleteMo'), 'confirm_delete', $formquestion, 0, 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteMo'), $langs->trans('ConfirmDeleteMo'), 'confirm_delete', $formquestion, 0, 1);
 	}
 	// Confirmation to delete line
 	if ($action == 'deleteline') {
@@ -533,7 +599,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Thirdparty
 	if (is_object($object->thirdparty)) {
 		$morehtmlref .= $object->thirdparty->getNomUrl(1, 'customer');
-		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
+		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
 			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
 		}
 	}

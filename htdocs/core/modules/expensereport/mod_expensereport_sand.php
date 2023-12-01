@@ -83,7 +83,7 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$mask = empty($conf->global->EXPENSEREPORT_SAND_MASK) ? '' : $conf->global->EXPENSEREPORT_SAND_MASK;
+		$mask = !getDolGlobalString('EXPENSEREPORT_SAND_MASK') ? '' : $conf->global->EXPENSEREPORT_SAND_MASK;
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskvalue" value="'.$mask.'">', $tooltip, 1, 1).'</td>';
 
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button" value="'.$langs->trans("Modify").'"></td>';
@@ -130,7 +130,7 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// We get cursor rule
-		$mask = empty($conf->global->EXPENSEREPORT_SAND_MASK) ? '' : $conf->global->EXPENSEREPORT_SAND_MASK;
+		$mask = !getDolGlobalString('EXPENSEREPORT_SAND_MASK') ? '' : $conf->global->EXPENSEREPORT_SAND_MASK;
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';

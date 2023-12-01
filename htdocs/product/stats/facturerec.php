@@ -156,7 +156,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<span class="opacitymedium">'.$langs->trans("ClinkOnALinkOfColumn", $langs->transnoentitiesnoconv("Referers")).'</span>';
 		} elseif ($user->hasRight('facture', 'lire')) {
 			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client,";
-			$sql .= "f.titre, f.datec, f.rowid as facid, f.suspended as suspended,";
+			$sql .= "f.titre as title, f.datec, f.rowid as facid, f.suspended as suspended,";
 			$sql .= " d.rowid, d.total_ht as total_ht, d.qty"; // We must keep the d.rowid here to not loose record because of the distinct used to ignore duplicate line when link on societe_commerciaux is used
 			if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 				$sql .= ", sc.fk_soc, sc.fk_user ";
@@ -266,7 +266,7 @@ if ($id > 0 || !empty($ref)) {
 						$total_qty += $objp->qty;
 
 						$invoicestatic->id = $objp->facid;
-						$invoicestatic->ref = $objp->titre;
+						$invoicestatic->ref = $objp->title;
 						$societestatic->fetch($objp->socid);
 						$paiement = $invoicestatic->getSommePaiement();
 

@@ -228,7 +228,7 @@ class AccountingJournal extends CommonObject
 	}
 
 	/**
-	 * Return clicable name (with picto eventually)
+	 * Return clickable name (with picto eventually)
 	 *
 	 * @param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 * @param	int		$withlabel		0=No label, 1=Include label of journal, 2=Include nature of journal
@@ -281,7 +281,7 @@ class AccountingJournal extends CommonObject
 		}
 
 		$label_link = $this->code;
-		if ($withlabel != 2 && !empty($this->label)) {
+		if ($withlabel == 1 && !empty($this->label)) {
 			$label_link .= ' - '.($nourl ? '<span class="opacitymedium">' : '').$langs->transnoentities($this->label).($nourl ? '</span>' : '');
 		}
 		if ($withlabel == 2 && !empty($this->nature)) {
@@ -619,7 +619,7 @@ class AccountingJournal extends CommonObject
 					$disposal_amount = $pre_data_info['disposal']['amount'];
 					$disposal_subject_to_vat = $pre_data_info['disposal']['subject_to_vat'];
 					$disposal_date_formatted = dol_print_date($disposal_date, 'day');
-					$disposal_vat = $conf->global->ASSET_DISPOSAL_VAT > 0 ? $conf->global->ASSET_DISPOSAL_VAT : 20;
+					$disposal_vat = getDolGlobalInt('ASSET_DISPOSAL_VAT') > 0 ? $conf->global->ASSET_DISPOSAL_VAT : 20;
 
 					// Get accountancy codes
 					//---------------------------

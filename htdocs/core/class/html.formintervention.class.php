@@ -58,10 +58,10 @@ class FormIntervention
 	 *	@param  string	$htmlname   Nom de la zone html
 	 *	@param	int		$maxlength	Maximum length of label
 	 *	@param	int		$showempty	Show empty line ('1' or string to show for empty line)
-	 *	@param	int		$draftonly	Show only drafts intervention
+	 *	@param	bool	$draftonly	Show only drafts intervention
 	 *	@return int         		Nbre of project if OK, <0 if KO
 	 */
-	public function select_interventions($socid = -1, $selected = '', $htmlname = 'interventionid', $maxlength = 16, $showempty = 1, $draftonly = false)
+	public function select_interventions($socid = -1, $selected = 0, $htmlname = 'interventionid', $maxlength = 16, $showempty = 1, $draftonly = false)
 	{
 		// phpcs:enable
 		global $user, $conf, $langs;

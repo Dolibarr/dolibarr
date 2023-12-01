@@ -29,9 +29,14 @@ if (empty($langs) || !is_object($langs)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
-
+global $action, $form, $langs;
 
 $langs->load("modulebuilder");
+
+if ($action == 'delete') {
+	$attributekey = GETPOST('attrname', 'aZ09');
+	print $form->formconfirm($_SERVER['PHP_SELF']."?attrname=$attributekey", $langs->trans("DeleteExtrafield"), $langs->trans("ConfirmDeleteExtrafield", $attributekey), "confirm_delete", '', 0, 1);
+}
 
 ?>
 

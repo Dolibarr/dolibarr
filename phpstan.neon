@@ -1,6 +1,6 @@
 parameters:
 	customRulesetUsed: true
-	level: 0
+	level: 1
 	fileExtensions:
 		- php
 	paths:
@@ -49,10 +49,13 @@ parameters:
 		- '#Undefined variable: \$error#'
 		- '#Undefined variable: \$errors#'
 		- '#Undefined variable: \$form#'
+		- '#has an unused parameter \$param#'
 		- '#Result of function fieldList#'
 		- '#Caught class Stripe#'
 		- '#Function llxHeader invoked with#'
 		- '#Function llxHeaderVierge invoked with#'
+		- '#Function llxFooter invoked with#'
+		- '#Function llxFooterVierge invoked with#'
 		- '#If condition is always true#'
 		- '#always exists and is not falsy#'
 		- '#has no return type specified#'
@@ -64,6 +67,10 @@ parameters:
 		- '#with no value type specified in iterable type array#'
 		- '#Empty array passed to foreach#'
 		- '#in isset\(\) is not nullable#'
+		- '#in isset\(\) is never defined#'
+		- '#(\$force_dolibarr_lib|\$dolibarr_main_db).*in empty\(\) is never defined.#'
+		- '#Sprain\\SwissQrBill\\#'
+		- '#Constructor of class DolEditor has an unused parameter \$toolbarlocation#'
 	internalErrorsCountLimit: 50
 	cache:
 	    nodesByFileCountMax: 512
