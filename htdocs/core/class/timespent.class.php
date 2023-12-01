@@ -164,7 +164,7 @@ class TimeSpent extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid']) && !empty($this->fields['ref'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid']) && !empty($this->fields['ref'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -527,6 +527,12 @@ class TimeSpent extends CommonObject
 				if (!$resql) {
 					$error++; $this->error = $this->db->lasterror();
 				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'timespent/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'timespent/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++; $this->error = $this->db->lasterror();
+				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
@@ -652,7 +658,7 @@ class TimeSpent extends CommonObject
 
 		$datas = [];
 
-		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			return ['optimize' => $langs->trans("ShowTimeSpent")];
 		}
 		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("TimeSpent").'</u>';
@@ -713,7 +719,7 @@ class TimeSpent extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowTimeSpent");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -797,7 +803,7 @@ class TimeSpent extends CommonObject
 	{
 		global $conf, $langs;
 
-		//$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
@@ -806,8 +812,9 @@ class TimeSpent extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		//$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
-
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'label')) {
 			$return .= ' <div class="inline-block opacitymedium valignmiddle tdoverflowmax100">'.$this->label.'</div>';
 		}
@@ -901,14 +908,8 @@ class TimeSpent extends CommonObject
 
 				$this->user_creation_id = $obj->fk_user_creat;
 				$this->user_modification_id = $obj->fk_user_modif;
-				if (!empty($obj->fk_user_valid)) {
-					$this->user_validation_id = $obj->fk_user_valid;
-				}
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
-				if (!empty($obj->datev)) {
-					$this->date_validation   = empty($obj->datev) ? '' : $this->db->jdate($obj->datev);
-				}
 			}
 
 			$this->db->free($result);
@@ -942,14 +943,14 @@ class TimeSpent extends CommonObject
 		global $langs, $conf;
 		$langs->load("timespent@timespent");
 
-		if (empty($conf->global->TIMESPENT_timespent_ADDON)) {
+		if (!getDolGlobalString('TIMESPENT_timespent_ADDON')) {
 			$conf->global->TIMESPENT_timespent_ADDON = 'mod_timespent_standard';
 		}
 
-		if (!empty($conf->global->TIMESPENT_timespent_ADDON)) {
+		if (getDolGlobalString('TIMESPENT_timespent_ADDON')) {
 			$mybool = false;
 
-			$file = $conf->global->TIMESPENT_timespent_ADDON.".php";
+			$file = getDolGlobalString('TIMESPENT_timespent_ADDON') . ".php";
 			$classname = $conf->global->TIMESPENT_timespent_ADDON;
 
 			// Include file with class
@@ -1012,7 +1013,7 @@ class TimeSpent extends CommonObject
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->timespent_ADDON_PDF)) {
+			} elseif (getDolGlobalString('timespent_ADDON_PDF')) {
 				$modele = $conf->global->timespent_ADDON_PDF;
 			}
 		}

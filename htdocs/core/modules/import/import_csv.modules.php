@@ -76,6 +76,8 @@ class ImportCsv extends ModeleImports
 
 	public $charset = '';
 
+	public $col;
+
 
 	/**
 	 *	Constructor
@@ -90,7 +92,7 @@ class ImportCsv extends ModeleImports
 		parent::__construct();
 		$this->db = $db;
 
-		$this->separator = (GETPOST('separator') ?GETPOST('separator') : (empty($conf->global->IMPORT_CSV_SEPARATOR_TO_USE) ? ',' : $conf->global->IMPORT_CSV_SEPARATOR_TO_USE));
+		$this->separator = (GETPOST('separator') ?GETPOST('separator') : (!getDolGlobalString('IMPORT_CSV_SEPARATOR_TO_USE') ? ',' : $conf->global->IMPORT_CSV_SEPARATOR_TO_USE));
 		$this->enclosure = '"';
 		$this->escape = '"';
 
@@ -249,7 +251,7 @@ class ImportCsv extends ModeleImports
 		$newarrayres = array();
 		if ($arrayres && is_array($arrayres)) {
 			foreach ($arrayres as $key => $val) {
-				if (!empty($conf->global->IMPORT_CSV_FORCE_CHARSET)) {	// Forced charset
+				if (getDolGlobalString('IMPORT_CSV_FORCE_CHARSET')) {	// Forced charset
 					if (strtolower($conf->global->IMPORT_CSV_FORCE_CHARSET) == 'utf8') {
 						$newarrayres[$key]['val'] = $val;
 						$newarrayres[$key]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we considere it's null
@@ -642,11 +644,21 @@ class ImportCsv extends ModeleImports
 									}
 									$classinstance = new $class($this->db);
 									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $arrayfield, ($key - 1)));
-									$newval = $res; 	// We get new value computed.
+									if (empty($classinstance->error) && empty($classinstance->errors)) {
+										$newval = $res; 	// We get new value computed.
+									} else {
+										$this->errors[$error]['type'] = 'CLASSERROR';
+										$this->errors[$error]['lib'] = implode(
+												"\n",
+												array_merge([$classinstance->error], $classinstance->errors)
+										);
+										$errorforthistable++;
+										$error++;
+									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'numeric') {
 									$newval = price2num($newval);
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'accountingaccount') {
-									if (empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
+									if (!getDolGlobalString('ACCOUNTING_MANAGE_ZERO')) {
 										$newval = rtrim(trim($newval), "0");
 									} else {
 										$newval = trim($newval);
@@ -802,12 +814,22 @@ class ImportCsv extends ModeleImports
 									}
 									$classinstance = new $class($this->db);
 									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $arrayfield, ($key - 1)));
-									$fieldArr = explode('.', $fieldname);
-									if (count($fieldArr) > 0) {
-										$fieldname = $fieldArr[1];
+									if (empty($classinstance->error) && empty($classinstance->errors)) {
+										$fieldArr = explode('.', $fieldname);
+										if (count($fieldArr) > 0) {
+											$fieldname = $fieldArr[1];
+										}
+										$listfields[] = $fieldname;
+										$listvalues[] = $res;
+									} else {
+										$this->errors[$error]['type'] = 'CLASSERROR';
+										$this->errors[$error]['lib'] = implode(
+												"\n",
+												array_merge([$classinstance->error], $classinstance->errors)
+										);
+										$errorforthistable++;
+										$error++;
 									}
-									$listfields[] = $fieldname;
-									$listvalues[] = $res;
 								}
 							}
 						} else {

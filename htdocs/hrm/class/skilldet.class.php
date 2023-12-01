@@ -166,7 +166,7 @@ class Skilldet extends CommonObjectLine
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -531,7 +531,7 @@ class Skilldet extends CommonObjectLine
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('SKILLDET_VALIDATE', $user);
+				$result = $this->call_trigger('HRM_SKILLDET_VALIDATE', $user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -547,6 +547,12 @@ class Skilldet extends CommonObjectLine
 				// Now we rename also files into index
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'skilldet/".$this->db->escape($this->newref)."'";
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'skilldet/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++; $this->error = $this->db->lasterror();
+				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'skilldet/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'skilldet/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++; $this->error = $this->db->lasterror();
@@ -706,7 +712,7 @@ class Skilldet extends CommonObjectLine
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowSkilldet");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -837,6 +843,7 @@ class Skilldet extends CommonObjectLine
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_creat;
@@ -877,14 +884,14 @@ class Skilldet extends CommonObjectLine
 		global $langs, $conf;
 		$langs->load("hrm");
 
-		if (empty($conf->global->hrm_SKILLDET_ADDON)) {
+		if (!getDolGlobalString('hrm_SKILLDET_ADDON')) {
 			$conf->global->hrm_SKILLDET_ADDON = 'mod_skilldet_standard';
 		}
 
-		if (!empty($conf->global->hrm_SKILLDET_ADDON)) {
+		if (getDolGlobalString('hrm_SKILLDET_ADDON')) {
 			$mybool = false;
 
-			$file = $conf->global->hrm_SKILLDET_ADDON.".php";
+			$file = getDolGlobalString('hrm_SKILLDET_ADDON') . ".php";
 			$classname = $conf->global->hrm_SKILLDET_ADDON;
 
 			// Include file with class
@@ -947,7 +954,7 @@ class Skilldet extends CommonObjectLine
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->SKILLDET_ADDON_PDF)) {
+			} elseif (getDolGlobalString('SKILLDET_ADDON_PDF')) {
 				$modele = $conf->global->SKILLDET_ADDON_PDF;
 			}
 		}

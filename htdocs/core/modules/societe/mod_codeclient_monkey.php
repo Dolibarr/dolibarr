@@ -181,9 +181,9 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		$result = 0;
 		$code = strtoupper(trim($code));
 
-		if (empty($code) && $this->code_null && empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) {
+		if (empty($code) && $this->code_null && !getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED')) {
 			$result = 0;
-		} elseif (empty($code) && (!$this->code_null || !empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED))) {
+		} elseif (empty($code) && (!$this->code_null || getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED'))) {
 			$result = -2;
 		} else {
 			if ($this->verif_syntax($code) >= 0) {

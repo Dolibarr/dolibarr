@@ -125,6 +125,7 @@ class SkillRank extends CommonObject
 	public $fk_user_modif;
 	public $objecttype;
 	// END MODULEBUILDER PROPERTIES
+	public $rankorder;
 
 
 	// If this object has a subtable with lines
@@ -174,7 +175,7 @@ class SkillRank extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -234,9 +235,10 @@ class SkillRank extends CommonObject
 	 *
 	 * @param  	User 	$user      	User that creates
 	 * @param  	int 	$fromid     Id of object to clone
+	 * @param   int     $fk_object  id of Job object (if new job object)
 	 * @return 	mixed 				New object created, <0 if KO
 	 */
-	public function createFromClone(User $user, $fromid)
+	public function createFromClone(User $user, $fromid, $fk_object = 0)
 	{
 		global $langs, $extrafields;
 		$error = 0;
@@ -261,6 +263,10 @@ class SkillRank extends CommonObject
 		unset($object->id);
 		unset($object->fk_user_creat);
 		unset($object->import_key);
+		if (!empty($fk_object) && $fk_object > 0) {
+			unset($object->fk_object);
+		}
+
 
 		// Clear fields
 		if (property_exists($object, 'ref')) {
@@ -277,6 +283,11 @@ class SkillRank extends CommonObject
 		}
 		if (property_exists($object, 'date_modification')) {
 			$object->date_modification = null;
+		}
+		if (!empty($fk_object) && $fk_object > 0) {
+			if (property_exists($object, 'fk_object')) {
+				$object->fk_object = ($fk_object = 0 ? $this->fk_object : $fk_object);
+			}
 		}
 		// ...
 		// Clear extrafields that are unique
@@ -570,7 +581,7 @@ class SkillRank extends CommonObject
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('SKILLRANK_VALIDATE', $user);
+				$result = $this->call_trigger('HRM_SKILLRANK_VALIDATE', $user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -586,6 +597,12 @@ class SkillRank extends CommonObject
 				// Now we rename also files into index
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'skillrank/".$this->db->escape($this->newref)."'";
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'skillrank/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++; $this->error = $this->db->lasterror();
+				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'skillrank/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'skillrank/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++; $this->error = $this->db->lasterror();
@@ -745,7 +762,7 @@ class SkillRank extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowSkillRank");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -876,6 +893,7 @@ class SkillRank extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_creat;
@@ -941,14 +959,14 @@ class SkillRank extends CommonObject
 		global $langs, $conf;
 		$langs->load("hrm");
 
-		if (empty($conf->global->hrm_SKILLRANK_ADDON)) {
+		if (!getDolGlobalString('hrm_SKILLRANK_ADDON')) {
 			$conf->global->hrm_SKILLRANK_ADDON = 'mod_skillrank_standard';
 		}
 
-		if (!empty($conf->global->hrm_SKILLRANK_ADDON)) {
+		if (getDolGlobalString('hrm_SKILLRANK_ADDON')) {
 			$mybool = false;
 
-			$file = $conf->global->hrm_SKILLRANK_ADDON.".php";
+			$file = getDolGlobalString('hrm_SKILLRANK_ADDON') . ".php";
 			$classname = $conf->global->hrm_SKILLRANK_ADDON;
 
 			// Include file with class
@@ -1011,7 +1029,7 @@ class SkillRank extends CommonObject
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->SKILLRANK_ADDON_PDF)) {
+			} elseif (getDolGlobalString('SKILLRANK_ADDON_PDF')) {
 				$modele = $conf->global->SKILLRANK_ADDON_PDF;
 			}
 		}

@@ -69,7 +69,7 @@ if ($socid > 0) {
 	$soc->fetch($socid);
 	$title .= ' (<a href="list.php">'.$soc->name.'</a>)';
 }
-if (!$user->rights->projet->lire) {
+if (!$user->hasRight('projet', 'lire')) {
 	accessforbidden();
 }
 
@@ -119,7 +119,7 @@ $search_import_key = GETPOST('search_import_key', 'alpha');
 $searchCategoryCustomerOperator = 0;
 if (GETPOSTISSET('formfilteraction')) {
 	$searchCategoryCustomerOperator = GETPOST('search_category_customer_operator', 'int');
-} elseif (!empty($conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT)) {
+} elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
 	$searchCategoryCustomerOperator = $conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT;
 }
 $searchCategoryCustomerList = GETPOST('search_category_customer_list', 'array');
@@ -176,7 +176,7 @@ $search_date_modif_endyear = GETPOST('search_date_modif_endyear', 'int');
 $search_date_modif_endday = GETPOST('search_date_modif_endday', 'int');
 $search_date_modif_end = dol_mktime(23, 59, 59, $search_date_modif_endmonth, $search_date_modif_endday, $search_date_modif_endyear);	// Use tzserver
 
-$search_category_array = GETPOST("search_category_".Categorie::TYPE_PROJECT."_list", "array");
+$search_category_array = array();
 
 if (isModEnabled('categorie')) {
 	$search_category_array = GETPOST("search_category_".Categorie::TYPE_PROJECT."_list", "array");
@@ -242,7 +242,7 @@ $arrayfields['s.nom'] = array('label'=>$langs->trans("ThirdParty"), 'checked'=>1
 $arrayfields['s.name_alias'] = array('label'=>"AliasNameShort", 'checked'=>0, 'position'=>22);
 $arrayfields['commercial'] = array('label'=>$langs->trans("SaleRepresentativesOfThirdParty"), 'checked'=>0, 'position'=>23);
 $arrayfields['c.assigned'] = array('label'=>$langs->trans("AssignedTo"), 'checked'=>1, 'position'=>120);
-$arrayfields['opp_weighted_amount'] = array('label'=>$langs->trans('OpportunityWeightedAmountShort'), 'checked'=>0, 'enabled'=>(empty($conf->global->PROJECT_USE_OPPORTUNITIES) ? 0 : 1), 'position'=>106);
+$arrayfields['opp_weighted_amount'] = array('label'=>$langs->trans('OpportunityWeightedAmountShort'), 'checked'=>0, 'enabled'=>(!getDolGlobalString('PROJECT_USE_OPPORTUNITIES') ? 0 : 1), 'position'=>106);
 $arrayfields['u.login'] = array('label'=>"Author", 'checked'=>-1, 'position'=>165);
 // Force some fields according to search_usage filter...
 if (GETPOST('search_usage_opportunity')) {
@@ -427,7 +427,7 @@ $userstatic = new User($db);
 
 $help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 $title = $langs->trans("LeadsOrProjects");
-if (empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+if (!getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 	$title = $langs->trans("Projects");
 }
 if (getDolGlobalInt('PROJECT_USE_OPPORTUNITIES') == 2) {	// 2 = leads only
@@ -439,7 +439,7 @@ $morecss = array();
 
 // Get list of project id allowed to user (in a string list separated by comma)
 $projectsListId = '';
-if (empty($user->rights->projet->all->lire)) {
+if (!$user->hasRight('projet', 'all', 'lire')) {
 	$projectsListId = $object->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 }
 
@@ -516,7 +516,7 @@ $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object
 $sql .= $hookmanager->resPrint;
 
 $sql .= " WHERE p.entity IN (".getEntity('project', (GETPOST('search_current_entity', 'int') ? 0 : 1)).')';
-if (empty($user->rights->projet->all->lire)) {
+if (!$user->hasRight('projet', 'all', 'lire')) {
 	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users
 }
 // No need to check if company is external user, as filtering of projects must be done by getProjectsAuthorizedForUser
@@ -781,7 +781,7 @@ if (!$resql) {
 $num = $db->num_rows($resql);
 
 // Direct jump if only one record found
-if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all && !$page) {
+if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	header("Location: ".DOL_URL_ROOT.'/projet/card.php?id='.$obj->id);
 	exit;
@@ -1005,6 +1005,11 @@ foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
+// Add $param from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$param .= $hookmanager->resPrint;
+
 // List of mass actions available
 $arrayofmassactions = array(
 	'validate'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate"),
@@ -1035,11 +1040,15 @@ if (!empty($socid)) {
 }
 if ($search_usage_event_organization == 1) {
 	$url .= '&usage_organize_event=1';
+	if (((int) $search_usage_opportunity) < 1) {
+		$url .= '&usage_opportunity=0';
+	}
 }
 
 $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewProject'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('projet', 'creer'));
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -1090,7 +1099,7 @@ $moreforfilter .= '<div class="divsearchfield">';
 $tmptitle = $langs->trans('ProjectsWithThisUserAsContact');
 //$includeonly = 'hierarchyme';
 $includeonly = '';
-if (empty($user->rights->user->user->lire)) {
+if (!$user->hasRight('user', 'user', 'lire')) {
 	$includeonly = array($user->id);
 }
 $moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_project_user ? $search_project_user : '', 'search_project_user', $tmptitle, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth300 widthcentpercentminusx');
@@ -1102,7 +1111,7 @@ $moreforfilter .= img_picto($tmptitle, 'contact', 'class="pictofixedwidth"').$fo
 $moreforfilter .= '</div>';
 
 // If the user can view thirdparties other than his'
-if ($user->rights->user->user->lire) {
+if ($user->hasRight('user', 'user', 'lire')) {
 	$langs->load("commercial");
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');
@@ -1116,7 +1125,7 @@ if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PROJECT, $search_category_array, 'minwidth300imp minwidth300 widthcentpercentminusx');
 }
 // Filter on customer categories
-if (!empty($conf->global->MAIN_SEARCH_CATEGORY_CUSTOMER_ON_PROJECT_LIST) && isModEnabled("categorie") && $user->hasRight('categorie', 'lire')) {
+if (getDolGlobalString('MAIN_SEARCH_CATEGORY_CUSTOMER_ON_PROJECT_LIST') && isModEnabled("categorie") && $user->hasRight('categorie', 'lire')) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->transnoentities('CustomersProspectsCategoriesShort');
 	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
@@ -1154,7 +1163,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -1360,7 +1369,7 @@ if (!empty($arrayfields['p.fk_statut']['checked'])) {
 	print '</td>';
 }
 // Action column
-if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -1834,8 +1843,6 @@ while ($i < $imaxinloop) {
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
-			}
-			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'opp_weighted_amount';
 			}
 		}
@@ -1853,8 +1860,6 @@ while ($i < $imaxinloop) {
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
-			}
-			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'p.budget_amount';
 			}
 		}

@@ -168,7 +168,7 @@ class FormAdvTargetEmailing extends Form
 		$sql_usr .= " WHERE u2.entity IN (0,".$conf->entity.")";
 		$sql_usr .= " AND u2.rowid = sc.fk_user ";
 
-		if (!empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX)) {
+		if (getDolGlobalString('USER_HIDE_INACTIVE_IN_COMBOBOX')) {
 			$sql_usr .= " AND u2.statut<>0 ";
 		}
 		$sql_usr .= " ORDER BY name ASC";

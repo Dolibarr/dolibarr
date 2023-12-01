@@ -153,7 +153,7 @@ if ($action == 'addfolder') {
 }
 
 // Action ajout d'un rep
-if ($action == 'add' && $user->rights->ftp->setup) {
+if ($action == 'add' && $user->hasRight('ftp', 'setup')) {
 	$ecmdir = new EcmDirectory($db);
 	$ecmdir->ref                = GETPOST("ref");
 	$ecmdir->label              = GETPOST("label");
@@ -458,7 +458,7 @@ if (!function_exists('ftp_connect')) {
 			//$newsection='/home';
 
 			// List content of directory ($newsection = '/', '/home', ...)
-			if (!empty($conf->global->FTP_CONNECT_WITH_SFTP)) {
+			if (getDolGlobalString('FTP_CONNECT_WITH_SFTP')) {
 				if ($newsection == '/') {
 					//$newsection = '/./';
 					$newsection = ssh2_sftp_realpath($conn_id, ".").'/./'; // workaround for bug https://bugs.php.net/bug.php?id=64169

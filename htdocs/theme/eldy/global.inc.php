@@ -51,7 +51,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	--refidnocolor:#444;
 	--tableforfieldcolor:#888;
 	--amountremaintopaycolor:#880000;
-	--amountpaymentcomplete:#008800;
+	--amountpaymentcomplete:#008855;
 	--amountremaintopaybackcolor:none;
 	--productlinestockod: #002200;
 	--productlinestocktoolow: #884400;
@@ -63,7 +63,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 }
 
 <?php
-if (!empty($conf->global->THEME_DARKMODEENABLED)) {
+if (getDolGlobalString('THEME_DARKMODEENABLED')) {
 	print "/* For dark mode */\n";
 	if ($conf->global->THEME_DARKMODEENABLED != 2) {
 		print "@media (prefers-color-scheme: dark) {";	// To test, click on the 3 dots menu, then Other options then Display then emulate prefer-color-schemes
@@ -174,8 +174,8 @@ table.liste th.wrapcolumntitle.liste_titre_sel:not(.maxwidthsearch), table.liste
 	text-overflow: ellipsis;
 }
 th.wrapcolumntitle dl dt a span.fas.fa-list {
+	vertical-align: middle;
 	padding-bottom: 1px;
-	vertical-align: bottom;
 }
 
 /*.liste_titre input[name=month_date_when], .liste_titre input[name=monthvalid], .liste_titre input[name=search_ordermonth], .liste_titre input[name=search_deliverymonth],
@@ -207,22 +207,22 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 	outline: none;
 	margin: 0px 0px 0px 0px;
 	background-color: var(--inputbackgroundcolor);
-	<?php if (empty($conf->global->THEME_ADD_BACKGROUND_ON_INPUT)) { ?>
-		border<?php echo empty($conf->global->THEME_SHOW_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
+	<?php if (!getDolGlobalString('THEME_ADD_BACKGROUND_ON_INPUT')) { ?>
+		border<?php echo !getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
 	<?php } ?>
 }
 
 .liste_titre input, .liste_titre select {
 	border: none;
-	border<?php echo empty($conf->global->THEME_SHOW_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
+	border<?php echo !getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
 	/* padding: 5px; */
 }
 .pageplusone, .divadvancedsearchfieldcompinput,
 div.tabBar input, div.tabBar input.flat, div.tabBar textarea, div.tabBar textarea.flat, div.tabBar form.flat select, div.tabBar select, div.tabBar select.flat, div.tabBar .dataTables_length label select
 {
-	border<?php echo empty($conf->global->THEME_SHOW_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
+	border<?php echo !getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
 	<?php
-	if (!empty($conf->global->THEME_ADD_BACKGROUND_ON_INPUT)) { ?>
+	if (getDolGlobalString('THEME_ADD_BACKGROUND_ON_INPUT')) { ?>
 		background-color: #f8f8fa;
 		border-bottom-left-radius: 0;
 		border-bottom-right-radius: 0;
@@ -546,12 +546,12 @@ input.removedfile {
 input[type=file]    {
 	background-color: transparent;
 	box-shadow: none;
-	<?php if (empty($conf->global->THEME_SHOW_BORDER_ON_INPUT)) { ?>
+	<?php if (!getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT')) { ?>
 	border-top: none;
 	border-left: none;
 	border-right: none;
 	<?php } ?>
-	border<?php echo empty($conf->global->THEME_SHOW_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
+	border<?php echo !getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
 }
 input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
 input[type=radio]    { background-color: transparent; border: none; box-shadow: none; }
@@ -672,7 +672,7 @@ form {
 	margin:0px;
 }
 form#addproduct {
-	padding-top: 10px;
+	padding-top: 20px;
 }
 div.float, span.floatleft
 {
@@ -1047,6 +1047,7 @@ span.fa.fa-plus-circle.paddingleft {
 	padding-bottom: 2px;
 }
 
+.size12x { font-size: 1.2em !important; }
 .size15x { font-size: 1.5em !important; }
 .fa-toggle-on, .fa-toggle-off, .size2x { font-size: 2em; }
 .websiteselectionsection .fa-toggle-on, .websiteselectionsection .fa-toggle-off,
@@ -1067,6 +1068,7 @@ span.fa.fa-plus-circle.paddingleft {
 /* Themes for badges */
 
 <?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
+<?php include dol_buildpath($path.'/theme/'.$theme.'/flags-sprite.inc.php', 0); ?>
 
 .borderrightlight
 {
@@ -1305,6 +1307,12 @@ select.flat.selectlimit {
 .nomarginleft {
 	margin-<?php echo $left; ?>: 0px !important;
 }
+.marginrightonly {
+	margin-<?php echo $right; ?>: 10px !important;
+}
+.marginrightonlyshort {
+	margin-<?php echo $right; ?>: 4px !important;
+}
 .margintoponly {
 	margin-top: 10px !important;
 }
@@ -1489,7 +1497,7 @@ table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaint
 .onlinepaymentbody .amountpaymentcomplete {
 	background-color: var(--amountpaymentcomplete);
 	color: #fff;
-	padding: 5px;
+	padding: 10px;
 	border-radius: 5px;
 }
 
@@ -1619,7 +1627,7 @@ maxscreenheightless200 {
 .minwidth50  { min-width: 50px; }
 .minwidth75  { min-width: 75px; }
 /* rule for not too small screen only */
-@media only screen and (min-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
+@media only screen and (min-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC3') ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
 	.width20  { width: 20px; }
 	.width25  { width: 25px; }
@@ -1683,7 +1691,7 @@ maxscreenheightless200 {
 .minheight30 { min-height: 30px; }
 .minheight40 { min-height: 40px; }
 .titlefieldcreate { width: 20%; }
-.titlefield       { /* width: 25%; */ min-width: 250px; width: 25%; }
+.titlefield       { /* width: 25%; */ min-width: 150px; width: 25%; }
 .titlefieldmiddle { width: 45%; }
 .titlefieldmax45 { max-width: 45%; }
 .imgmaxwidth180 { max-width: 180px; }
@@ -2037,7 +2045,7 @@ td.showDragHandle {
 */
 
 
-<?php if (empty($conf->global->THEME_DISABLE_STICKY_TOPMENU)) {  ?>
+<?php if (!getDolGlobalString('THEME_DISABLE_STICKY_TOPMENU')) {  ?>
 .side-nav-vert {
 	position: sticky;
 	top: 0px;
@@ -2140,7 +2148,7 @@ div.vmenu, td.vmenu {
 
 
 /* rule to reduce top menu - 3rd reduction: The menu for user is on left */
-@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
+@media only screen and (max-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC3') ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
 	/* no side-nav */
 	body.sidebar-collapse .side-nav {
@@ -2197,7 +2205,7 @@ div.vmenu, td.vmenu {
 	}
 }
 
-@media only screen and (min-width: 768px) and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
+@media only screen and (min-width: 768px) and (max-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC3') ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
 	div.fiche {
 		margin-<?php print $left; ?>: 13px !important;
@@ -2649,7 +2657,7 @@ li.tmenu, li.tmenusel {
 	<?php print $minwidthtmenu ? 'min-width: '.$minwidthtmenu.'px;' : ''; ?>
 	text-align: center;
 	vertical-align: bottom;
-	<?php if (empty($conf->global->MAIN_MENU_INVERT)) { ?>
+	<?php if (!getDolGlobalString('MAIN_MENU_INVERT')) { ?>
 	float: <?php print $left; ?>;
 	<?php } ?>
 	position:relative;
@@ -2834,6 +2842,7 @@ li.tmenu:hover .tmenuimage:not(.menuhider), li.tmenu:hover .tmenuimage:not(.menu
 	$divalreadydefined = array('home', 'companies', 'products', 'mrp', 'commercial', 'externalsite', 'accountancy', 'project', 'tools', 'members', 'agenda', 'ftp', 'holiday', 'hrm', 'bookmark', 'cashdesk', 'takepos', 'ecm', 'geoipmaxmind', 'gravatar', 'clicktodial', 'paypal', 'stripe', 'webservices', 'website');
 	// Put here list of menu entries we are sure we don't want
 	$divnotrequired = array('multicurrency', 'salaries', 'ticket', 'margin', 'opensurvey', 'paybox', 'expensereport', 'incoterm', 'prelevement', 'propal', 'workflow', 'notification', 'supplier_proposal', 'cron', 'product', 'productbatch', 'expedition');
+
 	foreach ($mainmenuusedarray as $val) {
 		if (empty($val) || in_array($val, $divalreadydefined)) {
 			continue;
@@ -2841,40 +2850,46 @@ li.tmenu:hover .tmenuimage:not(.menuhider), li.tmenu:hover .tmenuimage:not(.menu
 		if (in_array($val, $divnotrequired)) {
 			continue;
 		}
-		//print "XXX".$val;
 
-		// Search img file in module dir
 		$found = 0; $url = '';
-		foreach ($conf->file->dol_document_root as $dirroot) {
-			if (file_exists($dirroot."/".$val."/img/".$val.".png")) {
-				$url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
-				$found = 1;
-				break;
+		$constformoduleicon = 'MAIN_MODULE_'.strtoupper($val).'_ICON';
+		$iconformodule = getDolGlobalString($constformoduleicon);
+		if ($iconformodule) {
+			if (preg_match('/^fa\-/', $iconformodule)) {
+				// This is a fa icon
+			} else {
+				$url = dol_buildpath('/'.$val.'/img/'.$iconformodule.'.png', 1);
+			}
+			$found = 1;
+		} else {
+			// Search img file in module dir
+			foreach ($conf->file->dol_document_root as $dirroot) {
+				if (file_exists($dirroot."/".$val."/img/".$val.".png")) {
+					$url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
+					$found = 1;
+					break;
+				}
 			}
 		}
-		// Img file not found
+		//print "XXX".$val."->".$found."\n";
+
+		// Output entry for menu icon in CSS
 		if (!$found) {
-			if (!defined('DISABLE_FONT_AWSOME')) {
-				print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one. */\n";
-				print "/* Overwrite this definition in your own css with a different content to use your own font awesome icon. */\n";
-				print 'div.mainmenu.'.$val.'::before {
-                    content: "\f249";
-                }'."\n";
-			} else {
-				print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
-				$url = dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.(min($generic, 4))."_over.png", 1);
+			print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
+			print 'div.mainmenu.'.$val.' span::before {'."\n";
+			print 'content: "\f249";'."\n";
+			print '}'."\n";
+			$generic++;
+		} else {
+			if ($url) {
 				print "div.mainmenu.".$val." {\n";
 				print "	background-image: url(".$url.");\n";
 				print " background-position-y: 3px;\n";
+				print " filter: saturate(0);\n";
 				print "}\n";
+			} else {
+				print '/* icon for module '.$val.' is a fa icon */'."\n";
 			}
-			$generic++;
-		} else {
-			print "div.mainmenu.".$val." {\n";
-			print "	background-image: url(".$url.");\n";
-			print " background-position-y: 3px;\n";
-			print " filter: saturate(0);\n";
-			print "}\n";
 		}
 	}
 	// End of part to add more div class css
@@ -2883,7 +2898,7 @@ li.tmenu:hover .tmenuimage:not(.menuhider), li.tmenu:hover .tmenuimage:not(.menu
 
 .tmenuimage {
 	padding:0 0 0 0 !important;
-	margin:0 0px 0 0 !important;
+	margin:0 0 0 0 !important;
 	<?php if ($disableimages) { ?>
 		display: none;
 	<?php } ?>
@@ -2932,7 +2947,7 @@ form#login {
 	padding-bottom:12px;
 	max-width: 560px;
 <?php
-if (!empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
+if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 	print '	background-color: rgba(255, 255, 255, 0.9);';
 } else {
 	print '	background-color: #FFFFFF;';
@@ -4097,10 +4112,6 @@ div.pagination li.litext a:hover {
 	background-color: transparent;
 	background-image: none;
 }
-div.pagination li.litext a:hover {
-	background-color: transparent;
-	background-image: none;
-}
 div.pagination li.noborder a:hover {
   border: none;
   background-color: transparent;
@@ -4979,7 +4990,15 @@ table.table-fiche-title {
 }
 
 
-div.backgreypublicpayment { background-color: #f0f0f0; padding: 20px; border-bottom: 1px solid #ddd; text-align: center; }
+div.backgreypublicpayment {
+	background-color: #f0f0f0;
+	padding: 20px;
+	border-bottom: 1px solid #ddd;
+	text-align: center;
+	position: sticky;
+	top: 0;
+	z-index: 1005;
+}
 .backgreypublicpayment a { color: #222 !important; }
 .poweredbypublicpayment {
 	float: right;
@@ -5152,7 +5171,7 @@ div.ui-tooltip.mytooltip {
 }
 
 <?php
-if (!empty($conf->global->THEME_DARKMODEENABLED)) {
+if (getDolGlobalString('THEME_DARKMODEENABLED')) {
 	print "/* For dark mode */\n";
 	if ($conf->global->THEME_DARKMODEENABLED != 2) {
 		print "@media (prefers-color-scheme: dark) {";	// To test, click on the 3 dots menu, then Other options then Display then emulate prefer-color-schemes
@@ -6145,7 +6164,7 @@ div#ecm-layout-center {
 
 .jnotify-container {
 	position: fixed !important;
-<?php if (!empty($conf->global->MAIN_JQUERY_JNOTIFY_BOTTOM)) { ?>
+<?php if (getDolGlobalString('MAIN_JQUERY_JNOTIFY_BOTTOM')) { ?>
 	top: auto !important;
 	bottom: 4px !important;
 <?php } ?>
@@ -6298,14 +6317,14 @@ span#select2-taskid-container[title^='--'] {
 
 span.select2.select2-container.select2-container--default {
 	text-align: initial;
-	<?php if (empty($conf->global->THEME_SHOW_BORDER_ON_INPUT)) { ?>
+	<?php if (!getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT')) { ?>
 	border-left: none;
 	border-top: none;
 	border-right: none;
 	<?php } ?>
 }
 span.select2.select2-container.select2-container--default {
-	<?php if (empty($conf->global->THEME_SHOW_BORDER_ON_INPUT)) { ?>
+	<?php if (!getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT')) { ?>
 	/*border-bottom: solid 1px var(--inputbordercolor);*/
 	<?php } ?>
 }
@@ -6395,13 +6414,13 @@ input.select2-input {
 .select2-container--default .select2-selection--single
 {
 	outline: none;
-	<?php if (empty($conf->global->THEME_SHOW_BORDER_ON_INPUT)) { ?>
+	<?php if (!getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT')) { ?>
 	border-top: none;
 	border-left: none;
 	border-right: none;
 	<?php } ?>
 
-	border<?php echo empty($conf->global->THEME_SHOW_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
+	border<?php echo !getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
 
 	-webkit-box-shadow: none !important;
 	box-shadow: none !important;
@@ -6815,7 +6834,7 @@ dl.dropdown {
 	padding: 0 3px 2px 0;
 }
 .maxwidthsearch .dropdown dt a span, .multiSel span {
-	padding: 0 3px 2px 3px;
+	padding: 3px 3px 2px 3px;
 }
 .dropdown span.value {
 	display:none;
@@ -7802,7 +7821,7 @@ table.jPicker {
 
 /* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?> */
 /* rule to reduce top menu - 1st reduction: Reduce width of top menu icons */
-@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC1) ? round($nbtopmenuentries * 90, 0) + 340 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC1; ?>px)	/* reduction 1 */
+@media only screen and (max-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC1') ? round($nbtopmenuentries * 90, 0) + 340 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC1; ?>px)	/* reduction 1 */
 {
 	div.tmenucenter {
 		width: <?php echo round(52); ?>px;	/* size of viewport */
@@ -7842,7 +7861,7 @@ table.jPicker {
 	}
 }
 /* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again (<?php echo $nbtopmenuentries ?> menu entries) */
-@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2) ? round($nbtopmenuentries * 69, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */
+@media only screen and (max-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC2') ? round($nbtopmenuentries * 69, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */
 {
 	li.tmenucompanylogo {
 		display: none;
@@ -7873,7 +7892,7 @@ table.jPicker {
 	}
 }
 /* rule to reduce top menu - 3rd reduction: The menu for user is on left */
-@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
+@media only screen and (max-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC3') ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
 	<?php if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 2) { ?>
 	.tmenudiv .tmenulabel span.mainmenuaspan {
@@ -8086,7 +8105,7 @@ include dol_buildpath($path.'/theme/'.$theme.'/info-box.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/progress.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/timeline.inc.php', 0);
 
-if (!empty($conf->global->THEME_CUSTOM_CSS)) {
+if (getDolGlobalString('THEME_CUSTOM_CSS')) {
 	print $conf->global->THEME_CUSTOM_CSS;
 }
 

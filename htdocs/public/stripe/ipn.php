@@ -87,7 +87,7 @@ if (empty($endpoint_secret)) {
 	httponly_accessforbidden('Error: Setup of module Stripe not complete for mode '.dol_escape_htmltag($service).'. The WEBHOOK_KEY is not defined.', 400, 1);
 }
 
-if (!empty($conf->global->STRIPE_USER_ACCOUNT_FOR_ACTIONS)) {
+if (getDolGlobalString('STRIPE_USER_ACCOUNT_FOR_ACTIONS')) {
 	// We set the user to use for all ipn actions in Dolibarr
 	$user = new User($db);
 	$user->fetch($conf->global->STRIPE_USER_ACCOUNT_FOR_ACTIONS);
@@ -96,9 +96,10 @@ if (!empty($conf->global->STRIPE_USER_ACCOUNT_FOR_ACTIONS)) {
 	httponly_accessforbidden('Error: Setup of module Stripe not complete for mode '.dol_escape_htmltag($service).'. The STRIPE_USER_ACCOUNT_FOR_ACTIONS is not defined.', 400, 1);
 }
 
+$now = dol_now();
 
-// TODO Add a check on a security key
-
+// Security
+// The test on security key is done later into constructEvent() method.
 
 
 /*
@@ -162,7 +163,7 @@ $stripe = new Stripe($db);
 
 // Subject
 $societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
-if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 	$societeName = $conf->global->MAIN_APPLICATION_TITLE;
 }
 
@@ -181,12 +182,12 @@ if ($event->type == 'payout.created') {
 		if (!empty($user->email)) {
 			$sendto = dolGetFirstLastname($user->firstname, $user->lastname)." <".$user->email.">";
 		} else {
-			$sendto = $conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
+			$sendto = getDolGlobalString('MAIN_INFO_SOCIETE_MAIL') . '" <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
 		}
 		$replyto = $sendto;
 		$sendtocc = '';
-		if (!empty($conf->global->ONLINE_PAYMENT_SENDEMAIL)) {
-			$sendtocc = $conf->global->ONLINE_PAYMENT_SENDEMAIL.'" <'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'>';
+		if (getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL')) {
+			$sendtocc = getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL') . '" <' . getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL').'>';
 		}
 
 		$message = "A bank transfer of ".price2num($event->data->object->amount / 100)." ".$event->data->object->currency." should arrive in your account the ".dol_print_date($event->data->object->arrival_date, 'dayhour');
@@ -271,12 +272,12 @@ if ($event->type == 'payout.created') {
 		if (!empty($user->email)) {
 			$sendto = dolGetFirstLastname($user->firstname, $user->lastname)." <".$user->email.">";
 		} else {
-			$sendto = $conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
+			$sendto = getDolGlobalString('MAIN_INFO_SOCIETE_MAIL') . '" <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
 		}
 		$replyto = $sendto;
 		$sendtocc = '';
-		if (!empty($conf->global->ONLINE_PAYMENT_SENDEMAIL)) {
-			$sendtocc = $conf->global->ONLINE_PAYMENT_SENDEMAIL.'" <'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'>';
+		if (getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL')) {
+			$sendtocc = getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL') . '" <' . getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL').'>';
 		}
 
 		$message = "A bank transfer of ".price2num($event->data->object->amount / 100)." ".$event->data->object->currency." has been done to your account the ".dol_print_date($event->data->object->arrival_date, 'dayhour');
@@ -581,50 +582,72 @@ if ($event->type == 'payout.created') {
 } elseif ($event->type == 'payment_intent.payment_failed') {
 	dol_syslog("A try to make a payment has failed");
 
-	$db->begin();
-
 	$object = $event->data->object;
 	$ipaddress = $object->metadata->ipaddress;
-	$now = dol_now();
 	$currencyCodeType = strtoupper($object->currency);
 	$paymentmethodstripeid = $object->payment_method;
 	$customer_id = $object->customer;
 
-	$chargesdata = $object->charges->data;
-	$objpayid = $chargesdata->id;
-	$objpaydesc = $chargesdata->description;
-	$objinvoiceid = 0;
-	if ($chargesdata->metadata->dol_type == 'facture') {
-		$objinvoiceid = $chargesdata->metadata->dol_id;
-	}
-	$objerrcode = $chargesdata->outcome->reason;
-	$objerrmessage = $chargesdata->outcome->seller_message;
+	$chargesdataarray = $object->charges->data;
 
-	$objpaymentmodetype = $chargesdata->payment_method_details->type;
-
-	// If this is a differed payment for SEPA, add a line into agenda events
-	if ($objpaymentmodetype == 'sepa_debit') {
-		require_once DOL_DOCUMENT_ROOT.'/comm/class/actioncomm.class.php';
-		$actioncomm = new ActionComm($db);
-
-		if ($objinvoiceid > 0) {
-			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-			$invoice = new Facture($db);
-			$invoice->fetch($objinvoiceid);
-
-			$actioncomm->socid = $invoice->fk_soc;
-			$actioncomm->fk_project = $invoice->fk_project;
-			$actioncomm->elementid = $invoice->id;
-			$actioncomm->elementtype = $invoice->type;
+	foreach ($chargesdataarray as $chargesdata) {
+		$objpayid = $chargesdata->id;
+		$objpaydesc = $chargesdata->description;
+		$objinvoiceid = 0;
+		if ($chargesdata->metadata->dol_type == 'facture') {
+			$objinvoiceid = $chargesdata->metadata->dol_id;
 		}
+		$objerrcode = $chargesdata->outcome->reason;
+		$objerrmessage = $chargesdata->outcome->seller_message;
 
-		$actioncomm->actionmsg = 'Error returned on payment id '.$objpayid.' after request '.$objpaydesc.'<br>Error code is: '.$objerrcode.'<br>Error message is: '.$objerrmessage;
-		$actioncomm->actionmsg2 = 'Payment error returned';
+		$objpaymentmodetype = $chargesdata->payment_method_details->type;
 
-		$actioncomm->create($user);
+		// If this is a differed payment for SEPA, add a line into agenda events
+		if ($objpaymentmodetype == 'sepa_debit') {
+			$db->begin();
+
+			require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+			$actioncomm = new ActionComm($db);
+
+			if ($objinvoiceid > 0) {
+				require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+				$invoice = new Facture($db);
+				$invoice->fetch($objinvoiceid);
+
+				$actioncomm->userownerid = 0;
+				$actioncomm->percentage = -1;
+
+				$actioncomm->type_code = 'AC_OTH_AUTO'; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
+				$actioncomm->code = 'AC_IPN';
+
+				$actioncomm->datep = $now;
+				$actioncomm->datef = $now;
+
+				$actioncomm->socid = $invoice->socid;
+				$actioncomm->fk_project = $invoice->fk_project;
+				$actioncomm->fk_element = $invoice->id;
+				$actioncomm->elementtype = 'invoice';
+				$actioncomm->ip = getUserRemoteIP();
+			}
+
+			$actioncomm->note_private = 'Error returned on payment id '.$objpayid.' after SEPA payment request '.$objpaydesc.'<br>Error code is: '.$objerrcode.'<br>Error message is: '.$objerrmessage;
+			$actioncomm->label = 'Payment error (SEPA Stripe)';
+
+			$result = $actioncomm->create($user);
+			if ($result <= 0) {
+				dol_syslog($actioncomm->error, LOG_ERR);
+				$error++;
+			}
+
+			if (! $error) {
+				$db->commit();
+			} else {
+				$db->rollback();
+				http_response_code(500);
+				return -1;
+			}
+		}
 	}
-
-	$db->commit();
 } elseif ($event->type == 'checkout.session.completed') {		// Called when making payment with new Checkout method ($conf->global->STRIPE_USE_NEW_CHECKOUT is on).
 	// TODO: create fees
 } elseif ($event->type == 'payment_method.attached') {

@@ -48,12 +48,12 @@ $type = 'reception';
  * Actions
  */
 
-if (isModEnabled('reception') && empty($conf->global->MAIN_SUBMODULE_RECEPTION)) {
+if (isModEnabled('reception') && !getDolGlobalString('MAIN_SUBMODULE_RECEPTION')) {
 	// This option should always be set to on when module is on.
 	dolibarr_set_const($db, "MAIN_SUBMODULE_RECEPTION", "1", 'chaine', 0, '', $conf->entity);
 }
 
-if (empty($conf->global->RECEPTION_ADDON_NUMBER)) {
+if (!getDolGlobalString('RECEPTION_ADDON_NUMBER')) {
 	$conf->global->RECEPTION_ADDON_NUMBER = 'mod_reception_beryl';
 }
 
@@ -209,10 +209,10 @@ foreach ($dirmodels as $reldir) {
 
 					if ($module->isEnabled()) {
 						// Show modules according to features level
-						if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 							continue;
 						}
-						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+						if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 							continue;
 						}
 
@@ -345,10 +345,10 @@ foreach ($dirmodels as $reldir) {
 							$module = new $classname($db);
 
 							$modulequalified = 1;
-							if (isset($module->version) && $module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							if (isset($module->version) && $module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								$modulequalified = 0;
 							}
-							if (isset($module->version) && $module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							if (isset($module->version) && $module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 								$modulequalified = 0;
 							}
 

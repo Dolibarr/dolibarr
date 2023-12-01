@@ -117,7 +117,7 @@ class Notify
 		// Get full list of all notifications subscribed for $action, $socid and $object
 		$listofnotiftodo = $this->getNotificationsArray($action, $socid, $object, 0);
 
-		if (!empty($conf->global->NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_USER)) {
+		if (getDolGlobalString('NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_USER')) {
 			foreach ($listofnotiftodo as $val) {
 				if ($val['type'] == 'touser') {
 					unset($listofnotiftodo[$val['email']]);
@@ -125,7 +125,7 @@ class Notify
 				}
 			}
 		}
-		if (!empty($conf->global->NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_CONTACT)) {
+		if (getDolGlobalString('NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_CONTACT')) {
 			foreach ($listofnotiftodo as $val) {
 				if ($val['type'] == 'tocontact') {
 					unset($listofnotiftodo[$val['email']]);
@@ -133,7 +133,7 @@ class Notify
 				}
 			}
 		}
-		if (!empty($conf->global->NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_FIX)) {
+		if (getDolGlobalString('NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_FIX')) {
 			foreach ($listofnotiftodo as $val) {
 				if ($val['type'] == 'tofixedemail') {
 					unset($listofnotiftodo[$val['email']]);
@@ -394,7 +394,7 @@ class Notify
 
 		// Define some vars
 		$application = 'Dolibarr';
-		if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+		if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 			$application = $conf->global->MAIN_APPLICATION_TITLE;
 		}
 		$replyto = $conf->notification->email_from;
@@ -452,11 +452,8 @@ class Notify
 		if ($result) {
 			$num = $this->db->num_rows($result);
 			$projtitle = '';
-			if (!empty($object->fk_project)) {
-				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-				$proj = new Project($this->db);
-				$proj->fetch($object->fk_project);
-				$projtitle = '('.$proj->title.')';
+			if (is_object($object->project) || $object->fetch_project() > 0) {
+				$projtitle = '('.$object->project->title.')';
 			}
 
 			if ($num > 0) {
@@ -561,7 +558,7 @@ class Notify
 								$dir_output = $conf->fournisseur->commande->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object);
 								$object_type = 'order_supplier';
 								$mesg = $outputlangs->transnoentitiesnoconv("Hello").",\n\n";
-								$mesg .= $outputlangs->transnoentitiesnoconv("EMailTextOrderValidatedBy", $link, $user->getFullName($outputlangs));
+								$mesg .= $outputlangs->transnoentitiesnoconv("EMailTextSupplierOrderValidatedBy", $link, $user->getFullName($outputlangs));
 								$mesg .= "\n\n".$outputlangs->transnoentitiesnoconv("Sincerely").".\n\n";
 								break;
 							case 'ORDER_SUPPLIER_APPROVE':
@@ -569,7 +566,7 @@ class Notify
 								$dir_output = $conf->fournisseur->commande->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object);
 								$object_type = 'order_supplier';
 								$mesg = $outputlangs->transnoentitiesnoconv("Hello").",\n\n";
-								$mesg .= $outputlangs->transnoentitiesnoconv("EMailTextOrderApprovedBy", $link, $user->getFullName($outputlangs));
+								$mesg .= $outputlangs->transnoentitiesnoconv("EMailTextSupplierOrderApprovedBy", $link, $user->getFullName($outputlangs));
 								$mesg .= "\n\n".$outputlangs->transnoentitiesnoconv("Sincerely").".\n\n";
 								break;
 							case 'ORDER_SUPPLIER_SUBMIT':
@@ -585,7 +582,7 @@ class Notify
 								$dir_output = $conf->fournisseur->commande->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object);
 								$object_type = 'order_supplier';
 								$mesg = $outputlangs->transnoentitiesnoconv("Hello").",\n\n";
-								$mesg .= $outputlangs->transnoentitiesnoconv("EMailTextOrderRefusedBy", $link, $user->getFullName($outputlangs));
+								$mesg .= $outputlangs->transnoentitiesnoconv("EMailTextSupplierOrderRefusedBy", $link, $user->getFullName($outputlangs));
 								$mesg .= "\n\n".$outputlangs->transnoentitiesnoconv("Sincerely").".\n\n";
 								break;
 							case 'SHIPPING_VALIDATE':
@@ -844,7 +841,7 @@ class Notify
 						$dir_output = $conf->fournisseur->commande->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object);
 						$object_type = 'order_supplier';
 						$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
-						$mesg .= $langs->transnoentitiesnoconv("EMailTextOrderValidatedBy", $link, $user->getFullName($langs));
+						$mesg .= $langs->transnoentitiesnoconv("EMailTextSupplierOrderValidatedBy", $link, $user->getFullName($langs));
 						$mesg .= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
 						break;
 					case 'ORDER_SUPPLIER_APPROVE':
@@ -852,7 +849,7 @@ class Notify
 						$dir_output = $conf->fournisseur->commande->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object);
 						$object_type = 'order_supplier';
 						$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
-						$mesg .= $langs->transnoentitiesnoconv("EMailTextOrderApprovedBy", $link, $user->getFullName($langs));
+						$mesg .= $langs->transnoentitiesnoconv("EMailTextSupplierOrderApprovedBy", $link, $user->getFullName($langs));
 						$mesg .= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
 						break;
 					case 'ORDER_SUPPLIER_SUBMIT':
@@ -868,7 +865,7 @@ class Notify
 						$dir_output = $conf->fournisseur->dir_output.'/commande/';
 						$object_type = 'order_supplier';
 						$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
-						$mesg .= $langs->transnoentitiesnoconv("EMailTextOrderRefusedBy", $link, $user->getFullName($langs));
+						$mesg .= $langs->transnoentitiesnoconv("EMailTextSupplierOrderRefusedBy", $link, $user->getFullName($langs));
 						$mesg .= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
 						break;
 					case 'SHIPPING_VALIDATE':
@@ -950,7 +947,7 @@ class Notify
 				}
 
 				if ($sendto) {
-					$parameters = array('notifcode'=>$notifcode, 'sendto'=>$sendto, 'replyto'=>$replyto, 'file'=>$filename_list, 'mimefile'=>$mimetype_list, 'filename'=>$mimefilename_list);
+					$parameters = array('notifcode'=>$notifcode, 'sendto'=>$sendto, 'replyto'=>$replyto, 'file'=>$filename_list, 'mimefile'=>$mimetype_list, 'filename'=>$mimefilename_list, 'subject'=>&$subject, 'message'=>&$message);
 					$reshook = $hookmanager->executeHooks('formatNotificationMessage', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 					if (empty($reshook)) {
 						if (!empty($hookmanager->resArray['files'])) {

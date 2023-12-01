@@ -327,7 +327,7 @@ class ContactTest extends PHPUnit\Framework\TestCase
 		$localobject=new Contact($db);
 		$result=$localobject->fetch($id);
 
-		$result=$localobject->delete(0);
+		$result=$localobject->delete($user);
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 

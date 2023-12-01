@@ -60,7 +60,7 @@ if ($id > 0) {
  */
 
 // Delete payment
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expensereport->supprimer) {
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('expensereport', 'supprimer')) {
 	$db->begin();
 
 	$result = $object->delete($user);
@@ -240,7 +240,7 @@ print '<div class="tabsAction">';
 
 // Delete
 if ($action == '') {
-	if ($user->rights->expensereport->supprimer) {
+	if ($user->hasRight('expensereport', 'supprimer')) {
 		if (!$disable_delete) {
 			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 1);
 		} else {

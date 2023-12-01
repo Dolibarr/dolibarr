@@ -163,7 +163,7 @@ if ($id > 0 || !empty($ref)) {
 		print yn($object->fournisseur);
 		print '</td></tr>';*/
 
-		if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
+		if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
 			print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
 		}
 
@@ -205,7 +205,7 @@ if ($id > 0 || !empty($ref)) {
 		}
 
 		// additionnal list with adherents of company
-		if (isModEnabled('adherent') && $user->rights->adherent->lire) {
+		if (isModEnabled('adherent') && $user->hasRight('adherent', 'lire')) {
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 

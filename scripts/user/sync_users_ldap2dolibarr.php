@@ -115,7 +115,7 @@ print "port=" . getDolGlobalString('LDAP_SERVER_PORT')."\n";
 print "login=" . getDolGlobalString('LDAP_ADMIN_DN')."\n";
 print "pass=".preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)."\n";
 print "DN to extract=" . getDolGlobalString('LDAP_USER_DN')."\n";
-if (!empty($conf->global->LDAP_FILTER_CONNECTION)) {
+if (getDolGlobalString('LDAP_FILTER_CONNECTION')) {
 	print 'Filter=(' . getDolGlobalString('LDAP_FILTER_CONNECTION').')'."\n"; // Note: filter is defined into function getRecords
 } else {
 	print 'Filter=(' . getDolGlobalString('LDAP_KEY_USERS').'=*)'."\n";
@@ -137,7 +137,7 @@ if (!$confirmed) {
 	$input = trim(fgets(STDIN));
 }
 
-if (empty($conf->global->LDAP_USER_DN)) {
+if (!getDolGlobalString('LDAP_USER_DN')) {
 	print $langs->trans("Error").': '.$langs->trans("LDAP setup for users not defined inside Dolibarr");
 	exit(-1);
 }

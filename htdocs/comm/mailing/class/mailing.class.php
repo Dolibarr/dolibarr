@@ -128,6 +128,7 @@ class Mailing extends CommonObject
 
 	/**
 	 * @var int id of user create
+	 * @deprecated
 	 */
 	public $user_creation;
 
@@ -139,6 +140,7 @@ class Mailing extends CommonObject
 
 	/**
 	 * @var int id of user validate
+	 * @deprecated
 	 */
 	public $user_validation;
 
@@ -186,9 +188,9 @@ class Mailing extends CommonObject
 	public $statut_dest = array();
 
 	/**
-	 * @var array statuts
+	 * @var array labelStatus
 	 */
-	public $statuts = array();
+	public $labelStatus = array();
 
 	/**
 	 * @var array substitutionarray
@@ -218,10 +220,10 @@ class Mailing extends CommonObject
 		$this->db = $db;
 
 		// List of language codes for status
-		$this->statuts[0] = 'MailingStatusDraft';
-		$this->statuts[1] = 'MailingStatusValidated';
-		$this->statuts[2] = 'MailingStatusSentPartialy';
-		$this->statuts[3] = 'MailingStatusSentCompletely';
+		$this->labelStatus[0] = 'MailingStatusDraft';
+		$this->labelStatus[1] = 'MailingStatusValidated';
+		$this->labelStatus[2] = 'MailingStatusSentPartialy';
+		$this->labelStatus[3] = 'MailingStatusSentCompletely';
 
 		$this->statut_dest[0] = 'MailingStatusNotSent';
 		$this->statut_dest[1] = 'MailingStatusSent';
@@ -242,7 +244,7 @@ class Mailing extends CommonObject
 		global $conf, $langs;
 
 		// Check properties
-		if ($this->body === 'InvalidHTMLStringCantBeCleaned') {
+		if (preg_match('/^InvalidHTMLStringCantBeCleaned/', $this->body)) {
 			$this->error = 'InvalidHTMLStringCantBeCleaned';
 			return -1;
 		}
@@ -311,7 +313,7 @@ class Mailing extends CommonObject
 	public function update($user, $notrigger = 0)
 	{
 		// Check properties
-		if ($this->body === 'InvalidHTMLStringCantBeCleaned') {
+		if (preg_match('/^InvalidHTMLStringCantBeCleaned/', $this->body)) {
 			$this->error = 'InvalidHTMLStringCantBeCleaned';
 			return -1;
 		}
@@ -399,7 +401,7 @@ class Mailing extends CommonObject
 				$this->title = $obj->title;
 
 				$this->sujet = $obj->sujet;
-				if (!empty($conf->global->FCKEDITOR_ENABLE_MAILING) && dol_textishtml(dol_html_entity_decode($obj->body, ENT_COMPAT | ENT_HTML5))) {
+				if (getDolGlobalString('FCKEDITOR_ENABLE_MAILING') && dol_textishtml(dol_html_entity_decode($obj->body, ENT_COMPAT | ENT_HTML5))) {
 					$this->body = dol_html_entity_decode($obj->body, ENT_COMPAT | ENT_HTML5);
 				} else {
 					$this->body = $obj->body;
@@ -413,10 +415,8 @@ class Mailing extends CommonObject
 				$this->email_replyto = $obj->email_replyto;
 				$this->email_errorsto = $obj->email_errorsto;
 
-				$this->user_creat = $obj->fk_user_creat;
-				$this->user_creation = $obj->fk_user_creat;
-				$this->user_valid = $obj->fk_user_valid;
-				$this->user_validation = $obj->fk_user_valid;
+				$this->user_creation_id = $obj->fk_user_creat;
+				$this->user_validation_id = $obj->fk_user_valid;
 
 				$this->date_creat = $this->db->jdate($obj->date_creat);
 				$this->date_creation = $this->db->jdate($obj->date_creat);
@@ -479,8 +479,8 @@ class Mailing extends CommonObject
 			$object->email_replyto      = '';
 			$object->email_errorsto     = '';
 
-			$object->user_creat         = $user->id;
-			$object->user_valid         = '';
+			$object->user_creation_id = $user->id;
+			$object->user_validation_id = '';
 
 			$object->date_creat         = '';
 			$object->date_valid         = '';
@@ -831,7 +831,7 @@ class Mailing extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowEMailing");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -893,8 +893,8 @@ class Mailing extends CommonObject
 		global $langs;
 		$langs->load("mailing");
 
-		$labelStatus = $langs->transnoentitiesnoconv($this->statuts[$status]);
-		$labelStatusShort = $langs->transnoentitiesnoconv($this->statuts[$status]);
+		$labelStatus = $langs->transnoentitiesnoconv($this->labelStatus[$status]);
+		$labelStatusShort = $langs->transnoentitiesnoconv($this->labelStatus[$status]);
 
 		$statusType = 'status'.$status;
 		if ($status == 2) {

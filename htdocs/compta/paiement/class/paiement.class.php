@@ -58,6 +58,8 @@ class Paiement extends CommonObject
 	public $picto = 'payment';
 
 	public $facid;
+	public $socid;
+
 	public $datepaye;
 	public $date;		// same than $datepaye
 
@@ -328,7 +330,7 @@ class Paiement extends CommonObject
 			return -1;
 		}
 
-		dol_syslog(get_class($this)."::create insert paiement", LOG_DEBUG);
+		dol_syslog(get_class($this)."::create insert paiement (closepaidinvoices = ".$closepaidinvoices.")", LOG_DEBUG);
 
 		$this->db->begin();
 
@@ -472,7 +474,7 @@ class Paiement extends CommonObject
 						}
 
 						// Regenerate documents of invoices
-						if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+						if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 							dol_syslog(get_class($this).'::create Regenerate the document after inserting payment for thirdparty default_lang='.(is_object($invoice->thirdparty) ? $invoice->thirdparty->default_lang : 'null'), LOG_DEBUG);
 
 							$newlang = '';
@@ -486,13 +488,15 @@ class Paiement extends CommonObject
 								$outputlangs->setDefaultLang($newlang);
 							}
 
-							$hidedetails = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0;
-							$hidedesc = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0;
-							$hideref = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0;
+							$hidedetails = getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0;
+							$hidedesc = getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0;
+							$hideref = getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0;
 
 							$ret = $invoice->fetch($facid); // Reload to get new records
 
 							$result = $invoice->generateDocument($invoice->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+
+							dol_syslog(get_class($this).'::create Regenerate end result='.$result, LOG_DEBUG);
 
 							if ($result < 0) {
 								$this->error = $invoice->error;
@@ -508,6 +512,8 @@ class Paiement extends CommonObject
 					dol_syslog(get_class($this).'::Create Amount line '.$key.' not a number. We discard it.');
 				}
 			}
+
+			dol_syslog(get_class($this).'::create Now we call the triggers if no error (error = '.$error.')', LOG_DEBUG);
 
 			if (!$error) {    // All payments into $this->amounts were recorded without errors
 				// Appel des triggers
@@ -536,16 +542,17 @@ class Paiement extends CommonObject
 
 
 	/**
-	 *  Delete a payment and generated links into account
+	 * Delete a payment and generated links into account
 	 *  - Si le paiement porte sur un ecriture compte qui est rapprochee, on refuse
 	 *  - Si le paiement porte sur au moins une facture a "payee", on refuse
+	 * @TODO Add first param User $user
 	 *
-	 *  @param	int		$notrigger		No trigger
-	 *  @return int     				<0 si ko, >0 si ok
+	 * @param	int		$notrigger		No trigger
+	 * @return 	int     				<0 if KO, >0 if OK
 	 */
 	public function delete($notrigger = 0)
 	{
-		global $conf, $user, $langs;
+		global $user;
 
 		$error = 0;
 
@@ -916,21 +923,21 @@ class Paiement extends CommonObject
 	/**
 	 *  Updates the payment number
 	 *
-	 *  @param	string	$num		New num
-	 *  @return int					<0 if KO, 0 if OK
+	 *  @param	string	$num_payment		New num
+	 *  @return int							<0 if KO, 0 if OK
 	 */
-	public function update_num($num)
+	public function update_num($num_payment)
 	{
 		// phpcs:enable
-		if (!empty($num) && $this->statut != 1) {
+		if (!empty($num_payment) && $this->statut != 1) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-			$sql .= " SET num_paiement = '".$this->db->escape($num)."'";
+			$sql .= " SET num_paiement = '".$this->db->escape($num_payment)."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::update_num", LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if ($result) {
-				$this->num_payment = $this->db->escape($num);
+				$this->num_payment = $this->db->escape($num_payment);
 				return 0;
 			} else {
 				$this->error = 'Error -1 '.$this->db->error();
@@ -1012,17 +1019,11 @@ class Paiement extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_creat) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_creat);
-					$this->user_creation = $cuser;
-				}
-				if ($obj->fk_user_modif) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modif);
-					$this->user_modification = $muser;
-				}
+
+				$this->user_creation_id = $obj->fk_user_creat;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->tms);
 			}
@@ -1112,7 +1113,7 @@ class Paiement extends CommonObject
 		$langs->load("bills");
 
 		// Clean parameters (if not defined or using deprecated value)
-		if (empty($conf->global->PAYMENT_ADDON)) {
+		if (!getDolGlobalString('PAYMENT_ADDON')) {
 			$conf->global->PAYMENT_ADDON = 'mod_payment_cicada';
 		} elseif (getDolGlobalString('PAYMENT_ADDON') == 'ant') {
 			$conf->global->PAYMENT_ADDON = 'mod_payment_ant';
@@ -1120,10 +1121,10 @@ class Paiement extends CommonObject
 			$conf->global->PAYMENT_ADDON = 'mod_payment_cicada';
 		}
 
-		if (!empty($conf->global->PAYMENT_ADDON)) {
+		if (getDolGlobalString('PAYMENT_ADDON')) {
 			$mybool = false;
 
-			$file = $conf->global->PAYMENT_ADDON.".php";
+			$file = getDolGlobalString('PAYMENT_ADDON') . ".php";
 			$classname = $conf->global->PAYMENT_ADDON;
 
 			// Include file with class
@@ -1140,8 +1141,8 @@ class Paiement extends CommonObject
 
 			// For compatibility
 			if (!$mybool) {
-				$file = $conf->global->PAYMENT_ADDON.".php";
-				$classname = "mod_payment_".$conf->global->PAYMENT_ADDON;
+				$file = getDolGlobalString('PAYMENT_ADDON') . ".php";
+				$classname = "mod_payment_" . getDolGlobalString('PAYMENT_ADDON');
 				$classname = preg_replace('/\-.*$/', '', $classname);
 				// Include file with class
 				foreach ($conf->file->dol_document_root as $dirroot) {
@@ -1276,7 +1277,7 @@ class Paiement extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("Payment");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -1399,5 +1400,18 @@ class Paiement extends CommonObject
 		}
 
 		return parent::fetch_thirdparty($force_thirdparty_id);
+	}
+
+
+	/**
+	 *  Return if payment is reconciled
+	 *
+	 *  @return     boolean     True if payment is reconciled
+	 */
+	public function isReconciled()
+	{
+		$accountline = new AccountLine($this->db);
+		$accountline->fetch($this->bank_line);
+		return $accountline->rappro;
 	}
 }

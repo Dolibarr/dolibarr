@@ -74,7 +74,7 @@ $hookmanager->initHooks(array('directdebitcard', 'globalcard'));
 
 if ($type == 'bank-transfer') {
 	$result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture', 'fk_soc', $fieldid, $isdraft);
-	if (empty($user->rights->fournisseur->facture->lire)) {
+	if (!$user->hasRight('fournisseur', 'facture', 'lire')) {
 		accessforbidden();
 	}
 } else {
@@ -212,8 +212,8 @@ if (empty($reshook)) {
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
 	} elseif ($action == 'setdatef' && $usercancreate) {
 		$newdate = dol_mktime(0, 0, 0, GETPOST('datefmonth', 'int'), GETPOST('datefday', 'int'), GETPOST('datefyear', 'int'), 'tzserver');
-		if ($newdate > (dol_now('tzuserrel') + (empty($conf->global->INVOICE_MAX_FUTURE_DELAY) ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
-			if (empty($conf->global->INVOICE_MAX_FUTURE_DELAY)) {
+		if ($newdate > (dol_now('tzuserrel') + (!getDolGlobalString('INVOICE_MAX_FUTURE_DELAY') ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
+			if (!getDolGlobalString('INVOICE_MAX_FUTURE_DELAY')) {
 				setEventMessages($langs->trans("WarningInvoiceDateInFuture"), null, 'warnings');
 			} else {
 				setEventMessages($langs->trans("WarningInvoiceDateTooFarInFuture"), null, 'warnings');
@@ -286,7 +286,7 @@ if ($object->id > 0) {
 	$resteapayeraffiche = $resteapayer;
 
 	if ($type == 'bank-transfer') {
-		if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {	// Not recommended
+		if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {	// Not recommended
 			$filterabsolutediscount = "fk_invoice_supplier_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 			$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 		} else {
@@ -299,7 +299,7 @@ if ($object->id > 0) {
 		$absolute_discount = price2num($absolute_discount, 'MT');
 		$absolute_creditnote = price2num($absolute_creditnote, 'MT');
 	} else {
-		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {	// Not recommended
+		if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {	// Not recommended
 			$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 			$filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 		} else {
@@ -373,11 +373,11 @@ if ($object->id > 0) {
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 	if ($type == 'bank-transfer') {
-		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
+		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
 			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)';
 		}
 	} else {
-		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
+		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
 			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)';
 		}
 	}
@@ -618,7 +618,7 @@ if ($object->id > 0) {
 	print $bac->iban.(($bac->iban && $bac->bic) ? ' / ' : '').$bac->bic;
 	if (!empty($bac->iban)) {
 		if ($bac->verif() <= 0) {
-			print img_warning('Error on default bank number for IBAN : '.$bac->error_message);
+			print img_warning('Error on default bank number for IBAN : '.$bac->error);
 		}
 	} else {
 		if ($numopen || ($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
@@ -889,10 +889,11 @@ if ($object->id > 0) {
 
 			// Action column
 			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-				print '<td class="right">';
+				print '<td class="center">';
 				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'&did='.$obj->rowid.'&type='.urlencode($type).'">';
 				print img_delete();
-				print '</a></td>';
+				print '</a>';
+				print '</td>';
 			}
 
 			// Date
@@ -927,7 +928,7 @@ if ($object->id > 0) {
 			}
 
 			if ($type != 'bank-transfer') {
-				if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) {
+				if (getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT')) {
 					$langs->load("stripe");
 					if ($obj->fk_prelevement_bons > 0) {
 						print ' &nbsp; ';
@@ -935,7 +936,7 @@ if ($object->id > 0) {
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripedirectdebit&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequestDirectDebitWithStripe").'</a>';
 				}
 			} else {
-				if (!empty($conf->global->STRIPE_SEPA_CREDIT_TRANSFER)) {
+				if (getDolGlobalString('STRIPE_SEPA_CREDIT_TRANSFER')) {
 					$langs->load("stripe");
 					if ($obj->fk_prelevement_bons > 0) {
 						print ' &nbsp; ';
@@ -950,7 +951,7 @@ if ($object->id > 0) {
 
 			// Action column
 			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-				print '<td class="right">';
+				print '<td class="center">';
 				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'&did='.$obj->rowid.'&type='.urlencode($type).'">';
 				print img_delete();
 				print '</a></td>';

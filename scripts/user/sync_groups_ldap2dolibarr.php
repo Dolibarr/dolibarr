@@ -97,7 +97,7 @@ print "port=" . getDolGlobalString('LDAP_SERVER_PORT')."\n";
 print "login=" . getDolGlobalString('LDAP_ADMIN_DN')."\n";
 print "pass=".preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)."\n";
 print "DN to extract=" . getDolGlobalString('LDAP_GROUP_DN')."\n";
-if (!empty($conf->global->LDAP_GROUP_FILTER)) {
+if (getDolGlobalString('LDAP_GROUP_FILTER')) {
 	print 'Filter=(' . getDolGlobalString('LDAP_GROUP_FILTER').')'."\n"; // Note: filter is defined into function getRecords
 } else {
 	print 'Filter=(' . getDolGlobalString('LDAP_KEY_GROUPS').'=*)'."\n";
@@ -118,7 +118,7 @@ if (!$confirmed) {
 	$input = trim(fgets(STDIN));
 }
 
-if (empty($conf->global->LDAP_GROUP_DN)) {
+if (!getDolGlobalString('LDAP_GROUP_DN')) {
 	print $langs->trans("Error").': '.$langs->trans("LDAP setup for groups not defined inside Dolibarr");
 	exit(-1);
 }

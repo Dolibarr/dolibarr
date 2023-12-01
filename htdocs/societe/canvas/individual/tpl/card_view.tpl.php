@@ -45,7 +45,7 @@ if ($this->control->tpl['action_delete']) {
 	<td colspan="3"><?php echo $this->control->tpl['showrefnav']; ?></td>
 </tr>
 
-<?php if (!empty($conf->global->SOCIETE_USEPREFIX)) { ?>
+<?php if (getDolGlobalString('SOCIETE_USEPREFIX')) { ?>
 <tr>
 	<td><?php echo $langs->trans('Prefix'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['prefix_comm']; ?></td>
@@ -144,7 +144,7 @@ if ($this->control->tpl['action_delete']) {
 		<tr>
 			<td><?php echo $langs->trans('RIB'); ?></td>
 			<td class="right">
-			<?php if ($user->rights->societe->creer) { ?>
+			<?php if ($user->hasRight('societe', 'creer')) { ?>
 			<a href="<?php echo DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$this->control->tpl['id']; ?>"><?php echo $this->control->tpl['image_edit']; ?></a>
 			<?php } else { ?>
 			&nbsp;
@@ -162,7 +162,7 @@ if ($this->control->tpl['action_delete']) {
 		<tr>
 			<td><?php echo $langs->trans('SalesRepresentatives'); ?></td>
 			<td class="right">
-			<?php if ($user->rights->societe->creer) { ?>
+			<?php if ($user->hasRight('societe', 'creer')) { ?>
 			<a href="<?php echo DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$this->control->tpl['id']; ?>"><?php echo $this->control->tpl['image_edit']; ?></a>
 			<?php } else { ?>
 			&nbsp;
@@ -186,7 +186,7 @@ if ($this->control->tpl['action_delete']) {
 <?php print dol_get_fiche_end(); ?>
 
 <div class="tabsAction">
-<?php if ($user->rights->societe->creer) { ?>
+<?php if ($user->hasRight('societe', 'creer')) { ?>
 <a class="butAction" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&action=edit&token='.newToken().'&canvas='.urlencode($canvas); ?>"><?php echo $langs->trans("Modify"); ?></a>
 <?php } ?>
 

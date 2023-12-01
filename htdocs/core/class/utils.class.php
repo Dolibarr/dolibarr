@@ -271,7 +271,7 @@ class Utils
 
 		// MYSQL
 		if ($type == 'mysql' || $type == 'mysqli') {
-			if (empty($conf->global->SYSTEMTOOLS_MYSQLDUMP)) {
+			if (!getDolGlobalString('SYSTEMTOOLS_MYSQLDUMP')) {
 				$cmddump = $db->getPathOfDump();
 			} else {
 				$cmddump = $conf->global->SYSTEMTOOLS_MYSQLDUMP;
@@ -409,7 +409,7 @@ class Utils
 
 			$ok = 0;
 			if ($handle) {
-				if (!empty($conf->global->MAIN_EXEC_USE_POPEN)) {
+				if (getDolGlobalString('MAIN_EXEC_USE_POPEN')) {
 					$execmethod = $conf->global->MAIN_EXEC_USE_POPEN;
 				}
 				if (empty($execmethod)) {
@@ -713,7 +713,7 @@ class Utils
 			$command .= " 2>&1";
 		}
 
-		if (!empty($conf->global->MAIN_EXEC_USE_POPEN)) {
+		if (getDolGlobalString('MAIN_EXEC_USE_POPEN')) {
 			$execmethod = $conf->global->MAIN_EXEC_USE_POPEN;
 		}
 		if (empty($execmethod)) {
@@ -822,7 +822,7 @@ class Utils
 					return -1;
 				}
 
-				if (empty($conf->global->MODULEBUILDER_ASCIIDOCTOR) && empty($conf->global->MODULEBUILDER_ASCIIDOCTORPDF)) {
+				if (!getDolGlobalString('MODULEBUILDER_ASCIIDOCTOR') && !getDolGlobalString('MODULEBUILDER_ASCIIDOCTORPDF')) {
 					$this->error = 'Setup of module ModuleBuilder not complete';
 					return -1;
 				}
@@ -914,7 +914,7 @@ class Utils
 				$utils = new Utils($this->db);
 
 				// Build HTML doc
-				$command = $conf->global->MODULEBUILDER_ASCIIDOCTOR.' '.$destfile.' -n -o '.$dirofmoduledoc.'/'.$FILENAMEDOC;
+				$command = getDolGlobalString('MODULEBUILDER_ASCIIDOCTOR') . ' '.$destfile.' -n -o '.$dirofmoduledoc.'/'.$FILENAMEDOC;
 				$outfile = $dirofmoduletmp.'/out.tmp';
 
 				$resarray = $utils->executeCLI($command, $outfile);
@@ -929,7 +929,7 @@ class Utils
 				}
 
 				// Build PDF doc
-				$command = $conf->global->MODULEBUILDER_ASCIIDOCTORPDF.' '.$destfile.' -n -o '.$dirofmoduledoc.'/'.$FILENAMEDOCPDF;
+				$command = getDolGlobalString('MODULEBUILDER_ASCIIDOCTORPDF') . ' '.$destfile.' -n -o '.$dirofmoduledoc.'/'.$FILENAMEDOCPDF;
 				$outfile = $dirofmoduletmp.'/outpdf.tmp';
 				$resarray = $utils->executeCLI($command, $outfile);
 				if ($resarray['result'] != '0') {
@@ -985,7 +985,7 @@ class Utils
 
 		$nbSaves = intval(getDolGlobalString('SYSLOG_FILE_SAVES', 10));
 
-		if (empty($conf->global->SYSLOG_FILE)) {
+		if (!getDolGlobalString('SYSLOG_FILE')) {
 			$mainlogdir = DOL_DATA_ROOT;
 			$mainlog = 'dolibarr.log';
 		} else {
@@ -1282,7 +1282,7 @@ class Utils
 
 		if (!empty($from)) {
 			$from = dol_escape_htmltag($from);
-		} elseif (!empty($conf->global->MAIN_INFO_SOCIETE_MAIL)) {
+		} elseif (getDolGlobalString('MAIN_INFO_SOCIETE_MAIL')) {
 			$from = dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_MAIL);
 		} else {
 			$error++;
@@ -1290,7 +1290,7 @@ class Utils
 
 		if (!empty($sendto)) {
 			$sendto = dol_escape_htmltag($sendto);
-		} elseif (!empty($conf->global->MAIN_INFO_SOCIETE_MAIL)) {
+		} elseif (getDolGlobalString('MAIN_INFO_SOCIETE_MAIL')) {
 			$from = dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_MAIL);
 		} else {
 			$error++;

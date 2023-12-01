@@ -321,10 +321,10 @@ foreach ($dirmodels as $reldir) {
 					$module = new $file;
 
 					// Show modules according to features level
-					if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 						continue;
 					}
-					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+					if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 						continue;
 					}
 
@@ -386,7 +386,7 @@ foreach ($dirmodels as $reldir) {
 print '</table><br>';
 
 
-if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 	// Task numbering module
 	print load_fiche_titre($langs->trans("TasksNumberingModules"), '', '');
 
@@ -417,10 +417,10 @@ if (empty($conf->global->PROJECT_HIDE_TASKS)) {
 						$module = new $file;
 
 						// Show modules according to features level
-						if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 							continue;
 						}
-						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+						if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 							continue;
 						}
 
@@ -546,10 +546,10 @@ foreach ($dirmodels as $reldir) {
 							$module = new $classname($db);
 
 							$modulequalified = 1;
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								$modulequalified = 0;
 							}
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 								$modulequalified = 0;
 							}
 
@@ -622,7 +622,7 @@ print '</table><br>';
 
 
 
-if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 	/*
 	 * Modeles documents for Task
 	 */
@@ -686,10 +686,10 @@ if (empty($conf->global->PROJECT_HIDE_TASKS)) {
 								$module = new $classname($db);
 
 								$modulequalified = 1;
-								if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+								if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 									$modulequalified = 0;
 								}
-								if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+								if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 									$modulequalified = 0;
 								}
 
@@ -801,7 +801,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowToSelectProjectFromOtherCompany").'</td>';
 
 print '<td class="right" width="60" colspan="2">';
-print '<input type="text" id="projectToSelect" name="projectToSelect" value="'.$conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY.'"/>&nbsp;';
+print '<input type="text" id="projectToSelect" name="projectToSelect" value="' . getDolGlobalString('PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY').'"/>&nbsp;';
 print $form->textwithpicto('', $langs->trans('AllowToLinkFromOtherCompany'));
 print '<input type="submit" class="button small reposition" name="PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY" value="'.$langs->trans("Modify").'">';
 print '</td>';
@@ -821,7 +821,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("TimesheetPreventAfterFollowingMonths").'</td>';
 
 print '<td class="right" width="60" colspan="2">';
-print '<input type="number" class="width50" id="timesheetFreezeDuration" name="timesheetFreezeDuration" min="0" step="1" value="'.$conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS.'"/>&nbsp;';
+print '<input type="number" class="width50" id="timesheetFreezeDuration" name="timesheetFreezeDuration" min="0" step="1" value="' . getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS').'"/>&nbsp;';
 print '<input type="submit" class="button small reposition" name="PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS" value="'.$langs->trans("Modify").'">';
 print '</td>';
 print '</tr>';

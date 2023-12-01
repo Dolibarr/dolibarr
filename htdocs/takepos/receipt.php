@@ -128,15 +128,15 @@ if (getDolGlobalString('TAKEPOS_HEADER') || getDolGlobalString($constFreeText)) 
 <p class="right">
 <?php
 print $langs->trans('Date')." ".dol_print_date($object->date, 'day').'<br>';
-if (!empty($conf->global->TAKEPOS_RECEIPT_NAME)) {
-	print $conf->global->TAKEPOS_RECEIPT_NAME." ";
+if (getDolGlobalString('TAKEPOS_RECEIPT_NAME')) {
+	print getDolGlobalString('TAKEPOS_RECEIPT_NAME') . " ";
 }
 if ($object->statut == Facture::STATUS_DRAFT) {
 	print str_replace(")", "", str_replace("-", " ".$langs->trans('Place')." ", str_replace("(PROV-POS", $langs->trans("Terminal")." ", $object->ref)));
 } else {
 	print $object->ref;
 }
-if (!empty($conf->global->TAKEPOS_SHOW_CUSTOMER)) {
+if (getDolGlobalString('TAKEPOS_SHOW_CUSTOMER')) {
 	if ($object->socid != getDolGlobalInt('CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"])) {
 		$soc = new Societe($db);
 		if ($object->socid > 0) {
@@ -147,7 +147,7 @@ if (!empty($conf->global->TAKEPOS_SHOW_CUSTOMER)) {
 		print "<br>".$langs->trans("Customer").': '.$soc->name;
 	}
 }
-if (!empty($conf->global->TAKEPOS_SHOW_DATE_OF_PRINING)) {
+if (getDolGlobalString('TAKEPOS_SHOW_DATE_OF_PRINING')) {
 	print "<br>".$langs->trans("DateOfPrinting").': '.dol_print_date(dol_now(), 'dayhour', 'tzuserrel').'<br>';
 }
 ?>
@@ -162,7 +162,7 @@ if (!empty($conf->global->TAKEPOS_SHOW_DATE_OF_PRINING)) {
 		<th class="right"><?php if ($gift != 1) {
 			print $langs->trans("Price");
 						  } ?></th>
-		<?php  if (!empty($conf->global->TAKEPOS_SHOW_HT_RECEIPT)) { ?>
+		<?php  if (getDolGlobalString('TAKEPOS_SHOW_HT_RECEIPT')) { ?>
 		<th class="right"><?php if ($gift != 1) {
 			print $langs->trans("TotalHT");
 						  } ?></th>
@@ -180,7 +180,7 @@ if (!empty($conf->global->TAKEPOS_SHOW_DATE_OF_PRINING)) {
 		print '<td>' . GETPOST('label', 'alphanohtml') . '</td>';
 		print '<td class="right">' . $qty . '</td>';
 		print '<td class="right">' . price(price2num($object->total_ttc / $qty, 'MU'), 1) . '</td>';
-		if (!empty($conf->global->TAKEPOS_SHOW_HT_RECEIPT)) {
+		if (getDolGlobalString('TAKEPOS_SHOW_HT_RECEIPT')) {
 			print '<td class="right">' . price($object->total_ht, 1) . '</td>';
 		}
 		print '<td class="right">' . price($object->total_ttc, 1) . '</td>';
@@ -201,7 +201,7 @@ if (!empty($conf->global->TAKEPOS_SHOW_DATE_OF_PRINING)) {
 				echo price(price2num($line->total_ttc / $line->qty, 'MT'), 1);
 							  } ?></td>
 			<?php
-			if (!empty($conf->global->TAKEPOS_SHOW_HT_RECEIPT)) { ?>
+			if (getDolGlobalString('TAKEPOS_SHOW_HT_RECEIPT')) { ?>
 						<td class="right"><?php if ($gift != 1) {
 							echo price($line->total_ht, 1);
 										  } ?></td>

@@ -7,6 +7,7 @@
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2017-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023       Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,12 +87,16 @@ class FactureRec extends CommonInvoice
 	 */
 	public $titre;
 
+	/**
+	 * @var double
+	 */
+	public $multicurrency_subprice;
 	public $socid;
 	public $number;
 	public $date;
-	public $remise;
-	public $remise_absolue;
-	public $remise_percent;
+	//public $remise;
+	//public $remise_absolue;
+	//public $remise_percent;
 
 	/**
 	 * @deprecated
@@ -170,11 +175,8 @@ class FactureRec extends CommonInvoice
 		'titre' =>array('type'=>'varchar(100)', 'label'=>'Titre', 'enabled'=>1, 'showoncombobox' => 1, 'visible'=>-1, 'position'=>15),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>20, 'index'=>1),
 		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'isModEnabled("societe")', 'visible'=>-1, 'notnull'=>1, 'position'=>25),
-		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
-		//'amount' =>array('type'=>'double(24,8)', 'label'=>'Amount', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>35),
-		'remise' =>array('type'=>'double', 'label'=>'Remise', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
-		//'remise_percent' =>array('type'=>'double', 'label'=>'Remise percent', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
-		//'remise_absolue' =>array('type'=>'double', 'label'=>'Remise absolue', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
+		'subtype' =>array('type'=>'smallint(6)', 'label'=>'InvoiceSubtype', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>30),
+		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>35),
 		'total_tva' =>array('type'=>'double(24,8)', 'label'=>'Tva', 'enabled'=>1, 'visible'=>-1, 'position'=>55, 'isameasure'=>1),
 		'localtax1' =>array('type'=>'double(24,8)', 'label'=>'Localtax1', 'enabled'=>1, 'visible'=>-1, 'position'=>60, 'isameasure'=>1),
 		'localtax2' =>array('type'=>'double(24,8)', 'label'=>'Localtax2', 'enabled'=>1, 'visible'=>-1, 'position'=>65, 'isameasure'=>1),
@@ -268,15 +270,16 @@ class FactureRec extends CommonInvoice
 		$facsrc = new Facture($this->db);
 		$result = $facsrc->fetch($facid);
 		if ($result > 0) {
-			$this->fk_soc = $facsrc->socid;
+			$this->socid = $facsrc->socid;
 
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_rec (";
 			$sql .= "titre";
 			$sql .= ", fk_soc";
+			$sql .= ", subtype";
 			$sql .= ", entity";
 			$sql .= ", datec";
 			$sql .= ", amount";
-			$sql .= ", remise";
+			//$sql .= ", remise";
 			$sql .= ", note_private";
 			$sql .= ", note_public";
 			$sql .= ", modelpdf";
@@ -300,11 +303,12 @@ class FactureRec extends CommonInvoice
 			$sql .= ", suspended";
 			$sql .= ") VALUES (";
 			$sql .= "'".$this->db->escape($this->titre ? $this->titre : $this->title)."'";
-			$sql .= ", ".((int) $this->fk_soc);
+			$sql .= ", ".((int) $this->socid);
+			$sql .= ", ".($this->subtype ? "'".$this->db->escape($this->subtype)."'" : "null");
 			$sql .= ", ".((int) $conf->entity);
 			$sql .= ", '".$this->db->idate($now)."'";
 			$sql .= ", ".(!empty($facsrc->total_ttc) ? ((float) $facsrc->total_ttc) : '0');
-			$sql .= ", ".(!empty($facsrc->remise_absolue) ? ((float) $this->remise_absolue) : '0');
+			//$sql .= ", ".(!empty($facsrc->remise_absolue) ? ((float) $this->remise_absolue) : '0');
 			$sql .= ", ".(!empty($this->note_private) ? ("'".$this->db->escape($this->note_private)."'") : "NULL");
 			$sql .= ", ".(!empty($this->note_public) ? ("'".$this->db->escape($this->note_public)."'") : "NULL");
 			$sql .= ", ".(!empty($this->model_pdf) ? ("'".$this->db->escape($this->model_pdf)."'") : "NULL");
@@ -496,8 +500,7 @@ class FactureRec extends CommonInvoice
 		$sql .= " localtax1 = ".((float) $this->total_localtax1).",";
 		$sql .= " localtax2 = ".((float) $this->total_localtax2).",";
 		$sql .= " total_ht = ".((float) $this->total_ht).",";
-		$sql .= " total_ttc = ".((float) $this->total_ttc).",";
-		$sql .= " remise_percent = ".((float) $this->remise_percent);
+		$sql .= " total_ttc = ".((float) $this->total_ttc);
 		// TODO Add missing fields
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -538,14 +541,15 @@ class FactureRec extends CommonInvoice
 	 *	@param      int		$rowid       	Id of object to load
 	 * 	@param		string	$ref			Reference of recurring invoice
 	 * 	@param		string	$ref_ext		External reference of invoice
+	 *  @param		int		$noextrafields	0=Default to load extrafields, 1=No extrafields
+	 *  @param		int		$nolines		0=Default to load lines, 1=No lines
 	 *	@return     int         			>0 if OK, <0 if KO, 0 if not found
 	 */
-	public function fetch($rowid, $ref = '', $ref_ext = '')
+	public function fetch($rowid, $ref = '', $ref_ext = '', $noextrafields = 0, $nolines = 0)
 	{
 		dol_syslog('FactureRec::fetch', LOG_DEBUG);
 
-		$sql = 'SELECT f.rowid, f.entity, f.titre as title, f.suspended, f.fk_soc, f.total_tva, f.localtax1, f.localtax2, f.total_ht, f.total_ttc';
-		$sql .= ', f.remise_percent, f.remise_absolue, f.remise';
+		$sql = 'SELECT f.rowid, f.entity, f.titre as title, f.suspended, f.fk_soc, f.subtype, f.total_tva, f.localtax1, f.localtax2, f.total_ht, f.total_ttc';
 		$sql .= ', f.date_lim_reglement as dlr';
 		$sql .= ', f.note_private, f.note_public, f.fk_user_author';
 		$sql .= ', f.modelpdf as model_pdf';
@@ -583,10 +587,8 @@ class FactureRec extends CommonInvoice
 				$this->titre                  = $obj->title; // deprecated
 				$this->title                  = $obj->title;
 				$this->ref                    = $obj->title;
+				$this->subtype				  = $obj->subtype;
 				$this->suspended              = $obj->suspended;
-				$this->remise_percent         = $obj->remise_percent;
-				$this->remise_absolue         = $obj->remise_absolue;
-				$this->remise                 = $obj->remise;
 				$this->total_ht               = $obj->total_ht;
 				$this->total_tva              = $obj->total_tva;
 				$this->total_localtax1        = $obj->localtax1;
@@ -628,16 +630,23 @@ class FactureRec extends CommonInvoice
 
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
-				$this->fetch_optionals();
-
-				/*
-				 * Lines
-				 */
-				$result = $this->fetch_lines();
-				if ($result < 0) {
-					$this->error = $this->db->lasterror();
-					return -3;
+				if (empty($noextrafields)) {
+					$result = $this->fetch_optionals();
+					if ($result < 0) {
+						$this->error = $this->db->lasterror();
+						return -4;
+					}
 				}
+
+				// Retreive lines
+				if (empty($nolines)) {
+					$result = $this->fetch_lines();
+					if ($result < 0) {
+						$this->error = $this->db->lasterror();
+						return -3;
+					}
+				}
+
 				return 1;
 			} else {
 				$this->error = 'Bill with id '.$rowid.' or ref '.$ref.' not found';
@@ -1341,6 +1350,7 @@ class FactureRec extends CommonInvoice
 					$facture->fk_fac_rec_source = $facturerec->id; // We will create $facture from this recurring invoice
 
 					$facture->type = self::TYPE_STANDARD;
+					$facture->subtype = $facturerec->subtype;
 					$facture->statut = self::STATUS_DRAFT;	// deprecated
 					$facture->status = self::STATUS_DRAFT;
 					$facture->date = (empty($facturerec->date_when) ? $now : $facturerec->date_when); // We could also use dol_now here but we prefer date_when so invoice has real date when we would like even if we generate later.
@@ -1681,18 +1691,11 @@ class FactureRec extends CommonInvoice
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
-				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
-				if ($obj->fk_user_modif) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modif);
-					$this->user_modification = $muser;
-				}
 
+				$this->id = $obj->rowid;
+
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);
 			}
