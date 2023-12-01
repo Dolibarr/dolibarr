@@ -71,7 +71,7 @@ $morehtmlref .= $form->editfieldval("Label", 'label', $object->label, $object, 0
 if (isModEnabled('project')) {
 	$langs->load("projects");
 	$morehtmlref .= '<br>'.$langs->trans('Project').' : ';
-	if ($user->rights->loan->write) {
+	if ($user->hasRight('loan', 'write')) {
 		//if ($action != 'classify')
 		//	$morehtmlref .= '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 		if ($action == 'classify') {

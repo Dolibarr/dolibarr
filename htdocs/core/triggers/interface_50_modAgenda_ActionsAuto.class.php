@@ -6,6 +6,7 @@
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes			<bafbes@gmail.com>
  * Copyright (C) 2022		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,11 +87,11 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 
 		$key = 'MAIN_AGENDA_ACTIONAUTO_'.$action;
-		//var_dump($action.' - '.$conf->global->$key);exit;
+		//var_dump($action.' - '.$key.' - '.$conf->global->$key);exit;
 
 		// Do not log events not enabled for this action
 		// GUI allow to set this option only if entry exists into table llx_c_action_trigger
-		if (empty($conf->global->$key)) {
+		if (!getDolGlobalString($key)) {
 			return 0;
 		}
 
@@ -584,6 +585,24 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 
 			$object->sendtoid = 0;
+		} elseif ($action == 'FICHINTER_CLOSE') {
+			// Load translation files required by the page
+			$langs->loadLangs(array("agenda", "other", "interventions"));
+
+			if (empty($object->actionmsg2)) {
+				if (empty($object->context['actionmsg2'])) {
+					$object->actionmsg2 = $langs->transnoentities("InterventionClosedInDolibarr", $object->ref);
+				} else {
+					$object->actionmsg2 = $object->context['actionmsg2'];
+				}
+			}
+			if (empty($object->actionmsg)) {
+				$object->actionmsg = $langs->transnoentities("InterventionClosedInDolibarr", $object->ref);
+			}
+
+			$object->sendtoid = 0;
+			$object->fk_element = 0;
+			$object->elementtype = '';
 		} elseif ($action == 'FICHINTER_DELETE') {
 			// Load translation files required by the page
 			$langs->loadLangs(array("agenda", "other", "interventions"));
@@ -1019,7 +1038,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			// Load translation files required by the page
 			$langs->loadLangs(array("agenda", "other", "members"));
 
-			$member = (isset($this->context['member']) ? $this->context['member'] : null);
+			$member = (isset($object->context['member']) ? $object->context['member'] : null);
 			if (!is_object($member)) {	// This should not happen
 				dol_syslog("Execute a trigger MEMBER_SUBSCRIPTION_CREATE with context key 'member' not an object");
 				include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -1050,7 +1069,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			// Load translation files required by the page
 			$langs->loadLangs(array("agenda", "other", "members"));
 
-			$member = $this->context['member'];
+			$member = $object->context['member'];
 			if (!is_object($member)) {	// This should not happen
 				include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 				$member = new Adherent($this->db);
@@ -1080,7 +1099,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			// Load translation files required by the page
 			$langs->loadLangs(array("agenda", "other", "members"));
 
-			$member = $this->context['member'];
+			$member = $object->context['member'];
 			if (!is_object($member)) {	// This should not happen but it happen when deleting a subscription from adherents/subscription/card.php
 				dol_syslog("Execute a trigger MEMBER_SUBSCRIPTION_CREATE with context key 'member' not an object");
 				include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -1519,7 +1538,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 		$ret = $actioncomm->create($user); // User creating action
 
-		if ($ret > 0 && !empty($conf->global->MAIN_COPY_FILE_IN_EVENT_AUTO)) {
+		if ($ret > 0 && getDolGlobalString('MAIN_COPY_FILE_IN_EVENT_AUTO')) {
 			if (property_exists($object, 'attachedfiles') && is_array($object->attachedfiles) && array_key_exists('paths', $object->attachedfiles) && count($object->attachedfiles['paths']) > 0) {
 				foreach ($object->attachedfiles['paths'] as $key => $filespath) {
 					$srcfile = $filespath;

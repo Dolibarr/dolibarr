@@ -64,7 +64,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 			$this->prefixcreditnote = 'IC';
 		}
 
-		if (!empty($conf->global->INVOICE_NUMBERING_MARS_FORCE_PREFIX)) {
+		if (getDolGlobalString('INVOICE_NUMBERING_MARS_FORCE_PREFIX')) {
 			$this->prefixinvoice = $conf->global->INVOICE_NUMBERING_MARS_FORCE_PREFIX;
 		}
 	}

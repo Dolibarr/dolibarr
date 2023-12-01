@@ -3,12 +3,17 @@
 
 #### Installation
 
-run in this folder
+Run in this folder
+```shell
+cd dev/tools/rector
+```
 
+Install rector with composer
 ```shell
 composer install
 ```
- #### Usage
+
+#### Usage
 
 ##### To make changes (Add --dry-run for test mode only)
 ```shell
@@ -18,5 +23,5 @@ composer install
 ##### To make changes on a given directory
 
 ```shell
-./vendor/bin/rector process [--dry-run] ../../../htdocs/core/
+./vendor/bin/rector process [--dry-run] [--clear-cache] ../../../htdocs/core/
 ```

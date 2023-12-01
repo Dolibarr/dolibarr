@@ -54,7 +54,7 @@ dol_syslog("Call Dolibarr webservices interfaces");
 $langs->load("main");
 
 // Enable and test if module web services is enabled
-if (empty($conf->global->MAIN_MODULE_WEBSERVICES)) {
+if (!getDolGlobalString('MAIN_MODULE_WEBSERVICES')) {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
 	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
@@ -242,7 +242,7 @@ $server->register(
  * @param	string		$ref_ext			Ref_ext
  * @return	array							Array result
  */
-function getSupplierInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
+function getSupplierInvoice($authentication, $id = 0, $ref = '', $ref_ext = '')
 {
 	global $db, $conf;
 
@@ -266,7 +266,7 @@ function getSupplierInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
 	if (!$error) {
 		$fuser->getrights();
 
-		if ($fuser->rights->fournisseur->facture->lire) {
+		if ($fuser->hasRight('fournisseur', 'facture', 'lire')) {
 			$invoice = new FactureFournisseur($db);
 			$result = $invoice->fetch($id, $ref, $ref_ext);
 			if ($result > 0) {

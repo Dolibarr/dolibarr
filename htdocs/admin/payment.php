@@ -41,7 +41,7 @@ $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'invoice';
 
-if (empty($conf->global->PAYMENT_ADDON)) {
+if (!getDolGlobalString('PAYMENT_ADDON')) {
 	$conf->global->PAYMENT_ADDON = 'mod_payment_cicada.php';
 }
 
@@ -156,10 +156,10 @@ foreach ($dirmodels as $reldir) {
 						$module = new $classname($db);
 
 						// Show modules according to features level
-						if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 							continue;
 						}
-						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+						if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 							continue;
 						}
 

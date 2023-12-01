@@ -52,7 +52,6 @@ class PartnershipUtils
 	public function __construct($db)
 	{
 		$this->db = $db;
-		return 1;
 	}
 
 	/**
@@ -73,7 +72,7 @@ class PartnershipUtils
 		}
 
 		$partnership = new Partnership($this->db);
-		$MAXPERCALL = (empty($conf->global->PARTNERSHIP_MAX_EXPIRATION_CANCEL_PER_CALL) ? 25 : $conf->global->PARTNERSHIP_MAX_EXPIRATION_CANCEL_PER_CALL); // Limit to 25 per call
+		$MAXPERCALL = (!getDolGlobalString('PARTNERSHIP_MAX_EXPIRATION_CANCEL_PER_CALL') ? 25 : $conf->global->PARTNERSHIP_MAX_EXPIRATION_CANCEL_PER_CALL); // Limit to 25 per call
 
 		$langs->loadLangs(array("partnership", "member"));
 
@@ -173,7 +172,7 @@ class PartnershipUtils
 
 							$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
 							$msg     = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
-							$from = dol_string_nospecial($conf->global->MAIN_INFO_SOCIETE_NOM, ' ', array(",")).' <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
+							$from = dol_string_nospecial($conf->global->MAIN_INFO_SOCIETE_NOM, ' ', array(",")).' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
 
 							// We are in the case of autocancellation subscription because of missing backlink
 							$fk_partner = $object->fk_member;
@@ -202,7 +201,7 @@ class PartnershipUtils
 									$object->actiontypecode = $actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 									$object->actionmsg = $arraydefaultmessage->topic."\n".$arraydefaultmessage->content; // Long text
 									$object->actionmsg2 = $langs->transnoentities("PartnershipSentByEMail", $object->ref);; // Short text ($langs->transnoentities('MailSentBy')...);
-									if (!empty($conf->global->MAIN_MAIL_REPLACE_EVENT_TITLE_BY_EMAIL_SUBJECT)) {
+									if (getDolGlobalString('MAIN_MAIL_REPLACE_EVENT_TITLE_BY_EMAIL_SUBJECT')) {
 										$object->actionmsg2		= $subject; // Short text
 									}
 
@@ -389,7 +388,7 @@ class PartnershipUtils
 
 									$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
 									$msg     = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
-									$from = dol_string_nospecial($conf->global->MAIN_INFO_SOCIETE_NOM, ' ', array(",")).' <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
+									$from = dol_string_nospecial($conf->global->MAIN_INFO_SOCIETE_NOM, ' ', array(",")).' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
 
 									$sendto = $obj->email;
 
@@ -416,7 +415,7 @@ class PartnershipUtils
 											$object->actiontypecode = $actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 											$object->actionmsg = $arraydefaultmessage->topic."\n".$arraydefaultmessage->content; // Long text
 											$object->actionmsg2 = $langs->transnoentities("PartnershipSentByEMail", $object->ref);; // Short text ($langs->transnoentities('MailSentBy')...);
-											if (!empty($conf->global->MAIN_MAIL_REPLACE_EVENT_TITLE_BY_EMAIL_SUBJECT)) {
+											if (getDolGlobalString('MAIN_MAIL_REPLACE_EVENT_TITLE_BY_EMAIL_SUBJECT')) {
 												$object->actionmsg2		= $subject; // Short text
 											}
 
@@ -524,7 +523,7 @@ class PartnershipUtils
 			}
 		}
 
-		if ($webcontent && !empty($conf->global->PARTNERSHIP_BACKLINKS_TO_CHECK) && preg_match('/'.$conf->global->PARTNERSHIP_BACKLINKS_TO_CHECK.'/', $webcontent)) {
+		if ($webcontent && getDolGlobalString('PARTNERSHIP_BACKLINKS_TO_CHECK') && preg_match('/' . getDolGlobalString('PARTNERSHIP_BACKLINKS_TO_CHECK').'/', $webcontent)) {
 			$found = 1;
 		}
 

@@ -217,12 +217,12 @@ print '</td><td></td></tr>';
 if (empty($conf->stripeconnect->enabled)) {
 	print '<tr class="oddeven"><td>';
 	print '<span class="fieldrequired">'.$langs->trans("STRIPE_TEST_PUBLISHABLE_KEY").'</span></td><td>';
-	print '<input class="minwidth300" type="text" name="STRIPE_TEST_PUBLISHABLE_KEY" value="'.$conf->global->STRIPE_TEST_PUBLISHABLE_KEY.'" placeholder="'.$langs->trans("Example").': pk_test_xxxxxxxxxxxxxxxxxxxxxxxx">';
+	print '<input class="minwidth300" type="text" name="STRIPE_TEST_PUBLISHABLE_KEY" value="' . getDolGlobalString('STRIPE_TEST_PUBLISHABLE_KEY').'" placeholder="'.$langs->trans("Example").': pk_test_xxxxxxxxxxxxxxxxxxxxxxxx">';
 	print '</td><td></td></tr>';
 
 	print '<tr class="oddeven"><td>';
 	print '<span class="titlefield fieldrequired">'.$langs->trans("STRIPE_TEST_SECRET_KEY").'</span></td><td>';
-	print '<input class="minwidth300" type="text" name="STRIPE_TEST_SECRET_KEY" value="'.$conf->global->STRIPE_TEST_SECRET_KEY.'" placeholder="'.$langs->trans("Example").': sk_test_xxxxxxxxxxxxxxxxxxxxxxxx">';
+	print '<input class="minwidth300" type="text" name="STRIPE_TEST_SECRET_KEY" value="' . getDolGlobalString('STRIPE_TEST_SECRET_KEY').'" placeholder="'.$langs->trans("Example").': sk_test_xxxxxxxxxxxxxxxxxxxxxxxx">';
 	print '</td><td></td></tr>';
 
 	print '<tr class="oddeven"><td>';
@@ -242,7 +242,7 @@ if (empty($conf->stripeconnect->enabled)) {
 	print '<br>'.$out;
 	print '</td><td>';
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-		if (!empty($conf->global->STRIPE_TEST_WEBHOOK_KEY) && !empty($conf->global->STRIPE_TEST_SECRET_KEY) && !empty($conf->global->STRIPE_TEST_WEBHOOK_ID)) {
+		if (getDolGlobalString('STRIPE_TEST_WEBHOOK_KEY') && getDolGlobalString('STRIPE_TEST_SECRET_KEY') && getDolGlobalString('STRIPE_TEST_WEBHOOK_ID')) {
 			if (utf8_check($conf->global->STRIPE_TEST_SECRET_KEY)) {
 				try {
 					\Stripe\Stripe::setApiKey($conf->global->STRIPE_TEST_SECRET_KEY);
@@ -314,7 +314,7 @@ if (empty($conf->stripeconnect->enabled)) {
 	print '<br>'.$out;
 	print '</td><td>';
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-		if (!empty($conf->global->STRIPE_LIVE_WEBHOOK_KEY) && !empty($conf->global->STRIPE_LIVE_SECRET_KEY) && !empty($conf->global->STRIPE_LIVE_WEBHOOK_ID)) {
+		if (getDolGlobalString('STRIPE_LIVE_WEBHOOK_KEY') && getDolGlobalString('STRIPE_LIVE_SECRET_KEY') && getDolGlobalString('STRIPE_LIVE_WEBHOOK_ID')) {
 			if (utf8_check($conf->global->STRIPE_TEST_SECRET_KEY)) {
 				try {
 					\Stripe\Stripe::setApiKey($conf->global->STRIPE_LIVE_SECRET_KEY);
@@ -404,7 +404,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {	// TODO Not used by current c
 	print $langs->trans("TERMINAL_LOCATION").'</td><td>';
 	$service = 'StripeTest';
 	$servicestatus = 0;
-	if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha')) {
+	if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'alpha')) {
 		$service = 'StripeLive';
 		$servicestatus = 1;
 	}
@@ -415,7 +415,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {	// TODO Not used by current c
 		if (!empty($site_account)) {
 			\Stripe\Stripe::setApiKey($site_account);
 		}
-		if (isModEnabled('stripe') && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
+		if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('forcesandbox', 'alpha'))) {
 			$service = 'StripeTest';
 			$servicestatus = '0';
 			dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
@@ -533,7 +533,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {	// TODO Not used by current c
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("CSSUrlForPaymentForm").'</td><td>';
-print '<input class="width500" type="text" name="ONLINE_PAYMENT_CSS_URL" value="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'">';
+print '<input class="width500" type="text" name="ONLINE_PAYMENT_CSS_URL" value="' . getDolGlobalString('ONLINE_PAYMENT_CSS_URL').'">';
 print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': http://mysite/mycss.css</span>';
 print '</td></tr>';
 
@@ -558,7 +558,7 @@ print '</td></tr>';
 print '<tr class="oddeven"><td>';
 print $langs->trans("ONLINE_PAYMENT_SENDEMAIL").'</td><td>';
 print img_picto('', 'email', 'class="pictofixedwidth"');
-print '<input class="minwidth200" type="text" name="ONLINE_PAYMENT_SENDEMAIL" value="'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'">';
+print '<input class="minwidth200" type="text" name="ONLINE_PAYMENT_SENDEMAIL" value="' . getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL').'">';
 print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': myemail@myserver.com, Payment service &lt;myemail2@myserver2.com&gt;</span>';
 print '</td></tr>';
 
@@ -578,11 +578,11 @@ print "</tr>\n";
 // Payment token for URL
 print '<tr class="oddeven"><td>';
 print $langs->trans("SecurityToken").'</td><td>';
-print '<input class="minwidth300"  type="text" id="PAYMENT_SECURITY_TOKEN" name="PAYMENT_SECURITY_TOKEN" value="'.$conf->global->PAYMENT_SECURITY_TOKEN.'">';
+print '<input class="minwidth300"  type="text" id="PAYMENT_SECURITY_TOKEN" name="PAYMENT_SECURITY_TOKEN" value="' . getDolGlobalString('PAYMENT_SECURITY_TOKEN').'">';
 if (!empty($conf->use_javascript_ajax)) {
 	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 }
-if (!empty($conf->global->PAYMENT_SECURITY_ACCEPT_ANY_TOKEN)) {
+if (getDolGlobalString('PAYMENT_SECURITY_ACCEPT_ANY_TOKEN')) {
 	$langs->load("errors");
 	print img_warning($langs->trans("WarningTheHiddenOptionIsOn", 'PAYMENT_SECURITY_ACCEPT_ANY_TOKEN'), '', 'pictowarning marginleftonly');
 }

@@ -87,11 +87,12 @@ class FormOther
 		$stringaddbarcode = $langs->trans("QtyToAddAfterBarcodeScan", "tmphtml");
 		$htmltoreplaceby = '<select name="selectaddorreplace"><option selected value="add">'.$langs->trans("Add").'</option><option value="replace">'.$langs->trans("ToReplace").'</option></select>';
 		$stringaddbarcode = str_replace("tmphtml", $htmltoreplaceby, $stringaddbarcode);
-		$out .= $stringaddbarcode.' <input type="text" name="barcodeproductqty" class="width50 right" value="1"><br>';
+		$out .= $stringaddbarcode.': <input type="text" name="barcodeproductqty" class="width40 right" value="1"><br>';
 		if ($warehouseselect > 0) {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 			$formproduct = new FormProduct($this->db);
 			$formproduct->loadWarehouses();
+			$out .= img_picto('', 'stock', 'class="pictofixedwidth"');
 			$out .= $formproduct->selectWarehouses('', "warehousenew", '', 0, 0, 0, '', 0, 1);
 			$out .= '<br>';
 			$out .= '<br>';
@@ -149,7 +150,7 @@ class FormOther
 		$sql = "SELECT rowid, label, fk_user";
 		$sql .= " FROM ".$this->db->prefix()."export_model";
 		$sql .= " WHERE type = '".$this->db->escape($type)."'";
-		if (empty($conf->global->EXPORTS_SHARE_MODELS)) {	// EXPORTS_SHARE_MODELS means all templates are visible, whatever is owner.
+		if (!getDolGlobalString('EXPORTS_SHARE_MODELS')) {	// EXPORTS_SHARE_MODELS means all templates are visible, whatever is owner.
 			$sql .= " AND fk_user IN (0, ".((int) $fk_user).")";
 		}
 		$sql .= " ORDER BY label";
@@ -211,7 +212,7 @@ class FormOther
 		$sql = "SELECT rowid, label, fk_user";
 		$sql .= " FROM ".$this->db->prefix()."import_model";
 		$sql .= " WHERE type = '".$this->db->escape($type)."'";
-		if (empty($conf->global->EXPORTS_SHARE_MODELS)) {	// EXPORTS_SHARE_MODELS means all templates are visible, whatever is owner.
+		if (!getDolGlobalString('EXPORTS_SHARE_MODELS')) {	// EXPORTS_SHARE_MODELS means all templates are visible, whatever is owner.
 			$sql .= " AND fk_user IN (0, ".((int) $fk_user).")";
 		}
 		$sql .= " ORDER BY label";
@@ -370,7 +371,7 @@ class FormOther
 	public function select_percent($selected = 0, $htmlname = 'percent', $disabled = 0, $increment = 5, $start = 0, $end = 100, $showempty = 0)
 	{
 		// phpcs:enable
-		$return = '<select class="flat maxwidth75" name="'.$htmlname.'" '.($disabled ? 'disabled' : '').'>';
+		$return = '<select class="flat maxwidth75 right" name="'.$htmlname.'" '.($disabled ? 'disabled' : '').'>';
 		if ($showempty) {
 			$return .= '<option value="-1"'.(($selected == -1 || $selected == '') ? ' selected' : '').'>&nbsp;</option>';
 		}
@@ -515,7 +516,7 @@ class FormOther
 			$sql_usr .= " WHERE u.entity IN (".getEntity('user').")";
 		}
 
-		if (empty($user->rights->user->user->lire)) {
+		if (!$user->hasRight('user', 'user', 'lire')) {
 			$sql_usr .= " AND u.rowid = ".((int) $user->id);
 		}
 		if (!empty($user->socid)) {
@@ -528,7 +529,7 @@ class FormOther
 		}
 
 		// Add existing sales representatives of thirdparty of external user
-		if (empty($user->rights->user->user->lire) && $user->socid) {
+		if (!$user->hasRight('user', 'user', 'lire') && $user->socid) {
 			$sql_usr .= " UNION ";
 			$sql_usr .= "SELECT u2.rowid, u2.lastname, u2.firstname, u2.statut as status, u2.login, u2.photo, u2.gender, u2.entity, u2.admin";
 			$sql_usr .= " FROM ".$this->db->prefix()."user as u2, ".$this->db->prefix()."societe_commerciaux as sc";
@@ -551,7 +552,7 @@ class FormOther
 			}
 		}
 
-		if (empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)) {	// MAIN_FIRSTNAME_NAME_POSITION is 0 means firstname+lastname
+		if (!getDolGlobalString('MAIN_FIRSTNAME_NAME_POSITION')) {	// MAIN_FIRSTNAME_NAME_POSITION is 0 means firstname+lastname
 			$sql_usr .= " ORDER BY status DESC, firstname ASC, lastname ASC";
 		} else {
 			$sql_usr .= " ORDER BY status DESC, lastname ASC, firstname ASC";
@@ -595,7 +596,7 @@ class FormOther
 				$out .= $labeltoshow;
 				// Complete name with more info
 				$moreinfo = 0;
-				if (!empty($conf->global->MAIN_SHOW_LOGIN)) {
+				if (getDolGlobalString('MAIN_SHOW_LOGIN')) {
 					$out .= ($moreinfo ? ' - ' : ' (').$obj_usr->login;
 					$moreinfo++;
 				}
@@ -995,7 +996,7 @@ class FormOther
 
 		$file = $conf->$module->dir_temp.'/'.$name.'.png';
 
-		// On cree le repertoire contenant les icones
+		// We create temp directory
 		if (!file_exists($conf->$module->dir_temp)) {
 			dol_mkdir($conf->$module->dir_temp);
 		}
@@ -1362,7 +1363,7 @@ class FormOther
 
 			// Define $box_max_lines
 			$box_max_lines = 5;
-			if (!empty($conf->global->MAIN_BOXES_MAXLINES)) {
+			if (getDolGlobalString('MAIN_BOXES_MAXLINES')) {
 				$box_max_lines = $conf->global->MAIN_BOXES_MAXLINES;
 			}
 

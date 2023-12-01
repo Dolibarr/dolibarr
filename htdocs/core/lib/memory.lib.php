@@ -72,7 +72,7 @@ function dol_setcache($memoryid, $data, $expire = 0)
 	$result = 0;
 
 	if (strpos($memoryid, 'count_') === 0) {	// The memoryid key start with 'count_...'
-		if (empty($conf->global->MAIN_CACHE_COUNT)) {
+		if (!getDolGlobalString('MAIN_CACHE_COUNT')) {
 			return 0;
 		}
 	}
@@ -142,7 +142,7 @@ function dol_getcache($memoryid)
 	global $conf;
 
 	if (strpos($memoryid, 'count_') === 0) {	// The memoryid key start with 'count_...'
-		if (empty($conf->global->MAIN_CACHE_COUNT)) {
+		if (!getDolGlobalString('MAIN_CACHE_COUNT')) {
 			return null;
 		}
 	}

@@ -77,7 +77,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 		//$propalstatic=new Propal($this->db);
 
 		$startmonth = $conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1;
-		if (empty($conf->global->GRAPH_USE_FISCAL_YEAR)) {
+		if (!getDolGlobalString('GRAPH_USE_FISCAL_YEAR')) {
 			$startmonth = 1;
 		}
 
@@ -131,7 +131,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 			if (empty($endyear)) {
 				$endyear = $nowarray['year'];
 			}
-			$startyear = $endyear - (empty($conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH) ? 2 : ($conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH - 1));
+			$startyear = $endyear - (!getDolGlobalString('MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH') ? 2 : ($conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH - 1));
 
 			$WIDTH = (($shownb && $showtot) || !empty($conf->dol_optimize_smallscreen)) ? '256' : '320';
 			$HEIGHT = '192';
@@ -184,14 +184,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 				//$datatype2 = array('lines','bars');
 
 				$filenamenb = $dir."/".$prefix."propalsamountinyear-".$endyear.".png";
-				if (!empty($mode)) {
-					if ($mode == 'customer') {
-						$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&amp;file=propalsamountinyear-'.$endyear.'.png';
-					}
-					if ($mode == 'supplier') {
-						$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstatssupplier&amp;file=propalsamountinyear-'.$endyear.'.png';
-					}
-				}
+				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&amp;file=propalsamountinyear-'.$endyear.'.png';
 
 				$px2 = new DolGraph();
 				$mesg = $px2->isGraphKo();

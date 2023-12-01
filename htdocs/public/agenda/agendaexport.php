@@ -151,7 +151,7 @@ if (!isModEnabled('agenda')) {
  */
 
 // Check config
-if (empty($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY)) {
+if (!getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY')) {
 	$user->getrights();
 
 	llxHeaderVierge();
@@ -246,7 +246,7 @@ if ($shortfilename == 'dolibarrcalendar') {
 $agenda = new ActionComm($db);
 
 $cachedelay = 0;
-if (!empty($conf->global->MAIN_AGENDA_EXPORT_CACHE)) {
+if (getDolGlobalString('MAIN_AGENDA_EXPORT_CACHE')) {
 	$cachedelay = $conf->global->MAIN_AGENDA_EXPORT_CACHE;
 }
 

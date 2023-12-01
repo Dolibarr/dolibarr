@@ -306,13 +306,13 @@ if ($object->id > 0) {
 		}
 
 		// Try to know count of actioncomm from cache
-		/*require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
-		$cachekey = 'count_events_myobject_'.$object->id;
-		$nbEvent = dol_getcache($cachekey);
+		$nbEvent = 0;
+		//require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		//$cachekey = 'count_events_myobject_'.$object->id;
+		//$nbEvent = dol_getcache($cachekey);
+		$titlelist = $langs->trans("Actions").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>': '');
 
-		print_barre_liste($langs->trans("ActionsOnMyObject").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>': ''), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 1);
-		*/
-		print_barre_liste($langs->trans("ActionsOnMyObject"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);
+		print_barre_liste($titlelist, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);
 
 		// List of all actions
 		$filters = array();

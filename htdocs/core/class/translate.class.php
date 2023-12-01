@@ -78,11 +78,11 @@ class Translate
 		//dol_syslog(get_class($this)."::setDefaultLang srclang=".$srclang,LOG_DEBUG);
 
 		// If a module ask to force a priority on langs directories (to use its own lang files)
-		if (!empty($conf->global->MAIN_FORCELANGDIR)) {
+		if (getDolGlobalString('MAIN_FORCELANGDIR')) {
 			$more = array();
 			$i = 0;
 			foreach ($conf->file->dol_document_root as $dir) {
-				$newdir = $dir . $conf->global->MAIN_FORCELANGDIR; // For example $conf->global->MAIN_FORCELANGDIR is '/mymodule' meaning we search files into '/mymodule/langs/xx_XX'
+				$newdir = $dir . getDolGlobalString('MAIN_FORCELANGDIR'); // For example $conf->global->MAIN_FORCELANGDIR is '/mymodule' meaning we search files into '/mymodule/langs/xx_XX'
 				if (!in_array($newdir, $this->dir)) {
 					$more['module_' . $i] = $newdir;
 					$i++; // We add the forced dir into the array $more. Just after, we add entries into $more to list of lang dir $this->dir.
@@ -279,7 +279,7 @@ class Translate
 				// Enable caching of lang file in memory (not by default)
 				$usecachekey = '';
 				// Using a memcached server
-				if (isModEnabled('memcached') && !empty($conf->global->MEMCACHED_SERVER)) {
+				if (isModEnabled('memcached') && getDolGlobalString('MEMCACHED_SERVER')) {
 					$usecachekey = $newdomain . '_' . $langofdir . '_' . md5($file_lang); // Should not contains special chars
 				} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {
 					// Using cache with shmop. Speed gain: 40ms - Memory overusage: 200ko (Size of session cache file)
@@ -354,7 +354,7 @@ class Translate
 							}
 						}
 
-						if (empty($conf->global->MAIN_FORCELANGDIR)) {
+						if (!getDolGlobalString('MAIN_FORCELANGDIR')) {
 							break; // Break loop on each root dir. If a module has forced dir, we do not stop loop.
 						}
 					}
@@ -471,7 +471,7 @@ class Translate
 		// Enable caching of lang file in memory (not by default)
 		$usecachekey = '';
 		// Using a memcached server
-		if (isModEnabled('memcached') && !empty($conf->global->MEMCACHED_SERVER)) {
+		if (isModEnabled('memcached') && getDolGlobalString('MEMCACHED_SERVER')) {
 			$usecachekey = $newdomain . '_' . $langofdir; // Should not contains special chars
 		} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {
 			// Using cache with shmop. Speed gain: 40ms - Memory overusage: 200ko (Size of session cache file)
@@ -493,7 +493,7 @@ class Translate
 			}
 		}
 
-		if (!$found && !empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION)) {
+		if (!$found && getDolGlobalString('MAIN_ENABLE_OVERWRITE_TRANSLATION')) {
 			// Overwrite translation with database read
 			$sql = "SELECT transkey, transvalue FROM ".$db->prefix()."overwrite_trans where (lang='".$db->escape($this->defaultlang)."' OR lang IS NULL)";
 			$sql .= " AND entity IN (0, ".getEntity('overwrite_trans').")";
@@ -580,7 +580,7 @@ class Translate
 	 */
 	private function getTradFromKey($key)
 	{
-		global $conf, $db;
+		global $db;
 
 		if (!is_string($key)) {
 			//xdebug_print_function_stack('ErrorBadValueForParamNotAString');
@@ -660,7 +660,7 @@ class Translate
 				}
 			}
 
-			// Crypt string into HTML
+			// Encode string into HTML
 			$str = htmlentities($str, ENT_COMPAT, $this->charset_output); // Do not convert simple quotes in translation (strings in html are embraced by "). Use dol_escape_htmltag around text in HTML content
 
 			// Restore reliable HTML tags into original translation string
@@ -669,6 +669,10 @@ class Translate
 				array('"', '<b>', '</b>', '<u>', '</u>', '<i', '</i>', '<center>', '</center>', '<a ', '</a>', '<br>', '<span', '</span>', '< ', '>'),
 				$str
 			);
+
+			// Remove dangerous sequence we should never have. Not needed into a translated response.
+			// %27 is entity code for ' and is replaced by browser automatically when translation is inside a javascript code called by a click like on a href link.
+			$str = str_replace(array('%27', '&#39'), '', $str);
 
 			if ($maxsize) {
 				$str = dol_trunc($str, $maxsize);
@@ -738,6 +742,10 @@ class Translate
 				//print $str;
 				$str = sprintf($str, $param1, $param2, $param3, $param4, $param5); // Replace %s and %d except for FormatXXX strings.
 			}
+
+			// Remove dangerous sequence we should never have. Not needed into a translated response.
+			// %27 is entity code for ' and is replaced by browser automatically when translation is inside a javascript code called by a click like on a href link.
+			$str = str_replace(array('%27', '&#39'), '', $str);
 
 			return $str;
 		} else {
@@ -864,7 +872,7 @@ class Translate
 					}
 				}
 				// We must keep only languages into MAIN_LANGUAGES_ALLOWED
-				if (!empty($conf->global->MAIN_LANGUAGES_ALLOWED) && !in_array($dir, explode(',', $conf->global->MAIN_LANGUAGES_ALLOWED))) {
+				if (getDolGlobalString('MAIN_LANGUAGES_ALLOWED') && !in_array($dir, explode(',', $conf->global->MAIN_LANGUAGES_ALLOWED))) {
 					continue;
 				}
 
@@ -872,7 +880,7 @@ class Translate
 					$langs_available[$dir] = $dir;
 				}
 
-				if ($usecode == 1 || !empty($conf->global->MAIN_SHOW_LANGUAGE_CODE)) {
+				if ($usecode == 1 || getDolGlobalString('MAIN_SHOW_LANGUAGE_CODE')) {
 					$langs_available[$dir] = $dir . ': ' . dol_trunc($this->trans('Language_' . $dir), $maxlength);
 				} else {
 					$langs_available[$dir] = $this->trans('Language_' . $dir);

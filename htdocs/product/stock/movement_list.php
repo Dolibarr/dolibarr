@@ -147,10 +147,10 @@ $arrayfields = array(
 
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
-if (!empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+if (getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 	unset($arrayfields['pl.sellby']);
 }
-if (!empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+if (getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 	unset($arrayfields['pl.eatby']);
 }
 
@@ -167,7 +167,7 @@ if ($id > 0 || !empty($ref)) {
 $result = restrictedArea($user, 'stock');
 
 // Security check
-if (!$user->rights->stock->mouvement->lire) {
+if (!$user->hasRight('stock', 'mouvement', 'lire')) {
 	accessforbidden();
 }
 
@@ -586,6 +586,45 @@ if ($action == "transfert_stock" && !$cancel) {
 	}
 }
 
+// reverse mouvement of stock
+if ($action == 'confirm_reverse') {
+	$listMouvement = array();
+	$toselect = array_map('intval', $toselect);
+
+	$sql = "SELECT rowid, label, inventorycode, datem";
+	$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement";
+	$sql .= " WHERE rowid IN (";
+	foreach ($toselect as $id) {
+		$sql .= ((int) $id).",";
+	}
+	$sql = rtrim($sql, ',');
+	$sql .= ")";
+
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num = $db->num_rows($resql);
+		$i = 0;
+		while ($i < $num) {
+			$obj = $db->fetch_object($resql);
+			$object->fetch($obj->rowid);
+			$reverse = $object->reverseMouvement();
+			if ($reverse < 0) {
+				$hasError = true;
+			} else {
+				$hasSuccess = true;
+			}
+			$i++;
+		}
+		if ($hasError) {
+			setEventMessages($langs->trans("WarningAlreadyReverse", $langs->transnoentities($idAlreadyReverse)), null, 'warnings');
+		}
+		if ($hasSuccess) {
+			setEventMessages($langs->trans("ReverseConfirmed"), null);
+		}
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	}
+}
 
 /*
  * View
@@ -648,7 +687,7 @@ if ($msid > 0) {
 }
 $sql .= " AND m.fk_entrepot = e.rowid";
 $sql .= " AND e.entity IN (".getEntity('stock').")";
-if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 	$sql .= " AND p.fk_product_type = 0";
 }
 if ($id > 0) {
@@ -936,11 +975,11 @@ if ((empty($action) || $action == 'list') && $id > 0) {
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 																								   // modified by hook
 	if (empty($reshook)) {
-		if ($user->rights->stock->mouvement->creer) {
+		if ($user->hasRight('stock', 'mouvement', 'creer')) {
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=correction">'.$langs->trans("CorrectStock").'</a>';
 		}
 
-		if ($user->rights->stock->mouvement->creer) {
+		if ($user->hasRight('stock', 'mouvement', 'creer')) {
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert">'.$langs->trans("TransferStock").'</a>';
 		}
 	}
@@ -1024,12 +1063,16 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 	$arrayofmassactions['builddoc'] = img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("GeneratePDF");
 }
 // By default, we should never accept deletion of stock movement
-if (!empty($conf->global->STOCK_ALLOW_DELETE_OF_MOVEMENT) && $permissiontodelete) {
+if (getDolGlobalString('STOCK_ALLOW_DELETE_OF_MOVEMENT') && $permissiontodelete) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
+if (!empty($permissiontoadd)) {
+	$arrayofmassactions['prereverse'] = img_picto('', 'add', 'class="pictofixedwidth"').$langs->trans("Reverse");
+}
+if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'prereverse'))) {
 	$arrayofmassactions = array();
 }
+
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -1065,6 +1108,10 @@ $modelmail = "movementstock";
 $objecttmp = new MouvementStock($db);
 $trackid = 'mov'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+if ($massaction == 'prereverse') {
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassReverse"), $langs->trans("ConfirmMassReverseQuestion", count($toselect)), "confirm_reverse", null, '', 0, 200, 500, 1, 'Yes');
+}
+
 
 if ($search_all) {
 	$setupstring = '';
@@ -1402,13 +1449,14 @@ while ($i < $imaxinloop) {
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
+		$selected = -1;
 		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
 			if (in_array($object->id, $arrayofselected)) {
 				$selected = 1;
 			}
 		}
-		print $object->getKanbanView('', array('selected' => in_array($warehousestatic->id, $arrayofselected)));
+		print $object->getKanbanView('', array('selected' => $selected));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
@@ -1484,11 +1532,11 @@ while ($i < $imaxinloop) {
 		}
 		if (!empty($arrayfields['m.inventorycode']['checked'])) {
 			// Inventory code
-			print '<td><a href="'.$_SERVER["PHP_SELF"].'?search_inventorycode='.urlencode('^'.$obj->inventorycode.'$').'&search_type_mouvement='.urlencode($obj->type_mouvement).'">'.$obj->inventorycode.'</a></td>';
+			print '<td><a href="'.$_SERVER["PHP_SELF"].'?search_inventorycode='.urlencode('^'.$obj->inventorycode.'$').'">'.dol_escape_htmltag($obj->inventorycode).'</a></td>';
 		}
 		if (!empty($arrayfields['m.label']['checked'])) {
 			// Label of movement
-			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->label).'">'.$obj->label.'</td>';
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->label).'">'.dol_escape_htmltag($obj->label).'</td>';
 		}
 		if (!empty($arrayfields['origin']['checked'])) {
 			// Origin of movement

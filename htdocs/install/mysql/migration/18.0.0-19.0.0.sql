@@ -12,7 +12,7 @@
 -- To change type of field: ALTER TABLE llx_table MODIFY COLUMN name varchar(60);
 -- To drop a foreign key:   ALTER TABLE llx_table DROP FOREIGN KEY fk_name;
 -- To create a unique index ALTER TABLE llx_table ADD UNIQUE INDEX uk_table_field (field);
--- To drop an index:        -- VMYSQL4.1 DROP INDEX nomindex on llx_table;
+-- To drop an index:        -- VMYSQL4.1 DROP INDEX nomindex ON llx_table;
 -- To drop an index:        -- VPGSQL8.2 DROP INDEX nomindex;
 -- To make pk to be auto increment (mysql):
 -- -- VMYSQL4.3 ALTER TABLE llx_table ADD PRIMARY KEY(rowid);
@@ -34,13 +34,15 @@
 
 -- v18
 
+-- VPGSQL8.2 ALTER SEQUENCE llx_projet_task_time_rowid_seq RENAME TO llx_element_time_rowid_seq;
 
+ALTER TABLE llx_product_perentity ADD COLUMN pmp double(24,8);
 
 
 -- v19
 
 -- VAT multientity
--- VMYSQL4.1 DROP INDEX uk_c_tva_id on llx_c_tva;
+-- VMYSQL4.1 DROP INDEX uk_c_tva_id ON llx_c_tva;
 -- VPGSQL8.2 DROP INDEX uk_c_tva_id;
 ALTER TABLE llx_c_tva ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_c_tva ADD UNIQUE INDEX uk_c_tva_id (entity, fk_pays, code, taux, recuperableonly);
@@ -86,9 +88,14 @@ ALTER TABLE llx_adherent DROP COLUMN whatsapp;
 
 ALTER TABLE llx_societe DROP COLUMN skype;
 
+ALTER TABLE llx_user ADD COLUMN email_oauth2 varchar(255);
+
 ALTER TABLE llx_prelevement_demande ADD INDEX idx_prelevement_demande_ext_payment_id (ext_payment_id);
 
-ALTER TABLE llx_actioncomm ADD COLUMN fk_bookcal_availability integer DEFAULT NULL;
+ALTER TABLE llx_actioncomm CHANGE COLUMN fk_bookcal_availability fk_bookcal_calendar integer;
+ALTER TABLE llx_actioncomm ADD COLUMN fk_bookcal_calendar integer DEFAULT NULL;
+
+ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_entity (entity);
 
 ALTER TABLE llx_product_lot ADD COLUMN qc_frequency integer DEFAULT NULL;
 ALTER TABLE llx_product_lot ADD COLUMN lifetime integer DEFAULT NULL;
@@ -112,7 +119,7 @@ ALTER TABLE llx_commande_fournisseur_dispatch ADD INDEX idx_commande_fournisseur
 UPDATE llx_societe_account SET site = 'dolibarr_website' WHERE fk_website > 0 AND site IS NULL;
 ALTER TABLE llx_societe_account MODIFY COLUMN site varchar(128) NOT NULL;
 
-ALTER TABLE llx_accounting_account MODIFY COLUMN pcg_type varchar(32);
+ALTER TABLE llx_accounting_account MODIFY COLUMN pcg_type varchar(60);
 
 -- Drop the composite unique index that exists on llx_links to rebuild a new one with objecttype included.
 -- The old design did not allow same label on different objects with same id.
@@ -131,6 +138,9 @@ insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALU
 insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '5.2', 'Πιστωτικό Τιμολόγιο / Μη Συσχετιζόμενο', 1);
 insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '11.4', 'Πιστωτικό Στοιχ. Λιανικής', 1);
 
+-- Product/service managed in stock
+ALTER TABLE llx_product ADD COLUMN stockable_product integer DEFAULT 1 NOT NULL;
+UPDATE llx_product set stockable_product = 0 WHERE type = 1;
+
 ALTER TABLE llx_prelevement_lignes ADD COLUMN fk_user integer NULL;
 
-ALTER TABLE llx_propal ADD COLUMN model_pdf_pos_sign VARCHAR(32) DEFAULT NULL AFTER last_main_doc;

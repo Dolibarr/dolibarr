@@ -137,9 +137,9 @@ class EmailCollector extends CommonObject
 		'login'         => array('type'=>'varchar(128)', 'label'=>'Login', 'visible'=>-1, 'enabled'=>1, 'position'=>102, 'notnull'=>-1, 'index'=>1, 'comment'=>"IMAP login", 'help'=>'Example: myaccount@gmail.com'),
 		'password'      => array('type'=>'password', 'label'=>'Password', 'visible'=>-1, 'enabled'=>"1", 'position'=>103, 'notnull'=>-1, 'comment'=>"IMAP password", 'help'=>'WithGMailYouCanCreateADedicatedPassword'),
 		'oauth_service' => array('type'=>'varchar(128)', 'label'=>'oauthService', 'visible'=>-1, 'enabled'=>"getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')", 'position'=>104, 'notnull'=>0, 'index'=>1, 'comment'=>"IMAP login oauthService", 'arrayofkeyval'=>array(), 'help'=>'TokenMustHaveBeenCreated'),
-		'source_directory' => array('type'=>'varchar(255)', 'label'=>'MailboxSourceDirectory', 'visible'=>-1, 'enabled'=>1, 'position'=>104, 'notnull'=>1, 'default' => 'Inbox', 'help'=>'Example: INBOX'),
+		'source_directory' => array('type'=>'varchar(255)', 'label'=>'MailboxSourceDirectory', 'visible'=>-1, 'enabled'=>1, 'position'=>104, 'notnull'=>1, 'default' => 'Inbox', 'help'=>'Example: INBOX, [Gmail]/Spam, [Gmail]/Draft, [Gmail]/Brouillons, [Gmail]/Sent Mail, [Gmail]/Messages envoyés, ...'),
 		'target_directory' => array('type'=>'varchar(255)', 'label'=>'MailboxTargetDirectory', 'visible'=>1, 'enabled'=>1, 'position'=>110, 'notnull'=>0, 'help'=>"EmailCollectorTargetDir"),
-		'maxemailpercollect' => array('type'=>'integer', 'label'=>'MaxEmailCollectPerCollect', 'visible'=>-1, 'enabled'=>1, 'position'=>111, 'default'=>100),
+		'maxemailpercollect' => array('type'=>'integer', 'label'=>'MaxEmailCollectPerCollect', 'visible'=>-1, 'enabled'=>1, 'position'=>111, 'default'=>50),
 		'datelastresult' => array('type'=>'datetime', 'label'=>'DateLastCollectResult', 'visible'=>1, 'enabled'=>'$action != "create" && $action != "edit"', 'position'=>121, 'notnull'=>-1, 'csslist'=>'nowraponall'),
 		'codelastresult' => array('type'=>'varchar(16)', 'label'=>'CodeLastResult', 'visible'=>1, 'enabled'=>'$action != "create" && $action != "edit"', 'position'=>122, 'notnull'=>-1,),
 		'lastresult' => array('type'=>'varchar(255)', 'label'=>'LastResult', 'visible'=>1, 'enabled'=>'$action != "create" && $action != "edit"', 'position'=>123, 'notnull'=>-1, 'cssview'=>'small', 'csslist'=>'small tdoverflowmax200'),
@@ -251,7 +251,7 @@ class EmailCollector extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -380,6 +380,11 @@ class EmailCollector extends CommonObject
 		unset($object->fk_user_creat);
 		unset($object->import_key);
 		unset($object->password);
+		unset($object->lastresult);
+		unset($object->codelastresult);
+		unset($object->datelastresult);
+		unset($object->datelastok);
+		unset($object->debuginfo);
 
 		// Clear fields
 		$object->ref = "copy_of_".$object->ref;
@@ -590,7 +595,7 @@ class EmailCollector extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowEmailCollector");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -681,6 +686,7 @@ class EmailCollector extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_creat;
@@ -787,9 +793,9 @@ class EmailCollector extends CommonObject
 
 		// Connect to IMAP
 		$flags = '/service=imap'; // IMAP
-		if (!empty($conf->global->IMAP_FORCE_TLS)) {
+		if (getDolGlobalString('IMAP_FORCE_TLS')) {
 			$flags .= '/tls';
-		} elseif (empty($this->imap_encryption) || ($this->imap_encryption == 'ssl' && !empty($conf->global->IMAP_FORCE_NOSSL))) {
+		} elseif (empty($this->imap_encryption) || ($this->imap_encryption == 'ssl' && getDolGlobalString('IMAP_FORCE_NOSSL'))) {
 			$flags .= '';
 		} else {
 			$flags .= '/' . $this->imap_encryption;
@@ -798,7 +804,7 @@ class EmailCollector extends CommonObject
 		$flags .= '/novalidate-cert';
 		//$flags.='/readonly';
 		//$flags.='/debug';
-		if (!empty($this->norsh) || !empty($conf->global->IMAP_FORCE_NORSH)) {
+		if (!empty($this->norsh) || getDolGlobalString('IMAP_FORCE_NORSH')) {
 			$flags .= '/norsh';
 		}
 		//Used in shared mailbox from Office365
@@ -813,7 +819,7 @@ class EmailCollector extends CommonObject
 	}
 
 	/**
-	 * Convert str to UTF-7 imap default mailbox names
+	 * Convert str to UTF-7 imap. Used to forge mailbox names.
 	 *
 	 * @param 	string $str			String to encode
 	 * @return 	string				Encode string
@@ -822,13 +828,16 @@ class EmailCollector extends CommonObject
 	{
 		if (function_exists('mb_convert_encoding')) {
 			// change spaces by entropy because mb_convert fail with spaces
-			$str = preg_replace("/ /", "xyxy", $str);
+			$str = preg_replace("/ /", "xxxSPACExxx", $str);		// the replacement string must be valid in utf7 so _ can't be used
+			$str = preg_replace("/\[Gmail\]/", "xxxGMAILxxx", $str);	// the replacement string must be valid in utf7 so _ can't be used
 			// if mb_convert work
 			if ($str = mb_convert_encoding($str, "UTF-7")) {
 				// change characters
 				$str = preg_replace("/\+A/", "&A", $str);
 				// change to spaces again
-				$str = preg_replace("/xyxy/", " ", $str);
+				$str = preg_replace("/xxxSPACExxx/", " ", $str);
+				// change to [Gmail] again
+				$str = preg_replace("/xxxGMAILxxx/", "[Gmail]", $str);
 				return $str;
 			} else {
 				// print error and return false
@@ -1085,7 +1094,7 @@ class EmailCollector extends CommonObject
 		//$conf->global->SYSLOG_FILE = 'DOL_DATA_ROOT/dolibarr_mydedicatedlofile.log';
 
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 			require_once DOL_DOCUMENT_ROOT.'/includes/webklex/php-imap/vendor/autoload.php';
 		}
 
@@ -1111,7 +1120,6 @@ class EmailCollector extends CommonObject
 
 		$now = dol_now();
 
-
 		if (empty($this->host)) {
 			$this->error = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('EMailHost'));
 			return -1;
@@ -1125,15 +1133,21 @@ class EmailCollector extends CommonObject
 			return -1;
 		}
 
+		$sourcedir = $this->source_directory;
+		$targetdir = ($this->target_directory ? $this->target_directory : ''); // Can be '[Gmail]/Trash' or 'mytag'
+
 		$this->fetchFilters();
 		$this->fetchActions();
 
-		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 			if ($this->acces_type == 1) {
-				// Mode OAUth2 with PHP-IMAP
-				$supportedoauth2array = array();
+				// Mode OAUth2 (access_type == 1) with PHP-IMAP
+				$this->debuginfo .= 'doCollectOneCollector is using method MAIN_IMAP_USE_PHPIMAP=1, access_type=1 (OAUTH2)<br>';
 
-				require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php';
+
+				$supportedoauth2array = getSupportedOauth2Array();
+
 				$keyforsupportedoauth2array = $this->oauth_service;
 				if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
 					$keyforprovider = preg_replace('/^.*-/', '', $keyforsupportedoauth2array);
@@ -1143,7 +1157,12 @@ class EmailCollector extends CommonObject
 				$keyforsupportedoauth2array = preg_replace('/-.*$/', '', $keyforsupportedoauth2array);
 				$keyforsupportedoauth2array = 'OAUTH_'.$keyforsupportedoauth2array.'_NAME';
 
-				$OAUTH_SERVICENAME = (empty($supportedoauth2array[$keyforsupportedoauth2array]['name']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['name'].($keyforprovider ? '-'.$keyforprovider : ''));
+				$OAUTH_SERVICENAME = 'Unknown';
+				if ( array_key_exists($keyforsupportedoauth2array, $supportedoauth2array)
+					&& array_key_exists('name', $supportedoauth2array[$keyforsupportedoauth2array])
+					&& !empty($supportedoauth2array[$keyforsupportedoauth2array]['name'])) {
+					$OAUTH_SERVICENAME = $supportedoauth2array[$keyforsupportedoauth2array]['name'].(!empty($keyforprovider) ? '-'.$keyforprovider : '');
+				}
 
 				require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 				//$debugtext = "Host: ".$this->host."<br>Port: ".$this->port."<br>Login: ".$this->login."<br>Password: ".$this->password."<br>access type: ".$this->acces_type."<br>oauth service: ".$this->oauth_service."<br>Max email per collect: ".$this->maxemailpercollect;
@@ -1204,7 +1223,9 @@ class EmailCollector extends CommonObject
 					'authentication' => "oauth",
 				]);
 			} else {
-				// Mode login/pass with PHP-IMAP
+				// Mode LOGIN (login/pass) with PHP-IMAP
+				$this->debuginfo .= 'doCollectOneCollector is using method MAIN_IMAP_USE_PHPIMAP=1, access_type=0 (LOGIN)<br>';
+
 				$cm = new ClientManager();
 				$client = $cm->make([
 					'host'           => $this->host,
@@ -1230,16 +1251,18 @@ class EmailCollector extends CommonObject
 			$host = dol_getprefix('email');
 		} else {
 			// Use native IMAP functions
+			$this->debuginfo .= 'doCollectOneCollector is using method MAIN_IMAP_USE_PHPIMAP=0 (native PHP imap, LOGIN)<br>';
+
 			if (!function_exists('imap_open')) {
 				$this->error = 'IMAP function not enabled on your PHP';
 				return -2;
 			}
-			$sourcedir = $this->source_directory;
-			$targetdir = ($this->target_directory ? $this->target_directory : ''); // Can be '[Gmail]/Trash' or 'mytag'
 
 			$connectstringserver = $this->getConnectStringIMAP();
-			$connectstringsource = $connectstringserver.imap_utf7_encode($sourcedir);
-			$connectstringtarget = $connectstringserver.imap_utf7_encode($targetdir);
+			$connectstringsource = $connectstringserver.$this->getEncodedUtf7($sourcedir);
+			$connectstringtarget = $connectstringserver.$this->getEncodedUtf7($targetdir);
+
+			$this->debuginfo .= 'connectstringsource = '.$connectstringsource.', $connectstringtarget='.$connectstringtarget.'<br>';
 
 			$connection = imap_open($connectstringsource, $this->login, $this->password);
 			if (!$connection) {
@@ -1257,7 +1280,7 @@ class EmailCollector extends CommonObject
 			//$search='ALL';
 		}
 
-		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 			// Use PHPIMAP external library
 			$criteria = array(array('UNDELETED')); // Seems not supported by some servers
 			foreach ($this->filters as $rule) {
@@ -1523,11 +1546,11 @@ class EmailCollector extends CommonObject
 		$nbactiondone = 0;
 		$charset = ($this->hostcharset ? $this->hostcharset : "UTF-8");
 
-		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 			try {
 				//$criteria = [['ALL']];
 				//$Query = $client->getFolders()[0]->messages()->where($criteria);
-				$f = $client->getFolders(false, $this->source_directory);
+				$f = $client->getFolders(false, $sourcedir);
 				$Query = $f[0]->messages()->where($criteria);
 			} catch (InvalidWhereQueryCriteriaException $e) {
 				$this->error = $e->getMessage();
@@ -1555,7 +1578,7 @@ class EmailCollector extends CommonObject
 				return -1;
 			}
 		} else {
-			// Scan IMAP inbox
+			// Scan IMAP inbox (for native IMAP, the source dir is inside the $connection variable)
 			$arrayofemail = imap_search($connection, $search, SE_UID, $charset);
 
 			if ($arrayofemail === false) {
@@ -1600,7 +1623,7 @@ class EmailCollector extends CommonObject
 
 
 				// GET header and overview datas
-				if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+				if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 					$header = $imapemail->getHeader()->raw;
 					$overview = $imapemail->getAttributes();
 				} else {
@@ -1728,7 +1751,7 @@ class EmailCollector extends CommonObject
 				$candidaturefoundby = '';
 
 
-				if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+				if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 					dol_syslog("msgid=".$overview['message_id']." date=".dol_print_date($overview['date'], 'dayrfc', 'gmt')." from=".$overview['from']." to=".$overview['to']." subject=".$overview['subject']);
 
 					// Removed emojis
@@ -1847,7 +1870,7 @@ class EmailCollector extends CommonObject
 				$fromstring = '';
 				$replytostring = '';
 
-				if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+				if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 					$fromstring = $overview['from'];
 					//$replytostring = empty($overview['reply-to']) ? '' : $overview['reply-to'];
 
@@ -2201,7 +2224,7 @@ class EmailCollector extends CommonObject
 
 						$actioncode = 'EMAIL_IN';
 						// If we scan the Sent box, we use the code for out email
-						if ($this->source_directory == 'Sent') {
+						if (preg_match('/Sent$/', $sourcedir)) {
 							$actioncode = 'EMAIL_OUT';
 						}
 
@@ -2552,7 +2575,7 @@ class EmailCollector extends CommonObject
 								$description = dol_concatdesc($description, $messagetext);
 
 								$descriptionfull = $description;
-								if (empty($conf->global->MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER)) {
+								if (!getDolGlobalString('MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER')) {
 									$descriptionfull = dol_concatdesc($descriptionfull, "----- Header");
 									$descriptionfull = dol_concatdesc($descriptionfull, $header);
 								}
@@ -2616,7 +2639,7 @@ class EmailCollector extends CommonObject
 							}
 						} elseif ($operation['type'] == 'recordjoinpiece') {
 							$data = [];
-							if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+							if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 								foreach ($attachments as $attachment) {
 									if ($attachment->getName() === 'undefined') {
 										continue;
@@ -2816,7 +2839,7 @@ class EmailCollector extends CommonObject
 								$description = dol_concatdesc($description, $messagetext);
 
 								$descriptionfull = $description;
-								if (empty($conf->global->MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER)) {
+								if (!getDolGlobalString('MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER')) {
 									$descriptionfull = dol_concatdesc($descriptionfull, "----- Header");
 									$descriptionfull = dol_concatdesc($descriptionfull, $header);
 								}
@@ -2844,7 +2867,7 @@ class EmailCollector extends CommonObject
 								if (empty($projecttocreate->ref)) {
 									// Get next Ref
 									$defaultref = '';
-									$modele = empty($conf->global->PROJECT_ADDON) ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
+									$modele = !getDolGlobalString('PROJECT_ADDON') ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
 
 									// Search template files
 									$file = ''; $classname = ''; $filefound = 0; $reldir = '';
@@ -2901,7 +2924,7 @@ class EmailCollector extends CommonObject
 												if (!dol_is_dir($destdir)) {
 													dol_mkdir($destdir);
 												}
-												if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+												if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 													foreach ($attachments as $attachment) {
 														// $attachment->save($destdir.'/');
 														$typeattachment = (string) $attachment->getDisposition();
@@ -2952,16 +2975,16 @@ class EmailCollector extends CommonObject
 								$description = dol_concatdesc($description, $messagetext);
 
 								$descriptionfull = $description;
-								if (empty($conf->global->MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER)) {
+								if (!getDolGlobalString('MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER')) {
 									$descriptionfull = dol_concatdesc($descriptionfull, "----- Header");
 									$descriptionfull = dol_concatdesc($descriptionfull, $header);
 								}
 
 								$tickettocreate->subject = $subject;
 								$tickettocreate->message = $description;
-								$tickettocreate->type_code = (!empty($conf->global->MAIN_EMAILCOLLECTOR_TICKET_TYPE_CODE) ? $conf->global->MAIN_EMAILCOLLECTOR_TICKET_TYPE_CODE : dol_getIdFromCode($this->db, 1, 'c_ticket_type', 'use_default', 'code', 1));
-								$tickettocreate->category_code = (!empty($conf->global->MAIN_EMAILCOLLECTOR_TICKET_CATEGORY_CODE) ? $conf->global->MAIN_EMAILCOLLECTOR_TICKET_CATEGORY_CODE : dol_getIdFromCode($this->db, 1, 'c_ticket_category', 'use_default', 'code', 1));
-								$tickettocreate->severity_code = (!empty($conf->global->MAIN_EMAILCOLLECTOR_TICKET_SEVERITY_CODE) ? $conf->global->MAIN_EMAILCOLLECTOR_TICKET_SEVERITY_CODE : dol_getIdFromCode($this->db, 1, 'c_ticket_severity', 'use_default', 'code', 1));
+								$tickettocreate->type_code = (getDolGlobalString('MAIN_EMAILCOLLECTOR_TICKET_TYPE_CODE') ? $conf->global->MAIN_EMAILCOLLECTOR_TICKET_TYPE_CODE : dol_getIdFromCode($this->db, 1, 'c_ticket_type', 'use_default', 'code', 1));
+								$tickettocreate->category_code = (getDolGlobalString('MAIN_EMAILCOLLECTOR_TICKET_CATEGORY_CODE') ? $conf->global->MAIN_EMAILCOLLECTOR_TICKET_CATEGORY_CODE : dol_getIdFromCode($this->db, 1, 'c_ticket_category', 'use_default', 'code', 1));
+								$tickettocreate->severity_code = (getDolGlobalString('MAIN_EMAILCOLLECTOR_TICKET_SEVERITY_CODE') ? $conf->global->MAIN_EMAILCOLLECTOR_TICKET_SEVERITY_CODE : dol_getIdFromCode($this->db, 1, 'c_ticket_severity', 'use_default', 'code', 1));
 								$tickettocreate->origin_email = $from;
 								$tickettocreate->fk_user_create = $user->id;
 								$tickettocreate->datec = dol_now();
@@ -2983,7 +3006,7 @@ class EmailCollector extends CommonObject
 								if (empty($tickettocreate->ref)) {
 									// Get next Ref
 									$defaultref = '';
-									$modele = empty($conf->global->TICKET_ADDON) ? 'mod_ticket_simple' : $conf->global->TICKET_ADDON;
+									$modele = !getDolGlobalString('TICKET_ADDON') ? 'mod_ticket_simple' : $conf->global->TICKET_ADDON;
 
 									// Search template files
 									$file = ''; $classname = ''; $filefound = 0; $reldir = '';
@@ -3035,7 +3058,7 @@ class EmailCollector extends CommonObject
 												if (!dol_is_dir($destdir)) {
 													dol_mkdir($destdir);
 												}
-												if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+												if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 													foreach ($attachments as $attachment) {
 														// $attachment->save($destdir.'/');
 														$typeattachment = (string) $attachment->getDisposition();
@@ -3198,10 +3221,10 @@ class EmailCollector extends CommonObject
 				// Error for email or not ?
 				if (!$errorforactions) {
 					if (!empty($targetdir)) {
-						if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+						if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 							// Move mail using PHP-IMAP
 							dol_syslog("EmailCollector::doCollectOneCollector move message ".($imapemail->getHeader()->get('subject'))." to ".$targetdir, LOG_DEBUG);
-							if (empty($mode)) {
+							if (empty($mode)) {	// $mode > 0 is test
 								$imapemail->move($targetdir);
 							}
 						} else {
@@ -3209,9 +3232,10 @@ class EmailCollector extends CommonObject
 							$operationslog .= '<br>Move mail '.((string) $imapemail).' - '.$msgid;
 
 							$arrayofemailtodelete[$imapemail] = $msgid;
+							// Note: Real move is done later using $arrayofemailtodelete
 						}
 					} else {
-						if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+						if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 							dol_syslog("EmailCollector::doCollectOneCollector message '".($imapemail->getHeader()->get('subject'))."' using this->host=".$this->host.", this->access_type=".$this->acces_type." was set to read", LOG_DEBUG);
 						} else {
 							dol_syslog("EmailCollector::doCollectOneCollector message ".((string) $imapemail)." to ".$connectstringtarget." was set to read", LOG_DEBUG);
@@ -3261,7 +3285,7 @@ class EmailCollector extends CommonObject
 		}
 
 		// Disconnect
-		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 			$client->disconnect();
 		} else {
 			foreach ($arrayofemailtodelete as $imapemail => $msgid) {

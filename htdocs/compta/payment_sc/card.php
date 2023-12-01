@@ -254,7 +254,7 @@ if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 */
 
 if ($action == '') {
-	if ($user->rights->tax->charges->supprimer) {
+	if ($user->hasRight('tax', 'charges', 'supprimer')) {
 		if (!$disable_delete) {
 			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 1);
 		} else {

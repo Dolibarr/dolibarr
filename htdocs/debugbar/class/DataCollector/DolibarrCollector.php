@@ -84,15 +84,15 @@ class DolibarrCollector extends DataCollector implements Renderable, AssetProvid
 
 		$info  = $langs->trans('Version').': <strong>'.DOL_VERSION.'</strong><br>';
 		$info .= $langs->trans('Theme').': <strong>'.$conf->theme.'</strong><br>';
-		$info .= $langs->trans('Locale').': <strong>'.$conf->global->MAIN_LANG_DEFAULT.'</strong><br>';
+		$info .= $langs->trans('Locale').': <strong>' . getDolGlobalString('MAIN_LANG_DEFAULT').'</strong><br>';
 		$info .= $langs->trans('Currency').': <strong>'.$conf->currency.'</strong><br>';
 		$info .= $langs->trans('Entity').': <strong>'.$conf->entity.'</strong><br>';
 		$info .= $langs->trans('MaxSizeList').': <strong>'.($conf->liste_limit ?: $conf->global->MAIN_SIZE_LISTE_LIMIT).'</strong><br>';
-		$info .= $langs->trans('MaxSizeForUploadedFiles').': <strong>'.$conf->global->MAIN_UPLOAD_DOC.'</strong><br>';
+		$info .= $langs->trans('MaxSizeForUploadedFiles').': <strong>' . getDolGlobalString('MAIN_UPLOAD_DOC').'</strong><br>';
 		$info .= '$dolibarr_main_prod = <strong>'.$dolibarr_main_prod.'</strong><br>';
 		$info .= '$dolibarr_nocsrfcheck = <strong>'.$dolibarr_nocsrfcheck.'</strong><br>';
-		$info .= 'MAIN_SECURITY_CSRF_WITH_TOKEN = <strong>'.$conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN.'</strong><br>';
-		$info .= 'MAIN_FEATURES_LEVEL = <strong>'.$conf->global->MAIN_FEATURES_LEVEL.'</strong><br>';
+		$info .= 'MAIN_SECURITY_CSRF_WITH_TOKEN = <strong>' . getDolGlobalString('MAIN_SECURITY_CSRF_WITH_TOKEN').'</strong><br>';
+		$info .= 'MAIN_FEATURES_LEVEL = <strong>' . getDolGlobalString('MAIN_FEATURES_LEVEL').'</strong><br>';
 
 		return $info;
 	}
@@ -113,7 +113,7 @@ class DolibarrCollector extends DataCollector implements Renderable, AssetProvid
 		$info .= $langs->trans('ID').': <strong>'.getDolGlobalString("MAIN_MAIL_SMTPS_IDT").'</strong><br>';
 		$info .= $langs->trans('Pwd').': <strong>'.preg_replace('/./', '*', getDolGlobalString("MAIN_MAIL_SMTPS_PW")).'</strong><br>';
 		$info .= $langs->trans('TLS/STARTTLS').': <strong>'.getDolGlobalString("MAIN_MAIL_EMAIL_TLS").'</strong> / <strong>'.getDolGlobalString("MAIN_MAIL_EMAIL_STARTTLS").'</strong><br>';
-		$info .= $langs->trans('MAIN_DISABLE_ALL_MAILS').': <strong>'.(empty($conf->global->MAIN_DISABLE_ALL_MAILS) ? $langs->trans('No') : $langs->trans('Yes')).'</strong><br>';
+		$info .= $langs->trans('MAIN_DISABLE_ALL_MAILS').': <strong>'.(!getDolGlobalString('MAIN_DISABLE_ALL_MAILS') ? $langs->trans('No') : $langs->trans('Yes')).'</strong><br>';
 		$info .= 'dolibarr_mailing_limit_sendbyweb = <strong>'.$dolibarr_mailing_limit_sendbyweb.'</strong><br>';
 		$info .= 'dolibarr_mailing_limit_sendbycli = <strong>'.$dolibarr_mailing_limit_sendbycli.'</strong><br>';
 		$info .= 'dolibarr_mailing_limit_sendbyday = <strong>'.$dolibarr_mailing_limit_sendbyday.'</strong><br>';

@@ -57,8 +57,8 @@ $list = array(
 );
 
 $list_binding = array(
-	'ACCOUNTING_DATE_START_BINDING',
 	'ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER',
+	'ACCOUNTING_DATE_START_BINDING',
 );
 
 $error = 0;

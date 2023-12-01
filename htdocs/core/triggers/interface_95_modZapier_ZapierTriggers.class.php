@@ -470,10 +470,8 @@ function cleanObjectDatas($toclean)
 	unset($toclean->timespent_fk_user);
 	unset($toclean->timespent_note);
 
-	unset($toclean->statuts);
-	unset($toclean->statuts_short);
-	unset($toclean->statuts_logo);
-	unset($toclean->statuts_long);
+	unset($toclean->labelStatus);
+	unset($toclean->labelStatusShort);
 
 	unset($toclean->element);
 	unset($toclean->fk_element);

@@ -299,6 +299,7 @@ class PaiementFourn extends Paiement
 											$discount->discount_type = 1; // Supplier discount
 											$discount->description = '(DEPOSIT)';
 											$discount->fk_soc = $invoice->socid;
+											$discount->socid = $invoice->socid;
 											$discount->fk_invoice_supplier_source = $invoice->id;
 
 											// Loop on each vat rate
@@ -363,7 +364,7 @@ class PaiementFourn extends Paiement
 							}
 
 							// Regenerate documents of invoices
-							if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+							if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 								$newlang = '';
 								$outputlangs = $langs;
 								if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -426,13 +427,14 @@ class PaiementFourn extends Paiement
 	 *	Delete a payment and lines generated into accounts
 	 *	Si le paiement porte sur un ecriture compte qui est rapprochee, on refuse
 	 *	Si le paiement porte sur au moins une facture a "payee", on refuse
+	 *	@TODO Add User $user as first param
 	 *
 	 *	@param		int		$notrigger		No trigger
 	 *	@return     int     <0 si ko, >0 si ok
 	 */
 	public function delete($notrigger = 0)
 	{
-		global $conf, $user, $langs;
+		global $user;
 
 		$bank_line_id = $this->bank_line;
 
@@ -519,7 +521,7 @@ class PaiementFourn extends Paiement
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT c.rowid, datec, fk_user_author as fk_user_creat, tms';
+		$sql = 'SELECT c.rowid, datec, fk_user_author as fk_user_creat, tms as fk_user_modif';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as c';
 		$sql .= ' WHERE c.rowid = '.((int) $id);
 
@@ -528,18 +530,10 @@ class PaiementFourn extends Paiement
 			$num = $this->db->num_rows($resql);
 			if ($num) {
 				$obj = $this->db->fetch_object($resql);
-				$this->id = $obj->rowid;
 
-				if ($obj->fk_user_creat) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_creat);
-					$this->user_creation = $cuser;
-				}
-				if ($obj->fk_user_modif) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modif);
-					$this->user_modification = $muser;
-				}
+				$this->id = $obj->rowid;
+				$this->user_creation_id = $obj->fk_user_creat;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->tms);
 			}
@@ -691,7 +685,7 @@ class PaiementFourn extends Paiement
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("Payment");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -736,8 +730,6 @@ class PaiementFourn extends Paiement
 	 */
 	public function initAsSpecimen($option = '')
 	{
-		global $user, $langs, $conf;
-
 		$now = dol_now();
 		$arraynow = dol_getdate($now);
 		$nownotime = dol_mktime(0, 0, 0, $arraynow['mon'], $arraynow['mday'], $arraynow['year']);
@@ -765,7 +757,7 @@ class PaiementFourn extends Paiement
 		$langs->load("bills");
 
 		// Clean parameters (if not defined or using deprecated value)
-		if (empty($conf->global->SUPPLIER_PAYMENT_ADDON)) {
+		if (!getDolGlobalString('SUPPLIER_PAYMENT_ADDON')) {
 			$conf->global->SUPPLIER_PAYMENT_ADDON = 'mod_supplier_payment_bronan';
 		} elseif (getDolGlobalString('SUPPLIER_PAYMENT_ADDON') == 'brodator') {
 			$conf->global->SUPPLIER_PAYMENT_ADDON = 'mod_supplier_payment_brodator';
@@ -773,10 +765,10 @@ class PaiementFourn extends Paiement
 			$conf->global->SUPPLIER_PAYMENT_ADDON = 'mod_supplier_payment_bronan';
 		}
 
-		if (!empty($conf->global->SUPPLIER_PAYMENT_ADDON)) {
+		if (getDolGlobalString('SUPPLIER_PAYMENT_ADDON')) {
 			$mybool = false;
 
-			$file = $conf->global->SUPPLIER_PAYMENT_ADDON.".php";
+			$file = getDolGlobalString('SUPPLIER_PAYMENT_ADDON') . ".php";
 			$classname = $conf->global->SUPPLIER_PAYMENT_ADDON;
 
 			// Include file with class
@@ -793,8 +785,8 @@ class PaiementFourn extends Paiement
 
 			// For compatibility
 			if ($mybool === false) {
-				$file = $conf->global->SUPPLIER_PAYMENT_ADDON.".php";
-				$classname = "mod_supplier_payment_".$conf->global->SUPPLIER_PAYMENT_ADDON;
+				$file = getDolGlobalString('SUPPLIER_PAYMENT_ADDON') . ".php";
+				$classname = "mod_supplier_payment_" . getDolGlobalString('SUPPLIER_PAYMENT_ADDON');
 				$classname = preg_replace('/\-.*$/', '', $classname);
 				// Include file with class
 				foreach ($conf->file->dol_document_root as $dirroot) {
@@ -852,7 +844,7 @@ class PaiementFourn extends Paiement
 
 		// Set the model on the model name to use
 		if (empty($modele)) {
-			if (!empty($conf->global->SUPPLIER_PAYMENT_ADDON_PDF)) {
+			if (getDolGlobalString('SUPPLIER_PAYMENT_ADDON_PDF')) {
 				$modele = $conf->global->SUPPLIER_PAYMENT_ADDON_PDF;
 			} else {
 				$modele = ''; // No default value. For supplier invoice, we allow to disable all PDF generation
@@ -910,7 +902,7 @@ class PaiementFourn extends Paiement
 			if (!empty($billsarray)) {
 				$supplier_invoice = new FactureFournisseur($this->db);
 				if ($supplier_invoice->fetch($billsarray[0]) > 0) {
-					$force_thirdparty_id = $supplier_invoice->fk_soc;
+					$force_thirdparty_id = $supplier_invoice->socid;
 				}
 			}
 		}

@@ -64,7 +64,7 @@ $now = dol_now();
 $childids = $user->getAllChildIds(1);
 
 $morefilter = '';
-if (!empty($conf->global->HOLIDAY_HIDE_FOR_NON_SALARIES)) {
+if (getDolGlobalString('HOLIDAY_HIDE_FOR_NON_SALARIES')) {
 	$morefilter = 'AND employee = 1';
 }
 
@@ -80,10 +80,10 @@ if (($id > 0) || $ref) {
 
 	// Check current user can read this leave request
 	$canread = 0;
-	if (!empty($user->rights->holiday->readall)) {
+	if ($user->hasRight('holiday', 'readall')) {
 		$canread = 1;
 	}
-	if (!empty($user->rights->holiday->read) && in_array($object->fk_user, $childids)) {
+	if ($user->hasRight('holiday', 'read') && in_array($object->fk_user, $childids)) {
 		$canread = 1;
 	}
 	if (!$canread) {
@@ -96,19 +96,19 @@ $hookmanager->initHooks(array('holidaycard', 'globalcard'));
 
 $cancreate = 0;
 $cancreateall = 0;
-if (!empty($user->rights->holiday->write) && in_array($fuserid, $childids)) {
+if ($user->hasRight('holiday', 'write') && in_array($fuserid, $childids)) {
 	$cancreate = 1;
 }
-if (!empty($user->rights->holiday->writeall)) {
+if ($user->hasRight('holiday', 'writeall')) {
 	$cancreate = 1;
 	$cancreateall = 1;
 }
 
 $candelete = 0;
-if (!empty($user->rights->holiday->delete)) {
+if ($user->hasRight('holiday', 'delete')) {
 	$candelete = 1;
 }
-if ($object->statut == Holiday::STATUS_DRAFT && $user->rights->holiday->write && in_array($object->fk_user, $childids)) {
+if ($object->statut == Holiday::STATUS_DRAFT && $user->hasRight('holiday', 'write') && in_array($object->fk_user, $childids)) {
 	$candelete = 1;
 }
 
@@ -188,8 +188,8 @@ if (empty($reshook)) {
 
 			// Check that leave is for a user inside the hierarchy or advanced permission for all is set
 			if (!$cancreateall) {
-				if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
-					if (empty($user->rights->holiday->write)) {
+				if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+					if (!$user->hasRight('holiday', 'write')) {
 						$error++;
 						setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
 					} elseif (!in_array($fuserid, $childids)) {
@@ -198,10 +198,10 @@ if (empty($reshook)) {
 						$action = 'create';
 					}
 				} else {
-					if (empty($user->rights->holiday->write) && empty($user->rights->holiday->writeall_advance)) {
+					if (!$user->hasRight('holiday', 'write') && !$user->hasRight('holiday', 'writeall_advance')) {
 						$error++;
 						setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
-					} elseif (empty($user->rights->holiday->writeall_advance) && !in_array($fuserid, $childids)) {
+					} elseif (!$user->hasRight('holiday', 'writeall_advance') && !in_array($fuserid, $childids)) {
 						$error++;
 						setEventMessages($langs->trans("UserNotInHierachy"), null, 'errors');
 						$action = 'create';
@@ -301,7 +301,7 @@ if (empty($reshook)) {
 	}
 
 	// If this is an update and we are an approver, we can update to change the expected approver with another one (including himself)
-	if ($action == 'update' && GETPOSTISSET('savevalidator') && !empty($user->rights->holiday->approve)) {
+	if ($action == 'update' && GETPOSTISSET('savevalidator') && $user->hasRight('holiday', 'approve')) {
 		$object->fetch($id);
 
 		$object->oldcopy = dol_clone($object, 2);
@@ -490,7 +490,7 @@ if (empty($reshook)) {
 
 				// Subject
 				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
-				if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+				if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 					$societeName = $conf->global->MAIN_APPLICATION_TITLE;
 				}
 
@@ -503,7 +503,7 @@ if (empty($reshook)) {
 
 
 				// option to warn the validator in case of too short delay
-				if (empty($conf->global->HOLIDAY_HIDE_APPROVER_ABOUT_TOO_LOW_DELAY)) {
+				if (!getDolGlobalString('HOLIDAY_HIDE_APPROVER_ABOUT_TOO_LOW_DELAY')) {
 					$delayForRequest = 0;		// TODO Set delay depending of holiday leave type
 					if ($delayForRequest) {
 						$nowplusdelay = dol_time_plus_duree($now, $delayForRequest, 'd');
@@ -515,7 +515,7 @@ if (empty($reshook)) {
 				}
 
 				// option to notify the validator if the balance is less than the request
-				if (empty($conf->global->HOLIDAY_HIDE_APPROVER_ABOUT_NEGATIVE_BALANCE)) {
+				if (!getDolGlobalString('HOLIDAY_HIDE_APPROVER_ABOUT_NEGATIVE_BALANCE')) {
 					$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
 
 					if ($nbopenedday > $object->getCPforUser($object->fk_user, $object->fk_type)) {
@@ -654,7 +654,7 @@ if (empty($reshook)) {
 
 					// Subject
 					$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
-					if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+					if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 						$societeName = $conf->global->MAIN_APPLICATION_TITLE;
 					}
 
@@ -736,7 +736,7 @@ if (empty($reshook)) {
 
 						// Subject
 						$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
-						if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+						if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 							$societeName = $conf->global->MAIN_APPLICATION_TITLE;
 						}
 
@@ -884,7 +884,7 @@ if (empty($reshook)) {
 
 				// Subject
 				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
-				if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+				if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 					$societeName = $conf->global->MAIN_APPLICATION_TITLE;
 				}
 
@@ -957,7 +957,7 @@ $edit = false;
 
 if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 	// If user has no permission to create a leave
-	if ((in_array($fuserid, $childids) && empty($user->rights->holiday->write)) || (!in_array($fuserid, $childids) && ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->holiday->writeall_advance) || empty($user->rights->holiday->writeall))))) {
+	if ((in_array($fuserid, $childids) && !$user->hasRight('holiday', 'write')) || (!in_array($fuserid, $childids) && ((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('holiday', 'writeall_advance') || !$user->hasRight('holiday', 'writeall'))))) {
 		$errors[] = $langs->trans('CantCreateCP');
 	} else {
 		// Form to add a leave request
@@ -1052,7 +1052,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		}
 		print '</div>';
 
-		if (empty($conf->global->HOLIDAY_HIDE_BALANCE)) {
+		if (!getDolGlobalString('HOLIDAY_HIDE_BALANCE')) {
 			print '<div class="leaveuserbalance paddingtop inline-block floatright badge badge-status0 badge-status margintoponsmartphone">';
 
 			$out = '';
@@ -1161,7 +1161,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			// Defined default approver (the forced approved of user or the supervisor if no forced value defined)
 			// Note: This use will be set only if the deinfed approvr has permission to approve so is inside include_users
 			$defaultselectuser = (empty($user->fk_user_holiday_validator) ? $user->fk_user : $user->fk_user_holiday_validator);
-			if (!empty($conf->global->HOLIDAY_DEFAULT_VALIDATOR)) {
+			if (getDolGlobalString('HOLIDAY_DEFAULT_VALIDATOR')) {
 				$defaultselectuser = $conf->global->HOLIDAY_DEFAULT_VALIDATOR; // Can force default approver
 			}
 			if (GETPOST('valideur', 'int') > 0) {
