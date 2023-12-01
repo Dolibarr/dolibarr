@@ -413,7 +413,7 @@ if ($action == "importSignature") {
 						$yforimgstart = (empty($s['h']) ? 250 : $s['h'] - 57);
 						$wforimg = $s['w']/1 - ($xforimgstart + 16);
 
-						$pdf->SetXY(111, $yforimgstart - 5);
+						$pdf->SetXY(111, 235 +25);
 						$pdf->SetFont($default_font, '', $default_font_size - 1);
 						$pdf->MultiCell($wforimg, 4, $langs->trans("DateSigning").': '.dol_print_date(dol_now(), "daytext", false, $langs, true), 0, 'L');
 						$pdf->SetXY(111, $pdf->GetY());
