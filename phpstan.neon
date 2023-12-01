@@ -1,6 +1,6 @@
 parameters:
 	customRulesetUsed: true
-	level: 2
+	level: 1
 	fileExtensions:
 		- php
 	paths:
