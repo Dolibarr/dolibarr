@@ -299,6 +299,7 @@ class PaiementFourn extends Paiement
 											$discount->discount_type = 1; // Supplier discount
 											$discount->description = '(DEPOSIT)';
 											$discount->fk_soc = $invoice->socid;
+											$discount->socid = $invoice->socid;
 											$discount->fk_invoice_supplier_source = $invoice->id;
 
 											// Loop on each vat rate
@@ -729,8 +730,6 @@ class PaiementFourn extends Paiement
 	 */
 	public function initAsSpecimen($option = '')
 	{
-		global $user, $langs, $conf;
-
 		$now = dol_now();
 		$arraynow = dol_getdate($now);
 		$nownotime = dol_mktime(0, 0, 0, $arraynow['mon'], $arraynow['mday'], $arraynow['year']);

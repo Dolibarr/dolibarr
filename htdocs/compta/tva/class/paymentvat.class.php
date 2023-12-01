@@ -367,9 +367,6 @@ class PaymentVAT extends CommonObject
 		if (isset($this->fk_typepaiement)) {
 			$this->fk_typepaiement = (int) $this->fk_typepaiement;
 		}
-		if (isset($this->num_paiement)) {
-			$this->num_paiement = trim($this->num_paiement); // deprecated
-		}
 		if (isset($this->num_payment)) {
 			$this->num_payment = trim($this->num_payment);
 		}
@@ -566,8 +563,6 @@ class PaymentVAT extends CommonObject
 	 */
 	public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
 	{
-		global $conf;
-
 		// Clean data
 		$this->num_payment = trim($this->num_payment ? $this->num_payment : $this->num_paiement);
 

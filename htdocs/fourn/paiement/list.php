@@ -68,6 +68,7 @@ $search_payment_type	= GETPOST('search_payment_type');
 $search_cheque_num		= GETPOST('search_cheque_num', 'alpha');
 $search_bank_account	= GETPOST('search_bank_account', 'int');
 $search_amount			= GETPOST('search_amount', 'alpha'); // alpha because we must be able to search on '< x'
+$search_sale            = GETPOST('search_sale', 'int');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield				= GETPOST('sortfield', 'aZ09comma');
@@ -112,6 +113,10 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('paymentsupplierlist'));
 $object = new PaiementFourn($db);
+
+if (!$user->hasRight('societe', 'client', 'voir')) {
+	$search_sale = $user->id;
+}
 
 // Security check
 if ($user->socid) {
@@ -176,18 +181,14 @@ $accountstatic = new Account($db);
 $companystatic = new Societe($db);
 $paymentfournstatic = new PaiementFourn($db);
 
-$sql = 'SELECT p.rowid, p.ref, p.datep, p.amount as pamount, p.num_paiement';
-$sql .= ', s.rowid as socid, s.nom as name, s.email';
-$sql .= ', c.code as paiement_type, c.libelle as paiement_libelle';
-$sql .= ', ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.fk_accountancy_journal as accountancy_journal';
-if (!$user->hasRight("societe", "client", "voir")) {
-	$sql .= ', sc.fk_soc, sc.fk_user';
-}
-$sql .= ', SUM(pf.amount)';
-
+$sql = 'SELECT p.rowid, p.ref, p.datep, p.amount as pamount, p.num_paiement as num_payment,';
+$sql .= ' s.rowid as socid, s.nom as name, s.email,';
+$sql .= ' c.code as paiement_type, c.libelle as paiement_libelle,';
+$sql .= ' ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.fk_accountancy_journal as accountancy_journal,';
+$sql .= ' SUM(pf.amount)';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn AS p';
-$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn AS pf ON p.rowid=pf.fk_paiementfourn';
-$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn AS f ON f.rowid=pf.fk_facturefourn';
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn AS pf ON p.rowid = pf.fk_paiementfourn';
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn AS f ON f.rowid = pf.fk_facturefourn';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement AS c ON p.fk_paiement = c.id';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe AS s ON s.rowid = f.fk_soc';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
@@ -196,10 +197,7 @@ if (!$user->hasRight("societe", "client", "voir")) {
 	$sql .= ', '.MAIN_DB_PREFIX.'societe_commerciaux as sc';
 }
 
-$sql .= ' WHERE f.entity = '.$conf->entity;
-if (!$user->hasRight("societe", "client", "voir")) {
-	$sql .= ' AND s.rowid = sc.fk_soc AND sc.fk_user = '.((int) $user->id);
-}
+$sql .= ' WHERE f.entity = '.((int) $conf->entity);
 if ($socid > 0) {
 	$sql .= ' AND f.fk_soc = '.((int) $socid);
 }
@@ -231,15 +229,20 @@ if ($search_bank_account > 0) {
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
+// Search on sale representative
+if ($search_sale && $search_sale != '-1') {
+	if ($search_sale == -2) {
+		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc)";
+	} elseif ($search_sale > 0) {
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+	}
+}
 
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
 $sql .= ' GROUP BY p.rowid, p.ref, p.datep, p.amount, p.num_paiement, s.rowid, s.nom, s.email, c.code, c.libelle,';
 $sql .= ' ba.rowid, ba.ref, ba.label, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.fk_accountancy_journal';
-if (!$user->hasRight("societe", "client", "voir")) {
-	$sql .= ', sc.fk_soc, sc.fk_user';
-}
 
 $sql .= $db->order($sortfield, $sortorder);
 
@@ -573,7 +576,7 @@ while ($i < min($num, $limit)) {
 	// Pyament type
 	if (!empty($arrayfields['c.libelle']['checked'])) {
 		$payment_type = $langs->trans("PaymentType".$objp->paiement_type) != ("PaymentType".$objp->paiement_type) ? $langs->trans("PaymentType".$objp->paiement_type) : $objp->paiement_libelle;
-		print '<td>'.$payment_type.' '.dol_trunc($objp->num_paiement, 32).'</td>';
+		print '<td>'.$payment_type.' '.dol_trunc($objp->num_payment, 32).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -581,7 +584,7 @@ while ($i < min($num, $limit)) {
 
 	// Cheque number (fund transfer)
 	if (!empty($arrayfields['p.num_paiement']['checked'])) {
-		print '<td>'.$objp->num_paiement.'</td>';
+		print '<td>'.$objp->num_payment.'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
