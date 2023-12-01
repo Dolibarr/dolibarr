@@ -982,7 +982,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		//
 
 		// Loop on each payment
-		$sql = "SELECT p.datep as date, p.fk_paiement as type, p.num_paiement as num, pf.amount as amount, pf.multicurrency_amount,";
+		$sql = "SELECT p.datep as date, p.fk_paiement as type, p.num_paiement as num_payment, pf.amount as amount, pf.multicurrency_amount,";
 		$sql .= " cp.code";
 		$sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf, ".MAIN_DB_PREFIX."paiementfourn as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON p.fk_paiement = cp.id";
@@ -1005,7 +1005,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 				$pdf->MultiCell(20, 3, $oper, 0, 'L', 0);
 				$pdf->SetXY($tab3_posx + 58, $tab3_top + $y);
-				$pdf->MultiCell(30, 3, $row->num, 0, 'L', 0);
+				$pdf->MultiCell(30, 3, $row->num_payment, 0, 'L', 0);
 
 				$pdf->line($tab3_posx, $tab3_top + $y + 3, $tab3_posx + $tab3_width, $tab3_top + $y + 3);
 

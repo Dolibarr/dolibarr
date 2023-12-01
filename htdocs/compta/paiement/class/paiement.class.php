@@ -58,6 +58,8 @@ class Paiement extends CommonObject
 	public $picto = 'payment';
 
 	public $facid;
+	public $socid;
+
 	public $datepaye;
 	public $date;		// same than $datepaye
 
@@ -921,21 +923,21 @@ class Paiement extends CommonObject
 	/**
 	 *  Updates the payment number
 	 *
-	 *  @param	string	$num		New num
-	 *  @return int					<0 if KO, 0 if OK
+	 *  @param	string	$num_payment		New num
+	 *  @return int							<0 if KO, 0 if OK
 	 */
-	public function update_num($num)
+	public function update_num($num_payment)
 	{
 		// phpcs:enable
-		if (!empty($num) && $this->statut != 1) {
+		if (!empty($num_payment) && $this->statut != 1) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-			$sql .= " SET num_paiement = '".$this->db->escape($num)."'";
+			$sql .= " SET num_paiement = '".$this->db->escape($num_payment)."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::update_num", LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if ($result) {
-				$this->num_payment = $this->db->escape($num);
+				$this->num_payment = $this->db->escape($num_payment);
 				return 0;
 			} else {
 				$this->error = 'Error -1 '.$this->db->error();
