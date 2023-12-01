@@ -472,6 +472,9 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 		if (amountpayed > <?php echo $invoice->total_ttc; ?>) {
 			amountpayed = <?php echo $invoice->total_ttc; ?>;
 		}
+		if (amountpayed == 0) {
+            amountpayed = <?php echo $invoice->total_ttc; ?>;
+        }
 
 		// Starting sumup app
 		window.open('sumupmerchant://pay/1.0?affiliate-key=<?php echo urlencode(getDolGlobalString('TAKEPOS_SUMUP_AFFILIATE')) ?>&app-id=<?php echo urlencode(getDolGlobalString('TAKEPOS_SUMUP_APPID')) ?>&amount=' + amountpayed + '&currency=EUR&title=' + invoiceid + '&callback=<?php echo DOL_MAIN_URL_ROOT ?>/takepos/smpcb.php');
