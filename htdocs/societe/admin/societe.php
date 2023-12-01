@@ -676,6 +676,10 @@ $profid['IDPROF6'][0] = $langs->trans("ProfId6");
 $profid['IDPROF6'][1] = $langs->transcountry('ProfId6', $mysoc->country_code);
 $profid['EMAIL'][0] = $langs->trans("EMail");
 $profid['EMAIL'][1] = $langs->trans('Email');
+$profid['ACCOUNTANCY_CODE_CUSTOMER'][0] = $langs->trans("CustomerAccountancyCodeShort");
+$profid['ACCOUNTANCY_CODE_CUSTOMER'][1] = $langs->trans('CustomerAccountancyCodeShort');
+$profid['ACCOUNTANCY_CODE_SUPPLIER'][0] = $langs->trans("SupplierAccountancyCodeShort");
+$profid['ACCOUNTANCY_CODE_SUPPLIER'][1] = $langs->trans('SupplierAccountancyCodeShort');
 
 $nbofloop = count($profid);
 foreach ($profid as $key => $val) {
@@ -726,23 +730,6 @@ foreach ($profid as $key => $val) {
 		print "</tr>\n";
 	}
 	$i++;
-}
-
-if (isModEnabled('accounting')) {
-	print '<tr class="oddeven">';
-	print '<td colspan="2">'.$langs->trans('CustomerAccountancyCodeShort')."</td>\n";
-	print '<td colspan="2"></td>';
-
-	if (!empty($conf->global->SOCIETE_ACCOUNTANCY_CODE_CUSTOMER_INVOICE_MANDATORY)) {
-		print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaccountancycodecustomerinvoicemandatory&token='.newToken().'&value=0">';
-		print img_picto($langs->trans("Activated"), 'switch_on');
-		print '</a></td>';
-	} else {
-		print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaccountancycodecustomerinvoicemandatory&token='.newToken().'&value=1">';
-		print img_picto($langs->trans("Disabled"), 'switch_off');
-		print '</a></td>';
-	}
-	print "</tr>\n";
 }
 
 // VAT ID

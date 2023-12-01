@@ -108,6 +108,7 @@ if (empty($reshook)) {
 		$result = $object->update($object->id, $user, 1, 0, 1);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
+			$_GET['action'] = 'editsupplieraccountancycode';
 		}
 	}
 	// Set vat number accounting account

@@ -298,7 +298,7 @@ DescVentilExpenseReportMore=Si configura la cuentas contables de los tipos de in
 DescVentilDoneExpenseReport=Consulte aquí las líneas de informes de gastos y sus cuentas contables
 
 Closure=Cierre anual
-DescClosure=Consulta aquí el número de movimientos por mes aún no validados y bloqueados
+AccountancyClosureStep1Desc=Consulta aquí el número de movimientos por mes aún no validados y bloqueados
 OverviewOfMovementsNotValidated=Resumen de movimientos no validados y bloqueados
 AllMovementsWereRecordedAsValidated=Todos los movimientos fueron registrados como validados y bloqueados.
 NotAllMovementsCouldBeRecordedAsValidated=No todos los movimientos se pudieron registrar como validados y bloqueados

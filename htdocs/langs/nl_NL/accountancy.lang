@@ -298,7 +298,7 @@ DescVentilExpenseReportMore=Als u een account instelt op het type onkostendeclar
 DescVentilDoneExpenseReport=Hier kunt u de lijst raadplegen van kostenregels met hun tegenrekening
 
 Closure=Jaarafsluiting
-DescClosure=Raadpleeg hier het aantal bewegingen per maand nog niet gevalideerd & vergrendeld
+AccountancyClosureStep1Desc=Raadpleeg hier het aantal bewegingen per maand nog niet gevalideerd & vergrendeld
 OverviewOfMovementsNotValidated=Overzicht van bewegingen niet gevalideerd en vergrendeld
 AllMovementsWereRecordedAsValidated=Alle bewegingen werden geregistreerd als gevalideerd en vergrendeld
 NotAllMovementsCouldBeRecordedAsValidated=Niet alle bewegingen konden als gevalideerd en vergrendeld worden geregistreerd

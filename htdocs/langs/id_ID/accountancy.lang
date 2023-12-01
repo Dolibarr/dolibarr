@@ -298,7 +298,7 @@ DescVentilExpenseReportMore=Jika Anda mengatur akun akuntansi pada jenis garis l
 DescVentilDoneExpenseReport=Konsultasikan di sini daftar garis laporan pengeluaran dan akun akuntansi biayanya
 
 Closure=Penutupan tahunan
-DescClosure=Consult here the number of movements by month not yet validated & locked
+AccountancyClosureStep1Desc=Consult here the number of movements by month not yet validated & locked
 OverviewOfMovementsNotValidated=Overview of movements not validated and locked
 AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
 NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked

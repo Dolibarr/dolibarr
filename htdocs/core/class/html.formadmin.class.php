@@ -62,12 +62,15 @@ class FormAdmin
 	 *  @param		int				$mainlangonly	1=Show only main languages ('fr_FR' no' fr_BE', 'es_ES' not 'es_MX', ...)
 	 *  @return		string							Return HTML select string with list of languages
 	 */
-	public function select_language($selected = '', $htmlname = 'lang_id', $showauto = 0, $filter = null, $showempty = '', $showwarning = 0, $disabled = 0, $morecss = '', $showcode = 0, $forcecombo = 0, $multiselect = 0, $onlykeys = null, $mainlangonly = 0)
+	public function select_language($selected = '', $htmlname = 'lang_id', $showauto = 0, $filter = array(), $showempty = '', $showwarning = 0, $disabled = 0, $morecss = '', $showcode = 0, $forcecombo = 0, $multiselect = 0, $onlykeys = array(), $mainlangonly = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs;
 
 		if (!empty($conf->global->MAIN_DEFAULT_LANGUAGE_FILTER)) {
+			if (!is_array($filter)) {
+				$filter = array();
+			}
 			$filter[$conf->global->MAIN_DEFAULT_LANGUAGE_FILTER] = 1;
 		}
 

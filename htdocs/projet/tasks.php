@@ -172,6 +172,7 @@ if ($object->usage_bill_time) {
 
 // Extra fields
 $extrafieldsobjectkey = $taskstatic->table_element;
+$extrafieldsobjectprefix = 'efpt.';
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -893,7 +894,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	// Get list of tasks in tasksarray and taskarrayfiltered
 	// We need all tasks (even not limited to a user because a task to user can have a parent that is not affected to him).
 	$filteronthirdpartyid = $socid;
-	$tasksarray = $taskstatic->getTasksArray(0, 0, $object->id, $filteronthirdpartyid, 0, '', -1, $morewherefilter, 0, 0, $extrafields, 1, $search_array_options, 0, 1, $sortfield, $sortorder);
+	$tasksarray = $taskstatic->getTasksArray(0, 0, $object->id, $filteronthirdpartyid, 0, '', -1, $morewherefilter, 0, 0, $extrafields, 1, $search_array_options, 1, 1, $sortfield, $sortorder);
 
 	// We load also tasks limited to a particular user
 	$tmpuser = new User($db);
@@ -923,7 +924,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	// Show the massaction checkboxes only when this page is not opend from the Extended POS
 	if ($massactionbutton && $contextpage != 'poslist') {
-		$selectedfields = $form->showCheckAddButtons('checkforselect', 1);
+		$selectedfields.= $form->showCheckAddButtons('checkforselect', 1);
 	}
 
 	print '<div class="div-table-responsive">';
