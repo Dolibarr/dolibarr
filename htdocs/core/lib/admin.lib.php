@@ -555,7 +555,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
  *	@param	    DoliDB		$db         Database handler
  *	@param	    string|int	$name		Name of constant or rowid of line
  *	@param	    int			$entity		Multi company id, -1 for all entities
- *	@return     int         			<0 if KO, >0 if OK
+ *	@return     int         			Return integer <0 if KO, >0 if OK
  *
  *	@see		dolibarr_get_const(), dolibarr_set_const(), dol_set_user_param()
  */
@@ -1913,7 +1913,7 @@ function showModulesExludedForExternal($modules)
  *	@param		string	$type			Model type
  *	@param		string	$label			Model label
  *	@param		string	$description	Model description
- *	@return		int						<0 if KO, >0 if OK
+ *	@return		int						Return integer <0 if KO, >0 if OK
  */
 function addDocumentModel($name, $type, $label = '', $description = '')
 {
@@ -1944,7 +1944,7 @@ function addDocumentModel($name, $type, $label = '', $description = '')
  *
  *	@param		string	$name			Model name
  *	@param		string	$type			Model type
- *	@return		int						<0 if KO, >0 if OK
+ *	@return		int						Return integer <0 if KO, >0 if OK
  */
 function delDocumentModel($name, $type)
 {

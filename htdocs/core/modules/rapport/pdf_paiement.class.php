@@ -121,7 +121,7 @@ class pdf_paiement extends CommonDocGenerator
 	 *	@param	int		$month			mois du rapport
 	 *	@param	int		$year			annee du rapport
 	 *	@param	string	$outputlangs	Lang output object
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function write_file($_dir, $month, $year, $outputlangs)
 	{

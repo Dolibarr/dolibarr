@@ -515,7 +515,7 @@ class ProductAttribute extends CommonObject
 	 * Load array lines
 	 *
 	 * @param	string		$filters	Filter on other fields
-	 * @return	int						<0 if KO, >0 if OK
+	 * @return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_lines($filters = '')
 	{
@@ -870,7 +870,7 @@ class ProductAttribute extends CommonObject
 	 *
 	 * @param	boolean		$renum			   True to renum all already ordered lines, false to renum only not already ordered lines.
 	 * @param	string		$rowidorder		   ASC or DESC
-	 * @return	int                            <0 if KO, >0 if OK
+	 * @return	int                            Return integer <0 if KO, >0 if OK
 	 */
 	public function attributeOrder($renum = false, $rowidorder = 'ASC')
 	{
@@ -930,7 +930,7 @@ class ProductAttribute extends CommonObject
 	 *
 	 * @param	int		$rowid		Id of line
 	 * @param	int		$position	Position
-	 * @return	int					<0 if KO, >0 if OK
+	 * @return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function updatePositionOfAttribute($rowid, $position)
 	{

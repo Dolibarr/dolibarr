@@ -181,7 +181,7 @@ class Opensurveysondage extends CommonObject
 	 *
 	 *  @param	User    $user        User that creates
 	 *  @param  int     $notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return int                  <0 if KO, Id of created object if OK
+	 *  @return int                  Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
@@ -265,7 +265,7 @@ class Opensurveysondage extends CommonObject
 	 *
 	 *  @param	int		$id    				Id object
 	 *  @param	string	$numsurvey			Ref of survey (admin or not)
-	 *  @return int          				<0 if KO, >0 if OK
+	 *  @return int          				Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $numsurvey = '')
 	{
@@ -333,7 +333,7 @@ class Opensurveysondage extends CommonObject
 	 *
 	 *  @param	User    $user        User that modifies
 	 *  @param  int     $notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 <0 if KO, >0 if OK
+	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -399,7 +399,7 @@ class Opensurveysondage extends CommonObject
 	 *	@param  User	$user        		User that deletes
 	 *  @param  int		$notrigger	 		0=launch triggers after, 1=disable triggers
 	 *  @param	string	$numsondage			Num sondage admin to delete
-	 *  @return	int					 		<0 if KO, >0 if OK
+	 *  @return	int					 		Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 0, $numsondage = '')
 	{
@@ -549,7 +549,7 @@ class Opensurveysondage extends CommonObject
 	/**
 	 * Return array of lines
 	 *
-	 * @return 	int		<0 if KO, >0 if OK
+	 * @return 	int		Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_lines()
 	{

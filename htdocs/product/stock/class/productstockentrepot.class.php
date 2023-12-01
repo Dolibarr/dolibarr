@@ -83,7 +83,7 @@ class ProductStockEntrepot extends CommonObject
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
 	 *
-	 * @return int <0 if KO, Id of created object if OK
+	 * @return int Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -168,7 +168,7 @@ class ProductStockEntrepot extends CommonObject
 	 * @param int    $id  				Id object
 	 * @param int    $fk_product 		Id product
 	 * @param int    $fk_entrepot  		Id warehouse
-	 * @return int 						<0 if KO, 0 if not found, >0 if OK
+	 * @return int 						Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $fk_product = 0, $fk_entrepot = 0)
 	{
@@ -318,7 +318,7 @@ class ProductStockEntrepot extends CommonObject
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
 	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
@@ -398,7 +398,7 @@ class ProductStockEntrepot extends CommonObject
 	 * @param User $user      User that deletes
 	 * @param bool $notrigger false=launch triggers after, true=disable triggers
 	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
