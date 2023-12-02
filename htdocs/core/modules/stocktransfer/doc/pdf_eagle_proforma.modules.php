@@ -305,6 +305,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 
 				$tab_top = 90 + $top_shift;
 				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
+				$tab_height = 130;
 
 				// Incoterm
 				if ($conf->incoterm->enabled) {
