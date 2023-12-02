@@ -451,7 +451,7 @@ class Tva extends CommonObject
 		return $solde;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Total of the VAT from invoices emitted by the thirdparty.
 	 *
@@ -460,7 +460,7 @@ class Tva extends CommonObject
 	 */
 	public function tva_sum_collectee($year = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 
 		$sql = "SELECT sum(f.total_tva) as amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.paye = 1";
@@ -826,7 +826,7 @@ class Tva extends CommonObject
 	 *	Informations of vat payment object
 	 *
 	 *	@param	int		$id     Id of vat payment
-	 *	@return	int				Return integer <0 if KO, >0 if OK
+	 *	@return	void
 	 */
 	public function info($id)
 	{
