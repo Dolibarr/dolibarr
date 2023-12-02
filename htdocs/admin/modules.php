@@ -1351,15 +1351,15 @@ if ($mode == 'develop') {
 	print '<br>';
 
 	// Marketplace
-	print "<table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">\n";
-	print "<tr class=\"liste_titre\">\n";
+	print '<table summary="list_of_modules" class="noborder centpercent">'."\n";
+	print '<tr class="liste_titre">'."\n";
 	//print '<td>'.$langs->trans("Logo").'</td>';
 	print '<td colspan="2">'.$langs->trans("DevelopYourModuleDesc").'</td>';
 	print '<td>'.$langs->trans("URL").'</td>';
 	print '</tr>';
 
 	print '<tr class="oddeven" height="80">'."\n";
-	print '<td class="left">';
+	print '<td class="center">';
 	print '<div class="imgmaxheight50 logo_setup"></div>';
 	print '</td>';
 	print '<td>'.$langs->trans("TryToUseTheModuleBuilder", $langs->transnoentitiesnoconv("ModuleBuilder")).'</td>';
@@ -1374,11 +1374,13 @@ if ($mode == 'develop') {
 
 	print '<tr class="oddeven" height="80">'."\n";
 	$url = 'https://partners.dolibarr.org';
-	print '<td class="left">';
+	print '<td class="center">';
 	print'<a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner.png"></a>';
 	print '</td>';
 	print '<td>'.$langs->trans("DoliPartnersDesc").'</td>';
-	print '<td><a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
+	print '<td><a href="'.$url.'" target="_blank" rel="noopener noreferrer external">';
+	print img_picto('', 'url', 'class="pictofixedwidth"');
+	print $url.'</a></td>';
 	print '</tr>';
 
 	print "</table>\n";
