@@ -1091,6 +1091,7 @@ textarea.centpercent {
 }
 .nowrapfordate {	/* no wrap on all devices for dates */
 	white-space: nowrap;
+	display: inline-block;
 }
 .wrapimp {
 	white-space: normal !important;
