@@ -441,7 +441,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
  * @param   int		$websiteid			ID of website
  * @param	string	$websitepagetype	Type of page ('blogpost', 'page', ...)
  * @param	int		$websitepageid		ID of page
- * @return  int							<0 if KO, >0 if OK
+ * @return  int							Return integer <0 if KO, >0 if OK
  */
 function dolWebsiteIncrementCounter($websiteid, $websitepagetype, $websitepageid)
 {

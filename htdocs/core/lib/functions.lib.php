@@ -1703,7 +1703,9 @@ function dolPrintPassword($s)
 function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapetags = '', $escapeonlyhtmltags = 0, $cleanalsojavascript = 0)
 {
 	if ($noescapetags == 'common') {
-		$noescapetags = 'html,body,a,b,em,hr,i,u,ul,li,br,div,img,font,p,span,strong,table,tr,td,th,tbody';
+		$noescapetags = 'html,body,a,b,em,hr,i,u,ul,li,br,div,img,font,p,span,strong,table,tr,td,th,tbody,h1,h2,h3,h4,h5,h6,h7,h8,h9';
+		// Add also html5 tags
+		$noescapetags .= ',header,footer,nav,section,menu,menuitem';
 	}
 	if ($cleanalsojavascript) {
 		$stringtoescape = dol_string_onlythesehtmltags($stringtoescape, 0, 0, $cleanalsojavascript, 0, array(), 0);
@@ -7318,7 +7320,8 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 	if (empty($allowed_tags)) {
 		$allowed_tags = array(
 			"html", "head", "meta", "body", "article", "a", "abbr", "b", "blockquote", "br", "cite", "div", "dl", "dd", "dt", "em", "font", "img", "ins", "hr", "i", "li",
-			"ol", "p", "q", "s", "section", "span", "strike", "strong", "title", "table", "tr", "th", "td", "u", "ul", "sup", "sub", "blockquote", "pre", "h1", "h2", "h3", "h4", "h5", "h6"
+			"ol", "p", "q", "s", "span", "strike", "strong", "title", "table", "tr", "th", "td", "u", "ul", "sup", "sub", "blockquote", "pre", "h1", "h2", "h3", "h4", "h5", "h6",
+			"header", "footer", "nav", "section", "menu", "menuitem"	// html5 tags
 		);
 	}
 	$allowed_tags[] = "comment";		// this tags is added to manage comment <!--...--> that are replaced into <comment>...</comment>
@@ -7381,11 +7384,20 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
  *
  * 	@see	dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_onlythesehtmltags() dol_string_neverthesehtmltags()
  */
-function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes = array("allow", "allowfullscreen", "alt", "class", "contenteditable", "data-html", "frameborder", "height", "href", "id", "name", "src", "style", "target", "title", "width"))
+function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes = null)
 {
+	if (is_null($allowed_attributes)) {
+		$allowed_attributes = array(
+			"allow", "allowfullscreen", "alt", "class", "contenteditable", "data-html", "frameborder", "height", "href", "id", "name", "src", "style", "target", "title", "width",
+			// HTML5
+			"header", "footer", "nav", "section", "menu", "menuitem"
+		);
+	}
+
 	if (class_exists('DOMDocument') && !empty($stringtoclean)) {
 		$stringtoclean = '<?xml encoding="UTF-8"><html><body>'.$stringtoclean.'</body></html>';
 
+		// Warning: loadHTML does not support HTML5 on old libxml versions.
 		$dom = new DOMDocument(null, 'UTF-8');
 		$dom->loadHTML($stringtoclean, LIBXML_ERR_NONE|LIBXML_HTML_NOIMPLIED|LIBXML_HTML_NODEFDTD|LIBXML_NONET|LIBXML_NOWARNING|LIBXML_NOXMLDECL);
 
@@ -7561,7 +7573,8 @@ function dol_nl2br($stringtoencode, $nl2brmode = 0, $forxml = false)
 }
 
 /**
- * Sanitize a HTML to remove js and dangerous content
+ * Sanitize a HTML to remove js and dangerous content.
+ * This function is used by dolPrintHTML... function for example.
  *
  * @param	string	$stringtoencode				String to encode
  * @param	int     $nouseofiframesandbox		0=Default, 1=Allow use of option MAIN_SECURITY_USE_SANDBOX_FOR_HTMLWITHNOJS for html sanitizing (not yet working)
@@ -7570,8 +7583,6 @@ function dol_nl2br($stringtoencode, $nl2brmode = 0, $forxml = false)
  */
 function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = 'restricthtml')
 {
-	global $conf;
-
 	if (empty($nouseofiframesandbox) && getDolGlobalString('MAIN_SECURITY_USE_SANDBOX_FOR_HTMLWITHNOJS')) {
 		// TODO using sandbox on inline html content is not possible yet with current browsers
 		//$s = '<iframe class="iframewithsandbox" sandbox><html><body>';
@@ -7602,7 +7613,43 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 				} catch (Exception $e) {
 					// If error, invalid HTML string with no way to clean it
 					//print $e->getMessage();
-					$out = 'InvalidHTMLStringCantBeCleaned';
+					$out = 'InvalidHTMLStringCantBeCleaned '.$e->getMessage();
+				}
+			}
+
+			if (!empty($out) && getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY') && $check != 'restricthtmlallowunvalid') {
+				try {
+					// Try cleaning using tidy
+					if (extension_loaded('tidy') && class_exists("tidy")) {
+						//print "aaa".$out."\n";
+
+						// See options at https://tidy.sourceforge.net/docs/quickref.html
+						$config = array(
+							'clean' => false,
+							'quote-marks' => false,		// do not replace " that are used for real text content (not a string symbol for html attribute) into &quot;
+							'doctype'     => 'strict',
+							'show-body-only' => true,
+							"indent-attributes" => false,
+							"vertical-space" => false,
+							'ident' => false,
+							"wrap" => 0
+							// HTML5 tags
+							//'new-blocklevel-tags' => 'article aside audio bdi canvas details dialog figcaption figure footer header hgroup main menu menuitem nav section source summary template track video',
+							//'new-blocklevel-tags' => 'footer header section menu menuitem'
+							//'new-empty-tags' => 'command embed keygen source track wbr',
+							//'new-inline-tags' => 'audio command datalist embed keygen mark menuitem meter output progress source time video wbr',
+						);
+
+						// Tidy
+						$tidy = new tidy();
+						$out = $tidy->repairString($out, $config, 'utf8');
+
+						//print "xxx".$out;exit;
+					}
+				} catch (Exception $e) {
+					// If error, invalid HTML string with no way to clean it
+					//print $e->getMessage();
+					$out = 'InvalidHTMLStringCantBeCleaned '.$e->getMessage();
 				}
 			}
 
@@ -9266,10 +9313,10 @@ function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sen
 
 
 /**
- *      Check if a string is in UTF8
+ *      Check if a string is in UTF8. Seems similar to utf8_valid() but in pure PHP.
  *
  *      @param	string	$str        String to check
- * 		@return	boolean				True if string is UTF8 or ISO compatible with UTF8, False if not (ISO with special char or Binary)
+ * 		@return	boolean				True if string is UTF8 or ISO compatible with UTF8, False if not (ISO with special non utf8 char or Binary)
  * 		@see utf8_valid()
  */
 function utf8_check($str)
@@ -9277,7 +9324,7 @@ function utf8_check($str)
 	$str = (string) $str;	// Sometimes string is an int.
 
 	// We must use here a binary strlen function (so not dol_strlen)
-	$strLength = dol_strlen($str);
+	$strLength = strlen($str);
 	for ($i = 0; $i < $strLength; $i++) {
 		if (ord($str[$i]) < 0x80) {
 			continue; // 0bbbbbbb
@@ -9304,7 +9351,7 @@ function utf8_check($str)
 }
 
 /**
- *      Check if a string is in UTF8
+ *      Check if a string is in UTF8. Seems similar to utf8_check().
  *
  *      @param	string	$str        String to check
  * 		@return	boolean				True if string is valid UTF8 string, false if corrupted

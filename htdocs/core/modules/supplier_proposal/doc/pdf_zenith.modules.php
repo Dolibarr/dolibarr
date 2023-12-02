@@ -828,7 +828,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 	 *  @param  SupplierProposal		$object			Object supplier propsal
 	 *	@param	int			$posy			Position y in PDF
 	 *	@param	Translate	$outputlangs	Object langs for output
-	 *	@return int							<0 if KO, >0 if OK
+	 *	@return int							Return integer <0 if KO, >0 if OK
 	 */
 	protected function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{

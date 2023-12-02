@@ -753,7 +753,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 	/**
 	 *   Show table for lines
 	 *
-	 *   @param		tcpdf			$pdf     		Object PDF
+	 *   @param		tcpdf		$pdf     		Object PDF
 	 *   @param		string		$tab_top		Top position of table
 	 *   @param		string		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)

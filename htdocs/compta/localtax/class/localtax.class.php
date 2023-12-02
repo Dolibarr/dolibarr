@@ -102,7 +102,7 @@ class Localtax extends CommonObject
 	 *  Create in database
 	 *
 	 *  @param      User	$user       User that create
-	 *  @return     int      			<0 if KO, >0 if OK
+	 *  @return     int      			Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user)
 	{
@@ -171,7 +171,7 @@ class Localtax extends CommonObject
 	 *
 	 *	@param		User	$user        	User that modify
 	 *	@param		int		$notrigger		0=no, 1=yes (no update trigger)
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -230,7 +230,7 @@ class Localtax extends CommonObject
 	 *	Load object in memory from database
 	 *
 	 *	@param		int		$id		Object id
-	 *	@return		int				<0 if KO, >0 if OK
+	 *	@return		int				Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -290,7 +290,7 @@ class Localtax extends CommonObject
 	 *	Delete object in database
 	 *
 	 *	@param		User	$user		User that delete
-	 *	@return		int					<0 if KO, >0 if OK
+	 *	@return		int					Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user)
 	{
@@ -573,7 +573,7 @@ class Localtax extends CommonObject
 	 *	Update the link betwen localtax payment and the line into llx_bank
 	 *
 	 *	@param		int		$id		Id bank account
-	 *	@return		int				<0 if KO, >0 if OK
+	 *	@return		int				Return integer <0 if KO, >0 if OK
 	 */
 	public function update_fk_bank($id)
 	{

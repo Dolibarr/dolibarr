@@ -649,7 +649,7 @@ class MouvementStock extends CommonObject
 	 *
 	 * @param int    $id  Id object
 	 *
-	 * @return int <0 if KO, 0 if not found, >0 if OK
+	 * @return int Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -807,7 +807,7 @@ class MouvementStock extends CommonObject
 	 * 	@param		int				$id_product_batch		Id product_batch
 	 *  @param      string  		$inventorycode      	Inventory code
 	 *  @param		int				$donotcleanemptylines	Do not clean lines that remains in stock table with qty=0 (because we want to have this done by the caller)
-	 * 	@return		int								    	<0 if KO, >0 if OK
+	 * 	@return		int								    	Return integer <0 if KO, >0 if OK
 	 */
 	public function livraison($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $id_product_batch = 0, $inventorycode = '', $donotcleanemptylines = 0)
 	{
@@ -834,7 +834,7 @@ class MouvementStock extends CommonObject
 	 * 	@param		int				$id_product_batch    	Id product_batch
 	 *  @param      string			$inventorycode       	Inventory code
 	 *  @param		int				$donotcleanemptylines	Do not clean lines that remains in stock table with qty=0 (because we want to have this done by the caller)
-	 *	@return		int								     	<0 if KO, >0 if OK
+	 *	@return		int								     	Return integer <0 if KO, >0 if OK
 	 */
 	public function reception($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $eatby = '', $sellby = '', $batch = '', $datem = '', $id_product_batch = 0, $inventorycode = '', $donotcleanemptylines = 0)
 	{
@@ -1231,7 +1231,7 @@ class MouvementStock extends CommonObject
 	 *
 	 * @param User $user       User that deletes
 	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{

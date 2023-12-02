@@ -244,7 +244,7 @@ class Inventory extends CommonObject
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -259,7 +259,7 @@ class Inventory extends CommonObject
 	 * @param  	User 	$user      				User that creates
 	 * @param	bool 	$notrigger 				false=launch triggers after, true=disable triggers
 	 * @param	int		$include_sub_warehouse	Include sub warehouses
-	 * @return 	int             				<0 if KO, Id of created object if OK
+	 * @return 	int             				Return integer <0 if KO, Id of created object if OK
 	 */
 	public function validate(User $user, $notrigger = false, $include_sub_warehouse = 0)
 	{
@@ -372,7 +372,7 @@ class Inventory extends CommonObject
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function setDraft(User $user, $notrigger = false)
 	{
@@ -402,7 +402,7 @@ class Inventory extends CommonObject
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function setRecorded(User $user, $notrigger = false)
 	{
@@ -424,7 +424,7 @@ class Inventory extends CommonObject
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function setCanceled(User $user, $notrigger = false)
 	{
@@ -497,7 +497,7 @@ class Inventory extends CommonObject
 	 *
 	 * @param int    $id   Id object
 	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -509,7 +509,7 @@ class Inventory extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	/*public function fetchLines()
 	 {
@@ -525,7 +525,7 @@ class Inventory extends CommonObject
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
@@ -537,7 +537,7 @@ class Inventory extends CommonObject
 	 *
 	 * @param User $user       User that deletes
 	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
@@ -753,7 +753,7 @@ class Inventory extends CommonObject
 	 *
 	 * @param int 	$id 				Id of warehouse
 	 * @param array	$TChildWarehouse  	Array of child warehouses
-	 * @return int             			<0 if KO, >0 if OK
+	 * @return int             			Return integer <0 if KO, >0 if OK
 	 */
 	public function getChildWarehouse($id, &$TChildWarehouse)
 	{
@@ -861,7 +861,7 @@ class InventoryLine extends CommonObjectLine
 	 *
 	 * @param User $user       User that creates
 	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -873,7 +873,7 @@ class InventoryLine extends CommonObjectLine
 	 *
 	 * @param int    $id   Id object
 	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -887,7 +887,7 @@ class InventoryLine extends CommonObjectLine
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
@@ -899,7 +899,7 @@ class InventoryLine extends CommonObjectLine
 	 *
 	 * @param User $user       User that deletes
 	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{

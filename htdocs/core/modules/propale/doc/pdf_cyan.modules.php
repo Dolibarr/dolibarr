@@ -852,14 +852,6 @@ class pdf_cyan extends ModelePDFPropales
 				// Display total zone
 				$posy = $this->drawTotalTable($pdf, $object, 0, $bottomlasttab, $outputlangs);
 
-				// Display payment area
-				/*
-				if ($deja_regle || $amount_credit_notes_included || $amount_deposits_included)
-				{
-					$posy=$this->drawPaymentsTable($pdf, $object, $posy, $outputlangs);
-				}
-				*/
-
 				// Customer signature area
 				if (!getDolGlobalString('PROPAL_DISABLE_SIGNATURE')) {
 					$posy = $this->drawSignatureArea($pdf, $object, $posy, $outputlangs);
@@ -966,19 +958,6 @@ class pdf_cyan extends ModelePDFPropales
 			$this->error = $langs->trans("ErrorConstantNotDefined", "PROP_OUTPUTDIR");
 			return 0;
 		}
-	}
-
-	/**
-	 *  Show payments table
-	 *
-	 *  @param	TCPDF		$pdf            Object PDF
-	 *  @param  Propal		$object         Object proposal
-	 *  @param  int			$posy           Position y in PDF
-	 *  @param  Translate	$outputlangs    Object langs for output
-	 *  @return int             			<0 if KO, >0 if OK
-	 */
-	protected function drawPaymentsTable(&$pdf, $object, $posy, $outputlangs)
-	{
 	}
 
 	/**

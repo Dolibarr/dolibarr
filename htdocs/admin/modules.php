@@ -1167,8 +1167,6 @@ if ($mode == 'marketplace') {
 if ($mode == 'deploy') {
 	print dol_get_fiche_head($head, $mode, '', -1);
 
-	print $deschelp;
-
 	$dolibarrdataroot = preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);
 	$allowonlineinstall = true;
 	$allowfromweb = 1;
@@ -1209,6 +1207,8 @@ if ($mode == 'deploy') {
 		$allowfromweb = 0;
 	}
 
+	print $deschelp;
+
 	if ($allowfromweb < 1) {
 		print $langs->trans("SomethingMakeInstallFromWebNotPossible");
 		print $message;
@@ -1218,6 +1218,7 @@ if ($mode == 'deploy') {
 
 	print '<br>';
 
+	// $allowfromweb = -1 if installation or setup not correct, 0 if not allowed, 1 if allowed
 	if ($allowfromweb >= 0) {
 		if ($allowfromweb == 1) {
 			//print $langs->trans("ThisIsProcessToFollow").'<br>';
@@ -1231,16 +1232,12 @@ if ($mode == 'deploy') {
 		}
 
 		if ($allowfromweb == 1) {
-			print '<span class="opacitymedium">'.$langs->trans("UnpackPackageInModulesRoot", $dirins).'</span><br>';
-
-			print '<br>';
-
 			print '<form enctype="multipart/form-data" method="POST" class="noborder" action="'.$_SERVER["PHP_SELF"].'" name="forminstall">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="install">';
 			print '<input type="hidden" name="mode" value="deploy">';
 
-			print $langs->trans("YouCanSubmitFile");
+			print $langs->trans("YouCanSubmitFile").'<br><br>';
 
 			$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
 			$maxphp = @ini_get('upload_max_filesize'); // In unknown
@@ -1354,15 +1351,15 @@ if ($mode == 'develop') {
 	print '<br>';
 
 	// Marketplace
-	print "<table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">\n";
-	print "<tr class=\"liste_titre\">\n";
+	print '<table summary="list_of_modules" class="noborder centpercent">'."\n";
+	print '<tr class="liste_titre">'."\n";
 	//print '<td>'.$langs->trans("Logo").'</td>';
 	print '<td colspan="2">'.$langs->trans("DevelopYourModuleDesc").'</td>';
 	print '<td>'.$langs->trans("URL").'</td>';
 	print '</tr>';
 
 	print '<tr class="oddeven" height="80">'."\n";
-	print '<td class="left">';
+	print '<td class="center">';
 	print '<div class="imgmaxheight50 logo_setup"></div>';
 	print '</td>';
 	print '<td>'.$langs->trans("TryToUseTheModuleBuilder", $langs->transnoentitiesnoconv("ModuleBuilder")).'</td>';
@@ -1377,11 +1374,13 @@ if ($mode == 'develop') {
 
 	print '<tr class="oddeven" height="80">'."\n";
 	$url = 'https://partners.dolibarr.org';
-	print '<td class="left">';
+	print '<td class="center">';
 	print'<a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner.png"></a>';
 	print '</td>';
 	print '<td>'.$langs->trans("DoliPartnersDesc").'</td>';
-	print '<td><a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
+	print '<td><a href="'.$url.'" target="_blank" rel="noopener noreferrer external">';
+	print img_picto('', 'url', 'class="pictofixedwidth"');
+	print $url.'</a></td>';
 	print '</tr>';
 
 	print "</table>\n";

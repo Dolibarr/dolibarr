@@ -249,7 +249,7 @@ class AccountingAccount extends CommonObject
 	 *
 	 * @param User $user User making action
 	 * @param int $notrigger Disable triggers
-	 * @return int                 <0 if KO, >0 if OK
+	 * @return int                 Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -395,7 +395,7 @@ class AccountingAccount extends CommonObject
 	/**
 	 * Check usage of accounting code
 	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function checkUsage()
 	{
@@ -430,7 +430,7 @@ class AccountingAccount extends CommonObject
 	 *
 	 * @param User $user User that deletes
 	 * @param int $notrigger 0=triggers after, 1=disable triggers
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -619,7 +619,7 @@ class AccountingAccount extends CommonObject
 	 *
 	 * @param int $id Id
 	 * @param int $mode 0=field active, 1=field reconcilable
-	 * @return int              <0 if KO, >0 if OK
+	 * @return int              Return integer <0 if KO, >0 if OK
 	 */
 	public function accountDeactivate($id, $mode = 0)
 	{
@@ -659,7 +659,7 @@ class AccountingAccount extends CommonObject
 	 *
 	 * @param int $id Id
 	 * @param int $mode 0=field active, 1=field reconcilable
-	 * @return int              <0 if KO, >0 if OK
+	 * @return int              Return integer <0 if KO, >0 if OK
 	 */
 	public function accountActivate($id, $mode = 0)
 	{

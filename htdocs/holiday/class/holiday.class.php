@@ -232,7 +232,7 @@ class Holiday extends CommonObject
 	/**
 	 * Update balance of vacations and check table of users for holidays is complete. If not complete.
 	 *
-	 * @return	int			<0 if KO, >0 if OK
+	 * @return	int			Return integer <0 if KO, >0 if OK
 	 */
 	public function updateBalance()
 	{
@@ -258,7 +258,7 @@ class Holiday extends CommonObject
 	 *
 	 *   @param		User	$user        	User that create
 	 *   @param     int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *   @return    int			         	<0 if KO, Id of created object if OK
+	 *   @return    int			         	Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -368,7 +368,7 @@ class Holiday extends CommonObject
 	 *
 	 *  @param	int		$id         Id object
 	 *  @param	string	$ref        Ref object
-	 *  @return int         		<0 if KO, 0 if not found, >0 if OK
+	 *  @return int         		Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = '')
 	{
@@ -720,7 +720,7 @@ class Holiday extends CommonObject
 	 *
 	 *  @param	User	$user        	User that validate
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return int         			<0 if KO, >0 if OK
+	 *  @return int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function validate($user = null, $notrigger = 0)
 	{
@@ -843,7 +843,7 @@ class Holiday extends CommonObject
 	 *
 	 *  @param	User	$user        	User that approve
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return int         			<0 if KO, >0 if OK
+	 *  @return int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function approve($user = null, $notrigger = 0)
 	{
@@ -972,7 +972,7 @@ class Holiday extends CommonObject
 	 *
 	 *  @param	User	$user        	User that modify
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return int         			<0 if KO, >0 if OK
+	 *  @return int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -1103,7 +1103,7 @@ class Holiday extends CommonObject
 	 *
 	 *	 @param		User	$user        	User that delete
 	 *   @param     int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *	 @return	int						<0 if KO, >0 if OK
+	 *	 @return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -2080,7 +2080,7 @@ class Holiday extends CommonObject
 	 *
 	 *  @param    int	$userDolibarrWithoutCP	Number of active users in Dolibarr without holidays
 	 *  @param    int	$userCP    				Number of active users into table of holidays
-	 *  @return   int							<0 if KO, >0 if OK
+	 *  @return   int							Return integer <0 if KO, >0 if OK
 	 */
 	public function verifNbUsers($userDolibarrWithoutCP, $userCP)
 	{
@@ -2316,9 +2316,7 @@ class Holiday extends CommonObject
 
 				if ($obj->status == Holiday::STATUS_APPROVED || $obj->status == Holiday::STATUS_CANCELED) {
 					if ($obj->fk_user_approval_done) {
-						$auser = new User($this->db);
-						$auser->fetch($obj->fk_user_approval_done);
-						$this->user_approve = $auser;
+						$this->fk_user_approve = $obj->fk_user_approval_done;
 					}
 				}
 			}
@@ -2359,7 +2357,7 @@ class Holiday extends CommonObject
 	/**
 	 *      Load this->nb for dashboard
 	 *
-	 *      @return     int         <0 if KO, >0 if OK
+	 *      @return     int         Return integer <0 if KO, >0 if OK
 	 */
 	public function load_state_board()
 	{

@@ -794,6 +794,36 @@ if ($action == 'addcontainer' && $usercanedit) {
 
 		if (!$error) {
 			$tmp = getURLContent($urltograb, 'GET', '', 1, array(), array('http', 'https'), 0);
+
+			// Test charset of result and convert it into UTF-8 if not in this encoding charset
+			if (!empty($tmp['content_type']) && preg_match('/ISO-8859-1/', $tmp['content_type'])) {
+				if (function_exists('mb_check_encoding')) {
+					if (mb_check_encoding($tmp['content'], 'ISO-8859-1')) {
+						// This is a ISO-8829-1 encoding string
+						$tmp['content'] = mb_convert_encoding($tmp['content'], 'ISO-8859-1', 'UTF-8');
+					} else {
+						$error++;
+						setEventMessages('Error getting '.$urltograb.': content seems non valid ISO-8859-1', null, 'errors');
+						$action = 'createcontainer';
+					}
+				} else {
+					$error++;
+					setEventMessages('Error getting '.$urltograb.': content seems ISO-8859-1 but functions to convert into UTF-8 are not available in your PHP', null, 'errors');
+					$action = 'createcontainer';
+				}
+			}
+			if (empty($tmp['content_type']) || (!empty($tmp['content_type']) && preg_match('/UTF-8/', $tmp['content_type']))) {
+				if (function_exists('mb_check_encoding')) {
+					if (mb_check_encoding($tmp['content'], 'UTF-8')) {
+						// This is a UTF8 or ASCII compatible string
+					} else {
+						$error++;
+						setEventMessages('Error getting '.$urltograb.': content seems not a valid UTF-8', null, 'errors');
+						$action = 'createcontainer';
+					}
+				}
+			}
+
 			if ($tmp['curl_error_no']) {
 				$error++;
 				setEventMessages('Error getting '.$urltograb.': '.$tmp['curl_error_msg'], null, 'errors');

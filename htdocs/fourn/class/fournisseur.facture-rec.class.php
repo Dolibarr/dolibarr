@@ -792,7 +792,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 *	@param     	User	$user          	User that delete.
 	 *	@param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *	@param		int		$idwarehouse	Id warehouse to use for stock change.
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 0, $idwarehouse = -1)
 	{
@@ -1782,7 +1782,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 *
 	 *	@param     	int		$frequency		value of frequency
 	 *	@param     	string	$unit 			unit of frequency  (d, m, y)
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setFrequencyAndUnit($frequency, $unit)
 	{
@@ -1822,7 +1822,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 *
 	 *	@param     	datetime	$date					date of execution
 	 *	@param     	int			$increment_nb_gen_done	0 do nothing more, >0 increment nb_gen_done
-	 *	@return		int									<0 if KO, >0 if OK
+	 *	@return		int									Return integer <0 if KO, >0 if OK
 	 */
 	public function setNextDate($date, $increment_nb_gen_done = 0)
 	{
@@ -1855,7 +1855,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 *	Update the maximum period
 	 *
 	 *	@param     	int		$nb		number of maximum period
-	 *	@return		int				<0 if KO, >0 if OK
+	 *	@return		int				Return integer <0 if KO, >0 if OK
 	 */
 	public function setMaxPeriod($nb)
 	{
@@ -1887,7 +1887,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 *	Update the auto validate flag of invoice
 	 *
 	 *	@param     	int		$validate		0 to create in draft, 1 to create and validate invoice
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setAutoValidate($validate)
 	{
@@ -1915,7 +1915,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 *	Update the auto generate documents
 	 *
 	 *	@param     	int		$validate		0 no document, 1 to generate document
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setGeneratePdf($validate)
 	{
@@ -1943,7 +1943,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 *  Update the model for documents
 	 *
 	 *  @param     	string		$model		model of document generator
-	 *  @return		int						<0 if KO, >0 if OK
+	 *  @return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setModelPdf($model)
 	{
@@ -2012,7 +2012,7 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 	 *
 	 * @param User $user Object user
 	 * @param int $notrigger Disable triggers
-	 * @return        int                    <0 if KO, >0 if OK
+	 * @return        int                    Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{

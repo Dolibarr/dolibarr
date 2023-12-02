@@ -343,7 +343,7 @@ class Contrat extends CommonObject
 	 *  @param  int			$date_start Opening date
 	 *  @param  int|string	$date_end   Expected end date
 	 * 	@param	string		$comment	A comment typed by user
-	 *  @return int         			<0 if KO, >0 if OK
+	 *  @return int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function active_line($user, $line_id, $date_start, $date_end = '', $comment = '')
 	{
@@ -365,7 +365,7 @@ class Contrat extends CommonObject
 	 *  @param  int			$line_id    Id of line to close
 	 *  @param  int			$date_end	End date
 	 * 	@param	string		$comment	A comment typed by user
-	 *  @return int         			<0 if KO, >0 if OK
+	 *  @return int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function close_line($user, $line_id, $date_end, $comment = '')
 	{
@@ -387,7 +387,7 @@ class Contrat extends CommonObject
 	 *  @param	int			$notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *  @param	string		$comment		Comment
 	 *  @param	int|string	$date_end		Date end
-	 *	@return	int							<0 if KO, >0 if OK
+	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 *  @see ()
 	 */
 	public function activateAll($user, $date_start = '', $notrigger = 0, $comment = '', $date_end = '')
@@ -440,7 +440,7 @@ class Contrat extends CommonObject
 	 * @param	User		$user      		Object User making action
 	 * @param	int			$notrigger		1=Does not execute triggers, 0=Execute triggers
 	 * @param	string		$comment		Comment
-	 * @return	int							<0 if KO, >0 if OK
+	 * @return	int							Return integer <0 if KO, >0 if OK
 	 * @see activateAll()
 	 */
 	public function closeAll(User $user, $notrigger = 0, $comment = '')
@@ -493,7 +493,7 @@ class Contrat extends CommonObject
 	 * @param	User	$user      		Objet User
 	 * @param   string	$force_number	Reference to force on contract (not implemented yet)
 	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 * @return	int						<0 if KO, >0 if OK
+	 * @return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function validate(User $user, $force_number = '', $notrigger = 0)
 	{
@@ -616,7 +616,7 @@ class Contrat extends CommonObject
 	 *
 	 * @param	User	$user      		Object User
 	 * @param	int		$notrigger		1=Does not execute triggers, 0=execute triggers
-	 * @return	int						<0 if KO, >0 if OK
+	 * @return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function reopen($user, $notrigger = 0)
 	{
@@ -1331,7 +1331,7 @@ class Contrat extends CommonObject
 	 *
 	 *  @param	User	$user        User that modifies
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 <0 if KO, >0 if OK
+	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user, $notrigger = 0)
 	{
@@ -1473,7 +1473,7 @@ class Contrat extends CommonObject
 	 *  @param	array		$array_options		extrafields array
 	 * 	@param 	string		$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param 	string		$rang 				Position
-	 *  @return int             				<0 if KO, >0 if OK
+	 *  @return int             				Return integer <0 if KO, >0 if OK
 	 */
 	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type = 'HT', $pu_ttc = 0.0, $info_bits = 0, $fk_fournprice = null, $pa_ht = 0, $array_options = 0, $fk_unit = null, $rang = 0)
 	{
@@ -1705,7 +1705,7 @@ class Contrat extends CommonObject
 	 *  @param	array		$array_options		extrafields array
 	 * 	@param 	string		$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param 	string		$rang 				Position
-	 *  @return int              				<0 if KO, >0 if OK
+	 *  @return int              				Return integer <0 if KO, >0 if OK
 	 */
 	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $tvatx, $localtax1tx = 0.0, $localtax2tx = 0.0, $date_start_real = '', $date_end_real = '', $price_base_type = 'HT', $info_bits = 0, $fk_fournprice = null, $pa_ht = 0, $array_options = 0, $fk_unit = null, $rang = 0)
 	{
@@ -1936,7 +1936,7 @@ class Contrat extends CommonObject
 	 *  Update statut of contract according to services
 	 *
 	 *	@param	User	$user		Object user
-	 *	@return int     			<0 if KO, >0 if OK
+	 *	@return int     			Return integer <0 if KO, >0 if OK
 	 *  @deprecated					This function will never be used. Status of a contract is status of its lines.
 	 */
 	public function update_statut($user)
@@ -2680,7 +2680,7 @@ class Contrat extends CommonObject
 
 		if (!$error) {
 			foreach ($this->lines as $line) {
-				$result = $clonedObj->addline($line->description, $line->subprice, $line->qty, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->fk_product, $line->remise_percent, $line->date_ouverture, $line->date_cloture, 'HT', 0, $line->info_bits, $line->fk_fournprice, $line->pa_ht, $line->array_options, $line->fk_unit, $line->rang);
+				$result = $clonedObj->addline($line->description, $line->subprice, $line->qty, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->fk_product, $line->remise_percent, $line->date_start, $line->date_cloture, 'HT', 0, $line->info_bits, $line->fk_fournprice, $line->pa_ht, $line->array_options, $line->fk_unit, $line->rang);
 				if ($result < 0) {
 					$error++;
 					$this->error = $clonedObj->error;
@@ -3239,7 +3239,7 @@ class ContratLigne extends CommonObjectLine
 	 *
 	 *  @param	int		$id         Id object
 	 *  @param	string	$ref		Ref of contract line
-	 *  @return int         		<0 if KO, >0 if OK
+	 *  @return int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $ref = '')
 	{
@@ -3376,7 +3376,7 @@ class ContratLigne extends CommonObjectLine
 	 *
 	 *      @param	User	$user        	User that modify
 	 *      @param  int		$notrigger	    0=no, 1=yes (no update trigger)
-	 *      @return int         			<0 if KO, >0 if OK
+	 *      @return int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user, $notrigger = 0)
 	{
@@ -3585,7 +3585,7 @@ class ContratLigne extends CommonObjectLine
 	 *      Mise a jour en base des champs total_xxx de ligne
 	 *		Used by migration process
 	 *
-	 *		@return		int		<0 if KO, >0 if OK
+	 *		@return		int		Return integer <0 if KO, >0 if OK
 	 */
 	public function update_total()
 	{
@@ -3619,7 +3619,7 @@ class ContratLigne extends CommonObjectLine
 	 * Inserts a contrat line into database
 	 *
 	 * @param int $notrigger Set to 1 if you don't want triggers to be fired
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function insert($notrigger = 0)
 	{
@@ -3715,7 +3715,7 @@ class ContratLigne extends CommonObjectLine
 	 * @param  	int 		$date 		Date real activation
 	 * @param  	int|string 	$date_end 	Date planned end. Use '-1' to keep it unchanged.
 	 * @param   string 		$comment 	A comment typed by user
-	 * @return 	int                    	<0 if KO, >0 if OK
+	 * @return 	int                    	Return integer <0 if KO, >0 if OK
 	 */
 	public function active_line($user, $date, $date_end = '', $comment = '')
 	{
@@ -3775,7 +3775,7 @@ class ContratLigne extends CommonObjectLine
 	 * @param  	 int 	$date_end_real 	Date end
 	 * @param    string $comment 		A comment typed by user
 	 * @param    int	$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 * @return int                    	<0 if KO, >0 if OK
+	 * @return int                    	Return integer <0 if KO, >0 if OK
 	 */
 	public function close_line($user, $date_end_real, $comment = '', $notrigger = 0)
 	{

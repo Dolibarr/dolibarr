@@ -243,7 +243,7 @@ abstract class CommonObjectLine extends CommonObject
 	 * @param int $offset offset limit
 	 * @param array $filter filter array
 	 * @param string $filtermode filter mode (AND or OR)
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{

@@ -441,10 +441,10 @@ if (!empty($arrayfields['t.label']['checked'])) {
 // Filter: Date end period
 if (!empty($arrayfields['t.datev']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_dateend_start ? $search_dateend_start : -1, 'search_dateend_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_dateend_end ? $search_dateend_end : -1, 'search_dateend_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 	print '</div>';
 	print '</td>';
@@ -453,11 +453,11 @@ if (!empty($arrayfields['t.datev']['checked'])) {
 // Filter: Date payment
 /*if (!empty($arrayfields['t.datep']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
-	print $form->selectDate($search_datepayment_start ? $search_datepayment_start : -1, 'search_datepayment_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
+	print '<div class="nowrapfordate">';
+ print $form->selectDate($search_datepayment_start ? $search_datepayment_start : -1, 'search_datepayment_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
 	print '</div>';
-	print '<div class="nowrap">';
-	print $form->selectDate($search_datepayment_end ? $search_datepayment_end : -1, 'search_datepayment_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
+	print '<div class="nowrapfordate">';
+ print $form->selectDate($search_datepayment_end ? $search_datepayment_end : -1, 'search_datepayment_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 	print '</div>';
 	print '</td>';
 }*/
