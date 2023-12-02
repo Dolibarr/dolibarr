@@ -213,7 +213,7 @@ class Asset extends CommonObject
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -341,7 +341,7 @@ class Asset extends CommonObject
 	 *
 	 * @param int    $id   Id object
 	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -367,7 +367,7 @@ class Asset extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchLines()
 	{
@@ -462,7 +462,7 @@ class Asset extends CommonObject
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
@@ -499,7 +499,7 @@ class Asset extends CommonObject
 	 *
 	 * @param User $user       User that deletes
 	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
@@ -512,7 +512,7 @@ class Asset extends CommonObject
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function setDataFromAssetModel(User $user, $notrigger = false)
 	{
@@ -621,7 +621,7 @@ class Asset extends CommonObject
 	/**
 	 * Fetch depreciation lines for each mode in $this->depreciation_lines (sort by depreciation date)
 	 *
-	 * @return	int							<0 if KO, Id of created object if OK
+	 * @return	int							Return integer <0 if KO, Id of created object if OK
 	 */
 	public function fetchDepreciationLines()
 	{
@@ -799,7 +799,7 @@ class Asset extends CommonObject
 	/**
 	 * Calculation depreciation lines (reversal and future) for each mode
 	 *
-	 * @return	int							<0 if KO, Id of created object if OK
+	 * @return	int							Return integer <0 if KO, Id of created object if OK
 	 */
 	public function calculationDepreciation()
 	{
@@ -1090,7 +1090,7 @@ class Asset extends CommonObject
 	 * Set last cumulative depreciation for each mode
 	 *
 	 * @param	int		$asset_depreciation_id		Asset depreciation line ID
-	 * @return	int									<0 if KO, >0 if OK
+	 * @return	int									Return integer <0 if KO, >0 if OK
 	 */
 	public function setLastCumulativeDepreciation($asset_depreciation_id)
 	{

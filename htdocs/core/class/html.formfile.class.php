@@ -81,7 +81,7 @@ class FormFile
 	 *  @param	int			$capture		1=Add tag capture="capture" to force use of micro or video recording to generate file. When setting this to 1, you must also provide a value for $accept.
 	 *  @param	int			$disablemulti	0=Default, 1=Disable multiple file upload
 	 *  @param	int			$nooutput		0=Output result with print, 1=Return result
-	 * 	@return	int|string					<0 if KO, >0 if OK, or string if $noouput=1
+	 * 	@return	int|string					Return integer <0 if KO, >0 if OK, or string if $noouput=1
 	 */
 	public function form_attach_new_file($url, $title = '', $addcancel = 0, $sectionid = 0, $perm = 1, $size = 50, $object = null, $options = '', $useajax = 1, $savingdocmask = '', $linkfiles = 1, $htmlname = 'formuserfile', $accept = '', $sectiondir = '', $usewithoutform = 0, $capture = 0, $disablemulti = 0, $nooutput = 0)
 	{

@@ -242,7 +242,7 @@ class DiscountAbsolute
 	 *      Create a discount into database
 	 *
 	 *      @param      User	$user       User that create
-	 *      @return     int         		<0 if KO, >0 if OK
+	 *      @return     int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user)
 	{
@@ -317,7 +317,7 @@ class DiscountAbsolute
 	 *  Delete object in database. If fk_facture_source is defined, we delete all familiy with same fk_facture_source. If not, only with id is removed
 	 *
 	 *  @param      User    $user       Object of user asking to delete
-	 *  @return     int                 <0 if KO, >0 if OK
+	 *  @return     int                 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user)
 	{
@@ -441,7 +441,7 @@ class DiscountAbsolute
 	 *
 	 *	@param		int		$rowidline		Invoice line id (To use discount into invoice lines)
 	 *	@param		int		$rowidinvoice	Invoice id (To use discount as a credit note to reduce payment of invoice)
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function link_to_invoice($rowidline, $rowidinvoice)
 	{
@@ -497,7 +497,7 @@ class DiscountAbsolute
 	 *	Link the discount to a particular invoice line or a particular invoice.
 	 *	Do not call this if discount is linked to a reconcialiated invoice
 	 *
-	 *	@return		int							<0 if KO, >0 if OK
+	 *	@return		int							Return integer <0 if KO, >0 if OK
 	 */
 	public function unlink_invoice()
 	{

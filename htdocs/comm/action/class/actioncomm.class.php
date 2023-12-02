@@ -785,7 +785,7 @@ class ActionComm extends CommonObject
 	 *  @param  string	$ref_ext			Ref ext to get
 	 *  @param	string	$email_msgid		Email msgid
 	 *  @param	string	$loadresources		1=Load also resources
-	 *  @return	int							<0 if KO, >0 if OK
+	 *  @return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $ref = '', $ref_ext = '', $email_msgid = '', $loadresources = 1)
 	{
@@ -931,7 +931,7 @@ class ActionComm extends CommonObject
 	/**
 	 *    Initialize $this->userassigned & this->socpeopleassigned array with list of id of user and contact assigned to event
 	 *
-	 *    @return   int				<0 if KO, >0 if OK
+	 *    @return   int				Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchResources()
 	{
@@ -977,7 +977,7 @@ class ActionComm extends CommonObject
 	 *    Initialize this->userassigned array with list of id of user assigned to event
 	 *
 	 *    @param    bool    $override   Override $this->userownerid when empty. TODO This should be false by default. True is here to fix corrupted data.
-	 *    @return   int                 <0 if KO, >0 if OK
+	 *    @return   int                 Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_userassigned($override = true)
 	{
@@ -1024,7 +1024,7 @@ class ActionComm extends CommonObject
 	 *    @TODO Add User $user as first param
 	 *
 	 *    @param    int		$notrigger		1 = disable triggers, 0 = enable triggers
-	 *    @return   int 					<0 if KO, >0 if OK
+	 *    @return   int 					Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($notrigger = 0)
 	{
@@ -1122,7 +1122,7 @@ class ActionComm extends CommonObject
 	 *
 	 *    @param    User	$user			Object user making change
 	 *    @param    int		$notrigger		1 = disable triggers, 0 = enable triggers
-	 *    @return   int     				<0 if KO, >0 if OK
+	 *    @return   int     				Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -1908,7 +1908,7 @@ class ActionComm extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param  int[]|int 	$categories 	Category or categories IDs
-	 * @return int							<0 if KO, >0 if OK
+	 * @return int							Return integer <0 if KO, >0 if OK
 	 */
 	public function setCategories($categories)
 	{

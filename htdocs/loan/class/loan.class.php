@@ -288,7 +288,7 @@ class Loan extends CommonObject
 	 *  Delete a loan
 	 *
 	 *  @param	User	$user	Object user making delete
-	 *  @return int 			<0 if KO, >0 if OK
+	 *  @return int 			Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user)
 	{
@@ -390,7 +390,7 @@ class Loan extends CommonObject
 	 *  Tag loan as paid completely
 	 *
 	 *  @param	User	$user	Object user making change
-	 *  @return	int				<0 if KO, >0 if OK
+	 *  @return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function setPaid($user)
 	{
@@ -416,7 +416,7 @@ class Loan extends CommonObject
 	 *	@deprecated
 	 *  @see setStarted()
 	 *  @param	User	$user	Object user making change
-	 *  @return	int				<0 if KO, >0 if OK
+	 *  @return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function set_started($user)
 	{
@@ -429,7 +429,7 @@ class Loan extends CommonObject
 	 *  Tag loan as payment started
 	 *
 	 *  @param	User	$user	Object user making change
-	 *  @return	int				<0 if KO, >0 if OK
+	 *  @return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function setStarted($user)
 	{
@@ -452,7 +452,7 @@ class Loan extends CommonObject
 	 *  Tag loan as payment as unpaid
 	 *
 	 *  @param	User	$user	Object user making change
-	 *  @return	int				<0 if KO, >0 if OK
+	 *  @return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function setUnpaid($user)
 	{
