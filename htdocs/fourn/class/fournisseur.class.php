@@ -101,7 +101,7 @@ class Fournisseur extends Societe
 	/**
 	 * Load statistics indicators
 	 *
-	 * @return     int         <0 if KO, >0 if OK
+	 * @return     int         Return integer <0 if KO, >0 if OK
 	 */
 	public function load_state_board()
 	{

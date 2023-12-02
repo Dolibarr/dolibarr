@@ -733,14 +733,6 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 				// Affiche zone totaux
 				$posy = $this->drawTotalTable($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
 
-				// Affiche zone versements
-				/*
-				if ($deja_regle)
-				{
-					$posy=$this->drawPaymentsTable($pdf, $object, $posy, $outputlangs);
-				}
-				*/
-
 				// Pied de page
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
@@ -772,19 +764,6 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 			$this->error = $langs->transnoentities("ErrorConstantNotDefined", "STOCKTRANSFER_OUTPUTDIR");
 			return 0;
 		}
-	}
-
-	/**
-	 *  Show payments table
-	 *
-	 *  @param	TCPDF		$pdf     		Object PDF
-	 *  @param  Object		$object			Object order
-	 *	@param	int			$posy			Position y in PDF
-	 *	@param	Translate	$outputlangs	Object langs for output
-	 *	@return int							<0 if KO, >0 if OK
-	 */
-	protected function drawPaymentsTable(&$pdf, $object, $posy, $outputlangs)
-	{
 	}
 
 	/**

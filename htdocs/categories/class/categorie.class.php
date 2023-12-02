@@ -339,7 +339,7 @@ class Categorie extends CommonObject
 	 *  @param		string	$label   Label of category
 	 *  @param		string	$type    Type of category ('product', '...') or (0, 1, ...)
 	 *  @param		string	$ref_ext External reference of object
-	 * 	@return		int				<0 if KO, >0 if OK
+	 * 	@return		int				Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $label = '', $type = null, $ref_ext = '')
 	{
@@ -1087,7 +1087,7 @@ class Categorie extends CommonObject
 	/**
 	 * 	Load the array this->motherof that is array(id_son=>id_parent, ...)
 	 *
-	 *	@return		int		<0 if KO, >0 if OK
+	 *	@return		int		Return integer <0 if KO, >0 if OK
 	 */
 	protected function load_motherof()
 	{
@@ -1236,7 +1236,7 @@ class Categorie extends CommonObject
 	 *
 	 * 	@param		int		$id_categ		id_categ entry to update
 	 * 	@param		int		$protection		Deep counter to avoid infinite loop
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 *  @see get_full_arbo()
 	 */
 	private function buildPathFromId($id_categ, $protection = 1000)
@@ -1874,7 +1874,7 @@ class Categorie extends CommonObject
 	 *
 	 *	@param	User	$user		Object user
 	 *
-	 *	@return		int		<0 if KO, >0 if OK
+	 *	@return		int		Return integer <0 if KO, >0 if OK
 	 */
 	public function setMultiLangs($user)
 	{
@@ -1944,7 +1944,7 @@ class Categorie extends CommonObject
 	/**
 	 *	Load array this->multilangs
 	 *
-	 *	@return		int		<0 if KO, >0 if OK
+	 *	@return		int		Return integer <0 if KO, >0 if OK
 	 */
 	public function getMultiLangs()
 	{

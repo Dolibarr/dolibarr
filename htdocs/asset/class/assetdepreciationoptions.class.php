@@ -146,7 +146,7 @@ class AssetDepreciationOptions extends CommonObject
 	 * @param	string		$mode			Depreciation mode (economic, accelerated_depreciation, ...)
 	 * @param	int			$class_type		Type (0:asset, 1:asset model)
 	 * @param	bool		$all_field		Get all fields
-	 * @return	int							<0 if KO, >0 if OK
+	 * @return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function setInfosForMode($mode, $class_type = 0, $all_field = false)
 	{
@@ -190,7 +190,7 @@ class AssetDepreciationOptions extends CommonObject
 	 *  Fill deprecation_options property of object (using for data sent by forms)
 	 *
 	 * @param	int		$class_type		Type (0:asset, 1:asset model)
-	 * @return	int						<0 if KO, >0 if OK
+	 * @return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setDeprecationOptionsFromPost($class_type = 0)
 	{
@@ -304,7 +304,7 @@ class AssetDepreciationOptions extends CommonObject
 	 *
 	 * @param	int		$asset_id			Asset ID to set
 	 * @param	int		$asset_model_id		Asset model ID to set
-	 * @return	int							<0 if KO, >0 if OK
+	 * @return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchDeprecationOptions($asset_id = 0, $asset_model_id = 0)
 	{
@@ -413,7 +413,7 @@ class AssetDepreciationOptions extends CommonObject
 	 * @param	int		$asset_id			Asset ID to set
 	 * @param	int		$asset_model_id		Asset model ID to set
 	 * @param	int		$notrigger			1=disable trigger UPDATE (when called by create)
-	 * @return	int							<0 if KO, >0 if OK
+	 * @return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function updateDeprecationOptions($user, $asset_id = 0, $asset_model_id = 0, $notrigger = 0)
 	{

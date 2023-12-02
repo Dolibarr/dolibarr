@@ -523,7 +523,7 @@ class Expedition extends CommonObject
 	 *
 	 * @param 	object		$line_ext			Objet with full information of line. $line_ext->detail_batch must be an array of ExpeditionLineBatch
 	 * @param	array		$array_options		extrafields array
-	 * @return	int								<0 if KO, >0 if OK
+	 * @return	int								Return integer <0 if KO, >0 if OK
 	 */
 	public function create_line_batch($line_ext, $array_options = 0)
 	{
@@ -894,7 +894,7 @@ class Expedition extends CommonObject
 	 * @param 	int		$id					Id of source line (order line)
 	 * @param 	int		$qty				Quantity
 	 * @param	array	$array_options		extrafields array
-	 * @return	int							<0 if KO, >0 if OK
+	 * @return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function addline($entrepot_id, $id, $qty, $array_options = 0)
 	{
@@ -977,7 +977,7 @@ class Expedition extends CommonObject
 	 *
 	 * @param 	array		$dbatch		Array of value (key 'detail' -> Array, key 'qty' total quantity for line, key ix_l : original line index)
 	 * @param	array		$array_options		extrafields array
-	 * @return	int						<0 if KO, >0 if OK
+	 * @return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function addline_batch($dbatch, $array_options = 0)
 	{
@@ -1045,7 +1045,7 @@ class Expedition extends CommonObject
 	 *
 	 *  @param	User	$user        	User that modify
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return int 			       	<0 if KO, >0 if OK
+	 *  @return int 			       	Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -2024,7 +2024,7 @@ class Expedition extends CommonObject
 	 *
 	 *	@param      User			$user        		Objet user that modify
 	 *	@param      integer 		$delivery_date     Date of delivery
-	 *	@return     int         						<0 if KO, >0 if OK
+	 *	@return     int         						Return integer <0 if KO, >0 if OK
 	 */
 	public function setDeliveryDate($user, $delivery_date)
 	{
@@ -2141,7 +2141,7 @@ class Expedition extends CommonObject
 	/**
 	 *	Classify the shipping as closed (this record also the stock movement)
 	 *
-	 *	@return     int     <0 if KO, >0 if OK
+	 *	@return     int     Return integer <0 if KO, >0 if OK
 	 */
 	public function setClosed()
 	{
@@ -2226,7 +2226,7 @@ class Expedition extends CommonObject
 	 *
 	 * @param      	User 	$user        		Object user that modify
 	 * @param		string	$labelmovement		Label of movement
-	 * @return     	int     					<0 if KO, >0 if OK
+	 * @return     	int     					Return integer <0 if KO, >0 if OK
 	 * @throws Exception
 	 *
 	 */
@@ -2356,7 +2356,7 @@ class Expedition extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setDraft($user, $notrigger = 0)
 	{
@@ -2740,7 +2740,7 @@ class ExpeditionLigne extends CommonObjectLine
 	 *  Load line expedition
 	 *
 	 *  @param  int		$rowid          Id line order
-	 *  @return	int						<0 if KO, >0 if OK
+	 *  @return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($rowid)
 	{
