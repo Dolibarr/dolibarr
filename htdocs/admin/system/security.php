@@ -65,6 +65,8 @@ print '<br>';
 
 print load_fiche_titre($langs->trans("PHPSetup"), '', 'folder');
 
+print '<div class="wordbreak">';
+
 // Get version of PHP
 $phpversion = version_php();
 print "<strong>PHP</strong>: ".$langs->trans("Version").": ".$phpversion;
@@ -188,6 +190,9 @@ if ($test) {
 	print img_picto('', 'warning').' '.$langs->trans("ModuleActivatedMayExposeInformation", $langs->transnoentities("XDebug"));
 	print ' - '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php">XDebug admin page</a>';
 }
+
+print '</div>';
+
 print '<br>';
 
 
@@ -197,6 +202,8 @@ print '<br>';
 print '<br>';
 print '<br>';
 print load_fiche_titre($langs->trans("OSSetup").' - '.$langs->trans("PermissionsOnFiles"), '', 'folder');
+
+print '<div class="wordbreak">';
 
 print '<strong>'.$langs->trans("PermissionsOnFilesInWebRoot").'</strong>: ';
 $arrayoffilesinroot = dol_dir_list(DOL_DOCUMENT_ROOT, 'all', 1, '', array('\/custom'), 'name', SORT_ASC, 4, 1, '', 1);
@@ -285,6 +292,7 @@ if (file_exists($installmoduleslock)) {
 }
 print '<br>';
 
+print '</div>';
 
 
 // File conf.php
@@ -302,7 +310,7 @@ print '<br>';
 
 print '<strong>$dolibarr_nocsrfcheck</strong>: '.(empty($dolibarr_nocsrfcheck) ? '0' : $dolibarr_nocsrfcheck);
 if (!empty($dolibarr_nocsrfcheck)) {
-	print ' &nbsp; '.img_picto('', 'warning').' '.$langs->trans("IfYouAreOnAProductionSetThis", 0);
+	print ' &nbsp; '.img_picto('', 'error').' '.$langs->trans("IfYouAreOnAProductionSetThis", 0);
 } else {
 	print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 0)</span>';
 }
@@ -348,6 +356,7 @@ print '<br>';
 
 print load_fiche_titre($langs->trans("Menu").' '.$langs->trans("SecuritySetup"), '', 'folder');
 
+print '<div class="wordbreak">';
 
 print '<strong>'.$langs->trans("UseCaptchaCode").'</strong>: ';
 print !getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA') ? '' : img_picto('', 'tick').' ';
@@ -480,6 +489,9 @@ if (empty($out)) {
 
 print '<br>';
 
+print '</div>';
+
+
 
 // Modules/Applications
 
@@ -487,6 +499,8 @@ print '<br>';
 print '<br>';
 print '<br>';
 print load_fiche_titre($langs->trans("Modules"), '', 'folder');
+
+print '<div class="wordbreak">';
 
 // Module log
 print '<strong>'.$langs->trans("Syslog").'</strong>: ';
@@ -553,7 +567,7 @@ if (!isModEnabled('api') && !isModEnabled('webservices')) {
 	print $langs->trans("APIsAreNotEnabled");
 } else {
 	if (isModEnabled('webservices')) {
-		print $langs->trans('YouEnableDeprecatedWSAPIsUseRESTAPIsInstead')."<br>\n";
+		print img_picto('', 'warning').' '.$langs->trans('YouEnableDeprecatedWSAPIsUseRESTAPIsInstead')."<br>\n";
 		print '<br>';
 	}
 	if (isModEnabled('api')) {
@@ -562,14 +576,16 @@ if (!isModEnabled('api') && !isModEnabled('webservices')) {
 	}
 }
 
+print '</div>';
+
 
 print '<br><br>';
-
-
 print '<br>';
 
 
 print load_fiche_titre($langs->trans("OtherSetup"), '', 'folder');
+
+print '<div class="wordbreak">';
 
 print '<strong>MAIN_ALLOW_SVG_FILES_AS_IMAGES</strong> = '.getDolGlobalString('MAIN_ALLOW_SVG_FILES_AS_IMAGES', '0').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 0)</span><br>';
 print '<br>';
@@ -633,11 +649,11 @@ print '<strong>MAIN_SECURITY_MAXFILESIZE_DOWNLOADED</strong> = '.getDolGlobalStr
 print '<br>';
 
 print '<strong>MAIN_RESTRICTHTML_ONLY_VALID_HTML</strong> = '.(getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML') ? '1' : '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
-print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": 0 - does not work on HTML5 with some old libxml libs)</span><br>";
+print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": 1 - does not work on HTML5 with some old libxml libs)</span><br>";
 print '<br>';
 
 print '<strong>MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY</strong> = '.(getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY') ? '1' : '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
-print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 1) &nbsp; - &nbsp; Module "tidy" must be enabled (currently: '.((extension_loaded('tidy') && class_exists("tidy")) ? 'Enabled' : 'Not available').")</span><br>";
+print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 1) &nbsp; - &nbsp; Module "php-tidy" must be enabled (currently: '.((extension_loaded('tidy') && class_exists("tidy")) ? 'Enabled' : img_picto('', 'warning').' Not available').")</span><br>";
 print '<br>';
 
 print '<strong>MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES</strong> = '.(getDolGlobalString('MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES') ? '1' : '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
@@ -686,10 +702,15 @@ print '<br>';
 print '<strong>WEBSITE_MAIN_SECURITY_FORCEPP</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCEPP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"camera: (); microphone: ();\")</span><br>";
 print '<br>';
 
+print '</div>';
+
+
 print '<br>';
 
 
 print load_fiche_titre($langs->trans("LimitsAndMitigation"), '', 'folder');
+
+print '<div class="wordbreak">';
 
 print '<span class="opacitymedium">';
 print $langs->trans("RecommendMitigationOnURL").'<br>';
@@ -697,13 +718,14 @@ print '</span>';
 
 print '<br>';
 $urlexamplebase = 'https://github.com/Dolibarr/dolibarr/blob/develop/dev/setup/fail2ban/filter.d/';
-print '- Login or API authentication (see <a target="_blank" rel="noopener" href="'.$urlexamplebase.'web-dolibarr-rulesbruteforce.conf">fail2ban example on GitHub</a>)<br>';
-print '- '.DOL_URL_ROOT.'/passwordforgotten.php (see <a target="_blank" rel="noopener" href="'.$urlexamplebase.'web-dolibarr-rulespassforgotten.conf">fail2ban example on GitHub</a>)<br>';
-print '- '.DOL_URL_ROOT.'/public/* (see <a target="_blank" rel="noopener" href="'.$urlexamplebase.'web-dolibarr-limitpublic.conf">fail2ban example on GitHub</a>)<br>';
+print '<span class="fas fa-shield-alt"></span> Login or API authentication (see <a target="_blank" rel="noopener" href="'.$urlexamplebase.'web-dolibarr-rulesbruteforce.conf">fail2ban example on GitHub</a>)<br>';
+print '<span class="fas fa-shield-alt"></span> '.DOL_URL_ROOT.'/passwordforgotten.php (see <a target="_blank" rel="noopener" href="'.$urlexamplebase.'web-dolibarr-rulespassforgotten.conf">fail2ban example on GitHub</a>)<br>';
+print '<span class="fas fa-shield-alt"></span> '.DOL_URL_ROOT.'/public/* (see <a target="_blank" rel="noopener" href="'.$urlexamplebase.'web-dolibarr-limitpublic.conf">fail2ban example on GitHub</a>)<br>';
 print '<br>';
 $urlexamplebase = 'https://github.com/Dolibarr/dolibarr/blob/develop/dev/setup/apache/';
-print '- You can also protect the application using a HTTP Basic authentication layer (see <a target="_blank" rel="noopener" href="'.$urlexamplebase.'virtualhost">apache2 virtualhost example on GitHub</a>)<br>';
+print '<span class="fas fa-shield-alt"></span> You can also protect the application using a HTTP Basic authentication layer (see <a target="_blank" rel="noopener" href="'.$urlexamplebase.'virtualhost">apache2 virtualhost example on GitHub</a>)<br>';
 
+print '</div>';
 
 // End of page
 llxFooter();
