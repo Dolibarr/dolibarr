@@ -438,20 +438,20 @@ print '</td>';
 print '<td class="liste_titre"><input type="text" class="flat width150" name="search_label" value="'.$db->escape($search_label).'"></td>';
 // Date end period
 print '<td class="liste_titre center">';
-print '<div class="nowrap">';
-print $form->selectDate($search_dateep_start ? $search_dateep_start : -1, 'search_dateep_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+print '<div class="nowrapfordate">';
+ print $form->selectDate($search_dateep_start ? $search_dateep_start : -1, 'search_dateep_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 print '</div>';
-print '<div class="nowrap">';
-print $form->selectDate($search_dateep_end ? $search_dateep_end : -1, 'search_dateep_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+print '<div class="nowrapfordate">';
+ print $form->selectDate($search_dateep_end ? $search_dateep_end : -1, 'search_dateep_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 print '</div>';
 print '</td>';
 // Date payment
 print '<td class="liste_titre center">';
-print '<div class="nowrap">';
-print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+print '<div class="nowrapfordate">';
+ print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 print '</div>';
-print '<div class="nowrap">';
-print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+print '<div class="nowrapfordate">';
+ print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 print '</div>';
 print '</td>';
 // Date value
