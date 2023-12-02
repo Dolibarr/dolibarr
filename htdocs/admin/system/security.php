@@ -99,20 +99,20 @@ if (function_exists('exec')) {
 }
 print '<br>';
 
-print "<strong>PHP session.use_strict_mode</strong> = ".(ini_get('session.use_strict_mode') ? '' : img_warning().' ').(ini_get('session.use_strict_mode') ? ini_get('session.use_strict_mode') : yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", '1').")</span><br>\n";
-print "<strong>PHP session.use_only_cookies</strong> = ".(ini_get('session.use_only_cookies') ? '' : img_warning().' ').(ini_get('session.use_only_cookies') ? ini_get('session.use_only_cookies') : yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", '1').")</span><br>\n";
-print "<strong>PHP session.cookie_httponly</strong> = ".(ini_get('session.cookie_httponly') ? '' : img_warning().' ').(ini_get('session.cookie_httponly') ? ini_get('session.cookie_httponly') : '').' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", '1').")</span><br>\n";
-print "<strong>PHP session.cookie_samesite</strong> = ".(ini_get('session.cookie_samesite') ? ini_get('session.cookie_samesite') : 'None');
+print "<strong>PHP session.use_strict_mode</strong> = ".(ini_get('session.use_strict_mode') ? img_picto('', 'tick').' ' : img_warning().' ').(ini_get('session.use_strict_mode') ? ini_get('session.use_strict_mode') : yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", '1').")</span><br>\n";
+print "<strong>PHP session.use_only_cookies</strong> = ".(ini_get('session.use_only_cookies') ? img_picto('', 'tick').' ' : img_warning().' ').(ini_get('session.use_only_cookies') ? ini_get('session.use_only_cookies') : yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", '1').")</span><br>\n";
+print "<strong>PHP session.cookie_httponly</strong> = ".(ini_get('session.cookie_httponly') ? img_picto('', 'tick').' ' : img_warning().' ').(ini_get('session.cookie_httponly') ? ini_get('session.cookie_httponly') : '').' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", '1').")</span><br>\n";
+print "<strong>PHP session.cookie_samesite</strong> = ".(ini_get('session.cookie_samesite') ? img_picto('', 'tick').' ' .ini_get('session.cookie_samesite') : 'None');
 if (!ini_get('session.cookie_samesite') || ini_get('session.cookie_samesite') == 'Lax') {
 	print ' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'Lax').")</span>";
 } elseif (ini_get('session.cookie_samesite') == 'Strict') {
 	print ' &nbsp; '.img_warning().' <span class="opacitymedium">'.$langs->trans("WarningPaypalPaymentNotCompatibleWithStrict")."</span>";
 }
 print "<br>\n";
-print "<strong>PHP open_basedir</strong> = ".(ini_get('open_basedir') ? ini_get('open_basedir') : yn(0).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("ARestrictedPath").', '.$langs->transnoentitiesnoconv("Example").': '.$_SERVER["DOCUMENT_ROOT"].','.DOL_DATA_ROOT).')</span>')."<br>\n";
-print "<strong>PHP short_open_tag</strong> = ".((empty(ini_get('short_open_tag')) || ini_get('short_open_tag') == 'Off') ? yn(0) : img_warning().' '.yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No")).')</span>'."<br>\n";
+print "<strong>PHP open_basedir</strong> = ".(ini_get('open_basedir') ?  img_picto('', 'tick').' '.ini_get('open_basedir') : img_warning().' '.yn(0).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("ARestrictedPath").', '.$langs->transnoentitiesnoconv("Example").': '.$_SERVER["DOCUMENT_ROOT"].','.DOL_DATA_ROOT).')</span>')."<br>\n";
+print "<strong>PHP short_open_tag</strong> = ".((empty(ini_get('short_open_tag')) || ini_get('short_open_tag') == 'Off') ?  img_picto('', 'tick').' '.yn(0) : img_warning().' '.yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No")).')</span>'."<br>\n";
 print "<strong>PHP allow_url_fopen</strong> = ".(ini_get('allow_url_fopen') ? img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' '.ini_get('allow_url_fopen') : yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No")).")</span><br>\n";
-print "<strong>PHP allow_url_include</strong> = ".(ini_get('allow_url_include') ? img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' '.ini_get('allow_url_include') : yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No")).")</span><br>\n";
+print "<strong>PHP allow_url_include</strong> = ".(ini_get('allow_url_include') ? img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' '.ini_get('allow_url_include') : img_picto('', 'tick').' '.yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No")).")</span><br>\n";
 //print "<strong>PHP safe_mode</strong> = ".(ini_get('safe_mode') ? ini_get('safe_mode') : yn(0)).' &nbsp; <span class="opacitymedium">'.$langs->trans("Deprecated")." (removed in PHP 5.4)</span><br>\n";
 print "<strong>PHP disable_functions</strong> = ";
 $arrayoffunctionsdisabled = explode(',', ini_get('disable_functions'));
@@ -379,15 +379,15 @@ print ': '.getDolGlobalInt('MAIN_SESSION_TIMEOUT').' '.strtolower($langs->trans(
 print '<br><br>';
 
 print '<strong>'.$langs->trans("MaxNumberOfImagesInGetPost").'</strong>: ';
-print getDolGlobalInt('MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT').' '.strtolower($langs->trans("Images"));
+print (getDolGlobalInt('MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT') ? img_picto('', 'tick').' ' : '').getDolGlobalInt('MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT').' '.strtolower($langs->trans("Images"));
 print '<br><br>';
 
 print '<strong>'.$langs->trans("MaxNumberOfPostOnPublicPagesByIP").'</strong>: ';
-print getDolGlobalInt('MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS', 200).' '.strtolower($langs->trans("Posts"));
+print (getDolGlobalInt('MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS', 200) ? img_picto('', 'tick').' ' : '').getDolGlobalInt('MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS', 200).' '.strtolower($langs->trans("Posts"));
 print '<br><br>';
 
 print '<strong>'.$langs->trans("MaxNumberOfAttachementOnForms").'</strong>: ';
-print getDolGlobalInt("MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS", 10).' '.strtolower($langs->trans("Files"));
+print (getDolGlobalInt('MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS', 10) ? img_picto('', 'tick').' ' : '').getDolGlobalInt("MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS", 10).' '.strtolower($langs->trans("Files"));
 print '<br><br>';
 
 print '<strong>'.$langs->trans("DoNotStoreClearPassword").'</strong>: ';
@@ -485,6 +485,9 @@ if (!empty($eventstolog) && is_array($eventstolog)) {
 
 if (empty($out)) {
 	print img_warning().' '.$langs->trans("NoSecurityEventsAreAduited", $langs->transnoentities("Home").' - '.$langs->transnoentities("Setup").' - '.$langs->transnoentities("Security").' - '.$langs->transnoentities("Audit")).'<br>';
+} else {
+	$s = $langs->trans("SeeSetupPage", '{s1}'.$langs->transnoentities("Home").' - '.$langs->transnoentities("Setup").' - '.$langs->transnoentities("Security").' - '.$langs->transnoentities("Audit").'{s2}');
+	print ' - '.str_replace('{s2}', '</a>', str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/admin/events.php" target="_blank">', $s));
 }
 
 print '<br>';
