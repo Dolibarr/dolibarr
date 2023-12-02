@@ -1167,8 +1167,6 @@ if ($mode == 'marketplace') {
 if ($mode == 'deploy') {
 	print dol_get_fiche_head($head, $mode, '', -1);
 
-	print $deschelp;
-
 	$dolibarrdataroot = preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);
 	$allowonlineinstall = true;
 	$allowfromweb = 1;
@@ -1209,6 +1207,8 @@ if ($mode == 'deploy') {
 		$allowfromweb = 0;
 	}
 
+	print $deschelp;
+
 	if ($allowfromweb < 1) {
 		print $langs->trans("SomethingMakeInstallFromWebNotPossible");
 		print $message;
@@ -1218,6 +1218,7 @@ if ($mode == 'deploy') {
 
 	print '<br>';
 
+	// $allowfromweb = -1 if installation or setup not correct, 0 if not allowed, 1 if allowed
 	if ($allowfromweb >= 0) {
 		if ($allowfromweb == 1) {
 			//print $langs->trans("ThisIsProcessToFollow").'<br>';
@@ -1231,16 +1232,12 @@ if ($mode == 'deploy') {
 		}
 
 		if ($allowfromweb == 1) {
-			print '<span class="opacitymedium">'.$langs->trans("UnpackPackageInModulesRoot", $dirins).'</span><br>';
-
-			print '<br>';
-
 			print '<form enctype="multipart/form-data" method="POST" class="noborder" action="'.$_SERVER["PHP_SELF"].'" name="forminstall">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="install">';
 			print '<input type="hidden" name="mode" value="deploy">';
 
-			print $langs->trans("YouCanSubmitFile");
+			print $langs->trans("YouCanSubmitFile").'<br><br>';
 
 			$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
 			$maxphp = @ini_get('upload_max_filesize'); // In unknown
