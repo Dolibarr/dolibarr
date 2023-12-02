@@ -268,7 +268,7 @@ class CMailFile
 			if (!empty($conf->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_DATA)) {
 				// Search into the body for <img src="data:image/ext;base64,..." to replace them with an embedded file
 				// This convert an embedded file with src="data:image... into a cid link + attached file
-				$findimg = $this->findHtmlImagesIsSrcData($upload_dir_tmp);
+				$findimg = $findimg + $this->findHtmlImagesIsSrcData($upload_dir_tmp);
 			}
 
 			// Set atleastoneimage if there is at least one embedded file (into ->html_images)
@@ -1858,7 +1858,7 @@ class CMailFile
 				return -1;
 			}
 
-			$i = 0;
+			$i = count($this->html_images);
 			foreach ($matches[1] as $key => $ext) {
 				// We save the image to send in disk
 				$filecontent = $matches[2][$key];
