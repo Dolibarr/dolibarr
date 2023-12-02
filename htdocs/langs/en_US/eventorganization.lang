@@ -107,7 +107,7 @@ EvntOrgSuggested = Suggested
 EvntOrgConfirmed = Confirmed
 EvntOrgNotQualified = Not Qualified
 EvntOrgDone = Done
-EvntOrgCancelled = Cancelled
+EvntOrgCancelled = Canceled
 
 #
 # Other

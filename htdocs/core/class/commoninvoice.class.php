@@ -1081,6 +1081,7 @@ abstract class CommonInvoice extends CommonObject
 	public function makeStripeCardRequest($fuser, $id, $sourcetype = 'facture')
 	{
 		// TODO See in sellyoursaas
+		return 0;
 	}
 
 	/**
