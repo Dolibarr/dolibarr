@@ -136,7 +136,7 @@ class Tva extends CommonObject
 	 *  Create in database
 	 *
 	 *  @param      User	$user       User that create
-	 *  @return     int      			<0 if KO, >0 if OK
+	 *  @return     int      			Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user)
 	{
@@ -217,7 +217,7 @@ class Tva extends CommonObject
 	 *
 	 * @param   User	$user        	User that modify
 	 * @param	int		$notrigger	    0=no, 1=yes (no update trigger)
-	 * @return  int         			<0 if KO, >0 if OK
+	 * @return  int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user, $notrigger = 0)
 	{
@@ -278,7 +278,7 @@ class Tva extends CommonObject
 	 *    Tag TVA as payed completely
 	 *
 	 *    @param    User    $user       Object user making change
-	 *    @return   int					<0 if KO, >0 if OK
+	 *    @return   int					Return integer <0 if KO, >0 if OK
 	 */
 	public function setPaid($user)
 	{
@@ -298,7 +298,7 @@ class Tva extends CommonObject
 	 *    Remove tag payed on TVA
 	 *
 	 *    @param	User	$user       Object user making change
-	 *    @return	int					<0 if KO, >0 if OK
+	 *    @return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function setUnpaid($user)
 	{
@@ -320,7 +320,7 @@ class Tva extends CommonObject
 	 *
 	 *  @param	int		$id         id object
 	 *  @param  string	$ref        Ref of VAT (not used yet)
-	 *  @return int         		<0 if KO, >0 if OK
+	 *  @return int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $ref = '')
 	{
@@ -379,7 +379,7 @@ class Tva extends CommonObject
 	 *  Delete object in database
 	 *
 	 *	@param	User	$user       User that delete
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user)
 	{
@@ -451,7 +451,7 @@ class Tva extends CommonObject
 		return $solde;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Total of the VAT from invoices emitted by the thirdparty.
 	 *
@@ -460,7 +460,7 @@ class Tva extends CommonObject
 	 */
 	public function tva_sum_collectee($year = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 
 		$sql = "SELECT sum(f.total_tva) as amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.paye = 1";
@@ -705,7 +705,7 @@ class Tva extends CommonObject
 	 *  Update link between payment tva and line generate into llx_bank
 	 *
 	 *  @param	int		$id_bank    Id bank account
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function update_fk_bank($id_bank)
 	{
@@ -826,7 +826,7 @@ class Tva extends CommonObject
 	 *	Informations of vat payment object
 	 *
 	 *	@param	int		$id     Id of vat payment
-	 *	@return	int				<0 if KO, >0 if OK
+	 *	@return	void
 	 */
 	public function info($id)
 	{

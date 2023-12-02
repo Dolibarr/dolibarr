@@ -524,7 +524,7 @@ class Ldap
 	 *	@param	string	$dn			DN entry key
 	 *	@param	array	$info		Attributes array
 	 *	@param	User		$user		Objet user that create
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function add($dn, $info, $user)
 	{
@@ -572,7 +572,7 @@ class Ldap
 	 *	@param	string		$dn			DN entry key
 	 *	@param	array		$info		Attributes array
 	 *	@param	User		$user		Objet user that modify
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function modify($dn, $info, $user)
 	{
@@ -630,7 +630,7 @@ class Ldap
 	 *	@param	string		$newparent		New parent (ou=xxx,dc=aaa,dc=bbb)
 	 *	@param	User			$user			Objet user that modify
 	 *	@param	bool			$deleteoldrdn	If true the old RDN value(s) is removed, else the old RDN value(s) is retained as non-distinguished values of the entry.
-	 *	@return	int							<0 if KO, >0 if OK
+	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function rename($dn, $newrdn, $newparent, $user, $deleteoldrdn = true)
 	{
@@ -674,7 +674,7 @@ class Ldap
 	 * 	@param	string	$olddn		Old DN entry key (before update)
 	 * 	@param	string	$newrdn		New RDN entry key (uid=qqq) (for ldap_rename)
 	 *	@param	string	$newparent	New parent (ou=xxx,dc=aaa,dc=bbb) (for ldap_rename)
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function update($dn, $info, $user, $olddn, $newrdn = false, $newparent = false)
 	{
@@ -724,7 +724,7 @@ class Ldap
 	 *	Ldap object connect and bind must have been done
 	 *
 	 *	@param	string	$dn			DN entry key
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($dn)
 	{
@@ -794,7 +794,7 @@ class Ldap
 	 *
 	 *	@param	string		$dn			DN entry key
 	 *	@param	array		$info		Attributes array
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function dump($dn, $info)
 	{
@@ -871,7 +871,7 @@ class Ldap
 	 *	@param	string		$dn			DN entry key
 	 *	@param	array		$info		Attributes array
 	 *	@param	User		$user		Objet user that create
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function addAttribute($dn, $info, $user)
 	{
@@ -917,7 +917,7 @@ class Ldap
 	 *	@param	string		$dn			DN entry key
 	 *	@param	array		$info		Attributes array
 	 *	@param	User		$user		Objet user that create
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function updateAttribute($dn, $info, $user)
 	{
@@ -963,7 +963,7 @@ class Ldap
 	 *	@param	string		$dn			DN entry key
 	 *	@param	array		$info		Attributes array
 	 *	@param	User		$user		Objet user that create
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function deleteAttribute($dn, $info, $user)
 	{

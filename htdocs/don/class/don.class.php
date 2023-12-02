@@ -634,7 +634,7 @@ class Don extends CommonObject
 	 *
 	 *      @param      int		$id      Id of donation to load
 	 *      @param      string	$ref        Ref of donation to load
-	 *      @return     int      			<0 if KO, >0 if OK
+	 *      @return     int      			Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $ref = '')
 	{
@@ -715,7 +715,7 @@ class Don extends CommonObject
 	 *
 	 *	@param		User		$user		User that validate
 	 *  @param		int			$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setValid($user, $notrigger = 0)
 	{
@@ -729,7 +729,7 @@ class Don extends CommonObject
 	 *    @param	int		$id   		id of donation
 	 *    @param  	int		$userid  	User who validate the donation/promise
 	 *    @param	int		$notrigger	Disable triggers
-	 *    @return   int     			<0 if KO, >0 if OK
+	 *    @return   int     			Return integer <0 if KO, >0 if OK
 	 */
 	public function valid_promesse($id, $userid, $notrigger = 0)
 	{
@@ -774,7 +774,7 @@ class Don extends CommonObject
 	 *
 	 *    @param	int		$id           	    id of donation
 	 *    @param    int		$modepayment   	    mode of payment
-	 *    @return   int      					<0 if KO, >0 if OK
+	 *    @return   int      					Return integer <0 if KO, >0 if OK
 	 */
 	public function setPaid($id, $modepayment = 0)
 	{
@@ -804,7 +804,7 @@ class Don extends CommonObject
 	 *    Set donation to status cancelled
 	 *
 	 *    @param	int		$id   	    id of donation
-	 *    @return   int     			<0 if KO, >0 if OK
+	 *    @return   int     			Return integer <0 if KO, >0 if OK
 	 */
 	public function set_cancel($id)
 	{
@@ -881,7 +881,7 @@ class Don extends CommonObject
 	/**
 	 *	Charge indicateurs this->nb pour le tableau de bord
 	 *
-	 *	@return     int         <0 if KO, >0 if OK
+	 *	@return     int         Return integer <0 if KO, >0 if OK
 	 */
 	public function load_state_board()
 	{

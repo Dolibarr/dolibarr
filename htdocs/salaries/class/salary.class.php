@@ -144,7 +144,7 @@ class Salary extends CommonObject
 	 *
 	 * @param   User	$user        	User that modify
 	 * @param	int		$notrigger	    0=no, 1=yes (no update trigger)
-	 * @return  int         			<0 if KO, >0 if OK
+	 * @return  int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -220,7 +220,7 @@ class Salary extends CommonObject
 	 *
 	 *  @param	int		$id         id object
 	 *  @param  User	$user       User that load
-	 *  @return int         		<0 if KO, >0 if OK
+	 *  @return int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $user = null)
 	{
@@ -291,7 +291,7 @@ class Salary extends CommonObject
 	 *
 	 *	@param	User	$user       User that delete
 	 *  @param  bool 	$notrigger 	false=launch triggers after, true=disable triggers
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -328,7 +328,7 @@ class Salary extends CommonObject
 	 *  Create in database
 	 *
 	 *  @param      User	$user       User that create
-	 *  @return     int      			<0 if KO, >0 if OK
+	 *  @return     int      			Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user)
 	{
@@ -451,7 +451,7 @@ class Salary extends CommonObject
 	 *  Update link between payment salary and line generate into llx_bank
 	 *
 	 *  @param	int		$id_bank    Id bank account
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function update_fk_bank($id_bank)
 	{
@@ -639,7 +639,7 @@ class Salary extends CommonObject
 	 *	  @deprecated
 	 *    @see setPaid()
 	 *    @param    User    $user       Object user making change
-	 *    @return   int					<0 if KO, >0 if OK
+	 *    @return   int					Return integer <0 if KO, >0 if OK
 	 */
 	public function set_paid($user)
 	{
@@ -652,7 +652,7 @@ class Salary extends CommonObject
 	 *    Tag social contribution as payed completely
 	 *
 	 *    @param    User    $user       Object user making change
-	 *    @return   int					<0 if KO, >0 if OK
+	 *    @return   int					Return integer <0 if KO, >0 if OK
 	 */
 	public function setPaid($user)
 	{
@@ -675,7 +675,7 @@ class Salary extends CommonObject
 	 *    Remove tag payed on social contribution
 	 *
 	 *    @param	User	$user       Object user making change
-	 *    @return	int					<0 if KO, >0 if OK
+	 *    @return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function set_unpaid($user)
 	{

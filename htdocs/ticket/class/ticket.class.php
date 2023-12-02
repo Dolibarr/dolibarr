@@ -480,7 +480,7 @@ class Ticket extends CommonObject
 	 *
 	 *  @param  User $user      User that creates
 	 *  @param  int  $notrigger 0=launch triggers after, 1=disable triggers
-	 *  @return int                      <0 if KO, Id of created object if OK
+	 *  @return int                      Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -626,7 +626,7 @@ class Ticket extends CommonObject
 	 *  @param	string		$ref			Ref
 	 *  @param	string		$track_id		Track id, a hash like ref
 	 *  @param	string		$email_msgid	Email msgid
-	 *  @return int              			<0 if KO, >0 if OK
+	 *  @return int              			Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id = '', $ref = '', $track_id = '', $email_msgid = '')
 	{
@@ -761,7 +761,7 @@ class Ticket extends CommonObject
 	 * @param  int    $offset    	Offset for query
 	 * @param  int    $arch      	archive or not (not used)
 	 * @param  array  $filter    	Filter for query
-	 * @return int 					<0 if KO, >0 if OK
+	 * @return int 					Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchAll($user, $sortorder = 'ASC', $sortfield = 't.datec', $limit = '', $offset = 0, $arch = '', $filter = '')
 	{
@@ -928,7 +928,7 @@ class Ticket extends CommonObject
 	 *
 	 *  @param  User $user      User that modifies
 	 *  @param  int  $notrigger 0=launch triggers after, 1=disable triggers
-	 *  @return int                     <0 if KO, >0 if OK
+	 *  @return int                     Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = 0, $notrigger = 0)
 	{
@@ -1084,7 +1084,7 @@ class Ticket extends CommonObject
 	 *
 	 *     @param  User $user      User that deletes
 	 *  @param  int  $notrigger 0=launch triggers after, 1=disable triggers
-	 *  @return int                     <0 if KO, >0 if OK
+	 *  @return int                     Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -1715,7 +1715,7 @@ class Ticket extends CommonObject
 	 * @param 	array	$mimefilename_list  List of attached file name in message
 	 * @param 	boolean	$send_email      	Whether the message is sent by email
 	 * @param   int     $public_area    	0=Default, 1 if we are creating the message from a public area (so we can search contact from email to add it as contact of ticket if TICKET_ASSIGN_CONTACT_TO_MESSAGE is set)
-	 * @return 	int						  	<0 if KO, >0 if OK
+	 * @return 	int						  	Return integer <0 if KO, >0 if OK
 	 */
 	public function createTicketMessage($user, $notrigger = 0, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $send_email = false, $public_area = 0)
 	{
@@ -2038,7 +2038,7 @@ class Ticket extends CommonObject
 	 *    Define parent commany of current ticket
 	 *
 	 *    @param  int $id		Id of thirdparty to set or '' to remove
-	 *    @return int           <0 if KO, >0 if OK
+	 *    @return int           Return integer <0 if KO, >0 if OK
 	 */
 	public function setCustomer($id)
 	{
@@ -2062,7 +2062,7 @@ class Ticket extends CommonObject
 	 *    Define progression of current ticket
 	 *
 	 *    @param  int $percent Progression percent
-	 *    @return int             <0 if KO, >0 if OK
+	 *    @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function setProgression($percent)
 	{
@@ -2086,7 +2086,7 @@ class Ticket extends CommonObject
 	 *     Link element with a contract
 	 *
 	 *     @param  int $contractid Contract id to link element to
-	 *     @return int                        <0 if KO, >0 if OK
+	 *     @return int                        Return integer <0 if KO, >0 if OK
 	 */
 	public function setContract($contractid)
 	{
@@ -2485,7 +2485,7 @@ class Ticket extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param  int[]|int 	$categories 	Category or categories IDs
-	 * @return int							<0 if KO, >0 if OK
+	 * @return int							Return integer <0 if KO, >0 if OK
 	 */
 	public function setCategories($categories)
 	{

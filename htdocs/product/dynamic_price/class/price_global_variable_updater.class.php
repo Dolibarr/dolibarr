@@ -91,7 +91,7 @@ class PriceGlobalVariableUpdater
 	 *
 	 *  @param	User	$user        User that creates
 	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return int      		   	 <0 if KO, Id of created object if OK
+	 *  @return int      		   	 Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -190,7 +190,7 @@ class PriceGlobalVariableUpdater
 	 *
 	 *  @param	User	$user        User that modifies
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 <0 if KO, >0 if OK
+	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = 0, $notrigger = 0)
 	{
@@ -251,7 +251,7 @@ class PriceGlobalVariableUpdater
 	 * 	@param	int		$rowid		 Row id of global variable
 	 *	@param  User	$user        User that deletes
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 <0 if KO, >0 if OK
+	 *  @return	int					 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($rowid, $user, $notrigger = 0)
 	{
@@ -557,7 +557,7 @@ class PriceGlobalVariableUpdater
 	 *  @param	string	$next_update Next update to write
 	 *  @param	User	$user        User that modifies
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 <0 if KO, >0 if OK
+	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update_next_update($next_update, $user = 0, $notrigger = 0)
 	{
@@ -601,7 +601,7 @@ class PriceGlobalVariableUpdater
 	 *  @param	string	$last_status Status to write
 	 *  @param	User	$user        User that modifies
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 <0 if KO, >0 if OK
+	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update_status($last_status, $user = 0, $notrigger = 0)
 	{

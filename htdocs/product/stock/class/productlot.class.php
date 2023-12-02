@@ -300,7 +300,7 @@ class Productlot extends CommonObject
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
 	 *
-	 * @return int <0 if KO, Id of created object if OK
+	 * @return int Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -423,7 +423,7 @@ class Productlot extends CommonObject
 	 * @param int    $product_id  	Id of product, batch number parameter required
 	 * @param string $batch 		batch number
 	 *
-	 * @return int <0 if KO, 0 if not found, >0 if OK
+	 * @return int Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id = 0, $product_id = 0, $batch = '')
 	{
@@ -516,7 +516,7 @@ class Productlot extends CommonObject
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
 	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
@@ -614,7 +614,7 @@ class Productlot extends CommonObject
 	 * @param User $user      User that deletes
 	 * @param bool $notrigger false=launch triggers after, true=disable triggers
 	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{

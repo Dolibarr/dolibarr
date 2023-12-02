@@ -117,7 +117,7 @@ class ActionsTicket extends CommonHookActions
 	 * @param	int		$id				ID of ticket
 	 * @param	string	$ref			Reference of ticket
 	 * @param	string	$track_id		Track ID of ticket (for public area)
-	 * @return int              		<0 if KO, >0 if OK
+	 * @return int              		Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id = 0, $ref = '', $track_id = '')
 	{

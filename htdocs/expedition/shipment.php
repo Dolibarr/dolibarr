@@ -859,7 +859,7 @@ if ($id > 0 || !empty($ref)) {
 		}
 
 
-		// Bouton expedier avec gestion des stocks
+		// Button to create a shipment
 
 		if (isModEnabled('stock') && $object->statut == Commande::STATUS_DRAFT) {
 			print $langs->trans("ValidateOrderFirstBeforeShipment");
@@ -909,7 +909,7 @@ if ($id > 0 || !empty($ref)) {
 				$somethingshown = 1;
 			} else {
 				print '<div class="tabsAction">';
-				print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CreateShipment").'</a>';
+				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans("CreateShipment").'</a>';
 				print '</div>';
 			}
 		}

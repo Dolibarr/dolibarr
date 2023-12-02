@@ -301,7 +301,7 @@ class EmailCollector extends CommonObject
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -430,7 +430,7 @@ class EmailCollector extends CommonObject
 	 *
 	 * @param int    $id   Id object
 	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -446,7 +446,7 @@ class EmailCollector extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	/*
 	 public function fetchLines()
@@ -521,7 +521,7 @@ class EmailCollector extends CommonObject
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
@@ -549,7 +549,7 @@ class EmailCollector extends CommonObject
 	 *
 	 * @param User $user       User that deletes
 	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
@@ -718,7 +718,7 @@ class EmailCollector extends CommonObject
 	/**
 	 * Fetch filters
 	 *
-	 * @return 	int		<0 if KO, >0 if OK
+	 * @return 	int		Return integer <0 if KO, >0 if OK
 	 * @see fetchActions()
 	 */
 	public function fetchFilters()
@@ -750,7 +750,7 @@ class EmailCollector extends CommonObject
 	/**
 	 * Fetch actions
 	 *
-	 * @return 	int		<0 if KO, >0 if OK
+	 * @return 	int		Return integer <0 if KO, >0 if OK
 	 * @see fetchFilters()
 	 */
 	public function fetchActions()
@@ -1084,7 +1084,7 @@ class EmailCollector extends CommonObject
 	 * Execute collect for current collector loaded previously with fetch.
 	 *
 	 * @param	int		$mode		0=Mode production, 1=Mode test (read IMAP and try SQL update then rollback), 2=Mode test with no SQL updates
-	 * @return	int					<0 if KO, >0 if OK
+	 * @return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function doCollectOneCollector($mode = 0)
 	{

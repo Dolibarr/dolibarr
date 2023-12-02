@@ -1076,11 +1076,12 @@ abstract class CommonInvoice extends CommonObject
 	 *	@param      User	$fuser      	User asking the direct debit transfer
 	 *  @param		int		$id				Invoice ID with remain to pay
 	 *  @param		string	$sourcetype		Source ('facture' or 'supplier_invoice')
-	 *	@return     int         			<0 if KO, >0 if OK
+	 *	@return     int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function makeStripeCardRequest($fuser, $id, $sourcetype = 'facture')
 	{
 		// TODO See in sellyoursaas
+		return 0;
 	}
 
 	/**
@@ -1093,7 +1094,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  @param		string	$sourcetype		Source ('facture' or 'supplier_invoice')
 	 *  @param		string	$service		'StripeTest', 'StripeLive', ...
 	 *  @param		string	$forcestripe	To force another stripe env: 'cus_account@pk_...:sk_...'
-	 *	@return     int         			<0 if KO, >0 if OK
+	 *	@return     int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function makeStripeSepaRequest($fuser, $did, $type = 'direct-debit', $sourcetype = 'facture', $service = '', $forcestripe = '')
 	{

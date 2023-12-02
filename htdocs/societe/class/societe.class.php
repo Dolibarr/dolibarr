@@ -1073,7 +1073,7 @@ class Societe extends CommonObject
 	 * @param 	int		$no_email	    1=Do not send mailing, 0=Ok to recieve mailling
 	 * @param 	array	$tags		    Array of tag to affect to contact
 	 * @param   int     $notrigger	    1=Does not execute triggers, 0= execute triggers
-	 * @return 	int					    <0 if KO, >0 if OK
+	 * @return 	int					    Return integer <0 if KO, >0 if OK
 	 */
 	public function create_individual(User $user, $no_email = 0, $tags = array(), $notrigger = 0)
 	{
@@ -2212,7 +2212,7 @@ class Societe extends CommonObject
 	/**
 	 *  Define third party as a customer
 	 *
-	 *	@return		int		<0 if KO, >0 if OK
+	 *	@return		int		Return integer <0 if KO, >0 if OK
 	 *  @deprecated
 	 *  @see setAsCustomer()
 	 */
@@ -2227,7 +2227,7 @@ class Societe extends CommonObject
 	/**
 	 *  Define third party as a customer
 	 *
-	 *	@return		int		<0 if KO, >0 if OK
+	 *	@return		int		Return integer <0 if KO, >0 if OK
 	 *  @since dolibarr v19
 	 */
 	public function setAsCustomer()
@@ -2259,7 +2259,7 @@ class Societe extends CommonObject
 	 *  @param	float	$remise		Value in % of the discount
 	 *  @param  string	$note		Note/Reason for changing the discount
 	 *  @param  User	$user		User who sets the discount
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function set_remise_client($remise, $note, User $user)
 	{
@@ -2320,7 +2320,7 @@ class Societe extends CommonObject
 	 *  @param	float	$remise		Value in % of the discount
 	 *  @param  string	$note		Note/Reason for changing the discount
 	 *  @param  User	$user		User who sets the discount
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function set_remise_supplier($remise, $note, User $user)
 	{
@@ -2546,7 +2546,7 @@ class Societe extends CommonObject
 	 *
 	 * @param 	int		$price_level	Level of price
 	 * @param 	User	$user			Use making change
-	 * @return	int						<0 if KO, >0 if OK
+	 * @return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setPriceLevel($price_level, User $user)
 	{
@@ -3618,7 +3618,7 @@ class Societe extends CommonObject
 	 *    Define parent company of current company
 	 *
 	 *    @param	int		$id     Id of thirdparty to set or '' to remove
-	 *    @return	int     		<0 if KO, >0 if OK
+	 *    @return	int     		Return integer <0 if KO, >0 if OK
 	 */
 	public function setParent($id)
 	{
@@ -4249,7 +4249,7 @@ class Societe extends CommonObject
 	 *  Set "blacklist" mailing status
 	 *
 	 *  @param	int		$no_email	1=Do not send mailing, 0=Ok to recieve mailling
-	 *  @return int					<0 if KO, >0 if OK
+	 *  @return int					Return integer <0 if KO, >0 if OK
 	 */
 	public function setNoEmail($no_email)
 	{
@@ -4306,7 +4306,7 @@ class Societe extends CommonObject
 	 *  get "blacklist" mailing status
 	 * 	set no_email attribut to 1 or 0
 	 *
-	 *  @return int					<0 if KO, >0 if OK
+	 *  @return int					Return integer <0 if KO, >0 if OK
 	 */
 	public function getNoEmail()
 	{
@@ -5026,7 +5026,7 @@ class Societe extends CommonObject
 	 *  @param  int			$hidedesc       Hide description
 	 *  @param  int			$hideref        Hide ref
 	 *  @param  null|array  $moreparams     Array to provide more information
-	 *	@return int        					<0 if KO, >0 if OK
+	 *	@return int        					Return integer <0 if KO, >0 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
@@ -5083,7 +5083,7 @@ class Societe extends CommonObject
 	 *
 	 * @param 	int[]|int 	$categories 	Category ID or array of Categories IDs
 	 * @param 	string 		$type_categ 	Category type ('customer' or 'supplier')
-	 * @return	int							<0 if KO, >0 if OK
+	 * @return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function setCategories($categories, $type_categ)
 	{
@@ -5103,7 +5103,7 @@ class Societe extends CommonObject
 	 *
 	 * @param 	int[]|int 	$salesrep	 	User ID or array of user IDs
 	 * @param   bool        $onlyAdd        Only add (no delete before)
-	 * @return	int							<0 if KO, >0 if OK
+	 * @return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function setSalesRep($salesrep, $onlyAdd = false)
 	{
@@ -5148,7 +5148,7 @@ class Societe extends CommonObject
 	 *    Define third-party type of current company
 	 *
 	 *    @param	int		$typent_id	third party type rowid in llx_c_typent
-	 *    @return	int     			<0 if KO, >0 if OK
+	 *    @return	int     			Return integer <0 if KO, >0 if OK
 	 */
 	public function setThirdpartyType($typent_id)
 	{
@@ -5274,7 +5274,7 @@ class Societe extends CommonObject
 	 *	Function to get partnerships array
 	 *
 	 *  @param		string		$mode		'member' or 'thirdparty'
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchPartnerships($mode)
 	{

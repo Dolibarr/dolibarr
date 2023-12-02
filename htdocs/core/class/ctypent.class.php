@@ -54,7 +54,7 @@ class Ctypent extends CommonDict
 	 *
 	 *  @param      User	$user        User that create
 	 *  @param      int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return     int      		   	 <0 if KO, Id of created object if OK
+	 *  @return     int      		   	 Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -131,7 +131,7 @@ class Ctypent extends CommonDict
 	 *  @param      int		$id    	Id object
 	 *  @param		string	$code	Code
 	 *  @param		string	$label	Label
-	 *  @return     int          	<0 if KO, >0 if OK
+	 *  @return     int          	Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $code = '', $label = '')
 	{
@@ -178,7 +178,7 @@ class Ctypent extends CommonDict
 	 *
 	 *  @param      User	$user        User that modify
 	 *  @param      int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return     int     		   	 <0 if KO, >0 if OK
+	 *  @return     int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -240,7 +240,7 @@ class Ctypent extends CommonDict
 	 *
 	 *	@param  User	$user        User that delete
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 <0 if KO, >0 if OK
+	 *  @return	int					 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{

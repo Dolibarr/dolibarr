@@ -1180,6 +1180,9 @@ class User extends CommonObject
 		}
 		$sql .= " AND ur.fk_user= ".((int) $this->id);
 		$sql .= " AND r.perms IS NOT NULL";
+		if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+			$sql .= " AND r.perms NOT LIKE '%_advance'"; // Hide advanced perms if option is not enabled
+		}
 		if ($moduletag) {
 			$sql .= " AND r.module = '".$this->db->escape($moduletag)."'";
 		}
@@ -1432,7 +1435,7 @@ class User extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param 	int[]|int 	$categories 	Category or categories IDs
-	 * @return 	int							<0 if KO, >0 if OK
+	 * @return 	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function setCategories($categories)
 	{
@@ -1444,7 +1447,7 @@ class User extends CommonObject
 	 *  Delete the user
 	 *
 	 *	@param		User	$user	User than delete
-	 * 	@return		int				<0 if KO, >0 if OK
+	 * 	@return		int				Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user)
 	{
@@ -2548,7 +2551,7 @@ class User extends CommonObject
 	/**
 	 *  Read clicktodial information for user
 	 *
-	 *  @return int <0 if KO, >0 if OK
+	 *  @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_clicktodial()
 	{
@@ -2582,7 +2585,7 @@ class User extends CommonObject
 	/**
 	 *  Update clicktodial info
 	 *
-	 *  @return	int  <0 if KO, >0 if OK
+	 *  @return	int  Return integer <0 if KO, >0 if OK
 	 */
 	public function update_clicktodial()
 	{
@@ -2623,7 +2626,7 @@ class User extends CommonObject
 	 *  @param	int		$group      Id of group
 	 *  @param  int		$entity     Entity
 	 *  @param  int		$notrigger  Disable triggers
-	 *  @return int  				<0 if KO, >0 if OK
+	 *  @return int  				Return integer <0 if KO, >0 if OK
 	 */
 	public function SetInGroup($group, $entity, $notrigger = 0)
 	{
@@ -2679,7 +2682,7 @@ class User extends CommonObject
 	 *  @param	int   	$group       Id of group
 	 *  @param  int		$entity      Entity
 	 *  @param  int		$notrigger   Disable triggers
-	 *  @return int  			     <0 if KO, >0 if OK
+	 *  @return int  			     Return integer <0 if KO, >0 if OK
 	 */
 	public function RemoveFromGroup($group, $entity, $notrigger = 0)
 	{
@@ -3519,7 +3522,7 @@ class User extends CommonObject
 	 *  Update user using data from the LDAP
 	 *
 	 *  @param	Object	$ldapuser	Ladp User
-	 *  @return int  				<0 if KO, >0 if OK
+	 *  @return int  				Return integer <0 if KO, >0 if OK
 	 */
 	public function update_ldap2dolibarr(&$ldapuser)
 	{
@@ -3601,7 +3604,7 @@ class User extends CommonObject
 	/**
 	 *  Load this->parentof that is array(id_son=>id_parent, ...)
 	 *
-	 *  @return     int     <0 if KO, >0 if OK
+	 *  @return     int     Return integer <0 if KO, >0 if OK
 	 */
 	private function loadParentOf()
 	{
@@ -3831,7 +3834,7 @@ class User extends CommonObject
 	/**
 	 *      Load metrics this->nb for dashboard
 	 *
-	 *      @return     int         <0 if KO, >0 if OK
+	 *      @return     int         Return integer <0 if KO, >0 if OK
 	 */
 	public function load_state_board()
 	{
@@ -3981,7 +3984,7 @@ class User extends CommonObject
 	 *  @param	array		$filter			Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
 	 *  @param  string      $filtermode		Filter mode (AND or OR)
 	 *  @param  bool        $entityfilter	Activate entity filter
-	 *  @return int							<0 if KO, >0 if OK
+	 *  @return int							Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array(), $filtermode = 'AND', $entityfilter = false)
 	{

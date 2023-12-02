@@ -107,7 +107,6 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 		$this->option_tva = 1; // Manage the vat option FACTURE_TVAOPTION
 		$this->option_modereg = 1; // Display payment mode
 		$this->option_condreg = 1; // Display payment terms
-		$this->option_codeproduitservice = 1; // Display product-service code
 		$this->option_multilang = 1; // Available in several languages
 		$this->option_escompte = 0; // Displays if there has been a discount
 		$this->option_credit_note = 0; // Support credit notes
@@ -306,6 +305,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 
 				$tab_top = 90 + $top_shift;
 				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
+				$tab_height = 130;
 
 				// Incoterm
 				if ($conf->incoterm->enabled) {
@@ -734,14 +734,6 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 				// Affiche zone totaux
 				$posy = $this->drawTotalTable($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
 
-				// Affiche zone versements
-				/*
-				if ($deja_regle)
-				{
-					$posy=$this->drawPaymentsTable($pdf, $object, $posy, $outputlangs);
-				}
-				*/
-
 				// Pied de page
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
@@ -773,19 +765,6 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 			$this->error = $langs->transnoentities("ErrorConstantNotDefined", "STOCKTRANSFER_OUTPUTDIR");
 			return 0;
 		}
-	}
-
-	/**
-	 *  Show payments table
-	 *
-	 *  @param	TCPDF		$pdf     		Object PDF
-	 *  @param  Object		$object			Object order
-	 *	@param	int			$posy			Position y in PDF
-	 *	@param	Translate	$outputlangs	Object langs for output
-	 *	@return int							<0 if KO, >0 if OK
-	 */
-	protected function drawPaymentsTable(&$pdf, $object, $posy, $outputlangs)
-	{
 	}
 
 	/**

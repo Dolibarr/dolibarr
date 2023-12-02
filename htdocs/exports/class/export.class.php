@@ -102,7 +102,7 @@ class Export
 	 *
 	 *    @param  	User		$user      	Object user making export
 	 *    @param  	string		$filter    	Load a particular dataset only
-	 *    @return	int						<0 if KO, >0 if OK
+	 *    @return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function load_arrays($user, $filter = '')
 	{
@@ -597,7 +597,7 @@ class Export
 	 *      @param      array		$array_filterValue  Filter on array of fields with a filter
 	 *      @param		string		$sqlquery			If set, transmit the sql request for select (otherwise, sql request is generated from arrays)
 	 * 		@param		string		$separator			separator to fill $objmodel->separator with the new separator
-	 *      @return		int								<0 if KO, >0 if OK
+	 *      @return		int								Return integer <0 if KO, >0 if OK
 	 */
 	public function build_file($user, $model, $datatoexport, $array_selected, $array_filterValue, $sqlquery = '', $separator = '')
 	{
@@ -798,7 +798,7 @@ class Export
 	 *  Save an export model in database
 	 *
 	 *  @param		User	$user 	Object user that save
-	 *  @return		int				<0 if KO, >0 if OK
+	 *  @return		int				Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user)
 	{
@@ -838,7 +838,7 @@ class Export
 	 *  Load an export profil from database
 	 *
 	 *  @param      int		$id		Id of profil to load
-	 *  @return     int				<0 if KO, >0 if OK
+	 *  @return     int				Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -875,7 +875,7 @@ class Export
 	 *
 	 *	@param      User		$user        	User that delete
 	 *  @param      int			$notrigger	    0=launch triggers after, 1=disable triggers
-	 *	@return		int							<0 if KO, >0 if OK
+	 *	@return		int							Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
