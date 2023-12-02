@@ -517,7 +517,7 @@ class Thirdparties extends DolibarrApi
 	 * @param int       $category_id	Id of category
 	 * @return Object|void
 	 *
-	 * @url POST {id}/categories/{category_id}
+	 * @url PUT {id}/categories/{category_id}
 	 */
 	public function addCategory($id, $category_id)
 	{
@@ -632,7 +632,7 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @return mixed
 	 *
-	 * @url POST {id}/supplier_categories/{category_id}
+	 * @url PUT {id}/supplier_categories/{category_id}
 	 */
 	public function addSupplierCategory($id, $category_id)
 	{
