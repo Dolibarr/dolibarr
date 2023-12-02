@@ -98,6 +98,11 @@ class PaymentLoan extends CommonObject
 
 	public $type_code;
 	public $type_label;
+	public $chid;
+	public $label;
+	public $paymenttype;
+	public $bank_account;
+	public $bank_line;
 
 
 	/**
