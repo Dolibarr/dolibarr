@@ -205,7 +205,7 @@ if ($action == "confirm_delete") {
 	$current_rate = new CurrencyRate($db);
 	$current_rate->fetch(intval($id_rate_selected));
 	if ($current_rate) {
-		$result = $current_rate->delete();
+		$result = $current_rate->delete($user);
 		if ($result) {
 			setEventMessages($langs->trans('successRateDelete'), null);
 		} else {

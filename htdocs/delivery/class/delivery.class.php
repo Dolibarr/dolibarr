@@ -278,7 +278,7 @@ class Delivery extends CommonObject
 	 *	@param	string	$fk_product				Id of predefined product
 	 *	@param	string	$description			Description
 	 *  @param	array	$array_options			Array options
-	 *	@return	int								<0 if KO, >0 if OK
+	 *	@return	int								Return integer <0 if KO, >0 if OK
 	 */
 	public function create_line($origin_id, $qty, $fk_product, $description, $array_options = null)
 	{
@@ -598,7 +598,7 @@ class Delivery extends CommonObject
 	 *
 	 * @param 	int		$id					Id of line (livraison line)
 	 * @param	array		$array_options		extrafields array
-	 * @return	int							<0 if KO, >0 if OK
+	 * @return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function update_line($id, $array_options = 0)
 	{
@@ -676,13 +676,15 @@ class Delivery extends CommonObject
 	/**
 	 * Delete object
 	 *
+	 * @param	User		$user		User making the deletion
 	 * @return	integer
 	 */
-	public function delete()
+	public function delete($user = null)
 	{
-		global $conf, $langs, $user;
+		global $conf, $langs;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
 		$this->db->begin();
 
 		$error = 0;
@@ -836,7 +838,7 @@ class Delivery extends CommonObject
 	/**
 	 *	Load lines insto $this->lines.
 	 *
-	 *	@return		int								<0 if KO, >0 if OK
+	 *	@return		int								Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_lines()
 	{
@@ -1080,7 +1082,7 @@ class Delivery extends CommonObject
 	 *
 	 *	@param      User			$user        		Objet utilisateur qui modifie
 	 *	@param      integer 		$delivery_date     Delivery date
-	 *	@return     int         						<0 if KO, >0 if OK
+	 *	@return     int         						Return integer <0 if KO, >0 if OK
 	 */
 	public function setDeliveryDate($user, $delivery_date)
 	{

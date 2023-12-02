@@ -73,7 +73,7 @@ class PriceExpression
 	 *
 	 *  @param	User	$user        User that creates
 	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return int      		   	 <0 if KO, Id of created object if OK
+	 *  @return int      		   	 Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -228,7 +228,7 @@ class PriceExpression
 	 *
 	 *  @param	User	$user        User that modifies
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 <0 if KO, >0 if OK
+	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = 0, $notrigger = 0)
 	{
@@ -276,7 +276,7 @@ class PriceExpression
 	  *
 	  *	@param  User	$user        User that deletes
 	  *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	  *  @return	int					 <0 if KO, >0 if OK
+	  *  @return	int					 Return integer <0 if KO, >0 if OK
 	  */
 	public function delete(User $user, $notrigger = 0)
 	{

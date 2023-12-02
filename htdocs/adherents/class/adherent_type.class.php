@@ -159,7 +159,7 @@ class AdherentType extends CommonObject
 	/**
 	 * Load array this->multilangs
 	 *
-	 * @return int        <0 if KO, >0 if OK
+	 * @return int        Return integer <0 if KO, >0 if OK
 	 */
 	public function getMultiLangs()
 	{
@@ -195,7 +195,7 @@ class AdherentType extends CommonObject
 	 * Update or add a translation for this member type
 	 *
 	 * @param  User $user Object user making update
-	 * @return int        <0 if KO, >0 if OK
+	 * @return int        Return integer <0 if KO, >0 if OK
 	 */
 	public function setMultiLangs($user)
 	{
@@ -281,7 +281,7 @@ class AdherentType extends CommonObject
 		*
 		* @param string $langtodelete 	Language code to delete
 		* @param User   $user         	Object user making delete
-		* @return int                   <0 if KO, >0 if OK
+		* @return int                   Return integer <0 if KO, >0 if OK
 		*/
 	public function delMultiLangs($langtodelete, $user)
 	{
@@ -453,14 +453,12 @@ class AdherentType extends CommonObject
 
 	/**
 	 *	Function to delete the member's status
-	 *  TODO Add param "User $user"
 	 *
-	 *  @return		int		> 0 if OK, 0 if not found, < 0 if KO
+	 *	@param	User	$user		User making the deletion
+	 *  @return	int					> 0 if OK, 0 if not found, < 0 if KO
 	 */
-	public function delete()
+	public function delete($user)
 	{
-		global $user;
-
 		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_type";
@@ -488,7 +486,7 @@ class AdherentType extends CommonObject
 	 *  Function that retrieves the properties of a membership type
 	 *
 	 *  @param 		int		$rowid			Id of member type to load
-	 *  @return		int						<0 if KO, >0 if OK
+	 *  @return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($rowid)
 	{

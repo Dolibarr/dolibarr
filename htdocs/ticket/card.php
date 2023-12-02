@@ -695,7 +695,7 @@ if (empty($reshook)) {
 	}
 
 
-	$permissiondellink = $user->rights->ticket->write;
+	$permissiondellink = $user->hasRight('ticket', 'write');
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be include, not include_once
 
 	// Actions to build doc

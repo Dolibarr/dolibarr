@@ -1104,8 +1104,6 @@ function dol_move($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $te
 */
 function dol_move_dir($srcdir, $destdir, $overwriteifexists = 1, $indexdatabase = 1, $renamedircontent = 1)
 {
-
-	global $user, $db, $conf;
 	$result = false;
 
 	dol_syslog("files.lib.php::dol_move_dir srcdir=".$srcdir." destdir=".$destdir." overwritifexists=".$overwriteifexists." indexdatabase=".$indexdatabase." renamedircontent=".$renamedircontent);
@@ -1124,6 +1122,7 @@ function dol_move_dir($srcdir, $destdir, $overwriteifexists = 1, $indexdatabase 
 
 		$result = @rename($newpathofsrcdir, $newpathofdestdir);
 
+		// Now we rename also contents inside dir after the move to match new destination name
 		if ($result && $renamedircontent) {
 			if (file_exists($newpathofdestdir)) {
 				$destbasename = basename($newpathofdestdir);
@@ -2168,7 +2167,7 @@ function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '', $page = ''
  * @param 	string	$outputfile		Target file name
  * @param 	string	$mode			'gz' or 'bz' or 'zip'
  * @param	string	$errorstring	Error string
- * @return	int						<0 if KO, >0 if OK
+ * @return	int						Return integer <0 if KO, >0 if OK
  * @see dol_uncompress(), dol_compress_dir()
  */
 function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring = null)
@@ -2421,7 +2420,7 @@ function dol_uncompress($inputfile, $outputdir)
  * @param	string	$excludefiles   A regex pattern. For example: '/\.log$|\/temp\//'
  * @param	string	$rootdirinzip	Add a root dir level in zip file
  * @param	string	$newmask		Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
- * @return	int						<0 if KO, >0 if OK
+ * @return	int						Return integer <0 if KO, >0 if OK
  * @see dol_uncompress(), dol_compress_file()
  */
 function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles = '', $rootdirinzip = '', $newmask = 0)

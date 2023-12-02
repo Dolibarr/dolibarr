@@ -299,6 +299,7 @@ class PaiementFourn extends Paiement
 											$discount->discount_type = 1; // Supplier discount
 											$discount->description = '(DEPOSIT)';
 											$discount->fk_soc = $invoice->socid;
+											$discount->socid = $invoice->socid;
 											$discount->fk_invoice_supplier_source = $invoice->id;
 
 											// Loop on each vat rate
@@ -426,13 +427,14 @@ class PaiementFourn extends Paiement
 	 *	Delete a payment and lines generated into accounts
 	 *	Si le paiement porte sur un ecriture compte qui est rapprochee, on refuse
 	 *	Si le paiement porte sur au moins une facture a "payee", on refuse
+	 *	@TODO Add User $user as first param
 	 *
 	 *	@param		int		$notrigger		No trigger
 	 *	@return     int     <0 si ko, >0 si ok
 	 */
 	public function delete($notrigger = 0)
 	{
-		global $conf, $user, $langs;
+		global $user;
 
 		$bank_line_id = $this->bank_line;
 
@@ -728,8 +730,6 @@ class PaiementFourn extends Paiement
 	 */
 	public function initAsSpecimen($option = '')
 	{
-		global $user, $langs, $conf;
-
 		$now = dol_now();
 		$arraynow = dol_getdate($now);
 		$nownotime = dol_mktime(0, 0, 0, $arraynow['mon'], $arraynow['mday'], $arraynow['year']);
@@ -890,7 +890,7 @@ class PaiementFourn extends Paiement
 	 *  Load the third party of object, from id into this->thirdparty
 	 *
 	 *	@param		int		$force_thirdparty_id	Force thirdparty id
-	 *	@return		int								<0 if KO, >0 if OK
+	 *	@return		int								Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_thirdparty($force_thirdparty_id = 0)
 	{

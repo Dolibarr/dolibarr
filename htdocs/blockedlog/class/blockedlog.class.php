@@ -854,7 +854,7 @@ class BlockedLog
 	 *
 	 *	@param	User	$user      			Object user that create
 	 *  @param	int		$forcesignature		Force signature (for example '0000000000' when we disabled the module)
-	 *	@return	int							<0 if KO, >0 if OK
+	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user, $forcesignature = '')
 	{

@@ -1700,7 +1700,7 @@ abstract class CommonObject
 	 *		Load object contact with id=$this->contact_id into $this->contact
 	 *
 	 *		@param	int		$contactid      Id du contact. Use this->contact_id if empty.
-	 *		@return	int						<0 if KO, >0 if OK
+	 *		@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_contact($contactid = null)
 	{
@@ -1725,7 +1725,7 @@ abstract class CommonObject
 	 *    	Load the third party of object, from id $this->socid or $this->fk_soc, into this->thirdparty
 	 *
 	 *		@param		int		$force_thirdparty_id	Force thirdparty id
-	 *		@return		int								<0 if KO, >0 if OK
+	 *		@return		int								Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_thirdparty($force_thirdparty_id = 0)
 	{
@@ -1912,7 +1912,7 @@ abstract class CommonObject
 	 *		Load the user with id $userid into this->user
 	 *
 	 *		@param	int		$userid 		Id du contact
-	 *		@return	int						<0 if KO, >0 if OK
+	 *		@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_user($userid)
 	{
@@ -1961,7 +1961,7 @@ abstract class CommonObject
 	 *  @param	string	$field		Field selected
 	 *  @param	string	$key		Import key
 	 *  @param	string	$element	Element name
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchObjectFrom($table, $field, $key, $element = null)
 	{
@@ -2003,7 +2003,7 @@ abstract class CommonObject
 	 *	@param	string	$table		Table of element or element line
 	 *	@param	int		$id			Element id
 	 *	@param	string	$field		Field selected
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function getValueFrom($table, $id, $field)
 	{
@@ -2035,7 +2035,7 @@ abstract class CommonObject
 	 *	@param	User|string	$fuser			Update the user of last update field with this user. If not provided, current user is used except if value is 'none'
 	 *  @param  string      $trigkey    	Trigger key to run (in most cases something like 'XXX_MODIFY')
 	 *  @param	string		$fk_user_field	Name of field to save user id making change
-	 *	@return	int							<0 if KO, >0 if OK
+	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 *  @see updateExtraField()
 	 */
 	public function setValueFrom($field, $value, $table = '', $id = null, $format = '', $id_field = '', $fuser = null, $trigkey = '', $fk_user_field = 'fk_user_modif')
@@ -2168,7 +2168,7 @@ abstract class CommonObject
 	 *      							Use SQL and not Universal Search Filter. @TODO Replace this with an USF string after changing all ->next_prev_filter
 	 *	 	@param  string	$fieldid   	Name of field to use for the select MAX and MIN
 	 *		@param	int		$nodbprefix	Do not include DB prefix to forge table name
-	 *      @return int         		<0 if KO, >0 if OK
+	 *      @return int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function load_previous_next_ref($filter, $fieldid, $nodbprefix = 0)
 	{
@@ -2376,7 +2376,7 @@ abstract class CommonObject
 	 *
 	 *	@param     	int		$projectid		Project id to link element to
 	 *  @param		int		$notrigger		Disable the trigger
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setProject($projectid, $notrigger = 0)
 	{
@@ -3014,7 +3014,7 @@ abstract class CommonObject
 	 *
 	 *		@param		User	$user		User object that make change
 	 *		@param		string	$modelpdf	Modele name
-	 *		@return		int					<0 if KO, >0 if OK
+	 *		@return		int					Return integer <0 if KO, >0 if OK
 	 */
 	public function setDocModel($user, $modelpdf)
 	{
@@ -3116,7 +3116,7 @@ abstract class CommonObject
 	 * 	@param		boolean		$renum			   True to renum all already ordered lines, false to renum only not already ordered lines.
 	 * 	@param		string		$rowidorder		   ASC or DESC
 	 * 	@param		boolean		$fk_parent_line    Table with fk_parent_line field or not
-	 * 	@return		int                            <0 if KO, >0 if OK
+	 * 	@return		int                            Return integer <0 if KO, >0 if OK
 	 */
 	public function line_order($renum = false, $rowidorder = 'ASC', $fk_parent_line = true)
 	{
@@ -3280,7 +3280,7 @@ abstract class CommonObject
 	 *
 	 * 	@param	int		$rowid		Id of line
 	 * 	@param	int		$rang		Position
-	 * 	@return	int					<0 if KO, >0 if OK
+	 * 	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function updateRangOfLine($rowid, $rang)
 	{
@@ -3485,7 +3485,7 @@ abstract class CommonObject
 	 *  Update external ref of element
 	 *
 	 *  @param      string		$ref_ext	Update field ref_ext
-	 *  @return     int      		   		<0 if KO, >0 if OK
+	 *  @return     int      		   		Return integer <0 if KO, >0 if OK
 	 */
 	public function update_ref_ext($ref_ext)
 	{
@@ -3516,7 +3516,7 @@ abstract class CommonObject
 	 *  @param      string		$note		New value for note
 	 *  @param		string		$suffix		'', '_public' or '_private'
 	 *  @param      int         $notrigger  1=Does not execute triggers, 0=execute triggers
-	 *  @return     int      		   		<0 if KO, >0 if OK
+	 *  @return     int      		   		Return integer <0 if KO, >0 if OK
 	 */
 	public function update_note($note, $suffix = '', $notrigger = 0)
 	{
@@ -3602,7 +3602,7 @@ abstract class CommonObject
 	 * 	Update public note (kept for backward compatibility)
 	 *
 	 * @param      string		$note		New value for note
-	 * @return     int      		   		<0 if KO, >0 if OK
+	 * @return     int      		   		Return integer <0 if KO, >0 if OK
 	 * @deprecated
 	 * @see update_note()
 	 */
@@ -3621,7 +3621,7 @@ abstract class CommonObject
 	 *  @param  string	$roundingadjust    	'none'=Do nothing, 'auto'=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND if defined, or '0'), '0'=Force mode Total of rounding, '1'=Force mode Rounding of total
 	 *  @param	int		$nodatabaseupdate	1=Do not update database total fields of the main object. Update only properties in memory. Can be used to save SQL when this method is called several times, so we can do it only once at end.
 	 *  @param	Societe	$seller				If roundingadjust is '0' or '1' or maybe 'auto', it means we recalculate total for lines before calculating total for object and for this, we need seller object (used to analyze lines to check corrupted data).
-	 *	@return	int    			           	<0 if KO, >0 if OK
+	 *	@return	int    			           	Return integer <0 if KO, >0 if OK
 	 */
 	public function update_price($exclspec = 0, $roundingadjust = 'none', $nodatabaseupdate = 0, $seller = null)
 	{
@@ -4010,7 +4010,7 @@ abstract class CommonObject
 	 *  @param  int			$alsosametype		0=Return only links to object that differs from source type. 1=Include also link to objects of same type.
 	 *  @param  string		$orderby			SQL 'ORDER BY' clause
 	 *  @param	int|string	$loadalsoobjects	Load also the array $this->linkedObjects. Use 0 to not load (increase performances), Use 1 to load all, Use value of type ('facture', 'facturerec', ...) to load only a type of object.
-	 *	@return int								<0 if KO, >0 if OK
+	 *	@return int								Return integer <0 if KO, >0 if OK
 	 *  @see	add_object_linked(), updateObjectLinked(), deleteObjectLinked()
 	 */
 	public function fetchObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $clause = 'OR', $alsosametype = 1, $orderby = 'sourcetype', $loadalsoobjects = 1)
@@ -4232,7 +4232,7 @@ abstract class CommonObject
 	/**
 	 *	Clear the cache saying that all linked object were already loaded. So next fetchObjectLinked will reload all links.
 	 *
-	 *	@return int						<0 if KO, >0 if OK
+	 *	@return int						Return integer <0 if KO, >0 if OK
 	 *  @see	fetchObjectLinked()
 	 */
 	public function clearObjectLinkedCache()
@@ -4492,7 +4492,7 @@ abstract class CommonObject
 	 *      @param	string	$elementType	Type of element to force (use this->table_element by default)
 	 *      @param	string	$trigkey		Trigger key to use for trigger. Use '' means automatic but it is not recommended and is deprecated.
 	 *      @param	string	$fieldstatus	Name of status field in this->table_element
-	 *      @return int						<0 if KO, >0 if OK
+	 *      @return int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setStatut($status, $elementId = null, $elementType = '', $trigkey = '', $fieldstatus = 'fk_statut')
 	{
@@ -4945,7 +4945,7 @@ abstract class CommonObject
 	/**
 	 *	Set extra parameters
 	 *
-	 *	@return	int      <0 if KO, >0 if OK
+	 *	@return	int      Return integer <0 if KO, >0 if OK
 	 */
 	public function setExtraParameters()
 	{
@@ -5739,7 +5739,7 @@ abstract class CommonObject
 	 * @param	int		$update_main_doc_field	Update field main_doc fied into the table of object.
 	 * 											This param is set when called for a document generation if document generator hase
 	 * 											->update_main_doc_field set and returns ->result['fullpath'].
-	 * @return	int								<0 if KO, >0 if OK
+	 * @return	int								Return integer <0 if KO, >0 if OK
 	 */
 	public function indexFile($destfull, $update_main_doc_field)
 	{
@@ -6299,7 +6299,7 @@ abstract class CommonObject
 	/**
 	 *	Delete all extra fields values for the current object.
 	 *
-	 *  @return	int		<0 if KO, >0 if OK
+	 *  @return	int		Return integer <0 if KO, >0 if OK
 	 *  @see deleteExtraLanguages(), insertExtraField(), updateExtraField(), setValueFrom()
 	 */
 	public function deleteExtraFields()
@@ -9545,7 +9545,7 @@ abstract class CommonObject
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function createCommon(User $user, $notrigger = false)
 	{
@@ -9565,7 +9565,7 @@ abstract class CommonObject
 		if (array_key_exists('fk_user_creat', $fieldvalues) && !($fieldvalues['fk_user_creat'] > 0)) {
 			$fieldvalues['fk_user_creat'] = $user->id;
 		}
-		if (array_key_exists('pass_crypted', $fieldvalues)) {
+		if (array_key_exists('pass_crypted', $fieldvalues) && property_exists($this, 'pass')) {
 			$fieldvalues['pass_crypted'] = dol_hash($this->pass);
 		}
 		unset($fieldvalues['rowid']); // The field 'rowid' is reserved field name for autoincrement field so we don't need it into insert.
@@ -9719,7 +9719,7 @@ abstract class CommonObject
 	 * @param	string 	$ref			Ref
 	 * @param	string	$morewhere		More SQL filters (' AND ...')
 	 * @param	int		$noextrafields	0=Default to load extrafields, 1=No extrafields
-	 * @return 	int         			<0 if KO, 0 if not found, >0 if OK
+	 * @return 	int         			Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchCommon($id, $ref = null, $morewhere = '', $noextrafields = 0)
 	{
@@ -9783,7 +9783,7 @@ abstract class CommonObject
 	 *
 	 * @param	string	$morewhere		More SQL filters (' AND ...')
 	 * @param	int		$noextrafields	0=Default to load extrafields, 1=No extrafields
-	 * @return 	int         			<0 if KO, 0 if not found, >0 if OK
+	 * @return 	int         			Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchLinesCommon($morewhere = '', $noextrafields = 0)
 	{
@@ -9839,7 +9839,7 @@ abstract class CommonObject
 	 *
 	 * @param  User $user      	User that modifies
 	 * @param  bool $notrigger 	false=launch triggers after, true=disable triggers
-	 * @return int             	<0 if KO, >0 if OK
+	 * @return int             	Return integer <0 if KO, >0 if OK
 	 */
 	public function updateCommon(User $user, $notrigger = false)
 	{
@@ -10079,7 +10079,7 @@ abstract class CommonObject
 	 * @param		string	$parentField   Name of Foreign key parent column
 	 * @param 		array 	$filter		an array filter
 	 * @param		string	$filtermode	AND or OR
-	 * @return		int						<0 if KO, >0 if OK
+	 * @return		int						Return integer <0 if KO, >0 if OK
 	 * @throws Exception
 	 */
 	public function deleteByParentField($parentId = 0, $parentField = '', $filter = array(), $filtermode = "AND")
@@ -10118,16 +10118,12 @@ abstract class CommonObject
 				$error++;
 			} else {
 				while ($obj = $this->db->fetch_object($resql)) {
-					$result = $this->fetch($obj->rowid);
+					$result = $this->fetch($obj->rowid);	// @phpstan-ignore-line
 					if ($result < 0) {
 						$error++;
 						$this->errors[] = $this->error;
 					} else {
-						if (get_class($this) == 'Contact') { // TODO special code because delete() for contact has not been standardized like other delete.
-							$result = $this->delete();
-						} else {
-							$result = $this->delete($user);
-						}
+						$result = $this->delete($user);	// @phpstan-ignore-line
 						if ($result < 0) {
 							$error++;
 							$this->errors[] = $this->error;
@@ -10219,7 +10215,7 @@ abstract class CommonObject
 	 *  @param	int		$status			New status to set (often a constant like self::STATUS_XXX)
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *  @param  string  $triggercode    Trigger code to use
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setStatusCommon($user, $status, $notrigger = 0, $triggercode = '')
 	{
@@ -10396,7 +10392,7 @@ abstract class CommonObject
 	 * @param 	int[]|int 	$categories 		Category ID or array of Categories IDs
 	 * @param 	string 		$type_categ 		Category type ('customer', 'supplier', 'website_page', ...) definied into const class Categorie type
 	 * @param 	boolean		$remove_existing 	True: Remove existings categories from Object if not supplies by $categories, False: let them
-	 * @return	int								<0 if KO, >0 if OK
+	 * @return	int								Return integer <0 if KO, >0 if OK
 	 */
 	public function setCategoriesCommon($categories, $type_categ = '', $remove_existing = true)
 	{

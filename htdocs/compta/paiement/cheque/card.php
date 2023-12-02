@@ -188,7 +188,7 @@ if ($action == 'remove' && $id > 0 && GETPOST("lineid", 'int') > 0 && $user->has
 
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('banque', 'cheque')) {
 	$object->id = $id;
-	$result = $object->delete();
+	$result = $object->delete($user);
 	if ($result == 0) {
 		header("Location: index.php");
 		exit;
@@ -416,10 +416,10 @@ if ($action == 'new') {
 	}
 	print '</td><td>';
 	// filter by dates from / to
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_start, 'search_date_start_', 0, 0, 1, '', 1, 1, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_end, 'search_date_end_', 0, 0, 1, '', 1, 1, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td></tr>';

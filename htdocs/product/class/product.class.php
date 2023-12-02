@@ -594,6 +594,14 @@ class Product extends CommonObject
 	 */
 	const TYPE_SERVICE = 1;
 
+	/**
+	 * Const sell or eat by mandatory id
+	 */
+	const SELL_OR_EAT_BY_MANDATORY_ID_NONE = 0;
+	const SELL_OR_EAT_BY_MANDATORY_ID_SELL_BY = 1;
+	const SELL_OR_EAT_BY_MANDATORY_ID_EAT_BY = 2;
+	const SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT = 3;
+
 
 	/**
 	 *  Constructor
@@ -1610,7 +1618,7 @@ class Product extends CommonObject
 	 *    Update or add a translation for a product
 	 *
 	 * @param  User $user Object user making update
-	 * @return int        <0 if KO, >0 if OK
+	 * @return int        Return integer <0 if KO, >0 if OK
 	 */
 	public function setMultiLangs($user)
 	{
@@ -1720,7 +1728,7 @@ class Product extends CommonObject
 	 * @param string $langtodelete Language code to delete
 	 * @param User   $user         Object user making delete
 	 *
-	 * @return int                            <0 if KO, >0 if OK
+	 * @return int                            Return integer <0 if KO, >0 if OK
 	 */
 	public function delMultiLangs($langtodelete, $user)
 	{
@@ -1812,7 +1820,7 @@ class Product extends CommonObject
 	/**
 	 *    Load array this->multilangs
 	 *
-	 * @return int        <0 if KO, >0 if OK
+	 * @return int        Return integer <0 if KO, >0 if OK
 	 */
 	public function getMultiLangs()
 	{
@@ -1886,7 +1894,7 @@ class Product extends CommonObject
 	 *
 	 * @param  User $user  User making change
 	 * @param  int  $level price level to change
-	 * @return int                    <0 if KO, >0 if OK
+	 * @return int                    Return integer <0 if KO, >0 if OK
 	 */
 	private function _log_price($user, $level = 0)
 	{
@@ -1925,7 +1933,7 @@ class Product extends CommonObject
 	 *
 	 * @param  User $user  Object user
 	 * @param  int  $rowid Line id to delete
-	 * @return int                <0 if KO, >0 if OK
+	 * @return int                Return integer <0 if KO, >0 if OK
 	 */
 	public function log_price_delete($user, $rowid)
 	{
@@ -2232,7 +2240,7 @@ class Product extends CommonObject
 	 * @param  array  $localtaxes_array  Array with localtaxes info array('0'=>type1,'1'=>rate1,'2'=>type2,'3'=>rate2) (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
 	 * @param  string $newdefaultvatcode Default vat code
 	 * @param  int    $notrigger         Disable triggers
-	 * @return int                            <0 if KO, >0 if OK
+	 * @return int                            Return integer <0 if KO, >0 if OK
 	 */
 	public function updatePrice($newprice, $newpricebase, $user, $newvat = '', $newminprice = 0, $level = 0, $newnpr = 0, $newpbq = 0, $ignore_autogen = 0, $localtaxes_array = array(), $newdefaultvatcode = '', $notrigger = 0)
 	{
@@ -2427,7 +2435,7 @@ class Product extends CommonObject
 	 *  Sets the supplier price expression
 	 *
 	 * @param      int $expression_id Expression
-	 * @return     int                     <0 if KO, >0 if OK
+	 * @return     int                     Return integer <0 if KO, >0 if OK
 	 * @deprecated Use Product::update instead
 	 */
 	public function setPriceExpression($expression_id)
@@ -2449,7 +2457,7 @@ class Product extends CommonObject
 	 * @param  int    $ignore_expression When module dynamicprices is on, ignores the math expression for calculating price and uses the db value instead
 	 * @param  int    $ignore_price_load Load product without loading $this->multiprices... array (when we are sure we don't need them)
 	 * @param  int    $ignore_lang_load  Load product without loading $this->multilangs language arrays (when we are sure we don't need them)
-	 * @return int                       <0 if KO, 0 if not found, >0 if OK
+	 * @return int                       Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id = '', $ref = '', $ref_ext = '', $barcode = '', $ignore_expression = 0, $ignore_price_load = 0, $ignore_lang_load = 0)
 	{
@@ -4519,7 +4527,7 @@ class Product extends CommonObject
 	 *
 	 * @param  int 	$fk_parent 		Id of parent kit product
 	 * @param  int 	$fk_child  		Id of child product
-	 * @return int                  <0 if KO, >0 if OK
+	 * @return int                  Return integer <0 if KO, >0 if OK
 	 */
 	public function is_sousproduit($fk_parent, $fk_child)
 	{
@@ -4774,7 +4782,7 @@ class Product extends CommonObject
 	 *
 	 * @param  int $fromId Product id
 	 * @param  int $toId   Product id
-	 * @return int                  <0 if KO, >0 if OK
+	 * @return int                  Return integer <0 if KO, >0 if OK
 	 */
 	public function clone_associations($fromId, $toId)
 	{
@@ -5549,7 +5557,7 @@ class Product extends CommonObject
 	 * @param  int    $origin_id      Origin id of element
 	 * @param  int	  $disablestockchangeforsubproduct	Disable stock change for sub-products of kit (usefull only if product is a subproduct)
 	 * @param  Extrafields $extrafields	  Array of extrafields
-	 * @return int                    <0 if KO, >0 if OK
+	 * @return int                    Return integer <0 if KO, >0 if OK
 	 */
 	public function correct_stock($user, $id_entrepot, $nbpiece, $movement, $label = '', $price = 0, $inventorycode = '', $origin_element = '', $origin_id = null, $disablestockchangeforsubproduct = 0, $extrafields = null)
 	{
@@ -5612,7 +5620,7 @@ class Product extends CommonObject
 	 * @param  int	    $disablestockchangeforsubproduct	Disable stock change for sub-products of kit (usefull only if product is a subproduct)
 	 * @param  Extrafields $extrafields	Array of extrafields
 	 * @param  boolean  $force_update_batch   Force update batch
-	 * @return int                      <0 if KO, >0 if OK
+	 * @return int                      Return integer <0 if KO, >0 if OK
 	 */
 	public function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label = '', $price = 0, $dlc = '', $dluo = '', $lot = '', $inventorycode = '', $origin_element = '', $origin_id = null, $disablestockchangeforsubproduct = 0, $extrafields = null, $force_update_batch = false)
 	{
@@ -5897,7 +5905,7 @@ class Product extends CommonObject
 	 *
 	 * @param  string $sdir Target directory
 	 * @param  string $file Array of file info of file to upload: array('name'=>..., 'tmp_name'=>...)
-	 * @return int                    <0 if KO, >0 if OK
+	 * @return int                    Return integer <0 if KO, >0 if OK
 	 */
 	public function add_photo($sdir, $file)
 	{
@@ -6094,7 +6102,7 @@ class Product extends CommonObject
 	/**
 	 *  Load indicators this->nb for the dashboard
 	 *
-	 * @return int                 <0 if KO, >0 if OK
+	 * @return int                 Return integer <0 if KO, >0 if OK
 	 */
 	public function load_state_board()
 	{
@@ -6330,7 +6338,7 @@ class Product extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param  int[]|int 	$categories 	Category or categories IDs
-	 * @return int							<0 if KO, >0 if OK
+	 * @return int							Return integer <0 if KO, >0 if OK
 	 */
 	public function setCategories($categories)
 	{

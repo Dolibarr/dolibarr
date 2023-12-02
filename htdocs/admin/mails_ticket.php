@@ -41,7 +41,6 @@ if ($action == 'test' || $action == 'send') {
 }
 
 $substitutionarrayfortest = array(
-	'__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT,
 	'__ID__' => 'TESTIdRecord',
 	'__USER_LOGIN__' => $user->login,
 	'__USER_EMAIL__' => $user->email,
@@ -52,7 +51,8 @@ $substitutionarrayfortest = array(
 	'__ADDRESS__'=> 'RecipientAddress',
 	'__ZIP__'=> 'RecipientZip',
 	'__TOWN_'=> 'RecipientTown',
-	'__COUNTRY__'=> 'RecipientCountry'
+	'__COUNTRY__'=> 'RecipientCountry',
+	'__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT,
 );
 complete_substitutions_array($substitutionarrayfortest, $langs);
 
@@ -299,7 +299,7 @@ if ($action == 'edit') {
 	clearstatcache();
 
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td></td></tr>';
 
 	// Method
 
@@ -494,7 +494,7 @@ if ($action == 'edit') {
 
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td></td></tr>';
 
 	// Method
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td>';
@@ -666,7 +666,7 @@ if ($action == 'edit') {
 		print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
 		print load_fiche_titre($action == 'testhtml' ? $langs->trans("DoTestSendHTML") : $langs->trans("DoTestSend"));
 
-		print dol_get_fiche_head('');
+		print dol_get_fiche_head(array(), '', '', -1);
 
 		// Cree l'objet formulaire mail
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';

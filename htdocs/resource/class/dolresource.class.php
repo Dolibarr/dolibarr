@@ -110,7 +110,7 @@ class Dolresource extends CommonObject
 	 *
 	 *  @param	User    $user        User that creates
 	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return int      		   	 <0 if KO, Id of created object if OK
+	 *  @return int      		   	 Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -210,7 +210,7 @@ class Dolresource extends CommonObject
 	 *
 	 *    @param    int		$id     Id of object
 	 *    @param	string	$ref	Ref of object
-	 *    @return   int         	<0 if KO, >0 if OK
+	 *    @return   int         	Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $ref = '')
 	{
@@ -270,7 +270,7 @@ class Dolresource extends CommonObject
 	 *
 	 *  @param	User	$user        User that modifies
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 <0 if KO, >0 if OK
+	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -371,7 +371,7 @@ class Dolresource extends CommonObject
 	 *    Load data of resource links in memory from database
 	 *
 	 *    @param      int	$id         Id of link element_resources
-	 *    @return     int         		<0 if KO, >0 if OK
+	 *    @return     int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_element_resource($id)
 	{
@@ -586,7 +586,7 @@ class Dolresource extends CommonObject
 	 *
 	 *  @param	User	$user        User that modifies
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 <0 if KO, >0 if OK
+	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update_element_resource($user = null, $notrigger = 0)
 	{
@@ -903,7 +903,7 @@ class Dolresource extends CommonObject
 	/**
 	 *      Charge indicateurs this->nb de tableau de bord
 	 *
-	 *      @return     int         <0 if KO, >0 if OK
+	 *      @return     int         Return integer <0 if KO, >0 if OK
 	 */
 	public function load_state_board()
 	{

@@ -86,7 +86,7 @@ class Productbatch extends CommonObject
 	 *
 	 *  @param	User	$user        User that creates
 	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return int      		   	 <0 if KO, Id of created object if OK
+	 *  @return int      		   	 Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -141,7 +141,7 @@ class Productbatch extends CommonObject
 	 *  Load object in memory from the database
 	 *
 	 *  @param	int		$id		Id object
-	 *  @return int          	<0 if KO, >0 if OK
+	 *  @return int          	Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -194,7 +194,7 @@ class Productbatch extends CommonObject
 	 *
 	 *  @param	User	$user        User that modifies
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 <0 if KO, >0 if OK
+	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -244,7 +244,7 @@ class Productbatch extends CommonObject
 	 *
 	 *  @param  User	$user        User that deletes
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 <0 if KO, >0 if OK
+	 *  @return	int					 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -376,7 +376,7 @@ class Productbatch extends CommonObject
 	 *  @param	integer		$sellby   			sell-by date for object - deprecated: a search must be done on batch number
 	 *  @param	string		$batch_number   	batch number for object
 	 *  @param	int			$fk_warehouse		filter on warehouse (use it if you don't have $fk_product_stock)
-	 *  @return int          					<0 if KO, >0 if OK
+	 *  @return int          					Return integer <0 if KO, >0 if OK
 	 */
 	public function find($fk_product_stock = 0, $eatby = '', $sellby = '', $batch_number = '', $fk_warehouse = 0)
 	{

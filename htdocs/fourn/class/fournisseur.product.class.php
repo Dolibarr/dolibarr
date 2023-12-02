@@ -198,7 +198,7 @@ class ProductFournisseur extends Product
 	 * 	Remove a price for a couple supplier-product
 	 *
 	 * 	@param	int		$rowid		Line id of price
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function remove_product_fournisseur_price($rowid)
 	{
@@ -927,7 +927,7 @@ class ProductFournisseur extends Product
 	 *  Sets the supplier price expression
 	 *
 	 *  @param  int     $expression_id	Expression
-	 *  @return int                 	<0 if KO, >0 if OK
+	 *  @return int                 	Return integer <0 if KO, >0 if OK
 	 */
 	public function setSupplierPriceExpression($expression_id)
 	{
