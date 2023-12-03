@@ -176,7 +176,7 @@ class Paiement extends CommonObject
 	 *    @param	int		$id			Id of payment to get
 	 *    @param	string	$ref		Ref of payment to get (currently ref = id but this may change in future)
 	 *    @param	int		$fk_bank	Id of bank line associated to payment
-	 *    @return   int		            <0 if KO, 0 if not found, >0 if OK
+	 *    @return   int		            Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = '', $fk_bank = '')
 	{
@@ -548,7 +548,7 @@ class Paiement extends CommonObject
 	 * @TODO Add first param User $user
 	 *
 	 * @param	int		$notrigger		No trigger
-	 * @return 	int     				<0 if KO, >0 if OK
+	 * @return 	int     				Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($notrigger = 0)
 	{
@@ -843,7 +843,7 @@ class Paiement extends CommonObject
 	 *      Mise a jour du lien entre le paiement et la ligne generee dans llx_bank
 	 *
 	 *      @param	int		$id_bank    Id compte bancaire
-	 *      @return	int					<0 if KO, >0 if OK
+	 *      @return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function update_fk_bank($id_bank)
 	{
@@ -951,7 +951,7 @@ class Paiement extends CommonObject
 	 * Validate payment
 	 *
 	 * @param	User|null	$user		User making validation
-	 * @return	int     				<0 if KO, >0 if OK
+	 * @return	int     				Return integer <0 if KO, >0 if OK
 	 * @deprecated
 	 */
 	public function valide(User $user = null)
@@ -963,7 +963,7 @@ class Paiement extends CommonObject
 	 * Validate payment
 	 *
 	 * @param	User|null	$user		User making validation
-	 * @return	int     				<0 if KO, >0 if OK
+	 * @return	int     				Return integer <0 if KO, >0 if OK
 	 */
 	public function validate(User $user = null)
 	{
@@ -984,7 +984,7 @@ class Paiement extends CommonObject
 	 * Reject payment
 	 *
 	 * @param	User|null	$user		User making reject
-	 * @return  int     				<0 if KO, >0 if OK
+	 * @return  int     				Return integer <0 if KO, >0 if OK
 	 */
 	public function reject(User $user = null)
 	{
@@ -1382,7 +1382,7 @@ class Paiement extends CommonObject
 	 *  For payments, take the thirdparty linked to the first invoice found. This is enough because payments are done on invoices of the same thirdparty.
 	 *
 	 *	@param		int		$force_thirdparty_id	Force thirdparty id
-	 *	@return		int								<0 if KO, >0 if OK
+	 *	@return		int								Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_thirdparty($force_thirdparty_id = 0)
 	{

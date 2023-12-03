@@ -118,7 +118,7 @@ class ProductCustomerPrice extends CommonObject
 	 * @param User $user that creates
 	 * @param int $notrigger triggers after, 1=disable triggers
 	 * @param int $forceupdateaffiliate update price on each soc child
-	 * @return int <0 if KO, Id of created object if OK
+	 * @return int Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0, $forceupdateaffiliate = 0)
 	{
@@ -296,7 +296,7 @@ class ProductCustomerPrice extends CommonObject
 	 * Load object in memory from the database
 	 *
 	 * @param 	int 	$id 	ID of customer price
-	 * @return 	int 			<0 if KO, 0 if not found, >0 if OK
+	 * @return 	int 			Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -374,7 +374,7 @@ class ProductCustomerPrice extends CommonObject
 	 * @param 	int 	$limit 		page
 	 * @param 	int 	$offset 	offset
 	 * @param 	array 	$filter 	Filter for select
-	 * @return 	int 				<0 if KO, >0 if OK
+	 * @return 	int 				Return integer <0 if KO, >0 if OK
 	 * @since dolibarr v17
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array())
@@ -492,7 +492,7 @@ class ProductCustomerPrice extends CommonObject
 	 * @param 	int 	$limit 		page
 	 * @param 	int 	$offset 	offset
 	 * @param 	array 	$filter 	Filter for sql request
-	 * @return 	int 			<0 if KO, >0 if OK
+	 * @return 	int 			Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchAllLog($sortorder, $sortfield, $limit, $offset, $filter = array())
 	{
@@ -597,7 +597,7 @@ class ProductCustomerPrice extends CommonObject
 	 * @param User $user that modifies
 	 * @param int $notrigger triggers after, 1=disable triggers
 	 * @param int $forceupdateaffiliate update price on each soc child
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = 0, $notrigger = 0, $forceupdateaffiliate = 0)
 	{
@@ -908,7 +908,7 @@ class ProductCustomerPrice extends CommonObject
 	 *
 	 * @param User $user that deletes
 	 * @param int $notrigger triggers after, 1=disable triggers
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{

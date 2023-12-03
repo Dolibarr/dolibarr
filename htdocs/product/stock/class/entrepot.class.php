@@ -362,7 +362,7 @@ class Entrepot extends CommonObject
 	 *
 	 *	@param		User	$user		   Object user that made deletion
 	 *  @param      int     $notrigger     1=No trigger
-	 *	@return		int					   <0 if KO, >0 if OK
+	 *	@return		int					   Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -972,7 +972,7 @@ class Entrepot extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param 	int[]|int 	$categories 	Category or categories IDs
-	 * @return 	int							<0 if KO, >0 if OK
+	 * @return 	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function setCategories($categories)
 	{
