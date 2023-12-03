@@ -829,7 +829,7 @@ class Thirdparties extends DolibarrApi
 	 * Get representatives of thirdparty
 	 *
 	 * @param	int		$id			ID of the thirdparty
-	 * @param	string	$mode		0=Array with properties, 1=Array of id.
+	 * @param	int 	$mode		0=Array with properties, 1=Array of id.
 	 *
 	 * @url     GET {id}/representatives
 	 *

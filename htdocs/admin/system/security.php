@@ -652,11 +652,35 @@ print '<strong>MAIN_SECURITY_MAXFILESIZE_DOWNLOADED</strong> = '.getDolGlobalStr
 print '<br>';
 
 print '<strong>MAIN_RESTRICTHTML_ONLY_VALID_HTML</strong> = '.(getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML') ? '1' : '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
-print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": 1 - does not work on HTML5 with some old libxml libs)</span><br>";
+print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": 1 - does not work on HTML5 with some old libxml libs)</span>";
+$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;
+$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 1;
+$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 0;
+$result=dol_htmlwithnojs('<img onerror<=alert(document.domain)> src=>0xbeefed');
+if ($result == 'InvalidHTMLStringCantBeCleaned') {
+	print ' &nbsp; - &nbsp; '.img_warning().' Your libxml seems to old to work correctly with this option. Disable it !';
+} else {
+	print ' &nbsp; - &nbsp; Test of compatibility with this option seems ok';
+}
+print '<br>';
+
 print '<br>';
 
 print '<strong>MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY</strong> = '.(getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY') ? '1' : '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
-print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 1) &nbsp; - &nbsp; Module "php-tidy" must be enabled (currently: '.((extension_loaded('tidy') && class_exists("tidy")) ? 'Enabled' : img_picto('', 'warning').' Not available').")</span><br>";
+print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 1)</span> &nbsp; - &nbsp; Module "php-tidy" must be enabled (currently: '.((extension_loaded('tidy') && class_exists("tidy")) ? 'Enabled' : img_picto('', 'warning').' Not available').")";
+if (extension_loaded('tidy') && class_exists("tidy")) {
+	$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;
+	$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
+	$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
+	$result=dol_htmlwithnojs('<img onerror<=alert(document.domain)> src=>0xbeefed');
+	if ($result == 'InvalidHTMLStringCantBeCleaned') {
+		print ' &nbsp; - &nbsp; '.img_warning().' Your libxml seems to old to work correctly with this option. Disable it !';
+	} else {
+		print ' &nbsp; - &nbsp; Test of compatibility with this option seems ok';
+	}
+}
+print '<br>';
+
 print '<br>';
 
 print '<strong>MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES</strong> = '.(getDolGlobalString('MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES') ? '1' : '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
