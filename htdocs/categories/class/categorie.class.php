@@ -552,6 +552,7 @@ class Categorie extends CommonObject
 		$this->visible = ($this->visible != "" ? intval($this->visible) : 0);
 
 		if ($this->already_exists()) {
+			global $langs;
 			$this->error = $langs->trans("ImpossibleUpdateCat");
 			$this->error .= " : ".$langs->trans("CategoryExistsAtSameLevel");
 			return -1;
