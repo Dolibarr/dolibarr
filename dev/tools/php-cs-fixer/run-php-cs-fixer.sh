@@ -49,7 +49,7 @@ if [ "x$1" = "x" ]; then
 fi
 
 (
-  cd "${MYDIR}/../.." || exit
+  cd "${MYDIR}/../../.." || exit
   CMD=
   # If no argument, run check by default
   [[ "$1" == "" ]] && CMD=check
