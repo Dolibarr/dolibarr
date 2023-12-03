@@ -31,6 +31,7 @@ create table llx_prelevement_facture_demande
   fk_prelevement_bons integer,
   fk_user_demande     integer NOT NULL,
 
+  fk_soc_rib          integer NULL,
   code_banque         varchar(128),
   code_guichet        varchar(6),
   number              varchar(255),

@@ -205,7 +205,24 @@ if ($id > 0 || $ref) {
 		print dol_print_date($object->date_credit, 'day');
 		print '</td></tr>';
 	}
-
+	$sql = "SELECT pb.fk_account";
+	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as pb";
+	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
+	$sql .= " WHERE pb.rowid = ".((int) $id);
+	$sql .= " AND pb.entity = ".$conf->entity;
+	if ($socid) {
+		$sql .= " AND s.rowid = ".((int) $socid);
+	}
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj	= $db->fetch_object($resql);
+		if ($obj) {
+			$id_bankaccount	= (int) $obj->fk_account;
+		}
+	}
+	if (empty($id_bankaccount)) {
+		$id_bankaccount = $object->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT;
+	}
 	print '</table>';
 
 	print '<br>';
@@ -214,7 +231,7 @@ if ($id > 0 || $ref) {
 	print '<table class="border centpercent tableforfield">';
 
 	$acc = new Account($db);
-	$result = $acc->fetch(($object->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT));
+	$result = $acc->fetch($id_bankaccount);
 
 	print '<tr><td class="titlefield">';
 	$labelofbankfield = "BankToReceiveWithdraw";
@@ -266,7 +283,7 @@ if ($id > 0 || $ref) {
 	print $formconfirm;
 
 
-	if (empty($object->date_trans) && $user->rights->prelevement->bons->send && $action == 'settransmitted') {
+	if (empty($object->date_trans) && (($user->rights->prelevement->bons->send && $object->type != 'bank-transfer') || ($user->rights->paymentbybanktransfer->send && $object->type == 'bank-transfer')) && $action == 'settransmitted') {
 		print '<form method="post" name="userfile" action="card.php?id='.$object->id.'" enctype="multipart/form-data">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="infotrans">';
@@ -285,7 +302,7 @@ if ($id > 0 || $ref) {
 		print '<br>';
 	}
 
-	if (!empty($object->date_trans) && $object->date_credit == 0 && $user->rights->prelevement->bons->credit && $action == 'setcredited') {
+	if (!empty($object->date_trans) && $object->date_credit == 0 && (($user->rights->prelevement->bons->credit && $object->type != 'bank-transfer') || ($user->rights->paymentbybanktransfer->debit && $object->type == 'bank-transfer')) && $action == 'setcredited') {
 		$btnLabel = ($object->type == 'bank-transfer') ? $langs->trans("ClassDebited") : $langs->trans("ClassCredited");
 		print '<form name="infocredit" method="post" action="card.php?id='.$object->id.'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
