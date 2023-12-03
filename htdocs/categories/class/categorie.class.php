@@ -542,8 +542,6 @@ class Categorie extends CommonObject
 	 */
 	public function update(User $user)
 	{
-		global $conf, $langs, $hookmanager;
-
 		$error = 0;
 
 		// Clean parameters
@@ -618,8 +616,6 @@ class Categorie extends CommonObject
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs;
-
 		$error = 0;
 
 		// Clean parameters
@@ -714,7 +710,7 @@ class Categorie extends CommonObject
 	public function add_type($obj, $type = '')
 	{
 		// phpcs:enable
-		global $user, $conf;
+		global $user;
 
 		$error = 0;
 
@@ -807,7 +803,7 @@ class Categorie extends CommonObject
 	public function del_type($obj, $type)
 	{
 		// phpcs:enable
-		global $user, $langs, $conf;
+		global $user;
 
 		$error = 0;
 
@@ -942,12 +938,14 @@ class Categorie extends CommonObject
 	{
 		$sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."categorie_".(empty($this->MAP_CAT_TABLE[$type]) ? $type : $this->MAP_CAT_TABLE[$type]);
 		$sql .= " WHERE fk_categorie = ".((int) $this->id)." AND fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = ".((int) $object_id);
+
 		dol_syslog(get_class($this)."::containsObject", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			return $this->db->fetch_object($resql)->nb;
 		} else {
-			$this->error = $this->db->error().' sql='.$sql;
+			$this->error = $this->db->error();
 			return -1;
 		}
 	}
@@ -965,8 +963,6 @@ class Categorie extends CommonObject
 	 */
 	public function getListForItem($id, $type = 'customer', $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
 	{
-		global $conf;
-
 		$categories = array();
 
 		$type = sanitizeVal($type, 'aZ09');
@@ -1136,7 +1132,7 @@ class Categorie extends CommonObject
 	public function get_full_arbo($type, $markafterid = 0, $include = 0)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $langs;
 
 		if (!is_numeric($type)) {
 			$type = $this->MAP_ID[$type];
@@ -1665,7 +1661,7 @@ class Categorie extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $maxlength = 0, $moreparam = '')
 	{
-		global $langs, $hookmanager;
+		global $hookmanager;
 
 		$result = '';
 		$params = [
@@ -1797,6 +1793,7 @@ class Categorie extends CommonObject
 
 						// On determine nom du fichier vignette
 						$photo_vignette = '';
+						$regs = array();
 						if (preg_match('/(\.jpeg|\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i', $photo, $regs)) {
 							$photo_vignette = preg_replace('/'.$regs[0].'/i', '', $photo).'_small'.$regs[0];
 						}
@@ -1846,6 +1843,7 @@ class Categorie extends CommonObject
 		dol_delete_file($file, 1);
 
 		// Si elle existe, on efface la vignette
+		$regs = array();
 		if (preg_match('/(\.jpeg|\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i', $filename, $regs)) {
 			$photo_vignette = preg_replace('/'.$regs[0].'/i', '', $filename).'_small'.$regs[0];
 			if (file_exists($dirthumb.$photo_vignette)) {
