@@ -6,7 +6,7 @@
 #   Optionally set COMPOSER_VENDOR_DIR to your vendor path for composer.
 #
 #   Run php-cs-fixer by calling this script:
-#     ./run-php-cs-fixer.sh check    # Only checks (the default)
+#     ./run-php-cs-fixer.sh check    # Only checks
 #     ./run-php-cs-fixer.sh fix      # Fixes
 #
 #   You can fix only a few files using
@@ -41,6 +41,12 @@ if [ ! -r "${PHP_CS_FIXER}" ] ; then
   ${COMPOSER_CMD} require --dev friendsofphp/php-cs-fixer
 fi
 
+
+if [ "x$1" = "x" ]; then
+	echo "***** run-php-cs-fixer.sh *****"
+	echo "Syntax: run-php-cs-fixer.sh check|fix  [path]"
+	exit 1;
+fi
 
 (
   cd "${MYDIR}/../.." || exit

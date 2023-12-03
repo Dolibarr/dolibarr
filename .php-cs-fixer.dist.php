@@ -3,6 +3,8 @@
 $finder = (new PhpCsFixer\Finder())
 	->in(__DIR__)
 	->exclude([
+		'documents',
+		'htdocs/custom',
 		'htdocs/includes',
 	])
 	->notPath([
