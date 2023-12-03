@@ -228,7 +228,7 @@ function delivery_prepare_head($object)
  *
  * @param   string		$origin			Origin ('commande', ...)
  * @param	int			$origin_id		Origin id
- * @param	string		$filter			Filter
+ * @param	string		$filter			Filter (Do not use a string from a user input)
  * @return	int							Return integer <0 if KO, >0 if OK
  */
 function show_list_sending_receive($origin, $origin_id, $filter = '')
@@ -243,13 +243,11 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 	$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.date_start, obj.date_end,";
 	$sql .= " ed.rowid as edrowid, ed.qty as qty_shipped, ed.fk_expedition as expedition_id, ed.fk_origin_line, ed.fk_entrepot as warehouse_id,";
 	$sql .= " e.rowid as sendingid, e.ref as exp_ref, e.date_creation, e.date_delivery, e.date_expedition, e.billed, e.fk_statut as status,";
-	//if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) $sql .= " l.rowid as livraison_id, l.ref as livraison_ref, l.date_delivery, ld.qty as qty_received,";
 	$sql .= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, p.tobatch as product_tobatch,';
 	$sql .= ' p.description as product_desc';
-	$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
-	$sql .= ", ".MAIN_DB_PREFIX."expedition as e";
-	$sql .= ", ".MAIN_DB_PREFIX.$origin."det as obj";
-	//if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."delivery as l ON l.fk_expedition = e.rowid LEFT JOIN ".MAIN_DB_PREFIX."deliverydet as ld ON ld.fk_delivery = l.rowid  AND obj.rowid = ld.fk_origin_line";
+	$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed,";
+	$sql .= " ".MAIN_DB_PREFIX."expedition as e,";
+	$sql .= " ".MAIN_DB_PREFIX.$origin."det as obj";	// for example llx_commandedet
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON obj.fk_product = p.rowid";
 	//TODO Add link to expeditiondet_batch
 	$sql .= " WHERE e.entity IN (".getEntity('expedition').")";
@@ -259,8 +257,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 	if ($filter) {
 		$sql .= $filter;
 	}
-
-	$sql .= " ORDER BY obj.fk_product";
+	$sql .= " ORDER BY obj.rowid, obj.fk_product";
 
 	dol_syslog("show_list_sending_receive", LOG_DEBUG);
 	$resql = $db->query($sql);
