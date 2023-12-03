@@ -914,7 +914,7 @@ if ($dirins && $action == 'addlanguage' && !empty($module)) {
 
 // add Extrafield definition
 if ($dirins && $action == 'addextrafield' && !empty($module)) {
-	$extrafieldkey = GETPOST('extrafieldkey', 'int');
+	$extrafieldskey = GETPOST('extrafieldskey', 'int');
 	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 	$destdir = $dirins.'/'.strtolower($module);
 	$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
@@ -962,6 +962,48 @@ if ($dirins && $action == 'addextrafield' && !empty($module)) {
 		}
 		$extrafieldstocreate[] = $extratoadd;
 
+		$modulelowercase = strtolower($module);
+
+		// Dir for module
+		$dirofjson = dol_buildpath($modulelowercase, 0);
+
+		if ($dirofjson == $dolibarr_main_document_root.'/'.$modulelowercase) {
+			// This is not a custom module, we force diroflang to htdocs root
+			$dirofjson = $dolibarr_main_document_root;
+			$srcfile = $dirofjson.'/json/extrafields.json';
+		} else {
+			$srcdir = $dirofjson.'/json/extrafields.json';
+			file_put_contents($srcdir, json_encode($extrafieldstocreate, JSON_PRETTY_PRINT));
+		}
+	}
+}
+
+// delete Extrafield definition
+if ($dirins && $action == 'confirm_deleteextrafield' && $confirm == 'yes' && GETPOST('extrafieldskey', 'int') > 0) {
+	$extrafieldskey = GETPOST('extrafieldskey', 'int');
+	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+	$destdir = $dirins.'/'.strtolower($module);
+	$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
+
+	dol_include_once($pathtofile);
+	$class = 'mod' . $module;
+
+	if (class_exists($class)) {
+		try {
+			$moduleobj = new $class($db);
+		} catch (Exception $e) {
+			$error++;
+			dol_print_error($db, $e->getMessage());
+		}
+	} else {
+		$error++;
+		$langs->load("errors");
+		dol_print_error($db, $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
+		exit;
+	}
+	$extrafieldstocreate = $moduleobj->module_parts['extrafields'];
+	if (!$error) {
+		unset($extrafieldstocreate[$extrafieldskey]);
 		$modulelowercase = strtolower($module);
 
 		// Dir for module
