@@ -68,3 +68,4 @@ doc/install.lock
 /build/phpstan/phpstan
 /build/phpstan/bootstrap_custom.php
 phpstan_custom.neon
+/.php-cs-fixer.cache

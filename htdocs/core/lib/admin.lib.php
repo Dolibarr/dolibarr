@@ -869,12 +869,13 @@ function security_prepare_head()
 
 /**
  * Prepare array with list of tabs
- * @param object $object descriptor class
+ *
+ * @param 	object 	$object 	Descriptor class
  * @return  array				Array of tabs to show
  */
 function modulehelp_prepare_head($object)
 {
-	global $langs, $conf, $user;
+	global $langs, $conf;
 	$h = 0;
 	$head = array();
 
@@ -912,7 +913,7 @@ function modulehelp_prepare_head($object)
  */
 function translation_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf;
 	$h = 0;
 	$head = array();
 
