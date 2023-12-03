@@ -58,7 +58,7 @@ class IntracommReport extends CommonObject
 
 	public $label; 		// ref ???
 
-	public $period;
+	public $periode;
 
 	public $declaration;
 
