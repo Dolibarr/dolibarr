@@ -45,6 +45,8 @@ class LoanSchedule extends CommonObject
 	 */
 	public $fk_loan;
 
+	public $bank_account;
+	public $bank_line;
 	/**
 	 * @var string Create date
 	 */
