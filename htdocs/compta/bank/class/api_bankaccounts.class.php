@@ -566,4 +566,37 @@ class BankAccounts extends DolibarrApi
 		}
 		return $result;
 	}
+
+	/**
+	 * Get the list of links for a line of the account.
+	 *
+	 * @param int    $id    		ID of account
+	 * @param int    $line_id       ID of account line
+	 * @return array Array of links
+	 *
+	 * @throws RestException
+	 *
+	 * @url GET {id}/lines/{line_id}/links
+	 * 
+	 */
+	public function getLinks($id, $line_id)
+	{
+		$list = array();
+
+		if (!DolibarrApiAccess::$user->rights->banque->lire) {
+			throw new RestException(401);
+		}
+
+		$account = new Account($this->db);
+		$result = $account->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'account not found');
+		}
+		$links = $account->get_url($line_id); // Get an array('url'=>, 'url_id'=>, 'label'=>, 'type'=> 'fk_bank'=> )
+		foreach ($links as &$link) {
+    		unset($link[0], $link[1], $link[2], $link[3]); // Remove the numeric keys
+		}
+
+		return $links;
+	}
 }
