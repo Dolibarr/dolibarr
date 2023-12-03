@@ -577,7 +577,7 @@ class BankAccounts extends DolibarrApi
 	 * @throws RestException
 	 *
 	 * @url GET {id}/lines/{line_id}/links
-	 * 
+	 *
 	 */
 	public function getLinks($id, $line_id)
 	{
@@ -594,7 +594,7 @@ class BankAccounts extends DolibarrApi
 		}
 		$links = $account->get_url($line_id); // Get an array('url'=>, 'url_id'=>, 'label'=>, 'type'=> 'fk_bank'=> )
 		foreach ($links as &$link) {
-    		unset($link[0], $link[1], $link[2], $link[3]); // Remove the numeric keys
+			unset($link[0], $link[1], $link[2], $link[3]); // Remove the numeric keys
 		}
 
 		return $links;
