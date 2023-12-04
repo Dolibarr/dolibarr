@@ -47,8 +47,9 @@ $langs->loadLangs(array("errors", "admin", "modulebuilder"));
 // if we set another view list mode, we keep it (till we change one more time)
 if (GETPOSTISSET('mode')) {
 	$mode = GETPOST('mode', 'alpha');
-	if ($mode =='common' || $mode =='commonkanban')
+	if ($mode =='common' || $mode =='commonkanban') {
 		dolibarr_set_const($db, "MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT", $mode, 'chaine', 0, '', $conf->entity);
+	}
 } else {
 	$mode = (!getDolGlobalString('MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT') ? 'commonkanban' : $conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT);
 }
@@ -66,8 +67,8 @@ $search_version = GETPOST('search_version', 'alpha');
 $options              = array();
 $options['per_page']  = 20;
 $options['categorie'] = ((int) (GETPOST('categorie', 'int') ? GETPOST('categorie', 'int') : 0));
-$options['start']     = ((int) (GETPOST('start', 'int') ?GETPOST('start', 'int') : 0));
-$options['end']       = ((int) (GETPOST('end', 'int') ?GETPOST('end', 'int') : 0));
+$options['start']     = ((int) (GETPOST('start', 'int') ? GETPOST('start', 'int') : 0));
+$options['end']       = ((int) (GETPOST('end', 'int') ? GETPOST('end', 'int') : 0));
 $options['search']    = GETPOST('search_keyword', 'alpha');
 $dolistore            = new Dolistore(false);
 
@@ -487,7 +488,7 @@ foreach ($modulesdir as $dir) {
 							print "admin/modules.php Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)<br>";
 						}
 					} catch (Exception $e) {
-						 dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
+						dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
 					}
 				}
 			}
@@ -534,9 +535,15 @@ asort($orders);
 $nbofactivatedmodules = count($conf->modules);
 
 $nbmodulesnotautoenabled = count($conf->modules);
-if (in_array('fckeditor', $conf->modules)) $nbmodulesnotautoenabled--;
-if (in_array('export', $conf->modules)) $nbmodulesnotautoenabled--;
-if (in_array('import', $conf->modules)) $nbmodulesnotautoenabled--;
+if (in_array('fckeditor', $conf->modules)) {
+	$nbmodulesnotautoenabled--;
+}
+if (in_array('export', $conf->modules)) {
+	$nbmodulesnotautoenabled--;
+}
+if (in_array('import', $conf->modules)) {
+	$nbmodulesnotautoenabled--;
+}
 
 print load_fiche_titre($langs->trans("ModulesSetup"), '', 'title_setup');
 
@@ -1119,8 +1126,7 @@ if ($mode == 'marketplace') {
 
 		print '<div class="liste_titre liste_titre_bydiv centpercent"><div class="divsearchfield">';
 
-		print '<form method="POST" class="centpercent" id="searchFormList" action="'.$dolistore->url.'">';
-		?>
+		print '<form method="POST" class="centpercent" id="searchFormList" action="'.$dolistore->url.'">'; ?>
 					<input type="hidden" name="token" value="<?php echo newToken(); ?>">
 					<input type="hidden" name="mode" value="marketplace">
 					<div class="divsearchfield">
@@ -1139,15 +1145,12 @@ if ($mode == 'marketplace') {
 
 
 		print '</div></div>';
-		print '<div class="clearboth"></div>';
-
-		?>
+		print '<div class="clearboth"></div>'; ?>
 
 			<div id="category-tree-left">
 				<ul class="tree">
 					<?php
-					echo $dolistore->get_categories();	// Do not use dol_escape_htmltag here, it is already a structured content
-					?>
+					echo $dolistore->get_categories();	// Do not use dol_escape_htmltag here, it is already a structured content?>
 				</ul>
 			</div>
 			<div id="listing-content">

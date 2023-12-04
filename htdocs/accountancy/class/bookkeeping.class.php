@@ -2474,7 +2474,9 @@ class BookKeeping extends CommonObject
 		$sql = "SELECT rowid, label, date_start, date_end, statut";
 		$sql .= " FROM " . $this->db->prefix() . "accounting_fiscalyear";
 		$sql .= " WHERE entity = " . ((int) $conf->entity);
-		if (!empty($filter)) $sql .= " AND (" . $filter . ')';
+		if (!empty($filter)) {
+			$sql .= " AND (" . $filter . ')';
+		}
 		$sql .= $this->db->order('date_start', 'ASC');
 
 		$resql = $this->db->query($sql);
