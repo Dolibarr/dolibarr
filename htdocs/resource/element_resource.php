@@ -447,7 +447,8 @@ if (!$ret) {
 				}
 				if (!empty($act->userassigned)) {	// Now concat assigned users
 					// Restore array with key with same value than param 'id'
-					$tmplist1 = $act->userassigned; $tmplist2 = array();
+					$tmplist1 = $act->userassigned;
+					$tmplist2 = array();
 					foreach ($tmplist1 as $key => $val) {
 						if ($val['id'] && $val['id'] != $act->userownerid) {
 							$listofuserid[$val['id']] = $val;

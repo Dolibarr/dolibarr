@@ -37,7 +37,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/stocktransfer/modules_stocktransfe
 
 // Load translation files required by the page
 $langs->loadLangs(array("stocks", "other", "productbatch", "companies"));
- if (isModEnabled('incoterm')) $langs->load('incoterm');
+if (isModEnabled('incoterm')) {
+	$langs->load('incoterm');
+}
 
 // Get parameters
 $id = GETPOST('id', 'int');
@@ -45,7 +47,7 @@ $ref        = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'stocktransfercard'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'stocktransfercard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $qty = GETPOST('qty', 'int');
@@ -72,10 +74,14 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 $search_all = trim(GETPOST("search_all", 'alpha'));
 $search = array();
 foreach ($object->fields as $key => $val) {
-	if (GETPOST('search_'.$key, 'alpha')) $search[$key] = GETPOST('search_'.$key, 'alpha');
+	if (GETPOST('search_'.$key, 'alpha')) {
+		$search[$key] = GETPOST('search_'.$key, 'alpha');
+	}
 }
 
-if (empty($action) && empty($id) && empty($ref)) $action = 'view';
+if (empty($action) && empty($id) && empty($ref)) {
+	$action = 'view';
+}
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
@@ -94,7 +100,9 @@ $upload_dir = $conf->stocktransfer->multidir_output[isset($object->entity) ? $ob
 //$isdraft = (($object->statut == $object::STATUS_DRAFT) ? 1 : 0);
 //$result = restrictedArea($user, 'stocktransfer', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
-if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) accessforbidden();
+if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) {
+	accessforbidden();
+}
 
 
 /*
@@ -107,7 +115,9 @@ $formproject = new FormProjets($db);
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 if (empty($reshook)) {
 	$error = 0;
@@ -116,8 +126,11 @@ if (empty($reshook)) {
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
-			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) $backtopage = $backurlforlist;
-			else $backtopage = dol_buildpath('/product/stock/stocktransfer/stocktransfer_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+				$backtopage = $backurlforlist;
+			} else {
+				$backtopage = dol_buildpath('/product/stock/stocktransfer/stocktransfer_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+			}
 		}
 	}
 	$triggermodname = 'STOCKTRANSFER_STOCKTRANSFER_MODIFY'; // Name of trigger action code to execute when we modify record
@@ -183,8 +196,10 @@ if (empty($reshook)) {
 
 		if (empty($error)) {
 			$line = new StockTransferLine($db);
-			$records = $line->fetchAll('', '', 0, 0, array('customsql'=>' fk_stocktransfer = '.((int) $id).' AND fk_product = '.((int) $fk_product).' AND fk_warehouse_source = '.((int) $fk_warehouse_source).' AND fk_warehouse_destination = '.((int) $fk_warehouse_destination).' AND ('.(empty($batch) ? 'batch = "" or batch IS NULL' : "batch = '".$db->escape($batch)."'" ).')'));
-			if (!empty($records[key($records)])) $line = $records[key($records)];
+			$records = $line->fetchAll('', '', 0, 0, array('customsql'=>' fk_stocktransfer = '.((int) $id).' AND fk_product = '.((int) $fk_product).' AND fk_warehouse_source = '.((int) $fk_warehouse_source).' AND fk_warehouse_destination = '.((int) $fk_warehouse_destination).' AND ('.(empty($batch) ? 'batch = "" or batch IS NULL' : "batch = '".$db->escape($batch)."'").')'));
+			if (!empty($records[key($records)])) {
+				$line = $records[key($records)];
+			}
 			$line->fk_stocktransfer = $id;
 			$line->qty += $qty;
 			$line->fk_warehouse_source = $fk_warehouse_source;
@@ -193,8 +208,9 @@ if (empty($reshook)) {
 			$line->batch = $batch;
 
 			$line->pmp = $prod->pmp;
-			if ($line->id > 0) $line->update($user);
-			else {
+			if ($line->id > 0) {
+				$line->update($user);
+			} else {
 				$line->rang = (is_array($object->lines) || $object->lines instanceof Countable) ? count($object->lines) + 1 : 1;
 				$line->create($user);
 			}
@@ -257,10 +273,15 @@ if (empty($reshook)) {
 				$db->begin();
 				foreach ($lines as $line) {
 					$res = $line->doStockMovement($label, $code_inv, $line->fk_warehouse_source);
-					if ($res <= 0) $error++;
+					if ($res <= 0) {
+						$error++;
+					}
 				}
-				if (empty($error)) $db->commit();
-				else $db->rollback();
+				if (empty($error)) {
+					$db->commit();
+				} else {
+					$db->rollback();
+				}
 			}
 			if (empty($error)) {
 				$object->setStatut($object::STATUS_TRANSFERED, $id);
@@ -278,10 +299,15 @@ if (empty($reshook)) {
 				$db->begin();
 				foreach ($lines as $line) {
 					$res = $line->doStockMovement($label, $code_inv, $line->fk_warehouse_source, 0);
-					if ($res <= 0) $error++;
+					if ($res <= 0) {
+						$error++;
+					}
 				}
-				if (empty($error)) $db->commit();
-				else $db->rollback();
+				if (empty($error)) {
+					$db->commit();
+				} else {
+					$db->rollback();
+				}
 			}
 			if (empty($error)) {
 				$object->setStatut($object::STATUS_VALIDATED, $id);
@@ -299,10 +325,15 @@ if (empty($reshook)) {
 				$db->begin();
 				foreach ($lines as $line) {
 					$res = $line->doStockMovement($label, $code_inv, $line->fk_warehouse_destination, 0);
-					if ($res <= 0) $error++;
+					if ($res <= 0) {
+						$error++;
+					}
 				}
-				if (empty($error)) $db->commit();
-				else $db->rollback();
+				if (empty($error)) {
+					$db->commit();
+				} else {
+					$db->rollback();
+				}
 			}
 			if (empty($error)) {
 				$object->setStatut($object::STATUS_CLOSED, $id);
@@ -320,10 +351,15 @@ if (empty($reshook)) {
 				$db->begin();
 				foreach ($lines as $line) {
 					$res = $line->doStockMovement($label, $code_inv, $line->fk_warehouse_destination);
-					if ($res <= 0) $error++;
+					if ($res <= 0) {
+						$error++;
+					}
 				}
-				if (empty($error)) $db->commit();
-				else $db->rollback();
+				if (empty($error)) {
+					$db->commit();
+				} else {
+					$db->rollback();
+				}
 			}
 			if (empty($error)) {
 				$object->setStatut($object::STATUS_TRANSFERED, $id);
@@ -368,7 +404,9 @@ jQuery(document).ready(function() {';
 // Affichage alerte date prévue de départ si transfert concerné
 $date_prevue_depart = $object->date_prevue_depart;
 $date_prevue_depart_plus_delai = $date_prevue_depart;
-if ($object->lead_time_for_warning > 0) $date_prevue_depart_plus_delai = strtotime(date('Y-m-d', $date_prevue_depart) . ' + '.$object->lead_time_for_warning.' day');
+if ($object->lead_time_for_warning > 0) {
+	$date_prevue_depart_plus_delai = strtotime(date('Y-m-d', $date_prevue_depart) . ' + '.$object->lead_time_for_warning.' day');
+}
 if (!empty($date_prevue_depart) && $date_prevue_depart_plus_delai < strtotime(date('Y-m-d'))) {
 	print "$('.valuefield.fieldname_date_prevue_depart').append('";
 	print img_warning($langs->trans('Alert').' - '.$langs->trans('Late'));
@@ -386,8 +424,12 @@ if ($action == 'create') {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
-	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-	if ($backtopageforcancel) print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
+	if ($backtopage) {
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	}
+	if ($backtopageforcancel) {
+		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
+	}
 
 	print dol_get_fiche_head(array(), '');
 
@@ -443,8 +485,12 @@ if (($id || $ref) && $action == 'edit') {
 	print '<input type="hidden" name="token" value="' . newToken() . '">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="' . $object->id . '">';
-	if ($backtopage) print '<input type="hidden" name="backtopage" value="' . $backtopage . '">';
-	if ($backtopageforcancel) print '<input type="hidden" name="backtopageforcancel" value="' . $backtopageforcancel . '">';
+	if ($backtopage) {
+		print '<input type="hidden" name="backtopage" value="' . $backtopage . '">';
+	}
+	if ($backtopageforcancel) {
+		print '<input type="hidden" name="backtopageforcancel" value="' . $backtopageforcancel . '">';
+	}
 
 	print dol_get_fiche_head();
 
@@ -545,8 +591,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Call Hook formConfirm
 	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	if (empty($reshook)) $formconfirm .= $hookmanager->resPrint;
-	elseif ($reshook > 0) $formconfirm = $hookmanager->resPrint;
+	if (empty($reshook)) {
+		$formconfirm .= $hookmanager->resPrint;
+	} elseif ($reshook > 0) {
+		$formconfirm = $hookmanager->resPrint;
+	}
 
 	// Print form confirm
 	print $formconfirm;
@@ -616,8 +665,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<table width="100%" class="nobordernopadding"><tr><td>';
 		print $langs->trans('IncotermLabel');
 		print '<td><td class="right">';
-		if ($permissiontoadd && $action != 'editincoterm') print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
-		else print '&nbsp;';
+		if ($permissiontoadd && $action != 'editincoterm') {
+			print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+		} else {
+			print '&nbsp;';
+		}
 		print '</td></tr></table>';
 		print '</td>';
 		print '<td>';
@@ -706,7 +758,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		<input type="hidden" name="mode" value="">
 		<input type="hidden" name="id" value="' . $object->id.'">
 		';
-	if ($lineid > 0) print '<input type="hidden" name="lineid" value="'.$lineid.'" />';
+	if ($lineid > 0) {
+		print '<input type="hidden" name="lineid" value="'.$lineid.'" />';
+	}
 	print '<table id="tablelines" class="liste centpercent">';
 	//print '<div class="tagtable centpercent">';
 
@@ -753,32 +807,47 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		print '<tr id="row-'.$line->id.'" class="drag drop oddeven" '.$domData.'>';
 		print '<td class="titlefield">';
-		if ($action === 'editline' && $line->id == $lineid) $form->select_produits($line->fk_product, 'fk_product', $filtertype, $limit, 0, -1, 2, '', 0, array(), 0, 0, 0, 'minwidth200imp maxwidth300', 1);
-		else print $productstatic->getNomUrl(1).' - '.$productstatic->label;
+		if ($action === 'editline' && $line->id == $lineid) {
+			$form->select_produits($line->fk_product, 'fk_product', $filtertype, $limit, 0, -1, 2, '', 0, array(), 0, 0, 0, 'minwidth200imp maxwidth300', 1);
+		} else {
+			print $productstatic->getNomUrl(1).' - '.$productstatic->label;
+		}
 		print '</td>';
 		if (isModEnabled('productbatch')) {
 			print '<td>';
-			if ($action === 'editline' && $line->id == $lineid) print '<input type="text" value="'.$line->batch.'" name="batch" class="flat maxwidth50"/>';
-			else {
+			if ($action === 'editline' && $line->id == $lineid) {
+				print '<input type="text" value="'.$line->batch.'" name="batch" class="flat maxwidth50"/>';
+			} else {
 				$productlot = new Productlot($db);
 				if ($productlot->fetch(0, $line->fk_product, $line->batch) > 0) {
 					print $productlot->getNomUrl(1);
-				} elseif (!empty($line->batch)) print $line->batch.'&nbsp;'.img_warning($langs->trans('BatchNotFound'));
+				} elseif (!empty($line->batch)) {
+					print $line->batch.'&nbsp;'.img_warning($langs->trans('BatchNotFound'));
+				}
 			}
 			print '</td>';
 		}
 
 		print '<td>';
 
-		if ($action === 'editline' && $line->id == $lineid) print $formproduct->selectWarehouses($line->fk_warehouse_source, 'fk_warehouse_source', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200', $TExcludedWarehouseSource);
-		else print $warehousestatics->getNomUrl(1);
+		if ($action === 'editline' && $line->id == $lineid) {
+			print $formproduct->selectWarehouses($line->fk_warehouse_source, 'fk_warehouse_source', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200', $TExcludedWarehouseSource);
+		} else {
+			print $warehousestatics->getNomUrl(1);
+		}
 		print '</td>';
 		print '<td>';
-		if ($action === 'editline' && $line->id == $lineid) print $formproduct->selectWarehouses($line->fk_warehouse_destination, 'fk_warehouse_destination', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200', $TExcludedWarehouseDestination);
-		else print $warehousestatict->getNomUrl(1);
+		if ($action === 'editline' && $line->id == $lineid) {
+			print $formproduct->selectWarehouses($line->fk_warehouse_destination, 'fk_warehouse_destination', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200', $TExcludedWarehouseDestination);
+		} else {
+			print $warehousestatict->getNomUrl(1);
+		}
 		print '</td>';
-		if ($action === 'editline' && $line->id == $lineid) print '<td class="center"><input type="text" class="flat maxwidth50" name="qty" value="'.$line->qty.'"></td>';
-		else print '<td class="center">'.$line->qty.'</td>';
+		if ($action === 'editline' && $line->id == $lineid) {
+			print '<td class="center"><input type="text" class="flat maxwidth50" name="qty" value="'.$line->qty.'"></td>';
+		} else {
+			print '<td class="center">'.$line->qty.'</td>';
+		}
 
 		if ($conf->global->PRODUCT_USE_UNITS) {
 			print '<td class="linecoluseunit nowrap left">';
@@ -840,7 +909,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Product
 		print '<td class="titlefield">';
 		$filtertype = 0;
-		if (getDolGlobalString('STOCK_SUPPORTS_SERVICES')) $filtertype = '';
+		if (getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
+			$filtertype = '';
+		}
 		if (getDolGlobalInt('PRODUIT_LIMIT_SIZE') <= 0) {
 			$limit = '';
 		} else {
@@ -864,7 +935,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$source_ent = new Entrepot($db);
 			$source_ent->fetch($object->fk_warehouse_source);
 			foreach ($formproduct->cache_warehouses as $TDataCacheWarehouse) {
-				if (strpos($TDataCacheWarehouse['full_label'], $source_ent->label) === false) $TExcludedWarehouseSource[] = $TDataCacheWarehouse['id'];
+				if (strpos($TDataCacheWarehouse['full_label'], $source_ent->label) === false) {
+					$TExcludedWarehouseSource[] = $TDataCacheWarehouse['id'];
+				}
 			}
 		}
 
@@ -874,7 +947,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$dest_ent = new Entrepot($db);
 			$dest_ent->fetch($object->fk_warehouse_destination);
 			foreach ($formproduct->cache_warehouses as $TDataCacheWarehouse) {
-				if (strpos($TDataCacheWarehouse['full_label'], $dest_ent->label) === false) $TExcludedWarehouseDestination[] = $TDataCacheWarehouse['id'];
+				if (strpos($TDataCacheWarehouse['full_label'], $dest_ent->label) === false) {
+					$TExcludedWarehouseDestination[] = $TDataCacheWarehouse['id'];
+				}
 			}
 		}
 
@@ -919,7 +994,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<div class="tabsAction">'."\n";
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		}
 
 		if (empty($reshook)) {
 			// Send
@@ -1043,7 +1120,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	//Select mail models is same action as presend
-	if (GETPOST('modelselected')) $action = 'presend';
+	if (GETPOST('modelselected')) {
+		$action = 'presend';
+	}
 
 	// Presend form
 	$modelmail = 'stocktransfer';

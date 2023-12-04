@@ -47,7 +47,7 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 
 				print '<td'.($cssclass ? ' class="'.$cssclass.'"' : '');	// TODO Add 'css' and 'cssview' and 'csslist' for extrafields and use here 'csslist'
 				print ' data-key="'.$extrafieldsobjectkey.'.'.$key.'"';
-				print ($title ? ' title="'.dol_escape_htmltag($title).'"' : '');
+				print($title ? ' title="'.dol_escape_htmltag($title).'"' : '');
 				print '>';
 				print $valuetoshow;
 				print '</td>';

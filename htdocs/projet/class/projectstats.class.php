@@ -113,7 +113,7 @@ class ProjectStats extends Stats
 				} else {
 					$other += $row[1];
 				}
-					$i++;
+				$i++;
 			}
 			if ($num > $limit) {
 				$result[$i] = array(
@@ -121,7 +121,7 @@ class ProjectStats extends Stats
 				$other
 				);
 			}
-				$this->db->free($resql);
+			$this->db->free($resql);
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			dol_syslog(get_class($this).'::'.__METHOD__.' '.$this->error, LOG_ERR);

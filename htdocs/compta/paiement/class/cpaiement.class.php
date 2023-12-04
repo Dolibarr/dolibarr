@@ -84,25 +84,25 @@ class Cpaiement extends CommonDict
 		// Clean parameters
 
 		if (isset($this->code)) {
-			 $this->code = trim($this->code);
+			$this->code = trim($this->code);
 		}
 		if (isset($this->libelle)) {
-			 $this->libelle = trim($this->libelle);
+			$this->libelle = trim($this->libelle);
 		}
 		if (isset($this->label)) {
 			$this->label = trim($this->label);
 		}
 		if (isset($this->type)) {
-			 $this->type = trim($this->type);
+			$this->type = trim($this->type);
 		}
 		if (isset($this->active)) {
-			 $this->active = trim($this->active);
+			$this->active = trim($this->active);
 		}
 		if (isset($this->accountancy_code)) {
-			 $this->accountancy_code = trim($this->accountancy_code);
+			$this->accountancy_code = trim($this->accountancy_code);
 		}
 		if (isset($this->module)) {
-			 $this->module = trim($this->module);
+			$this->module = trim($this->module);
 		}
 
 
@@ -120,7 +120,7 @@ class Cpaiement extends CommonDict
 		$sql .= 'accountancy_code,';
 		$sql .= 'module';
 		$sql .= ') VALUES (';
-		$sql .= ' '.(!isset($this->entity) ?getEntity('c_paiement') : $this->entity).',';
+		$sql .= ' '.(!isset($this->entity) ? getEntity('c_paiement') : $this->entity).',';
 		$sql .= ' '.(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").',';
 		$sql .= ' '.(!isset($this->libelle) ? 'NULL' : "'".$this->db->escape($this->libelle)."'").',';
 		$sql .= ' '.(!isset($this->type) ? 'NULL' : $this->type).',';
@@ -240,25 +240,25 @@ class Cpaiement extends CommonDict
 		// Clean parameters
 
 		if (isset($this->code)) {
-			 $this->code = trim($this->code);
+			$this->code = trim($this->code);
 		}
 		if (isset($this->libelle)) {
-			 $this->libelle = trim($this->libelle);
+			$this->libelle = trim($this->libelle);
 		}
 		if (isset($this->label)) {
 			$this->label = trim($this->label);
 		}
 		if (isset($this->type)) {
-			 $this->type = trim($this->type);
+			$this->type = trim($this->type);
 		}
 		if (isset($this->active)) {
-			 $this->active = trim($this->active);
+			$this->active = trim($this->active);
 		}
 		if (isset($this->accountancy_code)) {
-			 $this->accountancy_code = trim($this->accountancy_code);
+			$this->accountancy_code = trim($this->accountancy_code);
 		}
 		if (isset($this->module)) {
-			 $this->module = trim($this->module);
+			$this->module = trim($this->module);
 		}
 
 

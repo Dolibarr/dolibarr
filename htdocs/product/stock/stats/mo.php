@@ -49,7 +49,7 @@ if ($user->socid) {
 $hookmanager->initHooks(array('batchproductstatsmo'));
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -74,7 +74,9 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_year = '';
 }
 
-if (!$user->hasRight('produit', 'lire')) accessforbidden();
+if (!$user->hasRight('produit', 'lire')) {
+	accessforbidden();
+}
 
 
 /*

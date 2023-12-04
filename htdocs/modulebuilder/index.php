@@ -1579,13 +1579,13 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 
 			$moduledescriptorfile = $destdir.'/core/modules/mod'.$module.'.class.php';
 		}
-			// TODO Allow a replace with regex using dolReplaceInFile with param arryreplacementisregex to 1
-			// TODO Avoid duplicate addition
+		// TODO Allow a replace with regex using dolReplaceInFile with param arryreplacementisregex to 1
+		// TODO Avoid duplicate addition
 
-			// load class and check if menu exist with same object name
-			$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
-			dol_include_once($pathtofile);
-				$class = 'mod'.$module;
+		// load class and check if menu exist with same object name
+		$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+		dol_include_once($pathtofile);
+		$class = 'mod'.$module;
 		if (class_exists($class)) {
 			try {
 				$moduleobj = new $class($db);
@@ -1594,8 +1594,8 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 				dol_print_error($db, $e->getMessage());
 			}
 		}
-			$menus = $moduleobj->menu;
-			$counter = 0 ;
+		$menus = $moduleobj->menu;
+		$counter = 0 ;
 		foreach ($menus as $menu) {
 			if ($menu['leftmenu'] == strtolower($objectname)) {
 				$counter++;
@@ -1610,8 +1610,8 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 				dolReplaceInFile($moduledescriptorfile, array('/* END MODULEBUILDER LEFTMENU MYOBJECT */' => '/*LEFTMENU '.strtoupper($objectname).'*/'.$stringtoadd."\n\t\t".'/*END LEFTMENU '.strtoupper($objectname).'*/'."\n\t\t".'/* END MODULEBUILDER LEFTMENU MYOBJECT */'));
 			}
 		}
-			// Add module descriptor to list of files to replace "MyObject' string with real name of object.
-			$filetogenerate[] = 'core/modules/mod'.$module.'.class.php';
+		// Add module descriptor to list of files to replace "MyObject' string with real name of object.
+		$filetogenerate[] = 'core/modules/mod'.$module.'.class.php';
 	}
 
 	if (!$error) {
@@ -2041,7 +2041,7 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname) {
 		// load class and check if menu,permission,documentation exist for this object
 		$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 		dol_include_once($pathtofile);
-			$class = 'mod'.$module;
+		$class = 'mod'.$module;
 		if (class_exists($class)) {
 			try {
 				$moduleobj = new $class($db);
@@ -2215,7 +2215,7 @@ if ($dirins && $action == 'updatedictionary' && GETPOST('dictionnarykey')) {
 	$destdir = $dirins.'/'.strtolower($module);
 	$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
 	dol_include_once($pathtofile);
-		$class = 'mod'.$module;
+	$class = 'mod'.$module;
 
 	if (class_exists($class)) {
 		try {
@@ -2336,7 +2336,7 @@ if ($dirins && $action == 'addright' && !empty($module) && empty($cancel)) {
 	// load class and check if right exist
 	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 	dol_include_once($pathtofile);
-		$class = 'mod'.$module;
+	$class = 'mod'.$module;
 	if (class_exists($class)) {
 		try {
 			$moduleobj = new $class($db);
@@ -2407,9 +2407,9 @@ if ($dirins && $action == 'addright' && !empty($module) && empty($cancel)) {
 			setEventMessages($langs->trans('WarningModuleNeedRefresh', $langs->transnoentities($module)), null, 'warnings');
 		}
 	}
-		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
-		//rewriting all permissions after add a right
-		$rewrite = checkExistComment($moduledescriptorfile, 1);
+	$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
+	//rewriting all permissions after add a right
+	$rewrite = checkExistComment($moduledescriptorfile, 1);
 	if ($rewrite < 0) {
 		setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
 	} else {
@@ -2432,7 +2432,7 @@ if ($dirins && GETPOST('action') == 'update_right' && GETPOST('modifyright')&& e
 	// load class and check if right exist
 	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 	dol_include_once($pathtofile);
-		$class = 'mod'.$module;
+	$class = 'mod'.$module;
 	if (class_exists($class)) {
 		try {
 			$moduleobj = new $class($db);
@@ -2475,15 +2475,15 @@ if ($dirins && GETPOST('action') == 'update_right' && GETPOST('modifyright')&& e
 	$x1 = $permissions[$key][1];
 	$x2 = $permissions[$key][4];
 	$x3 = $permissions[$key][5];
-		//check existing object permission
-		$counter = 0;
-		$permsForObject =array();
-		$permissions = $moduleobj->rights;
-		$firstRight = 0;
-		$existRight = 0;
-		$allObject = array();
+	//check existing object permission
+	$counter = 0;
+	$permsForObject =array();
+	$permissions = $moduleobj->rights;
+	$firstRight = 0;
+	$existRight = 0;
+	$allObject = array();
 
-		$countPerms = count($permissions);
+	$countPerms = count($permissions);
 	for ($i =0; $i<$countPerms; $i++) {
 		if ($permissions[$i][4] == $objectForPerms) {
 			$counter++;
@@ -2709,7 +2709,7 @@ if ($dirins && $action == 'confirm_deletemenu' && GETPOST('menukey', 'int')) {
 	// load class and check if menu exist
 	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 	dol_include_once($pathtofile);
-		$class = 'mod'.$module;
+	$class = 'mod'.$module;
 	if (class_exists($class)) {
 		try {
 			$moduleobj = new $class($db);
@@ -2771,7 +2771,7 @@ if ($dirins && $action == 'addmenu' && empty($cancel)) {
 	// load class and check if right exist
 	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 	dol_include_once($pathtofile);
-		$class = 'mod'.$module;
+	$class = 'mod'.$module;
 	if (class_exists($class)) {
 		try {
 			$moduleobj = new $class($db);
@@ -2830,9 +2830,9 @@ if ($dirins && $action == 'addmenu' && empty($cancel)) {
 			setEventMessages($langs->trans("WarningFieldsMustContains", $langs->transnoentities("leftmenu")), null, 'errors');
 		}
 	}
-	 $dirins = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
-	 $destdir = $dirins.'/'.strtolower($module);
-	 $objects = dolGetListOfObjectClasses($destdir);
+	$dirins = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
+	$destdir = $dirins.'/'.strtolower($module);
+	$objects = dolGetListOfObjectClasses($destdir);
 
 	if (GETPOST('type', 'alpha') == 'left') {
 		if (empty(GETPOST('leftmenu')) && count($objects) >0) {
@@ -2940,8 +2940,8 @@ if ($dirins && $action == "update_menu" && GETPOST('menukey', 'int') && GETPOST(
 		$key = (int) GETPOST('menukey', 'int') - 1;
 
 		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
-			//stock forms in array
-			$menuModify = array(
+		//stock forms in array
+		$menuModify = array(
 				'fk_menu' => GETPOST('fk_menu', 'alpha'),
 				'type'  => GETPOST('type', 'alpha'),
 				'titre' => ucfirst(GETPOST('titre', 'alpha')),
@@ -2955,52 +2955,52 @@ if ($dirins && $action == "update_menu" && GETPOST('menukey', 'int') && GETPOST(
 				'target' => GETPOST('target', 'alpha'),
 				'user' => GETPOST('user', 'alpha'),
 			);
-			if (!empty(GETPOST('fk_menu')) && GETPOST('fk_menu') != $menus[$key]['fk_menu']) {
-				$menuModify['fk_menu'] = 'fk_mainmenu='.GETPOST('mainmenu').',fk_leftmenu='.GETPOST('fk_menu');
-			} elseif (GETPOST('fk_menu') == $menus[$key]['fk_menu']) {
-				$menuModify['fk_menu'] = $menus[$key]['fk_menu'];
+		if (!empty(GETPOST('fk_menu')) && GETPOST('fk_menu') != $menus[$key]['fk_menu']) {
+			$menuModify['fk_menu'] = 'fk_mainmenu='.GETPOST('mainmenu').',fk_leftmenu='.GETPOST('fk_menu');
+		} elseif (GETPOST('fk_menu') == $menus[$key]['fk_menu']) {
+			$menuModify['fk_menu'] = $menus[$key]['fk_menu'];
+		} else {
+			$menuModify['fk_menu'] = 'fk_mainmenu='.GETPOST('mainmenu');
+		}
+		if ($menuModify['enabled'] === '') {
+			$menuModify['enabled'] = '1';
+		}
+		if ($menuModify['perms'] === '') {
+			$menuModify['perms'] = '1';
+		}
+
+		if (GETPOST('type', 'alpha') == 'top') {
+			$error++;
+			setEventMessages($langs->trans("ErrorTypeMenu", $langs->transnoentities("type")), null, 'errors');
+		}
+
+		if (!$error) {
+			//update menu
+			$checkComment = checkExistComment($moduledescriptorfile, 0);
+
+			if ($checkComment < 0) {
+				setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Menus"), "mod".$module."class.php"), null, 'warnings');
 			} else {
-				$menuModify['fk_menu'] = 'fk_mainmenu='.GETPOST('mainmenu');
-			}
-			if ($menuModify['enabled'] === '') {
-				$menuModify['enabled'] = '1';
-			}
-			if ($menuModify['perms'] === '') {
-				$menuModify['perms'] = '1';
-			}
+				// Write all menus
+				$result = reWriteAllMenus($moduledescriptorfile, $menus, $menuModify, $key, 2);
 
-			if (GETPOST('type', 'alpha') == 'top') {
-				$error++;
-				setEventMessages($langs->trans("ErrorTypeMenu", $langs->transnoentities("type")), null, 'errors');
-			}
+				clearstatcache(true);
+				if (function_exists('opcache_invalidate')) {
+					opcache_reset();
+				}
 
-			if (!$error) {
-				//update menu
-				$checkComment = checkExistComment($moduledescriptorfile, 0);
-
-				if ($checkComment < 0) {
-					setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Menus"), "mod".$module."class.php"), null, 'warnings');
-				} else {
-					// Write all menus
-					$result = reWriteAllMenus($moduledescriptorfile, $menus, $menuModify, $key, 2);
-
-					clearstatcache(true);
-					if (function_exists('opcache_invalidate')) {
-						opcache_reset();
-					}
-
-					if ($result < 0) {
-						setEventMessages($langs->trans('ErrorMenuExistValue'), null, 'errors');
-						//var_dump($_SESSION);exit;
-						header("Location: ".$_SERVER["PHP_SELF"].'?action=editmenu&token='.newToken().'&menukey='.urlencode($key+1).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.($key+1));
-						exit;
-					}
-
-					setEventMessages($langs->trans('MenuUpdatedSuccessfuly'), null);
-					header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
+				if ($result < 0) {
+					setEventMessages($langs->trans('ErrorMenuExistValue'), null, 'errors');
+					//var_dump($_SESSION);exit;
+					header("Location: ".$_SERVER["PHP_SELF"].'?action=editmenu&token='.newToken().'&menukey='.urlencode($key+1).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.($key+1));
 					exit;
 				}
+
+				setEventMessages($langs->trans('MenuUpdatedSuccessfuly'), null);
+				header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
+				exit;
 			}
+		}
 	} else {
 		$_POST['type'] = '';
 		$_POST['titre'] = '';
@@ -3028,7 +3028,7 @@ if ($dirins && $action == "update_props_module" && !empty(GETPOST('keydescriptio
 
 	dol_include_once($pathtofile);
 
-		$class = 'mod'.$module;
+	$class = 'mod'.$module;
 	if (class_exists($class)) {
 		try {
 			$moduleobj = new $class($db);
@@ -3447,7 +3447,7 @@ if ($module == 'initmodule') {
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=dictionaries&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = ($countDictionaries == 0  ? $langs->trans("Dictionaries") : $langs->trans('Dictionaries').'<span class="marginleftonlyshort badge">'.$countDictionaries."</span>");
+		$head2[$h][1] = ($countDictionaries == 0 ? $langs->trans("Dictionaries") : $langs->trans('Dictionaries').'<span class="marginleftonlyshort badge">'.$countDictionaries."</span>");
 		$head2[$h][2] = 'dictionaries';
 		$h++;
 
@@ -3763,7 +3763,7 @@ if ($module == 'initmodule') {
 				print dol_get_fiche_head($head2, $tab, '', -1, '', 0, '', '', 0, 'formodulesuffix');
 
 				$doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%', '');
-				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
+				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
 
 				print dol_get_fiche_end();
 
@@ -3843,7 +3843,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
 				$doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'text'));
+				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'text'));
 				print '<br>';
 				print '<center>';
 				print '<input type="submit" class="button buttonforacesave button-save" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -3975,7 +3975,7 @@ if ($module == 'initmodule') {
 
 				print '</form>';
 			} elseif ($tabobj == 'createproperty') {
-				$attributesUnique = array (
+				$attributesUnique = array(
 					'proplabel' => $form->textwithpicto($langs->trans("Label"), $langs->trans("YouCanUseTranslationKey")),
 					'propname' => $form->textwithpicto($langs->trans("Code"), $langs->trans("PropertyDesc"), 1, 'help', 'extracss', 0, 3, 'propertyhelp'),
 					'proptype' => $form->textwithpicto($langs->trans("Type"), $langs->trans("TypeOfFieldsHelpIntro").'<br><br>'.$langs->trans("TypeOfFieldsHelp"), 1, 'help', 'extracss', 0, 3, 'typehelp'),
@@ -4136,7 +4136,7 @@ if ($module == 'initmodule') {
 					// Print form confirm
 					print $formconfirm;
 				}
-				if ($action != 'editfile' || empty($file) ) {
+				if ($action != 'editfile' || empty($file)) {
 					try {
 						//$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 
@@ -4263,7 +4263,7 @@ if ($module == 'initmodule') {
 
 						// API file
 						print '<br>';
-						print '<span class="fa fa-file-o"></span> '.$langs->trans("ApiClassFile").' : <strong class="wordbreak">'.(dol_is_file($realpathtoapi) ? '' : '<strike><span class="opacitymedium">').preg_replace('/^'.strtolower($module).'\//', '', $pathtoapi).(dol_is_file($realpathtoapi)?'':'</span></strike>').'</strong>';
+						print '<span class="fa fa-file-o"></span> '.$langs->trans("ApiClassFile").' : <strong class="wordbreak">'.(dol_is_file($realpathtoapi) ? '' : '<strike><span class="opacitymedium">').preg_replace('/^'.strtolower($module).'\//', '', $pathtoapi).(dol_is_file($realpathtoapi) ? '' : '</span></strike>').'</strong>';
 						if (dol_is_file($realpathtoapi)) {
 							$file = file_get_contents($realpathtoapi);
 							if (preg_match('/var '.$tabobj.'\s+([^\s]*)\s/ims', $file, $objs)) {
@@ -4285,7 +4285,7 @@ if ($module == 'initmodule') {
 						}
 						// PHPUnit
 						print '<br>';
-						print '<span class="fa fa-file-o"></span> '.$langs->trans("TestClassFile").' : <strong class="wordbreak">'.(dol_is_file($realpathtophpunit) ? '' : '<strike><span class="opacitymedium">').preg_replace('/^'.strtolower($module).'\//', '', $pathtophpunit).(dol_is_file($realpathtophpunit)?'':'</span></strike>').'</strong>';
+						print '<span class="fa fa-file-o"></span> '.$langs->trans("TestClassFile").' : <strong class="wordbreak">'.(dol_is_file($realpathtophpunit) ? '' : '<strike><span class="opacitymedium">').preg_replace('/^'.strtolower($module).'\//', '', $pathtophpunit).(dol_is_file($realpathtophpunit) ? '' : '</span></strike>').'</strong>';
 						if (dol_is_file($realpathtophpunit)) {
 							print ' <a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&token='.newToken().'&format=php&file='.urlencode($pathtophpunit).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 							print ' ';
@@ -4474,26 +4474,26 @@ if ($module == 'initmodule') {
 									$propname = $propkey;
 									$proplabel = $propval['label'];
 									$proptype = $propval['type'];
-									$proparrayofkeyval = !empty($propval['arrayofkeyval'])?$propval['arrayofkeyval']:'';
+									$proparrayofkeyval = !empty($propval['arrayofkeyval']) ? $propval['arrayofkeyval'] : '';
 									$propnotnull = !empty($propval['notnull']) ? $propval['notnull'] : '0';
-									$propdefault = !empty($propval['default'])?$propval['default']:'';
-									$propindex = !empty($propval['index'])?$propval['index']:'';
-									$propforeignkey = !empty($propval['foreignkey'])?$propval['foreignkey']:'';
+									$propdefault = !empty($propval['default']) ? $propval['default'] : '';
+									$propindex = !empty($propval['index']) ? $propval['index'] : '';
+									$propforeignkey = !empty($propval['foreignkey']) ? $propval['foreignkey'] : '';
 									$propposition = $propval['position'];
 									$propenabled = $propval['enabled'];
 									$propvisible = $propval['visible'];
-									$propnoteditable = !empty($propval['noteditable'])?$propval['noteditable']:0;
+									$propnoteditable = !empty($propval['noteditable']) ? $propval['noteditable'] : 0;
 									//$propalwayseditable = !empty($propval['alwayseditable'])?$propval['alwayseditable']:0;
-									$propsearchall = !empty($propval['searchall'])?$propval['searchall']:0;
-									$propisameasure = !empty($propval['isameasure'])?$propval['isameasure']:0;
-									$propcss = !empty($propval['css'])?$propval['css']:'';
-									$propcssview = !empty($propval['cssview'])?$propval['cssview']:'';
-									$propcsslist = !empty($propval['csslist'])?$propval['csslist']:'';
-									$prophelp = !empty($propval['help'])?$propval['help']:'';
-									$propshowoncombobox = !empty($propval['showoncombobox'])?$propval['showoncombobox']:0;
+									$propsearchall = !empty($propval['searchall']) ? $propval['searchall'] : 0;
+									$propisameasure = !empty($propval['isameasure']) ? $propval['isameasure'] : 0;
+									$propcss = !empty($propval['css']) ? $propval['css'] : '';
+									$propcssview = !empty($propval['cssview']) ? $propval['cssview'] : '';
+									$propcsslist = !empty($propval['csslist']) ? $propval['csslist'] : '';
+									$prophelp = !empty($propval['help']) ? $propval['help'] : '';
+									$propshowoncombobox = !empty($propval['showoncombobox']) ? $propval['showoncombobox'] : 0;
 									//$propdisabled=$propval['disabled'];
-									$propvalidate = !empty($propval['validate'])?$propval['validate']:0;
-									$propcomment = !empty($propval['comment'])?$propval['comment']:'';
+									$propvalidate = !empty($propval['validate']) ? $propval['validate'] : 0;
+									$propcomment = !empty($propval['comment']) ? $propval['comment'] : '';
 
 									print '<!-- line for object property -->'."\n";
 									print '<tr class="oddeven">';
@@ -4594,7 +4594,7 @@ if ($module == 'initmodule') {
 										} elseif (strpos($proptype, 'real') === 0) {
 											$pictoType = 'double';
 										}
-										print (!empty($pictoType) ? getPictoForType($pictoType) : getPictoForType($proptype)).'<span title="'.dol_escape_htmltag($proptype).'">'.dol_escape_htmltag($proptype).'</span>';
+										print(!empty($pictoType) ? getPictoForType($pictoType) : getPictoForType($proptype)).'<span title="'.dol_escape_htmltag($proptype).'">'.dol_escape_htmltag($proptype).'</span>';
 										print '</td>';
 										print '<td class="tdoverflowmax200">';
 										if ($proparrayofkeyval) {
@@ -4710,7 +4710,7 @@ if ($module == 'initmodule') {
 										print '<input type="hidden" name="module" value="'.$module.'">';
 
 										$doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-										print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
+										print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
 										print '<br>';
 										print '<center>';
 										print '<input type="submit" class="button buttonforacesave button-save" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -4752,7 +4752,7 @@ if ($module == 'initmodule') {
 					print '<input type="hidden" name="module" value="'.$module.($forceddirread ? '@'.$dirread : '').'">';
 
 					$doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-					print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
+					print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
 					print '<br>';
 					print '<center>';
 					print '<input type="submit" class="button buttonforacesave button-save" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -4896,7 +4896,7 @@ if ($module == 'initmodule') {
 								print '<input type="hidden" name="dictionnarykey" value="'.($i+1).'">';
 
 								print '<td class="tdsticky tdstickygray">';
-								print ($i + 1);
+								print($i + 1);
 								print '</td>';
 
 								print '<td>';
@@ -4949,7 +4949,7 @@ if ($module == 'initmodule') {
 								print '<tr class="oddeven">';
 
 								print '<td class="tdsticky tdstickygray">';
-								print ($i + 1);
+								print($i + 1);
 								print '</td>';
 
 								print '<td>';
@@ -5105,7 +5105,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
 				$doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
+				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
 				print '<center>';
 				print '<input type="submit" class="button buttonforacesave button-save" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -5300,18 +5300,18 @@ if ($module == 'initmodule') {
 				}
 				$groupedRights[$key][] = $right;
 			}
-				$groupedRights_json = json_encode($groupedRights);
+			$groupedRights_json = json_encode($groupedRights);
 
 			if ($action == 'deletemenu') {
-					$formconfirms = $form->formconfirm(
-						$_SERVER["PHP_SELF"].'?menukey='.urlencode(GETPOST('menukey', 'int')).'&tab='.urlencode($tab).'&module='.urlencode($module),
-						$langs->trans('Delete'),
-						($menus[GETPOST('menukey')]['fk_menu'] === 'fk_mainmenu='.strtolower($module) ? $langs->trans('Warning: you will delete all menus linked to this one.', GETPOST('menukey', 'int')) : $langs->trans('Confirm Delete Menu', GETPOST('menukey', 'int'))),
-						'confirm_deletemenu',
-						'',
-						0,
-						1
-					);
+				$formconfirms = $form->formconfirm(
+					$_SERVER["PHP_SELF"].'?menukey='.urlencode(GETPOST('menukey', 'int')).'&tab='.urlencode($tab).'&module='.urlencode($module),
+					$langs->trans('Delete'),
+					($menus[GETPOST('menukey')]['fk_menu'] === 'fk_mainmenu='.strtolower($module) ? $langs->trans('Warning: you will delete all menus linked to this one.', GETPOST('menukey', 'int')) : $langs->trans('Confirm Delete Menu', GETPOST('menukey', 'int'))),
+					'confirm_deletemenu',
+					'',
+					0,
+					1
+				);
 				print $formconfirms;
 			}
 			if ($action != 'editfile' || empty($file)) {
@@ -5438,7 +5438,7 @@ if ($module == 'initmodule') {
 						$propMainmenu = !empty($menu['mainmenu']) ? $menu['mainmenu'] : GETPOST('mainmenu');
 						$propLeftmenu = !empty($menu['leftmenu']) ? $menu['leftmenu'] : GETPOST('leftmenu');
 						$propUrl = !empty($menu['url']) ? $menu['url'] : GETPOST('url', 'alpha');
-						$propPerms = !empty($menu['perms']) ?  $menu['perms'] : GETPOST('perms');
+						$propPerms = !empty($menu['perms']) ? $menu['perms'] : GETPOST('perms');
 						$propUser = !empty($menu['user']) ? $menu['user'] : GETPOST('user');
 						$propTarget = !empty($menu['target']) ? $menu['target'] : GETPOST('target');
 						$propEnabled = !empty($menu['enabled']) ? $menu['enabled'] : GETPOST('enabled');
@@ -5467,7 +5467,7 @@ if ($module == 'initmodule') {
 										<option value="'.dol_escape_htmltag($menu['type']).'">
 										'.dol_escape_htmltag($menu['type']).'
 										</option>';
-										print '<option value="'.($menu['type'] == 'left' ? 'top' : 'left').'">';
+							print '<option value="'.($menu['type'] == 'left' ? 'top' : 'left').'">';
 							if ($menu['type'] == 'left') {
 								print 'top';
 							} else {
@@ -5620,8 +5620,8 @@ if ($module == 'initmodule') {
 							print '</td>';
 							print '<td class="center minwidth75 tdstickyright tdstickyghostwhite">';
 							if ($menu['titre'] != 'Module'.$module.'Name') {
-									print '<a class="editfielda reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=editmenu&token='.newToken().'&menukey='.urlencode($i).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_edit().'</a>';
-									print '<a class="marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=deletemenu&token='.newToken().'&menukey='.urlencode($i-1).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_delete().'</a>';
+								print '<a class="editfielda reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=editmenu&token='.newToken().'&menukey='.urlencode($i).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_edit().'</a>';
+								print '<a class="marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=deletemenu&token='.newToken().'&menukey='.urlencode($i-1).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_delete().'</a>';
 							}
 							print '</td>';
 						}
@@ -5698,7 +5698,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
 				$doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
+				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
 				print '<center>';
 				print '<input type="submit" class="button buttonforacesave button-save" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -5948,7 +5948,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
 				$doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
+				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
 				print '<center>';
 				print '<input type="submit" class="button buttonforacesave button-save" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -6003,7 +6003,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
 				$doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
+				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
 				print '<center>';
 				print '<input type="submit" class="button buttonforacesave button-save" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -6069,7 +6069,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
 				$doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
+				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
 				print '<center>';
 				print '<input type="submit" class="button buttonforacesave button-save" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -6115,7 +6115,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
 				$doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
+				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
 				print '<center>';
 				print '<input type="submit" class="button buttonforacesave button-save" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -6161,7 +6161,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
 				$doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
+				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
 				print '<center>';
 				print '<input type="submit" class="button buttonforacesave button-save" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -6213,7 +6213,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
 				$doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
+				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
 				print '<center>';
 				print '<input type="submit" class="button buttonforacesave button-save" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -6253,7 +6253,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
 				$doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
+				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
 				print '<center>';
 				print '<input type="submit" class="button buttonforacesave button-save" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -6333,7 +6333,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
 				$doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
+				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
 				print '<center>';
 				print '<input type="submit" class="button buttonforacesave button-save" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -6455,7 +6455,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
 				$doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
+				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
 				print '<center>';
 				print '<input type="submit" class="button buttonforacesave button-save" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -6514,7 +6514,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
 				$doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
+				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
 				print '<center>';
 				print '<input type="submit" class="button buttonforacesave button-save" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -6758,7 +6758,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
 				$doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
-				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
+				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
 				print '<center>';
 				print '<input type="submit" class="button buttonforacesave button-save" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';

@@ -93,7 +93,7 @@ if (!GETPOST("currency", 'alpha')) {
 } else {
 	$currency = GETPOST("currency", 'aZ09');
 }
-$source = GETPOST("s", 'aZ09') ?GETPOST("s", 'aZ09') : GETPOST("source", 'aZ09');
+$source = GETPOST("s", 'aZ09') ? GETPOST("s", 'aZ09') : GETPOST("source", 'aZ09');
 $getpostlang = GETPOST('lang', 'aZ09');
 
 if (!$action) {
@@ -838,7 +838,7 @@ $form = new Form($db);
 
 $head = '';
 if (getDolGlobalString('ONLINE_PAYMENT_CSS_URL')) {
-	$head = '<link rel="stylesheet" type="text/css" href="' . getDolGlobalString('ONLINE_PAYMENT_CSS_URL').'?lang='.(!empty($getpostlang) ? $getpostlang: $langs->defaultlang).'">'."\n";
+	$head = '<link rel="stylesheet" type="text/css" href="' . getDolGlobalString('ONLINE_PAYMENT_CSS_URL').'?lang='.(!empty($getpostlang) ? $getpostlang : $langs->defaultlang).'">'."\n";
 }
 
 $conf->dol_hide_topmenu = 1;
@@ -1063,7 +1063,8 @@ if ($source == 'order') {
 	} else {
 		$fulltag = 'ORD='.$order->id.'.CUS='.$order->thirdparty->id;
 		if (!empty($TAG)) {
-			$tag = $TAG; $fulltag .= '.TAG='.$TAG;
+			$tag = $TAG;
+			$fulltag .= '.TAG='.$TAG;
 		}
 	}
 	$fulltag = dol_string_unaccent($fulltag);
@@ -1191,7 +1192,8 @@ if ($source == 'invoice') {
 	} else {
 		$fulltag = 'INV='.$invoice->id.'.CUS='.$invoice->thirdparty->id;
 		if (!empty($TAG)) {
-			$tag = $TAG; $fulltag .= '.TAG='.$TAG;
+			$tag = $TAG;
+			$fulltag .= '.TAG='.$TAG;
 		}
 	}
 	$fulltag = dol_string_unaccent($fulltag);
@@ -1359,7 +1361,8 @@ if ($source == 'contractline') {
 	} else {
 		$fulltag = 'COL='.$contractline->id.'.CON='.$contract->id.'.CUS='.$contract->thirdparty->id.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
 		if (!empty($TAG)) {
-			$tag = $TAG; $fulltag .= '.TAG='.$TAG;
+			$tag = $TAG;
+			$fulltag .= '.TAG='.$TAG;
 		}
 	}
 	$fulltag = dol_string_unaccent($fulltag);
@@ -1534,7 +1537,8 @@ if ($source == 'member' || $source == 'membersubscription') {
 	} else {
 		$fulltag = 'MEM='.$member->id.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
 		if (!empty($TAG)) {
-			$tag = $TAG; $fulltag .= '.TAG='.$TAG;
+			$tag = $TAG;
+			$fulltag .= '.TAG='.$TAG;
 		}
 	}
 	$fulltag = dol_string_unaccent($fulltag);
@@ -1620,7 +1624,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 			// list member type
 			if (!$action) {
 				// Set amount for the subscription
-				$amount = (!empty($amountbytype[$member->typeid])) ? $amountbytype[$member->typeid]  : $member->last_subscription_amount;
+				$amount = (!empty($amountbytype[$member->typeid])) ? $amountbytype[$member->typeid] : $member->last_subscription_amount;
 
 				print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("NewSubscription");
 				print '</td><td class="CTableRow2">';
@@ -1650,7 +1654,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 		$amount = max(0, $conf->global->MEMBER_MIN_AMOUNT, $amount);
 	}
 	$caneditamount = $adht->caneditamount;
-	$minimumamount = !getDolGlobalString('MEMBER_MIN_AMOUNT')? $adht->amount : max($conf->global->MEMBER_MIN_AMOUNT, $adht->amount, $amount);
+	$minimumamount = !getDolGlobalString('MEMBER_MIN_AMOUNT') ? $adht->amount : max($conf->global->MEMBER_MIN_AMOUNT, $adht->amount, $amount);
 
 	if ($caneditamount && $action != 'dopayment') {
 		if (GETPOSTISSET('newamount')) {
@@ -1740,7 +1744,8 @@ if ($source == 'donation') {
 	} else {
 		$fulltag = 'DON='.$don->ref.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
 		if (!empty($TAG)) {
-			$tag = $TAG; $fulltag .= '.TAG='.$TAG;
+			$tag = $TAG;
+			$fulltag .= '.TAG='.$TAG;
 		}
 	}
 	$fulltag = dol_string_unaccent($fulltag);
@@ -1874,7 +1879,8 @@ if ($source == 'organizedeventregistration') {
 	} else {
 		$fulltag = 'ATT='.$attendee->id.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
 		if (!empty($TAG)) {
-			$tag = $TAG; $fulltag .= '.TAG='.$TAG;
+			$tag = $TAG;
+			$fulltag .= '.TAG='.$TAG;
 		}
 	}
 	$fulltag = dol_string_unaccent($fulltag);
@@ -1889,7 +1895,7 @@ if ($source == 'organizedeventregistration') {
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Attendee");
 	print '</td><td class="CTableRow2"><b>';
 	print $attendee->email;
-	print ($thirdparty->name ? ' ('.$thirdparty->name.')' : '');
+	print($thirdparty->name ? ' ('.$thirdparty->name.')' : '');
 	print '</b>';
 	print '</td></tr>'."\n";
 
@@ -1963,7 +1969,8 @@ if ($source == 'boothlocation') {
 	} else {
 		$fulltag = 'BOO='.GETPOST("booth").'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
 		if (!empty($TAG)) {
-			$tag = $TAG; $fulltag .= '.TAG='.$TAG;
+			$tag = $TAG;
+			$fulltag .= '.TAG='.$TAG;
 		}
 	}
 	$fulltag = dol_string_unaccent($fulltag);
@@ -2404,22 +2411,20 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 					$_SESSION['TRANSACTIONID'] = $sessionstripe->id;
 				} catch (Exception $e) {
 					print $e->getMessage();
-				}
-				?>
+				} ?>
 			   // Code for payment with option STRIPE_USE_NEW_CHECKOUT set
 
 			// Create a Stripe client.
 				<?php
 				if (empty($stripeacc)) {
 					?>
-			var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>');
+			var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php?>');
 					<?php
 				} else {
 					?>
-			var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>', { stripeAccount: '<?php echo $stripeacc; ?>' });
+			var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php?>', { stripeAccount: '<?php echo $stripeacc; ?>' });
 					<?php
-				}
-				?>
+				} ?>
 
 			// Create an instance of Elements
 			var elements = stripe.elements();
@@ -2467,14 +2472,13 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 				<?php
 				if (empty($stripeacc)) {
 					?>
-			var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>');
+			var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php?>');
 					<?php
 				} else {
 					?>
-			var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>', { stripeAccount: '<?php echo $stripeacc; ?>' });
+			var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php?>', { stripeAccount: '<?php echo $stripeacc; ?>' });
 					<?php
-				}
-				?>
+				} ?>
 
 				<?php
 				if (getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION') == 2) {
@@ -2491,8 +2495,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 			// Create an instance of Elements
 			var elements = stripe.elements();
 					<?php
-				}
-				?>
+				} ?>
 
 			// Custom styling can be passed to options when creating an Element.
 			// (Note that this demo uses a wider set of styles than the guide below.)
@@ -2553,11 +2556,12 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 									line1: '<?php echo dol_escape_js(preg_replace('/\s\s+/', ' ', $object->thirdparty->address)); ?>',
 									postal_code: '<?php echo dol_escape_js($object->thirdparty->zip); ?>'
 									}
-								<?php } ?>
+									<?php
+								} ?>
 							}
 							},
 							save_payment_method:<?php if ($stripecu) {
-													print 'true';
+								print 'true';
 												} else {
 													print 'false';
 												} ?>	/* true when a customer was provided when creating payment intent. true ask to save the card */
@@ -2646,11 +2650,12 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 									line1: '<?php echo dol_escape_js(preg_replace('/\s\s+/', ' ', $object->thirdparty->address)); ?>',
 									postal_code: '<?php echo dol_escape_js($object->thirdparty->zip); ?>'
 									}
-								<?php } ?>
+									<?php
+								} ?>
 							}
 							},
 							save_payment_method:<?php if ($stripecu) {
-													print 'true';
+								print 'true';
 												} else {
 													print 'false';
 												} ?>	/* true when a customer was provided when creating payment intent. true ask to save the card */
@@ -2677,8 +2682,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 				}
 			});
 					<?php
-				}
-				?>
+				} ?>
 
 				<?php
 			}

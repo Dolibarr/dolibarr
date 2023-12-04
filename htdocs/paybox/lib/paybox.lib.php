@@ -146,8 +146,8 @@ function print_paybox_redirect($PRICE, $CURRENCY, $EMAIL, $urlok, $urlko, $TAG)
 		   "&PBX_OUTPUT=".$IBS_OUTPUT.
 		   "&PBX_SOURCE=".$PBX_SOURCE.
 		   "&PBX_TYPEPAIEMENT=".$PBX_TYPEPAIEMENT;
-		   "&PBX_HASH=".$PBX_HASH;
-		   "&PBX_TIME=".$PBX_TIME;
+	"&PBX_HASH=".$PBX_HASH;
+	"&PBX_TIME=".$PBX_TIME;
 
 	$binKey = pack("H*", dol_decode($conf->global->PAYBOX_HMAC_KEY));
 

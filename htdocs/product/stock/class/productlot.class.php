@@ -313,22 +313,22 @@ class Productlot extends CommonObject
 		// Clean parameters
 
 		if (isset($this->entity)) {
-			 $this->entity = (int) $this->entity;
+			$this->entity = (int) $this->entity;
 		}
 		if (isset($this->fk_product)) {
-			 $this->fk_product = (int) $this->fk_product;
+			$this->fk_product = (int) $this->fk_product;
 		}
 		if (isset($this->batch)) {
-			 $this->batch = trim($this->batch);
+			$this->batch = trim($this->batch);
 		}
 		if (isset($this->fk_user_creat)) {
-			 $this->fk_user_creat = (int) $this->fk_user_creat;
+			$this->fk_user_creat = (int) $this->fk_user_creat;
 		}
 		if (isset($this->fk_user_modif)) {
-			 $this->fk_user_modif = (int) $this->fk_user_modif;
+			$this->fk_user_modif = (int) $this->fk_user_modif;
 		}
 		if (isset($this->import_key)) {
-			 $this->import_key = trim($this->import_key);
+			$this->import_key = trim($this->import_key);
 		}
 
 		// Check parameters
@@ -527,22 +527,22 @@ class Productlot extends CommonObject
 		// Clean parameters
 
 		if (isset($this->entity)) {
-			 $this->entity = (int) $this->entity;
+			$this->entity = (int) $this->entity;
 		}
 		if (isset($this->fk_product)) {
-			 $this->fk_product = (int) $this->fk_product;
+			$this->fk_product = (int) $this->fk_product;
 		}
 		if (isset($this->batch)) {
-			 $this->batch = trim($this->batch);
+			$this->batch = trim($this->batch);
 		}
 		if (isset($this->fk_user_creat)) {
-			 $this->fk_user_creat = (int) $this->fk_user_creat;
+			$this->fk_user_creat = (int) $this->fk_user_creat;
 		}
 		if (isset($this->fk_user_modif)) {
-			 $this->fk_user_modif = (int) $this->fk_user_modif;
+			$this->fk_user_modif = (int) $this->fk_user_modif;
 		}
 		if (isset($this->import_key)) {
-			 $this->import_key = trim($this->import_key);
+			$this->import_key = trim($this->import_key);
 		}
 
 		// $this->oldcopy should have been set by the caller of update (here properties were already modified)
@@ -666,15 +666,15 @@ class Productlot extends CommonObject
 
 		// TODO
 		//if (!$error) {
-			//if (!$notrigger) {
-				// Uncomment this and change PRODUCTLOT to your own tag if you
-				// want this action calls a trigger.
+		//if (!$notrigger) {
+		// Uncomment this and change PRODUCTLOT to your own tag if you
+		// want this action calls a trigger.
 
-				//// Call triggers
-				//$result=$this->call_trigger('PRODUCTLOT_DELETE',$user);
-				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-				//// End call triggers
-			//}
+		//// Call triggers
+		//$result=$this->call_trigger('PRODUCTLOT_DELETE',$user);
+		//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+		//// End call triggers
+		//}
 		//}
 
 		if (!$error) {
@@ -1145,7 +1145,7 @@ class Productlot extends CommonObject
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');

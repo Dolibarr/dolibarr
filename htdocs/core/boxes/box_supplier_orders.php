@@ -30,7 +30,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_supplier_orders extends ModeleBoxes
 {
-
 	public $boxcode = "latestsupplierorders";
 	public $boximg = "object_order";
 	public $boxlabel = "BoxLatestSupplierOrders";

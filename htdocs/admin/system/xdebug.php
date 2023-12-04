@@ -52,8 +52,8 @@ print '</span>';
 print '<br><br>';
 
 if (function_exists('socket_create')) {
-	$address = ini_get('xdebug.remote_host') ?ini_get('xdebug.remote_host') : '127.0.0.1';
-	$port = ini_get('xdebug.remote_port') ?ini_get('xdebug.remote_port') : 9000;
+	$address = ini_get('xdebug.remote_host') ? ini_get('xdebug.remote_host') : '127.0.0.1';
+	$port = ini_get('xdebug.remote_port') ? ini_get('xdebug.remote_port') : 9000;
 
 	print "<strong>Current xdebug setup:</strong><br>\n";
 	print "* Remote debug setup:<br>\n";

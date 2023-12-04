@@ -401,7 +401,6 @@ class IntracommReport extends CommonObject
 	 */
 	public function addItemFraisDePort(&$declaration, &$TLinesFraisDePort, $type, &$categ_fraisdeport, $i)
 	{
-
 		global $conf;
 
 		if ($type == 'expedition') {

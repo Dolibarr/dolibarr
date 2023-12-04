@@ -1102,8 +1102,8 @@ if ($modecompta == 'CREANCES-DETTES' || $modecompta == 'BOOKKEEPING') {
 print '</td>';
 for ($annee = $year_start; $annee <= $year_end_for_table; $annee++) {
 	$nbcols += 2;
-	print '<td class="nowrap right">'.(isset($totsorties[$annee]) ?price(price2num($totsorties[$annee], 'MT')) : '&nbsp;').'</td>';
-	print '<td class="nowrap right" style="border-right: 1px solid #DDD">'.(isset($totentrees[$annee]) ?price(price2num($totentrees[$annee], 'MT')) : '&nbsp;').'</td>';
+	print '<td class="nowrap right">'.(isset($totsorties[$annee]) ? price(price2num($totsorties[$annee], 'MT')) : '&nbsp;').'</td>';
+	print '<td class="nowrap right" style="border-right: 1px solid #DDD">'.(isset($totentrees[$annee]) ? price(price2num($totentrees[$annee], 'MT')) : '&nbsp;').'</td>';
 }
 print "</tr>\n";
 
@@ -1118,8 +1118,8 @@ print '<tr class="liste_total"><td>'.$langs->trans("AccountingResult").'</td>';
 for ($annee = $year_start; $annee <= $year_end_for_table; $annee++) {
 	print '<td colspan="2" class="borderrightlight right"> ';
 	if (isset($totentrees[$annee]) || isset($totsorties[$annee])) {
-		$in = (isset($totentrees[$annee]) ?price2num($totentrees[$annee], 'MT') : 0);
-		$out = (isset($totsorties[$annee]) ?price2num($totsorties[$annee], 'MT') : 0);
+		$in = (isset($totentrees[$annee]) ? price2num($totentrees[$annee], 'MT') : 0);
+		$out = (isset($totsorties[$annee]) ? price2num($totsorties[$annee], 'MT') : 0);
 		print price(price2num($in - $out, 'MT')).'</td>';
 		//  print '<td>&nbsp;</td>';
 	}

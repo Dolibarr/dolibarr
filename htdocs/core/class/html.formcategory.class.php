@@ -118,7 +118,7 @@ class FormCategory extends Form
 				}
 				$i++;
 			}
-			print ('</select>');
+			print('</select>');
 
 			return $num_rows;
 		} else {

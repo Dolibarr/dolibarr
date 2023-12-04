@@ -40,7 +40,7 @@ $langs->loadLangs(array('products', 'stocks'));
 $action = GETPOST('action', 'aZ09');
 $sref = GETPOST("sref", 'alpha');
 $snom = GETPOST("snom", 'alpha');
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $type = GETPOSTISSET('type') ? GETPOST('type', 'int') : Product::TYPE_PRODUCT;
 $search_barcode = GETPOST("search_barcode", 'alpha');
 $search_toolowstock = GETPOST('search_toolowstock');
@@ -62,7 +62,7 @@ if (!$sortfield) {
 if (!$sortorder) {
 	$sortorder = "ASC";
 }
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -134,7 +134,9 @@ $helpurl = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 
 $form = new Form($db);
 $htmlother = new FormOther($db);
-if (!empty($objp->stock_physique) && $objp->stock_physique < 0) { print '<span class="warning">'; }
+if (!empty($objp->stock_physique) && $objp->stock_physique < 0) {
+	print '<span class="warning">';
+}
 
 $sql = 'SELECT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,';
 $sql .= ' p.fk_product_type, p.tms as datem,';
@@ -549,9 +551,13 @@ if ($resql) {
 		if ($objp->seuil_stock_alerte != '' && ($objp->stock_physique < $objp->seuil_stock_alerte)) {
 			print img_warning($langs->trans("StockLowerThanLimit", $objp->seuil_stock_alerte)).' ';
 		}
-		if ($objp->stock_physique < 0) { print '<span class="warning">'; }
+		if ($objp->stock_physique < 0) {
+			print '<span class="warning">';
+		}
 		print price(price2num($objp->stock_physique, 'MS'), 0, $langs, 1, 0);
-		if ($objp->stock_physique < 0) { print '</span>'; }
+		if ($objp->stock_physique < 0) {
+			print '</span>';
+		}
 		print '</td>';
 
 		// Details per warehouse
@@ -571,9 +577,13 @@ if ($resql) {
 			if ($objp->seuil_stock_alerte != '' && ($product->stock_theorique < (float) $objp->seuil_stock_alerte)) {
 				print img_warning($langs->trans("StockLowerThanLimit", $objp->seuil_stock_alerte)).' ';
 			}
-			if ($objp->stock_physique < 0) { print '<span class="warning">'; }
+			if ($objp->stock_physique < 0) {
+				print '<span class="warning">';
+			}
 			print price(price2num($product->stock_theorique, 'MS'), 0, $langs, 1, 0);
-			if ($objp->stock_physique < 0) { print '</span>'; }
+			if ($objp->stock_physique < 0) {
+				print '</span>';
+			}
 			print '</td>';
 		}
 		// Units

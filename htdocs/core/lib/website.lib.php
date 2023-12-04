@@ -557,8 +557,7 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 				$newurl = $currenturi.'&pageref='.urlencode($containerref);
 			}
 		}
-	} else // When page called from virtual host server
-	{
+	} else { // When page called from virtual host server
 		$newurl = '/'.$containerref.'.php';
 	}
 

@@ -122,7 +122,6 @@ class ProductCustomerPrice extends CommonObject
 	 */
 	public function create($user, $notrigger = 0, $forceupdateaffiliate = 0)
 	{
-
 		global $conf, $langs;
 		$error = 0;
 
@@ -174,8 +173,8 @@ class ProductCustomerPrice extends CommonObject
 			$this->import_key = trim($this->import_key);
 		}
 
-			// Check parameters
-			// Put here code to add control on parameters values
+		// Check parameters
+		// Put here code to add control on parameters values
 
 		if ($this->price != '' || $this->price == 0) {
 			if ($this->price_base_type == 'TTC') {
@@ -601,7 +600,6 @@ class ProductCustomerPrice extends CommonObject
 	 */
 	public function update($user = 0, $notrigger = 0, $forceupdateaffiliate = 0)
 	{
-
 		global $conf, $langs;
 		$error = 0;
 
@@ -653,8 +651,8 @@ class ProductCustomerPrice extends CommonObject
 			$this->import_key = trim($this->import_key);
 		}
 
-			// Check parameters
-			// Put here code to add a control on parameters values
+		// Check parameters
+		// Put here code to add a control on parameters values
 
 		if ($this->price != '' || $this->price == 0) {
 			if ($this->price_base_type == 'TTC') {
@@ -1007,7 +1005,6 @@ class ProductCustomerPrice extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-
 		$this->id = 0;
 
 		$this->entity = '';

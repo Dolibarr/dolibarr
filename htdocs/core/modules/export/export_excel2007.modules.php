@@ -461,7 +461,6 @@ class ExportExcel2007 extends ModeleExports
 	 */
 	public function column2Letter($c)
 	{
-
 		$c = intval($c);
 		if ($c <= 0) {
 			return '';

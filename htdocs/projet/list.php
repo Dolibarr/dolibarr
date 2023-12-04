@@ -55,7 +55,7 @@ $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $optioncss = GETPOST('optioncss', 'alpha');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'projectlist';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'projectlist';
 $mode = GETPOST('mode', 'alpha');
 
 
@@ -75,7 +75,7 @@ if (!$user->hasRight('projet', 'lire')) {
 
 $diroutputmassaction = $conf->project->dir_output.'/temp/massgeneration/'.$user->id;
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -130,7 +130,8 @@ if (getDolGlobalInt('PROJECT_ENABLE_SUB_PROJECT')) {
 
 $mine = ((GETPOST('mode') == 'mine') ? 1 : 0);
 if ($mine) {
-	$search_project_user = $user->id; $mine = 0;
+	$search_project_user = $user->id;
+	$mine = 0;
 }
 
 $search_sday	= GETPOST('search_sday', 'int');
@@ -451,8 +452,11 @@ $sql .= " WHERE ctc.element = '".$db->escape($object->element)."'";
 $resql = $db->query($sql);
 if ($resql) {
 	while ($obj = $db->fetch_object($resql)) {
-		if ($obj->source == 'internal') $listofprojectcontacttype[$obj->rowid] = $obj->code;
-		else $listofprojectcontacttypeexternal[$obj->rowid] = $obj->code;
+		if ($obj->source == 'internal') {
+			$listofprojectcontacttype[$obj->rowid] = $obj->code;
+		} else {
+			$listofprojectcontacttypeexternal[$obj->rowid] = $obj->code;
+		}
 	}
 } else {
 	dol_print_error($db);
@@ -1656,7 +1660,7 @@ while ($i < $imaxinloop) {
 		// Project url
 		if (!empty($arrayfields['p.ref']['checked'])) {
 			print '<td class="nowraponall tdoverflowmax200">';
-			print $object->getNomUrl(1, (!empty(GETPOST('search_usage_event_organization', 'int'))?'eventorganization':''));
+			print $object->getNomUrl(1, (!empty(GETPOST('search_usage_event_organization', 'int')) ? 'eventorganization' : ''));
 			if ($object->hasDelay()) {
 				print img_warning($langs->trans('Late'));
 			}

@@ -119,7 +119,9 @@ if (!$user->hasRight('societe', 'client', 'voir')) {
 }
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'facture', $facid, '');
 
 

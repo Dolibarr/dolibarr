@@ -34,7 +34,7 @@ if (empty($user->admin)) {
 $langs->loadLangs(array("install", "other", "admin"));
 
 $optioncss = GETPOST('optioncss', 'alpha');
-$contextpage		= GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'moduleoverview';
+$contextpage		= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'moduleoverview';
 
 $search_name		= GETPOST("search_name", 'alpha');
 $search_id = GETPOST("search_id", 'alpha');
