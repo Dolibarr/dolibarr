@@ -29,11 +29,10 @@
  */
 class Contracts extends DolibarrApi
 {
-
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
-	static $FIELDS = array(
+	public static $FIELDS = array(
 		'socid',
 		'date_contrat',
 		'commercial_signature_id',
@@ -480,7 +479,7 @@ class Contracts extends DolibarrApi
 		if ($updateRes > 0) {
 			return $this->get($id);
 		} else {
-			  throw new RestException(405, $this->contract->error);
+			throw new RestException(405, $this->contract->error);
 		}
 	}
 

@@ -175,11 +175,11 @@ if (empty($reshook)) {
 		$toselect = array();
 	}
 
-		// Mass actions
-		$objectclass = 'ChargeSociales';
-		$objectlabel = 'ChargeSociales';
-		$uploaddir = $conf->tax->dir_output;
-		include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+	// Mass actions
+	$objectclass = 'ChargeSociales';
+	$objectlabel = 'ChargeSociales';
+	$uploaddir = $conf->tax->dir_output;
+	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
 /*

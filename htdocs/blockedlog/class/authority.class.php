@@ -78,7 +78,6 @@ class BlockedLogAuthority
 	 */
 	public function getLocalBlockChain()
 	{
-
 		$block_static = new BlockedLog($this->db);
 
 		$this->signature = $block_static->getSignature();
@@ -103,7 +102,6 @@ class BlockedLogAuthority
 	 */
 	public function getBlockchainHash()
 	{
-
 		return md5($this->signature.$this->blockchain);
 	}
 
@@ -115,7 +113,6 @@ class BlockedLogAuthority
 	 */
 	public function checkBlockchain($hash)
 	{
-
 		return ($hash === $this->getBlockchainHash());
 	}
 
@@ -127,7 +124,6 @@ class BlockedLogAuthority
 	 */
 	public function addBlock($block)
 	{
-
 		$this->blockchain .= $block;
 	}
 
@@ -139,7 +135,6 @@ class BlockedLogAuthority
 	 */
 	public function checkBlock($block)
 	{
-
 		if (strlen($block) != 64) {
 			return false;
 		}
@@ -215,7 +210,6 @@ class BlockedLogAuthority
 	 */
 	public function create($user)
 	{
-
 		global $conf, $langs, $hookmanager;
 
 		$langs->load('blockedlog');
@@ -263,7 +257,6 @@ class BlockedLogAuthority
 	 */
 	public function update($user)
 	{
-
 		global $conf, $langs, $hookmanager;
 
 		$langs->load('blockedlog');

@@ -61,7 +61,7 @@ $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'orderlistdet';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'orderlistdet';
 $productobuy = GETPOST('productobuy', 'alpha');
 $productonly = GETPOST('productonly', 'alpha');
 $disablelinefree = GETPOST('disablelinefree', 'alpha');
@@ -94,7 +94,7 @@ $search_id = GETPOST('search_id', 'alpha');
 $search_refProduct = GETPOST('search_refProduct', 'alpha');
 $search_descProduct = GETPOST('search_descProduct', 'alpha');
 
-$search_ref = GETPOST('search_ref', 'alpha') != '' ?GETPOST('search_ref', 'alpha') : GETPOST('sref', 'alpha');
+$search_ref = GETPOST('search_ref', 'alpha') != '' ? GETPOST('search_ref', 'alpha') : GETPOST('sref', 'alpha');
 $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
 $search_company_alias = GETPOST('search_company_alias', 'alpha');
@@ -132,7 +132,7 @@ $search_fk_mode_reglement = GETPOST("search_fk_mode_reglement", 'int');
 $search_fk_input_reason = GETPOST("search_fk_input_reason", 'int');
 
 // Security check
-$id = (GETPOST('orderid') ?GETPOST('orderid', 'int') : GETPOST('id', 'int'));
+$id = (GETPOST('orderid') ? GETPOST('orderid', 'int') : GETPOST('id', 'int'));
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -141,7 +141,7 @@ $result = restrictedArea($user, 'commande', $id, '');
 $diroutputmassaction = $conf->commande->multidir_output[$conf->entity].'/temp/massgeneration/'.$user->id;
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -247,7 +247,8 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') {
 	$massaction = '';
@@ -912,9 +913,9 @@ if ($resql) {
 
 	$moreforfilter = '';
 
-	$moreforfilter .= '<input type="checkbox" name="productobuy"'.(!empty($productobuy)?'value="productobuychecked" checked':'' ).'><label for="productobuy">'.$langs->trans("productobuy").'</label>';
-	$moreforfilter .= '<input type="checkbox" name="productonly"'.(!empty($productonly)?'value="productonlychecked" checked':'' ).'><label for="productonly">'.$langs->trans("productonly").'</label>';
-	$moreforfilter .= '<input type="checkbox" name="disablelinefree"'.(!empty($disablelinefree)?'value="disablelinefreechecked" checked':'' ).'><label for="disablelinefree">'.$langs->trans("disablelinefree").'</label>';
+	$moreforfilter .= '<input type="checkbox" name="productobuy"'.(!empty($productobuy) ? 'value="productobuychecked" checked' : '').'><label for="productobuy">'.$langs->trans("productobuy").'</label>';
+	$moreforfilter .= '<input type="checkbox" name="productonly"'.(!empty($productonly) ? 'value="productonlychecked" checked' : '').'><label for="productonly">'.$langs->trans("productonly").'</label>';
+	$moreforfilter .= '<input type="checkbox" name="disablelinefree"'.(!empty($disablelinefree) ? 'value="disablelinefreechecked" checked' : '').'><label for="disablelinefree">'.$langs->trans("disablelinefree").'</label>';
 	$moreforfilter .= '<br>';
 
 	// If the user can view prospects other than his'
@@ -1465,11 +1466,11 @@ if ($resql) {
 
 	$with_margin_info = false;
 	if (isModEnabled('margin') && (
-			!empty($arrayfields['total_pa']['checked'])
+		!empty($arrayfields['total_pa']['checked'])
 			|| !empty($arrayfields['total_margin']['checked'])
 			|| !empty($arrayfields['total_margin_rate']['checked'])
 			|| !empty($arrayfields['total_mark_rate']['checked'])
-		)
+	)
 	) {
 		$with_margin_info = true;
 	}
@@ -1603,7 +1604,7 @@ if ($resql) {
 		// Product QtyOrdered
 		if (!empty($arrayfields['cdet.qty']['checked'])) {
 			print '<td class="nowrap right">'.$obj->qty.'</td>';
-			if (isset($totalarray['val']['cdet.qty']) || isset($subtotalarray['val']['cdet.qty']) ) {
+			if (isset($totalarray['val']['cdet.qty']) || isset($subtotalarray['val']['cdet.qty'])) {
 				$totalarray['val']['cdet.qty'] += $obj->qty;
 				$subtotalarray['val']['cdet.qty'] += $obj->qty;
 			} else {
@@ -1803,7 +1804,7 @@ if ($resql) {
 		}
 		// Amount HT
 		if (!empty($arrayfields['cdet.total_ht']['checked'])) {
-			  print '<td class="nowrap right"><span class="amount">'.price($obj->total_ht)."</span></td>\n";
+			print '<td class="nowrap right"><span class="amount">'.price($obj->total_ht)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1859,7 +1860,7 @@ if ($resql) {
 		}
 		// Currency
 		if (!empty($arrayfields['c.multicurrency_code']['checked'])) {
-			  print '<td class="nowrap">'.$obj->multicurrency_code.' - '.$langs->trans('Currency'.$obj->multicurrency_code)."</td>\n";
+			print '<td class="nowrap">'.$obj->multicurrency_code.' - '.$langs->trans('Currency'.$obj->multicurrency_code)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1867,16 +1868,16 @@ if ($resql) {
 
 		// Currency rate
 		if (!empty($arrayfields['c.multicurrency_tx']['checked'])) {
-			  print '<td class="nowrap">';
-			  $form->form_multicurrency_rate($_SERVER['PHP_SELF'].'?id='.$obj->rowid, $obj->multicurrency_tx, 'none', $obj->multicurrency_code);
-			  print "</td>\n";
+			print '<td class="nowrap">';
+			$form->form_multicurrency_rate($_SERVER['PHP_SELF'].'?id='.$obj->rowid, $obj->multicurrency_tx, 'none', $obj->multicurrency_code);
+			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Amount HT
 		if (!empty($arrayfields['c.multicurrency_total_ht']['checked'])) {
-			  print '<td class="right nowrap"><span class="amount">'.price($obj->multicurrency_total_ht)."</span></td>\n";
+			print '<td class="right nowrap"><span class="amount">'.price($obj->multicurrency_total_ht)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

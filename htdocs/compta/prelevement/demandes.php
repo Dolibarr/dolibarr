@@ -40,7 +40,7 @@ $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies'));
 $socid = GETPOST('socid', 'int');
 $status = GETPOST('status', 'int');
 
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'directdebitcredittransferlist'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'directdebitcredittransferlist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
@@ -51,7 +51,7 @@ $search_facture = GETPOST('search_facture', 'alpha');
 $search_societe = GETPOST('search_societe', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -290,7 +290,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print_liste_field_titre('');
 }
 print_liste_field_titre(($sourcetype ? "RefSalary" : "Bill"), $_SERVER["PHP_SELF"]);
-print_liste_field_titre(($sourcetype ? "Employee" :"Company"), $_SERVER["PHP_SELF"]);
+print_liste_field_titre(($sourcetype ? "Employee" : "Company"), $_SERVER["PHP_SELF"]);
 print_liste_field_titre("AmountRequested", $_SERVER["PHP_SELF"], "", "", $param, '', '', '', 'right ');
 print_liste_field_titre("DateRequest", $_SERVER["PHP_SELF"], "", "", $param, '', '', '', 'center ');
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {

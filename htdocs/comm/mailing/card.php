@@ -182,7 +182,8 @@ if (empty($reshook)) {
 			// Warning, we must not use begin-commit transaction here
 			// because we want to save update for each mail sent.
 
-			$nbok = 0; $nbko = 0;
+			$nbok = 0;
+			$nbko = 0;
 
 			// We choose mails not already sent for this mailing (statut=0)
 			// or sent in error (statut=-1)
@@ -224,11 +225,16 @@ if (empty($reshook)) {
 
 						// Make substitutions on topic and body. From (AA=YY;BB=CC;...) we keep YY, CC, ...
 						$other = explode(';', $obj->other);
-						$tmpfield = explode('=', $other[0], 2); $other1 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
-						$tmpfield = explode('=', $other[1], 2); $other2 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
-						$tmpfield = explode('=', $other[2], 2); $other3 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
-						$tmpfield = explode('=', $other[3], 2); $other4 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
-						$tmpfield = explode('=', $other[4], 2); $other5 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
+						$tmpfield = explode('=', $other[0], 2);
+						$other1 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
+						$tmpfield = explode('=', $other[1], 2);
+						$other2 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
+						$tmpfield = explode('=', $other[2], 2);
+						$other3 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
+						$tmpfield = explode('=', $other[3], 2);
+						$other4 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
+						$tmpfield = explode('=', $other[4], 2);
+						$other5 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
 
 						$signature = ((!empty($user->signature) && !getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? $user->signature : '');
 

@@ -286,13 +286,13 @@ class Cchargesociales
 		}
 
 		//if (!$error && !$notrigger) {
-			// Uncomment this and change MYOBJECT to your own tag if you
-			// want this action calls a trigger.
+		// Uncomment this and change MYOBJECT to your own tag if you
+		// want this action calls a trigger.
 
-			//// Call triggers
-			//$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-			//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-			//// End call triggers
+		//// Call triggers
+		//$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+		//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+		//// End call triggers
 		//}
 
 		// Commit or rollback
@@ -324,15 +324,15 @@ class Cchargesociales
 		$this->db->begin();
 
 		//if (!$error) {
-			//if (!$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
+		//if (!$notrigger) {
+		// Uncomment this and change MYOBJECT to your own tag if you
+		// want this action calls a trigger.
 
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_DELETE',$user);
-				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-				//// End call triggers
-			//}
+		//// Call triggers
+		//$result=$this->call_trigger('MYOBJECT_DELETE',$user);
+		//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+		//// End call triggers
+		//}
 		//}
 
 		if (!$error) {

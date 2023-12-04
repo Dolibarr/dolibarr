@@ -110,7 +110,8 @@ if (GETPOST('submitthirdparty') && GETPOST('submitthirdparty')) {
 }
 
 if ($action == 'builddoc') {
-	$result = 0; $error = 0;
+	$result = 0;
+	$error = 0;
 
 	if (empty($forbarcode)) {			// barcode value
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BarcodeValue")), null, 'errors');
@@ -313,7 +314,7 @@ foreach (array_keys($_Avery_Labels) as $codecards) {
 	$arrayoflabels[$codecards] = $labeltoshow;
 }
 asort($arrayoflabels);
-print $form->selectarray('modellabel', $arrayoflabels, (GETPOST('modellabel') ?GETPOST('modellabel') : $conf->global->ADHERENT_ETIQUETTE_TYPE), 1, 0, 0, '', 0, 0, 0, '', '', 1);
+print $form->selectarray('modellabel', $arrayoflabels, (GETPOST('modellabel') ? GETPOST('modellabel') : $conf->global->ADHERENT_ETIQUETTE_TYPE), 1, 0, 0, '', 0, 0, 0, '', '', 1);
 print '</div></div>';
 
 // Number of stickers to print
@@ -321,7 +322,7 @@ print '	<div class="tagtr">';
 print '	<div class="tagtd">';
 print $langs->trans("NumberOfStickers").' &nbsp; ';
 print '</div><div class="tagtd maxwidthonsmartphone" style="overflow: hidden; white-space: nowrap;">';
-print '<input size="4" type="text" name="numberofsticker" value="'.(GETPOST('numberofsticker') ?GETPOST('numberofsticker', 'int') : 10).'">';
+print '<input size="4" type="text" name="numberofsticker" value="'.(GETPOST('numberofsticker') ? GETPOST('numberofsticker', 'int') : 10).'">';
 print '</div></div>';
 
 print '</div>';
