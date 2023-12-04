@@ -397,7 +397,7 @@ class FormFile
 		$printer = 0;
 		// The direct print feature is implemented only for such elements
 		if (in_array($modulepart, array('contract', 'facture', 'supplier_proposal', 'propal', 'proposal', 'order', 'commande', 'expedition', 'commande_fournisseur', 'expensereport', 'delivery', 'ticket'))) {
-			$printer = (!empty($user->rights->printing->read) && !empty($conf->printing->enabled)) ?true:false;
+			$printer = (!empty($user->rights->printing->read) && !empty($conf->printing->enabled)) ? true : false;
 		}
 
 		$hookmanager->initHooks(array('formfile'));
@@ -1205,7 +1205,7 @@ class FormFile
 
 		// Define relative path used to store the file
 		if (empty($relativepath)) {
-			$relativepath = (!empty($object->ref) ?dol_sanitizeFileName($object->ref) : '').'/';
+			$relativepath = (!empty($object->ref) ? dol_sanitizeFileName($object->ref) : '').'/';
 			if (!empty($object->element) && $object->element == 'invoice_supplier') {
 				$relativepath = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$relativepath; // TODO Call using a defined value for $relativepath
 			}
