@@ -72,8 +72,8 @@ if (isModEnabled('productbatch')) {
 	$langs->load('productbatch');
 }
 
-$origin = GETPOST('origin', 'alpha') ?GETPOST('origin', 'alpha') : 'expedition'; // Example: commande, propal
-$origin_id = GETPOST('id', 'int') ?GETPOST('id', 'int') : '';
+$origin = GETPOST('origin', 'alpha') ? GETPOST('origin', 'alpha') : 'expedition'; // Example: commande, propal
+$origin_id = GETPOST('id', 'int') ? GETPOST('id', 'int') : '';
 $id = $origin_id;
 if (empty($origin_id)) {
 	$origin_id  = GETPOST('origin_id', 'int'); // Id of order or propal
@@ -82,7 +82,7 @@ if (empty($origin_id)) {
 	$origin_id  = GETPOST('object_id', 'int'); // Id of order or propal
 }
 $ref = GETPOST('ref', 'alpha');
-$line_id = GETPOST('lineid', 'int') ?GETPOST('lineid', 'int') : '';
+$line_id = GETPOST('lineid', 'int') ? GETPOST('lineid', 'int') : '';
 $facid = GETPOST('facid', 'int');
 
 $action		= GETPOST('action', 'alpha');
@@ -389,7 +389,7 @@ if (empty($reshook)) {
 						if (GETPOST($qty, 'int') > 0 || getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS')) {
 							$ent = "entl".$i;
 							$idl = "idl".$i;
-							$entrepot_id = is_numeric(GETPOST($ent, 'int')) ?GETPOST($ent, 'int') : GETPOST('entrepot_id', 'int');
+							$entrepot_id = is_numeric(GETPOST($ent, 'int')) ? GETPOST($ent, 'int') : GETPOST('entrepot_id', 'int');
 							if ($entrepot_id < 0) {
 								$entrepot_id = '';
 							}
@@ -555,8 +555,8 @@ if (empty($reshook)) {
 			$object->trueWidth = trim(GETPOST('trueWidth', 'int'));
 		}
 		if ($action == 'settrueHeight') {
-						$object->trueHeight = trim(GETPOST('trueHeight', 'int'));
-						$object->size_units = GETPOST('size_units', 'int');
+			$object->trueHeight = trim(GETPOST('trueHeight', 'int'));
+			$object->size_units = GETPOST('size_units', 'int');
 		}
 		if ($action == 'settrueDepth') {
 			$object->trueDepth = trim(GETPOST('trueDepth', 'int'));
@@ -911,7 +911,9 @@ if ($action == 'create2') {
 	print load_fiche_titre($langs->trans("CreateShipment"), '', 'dolly');
 
 	print '<br>'.$langs->trans("ShipmentCreationIsDoneFromOrder");
-	$action = ''; $id = ''; $ref = '';
+	$action = '';
+	$id = '';
+	$ref = '';
 }
 
 // Mode creation.
@@ -986,7 +988,7 @@ if ($action == 'create') {
 
 			// Project
 			if (isModEnabled('project')) {
-				$projectid = GETPOST('projectid', 'int') ?GETPOST('projectid', 'int') : 0;
+				$projectid = GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : 0;
 				if (empty($projectid) && !empty($object->fk_project)) {
 					$projectid = $object->fk_project;
 				}
@@ -1163,7 +1165,9 @@ if ($action == 'create') {
 						print '<td class="left">'.$langs->trans("Warehouse").' / '.$langs->trans("Batch").' ('.$langs->trans("Stock").')</td>';
 					}
 				}
-				if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) print '<td class="left">'.$langs->trans('StockEntryDate').'</td>';
+				if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+					print '<td class="left">'.$langs->trans('StockEntryDate').'</td>';
+				}
 				print "</tr>\n";
 			}
 
@@ -1330,7 +1334,7 @@ if ($action == 'create') {
 									// Show warehouse combo list
 									$ent = "entl".$indiceAsked;
 									$idl = "idl".$indiceAsked;
-									$tmpentrepot_id = is_numeric(GETPOST($ent, 'int')) ?GETPOST($ent, 'int') : $warehouse_id;
+									$tmpentrepot_id = is_numeric(GETPOST($ent, 'int')) ? GETPOST($ent, 'int') : $warehouse_id;
 									if ($line->fk_product > 0) {
 										print '<!-- Show warehouse selection -->';
 
@@ -1352,7 +1356,9 @@ if ($action == 'create') {
 								}
 								print '</td>';
 							}
-							if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) print '<td></td>'; //StockEntrydate
+							if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+								print '<td></td>';
+							} //StockEntrydate
 							print "</tr>\n";
 
 							// Show subproducts of product
@@ -1370,7 +1376,9 @@ if ($action == 'create') {
 											<a href=\"".DOL_URL_ROOT."/product/card.php?id=".$value['id']."\">".$value['fullpath']."
 											</a> (".$value['nb'].")</td><td class=\"center\"> ".$value['nb_total']."</td><td>&nbsp;</td><td>&nbsp;</td>
 											<td class=\"center\">".$value['stock']." ".$img."</td>";
-										if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) print '<td></td>'; //StockEntrydate
+										if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+											print '<td></td>';
+										} //StockEntrydate
 										print "</tr>";
 									}
 								}
@@ -1378,7 +1386,9 @@ if ($action == 'create') {
 						} else {
 							// Product need lot
 							print '<td></td><td></td>';
-							if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE'))  print '<td></td>'; //StockEntrydate
+							if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+								print '<td></td>';
+							} //StockEntrydate
 							print '</tr>'; // end line and start a new one for lot/serial
 							print '<!-- Case product need lot -->';
 
@@ -1445,7 +1455,9 @@ if ($action == 'create') {
 								print '<td class="left">';
 								print img_warning().' '.$langs->trans("NoProductToShipFoundIntoStock", $staticwarehouse->label);
 								print '</td>';
-								if (getDolGlobalInt('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) print '<td></td>'; //StockEntrydate
+								if (getDolGlobalInt('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+									print '<td></td>';
+								} //StockEntrydate
 								print '</tr>';
 							}
 						}
@@ -1454,7 +1466,9 @@ if ($action == 'create') {
 						if (empty($conf->productbatch->enabled) || !$product->hasbatch()) {
 							print '<!-- Case warehouse not already known and product does not need lot -->';
 							print '<td></td><td></td>';
-							if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) print '<td></td>';//StockEntrydate
+							if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+								print '<td></td>';
+							}//StockEntrydate
 							print '</tr>'."\n"; // end line and start a new one for each warehouse
 
 							print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
@@ -1494,7 +1508,9 @@ if ($action == 'create') {
 											$deliverableQty = min($quantityToBeDelivered, $stock);
 										}
 
-										if ($deliverableQty < 0) $deliverableQty = 0;
+										if ($deliverableQty < 0) {
+											$deliverableQty = 0;
+										}
 
 										$tooltip = '';
 										if (!empty($alreadyQtySetted[$line->fk_product][intval($warehouse_id)])) {
@@ -1539,7 +1555,9 @@ if ($action == 'create') {
 										$quantityToBeDelivered = 0;
 									}
 									$subj++;
-									if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) print '<td></td>';//StockEntrydate
+									if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+										print '<td></td>';
+									}//StockEntrydate
 									print "</tr>\n";
 								}
 							}
@@ -1559,7 +1577,9 @@ if ($action == 'create') {
 										<a href=\"".DOL_URL_ROOT."/product/card.php?id=".$value['id']."\">".$value['fullpath']."
 										</a> (".$value['nb'].")</td><td class=\"center\"> ".$value['nb_total']."</td><td>&nbsp;</td><td>&nbsp;</td>
 										<td class=\"center\">".$value['stock']." ".$img."</td>";
-										if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) print '<td></td>';//StockEntrydate
+										if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+											print '<td></td>';
+										}//StockEntrydate
 										print "</tr>";
 									}
 								}
@@ -1567,7 +1587,9 @@ if ($action == 'create') {
 						} else {
 							print '<!-- Case warehouse not already known and product need lot -->';
 							print '<td></td><td></td>';
-							if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) print '<td></td>';//StockEntrydate
+							if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+								print '<td></td>';
+							}//StockEntrydate
 							print '</tr>'; // end line and start a new one for lot/serial
 
 							$subj = 0;
@@ -1609,7 +1631,9 @@ if ($action == 'create') {
 											$deliverableQty = min($quantityToBeDelivered, $batchStock);
 										}
 
-										if ($deliverableQty < 0) $deliverableQty = 0;
+										if ($deliverableQty < 0) {
+											$deliverableQty = 0;
+										}
 
 										$inputName = 'qtyl'.$indiceAsked.'_'.$subj;
 										if (GETPOSTISSET($inputName)) {
@@ -1625,7 +1649,7 @@ if ($action == 'create') {
 										}
 										$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)] = $deliverableQty + $alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)];
 
-										print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested) ?'oddeven' : '').'><td colspan="3"></td><td class="center">';
+										print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested) ? 'oddeven' : '').'><td colspan="3"></td><td class="center">';
 										print '<input class="qtyl right '.$tooltipClass.'" title="'.$tooltipTitle.'" name="'.$inputName.'" id="'.$inputName.'" type="text" size="4" value="'.$deliverableQty.'">';
 										print '</td>';
 
@@ -1703,7 +1727,9 @@ if ($action == 'create') {
 								print '<span class="opacitymedium">('.$langs->trans("Service").')</span>';
 							}
 							print '</td>';
-							if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) print '<td></td>';//StockEntrydate
+							if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+								print '<td></td>';
+							}//StockEntrydate
 							print '</tr>';
 						}
 					}
@@ -2390,7 +2416,7 @@ if ($action == 'create') {
 							// only show lot numbers from src warehouse when shipping from multiple warehouses
 							$line->fetch($detail_batch->fk_expeditiondet);
 						}
-						$entrepot_id = !empty($detail_batch->entrepot_id)?$detail_batch->entrepot_id:$lines[$i]->entrepot_id;
+						$entrepot_id = !empty($detail_batch->entrepot_id) ? $detail_batch->entrepot_id : $lines[$i]->entrepot_id;
 						print '<td>'.$formproduct->selectLotStock($detail_batch->fk_origin_stock, 'batchl'.$detail_batch->fk_expeditiondet.'_'.$detail_batch->fk_origin_stock, '', 1, 0, $lines[$i]->fk_product, $entrepot_id).'</td>';
 						print '</tr>';
 					}
@@ -2614,7 +2640,7 @@ if ($action == 'create') {
 
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
-																									   // modified by hook
+		// modified by hook
 		if (empty($reshook)) {
 			if ($object->statut == Expedition::STATUS_DRAFT && $num_prod > 0) {
 				if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'creer'))

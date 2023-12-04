@@ -112,7 +112,9 @@ class ExpeditionLineBatch extends CommonObject
 		global $user;
 
 		$error = 0;
-		if (!is_object($f_user)) $f_user = $user;
+		if (!is_object($f_user)) {
+			$f_user = $user;
+		}
 
 		$id_line_expdet = (int) $id_line_expdet;
 
@@ -137,7 +139,8 @@ class ExpeditionLineBatch extends CommonObject
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
