@@ -972,14 +972,8 @@ if ($dirins && $action == 'addextrafield' && !empty($module)) {
 		// Dir for module
 		$dirofjson = dol_buildpath($modulelowercase, 0);
 
-		if ($dirofjson == $dolibarr_main_document_root.'/'.$modulelowercase) {
-			// This is not a custom module, we force diroflang to htdocs root
-			$dirofjson = $dolibarr_main_document_root;
-			$srcfile = $dirofjson.'/json/extrafields.json';
-		} else {
-			$srcdir = $dirofjson.'/json/extrafields.json';
-			file_put_contents($srcdir, json_encode($extrafieldstocreate, JSON_PRETTY_PRINT));
-		}
+		$srcfile = $dirofjson.'/json/extrafields.json';
+		file_put_contents($srcfile, json_encode($extrafieldstocreate, JSON_PRETTY_PRINT));
 	}
 }
 
@@ -1013,15 +1007,8 @@ if ($dirins && $action == 'confirm_deleteextrafield' && $confirm == 'yes' && GET
 
 		// Dir for module
 		$dirofjson = dol_buildpath($modulelowercase, 0);
-
-		if ($dirofjson == $dolibarr_main_document_root.'/'.$modulelowercase) {
-			// This is not a custom module, we force diroflang to htdocs root
-			$dirofjson = $dolibarr_main_document_root;
-			$srcfile = $dirofjson.'/json/extrafields.json';
-		} else {
-			$srcdir = $dirofjson.'/json/extrafields.json';
-			file_put_contents($srcdir, json_encode($extrafieldstocreate, JSON_PRETTY_PRINT));
-		}
+		$srcdir = $dirofjson.'/json/extrafields.json';
+		file_put_contents($srcdir, json_encode($extrafieldstocreate, JSON_PRETTY_PRINT));
 	}
 }
 
