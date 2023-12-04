@@ -1,0 +1,62 @@
+on: [pull_request, push]
+name: PHPCS_NEW
+jobs:
+  phan:
+    name: Run phpcs on modified or added files
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        name: Default checkout
+      - name: Fetch up to merge-base on push
+        uses: BioData/fetch-through-merge-base@v0
+        if: github.event_name == 'push'
+        timeout-minutes: 3
+        with:
+          base_ref: develop
+          head_ref: ${{ github.sha }}
+      - name: Fetch up to merge-base on pull
+        uses: BioData/fetch-through-merge-base@v0
+        timeout-minutes: 3
+        if: github.event_name == 'pull_request'
+        with:
+          base_ref: ${{ github.base_ref }}
+          head_ref: ${{ github.sha }}
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.1
+          coverage: none  # disable xdebug, pcov
+          tools: cs2pr,phpcs,phpcbf
+      - name: Run phpcs analysis
+        run: |
+          # Get base branch if PR
+          echo "BASE_REF=$GITHUB_BASE_REF  HEAD_REF=$GITHUB_HEAD_REF GITHUB_REF=$GITHUB_REF GITHUB_REF_NAME=$GITHUB_REF_NAME"
+          DIFF_TARGET=$GITHUB_BASE_REF
+          echo "DIFF_TARGET='${DIFF_TARGET}'"
+          HEAD_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          echo "HEAD_BRANCH='${HEAD_BRANCH}'"
+          [ "$HEAD_BRANCH" == "HEAD" ] && HEAD_BRANCH=$GITHUB_REF_NAME
+          echo "HEAD_BRANCH='${HEAD_BRANCH}'"
+          [ "$DIFF_TARGET" == "" ] && DIFF_TARGET=$(git show-branch -a --merge-base)
+          echo "DIFF_TARGET='${DIFF_TARGET}'"
+          TMPFILE=$(mktemp)
+          git diff --diff-filter=MA --name-only --merge-base "${DIFF_TARGET}" -- '***.php' > "${TMPFILE}"
+          RULESET_OPT="--standard=dev/setup/codesniffer/ruleset.xml"
+          [ ! -s ${TMPFILE} ] && echo "No changed php files" && exit 0
+          [ -s ${TMPFILE} ] && phpcs --file-list=${TMPFILE} -s -p --report=checkstyle --report-file=_phpcs.xml -d memory_limit=-1 --extensions=php --tab-width=4 ${RULESET_OPT}
+          [ -s ${TMPFILE} ] && phpcs --file-list=${TMPFILE} -s -p --report=checkstyle --report-file=_phpcs.xml -d memory_limit=-1 --extensions=php --tab-width=4 ${RULESET_OPT}
+          # Reminder on how to run phpcbf
+          # phpcbf --file-list=${TMPFILE} -s -p -d memory_limit=-1 --extensions=php --tab-width=4 ${RULESET_OPT}
+      - name: Add results to PR
+        if: ${{ always() }}
+        run: |
+          [ ! -r _phpcs.xml ] || [ ! -s _phpcs.xml ] || cs2pr _phpcs.xml
+      - name: Provide phpcs log as artifact
+        uses: actions/upload-artifact@v3
+        # if: ${{ always() }}
+        if: false
+        with:
+          name: phpcs-srcrt
+          path: |
+            ${{ github.workspace }}/_phpcs.xml
+          retention-days: 2
