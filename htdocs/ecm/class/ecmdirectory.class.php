@@ -207,7 +207,8 @@ class EcmDirectory extends CommonObject
 				$dir = $conf->ecm->dir_output.'/'.$this->getRelativePath();
 				$result = dol_mkdir($dir);
 				if ($result < 0) {
-					$error++; $this->error = "ErrorFailedToCreateDir";
+					$error++;
+					$this->error = "ErrorFailedToCreateDir";
 				}
 
 				// Call trigger
@@ -501,7 +502,7 @@ class EcmDirectory extends CommonObject
 			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
-			$result .= ($max ?dol_trunc($newref, $max, 'middle') : $newref);
+			$result .= ($max ? dol_trunc($newref, $max, 'middle') : $newref);
 		}
 		$result .= $linkend;
 

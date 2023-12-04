@@ -42,7 +42,9 @@ if ($action == 'presend') {
 	$titreform = 'SendMail';
 
 	$object->fetch_projet();
-	if (!isset($file)) $file = null;
+	if (!isset($file)) {
+		$file = null;
+	}
 	$ref = dol_sanitizeFileName($object->ref);
 	if (!in_array($object->element, array('user', 'member'))) {
 		//$fileparams['fullname'] can be filled from the card
@@ -59,7 +61,7 @@ if ($action == 'presend') {
 			}
 		}
 
-		$file = isset($fileparams['fullname'])?$fileparams['fullname']:null;
+		$file = isset($fileparams['fullname']) ? $fileparams['fullname'] : null;
 	}
 
 	// Define output language
@@ -113,7 +115,7 @@ if ($action == 'presend') {
 				$fileparams = dol_most_recent_file($diroutput.'/'.$ref, preg_quote($ref, '/').'[^\-]+');
 			}
 
-			$file = isset($fileparams['fullname'])?$fileparams['fullname']:null;
+			$file = isset($fileparams['fullname']) ? $fileparams['fullname'] : null;
 		}
 	}
 
@@ -129,7 +131,7 @@ if ($action == 'presend') {
 	$formmail = new FormMail($db);
 
 	$formmail->param['langsmodels'] = (empty($newlang) ? $langs->defaultlang : $newlang);
-	$formmail->fromtype = (GETPOST('fromtype') ?GETPOST('fromtype') : (getDolGlobalString('MAIN_MAIL_DEFAULT_FROMTYPE') ? $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE : 'user'));
+	$formmail->fromtype = (GETPOST('fromtype') ? GETPOST('fromtype') : (getDolGlobalString('MAIN_MAIL_DEFAULT_FROMTYPE') ? $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE : 'user'));
 
 	if ($formmail->fromtype === 'user') {
 		$formmail->fromid = $user->id;
@@ -159,7 +161,7 @@ if ($action == 'presend') {
 		$formmail->fromname = (getDolGlobalString('ORDER_SUPPLIER_EMAIL_SENDER_NAME') ? $conf->global->ORDER_SUPPLIER_EMAIL_SENDER_NAME : '');
 		$formmail->fromtype = 'special';
 	}
-	if ($object->element === 'recruitmentcandidature' ) {
+	if ($object->element === 'recruitmentcandidature') {
 		$formmail->frommail = (getDolGlobalString('RECRUITMENT_EMAIL_SENDER') ? $conf->global->RECRUITMENT_EMAIL_SENDER : $recruitermail);
 		$formmail->fromname = (getDolGlobalString('RECRUITMENT_EMAIL_SENDER_NAME') ? $conf->global->RECRUITMENT_EMAIL_SENDER_NAME : (!empty($recruitername) ? $recruitername : ''));
 		$formmail->fromtype = 'special';
@@ -272,7 +274,7 @@ if ($action == 'presend') {
 	$substitutionarray['__CHECK_READ__'] = "";
 	if (is_object($object) && is_object($object->thirdparty)) {
 		$checkRead= '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php';
-		$checkRead.='?tag='.(!empty($object->thirdparty->tag)?urlencode($object->thirdparty->tag):"");
+		$checkRead.='?tag='.(!empty($object->thirdparty->tag) ? urlencode($object->thirdparty->tag) : "");
 		$checkRead.='&securitykey='.(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY') ? urlencode(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')) : "");
 		$checkRead.='" width="1" height="1" style="width:1px;height:1px" border="0"/>';
 		$substitutionarray['__CHECK_READ__'] = $checkRead;

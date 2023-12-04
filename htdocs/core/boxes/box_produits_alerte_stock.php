@@ -169,7 +169,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 					if (!isModEnabled('dynamicprices') || empty($objp->fk_price_expression)) {
 						$price_base_type = $langs->trans($objp->price_base_type);
-						$price = ($objp->price_base_type == 'HT') ?price($objp->price) : $price = price($objp->price_ttc);
+						$price = ($objp->price_base_type == 'HT') ? price($objp->price) : $price = price($objp->price_ttc);
 					} else { //Parse the dynamic price
 						$productstatic->fetch($objp->rowid, '', '', 1);
 

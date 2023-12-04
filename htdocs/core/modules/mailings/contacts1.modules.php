@@ -480,6 +480,6 @@ class mailing_contacts1 extends MailingTargets
 			return -1;
 		}
 
-			return parent::addTargetsToDatabase($mailing_id, $cibles);
+		return parent::addTargetsToDatabase($mailing_id, $cibles);
 	}
 }

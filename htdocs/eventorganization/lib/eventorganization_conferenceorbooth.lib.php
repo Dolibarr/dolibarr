@@ -118,7 +118,6 @@ function conferenceorboothPrepareHead($object, $with_project = 0)
  */
 function conferenceorboothProjectPrepareHead($object)
 {
-
 	global $db, $langs, $conf;
 
 	$langs->load("eventorganization");

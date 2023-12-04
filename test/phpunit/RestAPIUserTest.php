@@ -76,7 +76,8 @@ class RestAPIUserTest extends PHPUnit\Framework\TestCase
 		$this->savdb=$db;
 
 		if (!isModEnabled('api')) {
-			print __METHOD__." module api must be enabled.\n"; die(1);
+			print __METHOD__." module api must be enabled.\n";
+			die(1);
 		}
 
 		print __METHOD__." db->type=".$db->type." user->id=".$user->id;

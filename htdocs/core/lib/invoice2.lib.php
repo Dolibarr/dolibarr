@@ -255,10 +255,10 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 				// Charge un document PDF depuis un fichier.
 				$pagecount = $pdf->setSourceFile($file);
 				for ($i = 1; $i <= $pagecount; $i++) {
-					 $tplidx = $pdf->importPage($i);
-					 $s = $pdf->getTemplatesize($tplidx);
-					 $pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
-					 $pdf->useTemplate($tplidx);
+					$tplidx = $pdf->importPage($i);
+					$s = $pdf->getTemplatesize($tplidx);
+					$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+					$pdf->useTemplate($tplidx);
 				}
 			}
 

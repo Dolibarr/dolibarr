@@ -157,7 +157,6 @@ class FormAdvTargetEmailing extends Form
 	 */
 	public function multiselectselectSalesRepresentatives($htmlname, $selected_array, $user)
 	{
-
 		global $conf;
 
 		$options_array = array();
@@ -198,7 +197,6 @@ class FormAdvTargetEmailing extends Form
 	 */
 	public function multiselectselectLanguage($htmlname = '', $selected_array = array())
 	{
-
 		global $conf, $langs;
 
 		$options_array = array();

@@ -181,7 +181,7 @@ if ($resql) {
 			$outputlangs->loadLangs(array("main", "contracts", "bills", "products"));
 
 			if (dol_strlen($newemail)) {
-				$message .= $outputlangs->trans("Contract")." ".$obj->ref.": ".$outputlangs->trans("Service")." ".dol_concatdesc($obj->plabel, $obj->description)." (".price($obj->total_ttc, 0, $outputlangs, 0, 0, - 1, $conf->currency)."), ".$outputlangs->trans("DateEndPlannedShort")." ".dol_print_date($db->jdate($obj->date_fin_validite), 'day')."\n\n";
+				$message .= $outputlangs->trans("Contract")." ".$obj->ref.": ".$outputlangs->trans("Service")." ".dol_concatdesc($obj->plabel, $obj->description)." (".price($obj->total_ttc, 0, $outputlangs, 0, 0, -1, $conf->currency)."), ".$outputlangs->trans("DateEndPlannedShort")." ".dol_print_date($db->jdate($obj->date_fin_validite), 'day')."\n\n";
 				dol_syslog("email_expire_services_to_customers.php: ".$newemail." ".$message);
 				$foundtoprocess++;
 			}
@@ -266,7 +266,7 @@ function sendEmailTo($mode, $oldemail, $message, $total, $userlang, $oldtarget, 
 	$sendto = $oldemail;
 	$from = $conf->global->MAIN_MAIL_EMAIL_FROM;
 	$errorsto = $conf->global->MAIN_MAIL_ERRORS_TO;
-	$msgishtml = - 1;
+	$msgishtml = -1;
 
 	print "- Send email to '".$oldtarget."' (".$oldemail."), total: ".$total."\n";
 	dol_syslog("email_expire_services_to_customers.php: send mail to ".$oldemail);

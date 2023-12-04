@@ -1091,7 +1091,7 @@ class CMailFile
 					$keyforsupportedoauth2array = 'OAUTH_'.$keyforsupportedoauth2array.'_NAME';
 
 					$OAUTH_SERVICENAME = 'Unknown';
-					if ( array_key_exists($keyforsupportedoauth2array, $supportedoauth2array)
+					if (array_key_exists($keyforsupportedoauth2array, $supportedoauth2array)
 						&& array_key_exists('name', $supportedoauth2array[$keyforsupportedoauth2array])
 						&& !empty($supportedoauth2array[$keyforsupportedoauth2array]['name'])) {
 						$OAUTH_SERVICENAME = $supportedoauth2array[$keyforsupportedoauth2array]['name'].(!empty($keyforprovider) ? '-'.$keyforprovider : '');
@@ -1729,7 +1729,8 @@ class CMailFile
 
 			dol_syslog("Try socket connection to host=".$host." port=".$port." timeout=".$timeout);
 			//See if we can connect to the SMTP server
-			$errno = 0; $errstr = '';
+			$errno = 0;
+			$errstr = '';
 			if ($socket = @fsockopen(
 				$host, // Host to test, IP or domain. Add ssl:// for SSL/TLS.
 				$port, // which Port number to use
@@ -2015,7 +2016,7 @@ class CMailFile
 					} elseif (!$name) {
 						$newemail = '<'.$email.'>';
 					} else {
-						$newemail = ($format == 3 ? '"' : '').($encode ?self::encodetorfc2822($name) : $name).($format == 3 ? '"' : '').' <'.$email.'>';
+						$newemail = ($format == 3 ? '"' : '').($encode ? self::encodetorfc2822($name) : $name).($format == 3 ? '"' : '').' <'.$email.'>';
 					}
 				}
 

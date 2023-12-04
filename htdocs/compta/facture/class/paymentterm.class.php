@@ -135,7 +135,7 @@ class PaymentTerm // extends CommonObject
 		$sql .= "nbjour,";
 		$sql .= "decalage";
 		$sql .= ") VALUES (";
-		$sql .= " ".(!isset($this->entity) ?getEntity('c_payment_term') : "'".$this->db->escape($this->entity)."'").",";
+		$sql .= " ".(!isset($this->entity) ? getEntity('c_payment_term') : "'".$this->db->escape($this->entity)."'").",";
 		$sql .= " ".(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").",";
 		$sql .= " ".(!isset($this->sortorder) ? 'NULL' : "'".$this->db->escape($this->sortorder)."'").",";
 		$sql .= " ".(!isset($this->active) ? 'NULL' : "'".$this->db->escape($this->active)."'").",";

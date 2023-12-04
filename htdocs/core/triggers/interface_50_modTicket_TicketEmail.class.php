@@ -271,7 +271,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 					$sendto = '';
 					if ($res > 0 && !empty($contact->email) && !empty($contact->statut)) {
 						$sendto = $contact->email;
-					} elseif ( !empty($linked_contacts) && ($contactid == -2 || (GETPOST('massaction', 'alpha') == 'close' && GETPOST('confirm', 'alpha') == 'yes'))) {
+					} elseif (!empty($linked_contacts) && ($contactid == -2 || (GETPOST('massaction', 'alpha') == 'close' && GETPOST('confirm', 'alpha') == 'yes'))) {
 						// if sending to all contacts or sending to contacts while mass closing
 						$temp_emails = [];
 						foreach ($linked_contacts as $contact) {

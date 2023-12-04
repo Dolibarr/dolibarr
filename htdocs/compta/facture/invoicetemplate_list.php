@@ -51,13 +51,13 @@ $show_files = GETPOST('show_files', 'int');
 $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'alpha');
 $toselect   = GETPOST('toselect', 'array');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'invoicetemplatelist'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'invoicetemplatelist'; // To manage different context of search
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
 
 $socid = GETPOST('socid', 'int');
 
-$id = (GETPOST('facid', 'int') ?GETPOST('facid', 'int') : GETPOST('id', 'int'));
+$id = (GETPOST('facid', 'int') ? GETPOST('facid', 'int') : GETPOST('id', 'int'));
 $lineid = GETPOST('lineid', 'int');
 $ref = GETPOST('ref', 'alpha');
 if ($user->socid) {
@@ -97,7 +97,7 @@ $search_unit_frequency = GETPOST('search_unit_frequency', 'alpha');
 $search_nb_gen_done = GETPOST('search_nb_gen_done', 'aplha');
 $search_status = GETPOST('search_status', 'int');
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -241,7 +241,7 @@ if (empty($reshook)) {
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
 		|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha')) {
-			$massaction = ''; // Protection to avoid mass action if we force a new search during a mass action confirmation
+		$massaction = ''; // Protection to avoid mass action if we force a new search during a mass action confirmation
 	}
 
 	// Mass actions
@@ -658,10 +658,10 @@ if (!empty($arrayfields['f.nb_gen_done']['checked'])) {
 // Date invoice
 if (!empty($arrayfields['f.date_last_gen']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td>';
@@ -669,10 +669,10 @@ if (!empty($arrayfields['f.date_last_gen']['checked'])) {
 // Date next generation
 if (!empty($arrayfields['f.date_when']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_when_start ? $search_date_when_start : -1, 'search_date_when_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_when_end ? $search_date_when_end : -1, 'search_date_when_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td>';
@@ -937,7 +937,7 @@ while ($i < $imaxinloop) {
 	}
 	if (!empty($arrayfields['f.frequency']['checked'])) {
 		print '<td class="center">';
-		print ($objp->frequency > 0 ? $objp->frequency : '');
+		print($objp->frequency > 0 ? $objp->frequency : '');
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -950,7 +950,7 @@ while ($i < $imaxinloop) {
 		} else {
 			$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
 		}
-		print ($objp->frequency > 0 ? $dur[$objp->unit_frequency] : '');
+		print($objp->frequency > 0 ? $dur[$objp->unit_frequency] : '');
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -958,7 +958,7 @@ while ($i < $imaxinloop) {
 	}
 	if (!empty($arrayfields['f.nb_gen_done']['checked'])) {
 		print '<td class="center">';
-		print ($objp->frequency > 0 ? $objp->nb_gen_done.($objp->nb_gen_max > 0 ? ' / '.$objp->nb_gen_max : '') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
+		print($objp->frequency > 0 ? $objp->nb_gen_done.($objp->nb_gen_max > 0 ? ' / '.$objp->nb_gen_max : '') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -967,7 +967,7 @@ while ($i < $imaxinloop) {
 	// Date last generation
 	if (!empty($arrayfields['f.date_last_gen']['checked'])) {
 		print '<td class="center">';
-		print ($objp->frequency > 0 ? dol_print_date($db->jdate($objp->date_last_gen), 'day') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
+		print($objp->frequency > 0 ? dol_print_date($db->jdate($objp->date_last_gen), 'day') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -977,7 +977,7 @@ while ($i < $imaxinloop) {
 	if (!empty($arrayfields['f.date_when']['checked'])) {
 		print '<td class="center">';
 		print '<div class="nowraponall">';
-		print ($objp->frequency ? ($invoicerectmp->isMaxNbGenReached() ? '<strike>' : '').dol_print_date($db->jdate($objp->date_when), 'day').($invoicerectmp->isMaxNbGenReached() ? '</strike>' : '') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
+		print($objp->frequency ? ($invoicerectmp->isMaxNbGenReached() ? '<strike>' : '').dol_print_date($db->jdate($objp->date_when), 'day').($invoicerectmp->isMaxNbGenReached() ? '</strike>' : '') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
 		if (!$invoicerectmp->isMaxNbGenReached()) {
 			if (!$objp->suspended && $objp->frequency > 0 && $db->jdate($objp->date_when) && $db->jdate($objp->date_when) < $now) {
 				print img_warning($langs->trans("Late"));

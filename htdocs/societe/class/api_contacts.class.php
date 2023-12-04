@@ -460,7 +460,7 @@ class Contacts extends DolibarrApi
 	/**
 	 * Add a category to a contact
 	 *
-	 * @url POST {id}/categories/{category_id}
+	 * @url PUT {id}/categories/{category_id}
 	 *
 	 * @param   int		$id             Id of contact
 	 * @param   int     $category_id    Id of category

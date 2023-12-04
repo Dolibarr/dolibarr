@@ -184,7 +184,7 @@ if ($resql) {
 			$outputlangs->loadLangs(array("main", "bills"));
 
 			if (dol_strlen($newemail)) {
-				$message .= $outputlangs->trans("Invoice")." ".$obj->ref." : ".price($obj->total_ttc, 0, $outputlangs, 0, 0, - 1, $conf->currency)."\n";
+				$message .= $outputlangs->trans("Invoice")." ".$obj->ref." : ".price($obj->total_ttc, 0, $outputlangs, 0, 0, -1, $conf->currency)."\n";
 				dol_syslog("email_unpaid_invoices_to_customers.php: ".$newemail." ".$message);
 				$foundtoprocess++;
 			}
@@ -258,7 +258,7 @@ function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldtarget)
 	$sendto = $oldemail;
 	$from = !getDolGlobalString('MAIN_MAIL_EMAIL_FROM') ? '' : $conf->global->MAIN_MAIL_EMAIL_FROM;
 	$errorsto = !getDolGlobalString('MAIN_MAIL_ERRORS_TO') ? '' : $conf->global->MAIN_MAIL_ERRORS_TO;
-	$msgishtml = - 1;
+	$msgishtml = -1;
 
 	print "- Send email to '".$oldtarget."' (".$oldemail."), total: ".$total."\n";
 	dol_syslog("email_unpaid_invoices_to_customers.php: send mail to ".$oldemail);
@@ -280,7 +280,7 @@ function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldtarget)
 		$allmessage .= "Note: This list contains only unpaid invoices.".($usehtml ? "<br>\n" : "\n");
 	}
 	$allmessage .= $message.($usehtml ? "<br>\n" : "\n");
-	$allmessage .= $langs->trans("Total")." = ".price($total, 0, $userlang, 0, 0, - 1, $conf->currency).($usehtml ? "<br>\n" : "\n");
+	$allmessage .= $langs->trans("Total")." = ".price($total, 0, $userlang, 0, 0, -1, $conf->currency).($usehtml ? "<br>\n" : "\n");
 	if (getDolGlobalString('SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_FOOTER')) {
 		$allmessage .= $conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_FOOTER;
 		if (dol_textishtml($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_FOOTER)) {

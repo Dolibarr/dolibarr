@@ -330,7 +330,7 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 	dol_syslog("xcal.lib.php::build_rssfile Build rss file ".$outputfile." to format ".$format);
 
 	if (empty($outputfile)) {
-		 // -1 = error
+		// -1 = error
 		return -1;
 	}
 

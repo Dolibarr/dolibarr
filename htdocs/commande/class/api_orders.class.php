@@ -31,7 +31,7 @@ class Orders extends DolibarrApi
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
-	static $FIELDS = array(
+	public static $FIELDS = array(
 		'socid',
 		'date'
 	);
@@ -607,7 +607,7 @@ class Orders extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		 $contacts = $this->commande->liste_contact();
+		$contacts = $this->commande->liste_contact();
 
 		foreach ($contacts as $contact) {
 			if ($contact['id'] == $contactid && $contact['code'] == $type) {
@@ -812,7 +812,6 @@ class Orders extends DolibarrApi
 	 */
 	public function setinvoiced($id)
 	{
-
 		if (!DolibarrApiAccess::$user->rights->commande->creer) {
 			throw new RestException(401);
 		}
@@ -949,7 +948,6 @@ class Orders extends DolibarrApi
 	 */
 	public function createOrderFromProposal($proposalid)
 	{
-
 		require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 
 		if (!DolibarrApiAccess::$user->hasRight('propal', 'lire')) {
