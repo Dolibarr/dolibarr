@@ -978,7 +978,7 @@ if ($dirins && $action == 'addextrafield' && !empty($module)) {
 }
 
 // delete Extrafield definition
-if ($dirins && $action == 'confirm_deleteextrafield' && $confirm == 'yes' && GETPOST('extrafieldskey', 'int') > 0) {
+if ($dirins && $action == 'confirm_deleteextrafield' && $confirm == 'yes' && GETPOSTISSET('extrafieldskey')) {
 	$extrafieldskey = GETPOST('extrafieldskey', 'int');
 	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 	$destdir = $dirins.'/'.strtolower($module);
