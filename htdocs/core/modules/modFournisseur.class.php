@@ -42,7 +42,7 @@ class modFournisseur extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf, $user;
+		global $conf, $user, $langs;
 
 		$this->db = $db;
 		$this->numero = 40;
