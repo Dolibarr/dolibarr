@@ -2,7 +2,6 @@
 
 namespace Dolibarr\Rector\Renaming;
 
-
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Scalar\String_;
@@ -36,7 +35,8 @@ class UserRightsToFunction extends AbstractRector
 			[new CodeSample(
 				'$user->rights->module->permission',
 				'$user->hasRight(\'module\', \'permission\')'
-			)]);
+			)]
+		);
 	}
 
 	/**
@@ -122,7 +122,7 @@ class UserRightsToFunction extends AbstractRector
 			return null;
 		}
 		// Add a test to avoid rector error on html.formsetup.class.php
-		if (! $node->name instanceof Node\Expr\Variable && is_null($this->getName($node))) {
+		if (!$node->name instanceof Node\Expr\Variable && is_null($this->getName($node))) {
 			//var_dump($node);
 			return null;
 			//exit;

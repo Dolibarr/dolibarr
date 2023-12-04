@@ -3,6 +3,7 @@
 $finder = (new PhpCsFixer\Finder())
 	->in(__DIR__)
 	->exclude([
+		'custom',
 		'documents',
 		'htdocs/custom',
 		'htdocs/includes',
@@ -15,7 +16,7 @@ $finder = (new PhpCsFixer\Finder())
 return (new PhpCsFixer\Config())
 	->setRules([
 		// Apply PSR-12 as per https://wiki.dolibarr.org/index.php?title=Langages_et_normes#PHP:~:text=utiliser%20est%20le-,PSR%2D12,-(https%3A//www
-		// '@PSR12' => true,  // Disabled for now to limit number of changes
+		'@PSR12' => true,  // Disabled for now to limit number of changes
 
 		// Minimum version Dolibarr v18.0.0
 		// Compatibility with min 7.1 is announced with Dolibarr18.0 but
