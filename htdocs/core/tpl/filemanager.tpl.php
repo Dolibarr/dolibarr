@@ -161,7 +161,7 @@ if ((!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE
 		<?php
 	}
 
-	$sectiondir = GETPOST('file', 'alpha') ?GETPOST('file', 'alpha') : GETPOST('section_dir', 'alpha');
+	$sectiondir = GETPOST('file', 'alpha') ? GETPOST('file', 'alpha') : GETPOST('section_dir', 'alpha');
 
 	print '<!-- Start form to attach new file in filemanager.tpl.php sectionid='.$section.' sectiondir='.$sectiondir.' -->'."\n";
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -206,8 +206,12 @@ if ($action == 'confirmconvertimgwebp') {
 		$formquestion['website']=array('type'=>'hidden', 'value'=>$website->ref, 'name'=>'website');
 	}
 	$param = '';
-	if (!empty($sortfield)) $param .= '&sortfield='.urlencode($sortfield);
-	if (!empty($sortorder)) $param .= '&sortorder='.urlencode($sortorder);
+	if (!empty($sortfield)) {
+		$param .= '&sortfield='.urlencode($sortfield);
+	}
+	if (!empty($sortorder)) {
+		$param .= '&sortorder='.urlencode($sortorder);
+	}
 	print $form->formconfirm($_SERVER["PHP_SELF"].($param ? '?'.$param : ''), empty($file) ? $langs->trans('ConfirmImgWebpCreation') : $langs->trans('ConfirmChosenImgWebpCreation'), empty($file) ? $langs->trans('ConfirmGenerateImgWebp') : $langs->trans('ConfirmGenerateChosenImgWebp', basename($file)), 'convertimgwebp', $formquestion, "yes", 1);
 	$action = 'file_manager';
 }

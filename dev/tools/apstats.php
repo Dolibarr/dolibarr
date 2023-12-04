@@ -34,7 +34,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 	exit();
 }
 
-error_reporting(E_ALL & ~ E_DEPRECATED);
+error_reporting(E_ALL & ~E_DEPRECATED);
 define('PRODUCT', "apstats");
 define('VERSION', "1.0");
 
@@ -51,7 +51,7 @@ $outputpath = $argv[1];
 $outputdir = dirname($outputpath);
 $outputfile = basename($outputpath);
 
-if (! is_dir($outputdir)) {
+if (!is_dir($outputdir)) {
 	print 'Error: dir '.$outputdir.' does not exists or is not writable'."\n";
 	exit(1);
 }
@@ -111,8 +111,8 @@ exec($commandcheck, $output_arrtd, $resexectd);
 $arrayoflineofcode = array();
 $arraycocomo = array();
 $arrayofmetrics = array(
-	'proj'=>array('Bytes'=>0, 'Files'=>0, 'Lines'=>0, 'Blanks'=>0, 'Comments'=>0, 'Code'=>0, 'Complexity'=>0),
-	'dep'=>array('Bytes'=>0, 'Files'=>0, 'Lines'=>0, 'Blanks'=>0, 'Comments'=>0, 'Code'=>0, 'Complexity'=>0)
+	'proj' => array('Bytes' => 0, 'Files' => 0, 'Lines' => 0, 'Blanks' => 0, 'Comments' => 0, 'Code' => 0, 'Complexity' => 0),
+	'dep' => array('Bytes' => 0, 'Files' => 0, 'Lines' => 0, 'Blanks' => 0, 'Comments' => 0, 'Code' => 0, 'Complexity' => 0)
 );
 
 // Analyse $output_arrproj

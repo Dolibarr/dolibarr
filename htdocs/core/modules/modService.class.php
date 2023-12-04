@@ -35,7 +35,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modService extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -750,11 +749,11 @@ class modService extends DolibarrModules
 					));
 				}
 
-					$this->import_convertvalue_array[$r] = array(
+				$this->import_convertvalue_array[$r] = array(
 						'sp.fk_soc'=>array('rule'=>'fetchidfromref', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetch', 'element'=>'ThirdParty'),
 						'sp.fk_product'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/class/product.class.php', 'class'=>'Product', 'method'=>'fetch', 'element'=>'Product')
 					);
-					$this->import_examplevalues_array[$r] = array(
+				$this->import_examplevalues_array[$r] = array(
 					'sp.fk_product' => "ref:PRODUCT_REF or id:123456",
 					'sp.fk_soc' => "My Supplier",
 					'sp.ref_fourn' => "XYZ-F123456",
@@ -767,16 +766,16 @@ class modService extends DolibarrModules
 					'sp.delivery_time_days' => '5',
 					'sp.supplier_reputation' => 'FAVORITE / NOTTHGOOD / DONOTORDER'
 					);
-					if (is_object($mysoc) && $usenpr) {
-						$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array('sp.recuperableonly'=>''));
-					}
-					if (is_object($mysoc) && $mysoc->useLocalTax(1)) {
-						$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array('sp.localtax1_tx'=>'LT1', 'sp.localtax1_type'=>'LT1Type'));
-					}
-					if (is_object($mysoc) && $mysoc->useLocalTax(2)) {
-						$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array('sp.localtax2_tx'=>'LT2', 'sp.localtax2_type'=>'LT2Type'));
-					}
-					$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array(
+				if (is_object($mysoc) && $usenpr) {
+					$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array('sp.recuperableonly'=>''));
+				}
+				if (is_object($mysoc) && $mysoc->useLocalTax(1)) {
+					$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array('sp.localtax1_tx'=>'LT1', 'sp.localtax1_type'=>'LT1Type'));
+				}
+				if (is_object($mysoc) && $mysoc->useLocalTax(2)) {
+					$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array('sp.localtax2_tx'=>'LT2', 'sp.localtax2_type'=>'LT2Type'));
+				}
+				$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array(
 					'sp.price' => "50.00",
 					'sp.unitprice' => '10',
 					// TODO Make this field not required and calculate it from price and qty

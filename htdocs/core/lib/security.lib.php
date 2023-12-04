@@ -741,7 +741,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				}
 			} elseif ($feature == 'payment') {
 				if (!$user->hasRight('facture', 'paiement')) {
-						$deleteok = 0;
+					$deleteok = 0;
 				}
 			} elseif ($feature == 'payment_sc') {
 				if (!$user->hasRight('tax', 'charges', 'creer')) {

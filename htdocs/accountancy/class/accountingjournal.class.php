@@ -84,12 +84,12 @@ class AccountingJournal extends CommonObject
 	/**
 	 * @var array 		Accounting account cached
 	 */
-	static public $accounting_account_cached = array();
+	public static $accounting_account_cached = array();
 
 	/**
 	 * @var array 		Nature mapping
 	 */
-	static public $nature_maps = array(
+	public static $nature_maps = array(
 		1 => 'variousoperations',
 		2 => 'sells',
 		3 => 'purchases',
@@ -386,8 +386,12 @@ class AccountingJournal extends CommonObject
 		global $hookmanager;
 
 		// Clean parameters
-		if (empty($type)) $type = 'view';
-		if (empty($in_bookkeeping)) $in_bookkeeping = 'notyet';
+		if (empty($type)) {
+			$type = 'view';
+		}
+		if (empty($in_bookkeeping)) {
+			$in_bookkeeping = 'notyet';
+		}
 
 		$data = array();
 
@@ -659,9 +663,11 @@ class AccountingJournal extends CommonObject
 							$lines[0][$accountancy_code_depreciation_asset] = -$last_cumulative_amount_ht;
 							$lines[0][$accountancy_code_asset] = $element_static->acquisition_value_ht;
 
-							$disposal_amount_vat = $disposal_subject_to_vat ? (double) price2num($disposal_amount * $disposal_vat / 100, 'MT') : 0;
+							$disposal_amount_vat = $disposal_subject_to_vat ? (float) price2num($disposal_amount * $disposal_vat / 100, 'MT') : 0;
 							$lines[1][$accountancy_code_receivable_on_assignment] = -($disposal_amount + $disposal_amount_vat);
-							if ($disposal_subject_to_vat) $lines[1][$accountancy_code_vat_collected] = $disposal_amount_vat;
+							if ($disposal_subject_to_vat) {
+								$lines[1][$accountancy_code_vat_collected] = $disposal_amount_vat;
+							}
 							$lines[1][$accountancy_code_proceeds_from_sales] = $disposal_amount;
 
 							foreach ($lines as $lines_block) {
@@ -925,7 +931,9 @@ class AccountingJournal extends CommonObject
 	{
 		global $conf, $langs, $hookmanager;
 
-		if (empty($sep)) $sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
+		if (empty($sep)) {
+			$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
+		}
 		$out = '';
 
 		// Hook
@@ -976,7 +984,9 @@ class AccountingJournal extends CommonObject
 				);
 			}
 
-			if (!empty($header)) $out .= '"' . implode('"' . $sep . '"', $header) . '"' . "\n";
+			if (!empty($header)) {
+				$out .= '"' . implode('"' . $sep . '"', $header) . '"' . "\n";
+			}
 			foreach ($journal_data as $element_id => $element) {
 				foreach ($element['blocks'] as $lines) {
 					foreach ($lines as $line) {

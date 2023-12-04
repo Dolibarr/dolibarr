@@ -150,7 +150,9 @@ class ICal
 		}
 
 		$insidealarm = 0;
-		$tmpkey = ''; $tmpvalue = ''; $type = '';
+		$tmpkey = '';
+		$tmpvalue = '';
+		$type = '';
 		foreach ($this->file_text as $text) {
 			$text = trim($text); // trim one line
 			if (!empty($text)) {

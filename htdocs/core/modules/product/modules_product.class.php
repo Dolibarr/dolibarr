@@ -60,7 +60,6 @@ abstract class ModelePDFProduct extends CommonDocGenerator
  */
 abstract class ModeleProductCode extends CommonNumRefGenerator
 {
-
 	/**
 	 * @var int Automatic numbering
 	 */

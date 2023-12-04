@@ -1109,7 +1109,7 @@ class Ldap
 		if (!empty($activefilter)) {	// Use a predefined trusted filter (defined into setup by admin).
 			if (((string) $activefilter == '1' || (string) $activefilter == 'user') && $this->filter) {
 				$filter = '('.$this->filter.')';
-			} elseif (((string) $activefilter == 'group') && $this->filtergroup ) {
+			} elseif (((string) $activefilter == 'group') && $this->filtergroup) {
 				$filter = '('.$this->filtergroup.')';
 			} elseif (((string) $activefilter == 'member') && $this->filter) {
 				$filter = '('.$this->filtermember.')';

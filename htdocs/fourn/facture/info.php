@@ -37,7 +37,7 @@ if (isModEnabled('project')) {
 
 $langs->loadLangs(array("companies", "bills"));
 
-$id = GETPOST("facid", 'int') ?GETPOST("facid", 'int') : GETPOST("id", 'int');
+$id = GETPOST("facid", 'int') ? GETPOST("facid", 'int') : GETPOST("id", 'int');
 $ref = GETPOST("ref", 'alpha');
 
 // Security check

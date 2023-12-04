@@ -369,9 +369,10 @@ function isASecretKey($keyname)
  */
 function num2Alpha($n)
 {
-	for ($r = ""; $n >= 0; $n = intval($n / 26) - 1)
+	for ($r = ""; $n >= 0; $n = intval($n / 26) - 1) {
 		$r = chr($n % 26 + 0x41) . $r;
-		return $r;
+	}
+	return $r;
 }
 
 
@@ -1976,7 +1977,8 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 
 	$out = '';
 
-	$backtopagejsfieldsid = ''; $backtopagejsfieldslabel = '';
+	$backtopagejsfieldsid = '';
+	$backtopagejsfieldslabel = '';
 	if ($backtopagejsfields) {
 		$tmpbacktopagejsfields = explode(':', $backtopagejsfields);
 		if (empty($tmpbacktopagejsfields[1])) {	// If the part 'keyforpopupid:' is missing, we add $name for it.
@@ -2029,10 +2031,10 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 									var returnedlabel = jQuery("#varforreturndialoglabel'.$name.'").text();
 									console.log("popup has been closed. returnedid (js var defined into parent page)="+returnedid+" returnedlabel="+returnedlabel);
 									if (returnedid != "" && returnedid != "div for returned id") {
-										jQuery("#'.(empty($backtopagejsfieldsid)?"none":$backtopagejsfieldsid).'").val(returnedid);
+										jQuery("#'.(empty($backtopagejsfieldsid) ? "none" : $backtopagejsfieldsid).'").val(returnedid);
 									}
 									if (returnedlabel != "" && returnedlabel != "div for returned label") {
-										jQuery("#'.(empty($backtopagejsfieldslabel)?"none":$backtopagejsfieldslabel).'").val(returnedlabel);
+										jQuery("#'.(empty($backtopagejsfieldslabel) ? "none" : $backtopagejsfieldslabel).'").val(returnedlabel);
 									}
 								}
 							});
@@ -2171,7 +2173,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 				}
 			} elseif (!empty($links[$i][1])) {
 				//print "x $i $active ".$links[$i][2]." z";
-				$out .= '<div class="tab tab'.($isactive?'active':'unactive').'" style="margin: 0 !important">';
+				$out .= '<div class="tab tab'.($isactive ? 'active' : 'unactive').'" style="margin: 0 !important">';
 				if (!empty($links[$i][0])) {
 					$titletoshow = preg_replace('/<.*$/', '', $links[$i][1]);
 					$out .= '<a'.(!empty($links[$i][2]) ? ' id="'.$links[$i][2].'"' : '').' class="tab inline-block valignmiddle'.($morecss ? ' '.$morecss : '').(!empty($links[$i][5]) ? ' '.$links[$i][5] : '').'" href="'.$links[$i][0].'" title="'.dol_escape_htmltag($titletoshow).'">';
@@ -2676,7 +2678,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : (empty($object->town) ? '' : $object->town));
 		$ret .= (($ret && $town) ? $sep : '').$town;
 
-		if (!empty($object->state))	{
+		if (!empty($object->state)) {
 			$ret .= ($ret ? ($town ? ", " : $sep) : '').$object->state;
 		}
 		if (!empty($object->zip)) {
@@ -2925,7 +2927,8 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		$newformat = str_replace(
 			array('%Y', '%y', '%m', '%d', '%H', '%I', '%M', '%S', '%p', 'T', 'Z', '__a__', '__A__', '__b__', '__B__'),
 			array('Y', 'y', 'm', 'd', 'H', 'h', 'i', 's', 'A', '__£__', '__$__', '__{__', '__}__', '__[__', '__]__'),
-			$format);
+			$format
+		);
 		$ret = $dtts->format($newformat);
 		$ret = str_replace(
 			array('__£__', '__$__', '__{__', '__}__', '__[__', '__]__'),
@@ -2948,7 +2951,8 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 			$newformat = str_replace(
 				array('%Y', '%y', '%m', '%d', '%H', '%I', '%M', '%S', '%p', '%w', 'T', 'Z', '__a__', '__A__', '__b__', '__B__'),
 				array('Y', 'y', 'm', 'd', 'H', 'h', 'i', 's', 'A', 'w', '__£__', '__$__', '__{__', '__}__', '__[__', '__]__'),
-				$format);
+				$format
+			);
 			$ret = $dtts->format($newformat);
 			$ret = str_replace(
 				array('__£__', '__$__', '__{__', '__}__', '__[__', '__]__'),
@@ -3272,9 +3276,9 @@ function dol_print_url($url, $target = '_blank', $max = 32, $withpicto = 0, $mor
 	$linkend = '</a>';
 
 	if ($morecss == 'float') {	// deprecated
-		return '<div class="nospan'.($morecss ? ' '.$morecss : '').'" style="margin-right: 10px">'.($withpicto ?img_picto($langs->trans("Url"), 'globe').' ' : '').$link.'</div>';
+		return '<div class="nospan'.($morecss ? ' '.$morecss : '').'" style="margin-right: 10px">'.($withpicto ? img_picto($langs->trans("Url"), 'globe').' ' : '').$link.'</div>';
 	} else {
-		return $linkstart.'<span class="nospan'.($morecss ? ' '.$morecss : '').'" style="margin-right: 10px">'.($withpicto ?img_picto('', 'globe').' ' : '').$link.'</span>'.$linkend;
+		return $linkstart.'<span class="nospan'.($morecss ? ' '.$morecss : '').'" style="margin-right: 10px">'.($withpicto ? img_picto('', 'globe').' ' : '').$link.'</span>'.$linkend;
 	}
 }
 
@@ -3484,7 +3488,9 @@ function dol_print_profids($profID, $profIDtype, $countrycode = '', $addcpButton
 	if (empty($profID) || empty($profIDtype)) {
 		return '';
 	}
-	if (empty($countrycode))	$countrycode = $mysoc->country_code;
+	if (empty($countrycode)) {
+		$countrycode = $mysoc->country_code;
+	}
 	$newProfID = $profID;
 	$id = substr($profIDtype, -1);
 	$ret = '';
@@ -3509,8 +3515,11 @@ function dol_print_profids($profID, $profIDtype, $countrycode = '', $addcpButton
 			$newProfID = substr($newProfID, 0, 4).' '.substr($newProfID, 4, 3).' '.substr($newProfID, 7, 3).' '.substr($newProfID, 10, 3);
 		}
 	}
-	if (!empty($addcpButton))	$ret = showValueWithClipboardCPButton(dol_escape_htmltag($profID), ($addcpButton == 1 ? 1 : 0), $newProfID);
-	else $ret = $newProfID;
+	if (!empty($addcpButton)) {
+		$ret = showValueWithClipboardCPButton(dol_escape_htmltag($profID), ($addcpButton == 1 ? 1 : 0), $newProfID);
+	} else {
+		$ret = $newProfID;
+	}
 	return $ret;
 }
 
@@ -3745,9 +3754,9 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 				$urlmask = $user->clicktodial_url;
 			}
 
-			$clicktodial_poste = (!empty($user->clicktodial_poste) ?urlencode($user->clicktodial_poste) : '');
-			$clicktodial_login = (!empty($user->clicktodial_login) ?urlencode($user->clicktodial_login) : '');
-			$clicktodial_password = (!empty($user->clicktodial_password) ?urlencode($user->clicktodial_password) : '');
+			$clicktodial_poste = (!empty($user->clicktodial_poste) ? urlencode($user->clicktodial_poste) : '');
+			$clicktodial_login = (!empty($user->clicktodial_login) ? urlencode($user->clicktodial_login) : '');
+			$clicktodial_password = (!empty($user->clicktodial_password) ? urlencode($user->clicktodial_password) : '');
 			// This line is for backward compatibility
 			$url = sprintf($urlmask, urlencode($phone), $clicktodial_poste, $clicktodial_login, $clicktodial_password);
 			// Thoose lines are for substitution
@@ -5393,8 +5402,7 @@ function dol_print_error($db = '', $error = '', $errors = null)
 			}
 			if ($_SERVER['DOCUMENT_ROOT']) {  // Mode web
 				$out .= "<b>".$langs->trans("Message").":</b> ".dol_escape_htmltag($msg)."<br>\n";
-			} else // Mode CLI
-			{
+			} else { // Mode CLI
 				$out .= '> '.$langs->transnoentities("Message").":\n".$msg."\n";
 			}
 			$syslog .= ", msg=".$msg;
@@ -7519,7 +7527,9 @@ function dolGetFirstLineOfText($text, $nboflines = 1, $charset = 'UTF-8')
 		$a = preg_split($pattern, $text, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 
 		$firstline = '';
-		$i = 0; $countline = 0; $lastaddediscontent = 1;
+		$i = 0;
+		$countline = 0;
+		$lastaddediscontent = 1;
 		while ($countline < $nboflines && isset($a[$i])) {
 			if (preg_match('/<br[^>]*>/', $a[$i])) {
 				if (array_key_exists($i+1, $a) && !empty($a[$i+1])) {
@@ -7599,7 +7609,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 				try {
 					libxml_use_internal_errors(false);	// Avoid to fill memory with xml errors
 
-					$dom = new DOMDocument;
+					$dom = new DOMDocument();
 					// Add a trick to solve pb with text without parent tag
 					// like '<h1>Foo</h1><p>bar</p>' that wrongly ends up, without the trick, with '<h1>Foo<p>bar</p></h1>'
 					// like 'abc' that wrongly ends up, without the trick, with '<p>abc</p>'
@@ -7664,7 +7674,8 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 			// No need to use a loop here, this step is not to sanitize (this is done at next step, this is to try to save chars, even if they are
 			// using a non coventionnel way to be encoded, to not have them sanitized just after)
 			$out = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', function ($m) {
-				return realCharForNumericEntities($m); }, $out);
+				return realCharForNumericEntities($m);
+			}, $out);
 
 
 			// Now we remove all remaining HTML entities starting with a number. We don't want such entities.
@@ -7994,9 +8005,9 @@ function dol_textishtml($msg, $option = 0)
 function dol_concatdesc($text1, $text2, $forxml = false, $invert = false)
 {
 	if (!empty($invert)) {
-			$tmp = $text1;
-			$text1 = $text2;
-			$text2 = $tmp;
+		$tmp = $text1;
+		$text1 = $text2;
+		$text2 = $tmp;
 	}
 
 	$ret = '';
@@ -8409,7 +8420,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'__'] = $object->array_options['options_'.$key];
 								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'_FORMATED__'] = price($object->array_options['options_'.$key]);
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] != 'separator') {
-								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'__'] = !empty($object->array_options['options_'.$key]) ? $object->array_options['options_'.$key] :'';
+								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'__'] = !empty($object->array_options['options_'.$key]) ? $object->array_options['options_'.$key] : '';
 							}
 						}
 					}
@@ -8451,7 +8462,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			}
 
 			if ($object->id > 0) {
-				$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__'] = ($paymenturl ?str_replace('\n', "\n", $outputlangs->trans("PredefinedMailContentLink", $paymenturl)) : '');
+				$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__'] = ($paymenturl ? str_replace('\n', "\n", $outputlangs->trans("PredefinedMailContentLink", $paymenturl)) : '');
 				$substitutionarray['__ONLINE_PAYMENT_URL__'] = $paymenturl;
 
 				if (getDolGlobalString('PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD') && is_object($object) && $object->element == 'propal') {
@@ -11381,7 +11392,7 @@ function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '
 		$TCompiledAttr[] = $key.'="'.$value.'"';
 	}
 
-	$compiledAttributes = !empty($TCompiledAttr) ?implode(' ', $TCompiledAttr) : '';
+	$compiledAttributes = !empty($TCompiledAttr) ? implode(' ', $TCompiledAttr) : '';
 
 	$tag = !empty($url) ? 'a' : 'span';
 
@@ -11555,9 +11566,9 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 
 	// Here, $url is a simple link
 
-	if (!empty($params['isDropdown']))
+	if (!empty($params['isDropdown'])) {
 		$class = "dropdown-item";
-	else {
+	} else {
 		$class = 'butAction';
 		if ($actionType == 'danger' || $actionType == 'delete') {
 			$class = 'butActionDelete';
@@ -11662,7 +11673,9 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 	);
 
 	$reshook = $hookmanager->executeHooks('dolGetButtonAction', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	if ($reshook < 0) {
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	}
 
 	if (empty($reshook)) {
 		if (dol_textishtml($text)) {	// If content already HTML encoded
@@ -12458,7 +12471,8 @@ function dolCheckFilters($sqlfilters, &$error = '')
 	//$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
 	//$tmp=preg_replace_all('/'.$regexstring.'/', '', $sqlfilters);
 	$tmp = $sqlfilters;
-	$i = 0; $nb = strlen($tmp);
+	$i = 0;
+	$nb = strlen($tmp);
 	$counter = 0;
 	while ($i < $nb) {
 		if ($tmp[$i] == '(') {
@@ -12538,7 +12552,7 @@ function dolForgeCriteriaCallback($matches)
 
 	if ($operator == 'IN') {	// IN is allowed for list of ID or code only
 		//if (!preg_match('/^\(.*\)$/', $tmpescaped)) {
-			$tmpescaped = '('.$db->escape($db->sanitize($tmpescaped, 1, 0)).')';
+		$tmpescaped = '('.$db->escape($db->sanitize($tmpescaped, 1, 0)).')';
 		//} else {
 		//	$tmpescaped = $db->escape($db->sanitize($tmpescaped, 1));
 		//}
@@ -13398,7 +13412,9 @@ function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto')
  */
 function buildParamDate($prefix, $timestamp = null, $hourTime = '', $gm = 'auto')
 {
-	if ($timestamp === null) $timestamp = GETPOSTDATE($prefix, $hourTime, $gm);
+	if ($timestamp === null) {
+		$timestamp = GETPOSTDATE($prefix, $hourTime, $gm);
+	}
 	$TParam = array(
 		$prefix . 'day'   => intval(dol_print_date($timestamp, '%d')),
 		$prefix . 'month' => intval(dol_print_date($timestamp, '%m')),
