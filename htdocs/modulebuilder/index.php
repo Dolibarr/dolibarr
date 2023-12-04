@@ -142,7 +142,7 @@ $fieldsToManage = [
 	'enabled' => 'text',
 	'totalizable' => 'text',
 	'printable' => 'text',
-	'moreparams' => 'array'
+	'moreparams' => 'arrayofcss'
 ];
 
 $form = new Form($db);
@@ -921,11 +921,16 @@ if ($dirins && $action == 'addextrafield' && !empty($module)) {
 	$extrafieldstocreate = [];
 	foreach ($fieldsToManage as $keyfield => $valuefield) {
 		if ($valuefield == 'text') {
-			$filter = 'alpha';
+			$$keyfield = GETPOST($keyfield, 'alpha');
+		} elseif ($valuefield == 'arrayofcss') {
+			$$keyfield = [
+				'css' => GETPOST('css', 'alpha'),
+				'csslist' => GETPOST('csslist', 'alpha'),
+				'cssview' => GETPOST('cssview', 'alpha'),
+			];
 		} else {
-			$filter = '';
+			$$keyfield = GETPOST($keyfield);
 		}
-		$$keyfield = GETPOST($keyfield, $filter);
 	}
 
 	if (!GETPOST('attrname')) {
@@ -5170,7 +5175,13 @@ if ($module == 'initmodule') {
 
 			print '<tr class="liste_titre">';
 			foreach ($fieldsToManage as $keytype => $field) {
-				print_liste_field_titre($keytype, '', '', '', '', '', '', '', 'center');
+				if ($field == 'arrayofcss') {
+					print_liste_field_titre('css', '', '', '', '', '', '', '', 'center');
+					print_liste_field_titre('csslist', '', '', '', '', '', '', '', 'center');
+					print_liste_field_titre('cssview', '', '', '', '', '', '', '', 'center');
+				} else {
+					print_liste_field_titre($keytype, '', '', '', '', '', '', '', 'center');
+				}
 			}
 			// add column
 			print_liste_field_titre("", '', '', '', '', '', '', '', 'center');
@@ -5186,6 +5197,10 @@ if ($module == 'initmodule') {
 						print '<option value="'.$typekey.'">'.$langs->trans($type).'</option>';
 					}
 					print '</select></td>';
+				} elseif ($fieldtype == 'arrayofcss') {
+					print '<td><input type="text" name="css" class="width75"></td>';
+					print '<td><input type="text" name="csslist" class="width75"></td>';
+					print '<td><input type="text" name="cssview" class="width75"></td>';
 				} else {
 					print '<td><input type="text" name="'.$keytype.'" class="width75"></td>';
 				}
@@ -5216,9 +5231,19 @@ if ($module == 'initmodule') {
 									print '<option value="'.$typekey.'" '.($typekey==$extra['type'] ? 'selected':'').'>'.$type.'</option>';
 								}
 								print '</select></td>';
+							} elseif ($fieldtype == 'arrayofcss') {
+								print '<td class="tdsticky tdstickygray">';
+								print '<input class="width75" type="text" name="css" value="'.dol_escape_htmltag($extra[$keytype]['css']).'"/>';
+								print '</td>';
+								print '<td class="tdsticky tdstickygray">';
+								print '<input class="width75" type="text" name="csslist" value="'.dol_escape_htmltag($extra[$keytype]['csslist']).'"/>';
+								print '</td>';
+								print '<td class="tdsticky tdstickygray">';
+								print '<input class="width75" type="text" name="cssview" value="'.dol_escape_htmltag($extra[$keytype]['cssview']).'"/>';
+								print '</td>';
 							} else {
 								print '<td class="tdsticky tdstickygray">';
-								print '<input class="width75" type="text" value="'.dol_escape_htmltag($extra[$keytype]).'"/>';
+								print '<input class="width75" type="text" name="'.$keytype.'" value="'.dol_escape_htmltag($extra[$keytype]).'"/>';
 								print '</td>';
 							}
 						}
@@ -5235,16 +5260,17 @@ if ($module == 'initmodule') {
 						print '<tr class="oddeven">';
 						foreach ($fieldsToManage as $keytype => $fieldtype) {
 							if ($fieldtype == 'selecttype') {
-								print '<td>';
-								print dol_escape_htmltag($types[$extra['type']]);
-								print '</td>';
+								print '<td>' . dol_escape_htmltag($types[$extra['type']]) . '</td>';
+							} elseif ($fieldtype == 'arrayofcss') {
+								print '<td>' . dol_escape_htmltag($extra[$keytype]['css']) . '</td>';
+								print '<td>' . dol_escape_htmltag($extra[$keytype]['csslist']) . '</td>';
+								print '<td>' . dol_escape_htmltag($extra[$keytype]['cssview']) . '</td>';
 							} else {
 								print '<td>';
 								print dol_escape_htmltag($extra[$keytype]);
 								print '</td>';
 							}
 						}
-
 						print '<td class="center minwidth75 tdstickyright tdstickyghostwhite">';
 						print '<a class="editfielda reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=edit_extrafield&token='.newToken().'&extrafieldskey='.urlencode($extrakey).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_edit().'</a>';
 						print '<a class="marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=deleteextrafield&token='.newToken().'&extrafieldskey='.urlencode($extrakey).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_delete().'</a>';
