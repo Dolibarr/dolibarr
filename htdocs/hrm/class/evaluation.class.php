@@ -244,7 +244,9 @@ class Evaluation extends CommonObject
 					$line->fk_rank = 0;
 
 					$res = $line->create($user, $notrigger);
-					if ($res > 0) $this->lines[] = $line;
+					if ($res > 0) {
+						$this->lines[] = $line;
+					}
 				}
 			}
 		}
@@ -581,13 +583,15 @@ class Evaluation extends CommonObject
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'evaluation/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'evaluation/".$this->db->escape($this->newref)."'";
 				$sql .= " WHERE filepath = 'evaluation/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
@@ -643,12 +647,15 @@ class Evaluation extends CommonObject
 		$sql.=	"LIMIT 1 ";
 
 		$res = $this->db->query($sql);
-		if (!$res) { dol_print_error($this->db);}
+		if (!$res) {
+			dol_print_error($this->db);
+		}
 
 		$Tab = $this->db->fetch_object($res);
 
-		if (empty($Tab)) return null;
-		else {
+		if (empty($Tab)) {
+			return null;
+		} else {
 			$evaluation = new Evaluation($this->db);
 			$evaluation->fetch($Tab->rowid);
 
