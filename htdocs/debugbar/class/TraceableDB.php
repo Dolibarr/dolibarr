@@ -535,7 +535,7 @@ class TraceableDB extends DoliDB
 	 * @param    string $field_name 		Name of field to add
 	 * @param    string $field_desc 		Tableau associatif de description du champ a inserer[nom du parametre][valeur du parametre]
 	 * @param    string $field_position 	Optionnel ex.: "after champtruc"
-	 * @return   int                        <0 if KO, >0 if OK
+	 * @return   int                        Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLAddField($table, $field_name, $field_desc, $field_position = "")
 	{
@@ -547,7 +547,7 @@ class TraceableDB extends DoliDB
 	 *
 	 * @param    string $table 				Name of table
 	 * @param    string $field_name 		Name of field to drop
-	 * @return   int                        <0 if KO, >0 if OK
+	 * @return   int                        Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLDropField($table, $field_name)
 	{
@@ -560,7 +560,7 @@ class TraceableDB extends DoliDB
 	 * @param    string 	$table 			Name of table
 	 * @param    string 	$field_name 	Name of field to modify
 	 * @param    string 	$field_desc 	Array with description of field format
-	 * @return   int                        <0 if KO, >0 if OK
+	 * @return   int                        Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLUpdateField($table, $field_name, $field_desc)
 	{
@@ -720,8 +720,8 @@ class TraceableDB extends DoliDB
 	/**
 	 * Returns the current line (as an object) for the resultset cursor
 	 *
-	 * @param   resource|Connection	 		$resultset    	Handler of the desired SQL request
-	 * @return  Object                 						Object result line or false if KO or end of cursor
+	 * @param   resource|PgSql\Connection	 	$resultset    	Handler of the desired SQL request
+	 * @return  Object                 							Object result line or false if KO or end of cursor
 	 */
 	public function fetch_object($resultset)
 	{

@@ -82,7 +82,7 @@ $hookmanager->initHooks(array('thirdpartybancard', 'globalcard'));
 $permissiontoread = $user->hasRight('societe', 'lire');
 $permissiontoadd = $user->hasRight('societe', 'creer'); // Used by the include of actions_addupdatedelete.inc.php and actions_builddoc.inc.php
 
-$permissiontoaddupdatepaymentinformation = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $permissiontoadd) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->societe->thirdparty_paymentinformation_advance->write)));
+$permissiontoaddupdatepaymentinformation = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $permissiontoadd) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->societe->thirdparty_paymentinformation_advance->write)));
 
 
 // Check permission on company
@@ -93,7 +93,7 @@ $result = restrictedArea($user, 'societe', '', '');
 if (isModEnabled('stripe')) {
 	$service = 'StripeTest';
 	$servicestatus = 0;
-	if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha')) {
+	if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'alpha')) {
 		$service = 'StripeLive';
 		$servicestatus = 1;
 	}
@@ -863,7 +863,7 @@ $formother = new FormOther($db);
 $formfile = new FormFile($db);
 
 $title = $langs->trans("ThirdParty");
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->name." - ".$langs->trans('PaymentInformation');
 }
 $help_url = '';
@@ -877,7 +877,7 @@ $head = societe_prepare_head($object);
 {
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode','Paypal'),'','warning');
 }*/
-if (isModEnabled('stripe') && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
+if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('forcesandbox', 'alpha'))) {
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
 }
 
@@ -941,7 +941,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	print $object->getTypeUrl(1);
 	print '</td></tr>';
 
-	if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
+	if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
 		print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="2">'.$object->prefix_comm.'</td></tr>';
 	}
 
@@ -1124,12 +1124,12 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			$customerstripe = $stripe->customerStripe($object, $stripeacc, $servicestatus);
 			if (!empty($customerstripe->id)) {
 				// When using the Charge API architecture
-				if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION)) {
+				if (!getDolGlobalString('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')) {
 					$listofsources = $customerstripe->sources->data;
 				} else {
 					$service = 'StripeTest';
 					$servicestatus = 0;
-					if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha')) {
+					if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'alpha')) {
 						$service = 'StripeLive';
 						$servicestatus = 1;
 					}
@@ -1169,7 +1169,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	// List of Card payment modes
 	if ($showcardpaymentmode && $object->client) {
 		$morehtmlright = '';
-		if (!empty($conf->global->STRIPE_ALLOW_LOCAL_CARD)) {
+		if (getDolGlobalString('STRIPE_ALLOW_LOCAL_CARD')) {
 			$morehtmlright .= dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=createcard');
 		}
 		print load_fiche_titre($langs->trans('CreditCard'), $morehtmlright, 'fa-credit-card');
@@ -1200,7 +1200,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		$arrayofremotecard = array();
 
 		// Show local sources
-		if (!empty($conf->global->STRIPE_ALLOW_LOCAL_CARD)) {
+		if (getDolGlobalString('STRIPE_ALLOW_LOCAL_CARD')) {
 			//$societeaccount = new SocieteAccount($db);
 			$companypaymentmodetemp = new CompanyPaymentMode($db);
 
@@ -1464,7 +1464,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		}
 
 		if ($nbremote == 0 && $nblocal == 0) {
-			$colspan = (!empty($conf->global->STRIPE_ALLOW_LOCAL_CARD) ? 10 : 9);
+			$colspan = (getDolGlobalString('STRIPE_ALLOW_LOCAL_CARD') ? 10 : 9);
 			print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 		print "</table>";
@@ -1669,7 +1669,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 			$out = '';
 			if (is_array($modellist) && count($modellist)) {
-				$out .= '<form action="'.$_SERVER["PHP_SELF"].(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#builddoc').'" name="'.$forname.'" id="'.$forname.'_form" method="post">';
+				$out .= '<form action="'.$_SERVER["PHP_SELF"].(!getDolGlobalString('MAIN_JUMP_TAG') ? '' : '#builddoc').'" name="'.$forname.'" id="'.$forname.'_form" method="post">';
 				$out .= '<input type="hidden" name="action" value="builddocrib">';
 				$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 				$out .= '<input type="hidden" name="socid" value="'.$object->id.'">';
@@ -1679,7 +1679,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					$arraykeys = array_keys($modellist);
 					$modelselected = $arraykeys[0];
 				}
-				if (!empty($conf->global->BANKADDON_PDF)) {
+				if (getDolGlobalString('BANKADDON_PDF')) {
 					$modelselected = $conf->global->BANKADDON_PDF;
 				}
 
@@ -1892,7 +1892,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	$reshook = $hookmanager->executeHooks('printNewTable', $parameters, $object);
 	print $hookmanager->resPrint;
 
-	if (empty($conf->global->SOCIETE_DISABLE_BUILDDOC)) {
+	if (!getDolGlobalString('SOCIETE_DISABLE_BUILDDOC')) {
 		print '<br>';
 
 		print '<div class="fichecenter"><div class="fichehalfleft">';
@@ -1907,7 +1907,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $permissiontoread, $permissiontoaddupdatepaymentinformation, $object->model_pdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
 
 		// Show direct download link
-		if (!empty($conf->global->BANK_ACCOUNT_ALLOW_EXTERNAL_DOWNLOAD)) {
+		if (getDolGlobalString('BANK_ACCOUNT_ALLOW_EXTERNAL_DOWNLOAD')) {
 			$companybankaccounttemp = new CompanyBankAccount($db);
 			$companypaymentmodetemp = new CompanyPaymentMode($db);
 			$result = $companypaymentmodetemp->fetch(0, null, $object->id, 'ban');

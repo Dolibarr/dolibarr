@@ -29,7 +29,6 @@ require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class
  */
 class SupplierProposals extends DolibarrApi
 {
-
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */

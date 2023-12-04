@@ -109,7 +109,9 @@ if ($action == 'setlabel' && $permissiontoadd) {
  */
 
 $form = new Form($db);
-if (isModEnabled('project')) $formproject = new FormProjets($db);
+if (isModEnabled('project')) {
+	$formproject = new FormProjets($db);
+}
 
 $title = $langs->trans('Salary')." - ".$langs->trans('Info');
 $help_url = "";

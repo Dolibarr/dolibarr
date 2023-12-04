@@ -30,7 +30,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_supplier_orders_awaiting_reception extends ModeleBoxes
 {
-
 	public $boxcode  = "supplierordersawaitingreception";
 	public $boximg   = "object_order";
 	public $boxlabel = "BoxLatestSupplierOrdersAwaitingReception";
@@ -105,7 +104,7 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 			if ($user->socid) {
 				$sql .= " AND s.rowid = ".((int) $user->socid);
 			}
-			if (!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE)) {
+			if (getDolGlobalString('MAIN_LASTBOX_ON_OBJECT_DATE')) {
 				$sql .= " ORDER BY c.date_commande DESC, c.ref DESC";
 			} else {
 				$sql .= " ORDER BY c.date_livraison ASC, c.fk_statut ASC";

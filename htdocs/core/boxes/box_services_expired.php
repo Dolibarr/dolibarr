@@ -29,7 +29,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_services_expired extends ModeleBoxes
 {
-
 	public $boxcode = "expiredservices"; // id of box
 	public $boximg = "object_contract";
 	public $boxlabel = "BoxOldestExpiredServices";

@@ -177,7 +177,7 @@ if (!isset($num)) {
 }
 $sql .= " AND b.fk_account = ba.rowid";
 $sql .= $db->order("b.num_releve, b.datev, b.datec", "ASC"); // We add date of creation to have correct order when everything is done the same day
-															 // print $sql;
+// print $sql;
 
 $resql = $db->query($sql);
 if ($resql) {
@@ -365,7 +365,7 @@ if ($resql) {
 		$debit = $credit = '';
 		if ($objp->amount < 0) {
 			$totald = $totald + abs($objp->amount);
-			$debit = price2num($objp->amount * - 1);
+			$debit = price2num($objp->amount * -1);
 		} else {
 			$totalc = $totalc + abs($objp->amount);
 			$credit = price2num($objp->amount);
@@ -411,7 +411,7 @@ if ($resql) {
 	}
 } else {
 	dol_print_error($db);
-	$ret = - 1;
+	$ret = -1;
 }
 
 $db->close();

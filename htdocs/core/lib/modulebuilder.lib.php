@@ -129,7 +129,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 				}
 				$texttoinsert .= ' "enabled"=>"'.($val['enabled'] !== '' ? dol_escape_php($val['enabled']) : 1).'",';
 				$texttoinsert .= " 'position'=>".($val['position'] !== '' ? (int) $val['position'] : 50).",";
-				$texttoinsert .= " 'notnull'=>".(empty($val['notnull']) ? 0 :(int) $val['notnull']).",";
+				$texttoinsert .= " 'notnull'=>".(empty($val['notnull']) ? 0 : (int) $val['notnull']).",";
 				$texttoinsert .= ' "visible"=>"'.($val['visible'] !== '' ? dol_escape_js($val['visible']) : -1).'",';
 				if (!empty($val['noteditable'])) {
 					$texttoinsert .= ' "noteditable"=>"'.dol_escape_php($val['noteditable']).'",';
@@ -464,7 +464,6 @@ function dolGetListOfObjectClasses($destdir)
  */
 function checkExistComment($file, $number)
 {
-
 	if (!file_exists($file)) {
 		return -1;
 	}
@@ -598,8 +597,8 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $
 			$permissions[$i][4] = "\$this->rights[\$r][4] = '".$permissions[$i][4]."'";
 			$permissions[$i][5] = "\$this->rights[\$r][5] = '".$permissions[$i][5]."';\n\t\t";
 		}
-			// for group permissions by object
-			$perms_grouped = array();
+		// for group permissions by object
+		$perms_grouped = array();
 		foreach ($permissions as $perms) {
 			$object = $perms[4];
 			if (!isset($perms_grouped[$object])) {
@@ -658,7 +657,6 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $
  */
 function parsePropertyString($string)
 {
-
 	$string = str_replace("'", '', $string);
 
 	// Uses a regular expression to capture keys and values
@@ -707,7 +705,7 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 {
 
 	// stock all properties in array
-	$attributesUnique = array ('type','label', 'enabled', 'position', 'notnull', 'visible', 'noteditable', 'index', 'default' , 'foreignkey', 'arrayofkeyval', 'alwayseditable','validate', 'searchall','comment', 'isameasure', 'css', 'cssview','csslist', 'help', 'showoncombobox','picto' );
+	$attributesUnique = array('type','label', 'enabled', 'position', 'notnull', 'visible', 'noteditable', 'index', 'default' , 'foreignkey', 'arrayofkeyval', 'alwayseditable','validate', 'searchall','comment', 'isameasure', 'css', 'cssview','csslist', 'help', 'showoncombobox','picto' );
 
 	$start = "public \$fields=array(";
 	$end = ");";
@@ -1136,7 +1134,8 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
 
 		dolReplaceInFile($file, array($beginMenu => $beginMenu."\n".$str_menu."\n"));
 		return 1;
-	}return -1;
+	}
+	return -1;
 }
 
 /**
@@ -1149,7 +1148,6 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
  */
 function updateDictionaryInFile($module, $file, $dicts)
 {
-
 	$isEmpty = false;
 	$dicData = "\t\t\$this->dictionaries=array(\n";
 	$module = strtolower($module);
@@ -1271,7 +1269,7 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 	$dictionnaires['tabhelp'][] = (array_key_exists('code', $columns) ? array('code'=>$langs->trans('CodeTooltipHelp'), 'field2' => 'field2tooltip') : '');
 
 	// Build the dictionary string
-		$writeInfile = updateDictionaryInFile($modulename, $file, $dictionnaires);
+	$writeInfile = updateDictionaryInFile($modulename, $file, $dictionnaires);
 	if ($writeInfile > 0) {
 		setEventMessages($langs->trans("DictionariesCreated", ucfirst(substr($namedic, 2))), null);
 	}

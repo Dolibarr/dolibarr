@@ -85,7 +85,7 @@ if (empty($accounting_product_mode)) {
 	$accounting_product_mode = 'ACCOUNTANCY_SELL';
 }
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : getDolGlobalInt('ACCOUNTING_LIMIT_LIST_VENTILATION', $conf->liste_limit);
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : getDolGlobalInt('ACCOUNTING_LIMIT_LIST_VENTILATION', $conf->liste_limit);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -136,7 +136,8 @@ if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
@@ -184,7 +185,9 @@ if ($action == 'update') {
 			//$msg .= '<div><span class="accountingprocessing">' . count($chk_prod) . ' ' . $langs->trans("SelectedLines") . '</span></div>';
 			$arrayofdifferentselectedvalues = array();
 
-			$cpt = 0; $ok = 0; $ko = 0;
+			$cpt = 0;
+			$ok = 0;
+			$ko = 0;
 			foreach ($chk_prod as $productid) {
 				$accounting_account_id = GETPOST('codeventil_'.$productid);
 

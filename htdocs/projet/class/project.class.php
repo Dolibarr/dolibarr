@@ -35,7 +35,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class Project extends CommonObject
 {
-
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -203,8 +202,8 @@ class Project extends CommonObject
 	 */
 	public $max_attendees;
 
-	public $statuts_short;
-	public $statuts_long;
+	public $labelStatusShort;
+	public $labelStatus;
 
 	public $statut; // 0=draft, 1=opened, 2=closed
 
@@ -364,23 +363,23 @@ class Project extends CommonObject
 
 		$this->db = $db;
 
-		$this->statuts_short = array(0 => 'Draft', 1 => 'Opened', 2 => 'Closed');
-		$this->statuts_long = array(0 => 'Draft', 1 => 'Opened', 2 => 'Closed');
+		$this->labelStatusShort = array(0 => 'Draft', 1 => 'Opened', 2 => 'Closed');
+		$this->labelStatus = array(0 => 'Draft', 1 => 'Opened', 2 => 'Closed');
 
 		global $conf;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID')) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 
-		if (empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+		if (!getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 			$this->fields['fk_opp_status']['enabled'] = 0;
 			$this->fields['opp_percent']['enabled'] = 0;
 			$this->fields['opp_amount']['enabled'] = 0;
 			$this->fields['usage_opportunity']['enabled'] = 0;
 		}
 
-		if (!empty($conf->global->PROJECT_HIDE_TASKS)) {
+		if (getDolGlobalString('PROJECT_HIDE_TASKS')) {
 			$this->fields['usage_bill_time']['visible'] = 0;
 			$this->fields['usage_task']['visible'] = 0;
 		}
@@ -421,7 +420,7 @@ class Project extends CommonObject
 			dol_syslog(get_class($this)."::create error -1 ref null", LOG_ERR);
 			return -1;
 		}
-		if (!empty($conf->global->PROJECT_THIRDPARTY_REQUIRED) && !($this->socid > 0)) {
+		if (getDolGlobalString('PROJECT_THIRDPARTY_REQUIRED') && !($this->socid > 0)) {
 			$this->error = 'ErrorFieldsRequired';
 			dol_syslog(get_class($this)."::create error -1 thirdparty not defined and option PROJECT_THIRDPARTY_REQUIRED is set", LOG_ERR);
 			return -1;
@@ -1237,7 +1236,7 @@ class Project extends CommonObject
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			$sql .= " AND fk_statut = ".self::STATUS_VALIDATED;
 
-			if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+			if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 				// TODO What to do if fk_opp_status is not code 'WON' or 'LOST'
 			}
 
@@ -1310,7 +1309,7 @@ class Project extends CommonObject
 			$statusClass = $statustrans[$status];
 		}
 
-		return dolGetStatus($langs->transnoentitiesnoconv($this->statuts_long[$status]), $langs->transnoentitiesnoconv($this->statuts_short[$status]), '', $statusClass, $mode);
+		return dolGetStatus($langs->transnoentitiesnoconv($this->labelStatus[$status]), $langs->transnoentitiesnoconv($this->labelStatusShort[$status]), '', $statusClass, $mode);
 	}
 
 	/**
@@ -1380,7 +1379,7 @@ class Project extends CommonObject
 		}
 
 		$result = '';
-		if (!empty($conf->global->PROJECT_OPEN_ALWAYS_ON_TAB)) {
+		if (getDolGlobalString('PROJECT_OPEN_ALWAYS_ON_TAB')) {
 			$option = $conf->global->PROJECT_OPEN_ALWAYS_ON_TAB;
 		}
 		$params = [
@@ -1428,11 +1427,11 @@ class Project extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip) && $user->hasRight('projet', 'lire')) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowProject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -1732,16 +1731,18 @@ class Project extends CommonObject
 
 		//Generate next ref
 		$defaultref = '';
-		$obj = empty($conf->global->PROJECT_ADDON) ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
+		$obj = !getDolGlobalString('PROJECT_ADDON') ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
 		// Search template files
-		$file = ''; $classname = ''; $filefound = 0;
+		$file = '';
+		$classname = '';
+		$filefound = 0;
 		$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 		foreach ($dirmodels as $reldir) {
 			$file = dol_buildpath($reldir."core/modules/project/".$obj.'.php', 0);
 			if (file_exists($file)) {
 				$filefound = 1;
 				dol_include_once($reldir."core/modules/project/".$obj.'.php');
-				$modProject = new $obj;
+				$modProject = new $obj();
 				$defaultref = $modProject->getNextValue(is_object($clone_project->thirdparty) ? $clone_project->thirdparty : null, $clone_project);
 				break;
 			}
@@ -2056,7 +2057,7 @@ class Project extends CommonObject
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->PROJECT_ADDON_PDF)) {
+			} elseif (getDolGlobalString('PROJECT_ADDON_PDF')) {
 				$modele = $conf->global->PROJECT_ADDON_PDF;
 			}
 		}
@@ -2296,7 +2297,7 @@ class Project extends CommonObject
 	/**
 	 * Charge indicateurs this->nb pour le tableau de bord
 	 *
-	 * @return     int         <0 if KO, >0 if OK
+	 * @return     int         Return integer <0 if KO, >0 if OK
 	 */
 	public function load_state_board()
 	{
@@ -2393,7 +2394,7 @@ class Project extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param 	int[]|int 	$categories 	Category or categories IDs
-	 * @return 	int							<0 if KO, >0 if OK
+	 * @return 	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function setCategories($categories)
 	{
@@ -2414,7 +2415,7 @@ class Project extends CommonObject
 		require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 		$taskstatic = new Task($this->db);
 
-		$this->lines = $taskstatic->getTasksArray(0, $user, $this->id, 0, 0, '',  '-1', '', 0, 0, array(),  0,  array(),  0,  $loadRoleMode);
+		$this->lines = $taskstatic->getTasksArray(0, $user, $this->id, 0, 0, '', '-1', '', 0, 0, array(), 0, array(), 0, $loadRoleMode);
 		return 1;
 	}
 
@@ -2433,7 +2434,7 @@ class Project extends CommonObject
 	 *  @param	string	$errors_to			erros to
 	 *  @param	string	$moreinheader		Add more html headers
 	 *  @since V18
-	 *  @return	int							<0 if KO, >0 if OK
+	 *  @return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function sendEmail($text, $subject, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $addr_cc = "", $addr_bcc = "", $deliveryreceipt = 0, $msgishtml = -1, $errors_to = '', $moreinheader = '')
 	{
@@ -2505,20 +2506,22 @@ class Project extends CommonObject
 			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Author").'</span>';
 			$return .= '<span> : '.$user->getNomUrl(1).'</span>';
 		}*/
+		$return .= '<br><div>';	// start div line status
 		if ($this->usage_opportunity && $this->opp_status_code) {
 			//$return .= '<br><span class="info-bo-label opacitymedium">'.$langs->trans("OpportunityStatusShort").'</span>';
-			$return .= '<br><span class="info-box-label small">'.$langs->trans("OppStatus".$this->opp_status_code).'</span>';
-			$return .= ' <span class="opacitymedium small">('.round($this->opp_percent).'%)</span>';
-			$return .= '<br><span class="amount small">'.price($this->opp_amount).'</span>';
-		} else {
-			$return .= '<br>';
+			//$return .= '<div class="small inline-block">'.dol_trunc($langs->trans("OppStatus".$this->opp_status_code), 5).'</div>';
+			$return .= '<div class="opacitymedium small marginrightonly inline-block" title="'.dol_escape_htmltag($langs->trans("OppStatus".$this->opp_status_code)).'">'.round($this->opp_percent).'%</div>';
+			$return .= ' <div class="amount small marginrightonly inline-block">'.price($this->opp_amount).'</div>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<div class="info-box-status small marginleftonly inline-block">'.$this->getLibStatut(3).'</div>';
+			$return .= '<div class="info-box-status small inline-block">'.$this->getLibStatut(3).'</div>';
 		}
+		$return .= '</div>';	// end div line status
+
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
+
 		return $return;
 	}
 

@@ -61,13 +61,13 @@ foreach ($dirsyslogs as $reldir) {
 
 					require_once $newdir.$file.'.php';
 
-					$module = new $file;
+					$module = new $file();
 
 					// Show modules according to features level
-					if ($module->getVersion() == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+					if ($module->getVersion() == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 						continue;
 					}
-					if ($module->getVersion() == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+					if ($module->getVersion() == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 						continue;
 					}
 
@@ -94,7 +94,7 @@ if ($action == 'set') {
 	// Save options of handler
 	foreach ($syslogModules as $syslogHandler) {
 		if (in_array($syslogHandler, $syslogModules)) {
-			$module = new $syslogHandler;
+			$module = new $syslogHandler();
 
 			if (in_array($syslogHandler, $selectedModules)) {
 				$newActiveModules[] = $syslogHandler;
@@ -115,7 +115,7 @@ if ($action == 'set') {
 
 	// Check configuration
 	foreach ($activeModules as $modulename) {
-		$module = new $modulename;
+		$module = new $modulename();
 		$error = $module->checkConfiguration();
 	}
 
@@ -199,7 +199,7 @@ print '<td class="right" colspan="2"><input type="submit" class="button" '.$opti
 print "</tr>\n";
 
 foreach ($syslogModules as $moduleName) {
-	$module = new $moduleName;
+	$module = new $moduleName();
 
 	$moduleactive = (int) $module->isActive();
 	//print $moduleName." = ".$moduleactive." - ".$module->getName()." ".($moduleactive == -1)."<br>\n";

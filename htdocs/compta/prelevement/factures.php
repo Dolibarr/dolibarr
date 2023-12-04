@@ -45,7 +45,7 @@ $userid = GETPOST('userid', 'int');
 $type = GETPOST('type', 'aZ09');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -305,7 +305,7 @@ if ($resql) {
 		print_liste_field_titre("RefSupplierShort", $_SERVER["PHP_SELF"], "f.ref_supplier", '', $param, '', $sortfield, $sortorder);
 	}
 	print_liste_field_titre(($salaryBonPl ? "Employee" : "ThirdParty"), $_SERVER["PHP_SELF"], "s.nom", '', $param, '', $sortfield, $sortorder);
-	print_liste_field_titre(($salaryBonPl ? "AmountSalary": "AmountInvoice"), $_SERVER["PHP_SELF"], "f.total_ttc", "", $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre(($salaryBonPl ? "AmountSalary" : "AmountInvoice"), $_SERVER["PHP_SELF"], "f.total_ttc", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre("AmountRequested", $_SERVER["PHP_SELF"], "pl.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre('');
@@ -342,7 +342,7 @@ if ($resql) {
 
 
 		print '<td class="nowraponall">';
-		print ($salaryBonPl ? $salarytmp->getNomUrl(1) : $invoicetmp->getNomUrl(1));
+		print($salaryBonPl ? $salarytmp->getNomUrl(1) : $invoicetmp->getNomUrl(1));
 		print "</td>\n";
 
 		if ($object->type == 'bank-transfer' && !$salaryBonPl) {
@@ -352,11 +352,11 @@ if ($resql) {
 		}
 
 		print '<td class="tdoverflowmax125">';
-		print ($salaryBonPl ? $usertmp->getNomUrl(-1) : $thirdpartytmp->getNomUrl(1));
+		print($salaryBonPl ? $usertmp->getNomUrl(-1) : $thirdpartytmp->getNomUrl(1));
 		print "</td>\n";
 
 		// Amount of invoice
-		print '<td class="right"><span class="amount">'.price(($salaryBonPl ? $obj->amount :$obj->total_ttc))."</span></td>\n";
+		print '<td class="right"><span class="amount">'.price(($salaryBonPl ? $obj->amount : $obj->total_ttc))."</span></td>\n";
 
 		// Amount requested
 		print '<td class="right"><span class="amount">'.price($obj->amount_requested)."</span></td>\n";

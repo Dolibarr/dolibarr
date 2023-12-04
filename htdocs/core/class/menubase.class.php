@@ -172,7 +172,6 @@ class Menubase
 	{
 		$this->db = $db;
 		$this->menu_handler = $menu_handler;
-		return 1;
 	}
 
 
@@ -326,7 +325,7 @@ class Menubase
 	 *
 	 *  @param	User	$user        	User that modify
 	 *  @param  int		$notrigger	    0=no, 1=yes (no update trigger)
-	 *  @return int 		        	<0 if KO, >0 if OK
+	 *  @return int 		        	Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -391,7 +390,7 @@ class Menubase
 	 *
 	 *   @param		int		$id         Id object
 	 *   @param		User    $user       User that load
-	 *   @return	int         		<0 if KO, >0 if OK
+	 *   @return	int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $user = null)
 	{
@@ -463,7 +462,7 @@ class Menubase
 	 *  Delete object in database
 	 *
 	 *	@param	User	$user       User that delete
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user)
 	{

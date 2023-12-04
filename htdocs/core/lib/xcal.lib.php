@@ -71,7 +71,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 		fwrite($calfileh, "X-WR-CALDESC:".$encoding.format_cal($format, $desc)."\n");
 		//fwrite($calfileh,"X-WR-TIMEZONE:Europe/Paris\n");
 
-		if (!empty($conf->global->MAIN_AGENDA_EXPORT_CACHE) && $conf->global->MAIN_AGENDA_EXPORT_CACHE > 60) {
+		if (getDolGlobalString('MAIN_AGENDA_EXPORT_CACHE') && getDolGlobalInt('MAIN_AGENDA_EXPORT_CACHE') > 60) {
 			$hh = convertSecondToTime($conf->global->MAIN_AGENDA_EXPORT_CACHE, "hour");
 			$mm = convertSecondToTime($conf->global->MAIN_AGENDA_EXPORT_CACHE, "min");
 			$ss = convertSecondToTime($conf->global->MAIN_AGENDA_EXPORT_CACHE, "sec");
@@ -330,7 +330,7 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 	dol_syslog("xcal.lib.php::build_rssfile Build rss file ".$outputfile." to format ".$format);
 
 	if (empty($outputfile)) {
-		 // -1 = error
+		// -1 = error
 		return -1;
 	}
 

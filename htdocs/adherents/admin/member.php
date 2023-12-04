@@ -269,12 +269,12 @@ foreach ($dirModMember as $dirroot) {
 					dol_syslog($e->getMessage(), LOG_ERR);
 					continue;
 				}
-				$modCodeMember = new $file;
+				$modCodeMember = new $file();
 				// Show modules according to features level
-				if ($modCodeMember->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+				if ($modCodeMember->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 					continue;
 				}
-				if ($modCodeMember->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+				if ($modCodeMember->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 					continue;
 				}
 
@@ -509,16 +509,16 @@ foreach ($dirmodels as $reldir) {
 							$module = new $classname($db);
 
 							$modulequalified = 1;
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								$modulequalified = 0;
 							}
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 								$modulequalified = 0;
 							}
 
 							if ($modulequalified) {
 								print '<tr class="oddeven"><td width="100">';
-								print (empty($module->name) ? $name : $module->name);
+								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
 								if (method_exists($module, 'info')) {
 									print $module->info($langs);
