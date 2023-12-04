@@ -350,7 +350,7 @@ class PaymentLoan extends CommonObject
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " fk_bank=".(isset($this->fk_bank) ? ((int) $this->fk_bank) : "null").",";
 		$sql .= " fk_user_creat=".(isset($this->fk_user_creat) ? ((int) $this->fk_user_creat) : "null").",";
-		$sql .= " fk_user_modif=".(isset($this->fk_user_modif) ?((int) $this->fk_user_modif) : "null");
+		$sql .= " fk_user_modif=".(isset($this->fk_user_modif) ? ((int) $this->fk_user_modif) : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -358,7 +358,8 @@ class PaymentLoan extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// Commit or rollback
@@ -397,7 +398,8 @@ class PaymentLoan extends CommonObject
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -408,7 +410,8 @@ class PaymentLoan extends CommonObject
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -431,15 +434,15 @@ class PaymentLoan extends CommonObject
 		//{
 		//	if (! $notrigger)
 		//	{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action call a trigger.
+		// Uncomment this and change MYOBJECT to your own tag if you
+		// want this action call a trigger.
 
-				//// Call triggers
-				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				//$interface=new Interfaces($this->db);
-				//$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				//// End call triggers
+		//// Call triggers
+		//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+		//$interface=new Interfaces($this->db);
+		//$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
+		//if ($result < 0) { $error++; $this->errors=$interface->errors; }
+		//// End call triggers
 		//	}
 		//}
 
