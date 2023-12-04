@@ -1003,6 +1003,7 @@ print '<br><br>';
 print '<br>';
 
 
+$total_time = 0;
 
 // Detail
 foreach ($listofreferent as $key => $value) {
@@ -1314,7 +1315,6 @@ foreach ($listofreferent as $key => $value) {
 				// Date or TimeSpent
 				$date = '';
 				$total_time_by_line = null;
-				$total_time = 0;
 				if ($tablename == 'expensereport_det') {
 					$date = $element->date; // No draft status on lines
 				} elseif ($tablename == 'stock_mouvement') {
