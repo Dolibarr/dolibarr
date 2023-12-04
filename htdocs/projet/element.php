@@ -239,7 +239,7 @@ $morehtmlref .= '</div>';
 // Define a complementary filter for search of next/prev ref.
 if (!$user->hasRight('projet', 'all', 'lire')) {
 	$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-	$object->next_prev_filter = "te.rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
+	$object->next_prev_filter = "te.rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
 }
 
 dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -331,10 +331,10 @@ print '</td></tr>';
 // Date start - end project
 print '<tr><td>'.$langs->trans("Dates").'</td><td>';
 $start = dol_print_date($object->date_start, 'day');
-print ($start ? $start : '?');
+print($start ? $start : '?');
 $end = dol_print_date($object->date_end, 'day');
 print ' - ';
-print ($end ? $end : '?');
+print($end ? $end : '?');
 if ($object->hasDelay()) {
 	print img_warning("Late");
 }
@@ -888,7 +888,7 @@ foreach ($listofreferent as $key => $value) {
 									|| !empty($dates) && empty($datee) && $loanSchedule->datep >= $dates && $loanSchedule->datep <= dol_now()
 									|| empty($dates) && !empty($datee) && $loanSchedule->datep <= $datee
 									) {
-										$total_ht_by_line -= $loanSchedule->amount_capital;
+									$total_ht_by_line -= $loanSchedule->amount_capital;
 								}
 							}
 						}
@@ -1312,7 +1312,9 @@ foreach ($listofreferent as $key => $value) {
 				print "</td>\n";
 
 				// Date or TimeSpent
-				$date = ''; $total_time_by_line = null; $total_time = 0;
+				$date = '';
+				$total_time_by_line = null;
+				$total_time = 0;
 				if ($tablename == 'expensereport_det') {
 					$date = $element->date; // No draft status on lines
 				} elseif ($tablename == 'stock_mouvement') {
@@ -1533,8 +1535,11 @@ foreach ($listofreferent as $key => $value) {
 					$total_ht_by_third += $total_ht_by_line;
 					$total_ttc_by_third += $total_ttc_by_line;
 
-					if (!isset($total_time)) $total_time = $total_time_by_line;
-					else $total_time += $total_time_by_line;
+					if (!isset($total_time)) {
+						$total_time = $total_time_by_line;
+					} else {
+						$total_time += $total_time_by_line;
+					}
 				}
 
 				if (canApplySubtotalOn($tablename)) {

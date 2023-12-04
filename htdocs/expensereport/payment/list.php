@@ -53,7 +53,9 @@ $mode = GETPOST('mode', 'alpha');
 $socid = GETPOST('socid', 'int');
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 
 $search_ref				= GETPOST('search_ref', 'alpha');
 $search_date_startday	= GETPOST('search_date_startday', 'int');

@@ -232,12 +232,18 @@ class MouvementStock extends CommonObject
 
 		// Clean parameters
 		$price = price2num($price, 'MU'); // Clean value for the casse we receive a float zero value, to have it a real zero value.
-		if (empty($price)) $price = 0;
+		if (empty($price)) {
+			$price = 0;
+		}
 		$now = (!empty($datem) ? $datem : dol_now());
 
 		// Check parameters
-		if (!($fk_product > 0)) return 0;
-		if (!($entrepot_id > 0)) return 0;
+		if (!($fk_product > 0)) {
+			return 0;
+		}
+		if (!($entrepot_id > 0)) {
+			return 0;
+		}
 
 		if (is_numeric($eatby) && $eatby < 0) {
 			dol_syslog(get_class($this)."::_create start ErrorBadValueForParameterEatBy eatby = ".$eatby);
@@ -280,7 +286,9 @@ class MouvementStock extends CommonObject
 		// Define if we must make the stock change (If product type is a service or if stock is used also for services)
 		// Only record into stock tables wil be disabled by this (the rest like writing into lot table or movement of subproucts are done)
 		$movestock = 0;
-		if ($product->type != Product::TYPE_SERVICE || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) $movestock = 1;
+		if ($product->type != Product::TYPE_SERVICE || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
+			$movestock = 1;
+		}
 
 		$this->db->begin();
 
@@ -416,7 +424,9 @@ class MouvementStock extends CommonObject
 					}
 
 					$foundforbatch = 1;
-					if ($prodbatch->qty < abs($qty)) $qtyisnotenough = $prodbatch->qty;
+					if ($prodbatch->qty < abs($qty)) {
+						$qtyisnotenough = $prodbatch->qty;
+					}
 					break;
 				}
 				if (!$foundforbatch || $qtyisnotenough) {
@@ -618,7 +628,9 @@ class MouvementStock extends CommonObject
 		if ($movestock && !$error) {
 			// Call trigger
 			$result = $this->call_trigger('STOCK_MOVEMENT', $user);
-			if ($result < 0) $error++;
+			if ($result < 0) {
+				$error++;
+			}
 			// End call triggers
 
 			// Check unicity for serial numbered equipments once all movement were done.
@@ -864,7 +876,9 @@ class MouvementStock extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			if ($obj) $nb = $obj->nb;
+			if ($obj) {
+				$nb = $obj->nb;
+			}
 			return (empty($nb) ? 0 : $nb);
 		} else {
 			dol_print_error($this->db);
@@ -1278,7 +1292,6 @@ class MouvementStock extends CommonObject
 	 */
 	public function reverseMouvement()
 	{
-
 		$formattedDate = "REVERTMV" .dol_print_date($this->datem, '%Y%m%d%His');
 		if ($this->label == 'Annulation mouvement ID'.$this->id) {
 			return -1;

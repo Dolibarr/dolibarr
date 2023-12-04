@@ -1735,7 +1735,9 @@ class User extends CommonObject
 				// Call trigger
 				$result = $this->call_trigger('USER_CREATE', $user);
 				if ($result < 0) {
-					$error++; $this->db->rollback(); return -1;
+					$error++;
+					$this->db->rollback();
+					return -1;
 				}
 				// End call triggers
 
@@ -2089,7 +2091,9 @@ class User extends CommonObject
 				$sql = "UPDATE ".$this->db->prefix()."user SET fk_member = NULL where fk_member = ".((int) $this->fk_member);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$this->error = $this->db->error(); $this->db->rollback(); return -5;
+					$this->error = $this->db->error();
+					$this->db->rollback();
+					return -5;
 				}
 			}
 			// Set link to user
@@ -2097,7 +2101,9 @@ class User extends CommonObject
 			$sql = "UPDATE ".$this->db->prefix()."user SET fk_member =".($this->fk_member > 0 ? ((int) $this->fk_member) : 'null')." where rowid = ".((int) $this->id);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$this->error = $this->db->error(); $this->db->rollback(); return -5;
+				$this->error = $this->db->error();
+				$this->db->rollback();
+				return -5;
 			}
 
 			if ($nbrowsaffected) {	// If something has changed in data
@@ -2386,7 +2392,9 @@ class User extends CommonObject
 						// Call trigger
 						$result = $this->call_trigger('USER_NEW_PASSWORD', $user);
 						if ($result < 0) {
-							$error++; $this->db->rollback(); return -1;
+							$error++;
+							$this->db->rollback();
+							return -1;
 						}
 						// End call triggers
 					}
@@ -2446,7 +2454,7 @@ class User extends CommonObject
 
 		if (isset($this->conf->MAIN_LANG_DEFAULT)
 			&& $this->conf->MAIN_LANG_DEFAULT != 'auto') {	// If user has defined its own language (rare because in most cases, auto is used)
-				$outputlangs->getDefaultLang($this->conf->MAIN_LANG_DEFAULT);
+			$outputlangs->getDefaultLang($this->conf->MAIN_LANG_DEFAULT);
 		}
 
 		if ($this->conf->MAIN_LANG_DEFAULT) {
@@ -2525,7 +2533,7 @@ class User extends CommonObject
 			$trackid,
 			'',
 			$sendcontext
-			);
+		);
 
 		if ($mailfile->sendfile()) {
 			return 1;
@@ -3719,7 +3727,7 @@ class User extends CommonObject
 			foreach ($this->users as $key => $val) {
 				if (preg_match('/'.$keyfilter1.'/', $val['fullpath']) || preg_match('/'.$keyfilter2.'/', $val['fullpath'])
 					|| preg_match('/'.$keyfilter3.'/', $val['fullpath']) || preg_match('/'.$keyfilter4.'/', $val['fullpath'])) {
-						unset($this->users[$key]);
+					unset($this->users[$key]);
 				}
 			}
 		}
@@ -3792,7 +3800,8 @@ class User extends CommonObject
 		// Define fullpath and fullname
 		$this->users[$id_user]['fullpath'] = '_'.$id_user;
 		$this->users[$id_user]['fullname'] = $this->users[$id_user]['lastname'];
-		$i = 0; $cursor_user = $id_user;
+		$i = 0;
+		$cursor_user = $id_user;
 
 		$useridfound = array($id_user);
 		while (!empty($this->parentof[$cursor_user]) && !empty($this->users[$this->parentof[$cursor_user]])) {
@@ -3803,7 +3812,8 @@ class User extends CommonObject
 			$useridfound[] = $this->parentof[$cursor_user];
 			$this->users[$id_user]['fullpath'] = '_'.$this->parentof[$cursor_user].$this->users[$id_user]['fullpath'];
 			$this->users[$id_user]['fullname'] = $this->users[$this->parentof[$cursor_user]]['lastname'].' >> '.$this->users[$id_user]['fullname'];
-			$i++; $cursor_user = $this->parentof[$cursor_user];
+			$i++;
+			$cursor_user = $this->parentof[$cursor_user];
 		}
 
 		// We count number of _ to have level

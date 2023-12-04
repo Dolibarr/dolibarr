@@ -1250,7 +1250,9 @@ abstract class CommonInvoice extends CommonObject
 								// So it inits or erases the $stripearrayofkeysbyenv
 								$stripe = new Stripe($this->db);
 
-								if (empty($savstripearrayofkeysbyenv)) $savstripearrayofkeysbyenv = $stripearrayofkeysbyenv;
+								if (empty($savstripearrayofkeysbyenv)) {
+									$savstripearrayofkeysbyenv = $stripearrayofkeysbyenv;
+								}
 								dol_syslog("makeStripeSepaRequest Current Stripe environment is " . $stripearrayofkeysbyenv[$servicestatus]['publishable_key']);
 								dol_syslog("makeStripeSepaRequest Current Saved Stripe environment is ".$savstripearrayofkeysbyenv[$servicestatus]['publishable_key']);
 

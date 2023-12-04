@@ -120,7 +120,8 @@ class Productbatch extends CommonObject
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 		if (!$error) {
 			$this->id = $this->db->last_insert_id($this->db->prefix().self::$_table_element);
@@ -222,7 +223,8 @@ class Productbatch extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// Commit or rollback
@@ -259,7 +261,8 @@ class Productbatch extends CommonObject
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -459,7 +462,9 @@ class Productbatch extends CommonObject
 		$sql .= " t.eatby as oldeatby,"; // deprecated but may not be migrated into new table
 		$sql .= " t.batch,";
 		$sql .= " t.qty,";
-		if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) $sql .= " MAX(sm.datem) as date_entree,";
+		if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+			$sql .= " MAX(sm.datem) as date_entree,";
+		}
 		$sql .= " t.import_key";
 		if ($fk_product > 0) {
 			$sql .= ", pl.rowid as lotid, pl.eatby as eatby, pl.sellby as sellby";
@@ -490,9 +495,11 @@ class Productbatch extends CommonObject
 		if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
 			$sql .= 'date_entree ASC,t.batch ASC,';
 		}
-		if ($fk_product > 0) { $sql .= "pl.eatby ASC, pl.sellby ASC, "; }
+		if ($fk_product > 0) {
+			$sql .= "pl.eatby ASC, pl.sellby ASC, ";
+		}
 		$sql .= "t.eatby ASC, t.sellby ASC ";
-		$sql .= ", t.qty ".(!getDolGlobalString('DO_NOT_TRY_TO_DEFRAGMENT_STOCKS_WAREHOUSE')?'ASC':'DESC'); // Note : qty ASC is important for expedition card, to avoid stock fragmentation
+		$sql .= ", t.qty ".(!getDolGlobalString('DO_NOT_TRY_TO_DEFRAGMENT_STOCKS_WAREHOUSE') ? 'ASC' : 'DESC'); // Note : qty ASC is important for expedition card, to avoid stock fragmentation
 		$sql .= ", t.batch ASC";
 
 		dol_syslog("productbatch::findAll", LOG_DEBUG);

@@ -114,7 +114,6 @@ function resource_prepare_head($object)
  */
 function resource_admin_prepare_head()
 {
-
 	global $conf, $db, $langs, $user;
 
 	$extrafields = new ExtraFields($db);

@@ -4,10 +4,13 @@
 $finder = (new PhpCsFixer\Finder())
 ->in(__DIR__)
 ->exclude([
+	'core/includes',
 	'custom',
 	'documents',
+	'doctemplates',
 	'htdocs/custom',
 	'htdocs/includes',
+	'htdocs/install/doctemplates',
 ])
 ->notPath('vendor');
 

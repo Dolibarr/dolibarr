@@ -259,7 +259,8 @@ class Task extends CommonObjectLine
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -470,7 +471,8 @@ class Task extends CommonObjectLine
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// Update extrafield
@@ -492,7 +494,7 @@ class Task extends CommonObjectLine
 						function ($allTasksCompleted, $task) {
 							return $allTasksCompleted && $task->progress >= 100;
 						},
-					1
+						1
 					);
 					if ($projectCompleted) {
 						if ($project->setClose($user) <= 0) {
@@ -563,7 +565,6 @@ class Task extends CommonObjectLine
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-
 		global $conf, $langs;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -603,7 +604,8 @@ class Task extends CommonObjectLine
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -613,7 +615,8 @@ class Task extends CommonObjectLine
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -623,7 +626,8 @@ class Task extends CommonObjectLine
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -688,7 +692,8 @@ class Task extends CommonObjectLine
 		dol_syslog(get_class($this)."::hasChildren", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		} else {
 			$obj = $this->db->fetch_object($resql);
 			if ($obj) {
@@ -722,7 +727,8 @@ class Task extends CommonObjectLine
 		dol_syslog(get_class($this)."::hasTimeSpent", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		} else {
 			$obj = $this->db->fetch_object($resql);
 			if ($obj) {
@@ -818,7 +824,7 @@ class Task extends CommonObjectLine
 				$label = $langs->trans("ShowTask");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.' nowraponall"';
 		} else {
 			$linkclose .= ' class="nowraponall"';
@@ -1876,7 +1882,8 @@ class Task extends CommonObjectLine
 			$res_del = $timespent->delete($user);
 
 			if ($res_del < 0) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -1951,7 +1958,7 @@ class Task extends CommonObjectLine
 		$obj = !getDolGlobalString('PROJECT_TASK_ADDON') ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
 		if (getDolGlobalString('PROJECT_TASK_ADDON') && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').".php")) {
 			require_once DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').'.php';
-			$modTask = new $obj;
+			$modTask = new $obj();
 			$defaultref = $modTask->getNextValue(0, $clone_task);
 		}
 
@@ -1985,7 +1992,7 @@ class Task extends CommonObjectLine
 		}
 
 		if (!$clone_prog) {
-				$clone_task->progress = 0;
+			$clone_task->progress = 0;
 		}
 
 		// Create clone
@@ -2333,7 +2340,8 @@ class Task extends CommonObjectLine
 		// phpcs:enable
 		global $user;
 
-		$mine = 0; $socid = $user->socid;
+		$mine = 0;
+		$socid = $user->socid;
 
 		$projectstatic = new Project($this->db);
 		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, $mine, 1, $socid);

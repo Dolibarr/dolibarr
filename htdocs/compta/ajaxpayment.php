@@ -69,7 +69,7 @@ if (is_array($amounts)) {
 if (is_array($remains)) {
 	foreach ($remains as $key => $value) {
 		$value = price2num($value);
-		$remains[$key] = (($invoice_type) == 2 ?-1 : 1) * $value;
+		$remains[$key] = (($invoice_type) == 2 ? -1 : 1) * $value;
 		if (empty($value)) {
 			unset($remains[$key]);
 		}

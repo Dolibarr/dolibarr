@@ -378,8 +378,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}
-						} else // Text
-						{
+						} else { // Text
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
 					} catch (OdfException $e) {
@@ -398,8 +397,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}
-						} else // Text
-						{
+						} else { // Text
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
 					} catch (OdfException $e) {
@@ -420,8 +418,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}
-						} else // Text
-						{
+						} else { // Text
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
 					} catch (OdfException $e) {
@@ -439,8 +436,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 								} else {
 									$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 								}
-							} else // Text
-							{
+							} else { // Text
 								$odfHandler->setVars($key, $value, true, 'UTF-8');
 							}
 						} catch (OdfException $e) {
@@ -465,8 +461,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}
-						} else // Text
-						{
+						} else { // Text
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
 					} catch (OdfException $e) {

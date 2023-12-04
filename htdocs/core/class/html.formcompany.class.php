@@ -39,7 +39,6 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
  */
 class FormCompany extends Form
 {
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    	Return list of labels (translated) of third parties type

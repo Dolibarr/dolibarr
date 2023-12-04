@@ -227,7 +227,8 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -405,7 +406,8 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 		dol_syslog(__METHOD__);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -484,7 +486,8 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 			dol_syslog(__METHOD__);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -722,7 +725,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 				$line->batch = $obj->batch;
 				$line->eatby = $this->db->jdate($obj->eatby);
 				$line->sellby = $this->db->jdate($obj->sellby);
-								$line->fetch_optionals();
+				$line->fetch_optionals();
 
 				$this->lines[$line->id] = $line;
 			}

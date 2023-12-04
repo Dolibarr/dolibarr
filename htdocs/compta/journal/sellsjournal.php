@@ -295,11 +295,11 @@ foreach ($tabfac as $key => $val) {
 				print "<td>".$k."</td><td>".$line['label']."</td>";
 
 				if (isset($line['inv'])) {
-					print '<td class="right">'.($mt >= 0 ?price($mt) : '')."</td>";
-					print '<td class="right">'.($mt < 0 ?price(-$mt) : '')."</td>";
+					print '<td class="right">'.($mt >= 0 ? price($mt) : '')."</td>";
+					print '<td class="right">'.($mt < 0 ? price(-$mt) : '')."</td>";
 				} else {
-					print '<td class="right">'.($mt < 0 ?price(-$mt) : '')."</td>";
-					print '<td class="right">'.($mt >= 0 ?price($mt) : '')."</td>";
+					print '<td class="right">'.($mt < 0 ? price(-$mt) : '')."</td>";
+					print '<td class="right">'.($mt >= 0 ? price($mt) : '')."</td>";
 				}
 
 				print "</tr>";

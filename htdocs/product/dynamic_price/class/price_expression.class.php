@@ -100,7 +100,8 @@ class PriceExpression
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -153,7 +154,7 @@ class PriceExpression
 				return 0;
 			}
 		} else {
-			  $this->error = "Error ".$this->db->lasterror();
+			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
 	}
@@ -217,7 +218,7 @@ class PriceExpression
 				return 0;
 			}
 		} else {
-			  $this->error = "Error ".$this->db->lasterror();
+			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
 	}
@@ -253,7 +254,8 @@ class PriceExpression
 		dol_syslog(__METHOD__);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// Commit or rollback
@@ -271,13 +273,13 @@ class PriceExpression
 	}
 
 
-	 /**
-	  *  Delete object in database
-	  *
-	  *	@param  User	$user        User that deletes
-	  *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	  *  @return	int					 Return integer <0 if KO, >0 if OK
-	  */
+	/**
+	 *  Delete object in database
+	 *
+	 *	@param  User	$user        User that deletes
+	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
+	 *  @return	int					 Return integer <0 if KO, >0 if OK
+	 */
 	public function delete(User $user, $notrigger = 0)
 	{
 		$error = 0;
@@ -293,7 +295,8 @@ class PriceExpression
 			dol_syslog(__METHOD__);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
