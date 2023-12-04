@@ -131,13 +131,6 @@ $search_fk_shipping_method = GETPOST("search_fk_shipping_method", 'int');
 $search_fk_mode_reglement = GETPOST("search_fk_mode_reglement", 'int');
 $search_fk_input_reason = GETPOST("search_fk_input_reason", 'int');
 
-// Security check
-$id = (GETPOST('orderid') ? GETPOST('orderid', 'int') : GETPOST('id', 'int'));
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'commande', $id, '');
-
 $diroutputmassaction = $conf->commande->multidir_output[$conf->entity].'/temp/massgeneration/'.$user->id;
 
 // Load variable for pagination
@@ -240,6 +233,16 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
+if (!$user->hasRight('societe', 'client', 'voir')) {
+	$search_sale = $user->id;
+}
+
+// Security check
+$id = (GETPOST('orderid') ? GETPOST('orderid', 'int') : GETPOST('id', 'int'));
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'commande', $id, '');
 
 
 /*
@@ -385,10 +388,9 @@ $sql .= ' c.date_creation as date_creation, c.tms as date_update, c.date_cloture
 $sql .= ' p.rowid as project_id, p.ref as project_ref, p.title as project_label,';
 $sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender,';
 $sql .= ' c.fk_cond_reglement,c.deposit_percent,c.fk_mode_reglement,c.fk_shipping_method,';
-$sql .= ' c.fk_input_reason, c.import_key';
-
-// Détail commande
-$sql .= ', cdet.rowid, cdet.description, cdet.qty, cdet.product_type, cdet.fk_product, cdet.total_ht, cdet.total_tva, cdet.total_ttc, ';
+$sql .= ' c.fk_input_reason, c.import_key,';
+// Lines or order
+$sql .= ' cdet.rowid, cdet.description, cdet.qty, cdet.product_type, cdet.fk_product, cdet.total_ht, cdet.total_tva, cdet.total_ttc,';
 $sql .= ' pr.rowid as product_rowid, pr.ref as product_ref, pr.label as product_label, pr.barcode as product_barcode, pr.tobatch as product_batch, pr.tosell as product_status, pr.tobuy as product_status_buy';
 
 if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
@@ -422,11 +424,6 @@ if (!empty($extrafields->attributes[$object->table_element]['label']) && is_arra
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = c.fk_projet";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON c.fk_user_author = u.rowid';
-
-// We'll need this table joined to the select in order to filter by sale
-if ($search_sale > 0 || (!$user->hasRight('societe', 'client', 'voir') && !$socid)) {
-	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-}
 if ($search_user > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
 	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
@@ -451,9 +448,6 @@ if (!empty($disablelinefree)) {
 }
 if ($socid > 0) {
 	$sql .= ' AND s.rowid = '.((int) $socid);
-}
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($search_id) {
 	$sql .= natural_search('cdet.rowid', $search_id);
@@ -537,9 +531,6 @@ if ($search_company) {
 if ($search_company_alias) {
 	$sql .= natural_search('s.name_alias', $search_company_alias);
 }
-if ($search_sale > 0) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);
-}
 if ($search_user > 0) {
 	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".((int) $search_user);
 }
@@ -597,7 +588,14 @@ if ($search_fk_mode_reglement > 0) {
 if ($search_fk_input_reason > 0) {
 	$sql .= " AND c.fk_input_reason = ".((int) $search_fk_input_reason);
 }
-
+// Search on sale representative
+if ($search_sale && $search_sale != '-1') {
+	if ($search_sale == -2) {
+		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc)";
+	} elseif ($search_sale > 0) {
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+	}
+}
 // Search for tag/category ($searchCategoryProductList is an array of ID)
 $searchCategoryProductList = $search_product_category_array;
 if (!empty($searchCategoryProductList)) {
@@ -913,10 +911,15 @@ if ($resql) {
 
 	$moreforfilter = '';
 
-	$moreforfilter .= '<input type="checkbox" name="productobuy"'.(!empty($productobuy) ? 'value="productobuychecked" checked' : '').'><label for="productobuy">'.$langs->trans("productobuy").'</label>';
-	$moreforfilter .= '<input type="checkbox" name="productonly"'.(!empty($productonly) ? 'value="productonlychecked" checked' : '').'><label for="productonly">'.$langs->trans("productonly").'</label>';
-	$moreforfilter .= '<input type="checkbox" name="disablelinefree"'.(!empty($disablelinefree) ? 'value="disablelinefreechecked" checked' : '').'><label for="disablelinefree">'.$langs->trans("disablelinefree").'</label>';
-	$moreforfilter .= '<br>';
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= '<input type="checkbox" id="productobuy" name="productobuy"'.(!empty($productobuy) ? 'value="productobuychecked" checked' : '').'><label for="productobuy">'.$langs->trans("productobuy").'</label>';
+	$moreforfilter .= '</div>';
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= '<input type="checkbox" id="productonly" name="productonly"'.(!empty($productonly) ? 'value="productonlychecked" checked' : '').'><label for="productonly">'.$langs->trans("productonly").'</label>';
+	$moreforfilter .= '</div>';
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= '<input type="checkbox" id="disablelinefree" name="disablelinefree"'.(!empty($disablelinefree) ? 'value="disablelinefreechecked" checked' : '').'><label for="disablelinefree">'.$langs->trans("disablelinefree").'</label>';
+	$moreforfilter .= '</div><br>';
 
 	// If the user can view prospects other than his'
 	if ($user->hasRight('user', 'user', 'lire')) {
