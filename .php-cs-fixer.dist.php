@@ -4,6 +4,7 @@
 $finder = (new PhpCsFixer\Finder())
 ->in(__DIR__)
 ->exclude([
+	'core/includes',
 	'custom',
 	'documents',
 	'htdocs/custom',
