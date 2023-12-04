@@ -424,8 +424,7 @@ class Products extends DolibarrApi
 			$pricemodified = false;
 			if ($this->product->price_base_type != $oldproduct->price_base_type) {
 				$pricemodified = true;
-			} 
-			else {
+			} else {
 				if ($this->product->tva_tx != $oldproduct->tva_tx) {
 					$pricemodified = true;
 				}
@@ -443,8 +442,7 @@ class Products extends DolibarrApi
 					if ($this->product->price_min_ttc != $oldproduct->price_min_ttc) {
 						$pricemodified = true;
 					}
-				} 
-				else {
+				} else {
 					if ($this->product->price != $oldproduct->price) {
 						$pricemodified = true;
 					}
