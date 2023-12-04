@@ -44,7 +44,7 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $module = GETPOST('module', 'alpha');
 $rights = GETPOST('rights', 'int');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'groupperms'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'groupperms'; // To manage different context of search
 
 if (!isset($id) || empty($id)) {
 	accessforbidden();
@@ -193,8 +193,8 @@ if ($object->id > 0) {
 			if (!isset($permsgroupbyentity[$obj->entity])) {
 				$permsgroupbyentity[$obj->entity] = array();
 			}
-				array_push($permsgroupbyentity[$obj->entity], $obj->id);
-				$i++;
+			array_push($permsgroupbyentity[$obj->entity], $obj->id);
+			$i++;
 		}
 		$db->free($result);
 	} else {
@@ -298,7 +298,8 @@ if ($object->id > 0) {
 	$result = $db->query($sql);
 	if ($result) {
 		$num = $db->num_rows($result);
-		$i = 0;$j = 0;
+		$i = 0;
+		$j = 0;
 		$oldmod = '';
 
 		$cookietohidegroup = (empty($_COOKIE["DOLUSER_PERMS_HIDE_GRP"]) ? '' : preg_replace('/^,/', '', $_COOKIE["DOLUSER_PERMS_HIDE_GRP"]));

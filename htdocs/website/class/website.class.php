@@ -174,16 +174,16 @@ class Website extends CommonObject
 
 		// Clean parameters
 		if (isset($this->entity)) {
-			 $this->entity = (int) $this->entity;
+			$this->entity = (int) $this->entity;
 		}
 		if (isset($this->ref)) {
-			 $this->ref = trim($this->ref);
+			$this->ref = trim($this->ref);
 		}
 		if (isset($this->description)) {
-			 $this->description = trim($this->description);
+			$this->description = trim($this->description);
 		}
 		if (isset($this->status)) {
-			 $this->status = (int) $this->status;
+			$this->status = (int) $this->status;
 		}
 		if (empty($this->date_creation)) {
 			$this->date_creation = $now;
@@ -503,16 +503,16 @@ class Website extends CommonObject
 		// Clean parameters
 
 		if (isset($this->entity)) {
-			 $this->entity = (int) $this->entity;
+			$this->entity = (int) $this->entity;
 		}
 		if (isset($this->ref)) {
-			 $this->ref = trim($this->ref);
+			$this->ref = trim($this->ref);
 		}
 		if (isset($this->description)) {
-			 $this->description = trim($this->description);
+			$this->description = trim($this->description);
 		}
 		if (isset($this->status)) {
-			 $this->status = (int) $this->status;
+			$this->status = (int) $this->status;
 		}
 
 		// Remove spaces and be sure we have main language only
@@ -957,7 +957,8 @@ class Website extends CommonObject
 		$destdir = $conf->website->dir_temp.'/'.$website->ref;
 
 		dol_syslog("Clear temp dir ".$destdir);
-		$count = 0; $countreallydeleted = 0;
+		$count = 0;
+		$countreallydeleted = 0;
 		$counttodelete = dol_delete_dir_recursive($destdir, $count, 1, 0, $countreallydeleted);
 		if ($counttodelete != $countreallydeleted) {
 			setEventMessages("Failed to clean temp directory ".$destdir, null, 'errors');

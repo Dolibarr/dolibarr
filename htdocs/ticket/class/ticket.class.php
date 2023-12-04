@@ -37,7 +37,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
  */
 class Ticket extends CommonObject
 {
-
 	/**
 	 * @var DoliDb Database handler
 	 */
@@ -1062,7 +1061,7 @@ class Ticket extends CommonObject
 			if ($result < 0) {
 				$error++;
 			}
-			  // End call triggers
+			// End call triggers
 		}
 
 		// Commit or rollback
@@ -1569,7 +1568,7 @@ class Ticket extends CommonObject
 				$label = $langs->trans("ShowTicket");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -2352,7 +2351,7 @@ class Ticket extends CommonObject
 
 		if ($filefound) {
 			$result = dol_include_once($reldir."core/modules/ticket/".$modele.'.php');
-			$modTicket = new $classname;
+			$modTicket = new $classname();
 
 			$defaultref = $modTicket->getNextValue($thirdparty, $this);
 		}

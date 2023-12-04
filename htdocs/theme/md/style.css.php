@@ -104,7 +104,8 @@ $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
 $path = ''; // This value may be used in future for external module to overwrite theme
 $theme = 'md'; // Value of theme
 if (getDolGlobalString('MAIN_OVERWRITE_THEME_RES')) {
-	$path = '/' . getDolGlobalString('MAIN_OVERWRITE_THEME_RES'); $theme = $conf->global->MAIN_OVERWRITE_THEME_RES;
+	$path = '/' . getDolGlobalString('MAIN_OVERWRITE_THEME_RES');
+	$theme = $conf->global->MAIN_OVERWRITE_THEME_RES;
 }
 
 // Define image path files and other constants
@@ -232,9 +233,11 @@ $tmppart = explode(',', $colorbacktitle1);
 if ($colortexttitle == '') {
 	$tmpval = (!empty($tmppart[0]) ? $tmppart[0] : 0) + (!empty($tmppart[1]) ? $tmppart[1] : 0) + (!empty($tmppart[2]) ? $tmppart[2] : 0);
 	if ($tmpval <= 460) {
-		$colortexttitle = 'FFFFFF'; $colorshadowtitle = '888888';
+		$colortexttitle = 'FFFFFF';
+		$colorshadowtitle = '888888';
 	} else {
-		$colortexttitle = '101010'; $colorshadowtitle = 'FFFFFF';
+		$colortexttitle = '101010';
+		$colorshadowtitle = 'FFFFFF';
 	}
 } else {
 	$colorshadowtitle = '888888';
@@ -451,7 +454,7 @@ body {
 }
 
 .thumbstat { font-weight: bold !important; }
-th a { font-weight: <?php echo ($useboldtitle ? 'bold' : 'normal'); ?> !important; }
+th a { font-weight: <?php echo($useboldtitle ? 'bold' : 'normal'); ?> !important; }
 a.tab { font-weight: 500 !important; }
 
 a:link, a:visited, a:hover, a:active, .classlink { font-family: <?php print $fontlist ?>; font-weight: normal; color: var(--colortextlink); text-decoration: none;  }
@@ -1038,10 +1041,10 @@ textarea.centpercent {
 }
 
 .flip {
-	transform: scaleX(-1) translate(<?php print ($left == 'left' ? '' : '-'); ?>2px, 0);
+	transform: scaleX(-1) translate(<?php print($left == 'left' ? '' : '-'); ?>2px, 0);
 }
 .rotate90 {
-	transform: rotate(90deg) translate(0, <?php print ($left == 'left' ? '' : '-'); ?>2px);
+	transform: rotate(90deg) translate(0, <?php print($left == 'left' ? '' : '-'); ?>2px);
 }
 .center {
 	text-align: center;
@@ -1075,13 +1078,13 @@ textarea.centpercent {
 	float: right!important;
 }
 .nowrap {
-	white-space: <?php print ($dol_optimize_smallscreen ? 'normal' : 'nowrap'); ?>;
+	white-space: <?php print($dol_optimize_smallscreen ? 'normal' : 'nowrap'); ?>;
 }
 .nowraponsmartphone {
-	white-space: <?php print ($dol_optimize_smallscreen ? 'nowrap' : 'normal'); ?>;
+	white-space: <?php print($dol_optimize_smallscreen ? 'nowrap' : 'normal'); ?>;
 }
 .wraponsmartphone {
-	white-space: <?php print ($dol_optimize_smallscreen ? 'normal' : 'nowrap'); ?>;
+	white-space: <?php print($dol_optimize_smallscreen ? 'normal' : 'nowrap'); ?>;
 }
 .liste_titre .nowrap {
 	white-space: nowrap;
@@ -1445,7 +1448,8 @@ if ($conf->browser->layout == 'phone') {
 .divsearchfieldfilter {
 	   white-space: nowrap;
 }
-<?php } ?>
+	<?php
+} ?>
 
 
 .a-filter, .a-mesure {
@@ -2089,7 +2093,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	}
 
 	div.fiche {
-		margin-top: <?php print ($dol_hide_topmenu ? '12' : '6'); ?>px !important;
+		margin-top: <?php print($dol_hide_topmenu ? '12' : '6'); ?>px !important;
 	}
 	.border tbody tr, .border tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
 		height: 40px !important;
@@ -2422,8 +2426,8 @@ div.fiche {
 <?php } ?>
 
 div.fiche {
-	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '30' : '6')); ?>px;
-	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '28' : '6')); ?>px;
+	margin-<?php print $left; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '30' : '6')); ?>px;
+	margin-<?php print $right; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '28' : '6')); ?>px;
 	<?php if (!empty($dol_hide_leftmenu) && !empty($dol_hide_topmenu)) {
 		print 'margin-top: 12px;';
 	} ?>
@@ -2514,8 +2518,8 @@ div.secondcolumn div.box {
 @media only screen and (max-width: 900px)
 {
 	div.fiche {
-		margin-<?php print $left; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print' ? 6 : ($dol_hide_leftmenu ? '4' : '20')); ?>px;
-		margin-<?php print $right; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print' ? 8 : 16); ?>px;
+		margin-<?php print $left; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : ($dol_hide_leftmenu ? '4' : '20')); ?>px;
+		margin-<?php print $right; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 8 : 16); ?>px;
 		<?php if (!empty($conf->dol_hide_leftmenu) && !empty($conf->dol_hide_topmenu)) {
 			print 'margin-top: 4px;';
 		} ?>
@@ -2752,7 +2756,10 @@ $heightmenu2 = 48; /* height of top menu, ârt with login  */
 $disableimages = 0;
 $maxwidthloginblock = 110;
 if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1) {
-	$heightmenu = 30; $disableimages = 1; $maxwidthloginblock = 180; $minwidthtmenu = 0;
+	$heightmenu = 30;
+	$disableimages = 1;
+	$maxwidthloginblock = 180;
+	$minwidthtmenu = 0;
 }
 ?>
 
@@ -2775,7 +2782,7 @@ div#tmenu_tooltip {
 <?php if (GETPOST('optioncss', 'aZ09') == 'print') {  ?>
 	display:none;
 <?php } else { ?>
-	/* padding-<?php echo $right; ?>: <?php echo ($maxwidthloginblock - 10); ?>px; */
+	/* padding-<?php echo $right; ?>: <?php echo($maxwidthloginblock - 10); ?>px; */
 <?php } ?>
 }
 
@@ -2941,7 +2948,7 @@ div.mainmenu {
 	position : relative;
 	background-repeat:no-repeat;
 	background-position:center top;
-	height: <?php echo ($heightmenu - 22); ?>px;
+	height: <?php echo($heightmenu - 22); ?>px;
 	margin-left: 0px;
 	min-width: 40px;
 }
@@ -2996,7 +3003,8 @@ div.mainmenu.menu {
 		}
 		//print "XXX".$val;
 
-		$found = 0; $url = '';
+		$found = 0;
+		$url = '';
 		$constformoduleicon = 'MAIN_MODULE_'.strtoupper($val).'_ICON';
 		$iconformodule = getDolGlobalString($constformoduleicon);
 		if ($iconformodule) {
@@ -3037,7 +3045,7 @@ div.mainmenu.menu {
 		}
 	}
 	// End of part to add more div class css
-}	// End test if $dol_hide_topmenu ?>
+}	// End test if $dol_hide_topmenu?>
 
 
 .tmenuimage {
@@ -3432,7 +3440,7 @@ a.help:link, a.help:visited, a.help:hover, a.help:active, span.help {
 	font-size: x-small;
 	vertical-align: super;
 	opacity: 0.95;
-	transform: rotate(<?php echo ($left == 'left' ? '55deg' : '305deg'); ?>);
+	transform: rotate(<?php echo($left == 'left' ? '55deg' : '305deg'); ?>);
 }
 
 div.blockvmenulogo
@@ -3825,7 +3833,7 @@ span.tabspan {
 
 #undertopmenu {
 	background-repeat: repeat-x;
-	margin-top: <?php echo ($dol_hide_topmenu ? '6' : '0'); ?>px;
+	margin-top: <?php echo($dol_hide_topmenu ? '6' : '0'); ?>px;
 }
 
 .paddingrightonly {
@@ -5799,7 +5807,7 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 .ui-widget {
 	font-family:<?php echo $fontlist; ?>;
 }
-.ui-button { margin-left: -2px; <?php print (preg_match('/chrome/', $conf->browser->name) ? 'padding-top: 1px;' : ''); ?> }
+.ui-button { margin-left: -2px; <?php print(preg_match('/chrome/', $conf->browser->name) ? 'padding-top: 1px;' : ''); ?> }
 .ui-button-icon-only .ui-button-text { height: 8px; }
 .ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding: 2px 0px 6px 0px; }
 .ui-button-text
@@ -6010,7 +6018,7 @@ pre#editfilecontentaceeditorid {
 /* ============================================================================== */
 
 div.scroll2 {
-	width: <?php print isset($_SESSION['dol_screenwidth']) ?max((int) $_SESSION['dol_screenwidth'] - 830, 450) : '450'; ?>px !important;
+	width: <?php print isset($_SESSION['dol_screenwidth']) ? max((int) $_SESSION['dol_screenwidth'] - 830, 450) : '450'; ?>px !important;
 }
 
 div#GanttChartDIVglisthead, div#GanttChartDIVgcharthead {
