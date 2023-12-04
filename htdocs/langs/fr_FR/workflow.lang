@@ -13,6 +13,7 @@ descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classer les propositions commerciales 
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classer les propositions sources liées comme facturé lorsqu'une facture client est validée (et si le montant du facture est le même que le montant total de la proposition liée signée)
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classer les ventes sources liées commande comme facturé lorsqu'une facture client est validée (et si le montant du facture est le même que le montant total de la commande liée)
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classer les commandes client source liées comme facturées lorsqu'une facture client est définie sur payée (et si le montant du facture est le même que le montant total du de la commande liée)
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=Classer la commande au statut "facturée" si la somme du montant des factures liées est égale au montant total de la commande
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classer les commandes client source liées comme expédiées lorsqu'une expédition est validée (et si la quantité expédiée par toutes les expéditions est la même que dans le commande à mettre à jour)
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Classer la commande client source liée à expédiée lorsqu'une expédition est fermée (et si la quantité expédiée par toutes les expéditions est la même que dans la commande à mettre à jour)
 # Autoclassify purchase proposal
