@@ -202,7 +202,7 @@ foreach ($dirmodels as $reldir) {
 							$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
 							$nextval = $module->getNextValue($mysoc, $payment);
 							if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
-									$htmltooltip .= $langs->trans("NextValue").': ';
+								$htmltooltip .= $langs->trans("NextValue").': ';
 								if ($nextval) {
 									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
 										$nextval = $langs->trans($nextval);

@@ -406,8 +406,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 								$showpricebeforepagebreak = 0;
 							}
 						}
-					} else // No pagebreak
-					{
+					} else { // No pagebreak
 						$pdf->commitTransaction();
 					}
 					$posYAfterDescription = $pdf->GetY();
@@ -1070,8 +1069,8 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		}
 		else
 		{*/
-			$text = $this->emetteur->name;
-			$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
+		$text = $this->emetteur->name;
+		$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 		//}
 
 		$pdf->SetFont('', 'B', $default_font_size + 3);

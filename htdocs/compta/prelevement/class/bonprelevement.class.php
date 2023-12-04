@@ -825,7 +825,7 @@ class BonPrelevement extends CommonObject
 		// phpcs:enable
 		global $conf;
 
-		if ($forsalary == 1 ) {
+		if ($forsalary == 1) {
 			$sql = "SELECT count(s.rowid) as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX."salary as s";
 		} else {

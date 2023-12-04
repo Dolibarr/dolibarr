@@ -41,7 +41,6 @@ if (isModEnabled('workstation')) {
  */
 class BOM extends CommonObject
 {
-
 	/**
 	 * @var string ID of module.
 	 */
@@ -761,11 +760,11 @@ class BOM extends CommonObject
 			$rankToUse = (int) $position;
 			if ($rankToUse != $line->oldcopy->position) { // check if position have a new value
 				foreach ($this->lines as $bl) {
-					if ($bl->position >= $rankToUse AND $bl->position < ($line->oldcopy->position + 1)) { // move rank up
+					if ($bl->position >= $rankToUse and $bl->position < ($line->oldcopy->position + 1)) { // move rank up
 						$bl->position++;
 						$bl->update($user);
 					}
-					if ($bl->position <= $rankToUse AND $bl->position > ($line->oldcopy->position)) { // move rank down
+					if ($bl->position <= $rankToUse and $bl->position > ($line->oldcopy->position)) { // move rank down
 						$bl->position--;
 						$bl->update($user);
 					}
@@ -782,7 +781,9 @@ class BOM extends CommonObject
 			$line->position = $rankToUse;
 
 
-			if (!empty($fk_unit)) $line->fk_unit = $fk_unit;
+			if (!empty($fk_unit)) {
+				$line->fk_unit = $fk_unit;
+			}
 
 
 			if (is_array($array_options) && count($array_options) > 0) {
@@ -986,13 +987,15 @@ class BOM extends CommonObject
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'bom/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'bom/".$this->db->escape($this->newref)."'";
 				$sql .= " WHERE filepath = 'bom/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
@@ -1197,7 +1200,7 @@ class BOM extends CommonObject
 				$label = $langs->trans("ShowBillOfMaterials");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -1476,10 +1479,11 @@ class BOM extends CommonObject
 						$workstation = new Workstation($this->db);
 						$res = $workstation->fetch($line->fk_default_workstation);
 
-						if ($res > 0) $line->total_cost = price2num($qtyhourforline * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated), 'MT');
-						else {
+						if ($res > 0) {
+							$line->total_cost = price2num($qtyhourforline * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated), 'MT');
+						} else {
 							$this->error = $workstation->error;
-								return -3;
+							return -3;
 						}
 					} else {
 						$defaultdurationofservice = $tmpproduct->duration;
@@ -1541,7 +1545,9 @@ class BOM extends CommonObject
 		if (!empty($this->lines)) {
 			foreach ($this->lines as $line) {
 				if (!empty($line->childBom)) {
-					foreach ($line->childBom as $childBom) $childBom->getNetNeeds($TNetNeeds, $line->qty*$qty);
+					foreach ($line->childBom as $childBom) {
+						$childBom->getNetNeeds($TNetNeeds, $line->qty*$qty);
+					}
 				} else {
 					if (empty($TNetNeeds[$line->fk_product])) {
 						$TNetNeeds[$line->fk_product] = 0;
@@ -1596,7 +1602,9 @@ class BOM extends CommonObject
 			return;
 		}
 
-		if (empty($bom_id)) $bom_id=$this->id;
+		if (empty($bom_id)) {
+			$bom_id=$this->id;
+		}
 
 		$sql = 'SELECT l.fk_bom, b.label
 				FROM '.MAIN_DB_PREFIX.'bom_bomline l

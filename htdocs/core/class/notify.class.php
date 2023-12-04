@@ -65,7 +65,7 @@ class Notify
 	public $fk_project;
 
 	// This codes actions are defined into table llx_notify_def
-	static public $arrayofnotifsupported = array(
+	public static $arrayofnotifsupported = array(
 		'BILL_VALIDATE',
 		'BILL_PAYED',
 		'ORDER_CREATE',

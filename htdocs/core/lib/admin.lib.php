@@ -218,8 +218,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 							if (!count($versionrequest) || !count($versionarray) || versioncompare($versionrequest, $versionarray) > 0) {
 								$qualified = 0;
 							}
-						} else // This is a test on a constant. For example when we have -- VMYSQLUTF8UNICODE, we test constant $conf->global->UTF8UNICODE
-						{
+						} else { // This is a test on a constant. For example when we have -- VMYSQLUTF8UNICODE, we test constant $conf->global->UTF8UNICODE
 							$dbcollation = strtoupper(preg_replace('/_/', '', $conf->db->dolibarr_main_db_collation));
 							//var_dump($reg[2]);
 							//var_dump($dbcollation);
@@ -243,7 +242,9 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 				if (empty($nocommentremoval)) {
 					$buf = preg_replace('/([,;ERLT\)])\s*--.*$/i', '\1', $buf); //remove comment from a line that not start with -- before add it to the buffer
 				}
-				if ($buffer) $buffer .= ' ';
+				if ($buffer) {
+					$buffer .= ' ';
+				}
 				$buffer .= trim($buf);
 			}
 
@@ -1231,7 +1232,7 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0)
 
 	if (!count($ret['errors'])) {
 		$ret['nbmodules']++;
-		$ret['nbperms'] += (is_array($objMod->rights)?count($objMod->rights):0);
+		$ret['nbperms'] += (is_array($objMod->rights) ? count($objMod->rights) : 0);
 	}
 
 	return $ret;
@@ -1278,8 +1279,7 @@ function unActivateModule($value, $requiredby = 1)
 		if ($result <= 0) {
 			$ret = $objMod->error;
 		}
-	} else // We come here when we try to unactivate a module when module does not exists anymore in sources
-	{
+	} else { // We come here when we try to unactivate a module when module does not exists anymore in sources
 		//print $dir.$modFile;exit;
 		// TODO Replace this after DolibarrModules is moved as abstract class with a try catch to show module we try to disable has not been found or could not be loaded
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -1746,7 +1746,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Valu
 			if (!empty($tableau[$key]['tooltip'])) {
 				print $form->textwithpicto($label ? $label : $langs->trans('Desc'.$const), $tableau[$key]['tooltip']);
 			} else {
-				print ($label ? $label : $langs->trans('Desc'.$const));
+				print($label ? $label : $langs->trans('Desc'.$const));
 			}
 
 			if ($const == 'ADHERENT_MAILMAN_URL') {

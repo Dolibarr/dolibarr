@@ -68,7 +68,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 
 $mesg = GETPOST('msg', 'alpha');
 $origin = GETPOST('origin', 'alpha');
-$originid = (GETPOST('originid', 'int') ?GETPOST('originid', 'int') : GETPOST('origin_id', 'int')); // For backward compatibility
+$originid = (GETPOST('originid', 'int') ? GETPOST('originid', 'int') : GETPOST('origin_id', 'int')); // For backward compatibility
 $note_public = GETPOST('note_public', 'restricthtml');
 $note_private = GETPOST('note_private', 'restricthtml');
 $lineid = GETPOST('line_id', 'int');
@@ -280,7 +280,8 @@ if (empty($reshook)) {
 					$element = $subelement = 'commande';
 				}
 				if ($element == 'propal') {
-					$element = 'comm/propal'; $subelement = 'propal';
+					$element = 'comm/propal';
+					$subelement = 'propal';
 				}
 				if ($element == 'contract') {
 					$element = $subelement = 'contrat';
@@ -858,7 +859,8 @@ if ($action == 'create') {
 				$element = $subelement = 'commande';
 			}
 			if ($element == 'propal') {
-				$element = 'comm/propal'; $subelement = 'propal';
+				$element = 'comm/propal';
+				$subelement = 'propal';
 			}
 			if ($element == 'contract') {
 				$element = $subelement = 'contrat';
@@ -1407,10 +1409,10 @@ if ($action == 'create') {
 					print '</td>';
 
 					// Date
-					print '<td class="center" width="150">'.(!getDolGlobalString('FICHINTER_DATE_WITHOUT_HOUR') ?dol_print_date($db->jdate($objp->date_intervention), 'dayhour') : dol_print_date($db->jdate($objp->date_intervention), 'day')).'</td>';
+					print '<td class="center" width="150">'.(!getDolGlobalString('FICHINTER_DATE_WITHOUT_HOUR') ? dol_print_date($db->jdate($objp->date_intervention), 'dayhour') : dol_print_date($db->jdate($objp->date_intervention), 'day')).'</td>';
 
 					// Duration
-					print '<td class="right" width="150">'.(!getDolGlobalString('FICHINTER_WITHOUT_DURATION') ?convertSecondToTime($objp->duree) : '').'</td>';
+					print '<td class="right" width="150">'.(!getDolGlobalString('FICHINTER_WITHOUT_DURATION') ? convertSecondToTime($objp->duree) : '').'</td>';
 
 					print "</td>\n";
 
@@ -1622,7 +1624,7 @@ if ($action == 'create') {
 
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
-																								  // modified by hook
+	// modified by hook
 	if (empty($reshook)) {
 		if ($user->socid == 0) {
 			if ($action != 'editdescription' && ($action != 'presend')) {

@@ -41,14 +41,18 @@ $langs->loadLangs(array('bills', 'banks', 'companies', 'salaries'));
 $id = GETPOST("id", 'int');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 
 $salary = new Salary($db);
 
 $object = new PaymentSalary($db);
 if ($id > 0) {
 	$result = $object->fetch($id);
-	if (!$result) dol_print_error($db, 'Failed to get payment id '.$id);
+	if (!$result) {
+		dol_print_error($db, 'Failed to get payment id '.$id);
+	}
 }
 restrictedArea($user, 'salaries', $object->fk_salary, 'salary', '');	// $object is payment of salary
 

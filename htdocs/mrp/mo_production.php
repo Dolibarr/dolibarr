@@ -49,7 +49,7 @@ $ref         = GETPOST('ref', 'alpha');
 $action      = GETPOST('action', 'aZ09');
 $confirm     = GETPOST('confirm', 'alpha');
 $cancel      = GETPOST('cancel', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'mocard'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'mocard'; // To manage different context of search
 $backtopage  = GETPOST('backtopage', 'alpha');
 $lineid      = GETPOST('lineid', 'int');
 $fk_movement = GETPOST('fk_movement', 'int');
@@ -204,7 +204,9 @@ if (empty($reshook)) {
 				$moline->fk_default_workstation = $tmpproduct->fk_default_workstation;
 			}
 			$moline->disable_stock_change = ($tmpproduct->type == Product::TYPE_SERVICE ? 1 : 0);
-			if ($conf->global->PRODUCT_USE_UNITS) $moline->fk_unit = $tmpproduct->fk_unit;
+			if ($conf->global->PRODUCT_USE_UNITS) {
+				$moline->fk_unit = $tmpproduct->fk_unit;
+			}
 		}
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -216,7 +218,9 @@ if (empty($reshook)) {
 				unset($_POST["options_".$key]);
 			}
 		}
-		if (is_array($array_options) && count($array_options) > 0) $moline->array_options = $array_options;
+		if (is_array($array_options) && count($array_options) > 0) {
+			$moline->array_options = $array_options;
+		}
 
 		$resultline = $moline->create($user, false); // Never use triggers here
 		if ($resultline <= 0) {
@@ -1307,7 +1311,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '<td class="right"><input type="text" class="width50 right" id="qtytoconsume-' . $line->id . '-' . $i . '" name="qty-' . $line->id . '-' . $i . '" value="' . $preselected . '" ' . $disable . '></td>';
 
 						// Unit
-						if ($conf->global->PRODUCT_USE_UNITS)  print '<td></td>';
+						if ($conf->global->PRODUCT_USE_UNITS) {
+							print '<td></td>';
+						}
 
 						// Cost
 						if ($permissiontoupdatecost && getDolGlobalString('MRP_SHOW_COST_FOR_CONSUMPTION')) {
@@ -1430,7 +1436,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Qty
 		print '<td class="right">'.$langs->trans("Qty").'</td>';
 		/// Unit
-		if ($conf->global->PRODUCT_USE_UNITS) print '<td class="right">'.$langs->trans("Unit").'</td>';
+		if ($conf->global->PRODUCT_USE_UNITS) {
+			print '<td class="right">'.$langs->trans("Unit").'</td>';
+		}
 		// Cost price
 		if ($permissiontoupdatecost) {
 			if (empty($bomcostupdated)) {
@@ -1481,7 +1489,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Qty
 			print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width50 right"></td>';
 			//Unit
-			if ($conf->global->PRODUCT_USE_UNITS) print '<td></td>';
+			if ($conf->global->PRODUCT_USE_UNITS) {
+				print '<td></td>';
+			}
 			// Cost price
 			if ($permissiontoupdatecost) {
 				print '<td></td>';
@@ -1546,7 +1556,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					// Qty
 					print '<td class="right">'.$line->qty.'</td>';
 					// Unit
-					if ($conf->global->PRODUCT_USE_UNITS) print '<td class="right">'.measuringUnitString($line->fk_unit, '', '', 1).'</td>';
+					if ($conf->global->PRODUCT_USE_UNITS) {
+						print '<td class="right">'.measuringUnitString($line->fk_unit, '', '', 1).'</td>';
+					}
 					// Cost price
 					if ($permissiontoupdatecost) {
 						// Defined $manufacturingcost
@@ -1643,7 +1655,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						// Qty
 						print '<td></td>';
 						// Unit
-						if ($conf->global->PRODUCT_USE_UNITS) print '<td></td>';
+						if ($conf->global->PRODUCT_USE_UNITS) {
+							print '<td></td>';
+						}
 						// Cost price
 						if ($permissiontoupdatecost) {
 							print '<td></td>';
@@ -1694,7 +1708,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						// Qty
 						print '<td class="right"><input type="text" class="width50 right" id="qtytoproduce-'.$line->id.'-'.$i.'" name="qtytoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
 						//Unit
-						if ($conf->global->PRODUCT_USE_UNITS) print '<td class="right"></td>';
+						if ($conf->global->PRODUCT_USE_UNITS) {
+							print '<td class="right"></td>';
+						}
 						// Cost
 						if ($permissiontoupdatecost) {
 							// Defined $manufacturingcost
@@ -1751,7 +1767,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 								print '</td>';
 
 								print '<td align="right"  class="splitall">';
-								if (($action == 'consumeorproduce' || $action == 'consumeandproduceall') && $tmpproduct->status_batch == 2) print img_picto($langs->trans('SplitAllQuantity'), 'split.png', 'class="splitbutton splitallbutton field-error-icon" onClick="addDispatchLine('.$line->id.', \'batch\', \'alltoproduce\')"'); //
+								if (($action == 'consumeorproduce' || $action == 'consumeandproduceall') && $tmpproduct->status_batch == 2) {
+									print img_picto($langs->trans('SplitAllQuantity'), 'split.png', 'class="splitbutton splitallbutton field-error-icon" onClick="addDispatchLine('.$line->id.', \'batch\', \'alltoproduce\')"');
+								} //
 								print '</td>';
 							} else {
 								print '<td></td>';
@@ -1778,9 +1796,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	if (in_array($action, array('consumeorproduce', 'consumeandproduceall', 'addconsumeline'))) {
 		print "</form>\n";
-	}
-
-	?>
+	} ?>
 
 		<script  type="text/javascript" language="javascript">
 

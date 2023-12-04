@@ -2202,7 +2202,7 @@ abstract class CommonObject
 		}
 		$restrictiononfksoc = empty($this->restrictiononfksoc) ? 0 : $this->restrictiononfksoc;
 		$sql = "SELECT MAX(te.".$fieldid.")";
-		$sql .= " FROM ".(empty($nodbprefix) ?$this->db->prefix():'').$this->table_element." as te";
+		$sql .= " FROM ".(empty($nodbprefix) ? $this->db->prefix() : '').$this->table_element." as te";
 		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged)) {
 			$tmparray = explode('@', $this->ismultientitymanaged);
 			$sql .= ", ".$this->db->prefix().$tmparray[1]." as ".($tmparray[1] == 'societe' ? 's' : 'parenttable'); // If we need to link to this table to limit select to entity
@@ -2272,7 +2272,7 @@ abstract class CommonObject
 		$this->ref_previous = $row[0];
 
 		$sql = "SELECT MIN(te.".$fieldid.")";
-		$sql .= " FROM ".(empty($nodbprefix) ?$this->db->prefix():'').$this->table_element." as te";
+		$sql .= " FROM ".(empty($nodbprefix) ? $this->db->prefix() : '').$this->table_element." as te";
 		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged)) {
 			$tmparray = explode('@', $this->ismultientitymanaged);
 			$sql .= ", ".$this->db->prefix().$tmparray[1]." as ".($tmparray[1] == 'societe' ? 's' : 'parenttable'); // If we need to link to this table to limit select to entity
@@ -2403,8 +2403,7 @@ abstract class CommonObject
 				$sql .= " SET fk_project = NULL";
 			}
 			$sql .= ' WHERE id = '.((int) $this->id);
-		} else // Special case for old architecture objects
-		{
+		} else { // Special case for old architecture objects
 			if ($projectid) {
 				$sql .= ' SET fk_projet = '.((int) $projectid);
 			} else {
@@ -2453,7 +2452,8 @@ abstract class CommonObject
 	{
 		global $user;
 
-		$error = 0; $notrigger = 0;
+		$error = 0;
+		$notrigger = 0;
 
 		dol_syslog(get_class($this).'::setPaymentMethods('.$id.')');
 
@@ -2970,7 +2970,7 @@ abstract class CommonObject
 			$this->db->rollback();
 			return -1;
 		} else {
-			$this->shipping_method_id = ($shipping_method_id == 'NULL') ?null:$shipping_method_id;
+			$this->shipping_method_id = ($shipping_method_id == 'NULL') ? null : $shipping_method_id;
 			$this->db->commit();
 			return 1;
 		}
@@ -2999,7 +2999,7 @@ abstract class CommonObject
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		if ($this->db->query($sql)) {
-			$this->warehouse_id = ($warehouse_id == 'NULL') ?null:$warehouse_id;
+			$this->warehouse_id = ($warehouse_id == 'NULL') ? null : $warehouse_id;
 			return 1;
 		} else {
 			dol_syslog(get_class($this).'::setWarehouse Error ', LOG_DEBUG);
@@ -3099,7 +3099,7 @@ abstract class CommonObject
 			$this->db->rollback();
 			return -1;
 		} else {
-			$this->fk_account = ($fk_account == 'NULL') ?null:$fk_account;
+			$this->fk_account = ($fk_account == 'NULL') ? null : $fk_account;
 			$this->db->commit();
 			return 1;
 		}
@@ -3947,7 +3947,9 @@ abstract class CommonObject
 		// Hook for explicitly set the targettype if it must be differtent than $this->element
 		$reshook = $hookmanager->executeHooks('setLinkedObjectSourceTargetType', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
-			if (!empty($hookmanager->resArray['targettype'])) $targettype = $hookmanager->resArray['targettype'];
+			if (!empty($hookmanager->resArray['targettype'])) {
+				$targettype = $hookmanager->resArray['targettype'];
+			}
 		}
 
 		$this->db->begin();
@@ -4036,10 +4038,18 @@ abstract class CommonObject
 		// Hook for explicitly set the targettype if it must be differtent than $this->element
 		$reshook = $hookmanager->executeHooks('setLinkedObjectSourceTargetType', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
-			if (!empty($hookmanager->resArray['sourcetype'])) $sourcetype = $hookmanager->resArray['sourcetype'];
-			if (!empty($hookmanager->resArray['sourceid'])) $sourceid = $hookmanager->resArray['sourceid'];
-			if (!empty($hookmanager->resArray['targettype'])) $targettype = $hookmanager->resArray['targettype'];
-			if (!empty($hookmanager->resArray['targetid'])) $targetid = $hookmanager->resArray['targetid'];
+			if (!empty($hookmanager->resArray['sourcetype'])) {
+				$sourcetype = $hookmanager->resArray['sourcetype'];
+			}
+			if (!empty($hookmanager->resArray['sourceid'])) {
+				$sourceid = $hookmanager->resArray['sourceid'];
+			}
+			if (!empty($hookmanager->resArray['targettype'])) {
+				$targettype = $hookmanager->resArray['targettype'];
+			}
+			if (!empty($hookmanager->resArray['targetid'])) {
+				$targetid = $hookmanager->resArray['targetid'];
+			}
 		}
 
 		if (!empty($sourceid) && !empty($sourcetype) && empty($targetid)) {
@@ -4157,7 +4167,7 @@ abstract class CommonObject
 						$classpath = 'adherents/class';
 						$module = 'adherent';
 					} elseif ($objecttype == 'contact') {
-						 $module = 'societe';
+						$module = 'societe';
 					}
 					// Set classfile
 					$classfile = strtolower($subelement);
@@ -4748,9 +4758,9 @@ abstract class CommonObject
 					if (is_numeric($element)) {	// very old usage array('table1', 'table2', ...)
 						$this->errors[] = $langs->transnoentitiesnoconv("ErrorRecordHasAtLeastOneChildOfType", method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref, $table);
 					} elseif (is_string($element)) { // old usage array('table1' => 'TranslateKey1', 'table2' => 'TranslateKey2', ...)
-						$this->errors[] = $langs->transnoentitiesnoconv("ErrorRecordHasAtLeastOneChildOfType",  method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref, $langs->transnoentitiesnoconv($element));
+						$this->errors[] = $langs->transnoentitiesnoconv("ErrorRecordHasAtLeastOneChildOfType", method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref, $langs->transnoentitiesnoconv($element));
 					} else { // new usage: $element['name']=Translation key
-						$this->errors[] = $langs->transnoentitiesnoconv("ErrorRecordHasAtLeastOneChildOfType",  method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref, $langs->transnoentitiesnoconv($element['name']));
+						$this->errors[] = $langs->transnoentitiesnoconv("ErrorRecordHasAtLeastOneChildOfType", method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref, $langs->transnoentitiesnoconv($element['name']));
 					}
 					break; // We found at least one, we stop here
 				}
@@ -4809,7 +4819,7 @@ abstract class CommonObject
 	 */
 	public function getTotalDiscount()
 	{
-		if (!empty($this->table_element_line) ) {
+		if (!empty($this->table_element_line)) {
 			$total_discount = 0.00;
 
 			$sql = "SELECT subprice as pu_ht, qty, remise_percent, total_ht";
@@ -5282,7 +5292,9 @@ abstract class CommonObject
 				//if (is_object($hookmanager) && (($line->product_type == 9 && !empty($line->special_code)) || !empty($line->fk_parent_line))) {
 				if (is_object($hookmanager)) {   // Old code is commented on preceding line.
 					$parameters = array('line'=>$line, 'i'=>$i, 'restrictlist'=>$restrictlist, 'selectedLines'=> $selectedLines);
-					if (!empty($line->fk_parent_line)) { $parameters['fk_parent_line'] = $line->fk_parent_line; }
+					if (!empty($line->fk_parent_line)) {
+						$parameters['fk_parent_line'] = $line->fk_parent_line;
+					}
 					$reshook = $hookmanager->executeHooks('printOriginObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				}
 				if (empty($reshook)) {
@@ -7135,7 +7147,7 @@ abstract class CommonObject
 		// Special case that force options and type ($type can be integer, varchar, ...)
 		if (!empty($this->fields[$key]['arrayofkeyval']) && is_array($this->fields[$key]['arrayofkeyval'])) {
 			$param['options'] = $this->fields[$key]['arrayofkeyval'];
-			$type = (($this->fields[$key]['type']=='checkbox')?$this->fields[$key]['type']:'select');
+			$type = (($this->fields[$key]['type']=='checkbox') ? $this->fields[$key]['type'] : 'select');
 		}
 
 		$label = $this->fields[$key]['label'];
@@ -7208,7 +7220,9 @@ abstract class CommonObject
 			$showtime = 1;
 
 			// Do not show current date when field not required (see selectDate() method)
-			if (!$required && $value == '') $value = '-1';
+			if (!$required && $value == '') {
+				$value = '-1';
+			}
 
 			// TODO Must also support $moreparam
 			$out = $form->selectDate($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required, '', 1, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 0, 1, '', '', '', 1, '', '', 'tzuserrel');
@@ -7294,7 +7308,8 @@ abstract class CommonObject
 				$param_list = array_keys($param['options']);
 				$InfoFieldList = explode(":", $param_list[0], 5);
 				if (! empty($InfoFieldList[4])) {
-					$pos = 0; $parenthesisopen = 0;
+					$pos = 0;
+					$parenthesisopen = 0;
 					while (substr($InfoFieldList[4], $pos, 1) !== '' && ($parenthesisopen || $pos == 0 || substr($InfoFieldList[4], $pos, 1) != ':')) {
 						if (substr($InfoFieldList[4], $pos, 1) == '(') {
 							$parenthesisopen++;
@@ -7474,7 +7489,7 @@ abstract class CommonObject
 			$out .= '</select>';
 		} elseif ($type == 'checkbox') {
 			$value_arr = explode(',', $value);
-			$out = $form->multiselectarray($keyprefix.$key.$keysuffix, (empty($param['options']) ?null:$param['options']), $value_arr, '', 0, $morecss, 0, '100%');
+			$out = $form->multiselectarray($keyprefix.$key.$keysuffix, (empty($param['options']) ? null : $param['options']), $value_arr, '', 0, $morecss, 0, '100%');
 		} elseif ($type == 'radio') {
 			$out = '';
 			foreach ($param['options'] as $keyopt => $valopt) {
@@ -7506,7 +7521,7 @@ abstract class CommonObject
 				$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2].' as rowid');
 
 				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
-					list ($parentName, $parentField) = explode('|', $InfoFieldList[3]);
+					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
 					$keyList .= ', '.$parentField;
 				}
 				if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
@@ -7774,7 +7789,7 @@ abstract class CommonObject
 			$type = 'varchar'; // convert varchar(xx) int varchar
 		}
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
-			$type = (($this->fields[$key]['type']=='checkbox')?$this->fields[$key]['type']:'select');
+			$type = (($this->fields[$key]['type']=='checkbox') ? $this->fields[$key]['type'] : 'select');
 		}
 		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) {
 			$type = 'link';
@@ -7897,7 +7912,7 @@ abstract class CommonObject
 				$value = price($value, 0, $langs, 0, 0, -1, $conf->currency);
 			}
 		} elseif ($type == 'select') {
-			$value = isset($param['options'][$value])?$param['options'][$value]:'';
+			$value = isset($param['options'][$value]) ? $param['options'][$value] : '';
 		} elseif ($type == 'sellist') {
 			$param_list = array_keys($param['options']);
 			$InfoFieldList = explode(":", $param_list[0]);
@@ -8340,23 +8355,31 @@ abstract class CommonObject
 			if (!$validate->isTimestamp($fieldValue)) {
 				$this->setFieldError($fieldKey, $validate->error);
 				return false;
-			} else { return true; }
+			} else {
+				return true;
+			}
 		} elseif ($type == 'duration') {
 			if (!$validate->isDuration($fieldValue)) {
 				$this->setFieldError($fieldKey, $validate->error);
 				return false;
-			} else { return true; }
+			} else {
+				return true;
+			}
 		} elseif (in_array($type, array('double', 'real', 'price'))) {
 			// is numeric
 			if (!$validate->isNumeric($fieldValue)) {
 				$this->setFieldError($fieldKey, $validate->error);
 				return false;
-			} else { return true; }
+			} else {
+				return true;
+			}
 		} elseif ($type == 'boolean') {
 			if (!$validate->isBool($fieldValue)) {
 				$this->setFieldError($fieldKey, $validate->error);
 				return false;
-			} else { return true; }
+			} else {
+				return true;
+			}
 		} elseif ($type == 'mail') {
 			if (!$validate->isEmail($fieldValue)) {
 				$this->setFieldError($fieldKey, $validate->error);
@@ -8366,17 +8389,23 @@ abstract class CommonObject
 			if (!$validate->isUrl($fieldValue)) {
 				$this->setFieldError($fieldKey, $validate->error);
 				return false;
-			} else { return true; }
+			} else {
+				return true;
+			}
 		} elseif ($type == 'phone') {
 			if (!$validate->isPhone($fieldValue)) {
 				$this->setFieldError($fieldKey, $validate->error);
 				return false;
-			} else { return true; }
+			} else {
+				return true;
+			}
 		} elseif ($type == 'select' || $type == 'radio') {
 			if (!isset($param['options'][$fieldValue])) {
 				$this->error = $langs->trans('RequireValidValue');
 				return false;
-			} else { return true; }
+			} else {
+				return true;
+			}
 		} elseif ($type == 'sellist' || $type == 'chkbxlst') {
 			$param_list = array_keys($param['options']);
 			$InfoFieldList = explode(":", $param_list[0]);
@@ -8391,7 +8420,9 @@ abstract class CommonObject
 			if (!$validate->isInDb($value_arr, $InfoFieldList[0], $selectkey)) {
 				$this->setFieldError($fieldKey, $validate->error);
 				return false;
-			} else { return true; }
+			} else {
+				return true;
+			}
 		} elseif ($type == 'link') {
 			$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath'
 			$InfoFieldList = explode(":", $param_list[0]);
@@ -8400,7 +8431,9 @@ abstract class CommonObject
 			if (!$validate->isFetchable($fieldValue, $classname, $classpath)) {
 				$this->setFieldError($fieldKey, $validate->error);
 				return false;
-			} else { return true; }
+			} else {
+				return true;
+			}
 		}
 
 		// if no test failled all is ok
@@ -8902,7 +8935,7 @@ abstract class CommonObject
 		$buyPrice = 0;
 
 		if (($unitPrice > 0) && (isset($conf->global->ForceBuyingPriceIfNull) && getDolGlobalInt('ForceBuyingPriceIfNull') > 0)) {
-			 // When ForceBuyingPriceIfNull is set
+			// When ForceBuyingPriceIfNull is set
 			$buyPrice = $unitPrice * (1 - $discountPercent / 100);
 		} else {
 			// Get cost price for margin calculation
@@ -9007,7 +9040,7 @@ abstract class CommonObject
 		$return = '<!-- Photo -->'."\n";
 		$nbphoto = 0;
 
-		$filearray = dol_dir_list($dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+		$filearray = dol_dir_list($dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 
 		/*if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO'))    // For backward compatiblity, we scan also old dirs
 		 {
@@ -9084,7 +9117,7 @@ abstract class CommonObject
 							if ($val['share']) {
 								if (empty($maxHeight) || ($photo_vignette && $imgarray['height'] > $maxHeight)) {
 									$return .= '<!-- Show original file (thumb not yet available with shared links) -->';
-									$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' '.$addphotorefcss : '').'"'.($maxHeight ?' height="'.$maxHeight.'"': '').' src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).($cache ? '&cache='.urlencode($cache) : '').'" title="'.dol_escape_htmltag($alt).'">';
+									$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' '.$addphotorefcss : '').'"'.($maxHeight ? ' height="'.$maxHeight.'"' : '').' src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).($cache ? '&cache='.urlencode($cache) : '').'" title="'.dol_escape_htmltag($alt).'">';
 								} else {
 									$return .= '<!-- Show original file -->';
 									$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' '.$addphotorefcss : '').'" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).($cache ? '&cache='.urlencode($cache) : '').'" title="'.dol_escape_htmltag($alt).'">';
@@ -9096,7 +9129,7 @@ abstract class CommonObject
 						} else {
 							if (empty($maxHeight) || ($photo_vignette && $imgarray['height'] > $maxHeight)) {
 								$return .= '<!-- Show thumb -->';
-								$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' '.$addphotorefcss : '').' maxwidth150onsmartphone maxwidth200"'.($maxHeight ?' height="'.$maxHeight.'"': '').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.($cache ? '&cache='.urlencode($cache) : '').'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
+								$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' '.$addphotorefcss : '').' maxwidth150onsmartphone maxwidth200"'.($maxHeight ? ' height="'.$maxHeight.'"' : '').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.($cache ? '&cache='.urlencode($cache) : '').'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
 							} else {
 								$return .= '<!-- Show original file -->';
 								$return .= '<img class="photo photowithmargin'.($addphotorefcss ? ' '.$addphotorefcss : '').'" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.($cache ? '&cache='.urlencode($cache) : '').'&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
@@ -9393,7 +9426,7 @@ abstract class CommonObject
 						} elseif ($this->isInt($info)) {
 							$queryarray[$field] = (int) $this->{$field};	// If '0', it may be set to null later if $info['notnull'] == -1
 						} elseif ($this->isFloat($info)) {
-							$queryarray[$field] = (double) $this->{$field};	// If '0', it may be set to null later if $info['notnull'] == -1
+							$queryarray[$field] = (float) $this->{$field};	// If '0', it may be set to null later if $info['notnull'] == -1
 						}
 					} else {
 						$queryarray[$field] = null;
@@ -9441,7 +9474,7 @@ abstract class CommonObject
 						if (empty($obj->$field)) {
 							$this->$field = null;
 						} else {
-							$this->$field = (double) $obj->$field;
+							$this->$field = (float) $obj->$field;
 						}
 					} else {
 						if (!is_null($obj->$field) || (isset($info['notnull']) && $info['notnull'] == 1)) {
@@ -9456,11 +9489,11 @@ abstract class CommonObject
 					if (empty($obj->$field)) {
 						$this->$field = null;
 					} else {
-						$this->$field = (double) $obj->$field;
+						$this->$field = (float) $obj->$field;
 					}
 				} else {
 					if (!is_null($obj->$field) || (isset($info['notnull']) && $info['notnull'] == 1)) {
-						$this->$field = (double) $obj->$field;
+						$this->$field = (float) $obj->$field;
 					} else {
 						$this->$field = null;
 					}
@@ -10534,6 +10567,7 @@ abstract class CommonObject
 					if ($project_result >= 0) {
 						$element = 'projet/'.dol_sanitizeFileName($this->project->ref).'/';
 					}
+					// no break
 				default:
 					$element = $this->element;
 			}

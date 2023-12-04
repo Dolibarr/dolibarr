@@ -128,7 +128,8 @@ if ($action == 'initbarcodethirdparties') {
 			if ($resql) {
 				$num = $db->num_rows($resql);
 
-				$i = 0; $nbok = $nbtry = 0;
+				$i = 0;
+				$nbok = $nbtry = 0;
 				while ($i < min($num, $maxperinit)) {
 					$obj = $db->fetch_object($resql);
 					if ($obj) {
@@ -230,7 +231,8 @@ if ($action == 'initbarcodeproducts') {
 			if ($resql) {
 				$num = $db->num_rows($resql);
 
-				$i = 0; $nbok = $nbtry = 0;
+				$i = 0;
+				$nbok = $nbtry = 0;
 				while ($i < min($num, $maxperinit)) {
 					$obj = $db->fetch_object($resql);
 					if ($obj) {

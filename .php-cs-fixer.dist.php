@@ -1,5 +1,22 @@
 <?php
 
+/* PHP 7.0 */
+$finder = (new PhpCsFixer\Finder())
+->in(__DIR__)
+->exclude([
+	'core/includes',
+	'custom',
+	'documents',
+	'doctemplates',
+	'htdocs/custom',
+	'htdocs/includes',
+	'htdocs/install/doctemplates',
+])
+->notPath('vendor');
+
+
+/* PHP 7.4+ */
+/*
 $finder = (new PhpCsFixer\Finder())
 	->in(__DIR__)
 	->exclude([
@@ -10,8 +27,8 @@ $finder = (new PhpCsFixer\Finder())
 	])
 	->notPath([
 		'vendor',
-	])
-;
+	]);
+*/
 
 return (new PhpCsFixer\Config())
 	->setRules([
@@ -28,6 +45,7 @@ return (new PhpCsFixer\Config())
 		//'strict_param' => true,
 		//'array_syntax' => ['syntax' => 'short'],
 		//'list_syntax' => false,
+		//'visibility_required' => false,
 		'array_syntax' => false,
 		'ternary_to_null_coalescing' => false
 	])

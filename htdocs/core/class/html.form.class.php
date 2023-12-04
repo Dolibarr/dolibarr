@@ -2644,22 +2644,34 @@ class Form
 		$sql = 'SELECT b.rowid, b.ref, b.label, b.fk_product';
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'bom_bom as b';
 		$sql .= ' WHERE b.entity IN (' . getEntity('bom') . ')';
-		if (!empty($status)) $sql .= ' AND status = ' . (int) $status;
-		if (!empty($type)) $sql .= ' AND bomtype = ' . (int) $type;
-		if (!empty($TProducts)) $sql .= ' AND fk_product IN (' . $this->db->sanitize(implode(',', $TProducts)) . ')';
-		if (!empty($limit)) $sql .= ' LIMIT ' . (int) $limit;
+		if (!empty($status)) {
+			$sql .= ' AND status = ' . (int) $status;
+		}
+		if (!empty($type)) {
+			$sql .= ' AND bomtype = ' . (int) $type;
+		}
+		if (!empty($TProducts)) {
+			$sql .= ' AND fk_product IN (' . $this->db->sanitize(implode(',', $TProducts)) . ')';
+		}
+		if (!empty($limit)) {
+			$sql .= ' LIMIT ' . (int) $limit;
+		}
 		$resql = $db->query($sql);
 		if ($resql) {
 			if ($showempty) {
 				$out .= '<option value="-1"';
-				if (empty($selected)) $out .= ' selected';
+				if (empty($selected)) {
+					$out .= ' selected';
+				}
 				$out .= '>&nbsp;</option>';
 			}
 			while ($obj = $db->fetch_object($resql)) {
 				$product = new Product($db);
 				$res = $product->fetch($obj->fk_product);
 				$out .= '<option value="' . $obj->rowid . '"';
-				if ($obj->rowid == $selected) $out .= 'selected';
+				if ($obj->rowid == $selected) {
+					$out .= 'selected';
+				}
 				$out .= '>' . $obj->ref . ' - ' . $product->label . ' - ' . $obj->label . '</option>';
 			}
 		} else {
@@ -3430,7 +3442,7 @@ class Form
 			$urloption = ($socid > 0 ? 'socid=' . $socid . '&' : '') . 'htmlname=' . $htmlname . '&outjson=1&price_level=' . $price_level . '&type=' . $filtertype . '&mode=2&status=' . $status . '&finished=' . $finished . '&alsoproductwithnosupplierprice=' . $alsoproductwithnosupplierprice;
 			print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
 
-			print ($hidelabel ? '' : $langs->trans("RefOrLabel") . ' : ') . '<input type="text" class="minwidth300" name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . ($placeholder ? ' placeholder="' . $placeholder . '"' : '') . '>';
+			print($hidelabel ? '' : $langs->trans("RefOrLabel") . ' : ') . '<input type="text" class="minwidth300" name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . ($placeholder ? ' placeholder="' . $placeholder . '"' : '') . '>';
 		} else {
 			print $this->select_produits_fournisseurs_list($socid, $selected, $htmlname, $filtertype, $filtre, '', $status, 0, 0, $alsoproductwithnosupplierprice, $morecss, 0, $placeholder);
 		}
@@ -3737,8 +3749,7 @@ class Form
 					if (empty($alsoproductwithnosupplierprice)) {     // No supplier price defined for couple product/supplier
 						$optlabel .= " - <span class='opacitymedium'>" . $langs->trans("NoPriceDefinedForThisSupplier") . '</span>';
 						$outvallabel .= ' - ' . $langs->transnoentities("NoPriceDefinedForThisSupplier");
-					} else // No supplier price defined for product, even on other suppliers
-					{
+					} else { // No supplier price defined for product, even on other suppliers
 						$optlabel .= " - <span class='opacitymedium'>" . $langs->trans("NoPriceDefinedForThisSupplier") . '</span>';
 						$outvallabel .= ' - ' . $langs->transnoentities("NoPriceDefinedForThisSupplier");
 					}
@@ -7324,7 +7335,9 @@ class Form
 		$out = '';
 
 		// check parameters
-		if (is_null($ajaxoptions)) $ajaxoptions = array();
+		if (is_null($ajaxoptions)) {
+			$ajaxoptions = array();
+		}
 
 		if (!empty($conf->use_javascript_ajax) && getDolGlobalString('TICKET_USE_SEARCH_TO_SELECT')) {
 			$placeholder = '';
@@ -7340,8 +7353,9 @@ class Form
 			$urloption = '';
 			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/ticket/ajax/tickets.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 1, $ajaxoptions);
 
-			if (empty($hidelabel)) $out .= $langs->trans("RefOrLabel") . ' : ';
-			elseif ($hidelabel > 1) {
+			if (empty($hidelabel)) {
+				$out .= $langs->trans("RefOrLabel") . ' : ';
+			} elseif ($hidelabel > 1) {
 				$placeholder = ' placeholder="' . $langs->trans("RefOrLabel") . '"';
 				if ($hidelabel == 2) {
 					$out .= img_picto($langs->trans("Search"), 'search');
@@ -7401,14 +7415,20 @@ class Form
 			// For natural search
 			$scrit = explode(' ', $filterkey);
 			$i = 0;
-			if (count($scrit) > 1) $sql .= "(";
+			if (count($scrit) > 1) {
+				$sql .= "(";
+			}
 			foreach ($scrit as $crit) {
-				if ($i > 0) $sql .= " AND ";
+				if ($i > 0) {
+					$sql .= " AND ";
+				}
 				$sql .= "(p.ref LIKE '" . $this->db->escape($prefix . $crit) . "%' OR p.subject LIKE '" . $this->db->escape($prefix . $crit) . "%'";
 				$sql .= ")";
 				$i++;
 			}
-			if (count($scrit) > 1) $sql .= ")";
+			if (count($scrit) > 1) {
+				$sql .= ")";
+			}
 			$sql .= ')';
 		}
 
@@ -7436,12 +7456,19 @@ class Form
 			// Do not use textifempty = ' ' or '&nbsp;' here, or search on key will search on ' key'.
 			//if (!empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='';
 			if (getDolGlobalString('TICKET_USE_SEARCH_TO_SELECT')) {
-				if ($showempty && !is_numeric($showempty)) $textifempty = $langs->trans($showempty);
-				else $textifempty .= $langs->trans("All");
+				if ($showempty && !is_numeric($showempty)) {
+					$textifempty = $langs->trans($showempty);
+				} else {
+					$textifempty .= $langs->trans("All");
+				}
 			} else {
-				if ($showempty && !is_numeric($showempty)) $textifempty = $langs->trans($showempty);
+				if ($showempty && !is_numeric($showempty)) {
+					$textifempty = $langs->trans($showempty);
+				}
 			}
-			if ($showempty) $out .= '<option value="0" selected>' . $textifempty . '</option>';
+			if ($showempty) {
+				$out .= '<option value="0" selected>' . $textifempty . '</option>';
+			}
 
 			$i = 0;
 			while ($num && $i < $num) {
@@ -7500,7 +7527,9 @@ class Form
 		$opt .= '>';
 		$opt .= $objp->ref;
 		$objRef = $objp->ref;
-		if (!empty($filterkey) && $filterkey != '') $objRef = preg_replace('/(' . preg_quote($filterkey, '/') . ')/i', '<strong>$1</strong>', $objRef, 1);
+		if (!empty($filterkey) && $filterkey != '') {
+			$objRef = preg_replace('/(' . preg_quote($filterkey, '/') . ')/i', '<strong>$1</strong>', $objRef, 1);
+		}
 
 		$opt .= "</option>\n";
 		$optJson = array('key' => $outkey, 'value' => $outref, 'type' => $outtype);
@@ -7532,7 +7561,9 @@ class Form
 		$out = '';
 
 		// check parameters
-		if (is_null($ajaxoptions)) $ajaxoptions = array();
+		if (is_null($ajaxoptions)) {
+			$ajaxoptions = array();
+		}
 
 		if (!empty($conf->use_javascript_ajax) && getDolGlobalString('TICKET_USE_SEARCH_TO_SELECT')) {
 			$placeholder = '';
@@ -7548,8 +7579,9 @@ class Form
 			$urloption = '';
 			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/projet/ajax/projects.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 1, $ajaxoptions);
 
-			if (empty($hidelabel)) $out .= $langs->trans("RefOrLabel") . ' : ';
-			elseif ($hidelabel > 1) {
+			if (empty($hidelabel)) {
+				$out .= $langs->trans("RefOrLabel") . ' : ';
+			} elseif ($hidelabel > 1) {
 				$placeholder = ' placeholder="' . $langs->trans("RefOrLabel") . '"';
 				if ($hidelabel == 2) {
 					$out .= img_picto($langs->trans("Search"), 'search');
@@ -7608,14 +7640,20 @@ class Form
 			// For natural search
 			$scrit = explode(' ', $filterkey);
 			$i = 0;
-			if (count($scrit) > 1) $sql .= "(";
+			if (count($scrit) > 1) {
+				$sql .= "(";
+			}
 			foreach ($scrit as $crit) {
-				if ($i > 0) $sql .= " AND ";
+				if ($i > 0) {
+					$sql .= " AND ";
+				}
 				$sql .= "p.ref LIKE '" . $this->db->escape($prefix . $crit) . "%'";
 				$sql .= "";
 				$i++;
 			}
-			if (count($scrit) > 1) $sql .= ")";
+			if (count($scrit) > 1) {
+				$sql .= ")";
+			}
 			$sql .= ')';
 		}
 
@@ -7643,12 +7681,19 @@ class Form
 			// Do not use textifempty = ' ' or '&nbsp;' here, or search on key will search on ' key'.
 			//if (!empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='';
 			if (getDolGlobalString('PROJECT_USE_SEARCH_TO_SELECT')) {
-				if ($showempty && !is_numeric($showempty)) $textifempty = $langs->trans($showempty);
-				else $textifempty .= $langs->trans("All");
+				if ($showempty && !is_numeric($showempty)) {
+					$textifempty = $langs->trans($showempty);
+				} else {
+					$textifempty .= $langs->trans("All");
+				}
 			} else {
-				if ($showempty && !is_numeric($showempty)) $textifempty = $langs->trans($showempty);
+				if ($showempty && !is_numeric($showempty)) {
+					$textifempty = $langs->trans($showempty);
+				}
 			}
-			if ($showempty) $out .= '<option value="0" selected>' . $textifempty . '</option>';
+			if ($showempty) {
+				$out .= '<option value="0" selected>' . $textifempty . '</option>';
+			}
 
 			$i = 0;
 			while ($num && $i < $num) {
@@ -7710,7 +7755,9 @@ class Form
 		$opt .= '>';
 		$opt .= $objp->ref;
 		$objRef = $objp->ref;
-		if (!empty($filterkey) && $filterkey != '') $objRef = preg_replace('/(' . preg_quote($filterkey, '/') . ')/i', '<strong>$1</strong>', $objRef, 1);
+		if (!empty($filterkey) && $filterkey != '') {
+			$objRef = preg_replace('/(' . preg_quote($filterkey, '/') . ')/i', '<strong>$1</strong>', $objRef, 1);
+		}
 
 		$opt .= "</option>\n";
 		$optJson = array('key' => $outkey, 'value' => $outref, 'type' => $outtype);
@@ -7743,7 +7790,9 @@ class Form
 		$out = '';
 
 		// check parameters
-		if (is_null($ajaxoptions)) $ajaxoptions = array();
+		if (is_null($ajaxoptions)) {
+			$ajaxoptions = array();
+		}
 
 		if (!empty($conf->use_javascript_ajax) && getDolGlobalString('TICKET_USE_SEARCH_TO_SELECT')) {
 			$placeholder = '';
@@ -7761,8 +7810,9 @@ class Form
 
 			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/adherents/ajax/adherents.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 1, $ajaxoptions);
 
-			if (empty($hidelabel)) $out .= $langs->trans("RefOrLabel") . ' : ';
-			elseif ($hidelabel > 1) {
+			if (empty($hidelabel)) {
+				$out .= $langs->trans("RefOrLabel") . ' : ';
+			} elseif ($hidelabel > 1) {
 				$placeholder = ' placeholder="' . $langs->trans("RefOrLabel") . '"';
 				if ($hidelabel == 2) {
 					$out .= img_picto($langs->trans("Search"), 'search');
@@ -7823,14 +7873,20 @@ class Form
 			// For natural search
 			$scrit = explode(' ', $filterkey);
 			$i = 0;
-			if (count($scrit) > 1) $sql .= "(";
+			if (count($scrit) > 1) {
+				$sql .= "(";
+			}
 			foreach ($scrit as $crit) {
-				if ($i > 0) $sql .= " AND ";
+				if ($i > 0) {
+					$sql .= " AND ";
+				}
 				$sql .= "(p.firstname LIKE '" . $this->db->escape($prefix . $crit) . "%'";
 				$sql .= " OR p.lastname LIKE '" . $this->db->escape($prefix . $crit) . "%')";
 				$i++;
 			}
-			if (count($scrit) > 1) $sql .= ")";
+			if (count($scrit) > 1) {
+				$sql .= ")";
+			}
 			$sql .= ')';
 		}
 		if ($status != -1) {
@@ -7860,10 +7916,15 @@ class Form
 			// Do not use textifempty = ' ' or '&nbsp;' here, or search on key will search on ' key'.
 			//if (!empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='';
 			if (getDolGlobalString('PROJECT_USE_SEARCH_TO_SELECT')) {
-				if ($showempty && !is_numeric($showempty)) $textifempty = $langs->trans($showempty);
-				else $textifempty .= $langs->trans("All");
+				if ($showempty && !is_numeric($showempty)) {
+					$textifempty = $langs->trans($showempty);
+				} else {
+					$textifempty .= $langs->trans("All");
+				}
 			} else {
-				if ($showempty && !is_numeric($showempty)) $textifempty = $langs->trans($showempty);
+				if ($showempty && !is_numeric($showempty)) {
+					$textifempty = $langs->trans($showempty);
+				}
 			}
 			if ($showempty) {
 				$out .= '<option value="-1" selected>' . $textifempty . '</option>';
@@ -8381,7 +8442,7 @@ class Form
 			}
 		}
 		$out .= "</select>";
-			// Add code for jquery to use multiselect
+		// Add code for jquery to use multiselect
 		if ($addjscombo && $jsbeautify) {
 			// Enhance with select2
 			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
@@ -8528,7 +8589,7 @@ class Form
 			return '';
 		}
 
-		$out = '<select type="text"'.($textfortitle? ' title="'.dol_escape_htmltag($textfortitle).'"' : '').' id="'.$htmlname.'" class="'.$htmlname.($morecss ? ' ' . $morecss : '').'"'.($moreparam ? ' '.$moreparam : '').' name="'.$htmlname.'"><option></option></select>';
+		$out = '<select type="text"'.($textfortitle ? ' title="'.dol_escape_htmltag($textfortitle).'"' : '').' id="'.$htmlname.'" class="'.$htmlname.($morecss ? ' ' . $morecss : '').'"'.($moreparam ? ' '.$moreparam : '').' name="'.$htmlname.'"><option></option></select>';
 
 		$formattedarrayresult = array();
 
@@ -10541,7 +10602,8 @@ class Form
 
 			$nbofchars = dol_strlen($search_component_params_hidden);
 			$arrayofandtags = array();
-			$i = 0; $s = '';
+			$i = 0;
+			$s = '';
 			$countparenthesis = 0;
 			while ($i < $nbofchars) {
 				$char = dol_substr($search_component_params_hidden, $i, 1);

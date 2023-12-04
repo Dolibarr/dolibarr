@@ -235,8 +235,8 @@ class ChargeSociales extends CommonObject
 		$newamount = price2num($this->amount, 'MT');
 
 		if (!$this->check()) {
-			 $this->error = "ErrorBadParameter";
-			 return -2;
+			$this->error = "ErrorBadParameter";
+			return -2;
 		}
 
 		$this->db->begin();
@@ -750,7 +750,7 @@ class ChargeSociales extends CommonObject
 		$this->type_label = 'Type of social contribution';
 	}
 
-		/**
+	/**
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)

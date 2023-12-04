@@ -568,13 +568,15 @@ class Commande extends CommonOrder
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'commande/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'commande/".$this->db->escape($this->newref)."'";
 				$sql .= " WHERE filepath = 'commande/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
@@ -673,7 +675,9 @@ class Commande extends CommonOrder
 						// We increment stock of product (and sub-products)
 						$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("OrderBackToDraftInDolibarr", $this->ref));
 						if ($result < 0) {
-							$error++; $this->error = $mouvP->error; break;
+							$error++;
+							$this->error = $mouvP->error;
+							break;
 						}
 					}
 				}
@@ -1109,8 +1113,7 @@ class Commande extends CommonOrder
 										$error++;
 									}
 								}
-							} else // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
-							{
+							} else { // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
 								$origin_id = $tmp_origin_id;
 								$ret = $this->add_object_linked($origin, $origin_id);
 								if (!$ret) {
@@ -1367,7 +1370,7 @@ class Commande extends CommonOrder
 				$line->array_options[$options_key] = $value;
 			}
 
-				$this->lines[$i] = $line;
+			$this->lines[$i] = $line;
 		}
 
 		$this->entity               = $object->entity;
@@ -1395,7 +1398,7 @@ class Commande extends CommonOrder
 		$this->origin = $object->element;
 		$this->origin_id = $object->id;
 
-				// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if not using origin rate)
+		// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if not using origin rate)
 		if (!empty($conf->multicurrency->enabled)) {
 			if (!empty($object->multicurrency_code)) {
 				$this->multicurrency_code = $object->multicurrency_code;
@@ -1405,16 +1408,16 @@ class Commande extends CommonOrder
 			}
 
 			if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) {
-					$tmparray = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $this->date_commande);
-					$this->fk_multicurrency = $tmparray[0];
-					$this->multicurrency_tx = $tmparray[1];
+				$tmparray = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $this->date_commande);
+				$this->fk_multicurrency = $tmparray[0];
+				$this->multicurrency_tx = $tmparray[1];
 			} else {
-					$this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
+				$this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
 			}
 			if (empty($this->fk_multicurrency)) {
-					$this->multicurrency_code = $conf->currency;
-					$this->fk_multicurrency = 0;
-					$this->multicurrency_tx = 1;
+				$this->multicurrency_code = $conf->currency;
+				$this->fk_multicurrency = 0;
+				$this->multicurrency_tx = 1;
 			}
 		}
 
@@ -2462,7 +2465,7 @@ class Commande extends CommonOrder
 	 */
 	public function setDiscount($user, $remise, $notrigger = 0)
 	{
-		$remise = trim($remise) ?trim($remise) : 0;
+		$remise = trim($remise) ? trim($remise) : 0;
 
 		if ($user->hasRight('commande', 'creer')) {
 			$error = 0;
@@ -3388,7 +3391,8 @@ class Commande extends CommonOrder
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -3870,7 +3874,7 @@ class Commande extends CommonOrder
 				$label = $langs->trans("Order");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.'"';
 
 			$target_value = array('_self', '_blank', '_parent', '_top');
@@ -4565,7 +4569,7 @@ class OrderLine extends CommonOrderLine
 		$sql .= ' '.((!empty($this->fk_product) && $this->fk_product > 0) ? $this->fk_product : "null").',';
 		$sql .= " '".$this->db->escape($this->product_type)."',";
 		$sql .= " '".price2num($this->remise_percent)."',";
-		$sql .= " ".(price2num($this->subprice) !== '' ?price2num($this->subprice) : "null").",";
+		$sql .= " ".(price2num($this->subprice) !== '' ? price2num($this->subprice) : "null").",";
 		$sql .= " ".($this->price != '' ? "'".price2num($this->price)."'" : "null").",";
 		$sql .= ' '.(!empty($this->fk_remise_except) ? $this->fk_remise_except : "null").',';
 		$sql .= ' '.((int) $this->special_code).',';

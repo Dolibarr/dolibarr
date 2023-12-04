@@ -1,4 +1,5 @@
 <?php
+
 // Add line to select existing file
 if (!getDolGlobalString('EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES')) {
 	print '<!-- expensereport_linktofile.tpl.php -->'."\n";
@@ -22,8 +23,9 @@ if (!getDolGlobalString('EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES')) {
 		// Select image section
 		print '<td colspan="'.($action == 'editline' ? $colspan - 1 : $colspan).'">';
 		//print '<span class="opacitymedium">'.$langs->trans("AttachTheNewLineToTheDocument").'</span><br>';
-		$modulepart = 'expensereport'; $maxheightmini = 48;
-		$relativepath = (!empty($object->ref) ?dol_sanitizeFileName($object->ref) : '').'/';
+		$modulepart = 'expensereport';
+		$maxheightmini = 48;
+		$relativepath = (!empty($object->ref) ? dol_sanitizeFileName($object->ref) : '').'/';
 		$filei = 0;
 		// Loop on each attached file
 		foreach ($arrayoffiles as $file) {

@@ -100,11 +100,11 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			if (in_array($action, array(
 				'MEMBER_SUBSCRIPTION_CREATE', 'MEMBER_SUBSCRIPTION_MODIFY', 'MEMBER_SUBSCRIPTION_DELETE',
 				'DON_VALIDATE', 'DON_MODIFY', 'DON_DELETE'))) {
-				$amounts = (double) $object->amount;
+				$amounts = (float) $object->amount;
 			} elseif ($action == 'CASHCONTROL_VALIDATE') {
-				$amounts = (double) $object->cash + (double) $object->cheque + (double) $object->card;
+				$amounts = (float) $object->cash + (float) $object->cheque + (float) $object->card;
 			} elseif (property_exists($object, 'total_ttc')) {
-				$amounts = (double) $object->total_ttc;
+				$amounts = (float) $object->total_ttc;
 			}
 		}
 		/*if ($action === 'BILL_PAYED' || $action==='BILL_UNPAYED'
@@ -119,14 +119,14 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			$amounts = 0;
 			if (!empty($object->amounts)) {
 				foreach ($object->amounts as $amount) {
-					$amounts += (double) $amount;
+					$amounts += (float) $amount;
 				}
 			} elseif (!empty($object->amount)) {
 				$amounts = $object->amount;
 			}
 		} elseif (strpos($action, 'PAYMENT') !== false && !in_array($action, array('PAYMENT_ADD_TO_BANK'))) {
 			$qualified++;
-			$amounts = (double) $object->amount;
+			$amounts = (float) $object->amount;
 		}
 
 		// Another protection.

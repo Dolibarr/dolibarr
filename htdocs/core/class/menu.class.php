@@ -35,7 +35,7 @@ class Menu
 	 */
 	public function __construct()
 	{
-		  $this->liste = array();
+		$this->liste = array();
 	}
 
 	/**
