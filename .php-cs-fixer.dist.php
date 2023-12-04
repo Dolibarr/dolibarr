@@ -7,8 +7,10 @@ $finder = (new PhpCsFixer\Finder())
 	'core/includes',
 	'custom',
 	'documents',
+	'doctemplates',
 	'htdocs/custom',
 	'htdocs/includes',
+	'htdocs/install/doctemplates',
 ])
 ->notPath('vendor');
 
