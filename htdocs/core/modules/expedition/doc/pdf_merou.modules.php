@@ -485,7 +485,7 @@ class pdf_merou extends ModelePdfExpedition
 
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
-			//Affiche le filigrane brouillon - Print Draft Watermark
+		//Affiche le filigrane brouillon - Print Draft Watermark
 		if ($object->statut == 0 && (getDolGlobalString('SENDING_DRAFT_WATERMARK'))) {
 			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->SENDING_DRAFT_WATERMARK);
 		}

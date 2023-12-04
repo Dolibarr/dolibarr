@@ -559,8 +559,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 									$showpricebeforepagebreak = 0;
 								}
 							}
-						} else // No pagebreak
-						{
+						} else { // No pagebreak
 							$pdf->commitTransaction();
 						}
 						$posYAfterDescription = $pdf->GetY();
@@ -998,7 +997,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		} else {
 			//if (!empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
 			//{
-				//Local tax 1
+			//Local tax 1
 			foreach ($this->localtax1 as $localtax_type => $localtax_rate) {
 				if (in_array((string) $localtax_type, array('2', '4', '6'))) {
 					continue;
@@ -1028,7 +1027,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 
 			//if (!empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
 			//{
-				//Local tax 2
+			//Local tax 2
 			foreach ($this->localtax2 as $localtax_type => $localtax_rate) {
 				if (in_array((string) $localtax_type, array('2', '4', '6'))) {
 					continue;
@@ -1176,7 +1175,9 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		global $langs, $conf, $mysoc;
 
 		$ltrdirection = 'L';
-		if ($outputlangs->trans("DIRECTION") == 'rtl') $ltrdirection = 'R';
+		if ($outputlangs->trans("DIRECTION") == 'rtl') {
+			$ltrdirection = 'R';
+		}
 
 		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "orders", "companies", "bills", "sendings"));
