@@ -116,7 +116,7 @@ $workflowcodes = array(
 		'enabled'=>(isModEnabled('facture') && isModEnabled('commande')),
 		'picto'=>'order',
 		'warning'=>''
-    ),
+    ), // For this option, if module invoice is disabled, it does not exists, so "Classify billed" for order must be done manually from order card.
     'WORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER' => array(
         'family' => 'classify_order',
         'position' => 43,
