@@ -1686,7 +1686,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		// Fields from hook
 		$parameters = array('sql' => &$sql, 'filterobj' => $filterobj, 'objcon' => $objcon);
 		$reshook = $hookmanager->executeHooks('showActionsDoneListSelect', $parameters);    // Note that $action and $object may have been modified by hook
-		if (!empty($hookmanager->resPrint)) $sql.= $hookmanager->resPrint;
+		if (!empty($hookmanager->resPrint)) {
+			$sql.= $hookmanager->resPrint;
+		}
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_action";
@@ -1702,7 +1704,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		// Fields from hook
 		$parameters = array('sql' => &$sql, 'filterobj' => $filterobj, 'objcon' => $objcon);
 		$reshook = $hookmanager->executeHooks('showActionsDoneListFrom', $parameters);    // Note that $action and $object may have been modified by hook
-		if (!empty($hookmanager->resPrint)) $sql.= $hookmanager->resPrint;
+		if (!empty($hookmanager->resPrint)) {
+			$sql.= $hookmanager->resPrint;
+		}
 
 		if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur'))) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
@@ -1825,7 +1829,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		// Fields from hook
 		$parameters = array('sql' => &$sql, 'filterobj' => $filterobj, 'objcon' => $objcon, 'module' => $module);
 		$reshook = $hookmanager->executeHooks('showActionsDoneListWhere', $parameters);    // Note that $action and $object may have been modified by hook
-		if (!empty($hookmanager->resPrint)) $sql.= $hookmanager->resPrint;
+		if (!empty($hookmanager->resPrint)) {
+			$sql.= $hookmanager->resPrint;
+		}
 
 		if (is_array($actioncode)) {
 			foreach ($actioncode as $code) {
@@ -2100,7 +2106,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$out .= '<td class="tdoverflowmax125" title="'.$labeltype.'">';
 			$out .= $actionstatic->getTypePicto();
 			//if (empty($conf->dol_optimize_smallscreen)) {
-				$out .= $labeltype;
+			$out .= $labeltype;
 			//}
 			$out .= '</td>';
 
