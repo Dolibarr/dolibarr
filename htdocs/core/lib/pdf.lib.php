@@ -853,6 +853,7 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 	if ($account->getCountryCode() == 'IN') {
 		$bickey = "SWIFT";
 	}
+	$intermediary_bickey = "IntermediaryBICNumber";
 
 	// Get format of bank account according to its country
 	$usedetailedbban = $account->useDetailedBBAN();
@@ -985,6 +986,12 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 		$pdf->SetFont('', 'B', $default_font_size - 3);
 		$pdf->SetXY($curx, $cury);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities($bickey).': '.$outputlangs->convToOutputCharset($account->bic), 0, 'L', 0);
+	}
+
+	if (!empty($account->intermediary_bic)) {
+		$pdf->SetFont('', 'B', $default_font_size - 3);
+		$pdf->SetXY($curx, $cury);
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities($intermediary_bickey).': '.$outputlangs->convToOutputCharset($account->intermediary_bic), 0, 'L', 0);
 	}
 
 	return $pdf->getY();
