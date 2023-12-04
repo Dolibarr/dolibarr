@@ -959,7 +959,7 @@ if (empty($reshook)) {
 }
 
 
-if (!$variants) {
+if (!$variants || getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT')) {
 	/*
 	 * Stock detail (by warehouse). May go down into batch details.
 	 */
