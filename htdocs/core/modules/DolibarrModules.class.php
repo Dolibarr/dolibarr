@@ -585,7 +585,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		}
 
 		// Run complementary sql requests
-		$num = count($array_sql);
+		$num = count((array) $array_sql);
 		for ($i = 0; $i < $num; $i++) {
 			if (!$err) {
 				dol_syslog(get_class($this)."::_remove", LOG_DEBUG);
