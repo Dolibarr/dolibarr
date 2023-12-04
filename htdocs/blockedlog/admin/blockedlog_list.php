@@ -42,7 +42,7 @@ if ((!$user->admin && !$user->hasRight('blockedlog', 'read')) || empty($conf->bl
 
 // Get Parameters
 $action      = GETPOST('action', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'blockedloglist'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'blockedloglist'; // To manage different context of search
 $backtopage  = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss   = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
@@ -80,7 +80,7 @@ if (($search_start == -1 || empty($search_start)) && !GETPOSTISSET('search_start
 }
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -160,8 +160,8 @@ if ($action === 'downloadblockchain') {
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog";
 		$sql .= " WHERE entity = ".$conf->entity;
 		if (GETPOST('monthtoexport', 'int') > 0 || GETPOST('yeartoexport', 'int') > 0) {
-			$dates = dol_get_first_day(GETPOST('yeartoexport', 'int'), GETPOST('monthtoexport', 'int') ?GETPOST('monthtoexport', 'int') : 1);
-			$datee = dol_get_last_day(GETPOST('yeartoexport', 'int'), GETPOST('monthtoexport', 'int') ?GETPOST('monthtoexport', 'int') : 12);
+			$dates = dol_get_first_day(GETPOST('yeartoexport', 'int'), GETPOST('monthtoexport', 'int') ? GETPOST('monthtoexport', 'int') : 1);
+			$datee = dol_get_last_day(GETPOST('yeartoexport', 'int'), GETPOST('monthtoexport', 'int') ? GETPOST('monthtoexport', 'int') : 12);
 			$sql .= " AND date_creation BETWEEN '".$db->idate($dates)."' AND '".$db->idate($datee)."'";
 		}
 		$sql .= " ORDER BY rowid ASC"; // Required so we get the first one
@@ -190,8 +190,8 @@ if ($action === 'downloadblockchain') {
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog";
 		$sql .= " WHERE entity = ".((int) $conf->entity);
 		if (GETPOST('monthtoexport', 'int') > 0 || GETPOST('yeartoexport', 'int') > 0) {
-			$dates = dol_get_first_day(GETPOST('yeartoexport', 'int'), GETPOST('monthtoexport', 'int') ?GETPOST('monthtoexport', 'int') : 1);
-			$datee = dol_get_last_day(GETPOST('yeartoexport', 'int'), GETPOST('monthtoexport', 'int') ?GETPOST('monthtoexport', 'int') : 12);
+			$dates = dol_get_first_day(GETPOST('yeartoexport', 'int'), GETPOST('monthtoexport', 'int') ? GETPOST('monthtoexport', 'int') : 1);
+			$datee = dol_get_last_day(GETPOST('yeartoexport', 'int'), GETPOST('monthtoexport', 'int') ? GETPOST('monthtoexport', 'int') : 12);
 			$sql .= " AND date_creation BETWEEN '".$db->idate($dates)."' AND '".$db->idate($datee)."'";
 		}
 		$sql .= " ORDER BY rowid ASC"; // Required so later we can use the parameter $previoushash of checkSignature()
@@ -200,7 +200,7 @@ if ($action === 'downloadblockchain') {
 		if ($res) {
 			header('Content-Type: application/octet-stream');
 			header("Content-Transfer-Encoding: Binary");
-			header("Content-disposition: attachment; filename=\"unalterable-log-archive-".$dolibarr_main_db_name."-".(GETPOST('yeartoexport', 'int') > 0 ? GETPOST('yeartoexport', 'int').(GETPOST('monthtoexport', 'int') > 0 ?sprintf("%02d", GETPOST('monthtoexport', 'int')) : '').'-' : '').$previoushash.".csv\"");
+			header("Content-disposition: attachment; filename=\"unalterable-log-archive-".$dolibarr_main_db_name."-".(GETPOST('yeartoexport', 'int') > 0 ? GETPOST('yeartoexport', 'int').(GETPOST('monthtoexport', 'int') > 0 ? sprintf("%02d", GETPOST('monthtoexport', 'int')) : '').'-' : '').$previoushash.".csv\"");
 
 			print $langs->transnoentities('Id')
 				.';'.$langs->transnoentities('Date')
@@ -230,7 +230,7 @@ if ($action === 'downloadblockchain') {
 				$block_static->action = $obj->action;
 				$block_static->fk_object = $obj->fk_object;
 				$block_static->element = $obj->element;
-				$block_static->amounts = (double) $obj->amounts;
+				$block_static->amounts = (float) $obj->amounts;
 				$block_static->ref_object = $obj->ref_object;
 				$block_static->date_object = $db->jdate($obj->date_object);
 				$block_static->user_fullname = $obj->user_fullname;

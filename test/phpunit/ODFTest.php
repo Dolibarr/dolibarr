@@ -363,7 +363,9 @@ class ODFTest extends PHPUnit\Framework\TestCase
 		];
 
 		$odf=new Odf($filename, array());
-		if (is_object($odf)) $result = 1; // Just to test
+		if (is_object($odf)) {
+			$result = 1;
+		} // Just to test
 
 		foreach ($to_test as $case) {
 			if ($case['charset'] !== null) {

@@ -63,8 +63,8 @@ $mode = $argv[1];
 $filepath = $argv[2];
 $filepatherr = $filepath.'.err';
 //$defaultlang = empty($argv[3])?'en_US':$argv[3];
-$startlinenb = empty($argv[3])?1:$argv[3];
-$endlinenb = empty($argv[4])?0:$argv[4];
+$startlinenb = empty($argv[3]) ? 1 : $argv[3];
+$endlinenb = empty($argv[4]) ? 0 : $argv[4];
 
 if (empty($mode) || ! in_array($mode, array('test','confirm','confirmforced')) || empty($filepath)) {
 	print "Usage:  $script_file (test|confirm|confirmforced) filepath.csv [startlinenb] [endlinenb]\n";

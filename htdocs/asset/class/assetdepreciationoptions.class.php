@@ -347,7 +347,9 @@ class AssetDepreciationOptions extends CommonObject
 				$error++;
 			} elseif ($result > 0) {
 				foreach ($this->fields as $field_key => $field_info) {
-					if (in_array($field_key, array('rowid', 'fk_asset', 'fk_asset_model', 'tms', 'fk_user_modif'))) continue;
+					if (in_array($field_key, array('rowid', 'fk_asset', 'fk_asset_model', 'tms', 'fk_user_modif'))) {
+						continue;
+					}
 					$deprecation_options[$mode_key][$field_key] = $this->{$field_key};
 				}
 			}
@@ -489,7 +491,9 @@ class AssetDepreciationOptions extends CommonObject
 			require_once DOL_DOCUMENT_ROOT . '/asset/class/asset.class.php';
 			$asset = new Asset($this->db);
 			$result = $asset->fetch($this->fk_asset);
-			if ($result > 0) $result = $asset->calculationDepreciation();
+			if ($result > 0) {
+				$result = $asset->calculationDepreciation();
+			}
 			if ($result < 0) {
 				$this->errors[] = $langs->trans('AssetErrorCalculationDepreciationLines');
 				$this->errors[] = $asset->errorsToString();

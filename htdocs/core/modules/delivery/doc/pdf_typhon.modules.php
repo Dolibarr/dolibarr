@@ -366,8 +366,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 								$showpricebeforepagebreak = 0;
 							}
 						}
-					} else // No pagebreak
-					{
+					} else { // No pagebreak
 						$pdf->commitTransaction();
 					}
 

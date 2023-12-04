@@ -90,7 +90,9 @@ class AssetAccountancyCodes extends CommonObject
 			$this->accountancy_codes[$mode_key] = array();
 			foreach ($mode_info['fields'] as $field_key => $field_info) {
 				$accountancy_code = GETPOST($mode_key . '_' . $field_key, 'aZ09');
-				if (empty($accountancy_code) || $accountancy_code == '-1') $accountancy_code = '';
+				if (empty($accountancy_code) || $accountancy_code == '-1') {
+					$accountancy_code = '';
+				}
 				$this->accountancy_codes[$mode_key][$field_key] = $accountancy_code;
 			}
 		}
@@ -242,7 +244,9 @@ class AssetAccountancyCodes extends CommonObject
 			require_once DOL_DOCUMENT_ROOT . '/asset/class/asset.class.php';
 			$asset = new Asset($this->db);
 			$result = $asset->fetch($asset_id);
-			if ($result > 0) $result = $asset->calculationDepreciation();
+			if ($result > 0) {
+				$result = $asset->calculationDepreciation();
+			}
 			if ($result < 0) {
 				$this->errors[] = $langs->trans('AssetErrorCalculationDepreciationLines');
 				$this->errors[] = $asset->errorsToString();

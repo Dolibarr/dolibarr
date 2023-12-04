@@ -66,13 +66,13 @@ $vatrate = GETPOST('vatrate', 'alpha');
 $ref = GETPOST("ref", 'alpha');
 $comments = GETPOST('comments', 'restricthtml');
 $fk_c_type_fees = GETPOST('fk_c_type_fees', 'int');
-$socid = GETPOST('socid', 'int') ?GETPOST('socid', 'int') : GETPOST('socid_id', 'int');
+$socid = GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('socid_id', 'int');
 
 $childids = $user->getAllChildIds(1);
 
 if (getDolGlobalString('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH')) {
 	if (empty($date_start)) {
-		$date_start = dol_mktime(0, 0, 0, (int) dol_print_date(dol_now(), '%m'),  1, (int) dol_print_date(dol_now(), '%Y'));
+		$date_start = dol_mktime(0, 0, 0, (int) dol_print_date(dol_now(), '%m'), 1, (int) dol_print_date(dol_now(), '%Y'));
 	}
 
 	if (empty($date_end)) {
@@ -422,7 +422,9 @@ if (empty($reshook)) {
 			$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
 
 			if ($emailTo && $emailFrom) {
-				$filename = array(); $filedir = array(); $mimetype = array();
+				$filename = array();
+				$filedir = array();
+				$mimetype = array();
 
 				// SUBJECT
 				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
@@ -529,7 +531,9 @@ if (empty($reshook)) {
 			$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
 
 			if ($emailFrom && $emailTo) {
-				$filename = array(); $filedir = array(); $mimetype = array();
+				$filename = array();
+				$filedir = array();
+				$mimetype = array();
 
 				// SUBJECT
 				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
@@ -645,7 +649,9 @@ if (empty($reshook)) {
 			$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
 
 			if ($emailFrom && $emailTo) {
-				$filename = array(); $filedir = array(); $mimetype = array();
+				$filename = array();
+				$filedir = array();
+				$mimetype = array();
 
 				// SUBJECT
 				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
@@ -753,7 +759,9 @@ if (empty($reshook)) {
 			$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
 
 			if ($emailFrom && $emailTo) {
-				$filename = array(); $filedir = array(); $mimetype = array();
+				$filename = array();
+				$filedir = array();
+				$mimetype = array();
 
 				// SUBJECT
 				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
@@ -867,7 +875,9 @@ if (empty($reshook)) {
 					$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
 
 					if ($emailFrom && $emailTo) {
-						$filename = array(); $filedir = array(); $mimetype = array();
+						$filename = array();
+						$filedir = array();
+						$mimetype = array();
 
 						// SUBJECT
 						$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
@@ -1047,7 +1057,9 @@ if (empty($reshook)) {
 			$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
 
 			if ($emailFrom && $emailTo) {
-				$filename = array(); $filedir = array(); $mimetype = array();
+				$filename = array();
+				$filedir = array();
+				$mimetype = array();
 
 				// SUBJECT
 				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
@@ -1527,17 +1539,17 @@ if ($action == 'create') {
 		if (!in_array($object->fk_user_author, $user->getAllChildIds(1))) {
 			if (!$user->hasRight('expensereport', 'readall') && !$user->hasRight('expensereport', 'lire_tous')
 				&& (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || !$user->hasRight('expensereport', 'writeall_advance'))) {
-					print load_fiche_titre($langs->trans('TripCard'), '', 'trip');
+				print load_fiche_titre($langs->trans('TripCard'), '', 'trip');
 
-					print '<div class="tabBar">';
-					print $langs->trans('NotUserRightToView');
-					print '</div>';
+				print '<div class="tabBar">';
+				print $langs->trans('NotUserRightToView');
+				print '</div>';
 
-					// End of page
-					llxFooter();
-					$db->close();
+				// End of page
+				llxFooter();
+				$db->close();
 
-					exit;
+				exit;
 			}
 		}
 
@@ -1941,7 +1953,8 @@ if ($action == 'create') {
 			$resql = $db->query($sql);
 			if ($resql) {
 				$num = $db->num_rows($resql);
-				$i = 0; $totalpaid = 0;
+				$i = 0;
+				$totalpaid = 0;
 				while ($i < $num) {
 					$objp = $db->fetch_object($resql);
 
@@ -2037,7 +2050,8 @@ if ($action == 'create') {
 			print '<table id="tablelines" class="noborder centpercent">';
 
 			if (!empty($object->lines)) {
-				$i = 0; $total = 0;
+				$i = 0;
+				$total = 0;
 
 				print '<tr class="liste_titre headerexpensereportdet">';
 				print '<td class="center linecollinenb">'.$langs->trans('LineNb').'</td>';
@@ -2391,7 +2405,7 @@ if ($action == 'create') {
 				}
 			}
 
-			 // Add a new line
+			// Add a new line
 			if (($object->status == ExpenseReport::STATUS_DRAFT || $object->status == ExpenseReport::STATUS_REFUSED) && $action != 'editline' && $user->hasRight('expensereport', 'creer')) {
 				$colspan = 12;
 				if (getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
@@ -2512,10 +2526,10 @@ if ($action == 'create') {
 					print '</td>';
 				}
 
-					// Select type
-					print '<td class="center inputtype">';
-					print $formexpensereport->selectTypeExpenseReport(!empty($fk_c_type_fees) ? $fk_c_type_fees : "", 'fk_c_type_fees', 1);
-					print '</td>';
+				// Select type
+				print '<td class="center inputtype">';
+				print $formexpensereport->selectTypeExpenseReport(!empty($fk_c_type_fees) ? $fk_c_type_fees : "", 'fk_c_type_fees', 1);
+				print '</td>';
 
 				if (getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 					print '<td class="fk_c_exp_tax_cat">';
@@ -2685,7 +2699,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	if (empty($user->socid)) {
 		if ($object->status > ExpenseReport::STATUS_DRAFT) {
 			//if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->expensereport->expensereport_advance->send)) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
 			//} else
 			//	print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">' . $langs->trans('SendMail') . '</a></div>';
 		}
@@ -2747,10 +2761,10 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	if ($user->hasRight('expensereport', 'approve') && $object->status == ExpenseReport::STATUS_VALIDATED) {
 		//if($object->fk_user_validator==$user->id)
 		//{
-			// Validate
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=validate&id='.$object->id.'">'.$langs->trans('Approve').'</a></div>';
-			// Deny
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=refuse&id='.$object->id.'">'.$langs->trans('Deny').'</a></div>';
+		// Validate
+		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=validate&id='.$object->id.'">'.$langs->trans('Approve').'</a></div>';
+		// Deny
+		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=refuse&id='.$object->id.'">'.$langs->trans('Deny').'</a></div>';
 		//}
 
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid) {

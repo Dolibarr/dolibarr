@@ -966,7 +966,7 @@ $displayed_account_number = null; // Start with undefined to be able to distingu
 $i = 0;
 
 $totalarray = array();
-$totalarray['val'] = array ();
+$totalarray['val'] = array();
 $totalarray['nbfield'] = 0;
 $total_debit = 0;
 $total_credit = 0;
@@ -993,18 +993,40 @@ while ($i < min($num, $limit)) {
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		$colspan++;
 	}
-	if (!empty($arrayfields['t.piece_num']['checked'])) { $colspan++; }
-	if (!empty($arrayfields['t.code_journal']['checked'])) { $colspan++; }
-	if (!empty($arrayfields['t.doc_date']['checked'])) { $colspan++; }
-	if (!empty($arrayfields['t.doc_ref']['checked'])) { $colspan++; }
-	if (!empty($arrayfields['t.label_operation']['checked'])) { $colspan++; }
-	if (!empty($arrayfields['t.lettering_code']['checked'])) { $colspan++; }
+	if (!empty($arrayfields['t.piece_num']['checked'])) {
+		$colspan++;
+	}
+	if (!empty($arrayfields['t.code_journal']['checked'])) {
+		$colspan++;
+	}
+	if (!empty($arrayfields['t.doc_date']['checked'])) {
+		$colspan++;
+	}
+	if (!empty($arrayfields['t.doc_ref']['checked'])) {
+		$colspan++;
+	}
+	if (!empty($arrayfields['t.label_operation']['checked'])) {
+		$colspan++;
+	}
+	if (!empty($arrayfields['t.lettering_code']['checked'])) {
+		$colspan++;
+	}
 
-	if (!empty($arrayfields['t.balance']['checked'])) { $colspanend++; }
-	if (!empty($arrayfields['t.date_export']['checked'])) { $colspanend++; }
-	if (!empty($arrayfields['t.date_validated']['checked'])) { $colspanend++; }
-	if (!empty($arrayfields['t.lettering_code']['checked'])) { $colspanend++; }
-	if (!empty($arrayfields['t.import_key']['checked'])) { $colspanend++; }
+	if (!empty($arrayfields['t.balance']['checked'])) {
+		$colspanend++;
+	}
+	if (!empty($arrayfields['t.date_export']['checked'])) {
+		$colspanend++;
+	}
+	if (!empty($arrayfields['t.date_validated']['checked'])) {
+		$colspanend++;
+	}
+	if (!empty($arrayfields['t.lettering_code']['checked'])) {
+		$colspanend++;
+	}
+	if (!empty($arrayfields['t.import_key']['checked'])) {
+		$colspanend++;
+	}
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		$colspan++;
 		$colspanend--;
@@ -1022,7 +1044,9 @@ while ($i < min($num, $limit)) {
 			}
 			print '<td class="nowrap right">'.price(price2num($sous_total_debit, 'MT')).'</td>';
 			print '<td class="nowrap right">'.price(price2num($sous_total_credit, 'MT')).'</td>';
-			if ($colspanend > 0) print '<td colspan="'.$colspanend.'"></td>';
+			if ($colspanend > 0) {
+				print '<td colspan="'.$colspanend.'"></td>';
+			}
 			print '</tr>';
 			// Show balance of last shown account
 			$balance = $sous_total_debit - $sous_total_credit;
@@ -1039,7 +1063,9 @@ while ($i < min($num, $limit)) {
 				print price(price2num($sous_total_credit - $sous_total_debit, 'MT'));
 				print '</td>';
 			}
-			if ($colspanend > 0) print '<td colspan="'.$colspanend.'"></td>';
+			if ($colspanend > 0) {
+				print '<td colspan="'.$colspanend.'"></td>';
+			}
 			print '</tr>';
 		}
 
@@ -1310,7 +1336,9 @@ if ($num > 0 && $colspan > 0) {
 	print '<td class="right" colspan="'.$colspan.'">'.$langs->trans("TotalForAccount").' '.$accountg.':</td>';
 	print '<td class="nowrap right">'.price(price2num($sous_total_debit, 'MT')).'</td>';
 	print '<td class="nowrap right">'.price(price2num($sous_total_credit, 'MT')).'</td>';
-	if ($colspanend > 0) print '<td colspan="'.$colspanend.'"></td>';
+	if ($colspanend > 0) {
+		print '<td colspan="'.$colspanend.'"></td>';
+	}
 	print '</tr>';
 	// Show balance of last shown account
 	$balance = $sous_total_debit - $sous_total_credit;
@@ -1327,7 +1355,9 @@ if ($num > 0 && $colspan > 0) {
 		print price(price2num($sous_total_credit - $sous_total_debit, 'MT'));
 		print '</td>';
 	}
-	if ($colspanend > 0) print '<td colspan="'.$colspanend.'"></td>';
+	if ($colspanend > 0) {
+		print '<td colspan="'.$colspanend.'"></td>';
+	}
 	print '</tr>';
 }
 

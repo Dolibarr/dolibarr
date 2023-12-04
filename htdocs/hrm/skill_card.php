@@ -208,7 +208,7 @@ if ($action == 'create') {
 	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
 	print '<input type="hidden" name="token" value="' . newToken() . '">';
 	print '<input type="hidden" name="action" value="add">';
-	$backtopage .= (strpos($backtopage, '?') > 0 ? '&' : '?' ) ."objecttype=job";
+	$backtopage .= (strpos($backtopage, '?') > 0 ? '&' : '?') ."objecttype=job";
 	if ($backtopage) {
 		print '<input type="hidden" name="backtopage" value="' . $backtopage . '">';
 	}
@@ -314,7 +314,7 @@ if (($id || $ref) && $action == 'edit') {
 				//              if (!empty($val['help'])) {
 				//                  print $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
 				//              } else {
-					print $langs->trans($val['label']).'&nbsp;'.$langs->trans('rank').'&nbsp;'.$sk->rankorder;
+				print $langs->trans($val['label']).'&nbsp;'.$langs->trans('rank').'&nbsp;'.$sk->rankorder;
 				//              }
 				print '</td>';
 				print '<td class="valuefieldcreate">';
@@ -333,7 +333,7 @@ if (($id || $ref) && $action == 'edit') {
 					$check = 'restricthtml';
 				}
 
-					$skilldetArray = GETPOST("descriptionline", "array");
+				$skilldetArray = GETPOST("descriptionline", "array");
 				if (empty($skilldetArray)) {
 					$value = GETPOSTISSET($key) ? GETPOST($key, $check) : $sk->$key;
 				} else {
@@ -626,7 +626,7 @@ if ($action != "create" && $action != "edit") {
 		print '<input type="hidden" name="id" value="' . $id . '">';
 	}
 
-	$param_fk = "&fk_skill=" . $id . "&fk_user_creat=" . (!empty($user->rowid) ? $user->rowid :0);
+	$param_fk = "&fk_skill=" . $id . "&fk_user_creat=" . (!empty($user->rowid) ? $user->rowid : 0);
 	$backtopage = dol_buildpath('/hrm/skill_card.php', 1) . '?id=' . $id;
 	$param = "";
 	$massactionbutton = "";
@@ -816,7 +816,9 @@ if ($action != "create" && $action != "edit") {
 		print '<tr><td colspan="' . $colspan . '"><span class="opacitymedium">' . $langs->trans("NoRecordFound") . '</span></td></tr>';
 	}
 
-	if (!empty($resql)) $db->free($resql);
+	if (!empty($resql)) {
+		$db->free($resql);
+	}
 
 	$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $objectline); // Note that $action and $objectline may have been modified by hook

@@ -92,10 +92,12 @@ class AdherentTest extends PHPUnit\Framework\TestCase
 			die(1);
 		}
 		if (getDolGlobalString('MAIN_MODULE_LDAP')) {
-			print "\n".__METHOD__." module LDAP must be disabled.\n"; die(1);
+			print "\n".__METHOD__." module LDAP must be disabled.\n";
+			die(1);
 		}
 		if (getDolGlobalString('MAIN_MODULE_MAILMANSPIP')) {
-			print "\n".__METHOD__." module MailmanSpip must be disabled.\n"; die(1);
+			print "\n".__METHOD__." module MailmanSpip must be disabled.\n";
+			die(1);
 		}
 
 		print __METHOD__."\n";
@@ -358,15 +360,15 @@ class AdherentTest extends PHPUnit\Framework\TestCase
 		return $localobject;
 	}
 
-	 /**
-	 * testAdherentSetUserId
-	 *
-	 * @param   Adherent    $localobject    Member instance
-	 * @return  Adherent
-	 *
-	 * @depends testAdherentMakeSubstitution
-	 * The depends says test is run only if previous is ok
-	 */
+	/**
+	* testAdherentSetUserId
+	*
+	* @param   Adherent    $localobject    Member instance
+	* @return  Adherent
+	*
+	* @depends testAdherentMakeSubstitution
+	* The depends says test is run only if previous is ok
+	*/
 	public function testAdherentSetUserId(Adherent $localobject)
 	{
 		global $conf,$user,$langs,$db;

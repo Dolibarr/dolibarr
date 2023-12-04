@@ -136,7 +136,7 @@ class ActionsDatapolicy extends CommonHookActions
 			require_once  DOL_DOCUMENT_ROOT.'/datapolicy/class/datapolicy.class.php';
 			DataPolicy::sendMailDataPolicyContact($object);
 		} elseif ($parameters['currentcontext'] == 'membercard' && $action == 'send_datapolicy') {
-			 $object->fetch(GETPOST('id'));
+			$object->fetch(GETPOST('id'));
 			require_once  DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 			require_once  DOL_DOCUMENT_ROOT.'/datapolicy/class/datapolicy.class.php';
 			DataPolicy::sendMailDataPolicyAdherent($object);

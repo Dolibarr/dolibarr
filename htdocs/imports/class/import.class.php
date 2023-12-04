@@ -274,13 +274,16 @@ class Import
 
 		// Check parameters
 		if (empty($this->model_name)) {
-			$this->error = 'ErrorWrongParameters'; return -1;
+			$this->error = 'ErrorWrongParameters';
+			return -1;
 		}
 		if (empty($this->datatoimport)) {
-			$this->error = 'ErrorWrongParameters'; return -1;
+			$this->error = 'ErrorWrongParameters';
+			return -1;
 		}
 		if (empty($this->hexa)) {
-			$this->error = 'ErrorWrongParameters'; return -1;
+			$this->error = 'ErrorWrongParameters';
+			return -1;
 		}
 
 		$this->db->begin();
@@ -362,7 +365,8 @@ class Import
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {

@@ -56,10 +56,14 @@ if ($id > 0 || !empty($ref)) {
 $permissiontoadd = $user->hasRight('asset', 'write'); // Used by the include of actions_addupdatedelete.inc.php
 
 // Security check (enable the most restrictive one)
-if ($user->socid > 0) accessforbidden();
+if ($user->socid > 0) {
+	accessforbidden();
+}
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (!isModEnabled('asset')) accessforbidden();
+if (!isModEnabled('asset')) {
+	accessforbidden();
+}
 
 $result = $assetaccountancycodes->fetchAccountancyCodes($object->id);
 if ($result < 0) {

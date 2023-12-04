@@ -107,7 +107,8 @@ if (preg_match('/set_(.*)/', $action, $reg)) {
 	$disableext = GETPOST('AGENDA_DISABLE_EXT', 'alpha');
 	$res = dolibarr_set_const($db, 'AGENDA_DISABLE_EXT', $disableext, 'chaine', 0, '', $conf->entity);
 
-	$i = 1; $errorsaved = 0;
+	$i = 1;
+	$errorsaved = 0;
 
 	// Save agendas
 	while ($i <= $MAXAGENDA) {
@@ -204,7 +205,11 @@ print "<br>\n";
 
 
 $selectedvalue = getDolGlobalInt('AGENDA_DISABLE_EXT');
-if ($selectedvalue==1) $selectedvalue=0; else $selectedvalue=1;
+if ($selectedvalue==1) {
+	$selectedvalue=0;
+} else {
+	$selectedvalue=1;
+}
 
 print "<table class=\"noborder\" width=\"100%\">";
 

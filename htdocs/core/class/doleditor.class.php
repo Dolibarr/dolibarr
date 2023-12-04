@@ -77,7 +77,7 @@ class DolEditor
 			$rows = round($height / 20);
 		}
 		if (!$cols) {
-			$cols = ($width ?round($width / 6) : 80);
+			$cols = ($width ? round($width / 6) : 80);
 		}
 		$shorttoolbarname = preg_replace('/_encoded$/', '', $toolbarname);
 

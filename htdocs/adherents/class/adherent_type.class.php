@@ -276,7 +276,7 @@ class AdherentType extends CommonObject
 		return 1;
 	}
 
-	   /**
+	/**
 		* Delete a language for this member type
 		*
 		* @param string $langtodelete 	Language code to delete
@@ -401,7 +401,7 @@ class AdherentType extends CommonObject
 		$sql .= "caneditamount = ".((int) $this->caneditamount).",";
 		$sql .= "duration = '".$this->db->escape($this->duration_value.$this->duration_unit)."',";
 		$sql .= "note = '".$this->db->escape($this->note_public)."',";
-		$sql .= "vote = ".(integer) $this->db->escape($this->vote).",";
+		$sql .= "vote = ".(int) $this->db->escape($this->vote).",";
 		$sql .= "mail_valid = '".$this->db->escape($this->mail_valid)."'";
 		$sql .= " WHERE rowid =".((int) $this->id);
 
@@ -469,7 +469,9 @@ class AdherentType extends CommonObject
 			// Call trigger
 			$result = $this->call_trigger('MEMBER_TYPE_DELETE', $user);
 			if ($result < 0) {
-				$error++; $this->db->rollback(); return -2;
+				$error++;
+				$this->db->rollback();
+				return -2;
 			}
 			// End call triggers
 
@@ -765,7 +767,7 @@ class AdherentType extends CommonObject
 			}
 		}
 		$linkstart = '<a href="'.$url.'"';
-		$linkstart .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+		$linkstart .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 		$linkstart .= $dataparams.' class="'.$classfortooltip.'">';
 
 		$linkend = '</a>';
@@ -775,7 +777,7 @@ class AdherentType extends CommonObject
 			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), (' class="'.(($withpicto != 2) ? 'paddingright' : '').'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
-			$result .= ($maxlen ?dol_trunc($this->label, $maxlen) : $this->label);
+			$result .= ($maxlen ? dol_trunc($this->label, $maxlen) : $this->label);
 		}
 		$result .= $linkend;
 
