@@ -5267,7 +5267,7 @@ if ($module == 'initmodule') {
 					}
 				}
 			} else {
-				print '<tr><td colspan="5"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+				print '<tr><td colspan="24"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 			}
 
 			print '</table>';
