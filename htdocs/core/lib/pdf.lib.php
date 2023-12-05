@@ -986,6 +986,7 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 		$pdf->SetFont('', 'B', $default_font_size - 3);
 		$pdf->SetXY($curx, $cury);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities($bickey).': '.$outputlangs->convToOutputCharset($account->bic), 0, 'L', 0);
+		$cury += 3;
 	}
 
 	if (!empty($account->intermediary_bic)) {
