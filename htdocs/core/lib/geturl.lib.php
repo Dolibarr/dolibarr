@@ -353,24 +353,35 @@ function getDomainFromURL($url, $mode = 0)
 		'com.mx'
 	);
 
+	// Set if tld is on 2 levels
+	$tldon2level = 0;
 	$parts = array_reverse(explode('.', $url));
-	if (!empty($parts[1])) {
-		if (in_array($parts[1].'.'.$parts[0], $arrayof2levetopdomain)) {
-			$mode++;
-		}
+	if (!empty($parts[1]) && in_array($parts[1].'.'.$parts[0], $arrayof2levetopdomain)) {
+		$tldon2level = 1;
+	}
+
+	if ($tldon2level && $mode > 0) {
+		$mode++;
 	}
 
 	$tmpdomain = preg_replace('/^https?:\/\//i', '', $url); // Remove http(s)://
-	$tmpdomain = preg_replace('/\/.*$/i', '', $tmpdomain); // Remove part after domain
+	$tmpdomain = preg_replace('/\/.*$/i', '', $tmpdomain); // Remove part after /
 	if ($mode == 3) {
 		$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)\.([^\.]+)\.([^\.]+)$/', '\1.\2.\3.\4', $tmpdomain);
 	} elseif ($mode == 2) {
 		$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)\.([^\.]+)$/', '\1.\2.\3', $tmpdomain); // Remove part 'www.' before 'abc.mydomain.com'
-	} else {
+	} elseif ($mode == 1) {
 		$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)$/', '\1.\2', $tmpdomain); // Remove part 'www.abc.' before 'mydomain.com'
 	}
+
 	if (empty($mode)) {
-		$tmpdomain = preg_replace('/\.[^\.]+$/', '', $tmpdomain); // Remove first level domain (.com, .net, ...)
+		if ($tldon2level) {
+			$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)\.([^\.]+)$/', '\1.\2.\3', $tmpdomain); // Remove part 'www.abc.' before 'mydomain.com'
+			$tmpdomain = preg_replace('/\.[^\.]+\.[^\.]+$/', '', $tmpdomain); // Remove TLD (.com.mx, .co.uk, ...)
+		} else {
+			$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)$/', '\1.\2', $tmpdomain); // Remove part 'www.abc.' before 'mydomain.com'
+			$tmpdomain = preg_replace('/\.[^\.]+$/', '', $tmpdomain); // Remove TLD (.com, .net, ...)
+		}
 	}
 
 	return $tmpdomain;

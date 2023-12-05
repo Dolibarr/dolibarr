@@ -235,7 +235,7 @@ class GetUrlLibTest extends PHPUnit\Framework\TestCase
 
 		$result=getDomainFromURL('https://www.with.dolimed.com.mx', 0);
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('com.mx', $result, 'Test dolimed.com.mx 0');
+		$this->assertEquals('dolimed', $result, 'Test dolimed.com.mx 0');
 
 		$result=getDomainFromURL('https://www.with.dolimed.com.mx', 1);
 		print __METHOD__." result=".$result."\n";
