@@ -345,9 +345,26 @@ function isIPAllowed($iptocheck, $localurl)
  */
 function getDomainFromURL($url, $mode = 0)
 {
+	$arrayof2levetopdomain = array(
+		'co.at', 'or.at', 'gv.at',
+		'avocat.fr', 'aeroport.fr', 'veterinaire.fr',
+		'com.ng', 'gov.ng', 'gov.ua', 'com.ua', 'in.ua', 'org.ua', 'edu.ua', 'net.ua',
+		'net.uk', 'org.uk', 'gov.uk', 'co.uk',
+		'com.mx'
+	);
+
+	$parts = array_reverse(explode('.', $url));
+	if (!empty($parts[1])) {
+		if (in_array($parts[1].'.'.$parts[0], $arrayof2levetopdomain)) {
+			$mode++;
+		}
+	}
+
 	$tmpdomain = preg_replace('/^https?:\/\//i', '', $url); // Remove http(s)://
 	$tmpdomain = preg_replace('/\/.*$/i', '', $tmpdomain); // Remove part after domain
-	if ($mode == 2) {
+	if ($mode == 3) {
+		$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)\.([^\.]+)\.([^\.]+)$/', '\1.\2.\3.\4', $tmpdomain);
+	} elseif ($mode == 2) {
 		$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)\.([^\.]+)$/', '\1.\2.\3', $tmpdomain); // Remove part 'www.' before 'abc.mydomain.com'
 	} else {
 		$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)$/', '\1.\2', $tmpdomain); // Remove part 'www.abc.' before 'mydomain.com'
