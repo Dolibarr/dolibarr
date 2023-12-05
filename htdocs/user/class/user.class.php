@@ -118,6 +118,11 @@ class User extends CommonObject
 	public $email;
 
 	/**
+	 * @var string email
+	 */
+	public $email_oauth2;
+
+	/**
 	 * @var string personal email
 	 */
 	public $personal_email;
@@ -421,9 +426,10 @@ class User extends CommonObject
 	 *  @param  int     $entity             If a value is >= 0, we force the search on a specific entity. If -1, means search depens on default setup.
 	 *  @param	string	$email       		If defined, email to used for search
 	 *  @param	int		$fk_socpeople		If defined, id of contact for search
+	 *  @param	int		$use_email_oauth2	1=Use also email_oauth2 to fetch on email
 	 * 	@return	int							<0 if KO, 0 not found, >0 if OK
 	 */
-	public function fetch($id = 0, $login = '', $sid = '', $loadpersonalconf = 0, $entity = -1, $email = '', $fk_socpeople = 0)
+	public function fetch($id = 0, $login = '', $sid = '', $loadpersonalconf = 0, $entity = -1, $email = '', $fk_socpeople = 0, $use_email_oauth2 = 0)
 	{
 		global $conf, $user;
 
@@ -431,7 +437,8 @@ class User extends CommonObject
 		$login = trim($login);
 
 		// Get user
-		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.employee, u.gender, u.civility as civility_code, u.birth, u.email, u.personal_email, u.job,";
+		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.employee, u.gender, u.civility as civility_code, u.birth, u.job,";
+		$sql .= " u.email, u.email_oauth2, u.personal_email,";
 		$sql .= " u.socialnetworks,";
 		$sql .= " u.signature, u.office_phone, u.office_fax, u.user_mobile, u.personal_mobile,";
 		$sql .= " u.address, u.zip, u.town, u.fk_state as state_id, u.fk_country as country_id,";
@@ -491,7 +498,11 @@ class User extends CommonObject
 		} elseif ($login) {
 			$sql .= " AND u.login = '".$this->db->escape($login)."'";
 		} elseif ($email) {
-			$sql .= " AND u.email = '".$this->db->escape($email)."'";
+			$sql .= " AND (u.email = '".$this->db->escape($email)."'";
+			if ($use_email_oauth2) {
+				$sql .= " OR u.email_oauth2 = '".$this->db->escape($email)."'";
+			}
+			$sql .= ")";
 		} elseif ($fk_socpeople > 0) {
 			$sql .= " AND u.fk_socpeople = ".((int) $fk_socpeople);
 		} else {
@@ -504,9 +515,18 @@ class User extends CommonObject
 			$sql .= ' '.$this->db->plimit(1);
 		}
 
-		$result = $this->db->query($sql);
-		if ($result) {
-			$obj = $this->db->fetch_object($result);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			if ($num > 1) {
+				$this->error = "USERDUPLICATEFOUND";
+				dol_syslog(get_class($this)."::fetch more than 1 user found", LOG_WARNING);
+
+				$this->db->free($resql);
+				return 0;
+			}
+
+			$obj = $this->db->fetch_object($resql);
 			if ($obj) {
 				$this->id = $obj->rowid;
 				$this->ref = $obj->rowid;
@@ -548,6 +568,7 @@ class User extends CommonObject
 				$this->user_mobile  = $obj->user_mobile;
 				$this->personal_mobile = $obj->personal_mobile;
 				$this->email = $obj->email;
+				$this->email_oauth2 = $obj->email_oauth2;
 				$this->personal_email = $obj->personal_email;
 				$this->socialnetworks = ($obj->socialnetworks ? (array) json_decode($obj->socialnetworks, true) : array());
 				$this->job = $obj->job;
@@ -605,12 +626,12 @@ class User extends CommonObject
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
-				$this->db->free($result);
+				$this->db->free($resql);
 			} else {
 				$this->error = "USERNOTFOUND";
 				dol_syslog(get_class($this)."::fetch user not found", LOG_DEBUG);
 
-				$this->db->free($result);
+				$this->db->free($resql);
 				return 0;
 			}
 		} else {
