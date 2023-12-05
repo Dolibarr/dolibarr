@@ -194,6 +194,7 @@ if ($result) {
 	$rcctva = getDolGlobalString('ACCOUNTING_VAT_BUY_REVERSE_CHARGES_CREDIT', 'NotDefined');
 	$rcdtva = getDolGlobalString('ACCOUNTING_VAT_BUY_REVERSE_CHARGES_DEBIT', 'NotDefined');
 	$country_code_in_EEC = getCountriesInEEC();		// This make a database call but there is a cache done into $conf->cache['country_code_in_EEC']
+	$group_tax_with_lines = getDolGlobalInt('AC_JOURNAL_GROUP_TAX_WITH_LINES'); //If enabled, Tax will NOT get split off from the base entry and credited to a separate tax account (good for non-VAT countries like USA)
 
 	$i = 0;
 	while ($i < $num) {
@@ -306,14 +307,18 @@ if ($result) {
 		}
 
 		$tabttc[$obj->rowid][$compta_soc] += $obj->total_ttc;
-		$tabht[$obj->rowid][$compta_prod] += $obj->total_ht;
-		$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva;
-		$tva_npr = (($obj->info_bits & 1 == 1) ? 1 : 0);
-		if ($tva_npr) { // If NPR, we add an entry for counterpartWe into tabother
-			$tabother[$obj->rowid][$compta_counterpart_tva_npr] += $obj->total_tva;
+		if ($group_tax_with_lines) { //case where all taxes paid should be grouped with the same account as the main expense (best for USA)
+			$tabht[$obj->rowid][$compta_prod] += $obj->total_ttc;
+		} else { //case where every tax paid should be broken out into its own account for future recovery (best for VAT countries)
+			$tabht[$obj->rowid][$compta_prod] += $obj->total_ht;
+			$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva;
+			$tva_npr = (($obj->info_bits & 1 == 1) ? 1 : 0);
+			if ($tva_npr) { // If NPR, we add an entry for counterpartWe into tabother
+				$tabother[$obj->rowid][$compta_counterpart_tva_npr] += $obj->total_tva;
+			}
+			$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1;
+			$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2;
 		}
-		$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1;
-		$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2;
 		$tabcompany[$obj->rowid] = array(
 				'id' => $obj->socid,
 				'name' => $obj->name,

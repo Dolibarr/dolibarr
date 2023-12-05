@@ -477,6 +477,9 @@ if ($result) {
 					$paymentexpensereportstatic->id = $links[$key]['url_id'];
 					$tabpay[$obj->rowid]["lib"] .= $paymentexpensereportstatic->getNomUrl(2);
 					$tabpay[$obj->rowid]["paymentexpensereport"] = $paymentexpensereportstatic->id;
+					if ($compta_user) {
+						$tabtp[$obj->rowid][$compta_user] += $amounttouse;
+					}
 				} elseif ($links[$key]['type'] == 'payment_various') {
 					$paymentvariousstatic->id = $links[$key]['url_id'];
 					$paymentvariousstatic->ref = $links[$key]['url_id'];
