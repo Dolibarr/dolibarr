@@ -1988,27 +1988,19 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 
 	public $fk_facture_fourn;
 	public $fk_parent;
-	public $fk_product;
 	public $ref_supplier;
 	public $label;
-	public $description;
 	public $pu_ht;
 	public $pu_ttc;
-	public $qty;
-	public $remise_percent;
 	public $fk_remise_except;
 	public $vat_src_code;
-	public $tva_tx;
 	public $localtax1_tx;
 	public $localtax1_type;
 	public $localtax2_tx;
 	public $localtax2_type;
 
-	public $product_type;
 	public $date_start;
 	public $date_end;
-	public $info_bits;
-	public $special_code;
 	public $rang;
 
 	public $fk_user_author;

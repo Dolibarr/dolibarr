@@ -6036,11 +6036,7 @@ class FactureLigne extends CommonInvoiceLine
 	public $fk_facture;
 	//! Id parent line
 	public $fk_parent_line;
-
-	//! Description ligne
-	public $desc;
 	public $ref_ext; // External reference of the line
-
 	public $localtax1_type; // Local tax 1 type
 	public $localtax2_type; // Local tax 2 type
 	public $fk_remise_except; // Link to line into llx_remise_except
@@ -6055,17 +6051,6 @@ class FactureLigne extends CommonInvoiceLine
 	 * @var int
 	 */
 	public $tva_npr;
-
-	public $remise_percent;
-
-	/**
-	 * List of special options to define line:
-	 * 1: shipment cost lines
-	 * 2: ecotaxe
-	 * 3: ??
-	 * idofmodule: a meaning for the module
-	 */
-	public $special_code;
 
 	/**
 	 * @var string		To store the batch to consume in stock when using a POS module

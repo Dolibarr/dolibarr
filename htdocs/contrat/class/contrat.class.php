@@ -2975,11 +2975,6 @@ class ContratLigne extends CommonObjectLine
 	public $element_for_permission = 'contrat';
 
 	/**
-	 * @var int ID
-	 */
-	public $id;
-
-	/**
 	 * @var string Ref
 	 */
 	public $ref;
@@ -2990,11 +2985,6 @@ class ContratLigne extends CommonObjectLine
 	 * @var int ID
 	 */
 	public $fk_contrat;
-
-	/**
-	 * @var int ID
-	 */
-	public $fk_product;
 
 	public $statut; // 0 inactive, 4 active, 5 closed
 	public $type; // 0 for product, 1 for service
@@ -3011,15 +3001,6 @@ class ContratLigne extends CommonObjectLine
 	 */
 	public $libelle;
 
-	/**
-	 * @var string description
-	 */
-	public $description;
-
-	public $product_type; // 0 for product, 1 for service
-	public $product_ref;
-	public $product_label;
-
 	public $date_commande;
 
 	public $date_start; // date start planned
@@ -3027,22 +3008,17 @@ class ContratLigne extends CommonObjectLine
 	public $date_end; // date end planned
 	public $date_end_real; // date end real
 
-	public $tva_tx;
 	public $vat_src_code;
 	public $localtax1_tx;
 	public $localtax2_tx;
 	public $localtax1_type; // Local tax 1 type
 	public $localtax2_type; // Local tax 2 type
-	public $qty;
-	public $remise_percent;
 	public $remise;
 
 	/**
 	 * @var int ID
 	 */
 	public $fk_remise_except;
-
-	public $subprice; // Unit price HT
 
 	/**
 	 * @var float
@@ -3065,8 +3041,6 @@ class ContratLigne extends CommonObjectLine
 	public $fk_fournprice;
 
 	public $pa_ht;
-
-	public $info_bits;
 
 	/**
 	 * @var int ID

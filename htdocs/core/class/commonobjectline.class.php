@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2023      Franck Moreau        <moreauf@theobald-groupe.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,7 +77,7 @@ abstract class CommonObjectLine extends CommonObject
 
 	public $multilangs;
 
-	public $product_type;		// type in line
+	public $product_type = 0;		// type in line
 	public $fk_product;			// product id in line (when line is linked to a product)
 
 	/**
@@ -97,15 +98,54 @@ abstract class CommonObjectLine extends CommonObject
 	public $product_ref;		// ref in product table
 	public $product_label;		// label in product table
 	public $product_barcode;	// barcode in product table
-	public $product_desc;		// desc in product table
+	public $product_desc;
+
+	/**
+	 * @deprecated
+	 * @see $product_type
+	 */// desc in product table
 	public $fk_product_type;	// type in product table
 
+	/**
+	 * Quantity
+	 * @var float
+	 */
 	public $qty;
 	public $duree;
+
+	/**
+	 * Percent of discount
+	 * @var float
+	 */
 	public $remise_percent;
-	public $info_bits;
-	public $special_code;
+
+	/**
+	 * Liste d'options cumulables:
+	 * Bit 0:	0 si TVA normal - 1 si TVA NPR
+	 * Bit 1:	0 si ligne normal - 1 si bit discount (link to line into llx_remise_except)
+	 * @var int
+	 */
+	public $info_bits=0;
+
+	/**
+	 * List of special options to define line:
+	 * 1: shipment cost lines
+	 * 2: ecotaxe
+	 * 3: ??
+	 * idofmodule: a meaning for the module
+	 */
+	public $special_code=0;
+
+	/**
+	 * Unit price before taxes
+	 * @var float
+	 */
 	public $subprice;
+
+	/**
+	 * VAT %
+	 * @var float
+	 */
 	public $tva_tx;
 
 	/**
@@ -144,7 +184,7 @@ abstract class CommonObjectLine extends CommonObject
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	public function __construct($db)
+	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
 	}
@@ -208,5 +248,16 @@ abstract class CommonObjectLine extends CommonObject
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
 		return 0;
+	}
+
+	/**
+	 * Funtion to override picto property
+	 * @param string $picto picto name off the object
+	 * @return int 1
+	 */
+	public function setPicto(String $picto)
+	{
+		$this->picto = $picto;
+		return 1;
 	}
 }

@@ -2021,15 +2021,11 @@ class MoLine extends CommonObjectLine
 		'fk_default_workstation' =>array('type'=>'integer', 'label'=>'DefaultWorkstation', 'enabled'=>1, 'visible'=>1, 'notnull'=>0, 'position'=>185),
 		'fk_unit' =>array('type'=>'int', 'label'=>'Unit', 'enabled'=>1, 'visible'=>1, 'notnull'=>0, 'position'=>186)
 	);
-
-	public $rowid;
 	public $fk_mo;
 	public $origin_id;
 	public $origin_type;
 	public $position;
-	public $fk_product;
 	public $fk_warehouse;
-	public $qty;
 	public $qty_frozen;
 	public $disable_stock_change;
 	public $efficiency;
@@ -2043,7 +2039,6 @@ class MoLine extends CommonObjectLine
 	public $fk_user_modif;
 	public $import_key;
 	public $fk_parent_line;
-	public $fk_unit;
 
 	/**
 	 * @var int Service Workstation

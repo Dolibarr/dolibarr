@@ -1833,42 +1833,6 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	public $libelle; // Product label (deprecated)
 
 	/**
-	 * Type of the product. 0 for product 1 for service
-	 * @var int
-	 */
-	public $product_type = 0;
-
-	/**
-	 * Product ref
-	 * @var string
-	 */
-	public $product_ref;
-
-	/**
-	 * Product label
-	 * @var string
-	 */
-	public $product_label;
-
-	/**
-	 * Product description
-	 * @var string
-	 */
-	public $product_desc;
-
-	/**
-	 * Quantity
-	 * @var double
-	 */
-	public $qty;
-
-	/**
-	 * Unit price before taxes
-	 * @var float
-	 */
-	public $subprice;
-
-	/**
 	 * Unit price before taxes
 	 * @var float
 	 * @deprecated
@@ -1876,22 +1840,10 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	public $price;
 
 	/**
-	 * Id of corresponding product
-	 * @var int
-	 */
-	public $fk_product;
-
-	/**
 	 * VAT code
 	 * @var string
 	 */
 	public $vat_src_code;
-
-	/**
-	 * VAT %
-	 * @var float
-	 */
-	public $tva_tx;
 
 	/**
 	 * Local tax 1 %
@@ -1916,12 +1868,6 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	 * @var string
 	 */
 	public $localtax2_type;
-
-	/**
-	 * Percent of discount
-	 * @var float
-	 */
-	public $remise_percent;
 
 	/**
 	 * Fixed discount
@@ -1969,16 +1915,6 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 
 	public $marge_tx;
 	public $marque_tx;
-
-	/**
-	 * List of cumulative options:
-	 * Bit 0:	0 for common VAT - 1 if VAT french NPR
-	 * Bit 1:	0 si ligne normal - 1 si bit discount (link to line into llx_remise_except)
-	 * @var int
-	 */
-	public $info_bits = 0;
-
-	public $special_code = 0;
 
 	public $fk_user_author;
 	public $fk_user_modif;

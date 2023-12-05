@@ -1201,11 +1201,6 @@ class DeliveryLine extends CommonObjectLine
 	public $label;
 
 	/**
-	 * @var string product description
-	 */
-	public $description;
-
-	/**
 	 * @deprecated
 	 * @see $product_ref
 	 */
@@ -1217,16 +1212,8 @@ class DeliveryLine extends CommonObjectLine
 	public $libelle;
 
 	// From llx_expeditiondet
-	public $qty;
 	public $qty_asked;
 	public $qty_shipped;
-
-	public $fk_product;
-	public $product_desc;
-	public $product_type;
-	public $product_ref;
-	public $product_label;
-
 	public $price;
 
 	public $fk_origin_line;

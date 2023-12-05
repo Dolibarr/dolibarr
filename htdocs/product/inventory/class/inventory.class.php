@@ -799,11 +799,6 @@ class InventoryLine extends CommonObjectLine
 	public $isextrafieldmanaged = 0;
 
 	/**
-	 * @var string String with name of icon for inventory
-	 */
-	public $picto = 'stock';
-
-	/**
 	 *  'type' if the field format.
 	 *  'label' the translation key.
 	 *  'enabled' is a condition when the field must be managed.
@@ -838,15 +833,8 @@ class InventoryLine extends CommonObjectLine
 		'pmp_real'      => array('type'=>'double', 'label'=>'PMPReal', 'visible'=>1, 'enabled'=>1, 'position'=>35),
 		'pmp_expected'  => array('type'=>'double', 'label'=>'PMPExpected', 'visible'=>1, 'enabled'=>1, 'position'=>36),
 	);
-
-	/**
-	 * @var int ID
-	 */
-	public $rowid;
-
 	public $fk_inventory;
 	public $fk_warehouse;
-	public $fk_product;
 	public $batch;
 	public $datec;
 	public $tms;
@@ -856,6 +844,17 @@ class InventoryLine extends CommonObjectLine
 	public $pmp_real;
 	public $pmp_expected;
 
+
+	/**
+	 *  Constructor
+	 *
+	 *  @param      DoliDB		$db      Database handler
+	 */
+	public function __construct(DoliDB $db)
+	{
+		$this->db = $db;
+		$this->setPicto('stock');
+	}
 
 	/**
 	 * Create object in database

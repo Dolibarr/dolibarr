@@ -3425,23 +3425,11 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $ref;
 
 	/**
-	 * Internal ref
-	 * @var string
-	 */
-	public $product_ref;
-
-	/**
 	 * Supplier reference of price when we added the line. May have been changed after line was added.
 	 * TODO Rename field ref to ref_supplier into table llx_facture_fourn_det and llx_commande_fournisseurdet and update fields into updateline
 	 * @var string
 	 */
 	public $ref_supplier;
-
-	/**
-	 * Product description
-	 * @var string
-	 */
-	public $product_desc;
 
 	/**
 	 * Unit price before taxes
@@ -3450,12 +3438,6 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 * @see $subprice
 	 */
 	public $pu_ht;
-
-	/**
-	 * Unit price excluded taxes
-	 * @var float
-	 */
-	public $subprice;
 
 	/**
 	 * Unit price included taxes
@@ -3481,7 +3463,6 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 * Description of the line
 	 * @var string
 	 */
-	public $description;
 
 	public $date_start;
 	public $date_end;
@@ -3505,12 +3486,6 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $vat_src_code;
 
 	/**
-	 * VAT %
-	 * @var float
-	 */
-	public $tva_tx;
-
-	/**
 	 * Local tax 1 %
 	 * @var float
 	 */
@@ -3521,18 +3496,6 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 * @var float
 	 */
 	public $localtax2_tx;
-
-	/**
-	 * Quantity
-	 * @var double
-	 */
-	public $qty;
-
-	/**
-	 * Percent of discount
-	 * @var float
-	 */
-	public $remise_percent;
 
 	/**
 	 * Buying price value
@@ -3571,31 +3534,6 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $total_localtax2;
 
 	/**
-	 * @var int ID
-	 */
-	public $fk_product;
-
-	/**
-	 * Type of the product. 0 for product 1 for service
-	 * @var int
-	 */
-	public $product_type;
-
-	/**
-	 * Label of the product
-	 * @var string
-	 */
-	public $product_label;
-
-	/**
-	 * List of cumulative options:
-	 * Bit 0:	0 si TVA normal - 1 si TVA NPR
-	 * Bit 1:	0 si ligne normal - 1 si bit discount (link to line into llx_remise_except)
-	 * @var int
-	 */
-	public $info_bits;
-
-	/**
 	 * Link to line into llx_remise_except
 	 * @var int
 	 */
@@ -3605,8 +3543,6 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 * @var int ID
 	 */
 	public $fk_parent_line;
-
-	public $special_code;
 
 	/**
 	 * @var int rank of line

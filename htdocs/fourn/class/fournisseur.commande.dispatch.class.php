@@ -62,17 +62,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 	/**
 	 * @var int ID
 	 */
-	public $id;
-
-	/**
-	 * @var int ID
-	 */
 	public $fk_commande;
-
-	/**
-	 * @var int ID
-	 */
-	public $fk_product;
 
 	/**
 	 * @var int ID. Should be named fk_origin_line ?
@@ -81,14 +71,10 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 
 	public $fk_reception;
 
-
-	public $qty;
 	public $qty_asked;
 
 	public $libelle;
 	public $label;
-	public $desc;
-	public $tva_tx;
 	public $vat_src_code;
 	public $ref_supplier;
 

@@ -2831,13 +2831,7 @@ class ExpenseReportLine extends CommonObjectLine
 	 */
 	public $error = '';
 
-	/**
-	 * @var int ID
-	 */
-	public $rowid;
-
 	public $comments;
-	public $qty;
 	public $value_unit;
 	public $date;
 
@@ -2876,7 +2870,6 @@ class ExpenseReportLine extends CommonObjectLine
 
 	public $vatrate;
 	public $vat_src_code;
-	public $tva_tx;
 	public $localtax1_tx;
 	public $localtax2_tx;
 	public $localtax1_type;
@@ -2890,18 +2883,9 @@ class ExpenseReportLine extends CommonObjectLine
 
 	// Multicurrency
 	/**
-	 * @var int Currency ID
-	 */
-	public $fk_multicurrency;
-
-	/**
 	 * @var string multicurrency code
 	 */
-	public $multicurrency_code;
 	public $multicurrency_tx;
-	public $multicurrency_total_ht;
-	public $multicurrency_total_tva;
-	public $multicurrency_total_ttc;
 
 	/**
 	 * @var int ID into llx_ecm_files table to link line to attached file

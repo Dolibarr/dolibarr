@@ -2823,11 +2823,6 @@ class SupplierProposalLine extends CommonObjectLine
 	/**
 	 * @var int ID
 	 */
-	public $id;
-
-	/**
-	 * @var int ID
-	 */
 	public $fk_supplier_proposal;
 
 	/**
@@ -2835,31 +2830,7 @@ class SupplierProposalLine extends CommonObjectLine
 	 */
 	public $fk_parent_line;
 
-	public $desc; // Description ligne
-
-	/**
-	 * @var int ID
-	 */
-	public $fk_product; // Id produit predefini
-
-	/**
-	 * @deprecated
-	 * @see $product_type
-	 */
-	public $fk_product_type;
-	/**
-	 * Product type
-	 * @var int
-	 * @see Product::TYPE_PRODUCT, Product::TYPE_SERVICE
-	 */
-	public $product_type = Product::TYPE_PRODUCT;
-
-	public $qty;
-	public $tva_tx;
 	public $vat_src_code;
-
-	public $subprice;
-	public $remise_percent;
 
 	/**
 	 * @var int ID
@@ -2877,15 +2848,6 @@ class SupplierProposalLine extends CommonObjectLine
 	public $marge_tx;
 	public $marque_tx;
 
-	public $special_code; // Tag for special lines (exlusive tags)
-	// 1: frais de port
-	// 2: ecotaxe
-	// 3: option line (when qty = 0)
-
-	public $info_bits = 0; // Liste d'options cumulables:
-	// Bit 0: 	0 si TVA normal - 1 si TVA NPR
-	// Bit 1:	0 ligne normale - 1 si ligne de remise fixe
-
 	public $total_ht; // Total HT de la ligne toute quantite et incluant la remise ligne
 	public $total_tva; // Total TVA de la ligne toute quantite et incluant la remise ligne
 	public $total_ttc; // Total TTC de la ligne toute quantite et incluant la remise ligne
@@ -2901,34 +2863,16 @@ class SupplierProposalLine extends CommonObjectLine
 	public $ref;
 
 	/**
-	 * Product reference
-	 * @var string
-	 */
-	public $product_ref;
-
-	/**
 	 * @deprecated
 	 * @see $product_label
 	 */
 	public $libelle;
 
 	/**
-	 *  Product label
-	 * @var string
-	 */
-	public $product_label;
-
-	/**
 	 * Custom label
 	 * @var string
 	 */
 	public $label;
-
-	/**
-	 * Product description
-	 * @var string
-	 */
-	public $product_desc;
 
 	public $localtax1_tx; // Local tax 1
 	public $localtax2_tx; // Local tax 2
@@ -2941,18 +2885,6 @@ class SupplierProposalLine extends CommonObjectLine
 
 	public $ref_fourn;
 	public $ref_supplier;
-
-	// Multicurrency
-	/**
-	 * @var int ID
-	 */
-	public $fk_multicurrency;
-
-	public $multicurrency_code;
-	public $multicurrency_subprice;
-	public $multicurrency_total_ht;
-	public $multicurrency_total_tva;
-	public $multicurrency_total_ttc;
 
 	/**
 	 * 	Class line Contructor

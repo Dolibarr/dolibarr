@@ -54,11 +54,6 @@ class Task extends CommonObjectLine
 	public $fk_element = 'fk_element';
 
 	/**
-	 * @var string String with name of icon for myobject.
-	 */
-	public $picto = 'projecttask';
-
-	/**
 	 * @var array	List of child tables. To test if we can delete object.
 	 */
 	protected $childtables = array(
@@ -78,7 +73,6 @@ class Task extends CommonObjectLine
 	/**
 	 * @var string description
 	 */
-	public $description;
 
 	public $duration_effective; // total of time spent on this task
 	public $planned_workload;
@@ -192,6 +186,7 @@ class Task extends CommonObjectLine
 	public function __construct($db)
 	{
 		$this->db = $db;
+		$this->setPicto('projecttask');
 	}
 
 

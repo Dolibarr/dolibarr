@@ -61,12 +61,6 @@ class Skilldet extends CommonObjectLine
 	 */
 	public $isextrafieldmanaged = 1;
 
-	/**
-	 * @var string String with name of icon for skilldet. Must be the part after the 'object_' into object_skilldet.png
-	 */
-	public $picto = 'skilldet@hrm';
-
-
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
 	const STATUS_CANCELED = 9;
@@ -110,10 +104,8 @@ class Skilldet extends CommonObjectLine
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>0,),
 	);
-	public $rowid;
 	public $fk_skill;
 	public $rankorder;
-	public $description;
 	public $fk_user_creat;
 	public $fk_user_modif;
 	// END MODULEBUILDER PROPERTIES
@@ -165,6 +157,7 @@ class Skilldet extends CommonObjectLine
 		global $conf, $langs;
 
 		$this->db = $db;
+		$this->setPicto('skilldet@hrm');
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;

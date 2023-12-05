@@ -4050,27 +4050,9 @@ class PropaleLigne extends CommonObjectLine
 	// From llx_propaldet
 	public $fk_propal;
 	public $fk_parent_line;
-	public $desc; // Description ligne
-	public $fk_product; // Id produit predefini
-	/**
-	 * @deprecated
-	 * @see $product_type
-	 */
-	public $fk_product_type;
-	/**
-	 * Product type.
-	 * @var int
-	 * @see Product::TYPE_PRODUCT, Product::TYPE_SERVICE
-	 */
-	public $product_type = Product::TYPE_PRODUCT;
 
-	public $qty;
-
-	public $tva_tx;
 	public $vat_src_code;
 
-	public $subprice;
-	public $remise_percent;
 	public $fk_remise_except;
 
 	public $rang = 0;
@@ -4079,15 +4061,6 @@ class PropaleLigne extends CommonObjectLine
 	public $pa_ht;
 	public $marge_tx;
 	public $marque_tx;
-
-	public $special_code; // Tag for special lines (exlusive tags)
-	// 1: frais de port
-	// 2: ecotaxe
-	// 3: option line (when qty = 0)
-
-	public $info_bits = 0; // Some other info:
-	// Bit 0: 	0 si TVA normal - 1 si TVA NPR
-	// Bit 1:	0 ligne normale - 1 si ligne de remise fixe
 
 	public $total_ht; // Total HT  de la ligne toute quantite et incluant la remise ligne
 	public $total_tva; // Total TVA  de la ligne toute quantite et incluant la remise ligne
@@ -4110,11 +4083,7 @@ class PropaleLigne extends CommonObjectLine
 	 * @see $product_ref
 	 */
 	public $ref;
-	/**
-	 * Product reference
-	 * @var string
-	 */
-	public $product_ref;
+
 	/**
 	 * @deprecated
 	 * @see $product_label
@@ -4125,28 +4094,12 @@ class PropaleLigne extends CommonObjectLine
 	 * @see $product_label
 	 */
 	public $label;
-	/**
-	 *  Product label
-	 * @var string
-	 */
-	public $product_label;
-	/**
-	 * Product description
-	 * @var string
-	 */
-	public $product_desc;
 
 	/**
 	 * Product use lot
 	 * @var string
 	 */
 	public $product_tobatch;
-
-	/**
-	 * Product barcode
-	 * @var string
-	 */
-	public $product_barcode;
 
 	public $localtax1_tx; // Local tax 1
 	public $localtax2_tx; // Local tax 2
@@ -4159,15 +4112,6 @@ class PropaleLigne extends CommonObjectLine
 	public $date_end;
 
 	public $skip_update_total; // Skip update price total for special lines
-
-	// Multicurrency
-	public $fk_multicurrency;
-	public $multicurrency_code;
-	public $multicurrency_subprice;
-	public $multicurrency_total_ht;
-	public $multicurrency_total_tva;
-	public $multicurrency_total_ttc;
-
 
 	/**
 	 * 	Class line Contructor

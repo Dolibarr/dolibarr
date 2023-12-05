@@ -1918,16 +1918,6 @@ class AccountLine extends CommonObjectLine
 	public $table_element = 'bank';
 
 	/**
-	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
-	 */
-	public $picto = 'accountline';
-
-	/**
-	 * @var int ID
-	 */
-	public $id;
-
-	/**
 	 * @var string Ref
 	 */
 	public $ref;
@@ -2027,6 +2017,7 @@ class AccountLine extends CommonObjectLine
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+		$this->setPicto('accountline');
 	}
 
 	/**

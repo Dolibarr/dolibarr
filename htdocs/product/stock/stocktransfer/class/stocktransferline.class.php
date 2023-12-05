@@ -54,12 +54,6 @@ class StockTransferLine extends CommonObjectLine
 	 */
 	public $isextrafieldmanaged = 1;
 
-	/**
-	 * @var string String with name of icon for stocktransferline. Must be the part after the 'object_' into object_stocktransferline.png
-	 */
-	public $picto = 'stocktransferline@stocktransfer';
-
-
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
 	const STATUS_CANCELED = 9;
@@ -106,13 +100,10 @@ class StockTransferLine extends CommonObjectLine
 		'pmp' => array('type'=>'double'/*, 'help'=>'THMEstimatedHelp'*/, 'label'=>'PMP', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1,),
 		'rang' => array('type'=>'integer', 'label'=>'Qty', 'enabled'=>'1', 'position'=>45, 'notnull'=>0, 'visible'=>0, 'default'=>'0', 'isameasure'=>'1', 'css'=>'maxwidth75imp', 'help'=>"Help text for quantity",),
 	);
-	public $rowid;
 	public $amount;
-	public $qty;
 	public $fk_warehouse_destination;
 	public $fk_warehouse_source;
 	public $fk_stocktransfer;
-	public $fk_product;
 	public $batch;
 
 	/**
@@ -133,6 +124,7 @@ class StockTransferLine extends CommonObjectLine
 		global $conf, $langs;
 
 		$this->db = $db;
+		$this->setPicto('stocktransferline@stocktransfer');
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;

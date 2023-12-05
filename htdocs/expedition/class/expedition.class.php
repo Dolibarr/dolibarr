@@ -2602,19 +2602,9 @@ class ExpeditionLigne extends CommonObjectLine
 	public $db;
 
 	/**
-	 * @var float qty asked From llx_expeditiondet
-	 */
-	public $qty;
-
-	/**
 	 * @var float qty shipped
 	 */
 	public $qty_shipped;
-
-	/**
-	 * @var int Id of product
-	 */
-	public $fk_product;
 
 	// detail of lot and qty = array(id in llx_expeditiondet_batch, fk_expeditiondet, batch, qty, fk_origin_stock)
 	// We can use this to know warehouse planned to be used for each lot.
@@ -2643,72 +2633,17 @@ class ExpeditionLigne extends CommonObjectLine
 	public $ref;
 
 	/**
-	 * @var string product ref
-	 */
-	public $product_ref;
-
-	/**
 	 * @deprecated
 	 * @see $product_label
 	 */
 	public $libelle;
 
 	/**
-	 * @var string product label
-	 */
-	public $product_label;
-
-	/**
-	 * @var string product description
-	 * @deprecated
-	 * @see $product_desc
-	 */
-	public $desc;
-
-	/**
-	 * @var string product description
-	 */
-	public $product_desc;
-
-	/**
-	 * Type of the product. 0 for product, 1 for service
-	 * @var int
-	 */
-	public $product_type = 0;
-
-	/**
 	 * @var int rang of line
 	 */
 	public $rang;
 
-	/**
-	 * @var float weight
-	 */
-	public $weight;
-	public $weight_units;
-
-	/**
-	 * @var float weight
-	 */
-	public $length;
-	public $length_units;
-
-	/**
-	 * @var float weight
-	 */
-	public $surface;
-	public $surface_units;
-
-	/**
-	 * @var float weight
-	 */
-	public $volume;
-	public $volume_units;
-
 	// Invoicing
-	public $remise_percent;
-	public $tva_tx;
-
 	/**
 	 * @var float total without tax
 	 */
