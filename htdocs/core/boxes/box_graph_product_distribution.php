@@ -423,9 +423,9 @@ class box_graph_product_distribution extends ModeleBoxes
 			);
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
+				'td' => 'class="nohover left"',
 				'maxlength'=>500,
-				'text' => $mesg
+				'text' => '<span class="opacitymedium">'.$mesg.'</span>'
 			);
 		}
 	}
