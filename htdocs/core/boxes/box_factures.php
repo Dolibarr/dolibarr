@@ -207,7 +207,7 @@ class box_factures extends ModeleBoxes
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
-						'text'=>$langs->trans("NoRecordedInvoices"),
+						'text'=> '<span class="opacitymedium">'.$langs->trans("NoRecordedInvoices").'</span>',
 					);
 				}
 

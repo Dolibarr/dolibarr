@@ -204,7 +204,7 @@ class box_factures_fourn extends ModeleBoxes
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
-						'text'=>$langs->trans("NoModifiedSupplierBills"),
+						'text'=> '<span class="opacitymedium">'.$langs->trans("NoModifiedSupplierBills").'</span>',
 					);
 				}
 
