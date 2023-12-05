@@ -80,7 +80,6 @@ if (getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE_SCREEN') && in_array($objec
 	$sign = -1;
 }
 
-
 $coldisplay = 0;
 print "<!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->\n";
 print '<tr  id="row-' . $line->id . '" class="drag drop oddeven"' . $domData . '>';
@@ -304,7 +303,6 @@ if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 
 // VAT Rate
 print '<td class="linecolvat nowrap right">';
-$coldisplay++;
 $positiverates = '';
 if (price2num($line->tva_tx)) {
 	$positiverates .= ($positiverates ? '/' : '') . price2num($line->tva_tx);
@@ -322,6 +320,7 @@ print $tooltiponprice;
 print vatrate($positiverates . ($line->vat_src_code ? ' (' . $line->vat_src_code . ')' : ''), '%', $line->info_bits);
 print $tooltiponpriceend;
 print '</td>';
+$coldisplay++;
 
 print '<td class="linecoluht nowraponall right">';
 print price($sign * $line->subprice) . '</td>';
@@ -346,8 +345,6 @@ if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH
 
 // line qty
 print '<td class="linecolqty nowraponall right">';
-$coldisplay++;
-
 if ((($line->info_bits & 2) != 2) && $line->special_code != 3) {
 	// I comment this because it shows info even when not required
 	// for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
@@ -358,6 +355,7 @@ if ((($line->info_bits & 2) != 2) && $line->special_code != 3) {
 	print '&nbsp;';
 }
 print '</td>';
+$coldisplay++;
 
 if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	print '<td class="linecoluseunit nowrap left">';
