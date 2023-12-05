@@ -38,12 +38,12 @@ class Categories extends DolibarrApi
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
-	static $FIELDS = array(
+	public static $FIELDS = array(
 		'label',
 		'type'
 	);
 
-	static $TYPES = array(
+	public static $TYPES = array(
 		0 => 'product',
 		1 => 'supplier',
 		2 => 'customer',
@@ -51,10 +51,13 @@ class Categories extends DolibarrApi
 		4 => 'contact',
 		5 => 'account',
 		6 => 'project',
-		//7 => 'user',
-		//8 => 'bank_line',
-		//9 => 'warehouse',
-		//10 => 'actioncomm',
+		7 => 'user',
+		8 => 'bank_line',
+		9 => 'warehouse',
+		10 => 'actioncomm',
+		11 => 'website_page',
+		12 => 'ticket',
+		13 => 'knowledgemanagement'
 	);
 
 	/**
@@ -77,11 +80,11 @@ class Categories extends DolibarrApi
 	 *
 	 * Return an array with category informations
 	 *
-	 * @param 	int 	$id ID of category
-	 * @param 	bool 	$include_childs Include child categories list (true or false)
-	 * @return 	array|mixed data without useless information
+	 * @param	int		$id ID of category
+	 * @param	bool	$include_childs Include child categories list (true or false)
+	 * @return	array|mixed data without useless information
 	 *
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	public function get($id, $include_childs = false)
 	{
@@ -103,7 +106,7 @@ class Categories extends DolibarrApi
 			if (!is_array($cats)) {
 				throw new RestException(500, 'Error when fetching child categories', array_merge(array($this->category->error), $this->category->errors));
 			}
-			$this->category->childs = [];
+			$this->category->childs = array();
 			foreach ($cats as $cat) {
 				$this->category->childs[] = $this->_cleanObjectDatas($cat);
 			}
@@ -123,11 +126,12 @@ class Categories extends DolibarrApi
 	 * @param int		$page		Page number
 	 * @param string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact')
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                Array of category objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $type = '', $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $type = '', $sqlfilters = '', $properties = '')
 	{
 		global $db, $conf;
 
@@ -138,27 +142,23 @@ class Categories extends DolibarrApi
 		}
 
 		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."categorie as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."categorie AS t LEFT JOIN ".MAIN_DB_PREFIX."categories_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 		$sql .= ' WHERE t.entity IN ('.getEntity('category').')';
-		if (!empty($type))
-		{
+		if (!empty($type)) {
 			$sql .= ' AND t.type='.array_search($type, Categories::$TYPES);
 		}
 		// Add sql filters
-		if ($sqlfilters)
-		{
-			if (!DolibarrApi::_checkFilters($sqlfilters))
-			{
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+		if ($sqlfilters) {
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
-			if ($page < 0)
-			{
+			if ($page < 0) {
 				$page = 0;
 			}
 			$offset = $limit * $page;
@@ -167,22 +167,19 @@ class Categories extends DolibarrApi
 		}
 
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$i = 0;
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
-			while ($i < $min)
-			{
+			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$category_static = new Categorie($this->db);
 				if ($category_static->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($category_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($category_static), $properties);
 				}
 				$i++;
 			}
-		}
-		else {
+		} else {
 			throw new RestException(503, 'Error when retrieve category list : '.$this->db->lasterror());
 		}
 		if (!count($obj_ret)) {
@@ -238,7 +235,9 @@ class Categories extends DolibarrApi
 		}
 
 		foreach ($request_data as $field => $value) {
-			if ($field == 'id') continue;
+			if ($field == 'id') {
+				continue;
+			}
 			$this->category->$field = $value;
 		}
 
@@ -306,7 +305,8 @@ class Categories extends DolibarrApi
 			Categorie::TYPE_CUSTOMER,
 			Categorie::TYPE_SUPPLIER,
 			Categorie::TYPE_MEMBER,
-			Categorie::TYPE_PROJECT
+			Categorie::TYPE_PROJECT,
+			Categorie::TYPE_KNOWLEDGEMANAGEMENT
 		])) {
 			throw new RestException(401);
 		}
@@ -315,13 +315,15 @@ class Categories extends DolibarrApi
 			throw new RestException(401);
 		} elseif ($type == Categorie::TYPE_CONTACT && !DolibarrApiAccess::$user->rights->contact->lire) {
 			throw new RestException(401);
-		} elseif ($type == Categorie::TYPE_CUSTOMER && !DolibarrApiAccess::$user->rights->societe->lire) {
+		} elseif ($type == Categorie::TYPE_CUSTOMER && !DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
 			throw new RestException(401);
 		} elseif ($type == Categorie::TYPE_SUPPLIER && !DolibarrApiAccess::$user->rights->fournisseur->lire) {
 			throw new RestException(401);
 		} elseif ($type == Categorie::TYPE_MEMBER && !DolibarrApiAccess::$user->rights->adherent->lire) {
 			throw new RestException(401);
 		} elseif ($type == Categorie::TYPE_PROJECT && !DolibarrApiAccess::$user->rights->projet->lire) {
+			throw new RestException(401);
+		} elseif ($type == Categorie::TYPE_KNOWLEDGEMANAGEMENT && !DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
 			throw new RestException(401);
 		}
 
@@ -384,7 +386,7 @@ class Categories extends DolibarrApi
 			}
 			$object = new Contact($this->db);
 		} elseif ($type === Categorie::TYPE_MEMBER) {
-			if (!DolibarrApiAccess::$user->rights->adherent->creer) {
+			if (!DolibarrApiAccess::$user->hasRight('adherent', 'creer')) {
 				throw new RestException(401);
 			}
 			$object = new Adherent($this->db);
@@ -464,7 +466,7 @@ class Categories extends DolibarrApi
 			}
 			$object = new Contact($this->db);
 		} elseif ($type === Categorie::TYPE_MEMBER) {
-			if (!DolibarrApiAccess::$user->rights->adherent->creer) {
+			if (!DolibarrApiAccess::$user->hasRight('adherent', 'creer')) {
 				throw new RestException(401);
 			}
 			$object = new Adherent($this->db);
@@ -544,7 +546,7 @@ class Categories extends DolibarrApi
 			}
 			$object = new Contact($this->db);
 		} elseif ($type === Categorie::TYPE_MEMBER) {
-			if (!DolibarrApiAccess::$user->rights->adherent->creer) {
+			if (!DolibarrApiAccess::$user->hasRight('adherent', 'creer')) {
 				throw new RestException(401);
 			}
 			$object = new Adherent($this->db);
@@ -622,7 +624,7 @@ class Categories extends DolibarrApi
 			}
 			$object = new Contact($this->db);
 		} elseif ($type === Categorie::TYPE_MEMBER) {
-			if (!DolibarrApiAccess::$user->rights->adherent->creer) {
+			if (!DolibarrApiAccess::$user->hasRight('adherent', 'creer')) {
 				throw new RestException(401);
 			}
 			$object = new Adherent($this->db);
@@ -658,7 +660,7 @@ class Categories extends DolibarrApi
 	 * Clean sensible object datas
 	 *
 	 * @param   Categorie  $object    Object to clean
-	 * @return    array    Array of cleaned object properties
+	 * @return  Object     Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -666,6 +668,10 @@ class Categories extends DolibarrApi
 		$object = parent::_cleanObjectDatas($object);
 
 		// Remove fields not relevent to categories
+		unset($object->MAP_CAT_FK);
+		unset($object->MAP_CAT_TABLE);
+		unset($object->MAP_OBJ_CLASS);
+		unset($object->MAP_OBJ_TABLE);
 		unset($object->country);
 		unset($object->country_id);
 		unset($object->country_code);
@@ -676,9 +682,6 @@ class Categories extends DolibarrApi
 		unset($object->total_ttc);
 		unset($object->total_tva);
 		unset($object->lines);
-		unset($object->fk_incoterms);
-		unset($object->label_incoterms);
-		unset($object->location_incoterms);
 		unset($object->civility_id);
 		unset($object->name);
 		unset($object->lastname);
@@ -721,8 +724,9 @@ class Categories extends DolibarrApi
 	{
 		$category = array();
 		foreach (Categories::$FIELDS as $field) {
-			if (!isset($data[$field]))
+			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
+			}
 			$category[$field] = $data[$field];
 		}
 		return $category;
@@ -747,8 +751,7 @@ class Categories extends DolibarrApi
 			throw new RestException(401);
 		}
 
-		if (empty($type))
-		{
+		if (empty($type)) {
 			throw new RestException(500, 'The "type" parameter is required.');
 		}
 
@@ -769,6 +772,7 @@ class Categories extends DolibarrApi
 
 		$objects = $result;
 		$cleaned_objects = array();
+		$objects_api = null;
 		if ($type == 'member') {
 			$objects_api = new Members();
 		} elseif ($type == 'customer' || $type == 'supplier') {

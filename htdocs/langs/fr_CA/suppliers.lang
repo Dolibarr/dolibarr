@@ -2,13 +2,10 @@
 TotalBuyingPriceMinShort=Total de sous-produits par prix d'achat
 SomeSubProductHaveNoPrices=Certains sous-produits n'ont pas de prix défini
 ChangeSupplierPrice=Changer le prix d'achat
-ReferenceSupplierIsAlreadyAssociatedWithAProduct=Ce fournisseur de référence est déjà associé à une référence : %s
 Availability=Disponible
 ApproveThisOrder=Approuver cette commande
 ConfirmApproveThisOrder=Êtes-vous sûr de vouloir approuver la commande <b> %s</b>?
 ConfirmDenyingThisOrder=Êtes-vous sûr de vouloir refuser cette commande <b> %s</b>?
 ConfirmCancelThisOrder=Êtes-vous sûr de vouloir annuler cette commande <b> %s</b>?
-DescNbDaysToDelivery=Délai de livraison maximum pour les produits de cette commande
 DoNotOrderThisProductToThisSupplier=Ne commandez pas
-NotTheGoodQualitySupplier=Qualité incorrecte
 AllProductServicePrices=Tous les prix des produits / services

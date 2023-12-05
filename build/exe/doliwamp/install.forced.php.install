@@ -22,6 +22,7 @@ $force_install_databaserootpass='WAMPMYSQLNEWPASSWORD';
 $force_install_dolibarrlogin='admin';
 $force_install_nophpinfo='1';
 $force_install_lockinstall='644';
+$force_install_distrib='doliwamp';
 
 $force_install_module='';
 ?>

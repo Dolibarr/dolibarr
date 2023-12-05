@@ -1,8 +1,10 @@
-# ProductBATCH language file - en_US - ProductBATCH
+# ProductBATCH language file - Source file is en_US - ProductBATCH
 ManageLotSerial=Usa lotto/numero di serie
-ProductStatusOnBatch=Sì (è richiesto il lotto/numero di serie)
+ProductStatusOnBatch=Sì (lotto richiesto)
+ProductStatusOnSerial=Sì (è richiesto un numero di serie univoco)
 ProductStatusNotOnBatch=No (è richiesto il lotto/numero di serie)
-ProductStatusOnBatchShort=Sì
+ProductStatusOnBatchShort=Quantità
+ProductStatusOnSerialShort=Seriale
 ProductStatusNotOnBatchShort=No
 Batch=Lotto/numero di serie
 atleast1batchfield=Data di scadenza o lotto/numero di serie
@@ -15,10 +17,31 @@ printBatch=Lotto/numero di serie: %s
 printEatby=Consumare entro: %s
 printSellby=Da vendere entro: %s
 printQty=Quantità: %d
+printPlannedWarehouse=Magazzino: %s
 AddDispatchBatchLine=Aggiungi una riga per la durata a scaffale
-WhenProductBatchModuleOnOptionAreForced=When module Lot/Serial is on, automatic stock decrease  is forced to 'Decrease real stocks on shipping validation' and automatic increase mode is forced to 'Increase real stocks on manual dispatching into warehouses' and can't be edited. Other options can be defined as you want.
+WhenProductBatchModuleOnOptionAreForced=When module Lot/Serial is on, automatic stock decrease  is forced to '%s' and automatic increase mode is forced to '%s'. Some choices may be not available. Other options can be defined as you want.
 ProductDoesNotUseBatchSerial=Questo prodotto non usa lotto/numero di serie
 ProductLotSetup=Configurazione del modulo lotto/numero di serie
 ShowCurrentStockOfLot=Mostra la scorta disponibile per la coppia prodotto/lotto
 ShowLogOfMovementIfLot=Mostra il log dei movimenti per la coppia prodotto/lotto
 StockDetailPerBatch=Dettagli magazzino per lotto
+SerialNumberAlreadyInUse=Il numero di serie %s è già utilizzato per il prodotto %s
+TooManyQtyForSerialNumber=Puoi avere un solo prodotto %s per numero di serie %s
+ManageLotMask=Mascherina personalizzata
+CustomMasks=Possibilità di definire una maschera di numerazione diversa per ogni prodotto
+BatchLotNumberingModules=Regola di numerazione per la generazione automatica del numero di lotto
+BatchSerialNumberingModules=Regola di numerazione per la generazione automatica del numero di serie (per prodotti con proprietà 1 lotto/numero unico per ogni prodotto)
+QtyToAddAfterBarcodeScan=Quantità in %s per ogni codice a barre/lotto/numero scansionato
+LifeTime=Durata (in giorni)
+EndOfLife=Fine della vita
+ManufacturingDate=Data di produzione
+DestructionDate=Data di distruzione
+FirstUseDate=Data di primo utilizzo
+QCFrequency=Frequenza del controllo qualità (in giorni)
+ShowAllLots=Mostra tutti i lotti
+HideLots=Nascondi tutti i lotti
+#Traceability - qc status
+OutOfOrder=Fuori servizio
+InWorkingOrder=Funzionante
+ToReplace=Sostituire
+CantMoveNonExistantSerial=Errore. Chiedi una mossa su un record per un seriale che non esiste più. È possibile che tu abbia preso lo stesso numero di serie nello stesso magazzino più volte nella stessa spedizione o sia stato utilizzato da un'altra spedizione. Rimuovi questa spedizione e preparane un'altra.

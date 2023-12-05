@@ -21,6 +21,7 @@
  *      \brief      Page to setup extra fields of ticket
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/ticket.lib.php";
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -71,25 +72,14 @@ print load_fiche_titre($langs->trans("TicketSetup"), $linkback, 'title_setup');
 
 $head = ticketAdminPrepareHead();
 
-dol_fiche_head($head, 'attributes', $langs->trans("Module56000Name"), -1, "ticket");
+print dol_get_fiche_head($head, 'attributes', $langs->trans("Module56000Name"), -1, "ticket");
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
-// Buttons
-if ($action != 'create' && $action != 'edit') {
-	print '<div class="tabsAction">';
-	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"]."?action=create\">".$langs->trans("NewAttribute").'</a></div>';
-	print "</div>";
-}
 
-/* ************************************************************************** */
-/*                                                                            */
-/* Creation d'un champ optionnel                                              */
-/*                                                                            */
-/* ************************************************************************** */
-
+// Creation of an optional field
 if ($action == 'create') {
 	print "<br>";
 	print load_fiche_titre($langs->trans('NewAttribute'));
@@ -97,11 +87,7 @@ if ($action == 'create') {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
 }
 
-/* ************************************************************************** */
-/*                                                                            */
-/* Edition d'un champ optionnel                                               */
-/*                                                                            */
-/* ************************************************************************** */
+// Edition of an optional field
 if ($action == 'edit' && !empty($attrname)) {
 	print "<br>";
 	print load_fiche_titre($langs->trans("FieldEdition", $attrname));

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2014-2018 Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2014-2023 Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,61 +31,87 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
  */
 class PrintingDriver
 {
-    /**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    /**
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
 
+	/**
+	 * @var string Name
+	 */
+	public $name;
 
-    /**
-     *  Constructor
-     *
-     *  @param      DoliDB      $db      Database handler
-     */
-    public function __construct($db)
-    {
-        $this->db = $db;
-    }
+	/**
+	 * @var string Description
+	 */
+	public $desc;
 
-    /**
-     *  Return list of printing driver
-     *
-     *  @param  DoliDB  $db                 Database handler
-     *  @param  integer  $maxfilenamelength  Max length of value to show
-     *  @return array                       List of drivers
-    */
-    public static function listDrivers($db, $maxfilenamelength = 0)
-    {
-        global $conf;
+	/**
+	 * @var string Html string returned for print
+	 */
+	public $resprint;
 
-        $type = 'printing';
-        $list = array();
+	/**
+	 *  Constructor
+	 *
+	 *  @param      DoliDB      $db      Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
 
-        $moduledir = DOL_DOCUMENT_ROOT."/core/modules/printing/";
-        $tmpfiles = dol_dir_list($moduledir, 'all', 0, '\modules.php', '', 'name', SORT_ASC, 0);
-        foreach ($tmpfiles as $record) {
-            $list[$record['fullname']] = str_replace('.modules.php', '', $record['name']);
-        }
+	/**
+	 *  Return list of printing driver
+	 *
+	 *  @param  DoliDB  $db                 Database handler
+	 *  @param  integer  $maxfilenamelength  Max length of value to show
+	 *  @return array                       List of drivers
+	 */
+	public static function listDrivers($db, $maxfilenamelength = 0)
+	{
+		global $conf;
 
-        return $list;
-    }
+		$type = 'printing';
+		$list = array();
 
-    /**
-     *  Return description of Printing Module
-     *
-     *  @return     string      Return translation of key PrintingModuleDescXXX where XXX is module name, or $this->desc if not exists
-     */
-    public function getDesc()
-    {
-        global $langs;
-        $langs->load("printing");
-        $transstring = "PrintingModuleDesc".$this->name;
-        if ($langs->trans($transstring) != $transstring) return $langs->trans($transstring);
-        else return $this->desc;
-    }
+		$listoffiles = array();
+		if (!empty($conf->modules_parts['printing'])) {
+			$dirmodels = array_merge(array('/core/modules/printing/'), (array) $conf->modules_parts['printing']);
+		} else {
+			$dirmodels = array('/core/modules/printing/');
+		}
+		foreach ($dirmodels as $dir) {
+			$tmpfiles = dol_dir_list(dol_buildpath($dir, 0), 'all', 0, '\.modules.php', '', 'name', SORT_ASC, 0);
+			if (!empty($tmpfiles)) {
+				$listoffiles = array_merge($listoffiles, $tmpfiles);
+			}
+		}
+		foreach ($listoffiles as $record) {
+			$list[$record['fullname']] = str_replace('.modules.php', '', $record['name']);
+		}
+		return $list;
+	}
+
+	/**
+	 *  Return description of Printing Module
+	 *
+	 *  @return     string      Return translation of key PrintingModuleDescXXX where XXX is module name, or $this->desc if not exists
+	 */
+	public function getDesc()
+	{
+		global $langs;
+		$langs->load("printing");
+		$transstring = "PrintingModuleDesc".$this->name;
+		if ($langs->trans($transstring) != $transstring) {
+			return $langs->trans($transstring);
+		} else {
+			return $this->desc;
+		}
+	}
 }

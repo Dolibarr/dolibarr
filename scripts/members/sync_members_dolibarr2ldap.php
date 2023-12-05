@@ -23,6 +23,11 @@
  * \ingroup ldap member
  * \brief Script de mise a jour des adherents dans LDAP depuis base Dolibarr
  */
+
+if (!defined('NOSESSION')) {
+	define('NOSESSION', '1');
+}
+
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path = __DIR__.'/';
@@ -40,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php";
 $langs->load("main");
 
 // Global variables
-$version = DOL_VERSION;
+$version = constant('DOL_VERSION');
 $error = 0;
 $confirmed = 0;
 
@@ -58,8 +63,14 @@ if (!isset($argv[1]) || !$argv[1]) {
 }
 
 foreach ($argv as $key => $val) {
-	if (preg_match('/-y$/', $val, $reg))
+	if (preg_match('/-y$/', $val, $reg)) {
 		$confirmed = 1;
+	}
+}
+
+if (!empty($dolibarr_main_db_readonly)) {
+	print "Error: instance in read-onyl mode\n";
+	exit(-1);
 }
 
 $now = $argv[1];
@@ -76,11 +87,11 @@ print "login=".$conf->db->user."\n";
 print "database=".$conf->db->name."\n";
 print "\n";
 print "----- To LDAP database:\n";
-print "host=".$conf->global->LDAP_SERVER_HOST."\n";
-print "port=".$conf->global->LDAP_SERVER_PORT."\n";
-print "login=".$conf->global->LDAP_ADMIN_DN."\n";
+print "host=" . getDolGlobalString('LDAP_SERVER_HOST')."\n";
+print "port=" . getDolGlobalString('LDAP_SERVER_PORT')."\n";
+print "login=" . getDolGlobalString('LDAP_ADMIN_DN')."\n";
 print "pass=".preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)."\n";
-print "DN target=".$conf->global->LDAP_MEMBER_DN."\n";
+print "DN target=" . getDolGlobalString('LDAP_MEMBER_DN')."\n";
 print "\n";
 
 if (!$confirmed) {
@@ -152,7 +163,6 @@ if ($resql) {
 	}
 
 	$ldap->unbind();
-	$ldap->close();
 } else {
 	dol_print_error($db);
 }

@@ -1,0 +1,22 @@
+# Dolibarr language file - Source file is en_US - marque pages
+AddThisPageToBookmarks=Саҳифаи ҳозираро ба хатчӯбҳо илова кунед
+Bookmark=Bookmark
+Bookmarks=Замимаҳо
+ListOfBookmarks=Рӯйхати хатчӯбҳо
+EditBookmarks=Рӯйхат/таҳрири хатчӯбҳо
+NewBookmark=Замимаи нав
+ShowBookmark=Нишон додани хатчӯб
+OpenANewWindow=Ҷадвали нав кушоед
+ReplaceWindow=Тугмаи ҷориро иваз кунед
+BookmarkTargetNewWindowShort=Ҷадвали нав
+BookmarkTargetReplaceWindowShort=Ҷадвали ҷорӣ
+BookmarkTitle=Номи хатчӯб
+UrlOrLink=URL
+BehaviourOnClick=Рафтори ҳангоми интихоби URL -и хатчӯб
+CreateBookmark=Эҷоди хатчӯб
+SetHereATitleForLink=Номи хатчӯбро таъин кунед
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Use an external/absolute link (https://externalurl.com) or an internal/relative link (/mypage.php). You can also use phone like tel:0123456.
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Интихоб кунед, ки оё саҳифаи пайвандшуда бояд дар ҷадвали ҷорӣ ё ҷадвали нав кушода шавад
+BookmarksManagement=Идоракунии хатчӯбҳо
+BookmarksMenuShortCut=Ctrl + shift + m
+NoBookmarks=No bookmarks defined

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\Browser;
 
 use Sabre\Uri;
@@ -13,8 +15,8 @@ use Sabre\Xml\Service as XmlService;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class HtmlOutputHelper {
-
+class HtmlOutputHelper
+{
     /**
      * Link to the root of the application.
      *
@@ -40,13 +42,11 @@ class HtmlOutputHelper {
      * that can be used to make output a lot shorter.
      *
      * @param string $baseUri
-     * @param array $namespaceMap
      */
-    function __construct($baseUri, array $namespaceMap) {
-
+    public function __construct($baseUri, array $namespaceMap)
+    {
         $this->baseUri = $baseUri;
         $this->namespaceMap = $namespaceMap;
-
     }
 
     /**
@@ -58,24 +58,24 @@ class HtmlOutputHelper {
      * Absolute urls are left alone.
      *
      * @param string $path
+     *
      * @return string
      */
-    function fullUrl($path) {
-
+    public function fullUrl($path)
+    {
         return Uri\resolve($this->baseUri, $path);
-
     }
 
     /**
      * Escape string for HTML output.
      *
-     * @param string $input
+     * @param scalar $input
+     *
      * @return string
      */
-    function h($input) {
-
-        return htmlspecialchars($input, ENT_COMPAT, 'UTF-8');
-
+    public function h($input)
+    {
+        return htmlspecialchars((string) $input, ENT_COMPAT, 'UTF-8');
     }
 
     /**
@@ -86,13 +86,14 @@ class HtmlOutputHelper {
      *
      * @param string $url
      * @param string $label
+     *
      * @return string
      */
-    function link($url, $label = null) {
-
+    public function link($url, $label = null)
+    {
         $url = $this->h($this->fullUrl($url));
-        return '<a href="' . $url . '">' . ($label ? $this->h($label) : $url) . '</a>';
 
+        return '<a href="'.$url.'">'.($label ? $this->h($label) : $url).'</a>';
     }
 
     /**
@@ -100,18 +101,18 @@ class HtmlOutputHelper {
      * shortened version with a prefix, if it was a known namespace.
      *
      * @param string $element
+     *
      * @return string
      */
-    function xmlName($element) {
-
+    public function xmlName($element)
+    {
         list($ns, $localName) = XmlService::parseClarkNotation($element);
         if (isset($this->namespaceMap[$ns])) {
-            $propName = $this->namespaceMap[$ns] . ':' . $localName;
+            $propName = $this->namespaceMap[$ns].':'.$localName;
         } else {
             $propName = $element;
         }
-        return "<span title=\"" . $this->h($element) . "\">" . $this->h($propName) . "</span>";
 
+        return '<span title="'.$this->h($element).'">'.$this->h($propName).'</span>';
     }
-
 }

@@ -1,0 +1,177 @@
+# Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+# Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+ModuleEventOrganizationName = Організація заходу
+EventOrganizationDescription = Організація заходу через модульний проект
+EventOrganizationDescriptionLong= Керуйте організацією події (шоу, конференції, учасники або спікери, з відкритими сторінками для пропозицій, голосування або реєстрації)
+#
+# Menu
+#
+EventOrganizationMenuLeft = Організовані заходи
+EventOrganizationConferenceOrBoothMenuLeft = Конференція або стенд
+
+PaymentEvent=Оплата заходу
+
+#
+# Admin page
+#
+NewRegistration=Реєстрація
+EventOrganizationSetup=Налаштування організації події
+EventOrganization=Організація заходу
+Settings=Налаштування
+EventOrganizationSetupPage = Сторінка налаштування організації події
+EVENTORGANIZATION_TASK_LABEL = Мітка завдань, які автоматично створюються під час перевірки проекту
+EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project <br>  <br> For example:  <br> Send Call for Conferences <br> Send Call for Booths <br> Validate suggestions of Conferences <br> Validate application for Booths <br> Open subscriptions to the event for attendees <br> Надіслати нагадування про подію доповідачам <br> Надіслати нагадування про подію організаторам стенду <br> Надіслати нагадування про подію учасникам
+EVENTORGANIZATION_TASK_LABELTooltip2=Залиште порожнім, якщо вам не потрібно створювати завдання автоматично.
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Категорія для додавання до сторонніх розробників автоматично створюється, коли хтось пропонує конференцію
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Категорія для додавання до сторонніх розробників автоматично створюється, коли вони пропонують будку
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Шаблон електронного листа для надсилання після отримання пропозиції конференції.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Шаблон електронного листа для надсилання після отримання пропозиції стенда.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Шаблон електронного листа для надсилання після оплати реєстрації на кіоску.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Шаблон електронного листа для надсилання після оплати реєстрації на подію.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Шаблон електронної пошти, який використовуватиметься під час надсилання електронних листів з масування "Надіслати електронні листи" спікерам
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Шаблон електронної пошти для надсилання електронних листів із маскування "Надіслати листи" у списку учасників
+EVENTORGANIZATION_FILTERATTENDEES_CAT = У формі для створення/додавання учасника обмежує список третіх сторін третіми особами в категорії
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = У формі для створення/додавання учасника обмежує список третіх сторін третіми особами з характером
+
+#
+# Object
+#
+OrganizedEvent=Organized event
+EventOrganizationConfOrBooth= Конференція або стенд
+EventOrganizationConfOrBoothes=Conferences or Boothes
+ManageOrganizeEvent = Керуйте організацією заходу
+ConferenceOrBooth = Конференція або стенд
+ConferenceOrBoothTab = Конференція або стенд
+AmountPaid = Виплачувана сума
+DateOfRegistration = Дата реєстрації
+ConferenceOrBoothAttendee = Учасник конференції або стенду
+ApplicantOrVisitor=Applicant or visitor
+Speaker=Speaker
+
+#
+# Template Mail
+#
+YourOrganizationEventConfRequestWasReceived = Ваш запит на конференцію отримано
+YourOrganizationEventBoothRequestWasReceived = Ваш запит на будку отримано
+EventOrganizationEmailAskConf = Запит на конференцію
+EventOrganizationEmailAskBooth = Запит на стенд
+EventOrganizationEmailBoothPayment = Оплата вашого стенду
+EventOrganizationEmailRegistrationPayment = Реєстрація на подію
+EventOrganizationMassEmailAttendees = Спілкування з учасниками
+EventOrganizationMassEmailSpeakers = Спілкування з доповідачами
+ToSpeakers=До спікерів
+
+#
+# Event
+#
+AllowUnknownPeopleSuggestConf=Дозвольте людям пропонувати конференції
+AllowUnknownPeopleSuggestConfHelp=Дозвольте незнайомим людям запропонувати конференцію, яку вони хочуть провести
+AllowUnknownPeopleSuggestBooth=Дозвольте людям подати заявку на стенд
+AllowUnknownPeopleSuggestBoothHelp=Дозвольте незнайомим людям подати заявку на стенд
+PriceOfRegistration=Ціна реєстрації
+PriceOfRegistrationHelp=Ціна за реєстрацію або участь у заході
+PriceOfBooth=Ціна передплати на стенд
+PriceOfBoothHelp=Ціна передплати на стенд
+EventOrganizationICSLink=Посилання ICS для конференцій
+ConferenceOrBoothInformation=Інформація про конференцію або стенд
+Attendees=Учасники
+ListOfAttendeesOfEvent=Список учасників заходу проекту
+DownloadICSLink = Завантажити посилання ICS
+EVENTORGANIZATION_SECUREKEY = Seed для захисту ключа для загальнодоступної сторінки реєстрації, щоб запропонувати конференцію
+SERVICE_BOOTH_LOCATION = Послуга, яка використовується для рядка рахунків-фактур щодо розташування кіоска
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Служба, яка використовується для рядка рахунків-фактур про підписку відвідувача на подію
+NbVotes=Кількість голосів
+#
+# Status
+#
+EvntOrgDraft = Проект
+EvntOrgSuggested = Запропоновано
+EvntOrgConfirmed = Підтверджено
+EvntOrgNotQualified = Не кваліфікований
+EvntOrgDone = Готово
+EvntOrgCancelled = Скасовано
+#
+# Public page
+#
+SuggestForm = Сторінка пропозицій
+SuggestOrVoteForConfOrBooth = Сторінка для пропозиції або голосування
+EvntOrgRegistrationHelpMessage = Тут ви можете проголосувати за конференцію або запропонувати нову для події. Ви також можете подати заявку на наявність стенду під час заходу.
+EvntOrgRegistrationConfHelpMessage = Тут ви можете запропонувати нову конференцію для анімації під час події.
+EvntOrgRegistrationBoothHelpMessage = Тут ви можете подати заявку на наявність стенду під час заходу.
+ListOfSuggestedConferences = Список пропонованих конференцій
+ListOfSuggestedBooths=Suggested booths
+ListOfConferencesOrBooths=Conferences or booths of event project
+SuggestConference = Запропонуйте нову конференцію
+SuggestBooth = Запропонуйте будку
+ViewAndVote = Переглядайте запропоновані події та голосуйте за них
+PublicAttendeeSubscriptionGlobalPage = Загальне посилання для реєстрації на подію
+PublicAttendeeSubscriptionPage = Загальне посилання лише для реєстрації на цю подію
+MissingOrBadSecureKey = Ключ безпеки недійсний або відсутній
+EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event
+EvntOrgDuration = Ця конференція починається на %s і закінчується на %s.
+ConferenceAttendeeFee = Плата за відвідування конференції за подію: «%s» від %s до %s.
+BoothLocationFee = Розташування стенду для події: "%s" від %s до %s
+EventType = Тип події
+LabelOfBooth=Етикетка стенду
+LabelOfconference=Етикетка конференції
+ConferenceIsNotConfirmed=Реєстрація недоступна, конференція ще не підтверджена
+DateMustBeBeforeThan=%s має бути перед %s
+DateMustBeAfterThan=%s має бути після %s
+MaxNbOfAttendeesReached=The maximum number of participants has been reached
+NewSubscription=Реєстрація
+OrganizationEventConfRequestWasReceived=Вашу пропозицію щодо конференції отримано
+OrganizationEventBoothRequestWasReceived=Ваш запит на будку отримано
+OrganizationEventPaymentOfBoothWasReceived=Ваш платіж за ваш стенд зафіксовано
+OrganizationEventPaymentOfRegistrationWasReceived=Ваш платіж за реєстрацію на подію зафіксовано
+OrganizationEventBulkMailToAttendees=Це нагадування про вашу участь у заході як учасника
+OrganizationEventBulkMailToSpeakers=Це нагадування про вашу участь у заході як доповідача
+OrganizationEventLinkToThirdParty=Посилання на третю сторону (клієнт, постачальник або партнер)
+OrganizationEvenLabelName=Public name of the conference or booth
+
+NewSuggestionOfBooth=Заявка на стенд
+NewSuggestionOfConference=Application to hold a conference
+
+#
+# Vote page
+#
+EvntOrgRegistrationWelcomeMessage = Вітаємо на сторінці пропозицій конференції або стенду.
+EvntOrgRegistrationConfWelcomeMessage = Вітаємо на сторінці пропозицій конференції.
+EvntOrgRegistrationBoothWelcomeMessage = Вітаємо на сторінці пропозицій стенду.
+EvntOrgVoteHelpMessage = Тут ви можете переглянути та проголосувати за запропоновані події для проекту
+VoteOk = Ваш голос прийнято.
+AlreadyVoted = Ви вже проголосували за цю подію.
+VoteError = Під час голосування сталася помилка, спробуйте ще раз.
+
+SubscriptionOk=Your registration has been recorded
+ConfAttendeeSubscriptionConfirmation = Підтвердження вашої підписки на подію
+Attendee = Учасник
+PaymentConferenceAttendee = Оплата учасникам конференції
+PaymentBoothLocation = Оплата місця розташування стенду
+DeleteConferenceOrBoothAttendee=Видалити учасника
+RegistrationAndPaymentWereAlreadyRecorder=Реєстрація та платіж уже були записані для електронної пошти <b> %s </b>
+EmailAttendee=Електронна адреса учасника
+EmailCompany=Company email
+EmailCompanyForInvoice=Електронна адреса компанії (для рахунку-фактури, якщо вона відрізняється від електронної адреси учасника)
+ErrorSeveralCompaniesWithEmailContactUs=Знайдено кілька компаній із цією електронною поштою, тому ми не можемо автоматично підтвердити вашу реєстрацію. Будь ласка, зв’яжіться з нами за адресою %s для перевірки вручну
+ErrorSeveralCompaniesWithNameContactUs=Було знайдено кілька компаній з такою назвою, тому ми не можемо автоматично підтвердити вашу реєстрацію. Будь ласка, зв’яжіться з нами за адресою %s для перевірки вручну
+NoPublicActionsAllowedForThisEvent=Жодні публічні заходи щодо цієї події не є відкритими
+MaxNbOfAttendees=Максимальна кількість учасників
+DateStartEvent=Event start date
+DateEndEvent=Event end date

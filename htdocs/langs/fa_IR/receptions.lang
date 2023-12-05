@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - receptions
-ReceptionsSetup=برپاسازی دریافت محصول
+ReceptionDescription=Vendor reception management (Create reception documents)
+ReceptionsSetup=Vendor Reception setup
 RefReception=ارجاع دریافت‌کالا
 Reception=دریافت‌کالا
 Receptions=دریافت‌های کالا
@@ -23,7 +24,9 @@ ReceptionsAndReceivingForSameOrder=دریافت‌کالا‌ها و رسیده�
 ReceptionsToValidate=دریافت‌کالا‌های منتظر تائید
 StatusReceptionCanceled=لغو شد
 StatusReceptionDraft=پیش‌نویش
-StatusReceptionValidated=تائیدشده ( محصولات ارسال‌شده یا برای ارسال)
+StatusReceptionValidated=Validated (products to receive or already received)
+StatusReceptionValidatedToReceive=Validated (products to receive)
+StatusReceptionValidatedReceived=Validated (products received)
 StatusReceptionProcessed=پردازش‌شده
 StatusReceptionDraftShort=پیش‌نویش
 StatusReceptionValidatedShort=تائیدشده
@@ -36,7 +39,7 @@ StatsOnReceptionsOnlyValidated=آمارهائی که تنها بر اساس در
 SendReceptionByEMail=ارسال دریافت‌کالا توسط رایانامه
 SendReceptionRef=تسلیم دریافت‌کالا %s
 ActionsOnReception=رخداد‌های دریافت‌کالا
-ReceptionCreationIsDoneFromOrder=فعلا، ایجاد «دریافت‌کالا» تنها از کارت سفارش انجام می‌گیرد
+ReceptionCreationIsDoneFromOrder=For the moment, creation of a new reception is done from the Purchase Order.
 ReceptionLine=سطر دریافت‌کالا
 ProductQtyInReceptionAlreadySent=این تعداد محصول از سفارش باز فروش قبلا ارسال شده است
 ProductQtyInSuppliersReceptionAlreadyRecevied=این تعداد محصول از سفارش باز تامین‌‌کننده قبلا دریافت شده است
@@ -44,4 +47,8 @@ ValidateOrderFirstBeforeReception=ابتدا باید سفارش را تائید
 ReceptionsNumberingModules=واحد شماره‌گذاری برای دریافت‌ها
 ReceptionsReceiptModel=قالب اسناد دریافت‌کالا
 NoMorePredefinedProductToDispatch=No more predefined products to dispatch
-
+ReceptionExist=A reception exists
+ByingPrice=Bying price
+ReceptionBackToDraftInDolibarr=Reception %s back to draft
+ReceptionClassifyClosedInDolibarr=Reception %s classified Closed
+ReceptionUnClassifyCloseddInDolibarr=Reception %s re-open

@@ -23,31 +23,49 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
  */
 abstract class ModelePDFStock extends CommonDocGenerator
 {
-    /**
-     * @var string Error code (or message)
-     */
-    public $error = '';
+	/**
+	 * @var DoliDb Database handler
+	 */
+	public $db;
+
+	/**
+	 * @var string model name
+	 */
+	public $name;
+
+	/**
+	 * @var string model description (short text)
+	 */
+	public $description;
+
+	/**
+	 * @var string document type
+	 */
+	public $type;
+
+	/**
+	 * @var string		Dolibarr version of the loaded document
+	 */
+	public $version = 'dolibarr';
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *  Return list of active generation modules
-     *
-     *  @param  DoliDB      $db                 Database handler
-     *  @param  integer     $maxfilenamelength  Max length of value to show
-     *  @return array                           List of templates
-     */
-    public static function liste_modeles($db, $maxfilenamelength = 0)
-    {
-        // phpcs:enable
-        global $conf;
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return list of active generation modules
+	 *
+	 *  @param  DoliDB      $db                 Database handler
+	 *  @param  integer     $maxfilenamelength  Max length of value to show
+	 *  @return array                           List of templates
+	 */
+	public static function liste_modeles($db, $maxfilenamelength = 0)
+	{
+		// phpcs:enable
+		$type = 'stock';
+		$list = array();
 
-        $type = 'stock';
-        $liste = array();
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+		$list = getListOfModels($db, $type, $maxfilenamelength);
 
-        include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-        $liste = getListOfModels($db, $type, $maxfilenamelength);
-
-        return $liste;
-    }
+		return $list;
+	}
 }

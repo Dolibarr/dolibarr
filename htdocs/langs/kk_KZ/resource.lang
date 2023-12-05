@@ -1,0 +1,39 @@
+# Dolibarr language file - Source file is en_US - resource
+MenuResourceIndex=Ресурстар
+MenuResourceAdd=Жаңа ресурс
+DeleteResource=Ресурсты жою
+ConfirmDeleteResourceElement=Бұл элементтің ресурсын жоюды растаңыз
+NoResourceInDatabase=Деректер қорында ресурс жоқ.
+NoResourceLinked=Ешқандай ресурс байланыстырылмаған
+ActionsOnResource=Бұл ресурс туралы оқиғалар
+ResourcePageIndex=Ресурстар тізімі
+ResourceSingular=Ресурс
+ResourceCard=Ресурстық карта
+AddResource=Ресурс құру
+ResourceFormLabel_ref=Ресурстың атауы
+ResourceType=Ресурстың түрі
+ResourceFormLabel_description=Ресурстар сипаттамасы
+
+ResourcesLinkedToElement=Элементпен байланысқан ресурстар
+
+ShowResource=Ресурсты көрсету
+
+ResourceElementPage=Элемент ресурстары
+ResourceCreatedWithSuccess=Ресурс сәтті құрылды
+RessourceLineSuccessfullyDeleted=Ресурстық желі сәтті жойылды
+RessourceLineSuccessfullyUpdated=Ресурстық желі сәтті жаңартылды
+ResourceLinkedWithSuccess=Табыспен байланысты ресурс
+
+ConfirmDeleteResource=Бұл ресурсты жоюды растаңыз
+RessourceSuccessfullyDeleted=Ресурс жойылды
+DictionaryResourceType=Ресурстар түрі
+
+SelectResource=Ресурсты таңдаңыз
+
+IdResource=Id ресурсы
+AssetNumber=Сериялық нөмір
+ResourceTypeCode=Ресурс түрінің коды
+ImportDataset_resource_1=Ресурстар
+
+ErrorResourcesAlreadyInUse=Кейбір ресурстар пайдаланылады
+ErrorResourceUseInEvent=%s %s оқиғасында қолданылады

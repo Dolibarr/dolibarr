@@ -2,6 +2,8 @@
 /* Copyright (C) 2005-2009	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2017	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
+ * Copyright (C) 2023		Udo Tamm			<dev@dolibit.de>
+ * Copyright (C) 2023		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,189 +22,149 @@
 /**
  *  \file       htdocs/core/triggers/interface_20_all_Logevents.class.php
  *  \ingroup    core
- *  \brief      Trigger file for
+ *  \brief      Trigger file for log events
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
-
 
 /**
  *  Class of triggers for security audit events
  */
 class InterfaceLogevents extends DolibarrTriggers
 {
+	const EVENT_ACTION_DICT = array( // TODO reduce number of events to CREATE, UPDATE & DELETE. Use object properties to pinpoint precise action.
+		'USER_LOGIN' => 'UserLogged',
+		'USER_LOGIN_FAILED' => 'UserLoginFailed',
+		'USER_LOGOUT' => 'UserLogoff',
+		'USER_CREATE' => 'NewUserCreated',
+		'USER_MODIFY' => 'EventUserModified',
+		'USER_NEW_PASSWORD' => 'NewUserPassword',
+		'USER_ENABLEDISABLE' => 'UserEnabledDisabled',
+		'USER_DELETE' => 'UserDeleted',
+		'USERGROUP_CREATE' => 'NewGroupCreated',
+		'USERGROUP_MODIFY' => 'GroupModified',
+		'USERGROUP_DELETE' => 'GroupDeleted'
+	);
 	/**
-	 * @var string Image of the trigger
+	 * @var string	Label
 	 */
-	public $picto = 'technic';
-
-	public $family = 'core';
-
-	public $description = "Triggers of this module allows to add security event records inside Dolibarr.";
-
+	private $event_label;
 	/**
-	 * Version of the trigger
-	 * @var string
+	 * @var string	Description
 	 */
-	public $version = self::VERSION_DOLIBARR;
+	private $event_desc;
+	/**
+	 * @var int		Date
+	 */
+	private $event_date;
+
 
 	/**
-	 * Function called when a Dolibarrr security audit event is done.
+	 * Constructor
+	 * @param	DoliDB	$db	Database handler
+	 */
+	public function __construct(DoliDB $db)
+	{
+		parent::__construct($db);
+
+		$this->family 		= "core";
+		$this->description  = "Triggers of this module allows to add security event records inside Dolibarr.";
+		$this->version 		= self::VERSION_DOLIBARR;  // VERSION_ 'DEVELOPMENT' or 'EXPERIMENTAL' or 'DOLIBARR'
+		$this->picto 		= 'technic';
+		$this->event_label 	= '';
+		$this->event_desc 	= '';
+		$this->event_date 	= 0;
+	}
+
+	/**
+	 * Function called when a Dolibarr security audit event is done.
 	 * All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers or htdocs/module/code/triggers (and declared)
 	 *
-	 * @param string		$action		Event action code
-	 * @param Object		$object     Object
-	 * @param User			$user       Object user
-	 * @param Translate		$langs      Object langs
-	 * @param conf			$conf       Object conf
-	 * @return int         				<0 if KO, 0 if no triggered ran, >0 if OK
+	 * @param	string		$action	Event action code
+	 * @param	Object		$object	Object
+	 * @param	User		$user	Object user
+	 * @param	Translate	$langs	Object langs
+	 * @param	conf		$conf	Object conf
+	 * @return	int					if KO: <0, if no trigger ran: 0, if OK: >0
+	 * @throws	Exception			dol_syslog can throw Exceptions
 	 */
-	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
-    {
-    	if (!empty($conf->global->MAIN_LOGEVENTS_DISABLE_ALL)) return 0; // Log events is disabled (hidden features)
-
-    	$key = 'MAIN_LOGEVENTS_'.$action;
-    	//dol_syslog("xxxxxxxxxxx".$key);
-    	if (empty($conf->global->$key)) return 0; // Log events not enabled for this action
-
-    	if (empty($conf->entity)) $conf->entity = $entity; // forcing of the entity if it's not defined (ex: in login form)
-
-        $date = dol_now();
-
-        // Actions
-        if ($action == 'USER_LOGIN')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-
-            $langs->load("users");
-            // Initialisation donnees (date,duree,texte,desc)
-            $text = "(UserLogged,".$object->login.")";
-            $text .= (empty($object->trigger_mesg) ? '' : ' - '.$object->trigger_mesg);
-            $desc = "(UserLogged,".$object->login.")";
-            $desc .= (empty($object->trigger_mesg) ? '' : ' - '.$object->trigger_mesg);
-        }
-        if ($action == 'USER_LOGIN_FAILED')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-
-            // Initialisation donnees (date,duree,texte,desc)
-            $text = $object->trigger_mesg; // Message direct
-            $desc = $object->trigger_mesg; // Message direct
-        }
-        if ($action == 'USER_LOGOUT')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-
-            $langs->load("users");
-            // Initialisation donnees (date,duree,texte,desc)
-            $text = "(UserLogoff,".$object->login.")";
-            $desc = "(UserLogoff,".$object->login.")";
-        }
-        if ($action == 'USER_CREATE')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            $langs->load("users");
-
-            // Initialisation donnees (date,duree,texte,desc)
-            $text = $langs->transnoentities("NewUserCreated", $object->login);
-            $desc = $langs->transnoentities("NewUserCreated", $object->login);
-		} elseif ($action == 'USER_MODIFY')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            $langs->load("users");
-
-            // Initialisation donnees (date,duree,texte,desc)
-            $text = $langs->transnoentities("EventUserModified", $object->login);
-            $desc = $langs->transnoentities("EventUserModified", $object->login);
-        } elseif ($action == 'USER_NEW_PASSWORD')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            $langs->load("users");
-
-            // Initialisation donnees (date,duree,texte,desc)
-            $text = $langs->transnoentities("NewUserPassword", $object->login);
-            $desc = $langs->transnoentities("NewUserPassword", $object->login);
-        } elseif ($action == 'USER_ENABLEDISABLE')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            $langs->load("users");
-            // Initialisation donnees (date,duree,texte,desc)
-			if ($object->statut == 0)
-			{
-				$text = $langs->transnoentities("UserEnabled", $object->login);
-				$desc = $langs->transnoentities("UserEnabled", $object->login);
-			}
-			if ($object->statut == 1)
-			{
-				$text = $langs->transnoentities("UserDisabled", $object->login);
-				$desc = $langs->transnoentities("UserDisabled", $object->login);
-			}
-        } elseif ($action == 'USER_DELETE')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            $langs->load("users");
-            // Initialisation donnees (date,duree,texte,desc)
-            $text = $langs->transnoentities("UserDeleted", $object->login);
-            $desc = $langs->transnoentities("UserDeleted", $object->login);
-        }
-
-		// Groupes
-        elseif ($action == 'USERGROUP_CREATE')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            $langs->load("users");
-            // Initialisation donnees (date,duree,texte,desc)
-            $text = $langs->transnoentities("NewGroupCreated", $object->name);
-            $desc = $langs->transnoentities("NewGroupCreated", $object->name);
-		} elseif ($action == 'USERGROUP_MODIFY')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            $langs->load("users");
-            // Initialisation donnees (date,duree,texte,desc)
-            $text = $langs->transnoentities("GroupModified", $object->name);
-            $desc = $langs->transnoentities("GroupModified", $object->name);
-		} elseif ($action == 'USERGROUP_DELETE')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            $langs->load("users");
-            // Initialisation donnees (date,duree,texte,desc)
-            $text = $langs->transnoentities("GroupDeleted", $object->name);
-            $desc = $langs->transnoentities("GroupDeleted", $object->name);
+	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf): int
+	{
+		if (getDolGlobalString('MAIN_LOGEVENTS_DISABLE_ALL')) {
+			return 0; // Log events is disabled (hidden features)
 		}
 
-		// If not found
-        /*
-        else
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' was ran by ".__FILE__." but no handler found for this action.");
-			return 0;
-        }
-        */
+		$key = 'MAIN_LOGEVENTS_'.$action;
+		if (empty($conf->global->$key)) {
+			return 0; // Log events not enabled for this action
+		}
 
-		// Add more information into desc from the context property
-		if (!empty($desc) && !empty($object->context['audit'])) $desc .= ' - '.$object->context['audit'];
+		if (empty($conf->entity)) {
+			global $entity;
+			$conf->entity = $entity; // forcing of the entity if it's not defined (ex: in login form)
+		}
 
-        // Add entry in event table
+		// Actions
+		dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
+		$this->initEventData(InterfaceLogevents::EVENT_ACTION_DICT[$action], $object);
+
+		// Add entry in event table
 		include_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 
 		$event = new Events($this->db);
-        $event->type = $action;
-        $event->dateevent = $date;
-        $event->label = $text;
-        $event->description = $desc;
-		$event->user_agent = $_SERVER["HTTP_USER_AGENT"];
+		$event->type = $action;
+		$event->dateevent = $this->event_date;
+		$event->label = $this->event_label;
+		$event->description = $this->event_desc;
+		$event->user_agent = (empty($_SERVER["HTTP_USER_AGENT"]) ? '' : $_SERVER["HTTP_USER_AGENT"]);
+		$event->authentication_method = (empty($object->context['authentication_method']) ? '' : $object->context['authentication_method']);
 
-        $result = $event->create($user);
-        if ($result > 0)
-        {
-            return 1;
-        } else {
-            $error = "Failed to insert security event: ".$event->error;
-            $this->errors[] = $error;
-            $this->error = $error;
+		$result = $event->create($user);
+		if ($result > 0) {
+			return 1;
+		} else {
+			$error = "Failed to insert security event: ".$event->error;
+			$this->errors[] = $error;
+			$this->error = $error;
 
-            dol_syslog(get_class($this).": ".$error, LOG_ERR);
-            return -1;
-        }
-    }
+			dol_syslog(get_class($this).": ".$error, LOG_ERR);
+			return -1;
+		}
+	}
+
+	/**
+	 * Method called by runTrigger to initialize date, label & description data for event
+	 *
+	 * @param	string		$key_text			Action string
+	 * @param	Object		$object				Object
+	 * @return	void
+	 */
+	private function initEventData($key_text, $object)
+	{
+		$this->event_date = dol_now();
+		$this->event_label = $this->event_desc = $key_text . ' : ' . $object->login;
+		if ($key_text == InterfaceLogevents::EVENT_ACTION_DICT['USER_ENABLEDISABLE']) { // TODO should be refactored using an object property for event data.
+			$object->statut ? $this->event_desc .= ' - disabled' : $this->event_desc .= ' - enabled';
+		}
+		// Add more information into event description from the context property
+		if (!empty($object->context['audit'])) {
+			$this->event_desc .= (empty($this->event_desc) ? '' : ' - ').$object->context['audit'];
+		}
+	}
+
+	/**
+	 * Check if text contains an event action key. Used for dynamic localization on frontend events list.
+	 *
+	 * @param	string	$event_text		Input event text
+	 * @return	bool					True if event text is a coded structured string
+	 */
+	public static function isEventActionTextKey($event_text)
+	{
+		foreach (InterfaceLogevents::EVENT_ACTION_DICT as $value) {
+			if (str_contains($event_text, $value)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

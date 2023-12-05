@@ -25,22 +25,22 @@
 
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
-$path=dirname(__FILE__).'/';
+$path = dirname(__FILE__).'/';
 
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
-    echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-    exit;
+	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+	exit;
 }
 
 // Global variables
-$version='1.10';
-$error=0;
+$version = '1.10';
+$error = 0;
 
 
 // -------------------- START OF YOUR CODE HERE --------------------
 // Include Dolibarr environment
-require_once $path."../../htdocs/master.inc.php";
+require_once $path."../../../htdocs/master.inc.php";
 // After this $db, $mysoc, $langs and $conf->entity are defined. Opened handler to database will be closed at end of file.
 
 //$langs->setDefaultLang('en_US'); 	// To change default language of $langs
@@ -48,8 +48,11 @@ $langs->load("main");				// To load language file for default language
 @set_time_limit(0);
 
 // Load user and its permissions
-$result=$user->fetch('', 'admin');	// Load user for login 'admin'. Comment line to run as anonymous user.
-if (! $result > 0) { dol_print_error('', $user->error); exit; }
+$result = $user->fetch('', 'admin');	// Load user for login 'admin'. Comment line to run as anonymous user.
+if (!$result > 0) {
+	dol_print_error('', $user->error);
+	exit;
+}
 $user->getrights();
 
 
@@ -62,7 +65,7 @@ $db->begin();
 require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 
 // Create instance of object
-$myproduct=new Product($db);
+$myproduct = new Product($db);
 
 // Definition of product instance properties
 $myproduct->ref                = '1234';
@@ -79,8 +82,7 @@ $myproduct->weight_units       = 0;
 
 // Create product in database
 $idobject = $myproduct->create($user);
-if ($idobject > 0)
-{
+if ($idobject > 0) {
 	print "OK Object created with id ".$idobject."\n";
 } else {
 	$error++;
@@ -89,8 +91,7 @@ if ($idobject > 0)
 
 // -------------------- END OF YOUR CODE --------------------
 
-if (! $error)
-{
+if (!$error) {
 	$db->commit();
 	print '--- end ok'."\n";
 } else {

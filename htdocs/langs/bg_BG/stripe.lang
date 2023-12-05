@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Настройка на модула Stripe
-StripeDesc=Предлага на клиентите Stripe страница за онлайн плащане с кредитни / дебитни карти, чрез <a href="http://www.stripe.com" target="_blank">Stripe</a>. Това може да се използва, за да позволите на вашите клиенти да извършват бързи плащания или плащания, свързани с определен обект в Dolibarr (фактура, поръчка, ...).
+StripeDesc=Offer your customers an online payment page for payments with credit/debit cards via <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
 StripeOrCBDoPayment=Плащане с кредитна карта или Stripe
 FollowingUrlAreAvailableToMakePayments=Следните URL адреси са налични, за да осигурят достъп на клиент, за да извърши плащане по Dolibarr обекти.
 PaymentForm=Формуляр за плащане
@@ -28,7 +28,6 @@ AccountParameter=Параметри на акаунта
 UsageParameter=Параметри за използване
 InformationToFindParameters=Помогнете, за да намерим информация за вашият %s акаунт
 STRIPE_CGI_URL_V2=URL адрес на Stripe CGI модул за плащане
-VendorName=Име на доставчик
 CSSUrlForPaymentForm=URL адрес на CSS стил с формуляр за плащане
 NewStripePaymentReceived=Получено е ново Stripe плащане
 NewStripePaymentFailed=Неуспешен опит за ново Stripe плащане
@@ -42,7 +41,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Работен Webhook ключ
 ONLINE_PAYMENT_WAREHOUSE=Склад, който да се използва за намаляване на наличности, когато се извършва онлайн плащане<br>(Да се направи, когато възможността за намаляване на наличности се извършва при действие върху фактура и онлайн плащането генерира фактурата?)
 StripeLiveEnabled=Активиран е работен режим на Stripe (в противен случай тестов режим / пясъчник)
 StripeImportPayment=Импортиране на Stripe плащания
-ExampleOfTestCreditCard=Пример с кредитна карта за тест: %s => валидна, %s => грешка в CVC, %s => изтекла, %s => неуспешно таксуване
+ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
+ExampleOfTestBankAcountForSEPA=Example of bank account BAN for direct debit test: %s
 StripeGateways=Stripe шлюзове
 OAUTH_STRIPE_TEST_ID=Тестов Stripe Connect Client ID (ca_...)
 OAUTH_STRIPE_LIVE_ID=Реален Stripe Connect Client ID (ca_...)
@@ -62,6 +62,7 @@ DeleteACard=Изтриване на карта
 ConfirmDeleteCard=Сигурни ли сте, че искате да изтриете тази кредитна или дебитна карта?
 CreateCustomerOnStripe=Създаване на клиент в Stripe
 CreateCardOnStripe=Създаване на карта в Stripe
+CreateBANOnStripe=Create bank on Stripe
 ShowInStripe=Показване в Stripe
 StripeUserAccountForActions=Потребителски акаунт, който да се използва за известяване по имейл при някои Stripe събития (Stripe изплащания)
 StripePayoutList=Списък със Stripe изплащания
@@ -70,3 +71,8 @@ ToOfferALinkForLiveWebhook=Връзка към настройка на Stripe We
 PaymentWillBeRecordedForNextPeriod=Плащането ще бъде регистрирано за следващия период.
 ClickHereToTryAgain=<a href="%s">Кликнете тук, за да опитате отново ...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s
+STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
+TERMINAL_LOCATION=Location (address) for Stripe Terminals
+RequestDirectDebitWithStripe=Request Direct Debit with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
+

@@ -49,7 +49,7 @@ create table llx_commande_fournisseur
   amount_ht					double(24,8)      default 0,
   remise_percent			real      default 0,
   remise					real      default 0,
-  tva						double(24,8)      default 0,
+  total_tva						double(24,8)      default 0,
   localtax1					double(24,8)      default 0,
   localtax2					double(24,8)      default 0,
   total_ht					double(24,8)      default 0,
@@ -70,7 +70,7 @@ create table llx_commande_fournisseur
   extraparams				varchar(255),					-- for stock other parameters with json format
 
   fk_multicurrency			integer,
-  multicurrency_code		varchar(255),
+  multicurrency_code		varchar(3),
   multicurrency_tx			double(24,8) DEFAULT 1,
   multicurrency_total_ht	double(24,8) DEFAULT 0,
   multicurrency_total_tva	double(24,8) DEFAULT 0,

@@ -1,0 +1,81 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Сілт. жөнелту
+Sending=Жеткізу
+Sendings=Жеткізулер
+AllSendings=Барлық жеткізілімдер
+Shipment=Жеткізу
+Shipments=Жеткізулер
+ShowSending=Жеткізулерді көрсету
+Receivings=Жеткізу түбіртектері
+SendingsArea=Жеткізу аймағы
+ListOfSendings=Жеткізулер тізімі
+SendingMethod=Жеткізу әдісі
+LastSendings=Соңғы %s жеткізілімдері
+StatisticsOfSendings=Жеткізу статистикасы
+NbOfSendings=Жеткізу саны
+NumberOfShipmentsByMonth=Айлар бойынша жеткізілімдер саны
+SendingCard=Жеткізу картасы
+NewSending=Жаңа жөнелту
+CreateShipment=Жеткізуді құру
+QtyShipped=Qty жөнелтілді
+QtyShippedShort=Қысымды кеме.
+QtyPreparedOrShipped=Дайындалған немесе жеткізілген
+QtyToShip=Жеткізу саны
+QtyToReceive=Қабылдау саны
+QtyReceived=Qty алынды
+QtyInOtherShipments=Басқа жеткізілімдегі саны
+KeepToShip=Жеткізуді жалғастырыңыз
+KeepToShipShort=Қалу
+OtherSendingsForSameOrder=Осы тапсырыс бойынша басқа жеткізілім
+SendingsAndReceivingForSameOrder=Бұл тапсырыстың жөнелтімдері мен түбіртектері
+SendingsToValidate=Растау үшін жөнелтімдер
+StatusSendingCanceled=Бас тартылды
+StatusSendingCanceledShort=Бас тартылды
+StatusSendingDraft=Жоба
+StatusSendingValidated=Тексерілген (жөнелтілетін немесе жіберілген өнімдер)
+StatusSendingProcessed=Өңделді
+StatusSendingDraftShort=Жоба
+StatusSendingValidatedShort=Тексерілді
+StatusSendingProcessedShort=Өңделді
+SendingSheet=Жеткізу парағы
+ConfirmDeleteSending=Бұл жүкті шынымен жойғыңыз келе ме?
+ConfirmValidateSending=Бұл жөнелтімді <b> %s </b> сілтемесімен растағыңыз келетініне сенімдісіз бе?
+ConfirmCancelSending=Бұл жөнелтуден бас тартқыңыз келетініне сенімдісіз бе?
+DocumentModelMerou=Merou A5 моделі
+WarningNoQtyLeftToSend=Ескерту, жөнелтуді күтетін өнімдер жоқ.
+StatsOnShipmentsOnlyValidated=Статистика тек тексерілген жеткізілімге арналған. Қолданылған күн - бұл жөнелтудің расталған күні (жоспарланған жеткізу күні әрқашан белгілі бола бермейді)
+DateDeliveryPlanned=Жеткізудің жоспарланған күні
+RefDeliveryReceipt=Жеткізу туралы түбіртек
+StatusReceipt=Мәртебені жеткізу туралы түбіртек
+DateReceived=Жеткізу күні қабылданды
+ClassifyReception=Classify Received
+SendShippingByEMail=Жеткізуді электрондық пошта арқылы жіберіңіз
+SendShippingRef=%s жөнелтілімін беру
+ActionsOnShipping=Жеткізу кезіндегі оқиғалар
+LinkToTrackYourPackage=Пакетті бақылау үшін сілтеме
+ShipmentCreationIsDoneFromOrder=For the moment, creation of a new shipment is done from the Sales Order record.
+ShipmentLine=Жеткізу желісі
+ProductQtyInCustomersOrdersRunning=Ашық сату тапсырыстарынан өнім саны
+ProductQtyInSuppliersOrdersRunning=Ашық сатып алу тапсырыстарынан өнім саны
+ProductQtyInShipmentAlreadySent=Ашық сатуға тапсырыс бойынша өнім саны жіберілген
+ProductQtyInSuppliersShipmentAlreadyRecevied=Ашық сатып алу тапсырыстарынан алынған өнім саны
+NoProductToShipFoundIntoStock=<b> %s </b> қоймасынан жіберілетін өнім табылмады. Дұрыс қойманы таңдаңыз немесе басқа қойманы таңдаңыз.
+WeightVolShort=Салмағы/том.
+ValidateOrderFirstBeforeShipment=Жеткізуді жасамас бұрын алдымен тапсырысты растауыңыз керек.
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=Жеткізу түбіртектері үшін құжаттың толық үлгісі (логотип ...)
+DocumentModelStorm=Жеткізу түбіртектері мен экстра -өрістердің үйлесімділігі үшін құжаттың толық үлгісі (логотип ...)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER тұрақты анықталмаған
+SumOfProductVolumes=Өнім көлемінің жиынтығы
+SumOfProductWeights=Өнімнің массасы
+
+# warehouse details
+DetailWarehouseNumber= Қойма туралы мәліметтер
+DetailWarehouseFormat= W: %s (Саны: %d)
+
+ShipmentDistribution=Shipment distribution
+
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.

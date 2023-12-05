@@ -13,17 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#
-# Generic
-#
-
-# Module label 'ModuleZapierForDolibarrName'
-ModuleZapierForDolibarrName = Zapier for Dolibarr
-# Module description 'ModuleZapierForDolibarrDesc'
-ModuleZapierForDolibarrDesc = Zapier for Dolibarr module
-
-#
-# Admin page
-#
-ZapierForDolibarrSetup = Setup of Zapier for Dolibarr
-ZapierDescription=Interface with Zapier
+ModuleZapierForDolibarrName = Zapier kwa Dolibarr
+ModuleZapierForDolibarrDesc = Zapier kwa moduli ya Dolibarr
+ZapierForDolibarrSetup=Usanidi wa Zapier kwa Dolibarr
+ZapierDescription=Muunganisho na Zapier
+ZapierAbout=Kuhusu moduli Zapier
+ZapierSetupPage=Hakuna haja ya kusanidi kwa upande wa Dolibarr ili kutumia Zapier. Walakini, lazima utengeneze na uchapishe kifurushi kwenye zapier ili uweze kutumia Zapier na Dolibarr. Angalia hati kwenye <a href="https://wiki.dolibarr.org/index.php/Module_Zapier"> ukurasa huu wa wiki </a> .

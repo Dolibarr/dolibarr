@@ -1,48 +1,47 @@
-<?php if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
+<?php if (!defined('ISLOADEDBYSTEELSHEET')) {
+	die('Must be call by steelsheet');
+} ?>
 /* <style type="text/css" > */
 
 .mainmenu::before{
-    /* font part */
-    font-family: "Font Awesome 5 Free";
-    font-weight: 900;
-    font-style: normal;
-    font-variant: normal;
-    text-rendering: auto;
-    line-height: 26px;
-	font-size: 1.5em;
-    -webkit-font-smoothing: antialiased;
-    text-align:center;
+	/* font part */
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
+	font-weight: 900;
+	font-style: normal;
+	font-variant: normal;
+	text-rendering: auto;
+	line-height: 26px;
+	font-size: 1.3em;
+	-webkit-font-smoothing: antialiased;
+	text-align:center;
 	text-decoration:none;
-	color: #<?php echo $colortextbackhmenu; ?>;
+	color: var(--colortextbackhmenu);
 }
 
-.fa-15x {
-    font-size: 1.5em;
+div.mainmenu.menu {
+	background-image: none;
 }
 
-div.mainmenu.ticket::before {
-    content: "\f3ff";
+/*
+div.mainmenu.menu::before {
+	content: "\f0c9";
 }
-div.mainmenu.ticket {
-    background-image: none !important;
-}
-
-
+*/
 
 div.mainmenu.generic1::before {
-    content: "\f249";
+	content: "\f249";
 }
 
 div.mainmenu.generic2::before {
-    content: "\f249";
+	content: "\f249";
 }
 
 div.mainmenu.generic3::before {
-    content: "\f249";
+	content: "\f249";
 }
 
 div.mainmenu.generic4::before {
-    content: "\f249";
+	content: "\f249";
 }
 
 /* Define color of some picto */
@@ -64,7 +63,7 @@ div.mainmenu.generic4::before {
 .fa-play {
 	color: #444;
 }
-.fa-unlink {
+.fa-link, .fa-unlink {
 	color: #555;
 }
 
@@ -96,4 +95,22 @@ div.mainmenu.generic4::before {
 	height: 25%;
 	border-bottom: solid 60px currentColor;
 	margin-left: 30px;
+}
+
+.tmenu span.fas, .tmenu span.far {
+	color: unset !important;
+	line-height: 28px;
+	text-align: center;
+}
+
+.menu_titre .em092 {
+	font-size: 0.92em;
+}
+
+.menu_titre .em088 {
+	font-size: 0.88em;
+}
+
+.menu_titre .em080 {
+	font-size: 0.80em;
 }

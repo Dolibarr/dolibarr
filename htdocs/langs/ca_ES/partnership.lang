@@ -1,0 +1,97 @@
+# Copyright (C) 2021		NextGestion			<contact@nextgestion.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+ModulePartnershipName=Gestió d'associacions
+PartnershipDescription=Mòdul Gestió d'associacions
+PartnershipDescriptionLong= Mòdul Gestió d'associacions
+Partnership=Associació
+Partnerships=Col·laboracions
+AddPartnership=Afegiu associació
+CancelPartnershipForExpiredMembers=Associació: cancel·leu l'associació de membres amb subscripcions caducades
+PartnershipCheckBacklink=Associació: consulteu l'enllaç de retrocés de referència
+
+#
+# Menu
+#
+NewPartnership=Nova associació
+NewPartnershipbyWeb=La vostra sol·licitud d'associació s'ha afegit correctament. Ens posarem en contacte amb tu aviat...
+ListOfPartnerships=Llista d'associació
+
+#
+# Admin page
+#
+PartnershipSetup=Configuració de l'associació
+PartnershipAbout=Quant a Partnership
+PartnershipAboutPage=Associació sobre la pàgina
+partnershipforthirdpartyormember=L'estatus de soci s'ha de definir com a «tercer» o «soci»
+PARTNERSHIP_IS_MANAGED_FOR=Associació gestionada per
+PARTNERSHIP_BACKLINKS_TO_CHECK=Retroenllaços per a comprovar
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb de dies abans de cancel·lar l'estat d'una associació quan la subscripció ha caducat
+ReferingWebsiteCheck=Comprovació de referència del lloc web
+ReferingWebsiteCheckDesc=Podeu activar una funció per a comprovar que els vostres socis hagin afegit un retroenllaç als dominis del vostre lloc web al seu propi lloc web.
+PublicFormRegistrationPartnerDesc=Dolibarr us pot proporcionar un URL/lloc web públic per a permetre que els visitants externs sol·licitin formar part del programa d'associació.
+
+#
+# Object
+#
+DeletePartnership=Suprimiu una associació
+PartnershipDedicatedToThisThirdParty=Associació dedicada a aquest tercer
+PartnershipDedicatedToThisMember=Associació dedicada a aquest membre
+DatePartnershipStart=Data inicial
+DatePartnershipEnd=Data final
+ReasonDecline=Rebutjar la raó
+ReasonDeclineOrCancel=Rebutjar la raó
+PartnershipAlreadyExist=L’associació ja existeix
+ManagePartnership=Gestioneu l'associació
+BacklinkNotFoundOnPartnerWebsite=Enllaç de retrocés no trobat al lloc web associat
+ConfirmClosePartnershipAsk=Esteu segur que voleu cancel·lar aquesta associació?
+PartnershipType=Tipus d'associació
+PartnershipRefApproved=Associació %s aprovada
+KeywordToCheckInWebsite=Si voleu comprovar que una paraula clau determinada està present al lloc web de cada soci, definiu aquesta paraula clau aquí
+PartnershipDraft=Esborrany
+PartnershipAccepted=Acceptat
+PartnershipRefused=Rebutjat
+PartnershipCanceled=Cancel·lat
+PartnershipManagedFor=Els socis ho són
+
+#
+# Template Mail
+#
+SendingEmailOnPartnershipWillSoonBeCanceled=Aviat es cancel·larà l'associació
+SendingEmailOnPartnershipRefused=L'associació es va negar
+SendingEmailOnPartnershipAccepted=S'ha acceptat l'associació
+SendingEmailOnPartnershipCanceled=S'ha cancel·lat l'associació
+
+YourPartnershipWillSoonBeCanceledTopic=Aviat es cancel·larà l'associació
+YourPartnershipRefusedTopic=L'associació es va negar
+YourPartnershipAcceptedTopic=S'ha acceptat l'associació
+YourPartnershipCanceledTopic=S'ha cancel·lat l'associació
+
+YourPartnershipWillSoonBeCanceledContent=Us informem que aviat es cancel·larà la vostra associació (no s'ha trobat l'enllaç de retrocés)
+YourPartnershipRefusedContent=Us informem que la vostra sol·licitud de col·laboració s’ha rebutjat.
+YourPartnershipAcceptedContent=Us informem que la vostra sol·licitud de col·laboració ha estat acceptada.
+YourPartnershipCanceledContent=Us informem que la vostra associació s’ha cancel·lat.
+
+CountLastUrlCheckError=Nombre d'errors de l'última comprovació de l'URL
+LastCheckBacklink=Data de l'última comprovació de l'URL
+ReasonDeclineOrCancel=Rebutjar la raó
+
+NewPartnershipRequest=Nova sol·licitud de col·laboració
+NewPartnershipRequestDesc=Aquest formulari us permet sol·licitar formar part d'un dels nostres programes d'associació. Si necessiteu ajuda per a omplir aquest formulari, poseu-vos en contacte amb el correu electrònic <b>%s</b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Aquesta pàgina ha de contenir almenys un enllaç a un dels dominis següents: %s
+

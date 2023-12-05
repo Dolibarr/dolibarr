@@ -48,12 +48,13 @@ class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 	/**
 	 *  Return description of numbering module
 	 *
-	 *  @return     string      Text with description
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs;
-	  	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
 	}
 
 
@@ -72,13 +73,15 @@ class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *  @return     boolean     false if conflict, true if ok
+	 *  @param  Object		$object		Object we need next value for
+	 *  @return boolean     			false if conflict, true if ok
 	 */
-	public function canBeActivated()
+	public function canBeActivated($object)
 	{
 		global $conf, $langs, $db;
 
-		$payyymm = ''; $max = '';
+		$payyymm = '';
+		$max = '';
 
 		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
@@ -87,13 +90,14 @@ class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 		$sql .= " AND entity = ".$conf->entity;
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$row = $db->fetch_row($resql);
-			if ($row) { $payyymm = substr($row[0], 0, 6); $max = $row[0]; }
+			if ($row) {
+				$payyymm = substr($row[0], 0, 6);
+				$max = $row[0];
+			}
 		}
-		if ($payyymm && !preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $payyymm))
-		{
+		if ($payyymm && !preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $payyymm)) {
 			$langs->load("errors");
 			$this->error = $langs->trans('ErrorNumRefModel', $max);
 			return false;
@@ -105,9 +109,9 @@ class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Societe		$objsoc     Object thirdparty
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
+	 *  @param	Societe			$objsoc     Object thirdparty
+	 *  @param  RemiseCheque	$object		Object we need next value for
+	 *  @return string      				Value if KO, <0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
@@ -121,11 +125,13 @@ class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 		$sql .= " AND entity = ".$conf->entity;
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$obj = $db->fetch_object($resql);
-			if ($obj) $max = intval($obj->max);
-			else $max = 0;
+			if ($obj) {
+				$max = intval($obj->max);
+			} else {
+				$max = 0;
+			}
 		} else {
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			return -1;
@@ -135,8 +141,11 @@ class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 		$date = $object->date_bordereau;
 		$yymm = strftime("%y%m", $date);
 
-		if ($max >= (pow(10, 4) - 1)) $num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
-		else $num = sprintf("%04s", $max + 1);
+		if ($max >= (pow(10, 4) - 1)) {
+			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
+		} else {
+			$num = sprintf("%04s", $max + 1);
+		}
 
 		dol_syslog(__METHOD__." return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;

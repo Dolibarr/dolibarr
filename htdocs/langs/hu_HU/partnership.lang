@@ -1,0 +1,96 @@
+# Copyright (C) 2021		NextGestion			<contact@nextgestion.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+ModulePartnershipName=Partnerség kezelése
+PartnershipDescription=Partnerség modul kezelés
+PartnershipDescriptionLong= Partnerség modul kezelés
+Partnership=Partnerség
+Partnerships=Partnerships
+AddPartnership=Partnerség hozzáadása
+CancelPartnershipForExpiredMembers=Partnerség: A lejárt előfizetéssel rendelkező tagok partnerségének megszüntetése
+PartnershipCheckBacklink=Partnerség: Ellenőrizze a hivatkozási hivatkozást
+
+#
+# Menu
+#
+NewPartnership=Új partnerség
+NewPartnershipbyWeb=Your partnership request has been added successfully. We may contact you soon...
+ListOfPartnerships=A partnerségek listája
+
+#
+# Admin page
+#
+PartnershipSetup=Partnerség beállítása
+PartnershipAbout=A partnerségről
+PartnershipAboutPage=Partnerség az oldalról
+partnershipforthirdpartyormember=A partner státuszát „harmadik félre” vagy „tagra” kell állítani
+PARTNERSHIP_IS_MANAGED_FOR=Partnerség kezelve
+PARTNERSHIP_BACKLINKS_TO_CHECK=Visszamutató hivatkozások az ellenőrzéshez
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb napok a partnerség állapotának lemondása előtt, ha az előfizetés lejárt
+ReferingWebsiteCheck=A webhely hivatkozásának ellenőrzése
+ReferingWebsiteCheckDesc=Engedélyezhet egy funkciót, amellyel ellenőrizheti, hogy partnerei hozzáadtak-e egy visszamutató hivatkozást az Ön webhelyének domainjéhez a saját webhelyükön.
+PublicFormRegistrationPartnerDesc=A Dolibarr nyilvános URL-t/webhelyet tud Önnek biztosítani, amely lehetővé teszi a külső látogatók számára, hogy kérjék a partnerségi programban való részvételt.
+
+#
+# Object
+#
+DeletePartnership=Partnerség törlése
+PartnershipDedicatedToThisThirdParty=Ennek a harmadik félnek szentelt partnerség
+PartnershipDedicatedToThisMember=Ennek a tagnak szentelt partnerség
+DatePartnershipStart=Kezdő dátum
+DatePartnershipEnd=Befejezés dátuma
+ReasonDecline=Elutasítás oka
+ReasonDeclineOrCancel=Elutasítás oka
+PartnershipAlreadyExist=Már létezik partnerség
+ManagePartnership=Partnerség kezelése
+BacklinkNotFoundOnPartnerWebsite=A visszamutató hivatkozás nem található a partner webhelyén
+ConfirmClosePartnershipAsk=Biztosan felmondja ezt a partnerséget?
+PartnershipType=Partnerség típusa
+PartnershipRefApproved=%s partnerség jóváhagyva
+KeywordToCheckInWebsite=Ha ellenőrizni szeretné, hogy egy adott kulcsszó megtalálható-e az egyes partnerek weboldalán, akkor itt adja meg ezt a kulcsszót
+PartnershipDraft=Piszkozat
+PartnershipAccepted=Elfogadva
+PartnershipRefused=Elutasítva
+PartnershipCanceled=Megszakítva
+PartnershipManagedFor=A partnerek
+
+#
+# Template Mail
+#
+SendingEmailOnPartnershipWillSoonBeCanceled=A partnerség hamarosan megszűnik
+SendingEmailOnPartnershipRefused=A partnerség elutasítva
+SendingEmailOnPartnershipAccepted=Partnerség elfogadva
+SendingEmailOnPartnershipCanceled=Partnerség törölve
+
+YourPartnershipWillSoonBeCanceledTopic=A partnerség hamarosan megszűnik
+YourPartnershipRefusedTopic=A partnerség elutasítva
+YourPartnershipAcceptedTopic=Partnerség elfogadva
+YourPartnershipCanceledTopic=Partnerség törölve
+
+YourPartnershipWillSoonBeCanceledContent=Tájékoztatjuk, hogy partnerségét hamarosan megszüntetjük (a visszamutató hivatkozás nem található)
+YourPartnershipRefusedContent=Tájékoztatjuk, hogy partnerségi kérelmét elutasították.
+YourPartnershipAcceptedContent=Tájékoztatjuk, hogy partnerségi kérelmét elfogadtuk.
+YourPartnershipCanceledContent=Tájékoztatjuk, hogy a partnerségét megszüntettük.
+
+CountLastUrlCheckError=Az utolsó URL-ellenőrzés hibáinak száma
+LastCheckBacklink=Az utolsó URL-ellenőrzés dátuma
+ReasonDeclineOrCancel=Elutasítás oka
+
+NewPartnershipRequest=Új partnerségi kérelem
+NewPartnershipRequestDesc=Ez az űrlap lehetővé teszi, hogy kérjen részt partnerségi programunkban. Ha segítségre van szüksége az űrlap kitöltéséhez, kérjük, lépjen kapcsolatba e-mailben <b> %s </b> .
+

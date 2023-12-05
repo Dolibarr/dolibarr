@@ -1,0 +1,36 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=پے پال ماڈیول سیٹ اپ
+PaypalDesc=یہ ماڈیول صارفین کو <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPal </a> کے ذریعے ادائیگی کی اجازت دیتا ہے۔ اسے ایڈہاک ادائیگی کے لیے یا Dolibarr آبجیکٹ (انوائس، آرڈر، ...) سے متعلق ادائیگی کے لیے استعمال کیا جا سکتا ہے۔
+PaypalOrCBDoPayment=پے پال (کارڈ یا پے پال) سے ادائیگی کریں
+PaypalDoPayment=پے پال کے ساتھ ادائیگی کریں۔
+PAYPAL_API_SANDBOX=موڈ ٹیسٹ/سینڈ باکس
+PAYPAL_API_USER=API صارف نام
+PAYPAL_API_PASSWORD=API پاس ورڈ
+PAYPAL_API_SIGNATURE=API دستخط
+PAYPAL_SSLVERSION=کرل SSL ورژن
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY="انٹیگرل" ادائیگی (کریڈٹ کارڈ+پے پال) یا صرف "پے پال" پیش کریں۔
+PaypalModeIntegral=لازمی
+PaypalModeOnlyPaypal=صرف پے پال
+ONLINE_PAYMENT_CSS_URL=آن لائن ادائیگی کے صفحے پر CSS اسٹائل شیٹ کا اختیاری URL
+ThisIsTransactionId=یہ ٹرانزیکشن کی شناخت ہے: <b> %s </b>
+PAYPAL_ADD_PAYMENT_URL=جب آپ ای میل کے ذریعے کوئی دستاویز بھیجیں تو پے پال کی ادائیگی کا یو آر ایل شامل کریں۔
+NewOnlinePaymentReceived=نئی آن لائن ادائیگی موصول ہوئی۔
+NewOnlinePaymentFailed=نئی آن لائن ادائیگی کی کوشش کی لیکن ناکام ہوگئی
+ONLINE_PAYMENT_SENDEMAIL=ہر ادائیگی کی کوشش کے بعد اطلاعات کے لیے ای میل ایڈریس (کامیابی اور ناکامی کے لیے)
+ReturnURLAfterPayment=ادائیگی کے بعد URL واپس کریں۔
+ValidationOfOnlinePaymentFailed=آن لائن ادائیگی کی توثیق ناکام ہوگئی
+PaymentSystemConfirmPaymentPageWasCalledButFailed=ادائیگی کی تصدیق کے صفحے کو ادائیگی کے نظام کی طرف سے بلایا گیا تھا ایک خرابی واپس آ گئی
+SetExpressCheckoutAPICallFailed=SetExpressCheckout API کال ناکام ہوگئی۔
+DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API کال ناکام ہوگئی۔
+DetailedErrorMessage=خرابی کا تفصیلی پیغام
+ShortErrorMessage=شارٹ ایرر میسج
+ErrorCode=غلط کوڈ
+ErrorSeverityCode=خرابی کی شدت کا کوڈ
+OnlinePaymentSystem=آن لائن ادائیگی کا نظام
+PaypalLiveEnabled=پے پال "لائیو" موڈ فعال ہے (بصورت دیگر ٹیسٹ/سینڈ باکس موڈ)
+PaypalImportPayment=پے پال کی ادائیگی درآمد کریں۔
+PostActionAfterPayment=ادائیگی کے بعد کارروائیاں پوسٹ کریں۔
+ARollbackWasPerformedOnPostActions=تمام پوسٹ ایکشنز پر ایک رول بیک کیا گیا تھا۔ اگر ضروری ہو تو آپ کو پوسٹ کے اعمال کو دستی طور پر مکمل کرنا چاہیے۔
+ValidationOfPaymentFailed=ادائیگی کی توثیق ناکام ہوگئی ہے۔
+CardOwner=کارڈ ہولڈر
+PayPalBalance=پے پال کریڈٹ

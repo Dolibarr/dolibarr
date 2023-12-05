@@ -6,6 +6,7 @@
  * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,88 +28,147 @@
  *  \brief      Page of third party projects
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
-$langs->loadLangs(array("companies", "projects"));
+$form  = new Form($db);
+
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'projects'));
+
+$action = GETPOST('action', 'aZ09');
+$massaction = GETPOST('massaction', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
+
+$toselect = GETPOST('toselect', 'array');
+
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('projectthirdparty'));
+
+$object = new Societe($db);
+$permissiontodelete = $user->hasRight('societe', 'supprimer');
+
 
 
 /*
  *	Actions
  */
 
-$parameters = array('id'=>$socid);
-$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
+if (GETPOST('cancel', 'alpha')) {
+	$massaction = '';
+}
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
+	$massaction = '';
+	$massactionbutton = '';
+}
+
+
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+
+$parameters = array('id'=>$socid);
+
+// List of mass actions available
+if (!empty($permissiontodelete)) {
+	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
+}
+if (in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
+	$arrayofmassactions = array();
+}
+
+if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag', 'preenable', 'preclose'))) {
+	$arrayofmassactions = array();
+}
+
+// Mass actions
+$objectclass = 'Project';
+$objectlabel = 'Project';
+$uploaddir = $conf->societe->dir_output;
+include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+
+$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 
 /*
  *	View
  */
 
-$contactstatic = new Contact($db);
-
-$form = new Form($db);
-
-if ($socid)
-{
+unset($_SESSION['pageforbacktolist']['project']);
+if ($socid) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 	$langs->load("companies");
 
-
-	$object = new Societe($db);
 	$result = $object->fetch($socid);
 
 	$title = $langs->trans("Projects");
-	if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title = $object->name." - ".$title;
+	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+		$title = $object->name." - ".$title;
+	}
 	llxHeader('', $title);
 
-	if (!empty($conf->notification->enabled)) $langs->load("mails");
+	if (isModEnabled('notification')) {
+		$langs->load("mails");
+	}
 	$head = societe_prepare_head($object);
 
-	dol_fiche_head($head, 'project', $langs->trans("ThirdParty"), -1, 'company');
+	print dol_get_fiche_head($head, 'project', $langs->trans("ThirdParty"), -1, 'company');
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
+	dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
 
-    print '<div class="fichecenter">';
+	print '<div class="fichecenter">';
 
-    print '<div class="underbanner clearboth"></div>';
+	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
-    if (!empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
-    {
-        print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
-    }
 
-	if ($object->client)
-	{
+	// Type Prospect/Customer/Supplier
+	print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
+	print $object->getTypeUrl(1);
+	print '</td></tr>';
+
+	if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
+		print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
+	}
+
+	if ($object->client) {
 		print '<tr><td class="titlefield">';
 		print $langs->trans('CustomerCode').'</td><td colspan="3">';
-		print $object->code_client;
-		if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_client));
+		$tmpcheck = $object->check_codeclient();
+		if ($tmpcheck != 0 && $tmpcheck != -5) {
+			print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
+		}
 		print '</td></tr>';
 	}
 
-	if ($object->fournisseur)
-	{
+	if ($object->fournisseur) {
 		print '<tr><td class="titlefield">';
 		print $langs->trans('SupplierCode').'</td><td colspan="3">';
-		print $object->code_fournisseur;
-		if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
+		$tmpcheck = $object->check_codefournisseur();
+		if ($tmpcheck != 0 && $tmpcheck != -5) {
+			print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
+		}
 		print '</td></tr>';
 	}
 
@@ -116,17 +176,25 @@ if ($socid)
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
+	print '<br>';
 	$params = '';
+	$backtopage = $_SERVER['PHP_SELF'].'?socid='.$object->id;
+	$newcardbutton = dolGetButtonTitle($langs->trans("NewProject"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?action=create&socid='.$object->id.'&backtopageforcancel='.urlencode($backtopage), '', 1, $params);
 
-	$newcardbutton .= dolGetButtonTitle($langs->trans("NewProject"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?action=create&socid='.$object->id.'&amp;backtopage='.urlencode($backtopage), '', 1, $params);
-
-    print '<br>';
+	if (empty($conf->dol_optimize_smallscreen)) {
+		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<div class="nobordernopadding center valignmiddle col-center">'.$massactionbutton.'</div>';
+	}
 
 
 	// Projects list
-    $result = show_projects($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1, $newcardbutton);
+	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+	$arrayofselected = is_array($toselect) ? $toselect : array();
+	$result = show_projects($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1, $newcardbutton);
+	print '</form>';
 }
 
 // End of page

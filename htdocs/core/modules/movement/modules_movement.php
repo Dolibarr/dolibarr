@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file       htdocs/core/modules/stock/modules_movement.php
+ *  \file       htdocs/core/modules/movement/modules_movement.php
  *  \ingroup    stock
  *  \brief      File with parent class for generating PDF of a stock movements
  */
@@ -31,9 +31,25 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 abstract class ModelePDFMovement extends CommonDocGenerator
 {
 	/**
-	 * @var string Error code (or message)
+	 * @var DoliDb Database handler
 	 */
-	public $error = '';
+	public $db;
+
+	/**
+	 * @var string model description (short text)
+	 */
+	public $description;
+
+	/**
+	 * @var string document type
+	 */
+	public $type;
+
+	/**
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
+	public $version = 'dolibarr';
 
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -47,14 +63,12 @@ abstract class ModelePDFMovement extends CommonDocGenerator
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$type = 'movement';
-		$liste = array();
+		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste = getListOfModels($db, $type, $maxfilenamelength);
+		$list = getListOfModels($db, $type, $maxfilenamelength);
 
-		return $liste;
+		return $list;
 	}
 }

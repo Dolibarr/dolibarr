@@ -12,7 +12,6 @@ UserMargins=Marges de l'utilisateur
 ProductService=Produit et service
 ChooseProduct/Service=Choisissez un produit ou un service
 ForceBuyingPriceIfNull=Force achat / prix de revient au prix de vente si non défini
-ForceBuyingPriceIfNullDetails=Si le prix d'achat / coût non défini, et cette option "ON", la marge sera nulle en ligne (prix d'achat / coût = prix de vente), sinon ("OFF"), marge sera égal au défaut suggéré.
 MARGIN_METHODE_FOR_DISCOUNT=Méthode de marge pour les réductions globales
 UseDiscountAsProduct=En tant que produit
 UseDiscountAsService=En tant que service
@@ -25,7 +24,6 @@ CostPrice=Prix ​​de revient
 UnitCharges=Frais unitaires
 Charges=Des charges
 AgentContactType=Type de contact d'agent commercial
-AgentContactTypeDetails=Définir le type de contact (lié sur les factures) sera utilisé pour le rapport de marge par représentant de vente
 rateMustBeNumeric=Le taux doit être une valeur numérique
 markRateShouldBeLesserThan100=Le taux de marquage devrait être inférieur à 100
 ShowMarginInfos=Afficher les infos de marge

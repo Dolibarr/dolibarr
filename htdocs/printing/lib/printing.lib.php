@@ -57,10 +57,10 @@ function printingAdminPrepareHead($mode)
 	}
 
 	/** TODO This feature seem to be not ready yet.
-    $head[$h][0] = DOL_URL_ROOT."/printing/admin/printing.php?mode=userconf";
-    $head[$h][1] = $langs->trans("UserConf");
-    $head[$h][2] = 'userconf';
-    $h++;
+	$head[$h][0] = DOL_URL_ROOT."/printing/admin/printing.php?mode=userconf";
+	$head[$h][1] = $langs->trans("UserConf");
+	$head[$h][2] = 'userconf';
+	$h++;
 	 */
 
 	//$object=new stdClass();

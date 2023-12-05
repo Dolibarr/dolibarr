@@ -1,0 +1,40 @@
+Module68000Name = Ішкі есеп
+Module68000Desc = Ішкі есептерді басқару (француздық DEB/DES форматын қолдау)
+IntracommReportSetup = Ішкі хабарлау модулін орнату
+IntracommReportAbout = Ішкі хабарлау туралы
+
+# Setup
+INTRACOMMREPORT_NUM_AGREMENT=Нөмірді тағайындау (délivré par le CISD de rattachement)
+INTRACOMMREPORT_TYPE_ACTEUR=Әрекетші түрін енгізіңіз
+INTRACOMMREPORT_ROLE_ACTEUR=Рөл joué par l'acteur
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les кіріспе
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
+INTRACOMMREPORT_CATEG_FRAISDEPORT=«Frais de port» түрінің қызметтері
+
+INTRACOMMREPORT_NUM_DECLARATION=Декарант
+
+# Menu
+MenuIntracommReport=Ішкі есеп
+MenuIntracommReportNew=Жаңа декларация
+MenuIntracommReportList=Тізім
+
+# View
+NewDeclaration=Жаңа декларация
+Declaration=Декларация
+AnalysisPeriod=Талдау кезеңі
+TypeOfDeclaration=Декларация түрі
+DEB=Тауар алмасу декларациясы (DEB)
+DES=Қызметтер алмасу декларациясы (DES)
+
+# Export page
+IntracommReportTitle=XML файлын ProDouane форматында дайындау
+
+# List
+IntracommReportList=Жасалған декларациялардың тізімі
+IntracommReportNumber=Декларация нөмірі
+IntracommReportPeriod=Талдау кезеңі
+IntracommReportTypeDeclaration=Декларация түрі
+IntracommReportDownload=xml файлын жүктеңіз
+
+# Invoice
+IntracommReportTransportMode=Тасымалдау режимі

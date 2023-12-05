@@ -1,0 +1,54 @@
+# Copyright (C) 2021 SuperAdmin
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see .
+
+#
+# Generic
+#
+
+# Module label 'ModuleKnowledgeManagementName'
+ModuleKnowledgeManagementName = அறிவு மேலாண்மை அமைப்பு
+# Module description 'ModuleKnowledgeManagementDesc'
+ModuleKnowledgeManagementDesc=அறிவு மேலாண்மை (KM) அல்லது உதவி-மேசை தளத்தை நிர்வகிக்கவும்
+
+#
+# Admin page
+#
+KnowledgeManagementSetup = அறிவு மேலாண்மை அமைப்பு அமைப்பு
+Settings = அமைப்புகள்
+KnowledgeManagementSetupPage = அறிவு மேலாண்மை அமைப்பு அமைப்பு பக்கம்
+
+
+#
+# About page
+#
+About = பற்றி
+KnowledgeManagementAbout = அறிவு மேலாண்மை பற்றி
+KnowledgeManagementAboutPage = பக்கத்தைப் பற்றிய அறிவு மேலாண்மை
+
+KnowledgeManagementArea = அறிவு மேலாண்மை
+MenuKnowledgeRecord = அறிவு சார்ந்த
+ListKnowledgeRecord = கட்டுரைகளின் பட்டியல்
+NewKnowledgeRecord = புதிய கட்டுரை
+ValidateReply = தீர்வு சரிபார்க்கவும்
+KnowledgeRecords = கட்டுரைகள்
+KnowledgeRecord = கட்டுரை
+KnowledgeRecordExtraFields = கட்டுரைக்கான கூடுதல் புலங்கள்
+GroupOfTicket=டிக்கெட்டுகளின் குழு
+YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
+SuggestedForTicketsInGroup=குழுவாக இருக்கும்போது டிக்கெட்டுகளுக்கு பரிந்துரைக்கப்படுகிறது
+
+SetObsolete=Set as obsolete
+ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
+ConfirmReopenKM=Do you want to restore this article to status "Validated" ?

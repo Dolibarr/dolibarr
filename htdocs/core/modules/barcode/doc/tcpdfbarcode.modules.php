@@ -32,9 +32,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/barcode.lib.php'; // This is to includ
 class modTcpdfbarcode extends ModeleBarCode
 {
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
@@ -47,12 +47,11 @@ class modTcpdfbarcode extends ModeleBarCode
 	/**
 	 *	Return description of numbering model
 	 *
-	 *	@return		string		Text with description
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
-		global $langs;
-
 		return 'TCPDF-barcode';
 	}
 
@@ -70,12 +69,11 @@ class modTcpdfbarcode extends ModeleBarCode
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *	@return		boolean		false if conflict, true if ok
+	 *	@param	Object		$object		Object we need next value for
+	 *  @return boolean     			false if KO (there is a conflict), true if OK
 	 */
-	public function canBeActivated()
+	public function canBeActivated($object)
 	{
-		global $langs;
-
 		return true;
 	}
 
@@ -100,17 +98,19 @@ class modTcpdfbarcode extends ModeleBarCode
 	 *
 	 *	@param	   string	    $code		      Value to encode
 	 *	@param	   string	    $encoding	      Mode of encoding
-	 *	@param	   string	    $readable	      Code can be read
+	 *	@param	   string	    $readable	      Code can be read (What is this ? is this used ?)
 	 *	@param	   integer		$scale			  Scale (not used with this engine)
 	 *  @param     integer      $nooutputiferror  No output if error (not used with this engine)
-	 *	@return	   int			                  <0 if KO, >0 if OK
+	 *	@return	   int			                  Return integer <0 if KO, >0 if OK
 	 */
 	public function buildBarCode($code, $encoding, $readable = 'Y', $scale = 1, $nooutputiferror = 0)
 	{
 		global $_GET;
 
 		$tcpdfEncoding = $this->getTcpdfEncodingType($encoding);
-		if (empty($tcpdfEncoding)) return -1;
+		if (empty($tcpdfEncoding)) {
+			return -1;
+		}
 
 		$color = array(0, 0, 0);
 
@@ -149,17 +149,25 @@ class modTcpdfbarcode extends ModeleBarCode
 	 *	@param	   string	    $readable	      Code can be read
 	 *	@param	   integer		$scale			  Scale (not used with this engine)
 	 *  @param     integer      $nooutputiferror  No output if error (not used with this engine)
-	 *	@return	   int			                  <0 if KO, >0 if OK
+	 *	@return	   int			                  Return integer <0 if KO, >0 if OK
 	 */
 	public function writeBarCode($code, $encoding, $readable = 'Y', $scale = 1, $nooutputiferror = 0)
 	{
-		global $conf, $_GET;
+		global $conf, $langs, $_GET;
 
 		dol_mkdir($conf->barcode->dir_temp);
-		$file = $conf->barcode->dir_temp.'/barcode_'.$code.'_'.$encoding.'.png';
+		if (!is_writable($conf->barcode->dir_temp)) {
+			$this->error = $langs->transnoentities("ErrorFailedToWriteInTempDirectory", $conf->barcode->dir_temp);
+			dol_syslog('Error in write_file: ' . $this->error, LOG_ERR);
+			return -1;
+		}
+
+		$file = $conf->barcode->dir_temp . '/barcode_' . $code . '_' . $encoding . '.png';
 
 		$tcpdfEncoding = $this->getTcpdfEncodingType($encoding);
-		if (empty($tcpdfEncoding)) return -1;
+		if (empty($tcpdfEncoding)) {
+			return -1;
+		}
 
 		$color = array(0, 0, 0);
 

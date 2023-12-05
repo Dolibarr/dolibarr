@@ -28,6 +28,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // Requis car utilise dans les classes qui heritent
 
 
@@ -36,118 +37,50 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // Requis
  */
 abstract class ModelePDFPropales extends CommonDocGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
+	public $posxpicture;
+	public $posxtva;
+	public $posxup;
+	public $posxqty;
+	public $posxunit;
+	public $posxdesc;
+	public $posxdiscount;
+	public $postotalht;
+
+	public $tva;
+	public $tva_array;
+	public $localtax1;
+	public $localtax2;
+
+	public $atleastonediscount = 0;
+	public $atleastoneratenotnull = 0;
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation modules
 	 *
-     *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of templates
+	 *  @param	DoliDB	$db     			Database handler
+	 *  @param  integer	$maxfilenamelength  Max length of value to show
+	 *  @return	array						List of templates
 	 */
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
-        // phpcs:enable
-		global $conf;
-
+		// phpcs:enable
 		$type = 'propal';
-		$liste = array();
+		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste = getListOfModels($db, $type, $maxfilenamelength);
+		$list = getListOfModels($db, $type, $maxfilenamelength);
 
-		return $liste;
+		return $list;
 	}
 }
 
 
 /**
- *	Classe mere des modeles de numerotation des references de propales
+ *	Parent class for numbering rules of proposals
  */
-abstract class ModeleNumRefPropales
+abstract class ModeleNumRefPropales extends CommonNumRefGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 * Return if a module can be used or not
-	 *
-	 * @return	boolean     true if module can be used
-	 */
-	public function isEnabled()
-	{
-		return true;
-	}
-
-	/**
-	 *  Renvoi la description par defaut du modele de numerotation
-	 *
-	 * 	@return     string      Texte descripif
-	 */
-	public function info()
-	{
-		global $langs;
-		$langs->load("propale");
-		return $langs->trans("NoDescription");
-	}
-
-	/**
-	 * 	Return an example of numbering
-	 *
-	 *  @return     string      Example
-	 */
-	public function getExample()
-	{
-		global $langs;
-		$langs->load("propale");
-		return $langs->trans("NoExample");
-	}
-
-	/**
-	 *  Checks if the numbers already in the database do not
-	 *  cause conflicts that would prevent this numbering working.
-	 *
-	 *  @return     boolean     false if conflict, true if ok
-	 */
-	public function canBeActivated()
-	{
-		return true;
-	}
-
-	/**
-	 * 	Renvoi prochaine valeur attribuee
-	 *
-	 *	@param		Societe		$objsoc     Object third party
-	 *	@param		Propal		$propal		Object commercial proposal
-	 *	@return     string      Valeur
-	 */
-	public function getNextValue($objsoc, $propal)
-	{
-		global $langs;
-		return $langs->trans("NotAvailable");
-	}
-
-	/**
-	 *  Renvoi version du module numerotation
-	 *
-	 *  @return     string      Valeur
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
-
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		if ($this->version == 'dolibarr') return DOL_VERSION;
-		if ($this->version) return $this->version;
-		return $langs->trans("NotAvailable");
-	}
+	// No overload code
 }

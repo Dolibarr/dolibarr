@@ -44,16 +44,19 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	// TODO: move to a global configuration file?
 	/** @var string Base URL of the webserver under test */
 	protected static $base_url = 'http://dev.zenfusion.fr';
+
 	/**
 	 * @var string Dolibarr admin username
 	 * @see authenticate
 	 */
 	protected static $dol_admin_user = 'admin';
+
 	/**
 	 * @var string Dolibarr admin password
 	 * @see authenticate
 	 */
 	protected static $dol_admin_pass = 'admin';
+
 	/** @var int Dolibarr module ID */
 	private static $module_id = 500000; // TODO: autodetect?
 
@@ -67,14 +70,14 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 		),
 		// Geckodriver does not keep the session at the moment?!
 		// XPath selectors also don't seem to work
-        //array(
-        //    'browser' => 'Mozilla Firefox on Linux',
-        //    'browserName' => 'firefox',
-        //    'sessionStrategy' => 'shared',
-        //    'desiredCapabilities' => array(
-        //        'marionette' => true
-        //    )
-        //)
+		//array(
+		//    'browser' => 'Mozilla Firefox on Linux',
+		//    'browserName' => 'firefox',
+		//    'sessionStrategy' => 'shared',
+		//    'desiredCapabilities' => array(
+		//        'marionette' => true
+		//    )
+		//)
 	);
 
 	/**
@@ -100,7 +103,7 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	 *
 	 * @return	void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 	}
 
@@ -189,7 +192,7 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 		}
 		// Page reloaded, we need a new Xpath
 		$module_status_image = $this->byXPath($module_status_image_path);
-		$this->assertContains('switch_on.png', $module_status_image->attribute('src'), "Module enabled");
+		$this->assertStringContainsString('switch_on.png', $module_status_image->attribute('src'), "Module enabled");
 	}
 
 	/**
@@ -203,7 +206,7 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	{
 		$this->url('/custom/takepos/admin/setup.php');
 		$this->authenticate();
-		$this->assertContains('takepos/admin/setup.php', $this->url(), 'Configuration page');
+		$this->assertStringContainsString('takepos/admin/setup.php', $this->url(), 'Configuration page');
 	}
 
 	/**
@@ -217,7 +220,7 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	{
 		$this->url('/custom/takepos/admin/about.php');
 		$this->authenticate();
-		$this->assertContains('takepos/admin/about.php', $this->url(), 'About page');
+		$this->assertStringContainsString('takepos/admin/about.php', $this->url(), 'About page');
 	}
 
 	/**
@@ -249,7 +252,7 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	{
 		$this->url('/admin/boxes.php');
 		$this->authenticate();
-		$this->assertContains('takeposwidget1', $this->source(), "Box enabled");
+		$this->assertStringContainsString('takeposwidget1', $this->source(), "Box enabled");
 	}
 
 	/**
@@ -263,7 +266,7 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	{
 		$this->url('/admin/triggers.php');
 		$this->authenticate();
-		$this->assertContains(
+		$this->assertStringContainsString(
 			'interface_99_modTakePos_TakePosTriggers.class.php',
 			$this->byTag('body')->text(),
 			"Trigger declared"
@@ -281,7 +284,7 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	{
 		$this->url('/admin/triggers.php');
 		$this->authenticate();
-		$this->assertContains(
+		$this->assertStringContainsString(
 			'tick.png',
 			$this->byXPath('//td[text()="interface_99_modTakePos_MyTrigger.class.php"]/following::img')->attribute('src'),
 			"Trigger enabled"
@@ -311,7 +314,7 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 	}
 }

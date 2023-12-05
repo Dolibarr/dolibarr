@@ -23,6 +23,11 @@
  * \ingroup ldap member
  * \brief Script to update users into Dolibarr from LDAP
  */
+
+if (!defined('NOSESSION')) {
+	define('NOSESSION', '1');
+}
+
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path = __DIR__.'/';
@@ -56,12 +61,27 @@ print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 // List of fields to get from LDAP
-$required_fields = array($conf->global->LDAP_KEY_USERS, $conf->global->LDAP_FIELD_FULLNAME, $conf->global->LDAP_FIELD_NAME, $conf->global->LDAP_FIELD_FIRSTNAME, $conf->global->LDAP_FIELD_LOGIN, $conf->global->LDAP_FIELD_LOGIN_SAMBA, $conf->global->LDAP_FIELD_PASSWORD, $conf->global->LDAP_FIELD_PASSWORD_CRYPTED, $conf->global->LDAP_FIELD_PHONE, $conf->global->LDAP_FIELD_FAX, $conf->global->LDAP_FIELD_MOBILE,
+$required_fields = array(
+	$conf->global->LDAP_KEY_USERS,
+	$conf->global->LDAP_FIELD_FULLNAME,
+	$conf->global->LDAP_FIELD_NAME,
+	$conf->global->LDAP_FIELD_FIRSTNAME,
+	$conf->global->LDAP_FIELD_LOGIN,
+	$conf->global->LDAP_FIELD_LOGIN_SAMBA,
+	$conf->global->LDAP_FIELD_PASSWORD,
+	$conf->global->LDAP_FIELD_PASSWORD_CRYPTED,
+	$conf->global->LDAP_FIELD_PHONE,
+	$conf->global->LDAP_FIELD_FAX,
+	$conf->global->LDAP_FIELD_MOBILE,
 	// $conf->global->LDAP_FIELD_ADDRESS,
 	// $conf->global->LDAP_FIELD_ZIP,
 	// $conf->global->LDAP_FIELD_TOWN,
 	// $conf->global->LDAP_FIELD_COUNTRY,
-	$conf->global->LDAP_FIELD_MAIL, $conf->global->LDAP_FIELD_TITLE, $conf->global->LDAP_FIELD_DESCRIPTION, $conf->global->LDAP_FIELD_SID);
+	$conf->global->LDAP_FIELD_MAIL,
+	$conf->global->LDAP_FIELD_TITLE,
+	$conf->global->LDAP_FIELD_DESCRIPTION,
+	$conf->global->LDAP_FIELD_SID
+);
 
 // Remove from required_fields all entries not configured in LDAP (empty) and duplicated
 $required_fields = array_unique(array_values(array_filter($required_fields, "dolValidElement")));
@@ -72,28 +92,34 @@ if (!isset($argv[1])) {
 }
 
 foreach ($argv as $key => $val) {
-	if ($val == 'commitiferror')
+	if ($val == 'commitiferror') {
 		$forcecommit = 1;
-	if (preg_match('/--server=([^\s]+)$/', $val, $reg))
+	}
+	if (preg_match('/--server=([^\s]+)$/', $val, $reg)) {
 		$conf->global->LDAP_SERVER_HOST = $reg[1];
-	if (preg_match('/--excludeuser=([^\s]+)$/', $val, $reg))
+	}
+	if (preg_match('/--excludeuser=([^\s]+)$/', $val, $reg)) {
 		$excludeuser = explode(',', $reg[1]);
-	if (preg_match('/-y$/', $val, $reg))
+	}
+	if (preg_match('/-y$/', $val, $reg)) {
 		$confirmed = 1;
+	}
 }
 
 print "Mails sending disabled (useless in batch mode)\n";
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1; // On bloque les mails
 print "\n";
 print "----- Synchronize all records from LDAP database:\n";
-print "host=".$conf->global->LDAP_SERVER_HOST."\n";
-print "port=".$conf->global->LDAP_SERVER_PORT."\n";
-print "login=".$conf->global->LDAP_ADMIN_DN."\n";
+print "host=" . getDolGlobalString('LDAP_SERVER_HOST')."\n";
+print "port=" . getDolGlobalString('LDAP_SERVER_PORT')."\n";
+print "login=" . getDolGlobalString('LDAP_ADMIN_DN')."\n";
 print "pass=".preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)."\n";
-print "DN to extract=".$conf->global->LDAP_USER_DN."\n";
-if (!empty($conf->global->LDAP_FILTER_CONNECTION))
-	print 'Filter=('.$conf->global->LDAP_FILTER_CONNECTION.')'."\n"; // Note: filter is defined into function getRecords
-else print 'Filter=('.$conf->global->LDAP_KEY_USERS.'=*)'."\n";
+print "DN to extract=" . getDolGlobalString('LDAP_USER_DN')."\n";
+if (getDolGlobalString('LDAP_FILTER_CONNECTION')) {
+	print 'Filter=(' . getDolGlobalString('LDAP_FILTER_CONNECTION').')'."\n"; // Note: filter is defined into function getRecords
+} else {
+	print 'Filter=(' . getDolGlobalString('LDAP_KEY_USERS').'=*)'."\n";
+}
 print "----- To Dolibarr database:\n";
 print "type=".$conf->db->type."\n";
 print "host=".$conf->db->host."\n";
@@ -111,7 +137,7 @@ if (!$confirmed) {
 	$input = trim(fgets(STDIN));
 }
 
-if (empty($conf->global->LDAP_USER_DN)) {
+if (!getDolGlobalString('LDAP_USER_DN')) {
 	print $langs->trans("Error").': '.$langs->trans("LDAP setup for users not defined inside Dolibarr");
 	exit(-1);
 }
@@ -158,25 +184,25 @@ if ($result >= 0) {
 		// Warning $ldapuser has a key in lowercase
 		foreach ($ldaprecords as $key => $ldapuser) {
 			// If login into exclude list, we discard record
-			if (in_array($ldapuser[$conf->global->LDAP_FIELD_LOGIN], $excludeuser)) {
-				print $langs->transnoentities("UserDiscarded").' # '.$key.': login='.$ldapuser[$conf->global->LDAP_FIELD_LOGIN].' --> Discarded'."\n";
+			if (in_array($ldapuser[getDolGlobalString('LDAP_FIELD_LOGIN')], $excludeuser)) {
+				print $langs->transnoentities("UserDiscarded").' # '.$key.': login='.$ldapuser[getDolGlobalString('LDAP_FIELD_LOGIN')].' --> Discarded'."\n";
 				continue;
 			}
 
 			$fuser = new User($db);
 
 			if ($conf->global->LDAP_KEY_USERS == $conf->global->LDAP_FIELD_SID) {
-				$fuser->fetch('', '', $ldapuser[$conf->global->LDAP_KEY_USERS]); // Chargement du user concerné par le SID
+				$fuser->fetch('', '', $ldapuser[getDolGlobalString('LDAP_KEY_USERS')]); // Chargement du user concerné par le SID
 			} elseif ($conf->global->LDAP_KEY_USERS == $conf->global->LDAP_FIELD_LOGIN) {
-				$fuser->fetch('', $ldapuser[$conf->global->LDAP_KEY_USERS]); // Chargement du user concerné par le login
+				$fuser->fetch('', $ldapuser[getDolGlobalString('LDAP_KEY_USERS')]); // Chargement du user concerné par le login
 			}
 
 			// Propriete membre
-			$fuser->firstname = $ldapuser[$conf->global->LDAP_FIELD_FIRSTNAME];
-			$fuser->lastname = $ldapuser[$conf->global->LDAP_FIELD_NAME];
-			$fuser->login = $ldapuser[$conf->global->LDAP_FIELD_LOGIN];
-			$fuser->pass = $ldapuser[$conf->global->LDAP_FIELD_PASSWORD];
-			$fuser->pass_indatabase_crypted = $ldapuser[$conf->global->LDAP_FIELD_PASSWORD_CRYPTED];
+			$fuser->firstname = $ldapuser[getDolGlobalString('LDAP_FIELD_FIRSTNAME')];
+			$fuser->lastname = $ldapuser[getDolGlobalString('LDAP_FIELD_NAME')];
+			$fuser->login = $ldapuser[getDolGlobalString('LDAP_FIELD_LOGIN')];
+			$fuser->pass = $ldapuser[getDolGlobalString('LDAP_FIELD_PASSWORD')];
+			$fuser->pass_indatabase_crypted = $ldapuser[getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED')];
 
 			// $user->societe;
 			/*
@@ -188,16 +214,16 @@ if ($result >= 0) {
 			 * $fuser->country_code=$countries[$hashlib2rowid[strtolower($fuser->country)]]['code'];
 			 */
 
-			$fuser->office_phone = $ldapuser[$conf->global->LDAP_FIELD_PHONE];
-			$fuser->user_mobile = $ldapuser[$conf->global->LDAP_FIELD_MOBILE];
-			$fuser->office_fax = $ldapuser[$conf->global->LDAP_FIELD_FAX];
-			$fuser->email = $ldapuser[$conf->global->LDAP_FIELD_MAIL];
-			$fuser->ldap_sid = $ldapuser[$conf->global->LDAP_FIELD_SID];
+			$fuser->office_phone = $ldapuser[getDolGlobalString('LDAP_FIELD_PHONE')];
+			$fuser->user_mobile = $ldapuser[getDolGlobalString('LDAP_FIELD_MOBILE')];
+			$fuser->office_fax = $ldapuser[getDolGlobalString('LDAP_FIELD_FAX')];
+			$fuser->email = $ldapuser[getDolGlobalString('LDAP_FIELD_MAIL')];
+			$fuser->ldap_sid = $ldapuser[getDolGlobalString('LDAP_FIELD_SID')];
 
-			$fuser->job = $ldapuser[$conf->global->LDAP_FIELD_TITLE];
-			$fuser->note = $ldapuser[$conf->global->LDAP_FIELD_DESCRIPTION];
+			$fuser->job = $ldapuser[getDolGlobalString('LDAP_FIELD_TITLE')];
+			$fuser->note = $ldapuser[getDolGlobalString('LDAP_FIELD_DESCRIPTION')];
 			$fuser->admin = 0;
-			$fuser->societe_id = 0;
+			$fuser->socid = 0;
 			$fuser->contact_id = 0;
 			$fuser->fk_member = 0;
 
@@ -251,9 +277,11 @@ if ($result >= 0) {
 		}
 
 		if (!$error || $forcecommit) {
-			if (!$error)
+			if (!$error) {
 				print $langs->transnoentities("NoErrorCommitIsDone")."\n";
-			else print $langs->transnoentities("ErrorButCommitIsDone")."\n";
+			} else {
+				print $langs->transnoentities("ErrorButCommitIsDone")."\n";
+			}
 			$db->commit();
 		} else {
 			print $langs->transnoentities("ErrorSomeErrorWereFoundRollbackIsDone", $error)."\n";

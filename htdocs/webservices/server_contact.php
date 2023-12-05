@@ -21,9 +21,29 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-if (!defined("NOCSRFCHECK"))    define("NOCSRFCHECK", '1');
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1'); // Do not check anti CSRF attack test
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1'); // Do not check anti POST attack test
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1'); // Do not load ajax.lib.php library
+}
+if (!defined("NOLOGIN")) {
+	define("NOLOGIN", '1'); // If this page is public (can be called outside logged session)
+}
+if (!defined("NOSESSION")) {
+	define("NOSESSION", '1');
+}
 
-require "../master.inc.php";
+require '../main.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php'; // Include SOAP
 require_once DOL_DOCUMENT_ROOT."/core/lib/ws.lib.php";
 require_once DOL_DOCUMENT_ROOT."/contact/class/contact.class.php";
@@ -33,13 +53,12 @@ require_once DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php";
 dol_syslog("Call Contact webservices interfaces");
 
 // Enable and test if module web services is enabled
-if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
-{
-    $langs->load("admin");
-    dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
-    print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
-    print $langs->trans("ToActivateModule");
-    exit;
+if (!getDolGlobalString('MAIN_MODULE_WEBSERVICES')) {
+	$langs->load("admin");
+	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
+	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
+	print $langs->trans("ToActivateModule");
+	exit;
 }
 
 // Create the soap Object
@@ -53,31 +72,31 @@ $server->wsdl->schemaTargetNamespace = $ns;
 
 // Define WSDL Authentication object
 $server->wsdl->addComplexType(
-    'authentication',
-    'complexType',
-    'struct',
-    'all',
-    '',
-    array(
-        'dolibarrkey' => array('name'=>'dolibarrkey', 'type'=>'xsd:string'),
-    	'sourceapplication' => array('name'=>'sourceapplication', 'type'=>'xsd:string'),
-    	'login' => array('name'=>'login', 'type'=>'xsd:string'),
-    	'password' => array('name'=>'password', 'type'=>'xsd:string'),
-        'entity' => array('name'=>'entity', 'type'=>'xsd:string'),
-    )
+	'authentication',
+	'complexType',
+	'struct',
+	'all',
+	'',
+	array(
+		'dolibarrkey' => array('name'=>'dolibarrkey', 'type'=>'xsd:string'),
+		'sourceapplication' => array('name'=>'sourceapplication', 'type'=>'xsd:string'),
+		'login' => array('name'=>'login', 'type'=>'xsd:string'),
+		'password' => array('name'=>'password', 'type'=>'xsd:string'),
+		'entity' => array('name'=>'entity', 'type'=>'xsd:string'),
+	)
 );
 
 // Define WSDL Return object
 $server->wsdl->addComplexType(
-    'result',
-    'complexType',
-    'struct',
-    'all',
-    '',
-    array(
-        'result_code' => array('name'=>'result_code', 'type'=>'xsd:string'),
-        'result_label' => array('name'=>'result_label', 'type'=>'xsd:string'),
-    )
+	'result',
+	'complexType',
+	'struct',
+	'all',
+	'',
+	array(
+		'result_code' => array('name'=>'result_code', 'type'=>'xsd:string'),
+		'result_label' => array('name'=>'result_label', 'type'=>'xsd:string'),
+	)
 );
 
 $contact_fields = array(
@@ -119,7 +138,7 @@ $contact_fields = array(
 $elementtype = 'socpeople';
 
 
-//Retreive all extrafield for contact
+//Retrieve all extrafield for contact
 // fetch optionals attributes and labels
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($elementtype, true);
@@ -127,26 +146,29 @@ $extrafield_array = null;
 if (is_array($extrafields) && count($extrafields) > 0) {
 	$extrafield_array = array();
 }
-if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
-{
-	foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
-	{
+if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
+	foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
 		$type = $extrafields->attributes[$elementtype]['type'][$key];
-		if ($type == 'date' || $type == 'datetime') {$type = 'xsd:dateTime'; }
-		else {$type = 'xsd:string'; }
+		if ($type == 'date' || $type == 'datetime') {
+			$type = 'xsd:dateTime';
+		} else {
+			$type = 'xsd:string';
+		}
 
 		$extrafield_array['options_'.$key] = array('name'=>'options_'.$key, 'type'=>$type);
 	}
 }
-if (is_array($extrafield_array)) $contact_fields = array_merge($contact_fields, $extrafield_array);
+if (is_array($extrafield_array)) {
+	$contact_fields = array_merge($contact_fields, $extrafield_array);
+}
 
 // Define other specific objects
 $server->wsdl->addComplexType(
-    'contact',
-    'complexType',
-    'struct',
-    'all',
-    '',
+	'contact',
+	'complexType',
+	'struct',
+	'all',
+	'',
 	$contact_fields
 );
 
@@ -179,16 +201,16 @@ $styleuse = 'encoded'; // encoded/literal/literal wrapped
 
 // Register WSDL
 $server->register(
-    'getContact',
-    // Entry values
-    array('authentication'=>'tns:authentication', 'id'=>'xsd:string', 'ref_ext'=>'xsd:string'),
-    // Exit values
-    array('result'=>'tns:result', 'contact'=>'tns:contact'),
-    $ns,
-    $ns.'#getContact',
-    $styledoc,
-    $styleuse,
-    'WS to get a contact'
+	'getContact',
+	// Entry values
+	array('authentication'=>'tns:authentication', 'id'=>'xsd:string', 'ref_ext'=>'xsd:string'),
+	// Exit values
+	array('result'=>'tns:result', 'contact'=>'tns:contact'),
+	$ns,
+	$ns.'#getContact',
+	$styledoc,
+	$styleuse,
+	'WS to get a contact'
 );
 
 // Register WSDL
@@ -243,113 +265,110 @@ $server->register(
  */
 function getContact($authentication, $id, $ref_ext)
 {
-    global $db, $conf, $langs;
+	global $db, $conf, $langs;
 
-    dol_syslog("Function: getContact login=".$authentication['login']." id=".$id." ref_ext=".$ref_ext);
+	dol_syslog("Function: getContact login=".$authentication['login']." id=".$id." ref_ext=".$ref_ext);
 
-    if ($authentication['entity']) $conf->entity = $authentication['entity'];
+	if ($authentication['entity']) {
+		$conf->entity = $authentication['entity'];
+	}
 
-    // Init and check authentication
-    $objectresp = array();
-    $errorcode = ''; $errorlabel = '';
-    $error = 0;
-    $fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
-    // Check parameters
-    if (!$error && ($id && $ref_ext))
-    {
-        $error++;
-        $errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id and ref_ext can't be both provided. You must choose one or other but not both.";
-    }
+	// Init and check authentication
+	$objectresp = array();
+	$errorcode = '';
+	$errorlabel = '';
+	$error = 0;
+	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
+	// Check parameters
+	if (!$error && ($id && $ref_ext)) {
+		$error++;
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = "Parameter id and ref_ext can't be both provided. You must choose one or other but not both.";
+	}
 
-    if (!$error)
-    {
-        $fuser->getrights();
+	if (!$error) {
+		$fuser->getrights();
 
-        $contact = new Contact($db);
-        $result = $contact->fetch($id, 0, $ref_ext);
-        if ($result > 0)
-        {
-        	// Only internal user who have contact read permission
-        	// Or for external user who have contact read permission, with restrict on societe_id
-	        if (
-	        	$fuser->rights->societe->contact->lire && !$fuser->societe_id
-	        	|| ($fuser->rights->societe->contact->lire && ($fuser->societe_id == $contact->socid))
-	        ) {
-            	$contact_result_fields = array(
-	            	'id' => $contact->id,
-	            	'ref_ext' => $contact->ref_ext,
-	            	'lastname' => $contact->lastname,
-	            	'firstname' => $contact->firstname,
-	            	'address' => $contact->address,
-	            	'zip' => $contact->zip,
-	            	'town' => $contact->town,
-	            	'state_id' => $contact->state_id,
-	            	'state_code' => $contact->state_code,
-	            	'state' => $contact->state,
-	            	'country_id' => $contact->country_id,
-	            	'country_code' => $contact->country_code,
-	            	'country' => $contact->country,
-	            	'socid' => $contact->socid,
-	            	'status' => $contact->statut,
-	            	'phone_pro' => $contact->phone_pro,
-	            	'fax' => $contact->fax,
-	            	'phone_perso' => $contact->phone_perso,
-	            	'phone_mobile' => $contact->phone_mobile,
-	            	'code' => $contact->code,
-	            	'email' => $contact->email,
-	            	'birthday' => $contact->birthday,
-	            	'default_lang' => $contact->default_lang,
-	            	'note' => $contact->note,
-	            	'ref_facturation' => $contact->ref_facturation,
-	            	'ref_contrat' => $contact->ref_contrat,
-	            	'ref_commande' => $contact->ref_commande,
-	            	'ref_propal' => $contact->ref_propal,
-	            	'user_id' => $contact->user_id,
-	            	'user_login' => $contact->user_login,
-	            	'civility_id' => $contact->civility_id,
-            		'poste' => $contact->poste
-            	);
+		$contact = new Contact($db);
+		$result = $contact->fetch($id, 0, $ref_ext);
+		if ($result > 0) {
+			// Only internal user who have contact read permission
+			// Or for external user who have contact read permission, with restrict on socid
+			if ($fuser->hasRight('societe', 'contact', 'lire') && !$fuser->socid
+				|| ($fuser->hasRight('societe', 'contact', 'lire') && ($fuser->socid == $contact->socid))
+			) {
+				$contact_result_fields = array(
+					'id' => $contact->id,
+					'ref_ext' => $contact->ref_ext,
+					'lastname' => $contact->lastname,
+					'firstname' => $contact->firstname,
+					'address' => $contact->address,
+					'zip' => $contact->zip,
+					'town' => $contact->town,
+					'state_id' => $contact->state_id,
+					'state_code' => $contact->state_code,
+					'state' => $contact->state,
+					'country_id' => $contact->country_id,
+					'country_code' => $contact->country_code,
+					'country' => $contact->country,
+					'socid' => $contact->socid,
+					'status' => $contact->statut,
+					'phone_pro' => $contact->phone_pro,
+					'fax' => $contact->fax,
+					'phone_perso' => $contact->phone_perso,
+					'phone_mobile' => $contact->phone_mobile,
+					'code' => $contact->code,
+					'email' => $contact->email,
+					'birthday' => $contact->birthday,
+					'default_lang' => $contact->default_lang,
+					'note' => $contact->note,
+					'ref_facturation' => $contact->ref_facturation,
+					'ref_contrat' => $contact->ref_contrat,
+					'ref_commande' => $contact->ref_commande,
+					'ref_propal' => $contact->ref_propal,
+					'user_id' => $contact->user_id,
+					'user_login' => $contact->user_login,
+					'civility_id' => $contact->civility_id,
+					'poste' => $contact->poste
+				);
 
-            	$elementtype = 'socpeople';
+				$elementtype = 'socpeople';
 
-            	//Retreive all extrafield for thirdsparty
-            	// fetch optionals attributes and labels
-            	$extrafields = new ExtraFields($db);
-            	$extrafields->fetch_name_optionals_label($elementtype, true);
-            	//Get extrafield values
-            	$contact->fetch_optionals();
+				//Retrieve all extrafield for thirdsparty
+				// fetch optionals attributes and labels
+				$extrafields = new ExtraFields($db);
+				$extrafields->fetch_name_optionals_label($elementtype, true);
+				//Get extrafield values
+				$contact->fetch_optionals();
 
-            	if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
-            	{
-            		foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
-	            	{
-	            		$contact_result_fields = array_merge($contact_result_fields, array('options_'.$key => $contact->array_options['options_'.$key]));
-	            	}
-            	}
+				if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
+					foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
+						$contact_result_fields = array_merge($contact_result_fields, array('options_'.$key => $contact->array_options['options_'.$key]));
+					}
+				}
 
-                // Create
-                $objectresp = array(
-			    	'result'=>array('result_code'=>'OK', 'result_label'=>''),
-			        'contact'=>$contact_result_fields
-                );
-	        }
-	        else {
-	            $error++;
-	            $errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
-	        }
-        }
-        else {
-            $error++;
-            $errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref_ext='.$ref_ext;
-        }
-    }
+				// Create
+				$objectresp = array(
+					'result'=>array('result_code'=>'OK', 'result_label'=>''),
+					'contact'=>$contact_result_fields
+				);
+			} else {
+				$error++;
+				$errorcode = 'PERMISSION_DENIED';
+				$errorlabel = 'User does not have permission for this request';
+			}
+		} else {
+			$error++;
+			$errorcode = 'NOT_FOUND';
+			$errorlabel = 'Object not found for id='.$id.' nor ref_ext='.$ref_ext;
+		}
+	}
 
-    if ($error)
-    {
-        $objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
-    }
+	if ($error) {
+		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+	}
 
-    return $objectresp;
+	return $objectresp;
 }
 
 
@@ -368,21 +387,24 @@ function createContact($authentication, $contact)
 
 	dol_syslog("Function: createContact login=".$authentication['login']);
 
-	if ($authentication['entity']) $conf->entity = $authentication['entity'];
+	if ($authentication['entity']) {
+		$conf->entity = $authentication['entity'];
+	}
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
-	if (empty($contact['lastname']))
-	{
-		$error++; $errorcode = 'KO'; $errorlabel = "Name is mandatory.";
+	if (empty($contact['lastname'])) {
+		$error++;
+		$errorcode = 'KO';
+		$errorlabel = "Name is mandatory.";
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$newobject = new Contact($db);
 
 		$newobject->id = $contact['id'];
@@ -420,14 +442,12 @@ function createContact($authentication, $contact)
 
 		$elementtype = 'socpeople';
 
-		//Retreive all extrafield for thirdsparty
+		//Retrieve all extrafield for thirdsparty
 		// fetch optionals attributes and labels
 		$extrafields = new ExtraFields($db);
 		$extrafields->fetch_name_optionals_label($elementtype, true);
-		if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
-		{
-			foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
-			{
+		if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
+			foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
 				$key = 'options_'.$key;
 				$newobject->array_options[$key] = $contact[$key];
 			}
@@ -439,17 +459,14 @@ function createContact($authentication, $contact)
 		$db->begin();
 
 		$result = $newobject->create($fuser);
-		if ($result <= 0)
-		{
+		if ($result <= 0) {
 			$error++;
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$db->commit();
 			$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$newobject->id, 'ref'=>$newobject->ref);
-		}
-		else {
+		} else {
 			$db->rollback();
 			$error++;
 			$errorcode = 'KO';
@@ -457,8 +474,7 @@ function createContact($authentication, $contact)
 		}
 	}
 
-	if ($error)
-	{
+	if ($error) {
 		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
@@ -478,22 +494,24 @@ function getContactsForThirdParty($authentication, $idthirdparty)
 
 	dol_syslog("Function: getContactsForThirdParty login=".$authentication['login']." idthirdparty=".$idthirdparty);
 
-	if ($authentication['entity']) $conf->entity = $authentication['entity'];
+	if ($authentication['entity']) {
+		$conf->entity = $authentication['entity'];
+	}
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
-	if (!$error && empty($idthirdparty))
-	{
+	if (!$error && empty($idthirdparty)) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = 'Parameter id is not provided';
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = 'Parameter id is not provided';
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$linesinvoice = array();
 
 		$sql = "SELECT c.rowid, c.fk_soc, c.civility as civility_id, c.lastname, c.firstname, c.statut as status,";
@@ -501,8 +519,7 @@ function getContactsForThirdParty($authentication, $idthirdparty)
 		$sql .= " c.fk_pays as country_id,";
 		$sql .= " c.fk_departement as state_id,";
 		$sql .= " c.birthday,";
-		$sql .= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid,";
-		//$sql.= " c.priv, c.note, c.default_lang, c.canvas,";
+		$sql .= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email,";
 		$sql .= " co.label as country, co.code as country_code,";
 		$sql .= " d.nom as state, d.code_departement as state_code,";
 		$sql .= " u.rowid as user_id, u.login as user_login,";
@@ -512,15 +529,13 @@ function getContactsForThirdParty($authentication, $idthirdparty)
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON c.fk_departement = d.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON c.rowid = u.fk_socpeople";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
-		$sql .= " WHERE c.fk_soc = ".$idthirdparty;
+		$sql .= " WHERE c.fk_soc = ".((int) $idthirdparty);
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $db->num_rows($resql);
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				// En attendant remplissage par boucle
 				$obj = $db->fetch_object($resql);
 
@@ -556,7 +571,6 @@ function getContactsForThirdParty($authentication, $idthirdparty)
 					'phone_mobile' => $contact->phone_mobile ? $contact->phone_mobile : '',
 
 					'email' => $contact->email ? $contact->email : '',
-					'jabberid' => $contact->jabberid ? $contact->jabberid : '',
 					'priv' => $contact->priv ? $contact->priv : '',
 					'mail' => $contact->mail ? $contact->mail : '',
 
@@ -580,15 +594,14 @@ function getContactsForThirdParty($authentication, $idthirdparty)
 			'contacts'=>$linescontact
 
 			);
-		}
-		else {
+		} else {
 			$error++;
-			$errorcode = $db->lasterrno(); $errorlabel = $db->lasterror();
+			$errorcode = $db->lasterrno();
+			$errorlabel = $db->lasterror();
 		}
 	}
 
-	if ($error)
-	{
+	if ($error) {
 		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
@@ -605,32 +618,36 @@ function getContactsForThirdParty($authentication, $idthirdparty)
  */
 function updateContact($authentication, $contact)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	$now = dol_now();
 
 	dol_syslog("Function: updateContact login=".$authentication['login']);
 
-	if ($authentication['entity']) $conf->entity = $authentication['entity'];
+	if ($authentication['entity']) {
+		$conf->entity = $authentication['entity'];
+	}
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (empty($contact['id']) && empty($contact['ref_ext'])) {
-		$error++; $errorcode = 'KO'; $errorlabel = "Contact id or ref_ext is mandatory.";
+		$error++;
+		$errorcode = 'KO';
+		$errorlabel = "Contact id or ref_ext is mandatory.";
 	}
 	// Check parameters
-    if (!$error && ($id && $ref_ext))
-    {
-        $error++;
-        $errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id and ref_ext can't be all provided. You must choose one of them.";
-    }
+	if (!$error && ($contact['id'] && $contact['ref_ext'])) {
+		$error++;
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = "Parameter id and ref_ext can't be all provided. You must choose one of them.";
+	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$objectfound = false;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -641,6 +658,7 @@ function updateContact($authentication, $contact)
 		if (!empty($object->id)) {
 			$objectfound = true;
 
+			$object->ref_ext = $contact['ref_ext'];
 
 			$object->firstname = $contact['firstname'];
 			$object->lastname = $contact['lastname'];
@@ -650,7 +668,9 @@ function updateContact($authentication, $contact)
 			$object->town = $contact['town'];
 
 			$object->country_id = $contact['country_id'];
-			if ($contact['country_code']) $object->country_id = getCountry($contact['country_code'], 3);
+			if ($contact['country_code']) {
+				$object->country_id = getCountry($contact['country_code'], 3);
+			}
 			$object->province_id = $contact['province_id'];
 
 
@@ -667,14 +687,12 @@ function updateContact($authentication, $contact)
 
 			$elementtype = 'socpeople';
 
-			//Retreive all extrafield for contact
+			//Retrieve all extrafield for contact
 			// fetch optionals attributes and labels
 			$extrafields = new ExtraFields($db);
 			$extrafields->fetch_name_optionals_label($elementtype, true);
-			if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
-			{
-				foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
-				{
+			if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
+				foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
 					$key = 'options_'.$key;
 					$object->array_options[$key] = $contact[$key];
 				}
@@ -688,16 +706,13 @@ function updateContact($authentication, $contact)
 			}
 		}
 
-		if ((!$error) && ($objectfound))
-		{
+		if ((!$error) && ($objectfound)) {
 			$db->commit();
 			$objectresp = array(
 			'result'=>array('result_code'=>'OK', 'result_label'=>''),
 			'id'=>$object->id
 			);
-		}
-		elseif ($objectfound)
-		{
+		} elseif ($objectfound) {
 			$db->rollback();
 			$error++;
 			$errorcode = 'KO';
@@ -709,8 +724,7 @@ function updateContact($authentication, $contact)
 		}
 	}
 
-	if ($error)
-	{
+	if ($error) {
 		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 

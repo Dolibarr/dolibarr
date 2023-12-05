@@ -2,6 +2,7 @@
 -- Copyright (C) 2001-2002,2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2004-2016      Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2012 		    Florian Henry        <florian.henry@open-concept.pro>
+-- Copyright (C) 2022 		    Juanjo Menent        <jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,10 +22,10 @@
 create table llx_c_actioncomm
 (
   id         integer     PRIMARY KEY,
-  code       varchar(12) NOT NULL,
+  code       varchar(50) NOT NULL,
   type       varchar(50) DEFAULT 'system' NOT NULL,
-  libelle    varchar(48) NOT NULL,
-  module	 varchar(16) DEFAULT NULL,
+  libelle    varchar(128) NOT NULL,
+  module	 varchar(50) DEFAULT NULL,
   active     tinyint DEFAULT 1 NOT NULL,
   todo       tinyint,						-- deprecated
   color      varchar(9),

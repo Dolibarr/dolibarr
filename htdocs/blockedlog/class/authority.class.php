@@ -20,12 +20,22 @@
  */
 class BlockedLogAuthority
 {
+	/**
+	 * DoliDB
+	 * @var DoliDB
+	 */
+	public $db;
 
 	/**
-	 * Id of the log
+	 * Id of the authority
 	 * @var int
 	 */
 	public $id;
+
+	/**
+	 * @var string	Ref of the authority
+	 */
+	public $ref;
 
 	/**
 	 * Unique fingerprint of the blockchain to store
@@ -46,23 +56,28 @@ class BlockedLogAuthority
 	public $tms = 0;
 
 	/**
+	 * Error message
+	 * @var string
+	 */
+	public $error;
+
+	/**
 	 *      Constructor
 	 *
 	 *      @param		DoliDB		$db      Database handler
 	 */
-    public function __construct($db)
-    {
-    	$this->db = $db;
-    }
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
 
 	/**
 	 *	Get the blockchain
 	 *
 	 *	@return     string         			blockchain
 	 */
-    public function getLocalBlockChain()
-    {
-
+	public function getLocalBlockChain()
+	{
 		$block_static = new BlockedLog($this->db);
 
 		$this->signature = $block_static->getSignature();
@@ -71,23 +86,24 @@ class BlockedLogAuthority
 
 		$this->blockchain = '';
 
-		foreach ($blocks as &$b) {
-			$this->blockchain .= $b->signature;
+		if (is_array($blocks)) {
+			foreach ($blocks as &$b) {
+				$this->blockchain .= $b->signature;
+			}
 		}
 
 		return $this->blockchain;
-    }
+	}
 
 	/**
 	 *	Get hash of the block chain to check
 	 *
 	 *	@return     string         			hash md5 of blockchain
 	 */
-    public function getBlockchainHash()
-    {
-
+	public function getBlockchainHash()
+	{
 		return md5($this->signature.$this->blockchain);
-    }
+	}
 
 	/**
 	 *	Get hash of the block chain to check
@@ -95,23 +111,21 @@ class BlockedLogAuthority
 	 *	@param      string		$hash		hash md5 of blockchain to test
 	 *	@return     boolean
 	 */
-    public function checkBlockchain($hash)
-    {
-
+	public function checkBlockchain($hash)
+	{
 		return ($hash === $this->getBlockchainHash());
-    }
+	}
 
 	/**
 	 *	Add a new block to the chain
 	 *
-     *	@param      string		$block		new block to chain
-     *  @return void
+	 *	@param      string		$block		new block to chain
+	 *  @return void
 	 */
-    public function addBlock($block)
-    {
-
+	public function addBlock($block)
+	{
 		$this->blockchain .= $block;
-    }
+	}
 
 	/**
 	 *	hash already exist into chain ?
@@ -119,10 +133,11 @@ class BlockedLogAuthority
 	 *	@param      string		$block		new block to chain
 	 *	@return     boolean
 	 */
-    public function checkBlock($block)
-    {
-
-		if (strlen($block) != 64) return false;
+	public function checkBlock($block)
+	{
+		if (strlen($block) != 64) {
+			return false;
+		}
 
 		$blocks = str_split($this->blockchain, 64);
 
@@ -131,7 +146,7 @@ class BlockedLogAuthority
 		} else {
 			return false;
 		}
-    }
+	}
 
 
 	/**
@@ -141,15 +156,13 @@ class BlockedLogAuthority
 	 *	@param      string		$signature		Signature of object to load
 	 *	@return     int         				>0 if OK, <0 if KO, 0 if not found
 	 */
-    public function fetch($id, $signature = '')
-    {
-
+	public function fetch($id, $signature = '')
+	{
 		global $langs;
 
-		dol_syslog(get_class($this)."::fetch id=".$id, LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetch id=".((int) $id), LOG_DEBUG);
 
-		if (empty($id) && empty($signature))
-		{
+		if (empty($id) && empty($signature)) {
 			$this->error = 'BadParameter';
 			return -1;
 		}
@@ -159,14 +172,15 @@ class BlockedLogAuthority
 		$sql = "SELECT b.rowid, b.signature, b.blockchain, b.tms";
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog_authority as b";
 
-		if ($id) $sql .= " WHERE b.rowid = ".$id;
-		elseif ($signature)$sql .= " WHERE b.signature = '".$this->db->escape($signature)."'";
+		if ($id) {
+			$sql .= " WHERE b.rowid = ".((int) $id);
+		} elseif ($signature) {
+			$sql .= " WHERE b.signature = '".$this->db->escape($signature)."'";
+		}
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
@@ -186,17 +200,16 @@ class BlockedLogAuthority
 			$this->error = $this->db->error();
 			return -1;
 		}
-    }
+	}
 
 	/**
 	 *	Create authority in database.
 	 *
 	 *	@param	User	$user      		Object user that create
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
-    public function create($user)
-    {
-
+	public function create($user)
+	{
 		global $conf, $langs, $hookmanager;
 
 		$langs->load('blockedlog');
@@ -216,12 +229,10 @@ class BlockedLogAuthority
 		$sql .= ")";
 
 		$res = $this->db->query($sql);
-		if ($res)
-		{
+		if ($res) {
 			$id = $this->db->last_insert_id(MAIN_DB_PREFIX."blockedlog_authority");
 
-			if ($id > 0)
-			{
+			if ($id > 0) {
 				$this->id = $id;
 
 				$this->db->commit();
@@ -236,17 +247,16 @@ class BlockedLogAuthority
 			$this->db->rollback();
 			return -1;
 		}
-    }
+	}
 
 	/**
 	 *	Create authority in database.
 	 *
 	 *	@param	User	$user      		Object user that create
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
-    public function update($user)
-    {
-
+	public function update($user)
+	{
 		global $conf, $langs, $hookmanager;
 
 		$langs->load('blockedlog');
@@ -259,11 +269,10 @@ class BlockedLogAuthority
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."blockedlog_authority SET ";
 		$sql .= " blockchain='".$this->db->escape($this->blockchain)."'";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$res = $this->db->query($sql);
-		if ($res)
-		{
+		if ($res) {
 			$this->db->commit();
 
 			return 1;
@@ -272,20 +281,20 @@ class BlockedLogAuthority
 			$this->db->rollback();
 			return -1;
 		}
-    }
+	}
 
 	/**
 	 *	For cron to sync to authority.
 	 *
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
-    public function syncSignatureWithAuthority()
-    {
+	public function syncSignatureWithAuthority()
+	{
 		global $conf, $langs;
 
 		//TODO create cron task on activation
 
-		if (empty($conf->global->BLOCKEDLOG_AUTHORITY_URL) || empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY)) {
+		if (!getDolGlobalString('BLOCKEDLOG_AUTHORITY_URL') || !getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
 			$this->error = $langs->trans('NoAuthorityURLDefined');
 			return -2;
 		}
@@ -298,19 +307,21 @@ class BlockedLogAuthority
 
 		$signature = $block_static->getSignature();
 
-		foreach ($blocks as &$block) {
-			$url = $conf->global->BLOCKEDLOG_AUTHORITY_URL.'/blockedlog/ajax/authority.php?s='.$signature.'&b='.$block->signature;
+		if (is_array($blocks)) {
+			foreach ($blocks as &$block) {
+				$url = getDolGlobalString('BLOCKEDLOG_AUTHORITY_URL') . '/blockedlog/ajax/authority.php?s='.$signature.'&b='.$block->signature;
 
-			$res = file_get_contents($url);
-			echo $block->signature.' '.$url.' '.$res.'<br>';
-			if ($res === 'blockalreadyadded' || $res === 'blockadded') {
-				$block->setCertified();
-			} else {
-				$this->error = $langs->trans('ImpossibleToContactAuthority ', $url);
-				return -1;
+				$res = getURLContent($url);
+				echo $block->signature.' '.$url.' '.$res['content'].'<br>';
+				if ($res['content'] === 'blockalreadyadded' || $res['content'] === 'blockadded') {
+					$block->setCertified();
+				} else {
+					$this->error = $langs->trans('ImpossibleToContactAuthority ', $url);
+					return -1;
+				}
 			}
 		}
 
-        return 1;
-    }
+		return 1;
+	}
 }

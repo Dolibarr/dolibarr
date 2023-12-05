@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2015   Marcos García   <marcosgdf@gmail.com>
  * Copyright (C) 2018   Charlene Benke  <charlie@patas-monkey.com>
  *
@@ -24,6 +23,11 @@
 
 class WorkboardResponse
 {
+	/**
+	 * Unique key of the workboard
+	 * @var string
+	 */
+	public $id;
 
 	/**
 	 * Image URL to represent the board item

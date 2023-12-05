@@ -1,0 +1,177 @@
+# Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+# Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+ModuleEventOrganizationName = Eseményszervezés
+EventOrganizationDescription = Eseményszervezés a modulprojekten keresztül
+EventOrganizationDescriptionLong= Esemény szervezésének kezelése (műsor, konferenciák, résztvevők vagy előadók, nyilvános oldalakkal javaslatokhoz, szavazáshoz vagy regisztrációhoz)
+#
+# Menu
+#
+EventOrganizationMenuLeft = Szervezett események
+EventOrganizationConferenceOrBoothMenuLeft = Konferencia vagy stand
+
+PaymentEvent=Esemény fizetése
+
+#
+# Admin page
+#
+NewRegistration=Regisztráció
+EventOrganizationSetup=Eseményszervezés beállítása
+EventOrganization=Rendezvényszervezés
+Settings=Beállítások
+EventOrganizationSetupPage = Eseményszervezés beállítási oldal
+EVENTORGANIZATION_TASK_LABEL = A projekt érvényesítésekor automatikusan létrehozandó feladatok címkéje
+EVENTORGANIZATION_TASK_LABELTooltip = Amikor érvényesít egy eseményt megszervezésre, bizonyos feladatok automatikusan létrehozhatók a projektben <br> <br> Például: <br> Konferencia felhívás küldése <br> Stand felhívás küldése <br> Érvényesítse a konferenciák javaslatait <br> Érvényesítse a jelentkezést a Standra <br> Nyitott jelentkezés az eseményre a résztvevők számára <br> Emlékeztető küldése az eseményről az előadóknak <br> Emlékeztető küldése az eseményről a Stand házigazdáinak <br> Emlékeztető küldése az eseményről a résztvevőknek
+EVENTORGANIZATION_TASK_LABELTooltip2=Ha nem kell automatikusan létrehoznia a feladatokat, hagyja üresen.
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = A harmadik felekhez hozzáadandó kategória automatikusan létrejön, amikor valaki konferenciát javasol
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = A harmadik felekhez hozzáadandó kategória automatikusan létrejön, amikor standot javasolnak
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = E-mail sablon, amelyet el kell küldeni, miután megkapta a konferencia-javaslatot.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = E-mail-sablon, amelyet el kell küldeni, miután megkapta a stand javaslatot.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = E-mail-sablon, amelyet el kell küldeni, miután kifizették a regisztrációt egy standon.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = E-mail sablon, amelyet el kell küldeni, miután egy eseményre való regisztrációt kifizették.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = E-mail-sablon, amelyet akkor kell használni, amikor az "E-mailek küldése" csoportból küld e-maileket a hangszóróknak
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = E-mail-sablon, amelyet akkor kell használni, amikor e-maileket küld a résztvevők listáján szereplő „E-mailek küldése” csoportból
+EVENTORGANIZATION_FILTERATTENDEES_CAT = A résztvevő létrehozására/hozzáadására szolgáló űrlapon a harmadik felek listáját a kategóriában lévő harmadik felekre korlátozza
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = A résztvevő létrehozására/hozzáadására szolgáló űrlapon a harmadik felekre korlátozza a harmadik felek listáját.
+
+#
+# Object
+#
+OrganizedEvent=Organized event
+EventOrganizationConfOrBooth= Konferencia vagy stand
+EventOrganizationConfOrBoothes=Conferences or Boothes
+ManageOrganizeEvent = Egy esemény szervezésének kezelése
+ConferenceOrBooth = Konferencia vagy stand
+ConferenceOrBoothTab = Konferencia vagy stand
+AmountPaid = Fizetett összeg
+DateOfRegistration = A regisztráció dátuma
+ConferenceOrBoothAttendee = Konferencia vagy stand résztvevője
+ApplicantOrVisitor=Jelentkező vagy látogató
+Speaker=Hangszóró
+
+#
+# Template Mail
+#
+YourOrganizationEventConfRequestWasReceived = Konferenciára vonatkozó kérése megérkezett
+YourOrganizationEventBoothRequestWasReceived = A standra vonatkozó kérése megérkezett
+EventOrganizationEmailAskConf = Konferencia kérése
+EventOrganizationEmailAskBooth = Stand kérése
+EventOrganizationEmailBoothPayment = Az Ön standjának kifizetése
+EventOrganizationEmailRegistrationPayment = Regisztráció egy eseményre
+EventOrganizationMassEmailAttendees = Kommunikáció a résztvevőkkel
+EventOrganizationMassEmailSpeakers = Kommunikáció az előadókkal
+ToSpeakers=A hangszórókhoz
+
+#
+# Event
+#
+AllowUnknownPeopleSuggestConf=Konferenciák javaslatának engedélyezése
+AllowUnknownPeopleSuggestConfHelp=Engedélyezi az ismeretlen személyeknek, hogy javasoljanak egy konferenciát
+AllowUnknownPeopleSuggestBooth=Engedélyezi az embereknek, hogy jelentkezzenek egy standra
+AllowUnknownPeopleSuggestBoothHelp=Ismeretlen személyek jelentkezhetnek egy standra
+PriceOfRegistration=Regisztráció ára
+PriceOfRegistrationHelp=Az eseményen való részvételért vagy regisztrációért fizetendő ár
+PriceOfBooth=Előfizetési ár, hogy megállja a helyét
+PriceOfBoothHelp=Előfizetési ár, hogy megállja a helyét
+EventOrganizationICSLink=ICS összekapcsolása konferenciákhoz
+ConferenceOrBoothInformation=Konferencia vagy fülke információk
+Attendees=Részvevők
+ListOfAttendeesOfEvent=Az eseményprojekt résztvevőinek listája
+DownloadICSLink = ICS hivatkozás letöltése
+EVENTORGANIZATION_SECUREKEY = Magvető a nyilvános regisztrációs oldal kulcsának biztosításához konferencia javaslatához
+SERVICE_BOOTH_LOCATION = A standhellyel kapcsolatos számlasorhoz használt szolgáltatás
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Az esemény résztvevőinek előfizetéséről szóló számlasorhoz használt szolgáltatás
+NbVotes=Szavazatok száma
+#
+# Status
+#
+EvntOrgDraft = Piszkozat
+EvntOrgSuggested = Javasolt
+EvntOrgConfirmed = Megerősítve
+EvntOrgNotQualified = Nem minősített
+EvntOrgDone = Kész
+EvntOrgCancelled = Törölve
+#
+# Public page
+#
+SuggestForm = Javaslat oldal
+SuggestOrVoteForConfOrBooth = Javaslat vagy szavazás oldala
+EvntOrgRegistrationHelpMessage = Itt szavazhat egy konferenciára, vagy javasolhat újat az eseményhez. A rendezvény ideje alatt is lehet jelentkezni standra.
+EvntOrgRegistrationConfHelpMessage = Itt javasolhat egy új konferenciát, amelyet animálhat az esemény alatt.
+EvntOrgRegistrationBoothHelpMessage = Itt jelentkezhet, hogy standot tarthasson az esemény alatt.
+ListOfSuggestedConferences = A javasolt konferenciák listája
+ListOfSuggestedBooths=Suggested booths
+ListOfConferencesOrBooths=Conferences or booths of event project
+SuggestConference = Új konferencia javaslata
+SuggestBooth = Javasolj egy fülkét
+ViewAndVote = A javasolt események megtekintése és szavazás
+PublicAttendeeSubscriptionGlobalPage = Nyilvános link az eseményre való regisztrációhoz
+PublicAttendeeSubscriptionPage = Nyilvános hivatkozás csak erre az eseményre való regisztrációhoz
+MissingOrBadSecureKey = A biztonsági kulcs érvénytelen vagy hiányzik
+EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event
+EvntOrgDuration = Ez a konferencia %s-kor kezdődik és %s-kor ér véget.
+ConferenceAttendeeFee = Konferencia résztvevői díja az eseményhez: '%s', %s és %s között.
+BoothLocationFee = A stand helye az eseményhez: '%s', %s és %s között
+EventType = Esemény típusa
+LabelOfBooth=Stand címke
+LabelOfconference=Konferencia címke
+ConferenceIsNotConfirmed=A regisztráció nem érhető el, a konferencia még nincs megerősítve
+DateMustBeBeforeThan=az %s előtt az %s előtt kell lennie
+DateMustBeAfterThan=%s %s után kell lennie
+MaxNbOfAttendeesReached=The maximum number of participants has been reached
+NewSubscription=Regisztráció
+OrganizationEventConfRequestWasReceived=A konferenciára vonatkozó javaslatát megkaptuk
+OrganizationEventBoothRequestWasReceived=A standra vonatkozó kérése megérkezett
+OrganizationEventPaymentOfBoothWasReceived=Az Ön standjáért fizetett fizetését rögzítettük
+OrganizationEventPaymentOfRegistrationWasReceived=Az esemény regisztrációjának kifizetését rögzítettük
+OrganizationEventBulkMailToAttendees=Ez egy emlékeztető arról, hogy résztvevőként részt vesz az eseményen
+OrganizationEventBulkMailToSpeakers=Emlékeztető arra, hogy előadóként vesz részt az eseményen
+OrganizationEventLinkToThirdParty=Harmadik félhez (ügyfélhez, szállítóhoz vagy partnerhez) mutató hivatkozás
+OrganizationEvenLabelName=A konferencia vagy stand nyilvános neve
+
+NewSuggestionOfBooth=Jelentkezés egy standra
+NewSuggestionOfConference=Application to hold a conference
+
+#
+# Vote page
+#
+EvntOrgRegistrationWelcomeMessage = Üdvözöljük a konferencia- vagy standjavaslat-oldalon.
+EvntOrgRegistrationConfWelcomeMessage = Üdvözöljük a konferencia javaslati oldalán.
+EvntOrgRegistrationBoothWelcomeMessage = Üdvözöljük a standjavaslat oldalon.
+EvntOrgVoteHelpMessage = Itt megtekintheti a projekthez javasolt eseményeket és szavazhat rájuk
+VoteOk = Szavazatát elfogadták.
+AlreadyVoted = Már szavazott erre az eseményre.
+VoteError = Hiba történt a szavazás során, próbálja újra.
+
+SubscriptionOk=Your registration has been recorded
+ConfAttendeeSubscriptionConfirmation = Egy eseményre való feliratkozás megerősítése
+Attendee = Résztvevő
+PaymentConferenceAttendee = Konferencia résztvevőinek kifizetése
+PaymentBoothLocation = Fizetés a fülkében
+DeleteConferenceOrBoothAttendee=Részvevő eltávolítása
+RegistrationAndPaymentWereAlreadyRecorder=A <b>%s</b> e-mailhez már rögzítésre került egy regisztráció és egy fizetés
+EmailAttendee=Részvevő e-mail
+EmailCompany=Company email
+EmailCompanyForInvoice=Vállalati e-mail-cím (a számlához, ha eltér a résztvevő e-mail-címétől)
+ErrorSeveralCompaniesWithEmailContactUs=Több ilyen e-mail-címmel rendelkező céget találtunk, így nem tudjuk automatikusan ellenőrizni regisztrációját. Kérjük, vegye fel velünk a kapcsolatot a %s címen kézi ellenőrzésért
+ErrorSeveralCompaniesWithNameContactUs=Több ilyen nevű céget találtunk, így nem tudjuk automatikusan ellenőrizni regisztrációját. Kérjük, vegye fel velünk a kapcsolatot a %s címen kézi ellenőrzésért
+NoPublicActionsAllowedForThisEvent=Ennél az eseménynél nincs nyilvános művelet
+MaxNbOfAttendees=A résztvevők maximális száma
+DateStartEvent=Event start date
+DateEndEvent=Event end date

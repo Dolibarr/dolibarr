@@ -16,6 +16,10 @@
 --
 -- ========================================================================
 
+--
+-- Table to store transport modes (plane, boat, road, ...)
+--
+
 CREATE TABLE llx_c_transport_mode (
   rowid     integer AUTO_INCREMENT PRIMARY KEY,
   entity    integer	DEFAULT 1 NOT NULL,	-- multi company id

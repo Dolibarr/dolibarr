@@ -116,7 +116,7 @@ then
 	fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 	trap "rm -f $fichtemp" 0 1 2 5 15
 	$DIALOG --title "Save Dolibarr with demo values" --clear \
-	        --inputbox "Password for Mysql root login :" 16 55 2> $fichtemp
+	        --passwordbox "Password for Mysql root login :" 16 55 2> $fichtemp
 	
 	valret=$?
 	
@@ -150,7 +150,7 @@ then
 	# ---------------------------- confirmation
 	DIALOG=${DIALOG=dialog}
 	$DIALOG --title "Save Dolibarr with demo values" --clear \
-	        --yesno "Do you confirm ? \n Dump file : '$dumpfile' \n Dump dir : '$mydir' \n Mysql database : '$base' \n Mysql port : '$port' \n Mysql login: '$admin' \n Mysql password : '$passwd'" 15 55
+	        --yesno "Do you confirm ? \n Dump file : '$dumpfile' \n Dump dir : '$mydir' \n Mysql database : '$base' \n Mysql port : '$port' \n Mysql login: '$admin' \n Mysql password : --hidden--" 15 55
 	
 	case $? in
 	        0)      echo "Ok, start process...";;
@@ -259,6 +259,7 @@ export list="
 	--ignore-table=$base.llx_dolireport_plot
 	--ignore-table=$base.llx_dolireport_report
 	--ignore-table=$base.llx_domain
+	--ignore-table=$base.llx_ecommerce_category
 	--ignore-table=$base.llx_ecommerce_commande
 	--ignore-table=$base.llx_ecommerce_facture
 	--ignore-table=$base.llx_ecommerce_product
@@ -289,6 +290,7 @@ export list="
 	--ignore-table=$base.llx_monmodule_abcdef
 	--ignore-table=$base.llx_notes
 	--ignore-table=$base.llx_packages
+	--ignore-table=$base.llx_packages_extrafields
 	--ignore-table=$base.llx_pos_cash
 	--ignore-table=$base.llx_pos_control_cash
 	--ignore-table=$base.llx_pos_facture
@@ -304,6 +306,19 @@ export list="
 	--ignore-table=$base.llx_residence
 	--ignore-table=$base.llx_residence_building
 	--ignore-table=$base.llx_residence_building_links
+	--ignore-table=$base.llx_scaninvoices_filestoimport
+	--ignore-table=$base.llx_scaninvoices_filestoimport_extrafields
+	--ignore-table=$base.llx_scaninvoices_settings
+	--ignore-table=$base.llx_scaninvoices_settings_extrafields
+	--ignore-table=$base.llx_sellyoursaas_blacklistcontent
+	--ignore-table=$base.llx_sellyoursaas_blacklistdir
+	--ignore-table=$base.llx_sellyoursaas_blacklistfrom
+	--ignore-table=$base.llx_sellyoursaas_blacklistip
+	--ignore-table=$base.llx_sellyoursaas_blacklistmail
+	--ignore-table=$base.llx_sellyoursaas_blacklistto
+	--ignore-table=$base.llx_sellyoursaas_deploymentserver
+	--ignore-table=$base.llx_sellyoursaas_stats
+	--ignore-table=$base.llx_sellyoursaas_whitelistip
 	--ignore-table=$base.llx_societe_rib2
 	--ignore-table=$base.llx_sellyoursaas_cancellation
 	--ignore-table=$base.llx_ticketsup

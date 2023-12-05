@@ -1,0 +1,17 @@
+# Dolibarr language file - Source file is en_US - hrm
+HRM_EMAIL_EXTERNAL_SERVICE=Correo electrónico para evitar el servicio externo de HRM
+ConfirmDeleteEstablishment=¿Estás seguro de que deseas eliminar este establecimiento?
+OpenEtablishment=Establecimiento abierto
+CloseEtablishment=Establecimiento cerrado
+DictionaryPublicHolidays=Licencia - Días festivos
+DictionaryDepartment=HRM - Unidad organizativa
+DictionaryFunction=HRM - Puestos de trabajo
+ListOfEmployees=Lista de empleados
+HrmSetup=Configuración del módulo HRM
+JobCard=Tarjeta de trabajo
+SkillCard=Tarjeta de habilidad
+EmployeeSkillsUpdated=Se actualizaron las habilidades de los empleados (consulte la pestaña "Habilidades" de la tarjeta de empleado)
+OrJobToCompare=Compare con los requisitos de habilidades laborales
+AddSkill=Agregue habilidades al trabajo
+TypeKnowHow=Saber cómo
+JobsExtraFields=Atributos complementarios (Emplois)

@@ -19,6 +19,10 @@ override_dh_auto_clean:
 override_dh_auto_build:
 # Do nothing. Added to disable launchpad to use bugged dh_auto_build search for ant
 
+# Force the compression format for control files
+override_dh_builddeb:
+	dh_builddeb -- -Zxz
+
 #override_dh_compress:
 #	dh_compress --no-act -X.png
 
@@ -89,7 +93,6 @@ override_dh_install:
 	rm -fr build/zip
 	
 	# clean from all PHP embedded libraries (we use package dependencies instead)
-#	rm -fr htdocs/includes/adodbtime
 #	rm -fr htdocs/includes/geoip
 #	rm -fr htdocs/includes/nusoap
 #	rm -fr htdocs/includes/odtphp/zip/pclzip
@@ -103,8 +106,6 @@ override_dh_install:
 
 	# clean from useless files
 	rm -fr htdocs/includes/jquery/plugins/multiselect
-	rm -fr htdocs/includes/phpexcel/PHPExcel/Shared/PDF
-	rm -fr htdocs/includes/phpexcel/PHPExcel/Shared/PCLZip
 	rm -fr htdocs/includes/tcpdf/fonts/dejavu-fonts-ttf-2.33
 	rm -fr htdocs/includes/tcpdf/fonts/freefont-20100919
 	rm -fr htdocs/includes/tcpdf/fonts/utils
@@ -113,7 +114,6 @@ override_dh_install:
 
 	# Licence files are already included into copyright file.
 	rm -f  htdocs/includes/jquery/plugins/flot/LICENSE.txt
-	rm -f  htdocs/includes/phpexcel/license.txt
 	rm -f  htdocs/includes/tcpdf/LICENSE.TXT
 
 	# Drop unwanted executable permissions
@@ -128,4 +128,4 @@ override_dh_fixperms:
 	# Give rights to the webserver on the upload directory
 	chown www-data:www-data debian/dolibarr/var/lib/dolibarr/documents
 	chmod 2775 debian/dolibarr/var/lib/dolibarr/documents
-	
+

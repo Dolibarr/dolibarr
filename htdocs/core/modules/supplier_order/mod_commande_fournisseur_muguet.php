@@ -54,7 +54,7 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 	 */
 	public $name = 'Muguet';
 
-	public $prefix = 'CF';
+	public $prefix = 'PO';	// PO for "Purchase Order"
 
 
 	/**
@@ -62,20 +62,21 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 	 */
 	public function __construct()
 	{
-		global $conf;
-
-		if ((float) $conf->global->MAIN_VERSION_LAST_INSTALL >= 5.0) $this->prefix = 'PO'; // We use correct standard code "PO = Purchase Order"
+		if (getDolGlobalInt('MAIN_VERSION_LAST_INSTALL') < 5) {
+			$this->prefix = 'CF'; // We use old prefix
+		}
 	}
 
 	/**
 	 * 	Return description of numbering module
 	 *
-	 *  @return     string      Text with description
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs;
-	  	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
 	}
 
 
@@ -94,13 +95,15 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *  @return     boolean     false if conflict, true if ok
+	 *	@param	Object		$object		Object we need next value for
+	 *  @return boolean     			false if KO (there is a conflict), true if OK
 	 */
-	public function canBeActivated()
+	public function canBeActivated($object)
 	{
 		global $conf, $langs, $db;
 
-		$coyymm = ''; $max = '';
+		$coyymm = '';
+		$max = '';
 
 		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
@@ -108,13 +111,14 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		$sql .= " AND entity = ".$conf->entity;
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$row = $db->fetch_row($resql);
-			if ($row) { $coyymm = substr($row[0], 0, 6); $max = $row[0]; }
+			if ($row) {
+				$coyymm = substr($row[0], 0, 6);
+				$max = $row[0];
+			}
 		}
-		if (!$coyymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm))
-		{
+		if (!$coyymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm)) {
 			return true;
 		} else {
 			$langs->load("errors");
@@ -142,20 +146,27 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 		$sql .= " AND entity = ".$conf->entity;
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$obj = $db->fetch_object($resql);
-			if ($obj) $max = intval($obj->max);
-			else $max = 0;
+			if ($obj) {
+				$max = intval($obj->max);
+			} else {
+				$max = 0;
+			}
 		}
 
 		//$date=time();
 		$date = $object->date_commande; // Not always defined
-		if (empty($date)) $date = $object->date; // Creation date is order date for suppliers orders
+		if (empty($date)) {
+			$date = $object->date; // Creation date is order date for suppliers orders
+		}
 		$yymm = strftime("%y%m", $date);
 
-		if ($max >= (pow(10, 4) - 1)) $num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
-		else $num = sprintf("%04s", $max + 1);
+		if ($max >= (pow(10, 4) - 1)) {
+			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
+		} else {
+			$num = sprintf("%04s", $max + 1);
+		}
 
 		return $this->prefix.$yymm."-".$num;
 	}
@@ -167,7 +178,7 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 	 *
 	 *  @param	Societe		$objsoc     Object third party
 	 *  @param  Object	    $object		Object
-	 *  @return string      			Texte descripif
+	 *  @return string      			Descriptive text
 	 */
 	public function commande_get_num($objsoc = 0, $object = '')
 	{

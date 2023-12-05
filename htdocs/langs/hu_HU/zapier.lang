@@ -13,17 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#
-# Generic
-#
-
-# Module label 'ModuleZapierForDolibarrName'
 ModuleZapierForDolibarrName = Zapier for Dolibarr
-# Module description 'ModuleZapierForDolibarrDesc'
-ModuleZapierForDolibarrDesc = Zapier for Dolibarr modul
-
-#
-# Admin page
-#
-ZapierForDolibarrSetup = Zapier for Dolibarr beállítása
-ZapierDescription=Interface with Zapier
+ModuleZapierForDolibarrDesc = Zapier Dolibarr modulhoz
+ZapierForDolibarrSetup=A Zapier beállítása Dolibarrhoz
+ZapierDescription=Interfész a Zapierrel
+ZapierAbout=A Zapier modulról
+ZapierSetupPage=A Zapier használatához nincs szükség a Dolibarr oldalon történő beállításra. A Zapier és a Dolibarr használatához azonban csomagot kell generálnia és közzé kell tennie a zapieren. Tekintse meg a dokumentációt <a href="https://wiki.dolibarr.org/index.php/Module_Zapier">ezen a wikioldalon</a>.

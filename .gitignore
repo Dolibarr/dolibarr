@@ -14,10 +14,11 @@ default.properties
 /.pydevproject
 /.vscode
 .DS_Store
-.idea
 *.iml
+*.orig
 Thumbs.db
 /dolibarr_genesis.mp4
+.phpunit.result.cache
 # Log files
 dolibarr_install.log
 upgrade.log
@@ -41,6 +42,8 @@ htdocs/includes/sebastian/
 htdocs/includes/squizlabs/
 htdocs/includes/webmozart/
 htdocs/.well-known/apple-developer-merchantid-domain-association
+/factory/
+/output/
 
 # Node Modules
 build/yarn-error.log
@@ -54,3 +57,14 @@ yarn.lock
 package-lock.json
 
 doc/install.lock
+/.asciidoctorconfig.adoc
+
+.idea
+/composer.json
+/composer.lock
+
+/build/phpstan/phpstan
+/build/phpstan/bootstrap_custom.php
+phpstan_custom.neon
+/.php-cs-fixer.cache
+/.php_cs.cache

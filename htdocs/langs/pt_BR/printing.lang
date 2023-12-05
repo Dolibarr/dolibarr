@@ -1,8 +1,4 @@
 # Dolibarr language file - Source file is en_US - printing
-Module64000Desc=Habilitar Sistema de Impressão Direta
-PrintingSetup=Configuração do Sistema de Impressão Direta
-MenuDirectPrinting=Trabalhos de Impressão Direta
-DirectPrint=Impressão directa
 PrintingDriverDesc=Configuração de variáveis para o driver de impressão.
 ListDrivers=Lista de drivers
 FileWasSentToPrinter=Arquivo %s enviado para impressora

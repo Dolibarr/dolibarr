@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - mailmanspip
+MailmanSpipSetup=میل مین اور SPIP ماڈیول سیٹ اپ
+MailmanTitle=میل مین میلنگ لسٹ سسٹم
+TestSubscribe=میل مین کی فہرستوں کی رکنیت کی جانچ کرنے کے لیے
+TestUnSubscribe=میل مین کی فہرستوں سے رکنیت ختم کرنے کی جانچ کرنے کے لیے
+MailmanCreationSuccess=سبسکرپشن ٹیسٹ کامیابی کے ساتھ انجام دیا گیا۔
+MailmanDeletionSuccess=ان سبسکرپشن ٹیسٹ کو کامیابی کے ساتھ انجام دیا گیا۔
+SynchroMailManEnabled=میل مین اپ ڈیٹ کیا جائے گا۔
+SynchroSpipEnabled=ایک سپپ اپ ڈیٹ کیا جائے گا۔
+DescADHERENT_MAILMAN_ADMIN_PASSWORD=Mailman administrator password
+DescADHERENT_MAILMAN_URL=میل مین سبسکرپشنز کے لیے URL
+DescADHERENT_MAILMAN_UNSUB_URL=میل مین کی رکنیت ختم کرنے کے لیے URL
+DescADHERENT_MAILMAN_LISTS=نئے اراکین کی خودکار تحریر کے لیے فہرست (کوما سے الگ)
+SPIPTitle=SPIP کنٹینٹ مینجمنٹ سسٹم
+DescADHERENT_SPIP_SERVEUR=SPIP سرور
+DescADHERENT_SPIP_DB=SPIP ڈیٹا بیس کا نام
+DescADHERENT_SPIP_USER=SPIP ڈیٹا بیس لاگ ان
+DescADHERENT_SPIP_PASS=SPIP ڈیٹا بیس پاس ورڈ
+AddIntoSpip=SPIP میں شامل کریں۔
+AddIntoSpipConfirmation=کیا آپ واقعی اس ممبر کو SPIP میں شامل کرنا چاہتے ہیں؟
+AddIntoSpipError=صارف کو SPIP میں شامل کرنے میں ناکام
+DeleteIntoSpip=SPIP سے ہٹا دیں۔
+DeleteIntoSpipConfirmation=کیا آپ واقعی اس ممبر کو SPIP سے ہٹانا چاہتے ہیں؟
+DeleteIntoSpipError=SPIP سے صارف کو دبانے میں ناکام
+SPIPConnectionFailed=SPIP سے جڑنے میں ناکام
+SuccessToAddToMailmanList=%s میل مین کی فہرست %s یا SPIP ڈیٹا بیس میں کامیابی کے ساتھ شامل کیا گیا
+SuccessToRemoveToMailmanList=%s میل مین کی فہرست %s یا SPIP ڈیٹا بیس سے کامیابی کے ساتھ ہٹا دیا گیا

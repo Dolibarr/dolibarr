@@ -27,7 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_proposal/modules_supplier
 
 
 /**
- *	Class to manage customer order numbering rules Marbre
+ * Class to manage the Marbre numbering rule for Request for quotation
  */
 class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 {
@@ -60,12 +60,13 @@ class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 	/**
 	 *  Return description of numbering module
 	 *
-	 *  @return     string      Text with description
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs;
-	  	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
 	}
 
 
@@ -84,13 +85,15 @@ class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *  @return     boolean     false if conflict, true if ok
+	 *	@param	Object		$object		Object we need next value for
+	 *  @return boolean     			false if KO (there is a conflict), true if OK
 	 */
-	public function canBeActivated()
+	public function canBeActivated($object)
 	{
 		global $conf, $langs, $db;
 
-		$pryymm = ''; $max = '';
+		$pryymm = '';
+		$max = '';
 
 		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
@@ -99,14 +102,15 @@ class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 		$sql .= " AND entity = ".$conf->entity;
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$row = $db->fetch_row($resql);
-			if ($row) { $pryymm = substr($row[0], 0, 6); $max = $row[0]; }
+			if ($row) {
+				$pryymm = substr($row[0], 0, 6);
+				$max = $row[0];
+			}
 		}
 
-		if (!$pryymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $pryymm))
-		{
+		if (!$pryymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $pryymm)) {
 			return true;
 		} else {
 			$langs->load("errors");
@@ -118,9 +122,9 @@ class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 	/**
 	 *  Return next value
 	 *
-	 *  @param	Societe		$objsoc     Object third party
-	 * 	@param	Propal		$supplier_proposal		Object commercial proposal
-	 *  @return string      			Next value
+	 *  @param	Societe				$objsoc     			Object third party
+	 * 	@param	SupplierProposal	$supplier_proposal		Object commercial proposal
+	 *  @return string      								Next value
 	 */
 	public function getNextValue($objsoc, $supplier_proposal)
 	{
@@ -134,11 +138,13 @@ class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 		$sql .= " AND entity = ".$conf->entity;
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$obj = $db->fetch_object($resql);
-			if ($obj) $max = intval($obj->max);
-			else $max = 0;
+			if ($obj) {
+				$max = intval($obj->max);
+			} else {
+				$max = 0;
+			}
 		} else {
 			dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
 			return -1;
@@ -147,8 +153,11 @@ class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 		$date = time();
 		$yymm = strftime("%y%m", $date);
 
-		if ($max >= (pow(10, 4) - 1)) $num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
-		else $num = sprintf("%04s", $max + 1);
+		if ($max >= (pow(10, 4) - 1)) {
+			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
+		} else {
+			$num = sprintf("%04s", $max + 1);
+		}
 
 		dol_syslog(get_class($this)."::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;

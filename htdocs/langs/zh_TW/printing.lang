@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - printing
-Module64000Name=直接印刷
-Module64000Desc=啟用直接列印系統
-PrintingSetup=直接列印系統設定
+Module64000Name=一鍵列印
+Module64000Desc=啟用一鍵列印系統
+PrintingSetup=一鍵列印系統設定
 PrintingDesc=此模組在各個模組中增加“列印”按鈕，以允許將文件直接列印到印表機，而無需在另一個應用程序中打開文件。
-MenuDirectPrinting=直接列印工作
-DirectPrint=直接列印
+MenuDirectPrinting=一鍵列印工作
+DirectPrint=一鍵列印
 PrintingDriverDesc=列印機驅動程式的參數配置。
 ListDrivers=驅動程式列表
 PrintTestDesc=印表機列表。
@@ -29,7 +29,7 @@ GCP_connectionStatus=在線狀態
 GCP_Type=印表機類型
 PrintIPPDesc=此驅動程式允許將文件直接傳送到印表機。它需要安裝了CUPS的Linux系統。
 PRINTIPP_HOST=印表機伺服器
-PRINTIPP_PORT=港口
+PRINTIPP_PORT=連接埠
 PRINTIPP_USER=登入
 PRINTIPP_PASSWORD=密碼
 NoDefaultPrinterDefined=未定義預設印表機

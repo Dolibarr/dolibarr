@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2013	Laurent Destailleur			<eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2023	Laurent Destailleur			<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 /**
  *	\file			htdocs/core/lib/parsemd.lib.php
- *	\brief			This file contains functions dedicated to MD parsind.
+ *	\brief			This file contains functions dedicated to MD parsing.
  */
 
 /**
@@ -31,25 +31,31 @@
  */
 function dolMd2Html($content, $parser = 'parsedown', $replaceimagepath = null)
 {
-    if (is_array($replaceimagepath))
-    {
-        foreach ($replaceimagepath as $key => $val)
-        {
-            $keytoreplace = ']('.$key;
-            $valafter = ']('.$val;
-            $content = preg_replace('/'.preg_quote($keytoreplace, '/').'/m', $valafter, $content);
-        }
-    }
-    if ($parser == 'parsedown')
-    {
-        include_once DOL_DOCUMENT_ROOT.'/includes/parsedown/Parsedown.php';
-        $Parsedown = new Parsedown();
-        $content = $Parsedown->text($content);
-    } else {
-        $content = nl2br($content);
-    }
+	// Replace a HTML string with a Markdown syntax
+	$content = preg_replace('/<a href="([^"]+)">([^<]+)<\/a>/', '[\2](\1)', $content);
+	//$content = preg_replace('/<a href="([^"]+)" target="([^"]+)">([^<]+)<\/a>/', '[\3](\1){:target="\2"}', $content);
+	$content = preg_replace('/<a href="([^"]+)" target="([^"]+)">([^<]+)<\/a>/', '[\3](\1)', $content);
 
-    return $content;
+	// Replace HTML coments
+	$content = preg_replace('/<!--.*-->/Ums', '', $content);	// We remove HTML comment that are not MD comment because they will be escaped and output when setSafeMode is set to true.
+
+	if (is_array($replaceimagepath)) {
+		foreach ($replaceimagepath as $key => $val) {
+			$keytoreplace = ']('.$key;
+			$valafter = ']('.$val;
+			$content = preg_replace('/'.preg_quote($keytoreplace, '/').'/m', $valafter, $content);
+		}
+	}
+	if ($parser == 'parsedown') {
+		include_once DOL_DOCUMENT_ROOT.'/includes/parsedown/Parsedown.php';
+		$parsedown = new Parsedown();
+		$parsedown->setSafeMode(true);		// This will escape HTML link <a href=""> into html entities but markdown links are ok
+		$content = $parsedown->text($content);
+	} else {
+		$content = nl2br($content);
+	}
+
+	return $content;
 }
 
 
@@ -63,23 +69,21 @@ function dolMd2Html($content, $parser = 'parsedown', $replaceimagepath = null)
  */
 function dolMd2Asciidoc($content, $parser = 'dolibarr', $replaceimagepath = null)
 {
-    if (is_array($replaceimagepath))
-    {
-        foreach ($replaceimagepath as $key => $val)
-        {
-            $keytoreplace = ']('.$key;
-            $valafter = ']('.$val;
-            $content = preg_replace('/'.preg_quote($keytoreplace, '/').'/m', $valafter, $content);
-        }
-    }
-    //if ($parser == 'dolibarr')
-    //{
-        $content = preg_replace('/<!--.*-->/msU', '', $content);
-    //}
-    //else
-    //{
-    //    $content = $content;
-    //}
+	if (is_array($replaceimagepath)) {
+		foreach ($replaceimagepath as $key => $val) {
+			$keytoreplace = ']('.$key;
+			$valafter = ']('.$val;
+			$content = preg_replace('/'.preg_quote($keytoreplace, '/').'/m', $valafter, $content);
+		}
+	}
+	//if ($parser == 'dolibarr')
+	//{
+	$content = preg_replace('/<!--.*-->/msU', '', $content);
+	//}
+	//else
+	//{
+	//    $content = $content;
+	//}
 
-    return $content;
+	return $content;
 }

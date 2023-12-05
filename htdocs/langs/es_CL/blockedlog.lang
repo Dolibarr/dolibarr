@@ -10,7 +10,6 @@ logBILL_UNPAYED=Factura del cliente fijada sin pagar
 logBILL_VALIDATE=Factura del cliente validada
 logBILL_SENTBYMAIL=Factura del cliente enviar por correo
 logMEMBER_SUBSCRIPTION_DELETE=Suscripción de miembros de eliminación lógica
-logCASHCONTROL_VALIDATE=Grabación de la cerca de efectivo
 ListOfTrackedEvents=Lista de eventos rastreados
 logDOC_PREVIEW=Vista previa de un documento validado para imprimir o descargar.
 ImpossibleToReloadObject=Objeto original (escriba %s, id %s) no vinculado (consulte la columna &#39;Datos completos&#39; para obtener datos guardados inalterables)

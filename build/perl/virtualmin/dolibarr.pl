@@ -30,7 +30,7 @@ return "Regis Houssin";
 # script_dolibarr_versions()
 sub script_dolibarr_versions
 {
-return ( "12.0.3", "11.0.5", "10.0.7", "9.0.4", "8.0.6", "7.0.5" );
+return ( "14.0.5", "13.0.5", "12.0.5", "11.0.5", "10.0.7", "9.0.4", "8.0.6", "7.0.5" );
 }
 
 sub script_dolibarr_release
@@ -400,6 +400,8 @@ sub script_dolibarr_check_latest
 {
 local ($ver) = @_;
 local @vers = &osdn_package_versions("dolibarr",
+				$ver >= 14.0 ? "dolibarr\\-(12\\.0\\.[0-9\\.]+)\\.tgz" :
+				$ver >= 13.0 ? "dolibarr\\-(12\\.0\\.[0-9\\.]+)\\.tgz" :
 				$ver >= 12.0 ? "dolibarr\\-(12\\.0\\.[0-9\\.]+)\\.tgz" :
 				$ver >= 11.0 ? "dolibarr\\-(11\\.0\\.[0-9\\.]+)\\.tgz" :
 				$ver >= 10.0 ? "dolibarr\\-(10\\.0\\.[0-9\\.]+)\\.tgz" :

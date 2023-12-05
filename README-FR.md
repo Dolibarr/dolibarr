@@ -6,7 +6,7 @@
 Dolibarr ERP & CRM est un logiciel moderne pour gérer votre activité (société, association, auto-entrepreneurs, artisans).
 Il est simple d'utilisation et modulaire, vous permettant de n'activez que les fonctions dont vous avez besoin (contacts, fournisseurs, factures, commandes, stocks, agenda, ...).
 
-![ScreenShot](https://www.dolibarr.org/images/dolibarr_screenshot1_1920x1080.jpg)
+![ScreenShot](https://www.dolibarr.org/medias/dolibarr_screenshot1_1920x1080.jpg)
 
 ## LICENCE
 
@@ -56,17 +56,21 @@ Vous pouvez aussi utiliser un serveur Web et une base de données prise en charg
 
 Pour mettre à jour Dolibarr depuis une vieille version vers celle ci:
 
+- Faites une sauvegarde de votre instance [voir ce tutorial](https://wiki.dolibarr.org/index.php/Installation_-_Upgrade#Upgrade_Dolibarr)
+
+- Vérifiez que la nouvelle version est compatible avec la version PHP de votre serveur [voir PHP support](https://wiki.dolibarr.org/index.php/Releases).
+
 - Ecrasez les vieux fichiers dans le vieux répertoire 'dolibarr' par les fichiers
   fournis dans ce nouveau package.
 
 - Au prochain accès, Dolibarr proposera la page de "mise à jour" des données (si nécessaire).
   Si un fichier install.lock existe pour verrouiller le processus de mise à jour, il sera demandé de le supprimer manuellement (vous devriez trouver le fichier install.lock dans le répertoire utilisé pour stocker les documents générés ou transférés sur le serveur. Dans la plupart des cas, c'est le répertoire appelé "documents")
 
-*Note: Le processus de migration peut être lancé manuellement et plusieurs fois, sans risque, en appelant la page /install/*
+Note: *Le processus de migration peut être lancé manuellement et plusieurs fois, sans risque, en appelant la page /install/*
 
 ## CE QUI EST NOUVEAU
 
-Voir fichier ChangeLog.
+Voir le fichier [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog).
 
 ## CE QUE DOLIBARR PEUT FAIRE
 
@@ -82,15 +86,17 @@ Voir fichier ChangeLog.
 - Calendrier/Agenda partagé (avec export ical, vcal)
 - Suivi des opportunités et/ou projets (suivi de rentabilité incluant les factures, notes de frais, temps consommé valorisé, ...)
 - Gestion de contrats de services
-- Gestion de stock
+- Gestion de stock et inventaires
 - Gestion des expéditions
-- Gestion des demandes de congès
+- Gestion des demandes de congés
 - Gestion des notes de frais
+- Gestion de recrutement
 - GED (Gestion Electronique de Documents)
-- EMailings de masse
+- E-Mailings de masse
 - Réalisation de sondages
+- Gestion d'adhérents
 - Point de vente/Caisse enregistreuse
-- …
+- … (près de 100 modules disponibles en standard, près de 1000 autre sur la place de marché d'extensions)
 
 ### Autres modules
 
@@ -101,27 +107,27 @@ Voir fichier ChangeLog.
 - Support des codes barres
 - Calcul des marges
 - Connectivité LDAP
-- Intégratn de ClickToDial
+- Intégration de ClickToDial
 - Intégration RSS
-- Intégation Skype
-- Intégration de système de paiements (Paypal, Stripe, Paybox...)
+- Intégration Skype
+- Intégration de système de paiements (PayPal, Stripe, Paybox...)
 - …
 
 ### Divers
 
 - Multi-langue.
 - Multi-utilisateurs avec différents niveaux de permissions par module.
-- Multi-devise.
+- Multidevise.
 - Peux être multi-société par ajout du module externe multi-société.
 - Plusieurs thèmes visuels.
 - Application simple à utiliser.
-- Requiert PHP et MariaDb, Mysql ou Postgresql (Voir versions exactes sur https://wiki.dolibarr.org/index.php/Prérequis).
+- Requiert PHP et MariaDb, Mysql ou Postgresql (Voir versions exactes sur [https://wiki.dolibarr.org/index.php/Prérequis](https://wiki.dolibarr.org/index.php/Prérequis)).
 - Compatible avec toutes les offres Cloud du marché respectant les prérequis de base de données et PHP.
 - APIs.
 - Génération PDF et ODT des éléments (factures, propositions commerciales, commandes, bons expéditions, etc...)
 - Code simple et facilement personnalisable (pas de framework lourd; mécanisme de hook et triggers).
 - Support natif de nombreuses fonctions spécifiques aux pays comme:
-  - La tax espagnole TE et ISPF
+  - La taxe espagnole TE et ISPF
   - Gestion de la TVA NPR (non perçue récupérable - pour les utilisateurs français des DOM-TOM)
   - La loi française Finance 2016 et logiciels de caisse
   - La double taxe canadienne
@@ -133,13 +139,13 @@ Voir fichier ChangeLog.
 
 ### Extension
 
-Dolibarr peut aussi être étendu à volonté avec l'ajout de module/applications externes développées par des développeus tiers, disponible sur [DoliStore](https://www.dolistore.com).
+Dolibarr peut aussi être étendu à volonté avec l'ajout de modules/applications externes développées par des développeurs tiers, disponible sur [DoliStore](https://www.dolistore.com).
 
 ## CE QUE DOLIBARR NE PEUT PAS (ENCORE) FAIRE
 
 Voici un liste de fonctionnalités pas encore gérées par Dolibarr:
 
-- Dolibarr ne contient pas de module de Gestion de la paie.
+- Dolibarr ne contient pas de module de génération de feuille de paie.
 - Les tâches du module de gestion de projets n'ont pas de dépendances entre elle.
 - Dolibarr n'embarque pas de Webmail intégré nativement.
 - Dolibarr ne fait pas le café (pas encore).
@@ -152,7 +158,7 @@ La documentation utilisateur, développeur et traducteur est disponible sous for
 
 Ce projet existe grâce à ses nombreux contributeurs [[Contribuer](https://github.com/Dolibarr/dolibarr/blob/develop/.github/CONTRIBUTING.md)].
 
-<a href="https://github.com/Dolibarr/dolibarr/graphs/contributors"><img src="https://opencollective.com/dolibarr/contributors.svg?width=890&button=false" /></a>
+[![Dolibarr](https://opencollective.com/dolibarr/contributors.svg?width=890&button=false)](https://github.com/Dolibarr/dolibarr/graphs/contributors)
 
 ## CREDITS
 
@@ -162,15 +168,15 @@ Voir le fichier [COPYRIGHT](https://github.com/Dolibarr/dolibarr/blob/develop/CO
 
 ## ACTUALITES ET RESEAUX SOCIAUX
 
-Suivez le projet Dolibarr project sur les réseaux francophones
+Suivez le projet Dolibarr sur les réseaux francophones
 
 - [Facebook](https://www.facebook.com/dolibarr.fr)
-- [Twitter](https://www.twitter.com/dolibarr_france)
+- [X](https://www.twitter.com/dolibarr_france)
 
 ou sur les réseaux anglophones
 
 - [Facebook](https://www.facebook.com/dolibarr)
-- [Twitter](https://www.twitter.com/dolibarr)
+- [X](https://www.twitter.com/dolibarr)
 - [LinkedIn](https://www.linkedin.com/company/association-dolibarr)
 - [YouTube](https://www.youtube.com/user/DolibarrERPCRM)
 - [GitHub](https://github.com/Dolibarr/dolibarr)

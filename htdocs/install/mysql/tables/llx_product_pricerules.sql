@@ -16,6 +16,9 @@
 --
 -- ===========================================================================
 
+-- Table used only when PRODUIT_MULTIPRICES is set (prices per level) + PRODUIT_MULTIPRICES_ALLOW_AUTOCALC_PRICELEVEL is set
+-- A checkbox become available on product to allow to set price rules
+
 CREATE TABLE llx_product_pricerules
 (
     rowid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,

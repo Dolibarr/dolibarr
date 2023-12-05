@@ -30,20 +30,40 @@ class BankCateg // extends CommonObject
 {
 	//public $element='bank_categ';			//!< Id that identify managed objects
 	//public $table_element='bank_categ';	//!< Name of table without prefix where object is stored
-    /**
+	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'generic';
 
 	/**
-     * @var int ID
-     */
-    public $id;
+	 * @var int ID
+	 */
+	public $id;
 
 	/**
-     * @var string bank categories label
-     */
-    public $label;
+	 * @var string bank categories label
+	 */
+	public $label;
+
+	/**
+	 * @var DoliDB
+	 */
+	protected $db;
+
+	/**
+	 * @var string error
+	 */
+	public $error;
+
+	/**
+	 * @var array errors
+	 */
+	public $errors;
+
+	/**
+	 * @var array context
+	 */
+	public $context;
 
 
 	/**
@@ -62,7 +82,7 @@ class BankCateg // extends CommonObject
 	 *
 	 * @param  User $user User that create
 	 * @param  int $notrigger 0=launch triggers after, 1=disable triggers
-	 * @return int <0 if KO, Id of created object if OK
+	 * @return int Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
@@ -80,8 +100,8 @@ class BankCateg // extends CommonObject
 		$sql .= "label";
 		$sql .= ", entity";
 		$sql .= ") VALUES (";
-		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'")."";
-		$sql .= ", ".$conf->entity;
+		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'");
+		$sql .= ", ".((int) $conf->entity);
 		$sql .= ")";
 
 		$this->db->begin();
@@ -116,7 +136,7 @@ class BankCateg // extends CommonObject
 	 * Load object in memory from database
 	 *
 	 * @param  int $id Id object
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -126,7 +146,7 @@ class BankCateg // extends CommonObject
 		$sql .= " t.rowid,";
 		$sql .= " t.label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank_categ as t";
-		$sql .= " WHERE t.rowid = ".$id;
+		$sql .= " WHERE t.rowid = ".((int) $id);
 		$sql .= " AND t.entity = ".$conf->entity;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -150,9 +170,9 @@ class BankCateg // extends CommonObject
 	/**
 	 * Update database
 	 *
-	 * @param  User $user User that modify
-	 * @param  int $notrigger 0=launch triggers after, 1=disable triggers
-	 * @return int                    <0 if KO, >0 if OK
+	 * @param  User|null	$user 		User that modify
+	 * @param  int 			$notrigger 	0=launch triggers after, 1=disable triggers
+	 * @return int          	        Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user = null, $notrigger = 0)
 	{
@@ -169,8 +189,8 @@ class BankCateg // extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."bank_categ SET";
-		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null")."";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
+		$sql .= " WHERE rowid=".((int) $this->id);
 		$sql .= " AND entity = ".$conf->entity;
 
 		$this->db->begin();
@@ -201,7 +221,7 @@ class BankCateg // extends CommonObject
 	 *
 	 * @param  User    $user       User that delete
 	 * @param  int     $notrigger  0=launch triggers after, 1=disable triggers
-	 * @return int                 <0 if KO, >0 if OK
+	 * @return int                 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
@@ -211,48 +231,42 @@ class BankCateg // extends CommonObject
 		$this->db->begin();
 
 		// Delete link between tag and bank account
-		if (!$error)
-		{
-		    $sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_account";
-    		$sql .= " WHERE fk_categorie = ".$this->id;
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_account";
+			$sql .= " WHERE fk_categorie = ".((int) $this->id);
 
-    		$resql = $this->db->query($sql);
-    		if (!$resql)
-    		{
-    		    $error++;
-    		    $this->errors[] = "Error ".$this->db->lasterror();
-    		}
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
+			}
 		}
 
 		// Delete link between tag and bank lines
-		if (!$error)
-		{
-		    $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class";
-		    $sql .= " WHERE fk_categ = ".$this->id;
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class";
+			$sql .= " WHERE fk_categ = ".((int) $this->id);
 
-		    $resql = $this->db->query($sql);
-		    if (!$resql)
-		    {
-		        $error++;
-		        $this->errors[] = "Error ".$this->db->lasterror();
-		    }
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
+			}
 		}
 
 		// Delete bank categ
-		if (!$error)
-		{
-    		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_categ";
-    		$sql .= " WHERE rowid=".$this->id;
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_categ";
+			$sql .= " WHERE rowid=".((int) $this->id);
 
-    		$resql = $this->db->query($sql);
-    		if (!$resql)
-    		{
-    			$error++;
-    			$this->errors[] = "Error ".$this->db->lasterror();
-    		}
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
+			}
 		}
 
-    	// Commit or rollback
+		// Commit or rollback
 		if ($error) {
 			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
@@ -284,7 +298,7 @@ class BankCateg // extends CommonObject
 		// Load source object
 		$object->fetch($fromid);
 		$object->id = 0;
-		$object->statut = 0;
+		// $object->statut = 0;
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';

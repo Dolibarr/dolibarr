@@ -19,7 +19,7 @@ use Luracast\Restler\Util;
  * @copyright  2010 Luracast
  * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link       http://luracast.com/products/restler/
- * @version    3.0.0rc6
+ *
  */
 class Nav
 {
@@ -130,7 +130,8 @@ class Nav
         } else {
             return $tree;
         }
-        return null;
+        $value = null;
+        return $value;
     }
 
     public static function addUrls(array $urls)

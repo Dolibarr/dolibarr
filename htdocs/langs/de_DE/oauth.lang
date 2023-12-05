@@ -1,32 +1,41 @@
 # Dolibarr language file - Source file is en_US - oauth
-ConfigOAuth=OAuth Konfiguration
-OAuthServices=OAuth Dienste
+ConfigOAuth=OAuth-Konfiguration
+OAuthServices=OAuth-Dienste
 ManualTokenGeneration=Manuelle Token Generation
 TokenManager=Token-Manager
-IsTokenGenerated=Ist der Token generiert?
+IsTokenGenerated=Ist das Token generiert?
 NoAccessToken=Kein Zugriffstoken in der lokalen Datenbank gespeichert
 HasAccessToken=Ein Token wurde erstellt und in der lokalen Datenbank gespeichert
 NewTokenStored=Token empfangen und gespeichert
 ToCheckDeleteTokenOnProvider=Klicke hier um prüfen/entfernen Authentifizierung gespeichert durch den OAuth Anbieter %s
 TokenDeleted=Token gelöscht
-RequestAccess=Hier klicken, um Zugang anzufordern/verlängern und neue Token zu speichern
+GetAccess=Hier klicken, um ein Token zu erhalten
+RequestAccess=Klicken Sie hier, um den Zugriff anzufordern/zu erneuern und ein neues Token zu erhalten
 DeleteAccess=Hier klicken, um das Token zu löschen
-UseTheFollowingUrlAsRedirectURI=Verwenden Sie die folgende URL als Umleitungs-URI, wenn Sie Ihre Anmeldeinformationen bei Ihrem OAuth-Anbieter erstellen:
-ListOfSupportedOauthProviders=Geben Sie die Anmeldeinformationen ein, die Sie von Ihrem OAuth2-Anbieter erhalten haben. Hier werden nur unterstützte OAuth2-Anbieter aufgelistet. Diese Dienste können von anderen Modulen verwendet werden, die eine OAuth2-Authentifizierung benötigen.
-OAuthSetupForLogin=Seite um einen OAuth-Token zu erzeugen
+UseTheFollowingUrlAsRedirectURI=Verwenden Sie die folgende URL als Redirect-URI, wenn Sie Ihre Anmeldeinformationen bei Ihrem OAuth-Anbieter erstellen:
+ListOfSupportedOauthProviders=Fügen Sie Ihre OAuth2-Tokenanbieter hinzu. Gehen Sie dann auf die Verwaltungsseite Ihres OAuth-Anbieters, um eine OAuth-ID und ein Geheimnis zu erstellen/abzurufen und speichern Sie sie hier. Wenn Sie fertig sind, wechseln Sie auf die andere Registerkarte, um Ihr Token zu generieren.
+OAuthSetupForLogin=Seite zum Verwalten (Erstellen/Löschen) von OAuth-Tokens
 SeePreviousTab=Siehe vorherigen Registerkarte
+OAuthProvider=OAuth-Anbieter
 OAuthIDSecret=OAuth-ID und Secret
 TOKEN_REFRESH=Aktualisierung des Tokens vorhanden
 TOKEN_EXPIRED=Token abgelaufen
 TOKEN_EXPIRE_AT=Token läuft ab am
-TOKEN_DELETE=Lösche gespeicherten Token
+TOKEN_DELETE=Lösche gespeichertes Token
 OAUTH_GOOGLE_NAME=OAuth Google-Dienst
 OAUTH_GOOGLE_ID=OAuth Google-ID
 OAUTH_GOOGLE_SECRET=OAuth Google Secret
-OAUTH_GOOGLE_DESC=Wechseln Sie zu <a class="notasortlink" href="https://console.developers.google.com/" target="_blank"> dieser Seite </a> und dann zu "Anmeldeinformationen", um OAuth-Anmeldeinformationen zu erstellen
 OAUTH_GITHUB_NAME=OAuth GitHub-Dienst
 OAUTH_GITHUB_ID=OAuth GitHub-ID
 OAUTH_GITHUB_SECRET=OAuth GitHub Secret
-OAUTH_GITHUB_DESC=Gehen Sie auf <a class="notasortlink" href="https://github.com/settings/developers" target="_blank"> diese Seite </a>. Anschließend „Eine neue Anwendung registrieren“ um OAuth-Berechtigungsnachweise zu erstellen
-OAUTH_STRIPE_TEST_NAME=OAuth Test Name für Stripe
-OAUTH_STRIPE_LIVE_NAME=OAuth Live Name für Stripe
+OAUTH_URL_FOR_CREDENTIAL=Gehen Sie zu <a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external">dieser Seite<span class="fas fa-external-link-alt paddingleft"></span></a>, um Ihre OAuth-ID und Ihr Geheimnis zu erstellen oder abzurufen
+OAUTH_STRIPE_TEST_NAME=OAuth Stripe Test
+OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live
+OAUTH_ID=OAuth-Client-ID
+OAUTH_SECRET=OAuth-Geheimnis
+OAUTH_TENANT=OAuth-Mandant
+OAuthProviderAdded=OAuth-Anbieter hinzugefügt
+AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=Ein OAuth-Eintrag für diesen Anbieter und dieses Label ist bereits vorhanden
+URLOfServiceForAuthorization=URL, die vom OAuth-Dienst zur Authentifizierung bereitgestellt wird
+Scopes=Berechtigungen (Scopes)
+ScopeUndefined=Berechtigungen (Scopes) undefiniert (siehe vorheriges Tab)

@@ -6,6 +6,7 @@ TotalMargin=Marge Totaal
 MarginOnProducts=Marge / Training
 MarginOnServices=Marge / Dienst
 MarginRate=Marge verhouding
+ModifyMarginRates=Margetarieven wijzigen
 MarkRate=Markerings verhouding
 DisplayMarginRates=Toon Marge Verhouding
 DisplayMarkRates=Toon Markeringsverhouding
@@ -22,7 +23,7 @@ ProductService=Trainning of Dienst
 AllProducts=Alle Trainingen en Diensten
 ChooseProduct/Service=Kies Training of Dienst
 ForceBuyingPriceIfNull=Forceren inkoop/kostprijs naar verkoopprijs als dit niet is gedefinieerd
-ForceBuyingPriceIfNullDetails=Als inkoop / kostprijs niet is gedefinieerd en deze optie staat op "AAN", zal de marge nul zijn (inkoop / kostprijs = verkoopprijs). Indien ("UIT"), zal marge gelijk zijn aan de voorgestelde standaard.
+ForceBuyingPriceIfNullDetails=Als er geen koop-/kostprijs wordt opgegeven wanneer we een nieuwe regel toevoegen, en deze optie is "AAN", is de marge 0%% op de nieuwe regel (koop-/kostprijs = verkoopprijs). Als deze optie "UIT" is (aanbevolen), is de marge gelijk aan de standaard voorgestelde waarde (en kan 100%% zijn als er geen standaardwaarde kan worden gevonden).
 MARGIN_METHODE_FOR_DISCOUNT=Marge methode voor globale discounts
 UseDiscountAsProduct=Als een training
 UseDiscountAsService=Als een dienst

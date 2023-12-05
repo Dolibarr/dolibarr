@@ -1,5 +1,4 @@
-* Copyright (c) 2013-2017, Paul Geldart, Eduardo Rodrigues and Ricardo Cardoso.
-* All rights reserved.
+* Copyright (c) 2013-2018, Paul Geldart, Eduardo Rodrigues and Ricardo Cardoso.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -26,7 +25,6 @@
 This project is based on jsGantt 1.2, the original project license follows:
 
 * Copyright (c) 2008, Shlomy Gantz/BlueBrick Inc.
-* All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:

@@ -1,5 +1,6 @@
 /* Copyright (C) 2014      delcroip            <delcroip@gmail.com>
  * Copyright (C) 2015-2017 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2021      Josep Lluís Amador  <joseplluis@lliuretic.cat>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +63,7 @@ function regexEvent(objet,evt,type)
           case 'timeChar':
               //var regex= /^[0-9:]{1}$/;
               //alert(event.charCode);
-              var charCode = (evt.which) ? evt.which : event.keyCode;
+              var charCode = (evt.which) ? evt.which : evt.keyCode;
 
               if(((charCode >= 48) && (charCode <= 57)) || //num
                     (charCode===46) || (charCode===8)||// comma & periode
@@ -71,12 +72,9 @@ function regexEvent(objet,evt,type)
                   // ((charCode>=96) && (charCode<=105)) || //numpad
             	  return true;
 
-              }else
-              {
+              } else {
                   return false;
               }
-
-              break;
           default:
               break;
       }
@@ -257,7 +255,7 @@ function updateTotal(days,mode)
        		result=parseTime(jQuery('.totalDay'+stringdays).text(),taskTime);
         	if (result >= 0)
         	{
-        		totalhour = totalhour + taskTime.getHours();
+        		totalhour = totalhour + taskTime.getHours() + result*24;
         		totalmin = totalmin + taskTime.getMinutes();
         	}
         }

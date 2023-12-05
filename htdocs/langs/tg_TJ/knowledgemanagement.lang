@@ -1,0 +1,54 @@
+# Copyright (C) 2021 SuperAdmin
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see .
+
+#
+# Generic
+#
+
+# Module label 'ModuleKnowledgeManagementName'
+ModuleKnowledgeManagementName = Системаи идоракунии дониш
+# Module description 'ModuleKnowledgeManagementDesc'
+ModuleKnowledgeManagementDesc=Идоракунии донишҳо (KM) ё пойгоҳи Help-Desk -ро идора кунед
+
+#
+# Admin page
+#
+KnowledgeManagementSetup = Танзими системаи идоракунии дониш
+Settings = Танзимот
+KnowledgeManagementSetupPage = Саҳифаи танзими системаи идоракунии дониш
+
+
+#
+# About page
+#
+About = Дар бораи
+KnowledgeManagementAbout = Дар бораи идоракунии дониш
+KnowledgeManagementAboutPage = Идоракунии дониш дар бораи саҳифа
+
+KnowledgeManagementArea = Идоракунии дониш
+MenuKnowledgeRecord = Пойгоҳи дониш
+ListKnowledgeRecord = Рӯйхати мақолаҳо
+NewKnowledgeRecord = Мақолаи нав
+ValidateReply = Ҳалли худро тасдиқ кунед
+KnowledgeRecords = Мақолаҳо
+KnowledgeRecord = Мақола
+KnowledgeRecordExtraFields = Майдони экзотикӣ барои мақола
+GroupOfTicket=Гурӯҳи чиптаҳо
+YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
+SuggestedForTicketsInGroup=Suggested for tickets when group is
+
+SetObsolete=Set as obsolete
+ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
+ConfirmReopenKM=Do you want to restore this article to status "Validated" ?

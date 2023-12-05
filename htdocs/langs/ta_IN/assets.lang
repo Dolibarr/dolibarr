@@ -1,0 +1,67 @@
+# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+Assets = சொத்துக்கள்
+NewAsset = புதிய சொத்து
+AccountancyCodeAsset = கணக்கியல் குறியீடு (சொத்து)
+AccountancyCodeDepreciationAsset = கணக்கியல் குறியீடு (தேய்மானச் சொத்துக் கணக்கு)
+AccountancyCodeDepreciationExpense = கணக்கியல் குறியீடு (தேய்மான செலவு கணக்கு)
+NewAssetType=புதிய சொத்து வகை
+AssetsTypeSetup=சொத்து வகை அமைப்பு
+AssetTypeModified=சொத்து வகை மாற்றப்பட்டது
+AssetType=சொத்து வகை
+AssetsLines=சொத்துக்கள்
+DeleteType=அழி
+DeleteAnAssetType=சொத்து வகையை நீக்கவும்
+ConfirmDeleteAssetType=இந்தச் சொத்து வகையை நிச்சயமாக நீக்க விரும்புகிறீர்களா?
+ShowTypeCard='%s' வகையைக் காட்டு
+
+# Module label 'ModuleAssetsName'
+ModuleAssetsName = சொத்துக்கள்
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc = சொத்து விளக்கம்
+
+#
+# Admin page
+#
+AssetsSetup = சொத்து அமைப்பு
+Settings = அமைப்புகள்
+AssetsSetupPage = சொத்துகள் அமைவு பக்கம்
+ExtraFieldsAssetsType = நிரப்பு பண்புக்கூறுகள் (சொத்து வகை)
+AssetsType=சொத்து வகை
+AssetsTypeId=சொத்து வகை ஐடி
+AssetsTypeLabel=சொத்து வகை லேபிள்
+AssetsTypes=சொத்து வகைகள்
+
+#
+# Menu
+#
+MenuAssets = சொத்துக்கள்
+MenuNewAsset = புதிய சொத்து
+MenuTypeAssets = சொத்து வகை
+MenuListAssets = பட்டியல்
+MenuNewTypeAssets = புதியது
+MenuListTypeAssets = பட்டியல்
+
+#
+# Module
+#
+Asset=சொத்து
+NewAssetType=புதிய சொத்து வகை
+NewAsset=புதிய சொத்து
+ConfirmDeleteAsset=இந்தச் சொத்தை நிச்சயமாக நீக்க விரும்புகிறீர்களா?

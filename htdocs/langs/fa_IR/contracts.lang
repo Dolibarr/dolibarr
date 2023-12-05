@@ -2,7 +2,7 @@
 ContractsArea=بخش قرارداد‌ها
 ListOfContracts=فهرست‌ قرارداد‌ها
 AllContracts=همۀ قراردادها
-ContractCard=کارت قرارداد
+ContractCard=قرارداد
 ContractStatusNotRunning=در حال اجرا نیست
 ContractStatusDraft=پیش‌نویس
 ContractStatusValidated=معتبر است
@@ -20,6 +20,7 @@ ContractsSubscriptions=قراردادها/اشتراک‌ها
 ContractsAndLine=قراردادها و سطر قراردادها
 Contract=قرارداد
 ContractLine=سطر قرارداد
+ContractLines=Contract lines
 Closing=بستن
 NoContracts=قراردادی نیست
 MenuServices=خدمات
@@ -36,7 +37,7 @@ CloseAContract=بستن یک قرارداد
 ConfirmDeleteAContract=آیا مطمئن هستید می‌خواهید این قرارداد و همۀ خدمات مربوط به آن را حذف کنید؟
 ConfirmValidateContract=آیا مطمئن هستید می‌خواهید این قرارداد را تحت نام <b>%s</b> تائیداعتبار کنید؟
 ConfirmActivateAllOnContract=این همۀ خدمات را باز خواهد کرد (هنوز فعال نیست). آیا مطمئن هستید می‌خواهید همۀ خدمات را باز کنید؟
-ConfirmCloseContract=شما همۀ خدمات را خواهید بست (فعال یا غیر فعال). آیا مطمئن هستید می‌خواهید این قرارداد را ببندید؟
+ConfirmCloseContract=This will close all services (expired or not). Are you sure you want to close this contract?
 ConfirmCloseService=آیا مطمئن هستید می‌خواهید این خدمات را با تاریخ <b>%s</b> ببندید؟
 ValidateAContract=تائیداعتبار یک قرارداد
 ActivateService=فعال‌کردن خدمات
@@ -79,7 +80,7 @@ ConfirmDeleteContractLine=آیا مطمئن هستید می‌خواهید ای�
 MoveToAnotherContract=جابجا کردن خدمات به یک قرارداد دیگر.
 ConfirmMoveToAnotherContract=من یک قرارداد مقصد جدید انتخاب کردم و تائید می‌کنم که قصد دارم این خدمات را به این قرارداد جدید منتقل کنم.
 ConfirmMoveToAnotherContractQuestion=انتخاب کنید می‌خواهید این قرارداد را به قرارداد موجود (از همین شخص سوم) منتقل کنید؟
-PaymentRenewContractId=تمدید یک سطر قرارداد (شمارۀ %s)
+PaymentRenewContractId=Renew contract %s (service %s)
 ExpiredSince=تاریخ انقضا
 NoExpiredServices=خدمات فعال منقضی شده وجود ندارد
 ListOfServicesToExpireWithDuration=فهرست خدماتی که در %s روز منقضی خواهند شد
@@ -102,3 +103,5 @@ TypeContact_contrat_external_SALESREPSIGN=طرف‌تماس مشتری امضا�
 HideClosedServiceByDefault=Hide closed services by default
 ShowClosedServices=Show Closed Services
 HideClosedServices=Hide Closed Services
+UserStartingService=User starting service
+UserClosingService=User closing service

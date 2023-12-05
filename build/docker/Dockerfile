@@ -1,4 +1,4 @@
-FROM php:7.3-apache
+FROM php:8.1-apache-bullseye
 
 ENV PHP_INI_DATE_TIMEZONE 'UTC'
 ENV PHP_INI_MEMORY_LIMIT 256M
@@ -20,9 +20,12 @@ RUN apt-get update -y \
         unzip \
         curl \
         apt-utils \
+        msmtp \
+        msmtp-mta \
+        mailutils \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/* \
-    && docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) calendar intl mysqli pdo_mysql gd soap zip \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
     && docker-php-ext-install -j$(nproc) ldap && \
@@ -36,15 +39,22 @@ RUN chmod +x /usr/local/bin/docker-run.sh
 
 RUN pecl install xdebug && docker-php-ext-enable xdebug
 RUN echo 'zend_extension="/usr/local/lib/php/extensions/no-debug-non-zts-20180731/xdebug.so"' >> ${PHP_INI_DIR}/php.ini
-RUN echo 'xdebug.remote_autostart=1' >> ${PHP_INI_DIR}/php.ini
-RUN echo 'xdebug.remote_enable=1' >> ${PHP_INI_DIR}/php.ini
-RUN echo 'xdebug.default_enable=1' >> ${PHP_INI_DIR}/php.ini
-#RUN echo 'xdebug.remote_host=docker.host' >> ${PHP_INI_DIR}/php.ini
-RUN echo 'xdebug.remote_port=9000' >> ${PHP_INI_DIR}/php.ini
-RUN echo 'xdebug.remote_connect_back=1' >> ${PHP_INI_DIR}/php.ini
-RUN echo 'xdebug.profiler_enable=0' >> ${PHP_INI_DIR}/php.ini
-RUN echo 'xdebug.remote_log="/tmp/xdebug.log"' >> ${PHP_INI_DIR}/php.ini
-#RUN echo '172.17.0.1 docker.host' >> /etc/hosts
+RUN echo 'xdebug.mode=debug' >> ${PHP_INI_DIR}/php.ini
+RUN echo 'xdebug.start_with_request=yes' >> ${PHP_INI_DIR}/php.ini
+RUN echo 'xdebug.client_host=host.docker.internal' >> ${PHP_INI_DIR}/php.ini
+RUN echo 'xdebug.client_port=9003' >> ${PHP_INI_DIR}/php.ini
+RUN echo 'xdebug.discover_client_host=true' >> ${PHP_INI_DIR}/php.ini
+#RUN echo 'xdebug.log="/tmp/xdebug.log"' >> ${PHP_INI_DIR}/php.ini
+RUN echo 'xdebug.idekey="netbeans-xdebug"' >> ${PHP_INI_DIR}/php.ini
+
+# set up sendmail config, to use maildev
+RUN echo "account default" > /etc/msmtprc
+RUN echo "auth off" >> /etc/msmtprc
+RUN echo "port 25" >> /etc/msmtprc
+RUN echo "host mail" >> /etc/msmtprc
+RUN echo "from local@localdomain.com" >> /etc/msmtprc
+RUN echo "domain localhost.localdomain" >> /etc/msmtprc
+RUN echo "sendmail_path=/usr/bin/msmtp -t" >> /usr/local/etc/php/conf.d/php-sendmail.ini
 
 EXPOSE 80
 

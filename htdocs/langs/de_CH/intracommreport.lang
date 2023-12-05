@@ -1,0 +1,11 @@
+# Dolibarr language file - Source file is en_US - intracommreport
+Module68000Name =Intracomm-Bericht
+Module68000Desc =Intracomm-Berichtsverwaltung (Unterstützt das französische DEB / DES-Format)
+IntracommReportSetup =Einrichtung des Intracommreport-Moduls
+IntracommReportAbout =Über Intracommreport
+MenuIntracommReport=Intracomm-Bericht
+DEB=Warenaustauscherklärung (DEB)
+DES=Erklärung zum Austausch von Dienstleistungen (DES)
+IntracommReportTitle=Vorbereitung einer XML-Datei im ProDouane-Format
+IntracommReportList=Liste der generierten Deklarationen
+IntracommReportTransportMode=Transportmodus
