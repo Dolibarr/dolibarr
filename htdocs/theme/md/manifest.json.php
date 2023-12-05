@@ -68,6 +68,7 @@ if (empty($dolibarr_nocache)) {
 
 $manifest = new stdClass();
 
+$manifest->manifest_version = 3;
 
 $manifest->name = constant('DOL_APPLICATION_TITLE');
 if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
