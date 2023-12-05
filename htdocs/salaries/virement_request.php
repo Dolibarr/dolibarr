@@ -153,7 +153,7 @@ if ($reshook < 0) {
 
 
 if ($action == "new") {
-		//var_dump($object);exit;
+	//var_dump($object);exit;
 	if ($object->id > 0) {
 		$db->begin();
 
@@ -167,12 +167,12 @@ if ($action == "new") {
 
 			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 		} else {
-				dol_print_error($db, $error);
-				$db->rollback();
+			dol_print_error($db, $error);
+			$db->rollback();
 			setEventMessages($obj->error, $obj->errors, 'errors');
 		}
 	}
-		$action = '';
+	$action = '';
 }
 
 if ($action == "delete" && $permissiontodelete) {
@@ -299,8 +299,9 @@ print '<tr><td>';
 print '<table class="nobordernopadding" width="100%"><tr><td>';
 print $langs->trans('DefaultPaymentMode');
 print '</td>';
-if ($action != 'editmode')
+if ($action != 'editmode') {
 	print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
+}
 print '</tr></table>';
 print '</td><td>';
 
@@ -365,7 +366,8 @@ if ($resql) {
 
 	$num = $db->num_rows($resql);
 
-	$i = 0; $total = 0;
+	$i = 0;
+	$total = 0;
 
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder paymenttable">';
@@ -405,8 +407,9 @@ if ($resql) {
 				}
 
 				print '<td class="right">';
-				if ($bankaccountstatic->id)
+				if ($bankaccountstatic->id) {
 					print $bankaccountstatic->getNomUrl(1, 'transactions');
+				}
 				print '</td>';
 			}
 			print '<td class="right nowrap amountcard">'.price($objp->amount)."</td>\n";
@@ -423,7 +426,7 @@ if ($resql) {
 	// print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid").' :</td><td class="right nowrap amountcard">'.price($totalpaid)."</td></tr>\n";
 	// print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected").' :</td><td class="right nowrap amountcard">'.price($object->amount)."</td></tr>\n";
 
-	 $resteapayer = $object->amount - $totalpaid;
+	$resteapayer = $object->amount - $totalpaid;
 	// $cssforamountpaymentcomplete = 'amountpaymentcomplete';
 
 	// print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("RemainderToPay")." :</td>";

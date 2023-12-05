@@ -40,7 +40,9 @@ if (empty($object) || !is_object($object)) {
 }
 
 global $filtertype;
-if (empty($filtertype))	$filtertype = 0;
+if (empty($filtertype)) {
+	$filtertype = 0;
+}
 
 print "<!-- BEGIN PHP TEMPLATE objectline_title.tpl.php -->\n";
 
@@ -85,7 +87,9 @@ if ($filtertype != 1) {
 } else {
 	print '<td class="linecolunit right">' . $form->textwithpicto($langs->trans('Unit'), '').'</td>';
 
-	if (isModEnabled('workstation')) print '<td class="linecolworkstation right">' .  $form->textwithpicto($langs->trans('DefaultWorkstation'), '') . '</td>';
+	if (isModEnabled('workstation')) {
+		print '<td class="linecolworkstation right">' .  $form->textwithpicto($langs->trans('DefaultWorkstation'), '') . '</td>';
+	}
 
 	// Cost
 	print '<td class="linecolcost right">'.$form->textwithpicto($langs->trans("TotalCost"), $langs->trans("BOMTotalCostService")).'</td>';

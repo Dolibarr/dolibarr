@@ -54,7 +54,7 @@ $date_endday = GETPOST('date_endday', 'int');
 $date_endyear = GETPOST('date_endyear', 'int');
 $showaccountdetail = GETPOST('showaccountdetail', 'aZ09') ? GETPOST('showaccountdetail', 'aZ09') : 'yes';
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -330,7 +330,7 @@ if ($modecompta == 'BOOKKEEPING') {
 					print '<td></td>';
 					print '<td>';
 					print dol_escape_htmltag($objp->pcg_type);
-					print ($objp->name ? ' ('.dol_escape_htmltag($objp->name).')' : ' ('.$langs->trans("Unknown").')');
+					print($objp->name ? ' ('.dol_escape_htmltag($objp->name).')' : ' ('.$langs->trans("Unknown").')');
 					print "</td>\n";
 					print '<td class="right nowraponall"><span class="amount">'.price($objp->amount)."</span></td>\n";
 					print "</tr>\n";

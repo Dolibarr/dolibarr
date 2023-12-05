@@ -46,7 +46,7 @@ $mode = GETPOST('mode', 'aZ');
 
 $id = GETPOST('id', 'int');
 
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_categ = GETPOST("search_categ", 'int');
 
 $search_projectstatus = GETPOST('search_projectstatus');
@@ -104,7 +104,7 @@ $search_datelimit_start = dol_mktime(0, 0, 0, $search_datelimit_startmonth, $sea
 $search_datelimit_end = dol_mktime(23, 59, 59, $search_datelimit_endmonth, $search_datelimit_endday, $search_datelimit_endyear);
 
 // Initialize context for list
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'tasklist';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'tasklist';
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new Task($db);
@@ -187,7 +187,9 @@ $permissiontoread = $user->hasRight('projet', 'lire');
 $permissiontocreate = $user->hasRight('projet', 'creer');
 $permissiontodelete = $user->hasRight('projet', 'supprimer');
 
-if (!$permissiontoread) accessforbidden();
+if (!$permissiontoread) {
+	accessforbidden();
+}
 
 
 /*
@@ -627,7 +629,7 @@ if ($search_date_endmonth) {
 if ($search_date_endyear) {
 	$param .= '&search_date_endyear='.urlencode($search_date_endyear);
 }
-if ($search_datelimit_startday)	{
+if ($search_datelimit_startday) {
 	$param .= '&search_datelimit_startday='.urlencode($search_datelimit_startday);
 }
 if ($search_datelimit_startmonth) {
@@ -870,10 +872,10 @@ if (!empty($arrayfields['t.description']['checked'])) {
 // Start date
 if (!empty($arrayfields['t.dateo']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td>';
@@ -881,10 +883,10 @@ if (!empty($arrayfields['t.dateo']['checked'])) {
 // End date
 if (!empty($arrayfields['t.datee']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_datelimit_start ? $search_datelimit_start : -1, 'search_datelimit_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_datelimit_end ? $search_datelimit_end : -1, 'search_datelimit_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	// TODO Add option late
 	//print '<br><input type="checkbox" name="search_option" value="late"'.($option == 'late' ? ' checked' : '').'> '.$langs->trans("Alert");
@@ -1357,7 +1359,8 @@ while ($i < $imaxinloop) {
 			}
 			// Time spent
 			if (!empty($arrayfields['t.duration_effective']['checked'])) {
-				$showlineingray = 0; $showproject = 1;
+				$showlineingray = 0;
+				$showproject = 1;
 				print '<td class="center">';
 				if ($showlineingray) {
 					print '<i>';
@@ -1601,9 +1604,9 @@ if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['tota
 		} elseif (!empty($totalarray['pos'][$i])) {
 			print '<td class="right">';
 			if (isset($totalarray['type']) && $totalarray['type'][$i] == 'duration') {
-				print (!empty($totalarray['val'][$totalarray['pos'][$i]]) ? convertSecondToTime($totalarray['val'][$totalarray['pos'][$i]], 'allhourmin') : 0);
+				print(!empty($totalarray['val'][$totalarray['pos'][$i]]) ? convertSecondToTime($totalarray['val'][$totalarray['pos'][$i]], 'allhourmin') : 0);
 			} else {
-				print price(!empty($totalarray['val'][$totalarray['pos'][$i]])?$totalarray['val'][$totalarray['pos'][$i]]:0);
+				print price(!empty($totalarray['val'][$totalarray['pos'][$i]]) ? $totalarray['val'][$totalarray['pos'][$i]] : 0);
 			}
 			print '</td>';
 		} else {

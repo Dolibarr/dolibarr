@@ -34,7 +34,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modOauth extends DolibarrModules
 {
-
 	/**
 	 *  Constructor
 	 *

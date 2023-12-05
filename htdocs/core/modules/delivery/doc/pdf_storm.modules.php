@@ -222,11 +222,6 @@ class pdf_storm extends ModelePDFDeliveryOrder
 					}
 				}
 
-				if (count($realpatharray) == 0) {
-					$this->posxpicture = $this->posxweightvol;
-				}
-
-
 
 				// Create pdf instance
 				$pdf = pdf_getInstance($this->format);
@@ -446,8 +441,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 									$showpricebeforepagebreak = 0;
 								}
 							}
-						} else // No pagebreak
-						{
+						} else { // No pagebreak
 							$pdf->commitTransaction();
 						}
 

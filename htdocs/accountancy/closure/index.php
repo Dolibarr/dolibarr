@@ -184,9 +184,16 @@ if (isset($current_fiscal_period)) {
 			'value' => $current_fiscal_period['date_end']
 		);
 
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?fiscal_period_id=' . $current_fiscal_period['id'],
-			$langs->trans('ValidateMovements'), $langs->trans('DescValidateMovements', $langs->transnoentitiesnoconv("RegistrationInAccounting")),
-			'confirm_step_1', $form_question, '', 1, 300);
+		$formconfirm = $form->formconfirm(
+			$_SERVER["PHP_SELF"] . '?fiscal_period_id=' . $current_fiscal_period['id'],
+			$langs->trans('ValidateMovements'),
+			$langs->trans('DescValidateMovements', $langs->transnoentitiesnoconv("RegistrationInAccounting")),
+			'confirm_step_1',
+			$form_question,
+			'',
+			1,
+			300
+		);
 	} elseif ($action == 'step_2') {
 		$form_question = array();
 
@@ -214,9 +221,16 @@ if (isset($current_fiscal_period)) {
 			'value' => 0
 		);
 
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?fiscal_period_id=' . $current_fiscal_period['id'],
-			$langs->trans('AccountancyClosureClose'), $langs->trans('AccountancyClosureConfirmClose'),
-			'confirm_step_2', $form_question, '', 1, 300);
+		$formconfirm = $form->formconfirm(
+			$_SERVER["PHP_SELF"] . '?fiscal_period_id=' . $current_fiscal_period['id'],
+			$langs->trans('AccountancyClosureClose'),
+			$langs->trans('AccountancyClosureConfirmClose'),
+			'confirm_step_2',
+			$form_question,
+			'',
+			1,
+			300
+		);
 	} elseif ($action == 'step_3') {
 		$form_question = array();
 
@@ -249,9 +263,15 @@ if (isset($current_fiscal_period)) {
 			'label' => $langs->trans('DateEnd'),
 			'value' => $current_fiscal_period['date_end']
 		);
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?fiscal_period_id=' . $current_fiscal_period['id'],
-			$langs->trans('AccountancyClosureAccountingReversal'), $langs->trans('AccountancyClosureConfirmAccountingReversal'),
-			'confirm_step_3', $form_question, '', 1, 300
+		$formconfirm = $form->formconfirm(
+			$_SERVER["PHP_SELF"] . '?fiscal_period_id=' . $current_fiscal_period['id'],
+			$langs->trans('AccountancyClosureAccountingReversal'),
+			$langs->trans('AccountancyClosureConfirmAccountingReversal'),
+			'confirm_step_3',
+			$form_question,
+			'',
+			1,
+			300
 		);
 	}
 }
@@ -309,7 +329,9 @@ if (isset($current_fiscal_period)) {
 
 	print '<tr class="liste_titre">';
 	$nb_years = is_array($count_by_month['list']) ? count($count_by_month['list']) : 0;
-	if ($nb_years > 1) print '<td class="right">' . $langs->trans("Year") . '</td>';
+	if ($nb_years > 1) {
+		print '<td class="right">' . $langs->trans("Year") . '</td>';
+	}
 	for ($i = 1; $i <= 12; $i++) {
 		print '<td class="right">' . $langs->trans('MonthShort' . str_pad($i, 2, '0', STR_PAD_LEFT)) . '</td>';
 	}
@@ -319,7 +341,9 @@ if (isset($current_fiscal_period)) {
 	if (is_array($count_by_month['list'])) {
 		foreach ($count_by_month['list'] as $info) {
 			print '<tr class="oddeven">';
-			if ($nb_years > 1) print '<td class="right">' . $info['year'] . '</td>';
+			if ($nb_years > 1) {
+				print '<td class="right">' . $info['year'] . '</td>';
+			}
 			for ($i = 1; $i <= 12; $i++) {
 				print '<td class="right">' . ((int) $info['count'][$i]) . '</td>';
 			}

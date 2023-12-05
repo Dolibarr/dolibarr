@@ -1,4 +1,5 @@
 <?php
+
 // Move fields of totalizable into the common array pos and val
 if (!empty($totalarray['totalizable']) && is_array($totalarray['totalizable'])) {
 	foreach ($totalarray['totalizable'] as $keytotalizable => $valtotalizable) {
@@ -14,22 +15,22 @@ if (isset($totalarray['pos'])) {
 		$i++;
 		if (!empty($totalarray['pos'][$i])) {
 			switch ($totalarray['pos'][$i]) {
-				case 'duration';
+				case 'duration':
 					print '<td class="right">';
-					print (!empty($totalarray['val'][$totalarray['pos'][$i]]) ? convertSecondToTime($totalarray['val'][$totalarray['pos'][$i]], 'allhourmin') : 0);
+					print(!empty($totalarray['val'][$totalarray['pos'][$i]]) ? convertSecondToTime($totalarray['val'][$totalarray['pos'][$i]], 'allhourmin') : 0);
 					print '</td>';
 					break;
-				case 'string';
+				case 'string':
 					print '<td class="left">';
-					print (!empty($totalarray['val'][$totalarray['pos'][$i]]) ? $totalarray['val'][$totalarray['pos'][$i]] : '');
+					print(!empty($totalarray['val'][$totalarray['pos'][$i]]) ? $totalarray['val'][$totalarray['pos'][$i]] : '');
 					print '</td>';
 					break;
-				case 'stock';
+				case 'stock':
 					print '<td class="right">';
 					print price2num(!empty($totalarray['val'][$totalarray['pos'][$i]]) ? $totalarray['val'][$totalarray['pos'][$i]] : 0, 'MS');
 					print '</td>';
 					break;
-				default;
+				default:
 					print '<td class="right">';
 					print price(!empty($totalarray['val'][$totalarray['pos'][$i]]) ? $totalarray['val'][$totalarray['pos'][$i]] : 0);
 					print '</td>';

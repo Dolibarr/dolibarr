@@ -70,8 +70,8 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 	}
 
 	$loaddate = ($mode == 1 || $mode == 2 || $nbsecondsold) ? true : false;
-	$loadsize = ($mode == 1 || $mode == 3) ?true : false;
-	$loadperm = ($mode == 1 || $mode == 4) ?true : false;
+	$loadsize = ($mode == 1 || $mode == 3) ? true : false;
+	$loadperm = ($mode == 1 || $mode == 4) ? true : false;
 
 	// Clean parameters
 	$path = preg_replace('/([\\/]+)$/i', '', $path);
@@ -1104,8 +1104,6 @@ function dol_move($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $te
 */
 function dol_move_dir($srcdir, $destdir, $overwriteifexists = 1, $indexdatabase = 1, $renamedircontent = 1)
 {
-
-	global $user, $db, $conf;
 	$result = false;
 
 	dol_syslog("files.lib.php::dol_move_dir srcdir=".$srcdir." destdir=".$destdir." overwritifexists=".$overwriteifexists." indexdatabase=".$indexdatabase." renamedircontent=".$renamedircontent);
@@ -1124,13 +1122,16 @@ function dol_move_dir($srcdir, $destdir, $overwriteifexists = 1, $indexdatabase 
 
 		$result = @rename($newpathofsrcdir, $newpathofdestdir);
 
+		// Now we rename also contents inside dir after the move to match new destination name
 		if ($result && $renamedircontent) {
 			if (file_exists($newpathofdestdir)) {
 				$destbasename = basename($newpathofdestdir);
 				$files = dol_dir_list($newpathofdestdir);
 				if (!empty($files) && is_array($files)) {
 					foreach ($files as $key => $file) {
-						if (!file_exists($file["fullname"])) continue;
+						if (!file_exists($file["fullname"])) {
+							continue;
+						}
 						$filepath = $file["path"];
 						$oldname = $file["name"];
 
@@ -1759,7 +1760,6 @@ function dol_init_file_process($pathtoscan = '', $trackid = '')
  */
 function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesession = 0, $varfiles = 'addedfile', $savingdocmask = '', $link = null, $trackid = '', $generatethumbs = 1, $object = null)
 {
-
 	global $db, $user, $conf, $langs;
 
 	$res = 0;
@@ -1868,7 +1868,9 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 					// Update index table of files (llx_ecm_files)
 					if ($donotupdatesession == 1) {
 						$sharefile = 0;
-						if ($TFile['type'][$i] == 'application/pdf' && strpos($_SERVER["REQUEST_URI"], 'product') !== false && getDolGlobalString('PRODUCT_ALLOW_EXTERNAL_DOWNLOAD')) $sharefile = 1;
+						if ($TFile['type'][$i] == 'application/pdf' && strpos($_SERVER["REQUEST_URI"], 'product') !== false && getDolGlobalString('PRODUCT_ALLOW_EXTERNAL_DOWNLOAD')) {
+							$sharefile = 1;
+						}
 						$result = addFileIntoDatabaseIndex($upload_dir, basename($destfile).($resupload == 2 ? '.noexe' : ''), $TFile['name'][$i], 'uploaded', $sharefile, $object);
 						if ($result < 0) {
 							if ($allowoverwrite) {
@@ -1886,8 +1888,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 						setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
 					} elseif (preg_match('/ErrorFileIsInfectedWithAVirus/', $resupload)) {	// Files infected by a virus
 						setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
-					} else // Known error
-					{
+					} else { // Known error
 						setEventMessages($langs->trans($resupload), null, 'errors');
 					}
 				}
@@ -2023,8 +2024,12 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 				dol_syslog('Error: object ' . get_class($object) . ' has no table_element attribute.');
 				return -1;
 			}
-			if (isset($object->src_object_description)) $ecmfile->description = $object->src_object_description;
-			if (isset($object->src_object_keywords)) $ecmfile->keywords = $object->src_object_keywords;
+			if (isset($object->src_object_description)) {
+				$ecmfile->description = $object->src_object_description;
+			}
+			if (isset($object->src_object_keywords)) {
+				$ecmfile->keywords = $object->src_object_keywords;
+			}
 		}
 
 		if (getDolGlobalString('MAIN_FORCE_SHARING_ON_ANY_UPLOADED_FILE')) {
@@ -2168,7 +2173,7 @@ function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '', $page = ''
  * @param 	string	$outputfile		Target file name
  * @param 	string	$mode			'gz' or 'bz' or 'zip'
  * @param	string	$errorstring	Error string
- * @return	int						<0 if KO, >0 if OK
+ * @return	int						Return integer <0 if KO, >0 if OK
  * @see dol_uncompress(), dol_compress_dir()
  */
 function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring = null)
@@ -2197,7 +2202,7 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring 
 				$rootPath = realpath($inputfile);
 
 				dol_syslog("Class ZipArchive is set so we zip using ZipArchive to zip into ".$outputfile.' rootPath='.$rootPath);
-				$zip = new ZipArchive;
+				$zip = new ZipArchive();
 
 				if ($zip->open($outputfile, ZipArchive::CREATE) !== true) {
 					$errorstring = "dol_compress_file failure - Failed to open file ".$outputfile."\n";
@@ -2342,7 +2347,7 @@ function dol_uncompress($inputfile, $outputdir)
 
 		if (class_exists('ZipArchive')) {	// Must install php-zip to have it
 			dol_syslog("Class ZipArchive is set so we unzip using ZipArchive to unzip into ".$outputdir);
-			$zip = new ZipArchive;
+			$zip = new ZipArchive();
 			$res = $zip->open($inputfile);
 			if ($res === true) {
 				//$zip->extractTo($outputdir.'/');
@@ -2421,7 +2426,7 @@ function dol_uncompress($inputfile, $outputdir)
  * @param	string	$excludefiles   A regex pattern. For example: '/\.log$|\/temp\//'
  * @param	string	$rootdirinzip	Add a root dir level in zip file
  * @param	string	$newmask		Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
- * @return	int						<0 if KO, >0 if OK
+ * @return	int						Return integer <0 if KO, >0 if OK
  * @see dol_uncompress(), dol_compress_file()
  */
 function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles = '', $rootdirinzip = '', $newmask = 0)
@@ -2547,7 +2552,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(\.meta|_preview.*\.png)$', '^\.'), $nohook = false, $mode = '')
 {
 	$tmparray = dol_dir_list($dir, 'files', 0, $regexfilter, $excludefilter, 'date', SORT_DESC, $mode, $nohook);
-	return isset($tmparray[0])?$tmparray[0]:null;
+	return isset($tmparray[0]) ? $tmparray[0] : null;
 }
 
 /**
@@ -3229,8 +3234,8 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 
 		$tmpmodulepart = explode('-', $modulepart);
 		if (!empty($tmpmodulepart[1])) {
-				$modulepart = $tmpmodulepart[0];
-				$original_file = $tmpmodulepart[1].'/'.$original_file;
+			$modulepart = $tmpmodulepart[0];
+			$original_file = $tmpmodulepart[1].'/'.$original_file;
 		}
 
 		// Define $accessallowed

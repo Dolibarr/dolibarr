@@ -197,7 +197,7 @@ class RssParser
 	 * 	@param	int		$maxNb		Max nb of records to get (0 for no limit)
 	 * 	@param	int		$cachedelay	0=No cache, nb of seconds we accept cache files (cachedir must also be defined)
 	 * 	@param	string	$cachedir	Directory where to save cache file (For example $conf->externalrss->dir_temp)
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function parser($urlRSS, $maxNb = 0, $cachedelay = 60, $cachedir = '')
 	{

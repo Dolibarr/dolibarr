@@ -45,7 +45,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $module = GETPOST('module', 'alpha');
 $rights = GETPOST('rights', 'int');
 $updatedmodulename = GETPOST('updatedmodulename', 'alpha');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'userperms'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'userperms'; // To manage different context of search
 
 if (!isset($id) || empty($id)) {
 	accessforbidden();
@@ -262,7 +262,7 @@ $morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 
 $morehtmlref .= '</a>';
 
 $urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
-$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->trans("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
+$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->transnoentitiesnoconv("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
 
 dol_banner_tab($object, 'id', $linkback, $user->hasRight("user", "user", "read") || $user->admin, 'rowid', 'ref', $morehtmlref);
 
@@ -435,7 +435,8 @@ $sql .= " ORDER BY r.family_position, r.module_position, r.module, r.id";
 $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
-	$i = 0; $j = 0;
+	$i = 0;
+	$j = 0;
 	$oldmod = '';
 
 	$cookietohidegroup = (empty($_COOKIE["DOLUSER_PERMS_HIDE_GRP"]) ? '' : preg_replace('/^,/', '', $_COOKIE["DOLUSER_PERMS_HIDE_GRP"]));
@@ -680,7 +681,7 @@ if ($result) {
 			if ((!empty($object->admin) && !empty($objMod->rights_admin_allowed)) ||
 				in_array($obj->id, $permsuser) /* if edited user owns this permissions */ ||
 				(isset($permsgroupbyentitypluszero) && is_array($permsgroupbyentitypluszero) && in_array($obj->id, $permsgroupbyentitypluszero))) {
-					print ' '.img_warning($langs->trans("AllowPasswordResetBySendingANewPassByEmail"));
+				print ' '.img_warning($langs->trans("AllowPasswordResetBySendingANewPassByEmail"));
 			}
 		}
 		// Special warning case for the permission "Create/modify other users, groups and permissions"
@@ -688,7 +689,7 @@ if ($result) {
 			if ((!empty($object->admin) && !empty($objMod->rights_admin_allowed)) ||
 				in_array($obj->id, $permsuser) /* if edited user owns this permissions */ ||
 				(isset($permsgroupbyentitypluszero) && is_array($permsgroupbyentitypluszero) && in_array($obj->id, $permsgroupbyentitypluszero))) {
-					print ' '.img_warning($langs->trans("AllowAnyPrivileges"));
+				print ' '.img_warning($langs->trans("AllowAnyPrivileges"));
 			}
 		}
 		print '</td>';

@@ -86,7 +86,7 @@ class Productbatch extends CommonObject
 	 *
 	 *  @param	User	$user        User that creates
 	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return int      		   	 <0 if KO, Id of created object if OK
+	 *  @return int      		   	 Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -120,7 +120,8 @@ class Productbatch extends CommonObject
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 		if (!$error) {
 			$this->id = $this->db->last_insert_id($this->db->prefix().self::$_table_element);
@@ -141,7 +142,7 @@ class Productbatch extends CommonObject
 	 *  Load object in memory from the database
 	 *
 	 *  @param	int		$id		Id object
-	 *  @return int          	<0 if KO, >0 if OK
+	 *  @return int          	Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -194,7 +195,7 @@ class Productbatch extends CommonObject
 	 *
 	 *  @param	User	$user        User that modifies
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 <0 if KO, >0 if OK
+	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -222,7 +223,8 @@ class Productbatch extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// Commit or rollback
@@ -244,7 +246,7 @@ class Productbatch extends CommonObject
 	 *
 	 *  @param  User	$user        User that deletes
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 <0 if KO, >0 if OK
+	 *  @return	int					 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -259,7 +261,8 @@ class Productbatch extends CommonObject
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -376,7 +379,7 @@ class Productbatch extends CommonObject
 	 *  @param	integer		$sellby   			sell-by date for object - deprecated: a search must be done on batch number
 	 *  @param	string		$batch_number   	batch number for object
 	 *  @param	int			$fk_warehouse		filter on warehouse (use it if you don't have $fk_product_stock)
-	 *  @return int          					<0 if KO, >0 if OK
+	 *  @return int          					Return integer <0 if KO, >0 if OK
 	 */
 	public function find($fk_product_stock = 0, $eatby = '', $sellby = '', $batch_number = '', $fk_warehouse = 0)
 	{
@@ -459,7 +462,9 @@ class Productbatch extends CommonObject
 		$sql .= " t.eatby as oldeatby,"; // deprecated but may not be migrated into new table
 		$sql .= " t.batch,";
 		$sql .= " t.qty,";
-		if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) $sql .= " MAX(sm.datem) as date_entree,";
+		if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
+			$sql .= " MAX(sm.datem) as date_entree,";
+		}
 		$sql .= " t.import_key";
 		if ($fk_product > 0) {
 			$sql .= ", pl.rowid as lotid, pl.eatby as eatby, pl.sellby as sellby";
@@ -490,9 +495,11 @@ class Productbatch extends CommonObject
 		if (getDolGlobalString('SHIPPING_DISPLAY_STOCK_ENTRY_DATE')) {
 			$sql .= 'date_entree ASC,t.batch ASC,';
 		}
-		if ($fk_product > 0) { $sql .= "pl.eatby ASC, pl.sellby ASC, "; }
+		if ($fk_product > 0) {
+			$sql .= "pl.eatby ASC, pl.sellby ASC, ";
+		}
 		$sql .= "t.eatby ASC, t.sellby ASC ";
-		$sql .= ", t.qty ".(!getDolGlobalString('DO_NOT_TRY_TO_DEFRAGMENT_STOCKS_WAREHOUSE')?'ASC':'DESC'); // Note : qty ASC is important for expedition card, to avoid stock fragmentation
+		$sql .= ", t.qty ".(!getDolGlobalString('DO_NOT_TRY_TO_DEFRAGMENT_STOCKS_WAREHOUSE') ? 'ASC' : 'DESC'); // Note : qty ASC is important for expedition card, to avoid stock fragmentation
 		$sql .= ", t.batch ASC";
 
 		dol_syslog("productbatch::findAll", LOG_DEBUG);

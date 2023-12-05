@@ -40,7 +40,7 @@ $action = GETPOST('action', 'aZ09');
 // dolibarr_readonly
 // dolibarr_mailings
 // Full (not sure this one is used)
-$mode = GETPOST('mode') ?GETPOST('mode', 'alpha') : 'dolibarr_notes';
+$mode = GETPOST('mode') ? GETPOST('mode', 'alpha') : 'dolibarr_notes';
 
 if (!$user->admin) {
 	accessforbidden();

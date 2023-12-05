@@ -253,8 +253,8 @@ if ($id > 0 || !empty($ref)) {
 
 				$totalMargin = $cumul_vente - $cumul_achat;
 				if ($totalMargin < 0) {
-					$marginRate = ($cumul_achat != 0) ?-1 * (100 * $totalMargin / $cumul_achat) : '';
-					$markRate = ($cumul_vente != 0) ?-1 * (100 * $totalMargin / $cumul_vente) : '';
+					$marginRate = ($cumul_achat != 0) ? -1 * (100 * $totalMargin / $cumul_achat) : '';
+					$markRate = ($cumul_vente != 0) ? -1 * (100 * $totalMargin / $cumul_vente) : '';
 				} else {
 					$marginRate = ($cumul_achat != 0) ? (100 * $totalMargin / $cumul_achat) : '';
 					$markRate = ($cumul_vente != 0) ? (100 * $totalMargin / $cumul_vente) : '';

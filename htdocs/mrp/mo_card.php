@@ -49,7 +49,7 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'mocard'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'mocard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $TBomLineId = GETPOST('bomlineid', 'array');
@@ -365,9 +365,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	mrpCollapseBomManagement();
-
-	?>
+	mrpCollapseBomManagement(); ?>
 	<script>
 		 $(document).ready(function () {
 			 jQuery('#fk_bom').change(function() {
@@ -496,8 +494,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($action == 'delete') {
 		$numberofmochilds = count($object->getAllMoChilds());
 
-		if ($numberofmochilds > 0)$label = $langs->trans("DeleteMoChild", '('.strval($numberofmochilds).')');
-		else $label = $langs->trans("DeleteMoChild");
+		if ($numberofmochilds > 0) {
+			$label = $langs->trans("DeleteMoChild", '('.strval($numberofmochilds).')');
+		} else {
+			$label = $langs->trans("DeleteMoChild");
+		}
 
 		$formquestion = array(
 			array('type' => 'checkbox', 'name' => 'deletechilds', 'label' => $label, 'value' => 0),

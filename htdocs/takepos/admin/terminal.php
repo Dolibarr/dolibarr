@@ -271,9 +271,13 @@ if (isModEnabled('stock')) {
 
 
 	print '<tr class="oddeven"><td>';
-	if (!$disabled) { print '<span class="fieldrequired">'; }
+	if (!$disabled) {
+		print '<span class="fieldrequired">';
+	}
 	print $langs->trans("CashDeskIdWareHouse");
-	if (!$disabled) { print '</span>'; }
+	if (!$disabled) {
+		print '</span>';
+	}
 	if (!getDolGlobalString('CASHDESK_ID_WAREHOUSE'.$terminal)) {
 		print img_warning($langs->trans("DisableStockChange").' - '.$langs->trans("NoWarehouseDefinedForTerminal"));
 	}

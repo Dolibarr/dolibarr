@@ -35,7 +35,7 @@ class Proposals extends DolibarrApi
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
-	static $FIELDS = array(
+	public static $FIELDS = array(
 		'socid'
 	);
 
@@ -419,7 +419,9 @@ class Proposals extends DolibarrApi
 		$this->db->begin();
 
 		foreach ($request_data as $TData) {
-			if (empty($TData[0])) $TData = array($TData);
+			if (empty($TData[0])) {
+				$TData = array($TData);
+			}
 
 			foreach ($TData as $lineData) {
 				$line = (object) $lineData;
@@ -626,20 +628,20 @@ class Proposals extends DolibarrApi
 		);
 	}
 
-	 /**
-	  * Delete a contact type of given commercial proposal
-	  *
-	  * @param	int    $id				Id of commercial proposal to update
-	  * @param	int    $contactid		Row key of the contact in the array contact_ids.
-	  * @param	string $type			Type of the contact (BILLING, SHIPPING, CUSTOMER).
-	  * @return Object					Object with cleaned properties
-	  *
-	  * @url	DELETE {id}/contact/{contactid}/{type}
-	  *
-	  * @throws RestException 401
-	  * @throws RestException 404
-	  * @throws RestException 500 System error
-	  */
+	/**
+	 * Delete a contact type of given commercial proposal
+	 *
+	 * @param	int    $id				Id of commercial proposal to update
+	 * @param	int    $contactid		Row key of the contact in the array contact_ids.
+	 * @param	string $type			Type of the contact (BILLING, SHIPPING, CUSTOMER).
+	 * @return Object					Object with cleaned properties
+	 *
+	 * @url	DELETE {id}/contact/{contactid}/{type}
+	 *
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 500 System error
+	 */
 	public function deleteContact($id, $contactid, $type)
 	{
 		if (!DolibarrApiAccess::$user->rights->propal->creer) {

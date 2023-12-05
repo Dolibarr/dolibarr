@@ -348,7 +348,7 @@ class ProductCombination
 	 * Creates a product attribute combination
 	 *
 	 * @param	User	$user	Object user
-	 * @return 	int				<0 if KO, >0 if OK
+	 * @return 	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user)
 	{
@@ -420,7 +420,7 @@ class ProductCombination
 	 * Deletes a product combination
 	 *
 	 * @param 	User 	$user	Object user
-	 * @return 	int 			<0 if KO, >0 if OK
+	 * @return 	int 			Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user)
 	{

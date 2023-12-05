@@ -58,11 +58,11 @@ $result = restrictedArea($user, 'projet', $projectid);
 
 $now = dol_now();
 
-$year = GETPOST('reyear') ?GETPOST('reyear', 'int') : (GETPOST("year") ?GETPOST("year", "int") : date("Y"));
-$month = GETPOST('remonth') ?GETPOST('remonth', 'int') : (GETPOST("month") ?GETPOST("month", "int") : date("m"));
-$day = GETPOST('reday') ?GETPOST('reday', 'int') : (GETPOST("day") ?GETPOST("day", "int") : date("d"));
+$year = GETPOST('reyear') ? GETPOST('reyear', 'int') : (GETPOST("year") ? GETPOST("year", "int") : date("Y"));
+$month = GETPOST('remonth') ? GETPOST('remonth', 'int') : (GETPOST("month") ? GETPOST("month", "int") : date("m"));
+$day = GETPOST('reday') ? GETPOST('reday', 'int') : (GETPOST("day") ? GETPOST("day", "int") : date("d"));
 $day = (int) $day;
-$week = GETPOST("week", "int") ?GETPOST("week", "int") : date("W");
+$week = GETPOST("week", "int") ? GETPOST("week", "int") : date("W");
 
 //$search_categ = GETPOST("search_categ", 'alpha');
 $search_usertoprocessid = GETPOST('search_usertoprocessid', 'int');
