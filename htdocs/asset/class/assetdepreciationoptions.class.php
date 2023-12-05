@@ -114,6 +114,12 @@ class AssetDepreciationOptions extends CommonObject
 	 */
 	public $deprecation_options = array();
 
+	public $depreciation_type;
+	public $degressive_coefficient;
+	public $duration;
+	public $duration_type;
+	public $accelerated_depreciation_option;
+
 	/**
 	 * Constructor
 	 *
@@ -165,12 +171,12 @@ class AssetDepreciationOptions extends CommonObject
 				// Unset required option (notnull) if field disabled
 				if (!empty($field_info['enabled_field'])) {
 					$info = explode(':', $field_info['enabled_field']);
-					if ($this->deprecation_options[$info[0]][$info[1]] != $info[2] && isset($this->fields[$field_key]['notnull'])) {
+					if (!empty($this->deprecation_options[$info[0]][$info[1]]) && $this->deprecation_options[$info[0]][$info[1]] != $info[2] && isset($this->fields[$field_key]['notnull'])) {
 						unset($this->fields[$field_key]['notnull']);
 					}
 				}
 				// Set value of the field in the object (for createCommon and setDeprecationOptionsFromPost functions)
-				$this->{$field_key} = $this->deprecation_options[$mode][$field_key];
+				$this->{$field_key} = $this->deprecation_options[$mode][$field_key] ?? null;
 			}
 
 			$this->fields['rowid'] = array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id");
@@ -356,7 +362,7 @@ class AssetDepreciationOptions extends CommonObject
 		foreach ($this->deprecation_options_fields as $mode_key => $mode_info) {
 			if (!empty($mode_info['enabled_field'])) {
 				$info = explode(':', $mode_info['enabled_field']);
-				if ($deprecation_options[$info[0]][$info[1]] != $info[2]) {
+				if (isset($deprecation_options[$info[0]][$info[1]]) && $deprecation_options[$info[0]][$info[1]] != $info[2]) {
 					unset($deprecation_options[$info[0]][$info[1]]);
 				}
 			}
@@ -523,8 +529,8 @@ class AssetDepreciationOptions extends CommonObject
 	 */
 	public function getRate($mode)
 	{
-		$duration = $this->deprecation_options[$mode]["duration"] > 0 ? $this->deprecation_options[$mode]["duration"] : 0;
-		$duration_type = $this->deprecation_options[$mode]["duration_type"] > 0 ? $this->deprecation_options[$mode]["duration_type"] : 0;
+		$duration = (isset($this->deprecation_options[$mode]["duration"]) && $this->deprecation_options[$mode]["duration"] > 0) ? $this->deprecation_options[$mode]["duration"] : 0;
+		$duration_type = (isset($this->deprecation_options[$mode]["duration_type"]) && $this->deprecation_options[$mode]["duration_type"] > 0) ? $this->deprecation_options[$mode]["duration_type"] : 0;
 
 		return price(price2num($duration > 0 ? (100 * ($duration_type == 1 ? 12 : 1) / $duration) : 0, 2));
 	}

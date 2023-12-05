@@ -112,7 +112,7 @@ class AssetModel extends CommonObject
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
-		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'default'=>'0', 'visible'=>2, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Enabled', '9'=>'Disabled'), 'validate'=>'1',),
+		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'default'=>'1', 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Enabled', '9'=>'Disabled'), 'validate'=>'1',),
 	);
 	public $rowid;
 	public $ref;
@@ -129,6 +129,7 @@ class AssetModel extends CommonObject
 	public $model_pdf;
 	public $status;
 	public $asset_depreciation_options;
+	public $asset_accountancy_codes;
 
 	// /**
 	//  * @var string    Field with ID of parent key if this object has a parent
@@ -193,6 +194,12 @@ class AssetModel extends CommonObject
 	public function create(User $user, $notrigger = false)
 	{
 		$resultcreate = $this->createCommon($user, $notrigger);
+		if ($resultcreate > 0) {
+			$this->asset_depreciation_options->setDeprecationOptionsFromPost(1);
+			$this->asset_depreciation_options->updateDeprecationOptions($user, 0, $resultcreate);
+			$this->asset_accountancy_codes->setAccountancyCodesFromPost();
+			$this->asset_accountancy_codes->updateAccountancyCodes($user, 0, $resultcreate);
+		}
 
 		return $resultcreate;
 	}
@@ -414,7 +421,15 @@ class AssetModel extends CommonObject
 	 */
 	public function update(User $user, $notrigger = false)
 	{
-		return $this->updateCommon($user, $notrigger);
+		$resultupdate = $this->updateCommon($user, $notrigger);
+		if ($resultupdate > 0) {
+			$this->asset_depreciation_options->setDeprecationOptionsFromPost(1);
+			$this->asset_depreciation_options->updateDeprecationOptions($user, 0, $resultupdate);
+			$this->asset_accountancy_codes->setAccountancyCodesFromPost();
+			$this->asset_accountancy_codes->updateAccountancyCodes($user, 0, $resultupdate);
+		}
+
+		return $resultupdate;
 	}
 
 	/**
