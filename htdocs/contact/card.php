@@ -157,17 +157,20 @@ if (empty($reshook)) {
 			if ($result > 0) {
 				$result2 = $nuser->setPassword($user, GETPOST("password"), 0, 0, 1); // Do not use GETPOST(alpha)
 				if (is_int($result2) && $result2 < 0) {
-					$error = $nuser->error; $errors = $nuser->errors;
+					$error = $nuser->error;
+					$errors = $nuser->errors;
 					$db->rollback();
 				} else {
 					$db->commit();
 				}
 			} else {
-				$error = $nuser->error; $errors = $nuser->errors;
+				$error = $nuser->error;
+				$errors = $nuser->errors;
 				$db->rollback();
 			}
 		} else {
-			$error = $object->error; $errors = $object->errors;
+			$error = $object->error;
+			$errors = $object->errors;
 		}
 	}
 
@@ -202,7 +205,7 @@ if (empty($reshook)) {
 			$object->canvas = $canvas;
 		}
 
-		$object->entity = (GETPOSTISSET('entity') ?GETPOST('entity', 'int') : $conf->entity);
+		$object->entity = (GETPOSTISSET('entity') ? GETPOST('entity', 'int') : $conf->entity);
 		$object->socid = GETPOST("socid", 'int');
 		$object->lastname = (string) GETPOST("lastname", 'alpha');
 		$object->firstname = (string) GETPOST("firstname", 'alpha');
@@ -334,7 +337,8 @@ if (empty($reshook)) {
 
 	if ($action == 'update' && empty($cancel) && !empty($permissiontoadd)) {
 		if (!GETPOST("lastname", 'alpha')) {
-			$error++; $errors = array($langs->trans("ErrorFieldRequired", $langs->transnoentities("Name").' / '.$langs->transnoentities("Label")));
+			$error++;
+			$errors = array($langs->trans("ErrorFieldRequired", $langs->transnoentities("Name").' / '.$langs->transnoentities("Label")));
 			$action = 'edit';
 		}
 
@@ -677,14 +681,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Name
 			print '<tr><td class="titlefieldcreate fieldrequired"><label for="lastname">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</label></td>';
-			print '<td colspan="3"><input name="lastname" id="lastname" type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("lastname", 'alpha') ?GETPOST("lastname", 'alpha') : $object->lastname).'" autofocus="autofocus"></td>';
+			print '<td colspan="3"><input name="lastname" id="lastname" type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("lastname", 'alpha') ? GETPOST("lastname", 'alpha') : $object->lastname).'" autofocus="autofocus"></td>';
 			print '</tr>';
 
 			// Firstname
 			print '<tr>';
 			print '<td><label for="firstname">';
 			print $form->textwithpicto($langs->trans("Firstname"), $langs->trans("KeepEmptyIfGenericAddress")).'</label></td>';
-			print '<td colspan="3"><input name="firstname" id="firstname"type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("firstname", 'alpha') ?GETPOST("firstname", 'alpha') : $object->firstname).'"></td>';
+			print '<td colspan="3"><input name="firstname" id="firstname"type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("firstname", 'alpha') ? GETPOST("firstname", 'alpha') : $object->firstname).'"></td>';
 			print '</tr>';
 
 			// Company
@@ -710,7 +714,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Job position
 			print '<tr><td><label for="title">'.$langs->trans("PostOrFunction").'</label></td>';
-			print '<td colspan="3"><input name="poste" id="title" type="text" class="minwidth100" maxlength="255" value="'.dol_escape_htmltag(GETPOSTISSET("poste") ?GETPOST("poste", 'alphanohtml') : $object->poste).'"></td>';
+			print '<td colspan="3"><input name="poste" id="title" type="text" class="minwidth100" maxlength="255" value="'.dol_escape_htmltag(GETPOSTISSET("poste") ? GETPOST("poste", 'alphanohtml') : $object->poste).'"></td>';
 
 			$colspan = 3;
 			if ($conf->use_javascript_ajax && $socid > 0) {
@@ -722,7 +726,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$object->address = $objsoc->address; // Predefined with third party
 			}
 			print '<tr><td><label for="address">'.$langs->trans("Address").'</label></td>';
-			print '<td colspan="'.$colspan.'"><textarea class="flat quatrevingtpercent" name="address" id="address" rows="'.ROWS_2.'">'.(GETPOST("address", 'alpha') ?GETPOST("address", 'alpha') : $object->address).'</textarea></td>';
+			print '<td colspan="'.$colspan.'"><textarea class="flat quatrevingtpercent" name="address" id="address" rows="'.ROWS_2.'">'.(GETPOST("address", 'alpha') ? GETPOST("address", 'alpha') : $object->address).'</textarea></td>';
 
 			if ($conf->use_javascript_ajax && $socid > 0) {
 				$rowspan = 3;
@@ -856,7 +860,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Visibility
 			print '<tr><td><label for="priv">'.$langs->trans("ContactVisibility").'</label></td><td colspan="3">';
 			$selectarray = array('0'=>$langs->trans("ContactPublic"), '1'=>$langs->trans("ContactPrivate"));
-			print $form->selectarray('priv', $selectarray, (GETPOST("priv", 'alpha') ?GETPOST("priv", 'alpha') : $object->priv), 0);
+			print $form->selectarray('priv', $selectarray, (GETPOST("priv", 'alpha') ? GETPOST("priv", 'alpha') : $object->priv), 0);
 			print '</td></tr>';
 
 			//Default language
@@ -1055,32 +1059,32 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td>'.$form->editfieldkey('PhonePro', 'phone_pro', GETPOST('phone_pro', 'alpha'), $object, 0).'</td>';
 			print '<td>';
 			print img_picto('', 'object_phoning', 'class="pictofixedwidth"');
-			print '<input type="text" name="phone_pro" id="phone_pro" class="maxwidth200" maxlength="80" value="'.(GETPOSTISSET('phone_pro') ?GETPOST('phone_pro', 'alpha') : $object->phone_pro).'"></td>';
+			print '<input type="text" name="phone_pro" id="phone_pro" class="maxwidth200" maxlength="80" value="'.(GETPOSTISSET('phone_pro') ? GETPOST('phone_pro', 'alpha') : $object->phone_pro).'"></td>';
 			if ($conf->browser->layout == 'phone') {
 				print '</tr><tr>';
 			}
 			print '<td>'.$form->editfieldkey('PhonePerso', 'fax', GETPOST('phone_perso', 'alpha'), $object, 0).'</td>';
 			print '<td>';
 			print img_picto('', 'object_phoning', 'class="pictofixedwidth"');
-			print '<input type="text" name="phone_perso" id="phone_perso" class="maxwidth200" maxlength="80" value="'.(GETPOSTISSET('phone_perso') ?GETPOST('phone_perso', 'alpha') : $object->phone_perso).'"></td></tr>';
+			print '<input type="text" name="phone_perso" id="phone_perso" class="maxwidth200" maxlength="80" value="'.(GETPOSTISSET('phone_perso') ? GETPOST('phone_perso', 'alpha') : $object->phone_perso).'"></td></tr>';
 
 			print '<tr><td>'.$form->editfieldkey('PhoneMobile', 'phone_mobile', GETPOST('phone_mobile', 'alpha'), $object, 0, 'string', '').'</td>';
 			print '<td>';
 			print img_picto('', 'object_phoning_mobile', 'class="pictofixedwidth"');
-			print '<input type="text" name="phone_mobile" id="phone_mobile" class="maxwidth200" maxlength="80" value="'.(GETPOSTISSET('phone_mobile') ?GETPOST('phone_mobile', 'alpha') : $object->phone_mobile).'"></td>';
+			print '<input type="text" name="phone_mobile" id="phone_mobile" class="maxwidth200" maxlength="80" value="'.(GETPOSTISSET('phone_mobile') ? GETPOST('phone_mobile', 'alpha') : $object->phone_mobile).'"></td>';
 			if ($conf->browser->layout == 'phone') {
 				print '</tr><tr>';
 			}
 			print '<td>'.$form->editfieldkey('Fax', 'fax', GETPOST('fax', 'alpha'), $object, 0).'</td>';
 			print '<td>';
 			print img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"');
-			print '<input type="text" name="fax" id="fax" class="maxwidth200" maxlength="80" value="'.(GETPOSTISSET('phone_fax') ?GETPOST('phone_fax', 'alpha') : $object->fax).'"></td></tr>';
+			print '<input type="text" name="fax" id="fax" class="maxwidth200" maxlength="80" value="'.(GETPOSTISSET('phone_fax') ? GETPOST('phone_fax', 'alpha') : $object->fax).'"></td></tr>';
 
 			// EMail
 			print '<tr><td>'.$form->editfieldkey('EMail', 'email', GETPOST('email', 'alpha'), $object, 0, 'string', '', (getDolGlobalString('SOCIETE_EMAIL_MANDATORY'))).'</td>';
 			print '<td>';
 			print img_picto('', 'object_email', 'class="pictofixedwidth"');
-			print '<input type="text" name="email" id="email" class="maxwidth100onsmartphone quatrevingtpercent" value="'.(GETPOSTISSET('email') ?GETPOST('email', 'alpha') : $object->email).'"></td>';
+			print '<input type="text" name="email" id="email" class="maxwidth100onsmartphone quatrevingtpercent" value="'.(GETPOSTISSET('email') ? GETPOST('email', 'alpha') : $object->email).'"></td>';
 			if (isModEnabled('mailing')) {
 				$langs->load("mails");
 				print '<td class="nowrap">'.$langs->trans("NbOfEMailingsSend").'</td>';

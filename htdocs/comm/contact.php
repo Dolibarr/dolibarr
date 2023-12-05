@@ -42,13 +42,13 @@ if (!$sortfield) {
 if ($page < 0) {
 	$page = 0;
 }
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
 
 $type = GETPOST('type', 'alpha');
-$search_lastname = GETPOST('search_nom') ?GETPOST('search_nom') : GETPOST('search_lastname'); // For backward compatibility
-$search_firstname = GETPOST('search_firstname') ?GETPOST('search_firstname') : GETPOST('search_firstname'); // For backward compatibility
-$search_company = GETPOST('search_societe') ?GETPOST('search_societe') : GETPOST('search_company'); // For backward compatibility
+$search_lastname = GETPOST('search_nom') ? GETPOST('search_nom') : GETPOST('search_lastname'); // For backward compatibility
+$search_firstname = GETPOST('search_firstname') ? GETPOST('search_firstname') : GETPOST('search_firstname'); // For backward compatibility
+$search_company = GETPOST('search_societe') ? GETPOST('search_societe') : GETPOST('search_company'); // For backward compatibility
 $contactname = GETPOST('contactname');
 $begin = GETPOST('begin', 'alpha');
 

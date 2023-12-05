@@ -55,7 +55,7 @@ $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $optioncss = GETPOST('optioncss', 'alpha');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'projectlist';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'projectlist';
 $mode = GETPOST('mode', 'alpha');
 
 
@@ -75,7 +75,7 @@ if (!$user->hasRight('projet', 'lire')) {
 
 $diroutputmassaction = $conf->project->dir_output.'/temp/massgeneration/'.$user->id;
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -130,7 +130,8 @@ if (getDolGlobalInt('PROJECT_ENABLE_SUB_PROJECT')) {
 
 $mine = ((GETPOST('mode') == 'mine') ? 1 : 0);
 if ($mine) {
-	$search_project_user = $user->id; $mine = 0;
+	$search_project_user = $user->id;
+	$mine = 0;
 }
 
 $search_sday	= GETPOST('search_sday', 'int');
@@ -451,8 +452,11 @@ $sql .= " WHERE ctc.element = '".$db->escape($object->element)."'";
 $resql = $db->query($sql);
 if ($resql) {
 	while ($obj = $db->fetch_object($resql)) {
-		if ($obj->source == 'internal') $listofprojectcontacttype[$obj->rowid] = $obj->code;
-		else $listofprojectcontacttypeexternal[$obj->rowid] = $obj->code;
+		if ($obj->source == 'internal') {
+			$listofprojectcontacttype[$obj->rowid] = $obj->code;
+		} else {
+			$listofprojectcontacttypeexternal[$obj->rowid] = $obj->code;
+		}
 	}
 } else {
 	dol_print_error($db);
@@ -1216,10 +1220,10 @@ if (!empty($arrayfields['p.dateo']['checked'])) {
 	}
 	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_smonth" value="'.dol_escape_htmltag($search_smonth).'">';
 	print $formother->selectyear($search_syear ? $search_syear : -1, 'search_syear', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');*/
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_start_start ? $search_date_start_start : -1, 'search_date_start_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_start_end ? $search_date_start_end : -1, 'search_date_start_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td>';
@@ -1232,10 +1236,10 @@ if (!empty($arrayfields['p.datee']['checked'])) {
 	}
 	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_emonth" value="'.dol_escape_htmltag($search_emonth).'">';
 	print $formother->selectyear($search_eyear ? $search_eyear : -1, 'search_eyear', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');*/
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_end_start ? $search_date_end_start : -1, 'search_date_end_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_end_end ? $search_date_end_end : -1, 'search_date_end_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td>';
@@ -1333,10 +1337,10 @@ print $hookmanager->resPrint;
 // Creation date
 if (!empty($arrayfields['p.datec']['checked'])) {
 	print '<td class="liste_titre center nowraponall">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_creation_start ? $search_date_creation_start : -1, 'search_date_creation_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_creation_end ? $search_date_creation_end : -1, 'search_date_creation_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td>';
@@ -1344,10 +1348,10 @@ if (!empty($arrayfields['p.datec']['checked'])) {
 // Modification date
 if (!empty($arrayfields['p.tms']['checked'])) {
 	print '<td class="liste_titre center nowraponall">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_modif_start ? $search_date_modif_start : -1, 'search_date_modif_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_modif_end ? $search_date_modif_end : -1, 'search_date_modif_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td>';
@@ -1656,7 +1660,7 @@ while ($i < $imaxinloop) {
 		// Project url
 		if (!empty($arrayfields['p.ref']['checked'])) {
 			print '<td class="nowraponall tdoverflowmax200">';
-			print $object->getNomUrl(1, (!empty(GETPOST('search_usage_event_organization', 'int'))?'eventorganization':''));
+			print $object->getNomUrl(1, (!empty(GETPOST('search_usage_event_organization', 'int')) ? 'eventorganization' : ''));
 			if ($object->hasDelay()) {
 				print img_warning($langs->trans('Late'));
 			}

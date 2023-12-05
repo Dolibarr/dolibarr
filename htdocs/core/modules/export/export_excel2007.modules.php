@@ -224,7 +224,7 @@ class ExportExcel2007 extends ModeleExports
 	 *  Write header
 	 *
 	 *  @param      Translate	$outputlangs        Object lang to translate values
-	 * 	@return		int								<0 if KO, >0 if OK
+	 * 	@return		int								Return integer <0 if KO, >0 if OK
 	 */
 	public function write_header($outputlangs)
 	{
@@ -243,7 +243,7 @@ class ExportExcel2007 extends ModeleExports
 	 *  @param      array		$array_selected_sorted       	Array with list of field to export
 	 *  @param      Translate	$outputlangs    				Object lang to translate values
 	 *  @param		array		$array_types					Array with types of fields
-	 * 	@return		int											<0 if KO, >0 if OK
+	 * 	@return		int											Return integer <0 if KO, >0 if OK
 	 */
 	public function write_title($array_export_fields_label, $array_selected_sorted, $outputlangs, $array_types)
 	{
@@ -303,7 +303,7 @@ class ExportExcel2007 extends ModeleExports
 	 *  @param      resource	$objp                       A record from a fetch with all fields from select
 	 *  @param      Translate	$outputlangs                Object lang to translate values
 	 *  @param		array		$array_types				Array with types of fields
-	 * 	@return		int										<0 if KO, >0 if OK
+	 * 	@return		int										Return integer <0 if KO, >0 if OK
 	 */
 	public function write_record($array_selected_sorted, $objp, $outputlangs, $array_types)
 	{
@@ -407,7 +407,7 @@ class ExportExcel2007 extends ModeleExports
 	 *	Write footer
 	 *
 	 * 	@param		Translate	$outputlangs	Output language object
-	 * 	@return		int							<0 if KO, >0 if OK
+	 * 	@return		int							Return integer <0 if KO, >0 if OK
 	 */
 	public function write_footer($outputlangs)
 	{
@@ -420,7 +420,7 @@ class ExportExcel2007 extends ModeleExports
 	/**
 	 *	Close Excel file
 	 *
-	 * 	@return		int							<0 if KO, >0 if OK
+	 * 	@return		int							Return integer <0 if KO, >0 if OK
 	 */
 	public function close_file()
 	{
@@ -461,7 +461,6 @@ class ExportExcel2007 extends ModeleExports
 	 */
 	public function column2Letter($c)
 	{
-
 		$c = intval($c);
 		if ($c <= 0) {
 			return '';

@@ -234,7 +234,7 @@ class IntracommReport extends CommonObject
 	 *  @param	string				$type				Declaration type by default - introduction or expedition (always 'expedition' for Des)
 	 *  @param	int					$period_reference	Reference period
 	 *  @param	string				$exporttype	    	deb=DEB, des=DES
-	 *  @return	int       			  					<0 if KO, >0 if OK
+	 *  @return	int       			  					Return integer <0 if KO, >0 if OK
 	 */
 	public function addItemsFact(&$declaration, $type, $period_reference, $exporttype = 'deb')
 	{
@@ -297,7 +297,7 @@ class IntracommReport extends CommonObject
 	 *  @param      string	$type				Declaration type by default - introduction or expedition (always 'expedition' for Des)
 	 *  @param      int		$period_reference	Reference declaration
 	 *  @param      string	$exporttype	    	deb=DEB, des=DES
-	 *  @return     string       			  		<0 if KO, >0 if OK
+	 *  @return     string       			  		Return integer <0 if KO, >0 if OK
 	 */
 	public function getSQLFactLines($type, $period_reference, $exporttype = 'deb')
 	{
@@ -401,7 +401,6 @@ class IntracommReport extends CommonObject
 	 */
 	public function addItemFraisDePort(&$declaration, &$TLinesFraisDePort, $type, &$categ_fraisdeport, $i)
 	{
-
 		global $conf;
 
 		if ($type == 'expedition') {

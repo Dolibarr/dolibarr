@@ -406,8 +406,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 								$showpricebeforepagebreak = 0;
 							}
 						}
-					} else // No pagebreak
-					{
+					} else { // No pagebreak
 						$pdf->commitTransaction();
 					}
 					$posYAfterDescription = $pdf->GetY();
@@ -934,7 +933,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 *  @param  int         $posy           	Position y in PDF
 	 *  @param  Translate   $outputlangs    	Object langs for output
 	 *  @param  int			$heightforfooter 	Height for footer
-	 *  @return int                             <0 if KO, >0 if OK
+	 *  @return int                             Return integer <0 if KO, >0 if OK
 	 */
 	protected function _tableau_versements(&$pdf, $object, $posy, $outputlangs, $heightforfooter = 0)
 	{
@@ -982,7 +981,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		//
 
 		// Loop on each payment
-		$sql = "SELECT p.datep as date, p.fk_paiement as type, p.num_paiement as num, pf.amount as amount, pf.multicurrency_amount,";
+		$sql = "SELECT p.datep as date, p.fk_paiement as type, p.num_paiement as num_payment, pf.amount as amount, pf.multicurrency_amount,";
 		$sql .= " cp.code";
 		$sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf, ".MAIN_DB_PREFIX."paiementfourn as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON p.fk_paiement = cp.id";
@@ -1005,7 +1004,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 				$pdf->MultiCell(20, 3, $oper, 0, 'L', 0);
 				$pdf->SetXY($tab3_posx + 58, $tab3_top + $y);
-				$pdf->MultiCell(30, 3, $row->num, 0, 'L', 0);
+				$pdf->MultiCell(30, 3, $row->num_payment, 0, 'L', 0);
 
 				$pdf->line($tab3_posx, $tab3_top + $y + 3, $tab3_posx + $tab3_width, $tab3_top + $y + 3);
 
@@ -1070,8 +1069,8 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		}
 		else
 		{*/
-			$text = $this->emetteur->name;
-			$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
+		$text = $this->emetteur->name;
+		$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 		//}
 
 		$pdf->SetFont('', 'B', $default_font_size + 3);

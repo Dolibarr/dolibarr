@@ -288,7 +288,7 @@ if ($action == 'validatehistory') {
 		$db->rollback();
 	} else {
 		$db->commit();
-		setEventMessages($langs->trans('AutomaticBindingDone', 	$nbbinddone, $notpossible), null, ($notpossible ? 'warnings' : 'mesgs'));
+		setEventMessages($langs->trans('AutomaticBindingDone', $nbbinddone, $notpossible), null, ($notpossible ? 'warnings' : 'mesgs'));
 		if ($nbbindfailed) {
 			setEventMessages($langs->trans('DoManualBindingForFailedRecord', $nbbindfailed), null, 'warnings');
 		}
@@ -666,15 +666,21 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 				if ($j > 12) {
 					$j -= 12;
 				}
-				$sql .= " SUM(".$db->ifsql("MONTH(f.datef)=".$j,
-							" (".$db->ifsql("fd.total_ht < 0",
+				$sql .= " SUM(".$db->ifsql(
+					"MONTH(f.datef)=".$j,
+					" (".$db->ifsql(
+								"fd.total_ht < 0",
 								" (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100))))",	// TODO This is bugged, we must use the percent for the invoice and fd.situation_percent is cumulated percent !
-								"  (fd.total_ht - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100)))").")",
-							 0).") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
+								"  (fd.total_ht - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100)))"
+							).")",
+					0
+				).") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
 			}
-			$sql .= "  SUM(".$db->ifsql("fd.total_ht < 0",
+			$sql .= "  SUM(".$db->ifsql(
+				"fd.total_ht < 0",
 				" (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100))))",	// TODO This is bugged, we must use the percent for the invoice and fd.situation_percent is cumulated percent !
-								"  (fd.total_ht - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100)))").") as total";
+								"  (fd.total_ht - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100)))"
+			).") as total";
 		} else {
 			$sql = "SELECT '".$db->escape($langs->trans("Vide"))."' AS marge,";
 			for ($i = 1; $i <= 12; $i++) {
@@ -682,15 +688,21 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 				if ($j > 12) {
 					$j -= 12;
 				}
-				$sql .= " SUM(".$db->ifsql("MONTH(f.datef)=".$j,
-					" (".$db->ifsql("fd.total_ht < 0",
+				$sql .= " SUM(".$db->ifsql(
+					"MONTH(f.datef)=".$j,
+					" (".$db->ifsql(
+						"fd.total_ht < 0",
 						" (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty)))",
-						"  (fd.total_ht - (fd.buy_price_ht * fd.qty))").")",
-					0).") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
+						"  (fd.total_ht - (fd.buy_price_ht * fd.qty))"
+					).")",
+					0
+				).") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
 			}
-			$sql .= "  SUM(".$db->ifsql("fd.total_ht < 0",
+			$sql .= "  SUM(".$db->ifsql(
+				"fd.total_ht < 0",
 				" (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty)))",
-				"  (fd.total_ht - (fd.buy_price_ht * fd.qty))").") as total";
+				"  (fd.total_ht - (fd.buy_price_ht * fd.qty))"
+			).") as total";
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
 		$sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = fd.fk_facture";

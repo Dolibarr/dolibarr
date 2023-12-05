@@ -94,7 +94,9 @@ if ($action == 'updateMask') {
 	$tmpobject->initAsSpecimen();
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$classname = '';
+	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/asset/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
@@ -382,7 +384,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 									if ($modulequalified) {
 										print '<tr class="oddeven"><td width="100">';
-										print (empty($module->name) ? $name : $module->name);
+										print(empty($module->name) ? $name : $module->name);
 										print "</td><td>\n";
 										if (method_exists($module, 'info')) {
 											print $module->info($langs);
@@ -608,7 +610,7 @@ if ($action == 'edit') {
 					$result = $c->fetch(getDolGlobalInt($constname));
 					if ($result < 0) {
 						setEventMessages(null, $c->errors, 'errors');
-					} elseif ($result > 0 ) {
+					} elseif ($result > 0) {
 						$ways = $c->print_all_ways(' &gt;&gt; ', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formated text
 						$toprint = array();
 						foreach ($ways as $way) {

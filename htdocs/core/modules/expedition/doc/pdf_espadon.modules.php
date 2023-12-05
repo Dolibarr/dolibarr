@@ -288,7 +288,7 @@ class pdf_espadon extends ModelePdfExpedition
 				$pdf->SetTextColor(0, 0, 0);
 
 				$tab_top = 90;
-				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift: 10);
+				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
 
 				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
@@ -389,8 +389,12 @@ class pdf_espadon extends ModelePdfExpedition
 							while ($pagenb < $pageposafternote) {
 								$pdf->AddPage();
 								$pagenb++;
-								if (!empty($tplidx)) $pdf->useTemplate($tplidx);
-								if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
+								if (!empty($tplidx)) {
+									$pdf->useTemplate($tplidx);
+								}
+								if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+									$this->_pagehead($pdf, $object, 0, $outputlangs);
+								}
 								// $this->_pagefoot($pdf,$object,$outputlangs,1);
 								$pdf->setTopMargin($tab_top_newpage);
 								// The only function to edit the bottom margin of current page to set it.
@@ -453,12 +457,15 @@ class pdf_espadon extends ModelePdfExpedition
 
 							// apply note frame to last page
 							$pdf->setPage($pageposafternote);
-							if (!empty($tplidx)) $pdf->useTemplate($tplidx);
-							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
+							if (!empty($tplidx)) {
+								$pdf->useTemplate($tplidx);
+							}
+							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+								$this->_pagehead($pdf, $object, 0, $outputlangs);
+							}
 							$height_note = $posyafter - $tab_top_newpage;
 							$pdf->Rect($this->marge_gauche, $tab_top_newpage - 1, $tab_width, $height_note + 1);
-						} else // No pagebreak
-						{
+						} else { // No pagebreak
 							$pdf->commitTransaction();
 							$posyafter = $pdf->GetY();
 							if (empty($height_trackingnumber)) {
@@ -476,8 +483,12 @@ class pdf_espadon extends ModelePdfExpedition
 								$pagenb++;
 								$pageposafternote++;
 								$pdf->setPage($pageposafternote);
-								if (!empty($tplidx)) $pdf->useTemplate($tplidx);
-								if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
+								if (!empty($tplidx)) {
+									$pdf->useTemplate($tplidx);
+								}
+								if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
+									$this->_pagehead($pdf, $object, 0, $outputlangs);
+								}
 
 								$posyafter = $tab_top_newpage;
 							}
@@ -586,8 +597,7 @@ class pdf_espadon extends ModelePdfExpedition
 									$showpricebeforepagebreak = 0;
 								}
 							}
-						} else // No pagebreak
-						{
+						} else { // No pagebreak
 							$pdf->commitTransaction();
 						}
 						$posYAfterDescription = $pdf->GetY();
@@ -874,9 +884,11 @@ class pdf_espadon extends ModelePdfExpedition
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		Hide top bar of array
 	 *   @param		int			$hidebottom		Hide bottom bar of array
+	 *   @param		string		$currency		Currency code
+	 *   @param		Translate	$outputlangsbis	Langs object bis
 	 *   @return	void
 	 */
-	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
+	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '', $outputlangsbis = null)
 	{
 		global $conf;
 
@@ -1010,10 +1022,10 @@ class pdf_espadon extends ModelePdfExpedition
 
 		// Date planned delivery
 		if (!empty($object->date_delivery)) {
-				$posy += 4;
-				$pdf->SetXY($posx, $posy);
-				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 4, $outputlangs->transnoentities("DateDeliveryPlanned")." : ".dol_print_date($object->date_delivery, "day", false, $outputlangs, true), '', 'R');
+			$posy += 4;
+			$pdf->SetXY($posx, $posy);
+			$pdf->SetTextColor(0, 0, 60);
+			$pdf->MultiCell($w, 4, $outputlangs->transnoentities("DateDeliveryPlanned")." : ".dol_print_date($object->date_delivery, "day", false, $outputlangs, true), '', 'R');
 		}
 
 		if (!getDolGlobalString('MAIN_PDF_HIDE_CUSTOMER_CODE') && !empty($object->thirdparty->code_client)) {

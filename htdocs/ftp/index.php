@@ -605,8 +605,8 @@ if (!function_exists('ftp_connect')) {
 
 
 		if (!$ok) {
-			  print $mesg.'<br>'."\n";
-			  setEventMessages($mesg, null, 'errors');
+			print $mesg.'<br>'."\n";
+			setEventMessages($mesg, null, 'errors');
 		}
 
 

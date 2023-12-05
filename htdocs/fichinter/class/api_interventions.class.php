@@ -34,7 +34,6 @@ require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
  */
 class Interventions extends DolibarrApi
 {
-
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */

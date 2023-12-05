@@ -166,7 +166,9 @@ if ($action == 'specimen') { // For products
 	$product->initAsSpecimen();
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$classname = '';
+	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/product/doc/pdf_".$modele.".modules.php", 0);
@@ -321,7 +323,7 @@ foreach ($dirproduct as $dirroot) {
 					dol_syslog($e->getMessage(), LOG_ERR);
 				}
 
-				$modCodeProduct = new $file;
+				$modCodeProduct = new $file();
 
 				// Show modules according to features level
 				if ($modCodeProduct->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -436,7 +438,7 @@ foreach ($dirmodels as $reldir) {
 
 							if ($modulequalified) {
 								print '<tr class="oddeven"><td width="100">';
-								print (empty($module->name) ? $name : $module->name);
+								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
 								if (method_exists($module, 'info')) {
 									print $module->info($langs);

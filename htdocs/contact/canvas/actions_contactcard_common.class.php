@@ -70,7 +70,7 @@ abstract class ActionsContactCardCommon
 		}
 		else
 		{*/
-			$object = new Contact($this->db);
+		$object = new Contact($this->db);
 		if (!empty($id)) {
 			$object->fetch($id);
 		}

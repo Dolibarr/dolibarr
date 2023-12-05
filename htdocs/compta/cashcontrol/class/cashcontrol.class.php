@@ -162,7 +162,7 @@ class CashControl extends CommonObject
 	 *
 	 * @param  User $user User that create
 	 * @param  int $notrigger 0=launch triggers after, 1=disable triggers
-	 * @return int <0 if KO, Id of created object if OK
+	 * @return int Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
@@ -247,7 +247,7 @@ class CashControl extends CommonObject
 	 *
 	 * @param 	User 		$user		User
 	 * @param 	number 		$notrigger	No trigger
-	 * @return 	int						<0 if KO, >0 if OK
+	 * @return 	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function valid(User $user, $notrigger = 0)
 	{
@@ -325,7 +325,7 @@ class CashControl extends CommonObject
 	 *
 	 * @param int    $id   Id object
 	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -339,7 +339,7 @@ class CashControl extends CommonObject
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
@@ -351,7 +351,7 @@ class CashControl extends CommonObject
 	 *
 	 * @param User $user       User that deletes
 	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{

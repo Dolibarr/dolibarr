@@ -110,7 +110,7 @@ class FormSms
 	 */
 	public function show_form($morecss = 'titlefield', $showform = 1)
 	{
-	 // phpcs:enable
+		// phpcs:enable
 		global $conf, $langs, $form;
 
 		if (!is_object($form)) {

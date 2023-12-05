@@ -336,7 +336,7 @@ class Cronjob extends CommonObject
 	 *
 	 *  @param	User	$user        User that creates
 	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return int      		   	 <0 if KO, Id of created object if OK
+	 *  @return int      		   	 Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
@@ -401,7 +401,7 @@ class Cronjob extends CommonObject
 	 *  @param	int		$id    			Id object
 	 *  @param	string	$objectname		Object name
 	 *  @param	string	$methodname		Method name
-	 *  @return int          			<0 if KO, >0 if OK
+	 *  @return int          			Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $objectname = '', $methodname = '')
 	{
@@ -433,7 +433,7 @@ class Cronjob extends CommonObject
 	 *  @param	int			$status    	    display active or not
 	 *  @param	array		$filter    	    filter output
 	 *  @param  int         $processing     Processing or not
-	 *  @return int          			    <0 if KO, >0 if OK
+	 *  @return int          			    Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchAll($sortorder = 'DESC', $sortfield = 't.rowid', $limit = 0, $offset = 0, $status = 1, $filter = array(), $processing = -1)
 	{
@@ -539,7 +539,7 @@ class Cronjob extends CommonObject
 	 *
 	 *  @param	User	$user        User that modifies
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 <0 if KO, >0 if OK
+	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user = null, $notrigger = 0)
 	{
@@ -606,7 +606,7 @@ class Cronjob extends CommonObject
 	 *
 	 *	@param  User	$user        User that deletes
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 <0 if KO, >0 if OK
+	 *  @return	int					 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
@@ -777,7 +777,7 @@ class Cronjob extends CommonObject
 				$label = $langs->trans("ShowCronJob");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -805,7 +805,7 @@ class Cronjob extends CommonObject
 	 *	Load object information
 	 *
 	 *  @param	int		$id		ID
-	 *	@return	int				<0 if KO, >0 if OK
+	 *	@return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function info($id)
 	{
@@ -844,7 +844,7 @@ class Cronjob extends CommonObject
 	 * This function does not plan the next run. This is done by function ->reprogram_jobs
 	 *
 	 * @param   string		$userlogin    	User login
-	 * @return	int					 		<0 if KO, >0 if OK
+	 * @return	int					 		Return integer <0 if KO, >0 if OK
 	 */
 	public function run_jobs($userlogin)
 	{
@@ -1125,7 +1125,7 @@ class Cronjob extends CommonObject
 			$result = $cmailfile->sendfile();	// Do not test result
 		}
 
-		return $error ?-1 : 1;
+		return $error ? -1 : 1;
 	}
 
 
@@ -1135,7 +1135,7 @@ class Cronjob extends CommonObject
 	 *
 	 * @param  string		$userlogin      User login
 	 * @param  integer      $now            Date returned by dol_now()
-	 * @return int					        <0 if KO, >0 if OK
+	 * @return int					        Return integer <0 if KO, >0 if OK
 	 */
 	public function reprogram_jobs($userlogin, $now)
 	{
@@ -1272,7 +1272,6 @@ class Cronjob extends CommonObject
  */
 class Cronjobline
 {
-
 	/**
 	 * @var int ID
 	 */

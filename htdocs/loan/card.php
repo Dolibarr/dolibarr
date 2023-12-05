@@ -110,19 +110,23 @@ if (empty($reshook)) {
 			$rate = price2num(GETPOST('rate'));
 
 			if (!$capital) {
-				$error++; $action = 'create';
+				$error++;
+				$action = 'create';
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("LoanCapital")), null, 'errors');
 			}
 			if (!$datestart) {
-				$error++; $action = 'create';
+				$error++;
+				$action = 'create';
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DateStart")), null, 'errors');
 			}
 			if (!$dateend) {
-				$error++; $action = 'create';
+				$error++;
+				$action = 'create';
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DateEnd")), null, 'errors');
 			}
 			if ($rate == '') {
-				$error++; $action = 'create';
+				$error++;
+				$action = 'create';
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Rate")), null, 'errors');
 			}
 
@@ -357,19 +361,19 @@ if ($action == 'create') {
 		// Accountancy_account_capital
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("LoanAccountancyCapitalCode").'</td>';
 		print '<td>';
-		print $formaccounting->select_account(GETPOST('accountancy_account_capital') ?GETPOST('accountancy_account_capital') : getDolGlobalString('LOAN_ACCOUNTING_ACCOUNT_CAPITAL'), 'accountancy_account_capital', 1, '', 1, 1);
+		print $formaccounting->select_account(GETPOST('accountancy_account_capital') ? GETPOST('accountancy_account_capital') : getDolGlobalString('LOAN_ACCOUNTING_ACCOUNT_CAPITAL'), 'accountancy_account_capital', 1, '', 1, 1);
 		print '</td></tr>';
 
 		// Accountancy_account_insurance
 		print '<tr><td class="fieldrequired">'.$langs->trans("LoanAccountancyInsuranceCode").'</td>';
 		print '<td>';
-		print $formaccounting->select_account(GETPOST('accountancy_account_insurance') ?GETPOST('accountancy_account_insurance') : getDolGlobalString('LOAN_ACCOUNTING_ACCOUNT_INSURANCE'), 'accountancy_account_insurance', 1, '', 1, 1);
+		print $formaccounting->select_account(GETPOST('accountancy_account_insurance') ? GETPOST('accountancy_account_insurance') : getDolGlobalString('LOAN_ACCOUNTING_ACCOUNT_INSURANCE'), 'accountancy_account_insurance', 1, '', 1, 1);
 		print '</td></tr>';
 
 		// Accountancy_account_interest
 		print '<tr><td class="fieldrequired">'.$langs->trans("LoanAccountancyInterestCode").'</td>';
 		print '<td>';
-		print $formaccounting->select_account(GETPOST('accountancy_account_interest') ?GETPOST('accountancy_account_interest') : getDolGlobalString('LOAN_ACCOUNTING_ACCOUNT_INTEREST'), 'accountancy_account_interest', 1, '', 1, 1);
+		print $formaccounting->select_account(GETPOST('accountancy_account_interest') ? GETPOST('accountancy_account_interest') : getDolGlobalString('LOAN_ACCOUNTING_ACCOUNT_INTEREST'), 'accountancy_account_interest', 1, '', 1, 1);
 		print '</td></tr>';
 	} else {
 		// For external software

@@ -760,7 +760,7 @@ if ($id > 0 || !empty($ref)) {
 					// Nb of sending products for this line of order
 					$qtyAlreadyShipped = (!empty($object->expeditions[$objp->rowid]) ? $object->expeditions[$objp->rowid] : 0);
 					print $qtyAlreadyShipped;
-					print ($objp->unit_order ? ' '.$objp->unit_order : '').'</td>';
+					print($objp->unit_order ? ' '.$objp->unit_order : '').'</td>';
 
 					// Qty remains to ship
 					print '<td class="center">';
@@ -771,7 +771,7 @@ if ($id > 0 || !empty($ref)) {
 					} else {
 						print '0 <span class="opacitymedium">('.$langs->trans("Service").')</span>';
 					}
-					print ($objp->unit_order ? ' '.$objp->unit_order : '').'</td>';
+					print($objp->unit_order ? ' '.$objp->unit_order : '').'</td>';
 
 					if ($objp->fk_product > 0) {
 						$product = new Product($db);
@@ -859,7 +859,7 @@ if ($id > 0 || !empty($ref)) {
 		}
 
 
-		// Bouton expedier avec gestion des stocks
+		// Button to create a shipment
 
 		if (isModEnabled('stock') && $object->statut == Commande::STATUS_DRAFT) {
 			print $langs->trans("ValidateOrderFirstBeforeShipment");
@@ -909,7 +909,7 @@ if ($id > 0 || !empty($ref)) {
 				$somethingshown = 1;
 			} else {
 				print '<div class="tabsAction">';
-				print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CreateShipment").'</a>';
+				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans("CreateShipment").'</a>';
 				print '</div>';
 			}
 		}

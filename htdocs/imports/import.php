@@ -1201,7 +1201,7 @@ if ($step == 4 && $datatoimport) {
 				}
 			}
 			// Source required
-			$example = !empty($objimport->array_import_examplevalues[0][$tmpcode])?$objimport->array_import_examplevalues[0][$tmpcode]:"";
+			$example = !empty($objimport->array_import_examplevalues[0][$tmpcode]) ? $objimport->array_import_examplevalues[0][$tmpcode] : "";
 			// Example
 			if (empty($objimport->array_import_convertvalue[0][$tmpcode])) {	// If source file does not need convertion
 				if ($example) {
@@ -1867,7 +1867,8 @@ if ($step == 5 && $datatoimport) {
 		if ($result > 0) {
 			global $tablewithentity_cache;
 			$tablewithentity_cache = array();
-			$sourcelinenb = 0; $endoffile = 0;
+			$sourcelinenb = 0;
+			$endoffile = 0;
 
 			// Loop on each input file record
 			while (($sourcelinenb < $nboflines) && !$endoffile) {
@@ -2279,7 +2280,8 @@ if ($step == 6 && $datatoimport) {
 	if ($result > 0) {
 		global $tablewithentity_cache;
 		$tablewithentity_cache = array();
-		$sourcelinenb = 0; $endoffile = 0;
+		$sourcelinenb = 0;
+		$endoffile = 0;
 
 		while ($sourcelinenb < $nboflines && !$endoffile) {
 			$sourcelinenb++;

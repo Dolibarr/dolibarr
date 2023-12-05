@@ -184,7 +184,7 @@ if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || getDolGlobalString
 		}
 
 		if (reductionType === 'percent') {
-			var invoiceid = <?php echo ($invoiceid > 0 ? $invoiceid : 0); ?>;
+			var invoiceid = <?php echo($invoiceid > 0 ? $invoiceid : 0); ?>;
 			parent.$("#poslines").load("invoice.php?action=update_reduction_global&token=<?php echo newToken(); ?>&place=<?php echo $place; ?>&number="+reductionNumber+"&invoiceid="+invoiceid, function() {
 				Reset();
 				parent.$.colorbox.close();

@@ -118,6 +118,11 @@ class User extends CommonObject
 	public $email;
 
 	/**
+	 * @var string email
+	 */
+	public $email_oauth2;
+
+	/**
 	 * @var string personal email
 	 */
 	public $personal_email;
@@ -421,9 +426,10 @@ class User extends CommonObject
 	 *  @param  int     $entity             If a value is >= 0, we force the search on a specific entity. If -1, means search depens on default setup.
 	 *  @param	string	$email       		If defined, email to used for search
 	 *  @param	int		$fk_socpeople		If defined, id of contact for search
+	 *  @param	int		$use_email_oauth2	1=Use also email_oauth2 to fetch on email
 	 * 	@return	int							<0 if KO, 0 not found, >0 if OK
 	 */
-	public function fetch($id = 0, $login = '', $sid = '', $loadpersonalconf = 0, $entity = -1, $email = '', $fk_socpeople = 0)
+	public function fetch($id = 0, $login = '', $sid = '', $loadpersonalconf = 0, $entity = -1, $email = '', $fk_socpeople = 0, $use_email_oauth2 = 0)
 	{
 		global $conf, $user;
 
@@ -431,7 +437,8 @@ class User extends CommonObject
 		$login = trim($login);
 
 		// Get user
-		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.employee, u.gender, u.civility as civility_code, u.birth, u.email, u.personal_email, u.job,";
+		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.employee, u.gender, u.civility as civility_code, u.birth, u.job,";
+		$sql .= " u.email, u.email_oauth2, u.personal_email,";
 		$sql .= " u.socialnetworks,";
 		$sql .= " u.signature, u.office_phone, u.office_fax, u.user_mobile, u.personal_mobile,";
 		$sql .= " u.address, u.zip, u.town, u.fk_state as state_id, u.fk_country as country_id,";
@@ -491,7 +498,11 @@ class User extends CommonObject
 		} elseif ($login) {
 			$sql .= " AND u.login = '".$this->db->escape($login)."'";
 		} elseif ($email) {
-			$sql .= " AND u.email = '".$this->db->escape($email)."'";
+			$sql .= " AND (u.email = '".$this->db->escape($email)."'";
+			if ($use_email_oauth2) {
+				$sql .= " OR u.email_oauth2 = '".$this->db->escape($email)."'";
+			}
+			$sql .= ")";
 		} elseif ($fk_socpeople > 0) {
 			$sql .= " AND u.fk_socpeople = ".((int) $fk_socpeople);
 		} else {
@@ -504,9 +515,18 @@ class User extends CommonObject
 			$sql .= ' '.$this->db->plimit(1);
 		}
 
-		$result = $this->db->query($sql);
-		if ($result) {
-			$obj = $this->db->fetch_object($result);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			if ($num > 1) {
+				$this->error = "USERDUPLICATEFOUND";
+				dol_syslog(get_class($this)."::fetch more than 1 user found", LOG_WARNING);
+
+				$this->db->free($resql);
+				return 0;
+			}
+
+			$obj = $this->db->fetch_object($resql);
 			if ($obj) {
 				$this->id = $obj->rowid;
 				$this->ref = $obj->rowid;
@@ -548,6 +568,7 @@ class User extends CommonObject
 				$this->user_mobile  = $obj->user_mobile;
 				$this->personal_mobile = $obj->personal_mobile;
 				$this->email = $obj->email;
+				$this->email_oauth2 = $obj->email_oauth2;
 				$this->personal_email = $obj->personal_email;
 				$this->socialnetworks = ($obj->socialnetworks ? (array) json_decode($obj->socialnetworks, true) : array());
 				$this->job = $obj->job;
@@ -605,12 +626,12 @@ class User extends CommonObject
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
-				$this->db->free($result);
+				$this->db->free($resql);
 			} else {
 				$this->error = "USERNOTFOUND";
 				dol_syslog(get_class($this)."::fetch user not found", LOG_DEBUG);
 
-				$this->db->free($result);
+				$this->db->free($resql);
 				return 0;
 			}
 		} else {
@@ -1180,6 +1201,9 @@ class User extends CommonObject
 		}
 		$sql .= " AND ur.fk_user= ".((int) $this->id);
 		$sql .= " AND r.perms IS NOT NULL";
+		if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+			$sql .= " AND r.perms NOT LIKE '%_advance'"; // Hide advanced perms if option is not enabled
+		}
 		if ($moduletag) {
 			$sql .= " AND r.module = '".$this->db->escape($moduletag)."'";
 		}
@@ -1432,7 +1456,7 @@ class User extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param 	int[]|int 	$categories 	Category or categories IDs
-	 * @return 	int							<0 if KO, >0 if OK
+	 * @return 	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function setCategories($categories)
 	{
@@ -1444,7 +1468,7 @@ class User extends CommonObject
 	 *  Delete the user
 	 *
 	 *	@param		User	$user	User than delete
-	 * 	@return		int				<0 if KO, >0 if OK
+	 * 	@return		int				Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user)
 	{
@@ -1732,7 +1756,9 @@ class User extends CommonObject
 				// Call trigger
 				$result = $this->call_trigger('USER_CREATE', $user);
 				if ($result < 0) {
-					$error++; $this->db->rollback(); return -1;
+					$error++;
+					$this->db->rollback();
+					return -1;
 				}
 				// End call triggers
 
@@ -2086,7 +2112,9 @@ class User extends CommonObject
 				$sql = "UPDATE ".$this->db->prefix()."user SET fk_member = NULL where fk_member = ".((int) $this->fk_member);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$this->error = $this->db->error(); $this->db->rollback(); return -5;
+					$this->error = $this->db->error();
+					$this->db->rollback();
+					return -5;
 				}
 			}
 			// Set link to user
@@ -2094,7 +2122,9 @@ class User extends CommonObject
 			$sql = "UPDATE ".$this->db->prefix()."user SET fk_member =".($this->fk_member > 0 ? ((int) $this->fk_member) : 'null')." where rowid = ".((int) $this->id);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$this->error = $this->db->error(); $this->db->rollback(); return -5;
+				$this->error = $this->db->error();
+				$this->db->rollback();
+				return -5;
 			}
 
 			if ($nbrowsaffected) {	// If something has changed in data
@@ -2383,7 +2413,9 @@ class User extends CommonObject
 						// Call trigger
 						$result = $this->call_trigger('USER_NEW_PASSWORD', $user);
 						if ($result < 0) {
-							$error++; $this->db->rollback(); return -1;
+							$error++;
+							$this->db->rollback();
+							return -1;
 						}
 						// End call triggers
 					}
@@ -2443,7 +2475,7 @@ class User extends CommonObject
 
 		if (isset($this->conf->MAIN_LANG_DEFAULT)
 			&& $this->conf->MAIN_LANG_DEFAULT != 'auto') {	// If user has defined its own language (rare because in most cases, auto is used)
-				$outputlangs->getDefaultLang($this->conf->MAIN_LANG_DEFAULT);
+			$outputlangs->getDefaultLang($this->conf->MAIN_LANG_DEFAULT);
 		}
 
 		if ($this->conf->MAIN_LANG_DEFAULT) {
@@ -2522,7 +2554,7 @@ class User extends CommonObject
 			$trackid,
 			'',
 			$sendcontext
-			);
+		);
 
 		if ($mailfile->sendfile()) {
 			return 1;
@@ -2548,7 +2580,7 @@ class User extends CommonObject
 	/**
 	 *  Read clicktodial information for user
 	 *
-	 *  @return int <0 if KO, >0 if OK
+	 *  @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_clicktodial()
 	{
@@ -2582,7 +2614,7 @@ class User extends CommonObject
 	/**
 	 *  Update clicktodial info
 	 *
-	 *  @return	int  <0 if KO, >0 if OK
+	 *  @return	int  Return integer <0 if KO, >0 if OK
 	 */
 	public function update_clicktodial()
 	{
@@ -2623,7 +2655,7 @@ class User extends CommonObject
 	 *  @param	int		$group      Id of group
 	 *  @param  int		$entity     Entity
 	 *  @param  int		$notrigger  Disable triggers
-	 *  @return int  				<0 if KO, >0 if OK
+	 *  @return int  				Return integer <0 if KO, >0 if OK
 	 */
 	public function SetInGroup($group, $entity, $notrigger = 0)
 	{
@@ -2679,7 +2711,7 @@ class User extends CommonObject
 	 *  @param	int   	$group       Id of group
 	 *  @param  int		$entity      Entity
 	 *  @param  int		$notrigger   Disable triggers
-	 *  @return int  			     <0 if KO, >0 if OK
+	 *  @return int  			     Return integer <0 if KO, >0 if OK
 	 */
 	public function RemoveFromGroup($group, $entity, $notrigger = 0)
 	{
@@ -3519,7 +3551,7 @@ class User extends CommonObject
 	 *  Update user using data from the LDAP
 	 *
 	 *  @param	Object	$ldapuser	Ladp User
-	 *  @return int  				<0 if KO, >0 if OK
+	 *  @return int  				Return integer <0 if KO, >0 if OK
 	 */
 	public function update_ldap2dolibarr(&$ldapuser)
 	{
@@ -3601,7 +3633,7 @@ class User extends CommonObject
 	/**
 	 *  Load this->parentof that is array(id_son=>id_parent, ...)
 	 *
-	 *  @return     int     <0 if KO, >0 if OK
+	 *  @return     int     Return integer <0 if KO, >0 if OK
 	 */
 	private function loadParentOf()
 	{
@@ -3716,7 +3748,7 @@ class User extends CommonObject
 			foreach ($this->users as $key => $val) {
 				if (preg_match('/'.$keyfilter1.'/', $val['fullpath']) || preg_match('/'.$keyfilter2.'/', $val['fullpath'])
 					|| preg_match('/'.$keyfilter3.'/', $val['fullpath']) || preg_match('/'.$keyfilter4.'/', $val['fullpath'])) {
-						unset($this->users[$key]);
+					unset($this->users[$key]);
 				}
 			}
 		}
@@ -3789,7 +3821,8 @@ class User extends CommonObject
 		// Define fullpath and fullname
 		$this->users[$id_user]['fullpath'] = '_'.$id_user;
 		$this->users[$id_user]['fullname'] = $this->users[$id_user]['lastname'];
-		$i = 0; $cursor_user = $id_user;
+		$i = 0;
+		$cursor_user = $id_user;
 
 		$useridfound = array($id_user);
 		while (!empty($this->parentof[$cursor_user]) && !empty($this->users[$this->parentof[$cursor_user]])) {
@@ -3800,7 +3833,8 @@ class User extends CommonObject
 			$useridfound[] = $this->parentof[$cursor_user];
 			$this->users[$id_user]['fullpath'] = '_'.$this->parentof[$cursor_user].$this->users[$id_user]['fullpath'];
 			$this->users[$id_user]['fullname'] = $this->users[$this->parentof[$cursor_user]]['lastname'].' >> '.$this->users[$id_user]['fullname'];
-			$i++; $cursor_user = $this->parentof[$cursor_user];
+			$i++;
+			$cursor_user = $this->parentof[$cursor_user];
 		}
 
 		// We count number of _ to have level
@@ -3831,7 +3865,7 @@ class User extends CommonObject
 	/**
 	 *      Load metrics this->nb for dashboard
 	 *
-	 *      @return     int         <0 if KO, >0 if OK
+	 *      @return     int         Return integer <0 if KO, >0 if OK
 	 */
 	public function load_state_board()
 	{
@@ -3981,7 +4015,7 @@ class User extends CommonObject
 	 *  @param	array		$filter			Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
 	 *  @param  string      $filtermode		Filter mode (AND or OR)
 	 *  @param  bool        $entityfilter	Activate entity filter
-	 *  @return int							<0 if KO, >0 if OK
+	 *  @return int							Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array(), $filtermode = 'AND', $entityfilter = false)
 	{

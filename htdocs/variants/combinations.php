@@ -534,8 +534,7 @@ if (!empty($id) || !empty($ref)) {
 
 			foreach ($prodattr_all as $each) {
 				$prodattr_alljson[$each->id] = $each;
-			}
-			?>
+			} ?>
 
 		<script type="text/javascript">
 
@@ -547,8 +546,7 @@ if (!empty($id) || !empty($ref)) {
 
 			<?php
 			foreach ($productCombination2ValuePairs1 as $pc2v) {
-				$prodattr_val->fetch($pc2v->fk_prod_attr_val);
-				?>
+				$prodattr_val->fetch($pc2v->fk_prod_attr_val); ?>
 				variants_selected.index.push(<?php echo $pc2v->fk_prod_attr ?>);
 				variants_selected.info[<?php echo $pc2v->fk_prod_attr ?>] = {
 					attribute: variants_available[<?php echo $pc2v->fk_prod_attr ?>],
@@ -558,8 +556,7 @@ if (!empty($id) || !empty($ref)) {
 					}
 				};
 				<?php
-			}
-			?>
+			} ?>
 
 			restoreAttributes = function() {
 				jQuery("select[name=attribute]").empty().append('<option value="-1">&nbsp;</option>');
@@ -647,8 +644,7 @@ if (!empty($id) || !empty($ref)) {
 			print '</a>';*/
 
 			print '</td>';
-			print '</tr>';
-			?>
+			print '</tr>'; ?>
 			<!-- Value -->
 			<tr>
 				<td class="fieldrequired"><label for="value"><?php echo $langs->trans('Value') ?></label></td>
@@ -660,11 +656,10 @@ if (!empty($id) || !empty($ref)) {
 					$htmltext = $langs->trans("GoOnMenuToCreateVairants", $langs->transnoentities("Product"), $langs->transnoentities("VariantAttributes"));
 					print $form->textwithpicto('', $htmltext);
 					/*
-						print ' &nbsp; &nbsp; <a href="'.DOL_URL_ROOT.'/variants/create.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=add&token='.newToken().'&id='.$object->id).'">';
-						print $langs->trans("Create");
-						print '</a>';
-					*/
-					?>
+					print ' &nbsp; &nbsp; <a href="'.DOL_URL_ROOT.'/variants/create.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=add&token='.newToken().'&id='.$object->id).'">';
+					print $langs->trans("Create");
+					print '</a>';
+					*/ ?>
 				</td>
 			</tr>
 			<tr>
@@ -701,8 +696,7 @@ if (!empty($id) || !empty($ref)) {
 							print $prodattr->label.' : '.$prodattr_val->value.'<br>';
 							// TODO Add delete link
 						}
-					}
-					?>
+					} ?>
 						</div>
 						<!-- <div class="inline-block valignmiddle">
 						<a href="#" class="inline-block valignmiddle button" id="delfeature"><?php echo img_edit_remove() ?></a>
@@ -712,8 +706,7 @@ if (!empty($id) || !empty($ref)) {
 					</td>
 				</tr>
 				<?php
-			}
-			?>
+			} ?>
 			<tr>
 				<td><label for="reference"><?php echo $langs->trans('Reference') ?></label></td>
 				<td><input type="text" id="reference" name="reference" value="<?php echo trim($reference) ?>"></td>
@@ -780,8 +773,7 @@ if (!empty($id) || !empty($ref)) {
 			<?php
 		}
 
-		print dol_get_fiche_end();
-		?>
+		print dol_get_fiche_end(); ?>
 
 		<div style="text-align: center">
 		<input type="submit" name="create" <?php if (!is_array($productCombination2ValuePairs1)) {
@@ -898,8 +890,7 @@ if (!empty($id) || !empty($ref)) {
 
 		print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $aaa, 0);
 
-		print '<div class="div-table-responsive">';
-		?>
+		print '<div class="div-table-responsive">'; ?>
 		<table class="liste">
 			<tr class="liste_titre">
 				<?php
@@ -909,8 +900,7 @@ if (!empty($id) || !empty($ref)) {
 					$searchpicto = $form->showCheckAddButtons('checkforselect', 1);
 					print $searchpicto;
 					print '</td>';
-				}
-				?>
+				} ?>
 				<td class="liste_titre"><?php echo $langs->trans('Product') ?></td>
 				<td class="liste_titre"><?php echo $langs->trans('Attributes') ?></td>
 				<td class="liste_titre right"><?php echo $langs->trans('PriceImpact') ?></td>
@@ -927,8 +917,7 @@ if (!empty($id) || !empty($ref)) {
 					$searchpicto = $form->showCheckAddButtons('checkforselect', 1);
 					print $searchpicto;
 					print '</td>';
-				}
-				?>
+				} ?>
 			</tr>
 		<?php
 
@@ -990,7 +979,7 @@ if (!empty($id) || !empty($ref)) {
 				print '</tr>';
 			}
 		} else {
-			 print '<tr><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+			print '<tr><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 		print '</table>';
 		print '</div>';

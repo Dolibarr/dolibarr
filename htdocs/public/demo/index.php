@@ -306,7 +306,7 @@ foreach ($demoprofiles as $profilearray) {
 			$urlwithmod = $profilearray['url'];
 			$urlwithmod = $urlwithmod.(preg_match('/\?/', $urlwithmod) ? '&amp;' : '?').'urlfrom='.urlencode($urlfrom);
 			if (!empty($profilearray['disablemodules'])) {
-				  $urlwithmod = $urlwithmod.(preg_match('/\?/', $urlwithmod) ? '&amp;' : '?').'disablemodules='.$profilearray['disablemodules'];
+				$urlwithmod = $urlwithmod.(preg_match('/\?/', $urlwithmod) ? '&amp;' : '?').'disablemodules='.$profilearray['disablemodules'];
 			}
 		}
 

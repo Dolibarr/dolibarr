@@ -53,10 +53,10 @@ $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
 $id_availability = GETPOST('id_availability', 'int');
 
-$year = GETPOST("year", "int") ?GETPOST("year", "int") : date("Y");
-$month = GETPOST("month", "int") ?GETPOST("month", "int") : date("m");
-$week = GETPOST("week", "int") ?GETPOST("week", "int") : date("W");
-$day = GETPOST("day", "int") ?GETPOST("day", "int") : date("d");
+$year = GETPOST("year", "int") ? GETPOST("year", "int") : date("Y");
+$month = GETPOST("month", "int") ? GETPOST("month", "int") : date("m");
+$week = GETPOST("week", "int") ? GETPOST("week", "int") : date("W");
+$day = GETPOST("day", "int") ? GETPOST("day", "int") : date("d");
 $dateselect = dol_mktime(0, 0, 0, GETPOST('dateselectmonth', 'int'), GETPOST('dateselectday', 'int'), GETPOST('dateselectyear', 'int'), 'tzuserrel');
 if ($dateselect > 0) {
 	$day = GETPOST('dateselectday', 'int');

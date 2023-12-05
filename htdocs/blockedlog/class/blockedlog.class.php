@@ -762,7 +762,7 @@ class BlockedLog
 				$this->date_creation 	= $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->tms);
 
-				$this->amounts			= (double) $obj->amounts;
+				$this->amounts			= (float) $obj->amounts;
 				$this->action 			= $obj->action;
 				$this->element			= $obj->element;
 
@@ -840,7 +840,6 @@ class BlockedLog
 	 */
 	public function setCertified()
 	{
-
 		$res = $this->db->query("UPDATE ".MAIN_DB_PREFIX."blockedlog SET certified=1 WHERE rowid=".((int) $this->id));
 		if (!$res) {
 			return false;
@@ -854,7 +853,7 @@ class BlockedLog
 	 *
 	 *	@param	User	$user      			Object user that create
 	 *  @param	int		$forcesignature		Force signature (for example '0000000000' when we disabled the module)
-	 *	@return	int							<0 if KO, >0 if OK
+	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user, $forcesignature = '')
 	{
@@ -865,7 +864,7 @@ class BlockedLog
 		$error = 0;
 
 		// Clean data
-		$this->amounts = (double) $this->amounts;
+		$this->amounts = (float) $this->amounts;
 
 		dol_syslog(get_class($this).'::create action='.$this->action.' fk_user='.$this->fk_user.' user_fullname='.$this->user_fullname, LOG_DEBUG);
 
