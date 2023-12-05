@@ -219,7 +219,7 @@ if ($result) {
 			$vatdata = $vatdata_cache[$tax_id];
 		} else {
 			$vatdata = getTaxesFromId($tax_id, $mysoc, $mysoc, 0);
-				$vatdata_cache[$tax_id] = $vatdata;
+			$vatdata_cache[$tax_id] = $vatdata;
 		}
 		$compta_tva = (!empty($vatdata['accountancy_code_sell']) ? $vatdata['accountancy_code_sell'] : $cpttva);
 		$compta_localtax1 = (!empty($vatdata['accountancy_code_sell']) ? $vatdata['accountancy_code_sell'] : $cpttva);
@@ -249,7 +249,7 @@ if ($result) {
 			}
 		}
 
-		$revenuestamp = (double) price2num($obj->revenuestamp, 'MT');
+		$revenuestamp = (float) price2num($obj->revenuestamp, 'MT');
 
 		// Invoice lines
 		$tabfac[$obj->rowid]["date"] = $db->jdate($obj->df);
@@ -291,7 +291,7 @@ if ($result) {
 
 		// Move a part of the retained warrenty into the account of warranty
 		if (getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY') && $obj->retained_warranty > 0) {
-			$retained_warranty = (double) price2num($total_ttc * $obj->retained_warranty / 100, 'MT');	// Calculate the amount of warrenty for this line (using the percent value)
+			$retained_warranty = (float) price2num($total_ttc * $obj->retained_warranty / 100, 'MT');	// Calculate the amount of warrenty for this line (using the percent value)
 			$tabwarranty[$obj->rowid][$compta_soc] += $retained_warranty;
 			$total_ttc -= $retained_warranty;
 		}
@@ -309,7 +309,7 @@ if ($result) {
 		if (!empty($revenuestamp)) {
 			$sqlrevenuestamp = "SELECT accountancy_code_sell FROM ".MAIN_DB_PREFIX."c_revenuestamp";
 			$sqlrevenuestamp .= " WHERE fk_pays = ".((int) $mysoc->country_id);
-			$sqlrevenuestamp .= " AND taux = ".((double) $revenuestamp);
+			$sqlrevenuestamp .= " AND taux = ".((float) $revenuestamp);
 			$sqlrevenuestamp .= " AND active = 1";
 			$resqlrevenuestamp = $db->query($sqlrevenuestamp);
 
@@ -879,19 +879,19 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 		// Third party
 		foreach ($tabttc[$key] as $k => $mt) {
 			//if ($mt) {
-				print '"'.$key.'"'.$sep;
-				print '"'.$date.'"'.$sep;
-				print '"'.$val["ref"].'"'.$sep;
-				print '"'.utf8_decode(dol_trunc($companystatic->name, 32)).'"'.$sep;
-				print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
-				print '"'.length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER')).'"'.$sep;
-				print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
-				print '"'.$langs->trans("Thirdparty").'"'.$sep;
-				print '"'.utf8_decode(dol_trunc($companystatic->name, 16)).' - '.$invoicestatic->ref.' - '.$langs->trans("Thirdparty").'"'.$sep;
-				print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
-				print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
-				print '"'.$journal.'"';
-				print "\n";
+			print '"'.$key.'"'.$sep;
+			print '"'.$date.'"'.$sep;
+			print '"'.$val["ref"].'"'.$sep;
+			print '"'.utf8_decode(dol_trunc($companystatic->name, 32)).'"'.$sep;
+			print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
+			print '"'.length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER')).'"'.$sep;
+			print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
+			print '"'.$langs->trans("Thirdparty").'"'.$sep;
+			print '"'.utf8_decode(dol_trunc($companystatic->name, 16)).' - '.$invoicestatic->ref.' - '.$langs->trans("Thirdparty").'"'.$sep;
+			print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
+			print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
+			print '"'.$journal.'"';
+			print "\n";
 			//}
 		}
 
@@ -900,19 +900,19 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 			$accountingaccount = new AccountingAccount($db);
 			$accountingaccount->fetch(null, $k, true);
 			//if ($mt) {
-				print '"'.$key.'"'.$sep;
-				print '"'.$date.'"'.$sep;
-				print '"'.$val["ref"].'"'.$sep;
-				print '"'.utf8_decode(dol_trunc($companystatic->name, 32)).'"'.$sep;
-				print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
-				print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
-				print '""'.$sep;
-				print '"'.utf8_decode(dol_trunc($accountingaccount->label, 32)).'"'.$sep;
-				print '"'.utf8_decode(dol_trunc($companystatic->name, 16)).' - '.dol_trunc($accountingaccount->label, 32).'"'.$sep;
-				print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
-				print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
-				print '"'.$journal.'"';
-				print "\n";
+			print '"'.$key.'"'.$sep;
+			print '"'.$date.'"'.$sep;
+			print '"'.$val["ref"].'"'.$sep;
+			print '"'.utf8_decode(dol_trunc($companystatic->name, 32)).'"'.$sep;
+			print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
+			print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
+			print '""'.$sep;
+			print '"'.utf8_decode(dol_trunc($accountingaccount->label, 32)).'"'.$sep;
+			print '"'.utf8_decode(dol_trunc($companystatic->name, 16)).' - '.dol_trunc($accountingaccount->label, 32).'"'.$sep;
+			print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
+			print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
+			print '"'.$journal.'"';
+			print "\n";
 			//}
 		}
 
@@ -1280,7 +1280,7 @@ if (empty($action) || $action == 'view') {
 					//var_dump($arrayofvat[$key]); var_dump($key); var_dump($k);
 					$tmpvatrate = (empty($def_tva[$key][$k]) ? (empty($arrayofvat[$key][$k]) ? '' : $arrayofvat[$key][$k]) : join(', ', $def_tva[$key][$k]));
 					print ' - '.$langs->trans("Taxes").' '.$tmpvatrate.' %';
-					print ($numtax ? ' - Localtax '.$numtax : '');
+					print($numtax ? ' - Localtax '.$numtax : '');
 					print "</td>";
 					print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
 					print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";

@@ -421,8 +421,7 @@ class FactureRec extends CommonInvoice
 									$error++;
 								}
 							}
-						} else // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
-						{
+						} else { // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
 							$origin_id = $tmp_origin_id;
 							$ret = $this->add_object_linked($origin, $origin_id);
 							if (!$ret) {
@@ -778,7 +777,7 @@ class FactureRec extends CommonInvoice
 	 *	@param     	User	$user          	User that delete.
 	 *	@param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *	@param		int		$idwarehouse	Id warehouse to use for stock change.
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 0, $idwarehouse = -1)
 	{
@@ -1782,8 +1781,7 @@ class FactureRec extends CommonInvoice
 					$line->total_ttc = 59.8;
 					$line->total_tva = 9.8;
 					$line->remise_percent = 50;
-				} else // (product line)
-				{
+				} else { // (product line)
 					$prodid = mt_rand(1, $num_prods);
 					$line->fk_product = $prodids[$prodid];
 					$line->total_ht = 100;
@@ -1863,7 +1861,7 @@ class FactureRec extends CommonInvoice
 	 *	@param     	int		$frequency		value of frequency
 	 *	@param     	string	$unit 			unit of frequency  (d, m, y)
 	 *	@param     	int 	$notrigger 		Disable the trigger
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setFrequencyAndUnit($frequency, $unit, $notrigger = 0)
 	{
@@ -1915,11 +1913,10 @@ class FactureRec extends CommonInvoice
 	 *	@param     	datetime	$date					date of execution
 	 *	@param     	int			$increment_nb_gen_done	0 do nothing more, >0 increment nb_gen_done
 	 *	@param     	int 	    $notrigger		 		Disable the trigger
-	 *	@return		int									<0 if KO, >0 if OK
+	 *	@return		int									Return integer <0 if KO, >0 if OK
 	 */
 	public function setNextDate($date, $increment_nb_gen_done = 0, $notrigger = 0)
 	{
-
 		global $user;
 
 		if (!$this->table_element) {
@@ -1960,11 +1957,10 @@ class FactureRec extends CommonInvoice
 	 *
 	 *	@param     	int		$nb		number of maximum period
 	 *	@param     	int 	$notrigger Disable the trigger
-	 *	@return		int				<0 if KO, >0 if OK
+	 *	@return		int				Return integer <0 if KO, >0 if OK
 	 */
 	public function setMaxPeriod($nb, $notrigger = 0)
 	{
-
 		global $user;
 
 		if (!$this->table_element) {
@@ -2005,7 +2001,7 @@ class FactureRec extends CommonInvoice
 	 *
 	 *	@param     	int		$validate		0 to create in draft, 1 to create and validate invoice
 	 *	@param     	int 	$notrigger 		Disable the trigger
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setAutoValidate($validate, $notrigger = 0)
 	{
@@ -2045,7 +2041,7 @@ class FactureRec extends CommonInvoice
 	 *
 	 *	@param     	int		$validate		0 no document, 1 to generate document
 	 *	@param     	int 	$notrigger 		Disable the trigger
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setGeneratePdf($validate, $notrigger = 0)
 	{
@@ -2085,7 +2081,7 @@ class FactureRec extends CommonInvoice
 	 *
 	 *  @param     	string		$model		model of document generator
 	 *	@param     	int 	$notrigger 		Disable the trigger
-	 *  @return		int						<0 if KO, >0 if OK
+	 *  @return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setModelPdf($model, $notrigger = 0)
 	{
@@ -2163,7 +2159,7 @@ class FactureLigneRec extends CommonInvoiceLine
 	 *
 	 *  @param		User	$user		Object user
 	 *  @param		int		$notrigger	Disable triggers
-	 *	@return		int					<0 if KO, >0 if OK
+	 *	@return		int					Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{

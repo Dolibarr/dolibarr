@@ -386,7 +386,8 @@ function getOrder($authentication, $id = 0, $ref = '', $ref_ext = '')
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$socid = 0;
 
@@ -399,7 +400,8 @@ function getOrder($authentication, $id = 0, $ref = '', $ref_ext = '')
 	// Check parameters
 	if (!$error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext))) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
 	}
 
 	if (!$error) {
@@ -412,7 +414,8 @@ function getOrder($authentication, $id = 0, $ref = '', $ref_ext = '')
 				// Security for external user
 				if ($socid && $socid != $order->socid) {
 					$error++;
-					$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
+					$errorcode = 'PERMISSION_DENIED';
+					$errorlabel = 'User does not have permission for this request';
 				}
 
 				if (!$error) {
@@ -463,10 +466,10 @@ function getOrder($authentication, $id = 0, $ref = '', $ref_ext = '')
 					'total' => $order->total_ttc,
 					'project_id' => $order->fk_project,
 
-					'date' => $order->date ?dol_print_date($order->date, 'dayrfc') : '',
-					'date_creation' => $order->date_creation ?dol_print_date($order->date_creation, 'dayhourrfc') : '',
-					'date_validation' => $order->date_validation ?dol_print_date($order->date_creation, 'dayhourrfc') : '',
-					'date_modification' => $order->date_modification ?dol_print_date($order->date_modification, 'dayhourrfc') : '',
+					'date' => $order->date ? dol_print_date($order->date, 'dayrfc') : '',
+					'date_creation' => $order->date_creation ? dol_print_date($order->date_creation, 'dayhourrfc') : '',
+					'date_validation' => $order->date_validation ? dol_print_date($order->date_creation, 'dayhourrfc') : '',
+					'date_modification' => $order->date_modification ? dol_print_date($order->date_modification, 'dayhourrfc') : '',
 
 					'source' => $order->source,
 					'billed' => $order->billed,
@@ -526,7 +529,8 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
@@ -537,7 +541,8 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
 	// Check parameters
 	if (!$error && empty($idthirdparty)) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = 'Parameter id is not provided';
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = 'Parameter id is not provided';
 	}
 
 	if (!$error) {
@@ -613,7 +618,7 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
 					'total' => $order->total_ttc,
 					'project_id' => $order->fk_project,
 
-					'date' => $order->date_commande ?dol_print_date($order->date_commande, 'dayrfc') : '',
+					'date' => $order->date_commande ? dol_print_date($order->date_commande, 'dayrfc') : '',
 
 					'source' => $order->source,
 					'billed' => $order->billed,
@@ -645,7 +650,8 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
 			);
 		} else {
 			$error++;
-			$errorcode = $db->lasterrno(); $errorlabel = $db->lasterror();
+			$errorcode = $db->lasterrno();
+			$errorlabel = $db->lasterror();
 		}
 	}
 
@@ -887,12 +893,15 @@ function updateOrder($authentication, $order)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (empty($order['id']) && empty($order['ref']) && empty($order['ref_ext'])) {
-		$error++; $errorcode = 'KO'; $errorlabel = "Order id or ref or ref_ext is mandatory.";
+		$error++;
+		$errorcode = 'KO';
+		$errorlabel = "Order id or ref or ref_ext is mandatory.";
 	}
 
 	if (!$error) {

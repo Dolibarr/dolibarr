@@ -207,8 +207,7 @@ class mailing_xinputfile extends MailingTargets
 					$this->error = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
 				} elseif (preg_match('/ErrorFileIsInfectedWithAVirus/', $resupload)) {	// Files infected by a virus
 					$this->error = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
-				} else // Known error
-				{
+				} else { // Known error
 					$this->error = '<div class="error">'.$langs->trans($resupload).'</div>';
 				}
 			}

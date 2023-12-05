@@ -1146,8 +1146,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			if (dol_strlen($reg[$posy]) < 2) {
 				return 'ErrorCantUseRazWithYearOnOneDigit';
 			}
-		} else // if reset is for a specific month in year, we need year
-		{
+		} else { // if reset is for a specific month in year, we need year
 			if (preg_match('/^(.*)\{(m+)\}\{(y+)\}/i', $maskwithonlyymcode, $reg)) {
 				$posy = 3;
 				$posm = 2;
@@ -1162,8 +1161,8 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			}
 		}
 		// Define length
-		$yearlen = $posy ?dol_strlen($reg[$posy]) : 0;
-		$monthlen = $posm ?dol_strlen($reg[$posm]) : 0;
+		$yearlen = $posy ? dol_strlen($reg[$posy]) : 0;
+		$monthlen = $posm ? dol_strlen($reg[$posm]) : 0;
 		// Define pos
 		$yearpos = (dol_strlen($reg[1]) + 1);
 		$monthpos = ($yearpos + $yearlen);
@@ -1435,8 +1434,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$numFinal = preg_replace('/\{yyyy\}/i', date("Y", $date) + $yearoffset, $numFinal);
 			$numFinal = preg_replace('/\{yy\}/i', date("y", $date) + $yearoffset, $numFinal);
 			$numFinal = preg_replace('/\{y\}/i', substr(date("y", $date), 1, 1) + $yearoffset, $numFinal);
-		} else // we want yyyy to be current year
-		{
+		} else { // we want yyyy to be current year
 			$numFinal = preg_replace('/\{yyyy\}/i', date("Y", $date), $numFinal);
 			$numFinal = preg_replace('/\{yy\}/i', date("y", $date), $numFinal);
 			$numFinal = preg_replace('/\{y\}/i', substr(date("y", $date), 1, 1), $numFinal);
@@ -1491,13 +1489,13 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 function get_string_between($string, $start, $end)
 {
 	$string = " ".$string;
-	 $ini = strpos($string, $start);
+	$ini = strpos($string, $start);
 	if ($ini == 0) {
 		return "";
 	}
-	 $ini += strlen($start);
-	 $len = strpos($string, $end, $ini) - $ini;
-	 return substr($string, $ini, $len);
+	$ini += strlen($start);
+	$len = strpos($string, $end, $ini) - $ini;
+	return substr($string, $ini, $len);
 }
 
 /**
@@ -1707,15 +1705,14 @@ function numero_semaine($time)
 		$premierJeudiAnnee = mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)) + (4 - date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)))) * 24 * 60 * 60;
 	} elseif (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))) > 4) { // du Vendredi au Samedi
 		$premierJeudiAnnee = mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)) + (7 - (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))) - 4)) * 24 * 60 * 60;
-	} else // Jeudi
-	{
+	} else { // Jeudi
 		$premierJeudiAnnee = mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine));
 	}
 
 	// Definition du numero de semaine: nb de jours entre "premier Jeudi de l'annee" et "Jeudi de la semaine";
 	$numeroSemaine = (
-	(
-	date("z", mktime(12, 0, 0, date("m", $jeudiSemaine), date("d", $jeudiSemaine), date("Y", $jeudiSemaine)))
+		(
+		date("z", mktime(12, 0, 0, date("m", $jeudiSemaine), date("d", $jeudiSemaine), date("Y", $jeudiSemaine)))
 	-
 	date("z", mktime(12, 0, 0, date("m", $premierJeudiAnnee), date("d", $premierJeudiAnnee), date("Y", $premierJeudiAnnee)))
 	) / 7
@@ -1775,7 +1772,7 @@ function weight_convert($weight, &$from_unit, $to_unit)
  *	@param	Conf	$conf		Object conf
  *	@param	User	$user      	Object user
  *	@param	array	$tab        Array (key=>value) with all parameters to save/update
- *	@return int         		<0 if KO, >0 if OK
+ *	@return int         		Return integer <0 if KO, >0 if OK
  *
  *	@see		dolibarr_get_const(), dolibarr_set_const(), dolibarr_del_const()
  */
@@ -2078,11 +2075,11 @@ function getSoapParams()
 	global $conf;
 
 	$params = array();
-	$proxyuse = (!getDolGlobalString('MAIN_PROXY_USE') ?false:true);
-	$proxyhost = (!getDolGlobalString('MAIN_PROXY_USE') ?false:$conf->global->MAIN_PROXY_HOST);
-	$proxyport = (!getDolGlobalString('MAIN_PROXY_USE') ?false:$conf->global->MAIN_PROXY_PORT);
-	$proxyuser = (!getDolGlobalString('MAIN_PROXY_USE') ?false:$conf->global->MAIN_PROXY_USER);
-	$proxypass = (!getDolGlobalString('MAIN_PROXY_USE') ?false:$conf->global->MAIN_PROXY_PASS);
+	$proxyuse = (!getDolGlobalString('MAIN_PROXY_USE') ? false : true);
+	$proxyhost = (!getDolGlobalString('MAIN_PROXY_USE') ? false : $conf->global->MAIN_PROXY_HOST);
+	$proxyport = (!getDolGlobalString('MAIN_PROXY_USE') ? false : $conf->global->MAIN_PROXY_PORT);
+	$proxyuser = (!getDolGlobalString('MAIN_PROXY_USE') ? false : $conf->global->MAIN_PROXY_USER);
+	$proxypass = (!getDolGlobalString('MAIN_PROXY_USE') ? false : $conf->global->MAIN_PROXY_PASS);
 	$timeout = (!getDolGlobalString('MAIN_USE_CONNECT_TIMEOUT') ? 10 : $conf->global->MAIN_USE_CONNECT_TIMEOUT); // Connection timeout
 	$response_timeout = (!getDolGlobalString('MAIN_USE_RESPONSE_TIMEOUT') ? 30 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT); // Response timeout
 	//print extension_loaded('soap');
@@ -2485,8 +2482,7 @@ function colorAgressiveness($hex, $ratio = -50, $brightness = 0)
 			if ($color < 128) {
 				$color -= ($color * ($ratio / 100));
 			}
-		} else // We decrease agressiveness
-		{
+		} else { // We decrease agressiveness
 			if ($color > 128) {
 				$color -= (($color - 128) * (abs($ratio) / 100));
 			}
@@ -2934,7 +2930,8 @@ function removeGlobalParenthesis($string)
 	}
 
 	$nbofchars = dol_strlen($string);
-	$i = 0; $g = 0;
+	$i = 0;
+	$g = 0;
 	$countparenthesis = 0;
 	while ($i < $nbofchars) {
 		$char = dol_substr($string, $i, 1);

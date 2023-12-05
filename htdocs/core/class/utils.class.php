@@ -765,7 +765,7 @@ class Utils
 	 * Generate documentation of a Module
 	 *
 	 * @param 	string	$module		Module name
-	 * @return	int					<0 if KO, >0 if OK
+	 * @return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function generateDoc($module)
 	{
@@ -1082,7 +1082,7 @@ class Utils
 	 *
 	 *	@param	string	$outputfile		Output file name
 	 *	@param	string	$tables			Table name or '*' for all
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function backupTables($outputfile, $tables = '*')
 	{

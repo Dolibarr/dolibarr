@@ -73,7 +73,7 @@ class ModelePDFCards
  *	@param	string		$outputdir		Output directory
  *	@param	string		$template		pdf generenate document class to use default 'standard'
  *  @param	string		$filename		Name of output file (without extension)
- *	@return int							<0 if KO, >0 if OK
+ *	@return int							Return integer <0 if KO, >0 if OK
  */
 function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $outputdir = '', $template = 'standard', $filename = 'tmp_cards')
 {

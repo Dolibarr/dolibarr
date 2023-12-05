@@ -159,6 +159,8 @@ class mailing_eventorganization extends MailingTargets
 	 */
 	public function getNbOfRecipients($sql = '')
 	{
+		global $conf;
+
 		$sql = "SELECT COUNT(DISTINCT(e.email)) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."eventorganization_conferenceorboothattendee as e, ";
 		$sql .= " ".MAIN_DB_PREFIX."projet as p";

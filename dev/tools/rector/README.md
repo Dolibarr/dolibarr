@@ -13,6 +13,7 @@ Install rector with composer
 composer install
 ```
 
+
 #### Usage
 
 ##### To make changes (Add --dry-run for test mode only)

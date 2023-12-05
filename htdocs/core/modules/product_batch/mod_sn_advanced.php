@@ -155,7 +155,7 @@ class mod_sn_advanced extends ModeleNumRefBatch
 			}
 		}
 
-		if (!$mask)	{
+		if (!$mask) {
 			$this->error = 'NotConfigured';
 			return 0;
 		}

@@ -67,9 +67,9 @@ if ($action == 'edit_updater') {
 if (!empty($action) && empty($cancel)) {
 	//Global variable actions
 	if ($action == 'create_variable' || $action == 'edit_variable') {
-		$price_globals->code = GETPOSTISSET('code') ?GETPOST('code', 'alpha') : $price_globals->code;
-		$price_globals->description = GETPOSTISSET('description') ?GETPOST('description', 'restricthtml') : $price_globals->description;
-		$price_globals->value = GETPOSTISSET('value') ?GETPOST('value', 'int') : $price_globals->value;
+		$price_globals->code = GETPOSTISSET('code') ? GETPOST('code', 'alpha') : $price_globals->code;
+		$price_globals->description = GETPOSTISSET('description') ? GETPOST('description', 'restricthtml') : $price_globals->description;
+		$price_globals->value = GETPOSTISSET('value') ? GETPOST('value', 'int') : $price_globals->value;
 		//Check if record already exists only when saving
 		if (!empty($save)) {
 			foreach ($price_globals->listGlobalVariables() as $entry) {

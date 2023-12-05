@@ -283,7 +283,7 @@ trait CommonPeople
 			$this->firstname = dol_ucwords(dol_strtolower($this->firstname));
 			$this->name = dol_ucwords(dol_strtolower($this->name));
 			if (property_exists($this, 'name_alias')) {
-				$this->name_alias = isset($this->name_alias)?dol_ucwords(dol_strtolower($this->name_alias)):'';
+				$this->name_alias = isset($this->name_alias) ? dol_ucwords(dol_strtolower($this->name_alias)) : '';
 			}
 		}
 		if (getDolGlobalString('MAIN_ALL_TO_UPPER')) {

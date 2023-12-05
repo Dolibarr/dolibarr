@@ -51,7 +51,7 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$fuserid = (GETPOST('fuserid', 'int') ?GETPOST('fuserid', 'int') : $user->id);
+$fuserid = (GETPOST('fuserid', 'int') ? GETPOST('fuserid', 'int') : $user->id);
 $socid = GETPOST('socid', 'int');
 
 // Load translation files required by the page
@@ -823,15 +823,15 @@ if (empty($reshook)) {
 		// If status pending validation and validator = validator or user, or rights to do for others
 		if (($object->statut == Holiday::STATUS_VALIDATED || $object->statut == Holiday::STATUS_APPROVED) &&
 			(!empty($user->admin) || $user->id == $object->fk_validator || $cancreate || $cancreateall)) {
-				$db->begin();
+			$db->begin();
 
-				$oldstatus = $object->statut;
-				$object->date_cancel = dol_now();
-				$object->fk_user_cancel = $user->id;
-				$object->statut = Holiday::STATUS_CANCELED;
-				$object->status = Holiday::STATUS_CANCELED;
+			$oldstatus = $object->statut;
+			$object->date_cancel = dol_now();
+			$object->fk_user_cancel = $user->id;
+			$object->statut = Holiday::STATUS_CANCELED;
+			$object->status = Holiday::STATUS_CANCELED;
 
-				$result = $object->update($user);
+			$result = $object->update($user);
 
 			if ($result >= 0 && $oldstatus == Holiday::STATUS_APPROVED) {	// holiday was already validated, status 3, so we must increase back the balance
 				// Call trigger
@@ -864,7 +864,7 @@ if (empty($reshook)) {
 				$db->rollback();
 			}
 
-				// If no SQL error, we redirect to the request form
+			// If no SQL error, we redirect to the request form
 			if (!$error && $result > 0) {
 				// To
 				$destinataire = new User($db);
@@ -1107,7 +1107,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			$labeltoshow .= ($val['delay'] > 0 ? ' ('.$langs->trans("NoticePeriod").': '.$val['delay'].' '.$langs->trans("days").')' : '');
 			$arraytypeleaves[$val['rowid']] = $labeltoshow;
 		}
-		print $form->selectarray('type', $arraytypeleaves, (GETPOST('type', 'alpha') ?GETPOST('type', 'alpha') : ''), 1, 0, 0, '', 0, 0, 0, '', '', true);
+		print $form->selectarray('type', $arraytypeleaves, (GETPOST('type', 'alpha') ? GETPOST('type', 'alpha') : ''), 1, 0, 0, '', 0, 0, 0, '', '', true);
 		if ($user->admin) {
 			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
@@ -1127,7 +1127,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			print $form->selectDate($tmpdate, 'date_debut_', 0, 0, 0, '', 1, 1);
 		}
 		print ' &nbsp; &nbsp; ';
-		print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday', 'alpha') ?GETPOST('starthalfday', 'alpha') : 'morning'));
+		print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday', 'alpha') ? GETPOST('starthalfday', 'alpha') : 'morning'));
 		print '</td>';
 		print '</tr>';
 
@@ -1144,7 +1144,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			print $form->selectDate($tmpdate, 'date_fin_', 0, 0, 0, '', 1, 1);
 		}
 		print ' &nbsp; &nbsp; ';
-		print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday', 'alpha') ?GETPOST('endhalfday', 'alpha') : 'afternoon'));
+		print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday', 'alpha') ? GETPOST('endhalfday', 'alpha') : 'afternoon'));
 		print '</td>';
 		print '</tr>';
 
@@ -1317,7 +1317,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					$tmpdate = dol_mktime(0, 0, 0, GETPOST('date_debut_month', 'int'), GETPOST('date_debut_day', 'int'), GETPOST('date_debut_year', 'int'));
 					print $form->selectDate($tmpdate ? $tmpdate : $object->date_debut, 'date_debut_');
 					print ' &nbsp; &nbsp; ';
-					print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday') ?GETPOST('starthalfday') : $starthalfday));
+					print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday') ? GETPOST('starthalfday') : $starthalfday));
 					print '</td>';
 					print '</tr>';
 				}
@@ -1340,7 +1340,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					print '<td>';
 					print $form->selectDate($object->date_fin, 'date_fin_');
 					print ' &nbsp; &nbsp; ';
-					print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday') ?GETPOST('endhalfday') : $endhalfday));
+					print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday') ? GETPOST('endhalfday') : $endhalfday));
 					print '</td>';
 					print '</tr>';
 				}

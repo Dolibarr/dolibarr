@@ -125,7 +125,7 @@ class FormMargin
 					//	$marginInfos['margin_on_products'] += -1 * (abs($pv) - $pa);
 					//}
 					//else
-						$marginInfos['margin_on_products'] += $pv - $pa;
+					$marginInfos['margin_on_products'] += $pv - $pa;
 				} elseif (getDolGlobalString('MARGIN_METHODE_FOR_DISCOUNT') == '2') { // remise globale considérée comme service
 					$marginInfos['pa_services'] += $pa;
 					$marginInfos['pv_services'] += $pv;
@@ -135,7 +135,7 @@ class FormMargin
 					//if ($pv < 0)
 					//	$marginInfos['margin_on_services'] += -1 * (abs($pv) - $pa);
 					//else
-						$marginInfos['margin_on_services'] += $pv - $pa;
+					$marginInfos['margin_on_services'] += $pv - $pa;
 				} elseif (getDolGlobalString('MARGIN_METHODE_FOR_DISCOUNT') == '3') { // remise globale prise en compte uniqt sur total
 					$marginInfos['pa_total'] += $pa;
 					$marginInfos['pv_total'] += $pv;
@@ -154,7 +154,7 @@ class FormMargin
 					//}
 					//else
 					//{
-						$marginInfos['margin_on_products'] += $pv - $pa;
+					$marginInfos['margin_on_products'] += $pv - $pa;
 					//}
 				} elseif ($type == 1) {  // service
 					$marginInfos['pa_services'] += $pa;
@@ -165,7 +165,7 @@ class FormMargin
 					//if ($pv < 0)
 					//	$marginInfos['margin_on_services'] += -1 * (abs($pv) - $pa);
 					//else
-						$marginInfos['margin_on_services'] += $pv - $pa;
+					$marginInfos['margin_on_services'] += $pv - $pa;
 				}
 			}
 		}
@@ -187,7 +187,7 @@ class FormMargin
 		//if ($marginInfos['pv_total'] < 0)
 		//	$marginInfos['total_margin'] = -1 * (abs($marginInfos['pv_total']) - $marginInfos['pa_total']);
 		//else
-			$marginInfos['total_margin'] = $marginInfos['pv_total'] - $marginInfos['pa_total'];
+		$marginInfos['total_margin'] = $marginInfos['pv_total'] - $marginInfos['pa_total'];
 		if ($marginInfos['pa_total'] > 0) {
 			$marginInfos['total_margin_rate'] = 100 * $marginInfos['total_margin'] / $marginInfos['pa_total'];
 		}

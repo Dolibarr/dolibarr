@@ -818,7 +818,9 @@ if ($action == 'confirm_generateinvoice') {
 if ($action == 'confirm_generateinter') {
 	$langs->load('interventions');
 
-	if (!empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
+	if (!empty($projectstatic->socid)) {
+		$projectstatic->fetch_thirdparty();
+	}
 
 	if (!($projectstatic->thirdparty->id > 0)) {
 		setEventMessages($langs->trans("ThirdPartyRequiredToGenerateIntervention"), null, 'errors');
@@ -1044,10 +1046,10 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			// Date start - end project
 			print '<tr><td>' . $langs->trans("Dates") . '</td><td>';
 			$start = dol_print_date($projectstatic->date_start, 'day');
-			print ($start ? $start : '?');
+			print($start ? $start : '?');
 			$end = dol_print_date($projectstatic->date_end, 'day');
 			print ' - ';
-			print ($end ? $end : '?');
+			print($end ? $end : '?');
 			if ($projectstatic->hasDelay()) {
 				print img_warning("Late");
 			}
@@ -1206,10 +1208,10 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		// Date start - Date end task
 		print '<tr><td class="titlefield">' . $langs->trans("DateStart") . ' - ' . $langs->trans("Deadline") . '</td><td>';
 		$start = dol_print_date($object->date_start, 'dayhour');
-		print ($start ? $start : '?');
+		print($start ? $start : '?');
 		$end = dol_print_date($object->date_end, 'dayhour');
 		print ' - ';
-		print ($end ? $end : '?');
+		print($end ? $end : '?');
 		if ($object->hasDelay()) {
 			print img_warning("Late");
 		}
@@ -1595,7 +1597,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			if (empty($search_user)) {
 				$search_user = $user->id;
 			}
-			if ($search_user > 0) $sql .= " AND t.fk_user = " . ((int) $search_user);
+			if ($search_user > 0) {
+				$sql .= " AND t.fk_user = " . ((int) $search_user);
+			}
 		}
 
 		if ($search_note) {
@@ -1892,10 +1896,10 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		// Date
 		if (!empty($arrayfields['t.element_date']['checked'])) {
 			print '<td class="liste_titre left">';
-			print '<div class="nowrap">';
+			print '<div class="nowrapfordate">';
 			print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 			print '</div>';
-			print '<div class="nowrap">';
+			print '<div class="nowrapfordate">';
 			print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 			print '</div>';
 			print '</td>';

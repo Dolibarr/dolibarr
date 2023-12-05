@@ -433,16 +433,16 @@ class Lessc
 		if (is_null($env) ||
 			!empty($env->block->type) && $env->block->type != "media"
 			) {
-				return $childQueries;
+			return $childQueries;
 		}
 
-			// plain old block, skip
+		// plain old block, skip
 		if (empty($env->block->type)) {
 			return $this->multiplyMedia($env->parent, $childQueries);
 		}
 
-			$out = array();
-			$queries = $env->block->queries;
+		$out = array();
+		$queries = $env->block->queries;
 		if (is_null($childQueries)) {
 			$out = $queries;
 		} else {
@@ -453,7 +453,7 @@ class Lessc
 			}
 		}
 
-			return $this->multiplyMedia($env->parent, $out);
+		return $this->multiplyMedia($env->parent, $out);
 	}
 
 	protected function expandParentSelectors(&$tag, $replace)
@@ -818,13 +818,13 @@ class Lessc
 							is_string($subProp[1]) &&
 							$subProp[1][0] != $this->vPrefix
 							) {
-								$subProp[2] = array(
+							$subProp[2] = array(
 									'list', ' ',
 									array($subProp[2], array('keyword', $suffix))
 								);
 						}
 
-							$this->compileProp($subProp, $mixin, $out);
+						$this->compileProp($subProp, $mixin, $out);
 					}
 
 					$mixin->parent = $oldParent;
@@ -863,7 +863,7 @@ class Lessc
 
 				break;
 			case "import_mixin":
-				list(,$importId) = $prop;
+				list(, $importId) = $prop;
 				$import = $this->env->imports[$importId];
 				if ($import[0] === false) {
 					if (isset($import[1])) {
@@ -1129,6 +1129,7 @@ class Lessc
 					return $this->lib_e($items[0]);
 				}
 				$this->throwError("unrecognised input");	// This end function by throwing an exception
+				// no break
 			case "string":
 				$arg[1] = "";
 				return $arg;
@@ -1754,7 +1755,7 @@ class Lessc
 				}
 				return $value;
 			case "escape":
-				list(,$inner) = $value;
+				list(, $inner) = $value;
 				return $this->lib_e($this->reduce($inner));
 			case "function":
 				$color = $this->funcToColor($value);
@@ -1775,7 +1776,7 @@ class Lessc
 						$args = self::compressList($args[2], $args[1]);
 					}
 
-						$ret = call_user_func($f, $this->reduce($args, true), $this);
+					$ret = call_user_func($f, $this->reduce($args, true), $this);
 
 					if (is_null($ret)) {
 						return array("string", "", array(
@@ -1783,14 +1784,14 @@ class Lessc
 						));
 					}
 
-						// convert to a typed value if the result is a php primitive
+					// convert to a typed value if the result is a php primitive
 					if (is_numeric($ret)) {
 						$ret = array('number', $ret, "");
 					} elseif (!is_array($ret)) {
 						$ret = array('keyword', $ret);
 					}
 
-						return $ret;
+					return $ret;
 				}
 
 				// plain function, reduce args
@@ -2107,7 +2108,7 @@ class Lessc
 
 	protected function makeOutputBlock($type, $selectors = null)
 	{
-		$b = new stdclass;
+		$b = new stdclass();
 		$b->lines = array();
 		$b->children = array();
 		$b->selectors = $selectors;
@@ -2119,7 +2120,7 @@ class Lessc
 	// the state of execution
 	protected function pushEnv($block = null)
 	{
-		$e = new stdclass;
+		$e = new stdclass();
 		$e->parent = $this->env;
 		$e->store = array();
 		$e->block = $block;
@@ -2372,10 +2373,10 @@ class Lessc
 			if (!is_string($this->formatterName)) {
 				return $this->formatterName;
 			}
-				$className = "lessc_formatter_$this->formatterName";
+			$className = "lessc_formatter_$this->formatterName";
 		}
 
-		return new $className;
+		return new $className();
 	}
 
 	public function setPreserveComments($preserve)
@@ -2440,7 +2441,7 @@ class Lessc
 	public static function ccompile($in, $out, $less = null)
 	{
 		if ($less === null) {
-			$less = new self;
+			$less = new self();
 		}
 		return $less->checkedCompile($in, $out);
 	}
@@ -2448,7 +2449,7 @@ class Lessc
 	public static function cexecute($in, $force = false, $less = null)
 	{
 		if ($less === null) {
-			$less = new self;
+			$less = new self();
 		}
 		return $less->cachedCompile($in, $force);
 	}
@@ -2686,12 +2687,12 @@ class lessc_parser
 				array_keys(self::$precedence)
 			)).')';
 
-				$commentSingle = Lessc::preg_quote(self::$commentSingle);
-				$commentMultiLeft = Lessc::preg_quote(self::$commentMultiLeft);
-				$commentMultiRight = Lessc::preg_quote(self::$commentMultiRight);
+			$commentSingle = Lessc::preg_quote(self::$commentSingle);
+			$commentMultiLeft = Lessc::preg_quote(self::$commentMultiLeft);
+			$commentMultiRight = Lessc::preg_quote(self::$commentMultiRight);
 
-				self::$commentMulti = $commentMultiLeft.'.*?'.$commentMultiRight;
-				self::$whitePattern = '/'.$commentSingle.'[^\n]*\s*|('.self::$commentMulti.')\s*|\s+/Ais';
+			self::$commentMulti = $commentMultiLeft.'.*?'.$commentMultiRight;
+			self::$whitePattern = '/'.$commentSingle.'[^\n]*\s*|('.self::$commentMulti.')\s*|\s+/Ais';
 		}
 	}
 
@@ -2716,23 +2717,23 @@ class lessc_parser
 		// trim whitespace on head
 		// if (preg_match('/^\s+/', $this->buffer, $m)) {
 		//  $this->line += substr_count($m[0], "\n");
-			//  $this->buffer = ltrim($this->buffer);
-			// }
-			$this->whitespace();
+		//  $this->buffer = ltrim($this->buffer);
+		// }
+		$this->whitespace();
 
-			// parse the entire file
-			while (false !== $this->parseChunk());
+		// parse the entire file
+		while (false !== $this->parseChunk());
 
 		if ($this->count != strlen($this->buffer)) {
 			$this->throwError('parse error count '.$this->count.' != len buffer '.strlen($this->buffer));
 		}
 
-			// TODO report where the block was opened
+		// TODO report where the block was opened
 		if (!property_exists($this->env, 'parent') || !is_null($this->env->parent)) {
 			throw new exception('parse error: unclosed block');
 		}
 
-			return $this->env;
+		return $this->env;
 	}
 
 	/**
@@ -2801,14 +2802,14 @@ class lessc_parser
 		if ($this->keyword($key) && $this->assign() &&
 			$this->propertyValue($value, $key) && $this->end()
 			) {
-				$this->append(array('assign', $key, $value), $s);
-				return true;
+			$this->append(array('assign', $key, $value), $s);
+			return true;
 		} else {
 			$this->seek($s);
 		}
 
 
-			// look for special css blocks
+		// look for special css blocks
 		if ($this->literal('@', false)) {
 			$this->count--;
 
@@ -2817,9 +2818,9 @@ class lessc_parser
 				if ($this->mediaQueryList($mediaQueries)
 					&& $this->literal('{')
 					) {
-						$media = $this->pushSpecialBlock("media");
-						$media->queries = is_null($mediaQueries) ? array() : $mediaQueries;
-						return true;
+					$media = $this->pushSpecialBlock("media");
+					$media->queries = is_null($mediaQueries) ? array() : $mediaQueries;
+					return true;
 				} else {
 					$this->seek($s);
 					return false;
@@ -2831,12 +2832,12 @@ class lessc_parser
 					if ($this->openString("{", $dirValue, null, array(";")) &&
 						$this->literal("{")
 						) {
-							$dir = $this->pushSpecialBlock("directive");
-							$dir->name = $dirName;
+						$dir = $this->pushSpecialBlock("directive");
+						$dir->name = $dirName;
 						if (isset($dirValue)) {
 							$dir->value = $dirValue;
 						}
-							return true;
+						return true;
 					}
 				} elseif ($this->isDirective($dirName, $this->lineDirectives)) {
 					if ($this->propertyValue($dirValue) && $this->end()) {
@@ -2849,12 +2850,12 @@ class lessc_parser
 			$this->seek($s);
 		}
 
-			// setting a variable
+		// setting a variable
 		if ($this->variable($var) && $this->assign() &&
 				$this->propertyValue($value) && $this->end()
 				) {
-				$this->append(array('assign', $var, $value), $s);
-				return true;
+			$this->append(array('assign', $var, $value), $s);
+			return true;
 		} else {
 			$this->seek($s);
 		}
@@ -2864,23 +2865,23 @@ class lessc_parser
 			return true;
 		}
 
-				// opening parametric mixin
+		// opening parametric mixin
 		if ($this->tag($tag, true) && $this->argumentDef($args, $isVararg) &&
 					$this->guards($guards) &&
 					$this->literal('{')
 					) {
-				$block = $this->pushBlock($this->fixTags(array($tag)));
-				$block->args = $args;
-				$block->isVararg = $isVararg;
+			$block = $this->pushBlock($this->fixTags(array($tag)));
+			$block->args = $args;
+			$block->isVararg = $isVararg;
 			if (!empty($guards)) {
 				$block->guards = $guards;
 			}
-				return true;
+			return true;
 		} else {
 			$this->seek($s);
 		}
 
-					// opening a simple block
+		// opening a simple block
 		if ($this->tags($tags) && $this->literal('{', false)) {
 			$tags = $this->fixTags($tags);
 			$this->pushBlock($tags);
@@ -2889,7 +2890,7 @@ class lessc_parser
 			$this->seek($s);
 		}
 
-					// closing a block
+		// closing a block
 		if ($this->literal('}', false)) {
 			try {
 				$block = $this->pop();
@@ -2922,24 +2923,24 @@ class lessc_parser
 			}
 
 			// this is done here so comments aren't bundled into he block that
-						// was just closed
-						$this->whitespace();
-						return true;
+			// was just closed
+			$this->whitespace();
+			return true;
 		}
 
-					// mixin
+		// mixin
 		if ($this->mixinTags($tags) &&
 						$this->argumentDef($argv, $isVararg) &&
 						$this->keyword($suffix) && $this->end()
 						) {
-				$tags = $this->fixTags($tags);
-				$this->append(array('mixin', $tags, $argv, $suffix), $s);
-				return true;
+			$tags = $this->fixTags($tags);
+			$this->append(array('mixin', $tags, $argv, $suffix), $s);
+			return true;
 		} else {
 			$this->seek($s);
 		}
 
-						// spare ;
+		// spare ;
 		if ($this->literal(';')) {
 			return true;
 		}
@@ -2970,7 +2971,7 @@ class lessc_parser
 		return $tags;
 	}
 
-		// a list of expressions
+	// a list of expressions
 	protected function expressionList(&$exps)
 	{
 		$exp = null;
@@ -2989,10 +2990,10 @@ class lessc_parser
 		return true;
 	}
 
-		/**
-		 * Attempt to consume an expression.
-		 * @link http://en.wikipedia.org/wiki/Operator-precedence_parser#Pseudo-code
-		 */
+	/**
+	 * Attempt to consume an expression.
+	 * @link http://en.wikipedia.org/wiki/Operator-precedence_parser#Pseudo-code
+	 */
 	protected function expression(&$out)
 	{
 		$lhs = null;
@@ -3075,7 +3076,7 @@ class lessc_parser
 		return $lhs;
 	}
 
-		// consume a list of values for a property
+	// consume a list of values for a property
 	public function propertyValue(&$value, $keyName = null)
 	{
 		$v = null;
@@ -3126,18 +3127,18 @@ class lessc_parser
 			($this->inParens = true) && $this->expression($exp) &&
 			$this->literal(")")
 			) {
-				$out = $exp;
-				$this->inParens = $inParens;
-				return true;
+			$out = $exp;
+			$this->inParens = $inParens;
+			return true;
 		} else {
 			$this->inParens = $inParens;
 			$this->seek($s);
 		}
 
-			return false;
+		return false;
 	}
 
-		// a single value
+	// a single value
 	protected function value(&$value)
 	{
 		$inner = null;
@@ -3155,8 +3156,8 @@ class lessc_parser
 					$this->unit($inner) ||
 					$this->parenValue($inner))
 				) {
-					$value = array("unary", "-", $inner);
-					return true;
+				$value = array("unary", "-", $inner);
+				return true;
 			} else {
 				$this->seek($s);
 			}
@@ -3209,7 +3210,7 @@ class lessc_parser
 		return false;
 	}
 
-		// an import statement
+	// an import statement
 	protected function import(&$out, $value = '')
 	{
 		if (!$this->literal('@import')) {
@@ -3293,21 +3294,21 @@ class lessc_parser
 			($this->literal(":") && $this->expression($value)) &&
 			$this->literal(")")
 			) {
-				$out = array("mediaExp", $feature);
+			$out = array("mediaExp", $feature);
 			if ($value) {
 				$out[] = $value;
 			}
-				return true;
+			return true;
 		} elseif ($this->variable($variable)) {
 			$out = array('variable', $variable);
 			return true;
 		}
 
-			$this->seek($s);
-			return false;
+		$this->seek($s);
+		return false;
 	}
 
-		// an unbounded string stopped by $end
+	// an unbounded string stopped by $end
 	protected function openString($end, &$out, $nestingOpen = null, $rejectStrs = null)
 	{
 		$str = null;
@@ -3401,8 +3402,8 @@ class lessc_parser
 		$patt = '([^\n]*?)(@\{|\\\\|'.
 			Lessc::preg_quote($delim).')';
 
-			$oldWhite = $this->eatWhiteDefault;
-			$this->eatWhiteDefault = false;
+		$oldWhite = $this->eatWhiteDefault;
+		$this->eatWhiteDefault = false;
 
 		$m = array();
 		while ($this->match($patt, $m, false)) {
@@ -3426,15 +3427,15 @@ class lessc_parser
 			}
 		}
 
-			$this->eatWhiteDefault = $oldWhite;
+		$this->eatWhiteDefault = $oldWhite;
 
 		if ($this->literal($delim)) {
 			$out = array("string", $delim, $content);
 			return true;
 		}
 
-			$this->seek($s);
-			return false;
+		$this->seek($s);
+		return false;
 	}
 
 	protected function interpolation(&$out)
@@ -3449,17 +3450,17 @@ class lessc_parser
 			$this->openString("}", $interp, null, array("'", '"', ";")) &&
 			$this->literal("}", false)
 			) {
-				$out = array("interpolate", $interp);
-				$this->eatWhiteDefault = $oldWhite;
+			$out = array("interpolate", $interp);
+			$this->eatWhiteDefault = $oldWhite;
 			if ($this->eatWhiteDefault) {
 				$this->whitespace();
 			}
-				return true;
+			return true;
 		}
 
-			$this->eatWhiteDefault = $oldWhite;
-			$this->seek($s);
-			return false;
+		$this->eatWhiteDefault = $oldWhite;
+		$this->seek($s);
+		return false;
 	}
 
 	protected function unit(&$unit)
@@ -3608,8 +3609,8 @@ class lessc_parser
 		return true;
 	}
 
-		// consume a list of tags
-		// this accepts a hanging delimiter
+	// consume a list of tags
+	// this accepts a hanging delimiter
 	protected function tags(&$tags, $simple = false, $delim = ',')
 	{
 		$tt = array();
@@ -3628,8 +3629,8 @@ class lessc_parser
 		return true;
 	}
 
-		// list of tags of specifying mixin path
-		// optionally separated by > (lazy, accepts extra >)
+	// list of tags of specifying mixin path
+	// optionally separated by > (lazy, accepts extra >)
 	protected function mixinTags(&$tags)
 	{
 		$tt = array();
@@ -3647,7 +3648,7 @@ class lessc_parser
 		return true;
 	}
 
-		// a bracketed value (contained within in a tag definition)
+	// a bracketed value (contained within in a tag definition)
 	protected function tagBracket(&$parts, &$hasExpression)
 	{
 		$str = null;
@@ -3723,7 +3724,7 @@ class lessc_parser
 		return false;
 	}
 
-		// a space separated list of selectors
+	// a space separated list of selectors
 	protected function tag(&$tag, $simple = false)
 	{
 		$interp = null;
@@ -3794,7 +3795,7 @@ class lessc_parser
 		return true;
 	}
 
-		// a css function
+	// a css function
 	protected function func(&$func)
 	{
 		$s = $this->seek();
@@ -3860,12 +3861,12 @@ class lessc_parser
 			} else {
 				$name = $this->lessc->vPrefix.$name;
 			}
-				return true;
+			return true;
 		}
 
-			$name = null;
-			$this->seek($s);
-			return false;
+		$name = null;
+		$this->seek($s);
+		return false;
 	}
 
 	/**
@@ -4034,9 +4035,9 @@ class lessc_parser
 	}
 
 
-		// advance counter to next occurrence of $what
-		// $until - don't include $what in advance
-		// $allowNewline, if string, will be used as valid char set
+	// advance counter to next occurrence of $what
+	// $until - don't include $what in advance
+	// $allowNewline, if string, will be used as valid char set
 	protected function to($what, &$out, $until = false, $allowNewline = false)
 	{
 		if (is_string($allowNewline)) {
@@ -4055,7 +4056,7 @@ class lessc_parser
 		return true;
 	}
 
-		// try to match something on head of buffer
+	// try to match something on head of buffer
 	protected function match($regex, &$out, $eatWhitespace = null)
 	{
 		if ($eatWhitespace === null) {
@@ -4073,7 +4074,7 @@ class lessc_parser
 		return false;
 	}
 
-		// match some whitespace
+	// match some whitespace
 	protected function whitespace()
 	{
 		if ($this->writeComments) {
@@ -4094,7 +4095,7 @@ class lessc_parser
 		}
 	}
 
-		// match something without consuming it
+	// match something without consuming it
 	protected function peek($regex, &$out = null, $from = null)
 	{
 		if (is_null($from)) {
@@ -4106,7 +4107,7 @@ class lessc_parser
 		return $result;
 	}
 
-		// seek to a spot in the buffer or return where we are on no argument
+	// seek to a spot in the buffer or return where we are on no argument
 	protected function seek($where = null)
 	{
 		if ($where === null) {
@@ -4117,7 +4118,7 @@ class lessc_parser
 		return true;
 	}
 
-		/* misc functions */
+	/* misc functions */
 
 	public function throwError($msg = "parse error", $count = null)
 	{
@@ -4143,7 +4144,7 @@ class lessc_parser
 
 	protected function pushBlock($selectors = null, $type = null)
 	{
-		$b = new stdclass;
+		$b = new stdclass();
 		$b->parent = $this->env;
 
 		$b->type = $type;
@@ -4159,13 +4160,13 @@ class lessc_parser
 		return $b;
 	}
 
-		// push a block that doesn't multiply tags
+	// push a block that doesn't multiply tags
 	protected function pushSpecialBlock($type)
 	{
 		return $this->pushBlock(null, $type);
 	}
 
-		// append a property to the current block
+	// append a property to the current block
 	protected function append($prop, $pos = null)
 	{
 		if ($pos !== null) {
@@ -4174,7 +4175,7 @@ class lessc_parser
 		$this->env->props[] = $prop;
 	}
 
-		// pop something off the stack
+	// pop something off the stack
 	protected function pop()
 	{
 		$old = $this->env;
@@ -4182,8 +4183,8 @@ class lessc_parser
 		return $old;
 	}
 
-		// remove comments from $text
-		// todo: make it work for all functions, not just url
+	// remove comments from $text
+	// todo: make it work for all functions, not just url
 	protected function removeComments($text)
 	{
 		$look = array(

@@ -205,4 +205,3 @@ function mrpCollapseBomManagement()
 
 	<?php
 }
-

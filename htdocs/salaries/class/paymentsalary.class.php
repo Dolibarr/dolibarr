@@ -188,15 +188,33 @@ class PaymentSalary extends CommonObject
 		}
 
 		// Clean parameters
-		if (isset($this->fk_salary)) $this->fk_salary = (int) $this->fk_salary;
-		if (isset($this->amount)) $this->amount = trim($this->amount);
-		if (isset($this->fk_typepayment)) $this->fk_typepayment = (int) $this->fk_typepayment;
-		if (isset($this->num_paiement)) $this->num_paiement = trim($this->num_paiement); // deprecated
-		if (isset($this->num_payment)) $this->num_payment = trim($this->num_payment);
-		if (isset($this->note)) $this->note = trim($this->note);
-		if (isset($this->fk_bank)) $this->fk_bank = (int) $this->fk_bank;
-		if (isset($this->fk_user_author)) $this->fk_user_author = (int) $this->fk_user_author;
-		if (isset($this->fk_user_modif)) $this->fk_user_modif = (int) $this->fk_user_modif;
+		if (isset($this->fk_salary)) {
+			$this->fk_salary = (int) $this->fk_salary;
+		}
+		if (isset($this->amount)) {
+			$this->amount = trim($this->amount);
+		}
+		if (isset($this->fk_typepayment)) {
+			$this->fk_typepayment = (int) $this->fk_typepayment;
+		}
+		if (isset($this->num_paiement)) {
+			$this->num_paiement = trim($this->num_paiement);
+		} // deprecated
+		if (isset($this->num_payment)) {
+			$this->num_payment = trim($this->num_payment);
+		}
+		if (isset($this->note)) {
+			$this->note = trim($this->note);
+		}
+		if (isset($this->fk_bank)) {
+			$this->fk_bank = (int) $this->fk_bank;
+		}
+		if (isset($this->fk_user_author)) {
+			$this->fk_user_author = (int) $this->fk_user_author;
+		}
+		if (isset($this->fk_user_modif)) {
+			$this->fk_user_modif = (int) $this->fk_user_modif;
+		}
 
 		$totalamount = 0;
 		foreach ($this->amounts as $key => $value) {  // How payment is dispatch
@@ -207,7 +225,9 @@ class PaymentSalary extends CommonObject
 		$totalamount = price2num($totalamount);
 
 		// Check parameters
-		if ($totalamount == 0) return -1; // On accepte les montants negatifs pour les rejets de prelevement mais pas null
+		if ($totalamount == 0) {
+			return -1;
+		} // On accepte les montants negatifs pour les rejets de prelevement mais pas null
 
 
 		$this->db->begin();
@@ -256,7 +276,9 @@ class PaymentSalary extends CommonObject
 		}
 
 		$result = $this->call_trigger('PAYMENTSALARY_CREATE', $user);
-		if ($result < 0) $error++;
+		if ($result < 0) {
+			$error++;
+		}
 
 		if ($totalamount != 0 && !$error) {
 			$this->amount = $totalamount;
@@ -274,7 +296,7 @@ class PaymentSalary extends CommonObject
 	 *  Load object in memory from database
 	 *
 	 *  @param	int		$id         Id object
-	 *  @return int         		<0 if KO, >0 if OK
+	 *  @return int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -343,7 +365,7 @@ class PaymentSalary extends CommonObject
 	 *
 	 *  @param	User	$user        	User that modify
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return int         			<0 if KO, >0 if OK
+	 *  @return int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -352,15 +374,33 @@ class PaymentSalary extends CommonObject
 
 		// Clean parameters
 
-		if (isset($this->fk_salary)) $this->fk_salary = (int) $this->fk_salary;
-		if (isset($this->amount)) $this->amount = trim($this->amount);
-		if (isset($this->fk_typepayment)) $this->fk_typepayment = (int) $this->fk_typepayment;
-		if (isset($this->num_paiement)) $this->num_paiement = trim($this->num_paiement); // deprecated
-		if (isset($this->num_payment)) $this->num_payment = trim($this->num_payment);
-		if (isset($this->note)) $this->note = trim($this->note);
-		if (isset($this->fk_bank)) $this->fk_bank = (int) $this->fk_bank;
-		if (isset($this->fk_user_author)) $this->fk_user_author = (int) $this->fk_user_author;
-		if (isset($this->fk_user_modif)) $this->fk_user_modif = (int) $this->fk_user_modif;
+		if (isset($this->fk_salary)) {
+			$this->fk_salary = (int) $this->fk_salary;
+		}
+		if (isset($this->amount)) {
+			$this->amount = trim($this->amount);
+		}
+		if (isset($this->fk_typepayment)) {
+			$this->fk_typepayment = (int) $this->fk_typepayment;
+		}
+		if (isset($this->num_paiement)) {
+			$this->num_paiement = trim($this->num_paiement);
+		} // deprecated
+		if (isset($this->num_payment)) {
+			$this->num_payment = trim($this->num_payment);
+		}
+		if (isset($this->note)) {
+			$this->note = trim($this->note);
+		}
+		if (isset($this->fk_bank)) {
+			$this->fk_bank = (int) $this->fk_bank;
+		}
+		if (isset($this->fk_user_author)) {
+			$this->fk_user_author = (int) $this->fk_user_author;
+		}
+		if (isset($this->fk_user_modif)) {
+			$this->fk_user_modif = (int) $this->fk_user_modif;
+		}
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -384,7 +424,10 @@ class PaymentSalary extends CommonObject
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		if (!$resql) {
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
+		}
 
 		// Commit or rollback
 		if ($error) {
@@ -406,7 +449,7 @@ class PaymentSalary extends CommonObject
 	 *
 	 *  @param	User	$user        	User that delete
 	 *  @param  int		$notrigger		0=launch triggers after, 1=disable triggers
-	 *  @return int						<0 if KO, >0 if OK
+	 *  @return int						Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -432,7 +475,10 @@ class PaymentSalary extends CommonObject
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+			if (!$resql) {
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
+			}
 		}
 
 		// Commit or rollback
@@ -533,7 +579,7 @@ class PaymentSalary extends CommonObject
 	 *      @param  int		$accountid          Id of bank account to do link with
 	 *      @param  string	$emetteur_nom       Name of transmitter
 	 *      @param  string	$emetteur_banque    Name of bank
-	 *      @return int                 		<0 if KO, >0 if OK
+	 *      @return int                 		Return integer <0 if KO, >0 if OK
 	 */
 	public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
 	{
@@ -607,7 +653,7 @@ class PaymentSalary extends CommonObject
 									DOL_URL_ROOT.'/user/card.php?id=',
 									$fuser->getFullName($langs),
 									'user'
-									);
+								);
 							}
 							if ($result <= 0) {
 								$this->error = $this->db->lasterror();
@@ -631,7 +677,7 @@ class PaymentSalary extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Mise a jour du lien entre le paiement de  salaire et la ligne dans llx_bank generee
 	 *
@@ -640,7 +686,7 @@ class PaymentSalary extends CommonObject
 	 */
 	public function update_fk_bank($id_bank)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_salary SET fk_bank = ".((int) $id_bank)." WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update_fk_bank", LOG_DEBUG);
@@ -719,7 +765,7 @@ class PaymentSalary extends CommonObject
 		return $this->LibStatut($this->statut, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return the status
 	 *
@@ -729,7 +775,7 @@ class PaymentSalary extends CommonObject
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs; // TODO Renvoyer le libelle anglais et faire traduction a affichage
 
 		$langs->load('compta');
@@ -826,7 +872,7 @@ class PaymentSalary extends CommonObject
 				$label = $langs->trans("SalaryPayment");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
