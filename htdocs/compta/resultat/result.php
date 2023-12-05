@@ -240,7 +240,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	$builddate = dol_now();
 }
 
-report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array('modecompta'=>$modecompta, 'action' => ''), $calcmode);
+report_header($name, '', $period, $periodlink ?? '', $description, $builddate, $exportlink ?? '', array('modecompta'=>$modecompta, 'action' => ''), $calcmode);
 
 
 if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
