@@ -278,7 +278,7 @@ class Delivery extends CommonObject
 	 *	@param	string	$fk_product				Id of predefined product
 	 *	@param	string	$description			Description
 	 *  @param	array	$array_options			Array options
-	 *	@return	int								<0 if KO, >0 if OK
+	 *	@return	int								Return integer <0 if KO, >0 if OK
 	 */
 	public function create_line($origin_id, $qty, $fk_product, $description, $array_options = null)
 	{
@@ -481,13 +481,15 @@ class Delivery extends CommonObject
 							$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'expedition/receipt/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 							$resql = $this->db->query($sql);
 							if (!$resql) {
-								$error++; $this->error = $this->db->lasterror();
+								$error++;
+								$this->error = $this->db->lasterror();
 							}
 							$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'expedition/receipt/".$this->db->escape($this->newref)."'";
 							$sql .= " WHERE filepath = 'expedition/receipt/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 							$resql = $this->db->query($sql);
 							if (!$resql) {
-								$error++; $this->error = $this->db->lasterror();
+								$error++;
+								$this->error = $this->db->lasterror();
 							}
 
 							// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
@@ -598,7 +600,7 @@ class Delivery extends CommonObject
 	 *
 	 * @param 	int		$id					Id of line (livraison line)
 	 * @param	array		$array_options		extrafields array
-	 * @return	int							<0 if KO, >0 if OK
+	 * @return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function update_line($id, $array_options = 0)
 	{
@@ -810,7 +812,7 @@ class Delivery extends CommonObject
 		//}
 
 		$linkstart = '<a href="'.$url.'"';
-		$linkstart .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+		$linkstart .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 		$linkstart .= $dataparams.' class="'.$classfortooltip.'">';
 		$linkend = '</a>';
 
@@ -838,7 +840,7 @@ class Delivery extends CommonObject
 	/**
 	 *	Load lines insto $this->lines.
 	 *
-	 *	@return		int								<0 if KO, >0 if OK
+	 *	@return		int								Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_lines()
 	{
@@ -1082,7 +1084,7 @@ class Delivery extends CommonObject
 	 *
 	 *	@param      User			$user        		Objet utilisateur qui modifie
 	 *	@param      integer 		$delivery_date     Delivery date
-	 *	@return     int         						<0 if KO, >0 if OK
+	 *	@return     int         						Return integer <0 if KO, >0 if OK
 	 */
 	public function setDeliveryDate($user, $delivery_date)
 	{

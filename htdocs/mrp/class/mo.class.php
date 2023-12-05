@@ -440,7 +440,7 @@ class Mo extends CommonObject
 	 *
 	 * @param int    $id   Id object
 	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -457,7 +457,7 @@ class Mo extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchLines()
 	{
@@ -638,7 +638,7 @@ class Mo extends CommonObject
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
@@ -672,7 +672,7 @@ class Mo extends CommonObject
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function createProduction(User $user, $notrigger = true)
 	{
@@ -739,11 +739,13 @@ class Mo extends CommonObject
 							$moline->fk_mo = $this->id;
 							$moline->origin_id = $line->id;
 							$moline->origin_type = 'bomline';
-							if (!empty($line->fk_unit)) $moline->fk_unit = $line->fk_unit;
+							if (!empty($line->fk_unit)) {
+								$moline->fk_unit = $line->fk_unit;
+							}
 							if ($line->qty_frozen) {
 								$moline->qty = $line->qty; // Qty to consume does not depends on quantity to produce
 							} else {
-								$moline->qty = price2num(($line->qty / ( !empty($bom->qty) ? $bom->qty : 1 ) ) * $this->qty / ( !empty($line->efficiency) ? $line->efficiency : 1 ), 'MS'); // Calculate with Qty to produce and  more presition
+								$moline->qty = price2num(($line->qty / (!empty($bom->qty) ? $bom->qty : 1)) * $this->qty / (!empty($line->efficiency) ? $line->efficiency : 1), 'MS'); // Calculate with Qty to produce and  more presition
 							}
 							if ($moline->qty <= 0) {
 								$error++;
@@ -755,7 +757,9 @@ class Mo extends CommonObject
 								$moline->position = $line->position;
 								$moline->qty_frozen = $line->qty_frozen;
 								$moline->disable_stock_change = $line->disable_stock_change;
-								if (!empty($line->fk_default_workstation)) $moline->fk_default_workstation = $line->fk_default_workstation;
+								if (!empty($line->fk_default_workstation)) {
+									$moline->fk_default_workstation = $line->fk_default_workstation;
+								}
 
 								$resultline = $moline->create($user, false); // Never use triggers here
 								if ($resultline <= 0) {
@@ -786,13 +790,15 @@ class Mo extends CommonObject
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function updateProduction(User $user, $notrigger = true)
 	{
 		$error = 0;
 
-		if ($this->status != self::STATUS_DRAFT) return 1;
+		if ($this->status != self::STATUS_DRAFT) {
+			return 1;
+		}
 
 		$this->db->begin();
 
@@ -805,14 +811,18 @@ class Mo extends CommonObject
 				while ($obj = $this->db->fetch_object($resql)) {
 					$moLine = new MoLine($this->db);
 					$res = $moLine->fetch($obj->rowid);
-					if (!$res) $error++;
+					if (!$res) {
+						$error++;
+					}
 
 					if ($moLine->role == 'toconsume' || $moLine->role == 'toproduce') {
 						if (empty($moLine->qty_frozen)) {
 							$qty = $newQty * $moLine->qty / $oldQty;
 							$moLine->qty = price2num($qty, 'MS');
 							$res = $moLine->update($user);
-							if (!$res) $error++;
+							if (!$res) {
+								$error++;
+							}
 						}
 					}
 				}
@@ -834,7 +844,7 @@ class Mo extends CommonObject
 	 * @param	User	$user										User that deletes
 	 * @param	bool	$notrigger									false=launch triggers after, true=disable triggers
 	 * @param	bool	$also_cancel_consumed_and_produced_lines  	true if the consumed and produced lines will be deleted (and stocks incremented/decremented back) (false by default)
-	 * @return	int													<0 if KO, >0 if OK
+	 * @return	int													Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false, $also_cancel_consumed_and_produced_lines = false)
 	{
@@ -1074,13 +1084,15 @@ class Mo extends CommonObject
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'mrp/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'mrp/".$this->db->escape($this->newref)."'";
 				$sql .= " WHERE filepath = 'mrp/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
@@ -1127,7 +1139,7 @@ class Mo extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setDraft($user, $notrigger = 0)
 	{
@@ -1430,7 +1442,7 @@ class Mo extends CommonObject
 				$label = $langs->trans("ShowMo");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -1574,7 +1586,9 @@ class Mo extends CommonObject
 		$objectline = new MoLine($this->db);
 
 		$TFilters = array('customsql'=>'fk_mo = '.((int) $this->id));
-		if (!empty($rolefilter)) $TFilters['role'] = $rolefilter;
+		if (!empty($rolefilter)) {
+			$TFilters['role'] = $rolefilter;
+		}
 		$result = $objectline->fetchAll('ASC', 'position', 0, 0, $TFilters);
 
 		if (is_numeric($result)) {
@@ -1713,7 +1727,9 @@ class Mo extends CommonObject
 				$reshook = 0;
 				if (is_object($hookmanager)) {
 					$parameters = array('line'=>$line, 'i'=>$i, 'restrictlist'=>$restrictlist, 'selectedLines'=> $selectedLines);
-					if (!empty($line->fk_parent_line)) { $parameters['fk_parent_line'] = $line->fk_parent_line; }
+					if (!empty($line->fk_parent_line)) {
+						$parameters['fk_parent_line'] = $line->fk_parent_line;
+					}
 					$reshook = $hookmanager->executeHooks('printOriginObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				}
 				if (empty($reshook)) {
@@ -1798,7 +1814,6 @@ class Mo extends CommonObject
 	 */
 	public function getMoChilds()
 	{
-
 		$TMoChilds = array();
 		$error = 0;
 
@@ -1814,8 +1829,11 @@ class Mo extends CommonObject
 				while ($obj = $this->db->fetch_object($resql)) {
 					$MoChild = new Mo($this->db);
 					$res = $MoChild->fetch($obj->rowid);
-					if ($res > 0) $TMoChilds[$MoChild->id] = $MoChild;
-					else $error++;
+					if ($res > 0) {
+						$TMoChilds[$MoChild->id] = $MoChild;
+					} else {
+						$error++;
+					}
 				}
 			}
 		} else {
@@ -1837,16 +1855,22 @@ class Mo extends CommonObject
 	 */
 	public function getAllMoChilds($depth = 0)
 	{
-		if ($depth > 1000) return -1;
+		if ($depth > 1000) {
+			return -1;
+		}
 
 		$TMoChilds = array();
 		$error = 0;
 
 		$childMoList = $this->getMoChilds();
 
-		if ($childMoList == -1) return -1;
+		if ($childMoList == -1) {
+			return -1;
+		}
 
-		foreach ($childMoList as $childMo) $TMoChilds[$childMo->id] = $childMo;
+		foreach ($childMoList as $childMo) {
+			$TMoChilds[$childMo->id] = $childMo;
+		}
 
 		foreach ($childMoList as $childMo) {
 			$childMoChildren = $childMo->getAllMoChilds($depth + 1);
@@ -1889,7 +1913,9 @@ class Mo extends CommonObject
 			if ($this->db->num_rows($resql) > 0) {
 				$obj = $this->db->fetch_object($resql);
 				$res = $MoParent->fetch($obj->id_moparent);
-				if ($res < 0) $error++;
+				if ($res < 0) {
+					$error++;
+				}
 			} else {
 				return 0;
 			}
@@ -2061,7 +2087,7 @@ class MoLine extends CommonObjectLine
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -2078,7 +2104,7 @@ class MoLine extends CommonObjectLine
 	 *
 	 * @param int    $id   Id object
 	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -2169,7 +2195,7 @@ class MoLine extends CommonObjectLine
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
@@ -2181,7 +2207,7 @@ class MoLine extends CommonObjectLine
 	 *
 	 * @param User $user       User that deletes
 	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{

@@ -314,7 +314,7 @@ if ($modecompta == 'RECETTES-DEPENSES') {
 				$cum[$obj->dm] += $obj->amount_ttc;
 			}
 			if ($obj->amount_ttc) {
-				$minyearmonth = ($minyearmonth ?min($minyearmonth, $obj->dm) : $obj->dm);
+				$minyearmonth = ($minyearmonth ? min($minyearmonth, $obj->dm) : $obj->dm);
 				$maxyearmonth = max($maxyearmonth, $obj->dm);
 			}
 			$i++;
@@ -463,7 +463,7 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 					if (!empty($cum[$caseprev]) && !empty($cum[$case])) {
 						$percent = (round(($cum[$case] - $cum[$caseprev]) / $cum[$caseprev], 4) * 100);
 						//print "X $cum[$case] - $cum[$caseprev] - $cum[$caseprev] - $percent X";
-						print ($percent >= 0 ? "+$percent" : "$percent").'%';
+						print($percent >= 0 ? "+$percent" : "$percent").'%';
 					}
 					if (!empty($cum[$caseprev]) && empty($cum[$case])) {
 						print '-100%';
@@ -582,7 +582,7 @@ for ($annee = $year_start; $annee <= $year_end; $annee++) {
 		// Montant total HT
 		if ($total_ht[$annee] || ($annee >= $minyear && $annee <= max($nowyear, $maxyear))) {
 			print '<td class="nowrap right">';
-			print (empty($total_ht[$annee]) ? '0' : price($total_ht[$annee]));
+			print(empty($total_ht[$annee]) ? '0' : price($total_ht[$annee]));
 			print "</td>";
 		} else {
 			print '<td>&nbsp;</td>';
@@ -592,7 +592,7 @@ for ($annee = $year_start; $annee <= $year_end; $annee++) {
 	// Total amount
 	if (!empty($total[$annee]) || ($annee >= $minyear && $annee <= max($nowyear, $maxyear))) {
 		print '<td class="nowrap right">';
-		print (empty($total[$annee]) ? '0' : price($total[$annee]));
+		print(empty($total[$annee]) ? '0' : price($total[$annee]));
 		print "</td>";
 	} else {
 		print '<td>&nbsp;</td>';
@@ -603,7 +603,7 @@ for ($annee = $year_start; $annee <= $year_end; $annee++) {
 		if (!empty($total[$annee - 1]) && !empty($total[$annee])) {
 			$percent = (round(($total[$annee] - $total[$annee - 1]) / $total[$annee - 1], 4) * 100);
 			print '<td class="nowrap borderrightlight right">';
-			print ($percent >= 0 ? "+$percent" : "$percent").'%';
+			print($percent >= 0 ? "+$percent" : "$percent").'%';
 			print '</td>';
 		}
 		if (!empty($total[$annee - 1]) && empty($total[$annee])) {

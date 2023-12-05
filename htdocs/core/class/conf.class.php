@@ -262,7 +262,9 @@ class Conf extends stdClass
 		// Unset all old modules values
 		if (!empty($this->modules)) {
 			foreach ($this->modules as $m) {
-				if (isset($this->$m)) unset($this->$m);
+				if (isset($this->$m)) {
+					unset($this->$m);
+				}
 			}
 		}
 
@@ -687,15 +689,23 @@ class Conf extends stdClass
 				// If module lot/serial enabled, we force the inc/dec mode to STOCK_CALCULATE_ON_SHIPMENT_CLOSE and STOCK_CALCULATE_ON_RECEPTION_CLOSE
 				$this->global->STOCK_CALCULATE_ON_BILL = 0;
 				$this->global->STOCK_CALCULATE_ON_VALIDATE_ORDER = 0;
-				if (empty($this->global->STOCK_CALCULATE_ON_SHIPMENT)) $this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE = 1;
-				if (empty($this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) $this->global->STOCK_CALCULATE_ON_SHIPMENT = 1;
+				if (empty($this->global->STOCK_CALCULATE_ON_SHIPMENT)) {
+					$this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE = 1;
+				}
+				if (empty($this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
+					$this->global->STOCK_CALCULATE_ON_SHIPMENT = 1;
+				}
 				$this->global->STOCK_CALCULATE_ON_SUPPLIER_BILL = 0;
 				$this->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER = 0;
 				if (!isModEnabled('reception')) {
 					$this->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER = 1;
 				} else {
-					if (empty($this->global->STOCK_CALCULATE_ON_RECEPTION)) $this->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE = 1;
-					if (empty($this->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) $this->global->STOCK_CALCULATE_ON_RECEPTION = 1;
+					if (empty($this->global->STOCK_CALCULATE_ON_RECEPTION)) {
+						$this->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE = 1;
+					}
+					if (empty($this->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
+						$this->global->STOCK_CALCULATE_ON_RECEPTION = 1;
+					}
 				}
 			}
 

@@ -235,8 +235,8 @@ class ChargeSociales extends CommonObject
 		$newamount = price2num($this->amount, 'MT');
 
 		if (!$this->check()) {
-			 $this->error = "ErrorBadParameter";
-			 return -2;
+			$this->error = "ErrorBadParameter";
+			return -2;
 		}
 
 		$this->db->begin();
@@ -286,7 +286,7 @@ class ChargeSociales extends CommonObject
 	 *      Delete a social contribution
 	 *
 	 *      @param		User    $user   Object user making delete
-	 *      @return     		int 	<0 if KO, >0 if OK
+	 *      @return     		int 	Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user)
 	{
@@ -347,7 +347,7 @@ class ChargeSociales extends CommonObject
 	 *
 	 *      @param	User	$user           User that modify
 	 *      @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *      @return int     		        <0 if KO, >0 if OK
+	 *      @return int     		        Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user, $notrigger = 0)
 	{
@@ -438,7 +438,7 @@ class ChargeSociales extends CommonObject
 	 *	@deprecated
 	 *  @see setPaid()
 	 *  @param    User    $user       Object user making change
-	 *  @return   int					<0 if KO, >0 if OK
+	 *  @return   int					Return integer <0 if KO, >0 if OK
 	 */
 	public function set_paid($user)
 	{
@@ -451,7 +451,7 @@ class ChargeSociales extends CommonObject
 	 *    Tag social contribution as paid completely
 	 *
 	 *    @param    User    $user       Object user making change
-	 *    @return   int					<0 if KO, >0 if OK
+	 *    @return   int					Return integer <0 if KO, >0 if OK
 	 */
 	public function setPaid($user)
 	{
@@ -477,7 +477,7 @@ class ChargeSociales extends CommonObject
 	 *	@deprecated
 	 *  @see setUnpaid()
 	 *  @param	User	$user       Object user making change
-	 *  @return	int					<0 if KO, >0 if OK
+	 *  @return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function set_unpaid($user)
 	{
@@ -490,7 +490,7 @@ class ChargeSociales extends CommonObject
 	 *    Remove tag paid on social contribution
 	 *
 	 *    @param	User	$user       Object user making change
-	 *    @return	int					<0 if KO, >0 if OK
+	 *    @return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function setUnpaid($user)
 	{
@@ -693,7 +693,7 @@ class ChargeSociales extends CommonObject
 	 * 	Charge les informations d'ordre info dans l'objet entrepot
 	 *
 	 *  @param	int		$id     Id of social contribution
-	 *  @return	int				<0 if KO, >0 if OK
+	 *  @return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function info($id)
 	{
@@ -750,7 +750,7 @@ class ChargeSociales extends CommonObject
 		$this->type_label = 'Type of social contribution';
 	}
 
-		/**
+	/**
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)

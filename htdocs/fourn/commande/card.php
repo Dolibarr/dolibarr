@@ -180,7 +180,7 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	$backurlforlist = DOL_URL_ROOT.'/fourn/commande/list.php'.($socid > 0 ? '?socid='.((int) $socid)  : '');
+	$backurlforlist = DOL_URL_ROOT.'/fourn/commande/list.php'.($socid > 0 ? '?socid='.((int) $socid) : '');
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
@@ -682,8 +682,9 @@ if (empty($reshook)) {
 				$newlang = '';
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 					$newlang = $object->thirdparty->default_lang;
-					if (GETPOST('lang_id', 'aZ09'))
+					if (GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
+					}
 				}
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
@@ -1262,7 +1263,8 @@ if (empty($reshook)) {
 					$element = $subelement = $origin;
 					$classname = ucfirst($subelement);
 					if ($origin == 'propal' || $origin == 'proposal') {
-						$element = 'comm/propal'; $subelement = 'propal';
+						$element = 'comm/propal';
+						$subelement = 'propal';
 						$classname = 'Propal';
 					}
 					if ($origin == 'order' || $origin == 'commande') {
@@ -1595,7 +1597,8 @@ if ($action == 'create') {
 
 		if ($origin == 'propal' || $origin == 'proposal') {
 			$classname = 'Propal';
-			$element = 'comm/propal'; $subelement = 'propal';
+			$element = 'comm/propal';
+			$subelement = 'propal';
 		}
 		if ($origin == 'order' || $origin == 'commande') {
 			$classname = 'Commande';
@@ -1634,7 +1637,7 @@ if ($action == 'create') {
 		$demand_reason_id = (!empty($objectsrc->demand_reason_id) ? $objectsrc->demand_reason_id : (!empty($soc->demand_reason_id) ? $soc->demand_reason_id : 0));
 		//$remise_percent		= (!empty($objectsrc->remise_percent) ? $objectsrc->remise_percent : (!empty($soc->remise_supplier_percent) ? $soc->remise_supplier_percent : 0));
 		//$remise_absolue		= (!empty($objectsrc->remise_absolue) ? $objectsrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
-		$dateinvoice		= !getDolGlobalString('MAIN_AUTOFILL_DATE') ?-1 : '';
+		$dateinvoice		= !getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : '';
 
 		$datedelivery = (!empty($objectsrc->delivery_date) ? $objectsrc->delivery_date : '');
 
@@ -2030,7 +2033,7 @@ if ($action == 'create') {
 
 	// Confirmation to delete line
 	if ($action == 'ask_deleteline') {
-		 $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
 	}
 
 	$parameters = array('formConfirm' => $formconfirm, 'lineid'=>$lineid);
@@ -2441,7 +2444,9 @@ if ($action == 'create') {
 
 		// Add free products/services form
 		global $forceall, $senderissupplier, $dateSelector, $inputalsopricewithtax;
-		$forceall = 1; $dateSelector = 0; $inputalsopricewithtax = 1;
+		$forceall = 1;
+		$dateSelector = 0;
+		$inputalsopricewithtax = 1;
 		$senderissupplier = 2; // $senderissupplier=2 is same than 1 but disable test on minimum qty and disable autofill qty with minimum.
 		if (getDolGlobalString('SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY')) {
 			$senderissupplier = 1;
@@ -2461,9 +2466,12 @@ if ($action == 'create') {
 
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-				if (empty($reshook))
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				}
+				if (empty($reshook)) {
 					$object->formAddObjectLine(1, $societe, $mysoc);
+				}
 			}
 		}
 		print '</table>';
@@ -2715,7 +2723,7 @@ if ($action == 'create') {
 			$action = 'presend';
 		}
 
-		if ($action != 'createorder' && $action != 'presend' ) {
+		if ($action != 'createorder' && $action != 'presend') {
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 
 			// Generated documents

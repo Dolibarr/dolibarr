@@ -834,7 +834,7 @@ class Account extends CommonObject
 	 *
 	 *    	@param	User	$user       Object user making action
 	 *      @param  int     $notrigger  1=Disable triggers
-	 *		@return	int					<0 if KO, >0 if OK
+	 *		@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -938,7 +938,7 @@ class Account extends CommonObject
 	 *  Update BBAN (RIB) account fields
 	 *
 	 *  @param	User|null	$user       Object user making update
-	 *  @return	int						<0 if KO, >0 if OK
+	 *  @return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function update_bban(User $user = null)
 	{
@@ -993,7 +993,7 @@ class Account extends CommonObject
 	 *
 	 *      @param	int		$id      	Id of bank account to get
 	 *      @param  string	$ref     	Ref of bank account to get
-	 *      @return	int					<0 if KO, >0 if OK
+	 *      @return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $ref = '')
 	{
@@ -1103,7 +1103,7 @@ class Account extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param 	int[]|int 	$categories 	Category or categories IDs
-	 * @return 	int							<0 if KO, >0 if OK
+	 * @return 	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function setCategories($categories)
 	{
@@ -1115,7 +1115,7 @@ class Account extends CommonObject
 	 *  Delete bank account from database
 	 *
 	 *  @param	User|null	$user	User deleting
-	 *  @return int      	       	<0 if KO, >0 if OK
+	 *  @return int      	       	Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user = null)
 	{
@@ -1342,7 +1342,7 @@ class Account extends CommonObject
 	 *      Charge indicateurs this->nb de tableau de bord
 	 *
 	 *		@param		int			$filteraccountid	To get info for a particular account id
-	 *      @return     int         <0 if KO, >0 if OK
+	 *      @return     int         Return integer <0 if KO, >0 if OK
 	 */
 	public function load_state_board($filteraccountid = 0)
 	{
@@ -1518,7 +1518,7 @@ class Account extends CommonObject
 				$label = $langs->trans("BankAccount");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -2172,7 +2172,7 @@ class AccountLine extends CommonObjectLine
 	 *
 	 * @param	User|null	$user		User object that delete
 	 * @param	int			$notrigger	1=Does not execute triggers, 0= execute triggers
-	 * @return	int 					<0 if KO, >0 if OK
+	 * @return	int 					Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user = null, $notrigger = 0)
 	{
@@ -2255,7 +2255,7 @@ class AccountLine extends CommonObjectLine
 	 * 	Delete bank line records
 	 *
 	 *	@param	User|null	$user	User object that delete
-	 *  @return	int 				<0 if KO, >0 if OK
+	 *  @return	int 				Return integer <0 if KO, >0 if OK
 	 */
 	public function delete_urls(User $user = null)
 	{
@@ -2292,7 +2292,7 @@ class AccountLine extends CommonObjectLine
 	 *
 	 *		@param	User	$user			Object user making update
 	 *		@param 	int		$notrigger		0=Disable all triggers
-	 *		@return	int						<0 if KO, >0 if OK
+	 *		@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -2324,7 +2324,7 @@ class AccountLine extends CommonObjectLine
 	 *	@param	User	$user			Objet user making update
 	 *	@param 	int		$cat			Category id
 	 *	@param	int		$conciliated	1=Set transaction to conciliated, 0=Keep transaction non conciliated
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function update_conciliation(User $user, $cat, $conciliated = 1)
 	{

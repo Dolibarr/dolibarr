@@ -162,7 +162,7 @@ foreach ($dirmodels as $reldir) {
 
 						if ($module->isEnabled()) {
 							print '<tr class="oddeven"><td width="100">';
-							print (empty($module->name) ? $name : $module->name);
+							print(empty($module->name) ? $name : $module->name);
 							print "</td><td>\n";
 
 							print $module->info($langs);

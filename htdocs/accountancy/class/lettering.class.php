@@ -469,9 +469,15 @@ class Lettering extends BookKeeping
 						$group_error++;
 						break;
 					}
-					if (!isset($lettering_code)) $lettering_code = (string) $line_infos['lettering_code'];
-					if (!empty($line_infos['lettering_code'])) $do_it = true;
-				} elseif (!empty($line_infos['lettering_code'])) $do_it = false;
+					if (!isset($lettering_code)) {
+						$lettering_code = (string) $line_infos['lettering_code'];
+					}
+					if (!empty($line_infos['lettering_code'])) {
+						$do_it = true;
+					}
+				} elseif (!empty($line_infos['lettering_code'])) {
+					$do_it = false;
+				}
 			}
 
 			// Check balance amount
@@ -482,8 +488,11 @@ class Lettering extends BookKeeping
 
 			// Lettering/Unlettering the group of bookkeeping lines
 			if (!$group_error && $do_it) {
-				if ($unlettering) $result = $this->deleteLettering($bookkeeping_lines);
-				else $result = $this->updateLettering($bookkeeping_lines);
+				if ($unlettering) {
+					$result = $this->deleteLettering($bookkeeping_lines);
+				} else {
+					$result = $this->updateLettering($bookkeeping_lines);
+				}
 				if ($result < 0) {
 					$group_error++;
 				} elseif ($result > 0) {
@@ -534,7 +543,9 @@ class Lettering extends BookKeeping
 			$sql .= "  AND pn.piece_num = ab.piece_num";
 			$sql .= " )";
 		}
-		if ($only_has_subledger_account) $sql .= " AND ab.subledger_account != ''";
+		if ($only_has_subledger_account) {
+			$sql .= " AND ab.subledger_account != ''";
+		}
 
 		dol_syslog(__METHOD__ . " - Get all bookkeeping lines", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -608,7 +619,9 @@ class Lettering extends BookKeeping
 				$sql .= "  AND dpn.piece_num = ab.piece_num";
 				$sql .= " )";
 				$sql .= ")";
-				if ($only_has_subledger_account) $sql .= " AND ab.subledger_account != ''";
+				if ($only_has_subledger_account) {
+					$sql .= " AND ab.subledger_account != ''";
+				}
 
 				dol_syslog(__METHOD__ . " - Get all bookkeeping lines linked", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -629,7 +642,9 @@ class Lettering extends BookKeeping
 				}
 				$this->db->free($resql);
 
-				if (!empty($group)) $grouped_lines[] = $group;
+				if (!empty($group)) {
+					$grouped_lines[] = $group;
+				}
 			}
 		}
 
@@ -831,7 +846,9 @@ class Lettering extends BookKeeping
 
 			foreach ($element_ids as $element_id) {
 				// Continue if element id in not found
-				if (!isset($link_by_element[$element_id])) continue;
+				if (!isset($link_by_element[$element_id])) {
+					continue;
+				}
 
 				// Set the element in the current group
 				$current_group[$element_id] = $element_id;

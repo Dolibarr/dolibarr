@@ -556,7 +556,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			//}
 		} else {
 			//if ($productid > 0) {
-				$currentstock = $stock_prod[$objp->rowid];
+			$currentstock = $stock_prod[$objp->rowid];
 			//} else {
 			//	$currentstock = $objp->stock;
 			//}
@@ -639,7 +639,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			if ($nbofmovement > 0) {
 				print '<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$objp->rowid;
 				foreach ($search_fk_warehouse as $val) {
-					print ($val > 0 ? '&search_warehouse='.$val : '');
+					print($val > 0 ? '&search_warehouse='.$val : '');
 				}
 				print '">'.$langs->trans("Movements").'</a>';
 				print ' <span class="tabs"><span class="badge">'.$nbofmovement.'</span></span>';

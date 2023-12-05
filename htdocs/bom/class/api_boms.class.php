@@ -537,7 +537,7 @@ class Boms extends DolibarrApi
 			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
 			}
-				$myobject[$field] = $data[$field];
+			$myobject[$field] = $data[$field];
 		}
 		return $myobject;
 	}

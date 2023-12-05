@@ -874,7 +874,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	 *  @param  Commande	$object			Object order
 	 *	@param	int			$posy			Position y in PDF
 	 *	@param	Translate	$outputlangs	Object langs for output
-	 *	@return int							<0 if KO, >0 if OK
+	 *	@return int							Return integer <0 if KO, >0 if OK
 	 */
 	protected function drawPaymentsTable(&$pdf, $object, $posy, $outputlangs)
 	{
@@ -1404,7 +1404,9 @@ class pdf_eratosthene extends ModelePDFCommandes
 		global $conf, $langs, $hookmanager, $mysoc;
 
 		$ltrdirection = 'L';
-		if ($outputlangs->trans("DIRECTION") == 'rtl') $ltrdirection = 'R';
+		if ($outputlangs->trans("DIRECTION") == 'rtl') {
+			$ltrdirection = 'R';
+		}
 
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "bills", "propal", "orders", "companies"));

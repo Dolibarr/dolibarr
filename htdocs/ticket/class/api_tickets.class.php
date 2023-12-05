@@ -288,7 +288,7 @@ class Tickets extends DolibarrApi
 		if (!count($obj_ret)) {
 			throw new RestException(404, 'No ticket found');
 		}
-			return $obj_ret;
+		return $obj_ret;
 	}
 
 	/**
