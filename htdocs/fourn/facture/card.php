@@ -1082,13 +1082,15 @@ if (empty($reshook)) {
 						$element = $subelement = 'commande';
 					}
 					if ($element == 'propal') {
-						$element = 'comm/propal'; $subelement = 'propal';
+						$element = 'comm/propal';
+						$subelement = 'propal';
 					}
 					if ($element == 'contract') {
 						$element = $subelement = 'contrat';
 					}
 					if ($element == 'order_supplier') {
-						$element = 'fourn'; $subelement = 'fournisseur.commande';
+						$element = 'fourn';
+						$subelement = 'fournisseur.commande';
 					}
 					if ($element == 'project') {
 						$element = 'projet';
@@ -2075,13 +2077,15 @@ if ($action == 'create') {
 			$element = $subelement = 'commande';
 		}
 		if ($element == 'propal') {
-			$element = 'comm/propal'; $subelement = 'propal';
+			$element = 'comm/propal';
+			$subelement = 'propal';
 		}
 		if ($element == 'contract') {
 			$element = $subelement = 'contrat';
 		}
 		if ($element == 'order_supplier') {
-			$element = 'fourn'; $subelement = 'fournisseur.commande';
+			$element = 'fourn';
+			$subelement = 'fournisseur.commande';
 		}
 
 		require_once DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php';
@@ -2175,7 +2179,7 @@ if ($action == 'create') {
 		$datetmp = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 		$dateinvoice = ($datetmp == '' ? (!getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : '') : $datetmp);
 		$datetmp = dol_mktime(12, 0, 0, GETPOST('echmonth', 'int'), GETPOST('echday', 'int'), GETPOST('echyear', 'int'));
-		$datedue = ($datetmp == '' ?-1 : $datetmp);
+		$datedue = ($datetmp == '' ? -1 : $datetmp);
 
 		// Replicate extrafields
 		$objectsrc->fetch_optionals();
@@ -2189,7 +2193,7 @@ if ($action == 'create') {
 		$datetmp = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 		$dateinvoice = ($datetmp == '' ? (getDolGlobalInt('MAIN_AUTOFILL_DATE') ? '' : -1) : $datetmp);
 		$datetmp = dol_mktime(12, 0, 0, GETPOST('echmonth', 'int'), GETPOST('echday', 'int'), GETPOST('echyear', 'int'));
-		$datedue = ($datetmp == '' ?-1 : $datetmp);
+		$datedue = ($datetmp == '' ? -1 : $datetmp);
 
 		if (isModEnabled("multicurrency") && !empty($soc->multicurrency_code)) {
 			$currency_code = $soc->multicurrency_code;
@@ -2377,7 +2381,7 @@ if ($action == 'create') {
 
 		// Standard invoice
 		print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
-		$tmp = '<input type="radio" id="radio_standard" name="type" value="0"'.(GETPOST('type', 'int')? '' : 'checked').'> ';
+		$tmp = '<input type="radio" id="radio_standard" name="type" value="0"'.(GETPOST('type', 'int') ? '' : 'checked').'> ';
 		$desc = $form->textwithpicto($tmp.'<label for="radio_standard">'.$langs->trans("InvoiceStandardAsk").'</label>', $langs->transnoentities("InvoiceStandardDesc"), 1, 'help', '', 0, 3);
 		print $desc;
 		print '</div></div>';
@@ -2699,7 +2703,7 @@ if ($action == 'create') {
 			print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 			print '<td class="maxwidthonsmartphone">';
 			print img_picto('', 'currency', 'class="pictofixedwidth"');
-			print $form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ?GETPOST('multicurrency_code', 'alpha') : $currency_code), 'multicurrency_code');
+			print $form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code', 'alpha') : $currency_code), 'multicurrency_code');
 			print '</td></tr>';
 		}
 
@@ -2746,7 +2750,7 @@ if ($action == 'create') {
 		// Public note
 		print '<tr><td>'.$langs->trans('NotePublic').'</td>';
 		print '<td>';
-		$doleditor = new DolEditor('note_public', (GETPOSTISSET('note_public') ?GETPOST('note_public', 'restricthtml') : $note_public), '', 80, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
+		$doleditor = new DolEditor('note_public', (GETPOSTISSET('note_public') ? GETPOST('note_public', 'restricthtml') : $note_public), '', 80, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td>';
 		// print '<td><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
@@ -2755,7 +2759,7 @@ if ($action == 'create') {
 		// Private note
 		print '<tr><td>'.$langs->trans('NotePrivate').'</td>';
 		print '<td>';
-		$doleditor = new DolEditor('note_private', (GETPOSTISSET('note_private') ?GETPOST('note_private', 'restricthtml') : $note_private), '', 80, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
+		$doleditor = new DolEditor('note_private', (GETPOSTISSET('note_private') ? GETPOST('note_private', 'restricthtml') : $note_private), '', 80, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td>';
 		// print '<td><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
@@ -2992,7 +2996,7 @@ if ($action == 'create') {
 						$value = '<input type="hidden" id="idwarehouse" name="idwarehouse" value="'.key($warehouse_array).'">';
 					} else {
 						$label = $object->type == FactureFournisseur::TYPE_CREDIT_NOTE ? $langs->trans("SelectWarehouseForStockDecrease") : $langs->trans("SelectWarehouseForStockIncrease");
-						$value = $formproduct->selectWarehouses(GETPOST('idwarehouse') ?GETPOST('idwarehouse') : 'ifone', 'idwarehouse', '', 1);
+						$value = $formproduct->selectWarehouses(GETPOST('idwarehouse') ? GETPOST('idwarehouse') : 'ifone', 'idwarehouse', '', 1);
 					}
 					$formquestion = array(
 						array('type' => 'other', 'name' => 'idwarehouse', 'label' => $label, 'value' => $value)
@@ -3024,7 +3028,7 @@ if ($action == 'create') {
 					$value = '<input type="hidden" id="idwarehouse" name="idwarehouse" value="'.key($warehouse_array).'">';
 				} else {
 					$label = $object->type == FactureFournisseur::TYPE_CREDIT_NOTE ? $langs->trans("SelectWarehouseForStockIncrease") : $langs->trans("SelectWarehouseForStockDecrease");
-					$value = $formproduct->selectWarehouses(GETPOST('idwarehouse') ?GETPOST('idwarehouse') : 'ifone', 'idwarehouse', '', 1);
+					$value = $formproduct->selectWarehouses(GETPOST('idwarehouse') ? GETPOST('idwarehouse') : 'ifone', 'idwarehouse', '', 1);
 				}
 				$formquestion = array(
 					array('type' => 'other', 'name' => 'idwarehouse', 'label' => $label, 'value' => $value)
@@ -3120,7 +3124,7 @@ if ($action == 'create') {
 					$selectwarehouse .= '<input type="hidden" id="idwarehouse" name="idwarehouse" value="'.key($warehouse_array).'">';
 				} else {
 					$label = $object->type == FactureFournisseur::TYPE_CREDIT_NOTE ? $langs->trans("SelectWarehouseForStockIncrease") : $langs->trans("SelectWarehouseForStockDecrease");
-					$selectwarehouse .= $formproduct->selectWarehouses(GETPOST('idwarehouse') ?GETPOST('idwarehouse') : 'ifone', 'idwarehouse', '', 1);
+					$selectwarehouse .= $formproduct->selectWarehouses(GETPOST('idwarehouse') ? GETPOST('idwarehouse') : 'ifone', 'idwarehouse', '', 1);
 				}
 				$selectwarehouse .= '</span>';
 
@@ -3585,12 +3589,14 @@ if ($action == 'create') {
 				$sign = - 1;
 			}
 
-			$nbrows = 9; $nbcols = 3;
+			$nbrows = 9;
+			$nbcols = 3;
 			if (isModEnabled('project')) {
 				$nbrows++;
 			}
 			if (isModEnabled("banque")) {
-				$nbrows++; $nbcols++;
+				$nbrows++;
+				$nbcols++;
 			}
 			if (isModEnabled('incoterm')) {
 				$nbrows++;
@@ -3931,7 +3937,9 @@ if ($action == 'create') {
 			print '<table id="tablelines" class="noborder noshadow centpercent">';
 
 			global $forceall, $senderissupplier, $dateSelector, $inputalsopricewithtax;
-			$forceall = 1; $dateSelector = 0; $inputalsopricewithtax = 1;
+			$forceall = 1;
+			$dateSelector = 0;
+			$inputalsopricewithtax = 1;
 			$senderissupplier = 2; // $senderissupplier=2 is same than 1 but disable test on minimum qty and disable autofill qty with minimum.
 			//if (!empty($conf->global->SUPPLIER_INVOICE_WITH_NOPRICEDEFINED)) $senderissupplier=2;
 			if (getDolGlobalString('SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY')) {
@@ -3952,9 +3960,12 @@ if ($action == 'create') {
 
 					$parameters = array();
 					$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-					if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-					if (empty($reshook))
+					if ($reshook < 0) {
+						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+					}
+					if (empty($reshook)) {
 						$object->formAddObjectLine(1, $societe, $mysoc);
+					}
 				}
 			}
 
@@ -3975,7 +3986,7 @@ if ($action == 'create') {
 
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
-																									  // modified by hook
+			// modified by hook
 			if (empty($reshook)) {
 				// Modify a validated invoice with no payments
 				if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $action != 'confirm_edit' && $object->getSommePaiement() == 0 && $usercancreate) {
@@ -4066,10 +4077,10 @@ if ($action == 'create') {
 
 				// Classify paid
 				if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0 && (
-						($object->type != FactureFournisseur::TYPE_CREDIT_NOTE && $object->type != FactureFournisseur::TYPE_DEPOSIT && ($resteapayer <= 0 || (getDolGlobalString('SUPPLIER_INVOICE_CAN_SET_PAID_EVEN_IF_PARTIALLY_PAID') && $object->total_ttc == $resteapayer))) ||
+					($object->type != FactureFournisseur::TYPE_CREDIT_NOTE && $object->type != FactureFournisseur::TYPE_DEPOSIT && ($resteapayer <= 0 || (getDolGlobalString('SUPPLIER_INVOICE_CAN_SET_PAID_EVEN_IF_PARTIALLY_PAID') && $object->total_ttc == $resteapayer))) ||
 						($object->type == FactureFournisseur::TYPE_CREDIT_NOTE && $resteapayer >= 0) ||
 						($object->type == FactureFournisseur::TYPE_DEPOSIT && $object->total_ttc > 0 && ($resteapayer == 0 || (getDolGlobalString('SUPPLIER_INVOICE_CAN_SET_PAID_EVEN_IF_PARTIALLY_PAID') && $object->total_ttc == $resteapayer)))
-					)
+				)
 				) {
 					print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=paid">'.$langs->trans('ClassifyPaid').'</a>';
 				}

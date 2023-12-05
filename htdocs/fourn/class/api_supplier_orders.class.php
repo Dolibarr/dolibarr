@@ -623,27 +623,27 @@ class SupplierOrders extends DolibarrApi
 		);
 	}
 
-		/**
+	/**
 	 * Receives the order, dispatches products.
-		 *
+	 *
 	 * Example:
 	 * <code> {
 	 *   "closeopenorder": 1,
 	 *   "comment": "",
-		 *   "lines": [{
-		 *      "id": 14,
-		 *      "fk_product": 112,
-		 *      "qty": 18,
-		 *      "warehouse": 1,
-		 *      "price": 114,
-		 *      "comment": "",
-		 *      "eatby": 0,
-		 *      "sellby": 0,
-		 *      "batch": 0,
-		 *      "notrigger": 0
-		 *   }]
+	 *   "lines": [{
+	 *      "id": 14,
+	 *      "fk_product": 112,
+	 *      "qty": 18,
+	 *      "warehouse": 1,
+	 *      "price": 114,
+	 *      "comment": "",
+	 *      "eatby": 0,
+	 *      "sellby": 0,
+	 *      "batch": 0,
+	 *      "notrigger": 0
+	 *   }]
 	 * }</code>
-		 *
+	 *
 	 * @param   int		$id             Order ID
 	 * @param   integer	$closeopenorder	Close order if everything is received {@required false}
 	 * @param   string	$comment	Comment {@required false}
@@ -673,17 +673,19 @@ class SupplierOrders extends DolibarrApi
 		foreach ($lines as $line) {
 			$lineObj =(object) $line;
 
-			$result=$this->order->dispatchProduct(DolibarrApiAccess::$user,
-				  $lineObj->fk_product,
-				  $lineObj->qty,
-				  $lineObj->warehouse,
-				  $lineObj->price,
-				  $lineObj->comment,
-				  $lineObj->eatby,
-				  $lineObj->sellby,
-				  $lineObj->batch,
-				  $lineObj->id,
-				  $lineObj->notrigger);
+			$result=$this->order->dispatchProduct(
+				DolibarrApiAccess::$user,
+				$lineObj->fk_product,
+				$lineObj->qty,
+				$lineObj->warehouse,
+				$lineObj->price,
+				$lineObj->comment,
+				$lineObj->eatby,
+				$lineObj->sellby,
+				$lineObj->batch,
+				$lineObj->id,
+				$lineObj->notrigger
+			);
 
 			if ($result < 0) {
 				throw new RestException(500, 'Error dispatch order line '.$line->id.': '.$this->order->error);

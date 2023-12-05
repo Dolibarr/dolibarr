@@ -215,8 +215,8 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 					if (strlen($numFinal)==13) {// be sure that the mask length is correct for EAN13
 						$ean = substr($numFinal, 0, 12); //take first 12 digits
 							$eansum = barcode_gen_ean_sum($ean);
-							$ean .= $eansum; //substitute the las character by the key
-							$numFinal = $ean;
+						$ean .= $eansum; //substitute the las character by the key
+						$numFinal = $ean;
 					}
 					break;
 				// Other barcode cases with key could be written here

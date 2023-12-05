@@ -79,7 +79,7 @@ abstract class Stats
 	 * 	@param	int 	$format 		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
 	 * 	@return int						value
 	 */
-	protected abstract function getNbByMonth($year, $format = 0);
+	abstract protected function getNbByMonth($year, $format = 0);
 
 	/**
 	 * Return nb of elements by month for several years
@@ -174,7 +174,7 @@ abstract class Stats
 	 * @param	int 	$format			0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
 	 * @return 	int						value
 	 */
-	protected abstract function getAmountByMonth($year, $format = 0);
+	abstract protected function getAmountByMonth($year, $format = 0);
 
 	/**
 	 * Return amount of elements by month for several years.
@@ -274,7 +274,7 @@ abstract class Stats
 	 * @param	int     $year           year number
 	 * @return 	array					array of values
 	 */
-	protected abstract function getAverageByMonth($year);
+	abstract protected function getAverageByMonth($year);
 
 	/**
 	 * Return average of entity by month for several years

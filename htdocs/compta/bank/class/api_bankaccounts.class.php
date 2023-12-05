@@ -32,7 +32,7 @@ class BankAccounts extends DolibarrApi
 	/**
 	 * array $FIELDS Mandatory fields, checked when creating an object
 	 */
-	static $FIELDS = array(
+	public static $FIELDS = array(
 		'ref',
 		'label',
 		'type',

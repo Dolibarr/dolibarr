@@ -315,7 +315,7 @@ class ProductAttributeValue extends CommonObjectLine
 	 *
 	 * @param  User	$user	   Object user
 	 * @param  int  $notrigger Do not execute trigger
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{

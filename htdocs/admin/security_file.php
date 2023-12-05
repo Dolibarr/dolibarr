@@ -200,7 +200,7 @@ print '<td>'.$langs->trans("AntiVirusParam").'<br>';
 print '<span class="opacitymedium">'.$langs->trans("AntiVirusParamExample").'</span>';
 print '</td>';
 print '<td>';
-print '<input type="text" '.(defined('MAIN_ANTIVIRUS_PARAM') ? 'disabled ' : '').'name="MAIN_ANTIVIRUS_PARAM" class="minwidth500imp" value="'.(getDolGlobalString('MAIN_ANTIVIRUS_PARAM') ?dol_escape_htmltag($conf->global->MAIN_ANTIVIRUS_PARAM) : '').'">';
+print '<input type="text" '.(defined('MAIN_ANTIVIRUS_PARAM') ? 'disabled ' : '').'name="MAIN_ANTIVIRUS_PARAM" class="minwidth500imp" value="'.(getDolGlobalString('MAIN_ANTIVIRUS_PARAM') ? dol_escape_htmltag($conf->global->MAIN_ANTIVIRUS_PARAM) : '').'">';
 if (defined('MAIN_ANTIVIRUS_PARAM')) {
 	print '<br><span class="opacitymedium">'.$langs->trans("ValueIsForcedBySystem").'</span>';
 }

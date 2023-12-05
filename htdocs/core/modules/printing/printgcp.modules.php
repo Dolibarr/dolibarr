@@ -530,9 +530,9 @@ class printing_printgcp extends PrintingDriver
 				$html .= '</tr>';
 			}
 		} else {
-				$html .= '<tr class="oddeven">';
-				$html .= '<td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td>';
-				$html .= '</tr>';
+			$html .= '<tr class="oddeven">';
+			$html .= '<td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td>';
+			$html .= '</tr>';
 		}
 		$html .= '</table>';
 		$html .= '</div>';

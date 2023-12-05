@@ -53,7 +53,7 @@ $search_fk_user_modif = GETPOST('search_fk_user_modif', 'int');
 $search_import_key = GETPOST('search_import_key', 'int');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -147,7 +147,9 @@ if ($user->socid > 0) { // Protection if external user
 	accessforbidden();
 }
 //$result = restrictedArea($user, 'productbatch');
-if (!$permissiontoread) accessforbidden();
+if (!$permissiontoread) {
+	accessforbidden();
+}
 
 
 /*

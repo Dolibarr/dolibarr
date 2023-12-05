@@ -53,7 +53,6 @@ abstract class ModeleBarCode
  */
 abstract class ModeleNumRefBarCode extends CommonNumRefGenerator
 {
-
 	/**
 	 * @var int Code facultatif
 	 */

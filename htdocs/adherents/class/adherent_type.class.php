@@ -159,7 +159,7 @@ class AdherentType extends CommonObject
 	/**
 	 * Load array this->multilangs
 	 *
-	 * @return int        <0 if KO, >0 if OK
+	 * @return int        Return integer <0 if KO, >0 if OK
 	 */
 	public function getMultiLangs()
 	{
@@ -195,7 +195,7 @@ class AdherentType extends CommonObject
 	 * Update or add a translation for this member type
 	 *
 	 * @param  User $user Object user making update
-	 * @return int        <0 if KO, >0 if OK
+	 * @return int        Return integer <0 if KO, >0 if OK
 	 */
 	public function setMultiLangs($user)
 	{
@@ -276,12 +276,12 @@ class AdherentType extends CommonObject
 		return 1;
 	}
 
-	   /**
+	/**
 		* Delete a language for this member type
 		*
 		* @param string $langtodelete 	Language code to delete
 		* @param User   $user         	Object user making delete
-		* @return int                   <0 if KO, >0 if OK
+		* @return int                   Return integer <0 if KO, >0 if OK
 		*/
 	public function delMultiLangs($langtodelete, $user)
 	{
@@ -401,7 +401,7 @@ class AdherentType extends CommonObject
 		$sql .= "caneditamount = ".((int) $this->caneditamount).",";
 		$sql .= "duration = '".$this->db->escape($this->duration_value.$this->duration_unit)."',";
 		$sql .= "note = '".$this->db->escape($this->note_public)."',";
-		$sql .= "vote = ".(integer) $this->db->escape($this->vote).",";
+		$sql .= "vote = ".(int) $this->db->escape($this->vote).",";
 		$sql .= "mail_valid = '".$this->db->escape($this->mail_valid)."'";
 		$sql .= " WHERE rowid =".((int) $this->id);
 
@@ -469,7 +469,9 @@ class AdherentType extends CommonObject
 			// Call trigger
 			$result = $this->call_trigger('MEMBER_TYPE_DELETE', $user);
 			if ($result < 0) {
-				$error++; $this->db->rollback(); return -2;
+				$error++;
+				$this->db->rollback();
+				return -2;
 			}
 			// End call triggers
 
@@ -486,7 +488,7 @@ class AdherentType extends CommonObject
 	 *  Function that retrieves the properties of a membership type
 	 *
 	 *  @param 		int		$rowid			Id of member type to load
-	 *  @return		int						<0 if KO, >0 if OK
+	 *  @return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($rowid)
 	{
@@ -765,7 +767,7 @@ class AdherentType extends CommonObject
 			}
 		}
 		$linkstart = '<a href="'.$url.'"';
-		$linkstart .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+		$linkstart .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 		$linkstart .= $dataparams.' class="'.$classfortooltip.'">';
 
 		$linkend = '</a>';
@@ -775,7 +777,7 @@ class AdherentType extends CommonObject
 			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), (' class="'.(($withpicto != 2) ? 'paddingright' : '').'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
-			$result .= ($maxlen ?dol_trunc($this->label, $maxlen) : $this->label);
+			$result .= ($maxlen ? dol_trunc($this->label, $maxlen) : $this->label);
 		}
 		$result .= $linkend;
 

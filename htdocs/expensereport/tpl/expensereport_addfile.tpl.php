@@ -1,4 +1,5 @@
 <?php
+
 // Add line to upload new file
 print '<!-- expensereport_addfile.tpl.php -->'."\n";
 print '<tr class="truploadnewfilenow'.(empty($tredited) ? ' oddeven nohover' : ' '.$tredited).'"'.(!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? ' style="display: none"' : '').'>';

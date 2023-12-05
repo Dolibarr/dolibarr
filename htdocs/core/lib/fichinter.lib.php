@@ -68,7 +68,7 @@ function fichinter_prepare_head($object)
 		require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 		$objectres = new Dolresource($db);
 		$linked_resources = $objectres->getElementResources('fichinter', $object->id);
-		$nbResource = (is_array($linked_resources) ?count($linked_resources) : 0);
+		$nbResource = (is_array($linked_resources) ? count($linked_resources) : 0);
 		// if (is_array($objectres->available_resources))
 		// {
 		// 	foreach ($objectres->available_resources as $modresources => $resources)

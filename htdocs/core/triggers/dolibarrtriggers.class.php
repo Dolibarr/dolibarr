@@ -92,7 +92,6 @@ abstract class DolibarrTriggers
 	 */
 	public function __construct(DoliDB $db)
 	{
-
 		$this->db = $db;
 
 		if (empty($this->name)) {

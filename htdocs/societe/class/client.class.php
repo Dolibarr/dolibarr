@@ -52,7 +52,7 @@ class Client extends Societe
 	/**
 	 *  Load indicators into this->nb for board
 	 *
-	 *  @return     int         <0 if KO, >0 if OK
+	 *  @return     int         Return integer <0 if KO, >0 if OK
 	 */
 	public function load_state_board()
 	{
@@ -102,7 +102,7 @@ class Client extends Societe
 	 *  Load array of prospect status
 	 *
 	 *  @param	int		$active     1=Active only, 0=Not active only, -1=All
-	 *  @return int					<0 if KO, >0 if OK
+	 *  @return int					Return integer <0 if KO, >0 if OK
 	 */
 	public function loadCacheOfProspStatus($active = 1)
 	{

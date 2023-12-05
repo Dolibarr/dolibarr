@@ -62,12 +62,12 @@ $langs->load("main");
 
 // Enable and test if module web services is enabled
 if (!getDolGlobalString('MAIN_MODULE_WEBSERVICES')) {
-	   $langs->load("admin");
+	$langs->load("admin");
 
-	   dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
-	   print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
-	   print $langs->trans("ToActivateModule");
-	   exit;
+	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
+	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
+	print $langs->trans("ToActivateModule");
+	exit;
 }
 
 // Create the soap Object

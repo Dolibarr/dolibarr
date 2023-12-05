@@ -114,8 +114,7 @@ $colorbackhmenu1 = join(',', colorStringToArray($colorbackhmenu1)); // Normalize
 print "<!-- BEGIN PHP TEMPLATE LOGIN.TPL.PHP -->\n";
 
 if (getDolGlobalString('ADD_UNSPLASH_LOGIN_BACKGROUND')) {
-	// For example $conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND = 'https://source.unsplash.com/random'
-	?>
+	// For example $conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND = 'https://source.unsplash.com/random'?>
 	<body class="body bodylogin" style="background-image: url('<?php echo dol_escape_htmltag($conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND); ?>'); background-repeat: no-repeat; background-position: center center; background-attachment: fixed; background-size: cover; background-color: #ffffff;">
 	<?php
 } else {
@@ -138,10 +137,10 @@ $(document).ready(function () {
 
 <div class="login_center center"<?php
 if (!getDolGlobalString('ADD_UNSPLASH_LOGIN_BACKGROUND')) {
-	$backstyle = 'background: linear-gradient('.((!empty($conf->browser->layout) && $conf->browser->layout == 'phone') ? '0deg' : '4deg').', rgb(240,240,240) 52%, rgb('.$colorbackhmenu1.') 52.1%);';
-	// old style:  $backstyle = 'background-image: linear-gradient(rgb('.$colorbackhmenu1.',0.3), rgb(240,240,240));';
-	$backstyle = getDolGlobalString('MAIN_LOGIN_BACKGROUND_STYLE', $backstyle);
-	print !getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; '.$backstyle.'"' : '';
+		$backstyle = 'background: linear-gradient('.((!empty($conf->browser->layout) && $conf->browser->layout == 'phone') ? '0deg' : '4deg').', rgb(240,240,240) 52%, rgb('.$colorbackhmenu1.') 52.1%);';
+		// old style:  $backstyle = 'background-image: linear-gradient(rgb('.$colorbackhmenu1.',0.3), rgb(240,240,240));';
+		$backstyle = getDolGlobalString('MAIN_LOGIN_BACKGROUND_STYLE', $backstyle);
+		print !getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; '.$backstyle.'"' : '';
 }
 ?>>
 <div class="login_vertical_align">
@@ -226,15 +225,14 @@ if ($disablenofollow) {
 
 <?php
 if (!empty($captcha)) {
-	// Add a variable param to force not using cache (jmobile)
+		// Add a variable param to force not using cache (jmobile)
 	$php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self); // Remove param time
 	if (preg_match('/\?/', $php_self)) {
 		$php_self .= '&time='.dol_print_date(dol_now(), 'dayhourlog');
 	} else {
 		$php_self .= '?time='.dol_print_date(dol_now(), 'dayhourlog');
 	}
-	// TODO: provide accessible captcha variants
-	?>
+		// TODO: provide accessible captcha variants?>
 	<!-- Captcha -->
 	<div class="trinputlogin">
 	<div class="tagtd none valignmiddle tdinputlogin nowrap">
@@ -410,8 +408,7 @@ if (!empty($_SESSION['dol_loginmesg'])) {
 		print '<div class="error">';
 	}
 	print dol_escape_htmltag($message);
-	print '</div>';
-	?>
+	print '</div>'; ?>
 	</div>
 	<?php
 }

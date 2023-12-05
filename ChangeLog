@@ -175,6 +175,7 @@ NEW: When an user unset the batch management of products, transformation of each
 SEC: #25512 applicative anti bruteforce - security on too many login attempts (#25520)
 SEC: Add action confirm_... as sensitive to need a CSRF token
 SEC: Disable not used PHP streams
+SEC: Add option MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY
 
 
 For developers or integrators:

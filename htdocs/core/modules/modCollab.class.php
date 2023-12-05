@@ -30,7 +30,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modCollab extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -74,7 +73,7 @@ class modCollab extends DolibarrModules
 
 		// Constants
 		//-----------
-		   $this->const = array();
+		$this->const = array();
 
 		// New pages on tabs
 		// -----------------

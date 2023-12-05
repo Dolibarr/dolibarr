@@ -301,13 +301,13 @@ if ($action == 'create') {
 			// Type
 			print "<tr>";
 			print '<td class="fieldrequired">'.$langs->trans("Type").'</td><td>';
-			$form->select_type_fees(GETPOST('type', 'int') ?GETPOST('type', 'int') : $object->type, 'type', 0);
+			$form->select_type_fees(GETPOST('type', 'int') ? GETPOST('type', 'int') : $object->type, 'type', 0);
 			print '</td></tr>';
 
 			// Who
 			print "<tr>";
 			print '<td class="fieldrequired">'.$langs->trans("Person").'</td><td>';
-			print $form->select_dolusers(GETPOST('fk_user', 'int') ?GETPOST('fk_user', 'int') : $object->fk_user, 'fk_user', 0, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+			print $form->select_dolusers(GETPOST('fk_user', 'int') ? GETPOST('fk_user', 'int') : $object->fk_user, 'fk_user', 0, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 			print '</td></tr>';
 
 			// Date

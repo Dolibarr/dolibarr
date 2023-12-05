@@ -85,7 +85,7 @@ $coldisplay = 0;
 ?>
 <tr class="oddeven tredited">
 <?php if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) { ?>
-		<td class="linecolnum center"><?php $coldisplay++; ?><?php echo ($i + 1); ?></td>
+		<td class="linecolnum center"><?php $coldisplay++; ?><?php echo($i + 1); ?></td>
 <?php }
 
 $coldisplay++;
@@ -103,8 +103,7 @@ $coldisplay++;
 		if (empty($canchangeproduct)) {
 			if ($line->fk_parent_line > 0) {
 				echo img_picto('', 'rightarrow');
-			}
-			?>
+			} ?>
 			<a href="<?php echo DOL_URL_ROOT.'/product/card.php?id='.$line->fk_product; ?>">
 			<?php
 			if ($line->product_type == 1) {
@@ -112,8 +111,7 @@ $coldisplay++;
 			} else {
 				print img_object($langs->trans('ShowProduct'), 'product');
 			}
-			echo ' '.$line->ref;
-			?>
+			echo ' '.$line->ref; ?>
 			</a>
 			<?php
 			echo ' - '.nl2br($line->product_label);
@@ -199,8 +197,7 @@ $coldisplay++;
 
 	<?php
 	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') {	// We must have same test in printObjectLines
-		$coldisplay++;
-		?>
+		$coldisplay++; ?>
 		<td class="right linecolrefsupplier"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth100 maxwidth125onsmartphone" value="<?php echo GETPOSTISSET('fourn_ref') ? GETPOST('fourn_ref') : ($line->ref_supplier ? $line->ref_supplier : $line->ref_fourn); ?>"></td>
 		<?php
 		print '<input type="hidden" id="fournprice" name="fournprice"  class="" value="'.$line->fk_fournprice.'">';
@@ -304,17 +301,17 @@ $coldisplay++;
 
 	if (!empty($usemargins)) {
 		if ($user->hasRight('margins', 'creer')) {
-			$coldisplay++;
-			?>
+			$coldisplay++; ?>
 		<td class="margininfos right">
 			<!-- For predef product -->
 			<?php if (isModEnabled("product") || isModEnabled("service")) { ?>
 			<select id="fournprice_predef" name="fournprice_predef" class="flat minwidth75imp right" style="display: none;"></select>
 			<?php } ?>
 			<!-- For free product -->
-			<input class="flat maxwidth75 right" type="text" id="buying_price" name="buying_price" class="hideobject" value="<?php echo (GETPOSTISSET('buying_price') ? GETPOST('buying_price') : price($line->pa_ht, 0, '', 0)); ?>">
+			<input class="flat maxwidth75 right" type="text" id="buying_price" name="buying_price" class="hideobject" value="<?php echo(GETPOSTISSET('buying_price') ? GETPOST('buying_price') : price($line->pa_ht, 0, '', 0)); ?>">
 		</td>
-		<?php }
+			<?php
+		}
 
 		if ($user->hasRight('margins', 'creer')) {
 			if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
@@ -371,8 +368,8 @@ $coldisplay++;
 		}
 
 		$res = $line->fetch_product();
-		if ($res  > 0  ) {
-			if ( $line->product->isMandatoryPeriod() && $line->product->isService()) {
+		if ($res  > 0) {
+			if ($line->product->isMandatoryPeriod() && $line->product->isService()) {
 				print  'jQuery("#date_start").addClass("error");';
 			}
 		}
@@ -387,7 +384,7 @@ $coldisplay++;
 
 		$res = $line->fetch_product();
 		// on doit fetch le product là !!! pour connaître le type
-		if ($res  > 0  ) {
+		if ($res  > 0) {
 			if ($line->product->isMandatoryperiod() && $line->product->isService()) {
 				print  'jQuery("#date_end").addClass("error");';
 			}
@@ -422,8 +419,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 				return checkFreeLine(e, "np_markRate");
 			});
 		<?php
-	}
-	?>
+	} ?>
 	});
 
 	/* TODO This does not work for number with thousand separator that is , */

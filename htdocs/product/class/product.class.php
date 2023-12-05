@@ -323,7 +323,7 @@ class Product extends CommonObject
 	 */
 	public $finished;
 
-		/**
+	/**
 	 * fk_default_bom indicates the default bom
 	 *
 	 * @var int
@@ -757,7 +757,7 @@ class Product extends CommonObject
 					$module = substr($module, 0, dol_strlen($module) - 4);
 				}
 				dol_include_once('/core/modules/product/'.$module.'.php');
-				$modCodeProduct = new $module;
+				$modCodeProduct = new $module();
 				if (!empty($modCodeProduct->code_auto)) {
 					$this->ref = $modCodeProduct->getNextValue($this, $this->type);
 				}
@@ -1289,7 +1289,7 @@ class Product extends CommonObject
 			$sql .= ", price_autogen = ".(!$this->price_autogen ? 0 : 1);
 			$sql .= ", fk_price_expression = ".($this->fk_price_expression != 0 ? (int) $this->fk_price_expression : 'NULL');
 			$sql .= ", fk_user_modif = ".($user->id > 0 ? $user->id : 'NULL');
-			$sql .= ", mandatory_period = ".($this->mandatory_period );
+			$sql .= ", mandatory_period = ".($this->mandatory_period);
 			// stock field is not here because it is a denormalized value from product_stock.
 			$sql .= " WHERE rowid = ".((int) $id);
 
@@ -1618,7 +1618,7 @@ class Product extends CommonObject
 	 *    Update or add a translation for a product
 	 *
 	 * @param  User $user Object user making update
-	 * @return int        <0 if KO, >0 if OK
+	 * @return int        Return integer <0 if KO, >0 if OK
 	 */
 	public function setMultiLangs($user)
 	{
@@ -1728,7 +1728,7 @@ class Product extends CommonObject
 	 * @param string $langtodelete Language code to delete
 	 * @param User   $user         Object user making delete
 	 *
-	 * @return int                            <0 if KO, >0 if OK
+	 * @return int                            Return integer <0 if KO, >0 if OK
 	 */
 	public function delMultiLangs($langtodelete, $user)
 	{
@@ -1820,7 +1820,7 @@ class Product extends CommonObject
 	/**
 	 *    Load array this->multilangs
 	 *
-	 * @return int        <0 if KO, >0 if OK
+	 * @return int        Return integer <0 if KO, >0 if OK
 	 */
 	public function getMultiLangs()
 	{
@@ -1860,7 +1860,6 @@ class Product extends CommonObject
 	 */
 	private function getArrayForPriceCompare($level = 0)
 	{
-
 		$testExit = array('multiprices','multiprices_ttc','multiprices_base_type','multiprices_min','multiprices_min_ttc','multiprices_tva_tx','multiprices_recuperableonly');
 
 		foreach ($testExit as $field) {
@@ -1894,7 +1893,7 @@ class Product extends CommonObject
 	 *
 	 * @param  User $user  User making change
 	 * @param  int  $level price level to change
-	 * @return int                    <0 if KO, >0 if OK
+	 * @return int                    Return integer <0 if KO, >0 if OK
 	 */
 	private function _log_price($user, $level = 0)
 	{
@@ -1933,7 +1932,7 @@ class Product extends CommonObject
 	 *
 	 * @param  User $user  Object user
 	 * @param  int  $rowid Line id to delete
-	 * @return int                <0 if KO, >0 if OK
+	 * @return int                Return integer <0 if KO, >0 if OK
 	 */
 	public function log_price_delete($user, $rowid)
 	{
@@ -2240,7 +2239,7 @@ class Product extends CommonObject
 	 * @param  array  $localtaxes_array  Array with localtaxes info array('0'=>type1,'1'=>rate1,'2'=>type2,'3'=>rate2) (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
 	 * @param  string $newdefaultvatcode Default vat code
 	 * @param  int    $notrigger         Disable triggers
-	 * @return int                            <0 if KO, >0 if OK
+	 * @return int                            Return integer <0 if KO, >0 if OK
 	 */
 	public function updatePrice($newprice, $newpricebase, $user, $newvat = '', $newminprice = 0, $level = 0, $newnpr = 0, $newpbq = 0, $ignore_autogen = 0, $localtaxes_array = array(), $newdefaultvatcode = '', $notrigger = 0)
 	{
@@ -2435,7 +2434,7 @@ class Product extends CommonObject
 	 *  Sets the supplier price expression
 	 *
 	 * @param      int $expression_id Expression
-	 * @return     int                     <0 if KO, >0 if OK
+	 * @return     int                     Return integer <0 if KO, >0 if OK
 	 * @deprecated Use Product::update instead
 	 */
 	public function setPriceExpression($expression_id)
@@ -2457,7 +2456,7 @@ class Product extends CommonObject
 	 * @param  int    $ignore_expression When module dynamicprices is on, ignores the math expression for calculating price and uses the db value instead
 	 * @param  int    $ignore_price_load Load product without loading $this->multiprices... array (when we are sure we don't need them)
 	 * @param  int    $ignore_lang_load  Load product without loading $this->multilangs language arrays (when we are sure we don't need them)
-	 * @return int                       <0 if KO, 0 if not found, >0 if OK
+	 * @return int                       Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id = '', $ref = '', $ref_ext = '', $barcode = '', $ignore_expression = 0, $ignore_price_load = 0, $ignore_lang_load = 0)
 	{
@@ -4392,7 +4391,7 @@ class Product extends CommonObject
 							return -1;
 						}
 					}
-						// End call triggers
+					// End call triggers
 
 					return 1;
 				}
@@ -4527,7 +4526,7 @@ class Product extends CommonObject
 	 *
 	 * @param  int 	$fk_parent 		Id of parent kit product
 	 * @param  int 	$fk_child  		Id of child product
-	 * @return int                  <0 if KO, >0 if OK
+	 * @return int                  Return integer <0 if KO, >0 if OK
 	 */
 	public function is_sousproduit($fk_parent, $fk_child)
 	{
@@ -4782,7 +4781,7 @@ class Product extends CommonObject
 	 *
 	 * @param  int $fromId Product id
 	 * @param  int $toId   Product id
-	 * @return int                  <0 if KO, >0 if OK
+	 * @return int                  Return integer <0 if KO, >0 if OK
 	 */
 	public function clone_associations($fromId, $toId)
 	{
@@ -5090,7 +5089,7 @@ class Product extends CommonObject
 		$sql .= " AND pa.fk_product_fils <> ".((int) $id); // This should not happens, it is to avoid infinite loop if it happens
 		$sql.= " ORDER BY pa.rang";
 
-		dol_syslog(get_class($this).'::getChildsArbo id='.$id.' level='.$level. ' parents='.(is_array($parents)?implode(',', $parents):$parents), LOG_DEBUG);
+		dol_syslog(get_class($this).'::getChildsArbo id='.$id.' level='.$level. ' parents='.(is_array($parents) ? implode(',', $parents) : $parents), LOG_DEBUG);
 
 		if ($level == 1) {
 			$alreadyfound = array($id=>1); // We init array of found object to start of tree, so if we found it later (should not happened), we stop immediatly
@@ -5323,7 +5322,7 @@ class Product extends CommonObject
 				$label = $langs->trans("ShowProduct");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="nowraponall '.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ' class="nowraponall'.($morecss ? ' '.$morecss : '').'"';
@@ -5500,7 +5499,7 @@ class Product extends CommonObject
 				$labelStatus = ($status == 1 ? $langs->transnoentitiesnoconv('ProductStatusOnBatch') : $langs->transnoentitiesnoconv('ProductStatusOnSerial'));
 				$labelStatusShort = ($status == 1 ? $langs->transnoentitiesnoconv('ProductStatusOnBatchShort') : $langs->transnoentitiesnoconv('ProductStatusOnSerialShort'));
 			}
-		} elseif ( $type == 2 && $status == 2 ) {
+		} elseif ($type == 2 && $status == 2) {
 			$labelStatus = $langs->transnoentitiesnoconv('ProductStatusOnSerial');
 			$labelStatusShort = $langs->transnoentitiesnoconv('ProductStatusOnSerialShort');
 		}
@@ -5557,7 +5556,7 @@ class Product extends CommonObject
 	 * @param  int    $origin_id      Origin id of element
 	 * @param  int	  $disablestockchangeforsubproduct	Disable stock change for sub-products of kit (usefull only if product is a subproduct)
 	 * @param  Extrafields $extrafields	  Array of extrafields
-	 * @return int                    <0 if KO, >0 if OK
+	 * @return int                    Return integer <0 if KO, >0 if OK
 	 */
 	public function correct_stock($user, $id_entrepot, $nbpiece, $movement, $label = '', $price = 0, $inventorycode = '', $origin_element = '', $origin_id = null, $disablestockchangeforsubproduct = 0, $extrafields = null)
 	{
@@ -5620,7 +5619,7 @@ class Product extends CommonObject
 	 * @param  int	    $disablestockchangeforsubproduct	Disable stock change for sub-products of kit (usefull only if product is a subproduct)
 	 * @param  Extrafields $extrafields	Array of extrafields
 	 * @param  boolean  $force_update_batch   Force update batch
-	 * @return int                      <0 if KO, >0 if OK
+	 * @return int                      Return integer <0 if KO, >0 if OK
 	 */
 	public function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label = '', $price = 0, $dlc = '', $dluo = '', $lot = '', $inventorycode = '', $origin_element = '', $origin_id = null, $disablestockchangeforsubproduct = 0, $extrafields = null, $force_update_batch = false)
 	{
@@ -5711,7 +5710,7 @@ class Product extends CommonObject
 			$sql .= " AND w.statut IN (".$this->db->sanitize(implode(',', $warehouseStatus)).")";
 		}
 
-		$sql .= " ORDER BY ps.reel ".(getDolGlobalString('DO_NOT_TRY_TO_DEFRAGMENT_STOCKS_WAREHOUSE')?'DESC':'ASC'); // Note : qty ASC is important for expedition card, to avoid stock fragmentation;
+		$sql .= " ORDER BY ps.reel ".(getDolGlobalString('DO_NOT_TRY_TO_DEFRAGMENT_STOCKS_WAREHOUSE') ? 'DESC' : 'ASC'); // Note : qty ASC is important for expedition card, to avoid stock fragmentation;
 
 		dol_syslog(get_class($this)."::load_stock", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -5905,7 +5904,7 @@ class Product extends CommonObject
 	 *
 	 * @param  string $sdir Target directory
 	 * @param  string $file Array of file info of file to upload: array('name'=>..., 'tmp_name'=>...)
-	 * @return int                    <0 if KO, >0 if OK
+	 * @return int                    Return integer <0 if KO, >0 if OK
 	 */
 	public function add_photo($sdir, $file)
 	{
@@ -6102,7 +6101,7 @@ class Product extends CommonObject
 	/**
 	 *  Load indicators this->nb for the dashboard
 	 *
-	 * @return int                 <0 if KO, >0 if OK
+	 * @return int                 Return integer <0 if KO, >0 if OK
 	 */
 	public function load_state_board()
 	{
@@ -6194,7 +6193,7 @@ class Product extends CommonObject
 				}
 			}
 			$var = $conf->global->BARCODE_PRODUCT_ADDON_NUM;
-			$mod = new $var;
+			$mod = new $var();
 
 			$result = $mod->getNextValue($object, $type);
 
@@ -6338,7 +6337,7 @@ class Product extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param  int[]|int 	$categories 	Category or categories IDs
-	 * @return int							<0 if KO, >0 if OK
+	 * @return int							Return integer <0 if KO, >0 if OK
 	 */
 	public function setCategories($categories)
 	{
@@ -6515,7 +6514,7 @@ class Product extends CommonObject
 	}
 
 
-		/**
+	/**
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
@@ -6533,8 +6532,8 @@ class Product extends CommonObject
 		$return .= '<div class="info-box-img">';
 		$label = '';
 		if ($this->is_photo_available($conf->product->multidir_output[$this->entity])) {
-				$label .= $this->show_photos('product', $conf->product->multidir_output[$this->entity], 1, 1, 0, 0, 0, 120, 160, 0, 0, 0, '', 'photoref photokanban');
-				$return .= $label;
+			$label .= $this->show_photos('product', $conf->product->multidir_output[$this->entity], 1, 1, 0, 0, 0, 120, 160, 0, 0, 0, '', 'photoref photokanban');
+			$return .= $label;
 		} else {
 			if ($this->type == Product::TYPE_PRODUCT) {
 				$label .= img_picto('', 'product');
