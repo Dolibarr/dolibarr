@@ -734,7 +734,7 @@ abstract class CommonObject
 
 		$ret .= dolGetFirstLastname($firstname, $lastname, $nameorder);
 
-		return dol_escape_htmltag(dol_trunc($ret, $maxlen));
+		return dol_escape_htmltag(dol_trunc($ret, $maxlen), 0, 0, '', 1);
 	}
 
 	/**
