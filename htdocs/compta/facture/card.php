@@ -3324,7 +3324,7 @@ if ($action == 'create') {
 			print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company($soc->id, 'socid', $filter, 'SelectThirdParty', 1, 0, null, 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
 			// Option to reload page to retrieve customer informations.
 			if (!getDolGlobalString('RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED')) {
-				print '<script>
+			print '<script type="text/javascript">
 				$(document).ready(function() {
 					$("#socid").change(function() {
 						/*
@@ -3337,9 +3337,16 @@ if ($action == 'create') {
 
 						// For company change, we must submit page with action=create instead of action=add
 						console.log("We have changed the company - Resubmit page");
-						jQuery("input[name=changecompany]").val("1");
-						jQuery("#formtocreateaction").val("create");
-						jQuery("#formtocreate").submit();
+						// jQuery("input[name=changecompany]").val("1");
+						// jQuery("#formtocreateaction").val("create");
+						// jQuery("#formtocreate").submit();
+						var socid = $(this).val();
+						var projectid = "";
+						if ($(\'#projectid\').val() > 0) {
+							projectid = "&projectid="+$(\'#projectid\').val();
+						}
+				        var fac_rec = $(\'#fac_rec\').val();
+	        			window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create"+projectid+"&socid="+socid+"&fac_rec="+fac_rec;	// InfraS change
 					});
 				});
 				</script>';
