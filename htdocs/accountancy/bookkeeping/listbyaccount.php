@@ -1001,10 +1001,18 @@ while ($i < min($num, $limit)) {
 
 	if (!empty($arrayfields['t.balance']['checked'])) { $colspanend++; }
 	if (!empty($arrayfields['t.date_export']['checked'])) { $colspanend++; }
+<<<<<<< HEAD
 	if (!empty($arrayfields['t.date_validating']['checked'])) { $colspanend++; }
 	if (!empty($arrayfields['t.import_key']['checked'])) { $colspanend++; }
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		$colspanend++;
+=======
+	if (!empty($arrayfields['t.date_validated']['checked'])) { $colspanend++; }
+	if (!empty($arrayfields['t.lettering_code']['checked'])) { $colspanend++; }
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		$colspan++;
+		$colspanend--;
+>>>>>>> upstream/18.0
 	}
 
 	// Is it a break ?

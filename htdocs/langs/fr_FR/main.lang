@@ -549,7 +549,11 @@ Reportings=Rapports
 Draft=Brouillon
 Drafts=Brouillons
 StatusInterInvoiced=Facturé
+<<<<<<< HEAD
 Done=Effectuées
+=======
+Done=Réalisé
+>>>>>>> upstream/18.0
 Validated=Validé
 ValidatedToProduce=Validé (à produire)
 Opened=Ouvert
