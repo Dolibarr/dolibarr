@@ -110,21 +110,21 @@ $workflowcodes = array(
 		'enabled'=>(isModEnabled("expedition") && isModEnabled('commande')),
 		'picto'=>'order'
 	),
-    // For this option, if module invoice is disabled, it does not exists, so "Classify billed" for order must be done manually from order card.
-    'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER' => array(
-        'family' => 'classify_order',
-        'position' => 42,
-        'enabled' => (isModEnabled('facture') && isModEnabled('commande')),
-        'picto' => 'order',
-        'warning' => ''
-    ),
-    'WORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER' => array(
-        'family' => 'classify_order',
-        'position' => 43,
-        'enabled' => (isModEnabled('facture') && isModEnabled('commande')),
-        'picto' => 'order',
-        'warning' => ''
-    ),
+	// For this option, if module invoice is disabled, it does not exists, so "Classify billed" for order must be done manually from order card.
+	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER' => array(
+		'family' => 'classify_order',
+		'position' => 42,
+		'enabled' => (isModEnabled('facture') && isModEnabled('commande')),
+		'picto' => 'order',
+		'warning' => ''
+	),
+	'WORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER' => array(
+		'family' => 'classify_order',
+		'position' => 43,
+		'enabled' => (isModEnabled('facture') && isModEnabled('commande')),
+		'picto' => 'order',
+		'warning' => ''
+	),
 	// Automatic classification supplier proposal
 	'WORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL'=>array(
 		'family'=>'classify_supplier_proposal',
