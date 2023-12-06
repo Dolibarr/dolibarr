@@ -51,7 +51,7 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$fuserid = (GETPOST('fuserid', 'int') ?GETPOST('fuserid', 'int') : $user->id);
+$fuserid = (GETPOST('fuserid', 'int') ? GETPOST('fuserid', 'int') : $user->id);
 $socid = GETPOST('socid', 'int');
 
 // Load translation files required by the page
@@ -64,7 +64,7 @@ $now = dol_now();
 $childids = $user->getAllChildIds(1);
 
 $morefilter = '';
-if (!empty($conf->global->HOLIDAY_HIDE_FOR_NON_SALARIES)) {
+if (getDolGlobalString('HOLIDAY_HIDE_FOR_NON_SALARIES')) {
 	$morefilter = 'AND employee = 1';
 }
 
@@ -188,7 +188,7 @@ if (empty($reshook)) {
 
 			// Check that leave is for a user inside the hierarchy or advanced permission for all is set
 			if (!$cancreateall) {
-				if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+				if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 					if (!$user->hasRight('holiday', 'write')) {
 						$error++;
 						setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
@@ -490,7 +490,7 @@ if (empty($reshook)) {
 
 				// Subject
 				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
-				if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+				if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 					$societeName = $conf->global->MAIN_APPLICATION_TITLE;
 				}
 
@@ -503,7 +503,7 @@ if (empty($reshook)) {
 
 
 				// option to warn the validator in case of too short delay
-				if (empty($conf->global->HOLIDAY_HIDE_APPROVER_ABOUT_TOO_LOW_DELAY)) {
+				if (!getDolGlobalString('HOLIDAY_HIDE_APPROVER_ABOUT_TOO_LOW_DELAY')) {
 					$delayForRequest = 0;		// TODO Set delay depending of holiday leave type
 					if ($delayForRequest) {
 						$nowplusdelay = dol_time_plus_duree($now, $delayForRequest, 'd');
@@ -515,7 +515,7 @@ if (empty($reshook)) {
 				}
 
 				// option to notify the validator if the balance is less than the request
-				if (empty($conf->global->HOLIDAY_HIDE_APPROVER_ABOUT_NEGATIVE_BALANCE)) {
+				if (!getDolGlobalString('HOLIDAY_HIDE_APPROVER_ABOUT_NEGATIVE_BALANCE')) {
 					$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
 
 					if ($nbopenedday > $object->getCPforUser($object->fk_user, $object->fk_type)) {
@@ -654,7 +654,7 @@ if (empty($reshook)) {
 
 					// Subject
 					$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
-					if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+					if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 						$societeName = $conf->global->MAIN_APPLICATION_TITLE;
 					}
 
@@ -736,7 +736,7 @@ if (empty($reshook)) {
 
 						// Subject
 						$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
-						if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+						if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 							$societeName = $conf->global->MAIN_APPLICATION_TITLE;
 						}
 
@@ -823,15 +823,15 @@ if (empty($reshook)) {
 		// If status pending validation and validator = validator or user, or rights to do for others
 		if (($object->statut == Holiday::STATUS_VALIDATED || $object->statut == Holiday::STATUS_APPROVED) &&
 			(!empty($user->admin) || $user->id == $object->fk_validator || $cancreate || $cancreateall)) {
-				$db->begin();
+			$db->begin();
 
-				$oldstatus = $object->statut;
-				$object->date_cancel = dol_now();
-				$object->fk_user_cancel = $user->id;
-				$object->statut = Holiday::STATUS_CANCELED;
-				$object->status = Holiday::STATUS_CANCELED;
+			$oldstatus = $object->statut;
+			$object->date_cancel = dol_now();
+			$object->fk_user_cancel = $user->id;
+			$object->statut = Holiday::STATUS_CANCELED;
+			$object->status = Holiday::STATUS_CANCELED;
 
-				$result = $object->update($user);
+			$result = $object->update($user);
 
 			if ($result >= 0 && $oldstatus == Holiday::STATUS_APPROVED) {	// holiday was already validated, status 3, so we must increase back the balance
 				// Call trigger
@@ -864,7 +864,7 @@ if (empty($reshook)) {
 				$db->rollback();
 			}
 
-				// If no SQL error, we redirect to the request form
+			// If no SQL error, we redirect to the request form
 			if (!$error && $result > 0) {
 				// To
 				$destinataire = new User($db);
@@ -884,7 +884,7 @@ if (empty($reshook)) {
 
 				// Subject
 				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
-				if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+				if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 					$societeName = $conf->global->MAIN_APPLICATION_TITLE;
 				}
 
@@ -957,7 +957,7 @@ $edit = false;
 
 if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 	// If user has no permission to create a leave
-	if ((in_array($fuserid, $childids) && !$user->hasRight('holiday', 'write')) || (!in_array($fuserid, $childids) && ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->hasRight('holiday', 'writeall_advance') || !$user->hasRight('holiday', 'writeall'))))) {
+	if ((in_array($fuserid, $childids) && !$user->hasRight('holiday', 'write')) || (!in_array($fuserid, $childids) && ((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('holiday', 'writeall_advance') || !$user->hasRight('holiday', 'writeall'))))) {
 		$errors[] = $langs->trans('CantCreateCP');
 	} else {
 		// Form to add a leave request
@@ -1052,7 +1052,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		}
 		print '</div>';
 
-		if (empty($conf->global->HOLIDAY_HIDE_BALANCE)) {
+		if (!getDolGlobalString('HOLIDAY_HIDE_BALANCE')) {
 			print '<div class="leaveuserbalance paddingtop inline-block floatright badge badge-status0 badge-status margintoponsmartphone">';
 
 			$out = '';
@@ -1107,7 +1107,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			$labeltoshow .= ($val['delay'] > 0 ? ' ('.$langs->trans("NoticePeriod").': '.$val['delay'].' '.$langs->trans("days").')' : '');
 			$arraytypeleaves[$val['rowid']] = $labeltoshow;
 		}
-		print $form->selectarray('type', $arraytypeleaves, (GETPOST('type', 'alpha') ?GETPOST('type', 'alpha') : ''), 1, 0, 0, '', 0, 0, 0, '', '', true);
+		print $form->selectarray('type', $arraytypeleaves, (GETPOST('type', 'alpha') ? GETPOST('type', 'alpha') : ''), 1, 0, 0, '', 0, 0, 0, '', '', true);
 		if ($user->admin) {
 			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
@@ -1127,7 +1127,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			print $form->selectDate($tmpdate, 'date_debut_', 0, 0, 0, '', 1, 1);
 		}
 		print ' &nbsp; &nbsp; ';
-		print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday', 'alpha') ?GETPOST('starthalfday', 'alpha') : 'morning'));
+		print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday', 'alpha') ? GETPOST('starthalfday', 'alpha') : 'morning'));
 		print '</td>';
 		print '</tr>';
 
@@ -1144,7 +1144,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			print $form->selectDate($tmpdate, 'date_fin_', 0, 0, 0, '', 1, 1);
 		}
 		print ' &nbsp; &nbsp; ';
-		print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday', 'alpha') ?GETPOST('endhalfday', 'alpha') : 'afternoon'));
+		print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday', 'alpha') ? GETPOST('endhalfday', 'alpha') : 'afternoon'));
 		print '</td>';
 		print '</tr>';
 
@@ -1161,7 +1161,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			// Defined default approver (the forced approved of user or the supervisor if no forced value defined)
 			// Note: This use will be set only if the deinfed approvr has permission to approve so is inside include_users
 			$defaultselectuser = (empty($user->fk_user_holiday_validator) ? $user->fk_user : $user->fk_user_holiday_validator);
-			if (!empty($conf->global->HOLIDAY_DEFAULT_VALIDATOR)) {
+			if (getDolGlobalString('HOLIDAY_DEFAULT_VALIDATOR')) {
 				$defaultselectuser = $conf->global->HOLIDAY_DEFAULT_VALIDATOR; // Can force default approver
 			}
 			if (GETPOST('valideur', 'int') > 0) {
@@ -1317,7 +1317,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					$tmpdate = dol_mktime(0, 0, 0, GETPOST('date_debut_month', 'int'), GETPOST('date_debut_day', 'int'), GETPOST('date_debut_year', 'int'));
 					print $form->selectDate($tmpdate ? $tmpdate : $object->date_debut, 'date_debut_');
 					print ' &nbsp; &nbsp; ';
-					print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday') ?GETPOST('starthalfday') : $starthalfday));
+					print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday') ? GETPOST('starthalfday') : $starthalfday));
 					print '</td>';
 					print '</tr>';
 				}
@@ -1340,7 +1340,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					print '<td>';
 					print $form->selectDate($object->date_fin, 'date_fin_');
 					print ' &nbsp; &nbsp; ';
-					print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday') ?GETPOST('endhalfday') : $endhalfday));
+					print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday') ? GETPOST('endhalfday') : $endhalfday));
 					print '</td>';
 					print '</tr>';
 				}

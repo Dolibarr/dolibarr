@@ -63,7 +63,7 @@ class box_prospect extends ModeleBoxes
 		$this->db = $db;
 
 		// disable box for such cases
-		if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) {
+		if (getDolGlobalString('SOCIETE_DISABLE_PROSPECTS')) {
 			$this->enabled = 0; // disabled by this option
 		}
 
@@ -160,8 +160,8 @@ class box_prospect extends ModeleBoxes
 
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center opacitymedium"',
-						'text'=> $langs->trans("NoRecordedProspects"),
+						'td' => 'class="center"',
+						'text'=> '<span class="opacitymedium">'.$langs->trans("NoRecordedProspects").'</span>'
 					);
 				}
 
@@ -175,8 +175,8 @@ class box_prospect extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

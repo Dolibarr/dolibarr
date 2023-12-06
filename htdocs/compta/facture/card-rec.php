@@ -54,10 +54,10 @@ $show_files = GETPOST('show_files', 'int');
 $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'alpha');
 $toselect   = GETPOST('toselect', 'array');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'invoicetemplatelist'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'invoicetemplatelist'; // To manage different context of search
 
 // Security check
-$id = (GETPOST('facid', 'int') ?GETPOST('facid', 'int') : GETPOST('id', 'int'));
+$id = (GETPOST('facid', 'int') ? GETPOST('facid', 'int') : GETPOST('id', 'int'));
 $lineid = GETPOST('lineid', 'int');
 $ref = GETPOST('ref', 'alpha');
 if ($user->socid) {
@@ -73,7 +73,7 @@ $year_date_when = GETPOST('year_date_when');
 $month_date_when = GETPOST('month_date_when');
 $selectedLines = GETPOST('toselect', 'array');
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -115,12 +115,12 @@ $usercanread = $user->hasRight('facture', 'lire');
 $usercancreate = $user->hasRight('facture', 'creer');
 $usercanissuepayment = $user->hasRight('facture', 'paiement');
 $usercandelete = $user->hasRight('facture', 'supprimer');
-$usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->facture->invoice_advance->validate)));
-$usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->facture->invoice_advance->send);
-$usercanreopen = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->facture->invoice_advance->reopen);
-$usercanunvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($usercancreate)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->facture->invoice_advance->unvalidate)));
+$usercanvalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $usercancreate) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->facture->invoice_advance->validate)));
+$usercansend = (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || $user->rights->facture->invoice_advance->send);
+$usercanreopen = (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || $user->rights->facture->invoice_advance->reopen);
+$usercanunvalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($usercancreate)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->facture->invoice_advance->unvalidate)));
 
-$usercanproductignorepricemin = ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS));
+$usercanproductignorepricemin = ((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && empty($user->rights->produit->ignore_price_min_advance)) || !getDolGlobalString('MAIN_USE_ADVANCED_PERMS'));
 $usercancreatemargin = $user->hasRight("margins", "creer");
 $usercanreadallmargin = $user->hasRight("margins", "liretous");
 $usercancreatewithdrarequest = $user->hasRight("prelevement", "bons", "creer");
@@ -445,7 +445,7 @@ if (empty($reshook)) {
 		} else {
 			$idprod = GETPOST('idprod', 'int');
 
-			if (!empty($conf->global->MAIN_DISABLE_FREE_LINES) && $idprod <= 0) {
+			if (getDolGlobalString('MAIN_DISABLE_FREE_LINES') && $idprod <= 0) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProductOrService")), null, 'errors');
 				$error++;
 			}
@@ -563,7 +563,7 @@ if (empty($reshook)) {
 				$desc = '';
 
 				// Define output language
-				if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
 					$outputlangs = $langs;
 					$newlang = '';
 					if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -585,10 +585,10 @@ if (empty($reshook)) {
 				$desc = dol_concatdesc($desc, $product_desc);
 
 				// Add custom code and origin country into description
-				if (empty($conf->global->MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE) && (!empty($prod->customcode) || !empty($prod->country_code))) {
+				if (!getDolGlobalString('MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE') && (!empty($prod->customcode) || !empty($prod->country_code))) {
 					$tmptxt = '(';
 					// Define output language
-					if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
 						$outputlangs = $langs;
 						$newlang = '';
 						if (empty($newlang) && GETPOST('lang_id', 'alpha')) {
@@ -782,7 +782,7 @@ if (empty($reshook)) {
 		if (is_array($extralabelsline)) {
 			// Get extra fields
 			foreach ($extralabelsline as $key => $value) {
-				 unset($_POST["options_".$key]);
+				unset($_POST["options_".$key]);
 			}
 		}
 
@@ -818,7 +818,7 @@ if (empty($reshook)) {
 			$type = $product->type;
 
 			$price_min = $product->price_min;
-			if (!empty($conf->global->PRODUIT_MULTIPRICES) && !empty($object->thirdparty->price_level)) {
+			if (getDolGlobalString('PRODUIT_MULTIPRICES') && !empty($object->thirdparty->price_level)) {
 				$price_min = $product->multiprices_min[$object->thirdparty->price_level];
 			}
 
@@ -827,7 +827,7 @@ if (empty($reshook)) {
 			$typeinvoice = Facture::TYPE_STANDARD;
 
 			// Check price is not lower than minimum (check is done only for standard or replacement invoices)
-			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->hasRight('produit', 'ignore_price_min_advance')) || empty($conf->global->MAIN_USE_ADVANCED_PERMS)) && (($typeinvoice == Facture::TYPE_STANDARD || $typeinvoice == Facture::TYPE_REPLACEMENT) && $price_min && ((float) price2num($pu_ht) * (1 - (float) $remise_percent / 100) < (float) price2num($price_min)))) {
+			if (((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('produit', 'ignore_price_min_advance')) || !getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) && (($typeinvoice == Facture::TYPE_STANDARD || $typeinvoice == Facture::TYPE_REPLACEMENT) && $price_min && ((float) price2num($pu_ht) * (1 - (float) $remise_percent / 100) < (float) price2num($price_min)))) {
 				setEventMessages($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency)), null, 'errors');
 				$error++;
 			}
@@ -880,22 +880,22 @@ if (empty($reshook)) {
 			);
 
 			if ($result >= 0) {
-					/*if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-						// Define output language
-						$outputlangs = $langs;
-						$newlang = '';
-						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id','aZ09'))
-							$newlang = GETPOST('lang_id','aZ09');
-							if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang))
-								$newlang = $object->thirdparty->default_lang;
-								if (!empty($newlang)) {
-									$outputlangs = new Translate("", $conf);
-									$outputlangs->setDefaultLang($newlang);
-								}
+				/*if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+					// Define output language
+					$outputlangs = $langs;
+					$newlang = '';
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id','aZ09'))
+						$newlang = GETPOST('lang_id','aZ09');
+						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang))
+							$newlang = $object->thirdparty->default_lang;
+							if (!empty($newlang)) {
+								$outputlangs = new Translate("", $conf);
+								$outputlangs->setDefaultLang($newlang);
+							}
 
-								$ret = $object->fetch($id); // Reload to get new records
-								$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-					}*/
+							$ret = $object->fetch($id); // Reload to get new records
+							$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				}*/
 
 				$object->fetch($object->id); // Reload lines
 
@@ -1074,7 +1074,7 @@ if ($action == 'create') {
 
 		// Project
 		if (isModEnabled('project') && is_object($object->thirdparty) && $object->thirdparty->id > 0) {
-			$projectid = GETPOST('projectid') ?GETPOST('projectid') : $object->fk_project;
+			$projectid = GETPOST('projectid') ? GETPOST('projectid') : $object->fk_project;
 			$langs->load('projects');
 			print '<tr><td>'.$langs->trans('Project').'</td><td>';
 			print img_picto('', 'project', 'class="pictofixedwidth"');
@@ -1097,7 +1097,7 @@ if ($action == 'create') {
 		print $form->textwithpicto($langs->trans('NotePublic'), $htmltext, 1, 'help', '', 0, 2, 'notepublic');
 		print '</td>';
 		print '<td>';
-		$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
+		$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 
 		// Private note
@@ -1107,7 +1107,7 @@ if ($action == 'create') {
 			print $form->textwithpicto($langs->trans('NotePrivate'), $htmltext, 1, 'help', '', 0, 2, 'noteprivate');
 			print '</td>';
 			print '<td>';
-			$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
+			$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
 			print $doleditor->Create(1);
 			// print '<textarea name="note_private" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_private.'.</textarea>
 			print '</td></tr>';
@@ -1130,7 +1130,7 @@ if ($action == 'create') {
 		// Frequency + unit
 		print '<tr><td class="titlefieldcreate">'.$form->textwithpicto($langs->trans("Frequency"), $langs->transnoentitiesnoconv('toolTipFrequency'))."</td><td>";
 		print "<input type='text' name='frequency' value='".GETPOST('frequency', 'int')."' size='4' />&nbsp;";
-		print $form->selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), (GETPOST('unit_frequency') ?GETPOST('unit_frequency') : 'm'));
+		print $form->selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), (GETPOST('unit_frequency') ? GETPOST('unit_frequency') : 'm'));
 		print "</td></tr>";
 
 		// Date next run
@@ -1151,7 +1151,7 @@ if ($action == 'create') {
 		print "</td></tr>";
 
 		// Auto generate document
-		if (!empty($conf->global->INVOICE_REC_CAN_DISABLE_DOCUMENT_FILE_GENERATION)) {
+		if (getDolGlobalString('INVOICE_REC_CAN_DISABLE_DOCUMENT_FILE_GENERATION')) {
 			print "<tr><td>".$langs->trans("StatusOfGeneratedDocuments")."</td><td>";
 			$select = array('0'=>$langs->trans('DoNotGenerateDoc'), '1'=>$langs->trans('AutoGenerateDoc'));
 			print $form->selectarray('generate_pdf', $select, GETPOST('generate_pdf'));
@@ -1296,7 +1296,9 @@ if ($action == 'create') {
 		// Invoice subtype
 		if (getDolGlobalInt('INVOICE_SUBTYPE_ENABLED')) {
 			print "<tr><td>".$langs->trans("InvoiceSubtype")."</td><td>";
-			print $object->getSubtypeLabel('facture_rec');
+			if ($object->subtype > 0) {
+				print $object->getSubtypeLabel('facture_rec');
+			}
 			print "</td></tr>";
 		}
 
@@ -1586,7 +1588,7 @@ if ($action == 'create') {
 		}
 		print '</td><td>';
 		if ($action == 'nb_gen_max' || $object->frequency > 0) {
-			  print $form->editfieldval($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max ? $object->nb_gen_max : '', $object, $user->hasRight('facture', 'creer'));
+			print $form->editfieldval($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max ? $object->nb_gen_max : '', $object, $user->hasRight('facture', 'creer'));
 		} else {
 			print '';
 		}
@@ -1607,7 +1609,7 @@ if ($action == 'create') {
 		}
 		print '</td>';
 		// Auto generate documents
-		if (!empty($conf->global->INVOICE_REC_CAN_DISABLE_DOCUMENT_FILE_GENERATION)) {
+		if (getDolGlobalString('INVOICE_REC_CAN_DISABLE_DOCUMENT_FILE_GENERATION')) {
 			print '<tr>';
 			print '<td>';
 			if ($action == 'generate_pdf' || $object->frequency > 0) {
@@ -1693,9 +1695,12 @@ if ($action == 'create') {
 
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-				if (empty($reshook))
-					$object->formAddObjectLine(0, $mysoc, $object->thirdparty); // No date selector for template invoice
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				}
+				if (empty($reshook)) {
+					$object->formAddObjectLine(0, $mysoc, $object->thirdparty);
+				} // No date selector for template invoice
 			}
 		}
 

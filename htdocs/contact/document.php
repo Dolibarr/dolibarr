@@ -64,10 +64,10 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-if (!empty($conf->global->MAIN_DOC_SORT_FIELD)) {
+if (getDolGlobalString('MAIN_DOC_SORT_FIELD')) {
 	$sortfield = $conf->global->MAIN_DOC_SORT_FIELD;
 }
-if (!empty($conf->global->MAIN_DOC_SORT_ORDER)) {
+if (getDolGlobalString('MAIN_DOC_SORT_ORDER')) {
 	$sortorder = $conf->global->MAIN_DOC_SORT_ORDER;
 }
 
@@ -110,8 +110,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 $form = new Form($db);
 
-$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/contactnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->lastname) {
+$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/contactnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->lastname) {
 	$title = $object->lastname;
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
@@ -119,13 +119,13 @@ llxHeader('', $title, $help_url);
 
 if ($object->id) {
 	$head = contact_prepare_head($object);
-	$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+	$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 
 	print dol_get_fiche_head($head, 'documents', $title, -1, 'contact');
 
 
 	// Build file list
-	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 	$totalsize = 0;
 	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];
@@ -138,7 +138,7 @@ if ($object->id) {
 	$morehtmlref .= '</a>';
 
 	$morehtmlref .= '<div class="refidno">';
-	if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+	if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
 		$objsoc = new Societe($db);
 		$objsoc->fetch($object->socid);
 		// Thirdparty

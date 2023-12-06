@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
+/* Copyright (C) 2003       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2013  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2015-2023  Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/vat.lib.php';
 
 if (isModEnabled('accounting')) {
-		include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
 
 // Load translation files required by the page
@@ -56,7 +56,7 @@ $refund = GETPOST("refund", "int");
 if (GETPOSTISSET('auto_create_paiement') || $action === 'add') {
 	$auto_create_payment = GETPOST("auto_create_paiement", "int");
 } else {
-	$auto_create_payment = empty($conf->global->CREATE_NEW_VAT_WITHOUT_AUTO_PAYMENT);
+	$auto_create_payment = !getDolGlobalString('CREATE_NEW_VAT_WITHOUT_AUTO_PAYMENT');
 }
 
 if (empty($refund)) {
@@ -561,7 +561,7 @@ if ($id > 0) {
 		print '<input type="hidden" name="action" value="update">';
 	}
 	// Call Hook formConfirm
-	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
+	$parameters = array('formConfirm' => $formconfirm);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
 		$formconfirm .= $hookmanager->resPrint;

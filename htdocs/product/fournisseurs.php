@@ -53,7 +53,7 @@ $ref = GETPOST('ref', 'alpha');
 $rowid = GETPOST('rowid', 'int');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'pricesuppliercard';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'pricesuppliercard';
 
 $socid = GETPOST('socid', 'int');
 $cost_price = price2num(GETPOST('cost_price', 'alpha'), '', 2);
@@ -81,10 +81,10 @@ if (!$user->hasRight('fournisseur', 'lire') && (!isModEnabled('margin') && !$use
 	accessforbidden();
 }
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = (GETPOST("page", 'int') ?GETPOST("page", 'int') : 0);
+$page = (GETPOST("page", 'int') ? GETPOST("page", 'int') : 0);
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -141,7 +141,8 @@ if (empty($reshook)) {
 	if ($action == 'setcost_price') {
 		if ($id) {
 			$result = $object->fetch($id);
-			$object->oldcopy = dol_clone($object, 2);
+			//Need dol_clone methode 1 (same object class) because update product use hasbatch method on oldcopy
+			$object->oldcopy = dol_clone($object, 1);
 			$object->cost_price = price2num($cost_price);
 			$result = $object->update($object->id, $user);
 			if ($result > 0) {
@@ -409,7 +410,7 @@ if ($id > 0 || $ref) {
 			if (isModEnabled("product") && isModEnabled("service")) {
 				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 				print '<tr><td class="">';
-				print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, 0, $typeformat) : $langs->trans('Type');
+				print (!getDolGlobalString('PRODUCT_DENY_CHANGE_PRODUCT_TYPE')) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, 0, $typeformat) : $langs->trans('Type');
 				print '</td><td>';
 				print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, 0, $typeformat);
 				print '</td></tr>';
@@ -427,7 +428,7 @@ if ($id > 0 || $ref) {
 
 			// PMP
 			$usercaneditpmp = 0;
-			if (!empty($conf->global->PRODUCT_CAN_EDIT_WAP)) {
+			if (getDolGlobalString('PRODUCT_CAN_EDIT_WAP')) {
 				$usercaneditpmp = $usercancreate;
 			}
 			print '<tr><td class="titlefieldcreate">';
@@ -587,7 +588,7 @@ if ($id > 0 || $ref) {
 					print '<input class="flat" name="qty" size="5" value="'.$quantity.'">';
 				}
 				// Units
-				if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+				if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 					$unit = $object->getLabelOfUnit();
 					if ($unit !== '') {
 						print '&nbsp;&nbsp;'.$langs->trans($unit);
@@ -595,7 +596,7 @@ if ($id > 0 || $ref) {
 				}
 				print '</td></tr>';
 
-				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
+				if (getDolGlobalString('PRODUCT_USE_SUPPLIER_PACKAGING')) {
 					// Packaging/Conditionnement
 					print '<tr>';
 
@@ -605,7 +606,7 @@ if ($id > 0 || $ref) {
 					print '<input class="flat" name="packaging" size="5" value="'.$packaging.'">';
 
 					// Units
-					if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+					if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 						$unit = $object->getLabelOfUnit();
 						if ($unit !== '') {
 							print '&nbsp;&nbsp;'.$langs->trans($unit);
@@ -639,7 +640,7 @@ if ($id > 0 || $ref) {
 						$default_vat = $object->tva_tx;
 					}
 				}
-				$vattosuggest = (GETPOSTISSET("tva_tx") ? vatrate(GETPOST("tva_tx")) : ($default_vat != '' ?vatrate($default_vat) : ''));
+				$vattosuggest = (GETPOSTISSET("tva_tx") ? vatrate(GETPOST("tva_tx")) : ($default_vat != '' ? vatrate($default_vat) : ''));
 				$vattosuggest = preg_replace('/\s*\(.*\)$/', '', $vattosuggest);
 				print '<input type="text" class="flat" size="5" name="tva_tx" value="'.$vattosuggest.'">';
 				print '</td></tr>';
@@ -696,7 +697,7 @@ if ($id > 0 || $ref) {
 					$pricesupplierincurrencytouse = (GETPOST('multicurrency_price') ? GETPOST('multicurrency_price') : (isset($object->fourn_multicurrency_price) ? $object->fourn_multicurrency_price : ''));
 					print '<td><input class="flat" name="multicurrency_price" size="8" value="'.price($pricesupplierincurrencytouse).'">';
 					print '&nbsp;';
-					print $form->selectPriceBaseType((GETPOST('multicurrency_price_base_type') ?GETPOST('multicurrency_price_base_type') : 'HT'), "multicurrency_price_base_type"); // We keep 'HT' here, multicurrency_price_base_type is not yet supported for supplier prices
+					print $form->selectPriceBaseType((GETPOST('multicurrency_price_base_type') ? GETPOST('multicurrency_price_base_type') : 'HT'), "multicurrency_price_base_type"); // We keep 'HT' here, multicurrency_price_base_type is not yet supported for supplier prices
 					print '</td></tr>';
 
 					// Price qty min
@@ -785,7 +786,7 @@ END;
 
 				// Discount qty min
 				print '<tr><td>'.$langs->trans("DiscountQtyMin").'</td>';
-				print '<td><input class="flat" name="remise_percent" size="4" value="'.(GETPOSTISSET('remise_percent') ? vatrate(price2num(GETPOST('remise_percent'), '', 2)) : (isset($object->fourn_remise_percent) ?vatrate($object->fourn_remise_percent) : '')).'"> %';
+				print '<td><input class="flat" name="remise_percent" size="4" value="'.(GETPOSTISSET('remise_percent') ? vatrate(price2num(GETPOST('remise_percent'), '', 2)) : (isset($object->fourn_remise_percent) ? vatrate($object->fourn_remise_percent) : '')).'"> %';
 				print '</td>';
 				print '</tr>';
 
@@ -815,7 +816,7 @@ END;
 				}
 
 				// Product description of the supplier
-				if (!empty($conf->global->PRODUIT_FOURN_TEXTS)) {
+				if (getDolGlobalString('PRODUIT_FOURN_TEXTS')) {
 					//WYSIWYG Editor
 					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
@@ -951,7 +952,7 @@ END;
 					'pfp.quantity'=>array('label'=>$langs->trans("QtyMin"), 'checked'=>1, 'position'=>5),
 					'pfp.unitprice'=>array('label'=>$langs->trans("UnitPriceHT"), 'checked'=>1, 'position'=>9),
 					'pfp.multicurrency_unitprice'=>array('label'=>$langs->trans("UnitPriceHTCurrency"), 'enabled' => isModEnabled('multicurrency'), 'checked'=>0, 'position'=>10),
-					'pfp.charges'=>array('label'=>$langs->trans("Charges"), 'enabled' => !empty($conf->global->PRODUCT_CHARGES), 'checked'=>0, 'position'=>11),
+					'pfp.charges'=>array('label'=>$langs->trans("Charges"), 'enabled' => getDolGlobalString('PRODUCT_CHARGES'), 'checked'=>0, 'position'=>11),
 					'pfp.delivery_time_days'=>array('label'=>$langs->trans("NbDaysToDelivery"), 'checked'=>-1, 'position'=>13),
 					'pfp.supplier_reputation'=>array('label'=>$langs->trans("ReputationForThisProduct"), 'checked'=>-1, 'position'=>14),
 					'pfp.fk_barcode_type'=>array('label'=>$langs->trans("BarcodeType"), 'enabled' => isModEnabled('barcode'), 'checked'=>0, 'position'=>15),
@@ -1102,7 +1103,7 @@ END;
 				}
 
 				if (is_object($hookmanager)) {
-					$parameters = array('id_fourn'=>(!empty($id_fourn)?$id_fourn:''), 'prod_id'=>$object->id, 'nbfields'=>$nbfields);
+					$parameters = array('id_fourn'=>(!empty($id_fourn) ? $id_fourn : ''), 'prod_id'=>$object->id, 'nbfields'=>$nbfields);
 					$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action);
 				}
 				print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
@@ -1142,7 +1143,7 @@ END;
 							print '<td class="right">';
 							print $productfourn->fourn_qty;
 							// Units
-							if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+							if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 								$unit = $object->getLabelOfUnit();
 								if ($unit !== '') {
 									print '&nbsp;&nbsp;'.$langs->trans($unit);
@@ -1285,7 +1286,7 @@ END;
 						}
 
 						if (is_object($hookmanager)) {
-							$parameters = array('id_pfp'=>$productfourn->product_fourn_price_id, 'id_fourn'=>(!empty($id_fourn)?$id_fourn:''), 'prod_id'=>$object->id);
+							$parameters = array('id_pfp'=>$productfourn->product_fourn_price_id, 'id_fourn'=>(!empty($id_fourn) ? $id_fourn : ''), 'prod_id'=>$object->id);
 							$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action);
 						}
 

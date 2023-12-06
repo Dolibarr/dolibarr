@@ -87,6 +87,7 @@ class ExtraFields
 		'mail'=>'ExtrafieldMail',
 		'url'=>'ExtrafieldUrl',
 		'ip'=>'ExtrafieldIP',
+		'icon'=>'Icon',
 		'password' => 'ExtrafieldPassword',
 		'select' => 'ExtrafieldSelect',
 		'sellist' => 'ExtrafieldSelectList',
@@ -225,7 +226,7 @@ class ExtraFields
 			} elseif ($type == 'phone') {
 				$typedb = 'varchar';
 				$lengthdb = '20';
-			} elseif ($type == 'mail' || $type == 'ip') {
+			} elseif ($type == 'mail' || $type == 'ip' || $type == 'icon') {
 				$typedb = 'varchar';
 				$lengthdb = '128';
 			} elseif ($type == 'url') {
@@ -579,7 +580,7 @@ class ExtraFields
 			} elseif ($type == 'phone') {
 				$typedb = 'varchar';
 				$lengthdb = '20';
-			} elseif ($type == 'mail' || $type == 'ip') {
+			} elseif ($type == 'mail' || $type == 'ip' || $type == 'icon') {
 				$typedb = 'varchar';
 				$lengthdb = '128';
 			} elseif ($type == 'url') {
@@ -1026,7 +1027,7 @@ class ExtraFields
 				// search filter on a date extrafield shows two inputs to select a date range
 				$prefill = array(
 					'start' => isset($value['start']) ? $value['start'] : '',
-					'end'   => isset($value['end'])   ? $value['end']   : ''
+					'end'   => isset($value['end']) ? $value['end'] : ''
 				);
 				$out = '<div ' . ($moreparam ? $moreparam : '') . '><div class="nowrap">';
 				$out .= $form->selectDate($prefill['start'], $keyprefix.$key.$keysuffix.'_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
@@ -1051,7 +1052,7 @@ class ExtraFields
 				// search filter on a date extrafield shows two inputs to select a date range
 				$prefill = array(
 					'start' => isset($value['start']) ? $value['start'] : '',
-					'end'   => isset($value['end'])   ? $value['end']   : ''
+					'end'   => isset($value['end']) ? $value['end'] : ''
 				);
 				$out = '<div ' . ($moreparam ? $moreparam : '') . '><div class="nowrap">';
 				$out .= $form->selectDate($prefill['start'], $keyprefix.$key.$keysuffix.'_start', 1, 1, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"), 'tzuserrel');
@@ -1062,7 +1063,7 @@ class ExtraFields
 				// TODO Must also support $moreparam
 				$out = $form->selectDate($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required, '', 1, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 0, 1, '', '', '', 1, '', '', 'tzuserrel');
 			}
-		} elseif (in_array($type, array('int', 'integer')))	{
+		} elseif (in_array($type, array('int', 'integer'))) {
 			$tmp = explode(',', $size);
 			$newsize = $tmp[0];
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$newsize.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
@@ -1070,6 +1071,31 @@ class ExtraFields
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$size.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
 		} elseif (in_array($type, array('mail', 'ip', 'phone', 'url'))) {
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
+		} elseif ($type == 'icon') {
+			/* External lib inclusion are not allowed in backoffice. Also lib is included several time if there is several icon file.
+			Some code must be added into main when MAIN_ADD_ICONPICKER_JS is set to add of lib in html header
+			$out ='<link rel="stylesheet" href="'.dol_buildpath('/myfield/css/fontawesome-iconpicker.min.css', 1).'">';
+			$out.='<script src="'.dol_buildpath('/myfield/js/fontawesome-iconpicker.min.js', 1).'"></script>';
+			*/
+			$out.= '<input type="text" class="form-control icp icp-auto iconpicker-element iconpicker-input flat '.$morecss.' maxwidthonsmartphone"';
+			$out.= ' name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
+			if (getDolGlobalInt('MAIN_ADD_ICONPICKER_JS')) {
+				$out.='<script>';
+				$options="{ title: '<b>".$langs->trans("IconFieldSelector")."</b>', placement: 'right', showFooter: false, templates: {";
+				$options.="iconpicker: '<div class=\"iconpicker\"><div style=\"background-color:#EFEFEF;\" class=\"iconpicker-items\"></div></div>',";
+				$options.="iconpickerItem: '<a role=\"button\" href=\"#\" class=\"iconpicker-item\" style=\"background-color:#DDDDDD;\"><i></i></a>',";
+				// $options.="buttons: '<button style=\"background-color:#FFFFFF;\" class=\"iconpicker-btn iconpicker-btn-cancel btn btn-default btn-sm\">".$langs->trans("Cancel")."</button>";
+				// $options.="<button style=\"background-color:#FFFFFF;\" class=\"iconpicker-btn iconpicker-btn-accept btn btn-primary btn-sm\">".$langs->trans("Save")."</button>',";
+				$options.="footer: '<div class=\"popover-footer\" style=\"background-color:#EFEFEF;\"></div>',";
+				$options.="search: '<input type=\"search\" class\"form-control iconpicker-search\" placeholder=\"".$langs->trans("TypeToFilter")."\" />',";
+				$options.="popover: '<div class=\"iconpicker-popover popover\">";
+				$options.="   <div class=\"arrow\" ></div>";
+				$options.="   <div class=\"popover-title\" style=\"text-align:center;background-color:#EFEFEF;\"></div>";
+				$options.="   <div class=\"popover-content \" ></div>";
+				$options.="</div>'}}";
+				$out.="$('#".$keyprefix.$key.$keysuffix."').iconpicker(".$options.");";
+				$out.='</script>';
+			}
 		} elseif ($type == 'text') {
 			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -1141,9 +1167,9 @@ class ExtraFields
 					$selected = explode(',', $value);
 				}
 
-				$out .= $form->multiselectarray($keyprefix.$key.$keysuffix, $options, $selected, 0, 0, $morecss, 0, 0, '', '', '', !empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_EXTRAFIELDS_DISABLE_SELECT2));
+				$out .= $form->multiselectarray($keyprefix.$key.$keysuffix, $options, $selected, 0, 0, $morecss, 0, 0, '', '', '', !empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_EXTRAFIELDS_DISABLE_SELECT2'));
 			} else {
-				if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_EXTRAFIELDS_DISABLE_SELECT2)) {
+				if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_EXTRAFIELDS_DISABLE_SELECT2')) {
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 					$out .= ajax_combobox($keyprefix.$key.$keysuffix, array(), 0);
 				}
@@ -1175,7 +1201,7 @@ class ExtraFields
 			}
 		} elseif ($type == 'sellist') {
 			$out = '';
-			if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_EXTRAFIELDS_DISABLE_SELECT2)) {
+			if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_EXTRAFIELDS_DISABLE_SELECT2')) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 				$out .= ajax_combobox($keyprefix.$key.$keysuffix, array(), 0);
 			}
@@ -1336,7 +1362,7 @@ class ExtraFields
 			if (!is_array($value)) {
 				$value_arr = explode(',', $value);
 			}
-			$out = $form->multiselectarray($keyprefix.$key.$keysuffix, (empty($param['options']) ?null:$param['options']), $value_arr, '', 0, '', 0, '100%');
+			$out = $form->multiselectarray($keyprefix.$key.$keysuffix, (empty($param['options']) ? null : $param['options']), $value_arr, '', 0, '', 0, '100%');
 		} elseif ($type == 'radio') {
 			$out = '';
 			foreach ($param['options'] as $keyopt => $val) {
@@ -1369,7 +1395,7 @@ class ExtraFields
 				$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2].' as rowid');
 
 				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
-					list ($parentName, $parentField) = explode('|', $InfoFieldList[3]);
+					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
 					$keyList .= ', '.$parentField;
 				}
 				if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
@@ -1652,6 +1678,8 @@ class ExtraFields
 			$value = dol_print_email($value, 0, 0, 0, 64, 1, 1);
 		} elseif ($type == 'ip') {
 			$value = dol_print_ip($value, 0);
+		} elseif ($type == 'icon') {
+			$value = '<span class="'.$value.'"></span>';
 		} elseif ($type == 'url') {
 			$value = dol_print_url($value, '_blank', 32, 1);
 		} elseif ($type == 'phone') {
@@ -1885,7 +1913,9 @@ class ExtraFields
 						}
 					}
 				}
-				if (!empty($toprint)) $value = '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
+				if (!empty($toprint)) {
+					$value = '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
+				}
 			} else {
 				dol_syslog(get_class($this).'::showOutputField error '.$this->db->lasterror(), LOG_WARNING);
 			}
@@ -1948,11 +1978,11 @@ class ExtraFields
 
 		$cssstring = '';
 
-		if (in_array($type, array('date', 'datetime', 'datetimegmt'))) {
+		if (in_array($type, array('date', 'datetime', 'datetimegmt',))) {
 			$cssstring = "center";
 		} elseif (in_array($type, array('int', 'price', 'double'))) {
 			$cssstring = "right";
-		} elseif (in_array($type, array('boolean', 'radio', 'checkbox', 'ip'))) {
+		} elseif (in_array($type, array('boolean', 'radio', 'checkbox', 'ip', 'icon'))) {
 			$cssstring = "center";
 		}
 
@@ -2011,8 +2041,8 @@ class ExtraFields
 			$disabledcookiewrite = 1; // We keep status of group unchanged into the cookie
 		}
 
-		$out = '<'.$tagtype.' id="trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').'" class="trextrafieldseparator trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').'">';
-		$out .= '<'.$tagtype_dyn.' '.(!empty($colspan)?'colspan="' . $colspan . '"':'').'>';
+		$out = '<'.$tagtype.' id="trextrafieldseparator'.$key.(!empty($object->id) ? '_'.$object->id : '').'" class="trextrafieldseparator trextrafieldseparator'.$key.(!empty($object->id) ? '_'.$object->id : '').'">';
+		$out .= '<'.$tagtype_dyn.' '.(!empty($colspan) ? 'colspan="' . $colspan . '"' : '').'>';
 		// Some js code will be injected here to manage the collapsing of extrafields
 		// Output the picto
 		$out .= '<span class="'.($extrafield_collapse_display_value ? 'cursorpointer ' : '').($extrafield_collapse_display_value == 0 ? 'fas fa-square opacitymedium' : 'far fa-'.(($expand_display ? 'minus' : 'plus').'-square')).'"></span>';
@@ -2043,14 +2073,14 @@ class ExtraFields
 						$out .= '   document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
 					}
 				}
-				$out .= '   jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').'").click(function(){'."\n";
+				$out .= '   jQuery("#trextrafieldseparator'.$key.(!empty($object->id) ? '_'.$object->id : '').'").click(function(){'."\n";
 				$out .= '       console.log("We click on collapse/uncollapse to hide/show .trextrafields_collapse'.$collapse_group.'");'."\n";
 				$out .= '       jQuery(".trextrafields_collapse'.$collapse_group.'").toggle(100, function(){'."\n";
 				$out .= '           if (jQuery(".trextrafields_collapse'.$collapse_group.'").is(":hidden")) {'."\n";
-				$out .= '               jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.' span").addClass("fa-plus-square").removeClass("fa-minus-square");'."\n";
+				$out .= '               jQuery("#trextrafieldseparator'.$key.(!empty($object->id) ? '_'.$object->id : '').' '.$tagtype_dyn.' span").addClass("fa-plus-square").removeClass("fa-minus-square");'."\n";
 				$out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=0; path='.$_SERVER["PHP_SELF"].'"'."\n";
 				$out .= '           } else {'."\n";
-				$out .= '               jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.' span").addClass("fa-minus-square").removeClass("fa-plus-square");'."\n";
+				$out .= '               jQuery("#trextrafieldseparator'.$key.(!empty($object->id) ? '_'.$object->id : '').' '.$tagtype_dyn.' span").addClass("fa-minus-square").removeClass("fa-plus-square");'."\n";
 				$out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
 				$out .= '           }'."\n";
 				$out .= '       });'."\n";
@@ -2183,10 +2213,10 @@ class ExtraFields
 				} elseif (in_array($key_type, array('text'))) {
 					$label_security_check = 'alphanohtml';
 					// by default 'alphanohtml' (better security); hidden conf MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML allows basic html
-					if (!empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS)) {
+					if (getDolGlobalString('MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS')) {
 						$label_security_check = 'nohtml';
 					} else {
-						$label_security_check = empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML) ? 'alphanohtml' : 'restricthtml';
+						$label_security_check = !getDolGlobalString('MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML') ? 'alphanohtml' : 'restricthtml';
 					}
 					$value_key = GETPOST("options_".$key, $label_security_check);
 				} else {

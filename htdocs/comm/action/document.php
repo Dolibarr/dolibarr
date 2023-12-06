@@ -129,10 +129,14 @@ if ($object->id > 0) {
 	}
 
 	if ($object->authorid > 0) {
-		$tmpuser = new User($db); $res = $tmpuser->fetch($object->authorid); $object->author = $tmpuser;
+		$tmpuser = new User($db);
+		$res = $tmpuser->fetch($object->authorid);
+		$object->author = $tmpuser;
 	}
 	if ($object->usermodid > 0) {
-		$tmpuser = new User($db); $res = $tmpuser->fetch($object->usermodid); $object->usermod = $tmpuser;
+		$tmpuser = new User($db);
+		$res = $tmpuser->fetch($object->usermodid);
+		$object->usermod = $tmpuser;
 	}
 
 	$author = new User($db);
@@ -205,7 +209,7 @@ if ($object->id > 0) {
 	print '<table class="border tableforfield centpercent">';
 
 	// Type of event
-	if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
+	if (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 		print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td colspan="3">';
 		print $object->getTypePicto();
 		print $langs->trans("Action".$object->type_code);
@@ -243,7 +247,7 @@ if ($object->id > 0) {
 	print '</td></tr>';
 
 	// Location
-	if (empty($conf->global->AGENDA_DISABLE_LOCATION)) {
+	if (!getDolGlobalString('AGENDA_DISABLE_LOCATION')) {
 		print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3">'.$object->location.'</td></tr>';
 	}
 
@@ -287,7 +291,7 @@ if ($object->id > 0) {
 	print '<table class="border tableforfield centpercent">';
 
 	// Build file list
-	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 	$totalsize = 0;
 	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];

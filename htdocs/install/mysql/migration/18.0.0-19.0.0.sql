@@ -93,7 +93,8 @@ ALTER TABLE llx_user ADD COLUMN email_oauth2 varchar(255);
 
 ALTER TABLE llx_prelevement_demande ADD INDEX idx_prelevement_demande_ext_payment_id (ext_payment_id);
 
-ALTER TABLE llx_actioncomm ADD COLUMN fk_bookcal_availability integer DEFAULT NULL;
+ALTER TABLE llx_actioncomm CHANGE COLUMN fk_bookcal_availability fk_bookcal_calendar integer;
+ALTER TABLE llx_actioncomm ADD COLUMN fk_bookcal_calendar integer DEFAULT NULL;
 
 ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_entity (entity);
 
@@ -191,3 +192,12 @@ CREATE TABLE llx_mrp_production_extrafields
 ) ENGINE=innodb;
 
 ALTER TABLE llx_mrp_production_extrafields ADD INDEX idx_mrp_production_fk_object(fk_object);
+
+ALTER TABLE llx_salary ADD COLUMN ref_ext varchar(255);
+ALTER TABLE llx_salary ADD COLUMN note_public text;
+
+ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN element_type varchar(50) DEFAULT 'supplier_order' NOT NULL;
+
+ALTER TABLE llx_expensereport DROP INDEX idx_expensereport_fk_refuse, ADD INDEX idx_expensereport_fk_refuse(fk_user_refuse);
+
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (1,'66','Société publique locale');

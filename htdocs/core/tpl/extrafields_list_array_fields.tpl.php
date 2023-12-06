@@ -1,4 +1,5 @@
 <?php
+
 // This tpl file is included into the init part of pages, so before action.
 // So no output must be done.
 

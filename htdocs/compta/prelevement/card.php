@@ -45,7 +45,7 @@ $type = GETPOST('type', 'aZ09');
 $date_trans = dol_mktime(GETPOST('date_transhour', 'int'), GETPOST('date_transmin', 'int'), GETPOST('date_transsec', 'int'), GETPOST('date_transmonth', 'int'), GETPOST('date_transday', 'int'), GETPOST('date_transyear', 'int'));
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -411,16 +411,25 @@ if ($id > 0 || $ref) {
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) {
 			if (empty($object->date_trans)) {
-				if ($object->type == 'bank-transfer') print dolGetButtonAction($langs->trans("SetToStatusSent"), '', 'default', 'card.php?action=settransmitted&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'send'));
-				else print dolGetButtonAction($langs->trans("SetToStatusSent"), '', 'default', 'card.php?action=settransmitted&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'send'));
+				if ($object->type == 'bank-transfer') {
+					print dolGetButtonAction($langs->trans("SetToStatusSent"), '', 'default', 'card.php?action=settransmitted&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'send'));
+				} else {
+					print dolGetButtonAction($langs->trans("SetToStatusSent"), '', 'default', 'card.php?action=settransmitted&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'send'));
+				}
 			}
 			if (!empty($object->date_trans) && empty($object->date_credit)) {
-				if ($object->type == 'bank-transfer') print dolGetButtonAction($langs->trans("ClassDebited"), '', 'default', 'card.php?action=setcredited&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'debit'));
-				else print dolGetButtonAction($langs->trans("ClassCredited"), '', 'default', 'card.php?action=setcredited&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'credit'));
+				if ($object->type == 'bank-transfer') {
+					print dolGetButtonAction($langs->trans("ClassDebited"), '', 'default', 'card.php?action=setcredited&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'debit'));
+				} else {
+					print dolGetButtonAction($langs->trans("ClassCredited"), '', 'default', 'card.php?action=setcredited&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'credit'));
+				}
 			}
 
-			if ($object->type == 'bank-transfer') print dolGetButtonAction($langs->trans("Delete"), '', 'delete', 'card.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'create'));
-			else print dolGetButtonAction($langs->trans("Delete"), '', 'delete', 'card.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'creer'));
+			if ($object->type == 'bank-transfer') {
+				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', 'card.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'create'));
+			} else {
+				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', 'card.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'creer'));
+			}
 		}
 		print '</div>';
 	}
@@ -525,7 +534,7 @@ if ($id > 0 || $ref) {
 				$userSalary->fetch($obj->fk_user);
 			}
 			print '<td>';
-			print (!$salaryBonPl  ? $thirdparty->getNomUrl(1) : $userSalary->getNomUrl(-1));
+			print(!$salaryBonPl ? $thirdparty->getNomUrl(1) : $userSalary->getNomUrl(-1));
 			print "</td>\n";
 
 			print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";

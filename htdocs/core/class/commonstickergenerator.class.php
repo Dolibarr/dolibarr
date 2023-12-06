@@ -104,8 +104,12 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 	protected $_First = 1;
 	public $Tformat;
 
-
+	/**
+	 * @var array
+	 */
+	public $_Avery_Labels;
 	// phpcs:enable
+
 	/**
 	 *	Constructor
 	 *
@@ -294,7 +298,7 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 		// phpcs:enable
 		$this->_Metric = $format['metric'];
 		$this->_Avery_Name = $format['name'];
-		$this->_Avery_Code = empty($format['code'])?'':$format['code'];
+		$this->_Avery_Code = empty($format['code']) ? '' : $format['code'];
 		$this->_Margin_Left = $this->convertMetric($format['marginLeft'], $this->_Metric, $this->_Metric_Doc);
 		$this->_Margin_Top = $this->convertMetric($format['marginTop'], $this->_Metric, $this->_Metric_Doc);
 		$this->_X_Space = $this->convertMetric($format['SpaceX'], $this->_Metric, $this->_Metric_Doc);

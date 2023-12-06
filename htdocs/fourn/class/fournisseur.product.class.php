@@ -198,7 +198,7 @@ class ProductFournisseur extends Product
 	 * 	Remove a price for a couple supplier-product
 	 *
 	 * 	@param	int		$rowid		Line id of price
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function remove_product_fournisseur_price($rowid)
 	{
@@ -413,7 +413,7 @@ class ProductFournisseur extends Product
 			$sql .= " supplier_reputation = ".(empty($supplier_reputation) ? 'NULL' : "'".$this->db->escape($supplier_reputation)."'").",";
 			$sql .= " barcode = ".(empty($barcode) ? 'NULL' : "'".$this->db->escape($barcode)."'").",";
 			$sql .= " fk_barcode_type = ".(empty($fk_barcode_type) ? 'NULL' : "'".$this->db->escape($fk_barcode_type)."'");
-			if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
+			if (getDolGlobalString('PRODUCT_USE_SUPPLIER_PACKAGING')) {
 				$sql .= ", packaging = ".(empty($packaging) ? 1 : $packaging);
 			}
 			$sql .= " WHERE rowid = ".((int) $this->product_fourn_price_id);
@@ -447,7 +447,7 @@ class ProductFournisseur extends Product
 					$error++;
 				}
 				// End call triggers
-				if (!$error && empty($conf->global->PRODUCT_PRICE_SUPPLIER_NO_LOG)) {
+				if (!$error && !getDolGlobalString('PRODUCT_PRICE_SUPPLIER_NO_LOG')) {
 					$result = $this->logPrice($user, $now, $buyprice, $qty, $multicurrency_buyprice, $multicurrency_unitBuyPrice, $multicurrency_tx, $fk_multicurrency, $multicurrency_code);
 					if ($result < 0) {
 						$error++;
@@ -477,7 +477,7 @@ class ProductFournisseur extends Product
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price(";
 				$sql .= " multicurrency_price, multicurrency_unitprice, multicurrency_tx, fk_multicurrency, multicurrency_code,";
 				$sql .= "datec, fk_product, fk_soc, ref_fourn, desc_fourn, fk_user, price, quantity, remise_percent, remise, unitprice, tva_tx, charges, fk_availability, default_vat_code, info_bits, entity, delivery_time_days, supplier_reputation, barcode, fk_barcode_type";
-				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
+				if (getDolGlobalString('PRODUCT_USE_SUPPLIER_PACKAGING')) {
 					$sql .= ", packaging";
 				}
 				$sql .= ") values(";
@@ -507,7 +507,7 @@ class ProductFournisseur extends Product
 				$sql .= (empty($supplier_reputation) ? 'NULL' : "'".$this->db->escape($supplier_reputation)."'").",";
 				$sql .= (empty($barcode) ? 'NULL' : "'".$this->db->escape($barcode)."'").",";
 				$sql .= (empty($fk_barcode_type) ? 'NULL' : "'".$this->db->escape($fk_barcode_type)."'");
-				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
+				if (getDolGlobalString('PRODUCT_USE_SUPPLIER_PACKAGING')) {
 					$sql .= ", ".(empty($this->packaging) ? '1' : "'".$this->db->escape($this->packaging)."'");
 				}
 				$sql .= ")";
@@ -540,7 +540,7 @@ class ProductFournisseur extends Product
 					}
 				}
 
-				if (!$error && empty($conf->global->PRODUCT_PRICE_SUPPLIER_NO_LOG)) {
+				if (!$error && !getDolGlobalString('PRODUCT_PRICE_SUPPLIER_NO_LOG')) {
 					// Add record into log table
 					// $this->product_fourn_price_id must be set
 					$result = $this->logPrice($user, $now, $buyprice, $qty, $multicurrency_buyprice, $multicurrency_unitBuyPrice, $multicurrency_tx, $fk_multicurrency, $multicurrency_code);
@@ -555,7 +555,7 @@ class ProductFournisseur extends Product
 					if ($result < 0) {
 						$error++;
 					}
-						// End call triggers
+					// End call triggers
 
 					if (empty($error)) {
 						$this->db->commit();
@@ -927,7 +927,7 @@ class ProductFournisseur extends Product
 	 *  Sets the supplier price expression
 	 *
 	 *  @param  int     $expression_id	Expression
-	 *  @return int                 	<0 if KO, >0 if OK
+	 *  @return int                 	Return integer <0 if KO, >0 if OK
 	 */
 	public function setSupplierPriceExpression($expression_id)
 	{
@@ -998,7 +998,7 @@ class ProductFournisseur extends Product
 			$out .= '<td class="liste_titre">'.$langs->trans("Supplier").'</td>';
 			$out .= '<td class="liste_titre">'.$langs->trans("SupplierRef").'</td></tr>';
 			foreach ($productFournList as $productFourn) {
-				$out .= '<tr><td class="right">'.($showunitprice ?price($productFourn->fourn_unitprice * (1 - $productFourn->fourn_remise_percent / 100) - $productFourn->fourn_remise) : '').'</td>';
+				$out .= '<tr><td class="right">'.($showunitprice ? price($productFourn->fourn_unitprice * (1 - $productFourn->fourn_remise_percent / 100) - $productFourn->fourn_remise) : '').'</td>';
 				$out .= '<td class="right">'.($showunitprice ? $productFourn->fourn_qty : '').'</td>';
 				$out .= '<td>'.$productFourn->getSocNomUrl(1, 'supplier', $maxlen, $notooltip).'</td>';
 				$out .= '<td>'.$productFourn->fourn_ref.'<td></tr>';
@@ -1199,7 +1199,7 @@ class ProductFournisseur extends Product
 		}
 		$label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_supplier;
 
-		if ($this->type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+		if ($this->type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 			if (isModEnabled('productbatch')) {
 				$langs->load("productbatch");
 				$label .= "<br><b>".$langs->trans("ManageLotSerial").'</b>: '.$this->getLibStatut(0, 2);
@@ -1274,7 +1274,7 @@ class ProductFournisseur extends Product
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("SupplierRef");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}

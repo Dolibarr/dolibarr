@@ -149,7 +149,7 @@ class mod_task_simple extends ModeleNumRefTask
 			return -1;
 		}
 
-		$date = empty($object->date_c) ?dol_now() : $object->date_c;
+		$date = empty($object->date_c) ? dol_now() : $object->date_c;
 
 		//$yymm = strftime("%y%m",time());
 		$yymm = strftime("%y%m", $date);

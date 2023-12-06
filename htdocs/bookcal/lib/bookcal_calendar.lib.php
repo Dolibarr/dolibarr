@@ -46,6 +46,14 @@ function calendarPrepareHead($object)
 	$head[$h][2] = 'card';
 	$h++;
 
+	if ($object->status == Calendar::STATUS_VALIDATED) {
+		$head[$h][0] = dol_buildpath("/bookcal/booking_list.php", 1).'?id='.$object->id;
+		$head[$h][1] = $langs->trans("Bookings");
+		$head[$h][2] = 'booking';
+		$h++;
+	}
+
+
 	if ($showtabofpagecontact) {
 		$head[$h][0] = dol_buildpath("/bookcal/calendar_contact.php", 1).'?id='.$object->id;
 		$head[$h][1] = $langs->trans("Contacts");

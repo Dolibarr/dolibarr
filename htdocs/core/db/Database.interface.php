@@ -362,7 +362,7 @@ interface Database
 	 * @param    string $field_name 		Name of field to add
 	 * @param    string $field_desc 		Associative array of description of the field to insert [parameter name][parameter value]
 	 * @param    string $field_position 	Optional ex .: "after field stuff"
-	 * @return   int                        <0 if KO, >0 if OK
+	 * @return   int                        Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLAddField($table, $field_name, $field_desc, $field_position = "");
 	// phpcs:enable
@@ -373,7 +373,7 @@ interface Database
 	 *
 	 * @param    string $table 				Name of table
 	 * @param    string $field_name 		Name of field to drop
-	 * @return   int                        <0 if KO, >0 if OK
+	 * @return   int                        Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLDropField($table, $field_name);
 	// phpcs:enable
@@ -385,7 +385,7 @@ interface Database
 	 * @param    string 	$table 			Name of table
 	 * @param    string 	$field_name 	Name of field to modify
 	 * @param    string 	$field_desc 	Array with description of field format
-	 * @return   int                        <0 if KO, >0 if OK
+	 * @return   int                        Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLUpdateField($table, $field_name, $field_desc);
 	// phpcs:enable
@@ -515,7 +515,7 @@ interface Database
 	/**
 	 * Returns the current line (as an object) for the resultset cursor
 	 *
-	 * @param   resource|Connection		$resultset 		Handler of the desired request
+	 * @param   resource|PgSql\Connection		$resultset 		Handler of the desired request
 	 * @return  Object                  				Object result line or false if KO or end of cursor
 	 */
 	public function fetch_object($resultset);

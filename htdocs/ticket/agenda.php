@@ -71,7 +71,7 @@ if (GETPOST('actioncode', 'array')) {
 		$actioncode = '0';
 	}
 } else {
-	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
+	$actioncode = GETPOST("actioncode", "alpha", 3) ? GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
 }
 
 $search_rowid = GETPOST('search_rowid');
@@ -91,7 +91,9 @@ if (!$action) {
 
 // Security check
 $id = GETPOST("id", 'int');
-if ($user->socid > 0) $socid = $user->socid;
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'ticket', $object->id, '');
 
 // restrict access for externals users
@@ -99,7 +101,7 @@ if ($user->socid > 0 && ($object->fk_soc != $user->socid)) {
 	accessforbidden();
 }
 // or for unauthorized internals users
-if (!$user->socid && (!empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && $object->fk_user_assign != $user->id) && !$user->hasRight('ticket', 'manage')) {
+if (!$user->socid && (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && $object->fk_user_assign != $user->id) && !$user->hasRight('ticket', 'manage')) {
 	accessforbidden();
 }
 
@@ -147,7 +149,7 @@ $userstat = new User($db);
 $formticket = new FormTicket($db);
 
 $title = $langs->trans("Ticket").' - '.$object->ref.' '.$object->name;
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/ticketnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/ticketnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->ref.' '.$object->name.' - '.$langs->trans("Info");
 }
 $help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|DE:Modul_Terminplanung';
@@ -165,7 +167,7 @@ if ($socid > 0) {
 	print dol_get_fiche_end();
 }
 
-if (!$user->socid && !empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY)) {
+if (!$user->socid && getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY')) {
 	$object->next_prev_filter = "te.fk_user_assign = ".((int) $user->id);
 } elseif ($user->socid > 0) {
 	$object->next_prev_filter = "te.fk_soc = ".((int) $user->socid);
@@ -273,7 +275,7 @@ if (!empty($object->id)) {
 	$cachekey = 'count_events_ticket_'.$object->id;
 	$nbEvent = dol_getcache($cachekey);
 
-	$titlelist = $langs->trans("ActionsOnTicket").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>': '');
+	$titlelist = $langs->trans("ActionsOnTicket").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : '');
 
 	print_barre_liste($titlelist, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);
 

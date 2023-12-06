@@ -57,7 +57,7 @@ $socid = GETPOST('socid', 'int');
 $ref = GETPOST('ref', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 if (!$sortfield) {
@@ -335,7 +335,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans('Address').'</td><td><textarea name="address" class="quatrevingtpercent" rows="3" wrap="soft">';
-	print (!empty($object->address) ? $object->address : '');
+	print(!empty($object->address) ? $object->address : '');
 	print '</textarea></td></tr>';
 
 	// Zip / Town
@@ -367,7 +367,7 @@ if ($action == 'create') {
 	// Status
 	print '<tr><td>'.$langs->trans("Status").'</td><td>';
 	print '<select id="warehousestatus" name="statut" class="flat minwidth100">';
-	foreach ($object->statuts as $key => $value) {
+	foreach ($object->labelStatus as $key => $value) {
 		if ($key == 1) {
 			print '<option value="'.$key.'" selected>'.$langs->trans($value).'</option>';
 		} else {
@@ -601,9 +601,9 @@ if ($action == 'create') {
 
 
 			$totalarray = array();
-			$totalarray['val'] = array ();
-			$totalarray['pos'] = array ();
-			$totalarray['type'] = array ();
+			$totalarray['val'] = array();
+			$totalarray['pos'] = array();
+			$totalarray['type'] = array();
 			$totalarray['nbfield'] = 0;
 
 			// TODO Create $arrayfields with all fields to show
@@ -621,7 +621,7 @@ if ($action == 'create') {
 			$totalarray['pos'][$totalarray['nbfield']] = 'totalunit';
 			$totalarray['type'][$totalarray['nbfield']] = 'stock';
 
-			if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+			if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 				print_liste_field_titre("Unit", "", "p.fk_unit", "&amp;id=".$id, "", 'align="left"', $sortfield, $sortorder);
 				$totalarray['nbfield']++;
 				$totalarray['pos'][$totalarray['nbfield']] = 'units';
@@ -637,11 +637,11 @@ if ($action == 'create') {
 			$totalarray['type'][$totalarray['nbfield']] = '';
 
 
-			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 				print_liste_field_titre("SellPriceMin", "", "p.price", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
 				$totalarray['nbfield']++;
 			}
-			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 				print_liste_field_titre("EstimatedStockValueSellShort", "", "", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
 				$totalarray['nbfield']++;
 				$totalarray['pos'][$totalarray['nbfield']] = 'totalvaluesell';
@@ -666,7 +666,7 @@ if ($action == 'create') {
 
 			//For MultiCompany PMP per entity
 			$separatedPMP = false;
-			if (!empty($conf->global->MULTICOMPANY_PRODUCT_SHARING_ENABLED) && !empty($conf->global->MULTICOMPANY_PMP_PER_ENTITY_ENABLED)) {
+			if (getDolGlobalString('MULTICOMPANY_PRODUCT_SHARING_ENABLED') && getDolGlobalString('MULTICOMPANY_PMP_PER_ENTITY_ENABLED')) {
 				$separatedPMP = true;
 			}
 
@@ -685,7 +685,7 @@ if ($action == 'create') {
 				$sql .= " p.pmp as ppmp,";
 			}
 			$sql .= " ps.reel as value";
-			if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+			if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 				$sql .= ",fk_unit";
 			}
 			// Add fields from hooks
@@ -751,7 +751,7 @@ if ($action == 'create') {
 					$productstatic->type = $objp->type;
 					$productstatic->entity = $objp->entity;
 					$productstatic->status_batch = $objp->tobatch;
-					if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+					if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 						$productstatic->fk_unit = $objp->fk_unit;
 					}
 					$productstatic->status = $objp->tosell;
@@ -779,7 +779,7 @@ if ($action == 'create') {
 					print '</td>';
 					$totalunit += $objp->value;
 
-					if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+					if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 						// Units
 						print '<td align="left">';
 						if (is_null($productstatic->fk_unit)) {
@@ -797,7 +797,7 @@ if ($action == 'create') {
 					$totalvalue += price2num($objp->ppmp * $objp->value, 'MT');
 
 					// Price sell min
-					if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+					if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 						$pricemin = $objp->price;
 						print '<td class="right">';
 						print price(price2num($pricemin, 'MU'), 1);
@@ -830,7 +830,7 @@ if ($action == 'create') {
 					$i++;
 
 					// Define $unit and $sameunits
-					if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+					if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 						if ($i == 0) {
 							$units = $productstatic->fk_unit;
 						} elseif ($productstatic->fk_unit != $units) {
@@ -936,7 +936,7 @@ if ($action == 'create') {
 			// Status
 			print '<tr><td>'.$langs->trans("Status").'</td><td>';
 			print '<select id="warehousestatus" name="statut" class="flat">';
-			foreach ($object->statuts as $key => $value) {
+			foreach ($object->labelStatus as $key => $value) {
 				if ($key == $object->statut) {
 					print '<option value="'.$key.'" selected>'.$langs->trans($value).'</option>';
 				} else {

@@ -203,7 +203,8 @@ class ActionsMyModule extends CommonHookActions
 
 		$outputlangs = $langs;
 
-		$ret = 0; $deltemp = array();
+		$ret = 0;
+		$deltemp = array();
 		dol_syslog(get_class($this).'::executeHooks action='.$action);
 
 		/* print_r($parameters); print_r($object); echo "action: " . $action; */
@@ -230,7 +231,8 @@ class ActionsMyModule extends CommonHookActions
 
 		$outputlangs = $langs;
 
-		$ret = 0; $deltemp = array();
+		$ret = 0;
+		$deltemp = array();
 		dol_syslog(get_class($this).'::executeHooks action='.$action);
 
 		/* print_r($parameters); print_r($object); echo "action: " . $action; */

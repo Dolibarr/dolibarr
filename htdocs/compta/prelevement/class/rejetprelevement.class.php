@@ -307,7 +307,7 @@ class RejetPrelevement
 
 		$arr = array();
 
-		 //Returns all invoices of a withdrawal
+		//Returns all invoices of a withdrawal
 		$sql = "SELECT f.rowid as facid, pl.amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement as pf";
 		if ($this->type == 'bank-transfer') {

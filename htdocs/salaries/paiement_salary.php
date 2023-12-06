@@ -106,8 +106,9 @@ if (($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == '
 
 			// Create a line of payments
 			$paiement = new PaymentSalary($db);
-			$paiement->chid         = $id;
-			$paiement->datepaye     = $datepaye;
+			$paiement->id           = $id;
+			$paiement->chid         = $id;	// deprecated
+			$paiement->datep        = $datepaye;
 			$paiement->amounts      = $amounts; // Tableau de montant
 			$paiement->paiementtype = GETPOST("paiementtype", 'alphanohtml');
 			$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
@@ -211,7 +212,7 @@ if ($action == 'create') {
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
 	$datepaye = dol_mktime(GETPOST("rehour", 'int'), GETPOST("remin", 'int'), GETPOST("resec", 'int'), GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
-	$datepayment = empty($conf->global->MAIN_AUTOFILL_DATE) ? (GETPOST("remonth") ? $datepaye : -1) : '';
+	$datepayment = !getDolGlobalString('MAIN_AUTOFILL_DATE') ? (GETPOST("remonth") ? $datepaye : -1) : '';
 	print $form->selectDate($datepayment, '', 1, 1, 0, "add_payment", 1, 1, 0, '', '', $salary->dateep, '', 1, $langs->trans("DateEnd"));
 	print "</td>";
 	print '</tr>';

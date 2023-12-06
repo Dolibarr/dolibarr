@@ -134,16 +134,18 @@ if (php_sapi_name() === "cli" && (float) PHP_VERSION > 7.0) {
 	$rest_index = 0;
 	$opts = getopt($short_options, $long_options, $rest_index);
 
-	foreach ($opts as $opt => $arg) switch ($opt) {
-		case 'c':
-		case 'config':
-			$conffile = $arg;
-			$conffiletoshow = $arg;
+	foreach ($opts as $opt => $arg) {
+		switch ($opt) {
+			case 'c':
+			case 'config':
+				$conffile = $arg;
+				$conffiletoshow = $arg;
 			break;
-		case 'h':
-		case 'help':
-			usage($argv[0], "Usage:");
+			case 'h':
+			case 'help':
+				usage($argv[0], "Usage:");
 			exit(0);
+		}
 	}
 
 	// Parse the arguments to find the options.
@@ -151,8 +153,9 @@ if (php_sapi_name() === "cli" && (float) PHP_VERSION > 7.0) {
 		return strlen($arg) >= 2 && $arg[0] == '-';
 	});
 	$parsed_options = array_map(function ($arg) {
-		if (strlen($arg) > 1)
+		if (strlen($arg) > 1) {
 			return "--" . $arg;
+		}
 		return "-" . $arg;
 	}, array_keys($opts));
 
@@ -195,11 +198,11 @@ if (!defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) >
 		}
 
 		// Clean parameters
-		$dolibarr_main_data_root = isset($dolibarr_main_data_root) ?trim($dolibarr_main_data_root) : DOL_DOCUMENT_ROOT.'/../documents';
-		$dolibarr_main_url_root         = isset($dolibarr_main_url_root) ?trim($dolibarr_main_url_root) : '';
-		$dolibarr_main_url_root_alt     = isset($dolibarr_main_url_root_alt) ?trim($dolibarr_main_url_root_alt) : '';
-		$dolibarr_main_document_root    = isset($dolibarr_main_document_root) ?trim($dolibarr_main_document_root) : '';
-		$dolibarr_main_document_root_alt = isset($dolibarr_main_document_root_alt) ?trim($dolibarr_main_document_root_alt) : '';
+		$dolibarr_main_data_root = isset($dolibarr_main_data_root) ? trim($dolibarr_main_data_root) : DOL_DOCUMENT_ROOT.'/../documents';
+		$dolibarr_main_url_root         = isset($dolibarr_main_url_root) ? trim($dolibarr_main_url_root) : '';
+		$dolibarr_main_url_root_alt     = isset($dolibarr_main_url_root_alt) ? trim($dolibarr_main_url_root_alt) : '';
+		$dolibarr_main_document_root    = isset($dolibarr_main_document_root) ? trim($dolibarr_main_document_root) : '';
+		$dolibarr_main_document_root_alt = isset($dolibarr_main_document_root_alt) ? trim($dolibarr_main_document_root_alt) : '';
 
 		// Remove last / or \ on directories or url value
 		if (!empty($dolibarr_main_document_root) && !preg_match('/^[\\/]+$/', $dolibarr_main_document_root)) {
@@ -322,7 +325,7 @@ if ($islocked) {	// Pages are locked
 		print $langs->trans("YouTryUpgradeDisabledByMissingFileUnLock").'<br>';
 	}
 	if (!empty($dolibarr_main_url_root)) {
-		if (GETPOST('action') != 'upgrade') {
+		if (GETPOST('action') != 'upgrade' && (!file_exists($conffile) || !isset($dolibarr_main_url_root))) {
 			print $langs->trans("ClickOnLinkOrRemoveManualy").'<br>';
 		} else {
 			print $langs->trans("ClickOnLinkOrCreateUnlockFileManualy").'<br>';
@@ -395,7 +398,7 @@ if (GETPOST('lang', 'aZ09')) {
  * Load conf file (file must exists)
  *
  * @param	string		$dolibarr_main_document_root		Root directory of Dolibarr bin files
- * @return	int												<0 if KO, >0 if OK
+ * @return	int												Return integer <0 if KO, >0 if OK
  */
 function conf($dolibarr_main_document_root)
 {

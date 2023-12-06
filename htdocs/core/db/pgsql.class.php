@@ -101,7 +101,7 @@ class DoliDBPgsql extends DoliDB
 			$this->ok = false;
 			$this->error = "Pgsql PHP functions are not available in this version of PHP";
 			dol_syslog(get_class($this)."::DoliDBPgsql : Pgsql PHP functions are not available in this version of PHP", LOG_ERR);
-			return $this->ok;
+			return;
 		}
 
 		if (!$host) {
@@ -109,7 +109,7 @@ class DoliDBPgsql extends DoliDB
 			$this->ok = false;
 			$this->error = $langs->trans("ErrorWrongHostParameter");
 			dol_syslog(get_class($this)."::DoliDBPgsql : Erreur Connect, wrong host parameters", LOG_ERR);
-			return $this->ok;
+			return;
 		}
 
 		// Essai connexion serveur
@@ -144,8 +144,6 @@ class DoliDBPgsql extends DoliDB
 			// Pas de selection de base demandee, ok ou ko
 			$this->database_selected = false;
 		}
-
-		return $this->ok;
 	}
 
 
@@ -325,7 +323,7 @@ class DoliDBPgsql extends DoliDB
 			// To have postgresql case sensitive
 			$count_like = 0;
 			$line = str_replace(' LIKE \'', ' ILIKE \'', $line, $count_like);
-			if (!empty($conf->global->PSQL_USE_UNACCENT) && $count_like > 0) {
+			if (getDolGlobalString('PSQL_USE_UNACCENT') && $count_like > 0) {
 				// @see https://docs.postgresql.fr/11/unaccent.html : 'unaccent()' function must be installed before
 				$line = preg_replace('/\s+(\(+\s*)([a-zA-Z0-9\-\_\.]+) ILIKE /', ' \1unaccent(\2) ILIKE ', $line);
 			}
@@ -523,7 +521,7 @@ class DoliDBPgsql extends DoliDB
 		$query = $this->convertSQLFromMysql($query, $type, ($this->unescapeslashquot && $this->standard_conforming_strings));
 		//print "After convertSQLFromMysql:\n".$query."<br>\n";
 
-		if (!empty($conf->global->MAIN_DB_AUTOFIX_BAD_SQL_REQUEST)) {
+		if (getDolGlobalString('MAIN_DB_AUTOFIX_BAD_SQL_REQUEST')) {
 			// Fix bad formed requests. If request contains a date without quotes, we fix this but this should not occurs.
 			$loop = true;
 			while ($loop) {
@@ -1209,7 +1207,7 @@ class DoliDBPgsql extends DoliDB
 	 *	@param	string	$field_name 		Name of field to add
 	 *	@param	string	$field_desc 		Tableau associatif de description du champ a inserer[nom du parametre][valeur du parametre]
 	 *	@param	string	$field_position 	Optionnel ex.: "after champtruc"
-	 *	@return	int							<0 if KO, >0 if OK
+	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLAddField($table, $field_name, $field_desc, $field_position = "")
 	{
@@ -1255,7 +1253,7 @@ class DoliDBPgsql extends DoliDB
 	 *	@param	string	$table 				Name of table
 	 *	@param	string	$field_name 		Name of field to modify
 	 *	@param	string	$field_desc 		Array with description of field format
-	 *	@return	int							<0 if KO, >0 if OK
+	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLUpdateField($table, $field_name, $field_desc)
 	{
@@ -1300,7 +1298,7 @@ class DoliDBPgsql extends DoliDB
 	 *
 	 *	@param	string	$table 			Name of table
 	 *	@param	string	$field_name 	Name of field to drop
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLDropField($table, $field_name)
 	{
