@@ -138,7 +138,7 @@ class ProductCombination
 		$this->variation_weight = $obj->variation_weight;
 		$this->variation_ref_ext = $obj->variation_ref_ext;
 
-		if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+		if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 			$this->fetchCombinationPriceLevels();
 		}
 
@@ -273,7 +273,7 @@ class ProductCombination
 		$this->variation_price_percentage = $result->variation_price_percentage;
 		$this->variation_weight = $result->variation_weight;
 
-		if (empty($donotloadpricelevel) && !empty($conf->global->PRODUIT_MULTIPRICES)) {
+		if (empty($donotloadpricelevel) && getDolGlobalString('PRODUIT_MULTIPRICES')) {
 			$this->fetchCombinationPriceLevels();
 		}
 
@@ -312,7 +312,7 @@ class ProductCombination
 			$tmp->variation_weight = $result->variation_weight;
 			$tmp->variation_ref_ext = $result->variation_ref_ext;
 
-			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+			if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 				$tmp->fetchCombinationPriceLevels();
 			}
 
@@ -348,7 +348,7 @@ class ProductCombination
 	 * Creates a product attribute combination
 	 *
 	 * @param	User	$user	Object user
-	 * @return 	int				<0 if KO, >0 if OK
+	 * @return 	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user)
 	{
@@ -370,7 +370,7 @@ class ProductCombination
 			return -1;
 		}
 
-		if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+		if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 			$res = $this->saveCombinationPriceLevels();
 			if ($res < 0) {
 				return -2;
@@ -401,7 +401,7 @@ class ProductCombination
 			return -1;
 		}
 
-		if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+		if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 			$res = $this->saveCombinationPriceLevels();
 			if ($res < 0) {
 				return -2;
@@ -420,7 +420,7 @@ class ProductCombination
 	 * Deletes a product combination
 	 *
 	 * @param 	User 	$user	Object user
-	 * @return 	int 			<0 if KO, >0 if OK
+	 * @return 	int 			Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user)
 	{
@@ -525,7 +525,7 @@ class ProductCombination
 			$new_npr = $parent->tva_npr;
 
 			// MultiPrix
-			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+			if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 				for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
 					if ($parent->multiprices[$i] != '' || isset($this->combination_price_levels[$i]->variation_price)) {
 						$new_type = empty($parent->multiprices_base_type[$i]) ? 'HT' : $parent->multiprices_base_type[$i];

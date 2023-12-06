@@ -52,7 +52,7 @@ require_once DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php";
 dol_syslog("Call Dolibarr webservices interfaces");
 
 // Enable and test if module web services is enabled
-if (empty($conf->global->MAIN_MODULE_WEBSERVICES)) {
+if (!getDolGlobalString('MAIN_MODULE_WEBSERVICES')) {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
 	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
@@ -218,13 +218,15 @@ function getCategory($authentication, $id)
 	}
 
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
 	if (!$error && !$id) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id must be provided.";
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = "Parameter id must be provided.";
 	}
 
 	if (!$error) {
@@ -278,11 +280,13 @@ function getCategory($authentication, $id)
 				);
 			} else {
 				$error++;
-				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id;
+				$errorcode = 'NOT_FOUND';
+				$errorlabel = 'Object not found for id='.$id;
 			}
 		} else {
 			$error++;
-			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
+			$errorcode = 'PERMISSION_DENIED';
+			$errorlabel = 'User does not have permission for this request';
 		}
 	}
 

@@ -143,7 +143,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 *
 	 *  @param	User    $user        User that creates
 	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return int      		   	 <0 if KO, Id of created object if OK
+	 *  @return int      		   	 Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -194,7 +194,8 @@ class AdvanceTargetingMailing extends CommonObject
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -219,7 +220,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 *  Load object in memory from the database
 	 *
 	 *  @param	int		$id    Id object
-	 *  @return int          	<0 if KO, >0 if OK
+	 *  @return int          	Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -273,7 +274,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 *  Load object in memory from the database
 	 *
 	 *  @param	int		$id    Id object
-	 *  @return int          	<0 if KO, >0 if OK
+	 *  @return int          	Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_by_mailing($id = 0)
 	{
@@ -336,7 +337,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 *
 	 *  @param	int		$id    			Id object
 	 *  @param	string	$type_element	Type target
-	 *  @return int          			<0 if KO, >0 if OK
+	 *  @return int          			Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_by_element($id = 0, $type_element = 'mailing')
 	{
@@ -395,7 +396,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 *
 	 *  @param	User	$user        User that modifies
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 <0 if KO, >0 if OK
+	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user, $notrigger = 0)
 	{
@@ -458,7 +459,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 *
 	 *	@param  User	$user        User that deletes
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 <0 if KO, >0 if OK
+	 *  @return	int					 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -474,7 +475,8 @@ class AdvanceTargetingMailing extends CommonObject
 			dol_syslog(get_class($this)."::delete sql=".$sql);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -498,7 +500,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 *
 	 *	@param  	User		$user    		User that deletes
 	 * 	@param		array		$arrayquery		All element to Query
-	 * 	@return		int			<0 if KO, >0 if OK
+	 * 	@return		int			Return integer <0 if KO, >0 if OK
 	 */
 	public function savequery($user, $arrayquery)
 	{
@@ -526,7 +528,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 * Load object in memory from database
 	 *
 	 * 	@param		array		$arrayquery	All element to Query
-	 * 	@return		int			<0 if KO, >0 if OK
+	 * 	@return		int			Return integer <0 if KO, >0 if OK
 	 */
 	public function query_thirdparty($arrayquery)
 	{
@@ -601,7 +603,7 @@ class AdvanceTargetingMailing extends CommonObject
 			}
 
 			//Standard Extrafield feature
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
+			if (!getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED')) {
 				$socstatic = new Societe($this->db);
 				$elementtype = $socstatic->table_element;
 
@@ -678,7 +680,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 *
 	 * 	@param		array		$arrayquery	All element to Query
 	 * 	@param		int			$withThirdpartyFilter	add contact with tridparty filter
-	 * 	@return		int			<0 if KO, >0 if OK
+	 * 	@return		int			Return integer <0 if KO, >0 if OK
 	 */
 	public function query_contact($arrayquery, $withThirdpartyFilter = 0)
 	{
@@ -739,7 +741,7 @@ class AdvanceTargetingMailing extends CommonObject
 			}
 
 			//Standard Extrafield feature
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
+			if (!getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED')) {
 				$contactstatic = new Contact($this->db);
 				$elementtype = $contactstatic->table_element;
 
@@ -842,7 +844,7 @@ class AdvanceTargetingMailing extends CommonObject
 					}
 
 					//Standard Extrafield feature
-					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
+					if (!getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED')) {
 						$socstatic = new Societe($this->db);
 						$elementtype = $socstatic->table_element;
 

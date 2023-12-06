@@ -67,7 +67,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 	$head[$h][2] = 'contact';
 	$h++;
 
-	if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+	if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 		// Then tab for sub level of projet, i mean tasks
 		$nbTasks = 0;
 		// Enable caching of project count Tasks
@@ -230,7 +230,8 @@ function project_prepare_head(Project $project, $moreparam = '')
 		$head[$h][1] = $langs->trans("EventOrganization");
 
 		// Enable caching of conf or booth count
-		$nbConfOrBooth = 0; $nbAttendees = 0;
+		$nbConfOrBooth = 0;
+		$nbAttendees = 0;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 		$cachekey = 'count_conferenceorbooth_'.$project->id;
 		$dataretrieved = dol_getcache($cachekey);
@@ -284,7 +285,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 	complete_head_from_modules($conf, $langs, $project, $head, $h, 'project', 'add', 'core');
 
 
-	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
+	if (!getDolGlobalString('MAIN_DISABLE_NOTES_TAB')) {
 		$nbNote = 0;
 		if (!empty($project->note_private)) {
 			$nbNote++;
@@ -327,7 +328,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 	$h++;
 
 	// Manage discussion
-	if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT)) {
+	if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT')) {
 		$nbComments = 0;
 		// Enable caching of thirdrparty count attached files and links
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
@@ -422,7 +423,7 @@ function task_prepare_head($object)
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'task', 'add', 'core');
 
-	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
+	if (!getDolGlobalString('MAIN_DISABLE_NOTES_TAB')) {
 		$nbNote = 0;
 		if (!empty($object->note_private)) {
 			$nbNote++;
@@ -453,7 +454,7 @@ function task_prepare_head($object)
 	$h++;
 
 	// Manage discussion
-	if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_TASK)) {
+	if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_TASK')) {
 		$nbComments = $object->getNbComments();
 		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/comment.php?id='.$object->id.(GETPOST('withproject') ? '&withproject=1' : '');
 		$head[$h][1] = $langs->trans("CommentLink");
@@ -492,21 +493,21 @@ function project_timesheet_prepare_head($mode, $fuser = null)
 		$param .= '&search_usertoprocessid='.$fuser->id;
 	}
 
-	if (empty($conf->global->PROJECT_DISABLE_TIMESHEET_PERMONTH)) {
+	if (!getDolGlobalString('PROJECT_DISABLE_TIMESHEET_PERMONTH')) {
 		$head[$h][0] = DOL_URL_ROOT."/projet/activity/permonth.php".($param ? '?'.$param : '');
 		$head[$h][1] = $langs->trans("InputPerMonth");
 		$head[$h][2] = 'inputpermonth';
 		$h++;
 	}
 
-	if (empty($conf->global->PROJECT_DISABLE_TIMESHEET_PERWEEK)) {
+	if (!getDolGlobalString('PROJECT_DISABLE_TIMESHEET_PERWEEK')) {
 		$head[$h][0] = DOL_URL_ROOT."/projet/activity/perweek.php".($param ? '?'.$param : '');
 		$head[$h][1] = $langs->trans("InputPerWeek");
 		$head[$h][2] = 'inputperweek';
 		$h++;
 	}
 
-	if (empty($conf->global->PROJECT_DISABLE_TIMESHEET_PERTIME)) {
+	if (!getDolGlobalString('PROJECT_DISABLE_TIMESHEET_PERTIME')) {
 		$head[$h][0] = DOL_URL_ROOT."/projet/activity/perday.php".($param ? '?'.$param : '');
 		$head[$h][1] = $langs->trans("InputPerDay");
 		$head[$h][2] = 'inputperday';
@@ -562,7 +563,7 @@ function project_admin_prepare_head()
 	$head[$h][2] = 'attributes_task';
 	$h++;
 
-	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+	if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 		$langs->load("members");
 
 		$head[$h][0] = DOL_URL_ROOT.'/projet/admin/website.php';
@@ -779,10 +780,10 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 				$plannedworkloadoutputformat = 'allhourmin';
 				$timespentoutputformat = 'allhourmin';
-				if (!empty($conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT)) {
+				if (getDolGlobalString('PROJECT_PLANNED_WORKLOAD_FORMAT')) {
 					$plannedworkloadoutputformat = $conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT;
 				}
-				if (!empty($conf->global->PROJECT_TIMES_SPENT_FORMAT)) {
+				if (getDolGlobalString('PROJECT_TIMES_SPENT_FORMAT')) {
 					$timespentoutputformat = $conf->global->PROJECT_TIME_SPENT_FORMAT;
 				}
 
@@ -823,7 +824,8 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 				// Progress calculated (Note: ->duration_effective is time spent)
 				if (count($arrayfields) > 0 && !empty($arrayfields['t.progress_calculated']['checked'])) {
-					$s = ''; $shtml = '';
+					$s = '';
+					$shtml = '';
 					if ($lines[$i]->planned_workload || $lines[$i]->duration_effective) {
 						if ($lines[$i]->planned_workload) {
 							$s = round(100 * $lines[$i]->duration_effective / $lines[$i]->planned_workload, 2).' %';
@@ -932,7 +934,8 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 				// Extra fields
 				$extrafieldsobjectkey = $taskstatic->table_element;
-				$obj = $lines[$i];
+				$extrafieldsobjectprefix = 'efpt.';
+				$obj = $lines[$i]->obj;
 				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 				// Fields from hook
 				$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$lines[$i]);
@@ -1029,7 +1032,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 			$totalCalculatedProgress = round(100 * $total_projectlinesa_spent / $total_projectlinesa_planned, 2);
 
 			// this conf is actually hidden, by default we use 10% for "be carefull or warning"
-			$warningRatio = !empty($conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT) ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.10;
+			$warningRatio = getDolGlobalString('PROJECT_TIME_SPEND_WARNING_PERCENT') ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.10;
 
 			// define progress color according to time spend vs workload
 			$progressBarClass = 'progress-bar-info';
@@ -1102,7 +1105,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		}
 
 		// Contacts of task for backward compatibility,
-		if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) {
+		if (getDolGlobalString('PROJECT_SHOW_CONTACTS_IN_LIST')) {
 			print '<td></td>';
 		}
 		// Contacts of task
@@ -1113,7 +1116,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		// Check if Extrafields is totalizable
 		if (!empty($extrafields->attributes['projet_task']['totalizable'])) {
 			foreach ($extrafields->attributes['projet_task']['totalizable'] as $key => $value) {
-				if (!empty($arrayfields['ef.'.$key]['checked']) && $arrayfields['ef.'.$key]['checked'] == 1) {
+				if (!empty($arrayfields['efpt.'.$key]['checked']) && $arrayfields['ef.'.$key]['checked'] == 1) {
 					print '<td class="right">';
 					if ($value == 1) {
 						print empty($totalarray['totalizable'][$key]['total']) ? '' : $totalarray['totalizable'][$key]['total'];
@@ -1176,7 +1179,7 @@ function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projec
 	}
 
 	if (empty($oldprojectforbreak)) {
-		$oldprojectforbreak = (empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT) ? 0 : -1); // 0 to start break , -1 no break
+		$oldprojectforbreak = (!getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT') ? 0 : -1); // 0 to start break , -1 no break
 	}
 
 	//dol_syslog('projectLinesPerDay inc='.$inc.' preselectedday='.$preselectedday.' task parent id='.$parent.' level='.$level." count(lines)=".$numlines." count(lineswithoutlevel0)=".count($lineswithoutlevel0));
@@ -1264,20 +1267,17 @@ function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projec
 
 			// Ref
 			print '<td>';
-			print '<!-- Task id = '.$lines[$i]->id.' -->';
+			print '<!-- Task id = '.$lines[$i]->id.' (projectlinesperaction) -->';
 			for ($k = 0; $k < $level; $k++) {
-				print "&nbsp;&nbsp;&nbsp;";
+				print '<div class="marginleftonly">';
 			}
 			print $taskstatic->getNomUrl(1, 'withproject', 'time');
 			// Label task
 			print '<br>';
+			print '<div class="opacitymedium tdoverflowmax500" title="'.dol_escape_htmltag($taskstatic->label).'">'.dol_escape_htmltag($taskstatic->label).'</div>';
 			for ($k = 0; $k < $level; $k++) {
-				print "&nbsp;&nbsp;&nbsp;";
+				print "</div>";
 			}
-			print $taskstatic->label;
-			//print "<br>";
-			//for ($k = 0 ; $k < $level ; $k++) print "&nbsp;&nbsp;&nbsp;";
-			//print get_date_range($lines[$i]->date_start,$lines[$i]->date_end,'',$langs,0);
 			print "</td>\n";
 
 			// Date
@@ -1402,12 +1402,12 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 	}
 
 	if (empty($oldprojectforbreak)) {
-		$oldprojectforbreak = (empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT) ? 0 : -1); // 0 to start break , -1 no break
+		$oldprojectforbreak = (!getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT') ? 0 : -1); // 0 to start break , -1 no break
 	}
 
 	$restrictBefore = null;
 
-	if (!empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
+	if (getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 		$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
 	}
@@ -1563,7 +1563,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				*/
 
 				// Project
-				if (!empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) {
+				if (getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT')) {
 					print "<td>";
 					if ($oldprojectforbreak == -1) {
 						print $projectstatic->getNomUrl(1, '', 0, $langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
@@ -1572,7 +1572,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				}
 
 				// Thirdparty
-				if (!empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) {
+				if (getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT')) {
 					print '<td class="tdoverflowmax100">';
 					if ($thirdpartystatic->id > 0) {
 						print $thirdpartystatic->getNomUrl(1, 'project', 10);
@@ -1582,14 +1582,14 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 
 				// Ref
 				print '<td>';
-				print '<!-- Task id = '.$lines[$i]->id.' -->';
+				print '<!-- Task id = '.$lines[$i]->id.' (projectlinesperday) -->';
 				for ($k = 0; $k < $level; $k++) {
 					print '<div class="marginleftonly">';
 				}
 				print $taskstatic->getNomUrl(1, 'withproject', 'time');
 				// Label task
 				print '<br>';
-				print '<span class="opacitymedium">'.$taskstatic->label.'</a>';
+				print '<div class="opacitymedium tdoverflowmax500" title="'.dol_escape_htmltag($taskstatic->label).'">'.dol_escape_htmltag($taskstatic->label).'</div>';
 				for ($k = 0; $k < $level; $k++) {
 					print "</div>";
 				}
@@ -1679,7 +1679,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				global $daytoparse;
 				$tmparray = dol_getdate($daytoparse, true); // detail of current day
 
-				$idw = ($tmparray['wday'] - (empty($conf->global->MAIN_START_WEEK) ? 0 : 1));
+				$idw = ($tmparray['wday'] - (!getDolGlobalString('MAIN_START_WEEK') ? 0 : 1));
 				global $numstartworkingday, $numendworkingday;
 				$cssweekend = '';
 				if ((($idw + 1) < $numstartworkingday) || (($idw + 1) > $numendworkingday)) {	// This is a day is not inside the setup of working days, so we use a week-end css.
@@ -1801,12 +1801,12 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 	//dol_syslog('projectLinesPerWeek inc='.$inc.' firstdaytoshow='.$firstdaytoshow.' task parent id='.$parent.' level='.$level." count(lines)=".$numlines." count(lineswithoutlevel0)=".count($lineswithoutlevel0));
 
 	if (empty($oldprojectforbreak)) {
-		$oldprojectforbreak = (empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT) ? 0 : -1); // 0 = start break, -1 = never break
+		$oldprojectforbreak = (!getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT') ? 0 : -1); // 0 = start break, -1 = never break
 	}
 
 	$restrictBefore = null;
 
-	if (!empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
+	if (getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 		$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
 	}
@@ -1962,7 +1962,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				*/
 
 				// Project
-				if (!empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) {
+				if (getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT')) {
 					print '<td class="nowrap">';
 					if ($oldprojectforbreak == -1) {
 						print $projectstatic->getNomUrl(1, '', 0, $langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
@@ -1971,7 +1971,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				}
 
 				// Thirdparty
-				if (!empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) {
+				if (getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT')) {
 					print '<td class="tdoverflowmax100">';
 					if ($thirdpartystatic->id > 0) {
 						print $thirdpartystatic->getNomUrl(1, 'project');
@@ -1980,15 +1980,15 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				}
 
 				// Ref
-				print '<td class="nowrap">';
-				print '<!-- Task id = '.$lines[$i]->id.' -->';
+				print '<td class="tdoverflowmax300">';
+				print '<!-- Task id = '.$lines[$i]->id.' (projectlinesperweek) -->';
 				for ($k = 0; $k < $level; $k++) {
 					print '<div class="marginleftonly">';
 				}
 				print $taskstatic->getNomUrl(1, 'withproject', 'time');
 				// Label task
 				print '<br>';
-				print '<span class="opacitymedium">'.$taskstatic->label.'</span>';
+				print '<div class="opacitymedium tdoverflowmax500" title="'.dol_escape_htmltag($taskstatic->label).'">'.dol_escape_htmltag($taskstatic->label).'</div>';
 				for ($k = 0; $k < $level; $k++) {
 					print "</div>";
 				}
@@ -2022,7 +2022,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 					print '<td class="right">';
 					// $lines[$i]->duration_effective is a denormalised field = summ of time spent by everybody for task. What we need is time consumed by user
 					if ($lines[$i]->duration_effective) {
-						print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.'">';
+						print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.((int) $lines[$i]->id).'">';
 						print convertSecondToTime($lines[$i]->duration_effective, 'allhourmin');
 						print '</a>';
 					} else {
@@ -2034,7 +2034,9 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 					print '<td class="right">';
 					$tmptimespent = $taskstatic->getSummaryOfTimeSpent($fuser->id);
 					if ($tmptimespent['total_duration']) {
+						print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.((int) $lines[$i]->id).'&search_user='.((int) $fuser->id).'">';
 						print convertSecondToTime($tmptimespent['total_duration'], 'allhourmin');
+						print '</a>';
 					} else {
 						print '--:--';
 					}
@@ -2063,7 +2065,9 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				$modeinput = 'hours';
 				for ($idw = 0; $idw < 7; $idw++) {
 					$tmpday = dol_time_plus_duree($firstdaytoshow, $idw, 'd');
-					if (!isset($totalforeachday[$tmpday])) $totalforeachday[$tmpday] = 0;
+					if (!isset($totalforeachday[$tmpday])) {
+						$totalforeachday[$tmpday] = 0;
+					}
 					$cssonholiday = '';
 					if (!$isavailable[$tmpday]['morning'] && !$isavailable[$tmpday]['afternoon']) {
 						$cssonholiday .= 'onholidayallday ';
@@ -2194,12 +2198,12 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 	//dol_syslog('projectLinesPerWeek inc='.$inc.' firstdaytoshow='.$firstdaytoshow.' task parent id='.$parent.' level='.$level." count(lines)=".$numlines." count(lineswithoutlevel0)=".count($lineswithoutlevel0));
 
 	if (empty($oldprojectforbreak)) {
-		$oldprojectforbreak = (empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT) ? 0 : -1); // 0 = start break, -1 = never break
+		$oldprojectforbreak = (!getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT') ? 0 : -1); // 0 = start break, -1 = never break
 	}
 
 	$restrictBefore = null;
 
-	if (!empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
+	if (getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 		$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
 	}
@@ -2285,14 +2289,14 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 
 				// Ref
 				print '<td class="nowrap">';
-				print '<!-- Task id = '.$lines[$i]->id.' -->';
+				print '<!-- Task id = '.$lines[$i]->id.' (projectlinespermonth)  -->';
 				for ($k = 0; $k < $level; $k++) {
 					print '<div class="marginleftonly">';
 				}
 				print $taskstatic->getNomUrl(1, 'withproject', 'time');
 				// Label task
 				print '<br>';
-				print '<span class="opacitymedium">'.$taskstatic->label.'</span>';
+				print '<div class="opacitymedium tdoverflowmax500" title="'.dol_escape_htmltag($taskstatic->label).'">'.dol_escape_htmltag($taskstatic->label).'</div>';
 				for ($k = 0; $k < $level; $k++) {
 					print "</div>";
 				}
@@ -2362,7 +2366,9 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 				$month = $firstdaytoshowarray['mon'];
 				foreach ($TWeek as $weekIndex => $weekNb) {
 					$weekWorkLoad = !empty($projectstatic->monthWorkLoadPerTask[$weekNb][$lines[$i]->id]) ? $projectstatic->monthWorkLoadPerTask[$weekNb][$lines[$i]->id] : 0 ;
-					if (!isset($totalforeachweek[$weekNb])) $totalforeachweek[$weekNb] = 0;
+					if (!isset($totalforeachweek[$weekNb])) {
+						$totalforeachweek[$weekNb] = 0;
+					}
 					$totalforeachweek[$weekNb] += $weekWorkLoad;
 
 					$alreadyspent = '';
@@ -2490,13 +2496,13 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 	global $langs, $conf, $user;
 	global $theme_datacolor;
 
-	$maxofloop = (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD);
+	$maxofloop = (!getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD);
 
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 	$listofstatus = array_keys($listofoppstatus);
 
-	if (is_array($listofstatus) && !empty($conf->global->USE_COLOR_FOR_PROSPECTION_STATUS)) {
+	if (is_array($listofstatus) && getDolGlobalString('USE_COLOR_FOR_PROSPECTION_STATUS')) {
 		// Define $themeColorId and array $statusOppList for each $listofstatus
 		$themeColorId = 0;
 		$statusOppList = array();
@@ -2519,7 +2525,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 
 	$title = $langs->trans("Projects");
 	if (strcmp($status, '') && $status >= 0) {
-		$title = $langs->trans("Projects").' '.$langs->trans($projectstatic->statuts_long[$status]);
+		$title = $langs->trans("Projects").' '.$langs->trans($projectstatic->labelStatus[$status]);
 	}
 
 	print '<!-- print_projecttasks_array -->';
@@ -2549,7 +2555,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 	if ($status >= 0) {
 		$sql .= " AND p.fk_statut = ".(int) $status;
 	}
-	if (!empty($conf->global->PROJECT_LIMIT_YEAR_RANGE)) {
+	if (getDolGlobalString('PROJECT_LIMIT_YEAR_RANGE')) {
 		$project_year_filter = GETPOST("project_year_filter");
 		//Check if empty or invalid year. Wildcard ignores the sql check
 		if ($project_year_filter != "*") {
@@ -2608,20 +2614,20 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 		$total_declaredprogressworkload = 0;
 
 		$num = $db->num_rows($resql);
-		$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
+		$nbofloop = min($num, (!getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
 		$i = 0;
 
 		print '<tr class="liste_titre">';
 		print_liste_field_titre($title.'<a href="'.DOL_URL_ROOT.'/projet/list.php?search_status='.((int) $status).'"><span class="badge marginleftonlyshort">'.$num.'</span></a>', $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
 		print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
-		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+		if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 			if (!in_array('prospectionstatus', $hiddenfields)) {
 				print_liste_field_titre("OpportunityStatus", "", "", "", "", 'style="max-width: 100px"', $sortfield, $sortorder, 'center ');
 			}
 			print_liste_field_titre($form->textwithpicto($langs->trans("Amount"), $langs->trans("OpportunityAmount").' ('.$langs->trans("Tooltip").' = '.$langs->trans("OpportunityWeightedAmount").')'), "", "", "", "", 'style="max-width: 100px"', $sortfield, $sortorder, 'right ');
 			//print_liste_field_titre('OpportunityWeightedAmount', '', '', '', '', 'align="right"', $sortfield, $sortorder);
 		}
-		if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+		if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 			print_liste_field_titre("Tasks", "", "", "", "", 'align="right"', $sortfield, $sortorder);
 			if (!in_array('plannedworkload', $hiddenfields)) {
 				print_liste_field_titre("PlannedWorkload", "", "", "", "", 'style="max-width: 100px"', $sortfield, $sortorder, 'right ');
@@ -2692,11 +2698,11 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 				}
 				print '</td>';
 
-				if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+				if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 					if (!in_array('prospectionstatus', $hiddenfields)) {
 						print '<td class="center tdoverflowmax75">';
 						// Because color of prospection status has no meaning yet, it is used if hidden constant is set
-						if (empty($conf->global->USE_COLOR_FOR_PROSPECTION_STATUS)) {
+						if (!getDolGlobalString('USE_COLOR_FOR_PROSPECTION_STATUS')) {
 							$oppStatusCode = dol_getIdFromCode($db, $objp->opp_status, 'c_lead_status', 'rowid', 'code');
 							if ($langs->trans("OppStatus".$oppStatusCode) != "OppStatus".$oppStatusCode) {
 								print $langs->trans("OppStatus".$oppStatusCode);
@@ -2732,20 +2738,20 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 					print '</td>';
 				}
 
-				if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+				if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 					print '<td class="right">'.$objp->nb.'</td>';
 
 					$plannedworkload = $objp->planned_workload;
 					$total_plannedworkload += $plannedworkload;
 					if (!in_array('plannedworkload', $hiddenfields)) {
-						print '<td class="right nowraponall">'.($plannedworkload ?convertSecondToTime($plannedworkload) : '').'</td>';
+						print '<td class="right nowraponall">'.($plannedworkload ? convertSecondToTime($plannedworkload) : '').'</td>';
 					}
 					if (!in_array('declaredprogress', $hiddenfields)) {
 						$declaredprogressworkload = $objp->declared_progess_workload;
 						$total_declaredprogressworkload += $declaredprogressworkload;
 						print '<td class="right nowraponall">';
 						//print $objp->planned_workload.'-'.$objp->declared_progess_workload."<br>";
-						print ($plannedworkload ?round(100 * $declaredprogressworkload / $plannedworkload, 0).'%' : '');
+						print($plannedworkload ? round(100 * $declaredprogressworkload / $plannedworkload, 0).'%' : '');
 						print '</td>';
 					}
 				}
@@ -2775,7 +2781,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 
 		print '<tr class="liste_total">';
 		print '<td>'.$langs->trans("Total")."</td><td></td>";
-		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+		if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 			if (!in_array('prospectionstatus', $hiddenfields)) {
 				print '<td class="liste_total"></td>';
 			}
@@ -2784,13 +2790,13 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 			print $form->textwithpicto(price($total_opp_amount, 0, '', 1, -1, 0), $langs->trans("OpportunityPonderatedAmountDesc").' : '.price($ponderated_opp_amount, 0, '', 1, -1, 0, $conf->currency));
 			print '</td>';
 		}
-		if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+		if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 			print '<td class="liste_total right">'.$total_task.'</td>';
 			if (!in_array('plannedworkload', $hiddenfields)) {
-				print '<td class="liste_total right">'.($total_plannedworkload ?convertSecondToTime($total_plannedworkload) : '').'</td>';
+				print '<td class="liste_total right">'.($total_plannedworkload ? convertSecondToTime($total_plannedworkload) : '').'</td>';
 			}
 			if (!in_array('declaredprogress', $hiddenfields)) {
-				print '<td class="liste_total right">'.($total_plannedworkload ?round(100 * $total_declaredprogressworkload / $total_plannedworkload, 0).'%' : '').'</td>';
+				print '<td class="liste_total right">'.($total_plannedworkload ? round(100 * $total_declaredprogressworkload / $total_plannedworkload, 0).'%' : '').'</td>';
 			}
 		}
 		if (!in_array('projectstatus', $hiddenfields)) {
@@ -2806,7 +2812,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 	print "</table>";
 	print '</div>';
 
-	if (!empty($conf->global->PROJECT_LIMIT_YEAR_RANGE)) {
+	if (getDolGlobalString('PROJECT_LIMIT_YEAR_RANGE')) {
 		//Add the year filter input
 		print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<table width="100%">';
@@ -2835,10 +2841,10 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 
 	$plannedworkloadoutputformat = 'allhourmin';
 	$timespentoutputformat = 'allhourmin';
-	if (!empty($conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT)) {
+	if (getDolGlobalString('PROJECT_PLANNED_WORKLOAD_FORMAT')) {
 		$plannedworkloadoutputformat = $conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT;
 	}
-	if (!empty($conf->global->PROJECT_TIMES_SPENT_FORMAT)) {
+	if (getDolGlobalString('PROJECT_TIMES_SPENT_FORMAT')) {
 		$timespentoutputformat = $conf->global->PROJECT_TIME_SPENT_FORMAT;
 	}
 
@@ -2857,7 +2863,7 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 		$progressCalculated = round(100 * floatval($task->duration_effective) / floatval($task->planned_workload), 2);
 
 		// this conf is actually hidden, by default we use 10% for "be carefull or warning"
-		$warningRatio = !empty($conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT) ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.10;
+		$warningRatio = getDolGlobalString('PROJECT_TIME_SPEND_WARNING_PERCENT') ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.10;
 
 		$diffTitle = '<br>'.$langs->trans('ProgressDeclared').' : '.$task->progress.(isset($task->progress) ? '%' : '');
 		$diffTitle .= '<br>'.$langs->trans('ProgressCalculated').' : '.$progressCalculated.(isset($progressCalculated) ? '%' : '');
@@ -2974,7 +2980,7 @@ function getTaskProgressBadge($task, $label = '', $tooltip = '')
 			$progressCalculated = round(100 * floatval($task->duration_effective) / floatval($task->planned_workload), 2);
 
 			// this conf is actually hidden, by default we use 10% for "be carefull or warning"
-			$warningRatio = !empty($conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT) ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.10;
+			$warningRatio = getDolGlobalString('PROJECT_TIME_SPEND_WARNING_PERCENT') ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.10;
 
 			if (floatval($progressCalculated) > floatval($task->progress * $warningRatio)) {
 				$badgeClass .= 'badge-danger';

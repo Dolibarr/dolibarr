@@ -68,7 +68,7 @@ function bank_prepare_head(Account $object)
 	$head[$h][2] = 'graph';
 	$h++;
 
-	if ($object->courant != Account::TYPE_CASH || !empty($conf->global->BANK_CAN_RECONCILIATE_CASHACCOUNT)) {
+	if ($object->courant != Account::TYPE_CASH || getDolGlobalString('BANK_CAN_RECONCILIATE_CASHACCOUNT')) {
 		$nbReceipts = 0;
 
 		// List of all standing receipts
@@ -329,7 +329,7 @@ function getIbanHumanReadable(Account $account)
 {
 	if ($account->getCountryCode() == 'FR') {
 		require_once DOL_DOCUMENT_ROOT.'/includes/php-iban/oophp-iban.php';
-		$ibantoprint = preg_replace('/[^a-zA-Z0-9]/', '', empty($account->iban)?'':$account->iban);
+		$ibantoprint = preg_replace('/[^a-zA-Z0-9]/', '', empty($account->iban) ? '' : $account->iban);
 		$iban = new PHP_IBAN\IBAN($ibantoprint);
 		return $iban->HumanFormat();
 	}

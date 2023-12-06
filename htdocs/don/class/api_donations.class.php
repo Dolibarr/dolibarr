@@ -28,7 +28,6 @@ require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
  */
 class Donations extends DolibarrApi
 {
-
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */

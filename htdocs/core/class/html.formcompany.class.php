@@ -39,7 +39,6 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
  */
 class FormCompany extends Form
 {
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    	Return list of labels (translated) of third parties type
@@ -328,7 +327,7 @@ class FormCompany extends Form
 
 						// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
 						if (
-							!empty($conf->global->MAIN_SHOW_STATE_CODE) &&
+							getDolGlobalString('MAIN_SHOW_STATE_CODE') &&
 							(getDolGlobalInt('MAIN_SHOW_STATE_CODE') == 1 || getDolGlobalInt('MAIN_SHOW_STATE_CODE') == 2 || $conf->global->MAIN_SHOW_STATE_CODE === 'all')
 						) {
 							if (getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1) {
@@ -648,7 +647,7 @@ class FormCompany extends Form
 	{
 		global $conf, $hookmanager;
 
-		if (!empty($conf->use_javascript_ajax) && !empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) {
+		if (!empty($conf->use_javascript_ajax) && getDolGlobalString('COMPANY_USE_SEARCH_TO_SELECT')) {
 			// Use Ajax search
 			$minLength = (is_numeric($conf->global->COMPANY_USE_SEARCH_TO_SELECT) ? $conf->global->COMPANY_USE_SEARCH_TO_SELECT : 2);
 
@@ -730,15 +729,15 @@ class FormCompany extends Form
 		} else {
 			// Search to list thirdparties
 			$sql = "SELECT s.rowid, s.nom as name ";
-			if (!empty($conf->global->SOCIETE_ADD_REF_IN_LIST)) {
+			if (getDolGlobalString('SOCIETE_ADD_REF_IN_LIST')) {
 				$sql .= ", s.code_client, s.code_fournisseur";
 			}
-			if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
+			if (getDolGlobalString('COMPANY_SHOW_ADDRESS_SELECTLIST')) {
 				$sql .= ", s.address, s.zip, s.town";
 				$sql .= ", dictp.code as country_code";
 			}
 			$sql .= " FROM " . $this->db->prefix() . "societe as s";
-			if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
+			if (getDolGlobalString('COMPANY_SHOW_ADDRESS_SELECTLIST')) {
 				$sql .= " LEFT JOIN " . $this->db->prefix() . "c_country as dictp ON dictp.rowid = s.fk_pays";
 			}
 			$sql .= " WHERE s.entity IN (" . getEntity('societe') . ")";
@@ -942,7 +941,7 @@ class FormCompany extends Form
 		global $conf, $langs, $hookmanager;
 
 		$formlength = 0;
-		if (empty($conf->global->MAIN_DISABLEPROFIDRULES)) {
+		if (!getDolGlobalString('MAIN_DISABLEPROFIDRULES')) {
 			if ($country_code == 'FR') {
 				if (isset($idprof)) {
 					if ($idprof == 1) {
@@ -1054,7 +1053,7 @@ class FormCompany extends Form
 	public function selectProspectCustomerType($selected, $htmlname = 'client', $htmlidname = 'customerprospect', $typeinput = 'form', $morecss = '', $allowempty = '')
 	{
 		global $conf, $langs;
-		if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && !empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && !isModEnabled('fournisseur')) {
+		if (getDolGlobalString('SOCIETE_DISABLE_PROSPECTS') && getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS') && !isModEnabled('fournisseur')) {
 			return '';
 		}
 
@@ -1069,22 +1068,22 @@ class FormCompany extends Form
 				}
 				$out .= '</option>';
 			}
-			if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) {
+			if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTS')) {
 				$out .= '<option value="2"' . ($selected == 2 ? ' selected' : '') . '>' . $langs->trans('Prospect') . '</option>';
 			}
-			if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) {
+			if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTS') && !getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS') && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTSCUSTOMERS')) {
 				$out .= '<option value="3"' . ($selected == 3 ? ' selected' : '') . '>' . $langs->trans('ProspectCustomer') . '</option>';
 			}
-			if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
+			if (!getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS')) {
 				$out .= '<option value="1"' . ($selected == 1 ? ' selected' : '') . '>' . $langs->trans('Customer') . '</option>';
 			}
 			$out .= '<option value="0"' . ((string) $selected == '0' ? ' selected' : '') . '>' . $langs->trans('NorProspectNorCustomer') . '</option>';
 		} elseif ($typeinput == 'list') {
 			$out .= '<option value="-1"' . (($selected == '' || $selected == '-1') ? ' selected' : '') . '>&nbsp;</option>';
-			if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) {
+			if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTS')) {
 				$out .= '<option value="2,3"' . ($selected == '2,3' ? ' selected' : '') . '>' . $langs->trans('Prospect') . '</option>';
 			}
-			if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
+			if (!getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS')) {
 				$out .= '<option value="1,3"' . ($selected == '1,3' ? ' selected' : '') . '>' . $langs->trans('Customer') . '</option>';
 			}
 			if (isModEnabled("fournisseur")) {
@@ -1092,10 +1091,10 @@ class FormCompany extends Form
 			}
 			$out .= '<option value="0"' . ($selected == '0' ? ' selected' : '') . '>' . $langs->trans('Other') . '</option>';
 		} elseif ($typeinput == 'admin') {
-			if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) {
+			if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTS') && !getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS') && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTSCUSTOMERS')) {
 				$out .= '<option value="3"' . ($selected == 3 ? ' selected' : '') . '>' . $langs->trans('ProspectCustomer') . '</option>';
 			}
-			if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
+			if (!getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS')) {
 				$out .= '<option value="1"' . ($selected == 1 ? ' selected' : '') . '>' . $langs->trans('Customer') . '</option>';
 			}
 		}
@@ -1125,7 +1124,7 @@ class FormCompany extends Form
 			$out .= '<form method="post" action="' . $page . '">';
 			$out .= '<input type="hidden" name="action" value="set_thirdpartytype">';
 			$out .= '<input type="hidden" name="token" value="' . newToken() . '">';
-			$sortparam = (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
+			$sortparam = (!getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
 			$out .= $this->selectarray($htmlname, $this->typent_array(0, $filter), $selected, 1, 0, 0, '', 0, 0, 0, $sortparam, '', 1);
 			$out .= '<input type="submit" class="button smallpaddingimp valignmiddle" value="' . $langs->trans("Modify") . '">';
 			$out .= '</form>';

@@ -47,7 +47,7 @@ if ($user->socid > 0) {
 $langs->loadLangs(array("companies", "admin", "users", "other","withdrawals"));
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -214,29 +214,36 @@ $sql .= " WHERE e.entity IN (".getEntity('event').")";
 if ($date_start !== '') {
 	$sql .= " AND e.dateevent >= '".$db->idate($date_start)."'";
 }
-if ($date_end !== '' ) {
+if ($date_end !== '') {
 	$sql .= " AND e.dateevent <= '".$db->idate($date_end)."'";
 }
 if ($search_rowid) {
-	$usefilter++; $sql .= natural_search("e.rowid", $search_rowid, 1);
+	$usefilter++;
+	$sql .= natural_search("e.rowid", $search_rowid, 1);
 }
 if ($search_code) {
-	$usefilter++; $sql .= natural_search("e.type", $search_code, 0);
+	$usefilter++;
+	$sql .= natural_search("e.type", $search_code, 0);
 }
 if ($search_ip) {
-	$usefilter++; $sql .= natural_search("e.ip", $search_ip, 0);
+	$usefilter++;
+	$sql .= natural_search("e.ip", $search_ip, 0);
 }
 if ($search_user) {
-	$usefilter++; $sql .= natural_search("u.login", $search_user, 0);
+	$usefilter++;
+	$sql .= natural_search("u.login", $search_user, 0);
 }
 if ($search_desc) {
-	$usefilter++; $sql .= natural_search("e.description", $search_desc, 0);
+	$usefilter++;
+	$sql .= natural_search("e.description", $search_desc, 0);
 }
 if ($search_ua) {
-	$usefilter++; $sql .= natural_search("e.user_agent", $search_ua, 0);
+	$usefilter++;
+	$sql .= natural_search("e.user_agent", $search_ua, 0);
 }
 if ($search_prefix_session) {
-	$usefilter++; $sql .= natural_search("e.prefix_session", $search_prefix_session, 0);
+	$usefilter++;
+	$sql .= natural_search("e.prefix_session", $search_prefix_session, 0);
 }
 $sql .= $db->order($sortfield, $sortorder);
 
@@ -381,11 +388,9 @@ if ($result) {
 	//print '<input class="flat maxwidth100" type="text" size="10" name="search_desc" value="'.$search_desc.'">';
 	print '</td>';
 
-	if (!empty($arrayfields['e.user_agent']['checked'])) {
-		print '<td class="liste_titre left">';
-		print '<input class="flat maxwidth100" type="text" name="search_ua" value="'.dol_escape_htmltag($search_ua).'">';
-		print '</td>';
-	}
+	print '<td class="liste_titre left">';
+	print '<input class="flat maxwidth100" type="text" name="search_ua" value="'.dol_escape_htmltag($search_ua).'">';
+	print '</td>';
 
 	if (!empty($arrayfields['e.prefix_session']['checked'])) {
 		print '<td class="liste_titre left">';
@@ -415,9 +420,7 @@ if ($result) {
 	print_liste_field_titre("IP", $_SERVER["PHP_SELF"], "e.ip", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("User", $_SERVER["PHP_SELF"], "u.login", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "e.description", "", $param, '', $sortfield, $sortorder);
-	if (!empty($arrayfields['e.user_agent']['checked'])) {
-		print_liste_field_titre("UserAgent", $_SERVER["PHP_SELF"], "e.user_agent", "", $param, '', $sortfield, $sortorder);
-	}
+	print_liste_field_titre("UserAgent", $_SERVER["PHP_SELF"], "e.user_agent", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['e.prefix_session']['checked'])) {
 		print_liste_field_titre("SuffixSessionName", $_SERVER["PHP_SELF"], "e.prefix_session", "", $param, '', $sortfield, $sortorder);
 	}
@@ -493,19 +496,15 @@ if ($result) {
 		print dol_escape_htmltag($text);
 		print '</td>';
 
-		if (!empty($arrayfields['e.user_agent']['checked'])) {
-			// User agent
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->user_agent).'">';
-			print dol_escape_htmltag($obj->user_agent);
-			print '</td>';
-		}
+		// User agent
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->user_agent).'">';
+		print dol_escape_htmltag($obj->user_agent);
+		print '</td>';
 
-		if (!empty($arrayfields['e.prefix_session']['checked'])) {
-			// User agent
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->prefix_session).'">';
-			print dol_escape_htmltag($obj->prefix_session);
-			print '</td>';
-		}
+		// User agent
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->prefix_session).'">';
+		print dol_escape_htmltag($obj->prefix_session);
+		print '</td>';
 
 		// Action column
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {

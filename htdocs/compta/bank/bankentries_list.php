@@ -75,16 +75,16 @@ $dateop = dol_mktime(12, 0, 0, GETPOST("opmonth", 'int'), GETPOST("opday", 'int'
 $search_debit = GETPOST("search_debit", 'alpha');
 $search_credit = GETPOST("search_credit", 'alpha');
 $search_type = GETPOST("search_type", 'alpha');
-$search_account = GETPOST("search_account", 'int') ?GETPOST("search_account", 'int') : GETPOST("account", 'int');
-$search_accountancy_code = GETPOST('search_accountancy_code', 'alpha') ?GETPOST('search_accountancy_code', 'alpha') : GETPOST('accountancy_code', 'alpha');
-$search_bid = GETPOST("search_bid", "int") ?GETPOST("search_bid", "int") : GETPOST("bid", "int");
+$search_account = GETPOST("search_account", 'int') ? GETPOST("search_account", 'int') : GETPOST("account", 'int');
+$search_accountancy_code = GETPOST('search_accountancy_code', 'alpha') ? GETPOST('search_accountancy_code', 'alpha') : GETPOST('accountancy_code', 'alpha');
+$search_bid = GETPOST("search_bid", "int") ? GETPOST("search_bid", "int") : GETPOST("bid", "int");
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_description = GETPOST("search_description", 'alpha');
 $search_dt_start = dol_mktime(0, 0, 0, GETPOST('search_start_dtmonth', 'int'), GETPOST('search_start_dtday', 'int'), GETPOST('search_start_dtyear', 'int'));
 $search_dt_end = dol_mktime(0, 0, 0, GETPOST('search_end_dtmonth', 'int'), GETPOST('search_end_dtday', 'int'), GETPOST('search_end_dtyear', 'int'));
 $search_dv_start = dol_mktime(0, 0, 0, GETPOST('search_start_dvmonth', 'int'), GETPOST('search_start_dvday', 'int'), GETPOST('search_start_dvyear', 'int'));
 $search_dv_end = dol_mktime(0, 0, 0, GETPOST('search_end_dvmonth', 'int'), GETPOST('search_end_dvday', 'int'), GETPOST('search_end_dvyear', 'int'));
-$search_thirdparty_user = GETPOST("search_thirdparty", 'alpha') ?GETPOST("search_thirdparty", 'alpha') : GETPOST("thirdparty", 'alpha');
+$search_thirdparty_user = GETPOST("search_thirdparty", 'alpha') ? GETPOST("search_thirdparty", 'alpha') : GETPOST("thirdparty", 'alpha');
 $search_req_nb = GETPOST("req_nb", 'alpha');
 $search_num_releve = GETPOST("search_num_releve", 'alpha');
 $search_conciliated = GETPOST("search_conciliated", 'int');
@@ -96,7 +96,7 @@ if (empty($dateop)) {
 	$dateop = -1;
 }
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -380,7 +380,7 @@ if (GETPOST('save') && !$cancel && $user->hasRight('banque', 'modifier')) {
 		$error++;
 	}*/
 
-	if (!$error && !empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT)) {
+	if (!$error && getDolGlobalString('BANK_USE_OLD_VARIOUS_PAYMENT')) {
 		$objecttmp = new Account($db);
 		$objecttmp->fetch($bankaccountid);
 		$insertid = $objecttmp->addline($dateop, $operation, $label, $amount, $num_chq, ($cat1 > 0 ? $cat1 : 0), $user, '', '', $search_accountancy_code);
@@ -882,7 +882,7 @@ if ($resql) {
 		}
 
 		// Using BANK_REPORT_LAST_NUM_RELEVE to automatically report last num (or not)
-		if (!empty($conf->global->BANK_REPORT_LAST_NUM_RELEVE)) {
+		if (getDolGlobalString('BANK_REPORT_LAST_NUM_RELEVE')) {
 			print '
 			    <script type="text/javascript">
 			    	$("#num_releve").val("' . $last_releve.'");
@@ -893,7 +893,7 @@ if ($resql) {
 	}
 
 	// Form to add a transaction with no invoice
-	if ($user->hasRight('banque', 'modifier') && $action == 'addline' && !empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT)) {
+	if ($user->hasRight('banque', 'modifier') && $action == 'addline' && getDolGlobalString('BANK_USE_OLD_VARIOUS_PAYMENT')) {
 		print load_fiche_titre($langs->trans("AddBankRecordLong"), '', '');
 
 		print '<table class="noborder centpercent">';
@@ -925,20 +925,20 @@ if ($resql) {
 		}
 		print '</td>';
 		print '<td class="nowrap">';
-		print $form->selectDate(empty($dateop) ?-1 : $dateop, 'op', 0, 0, 0, 'transaction');
+		print $form->selectDate(empty($dateop) ? -1 : $dateop, 'op', 0, 0, 0, 'transaction');
 		print '</td>';
 		print '<td>&nbsp;</td>';
 		print '<td class="nowrap">';
-		$form->select_types_paiements((GETPOST('operation') ?GETPOST('operation') : ($object->courant == Account::TYPE_CASH ? 'LIQ' : '')), 'operation', '1,2', 2, 1);
+		$form->select_types_paiements((GETPOST('operation') ? GETPOST('operation') : ($object->courant == Account::TYPE_CASH ? 'LIQ' : '')), 'operation', '1,2', 2, 1);
 		print '</td>';
 		print '<td>';
 		print '<input name="num_chq" class="flat" type="text" size="4" value="'.GETPOST("num_chq", "alpha").'">';
 		print '</td>';
 		//if (! $search_account > 0)
 		//{
-			print '<td class=right>';
-			$form->select_comptes(GETPOST('add_account', 'int') ?GETPOST('add_account', 'int') : $search_account, 'add_account', 0, '', 1, ($id > 0 || !empty($ref) ? ' disabled="disabled"' : ''));
-			print '</td>';
+		print '<td class=right>';
+		$form->select_comptes(GETPOST('add_account', 'int') ? GETPOST('add_account', 'int') : $search_account, 'add_account', 0, '', 1, ($id > 0 || !empty($ref) ? ' disabled="disabled"' : ''));
+		print '</td>';
 		//}
 		print '<td class="right"><input name="adddebit" class="flat" type="text" size="4" value="'.GETPOST("adddebit", "alpha").'"></td>';
 		print '<td class="right"><input name="addcredit" class="flat" type="text" size="4" value="'.GETPOST("addcredit", "alpha").'"></td>';
@@ -987,11 +987,10 @@ if ($resql) {
 
 	$newcardbutton = '';
 	if ($action != 'addline' && $action != 'reconcile') {
-		if (empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) {
-			if (empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT)) {	// Default is to record miscellaneous direct entries using miscellaneous payments
+		if (!getDolGlobalString('BANK_DISABLE_DIRECT_INPUT')) {
+			if (!getDolGlobalString('BANK_USE_OLD_VARIOUS_PAYMENT')) {	// Default is to record miscellaneous direct entries using miscellaneous payments
 				$newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&accountid='.urlencode($search_account).'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.urlencode($search_account)), '', $user->rights->banque->modifier);
-			} else // If direct entries is not done using miscellaneous payments
-			{
+			} else { // If direct entries is not done using miscellaneous payments
 				$newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=addline&token='.newToken().'&page='.$page.$param, '', $user->rights->banque->modifier);
 			}
 		} else {
@@ -1393,7 +1392,7 @@ if ($resql) {
 			$bankaccount = $cachebankaccount[$objp->bankid];
 		}
 
-		if (empty($conf->global->BANK_COLORIZE_MOVEMENT)) {
+		if (!getDolGlobalString('BANK_COLORIZE_MOVEMENT')) {
 			$backgroundcolor = "class='oddeven'";
 		} else {
 			if ($objp->amount < 0) {
@@ -1427,9 +1426,9 @@ if ($resql) {
 
 		// Ref
 		if (!empty($arrayfields['b.rowid']['checked'])) {
-				print '<td class="nowrap left">';
-				print $banklinestatic->getNomUrl(1);
-				print '</td>';
+			print '<td class="nowrap left">';
+			print $banklinestatic->getNomUrl(1);
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1515,7 +1514,7 @@ if ($resql) {
 						$bankstatic->id = $objp->bankid;
 						$bankstatic->label = $objp->bankref;
 						print $bankstatic->getNomUrl(1, '');
-						print ($labeltoshow ? ' - ' : '');
+						print($labeltoshow ? ' - ' : '');
 					} else {
 						$bankstatic->id = $objp->bankid;
 						$bankstatic->label = $objp->bankref;
@@ -1526,7 +1525,7 @@ if ($resql) {
 						$bankstatic->id = $banklinestatic->fk_account;
 						$bankstatic->label = $banklinestatic->bank_account_ref;
 						print $bankstatic->getNomUrl(1, 'transactions');
-						print ($labeltoshow ? ' - ' : '');
+						print($labeltoshow ? ' - ' : '');
 					}
 					//var_dump($links);
 				} elseif ($links[$key]['type'] == 'company') {

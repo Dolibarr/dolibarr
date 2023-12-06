@@ -214,18 +214,24 @@ class Asset extends CommonObject
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
-		if (!isset($this->date_start) || $this->date_start === "") $this->date_start = $this->date_acquisition;
+		if (!isset($this->date_start) || $this->date_start === "") {
+			$this->date_start = $this->date_acquisition;
+		}
 
 		$this->db->begin();
 
 		$result = $result_create = $this->createCommon($user, $notrigger);
-		if ($result > 0 && $this->fk_asset_model > 0) $result = $this->setDataFromAssetModel($user, $notrigger);
+		if ($result > 0 && $this->fk_asset_model > 0) {
+			$result = $this->setDataFromAssetModel($user, $notrigger);
+		}
 		if ($result > 0) {
-			if ($this->supplier_invoice_id > 0) $this->add_object_linked('invoice_supplier', $this->supplier_invoice_id);
+			if ($this->supplier_invoice_id > 0) {
+				$this->add_object_linked('invoice_supplier', $this->supplier_invoice_id);
+			}
 		}
 
 		if ($result < 0) {
@@ -342,13 +348,15 @@ class Asset extends CommonObject
 	 *
 	 * @param int    $id   Id object
 	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
 		if ($result > 0) {
-			if (!empty($this->table_element_line)) $this->fetchLines();
+			if (!empty($this->table_element_line)) {
+				$this->fetchLines();
+			}
 
 			$res = $this->hasDepreciationLinesInBookkeeping();
 			if ($res < 0) {
@@ -368,7 +376,7 @@ class Asset extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchLines()
 	{
@@ -463,11 +471,13 @@ class Asset extends CommonObject
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
-		if (!isset($this->date_start) || $this->date_start === "") $this->date_start = $this->date_acquisition;
+		if (!isset($this->date_start) || $this->date_start === "") {
+			$this->date_start = $this->date_acquisition;
+		}
 
 		$this->db->begin();
 
@@ -476,12 +486,12 @@ class Asset extends CommonObject
 			$result = $this->setDataFromAssetModel($user, $notrigger);
 		}
 		if ($result > 0 && (
-				$this->date_start != $this->oldcopy->date_start ||
+			$this->date_start != $this->oldcopy->date_start ||
 				$this->acquisition_value_ht != $this->oldcopy->acquisition_value_ht ||
 				$this->reversal_date != $this->oldcopy->reversal_date ||
 				$this->reversal_amount_ht != $this->oldcopy->reversal_amount_ht ||
 				($this->fk_asset_model > 0 && $this->fk_asset_model != $this->oldcopy->fk_asset_model)
-			)
+		)
 		) {
 			$result = $this->calculationDepreciation();
 		}
@@ -500,7 +510,7 @@ class Asset extends CommonObject
 	 *
 	 * @param User $user       User that deletes
 	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
@@ -513,7 +523,7 @@ class Asset extends CommonObject
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function setDataFromAssetModel(User $user, $notrigger = false)
 	{
@@ -622,7 +632,7 @@ class Asset extends CommonObject
 	/**
 	 * Fetch depreciation lines for each mode in $this->depreciation_lines (sort by depreciation date)
 	 *
-	 * @return	int							<0 if KO, Id of created object if OK
+	 * @return	int							Return integer <0 if KO, Id of created object if OK
 	 */
 	public function fetchDepreciationLines()
 	{
@@ -672,7 +682,9 @@ class Asset extends CommonObject
 		}
 
 		while ($obj = $this->db->fetch_object($resql)) {
-			if (!isset($this->depreciation_lines[$obj->depreciation_mode])) $this->depreciation_lines[$obj->depreciation_mode] = array();
+			if (!isset($this->depreciation_lines[$obj->depreciation_mode])) {
+				$this->depreciation_lines[$obj->depreciation_mode] = array();
+			}
 			$this->depreciation_lines[$obj->depreciation_mode][] = array(
 				'id' => $obj->rowid,
 				'ref' => $obj->ref,
@@ -782,8 +794,8 @@ class Asset extends CommonObject
 		$sql .= ", '" . $this->db->escape($mode) . "'";
 		$sql .= ", '" . $this->db->escape($ref) . "'";
 		$sql .= ", '" . $this->db->idate($depreciation_date) . "'";
-		$sql .= ", " . (double) $depreciation_ht;
-		$sql .= ", " . (double) $cumulative_depreciation_ht;
+		$sql .= ", " . (float) $depreciation_ht;
+		$sql .= ", " . (float) $cumulative_depreciation_ht;
 		$sql .= ", '" . $this->db->escape($accountancy_code_debit) . "'";
 		$sql .= ", '" . $this->db->escape($accountancy_code_credit) . "'";
 		$sql .= ")";
@@ -800,7 +812,7 @@ class Asset extends CommonObject
 	/**
 	 * Calculation depreciation lines (reversal and future) for each mode
 	 *
-	 * @return	int							<0 if KO, Id of created object if OK
+	 * @return	int							Return integer <0 if KO, Id of created object if OK
 	 */
 	public function calculationDepreciation()
 	{
@@ -933,7 +945,9 @@ class Asset extends CommonObject
 				$sql .= " WHERE " . MAIN_DB_PREFIX . "asset_depreciation.fk_asset = " . (int) $this->id;
 				$sql .= " AND " . MAIN_DB_PREFIX . "asset_depreciation.depreciation_mode = '" . $this->db->escape($mode_key) . "'";
 				$sql .= " AND ab.fk_docdet IS NULL";
-				if ($last_depreciation_date !== "") $sql .= " AND " . MAIN_DB_PREFIX . "asset_depreciation.ref != ''";
+				if ($last_depreciation_date !== "") {
+					$sql .= " AND " . MAIN_DB_PREFIX . "asset_depreciation.ref != ''";
+				}
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$this->errors[] = $langs->trans('AssetErrorClearDepreciationLines') . ': ' . $this->db->lasterror();
@@ -999,7 +1013,7 @@ class Asset extends CommonObject
 				//-----------------------------------------------------
 				$nb_days_in_year = getDolGlobalString('ASSET_DEPRECIATION_DURATION_PER_YEAR') ? $conf->global->ASSET_DEPRECIATION_DURATION_PER_YEAR : 365;
 				$nb_days_in_month = getDolGlobalString('ASSET_DEPRECIATION_DURATION_PER_MONTH') ? $conf->global->ASSET_DEPRECIATION_DURATION_PER_MONTH : 30;
-				$period_amount = (double) price2num($depreciation_period_amount / $fields['duration'], 'MT');
+				$period_amount = (float) price2num($depreciation_period_amount / $fields['duration'], 'MT');
 				$first_period_found = false;
 				$first_period_date = isset($begin_period) && $begin_period > $fiscal_period_start ? $begin_period : $fiscal_period_start;
 
@@ -1011,7 +1025,9 @@ class Asset extends CommonObject
 				do {
 					// Loop security
 					$idx_loop++;
-					if ($idx_loop > $max_loop) break;
+					if ($idx_loop > $max_loop) {
+						break;
+					}
 
 					if ($last_depreciation_date < $fiscal_period_end && ($first_period_date <= $start_date || $first_period_found)) {
 						// Disposal not depreciated
@@ -1040,14 +1056,14 @@ class Asset extends CommonObject
 									$nb_days = 30;
 								}
 							}
-							$depreciation_ht = (double) price2num($period_amount * $nb_days / $nb_days_in_month, 'MT');
+							$depreciation_ht = (float) price2num($period_amount * $nb_days / $nb_days_in_month, 'MT');
 						} else { // Annually
 							$nb_days = min($nb_days_in_year, num_between_day($begin_date, $end_date, 1));
-							$depreciation_ht = (double) price2num($period_amount * $nb_days / $nb_days_in_year, 'MT');
+							$depreciation_ht = (float) price2num($period_amount * $nb_days / $nb_days_in_year, 'MT');
 						}
 
 						if ($fiscal_period_start <= $depreciation_date_end && $depreciation_date_end <= $fiscal_period_end) { // last period
-							$depreciation_ht = (double) price2num($depreciation_amount - $cumulative_depreciation_ht, 'MT');
+							$depreciation_ht = (float) price2num($depreciation_amount - $cumulative_depreciation_ht, 'MT');
 							$cumulative_depreciation_ht = $depreciation_amount;
 						} else {
 							$cumulative_depreciation_ht += $depreciation_ht;
@@ -1091,7 +1107,7 @@ class Asset extends CommonObject
 	 * Set last cumulative depreciation for each mode
 	 *
 	 * @param	int		$asset_depreciation_id		Asset depreciation line ID
-	 * @return	int									<0 if KO, >0 if OK
+	 * @return	int									Return integer <0 if KO, >0 if OK
 	 */
 	public function setLastCumulativeDepreciation($asset_depreciation_id)
 	{
@@ -1178,10 +1194,14 @@ class Asset extends CommonObject
 			$this->fields[$field]['notnull'] = 0;
 		}
 		if ($result > 0) {
-			if ($disposal_invoice_id > 0) $this->add_object_linked('facture', $disposal_invoice_id);
+			if ($disposal_invoice_id > 0) {
+				$this->add_object_linked('facture', $disposal_invoice_id);
+			}
 			$result = $this->setStatusCommon($user, self::STATUS_DISPOSED, $notrigger, 'ASSET_DISPOSED');
 		}
-		if ($result > 0) $result = $this->calculationDepreciation();
+		if ($result > 0) {
+			$result = $this->calculationDepreciation();
+		}
 
 		if ($result < 0) {
 			$this->db->rollback();
@@ -1244,7 +1264,9 @@ class Asset extends CommonObject
 			$this->deleteObjectLinked(null, 'facture');
 			$result = $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'ASSET_REOPEN');
 		}
-		if ($result > 0) $result = $this->calculationDepreciation();
+		if ($result > 0) {
+			$result = $this->calculationDepreciation();
+		}
 
 		if ($result < 0) {
 			$this->db->rollback();
@@ -1378,8 +1400,11 @@ class Asset extends CommonObject
 
 		if ($withpicto != 2) {
 			$name = $this->ref;
-			if ($option == 'label') $name = $this->label;
-			elseif ($option == 'with_label') $name .= ' - ' . $this->label;
+			if ($option == 'label') {
+				$name = $this->label;
+			} elseif ($option == 'with_label') {
+				$name .= ' - ' . $this->label;
+			}
 			$result .= dol_escape_htmltag($maxlen ? dol_trunc($name, $maxlen) : $name);
 		}
 

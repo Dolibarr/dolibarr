@@ -56,9 +56,11 @@ class GlobalToFunction extends AbstractRector
 	{
 		return new RuleDefinition(
 			'Change $conf->global to getDolGlobal',
-			[new CodeSample('$conf->global->CONSTANT',
+			[new CodeSample(
+				'$conf->global->CONSTANT',
 				'getDolGlobalInt(\'CONSTANT\')'
-			)]);
+			)]
+		);
 	}
 
 	/**
@@ -188,36 +190,36 @@ class GlobalToFunction extends AbstractRector
 				new FuncCall(
 					new Name($funcName),
 					[new Arg($constName)]
-					),
+				),
 				$node->right
-				);
+			);
 		}
 		if ($typeofcomparison == 'GreaterOrEqual') {
 			return new GreaterOrEqual(
 				new FuncCall(
 					new Name($funcName),
 					[new Arg($constName)]
-					),
+				),
 				$node->right
-				);
+			);
 		}
 		if ($typeofcomparison == 'Smaller') {
 			return new Smaller(
 				new FuncCall(
 					new Name($funcName),
 					[new Arg($constName)]
-					),
+				),
 				$node->right
-				);
+			);
 		}
 		if ($typeofcomparison == 'SmallerOrEqual') {
 			return new SmallerOrEqual(
 				new FuncCall(
 					new Name($funcName),
 					[new Arg($constName)]
-					),
+				),
 				$node->right
-				);
+			);
 		}
 	}
 

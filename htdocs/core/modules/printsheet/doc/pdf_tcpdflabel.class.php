@@ -203,15 +203,13 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 					$pdf->SetXY($_PosX + $xleft, $_PosY + $ytop);
 					$pdf->MultiCell($widthtouse - $logoWidth - 1, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft), 0, 'L');
 				}
-			} else // text on halft left and text on half right
-			{
+			} else { // text on halft left and text on half right
 				$pdf->SetXY($_PosX + $xleft, $_PosY + $ytop);
 				$pdf->MultiCell(round($this->_Width / 2), $this->_Line_Height, $outputlangs->convToOutputCharset($textleft), 0, 'L');
 				$pdf->SetXY($_PosX + round($this->_Width / 2), $_PosY + $ytop);
 				$pdf->MultiCell(round($this->_Width / 2) - 2, $this->_Line_Height, $outputlangs->convToOutputCharset($textright), 0, 'R');
 			}
-		} else // Only a right part
-		{
+		} else { // Only a right part
 			// Output right area
 			if ($textright == '%LOGO%' && $logo) {
 				$pdf->Image($logo, $_PosX + $this->_Width - $widthtouse - $xleft, $_PosY + $ytop, 0, $logoHeight);
@@ -284,7 +282,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 			$outputlangs = $langs;
 		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!empty($conf->global->MAIN_USE_FPDF)) {
+		if (getDolGlobalString('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 

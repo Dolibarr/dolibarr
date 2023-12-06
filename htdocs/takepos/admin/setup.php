@@ -169,13 +169,13 @@ foreach ($dirmodels as $reldir) {
 
 					require_once $dir.$file.'.php';
 
-					$module = new $file;
+					$module = new $file();
 
 					// Show modules according to features level
-					if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 						continue;
 					}
-					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+					if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 						continue;
 					}
 
@@ -261,7 +261,7 @@ print "</tr>\n";
 print '<tr class="oddeven"><td>';
 print $langs->trans("NumberOfTerminals");
 print '<td colspan="2">';
-print '<input type="number" name="TAKEPOS_NUM_TERMINALS" min="1" value="' . (empty($conf->global->TAKEPOS_NUM_TERMINALS) ? '1' : $conf->global->TAKEPOS_NUM_TERMINALS)  . '">';
+print '<input type="number" name="TAKEPOS_NUM_TERMINALS" min="1" value="' . (!getDolGlobalString('TAKEPOS_NUM_TERMINALS') ? '1' : $conf->global->TAKEPOS_NUM_TERMINALS)  . '">';
 print "</td></tr>\n";
 
 // Services
@@ -288,7 +288,7 @@ print $langs->trans("SortProductField");
 print '<td colspan="2">';
 $prod = new Product($db);
 $array = array('rowid' => 'ID', 'ref' => 'Ref', 'label' => 'Label', 'datec' => 'DateCreation', 'tms' => 'DateModification');
-print $form->selectarray('TAKEPOS_SORTPRODUCTFIELD', $array, (empty($conf->global->TAKEPOS_SORTPRODUCTFIELD) ? 'rowid' : $conf->global->TAKEPOS_SORTPRODUCTFIELD), 0, 0, 0, '', 1);
+print $form->selectarray('TAKEPOS_SORTPRODUCTFIELD', $array, (!getDolGlobalString('TAKEPOS_SORTPRODUCTFIELD') ? 'rowid' : $conf->global->TAKEPOS_SORTPRODUCTFIELD), 0, 0, 0, '', 1);
 print "</td></tr>\n";
 
 print '<tr class="oddeven"><td>';
@@ -310,7 +310,7 @@ print '<tr class="oddeven"><td>';
 print $langs->trans("Paymentnumpad");
 print '<td colspan="2">';
 $array = array(0=>$langs->trans("Numberspad"), 1=>$langs->trans("BillsCoinsPad"));
-print $form->selectarray('TAKEPOS_NUMPAD', $array, (empty($conf->global->TAKEPOS_NUMPAD) ? '0' : $conf->global->TAKEPOS_NUMPAD), 0);
+print $form->selectarray('TAKEPOS_NUMPAD', $array, (!getDolGlobalString('TAKEPOS_NUMPAD') ? '0' : $conf->global->TAKEPOS_NUMPAD), 0);
 print "</td></tr>\n";
 
 // Numpad use payment icons

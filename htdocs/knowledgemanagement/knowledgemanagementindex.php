@@ -148,7 +148,7 @@ END MODULEBUILDER DRAFT MYOBJECT */
 print '</div><div class="fichetwothirdright">';
 
 
-$NBMAX = (empty($conf->global->MAIN_SIZE_SHORTLIST_LIMIT) ? 25 : $conf->global->MAIN_SIZE_SHORTLIST_LIMIT);
+$NBMAX = (!getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT') ? 25 : $conf->global->MAIN_SIZE_SHORTLIST_LIMIT);
 $max = $NBMAX;
 
 /* BEGIN MODULEBUILDER LASTMODIFIED MYOBJECT

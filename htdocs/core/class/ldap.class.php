@@ -220,10 +220,10 @@ class Ldap
 		global $conf;
 
 		// Server
-		if (!empty($conf->global->LDAP_SERVER_HOST)) {
+		if (getDolGlobalString('LDAP_SERVER_HOST')) {
 			$this->server[] = $conf->global->LDAP_SERVER_HOST;
 		}
-		if (!empty($conf->global->LDAP_SERVER_HOST_SLAVE)) {
+		if (getDolGlobalString('LDAP_SERVER_HOST_SLAVE')) {
 			$this->server[] = $conf->global->LDAP_SERVER_HOST_SLAVE;
 		}
 		$this->serverPort          = getDolGlobalInt('LDAP_SERVER_PORT', 389);
@@ -327,7 +327,7 @@ class Ldap
 					}
 
 					// Upgrade connexion to TLS, if requested by the configuration
-					if (!empty($conf->global->LDAP_SERVER_USE_TLS)) {
+					if (getDolGlobalString('LDAP_SERVER_USE_TLS')) {
 						// For test/debug
 						//ldap_set_option($this->connection, LDAP_OPT_DEBUG_LEVEL, 7);
 						//ldap_set_option($this->connection, LDAP_OPT_PROTOCOL_VERSION, 3);
@@ -524,7 +524,7 @@ class Ldap
 	 *	@param	string	$dn			DN entry key
 	 *	@param	array	$info		Attributes array
 	 *	@param	User		$user		Objet user that create
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function add($dn, $info, $user)
 	{
@@ -572,7 +572,7 @@ class Ldap
 	 *	@param	string		$dn			DN entry key
 	 *	@param	array		$info		Attributes array
 	 *	@param	User		$user		Objet user that modify
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function modify($dn, $info, $user)
 	{
@@ -630,7 +630,7 @@ class Ldap
 	 *	@param	string		$newparent		New parent (ou=xxx,dc=aaa,dc=bbb)
 	 *	@param	User			$user			Objet user that modify
 	 *	@param	bool			$deleteoldrdn	If true the old RDN value(s) is removed, else the old RDN value(s) is retained as non-distinguished values of the entry.
-	 *	@return	int							<0 if KO, >0 if OK
+	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function rename($dn, $newrdn, $newparent, $user, $deleteoldrdn = true)
 	{
@@ -674,7 +674,7 @@ class Ldap
 	 * 	@param	string	$olddn		Old DN entry key (before update)
 	 * 	@param	string	$newrdn		New RDN entry key (uid=qqq) (for ldap_rename)
 	 *	@param	string	$newparent	New parent (ou=xxx,dc=aaa,dc=bbb) (for ldap_rename)
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function update($dn, $info, $user, $olddn, $newrdn = false, $newparent = false)
 	{
@@ -724,7 +724,7 @@ class Ldap
 	 *	Ldap object connect and bind must have been done
 	 *
 	 *	@param	string	$dn			DN entry key
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($dn)
 	{
@@ -794,7 +794,7 @@ class Ldap
 	 *
 	 *	@param	string		$dn			DN entry key
 	 *	@param	array		$info		Attributes array
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function dump($dn, $info)
 	{
@@ -871,7 +871,7 @@ class Ldap
 	 *	@param	string		$dn			DN entry key
 	 *	@param	array		$info		Attributes array
 	 *	@param	User		$user		Objet user that create
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function addAttribute($dn, $info, $user)
 	{
@@ -917,7 +917,7 @@ class Ldap
 	 *	@param	string		$dn			DN entry key
 	 *	@param	array		$info		Attributes array
 	 *	@param	User		$user		Objet user that create
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function updateAttribute($dn, $info, $user)
 	{
@@ -963,7 +963,7 @@ class Ldap
 	 *	@param	string		$dn			DN entry key
 	 *	@param	array		$info		Attributes array
 	 *	@param	User		$user		Objet user that create
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function deleteAttribute($dn, $info, $user)
 	{
@@ -1109,7 +1109,7 @@ class Ldap
 		if (!empty($activefilter)) {	// Use a predefined trusted filter (defined into setup by admin).
 			if (((string) $activefilter == '1' || (string) $activefilter == 'user') && $this->filter) {
 				$filter = '('.$this->filter.')';
-			} elseif (((string) $activefilter == 'group') && $this->filtergroup ) {
+			} elseif (((string) $activefilter == 'group') && $this->filtergroup) {
 				$filter = '('.$this->filtergroup.')';
 			} elseif (((string) $activefilter == 'member') && $this->filter) {
 				$filter = '('.$this->filtermember.')';
