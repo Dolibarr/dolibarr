@@ -144,7 +144,7 @@ class Fournisseur extends Societe
 	 *
 	 *  @param      User	$user       User asking creation
 	 *	@param		string	$name		Category name
-	 *  @return     int         		<0 if KO, 0 if OK
+	 *  @return     int         		Return integer <0 if KO, 0 if OK
 	 */
 	public function CreateCategory($user, $name)
 	{

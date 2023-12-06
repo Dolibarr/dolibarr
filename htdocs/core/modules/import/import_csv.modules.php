@@ -176,7 +176,7 @@ class ImportCsv extends ModeleImports
 	 *	Open input file
 	 *
 	 *	@param	string	$file		Path of filename
-	 *	@return	int					<0 if KO, >=0 if OK
+	 *	@return	int					Return integer <0 if KO, >=0 if OK
 	 */
 	public function import_open_file($file)
 	{
@@ -206,7 +206,7 @@ class ImportCsv extends ModeleImports
 	 * 	Return nb of records. File must be closed.
 	 *
 	 *	@param	string	$file		Path of filename
-	 * 	@return		int		<0 if KO, >=0 if OK
+	 * 	@return		int		Return integer <0 if KO, >=0 if OK
 	 */
 	public function import_get_nb_of_lines($file)
 	{
@@ -219,7 +219,7 @@ class ImportCsv extends ModeleImports
 	/**
 	 * 	Input header line from file
 	 *
-	 * 	@return		int		<0 if KO, >=0 if OK
+	 * 	@return		int		Return integer <0 if KO, >=0 if OK
 	 */
 	public function import_read_header()
 	{

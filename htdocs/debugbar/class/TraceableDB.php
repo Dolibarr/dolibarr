@@ -500,7 +500,7 @@ class TraceableDB extends DoliDB
 	 * @param        array 	$unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
 	 * @param        array 	$fulltext_keys 	Tableau des Nom de champs qui seront indexes en fulltext
 	 * @param        array $keys 			Tableau des champs cles noms => valeur
-	 * @return       int                    <0 if KO, >=0 if OK
+	 * @return       int                    Return integer <0 if KO, >=0 if OK
 	 */
 	public function DDLCreateTable($table, $fields, $primary_key, $type, $unique_keys = null, $fulltext_keys = null, $keys = null)
 	{
@@ -511,7 +511,7 @@ class TraceableDB extends DoliDB
 	 * Drop a table into database
 	 *
 	 * @param        string $table 			Name of table
-	 * @return       int                    <0 if KO, >=0 if OK
+	 * @return       int                    Return integer <0 if KO, >=0 if OK
 	 */
 	public function DDLDropTable($table)
 	{
@@ -616,7 +616,7 @@ class TraceableDB extends DoliDB
 	 * @param    string $dolibarr_main_db_user 	Nom user a creer
 	 * @param    string $dolibarr_main_db_pass 	Mot de passe user a creer
 	 * @param    string $dolibarr_main_db_name 	Database name where user must be granted
-	 * @return   int                            <0 if KO, >=0 if OK
+	 * @return   int                            Return integer <0 if KO, >=0 if OK
 	 */
 	public function DDLCreateUser($dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name)
 	{

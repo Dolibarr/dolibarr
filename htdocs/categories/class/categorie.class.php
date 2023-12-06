@@ -614,7 +614,7 @@ class Categorie extends CommonObject
 	 *
 	 * 	@param	User	$user		Object user that ask to delete
 	 *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return	int                 <0 KO >0 OK
+	 *	@return	int                 Return integer <0 KO >0 OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -1057,7 +1057,7 @@ class Categorie extends CommonObject
 	/**
 	 * Return direct childs id of a category into an array
 	 *
-	 * @return	array|int   <0 KO, array ok
+	 * @return	array|int   Return integer <0 KO, array ok
 	 */
 	public function get_filles()
 	{
@@ -1439,7 +1439,7 @@ class Categorie extends CommonObject
 	/**
 	 *	Returns an array containing the list of parent categories
 	 *
-	 *	@return	int|array <0 KO, array OK
+	 *	@return	int|array Return integer <0 KO, array OK
 	 */
 	public function get_meres()
 	{

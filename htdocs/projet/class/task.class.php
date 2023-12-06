@@ -409,7 +409,7 @@ class Task extends CommonObjectLine
 	 *
 	 *  @param	User	$user        	User that modify
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return int			         	<=0 if KO, >0 if OK
+	 *  @return int			         	Return integer <=0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -678,7 +678,7 @@ class Task extends CommonObjectLine
 	/**
 	 *	Return nb of children
 	 *
-	 *	@return	int		<0 if KO, 0 if no children, >0 if OK
+	 *	@return	int		Return integer <0 if KO, 0 if no children, >0 if OK
 	 */
 	public function hasChildren()
 	{
@@ -712,7 +712,7 @@ class Task extends CommonObjectLine
 	/**
 	 *	Return nb of time spent
 	 *
-	 *	@return	int		<0 if KO, 0 if no children, >0 if OK
+	 *	@return	int		Return integer <0 if KO, 0 if no children, >0 if OK
 	 */
 	public function hasTimeSpent()
 	{
@@ -1283,7 +1283,7 @@ class Task extends CommonObjectLine
 	 *
 	 *  @param	User	$user           User object
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return	int                     <=0 if KO, >0 if OK
+	 *  @return	int                     Return integer <=0 if KO, >0 if OK
 	 */
 	public function addTimeSpent($user, $notrigger = 0)
 	{
@@ -1395,7 +1395,7 @@ class Task extends CommonObjectLine
 	 *  Fetch records of time spent of this task
 	 *
 	 *  @param	string	$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
-	 *  @return int							<0 if KO, array of time spent if OK
+	 *  @return int							Return integer <0 if KO, array of time spent if OK
 	 */
 	public function fetchTimeSpentOnTask($morewherefilter = '')
 	{
@@ -1637,7 +1637,7 @@ class Task extends CommonObjectLine
 	 *
 	 *  @param	User		$userobj			User object
 	 *  @param	string		$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
-	 *  @return array|int						<0 if KO, array of time spent if OK
+	 *  @return array|int						Return integer <0 if KO, array of time spent if OK
 	 */
 	public function fetchAllTimeSpent(User $userobj, $morewherefilter = '')
 	{
@@ -2258,7 +2258,7 @@ class Task extends CommonObjectLine
 	 * Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 * @param	User	$user   Objet user
-	 * @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
+	 * @return WorkboardResponse|int Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user)
 	{
@@ -2333,7 +2333,7 @@ class Task extends CommonObjectLine
 	/**
 	 *      Charge indicateurs this->nb de tableau de bord
 	 *
-	 *      @return     int         <0 if ko, >0 if ok
+	 *      @return     int         Return integer <0 if ko, >0 if ok
 	 */
 	public function load_state_board()
 	{

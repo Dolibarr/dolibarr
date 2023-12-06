@@ -1554,7 +1554,7 @@ class FactureFournisseur extends CommonInvoice
 	 *	@param  User	$user       Object user
 	 *	@param  string	$close_code	Code indicates whether the class has paid in full while payment is incomplete. Not implementd yet.
 	 *	@param  string	$close_note	Comment informs if the class has been paid while payment is incomplete. Not implementd yet.
-	 *	@return int         		<0 si ko, >0 si ok
+	 *	@return int         		Return integer <0 si ko, >0 si ok
 	 */
 	public function set_paid($user, $close_code = '', $close_note = '')
 	{
@@ -1569,7 +1569,7 @@ class FactureFournisseur extends CommonInvoice
 	 *	@param  User	$user       Object user
 	 *	@param  string	$close_code	Code indicates whether the class has paid in full while payment is incomplete. Not implementd yet.
 	 *	@param  string	$close_note	Comment informs if the class has been paid while payment is incomplete. Not implementd yet.
-	 *	@return int         		<0 si ko, >0 si ok
+	 *	@return int         		Return integer <0 si ko, >0 si ok
 	 */
 	public function setPaid($user, $close_code = '', $close_note = '')
 	{
@@ -1632,7 +1632,7 @@ class FactureFournisseur extends CommonInvoice
 	 *	@deprecated
 	 *  @see setUnpaid()
 	 *	@param      User	$user       Object user that change status
-	 *	@return     int         		<0 si ok, >0 si ok
+	 *	@return     int         		Return integer <0 si ok, >0 si ok
 	 */
 	public function set_unpaid($user)
 	{
@@ -1647,7 +1647,7 @@ class FactureFournisseur extends CommonInvoice
 	 *	or when the invoice was canceled and reopened.
 	 *
 	 *	@param      User	$user       Object user that change status
-	 *	@return     int         		<0 si ok, >0 si ok
+	 *	@return     int         		Return integer <0 si ok, >0 si ok
 	 */
 	public function setUnpaid($user)
 	{
@@ -1750,7 +1750,7 @@ class FactureFournisseur extends CommonInvoice
 	 *	@param  string	$force_number   Reference to force on invoice
 	 *	@param	int		$idwarehouse	Id of warehouse for stock change
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return int 			        <0 if KO, =0 if nothing to do, >0 if OK
+	 *	@return int 			        Return integer <0 if KO, =0 if nothing to do, >0 if OK
 	 */
 	public function validate($user, $force_number = '', $idwarehouse = 0, $notrigger = 0)
 	{
@@ -2679,7 +2679,7 @@ class FactureFournisseur extends CommonInvoice
 	 *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 *	@param      User	$user       Object user
-	 *	@return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
+	 *	@return WorkboardResponse|int Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user)
 	{
@@ -3213,7 +3213,7 @@ class FactureFournisseur extends CommonInvoice
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
 	 *  @param   null|array  $moreparams     Array to provide more information
-	 *  @return     int         				<0 if KO, 0 if nothing done, >0 if OK
+	 *  @return     int         				Return integer <0 if KO, 0 if nothing done, >0 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
@@ -3640,7 +3640,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 * Retrieves a supplier invoice line
 	 *
 	 * @param    int    $rowid    Line id
-	 * @return   int              <0 KO; 0 NOT FOUND; 1 OK
+	 * @return   int              Return integer <0 KO; 0 NOT FOUND; 1 OK
 	 */
 	public function fetch($rowid)
 	{
@@ -4125,7 +4125,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	/**
 	 *  Mise a jour de l'objet ligne de commande en base
 	 *
-	 *  @return		int		<0 si ko, >0 si ok
+	 *  @return		int		Return integer <0 si ko, >0 si ok
 	 */
 	public function update_total()
 	{

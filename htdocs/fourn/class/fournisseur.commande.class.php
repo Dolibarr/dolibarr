@@ -1054,7 +1054,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	Class invoiced the supplier order
 	 *
 	 *  @param      User        $user       Object user making the change
-	 *	@return     int     	            <0 if KO, 0 if already billed,  >0 if OK
+	 *	@return     int     	            Return integer <0 if KO, 0 if already billed,  >0 if OK
 	 */
 	public function classifyBilled(User $user)
 	{
@@ -1406,7 +1406,7 @@ class CommandeFournisseur extends CommonOrder
 	 *
 	 *  @param      User	$user       User making creation
 	 *	@param		int		$notrigger	Disable all triggers
-	 *  @return     int         		<0 if KO, Id of supplier order if OK
+	 *  @return     int         		Return integer <0 if KO, Id of supplier order if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -1827,7 +1827,7 @@ class CommandeFournisseur extends CommonOrder
 	 *  @param		int		$origin_id				Id of origin object
 	 *  @param		int		$rang					Rank
 	 * 	@param		int		$special_code			Special code
-	 *	@return     int             				<=0 if KO, >0 if OK
+	 *	@return     int             				Return integer <=0 if KO, >0 if OK
 	 */
 	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $fk_product = 0, $fk_prod_fourn_price = 0, $ref_supplier = '', $remise_percent = 0.0, $price_base_type = 'HT', $pu_ttc = 0.0, $type = 0, $info_bits = 0, $notrigger = false, $date_start = null, $date_end = null, $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $origin = '', $origin_id = 0, $rang = -1, $special_code = 0)
 	{
@@ -2547,7 +2547,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	@param      User 	$user        		Object user that modify
 	 *	@param      int		$delivery_date		Delivery date
 	 *  @param  	int		$notrigger			1=Does not execute triggers, 0= execute triggers
-	 *	@return     int         				<0 if ko, >0 if ok
+	 *	@return     int         				Return integer <0 if ko, >0 if ok
 	 *	@deprecated Use  setDeliveryDate
 	 */
 	public function set_date_livraison($user, $delivery_date, $notrigger = 0)
@@ -2619,7 +2619,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	@param      User			$user        		Objet utilisateur qui modifie
 	 *	@param      int				$id_projet    	 	Delivery date
 	 *  @param     	int				$notrigger			1=Does not execute triggers, 0= execute triggers
-	 *	@return     int         						<0 si ko, >0 si ok
+	 *	@return     int         						Return integer <0 si ko, >0 si ok
 	 */
 	public function set_id_projet($user, $id_projet, $notrigger = 0)
 	{
@@ -2788,7 +2788,7 @@ class CommandeFournisseur extends CommonOrder
 	 * 	@param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param		double		$pu_ht_devise		Unit price in currency
 	 *  @param		string		$ref_supplier		Supplier ref
-	 *	@return    	int         	    			< 0 if error, > 0 if ok
+	 *	@return    	int         	    			Return integer < 0 if error, > 0 if ok
 	 */
 	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $info_bits = 0, $type = 0, $notrigger = 0, $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $ref_supplier = '')
 	{
@@ -3097,7 +3097,7 @@ class CommandeFournisseur extends CommonOrder
 	/**
 	 *	Charge indicateurs this->nb de tableau de bord
 	 *
-	 *	@return     int         <0 si ko, >0 si ok
+	 *	@return     int         Return integer <0 si ko, >0 si ok
 	 */
 	public function load_state_board()
 	{
@@ -3137,7 +3137,7 @@ class CommandeFournisseur extends CommonOrder
 	 *
 	 *	@param          User	$user   Objet user
 	 *  @param          int		$mode   "opened", "awaiting" for orders awaiting reception
-	 *	@return WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
+	 *	@return WorkboardResponse|int 	Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $mode = 'opened')
 	{
@@ -3239,7 +3239,7 @@ class CommandeFournisseur extends CommonOrder
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
 	 *  @param      null|array  $moreparams     Array to provide more information
-	 *  @return     int          				< 0 if KO, 0 = no doc generated, > 0 if OK
+	 *  @return     int          				Return integer < 0 if KO, 0 = no doc generated, > 0 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
@@ -3412,7 +3412,7 @@ class CommandeFournisseur extends CommonOrder
 	 * @param 		User 	$user                   User action
 	 * @param       int     $closeopenorder         Close if received
 	 * @param		string	$comment				Comment
-	 * @return		int		                        <0 if KO, 0 if not applicable, >0 if OK
+	 * @return		int		                        Return integer <0 if KO, 0 if not applicable, >0 if OK
 	 */
 	public function calcAndSetStatusDispatch(User $user, $closeopenorder = 1, $comment = '')
 	{
@@ -3542,7 +3542,7 @@ class CommandeFournisseur extends CommonOrder
 	 *  Note: For a dedicated shipment, the fetch_lines can be used to load the qty_asked and qty_shipped. This function is use to return qty_shipped cumulated for the order
 	 *
 	 *	@param      int		$filtre_statut      Filter on shipment status
-	 * 	@return     int                			<0 if KO, Nb of lines found if OK
+	 * 	@return     int                			Return integer <0 if KO, Nb of lines found if OK
 	 */
 	public function loadReceptions($filtre_statut = -1)
 	{
@@ -3975,7 +3975,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	 *	Update the line object into db
 	 *
 	 *	@param      int		$notrigger		1 = disable triggers
-	 *	@return		int		<0 si ko, >0 si ok
+	 *	@return		int		Return integer <0 si ko, >0 si ok
 	 */
 	public function update($notrigger = 0)
 	{
