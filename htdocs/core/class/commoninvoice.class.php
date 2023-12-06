@@ -1804,13 +1804,12 @@ abstract class CommonInvoice extends CommonObject
 	}
 	
 	/**
-	 * delete lines (or dec qty) of an invoice src object if lines are already billed
-	 * called to avoid billing several times the same order lines
-	 * only works with lines of products or services
+	 *	Delete lines (or dec qty) of an invoice src object if lines are already billed.
+	 *	called to avoid billing several times the same order lines
+	 *	only works with lines of products or services
 	 *
-	 * @param CommonObject $objectsrc source of the invoice
-	 *
-	 * @return void
+	 *	@param	CommonObject	$objectsrc source of the invoice
+	 *	@return	void
 	 */
 	public function srcObjDelBilledLines(&$objectsrc)
 	{
