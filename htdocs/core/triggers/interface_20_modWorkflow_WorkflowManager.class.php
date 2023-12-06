@@ -243,8 +243,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						foreach ($orderLinked->linkedObjects['facture'] as $key => $invoice) {
 							if ($invoice->statut == Facture::STATUS_VALIDATED || $object->id == $invoice->id) {
 								$totalHTInvoices += floatval($invoice->total_ht);
-							}
-							else {
+							} else {
 								$areAllInvoicesValidated = false;
 								break;
 							}
