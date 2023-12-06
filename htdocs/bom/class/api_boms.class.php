@@ -546,7 +546,7 @@ class Boms extends DolibarrApi
 	 *
 	 * @return void
 	 */
-	private function checkRefNumbering(): void
+	private function checkRefNumbering()
 	{
 		$ref = substr($this->bom->ref, 1, 4);
 		if ($this->bom->status > 0 && $ref == 'PROV') {
