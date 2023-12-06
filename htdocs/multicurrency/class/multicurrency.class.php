@@ -237,7 +237,7 @@ class MultiCurrency extends CommonObject
 	/**
 	 * Load all rates in object from the database
 	 *
-	 * @return int <0 if KO, >=0 if OK
+	 * @return int Return integer <0 if KO, >=0 if OK
 	 */
 	public function fetchAllCurrencyRate()
 	{

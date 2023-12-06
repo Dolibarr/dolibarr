@@ -159,7 +159,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 	 * Met a jour nombre de destinataires
 	 *
 	 * @param	int		$mailing_id          Id of emailing
-	 * @return  int			                 < 0 si erreur, nb destinataires si ok
+	 * @return  int			                 Return integer < 0 si erreur, nb destinataires si ok
 	 */
 	public function update_nb($mailing_id)
 	{
@@ -190,7 +190,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 	 *
 	 * @param	int		$mailing_id    Id of emailing
 	 * @param   array	$cibles        Array with targets
-	 * @return  int      			   < 0 if error, nb added if OK
+	 * @return  int      			   Return integer < 0 if error, nb added if OK
 	 */
 	public function addTargetsToDatabase($mailing_id, $cibles)
 	{
