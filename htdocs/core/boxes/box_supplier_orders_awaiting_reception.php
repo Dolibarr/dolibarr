@@ -185,7 +185,7 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][] = array(
-				'td' => 'class="nohover opacitymedium left"',
+				'td' => 'class="nohover left"',
 				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}

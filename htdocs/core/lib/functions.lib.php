@@ -12281,7 +12281,7 @@ function addSummaryTableLine($tableColumnCount, $num, $nbofloop = 0, $total = 0,
 
 	if ($num === 0) {
 		print '<tr class="oddeven">';
-		print '<td colspan="'.$tableColumnCount.'" class="opacitymedium">'.$langs->trans($noneWord).'</td>';
+		print '<td colspan="'.$tableColumnCount.'"><span class="opacitymedium">'.$langs->trans($noneWord).'</span></td>';
 		print '</tr>';
 		return;
 	}
@@ -12309,7 +12309,7 @@ function addSummaryTableLine($tableColumnCount, $num, $nbofloop = 0, $total = 0,
 		print '<td colspan="'.$colspan.'" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop)).'</td>';
 	} else {
 		print '<td colspan="'.$colspan.'" class="right"> '.$langs->trans("Total").'</td>';
-		print '<td class="right" width="100">'.price($total).'</td>';
+		print '<td class="right centpercent">'.price($total).'</td>';
 	}
 
 	if ($extraRightColumn) {
@@ -12329,8 +12329,6 @@ function addSummaryTableLine($tableColumnCount, $num, $nbofloop = 0, $total = 0,
  */
 function readfileLowMemory($fullpath_original_file_osencoded, $method = -1)
 {
-	global $conf;
-
 	if ($method == -1) {
 		$method = 0;
 		if (getDolGlobalString('MAIN_FORCE_READFILE_WITH_FREAD')) {
