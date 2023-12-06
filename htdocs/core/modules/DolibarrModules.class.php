@@ -872,8 +872,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	{
 		if (in_array($this->version, array('dolibarr', 'experimental', 'development'))) {	// core module
 			return $this->module_position;
-		} else {																			// external module
-			$position = (int)$this->module_position;
+		} else {   // external module
+			$position = (int) $this->module_position;
 			if ($this->module_position >= 100000) {
 				return $this->module_position;
 			} else {
