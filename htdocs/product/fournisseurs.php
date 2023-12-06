@@ -762,7 +762,6 @@ if ($id > 0 || $ref) {
 							});
 						});
 					</script>";
-
 				} else {
 					// Price qty min
 					print '<tr><td class="fieldrequired">'.$langs->trans("PriceQtyMin").'</td>';
