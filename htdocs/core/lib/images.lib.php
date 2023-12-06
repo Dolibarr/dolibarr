@@ -583,6 +583,9 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 		case IMAGETYPE_WBMP:	// 15
 			$imgfonction = 'imagecreatefromwbmp';
 			break;
+		case IMAGETYPE_WEBP:	// 18
+			$imgfonction = 'imagecreatefromwebp';
+			break;
 	}
 	if ($imgfonction) {
 		if (!function_exists($imgfonction)) {
@@ -600,11 +603,11 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 	switch ($infoImg[2]) {
 		case IMAGETYPE_GIF:	    // 1
 			$img = imagecreatefromgif($filetoread);
-			$extImg = '.gif'; // Extension de l'image
+			$extImg = '.gif';
 			break;
 		case IMAGETYPE_JPEG:    // 2
 			$img = imagecreatefromjpeg($filetoread);
-			$extImg = (preg_match('/\.jpeg$/', $file) ? '.jpeg' : '.jpg'); // Extension de l'image
+			$extImg = (preg_match('/\.jpeg$/', $file) ? '.jpeg' : '.jpg');
 			break;
 		case IMAGETYPE_PNG:	    // 3
 			$img = imagecreatefrompng($filetoread);
@@ -617,6 +620,10 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 		case IMAGETYPE_WBMP:	// 15
 			$img = imagecreatefromwbmp($filetoread);
 			$extImg = '.bmp';
+			break;
+		case IMAGETYPE_WEBP:	// 18
+			$img = imagecreatefromwebp($filetoread);
+			$extImg = '.webp';
 			break;
 	}
 
@@ -746,6 +753,11 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			$extImgTarget = '.bmp';
 			$newquality = 'NU';
 			break;
+		case IMAGETYPE_WEBP:	// 18
+			$trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 0);
+			$extImgTarget = '.webp';
+			$newquality = $quality;
+			break;
 	}
 	if (function_exists("imagefill")) {
 		imagefill($imgThumb, 0, 0, $trans_colour);
@@ -781,6 +793,9 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			break;
 		case IMAGETYPE_WBMP:    // 15
 			imagewbmp($imgThumb, $imgThumbName);
+			break;
+		case IMAGETYPE_WEBP:    // 18
+			imagewebp($imgThumb, $imgThumbName, $newquality);
 			break;
 	}
 
