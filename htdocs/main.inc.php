@@ -1657,7 +1657,7 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
  * @param   int     $disablenoindex  Disable noindex tag for meta robots
  * @return	void
  */
-function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $disableforlogin = 0, $disablenofollow = 0, $disablenoindex = 0)
+function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [], $disableforlogin = 0, $disablenofollow = 0, $disablenoindex = 0)
 {
 	global $db, $conf, $langs, $user, $mysoc, $hookmanager;
 

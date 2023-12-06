@@ -510,6 +510,7 @@ if (empty($reshook)) {
 			dol_print_error($db, $object->error);
 		}
 	} elseif ($action == "setabsolutediscount" && $usercancreate) {
+		$db->begin();
 		// We use the credit to reduce amount of invoice
 		if (GETPOST("remise_id", "int")) {
 			$ret = $object->fetch($id);
@@ -530,7 +531,8 @@ if (empty($reshook)) {
 
 			//var_dump($object->getRemainToPay(0));
 			//var_dump($discount->amount_ttc);exit;
-			if (price2num($discount->amount_ttc) > price2num($object->getRemainToPay(0))) {
+			$remaintopay = $object->getRemainToPay(0);
+			if (price2num($discount->amount_ttc) > price2num($remaintopay)) {
 				// TODO Split the discount in 2 automatically
 				$error++;
 				setEventMessages($langs->trans("ErrorDiscountLargerThanRemainToPaySplitItBefore"), null, 'errors');
@@ -539,12 +541,23 @@ if (empty($reshook)) {
 			if (!$error) {
 				$result = $discount->link_to_invoice(0, $id);
 				if ($result < 0) {
+					$error++;
 					setEventMessages($discount->error, $discount->errors, 'errors');
 				}
 			}
+			if (!$error) {
+				$newremaintopay = $object->getRemainToPay(0);
+				if ($newremaintopay == 0) {
+					$object->setPaid($user);
+				}
+			}
 		}
-
-		if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+		if (!$error) {
+			$db->commit();
+		} else {
+			$db->rollback();
+		}
+		if (empty($error) && !getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 			$outputlangs = $langs;
 			$newlang = '';
 			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
