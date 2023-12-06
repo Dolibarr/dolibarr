@@ -56,6 +56,7 @@ class ExportExcel2007 extends ModeleExports
 
 	public $version_lib;
 
+	/** @var Spreadsheet */
 	public $workbook; // Handle file
 
 	public $worksheet; // Handle sheet
@@ -182,10 +183,6 @@ class ExportExcel2007 extends ModeleExports
 		// phpcs:enable
 		global $user, $conf, $langs;
 
-		if (getDolGlobalString('MAIN_USE_PHP_WRITEEXCEL')) {
-			$outputlangs->charset_output = 'ISO-8859-1'; // Because Excel 5 format is ISO
-		}
-
 		dol_syslog(get_class($this)."::open_file file=".$file);
 		$this->file = $file;
 
@@ -256,9 +253,7 @@ class ExportExcel2007 extends ModeleExports
 		$selectlabel = array();
 
 		$this->col = 1;
-		if (getDolGlobalString('MAIN_USE_PHP_WRITEEXCEL')) {
-			$this->col = 0;
-		}
+
 		foreach ($array_selected_sorted as $code => $value) {
 			$alias = $array_export_fields_label[$code];
 			//print "dd".$alias;
@@ -270,24 +265,16 @@ class ExportExcel2007 extends ModeleExports
 			if (preg_match('/^Select:/i', $typefield) && $typefield = substr($typefield, 7)) {
 				$selectlabel[$code."_label"] = $alias."_label";
 			}
-			if (getDolGlobalString('MAIN_USE_PHP_WRITEEXCEL')) {
-				$this->worksheet->write($this->row, $this->col, $outputlangs->transnoentities($alias), $formatheader);
-			} else {
-				$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, $outputlangs->transnoentities($alias));
-				if (!empty($array_types[$code]) && in_array($array_types[$code], array('Date', 'Numeric', 'TextAuto'))) {		// Set autowidth for some types
-					$this->workbook->getActiveSheet()->getColumnDimension($this->column2Letter($this->col + 1))->setAutoSize(true);
-				}
+			$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, $outputlangs->transnoentities($alias));
+			if (!empty($array_types[$code]) && in_array($array_types[$code], array('Date', 'Numeric', 'TextAuto'))) {		// Set autowidth for some types
+				$this->workbook->getActiveSheet()->getColumnDimension($this->column2Letter($this->col + 1))->setAutoSize(true);
 			}
 			$this->col++;
 		}
 		foreach ($selectlabel as $key => $value) {
-			if (getDolGlobalString('MAIN_USE_PHP_WRITEEXCEL')) {
-				$this->worksheet->write($this->row, $this->col, $outputlangs->transnoentities($value), $formatheader);
-			} else {
-				$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, $outputlangs->transnoentities($value));
-				if (!empty($array_types[$code]) && in_array($array_types[$code], array('Date', 'Numeric', 'TextAuto'))) {		// Set autowidth for some types
-					$this->workbook->getActiveSheet()->getColumnDimension($this->column2Letter($this->col + 1))->setAutoSize(true);
-				}
+			$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, $outputlangs->transnoentities($value));
+			if (!empty($array_types[$code]) && in_array($array_types[$code], array('Date', 'Numeric', 'TextAuto'))) {		// Set autowidth for some types
+				$this->workbook->getActiveSheet()->getColumnDimension($this->column2Letter($this->col + 1))->setAutoSize(true);
 			}
 			$this->col++;
 		}
@@ -312,9 +299,6 @@ class ExportExcel2007 extends ModeleExports
 
 		// Define first row
 		$this->col = 1;
-		if (getDolGlobalString('MAIN_USE_PHP_WRITEEXCEL')) {
-			$this->col = 0;
-		}
 
 		$reg = array();
 		$selectlabelvalues = array();
