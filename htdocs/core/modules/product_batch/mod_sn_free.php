@@ -79,26 +79,35 @@ class mod_sn_free extends ModeleNumRefBatch
 	/**
 	 *  Return description of module
 	 *
-	 *  @return string      		Description of module
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs;
 		$langs->load("companies");
 		return $langs->trans("LeopardNumRefModelDesc");
 	}
 
+	/**
+	 *  Return an example of numbering
+	 *
+	 *  @return     string      Example
+	 */
+	public function getExample()
+	{
+		return $this->getNextValue(null, null);
+	}
 
 	/**
 	 * Return an example of result returned by getNextValue
 	 *
 	 * @param	Societe		$objsoc	    Object thirdparty
-	 * @param   Object		$object		Object we need next value for
+	 * @param   Productlot	$object		Object we need next value for
 	 * @return	string					Return next value
 	 */
 	public function getNextValue($objsoc, $object)
 	{
-		global $langs;
 		return '';
 	}
 }

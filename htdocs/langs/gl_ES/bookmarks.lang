@@ -20,3 +20,4 @@ ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Escolla se debe abrir a páxina 
 BookmarksManagement=Xestión de marcadores
 BookmarksMenuShortCut=Ctrl + shift + m
 NoBookmarks=Bookmarks non definidos
+NoBookmarkFound=Non se atopou ningún marcador

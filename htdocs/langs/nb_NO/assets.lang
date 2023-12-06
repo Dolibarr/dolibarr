@@ -73,8 +73,8 @@ Asset=Ressurs
 Assets=Aktiva
 AssetReversalAmountHT=Tilbakeføringsbeløp (uten avgifter)
 AssetAcquisitionValueHT=Anskaffelsesbeløp (uten avgifter)
-AssetRecoveredVAT=Recovered VAT
-AssetReversalDate=Reversal date
+AssetRecoveredVAT=Gjenvunnet MVA
+AssetReversalDate=Reverseringsdato
 AssetDateAcquisition=Anskaffelsesdato
 AssetDateStart=Dato for oppstart
 AssetAcquisitionType=Type anskaffelse
@@ -103,8 +103,8 @@ AssetRecorded=Regnskapsført
 AssetDisposalDate=Dato for avhending
 AssetDisposalAmount=Avhendingsverdi
 AssetDisposalType=Type avhending
-AssetDisposalDepreciated=Depreciate the year of transfer
-AssetDisposalSubjectToVat=Disposal subject to VAT
+AssetDisposalDepreciated=Avskriv overføringsåret
+AssetDisposalSubjectToVat=Avhending MVA-pliktig
 
 #
 # Asset model
@@ -128,10 +128,10 @@ AssetDepreciationOptionDurationType=Type varighet
 AssetDepreciationOptionDurationTypeAnnual=Årlig
 AssetDepreciationOptionDurationTypeMonthly=Månedlig
 AssetDepreciationOptionDurationTypeDaily=Daglig
-AssetDepreciationOptionRate=Rate (%%)
+AssetDepreciationOptionRate=Takst (%%)
 AssetDepreciationOptionAmountBaseDepreciationHT=Avskrivningsgrunnlag (ekskl. mva)
 AssetDepreciationOptionAmountBaseDeductibleHT=Egenandelsgrunnlag (ekskl. mva)
-AssetDepreciationOptionTotalAmountLastDepreciationHT=Total amount last depreciation (excl. VAT)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=Totalbeløp siste avskrivning (ekskl. MVA)
 
 #
 # Asset accountancy codes
@@ -139,24 +139,24 @@ AssetDepreciationOptionTotalAmountLastDepreciationHT=Total amount last depreciat
 AssetAccountancyCodeDepreciationEconomic=Økonomisk avskrivning
 AssetAccountancyCodeAsset=Ressurs
 AssetAccountancyCodeDepreciationAsset=Avskrivninger
-AssetAccountancyCodeDepreciationExpense=Depreciation expense
-AssetAccountancyCodeValueAssetSold=Value of asset disposed
-AssetAccountancyCodeReceivableOnAssignment=Receivable on disposal
+AssetAccountancyCodeDepreciationExpense=Avskrivninger
+AssetAccountancyCodeValueAssetSold=Verdien av avhendet eiendel 
+AssetAccountancyCodeReceivableOnAssignment=Tilgodehavende ved avhending
 AssetAccountancyCodeProceedsFromSales=Inntekter fra avhending
 AssetAccountancyCodeVatCollected=Innkrevd MVA
 AssetAccountancyCodeVatDeductible=Gjenvunnet merverdiavgift på eiendeler
 AssetAccountancyCodeDepreciationAcceleratedDepreciation=Akselerert avskrivning (skatt)
 AssetAccountancyCodeAcceleratedDepreciation=Konto
-AssetAccountancyCodeEndowmentAcceleratedDepreciation=Depreciation expense
-AssetAccountancyCodeProvisionAcceleratedDepreciation=Repossession/Provision
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=Avskrivninger
+AssetAccountancyCodeProvisionAcceleratedDepreciation=Tilbaketakelse/provisjon
 
 #
 # Asset depreciation
 #
-AssetBaseDepreciationHT=Depreciation basis (excl. VAT)
-AssetDepreciationBeginDate=Start of depreciation on
+AssetBaseDepreciationHT=Avskrivningsgrunnlag (ekskl. mva)
+AssetDepreciationBeginDate=Start av avskrivning pr
 AssetDepreciationDuration=Varighet
-AssetDepreciationRate=Rate (%%)
+AssetDepreciationRate=Takst (%%)
 AssetDepreciationDate=Avskrivningsdato
 AssetDepreciationHT=Avskrivninger (ekskl. mva)
 AssetCumulativeDepreciationHT=Akkumulerte avskrivninger (ekskl. mva)
@@ -168,19 +168,19 @@ AssetDepreciationReversal=Reversering
 #
 # Errors
 #
-AssetErrorAssetOrAssetModelIDNotProvide=Id of the asset or the model sound has not been provided
-AssetErrorFetchAccountancyCodesForMode=Error when retrieving the accounting accounts for the '%s' depreciation mode
-AssetErrorDeleteAccountancyCodesForMode=Error when deleting accounting accounts from the '%s' depreciation mode
-AssetErrorInsertAccountancyCodesForMode=Error when inserting the accounting accounts of the depreciation mode '%s'
-AssetErrorFetchDepreciationOptionsForMode=Error when retrieving options for the '%s' depreciation mode
-AssetErrorDeleteDepreciationOptionsForMode=Error when deleting the '%s' depreciation mode options
-AssetErrorInsertDepreciationOptionsForMode=Error when inserting the '%s' depreciation mode options
-AssetErrorFetchDepreciationLines=Error when retrieving recorded depreciation lines
-AssetErrorClearDepreciationLines=Error when purging recorded depreciation lines (reversal and future)
-AssetErrorAddDepreciationLine=Error when adding a depreciation line
-AssetErrorCalculationDepreciationLines=Error when calculating the depreciation lines (recovery and future)
-AssetErrorReversalDateNotProvidedForMode=The reversal date is not provided for the '%s' depreciation method
-AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=The reversal date must be greater than or equal to the beginning of the current fiscal year for the '%s' depreciation method
-AssetErrorReversalAmountNotProvidedForMode=The reversal amount is not provided for the depreciation mode '%s'.
-AssetErrorFetchCumulativeDepreciation=Error when retrieving the accumulated depreciation amount from the depreciation line
-AssetErrorSetLastCumulativeDepreciation=Error when recording the last accumulated depreciation amount
+AssetErrorAssetOrAssetModelIDNotProvide=Aktiva-ID eller modell-ID er ikke oppgitt
+AssetErrorFetchAccountancyCodesForMode=Feil ved henting av regnskapskonto for '%s' avskrivningsmodus
+AssetErrorDeleteAccountancyCodesForMode=Feil ved sletting av regnskapskontoer fra '%s' avskrivningsmodus
+AssetErrorInsertAccountancyCodesForMode=Feil ved innsetting av regnskapskontoer for avskrivningsmodus '%s'
+AssetErrorFetchDepreciationOptionsForMode=Feil ved henting av alternativer for '%s' avskrivningsmodus
+AssetErrorDeleteDepreciationOptionsForMode=Feil ved sletting av '%s' alternativer for avskrivningsmodus
+AssetErrorInsertDepreciationOptionsForMode=Feil ved innsetting av '%s' alternativer for avskrivningsmodus
+AssetErrorFetchDepreciationLines=Feil ved henting av registrerte avskrivningslinjer
+AssetErrorClearDepreciationLines=Feil ved tømming av registrerte avskrivningslinjer (reversering og fremtidig)
+AssetErrorAddDepreciationLine=Feil ved å legge til en avskrivningslinje
+AssetErrorCalculationDepreciationLines=Feil ved beregning av avskrivningslinjene (gjenvinning og fremtidig)
+AssetErrorReversalDateNotProvidedForMode=Tilbakeføringsdatoen er ikke oppgitt for '%s' avskrivningsmetoden
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=Tilbakeføringsdatoen må være større enn eller lik begynnelsen av inneværende regnskapsår for avskrivningsmetoden '%s'
+AssetErrorReversalAmountNotProvidedForMode=Tilbakeføringsbeløpet er ikke oppgitt for avskrivningsmodus '%s'.
+AssetErrorFetchCumulativeDepreciation=Feil ved henting av akkumulert avskrivningsbeløp fra avskrivningslinjen
+AssetErrorSetLastCumulativeDepreciation=Feil ved registrering av siste akkumulerte avskrivningsbeløp

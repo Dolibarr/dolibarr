@@ -39,13 +39,14 @@ optimize_image()
 	max_input_size=$(expr $max_input_size + $input_file_size)
 
 	if [ "${1##*.}" = "png" ]; then
-		#optipng -o1 -clobber -quiet $1 -out $2.firstpass
-		optipng -o1 -quiet $1 -out $2.firstpass
-		pngcrush -q -rem alla -reduce $2.firstpass $2 >/dev/null
-		rm -fr $2.firstpass
+		#optipng -o1 -clobber -quiet "$1" -out "$2.firstpass"
+		echo optipng -o1 -quiet "$1" -out "$2.firstpass"
+		optipng -o1 -quiet "$1" -out "$2.firstpass"
+		pngcrush -q -rem alla -reduce "$2.firstpass" "$2" >/dev/null
+		rm -fr "$2.firstpass"
 	fi
 	if [ "${1##*.}" = "jpg" -o "${1##*.}" = "jpeg" ]; then
-		jpegtran -copy none -progressive $1 > $2
+		jpegtran -copy none -progressive "$1" > $2
 	fi
 
 	output_file_size=$(stat -c%s "$2")
@@ -120,9 +121,11 @@ main()
 
 	# Search of all jpg/jpeg/png in $INPUT
 	# We remove images from $OUTPUT if $OUTPUT is a subdirectory of $INPUT
-	echo "Scan $INPUT to find images"
-	IMAGES=$(find $INPUT -regextype posix-extended -regex '.*\.(jpg|jpeg|png)' | grep -v $OUTPUT)
-
+	echo "Scan $INPUT to find images with find $INPUT -regextype posix-extended -regex '.*\.(jpg|jpeg|png)' | grep -v '/gource/' | grep -v '/includes/' | grep -v '/custom/' | grep -v '/documents/' | grep -v $OUTPUT"
+	#echo "Scan $INPUT to find images with find $INPUT -regextype posix-extended -regex '.*\.(jpg|jpeg|png)' | grep -v '/gource/' | grep -v '/includes/' | grep -v '/custom/'"
+	IMAGES=$(find $INPUT -regextype posix-extended -regex '.*\.(jpg|jpeg|png)' | grep -v '/gource/' | grep -v '/includes/' | grep -v '/custom/' | grep -v '/documents/' | grep -v $OUTPUT)
+	#IMAGES=$(find $INPUT -regextype posix-extended -regex '.*\.(jpg|jpeg|png)' | grep -v '/gource/' | grep -v '/includes/' | grep -v '/custom/')
+	
 	if [ "$QUIET" == "0" ]; then
 		echo --- Optimizing $INPUT ---
 		echo
@@ -135,11 +138,11 @@ main()
 			printf '%*.*s' 0 $((linelength - ${#filename} - ${#sDone} )) "$pad"
 		fi
 
-		optimize_image $CURRENT_IMAGE $OUTPUT/$filename
+		optimize_image "$CURRENT_IMAGE" "$OUTPUT/$filename"
 
 		# Replace file
 		if [[ "$INPLACE" == "1" ]]; then
-			mv $OUTPUT/$filename $CURRENT_IMAGE
+			mv "$OUTPUT/$filename" "$CURRENT_IMAGE"
 		fi
 
 		if [ "$QUIET" == "0" ]; then

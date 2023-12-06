@@ -22,6 +22,7 @@
  */
 
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
@@ -49,7 +50,6 @@ if ($user->socid > 0) {
 }
 
 $object = new Dolresource($db);
-
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -62,7 +62,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 $result = restrictedArea($user, 'resource', $object->id, 'resource');
 
 $permissiontoadd = $user->rights->resource->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-
+$permissiontodelete = $user->rights->resource->delete;
 
 
 /*
@@ -89,7 +89,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($action == 'add' && $user->rights->resource->write) {
+	if ($action == 'add' && $user->hasRight('resource', 'write')) {
 		if (!$cancel) {
 			$error = '';
 
@@ -126,7 +126,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update' && !$cancel && $user->rights->resource->write) {
+	if ($action == 'update' && !$cancel && $user->hasRight('resource', 'write')) {
 		$error = 0;
 
 		if (empty($ref)) {
@@ -167,7 +167,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'confirm_delete_resource' && $user->rights->resource->delete && $confirm === 'yes') {
+	if ($action == 'confirm_delete_resource' && $user->hasRight('resource', 'delete') && $confirm === 'yes') {
 		$res = $object->fetch($id);
 		if ($res > 0) {
 			$result = $object->delete($id);
@@ -206,7 +206,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 	}
 
 	if ($action == 'create' || $action == 'edit') {
-		if (!$user->rights->resource->write) {
+		if (!$user->hasRight('resource', 'write')) {
 			accessforbidden('', 0, 1);
 		}
 
@@ -225,7 +225,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		// Type
 		print '<tr><td>'.$langs->trans("ResourceType").'</td>';
 		print '<td>';
-		$ret = $formresource->select_types_resource($object->fk_code_type_resource, 'fk_code_type_resource', '', 2);
+		$formresource->select_types_resource($object->fk_code_type_resource, 'fk_code_type_resource', '', 2);
 		print '</td></tr>';
 
 		// Description
@@ -245,7 +245,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print '</td></tr>';
 
 		// Other attributes
-		$parameters = array('objectsrc' => $objectsrc);
+		$parameters = array();
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		if (empty($reshook)) {
@@ -266,8 +266,8 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		$formconfirm = '';
 
 		// Confirm deleting resource line
-		if ($action == 'delete') {
-			$formconfirm = $form->formconfirm("card.php?&id=".$object->id, $langs->trans("DeleteResource"), $langs->trans("ConfirmDeleteResource"), "confirm_delete_resource", '', '', 1);
+		if ($action == 'delete' || ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile))) {
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("DeleteResource"), $langs->trans("ConfirmDeleteResource"), "confirm_delete_resource", '', 0, "action-delete");
 		}
 
 		// Print form confirm
@@ -341,19 +341,20 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 	if (empty($reshook)) {
 		if ($action != "create" && $action != "edit") {
 			// Edit resource
-			if ($user->rights->resource->write) {
+			if ($user->hasRight('resource', 'write')) {
 				print '<div class="inline-block divButAction">';
 				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&action=edit&token='.newToken().'" class="butAction">'.$langs->trans('Modify').'</a>';
 				print '</div>';
 			}
 		}
-		if ($action != "delete" && $action != "create" && $action != "edit") {
-			// Delete resource
-			if ($user->rights->resource->delete) {
-				print '<div class="inline-block divButAction">';
-				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&action=delete&token='.newToken().'" class="butActionDelete">'.$langs->trans('Delete').'</a>';
-				print '</div>';
+		if ($action != "create" && $action != "edit") {
+			$deleteUrl = $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken();
+			$buttonId = 'action-delete-no-ajax';
+			if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile)) {	// We can't use preloaded confirm form with jmobile
+				$deleteUrl = '';
+				$buttonId = 'action-delete';
 			}
+			print dolGetButtonAction('', $langs->trans("Delete"), 'delete', $deleteUrl, $buttonId, $permissiontodelete);
 		}
 	}
 	print '</div>';

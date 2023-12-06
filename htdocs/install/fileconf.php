@@ -188,7 +188,7 @@ if (!empty($force_install_noedit)) {
 				   name="main_data_dir"
 				   value="<?php print $dolibarr_main_data_root ?>"
 <?php if (!empty($force_install_noedit)) {
-	print ' disabled';
+			print ' disabled';
 } ?>
 			>
 		</td>
@@ -220,7 +220,7 @@ if (!empty($force_install_noedit)) {
 				   name="main_url"
 				   value="<?php print $dolibarr_main_url_root; ?> "
 <?php if (!empty($force_install_noedit)) {
-	print ' disabled';
+		print ' disabled';
 }
 ?>
 			>
@@ -332,22 +332,28 @@ if (!empty($force_install_noedit)) {
 
 					// Show line into list
 					if ($type == 'mysql') {
-						$testfunction = 'mysql_connect'; $testclass = '';
+						$testfunction = 'mysql_connect';
+						$testclass = '';
 					}
 					if ($type == 'mysqli') {
-						$testfunction = 'mysqli_connect'; $testclass = '';
+						$testfunction = 'mysqli_connect';
+						$testclass = '';
 					}
 					if ($type == 'pgsql') {
-						$testfunction = 'pg_connect'; $testclass = '';
+						$testfunction = 'pg_connect';
+						$testclass = '';
 					}
 					if ($type == 'mssql') {
-						$testfunction = 'mssql_connect'; $testclass = '';
+						$testfunction = 'mssql_connect';
+						$testclass = '';
 					}
 					if ($type == 'sqlite') {
-						$testfunction = ''; $testclass = 'PDO';
+						$testfunction = '';
+						$testclass = 'PDO';
 					}
 					if ($type == 'sqlite3') {
-						$testfunction = ''; $testclass = 'SQLite3';
+						$testfunction = '';
+						$testclass = 'SQLite3';
 					}
 					$option .= '<option value="'.$type.'"'.($defaultype == $type ? ' selected' : '');
 					if ($testfunction && !function_exists($testfunction)) {
@@ -399,7 +405,7 @@ if (!empty($force_install_noedit)) {
 			<input type="text"
 				   id="db_host"
 				   name="db_host"
-				   value="<?php print (!empty($force_install_dbserver) ? $force_install_dbserver : (!empty($dolibarr_main_db_host) ? $dolibarr_main_db_host : 'localhost')); ?>"
+				   value="<?php print(!empty($force_install_dbserver) ? $force_install_dbserver : (!empty($dolibarr_main_db_host) ? $dolibarr_main_db_host : 'localhost')); ?>"
 				<?php if ($force_install_noedit == 2 && $force_install_dbserver !== null) {
 					print ' disabled';
 				} ?>
@@ -448,7 +454,11 @@ if (!empty($force_install_noedit)) {
 			<input type="checkbox"
 				   id="db_create_database"
 				   name="db_create_database"
-				<?php if ($force_install_createdatabase) {
+				   value="on"
+				<?php
+				$checked = 0;
+				if ($force_install_createdatabase) {
+					$checked = 1;
 					print ' checked';
 				} ?>
 				<?php if ($force_install_noedit == 2 && $force_install_createdatabase !== null) {
@@ -456,7 +466,8 @@ if (!empty($force_install_noedit)) {
 				} ?>
 			>
 		</td>
-		<td class="comment"><?php echo $langs->trans("CheckToCreateDatabase"); ?>
+		<td class="comment">
+		<?php echo $langs->trans("CheckToCreateDatabase"); ?>
 		</td>
 	</tr>
 
@@ -478,7 +489,7 @@ if (!empty($force_install_noedit)) {
 	<tr class="hidesqlite">
 		<td class="label"><label for="db_pass"><b><?php echo $langs->trans("Password"); ?></b></label></td>
 		<td class="label">
-			<input type="password" class="text-security";
+			<input type="password" class="text-security"
 				   id="db_pass" autocomplete="off"
 				   name="db_pass"
 				   value="<?php
@@ -490,7 +501,7 @@ if (!empty($force_install_noedit)) {
 					print dol_escape_htmltag($autofill);
 					?>"
 				<?php if ($force_install_noedit == 2 && $force_install_databasepass !== null) {
-					print ' disabled';
+						print ' disabled';
 				} ?>
 			>
 		</td>
@@ -503,7 +514,11 @@ if (!empty($force_install_noedit)) {
 			<input type="checkbox"
 				   id="db_create_user"
 				   name="db_create_user"
-				<?php if (!empty($force_install_createuser)) {
+				   value="on"
+				<?php
+				$checked = 0;
+				if (!empty($force_install_createuser)) {
+					$checked = 1;
 					print ' checked';
 				} ?>
 				<?php if ($force_install_noedit == 2 && $force_install_createuser !== null) {
@@ -511,7 +526,8 @@ if (!empty($force_install_noedit)) {
 				} ?>
 			>
 		</td>
-		<td class="comment"><?php echo $langs->trans("CheckToCreateUser"); ?>
+		<td class="comment">
+		<?php echo $langs->trans("CheckToCreateUser"); ?>
 		</td>
 	</tr>
 
@@ -576,7 +592,7 @@ if (!empty($force_install_noedit)) {
 					print dol_escape_htmltag($autofill);
 					?>"
 				<?php if ($force_install_noedit > 0 && !empty($force_install_databaserootpass)) {
-					print ' disabled'; /* May be removed by javascript*/
+						print ' disabled'; /* May be removed by javascript*/
 				} ?>
 			>
 		</td>
@@ -588,61 +604,28 @@ if (!empty($force_install_noedit)) {
 </div>
 
 <script type="text/javascript">
-jQuery(document).ready(function() {
+function init_needroot()
+{
+	console.log("init_needroot force_install_noedit=<?php echo $force_install_noedit?>");
+	console.log(jQuery("#db_create_database").is(":checked"));
+	console.log(jQuery("#db_create_user").is(":checked"));
 
-	var dbtype = jQuery("#db_type");
-
-	dbtype.change(function () {
-		if (dbtype.val() == 'sqlite' || dbtype.val() == 'sqlite3') {
-			jQuery(".hidesqlite").hide();
-		} else {
-			jQuery(".hidesqlite").show();
-		}
-
-		// Automatically set default database ports and admin user
-		if (dbtype.val() == 'mysql' || dbtype.val() == 'mysqli') {
-			jQuery("#db_port").val(3306);
-			jQuery("#db_user_root").val('root');
-		} else if (dbtype.val() == 'pgsql') {
-			jQuery("#db_port").val(5432);
-			jQuery("#db_user_root").val('postgres');
-		} else if (dbtype.val() == 'mssql') {
-			jQuery("#db_port").val(1433);
-			jQuery("#db_user_root").val('sa');
-		}
-
-	});
-
-	function init_needroot()
+	if (jQuery("#db_create_database").is(":checked") || jQuery("#db_create_user").is(":checked"))
 	{
-		console.log("init_needroot force_install_noedit=<?php echo $force_install_noedit?>");
-		/*alert(jQuery("#db_create_database").prop("checked")); */
-		if (jQuery("#db_create_database").is(":checked") || jQuery("#db_create_user").is(":checked"))
-		{
-			jQuery(".hideroot").show();
-			<?php
-			if (empty($force_install_noedit)) { ?>
-				jQuery(".needroot").removeAttr('disabled');
-			<?php } ?>
-		}
-		else
-		{
-			jQuery(".hideroot").hide();
-			jQuery(".needroot").prop('disabled', true);
-		}
+		console.log("init_needroot show root section");
+		jQuery(".hideroot").show();
+		<?php
+		if (empty($force_install_noedit)) { ?>
+			jQuery(".needroot").removeAttr('disabled');
+		<?php } ?>
 	}
-
-	init_needroot();
-	jQuery("#db_create_database").click(function() {
-		init_needroot();
-	});
-	jQuery("#db_create_user").click(function() {
-		init_needroot();
-	});
-	<?php if ($force_install_noedit == 2 && empty($force_install_databasepass)) { ?>
-	jQuery("#db_pass").focus();
-	<?php } ?>
-});
+	else
+	{
+		console.log("init_needroot hide root section");
+		jQuery(".hideroot").hide();
+		jQuery(".needroot").prop('disabled', true);
+	}
+}
 
 function checkDatabaseName(databasename) {
 	if (databasename.match(/[;\.]/)) { return false; }
@@ -651,7 +634,9 @@ function checkDatabaseName(databasename) {
 
 function jscheckparam()
 {
-	ok=true;
+	console.log("Click on jscheckparam");
+
+	var ok = true;
 
 	if (document.forminstall.main_dir.value == '')
 	{
@@ -681,23 +666,66 @@ function jscheckparam()
 	else if (! checkDatabaseName(document.forminstall.db_name.value))
 	{
 		ok=false;
-		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorSpecialCharNotAllowedForField", $langs->transnoentitiesnoconv("DatabaseName"))); ?>');
+		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorFieldCanNotContainSpecialCharacters", $langs->transnoentitiesnoconv("DatabaseName"))); ?>');
 	}
 	// If create database asked
 	else if (document.forminstall.db_create_database.checked == true && (document.forminstall.db_user_root.value == ''))
 	{
 		ok=false;
 		alert('<?php echo dol_escape_js($langs->transnoentities("YouAskToCreateDatabaseSoRootRequired")); ?>');
+		init_needroot();
 	}
 	// If create user asked
 	else if (document.forminstall.db_create_user.checked == true && (document.forminstall.db_user_root.value == ''))
 	{
 		ok=false;
 		alert('<?php echo dol_escape_js($langs->transnoentities("YouAskToCreateDatabaseUserSoRootRequired")); ?>');
+		init_needroot();
 	}
 
 	return ok;
 }
+
+
+jQuery(document).ready(function() {	// TODO Test $( window ).load(function() to see if the init_needroot work better after a back
+
+	var dbtype = jQuery("#db_type");
+
+	dbtype.change(function () {
+		if (dbtype.val() == 'sqlite' || dbtype.val() == 'sqlite3') {
+			jQuery(".hidesqlite").hide();
+		} else {
+			jQuery(".hidesqlite").show();
+		}
+
+		// Automatically set default database ports and admin user
+		if (dbtype.val() == 'mysql' || dbtype.val() == 'mysqli') {
+			jQuery("#db_port").val(3306);
+			jQuery("#db_user_root").val('root');
+		} else if (dbtype.val() == 'pgsql') {
+			jQuery("#db_port").val(5432);
+			jQuery("#db_user_root").val('postgres');
+		} else if (dbtype.val() == 'mssql') {
+			jQuery("#db_port").val(1433);
+			jQuery("#db_user_root").val('sa');
+		}
+
+	});
+
+	jQuery("#db_create_database").click(function() {
+		console.log("click on db_create_database");
+		init_needroot();
+	});
+	jQuery("#db_create_user").click(function() {
+		console.log("click on db_create_user");
+		init_needroot();
+	});
+	<?php if ($force_install_noedit == 2 && empty($force_install_databasepass)) { ?>
+	jQuery("#db_pass").focus();
+	<?php } ?>
+
+	init_needroot();
+});
 </script>
 
 

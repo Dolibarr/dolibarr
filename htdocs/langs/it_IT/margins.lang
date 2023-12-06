@@ -29,9 +29,9 @@ UseDiscountAsService=Come servizio
 UseDiscountOnTotal=Sul subtotale
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Definisce se, ai fini del calcolo del margine, uno sconto globale debba essere trattato come un prodotto, un servizio o usato solo sul subtotale.
 MARGIN_TYPE=Prezzo di acquisto / costo suggerito per impostazione predefinita per il calcolo del margine
-MargeType1=Margin on Best vendor price
-MargeType2=Margin on Weighted Average Price (WAP)
-MargeType3=Margin on Cost Price
+MargeType1=Margine sul miglior prezzo fornitore
+MargeType2=Margine sul prezzo meglio ponderato (WAP)
+MargeType3=Margine sul prezzo di costo
 MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
 CostPrice=Prezzo di costo
 UnitCharges=Carico unitario

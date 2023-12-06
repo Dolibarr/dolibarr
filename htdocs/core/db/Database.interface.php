@@ -64,9 +64,10 @@ interface Database
 	/**
 	 * Start transaction
 	 *
-	 * @return  int         1 if transaction successfuly opened or already opened, 0 if error
+	 * @param	string	$textinlog		Add a small text into log. '' by default.
+	 * @return  int      				1 if transaction successfuly opened or already opened, 0 if error
 	 */
-	public function begin();
+	public function begin($textinlog = '');
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -97,7 +98,7 @@ interface Database
 	 * @param   string $type Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
 	 * @return  string        SQL request line converted
 	 */
-	public static function convertSQLFromMysql($line, $type = 'ddl');
+	public function convertSQLFromMysql($line, $type = 'ddl');
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -128,6 +129,17 @@ interface Database
 	public function DDLListTables($database, $table = '');
 	// phpcs:enable
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  List tables into a database with table type
+	 *
+	 *  @param	string		$database	Name of database
+	 *  @param	string		$table		Name of table filter ('xxx%')
+	 *  @return	array					List of tables in an array
+	 */
+	public function DDLListTablesFull($database, $table = '');
+	// phpcs:enable
+
 	/**
 	 * Return last request executed with query()
 	 *
@@ -142,7 +154,7 @@ interface Database
 	 * @param   string $sortorder Sort order
 	 * @return  string            String to provide syntax of a sort sql string
 	 */
-	public function order($sortfield = null, $sortorder = null);
+	public function order($sortfield = '', $sortorder = '');
 
 	/**
 	 * Decrypt sensitive data in database
@@ -172,18 +184,19 @@ interface Database
 	/**
 	 * Escape a string to insert data
 	 *
-	 * @param   string $stringtoencode String to escape
-	 * @return  string                        String escaped
+	 * @param   string $stringtoencode 		String to escape
+	 * @return  string                      String escaped
 	 */
 	public function escape($stringtoencode);
 
 	/**
-	 * Escape a string to insert data
+	 *	Escape a string to insert data into a like.
+	 *  Can be used this way: LIKE '%".dbhandler->escapeforlike(dbhandler->escape(...))."%'
 	 *
-	 * @param   string $stringtoencode String to escape
-	 * @return  string                        String escaped
+	 *	@param	string	$stringtoencode		String to escape
+	 *	@return	string						String escaped
 	 */
-	public function escapeunderscore($stringtoencode);
+	public function escapeforlike($stringtoencode);
 
 	/**
 	 * Sanitize a string for SQL forging
@@ -319,7 +332,7 @@ interface Database
 	 * @param        array 	$unique_keys 	Associative array Name of fields that will be unique key => value
 	 * @param        array 	$fulltext_keys 	Field name table that will be indexed in fulltext
 	 * @param        array $keys 			Table of key fields names => value
-	 * @return       int                    <0 if KO, >=0 if OK
+	 * @return       int                    Return integer <0 if KO, >=0 if OK
 	 */
 	public function DDLCreateTable($table, $fields, $primary_key, $type, $unique_keys = null, $fulltext_keys = null, $keys = null);
 	// phpcs:enable
@@ -329,7 +342,7 @@ interface Database
 	 * Drop a table into database
 	 *
 	 * @param        string $table 			Name of table
-	 * @return       int                    <0 if KO, >=0 if OK
+	 * @return       int                    Return integer <0 if KO, >=0 if OK
 	 */
 	public function DDLDropTable($table);
 	// phpcs:enable
@@ -349,7 +362,7 @@ interface Database
 	 * @param    string $field_name 		Name of field to add
 	 * @param    string $field_desc 		Associative array of description of the field to insert [parameter name][parameter value]
 	 * @param    string $field_position 	Optional ex .: "after field stuff"
-	 * @return   int                        <0 if KO, >0 if OK
+	 * @return   int                        Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLAddField($table, $field_name, $field_desc, $field_position = "");
 	// phpcs:enable
@@ -360,7 +373,7 @@ interface Database
 	 *
 	 * @param    string $table 				Name of table
 	 * @param    string $field_name 		Name of field to drop
-	 * @return   int                        <0 if KO, >0 if OK
+	 * @return   int                        Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLDropField($table, $field_name);
 	// phpcs:enable
@@ -372,7 +385,7 @@ interface Database
 	 * @param    string 	$table 			Name of table
 	 * @param    string 	$field_name 	Name of field to modify
 	 * @param    string 	$field_desc 	Array with description of field format
-	 * @return   int                        <0 if KO, >0 if OK
+	 * @return   int                        Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLUpdateField($table, $field_name, $field_desc);
 	// phpcs:enable
@@ -417,7 +430,7 @@ interface Database
 	 * @param    string $dolibarr_main_db_user 	Username to create
 	 * @param    string $dolibarr_main_db_pass 	User password to create
 	 * @param    string $dolibarr_main_db_name 	Database name where user must be granted
-	 * @return   int                            <0 if KO, >=0 if OK
+	 * @return   int                            Return integer <0 if KO, >=0 if OK
 	 */
 	public function DDLCreateUser(
 		$dolibarr_main_db_host,
@@ -502,7 +515,7 @@ interface Database
 	/**
 	 * Returns the current line (as an object) for the resultset cursor
 	 *
-	 * @param   resource|Connection		$resultset 		Handler of the desired request
+	 * @param   resource|PgSql\Connection		$resultset 		Handler of the desired request
 	 * @return  Object                  				Object result line or false if KO or end of cursor
 	 */
 	public function fetch_object($resultset);

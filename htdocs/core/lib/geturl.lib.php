@@ -42,11 +42,11 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 {
 	//declaring of global variables
 	global $conf;
-	$USE_PROXY = empty($conf->global->MAIN_PROXY_USE) ? 0 : $conf->global->MAIN_PROXY_USE;
-	$PROXY_HOST = empty($conf->global->MAIN_PROXY_HOST) ? 0 : $conf->global->MAIN_PROXY_HOST;
-	$PROXY_PORT = empty($conf->global->MAIN_PROXY_PORT) ? 0 : $conf->global->MAIN_PROXY_PORT;
-	$PROXY_USER = empty($conf->global->MAIN_PROXY_USER) ? 0 : $conf->global->MAIN_PROXY_USER;
-	$PROXY_PASS = empty($conf->global->MAIN_PROXY_PASS) ? 0 : $conf->global->MAIN_PROXY_PASS;
+	$USE_PROXY = !getDolGlobalString('MAIN_PROXY_USE') ? 0 : $conf->global->MAIN_PROXY_USE;
+	$PROXY_HOST = !getDolGlobalString('MAIN_PROXY_HOST') ? 0 : $conf->global->MAIN_PROXY_HOST;
+	$PROXY_PORT = !getDolGlobalString('MAIN_PROXY_PORT') ? 0 : $conf->global->MAIN_PROXY_PORT;
+	$PROXY_USER = !getDolGlobalString('MAIN_PROXY_USER') ? 0 : $conf->global->MAIN_PROXY_USER;
+	$PROXY_PASS = !getDolGlobalString('MAIN_PROXY_PASS') ? 0 : $conf->global->MAIN_PROXY_PASS;
 
 	dol_syslog("getURLContent postorget=".$postorget." URL=".$url." param=".$param);
 
@@ -71,7 +71,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 	// By default use tls decied by PHP.
 	// You can force, if supported a version like TLSv1 or TLSv1.2
-	if (!empty($conf->global->MAIN_CURL_SSLVERSION)) {
+	if (getDolGlobalString('MAIN_CURL_SSLVERSION')) {
 		curl_setopt($ch, CURLOPT_SSLVERSION, $conf->global->MAIN_CURL_SSLVERSION);
 	}
 	//curl_setopt($ch, CURLOPT_SSLVERSION, 6); for tls 1.2
@@ -81,7 +81,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		global $dolibarr_main_prod;
 		$ssl_verifypeer =  ($dolibarr_main_prod ? true : false);
 	}
-	if (!empty($conf->global->MAIN_CURL_DISABLE_VERIFYPEER)) {
+	if (getDolGlobalString('MAIN_CURL_DISABLE_VERIFYPEER')) {
 		$ssl_verifypeer = 0;
 	}
 
@@ -104,13 +104,17 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		curl_setopt($ch, CURLOPT_REDIR_PROTOCOLS, $protocols);
 	}
 
-	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, empty($conf->global->MAIN_USE_CONNECT_TIMEOUT) ? 5 : $conf->global->MAIN_USE_CONNECT_TIMEOUT);
-	curl_setopt($ch, CURLOPT_TIMEOUT, empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT) ? 30 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT);
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, !getDolGlobalString('MAIN_USE_CONNECT_TIMEOUT') ? 5 : $conf->global->MAIN_USE_CONNECT_TIMEOUT);
+	curl_setopt($ch, CURLOPT_TIMEOUT, !getDolGlobalString('MAIN_USE_RESPONSE_TIMEOUT') ? 30 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT);
 
-	/*
-	if ($maxsize) {
+	// limit size of downloaded files. TODO Add MAIN_SECURITY_MAXFILESIZE_DOWNLOADED
+	$maxsize = getDolGlobalInt('MAIN_SECURITY_MAXFILESIZE_DOWNLOADED');
+	if ($maxsize && defined('CURLOPT_MAXFILESIZE_LARGE')) {
 		curl_setopt($ch, CURLOPT_MAXFILESIZE_LARGE, $maxsize);
-	} */
+	}
+	if ($maxsize && defined('CURLOPT_MAXFILESIZE')) {
+		curl_setopt($ch, CURLOPT_MAXFILESIZE, $maxsize);
+	}
 
 	//curl_setopt($ch, CURLOPT_SAFE_UPLOAD, true);	// PHP 5.5
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); // We want response
@@ -182,7 +186,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		} elseif (in_array($hosttocheck, array('ip6-localhost', 'ip6-loopback'))) {
 			$iptocheck = '::1';
 		} else {
-			// Resolve $hosttocheck to get the IP $iptocheck and set CURLOPT_CONNECT_TO to use this ip so curl will not try another resolution that may give a different result
+			// Resolve $hosttocheck to get the IP $iptocheck
 			if (function_exists('gethostbyname')) {
 				$iptocheck = gethostbyname($hosttocheck);
 			} else {
@@ -197,58 +201,18 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		}
 
 		if ($iptocheck) {
-			if ($localurl == 0) {	// Only external url allowed (dangerous, may allow to get malware)
-				if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
-					// Deny ips like 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 0.0.0.0/8, 169.254.0.0/16, 127.0.0.0/8 et 240.0.0.0/4, ::1/128, ::/128, ::ffff:0:0/96, fe80::/10...
-					$info['http_code'] = 400;
-					$info['content'] = 'Error bad hostname IP (private or reserved range). Must be an external URL.';
-					break;
-				}
-				if (!empty($_SERVER["SERVER_ADDR"]) && $iptocheck == $_SERVER["SERVER_ADDR"]) {
-					$info['http_code'] = 400;
-					$info['content'] = 'Error bad hostname IP (IP is a local IP). Must be an external URL.';
-					break;
-				}
-				if (!empty($conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP) && in_array($iptocheck, explode(',', $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP))) {
-					$info['http_code'] = 400;
-					$info['content'] = 'Error bad hostname IP (IP is a local IP defined into MAIN_SECURITY_SERVER_IP). Must be an external URL.';
-					break;
-				}
+			$tmpresult = isIPAllowed($iptocheck, $localurl);
+			if ($tmpresult) {
+				$info['http_code'] = 400;
+				$info['content'] = $tmpresult;
+				break;
 			}
-			if ($localurl == 1) {	// Only local url allowed (dangerous, may allow to get metadata on server or make internal port scanning)
-				// Deny ips NOT like 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 0.0.0.0/8, 169.254.0.0/16, 127.0.0.0/8 et 240.0.0.0/4, ::1/128, ::/128, ::ffff:0:0/96, fe80::/10...
-				if (filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
-					$info['http_code'] = 400;
-					$info['content'] = 'Error bad hostname '.$iptocheck.'. Must be a local URL.';
-					break;
-				}
-				if (!empty($conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP) && !in_array($iptocheck, explode(',', $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP))) {
-					$info['http_code'] = 400;
-					$info['content'] = 'Error bad hostname IP (IP is not a local IP defined into list MAIN_SECURITY_SERVER_IP). Must be a local URL in allowed list.';
-					break;
-				}
-			}
+		}
 
-			// Common check on ip (local and external)
-			// See list on https://tagmerge.com/gist/a7b9d57ff8ec11d63642f8778609a0b8
-			// Not evasive url that ar enot IP are excluded by test on IP v4/v6 validity.
-			$arrayofmetadataserver = array(
-				'100.100.100.200' => 'Alibaba',
-				'192.0.0.192' => 'Oracle',
-				'192.80.8.124' => 'Packet',
-				'100.88.222.5' => 'Tencent cloud',
-			);
-			foreach ($arrayofmetadataserver as $ipofmetadataserver => $nameofmetadataserver) {
-				if ($iptocheck == $ipofmetadataserver) {
-					$info['http_code'] = 400;
-					$info['content'] = 'Error bad hostname IP (Used by '.$nameofmetadataserver.' metadata server). This IP is forbidden.';
-					break 2;	// exit the foreach and the do...
-				}
-			}
-
+		if ($iptocheck) {
 			// Set CURLOPT_CONNECT_TO so curl will not try another resolution that may give a different result. Possible only on PHP v7+
 			if (defined('CURLOPT_CONNECT_TO')) {
-				$connect_to = array(sprintf("%s:%d:%s:%d", $newUrlArray['host'], empty($newUrlArray['port'])?'':$newUrlArray['port'], $iptocheck, empty($newUrlArray['port'])?'':$newUrlArray['port']));
+				$connect_to = array(sprintf("%s:%d:%s:%d", $newUrlArray['host'], empty($newUrlArray['port']) ? '' : $newUrlArray['port'], $iptocheck, empty($newUrlArray['port']) ? '' : $newUrlArray['port']));
 				//var_dump($newUrlArray);
 				//var_dump($connect_to);
 				curl_setopt($ch, CURLOPT_CONNECT_TO, $connect_to);
@@ -266,17 +230,18 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 			$maxRedirection--;
 			// TODO Use $info['local_ip'] and $info['primary_ip'] ?
 			continue;
-		} else {
-			$http_code = 0;
 		}
+
+		$http_code = 0;
 	} while ($http_code);
 
 	$request = curl_getinfo($ch, CURLINFO_HEADER_OUT); // Reading of request must be done after sending request
 
 	dol_syslog("getURLContent request=".$request);
-	if (!empty($conf->global->MAIN_GETURLCONTENT_OUTPUT_RESPONSE)) {
+	if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
 		// This may contains binary data, so we dont output reponse by default.
-		dol_syslog("getURLContent response =".$response);
+		dol_syslog("getURLContent request=".$request, LOG_DEBUG, 0, '_curl');
+		dol_syslog("getURLContent response =".$response, LOG_DEBUG, 0, '_curl');
 	}
 	dol_syslog("getURLContent response size=".strlen($response)); // This may contains binary data, so we dont output it
 
@@ -313,6 +278,62 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	return $rep;
 }
 
+/**
+ * Is IP allowed
+ *
+ * @param 	string	$iptocheck		IP to check
+ * @param 	int		$localurl		0=external url only, 1=internal url only
+ * @return	string					Error message or ''
+ */
+function isIPAllowed($iptocheck, $localurl)
+{
+	global $conf;
+
+	if ($localurl == 0) {	// Only external url allowed (dangerous, may allow to get malware)
+		if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+			// Deny ips like 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 0.0.0.0/8, 169.254.0.0/16, 127.0.0.0/8 et 240.0.0.0/4, ::1/128, ::/128, ::ffff:0:0/96, fe80::/10...
+			$errormsg = 'Error bad hostname IP (private or reserved range). Must be an external URL.';
+			return $errormsg;
+		}
+		if (!empty($_SERVER["SERVER_ADDR"]) && $iptocheck == $_SERVER["SERVER_ADDR"]) {
+			$errormsg = 'Error bad hostname IP (IP is a local IP). Must be an external URL.';
+			return $errormsg;
+		}
+		if (getDolGlobalString('MAIN_SECURITY_ANTI_SSRF_SERVER_IP') && in_array($iptocheck, explode(',', $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP))) {
+			$errormsg = 'Error bad hostname IP (IP is a local IP defined into MAIN_SECURITY_SERVER_IP). Must be an external URL.';
+			return $errormsg;
+		}
+	}
+	if ($localurl == 1) {	// Only local url allowed (dangerous, may allow to get metadata on server or make internal port scanning)
+		// Deny ips NOT like 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 0.0.0.0/8, 169.254.0.0/16, 127.0.0.0/8 et 240.0.0.0/4, ::1/128, ::/128, ::ffff:0:0/96, fe80::/10...
+		if (filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+			$errormsg = 'Error bad hostname '.$iptocheck.'. Must be a local URL.';
+			return $errormsg;
+		}
+		if (getDolGlobalString('MAIN_SECURITY_ANTI_SSRF_SERVER_IP') && !in_array($iptocheck, explode(',', $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP))) {
+			$errormsg = 'Error bad hostname IP (IP is not a local IP defined into list MAIN_SECURITY_SERVER_IP). Must be a local URL in allowed list.';
+			return $errormsg;
+		}
+	}
+
+	// Common check on ip (local and external)
+	// See list on https://tagmerge.com/gist/a7b9d57ff8ec11d63642f8778609a0b8
+	// Not evasive url that ar enot IP are excluded by test on IP v4/v6 validity.
+	$arrayofmetadataserver = array(
+		'100.100.100.200' => 'Alibaba',
+		'192.0.0.192' => 'Oracle',
+		'192.80.8.124' => 'Packet',
+		'100.88.222.5' => 'Tencent cloud',
+	);
+	foreach ($arrayofmetadataserver as $ipofmetadataserver => $nameofmetadataserver) {
+		if ($iptocheck == $ipofmetadataserver) {
+			$errormsg = 'Error bad hostname IP (Used by '.$nameofmetadataserver.' metadata server). This IP is forbidden.';
+			return $errormsg;
+		}
+	}
+
+	return '';
+}
 
 /**
  * Function get second level domain name.
@@ -324,15 +345,43 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
  */
 function getDomainFromURL($url, $mode = 0)
 {
+	$arrayof2levetopdomain = array(
+		'co.at', 'or.at', 'gv.at',
+		'avocat.fr', 'aeroport.fr', 'veterinaire.fr',
+		'com.ng', 'gov.ng', 'gov.ua', 'com.ua', 'in.ua', 'org.ua', 'edu.ua', 'net.ua',
+		'net.uk', 'org.uk', 'gov.uk', 'co.uk',
+		'com.mx'
+	);
+
+	// Set if tld is on 2 levels
+	$tldon2level = 0;
+	$parts = array_reverse(explode('.', $url));
+	if (!empty($parts[1]) && in_array($parts[1].'.'.$parts[0], $arrayof2levetopdomain)) {
+		$tldon2level = 1;
+	}
+
+	if ($tldon2level && $mode > 0) {
+		$mode++;
+	}
+
 	$tmpdomain = preg_replace('/^https?:\/\//i', '', $url); // Remove http(s)://
-	$tmpdomain = preg_replace('/\/.*$/i', '', $tmpdomain); // Remove part after domain
-	if ($mode == 2) {
+	$tmpdomain = preg_replace('/\/.*$/i', '', $tmpdomain); // Remove part after /
+	if ($mode == 3) {
+		$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)\.([^\.]+)\.([^\.]+)$/', '\1.\2.\3.\4', $tmpdomain);
+	} elseif ($mode == 2) {
 		$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)\.([^\.]+)$/', '\1.\2.\3', $tmpdomain); // Remove part 'www.' before 'abc.mydomain.com'
-	} else {
+	} elseif ($mode == 1) {
 		$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)$/', '\1.\2', $tmpdomain); // Remove part 'www.abc.' before 'mydomain.com'
 	}
+
 	if (empty($mode)) {
-		$tmpdomain = preg_replace('/\.[^\.]+$/', '', $tmpdomain); // Remove first level domain (.com, .net, ...)
+		if ($tldon2level) {
+			$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)\.([^\.]+)$/', '\1.\2.\3', $tmpdomain); // Remove part 'www.abc.' before 'mydomain.com'
+			$tmpdomain = preg_replace('/\.[^\.]+\.[^\.]+$/', '', $tmpdomain); // Remove TLD (.com.mx, .co.uk, ...)
+		} else {
+			$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)$/', '\1.\2', $tmpdomain); // Remove part 'www.abc.' before 'mydomain.com'
+			$tmpdomain = preg_replace('/\.[^\.]+$/', '', $tmpdomain); // Remove TLD (.com, .net, ...)
+		}
 	}
 
 	return $tmpdomain;

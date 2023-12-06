@@ -57,11 +57,12 @@ class mod_payment_ant extends ModeleNumRefPayments
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Texte descripif
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
-		global $db, $conf, $langs;
+		global $db, $langs;
 
 		$langs->load("bills");
 
@@ -82,9 +83,9 @@ class mod_payment_ant extends ModeleNumRefPayments
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskpayment" value="'.$conf->global->PAYMENT_ANT_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskpayment" value="'.getDolGlobalString('PAYMENT_ANT_MASK').'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 
@@ -128,7 +129,7 @@ class mod_payment_ant extends ModeleNumRefPayments
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// We get cursor rule
-		$mask = $conf->global->PAYMENT_ANT_MASK;
+		$mask = getDolGlobalString('PAYMENT_ANT_MASK');
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2009	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,6 +48,11 @@ class Menubase
 	 * @var int ID
 	 */
 	public $id;
+
+	/**
+	 * @var int Entity
+	 */
+	public $entity;
 
 	/**
 	 * @var string Menu handler
@@ -152,6 +157,10 @@ class Menubase
 	 */
 	public $tms;
 
+	/**
+	 * @var Menu menu
+	 */
+	public $newmenu;
 
 	/**
 	 *  Constructor
@@ -163,7 +172,6 @@ class Menubase
 	{
 		$this->db = $db;
 		$this->menu_handler = $menu_handler;
-		return 1;
 	}
 
 
@@ -171,7 +179,7 @@ class Menubase
 	 *  Create menu entry into database
 	 *
 	 *  @param      User	$user       User that create
-	 *  @return     int      			<0 if KO, Id of record if OK
+	 *  @return     int      			Return integer <0 if KO, Id of record if OK
 	 */
 	public function create($user = null)
 	{
@@ -181,21 +189,22 @@ class Menubase
 		if (!isset($this->enabled)) {
 			$this->enabled = '1';
 		}
-		$this->menu_handler = trim($this->menu_handler);
-		$this->module = trim($this->module);
-		$this->type = trim($this->type);
-		$this->mainmenu = trim($this->mainmenu);
-		$this->leftmenu = trim($this->leftmenu);
+		$this->entity = (isset($this->entity) && (int) $this->entity >= 0 ? (int) $this->entity : $conf->entity);
+		$this->menu_handler = trim((string) $this->menu_handler);
+		$this->module = trim((string) $this->module);
+		$this->type = trim((string) $this->type);
+		$this->mainmenu = trim((string) $this->mainmenu);
+		$this->leftmenu = trim((string) $this->leftmenu);
 		$this->fk_menu = (int) $this->fk_menu; // If -1, fk_mainmenu and fk_leftmenu must be defined
-		$this->fk_mainmenu = trim($this->fk_mainmenu);
-		$this->fk_leftmenu = trim($this->fk_leftmenu);
+		$this->fk_mainmenu = trim((string) $this->fk_mainmenu);
+		$this->fk_leftmenu = trim((string) $this->fk_leftmenu);
 		$this->position = (int) $this->position;
-		$this->url = trim($this->url);
-		$this->target = trim($this->target);
-		$this->title = trim($this->title);
-		$this->langs = trim($this->langs);
-		$this->perms = trim($this->perms);
-		$this->enabled = trim($this->enabled);
+		$this->url = trim((string) $this->url);
+		$this->target = trim((string) $this->target);
+		$this->title = trim((string) $this->title);
+		$this->langs = trim((string) $this->langs);
+		$this->perms = trim((string) $this->perms);
+		$this->enabled = trim((string) $this->enabled);
 		$this->user = (int) $this->user;
 		if (empty($this->position)) {
 			$this->position = 0;
@@ -242,7 +251,7 @@ class Menubase
 		$sql .= " AND fk_menu = ".((int) $this->fk_menu);
 		$sql .= " AND position = ".((int) $this->position);
 		$sql .= " AND url = '".$this->db->escape($this->url)."'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity IN (0, ".$conf->entity.")";
 
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -271,7 +280,7 @@ class Menubase
 				$sql .= "usertype";
 				$sql .= ") VALUES (";
 				$sql .= " '".$this->db->escape($this->menu_handler)."',";
-				$sql .= " '".$this->db->escape($conf->entity)."',";
+				$sql .= " '".$this->db->escape($this->entity)."',";
 				$sql .= " '".$this->db->escape($this->module)."',";
 				$sql .= " '".$this->db->escape($this->type)."',";
 				$sql .= " ".($this->mainmenu ? "'".$this->db->escape($this->mainmenu)."'" : "''").","; // Can't be null
@@ -303,7 +312,7 @@ class Menubase
 				}
 			} else {
 				dol_syslog(get_class($this)."::create menu entry already exists", LOG_WARNING);
-				$this->error = 'Error Menu entry already exists';
+				$this->error = 'Error Menu entry ('.$this->menu_handler.','.$this->position.','.$this->url.') already exists';
 				return 0;
 			}
 		} else {
@@ -316,14 +325,13 @@ class Menubase
 	 *
 	 *  @param	User	$user        	User that modify
 	 *  @param  int		$notrigger	    0=no, 1=yes (no update trigger)
-	 *  @return int 		        	<0 if KO, >0 if OK
+	 *  @return int 		        	Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
 		//global $conf, $langs;
 
 		// Clean parameters
-		$this->rowid = trim($this->rowid);
 		$this->menu_handler = trim($this->menu_handler);
 		$this->module = trim($this->module);
 		$this->type = trim($this->type);
@@ -382,7 +390,7 @@ class Menubase
 	 *
 	 *   @param		int		$id         Id object
 	 *   @param		User    $user       User that load
-	 *   @return	int         		<0 if KO, >0 if OK
+	 *   @return	int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $user = null)
 	{
@@ -454,7 +462,7 @@ class Menubase
 	 *  Delete object in database
 	 *
 	 *	@param	User	$user       User that delete
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user)
 	{
@@ -634,7 +642,8 @@ class Menubase
 		$mainmenu = $mymainmenu; // To export to dol_eval function
 		$leftmenu = $myleftmenu; // To export to dol_eval function
 
-		$sql = "SELECT m.rowid, m.type, m.module, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.url, m.titre, m.prefix, m.langs, m.perms, m.enabled, m.target, m.mainmenu, m.leftmenu, m.position";
+		$sql = "SELECT m.rowid, m.type, m.module, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.url, m.titre,";
+		$sql .= " m.prefix, m.langs, m.perms, m.enabled, m.target, m.mainmenu, m.leftmenu, m.position";
 		$sql .= " FROM ".$this->db->prefix()."menu as m";
 		$sql .= " WHERE m.entity IN (0,".$conf->entity.")";
 		$sql .= " AND m.menu_handler IN ('".$this->db->escape($menu_handler)."','all')";
@@ -644,10 +653,10 @@ class Menubase
 		if ($type_user == 1) {
 			$sql .= " AND m.usertype IN (1,2)";
 		}
-		$sql .= " ORDER BY m.position, m.rowid";
+		$sql .= " ORDER BY m.type DESC, m.position, m.rowid";
 		//print $sql;
 
-		//dol_syslog(get_class($this)."::menuLoad mymainmenu=".$mymainmenu." myleftmenu=".$myleftmenu." type_user=".$type_user." menu_handler=".$menu_handler." tabMenu size=".count($tabMenu)."", LOG_DEBUG);
+		//dol_syslog(get_class($this)."::menuLoad mymainmenu=".$mymainmenu." myleftmenu=".$myleftmenu." type_user=".$type_user." menu_handler=".$menu_handler." tabMenu size=".count($tabMenu), LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$numa = $this->db->num_rows($resql);
@@ -677,6 +686,7 @@ class Menubase
 						$tmpcond = preg_replace('/\$leftmenu\s*==\s*["\'a-zA-Z_]+/', '1==1', $tmpcond); // Force part of condition to true
 					}
 					$enabled = verifCond($tmpcond);
+					//var_dump($menu['type'].' - '.$menu['titre'].' - '.$menu['enabled'].' => '.$enabled);
 				}
 
 				// Define $title
@@ -721,7 +731,7 @@ class Menubase
 						}
 					}
 					$tabMenu[$b]['titre']       = $title;
-					$tabMenu[$b]['prefix'] = $menu['prefix'];
+					$tabMenu[$b]['prefix']      = $menu['prefix'];
 					$tabMenu[$b]['target']      = $menu['target'];
 					$tabMenu[$b]['mainmenu']    = $menu['mainmenu'];
 					$tabMenu[$b]['leftmenu']    = $menu['leftmenu'];

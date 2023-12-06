@@ -23,7 +23,7 @@ AccountancyCodeDepreciationExpense=Λογιστικός κωδικός (λογα
 AssetsLines=Περιουσιακά στοιχεία
 DeleteType=Διαγραφή
 DeleteAnAssetType=Διαγραφή ενός τύπου ενεργητικού
-ConfirmDeleteAssetType=Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτό τον τύπο ενεργητικού;
+ConfirmDeleteAssetType=Είστε σίγουροι ότι θέλετε να διαγράψετε αυτό τον τύπο ενεργητικού;
 ShowTypeCard=Εμφάνιση τύπου "%s"
 
 # Module label 'ModuleAssetsName'
@@ -79,16 +79,16 @@ AssetDateAcquisition=Ημερομηνία Απόκτησης
 AssetDateStart=Ημερομηνία έναρξης λειτουργίας
 AssetAcquisitionType=Τρόπος απόκτησης
 AssetAcquisitionTypeNew=Νέο
-AssetAcquisitionTypeOccasion=Μεταχειρισμένο
-AssetType=Τύπος περιουσιακού στοιχείου
+AssetAcquisitionTypeOccasion=Μεταχειρισμένα
+AssetType=Τύπος ενεργητικού
 AssetTypeIntangible=Αϋλο
 AssetTypeTangible=Απτό
 AssetTypeInProgress=Σε εξέλιξη
 AssetTypeFinancial=Χρηματοοικονομικό
 AssetNotDepreciated=Δεν αποσβέστηκε
 AssetDisposal=Διάθεση
-AssetConfirmDisposalAsk=Είστε βέβαιοι ότι θέλετε να διαθέσετε το περιουσιακό στοιχείο <b> %s </b>;
-AssetConfirmReOpenAsk=Είστε βέβαιοι ότι θέλετε να ανοίξετε ξανά το στοιχείο <b> %s </b>;
+AssetConfirmDisposalAsk=Είστε σίγουροι ότι θέλετε να διαθέσετε αυτό το περιουσιακό στοιχείο <b> %s </b>;
+AssetConfirmReOpenAsk=Είστε βέβαιοι ότι θέλετε να ανοίξετε ξανά αυτό το στοιχείο <b> %s </b>;
 
 #
 # Asset status
@@ -102,15 +102,15 @@ AssetRecorded=Καταγεγραμμένο
 #
 AssetDisposalDate=Ημερομηνία διάθεσης
 AssetDisposalAmount=Αξία διάθεσης
-AssetDisposalType=Είδος διάθεσης
+AssetDisposalType=Τύπος διάθεσης
 AssetDisposalDepreciated=Απόσβεση του έτους μεταφοράς
 AssetDisposalSubjectToVat=Η διάθεση υπόκειται σε ΦΠΑ
 
 #
 # Asset model
 #
-AssetModel=Μοντέλο περιουσιακού στοιχείου
-AssetModels=Μοντέλα περιουσιακών στοιχείων
+AssetModel=Τύπος ενεργητικού
+AssetModels=Τύποι ενεργητικού
 
 #
 # Asset depreciation options
@@ -121,7 +121,7 @@ AssetDepreciationOptionDepreciationType=Μέθοδος απόσβεσης
 AssetDepreciationOptionDepreciationTypeLinear=Γραμμική
 AssetDepreciationOptionDepreciationTypeDegressive=Προοδευτική
 AssetDepreciationOptionDepreciationTypeExceptional=Εξαιρετική
-AssetDepreciationOptionDegressiveRate=Φθίνουσα απόσβεση
+AssetDepreciationOptionDegressiveRate=Φθίνων συντελεστής
 AssetDepreciationOptionAcceleratedDepreciation=Ταχεία απόσβεση (φόρος)
 AssetDepreciationOptionDuration=Διάρκεια
 AssetDepreciationOptionDurationType=Τύπος διάρκειας
@@ -168,7 +168,7 @@ AssetDepreciationReversal=Αντιστροφή
 #
 # Errors
 #
-AssetErrorAssetOrAssetModelIDNotProvide=Το αναγνωριστικό του στοιχείου ή ο ήχος του μοντέλου δεν έχει παρασχεθεί
+AssetErrorAssetOrAssetModelIDNotProvide=Το αναγνωριστικό του στοιχείου ή του τύπου δεν έχει παρασχεθεί
 AssetErrorFetchAccountancyCodesForMode=Σφάλμα κατά την ανάκτηση των λογιστικών λογαριασμών για τη λειτουργία απόσβεσης '%s'
 AssetErrorDeleteAccountancyCodesForMode=Σφάλμα κατά τη διαγραφή λογιστικών λογαριασμών από τη λειτουργία απόσβεσης '%s'
 AssetErrorInsertAccountancyCodesForMode=Σφάλμα κατά την εισαγωγή των λογιστικών λογαριασμών του τρόπου απόσβεσης '%s'

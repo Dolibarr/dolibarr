@@ -37,6 +37,11 @@ class MenuManager
 	public $atarget = ""; // To store default target to use onto links
 	public $name = "auguria";
 
+	/**
+	 * @var Menu
+	 */
+	public $menu;
+
 	public $menu_array;
 	public $menu_array_after;
 
@@ -67,7 +72,7 @@ class MenuManager
 	{
 		global $conf, $user, $langs;
 
-		// On sauve en session le menu principal choisi
+		// We save into session the main menu selected
 		if (GETPOSTISSET("mainmenu")) {
 			$_SESSION["mainmenu"] = GETPOST("mainmenu", 'aZ09');
 		}
@@ -75,7 +80,7 @@ class MenuManager
 			$_SESSION["idmenu"] = GETPOST("idmenu", 'int');
 		}
 
-		// Read mainmenu and leftmenu that define which menu to show
+		// Read now mainmenu and leftmenu that define which menu to show
 		if (GETPOSTISSET("mainmenu")) {
 			// On sauve en session le menu principal choisi
 			$mainmenu = GETPOST("mainmenu", 'aZ09');
@@ -115,9 +120,7 @@ class MenuManager
 		$this->tabMenu = $tabMenu;
 		//var_dump($tabMenu);
 
-		//if ($forcemainmenu == 'all') {
-		//var_dump($this->tabMenu);
-		//}
+		//if ($forcemainmenu == 'all') { var_dump($this->tabMenu); exit; }
 	}
 
 
@@ -143,7 +146,7 @@ class MenuManager
 		require_once DOL_DOCUMENT_ROOT.'/core/class/menu.class.php';
 		$this->menu = new Menu();
 
-		if (empty($conf->global->MAIN_MENU_INVERT)) {
+		if (!getDolGlobalString('MAIN_MENU_INVERT')) {
 			if ($mode == 'top') {
 				print_auguria_menu($this->db, $this->atarget, $this->type_user, $this->tabMenu, $this->menu, 0, $mode);
 			}
@@ -186,8 +189,8 @@ class MenuManager
 					print '<a class="alilevel0" href="#">';
 
 					// Add font-awesome
-					if ($val['level'] == 0 && $val['mainmenu'] == 'home') {
-						print '<span class="fa fa-home fa-fw paddingright" aria-hidden="true"></span>';
+					if ($val['level'] == 0 && !empty($val['prefix'])) {
+						print str_replace('<span class="', '<span class="paddingright pictofixedwidth ', $val['prefix']);
 					}
 
 					print $val['titre'];
@@ -198,7 +201,11 @@ class MenuManager
 					$tmpleftmenu = 'all';
 					$submenu = new Menu();
 					print_left_auguria_menu($this->db, $this->menu_array, $this->menu_array_after, $this->tabMenu, $submenu, 1, $tmpmainmenu, $tmpleftmenu);
-					$nexturl = dol_buildpath($submenu->liste[0]['url'], 1);
+					if (!empty($submenu->liste[0]['url'])) {
+						$nexturl = dol_buildpath($submenu->liste[0]['url'], 1);
+					} else {
+						$nexturl = '';
+					}
 
 					$canonrelurl = preg_replace('/\?.*$/', '', $relurl);
 					$canonnexturl = preg_replace('/\?.*$/', '', $nexturl);
@@ -210,8 +217,13 @@ class MenuManager
 						// We add sub entry
 						print str_pad('', 1).'<li class="lilevel1 ui-btn-icon-right ui-btn">'; // ui-btn to highlight on clic
 						print '<a href="'.$relurl.'">';
+
+						if ($val['level'] == 0) {
+							print '<span class="fas fa-home fa-fw paddingright pictofixedwidth" aria-hidden="true"></span>';
+						}
+
 						if ($langs->trans(ucfirst($val['mainmenu'])."Dashboard") == ucfirst($val['mainmenu'])."Dashboard") {  // No translation
-							if (in_array($val['mainmenu'], array('cashdesk', 'externalsite', 'website', 'collab'))) {
+							if (in_array($val['mainmenu'], array('cashdesk', 'externalsite', 'website', 'collab', 'takepos'))) {
 								print $langs->trans("Access");
 							} else {
 								print $langs->trans("Dashboard");
@@ -236,7 +248,7 @@ class MenuManager
 					$lastlevel2 = array();
 					foreach ($submenu->liste as $key2 => $val2) {		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
 						$showmenu = true;
-						if (!empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED) && empty($val2['enabled'])) {
+						if (getDolGlobalString('MAIN_MENU_HIDE_UNAUTHORIZED') && empty($val2['enabled'])) {
 							$showmenu = false;
 						}
 
@@ -284,8 +296,7 @@ class MenuManager
 									//print ' data-ajax="false"';
 									print '>';
 									$lastlevel2[$val2['level']] = 'enabled';
-								} else // Not allowed but visible (greyed)
-								{
+								} else { // Not allowed but visible (greyed)
 									print '<a href="#" class="vsmenudisabled">';
 									$lastlevel2[$val2['level']] = 'greyed';
 								}
@@ -296,6 +307,13 @@ class MenuManager
 									$lastlevel2[$val2['level']] = 'greyed';
 								}
 							}
+
+							if ($val2['level'] == 0 && !empty($val2['prefix'])) {
+								print $val2['prefix'];
+							} else {
+								print '<i class="fa fa-does-not-exists fa-fw paddingright pictofixedwidth"></i>';
+							}
+
 							print $val2['titre'];
 							if ($relurl2) {
 								if ($val2['enabled']) {	// Allowed
@@ -311,7 +329,15 @@ class MenuManager
 					print '</ul>';
 				}
 				if ($val['enabled'] == 2) {
-					print '<span class="vsmenudisabled">'.$val['titre'].'</span>';
+					print '<span class="spanlilevel0 vsmenudisabled">';
+
+					// Add font-awesome
+					if ($val['level'] == 0 && !empty($val['prefix'])) {
+						print $val['prefix'];
+					}
+
+					print $val['titre'];
+					print '</span>';
 				}
 				print '</li>';
 				print '</ul>'."\n";

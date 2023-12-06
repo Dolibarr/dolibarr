@@ -136,3 +136,4 @@ PrintWithoutDetails=Udskriv uden detaljer
 YearNotDefined=År er ikke defineret
 TakeposBarcodeRuleToInsertProduct=Stregkoderegel til at indsætte produkt
 TakeposBarcodeRuleToInsertProductDesc=Regel for at udtrække produktreferencen + en mængde fra en scannet stregkode. <br> Hvis tom (standardværdi), vil applikationen bruge den fulde stregkode, der er scannet til at finde produktet. <br> <br> Hvis defineret, skal syntaks være: <br> <b> ref: NB + qu: NB + qd: NB + andre: NB </b> <br> hvor NB er antallet af tegn til at bruge til at udtrække data fra det scannede stregkode med: <ul> <li> <b> ref </b>: produkt henvisning </li> <li> <b> qu </b>: mængde til sæt ved isætning item (enheder) <l/i> <li> <b> qd </b>: mængde til sæt ved isætning punkt (decimaler) </li> <li> <b> andre </b>: andre tegn </li> </ul>
+AlreadyPrinted=Allerede udskrevet

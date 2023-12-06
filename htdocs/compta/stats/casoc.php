@@ -6,6 +6,7 @@
  * Copyright (C) 2013       Antoine Iauch           <aiauch@gpcsolutions.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +27,7 @@
  *       \brief       Page reporting Turnover (CA) by thirdparty
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -57,7 +59,9 @@ $socid = GETPOST('socid', 'int');
 
 // Category
 $selected_cat = (int) GETPOST('search_categ', 'int');
-if ($selected_cat == -1) $selected_cat = '';
+if ($selected_cat == -1) {
+	$selected_cat = '';
+}
 $subcat = false;
 if (GETPOST('subcat', 'alpha') === 'yes') {
 	$subcat = true;
@@ -67,10 +71,10 @@ if (GETPOST('subcat', 'alpha') === 'yes') {
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
-if (!empty($conf->comptabilite->enabled)) {
+if (isModEnabled('comptabilite')) {
 	$result = restrictedArea($user, 'compta', '', '', 'resultat');
 }
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 }
 
@@ -103,10 +107,10 @@ $date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_star
 $date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"), 'tzserver');		// We use timezone of server so report is same from everywhere
 // Quarter
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
-	$q = GETPOST("q", "int") ?GETPOST("q", "int") : 0;
+	$q = GETPOST("q", "int") ? GETPOST("q", "int") : 0;
 	if (empty($q)) {
 		// We define date_start and date_end
-		$month_start = GETPOST("month") ?GETPOST("month") : ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
+		$month_start = GETPOST("month") ? GETPOST("month") : ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
 		$year_end = $year_start;
 		$month_end = $month_start;
 		if (!GETPOST("month")) {	// If month not forced
@@ -158,13 +162,27 @@ $commonparams['sortorder'] = $sortorder;
 $commonparams['sortfield'] = $sortfield;
 
 $headerparams = array();
-$headerparams['date_startyear'] = $date_startyear;
-$headerparams['date_startmonth'] = $date_startmonth;
-$headerparams['date_startday'] = $date_startday;
-$headerparams['date_endyear'] = $date_endyear;
-$headerparams['date_endmonth'] = $date_endmonth;
-$headerparams['date_endday'] = $date_endday;
-$headerparams['q'] = $q;
+if (!empty($date_startyear)) {
+	$headerparams['date_startyear'] = $date_startyear;
+}
+if (!empty($date_startmonth)) {
+	$headerparams['date_startmonth'] = $date_startmonth;
+}
+if (!empty($date_startday)) {
+	$headerparams['date_startday'] = $date_startday;
+}
+if (!empty($date_endyear)) {
+	$headerparams['date_endyear'] = $date_endyear;
+}
+if (!empty($date_endmonth)) {
+	$headerparams['date_endmonth'] = $date_endmonth;
+}
+if (!empty($date_endday)) {
+	$headerparams['date_endday'] = $date_endday;
+}
+if (!empty($q)) {
+	$headerparams['q'] = $q;
+}
 
 $tableparams = array();
 $tableparams['search_categ'] = $selected_cat;
@@ -212,7 +230,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	$calcmode = $langs->trans("CalcModeDebt");
 	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 	$description = $langs->trans("RulesCADue");
-	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 		$description .= $langs->trans("DepositsAreNotIncluded");
 	} else {
 		$description .= $langs->trans("DepositsAreIncluded");
@@ -241,7 +259,7 @@ if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) {
 
 report_header($name, $namelink, $period, $periodlink, $description, $builddate, $exportlink, $tableparams, $calcmode);
 
-if (!empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING') {
+if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
 	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
 }
 
@@ -250,8 +268,10 @@ $name = array();
 
 // Show Array
 $catotal = 0;
+$catotal_ht = 0;
+
 if ($modecompta == 'CREANCES-DETTES') {
-	$sql = "SELECT DISTINCT s.rowid as socid, s.nom as name, s.zip, s.town, s.fk_pays,";
+	$sql = "SELECT DISTINCT s.rowid as socid, s.nom as name, s.name_alias, s.zip, s.town, s.fk_pays,";
 	$sql .= " sum(f.total_ht) as amount, sum(f.total_ttc) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
 	if ($selected_cat === -2) {	// Without any category
@@ -260,7 +280,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_societe as cs";
 	}
 	$sql .= " WHERE f.fk_statut in (1,2)";
-	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 		$sql .= " AND f.type IN (0,1,2,5)";
 	} else {
 		$sql .= " AND f.type IN (0,1,2,3,5)";
@@ -281,10 +301,10 @@ if ($modecompta == 'CREANCES-DETTES') {
 	}
 } elseif ($modecompta == "RECETTES-DEPENSES") {
 	/*
-	 * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
-	 * vieilles versions, ils n'etaient pas lies via paiement_facture. On les ajoute plus loin)
+	 * List of payments (old payments are not seen by this query because on older versions,
+	 * they were not linked via the table llx_paiement_facture. They are added later)
 	 */
-	$sql = "SELECT s.rowid as socid, s.nom as name, s.zip, s.town, s.fk_pays, sum(pf.amount) as amount_ttc";
+	$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias, s.zip, s.town, s.fk_pays, sum(pf.amount) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql .= ", ".MAIN_DB_PREFIX."paiement_facture as pf";
 	$sql .= ", ".MAIN_DB_PREFIX."paiement as p";
@@ -329,7 +349,7 @@ $sql .= " AND f.entity IN (".getEntity('invoice').")";
 if ($socid) {
 	$sql .= " AND f.fk_soc = ".((int) $socid);
 }
-$sql .= " GROUP BY s.rowid, s.nom, s.zip, s.town, s.fk_pays";
+$sql .= " GROUP BY s.rowid, s.nom, s.name_alias, s.zip, s.town, s.fk_pays";
 $sql .= " ORDER BY s.rowid";
 //echo $sql;
 
@@ -342,21 +362,29 @@ if ($result) {
 	$i = 0;
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
-			$amount_ht[$obj->socid] = $obj->amount;
-			$amount[$obj->socid] = $obj->amount_ttc;
-			$name[$obj->socid] = $obj->name.' '.$obj->firstname;
-			$address_zip[$obj->socid] = $obj->zip;
-			$address_town[$obj->socid] = $obj->town;
-			$address_pays[$obj->socid] = getCountry($obj->fk_pays);
-			$catotal_ht += $obj->amount;
-			$catotal += $obj->amount_ttc;
-			$i++;
+
+		$amount_ht[$obj->socid] = (empty($obj->amount) ? 0 : $obj->amount);
+		$amount[$obj->socid] = $obj->amount_ttc;
+		$fullname = $obj->name;
+		if (!empty($obj->name_alias)) {
+			$fullname .= ' ('.$obj->name_alias.')';
+		}
+		$name[$obj->socid] = $fullname;
+
+		$address_zip[$obj->socid] = $obj->zip;
+		$address_town[$obj->socid] = $obj->town;
+		$address_pays[$obj->socid] = getCountry($obj->fk_pays);
+
+		$catotal_ht += (empty($obj->amount) ? 0 : $obj->amount);
+		$catotal += $obj->amount_ttc;
+
+		$i++;
 	}
 } else {
 	dol_print_error($db);
 }
 
-// On ajoute les paiements anciennes version, non lies par paiement_facture
+// We add the old versions of payments, not linked by table llx_paiement_facture
 if ($modecompta == "RECETTES-DEPENSES") {
 	$sql = "SELECT '0' as socid, 'Autres' as name, sum(p.amount) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -379,12 +407,20 @@ if ($modecompta == "RECETTES-DEPENSES") {
 		$i = 0;
 		while ($i < $num) {
 			$obj = $db->fetch_object($result);
-			$amount[$obj->rowid] += $obj->amount_ttc;
-			$name[$obj->rowid] = $obj->name;
-			$address_zip[$obj->rowid] = $obj->zip;
-			$address_town[$obj->rowid] = $obj->town;
-			$address_pays[$obj->rowid] = getCountry($obj->fk_pays);
+
+			if (empty($amount[$obj->socid])) {
+				$amount[$obj->socid] = $obj->amount_ttc;
+			} else {
+				$amount[$obj->socid] += $obj->amount_ttc;
+			}
+
+			$name[$obj->socid] = $obj->name;
+			$address_zip[$obj->socid] = '';
+			$address_town[$obj->socid] = '';
+			$address_pays[$obj->socid] = 0;
+
 			$catotal += $obj->amount_ttc;
+
 			$i++;
 		}
 	} else {
@@ -399,7 +435,7 @@ print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 // Extra parameters management
 foreach ($headerparams as $key => $value) {
-	 print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
+	print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
 }
 
 $moreforfilter = '';
@@ -409,7 +445,7 @@ print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" :
 
 // Category filter
 print '<tr class="liste_titre">';
-print '<td>';
+print '<td class="nowraponall">';
 print img_picto('', 'category', 'class="paddingrightonly"');
 print $formother->select_categories(Categorie::TYPE_CUSTOMER, $selected_cat, 'search_categ', 0, $langs->trans("Category"));
 print ' ';
@@ -435,7 +471,7 @@ print '<td class="liste_titre left">';
 print '<input class="flat" size="6" type="text" name="search_town" value="'.dol_escape_htmltag($search_town).'">';
 print '</td>';
 print '<td class="liste_titre left">';
-print $form->select_country($search_country, 'search_country');
+print $form->select_country($search_country, 'search_country', '', 0, 'minwidth100imp maxwidth100');
 //print '<input class="flat" size="6" type="text" name="search_country" value="'.$search_country.'">';
 print '</td>';
 print '<td class="liste_titre">&nbsp;</td>';
@@ -596,18 +632,18 @@ if (count($amount)) {
 		} else {
 			$linkname = $langs->trans("PaymentsNotLinkedToInvoice");
 		}
-		print "<td>".$linkname."</td>\n";
+		print '<td class="tdoverflowmax150">'.$linkname."</td>\n";
 
 		print '<td>';
-		print $address_zip[$key];
+		print $address_pays($address_zip[$key]);
 		print '</td>';
 
-		print '<td>';
-		print $address_town[$key];
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($address_town[$key]).'">';
+		print $address_pays($address_town[$key]);
 		print '</td>';
 
-		print '<td>';
-		print $address_pays[$key];
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($address_pays[$key]).'">';
+		print $address_pays($address_pays[$key]);
 		print '</td>';
 
 		// Amount w/o VAT
@@ -652,10 +688,10 @@ if (count($amount)) {
 
 		// Other stats
 		print '<td class="center">';
-		if (!empty($conf->propal->enabled) && $key > 0) {
+		if (isModEnabled("propal") && $key > 0) {
 			print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?socid='.$key.'">'.img_picto($langs->trans("ProposalStats"), "stats").'</a>&nbsp;';
 		}
-		if (!empty($conf->commande->enabled) && $key > 0) {
+		if (isModEnabled('commande') && $key > 0) {
 			print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/stats/index.php?socid='.$key.'">'.img_picto($langs->trans("OrderStats"), "stats").'</a>&nbsp;';
 		}
 		if (isModEnabled('facture') && $key > 0) {

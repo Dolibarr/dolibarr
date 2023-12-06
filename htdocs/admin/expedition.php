@@ -28,6 +28,7 @@
  *	\brief      Page d'administration/configuration du module Expedition
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
@@ -49,7 +50,7 @@ $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'shipping';
 
-if (empty($conf->global->EXPEDITION_ADDON_NUMBER)) {
+if (!getDolGlobalString('EXPEDITION_ADDON_NUMBER')) {
 	$conf->global->EXPEDITION_ADDON_NUMBER = 'mod_expedition_safor';
 }
 
@@ -61,9 +62,9 @@ if (empty($conf->global->EXPEDITION_ADDON_NUMBER)) {
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
-	$maskconst = GETPOST('maskconstexpedition', 'alpha');
+	$maskconst = GETPOST('maskconstexpedition', 'aZ09');
 	$maskvalue = GETPOST('maskexpedition', 'alpha');
-	if (!empty($maskconst)) {
+	if (!empty($maskconst) && preg_match('/_MASK$/', $maskconst)) {
 		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 	}
 
@@ -99,7 +100,9 @@ if ($action == 'updateMask') {
 	$exp->initAsSpecimen();
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$classname = '';
+	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/expedition/doc/pdf_".$modele.".modules.php", 0);
@@ -198,20 +201,20 @@ foreach ($dirmodels as $reldir) {
 
 					require_once $dir.$file.'.php';
 
-					$module = new $file;
+					$module = new $file();
 
 					if ($module->isEnabled()) {
 						// Show modules according to features level
-						if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 							continue;
 						}
-						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+						if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 							continue;
 						}
 
 						print '<tr><td>'.$module->name."</td>\n";
 						print '<td>';
-						print $module->info();
+						print $module->info($langs);
 						print '</td>';
 
 						// Show example of numbering module
@@ -334,16 +337,16 @@ foreach ($dirmodels as $reldir) {
 							$module = new $classname($db);
 
 							$modulequalified = 1;
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								$modulequalified = 0;
 							}
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 								$modulequalified = 0;
 							}
 
 							if ($modulequalified) {
 								print '<tr><td width="100">';
-								print (empty($module->name) ? $name : $module->name);
+								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
 								if (method_exists($module, 'info')) {
 									print $module->info($langs);
@@ -411,6 +414,25 @@ foreach ($dirmodels as $reldir) {
 }
 
 print '</table>';
+print load_fiche_titre($langs->trans('CreationOptions'), '', '');
+
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td width="100">'.$langs->trans('Name').'</td>';
+print '<td></td>';
+print '<td class="center" width="60">'.$langs->trans('Status').'</td>';
+
+print "</tr>\n";
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans('SHIPPING_DISPLAY_STOCK_ENTRY_DATE');
+print '</td>';
+print '<td class="center" width="20">&nbsp;</td>';
+print '<td class="center" >';
+print ajax_constantonoff('SHIPPING_DISPLAY_STOCK_ENTRY_DATE');
+print '</td></tr>';
+
+print '</table><br>';
 print '<br>';
 
 
@@ -440,7 +462,7 @@ $htmltext .= '</i>';
 print '<tr><td>';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnShippings"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 $variablename = 'SHIPPING_FREE_TEXT';
-if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
+if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {
 	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.getDolGlobalString($variablename).'</textarea>';
 } else {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -451,7 +473,7 @@ print "</td></tr>\n";
 
 print '<tr><td>';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftContractCards"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
-print '<input class="flat minwidth200" type="text" name="SHIPPING_DRAFT_WATERMARK" value="'.getDolGlobalString('SHIPPING_DRAFT_WATERMARK').'">';
+print '<input class="flat minwidth200" type="text" name="SHIPPING_DRAFT_WATERMARK" value="'.dol_escape_htmltag(getDolGlobalString('SHIPPING_DRAFT_WATERMARK')).'">';
 print "</td></tr>\n";
 
 print '</table>';

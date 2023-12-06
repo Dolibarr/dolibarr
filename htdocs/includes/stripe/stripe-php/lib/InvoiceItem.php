@@ -5,12 +5,25 @@
 namespace Stripe;
 
 /**
- * Sometimes you want to add a charge or credit to a customer, but actually charge
- * or credit the customer's card only at the end of a regular billing cycle. This
- * is useful for combining several charges (to minimize per-transaction fees), or
- * for having Stripe tabulate your usage-based billing totals.
+ * Invoice Items represent the component lines of an <a
+ * href="https://stripe.com/docs/api/invoices">invoice</a>. An invoice item is
+ * added to an invoice by creating or updating it with an <code>invoice</code>
+ * field, at which point it will be included as <a
+ * href="https://stripe.com/docs/api/invoices/line_item">an invoice line item</a>
+ * within <a
+ * href="https://stripe.com/docs/api/invoices/object#invoice_object-lines">invoice.lines</a>.
  *
- * Related guide: <a
+ * Invoice Items can be created before you are ready to actually send the invoice.
+ * This can be particularly useful when combined with a <a
+ * href="https://stripe.com/docs/api/subscriptions">subscription</a>. Sometimes you
+ * want to add a charge or credit to a customer, but actually charge or credit the
+ * customer’s card only at the end of a regular billing cycle. This is useful for
+ * combining several charges (to minimize per-transaction fees), or for having
+ * Stripe tabulate your usage-based billing totals.
+ *
+ * Related guides: <a
+ * href="https://stripe.com/docs/invoicing/integration">Integrate with the
+ * Invoicing API</a>, <a
  * href="https://stripe.com/docs/billing/invoices/subscription#adding-upcoming-invoice-items">Subscription
  * Invoices</a>.
  *
@@ -32,8 +45,9 @@ namespace Stripe;
  * @property bool $proration Whether the invoice item was created automatically as a proration adjustment when the customer switched plans.
  * @property int $quantity Quantity of units for the invoice item. If the invoice item is a proration, the quantity of the subscription that the proration was computed for.
  * @property null|string|\Stripe\Subscription $subscription The subscription that this invoice item has been created for, if any.
- * @property string $subscription_item The subscription item that this invoice item has been created for, if any.
+ * @property null|string $subscription_item The subscription item that this invoice item has been created for, if any.
  * @property null|\Stripe\TaxRate[] $tax_rates The tax rates which apply to the invoice item. When set, the <code>default_tax_rates</code> on the invoice do not apply to this invoice item.
+ * @property null|string|\Stripe\TestHelpers\TestClock $test_clock ID of the test clock this invoice item belongs to.
  * @property null|int $unit_amount Unit amount (in the <code>currency</code> specified) of the invoice item.
  * @property null|string $unit_amount_decimal Same as <code>unit_amount</code>, but contains a decimal value with at most 12 decimal places.
  */

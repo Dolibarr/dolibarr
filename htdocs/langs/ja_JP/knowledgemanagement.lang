@@ -46,7 +46,7 @@ KnowledgeRecords = 項目s
 KnowledgeRecord = 項目
 KnowledgeRecordExtraFields = 項目のエクストラフィールド
 GroupOfTicket=チケットのグループ
-YouCanLinkArticleToATicketCategory=項目をチケットグループにリンクできる(新規チケット認定時に項目が提案されるようになる)
+YouCanLinkArticleToATicketCategory=記事をチケット グループにリンクできる（すると、記事はこのグループのすべてのチケットで強調表示される）。
 SuggestedForTicketsInGroup=チケットに対して提案されるのは、グループが
 
 SetObsolete=廃止として設定

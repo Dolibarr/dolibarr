@@ -43,8 +43,8 @@ error_reporting(0);      // Disable all errors
 @set_time_limit(1800);   // Need 1800 on some very slow OS like Windows 7/64
 error_reporting($err);
 
-$action = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : (empty($argv[1]) ? '' : $argv[1]);
-$setuplang = GETPOST('selectlang', 'aZ09', 3) ?GETPOST('selectlang', 'aZ09', 3) : (empty($argv[2]) ? 'auto' : $argv[2]);
+$action = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : (empty($argv[1]) ? '' : $argv[1]);
+$setuplang = GETPOST('selectlang', 'aZ09', 3) ? GETPOST('selectlang', 'aZ09', 3) : (empty($argv[2]) ? 'auto' : $argv[2]);
 $langs->setDefaultLang($setuplang);
 
 $langs->loadLangs(array("admin", "install"));
@@ -87,7 +87,7 @@ if (@file_exists($forcedfile)) {
 	}
 }
 
-dolibarr_install_syslog("- step2: entering step2.php page");
+dolibarr_install_syslog("--- step2: entering step2.php page");
 
 
 /*
@@ -109,7 +109,7 @@ if ($action == "set") {
 	print '<table cellspacing="0" style="padding: 4px 4px 4px 0" border="0" width="100%">';
 	$error = 0;
 
-	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
+	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
 
 	if ($db->connected) {
 		print "<tr><td>";
@@ -147,15 +147,16 @@ if ($action == "set") {
 
 	// To disable some code, so you can call step2 with url like
 	// http://localhost/dolibarrnew/install/step2.php?action=set&token='.newToken().'&createtables=0&createkeys=0&createfunctions=0&createdata=llx_20_c_departements
-	$createtables = isset($_GET['createtables']) ?GETPOST('createtables') : 1;
-	$createkeys = isset($_GET['createkeys']) ?GETPOST('createkeys') : 1;
-	$createfunctions = isset($_GET['createfunctions']) ?GETPOST('createfunction') : 1;
-	$createdata = isset($_GET['createdata']) ?GETPOST('createdata') : 1;
+	$createtables = GETPOSTISSET('createtables') ? GETPOST('createtables') : 1;
+	$createkeys = GETPOSTISSET('createkeys') ? GETPOST('createkeys') : 1;
+	$createfunctions = GETPOSTISSET('createfunctions') ? GETPOST('createfunction') : 1;
+	$createdata = GETPOSTISSET('createdata') ? GETPOST('createdata') : 1;
 
 
-	// To say sql requests are escaped for mysql so we need to unescape them
-	$db->unescapeslashquot = true;
-
+	// To say that SQL we pass to query are already escaped for mysql, so we need to unescape them
+	if (property_exists($db, 'unescapeslashquot')) {
+		$db->unescapeslashquot = true;
+	}
 
 	/**************************************************************************************
 	 *
@@ -292,7 +293,7 @@ if ($action == "set") {
 					$buf = fgets($fp, 4096);
 
 					// Special case of lines allowed for some version only
-					 // MySQL
+					// MySQL
 					if ($choix == 1 && preg_match('/^--\sV([0-9\.]+)/i', $buf, $reg)) {
 						$versioncommande = explode('.', $reg[1]);
 						//var_dump($versioncommande);
@@ -304,7 +305,7 @@ if ($action == "set") {
 							//print "Ligne $i qualifiee par version: ".$buf.'<br>';
 						}
 					}
-					 // PGSQL
+					// PGSQL
 					if ($choix == 2 && preg_match('/^--\sPOSTGRESQL\sV([0-9\.]+)/i', $buf, $reg)) {
 						$versioncommande = explode('.', $reg[1]);
 						//var_dump($versioncommande);
@@ -585,7 +586,7 @@ $conf->file->instance_unique_id = (empty($dolibarr_main_instance_unique_id) ? (e
 
 $hash_unique_id = md5('dolibarr'.$conf->file->instance_unique_id);
 
-$out  = '<input type="checkbox" name="dolibarrpingno" id="dolibarrpingno"'.((!empty($conf->global->MAIN_FIRST_PING_OK_ID) && $conf->global->MAIN_FIRST_PING_OK_ID == 'disabled') ? '' : ' value="checked" checked="true"').'> ';
+$out  = '<input type="checkbox" name="dolibarrpingno" id="dolibarrpingno"'.((getDolGlobalString('MAIN_FIRST_PING_OK_ID') == 'disabled') ? '' : ' value="checked" checked="true"').'> ';
 $out .= '<label for="dolibarrpingno">'.$langs->trans("MakeAnonymousPing").'</label>';
 
 $out .= '<!-- Add js script to manage the uncheck of option to not send the ping -->';

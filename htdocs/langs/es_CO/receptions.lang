@@ -25,5 +25,4 @@ ProductQtyInSuppliersReceptionAlreadyRecevied=Cantidad de producto de la orden d
 ValidateOrderFirstBeforeReception=Primero debes validar el pedido antes de poder realizar recepciones.
 ReceptionsReceiptModel=Plantillas de documentos para recepciones
 NoMorePredefinedProductToDispatch=No más productos predefinidos para enviar
-ByingPrice=Precio de oferta
 ReceptionUnClassifyCloseddInDolibarr=Recepción %s re-abrir

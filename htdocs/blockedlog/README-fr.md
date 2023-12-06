@@ -4,7 +4,7 @@ LOG INALTERABLE
 ## Fonctionnalité
  
 Ce module trace, en temps réel, certains évènements métiers dans une log inaltérable (que vous ne pouvez pas modifier une fois enregistrés) de type blockchain. 
-Ce module est requis pour la compatibilité avec les exigences légales de certains pays (comme la France avec la loi Fincance 2016 - Norme NF535).
+Ce module est requis pour la compatibilité avec les exigences légales de certains pays (comme la France avec la loi Finance 2016 - Norme NF525).
 
 
 **Les évènements tracés de manière inaltérables sont:**

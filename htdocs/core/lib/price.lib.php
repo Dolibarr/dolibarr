@@ -153,6 +153,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as cv";
 		$sql .= " WHERE cv.taux = ".((float) $txtva);
 		$sql .= " AND cv.fk_pays = ".((int) $countryid);
+		$sql .= " AND cv.entity IN (".getEntity('c_tva').")";
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
@@ -192,8 +193,8 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 
 	// initialize total (may be HT or TTC depending on price_base_type)
 	$tot_sans_remise = $pu * $qty * $progress / 100;
-	$tot_avec_remise_ligne = $tot_sans_remise * (1 - ($remise_percent_ligne / 100));
-	$tot_avec_remise       = $tot_avec_remise_ligne * (1 - ($remise_percent_global / 100));
+	$tot_avec_remise_ligne = $tot_sans_remise * (1 - ((float) $remise_percent_ligne / 100));
+	$tot_avec_remise       = $tot_avec_remise_ligne * (1 - ((float) $remise_percent_global / 100));
 
 	// initialize result array
 	for ($i = 0; $i <= 15; $i++) {
@@ -370,18 +371,18 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	}
 
 	// If rounding is not using base 10 (rare)
-	if (!empty($conf->global->MAIN_ROUNDING_RULE_TOT)) {
+	if (getDolGlobalString('MAIN_ROUNDING_RULE_TOT')) {
 		if ($price_base_type == 'HT') {
-			$result[0] = round($result[0] / $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * $conf->global->MAIN_ROUNDING_RULE_TOT;
-			$result[1] = round($result[1] / $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * $conf->global->MAIN_ROUNDING_RULE_TOT;
-			$result[9] = round($result[9] / $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * $conf->global->MAIN_ROUNDING_RULE_TOT;
-			$result[10] = round($result[10] / $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * $conf->global->MAIN_ROUNDING_RULE_TOT;
+			$result[0] = price2num(round($result[0] / $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * $conf->global->MAIN_ROUNDING_RULE_TOT, 'MT');
+			$result[1] = price2num(round($result[1] / $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * $conf->global->MAIN_ROUNDING_RULE_TOT, 'MT');
+			$result[9] = price2num(round($result[9] / $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * $conf->global->MAIN_ROUNDING_RULE_TOT, 'MT');
+			$result[10] = price2num(round($result[10] / $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * $conf->global->MAIN_ROUNDING_RULE_TOT, 'MT');
 			$result[2] = price2num($result[0] + $result[1] + $result[9] + $result[10], 'MT');
 		} else {
-			$result[1] = round($result[1] / $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * $conf->global->MAIN_ROUNDING_RULE_TOT;
-			$result[2] = round($result[2] / $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * $conf->global->MAIN_ROUNDING_RULE_TOT;
-			$result[9] = round($result[9] / $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * $conf->global->MAIN_ROUNDING_RULE_TOT;
-			$result[10] = round($result[10] / $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * $conf->global->MAIN_ROUNDING_RULE_TOT;
+			$result[1] = price2num(round($result[1] / $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * $conf->global->MAIN_ROUNDING_RULE_TOT, 'MT');
+			$result[2] = price2num(round($result[2] / $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * $conf->global->MAIN_ROUNDING_RULE_TOT, 'MT');
+			$result[9] = price2num(round($result[9] / $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * $conf->global->MAIN_ROUNDING_RULE_TOT, 'MT');
+			$result[10] = price2num(round($result[10] / $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * $conf->global->MAIN_ROUNDING_RULE_TOT, 'MT');
 			$result[0] = price2num($result[2] - $result[1] - $result[9] - $result[10], 'MT');
 		}
 	}
@@ -443,7 +444,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	// initialize result array
 	//for ($i=0; $i <= 18; $i++) $result[$i] = (float) $result[$i];
 
-	dol_syslog('Price.lib::calcul_price_total MAIN_ROUNDING_RULE_TOT='.(empty($conf->global->MAIN_ROUNDING_RULE_TOT) ? '' : $conf->global->MAIN_ROUNDING_RULE_TOT).' pu='.$pu.' qty='.$qty.' price_base_type='.$price_base_type.' total_ht='.$result[0].'-total_vat='.$result[1].'-total_ttc='.$result[2]);
+	dol_syslog('Price.lib::calcul_price_total MAIN_ROUNDING_RULE_TOT='.(!getDolGlobalString('MAIN_ROUNDING_RULE_TOT') ? '' : $conf->global->MAIN_ROUNDING_RULE_TOT).' pu='.$pu.' qty='.$qty.' price_base_type='.$price_base_type.' total_ht='.$result[0].'-total_vat='.$result[1].'-total_ttc='.$result[2]);
 
 	return $result;
 }

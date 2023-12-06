@@ -12,7 +12,7 @@ OpenEtablishment=Sefydliad agored
 CloseEtablishment=Sefydliad agos
 # Dictionary
 DictionaryPublicHolidays=Gadael - Gwyliau cyhoeddus
-DictionaryDepartment=HRM - Rhestr adrannau
+DictionaryDepartment=HRM - Organizational Unit
 DictionaryFunction=RhAD - Swyddi
 # Module
 Employees=Gweithwyr
@@ -70,9 +70,9 @@ RequiredSkills=Sgiliau gofynnol ar gyfer y swydd hon
 UserRank=Safle Defnyddiwr
 SkillList=Rhestr sgiliau
 SaveRank=Cadw rheng
-knowHow=Gwybod sut
-HowToBe=Sut i fod
-knowledge=Gwybodaeth
+TypeKnowHow=Know how
+TypeHowToBe=How to be
+TypeKnowledge=Knowledge
 AbandonmentComment=Sylw gadael
 DateLastEval=Dyddiad y gwerthusiad diwethaf
 NoEval=Dim gwerthusiad wedi'i wneud ar gyfer y gweithiwr hwn
@@ -88,3 +88,4 @@ DeleteSkill = Skill removed
 SkillsExtraFields=Attributs supplémentaires (Compétences)
 JobsExtraFields=Attributs supplémentaires (Emplois)
 EvaluationsExtraFields=Attributs supplémentaires (Evaluations)
+NeedBusinessTravels=Need business travels

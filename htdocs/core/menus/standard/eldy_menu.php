@@ -36,6 +36,11 @@ class MenuManager
 	public $atarget = ""; // To store default target to use onto links
 	public $name = "eldy";
 
+	/**
+	 * @var Menu
+	 */
+	public $menu;
+
 	public $menu_array;
 	public $menu_array_after;
 
@@ -142,7 +147,7 @@ class MenuManager
 		require_once DOL_DOCUMENT_ROOT.'/core/class/menu.class.php';
 		$this->menu = new Menu();
 
-		if (empty($conf->global->MAIN_MENU_INVERT)) {
+		if (!getDolGlobalString('MAIN_MENU_INVERT')) {
 			if ($mode == 'top') {
 				print_eldy_menu($this->db, $this->atarget, $this->type_user, $this->tabMenu, $this->menu, 0, $mode);
 			}
@@ -186,7 +191,7 @@ class MenuManager
 
 					// Add font-awesome
 					if ($val['level'] == 0 && !empty($val['prefix'])) {
-						print $val['prefix'];
+						print str_replace('<span class="', '<span class="paddingright pictofixedwidth ', $val['prefix']);
 					}
 
 					print $val['titre'];
@@ -204,7 +209,7 @@ class MenuManager
 					//if ($tmpmainmenu=='accountancy') {
 					//var_dump($submenu->liste); exit;
 					//}
-					$nexturl = dol_buildpath($submenu->liste[0]['url'], 1);
+					$nexturl = dol_buildpath(empty($submenu->liste[0]['url']) ? '' : $submenu->liste[0]['url'], 1);
 
 					$canonrelurl = preg_replace('/\?.*$/', '', $relurl);
 					$canonnexturl = preg_replace('/\?.*$/', '', $nexturl);
@@ -217,6 +222,11 @@ class MenuManager
 						// We add sub entry
 						print str_pad('', 1).'<li class="lilevel1 ui-btn-icon-right ui-btn">'; // ui-btn to highlight on clic
 						print '<a href="'.$relurl.'">';
+
+						if ($val['level'] == 0) {
+							print '<span class="fas fa-home fa-fw paddingright pictofixedwidth" aria-hidden="true"></span>';
+						}
+
 						if ($langs->trans(ucfirst($val['mainmenu'])."Dashboard") == ucfirst($val['mainmenu'])."Dashboard") {  // No translation
 							if (in_array($val['mainmenu'], array('cashdesk', 'externalsite', 'website', 'collab', 'takepos'))) {
 								print $langs->trans("Access");
@@ -246,7 +256,7 @@ class MenuManager
 					$lastlevel2 = array();
 					foreach ($submenu->liste as $key2 => $val2) {		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
 						$showmenu = true;
-						if (!empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED) && empty($val2['enabled'])) {
+						if (getDolGlobalString('MAIN_MENU_HIDE_UNAUTHORIZED') && empty($val2['enabled'])) {
 							$showmenu = false;
 						}
 
@@ -294,8 +304,7 @@ class MenuManager
 									//print ' data-ajax="false"';
 									print '>';
 									$lastlevel2[$val2['level']] = 'enabled';
-								} else // Not allowed but visible (greyed)
-								{
+								} else { // Not allowed but visible (greyed)
 									print '<a href="#" class="vsmenudisabled">';
 									$lastlevel2[$val2['level']] = 'greyed';
 								}
@@ -306,6 +315,14 @@ class MenuManager
 									$lastlevel2[$val2['level']] = 'greyed';
 								}
 							}
+
+							// Add font-awesome (if $val2['level'] == 0, we are on level2
+							if ($val2['level'] == 0 && !empty($val2['prefix'])) {
+								print $val2['prefix'];	// the picto must have class="pictofixedwidth paddingright"
+							} else {
+								print '<span class="paddingright"></span>';	// we also add class="paddingright". width similar to pictofixedwidth is managed by class=lilevel2
+							}
+
 							print $val2['titre'];
 							if ($relurl2) {
 								if ($val2['enabled']) {	// Allowed
@@ -322,6 +339,7 @@ class MenuManager
 				}
 				if ($val['enabled'] == 2) {
 					print '<span class="spanlilevel0 vsmenudisabled">';
+
 					// Add font-awesome
 					if ($val['level'] == 0 && !empty($val['prefix'])) {
 						print $val['prefix'];

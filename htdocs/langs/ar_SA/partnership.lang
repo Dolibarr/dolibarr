@@ -19,15 +19,17 @@
 ModulePartnershipName=إدارة الشراكة
 PartnershipDescription=وحدة إدارة الشراكة
 PartnershipDescriptionLong= وحدة إدارة الشراكة
-Partnership=Partnership
-AddPartnership=Add partnership
-CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
-PartnershipCheckBacklink=Partnership: Check referring backlink
+Partnership=شراكة
+Partnerships=Partnerships
+AddPartnership=أضف شراكة
+CancelPartnershipForExpiredMembers=الشراكة: إلغاء شراكة الأعضاء المنتهية صلاحيتها
+PartnershipCheckBacklink=الشراكة: تحقق من إحالة الروابط الخلفية
 
 #
 # Menu
 #
 NewPartnership=شراكة جديدة
+NewPartnershipbyWeb= Your partnership was added successfully.
 ListOfPartnerships=قائمة الشراكات
 
 #
@@ -36,57 +38,59 @@ ListOfPartnerships=قائمة الشراكات
 PartnershipSetup=إعدادات الشراكة
 PartnershipAbout=حول الشراكة
 PartnershipAboutPage=صفحة حول الشراكة 
-partnershipforthirdpartyormember=Partner status must be set on a 'thirdparty' or a 'member'
-PARTNERSHIP_IS_MANAGED_FOR=Partnership managed for
-PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks to check
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cancelling status of a partnership when a subscription has expired
-ReferingWebsiteCheck=Check of website referring
-ReferingWebsiteCheckDesc=You can enable a feature to check that your partners has added a backlink to your website domains on their own website.
+partnershipforthirdpartyormember=يجب تعيين حالة الشريك على "طرف ثالث" أو "عضو"
+PARTNERSHIP_IS_MANAGED_FOR=إدارة الشراكة لـ
+PARTNERSHIP_BACKLINKS_TO_CHECK=الروابط الخلفية المراد التحقق منها
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=عدد الأيام قبل إلغاء حالة الشراكة عند انتهاء صلاحية الاشتراك
+ReferingWebsiteCheck=تحقق من إحالة الموقع
+ReferingWebsiteCheckDesc=يمكنك تمكين ميزة للتحقق من أن شركائك قد أضافوا رابطًا خلفيًا إلى مجالات موقع الويب الخاص بك على موقع الويب الخاص بهم.
+PublicFormRegistrationPartnerDesc=يمكن أن توفر لك Dolibarr عنوان URL / موقع ويب عام للسماح للزوار الخارجيين بطلب الانضمام إلى برنامج الشراكة.
 
 #
 # Object
 #
-DeletePartnership=Delete a partnership
-PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party
-PartnershipDedicatedToThisMember=Partnership dedicated to this member
+DeletePartnership=حذف شراكة
+PartnershipDedicatedToThisThirdParty=شراكة مخصصة لهذا الطرف الثالث
+PartnershipDedicatedToThisMember=شراكة مكرسة لهذا العضو
 DatePartnershipStart=تاريخ البدء
 DatePartnershipEnd=تاريخ الانتهاء
-ReasonDecline=Decline reason
-ReasonDeclineOrCancel=Decline reason
-PartnershipAlreadyExist=Partnership already exist
-ManagePartnership=Manage partnership
-BacklinkNotFoundOnPartnerWebsite=Backlink not found on partner website
-ConfirmClosePartnershipAsk=Are you sure you want to cancel this partnership?
-PartnershipType=Partnership type
-PartnershipRefApproved=Partnership %s approved
-
-#
-# Template Mail
-#
-SendingEmailOnPartnershipWillSoonBeCanceled=Partnership will soon be canceled
-SendingEmailOnPartnershipRefused=Partnership refused
-SendingEmailOnPartnershipAccepted=Partnership accepted
-SendingEmailOnPartnershipCanceled=Partnership canceled
-
-YourPartnershipWillSoonBeCanceledTopic=Partnership will soon be canceled
-YourPartnershipRefusedTopic=Partnership refused
-YourPartnershipAcceptedTopic=Partnership accepted
-YourPartnershipCanceledTopic=Partnership canceled
-
-YourPartnershipWillSoonBeCanceledContent=We inform you that your partnership will soon be canceled (Backlink not found)
-YourPartnershipRefusedContent=We inform you that your partnership request has been refused.
-YourPartnershipAcceptedContent=We inform you that your partnership request has been accepted.
-YourPartnershipCanceledContent=We inform you that your partnership has been canceled.
-
-CountLastUrlCheckError=Number of errors for last URL check
-LastCheckBacklink=Date of last URL check
-ReasonDeclineOrCancel=Decline reason
-
-#
-# Status
-#
+ReasonDecline=سبب الرفض
+ReasonDeclineOrCancel=سبب الرفض
+PartnershipAlreadyExist=الشراكة موجودة بالفعل
+ManagePartnership=إدارة الشراكة
+BacklinkNotFoundOnPartnerWebsite=الرابط الخلفي غير موجود على موقع الشريك
+ConfirmClosePartnershipAsk=هل أنت متأكد أنك تريد إلغاء هذه الشراكة؟
+PartnershipType=نوع الشراكة
+PartnershipRefApproved=تمت الموافقة على الشراكة %s
+KeywordToCheckInWebsite=إذا كنت تريد التحقق من وجود كلمة رئيسية معينة في موقع الويب الخاص بكل شريك ، فحدد هذه الكلمة الأساسية هنا
 PartnershipDraft=حوالة مصرفية
 PartnershipAccepted=قبلت
 PartnershipRefused=رفض
 PartnershipCanceled=ملغي
 PartnershipManagedFor=الشركاء هم
+
+#
+# Template Mail
+#
+SendingEmailOnPartnershipWillSoonBeCanceled=سيتم إلغاء الشراكة قريبًا
+SendingEmailOnPartnershipRefused=رفضت الشراكة
+SendingEmailOnPartnershipAccepted=قبلت الشراكة
+SendingEmailOnPartnershipCanceled=تم إلغاء الشراكة
+
+YourPartnershipWillSoonBeCanceledTopic=سيتم إلغاء الشراكة قريبًا
+YourPartnershipRefusedTopic=رفضت الشراكة
+YourPartnershipAcceptedTopic=قبلت الشراكة
+YourPartnershipCanceledTopic=تم إلغاء الشراكة
+
+YourPartnershipWillSoonBeCanceledContent=نعلمك أنه سيتم إلغاء شراكتك قريبًا (لم يتم العثور على Backlink)
+YourPartnershipRefusedContent=نعلمك أنه تم رفض طلب الشراكة الخاص بك.
+YourPartnershipAcceptedContent=نعلمك أنه تم قبول طلب الشراكة الخاص بك.
+YourPartnershipCanceledContent=نعلمك أنه تم إلغاء شراكتك.
+
+CountLastUrlCheckError=عدد الأخطاء الخاصة بآخر فحص لعنوان URL
+LastCheckBacklink=تاريخ آخر فحص لعنوان URL
+ReasonDeclineOrCancel=سبب الرفض
+
+NewPartnershipRequest=طلب شراكة جديد
+NewPartnershipRequestDesc=يسمح لك هذا النموذج بطلب أن تكون جزءًا من أحد برامج الشراكة الخاصة بنا. إذا كنت بحاجة إلى مساعدة لملء هذا النموذج ، فيرجى الاتصال عبر البريد الإلكتروني <b> %s </b>.
+

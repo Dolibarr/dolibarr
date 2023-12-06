@@ -20,6 +20,7 @@ ModulePartnershipName=Gestione del partenariato
 PartnershipDescription=Modulo Gestione del partenariato
 PartnershipDescriptionLong= Modulo Gestione del partenariato
 Partnership=Collaborazione
+Partnerships=Partnerships
 AddPartnership=Aggiungi partnership
 CancelPartnershipForExpiredMembers=Partnership: annulla la partnership di membri con abbonamenti scaduti
 PartnershipCheckBacklink=Partnership: controlla il backlink di riferimento
@@ -28,6 +29,7 @@ PartnershipCheckBacklink=Partnership: controlla il backlink di riferimento
 # Menu
 #
 NewPartnership=Nuova partnership
+NewPartnershipbyWeb= Your partnership was added successfully.
 ListOfPartnerships=Elenco delle partnership
 
 #
@@ -42,6 +44,7 @@ PARTNERSHIP_BACKLINKS_TO_CHECK=Backlink da controllare
 PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb di giorni prima della cancellazione dello stato di una partnership quando un abbonamento è scaduto
 ReferingWebsiteCheck=Verifica del sito web di riferimento
 ReferingWebsiteCheckDesc=Puoi abilitare una funzione per verificare che i tuoi partner abbiano aggiunto un backlink ai domini del tuo sito web sul proprio sito web.
+PublicFormRegistrationPartnerDesc=Dolibarr può fornirti un URL/sito web pubblico per consentire ai visitatori esterni di richiedere di far parte del programma di partnership.
 
 #
 # Object
@@ -59,6 +62,12 @@ BacklinkNotFoundOnPartnerWebsite=Backlink non trovato sul sito web del partner
 ConfirmClosePartnershipAsk=Sei sicuro di voler annullare questa partnership?
 PartnershipType=Tipo di partenariato
 PartnershipRefApproved=Approvata la partnership %s
+KeywordToCheckInWebsite=Se vuoi verificare che una determinata parola chiave sia presente nel sito web di ciascun partner, definisci questa parola chiave qui
+PartnershipDraft=Assegno circolare
+PartnershipAccepted=Accettata
+PartnershipRefused=Rifiutato
+PartnershipCanceled=Annullata
+PartnershipManagedFor=I partner sono
 
 #
 # Template Mail
@@ -82,11 +91,6 @@ CountLastUrlCheckError=Numero di errori per l'ultimo controllo URL
 LastCheckBacklink=Data dell'ultimo controllo dell'URL
 ReasonDeclineOrCancel=Rifiuta la ragione
 
-#
-# Status
-#
-PartnershipDraft=Assegno circolare
-PartnershipAccepted=Accettata
-PartnershipRefused=Rifiutato
-PartnershipCanceled=Annullata
-PartnershipManagedFor=I partner sono
+NewPartnershipRequest=Nuova richiesta di partnership
+NewPartnershipRequestDesc=Questo modulo ti consente di richiedere di far parte di uno dei nostri programmi di partnership. Se hai bisogno di aiuto per compilare questo modulo, contatta via email <b> %s </b> .
+

@@ -24,14 +24,14 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last invoices
+ * Class to manage the box to show invoices per year graph
  */
 class box_graph_invoices_peryear extends ModeleBoxes
 {
-	public $boxcode = "invoicesperyear";
-	public $boximg = "object_bill";
+	public $boxcode  = "invoicesperyear";
+	public $boximg   = "object_bill";
 	public $boxlabel = "BoxCustomersInvoicesPerYear";
-	public $depends = array("facture");
+	public $depends  = array("facture");
 
 	/**
 	 * @var DoliDB Database handler.
@@ -54,7 +54,7 @@ class box_graph_invoices_peryear extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->facture->lire);
+		$this->hidden = !$user->hasRight('facture', 'lire');
 	}
 
 	/**
@@ -75,7 +75,9 @@ class box_graph_invoices_peryear extends ModeleBoxes
 		//$facturestatic=new Facture($this->db);
 
 		$startmonth = $conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1;
-		if (empty($conf->global->GRAPH_USE_FISCAL_YEAR)) $startmonth = 1;
+		if (!getDolGlobalString('GRAPH_USE_FISCAL_YEAR')) {
+			$startmonth = 1;
+		}
 
 		$text = $langs->trans("Turnover", $max);
 		$this->info_box_head = array(
@@ -92,10 +94,14 @@ class box_graph_invoices_peryear extends ModeleBoxes
 		$dir = ''; // We don't need a path because image file will not be saved into disk
 		$prefix = '';
 		$socid = 0;
-		if ($user->socid) $socid = $user->socid;
-		if (empty($user->rights->societe->client->voir) || $socid) $prefix .= 'private-'.$user->id.'-'; // If user has no permission to see all, output dir is specific to user
+		if ($user->socid) {
+			$socid = $user->socid;
+		}
+		if (!$user->hasRight('societe', 'client', 'voir') || $socid) {
+			$prefix .= 'private-'.$user->id.'-';
+		} // If user has no permission to see all, output dir is specific to user
 
-		if ($user->rights->facture->lire) {
+		if ($user->hasRight('facture', 'lire')) {
 			$mesg = '';
 
 			$param_year = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_year';
@@ -112,10 +118,14 @@ class box_graph_invoices_peryear extends ModeleBoxes
 				$endyear = $tmparray['year'];
 				$showtot = $tmparray['showtot'];
 			}
-			if (empty($showtot)) { $showtot = 1; }
+			if (empty($showtot)) {
+				$showtot = 1;
+			}
 			$nowarray = dol_getdate(dol_now(), true);
-			if (empty($endyear)) $endyear = $nowarray['year'];
-			$numberyears = (empty($conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH) ? 5 : $conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH);
+			if (empty($endyear)) {
+				$endyear = $nowarray['year'];
+			}
+			$numberyears = (!getDolGlobalString('MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH') ? 5 : $conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH);
 			$startyear = $endyear - $numberyears;
 
 			$mode = 'customer';
@@ -142,7 +152,7 @@ class box_graph_invoices_peryear extends ModeleBoxes
 				$px2->SetData($data2);
 				unset($data2);
 				$i = $startyear;
-				$legend = array();
+				/*$legend = array();
 				while ($i <= $endyear) {
 					if ($startmonth != 1) {
 						$legend[] = sprintf("%d/%d", $i - 2001, $i - 2000);
@@ -150,7 +160,7 @@ class box_graph_invoices_peryear extends ModeleBoxes
 						$legend[] = $i;
 					}
 					$i++;
-				}
+				}*/
 				$px2->SetLegend([$langs->trans("AmountOfBillsHT")]);
 				$px2->SetMaxValue($px2->GetCeilMaxValue());
 				$px2->SetWidth($WIDTH);
@@ -172,7 +182,7 @@ class box_graph_invoices_peryear extends ModeleBoxes
 
 			if (!$mesg) {
 				$stringtoshow = '';
-				$stringtoshow .= '<script type="text/javascript" language="javascript">
+				$stringtoshow .= '<script nonce="'.getNonce().'" type="text/javascript" language="javascript">
 					jQuery(document).ready(function() {
 						jQuery("#idsubimg'.$this->boxcode.'").click(function() {
 							jQuery("#idfilter'.$this->boxcode.'").toggle();

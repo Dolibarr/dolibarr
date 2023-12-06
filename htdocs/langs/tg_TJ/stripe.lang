@@ -41,7 +41,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Калиди зинда дар Webhook
 ONLINE_PAYMENT_WAREHOUSE=Ҳангоме ки пардохти онлайн анҷом дода мешавад, саҳмияҳо барои коҳиш додани саҳмия истифода мешаванд <br> (TODO Вақте ки имкони коҳиш додани саҳмия дар асоси амали суратҳисоб сурат мегирад ва пардохти онлайн ҳисобнома -фактураро тавлид мекунад?)
 StripeLiveEnabled=Stripe live фаъол аст (дар акси ҳол ҳолати санҷиш/қуттии қуттиҳо)
 StripeImportPayment=Пардохтҳои Stripe воридотӣ
-ExampleOfTestCreditCard=Намунаи корти кредитӣ барои санҷиш: %s => дуруст, %s => хатои CVC, %s => гузашт, %s => пардохт ноком шуд
+ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
+ExampleOfTestBankAcountForSEPA=Example of bank account BAN for direct debit test: %s
 StripeGateways=Дарвозаҳои рахӣ
 OAUTH_STRIPE_TEST_ID=ID муштарии Stripe Connect (тақрибан _...)
 OAUTH_STRIPE_LIVE_ID=ID муштарии Stripe Connect (тақрибан _...)
@@ -61,6 +62,7 @@ DeleteACard=Кортро нест кунед
 ConfirmDeleteCard=Шумо мутмаин ҳастед, ки ин корти кредитӣ ё дебетиро нест кардан мехоҳед?
 CreateCustomerOnStripe=Дар Stripe муштарӣ эҷод кунед
 CreateCardOnStripe=Дар Stripe корт эҷод кунед
+CreateBANOnStripe=Create bank on Stripe
 ShowInStripe=Дар Stripe нишон диҳед
 StripeUserAccountForActions=Ҳисоби корбаре, ки барои почтаи электронӣ дар бораи баъзе чорабиниҳои Stripe истифода мешавад (пардохтҳои Stripe)
 StripePayoutList=Рӯйхати пардохтҳои Stripe
@@ -69,3 +71,8 @@ ToOfferALinkForLiveWebhook=Истинод барои насб кардани Str
 PaymentWillBeRecordedForNextPeriod=Пардохт барои давраи оянда сабт карда мешавад.
 ClickHereToTryAgain= <a href="%s"> Барои дубора кӯшиш кардан ин ҷо клик кунед ... </a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Бо назардошти қоидаҳои қавии аутентификатсияи муштариён, сохтани корт бояд аз backoffice Stripe анҷом дода шавад. Шумо метавонед ин ҷо клик кунед, то сабти муштариёни Stripe -ро фаъол созед: %s
+STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
+TERMINAL_LOCATION=Location (address) for Stripe Terminals
+RequestDirectDebitWithStripe=Request Direct Debit with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
+

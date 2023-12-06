@@ -21,6 +21,7 @@
  *	\brief		Home page of customer invoices area
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -43,8 +44,8 @@ if (isset($user->socid) && $user->socid > 0) {
 $max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 // Maximum elements of the tables
-$maxDraftCount = empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? $max : $conf->global->MAIN_MAXLIST_OVERLOAD;
-$maxOpenCount = empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? $max : $conf->global->MAIN_MAXLIST_OVERLOAD;
+$maxDraftCount = !getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? $max : $conf->global->MAIN_MAXLIST_OVERLOAD;
+$maxOpenCount = !getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? $max : $conf->global->MAIN_MAXLIST_OVERLOAD;
 
 
 /*

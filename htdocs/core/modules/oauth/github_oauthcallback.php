@@ -1,5 +1,5 @@
 <?php
-/*
+/* Copyright (C) 2022       Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,6 +22,7 @@
  *      \brief      Page to get oauth callback
  */
 
+// Load Dolibarr environment
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 use OAuth\Common\Storage\DoliStorage;
@@ -64,7 +65,7 @@ $httpClient = new \OAuth\Common\Http\Client\CurlClient();
 $serviceFactory->setHttpClient($httpClient);
 
 // Dolibarr storage
-$storage = new DoliStorage($db, $conf);
+$storage = new DoliStorage($db, $conf, $keyforprovider);
 
 // Setup the credentials for the requests
 $keyforparamid = 'OAUTH_GITHUB'.($keyforprovider ? '-'.$keyforprovider : '').'_ID';
@@ -86,7 +87,7 @@ if ($action != 'delete' && empty($requestedpermissionsarray)) {
 //var_dump($requestedpermissionsarray);exit;
 
 // Instantiate the Api service using the credentials, http client and storage mechanism for the token
-$apiService = $serviceFactory->createService('GitHub'.($keyforprovider ? '-'.$keyforprovider : ''), $credentials, $storage, $requestedpermissionsarray);
+$apiService = $serviceFactory->createService('GitHub', $credentials, $storage, $requestedpermissionsarray);
 
 // access type needed to have oauth provider refreshing token
 //$apiService->setAccessType('offline');
@@ -114,30 +115,21 @@ if ($action == 'delete') {
 	exit();
 }
 
-if (!empty($_GET['code'])) {     // We are coming from oauth provider page
+if (GETPOST('code')) {     // We are coming from oauth provider page
 	// We should have
 	//$_GET=array('code' => string 'aaaaaaaaaaaaaa' (length=20), 'state' => string 'user,public_repo' (length=16))
 
-	dol_syslog("We are coming from the oauth provider page");
-	//llxHeader('',$langs->trans("OAuthSetup"));
-
-	//$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-	//print load_fiche_titre($langs->trans("OAuthSetup"),$linkback,'title_setup');
-
-	//print dol_get_fiche_head();
-	// retrieve the CSRF state parameter
-	$state = isset($_GET['state']) ? $_GET['state'] : null;
-	//print '<table>';
+	dol_syslog("We are coming from the oauth provider page code=".dol_trunc(GETPOST('code'), 5));
 
 	// This was a callback request from service, get the token
 	try {
-		//var_dump($_GET['code']);
 		//var_dump($state);
 		//var_dump($apiService);      // OAuth\OAuth2\Service\GitHub
 
-		//$token = $apiService->requestAccessToken($_GET['code'], $state);
-		$token = $apiService->requestAccessToken($_GET['code']);
-		// Github is a service that does not need state to be stored.
+		//$token = $apiService->requestAccessToken(GETPOST('code'), $state);
+		$token = $apiService->requestAccessToken(GETPOST('code'));
+		// Github is a service that does not need state to be stored as second paramater of requestAccessToken
+
 		// Into constructor of GitHub, the call
 		// parent::__construct($credentials, $httpClient, $storage, $scopes, $baseApiUri)
 		// has not the ending parameter to true like the Google class constructor.
@@ -146,6 +138,10 @@ if (!empty($_GET['code'])) {     // We are coming from oauth provider page
 
 		$backtourl = $_SESSION["backtourlsavedbeforeoauthjump"];
 		unset($_SESSION["backtourlsavedbeforeoauthjump"]);
+
+		if (empty($backtourl)) {
+			$backtourl = DOL_URL_ROOT.'/';
+		}
 
 		header('Location: '.$backtourl);
 		exit();

@@ -21,6 +21,7 @@
  *	\brief      Print QR Menu
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 // Security check

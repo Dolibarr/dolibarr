@@ -27,6 +27,7 @@
  *		\brief      Page to setup the module MailmanSpip (Mailman)
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/mailmanspip.lib.php';
@@ -93,7 +94,7 @@ if ($action == 'unset') {
 	}
 }
 
-if (($action == 'testsubscribe' || $action == 'testunsubscribe') && !empty($conf->global->ADHERENT_USE_MAILMAN)) {
+if (($action == 'testsubscribe' || $action == 'testunsubscribe') && getDolGlobalString('ADHERENT_USE_MAILMAN')) {
 	$email = GETPOST($action.'email');
 	if (!isValidEmail($email)) {
 		$langs->load("errors");
@@ -144,7 +145,7 @@ print load_fiche_titre($langs->trans("MailmanSpipSetup"), $linkback, 'title_setu
 
 $head = mailmanspip_admin_prepare_head();
 
-if (!empty($conf->global->ADHERENT_USE_MAILMAN)) {
+if (getDolGlobalString('ADHERENT_USE_MAILMAN')) {
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
@@ -158,7 +159,7 @@ if (!empty($conf->global->ADHERENT_USE_MAILMAN)) {
 	$link .= '</a>';
 	// Edition des varibales globales
 	$constantes = array(
-		'ADHERENT_MAILMAN_ADMINPW',
+		'ADHERENT_MAILMAN_ADMIN_PASSWORD',
 		'ADHERENT_MAILMAN_URL',
 		'ADHERENT_MAILMAN_UNSUB_URL',
 		'ADHERENT_MAILMAN_LISTS'
@@ -212,7 +213,7 @@ if (!empty($conf->global->ADHERENT_USE_MAILMAN)) {
 }
 
 
-if (!empty($conf->global->ADHERENT_USE_MAILMAN)) {
+if (getDolGlobalString('ADHERENT_USE_MAILMAN')) {
 	print '<form action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="testsubscribe">';

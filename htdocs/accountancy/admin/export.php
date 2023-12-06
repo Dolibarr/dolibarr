@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyexport.class.php';
 $langs->loadLangs(array("compta", "bills", "admin", "accountancy"));
 
 // Security access
-if (empty($user->rights->accounting->chartofaccount)) {
+if (!$user->hasRight('accounting', 'chartofaccount')) {
 	accessforbidden();
 }
 
@@ -152,7 +152,7 @@ foreach ($listparam as $key => $param) {
 	print '        {'."\n";
 	print '            //console.log("'.$param['label'].'");'."\n";
 	if (empty($param['ACCOUNTING_EXPORT_FORMAT'])) {
-		print '            jQuery("#ACCOUNTING_EXPORT_FORMAT").val("'.$conf->global->ACCOUNTING_EXPORT_FORMAT.'");'."\n";
+		print '            jQuery("#ACCOUNTING_EXPORT_FORMAT").val("'.getDolGlobalString('ACCOUNTING_EXPORT_FORMAT').'");'."\n";
 		print '            jQuery("#ACCOUNTING_EXPORT_FORMAT").prop("disabled", true);'."\n";
 	} else {
 		print '            jQuery("#ACCOUNTING_EXPORT_FORMAT").val("'.$param['ACCOUNTING_EXPORT_FORMAT'].'");'."\n";
@@ -162,7 +162,7 @@ foreach ($listparam as $key => $param) {
 		print '            jQuery("#ACCOUNTING_EXPORT_SEPARATORCSV").val("");'."\n";
 		print '            jQuery("#ACCOUNTING_EXPORT_SEPARATORCSV").prop("disabled", true);'."\n";
 	} else {
-		print '            jQuery("#ACCOUNTING_EXPORT_SEPARATORCSV").val("'.$conf->global->ACCOUNTING_EXPORT_SEPARATORCSV.'");'."\n";
+		print '            jQuery("#ACCOUNTING_EXPORT_SEPARATORCSV").val("'.getDolGlobalString('ACCOUNTING_EXPORT_SEPARATORCSV').'");'."\n";
 		print '            jQuery("#ACCOUNTING_EXPORT_SEPARATORCSV").removeAttr("disabled");'."\n";
 	}
 	if (empty($param['ACCOUNTING_EXPORT_ENDLINE'])) {
@@ -174,7 +174,7 @@ foreach ($listparam as $key => $param) {
 		print '            jQuery("#ACCOUNTING_EXPORT_DATE").val("");'."\n";
 		print '            jQuery("#ACCOUNTING_EXPORT_DATE").prop("disabled", true);'."\n";
 	} else {
-		print '            jQuery("#ACCOUNTING_EXPORT_DATE").val("'.$conf->global->ACCOUNTING_EXPORT_DATE.'");'."\n";
+		print '            jQuery("#ACCOUNTING_EXPORT_DATE").val("'.getDolGlobalString('ACCOUNTING_EXPORT_DATE').'");'."\n";
 		print '            jQuery("#ACCOUNTING_EXPORT_DATE").removeAttr("disabled");'."\n";
 	}
 	print '        }'."\n";
@@ -269,9 +269,9 @@ if ($num2) {
 		// Value
 		print '<td>';
 		if (is_array($key['param'])) {
-			print $form->selectarray($label, $key['param'], $conf->global->$label, 0);
+			print $form->selectarray($label, $key['param'], getDolGlobalString($label), 0);
 		} else {
-			print '<input type="text" size="20" id="'.$label.'" name="'.$key['label'].'" value="'.$conf->global->$label.'">';
+			print '<input type="text" size="20" id="'.$label.'" name="'.$key['label'].'" value="'.getDolGlobalString($label).'">';
 		}
 
 		print '</td></tr>';

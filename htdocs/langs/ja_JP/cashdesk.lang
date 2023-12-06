@@ -136,3 +136,4 @@ PrintWithoutDetails=詳細なしで印刷
 YearNotDefined=年は未定義
 TakeposBarcodeRuleToInsertProduct=製品を挿入するためのバーコードルール
 TakeposBarcodeRuleToInsertProductDesc=スキャン済バーコードから製品参照+数量を抽出するルール。<br>空（デフォルト値）の場合、アプリケーションはスキャンされたバーコードのみを使用して製品を検索する。<br><br>定義済の場合の構文規則:<br><b>ref:NB+qu:NB+qd:NB+other:NB</b><br>上記 NB はスキャン済バーコードからデータ抽出するときに使用する文字数であり: <ul><li><b>ref</b> : 製品参照</li><li><b>qu</b> : 項目追加時の設定数量(units) </li><li><b>qd</b> : 項目追加時の設定数量 (decimals)</li><li><b>other</b> : その他の文字列</li></ul>
+AlreadyPrinted=すでに印刷されている

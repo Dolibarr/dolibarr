@@ -48,7 +48,7 @@ DateDeliveryPlanned=Планирана дата за доставка
 RefDeliveryReceipt=Разписка за доставка №
 StatusReceipt=Статус
 DateReceived=Дата на получаване
-ClassifyReception=Класифициране на приема
+ClassifyReception=Classify Received
 SendShippingByEMail=Изпращане на пратка по имейл
 SendShippingRef=Изпращане на пратка %s
 ActionsOnShipping=Свързани събития
@@ -74,3 +74,8 @@ SumOfProductWeights=Общо тегло на продуктите
 # warehouse details
 DetailWarehouseNumber= Детайли за склада
 DetailWarehouseFormat= Тегло: %s (Кол.: %d)
+
+ShipmentDistribution=Shipment distribution
+
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.

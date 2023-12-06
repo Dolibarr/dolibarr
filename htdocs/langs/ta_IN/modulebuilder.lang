@@ -1,14 +1,16 @@
 # Dolibarr language file - Source file is en_US - loan
+IdModule= Module id
 ModuleBuilderDesc=இந்த கருவியை அனுபவம் வாய்ந்த பயனர்கள் அல்லது டெவலப்பர்கள் மட்டுமே பயன்படுத்த வேண்டும். இது உங்கள் சொந்த தொகுதியை உருவாக்க அல்லது திருத்துவதற்கான பயன்பாடுகளை வழங்குகிறது. மாற்று <a href="%s" target="_blank" rel="noopener noreferrer"> கைமுறை மேம்பாட்டிற்கான ஆவணம் இங்கே </a> .
 EnterNameOfModuleDesc=Enter the name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
-EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
+EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, the pages to list/add/edit/delete the object and the SQL files will be generated.
 EnterNameOfDictionaryDesc=Enter the name of the dictionary to create with no spaces. Use uppercase to separate words (For example: MyDico...). The class file, but also the SQL file will be generated.
 ModuleBuilderDesc2=தொகுதிகள் உருவாக்கப்படும்/திருத்தப்படும் பாதை (வெளிப்புற தொகுதிகளுக்கான முதல் அடைவு %s என வரையறுக்கப்பட்டுள்ளது): <strong> %s </strong>
 ModuleBuilderDesc3=உருவாக்கப்பட்ட/திருத்தக்கூடிய தொகுதிகள் கண்டறியப்பட்டன: <strong> %s </strong>
-ModuleBuilderDesc4=தொகுதி கோப்பகத்தின் மூலத்தில் <strong> %s </strong> கோப்பு இருக்கும்போது ஒரு தொகுதி 'எடிட் செய்யக்கூடியது' எனக் கண்டறியப்பட்டது.
+ModuleBuilderDesc4=A module is detected as a 'module for Module Builer' when the file <strong>%s</strong> exists in the root of the module directory
 NewModule=புதிய தொகுதி
 NewObjectInModulebuilder=புதிய பொருள்
 NewDictionary=New dictionary
+ModuleName=Module name
 ModuleKey=தொகுதி விசை
 ObjectKey=பொருள் விசை
 DicKey=Dictionary key
@@ -48,11 +50,14 @@ PathToModulePackage=தொகுதி/பயன்பாடு தொகுப�
 PathToModuleDocumentation=தொகுதி/பயன்பாட்டு ஆவணங்களின் கோப்புக்கான பாதை (%s)
 SpaceOrSpecialCharAreNotAllowed=இடைவெளிகள் அல்லது சிறப்பு எழுத்துக்கள் அனுமதிக்கப்படாது.
 FileNotYetGenerated=கோப்பு இன்னும் உருவாக்கப்படவில்லை
+GenerateCode=Generate code
 RegenerateClassAndSql=.class மற்றும் .sql கோப்புகளை கட்டாயமாக புதுப்பிக்கவும்
 RegenerateMissingFiles=விடுபட்ட கோப்புகளை உருவாக்கவும்
 SpecificationFile=ஆவணக் கோப்பு
 LanguageFile=மொழிக்கான கோப்பு
 ObjectProperties=பொருள் பண்புகள்
+Property=Propery
+PropertyDesc=A property is an attribute that characterizes an object. This attribute has a code, a label and a type with several options.
 ConfirmDeleteProperty=<strong> %s </strong> சொத்தை நிச்சயமாக நீக்க விரும்புகிறீர்களா? இது PHP வகுப்பில் குறியீட்டை மாற்றும் ஆனால் பொருளின் அட்டவணை வரையறையிலிருந்து நெடுவரிசையை அகற்றும்.
 NotNull=NULL அல்ல
 NotNullDesc=1=Set database to NOT NULL, 0=Allow null values, -1=Allow null values by forcing value to NULL if empty ('' or 0)
@@ -81,15 +86,16 @@ IsAMeasure=ஒரு அளவீடு ஆகும்
 DirScanned=கோப்பகம் ஸ்கேன் செய்யப்பட்டது
 NoTrigger=தூண்டுதல் இல்லை
 NoWidget=விட்ஜெட் இல்லை
-GoToApiExplorer=ஏபிஐ எக்ஸ்ப்ளோரர்
+ApiExplorer=API explorer
 ListOfMenusEntries=மெனு உள்ளீடுகளின் பட்டியல்
 ListOfDictionariesEntries=அகராதி உள்ளீடுகளின் பட்டியல்
 ListOfPermissionsDefined=வரையறுக்கப்பட்ட அனுமதிகளின் பட்டியல்
 SeeExamples=உதாரணங்களை இங்கே பார்க்கவும்
-EnabledDesc=இந்த புலம் செயலில் இருக்க வேண்டிய நிபந்தனை (எடுத்துக்காட்டுகள்: 1 அல்லது $conf->global->MYMODULE_MYOPTION)
-VisibleDesc=புலம் தெரிகிறதா? (எடுத்துக்காட்டுகள்: 0=எப்போதும் காணமுடியாது, 1=பட்டியல் மற்றும் உருவாக்க/புதுப்பித்தல்/பார்க்கும் படிவங்களில் தெரியும், 2=பட்டியலிலேயே தெரியும், 3=உருவாக்கும்/புதுப்பிப்பு/பார்க்கும் படிவத்தில் மட்டும் தெரியும் (பட்டியல் அல்ல), 4=பட்டியலில் தெரியும் மற்றும் புதுப்பித்தல்/பார்வை படிவம் மட்டும் (உருவாக்கவில்லை), 5=பட்டியல் இறுதிக் காட்சிப் படிவத்தில் மட்டும் தெரியும் (உருவாக்கவில்லை, புதுப்பிக்கவில்லை). <br> <br> இது ஒரு வெளிப்பாடாக இருக்கலாம், எடுத்துக்காட்டாக: <br> preg_match('/public/', $_SERVER['PHP_SELF'])?0:1 <br>
-DisplayOnPdfDesc=இணக்கமான PDF ஆவணங்களில் இந்தப் புலத்தைக் காண்பி, நீங்கள் "நிலை" புலத்துடன் நிலையை நிர்வகிக்கலாம். <br> தற்போது, அறியப்பட்ட இணக்கதன்மை பிடிஎப் மாதிரிகள் உள்ளன: eratosthene (ஆர்டர்), espadon (கப்பல்), கடற்பாசி (பொருள்), சியான் (propal / மேற்கோள்), cornas (சப்ளையர் ஆர்டர்) <br> <br> <strong> ஆவணம்: </strong> <br> 0 = <br> 1 காண்பிக்கப்படவில்லை = காட்சி <br> 2 = காட்ட மட்டுமே காலி இல்லை என்றால் <br> <br> <strong> பொறுத்தவரை ஆவணம் வரிகளை: </strong> <br> 0 = இல்லை <br> 1 = பிறகு விளக்கம் பத்தியில் 4 = காட்சி <br> விளக்கம் பிறகு <br> வரி விளக்கம் பத்தியில் 3 = காட்சி ஒரு பத்தியில் காட்டப்படும் காட்டப்படும் காலியாக இல்லாவிட்டால் மட்டுமே விளக்கம்
-DisplayOnPdf=PDF இல் காட்சி
+EnabledDesc=Condition to have this field active.<br><br>Examples:<br>1<br>isModEnabled('MAIN_MODULE_MYMODULE')<br>getDolGlobalString('MYMODULE_OPTION')==2
+VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create), 5=Visible on list end view form only (not create, not update).<br><br>Using a negative value means field is not shown by default on list but can be selected for viewing).
+ItCanBeAnExpression=It can be an expression. Example:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>$user->hasRight('holiday', 'define_holiday')?1:5
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
+DisplayOnPdf=On PDF
 IsAMeasureDesc=புலத்தின் மதிப்பை மொத்தமாக பட்டியலில் சேர்க்க முடியுமா? (எடுத்துக்காட்டுகள்: 1 அல்லது 0)
 SearchAllDesc=விரைவு தேடல் கருவியில் இருந்து தேடுவதற்கு புலம் பயன்படுத்தப்படுகிறதா? (எடுத்துக்காட்டுகள்: 1 அல்லது 0)
 SpecDefDesc=மற்ற தாவல்களால் ஏற்கனவே வரையறுக்கப்படாத உங்கள் தொகுதியுடன் நீங்கள் வழங்க விரும்பும் அனைத்து ஆவணங்களையும் இங்கே உள்ளிடவும். நீங்கள் .md அல்லது சிறந்த, பணக்கார .asciidoc தொடரியல் பயன்படுத்தலாம்.
@@ -130,26 +136,44 @@ UseSpecificEditorURL = குறிப்பிட்ட எடிட்டர�
 UseSpecificFamily = ஒரு குறிப்பிட்ட குடும்பத்தைப் பயன்படுத்தவும்
 UseSpecificAuthor = ஒரு குறிப்பிட்ட ஆசிரியரைப் பயன்படுத்தவும்
 UseSpecificVersion = ஒரு குறிப்பிட்ட ஆரம்ப பதிப்பைப் பயன்படுத்தவும்
-IncludeRefGeneration=The reference of object must be generated automatically by custom numbering rules
+IncludeRefGeneration=The reference of this object must be generated automatically by custom numbering rules
 IncludeRefGenerationHelp=Check this if you want to include code to manage the generation of the reference automatically using custom numbering rules
-IncludeDocGeneration=I want to generate some documents from templates for the object
+IncludeDocGeneration=I want the feature to generate some documents (PDF, ODT) from templates for this object
 IncludeDocGenerationHelp=இதை நீங்கள் சரிபார்த்தால், பதிவில் "ஆவணத்தை உருவாக்கு" பெட்டியைச் சேர்க்க சில குறியீடு உருவாக்கப்படும்.
-ShowOnCombobox=காம்போபாக்ஸில் மதிப்பைக் காட்டு
+ShowOnCombobox=Show value into combo boxes
 KeyForTooltip=உதவிக்குறிப்புக்கான திறவுகோல்
 CSSClass=படிவத்தை திருத்த/உருவாக்க CSS
 CSSViewClass=படிவத்தை படிக்க CSS
 CSSListClass=பட்டியலுக்கு CSS
 NotEditable=திருத்த முடியாது
 ForeignKey=வெளிநாட்டு விசை
-TypeOfFieldsHelp=Type of fields:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br>'1' means we add a + button after the combo to create the record<br>'filter' is a sql condition, example: 'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)'
+ForeignKeyDesc=If the value of this field must be guaranted to exists into another table. Enter here a value matching syntax: tablename.parentfieldtocheck
+TypeOfFieldsHelp=Example:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br>'1' means we add a + button after the combo to create the record<br>'filter' is a sql condition, example: 'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)'
+TypeOfFieldsHelpIntro=This is the type of the field/attribute.
 AsciiToHtmlConverter=Ascii க்கு HTML மாற்றி
 AsciiToPdfConverter=Ascii to PDF மாற்றி
 TableNotEmptyDropCanceled=அட்டவணை காலியாக இல்லை. டிராப் ரத்து செய்யப்பட்டது.
 ModuleBuilderNotAllowed=மாட்யூல் பில்டர் உள்ளது ஆனால் உங்கள் பயனருக்கு அனுமதிக்கப்படவில்லை.
 ImportExportProfiles=சுயவிவரங்களை இறக்குமதி மற்றும் ஏற்றுமதி
-ValidateModBuilderDesc=Set this to 1 if you want to have the method $this->validateField() of object being called to validate the content of the field during insert or upadate. Set 0 if there is no validation required.
+ValidateModBuilderDesc=Set this to 1 if you want to have the method $this->validateField() of object being called to validate the content of the field during insert or update. Set 0 if there is no validation required.
 WarningDatabaseIsNotUpdated=Warning: The database is not updated automatically, you must destroy tables and disable-enable the module to have tables recreated
 LinkToParentMenu=Parent menu (fk_xxxxmenu)
 ListOfTabsEntries=List of tab entries
 TabsDefDesc=Define here the tabs provided by your module
 TabsDefDescTooltip=The tabs provided by your module/application are defined into the array <strong>$this->tabs</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.
+BadValueForType=Bad value for type %s
+DefinePropertiesFromExistingTable=Define properties from an existing table
+DefinePropertiesFromExistingTableDesc=If a table in the database (for the object to create) already exists, you can use it to define the properties of the object.
+DefinePropertiesFromExistingTableDesc2=Keep empty if the table does not exist yet. The code generator will use different kinds of fields to build an example of table that you can edit later.
+GeneratePermissions=I want to add the rights for this object
+GeneratePermissionsHelp=generate default rights for this object
+PermissionDeletedSuccesfuly=Permission has been successfully removed
+PermissionUpdatedSuccesfuly=Permission has been successfully updated
+PermissionAddedSuccesfuly=Permission has been successfully added
+MenuDeletedSuccessfuly=Menu has been successfully deleted
+MenuAddedSuccessfuly=Menu has been successfully added
+MenuUpdatedSuccessfuly=Menu has been successfully updated
+ApiObjectDeleted=API for object %s has been successfully deleted
+CRUDRead=Read
+CRUDCreateWrite=Create or Update
+FailedToAddCodeIntoDescriptor=Failed to add code into descriptor. Check that the string comment "%s" is still present into the file.

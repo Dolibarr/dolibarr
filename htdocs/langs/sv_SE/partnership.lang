@@ -16,77 +16,81 @@
 #
 # Generic
 #
-ModulePartnershipName=Partnerskapshantering
-PartnershipDescription=Partnerskapshanteringsmodul
-PartnershipDescriptionLong= Partnerskapshanteringsmodul
-Partnership=Partnership
-AddPartnership=Lägg till partnerskap
-CancelPartnershipForExpiredMembers=Partnerskap: Avbryt partnerskap med inaktiva abonnemang
-PartnershipCheckBacklink=Partnerskap: Kontrollera hänvisningslänk
+ModulePartnershipName=Hantering av partners
+PartnershipDescription=Modul för hantering av partners
+PartnershipDescriptionLong= Modul för hantering av partners
+Partnership=Partner
+Partnerships=Partners
+AddPartnership=Lägg till partner
+CancelPartnershipForExpiredMembers=Partners: Avbryt partners med inaktiva prenumerationer
+PartnershipCheckBacklink=Partners: Kontrollera hänvisningslänk
 
 #
 # Menu
 #
-NewPartnership=Nytt partnerskap
-ListOfPartnerships=Lista över partnerskap
+NewPartnership=Nytt partner
+NewPartnershipbyWeb=Your partnership request has been added successfully. We may contact you soon...
+ListOfPartnerships=Lista över partners
 
 #
 # Admin page
 #
-PartnershipSetup=Partnerskapsupplägg
-PartnershipAbout=Om partnerskap
-PartnershipAboutPage=Om partnerskapssidan
-partnershipforthirdpartyormember=Partnerstatus måste ställas in på "tredje part" eller "medlem"
-PARTNERSHIP_IS_MANAGED_FOR=Partnerskap hanterad för
-PARTNERSHIP_BACKLINKS_TO_CHECK=Bakåtlänkar att kontrollera
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Antal dagar innan partnerskap avbryts när ett abonnemang har löpt ut
-ReferingWebsiteCheck=Kontroll av webbplatsens hänvisning
+PartnershipSetup=Inställningar för partners
+PartnershipAbout=Om partners
+PartnershipAboutPage=Partners om-sida
+partnershipforthirdpartyormember=Partnerstatus måste anges till "tredjepart" eller "medlem"
+PARTNERSHIP_IS_MANAGED_FOR=Partners hanterad åt
+PARTNERSHIP_BACKLINKS_TO_CHECK=Baklänkar att kontrollera
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Antal dagar innan partners avbryts när ett prenumeration har löpt ut
+ReferingWebsiteCheck=Kontroll av webbplatsens hänvisningar
 ReferingWebsiteCheckDesc=Du kan aktivera en funktion för att kontrollera om din partner har länkat tillbaka till er hemsida via deras egen hemsida.
+PublicFormRegistrationPartnerDesc=Dolibarr kan ge dig en offentlig URL/webbplats så att externa besökare kan begära att få bli partner.
 
 #
 # Object
 #
-DeletePartnership=Ta bort partnerskap
-PartnershipDedicatedToThisThirdParty=Partnerskap dedikerat till denna kund/leverantör
-PartnershipDedicatedToThisMember=Partnerskap tillägnad denna medlem
+DeletePartnership=Ta bort partner
+PartnershipDedicatedToThisThirdParty=Partnerskap dedikerat denna kund/leverantör
+PartnershipDedicatedToThisMember=Partnerskap dedikerat denna medlem
 DatePartnershipStart=Startdatum
 DatePartnershipEnd=Slutdatum
 ReasonDecline=Avslagsanledning
 ReasonDeclineOrCancel=Avslagsanledning
-PartnershipAlreadyExist=Partnerskap finns redan
-ManagePartnership=Hantera partnerskap
-BacklinkNotFoundOnPartnerWebsite=Backlink hittades inte på partnerwebbplatsen
+PartnershipAlreadyExist=Partner finns redan
+ManagePartnership=Hantera partner
+BacklinkNotFoundOnPartnerWebsite=Baklänk hittades inte på partners webbplats
 ConfirmClosePartnershipAsk=Är du säker på att du vill avbryta detta partnerskap?
-PartnershipType=Partnerskapstyp
-PartnershipRefApproved=Partnership %s approved
+PartnershipType=Partnertyp
+PartnershipRefApproved=Partnern %s godkänd
+KeywordToCheckInWebsite=Om du vill kontrollera att ett givet sökord finns på webbplatsen för varje partner, anger du nyckelordet här
+PartnershipDraft=Utkast
+PartnershipAccepted=Accepterad
+PartnershipRefused=Nekad
+PartnershipCanceled=Avbruten
+PartnershipManagedFor=Partnerområde
 
 #
 # Template Mail
 #
-SendingEmailOnPartnershipWillSoonBeCanceled=Partnerskap kommer snart att avbrytas
-SendingEmailOnPartnershipRefused=Partnerskap nekat
-SendingEmailOnPartnershipAccepted=Partnerskap accepterat
-SendingEmailOnPartnershipCanceled=Partnerskap avbrutet
+SendingEmailOnPartnershipWillSoonBeCanceled=Partnerskapet kommer snart att avbrytas
+SendingEmailOnPartnershipRefused=Partner nekad
+SendingEmailOnPartnershipAccepted=Partner accepterad
+SendingEmailOnPartnershipCanceled=Partnerskap avbruten
 
 YourPartnershipWillSoonBeCanceledTopic=Partnerskap kommer snart att avbrytas
-YourPartnershipRefusedTopic=Partnerskap nekat
-YourPartnershipAcceptedTopic=Partnerskap accepterat
-YourPartnershipCanceledTopic=Partnerskap avbrutet
+YourPartnershipRefusedTopic=Partner nekad
+YourPartnershipAcceptedTopic=Partner accepterad
+YourPartnershipCanceledTopic=Partnerskap avbruten
 
-YourPartnershipWillSoonBeCanceledContent=Vi informerar dig om att ditt partnerskap snart kommer att avbrytas (Backlink hittades inte)
-YourPartnershipRefusedContent=Vi vill informera dig om att parnterskapsförfrågan har blivit nekad.
-YourPartnershipAcceptedContent=Vi vill informera dig om att partnerskapsförfrågan har blivit accepterad
-YourPartnershipCanceledContent=Vi vill informera dig om att partnerskapsförfrågan har blivit avbruten
+YourPartnershipWillSoonBeCanceledContent=Vi vill informera dig om att ditt partnerskap snart kommer att avbrytas (baklänk hittades inte)
+YourPartnershipRefusedContent=Vi vill informera dig om att din förfrågan om partnerskap har nekats.
+YourPartnershipAcceptedContent=Vi vill informera dig om att din fråga om partnerskap har accepterats
+YourPartnershipCanceledContent=Vi vill informera dig om att din förfrågan om partnerskap har avbrutits
 
-CountLastUrlCheckError=Number of errors for last URL check
-LastCheckBacklink=Date of last URL check
+CountLastUrlCheckError=Antal fel för senaste URL-kontroll
+LastCheckBacklink=Datum för senaste URL-kontroll
 ReasonDeclineOrCancel=Avslagsanledning
 
-#
-# Status
-#
-PartnershipDraft=Utkast
-PartnershipAccepted=Accepterad
-PartnershipRefused=Refused
-PartnershipCanceled=Annullerad
-PartnershipManagedFor=Partnerutrymme
+NewPartnershipRequest=Ny förfrågan om partnerskap
+NewPartnershipRequestDesc=I detta formulär kan du skicka in en fråga och beägra att bli en del av vårt partnerskapsprogram. Om du behöver hjälp med att fylla i detta formulär, vänligen kontakta oss via e-post <b>%s</b>.
+

@@ -1,6 +1,7 @@
 <?php
+
 // Add line to select existing file
-if (empty($conf->global->EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES)) {
+if (!getDolGlobalString('EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES')) {
 	print '<!-- expensereport_linktofile.tpl.php -->'."\n";
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -12,7 +13,7 @@ if (empty($conf->global->EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES)) {
 	$nbLinks = Link::count($db, $object->element, $object->id);
 
 	if ($nbFiles > 0) {
-		print '<tr class="trattachnewfilenow'.(empty($tredited) ? ' oddeven nohover' : ' '.$tredited).'"'.(!GETPOSTISSET('sendit') && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? ' style="display: none"' : '').'>';
+		print '<tr class="trattachnewfilenow'.(empty($tredited) ? ' oddeven nohover' : ' '.$tredited).'"'.(!GETPOSTISSET('sendit') && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? ' style="display: none"' : '').'>';
 
 		// Num line
 		if ($action == 'editline') {
@@ -22,8 +23,9 @@ if (empty($conf->global->EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES)) {
 		// Select image section
 		print '<td colspan="'.($action == 'editline' ? $colspan - 1 : $colspan).'">';
 		//print '<span class="opacitymedium">'.$langs->trans("AttachTheNewLineToTheDocument").'</span><br>';
-		$modulepart = 'expensereport'; $maxheightmini = 48;
-		$relativepath = (!empty($object->ref) ?dol_sanitizeFileName($object->ref) : '').'/';
+		$modulepart = 'expensereport';
+		$maxheightmini = 48;
+		$relativepath = (!empty($object->ref) ? dol_sanitizeFileName($object->ref) : '').'/';
 		$filei = 0;
 		// Loop on each attached file
 		foreach ($arrayoffiles as $file) {
@@ -62,7 +64,7 @@ if (empty($conf->global->EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES)) {
 					if ($pdfexists) {
 						// Conversion du PDF en image png si fichier png non existant
 						if (!file_exists($fileimage) || (filemtime($fileimage) < filemtime($filepdf))) {
-							if (empty($conf->global->MAIN_DISABLE_PDF_THUMBS)) {		// If you experience trouble with pdf thumb generation and imagick, you can disable here.
+							if (!getDolGlobalString('MAIN_DISABLE_PDF_THUMBS')) {		// If you experience trouble with pdf thumb generation and imagick, you can disable here.
 								include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 								$ret = dol_convert_file($filepdf, 'png', $fileimage, '0'); // Convert first page of PDF into a file _preview.png
 								if ($ret < 0) {
@@ -106,7 +108,7 @@ if (empty($conf->global->EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES)) {
 			//var_dump($file['relativename']);
 			//var_dump($_FILES['userfile']['name']);
 			// If a file was just uploaded, we check to preselect it
-			if (is_array($_FILES['userfile']['name'])) {
+			if (is_array($_FILES['userfile']) && is_array($_FILES['userfile']['name'])) {
 				foreach ($_FILES['userfile']['name'] as $tmpfile) {
 					if ($file['relativename'] == (GETPOST('savingdocmask', 'alpha') ? dol_sanitizeFileName($object->ref.'-') : '').$tmpfile) {
 						$checked = ' checked';
@@ -136,8 +138,18 @@ if (empty($conf->global->EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES)) {
 
 		print '</td></tr>';
 	} else {
-		print '<tr class="oddeven nohover trattachnewfilenow"'.(!GETPOSTISSET('sendit') && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? ' style="display: none"' : '').'>';
-		print '<td colspan="'.$colspan.'">';
+		if (empty($tredited)) {
+			$css = 'oddeven nohover trattachnewfilenow';
+			$newcolspan = $colspan;
+		} else {
+			$css = 'trattachnewfilenow tredited';
+			$newcolspan = $colspan - 1;
+		}
+		print '<tr class="'.$css.'"'.(!GETPOSTISSET('sendit') && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? ' style="display: none"' : '').'>';
+		if (!empty($tredited)) {
+			print '<td></td>';
+		}
+		print '<td colspan="'.($newcolspan).'">';
 		print '<span class="opacitymedium">'.$langs->trans("NoFilesUploadedYet").'</span>';
 		print '</td></tr>';
 	}

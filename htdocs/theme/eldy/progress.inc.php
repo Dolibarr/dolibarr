@@ -29,7 +29,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-.progress.spaced{
+.progress.spaced {
 	margin-bottom: 20px;
 }
 

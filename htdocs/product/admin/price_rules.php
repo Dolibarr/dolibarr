@@ -19,6 +19,7 @@
  * This page is a tab in the setup of module Product if option PRODUIT_MULTIPRICES_ALLOW_AUTOCALC_PRICELEVEL is set.
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
@@ -29,7 +30,7 @@ $langs->loadLangs(array('admin', 'products'));
 $action = GETPOST('action', 'aZ09');
 
 // Security check
-if (!$user->admin || (empty($conf->product->enabled) && empty($conf->service->enabled))) {
+if (!$user->admin || (!isModEnabled("product") && !isModEnabled("service"))) {
 	accessforbidden();
 }
 
@@ -118,10 +119,10 @@ while ($result = $db->fetch_object($query)) {
 $title = $langs->trans('ProductServiceSetup');
 $tab = $langs->trans("ProductsAndServices");
 
-if (empty($conf->product->enabled)) {
+if (!isModEnabled("product")) {
 	$title = $langs->trans('ServiceSetup');
 	$tab = $langs->trans('Services');
-} elseif (empty($conf->service->enabled)) {
+} elseif (!isModEnabled("service")) {
 	$title = $langs->trans('ProductSetup');
 	$tab = $langs->trans('Products');
 }

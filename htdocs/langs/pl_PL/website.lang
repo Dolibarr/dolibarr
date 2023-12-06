@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - website
 Shortname=Kod
+WebsiteName=Name of the website
 WebsiteSetupDesc=Tu utwórz witryny, które chcesz użyć. Następnie, przejdź do menu Witryny, aby je edytować.
 DeleteWebsite=Skasuj stronę
 ConfirmDeleteWebsite=Czy na pewno zamierzasz usunąć tę witrynę? Wszystkie jej strony i zawartość również zostaną usunięte. Pozostawione zostaną wszelkie pliki dosłane (np. do katalogu mediów, moduł ECM, ...).
@@ -15,9 +16,9 @@ WEBSITE_HTML_HEADER=Dodanie nagłówka HTML u dołu (wspólne dla wszystkich str
 WEBSITE_ROBOT=Plik robota (robots.txt)
 WEBSITE_HTACCESS=Plik .htaccess witryny
 WEBSITE_MANIFEST_JSON=Plik manifest.json witryny
-WEBSITE_README=Plik README.md
 WEBSITE_KEYWORDSDesc=Wartości rozdziel przecinkami
-EnterHereLicenseInformation=Tu wprowadź metadane lub informacje licencyjne, które wypełnią plik README.md. Przy rozprowadzaniu Twej witryny jako szablonu, plik ten zostanie dołączony do pakietu tego szablonu.
+EnterHereReadmeInformation=Enter here a description of the website. If you distribute your website as a template, the file will be included into the temptate package.
+EnterHereLicenseInformation=Enter here the LICENSE of the code of the website. If you distribute your website as a template, the file will be included into the temptate package.
 HtmlHeaderPage=Nagłówek HTML (tylko dla tej strony)
 PageNameAliasHelp=Nazwa lub alias strony. <br> Ten alias służy również do tworzenia adresu URL wspierającego SEO, gdy witrynę obsługuje web serwer (taki jak Apacke, Nginx, ...). Użyj przycisku „<strong>%s</strong>”, aby edytować ten alias.
 EditTheWebSiteForACommonHeader=Uwaga: Jeśli chcesz zdefiniować nagłówek dla wszystkich stron, edytuj nagłówek na poziomie witryny zamiast na poziomie strony/pojemnika.
@@ -42,10 +43,12 @@ ViewPageInNewTab=Zobacz stronę w nowej zakładce
 SetAsHomePage=Ustaw jako stronę domową
 RealURL=Prawdziwy adres URL
 ViewWebsiteInProduction=Zobacz stronę używając linków ze strony głównej
+Virtualhost=Virtual host or domain name
+VirtualhostDesc=The name of the Virtual host or domain (For example: www.mywebsite.com, mybigcompany.net, ...)
 SetHereVirtualHost= <u> Użyj z Apache / NGinx / ... </u> <br> Utwórz na swoim serwerze internetowym (Apache, Nginx, ...) dedykowany wirtualny host z włączoną obsługą PHP i katalog główny na <br> <strong>%s</strong>
 ExampleToUseInApacheVirtualHostConfig=Przykład do użycia w konfiguracji hosta wirtualnego Apache:
 YouCanAlsoTestWithPHPS=<u> Używaj z wbudowanym serwerem PHP </u> <br>Gdy w środowisku rozwojowym preferujesz testowanie web strony z web serwerem wbudowanym w PHP (wymagane PHP 5.5 lub nowsze), to uruchamiaj<br> <strong> php -S 0.0.0.0:8080 -t %s</strong>
-YouCanAlsoDeployToAnotherWHP=<u>Uruchom swoją witrynę u innego dostawcy wystąpień Dolibarr</u><br>Jeśli nie masz dostępnego w internecie web serwera, takiego jak Apache lub NGinx, to możesz eksportować i importować swoją witrynę do innego wystąpienia Dolibarr u kogoś oferującego wystąpienia Dolibarr mające moduł Website w pełni zintegrowany z web serwerem. Listę niektórych dostawców wystąpień Dolibarr znajdziesz w <a href="https://saas.dolibarr.org" target="_blank">https://saas.dolibarr.org</a>
+YouCanAlsoDeployToAnotherWHP=<u>Run your web site with another Dolibarr Hosting provider</u><br>If you don't have a web server like Apache or NGinx available on internet, you can export and import your web site onto another Dolibarr instance provided by another Dolibarr hosting provider that provide full integration with the Website module. You can find a list of some Dolibarr hosting providers on <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
 CheckVirtualHostPerms=Sprawdź również, czy użytkownik wirtualnego hosta (na przykład dane www) ma <strong> %s </strong> uprawnienia do plików w <br> <strong> %s</strong>
 ReadPerm=Czytanie
 WritePerm=Zapis
@@ -60,7 +63,7 @@ YouCanEditHtmlSourceckeditor=Możesz edytować kod źródłowy HTML używając p
 YouCanEditHtmlSource= <br> <span class="fa fa-bug"> </span> Możesz dołączyć kod PHP do tego źródła za pomocą tagów <strong> &lt;? php? &gt; </strong>. Dostępne są następujące zmienne globalne: $ conf, $ db, $ mysoc, $ user, $ website, $ websitepage, $ weblangs, $ pagelangs. <br> <br> <span class="fa fa-bug"> </span> Możesz także dołączyć zawartość innej strony / kontenera o następującej składni: <br> <strong> a03900aindf7d31Contiaser? ? &gt; </strong> <br> <br> <span class="fa fa-bug"> </span> Można zrobić przekierowanie do innej strony / pojemnik z następującą składnią (Uwaga: Nie Wyjście jakiejkolwiek zawartości przed przekierowaniem): <br> <strong> &lt; php redirectToContainer ( 'alias_of_container_to_redirect_to'); ? &gt; </strong> <br> <br> <span class="fa fa-link"> </span> Aby dodać link do innej strony, użyj składni: <br> <strong> &lt;a href = "alias_of_page_to_link_to.php" &gt;mylink&lt;a&gt; </strong> <br> <br> <span class="fa fa-download"> </span> Aby umieścić link do pobrania </strong> <strong> pliku zapisanego w dokumentach <strong> </strong>, użyj <strong> document.php </strong> wrapper: <br> Przykład, dla pliku w dokumentach / ecm (należy zarejestrować), składnia jest następująca: a0342fcccfdae19bz039 = <br> ] nazwa_pliku.ext "&gt; </strong> <br> Dla pliku w dokumentach / mediach (otwarty katalog dla publicznego dostępu) składnia jest następująca: <br> <strong> a03900dfred31ecz "/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt; </strong> <br> W przypadku pliku udostępnionego za pomocą linku do udostępniania (otwarty dostęp za pomocą klucza współdzielenia hashf pliku: </strong> <br>), dla pliku udostępnionego za pomocą linku do udostępniania (otwarty dostęp przy użyciu klucza współdzielenia hashf pliku: </strong> <br>). /document.php?hashp=publicsharekeyoffile"&gt; </strong> <br> <br> <span class="fa fa-picture-o"> </span> Aby to </strong> <strong> obrazu zapisane do tych <strong> dokumentów </strong>, za pomocą przycisków <strong> viewimage.php </strong> owijający: <br> przykład w przypadku obrazu do dokumentów / media (otwarte katalog dla dostępu publicznego), składnia jest następująca: <br> <strong> &lt;img src = "/ viewimage.php? modulepart = medias&amp;file = [katalog_względny /] nazwa_pliku.ext" a0065c2c071 "a0065c2c071" a0087c2c071
 #YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource2=W przypadku obrazu udostępnionego za pomocą linku do udostępniania (otwarty dostęp przy użyciu klucza współdzielenia skrótu pliku) składnia jest następująca: <br> <strong> &lt;img src = "/ viewimage.php? Hashp = 12345679012 ..." a0012c7dcbe087c65z071
-YouCanEditHtmlSourceMore= <br> Więcej przykładów kodu HTML lub dynamicznego dostępnych w <a href="%s" target="_blank"> dokumentacji wiki </a> <br>.
+YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank" rel="noopener noreferrer external">the wiki documentation</a><br>.
 ClonePage=Powiel stronę/pojemnik
 CloneSite=Duplikuj stronę
 SiteAdded=Dodano witrynę
@@ -80,7 +83,7 @@ BlogPost=Post na blogu
 WebsiteAccount=Konto witryny
 WebsiteAccounts=Konta witryny
 AddWebsiteAccount=Utwórz konto witryny
-BackToListForThirdParty=Powrót do listy dla firmy zewnętrznej
+BackToListForThirdParty=Back to list for the third parties
 DisableSiteFirst=Najpierw wyłącz witrynę
 MyContainerTitle=Tytuł mojej witryny
 AnotherContainer=W ten sposób można dołączyć zawartość innej web strony/pojemnika (może pojawić się błąd, gdy włączysz obsługę kodu dynamicznego a wbudowany podrzędny pojemnik nie istnieje)
@@ -137,7 +140,7 @@ PagesRegenerated=%s strony / kontenery zostały ponownie wygenerowane
 RegenerateWebsiteContent=Zregeneruj pliki pamięci podręcznej witryny internetowej
 AllowedInFrames=Dozwolone w ramkach
 DefineListOfAltLanguagesInWebsiteProperties=Zdefiniuj listę wszystkich dostępnych języków we właściwościach witryny internetowej.
-GenerateSitemaps=Wygeneruj plik mapy witryny internetowej
+GenerateSitemaps=Generate website sitemap.xml file
 ConfirmGenerateSitemaps=Jeśli potwierdzisz, usuniesz istniejący plik mapy witryny ...
 ConfirmSitemapsCreation=Potwierdź wygenerowanie mapy witryny
 SitemapGenerated=Wygenerowano plik mapy witryny <b>%s</b>
@@ -145,3 +148,15 @@ ImportFavicon=Favicon
 ErrorFaviconType=Favicon musi być w formacie PNG
 ErrorFaviconSize=Favicon musi mieć rozmiar 16x16, 32x32 lub 64x64
 FaviconTooltip=Prześlij obraz, który musi być w formacie PNG (16x16, 32x32 lub 64x64)
+NextContainer=Next page/container
+PreviousContainer=Previous page/container
+WebsiteMustBeDisabled=The website must have the status "%s"
+WebpageMustBeDisabled=The web page must have the status "%s"
+SetWebsiteOnlineBefore=When website is offline, all pages are offline. Change status of website first.
+Booking=Booking
+Reservation=Reservation
+PagesViewedPreviousMonth=Pages viewed (previous month)
+PagesViewedTotal=Pages viewed (total)
+Visibility=Widoczność
+Everyone=Everyone
+AssignedContacts=Assigned contacts

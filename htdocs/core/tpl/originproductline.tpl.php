@@ -32,12 +32,12 @@ print '<td class="linecolref">'.$this->tpl['label'].'</td>';
 print '<td class="linecoldescription">'.$this->tpl['description'].'</td>';
 print '<td class="linecolvat right">'.$this->tpl['vat_rate'].'</td>';
 print '<td class="linecoluht right">'.$this->tpl['price'].'</td>';
-if (!empty($conf->multicurrency->enabled)) {
+if (isModEnabled("multicurrency")) {
 	print '<td class="linecoluht_currency right">'.$this->tpl['multicurrency_price'].'</td>';
 }
 
 print '<td class="linecolqty right">'.$this->tpl['qty'].'</td>';
-if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	print '<td class="linecoluseunit left">'.$langs->trans($this->tpl['unit']).'</td>';
 }
 

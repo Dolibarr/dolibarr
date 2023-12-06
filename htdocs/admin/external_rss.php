@@ -28,6 +28,7 @@
  *      \brief      Page to setupe module ExternalRss
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/rssparser.class.php';
@@ -295,9 +296,13 @@ if ($resql) {
 			$imageurl = $rssparser->getImageUrl();
 			$linkrss = $rssparser->getLink();
 			if (!preg_match('/^http/', $imageurl)) {
-				$imageurl = $linkrss.$imageurl;
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+				if (image_format_supported($imageurl) >= 0) {
+					// If we are sure imageurl is a path to an image file, and if it does not start with http, we append root url to it.
+					$imageurl = $linkrss.$imageurl;
+				}
 			}
-			if ($imageurl) {
+			if ($imageurl && preg_match('/^http/', $imageurl)) {
 				print '<img height="32" src="'.$imageurl.'">';
 			} else {
 				print $langs->trans("None");

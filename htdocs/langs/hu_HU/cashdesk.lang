@@ -136,3 +136,4 @@ PrintWithoutDetails=Nyomtatás részletek nélkül
 YearNotDefined=Az év nincs megadva
 TakeposBarcodeRuleToInsertProduct=Vonalkód szabály a termék beillesztéséhez
 TakeposBarcodeRuleToInsertProductDesc=Szabály a termékreferencia + mennyiség kinyerésére a beolvasott vonalkódból. <br> Ha üres (alapértelmezett érték), az alkalmazás a teljes beolvasott vonalkódot használja a termék megtalálásához. <br> <br> Ha definiálva van, szintaxis kell: <br> <b> hiv.: NB + qu: NB + qd NB + egyéb: NB </b> <br> ahol NB karakterek száma használni kinyeri az adatokat a beszkennelt vonalkód: <ul> <li> <b> hiv. </b>: termék hivatkozási </li> <li> <b> qu </b>: mennyiség beillesztés közben tétel (egység) <l/i> <li> <b> qd </b>: mennyiség beillesztés közben tétel (tizedes) </li> <li> <b> más </b>: mások karakter </li> </ul>
+AlreadyPrinted=Már kinyomtatva

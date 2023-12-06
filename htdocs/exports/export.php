@@ -76,7 +76,8 @@ $entitytoicon = array(
 	'contract_line' => 'contract',
 	'translation'  => 'generic',
 	'bomm'         => 'bom',
-	'bomline'      => 'bom'
+	'bomline'      => 'bom',
+	'conferenceorboothattendee' => 'contact'
 );
 
 // Translation code, array duplicated in import.php, was not synchronized, TODO put it somewhere only once
@@ -125,7 +126,8 @@ $entitytolang = array(
 	'contract_line'=> 'ContractLine',
 	'translation'  => 'Translation',
 	'bom'          => 'BOM',
-	'bomline'      => 'BOMLine'
+	'bomline'      => 'BOMLine',
+	'conferenceorboothattendee' => 'Attendee'
 );
 
 $array_selected = isset($_SESSION["export_selected_fields"]) ? $_SESSION["export_selected_fields"] : array();
@@ -133,7 +135,7 @@ $array_filtervalue = isset($_SESSION["export_filtered_fields"]) ? $_SESSION["exp
 $datatoexport = GETPOST("datatoexport", "aZ09");
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$step = GETPOST("step", "int") ?GETPOST("step", "int") : 1;
+$step = GETPOST("step", "int") ? GETPOST("step", "int") : 1;
 $export_name = GETPOST("export_name", "alphanohtml");
 $hexa = GETPOST("hexa", "alpha");
 $exportmodelid = GETPOST("exportmodelid", "int");
@@ -267,7 +269,8 @@ if ($step == 1 || $action == 'cleanselect') {
 }
 
 if ($action == 'builddoc') {
-	$max_execution_time_for_importexport = (empty($conf->global->EXPORT_MAX_EXECUTION_TIME) ? 300 : $conf->global->EXPORT_MAX_EXECUTION_TIME); // 5mn if not defined
+	$separator = GETPOST('delimiter', 'alpha');
+	$max_execution_time_for_importexport = (!getDolGlobalString('EXPORT_MAX_EXECUTION_TIME') ? 300 : $conf->global->EXPORT_MAX_EXECUTION_TIME); // 5mn if not defined
 	$max_time = @ini_get("max_execution_time");
 	if ($max_time && $max_time < $max_execution_time_for_importexport) {
 		dol_syslog("max_execution_time=".$max_time." is lower than max_execution_time_for_importexport=".$max_execution_time_for_importexport.". We try to increase it dynamically.");
@@ -275,7 +278,7 @@ if ($action == 'builddoc') {
 	}
 
 	// Build export file
-	$result = $objexport->build_file($user, GETPOST('model', 'alpha'), $datatoexport, $array_selected, $array_filtervalue);
+	$result = $objexport->build_file($user, GETPOST('model', 'alpha'), $datatoexport, $array_selected, $array_filtervalue, '', $separator);
 	if ($result < 0) {
 		setEventMessages($objexport->error, $objexport->errors, 'errors');
 		$sqlusedforexport = $objexport->sqlusedforexport;
@@ -451,7 +454,7 @@ if ($step == 1 || !$datatoexport) {
 			print $label;
 			print '</td><td class="right">';
 			if ($objexport->array_export_perms[$key]) {
-				print '<a href="'.DOL_URL_ROOT.'/exports/export.php?step=2&module_position='.$objexport->array_export_module[$key]->module_position.'&datatoexport='.$objexport->array_export_code[$key].'">'.img_picto($langs->trans("NewExport"), 'next', 'class="fa-15x"').'</a>';
+				print '<a href="'.DOL_URL_ROOT.'/exports/export.php?step=2&module_position='.$objexport->array_export_module[$key]->module_position.'&datatoexport='.$objexport->array_export_code[$key].'">'.img_picto($langs->trans("NewExport"), 'next', 'class="fa-15"').'</a>';
 			} else {
 				print '<span class="opacitymedium">'.$langs->trans("NotEnoughPermissions").'</span>';
 			}
@@ -527,7 +530,7 @@ if ($step == 2 && $datatoexport) {
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Entities").'</td>';
+	print '<td>'.$langs->trans("Object").'</td>';
 	print '<td>'.$langs->trans("ExportableFields").'</td>';
 	print '<td width="100" class="center">';
 	print '<a class="liste_titre commonlink" title='.$langs->trans("All").' alt='.$langs->trans("All").' href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=selectfield&field=all">'.$langs->trans("All")."</a>";
@@ -1030,7 +1033,7 @@ if ($step == 4 && $datatoexport) {
 		$sql = "SELECT rowid, label, fk_user, entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."export_model";
 		$sql .= " WHERE type = '".$db->escape($datatoexport)."'";
-		if (empty($conf->global->EXPORTS_SHARE_MODELS)) {	// EXPORTS_SHARE_MODELS means all templates are visible, whatever is owner.
+		if (!getDolGlobalString('EXPORTS_SHARE_MODELS')) {	// EXPORTS_SHARE_MODELS means all templates are visible, whatever is owner.
 			$sql .= " AND fk_user IN (0, ".((int) $user->id).")";
 		}
 		$sql .= " ORDER BY rowid";
@@ -1180,14 +1183,15 @@ if ($step == 5 && $datatoexport) {
 	print '<br>';
 
 	// List of available export formats
-	$htmltabloflibs = '<table class="noborder centpercent">';
+	$htmltabloflibs = '<!-- Table with available export formats --><br>';
+	$htmltabloflibs .= '<table class="noborder centpercent nomarginbottom">';
 	$htmltabloflibs .= '<tr class="liste_titre">';
 	$htmltabloflibs .= '<td>'.$langs->trans("AvailableFormats").'</td>';
 	$htmltabloflibs .= '<td>'.$langs->trans("LibraryUsed").'</td>';
 	$htmltabloflibs .= '<td class="right">'.$langs->trans("LibraryVersion").'</td>';
 	$htmltabloflibs .= '</tr>'."\n";
 
-	$liste = $objmodelexport->liste_modeles($db);
+	$liste = $objmodelexport->listOfAvailableExportFormat($db);
 	$listeall = $liste;
 	foreach ($listeall as $key => $val) {
 		if (preg_match('/__\(Disabled\)__/', $listeall[$key])) {
@@ -1204,7 +1208,7 @@ if ($step == 5 && $datatoexport) {
 		$htmltabloflibs .= '<td class="right">'.$objmodelexport->getLibVersionForKey($key).'</td>';
 		$htmltabloflibs .= '</tr>'."\n";
 	}
-	$htmltabloflibs .= '</table>';
+	$htmltabloflibs .= '</table><br>';
 
 	print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NowClickToGenerateToBuildExportFile"), $htmltabloflibs, 1, 'help', '', 0, 2, 'helphonformat').'</span>';
 	//print $htmltabloflibs;

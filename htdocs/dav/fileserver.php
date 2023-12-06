@@ -66,13 +66,12 @@ if (empty($conf->dav->enabled)) {
 	accessforbidden();
 }
 
-
 // Restrict API to some IPs
-if (!empty($conf->global->DAV_RESTRICT_ON_IP)) {
+if (getDolGlobalString('DAV_RESTRICT_ON_IP')) {
 	$allowedip = explode(' ', $conf->global->DAV_RESTRICT_ON_IP);
 	$ipremote = getUserRemoteIP();
 	if (!in_array($ipremote, $allowedip)) {
-		dol_syslog('Remote ip is '.$ipremote.', not into list '.$conf->global->DAV_RESTRICT_ON_IP);
+		dol_syslog('Remote ip is '.$ipremote.', not into list ' . getDolGlobalString('DAV_RESTRICT_ON_IP'));
 		print 'DAV not allowed from the IP '.$ipremote;
 		header('HTTP/1.1 503 DAV not allowed from your IP '.$ipremote);
 		//print $conf->global->DAV_RESTRICT_ON_IP;
@@ -93,8 +92,7 @@ $tmpDir = $conf->dav->multidir_output[$entity]; // We need root dir, not a dir t
 
 // Authentication callback function
 $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function ($username, $password) {
-	global $user;
-	global $conf;
+	global $user, $conf;
 	global $dolibarr_main_authentication, $dolibarr_auto_user;
 
 	if (empty($user->login)) {
@@ -102,7 +100,7 @@ $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function ($username, $p
 		return false;
 	}
 	if ($user->socid > 0) {
-		dol_syslog("Failed to authenticate to DAV, use is an external user", LOG_WARNING);
+		dol_syslog("Failed to authenticate to DAV, user is an external user", LOG_WARNING);
 		return false;
 	}
 	if ($user->login != $username) {
@@ -133,10 +131,31 @@ $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function ($username, $p
 		return false;
 	}
 
+	// Check if user status is enabled
+	if ($user->statut != $user::STATUS_ENABLED) {
+		// Status is disabled
+		dol_syslog("The user has been disabled.");
+		return false;
+	}
+
+	// Check if session was unvalidated by a password change
+	if (($user->flagdelsessionsbefore && !empty($_SESSION["dol_logindate"]) && $user->flagdelsessionsbefore > $_SESSION["dol_logindate"])) {
+		// Session is no more valid
+		dol_syslog("The user has a date for session invalidation = ".$user->flagdelsessionsbefore." and a session date = ".$_SESSION["dol_logindate"].". We must invalidate its sessions.");
+		return false;
+	}
+
+	// Check date validity
+	if ($user->isNotIntoValidityDateRange()) {
+		// User validity dates are no more valid
+		dol_syslog("The user login has a validity between [".$user->datestartvalidity." and ".$user->dateendvalidity."], curren date is ".dol_now());
+		return false;
+	}
+
 	return true;
 });
 
-$authBackend->setRealm(constant('DOL_APPLICATION_TITLE'));
+$authBackend->setRealm(constant('DOL_APPLICATION_TITLE').' - WebDAV');
 
 
 
@@ -152,13 +171,13 @@ $nodes = array();
 
 // Enable directories and features according to DAV setup
 // Public dir
-if (!empty($conf->global->DAV_ALLOW_PUBLIC_DIR)) {
+if (getDolGlobalString('DAV_ALLOW_PUBLIC_DIR')) {
 	$nodes[] = new \Sabre\DAV\FS\Directory($publicDir);
 }
 // Private dir
 $nodes[] = new \Sabre\DAV\FS\Directory($privateDir);
 // ECM dir
-if (!empty($conf->ecm->enabled) && !empty($conf->global->DAV_ALLOW_ECM_DIR)) {
+if (isModEnabled('ecm') && getDolGlobalString('DAV_ALLOW_ECM_DIR')) {
 	$nodes[] = new \Sabre\DAV\FS\Directory($ecmDir);
 }
 
@@ -188,7 +207,7 @@ if (isset($baseUri)) {
 }
 
 // Add authentication function
-if ((empty($conf->global->DAV_ALLOW_PUBLIC_DIR)
+if ((!getDolGlobalString('DAV_ALLOW_PUBLIC_DIR')
 	|| !preg_match('/'.preg_quote(DOL_URL_ROOT.'/dav/fileserver.php/public', '/').'/', $_SERVER["PHP_SELF"]))
 	&& !preg_match('/^sabreAction=asset&assetName=[a-zA-Z0-9%\-\/]+\.(png|css|woff|ico|ttf)$/', $_SERVER["QUERY_STRING"])	// URL for Sabre browser resources
 	) {
@@ -200,8 +219,8 @@ $lockBackend = new \Sabre\DAV\Locks\Backend\File($tmpDir.'/.locksdb');
 $lockPlugin = new \Sabre\DAV\Locks\Plugin($lockBackend);
 $server->addPlugin($lockPlugin);
 
-// Support for html frontend
-if (empty($conf->global->DAV_DISABLE_BROWSER)) {
+// Support for the html browser
+if (!getDolGlobalString('DAV_DISABLE_BROWSER')) {
 	$browser = new \Sabre\DAV\Browser\Plugin();
 	$server->addPlugin($browser);
 }

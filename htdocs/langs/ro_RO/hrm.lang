@@ -12,7 +12,7 @@ OpenEtablishment=Deschide sediu
 CloseEtablishment=Închide sediu
 # Dictionary
 DictionaryPublicHolidays=Concediu - Sărbători legale
-DictionaryDepartment=HRM - Listă departamente
+DictionaryDepartment=HRM - Unitate organizațională
 DictionaryFunction=HRM - Joburi disponibile
 # Module
 Employees=Angajaţi
@@ -70,9 +70,9 @@ RequiredSkills=Abilităţi necesare pentru acest job
 UserRank=Rang utilizator
 SkillList=Listă aptitudini
 SaveRank=Salvare rang
-knowHow=Know how
-HowToBe=Cum să fie
-knowledge=Cunoştinţe
+TypeKnowHow=Know how
+TypeHowToBe=Cum să fie
+TypeKnowledge=Cunoştinţe
 AbandonmentComment=Comentariu abandon
 DateLastEval=Data ultimei evaluări
 NoEval=Nicio evaluare efectuată pentru acest angajat
@@ -88,3 +88,5 @@ DeleteSkill = Aptitudine ştearsă
 SkillsExtraFields=Atribute suplimentare (Competenţe)
 JobsExtraFields=Atribute suplimentare (Angajaţi)
 EvaluationsExtraFields=Atribute suplimentare (Evaluări)
+NeedBusinessTravels=Necesar călătorii de afaceri
+NoDescription=Nicio descriere

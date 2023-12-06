@@ -27,6 +27,7 @@
  *	\brief      Test if file conf can be modified and if does not exists, test if install process can create it
  */
 
+define('ALLOWED_IF_UPGRADE_UNLOCK_FOUND', 1);
 include_once 'inc.php';
 
 global $langs;
@@ -36,7 +37,7 @@ $allowinstall = 0;
 $allowupgrade = false;
 $checksok = 1;
 
-$setuplang = GETPOST("selectlang", 'aZ09', 3) ?GETPOST("selectlang", 'aZ09', 3) : $langs->getDefaultLang();
+$setuplang = GETPOST("selectlang", 'aZ09', 3) ? GETPOST("selectlang", 'aZ09', 3) : $langs->getDefaultLang();
 $langs->setDefaultLang($setuplang);
 
 $langs->load("install");
@@ -80,15 +81,15 @@ if (!empty($useragent)) {
 }
 
 
-// Check PHP version
-$arrayphpminversionerror = array(5, 5, 0);
-$arrayphpminversionwarning = array(5, 6, 0);
+// Check PHP version min
+$arrayphpminversionerror = array(7, 0, 0);
+$arrayphpminversionwarning = array(7, 1, 0);
 if (versioncompare(versionphparray(), $arrayphpminversionerror) < 0) {        // Minimum to use (error if lower)
 	print '<img src="../theme/eldy/img/error.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionerror));
 	$checksok = 0; // 0=error, 1=warning
 } elseif (versioncompare(versionphparray(), $arrayphpminversionwarning) < 0) {    // Minimum supported (warning if lower)
 	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionwarning));
-	$checksok = 0; // 0=error, 1=warning
+	$checksok = 1; // 0=error, 1=warning
 } else {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPVersion")." ".versiontostring(versionphparray());
 }
@@ -96,6 +97,14 @@ if (empty($force_install_nophpinfo)) {
 	print ' (<a href="phpinfo.php" target="_blank" rel="noopener noreferrer">'.$langs->trans("MoreInformation").'</a>)';
 }
 print "<br>\n";
+
+// Check PHP version max
+$arrayphpmaxversionwarning = array(8, 2, 0);
+if (versioncompare(versionphparray(), $arrayphpmaxversionwarning) > 0 && versioncompare(versionphparray(), $arrayphpmaxversionwarning) < 3) {        // Maximum to use (warning if higher)
+	print '<img src="../theme/eldy/img/error.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPVersionTooHigh", versiontostring($arrayphpmaxversionwarning));
+	$checksok = 1; // 0=error, 1=warning
+	print "<br>\n";
+}
 
 
 // Check PHP support for $_GET and $_POST
@@ -140,17 +149,16 @@ if (!extension_loaded("json")) {
 if (!function_exists("imagecreate")) {
 	$langs->load("errors");
 	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "GD")."<br>\n";
-	// $checksok = 0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
+	// $checksok = 0;       // If ko, just warning. So check must still be 1 (otherwise no way to install)
 } else {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "GD")."<br>\n";
 }
-
 
 // Check if Curl is supported
 if (!function_exists("curl_init")) {
 	$langs->load("errors");
 	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "Curl")."<br>\n";
-	// $checksok = 0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
+	// $checksok = 0;       // If ko, just warning. So check must still be 1 (otherwise no way to install)
 } else {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "Curl")."<br>\n";
 }
@@ -162,11 +170,11 @@ if (!function_exists("easter_date")) {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "Calendar")."<br>\n";
 }
 
-// Check if Curl is supported
+// Check if Xml is supported
 if (!function_exists("simplexml_load_string")) {
 	$langs->load("errors");
 	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "Xml")."<br>\n";
-	// $checksok = 0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
+	// $checksok = 0;       // If ko, just warning. So check must still be 1 (otherwise no way to install)
 } else {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "Xml")."<br>\n";
 }
@@ -180,7 +188,7 @@ if (!function_exists("utf8_encode")) {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "UTF8")."<br>\n";
 }
 
-// Check if intl methods are supported
+// Check if intl methods are supported if install is not from DoliWamp. TODO Why ?
 if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@localhost') {
 	if (!function_exists("locale_get_primary_language") || !function_exists("locale_get_region")) {
 		$langs->load("errors");
@@ -191,19 +199,20 @@ if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@loc
 	}
 }
 
-// Check if Curl is supported
+// Check if Imap is supported
 if (!function_exists("imap_open")) {
 	$langs->load("errors");
 	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "IMAP")."<br>\n";
-	// $checksok = 0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
+	// $checksok = 0;       // If ko, just warning. So check must still be 1 (otherwise no way to install)
 } else {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "IMAP")."<br>\n";
 }
 
+// Check if Zip is supported
 if (!class_exists('ZipArchive')) {
 	$langs->load("errors");
 	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "ZIP")."<br>\n";
-	// $checksok = 0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
+	// $checksok = 0;       // If ko, just warning. So check must still be 1 (otherwise no way to install)
 } else {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "ZIP")."<br>\n";
 }
@@ -350,7 +359,7 @@ if (!file_exists($conffile)) {
 					$conf->db->name = $dolibarr_main_db_name;
 					$conf->db->user = $dolibarr_main_db_user;
 					$conf->db->pass = $dolibarr_main_db_pass;
-					$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
+					$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
 					if ($db->connected && $db->database_selected) {
 						$ok = true;
 					}
@@ -383,8 +392,8 @@ if (!file_exists($conffile)) {
 		}
 
 		// Show title
-		if (!empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || !empty($conf->global->MAIN_VERSION_LAST_INSTALL)) {
-			print $langs->trans("VersionLastUpgrade").': <b><span class="ok">'.(empty($conf->global->MAIN_VERSION_LAST_UPGRADE) ? $conf->global->MAIN_VERSION_LAST_INSTALL : $conf->global->MAIN_VERSION_LAST_UPGRADE).'</span></b> - ';
+		if (getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') || getDolGlobalString('MAIN_VERSION_LAST_INSTALL')) {
+			print $langs->trans("VersionLastUpgrade").': <b><span class="ok">'.(!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') ? $conf->global->MAIN_VERSION_LAST_INSTALL : $conf->global->MAIN_VERSION_LAST_UPGRADE).'</span></b> - ';
 			print $langs->trans("VersionProgram").': <b><span class="ok">'.DOL_VERSION.'</span></b>';
 			//print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired"));
 			print '<br>';

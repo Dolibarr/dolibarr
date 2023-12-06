@@ -40,7 +40,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
  */
 class pdf_proforma extends pdf_eratosthene
 {
-
 	/**
 	 *	Constructor
 	 *

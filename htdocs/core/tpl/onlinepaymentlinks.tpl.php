@@ -30,11 +30,11 @@ print '<u>'.$langs->trans("FollowingUrlAreAvailableToMakePayments").':</u><br><b
 print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePaymentOnFreeAmount", $servicename).':</span><br>';
 print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'free')."</strong><br><br>\n";
 
-if (!empty($conf->commande->enabled)) {
+if (isModEnabled('commande')) {
 	print '<div id="order"></div>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePaymentOnOrder", $servicename).':</span><br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'order')."</strong><br>\n";
-	if (!empty($conf->global->PAYMENT_SECURITY_TOKEN) && !empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
+	if (getDolGlobalString('PAYMENT_SECURITY_TOKEN') && getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
 		$langs->load("orders");
 		print '<form action="'.$_SERVER["PHP_SELF"].'#order" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -56,7 +56,7 @@ if (isModEnabled('facture')) {
 	print '<div id="invoice"></div>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePaymentOnInvoice", $servicename).':</span><br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'invoice')."</strong><br>\n";
-	if (!empty($conf->global->PAYMENT_SECURITY_TOKEN) && !empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
+	if (getDolGlobalString('PAYMENT_SECURITY_TOKEN') && getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
 		$langs->load("bills");
 		print '<form action="'.$_SERVER["PHP_SELF"].'#invoice" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -74,11 +74,11 @@ if (isModEnabled('facture')) {
 	}
 	print '<br>';
 }
-if (!empty($conf->contrat->enabled)) {
+if (isModEnabled('contrat')) {
 	print '<div id="contractline"></div>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePaymentOnContractLine", $servicename).':</span><br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'contractline')."</strong><br>\n";
-	if (!empty($conf->global->PAYMENT_SECURITY_TOKEN) && !empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
+	if (getDolGlobalString('PAYMENT_SECURITY_TOKEN') && getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
 		$langs->load("contracts");
 		print '<form action="'.$_SERVER["PHP_SELF"].'#contractline" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -96,11 +96,11 @@ if (!empty($conf->contrat->enabled)) {
 	}
 	print '<br>';
 }
-if (!empty($conf->adherent->enabled)) {
+if (isModEnabled('adherent')) {
 	print '<div id="membersubscription"></div>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePaymentOnMemberSubscription", $servicename).':</span><br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'membersubscription')."</strong><br>\n";
-	if (!empty($conf->global->PAYMENT_SECURITY_TOKEN) && !empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
+	if (getDolGlobalString('PAYMENT_SECURITY_TOKEN') && getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
 		$langs->load("members");
 		print '<form action="'.$_SERVER["PHP_SELF"].'#membersubscription" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -118,11 +118,11 @@ if (!empty($conf->adherent->enabled)) {
 	}
 	print '<br>';
 }
-if (!empty($conf->don->enabled)) {
+if (isModEnabled('don')) {
 	print '<div id="donation"></div>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePaymentOnDonation", $servicename).':</span><br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'donation')."</strong><br>\n";
-	if (!empty($conf->global->PAYMENT_SECURITY_TOKEN) && !empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
+	if (getDolGlobalString('PAYMENT_SECURITY_TOKEN') && getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
 		$langs->load("members");
 		print '<form action="'.$_SERVER["PHP_SELF"].'#donation" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -141,21 +141,11 @@ if (!empty($conf->don->enabled)) {
 	print '<br>';
 }
 
-if (!empty($conf->use_javascript_ajax)) {
-	print "\n".'<script>';
-	print '$(document).ready(function () {
-		$("#generate_token").click(function() {
-            	$.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
-            		action: \'getrandompassword\',
-            		generic: true
-				},
-				function(token) {
-					$("#PAYMENT_SECURITY_TOKEN").val(token);
-				});
-            });
-    	});';
-	print '</script>';
-}
+$constname = 'PAYMENT_SECURITY_TOKEN';
+
+// Add button to autosuggest a key
+include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+print dolJSToSetRandomPassword($constname);
 
 print info_admin($langs->trans("YouCanAddTagOnUrl"));
 

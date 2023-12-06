@@ -43,6 +43,8 @@ function check_user_password_http($usertotest, $passwordtotest, $entitytotest)
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
+		// Note: Test on validity is done later natively with isNotIntoValidityDateRange() by core after calling checkLoginPassEntity() that call this method
+		/*
 		$tmpuser = new User($db);
 		$tmpuser->fetch('', $login, '', 1, ($entitytotest > 0 ? $entitytotest : -1));
 
@@ -59,7 +61,30 @@ function check_user_password_http($usertotest, $passwordtotest, $entitytotest)
 			$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginDateValidity");
 			return '--bad-login-validity--';
 		}
+		*/
 	}
 
 	return $login;
+}
+
+
+/**
+ * Decode the value found into the Authorization HTTP header.
+ * Ex: "Authorization: Basic bG9naW46cGFzcw==", $value is "Basic bG9naW46cGFzcw==" and after base64decode is "login:pass"
+ * Note: the $_SERVER["REMOTE_USER"] contains only the login used in the HTTP Basic form
+ * Method not used yet, but we keep it for some dev/test purposes.
+ *
+ * @param 	string	$value 		Ex: $_SERVER["REMOTE_USER"]
+ * @return 	Object 				object.login & object.password
+ */
+function decodeHttpBasicAuth($value)
+{
+	$encoded_basic_auth = substr($value, 6);	// Remove the "Basic " string
+	$decoded_basic_auth = base64_decode($encoded_basic_auth);
+	$credentials_basic_auth = explode(':', $decoded_basic_auth);
+
+	return (object) [
+		'username'=> $credentials_basic_auth[0],
+		'password' => $credentials_basic_auth[1]
+	];
 }

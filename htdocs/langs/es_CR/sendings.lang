@@ -1,0 +1,6 @@
+# Dolibarr language file - Source file is en_US - sendings
+StatusSendingCanceled=Cancelado
+StatusSendingCanceledShort=Cancelado
+StatusSendingProcessed=Procesada
+StatusSendingValidatedShort=Validada
+StatusSendingProcessedShort=Procesada

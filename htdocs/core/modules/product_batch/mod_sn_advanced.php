@@ -55,9 +55,10 @@ class mod_sn_advanced extends ModeleNumRefBatch
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Texte descripif
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $conf, $langs, $db;
 
@@ -66,7 +67,7 @@ class mod_sn_advanced extends ModeleNumRefBatch
 		$form = new Form($db);
 
 		// We get cursor rule
-		$mask = isset($conf->global->SN_ADVANCED_MASK) ? $conf->global->SN_ADVANCED_MASK : '';
+		$mask = getDolGlobalString('SN_ADVANCED_MASK');
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -85,11 +86,11 @@ class mod_sn_advanced extends ModeleNumRefBatch
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskSN" value="'.$mask.'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button" value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button" value="'.$langs->trans("Modify").'"></td>';
 
 		// Option to enable custom masks per product
 		$texte .= '<td class="right">';
-		if (!empty($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS)) {
+		if (getDolGlobalString('PRODUCTBATCH_SN_USE_PRODUCT_MASKS')) {
 			$texte .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmaskssn&token='.newToken().'&value=0">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 		} else {
 			$texte .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmaskssn&token='.newToken().'&value=1">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
@@ -132,7 +133,7 @@ class mod_sn_advanced extends ModeleNumRefBatch
 	 * 	Return next free value
 	 *
 	 *  @param	Societe		$objsoc	    Object thirdparty
-	 *  @param  Object		$object		Object we need next value for
+	 *  @param  Productlot	$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
@@ -142,16 +143,26 @@ class mod_sn_advanced extends ModeleNumRefBatch
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// We get cursor rule
-		$mask = isset($conf->global->SN_ADVANCED_MASK) ? $conf->global->SN_ADVANCED_MASK : '';
+		$mask = getDolGlobalString('SN_ADVANCED_MASK');
 
-		if (!$mask)	{
+		$filter = '';
+		if (getDolGlobalString('PRODUCTBATCH_SN_USE_PRODUCT_MASKS') && !empty($object->fk_product)) {
+			$product = new Product($db);
+			$res = $product->fetch($object->fk_product);
+			if ($res > 0 && !empty($product->batch_mask)) {
+				$mask = $product->batch_mask;
+				$filter = '';
+			}
+		}
+
+		if (!$mask) {
 			$this->error = 'NotConfigured';
 			return 0;
 		}
 
 		$date = dol_now();
 
-		$numFinal = get_next_value($db, $mask, 'product_lot', 'batch', '', null, $date);
+		$numFinal = get_next_value($db, $mask, 'product_lot', 'batch', $filter, null, $date);
 
 		return  $numFinal;
 	}

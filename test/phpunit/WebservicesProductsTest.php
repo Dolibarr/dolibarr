@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +43,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
 $conf->global->MAIN_UMASK='0666';
 
-if (empty($conf->service->enabled)) {
+if (!isModEnabled('service')) {
 	print "Error: Module service must be enabled.\n";
 	exit(1);
 }
@@ -65,11 +66,12 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return DateLibTest
+	 * @param 	string	$name		Name
+	 * @return WebservicesProductsTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -88,7 +90,7 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
@@ -101,7 +103,7 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -114,7 +116,7 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return  void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -130,7 +132,7 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return  void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}
@@ -194,7 +196,7 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
 			echo $exception;
 			$result=0;
 		}
-		if (! $result || ! empty($result['faultstring']) || $result['result']['result_code'] != 'OK') {
+		if (! $result || !empty($result['faultstring']) || $result['result']['result_code'] != 'OK') {
 			//var_dump($soapclient);
 			print $soapclient->error_str;
 			print "\n<br>\n";
@@ -257,7 +259,7 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
 			echo $exception;
 			$result=0;
 		}
-		if (! $result || ! empty($result['faultstring'])) {
+		if (! $result || !empty($result['faultstring'])) {
 			//var_dump($soapclient);
 			print $soapclient->error_str;
 			print "\n<br>\n";
@@ -320,7 +322,7 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
 			echo $exception;
 			$result=0;
 		}
-		if (! $result || ! empty($result['faultstring']) || $result['result']['result_code'] != 'OK') {
+		if (! $result || !empty($result['faultstring']) || $result['result']['result_code'] != 'OK') {
 			//var_dump($soapclient);
 			print 'Error: '.$soapclient->error_str;
 			print "\n<br>\n";

@@ -31,7 +31,6 @@
  */
 class PrestaShopWebservice
 {
-
 	/** @var string Shop URL */
 	protected $url;
 
@@ -206,7 +205,7 @@ class PrestaShopWebservice
 	 */
 	public function printDebug($title, $content)
 	{
-		echo '<div style="display:table;background:#CCC;font-size:8pt;padding:7px"><h6 style="font-size:9pt;margin:0">'.$title.'</h6><pre>'.htmlentities($content).'</pre></div>';
+		echo '<div style="display:table;background:#CCC;font-size:8pt;padding:7px"><h6 style="font-size:9pt;margin:0">'.dol_escape_htmltag($title).'</h6><pre>'.dol_escape_htmltag($content).'</pre></div>';
 	}
 
 	/**
@@ -225,7 +224,7 @@ class PrestaShopWebservice
 	 * @param 	string 				$response 	String from a CURL response
 	 * @return 	SimpleXMLElement|boolean		status_code, response
 	 *
-	 * @throw PrestaShopWebserviceException
+	 * @throws PrestaShopWebserviceException
 	 */
 	protected function parseXML($response)
 	{
@@ -257,7 +256,7 @@ class PrestaShopWebservice
 	 * @param 	array 				$options	Options
 	 * @return 	SimpleXMLElement|boolean 		status_code, response
 	 *
-	 * @throw PrestaShopWebserviceException
+	 * @throws PrestaShopWebserviceException
 	 */
 	public function add($options)
 	{
@@ -310,7 +309,7 @@ class PrestaShopWebservice
 	 * @param 	array 			$options 	Array representing resource to get.
 	 * @return 	SimpleXMLElement|boolean	status_code, response
 	 *
-	 * @throw PrestaShopWebserviceException
+	 * @throws PrestaShopWebserviceException
 	 */
 	public function get($options)
 	{
@@ -351,7 +350,7 @@ class PrestaShopWebservice
 	 * @param 	array 				$options 	Array representing resource for head request.
 	 * @return 	SimpleXMLElement 				status_code, response
 	 *
-	 * @throw PrestaShopWebserviceException
+	 * @throws PrestaShopWebserviceException
 	 */
 	public function head($options)
 	{
@@ -393,7 +392,7 @@ class PrestaShopWebservice
 	 * @param 	array 				$options 	Array representing resource to edit.
 	 * @return	SimpleXMLElement|boolean 		status_code, response
 	 *
-	 * @throw PrestaShopWebserviceException
+	 * @throws PrestaShopWebserviceException
 	 */
 	public function edit($options)
 	{
@@ -424,5 +423,4 @@ class PrestaShopWebservice
  */
 class PrestaShopWebserviceException extends Exception
 {
-
 }

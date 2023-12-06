@@ -4,6 +4,7 @@ SuppliersInvoice=Szállítói számla
 SupplierInvoices=Szállítói számlák
 ShowSupplierInvoice=Szállítói számla megjelenítése
 NewSupplier=Új szállító
+NewSupplierInvoice = Új szállítói számla
 History=Történet
 ListOfSuppliers=Szállítók listája
 ShowSupplier=Szállító megjelenítése

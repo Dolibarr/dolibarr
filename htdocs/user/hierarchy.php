@@ -4,7 +4,7 @@
  * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2019-2021  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2021 Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,11 +26,12 @@
  *      \brief      Page of hierarchy view of user module
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 
 // Load translation files required by page
-$langs->loadLangs(array('users', 'companies'));
+$langs->loadLangs(array('users', 'companies', 'hrm', 'salaries'));
 
 // Security check (for external users)
 $socid = 0;
@@ -39,16 +40,18 @@ if ($user->socid > 0) {
 }
 
 $optioncss = GETPOST('optioncss', 'alpha');
-$contextpage = GETPOST('optioncss', 'aZ09');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'userlist'; // To manage different context of search
+$mode = GETPOST("mode", 'alpha');
+if (empty($mode)) {
+	$mode = 'hierarchy';
+}
+
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 
-// Load mode employee
-$mode = GETPOST("mode", 'alpha');
 
 $search_statut = GETPOST('search_statut', 'int');
-
 if ($search_statut == '' || $search_statut == '0') {
 	$search_statut = '1';
 }
@@ -57,16 +60,28 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_statut = "";
 }
 
+if ($contextpage == 'employeelist') {
+	$search_employee = 1;
+}
+
 $userstatic = new User($db);
 
 // Define value to know what current user can do on users
-$canadduser = (!empty($user->admin) || $user->rights->user->user->creer);
+$canadduser = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
 
-if (!$user->rights->user->user->lire && !$user->admin) {
-	accessforbidden();
+// Permission to list
+if (isModEnabled('salaries') && $contextpage == 'employeelist' && $search_employee == 1) {
+	if (!$user->hasRight("salaries", "read")) {
+		accessforbidden();
+	}
+} else {
+	if (!$user->hasRight("user", "user", "read") && empty($user->admin)) {
+		accessforbidden();
+	}
 }
 
 $childids = $user->getAllChildIds(1);
+
 
 
 /*
@@ -76,7 +91,11 @@ $childids = $user->getAllChildIds(1);
 $form = new Form($db);
 
 $help_url = 'EN:Module_Users|FR:Module_Utilisateurs|ES:M&oacute;dulo_Usuarios|DE:Modul_Benutzer';
-$title = $langs->trans("Users");
+if ($contextpage == 'employeelist' && $search_employee == 1) {
+	$title = $langs->trans("Employees");
+} else {
+	$title = $langs->trans("Users");
+}
 $arrayofjs = array(
 	'/includes/jquery/plugins/jquerytreeview/jquery.treeview.js',
 	'/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js',
@@ -121,7 +140,7 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 		$entitystring = '';
 
 		// TODO Set of entitystring should be done with a hook
-		if (!empty($conf->multicompany->enabled) && is_object($mc)) {
+		if (isModEnabled('multicompany') && is_object($mc)) {
 			if (empty($entity)) {
 				$entitystring = $langs->trans("AllEntities");
 			} else {
@@ -131,10 +150,10 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 		}
 
 		$li = $userstatic->getNomUrl(-1, '', 0, 1);
-		if (!empty($conf->multicompany->enabled) && $userstatic->admin && !$userstatic->entity) {
-			$li .= img_picto($langs->trans("SuperAdministrator"), 'redstar');
+		if (isModEnabled('multicompany') && $userstatic->admin && !$userstatic->entity) {
+			$li .= img_picto($langs->trans("SuperAdministratorDesc"), 'redstar', 'class="valignmiddle paddingright paddingleft"');
 		} elseif ($userstatic->admin) {
-			$li .= img_picto($langs->trans("Administrator"), 'star');
+			$li .= img_picto($langs->trans("AdministratorDesc"), 'star', 'class="valignmiddle paddingright paddingleft"');
 		}
 		$li .= ' <span class="opacitymedium">('.$val['login'].($entitystring ? ' - '.$entitystring : '').')</span>';
 
@@ -151,6 +170,7 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 	//var_dump($data);
 
 	$param = "&search_statut=".urlencode($search_statut);
+	$param = "&contextpage=".urlencode($contextpage);
 
 	$newcardbutton = '';
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars paddingleft imgforviewmode', DOL_URL_ROOT.'/user/list.php?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));

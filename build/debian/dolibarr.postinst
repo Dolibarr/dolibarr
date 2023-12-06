@@ -146,7 +146,6 @@ case "$1" in
 		#else
 			# File already exist. We add params not found.
 			#echo Add new params to overwrite path to use shared libraries/fonts
-			#grep -q -c "dolibarr_lib_ADODB_PATH" $config    || [ ! -d "/usr/share/php/adodb" ]  || echo "<?php \$dolibarr_lib_ADODB_PATH='/usr/share/php/adodb'; ?>" >> $config
 			##grep -q -c "dolibarr_lib_GEOIP_PATH" $config    || echo "<?php \$dolibarr_lib_GEOIP_PATH=''; ?>" >> $config
 			#grep -q -c "dolibarr_lib_NUSOAP_PATH" $config   || [ ! -d "/usr/share/php/nusoap" ] || echo "<?php \$dolibarr_lib_NUSOAP_PATH='/usr/share/php/nusoap'; ?>" >> $config
 			#grep -q -c "dolibarr_lib_ODTPHP_PATHTOPCLZIP" $config || [ ! -d "/usr/share/php/libphp-pclzip" ]  || echo "<?php \$dolibarr_lib_ODTPHP_PATHTOPCLZIP='/usr/share/php/libphp-pclzip'; ?>" >> $config

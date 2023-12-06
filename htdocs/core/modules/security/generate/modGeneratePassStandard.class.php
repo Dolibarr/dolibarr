@@ -35,6 +35,8 @@ class modGeneratePassStandard extends ModeleGenPassword
 	 */
 	public $id;
 
+	public $picto = 'fa-shield-alt';
+
 	/**
 	 * Minimum length (text visible by end user)
 	 *
@@ -48,16 +50,6 @@ class modGeneratePassStandard extends ModeleGenPassword
 	 * @var integer
 	 */
 	public $length2;
-
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $conf;
-	public $lang;
-	public $user;
-
 
 	/**
 	 *	Constructor

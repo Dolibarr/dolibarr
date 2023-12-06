@@ -20,6 +20,7 @@ ModulePartnershipName=Parteneriate
 PartnershipDescription=Modul Management parteneriate
 PartnershipDescriptionLong= Modul Management parteneriate
 Partnership=Parteneriat
+Partnerships=Parteneriate
 AddPartnership=Adăugare parteneriat
 CancelPartnershipForExpiredMembers=Parteneriat: Anulează parteneriatul membrilor cu adeziuni expirate
 PartnershipCheckBacklink=Parteneriat: Verificare backlink de referinţă
@@ -28,6 +29,7 @@ PartnershipCheckBacklink=Parteneriat: Verificare backlink de referinţă
 # Menu
 #
 NewPartnership=Parteneriat nou
+NewPartnershipbyWeb=Solicitarea ta de parteneriat a fost adăugată cu succes. Te vom contacta în curând...
 ListOfPartnerships=Listă parteneriate
 
 #
@@ -91,4 +93,5 @@ ReasonDeclineOrCancel=Motiv respingere
 
 NewPartnershipRequest=Solicitare nouă de parteneriat
 NewPartnershipRequestDesc=Acest formular îţi permite să soliciţi un parteneriat. Dacă ai nevoie de ajutor pentru a completa acest formular, contactează-ne pe email <b>%s</b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Această pagină trebuie să conțină cel puțin un link către unul dintre următoarele domenii: %s
 

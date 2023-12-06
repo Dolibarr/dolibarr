@@ -20,3 +20,4 @@ ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Trieu si la pàgina enllaçada s
 BookmarksManagement=Gestió de marcadors
 BookmarksMenuShortCut=Ctrl + shift + m
 NoBookmarks=No s'han definit cap marcador
+NoBookmarkFound=No s'ha trobat cap marcador

@@ -28,6 +28,7 @@
  *		\brief      Page to list payments of special expenses
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -37,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
 
@@ -53,7 +54,7 @@ $year = GETPOST("year", 'int');
 $search_sc_type = GETPOST('search_sc_type', 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -113,7 +114,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if ($sortfield) {
 	$param .= '&sortfield='.urlencode($sortfield);
@@ -176,12 +177,12 @@ if (preg_match('/^cs\./', $sortfield)
 	|| preg_match('/^pct\./', $sortfield)
 	|| preg_match('/^u\./', $sortfield)
 	|| preg_match('/^ba\./', $sortfield)) {
-		$sql .= $db->order($sortfield, $sortorder);
+	$sql .= $db->order($sortfield, $sortorder);
 }
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
@@ -225,7 +226,7 @@ print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled("banque")) {
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
 }
@@ -245,7 +246,7 @@ print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "pc.datep", "", $pa
 print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.rowid", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "pct.code", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("Numero", $_SERVER["PHP_SELF"], "pc.num_paiement", "", $param, '', $sortfield, $sortorder, '', 'ChequeOrTransferNumber');
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled("banque")) {
 	print_liste_field_titre("BankTransactionLine", $_SERVER["PHP_SELF"], "pc.fk_bank", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 }
@@ -269,7 +270,7 @@ while ($i < min($num, $limit)) {
 
 	$payment_sc_static->id = $obj->pid;
 	$payment_sc_static->ref = $obj->pid;
-	$payment_sc_static->date = $db->jdate($obj->datep);
+	$payment_sc_static->datep = $db->jdate($obj->datep);
 
 	$socialcontrib->id = $obj->rowid;
 	$socialcontrib->ref = empty($obj->label_sc) ? $obj->type_label : $obj->label_sc;
@@ -287,7 +288,7 @@ while ($i < min($num, $limit)) {
 	print $socialcontrib->getNomUrl(1, '');
 	print '</td>';
 	// Type
-	print '<td title="'.dol_escape_htmltag($obj->label_sc).'" class="tdoverflowmax300">'.$obj->label_sc.'</td>';
+	print '<td title="'.dol_escape_htmltag($obj->type_label).'" class="tdoverflowmax300">'.$obj->type_label.'</td>';
 	// Date
 	$date = $obj->periode;
 	if (empty($date)) {
@@ -323,7 +324,7 @@ while ($i < min($num, $limit)) {
 	print '<td>'.$obj->num_payment.'</td>';
 
 	// Account
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled("banque")) {
 		// Bank transaction
 		print '<td class="nowraponall">';
 		$accountlinestatic->id = $obj->fk_bank;
@@ -341,7 +342,7 @@ while ($i < min($num, $limit)) {
 			$accountstatic->currency_code = $langs->trans("Currency".$obj->currency_code);
 			$accountstatic->clos = $obj->clos;
 
-			if (!empty($conf->accounting->enabled)) {
+			if (isModEnabled('accounting')) {
 				$accountstatic->account_number = $obj->account_number;
 				$accountstatic->accountancy_journal = $obj->account_journal;
 			}
@@ -379,7 +380,7 @@ print '<td align="center" class="liste_total">&nbsp;</td>';
 print '<td align="center" class="liste_total">&nbsp;</td>';
 print '<td align="center" class="liste_total">&nbsp;</td>';
 print '<td align="center" class="liste_total">&nbsp;</td>';
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled("banque")) {
 	print '<td></td>';
 	print '<td></td>';
 }

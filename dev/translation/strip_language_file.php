@@ -58,10 +58,10 @@ $rc = 0;
 
 // Get and check arguments
 
-$lPrimary = isset($argv[1])?$argv[1]:'';
-$lSecondary = isset($argv[2])?$argv[2]:'';
+$lPrimary = isset($argv[1]) ? $argv[1] : '';
+$lSecondary = isset($argv[2]) ? $argv[2] : '';
 $lEnglish = 'en_US';
-$filesToProcess = isset($argv[3])?$argv[3]:'';
+$filesToProcess = isset($argv[3]) ? $argv[3] : '';
 
 if (empty($lPrimary) || empty($lSecondary) || empty($filesToProcess)) {
 	$rc = 1;
@@ -303,12 +303,12 @@ foreach ($filesToProcess as $fileToProcess) {
 
 			// String exists in both files and value into alternative language differs from main language but also from english files
 			// so we keep it.
-			if ((! empty($aSecondary[$key]) && $aSecondary[$key] != $aPrimary[$key]
-				&& ! empty($aEnglish[$key]) && $aSecondary[$key] != $aEnglish[$key])
+			if ((!empty($aSecondary[$key]) && $aSecondary[$key] != $aPrimary[$key]
+				&& !empty($aEnglish[$key]) && $aSecondary[$key] != $aEnglish[$key])
 				|| in_array($key, $arrayofkeytoalwayskeep) || preg_match('/^FormatDate/', $key) || preg_match('/^FormatHour/', $key)
 				) {
 				//print "Key $key differs (aSecondary=".$aSecondary[$key].", aPrimary=".$aPrimary[$key].", aEnglish=".$aEnglish[$key].") so we add it into new secondary language (line: $cnt).\n";
-				fwrite($oh, $key."=".(empty($aSecondary[$key])?$aPrimary[$key]:$aSecondary[$key])."\n");
+				fwrite($oh, $key."=".(empty($aSecondary[$key]) ? $aPrimary[$key] : $aSecondary[$key])."\n");
 			}
 		}
 		if (! feof($handle)) {

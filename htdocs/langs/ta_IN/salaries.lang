@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=பயனரின் மூன்றாம் தரப்பினருக்குப் பயன்படுத்தப்படும் கணக்கியல் கணக்கு
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=பயனர் அட்டையில் வரையறுக்கப்பட்ட பிரத்யேக கணக்கியல் கணக்கு சப்லெட்ஜர் கணக்கியலுக்கு மட்டுமே பயன்படுத்தப்படும். இது ஜெனரல் லெட்ஜருக்குப் பயன்படுத்தப்படும் மற்றும் பயனரின் பிரத்யேக பயனர் கணக்கியல் கணக்கு வரையறுக்கப்படாவிட்டால், சப்லெட்ஜர் கணக்கின் இயல்புநிலை மதிப்பாகப் பயன்படுத்தப்படும்.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "user" third parties
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on user card will be used for Subledger accounting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accounting account on user is not defined.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=ஊதியக் கொடுப்பனவுகளுக்கு முன்னிருப்பாக கணக்கியல் கணக்கு
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=இயல்பாக, சம்பளத்தை உருவாக்கும் போது "தானாக மொத்த கட்டணத்தை உருவாக்கு" என்ற விருப்பத்தை காலியாக விடவும்
 Salary=சம்பளம்
@@ -24,4 +24,4 @@ SalariesStatistics=சம்பள புள்ளிவிவரங்கள்
 SalariesAndPayments=சம்பளம் மற்றும் கொடுப்பனவுகள்
 ConfirmDeleteSalaryPayment=இந்த சம்பளத்தை நீக்க வேண்டுமா?
 FillFieldFirst=முதலில் பணியாளர் புலத்தை நிரப்பவும்
-UpdateAmountWithLastSalary=கடைசி சம்பளத்துடன் தொகையை அமைக்கவும்
+UpdateAmountWithLastSalary=Set amount of last salary

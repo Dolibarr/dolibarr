@@ -37,11 +37,12 @@ class mod_reception_moonstone extends ModelNumRefReception
 	/**
 	 *  Return default description of numbering model
 	 *
-	 *  @return     string      text description
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
-		global $conf, $langs, $db;
+		global $langs, $db;
 
 		$langs->load("bills");
 
@@ -61,8 +62,8 @@ class mod_reception_moonstone extends ModelNumRefReception
 		$tooltip .= $langs->trans("GenericMaskCodes5");
 
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskreception" value="'.$conf->global->RECEPTION_MOONSTONE_MASK.'">', $tooltip, 1, 1).'</td>';
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button" value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskreception" value="'.getDolGlobalString("RECEPTION_MOONSTONE_MASK").'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button" value="'.$langs->trans("Modify").'"></td>';
 		$texte .= '</tr>';
 		$texte .= '</table>';
 		$texte .= '</form>';
@@ -77,13 +78,13 @@ class mod_reception_moonstone extends ModelNumRefReception
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		$old_code_client = $mysoc->code_client;
 		$old_code_type = $mysoc->typent_code;
 		$mysoc->code_client = 'CCCCCCCCCC';
 		$mysoc->typent_code = 'TTTTTTTTTT';
-		$numExample = $this->getNextValue($mysoc, '');
+		$numExample = $this->getNextValue($mysoc, null);
 		$mysoc->code_client = $old_code_client;
 		$mysoc->typent_code = $old_code_type;
 
@@ -96,24 +97,28 @@ class mod_reception_moonstone extends ModelNumRefReception
 	/**
 	 *	Return next value
 	 *
-	 *	@param	Societe		$objsoc     Third party object
-	 *	@param	Object		$reception	Reception object
-	 *	@return string      			Value if OK, 0 if KO
+	 *	@param	Societe			$objsoc     Third party object
+	 *	@param	Object|null		$reception	Reception object
+	 *	@return string      				Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $reception)
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-		$mask = $conf->global->RECEPTION_MOONSTONE_MASK;
+		$mask = getDolGlobalString("RECEPTION_MOONSTONE_MASK");
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';
 			return 0;
 		}
 
-		$date = $reception->date_reception;
+		if (!empty($reception)) {
+			$date = $reception->date_reception;
+		} else {
+			$date = dol_now();
+		}
 
 		$numFinal = get_next_value($db, $mask, 'reception', 'ref', '', $objsoc, $date);
 

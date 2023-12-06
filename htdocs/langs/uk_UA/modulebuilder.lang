@@ -1,14 +1,16 @@
 # Dolibarr language file - Source file is en_US - loan
+IdModule= Module id
 ModuleBuilderDesc=Цим інструментом повинні користуватися лише досвідчені користувачі або розробники. Він надає утиліти для створення або редагування вашого власного модуля. Документація для альтернативної розробки вручну <a href="%s" target="_blank" rel="noopener noreferrer"> знаходиться тут </a>.
 EnterNameOfModuleDesc=Enter the name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
-EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
+EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, the pages to list/add/edit/delete the object and the SQL files will be generated.
 EnterNameOfDictionaryDesc=Enter the name of the dictionary to create with no spaces. Use uppercase to separate words (For example: MyDico...). The class file, but also the SQL file will be generated.
 ModuleBuilderDesc2=Шлях, де генеруються/редагуються модулі (перший каталог для зовнішніх модулів, визначених як %s): <strong> %s </strong>
 ModuleBuilderDesc3=Знайдено створені/редаговані модулі: <strong> %s </strong>
-ModuleBuilderDesc4=Модуль визначається як «доступний для редагування», коли файл <strong> %s </strong> існує в кореневому каталозі модуля
+ModuleBuilderDesc4=A module is detected as a 'module for Module Builer' when the file <strong>%s</strong> exists in the root of the module directory
 NewModule=Новий модуль
 NewObjectInModulebuilder=Новий об'єкт
 NewDictionary=New dictionary
+ModuleName=Module name
 ModuleKey=Ключ модуля
 ObjectKey=Ключ об'єкта
 DicKey=Dictionary key
@@ -48,11 +50,14 @@ PathToModulePackage=Шлях до zip пакета модуля/програми
 PathToModuleDocumentation=Шлях до файлу документації модуля/програми (%s)
 SpaceOrSpecialCharAreNotAllowed=Пробіли або спеціальні символи не допускаються.
 FileNotYetGenerated=Файл ще не згенерований
+GenerateCode=Generate code
 RegenerateClassAndSql=Примусове оновлення файлів .class і .sql
 RegenerateMissingFiles=Згенерувати відсутні файли
 SpecificationFile=Файл документації
 LanguageFile=Файл для мови
 ObjectProperties=Властивості об'єкта
+Property=Propery
+PropertyDesc=A property is an attribute that characterizes an object. This attribute has a code, a label and a type with several options.
 ConfirmDeleteProperty=Ви впевнені, що хочете видалити властивість <strong> %s </strong>? Це змінить код у класі PHP, але також видалить стовпець із визначення об’єкта в таблиці.
 NotNull=Не NULL
 NotNullDesc=1=Встановити базу даних у значення NOT NULL, 0=Дозволити нульові значення, -1=Дозволити нульові значення шляхом примусового значення NULL, якщо порожнє ('' або 0)
@@ -81,15 +86,16 @@ IsAMeasure=Є мірою
 DirScanned=Каталог відскановано
 NoTrigger=Без тригера
 NoWidget=Немає віджета
-GoToApiExplorer=API Explorer
+ApiExplorer=API explorer
 ListOfMenusEntries=Список пунктів меню
 ListOfDictionariesEntries=Список словникових статей
 ListOfPermissionsDefined=Список визначених дозволів
 SeeExamples=Дивіться приклади тут
-EnabledDesc=Умова, щоб це поле було активним (приклади: 1 або $conf->global->MYMODULE_MYOPTION)
-VisibleDesc=Чи видно поле? (Приклади: 0=Ніколи не видно, 1=Відображається у списку та формах створення/оновлення/перегляду, 2=Відображається лише у списку, 3=Відображається лише під час створення/оновлення/перегляду форми (не в списку), 4=Відображається у списку та оновити/переглянути лише форму (не створити), 5=Відображається лише у формі кінцевого перегляду списку (не створювати, не оновлювати) <br> <br> Використання від’ємного значення означає, що поле не відображається за замовчуванням у списку, але його можна вибрати для перегляду). <br> <br> Це може бути вираз, наприклад: <br> preg_match('/public/', $_SERVER['PHP_SELF'])?0:1 <br>.
-DisplayOnPdfDesc=Відображайте це поле на сумісних PDF-документах, ви можете керувати позицією за допомогою поля «Позиція». <br> Currently, known compatibles PDF models are : eratosthene (order), espadon (ship), sponge (invoices), cyan (propal/quotation), cornas (supplier order) <br>  <br>  <strong> For document : </strong>  <br> 0 = not displayed  <br> 1 = display <br> 2 = display only if not empty <br>  <br>  <strong> For document lines : </strong>  <br> 0 = not displayed  <br> 1 = displayed in a column <br> 3 = display in line description column after the description <br> 4 = display in description column after the опис лише якщо не порожній
-DisplayOnPdf=Відображення в PDF
+EnabledDesc=Condition to have this field active.<br><br>Examples:<br>1<br>isModEnabled('MAIN_MODULE_MYMODULE')<br>getDolGlobalString('MYMODULE_OPTION')==2
+VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create), 5=Visible on list end view form only (not create, not update).<br><br>Using a negative value means field is not shown by default on list but can be selected for viewing).
+ItCanBeAnExpression=It can be an expression. Example:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>$user->hasRight('holiday', 'define_holiday')?1:5
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
+DisplayOnPdf=On PDF
 IsAMeasureDesc=Чи можна сумувати значення поля, щоб отримати підсумок у списку? (Приклади: 1 або 0)
 SearchAllDesc=Чи використовується поле для пошуку за допомогою інструмента швидкого пошуку? (Приклади: 1 або 0)
 SpecDefDesc=Введіть сюди всю документацію, яку ви хочете надати зі своїм модулем, яка ще не визначена іншими вкладками. Ви можете використовувати .md або краще, багатий синтаксис .asciidoc.
@@ -130,26 +136,44 @@ UseSpecificEditorURL = Використовуйте конкретну URL-ад�
 UseSpecificFamily = Використовуйте конкретну сім'ю
 UseSpecificAuthor = Використовуйте конкретного автора
 UseSpecificVersion = Використовуйте конкретну початкову версію
-IncludeRefGeneration=Посилання на об'єкт має генеруватися автоматично за допомогою спеціальних правил нумерації
+IncludeRefGeneration=The reference of this object must be generated automatically by custom numbering rules
 IncludeRefGenerationHelp=Поставте прапорець, якщо ви хочете включити код для автоматичного керування створенням посилання за допомогою спеціальних правил нумерації
-IncludeDocGeneration=Я хочу створити деякі документи з шаблонів для об’єкта
+IncludeDocGeneration=I want the feature to generate some documents (PDF, ODT) from templates for this object
 IncludeDocGenerationHelp=Якщо ви поставите цей прапорець, буде створено деякий код, щоб додати до запису поле «Створити документ».
-ShowOnCombobox=Показати значення у списку
+ShowOnCombobox=Show value into combo boxes
 KeyForTooltip=Ключ для підказки
 CSSClass=CSS для редагування/створення форми
 CSSViewClass=CSS для читання форми
 CSSListClass=CSS для списку
 NotEditable=Не можна редагувати
 ForeignKey=Зовнішній ключ
-TypeOfFieldsHelp=Тип полів: <br> varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] <br> '1' означає, що ми додаємо кнопку + після комбінації для створення запису <br> 'фільтр' є умовою sql, наприклад: 'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED)_ENT.
+ForeignKeyDesc=If the value of this field must be guaranted to exists into another table. Enter here a value matching syntax: tablename.parentfieldtocheck
+TypeOfFieldsHelp=Example:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br>'1' means we add a + button after the combo to create the record<br>'filter' is a sql condition, example: 'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)'
+TypeOfFieldsHelpIntro=This is the type of the field/attribute.
 AsciiToHtmlConverter=Конвертер Ascii в HTML
 AsciiToPdfConverter=Конвертер Ascii в PDF
 TableNotEmptyDropCanceled=Стіл не порожній. Викидання скасовано.
 ModuleBuilderNotAllowed=Конструктор модулів доступний, але не дозволений вашому користувачеві.
 ImportExportProfiles=Імпорт і експорт профілів
-ValidateModBuilderDesc=Встановіть для цього значення 1, якщо ви хочете, щоб метод $this->validateField() об’єкта був викликаний для перевірки вмісту поля під час вставки або оновлення. Встановіть 0, якщо перевірка не потрібна.
+ValidateModBuilderDesc=Set this to 1 if you want to have the method $this->validateField() of object being called to validate the content of the field during insert or update. Set 0 if there is no validation required.
 WarningDatabaseIsNotUpdated=Попередження: база даних не оновлюється автоматично, ви повинні знищити таблиці та вимкнути-ввімкнути модуль для відтворення таблиць
 LinkToParentMenu=Батьківське меню (fk_xxxxmenu)
 ListOfTabsEntries=Список записів вкладки
 TabsDefDesc=Визначте тут вкладки, надані вашим модулем
 TabsDefDescTooltip=Вкладки, надані вашим модулем/додатком, визначаються в масиві <strong> $this->tabs </strong> у файлі дескриптора модуля. Ви можете редагувати цей файл вручну або використовувати вбудований редактор.
+BadValueForType=Bad value for type %s
+DefinePropertiesFromExistingTable=Define properties from an existing table
+DefinePropertiesFromExistingTableDesc=If a table in the database (for the object to create) already exists, you can use it to define the properties of the object.
+DefinePropertiesFromExistingTableDesc2=Keep empty if the table does not exist yet. The code generator will use different kinds of fields to build an example of table that you can edit later.
+GeneratePermissions=I want to add the rights for this object
+GeneratePermissionsHelp=generate default rights for this object
+PermissionDeletedSuccesfuly=Permission has been successfully removed
+PermissionUpdatedSuccesfuly=Permission has been successfully updated
+PermissionAddedSuccesfuly=Permission has been successfully added
+MenuDeletedSuccessfuly=Menu has been successfully deleted
+MenuAddedSuccessfuly=Menu has been successfully added
+MenuUpdatedSuccessfuly=Menu has been successfully updated
+ApiObjectDeleted=API for object %s has been successfully deleted
+CRUDRead=Прочитані
+CRUDCreateWrite=Create or Update
+FailedToAddCodeIntoDescriptor=Failed to add code into descriptor. Check that the string comment "%s" is still present into the file.

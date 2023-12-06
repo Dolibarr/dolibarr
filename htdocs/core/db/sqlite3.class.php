@@ -86,7 +86,7 @@ class DoliDBSqlite3 extends DoliDB
 			$this->ok = false;
 			$this->error="Sqlite PHP functions for using Sqlite driver are not available in this version of PHP. Try to use another driver.";
 			dol_syslog(get_class($this)."::DoliDBSqlite3 : Sqlite PHP functions for using Sqlite driver are not available in this version of PHP. Try to use another driver.",LOG_ERR);
-			return $this->ok;
+			return;
 		}*/
 
 		/*if (! $host)
@@ -95,7 +95,7 @@ class DoliDBSqlite3 extends DoliDB
 			$this->ok = false;
 			$this->error=$langs->trans("ErrorWrongHostParameter");
 			dol_syslog(get_class($this)."::DoliDBSqlite3 : Erreur Connect, wrong host parameters",LOG_ERR);
-			return $this->ok;
+			return;
 		}*/
 
 		// Essai connexion serveur
@@ -126,8 +126,6 @@ class DoliDBSqlite3 extends DoliDB
 			//$this->error=sqlite_connect_error();
 			dol_syslog(get_class($this)."::DoliDBSqlite3 : Error Connect ".$this->error, LOG_ERR);
 		}
-
-		return $this->ok;
 	}
 
 
@@ -138,7 +136,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *  @param     string	$type	Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
 	 *  @return    string   		SQL request line converted
 	 */
-	public static function convertSQLFromMysql($line, $type = 'ddl')
+	public function convertSQLFromMysql($line, $type = 'ddl')
 	{
 		// Removed empty line if this is a comment line for SVN tagging
 		if (preg_match('/^--\s\$Id/i', $line)) {
@@ -316,7 +314,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *	@param	    string	$passwd		password
 	 *	@param		string	$name		name of database (not used for mysql, used for pgsql)
 	 *	@param		integer	$port		Port of database server
-	 *	@return		SQLite3				Database access handler
+	 *	@return		SQLite3|string				Database access handler
 	 *	@see		close()
 	 */
 	public function connect($host, $login, $passwd, $name, $port = 0)
@@ -650,14 +648,14 @@ class DoliDBSqlite3 extends DoliDB
 	}
 
 	/**
-	 *	Escape a string to insert data
+	 *	Escape a string to insert data into a like
 	 *
 	 *	@param	string	$stringtoencode		String to escape
 	 *	@return	string						String escaped
 	 */
-	public function escapeunderscore($stringtoencode)
+	public function escapeforlike($stringtoencode)
 	{
-		return str_replace('_', '\_', $stringtoencode);
+		return str_replace(array('\\', '_', '%'), array('\\\\', '\_', '\%'), (string) $stringtoencode);
 	}
 
 	/**
@@ -898,6 +896,38 @@ class DoliDBSqlite3 extends DoliDB
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
+	 *  List tables into a database with table type
+	 *
+	 *  @param	string		$database	Name of database
+	 *  @param	string		$table		Name of table filter ('xxx%')
+	 *  @return	array					List of tables in an array
+	 */
+	public function DDLListTablesFull($database, $table = '')
+	{
+		// phpcs:enable
+		$listtables = array();
+
+		$like = '';
+		if ($table) {
+			$tmptable = preg_replace('/[^a-z0-9\.\-\_%]/i', '', $table);
+
+			$like = "LIKE '".$this->escape($tmptable)."'";
+		}
+		$tmpdatabase = preg_replace('/[^a-z0-9\.\-\_]/i', '', $database);
+
+		$sql = "SHOW FULL TABLES FROM ".$tmpdatabase." ".$like.";";
+		//print $sql;
+		$result = $this->query($sql);
+		if ($result) {
+			while ($row = $this->fetch_row($result)) {
+				$listtables[] = $row;
+			}
+		}
+		return $listtables;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
 	 *  List information of columns into a table.
 	 *
 	 *	@param	string	$table		Name of table
@@ -934,7 +964,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *	@param	    array	$unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
 	 *	@param	    array	$fulltext_keys	Tableau des Nom de champs qui seront indexes en fulltext
 	 *	@param	    array	$keys 			Tableau des champs cles noms => valeur
-	 *	@return	    int						<0 if KO, >=0 if OK
+	 *	@return	    int						Return integer <0 if KO, >=0 if OK
 	 */
 	public function DDLCreateTable($table, $fields, $primary_key, $type, $unique_keys = null, $fulltext_keys = null, $keys = null)
 	{
@@ -1007,7 +1037,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *	Drop a table into database
 	 *
 	 *	@param	    string	$table 			Name of table
-	 *	@return	    int						<0 if KO, >=0 if OK
+	 *	@return	    int						Return integer <0 if KO, >=0 if OK
 	 */
 	public function DDLDropTable($table)
 	{
@@ -1049,7 +1079,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *	@param	string	$field_name 		Name of field to add
 	 *	@param	string	$field_desc 		Tableau associatif de description du champ a inserer[nom du parametre][valeur du parametre]
 	 *	@param	string	$field_position 	Optionnel ex.: "after champtruc"
-	 *	@return	int							<0 if KO, >0 if OK
+	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLAddField($table, $field_name, $field_desc, $field_position = "")
 	{
@@ -1095,7 +1125,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *	@param	string	$table 				Name of table
 	 *	@param	string	$field_name 		Name of field to modify
 	 *	@param	string	$field_desc 		Array with description of field format
-	 *	@return	int							<0 if KO, >0 if OK
+	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLUpdateField($table, $field_name, $field_desc)
 	{
@@ -1119,7 +1149,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *
 	 *	@param	string	$table 			Name of table
 	 *	@param	string	$field_name 	Name of field to drop
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLDropField($table, $field_name)
 	{
@@ -1143,7 +1173,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *	@param	string	$dolibarr_main_db_user 		Nom user a creer
 	 *	@param	string	$dolibarr_main_db_pass 		Mot de passe user a creer
 	 *	@param	string	$dolibarr_main_db_name		Database name where user must be granted
-	 *	@return	int									<0 if KO, >=0 if OK
+	 *	@return	int									Return integer <0 if KO, >=0 if OK
 	 */
 	public function DDLCreateUser($dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name)
 	{
@@ -1382,8 +1412,8 @@ class DoliDBSqlite3 extends DoliDB
 		} else {
 			$num -= floor(($month * 4 + 23) / 10);
 		}
-			$temp = floor(($y / 100 + 1) * 3 / 4);
-			return $num + floor($y / 4) - $temp;
+		$temp = floor(($y / 100 + 1) * 3 / 4);
+		return $num + floor($y / 4) - $temp;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

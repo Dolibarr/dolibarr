@@ -41,7 +41,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook тірі кілті
 ONLINE_PAYMENT_WAREHOUSE=<br> (TODO) Акцияны төмендету опциясы шот -фактура бойынша жасалса және онлайн төлем өзі шот -фактураны шығаратын болса, акцияның төмендеуі үшін пайдаланылатын акция.
 StripeLiveEnabled=Stripe live қосылған (әйтпесе тест/құм жәшігі режимі)
 StripeImportPayment=Stripe төлемдерін импорттау
-ExampleOfTestCreditCard=Сынақ үшін несие картасының мысалы: %s => жарамды, %s => CVC қатесі, %s => мерзімі өтіп кетті, %s => заряд сәтсіз
+ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
+ExampleOfTestBankAcountForSEPA=Example of bank account BAN for direct debit test: %s
 StripeGateways=Жолақты шлюздер
 OAUTH_STRIPE_TEST_ID=Stripe Connect клиент идентификаторы (шамамен _...)
 OAUTH_STRIPE_LIVE_ID=Stripe Connect клиент идентификаторы (шамамен _...)
@@ -61,6 +62,7 @@ DeleteACard=Картаны жою
 ConfirmDeleteCard=Бұл несиелік немесе дебеттік картаны шынымен жойғыңыз келе ме?
 CreateCustomerOnStripe=Stripe -де тұтынушы жасаңыз
 CreateCardOnStripe=Stripe картасын жасаңыз
+CreateBANOnStripe=Create bank on Stripe
 ShowInStripe=Stripe -те көрсету
 StripeUserAccountForActions=Кейбір Stripe оқиғалары туралы электрондық пошта арқылы хабарландыру үшін қолданылатын пайдаланушы тіркелгісі (Stripe төлемдері)
 StripePayoutList=Stripe төлемдерінің тізімі
@@ -69,3 +71,8 @@ ToOfferALinkForLiveWebhook=IPN -ге қоңырау шалу үшін Stripe Web
 PaymentWillBeRecordedForNextPeriod=Төлем келесі кезеңге жазылады.
 ClickHereToTryAgain= <a href="%s"> Қайталап көру үшін мына жерді басыңыз ... </a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Клиенттердің аутентификациясының күшті ережелеріне байланысты картаны Stripe backoffice -тен жасау керек. Stripe тұтынушылар жазбасын қосу үшін мына жерді басуға болады: %s
+STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
+TERMINAL_LOCATION=Location (address) for Stripe Terminals
+RequestDirectDebitWithStripe=Request Direct Debit with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
+

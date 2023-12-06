@@ -46,7 +46,7 @@ KnowledgeRecords = Articole
 KnowledgeRecord = Articol
 KnowledgeRecordExtraFields = Extracâmpuri articole
 GroupOfTicket=Grup de tichete
-YouCanLinkArticleToATicketCategory=Poți conecta un articol la un grup de tichete (astfel încât articolul să fie sugerat în timpul clasificării tichetelor noi)
+YouCanLinkArticleToATicketCategory=Poți lega articolul la un grup de tichete (deci articolul va fi evidențiat pe orice tichet din acest grup)
 SuggestedForTicketsInGroup=Sugerat pentru tichete atunci când grupul este
 
 SetObsolete=Setează ca învechit

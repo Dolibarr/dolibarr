@@ -46,7 +46,7 @@ KnowledgeRecords = கட்டுரைகள்
 KnowledgeRecord = கட்டுரை
 KnowledgeRecordExtraFields = கட்டுரைக்கான கூடுதல் புலங்கள்
 GroupOfTicket=டிக்கெட்டுகளின் குழு
-YouCanLinkArticleToATicketCategory=நீங்கள் ஒரு கட்டுரையை டிக்கெட் குழுவுடன் இணைக்கலாம் (எனவே புதிய டிக்கெட்டுகளின் தகுதியின் போது கட்டுரை பரிந்துரைக்கப்படும்)
+YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
 SuggestedForTicketsInGroup=குழுவாக இருக்கும்போது டிக்கெட்டுகளுக்கு பரிந்துரைக்கப்படுகிறது
 
 SetObsolete=Set as obsolete

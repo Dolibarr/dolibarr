@@ -31,7 +31,8 @@ if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) {
 // Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
 $tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME']; $tmp2 = realpath(__FILE__); $i = strlen($tmp) - 1; $j = strlen($tmp2) - 1;
 while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) {
-	$i--; $j--;
+	$i--;
+	$j--;
 }
 if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1))."/main.inc.php")) {
 	$res = @include substr($tmp, 0, ($i + 1))."/main.inc.php";
@@ -86,50 +87,45 @@ $setupnotempty = 0;
 $useFormSetup = 1;
 
 if (!class_exists('FormSetup')) {
-	// For retrocompatibility Dolibarr < 16.0
-	if (floatval(DOL_VERSION) < 16.0 && !class_exists('FormSetup')) {
-		require_once __DIR__.'/../backport/v16/core/class/html.formsetup.class.php';
-	} else {
-		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
-	}
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
 }
-
 $formSetup = new FormSetup($db);
 
 
-// Hôte
-$item = $formSetup->newItem('NO_PARAM_JUST_TEXT');
+// Enter here all parameters in your setup page
+
+// Setup conf for selection of an URL
+$item = $formSetup->newItem('MYMODULE_MYPARAM1');
 $item->fieldOverride = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'];
 $item->cssClass = 'minwidth500';
 
-// Setup conf MYMODULE_MYPARAM1 as a simple string input
-$item = $formSetup->newItem('MYMODULE_MYPARAM1');
+// Setup conf for selection of a simple string input
+$item = $formSetup->newItem('MYMODULE_MYPARAM2');
 $item->defaultFieldValue = 'default value';
 
-// Setup conf MYMODULE_MYPARAM1 as a simple textarea input but we replace the text of field title
-$item = $formSetup->newItem('MYMODULE_MYPARAM2');
+// Setup conf for selection of a simple textarea input but we replace the text of field title
+$item = $formSetup->newItem('MYMODULE_MYPARAM3');
 $item->nameText = $item->getNameText().' more html text ';
 
-// Setup conf MYMODULE_MYPARAM3
-$item = $formSetup->newItem('MYMODULE_MYPARAM3');
+// Setup conf for a selection of a thirdparty
+$item = $formSetup->newItem('MYMODULE_MYPARAM4');
 $item->setAsThirdpartyType();
 
-// Setup conf MYMODULE_MYPARAM4 : exemple of quick define write style
-$formSetup->newItem('MYMODULE_MYPARAM4')->setAsYesNo();
+// Setup conf for a selection of a boolean
+$formSetup->newItem('MYMODULE_MYPARAM5')->setAsYesNo();
 
-// Setup conf MYMODULE_MYPARAM5
-$formSetup->newItem('MYMODULE_MYPARAM5')->setAsEmailTemplate('thirdparty');
+// Setup conf for a selection of an email template of type thirdparty
+$formSetup->newItem('MYMODULE_MYPARAM6')->setAsEmailTemplate('thirdparty');
 
-// Setup conf MYMODULE_MYPARAM6
-$formSetup->newItem('MYMODULE_MYPARAM6')->setAsSecureKey()->enabled = 0; // disabled
+// Setup conf for a selection of a secured key
+//$formSetup->newItem('MYMODULE_MYPARAM7')->setAsSecureKey();
 
-// Setup conf MYMODULE_MYPARAM7
-$formSetup->newItem('MYMODULE_MYPARAM7')->setAsProduct();
+// Setup conf for a selection of a product
+$formSetup->newItem('MYMODULE_MYPARAM8')->setAsProduct();
 
-$formSetup->newItem('Title')->setAsTitle();
+// Add a title for a new section
+$formSetup->newItem('NewSection')->setAsTitle();
 
-// Setup conf MYMODULE_MYPARAM8
-$item = $formSetup->newItem('MYMODULE_MYPARAM8');
 $TField = array(
 	'test01' => $langs->trans('test01'),
 	'test02' => $langs->trans('test02'),
@@ -138,12 +134,15 @@ $TField = array(
 	'test05' => $langs->trans('test05'),
 	'test06' => $langs->trans('test06'),
 );
-$item->setAsMultiSelect($TField);
-$item->helpText = $langs->transnoentities('MYMODULE_MYPARAM8');
 
-
-// Setup conf MYMODULE_MYPARAM9
+// Setup conf for a simple combo list
 $formSetup->newItem('MYMODULE_MYPARAM9')->setAsSelect($TField);
+
+// Setup conf for a multiselect combo list
+$item = $formSetup->newItem('MYMODULE_MYPARAM10');
+$item->setAsMultiSelect($TField);
+$item->helpText = $langs->transnoentities('MYMODULE_MYPARAM10');
+
 
 
 // Setup conf MYMODULE_MYPARAM10
@@ -160,7 +159,7 @@ $item->helpText = $langs->transnoentities('AnHelpMessage');
 //$item->fieldOutputOverride = false; // set this var to override field output
 
 
-$setupnotempty =+ count($formSetup->items);
+$setupnotempty += count($formSetup->items);
 
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -171,17 +170,17 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
  */
 
 // For retrocompatibility Dolibarr < 15.0
-if ( versioncompare(explode('.', DOL_VERSION), array(15)) < 0 && $action == 'update' && !empty($user->admin)) {
+if (versioncompare(explode('.', DOL_VERSION), array(15)) < 0 && $action == 'update' && !empty($user->admin)) {
 	$formSetup->saveConfFromPost();
 }
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
-	$maskconst = GETPOST('maskconst', 'alpha');
+	$maskconst = GETPOST('maskconst', 'aZ09');
 	$maskvalue = GETPOST('maskvalue', 'alpha');
 
-	if ($maskconst) {
+	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
 		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
 			$error++;
@@ -201,7 +200,9 @@ if ($action == 'updateMask') {
 	$tmpobject->initAsSpecimen();
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$classname = '';
+	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/mymodule/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
@@ -244,7 +245,7 @@ if ($action == 'updateMask') {
 		$tmpobjectkey = GETPOST('object');
 		if (!empty($tmpobjectkey)) {
 			$constforval = 'MYMODULE_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
-			if ($conf->global->$constforval == "$value") {
+			if (getDolGlobalString($constforval) == "$value") {
 				dolibarr_del_const($db, $constforval, $conf->entity);
 			}
 		}
@@ -257,7 +258,7 @@ if ($action == 'updateMask') {
 		if (dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity)) {
 			// The constant that was read before the new set
 			// We therefore requires a variable to have a coherent view
-			$conf->global->$constforval = $value;
+			$conf->global->{$constforval} = $value;
 		}
 
 		// We disable/enable the document template (into llx_document_model table)
@@ -315,20 +316,18 @@ if ($action == 'edit') {
 
 $moduledir = 'mymodule';
 $myTmpObjects = array();
-$myTmpObjects['MyObject'] = array('includerefgeneration'=>0, 'includedocgeneration'=>0);
+// TODO Scan list of objects
+$myTmpObjects['myobject'] = array('label'=>'MyObject', 'includerefgeneration'=>0, 'includedocgeneration'=>0, 'class'=>'MyObject');
 
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-	if ($myTmpObjectKey == 'MyObject') {
-		continue;
-	}
 	if ($myTmpObjectArray['includerefgeneration']) {
 		/*
 		 * Orders Numbering model
 		 */
 		$setupnotempty++;
 
-		print load_fiche_titre($langs->trans("NumberingModules", $myTmpObjectKey), '', '');
+		print load_fiche_titre($langs->trans("NumberingModules", $myTmpObjectArray['label']), '', '');
 
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
@@ -356,10 +355,10 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 							$module = new $file($db);
 
 							// Show modules according to features level
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								continue;
 							}
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 								continue;
 							}
 
@@ -367,7 +366,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								dol_include_once('/'.$moduledir.'/class/'.strtolower($myTmpObjectKey).'.class.php');
 
 								print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-								print $module->info();
+								print $module->info($langs);
 								print '</td>';
 
 								// Show example of numbering model
@@ -394,7 +393,8 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								}
 								print '</td>';
 
-								$mytmpinstance = new $myTmpObjectKey($db);
+								$nameofclass = $myTmpObjectArray['class'];
+								$mytmpinstance = new $nameofclass($db);
 								$mytmpinstance->initAsSpecimen();
 
 								// Info
@@ -457,8 +457,8 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 			dol_print_error($db);
 		}
 
-		print "<table class=\"noborder\" width=\"100%\">\n";
-		print "<tr class=\"liste_titre\">\n";
+		print '<table class="noborder centpercent">'."\n";
+		print '<tr class="liste_titre">'."\n";
 		print '<td>'.$langs->trans("Name").'</td>';
 		print '<td>'.$langs->trans("Description").'</td>';
 		print '<td class="center" width="60">'.$langs->trans("Status")."</td>\n";
@@ -493,16 +493,16 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 									$module = new $classname($db);
 
 									$modulequalified = 1;
-									if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+									if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 										$modulequalified = 0;
 									}
-									if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+									if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 										$modulequalified = 0;
 									}
 
 									if ($modulequalified) {
 										print '<tr class="oddeven"><td width="100">';
-										print (empty($module->name) ? $name : $module->name);
+										print(empty($module->name) ? $name : $module->name);
 										print "</td><td>\n";
 										if (method_exists($module, 'info')) {
 											print $module->info($langs);
@@ -526,7 +526,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 										// Default
 										print '<td class="center">';
-										$constforvar = 'MYMODULE_'.strtoupper($myTmpObjectKey).'_ADDON';
+										$constforvar = 'MYMODULE_'.strtoupper($myTmpObjectKey).'_ADDON_PDF';
 										if (getDolGlobalString($constforvar) == $name) {
 											//print img_picto($langs->trans("Default"), 'on');
 											// Even if choice is the default value, we allow to disable it. Replace this with previous line if you need to disable unset

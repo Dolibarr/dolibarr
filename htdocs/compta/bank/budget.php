@@ -24,6 +24,7 @@
  *		\brief      Page de budget
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
@@ -93,7 +94,7 @@ if ($result) {
 
 	print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").'</td>';
 	print '<td class="liste_total right">'.price($total).'</td>';
-	print '<td colspan="2" class="liste_total right">'.price($totalnb ?price2num($total / $totalnb, 'MT') : 0).'</td></tr>';
+	print '<td colspan="2" class="liste_total right">'.price($totalnb ? price2num($total / $totalnb, 'MT') : 0).'</td></tr>';
 } else {
 	dol_print_error($db);
 }

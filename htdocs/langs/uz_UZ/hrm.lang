@@ -12,7 +12,7 @@ OpenEtablishment=Ochiq muassasa
 CloseEtablishment=Yaqin muassasasi
 # Dictionary
 DictionaryPublicHolidays=Ta'til - rasmiy bayramlar
-DictionaryDepartment=HRM - bo'limlar ro'yxati
+DictionaryDepartment=HRM - Organizational Unit
 DictionaryFunction=HRM - ish joylari
 # Module
 Employees=Xodimlar
@@ -70,9 +70,9 @@ RequiredSkills=Ushbu ish uchun zarur bo'lgan ko'nikmalar
 UserRank=Foydalanuvchi darajasi
 SkillList=Ko'nikmalar ro'yxati
 SaveRank=Darajani saqlang
-knowHow=Nou-hau
-HowToBe=Qanday bo'lish
-knowledge=Bilim
+TypeKnowHow=Know how
+TypeHowToBe=How to be
+TypeKnowledge=Knowledge
 AbandonmentComment=Bekor qilish sharhi
 DateLastEval=Oxirgi baholash sanasi
 NoEval=Ushbu xodim uchun hech qanday baholash o'tkazilmagan
@@ -88,3 +88,4 @@ DeleteSkill = Ko'nikma olib tashlandi
 SkillsExtraFields=Atributlar qo'shimchalari (Kompentsiyalar)
 JobsExtraFields=Attributs supplémentaires (Emplois)
 EvaluationsExtraFields=Atributlar qoʻshimchalari (baholar)
+NeedBusinessTravels=Need business travels

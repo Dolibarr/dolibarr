@@ -56,6 +56,7 @@ class ExportExcel2007 extends ModeleExports
 
 	public $version_lib;
 
+	/** @var Spreadsheet */
 	public $workbook; // Handle file
 
 	public $worksheet; // Handle sheet
@@ -85,14 +86,14 @@ class ExportExcel2007 extends ModeleExports
 		$this->extension = 'xlsx'; // Extension for generated file by this driver
 		$this->picto = 'mime/xls'; // Picto
 		$this->version = '1.30'; // Driver version
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 
 		$this->disabled = 0;
 
 		if (empty($this->disabled)) {
 			require_once PHPEXCELNEW_PATH.'Spreadsheet.php';
 			$this->label_lib = 'PhpSpreadSheet';
-			$this->version_lib = '1.6.0'; // No way to get info from library
+			$this->version_lib = '1.12.0'; // No way to get info from library
 		}
 
 		$this->row = 0;
@@ -175,16 +176,12 @@ class ExportExcel2007 extends ModeleExports
 	 *
 	 * 	@param		string		$file			File name to generate
 	 *  @param		Translate	$outputlangs	Output language object
-	 *	@return		int							<0 if KO, >=0 if OK
+	 *	@return		int							Return integer <0 if KO, >=0 if OK
 	 */
 	public function open_file($file, $outputlangs)
 	{
 		// phpcs:enable
 		global $user, $conf, $langs;
-
-		if (!empty($conf->global->MAIN_USE_PHP_WRITEEXCEL)) {
-			$outputlangs->charset_output = 'ISO-8859-1'; // Because Excel 5 format is ISO
-		}
 
 		dol_syslog(get_class($this)."::open_file file=".$file);
 		$this->file = $file;
@@ -224,7 +221,7 @@ class ExportExcel2007 extends ModeleExports
 	 *  Write header
 	 *
 	 *  @param      Translate	$outputlangs        Object lang to translate values
-	 * 	@return		int								<0 if KO, >0 if OK
+	 * 	@return		int								Return integer <0 if KO, >0 if OK
 	 */
 	public function write_header($outputlangs)
 	{
@@ -243,7 +240,7 @@ class ExportExcel2007 extends ModeleExports
 	 *  @param      array		$array_selected_sorted       	Array with list of field to export
 	 *  @param      Translate	$outputlangs    				Object lang to translate values
 	 *  @param		array		$array_types					Array with types of fields
-	 * 	@return		int											<0 if KO, >0 if OK
+	 * 	@return		int											Return integer <0 if KO, >0 if OK
 	 */
 	public function write_title($array_export_fields_label, $array_selected_sorted, $outputlangs, $array_types)
 	{
@@ -253,24 +250,31 @@ class ExportExcel2007 extends ModeleExports
 		// Create a format for the column headings
 		$this->workbook->getActiveSheet()->getStyle('1')->getFont()->setBold(true);
 		$this->workbook->getActiveSheet()->getStyle('1')->getAlignment()->setHorizontal(PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+		$selectlabel = array();
 
 		$this->col = 1;
-		if (!empty($conf->global->MAIN_USE_PHP_WRITEEXCEL)) {
-			$this->col = 0;
-		}
+
 		foreach ($array_selected_sorted as $code => $value) {
 			$alias = $array_export_fields_label[$code];
 			//print "dd".$alias;
 			if (empty($alias)) {
 				dol_print_error('', 'Bad value for field with code='.$code.'. Try to redefine export.');
 			}
-			if (!empty($conf->global->MAIN_USE_PHP_WRITEEXCEL)) {
-				$this->worksheet->write($this->row, $this->col, $outputlangs->transnoentities($alias), $formatheader);
-			} else {
-				$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, $outputlangs->transnoentities($alias));
-				if (!empty($array_types[$code]) && in_array($array_types[$code], array('Date', 'Numeric', 'TextAuto'))) {		// Set autowidth for some types
-					$this->workbook->getActiveSheet()->getColumnDimension($this->column2Letter($this->col + 1))->setAutoSize(true);
-				}
+			$typefield = isset($array_types[$code]) ? $array_types[$code] : '';
+
+			if (preg_match('/^Select:/i', $typefield) && $typefield = substr($typefield, 7)) {
+				$selectlabel[$code."_label"] = $alias."_label";
+			}
+			$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, $outputlangs->transnoentities($alias));
+			if (!empty($array_types[$code]) && in_array($array_types[$code], array('Date', 'Numeric', 'TextAuto'))) {		// Set autowidth for some types
+				$this->workbook->getActiveSheet()->getColumnDimension($this->column2Letter($this->col + 1))->setAutoSize(true);
+			}
+			$this->col++;
+		}
+		foreach ($selectlabel as $key => $value) {
+			$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, $outputlangs->transnoentities($value));
+			if (!empty($array_types[$code]) && in_array($array_types[$code], array('Date', 'Numeric', 'TextAuto'))) {		// Set autowidth for some types
+				$this->workbook->getActiveSheet()->getColumnDimension($this->column2Letter($this->col + 1))->setAutoSize(true);
 			}
 			$this->col++;
 		}
@@ -286,7 +290,7 @@ class ExportExcel2007 extends ModeleExports
 	 *  @param      resource	$objp                       A record from a fetch with all fields from select
 	 *  @param      Translate	$outputlangs                Object lang to translate values
 	 *  @param		array		$array_types				Array with types of fields
-	 * 	@return		int										<0 if KO, >0 if OK
+	 * 	@return		int										Return integer <0 if KO, >0 if OK
 	 */
 	public function write_record($array_selected_sorted, $objp, $outputlangs, $array_types)
 	{
@@ -295,12 +299,9 @@ class ExportExcel2007 extends ModeleExports
 
 		// Define first row
 		$this->col = 1;
-		if (!empty($conf->global->MAIN_USE_PHP_WRITEEXCEL)) {
-			$this->col = 0;
-		}
 
 		$reg = array();
-
+		$selectlabelvalues = array();
 		foreach ($array_selected_sorted as $code => $value) {
 			if (strpos($code, ' as ') == 0) {
 				$alias = str_replace(array('.', '-', '(', ')'), '_', $code);
@@ -316,9 +317,13 @@ class ExportExcel2007 extends ModeleExports
 			$typefield = isset($array_types[$code]) ? $array_types[$code] : '';
 
 			if (preg_match('/^Select:/i', $typefield) && $typefield = substr($typefield, 7)) {
-				$array = json_decode($typefield, true);
-				$array = $array['options'];
-				$newvalue = $array[$newvalue];
+				$array = jsonOrUnserialize($typefield);
+				if (is_array($array) && !empty($newvalue)) {
+					$array = $array['options'];
+					$selectlabelvalues[$code."_label"] = $array[$newvalue];
+				} else {
+					$selectlabelvalues[$code."_label"] = "";
+				}
 			}
 
 			// Traduction newvalue
@@ -328,6 +333,32 @@ class ExportExcel2007 extends ModeleExports
 				$newvalue = $outputlangs->convToOutputCharset($newvalue);
 			}
 
+			if (preg_match('/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/i', $newvalue)) {
+				$newvalue = dol_stringtotime($newvalue);
+				$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($newvalue));
+				$coord = $this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row + 1)->getCoordinate();
+				$this->workbook->getActiveSheet()->getStyle($coord)->getNumberFormat()->setFormatCode('yyyy-mm-dd');
+			} elseif (preg_match('/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]$/i', $newvalue)) {
+				$newvalue = dol_stringtotime($newvalue);
+				$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($newvalue));
+				$coord = $this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row + 1)->getCoordinate();
+				$this->workbook->getActiveSheet()->getStyle($coord)->getNumberFormat()->setFormatCode('yyyy-mm-dd h:mm:ss');
+			} else {
+				if ($typefield == 'Text' || $typefield == 'TextAuto') {
+					// If $newvalue start with an equal sign we don't want it to be interpreted as a formula, so we add a '. Such transformation should be
+					// done by SetCellValueByColumnAndRow but it is not, so we do it ourself.
+					$newvalue = (dol_substr($newvalue, 0, 1) === '=' ? '\'' : '') . $newvalue;
+					$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, $newvalue);
+					$coord = $this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row + 1)->getCoordinate();
+					$this->workbook->getActiveSheet()->getStyle($coord)->getNumberFormat()->setFormatCode('@');
+					$this->workbook->getActiveSheet()->getStyle($coord)->getAlignment()->setHorizontal(PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+				} else {
+					$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, $newvalue);
+				}
+			}
+			$this->col++;
+		}
+		foreach ($selectlabelvalues as $key => $newvalue) {
 			if (preg_match('/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/i', $newvalue)) {
 				$newvalue = dol_stringtotime($newvalue);
 				$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($newvalue));
@@ -360,7 +391,7 @@ class ExportExcel2007 extends ModeleExports
 	 *	Write footer
 	 *
 	 * 	@param		Translate	$outputlangs	Output language object
-	 * 	@return		int							<0 if KO, >0 if OK
+	 * 	@return		int							Return integer <0 if KO, >0 if OK
 	 */
 	public function write_footer($outputlangs)
 	{
@@ -373,7 +404,7 @@ class ExportExcel2007 extends ModeleExports
 	/**
 	 *	Close Excel file
 	 *
-	 * 	@return		int							<0 if KO, >0 if OK
+	 * 	@return		int							Return integer <0 if KO, >0 if OK
 	 */
 	public function close_file()
 	{
@@ -414,12 +445,12 @@ class ExportExcel2007 extends ModeleExports
 	 */
 	public function column2Letter($c)
 	{
-
 		$c = intval($c);
 		if ($c <= 0) {
 			return '';
 		}
 
+		$letter = '';
 		while ($c != 0) {
 			$p = ($c - 1) % 26;
 			$c = intval(($c - $p) / 26);

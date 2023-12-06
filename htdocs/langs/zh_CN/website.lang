@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - website
 Shortname=代码
+WebsiteName=Name of the website
 WebsiteSetupDesc=Create here the websites you wish to use. Then go into menu Websites to edit them.
 DeleteWebsite=删除网址
 ConfirmDeleteWebsite=Are you sure you want to delete this web site? All its pages and content will also be removed. The files uploaded (like into the medias directory, the ECM module, ...) will remain.
@@ -15,9 +16,9 @@ WEBSITE_HTML_HEADER=在HTML标题的底部添加（对所有页面通用）
 WEBSITE_ROBOT=机器人文件（robots.txt）
 WEBSITE_HTACCESS=Website .htaccess file
 WEBSITE_MANIFEST_JSON=Website manifest.json file
-WEBSITE_README=README.md file
 WEBSITE_KEYWORDSDesc=Use a comma to separate values
-EnterHereLicenseInformation=Enter here meta data or license information to fille a README.md file. if you distribute your website as a template, the file will be included into the temptate package.
+EnterHereReadmeInformation=Enter here a description of the website. If you distribute your website as a template, the file will be included into the temptate package.
+EnterHereLicenseInformation=Enter here the LICENSE of the code of the website. If you distribute your website as a template, the file will be included into the temptate package.
 HtmlHeaderPage=HTML标头（仅限此页面）
 PageNameAliasHelp=页面的名称或别名。<br>当从Web服务器的虚拟主机（如Apacke，Nginx，...）运行网站时，此别名也用于伪造SEO URL。使用“<strong> %s </strong>”按钮编辑此别名。
 EditTheWebSiteForACommonHeader=注意：如果要为所有页面定义个性化标题，请在站点级别而不是页面/容器上编辑标题。
@@ -39,13 +40,15 @@ PageDeleted=页面/ contenair'%s'的网站%s已删除
 PageAdded=Page / Contenair'%s'补充道
 ViewSiteInNewTab=在新标签页查看网站
 ViewPageInNewTab=在新标签页查看页面
-SetAsHomePage=设为首页
+SetAsHomePage=设为主页
 RealURL=真实URL地址
 ViewWebsiteInProduction=使用主页URL网址查看网页
+Virtualhost=Virtual host or domain name
+VirtualhostDesc=The name of the Virtual host or domain (For example: www.mywebsite.com, mybigcompany.net, ...)
 SetHereVirtualHost=<u>Use with Apache/NGinx/...</u><br>Create on your web server (Apache, Nginx, ...) a dedicated Virtual Host with PHP enabled and a Root directory on<br><strong>%s</strong>
 ExampleToUseInApacheVirtualHostConfig=Example to use in Apache virtual host setup:
 YouCanAlsoTestWithPHPS=<u>Use with PHP embedded server</u><br>On develop environment, you may prefer to test the site with the PHP embedded web server (PHP 5.5 required) by running<br><strong>php -S 0.0.0.0:8080 -t %s</strong>
-YouCanAlsoDeployToAnotherWHP=<u>Run your web site with another Dolibarr Hosting provider</u><br>If you don't have a web server like Apache or NGinx available on internet, you can export and import your web site onto another Dolibarr instance provided by another Dolibarr hosting provider that provide full integration with the Website module. You can find a list of some Dolibarr hosting providers on <a href="https://saas.dolibarr.org" target="_blank">https://saas.dolibarr.org</a>
+YouCanAlsoDeployToAnotherWHP= <u> 使用其他 Dolibarr 托管提供商运行您的网站 </u> <br> 如果您在互联网上没有像 Apache 或 NGinx 这样的 Web 服务器，您可以将您的网站导出和导入到另一个 Dolibarr 托管提供商提供的另一个 Dolibarr 实例上，该实例提供与网站模块的完全集成。您可以在 <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external"> https://saas.dolibarr.org </a> 上找到一些 Dolibarr 托管提供商的列表
 CheckVirtualHostPerms=Check also that the virtual host user (for example www-data) has <strong>%s</strong> permissions on files into<br><strong>%s</strong>
 ReadPerm=阅读
 WritePerm=写
@@ -57,10 +60,10 @@ NoPageYet=还没有页面
 YouCanCreatePageOrImportTemplate=You can create a new page or import a full website template
 SyntaxHelp=有关特定语法提示的帮助
 YouCanEditHtmlSourceckeditor=您可以使用编辑器中的“源”按钮编辑HTML源代码。
-YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper:<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
+YouCanEditHtmlSource= <br> <span class="fa fa-bug"> </span> 您可以使用标签将 PHP 代码包含到此源中 <strong> &lt;?php ?&gt; </strong> 。可以使用以下全局变量：$conf、$db、$mysoc、$user、$website、$websitepage、$weblangs、$pagelangs。 <br> <br> <span class="fa fa-bug"> </span> 您还可以使用以下语法包含另一个页面/容器的内容： <br> <strong> &lt;?php includeContainer('alias_of_container_to_include'); ?&gt; </strong> <br> <br> <span class="fa fa-bug"> </span> 您可以使用以下语法重定向到另一个页面/容器（注意：不要输出任何内容）重定向前的内容）： <br> <strong> &lt;?php redirectToContainer(' alias_of_container_to_redirect_to'); ?&gt; </strong> <br> <br> <span class="fa fa-link"> </span> 要添加到其他页面的链接，请使用以下语法：<br>  <strong> &lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt; </strong>  <br> <br> <span class="fa fa-download"> </span> 包含 <strong>用于下载</strong>文件的链接，该文件存储在<strong>documents</strong> 目录，使用 <strong> document.php </strong> 包装器：<br> 示例，对于将文件放入documents/ecm（需要记录），语法为： <br> <strong> &lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt; </strong> <br> 对于文档/媒体中的文件（开放目录以供公共访问），语法为： <br> <strong> &lt;a href="/document.php?modulepart=medias&file=[relative_dir/]文件名。 ext"&gt; </strong> <br> 对于通过共享链接共享的文件 (使用文件的共享哈希键打开访问），语法为： <br> <strong> &lt;a href="/document.php?hashp=publicsharekeyoffile"&gt; </strong>  <br> <br> <span class="fa fa-picture-o"> </span> 包含 <span 类='notranslate'><strong></span> 图像</strong> 存储到<strong> 文档</strong>  目录，使用 <strong> viewimage.php </strong> 包装器：<br>例如，要将图像放入文档/媒体（开放目录以供公共访问），语法为： <br> <strong> &lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt; </strong> <br>
 #YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
-YouCanEditHtmlSource2=For an image shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
-YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank">the wiki documentation</a><br>.
+YouCanEditHtmlSource2=对于通过共享链接共享的图像（使用文件的共享哈希键进行开放访问），语法为： <br> <strong> &lt;img src="/viewimage.php?hashp=12345679012..."&gt; </strong>  <br>
+YouCanEditHtmlSourceMore= <br> 有关 HTML 或动态代码的更多示例，请参阅 <a href="%s" target="_blank" rel="noopener noreferrer external"> wiki 文档</a> <br> .
 ClonePage=克隆页面/容器
 CloneSite=克隆网站
 SiteAdded=Website added
@@ -78,9 +81,9 @@ IDOfPage=页面ID
 Banner=旗帜
 BlogPost=博客文章
 WebsiteAccount=Website account
-WebsiteAccounts=Website accounts
+WebsiteAccounts=网站帐号
 AddWebsiteAccount=创建网站帐户
-BackToListForThirdParty=Back to list for the third-party
+BackToListForThirdParty=Back to list for the third parties
 DisableSiteFirst=首先停用网站
 MyContainerTitle=我的网站标题
 AnotherContainer=This is how to include content of another page/container (you may have an error here if you enable dynamic code because the embedded subcontainer may not exists)
@@ -132,12 +135,12 @@ PublicAuthorAlias=Public author alias
 AvailableLanguagesAreDefinedIntoWebsiteProperties=Available languages are defined into website properties
 ReplacementDoneInXPages=Replacement done in %s pages or containers
 RSSFeed=RSS 源
-RSSFeedDesc=You can get a RSS feed of latest articles with type 'blogpost' using this URL
+RSSFeedDesc=您可以使用此 URL 获取类型为“blogpost”的最新文章的 RSS 提要
 PagesRegenerated=%s page(s)/container(s) regenerated
 RegenerateWebsiteContent=Regenerate web site cache files
 AllowedInFrames=Allowed in Frames
 DefineListOfAltLanguagesInWebsiteProperties=Define list of all available languages into web site properties.
-GenerateSitemaps=Generate website sitemap file
+GenerateSitemaps=Generate website sitemap.xml file
 ConfirmGenerateSitemaps=If you confirm, you will erase the existing sitemap file...
 ConfirmSitemapsCreation=Confirm sitemap generation
 SitemapGenerated=Sitemap file <b>%s</b> generated
@@ -145,3 +148,15 @@ ImportFavicon=Favicon
 ErrorFaviconType=Favicon must be png
 ErrorFaviconSize=Favicon must be sized 16x16, 32x32 or 64x64
 FaviconTooltip=Upload an image which needs to be a png (16x16, 32x32 or 64x64)
+NextContainer=Next page/container
+PreviousContainer=Previous page/container
+WebsiteMustBeDisabled=The website must have the status "%s"
+WebpageMustBeDisabled=The web page must have the status "%s"
+SetWebsiteOnlineBefore=When website is offline, all pages are offline. Change status of website first.
+Booking=Booking
+Reservation=Reservation
+PagesViewedPreviousMonth=Pages viewed (previous month)
+PagesViewedTotal=Pages viewed (total)
+Visibility=谁可访问
+Everyone=所有人
+AssignedContacts=项目联系人

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - receptions
-ReceptionDescription=Vendor reception management (Create reception documents)
-ReceptionsSetup=Vendor Reception setup
+ReceptionDescription=供應商收貨管理（建立收貨文件）
+ReceptionsSetup=產品收貨設定
 RefReception=收貨參考
 Reception=收貨
 Receptions=收貨(s)
@@ -32,6 +32,7 @@ StatusReceptionDraftShort=草案
 StatusReceptionValidatedShort=驗證
 StatusReceptionProcessedShort=已處理
 ReceptionSheet=收貨表
+ValidateReception=Validate reception
 ConfirmDeleteReception=您確定要刪除此收貨嗎？
 ConfirmValidateReception=您確定要使用參考<b>%s</b>驗證此收貨嗎？
 ConfirmCancelReception=您確定要取消此收貨嗎？
@@ -48,7 +49,6 @@ ReceptionsNumberingModules=收貨編號模組
 ReceptionsReceiptModel=收貨用文件範本
 NoMorePredefinedProductToDispatch=沒有更多預定義的產品要調度
 ReceptionExist=有櫃台
-ByingPrice=依價格
 ReceptionBackToDraftInDolibarr=收貨 %s 回到草案狀態
 ReceptionClassifyClosedInDolibarr=收貨%s 分類為已關閉
-ReceptionUnClassifyCloseddInDolibarr=收貨 %s 重新開放
+ReceptionUnClassifyCloseddInDolibarr=收貨 %s 重新啟用

@@ -46,6 +46,7 @@
  * {dol_print_barcode}                              Print barcode
  * {dol_print_logo}                                 Print logo stored on printer. Example : <print_logo>32|32
  * {dol_print_logo_old}                             Print logo stored on printer. Must be followed by logo code. For old printers.
+ * {dol_print_logo_old_cf}                          Print logo stored on printer. Must be followed by logo code. For old printers. May help for centering image.
  * {dol_print_object_lines}                         Print object lines
  * {dol_print_object_tax}                           Print object total tax
  * {dol_print_object_local_tax}                     Print object local tax
@@ -63,7 +64,8 @@
  * <dol_value_month>                                Replaced by month number
  * <dol_value_day>                                  Replaced by day number
  * <dol_value_day_letters>                          Replaced by day number
- * <dol_value_currentdate>                          Replaced by current date
+ * <dol_value_currentdate>                          Replaced by current date and time
+ * <dol_value_currentdate_notime>                   Replaced by current date without time
  * <dol_object_id>                                  Replaced by object id
  * <dol_object_ref>                                 Replaced by object ref
  * <dol_value_customer_firstname>                   Replaced by customer firstname
@@ -71,7 +73,6 @@
  * <dol_value_customer_mail>                        Replaced by customer mail
  * <dol_value_customer_phone>                       Replaced by customer phone
  * <dol_value_customer_mobile>                      Replaced by customer mobile
- * <dol_value_customer_skype>                       Replaced by customer skype
  * <dol_value_customer_tax_number>                  Replaced by customer VAT number
  * <dol_value_customer_account_balance>             Replaced by customer account balance
  * <dol_value_mysoc_name>                           Replaced by mysoc name
@@ -143,6 +144,28 @@ class dolReceiptPrinter extends Printer
 	public $orderprinter;
 
 	/**
+	 * Array with list of printers
+	 * @var array	List of printers
+	 */
+	public $listprinters;
+
+	/**
+	 * Array with list of printer templates
+	 * @var array	List of printer templates
+	 */
+	public $listprinterstemplates;
+
+	/**
+	 * @var string
+	 */
+	public $profileresprint;
+
+	/**
+	 * @var string
+	 */
+	public $resprint;
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
@@ -191,10 +214,18 @@ class dolReceiptPrinter extends Printer
 			'dol_value_day' => 'DOL_VALUE_DAY',
 			'dol_value_day_letters' => 'DOL_VALUE_DAY',
 			'dol_value_currentdate' => 'DOL_VALUE_CURRENTDATE',
+			'dol_value_currentdate_notime' => 'CurrentDateWithTime',
+			'dol_value_currentdate_letters' => 'DOL_VALUE_CURRENTDATE_LETTERS',
+			'dol_value_currentyear' => 'CurrentYear',
+			'dol_value_currentmonth_letters' => 'DOL_VALUE_CURRENT_MONTH_LETTERS',
+			'dol_value_currentmonth' => 'DOL_VALUE_CURRENT_MONTH',
+			'dol_value_currentday' => 'DOL_VALUE_CURRENT_DAY',
+			'dol_value_currentday_letters' => 'DOL_VALUE_CURRENT_DAY',
 			'dol_print_payment' => 'DOL_PRINT_PAYMENT',
 			'dol_print_curr_date' => 'DOL_PRINT_CURR_DATE',
 			'dol_print_logo' => 'DOL_PRINT_LOGO',
 			'dol_print_logo_old' => 'DOL_PRINT_LOGO_OLD',
+			'dol_print_logo_old_cf' => 'DOL_PRINT_LOGO_OLD_CF',
 			'dol_value_object_id' => 'InvoiceID',
 			'dol_value_object_ref' => 'InvoiceRef',
 			'dol_print_object_lines' => 'DOL_PRINT_OBJECT_LINES',
@@ -210,7 +241,6 @@ class dolReceiptPrinter extends Printer
 			'dol_value_customer_lastname' => 'DOL_VALUE_CUSTOMER_LASTNAME',
 			'dol_value_customer_mail' => 'DOL_VALUE_CUSTOMER_MAIL',
 			'dol_value_customer_phone' => 'DOL_VALUE_CUSTOMER_PHONE',
-			'dol_value_customer_skype' => 'DOL_VALUE_CUSTOMER_SKYPE',
 			'dol_value_customer_tax_number' => 'DOL_VALUE_CUSTOMER_TAX_NUMBER',
 			//'dol_value_customer_account_balance' => 'DOL_VALUE_CUSTOMER_ACCOUNT_BALANCE',
 			//'dol_value_customer_points' => 'DOL_VALUE_CUSTOMER_POINTS',
@@ -236,20 +266,24 @@ class dolReceiptPrinter extends Printer
 	}
 
 	/**
-	 * list printers
+	 * List printers into the array ->listprinters
 	 *
 	 * @return  int                     0 if OK; >0 if KO
 	 */
 	public function listPrinters()
 	{
 		global $conf;
+
 		$error = 0;
 		$line = 0;
 		$obj = array();
+
 		$sql = "SELECT rowid, name, fk_type, fk_profile, parameter";
 		$sql .= " FROM ".$this->db->prefix()."printer_receipt";
-		$sql .= " WHERE entity = ".$conf->entity;
+		$sql .= " WHERE entity = ".((int) $conf->entity);
+
 		$resql = $this->db->query($sql);
+
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			while ($line < $num) {
@@ -298,7 +332,9 @@ class dolReceiptPrinter extends Printer
 			$error++;
 			$this->errors[] = $this->db->lasterror;
 		}
+
 		$this->listprinters = $obj;
+
 		return $error;
 	}
 
@@ -311,13 +347,17 @@ class dolReceiptPrinter extends Printer
 	public function listPrintersTemplates()
 	{
 		global $conf;
+
 		$error = 0;
 		$line = 0;
 		$obj = array();
+
 		$sql = "SELECT rowid, name, template";
 		$sql .= " FROM ".$this->db->prefix()."printer_receipt_template";
 		$sql .= " WHERE entity = ".$conf->entity;
+
 		$resql = $this->db->query($sql);
+
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			while ($line < $num) {
@@ -328,7 +368,9 @@ class dolReceiptPrinter extends Printer
 			$error++;
 			$this->errors[] = $this->db->lasterror;
 		}
+
 		$this->listprinterstemplates = $obj;
+
 		return $error;
 	}
 
@@ -577,9 +619,13 @@ class dolReceiptPrinter extends Printer
 	public function sendToPrinter($object, $templateid, $printerid)
 	{
 		global $conf, $mysoc, $langs, $user;
+		global $hookmanager;
+
+		$langs->load('bills');
+
 		$error = 0;
 		$ret = $this->loadTemplate($templateid);
-
+		$now = dol_now('tzuser');
 		// tags a remplacer par leur valeur avant de parser (dol_value_xxx)
 		$this->template = str_replace('{dol_value_object_id}', $object->id, $this->template);
 		$this->template = str_replace('{dol_value_object_ref}', $object->ref, $this->template);
@@ -591,7 +637,15 @@ class dolReceiptPrinter extends Printer
 		$this->template = str_replace('{dol_value_month}', dol_print_date($object->date, '%m'), $this->template);
 		$this->template = str_replace('{dol_value_day}', dol_print_date($object->date, '%d'), $this->template);
 		$this->template = str_replace('{dol_value_day_letters}', $langs->trans("Day".dol_print_date($object->date, '%m')[1]), $this->template);
-		$this->template = str_replace('{dol_value_currentdate}', dol_print_date(dol_now(), 'dayhour'), $this->template);
+
+		$this->template = str_replace('{dol_value_currentdate}', dol_print_date($now, 'dayhour'), $this->template);
+		$this->template = str_replace('{dol_value_currentdate_notime}', dol_print_date($now, 'day'), $this->template);
+		$this->template = str_replace('{dol_value_currentdate_letters}', dol_print_date($now, 'dayhourtext'), $this->template);
+		$this->template = str_replace('{dol_value_currentyear}', dol_print_date($now, '%Y'), $this->template);
+		$this->template = str_replace('{dol_value_currentmonth_letters}', $langs->trans("Month".dol_print_date($now, '%m')), $this->template);
+		$this->template = str_replace('{dol_value_currentmonth}', dol_print_date($now, '%m'), $this->template);
+		$this->template = str_replace('{dol_value_currentday}', dol_print_date($now, '%d'), $this->template);
+		$this->template = str_replace('{dol_value_currentday_letters}', $langs->trans("Day".dol_print_date($now, '%m')[1]), $this->template);
 
 		$this->template = str_replace('{dol_value_customer_firstname}', $object->thirdparty->firstname, $this->template);
 		$this->template = str_replace('{dol_value_customer_lastname}', $object->thirdparty->lastname, $this->template);
@@ -621,6 +675,15 @@ class dolReceiptPrinter extends Printer
 		$this->template = str_replace('{dol_value_vendor_lastname}', $user->lastname, $this->template);
 		$this->template = str_replace('{dol_value_vendor_mail}', $user->email, $this->template);
 
+		$parameters = array('object'=>$object);
+		$action = '';
+		$reshook = $hookmanager->executeHooks('sendToPrinterBefore', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook < 0) {
+			$this->error = "Error in hook dolReceiptPrinter sendToPrinterBefore ".$reshook;
+			dol_syslog("dolReceiptPrinter::sendToPrinter: error=".$this->error, LOG_ERR);
+			return $reshook;
+		}
+
 		// parse template
 		$this->template = str_replace("{", "<", $this->template);
 		$this->template = str_replace("}", ">", $this->template);
@@ -631,7 +694,7 @@ class dolReceiptPrinter extends Printer
 		//print '<pre>'.print_r($vals, true).'</pre>';
 		// print ticket
 		$level = 0;
-		$nbcharactbyline = (!empty($conf->global->RECEIPT_PRINTER_NB_CHARACT_BY_LINE) ? $conf->global->RECEIPT_PRINTER_NB_CHARACT_BY_LINE : 48);
+		$nbcharactbyline = (getDolGlobalString('RECEIPT_PRINTER_NB_CHARACT_BY_LINE') ? $conf->global->RECEIPT_PRINTER_NB_CHARACT_BY_LINE : 48);
 		$ret = $this->initPrinter($printerid);
 		if ($ret > 0) {
 			setEventMessages($this->error, $this->errors, 'errors');
@@ -717,8 +780,11 @@ class dolReceiptPrinter extends Printer
 						$this->printer->text($title.$spaces.str_pad(price($object->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
 						break;
 					case 'DOL_PRINT_CURR_DATE':
-						if (strlen($vals[$tplline]['value'])<2) $this->printer->text(date('d/m/Y H:i:s')."\n");
-						else $this->printer->text(date($vals[$tplline]['value'])."\n");
+						if (strlen($vals[$tplline]['value'])<2) {
+							$this->printer->text(date('d/m/Y H:i:s')."\n");
+						} else {
+							$this->printer->text(date($vals[$tplline]['value'])."\n");
+						}
 						break;
 					case 'DOL_LINE_FEED':
 						$this->printer->feed();
@@ -758,6 +824,10 @@ class dolReceiptPrinter extends Printer
 					case 'DOL_PRINT_LOGO_OLD':
 						$img = EscposImage::load(DOL_DATA_ROOT.'/mycompany/logos/'.$mysoc->logo);
 						$this->printer->bitImage($img);
+						break;
+					case 'DOL_PRINT_LOGO_OLD_CF':
+						$img = EscposImage::load(DOL_DATA_ROOT.'/mycompany/logos/'.$mysoc->logo);
+						$this->printer->bitImageColumnFormat($img);
 						break;
 					case 'DOL_PRINT_QRCODE':
 						// $vals[$tplline]['value'] -> qrCode($content, $ec, $size, $model)
@@ -830,7 +900,7 @@ class dolReceiptPrinter extends Printer
 								$row = $this->db->fetch_object($resql);
 								$spacestoadd = $nbcharactbyline - strlen($langs->transnoentitiesnoconv("PaymentTypeShort".$row->code)) - 12;
 								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
-								$amount_payment = (!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) ? $row->multicurrency_amount : $row->amount;
+								$amount_payment = (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) ? $row->multicurrency_amount : $row->amount;
 								if ($row->code == "LIQ") {
 									$amount_payment = $amount_payment + $row->pos_change; // Show amount with excess received if is cash payment
 								}
@@ -845,25 +915,31 @@ class dolReceiptPrinter extends Printer
 						}
 						break;
 					case 'DOL_VALUE_PLACE':
-							$sql = "SELECT floor, label FROM ".$this->db->prefix()."takepos_floor_tables where rowid=".((int) str_replace(")", "", str_replace("(PROV-POS".$_SESSION["takeposterminal"]."-", "", $object->ref)));
-							$resql = $this->db->query($sql);
-							$obj = $this->db->fetch_object($resql);
+						$sql = "SELECT floor, label FROM ".$this->db->prefix()."takepos_floor_tables where rowid=".((int) str_replace(")", "", str_replace("(PROV-POS".$_SESSION["takeposterminal"]."-", "", $object->ref)));
+						$resql = $this->db->query($sql);
+						$obj = $this->db->fetch_object($resql);
 						if ($obj) {
 							$this->printer->text($obj->label);
 						}
 						break;
 					default:
-						$this->printer->text($vals[$tplline]['tag']);
-						$this->printer->text($vals[$tplline]['value']);
-						$this->errors[] = 'UnknowTag: &lt;'.strtolower($vals[$tplline]['tag']).'&gt;';
-						$error++;
+						$parameters = array('vals' => $vals[$tplline],'object' => $object,'nbcharactbyline' => $nbcharactbyline);
+						$action = '';
+						$reshook = $hookmanager->executeHooks('sendToPrinterAfter', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+
+						if (!$reshook || $reshook < 0) {
+							$this->printer->text($vals[$tplline]['tag']);
+							$this->printer->text($vals[$tplline]['value']);
+							$this->errors[] = 'UnknowTag: &lt;'.strtolower($vals[$tplline]['tag']).'&gt;';
+							$error++;
+						}
 						break;
 				}
 			}
 			// If is DummyPrintConnector send to log to debugging
-			if ($this->printer->connector instanceof DummyPrintConnector || $conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
+			if ($this->printer->connector instanceof DummyPrintConnector || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
 				$data = $this->printer->connector->getData();
-				if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
+				if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
 					echo rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
 				}
 				dol_syslog($data);
@@ -910,7 +986,7 @@ class dolReceiptPrinter extends Printer
 	 *  Function Init Printer
 	 *
 	 *  @param   int       $printerid       Printer id
-	 *  @return  int                        0 if OK; >0 if KO
+	 *  @return  void|int                        0 if OK; >0 if KO
 	 */
 	public function initPrinter($printerid)
 	{

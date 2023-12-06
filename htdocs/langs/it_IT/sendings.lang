@@ -48,7 +48,7 @@ DateDeliveryPlanned=Data prevista di consegna
 RefDeliveryReceipt=Rif. ricevuta di consegna
 StatusReceipt=Stato ricevuta di consegna
 DateReceived=Data di consegna ricevuto
-ClassifyReception=Classifica ricevuto
+ClassifyReception=Classify Received
 SendShippingByEMail=Invia spedizione via EMail
 SendShippingRef=Invio della spedizione %s
 ActionsOnShipping=Azioni sulla spedizione
@@ -74,3 +74,8 @@ SumOfProductWeights=Totale peso prodotti
 # warehouse details
 DetailWarehouseNumber= Dettagli magazzino
 DetailWarehouseFormat= Peso:%s (Qtà : %d)
+
+ShipmentDistribution=Shipment distribution
+
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.

@@ -32,7 +32,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modExternalRss extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -63,7 +62,7 @@ class modExternalRss extends DolibarrModules
 		// Dependencies
 		$this->depends = array();
 		$this->requiredby = array();
-		$this->phpmin = array(4, 2, 0);
+		$this->phpmin = array(7, 0);
 		$this->phpmax = array();
 
 		// Constants
