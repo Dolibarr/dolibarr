@@ -1812,21 +1812,17 @@ abstract class CommonInvoice extends CommonObject
 	 *
 	 * @return void
 	 */
-	public function srcObjDelBilledLines(&$objectsrc) {
+	public function srcObjDelBilledLines(&$objectsrc)
+	{
 		/* @var $objectsrc CommonObject */
 		if (isModEnabled("product")) { // doesnt work with "free lines", it seems to be to dangerous
 			$objectsrc->fetchObjectLinked();
-			if (is_array($objectsrc->linkedObjects) && is_array($objectsrc->linkedObjects[$this->element])) 
-			{
-				foreach ($objectsrc->linkedObjects[$this->element] as $facture_ex) 
-				{
+			if (is_array($objectsrc->linkedObjects) && is_array($objectsrc->linkedObjects[$this->element]))	{
+				foreach ($objectsrc->linkedObjects[$this->element] as $facture_ex) {
 					/* @var $facture_ex CommonInvoice */
-					foreach ($facture_ex->lines as $linef_ex) 
-					{
-						foreach ($objectsrc->lines as $il=>$osrc_line) 
-						{
-							if ($linef_ex->fk_product == $osrc_line->fk_product) 
-							{
+					foreach ($facture_ex->lines as $linef_ex) {
+						foreach ($objectsrc->lines as $il=>$osrc_line) {
+							if ($linef_ex->fk_product == $osrc_line->fk_product) {
 								$objectsrc->lines[$il]->qty -= $linef_ex->qty;
 								if ($objectsrc->lines[$il]->qty <= 0) unset($objectsrc->lines[$il]);
 							}
