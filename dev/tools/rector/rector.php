@@ -7,7 +7,7 @@ use Rector\Core\ValueObject\PhpVersion;
 use Rector\Set\ValueObject\LevelSetList;
 
 return static function (RectorConfig $rectorConfig): void {
-	$rectorConfig->phpVersion(PhpVersion::PHP_71);
+	$rectorConfig->phpVersion(PhpVersion::PHP_82);
 	//$rectorConfig->indent(' ', 4);
 
 	// Traits seems not supported correctly by rector without declaring them as bootstrapFiles
@@ -19,15 +19,9 @@ return static function (RectorConfig $rectorConfig): void {
 	$rectorConfig->bootstrapFiles($arrayoftraitfiles);
 
 	$rectorConfig->paths([
-		__DIR__ . '/../../../htdocs/',
-		__DIR__ . '/../../../scripts/',
-		__DIR__ . '/../../../test/phpunit/',
+		__DIR__ . '/../../../htdocs/custom/multismtp',
 	]);
 	$rectorConfig->skip([
-		'**/includes/**',
-		'**/custom/**',
-		__DIR__ . '/../../../htdocs/custom/',
-		__DIR__ . '/../../../htdocs/install/doctemplates/*'
 	]);
 	$rectorConfig->parallel(240);
 
@@ -47,7 +41,7 @@ return static function (RectorConfig $rectorConfig): void {
 	$rectorConfig->rule(Dolibarr\Rector\Renaming\EmptyGlobalToFunction::class);
 
 	// Add all predefined rules to migrate to up to php 71
-	// $rectorConfig->sets([
-	//	LevelSetList::UP_TO_PHP_71
-	// ]);
+	/* $rectorConfig->sets([
+		LevelSetList::UP_TO_PHP_71
+	]);*/
 };
