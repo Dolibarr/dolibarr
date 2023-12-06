@@ -1822,10 +1822,12 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print "</table>\n";
 
 
-			// Credentials
+			// Credentials section
+
 			print '<br>';
 			print '<div class="div-table-responsive-no-min">';
 			print '<table class="border tableforfield centpercent">';
+
 			print '<tr class="liste_titre"><td class="liste_titre">';
 			print img_picto('', 'security', 'class="paddingleft pictofixedwidth"').$langs->trans("Credentials");
 			print '</td>';
@@ -1845,6 +1847,15 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 			print '</td>';
 			print "</tr>\n";
+
+			// Alternative email for OAUth2 login
+			if (!empty($object->email_oauth2) && preg_match('/googleoauth/', $dolibarr_main_authentication)) {
+				print '<tr class="nooddeven"><td class="titlefield">'.$langs->trans("AlternativeEmailForOAuth2").'</td>';
+				print '<td>';
+				print dol_print_email($object->email_oauth2);
+				print '</td>';
+				print "</tr>\n";
+			}
 
 			// Password
 			$valuetoshow = '';
