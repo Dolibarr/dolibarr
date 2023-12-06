@@ -102,7 +102,7 @@ class ProductAttributeValue extends CommonObjectLine
 		$this->db = $db;
 		$this->entity = $conf->entity;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -315,7 +315,7 @@ class ProductAttributeValue extends CommonObjectLine
 	 *
 	 * @param  User	$user	   Object user
 	 * @param  int  $notrigger Do not execute trigger
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{

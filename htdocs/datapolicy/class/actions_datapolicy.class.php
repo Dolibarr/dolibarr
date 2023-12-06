@@ -136,7 +136,7 @@ class ActionsDatapolicy extends CommonHookActions
 			require_once  DOL_DOCUMENT_ROOT.'/datapolicy/class/datapolicy.class.php';
 			DataPolicy::sendMailDataPolicyContact($object);
 		} elseif ($parameters['currentcontext'] == 'membercard' && $action == 'send_datapolicy') {
-			 $object->fetch(GETPOST('id'));
+			$object->fetch(GETPOST('id'));
 			require_once  DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 			require_once  DOL_DOCUMENT_ROOT.'/datapolicy/class/datapolicy.class.php';
 			DataPolicy::sendMailDataPolicyAdherent($object);
@@ -171,7 +171,7 @@ class ActionsDatapolicy extends CommonHookActions
 		global $conf, $langs;
 		$langs->load('datapolicy@datapolicy');
 
-		if (!empty($conf->global->DATAPOLICY_ENABLE_EMAILS)) {
+		if (getDolGlobalString('DATAPOLICY_ENABLE_EMAILS')) {
 			$dialog = '<div id="dialogdatapolicy" style="display:none;" title="'.$langs->trans('DATAPOLICY_PORTABILITE_TITLE').'">';
 			$dialog .= '<div class="confirmmessage">'.img_help('', '').' '.$langs->trans('DATAPOLICY_PORTABILITE_CONFIRMATION').'</div>';
 			$dialog .= "</div>";

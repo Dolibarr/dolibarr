@@ -97,7 +97,7 @@ print "port=" . getDolGlobalString('LDAP_SERVER_PORT')."\n";
 print "login=" . getDolGlobalString('LDAP_ADMIN_DN')."\n";
 print "pass=".preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)."\n";
 print "DN to extract=" . getDolGlobalString('LDAP_GROUP_DN')."\n";
-if (!empty($conf->global->LDAP_GROUP_FILTER)) {
+if (getDolGlobalString('LDAP_GROUP_FILTER')) {
 	print 'Filter=(' . getDolGlobalString('LDAP_GROUP_FILTER').')'."\n"; // Note: filter is defined into function getRecords
 } else {
 	print 'Filter=(' . getDolGlobalString('LDAP_KEY_GROUPS').'=*)'."\n";
@@ -118,7 +118,7 @@ if (!$confirmed) {
 	$input = trim(fgets(STDIN));
 }
 
-if (empty($conf->global->LDAP_GROUP_DN)) {
+if (!getDolGlobalString('LDAP_GROUP_DN')) {
 	print $langs->trans("Error").': '.$langs->trans("LDAP setup for groups not defined inside Dolibarr");
 	exit(-1);
 }
@@ -181,7 +181,7 @@ if ($result >= 0) {
 					continue;
 				}
 				if (empty($userList[$userdn])) { // Récupération de l'utilisateur
-												 // Schéma rfc2307: les membres sont listés dans l'attribut memberUid sous form de login uniquement
+					// Schéma rfc2307: les membres sont listés dans l'attribut memberUid sous form de login uniquement
 					if (getDolGlobalString('LDAP_GROUP_FIELD_GROUPMEMBERS') === 'memberUid') {
 						$userKey = array($userdn);
 					} else { // Pour les autres schémas, les membres sont listés sous forme de DN complets

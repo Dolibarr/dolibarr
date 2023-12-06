@@ -344,7 +344,7 @@ class ImportXlsx extends ModeleImports
 	 * @param	int		$maxfields						Max number of fields to use
 	 * @param	string	$importid						Import key
 	 * @param	array	$updatekeys						Array of keys to use to try to do an update first before insert. This field are defined into the module descriptor.
-	 * @return	int										<0 if KO, >0 if OK
+	 * @return	int										Return integer <0 if KO, >0 if OK
 	 */
 	public function import_insert($arrayrecord, $array_match_file_to_database, $objimport, $maxfields, $importid, $updatekeys)
 	{
@@ -652,7 +652,7 @@ class ImportXlsx extends ModeleImports
 
 										if (!empty($classModForNumber) && !empty($pathModForNumber) && is_readable(DOL_DOCUMENT_ROOT.$pathModForNumber)) {
 											require_once DOL_DOCUMENT_ROOT.$pathModForNumber;
-											$modForNumber = new $classModForNumber;
+											$modForNumber = new $classModForNumber();
 
 											$tmpobject = null;
 											// Set the object with the date property when we can
@@ -693,14 +693,14 @@ class ImportXlsx extends ModeleImports
 										$this->errors[$error]['lib'] = implode(
 											"\n",
 											array_merge([$classinstance->error], $classinstance->errors)
-											);
+										);
 										$errorforthistable++;
 										$error++;
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'numeric') {
 									$newval = price2num($newval);
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'accountingaccount') {
-									if (empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
+									if (!getDolGlobalString('ACCOUNTING_MANAGE_ZERO')) {
 										$newval = rtrim(trim($newval), "0");
 									} else {
 										$newval = trim($newval);
@@ -866,7 +866,7 @@ class ImportXlsx extends ModeleImports
 									$this->errors[$error]['lib'] = implode(
 										"\n",
 										array_merge([$classinstance->error], $classinstance->errors)
-										);
+									);
 									$errorforthistable++;
 									$error++;
 								}
@@ -937,7 +937,9 @@ class ImportXlsx extends ModeleImports
 									if ($num_rows == 1) {
 										$res = $this->db->fetch_object($resql);
 										$lastinsertid = $res->rowid;
-										if ($is_table_category_link) $lastinsertid = 'linktable'; // used to apply update on tables like llx_categorie_product and avoid being blocked for all file content if at least one entry already exists
+										if ($is_table_category_link) {
+											$lastinsertid = 'linktable';
+										} // used to apply update on tables like llx_categorie_product and avoid being blocked for all file content if at least one entry already exists
 										$last_insert_id_array[$tablename] = $lastinsertid;
 									} elseif ($num_rows > 1) {
 										$this->errors[$error]['lib'] = $langs->trans('MultipleRecordFoundWithTheseFilters', implode(', ', $filters));

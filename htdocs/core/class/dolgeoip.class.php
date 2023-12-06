@@ -33,6 +33,9 @@
  */
 class DolGeoIP
 {
+	/**
+	 * @var GeoIp2\Database\Reader
+	 */
 	public $gi;
 
 	public $error;
@@ -49,7 +52,7 @@ class DolGeoIP
 		global $conf;
 
 		$geoipversion = '2'; // 'php', or geoip version '2'
-		if (!empty($conf->global->GEOIP_VERSION)) {
+		if (getDolGlobalString('GEOIP_VERSION')) {
 			$geoipversion = $conf->global->GEOIP_VERSION;
 		}
 
@@ -89,6 +92,7 @@ class DolGeoIP
 
 		if ($geoipversion == '2') {
 			try {
+				// @phpstan-ignore-next-line
 				$this->gi = new GeoIp2\Database\Reader($datfile); // '/usr/local/share/GeoIP/GeoIP2-City.mmdb'
 			} catch (Exception $e) {
 				$this->error = $e->getMessage();
@@ -117,7 +121,7 @@ class DolGeoIP
 		global $conf;
 
 		$geoipversion = '2'; // 'php', or '2'
-		if (!empty($conf->global->GEOIP_VERSION)) {
+		if (getDolGlobalString('GEOIP_VERSION')) {
 			$geoipversion = $conf->global->GEOIP_VERSION;
 		}
 
@@ -175,7 +179,7 @@ class DolGeoIP
 		global $conf;
 
 		$geoipversion = '2'; // 'php', or '2'
-		if (!empty($conf->global->GEOIP_VERSION)) {
+		if (getDolGlobalString('GEOIP_VERSION')) {
 			$geoipversion = $conf->global->GEOIP_VERSION;
 		}
 
@@ -206,7 +210,7 @@ class DolGeoIP
 		global $conf;
 
 		$geoipversion = '2'; // 'php', or '2'
-		if (!empty($conf->global->GEOIP_VERSION)) {
+		if (getDolGlobalString('GEOIP_VERSION')) {
 			$geoipversion = $conf->global->GEOIP_VERSION;
 		}
 

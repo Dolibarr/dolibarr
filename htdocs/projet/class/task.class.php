@@ -138,12 +138,12 @@ class Task extends CommonObjectLine
 	/**
 	 * @var array
 	 */
-	public $statuts;
+	public $labelStatus;
 
 	/**
 	 * @var array
 	 */
-	public $statuts_short;
+	public $labelStatusShort;
 
 	// Properties calculated from sum of llx_element_time linked to task
 	public $tobill;
@@ -200,7 +200,7 @@ class Task extends CommonObjectLine
 	 *
 	 *  @param	User	$user        	User that create
 	 *  @param 	int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return int 		        	<0 if KO, Id of created object if OK
+	 *  @return int 		        	Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -259,7 +259,8 @@ class Task extends CommonObjectLine
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -306,7 +307,7 @@ class Task extends CommonObjectLine
 	 *  @param	int		$id					Id object
 	 *  @param	int		$ref				ref object
 	 *  @param	int		$loadparentdata		Also load parent data
-	 *  @return int 		        		<0 if KO, 0 if not found, >0 if OK
+	 *  @return int 		        		Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = '', $loadparentdata = 0)
 	{
@@ -470,7 +471,8 @@ class Task extends CommonObjectLine
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// Update extrafield
@@ -481,7 +483,7 @@ class Task extends CommonObjectLine
 			}
 		}
 
-		if (!$error && !empty($conf->global->PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE)) {
+		if (!$error && getDolGlobalString('PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE')) {
 			// Close the parent project if it is open (validated) and its tasks are 100% completed
 			$project = new Project($this->db);
 			if ($project->fetch($this->fk_project) > 0) {
@@ -492,7 +494,7 @@ class Task extends CommonObjectLine
 						function ($allTasksCompleted, $task) {
 							return $allTasksCompleted && $task->progress >= 100;
 						},
-					1
+						1
 					);
 					if ($projectCompleted) {
 						if ($project->setClose($user) <= 0) {
@@ -559,11 +561,10 @@ class Task extends CommonObjectLine
 	 *
 	 *	@param	User	$user        	User that delete
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-
 		global $conf, $langs;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -603,7 +604,8 @@ class Task extends CommonObjectLine
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -613,7 +615,8 @@ class Task extends CommonObjectLine
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -623,7 +626,8 @@ class Task extends CommonObjectLine
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -688,7 +692,8 @@ class Task extends CommonObjectLine
 		dol_syslog(get_class($this)."::hasChildren", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		} else {
 			$obj = $this->db->fetch_object($resql);
 			if ($obj) {
@@ -722,7 +727,8 @@ class Task extends CommonObjectLine
 		dol_syslog(get_class($this)."::hasTimeSpent", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		} else {
 			$obj = $this->db->fetch_object($resql);
 			if ($obj) {
@@ -814,11 +820,11 @@ class Task extends CommonObjectLine
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowTask");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.' nowraponall"';
 		} else {
 			$linkclose .= ' class="nowraponall"';
@@ -1302,7 +1308,7 @@ class Task extends CommonObjectLine
 			$this->timespent_datehour = $this->timespent_date;
 		}
 
-		if (!empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
+		if (getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
 
@@ -1597,7 +1603,7 @@ class Task extends CommonObjectLine
 	 *  Load properties of timespent of a task from the time spent ID.
 	 *
 	 *  @param	int		$id 	Id in time spent table
-	 *  @return int		        <0 if KO, >0 if OK
+	 *  @return int		        Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchTimeSpent($id)
 	{
@@ -1720,7 +1726,7 @@ class Task extends CommonObjectLine
 	 *
 	 *  @param	User	$user           User id
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return	int						<0 if KO, >0 if OK
+	 *  @return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function updateTimeSpent($user, $notrigger = 0)
 	{
@@ -1746,7 +1752,7 @@ class Task extends CommonObjectLine
 			$this->timespent_note = trim($this->timespent_note);
 		}
 
-		if (!empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
+		if (getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
 
@@ -1792,7 +1798,7 @@ class Task extends CommonObjectLine
 			$ret = -1;
 		}
 
-		if ($ret == 1 && (($this->timespent_old_duration != $this->timespent_duration) || !empty($conf->global->TIMESPENT_ALWAYS_UPDATE_THM))) {
+		if ($ret == 1 && (($this->timespent_old_duration != $this->timespent_duration) || getDolGlobalString('TIMESPENT_ALWAYS_UPDATE_THM'))) {
 			if ($this->timespent_old_duration != $this->timespent_duration) {
 				// Recalculate amount of time spent for task and update denormalized field
 				$sql = "UPDATE " . MAIN_DB_PREFIX . "projet_task";
@@ -1812,7 +1818,7 @@ class Task extends CommonObjectLine
 
 			// Update hourly rate of this time spent entry, but only if it was not set initialy
 			$res_update = 1;
-			if (empty($timespent->thm) || !empty($conf->global->TIMESPENT_ALWAYS_UPDATE_THM)) {
+			if (empty($timespent->thm) || getDolGlobalString('TIMESPENT_ALWAYS_UPDATE_THM')) {
 				$resql_thm_user = $this->db->query("SELECT thm FROM " . MAIN_DB_PREFIX . "user WHERE rowid = " . ((int) $timespent->fk_user));
 				if (!empty($resql_thm_user)) {
 					$obj_thm_user = $this->db->fetch_object($resql_thm_user);
@@ -1839,7 +1845,7 @@ class Task extends CommonObjectLine
 	 *
 	 *  @param	User	$user        	User that delete
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return	int						<0 if KO, >0 if OK
+	 *  @return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function delTimeSpent($user, $notrigger = 0)
 	{
@@ -1847,7 +1853,7 @@ class Task extends CommonObjectLine
 
 		$error = 0;
 
-		if (!empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
+		if (getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
 
@@ -1876,7 +1882,8 @@ class Task extends CommonObjectLine
 			$res_del = $timespent->delete($user);
 
 			if ($res_del < 0) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -1948,10 +1955,10 @@ class Task extends CommonObjectLine
 		$origin_task->fetch($fromid);
 
 		$defaultref = '';
-		$obj = empty($conf->global->PROJECT_TASK_ADDON) ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
-		if (!empty($conf->global->PROJECT_TASK_ADDON) && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').".php")) {
+		$obj = !getDolGlobalString('PROJECT_TASK_ADDON') ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
+		if (getDolGlobalString('PROJECT_TASK_ADDON') && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').".php")) {
 			require_once DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').'.php';
-			$modTask = new $obj;
+			$modTask = new $obj();
 			$defaultref = $modTask->getNextValue(0, $clone_task);
 		}
 
@@ -1985,7 +1992,7 @@ class Task extends CommonObjectLine
 		}
 
 		if (!$clone_prog) {
-				$clone_task->progress = 0;
+			$clone_task->progress = 0;
 		}
 
 		// Create clone
@@ -2133,80 +2140,80 @@ class Task extends CommonObjectLine
 		global $langs;
 
 		// list of Statut of the task
-		$this->statuts[0] = 'Draft';
-		$this->statuts[1] = 'ToDo';
-		$this->statuts[2] = 'Running';
-		$this->statuts[3] = 'Finish';
-		$this->statuts[4] = 'Transfered';
-		$this->statuts_short[0] = 'Draft';
-		$this->statuts_short[1] = 'ToDo';
-		$this->statuts_short[2] = 'Running';
-		$this->statuts_short[3] = 'Completed';
-		$this->statuts_short[4] = 'Transfered';
+		$this->labelStatus[0] = 'Draft';
+		$this->labelStatus[1] = 'ToDo';
+		$this->labelStatus[2] = 'Running';
+		$this->labelStatus[3] = 'Finish';
+		$this->labelStatus[4] = 'Transfered';
+		$this->labelStatusShort[0] = 'Draft';
+		$this->labelStatusShort[1] = 'ToDo';
+		$this->labelStatusShort[2] = 'Running';
+		$this->labelStatusShort[3] = 'Completed';
+		$this->labelStatusShort[4] = 'Transfered';
 
 		if ($mode == 0) {
-			return $langs->trans($this->statuts[$status]);
+			return $langs->trans($this->labelStatus[$status]);
 		} elseif ($mode == 1) {
-			return $langs->trans($this->statuts_short[$status]);
+			return $langs->trans($this->labelStatusShort[$status]);
 		} elseif ($mode == 2) {
 			if ($status == 0) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut0').' '.$langs->trans($this->statuts_short[$status]);
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut0').' '.$langs->trans($this->labelStatusShort[$status]);
 			} elseif ($status == 1) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut1').' '.$langs->trans($this->statuts_short[$status]);
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut1').' '.$langs->trans($this->labelStatusShort[$status]);
 			} elseif ($status == 2) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut3').' '.$langs->trans($this->statuts_short[$status]);
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut3').' '.$langs->trans($this->labelStatusShort[$status]);
 			} elseif ($status == 3) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut6').' '.$langs->trans($this->statuts_short[$status]);
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut6').' '.$langs->trans($this->labelStatusShort[$status]);
 			} elseif ($status == 4) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut6').' '.$langs->trans($this->statuts_short[$status]);
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut6').' '.$langs->trans($this->labelStatusShort[$status]);
 			} elseif ($status == 5) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut5').' '.$langs->trans($this->statuts_short[$status]);
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut5').' '.$langs->trans($this->labelStatusShort[$status]);
 			}
 		} elseif ($mode == 3) {
 			if ($status == 0) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut0');
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut0');
 			} elseif ($status == 1) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut1');
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut1');
 			} elseif ($status == 2) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut3');
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut3');
 			} elseif ($status == 3) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut6');
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut6');
 			} elseif ($status == 4) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut6');
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut6');
 			} elseif ($status == 5) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut5');
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut5');
 			}
 		} elseif ($mode == 4) {
 			if ($status == 0) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut0').' '.$langs->trans($this->statuts[$status]);
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut0').' '.$langs->trans($this->labelStatus[$status]);
 			} elseif ($status == 1) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut1').' '.$langs->trans($this->statuts[$status]);
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut1').' '.$langs->trans($this->labelStatus[$status]);
 			} elseif ($status == 2) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut3').' '.$langs->trans($this->statuts[$status]);
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut3').' '.$langs->trans($this->labelStatus[$status]);
 			} elseif ($status == 3) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut6').' '.$langs->trans($this->statuts[$status]);
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut6').' '.$langs->trans($this->labelStatus[$status]);
 			} elseif ($status == 4) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut6').' '.$langs->trans($this->statuts[$status]);
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut6').' '.$langs->trans($this->labelStatus[$status]);
 			} elseif ($status == 5) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut5').' '.$langs->trans($this->statuts[$status]);
+				return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut5').' '.$langs->trans($this->labelStatus[$status]);
 			}
 		} elseif ($mode == 5) {
-			/*if ($status==0) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut0');
-			elseif ($status==1) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut1');
-			elseif ($status==2) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut3');
-			elseif ($status==3) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut6');
-			elseif ($status==4) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut6');
-			elseif ($status==5) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut5');
+			/*if ($status==0) return $langs->trans($this->labelStatusShort[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut0');
+			elseif ($status==1) return $langs->trans($this->labelStatusShort[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut1');
+			elseif ($status==2) return $langs->trans($this->labelStatusShort[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut3');
+			elseif ($status==3) return $langs->trans($this->labelStatusShort[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut6');
+			elseif ($status==4) return $langs->trans($this->labelStatusShort[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut6');
+			elseif ($status==5) return $langs->trans($this->labelStatusShort[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut5');
 			*/
 			//else return $this->progress.' %';
 			return '&nbsp;';
 		} elseif ($mode == 6) {
-			/*if ($status==0) return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut0');
-			elseif ($status==1) return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut1');
-			elseif ($status==2) return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut3');
-			elseif ($status==3) return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut6');
-			elseif ($status==4) return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut6');
-			elseif ($status==5) return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut5');
+			/*if ($status==0) return $langs->trans($this->labelStatus[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut0');
+			elseif ($status==1) return $langs->trans($this->labelStatus[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut1');
+			elseif ($status==2) return $langs->trans($this->labelStatus[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut3');
+			elseif ($status==3) return $langs->trans($this->labelStatus[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut6');
+			elseif ($status==4) return $langs->trans($this->labelStatus[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut6');
+			elseif ($status==5) return $langs->trans($this->labelStatus[$status]).' '.img_picto($langs->trans($this->labelStatusShort[$status]),'statut5');
 			*/
 			//else return $this->progress.' %';
 			return '&nbsp;';
@@ -2235,7 +2242,7 @@ class Task extends CommonObjectLine
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->PROJECT_TASK_ADDON_PDF)) {
+			} elseif (getDolGlobalString('PROJECT_TASK_ADDON_PDF')) {
 				$modele = $conf->global->PROJECT_TASK_ADDON_PDF;
 			}
 		}
@@ -2333,7 +2340,8 @@ class Task extends CommonObjectLine
 		// phpcs:enable
 		global $user;
 
-		$mine = 0; $socid = $user->socid;
+		$mine = 0;
+		$socid = $user->socid;
 
 		$projectstatic = new Project($this->db);
 		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, $mine, 1, $socid);

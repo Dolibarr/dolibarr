@@ -83,7 +83,7 @@ print "</tr>";
 
 print '<tr class="oddeven">';
 print '<td class="fieldrequired">'.$langs->trans("KeyForWebServicesAccess").'</td>';
-print '<td><input type="text" class="flat" id="WEBSERVICES_KEY" name="WEBSERVICES_KEY" value="'.(GETPOST('WEBSERVICES_KEY') ?GETPOST('WEBSERVICES_KEY') : (!empty($conf->global->WEBSERVICES_KEY) ? $conf->global->WEBSERVICES_KEY : '')).'" size="40">';
+print '<td><input type="text" class="flat" id="WEBSERVICES_KEY" name="WEBSERVICES_KEY" value="'.(GETPOST('WEBSERVICES_KEY') ? GETPOST('WEBSERVICES_KEY') : (getDolGlobalString('WEBSERVICES_KEY') ? $conf->global->WEBSERVICES_KEY : '')).'" size="40">';
 if (!empty($conf->use_javascript_ajax)) {
 	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 }

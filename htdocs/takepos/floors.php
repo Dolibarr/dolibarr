@@ -118,7 +118,7 @@ if ($action == "add") {
 // Title
 $head = '';
 $title = 'TakePOS - Dolibarr '.DOL_VERSION;
-if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 	$title = 'TakePOS - ' . getDolGlobalString('MAIN_APPLICATION_TITLE');
 }
 $arrayofcss = array('/takepos/css/pos.css.php?a=xxx');
@@ -224,7 +224,9 @@ $( document ).ready(function() {
 	<h1>
 	<?php if ($floor > 1) { ?>
 	<img class="valignmiddle" src="./img/arrow-prev.png" width="5%" onclick="location.href='floors.php?floor=<?php if ($floor > 1) {
-		$floor--; echo $floor; $floor++;
+		$floor--;
+		echo $floor;
+		$floor++;
 																											 } else {
 																												 echo "1";
 																											 } ?>';">

@@ -51,9 +51,6 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 've
 
 $socid = GETPOST('socid', 'int');
 
-// Security check
-if ($user->socid) $socid = $user->socid;
-
 $search_ref				= GETPOST('search_ref', 'alpha');
 $search_date_startday	= GETPOST('search_date_startday', 'int');
 $search_date_startmonth	= GETPOST('search_date_startmonth', 'int');
@@ -68,6 +65,7 @@ $search_payment_type	= GETPOST('search_payment_type');
 $search_cheque_num		= GETPOST('search_cheque_num', 'alpha');
 $search_bank_account	= GETPOST('search_bank_account', 'int');
 $search_amount			= GETPOST('search_amount', 'alpha'); // alpha because we must be able to search on '< x'
+$search_sale            = GETPOST('search_sale', 'int');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield				= GETPOST('sortfield', 'aZ09comma');
@@ -113,6 +111,10 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 $hookmanager->initHooks(array('paymentsupplierlist'));
 $object = new PaiementFourn($db);
 
+if (!$user->hasRight('societe', 'client', 'voir')) {
+	$search_sale = $user->id;
+}
+
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
@@ -127,8 +129,8 @@ if ($user->socid) {
 if (!isModEnabled('supplier_invoice')) {
 	accessforbidden();
 }
-if ((!$user->hasRight("fournisseur", "facture", "lire") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))
-	|| (!$user->hasRight("supplier_invoice", "lire") && !empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))) {
+if ((!$user->hasRight("fournisseur", "facture", "lire") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD'))
+	|| (!$user->hasRight("supplier_invoice", "lire") && getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD'))) {
 	accessforbidden();
 }
 
@@ -161,6 +163,9 @@ if (empty($reshook)) {
 		$search_cheque_num = '';
 		$search_bank_account = '';
 		$search_amount = '';
+		$option = '';
+		$toselect = array();
+		$search_array_options = array();
 	}
 }
 
@@ -176,18 +181,14 @@ $accountstatic = new Account($db);
 $companystatic = new Societe($db);
 $paymentfournstatic = new PaiementFourn($db);
 
-$sql = 'SELECT p.rowid, p.ref, p.datep, p.amount as pamount, p.num_paiement';
-$sql .= ', s.rowid as socid, s.nom as name, s.email';
-$sql .= ', c.code as paiement_type, c.libelle as paiement_libelle';
-$sql .= ', ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.fk_accountancy_journal as accountancy_journal';
-if (!$user->hasRight("societe", "client", "voir")) {
-	$sql .= ', sc.fk_soc, sc.fk_user';
-}
-$sql .= ', SUM(pf.amount)';
-
+$sql = 'SELECT p.rowid, p.ref, p.datep, p.amount as pamount, p.num_paiement as num_payment,';
+$sql .= ' s.rowid as socid, s.nom as name, s.email,';
+$sql .= ' c.code as paiement_type, c.libelle as paiement_libelle,';
+$sql .= ' ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.fk_accountancy_journal as accountancy_journal,';
+$sql .= ' SUM(pf.amount)';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn AS p';
-$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn AS pf ON p.rowid=pf.fk_paiementfourn';
-$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn AS f ON f.rowid=pf.fk_facturefourn';
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn AS pf ON p.rowid = pf.fk_paiementfourn';
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn AS f ON f.rowid = pf.fk_facturefourn';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement AS c ON p.fk_paiement = c.id';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe AS s ON s.rowid = f.fk_soc';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
@@ -196,10 +197,7 @@ if (!$user->hasRight("societe", "client", "voir")) {
 	$sql .= ', '.MAIN_DB_PREFIX.'societe_commerciaux as sc';
 }
 
-$sql .= ' WHERE f.entity = '.$conf->entity;
-if (!$user->hasRight("societe", "client", "voir")) {
-	$sql .= ' AND s.rowid = sc.fk_soc AND sc.fk_user = '.((int) $user->id);
-}
+$sql .= ' WHERE f.entity = '.((int) $conf->entity);
 if ($socid > 0) {
 	$sql .= ' AND f.fk_soc = '.((int) $socid);
 }
@@ -231,15 +229,20 @@ if ($search_bank_account > 0) {
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
+// Search on sale representative
+if ($search_sale && $search_sale != '-1') {
+	if ($search_sale == -2) {
+		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc)";
+	} elseif ($search_sale > 0) {
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+	}
+}
 
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
 $sql .= ' GROUP BY p.rowid, p.ref, p.datep, p.amount, p.num_paiement, s.rowid, s.nom, s.email, c.code, c.libelle,';
 $sql .= ' ba.rowid, ba.ref, ba.label, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.fk_accountancy_journal';
-if (!$user->hasRight("societe", "client", "voir")) {
-	$sql .= ', sc.fk_soc, sc.fk_user';
-}
 
 $sql .= $db->order($sortfield, $sortorder);
 
@@ -267,7 +270,7 @@ $num = $db->num_rows($resql);
 $i = 0;
 
 $param = '';
-if (!empty($contextpage) && $contextpage != $_SERVER['PHP_SELF']) {
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
@@ -350,7 +353,7 @@ if ($moreforfilter) {
 	print '</div>';
 }
 
-$varpage = empty($contextpage) ? $_SERVER['PHP_SELF'] : $contextpage;
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
 if (!empty($massactionbutton)) {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
@@ -371,7 +374,8 @@ if (getDolGlobalInt('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '</td>';
 }
 
-if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+// #
+if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
@@ -386,10 +390,10 @@ if (!empty($arrayfields['p.ref']['checked'])) {
 // Filter: Date
 if (!empty($arrayfields['p.datep']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td>';
@@ -432,7 +436,7 @@ if (!empty($arrayfields['p.amount']['checked'])) {
 
 // Fields from hook
 $parameters = array('arrayfields'=>$arrayfields);
-$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
 // Action column
@@ -456,7 +460,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
-if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 	print_liste_field_titre('#', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
@@ -497,23 +501,35 @@ print $hookmanager->resPrint;
 // Action column
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+	$totalarray['nbfield']++;
 }
 print '</tr>';
 
-$checkedCount = 0;
-foreach ($arrayfields as $column) {
-	if ($column['checked']) {
-		$checkedCount++;
+print '</tr>'."\n";
+
+// Detect if we need a fetch on each output line
+$needToFetchEachLine = 0;
+if (isset($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
+	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
+		if (!is_null($val) && preg_match('/\$object/', $val)) {
+			$needToFetchEachLine++; // There is at least one compute field that use $object
+		}
 	}
 }
+
 
 // Loop on record
 // --------------------------------------------------------------------
 $i = 0;
+$savnbfield = $totalarray['nbfield'];
 $totalarray = array();
 $totalarray['nbfield'] = 0;
-while ($i < min($num, $limit)) {
+$imaxinloop = ($limit ? min($num, $limit) : $num);
+while ($i < $imaxinloop) {
 	$objp = $db->fetch_object($resql);
+	if (empty($objp)) {
+		break; // Should not happen
+	}
 
 	$paymentfournstatic->id = $objp->rowid;
 	$paymentfournstatic->ref = $objp->ref;
@@ -523,120 +539,178 @@ while ($i < min($num, $limit)) {
 	$companystatic->name = $objp->name;
 	$companystatic->email = $objp->email;
 
-	print '<tr data-rowid="'.$object->id.'" class="oddeven">';
-
-	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		print '<td></td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
+	if ($mode == 'kanban') {
+		if ($i == 0) {
+			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
+			print '<div class="box-flex-container kanban">';
 		}
+		// Output Kanban
+		$selected = -1;
+		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($object->id, $arrayofselected)) {
+				$selected = 1;
+			}
+		}
+		//print $object->getKanbanView('', array('thirdparty'=>$object->thirdparty, 'selected' => $selected));
+		print $object->getKanbanView('', array('selected' => $selected));
+		if ($i == ($imaxinloop - 1)) {
+			print '</div>';
+			print '</td></tr>';
+		}
+	} else {
+		// Show line of result
+		$j = 0;
+		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
+
+		// Action column
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td class="nowrap center">';
+			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				$selected = 0;
+				if (in_array($object->id, $arrayofselected)) {
+					$selected = 1;
+				}
+				print '<input id="cb'.$object->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$object->id.'"'.($selected ? ' checked="checked"' : '').'>';
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// No
+		if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
+			print '<td class="nowraponall">'.(($offset * $limit) + $i).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Ref
+		if (!empty($arrayfields['p.ref']['checked'])) {
+			print '<td class="nowraponall">'.$paymentfournstatic->getNomUrl(1).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Date
+		if (!empty($arrayfields['p.datep']['checked'])) {
+			$dateformatforpayment = 'dayhour';
+			print '<td class="nowraponall center">'.dol_print_date($db->jdate($objp->datep), $dateformatforpayment).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Thirdparty
+		if (!empty($arrayfields['s.nom']['checked'])) {
+			print '<td class="tdoverflowmax125">';
+			if ($objp->socid > 0) {
+				print $companystatic->getNomUrl(1, '', 24);
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Pyament type
+		if (!empty($arrayfields['c.libelle']['checked'])) {
+			$payment_type = $langs->trans("PaymentType".$objp->paiement_type) != ("PaymentType".$objp->paiement_type) ? $langs->trans("PaymentType".$objp->paiement_type) : $objp->paiement_libelle;
+			print '<td>'.$payment_type.' '.dol_trunc($objp->num_payment, 32).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Cheque number (fund transfer)
+		if (!empty($arrayfields['p.num_paiement']['checked'])) {
+			print '<td>'.$objp->num_payment.'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Bank account
+		if (!empty($arrayfields['ba.label']['checked'])) {
+			print '<td class="tdoverflowmax125">';
+			if ($objp->bid) {
+				$accountstatic->id = $objp->bid;
+				$accountstatic->ref = $objp->bref;
+				$accountstatic->label = $objp->blabel;
+				$accountstatic->number = $objp->number;
+				$accountstatic->iban = $objp->iban_prefix;
+				$accountstatic->bic = $objp->bic;
+				$accountstatic->currency_code = $objp->currency_code;
+				$accountstatic->account_number = $objp->account_number;
+
+				$accountingjournal = new AccountingJournal($db);
+				$accountingjournal->fetch($objp->accountancy_journal);
+				$accountstatic->accountancy_journal = $accountingjournal->code;
+
+				print $accountstatic->getNomUrl(1);
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Amount
+		if (!empty($arrayfields['p.amount']['checked'])) {
+			print '<td class="right"><span class="amount">'.price($objp->pamount).'</span></td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+				$totalarray['pos'][$totalarray['nbfield']] = 'amount';
+			}
+			if (empty($totalarray['val']['amount'])) {
+				$totalarray['val']['amount'] = $objp->pamount;
+			} else {
+				$totalarray['val']['amount'] += $objp->pamount;
+			}
+		}
+
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td class="nowrap center">';
+			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				$selected = 0;
+				if (in_array($object->id, $arrayofselected)) {
+					$selected = 1;
+				}
+				print '<input id="cb'.$object->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$object->id.'"'.($selected ? ' checked="checked"' : '').'>';
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		print '</tr>'."\n";
 	}
-
-	// No
-	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
-		print '<td class="nowraponall">'.(($offset * $limit) + $i).'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	// Ref
-	if (!empty($arrayfields['p.ref']['checked'])) {
-		print '<td class="nowraponall">'.$paymentfournstatic->getNomUrl(1).'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	// Date
-	if (!empty($arrayfields['p.datep']['checked'])) {
-		$dateformatforpayment = 'dayhour';
-		print '<td class="nowrap center">'.dol_print_date($db->jdate($objp->datep), $dateformatforpayment).'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	// Thirdparty
-	if (!empty($arrayfields['s.nom']['checked'])) {
-		print '<td class="tdoverflowmax125">';
-		if ($objp->socid > 0) {
-			print $companystatic->getNomUrl(1, '', 24);
-		}
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	// Pyament type
-	if (!empty($arrayfields['c.libelle']['checked'])) {
-		$payment_type = $langs->trans("PaymentType".$objp->paiement_type) != ("PaymentType".$objp->paiement_type) ? $langs->trans("PaymentType".$objp->paiement_type) : $objp->paiement_libelle;
-		print '<td>'.$payment_type.' '.dol_trunc($objp->num_paiement, 32).'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	// Cheque number (fund transfer)
-	if (!empty($arrayfields['p.num_paiement']['checked'])) {
-		print '<td>'.$objp->num_paiement.'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	// Bank account
-	if (!empty($arrayfields['ba.label']['checked'])) {
-		print '<td class="tdoverflowmax125">';
-		if ($objp->bid) {
-			$accountstatic->id = $objp->bid;
-			$accountstatic->ref = $objp->bref;
-			$accountstatic->label = $objp->blabel;
-			$accountstatic->number = $objp->number;
-			$accountstatic->iban = $objp->iban_prefix;
-			$accountstatic->bic = $objp->bic;
-			$accountstatic->currency_code = $objp->currency_code;
-			$accountstatic->account_number = $objp->account_number;
-
-			$accountingjournal = new AccountingJournal($db);
-			$accountingjournal->fetch($objp->accountancy_journal);
-			$accountstatic->accountancy_journal = $accountingjournal->code;
-
-			print $accountstatic->getNomUrl(1);
-		} else {
-			print '&nbsp;';
-		}
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	// Amount
-	if (!empty($arrayfields['p.amount']['checked'])) {
-		print '<td class="right"><span class="amount">'.price($objp->pamount).'</span></td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-		$totalarray['pos'][$checkedCount] = 'amount';
-		$totalarray['val']['amount'] += $objp->pamount;
-	}
-
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		print '<td></td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	print '</tr>'."\n";
 	$i++;
 }
 
 // Show total line
 include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
+
+// If no record found
+if ($num == 0) {
+	$colspan = 1;
+	foreach ($arrayfields as $key => $val) {
+		if (!empty($val['checked'])) {
+			$colspan++;
+		}
+	}
+	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+}
+
+$db->free($resql);
+
+$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
+$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
 
 print '</table>'."\n";
 print '</div>'."\n";

@@ -109,7 +109,7 @@ class Bookmark extends CommonObject
 	 *    Directs the bookmark
 	 *
 	 *    @param    int		$id		Bookmark Id Loader
-	 *    @return	int				<0 if KO, >0 if OK
+	 *    @return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -235,7 +235,7 @@ class Bookmark extends CommonObject
 	 *      Removes the bookmark
 	 *
 	 *      @param      User	$user     	User deleting
-	 *      @return     int         		<0 if KO, >0 if OK
+	 *      @return     int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user)
 	{
@@ -318,7 +318,7 @@ class Bookmark extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowBookmark");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}

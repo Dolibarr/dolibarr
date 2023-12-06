@@ -86,9 +86,9 @@ $fac_recid = GETPOST('fac_rec', 'int');
 $rank = (GETPOST('rank', 'int') > 0) ? GETPOST('rank', 'int') : -1;
 
 // PDF
-$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
-$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
-$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
+$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0));
+$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0));
+$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0));
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('invoicesuppliercard', 'globalcard'));
@@ -127,8 +127,8 @@ $usercandelete = ($user->hasRight("fournisseur", "facture", "supprimer") || $use
 $usercancreatecontract = $user->hasRight("contrat", "creer");
 
 // Advanced permissions
-$usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($usercancreate)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight("fournisseur", "supplier_invoice_advance", "validate")));
-$usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->hasRight("fournisseur", "supplier_invoice_advance", "send"));
+$usercanvalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($usercancreate)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight("fournisseur", "supplier_invoice_advance", "validate")));
+$usercansend = (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || $user->hasRight("fournisseur", "supplier_invoice_advance", "send"));
 
 // Permissions for includes
 $permissionnote = $usercancreate; // Used by the include of actions_setnotes.inc.php
@@ -211,14 +211,14 @@ if (empty($reshook)) {
 		$object->fetch_thirdparty();
 
 		$qualified_for_stock_change = 0;
-		if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+		if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 			$qualified_for_stock_change = $object->hasProductsOrServices(2);
 		} else {
 			$qualified_for_stock_change = $object->hasProductsOrServices(1);
 		}
 
 		// Check parameters
-		if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change) {
+		if (isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_BILL') && $qualified_for_stock_change) {
 			$langs->load("stocks");
 			if (!$idwarehouse || $idwarehouse == -1) {
 				$error++;
@@ -239,7 +239,7 @@ if (empty($reshook)) {
 				$db->commit();
 
 				// Define output language
-				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+				if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 					$outputlangs = $langs;
 					$newlang = '';
 					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -275,14 +275,14 @@ if (empty($reshook)) {
 				$idwarehouse = GETPOST('idwarehouse');
 
 				$qualified_for_stock_change = 0;
-				if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+				if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 					$qualified_for_stock_change = $object->hasProductsOrServices(2);
 				} else {
 					$qualified_for_stock_change = $object->hasProductsOrServices(1);
 				}
 
 				// Check parameters
-				if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change) {
+				if (isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_BILL') && $qualified_for_stock_change) {
 					$langs->load("stocks");
 					if (!$idwarehouse || $idwarehouse == -1) {
 						$error++;
@@ -395,7 +395,7 @@ if (empty($reshook)) {
 				$outputlangs = new Translate("", $conf);
 				$outputlangs->setDefaultLang($newlang);
 			}
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$ret = $object->fetch($object->id); // Reload to get new records
 				$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
@@ -475,8 +475,8 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'setdatef' && $usercancreate) {
 		$newdate = dol_mktime(0, 0, 0, GETPOST('datefmonth', 'int'), GETPOST('datefday', 'int'), GETPOST('datefyear', 'int'), 'tzserver');
-		if ($newdate > (dol_now('tzuserrel') + (empty($conf->global->INVOICE_MAX_FUTURE_DELAY) ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
-			if (empty($conf->global->INVOICE_MAX_FUTURE_DELAY)) {
+		if ($newdate > (dol_now('tzuserrel') + (!getDolGlobalString('INVOICE_MAX_FUTURE_DELAY') ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
+			if (!getDolGlobalString('INVOICE_MAX_FUTURE_DELAY')) {
 				setEventMessages($langs->trans("WarningInvoiceDateInFuture"), null, 'warnings');
 			} else {
 				setEventMessages($langs->trans("WarningInvoiceDateTooFarInFuture"), null, 'warnings');
@@ -544,7 +544,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+		if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 			$outputlangs = $langs;
 			$newlang = '';
 			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -604,7 +604,7 @@ if (empty($reshook)) {
 			}
 
 			// If some payments were already done, we change the amount to pay using same prorate
-			if (!empty($conf->global->SUPPLIER_INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED) && $object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
+			if (getDolGlobalString('SUPPLIER_INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED') && $object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
 				$alreadypaid = $object->getSommePaiement(); // This can be not 0 if we allow to create credit to reuse from credit notes partially refunded.
 				if ($alreadypaid && abs($alreadypaid) < abs($object->total_ttc)) {
 					$ratio = abs(($object->total_ttc - $alreadypaid) / $object->total_ttc);
@@ -780,7 +780,7 @@ if (empty($reshook)) {
 				$action = 'create';
 				$_GET['socid'] = $_POST['socid'];
 				$error++;
-			} elseif ($dateinvoice > (dol_get_last_hour(dol_now('tzuserrel')) + (empty($conf->global->INVOICE_MAX_FUTURE_DELAY) ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
+			} elseif ($dateinvoice > (dol_get_last_hour(dol_now('tzuserrel')) + (!getDolGlobalString('INVOICE_MAX_FUTURE_DELAY') ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
 				$error++;
 				setEventMessages($langs->trans("ErrorDateIsInFuture"), null, 'errors');
 				$action = 'create';
@@ -831,7 +831,7 @@ if (empty($reshook)) {
 		// Credit note invoice
 		if (GETPOST('type') == FactureFournisseur::TYPE_CREDIT_NOTE) {
 			$sourceinvoice = GETPOST('fac_avoir', 'int');
-			if (!($sourceinvoice > 0) && empty($conf->global->INVOICE_CREDIT_NOTE_STANDALONE)) {
+			if (!($sourceinvoice > 0) && !getDolGlobalString('INVOICE_CREDIT_NOTE_STANDALONE')) {
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CorrectInvoice")), null, 'errors');
 			}
@@ -846,7 +846,7 @@ if (empty($reshook)) {
 				$action = 'create';
 				$_GET['socid'] = $_POST['socid'];
 				$error++;
-			} elseif ($dateinvoice > (dol_get_last_hour(dol_now('tzuserrel')) + (empty($conf->global->INVOICE_MAX_FUTURE_DELAY) ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
+			} elseif ($dateinvoice > (dol_get_last_hour(dol_now('tzuserrel')) + (!getDolGlobalString('INVOICE_MAX_FUTURE_DELAY') ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
 				$error++;
 				setEventMessages($langs->trans("ErrorDateIsInFuture"), null, 'errors');
 				$action = 'create';
@@ -958,7 +958,7 @@ if (empty($reshook)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 				$action = 'create';
-			} elseif ($dateinvoice > (dol_get_last_hour(dol_now('tzuserrel')) + (empty($conf->global->INVOICE_MAX_FUTURE_DELAY) ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
+			} elseif ($dateinvoice > (dol_get_last_hour(dol_now('tzuserrel')) + (!getDolGlobalString('INVOICE_MAX_FUTURE_DELAY') ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
 				$error++;
 				setEventMessages($langs->trans("ErrorDateIsInFuture"), null, 'errors');
 				$action = 'create';
@@ -1014,7 +1014,7 @@ if (empty($reshook)) {
 				$action = 'create';
 				$_GET['socid'] = $_POST['socid'];
 				$error++;
-			} elseif ($dateinvoice > (dol_get_last_hour(dol_now('tzuserrel')) + (empty($conf->global->INVOICE_MAX_FUTURE_DELAY) ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
+			} elseif ($dateinvoice > (dol_get_last_hour(dol_now('tzuserrel')) + (!getDolGlobalString('INVOICE_MAX_FUTURE_DELAY') ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
 				$error++;
 				setEventMessages($langs->trans("ErrorDateIsInFuture"), null, 'errors');
 				$action = 'create';
@@ -1082,13 +1082,15 @@ if (empty($reshook)) {
 						$element = $subelement = 'commande';
 					}
 					if ($element == 'propal') {
-						$element = 'comm/propal'; $subelement = 'propal';
+						$element = 'comm/propal';
+						$subelement = 'propal';
 					}
 					if ($element == 'contract') {
 						$element = $subelement = 'contrat';
 					}
 					if ($element == 'order_supplier') {
-						$element = 'fourn'; $subelement = 'fournisseur.commande';
+						$element = 'fourn';
+						$subelement = 'fournisseur.commande';
 					}
 					if ($element == 'project') {
 						$element = 'projet';
@@ -1141,7 +1143,7 @@ if (empty($reshook)) {
 
 							// Define the array $amountdeposit
 							$amountdeposit = array();
-							if (!empty($conf->global->MAIN_DEPOSIT_MULTI_TVA)) {
+							if (getDolGlobalString('MAIN_DEPOSIT_MULTI_TVA')) {
 								if ($typeamount == 'amount') {
 									$amount = $valuedeposit;
 								} else {
@@ -1222,7 +1224,7 @@ if (empty($reshook)) {
 									0, // localtax1_tx
 									0, // localtax2_tx
 									1, // quantity
-									(empty($conf->global->INVOICE_PRODUCTID_DEPOSIT) ? 0 : $conf->global->INVOICE_PRODUCTID_DEPOSIT), // fk_product
+									(!getDolGlobalString('INVOICE_PRODUCTID_DEPOSIT') ? 0 : $conf->global->INVOICE_PRODUCTID_DEPOSIT), // fk_product
 									0, // remise_percent
 									0, // date_start
 									0, // date_end
@@ -1246,7 +1248,7 @@ if (empty($reshook)) {
 
 							$diff = $object->total_ttc - $amount_ttc_diff;
 
-							if (!empty($conf->global->MAIN_DEPOSIT_MULTI_TVA) && $diff != 0) {
+							if (getDolGlobalString('MAIN_DEPOSIT_MULTI_TVA') && $diff != 0) {
 								$object->fetch_lines();
 								$subprice_diff = $object->lines[0]->subprice - $diff / (1 + $object->lines[0]->tva_tx / 100);
 								$object->updateline(
@@ -1381,7 +1383,7 @@ if (empty($reshook)) {
 		} else {
 			$db->commit();
 
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$result = $object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				if ($result < 0) {
@@ -1415,7 +1417,7 @@ if (empty($reshook)) {
 
 		if (GETPOST('productid') > 0) {
 			$productsupplier = new ProductFournisseur($db);
-			if (!empty($conf->global->SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY)) {
+			if (getDolGlobalString('SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY')) {
 				if (GETPOST('productid') > 0 && $productsupplier->get_buyprice(0, price2num(GETPOST('qty')), GETPOST('productid', 'int'), 'restricthtml', GETPOST('socid', 'int')) < 0) {
 					setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'warnings');
 				}
@@ -1614,7 +1616,7 @@ if (empty($reshook)) {
 				$res = $productsupplier->fetch($idprod); // Load product from its id
 				// Call to init some price properties of $productsupplier
 				// So if a supplier price already exists for another thirdparty (first one found), we use it as reference price
-				if (!empty($conf->global->SUPPLIER_TAKE_FIRST_PRICE_IF_NO_PRICE_FOR_CURRENT_SUPPLIER)) {
+				if (getDolGlobalString('SUPPLIER_TAKE_FIRST_PRICE_IF_NO_PRICE_FOR_CURRENT_SUPPLIER')) {
 					$fksoctosearch = 0;
 					$productsupplier->get_buyprice(0, -1, $idprod, 'none', $fksoctosearch); // We force qty to -1 to be sure to find if a supplier price exist
 					if ($productsupplier->fourn_socid != $socid) {	// The price we found is for another supplier, so we clear supplier price
@@ -1634,7 +1636,7 @@ if (empty($reshook)) {
 			if ($idprod > 0) {
 				$label = $productsupplier->label;
 				// Define output language
-				if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
 					$outputlangs = $langs;
 					$newlang = '';
 					if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -1652,19 +1654,19 @@ if (empty($reshook)) {
 					$desc = $productsupplier->description;
 				}
 				// if we use supplier description of the products
-				if (!empty($productsupplier->desc_supplier) && !empty($conf->global->PRODUIT_FOURN_TEXTS)) {
+				if (!empty($productsupplier->desc_supplier) && getDolGlobalString('PRODUIT_FOURN_TEXTS')) {
 					$desc = $productsupplier->desc_supplier;
 				}
 
 				//If text set in desc is the same as product descpription (as now it's preloaded) whe add it only one time
-				if (trim($product_desc) == trim($desc) && !empty($conf->global->PRODUIT_AUTOFILL_DESC)) {
+				if (trim($product_desc) == trim($desc) && getDolGlobalString('PRODUIT_AUTOFILL_DESC')) {
 					$product_desc = '';
 				}
-				if (!empty($product_desc) && !empty($conf->global->MAIN_NO_CONCAT_DESCRIPTION)) {
+				if (!empty($product_desc) && getDolGlobalString('MAIN_NO_CONCAT_DESCRIPTION')) {
 					$desc = $product_desc;
 				}
 				if (!empty($product_desc) && trim($product_desc) != trim($desc)) {
-					$desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION));
+					$desc = dol_concatdesc($desc, $product_desc, '', getDolGlobalString('MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION'));
 				}
 
 				$ref_supplier = $productsupplier->ref_supplier;
@@ -1786,7 +1788,7 @@ if (empty($reshook)) {
 			$db->commit();
 
 			// Define output language
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -1867,14 +1869,14 @@ if (empty($reshook)) {
 				$object->fetch_thirdparty();
 
 				$qualified_for_stock_change = 0;
-				if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+				if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 					$qualified_for_stock_change = $object->hasProductsOrServices(2);
 				} else {
 					$qualified_for_stock_change = $object->hasProductsOrServices(1);
 				}
 
 				// Check parameters
-				if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change) {
+				if (isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_BILL') && $qualified_for_stock_change) {
 					$langs->load("stocks");
 					if (!$idwarehouse || $idwarehouse == -1) {
 						$error++;
@@ -1886,7 +1888,7 @@ if (empty($reshook)) {
 				$object->setDraft($user, $idwarehouse);
 
 				// Define output language
-				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+				if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 					$outputlangs = $langs;
 					$newlang = '';
 					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -1977,7 +1979,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if (!empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $usercancreate) {
+	if (getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB') && $usercancreate) {
 		if ($action == 'addcontact') {
 			$result = $object->fetch($id);
 
@@ -2075,13 +2077,15 @@ if ($action == 'create') {
 			$element = $subelement = 'commande';
 		}
 		if ($element == 'propal') {
-			$element = 'comm/propal'; $subelement = 'propal';
+			$element = 'comm/propal';
+			$subelement = 'propal';
 		}
 		if ($element == 'contract') {
 			$element = $subelement = 'contrat';
 		}
 		if ($element == 'order_supplier') {
-			$element = 'fourn'; $subelement = 'fournisseur.commande';
+			$element = 'fourn';
+			$subelement = 'fournisseur.commande';
 		}
 
 		require_once DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php';
@@ -2167,15 +2171,15 @@ if ($action == 'create') {
 			if (!empty($objectsrc->multicurrency_code)) {
 				$currency_code = $objectsrc->multicurrency_code;
 			}
-			if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($objectsrc->multicurrency_tx)) {
+			if (getDolGlobalString('MULTICURRENCY_USE_ORIGIN_TX') && !empty($objectsrc->multicurrency_tx)) {
 				$currency_tx = $objectsrc->multicurrency_tx;
 			}
 		}
 
 		$datetmp = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-		$dateinvoice = ($datetmp == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE) ? -1 : '') : $datetmp);
+		$dateinvoice = ($datetmp == '' ? (!getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : '') : $datetmp);
 		$datetmp = dol_mktime(12, 0, 0, GETPOST('echmonth', 'int'), GETPOST('echday', 'int'), GETPOST('echyear', 'int'));
-		$datedue = ($datetmp == '' ?-1 : $datetmp);
+		$datedue = ($datetmp == '' ? -1 : $datetmp);
 
 		// Replicate extrafields
 		$objectsrc->fetch_optionals();
@@ -2189,7 +2193,7 @@ if ($action == 'create') {
 		$datetmp = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 		$dateinvoice = ($datetmp == '' ? (getDolGlobalInt('MAIN_AUTOFILL_DATE') ? '' : -1) : $datetmp);
 		$datetmp = dol_mktime(12, 0, 0, GETPOST('echmonth', 'int'), GETPOST('echday', 'int'), GETPOST('echyear', 'int'));
-		$datedue = ($datetmp == '' ?-1 : $datetmp);
+		$datedue = ($datetmp == '' ? -1 : $datetmp);
 
 		if (isModEnabled("multicurrency") && !empty($soc->multicurrency_code)) {
 			$currency_code = $soc->multicurrency_code;
@@ -2219,14 +2223,14 @@ if ($action == 'create') {
 		}
 	}
 
-	$note_public = $object->getDefaultCreateValueFor('note_public', ((!empty($origin) && !empty($originid) && is_object($objectsrc) && !empty($conf->global->FACTUREFOURN_REUSE_NOTES_ON_CREATE_FROM)) ? $objectsrc->note_public : null));
-	$note_private = $object->getDefaultCreateValueFor('note_private', ((!empty($origin) && !empty($originid) && is_object($objectsrc) && !empty($conf->global->FACTUREFOURN_REUSE_NOTES_ON_CREATE_FROM)) ? $objectsrc->note_private : null));
+	$note_public = $object->getDefaultCreateValueFor('note_public', ((!empty($origin) && !empty($originid) && is_object($objectsrc) && getDolGlobalString('FACTUREFOURN_REUSE_NOTES_ON_CREATE_FROM')) ? $objectsrc->note_public : null));
+	$note_private = $object->getDefaultCreateValueFor('note_private', ((!empty($origin) && !empty($originid) && is_object($objectsrc) && getDolGlobalString('FACTUREFOURN_REUSE_NOTES_ON_CREATE_FROM')) ? $objectsrc->note_private : null));
 
 	if ($origin == 'contrat') {
 		$langs->load("admin");
 		$text = $langs->trans("ToCreateARecurringInvoice");
 		$text .= ' '.$langs->trans("ToCreateARecurringInvoiceGene", $langs->transnoentitiesnoconv("MenuFinancial"), $langs->transnoentitiesnoconv("SupplierBills"), $langs->transnoentitiesnoconv("ListOfTemplates"));
-		if (empty($conf->global->INVOICE_DISABLE_AUTOMATIC_RECURRING_INVOICE)) {
+		if (!getDolGlobalString('INVOICE_DISABLE_AUTOMATIC_RECURRING_INVOICE')) {
 			$text .= ' '.$langs->trans("ToCreateARecurringInvoiceGeneAuto", $langs->transnoentitiesnoconv('Module2300Name'));
 		}
 		print info_admin($text, 0, 0, 0, 'opacitymedium').'<br>';
@@ -2277,7 +2281,7 @@ if ($action == 'create') {
 			$filter = '((s.fournisseur:=:1) AND (s.status:=:1))';
 			print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company(empty($societe->id) ? 0 : $societe->id, 'socid', $filter, 'SelectThirdParty', 1, 0, null, 0, 'minwidth175 widthcentpercentminusxx maxwidth500');
 			// reload page to retrieve supplier informations
-			if (empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE_DISABLED)) {
+			if (!getDolGlobalString('RELOAD_PAGE_ON_SUPPLIER_CHANGE_DISABLED')) {
 				print '<script type="text/javascript">
 					$(document).ready(function() {
 						$("#socid").change(function() {
@@ -2343,7 +2347,7 @@ if ($action == 'create') {
 					}
 					print '</select>';
 					// Option to reload page to retrieve customer informations. Note, this clear other input
-					if (empty($conf->global->RELOAD_PAGE_ON_TEMPLATE_CHANGE_DISABLED)) {
+					if (!getDolGlobalString('RELOAD_PAGE_ON_TEMPLATE_CHANGE_DISABLED')) {
 						print '<script type="text/javascript">
 						$(document).ready(function() {
 							$("#fac_rec").change(function() {
@@ -2377,14 +2381,14 @@ if ($action == 'create') {
 
 		// Standard invoice
 		print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
-		$tmp = '<input type="radio" id="radio_standard" name="type" value="0"'.(GETPOST('type', 'int')? '' : 'checked').'> ';
+		$tmp = '<input type="radio" id="radio_standard" name="type" value="0"'.(GETPOST('type', 'int') ? '' : 'checked').'> ';
 		$desc = $form->textwithpicto($tmp.'<label for="radio_standard">'.$langs->trans("InvoiceStandardAsk").'</label>', $langs->transnoentities("InvoiceStandardDesc"), 1, 'help', '', 0, 3);
 		print $desc;
 		print '</div></div>';
 
 		if (empty($origin) || ($origin == 'order_supplier' && !empty($originid))) {
 			// Deposit - Down payment
-			if (empty($conf->global->INVOICE_DISABLE_DEPOSIT)) {
+			if (!getDolGlobalString('INVOICE_DISABLE_DEPOSIT')) {
 				print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 				$tmp='<input type="radio" id="radio_deposit" name="type" value="3"' . (GETPOST('type') == 3 ? ' checked' : '') . '> ';
 				print '<script type="text/javascript">
@@ -2509,7 +2513,7 @@ if ($action == 'create') {
 		if (empty($origin)) {
 			if (!empty($societe->id) && $societe->id > 0) {
 				// Credit note
-				if (empty($conf->global->INVOICE_DISABLE_CREDIT_NOTE)) {
+				if (!getDolGlobalString('INVOICE_DISABLE_CREDIT_NOTE')) {
 					// Show link for credit note
 					$facids = $facturestatic->list_qualified_avoir_supplier_invoices($societe->id);
 					if ($facids < 0) {
@@ -2537,7 +2541,7 @@ if ($action == 'create') {
 
 					print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 					$tmp = '<input type="radio" id="radio_creditnote" name="type" value="2"'.(GETPOST('type') == 2 ? ' checked' : '');
-					if (!$optionsav && empty($conf->global->INVOICE_CREDIT_NOTE_STANDALONE)) {
+					if (!$optionsav && !getDolGlobalString('INVOICE_CREDIT_NOTE_STANDALONE')) {
 						$tmp .= ' disabled';
 					}
 					$tmp .= '> ';
@@ -2584,7 +2588,7 @@ if ($action == 'create') {
 				}
 			} else {
 				print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
-				if (empty($conf->global->INVOICE_CREDIT_NOTE_STANDALONE)) {
+				if (!getDolGlobalString('INVOICE_CREDIT_NOTE_STANDALONE')) {
 					$tmp = '<input type="radio" name="type" id="radio_creditnote" value="0" disabled> ';
 				} else {
 					$tmp='<input type="radio" name="type" id="radio_creditnote" value="2"> ';
@@ -2663,7 +2667,7 @@ if ($action == 'create') {
 
 			$langs->load('projects');
 			print '<tr><td>'.$langs->trans('Project').'</td><td>';
-			print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $societe->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
+			print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects((!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $societe->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
 			print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.(!empty($soc->id) ? $soc->id : 0).'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.(!empty($soc->id) ? $soc->id : 0).($fac_recid > 0 ? '&fac_rec='.$fac_recid : '')).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
 			print '</td></tr>';
 		}
@@ -2679,7 +2683,7 @@ if ($action == 'create') {
 		}
 
 		// Vat reverse-charge by default
-		if (!empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
+		if (getDolGlobalString('ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE')) {
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 			print '<tr><td>' . $langs->trans('VATReverseCharge') . '</td><td>';
 			// Try to propose to use VAT reverse charge even if the VAT reverse charge is not activated in the supplier card, if this corresponds to the context of use, the activation is proposed
@@ -2699,14 +2703,14 @@ if ($action == 'create') {
 			print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 			print '<td class="maxwidthonsmartphone">';
 			print img_picto('', 'currency', 'class="pictofixedwidth"');
-			print $form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ?GETPOST('multicurrency_code', 'alpha') : $currency_code), 'multicurrency_code');
+			print $form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code', 'alpha') : $currency_code), 'multicurrency_code');
 			print '</td></tr>';
 		}
 
 		// Help of substitution key
 		$htmltext = '';
 		if ($fac_recid > 0) {
-			$dateexample = $newdateinvoice ? $newdateinvoice : $dateinvoice;
+			$dateexample = $dateinvoice;
 			if (empty($dateexample)) {
 				$dateexample = dol_now();
 			}
@@ -2746,7 +2750,7 @@ if ($action == 'create') {
 		// Public note
 		print '<tr><td>'.$langs->trans('NotePublic').'</td>';
 		print '<td>';
-		$doleditor = new DolEditor('note_public', (GETPOSTISSET('note_public') ?GETPOST('note_public', 'restricthtml') : $note_public), '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
+		$doleditor = new DolEditor('note_public', (GETPOSTISSET('note_public') ? GETPOST('note_public', 'restricthtml') : $note_public), '', 80, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td>';
 		// print '<td><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
@@ -2755,7 +2759,7 @@ if ($action == 'create') {
 		// Private note
 		print '<tr><td>'.$langs->trans('NotePrivate').'</td>';
 		print '<td>';
-		$doleditor = new DolEditor('note_private', (GETPOSTISSET('note_private') ?GETPOST('note_private', 'restricthtml') : $note_private), '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
+		$doleditor = new DolEditor('note_private', (GETPOSTISSET('note_private') ? GETPOST('note_private', 'restricthtml') : $note_private), '', 80, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td>';
 		// print '<td><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
@@ -2899,7 +2903,7 @@ if ($action == 'create') {
 		}
 		$resteapayeraffiche = $resteapayer;
 
-		if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {	// Never use this
+		if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {	// Never use this
 			$filterabsolutediscount = "fk_invoice_supplier_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 			$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 		} else {
@@ -2975,13 +2979,13 @@ if ($action == 'create') {
 				$formquestion = array();
 
 				$qualified_for_stock_change = 0;
-				if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+				if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 					$qualified_for_stock_change = $object->hasProductsOrServices(2);
 				} else {
 					$qualified_for_stock_change = $object->hasProductsOrServices(1);
 				}
 
-				if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change) {
+				if (isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_BILL') && $qualified_for_stock_change) {
 					$langs->load("stocks");
 					require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 					$formproduct = new FormProduct($db);
@@ -2992,7 +2996,7 @@ if ($action == 'create') {
 						$value = '<input type="hidden" id="idwarehouse" name="idwarehouse" value="'.key($warehouse_array).'">';
 					} else {
 						$label = $object->type == FactureFournisseur::TYPE_CREDIT_NOTE ? $langs->trans("SelectWarehouseForStockDecrease") : $langs->trans("SelectWarehouseForStockIncrease");
-						$value = $formproduct->selectWarehouses(GETPOST('idwarehouse') ?GETPOST('idwarehouse') : 'ifone', 'idwarehouse', '', 1);
+						$value = $formproduct->selectWarehouses(GETPOST('idwarehouse') ? GETPOST('idwarehouse') : 'ifone', 'idwarehouse', '', 1);
 					}
 					$formquestion = array(
 						array('type' => 'other', 'name' => 'idwarehouse', 'label' => $label, 'value' => $value)
@@ -3008,12 +3012,12 @@ if ($action == 'create') {
 			$formquestion = array();
 
 			$qualified_for_stock_change = 0;
-			if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+			if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 				$qualified_for_stock_change = $object->hasProductsOrServices(2);
 			} else {
 				$qualified_for_stock_change = $object->hasProductsOrServices(1);
 			}
-			if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change) {
+			if (isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_BILL') && $qualified_for_stock_change) {
 				$langs->load("stocks");
 				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 				$formproduct = new FormProduct($db);
@@ -3024,7 +3028,7 @@ if ($action == 'create') {
 					$value = '<input type="hidden" id="idwarehouse" name="idwarehouse" value="'.key($warehouse_array).'">';
 				} else {
 					$label = $object->type == FactureFournisseur::TYPE_CREDIT_NOTE ? $langs->trans("SelectWarehouseForStockIncrease") : $langs->trans("SelectWarehouseForStockDecrease");
-					$value = $formproduct->selectWarehouses(GETPOST('idwarehouse') ?GETPOST('idwarehouse') : 'ifone', 'idwarehouse', '', 1);
+					$value = $formproduct->selectWarehouses(GETPOST('idwarehouse') ? GETPOST('idwarehouse') : 'ifone', 'idwarehouse', '', 1);
 				}
 				$formquestion = array(
 					array('type' => 'other', 'name' => 'idwarehouse', 'label' => $label, 'value' => $value)
@@ -3034,11 +3038,11 @@ if ($action == 'create') {
 		}
 
 		// Confirmation set paid
-		if ($action == 'paid' && ($resteapayer <= 0 || (!empty($conf->global->SUPPLIER_INVOICE_CAN_SET_PAID_EVEN_IF_PARTIALLY_PAID) && $resteapayer == $object->total_ttc))) {
+		if ($action == 'paid' && ($resteapayer <= 0 || (getDolGlobalString('SUPPLIER_INVOICE_CAN_SET_PAID_EVEN_IF_PARTIALLY_PAID') && $resteapayer == $object->total_ttc))) {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidBill', $object->ref), 'confirm_paid', '', 0, 1);
 		}
 
-		if ($action == 'paid' && $resteapayer > 0 && (empty($conf->global->SUPPLIER_INVOICE_CAN_SET_PAID_EVEN_IF_PARTIALLY_PAID) || $resteapayer != $object->total_ttc)) {
+		if ($action == 'paid' && $resteapayer > 0 && (!getDolGlobalString('SUPPLIER_INVOICE_CAN_SET_PAID_EVEN_IF_PARTIALLY_PAID') || $resteapayer != $object->total_ttc)) {
 			$close = array();
 			// Code
 			$i = 0;
@@ -3101,13 +3105,13 @@ if ($action == 'create') {
 			$formquestion = array();
 
 			$qualified_for_stock_change = 0;
-			if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+			if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 				$qualified_for_stock_change = $object->hasProductsOrServices(2);
 			} else {
 				$qualified_for_stock_change = $object->hasProductsOrServices(1);
 			}
 
-			if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change) {
+			if (isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_BILL') && $qualified_for_stock_change) {
 				$langs->load("stocks");
 				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 				$formproduct = new FormProduct($db);
@@ -3120,7 +3124,7 @@ if ($action == 'create') {
 					$selectwarehouse .= '<input type="hidden" id="idwarehouse" name="idwarehouse" value="'.key($warehouse_array).'">';
 				} else {
 					$label = $object->type == FactureFournisseur::TYPE_CREDIT_NOTE ? $langs->trans("SelectWarehouseForStockIncrease") : $langs->trans("SelectWarehouseForStockDecrease");
-					$selectwarehouse .= $formproduct->selectWarehouses(GETPOST('idwarehouse') ?GETPOST('idwarehouse') : 'ifone', 'idwarehouse', '', 1);
+					$selectwarehouse .= $formproduct->selectWarehouses(GETPOST('idwarehouse') ? GETPOST('idwarehouse') : 'ifone', 'idwarehouse', '', 1);
 				}
 				$selectwarehouse .= '</span>';
 
@@ -3179,7 +3183,7 @@ if ($action == 'create') {
 		$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $usercancreate, 'string', '', null, null, '', 1);
 		// Thirdparty
 		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'supplier');
-		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
+		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
 			$morehtmlref .= ' <div class="inline-block valignmiddle">(<a class="valignmiddle" href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.((int) $object->thirdparty->id).'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)</div>';
 		}
 		// Project
@@ -3191,7 +3195,7 @@ if ($action == 'create') {
 				if ($action != 'classify') {
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.((int) $object->id).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);
@@ -3433,7 +3437,7 @@ if ($action == 'create') {
 			}
 
 			// Vat reverse-charge by default
-			if (!empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
+			if (getDolGlobalString('ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE')) {
 				print '<tr><td class="nowrap">';
 				print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 				print $langs->trans('VATReverseCharge');
@@ -3527,7 +3531,7 @@ if ($action == 'create') {
 			if (GETPOST('calculationrule')) {
 				$calculationrule = GETPOST('calculationrule', 'alpha');
 			} else {
-				$calculationrule = (empty($conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND) ? 'totalofround' : 'roundoftotal');
+				$calculationrule = (!getDolGlobalString('MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND') ? 'totalofround' : 'roundoftotal');
 			}
 			if ($calculationrule == 'totalofround') {
 				$calculationrulenum = 1;
@@ -3585,12 +3589,14 @@ if ($action == 'create') {
 				$sign = - 1;
 			}
 
-			$nbrows = 9; $nbcols = 3;
+			$nbrows = 9;
+			$nbcols = 3;
 			if (isModEnabled('project')) {
 				$nbrows++;
 			}
 			if (isModEnabled("banque")) {
-				$nbrows++; $nbcols++;
+				$nbrows++;
+				$nbcols++;
 			}
 			if (isModEnabled('incoterm')) {
 				$nbrows++;
@@ -3897,13 +3903,13 @@ if ($action == 'create') {
 
 			print '<div class="clearboth"></div><br>';
 
-			if (!empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
+			if (getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
 				$blocname = 'contacts';
 				$title = $langs->trans('ContactsAddresses');
 				include DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php';
 			}
 
-			if (!empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
+			if (getDolGlobalString('MAIN_DISABLE_NOTES_TAB')) {
 				$colwidth = 20;
 				$blocname = 'notes';
 				$title = $langs->trans('Notes');
@@ -3931,10 +3937,12 @@ if ($action == 'create') {
 			print '<table id="tablelines" class="noborder noshadow centpercent">';
 
 			global $forceall, $senderissupplier, $dateSelector, $inputalsopricewithtax;
-			$forceall = 1; $dateSelector = 0; $inputalsopricewithtax = 1;
+			$forceall = 1;
+			$dateSelector = 0;
+			$inputalsopricewithtax = 1;
 			$senderissupplier = 2; // $senderissupplier=2 is same than 1 but disable test on minimum qty and disable autofill qty with minimum.
 			//if (!empty($conf->global->SUPPLIER_INVOICE_WITH_NOPRICEDEFINED)) $senderissupplier=2;
-			if (!empty($conf->global->SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY)) {
+			if (getDolGlobalString('SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY')) {
 				$senderissupplier = 1;
 			}
 
@@ -3952,9 +3960,12 @@ if ($action == 'create') {
 
 					$parameters = array();
 					$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-					if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-					if (empty($reshook))
+					if ($reshook < 0) {
+						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+					}
+					if (empty($reshook)) {
 						$object->formAddObjectLine(1, $societe, $mysoc);
+					}
 				}
 			}
 
@@ -3975,7 +3986,7 @@ if ($action == 'create') {
 
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
-																									  // modified by hook
+			// modified by hook
 			if (empty($reshook)) {
 				// Modify a validated invoice with no payments
 				if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $action != 'confirm_edit' && $object->getSommePaiement() == 0 && $usercancreate) {
@@ -4002,7 +4013,7 @@ if ($action == 'create') {
 					} else {
 						if ($usercancreate) {
 							print '<span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('ReOpen').'</span>';
-						} elseif (empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) {
+						} elseif (!getDolGlobalString('MAIN_BUTTON_HIDE_UNAUTHORIZED')) {
 							print '<span class="butActionRefused classfortooltip">'.$langs->trans('ReOpen').'</span>';
 						}
 					}
@@ -4054,7 +4065,7 @@ if ($action == 'create') {
 					}
 					// For credit note
 					if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $usercancreate
-						&& (!empty($conf->global->SUPPLIER_INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED) || $object->getSommePaiement() == 0)
+						&& (getDolGlobalString('SUPPLIER_INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED') || $object->getSommePaiement() == 0)
 						) {
 						print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc" title="'.dol_escape_htmltag($langs->trans("ConfirmConvertToReducSupplier2")).'">'.$langs->trans('ConvertToReduc').'</a>';
 					}
@@ -4066,21 +4077,21 @@ if ($action == 'create') {
 
 				// Classify paid
 				if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0 && (
-						($object->type != FactureFournisseur::TYPE_CREDIT_NOTE && $object->type != FactureFournisseur::TYPE_DEPOSIT && ($resteapayer <= 0 || (!empty($conf->global->SUPPLIER_INVOICE_CAN_SET_PAID_EVEN_IF_PARTIALLY_PAID) && $object->total_ttc == $resteapayer))) ||
+					($object->type != FactureFournisseur::TYPE_CREDIT_NOTE && $object->type != FactureFournisseur::TYPE_DEPOSIT && ($resteapayer <= 0 || (getDolGlobalString('SUPPLIER_INVOICE_CAN_SET_PAID_EVEN_IF_PARTIALLY_PAID') && $object->total_ttc == $resteapayer))) ||
 						($object->type == FactureFournisseur::TYPE_CREDIT_NOTE && $resteapayer >= 0) ||
-						($object->type == FactureFournisseur::TYPE_DEPOSIT && $object->total_ttc > 0 && ($resteapayer == 0 || (!empty($conf->global->SUPPLIER_INVOICE_CAN_SET_PAID_EVEN_IF_PARTIALLY_PAID) && $object->total_ttc == $resteapayer)))
-					)
+						($object->type == FactureFournisseur::TYPE_DEPOSIT && $object->total_ttc > 0 && ($resteapayer == 0 || (getDolGlobalString('SUPPLIER_INVOICE_CAN_SET_PAID_EVEN_IF_PARTIALLY_PAID') && $object->total_ttc == $resteapayer)))
+				)
 				) {
 					print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=paid">'.$langs->trans('ClassifyPaid').'</a>';
 				}
 
 				// Classify 'closed not completely paid' (possible if validated and not yet filed paid)
-				if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0 && $resteapayer > 0 && (empty($conf->global->SUPPLIER_INVOICE_CAN_SET_PAID_EVEN_IF_PARTIALLY_PAID) || $object->total_ttc != $resteapayer)) {
+				if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0 && $resteapayer > 0 && (!getDolGlobalString('SUPPLIER_INVOICE_CAN_SET_PAID_EVEN_IF_PARTIALLY_PAID') || $object->total_ttc != $resteapayer)) {
 					if ($totalpaid > 0 || $totalcreditnotes > 0) {
 						// If one payment or one credit note was linked to this invoice
 						print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=paid">'.$langs->trans('ClassifyPaidPartially').'</a>';
 					} else {
-						if (empty($conf->global->INVOICE_CAN_NEVER_BE_CANCELED)) {
+						if (!getDolGlobalString('INVOICE_CAN_NEVER_BE_CANCELED')) {
 							print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=canceled">'.$langs->trans('ClassifyCanceled').'</a>';
 						}
 					}
@@ -4148,7 +4159,7 @@ if ($action == 'create') {
 					$urlsource = $_SERVER['PHP_SELF'].'?id='.$object->id;
 					$genallowed = $usercanread;
 					$delallowed = $usercancreate;
-					$modelpdf = (!empty($object->model_pdf) ? $object->model_pdf : (empty($conf->global->INVOICE_SUPPLIER_ADDON_PDF) ? '' : $conf->global->INVOICE_SUPPLIER_ADDON_PDF));
+					$modelpdf = (!empty($object->model_pdf) ? $object->model_pdf : (!getDolGlobalString('INVOICE_SUPPLIER_ADDON_PDF') ? '' : $conf->global->INVOICE_SUPPLIER_ADDON_PDF));
 
 					print $formfile->showdocuments('facture_fournisseur', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
 					$somethingshown = $formfile->numoffiles;

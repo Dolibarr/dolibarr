@@ -237,6 +237,7 @@ class ChargeSocialesTest extends PHPUnit\Framework\TestCase
 	public function testChargeSocialesDelete($id)
 	{
 		global $conf,$user,$langs,$db;
+
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
@@ -244,7 +245,7 @@ class ChargeSocialesTest extends PHPUnit\Framework\TestCase
 
 		$localobject=new ChargeSociales($db);
 		$result=$localobject->fetch($id);
-		$result=$localobject->delete($id);
+		$result=$localobject->delete($user);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);

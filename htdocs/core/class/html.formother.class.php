@@ -150,7 +150,7 @@ class FormOther
 		$sql = "SELECT rowid, label, fk_user";
 		$sql .= " FROM ".$this->db->prefix()."export_model";
 		$sql .= " WHERE type = '".$this->db->escape($type)."'";
-		if (empty($conf->global->EXPORTS_SHARE_MODELS)) {	// EXPORTS_SHARE_MODELS means all templates are visible, whatever is owner.
+		if (!getDolGlobalString('EXPORTS_SHARE_MODELS')) {	// EXPORTS_SHARE_MODELS means all templates are visible, whatever is owner.
 			$sql .= " AND fk_user IN (0, ".((int) $fk_user).")";
 		}
 		$sql .= " ORDER BY label";
@@ -212,7 +212,7 @@ class FormOther
 		$sql = "SELECT rowid, label, fk_user";
 		$sql .= " FROM ".$this->db->prefix()."import_model";
 		$sql .= " WHERE type = '".$this->db->escape($type)."'";
-		if (empty($conf->global->EXPORTS_SHARE_MODELS)) {	// EXPORTS_SHARE_MODELS means all templates are visible, whatever is owner.
+		if (!getDolGlobalString('EXPORTS_SHARE_MODELS')) {	// EXPORTS_SHARE_MODELS means all templates are visible, whatever is owner.
 			$sql .= " AND fk_user IN (0, ".((int) $fk_user).")";
 		}
 		$sql .= " ORDER BY label";
@@ -552,7 +552,7 @@ class FormOther
 			}
 		}
 
-		if (empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)) {	// MAIN_FIRSTNAME_NAME_POSITION is 0 means firstname+lastname
+		if (!getDolGlobalString('MAIN_FIRSTNAME_NAME_POSITION')) {	// MAIN_FIRSTNAME_NAME_POSITION is 0 means firstname+lastname
 			$sql_usr .= " ORDER BY status DESC, firstname ASC, lastname ASC";
 		} else {
 			$sql_usr .= " ORDER BY status DESC, lastname ASC, firstname ASC";
@@ -596,7 +596,7 @@ class FormOther
 				$out .= $labeltoshow;
 				// Complete name with more info
 				$moreinfo = 0;
-				if (!empty($conf->global->MAIN_SHOW_LOGIN)) {
+				if (getDolGlobalString('MAIN_SHOW_LOGIN')) {
 					$out .= ($moreinfo ? ' - ' : ' (').$obj_usr->login;
 					$moreinfo++;
 				}
@@ -1219,7 +1219,7 @@ class FormOther
 		// $boxidactivatedforuser will be array of boxes choosed by user
 
 		$selectboxlist = '';
-		$boxactivated = InfoBox::listBoxes($db, 'activated', $areacode, (empty($user->conf->$confuserzone) ?null:$user), array(), 0); // Search boxes of common+user (or common only if user has no specific setup)
+		$boxactivated = InfoBox::listBoxes($db, 'activated', $areacode, (empty($user->conf->$confuserzone) ? null : $user), array(), 0); // Search boxes of common+user (or common only if user has no specific setup)
 
 		$boxidactivatedforuser = array();
 		foreach ($boxactivated as $box) {
@@ -1317,7 +1317,7 @@ class FormOther
 			if (!count($arrayboxtoactivatelabel)) {
 				$selectboxlist .= 'jQuery("#boxcombo").hide();';
 			}
-				$selectboxlist .= '
+			$selectboxlist .= '
 
 	        	jQuery("#boxhalfleft, #boxhalfright").sortable({
 	    	    	handle: \'.boxhandle\',
@@ -1363,7 +1363,7 @@ class FormOther
 
 			// Define $box_max_lines
 			$box_max_lines = 5;
-			if (!empty($conf->global->MAIN_BOXES_MAXLINES)) {
+			if (getDolGlobalString('MAIN_BOXES_MAXLINES')) {
 				$box_max_lines = $conf->global->MAIN_BOXES_MAXLINES;
 			}
 

@@ -144,7 +144,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 		// Scan directories
 		$nbofiles = count($listoffiles);
-		if (!empty($conf->global->COMPANY_ADDON_PDF_ODT_PATH)) {
+		if (getDolGlobalString('COMPANY_ADDON_PDF_ODT_PATH')) {
 			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>';
 			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
 			$texte .= $nbofiles;
@@ -244,7 +244,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				$newfiletmp = preg_replace('/modele_/i', '', $newfiletmp);
 				// Get extension (ods or odt)
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
-				if (!empty($conf->global->MAIN_DOC_USE_OBJECT_THIRDPARTY_NAME)) {
+				if (getDolGlobalString('MAIN_DOC_USE_OBJECT_THIRDPARTY_NAME')) {
 					$newfiletmp = dol_sanitizeFileName(dol_string_nospecial($object->name)) . '-' . $newfiletmp;
 					$newfiletmp = preg_replace('/__+/', '_', $newfiletmp);	// Replace repeated _ into one _ (to avoid string with substitution syntax)
 				}
@@ -369,8 +369,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}
-						} else // Text
-						{
+						} else { // Text
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
 					} catch (OdfException $e) {
@@ -394,7 +393,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				$reshook = $hookmanager->executeHooks('beforeODTSave', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
 				// Write new file
-				if (!empty($conf->global->MAIN_ODT_AS_PDF)) {
+				if (getDolGlobalString('MAIN_ODT_AS_PDF')) {
 					try {
 						$odfHandler->exportAsAttachedPDF($file);
 					} catch (Exception $e) {
@@ -408,7 +407,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 						$odfHandler->title = $object->builddoc_filename;
 						$odfHandler->subject = $object->builddoc_filename;
 
-						if (!empty($conf->global->ODT_ADD_DOLIBARR_ID)) {
+						if (getDolGlobalString('ODT_ADD_DOLIBARR_ID')) {
 							$odfHandler->userdefined['dol_id'] = $object->id;
 							$odfHandler->userdefined['dol_element'] = $object->element;
 						}

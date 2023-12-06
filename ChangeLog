@@ -9,6 +9,7 @@ For users:
 ----------
 NEW: Compatibility with PHP 8.2
 NEW: Module for Advanced stock transfert is now stable (#26594)
+NEW: Module Workstation (used to enhance the module BOM and Manufacturing Order) is now stable
 NEW: Add a confirmation popup when deleting extrafields
 NEW: Add type 'icon' type for extrafields
 NEW: Close #20930 Use ajax for state loading after country change
@@ -174,6 +175,7 @@ NEW: When an user unset the batch management of products, transformation of each
 SEC: #25512 applicative anti bruteforce - security on too many login attempts (#25520)
 SEC: Add action confirm_... as sensitive to need a CSRF token
 SEC: Disable not used PHP streams
+SEC: Add option MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY
 
 
 For developers or integrators:
@@ -238,6 +240,7 @@ The following changes may create regressions for some external modules, but were
 * The property ->user_validation to store ID of user validating has been renamed into ->user_validation_id.
 * The property ->user_creation to store ID of user of creation has been renamed into ->user_creation_id.
 * The property ->user_modification to store ID of user of modification has been renamed into ->user_modification_id.
+* The private array ->status_short, ->statuts and ->status_long are now array ->labelStatusShort and ->labelStatus everywhere.
 * The duplicate property ->user_creat, ->date_creat, ->date_valid has been removed (use instead user_creation, date_creation, date_validation). 
 * The method get_substitutionarray_shipment_lines() has been removed. Use the generic get_substitutionarray_lines() instead.
 * The method ProductcustomerPrice->fetch_all_log() has been renamed into camel case ->fetchAllLog()
@@ -247,7 +250,8 @@ The following changes may create regressions for some external modules, but were
 * New hook files of modules actions_mymodule.class.php should now "extends CommonHookActions"
 * Endpoint for API /partnershipapi and /recruitment has been renamed into /partnerships and /recruitments to follow name conventions.
 * Hidden option ACCOUNTANCY_AUTOFIX_MISSING_LINK_TO_USEr_ON_SALARY_BANK_PAYMENT has been renamed into ACCOUNTANCY_AUTOFIX_MISSING_LINK_TO_USER_ON_SALARY_BANK_PAYMENT
-
+* The delete() method of AdherentType, Contact, Delivery, MultiCurrency, CurrencyRate now need $user as first parameter.
+ 
 ***** ChangeLog for 18.0.3 compared to 18.0.2 *****
 FIX: #25793 Cannot add time spent (#26405)
 FIX: #26100 Ticket - On edit, list of closed project must be excluded (#26223)

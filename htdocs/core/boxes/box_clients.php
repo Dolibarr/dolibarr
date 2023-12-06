@@ -61,7 +61,7 @@ class box_clients extends ModeleBoxes
 		$this->db = $db;
 
 		// disable box for such cases
-		if (!empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
+		if (getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS')) {
 			$this->enabled = 0; // disabled by this option
 		}
 
@@ -154,8 +154,8 @@ class box_clients extends ModeleBoxes
 
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
-					'td' => 'class="center opacitymedium"',
-					'text'=>$langs->trans("NoRecordedCustomers")
+					'td' => 'class="center"',
+						'text'=> '<span class="opacitymedium">'.$langs->trans("NoRecordedCustomers").'</span>'
 					);
 				}
 
@@ -169,8 +169,8 @@ class box_clients extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

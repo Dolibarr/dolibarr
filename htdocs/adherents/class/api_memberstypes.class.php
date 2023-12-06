@@ -229,7 +229,7 @@ class MembersTypes extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$res = $membertype->delete();
+		$res = $membertype->delete(DolibarrApiAccess::$user);
 		if ($res < 0) {
 			throw new RestException(500, "Can't delete, error occurs");
 		} elseif ($res == 0) {

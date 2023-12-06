@@ -53,7 +53,8 @@ $result = restrictedArea($user, 'categorie', $id, '&category');
 $object = new Categorie($db);
 $result = $object->fetch($id, $label);
 if ($result <= 0) {
-	dol_print_error($db, $object->error); exit;
+	dol_print_error($db, $object->error);
+	exit;
 }
 
 $type = $object->type;
@@ -68,7 +69,7 @@ $hookmanager->initHooks(array('categorycard'));
 /*
  * Actions
  */
-$parameters = array('id' => $id,  'label' => $label, 'confirm' => $confirm, 'type' => $type, 'uploaddir' => $upload_dir, 'sendfile' => (GETPOST("sendit")?true:false));
+$parameters = array('id' => $id,  'label' => $label, 'confirm' => $confirm, 'type' => $type, 'uploaddir' => $upload_dir, 'sendfile' => (GETPOST("sendit") ? true : false));
 // Note that $action and $object may be modified by some hooks
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
 if ($reshook < 0) {
@@ -76,7 +77,7 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if (isset($_FILES['userfile']) && $_FILES['userfile']['size'] > 0 && GETPOST("sendit") && !empty($conf->global->MAIN_UPLOAD_DOC)) {
+	if (isset($_FILES['userfile']) && $_FILES['userfile']['size'] > 0 && GETPOST("sendit") && getDolGlobalString('MAIN_UPLOAD_DOC')) {
 		if ($object->id) {
 			$file = $_FILES['userfile'];
 			if (is_array($file['name']) && count($file['name']) > 0) {
@@ -169,7 +170,7 @@ if ($object->id) {
 	print '<div class="tabsAction">'."\n";
 
 	if ($action != 'ajout_photo' && $user->hasRight('categorie', 'creer')) {
-		if (!empty($conf->global->MAIN_UPLOAD_DOC)) {
+		if (getDolGlobalString('MAIN_UPLOAD_DOC')) {
 			print '<a class="butAction hideonsmartphone" href="'.$_SERVER['PHP_SELF'].'?action=ajout_photo&amp;id='.$object->id.'&amp;type='.$type.'">';
 			print $langs->trans("AddPhoto").'</a>';
 		} else {
@@ -183,7 +184,7 @@ if ($object->id) {
 	/*
 	 * Ajouter une photo
 	*/
-	if ($action == 'ajout_photo' && $user->hasRight('categorie', 'creer') && !empty($conf->global->MAIN_UPLOAD_DOC)) {
+	if ($action == 'ajout_photo' && $user->hasRight('categorie', 'creer') && getDolGlobalString('MAIN_UPLOAD_DOC')) {
 		// Affiche formulaire upload
 		$formfile = new FormFile($db);
 		$formfile->form_attach_new_file($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;type='.$type, $langs->trans("AddPhoto"), 1, '', $user->hasRight('categorie', 'creer'), 50, $object, '', false, '', 0);

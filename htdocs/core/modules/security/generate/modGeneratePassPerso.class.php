@@ -90,7 +90,7 @@ class modGeneratePassPerso extends ModeleGenPassword
 		$this->langs = $langs;
 		$this->user = $user;
 
-		if (empty($conf->global->USER_PASSWORD_PATTERN)) {
+		if (!getDolGlobalString('USER_PASSWORD_PATTERN')) {
 			// default value at auto generation (12 chars, 1 uppercase, 1 digit, 0 special char, 3 repeat max, exclude ambiguous characters).
 			dolibarr_set_const($db, "USER_PASSWORD_PATTERN", '12;1;1;0;3;1', 'chaine', 0, '', $conf->entity);
 		}

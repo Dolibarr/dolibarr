@@ -81,7 +81,7 @@ class box_factures extends ModeleBoxes
 
 		$langs->load("bills");
 
-		$text = $langs->trans("BoxTitleLast".(!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) ? "" : "Modified")."CustomerBills", $max);
+		$text = $langs->trans("BoxTitleLast".(getDolGlobalString('MAIN_LASTBOX_ON_OBJECT_DATE') ? "" : "Modified")."CustomerBills", $max);
 		$this->info_box_head = array(
 			'text' => $text,
 			'limit'=> dol_strlen($text)
@@ -116,7 +116,7 @@ class box_factures extends ModeleBoxes
 			}
 			$sql .= " GROUP BY s.rowid, s.nom, s.name_alias, s.code_client, s.code_compta, s.client, s.logo, s.email, s.entity, s.tva_intra, s.siren, s.siret, s.ape, s.idprof4, s.idprof5, s.idprof6,";
 			$sql .= " f.rowid, f.ref, f.type, f.total_ht, f.total_tva, f.total_ttc, f.datef, f.paye, f.fk_statut, f.datec, f.tms, f.date_lim_reglement";
-			if (!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE)) {
+			if (getDolGlobalString('MAIN_LASTBOX_ON_OBJECT_DATE')) {
 				$sql .= " ORDER BY f.datef DESC, f.ref DESC ";
 			} else {
 				$sql .= " ORDER BY f.tms DESC, f.ref DESC ";
@@ -207,7 +207,7 @@ class box_factures extends ModeleBoxes
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
-						'text'=>$langs->trans("NoRecordedInvoices"),
+						'text'=> '<span class="opacitymedium">'.$langs->trans("NoRecordedInvoices").'</span>',
 					);
 				}
 
@@ -221,8 +221,8 @@ class box_factures extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

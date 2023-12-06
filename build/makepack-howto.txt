@@ -43,6 +43,7 @@ Prerequisites to build autoexe DoliWamp package from Windows:
 
 
 ***** Actions to do a BETA *****
+
 This files describe steps made by Dolibarr packaging team to make a 
 beta version of Dolibarr, step by step.
 
@@ -67,6 +68,7 @@ Recopy the content of the output file into the file ChangeLog.
 
 
 ***** Actions to do a RELEASE *****
+
 This files describe steps made by Dolibarr packaging team to make a 
 complete release of Dolibarr, step by step.
 

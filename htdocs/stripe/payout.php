@@ -69,7 +69,7 @@ $stripe = new Stripe($db);
 
 llxHeader('', $langs->trans("StripePayoutList"));
 
-if (isModEnabled('stripe') && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
+if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('forcesandbox', 'alpha'))) {
 	$service = 'StripeTest';
 	$servicestatus = '0';
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
@@ -131,7 +131,9 @@ if (!$rowid) {
 			// Ref
 			if (!empty($stripeacc)) {
 				$connect = $stripeacc.'/';
-			} else $connect = null;
+			} else {
+				$connect = null;
+			}
 
 			$url = 'https://dashboard.stripe.com/'.$connect.'test/payouts/'.$payout->id;
 			if ($servicestatus) {

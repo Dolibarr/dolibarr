@@ -159,7 +159,7 @@ $cate_arbo = $categstatic->get_full_arbo($typetext);
 $fulltree = $cate_arbo;
 
 // Load possible missing includes
-if (!empty($conf->global->CATEGORY_SHOW_COUNTS)) {
+if (getDolGlobalString('CATEGORY_SHOW_COUNTS')) {
 	if ($type == Categorie::TYPE_MEMBER) {
 		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 	}
@@ -185,7 +185,7 @@ foreach ($fulltree as $key => $val) {
 	$desc = dol_htmlcleanlastbr($val['description']);
 
 	$counter = '';
-	if (!empty($conf->global->CATEGORY_SHOW_COUNTS)) {
+	if (getDolGlobalString('CATEGORY_SHOW_COUNTS')) {
 		// we need only a count of the elements, so it is enough to consume only the id's from the database
 		$elements = $type == Categorie::TYPE_ACCOUNT
 			? $categstatic->getObjectsInCateg("account", 1)			// Categorie::TYPE_ACCOUNT is "bank_account" instead of "account"

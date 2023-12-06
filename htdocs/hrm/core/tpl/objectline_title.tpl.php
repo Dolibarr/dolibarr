@@ -51,7 +51,7 @@ print "<thead>\n";
 print '<tr class="liste_titre nodrag nodrop">';
 
 // Adds a line numbering column
-if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 	print '<th class="linecolnum center">&nbsp;</th>';
 }
 

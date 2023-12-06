@@ -165,7 +165,7 @@ class ProductAttribute extends CommonObject
 		$this->db = $db;
 		$this->entity = $conf->entity;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -515,7 +515,7 @@ class ProductAttribute extends CommonObject
 	 * Load array lines
 	 *
 	 * @param	string		$filters	Filter on other fields
-	 * @return	int						<0 if KO, >0 if OK
+	 * @return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_lines($filters = '')
 	{
@@ -870,7 +870,7 @@ class ProductAttribute extends CommonObject
 	 *
 	 * @param	boolean		$renum			   True to renum all already ordered lines, false to renum only not already ordered lines.
 	 * @param	string		$rowidorder		   ASC or DESC
-	 * @return	int                            <0 if KO, >0 if OK
+	 * @return	int                            Return integer <0 if KO, >0 if OK
 	 */
 	public function attributeOrder($renum = false, $rowidorder = 'ASC')
 	{
@@ -930,7 +930,7 @@ class ProductAttribute extends CommonObject
 	 *
 	 * @param	int		$rowid		Id of line
 	 * @param	int		$position	Position
-	 * @return	int					<0 if KO, >0 if OK
+	 * @return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function updatePositionOfAttribute($rowid, $position)
 	{
@@ -1144,7 +1144,7 @@ class ProductAttribute extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowProductAttribute");
 				$linkclose .= ' alt="' . dol_escape_htmltag($label, 1) . '"';
 			}
@@ -1354,9 +1354,12 @@ class ProductAttribute extends CommonObject
 
 					$parameters = array();
 					$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-					if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-					if (empty($reshook))
+					if ($reshook < 0) {
+						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+					}
+					if (empty($reshook)) {
 						$object->formAddObjectLine(1, $mysoc, $buyer);
+					}
 				}
 			}
 		}

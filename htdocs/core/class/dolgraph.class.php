@@ -136,7 +136,7 @@ class DolGraph
 
 		$this->_library = $library;
 		if ($this->_library == 'auto') {
-			$this->_library = (empty($conf->global->MAIN_JS_GRAPH) ? 'chart' : $conf->global->MAIN_JS_GRAPH);
+			$this->_library = (!getDolGlobalString('MAIN_JS_GRAPH') ? 'chart' : $conf->global->MAIN_JS_GRAPH);
 		}
 	}
 
@@ -1294,13 +1294,15 @@ class DolGraph
 			$this->stringtoshow .= '});' . "\n";
 		} else {
 			// Other cases, graph of type 'bars', 'lines', 'linesnopoint'
-			$type = 'bar'; $xaxis = '';
+			$type = 'bar';
+			$xaxis = '';
 
 			if (!isset($this->type[$firstlot]) || $this->type[$firstlot] == 'bars') {
 				$type = 'bar';
 			}
 			if (isset($this->type[$firstlot]) && $this->type[$firstlot] == 'horizontalbars') {
-				$type = 'bar'; $xaxis = "indexAxis: 'y', ";
+				$type = 'bar';
+				$xaxis = "indexAxis: 'y', ";
 			}
 			if (isset($this->type[$firstlot]) && ($this->type[$firstlot] == 'lines' || $this->type[$firstlot] == 'linesnopoint')) {
 				$type = 'line';

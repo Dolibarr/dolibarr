@@ -165,7 +165,7 @@ class Establishment extends CommonObject
 	 *	Create object in database
 	 *
 	 *	@param		User	$user   User making creation
-	 *	@return 	int				<0 if KO, >0 if OK
+	 *	@return 	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user)
 	{
@@ -243,7 +243,7 @@ class Establishment extends CommonObject
 	 *	Update record
 	 *
 	 *	@param	User	$user		User making update
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user)
 	{
@@ -327,7 +327,7 @@ class Establishment extends CommonObject
 	 *	Delete record
 	 *
 	 *	@param	int		$id		Id of record to delete
-	 *	@return	int				<0 if KO, >0 if OK
+	 *	@return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($id)
 	{
@@ -467,7 +467,7 @@ class Establishment extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("Establishment");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}

@@ -91,7 +91,7 @@ print load_fiche_titre($transAreaType, $linkback, 'product');
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This may be useless due to the global search combo
+if (getDolGlobalString('MAIN_SEARCH_FORM_ON_HOME_AREAS')) {     // This may be useless due to the global search combo
 	// Search contract
 	if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
 		$listofsearchfields['search_product'] = array('text'=>'ProductOrService');
@@ -215,7 +215,7 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 }
 
 
-if (isModEnabled('categorie') && !empty($conf->global->CATEGORY_GRAPHSTATS_ON_PRODUCTS)) {
+if (isModEnabled('categorie') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_PRODUCTS')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	print '<br>';
 	print '<div class="div-table-responsive-no-min">';
@@ -321,7 +321,7 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 			print '<table class="noborder centpercent">';
 
 			$colnb = 2;
-			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 				$colnb++;
 			}
 
@@ -341,9 +341,9 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 				$product_static->status_buy = $objp->tobuy;
 				$product_static->status_batch = $objp->tobatch;
 
-				$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('product', 'product_advance', 'read_prices'):$user->hasRight('product', 'read');
+				$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_prices') : $user->hasRight('product', 'read');
 				if ($product_static->isService()) {
-					$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('service', 'service_advance', 'read_prices'):$user->hasRight('service', 'read');
+					$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('service', 'service_advance', 'read_prices') : $user->hasRight('service', 'read');
 				}
 
 				// Multilangs
@@ -372,7 +372,7 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 				print dol_print_date($db->jdate($objp->datem), 'day', 'tzuserrel');
 				print "</td>";
 				// Sell price
-				if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+				if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 					if (isModEnabled('dynamicprices') && !empty($objp->fk_price_expression)) {
 						$product = new Product($db);
 						$product->fetch($objp->rowid);

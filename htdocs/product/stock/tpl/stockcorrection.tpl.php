@@ -105,8 +105,8 @@ print '<tr>';
 if ($object->element == 'product') {
 	print '<td class="fieldrequired">'.$langs->trans("Warehouse").'</td>';
 	print '<td>';
-	$ident = (GETPOST("dwid") ?GETPOST("dwid", 'int') : (GETPOST('id_entrepot') ? GETPOST('id_entrepot', 'int') : ($object->element == 'product' && $object->fk_default_warehouse ? $object->fk_default_warehouse : 'ifone')));
-	if (empty($ident) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) {
+	$ident = (GETPOST("dwid") ? GETPOST("dwid", 'int') : (GETPOST('id_entrepot') ? GETPOST('id_entrepot', 'int') : ($object->element == 'product' && $object->fk_default_warehouse ? $object->fk_default_warehouse : 'ifone')));
+	if (empty($ident) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE')) {
 		$ident = $conf->global->MAIN_DEFAULT_WAREHOUSE;
 	}
 	print img_picto('', 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($ident, 'id_entrepot', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, null, 'minwidth100 maxwidth300 widthcentpercentminusx');
@@ -116,7 +116,7 @@ if ($object->element == 'stock') {
 	print '<td class="fieldrequired">'.$langs->trans("Product").'</td>';
 	print '<td>';
 	print img_picto('', 'product');
-	$form->select_produits(GETPOST('product_id', 'int'), 'product_id', (empty($conf->global->STOCK_SUPPORTS_SERVICES) ? '0' : ''), 0, 0, -1, 2, '', 0, null, 0, 1, 0, 'maxwidth500');
+	$form->select_produits(GETPOST('product_id', 'int'), 'product_id', (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') ? '0' : ''), 0, 0, -1, 2, '', 0, null, 0, 1, 0, 'maxwidth500');
 	print '</td>';
 }
 print '<td class="fieldrequired">'.$langs->trans("NumberOfUnit").'</td>';
@@ -133,7 +133,7 @@ print '</td>';
 print '</tr>';
 
 // If product is a Kit, we ask if we must disable stock change of subproducts
-if (!empty($conf->global->PRODUIT_SOUSPRODUITS) && $object->element == 'product' && $object->hasFatherOrChild(1)) {
+if (getDolGlobalString('PRODUIT_SOUSPRODUITS') && $object->element == 'product' && $object->hasFatherOrChild(1)) {
 	print '<tr>';
 	print '<td></td>';
 	print '<td colspan="3">';
@@ -152,8 +152,8 @@ if (ismodEnabled('productbatch') &&
 	print '<td'.($object->element == 'stock' ? '' : ' class="fieldrequired"').'>'.$langs->trans("batch_number").'</td><td colspan="3">';
 	if ($pdluoid > 0) {
 		// If form was opened for a specific pdluoid, field is disabled
-		print '<input type="text" name="batch_number_bis" size="40" disabled="disabled" value="'.(GETPOST('batch_number') ?GETPOST('batch_number') : $pdluo->batch).'">';
-		print '<input type="hidden" name="batch_number" value="'.(GETPOST('batch_number') ?GETPOST('batch_number') : $pdluo->batch).'">';
+		print '<input type="text" name="batch_number_bis" size="40" disabled="disabled" value="'.(GETPOST('batch_number') ? GETPOST('batch_number') : $pdluo->batch).'">';
+		print '<input type="hidden" name="batch_number" value="'.(GETPOST('batch_number') ? GETPOST('batch_number') : $pdluo->batch).'">';
 	} else {
 		print img_picto('', 'barcode', 'class="pictofixedwidth"').'<input type="text" name="batch_number" class="minwidth300" value="'.(GETPOST('batch_number') ? GETPOST('batch_number') : $pdluo->batch).'">';
 	}
@@ -161,14 +161,14 @@ if (ismodEnabled('productbatch') &&
 	print '</tr>';
 
 	print '<tr>';
-	if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+	if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 		print '<td>'.$langs->trans("SellByDate").'</td><td>';
 		$sellbyselected = dol_mktime(0, 0, 0, GETPOST('sellbymonth'), GETPOST('sellbyday'), GETPOST('sellbyyear'));
 		// If form was opened for a specific pdluoid, field is disabled
 		print $form->selectDate(($pdluo->id > 0 ? $pdluo->sellby : $sellbyselected), 'sellby', '', '', 1, "", 1, 0, ($pdluoid > 0 ? 1 : 0));
 		print '</td>';
 	}
-	if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+	if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 		print '<td>'.$langs->trans("EatByDate").'</td><td>';
 		$eatbyselected = dol_mktime(0, 0, 0, GETPOST('eatbymonth'), GETPOST('eatbyday'), GETPOST('eatbyyear'));
 		// If form was opened for a specific pdluoid, field is disabled

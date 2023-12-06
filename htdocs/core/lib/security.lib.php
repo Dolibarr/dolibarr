@@ -236,12 +236,12 @@ function dol_hash($chain, $type = '0')
 	global $conf;
 
 	// No need to add salt for password_hash
-	if (($type == '0' || $type == 'auto') && !empty($conf->global->MAIN_SECURITY_HASH_ALGO) && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'password_hash' && function_exists('password_hash')) {
+	if (($type == '0' || $type == 'auto') && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'password_hash' && function_exists('password_hash')) {
 		return password_hash($chain, PASSWORD_DEFAULT);
 	}
 
 	// Salt value
-	if (!empty($conf->global->MAIN_SECURITY_SALT) && $type != '4' && $type !== 'openldap') {
+	if (getDolGlobalString('MAIN_SECURITY_SALT') && $type != '4' && $type !== 'openldap') {
 		$chain = getDolGlobalString('MAIN_SECURITY_SALT') . $chain;
 	}
 
@@ -283,7 +283,7 @@ function dol_verifyHash($chain, $hash, $type = '0')
 {
 	global $conf;
 
-	if ($type == '0' && !empty($conf->global->MAIN_SECURITY_HASH_ALGO) && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'password_hash' && function_exists('password_verify')) {
+	if ($type == '0' && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'password_hash' && function_exists('password_verify')) {
 		if (! empty($hash[0]) && $hash[0] == '$') {
 			return password_verify($chain, $hash);
 		} elseif (dol_strlen($hash) == 32) {
@@ -494,7 +494,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		if ($featureforlistofmodule == 'supplier_proposal') {
 			$featureforlistofmodule = 'supplierproposal';
 		}
-		if (!empty($user->socid) && !empty($conf->global->MAIN_MODULES_FOR_EXTERNAL) && !in_array($featureforlistofmodule, $listofmodules)) {	// If limits on modules for external users, module must be into list of modules for external users
+		if (!empty($user->socid) && getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL') && !in_array($featureforlistofmodule, $listofmodules)) {	// If limits on modules for external users, module must be into list of modules for external users
 			$readok = 0;
 			$nbko++;
 			continue;
@@ -741,7 +741,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				}
 			} elseif ($feature == 'payment') {
 				if (!$user->hasRight('facture', 'paiement')) {
-						$deleteok = 0;
+					$deleteok = 0;
 				}
 			} elseif ($feature == 'payment_sc') {
 				if (!$user->hasRight('tax', 'charges', 'creer')) {
@@ -925,7 +925,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 			if (($feature == 'user' || $feature == 'usergroup') && isModEnabled('multicompany')) {	// Special for multicompany
-				if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+				if (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 					if ($conf->entity == 1 && $user->admin && !$user->entity) {
 						$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
 						$sql .= " AND dbt.entity IS NOT NULL";
@@ -1115,15 +1115,8 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			}
 			if ($feature == 'expensereport') {
 				$useridtocheck = $object->fk_user_author;
-<<<<<<< HEAD
 				if (!$user->hasRight('expensereport', 'readall') && !in_array($useridtocheck, $childids)) {
 					return false;
-=======
-				if (!$user->hasRight('expensereport', 'readall')) {
-					if (!in_array($useridtocheck, $childids)) {
-						return false;
-					}
->>>>>>> upstream/develop
 				}
 			}
 		}

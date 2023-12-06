@@ -44,7 +44,7 @@ $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '
 $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -74,7 +74,7 @@ $search_service = GETPOST("search_service", 'alpha');
 $search_status = GETPOST("search_status", 'alpha');
 $search_product_category = GETPOST('search_product_category', 'int');
 $socid = GETPOST('socid', 'int');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'contractservicelist'.$mode;
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'contractservicelist'.$mode;
 
 $opouvertureprevuemonth = GETPOST('opouvertureprevuemonth');
 $opouvertureprevueday = GETPOST('opouvertureprevueday');
@@ -704,7 +704,7 @@ if (!empty($arrayfields['status']['checked'])) {
 	if ($filter == 'expired' && !preg_match('/expired/', $search_status_new)) {
 		$search_status_new .= '&filter=expired';
 	}
-	print $form->selectarray('search_status', $arrayofstatus, (strstr($search_status_new, ',') ?-1 : $search_status_new), 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
+	print $form->selectarray('search_status', $arrayofstatus, (strstr($search_status_new, ',') ? -1 : $search_status_new), 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
 	print '</td>';
 }
 // Action column
@@ -855,7 +855,7 @@ while ($i < $imaxinloop) {
 		if ($obj->pid > 0) {
 			print $productstatic->getNomUrl(1, '', 24);
 			print $obj->label ? ' - '.dol_trunc($obj->label, 16) : '';
-			if (!empty($obj->description) && !empty($conf->global->PRODUCT_DESC_IN_LIST)) {
+			if (!empty($obj->description) && getDolGlobalString('PRODUCT_DESC_IN_LIST')) {
 				print '<br><span class="small">'.dol_nl2br($obj->description).'</span>';
 			}
 		} else {
@@ -938,7 +938,7 @@ while ($i < $imaxinloop) {
 	// Start date
 	if (!empty($arrayfields['cd.date_ouverture_prevue']['checked'])) {
 		print '<td class="center nowraponall">';
-		print ($obj->date_ouverture_prevue ?dol_print_date($db->jdate($obj->date_ouverture_prevue), 'dayhour') : '&nbsp;');
+		print($obj->date_ouverture_prevue ? dol_print_date($db->jdate($obj->date_ouverture_prevue), 'dayhour') : '&nbsp;');
 		if ($db->jdate($obj->date_ouverture_prevue) && ($db->jdate($obj->date_ouverture_prevue) < ($now - $conf->contrat->services->inactifs->warning_delay)) && $obj->statut == 0) {
 			print ' '.img_picto($langs->trans("Late"), "warning");
 		} else {
@@ -950,14 +950,14 @@ while ($i < $imaxinloop) {
 		}
 	}
 	if (!empty($arrayfields['cd.date_ouverture']['checked'])) {
-		print '<td class="center nowraponall">'.($obj->date_ouverture ?dol_print_date($db->jdate($obj->date_ouverture), 'dayhour') : '&nbsp;').'</td>';
+		print '<td class="center nowraponall">'.($obj->date_ouverture ? dol_print_date($db->jdate($obj->date_ouverture), 'dayhour') : '&nbsp;').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// End date
 	if (!empty($arrayfields['cd.date_fin_validite']['checked'])) {
-		print '<td class="center nowraponall">'.($obj->date_fin_validite ?dol_print_date($db->jdate($obj->date_fin_validite), 'dayhour') : '&nbsp;');
+		print '<td class="center nowraponall">'.($obj->date_fin_validite ? dol_print_date($db->jdate($obj->date_fin_validite), 'dayhour') : '&nbsp;');
 		if ($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < ($now - $conf->contrat->services->expires->warning_delay) && $obj->statut < 5) {
 			$warning_delay = $conf->contrat->services->expires->warning_delay / 3600 / 24;
 			$textlate = $langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($warning_delay) >= 0 ? '+' : '').ceil($warning_delay).' '.$langs->trans("days");
