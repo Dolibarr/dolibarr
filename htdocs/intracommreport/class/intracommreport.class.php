@@ -482,8 +482,11 @@ class IntracommReport extends CommonObject
 	 */
 	public function generateXMLFile()
 	{
-		$name = $this->periode.'.xml';
+		$name = $this->period.'.xml';
+
+		// TODO Must be stored into a dolibarr temp directory
 		$fname = sys_get_temp_dir().'/'.$name;
+
 		$f = fopen($fname, 'w+');
 		fwrite($f, $this->content_xml);
 		fclose($f);
@@ -495,6 +498,7 @@ class IntracommReport extends CommonObject
 		header('Cache-Control: must-revalidate');
 		header('Pragma: public');
 		header('Content-Length: '.filesize($fname));
+
 		readfile($fname);
 		exit;
 	}

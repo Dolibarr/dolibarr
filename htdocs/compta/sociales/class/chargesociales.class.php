@@ -66,7 +66,11 @@ class ChargeSociales extends CommonObject
 	public $type_label;
 	public $amount;
 	public $paye;
+	/**
+	 * @deprecated
+	 */
 	public $periode;
+	public $period;
 
 	/**
 	 * @var integer|string date_creation
@@ -149,7 +153,7 @@ class ChargeSociales extends CommonObject
 	public function fetch($id, $ref = '')
 	{
 		$sql = "SELECT cs.rowid, cs.date_ech";
-		$sql .= ", cs.libelle as label, cs.fk_type, cs.amount, cs.fk_projet as fk_project, cs.paye, cs.periode, cs.import_key";
+		$sql .= ", cs.libelle as label, cs.fk_type, cs.amount, cs.fk_projet as fk_project, cs.paye, cs.periode as period, cs.import_key";
 		$sql .= ", cs.fk_account, cs.fk_mode_reglement, cs.fk_user, note_public, note_private";
 		$sql .= ", c.libelle as type_label";
 		$sql .= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
@@ -186,7 +190,8 @@ class ChargeSociales extends CommonObject
 				$this->note_public = $obj->note_public;
 				$this->note_private = $obj->note_private;
 				$this->paye = $obj->paye;
-				$this->periode = $this->db->jdate($obj->periode);
+				$this->periode = $this->db->jdate($obj->period);
+				$this->period = $this->db->jdate($obj->period);
 				$this->import_key = $this->import_key;
 
 				$this->db->free($resql);
@@ -211,7 +216,7 @@ class ChargeSociales extends CommonObject
 		$newamount = price2num($this->amount, 'MT');
 
 		// Validation of parameters
-		if ($newamount == 0 || empty($this->date_ech) || empty($this->periode)) {
+		if ($newamount == 0 || empty($this->date_ech) || (empty($this->period) && empty($this->periode))) {
 			return false;
 		}
 
@@ -744,6 +749,7 @@ class ChargeSociales extends CommonObject
 		$this->date_creation = dol_now();
 		$this->date_ech = $this->date_creation + 3600 * 24 * 30;
 		$this->periode = $this->date_creation + 3600 * 24 * 30;
+		$this->period = $this->date_creation + 3600 * 24 * 30;
 		$this->amount = 100;
 		$this->label = 'Social contribution label';
 		$this->type = 1;
