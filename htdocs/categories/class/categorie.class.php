@@ -542,6 +542,8 @@ class Categorie extends CommonObject
 	 */
 	public function update(User $user)
 	{
+		global $langs;
+
 		$error = 0;
 
 		// Clean parameters
