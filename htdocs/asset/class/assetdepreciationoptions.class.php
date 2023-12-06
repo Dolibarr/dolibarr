@@ -377,7 +377,7 @@ class AssetDepreciationOptions extends CommonObject
 	 *  get general depreciation info for a mode (used in depreciation card)
 	 *
 	 * @param	string			$mode		Depreciation mode (economic, accelerated_depreciation, ...)
-	 * @return	array|int					<0 if KO otherwise array with general depreciation info
+	 * @return	array|int					Return integer <0 if KO otherwise array with general depreciation info
 	 */
 	public function getGeneralDepreciationInfoForMode($mode)
 	{

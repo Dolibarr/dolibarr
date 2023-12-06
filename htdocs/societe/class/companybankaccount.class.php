@@ -254,7 +254,7 @@ class CompanyBankAccount extends Account
 	 *
 	 * @param   User|null   $user		User
 	 * @param   int    		$notrigger  1=Disable triggers
-	 * @return	int						<0 if KO, > 0 if OK (ID of newly created company bank account information)
+	 * @return	int						Return integer <0 if KO, > 0 if OK (ID of newly created company bank account information)
 	 */
 	public function create(User $user = null, $notrigger = 0)
 	{
@@ -328,7 +328,7 @@ class CompanyBankAccount extends Account
 	 *
 	 *	@param	User|null	$user	     Object user
 	 *  @param  int     	$notrigger   1=Disable triggers
-	 *	@return	int					     <=0 if KO, >0 if OK
+	 *	@return	int					     Return integer <=0 if KO, >0 if OK
 	 */
 	public function update(User $user = null, $notrigger = 0)
 	{

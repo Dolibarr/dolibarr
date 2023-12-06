@@ -333,7 +333,7 @@ class mailing_contacts1 extends MailingTargets
 	 *  Add some recipients into target table
 	 *
 	 *  @param  int		$mailing_id    	Id of emailing
-	 *  @return int           			<0 si erreur, nb ajout si ok
+	 *  @return int           			Return integer <0 si erreur, nb ajout si ok
 	 */
 	public function add_to_target($mailing_id)
 	{

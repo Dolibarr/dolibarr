@@ -1026,7 +1026,7 @@ class Adherent extends CommonObject
 	 *  @param	int		$rowid		Id of member to delete
 	 *	@param	User	$user		User object
 	 *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *  @return	int					<0 if KO, 0=nothing to do, >0 if OK
+	 *  @return	int					Return integer <0 if KO, 0=nothing to do, >0 if OK
 	 */
 	public function delete($rowid, $user, $notrigger = 0)
 	{
@@ -1939,7 +1939,7 @@ class Adherent extends CommonObject
 	 *		Function that validate a member
 	 *
 	 *		@param	User	$user		user adherent qui valide
-	 *		@return	int					<0 if KO, 0 if nothing done, >0 if OK
+	 *		@return	int					Return integer <0 if KO, 0 if nothing done, >0 if OK
 	 */
 	public function validate($user)
 	{
@@ -2503,7 +2503,7 @@ class Adherent extends CommonObject
 	 *
 	 *      @param	User	$user   		Objet user
 	 *      @param  string	$mode           "expired" for membership to renew, "shift" for member to validate
-	 *      @return WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
+	 *      @return WorkboardResponse|int 	Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $mode)
 	{

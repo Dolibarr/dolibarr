@@ -182,7 +182,7 @@ class MouvementStock extends CommonObject
 	 *  @param		int				$disablestockchangeforsubproduct	Disable stock change for sub-products of kit (usefull only if product is a subproduct)
 	 *  @param		int				$donotcleanemptylines				Do not clean lines in stock table with qty=0 (because we want to have this done by the caller)
 	 * 	@param		boolean			$force_update_batch	Allows to add batch stock movement even if $product doesn't use batch anymore
-	 *	@return		int									<0 if KO, 0 if fk_product is null or product id does not exists, >0 if OK
+	 *	@return		int									Return integer <0 if KO, 0 if fk_product is null or product id does not exists, >0 if OK
 	 */
 	public function _create($user, $fk_product, $entrepot_id, $qty, $type, $price = 0, $label = '', $inventorycode = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $skip_batch = false, $id_product_batch = 0, $disablestockchangeforsubproduct = 0, $donotcleanemptylines = 0, $force_update_batch = false)
 	{
@@ -752,7 +752,7 @@ class MouvementStock extends CommonObject
 	 * 	@param		string			$label			Label of movement
 	 *  @param		string			$inventorycode	Inventory code
 	 *  @param		integer|string	$datem			Force date of movement
-	 * 	@return 	int     		<0 if KO, 0 if OK
+	 * 	@return 	int     		Return integer <0 if KO, 0 if OK
 	 */
 	private function _createSubProduct($user, $idProduct, $entrepot_id, $qty, $type, $price = 0, $label = '', $inventorycode = '', $datem = '')
 	{
@@ -893,7 +893,7 @@ class MouvementStock extends CommonObject
 	 *                                    - int if row id of product_batch table (for update)
 	 *                                    - or complete array('fk_product_stock'=>, 'batchnumber'=>)
 	 * @param	int			$qty	      Quantity of product with batch number. May be a negative amount.
-	 * @return 	int   				      <0 if KO, -2 if we try to update a product_batchid that does not exist, else return productbatch id
+	 * @return 	int   				      Return integer <0 if KO, -2 if we try to update a product_batchid that does not exist, else return productbatch id
 	 */
 	private function createBatch($dluo, $qty)
 	{
@@ -1258,7 +1258,7 @@ class MouvementStock extends CommonObject
 	 *
 	 * @param 	int 		$fk_product 	Product id
 	 * @param 	string 		$batch  		batch number
-	 * @return 	int            				<0 if KO, number of equipments found if OK
+	 * @return 	int            				Return integer <0 if KO, number of equipments found if OK
 	 */
 	private function getBatchCount($fk_product, $batch)
 	{

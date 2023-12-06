@@ -148,7 +148,7 @@ class ChargeSociales extends CommonObject
 	 *
 	 *  @param	int     $id		Id
 	 *  @param	string  $ref	Ref
-	 *  @return	int <0 KO >0 OK
+	 *  @return	int Return integer <0 KO >0 OK
 	 */
 	public function fetch($id, $ref = '')
 	{
@@ -227,7 +227,7 @@ class ChargeSociales extends CommonObject
 	 *      Create a social contribution into database
 	 *
 	 *      @param	User	$user   User making creation
-	 *      @return int     		<0 if KO, id if OK
+	 *      @return int     		Return integer <0 if KO, id if OK
 	 */
 	public function create($user)
 	{

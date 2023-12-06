@@ -288,7 +288,7 @@ class MailmanSpip
 	 *
 	 *	@param	Adherent	$object		Object with data (->email, ->pass, ->element, ->type)
 	 *  @param	string		$listes    	To force mailing-list (string separated with ,)
-	 *  @return	int		  				<0 if KO, >=0 if OK
+	 *  @return	int		  				Return integer <0 if KO, >=0 if OK
 	 */
 	public function add_to_mailman($object, $listes = '')
 	{
@@ -358,7 +358,7 @@ class MailmanSpip
 	 *
 	 *	@param	Adherent	$object		Object with data (->email, ->pass, ->element, ->type)
 	 *  @param	string	    $listes     To force mailing-list (string separated with ,)
-	 *  @return int         		    <0 if KO, >=0 if OK
+	 *  @return int         		    Return integer <0 if KO, >=0 if OK
 	 */
 	public function del_to_mailman($object, $listes = '')
 	{

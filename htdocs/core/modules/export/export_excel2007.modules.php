@@ -176,7 +176,7 @@ class ExportExcel2007 extends ModeleExports
 	 *
 	 * 	@param		string		$file			File name to generate
 	 *  @param		Translate	$outputlangs	Output language object
-	 *	@return		int							<0 if KO, >=0 if OK
+	 *	@return		int							Return integer <0 if KO, >=0 if OK
 	 */
 	public function open_file($file, $outputlangs)
 	{

@@ -869,7 +869,7 @@ class BookKeeping extends CommonObject
 	 * @param 	string 	$filtermode 	filter mode (AND or OR)
 	 * @param 	int 	$option 		option (0: general account or 1: subaccount)
 	 * @param	int		$countonly		Do not fill the $object->lines, return only the count.
-	 * @return 	int 					<0 if KO, Number of lines if OK
+	 * @return 	int 					Return integer <0 if KO, Number of lines if OK
 	 */
 	public function fetchAllByAccount($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND', $option = 0, $countonly = 0)
 	{
@@ -2303,7 +2303,7 @@ class BookKeeping extends CommonObject
 	 * Is the bookkeeping can be modified or deleted ?
 	 *
 	 * @param 	int		$id		Bookkeeping ID
-	 * @return 	int				<0 if KO, == 0 if No, == 1 if Yes
+	 * @return 	int				Return integer <0 if KO, == 0 if No, == 1 if Yes
 	 */
 	public function canModifyBookkeeping($id)
 	{
@@ -2359,7 +2359,7 @@ class BookKeeping extends CommonObject
 	 * Is the bookkeeping date valid (on an open period or not on a closed period) ?
 	 *
 	 * @param 	int		$date		Bookkeeping date
-	 * @return 	int					<0 if KO, == 0 if No, == 1 if date is valid for a transfer
+	 * @return 	int					Return integer <0 if KO, == 0 if No, == 1 if date is valid for a transfer
 	 */
 	public function validBookkeepingDate($date)
 	{
@@ -2464,7 +2464,7 @@ class BookKeeping extends CommonObject
 	 * Get list of fiscal period
 	 *
 	 * @param 	string	$filter		Filter
-	 * @return 	array|int			<0 if KO, Fiscal periods : [[id, date_start, date_end, label], ...]
+	 * @return 	array|int			Return integer <0 if KO, Fiscal periods : [[id, date_start, date_end, label], ...]
 	 */
 	public function getFiscalPeriods($filter = '')
 	{
@@ -2503,7 +2503,7 @@ class BookKeeping extends CommonObject
 	 *
 	 * @param 	int			$date_start		Date start
 	 * @param 	int			$date_end		Date end
-	 * @return 	array|int					<0 if KO, Fiscal periods : [[id, date_start, date_end, label], ...]
+	 * @return 	array|int					Return integer <0 if KO, Fiscal periods : [[id, date_start, date_end, label], ...]
 	 */
 	public function getCountByMonthForFiscalPeriod($date_start, $date_end)
 	{

@@ -6753,7 +6753,7 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
  *  @param	int		$idprod         		Id of product
  *  @param  int		$local          		1 for localtax1, 2 for localtax 2
  *  @param  Societe	$thirdpartytouse    	Thirdparty with a ->country_code defined (FR, US, IT, ...)
- *  @return int             				<0 if KO, Vat rate if OK
+ *  @return int             				Return integer <0 if KO, Vat rate if OK
  *  @see get_product_vat_for_country()
  */
 function get_product_localtax_for_country($idprod, $local, $thirdpartytouse)
@@ -7138,7 +7138,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
  *	@param	string		$dir		Directory to create (Separator must be '/'. Example: '/mydir/mysubdir')
  *	@param	string		$dataroot	Data root directory (To avoid having the data root in the loop. Using this will also lost the warning, on first dir, saying PHP has no permission when open_basedir is used)
  *  @param	string		$newmask	Mask for new file (Defaults to $conf->global->MAIN_UMASK or 0755 if unavailable). Example: '0444'
- *	@return int         			< 0 if KO, 0 = already exists, > 0 if OK
+ *	@return int         			Return integer < 0 if KO, 0 = already exists, > 0 if OK
  */
 function dol_mkdir($dir, $dataroot = '', $newmask = '')
 {
@@ -9441,7 +9441,7 @@ function dol_osencode($str)
  * 		@param	string	$fieldid		Field to get
  *      @param  int		$entityfilter	Filter by entity
  *      @param	string	$filters		Filters to add. WARNING: string must be escaped for SQL and not coming from user input.
- *      @return int						<0 if KO, Id of code if OK
+ *      @return int						Return integer <0 if KO, Id of code if OK
  *      @see $langs->getLabelFromKey
  */
 function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid = 'id', $entityfilter = 0, $filters = '')

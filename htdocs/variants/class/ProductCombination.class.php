@@ -110,7 +110,7 @@ class ProductCombination
 	 * Retrieves a combination by its rowid
 	 *
 	 * @param 	int 	$rowid 		Row id
-	 * @return 	int 				<0 KO, >0 OK
+	 * @return 	int 				Return integer <0 KO, >0 OK
 	 */
 	public function fetch($rowid)
 	{
@@ -151,7 +151,7 @@ class ProductCombination
 	 *
 	 * @param 	int 	$fk_price_level The price level to fetch, use 0 for all
 	 * @param 	bool 	$useCache 		To use cache or not
-	 * @return 	int 					<0 KO, >0 OK
+	 * @return 	int 					Return integer <0 KO, >0 OK
 	 */
 	public function fetchCombinationPriceLevels($fk_price_level = 0, $useCache = true)
 	{
@@ -199,7 +199,7 @@ class ProductCombination
 	 * Retrieves combination price levels
 	 *
 	 * @param 	int 	$clean 		Levels of PRODUIT_MULTIPRICES_LIMIT
-	 * @return 	int 				<0 KO, >0 OK
+	 * @return 	int 				Return integer <0 KO, >0 OK
 	 */
 	public function saveCombinationPriceLevels($clean = 1)
 	{
@@ -245,7 +245,7 @@ class ProductCombination
 	 *
 	 * @param 	int 	$productid 				Product ID of variant
 	 * @param	int		$donotloadpricelevel	Avoid loading price impact for each level. If PRODUIT_MULTIPRICES is not set, this has no effect.
-	 * @return 	int 							<0 if KO, 0 if product ID is not ID of a variant product (so parent not found), >0 if OK (ID of parent)
+	 * @return 	int 							Return integer <0 if KO, 0 if product ID is not ID of a variant product (so parent not found), >0 if OK (ID of parent)
 	 */
 	public function fetchByFkProductChild($productid, $donotloadpricelevel = 0)
 	{
@@ -284,7 +284,7 @@ class ProductCombination
 	 * Retrieves all product combinations by the product parent row id
 	 *
 	 * @param int $fk_product_parent Rowid of parent product
-	 * @return int|ProductCombination[] <0 KO
+	 * @return int|ProductCombination[] Return integer <0 KO
 	 */
 	public function fetchAllByFkProductParent($fk_product_parent)
 	{
@@ -384,7 +384,7 @@ class ProductCombination
 	 * Updates a product combination
 	 *
 	 * @param	User	$user		Object user
-	 * @return 						int <0 KO, >0 OK
+	 * @return 						int Return integer <0 KO, >0 OK
 	 */
 	public function update(User $user)
 	{
@@ -451,7 +451,7 @@ class ProductCombination
 	 *
 	 * @param User		$user Object user
 	 * @param int 		$fk_product_parent Rowid of parent product
-	 * @return int <0 KO >0 OK
+	 * @return int Return integer <0 KO >0 OK
 	 */
 	public function deleteByFkProductParent($user, $fk_product_parent)
 	{
@@ -711,7 +711,7 @@ class ProductCombination
 	 * @param bool|float 	$forced_weightvar 	If the weight variation is forced
 	 * @param bool|string 	$forced_refvar 		If the reference is forced
 	 * @param string 	    $ref_ext            External reference
-	 * @return int 								<0 KO, >0 OK
+	 * @return int 								Return integer <0 KO, >0 OK
 	 */
 	public function createProductCombination(User $user, Product $product, array $combinations, array $variations, $price_var_percent = false, $forced_pricevar = false, $forced_weightvar = false, $forced_refvar = false, $ref_ext = '')
 	{
@@ -1077,7 +1077,7 @@ class ProductCombinationLevel
 	 * Retrieves a combination level by its rowid
 	 *
 	 * @param int $rowid Row id
-	 * @return int <0 KO, >0 OK
+	 * @return int Return integer <0 KO, >0 OK
 	 */
 	public function fetch($rowid)
 	{
@@ -1135,7 +1135,7 @@ class ProductCombinationLevel
 	 * Assign vars form an stdclass like sql obj
 	 *
 	 * @param 	Object 	$obj		Object resultset
-	 * @return 	int 				<0 KO, >0 OK
+	 * @return 	int 				Return integer <0 KO, >0 OK
 	 */
 	public function fetchFormObj($obj)
 	{
@@ -1156,7 +1156,7 @@ class ProductCombinationLevel
 	/**
 	 * Save a price impact of a product combination for a price level
 	 *
-	 * @return int 		<0 KO, >0 OK
+	 * @return int 		Return integer <0 KO, >0 OK
 	 */
 	public function save()
 	{
@@ -1222,7 +1222,7 @@ class ProductCombinationLevel
 	/**
 	 * delete
 	 *
-	 * @return int <0 KO, >0 OK
+	 * @return int Return integer <0 KO, >0 OK
 	 */
 	public function delete()
 	{
@@ -1237,7 +1237,7 @@ class ProductCombinationLevel
 	 * delete all for a combination
 	 *
 	 * @param 	int		$fk_product_attribute_combination	Id of combination
-	 * @return 	int 										<0 KO, >0 OK
+	 * @return 	int 										Return integer <0 KO, >0 OK
 	 */
 	public function deleteAllForCombination($fk_product_attribute_combination)
 	{
@@ -1252,7 +1252,7 @@ class ProductCombinationLevel
 	 * Clean not needed price levels for a combination
 	 *
 	 * @param 	int		$fk_product_attribute_combination	Id of combination
-	 * @return 	int 										<0 KO, >0 OK
+	 * @return 	int 										Return integer <0 KO, >0 OK
 	 */
 	public function clean($fk_product_attribute_combination)
 	{

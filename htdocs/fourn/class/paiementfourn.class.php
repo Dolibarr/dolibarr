@@ -96,7 +96,7 @@ class PaiementFourn extends Paiement
 	 *	@param	int		$id         Id if payment to get
 	 *  @param	string	$ref		Ref of payment to get
 	 *  @param	int		$fk_bank	Id of bank line associated to payment
-	 *  @return int		            <0 if KO, -2 if not found, >0 if OK
+	 *  @return int		            Return integer <0 if KO, -2 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = '', $fk_bank = '')
 	{
@@ -429,7 +429,7 @@ class PaiementFourn extends Paiement
 	 *	@TODO Add User $user as first param
 	 *
 	 *	@param		int		$notrigger		No trigger
-	 *	@return     int     <0 si ko, >0 si ok
+	 *	@return     int     Return integer <0 si ko, >0 si ok
 	 */
 	public function delete($notrigger = 0)
 	{
@@ -833,7 +833,7 @@ class PaiementFourn extends Paiement
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
 	 *  @param   null|array  $moreparams     Array to provide more information
-	 *  @return     int         				<0 if KO, 0 if nothing done, >0 if OK
+	 *  @return     int         				Return integer <0 if KO, 0 if nothing done, >0 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{

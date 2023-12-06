@@ -179,7 +179,7 @@ class Productlot extends CommonObject
 	 * Check sell or eat by date is mandatory
 	 *
 	 * @param	string 		$onlyFieldName		[=''] check all fields by default or only one field name ("sellby", "eatby")
-	 * @return 	int			<0 if KO, 0 nothing done, >0 if OK
+	 * @return 	int			Return integer <0 if KO, 0 nothing done, >0 if OK
 	 */
 	public function checkSellOrEatByMandatory($onlyFieldName = '')
 	{
