@@ -33,8 +33,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
-$typent_id = GETPOST('typent_id', 'int');
-
 $userid = GETPOST('userid', 'int');
 $socid = GETPOST('socid', 'int');
 // Security check
@@ -66,9 +64,7 @@ print load_fiche_titre($langs->trans("StatisticsOfDonations"), '', 'donation');
 
 dol_mkdir($dir);
 
-$useridtofilter = $user->id;
-
-$stats = new DonationStats($db, $socid, $useridtofilter);
+$stats = new DonationStats($db, $socid, $user->id);
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 
@@ -88,9 +84,10 @@ if (!$mesg) {
 	}
 	$px1->SetLegend($legend);
 	$px1->SetMaxValue($px1->GetCeilMaxValue());
+	$px1->SetMinValue(min(0, $px1->GetFloorMinValue()));
 	$px1->SetWidth($WIDTH);
 	$px1->SetHeight($HEIGHT);
-	$px1->SetYLabel($langs->trans("Number"));
+	$px1->SetYLabel($langs->trans("NbOfDonations"));
 	$px1->SetShading(3);
 	$px1->SetHorizTickIncrement(1);
 	$px1->mode = 'depth';
