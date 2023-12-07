@@ -86,7 +86,7 @@ class RemiseCheque extends CommonObject
 	 *
 	 *	@param	int		$id 			Id record
 	 *	@param 	string	$ref		 	Ref record
-	 * 	@return	int						<0 if KO, > 0 if OK
+	 * 	@return	int						Return integer <0 if KO, > 0 if OK
 	 */
 	public function fetch($id, $ref = '')
 	{
@@ -475,7 +475,7 @@ class RemiseCheque extends CommonObject
 	 *
 	 *      @param  User	$user       Objet user
 	 *      @param	string	$type		Type of payment mode deposit ('CHQ', 'TRA', ...)
-	 *      @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
+	 *      @return WorkboardResponse|int Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $type = 'CHQ')
 	{
@@ -529,7 +529,7 @@ class RemiseCheque extends CommonObject
 	 *      Charge indicateurs this->nb de tableau de bord
 	 *
 	 *      @param	string	$type		Type of payment mode deposit ('CHQ', 'TRA', ...)
-	 *      @return int         		<0 if ko, >0 if ok
+	 *      @return int         		Return integer <0 if ko, >0 if ok
 	 */
 	public function load_state_board($type = 'CHQ')
 	{

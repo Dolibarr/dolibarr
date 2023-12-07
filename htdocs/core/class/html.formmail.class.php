@@ -1521,7 +1521,7 @@ class FormMail extends Form
 	 * 		@param	string		$type_template	Get message for key module
 	 *      @param	User		$user			Use template public or limited to this user
 	 *      @param	Translate	$outputlangs	Output lang object
-	 *      @return	int		<0 if KO,
+	 *      @return	int		Return integer <0 if KO,
 	 */
 	public function isEMailTemplate($type_template, $user, $outputlangs)
 	{
@@ -1555,7 +1555,7 @@ class FormMail extends Form
 	 *      @param	User		$user				Use template public or limited to this user
 	 *      @param	Translate	$outputlangs		Output lang object
 	 *      @param  int         $active         	1=Only active template, 0=Only disabled, -1=All
-	 *      @return	int		                    	<0 if KO, nb of records found if OK
+	 *      @return	int		                    	Return integer <0 if KO, nb of records found if OK
 	 */
 	public function fetchAllEMailTemplate($type_template, $user, $outputlangs, $active = 1)
 	{

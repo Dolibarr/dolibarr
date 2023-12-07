@@ -144,7 +144,7 @@ class Delivery extends CommonObject
 	 *  Create delivery receipt in database
 	 *
 	 *  @param 	User	$user       Objet du user qui cree
-	 *  @return int         		<0 si erreur, id delivery cree si ok
+	 *  @return int         		Return integer <0 si erreur, id delivery cree si ok
 	 */
 	public function create($user)
 	{
@@ -548,7 +548,7 @@ class Delivery extends CommonObject
 	 *
 	 *	@param	User	$user           User who creates
 	 *	@param  int		$sending_id		Id of the expedition that serves as a model
-	 *	@return	integer					<=0 if KO, >0 if OK
+	 *	@return	integer					Return integer <=0 if KO, >0 if OK
 	 */
 	public function create_from_sending($user, $sending_id)
 	{
@@ -655,7 +655,7 @@ class Delivery extends CommonObject
 	 *	Delete line
 	 *
 	 *	@param	int		$lineid		Line id
-	 *	@return	integer				<0 if KO, 0 if nothing done, >0 if OK
+	 *	@return	integer				Return integer <0 if KO, 0 if nothing done, >0 if OK
 	 */
 	public function deleteline($lineid)
 	{

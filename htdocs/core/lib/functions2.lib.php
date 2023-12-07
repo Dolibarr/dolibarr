@@ -1503,7 +1503,7 @@ function get_string_between($string, $start, $end)
  *
  * @param 	string	$mask		Mask to use
  * @param 	string	$value		Value
- * @return	int|string		    <0 or error string if KO, 0 if OK
+ * @return	int|string		    Return integer <0 or error string if KO, 0 if OK
  */
 function check_value($mask, $value)
 {

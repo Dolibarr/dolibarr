@@ -1509,7 +1509,7 @@ class Fichinter extends CommonObject
 	 *  @param      User	$user			Object user that modify
 	 *  @param      string	$ref_client		Customer reference
 	 *  @param  	int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *  @return     int						<0 if ko, >0 if ok
+	 *  @return     int						Return integer <0 if ko, >0 if ok
 	 */
 	public function setRefClient($user, $ref_client, $notrigger = 0)
 	{
@@ -1707,7 +1707,7 @@ class FichinterLigne extends CommonObjectLine
 	 *
 	 *	@param		User	$user 		Objet user that make creation
 	 *	@param		int		$notrigger	Disable all triggers
-	 *	@return		int		<0 if ko, >0 if ok
+	 *	@return		int		Return integer <0 if ko, >0 if ok
 	 */
 	public function insert($user, $notrigger = 0)
 	{
@@ -1796,7 +1796,7 @@ class FichinterLigne extends CommonObjectLine
 	 *
 	 *	@param		User	$user 		Objet user that make creation
 	 *	@param		int		$notrigger	Disable all triggers
-	 *	@return		int		<0 if ko, >0 if ok
+	 *	@return		int		Return integer <0 if ko, >0 if ok
 	 */
 	public function update($user, $notrigger = 0)
 	{
@@ -1857,7 +1857,7 @@ class FichinterLigne extends CommonObjectLine
 	/**
 	 *	Update total duration into llx_fichinter
 	 *
-	 *	@return		int		<0 si ko, >0 si ok
+	 *	@return		int		Return integer <0 si ko, >0 si ok
 	 */
 	public function update_total()
 	{

@@ -1408,7 +1408,7 @@ class ActionComm extends CommonObject
 	 *
 	 * @param	User	$user   			Objet user
 	 * @param	int		$load_state_board	Load indicator array this->nb
-	 * @return WorkboardResponse|int 		<0 if KO, WorkboardResponse if OK
+	 * @return WorkboardResponse|int 		Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $load_state_board = 0)
 	{

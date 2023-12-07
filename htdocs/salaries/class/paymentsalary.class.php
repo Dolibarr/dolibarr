@@ -163,7 +163,7 @@ class PaymentSalary extends CommonObject
 	 *
 	 *  @param      User	$user   				User making payment
 	 *	@param		int		$closepaidcontrib   	1=Also close payed contributions to paid, 0=Do nothing more
-	 *  @return     int     						<0 if KO, id of payment if OK
+	 *  @return     int     						Return integer <0 if KO, id of payment if OK
 	 */
 	public function create($user, $closepaidcontrib = 0)
 	{
@@ -704,7 +704,7 @@ class PaymentSalary extends CommonObject
 	 *  Old name of function is update_date()
 	 *
 	 *  @param	int	$date   		New date
-	 *  @return int					<0 if KO, 0 if OK
+	 *  @return int					Return integer <0 if KO, 0 if OK
 	 */
 	public function updatePaymentDate($date)
 	{

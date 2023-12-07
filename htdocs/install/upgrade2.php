@@ -2534,7 +2534,7 @@ function migrate_commande_deliveryaddress($db, $langs, $conf)
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
  * @param	Conf		$conf	Object conf
- * @return	integer				<0 if KO, 0=Bad version, >0 if OK
+ * @return	integer				Return integer <0 if KO, 0=Bad version, >0 if OK
  */
 function migrate_restore_missing_links($db, $langs, $conf)
 {

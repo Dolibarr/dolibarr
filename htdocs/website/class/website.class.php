@@ -161,7 +161,7 @@ class Website extends CommonObject
 	 * @param  User $user      	User that creates
 	 * @param  bool $notrigger 	false=launch triggers after, true=disable triggers
 	 *
-	 * @return int 				<0 if KO, 0 if already exists, ID of created object if OK
+	 * @return int 				Return integer <0 if KO, 0 if already exists, ID of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -1168,7 +1168,7 @@ class Website extends CommonObject
 	 * Open a zip with all data of web site and load it into database.
 	 *
 	 * @param 	string		$pathtofile		Full path of zip file
-	 * @return  int							<0 if KO, Id of new website if OK
+	 * @return  int							Return integer <0 if KO, Id of new website if OK
 	 */
 	public function importWebSite($pathtofile)
 	{
@@ -1327,7 +1327,7 @@ class Website extends CommonObject
 	 * Rebuild all files of all the pages/containers of a website. Rebuild also the index and wrapper.php file.
 	 * Note: Files are already regenerated during importWebSite so this function is useless when importing a website.
 	 *
-	 * @return 	int						<0 if KO, >=0 if OK
+	 * @return 	int						Return integer <0 if KO, >=0 if OK
 	 */
 	public function rebuildWebSiteFiles()
 	{

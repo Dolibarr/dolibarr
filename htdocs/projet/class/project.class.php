@@ -399,7 +399,7 @@ class Project extends CommonObject
 	 *
 	 *    @param    User	$user       	User making creation
 	 *    @param	int		$notrigger		Disable triggers
-	 *    @return   int         			<0 if KO, id of created project if OK
+	 *    @return   int         			Return integer <0 if KO, id of created project if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -545,7 +545,7 @@ class Project extends CommonObject
 	 *
 	 * @param  User		$user       User object of making update
 	 * @param  int		$notrigger  1=Disable all triggers
-	 * @return int                  <=0 if KO, >0 if OK
+	 * @return int                  Return integer <=0 if KO, >0 if OK
 	 */
 	public function update($user, $notrigger = 0)
 	{
@@ -923,7 +923,7 @@ class Project extends CommonObject
 	 *
 	 *    @param       User		$user            User
 	 *    @param       int		$notrigger       Disable triggers
-	 *    @return      int       			      <0 if KO, 0 if not possible, >0 if OK
+	 *    @return      int       			      Return integer <0 if KO, 0 if not possible, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -1125,7 +1125,7 @@ class Project extends CommonObject
 	 * 		Delete tasks with no children first, then task with children recursively
 	 *
 	 *  	@param     	User		$user		User
-	 *		@return		int				<0 if KO, 1 if OK
+	 *		@return		int				Return integer <0 if KO, 1 if OK
 	 */
 	public function deleteTasks($user)
 	{
@@ -1158,7 +1158,7 @@ class Project extends CommonObject
 	 *
 	 * 		@param		User	$user		   User that validate
 	 *      @param      int     $notrigger     1=Disable triggers
-	 * 		@return		int					   <0 if KO, 0=Nothing done, >0 if KO
+	 * 		@return		int					   Return integer <0 if KO, 0=Nothing done, >0 if KO
 	 */
 	public function setValid($user, $notrigger = 0)
 	{
@@ -1218,7 +1218,7 @@ class Project extends CommonObject
 	 * 		Close a project
 	 *
 	 * 		@param		User	$user		User that close project
-	 * 		@return		int					<0 if KO, 0 if already closed, >0 if OK
+	 * 		@return		int					Return integer <0 if KO, 0 if already closed, >0 if OK
 	 */
 	public function setClose($user)
 	{
@@ -2075,7 +2075,7 @@ class Project extends CommonObject
 	 * @param 	int		$datestart		First day of week (use dol_get_first_day to find this date)
 	 * @param 	int		$taskid			Filter on a task id
 	 * @param 	int		$userid			Time spent by a particular user
-	 * @return 	int						<0 if OK, >0 if KO
+	 * @return 	int						Return integer <0 if OK, >0 if KO
 	 */
 	public function loadTimeSpent($datestart, $taskid = 0, $userid = 0)
 	{
@@ -2139,7 +2139,7 @@ class Project extends CommonObject
 	 * @param 	int		$datestart		First day of week (use dol_get_first_day to find this date)
 	 * @param 	int		$taskid			Filter on a task id
 	 * @param 	int		$userid			Time spent by a particular user
-	 * @return 	int						<0 if OK, >0 if KO
+	 * @return 	int						Return integer <0 if OK, >0 if KO
 	 */
 	public function loadTimeSpentMonth($datestart, $taskid = 0, $userid = 0)
 	{
@@ -2204,7 +2204,7 @@ class Project extends CommonObject
 	 * Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 * @param	User	$user   Objet user
-	 * @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
+	 * @return WorkboardResponse|int Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user)
 	{
