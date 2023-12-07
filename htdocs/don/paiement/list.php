@@ -550,7 +550,9 @@ while ($i < $imaxinloop) {
 	if (!empty($arrayfields['pd.datep']['checked'])) {
 		$dateformatforpayment = 'dayhour';
 		print '<td class="nowraponall">'.dol_print_date($db->jdate($obj->datep), $dateformatforpayment, 'tzuser').'</td>';
-
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
 	// Thirdparty
@@ -592,6 +594,9 @@ while ($i < $imaxinloop) {
 			print $bankline->getNomUrl(1, 0);
 		}
 		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
 	// Bank account
@@ -610,11 +615,23 @@ while ($i < $imaxinloop) {
 
 			print $accountstatic->getNomUrl(1);
 		}
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
 	// Amount
 	if (!empty($arrayfields['pd.amount']['checked'])) {
 		print '<td ><span class="amount">' . price($obj->amount) . '</span></td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+			$totalarray['pos'][$totalarray['nbfield']] = 'amount';
+		}
+		if (empty($totalarray['val']['amount'])) {
+			$totalarray['val']['amount'] = $obj->amount;
+		} else {
+			$totalarray['val']['amount'] += $obj->amount;
+		}
 	}
 
 	$i++;
