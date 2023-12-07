@@ -394,6 +394,7 @@ script:
     # Ensure we catch errors
     set +e
     echo '<?php ' > $INSTALL_FORCED_FILE
+    echo 'error_reporting(E_ALL);' >> $INSTALL_FORCED_FILE
     echo '$'force_install_noedit=2';' >> $INSTALL_FORCED_FILE
     if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ]; then
       echo '$'force_install_type=\'mysqli\'';' >> $INSTALL_FORCED_FILE
