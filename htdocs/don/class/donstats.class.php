@@ -66,7 +66,7 @@ class DonationStats extends Stats
 	 * @param 	string	$mode	   	Option (not used)
 	 * @param   int		$userid    	Id user for filter (creation user)
 	 */
-	public function __construct(DoliDB $db, $socid, $mode, $userid = 0)
+	public function __construct($db, $socid, $mode, $userid = 0)
 	{
 		global $conf;
 
