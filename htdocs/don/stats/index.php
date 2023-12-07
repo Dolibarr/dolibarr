@@ -33,6 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
+$typent_id = GETPOST('typent_id', 'int');
+
 $userid = GETPOST('userid', 'int');
 $socid = GETPOST('socid', 'int');
 // Security check
@@ -47,35 +49,32 @@ $startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 
 $endyear = $year;
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "other", "sendings"));
+$langs->loadLangs("donation");
 
 
 /*
  * View
  */
-
 $form = new Form($db);
 
 llxHeader();
 
-print load_fiche_titre($langs->trans("StatisticsOfDonations"), $mesg);
+$dir = $conf->don->dir_temp;
 
+
+print load_fiche_titre($langs->trans("StatisticsOfDonations"), '', 'donation');
 
 dol_mkdir($dir);
 
-$stats = new DonationStats($db, $socid, '', ($userid > 0 ? $userid : 0));
+$useridtofilter = $user->id;
 
+$stats = new DonationStats($db, $socid, $useridtofilter);
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
-//var_dump($data);exit;
-// $data = array(array('Lib',val1,val2,val3),...)
 
+$filenamenb = $dir."/salariesnbinyear-".$year.".png";
+$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=donationStats&amp;file=donationinyear-'.$year.'.png';
 
-if (!$user->hasRight('societe', 'client', 'voir') || $user->socid) {
-	$filenamenb = $dir.'/donationnbinyear-'.$user->id.'-'.$year.'.png';
-} else {
-	$filenamenb = $dir.'/donationnbinyear-'.$year.'.png';
-}
 
 $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
@@ -89,32 +88,21 @@ if (!$mesg) {
 	}
 	$px1->SetLegend($legend);
 	$px1->SetMaxValue($px1->GetCeilMaxValue());
-	$px1->SetMinValue(min(0, $px1->GetFloorMinValue()));
 	$px1->SetWidth($WIDTH);
 	$px1->SetHeight($HEIGHT);
-	$px1->SetYLabel($langs->trans("NbOfDonations"));
+	$px1->SetYLabel($langs->trans("Number"));
 	$px1->SetShading(3);
 	$px1->SetHorizTickIncrement(1);
 	$px1->mode = 'depth';
-	$px1->SetTitle($langs->trans("NumberOfDonationsByMonth"));
+	$px1->SetTitle($langs->trans("NumberByMonth"));
 
 	$px1->draw($filenamenb, $fileurlnb);
 }
 
-// Build graphic amount of object
-/*
 $data = $stats->getAmountByMonthWithPrevYear($endyear,$startyear);
-//var_dump($data);
-// $data = array(array('Lib',val1,val2,val3),...)
 
-if (empty($user->rights->societe->client->voir) || $user->socid)
-{
-	$filenameamount = $dir.'/shipmentsamountinyear-'.$user->id.'-'.$year.'.png';
-}
-else
-{
-	$filenameamount = $dir.'/shipmentsamountinyear-'.$year.'.png';
-}
+$filenameamount = $dir."/donationamount-".$year.".png";
+$fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=donationStats&amp;file=donationamoutinyear-'.$year.'.png';
 
 $px2 = new DolGraph();
 $mesg = $px2->isGraphKo();
@@ -132,37 +120,28 @@ if (! $mesg)
 	$px2->SetMinValue(min(0,$px2->GetFloorMinValue()));
 	$px2->SetWidth($WIDTH);
 	$px2->SetHeight($HEIGHT);
-	$px2->SetYLabel($langs->trans("AmountOfShipments"));
+	$px2->SetYLabel($langs->trans("Amount"));
 	$px2->SetShading(3);
 	$px2->SetHorizTickIncrement(1);
 	$px2->mode='depth';
-	$px2->SetTitle($langs->trans("AmountOfShipmentsByMonthHT"));
+	$px2->SetTitle($langs->trans("AmountTotal"));
 
 	$px2->draw($filenameamount,$fileurlamount);
 }
-*/
 
-/*
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
-if (empty($user->rights->societe->client->voir) || $user->socid)
-{
-	$filename_avg = $dir.'/shipmentsaverage-'.$user->id.'-'.$year.'.png';
-}
-else
-{
-	$filename_avg = $dir.'/shipmentsaverage-'.$year.'.png';
-}
+$filename_avg = $dir."/donationaverage-".$year.".png";
+$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=donationStats&file=donationaverageinyear-'.$year.'.png';
 
 $px3 = new DolGraph();
 $mesg = $px3->isGraphKo();
-if (! $mesg)
-{
+if (!$mesg) {
 	$px3->SetData($data);
-	$i=$startyear;$legend=array();
-	while ($i <= $endyear)
-	{
-		$legend[]=$i;
+	$i = $startyear;
+	$legend = array();
+	while ($i <= $endyear) {
+		$legend[] = $i;
 		$i++;
 	}
 	$px3->SetLegend($legend);
@@ -173,13 +152,11 @@ if (! $mesg)
 	$px3->SetHeight($HEIGHT);
 	$px3->SetShading(3);
 	$px3->SetHorizTickIncrement(1);
-	$px3->mode='depth';
+	$px3->mode = 'depth';
 	$px3->SetTitle($langs->trans("AmountAverage"));
 
-	$px3->draw($filename_avg,$fileurl_avg);
+	$px3->draw($filename_avg, $fileurl_avg);
 }
-*/
-
 
 // Show array
 $data = $stats->getAllByYear();
@@ -221,18 +198,10 @@ print '<tr><td class="left">'.$langs->trans("ThirdParty").'</td><td class="left"
 print img_picto('', 'company', 'class="pictofixedwidth"');
 print $form->select_company($socid, 'socid', '', 1, 0, 0, array(), 0, 'widthcentpercentminusx maxwidth300', '');
 print '</td></tr>';
-// User
-print '<tr><td class="left">'.$langs->trans("CreatedBy").'</td><td class="left">';
-print img_picto('', 'user', 'class="pictofixedwidth"');
-print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
-print '</td></tr>';
 // Year
-print '<tr><td class="left">'.$langs->trans("Year").'</td><td class="left">';
+print '<tr><td>'.$langs->trans("Year").'</td><td>';
 if (!in_array($year, $arrayyears)) {
 	$arrayyears[$year] = $year;
-}
-if (!in_array($nowyear, $arrayyears)) {
-	$arrayyears[$nowyear] = $nowyear;
 }
 arsort($arrayyears);
 print $form->selectarray('year', $arrayyears, $year, 0, 0, 0, '', 0, 0, 0, '', 'width75');
@@ -247,8 +216,8 @@ print '<table class="border centpercent">';
 print '<tr height="24">';
 print '<td class="center">'.$langs->trans("Year").'</td>';
 print '<td class="right">'.$langs->trans("NbOfDonations").'</td>';
-/*print '<td class="center">'.$langs->trans("AmountTotal").'</td>';
-print '<td class="center">'.$langs->trans("AmountAverage").'</td>';*/
+print '<td class="center">'.$langs->trans("AmountTotal").'</td>';
+print '<td class="center">'.$langs->trans("AmountAverage").'</td>';
 print '</tr>';
 
 $oldyear = 0;
@@ -260,16 +229,16 @@ foreach ($data as $val) {
 		print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'">'.$oldyear.'</a></td>';
 
 		print '<td class="right">0</td>';
-		/*print '<td class="right">0</td>';
-		print '<td class="right">0</td>';*/
+		print '<td class="right">0</td>';
+		print '<td class="right">0</td>';
 		print '</tr>';
 	}
 
 	print '<tr height="24">';
 	print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'">'.$year.'</a></td>';
 	print '<td class="right">'.$val['nb'].'</td>';
-	/*print '<td class="right">'.price(price2num($val['total'],'MT'),1).'</td>';
-	print '<td class="right">'.price(price2num($val['avg'],'MT'),1).'</td>';*/
+	print '<td class="right">'.price(price2num($val['total'],'MT'),1).'</td>';
+	print '<td class="right">'.price(price2num($val['avg'],'MT'),1).'</td>';
 	print '</tr>';
 	$oldyear = $year;
 }
@@ -288,9 +257,9 @@ if ($mesg) {
 } else {
 	print $px1->show();
 	print "<br>\n";
-	/*print $px2->show();
+	print $px2->show();
 	print "<br>\n";
-	print $px3->show();*/
+	print $px3->show();
 }
 print '</td></tr></table>';
 
@@ -300,43 +269,5 @@ print '<div class="clearboth"></div>';
 
 print dol_get_fiche_end();
 
-
-
-// TODO USe code similar to commande/stats/index.php instead of this one.
-/*
-print '<table class="border centpercent">';
-print '<tr><td class="center">'.$langs->trans("Year").'</td>';
-print '<td width="40%" class="center">'.$langs->trans("NbOfSendings").'</td></tr>';
-
-$sql = "SELECT count(*) as nb, date_format(date_expedition,'%Y') as dm";
-$sql.= " FROM ".MAIN_DB_PREFIX."expedition";
-$sql.= " WHERE fk_statut > 0";
-$sql.= " AND entity = ".$conf->entity;
-$sql.= " GROUP BY dm DESC";
-
-$resql=$db->query($sql);
-if ($resql)
-{
-	$num = $db->num_rows($resql);
-	$i = 0;
-	while ($i < $num)
-	{
-		$row = $db->fetch_row($resql);
-		$nbproduct = $row[0];
-		$year = $row[1];
-		print "<tr>";
-		print '<td class="center"><a href="month.php?year='.$year.'">'.$year.'</a></td><td class="center">'.$nbproduct.'</td></tr>';
-		$i++;
-	}
-}
-$db->free($resql);
-
-print '</table>';
-*/
-
-print '<br>';
-print '<i>'.$langs->trans("StatsOnDonationsOnlyValidated").'</i>';
-
 llxFooter();
-
 $db->close();

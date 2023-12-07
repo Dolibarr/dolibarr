@@ -57,6 +57,8 @@ class DonationStats extends Stats
 	 */
 	public $where;
 
+	public $join;
+
 
 	/**
 	 * Constructor
@@ -66,7 +68,7 @@ class DonationStats extends Stats
 	 * @param 	string	$mode	   	Option (not used)
 	 * @param   int		$userid    	Id user for filter (creation user)
 	 */
-	public function __construct($db, $socid, $mode, $userid = 0)
+	public function __construct(DoliDB $db, $socid, $mode, $userid = 0)
 	{
 		global $conf;
 
@@ -84,9 +86,12 @@ class DonationStats extends Stats
 		$this->where .= " d.fk_statut > 0"; // Not draft and not cancelled
 
 		//$this->where.= " AND c.fk_soc = s.rowid AND c.entity = ".$conf->entity;
-		$this->where .= " AND d.entity = ".$conf->entity;
+		$this->where = " d.entity = ".$conf->entity;
+		if ($this->socid > 0) {
+			$this->where .= " AND d.fk_soc = ".((int) $this->socid);
+		}
 		if ($this->userid > 0) {
-			$this->where .= ' WHERE c.fk_user_author = '.((int) $this->userid);
+			$this->where .= ' AND d.fk_user_author = '.((int) $this->userid);
 		}
 	}
 
