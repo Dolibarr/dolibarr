@@ -49,6 +49,9 @@ $endyear = $year;
 // Load translation files required by the page
 $langs->loadLangs(["donation"]);
 
+// Security check
+$result = restrictedArea($user, 'don');
+
 /*
  * View
  */

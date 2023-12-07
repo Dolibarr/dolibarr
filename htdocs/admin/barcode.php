@@ -181,7 +181,7 @@ foreach ($dirbarcode as $reldir) {
 						}
 
 						if ($module->isEnabled()) {
-							$barcodelist[$filebis] = $module->info();
+							$barcodelist[$filebis] = $module->info($langs);
 						}
 					}
 				}

@@ -89,7 +89,7 @@ trait CommonPeople
 
 		$ret .= dolGetFirstLastname($firstname, $lastname, $nameorder);
 
-		return dol_trunc($ret, $maxlen);
+		return dol_string_nohtmltag(dol_trunc($ret, $maxlen));
 	}
 
 	/**

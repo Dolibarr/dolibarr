@@ -209,7 +209,7 @@ class Reception extends CommonObject
 	 *
 	 *  @param	User	$user       Objet du user qui cree
 	 *  @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *  @return int 				<0 si erreur, id reception creee si ok
+	 *  @return int 				Return integer <0 si erreur, id reception creee si ok
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -489,7 +489,7 @@ class Reception extends CommonObject
 	 *
 	 *  @param      User		$user       Object user that validate
 	 *  @param		int			$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *  @return     int						<0 if OK, >0 if KO
+	 *  @return     int						Return integer <0 if OK, >0 if KO
 	 */
 	public function valid($user, $notrigger = 0)
 	{
@@ -715,7 +715,7 @@ class Reception extends CommonObject
 	/**
 	 * Get status from all dispatched lines
 	 *
-	 * @return		int		                        <0 if KO, Status of reception if OK
+	 * @return		int		                        Return integer <0 if KO, Status of reception if OK
 	 */
 	public function getStatusDispatch()
 	{
@@ -817,7 +817,7 @@ class Reception extends CommonObject
 	 * @param	integer		$sellby					sell-by date
 	 * @param	string		$batch					Lot number
 	 * @param	double		$cost_price			Line cost
-	 * @return	int							<0 if KO, index of line if OK
+	 * @return	int							Return integer <0 if KO, index of line if OK
 	 */
 	public function addline($entrepot_id, $id, $qty, $array_options = 0, $comment = '', $eatby = '', $sellby = '', $batch = '', $cost_price = 0)
 	{
@@ -1678,7 +1678,7 @@ class Reception extends CommonObject
 	/**
 	 *	Classify the reception as invoiced (used for exemple by trigger when WORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE is on)
 	 *
-	 *	@return     int     <0 if ko, >0 if ok
+	 *	@return     int     Return integer <0 if ko, >0 if ok
 	 */
 	public function setBilled()
 	{
@@ -1722,7 +1722,7 @@ class Reception extends CommonObject
 	/**
 	 *	Classify the reception as validated/opened
 	 *
-	 *	@return     int     <0 if ko, >0 if ok
+	 *	@return     int     Return integer <0 if ko, >0 if ok
 	 */
 	public function reOpen()
 	{

@@ -260,7 +260,7 @@ class Ldap
 	 * 	Use this->server, this->serverPort, this->ldapProtocolVersion, this->serverType, this->searchUser, this->searchPassword
 	 * 	After return, this->connection and $this->bind are defined
 	 *
-	 *	@return		int		<0 if KO, 1 if bind anonymous, 2 if bind auth
+	 *	@return		int		Return integer <0 if KO, 1 if bind anonymous, 2 if bind auth
 	 */
 	public function connect_bind()
 	{
@@ -1007,7 +1007,7 @@ class Ldap
 	 *
 	 *	@param	string	$dn			DN entry key
 	 *	@param	string	$filter		Filter
-	 *	@return	int|array			<0 or false if KO, array if OK
+	 *	@return	int|array			Return integer <0 or false if KO, array if OK
 	 */
 	public function getAttribute($dn, $filter)
 	{

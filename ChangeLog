@@ -251,7 +251,9 @@ The following changes may create regressions for some external modules, but were
 * Endpoint for API /partnershipapi and /recruitment has been renamed into /partnerships and /recruitments to follow name conventions.
 * Hidden option ACCOUNTANCY_AUTOFIX_MISSING_LINK_TO_USEr_ON_SALARY_BANK_PAYMENT has been renamed into ACCOUNTANCY_AUTOFIX_MISSING_LINK_TO_USER_ON_SALARY_BANK_PAYMENT
 * The delete() method of AdherentType, Contact, Delivery, MultiCurrency, CurrencyRate now need $user as first parameter.
- 
+* A very high number of class properties (with old name in french) are now deprecated in favor of the property name in english.
+
+
 ***** ChangeLog for 18.0.3 compared to 18.0.2 *****
 FIX: #25793 Cannot add time spent (#26405)
 FIX: #26100 Ticket - On edit, list of closed project must be excluded (#26223)

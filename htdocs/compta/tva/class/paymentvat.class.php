@@ -154,7 +154,7 @@ class PaymentVAT extends CommonObject
 	 *
 	 *  @param      User	$user   				User making payment
 	 *	@param		int		$closepaidvat			1=Also close paid contributions to paid, 0=Do nothing more
-	 *  @return     int     						<0 if KO, id of payment if OK
+	 *  @return     int     						Return integer <0 if KO, id of payment if OK
 	 */
 	public function create($user, $closepaidvat = 0)
 	{

@@ -201,6 +201,7 @@ if (empty($reshook)) {
 			$object->label = GETPOST('label', 'alpha');
 			$object->date_ech = $dateech;
 			$object->periode = $dateperiod;
+			$object->period = $dateperiod;
 			$object->amount = $amount;
 			$object->fk_user			= $fk_user;
 			$object->mode_reglement_id = (int) GETPOST('mode_reglement_id', 'int');
@@ -236,6 +237,7 @@ if (empty($reshook)) {
 
 			$object->date_ech = $dateech;
 			$object->periode = $dateperiod;
+			$object->period = $dateperiod;
 			$object->amount = $amount;
 			$object->fk_user = $fk_user;
 
@@ -271,6 +273,7 @@ if (empty($reshook)) {
 
 			if (GETPOST('clone_for_next_month', 'int')) {	// This can be true only if TAX_ADD_CLONE_FOR_NEXT_MONTH_CHECKBOX has been set
 				$object->periode = dol_time_plus_duree($object->periode, 1, 'm');
+				$object->period = dol_time_plus_duree($object->periode, 1, 'm');
 				$object->date_ech = dol_time_plus_duree($object->date_ech, 1, 'm');
 			} else {
 				// Note date_ech is often a little bit higher than dateperiod
@@ -278,6 +281,7 @@ if (empty($reshook)) {
 				$newdateech = dol_mktime(0, 0, 0, GETPOST('clone_date_echmonth', 'int'), GETPOST('clone_date_echday', 'int'), GETPOST('clone_date_echyear', 'int'));
 				if ($newdateperiod) {
 					$object->periode = $newdateperiod;
+					$object->period = $newdateperiod;
 					if (empty($newdateech)) {
 						$object->date_ech = $object->periode;
 					}
@@ -288,6 +292,7 @@ if (empty($reshook)) {
 						// TODO We can here get dol_get_last_day of previous month:
 						// $object->periode = dol_get_last_day(year of $object->date_ech - 1m, month or $object->date_ech -1m)
 						$object->periode = $object->date_ech;
+						$object->period = $object->date_ech;
 					}
 				}
 			}

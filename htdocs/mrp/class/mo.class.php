@@ -294,7 +294,7 @@ class Mo extends CommonObject
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <=0 if KO, Id of created object if OK
+	 * @return int             Return integer <=0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -1012,7 +1012,7 @@ class Mo extends CommonObject
 	 *
 	 *	@param		User	$user     		User making status change
 	 *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return  	int						<=0 if OK, 0=Nothing done, >0 if KO
+	 *	@return  	int						Return integer <=0 if OK, 0=Nothing done, >0 if KO
 	 */
 	public function validate($user, $notrigger = 0)
 	{
@@ -1164,7 +1164,7 @@ class Mo extends CommonObject
 	 *	@param	User	$user										Object user that modify
 	 *  @param	int		$notrigger									1=Does not execute triggers, 0=Execute triggers
 	 *  @param	bool	$also_cancel_consumed_and_produced_lines  	true if the consumed and produced lines will be deleted (and stocks incremented/decremented back) (false by default)
-	 *	@return	int													<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int													Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function cancel($user, $notrigger = 0, $also_cancel_consumed_and_produced_lines = false)
 	{
@@ -1211,7 +1211,7 @@ class Mo extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function reopen($user, $notrigger = 0)
 	{
@@ -1237,7 +1237,7 @@ class Mo extends CommonObject
 	 *  @param  bool	$mode  					Type line supported (0 by default) (0: consumed and produced lines; 1: consumed lines; 2: produced lines)
 	 *  @param  bool	$also_delete_lines  	true if the consumed/produced lines is deleted (false by default)
 	 *  @param	int		$notrigger				1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int								<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int								Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function cancelConsumedAndProducedLines($user, $mode = 0, $also_delete_lines = false, $notrigger = 0)
 	{

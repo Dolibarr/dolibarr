@@ -123,7 +123,7 @@ class PaymentDonation extends CommonObject
 	 *
 	 *  @param      User		$user			User making payment
 	 *  @param      bool 		$notrigger 		false=launch triggers after, true=disable triggers
-	 *  @return     int     					<0 if KO, id of payment if OK
+	 *  @return     int     					Return integer <0 if KO, id of payment if OK
 	 */
 	public function create($user, $notrigger = false)
 	{

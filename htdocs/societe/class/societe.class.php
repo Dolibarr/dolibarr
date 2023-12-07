@@ -1310,7 +1310,7 @@ class Societe extends CommonObject
 	 *		@param	int		$allowmodcodefournisseur	Inclut modif code fournisseur et code compta fournisseur
 	 *		@param	string	$action						'add' or 'update' or 'merge'
 	 *		@param	int		$nosyncmember				Do not synchronize info of linked member
-	 *      @return int  			           			<0 if KO, >=0 if OK
+	 *      @return int  			           			Return integer <0 if KO, >=0 if OK
 	 */
 	public function update($id, $user = '', $call_trigger = 1, $allowmodcodeclient = 0, $allowmodcodefournisseur = 0, $action = 'update', $nosyncmember = 1)
 	{
@@ -2061,7 +2061,7 @@ class Societe extends CommonObject
 	 *    @param	int			$id             Id of third party to delete
 	 *    @param    User|null   $fuser          User who ask to delete thirdparty
 	 *    @param    int			$call_trigger   0=No, 1=yes
-	 *    @return	int							<0 if KO, 0 if nothing done, >0 if OK
+	 *    @return	int							Return integer <0 if KO, 0 if nothing done, >0 if OK
 	 */
 	public function delete($id, User $fuser = null, $call_trigger = 1)
 	{
@@ -2384,7 +2384,7 @@ class Societe extends CommonObject
 	 *      @param  string	$vatrate     		VAT rate (may contain the vat code too). Exemple: '1.23', '1.23 (ABC)', ...
 	 *      @param	int		$discount_type		0 => customer discount, 1 => supplier discount
 	 *      @param	string	$price_base_type	Price base type 'HT' or 'TTC'
-	 *		@return	int							<0 if KO, id of discount record if OK
+	 *		@return	int							Return integer <0 if KO, id of discount record if OK
 	 */
 	public function set_remise_except($remise, User $user, $desc, $vatrate = '', $discount_type = 0, $price_base_type = 'HT')
 	{
@@ -2455,7 +2455,7 @@ class Societe extends CommonObject
 	 * 	@param	string	$filter			Other filter
 	 * 	@param	integer	$maxvalue		Filter on max value for discount
 	 * 	@param	int		$discount_type	0 => customer discount, 1 => supplier discount
-	 *	@return	int					<0 if KO, Credit note amount otherwise
+	 *	@return	int					Return integer <0 if KO, Credit note amount otherwise
 	 */
 	public function getAvailableDiscounts($user = '', $filter = '', $maxvalue = 0, $discount_type = 0)
 	{
@@ -2581,7 +2581,7 @@ class Societe extends CommonObject
 	 *
 	 *	@param	User	$user		Object user
 	 *	@param	int		$commid		Id of user
-	 *	@return	int					<=0 if KO, >0 if OK
+	 *	@return	int					Return integer <=0 if KO, >0 if OK
 	 */
 	public function add_commercial(User $user, $commid)
 	{
@@ -3657,7 +3657,7 @@ class Societe extends CommonObject
 	 *    @param	int		$idparent	Id of thirdparty to check
 	 *    @param	int		$idchild	Id of thirdparty to compare to
 	 *    @param    int     $counter    Counter to protect against infinite loops
-	 *    @return	int     			<0 if KO, 0 if OK or 1 if at some level a parent company was the child to compare to
+	 *    @return	int     			Return integer <0 if KO, 0 if OK or 1 if at some level a parent company was the child to compare to
 	 */
 	public function validateFamilyTree($idparent, $idchild, $counter = 0)
 	{
@@ -3823,7 +3823,7 @@ class Societe extends CommonObject
 	 *
 	 *  @param	int			$idprof         1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
 	 *  @param  Societe		$soc            Objet societe
-	 *  @return int             			<=0 if KO, >0 if OK
+	 *  @return int             			Return integer <=0 if KO, >0 if OK
 	 *  TODO better to have this in a lib than into a business class
 	 */
 	public function id_prof_check($idprof, $soc)
@@ -4334,7 +4334,7 @@ class Societe extends CommonObject
 	 * 	@param	string		$socname		Name of third party to force
 	 *	@param	string		$socalias		Alias name of third party to force
 	 *  @param	string		$customercode	Customer code
-	 *  @return int							<0 if KO, id of created account if OK
+	 *  @return int							Return integer <0 if KO, id of created account if OK
 	 */
 	public function create_from_member(Adherent $member, $socname = '', $socalias = '', $customercode = '')
 	{
@@ -5223,7 +5223,7 @@ class Societe extends CommonObject
 	 *
 	 * @param   string  $type   It can be only 'buy' or 'sell'
 	 * @param   string  $value  Accountancy code
-	 * @return  int             <0 KO >0 OK
+	 * @return  int             Return integer <0 KO >0 OK
 	 */
 	public function setAccountancyCode($type, $value)
 	{

@@ -501,10 +501,12 @@ if ($result) {
 		print dol_escape_htmltag($obj->user_agent);
 		print '</td>';
 
-		// User agent
-		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->prefix_session).'">';
-		print dol_escape_htmltag($obj->prefix_session);
-		print '</td>';
+		// Prefix
+		if (!empty($arrayfields['e.prefix_session']['checked'])) {
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->prefix_session).'">';
+			print dol_escape_htmltag($obj->prefix_session);
+			print '</td>';
+		}
 
 		// Action column
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {

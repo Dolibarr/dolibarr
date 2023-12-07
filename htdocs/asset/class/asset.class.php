@@ -700,7 +700,7 @@ class Asset extends CommonObject
 	/**
 	 * If has depreciation lines in bookkeeping
 	 *
-	 * @return	int			<0 if KO, 0 if NO, 1 if Yes
+	 * @return	int			Return integer <0 if KO, 0 if NO, 1 if Yes
 	 */
 	public function hasDepreciationLinesInBookkeeping()
 	{
@@ -763,7 +763,7 @@ class Asset extends CommonObject
 	 * @param	double		$cumulative_depreciation_ht		Depreciation cumulative amount HT
 	 * @param	string		$accountancy_code_debit			Accountancy code Debit
 	 * @param	string		$accountancy_code_credit		Accountancy code Credit
-	 * @return	int											<0 if KO, Id of created line if OK
+	 * @return	int											Return integer <0 if KO, Id of created line if OK
 	 */
 	public function addDepreciationLine($mode, $ref, $depreciation_date, $depreciation_ht, $cumulative_depreciation_ht, $accountancy_code_debit, $accountancy_code_credit)
 	{
@@ -1014,6 +1014,8 @@ class Asset extends CommonObject
 				$nb_days_in_month = getDolGlobalString('ASSET_DEPRECIATION_DURATION_PER_MONTH') ? $conf->global->ASSET_DEPRECIATION_DURATION_PER_MONTH : 30;
 				$period_amount = (float) price2num($depreciation_period_amount / $fields['duration'], 'MT');
 				$first_period_found = false;
+				// TODO fix declaration of $begin_period
+				// @phpstan-ignore-next-line
 				$first_period_date = isset($begin_period) && $begin_period > $fiscal_period_start ? $begin_period : $fiscal_period_start;
 
 				$ref_date_format = "%Y" . ($fields['duration_type'] == 1 || $fields['duration_type'] == 2 ? '-%m' : '') . ($fields['duration_type'] == 2 ? '-%d' : '');
@@ -1171,7 +1173,7 @@ class Asset extends CommonObject
 	 *	@param	User	$user						Object user that dispose
 	 *	@param	int		$disposal_invoice_id		Disposal invoice ID
 	 *  @param	int		$notrigger					1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int									<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int									Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function dispose($user, $disposal_invoice_id, $notrigger = 0)
 	{
@@ -1239,7 +1241,7 @@ class Asset extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function reopen($user, $notrigger = 0)
 	{

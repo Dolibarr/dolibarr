@@ -649,7 +649,7 @@ class Paiement extends CommonObject
 	 *      @param	int		$notrigger			No trigger
 	 *  	@param	string	$accountancycode	When we record a free bank entry, we must provide accounting account if accountancy module is on.
 	 *      @param	string	$addbankurl			'direct-debit' or 'credit-transfer': Add another entry into bank_url.
-	 *      @return int                 		<0 if KO, bank_line_id if OK
+	 *      @return int                 		Return integer <0 if KO, bank_line_id if OK
 	 */
 	public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque, $notrigger = 0, $accountancycode = '', $addbankurl = '')
 	{
@@ -867,7 +867,7 @@ class Paiement extends CommonObject
 	 *	Updates the payment date
 	 *
 	 *  @param	int	$date   New date
-	 *  @return int					<0 if KO, 0 if OK
+	 *  @return int					Return integer <0 if KO, 0 if OK
 	 */
 	public function update_date($date)
 	{
@@ -924,7 +924,7 @@ class Paiement extends CommonObject
 	 *  Updates the payment number
 	 *
 	 *  @param	string	$num_payment		New num
-	 *  @return int							<0 if KO, 0 if OK
+	 *  @return int							Return integer <0 if KO, 0 if OK
 	 */
 	public function update_num($num_payment)
 	{
@@ -1037,7 +1037,7 @@ class Paiement extends CommonObject
 	 *  Return list of invoices the payment is related to.
 	 *
 	 *  @param	string		$filter         Filter
-	 *  @return int|array					<0 if KO or array of invoice id
+	 *  @return int|array					Return integer <0 if KO or array of invoice id
 	 *  @see getAmountsArray()
 	 */
 	public function getBillsArray($filter = '')
