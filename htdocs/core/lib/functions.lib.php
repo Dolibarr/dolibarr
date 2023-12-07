@@ -630,7 +630,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 		return 'BadFirstParameterForGETPOST';
 	}
 	if (empty($check)) {
-		dol_syslog("Deprecated use of GETPOST, called with 1st param = ".$paramname." and 2nd param is '', when calling page ".$_SERVER["PHP_SELF"], LOG_WARNING);
+		dol_syslog("Deprecated use of GETPOST, called with 1st param = ".$paramname." and a 2nd param that is '', when calling page ".$_SERVER["PHP_SELF"], LOG_WARNING);
 		// Enable this line to know who call the GETPOST with '' $check parameter.
 		//var_dump(debug_backtrace()[0]);
 	}
@@ -659,7 +659,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 		//var_dump($user->default_values);
 
 		// Code for search criteria persistence.
-		// Retrieve values if restore_lastsearch_values
+		// Retrieve saved values if restore_lastsearch_values is set
 		if (!empty($_GET['restore_lastsearch_values'])) {        // Use $_GET here and not GETPOST
 			if (!empty($_SESSION['lastsearch_values_'.$relativepathstring])) {	// If there is saved values
 				$tmp = json_decode($_SESSION['lastsearch_values_'.$relativepathstring], true);
@@ -815,7 +815,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 		}
 	}
 
-	// Substitution variables for GETPOST (used to get final url with variable parameters or final default value with variable parameters)
+	// Substitution variables for GETPOST (used to get final url with variable parameters or final default value, when using variable parameters __XXX__ in the GET URL)
 	// Example of variables: __DAY__, __MONTH__, __YEAR__, __MYCOMPANY_COUNTRY_ID__, __USER_ID__, ...
 	// We do this only if var is a GET. If it is a POST, may be we want to post the text with vars as the setup text.
 	if (!is_array($out) && empty($_POST[$paramname]) && empty($noreplace)) {
@@ -873,7 +873,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 		}
 	}
 
-	// Check rule
+	// Check type of variable and make sanitization according to this
 	if (preg_match('/^array/', $check)) {	// If 'array' or 'array:restricthtml' or 'array:aZ09' or 'array:intcomma'
 		if (!is_array($out) || empty($out)) {
 			$out = array();
@@ -1074,6 +1074,9 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 				}*/
 				$out = filter_var($out, $filter, $options);
 			}
+			break;
+		default:
+			dol_syslog("Error, you call sanitizeVal() with a bad value for the check type. Data can't be sanitized.", LOG_ERR);
 			break;
 	}
 
