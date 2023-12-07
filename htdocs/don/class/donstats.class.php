@@ -57,8 +57,6 @@ class DonationStats extends Stats
 	 */
 	public $where;
 
-	public $join;
-
 
 	/**
 	 * Constructor
