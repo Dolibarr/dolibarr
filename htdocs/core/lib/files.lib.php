@@ -113,7 +113,7 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 			$fileperm = '';
 			while (false !== ($file = readdir($dir))) {        // $file is always a basename (into directory $newpath)
 				if (!utf8_check($file)) {
-					$file = utf8_encode($file); // To be sure data is stored in utf8 in memory
+					$file = mb_convert_encoding($file, 'UTF-8', 'ISO-8859-1'); // To be sure data is stored in utf8 in memory
 				}
 				$fullpathfile = ($newpath ? $newpath.'/' : '').$file;
 
@@ -1515,7 +1515,7 @@ function dol_delete_dir_recursive($dir, $count = 0, $nophperrors = 0, $onlysub =
 		if ($handle = opendir("$dir_osencoded")) {
 			while (false !== ($item = readdir($handle))) {
 				if (!utf8_check($item)) {
-					$item = utf8_encode($item); // should be useless
+					$item = mb_convert_encoding($item, 'UTF-8', 'ISO-8859-1'); // should be useless
 				}
 
 				if ($item != "." && $item != "..") {
