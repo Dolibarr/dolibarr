@@ -1429,7 +1429,7 @@ abstract class CommonDocGenerator
 		$params = $params + $defaultParams;
 
 		/**
-		 * @var $extrafields ExtraFields
+		 * @var ExtraFields $extrafields
 		 */
 
 		$html = '';
