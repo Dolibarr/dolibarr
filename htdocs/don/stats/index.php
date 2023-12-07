@@ -47,8 +47,7 @@ $startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 
 $endyear = $year;
 
 // Load translation files required by the page
-$langs->loadLangs("donation");
-
+$langs->loadLangs(["donation"]);
 
 /*
  * View
@@ -58,7 +57,6 @@ $form = new Form($db);
 llxHeader();
 
 $dir = $conf->don->dir_temp;
-
 
 print load_fiche_titre($langs->trans("StatisticsOfDonations"), '', 'donation');
 
@@ -70,7 +68,6 @@ $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 
 $filenamenb = $dir."/salariesnbinyear-".$year.".png";
 $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=donationStats&amp;file=donationinyear-'.$year.'.png';
-
 
 $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
@@ -183,7 +180,6 @@ print dol_get_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-
 // Show filter box
 print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -245,7 +241,6 @@ print '</div>';
 
 
 print '</div><div class="fichetwothirdright">';
-
 
 // Show graphs
 print '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
