@@ -174,13 +174,6 @@ if (in_array($functiontokeep, $arrayoffunctionsdisabled)) {
 print '<span class="opacitymedium">'.$functiontokeep.'</span>';
 print '<br>';
 
-$arrayofstreams = stream_get_wrappers();
-if (!empty($arrayofstreams)) {
-	sort($arrayofstreams);
-	print "<strong>PHP streams</strong> = ".(join(',', $arrayofstreams)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'file,http,https,php').')</span>'."<br>\n";
-}
-
-print '<br>';
 
 // XDebug
 print '<strong>'.$langs->trans("XDebug").'</strong>: ';
@@ -305,21 +298,21 @@ print load_fiche_titre($langs->trans("ConfigurationFile").' ('.$conffile.')', ''
 
 print '<strong>$dolibarr_main_prod</strong>: '.($dolibarr_main_prod ? $dolibarr_main_prod : '0');
 if (empty($dolibarr_main_prod)) {
-	print ' &nbsp; '.img_picto('', 'warning').' '.$langs->trans("IfYouAreOnAProductionSetThis", 1);
+	print ' &nbsp; &nbsp; '.img_picto('', 'warning').' '.$langs->trans("IfYouAreOnAProductionSetThis", 1);
 }
 print '<br>';
 
 print '<strong>$dolibarr_nocsrfcheck</strong>: '.(empty($dolibarr_nocsrfcheck) ? '0' : $dolibarr_nocsrfcheck);
 if (!empty($dolibarr_nocsrfcheck)) {
-	print ' &nbsp; '.img_picto('', 'error').' '.$langs->trans("IfYouAreOnAProductionSetThis", 0);
+	print ' &nbsp; &nbsp;'.img_picto('', 'error').' '.$langs->trans("IfYouAreOnAProductionSetThis", 0);
 } else {
-	print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 0)</span>';
+	print ' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 0)</span>';
 }
 print '<br>';
 
 print '<strong>$dolibarr_main_restrict_ip</strong>: ';
 if (empty($dolibarr_main_restrict_ip)) {
-	print $langs->trans("None");
+	print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
 	//print ' <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("IPsOfUsers")).')</span>';
 } else {
 	print $dolibarr_main_restrict_ip;
@@ -332,13 +325,13 @@ if (empty($dolibarr_main_restrict_os_commands)) {
 } else {
 	print $dolibarr_main_restrict_os_commands;
 }
-print ' <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'mysqldump, mysql, pg_dump, pgrestore, mariadb, mariadb-dump, clamdscan').')</span>';
+print ' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'mysqldump, mysql, pg_dump, pgrestore, mariadb, mariadb-dump, clamdscan').')</span>';
 print '<br>';
 
 if (!getDolGlobalString('SECURITY_DISABLE_TEST_ON_OBFUSCATED_CONF')) {
 	print '<strong>$dolibarr_main_db_pass</strong>: ';
 	if (!empty($dolibarr_main_db_pass) && empty($dolibarr_main_db_encrypted_pass)) {
-		print img_picto('', 'warning').' '.$langs->trans("DatabasePasswordNotObfuscated").' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("SetOptionTo", $langs->transnoentitiesnoconv("MainDbPasswordFileConfEncrypted"), yn(1)).')</span>';
+		print img_picto('', 'warning').' '.$langs->trans("DatabasePasswordNotObfuscated").' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("SetOptionTo", $langs->transnoentitiesnoconv("MainDbPasswordFileConfEncrypted"), yn(1)).')</span>';
 		//print ' <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("IPsOfUsers")).')</span>';
 	} else {
 		print img_picto('', 'tick').' '.$langs->trans("DatabasePasswordObfuscated");
@@ -347,7 +340,39 @@ if (!getDolGlobalString('SECURITY_DISABLE_TEST_ON_OBFUSCATED_CONF')) {
 	print '<br>';
 }
 
+print '<strong>$dolibarr_main_stream_to_disable</strong>: ';
+if (empty($dolibarr_main_stream_to_disable)) {
+	print '<span class="opacitymedium">'.$langs->trans("Undefined").' = '.join(', ', $arrayofstreamtodisable).'</span>';
+} else {
+	print join(', ', $dolibarr_main_stream_to_disable);
+}
+print '<span class="bold"> -> PHP streams allowed = </span>';
+$arrayofstreams = stream_get_wrappers();
+if (!empty($arrayofstreams)) {
+	sort($arrayofstreams);
+	print (join(',', $arrayofstreams)).' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("TryToKeepOnly", 'file,http,https,php').')</span>'."\n";
+}
 
+print '<br>';
+
+/*
+if (!empty($dolibarr_main_stream_do_not_disable)) {
+	print '<strong>$dolibarr_main_stream_do_not_disable</strong>: ';
+	if (empty($dolibarr_main_stream_do_not_disable)) {
+		print '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>';
+	} else {
+		print join(', ', $dolibarr_main_stream_do_not_disable);
+	}
+	print ' -> PHP stream allowed = ';
+	$arrayofstreams = stream_get_wrappers();
+	if (!empty($arrayofstreams)) {
+		sort($arrayofstreams);
+		print (join(',', $arrayofstreams)).' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'Undefined').')</span>'."\n";
+	}
+
+	print '<br>';
+}
+*/
 
 // Menu Home - Setup - Security
 
