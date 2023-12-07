@@ -79,7 +79,6 @@ if (!$sortfield) {
 
 $search_all = trim(GETPOSTISSET("search_all") ? GETPOST("search_all", 'alpha') : GETPOST('sall'));
 
-
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
 	'pd.rowid'=>"RefPayment",
@@ -102,7 +101,6 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 
 $optioncss = GETPOST('optioncss', 'alpha');
 $moreforfilter = GETPOST('moreforfilter', 'alpha');
-
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('donationlist'));
@@ -149,7 +147,6 @@ if (empty($reshook)) {
 	}
 }
 
-
 /*
  * View
  */
@@ -162,7 +159,6 @@ $accountstatic = new Account($db);
 
 $title = $langs->trans("Donations");
 $help_url = 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones|DE:Modul_Spenden';
-
 
 // Build and execute select
 // --------------------------------------------------------------------
@@ -211,7 +207,6 @@ if ($search_amount) {
 if ($search_company) {
 	$sql .= natural_search('s.nom', $search_company);
 }
-
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
@@ -270,7 +265,6 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
-
 if ($search_ref) {
 	$param .= '&search_ref='.urlencode($search_ref);
 }
@@ -357,7 +351,6 @@ if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
-
 
 if (!empty($arrayfields['pd.rowid']['checked'])) {
 	print '<td class="liste_titre left">';
@@ -494,7 +487,6 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 print '</tr>'."\n";
 
-
 // Detect if we need a fetch on each output line
 $needToFetchEachLine = 0;
 if (isset($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
@@ -513,7 +505,6 @@ $totalarray = array();
 $totalarray['nbfield'] = 0;
 $imaxinloop = ($limit ? min($num, $limit) : $num);
 while ($i < $imaxinloop) {
-
 	$obj = $db->fetch_object($resql);
 
 	$companystatic->id = $obj->soc_id;
@@ -568,7 +559,6 @@ while ($i < $imaxinloop) {
 			$totalarray['nbfield']++;
 		}
 	}
-
 
 	// Payment type
 	if (!empty($arrayfields['c.code']['checked'])) {
