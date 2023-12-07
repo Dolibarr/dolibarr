@@ -1051,7 +1051,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql .= " WHERE dbt.rowid IN (".$db->sanitize($objectid, 1).")";
 				$sql .= " AND dbt.".$dbt_keyfield." = ".((int) $user->socid);
-			} elseif (isModEnabled("societe") && empty($user->rights->societe->client->voir)) {
+			} elseif (isModEnabled("societe") && empty($user->rights->societe->client->voir)&& ($feature != 'knowledgemanagement')) {
 				// If internal user without permission to see all thirdparties: Check permission for internal users that are restricted on their objects
 				if ($feature != 'ticket') {
 					if (empty($dbt_keyfield)) {
