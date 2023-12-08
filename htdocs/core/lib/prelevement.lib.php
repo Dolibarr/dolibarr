@@ -109,10 +109,10 @@ function prelevement_check_config($type = 'direct-debit')
 	/**
  *  Return array head with list of tabs to view object informations
  *
- *  @param	object	$object         Member
- *  @param  int     $nbOfInvoices   No of invoices
- *  @param  int     $nbOfSalaryInvoice  No of salary invoices
- *  @return array           		head
+ *  @param	BonPrelevement	$object         	Member
+ *  @param  int     		$nbOfInvoices   	No of invoices
+ *  @param  int     		$nbOfSalaryInvoice  No of salary invoices
+ *  @return array           					head
  */
 function bon_prelevement_prepare_head(BonPrelevement $object, $nbOfInvoices, $nbOfSalaryInvoice)
 {

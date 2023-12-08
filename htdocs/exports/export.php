@@ -139,7 +139,7 @@ $step = GETPOST("step", "int") ? GETPOST("step", "int") : 1;
 $export_name = GETPOST("export_name", "alphanohtml");
 $hexa = GETPOST("hexa", "alpha");
 $exportmodelid = GETPOST("exportmodelid", "int");
-$field = GETPOST("field", "alpa");
+$field = GETPOST("field", "alpha");
 
 $objexport = new Export($db);
 $objexport->load_arrays($user, $datatoexport);
