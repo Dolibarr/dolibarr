@@ -617,12 +617,13 @@ if ($event->type == 'payout.created') {
 		if ($object->metadata->dol_type == 'facture') {
 			$objinvoiceid = $object->metadata->dol_id;
 		}
-		$objerrcode = $object->last_payment_error->code;
+		$objerrcode = empty($object->last_payment_error->code) ? $object->last_payment_error->decline_code : $object->last_payment_error->code;
 		$objerrmessage = $object->last_payment_error->message;
 
-		$objpaymentmodetype = $object->last_payment_error->type;
+		$objpaymentmodetype = $object->last_payment_error->payment_method->type;
 	}
 
+	dol_syslog("objpaymentmodetype = ".$objpaymentmodetype);
 
 	// If this is a differed payment for SEPA, add a line into agenda events
 	if ($objpaymentmodetype == 'sepa_debit') {
