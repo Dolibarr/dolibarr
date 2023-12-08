@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 // Get parameters
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'usernote'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'usernote'; // To manage different context of search
 
 if (!isset($id) || empty($id)) {
 	accessforbidden();

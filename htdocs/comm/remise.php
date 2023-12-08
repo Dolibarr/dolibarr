@@ -32,7 +32,7 @@ $langs->loadLangs(array('companies', 'orders', 'bills'));
 
 $id = GETPOST("id", 'int');
 
-$socid = GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('socid', 'int');
+$socid = GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('socid', 'int');
 // Security check
 if ($user->socid > 0) {
 	$socid = $user->socid;

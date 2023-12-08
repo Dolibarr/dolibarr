@@ -30,7 +30,7 @@
  *  @param      string  $desc               Description of export
  *  @param      array   $events_array       Array of events ("uid","startdate","duration","enddate","title","summary","category","email","url","desc","author")
  *  @param      string  $outputfile         Output file
- *  @return     int                         < 0 if KO, Nb of events in file if OK
+ *  @return     int                         Return integer < 0 if KO, Nb of events in file if OK
  */
 function build_calfile($format, $title, $desc, $events_array, $outputfile)
 {
@@ -320,7 +320,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
  *  @param      string	$filter             (optional) Filter
  *  @param		string	$url				Url (If empty, forge URL for agenda RSS export)
  *  @param		string	$langcode			Language code to show in header
- *  @return     int                         < 0 if KO, Nb of events in file if OK
+ *  @return     int                         Return integer < 0 if KO, Nb of events in file if OK
  */
 function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filter = '', $url = '', $langcode = '')
 {
@@ -330,7 +330,7 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 	dol_syslog("xcal.lib.php::build_rssfile Build rss file ".$outputfile." to format ".$format);
 
 	if (empty($outputfile)) {
-		 // -1 = error
+		// -1 = error
 		return -1;
 	}
 

@@ -308,7 +308,7 @@ class Mailing extends CommonObject
 	 *
 	 *  @param  User	$user 		Object of user making change
 	 * 	@param	int		$notrigger	Disable triggers
-	 *  @return int				    < 0 if KO, > 0 if OK
+	 *  @return int				    Return integer < 0 if KO, > 0 if OK
 	 */
 	public function update($user, $notrigger = 0)
 	{
@@ -835,7 +835,7 @@ class Mailing extends CommonObject
 				$label = $langs->trans("ShowEMailing");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');

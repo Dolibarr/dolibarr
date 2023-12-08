@@ -228,7 +228,7 @@ class ImportXlsx extends ModeleImports
 	 *	Open input file
 	 *
 	 *	@param	string	$file		Path of filename
-	 *	@return	int					<0 if KO, >=0 if OK
+	 *	@return	int					Return integer <0 if KO, >=0 if OK
 	 */
 	public function import_open_file($file)
 	{
@@ -252,7 +252,7 @@ class ImportXlsx extends ModeleImports
 	 * 	Return nb of records. File must be closed.
 	 *
 	 *	@param	string	$file		Path of filename
-	 * 	@return	int					<0 if KO, >=0 if OK
+	 * 	@return	int					Return integer <0 if KO, >=0 if OK
 	 */
 	public function import_get_nb_of_lines($file)
 	{
@@ -273,7 +273,7 @@ class ImportXlsx extends ModeleImports
 	/**
 	 * 	Input header line from file
 	 *
-	 * 	@return		int		<0 if KO, >=0 if OK
+	 * 	@return		int		Return integer <0 if KO, >=0 if OK
 	 */
 	public function import_read_header()
 	{
@@ -652,7 +652,7 @@ class ImportXlsx extends ModeleImports
 
 										if (!empty($classModForNumber) && !empty($pathModForNumber) && is_readable(DOL_DOCUMENT_ROOT.$pathModForNumber)) {
 											require_once DOL_DOCUMENT_ROOT.$pathModForNumber;
-											$modForNumber = new $classModForNumber;
+											$modForNumber = new $classModForNumber();
 
 											$tmpobject = null;
 											// Set the object with the date property when we can
@@ -693,7 +693,7 @@ class ImportXlsx extends ModeleImports
 										$this->errors[$error]['lib'] = implode(
 											"\n",
 											array_merge([$classinstance->error], $classinstance->errors)
-											);
+										);
 										$errorforthistable++;
 										$error++;
 									}
@@ -866,7 +866,7 @@ class ImportXlsx extends ModeleImports
 									$this->errors[$error]['lib'] = implode(
 										"\n",
 										array_merge([$classinstance->error], $classinstance->errors)
-										);
+									);
 									$errorforthistable++;
 									$error++;
 								}
@@ -937,7 +937,9 @@ class ImportXlsx extends ModeleImports
 									if ($num_rows == 1) {
 										$res = $this->db->fetch_object($resql);
 										$lastinsertid = $res->rowid;
-										if ($is_table_category_link) $lastinsertid = 'linktable'; // used to apply update on tables like llx_categorie_product and avoid being blocked for all file content if at least one entry already exists
+										if ($is_table_category_link) {
+											$lastinsertid = 'linktable';
+										} // used to apply update on tables like llx_categorie_product and avoid being blocked for all file content if at least one entry already exists
 										$last_insert_id_array[$tablename] = $lastinsertid;
 									} elseif ($num_rows > 1) {
 										$this->errors[$error]['lib'] = $langs->trans('MultipleRecordFoundWithTheseFilters', implode(', ', $filters));

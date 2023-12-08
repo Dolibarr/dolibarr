@@ -33,7 +33,7 @@ $langs->loadLangs(array('users', 'admin', 'companies', 'ldap'));
 
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'userldap'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'userldap'; // To manage different context of search
 
 // Security check
 $socid = 0;

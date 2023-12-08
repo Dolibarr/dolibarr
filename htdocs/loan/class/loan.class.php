@@ -131,7 +131,7 @@ class Loan extends CommonObject
 	 *  Load object in memory from database
 	 *
 	 *  @param	int		$id		 id object
-	 *  @return int				 <0 error , >=0 no error
+	 *  @return int				 Return integer <0 error , >=0 no error
 	 */
 	public function fetch($id)
 	{
@@ -182,7 +182,7 @@ class Loan extends CommonObject
 	 *  Create a loan into database
 	 *
 	 *  @param	User	$user	User making creation
-	 *  @return int				<0 if KO, id if OK
+	 *  @return int				Return integer <0 if KO, id if OK
 	 */
 	public function create($user)
 	{
@@ -348,7 +348,7 @@ class Loan extends CommonObject
 	 *  Update loan
 	 *
 	 *  @param	User	$user	User who modified
-	 *  @return int				<0 if error, >0 if ok
+	 *  @return int				Return integer <0 if error, >0 if ok
 	 */
 	public function update($user)
 	{
@@ -588,7 +588,7 @@ class Loan extends CommonObject
 			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
-			$result .= ($maxlen ?dol_trunc($this->ref, $maxlen) : $this->ref);
+			$result .= ($maxlen ? dol_trunc($this->ref, $maxlen) : $this->ref);
 		}
 		$result .= $linkend;
 

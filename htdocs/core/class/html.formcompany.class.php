@@ -39,7 +39,6 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
  */
 class FormCompany extends Form
 {
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    	Return list of labels (translated) of third parties type
@@ -1156,7 +1155,7 @@ class FormCompany extends Form
 	 *  @param  string  		$mode      		select if we want activate de html part or js
 	 *  @return	void
 	 */
-	public function selectProspectStatus($htmlname, Societe $prospectstatic, $statusprospect, $idprospect, $mode = "html")
+	public function selectProspectStatus($htmlname, $prospectstatic, $statusprospect, $idprospect, $mode = "html")
 	{
 		global $langs;
 

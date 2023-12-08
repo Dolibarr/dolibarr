@@ -169,7 +169,8 @@ if ((!($id > 0) && empty($ref)) || $notab) {
 	$title = $langs->trans("ListProductServiceByPopularity");
 	if ((string) $type == '0') {
 		$title = $langs->trans("ListProductByPopularity");
-	}	if ((string) $type == '1') {
+	}
+	if ((string) $type == '1') {
 		$title = $langs->trans("ListServiceByPopularity");
 	}
 

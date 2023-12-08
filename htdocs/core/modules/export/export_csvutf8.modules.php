@@ -31,7 +31,6 @@ set_time_limit(0);
  */
 class ExportCsvUtf8 extends ExportCsv
 {
-
 	/**
 	 *	Constructor
 	 *

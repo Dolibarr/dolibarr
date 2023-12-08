@@ -64,7 +64,7 @@ if (!$sortorder) {
 if (!$sortfield) {
 	$sortfield = "d.date_create";
 }
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 
 
 /*

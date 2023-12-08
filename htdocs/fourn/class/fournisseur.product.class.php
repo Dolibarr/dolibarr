@@ -164,7 +164,7 @@ class ProductFournisseur extends Product
 	 *    Remove all prices for this couple supplier-product
 	 *
 	 *    @param	int		$id_fourn   Supplier Id
-	 *    @return   int         		< 0 if error, > 0 if ok
+	 *    @return   int         		Return integer < 0 if error, > 0 if ok
 	 */
 	public function remove_fournisseur($id_fourn)
 	{
@@ -266,7 +266,7 @@ class ProductFournisseur extends Product
 	 *    @param  	string		$barcode     	                Barcode
 	 *    @param  	int		    $fk_barcode_type     	        Barcode type
 	 *    @param  	array		$options		     	       	Extrafields of product fourn price
-	 *    @return	int											<0 if KO, >=0 if OK
+	 *    @return	int											Return integer <0 if KO, >=0 if OK
 	 */
 	public function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges = 0, $remise_percent = 0, $remise = 0, $newnpr = 0, $delivery_time_days = 0, $supplier_reputation = '', $localtaxes_array = array(), $newdefaultvatcode = '', $multicurrency_buyprice = 0, $multicurrency_price_base_type = 'HT', $multicurrency_tx = 1, $multicurrency_code = '', $desc_fourn = '', $barcode = '', $fk_barcode_type = '', $options = array())
 	{
@@ -555,7 +555,7 @@ class ProductFournisseur extends Product
 					if ($result < 0) {
 						$error++;
 					}
-						// End call triggers
+					// End call triggers
 
 					if (empty($error)) {
 						$this->db->commit();
@@ -583,7 +583,7 @@ class ProductFournisseur extends Product
 	 *
 	 *    @param    int     $rowid              Line id
 	 *    @param    int     $ignore_expression  Ignores the math expression for calculating price and uses the db value instead
-	 *    @return   int 					    < 0 if KO, 0 if OK but not found, > 0 if OK
+	 *    @return   int 					    Return integer < 0 if KO, 0 if OK but not found, > 0 if OK
 	 */
 	public function fetch_product_fournisseur_price($rowid, $ignore_expression = 0)
 	{
@@ -794,7 +794,7 @@ class ProductFournisseur extends Product
 	 *  @param	int		$prodid	    Product id
 	 *  @param	int		$qty		Minimum quantity
 	 *  @param	int		$socid		get min price for specific supplier
-	 *  @return int					<0 if KO, 0=Not found of no product id provided, >0 if OK
+	 *  @return int					Return integer <0 if KO, 0=Not found of no product id provided, >0 if OK
 	 *  @see list_product_fournisseur_price()
 	 */
 	public function find_min_price_product_fournisseur($prodid, $qty = 0, $socid = 0)
@@ -998,7 +998,7 @@ class ProductFournisseur extends Product
 			$out .= '<td class="liste_titre">'.$langs->trans("Supplier").'</td>';
 			$out .= '<td class="liste_titre">'.$langs->trans("SupplierRef").'</td></tr>';
 			foreach ($productFournList as $productFourn) {
-				$out .= '<tr><td class="right">'.($showunitprice ?price($productFourn->fourn_unitprice * (1 - $productFourn->fourn_remise_percent / 100) - $productFourn->fourn_remise) : '').'</td>';
+				$out .= '<tr><td class="right">'.($showunitprice ? price($productFourn->fourn_unitprice * (1 - $productFourn->fourn_remise_percent / 100) - $productFourn->fourn_remise) : '').'</td>';
 				$out .= '<td class="right">'.($showunitprice ? $productFourn->fourn_qty : '').'</td>';
 				$out .= '<td>'.$productFourn->getSocNomUrl(1, 'supplier', $maxlen, $notooltip).'</td>';
 				$out .= '<td>'.$productFourn->fourn_ref.'<td></tr>';
@@ -1367,7 +1367,7 @@ class ProductFournisseur extends Product
 	 * @param int       $fk_multicurrency               key multi currency
 	 * @param string    $multicurrency_code	            Currency code
 	 *
-	 * @return int < 0 NOK > 0 OK
+	 * @return int Return integer < 0 NOK > 0 OK
 	 */
 	private function logPrice($user, $datec, $buyprice, $qty, $multicurrency_buyprice = null, $multicurrency_unitBuyPrice = null, $multicurrency_tx = null, $fk_multicurrency = null, $multicurrency_code = null)
 	{

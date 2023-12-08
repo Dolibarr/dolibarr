@@ -52,7 +52,6 @@ use Webklex\PHPIMAP\Exceptions\GetMessagesFailedException;
 use OAuth\Common\Storage\DoliStorage;
 use OAuth\Common\Consumer\Credentials;
 
-
 /**
  * Class for EmailCollector
  */
@@ -968,7 +967,7 @@ class EmailCollector extends CommonObject
 						//var_dump($tmpproperty.' - '.$regexstring.' - '.$regexoptions.' - '.$sourcestring);
 						if (preg_match('/'.$regexstring.'/'.$regexoptions, $sourcestring, $regforval)) {
 							// Overwrite param $tmpproperty
-							$valueextracted = isset($regforval[count($regforval) - 1]) ?trim($regforval[count($regforval) - 1]) : null;
+							$valueextracted = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : null;
 							if (strtolower($sourcefield) == 'header') {		// extract from HEADER
 								if (preg_match('/^options_/', $tmpproperty)) {
 									$object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $this->decodeSMTPSubject($valueextracted);
@@ -1158,7 +1157,7 @@ class EmailCollector extends CommonObject
 				$keyforsupportedoauth2array = 'OAUTH_'.$keyforsupportedoauth2array.'_NAME';
 
 				$OAUTH_SERVICENAME = 'Unknown';
-				if ( array_key_exists($keyforsupportedoauth2array, $supportedoauth2array)
+				if (array_key_exists($keyforsupportedoauth2array, $supportedoauth2array)
 					&& array_key_exists('name', $supportedoauth2array[$keyforsupportedoauth2array])
 					&& !empty($supportedoauth2array[$keyforsupportedoauth2array]['name'])) {
 					$OAUTH_SERVICENAME = $supportedoauth2array[$keyforsupportedoauth2array]['name'].(!empty($keyforprovider) ? '-'.$keyforprovider : '');
@@ -1186,7 +1185,7 @@ class EmailCollector extends CommonObject
 							getDolGlobalString('OAUTH_'.$this->oauth_service.'_ID'),
 							getDolGlobalString('OAUTH_'.$this->oauth_service.'_SECRET'),
 							getDolGlobalString('OAUTH_'.$this->oauth_service.'_URLAUTHORIZE')
-							);
+						);
 						$serviceFactory = new \OAuth\ServiceFactory();
 						$oauthname = explode('-', $OAUTH_SERVICENAME);
 						// ex service is Google-Emails we need only the first part Google
@@ -1370,27 +1369,34 @@ class EmailCollector extends CommonObject
 
 				// Rules to filter after the search imap
 				if ($rule['type'] == 'withtrackingidinmsgid') {
-					$searchfilterdoltrackid++; $searchhead .= '/Message-ID.*@'.preg_quote($host, '/').'/';
+					$searchfilterdoltrackid++;
+					$searchhead .= '/Message-ID.*@'.preg_quote($host, '/').'/';
 				}
 				if ($rule['type'] == 'withouttrackingidinmsgid') {
-					$searchfilterdoltrackid++; $searchhead .= '/Message-ID.*@'.preg_quote($host, '/').'/';
+					$searchfilterdoltrackid++;
+					$searchhead .= '/Message-ID.*@'.preg_quote($host, '/').'/';
 				}
 				if ($rule['type'] == 'withtrackingid') {
-					$searchfilterdoltrackid++; $searchhead .= '/References.*@'.preg_quote($host, '/').'/';
+					$searchfilterdoltrackid++;
+					$searchhead .= '/References.*@'.preg_quote($host, '/').'/';
 				}
 				if ($rule['type'] == 'withouttrackingid') {
-					$searchfilternodoltrackid++; $searchhead .= '! /References.*@'.preg_quote($host, '/').'/';
+					$searchfilternodoltrackid++;
+					$searchhead .= '! /References.*@'.preg_quote($host, '/').'/';
 				}
 
 				if ($rule['type'] == 'isanswer') {
-					$searchfilterisanswer++; $searchhead .= '/References.*@.*/';
+					$searchfilterisanswer++;
+					$searchhead .= '/References.*@.*/';
 				}
 				if ($rule['type'] == 'isnotanswer') {
-					$searchfilterisnotanswer++; $searchhead .= '! /References.*@.*/';
+					$searchfilterisnotanswer++;
+					$searchhead .= '! /References.*@.*/';
 				}
 
 				if ($rule['type'] == 'replyto') {
-					$searchfilterreplyto++; $searchhead .= '/Reply-To.*'.preg_quote($rule['rulevalue'], '/').'/';
+					$searchfilterreplyto++;
+					$searchhead .= '/Reply-To.*'.preg_quote($rule['rulevalue'], '/').'/';
 				}
 			}
 
@@ -1502,27 +1508,34 @@ class EmailCollector extends CommonObject
 
 				// Rules to filter after the search imap
 				if ($rule['type'] == 'withtrackingidinmsgid') {
-					$searchfilterdoltrackid++; $searchhead .= '/Message-ID.*@'.preg_quote($host, '/').'/';
+					$searchfilterdoltrackid++;
+					$searchhead .= '/Message-ID.*@'.preg_quote($host, '/').'/';
 				}
 				if ($rule['type'] == 'withouttrackingidinmsgid') {
-					$searchfilterdoltrackid++; $searchhead .= '/Message-ID.*@'.preg_quote($host, '/').'/';
+					$searchfilterdoltrackid++;
+					$searchhead .= '/Message-ID.*@'.preg_quote($host, '/').'/';
 				}
 				if ($rule['type'] == 'withtrackingid') {
-					$searchfilterdoltrackid++; $searchhead .= '/References.*@'.preg_quote($host, '/').'/';
+					$searchfilterdoltrackid++;
+					$searchhead .= '/References.*@'.preg_quote($host, '/').'/';
 				}
 				if ($rule['type'] == 'withouttrackingid') {
-					$searchfilternodoltrackid++; $searchhead .= '! /References.*@'.preg_quote($host, '/').'/';
+					$searchfilternodoltrackid++;
+					$searchhead .= '! /References.*@'.preg_quote($host, '/').'/';
 				}
 
 				if ($rule['type'] == 'isanswer') {
-					$searchfilterisanswer++; $searchhead .= '/References.*@.*/';
+					$searchfilterisanswer++;
+					$searchhead .= '/References.*@.*/';
 				}
 				if ($rule['type'] == 'isnotanswer') {
-					$searchfilterisnotanswer++; $searchhead .= '! /References.*@.*/';
+					$searchfilterisnotanswer++;
+					$searchhead .= '! /References.*@.*/';
 				}
 
 				if ($rule['type'] == 'replyto') {
-					$searchfilterreplyto++; $searchhead .= '/Reply-To.*'.preg_quote($rule['rulevalue'], '/').'/';
+					$searchfilterreplyto++;
+					$searchhead .= '/Reply-To.*'.preg_quote($rule['rulevalue'], '/').'/';
 				}
 			}
 
@@ -1921,11 +1934,15 @@ class EmailCollector extends CommonObject
 					$replyto = $replytostring;
 					$replytotext = '';
 				}
-				$fk_element_id = 0; $fk_element_type = '';
+				$fk_element_id = 0;
+				$fk_element_type = '';
 
 				$this->db->begin();
 
-				$contactid = 0; $thirdpartyid = 0; $projectid = 0; $ticketid = 0;
+				$contactid = 0;
+				$thirdpartyid = 0;
+				$projectid = 0;
+				$ticketid = 0;
 
 				// Analyze TrackId in field References. For example:
 				// References: <1542377954.SMTPs-dolibarr-thi649@8f6014fde11ec6cdec9a822234fc557e>
@@ -2400,7 +2417,7 @@ class EmailCollector extends CommonObject
 													$thirdpartystatic->name_alias = $namealiastouseforthirdparty;
 												}
 											} else {
-												$thirdpartystatic->name_alias = (empty($replytostring) ? (empty($fromtext) ? '': $fromtext) : $replytostring);
+												$thirdpartystatic->name_alias = (empty($replytostring) ? (empty($fromtext) ? '' : $fromtext) : $replytostring);
 											}
 											$thirdpartystatic->email = (empty($emailtouseforthirdparty) ? (empty($replyto) ? (empty($from) ? '' : $from) : $replyto) : $emailtouseforthirdparty);
 
@@ -2446,7 +2463,9 @@ class EmailCollector extends CommonObject
 								if ($errorforthisaction) {
 									$errorforactions++;
 								} else {
-									if (!empty($contact_static->email) && $contact_static->email != $from) $from = $contact_static->email;
+									if (!empty($contact_static->email) && $contact_static->email != $from) {
+										$from = $contact_static->email;
+									}
 
 									$result = $contactstatic->fetch(0, null, '', $from);
 									if ($result < 0) {
@@ -2870,7 +2889,10 @@ class EmailCollector extends CommonObject
 									$modele = !getDolGlobalString('PROJECT_ADDON') ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
 
 									// Search template files
-									$file = ''; $classname = ''; $filefound = 0; $reldir = '';
+									$file = '';
+									$classname = '';
+									$filefound = 0;
+									$reldir = '';
 									$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 									foreach ($dirmodels as $reldir) {
 										$file = dol_buildpath($reldir."core/modules/project/".$modele.'.php', 0);
@@ -2894,7 +2916,7 @@ class EmailCollector extends CommonObject
 										}
 
 										$result = dol_include_once($reldir."core/modules/project/".$modele.'.php');
-										$modModuleToUseForNextValue = new $classname;
+										$modModuleToUseForNextValue = new $classname();
 										$defaultref = $modModuleToUseForNextValue->getNextValue(($thirdpartystatic->id > 0 ? $thirdpartystatic : null), $projecttocreate);
 									}
 									$projecttocreate->ref = $defaultref;
@@ -3009,7 +3031,10 @@ class EmailCollector extends CommonObject
 									$modele = !getDolGlobalString('TICKET_ADDON') ? 'mod_ticket_simple' : $conf->global->TICKET_ADDON;
 
 									// Search template files
-									$file = ''; $classname = ''; $filefound = 0; $reldir = '';
+									$file = '';
+									$classname = '';
+									$filefound = 0;
+									$reldir = '';
 									$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 									foreach ($dirmodels as $reldir) {
 										$file = dol_buildpath($reldir."core/modules/ticket/".$modele.'.php', 0);
@@ -3033,7 +3058,7 @@ class EmailCollector extends CommonObject
 										}
 
 										$result = dol_include_once($reldir."core/modules/ticket/".$modele.'.php');
-										$modModuleToUseForNextValue = new $classname;
+										$modModuleToUseForNextValue = new $classname();
 										$defaultref = $modModuleToUseForNextValue->getNextValue(($thirdpartystatic->id > 0 ? $thirdpartystatic : null), $tickettocreate);
 									}
 									$tickettocreate->ref = $defaultref;
@@ -3449,7 +3474,9 @@ class EmailCollector extends CommonObject
 			$attachments[$filename] = $data; // this is a problem if two files have same name
 
 			if (strlen($destdir)) {
-				if (substr($destdir, -1) != '/') $destdir .= '/';
+				if (substr($destdir, -1) != '/') {
+					$destdir .= '/';
+				}
 
 				// Get file name (with extension)
 				$file_name_complete = $params['filename'];

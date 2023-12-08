@@ -30,7 +30,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
  */
 class FormOrder extends Form
 {
-
 	/**
 	 *  Return combo list of differents status of a orders
 	 *

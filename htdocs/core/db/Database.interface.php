@@ -332,7 +332,7 @@ interface Database
 	 * @param        array 	$unique_keys 	Associative array Name of fields that will be unique key => value
 	 * @param        array 	$fulltext_keys 	Field name table that will be indexed in fulltext
 	 * @param        array $keys 			Table of key fields names => value
-	 * @return       int                    <0 if KO, >=0 if OK
+	 * @return       int                    Return integer <0 if KO, >=0 if OK
 	 */
 	public function DDLCreateTable($table, $fields, $primary_key, $type, $unique_keys = null, $fulltext_keys = null, $keys = null);
 	// phpcs:enable
@@ -342,7 +342,7 @@ interface Database
 	 * Drop a table into database
 	 *
 	 * @param        string $table 			Name of table
-	 * @return       int                    <0 if KO, >=0 if OK
+	 * @return       int                    Return integer <0 if KO, >=0 if OK
 	 */
 	public function DDLDropTable($table);
 	// phpcs:enable
@@ -430,7 +430,7 @@ interface Database
 	 * @param    string $dolibarr_main_db_user 	Username to create
 	 * @param    string $dolibarr_main_db_pass 	User password to create
 	 * @param    string $dolibarr_main_db_name 	Database name where user must be granted
-	 * @return   int                            <0 if KO, >=0 if OK
+	 * @return   int                            Return integer <0 if KO, >=0 if OK
 	 */
 	public function DDLCreateUser(
 		$dolibarr_main_db_host,

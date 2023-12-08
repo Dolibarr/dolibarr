@@ -296,7 +296,7 @@ class FormFile
 	 * 		@param		string				$title				Title to show on top of form
 	 * 		@param		string				$buttonlabel		Label on submit button
 	 * 		@param		string				$codelang			Default language code to use on lang combo box if multilang is enabled
-	 * 		@return		int										<0 if KO, number of shown files if OK
+	 * 		@return		int										Return integer <0 if KO, number of shown files if OK
 	 *      @deprecated                                         Use print xxx->showdocuments() instead.
 	 */
 	public function show_documents($modulepart, $modulesubdir, $filedir, $urlsource, $genallowed, $delallowed = 0, $modelselected = '', $allowgenifempty = 1, $forcenomultilang = 0, $iconPDF = 0, $notused = 0, $noform = 0, $param = '', $title = '', $buttonlabel = '', $codelang = '')
@@ -397,7 +397,7 @@ class FormFile
 		$printer = 0;
 		// The direct print feature is implemented only for such elements
 		if (in_array($modulepart, array('contract', 'facture', 'supplier_proposal', 'propal', 'proposal', 'order', 'commande', 'expedition', 'commande_fournisseur', 'expensereport', 'delivery', 'ticket'))) {
-			$printer = (!empty($user->rights->printing->read) && !empty($conf->printing->enabled)) ?true:false;
+			$printer = (!empty($user->rights->printing->read) && !empty($conf->printing->enabled)) ? true : false;
 		}
 
 		$hookmanager->initHooks(array('formfile'));
@@ -1185,7 +1185,7 @@ class FormFile
 	 *  @param	 int			$addfilterfields	Add the line with filters
 	 *  @param	 int			$disablecrop		Disable crop feature on images (-1 = auto, prefer to set it explicitely to 0 or 1)
 	 *  @param	 string			$moreattrondiv		More attributes on the div for responsive. Example 'style="height:280px; overflow: auto;"'
-	 * 	@return	 int								<0 if KO, nb of files shown if OK
+	 * 	@return	 int								Return integer <0 if KO, nb of files shown if OK
 	 *  @see list_of_autoecmfiles()
 	 */
 	public function list_of_documents($filearray, $object, $modulepart, $param = '', $forcedownload = 0, $relativepath = '', $permonobject = 1, $useinecm = 0, $textifempty = '', $maxlength = 0, $title = '', $url = '', $showrelpart = 0, $permtoeditline = -1, $upload_dir = '', $sortfield = '', $sortorder = 'ASC', $disablemove = 1, $addfilterfields = 0, $disablecrop = -1, $moreattrondiv = '')
@@ -1205,7 +1205,7 @@ class FormFile
 
 		// Define relative path used to store the file
 		if (empty($relativepath)) {
-			$relativepath = (!empty($object->ref) ?dol_sanitizeFileName($object->ref) : '').'/';
+			$relativepath = (!empty($object->ref) ? dol_sanitizeFileName($object->ref) : '').'/';
 			if (!empty($object->element) && $object->element == 'invoice_supplier') {
 				$relativepath = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$relativepath; // TODO Call using a defined value for $relativepath
 			}
@@ -1643,7 +1643,7 @@ class FormFile
 	 *  @param  int		$maxlength          Maximum length of file name shown
 	 *  @param	string 	$url				Full url to use for click links ('' = autodetect)
 	 *  @param	int		$addfilterfields	Add line with filters
-	 *  @return int                 		<0 if KO, nb of files shown if OK
+	 *  @return int                 		Return integer <0 if KO, nb of files shown if OK
 	 *  @see list_of_documents()
 	 */
 	public function list_of_autoecmfiles($upload_dir, $filearray, $modulepart, $param, $forcedownload = 0, $relativepath = '', $permissiontodelete = 1, $useinecm = 0, $textifempty = '', $maxlength = 0, $url = '', $addfilterfields = 0)

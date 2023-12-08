@@ -111,7 +111,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 			}
 		} else {
 			if ($key == 'lang') {
-				$value = GETPOST($key, 'aZ09') ?GETPOST($key, 'aZ09') : "";
+				$value = GETPOST($key, 'aZ09') ? GETPOST($key, 'aZ09') : "";
 			} else {
 				$value = GETPOST($key, 'alphanohtml');
 			}

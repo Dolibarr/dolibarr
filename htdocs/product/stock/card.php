@@ -57,7 +57,7 @@ $socid = GETPOST('socid', 'int');
 $ref = GETPOST('ref', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 if (!$sortfield) {
@@ -335,7 +335,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans('Address').'</td><td><textarea name="address" class="quatrevingtpercent" rows="3" wrap="soft">';
-	print (!empty($object->address) ? $object->address : '');
+	print(!empty($object->address) ? $object->address : '');
 	print '</textarea></td></tr>';
 
 	// Zip / Town
@@ -601,9 +601,9 @@ if ($action == 'create') {
 
 
 			$totalarray = array();
-			$totalarray['val'] = array ();
-			$totalarray['pos'] = array ();
-			$totalarray['type'] = array ();
+			$totalarray['val'] = array();
+			$totalarray['pos'] = array();
+			$totalarray['type'] = array();
 			$totalarray['nbfield'] = 0;
 
 			// TODO Create $arrayfields with all fields to show

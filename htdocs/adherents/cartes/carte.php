@@ -306,7 +306,7 @@ foreach (array_keys($_Avery_Labels) as $codecards) {
 	$arrayoflabels[$codecards] = $_Avery_Labels[$codecards]['name'];
 }
 asort($arrayoflabels);
-print $form->selectarray('model', $arrayoflabels, (GETPOST('model') ?GETPOST('model') : (!getDolGlobalString('ADHERENT_CARD_TYPE') ? '' : $conf->global->ADHERENT_CARD_TYPE)), 1, 0, 0, '', 0, 0, 0, '', '', 1);
+print $form->selectarray('model', $arrayoflabels, (GETPOST('model') ? GETPOST('model') : (!getDolGlobalString('ADHERENT_CARD_TYPE') ? '' : $conf->global->ADHERENT_CARD_TYPE)), 1, 0, 0, '', 0, 0, 0, '', '', 1);
 print '<br>'.$langs->trans("Login").': <input class="with100" type="text" name="foruserlogin" value="'.GETPOST('foruserlogin').'">';
 print '<br><input type="submit" class="button small" value="'.$langs->trans("BuildDoc").'">';
 print '</form>';

@@ -211,7 +211,6 @@ class FileUpload
 	 */
 	protected function getFileObject($file_name)
 	{
-
 		$file_path = $this->options['upload_dir'].$file_name;
 		if (is_file($file_path) && $file_name[0] !== '.') {
 			$file = new stdClass();
@@ -309,8 +308,9 @@ class FileUpload
 			$file_size = $_SERVER['CONTENT_LENGTH'];
 		}
 		if ($this->options['max_file_size'] && (
-				$file_size > $this->options['max_file_size'] ||
-				$file->size > $this->options['max_file_size'])
+			$file_size > $this->options['max_file_size'] ||
+				$file->size > $this->options['max_file_size']
+		)
 		) {
 			$file->error = 'maxFileSize';
 			return false;
@@ -321,7 +321,8 @@ class FileUpload
 			return false;
 		}
 		if (is_numeric($this->options['max_number_of_files']) && (
-				count($this->getFileObjects()) >= $this->options['max_number_of_files'])
+			count($this->getFileObjects()) >= $this->options['max_number_of_files']
+		)
 		) {
 			$file->error = 'maxNumberOfFiles';
 			return false;

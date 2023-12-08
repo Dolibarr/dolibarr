@@ -425,7 +425,7 @@ class FormTicket
 				} else {
 					$subject = GETPOST('subject', 'alpha');
 				}
-				print '<input class="text minwidth500" id="subject" name="subject" value="'.$subject.'"'.(empty($this->withemail)?' autofocus':'').' />';
+				print '<input class="text minwidth500" id="subject" name="subject" value="'.$subject.'"'.(empty($this->withemail) ? ' autofocus' : '').' />';
 			}
 			print '</td></tr>';
 		}
@@ -726,7 +726,7 @@ class FormTicket
 
 		$ticketstat->loadCacheTypesTickets();
 
-		print '<select id="select'.$htmlname.'" class="flat minwidth100'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.($multiselect?'[]':'').'"'.($multiselect?' multiple':'').'>';
+		print '<select id="select'.$htmlname.'" class="flat minwidth100'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.($multiselect ? '[]' : '').'"'.($multiselect ? ' multiple' : '').'>';
 		if ($empty) {
 			print '<option value="">&nbsp;</option>';
 		}
@@ -911,7 +911,7 @@ class FormTicket
 			$selectedgroups = array();
 			$groupvalue = "";
 			$groupticket=GETPOST($htmlname, 'aZ09');
-			$child_id=GETPOST($htmlname.'_child_id', 'aZ09')?GETPOST($htmlname.'_child_id', 'aZ09'):0;
+			$child_id=GETPOST($htmlname.'_child_id', 'aZ09') ? GETPOST($htmlname.'_child_id', 'aZ09') : 0;
 			if (!empty($groupticket)) {
 				$tmpgroupticket = $groupticket;
 				$sql = "SELECT ctc.rowid, ctc.fk_parent, ctc.code";
@@ -970,9 +970,9 @@ class FormTicket
 
 						$isparent = $obj->isparent;
 						if (is_array($selectedgroups)) {
-							$iselected = in_array($obj->code, $selectedgroups) ?'selected':'';
+							$iselected = in_array($obj->code, $selectedgroups) ? 'selected' : '';
 						} else {
-							$iselected = $groupticket == $obj->code ?'selected':'';
+							$iselected = $groupticket == $obj->code ? 'selected' : '';
 						}
 						$stringtoprint .= '<option '.$iselected.' class="'.$htmlname.dol_escape_htmltag($grouprowid).'" value="'.dol_escape_htmltag($groupvalue).'" data-html="'.dol_escape_htmltag($grouplabel).'">'.dol_escape_htmltag($grouplabel).'</option>';
 						if ($isparent == 'NOTPARENT') {
@@ -1047,13 +1047,13 @@ class FormTicket
 								$arraycodenotparent[] = $groupvalue;
 							}
 							if (is_array($selectedgroups)) {
-								$iselected = in_array($obj->code, $selectedgroups) ?'selected':'';
+								$iselected = in_array($obj->code, $selectedgroups) ? 'selected' : '';
 							} else {
-								$iselected = $groupticket == $obj->code ?'selected':'';
+								$iselected = $groupticket == $obj->code ? 'selected' : '';
 							}
 							$stringtoprint .= '<option '.$iselected.' class="'.$htmlname.'_'.dol_escape_htmltag($fatherid).'_child_'.$levelid.'" value="'.dol_escape_htmltag($groupvalue).'" data-html="'.dol_escape_htmltag($grouplabel).'">'.dol_escape_htmltag($grouplabel).'</option>';
 							if (empty($tabscript[$groupcodefather])) {
-								$tabscript[$groupcodefather] = 'if ($("#'.$htmlname.($levelid > 1 ?'_child_'.($levelid-1):'').'").val() == "'.dol_escape_js($groupcodefather).'"){
+								$tabscript[$groupcodefather] = 'if ($("#'.$htmlname.($levelid > 1 ? '_child_'.($levelid-1) : '').'").val() == "'.dol_escape_js($groupcodefather).'"){
 									$(".'.$htmlname.'_'.dol_escape_htmltag($fatherid).'_child_'.$levelid.'").show()
 									console.log("We show childs tickets of '.$groupcodefather.' group ticket")
 								}else{
@@ -1071,7 +1071,7 @@ class FormTicket
 
 				$stringtoprint .='<script nonce="'.getNonce().'">';
 				$stringtoprint .='arraynotparents = '.json_encode($arraycodenotparent).';';	// when the last visible combo list is number x, this is the array of group
-				$stringtoprint .='if (arraynotparents.includes($("#'.$htmlname.($levelid > 1 ?'_child_'.($levelid-1):'').'").val())){
+				$stringtoprint .='if (arraynotparents.includes($("#'.$htmlname.($levelid > 1 ? '_child_'.($levelid-1) : '').'").val())){
 					console.log("'.$htmlname.'_child_'.$levelid.'")
 					if($("#'.$htmlname.'_child_'.$levelid.'").val() == "" && ($("#'.$htmlname.'_child_'.$levelid.'").attr("child_id")>'.$child_id.')){
 						$("#'.$htmlname.'_child_'.$levelid.'").hide();
@@ -1083,8 +1083,8 @@ class FormTicket
 						console.log("We choose '.$htmlname.' input and reload hidden input");
 					}
 				}
-				$("#'.$htmlname.($levelid > 1 ?'_child_'.($levelid-1):'').'").change(function() {
-					child_id = $("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid:'').'").attr("child_id");
+				$("#'.$htmlname.($levelid > 1 ? '_child_'.($levelid-1) : '').'").change(function() {
+					child_id = $("#'.$htmlname.($levelid > 1 ? '_child_'.$levelid : '').'").attr("child_id");
 
 					/* Change of value to select this value*/
 					if (arraynotparents.includes($(this).val()) || $(this).attr("child_id") == '.$use_multilevel.') {
@@ -1454,7 +1454,7 @@ class FormTicket
 			$res = $ticketstat->fetch('', '', $this->track_id);
 
 			print '<tr><td></td><td>';
-			$checkbox_selected = (GETPOST('send_email') == "1" ? ' checked' : (getDolGlobalInt('TICKETS_MESSAGE_FORCE_MAIL')?'checked':''));
+			$checkbox_selected = (GETPOST('send_email') == "1" ? ' checked' : (getDolGlobalInt('TICKETS_MESSAGE_FORCE_MAIL') ? 'checked' : ''));
 			print '<input type="checkbox" name="send_email" value="1" id="send_msg_email" '.$checkbox_selected.'/> ';
 			print '<label for="send_msg_email">'.$langs->trans('SendMessageByEmail').'</label>';
 			$texttooltip = $langs->trans("TicketMessageSendEmailHelp");
@@ -1480,7 +1480,7 @@ class FormTicket
 			// Zone to select its email template
 			if (count($modelmail_array) > 0) {
 				print '<tr class="email_line"><td></td><td colspan="2"><div style="padding: 3px 0 3px 0">'."\n";
-				 print $langs->trans('SelectMailModel').': '.$formmail->selectarray('modelmailselected', $modelmail_array, $this->param['models_id'], 1, 0, "", "", 0, 0, 0, '', 'minwidth200');
+				print $langs->trans('SelectMailModel').': '.$formmail->selectarray('modelmailselected', $modelmail_array, $this->param['models_id'], 1, 0, "", "", 0, 0, 0, '', 'minwidth200');
 				if ($user->admin) {
 					print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 				}

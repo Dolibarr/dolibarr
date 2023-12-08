@@ -485,7 +485,7 @@ class ExpenseReport extends CommonObject
 
 		// get extrafields so they will be clone
 		//foreach($this->lines as $line)
-			//$line->fetch_optionals();
+		//$line->fetch_optionals();
 
 		// Load source object
 		$objFrom = clone $this;
@@ -1039,7 +1039,7 @@ class ExpenseReport extends CommonObject
 	/**
 	 * fetch_lines
 	 *
-	 * @return  int     <0 if OK, >0 if KO
+	 * @return  int     Return integer <0 if OK, >0 if KO
 	 */
 	public function fetch_lines()
 	{
@@ -1257,7 +1257,7 @@ class ExpenseReport extends CommonObject
 	 *
 	 * @param   User    $fuser      User
 	 * @param   int     $notrigger  Disable triggers
-	 * @return  int                 <0 if KO, 0 if nothing done, >0 if OK
+	 * @return  int                 Return integer <0 if KO, 0 if nothing done, >0 if OK
 	 */
 	public function setValidate($fuser, $notrigger = 0)
 	{
@@ -1319,13 +1319,15 @@ class ExpenseReport extends CommonObject
 					$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'expensereport/".$this->db->escape($this->ref)."' AND entity = ".((int) $this->entity);
 					$resql = $this->db->query($sql);
 					if (!$resql) {
-						$error++; $this->error = $this->db->lasterror();
+						$error++;
+						$this->error = $this->db->lasterror();
 					}
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'expensereport/".$this->db->escape($this->newref)."'";
 					$sql .= " WHERE filepath = 'expensereport/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 					$resql = $this->db->query($sql);
 					if (!$resql) {
-						$error++; $this->error = $this->db->lasterror();
+						$error++;
+						$this->error = $this->db->lasterror();
 					}
 
 					// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
@@ -1419,7 +1421,7 @@ class ExpenseReport extends CommonObject
 	 *
 	 * @param   User    $fuser      User
 	 * @param   int     $notrigger  Disable triggers
-	 * @return  int                 <0 if KO, 0 if nothing done, >0 if OK
+	 * @return  int                 Return integer <0 if KO, 0 if nothing done, >0 if OK
 	 */
 	public function setApproved($fuser, $notrigger = 0)
 	{
@@ -1797,7 +1799,7 @@ class ExpenseReport extends CommonObject
 				$label = $langs->trans("ShowExpenseReport");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.'"';
 		}
 
@@ -2309,7 +2311,7 @@ class ExpenseReport extends CommonObject
 		dol_syslog(get_class($this)."::deleteline sql=".$sql);
 		$result = $this->db->query($sql);
 
-		if (!$result || $error > 0 ) {
+		if (!$result || $error > 0) {
 			$this->error = $this->db->error();
 			dol_syslog(get_class($this)."::deleteline  Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
@@ -2342,7 +2344,8 @@ class ExpenseReport extends CommonObject
 		dol_syslog(get_class($this)."::periode_existe sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result) {
-			$num_rows = $this->db->num_rows($result); $i = 0;
+			$num_rows = $this->db->num_rows($result);
+			$i = 0;
 
 			if ($num_rows > 0) {
 				$date_d_form = $date_debut;
@@ -2397,7 +2400,8 @@ class ExpenseReport extends CommonObject
 		dol_syslog(get_class($this)."::fetch_users_approver_expensereport sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result) {
-			$num_rows = $this->db->num_rows($result); $i = 0;
+			$num_rows = $this->db->num_rows($result);
+			$i = 0;
 			while ($i < $num_rows) {
 				$objp = $this->db->fetch_object($result);
 				array_push($users_validator, $objp->fk_user);
@@ -2517,7 +2521,7 @@ class ExpenseReport extends CommonObject
 	 *
 	 *      @param	User	$user   		Objet user
 	 *      @param  string  $option         'topay' or 'toapprove'
-	 *      @return WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
+	 *      @return WorkboardResponse|int 	Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $option = 'topay')
 	{
@@ -2613,7 +2617,7 @@ class ExpenseReport extends CommonObject
 	/**
 	 *	Return if object was dispatched into bookkeeping
 	 *
-	 *	@return     int         <0 if KO, 0=no, 1=yes
+	 *	@return     int         Return integer <0 if KO, 0=no, 1=yes
 	 */
 	public function getVentilExportCompta()
 	{
@@ -2671,7 +2675,7 @@ class ExpenseReport extends CommonObject
 	 *  @param     int		$fk_cat           Category of the vehicule used
 	 *  @param     float	$qty              Number of kilometers
 	 *  @param     float	$tva              VAT rate
-	 *  @return    int              		  <0 if KO, total ttc if OK
+	 *  @return    int              		  Return integer <0 if KO, total ttc if OK
 	 */
 	public function computeTotalKm($fk_cat, $qty, $tva)
 	{
@@ -3118,7 +3122,7 @@ class ExpenseReportLine extends CommonObjectLine
 			$num = $this->db->num_rows($resql);
 			if ($num > 0) {
 				$obj = $this->db->fetch_object($resql);
-				$amount = (double) $obj->total_amount;
+				$amount = (float) $obj->total_amount;
 			}
 		} else {
 			dol_print_error($this->db);

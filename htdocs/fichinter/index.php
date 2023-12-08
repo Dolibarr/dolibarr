@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015	   Charlie Benke        <charlie@patas-monkey.com>
+ * Copyright (C) 2015	   Charlene Benke        <charlene@patas-monkey.com>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 
 /**
  *	\file       htdocs/fichinter/index.php
- *	\ingroup    commande
+ *	\ingroup    ficheinter
  *	\brief      Home page of interventional module
  */
 
@@ -115,7 +115,9 @@ if ($resql) {
 	print '<table class="noborder nohover centpercent">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Interventions").'</th></tr>'."\n";
 	$listofstatus = array(Fichinter::STATUS_DRAFT, Fichinter::STATUS_VALIDATED);
-	if (getDolGlobalString('FICHINTER_CLASSIFY_BILLED')) $listofstatus[] = Fichinter::STATUS_BILLED;
+	if (getDolGlobalString('FICHINTER_CLASSIFY_BILLED')) {
+		$listofstatus[] = Fichinter::STATUS_BILLED;
+	}
 
 	foreach ($listofstatus as $status) {
 		$dataseries[] = array($fichinterstatic->LibStatut($status, 1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
@@ -269,7 +271,7 @@ if ($resql) {
 
 			print '<td width="16" class="right nobordernopadding hideonsmartphone">';
 			$filename = dol_sanitizeFileName($obj->ref);
-			$filedir = $conf->commande->dir_output.'/'.dol_sanitizeFileName($obj->ref);
+			$filedir = $conf->ficheinter->dir_output.'/'.dol_sanitizeFileName($obj->ref);
 			$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 			print $formfile->getDocumentsLink($fichinterstatic->element, $filename, $filedir);
 			print '</td></tr></table>';
@@ -341,7 +343,7 @@ if (isModEnabled('ficheinter')) {
 
 				print '<td width="16" class="right nobordernopadding hideonsmartphone">';
 				$filename = dol_sanitizeFileName($obj->ref);
-				$filedir = $conf->commande->dir_output.'/'.dol_sanitizeFileName($obj->ref);
+				$filedir = $conf->ficheinter->dir_output.'/'.dol_sanitizeFileName($obj->ref);
 				$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 				print $formfile->getDocumentsLink($fichinterstatic->element, $filename, $filedir);
 				print '</td></tr></table>';

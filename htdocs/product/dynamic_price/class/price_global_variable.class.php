@@ -101,7 +101,8 @@ class PriceGlobalVariable
 		dol_syslog(__METHOD__);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -137,7 +138,7 @@ class PriceGlobalVariable
 	 *  Load object in memory from the database
 	 *
 	 *  @param		int		$id    	Id object
-	 *  @return		int			    < 0 if KO, 0 if OK but not found, > 0 if OK
+	 *  @return		int			    Return integer < 0 if KO, 0 if OK but not found, > 0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -190,7 +191,8 @@ class PriceGlobalVariable
 		dol_syslog(__METHOD__);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// if (! $error)
@@ -255,7 +257,8 @@ class PriceGlobalVariable
 			dol_syslog(__METHOD__);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 

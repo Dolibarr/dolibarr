@@ -49,7 +49,7 @@ $show_files  = GETPOST('show_files', 'int');
 $confirm     = GETPOST('confirm', 'alpha');
 $cancel      = GETPOST('cancel', 'alpha'); // We click on a Cancel button
 $toselect    = GETPOST('toselect', 'array');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'expensereportlist';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'expensereportlist';
 $mode        = GETPOST('mode', 'alpha');
 
 $childids = $user->getAllChildIds(1);
@@ -82,7 +82,7 @@ $diroutputmassaction = $conf->expensereport->dir_output.'/temp/massgeneration/'.
 
 
 // Load variable for pagination
-$limit 		= GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit 		= GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield	= GETPOST('sortfield', 'aZ09comma');
 $sortorder	= GETPOST('sortorder', 'aZ09comma');
 $page 		= GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -100,14 +100,14 @@ if (!$sortfield) {
 }
 
 
-$sall			= trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$sall			= trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 
 $search_ref			= GETPOST('search_ref', 'alpha');
 $search_user		= GETPOST('search_user', 'int');
 $search_amount_ht	= GETPOST('search_amount_ht', 'alpha');
 $search_amount_vat	= GETPOST('search_amount_vat', 'alpha');
 $search_amount_ttc	= GETPOST('search_amount_ttc', 'alpha');
-$search_status		= (GETPOST('search_status', 'intcomma') != '' ?GETPOST('search_status', 'intcomma') : GETPOST('statut', 'intcomma'));
+$search_status		= (GETPOST('search_status', 'intcomma') != '' ? GETPOST('search_status', 'intcomma') : GETPOST('statut', 'intcomma'));
 
 $search_date_startday		= GETPOST('search_date_startday', 'int');
 $search_date_startmonth		= GETPOST('search_date_startmonth', 'int');
@@ -186,7 +186,8 @@ $objectuser = new User($db);
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
@@ -589,10 +590,10 @@ if ($resql) {
 	// Date start
 	if (!empty($arrayfields['d.date_debut']['checked'])) {
 		print '<td class="liste_titre" align="center">';
-		print '<div class="nowrap">';
+		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
-		print '<div class="nowrap">';
+		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_date_startend ? $search_date_startend : -1, 'search_date_startend', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 		print '</div>';
 		print '</td>';
@@ -600,10 +601,10 @@ if ($resql) {
 	// Date end
 	if (!empty($arrayfields['d.date_fin']['checked'])) {
 		print '<td class="liste_titre" align="center">';
-		print '<div class="nowrap">';
+		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
-		print '<div class="nowrap">';
+		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_date_endend ? $search_date_endend : -1, 'search_date_endend', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 		print '</div>';
 		print '</td>';

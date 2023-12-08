@@ -71,7 +71,7 @@ if ($socid > 0) {
 	// Prefix
 	if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
 		print '<tr><td>'.$langs->trans("Prefix").'</td><td colspan="3">';
-		print ($societe->prefix_comm ? $societe->prefix_comm : '&nbsp;');
+		print($societe->prefix_comm ? $societe->prefix_comm : '&nbsp;');
 		print '</td></tr>';
 	}
 

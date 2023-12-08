@@ -242,7 +242,7 @@ class ProductStockEntrepot extends CommonObject
 	 * @param array  $filter     filter array
 	 * @param string $filtermode filter mode (AND or OR)
 	 *
-	 * @return int|array <0 if KO, array if OK
+	 * @return int|array Return integer <0 if KO, array if OK
 	 */
 	public function fetchAll($fk_product = '', $fk_entrepot = '', $sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
@@ -371,13 +371,13 @@ class ProductStockEntrepot extends CommonObject
 		}
 
 		//if (!$error && !$notrigger) {
-			// Uncomment this and change MYOBJECT to your own tag if you
-			// want this action calls a trigger.
+		// Uncomment this and change MYOBJECT to your own tag if you
+		// want this action calls a trigger.
 
-			//// Call triggers
-			//$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-			//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-			//// End call triggers
+		//// Call triggers
+		//$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+		//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+		//// End call triggers
 		//}
 
 		// Commit or rollback
@@ -409,13 +409,13 @@ class ProductStockEntrepot extends CommonObject
 		$this->db->begin();
 
 		//if (!$error && !$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
+		// Uncomment this and change MYOBJECT to your own tag if you
+		// want this action calls a trigger.
 
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_DELETE',$user);
-				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-				//// End call triggers
+		//// Call triggers
+		//$result=$this->call_trigger('MYOBJECT_DELETE',$user);
+		//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+		//// End call triggers
 		//}
 
 		if (!$error) {
