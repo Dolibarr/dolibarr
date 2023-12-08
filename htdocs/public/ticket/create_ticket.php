@@ -477,7 +477,7 @@ if (empty($reshook)) {
 					setEventMessages($messagetoshow, null, 'warnings');
 					setEventMessages($langs->trans('PleaseRememberThisId'), null, 'warnings');
 
-					header("Location: index.php".(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:''));
+					header("Location: index.php".(!empty($entity) && isModEnabled('multicompany') ? '?entity='.$entity : ''));
 					exit;
 				}
 			} else {

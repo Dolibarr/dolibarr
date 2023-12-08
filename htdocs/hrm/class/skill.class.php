@@ -401,7 +401,7 @@ class Skill extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @return array|int         <0 if KO, array of skill level found
+	 * @return array|int         Return integer <0 if KO, array of skill level found
 	 */
 	public function fetchLines()
 	{
@@ -549,7 +549,7 @@ class Skill extends CommonObject
 	 *
 	 *	@param		User	$user     		User making status change
 	 *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return  	int						<=0 if OK, 0=Nothing done, >0 if KO
+	 *	@return  	int						Return integer <=0 if OK, 0=Nothing done, >0 if KO
 	 */
 	public function validate($user, $notrigger = 0)
 	{
@@ -626,13 +626,15 @@ class Skill extends CommonObject
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'skill/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'skill/".$this->db->escape($this->newref)."'";
 				$sql .= " WHERE filepath = 'skill/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
@@ -704,7 +706,7 @@ class Skill extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function cancel($user, $notrigger = 0)
 	{
@@ -728,7 +730,7 @@ class Skill extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function reopen($user, $notrigger = 0)
 	{
@@ -1120,9 +1122,9 @@ class Skill extends CommonObject
 		global $langs;
 		$result = '';
 		switch ($code) {
-			case 0 : $result = $langs->trans("TypeKnowHow"); break; //"Savoir Faire"
-			case 1 : $result = $langs->trans("TypeHowToBe"); break; // "Savoir être"
-			case 9 : $result = $langs->trans("TypeKnowledge"); break; //"Savoir"
+			case 0: $result = $langs->trans("TypeKnowHow"); break; //"Savoir Faire"
+			case 1: $result = $langs->trans("TypeHowToBe"); break; // "Savoir être"
+			case 9: $result = $langs->trans("TypeKnowledge"); break; //"Savoir"
 		}
 		return $result;
 	}

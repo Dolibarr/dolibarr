@@ -1073,7 +1073,7 @@ class ActionComm extends CommonObject
 
 		// Removed extrafields
 		if (!$error) {
-			  $result = $this->deleteExtraFields();
+			$result = $this->deleteExtraFields();
 			if ($result < 0) {
 				$error++;
 				dol_syslog(get_class($this)."::delete error -3 ".$this->error, LOG_ERR);
@@ -1248,7 +1248,9 @@ class ActionComm extends CommonObject
 					if (!is_array($val)) {	// For backward compatibility when val=id
 						$val = array('id'=>$val);
 					}
-					if (!empty($already_inserted[$val['id']])) continue;
+					if (!empty($already_inserted[$val['id']])) {
+						continue;
+					}
 
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
 					$sql .= " VALUES(".((int) $this->id).", 'user', ".((int) $val['id']).", ".(empty($val['mandatory']) ? '0' : ((int) $val['mandatory'])).", ".(empty($val['transparency']) ? '0' : ((int) $val['transparency'])).", ".(empty($val['answer_status']) ? '0' : ((int) $val['answer_status'])).")";
@@ -1274,7 +1276,9 @@ class ActionComm extends CommonObject
 						if (!is_array($val)) {	// For backward compatibility when val=id
 							$val = array('id'=>$val);
 						}
-						if (!empty($already_inserted[$val['id']])) continue;
+						if (!empty($already_inserted[$val['id']])) {
+							continue;
+						}
 
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
 						$sql .= " VALUES(".((int) $this->id).", 'socpeople', ".((int) $val['id']).", 0, 0, 0)";
@@ -1347,7 +1351,9 @@ class ActionComm extends CommonObject
 		// Fields from hook
 		$parameters = array('sql' => &$sql, 'socid' => $socid, 'fk_element' => $fk_element, 'elementtype' => $elementtype);
 		$reshook = $hookmanager->executeHooks('getActionsListFrom', $parameters);    // Note that $action and $object may have been modified by hook
-		if (!empty($hookmanager->resPrint)) $sql.= $hookmanager->resPrint;
+		if (!empty($hookmanager->resPrint)) {
+			$sql.= $hookmanager->resPrint;
+		}
 		$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
 		if (!empty($socid)) {
 			$sql .= " AND a.fk_soc = ".((int) $socid);
@@ -1369,7 +1375,9 @@ class ActionComm extends CommonObject
 		// Fields where hook
 		$parameters = array('sql' => &$sql, 'socid' => $socid, 'fk_element' => $fk_element, 'elementtype' => $elementtype);
 		$reshook = $hookmanager->executeHooks('getActionsListWhere', $parameters);    // Note that $action and $object may have been modified by hook
-		if (!empty($hookmanager->resPrint)) $sql.= $hookmanager->resPrint;
+		if (!empty($hookmanager->resPrint)) {
+			$sql.= $hookmanager->resPrint;
+		}
 		if ($sortorder && $sortfield) {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
@@ -1400,7 +1408,7 @@ class ActionComm extends CommonObject
 	 *
 	 * @param	User	$user   			Objet user
 	 * @param	int		$load_state_board	Load indicator array this->nb
-	 * @return WorkboardResponse|int 		<0 if KO, WorkboardResponse if OK
+	 * @return WorkboardResponse|int 		Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $load_state_board = 0)
 	{
@@ -1770,7 +1778,7 @@ class ActionComm extends CommonObject
 				$label = $langs->trans("ShowAction");
 				$linkclose .= ' alt="'.dol_escape_htmltag($tooltip, 1).'"';
 			}
-			$linkclose .= ($tooltip ? ' title="'.dol_escape_htmltag($tooltip, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($tooltip ? ' title="'.dol_escape_htmltag($tooltip, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classname.' '.$classfortooltip.'"';
 		} else {
 			$linkclose .= ' class="'.$classname.'"';
@@ -1991,7 +1999,10 @@ class ActionComm extends CommonObject
 		$result = 0;
 
 		$buildfile = true;
-		$login = ''; $logina = ''; $logind = ''; $logint = '';
+		$login = '';
+		$logina = '';
+		$logind = '';
+		$logint = '';
 
 		$now = dol_now();
 
@@ -2664,7 +2675,9 @@ class ActionComm extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm ";
 		$sql .= " SET percent = ".(int) $percent;
-		if ($usermodid > 0) $sql .= ", fk_user_mod = ".$usermodid;
+		if ($usermodid > 0) {
+			$sql .= ", fk_user_mod = ".$usermodid;
+		}
 		$sql .= " WHERE id = ".((int) $id);
 
 		if ($this->db->query($sql)) {

@@ -440,7 +440,7 @@ if (empty($reshook)) {
 							// Hooks
 							$parameters = array('objFrom' => $srcobject);
 							$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been
-																											   // modified by hook
+							// modified by hook
 							if ($reshook < 0) {
 								setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 								$error++;
@@ -942,7 +942,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'updateline' && $usercancreate && GETPOST('save') == $langs->trans("Save")) {
 		// Update a line within proposal
-		$vat_rate = (GETPOST('tva_tx') ?GETPOST('tva_tx') : 0);
+		$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 
 		// Define info_bits
 		$info_bits = 0;
@@ -1921,7 +1921,9 @@ if ($action == 'create') {
 
 		// Add free products/services form
 		global $forceall, $senderissupplier, $dateSelector, $inputalsopricewithtax;
-		$forceall = 1; $dateSelector = 0; $inputalsopricewithtax = 1;
+		$forceall = 1;
+		$dateSelector = 0;
+		$inputalsopricewithtax = 1;
 		$senderissupplier = 2; // $senderissupplier=2 is same than 1 but disable test on minimum qty.
 		if (getDolGlobalString('SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY')) {
 			$senderissupplier = 1;
@@ -1938,9 +1940,12 @@ if ($action == 'create') {
 
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-				if (empty($reshook))
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				}
+				if (empty($reshook)) {
 					$object->formAddObjectLine($dateSelector, $soc, $mysoc);
+				}
 			}
 		}
 
@@ -1987,7 +1992,7 @@ if ($action == 'create') {
 
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
-																									   // modified by hook
+		// modified by hook
 		if (empty($reshook)) {
 			if ($action != 'statut' && $action != 'editline') {
 				// Validate

@@ -365,7 +365,7 @@ class Paiement extends CommonObject
 				if (is_numeric($amount) && $amount <> 0) {
 					$amount = price2num($amount);
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement_facture (fk_facture, fk_paiement, amount, multicurrency_amount, multicurrency_code, multicurrency_tx)";
-					$sql .= " VALUES (".((int) $facid).", ".((int) $this->id).", ".((float) $amount).", ".((float) $this->multicurrency_amounts[$key]).", ".($currencyofpayment ? "'".$this->db->escape($currencyofpayment)."'" : 'NULL').", ".(!empty($this->multicurrency_tx) ? (double) $currencytxofpayment : 1).")";
+					$sql .= " VALUES (".((int) $facid).", ".((int) $this->id).", ".((float) $amount).", ".((float) $this->multicurrency_amounts[$key]).", ".($currencyofpayment ? "'".$this->db->escape($currencyofpayment)."'" : 'NULL').", ".(!empty($this->multicurrency_tx) ? (float) $currencytxofpayment : 1).")";
 
 					dol_syslog(get_class($this).'::create Amount line '.$key.' insert paiement_facture', LOG_DEBUG);
 					$resql = $this->db->query($sql);
@@ -649,7 +649,7 @@ class Paiement extends CommonObject
 	 *      @param	int		$notrigger			No trigger
 	 *  	@param	string	$accountancycode	When we record a free bank entry, we must provide accounting account if accountancy module is on.
 	 *      @param	string	$addbankurl			'direct-debit' or 'credit-transfer': Add another entry into bank_url.
-	 *      @return int                 		<0 if KO, bank_line_id if OK
+	 *      @return int                 		Return integer <0 if KO, bank_line_id if OK
 	 */
 	public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque, $notrigger = 0, $accountancycode = '', $addbankurl = '')
 	{
@@ -715,7 +715,7 @@ class Paiement extends CommonObject
 				null,
 				'',
 				$totalamount_main_currency
-				);
+			);
 
 			// Mise a jour fk_bank dans llx_paiement
 			// On connait ainsi le paiement qui a genere l'ecriture bancaire
@@ -759,7 +759,7 @@ class Paiement extends CommonObject
 									DOL_URL_ROOT.'/comm/card.php?socid=',
 									$fac->thirdparty->name,
 									'company'
-									);
+								);
 								if ($result <= 0) {
 									dol_syslog(get_class($this).'::addPaymentToBank '.$this->db->lasterror());
 								}
@@ -777,7 +777,7 @@ class Paiement extends CommonObject
 									DOL_URL_ROOT.'/fourn/card.php?socid=',
 									$fac->thirdparty->name,
 									'company'
-									);
+								);
 								if ($result <= 0) {
 									dol_syslog(get_class($this).'::addPaymentToBank '.$this->db->lasterror());
 								}
@@ -795,7 +795,7 @@ class Paiement extends CommonObject
 						DOL_URL_ROOT.'/compta/prelevement/card.php?id=',
 						$this->num_payment,
 						$addbankurl
-						);
+					);
 				}
 
 				// Add link to the Direct Debit if invoice redused ('InvoiceRefused') in bank_url
@@ -806,7 +806,7 @@ class Paiement extends CommonObject
 						DOL_URL_ROOT.'/compta/prelevement/card.php?id=',
 						$this->num_prelevement,
 						'withdraw'
-						);
+					);
 				}
 
 				if (!$error && !$notrigger) {
@@ -867,7 +867,7 @@ class Paiement extends CommonObject
 	 *	Updates the payment date
 	 *
 	 *  @param	int	$date   New date
-	 *  @return int					<0 if KO, 0 if OK
+	 *  @return int					Return integer <0 if KO, 0 if OK
 	 */
 	public function update_date($date)
 	{
@@ -924,7 +924,7 @@ class Paiement extends CommonObject
 	 *  Updates the payment number
 	 *
 	 *  @param	string	$num_payment		New num
-	 *  @return int							<0 if KO, 0 if OK
+	 *  @return int							Return integer <0 if KO, 0 if OK
 	 */
 	public function update_num($num_payment)
 	{
@@ -1037,7 +1037,7 @@ class Paiement extends CommonObject
 	 *  Return list of invoices the payment is related to.
 	 *
 	 *  @param	string		$filter         Filter
-	 *  @return int|array					<0 if KO or array of invoice id
+	 *  @return int|array					Return integer <0 if KO or array of invoice id
 	 *  @see getAmountsArray()
 	 */
 	public function getBillsArray($filter = '')

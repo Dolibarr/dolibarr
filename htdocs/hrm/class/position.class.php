@@ -491,7 +491,7 @@ class Position extends CommonObject
 	 *
 	 * @param User $user User making status change
 	 * @param int $notrigger 1=Does not execute triggers, 0= execute triggers
-	 * @return    int                        <=0 if OK, 0=Nothing done, >0 if KO
+	 * @return    int                        Return integer <=0 if OK, 0=Nothing done, >0 if KO
 	 */
 	public function validate($user, $notrigger = 0)
 	{
@@ -575,7 +575,8 @@ class Position extends CommonObject
 				$sql .= " WHERE filepath = 'position/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
@@ -647,7 +648,7 @@ class Position extends CommonObject
 	 *
 	 * @param User $user Object user that modify
 	 * @param int $notrigger 1=Does not execute triggers, 0=Execute triggers
-	 * @return    int                        <0 if KO, 0=Nothing done, >0 if OK
+	 * @return    int                        Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function cancel($user, $notrigger = 0)
 	{
@@ -671,7 +672,7 @@ class Position extends CommonObject
 	 *
 	 * @param User $user Object user that modify
 	 * @param int $notrigger 1=Does not execute triggers, 0=Execute triggers
-	 * @return    int                        <0 if KO, 0=Nothing done, >0 if OK
+	 * @return    int                        Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function reopen($user, $notrigger = 0)
 	{
@@ -874,9 +875,7 @@ class Position extends CommonObject
 			$vacantId = $keyprefix.$key.'vacant'.$keysuffix;
 
 			$out = parent::showInputField($val, $key, $value, $moreparam, $keysuffix, $keyprefix, $morecss);
-			$out .= '<label class="nowrap position-fk-user classfortooltip" title="'.dol_escape_js($langs->trans('VacantCheckboxHelper')).'"><input type="checkbox" id="'.$vacantId.'" name="'.$vacantId.'" />&nbsp;'.$langs->trans("Vacant").'</label>';
-
-			?>
+			$out .= '<label class="nowrap position-fk-user classfortooltip" title="'.dol_escape_js($langs->trans('VacantCheckboxHelper')).'"><input type="checkbox" id="'.$vacantId.'" name="'.$vacantId.'" />&nbsp;'.$langs->trans("Vacant").'</label>'; ?>
 			<script type="text/javascript">
 				$(document).ready(function () {
 					var checkbox = $('#<?php print $vacantId; ?>');
@@ -923,7 +922,7 @@ class Position extends CommonObject
 	}
 
 
-		/**
+	/**
 	 *    Load the info information in the object
 	 *
 	 * @param int $id Id of object

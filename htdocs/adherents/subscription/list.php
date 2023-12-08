@@ -43,7 +43,7 @@ $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
 
-$statut = (GETPOSTISSET("statut") ?GETPOST("statut", "alpha") : 1);
+$statut = (GETPOSTISSET("statut") ? GETPOST("statut", "alpha") : 1);
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_type = GETPOST('search_type', 'alpha');
 $search_lastname = GETPOST('search_lastname', 'alpha');

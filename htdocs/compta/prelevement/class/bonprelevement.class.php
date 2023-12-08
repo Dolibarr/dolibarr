@@ -744,7 +744,7 @@ class BonPrelevement extends CommonObject
 	 *
 	 *	@param	string	$mode		'direct-debit' or 'bank-transfer'
 	 *  @param  string  $type        for type=salary
-	 *	@return	double	 			<O if KO, Total amount
+	 *	@return	double	 			Return integer <O if KO, Total amount
 	 */
 	public function SommeAPrelever($mode = 'direct-debit', $type = '')
 	{
@@ -801,7 +801,7 @@ class BonPrelevement extends CommonObject
 	 *
 	 *	@param	string	$mode		'direct-debit' or 'bank-transfer'
 	 *  @param  string  $type        for salary invoice
-	 *	@return	int					<O if KO, number of invoices if OK
+	 *	@return	int					Return integer <O if KO, number of invoices if OK
 	 */
 	public function nbOfInvoiceToPay($mode = 'direct-debit', $type = '')
 	{
@@ -818,14 +818,14 @@ class BonPrelevement extends CommonObject
 	 *
 	 *	@param	string	$type		'direct-debit' or 'bank-transfer'
 	 *  @param  int     $forsalary   0= for facture & facture_supplier, 1=for salary
-	 *	@return	int					<O if KO, number of invoices if OK
+	 *	@return	int					Return integer <O if KO, number of invoices if OK
 	 */
 	public function NbFactureAPrelever($type = 'direct-debit', $forsalary = 0)
 	{
 		// phpcs:enable
 		global $conf;
 
-		if ($forsalary == 1 ) {
+		if ($forsalary == 1) {
 			$sql = "SELECT count(s.rowid) as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX."salary as s";
 		} else {
@@ -900,7 +900,7 @@ class BonPrelevement extends CommonObject
 	 *  @param	int		$did				ID of an existing payment request. If $did is defined, we use the existing payment request.
 	 *  @param	int		$fk_bank_account	Bank account ID the receipt is generated for. Will use the ID into the setup of module Direct Debit or Credit Transfer if 0.
 	 *  @param	int		$sourcetype			'invoice' or 'salary'
-	 *	@return	int							<0 if KO, No of invoice included into file if OK
+	 *	@return	int							Return integer <0 if KO, No of invoice included into file if OK
 	 */
 	public function create($banque = 0, $agence = 0, $mode = 'real', $format = 'ALL', $executiondate = '', $notrigger = 0, $type = 'direct-debit', $did = 0, $fk_bank_account = 0, $sourcetype = 'invoice')
 	{
@@ -2618,7 +2618,7 @@ class BonPrelevement extends CommonObject
 	 *
 	 *      @param      User	$user       	Objet user
 	 *      @param		string	$mode			Mode 'direct_debit' or 'credit_transfer'
-	 *      @return 	WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
+	 *      @return 	WorkboardResponse|int 	Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $mode)
 	{

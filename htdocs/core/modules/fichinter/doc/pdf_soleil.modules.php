@@ -39,9 +39,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
  */
 class pdf_soleil extends ModelePDFFicheinter
 {
-	 /**
-	  * @var DoliDb Database handler
-	  */
+	/**
+	 * @var DoliDb Database handler
+	 */
 	public $db;
 
 	/**
@@ -338,8 +338,7 @@ class pdf_soleil extends ModelePDFFicheinter
 									$pdf->setPage($pageposafter + 1);
 								}
 							}
-						} else // No pagebreak
-						{
+						} else { // No pagebreak
 							$pdf->commitTransaction();
 						}
 

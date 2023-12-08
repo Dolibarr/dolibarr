@@ -48,7 +48,7 @@ $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hier
 $type = GETPOST('type', 'aZ09');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -503,7 +503,7 @@ while ($i < $imaxinloop) {
 
 		print '<td>';
 
-		print (!$bon->checkIfSalaryBonPrelevement() ? $company->getNomUrl(1) : $userstatic->getNomUrl(1));
+		print(!$bon->checkIfSalaryBonPrelevement() ? $company->getNomUrl(1) : $userstatic->getNomUrl(1));
 		print "</td>\n";
 
 

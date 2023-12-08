@@ -136,7 +136,7 @@ if ($id > 0 || !empty($ref)) {
 	 }
 	 }
 	 }*/
-	 $morehtmlref .= '</div>';
+	$morehtmlref .= '</div>';
 
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);

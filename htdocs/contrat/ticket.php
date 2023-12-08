@@ -49,8 +49,9 @@ if ($id == '' && $ref == '') {
 
 // Security check
 $socid=0;
-if ($user->socid > 0)
+if ($user->socid > 0) {
 	$socid=$user->socid;
+}
 
 $result=restrictedArea($user, 'contrat', $id);
 
@@ -72,7 +73,7 @@ $head = contract_prepare_head($object);
 
 dol_fiche_head($head, 'ticket', $langs->trans("Contract"), -1, 'contract');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/contrat/list.php'.(! empty($socid)?'?socid='.$socid:'').'">';
+$linkback = '<a href="'.DOL_URL_ROOT.'/contrat/list.php'.(! empty($socid) ? '?socid='.$socid : '').'">';
 $linkback.= $langs->trans("BackToList").'</a>';
 
 $morehtmlref='';
@@ -81,22 +82,54 @@ $morehtmlref.=$object->ref;
 $morehtmlref.='<div class="refidno">';
 // Ref customer
 $morehtmlref.=$form->editfieldkey(
-				"RefCustomer", 'ref_customer', $object->ref_customer,
-				$object, 0, 'string', '', 0, 1
+	"RefCustomer",
+	'ref_customer',
+	$object->ref_customer,
+	$object,
+	0,
+	'string',
+	'',
+	0,
+	1
 );
 $morehtmlref.=$form->editfieldval(
-				"RefCustomer", 'ref_customer', $object->ref_customer,
-				$object, 0, 'string', '', null, null, '', 1
+	"RefCustomer",
+	'ref_customer',
+	$object->ref_customer,
+	$object,
+	0,
+	'string',
+	'',
+	null,
+	null,
+	'',
+	1
 );
 // Ref supplier
 $morehtmlref.='<br>';
 $morehtmlref.=$form->editfieldkey(
-				"RefSupplier", 'ref_supplier', $object->ref_supplier,
-				$object, 0, 'string', '', 0, 1
+	"RefSupplier",
+	'ref_supplier',
+	$object->ref_supplier,
+	$object,
+	0,
+	'string',
+	'',
+	0,
+	1
 );
 $morehtmlref.=$form->editfieldval(
-				"RefSupplier", 'ref_supplier', $object->ref_supplier,
-				$object, 0, 'string', '', null, null, '', 1
+	"RefSupplier",
+	'ref_supplier',
+	$object->ref_supplier,
+	$object,
+	0,
+	'string',
+	'',
+	null,
+	null,
+	'',
+	1
 );
 // Thirdparty
 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
@@ -170,7 +203,7 @@ if (is_array($allticketarray) && count($allticketarray) > 0) {
 
 		// Duration
 		print '<td align="right">';
-		print (isset($element->progress) ? $element->progress.'%' : '');
+		print(isset($element->progress) ? $element->progress.'%' : '');
 		print '</td>';
 
 		// Status

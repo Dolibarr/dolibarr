@@ -269,13 +269,16 @@ class Holiday extends CommonObject
 
 		// Check parameters
 		if (empty($this->fk_user) || !is_numeric($this->fk_user) || $this->fk_user < 0) {
-			$this->error = "ErrorBadParameterFkUser"; return -1;
+			$this->error = "ErrorBadParameterFkUser";
+			return -1;
 		}
 		if (empty($this->fk_validator) || !is_numeric($this->fk_validator) || $this->fk_validator < 0) {
-			$this->error = "ErrorBadParameterFkValidator"; return -1;
+			$this->error = "ErrorBadParameterFkValidator";
+			return -1;
 		}
 		if (empty($this->fk_type) || !is_numeric($this->fk_type) || $this->fk_type < 0) {
-			$this->error = "ErrorBadParameterFkType"; return -1;
+			$this->error = "ErrorBadParameterFkType";
+			return -1;
 		}
 
 		// Insert request
@@ -312,7 +315,8 @@ class Holiday extends CommonObject
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -765,7 +769,8 @@ class Holiday extends CommonObject
 		dol_syslog(get_class($this)."::validate", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -796,7 +801,8 @@ class Holiday extends CommonObject
 				$sql .= " WHERE filepath = 'holiday/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
@@ -939,7 +945,8 @@ class Holiday extends CommonObject
 		dol_syslog(get_class($this)."::approve", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -1069,7 +1076,8 @@ class Holiday extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -1118,7 +1126,8 @@ class Holiday extends CommonObject
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -1404,7 +1413,7 @@ class Holiday extends CommonObject
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -1546,7 +1555,6 @@ class Holiday extends CommonObject
 	 */
 	public function updateConfCP($name, $value)
 	{
-
 		$sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
 		$sql .= " value = '".$this->db->escape($value)."'";
 		$sql .= " WHERE name = '".$this->db->escape($name)."'";
@@ -2026,7 +2034,8 @@ class Holiday extends CommonObject
 		dol_syslog(get_class($this)."::fetch_users_approver_holiday sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result) {
-			$num_rows = $this->db->num_rows($result); $i = 0;
+			$num_rows = $this->db->num_rows($result);
+			$i = 0;
 			while ($i < $num_rows) {
 				$objp = $this->db->fetch_object($result);
 				array_push($users_validator, $objp->fk_user);
@@ -2064,7 +2073,6 @@ class Holiday extends CommonObject
 	 */
 	public function countActiveUsersWithoutCP()
 	{
-
 		$sql = "SELECT count(u.rowid) as compteur";
 		$sql .= " FROM ".MAIN_DB_PREFIX."user as u LEFT OUTER JOIN ".MAIN_DB_PREFIX."holiday_users hu ON (hu.fk_user=u.rowid)";
 		$sql .= " WHERE u.statut > 0 AND hu.fk_user IS NULL";
@@ -2139,7 +2147,8 @@ class Holiday extends CommonObject
 
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -2395,7 +2404,7 @@ class Holiday extends CommonObject
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 *      @param	User	$user   		Objet user
-	 *      @return WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
+	 *      @return WorkboardResponse|int 	Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user)
 	{

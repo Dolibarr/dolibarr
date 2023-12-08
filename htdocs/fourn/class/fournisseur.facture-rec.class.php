@@ -83,6 +83,11 @@ class FactureFournisseurRec extends CommonInvoice
 	public $ref_supplier;
 	public $socid;
 
+	/**
+	 * @deprecated
+	 */
+	public $fk_soc;
+
 	public $suspended; // status
 
 	/**
@@ -255,7 +260,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @param 	User 	$user 			User object
 	 * @param 	int 	$facFournId		Id invoice
 	 * @param 	int 	$notrigger 		No trigger
-	 * @return	int                    	<0 if KO, id of invoice created if OK
+	 * @return	int                    	Return integer <0 if KO, id of invoice created if OK
 	 */
 	public function create($user, $facFournId, $notrigger = 0)
 	{
@@ -429,8 +434,7 @@ class FactureFournisseurRec extends CommonInvoice
 									$error++;
 								}
 							}
-						} else // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
-						{
+						} else { // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
 							$origin_id = $tmp_origin_id;
 							$ret = $this->add_object_linked($origin, $origin_id);
 							if (!$ret) {
@@ -482,7 +486,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 *
 	 *  @param		User	$user					User
 	 *  @param		int		$notrigger				No trigger
-	 *	@return    	int             				<0 if KO, Id of line if OK
+	 *	@return    	int             				Return integer <0 if KO, Id of line if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -492,7 +496,11 @@ class FactureFournisseurRec extends CommonInvoice
 		$sql .= " titre = '" . (!empty($this->title) ? $this->db->escape($this->title) : "")."'," ;
 		$sql .= " ref_supplier = '". (!empty($this->ref_supplier) ? $this->db->escape($this->ref_supplier) : "")."',";
 		$sql .= " entity = ". (!empty($this->entity) ? ((int) $this->entity) : 1) . ',';
-		if ($this->fk_soc > 0) $sql .= " fk_soc = ". (int) $this->fk_soc. ',';
+		if (!empty($this->socid) && $this->socid > 0) {
+			$sql .= " fk_soc = ". ((int) $this->socid). ',';
+		} elseif (!empty($this->fk_soc) && $this->fk_soc > 0) {	// For backward compatibility
+			$sql .= " fk_soc = ". ((int) $this->fk_soc). ',';
+		}
 		$sql .= " suspended = ". (!empty($this->suspended) ? ((int) $this->suspended) : 0) . ',';
 		$sql .= " libelle = ". (!empty($this->libelle) ? "'".$this->db->escape($this->libelle)."'" : 'NULL') . ",";
 		$sql .= " vat_src_code = ". (!empty($this->vat_src_code) ? "'".$this->db->escape($this->vat_src_code)."'" : 'NULL') . ',';
@@ -871,7 +879,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @param int 		$rang 			Position of line
 	 * @param string 	$fk_unit 		Unit
 	 * @param int 		$pu_ht_devise 	Unit price in currency
-	 * @return int                  	<0 if KO, Id of line if OK
+	 * @return int                  	Return integer <0 if KO, Id of line if OK
 	 * @throws Exception
 	 */
 	public function addline($fk_product, $ref, $label, $desc, $pu_ht, $pu_ttc, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $type = 0, $date_start = 0, $date_end = 0, $info_bits = 0, $special_code = 0, $rang = -1, $fk_unit = null, $pu_ht_devise = 0)
@@ -1064,7 +1072,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @param string 	$fk_unit 			Unit
 	 * @param double	$pu_ht_devise 		Unit price in currency
 	 * @param double    $pu_ttc             Unit price TTC (> 0 even for credit note)
-	 * @return int  		                <0 if KO, Id of line if OK
+	 * @return int  		                Return integer <0 if KO, Id of line if OK
 	 * @throws Exception
 	 */
 	public function updateline($rowid, $fk_product, $ref, $label, $desc, $pu_ht, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $type = 0, $date_start = 0, $date_end = 0, $info_bits = 0, $special_code = 0, $rang = -1, $fk_unit = null, $pu_ht_devise = 0, $pu_ttc = 0)
@@ -1719,8 +1727,7 @@ class FactureFournisseurRec extends CommonInvoice
 					$line->total_ttc = 59.8;
 					$line->total_tva = 9.8;
 					$line->remise_percent = 50;
-				} else // (product line)
-				{
+				} else { // (product line)
 					$prodid = mt_rand(1, $num_prods);
 					$line->fk_product = $prodids[$prodid];
 					$line->total_ht = 100;
@@ -2148,7 +2155,7 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 	 *
 	 *  @param		User	$user					User
 	 *  @param		int		$notrigger				No trigger
-	 *	@return    	int             				<0 if KO, Id of line if OK
+	 *	@return    	int             				Return integer <0 if KO, Id of line if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{

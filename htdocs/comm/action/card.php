@@ -106,7 +106,7 @@ if ($user->socid && ($socid != $user->socid)) {
 }
 
 $error = GETPOST("error");
-$donotclearsession = GETPOST('donotclearsession') ?GETPOST('donotclearsession') : 0;
+$donotclearsession = GETPOST('donotclearsession') ? GETPOST('donotclearsession') : 0;
 
 // Initialize Objects
 $object = new ActionComm($db);
@@ -330,20 +330,23 @@ if (empty($reshook) && $action == 'add') {
 
 	// Check parameters
 	if (!$datef && $percentage == 100) {
-		$error++; $donotclearsession = 1;
+		$error++;
+		$donotclearsession = 1;
 		$action = 'create';
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateEnd")), null, 'errors');
 	}
 
 	if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') && !GETPOST('label')) {
-		$error++; $donotclearsession = 1;
+		$error++;
+		$donotclearsession = 1;
 		$action = 'create';
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Title")), null, 'errors');
 	}
 
 	// Initialisation objet cactioncomm
 	if (GETPOSTISSET('actioncode') && !GETPOST('actioncode', 'aZ09')) {	// actioncode is '0'
-		$error++; $donotclearsession = 1;
+		$error++;
+		$donotclearsession = 1;
 		$action = 'create';
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 	} else {
@@ -442,18 +445,21 @@ if (empty($reshook) && $action == 'add') {
 
 	// Check parameters
 	if (empty($object->userownerid) && empty($_SESSION['assignedtouser'])) {
-		$error++; $donotclearsession = 1;
+		$error++;
+		$donotclearsession = 1;
 		$action = 'create';
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ActionsOwnedBy")), null, 'errors');
 	}
 	if ($object->type_code == 'AC_RDV' && ($datep == '' || ($datef == '' && empty($fulldayevent)))) {
-		$error++; $donotclearsession = 1;
+		$error++;
+		$donotclearsession = 1;
 		$action = 'create';
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateEnd")), null, 'errors');
 	}
 
 	if (!GETPOST('apyear') && !GETPOST('adyear')) {
-		$error++; $donotclearsession = 1;
+		$error++;
+		$donotclearsession = 1;
 		$action = 'create';
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 	}
@@ -484,7 +490,9 @@ if (empty($reshook) && $action == 'add') {
 		$object->recurrule .= (GETPOST('recurrulefreq', 'alpha') == 'MONTHLY' && GETPOSTISSET('BYMONTHDAY')) ? "_BYMONTHDAY".GETPOST('BYMONTHDAY', 'alpha') : "";
 		$object->recurrule .= (GETPOST('recurrulefreq', 'alpha') == 'WEEKLY' && GETPOSTISSET('BYDAY')) ? "_BYDAY".GETPOST('BYDAY', 'alpha') : "";
 
-		$reg1 = array(); $reg2 = array(); $reg3 = array();
+		$reg1 = array();
+		$reg2 = array();
+		$reg3 = array();
 		if ($object->recurrule && preg_match('/FREQ=([A-Z]+)/i', $object->recurrule, $reg1)) {
 			$selectedrecurrulefreq = $reg1[1];
 		}
@@ -551,7 +559,8 @@ if (empty($reshook) && $action == 'add') {
 							$langs->load("errors");
 							$error = $langs->trans('ErrorReminderActionCommCreation');
 							setEventMessages($error, null, 'errors');
-							$action = 'create'; $donotclearsession = 1;
+							$action = 'create';
+							$donotclearsession = 1;
 							break;
 						}
 					}
@@ -585,12 +594,14 @@ if (empty($reshook) && $action == 'add') {
 				$langs->load("errors");
 				$error = $langs->trans($object->error);
 				setEventMessages($error, null, 'errors');
-				$action = 'create'; $donotclearsession = 1;
+				$action = 'create';
+				$donotclearsession = 1;
 			}
 		} else {
 			$db->rollback();
 			setEventMessages($object->error, $object->errors, 'errors');
-			$action = 'create'; $donotclearsession = 1;
+			$action = 'create';
+			$donotclearsession = 1;
 		}
 
 		if ($eventisrecurring) {
@@ -603,7 +614,7 @@ if (empty($reshook) && $action == 'add') {
 				$monthoffset = 0;
 			} elseif ($selectedrecurrulefreq == 'MONTHLY' && !empty($selectedrecurrulebymonthday)) {
 				$firstday = $selectedrecurrulebymonthday;
-				$firstmonth = GETPOST("apday") > $selectedrecurrulebymonthday ?  GETPOST("apmonth", 'int') + 1 : GETPOST("apmonth", 'int');//We begin the week after
+				$firstmonth = GETPOST("apday") > $selectedrecurrulebymonthday ? GETPOST("apmonth", 'int') + 1 : GETPOST("apmonth", 'int');//We begin the week after
 				$datep = dol_mktime($fulldayevent ? '00' : GETPOST("aphour", 'int'), $fulldayevent ? '00' : GETPOST("apmin", 'int'), $fulldayevent ? '00' : GETPOST("apsec", 'int'), $firstmonth, $firstday, GETPOST("apyear", 'int'), $tzforfullday ? $tzforfullday : 'tzuserrel');
 				$dayoffset = 0;
 				$monthoffset = 1;
@@ -665,7 +676,8 @@ if (empty($reshook) && $action == 'add') {
 									$langs->load("errors");
 									$error = $langs->trans('ErrorReminderActionCommCreation');
 									setEventMessages($error, null, 'errors');
-									$action = 'create'; $donotclearsession = 1;
+									$action = 'create';
+									$donotclearsession = 1;
 									break;
 								}
 							}
@@ -689,12 +701,14 @@ if (empty($reshook) && $action == 'add') {
 						$langs->load("errors");
 						$error = $langs->trans($finalobject->error);
 						setEventMessages($error, null, 'errors');
-						$action = 'create'; $donotclearsession = 1;
+						$action = 'create';
+						$donotclearsession = 1;
 					}
 				} else {
 					$db->rollback();
 					setEventMessages($finalobject->error, $finalobject->errors, 'errors');
-					$action = 'create'; $donotclearsession = 1;
+					$action = 'create';
+					$donotclearsession = 1;
 				}
 
 				// If event is not recurrent, we stop here
@@ -820,7 +834,8 @@ if (empty($reshook) && $action == 'update') {
 		}
 
 		if (!$datef && $percentage == 100) {
-			$error++; $donotclearsession = 1;
+			$error++;
+			$donotclearsession = 1;
 			setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateEnd")), $object->errors, 'errors');
 			$action = 'edit';
 		}
@@ -843,7 +858,8 @@ if (empty($reshook) && $action == 'update') {
 				$listofuserid[$assignedtouser] = array('id'=>$assignedtouser, 'mandatory'=>0, 'transparency'=>($user->id == $assignedtouser ? $transparency : '')); // Owner first
 			}
 		}
-		$object->userassigned = array(); $object->userownerid = 0; // Clear old content
+		$object->userassigned = array();
+		$object->userownerid = 0; // Clear old content
 		$i = 0;
 		foreach ($listofuserid as $key => $val) {
 			if ($i == 0) {
@@ -864,14 +880,16 @@ if (empty($reshook) && $action == 'update') {
 
 		// Check parameters
 		if (GETPOSTISSET('actioncode') && !GETPOST('actioncode', 'aZ09')) {	// actioncode is '0'
-			$error++; $donotclearsession = 1;
+			$error++;
+			$donotclearsession = 1;
 			$action = 'edit';
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 		} else {
 			$result = $cactioncomm->fetch(GETPOST('actioncode', 'aZ09'));
 		}
 		if (empty($object->userownerid)) {
-			$error++; $donotclearsession = 1;
+			$error++;
+			$donotclearsession = 1;
 			$action = 'edit';
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ActionsOwnedBy")), null, 'errors');
 		}
@@ -985,7 +1003,8 @@ if (empty($reshook) && $action == 'update') {
 							$langs->load("errors");
 							$error = $langs->trans('ErrorReminderActionCommCreation');
 							setEventMessages($error, null, 'errors');
-							$action = 'create'; $donotclearsession = 1;
+							$action = 'create';
+							$donotclearsession = 1;
 							break;
 						}
 					}
@@ -1399,7 +1418,7 @@ if ($action == 'create') {
 	$listofotherid = array();
 
 	if (empty($donotclearsession)) {
-		$assignedtouser = GETPOST("assignedtouser") ?GETPOST("assignedtouser") : (!empty($object->userownerid) && $object->userownerid > 0 ? $object->userownerid : $user->id);
+		$assignedtouser = GETPOST("assignedtouser") ? GETPOST("assignedtouser") : (!empty($object->userownerid) && $object->userownerid > 0 ? $object->userownerid : $user->id);
 		if ($assignedtouser) {
 			$listofuserid[$assignedtouser] = array('id'=>$assignedtouser, 'mandatory'=>0); // Owner first
 		}
@@ -1518,7 +1537,9 @@ if ($action == 'create') {
 		if (GETPOST('contactid', 'int')) {
 			$preselectedids[GETPOST('contactid', 'int')] = GETPOST('contactid', 'int');
 		}
-		if ($origin=='contact') $preselectedids[GETPOST('originid', 'int')] = GETPOST('originid', 'int');
+		if ($origin=='contact') {
+			$preselectedids[GETPOST('originid', 'int')] = GETPOST('originid', 'int');
+		}
 		print img_picto('', 'contact', 'class="paddingrightonly"');
 		print $form->selectcontacts(!getDolGlobalString('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT') ? GETPOST('socid', 'int') : 0, $preselectedids, 'socpeopleassigned[]', 1, '', '', 0, 'minwidth300 widthcentpercentminusxx maxwidth500', false, 0, array(), false, 'multiple', 'contactid');
 		print '</td></tr>';
@@ -1723,7 +1744,7 @@ if ($id > 0) {
 		$object->percentage  = $percentage;
 		$object->priority    = GETPOST("priority", "alphanohtml");
 		$object->fulldayevent = GETPOST("fullday") ? 1 : 0;
-		$object->location    = GETPOST('location', "alpanohtml");
+		$object->location    = GETPOST('location', "alphanohtml");
 		$object->socid       = GETPOST("socid", "int");
 		$socpeopleassigned   = GETPOST("socpeopleassigned", 'array');
 		foreach ($socpeopleassigned as $tmpid) {
@@ -2215,8 +2236,11 @@ if ($id > 0) {
 		// Call Hook formConfirm
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
-		elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
+		if (empty($reshook)) {
+			$formconfirm.=$hookmanager->resPrint;
+		} elseif ($reshook > 0) {
+			$formconfirm=$hookmanager->resPrint;
+		}
 
 		// Print form confirm
 		print $formconfirm;
@@ -2469,7 +2493,7 @@ if ($id > 0) {
 
 		// Priority
 		print '<tr><td class="nowrap" class="titlefield">'.$langs->trans("Priority").'</td><td>';
-		print ($object->priority ? $object->priority : '');
+		print($object->priority ? $object->priority : '');
 		print '</td></tr>';
 
 		// Object linked (if link is for thirdparty, contact, project it is a recording error. We should not have links in link table

@@ -361,10 +361,10 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					$pdf->SetTextColor(0, 0, 0);
 
 					// Define size of image if we need it
-					$imglinesize = array();
-					if (!empty($realpatharray[$i])) {
-						$imglinesize = pdf_getSizeForImage($realpatharray[$i]);
-					}
+					//$imglinesize = array();
+					//if (!empty($realpatharray[$i])) {
+					//	$imglinesize = pdf_getSizeForImage($realpatharray[$i]);
+					//}
 
 					$pdf->setTopMargin($tab_top_newpage);
 					$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
@@ -406,8 +406,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 								$showpricebeforepagebreak = 0;
 							}
 						}
-					} else // No pagebreak
-					{
+					} else { // No pagebreak
 						$pdf->commitTransaction();
 					}
 					$posYAfterDescription = $pdf->GetY();
@@ -1070,8 +1069,8 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		}
 		else
 		{*/
-			$text = $this->emetteur->name;
-			$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
+		$text = $this->emetteur->name;
+		$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 		//}
 
 		$pdf->SetFont('', 'B', $default_font_size + 3);

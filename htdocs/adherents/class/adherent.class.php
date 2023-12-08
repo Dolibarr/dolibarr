@@ -634,7 +634,7 @@ class Adherent extends CommonObject
 					try {
 						require_once $modfile;
 						$modname = getDolGlobalString('MEMBER_CODEMEMBER_ADDON');
-						$modCodeMember = new $modname;
+						$modCodeMember = new $modname();
 						$this->ref = $modCodeMember->getNextValue($mysoc, $this);
 					} catch (Exception $e) {
 						dol_syslog($e->getMessage(), LOG_ERR);
@@ -728,7 +728,7 @@ class Adherent extends CommonObject
 		$this->state_id = ($this->state_id > 0 ? $this->state_id : $this->state_id);
 		$this->note_public = ($this->note_public ? $this->note_public : $this->note_public);
 		$this->note_private = ($this->note_private ? $this->note_private : $this->note_private);
-		$this->url = $this->url ?clean_url($this->url, 0) : '';
+		$this->url = $this->url ? clean_url($this->url, 0) : '';
 		$this->setUpperOrLowerCase();
 		// Check parameters
 		if (getDolGlobalString('ADHERENT_MAIL_REQUIRED') && !isValidEMail($this->email)) {
@@ -1026,7 +1026,7 @@ class Adherent extends CommonObject
 	 *  @param	int		$rowid		Id of member to delete
 	 *	@param	User	$user		User object
 	 *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *  @return	int					<0 if KO, 0=nothing to do, >0 if OK
+	 *  @return	int					Return integer <0 if KO, 0=nothing to do, >0 if OK
 	 */
 	public function delete($rowid, $user, $notrigger = 0)
 	{
@@ -1939,7 +1939,7 @@ class Adherent extends CommonObject
 	 *		Function that validate a member
 	 *
 	 *		@param	User	$user		user adherent qui valide
-	 *		@return	int					<0 if KO, 0 if nothing done, >0 if OK
+	 *		@return	int					Return integer <0 if KO, 0 if nothing done, >0 if OK
 	 */
 	public function validate($user)
 	{
@@ -2328,7 +2328,7 @@ class Adherent extends CommonObject
 				$label = $langs->trans("ShowUser");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		}
 
@@ -2503,7 +2503,7 @@ class Adherent extends CommonObject
 	 *
 	 *      @param	User	$user   		Objet user
 	 *      @param  string	$mode           "expired" for membership to renew, "shift" for member to validate
-	 *      @return WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
+	 *      @return WorkboardResponse|int 	Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $mode)
 	{
@@ -3229,7 +3229,7 @@ class Adherent extends CommonObject
 		return $nbko;
 	}
 
-		/**
+	/**
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)

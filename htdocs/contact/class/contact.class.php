@@ -467,7 +467,7 @@ class Contact extends CommonObject
 		$this->db->begin();
 
 		// Clean parameters
-		$this->lastname = $this->lastname ?trim($this->lastname) : trim($this->name);
+		$this->lastname = $this->lastname ? trim($this->lastname) : trim($this->name);
 		$this->firstname = trim($this->firstname);
 		$this->setUpperOrLowerCase();
 		if (empty($this->socid)) {
@@ -583,7 +583,7 @@ class Contact extends CommonObject
 
 		// Clean parameters
 		$this->ref_ext = trim($this->ref_ext);
-		$this->lastname = trim($this->lastname) ?trim($this->lastname) : trim($this->lastname);
+		$this->lastname = trim($this->lastname) ? trim($this->lastname) : trim($this->lastname);
 		$this->firstname = trim($this->firstname);
 		$this->email = trim($this->email);
 		$this->phone_pro = trim($this->phone_pro);
@@ -883,7 +883,7 @@ class Contact extends CommonObject
 	 *  @param      int			$id         Id of contact
 	 *  @param      User		$user		User asking to change alert or birthday
 	 *  @param      int		    $notrigger	0=no, 1=yes
-	 *  @return     int         			<0 if KO, >=0 if OK
+	 *  @return     int         			Return integer <0 if KO, >=0 if OK
 	 */
 	public function update_perso($id, $user = null, $notrigger = 0)
 	{
@@ -1178,7 +1178,7 @@ class Contact extends CommonObject
 	 *  ref_commande (for order and/or shipments)
 	 *  ref_propale
 	 *
-	 *  @return     int             					<0 if KO, >=0 if OK
+	 *  @return     int             					Return integer <0 if KO, >=0 if OK
 	 */
 	public function load_ref_elements()
 	{
@@ -1414,7 +1414,7 @@ class Contact extends CommonObject
 		}
 		$datas['email'] = '<br><b>'.$langs->trans("EMail").':</b> '.$this->email;
 		$phonelist = array();
-		$country_code = empty($this->country_code) ? '': $this->country_code;
+		$country_code = empty($this->country_code) ? '' : $this->country_code;
 		if ($this->phone_pro) {
 			$phonelist[] = dol_print_phone($this->phone_pro, $country_code, $this->id, 0, '', '&nbsp;', 'phone');
 		}
@@ -1488,7 +1488,7 @@ class Contact extends CommonObject
 				$label = $langs->trans("ShowContact");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -1678,7 +1678,7 @@ class Contact extends CommonObject
 	 *  Change status of a user
 	 *
 	 *	@param	int		$status		Status to set
-	 *  @return int     			<0 if KO, 0 if nothing is done, >0 if OK
+	 *  @return int     			Return integer <0 if KO, 0 if nothing is done, >0 if OK
 	 */
 	public function setstatus($status)
 	{
@@ -1758,7 +1758,7 @@ class Contact extends CommonObject
 	 * Fetch roles (default contact of some companies) for the current contact.
 	 * This load the array ->roles.
 	 *
-	 * @return 	int			<0 if KO, Nb of roles found if OK
+	 * @return 	int			Return integer <0 if KO, Nb of roles found if OK
 	 * @see updateRoles()
 	 */
 	public function fetchRoles()

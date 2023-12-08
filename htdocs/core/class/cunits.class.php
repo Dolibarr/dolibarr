@@ -402,11 +402,10 @@ class CUnits extends CommonDict
 	 * @param string $code code of unit
 	 * @param string $mode 0= id , short_label=Use short label as value, code=use code
 	 * @param string $unit_type weight,size,surface,volume,qty,time...
-	 * @return int            <0 if KO, Id of code if OK
+	 * @return int            Return integer <0 if KO, Id of code if OK
 	 */
 	public function getUnitFromCode($code, $mode = 'code', $unit_type = '')
 	{
-
 		if ($mode == 'short_label') {
 			return dol_getIdFromCode($this->db, $code, 'c_units', 'short_label', 'rowid', 0, " AND unit_type = '".$this->db->escape($unit_type)."'");
 		} elseif ($mode == 'code') {

@@ -475,7 +475,7 @@ class pdf_merou extends ModelePdfExpedition
 	 *  @param  Expedition	$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @return	int							<0 if KO, > if OK
+	 *  @return	int							Return integer <0 if KO, > if OK
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
@@ -485,7 +485,7 @@ class pdf_merou extends ModelePdfExpedition
 
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
-			//Affiche le filigrane brouillon - Print Draft Watermark
+		//Affiche le filigrane brouillon - Print Draft Watermark
 		if ($object->statut == 0 && (getDolGlobalString('SENDING_DRAFT_WATERMARK'))) {
 			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->SENDING_DRAFT_WATERMARK);
 		}

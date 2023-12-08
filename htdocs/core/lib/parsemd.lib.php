@@ -78,7 +78,7 @@ function dolMd2Asciidoc($content, $parser = 'dolibarr', $replaceimagepath = null
 	}
 	//if ($parser == 'dolibarr')
 	//{
-		$content = preg_replace('/<!--.*-->/msU', '', $content);
+	$content = preg_replace('/<!--.*-->/msU', '', $content);
 	//}
 	//else
 	//{

@@ -237,7 +237,7 @@ class Comment extends CommonObject
 	 *
 	 *  @param	User	$user        	User that modify
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return int			         	<=0 if KO, >0 if OK
+	 *  @return int			         	Return integer <=0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{

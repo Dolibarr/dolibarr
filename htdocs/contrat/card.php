@@ -275,7 +275,8 @@ if (empty($reshook)) {
 					$element = $subelement = 'commande';
 				}
 				if ($element == 'propal') {
-					$element = 'comm/propal'; $subelement = 'propal';
+					$element = 'comm/propal';
+					$subelement = 'propal';
 				}
 				if ($element == 'invoice' || $element == 'facture') {
 					$element = 'compta/facture';
@@ -461,7 +462,7 @@ if (empty($reshook)) {
 		$tva_tx = GETPOST('tva_tx', 'alpha');
 
 		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
-		$remise_percent = (GETPOSTISSET('remise_percent'.$predef) ? price2num(GETPOST('remise_percent'.$predef), 2) : 0);
+		$remise_percent = (GETPOSTISSET('remise_percent'.$predef) ? price2num(GETPOST('remise_percent'.$predef), '', 2) : 0);
 		if (empty($remise_percent)) {
 			$remise_percent = 0;
 		}
@@ -734,7 +735,7 @@ if (empty($reshook)) {
 			// Define info_bits
 			$info_bits = 0;
 			if (preg_match('/\*/', $vat_rate)) {
-				  $info_bits |= 0x01;
+				$info_bits |= 0x01;
 			}
 
 			// Define vat_rate
@@ -748,8 +749,8 @@ if (empty($reshook)) {
 			$reg = array();
 			$vat_src_code = '';
 			if (preg_match('/\((.*)\)/', $txtva, $reg)) {
-				  $vat_src_code = $reg[1];
-				  $txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
+				$vat_src_code = $reg[1];
+				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
 			}
 
 			// ajout prix d'achat
@@ -765,7 +766,7 @@ if (empty($reshook)) {
 			// TODO Use object->updateline instead objedtline->update
 
 			$price_ht =  price2num(GETPOST('elprice'), 'MU');
-			$remise_percent = price2num(GETPOST('elremise_percent'), 2);
+			$remise_percent = price2num(GETPOST('elremise_percent'), '', 2);
 			if ($remise_percent > 0) {
 				$remise = round(($price_ht * $remise_percent / 100), 2);
 				$price_ht = ($price_ht - $remise);
@@ -1006,7 +1007,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Actions to build doc
-	$upload_dir = $conf->contrat->multidir_output[!empty($object->entity)?$object->entity:$conf->entity];
+	$upload_dir = $conf->contrat->multidir_output[!empty($object->entity) ? $object->entity : $conf->entity];
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Actions to send emails
@@ -1128,7 +1129,8 @@ if ($action == 'create') {
 				$element = $subelement = 'commande';
 			}
 			if ($element == 'propal') {
-				$element = 'comm/propal'; $subelement = 'propal';
+				$element = 'comm/propal';
+				$subelement = 'propal';
 			}
 			if ($element == 'invoice' || $element == 'facture') {
 				$element = 'compta/facture';
@@ -1183,7 +1185,7 @@ if ($action == 'create') {
 	if (!empty($modCodeContract->code_auto)) {
 		$tmpcode = $langs->trans("Draft");
 	} else {
-		$tmpcode = '<input name="ref" class="maxwidth100" maxlength="128" value="'.dol_escape_htmltag(GETPOST('ref') ?GETPOST('ref') : $tmpcode).'">';
+		$tmpcode = '<input name="ref" class="maxwidth100" maxlength="128" value="'.dol_escape_htmltag(GETPOST('ref') ? GETPOST('ref') : $tmpcode).'">';
 	}
 	print $tmpcode;
 	print '</td></tr>';
@@ -1233,13 +1235,13 @@ if ($action == 'create') {
 	// Commercial suivi
 	print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("TypeContact_contrat_internal_SALESREPFOLL").'</span></td><td>';
 	print img_picto('', 'user', 'class="pictofixedwidth"');
-	print $form->select_dolusers(GETPOST("commercial_suivi_id") ?GETPOST("commercial_suivi_id") : $user->id, 'commercial_suivi_id', 1, '');
+	print $form->select_dolusers(GETPOST("commercial_suivi_id") ? GETPOST("commercial_suivi_id") : $user->id, 'commercial_suivi_id', 1, '');
 	print '</td></tr>';
 
 	// Commercial signature
 	print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("TypeContact_contrat_internal_SALESREPSIGN").'</span></td><td>';
 	print img_picto('', 'user', 'class="pictofixedwidth"');
-	print $form->select_dolusers(GETPOST("commercial_signature_id") ?GETPOST("commercial_signature_id") : $user->id, 'commercial_signature_id', 1, '');
+	print $form->select_dolusers(GETPOST("commercial_signature_id") ? GETPOST("commercial_signature_id") : $user->id, 'commercial_signature_id', 1, '');
 	print '</td></tr>';
 
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("Date").'</span></td><td>';
@@ -1625,7 +1627,7 @@ if ($action == 'create') {
 							$description = ''; // Already added into main visible desc
 						}
 
-						print $form->textwithtooltip($text, $description, 3, '', '', $cursorline, 3, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
+						print $form->textwithtooltip($text, $description, 3, '', '', $cursorline, 3, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
 
 						print '</td>';
 					} else {
@@ -2106,9 +2108,12 @@ if ($action == 'create') {
 
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-				if (empty($reshook))
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				}
+				if (empty($reshook)) {
 					$object->formAddObjectLine(1, $mysoc, $soc);
+				}
 			}
 
 			print '</table>';
@@ -2302,8 +2307,7 @@ $db->close();
 
 <?php
 if (isModEnabled('margin') && $action == 'editline') {
-	// TODO Why this ? To manage margin on contracts ?
-	?>
+	// TODO Why this ? To manage margin on contracts ??>
 <script type="text/javascript">
 $(document).ready(function() {
   var idprod = $("input[name='idprod']").val();

@@ -175,11 +175,11 @@ if (empty($reshook)) {
 		$toselect = array();
 	}
 
-		// Mass actions
-		$objectclass = 'ChargeSociales';
-		$objectlabel = 'ChargeSociales';
-		$uploaddir = $conf->tax->dir_output;
-		include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+	// Mass actions
+	$objectclass = 'ChargeSociales';
+	$objectlabel = 'ChargeSociales';
+	$uploaddir = $conf->tax->dir_output;
+	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
 /*
@@ -478,10 +478,10 @@ if (!empty($arrayfields['cs.fk_type']['checked'])) {
 // Filter: Date (placeholder)
 if (!empty($arrayfields['cs.date_ech']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td>';
@@ -490,10 +490,10 @@ if (!empty($arrayfields['cs.date_ech']['checked'])) {
 // Filter: Period end date
 if (!empty($arrayfields['cs.periode']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_limit_start ? $search_date_limit_start : -1, 'search_date_limit_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_limit_end ? $search_date_limit_end : -1, 'search_date_limit_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td>';

@@ -45,6 +45,8 @@ class LoanSchedule extends CommonObject
 	 */
 	public $fk_loan;
 
+	public $bank_account;
+	public $bank_line;
 	/**
 	 * @var string Create date
 	 */
@@ -122,7 +124,7 @@ class LoanSchedule extends CommonObject
 	 *  Use this->amounts to have list of lines for the payment
 	 *
 	 *  @param      User		$user   User making payment
-	 *  @return     int     			<0 if KO, id of payment if OK
+	 *  @return     int     			Return integer <0 if KO, id of payment if OK
 	 */
 	public function create($user)
 	{
@@ -350,7 +352,8 @@ class LoanSchedule extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// Commit or rollback
@@ -385,7 +388,8 @@ class LoanSchedule extends CommonObject
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -534,7 +538,7 @@ class LoanSchedule extends CommonObject
 	 *  lastpayment
 	 *
 	 *  @param  int    $loanid     Loan id
-	 *  @return int                < 0 if KO, Date > 0 if OK
+	 *  @return int                Return integer < 0 if KO, Date > 0 if OK
 	 */
 	private function lastPayment($loanid)
 	{
@@ -563,7 +567,6 @@ class LoanSchedule extends CommonObject
 	 */
 	public function paimenttorecord($loanid, $datemax)
 	{
-
 		$result = array();
 
 		$sql = "SELECT p.rowid";

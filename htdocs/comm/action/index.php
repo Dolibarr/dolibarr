@@ -72,7 +72,7 @@ $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("pa
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
 if (!$sortorder) {
 	$sortorder = "ASC";
@@ -82,7 +82,7 @@ if (!$sortfield) {
 }
 
 // Security check
-$socid = GETPOST("search_socid", "int") ?GETPOST("search_socid", "int") : GETPOST("socid", "int");
+$socid = GETPOST("search_socid", "int") ? GETPOST("search_socid", "int") : GETPOST("socid", "int");
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -108,10 +108,10 @@ if (empty($mode) && preg_match('/show_/', $action)) {
 	$mode = $action;	// For backward compatibility
 }
 $resourceid = GETPOST("search_resourceid", "int");
-$year = GETPOST("year", "int") ?GETPOST("year", "int") : date("Y");
-$month = GETPOST("month", "int") ?GETPOST("month", "int") : date("m");
-$week = GETPOST("week", "int") ?GETPOST("week", "int") : date("W");
-$day = GETPOST("day", "int") ?GETPOST("day", "int") : date("d");
+$year = GETPOST("year", "int") ? GETPOST("year", "int") : date("Y");
+$month = GETPOST("month", "int") ? GETPOST("month", "int") : date("m");
+$week = GETPOST("week", "int") ? GETPOST("week", "int") : date("W");
+$day = GETPOST("day", "int") ? GETPOST("day", "int") : date("d");
 $pid = GETPOST("search_projectid", "int", 3) ? GETPOST("search_projectid", "int", 3) : GETPOST("projectid", "int", 3);
 $status = GETPOSTISSET("search_status") ? GETPOST("search_status", 'aZ09') : GETPOST("status", 'aZ09'); // status may be 0, 50, 100, 'todo', 'na' or -1
 $type = GETPOSTISSET("search_type") ? GETPOST("search_type", 'aZ09') : GETPOST("type", 'aZ09');
@@ -132,7 +132,7 @@ if (GETPOST('search_actioncode', 'array:aZ09')) {
 		$actioncode = '0';
 	}
 } else {
-	$actioncode = GETPOST("search_actioncode", "alpha", 3) ?GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode") == '0' ? '0' : ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE') || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE));
+	$actioncode = GETPOST("search_actioncode", "alpha", 3) ? GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode") == '0' ? '0' : ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE') || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE));
 }
 
 if ($status == '' && !GETPOSTISSET('search_status')) {
@@ -148,13 +148,17 @@ if ($mode == 'default') {	// When action is default, we want a calendar view and
 	$mode = (($defaultview != 'show_list') ? $defaultview : 'show_month');
 }
 if (GETPOST('viewcal', 'int') && GETPOST('mode', 'alpha') != 'show_day' && GETPOST('mode', 'alpha') != 'show_week') {
-	$mode = 'show_month'; $day = '';
+	$mode = 'show_month';
+	$day = '';
 } // View by month
 if (GETPOST('viewweek', 'int') || GETPOST('mode', 'alpha') == 'show_week') {
-	$mode = 'show_week'; $week = ($week ? $week : date("W")); $day = ($day ? $day : date("d"));
+	$mode = 'show_week';
+	$week = ($week ? $week : date("W"));
+	$day = ($day ? $day : date("d"));
 } // View by week
 if (GETPOST('viewday', 'int') || GETPOST('mode', 'alpha') == 'show_day') {
-	$mode = 'show_day'; $day = ($day ? $day : date("d"));
+	$mode = 'show_day';
+	$day = ($day ? $day : date("d"));
 } // View by day
 
 $object = new ActionComm($db);
@@ -908,7 +912,7 @@ if ($resql) {
 		}
 
 		// Check values
-		if ($event->date_end_in_calendar < $firstdaytoshow || $event->date_start_in_calendar >= $lastdaytoshow)	{
+		if ($event->date_end_in_calendar < $firstdaytoshow || $event->date_start_in_calendar >= $lastdaytoshow) {
 			// This record is out of visible range
 		} else {
 			if ($event->date_start_in_calendar < $firstdaytoshow) {
@@ -934,7 +938,8 @@ if ($resql) {
 			//print 'annee='.$annee.' mois='.$mois.' jour='.$jour.'<br>';
 
 			// Loop on each day covered by action to prepare an index to show on calendar
-			$loop = true; $j = 0;
+			$loop = true;
+			$j = 0;
 			$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee, 'gmt');	// $mois, $jour, $annee has been set for user tz
 			$daykeyend = dol_mktime(0, 0, 0, $moisend, $jourend, $anneeend, 'gmt');	// $moisend, $jourend, $anneeend has been set for user tz
 			/*
@@ -1393,14 +1398,16 @@ if (count($listofextcals)) {
 						$jour = dol_print_date($daycursor, '%d', 'tzuserrel');
 
 						// Loop on each day covered by action to prepare an index to show on calendar
-						$loop = true; $j = 0;
+						$loop = true;
+						$j = 0;
 						// daykey must be date that represent day box in calendar so must be a user time
 						$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee, 'gmt');
 						$daykeygmt = dol_mktime(0, 0, 0, $mois, $jour, $annee, 'gmt');
 						do {
 							//if ($event->fulldayevent) print dol_print_date($daykeygmt,'dayhour','gmt').'-'.dol_print_date($daykey,'dayhour','gmt').'-'.dol_print_date($event->date_end_in_calendar,'dayhour','gmt').' ';
 							$eventarray[$daykey][] = $event;
-							$daykey += 60 * 60 * 24; $daykeygmt += 60 * 60 * 24; // Add one day
+							$daykey += 60 * 60 * 24;
+							$daykeygmt += 60 * 60 * 24; // Add one day
 							if (($event->fulldayevent ? $daykeygmt : $daykey) > $event->date_end_in_calendar) {
 								$loop = false;
 							}
@@ -1502,8 +1509,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 			$currdate0 = sprintf("%04d", $prev_year).sprintf("%02d", $prev_month).sprintf("%02d", $max_day_in_prev_month + $tmpday);
 		} elseif ($tmpday <= $max_day_in_month) { // If number of the current day is in current month
 			$currdate0 = sprintf("%04d", $year).sprintf("%02d", $month).sprintf("%02d", $tmpday);
-		} else // If number of the current day is in next month
-		{
+		} else { // If number of the current day is in next month
 			$currdate0 = sprintf("%04d", $next_year).sprintf("%02d", $next_month).sprintf("%02d", $tmpday - $max_day_in_month);
 		}
 		// Get week number for the targeted date '$currdate0'
@@ -1798,11 +1804,17 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	print '<div class="tagtd centpercent agendacell sortable">';
 
 	//$curtime = dol_mktime (0, 0, 0, $month, $day, $year);
-	$i = 0; $ireallyshown = 0; $itoshow = 0; $numother = 0; $numbirthday = 0; $numical = 0; $numicals = array();
+	$i = 0;
+	$ireallyshown = 0;
+	$itoshow = 0;
+	$numother = 0;
+	$numbirthday = 0;
+	$numical = 0;
+	$numicals = array();
 	$ymd = sprintf("%04d", $year).sprintf("%02d", $month).sprintf("%02d", $day);
 
 	$colorindexused[$user->id] = 0; // Color index for current user (user->id) is always 0
-	$nextindextouse = is_array($colorindexused) ?count($colorindexused) : 0; // At first run this is 0, so fist user has 0, next 1, ...
+	$nextindextouse = is_array($colorindexused) ? count($colorindexused) : 0; // At first run this is 0, so fist user has 0, next 1, ...
 	//var_dump($colorindexused);
 
 	include_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
@@ -1822,7 +1834,9 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					$ponct = ($event->date_start_in_calendar == $event->date_end_in_calendar);
 
 					// Define $color (Hex string like '0088FF') and $cssclass of event
-					$color = -1; $cssclass = ''; $colorindex = -1;
+					$color = -1;
+					$cssclass = '';
+					$colorindex = -1;
 					if (in_array($user->id, $keysofuserassigned)) {
 						$cssclass = 'family_mytasks';
 
@@ -1917,18 +1931,21 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					} else {
 						if ($user->hasRight('agenda', 'allactions', 'create') ||
 							(($event->authorid == $user->id || $event->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create'))) {
-								$cssclass .= " movable cursormove";
+							$cssclass .= " movable cursormove";
 						} else {
 							$cssclass .= " unmovable";
 						}
 					}
 
-					$h = ''; $nowrapontd = 1;
+					$h = '';
+					$nowrapontd = 1;
 					if ($mode == 'show_day') {
-						$h = 'height: 100%; '; $nowrapontd = 0;
+						$h = 'height: 100%; ';
+						$nowrapontd = 0;
 					}
 					if ($mode == 'show_week') {
-						$h = 'height: 100%; '; $nowrapontd = 0;
+						$h = 'height: 100%; ';
+						$nowrapontd = 0;
 					}
 
 					// Show event box
@@ -1968,7 +1985,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					//var_dump($event->userassigned);
 					//var_dump($event->transparency);
 					print '<table class="centpercent cal_event';
-					print (empty($event->transparency) ? ' cal_event_notbusy' : ' cal_event_busy');
+					print(empty($event->transparency) ? ' cal_event_notbusy' : ' cal_event_busy');
 					//if (empty($event->transparency) && empty($conf->global->AGENDA_NO_TRANSPARENT_ON_NOT_BUSY)) print ' opacitymedium';	// Not busy
 					print '" style="'.$h;
 					$colortouse = $color;
@@ -2188,10 +2205,10 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					$i++;
 				} else {
 					print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode='.$mode.'&maxprint=0&month='.((int) $monthshown).'&year='.((int) $year);
-					print ($status ? '&status='.$status : '').($filter ? '&filter='.urlencode($filter) : '');
-					print ($filtert ? '&search_filtert='.urlencode($filtert) : '');
-					print ($usergroup ? '&search_usergroup='.urlencode($usergroup) : '');
-					print ($actioncode != '' ? '&search_actioncode='.urlencode($actioncode) : '');
+					print($status ? '&status='.$status : '').($filter ? '&filter='.urlencode($filter) : '');
+					print($filtert ? '&search_filtert='.urlencode($filtert) : '');
+					print($usergroup ? '&search_usergroup='.urlencode($usergroup) : '');
+					print($actioncode != '' ? '&search_actioncode='.urlencode($actioncode) : '');
 					print '">'.img_picto("all", "1downarrow_selected.png").' ...';
 					print ' +'.(count($eventarray[$daykey]) - $maxprint);
 					print '</a>';
@@ -2261,7 +2278,7 @@ function dol_color_minus($color, $minus, $minusunit = 16)
  *
  * @param   object  $a      Event A
  * @param   object  $b      Event B
- * @return  int             < 0 if event A should be before event B, > 0 otherwise, 0 if they have the exact same time slot
+ * @return  int             Return integer < 0 if event A should be before event B, > 0 otherwise, 0 if they have the exact same time slot
  */
 function sort_events_by_date($a, $b)
 {
@@ -2300,7 +2317,7 @@ function sort_events_by_date($a, $b)
  *
  * @param   object  $a      Event A
  * @param   object  $b      Event B
- * @return  int             < 0 if event A should be before event B, > 0 otherwise, 0 if they have the exact same percentage
+ * @return  int             Return integer < 0 if event A should be before event B, > 0 otherwise, 0 if they have the exact same percentage
  */
 function sort_events_by_percentage($a, $b)
 {
