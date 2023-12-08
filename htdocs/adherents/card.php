@@ -57,7 +57,7 @@ $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $rowid = GETPOST('rowid', 'int');
-$id = GETPOST('id') ?GETPOST('id', 'int') : $rowid;
+$id = GETPOST('id') ? GETPOST('id', 'int') : $rowid;
 $typeid = GETPOST('typeid', 'int');
 $userid = GETPOST('userid', 'int');
 $socid = GETPOST('socid', 'int');
@@ -616,7 +616,7 @@ if (empty($reshook)) {
 				}
 			}
 		}
-		$action = ($result < 0 || !$error) ?  '' : 'create';
+		$action = ($result < 0 || !$error) ? '' : 'create';
 
 		if (!$error && $backtopage) {
 			header("Location: ".$backtopage);
@@ -1022,7 +1022,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$morphys["phy"] = $langs->trans("Physical");
 		$morphys["mor"] = $langs->trans("Moral");
 		print '<tr><td class="fieldrequired">'.$langs->trans("MemberNature")."</td><td>\n";
-		print $form->selectarray("morphy", $morphys, (GETPOST('morphy', 'alpha') ?GETPOST('morphy', 'alpha') : $object->morphy), 1, 0, 0, '', 0, 0, 0, '', '', 1);
+		print $form->selectarray("morphy", $morphys, (GETPOST('morphy', 'alpha') ? GETPOST('morphy', 'alpha') : $object->morphy), 1, 0, 0, '', 0, 0, 0, '', '', 1);
 		print "</td>\n";
 
 		// Company
@@ -1058,7 +1058,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Address
 		print '<tr><td class="tdtop">'.$langs->trans("Address").'</td><td>';
-		print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="2">'.(GETPOSTISSET('address') ?GETPOST('address', 'alphanohtml') : $soc->address).'</textarea>';
+		print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="2">'.(GETPOSTISSET('address') ? GETPOST('address', 'alphanohtml') : $soc->address).'</textarea>';
 		print '</td></tr>';
 
 		// Zip / Town
@@ -1154,11 +1154,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	if ($action == 'edit') {
 		$res = $object->fetch($id);
 		if ($res < 0) {
-			dol_print_error($db, $object->error); exit;
+			dol_print_error($db, $object->error);
+			exit;
 		}
 		$res = $object->fetch_optionals();
 		if ($res < 0) {
-			dol_print_error($db); exit;
+			dol_print_error($db);
+			exit;
 		}
 
 		$adht = new AdherentType($db);
@@ -1307,7 +1309,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Website
 		print '<tr><td>'.$form->editfieldkey('Web', 'member_url', GETPOST('member_url', 'alpha'), $object, 0).'</td>';
-		print '<td>'.img_picto('', 'globe', 'class="pictofixedwidth"').'<input type="text" name="member_url" id="member_url" class="maxwidth200onsmartphone maxwidth500 widthcentpercentminusx " value="'.(GETPOSTISSET('member_url') ?GETPOST('member_url', 'alpha') : $object->url).'"></td></tr>';
+		print '<td>'.img_picto('', 'globe', 'class="pictofixedwidth"').'<input type="text" name="member_url" id="member_url" class="maxwidth200onsmartphone maxwidth500 widthcentpercentminusx " value="'.(GETPOSTISSET('member_url') ? GETPOST('member_url', 'alpha') : $object->url).'"></td></tr>';
 
 		// Address
 		print '<tr><td>'.$langs->trans("Address").'</td><td>';
@@ -1356,7 +1358,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				if (!$value['active']) {
 					break;
 				}
-				print '<tr><td>'.$langs->trans($value['label']).'</td><td><input type="text" name="'.$key.'" class="minwidth100" value="'.(GETPOSTISSET($key) ? GETPOST($key, 'alphanohtml') : (isset($object->socialnetworks[$key])? $object->socialnetworks[$key] : null)).'"></td></tr>';
+				print '<tr><td>'.$langs->trans($value['label']).'</td><td><input type="text" name="'.$key.'" class="minwidth100" value="'.(GETPOSTISSET($key) ? GETPOST($key, 'alphanohtml') : (isset($object->socialnetworks[$key]) ? $object->socialnetworks[$key] : null)).'"></td></tr>';
 			}
 		}
 
@@ -1435,17 +1437,20 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	if ($id > 0 && $action != 'edit') {
 		$res = $object->fetch($id);
 		if ($res < 0) {
-			dol_print_error($db, $object->error); exit;
+			dol_print_error($db, $object->error);
+			exit;
 		}
 		$res = $object->fetch_optionals();
 		if ($res < 0) {
-			dol_print_error($db); exit;
+			dol_print_error($db);
+			exit;
 		}
 
 		$adht = new AdherentType($db);
 		$res = $adht->fetch($object->typeid);
 		if ($res < 0) {
-			dol_print_error($db); exit;
+			dol_print_error($db);
+			exit;
 		}
 
 

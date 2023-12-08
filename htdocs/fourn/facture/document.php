@@ -42,7 +42,7 @@ if (isModEnabled('project')) {
 
 $langs->loadLangs(array('bills', 'other', 'companies'));
 
-$id = GETPOST('facid', 'int') ?GETPOST('facid', 'int') : GETPOST('id', 'int');
+$id = GETPOST('facid', 'int') ? GETPOST('facid', 'int') : GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $ref = GETPOST('ref', 'alpha');
@@ -147,7 +147,7 @@ if ($object->id > 0) {
 	print '<div class="underbanner clearboth"></div>';
 
 	// Build file list
-	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 	$totalsize = 0;
 	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];

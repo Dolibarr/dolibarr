@@ -28,7 +28,7 @@ if (!empty($form) && !is_object($form)) {
 	$form = new Form($db);
 }
 
-$qtytoconsumeforline = $this->tpl['qty'] / ( !empty($this->tpl['efficiency']) ? $this->tpl['efficiency'] : 1 );
+$qtytoconsumeforline = $this->tpl['qty'] / (!empty($this->tpl['efficiency']) ? $this->tpl['efficiency'] : 1);
 /*if ((empty($this->tpl['qty_frozen']) && $this->tpl['qty_bom'] > 1)) {
 	$qtytoconsumeforline = $qtytoconsumeforline / $this->tpl['qty_bom'];
 }*/
@@ -52,7 +52,7 @@ if ($res) {
 		print ' ' . $langs->trans("or") . ' ';
 		print $tmpbom->getNomUrl(1);
 		print ' <a class="collapse_bom" id="collapse-' . $line->id . '" href="#">';
-		print (!getDolGlobalString('BOM_SHOW_ALL_BOM_BY_DEFAULT') ? img_picto('', 'folder') : img_picto('', 'folder-open'));
+		print(!getDolGlobalString('BOM_SHOW_ALL_BOM_BY_DEFAULT') ? img_picto('', 'folder') : img_picto('', 'folder-open'));
 	}
 	print '</a>';
 } else {

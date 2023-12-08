@@ -237,7 +237,7 @@ class MultiCurrency extends CommonObject
 	/**
 	 * Load all rates in object from the database
 	 *
-	 * @return int <0 if KO, >=0 if OK
+	 * @return int Return integer <0 if KO, >=0 if OK
 	 */
 	public function fetchAllCurrencyRate()
 	{
@@ -458,12 +458,12 @@ class MultiCurrency extends CommonObject
 		return -1;
 	}
 
-	 /**
-	  * Add new entry into llx_multicurrency_rate
-	  *
-	  * @param double	$rate	rate value
-	  * @return int Return integer <0 if KO, >0 if OK
-	  */
+	/**
+	 * Add new entry into llx_multicurrency_rate
+	 *
+	 * @param double	$rate	rate value
+	 * @return int Return integer <0 if KO, >0 if OK
+	 */
 	public function updateRate($rate)
 	{
 		return $this->addRate($rate);
@@ -491,14 +491,14 @@ class MultiCurrency extends CommonObject
 		return -1;
 	}
 
-	 /**
-	  * Get id of currency from code
-	  *
-	  * @param  DoliDB	$dbs	    object db
-	  * @param  string	$code	    code value search
-	  *
-	  * @return int                 0 if not found, >0 if OK
-	  */
+	/**
+	 * Get id of currency from code
+	 *
+	 * @param  DoliDB	$dbs	    object db
+	 * @param  string	$code	    code value search
+	 *
+	 * @return int                 0 if not found, >0 if OK
+	 */
 	public static function getIdFromCode($dbs, $code)
 	{
 		global $conf;
@@ -514,16 +514,16 @@ class MultiCurrency extends CommonObject
 		}
 	}
 
-	 /**
-	  * Get id and rate of currency from code
-	  *
-	  * @param DoliDB	$dbs	        Object db
-	  * @param string	$code	        Code value search
-	  * @param integer	$date_document	Date from document (propal, order, invoice, ...)
-	  *
-	  * @return 	array	[0] => id currency
-	  *						[1] => rate
-	  */
+	/**
+	 * Get id and rate of currency from code
+	 *
+	 * @param DoliDB	$dbs	        Object db
+	 * @param string	$code	        Code value search
+	 * @param integer	$date_document	Date from document (propal, order, invoice, ...)
+	 *
+	 * @return 	array	[0] => id currency
+	 *						[1] => rate
+	 */
 	public static function getIdAndTxFromCode($dbs, $code, $date_document = '')
 	{
 		global $conf;

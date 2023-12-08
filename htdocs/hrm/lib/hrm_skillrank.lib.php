@@ -118,7 +118,9 @@ function displayRankInfos($selected_rank, $fk_skill, $inputname = 'TNote', $mode
 	if (!is_array($Lines) && $Lines<0) {
 		setEventMessages($skilldet->error, $skilldet->errors, 'errors');
 	}
-	if (empty($Lines)) return $langs->trans('SkillHasNoLines');
+	if (empty($Lines)) {
+		return $langs->trans('SkillHasNoLines');
+	}
 
 	$ret = '<!-- field jquery --><span title="'.$langs->trans('NA').'" class="radio_js_bloc_number '.$inputname.'_'.$fk_skill.(empty($selected_rank) ? ' selected' : '').'">';
 	$ret .= $langs->trans('NA');

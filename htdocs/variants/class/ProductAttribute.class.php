@@ -196,7 +196,7 @@ class ProductAttribute extends CommonObject
 	 *
 	 * @param   User    $user      Object user
 	 * @param   int     $notrigger Do not execute trigger
-	 * @return 					int <0 KO, Id of new variant if OK
+	 * @return 					int Return integer <0 KO, Id of new variant if OK
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
@@ -274,7 +274,7 @@ class ProductAttribute extends CommonObject
 	 * Fetches the properties of a product attribute
 	 *
 	 * @param int $id Attribute id
-	 * @return int <1 KO, >1 OK
+	 * @return int Return integer <1 KO, >1 OK
 	 */
 	public function fetch($id)
 	{
@@ -366,7 +366,7 @@ class ProductAttribute extends CommonObject
 	 *
 	 * @param   User    $user      Object user
 	 * @param   int     $notrigger Do not execute trigger
-	 * @return 	int 				<0 KO, >0 OK
+	 * @return 	int 				Return integer <0 KO, >0 OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -437,7 +437,7 @@ class ProductAttribute extends CommonObject
 	 *
 	 * @param   User    $user      Object user
 	 * @param   int     $notrigger Do not execute trigger
-	 * @return 	int <0 KO, >0 OK
+	 * @return 	int Return integer <0 KO, >0 OK
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
@@ -827,7 +827,7 @@ class ProductAttribute extends CommonObject
 	/**
 	 * Test if used by a product
 	 *
-	 * @return int <0 KO, =0 if No, =1 if Yes
+	 * @return int Return integer <0 KO, =0 if No, =1 if Yes
 	 */
 	public function isUsed()
 	{
@@ -976,7 +976,7 @@ class ProductAttribute extends CommonObject
 	 * 	Update a attribute to have a higher position
 	 *
 	 * @param	int		$rowid		Id of line
-	 * @return	int					<0 KO, >0 OK
+	 * @return	int					Return integer <0 KO, >0 OK
 	 */
 	public function attributeMoveUp($rowid)
 	{
@@ -995,7 +995,7 @@ class ProductAttribute extends CommonObject
 	 * 	Update a attribute to have a lower position
 	 *
 	 * @param	int		$rowid		Id of line
-	 * @return	int					<0 KO, >0 OK
+	 * @return	int					Return integer <0 KO, >0 OK
 	 */
 	public function attributeMoveDown($rowid)
 	{
@@ -1354,9 +1354,12 @@ class ProductAttribute extends CommonObject
 
 					$parameters = array();
 					$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-					if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-					if (empty($reshook))
+					if ($reshook < 0) {
+						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+					}
+					if (empty($reshook)) {
 						$object->formAddObjectLine(1, $mysoc, $buyer);
+					}
 				}
 			}
 		}

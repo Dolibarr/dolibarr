@@ -86,7 +86,7 @@ $arrayAvailableType = array(
 if ($action == 'edit') {
 	$item->fieldInputOverride = $form->selectarray('INVOICE_USE_RETAINED_WARRANTY', $arrayAvailableType, $conf->global->INVOICE_USE_RETAINED_WARRANTY, 1);
 } else {
-	$item->fieldOutputOverride= isset($arrayAvailableType[getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')])?$arrayAvailableType[getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')]:'';
+	$item->fieldOutputOverride= isset($arrayAvailableType[getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')]) ? $arrayAvailableType[getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')] : '';
 }
 
 //$item = $formSetup->newItem('INVOICE_RETAINED_WARRANTY_LIMITED_TO_SITUATION')->setAsYesNo();

@@ -91,7 +91,8 @@ if ($labeluser && $labelgroup) {
 }
 // Web user group real (detected by 'id' external command)
 if (function_exists('exec')) {
-	$arrayout = array(); $varout = 0;
+	$arrayout = array();
+	$varout = 0;
 	exec('id', $arrayout, $varout);
 	if (empty($varout)) {	// Test command is ok. Work only on Linux OS.
 		print '<strong>'.$langs->trans("WebUserGroup")." (real, 'id' command)</strong> : ".join(',', $arrayout)."<br>\n";
@@ -109,8 +110,8 @@ if (!ini_get('session.cookie_samesite') || ini_get('session.cookie_samesite') ==
 	print ' &nbsp; '.img_warning().' <span class="opacitymedium">'.$langs->trans("WarningPaypalPaymentNotCompatibleWithStrict")."</span>";
 }
 print "<br>\n";
-print "<strong>PHP open_basedir</strong> = ".(ini_get('open_basedir') ?  img_picto('', 'tick').' '.ini_get('open_basedir') : img_warning().' '.yn(0).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("ARestrictedPath").', '.$langs->transnoentitiesnoconv("Example").': '.$_SERVER["DOCUMENT_ROOT"].','.DOL_DATA_ROOT).')</span>')."<br>\n";
-print "<strong>PHP short_open_tag</strong> = ".((empty(ini_get('short_open_tag')) || ini_get('short_open_tag') == 'Off') ?  img_picto('', 'tick').' '.yn(0) : img_warning().' '.yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No")).')</span>'."<br>\n";
+print "<strong>PHP open_basedir</strong> = ".(ini_get('open_basedir') ? img_picto('', 'tick').' '.ini_get('open_basedir') : img_warning().' '.yn(0).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("ARestrictedPath").', '.$langs->transnoentitiesnoconv("Example").': '.$_SERVER["DOCUMENT_ROOT"].','.DOL_DATA_ROOT).')</span>')."<br>\n";
+print "<strong>PHP short_open_tag</strong> = ".((empty(ini_get('short_open_tag')) || ini_get('short_open_tag') == 'Off') ? img_picto('', 'tick').' '.yn(0) : img_warning().' '.yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No")).')</span>'."<br>\n";
 print "<strong>PHP allow_url_fopen</strong> = ".(ini_get('allow_url_fopen') ? img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' '.ini_get('allow_url_fopen') : yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No")).")</span><br>\n";
 print "<strong>PHP allow_url_include</strong> = ".(ini_get('allow_url_include') ? img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' '.ini_get('allow_url_include') : img_picto('', 'tick').' '.yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No")).")</span><br>\n";
 //print "<strong>PHP safe_mode</strong> = ".(ini_get('safe_mode') ? ini_get('safe_mode') : yn(0)).' &nbsp; <span class="opacitymedium">'.$langs->trans("Deprecated")." (removed in PHP 5.4)</span><br>\n";
@@ -173,13 +174,6 @@ if (in_array($functiontokeep, $arrayoffunctionsdisabled)) {
 print '<span class="opacitymedium">'.$functiontokeep.'</span>';
 print '<br>';
 
-$arrayofstreams = stream_get_wrappers();
-if (!empty($arrayofstreams)) {
-	sort($arrayofstreams);
-	print "<strong>PHP streams</strong> = ".(join(',', $arrayofstreams)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'file,http,https,php').')</span>'."<br>\n";
-}
-
-print '<br>';
 
 // XDebug
 print '<strong>'.$langs->trans("XDebug").'</strong>: ';
@@ -304,21 +298,21 @@ print load_fiche_titre($langs->trans("ConfigurationFile").' ('.$conffile.')', ''
 
 print '<strong>$dolibarr_main_prod</strong>: '.($dolibarr_main_prod ? $dolibarr_main_prod : '0');
 if (empty($dolibarr_main_prod)) {
-	print ' &nbsp; '.img_picto('', 'warning').' '.$langs->trans("IfYouAreOnAProductionSetThis", 1);
+	print ' &nbsp; &nbsp; '.img_picto('', 'warning').' '.$langs->trans("IfYouAreOnAProductionSetThis", 1);
 }
 print '<br>';
 
 print '<strong>$dolibarr_nocsrfcheck</strong>: '.(empty($dolibarr_nocsrfcheck) ? '0' : $dolibarr_nocsrfcheck);
 if (!empty($dolibarr_nocsrfcheck)) {
-	print ' &nbsp; '.img_picto('', 'error').' '.$langs->trans("IfYouAreOnAProductionSetThis", 0);
+	print ' &nbsp; &nbsp;'.img_picto('', 'error').' '.$langs->trans("IfYouAreOnAProductionSetThis", 0);
 } else {
-	print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 0)</span>';
+	print ' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 0)</span>';
 }
 print '<br>';
 
 print '<strong>$dolibarr_main_restrict_ip</strong>: ';
 if (empty($dolibarr_main_restrict_ip)) {
-	print $langs->trans("None");
+	print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
 	//print ' <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("IPsOfUsers")).')</span>';
 } else {
 	print $dolibarr_main_restrict_ip;
@@ -331,13 +325,13 @@ if (empty($dolibarr_main_restrict_os_commands)) {
 } else {
 	print $dolibarr_main_restrict_os_commands;
 }
-print ' <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'mysqldump, mysql, pg_dump, pgrestore, mariadb, mariadb-dump, clamdscan').')</span>';
+print ' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'mysqldump, mysql, pg_dump, pgrestore, mariadb, mariadb-dump, clamdscan').')</span>';
 print '<br>';
 
 if (!getDolGlobalString('SECURITY_DISABLE_TEST_ON_OBFUSCATED_CONF')) {
 	print '<strong>$dolibarr_main_db_pass</strong>: ';
 	if (!empty($dolibarr_main_db_pass) && empty($dolibarr_main_db_encrypted_pass)) {
-		print img_picto('', 'warning').' '.$langs->trans("DatabasePasswordNotObfuscated").' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("SetOptionTo", $langs->transnoentitiesnoconv("MainDbPasswordFileConfEncrypted"), yn(1)).')</span>';
+		print img_picto('', 'warning').' '.$langs->trans("DatabasePasswordNotObfuscated").' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("SetOptionTo", $langs->transnoentitiesnoconv("MainDbPasswordFileConfEncrypted"), yn(1)).')</span>';
 		//print ' <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("IPsOfUsers")).')</span>';
 	} else {
 		print img_picto('', 'tick').' '.$langs->trans("DatabasePasswordObfuscated");
@@ -346,7 +340,39 @@ if (!getDolGlobalString('SECURITY_DISABLE_TEST_ON_OBFUSCATED_CONF')) {
 	print '<br>';
 }
 
+print '<strong>$dolibarr_main_stream_to_disable</strong>: ';
+if (empty($dolibarr_main_stream_to_disable)) {
+	print '<span class="opacitymedium">'.$langs->trans("Undefined").' = '.join(', ', $arrayofstreamtodisable).'</span>';
+} else {
+	print join(', ', $dolibarr_main_stream_to_disable);
+}
+print '<span class="bold"> -> PHP streams allowed = </span>';
+$arrayofstreams = stream_get_wrappers();
+if (!empty($arrayofstreams)) {
+	sort($arrayofstreams);
+	print (join(',', $arrayofstreams)).' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("TryToKeepOnly", 'file,http,https,php').')</span>'."\n";
+}
 
+print '<br>';
+
+/*
+if (!empty($dolibarr_main_stream_do_not_disable)) {
+	print '<strong>$dolibarr_main_stream_do_not_disable</strong>: ';
+	if (empty($dolibarr_main_stream_do_not_disable)) {
+		print '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>';
+	} else {
+		print join(', ', $dolibarr_main_stream_do_not_disable);
+	}
+	print ' -> PHP stream allowed = ';
+	$arrayofstreams = stream_get_wrappers();
+	if (!empty($arrayofstreams)) {
+		sort($arrayofstreams);
+		print (join(',', $arrayofstreams)).' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'Undefined').')</span>'."\n";
+	}
+
+	print '<br>';
+}
+*/
 
 // Menu Home - Setup - Security
 
@@ -379,15 +405,15 @@ print ': '.getDolGlobalInt('MAIN_SESSION_TIMEOUT').' '.strtolower($langs->trans(
 print '<br><br>';
 
 print '<strong>'.$langs->trans("MaxNumberOfImagesInGetPost").'</strong>: ';
-print (getDolGlobalInt('MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT') ? img_picto('', 'tick').' ' : '').getDolGlobalInt('MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT').' '.strtolower($langs->trans("Images"));
+print(getDolGlobalInt('MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT') ? img_picto('', 'tick').' ' : '').getDolGlobalInt('MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT').' '.strtolower($langs->trans("Images"));
 print '<br><br>';
 
 print '<strong>'.$langs->trans("MaxNumberOfPostOnPublicPagesByIP").'</strong>: ';
-print (getDolGlobalInt('MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS', 200) ? img_picto('', 'tick').' ' : '').getDolGlobalInt('MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS', 200).' '.strtolower($langs->trans("Posts"));
+print(getDolGlobalInt('MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS', 200) ? img_picto('', 'tick').' ' : '').getDolGlobalInt('MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS', 200).' '.strtolower($langs->trans("Posts"));
 print '<br><br>';
 
 print '<strong>'.$langs->trans("MaxNumberOfAttachementOnForms").'</strong>: ';
-print (getDolGlobalInt('MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS', 10) ? img_picto('', 'tick').' ' : '').getDolGlobalInt("MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS", 10).' '.strtolower($langs->trans("Files"));
+print(getDolGlobalInt('MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS', 10) ? img_picto('', 'tick').' ' : '').getDolGlobalInt("MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS", 10).' '.strtolower($langs->trans("Files"));
 print '<br><br>';
 
 print '<strong>'.$langs->trans("DoNotStoreClearPassword").'</strong>: ';

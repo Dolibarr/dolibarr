@@ -87,7 +87,7 @@ class UserBankAccount extends Account
 	 *
 	 * @param	User|null	$user		User
 	 * @param	int			$notrigger	1=Disable triggers
-	 * @return	int						<0 if KO, >= 0 if OK
+	 * @return	int						Return integer <0 if KO, >= 0 if OK
 	 */
 	public function create(User $user = null, $notrigger = 0)
 	{
@@ -115,7 +115,7 @@ class UserBankAccount extends Account
 	 *
 	 *	@param	User|null	$user		Object user
 	 *	@param	int			$notrigger	1=Disable triggers
-	 *	@return	int						<=0 if KO, >0 if OK
+	 *	@return	int						Return integer <=0 if KO, >0 if OK
 	 */
 	public function update(User $user = null, $notrigger = 0)
 	{
@@ -310,7 +310,6 @@ class UserBankAccount extends Account
 	 */
 	public function checkCountryBankAccount()
 	{
-
 		if (!empty($this->country_code)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 			$country_code_in_EEC = getCountriesInEEC();

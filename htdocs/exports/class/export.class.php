@@ -223,7 +223,7 @@ class Export
 									$this->array_export_sql_order[$i] = (!empty($module->export_sql_order[$r]) ? $module->export_sql_order[$r] : null);
 									//$this->array_export_sql[$i]=$module->export_sql[$r];
 
-									dol_syslog(get_class($this)."::load_arrays loaded for module ".$modulename." with index ".$i.", dataset=".$module->export_code[$r].", nb of fields=".(!empty($module->export_fields_code[$r]) ?count($module->export_fields_code[$r]) : ''));
+									dol_syslog(get_class($this)."::load_arrays loaded for module ".$modulename." with index ".$i.", dataset=".$module->export_code[$r].", nb of fields=".(!empty($module->export_fields_code[$r]) ? count($module->export_fields_code[$r]) : ''));
 									$i++;
 									//	          }
 								}
@@ -890,7 +890,8 @@ class Export
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// Commit or rollback
@@ -938,7 +939,7 @@ class Export
 				// recover export name / recuperation du nom de l'export
 
 				$string = $langs->trans($this->array_export_label[$keyModel]);
-				print ($string != $this->array_export_label[$keyModel] ? $string : $this->array_export_label[$keyModel]);
+				print($string != $this->array_export_label[$keyModel] ? $string : $this->array_export_label[$keyModel]);
 				print '</td>';
 				//print '<td>'.$obj->type.$keyModel.'</td>';
 				print '<td>'.str_replace(',', ' , ', $obj->field).'</td>';

@@ -26,7 +26,9 @@ define('NOSCANPOSTFORINJECTION', 1);
 define('NOSTYLECHECK', 1);
 define('USEDOLIBARREDITOR', 1);
 define('FORCE_CKEDITOR', 1); // We need CKEditor, even if module is off.
-if (!defined('DISABLE_JS_GRAHP')) define('DISABLE_JS_GRAPH', 1);
+if (!defined('DISABLE_JS_GRAHP')) {
+	define('DISABLE_JS_GRAPH', 1);
+}
 
 //header('X-XSS-Protection:0');	// Disable XSS filtering protection of some browsers (note: use of Content-Security-Policy is more efficient). Disabled as deprecated.
 
@@ -68,7 +70,7 @@ $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choi
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'websitelist'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'websitelist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 $dol_hide_topmenu = GETPOST('dol_hide_topmenu', 'int');
@@ -137,7 +139,7 @@ if (GETPOST('refreshsite') || GETPOST('refreshsite_x') || GETPOST('refreshsite.x
 }
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -195,13 +197,11 @@ if (($pageid > 0 || $pageref) && $action != 'addcontainer') {
 				$res = $objectpage->fetch(0, $object->id, ''); // We search first page of web site
 				if ($res == 0) {	// Page was not found, we reset it
 					$objectpage = new WebsitePage($db);
-				} else // We found a page, we set pageid to it.
-				{
+				} else { // We found a page, we set pageid to it.
 					$pageid = $objectpage->id;
 				}
 			}
-		} else // We have a valid page. We force pageid for the case we got the page with a fetch on ref.
-		{
+		} else { // We have a valid page. We force pageid for the case we got the page with a fetch on ref.
 			$pageid = $objectpage->id;
 		}
 	}
@@ -217,7 +217,8 @@ if (empty($pageid) && empty($pageref) && $object->id > 0 && $action != 'createco
 		}
 		$atleastonepage = (is_array($array) && count($array) > 0);
 
-		$firstpageid = 0; $homepageid = 0;
+		$firstpageid = 0;
+		$homepageid = 0;
 		foreach ($array as $key => $valpage) {
 			if (empty($firstpageid)) {
 				$firstpageid = $valpage->id;
@@ -323,9 +324,11 @@ if (GETPOST('optionsitefiles')) {
 
 if (empty($sortfield)) {
 	if ($action == 'file_manager') {
-		$sortfield = 'name'; $sortorder = 'ASC';
+		$sortfield = 'name';
+		$sortorder = 'ASC';
 	} else {
-		$sortfield = 'pageurl'; $sortorder = 'ASC';
+		$sortfield = 'pageurl';
+		$sortorder = 'ASC';
 	}
 }
 
@@ -371,7 +374,8 @@ if (GETPOST('refreshsite', 'alpha') || GETPOST('refreshsite.x', 'alpha') || GETP
 		}
 		$atleastonepage = (is_array($array) && count($array) > 0);
 
-		$firstpageid = 0; $homepageid = 0;
+		$firstpageid = 0;
+		$homepageid = 0;
 		foreach ($array as $key => $valpage) {
 			if (empty($firstpageid)) {
 				$firstpageid = $valpage->id;
@@ -698,7 +702,9 @@ if ($action == 'addsite' && $usercanedit) {
 		$arrayotherlang = explode(',', GETPOST('WEBSITE_OTHERLANG', 'alphanohtml'));
 		foreach ($arrayotherlang as $key => $val) {
 			// It possible we have empty val here if postparam WEBSITE_OTHERLANG is empty or set like this : 'en,,sv' or 'en,sv,'
-			if (empty(trim($val))) continue;
+			if (empty(trim($val))) {
+				continue;
+			}
 			$arrayotherlang[$key] = substr(trim($val), 0, 2); // Kept short language code only
 		}
 
@@ -1487,7 +1493,9 @@ if ($action == 'updatecss' && $usercanedit) {
 				$arrayotherlang = explode(',', GETPOST('WEBSITE_OTHERLANG', 'alphanohtml'));
 				foreach ($arrayotherlang as $key => $val) {
 					// It possible we have empty val here if postparam WEBSITE_OTHERLANG is empty or set like this : 'en,,sv' or 'en,sv,'
-					if (empty(trim($val))) continue;
+					if (empty(trim($val))) {
+						continue;
+					}
 					$arrayotherlang[$key] = substr(trim($val), 0, 2); // Kept short language code only
 				}
 
@@ -2067,7 +2075,9 @@ if ($action == 'updatemeta' && $usercanedit) {
 					// Under certain conditions $sublang can be an empty string
 					// ($object->otherlang with empty string or with string like this 'en,,sv')
 					// if is the case we try to re-delete the main alias file. Avoid it.
-					if (empty(trim($sublang))) continue;
+					if (empty(trim($sublang))) {
+						continue;
+					}
 					$fileoldaliassub = $dirname.'/'.$sublang.'/'.$filename;
 					dol_delete_file($fileoldaliassub);
 				}
@@ -2090,7 +2100,9 @@ if ($action == 'updatemeta' && $usercanedit) {
 							// Under certain conditions $ sublang can be an empty string
 							// ($object->otherlang with empty string or with string like this 'en,,sv')
 							// if is the case we try to re-delete the main alias file. Avoid it.
-							if (empty(trim($sublang))) continue;
+							if (empty(trim($sublang))) {
+								continue;
+							}
 							$fileoldaliassub = $dirname.'/'.$sublang.'/'.$filename;
 							dol_delete_file($fileoldaliassub);
 						}
@@ -2152,7 +2164,7 @@ if ($usercanedit && (($action == 'updatesource' || $action == 'updatecontent' ||
 		$db->begin();
 
 		$objectnew = new Website($db);
-		$result = $objectnew->createFromClone($user, GETPOST('id', 'int'), GETPOST('siteref', 'aZ09'), (GETPOST('newlang', 'aZ09') ?GETPOST('newlang', 'aZ09') : ''));
+		$result = $objectnew->createFromClone($user, GETPOST('id', 'int'), GETPOST('siteref', 'aZ09'), (GETPOST('newlang', 'aZ09') ? GETPOST('newlang', 'aZ09') : ''));
 
 		if ($result < 0) {
 			$error++;
@@ -2794,7 +2806,7 @@ llxHeader($moreheadcss.$moreheadjs, $langs->trans("Website").(empty($website->re
 
 print "\n";
 print '<!-- Open form for all page -->'."\n";
-print '<form action="'.$_SERVER["PHP_SELF"].($action == 'file_manager' ? '?uploadform=1': '').'" method="POST" enctype="multipart/form-data" class="websiteformtoolbar">';
+print '<form action="'.$_SERVER["PHP_SELF"].($action == 'file_manager' ? '?uploadform=1' : '').'" method="POST" enctype="multipart/form-data" class="websiteformtoolbar">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 print '<input type="hidden" name="dol_openinpopup" value="'.$dol_openinpopup.'">';
@@ -3278,7 +3290,9 @@ if (!GETPOST('hide_websitemenu')) {
 							$onlylang[$website->lang] = $website->lang.' ('.$langs->trans("Default").')';
 						}
 						foreach (explode(',', $website->otherlang) as $langkey) {
-							if (empty(trim($langkey))) continue;
+							if (empty(trim($langkey))) {
+								continue;
+							}
 							$onlylang[$langkey] = $langkey;
 						}
 						$textifempty = $langs->trans("Default");
@@ -5131,13 +5145,13 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 
 		// Output file on browser
 		dol_syslog("index.php include $filetpl $filename content-type=$type");
-		$original_file_osencoded=dol_osencode($filetpl);	// New file name encoded in OS encoding charset
+		$original_file_osencoded=dol_osencode($filetpl);    // New file name encoded in OS encoding charset
 
 		// This test if file exists should be useless. We keep it to find bug more easily
 		if (! file_exists($original_file_osencoded))
 		{
-			dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file));
-			exit;
+		dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file));
+		exit;
 		}
 
 		//include_once $original_file_osencoded;

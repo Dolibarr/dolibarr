@@ -780,8 +780,11 @@ class dolReceiptPrinter extends Printer
 						$this->printer->text($title.$spaces.str_pad(price($object->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
 						break;
 					case 'DOL_PRINT_CURR_DATE':
-						if (strlen($vals[$tplline]['value'])<2) $this->printer->text(date('d/m/Y H:i:s')."\n");
-						else $this->printer->text(date($vals[$tplline]['value'])."\n");
+						if (strlen($vals[$tplline]['value'])<2) {
+							$this->printer->text(date('d/m/Y H:i:s')."\n");
+						} else {
+							$this->printer->text(date($vals[$tplline]['value'])."\n");
+						}
 						break;
 					case 'DOL_LINE_FEED':
 						$this->printer->feed();
@@ -924,7 +927,7 @@ class dolReceiptPrinter extends Printer
 						$action = '';
 						$reshook = $hookmanager->executeHooks('sendToPrinterAfter', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
-						if (!$reshook || $reshook < 0 ) {
+						if (!$reshook || $reshook < 0) {
 							$this->printer->text($vals[$tplline]['tag']);
 							$this->printer->text($vals[$tplline]['value']);
 							$this->errors[] = 'UnknowTag: &lt;'.strtolower($vals[$tplline]['tag']).'&gt;';

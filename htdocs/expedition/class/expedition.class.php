@@ -334,7 +334,7 @@ class Expedition extends CommonObject
 	 *
 	 *  @param	User	$user       Objet du user qui cree
 	 * 	@param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *  @return int 				<0 si erreur, id expedition creee si ok
+	 *  @return int 				Return integer <0 si erreur, id expedition creee si ok
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -495,7 +495,7 @@ class Expedition extends CommonObject
 	 * @param 	int		$qty				Quantity
 	 * @param 	int		$rang				Rang
 	 * @param	array	$array_options		extrafields array
-	 * @return	int							<0 if KO, line_id if OK
+	 * @return	int							Return integer <0 if KO, line_id if OK
 	 */
 	public function create_line($entrepot_id, $origin_line_id, $qty, $rang = 0, $array_options = null)
 	{
@@ -709,7 +709,7 @@ class Expedition extends CommonObject
 	 *
 	 *  @param      User		$user       Object user that validate
 	 *  @param		int			$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *  @return     int						<0 if OK, >0 if KO
+	 *  @return     int						Return integer <0 if OK, >0 if KO
 	 */
 	public function valid($user, $notrigger = 0)
 	{
@@ -803,13 +803,15 @@ class Expedition extends CommonObject
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'expedition/sending/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'expedition/sending/".$this->db->escape($this->newref)."'";
 				$sql .= " WHERE filepath = 'expedition/sending/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
@@ -857,7 +859,7 @@ class Expedition extends CommonObject
 	 *	Create a delivery receipt from a shipment
 	 *
 	 *	@param	User	$user       User
-	 *  @return int  				<0 if KO, >=0 if OK
+	 *  @return int  				Return integer <0 if KO, >=0 if OK
 	 */
 	public function create_delivery($user)
 	{
@@ -1150,7 +1152,8 @@ class Expedition extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error && !$notrigger) {
@@ -1277,7 +1280,8 @@ class Expedition extends CommonObject
 					}
 				}
 			} else {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -1285,7 +1289,8 @@ class Expedition extends CommonObject
 		if (!$error && isModEnabled('productbatch')) {
 			$shipmentlinebatch = new ExpeditionLineBatch($this->db);
 			if ($shipmentlinebatch->deleteFromShipment($this->id) < 0) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -1434,7 +1439,8 @@ class Expedition extends CommonObject
 					// get lot/serial
 					$lotArray = $shipmentlinebatch->fetchAll($obj->expeditiondet_id);
 					if (!is_array($lotArray)) {
-						$error++; $this->errors[] = "Error ".$this->db->lasterror();
+						$error++;
+						$this->errors[] = "Error ".$this->db->lasterror();
 					}
 					if (empty($lotArray)) {
 						// no lot/serial
@@ -1463,7 +1469,8 @@ class Expedition extends CommonObject
 					}
 				}
 			} else {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -1471,7 +1478,8 @@ class Expedition extends CommonObject
 		if (!$error) {
 			$shipmentlinebatch = new ExpeditionLineBatch($this->db);
 			if ($shipmentlinebatch->deleteFromShipment($this->id) < 0) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -1877,7 +1885,7 @@ class Expedition extends CommonObject
 				$label = $langs->trans("Shipment");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.'"';
 		}
 
@@ -2011,7 +2019,7 @@ class Expedition extends CommonObject
 	 *
 	 *	@param      User 	$user        		Object user that modify
 	 *	@param      int		$delivery_date		Delivery date
-	 *	@return     int         				<0 if ko, >0 if ok
+	 *	@return     int         				Return integer <0 if ko, >0 if ok
 	 *	@deprecated Use  setDeliveryDate
 	 */
 	public function set_date_livraison($user, $delivery_date)
@@ -2316,7 +2324,7 @@ class Expedition extends CommonObject
 	/**
 	 *	Classify the shipping as invoiced (used for exemple by trigger when WORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE is on)
 	 *
-	 *	@return     int     <0 if ko, >0 if ok
+	 *	@return     int     Return integer <0 if ko, >0 if ok
 	 */
 	public function setBilled()
 	{
@@ -2372,7 +2380,7 @@ class Expedition extends CommonObject
 	/**
 	 *	Classify the shipping as validated/opened
 	 *
-	 *	@return     int     <0 if KO, 0 if already open, >0 if OK
+	 *	@return     int     Return integer <0 if KO, 0 if already open, >0 if OK
 	 */
 	public function reOpen()
 	{
@@ -2773,7 +2781,7 @@ class ExpeditionLigne extends CommonObjectLine
 	 *
 	 *	@param      User	$user			User that modify
 	 *	@param      int		$notrigger		1 = disable triggers
-	 *	@return     int						<0 if KO, line id >0 if OK
+	 *	@return     int						Return integer <0 if KO, line id >0 if OK
 	 */
 	public function insert($user, $notrigger = 0)
 	{
@@ -2920,7 +2928,7 @@ class ExpeditionLigne extends CommonObjectLine
 	 *
 	 *	@param		User	$user			User that modify
 	 *	@param		int		$notrigger		1 = disable triggers
-	 *  @return		int					< 0 if KO, > 0 if OK
+	 *  @return		int					Return integer < 0 if KO, > 0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{

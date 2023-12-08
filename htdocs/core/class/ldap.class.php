@@ -260,7 +260,7 @@ class Ldap
 	 * 	Use this->server, this->serverPort, this->ldapProtocolVersion, this->serverType, this->searchUser, this->searchPassword
 	 * 	After return, this->connection and $this->bind are defined
 	 *
-	 *	@return		int		<0 if KO, 1 if bind anonymous, 2 if bind auth
+	 *	@return		int		Return integer <0 if KO, 1 if bind anonymous, 2 if bind auth
 	 */
 	public function connect_bind()
 	{
@@ -1007,7 +1007,7 @@ class Ldap
 	 *
 	 *	@param	string	$dn			DN entry key
 	 *	@param	string	$filter		Filter
-	 *	@return	int|array			<0 or false if KO, array if OK
+	 *	@return	int|array			Return integer <0 or false if KO, array if OK
 	 */
 	public function getAttribute($dn, $filter)
 	{
@@ -1109,7 +1109,7 @@ class Ldap
 		if (!empty($activefilter)) {	// Use a predefined trusted filter (defined into setup by admin).
 			if (((string) $activefilter == '1' || (string) $activefilter == 'user') && $this->filter) {
 				$filter = '('.$this->filter.')';
-			} elseif (((string) $activefilter == 'group') && $this->filtergroup ) {
+			} elseif (((string) $activefilter == 'group') && $this->filtergroup) {
 				$filter = '('.$this->filtergroup.')';
 			} elseif (((string) $activefilter == 'member') && $this->filter) {
 				$filter = '('.$this->filtermember.')';
@@ -1511,10 +1511,10 @@ class Ldap
 	{
 		global $conf;
 		if ($pagecodefrom == 'ISO-8859-1' && $conf->file->character_set_client == 'UTF-8') {
-			$str = utf8_encode($str);
+			$str = mb_convert_encoding($str, 'UTF-8', 'ISO-8859-1');
 		}
 		if ($pagecodefrom == 'UTF-8' && $conf->file->character_set_client == 'ISO-8859-1') {
-			$str = utf8_decode($str);
+			$str = mb_convert_encoding($str, 'ISO-8859-1');
 		}
 		return $str;
 	}
@@ -1530,10 +1530,10 @@ class Ldap
 	{
 		global $conf;
 		if ($pagecodeto == 'ISO-8859-1' && $conf->file->character_set_client == 'UTF-8') {
-			$str = utf8_decode($str);
+			$str = mb_convert_encoding($str, 'ISO-8859-1');
 		}
 		if ($pagecodeto == 'UTF-8' && $conf->file->character_set_client == 'ISO-8859-1') {
-			$str = utf8_encode($str);
+			$str = mb_convert_encoding($str, 'UTF-8', 'ISO-8859-1');
 		}
 		return $str;
 	}

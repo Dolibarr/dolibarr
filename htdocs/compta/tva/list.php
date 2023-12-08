@@ -675,7 +675,9 @@ while ($i < $imaxinloop) {
 		// Type
 		if (!empty($arrayfields['t.fk_typepayment']['checked'])) {
 			print '<td>';
-			if (!empty($obj->payment_code)) print $langs->trans("PaymentTypeShort".$obj->payment_code);
+			if (!empty($obj->payment_code)) {
+				print $langs->trans("PaymentTypeShort".$obj->payment_code);
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -702,7 +704,9 @@ while ($i < $imaxinloop) {
 				print $bankstatic->getNomUrl(1);
 			}
 			print '</td>';
-			if (!$i) $totalarray['nbfield']++;
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		// Amount

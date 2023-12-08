@@ -872,7 +872,7 @@ class SupplierProposal extends CommonObject
 	 *
 	 * 	@param		User	$user		User that create
 	 * 	@param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *  @return     int     			<0 if KO, >=0 if OK
+	 *  @return     int     			Return integer <0 if KO, >=0 if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -958,7 +958,7 @@ class SupplierProposal extends CommonObject
 		$sql .= ", ".((int) $conf->entity);
 		$sql .= ", ".((int) $this->fk_multicurrency);
 		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
-		$sql .= ", ".((double) $this->multicurrency_tx);
+		$sql .= ", ".((float) $this->multicurrency_tx);
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -1150,7 +1150,7 @@ class SupplierProposal extends CommonObject
 		// Set ref
 		require_once DOL_DOCUMENT_ROOT."/core/modules/supplier_proposal/" . getDolGlobalString('SUPPLIER_PROPOSAL_ADDON').'.php';
 		$obj = $conf->global->SUPPLIER_PROPOSAL_ADDON;
-		$modSupplierProposal = new $obj;
+		$modSupplierProposal = new $obj();
 		$this->ref = $modSupplierProposal->getNextValue($objsoc, $this);
 
 		// Create clone
@@ -1328,7 +1328,7 @@ class SupplierProposal extends CommonObject
 						$line->total_localtax1	= $objp->total_localtax1;
 						$line->total_localtax2	= $objp->total_localtax2;
 						$line->total_ttc        = $objp->total_ttc;
-						  $line->fk_fournprice 	= $objp->fk_fournprice;
+						$line->fk_fournprice 	= $objp->fk_fournprice;
 						$marginInfos = getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $line->fk_fournprice, $objp->pa_ht);
 						$line->pa_ht = $marginInfos[0];
 						$line->marge_tx			= $marginInfos[1];
@@ -1386,7 +1386,7 @@ class SupplierProposal extends CommonObject
 	 *
 	 *  @param	User	$user       Object user that validate
 	 *  @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *  @return int         		<0 if KO, >=0 if OK
+	 *  @return int         		Return integer <0 if KO, >=0 if OK
 	 */
 	public function valid($user, $notrigger = 0)
 	{
@@ -1429,7 +1429,7 @@ class SupplierProposal extends CommonObject
 				$error++;
 			}
 
-			   // Trigger calls
+			// Trigger calls
 			if (!$error && !$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('PROPOSAL_SUPPLIER_VALIDATE', $user);
@@ -1449,13 +1449,15 @@ class SupplierProposal extends CommonObject
 					$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'supplier_proposal/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 					$resql = $this->db->query($sql);
 					if (!$resql) {
-						$error++; $this->error = $this->db->lasterror();
+						$error++;
+						$this->error = $this->db->lasterror();
 					}
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'supplier_proposal/".$this->db->escape($this->newref)."'";
 					$sql .= " WHERE filepath = 'supplier_proposal/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 					$resql = $this->db->query($sql);
 					if (!$resql) {
-						$error++; $this->error = $this->db->lasterror();
+						$error++;
+						$this->error = $this->db->lasterror();
 					}
 
 					// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
@@ -1505,7 +1507,7 @@ class SupplierProposal extends CommonObject
 	 *
 	 *	@param      User 	$user        		Object user that modify
 	 *	@param      int		$delivery_date		Delivery date
-	 *	@return     int         				<0 if ko, >0 if ok
+	 *	@return     int         				Return integer <0 if ko, >0 if ok
 	 *	@deprecated Use  setDeliveryDate
 	 */
 	public function set_date_livraison($user, $delivery_date)
@@ -1519,7 +1521,7 @@ class SupplierProposal extends CommonObject
 	 *
 	 *	@param      User 		$user        		Object user that modify
 	 *	@param      int			$delivery_date     Delivery date
-	 *	@return     int         					<0 if ko, >0 if ok
+	 *	@return     int         					Return integer <0 if ko, >0 if ok
 	 */
 	public function setDeliveryDate($user, $delivery_date)
 	{
@@ -1546,7 +1548,7 @@ class SupplierProposal extends CommonObject
 	 *
 	 *	@param      User	$user       Object user that modify
 	 *	@param      double	$remise      Amount discount
-	 *	@return     int         		<0 if ko, >0 if ok
+	 *	@return     int         		Return integer <0 if ko, >0 if ok
 	 */
 	/*
 	public function set_remise_percent($user, $remise)
@@ -1579,7 +1581,7 @@ class SupplierProposal extends CommonObject
 	 *
 	 *	@param      User	$user        Object user that modify
 	 *	@param      double	$remise      Amount discount
-	 *	@return     int         		<0 if ko, >0 if ok
+	 *	@return     int         		Return integer <0 if ko, >0 if ok
 	 */
 	/*
 	public function set_remise_absolue($user, $remise)
@@ -1639,7 +1641,8 @@ class SupplierProposal extends CommonObject
 		dol_syslog(get_class($this)."::reopen", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 		if (!$error) {
 			if (!$notrigger) {
@@ -1807,13 +1810,13 @@ class SupplierProposal extends CommonObject
 		return 1;
 	}
 
-	 /**
-	  *	Create ProductFournisseur
-	  *
-	  *	@param		Product 	$product	Object Product
-	  *	@param      User		$user		Object user
-	  *	@return     int         			Return integer <0 if KO, >0 if OK
-	  */
+	/**
+	 *	Create ProductFournisseur
+	 *
+	 *	@param		Product 	$product	Object Product
+	 *	@param      User		$user		Object user
+	 *	@return     int         			Return integer <0 if KO, >0 if OK
+	 */
 	public function createPriceFournisseur($product, $user)
 	{
 		global $conf;
@@ -2207,7 +2210,7 @@ class SupplierProposal extends CommonObject
 	 *
 	 *      @param          User	$user   Object user
 	 *      @param          string	$mode   "opened" for askprice to close, "signed" for proposal to invoice
-	 *      @return         WorkboardResponse|int	<0 if KO, WorkboardResponse if OK
+	 *      @return         WorkboardResponse|int	Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $mode)
 	{
@@ -2364,7 +2367,7 @@ class SupplierProposal extends CommonObject
 	/**
 	 *      Load indicator this->nb of global stats widget
 	 *
-	 *      @return     int         <0 if ko, >0 if ok
+	 *      @return     int         Return integer <0 if ko, >0 if ok
 	 */
 	public function load_state_board()
 	{
@@ -2552,7 +2555,7 @@ class SupplierProposal extends CommonObject
 				$label = $langs->trans("ShowSupplierProposal");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.'"';
 		}
 
@@ -3251,7 +3254,7 @@ class SupplierProposalLine extends CommonObjectLine
 	 *	Update propal line object into DB
 	 *
 	 *	@param 	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return	int					<0 if ko, >0 if ok
+	 *	@return	int					Return integer <0 if ko, >0 if ok
 	 */
 	public function update($notrigger = 0)
 	{
@@ -3402,7 +3405,7 @@ class SupplierProposalLine extends CommonObjectLine
 	 *	Update DB line fields total_xxx
 	 *	Used by migration
 	 *
-	 *	@return		int		<0 if ko, >0 if ok
+	 *	@return		int		Return integer <0 if ko, >0 if ok
 	 */
 	public function update_total()
 	{

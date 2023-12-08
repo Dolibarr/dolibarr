@@ -70,7 +70,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 
 // Search Criterias
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_id = GETPOST("search_id", 'alpha');
 $search_ref = GETPOST("search_ref", 'alpha');
 $search_ref_supplier = GETPOST("search_ref_supplier", 'alpha');
@@ -117,7 +117,7 @@ if (isModEnabled('variants')) {
 $diroutputmassaction = $conf->product->dir_output.'/temp/massgeneration/'.$user->id;
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -136,14 +136,16 @@ if (!$sortorder) {
 }
 
 // Initialize context for list
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'productservicelist';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'productservicelist';
 if ((string) $type == '1') {
-	$contextpage = 'servicelist'; if ($search_type == '') {
+	$contextpage = 'servicelist';
+	if ($search_type == '') {
 		$search_type = '1';
 	}
 }
 if ((string) $type == '0') {
-	$contextpage = 'productlist'; if ($search_type == '') {
+	$contextpage = 'productlist';
+	if ($search_type == '') {
 		$search_type = '0';
 	}
 }
@@ -1557,9 +1559,9 @@ while ($i < $imaxinloop) {
 
 	$object = $product_static;
 
-	$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('product', 'product_advance', 'read_prices'):$user->hasRight('product', 'lire');
+	$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_prices') : $user->hasRight('product', 'lire');
 	if ($product_static->isService()) {
-		$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('service', 'service_advance', 'read_prices'):$user->hasRight('service', 'lire');
+		$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('service', 'service_advance', 'read_prices') : $user->hasRight('service', 'lire');
 	}
 
 	if ($mode == 'kanban') {
@@ -1705,7 +1707,7 @@ while ($i < $imaxinloop) {
 					$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
 				}
 				print $duration_value;
-				print ((!empty($duration_unit) && isset($dur[$duration_unit]) && $duration_value != '') ? ' '.$langs->trans($dur[$duration_unit]) : '');
+				print((!empty($duration_unit) && isset($dur[$duration_unit]) && $duration_value != '') ? ' '.$langs->trans($dur[$duration_unit]) : '');
 			} elseif (!preg_match('/^[a-z]$/i', $obj->duration)) {		// If duration is a simple char (like 's' of 'm'), we do not show value
 				print $obj->duration;
 			}
@@ -2053,9 +2055,13 @@ while ($i < $imaxinloop) {
 					print img_warning($langs->trans("StockLowerThanLimit", $obj->seuil_stock_alerte)).' ';
 				}
 				if ($usercancreadprice) {
-					if ($product_static->stock_reel < 0) { print '<span class="warning">'; }
+					if ($product_static->stock_reel < 0) {
+						print '<span class="warning">';
+					}
 					print price(price2num($product_static->stock_reel, 'MS'), 0, $langs, 1, 0);
-					if ($product_static->stock_reel < 0) { print '</span>'; }
+					if ($product_static->stock_reel < 0) {
+						print '</span>';
+					}
 				}
 			}
 			print '</td>';
@@ -2071,9 +2077,13 @@ while ($i < $imaxinloop) {
 					print img_warning($langs->trans("StockLowerThanLimit", $obj->seuil_stock_alerte)).' ';
 				}
 				if ($usercancreadprice) {
-					if ($product_static->stock_theorique < 0) { print '<span class="warning">'; }
+					if ($product_static->stock_theorique < 0) {
+						print '<span class="warning">';
+					}
 					print price(price2num($product_static->stock_theorique, 'MS'), 0, $langs, 1, 0);
-					if ($product_static->stock_theorique < 0) { print '</span>'; }
+					if ($product_static->stock_theorique < 0) {
+						print '</span>';
+					}
 				}
 			}
 			print '</td>';

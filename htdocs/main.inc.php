@@ -746,7 +746,7 @@ if (!defined('NOLOGIN')) {
 
 			// Check code
 			if (!$ok) {
-				dol_syslog('Bad value for code, connexion refused');
+				dol_syslog('Bad value for code, connexion refused', LOG_NOTICE);
 				// Load translation files required by page
 				$langs->loadLangs(array('main', 'errors'));
 
@@ -854,7 +854,7 @@ if (!defined('NOLOGIN')) {
 			}
 
 			if (!$login) {
-				dol_syslog('Bad password, connexion refused', LOG_DEBUG);
+				dol_syslog('Bad password, connexion refused (see a previous notice message for more info)', LOG_NOTICE);
 				// Load translation files required by page
 				$langs->loadLangs(array('main', 'errors'));
 
@@ -1657,7 +1657,7 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
  * @param   int     $disablenoindex  Disable noindex tag for meta robots
  * @return	void
  */
-function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $disableforlogin = 0, $disablenofollow = 0, $disablenoindex = 0)
+function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [], $disableforlogin = 0, $disablenofollow = 0, $disablenoindex = 0)
 {
 	global $db, $conf, $langs, $user, $mysoc, $hookmanager;
 

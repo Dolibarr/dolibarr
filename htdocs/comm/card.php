@@ -343,7 +343,7 @@ if ($object->id > 0) {
 	// Prefix
 	if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
 		print '<tr><td>'.$langs->trans("Prefix").'</td><td>';
-		print ($object->prefix_comm ? $object->prefix_comm : '&nbsp;');
+		print($object->prefix_comm ? $object->prefix_comm : '&nbsp;');
 		print '</td></tr>';
 	}
 
@@ -1395,7 +1395,7 @@ if ($object->id > 0) {
 
 				print '<td class="nowrap right" style="min-width: 60px">';
 				print $langs->trans('FrequencyPer_'.$invoicetemplate->unit_frequency, $invoicetemplate->frequency).' - ';
-				print ($invoicetemplate->LibStatut($invoicetemplate->frequency, $invoicetemplate->suspended, 5, 0));
+				print($invoicetemplate->LibStatut($invoicetemplate->frequency, $invoicetemplate->suspended, 5, 0));
 				print '</td>';
 				print "</tr>\n";
 				$i++;
