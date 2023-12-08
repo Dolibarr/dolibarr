@@ -594,7 +594,7 @@ if ($event->type == 'payout.created') {
 	$objerrcode = '';
 	$objerrmessage = '';
 	$objpaymentmodetype = '';
-	if (property_exists($object, 'charges')) {				// Old format
+	if (!empty($object->charges)) {				// Old format
 		$chargesdataarray = $object->charges->data;
 		foreach ($chargesdataarray as $chargesdata) {
 			$objpayid = $chargesdata->id;
@@ -610,7 +610,8 @@ if ($event->type == 'payout.created') {
 			break;
 		}
 	}
-	if (property_exists($object, 'last_payment_error')) {	// New format 2023-10-16
+	if (!empty($object->last_payment_error)) {	// New format 2023-10-16
+		// $object is probably an object of type Stripe\PaymentIntent
 		$objpayid = $object->latest_charge;
 		$objpaydesc = $object->description;
 		$objinvoiceid = 0;
@@ -623,7 +624,7 @@ if ($event->type == 'payout.created') {
 		$objpaymentmodetype = $object->last_payment_error->payment_method->type;
 	}
 
-	dol_syslog("objpaymentmodetype = ".$objpaymentmodetype);
+	dol_syslog("objpayid=".$objpayid." objpaymentmodetype = ".$objpaymentmodetype." objerrcode=".$objerrcode);
 
 	// If this is a differed payment for SEPA, add a line into agenda events
 	if ($objpaymentmodetype == 'sepa_debit') {
