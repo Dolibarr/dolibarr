@@ -414,7 +414,7 @@ if ($action == 'writebookkeeping') {
 				$bookkeeping->date_creation = $now;
 				$bookkeeping->doc_type = 'supplier_invoice';
 				$bookkeeping->fk_doc = $key;
-				$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
+				$bookkeeping->fk_docdet = $val["fk_facturefourndet"];
 				$bookkeeping->thirdparty_code = $companystatic->code_fournisseur;
 
 				$bookkeeping->subledger_account = $tabcompany[$key]['code_compta_fournisseur'];
@@ -474,7 +474,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->date_creation = $now;
 					$bookkeeping->doc_type = 'supplier_invoice';
 					$bookkeeping->fk_doc = $key;
-					$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
+					$bookkeeping->fk_docdet = $val["fk_facturefourndet"];
 					$bookkeeping->thirdparty_code = $companystatic->code_fournisseur;
 
 					if (!empty($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER_USE_AUXILIARY_ON_DEPOSIT)) {
@@ -572,7 +572,7 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->date_creation = $now;
 						$bookkeeping->doc_type = 'supplier_invoice';
 						$bookkeeping->fk_doc = $key;
-						$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
+						$bookkeeping->fk_docdet = $val["fk_facturefourndet"];
 						$bookkeeping->thirdparty_code = $companystatic->code_fournisseur;
 
 						$bookkeeping->subledger_account = '';
@@ -625,7 +625,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->date_creation = $now;
 					$bookkeeping->doc_type = 'supplier_invoice';
 					$bookkeeping->fk_doc = $key;
-					$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
+					$bookkeeping->fk_docdet = $val["fk_facturefourndet"];
 					$bookkeeping->thirdparty_code = $companystatic->code_fournisseur;
 
 					$bookkeeping->subledger_account = '';
