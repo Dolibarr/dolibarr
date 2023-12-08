@@ -811,7 +811,7 @@ class ProductCustomerPrice extends CommonObject
 	 *
 	 * @param 	User $user 					User that modifies
 	 * @param 	int $forceupdateaffiliate 	update price on each soc child
-	 * @return 	int 						<0 if KO, 0 = action disabled, >0 if OK
+	 * @return 	int 						Return integer <0 if KO, 0 = action disabled, >0 if OK
 	 */
 	public function setPriceOnAffiliateThirdparty($user, $forceupdateaffiliate)
 	{

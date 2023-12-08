@@ -822,7 +822,7 @@ function startsWith($haystack, $needle)
  *
  * @param Object $static_object static object to fetch
  * @param string $tmp_ref ref of the object to fetch
- * @return int <0 if Ko or Id of object
+ * @return int Return integer <0 if Ko or Id of object
  */
 function fetchref($static_object, $tmp_ref)
 {

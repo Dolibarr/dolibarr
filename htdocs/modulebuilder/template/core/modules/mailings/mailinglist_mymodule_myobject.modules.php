@@ -96,7 +96,7 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 	 *  This is the main function that returns the array of emails
 	 *
 	 *  @param  int     $mailing_id     Id of emailing
-	 *  @return int                     <0 if error, number of emails added if ok
+	 *  @return int                     Return integer <0 if error, number of emails added if ok
 	 */
 	public function add_to_target($mailing_id)
 	{

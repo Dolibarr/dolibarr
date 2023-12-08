@@ -145,7 +145,7 @@ class FichinterRec extends Fichinter
 	 *
 	 *  @param      User    $user       User object
 	 *  @param      int     $notrigger  no trigger
-	 *  @return     int                 <0 if KO, id of fichinter if OK
+	 *  @return     int                 Return integer <0 if KO, id of fichinter if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -477,7 +477,7 @@ class FichinterRec extends Fichinter
 	 *  @param		int			$special_code		Special code
 	 *  @param		string		$label				Label of the line
 	 *  @param		string		$fk_unit			Unit
-	 *  @return		int			 				    <0 if KO, Id of line if OK
+	 *  @return		int			 				    Return integer <0 if KO, Id of line if OK
 	 */
 	public function addline($desc, $duration, $date, $rang = -1, $pu_ht = 0, $qty = 0, $txtva = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = '', $pu_ttc = 0, $type = 0, $special_code = 0, $label = '', $fk_unit = null)
 	{

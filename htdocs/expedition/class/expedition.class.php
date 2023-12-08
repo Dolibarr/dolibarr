@@ -334,7 +334,7 @@ class Expedition extends CommonObject
 	 *
 	 *  @param	User	$user       Objet du user qui cree
 	 * 	@param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *  @return int 				<0 si erreur, id expedition creee si ok
+	 *  @return int 				Return integer <0 si erreur, id expedition creee si ok
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -495,7 +495,7 @@ class Expedition extends CommonObject
 	 * @param 	int		$qty				Quantity
 	 * @param 	int		$rang				Rang
 	 * @param	array	$array_options		extrafields array
-	 * @return	int							<0 if KO, line_id if OK
+	 * @return	int							Return integer <0 if KO, line_id if OK
 	 */
 	public function create_line($entrepot_id, $origin_line_id, $qty, $rang = 0, $array_options = null)
 	{
@@ -709,7 +709,7 @@ class Expedition extends CommonObject
 	 *
 	 *  @param      User		$user       Object user that validate
 	 *  @param		int			$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *  @return     int						<0 if OK, >0 if KO
+	 *  @return     int						Return integer <0 if OK, >0 if KO
 	 */
 	public function valid($user, $notrigger = 0)
 	{
@@ -859,7 +859,7 @@ class Expedition extends CommonObject
 	 *	Create a delivery receipt from a shipment
 	 *
 	 *	@param	User	$user       User
-	 *  @return int  				<0 if KO, >=0 if OK
+	 *  @return int  				Return integer <0 if KO, >=0 if OK
 	 */
 	public function create_delivery($user)
 	{
@@ -2019,7 +2019,7 @@ class Expedition extends CommonObject
 	 *
 	 *	@param      User 	$user        		Object user that modify
 	 *	@param      int		$delivery_date		Delivery date
-	 *	@return     int         				<0 if ko, >0 if ok
+	 *	@return     int         				Return integer <0 if ko, >0 if ok
 	 *	@deprecated Use  setDeliveryDate
 	 */
 	public function set_date_livraison($user, $delivery_date)
@@ -2324,7 +2324,7 @@ class Expedition extends CommonObject
 	/**
 	 *	Classify the shipping as invoiced (used for exemple by trigger when WORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE is on)
 	 *
-	 *	@return     int     <0 if ko, >0 if ok
+	 *	@return     int     Return integer <0 if ko, >0 if ok
 	 */
 	public function setBilled()
 	{
@@ -2380,7 +2380,7 @@ class Expedition extends CommonObject
 	/**
 	 *	Classify the shipping as validated/opened
 	 *
-	 *	@return     int     <0 if KO, 0 if already open, >0 if OK
+	 *	@return     int     Return integer <0 if KO, 0 if already open, >0 if OK
 	 */
 	public function reOpen()
 	{
@@ -2781,7 +2781,7 @@ class ExpeditionLigne extends CommonObjectLine
 	 *
 	 *	@param      User	$user			User that modify
 	 *	@param      int		$notrigger		1 = disable triggers
-	 *	@return     int						<0 if KO, line id >0 if OK
+	 *	@return     int						Return integer <0 if KO, line id >0 if OK
 	 */
 	public function insert($user, $notrigger = 0)
 	{
@@ -2928,7 +2928,7 @@ class ExpeditionLigne extends CommonObjectLine
 	 *
 	 *	@param		User	$user			User that modify
 	 *	@param		int		$notrigger		1 = disable triggers
-	 *  @return		int					< 0 if KO, > 0 if OK
+	 *  @return		int					Return integer < 0 if KO, > 0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{

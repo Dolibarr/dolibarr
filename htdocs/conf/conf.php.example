@@ -349,6 +349,14 @@ $dolibarr_cron_allow_cli='0';
 //
 // $dolibarr_mailing_limit_sendbycli='0';
 
+// dolibarr_main_stream_to_disable
+// ================================
+// Can set a list of PHP stream to disable.
+// Default value: array('compress.zlib', 'compress.bzip2', 'ftp', 'ftps', 'glob', 'data', 'expect', 'ogg', 'rar', 'zip', 'zlib')
+// Examples: array('ftp', 'ftps')
+//
+// $dolibarr_main_stream_to_disable = array('compress.zlib', 'compress.bzip2', 'ftp', 'ftps', 'glob', 'data', 'expect', 'ogg', 'rar', 'zip', 'zlib');
+
 // MAIN_ANTIVIRUS_COMMAND (as a constant)
 // ======================
 // Force a value for the antivirus command line tool so setup for admin user interface has no effect.
@@ -378,8 +386,8 @@ $dolibarr_cron_allow_cli='0';
 // =========================
 // If this value is set to a value, it forces the creation of a file install.lock once an upgrade process into a new version end.
 // The value is the octal value of permission to set on created file.
-// The file install.lock prevents the use of the migration process another time. You will have to delete it manually for
-// next upgrade.
+// The file install.lock prevents the use of the install and upgrade process another time. You will have to delete it manually for
+// next install process or create a upgrade.unlock for next upgrade.
 // Default value: '0'
 // Example: '444';
 // $force_install_lockinstall='440';

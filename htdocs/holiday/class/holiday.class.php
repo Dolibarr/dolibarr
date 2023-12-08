@@ -2404,7 +2404,7 @@ class Holiday extends CommonObject
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 *      @param	User	$user   		Objet user
-	 *      @return WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
+	 *      @return WorkboardResponse|int 	Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user)
 	{

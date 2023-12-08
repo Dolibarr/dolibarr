@@ -462,7 +462,7 @@ if (empty($reshook)) {
 		$tva_tx = GETPOST('tva_tx', 'alpha');
 
 		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
-		$remise_percent = (GETPOSTISSET('remise_percent'.$predef) ? price2num(GETPOST('remise_percent'.$predef), 2) : 0);
+		$remise_percent = (GETPOSTISSET('remise_percent'.$predef) ? price2num(GETPOST('remise_percent'.$predef), '', 2) : 0);
 		if (empty($remise_percent)) {
 			$remise_percent = 0;
 		}
@@ -766,10 +766,9 @@ if (empty($reshook)) {
 			// TODO Use object->updateline instead objedtline->update
 
 			$price_ht =  price2num(GETPOST('elprice'), 'MU');
-			$remise_percent = price2num(GETPOST('elremise_percent'), 2);
+			$remise_percent = price2num(GETPOST('elremise_percent'), '', 2);
 			if ($remise_percent > 0) {
 				$remise = round(($price_ht * $remise_percent / 100), 2);
-				$price_ht = ($price_ht - $remise);
 			}
 
 			$objectline->fk_product = GETPOST('idprod', 'int');

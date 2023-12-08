@@ -1242,7 +1242,7 @@ class CMailFile
 	 * Read a file on disk and return encoded content for emails (mode = 'mail')
 	 *
 	 * @param	string	$sourcefile		Path to file to encode
-	 * @return 	int|string			    <0 if KO, encoded string if OK
+	 * @return 	int|string			    Return integer <0 if KO, encoded string if OK
 	 */
 	private function _encode_file($sourcefile)
 	{
@@ -1750,7 +1750,7 @@ class CMailFile
 					$_retVal = $socket;
 				}
 			} else {
-				$this->error = utf8_check('Error '.$errno.' - '.$errstr) ? 'Error '.$errno.' - '.$errstr : utf8_encode('Error '.$errno.' - '.$errstr);
+				$this->error = utf8_check('Error '.$errno.' - '.$errstr) ? 'Error '.$errno.' - '.$errstr : mb_convert_encoding('Error '.$errno.' - '.$errstr, 'UTF-8', 'ISO-8859-1');
 			}
 		}
 		return $_retVal;

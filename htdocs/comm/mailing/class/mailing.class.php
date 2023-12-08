@@ -308,7 +308,7 @@ class Mailing extends CommonObject
 	 *
 	 *  @param  User	$user 		Object of user making change
 	 * 	@param	int		$notrigger	Disable triggers
-	 *  @return int				    < 0 if KO, > 0 if OK
+	 *  @return int				    Return integer < 0 if KO, > 0 if OK
 	 */
 	public function update($user, $notrigger = 0)
 	{

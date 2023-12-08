@@ -828,7 +828,7 @@ class Salary extends CommonObject
 	 *  @param		string	$type						'direct-debit' or 'bank-transfer'
 	 *  @param		string	$sourcetype					Source ('facture' or 'supplier_invoice')
 	 *  @param		int		$checkduplicateamongall		0=Default (check among open requests only to find if request already exists). 1=Check also among requests completely processed and cancel if at least 1 request exists whatever is its status.
-	 *	@return     int         						<0 if KO, 0 if a request already exists, >0 if OK
+	 *	@return     int         						Return integer <0 if KO, 0 if a request already exists, >0 if OK
 	 */
 	public function demande_prelevement($fuser, $amount = 0, $type = 'direct-debit', $sourcetype = 'salaire', $checkduplicateamongall = 0)
 	{
@@ -945,7 +945,7 @@ class Salary extends CommonObject
 	 *
 	 *  @param  User	$fuser      User making delete
 	 *  @param  int		$did        ID of request to delete
-	 *  @return	int					<0 if OK, >0 if KO
+	 *  @return	int					Return integer <0 if OK, >0 if KO
 	 */
 	public function demande_prelevement_delete($fuser, $did)
 	{

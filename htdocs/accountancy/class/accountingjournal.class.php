@@ -114,7 +114,7 @@ class AccountingJournal extends CommonObject
 	 *
 	 * @param	int		$rowid				Id of record to load
 	 * @param 	string 	$journal_code		Journal code
-	 * @return	int							<0 if KO, Id of record if OK and found
+	 * @return	int							Return integer <0 if KO, Id of record if OK and found
 	 */
 	public function fetch($rowid = null, $journal_code = null)
 	{
