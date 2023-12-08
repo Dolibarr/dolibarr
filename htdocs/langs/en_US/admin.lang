@@ -2383,6 +2383,7 @@ RECEPTION_PDF_HIDE_ORDERED=Hide the quantity ordered on the generated documents 
 MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT=Show the price on the generated documents for receptions
 WarningDisabled=Warning disabled
 LimitsAndMitigation=Access limits and mitigation
+RecommendMitigationOnURL=It is recommanded to activate mitigation on critical URL. This is list of fail2ban rules you can use for the main important URLs.
 DesktopsOnly=Desktops only
 DesktopsAndSmartphones=Desktops et smartphones
 AllowOnlineSign=Allow online signing
