@@ -256,7 +256,7 @@ class ImportCsv extends ModeleImports
 						$newarrayres[$key]['val'] = $val;
 						$newarrayres[$key]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we considere it's null
 					} else {
-						$newarrayres[$key]['val'] = utf8_encode($val);
+						$newarrayres[$key]['val'] = mb_convert_encoding($val, 'UTF-8', 'ISO-8859-1');
 						$newarrayres[$key]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we considere it's null
 					}
 				} else { // Autodetect format (UTF8 or ISO)
@@ -264,7 +264,7 @@ class ImportCsv extends ModeleImports
 						$newarrayres[$key]['val'] = $val;
 						$newarrayres[$key]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we considere it's null
 					} else {
-						$newarrayres[$key]['val'] = utf8_encode($val);
+						$newarrayres[$key]['val'] = mb_convert_encoding($val, 'UTF-8', 'ISO-8859-1');
 						$newarrayres[$key]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we considere it's null
 					}
 				}
