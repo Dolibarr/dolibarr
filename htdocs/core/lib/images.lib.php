@@ -30,6 +30,11 @@ $maxwidthmini = 128;
 $maxheightmini = 72; // 16/9eme
 $quality = 80;
 
+if (!defined('IMAGETYPE_WEBP')) {
+	define('IMAGETYPE_WEBP', 18);
+}
+
+
 /**
  *      Return default values for image sizes
  *
@@ -445,7 +450,7 @@ function correctExifImageOrientation($fileSource, $fileDest, $quality = 95)
 						break;
 				}
 				if ($deg) {
-					if ($infoImg[2] === 'IMAGETYPE_PNG') { // In fact there is no exif on PNG but just in case
+					if ($infoImg[2] === IMAGETYPE_PNG) { // In fact there is no exif on PNG but just in case
 						imagealphablending($img, false);
 						imagesavealpha($img, true);
 						$img = imagerotate($img, $deg, imageColorAllocateAlpha($img, 0, 0, 0, 127));
