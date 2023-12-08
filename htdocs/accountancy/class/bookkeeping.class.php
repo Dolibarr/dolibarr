@@ -1143,7 +1143,6 @@ class BookKeeping extends CommonObject
 
 		$sql = 'SELECT';
 		$sql .= " t.numero_compte,";
-		$sql .= " t.label_compte,";
 		$sql .= " t.subledger_account,";
 		$sql .= " t.subledger_label,";
 		$sql .= " SUM(t.debit) as debit,";
@@ -1211,7 +1210,6 @@ class BookKeeping extends CommonObject
 				$line = new BookKeepingLine();
 
 				$line->numero_compte = $obj->numero_compte;
-				$line->label_compte = $obj->label_compte;
 				$line->subledger_account = $obj->subledger_account;
 				$line->subledger_label = $obj->subledger_label;
 				$line->debit = $obj->debit;

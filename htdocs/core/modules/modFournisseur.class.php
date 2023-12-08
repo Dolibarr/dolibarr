@@ -42,7 +42,7 @@ class modFournisseur extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf, $user;
+		global $conf, $user, $langs;
 
 		$this->db = $db;
 		$this->numero = 40;
@@ -282,6 +282,10 @@ class modFournisseur extends DolibarrModules
 		//--------
 		$r = 0;
 
+		$langs->loadLangs(array("suppliers", "multicurrency"));
+
+		$alias_product_perentity = empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p" : "ppe";
+
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = 'Vendor invoices and lines of invoices';
@@ -295,7 +299,7 @@ class modFournisseur extends DolibarrModules
 			'f.total_ht'=>"TotalHT", 'f.total_ttc'=>"TotalTTC", 'f.total_tva'=>"TotalVAT", 'f.paye'=>"InvoicePaid", 'f.fk_statut'=>'InvoiceStatus', 'f.note_public'=>"InvoiceNote",
 			'fd.rowid'=>'LineId', 'fd.description'=>"LineDescription", 'fd.tva_tx'=>"LineVATRate", 'fd.qty'=>"LineQty", 'fd.remise_percent'=>"Discount", 'fd.total_ht'=>"LineTotalHT",
 			'fd.total_ttc'=>"LineTotalTTC", 'fd.tva'=>"LineTotalVAT", 'fd.product_type'=>'TypeOfLineServiceOrProduct', 'fd.fk_product'=>'ProductId',
-			'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel', 'p.accountancy_code_buy'=>'ProductAccountancyBuyCode', 'project.rowid'=>'ProjectId',
+			'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel', $alias_product_perentity.'.accountancy_code_buy'=>'ProductAccountancyBuyCode', 'project.rowid'=>'ProjectId',
 			'project.ref'=>'ProjectRef', 'project.title'=>'ProjectLabel'
 		);
 		if (!empty($conf->multicurrency->enabled)) {
@@ -316,6 +320,7 @@ class modFournisseur extends DolibarrModules
 			's.code_compta'=>'Text', 's.code_compta_fournisseur'=>'Text', 's.tva_intra'=>'Text', 'f.ref'=>"Text", 'f.ref_supplier'=>"Text", 'f.datec'=>"Date", 'f.datef'=>"Date", 'f.date_lim_reglement'=>'Date',
 			'f.total_ht'=>"Numeric", 'f.total_ttc'=>"Numeric", 'f.total_tva'=>"Numeric", 'f.paye'=>"Boolean", 'f.fk_statut'=>'Status', 'f.note_public'=>"Text", 'fd.description'=>"Text", 'fd.tva_tx'=>"Text",
 			'fd.qty'=>"Numeric", 'fd.total_ht'=>"Numeric", 'fd.total_ttc'=>"Numeric", 'fd.tva'=>"Numeric", 'fd.product_type'=>'Numeric', 'fd.fk_product'=>'List:product:label',
+			$alias_product_perentity . '.accountancy_code_buy'=>'Text',
 			'p.ref'=>'Text', 'p.label'=>'Text', 'project.ref'=>'Text', 'project.title'=>'Text'
 		);
 		$this->export_entities_array[$r] = array(
@@ -324,7 +329,7 @@ class modFournisseur extends DolibarrModules
 			'f.ref'=>"invoice", 'f.ref_supplier'=>"invoice", 'f.datec'=>"invoice", 'f.datef'=>"invoice", 'f.date_lim_reglement'=>'invoice', 'f.total_ht'=>"invoice", 'f.total_ttc'=>"invoice", 'f.total_tva'=>"invoice",
 			'f.paye'=>"invoice", 'f.fk_statut'=>'invoice', 'f.note_public'=>"invoice", 'fd.rowid'=>'invoice_line', 'fd.description'=>"invoice_line", 'fd.tva_tx'=>"invoice_line", 'fd.qty'=>"invoice_line",
 			'fd.remise_percent'=>"invoice_line", 'fd.total_ht'=>"invoice_line", 'fd.total_ttc'=>"invoice_line", 'fd.tva'=>"invoice_line", 'fd.product_type'=>'invoice_line', 'fd.fk_product'=>'product',
-			'p.ref'=>'product', 'p.label'=>'product', 'p.accountancy_code_buy'=>'product', 'project.rowid'=>'project', 'project.ref'=>'project', 'project.title'=>'project'
+			'p.ref'=>'product', 'p.label'=>'product', $alias_product_perentity.'.accountancy_code_buy'=>'product', 'project.rowid'=>'project', 'project.ref'=>'project', 'project.title'=>'project'
 		);
 		$this->export_dependencies_array[$r] = array('invoice_line'=>'fd.rowid', 'product'=>'fd.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 		// Add extra fields object
