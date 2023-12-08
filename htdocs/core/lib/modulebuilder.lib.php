@@ -32,7 +32,7 @@
  *  @param	string      $readdir		Directory source (use $destdir when not defined)
  *  @param	string		$addfieldentry	Array of 1 field entry to add array('key'=>,'type'=>,''label'=>,'visible'=>,'enabled'=>,'position'=>,'notnull'=>','index'=>,'searchall'=>,'comment'=>,'help'=>,'isameasure')
  *  @param	string		$delfieldentry	Id of field to remove
- * 	@return	int|object					<=0 if KO, Object if OK
+ * 	@return	int|object					Return integer <=0 if KO, Object if OK
  *  @see rebuildObjectSql()
  */
 function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir = '', $addfieldentry = array(), $delfieldentry = '')
@@ -250,7 +250,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
  *  @param	string      $readdir		Directory source (use $destdir when not defined)
  *  @param	Object		$object			If object was already loaded/known, it is pass to avoid another include and new.
  *  @param	string		$moduletype		'external' or 'internal'
- * 	@return	int							<=0 if KO, >0 if OK
+ * 	@return	int							Return integer <=0 if KO, >0 if OK
  *  @see rebuildObjectClass()
  */
 function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '', $object = null, $moduletype = 'external')
@@ -429,7 +429,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
  * Get list of existing objects from directory
  *
  * @param	string      $destdir		Directory
- * @return 	array|int                    <=0 if KO, array if OK
+ * @return 	array|int                    Return integer <=0 if KO, array if OK
  */
 function dolGetListOfObjectClasses($destdir)
 {

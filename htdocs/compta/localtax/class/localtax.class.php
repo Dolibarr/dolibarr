@@ -467,7 +467,7 @@ class Localtax extends CommonObject
 	 *	Add a payment of localtax
 	 *
 	 *	@param		User	$user		Object user that insert
-	 *	@return		int					<0 if KO, rowid in localtax table if OK
+	 *	@return		int					Return integer <0 if KO, rowid in localtax table if OK
 	 */
 	public function addPayment($user)
 	{

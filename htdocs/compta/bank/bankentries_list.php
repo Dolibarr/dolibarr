@@ -66,10 +66,10 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
-$contextpage = 'banktransactionlist';
+$contextpage = 'bankentrieslist';
 $massaction = GETPOST('massaction', 'alpha');
 $optioncss = GETPOST('optioncss', 'aZ09');
-
+$mode = GETPOST('mode', 'aZ');
 
 $dateop = dol_mktime(12, 0, 0, GETPOST("opmonth", 'int'), GETPOST("opday", 'int'), GETPOST("opyear", 'int'));
 $search_debit = GETPOST("search_debit", 'alpha');
@@ -1819,10 +1819,10 @@ if ($resql) {
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
-				if (in_array($obj->rowid, $arrayofselected)) {
+				if (in_array($objp->rowid, $arrayofselected)) {
 					$selected = 1;
 				}
-				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+				print '<input id="cb'.$objp->rowid.'" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="'.$objp->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
 			print '</td>';
 			if (!$i) {

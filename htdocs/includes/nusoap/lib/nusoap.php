@@ -6936,7 +6936,7 @@ class nusoap_parser extends nusoap_base {
 			// raw UTF-8 that, e.g., might not map to iso-8859-1
 			// TODO: this can also be handled with xml_parser_set_option($this->parser, XML_OPTION_TARGET_ENCODING, "ISO-8859-1");
 			if($this->decode_utf8){
-				$data = utf8_decode($data);
+				$data = mb_convert_encoding($data, 'ISO-8859-1');
 			}
 		}
         $this->message[$pos]['cdata'] .= $data;

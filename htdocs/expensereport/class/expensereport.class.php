@@ -1039,7 +1039,7 @@ class ExpenseReport extends CommonObject
 	/**
 	 * fetch_lines
 	 *
-	 * @return  int     <0 if OK, >0 if KO
+	 * @return  int     Return integer <0 if OK, >0 if KO
 	 */
 	public function fetch_lines()
 	{
@@ -1257,7 +1257,7 @@ class ExpenseReport extends CommonObject
 	 *
 	 * @param   User    $fuser      User
 	 * @param   int     $notrigger  Disable triggers
-	 * @return  int                 <0 if KO, 0 if nothing done, >0 if OK
+	 * @return  int                 Return integer <0 if KO, 0 if nothing done, >0 if OK
 	 */
 	public function setValidate($fuser, $notrigger = 0)
 	{
@@ -1421,7 +1421,7 @@ class ExpenseReport extends CommonObject
 	 *
 	 * @param   User    $fuser      User
 	 * @param   int     $notrigger  Disable triggers
-	 * @return  int                 <0 if KO, 0 if nothing done, >0 if OK
+	 * @return  int                 Return integer <0 if KO, 0 if nothing done, >0 if OK
 	 */
 	public function setApproved($fuser, $notrigger = 0)
 	{
@@ -2521,7 +2521,7 @@ class ExpenseReport extends CommonObject
 	 *
 	 *      @param	User	$user   		Objet user
 	 *      @param  string  $option         'topay' or 'toapprove'
-	 *      @return WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
+	 *      @return WorkboardResponse|int 	Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $option = 'topay')
 	{
@@ -2617,7 +2617,7 @@ class ExpenseReport extends CommonObject
 	/**
 	 *	Return if object was dispatched into bookkeeping
 	 *
-	 *	@return     int         <0 if KO, 0=no, 1=yes
+	 *	@return     int         Return integer <0 if KO, 0=no, 1=yes
 	 */
 	public function getVentilExportCompta()
 	{
@@ -2675,7 +2675,7 @@ class ExpenseReport extends CommonObject
 	 *  @param     int		$fk_cat           Category of the vehicule used
 	 *  @param     float	$qty              Number of kilometers
 	 *  @param     float	$tva              VAT rate
-	 *  @return    int              		  <0 if KO, total ttc if OK
+	 *  @return    int              		  Return integer <0 if KO, total ttc if OK
 	 */
 	public function computeTotalKm($fk_cat, $qty, $tva)
 	{

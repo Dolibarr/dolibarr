@@ -176,7 +176,7 @@ class ImportCsv extends ModeleImports
 	 *	Open input file
 	 *
 	 *	@param	string	$file		Path of filename
-	 *	@return	int					<0 if KO, >=0 if OK
+	 *	@return	int					Return integer <0 if KO, >=0 if OK
 	 */
 	public function import_open_file($file)
 	{
@@ -206,7 +206,7 @@ class ImportCsv extends ModeleImports
 	 * 	Return nb of records. File must be closed.
 	 *
 	 *	@param	string	$file		Path of filename
-	 * 	@return		int		<0 if KO, >=0 if OK
+	 * 	@return		int		Return integer <0 if KO, >=0 if OK
 	 */
 	public function import_get_nb_of_lines($file)
 	{
@@ -219,7 +219,7 @@ class ImportCsv extends ModeleImports
 	/**
 	 * 	Input header line from file
 	 *
-	 * 	@return		int		<0 if KO, >=0 if OK
+	 * 	@return		int		Return integer <0 if KO, >=0 if OK
 	 */
 	public function import_read_header()
 	{
@@ -256,7 +256,7 @@ class ImportCsv extends ModeleImports
 						$newarrayres[$key]['val'] = $val;
 						$newarrayres[$key]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we considere it's null
 					} else {
-						$newarrayres[$key]['val'] = utf8_encode($val);
+						$newarrayres[$key]['val'] = mb_convert_encoding($val, 'UTF-8', 'ISO-8859-1');
 						$newarrayres[$key]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we considere it's null
 					}
 				} else { // Autodetect format (UTF8 or ISO)
@@ -264,7 +264,7 @@ class ImportCsv extends ModeleImports
 						$newarrayres[$key]['val'] = $val;
 						$newarrayres[$key]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we considere it's null
 					} else {
-						$newarrayres[$key]['val'] = utf8_encode($val);
+						$newarrayres[$key]['val'] = mb_convert_encoding($val, 'UTF-8', 'ISO-8859-1');
 						$newarrayres[$key]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we considere it's null
 					}
 				}
