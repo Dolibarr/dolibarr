@@ -769,7 +769,6 @@ if (empty($reshook)) {
 			$remise_percent = price2num(GETPOST('elremise_percent'), '', 2);
 			if ($remise_percent > 0) {
 				$remise = round(($price_ht * $remise_percent / 100), 2);
-				$price_ht = ($price_ht - $remise);
 			}
 
 			$objectline->fk_product = GETPOST('idprod', 'int');
