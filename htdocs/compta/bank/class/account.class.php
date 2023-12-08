@@ -278,6 +278,7 @@ class Account extends CommonObject
 	public $ics_transfer;
 
 
+
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
@@ -433,7 +434,7 @@ class Account extends CommonObject
 		if (empty($this->rappro)) {
 			return -1;
 		}
-		if ($this->courant == Account::TYPE_CASH && !getDolGlobalString('BANK_CAN_RECONCILIATE_CASHACCOUNT')) {
+		if ($this->courant == Account::TYPE_CASH && empty($conf->global->BANK_CAN_RECONCILIATE_CASHACCOUNT)) {
 			return -2;
 		}
 		if ($this->clos) {
@@ -700,7 +701,15 @@ class Account extends CommonObject
 			return -1;
 		}
 
-		// Load librairies to check BAN
+		$balance = $this->balance;
+		if (empty($balance) && !empty($this->solde)) {
+			$balance = $this->solde;
+		}
+		if (empty($balance)) {
+			$balance = 0;
+		}
+
+		// Chargement librairie pour acces fonction controle RIB
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 
 		$now = dol_now();
@@ -777,13 +786,13 @@ class Account extends CommonObject
 			$result = $this->update($user, 1);
 			if ($result > 0) {
 				$accline = new AccountLine($this->db);
-				$accline->datec = $now;
+				$accline->datec = $this->db->idate($now);
 				$accline->label = '('.$langs->trans("InitialBankBalance").')';
-				$accline->amount = price2num($this->solde);
+				$accline->amount = price2num($balance);
 				$accline->fk_user_author = $user->id;
 				$accline->fk_account = $this->id;
-				$accline->datev = $this->date_solde;
-				$accline->dateo = $this->date_solde;
+				$accline->datev = $this->db->idate($this->date_solde);
+				$accline->dateo = $this->db->idate($this->date_solde);
 				$accline->fk_type = 'SOLD';
 
 				if ($accline->insert() < 0) {
@@ -834,7 +843,7 @@ class Account extends CommonObject
 	 *
 	 *    	@param	User	$user       Object user making action
 	 *      @param  int     $notrigger  1=Disable triggers
-	 *		@return	int					Return integer <0 if KO, >0 if OK
+	 *		@return	int					<0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -938,7 +947,7 @@ class Account extends CommonObject
 	 *  Update BBAN (RIB) account fields
 	 *
 	 *  @param	User|null	$user       Object user making update
-	 *  @return	int						Return integer <0 if KO, >0 if OK
+	 *  @return	int						<0 if KO, >0 if OK
 	 */
 	public function update_bban(User $user = null)
 	{
@@ -993,7 +1002,7 @@ class Account extends CommonObject
 	 *
 	 *      @param	int		$id      	Id of bank account to get
 	 *      @param  string	$ref     	Ref of bank account to get
-	 *      @return	int					Return integer <0 if KO, >0 if OK
+	 *      @return	int					<0 if KO, >0 if OK
 	 */
 	public function fetch($id, $ref = '')
 	{
@@ -1103,7 +1112,7 @@ class Account extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param 	int[]|int 	$categories 	Category or categories IDs
-	 * @return 	int							Return integer <0 if KO, >0 if OK
+	 * @return 	int							<0 if KO, >0 if OK
 	 */
 	public function setCategories($categories)
 	{
@@ -1115,7 +1124,7 @@ class Account extends CommonObject
 	 *  Delete bank account from database
 	 *
 	 *  @param	User|null	$user	User deleting
-	 *  @return int      	       	Return integer <0 if KO, >0 if OK
+	 *  @return int      	       	<0 if KO, >0 if OK
 	 */
 	public function delete(User $user = null)
 	{
@@ -1342,7 +1351,7 @@ class Account extends CommonObject
 	 *      Charge indicateurs this->nb de tableau de bord
 	 *
 	 *		@param		int			$filteraccountid	To get info for a particular account id
-	 *      @return     int         Return integer <0 if KO, >0 if OK
+	 *      @return     int         <0 if KO, >0 if OK
 	 */
 	public function load_state_board($filteraccountid = 0)
 	{
@@ -1399,7 +1408,7 @@ class Account extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE ba.rappro > 0 and ba.clos = 0";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		if (!getDolGlobalString('BANK_CAN_RECONCILIATE_CASHACCOUNT')) {
+		if (empty($conf->global->BANK_CAN_RECONCILIATE_CASHACCOUNT)) {
 			$sql .= " AND ba.courant != 2";
 		}
 		$resql = $this->db->query($sql);
@@ -1504,7 +1513,7 @@ class Account extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -1518,7 +1527,7 @@ class Account extends CommonObject
 				$label = $langs->trans("BankAccount");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -1562,19 +1571,25 @@ class Account extends CommonObject
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 
-		$error = 0;
+		$this->error_number = 0;
 
-		// Call functions to check BAN
+		// Call function to check BAN
+
 		if (!checkIbanForAccount($this)) {
-			$error++;
-			$this->error = 'IBANNotValid';
+			$this->error_number = 12;
+			$this->error_message = 'IBANNotValid';
 		}
 		if (!checkSwiftForAccount($this)) {
-			$error++;
-			$this->error = 'SwiftNotValid';
+			$this->error_number = 12;
+			$this->error_message = 'SwiftNotValid';
 		}
+		/*if (! checkBanForAccount($this))
+		{
+			$this->error_number = 12;
+			$this->error_message = 'BANControlError';
+		}*/
 
-		if (! $error) {
+		if ($this->error_number == 0) {
 			return 1;
 		} else {
 			return 0;
@@ -1652,7 +1667,7 @@ class Account extends CommonObject
 	{
 		global $conf;
 
-		if (getDolGlobalString('MAIN_IBAN_IS_NEVER_MANDATORY')) {
+		if (!empty($conf->global->MAIN_IBAN_IS_NEVER_MANDATORY)) {
 			return 0;
 		}
 
@@ -1774,9 +1789,9 @@ class Account extends CommonObject
 				'BankAccountNumberKey'
 		);
 
-		if (getDolGlobalString('BANK_SHOW_ORDER_OPTION')) {
+		if (!empty($conf->global->BANK_SHOW_ORDER_OPTION)) {
 			if (is_numeric($conf->global->BANK_SHOW_ORDER_OPTION)) {
-				if (getDolGlobalString('BANK_SHOW_ORDER_OPTION') == '1') {
+				if ($conf->global->BANK_SHOW_ORDER_OPTION == '1') {
 					$fieldlists = array(
 						'BankCode',
 						'DeskCode',
@@ -1869,9 +1884,8 @@ class Account extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		if ($selected >= 0) {
-			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
-		}
+		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+
 		if (property_exists($this, 'type_lib')) {
 			$return .= '<br><span class="info-box-label opacitymedium" title="'.$this->type_lib[$this->type].'">'.substr($this->type_lib[$this->type], 0, 24).'...</span>';
 		}
@@ -2013,10 +2027,6 @@ class AccountLine extends CommonObjectLine
 
 	public $note;
 
-	/**
-	 * User author of the rapprochement.
-	 */
-	public $user_rappro;
 
 
 	/**
@@ -2039,6 +2049,8 @@ class AccountLine extends CommonObjectLine
 	 */
 	public function fetch($rowid, $ref = '', $num = '')
 	{
+		global $conf;
+
 		// Check parameters
 		if (empty($rowid) && empty($ref) && empty($num)) {
 			return -1;
@@ -2054,9 +2066,9 @@ class AccountLine extends CommonObjectLine
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
 		if ($num) {
-			$sql .= " AND b.num_chq = '".$this->db->escape($num)."'";
+			$sql .= " AND b.num_chq='".$this->db->escape($num)."'";
 		} elseif ($ref) {
-			$sql .= " AND b.rowid = '".$this->db->escape($ref)."'";
+			$sql .= " AND b.rowid='".$this->db->escape($ref)."'";
 		} else {
 			$sql .= " AND b.rowid = ".((int) $rowid);
 		}
@@ -2072,9 +2084,9 @@ class AccountLine extends CommonObjectLine
 				$this->rowid = $obj->rowid;
 				$this->ref = $obj->rowid;
 
-				$this->datec = $this->db->jdate($obj->datec);
-				$this->datev = $this->db->jdate($obj->datev);
-				$this->dateo = $this->db->jdate($obj->dateo);
+				$this->datec = $obj->datec;
+				$this->datev = $obj->datev;
+				$this->dateo = $obj->dateo;
 				$this->amount = $obj->amount;
 				$this->label = $obj->label;
 				$this->note = $obj->note;
@@ -2151,7 +2163,6 @@ class AccountLine extends CommonObjectLine
 		$sql .= ", ".($this->num_releve ? "'".$this->db->escape($this->num_releve)."'" : "null");
 		$sql .= ")";
 
-
 		dol_syslog(get_class($this)."::insert", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -2177,14 +2188,15 @@ class AccountLine extends CommonObjectLine
 	}
 
 	/**
-	 * Delete bank transaction record
+	 *      Delete bank transaction record
 	 *
-	 * @param	User|null	$user		User object that delete
-	 * @param	int			$notrigger	1=Does not execute triggers, 0= execute triggers
-	 * @return	int 					Return integer <0 if KO, >0 if OK
+	 *		@param	User|null	$user	User object that delete
+	 *      @return	int 				<0 if KO, >0 if OK
 	 */
-	public function delete(User $user = null, $notrigger = 0)
+	public function delete(User $user = null)
 	{
+		global $conf;
+
 		$nbko = 0;
 
 		if ($this->rappro) {
@@ -2195,18 +2207,8 @@ class AccountLine extends CommonObjectLine
 
 		$this->db->begin();
 
-		if (!$notrigger) {
-			// Call trigger
-			$result = $this->call_trigger('BANKACCOUNTLINE_DELETE', $user);
-			if ($result < 0) {
-				$this->db->rollback();
-				return -1;
-			}
-			// End call triggers
-		}
-
 		// Protection to avoid any delete of accounted lines. Protection on by default
-		if (!getDolGlobalString('BANK_ALLOW_TRANSACTION_DELETION_EVEN_IF_IN_ACCOUNTING')) {
+		if (empty($conf->global->BANK_ALLOW_TRANSACTION_DELETION_EVEN_IF_IN_ACCOUNTING)) {
 			$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping WHERE doc_type = 'bank' AND fk_doc = ".((int) $this->id);
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -2264,7 +2266,7 @@ class AccountLine extends CommonObjectLine
 	 * 	Delete bank line records
 	 *
 	 *	@param	User|null	$user	User object that delete
-	 *  @return	int 				Return integer <0 if KO, >0 if OK
+	 *  @return	int 				<0 if KO, >0 if OK
 	 */
 	public function delete_urls(User $user = null)
 	{
@@ -2301,7 +2303,7 @@ class AccountLine extends CommonObjectLine
 	 *
 	 *		@param	User	$user			Object user making update
 	 *		@param 	int		$notrigger		0=Disable all triggers
-	 *		@return	int						Return integer <0 if KO, >0 if OK
+	 *		@return	int						<0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -2333,7 +2335,7 @@ class AccountLine extends CommonObjectLine
 	 *	@param	User	$user			Objet user making update
 	 *	@param 	int		$cat			Category id
 	 *	@param	int		$conciliated	1=Set transaction to conciliated, 0=Keep transaction non conciliated
-	 *	@return	int						Return integer <0 if KO, >0 if OK
+	 *	@return	int						<0 if KO, >0 if OK
 	 */
 	public function update_conciliation(User $user, $cat, $conciliated = 1)
 	{
@@ -2343,8 +2345,8 @@ class AccountLine extends CommonObjectLine
 		$this->db->begin();
 
 		// Check statement field
-		if (getDolGlobalString('BANK_STATEMENT_REGEX_RULE')) {
-			if (!preg_match('/' . getDolGlobalString('BANK_STATEMENT_REGEX_RULE').'/', $this->num_releve)) {
+		if (!empty($conf->global->BANK_STATEMENT_REGEX_RULE)) {
+			if (!preg_match('/'.$conf->global->BANK_STATEMENT_REGEX_RULE.'/', $this->num_releve)) {
 				$this->errors[] = $langs->trans("ErrorBankStatementNameMustFollowRegex", $conf->global->BANK_STATEMENT_REGEX_RULE);
 				return -1;
 			}
@@ -2531,11 +2533,19 @@ class AccountLine extends CommonObjectLine
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
-
 				$this->id = $obj->rowid;
 
-				$this->user_creation_id = $obj->fk_user_author;
-				$this->user_rappro = $obj->fk_user_rappro;
+				if ($obj->fk_user_author) {
+					$cuser = new User($this->db);
+					$cuser->fetch($obj->fk_user_author);
+					$this->user_creation = $cuser;
+				}
+				if ($obj->fk_user_rappro) {
+					$ruser = new User($this->db);
+					$ruser->fetch($obj->fk_user_rappro);
+					$this->user_rappro = $ruser;
+				}
+
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);
 				//$this->date_rappro       = $obj->daterappro;    // Not yet managed
