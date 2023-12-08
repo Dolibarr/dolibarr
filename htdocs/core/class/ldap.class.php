@@ -1511,10 +1511,10 @@ class Ldap
 	{
 		global $conf;
 		if ($pagecodefrom == 'ISO-8859-1' && $conf->file->character_set_client == 'UTF-8') {
-			$str = utf8_encode($str);
+			$str = mb_convert_encoding($str, 'UTF-8', 'ISO-8859-1');
 		}
 		if ($pagecodefrom == 'UTF-8' && $conf->file->character_set_client == 'ISO-8859-1') {
-			$str = utf8_decode($str);
+			$str = mb_convert_encoding($str, 'ISO-8859-1');
 		}
 		return $str;
 	}
@@ -1530,10 +1530,10 @@ class Ldap
 	{
 		global $conf;
 		if ($pagecodeto == 'ISO-8859-1' && $conf->file->character_set_client == 'UTF-8') {
-			$str = utf8_decode($str);
+			$str = mb_convert_encoding($str, 'ISO-8859-1');
 		}
 		if ($pagecodeto == 'UTF-8' && $conf->file->character_set_client == 'ISO-8859-1') {
-			$str = utf8_encode($str);
+			$str = mb_convert_encoding($str, 'UTF-8', 'ISO-8859-1');
 		}
 		return $str;
 	}

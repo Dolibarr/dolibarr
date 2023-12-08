@@ -803,10 +803,10 @@ class Translate
 	public function convToOutputCharset($str, $pagecodefrom = 'UTF-8')
 	{
 		if ($pagecodefrom == 'ISO-8859-1' && $this->charset_output == 'UTF-8') {
-			$str = utf8_encode($str);
+			$str = mb_convert_encoding($str, 'UTF-8', 'ISO-8859-1');
 		}
 		if ($pagecodefrom == 'UTF-8' && $this->charset_output == 'ISO-8859-1') {
-			$str = utf8_decode(str_replace('€', chr(128), $str));
+			$str = mb_convert_encoding(str_replace('€', chr(128), $str), 'ISO-8859-1');
 			// TODO Replace with iconv("UTF-8", "ISO-8859-1", str_replace('€', chr(128), $str)); ?
 		}
 		return $str;
