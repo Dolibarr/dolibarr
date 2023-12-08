@@ -14,7 +14,7 @@ if (isset($totalarray['pos'])) {
 	while ($i < $totalarray['nbfield']) {
 		$i++;
 		if (!empty($totalarray['pos'][$i])) {
-			switch ($totalarray['pos'][$i]) {
+			switch ($totalarray['type'][$i]) {
 				case 'duration':
 					print '<td class="right">';
 					print(!empty($totalarray['val'][$totalarray['pos'][$i]]) ? convertSecondToTime($totalarray['val'][$totalarray['pos'][$i]], 'allhourmin') : 0);
