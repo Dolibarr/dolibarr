@@ -255,6 +255,10 @@ if ($action == 'writebookkeeping' && !$error) {
 			setEventMessages($langs->trans('ErrorInvoiceContainsLinesNotYetBounded', $val['ref']), null, 'errors');
 		}
 
+		$accountingaccountexpense = new AccountingAccount($db);
+
+		$accountingaccountexpense->fetch(null, $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT, true);
+
 		// Thirdparty
 		if (!$errorforline) {
 			foreach ($tabttc[$key] as $k => $mt) {
