@@ -66,10 +66,10 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
-$contextpage = 'banktransactionlist';
+$contextpage = 'bankentrieslist';
 $massaction = GETPOST('massaction', 'alpha');
 $optioncss = GETPOST('optioncss', 'aZ09');
-
+$mode = GETPOST('mode', 'aZ');
 
 $dateop = dol_mktime(12, 0, 0, GETPOST("opmonth", 'int'), GETPOST("opday", 'int'), GETPOST("opyear", 'int'));
 $search_debit = GETPOST("search_debit", 'alpha');
