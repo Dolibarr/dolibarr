@@ -187,11 +187,15 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<table class="border centpercent">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
+
 // Company
-print '<tr><td class="left">'.$langs->trans("ThirdParty").'</td><td class="left">';
-print img_picto('', 'company', 'class="pictofixedwidth"');
-print $form->select_company($socid, 'socid', '', 1, 0, 0, array(), 0, 'widthcentpercentminusx maxwidth300', '');
-print '</td></tr>';
+if (empty(!$conf->global->DONATION_USE_THIRDPARTIES)) {
+	print '<tr><td class="left">'.$langs->trans("ThirdParty").'</td><td class="left">';
+	print img_picto('', 'company', 'class="pictofixedwidth"');
+	print $form->select_company($socid, 'socid', '', 1, 0, 0, array(), 0, 'widthcentpercentminusx maxwidth300', '');
+	print '</td></tr>';
+}
+
 // Year
 print '<tr><td>'.$langs->trans("Year").'</td><td>';
 if (!in_array($year, $arrayyears)) {
