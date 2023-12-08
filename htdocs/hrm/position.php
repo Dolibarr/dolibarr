@@ -745,7 +745,7 @@ if ($job->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'
 
 	print '</form>' . "\n";
 
-	if (in_array('builddoc', array_map('trim', array_keys($arrayofmassactions))) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
+	if (in_array('builddoc', array_keys($arrayofmassactions)) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
 		$hidegeneratedfilelistifempty = 1;
 		if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) {
 			$hidegeneratedfilelistifempty = 0;
