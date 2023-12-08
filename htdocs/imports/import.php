@@ -713,7 +713,7 @@ if ($step == 3 && $datatoimport) {
 
 			// readdir return value in ISO and we want UTF8 in memory
 			if (!utf8_check($file)) {
-				$file = utf8_encode($file);
+				$file = mb_convert_encoding($file, 'UTF-8', 'ISO-8859-1');
 			}
 
 			if (preg_match('/^\./', $file)) {
@@ -2468,7 +2468,7 @@ function show_elem($fieldssource, $pos, $key, $var, $nostyle = '')
 		}
 		if ($example) {
 			if (!utf8_check($example)) {
-				$example = utf8_encode($example);
+				$example = mb_convert_encoding($example, 'UTF-8', 'ISO-8859-1');
 			}
 			if (!empty($conf->dol_optimize_smallscreen)) {
 				//print '<br>';

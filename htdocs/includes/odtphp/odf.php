@@ -330,7 +330,7 @@ class Odf
 	private function encode_chars($text, $encode = false, $charset = '')
 	{
 		$newtext = $encode ? htmlspecialchars($text, ENT_QUOTES | ENT_XML1) : $text;
-		$newtext = ($charset == 'ISO-8859') ? utf8_encode($newtext) : $newtext;
+		$newtext = ($charset == 'ISO-8859') ? mb_convert_encoding($newtext, 'UTF-8', 'ISO-8859-1') : $newtext;
 		return $newtext;
 	}
 
