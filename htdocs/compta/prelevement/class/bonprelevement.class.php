@@ -1799,7 +1799,7 @@ class BonPrelevement extends CommonObject
 				 * Section Creditor (sepa Crediteurs bloc lines)
 				 */
 				if (!empty($user_dest)) {
-					$sql = "SELECT u.rowid as userId, c.code as country_code, CONCAT(u.firstname,' ',u.lastname) as nom,";
+					$sql = "SELECT u.rowid as userId, u.address, u.zip, u.town, c.code as country_code, CONCAT(u.firstname,' ',u.lastname) as nom,";
 					$sql .= " pl.code_banque as cb, pl.code_guichet as cg, pl.number as cc, pl.amount as somme,";
 					$sql .= " s.ref as reffac, p.fk_salary as idfac,";
 					$sql .= " rib.rowid, rib.datec, rib.iban_prefix as iban, rib.bic as bic, rib.rowid as drum, '' as rum, '' as date_rum";
