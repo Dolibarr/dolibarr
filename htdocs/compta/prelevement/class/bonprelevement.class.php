@@ -749,8 +749,6 @@ class BonPrelevement extends CommonObject
 	public function SommeAPrelever($mode = 'direct-debit', $type = '')
 	{
 		// phpcs:enable
-		global $conf;
-
 		$sql = "SELECT sum(pd.amount) as nb";
 		if ($type !== 'salary') {
 			if ($mode != 'bank-transfer') {
