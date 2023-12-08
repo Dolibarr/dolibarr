@@ -1142,6 +1142,9 @@ class User extends CommonObject
 		}
 		$sql .= " AND ur.fk_user= ".((int) $this->id);
 		$sql .= " AND r.perms IS NOT NULL";
+		if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+			$sql .= " AND r.perms NOT LIKE '%_advance'"; // Hide advanced perms if option is not enabled
+		}
 		if ($moduletag) {
 			$sql .= " AND r.module = '".$this->db->escape($moduletag)."'";
 		}
