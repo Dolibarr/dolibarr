@@ -103,8 +103,7 @@ $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=donationStats&amp;file=
 
 $px2 = new DolGraph();
 $mesg = $px2->isGraphKo();
-if (!$mesg)
-{
+if (!$mesg) {
 	$px2->SetData($data);
 	$i=$startyear;$legend=array();
 	while ($i <= $endyear) {
@@ -232,8 +231,8 @@ foreach ($data as $val) {
 	print '<tr height="24">';
 	print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'">'.$year.'</a></td>';
 	print '<td class="right">'.$val['nb'].'</td>';
-	print '<td class="right">'.price(price2num($val['total'],'MT'), 1).'</td>';
-	print '<td class="right">'.price(price2num($val['avg'],'MT'), 1).'</td>';
+	print '<td class="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';
+	print '<td class="right">'.price(price2num($val['avg'], 'MT'), 1).'</td>';
 	print '</tr>';
 	$oldyear = $year;
 }
