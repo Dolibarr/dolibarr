@@ -1458,7 +1458,7 @@ class Product extends CommonObject
 	 *
 	 * @param  User $user      User (object) deleting product
 	 * @param  int  $notrigger Do not execute trigger
-	 * @return int                    < 0 if KO, 0 = Not possible, > 0 if OK
+	 * @return int                    Return integer < 0 if KO, 0 = Not possible, > 0 if OK
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
@@ -1760,7 +1760,7 @@ class Product extends CommonObject
 	 *
 	 * @param 	string $type 	It can be 'buy', 'buy_intra', 'buy_export', 'sell', 'sell_intra' or 'sell_export'
 	 * @param 	string $value 	Accountancy code
-	 * @return 	int 			<0 KO >0 OK
+	 * @return 	int 			Return integer <0 KO >0 OK
 	 */
 	public function setAccountancyCode($type, $value)
 	{
@@ -2082,7 +2082,7 @@ class Product extends CommonObject
 	 * @param  int    $product_id     Filter on a particular product id
 	 * @param  string $fourn_ref      Filter on a supplier price ref. 'none' to exclude ref in search.
 	 * @param  int    $fk_soc         If of supplier
-	 * @return int                    <-1 if KO, -1 if qty not enough, 0 if OK but nothing found, id_product if OK and found. May also initialize some properties like (->ref_supplier, buyprice, fourn_pu, vatrate_supplier...)
+	 * @return int                    Return integer <-1 if KO, -1 if qty not enough, 0 if OK but nothing found, id_product if OK and found. May also initialize some properties like (->ref_supplier, buyprice, fourn_pu, vatrate_supplier...)
 	 * @see getSellPrice(), find_min_price_product_fournisseur()
 	 */
 	public function get_buyprice($prodfournprice, $qty, $product_id = 0, $fourn_ref = '', $fk_soc = 0)
@@ -3836,7 +3836,7 @@ class Product extends CommonObject
 	 * @param  string $sql  		Request to execute
 	 * @param  string $mode 		'byunit'=number of unit, 'bynumber'=nb of entities
 	 * @param  int    $year 		Year (0=current year, -1=all years)
-	 * @return array|int           	<0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
+	 * @return array|int           	Return integer <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
 	private function _get_stats($sql, $mode, $year = 0)
 	{
@@ -3914,7 +3914,7 @@ class Product extends CommonObject
 	 * @param  int    $filteronproducttype 0=To filter on product only, 1=To filter on services only
 	 * @param  int    $year                Year (0=last 12 month, -1=all years)
 	 * @param  string $morefilter          More sql filters
-	 * @return array                       <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
+	 * @return array                       Return integer <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
 	public function get_nb_vente($socid, $mode, $filteronproducttype = -1, $year = 0, $morefilter = '')
 	{
@@ -3968,7 +3968,7 @@ class Product extends CommonObject
 	 * @param  int    $filteronproducttype 0=To filter on product only, 1=To filter on services only
 	 * @param  int    $year                Year (0=last 12 month, -1=all years)
 	 * @param  string $morefilter          More sql filters
-	 * @return array                       <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
+	 * @return array                       Return integer <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
 	public function get_nb_achat($socid, $mode, $filteronproducttype = -1, $year = 0, $morefilter = '')
 	{
@@ -4021,7 +4021,7 @@ class Product extends CommonObject
 	 * @param  int    $filteronproducttype 0=To filter on product only, 1=To filter on services only
 	 * @param  int    $year                Year (0=last 12 month, -1=all years)
 	 * @param  string $morefilter          More sql filters
-	 * @return array                       <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
+	 * @return array                       Return integer <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
 	public function get_nb_propal($socid, $mode, $filteronproducttype = -1, $year = 0, $morefilter = '')
 	{
@@ -4073,7 +4073,7 @@ class Product extends CommonObject
 	 * @param  int    $filteronproducttype 0=To filter on product only, 1=To filter on services only
 	 * @param  int    $year                Year (0=last 12 month, -1=all years)
 	 * @param  string $morefilter          More sql filters
-	 * @return array                       <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
+	 * @return array                       Return integer <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
 	public function get_nb_propalsupplier($socid, $mode, $filteronproducttype = -1, $year = 0, $morefilter = '')
 	{
@@ -4126,7 +4126,7 @@ class Product extends CommonObject
 	 * @param  int    $filteronproducttype 0=To filter on product only, 1=To filter on services only
 	 * @param  int    $year                Year (0=last 12 month, -1=all years)
 	 * @param  string $morefilter          More sql filters
-	 * @return array                       <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
+	 * @return array                       Return integer <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
 	public function get_nb_order($socid, $mode, $filteronproducttype = -1, $year = 0, $morefilter = '')
 	{
@@ -4178,7 +4178,7 @@ class Product extends CommonObject
 	 * @param  int    $filteronproducttype 0=To filter on product only, 1=To filter on services only
 	 * @param  int    $year                Year (0=last 12 month, -1=all years)
 	 * @param  string $morefilter          More sql filters
-	 * @return array                       <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
+	 * @return array                       Return integer <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
 	public function get_nb_ordersupplier($socid, $mode, $filteronproducttype = -1, $year = 0, $morefilter = '')
 	{
@@ -4230,7 +4230,7 @@ class Product extends CommonObject
 	 * @param  int    $filteronproducttype 0=To filter on product only, 1=To filter on services only
 	 * @param  int    $year                Year (0=last 12 month, -1=all years)
 	 * @param  string $morefilter          More sql filters
-	 * @return array                       <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
+	 * @return array                       Return integer <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
 	public function get_nb_contract($socid, $mode, $filteronproducttype = -1, $year = 0, $morefilter = '')
 	{
@@ -4285,7 +4285,7 @@ class Product extends CommonObject
 	 * @param  int    $filteronproducttype 0=To filter on product only, 1=To filter on services only
 	 * @param  int    $year                Year (0=last 12 month, -1=all years)
 	 * @param  string $morefilter          More sql filters
-	 * @return array                       <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
+	 * @return array                       Return integer <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
 	public function get_nb_mos($socid, $mode, $filteronproducttype = -1, $year = 0, $morefilter = '')
 	{
@@ -4338,7 +4338,7 @@ class Product extends CommonObject
 	 * @param  int $qty     Quantity
 	 * @param  int $incdec  1=Increase/decrease stock of child when parent stock increase/decrease
 	 * @param  int $notrigger	Disable triggers
-	 * @return int                < 0 if KO, > 0 if OK
+	 * @return int                Return integer < 0 if KO, > 0 if OK
 	 */
 	public function add_sousproduit($id_pere, $id_fils, $qty, $incdec = 1, $notrigger = 0)
 	{
@@ -4411,7 +4411,7 @@ class Product extends CommonObject
 	 * @param  int $qty     Quantity
 	 * @param  int $incdec  1=Increase/decrease stock of child when parent stock increase/decrease
 	 * @param  int $notrigger	Disable triggers
-	 * @return int                < 0 if KO, > 0 if OK
+	 * @return int                Return integer < 0 if KO, > 0 if OK
 	 */
 	public function update_sousproduit($id_pere, $id_fils, $qty, $incdec = 1, $notrigger = 0)
 	{
@@ -4463,7 +4463,7 @@ class Product extends CommonObject
 	 * @param  int $fk_parent Id of parent product (child will no more be linked to it)
 	 * @param  int $fk_child  Id of child product
 	 * @param  int $notrigger	Disable triggers
-	 * @return int            < 0 if KO, > 0 if OK
+	 * @return int            Return integer < 0 if KO, > 0 if OK
 	 */
 	public function del_sousproduit($fk_parent, $fk_child, $notrigger = 0)
 	{
@@ -4566,7 +4566,7 @@ class Product extends CommonObject
 	 * @param  int    $id_fourn  Supplier id
 	 * @param  string $ref_fourn Supplier ref
 	 * @param  float  $quantity  Quantity minimum for price
-	 * @return int               < 0 if KO, 0 if link already exists for this product, > 0 if OK
+	 * @return int               Return integer < 0 if KO, 0 if link already exists for this product, > 0 if OK
 	 */
 	public function add_fournisseur($user, $id_fourn, $ref_fourn, $quantity)
 	{
@@ -4695,7 +4695,7 @@ class Product extends CommonObject
 	 *
 	 * @param  int $fromId Id product source
 	 * @param  int $toId   Id product target
-	 * @return int                     < 0 if KO, > 0 if OK
+	 * @return int                     Return integer < 0 if KO, > 0 if OK
 	 */
 	public function clone_price($fromId, $toId)
 	{
@@ -4808,7 +4808,7 @@ class Product extends CommonObject
 	 *
 	 * @param  int $fromId Id produit source
 	 * @param  int $toId   Id produit cible
-	 * @return int                 < 0 si erreur, > 0 si ok
+	 * @return int                 Return integer < 0 si erreur, > 0 si ok
 	 */
 	public function clone_fournisseurs($fromId, $toId)
 	{
@@ -5672,7 +5672,7 @@ class Product extends CommonObject
 	 * 												You can also filter on 'warehouseclosed', 'warehouseopen', 'warehouseinternal'
 	 * @param	int		$includedraftpoforvirtual	Include draft status of PO for virtual stock calculation
 	 * @param	int		$dateofvirtualstock			Date of virtual stock
-	 * @return 	int                  				< 0 if KO, > 0 if OK
+	 * @return 	int                  				Return integer < 0 if KO, > 0 if OK
 	 * @see    	load_virtual_stock(), loadBatchInfo()
 	 */
 	public function load_stock($option = '', $includedraftpoforvirtual = null, $dateofvirtualstock = null)
@@ -5751,7 +5751,7 @@ class Product extends CommonObject
 	 *
 	 * 	@param	int		$includedraftpoforvirtual	Include draft status and not yet approved Purchase Orders for virtual stock calculation
 	 *  @param	int		$dateofvirtualstock			Date of virtual stock
-	 *  @return int     							< 0 if KO, > 0 if OK
+	 *  @return int     							Return integer < 0 if KO, > 0 if OK
 	 *  @see	load_stock(), loadBatchInfo()
 	 */
 	public function load_virtual_stock($includedraftpoforvirtual = null, $dateofvirtualstock = null)
@@ -5975,7 +5975,7 @@ class Product extends CommonObject
 			if (is_resource($handle)) {
 				while (($file = readdir($handle)) !== false) {
 					if (!utf8_check($file)) {
-						$file = utf8_encode($file); // To be sure data is stored in UTF8 in memory
+						$file = mb_convert_encoding($file, 'UTF-8', 'ISO-8859-1'); // To be sure data is stored in UTF8 in memory
 					}
 					if (dol_is_file($dir.$file) && image_format_supported($file) >= 0) {
 						return true;
@@ -6008,7 +6008,7 @@ class Product extends CommonObject
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
 				if (!utf8_check($file)) {
-					$file = utf8_encode($file); // readdir returns ISO
+					$file = mb_convert_encoding($file, 'UTF-8', 'ISO-8859-1'); // readdir returns ISO
 				}
 				if (dol_is_file($dir.$file) && image_format_supported($file) >= 0) {
 					$nbphoto++;
@@ -6253,7 +6253,7 @@ class Product extends CommonObject
 	 *    Returns the text label from units dictionary
 	 *
 	 * @param  string $type Label type (long or short)
-	 * @return string|int <0 if ko, label if ok
+	 * @return string|int Return integer <0 if ko, label if ok
 	 */
 	public function getLabelOfUnit($type = 'long')
 	{

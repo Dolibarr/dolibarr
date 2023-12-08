@@ -49,6 +49,9 @@ $endyear = $year;
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "other", "sendings"));
 
+// Security check
+$result = restrictedArea($user, 'don');
+
 
 /*
  * View

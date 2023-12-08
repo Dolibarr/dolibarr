@@ -1155,7 +1155,7 @@ class FormCompany extends Form
 	 *  @param  string  		$mode      		select if we want activate de html part or js
 	 *  @return	void
 	 */
-	public function selectProspectStatus($htmlname, Societe $prospectstatic, $statusprospect, $idprospect, $mode = "html")
+	public function selectProspectStatus($htmlname, $prospectstatic, $statusprospect, $idprospect, $mode = "html")
 	{
 		global $langs;
 

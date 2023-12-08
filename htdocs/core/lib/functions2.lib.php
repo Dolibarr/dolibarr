@@ -53,7 +53,7 @@ function jsUnEscape($source)
 				$unicodeHexVal = substr($source, $pos, 4);
 				$unicode = hexdec($unicodeHexVal);
 				$entity = "&#".$unicode.';';
-				$decodedStr .= utf8_encode($entity);
+				$decodedStr .= mb_convert_encoding($entity, 'UTF-8', 'ISO-8859-1');
 				$pos += 4;
 			} else {
 				// we have an escaped ascii character
@@ -154,9 +154,9 @@ function dol_print_file($langs, $filename, $searchalt = 0)
 			$content = file_get_contents($formfile);
 			$isutf8 = utf8_check($content);
 			if (!$isutf8 && $conf->file->character_set_client == 'UTF-8') {
-				print utf8_encode($content);
+				print mb_convert_encoding($content, 'UTF-8', 'ISO-8859-1');
 			} elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') {
-				print utf8_decode($content);
+				print mb_convert_encoding($content, 'ISO-8859-1');
 			} else {
 				print $content;
 			}
@@ -1503,7 +1503,7 @@ function get_string_between($string, $start, $end)
  *
  * @param 	string	$mask		Mask to use
  * @param 	string	$value		Value
- * @return	int|string		    <0 or error string if KO, 0 if OK
+ * @return	int|string		    Return integer <0 or error string if KO, 0 if OK
  */
 function check_value($mask, $value)
 {

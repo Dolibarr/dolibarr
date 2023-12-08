@@ -166,7 +166,7 @@ class Translate
 	 *  Load translation files.
 	 *
 	 *  @param	array	$domains      		Array of lang files to load
-	 *	@return	int							<0 if KO, 0 if already loaded or loading not required, >0 if OK
+	 *	@return	int							Return integer <0 if KO, 0 if already loaded or loading not required, >0 if OK
 	 */
 	public function loadLangs($domains)
 	{
@@ -200,7 +200,7 @@ class Translate
 	 * 	@param	int		$forcelangdir				To force a different lang directory
 	 *  @param  int     $loadfromfileonly   		1=Do not load overwritten translation from file or old conf.
 	 *  @param  int     $forceloadifalreadynotfound	Force attempt to reload lang file if it was previously not found
-	 *	@return	int									<0 if KO, 0 if already loaded or loading not required, >0 if OK
+	 *	@return	int									Return integer <0 if KO, 0 if already loaded or loading not required, >0 if OK
 	 *  @see loadLangs()
 	 */
 	public function load($domain, $alt = 0, $stopafterdirection = 0, $forcelangdir = '', $loadfromfileonly = 0, $forceloadifalreadynotfound = 0)
@@ -432,7 +432,7 @@ class Translate
 	 *  Value for hash are: 1:Loaded from disk, 2:Not found, 3:Loaded from cache
 	 *
 	 *  @param  DoliDB    $db             Database handler
-	 *	@return	int							<0 if KO, 0 if already loaded or loading not required, >0 if OK
+	 *	@return	int							Return integer <0 if KO, 0 if already loaded or loading not required, >0 if OK
 	 */
 	public function loadFromDatabase($db)
 	{
@@ -803,10 +803,10 @@ class Translate
 	public function convToOutputCharset($str, $pagecodefrom = 'UTF-8')
 	{
 		if ($pagecodefrom == 'ISO-8859-1' && $this->charset_output == 'UTF-8') {
-			$str = utf8_encode($str);
+			$str = mb_convert_encoding($str, 'UTF-8', 'ISO-8859-1');
 		}
 		if ($pagecodefrom == 'UTF-8' && $this->charset_output == 'ISO-8859-1') {
-			$str = utf8_decode(str_replace('€', chr(128), $str));
+			$str = mb_convert_encoding(str_replace('€', chr(128), $str), 'ISO-8859-1');
 			// TODO Replace with iconv("UTF-8", "ISO-8859-1", str_replace('€', chr(128), $str)); ?
 		}
 		return $str;

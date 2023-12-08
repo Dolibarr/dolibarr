@@ -148,7 +148,7 @@ class Bookmark extends CommonObject
 	/**
 	 *      Insert bookmark into database
 	 *
-	 *      @return     int     <0 si ko, rowid du bookmark cree si ok
+	 *      @return     int     Return integer <0 si ko, rowid du bookmark cree si ok
 	 */
 	public function create()
 	{
@@ -201,7 +201,7 @@ class Bookmark extends CommonObject
 	/**
 	 *      Update bookmark record
 	 *
-	 *      @return     int         <0 if KO, > if OK
+	 *      @return     int         Return integer <0 if KO, > if OK
 	 */
 	public function update()
 	{

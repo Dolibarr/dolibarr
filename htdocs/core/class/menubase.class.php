@@ -179,7 +179,7 @@ class Menubase
 	 *  Create menu entry into database
 	 *
 	 *  @param      User	$user       User that create
-	 *  @return     int      			<0 if KO, Id of record if OK
+	 *  @return     int      			Return integer <0 if KO, Id of record if OK
 	 */
 	public function create($user = null)
 	{

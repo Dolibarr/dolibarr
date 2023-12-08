@@ -1232,7 +1232,7 @@ abstract class CommonDocGenerator
 	 *  @param	float		$curY    		curent Y position
 	 *  @param	string		$colKey    		the column key
 	 *  @param	string		$columnText   	column text
-	 *  @return	int							<0 if KO, >= if OK
+	 *  @return	int							Return integer <0 if KO, >= if OK
 	 */
 	public function printStdColumnContent($pdf, &$curY, $colKey, $columnText = '')
 	{
@@ -1429,7 +1429,7 @@ abstract class CommonDocGenerator
 		$params = $params + $defaultParams;
 
 		/**
-		 * @var $extrafields ExtraFields
+		 * @var ExtraFields $extrafields
 		 */
 
 		$html = '';
@@ -1658,7 +1658,7 @@ abstract class CommonDocGenerator
 	 *  @param	object			$object    		common object det
 	 *  @param	Translate		$outputlangs    langs
 	 *  @param	int			   $hidedetails		Do not show line details
-	 *  @return	int								<0 if KO, >=0 if OK
+	 *  @return	int								Return integer <0 if KO, >=0 if OK
 	 */
 	public function defineColumnExtrafield($object, $outputlangs, $hidedetails = 0)
 	{

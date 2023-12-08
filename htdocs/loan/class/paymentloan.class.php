@@ -120,7 +120,7 @@ class PaymentLoan extends CommonObject
 	 *  Use this->amounts to have list of lines for the payment
 	 *
 	 *  @param      User		$user   User making payment
-	 *  @return     int     			<0 if KO, id of payment if OK
+	 *  @return     int     			Return integer <0 if KO, id of payment if OK
 	 */
 	public function create($user)
 	{

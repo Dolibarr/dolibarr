@@ -626,7 +626,7 @@ class AccountancyCategory // extends CommonObject
 	 * @param string	$thirdparty_code	Thirdparty code
 	 * @param int       $month 				Specifig month - Can be empty
 	 * @param int       $year 				Specifig year - Can be empty
-	 * @return integer 						<0 if KO, >= 0 if OK
+	 * @return integer 						Return integer <0 if KO, >= 0 if OK
 	 */
 	public function getSumDebitCredit($cpt, $date_start, $date_end, $sens, $thirdparty_code = 'nofilter', $month = 0, $year = 0)
 	{
