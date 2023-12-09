@@ -476,7 +476,7 @@ class BonPrelevement extends CommonObject
 			$sql .= " SET fk_user_credit = ".$user->id;
 			$sql .= ", statut = ".self::STATUS_CREDITED;
 			$sql .= ", date_credit = '".$this->db->idate($date)."'";
-			$sql .= " WHERE rowid=".((int) $this->id);
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			$sql .= " AND entity = ".((int) $conf->entity);
 			$sql .= " AND statut = ".self::STATUS_TRANSFERED;
 
@@ -497,6 +497,10 @@ class BonPrelevement extends CommonObject
 				$amountsperthirdparty = array();
 
 				$facs = $this->getListInvoices(1);
+				if ($this->error) {
+					$error++;
+				}
+				//var_dump($facs);exit;
 
 				// Loop on each invoice. $facs=array(0=>id, 1=>amount requested)
 				$num = count($facs);
@@ -594,9 +598,7 @@ class BonPrelevement extends CommonObject
 				$error++;
 			}
 
-			/*
-			 * End of procedure
-			 */
+			// End of procedure
 			if ($error == 0) {
 				$this->date_credit = $date;
 				$this->statut = self::STATUS_CREDITED;
@@ -674,13 +676,15 @@ class BonPrelevement extends CommonObject
 	 *	Get invoice list
 	 *
 	 *  @param 	int		$amounts 	If you want to get the amount of the order for each invoice
-	 *	@return	array 				Id of invoices
+	 *	@return	array 				Array(Id of invoices, Amount to pay)
 	 */
 	private function getListInvoices($amounts = 0)
 	{
 		global $conf;
 
 		$arr = array();
+
+		dol_syslog(get_class($this)."::getListInvoices");
 
 		/*
 		 * Returns all invoices presented within same order
@@ -694,18 +698,18 @@ class BonPrelevement extends CommonObject
 		if ($amounts) {
 			$sql .= ", SUM(pl.amount)";
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
-		$sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-		$sql .= " , ".MAIN_DB_PREFIX."prelevement as p";
+		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as pb,";
+		$sql .= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
+		$sql .= " ".MAIN_DB_PREFIX."prelevement as p";
 		$sql .= " WHERE p.fk_prelevement_lignes = pl.rowid";
-		$sql .= " AND pl.fk_prelevement_bons = p.rowid";
-		$sql .= " AND p.rowid = ".((int) $this->id);
-		$sql .= " AND p.entity = ".((int) $conf->entity);
+		$sql .= " AND pl.fk_prelevement_bons = pb.rowid";
+		$sql .= " AND pb.rowid = ".((int) $this->id);
+		$sql .= " AND pb.entity = ".((int) $conf->entity);
 		if ($amounts) {
 			if ($this->type == 'bank-transfer') {
-				$sql .= " GROUP BY fk_facture_fourn";
+				$sql .= " GROUP BY p.fk_facture_fourn";
 			} else {
-				$sql .= " GROUP BY fk_facture";
+				$sql .= " GROUP BY p.fk_facture";
 			}
 		}
 
@@ -730,7 +734,7 @@ class BonPrelevement extends CommonObject
 			}
 			$this->db->free($resql);
 		} else {
-			dol_syslog(get_class($this)."::getListInvoices Erreur");
+			$this->error = $this->db->lasterror();
 		}
 
 		return $arr;

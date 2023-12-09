@@ -308,7 +308,6 @@ if ($resql) {
 	print_liste_field_titre(($salaryBonPl ? "AmountSalary" : "AmountInvoice"), $_SERVER["PHP_SELF"], "f.total_ttc", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre("AmountRequested", $_SERVER["PHP_SELF"], "pl.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", $param, 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre('');
 	print "</tr>\n";
 
 	$totalinvoices = 0;
@@ -376,8 +375,6 @@ if ($resql) {
 		}
 		print "</td>";
 
-		print "<td></td>";
-
 		print "</tr>\n";
 
 		$totalinvoices += $obj->total_ttc;
@@ -402,7 +399,6 @@ if ($resql) {
 		}
 		print price($totalamount_requested);
 		print "</td>\n";
-		print '<td>&nbsp;</td>';
 		print '<td>&nbsp;</td>';
 		print "</tr>\n";
 	}
