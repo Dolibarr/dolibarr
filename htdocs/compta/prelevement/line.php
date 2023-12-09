@@ -274,6 +274,9 @@ if ($id) {
 	$sql = "SELECT pf.rowid";
 	$sql .= " ,f.rowid as facid, f.ref as ref, f.total_ttc, f.paye, f.fk_statut";
 	$sql .= " , s.rowid as socid, s.nom as name";
+
+	$sqlfields = $sql; // $sql fields to remove for count total
+
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 	$sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 	$sql .= " , ".MAIN_DB_PREFIX."prelevement as pf";
@@ -296,6 +299,30 @@ if ($id) {
 	if ($socid) {
 		$sql .= " AND s.rowid = ".((int) $socid);
 	}
+
+	// Count total nb of records
+	$nbtotalofrecords = '';
+	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
+		/* The fast and low memory method to get and count full list converts the sql into a sql count */
+		$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+		$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+		$resql = $db->query($sqlforcount);
+		if ($resql) {
+			$objforcount = $db->fetch_object($resql);
+			$nbtotalofrecords = $objforcount->nbtotalofrecords;
+		} else {
+			dol_print_error($db);
+		}
+
+		if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+			$page = 0;
+			$offset = 0;
+		}
+		$db->free($resql);
+	}
+
+	$result = $db->query($sql);
+
 	$sql .= $db->order($sortfield, $sortorder);
 	$sql .= $db->plimit($conf->liste_limit + 1, $offset);
 
@@ -307,7 +334,7 @@ if ($id) {
 
 		$urladd = "&id=".urlencode($id);
 
-		print_barre_liste($langs->trans("Bills"), $page, "factures.php", $urladd, $sortfield, $sortorder, '', $num, 0, '');
+		print_barre_liste($langs->trans("Bills"), $page, "factures.php", $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
 
 		print"\n<!-- debut table -->\n";
 		print '<table class="noborder" width="100%" cellpadding="4">';
