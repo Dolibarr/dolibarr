@@ -96,6 +96,7 @@ llxHeader('', $langs->trans("WithdrawalsReceipts"));
 if ($id > 0 || $ref) {
 	if ($object->fetch($id, $ref) >= 0) {
 		$head = prelevement_prepare_head($object);
+
 		print dol_get_fiche_head($head, 'invoices', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/orders_list.php?restore_lastsearch_values=1'.($object->type != 'bank-transfer' ? '' : '&type=bank-transfer').'">'.$langs->trans("BackToList").'</a>';
@@ -293,8 +294,9 @@ if ($resql) {
 	print '<input type="hidden" name="id" value="'.$id.'">';
 
 	$massactionbutton = '';
+	$title = ($salaryBonPl ? $langs->trans("Salaries") : ($object->type == 'bank-transfer' ? $langs->trans("SupplierInvoices") : $langs->trans("Invoices")));
 
-	print_barre_liste(($salaryBonPl ? $langs->trans("Salaries") : $langs->trans("Invoices")), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, '', '', $limit);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
 	print"\n<!-- debut table -->\n";
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
@@ -338,7 +340,6 @@ if ($resql) {
 		}
 
 		print '<tr class="oddeven">';
-
 
 		print '<td class="nowraponall">';
 		print($salaryBonPl ? $salarytmp->getNomUrl(1) : $invoicetmp->getNomUrl(1));
