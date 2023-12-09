@@ -175,7 +175,7 @@ if ($nolinesbefore) {
 	}
 	$coldisplay++;
 	?>
-	<td class="nobottom linecoldescription minwidth400imp">
+	<td class="nobottom linecoldescription minwidth400imp" colspan="15">
 		<?php
 		$freelines = false;
 		if (!getDolGlobalString('MAIN_DISABLE_FREE_LINES')) {
@@ -398,6 +398,14 @@ if ($nolinesbefore) {
 				echo '<div id="attributes_box"></div>';
 			}
 		}
+		?>
+	</td></tr>
+		<tr class="pair nobottom nodrag nodrop nohoverpair"><td>
+	<?php
+		//Label of product
+		if (getDolGlobalString('PRODUIT_LABEL_IN_FORM')) {
+			echo '<span><input type="text" name="product_label" id="product_label" class="flat left" style="width:100%; padding-right:0; padding-left:0;" placeholder='.$langs->trans("Label").' value=></span>' ;  //ajout MM
+		}
 		// Editor wysiwyg
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$nbrows = ROWS_2;
@@ -437,10 +445,11 @@ if ($nolinesbefore) {
 		echo '</td>';
 		if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') {	// We must have same test in printObjectLines
 			$coldisplay++; ?>
-	<td class="nobottom linecolrefsupplier"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth100 maxwidth125onsmartphone" value="<?php echo(GETPOSTISSET("fourn_ref") ? GETPOST("fourn_ref", 'alpha', 2) : ''); ?>"></td>
+	<td class="nobottom linecolrefsupplier" style="vertical-align: top"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth100 maxwidth125onsmartphone" value="<?php echo(GETPOSTISSET("fourn_ref") ? GETPOST("fourn_ref", 'alpha', 2) : ''); ?>"></td>
 			<?php
 		}
-		print '<td class="nobottom linecolvat right">';
+		// VAT column
+		print '<td class="nobottom linecolvat right" style="vertical-align: top">';
 		$coldisplay++;
 		if ($seller->tva_assuj == "0") {
 			echo '<input type="hidden" name="tva_tx" id="tva_tx" value="0">'.vatrate(0, true);
@@ -450,35 +459,35 @@ if ($nolinesbefore) {
 		?>
 	</td>
 
-	<td class="nobottom linecoluht right"><?php $coldisplay++; ?>
+	<td class="nobottom linecoluht right" style="vertical-align: top"><?php $coldisplay++; ?>
 		<input type="text" size="5" name="price_ht" id="price_ht" class="flat right" value="<?php echo(GETPOSTISSET("price_ht") ? GETPOST("price_ht", 'alpha', 2) : ''); ?>">
 	</td>
 
 	<?php
 	if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
 		$coldisplay++; ?>
-		<td class="nobottom linecoluht_currency right">
+		<td class="nobottom linecoluht_currency right" style="vertical-align: top">
 			<input type="text" size="5" name="multicurrency_price_ht" id="multicurrency_price_ht" class="flat right" value="<?php echo(GETPOSTISSET("multicurrency_price_ht") ? GETPOST("multicurrency_price_ht", 'alpha', 2) : ''); ?>">
 		</td>
 		<?php
 	}
 	if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
 		$coldisplay++; ?>
-		<td class="nobottom linecoluttc right">
+		<td class="nobottom linecoluttc right" style="vertical-align: top">
 			<input type="text" size="5" name="price_ttc" id="price_ttc" class="flat right" value="<?php echo(GETPOSTISSET("price_ttc") ? GETPOST("price_ttc", 'alpha', 2) : ''); ?>">
 		</td>
 		<?php
 	}
 	$coldisplay++;
 	?>
-	<td class="nobottom linecolqty right">
+	<td class="nobottom linecolqty right" style="vertical-align: top">
 	<?php $default_qty = (!getDolGlobalString('MAIN_OBJECTLINE_CREATE_EMPTY_QTY_BY_DEFAULT') ? 1 : ''); ?>
 	<input type="text" name="qty" id="qty" class="flat width40 right" value="<?php echo(GETPOSTISSET("qty") ? GETPOST("qty", 'alpha', 2) : $default_qty); ?>">
 	</td>
 	<?php
 	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		$coldisplay++;
-		print '<td class="nobottom linecoluseunit left">';
+		print '<td class="nobottom linecoluseunit left" style="vertical-align: top">';
 		print $form->selectUnits(empty($line->fk_unit) ? $conf->global->PRODUCT_USE_UNITS : $line->fk_unit, "units");
 		print '</td>';
 	}
@@ -489,7 +498,8 @@ if ($nolinesbefore) {
 	$coldisplay++;
 	?>
 
-	<td class="nobottom nowrap linecoldiscount right"><input type="text" name="remise_percent" id="remise_percent" class="flat width40 right" value="<?php echo(GETPOSTISSET("remise_percent") ? GETPOST("remise_percent", 'alpha', 2) : ($remise_percent ? $remise_percent : '')); ?>"><span class="opacitymedium hideonsmartphone">%</span></td>
+	<td class="nobottom nowrap linecoldiscount right" style="vertical-align: top">
+		<input type="text" name="remise_percent" id="remise_percent" class="flat width40 right" value="<?php echo(GETPOSTISSET("remise_percent") ? GETPOST("remise_percent", 'alpha', 2) : ($remise_percent ? $remise_percent : '')); ?>"><span class="opacitymedium hideonsmartphone">%</span></td>
 	<?php
 	if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 		$coldisplay++;
@@ -500,7 +510,7 @@ if ($nolinesbefore) {
 	if (!empty($usemargins)) {
 		if ($user->hasRight('margins', 'creer')) {
 			$coldisplay++; ?>
-			<td class="nobottom margininfos linecolmargin right">
+			<td class="nobottom margininfos linecolmargin right" style="vertical-align: top">
 				<!-- For predef product -->
 				<?php if (isModEnabled("product") || isModEnabled("service")) { ?>
 					<select id="fournprice_predef" name="fournprice_predef" class="flat minwidth75imp maxwidth150" style="display: none;"></select>
@@ -521,7 +531,7 @@ if ($nolinesbefore) {
 	}
 	$coldisplay += $colspan;
 	?>
-	<td class="nobottom linecoledit center valignmiddle" colspan="<?php echo $colspan; ?>">
+	<td class="nobottom linecoledit center valignmiddle" style="vertical-align: top" colspan="<?php echo $colspan; ?>">
 		<input type="submit" class="button reposition" value="<?php echo $langs->trans('Add'); ?>" name="addline" id="addline">
 	</td>
 </tr>
@@ -866,13 +876,19 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 						if (getDolGlobalInt('PRODUIT_AUTOFILL_DESC') == 1) {
 							if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) { ?>
 						var proddesc = data.desc_trans;
+						var prodlabel = data.label_trans; // ajout MM
 								<?php
 							} else { ?>
 						var proddesc = data.desc;
+						var prodlabel = data.label; // ajout MM
 								<?php
 							} ?>
 						console.log("objectline_create.tpl Load desciption into text area : "+proddesc);
-							<?php
+								<?php
+							if (getDolGlobalString('PRODUIT_LABEL_IN_FORM')) { ?>
+						jQuery('#product_label').val(prodlabel);  //ajout MM : update the input text on product selection
+								<?php
+							}
 							if (getDolGlobalString('FCKEDITOR_ENABLE_DETAILS')) { ?>
 						if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
 						{

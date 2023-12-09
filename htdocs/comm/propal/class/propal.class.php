@@ -576,7 +576,7 @@ class Propal extends CommonObject
 	 *      @param		int			$fk_parent_line		Id of parent line
 	 *      @param		int			$fk_fournprice		Id supplier price
 	 *      @param		int			$pa_ht				Buying price without tax
-	 *      @param		string		$label				???
+	 *      @param		string		$label				Product or Service custom label if PRODUIT_LABEL_IN_FORM is set
 	 *		@param      int			$date_start       	Start date of the line
 	 *		@param      int			$date_end         	End date of the line
 	 *      @param		array		$array_options		extrafields array
@@ -593,7 +593,7 @@ class Propal extends CommonObject
 	{
 		global $mysoc, $conf, $langs;
 
-		dol_syslog(get_class($this)."::addline propalid=$this->id, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc, info_bits=$info_bits, type=$type, fk_remise_except=".$fk_remise_except);
+		dol_syslog(get_class($this)."::addline propalid=$this->id, label=$label, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc, info_bits=$info_bits, type=$type, fk_remise_except=".$fk_remise_except);
 
 		if ($this->statut == self::STATUS_DRAFT) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -825,7 +825,7 @@ class Propal extends CommonObject
 	 * 	@param		int			$skip_update_total	Keep fields total_xxx to 0 (used for special lines by some modules)
 	 *  @param		int			$fk_fournprice		Id of origin supplier price
 	 *  @param		int			$pa_ht				Price (without tax) of product when it was bought
-	 *  @param		string		$label				???
+	 *  @param		string		$label				Product or Service label if PRODUIT_LABEL_IN_FORM is set
 	 *  @param		int			$type				0/1=Product/service
 	 *	@param      int			$date_start       	Start date of the line
 	 *	@param      int			$date_end         	End date of the line
@@ -841,7 +841,7 @@ class Propal extends CommonObject
 		global $mysoc, $langs;
 
 		dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise_percent=$remise_percent,
-        txtva=$txtva, desc=$desc, price_base_type=$price_base_type, info_bits=$info_bits, special_code=$special_code, fk_parent_line=$fk_parent_line, pa_ht=$pa_ht, type=$type, date_start=$date_start, date_end=$date_end");
+        txtva=$txtva, desc=$desc, label=$label, price_base_type=$price_base_type, info_bits=$info_bits, special_code=$special_code, fk_parent_line=$fk_parent_line, pa_ht=$pa_ht, type=$type, date_start=$date_start, date_end=$date_end");
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 		// Clean parameters
