@@ -566,7 +566,7 @@ class Products extends DolibarrApi
 	 *
 	 * @param  int $id            Id of parent product/service
 	 * @param  int $subproduct_id Id of child product/service
-	 * @param  int $qty           Quantity
+	 * @param  int $qty           Quantity must be positive
 	 * @param  int $incdec        1=Increase/decrease stock of child when parent stock increase/decrease
 	 * @return int
 	 *
@@ -584,6 +584,10 @@ class Products extends DolibarrApi
 
 		if (!DolibarrApi::_checkAccessToResource('product', $id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		if ($qty <= 0) {
+			throw new RestException(500, "Quantity of product child must be positive");
 		}
 
 		$result = $this->product->add_sousproduit($id, $subproduct_id, $qty, $incdec);
