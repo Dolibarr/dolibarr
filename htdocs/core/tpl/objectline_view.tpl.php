@@ -137,13 +137,7 @@ if (($line->info_bits & 2) == 2) {
 	$format = (getDolGlobalString('MAIN_USE_HOURMIN_IN_DATE_RANGE') ? 'dayhour' : 'day');
 
 	if ($line->fk_product > 0) {
-		if ( !getDolGlobalString('PRODUIT_LABEL_IN_FORM') ){
-			print $form->textwithtooltip($text, $description, 3, 0, '', $i, 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
-		} else {
-			print '<span class="product_label">'.$form->textwithtooltip($text, '', 3, 0, '', $i, 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : '')).'</span>';
-			// removes the desciption in tooltip
-		}
-
+		print $form->textwithtooltip($text, $description, 3, 0, '', $i, 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
 	} else {
 		$type = (!empty($line->product_type) ? $line->product_type : $line->fk_product_type);
 		if ($type == 1) {
@@ -154,11 +148,7 @@ if (($line->info_bits & 2) == 2) {
 
 		if (!empty($line->label)) {
 			$text .= ' <strong>'.$line->label.'</strong>';
-			if ( !getDolGlobalString('PRODUIT_LABEL_IN_FORM') ){
-				print $form->textwithtooltip($text, dol_htmlentitiesbr($line->description), 3, 0, '', $i, 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
-			} else {
-				print $form->textwithtooltip($text, '', 3, 0, '', $i, 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
-			}
+			print $form->textwithtooltip($text, dol_htmlentitiesbr($line->description), 3, 0, '', $i, 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
 		} else {
 			if (!empty($line->fk_parent_line)) {
 				print img_picto('', 'rightarrow');
@@ -230,7 +220,7 @@ if (($line->info_bits & 2) == 2) {
 		} elseif ($line->element == 'invoice_supplier_det_rec') {
 			print (!empty($line->description) && $line->description != $line->label) ? (($line->date_start || $line->date_end) ? '' : '<br>').'<br>'.dol_htmlentitiesbr($line->description) : '';
 		} else {
-			print (!empty($line->description) && $line->description != $line->product_label) ? (($line->date_start || $line->date_end) ? '' : '<br>').dol_htmlentitiesbr($line->description) : '';
+			print (!empty($line->description) && $line->description != $line->product_label) ? (($line->date_start || $line->date_end) ? '' : '<br>').'<br>'.dol_htmlentitiesbr($line->description) : '';
 		}
 	}
 
@@ -308,7 +298,7 @@ if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 	$tooltiponpriceend = '</span>';
 }
 
-// VAT Rate column
+// VAT Rate
 print '<td class="linecolvat nowrap right">';
 $coldisplay++;
 $positiverates = '';
@@ -366,7 +356,6 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	}
 	print '</td>';
 }
-// Discount column
 if (!empty($line->remise_percent) && $line->special_code != 3) {
 	print '<td class="linecoldiscount right">';
 	$coldisplay++;
@@ -389,7 +378,6 @@ if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 	print '<td align="right" class="linecolcycleref2 nowrap">'.price($sign * $tmp[0]).'</td>';
 }
 
-// Margin column
 if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 	if ($user->hasRight('margins', 'creer')) { ?>
 		<td class="linecolmargin1 nowrap margininfos right"><?php $coldisplay++; ?><?php print price($line->pa_ht); ?></td>
