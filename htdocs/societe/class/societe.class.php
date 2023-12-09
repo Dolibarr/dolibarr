@@ -923,7 +923,9 @@ class Societe extends CommonObject
 		dol_syslog(get_class($this)."::create ".$this->name);
 
 		$now = dol_now();
-
+		if(!empty($this->date_creation)) {
+			$now = $this->date_creation; 
+		}
 		$this->db->begin();
 
 		// For automatic creation during create action (not used by Dolibarr GUI, can be used by scripts)
