@@ -235,7 +235,7 @@ if ($result) {
 		$tabfac[$obj->rowid]["type"] = $obj->type;
 		$tabfac[$obj->rowid]["description"] = $obj->description;
 		$tabfac[$obj->rowid]["close_code"] = $obj->close_code; // close_code = 'replaced' for replacement invoices (not used in most european countries)
-		//$tabfac[$obj->rowid]["fk_facturefourndet"] = $obj->fdid;
+		$tabfac[$obj->rowid]["fk_facturefourndet"] = $obj->fdid;
 
 		// Avoid warnings
 		if (!isset($tabttc[$obj->rowid][$compta_soc])) {
