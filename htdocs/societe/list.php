@@ -243,7 +243,7 @@ $checkedprofid6 = 0;
 $checkprospectlevel = (in_array($contextpage, array('prospectlist')) ? 1 : 0);
 $checkstcomm = (in_array($contextpage, array('prospectlist')) ? 1 : 0);
 $arrayfields = array(
-	's.rowid'=>array('label'=>"TechnicalID", 'position'=>1, 'checked'=>(getDolGlobalString('MAIN_SHOW_TECHNICAL_ID')), 'enabled'=>(getDolGlobalString('MAIN_SHOW_TECHNICAL_ID'))),
+	's.rowid'=>array('label'=>"TechnicalID", 'position'=>1, 'checked'=>-1, 'enabled'=>1),
 	's.nom'=>array('label'=>"ThirdPartyName", 'position'=>2, 'checked'=>1),
 	's.name_alias'=>array('label'=>"AliasNameShort", 'position'=>3, 'checked'=>1),
 	's.barcode'=>array('label'=>"Gencod", 'position'=>5, 'checked'=>1, 'enabled'=>(isModEnabled('barcode'))),
