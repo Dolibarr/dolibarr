@@ -247,7 +247,7 @@ if ($result) {
 		$tabfac[$obj->rowid]["type"] = $obj->type;
 		$tabfac[$obj->rowid]["description"] = $obj->label_compte;
 		$tabfac[$obj->rowid]["close_code"] = $obj->close_code; // close_code = 'replaced' for replacement invoices (not used in most european countries)
-		//$tabfac[$obj->rowid]["fk_facturedet"] = $obj->fdid;
+		$tabfac[$obj->rowid]["fk_facturedet"] = $obj->fdid;
 
 		// Modification - Situation invoice - Begin
 		$tabfac[$obj->rowid]["total_ht"] = $obj->invoice_total_ht;
