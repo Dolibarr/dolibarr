@@ -923,8 +923,8 @@ class Societe extends CommonObject
 		dol_syslog(get_class($this)."::create ".$this->name);
 
 		$now = dol_now();
-		if(!empty($this->date_creation)) {
-			$now = $this->date_creation; 
+		if (!empty($this->date_creation)) {
+			$now = $this->date_creation;
 		}
 		$this->db->begin();
 

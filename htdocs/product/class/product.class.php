@@ -773,8 +773,8 @@ class Product extends CommonObject
 		dol_syslog(get_class($this)."::create ref=".$this->ref." price=".$this->price." price_ttc=".$this->price_ttc." tva_tx=".$this->tva_tx." price_base_type=".$this->price_base_type, LOG_DEBUG);
 
 		$now = dol_now();
-		if(!empty($this->date_creation)) {
-			$now = $this->date_creation; 
+		if (!empty($this->date_creation)) {
+			$now = $this->date_creation;
 		}
 		$this->db->begin();
 
