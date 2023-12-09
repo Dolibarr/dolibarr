@@ -1487,8 +1487,8 @@ if (empty($reshook)) {
 			$res = $product->fetch($productid);
 
 			$type = $product->type;
-			// $label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');  //'update_label' seems not referenced anywhere
-			$label = (GETPOST('product_label') ? GETPOST('product_label') : ''); //MODIF MM
+			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
+
 			$price_min = $product->price_min;
 			if (getDolGlobalString('PRODUIT_MULTIPRICES') && !empty($object->thirdparty->price_level)) {
 				$price_min = $product->multiprices_min[$object->thirdparty->price_level];
@@ -1547,6 +1547,7 @@ if (empty($reshook)) {
 				$pu = $pu_ttc;
 				$price_base_type = 'TTC';
 			}
+
 			$result = $object->updateline(GETPOST('lineid', 'int'), $pu, $qty, $remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $description, $price_base_type, $info_bits, $special_code, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $type, $date_start, $date_end, $array_options, GETPOST("units"), $pu_ht_devise);
 
 			if ($result >= 0) {
