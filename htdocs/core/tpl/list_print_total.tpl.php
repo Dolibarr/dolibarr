@@ -14,6 +14,10 @@ if (isset($totalarray['pos'])) {
 	while ($i < $totalarray['nbfield']) {
 		$i++;
 		if (!empty($totalarray['pos'][$i])) {
+			// if $totalarray['type'] not present we consider it as number
+			if (empty($totalarray['type'][$i])) {
+				$totalarray['type'][$i] = 'number';
+			}
 			switch ($totalarray['type'][$i]) {
 				case 'duration':
 					print '<td class="right">';
