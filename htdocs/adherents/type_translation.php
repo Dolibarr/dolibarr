@@ -216,7 +216,7 @@ if ($action == 'edit') {
 			$s = picto_from_langcode($key);
 			print '<br>';
 			print '<div class="inline-block marginbottomonly">';
-			print ($s ? $s.' ' : '').'<b>'.$langs->trans('Language_'.$key).':</b>';
+			print($s ? $s.' ' : '').'<b>'.$langs->trans('Language_'.$key).':</b>';
 			print '</div>';
 			print '<div class="inline-block marginbottomonly floatright">';
 			print '<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=delete&token='.newToken().'&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom"')."</a><br>";
@@ -242,7 +242,7 @@ if ($action == 'edit') {
 		foreach ($object->multilangs as $key => $value) {
 			$s = picto_from_langcode($key);
 			print '<div class="inline-block marginbottomonly">';
-			print ($s ? $s.' ' : '').'<b>'.$langs->trans('Language_'.$key).':</b>';
+			print($s ? $s.' ' : '').'<b>'.$langs->trans('Language_'.$key).':</b>';
 			print '</div>';
 			print '<div class="inline-block marginbottomonly floatright">';
 			print '<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=delete&token='.newToken().'&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom"').'</a>';

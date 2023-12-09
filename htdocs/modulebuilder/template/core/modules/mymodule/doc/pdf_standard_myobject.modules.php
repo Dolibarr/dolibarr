@@ -839,7 +839,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 	/**
 	 *   Show table for lines
 	 *
-	 *   @param		tcpdf			$pdf     		Object PDF
+	 *   @param		tcpdf		$pdf     		Object PDF
 	 *   @param		string		$tab_top		Top position of table
 	 *   @param		string		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
@@ -913,7 +913,9 @@ class pdf_standard_myobject extends ModelePDFMyObject
 		global $conf, $langs;
 
 		$ltrdirection = 'L';
-		if ($outputlangs->trans("DIRECTION") == 'rtl') $ltrdirection = 'R';
+		if ($outputlangs->trans("DIRECTION") == 'rtl') {
+			$ltrdirection = 'R';
+		}
 
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "bills", "propal", "companies"));

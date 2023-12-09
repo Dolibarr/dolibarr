@@ -109,7 +109,7 @@ class MultiCurrency extends CommonObject
 	 *
 	 * @param  User $user      	User that creates
 	 * @param  bool $trigger 	true=launch triggers after, false=disable triggers
-	 * @return int 				<0 if KO, Id of created object if OK
+	 * @return int 				Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $trigger = true)
 	{
@@ -184,7 +184,7 @@ class MultiCurrency extends CommonObject
 	 *
 	 * @param int    $id  		Id object
 	 * @param string $code 		code
-	 * @return int 				<0 if KO, 0 if not found, >0 if OK
+	 * @return int 				Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $code = null)
 	{
@@ -237,7 +237,7 @@ class MultiCurrency extends CommonObject
 	/**
 	 * Load all rates in object from the database
 	 *
-	 * @return int <0 if KO, >=0 if OK
+	 * @return int Return integer <0 if KO, >=0 if OK
 	 */
 	public function fetchAllCurrencyRate()
 	{
@@ -275,7 +275,7 @@ class MultiCurrency extends CommonObject
 	 *
 	 * @param  User $user      	User that modifies
 	 * @param  bool $trigger 	true=launch triggers after, false=disable triggers
-	 * @return int 				<0 if KO, >0 if OK
+	 * @return int 				Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $trigger = true)
 	{
@@ -332,13 +332,12 @@ class MultiCurrency extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param bool $trigger true=launch triggers after, false=disable triggers
-	 * @return int <0 if KO, >0 if OK
+	 * @param	User	$user		User making the deletion
+	 * @param 	bool 	$trigger 	true=launch triggers after, false=disable triggers
+	 * @return 	int 				Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($trigger = true)
+	public function delete($user, $trigger = true)
 	{
-		global $user;
-
 		dol_syslog('MultiCurrency::delete', LOG_DEBUG);
 
 		$error = 0;
@@ -391,8 +390,10 @@ class MultiCurrency extends CommonObject
 	 */
 	public function deleteRates()
 	{
+		global $user;
+
 		foreach ($this->rates as &$rate) {
-			if ($rate->delete() <= 0) {
+			if ($rate->delete($user) <= 0) {
 				return false;
 			}
 		}
@@ -457,12 +458,12 @@ class MultiCurrency extends CommonObject
 		return -1;
 	}
 
-	 /**
-	  * Add new entry into llx_multicurrency_rate
-	  *
-	  * @param double	$rate	rate value
-	  * @return int <0 if KO, >0 if OK
-	  */
+	/**
+	 * Add new entry into llx_multicurrency_rate
+	 *
+	 * @param double	$rate	rate value
+	 * @return int Return integer <0 if KO, >0 if OK
+	 */
 	public function updateRate($rate)
 	{
 		return $this->addRate($rate);
@@ -471,7 +472,7 @@ class MultiCurrency extends CommonObject
 	/**
 	 * Fetch CurrencyRate object in $this->rate
 	 *
-	 * @return int <0 if KO, 0 if not found, >0 if OK
+	 * @return int Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function getRate()
 	{
@@ -490,14 +491,14 @@ class MultiCurrency extends CommonObject
 		return -1;
 	}
 
-	 /**
-	  * Get id of currency from code
-	  *
-	  * @param  DoliDB	$dbs	    object db
-	  * @param  string	$code	    code value search
-	  *
-	  * @return int                 0 if not found, >0 if OK
-	  */
+	/**
+	 * Get id of currency from code
+	 *
+	 * @param  DoliDB	$dbs	    object db
+	 * @param  string	$code	    code value search
+	 *
+	 * @return int                 0 if not found, >0 if OK
+	 */
 	public static function getIdFromCode($dbs, $code)
 	{
 		global $conf;
@@ -513,16 +514,16 @@ class MultiCurrency extends CommonObject
 		}
 	}
 
-	 /**
-	  * Get id and rate of currency from code
-	  *
-	  * @param DoliDB	$dbs	        Object db
-	  * @param string	$code	        Code value search
-	  * @param integer	$date_document	Date from document (propal, order, invoice, ...)
-	  *
-	  * @return 	array	[0] => id currency
-	  *						[1] => rate
-	  */
+	/**
+	 * Get id and rate of currency from code
+	 *
+	 * @param DoliDB	$dbs	        Object db
+	 * @param string	$code	        Code value search
+	 * @param integer	$date_document	Date from document (propal, order, invoice, ...)
+	 *
+	 * @return 	array	[0] => id currency
+	 *						[1] => rate
+	 */
 	public static function getIdAndTxFromCode($dbs, $code, $date_document = '')
 	{
 		global $conf;
@@ -641,7 +642,7 @@ class MultiCurrency extends CommonObject
 	 * @param 	string  $key                Key to use. Come from getDolGlobalString("MULTICURRENCY_APP_ID")
 	 * @param   int     $addifnotfound      Add if not found
 	 * @param   string  $mode				"" for standard use, "cron" to use it in a cronjob
-	 * @return  int							<0 if KO, >0 if OK, if mode = "cron" OK is 0
+	 * @return  int							Return integer <0 if KO, >0 if OK, if mode = "cron" OK is 0
 	 */
 	public function syncRates($key, $addifnotfound = 0, $mode = "")
 	{
@@ -786,7 +787,7 @@ class CurrencyRate extends CommonObjectLine
 	 *
 	 * @param  int	$fk_multicurrency	Id of currency
 	 * @param  bool	$trigger			true=launch triggers after, false=disable triggers
-	 * @return int 						<0 if KO, Id of created object if OK
+	 * @return int 						Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($fk_multicurrency, $trigger = true)
 	{
@@ -854,7 +855,7 @@ class CurrencyRate extends CommonObjectLine
 	 * Load object in memory from the database
 	 *
 	 * @param 	int    $id  Id object
-	 * @return 	int 		<0 if KO, 0 if not found, >0 if OK
+	 * @return 	int 		Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -897,7 +898,7 @@ class CurrencyRate extends CommonObjectLine
 	 * Update object into database
 	 *
 	 * @param  bool $trigger	true=launch triggers after, false=disable triggers
-	 * @return int 				<0 if KO, >0 if OK
+	 * @return int 				Return integer <0 if KO, >0 if OK
 	 */
 	public function update($trigger = true)
 	{
@@ -952,13 +953,12 @@ class CurrencyRate extends CommonObjectLine
 	/**
 	 * Delete object in database
 	 *
-	 * @param 	bool $trigger 	true=launch triggers after, false=disable triggers
-	 * @return 	int 			<0 if KO, >0 if OK
+	 * @param	User	$user		User making the deletion
+	 * @param 	bool 	$trigger 	true=launch triggers after, false=disable triggers
+	 * @return 	int 				Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($trigger = true)
+	public function delete($user, $trigger = true)
 	{
-		global $user;
-
 		dol_syslog('CurrencyRate::delete', LOG_DEBUG);
 
 		$error = 0;

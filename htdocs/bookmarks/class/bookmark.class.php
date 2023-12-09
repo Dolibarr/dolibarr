@@ -109,7 +109,7 @@ class Bookmark extends CommonObject
 	 *    Directs the bookmark
 	 *
 	 *    @param    int		$id		Bookmark Id Loader
-	 *    @return	int				<0 if KO, >0 if OK
+	 *    @return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -148,7 +148,7 @@ class Bookmark extends CommonObject
 	/**
 	 *      Insert bookmark into database
 	 *
-	 *      @return     int     <0 si ko, rowid du bookmark cree si ok
+	 *      @return     int     Return integer <0 si ko, rowid du bookmark cree si ok
 	 */
 	public function create()
 	{
@@ -201,7 +201,7 @@ class Bookmark extends CommonObject
 	/**
 	 *      Update bookmark record
 	 *
-	 *      @return     int         <0 if KO, > if OK
+	 *      @return     int         Return integer <0 if KO, > if OK
 	 */
 	public function update()
 	{
@@ -235,7 +235,7 @@ class Bookmark extends CommonObject
 	 *      Removes the bookmark
 	 *
 	 *      @param      User	$user     	User deleting
-	 *      @return     int         		<0 if KO, >0 if OK
+	 *      @return     int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user)
 	{

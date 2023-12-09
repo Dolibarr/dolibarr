@@ -375,8 +375,9 @@ class MultiCurrencies extends DolibarrApi
 
 		// Clear all fields out of interrest
 		foreach ($object as $key => $value) {
-			if ($key == "id" || $key == "rate" || $key == "date_sync")
+			if ($key == "id" || $key == "rate" || $key == "date_sync") {
 				continue;
+			}
 			unset($object->$key);
 		}
 

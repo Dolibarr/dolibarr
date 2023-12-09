@@ -275,13 +275,15 @@ function getContact($authentication, $id, $ref_ext)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (!$error && ($id && $ref_ext)) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id and ref_ext can't be both provided. You must choose one or other but not both.";
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = "Parameter id and ref_ext can't be both provided. You must choose one or other but not both.";
 	}
 
 	if (!$error) {
@@ -352,11 +354,13 @@ function getContact($authentication, $id, $ref_ext)
 				);
 			} else {
 				$error++;
-				$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
+				$errorcode = 'PERMISSION_DENIED';
+				$errorlabel = 'User does not have permission for this request';
 			}
 		} else {
 			$error++;
-			$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref_ext='.$ref_ext;
+			$errorcode = 'NOT_FOUND';
+			$errorlabel = 'Object not found for id='.$id.' nor ref_ext='.$ref_ext;
 		}
 	}
 
@@ -389,12 +393,15 @@ function createContact($authentication, $contact)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (empty($contact['lastname'])) {
-		$error++; $errorcode = 'KO'; $errorlabel = "Name is mandatory.";
+		$error++;
+		$errorcode = 'KO';
+		$errorlabel = "Name is mandatory.";
 	}
 
 	if (!$error) {
@@ -493,13 +500,15 @@ function getContactsForThirdParty($authentication, $idthirdparty)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (!$error && empty($idthirdparty)) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = 'Parameter id is not provided';
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = 'Parameter id is not provided';
 	}
 
 	if (!$error) {
@@ -587,7 +596,8 @@ function getContactsForThirdParty($authentication, $idthirdparty)
 			);
 		} else {
 			$error++;
-			$errorcode = $db->lasterrno(); $errorlabel = $db->lasterror();
+			$errorcode = $db->lasterrno();
+			$errorlabel = $db->lasterror();
 		}
 	}
 
@@ -620,17 +630,21 @@ function updateContact($authentication, $contact)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (empty($contact['id']) && empty($contact['ref_ext'])) {
-		$error++; $errorcode = 'KO'; $errorlabel = "Contact id or ref_ext is mandatory.";
+		$error++;
+		$errorcode = 'KO';
+		$errorlabel = "Contact id or ref_ext is mandatory.";
 	}
 	// Check parameters
 	if (!$error && ($contact['id'] && $contact['ref_ext'])) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id and ref_ext can't be all provided. You must choose one of them.";
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = "Parameter id and ref_ext can't be all provided. You must choose one of them.";
 	}
 
 	if (!$error) {

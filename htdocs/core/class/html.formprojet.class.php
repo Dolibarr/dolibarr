@@ -537,7 +537,9 @@ class FormProjets extends Form
 		}
 
 		$linkedtothirdparty = false;
-		if (!in_array($table_element, array(
+		if (!in_array(
+			$table_element,
+			array(
 				'don',
 				'expensereport_det',
 				'expensereport', 'loan',

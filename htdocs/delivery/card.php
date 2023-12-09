@@ -166,7 +166,7 @@ if ($action == 'add') {
 
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('expedition', 'delivery', 'supprimer')) {
 	$db->begin();
-	$result = $object->delete();
+	$result = $object->delete($user);
 
 	if ($result > 0) {
 		$db->commit();
@@ -510,7 +510,8 @@ if ($action == 'create') {
 			 */
 
 			$num_prod = count($object->lines);
-			$i = 0; $total = 0;
+			$i = 0;
+			$total = 0;
 
 			print '<table class="noborder centpercent">';
 
@@ -600,10 +601,10 @@ if ($action == 'create') {
 
 					// Display lines extrafields
 					//if (!empty($extrafields)) {
-						$colspan = 2;
-						$mode = ($object->statut == 0) ? 'edit' : 'view';
+					$colspan = 2;
+					$mode = ($object->statut == 0) ? 'edit' : 'view';
 
-						$object->lines[$i]->fetch_optionals();
+					$object->lines[$i]->fetch_optionals();
 
 					if ($action == 'create_delivery') {
 						$srcLine = new ExpeditionLigne($db);
@@ -614,10 +615,10 @@ if ($action == 'create') {
 
 						$object->lines[$i]->array_options = array_merge($object->lines[$i]->array_options, $srcLine->array_options);
 					} else {
-							$srcLine = new DeliveryLine($db);
-							$extrafields->fetch_name_optionals_label($srcLine->table_element);
+						$srcLine = new DeliveryLine($db);
+						$extrafields->fetch_name_optionals_label($srcLine->table_element);
 					}
-						print $object->lines[$i]->showOptionals($extrafields, $mode, array('style' => 'class="oddeven"', 'colspan' => $colspan), '');
+					print $object->lines[$i]->showOptionals($extrafields, $mode, array('style' => 'class="oddeven"', 'colspan' => $colspan), '');
 					//}
 				}
 

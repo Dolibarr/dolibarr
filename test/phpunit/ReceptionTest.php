@@ -143,7 +143,9 @@ class ReceptionTest extends PHPUnit\Framework\TestCase
 		$soc = new Societe($db);
 		$soc->name = "ReceptionTest Unittest";
 		$soc_id = $soc->create($user);
-		$this->assertLessThanOrEqual($soc_id, 0,
+		$this->assertLessThanOrEqual(
+			$soc_id,
+			0,
 			"Cannot create Societe object: ".
 			$soc->errorsToString()
 		);
@@ -217,7 +219,7 @@ class ReceptionTest extends PHPUnit\Framework\TestCase
 		global $db, $user, $conf;
 
 		$conf->global->MAIN_USE_ADVANCED_PERMS = '';
-		$user->rights->reception = new stdClass;
+		$user->rights->reception = new stdClass();
 		$user->rights->reception->creer = 1;
 
 		$result = $user->fetch($user->id);
@@ -265,19 +267,31 @@ class ReceptionTest extends PHPUnit\Framework\TestCase
 		$result = $localobject->setClosed($user);
 		$this->assertLessThanOrEqual($result, 0, "Cannot close Reception object:\n".
 									 $localobject->errorsToString());
-		$this->assertEquals(Reception::STATUS_CLOSED, $localobject->status,
-							"Checking that \$localobject->status is STATUS_CLOSED");
-		$this->assertEquals(Reception::STATUS_CLOSED, $localobject->statut,
-							"Checking that \$localobject->statut is STATUS_CLOSED");
+		$this->assertEquals(
+			Reception::STATUS_CLOSED,
+			$localobject->status,
+			"Checking that \$localobject->status is STATUS_CLOSED"
+		);
+		$this->assertEquals(
+			Reception::STATUS_CLOSED,
+			$localobject->statut,
+			"Checking that \$localobject->statut is STATUS_CLOSED"
+		);
 
 		$obj = new Reception($db);
 		$result = $obj->fetch($localobject->id);
 		$this->assertLessThanOrEqual($result, 0, "Cannot fetch Reception object:\n".
 									 $obj->errorsToString());
-		$this->assertEquals(Reception::STATUS_CLOSED, $obj->status,
-							"Checking that \$obj->status is STATUS_CLOSED");
-		$this->assertEquals(Reception::STATUS_CLOSED, $obj->statut,
-							"Checking that \$obj->statut is STATUS_CLOSED");
+		$this->assertEquals(
+			Reception::STATUS_CLOSED,
+			$obj->status,
+			"Checking that \$obj->status is STATUS_CLOSED"
+		);
+		$this->assertEquals(
+			Reception::STATUS_CLOSED,
+			$obj->statut,
+			"Checking that \$obj->statut is STATUS_CLOSED"
+		);
 
 		return $obj;
 	}
@@ -405,7 +419,7 @@ class ReceptionTest extends PHPUnit\Framework\TestCase
 		$this->assertLessThanOrEqual($result, 0);
 
 		$soc = new Societe($db);
-		$result = $soc->delete($localobject->socid);
+		$result = $soc->delete($localobject->socid, $user);
 		$this->assertLessThanOrEqual($result, 0);
 
 		return $result;

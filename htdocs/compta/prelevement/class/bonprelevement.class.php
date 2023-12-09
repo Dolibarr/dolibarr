@@ -186,8 +186,6 @@ class BonPrelevement extends CommonObject
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs;
-
 		$this->db = $db;
 
 		$this->filename = '';
@@ -441,7 +439,7 @@ class BonPrelevement extends CommonObject
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
@@ -744,13 +742,11 @@ class BonPrelevement extends CommonObject
 	 *
 	 *	@param	string	$mode		'direct-debit' or 'bank-transfer'
 	 *  @param  string  $type        for type=salary
-	 *	@return	double	 			<O if KO, Total amount
+	 *	@return	double	 			Return integer <O if KO, Total amount
 	 */
 	public function SommeAPrelever($mode = 'direct-debit', $type = '')
 	{
 		// phpcs:enable
-		global $conf;
-
 		$sql = "SELECT sum(pd.amount) as nb";
 		if ($type !== 'salary') {
 			if ($mode != 'bank-transfer') {
@@ -801,7 +797,7 @@ class BonPrelevement extends CommonObject
 	 *
 	 *	@param	string	$mode		'direct-debit' or 'bank-transfer'
 	 *  @param  string  $type        for salary invoice
-	 *	@return	int					<O if KO, number of invoices if OK
+	 *	@return	int					Return integer <O if KO, number of invoices if OK
 	 */
 	public function nbOfInvoiceToPay($mode = 'direct-debit', $type = '')
 	{
@@ -818,14 +814,14 @@ class BonPrelevement extends CommonObject
 	 *
 	 *	@param	string	$type		'direct-debit' or 'bank-transfer'
 	 *  @param  int     $forsalary   0= for facture & facture_supplier, 1=for salary
-	 *	@return	int					<O if KO, number of invoices if OK
+	 *	@return	int					Return integer <O if KO, number of invoices if OK
 	 */
 	public function NbFactureAPrelever($type = 'direct-debit', $forsalary = 0)
 	{
 		// phpcs:enable
 		global $conf;
 
-		if ($forsalary == 1 ) {
+		if ($forsalary == 1) {
 			$sql = "SELECT count(s.rowid) as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX."salary as s";
 		} else {
@@ -900,7 +896,7 @@ class BonPrelevement extends CommonObject
 	 *  @param	int		$did				ID of an existing payment request. If $did is defined, we use the existing payment request.
 	 *  @param	int		$fk_bank_account	Bank account ID the receipt is generated for. Will use the ID into the setup of module Direct Debit or Credit Transfer if 0.
 	 *  @param	int		$sourcetype			'invoice' or 'salary'
-	 *	@return	int							<0 if KO, No of invoice included into file if OK
+	 *	@return	int							Return integer <0 if KO, No of invoice included into file if OK
 	 */
 	public function create($banque = 0, $agence = 0, $mode = 'real', $format = 'ALL', $executiondate = '', $notrigger = 0, $type = 'direct-debit', $did = 0, $fk_bank_account = 0, $sourcetype = 'invoice')
 	{
@@ -1165,7 +1161,7 @@ class BonPrelevement extends CommonObject
 			if (!$error) {
 				$ref = substr($year, -2).$month;
 
-				// Get next free nuber for the ref of bon
+				// Get next free nunber for the ref of bon prelevement
 				$sql = "SELECT substring(ref from char_length(ref) - 1)";	// To extract "YYMMXX" from "TYYMMXX"
 				$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons";
 				$sql .= " WHERE ref LIKE '_".$this->db->escape($ref)."%'";
@@ -1230,6 +1226,8 @@ class BonPrelevement extends CommonObject
 			}
 
 			if (!$error) {
+				dol_syslog(__METHOD__." Now loop on each document to insert them in llx_prelevement_demande");
+
 				// Add lines for the bon
 				if (count($factures_prev) > 0) {
 					foreach ($factures_prev as $fac) {	// Add a link in database for each invoice ro salary
@@ -1799,7 +1797,7 @@ class BonPrelevement extends CommonObject
 				 * Section Creditor (sepa Crediteurs bloc lines)
 				 */
 				if (!empty($user_dest)) {
-					$sql = "SELECT u.rowid as userId, c.code as country_code, CONCAT(u.firstname,' ',u.lastname) as nom,";
+					$sql = "SELECT u.rowid as userId, u.address, u.zip, u.town, c.code as country_code, CONCAT(u.firstname,' ',u.lastname) as nom,";
 					$sql .= " pl.code_banque as cb, pl.code_guichet as cg, pl.number as cc, pl.amount as somme,";
 					$sql .= " s.ref as reffac, p.fk_salary as idfac,";
 					$sql .= " rib.rowid, rib.datec, rib.iban_prefix as iban, rib.bic as bic, rib.rowid as drum, '' as rum, '' as date_rum";
@@ -1807,15 +1805,14 @@ class BonPrelevement extends CommonObject
 					$sql .= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
 					$sql .= " ".MAIN_DB_PREFIX."salary as s,";
 					$sql .= " ".MAIN_DB_PREFIX."prelevement as p,";
-					$sql .= " ".MAIN_DB_PREFIX."c_country as c,";
-					$sql .= " ".MAIN_DB_PREFIX."user as u,";
+					$sql .= " ".MAIN_DB_PREFIX."user as u";
+					$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON u.fk_country = c.rowid,";
 					$sql .= " ".MAIN_DB_PREFIX."user_rib as rib";
 					$sql .= " WHERE pl.fk_prelevement_bons=".((int) $this->id);
 					$sql .= " AND pl.rowid = p.fk_prelevement_lignes";
 					$sql .= " AND p.fk_salary = s.rowid";
 					$sql .= " AND s.fk_user = u.rowid";
 					$sql .= " AND rib.fk_user = s.fk_user";
-					$sql .= " AND rib.fk_country = c.rowid";
 				} else {
 					$sql = "SELECT soc.rowid as socid, soc.code_client as code, soc.address, soc.zip, soc.town, c.code as country_code,";
 					$sql .= " pl.client_nom as nom, pl.code_banque as cb, pl.code_guichet as cg, pl.number as cc, pl.amount as somme,";
@@ -1825,14 +1822,13 @@ class BonPrelevement extends CommonObject
 					$sql .= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
 					$sql .= " ".MAIN_DB_PREFIX."facture_fourn as f,";
 					$sql .= " ".MAIN_DB_PREFIX."prelevement as p,";
-					$sql .= " ".MAIN_DB_PREFIX."societe as soc,";
-					$sql .= " ".MAIN_DB_PREFIX."c_country as c,";
+					$sql .= " ".MAIN_DB_PREFIX."societe as soc";
+					$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON soc.fk_pays = c.rowid,";
 					$sql .= " ".MAIN_DB_PREFIX."societe_rib as rib";
 					$sql .= " WHERE pl.fk_prelevement_bons = ".((int) $this->id);
 					$sql .= " AND pl.rowid = p.fk_prelevement_lignes";
 					$sql .= " AND p.fk_facture_fourn = f.rowid";
 					$sql .= " AND f.fk_soc = soc.rowid";
-					$sql .= " AND soc.fk_pays = c.rowid";
 					$sql .= " AND rib.fk_soc = f.fk_soc";
 					$sql .= " AND rib.default_rib = 1";
 					$sql .= " AND rib.type = 'ban'";
@@ -1854,8 +1850,12 @@ class BonPrelevement extends CommonObject
 						$cachearraytotestduplicate[$obj->idfac] = $obj->rowid;
 
 						$daterum = (!empty($obj->date_rum)) ? $this->db->jdate($obj->date_rum) : $this->db->jdate($obj->datec);
+						$refobj = $obj->reffac;
+						if (empty($refobj) && !empty($user_dest)) {	// If ref of salary not defined, we force a value
+							$refobj = "SAL".$obj->idfac;
+						}
 
-						$fileCrediteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, $obj->cb, $obj->cg, $obj->cc, $obj->somme, $obj->reffac, $obj->idfac, $obj->iban, $obj->bic, $daterum, $obj->drum, $obj->rum, $type, $obj->fac_ref_supplier);
+						$fileCrediteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, $obj->cb, $obj->cg, $obj->cc, $obj->somme, $refobj, $obj->idfac, $obj->iban, $obj->bic, $daterum, $obj->drum, $obj->rum, $type, $obj->fac_ref_supplier);
 
 						$this->total = $this->total + $obj->somme;
 						$i++;
@@ -2070,6 +2070,7 @@ class BonPrelevement extends CommonObject
 
 		fputs($this->file, "\n");
 	}
+
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -2301,6 +2302,7 @@ class BonPrelevement extends CommonObject
 
 		fputs($this->file, "\n");
 	}
+
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -2618,13 +2620,11 @@ class BonPrelevement extends CommonObject
 	 *
 	 *      @param      User	$user       	Objet user
 	 *      @param		string	$mode			Mode 'direct_debit' or 'credit_transfer'
-	 *      @return 	WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
+	 *      @return 	WorkboardResponse|int 	Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $mode)
 	{
 		// phpcs:enable
-		global $conf, $langs;
-
 		if ($user->socid) {
 			return -1; // protection pour eviter appel par utilisateur externe
 		}

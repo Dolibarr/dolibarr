@@ -105,7 +105,8 @@ $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
 if (!$mesg) {
 	$px1->SetData($data);
-	$i = $startyear; $legend = array();
+	$i = $startyear;
+	$legend = array();
 	while ($i <= $endyear) {
 		$legend[] = $i;
 		$i++;
@@ -136,7 +137,8 @@ if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 	$px2 = new DolGraph();
 	$mesg = $px2->isGraphKo();
 	if (!$mesg) {
-		$i = $startyear; $legend = array();
+		$i = $startyear;
+		$legend = array();
 		while ($i <= $endyear) {
 			$legend[] = $i;
 			$i++;

@@ -37,7 +37,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
  */
 class Ticket extends CommonObject
 {
-
 	/**
 	 * @var DoliDb Database handler
 	 */
@@ -480,7 +479,7 @@ class Ticket extends CommonObject
 	 *
 	 *  @param  User $user      User that creates
 	 *  @param  int  $notrigger 0=launch triggers after, 1=disable triggers
-	 *  @return int                      <0 if KO, Id of created object if OK
+	 *  @return int                      Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -626,7 +625,7 @@ class Ticket extends CommonObject
 	 *  @param	string		$ref			Ref
 	 *  @param	string		$track_id		Track id, a hash like ref
 	 *  @param	string		$email_msgid	Email msgid
-	 *  @return int              			<0 if KO, >0 if OK
+	 *  @return int              			Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id = '', $ref = '', $track_id = '', $email_msgid = '')
 	{
@@ -761,7 +760,7 @@ class Ticket extends CommonObject
 	 * @param  int    $offset    	Offset for query
 	 * @param  int    $arch      	archive or not (not used)
 	 * @param  array  $filter    	Filter for query
-	 * @return int 					<0 if KO, >0 if OK
+	 * @return int 					Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchAll($user, $sortorder = 'ASC', $sortfield = 't.datec', $limit = '', $offset = 0, $arch = '', $filter = '')
 	{
@@ -928,7 +927,7 @@ class Ticket extends CommonObject
 	 *
 	 *  @param  User $user      User that modifies
 	 *  @param  int  $notrigger 0=launch triggers after, 1=disable triggers
-	 *  @return int                     <0 if KO, >0 if OK
+	 *  @return int                     Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = 0, $notrigger = 0)
 	{
@@ -1062,7 +1061,7 @@ class Ticket extends CommonObject
 			if ($result < 0) {
 				$error++;
 			}
-			  // End call triggers
+			// End call triggers
 		}
 
 		// Commit or rollback
@@ -1084,7 +1083,7 @@ class Ticket extends CommonObject
 	 *
 	 *     @param  User $user      User that deletes
 	 *  @param  int  $notrigger 0=launch triggers after, 1=disable triggers
-	 *  @return int                     <0 if KO, >0 if OK
+	 *  @return int                     Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -1569,7 +1568,7 @@ class Ticket extends CommonObject
 				$label = $langs->trans("ShowTicket");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -1598,7 +1597,7 @@ class Ticket extends CommonObject
 	 *
 	 *    @param    User		$user			Object user
 	 *    @param	int			$notrigger		No trigger
-	 *    @return   int							<0 if KO, 0=nothing done, >0 if OK
+	 *    @return   int							Return integer <0 if KO, 0=nothing done, >0 if OK
 	 */
 	public function markAsRead($user, $notrigger = 0)
 	{
@@ -1656,7 +1655,7 @@ class Ticket extends CommonObject
 	 *    @param    User	$user				Object user
 	 *    @param    int 	$id_assign_user		ID of user assigned
 	 *    @param    int 	$notrigger        	Disable trigger
-	 *    @return   int							<0 if KO, 0=Nothing done, >0 if OK
+	 *    @return   int							Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function assignUser($user, $id_assign_user, $notrigger = 0)
 	{
@@ -1715,7 +1714,7 @@ class Ticket extends CommonObject
 	 * @param 	array	$mimefilename_list  List of attached file name in message
 	 * @param 	boolean	$send_email      	Whether the message is sent by email
 	 * @param   int     $public_area    	0=Default, 1 if we are creating the message from a public area (so we can search contact from email to add it as contact of ticket if TICKET_ASSIGN_CONTACT_TO_MESSAGE is set)
-	 * @return 	int						  	<0 if KO, >0 if OK
+	 * @return 	int						  	Return integer <0 if KO, >0 if OK
 	 */
 	public function createTicketMessage($user, $notrigger = 0, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $send_email = false, $public_area = 0)
 	{
@@ -1854,7 +1853,7 @@ class Ticket extends CommonObject
 	 *
 	 *    @param    User    $user      	User that close
 	 *    @param	int		$mode		0=Close solved, 1=Close abandonned
-	 *    @return   int		           	<0 if KO, 0=nothing done, >0 if OK
+	 *    @return   int		           	Return integer <0 if KO, 0=nothing done, >0 if OK
 	 */
 	public function close(User $user, $mode = 0)
 	{
@@ -2038,7 +2037,7 @@ class Ticket extends CommonObject
 	 *    Define parent commany of current ticket
 	 *
 	 *    @param  int $id		Id of thirdparty to set or '' to remove
-	 *    @return int           <0 if KO, >0 if OK
+	 *    @return int           Return integer <0 if KO, >0 if OK
 	 */
 	public function setCustomer($id)
 	{
@@ -2062,7 +2061,7 @@ class Ticket extends CommonObject
 	 *    Define progression of current ticket
 	 *
 	 *    @param  int $percent Progression percent
-	 *    @return int             <0 if KO, >0 if OK
+	 *    @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function setProgression($percent)
 	{
@@ -2086,7 +2085,7 @@ class Ticket extends CommonObject
 	 *     Link element with a contract
 	 *
 	 *     @param  int $contractid Contract id to link element to
-	 *     @return int                        <0 if KO, >0 if OK
+	 *     @return int                        Return integer <0 if KO, >0 if OK
 	 */
 	public function setContract($contractid)
 	{
@@ -2352,7 +2351,7 @@ class Ticket extends CommonObject
 
 		if ($filefound) {
 			$result = dol_include_once($reldir."core/modules/ticket/".$modele.'.php');
-			$modTicket = new $classname;
+			$modTicket = new $classname();
 
 			$defaultref = $modTicket->getNextValue($thirdparty, $this);
 		}
@@ -2388,7 +2387,7 @@ class Ticket extends CommonObject
 			if (is_resource($handle)) {
 				while (($file = readdir($handle)) !== false) {
 					if (!utf8_check($file)) {
-						$file = utf8_encode($file);	// To be sure data is stored in UTF8 in memory
+						$file = mb_convert_encoding($file, 'UTF-8', 'ISO-8859-1');	// To be sure data is stored in UTF8 in memory
 					}
 					if (dol_is_file($dir.$file)) {
 						return true;
@@ -2485,7 +2484,7 @@ class Ticket extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param  int[]|int 	$categories 	Category or categories IDs
-	 * @return int							<0 if KO, >0 if OK
+	 * @return int							Return integer <0 if KO, >0 if OK
 	 */
 	public function setCategories($categories)
 	{
@@ -2533,7 +2532,7 @@ class Ticket extends CommonObject
 	 * @param   int     $public_area    0=Default,
 	 * 									1=If we are creating the message from a public area, so confirmation email will be sent to the author
 	 * 									and we can search contact from email to add it as contact of ticket if TICKET_ASSIGN_CONTACT_TO_MESSAGE is set
-	 * @return  int						<0 if KO, >= 0 if OK
+	 * @return  int						Return integer <0 if KO, >= 0 if OK
 	 */
 	public function newMessage($user, &$action, $private = 1, $public_area = 0)
 	{
@@ -2981,7 +2980,7 @@ class Ticket extends CommonObject
 	 *
 	 *  @param          User	$user   Object user
 	 *  @param          int		$mode   "opened" for askprice to close, "signed" for proposal to invoice
-	 *  @return         WorkboardResponse|int             <0 if KO, WorkboardResponse if OK
+	 *  @return         WorkboardResponse|int             Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $mode)
 	{
@@ -3048,7 +3047,7 @@ class Ticket extends CommonObject
 	/**
 	 *      Load indicator this->nb of global stats widget
 	 *
-	 *      @return     int         <0 if ko, >0 if ok
+	 *      @return     int         Return integer <0 if ko, >0 if ok
 	 */
 	public function load_state_board()
 	{

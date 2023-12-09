@@ -142,7 +142,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 	 *
 	 * @param   int $rowid  Row id to load
 	 *
-	 * @return  int         <0 if KO, >0 if OK
+	 * @return  int         Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($rowid)
 	{

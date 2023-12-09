@@ -49,7 +49,7 @@ $show_files			= GETPOST('show_files', 'int');
 $confirm			= GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $id_rate_selected = GETPOST('id_rate', 'int');
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_date_sync = dol_mktime(0, 0, 0, GETPOST('search_date_syncmonth', 'int'), GETPOST('search_date_syncday', 'int'), GETPOST('search_date_syncyear', 'int'));
 $search_date_sync_end	= dol_mktime(0, 0, 0, GETPOST('search_date_sync_endmonth', 'int'), GETPOST('search_date_sync_endday', 'int'), GETPOST('search_date_sync_endyear', 'int'));
 $search_rate		= GETPOST('search_rate', 'alpha');
@@ -60,10 +60,10 @@ $dateinput 			= dol_mktime(0, 0, 0, GETPOST('dateinputmonth', 'int'), GETPOST('d
 $rateinput 			= price2num(GETPOST('rateinput', 'alpha'));
 $rateindirectinput 	= price2num(GETPOST('rateinidirectinput', 'alpha'));
 $optioncss 			= GETPOST('optioncss', 'alpha');
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield 			= GETPOST('sortfield', 'aZ09comma');
 $sortorder 			= GETPOST('sortorder', 'aZ09comma');
-$page = (GETPOST("page", 'int') ?GETPOST("page", 'int') : 0);
+$page = (GETPOST("page", 'int') ? GETPOST("page", 'int') : 0);
 
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -71,8 +71,12 @@ if (empty($page) || $page == -1) {
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortfield) $sortfield = "cr.date_sync";
-if (!$sortorder) $sortorder = "DESC";
+if (!$sortfield) {
+	$sortfield = "cr.date_sync";
+}
+if (!$sortorder) {
+	$sortorder = "DESC";
+}
 
 
 // Initialize technical objects
@@ -205,7 +209,7 @@ if ($action == "confirm_delete") {
 	$current_rate = new CurrencyRate($db);
 	$current_rate->fetch(intval($id_rate_selected));
 	if ($current_rate) {
-		$result = $current_rate->delete();
+		$result = $current_rate->delete($user);
 		if ($result) {
 			setEventMessages($langs->trans('successRateDelete'), null);
 		} else {
@@ -218,12 +222,19 @@ if ($action == "confirm_delete") {
 }
 
 
-if (GETPOST('cancel', 'alpha')) { $action = 'list'; $massaction = ''; }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction = ''; }
+if (GETPOST('cancel', 'alpha')) {
+	$action = 'list';
+	$massaction = '';
+}
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
+	$massaction = '';
+}
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 if (empty($reshook)) {
 	// Selection of new fields
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
@@ -326,14 +337,20 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // N
 $sql .= $hookmanager->resPrint;
 $sql .= ' FROM '.MAIN_DB_PREFIX.'multicurrency_rate as cr ';
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."multicurrency AS m ON cr.fk_multicurrency = m.rowid";
-if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
-if ($search_date_sync && $search_date_sync_end ) {
+if ($sall) {
+	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
+}
+if ($search_date_sync && $search_date_sync_end) {
 	$sql .= " AND (cr.date_sync BETWEEN '".$db->idate($search_date_sync)."' AND '".$db->idate($search_date_sync_end)."')";
 } elseif ($search_date_sync && !$search_date_sync_end) {
 	$sql .= natural_search('cr.date_sync', $db->idate($search_date_sync));
 }
-if ($search_rate) $sql .= natural_search('cr.rate', $search_rate);
-if ($search_code) $sql .= natural_search('m.code', $search_code);
+if ($search_rate) {
+	$sql .= natural_search('cr.rate', $search_rate);
+}
+if ($search_code) {
+	$sql .= natural_search('m.code', $search_code);
+}
 $sql .= " WHERE m.code <> '".$db->escape($conf->currency)."'";
 
 // Add where from hooks
@@ -383,10 +400,18 @@ if ($resql) {
 		$param .= "&sall=".urlencode($sall);
 	}
 
-	if ($search_date_sync) $param = "&search_date_sync=".$search_date_sync;
-	if ($search_date_sync_end) $param="&search_date_sync_end=".$search_date_sync_end;
-	if ($search_rate) $param = "&search_rate=".urlencode($search_rate);
-	if ($search_code != '') $param.="&search_code=".urlencode($search_code);
+	if ($search_date_sync) {
+		$param = "&search_date_sync=".$search_date_sync;
+	}
+	if ($search_date_sync_end) {
+		$param="&search_date_sync_end=".$search_date_sync_end;
+	}
+	if ($search_rate) {
+		$param = "&search_rate=".urlencode($search_rate);
+	}
+	if ($search_code != '') {
+		$param.="&search_code=".urlencode($search_code);
+	}
 
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -459,13 +484,13 @@ if ($resql) {
 		print $form->selectDate(dol_print_date($search_date_sync_end, "%Y-%m-%d"), 'search_date_sync_end', 0, 0, 1);
 		print '</td>';
 	}
-		// code
+	// code
 	if (!empty($arrayfields['m.code']['checked'])) {
 		print '<td class="liste_titre" align="left">';
 		print  $form->selectMultiCurrency($multicurrency_code, 'search_code', 1, " code != '".$conf->currency."'", true);
 		print '</td>';
 	}
-		// rate
+	// rate
 	if (!empty($arrayfields['cr.rate']['checked'])) {
 		print '<td class="liste_titre" align="left">';
 		print '<input class="flat maxwidth75" type="text" name="search_rate" value="'.dol_escape_htmltag($search_rate).'">';
@@ -529,7 +554,9 @@ if ($resql) {
 				print '<td class="tdoverflowmax200">';
 				print $obj->date_sync;
 				print "</td>\n";
-				if (!$i) $totalarray['nbfield']++;
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
 			}
 
 			// code
@@ -539,7 +566,9 @@ if ($resql) {
 				print ' - <span class="opacitymedium">'.$obj->name.'</span>';
 				print "</td>\n";
 
-				if (! $i) $totalarray['nbfield']++;
+				if (! $i) {
+					$totalarray['nbfield']++;
+				}
 			}
 
 			// rate
@@ -547,7 +576,9 @@ if ($resql) {
 				print '<td class="tdoverflowmax200">';
 				print $obj->rate;
 				print "</td>\n";
-				if (! $i) $totalarray['nbfield']++;
+				if (! $i) {
+					$totalarray['nbfield']++;
+				}
 			}
 
 			// rate indirect
@@ -555,7 +586,9 @@ if ($resql) {
 				print '<td class="tdoverflowmax200">';
 				print $obj->rate_indirect;
 				print "</td>\n";
-				if (! $i) $totalarray['nbfield']++;
+				if (! $i) {
+					$totalarray['nbfield']++;
+				}
 			}
 
 

@@ -946,7 +946,7 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 			$resql = $db->query($sql);
 			if ($resql) {
 				$toselectnew = [];
-				while ( !empty($arr = $db->fetch_row($resql))) {
+				while (!empty($arr = $db->fetch_row($resql))) {
 					$toselectnew[] = $arr[0];
 				}
 				$toselect = (empty($toselectnew)) ? $toselect : $toselectnew;
@@ -1088,7 +1088,7 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 			if (in_array($objecttmp->element, array('societe', 'member'))) {
 				$result = $objecttmp->delete($objecttmp->id, $user, 1);
 			} elseif (in_array($objecttmp->element, array('action'))) {
-				$result = $objecttmp->delete();
+				$result = $objecttmp->delete();	// TODO Add User $user as first param
 			} else {
 				$result = $objecttmp->delete($user);
 			}
@@ -1221,7 +1221,7 @@ if (!$error && ($action == 'affecttag' && $confirm == 'yes') && $permissiontoadd
 		$to_affecttag_type_array=array();
 		$categ_type_array=$categ->getMapList();
 		foreach ($categ_type_array as $categdef) {
-			if (in_array($categdef['code'],  $affecttag_type_array)) {
+			if (in_array($categdef['code'], $affecttag_type_array)) {
 				$to_affecttag_type_array[] = $categdef['code'];
 			}
 		}
@@ -1744,7 +1744,7 @@ if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $conf
 		$obj = !getDolGlobalString('PROJECT_TASK_ADDON') ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
 		if (getDolGlobalString('PROJECT_TASK_ADDON') && is_readable(DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON') . ".php")) {
 			require_once DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON') . '.php';
-			$modTask = new $obj;
+			$modTask = new $obj();
 			$defaultref = $modTask->getNextValue(0, $clone_task);
 		}
 

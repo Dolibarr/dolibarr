@@ -1661,11 +1661,11 @@ class SMTPs
 						// Add plain text message part before html part
 						$content .= 'Content-Type: multipart/alternative; boundary="'.$this->_getBoundary('alternative').'"'."\r\n";
 						$content .= "\r\n";
-						   $content .= "--".$this->_getBoundary('alternative')."\r\n";
+						$content .= "--".$this->_getBoundary('alternative')."\r\n";
 
-						   $content .= "Content-Type: text/plain; charset=".$this->getCharSet()."\r\n";
-						   $content .= "\r\n".$_content['dataText']."\r\n";
-						   $content .= "--".$this->_getBoundary('alternative')."\r\n";
+						$content .= "Content-Type: text/plain; charset=".$this->getCharSet()."\r\n";
+						$content .= "\r\n".$_content['dataText']."\r\n";
+						$content .= "--".$this->_getBoundary('alternative')."\r\n";
 					}
 
 					$content .= 'Content-Type: '.$_content['mimeType'].'; charset='.$this->getCharSet();

@@ -72,11 +72,11 @@ if (getDolGlobalString('MAIN_OVERRIDE_TIME_LIMIT')) {
 }
 error_reporting($err);
 
-$setuplang = GETPOST("selectlang", 'aZ09', 3) ?GETPOST("selectlang", 'aZ09', 3) : 'auto';
+$setuplang = GETPOST("selectlang", 'aZ09', 3) ? GETPOST("selectlang", 'aZ09', 3) : 'auto';
 $langs->setDefaultLang($setuplang);
-$versionfrom = GETPOST("versionfrom", 'alpha', 3) ?GETPOST("versionfrom", 'alpha', 3) : (empty($argv[1]) ? '' : $argv[1]);
-$versionto = GETPOST("versionto", 'alpha', 3) ?GETPOST("versionto", 'alpha', 3) : (empty($argv[2]) ? '' : $argv[2]);
-$enablemodules = GETPOST("enablemodules", 'alpha', 3) ?GETPOST("enablemodules", 'alpha', 3) : (empty($argv[3]) ? '' : $argv[3]);
+$versionfrom = GETPOST("versionfrom", 'alpha', 3) ? GETPOST("versionfrom", 'alpha', 3) : (empty($argv[1]) ? '' : $argv[1]);
+$versionto = GETPOST("versionto", 'alpha', 3) ? GETPOST("versionto", 'alpha', 3) : (empty($argv[2]) ? '' : $argv[2]);
+$enablemodules = GETPOST("enablemodules", 'alpha', 3) ? GETPOST("enablemodules", 'alpha', 3) : (empty($argv[3]) ? '' : $argv[3]);
 
 $langs->loadLangs(array("admin", "install", "bills", "suppliers"));
 
@@ -115,7 +115,7 @@ if ((!$versionfrom || preg_match('/version/', $versionfrom)) && (!$versionto || 
 	exit;
 }
 
-pHeader('', 'step5', GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'upgrade', 'versionfrom='.$versionfrom.'&versionto='.$versionto, '', 'main-inside main-inside-borderbottom');
+pHeader('', 'step5', GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'upgrade', 'versionfrom='.$versionfrom.'&versionto='.$versionto, '', 'main-inside main-inside-borderbottom');
 
 
 if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ09'))) {
@@ -1922,6 +1922,8 @@ function migrate_price_commande($db, $langs, $conf)
  */
 function migrate_price_commande_fournisseur($db, $langs, $conf)
 {
+	global $mysoc;
+
 	$db->begin();
 
 	$tmpmysoc = new Societe($db);
@@ -2532,7 +2534,7 @@ function migrate_commande_deliveryaddress($db, $langs, $conf)
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
  * @param	Conf		$conf	Object conf
- * @return	integer				<0 if KO, 0=Bad version, >0 if OK
+ * @return	integer				Return integer <0 if KO, 0=Bad version, >0 if OK
  */
 function migrate_restore_missing_links($db, $langs, $conf)
 {
@@ -2553,8 +2555,10 @@ function migrate_restore_missing_links($db, $langs, $conf)
 
 
 	// Restore missing link for this cross foreign key (link 1 <=> 1). Direction 1.
-	$table1 = 'facturedet'; $field1 = 'fk_remise_except';
-	$table2 = 'societe_remise_except'; $field2 = 'fk_facture_line';
+	$table1 = 'facturedet';
+	$field1 = 'fk_remise_except';
+	$table2 = 'societe_remise_except';
+	$field2 = 'fk_facture_line';
 
 	$db->begin();
 
@@ -2610,8 +2614,10 @@ function migrate_restore_missing_links($db, $langs, $conf)
 	print '<b>'.$langs->trans('MigrationFixData')."</b> (2)<br>\n";
 
 	// Restore missing link for this cross foreign key (link 1 <=> 1). Direction 2.
-	$table2 = 'facturedet'; $field2 = 'fk_remise_except';
-	$table1 = 'societe_remise_except'; $field1 = 'fk_facture_line';
+	$table2 = 'facturedet';
+	$field2 = 'fk_remise_except';
+	$table1 = 'societe_remise_except';
+	$field1 = 'fk_facture_line';
 
 	$db->begin();
 
@@ -4242,7 +4248,7 @@ function migrate_delete_old_dir($db, $langs, $conf)
  * @param	Conf		$conf			Object conf
  * @param	array		$listofmodule	List of modules, like array('MODULE_KEY_NAME'=>', $reloadmode)
  * @param   int         $force          1=Reload module even if not already loaded
- * @return	int					<0 if KO, >0 if OK
+ * @return	int					Return integer <0 if KO, >0 if OK
  */
 function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $force = 0)
 {
@@ -4318,8 +4324,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 			if (!empty($reg[1])) {
 				if (strtoupper($moduletoreload) == $moduletoreload) {	// If key is un uppercase
 					$moduletoreloadshort = ucfirst(strtolower($reg[1]));
-				} else // If key is a mix of up and low case
-				{
+				} else { // If key is a mix of up and low case
 					$moduletoreloadshort = $reg[1];
 				}
 
@@ -4375,7 +4380,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
  * @param	DoliDB		$db			Database handler
  * @param	Translate	$langs		Object langs
  * @param	Conf		$conf		Object conf
- * @return	int						<0 if KO, >0 if OK
+ * @return	int						Return integer <0 if KO, >0 if OK
  */
 function migrate_reload_menu($db, $langs, $conf)
 {
@@ -5049,7 +5054,6 @@ function migrate_export_import_profiles($mode = 'export')
  */
 function migrate_contractdet_rank()
 {
-
 	global $db, $langs;
 
 	$error = 0;

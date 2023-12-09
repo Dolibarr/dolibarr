@@ -175,6 +175,7 @@ NEW: When an user unset the batch management of products, transformation of each
 SEC: #25512 applicative anti bruteforce - security on too many login attempts (#25520)
 SEC: Add action confirm_... as sensitive to need a CSRF token
 SEC: Disable not used PHP streams
+SEC: Add option MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY
 
 
 For developers or integrators:
@@ -249,6 +250,9 @@ The following changes may create regressions for some external modules, but were
 * New hook files of modules actions_mymodule.class.php should now "extends CommonHookActions"
 * Endpoint for API /partnershipapi and /recruitment has been renamed into /partnerships and /recruitments to follow name conventions.
 * Hidden option ACCOUNTANCY_AUTOFIX_MISSING_LINK_TO_USEr_ON_SALARY_BANK_PAYMENT has been renamed into ACCOUNTANCY_AUTOFIX_MISSING_LINK_TO_USER_ON_SALARY_BANK_PAYMENT
+* The delete() method of AdherentType, Contact, Delivery, MultiCurrency, CurrencyRate now need $user as first parameter.
+* A very high number of class properties (with old name in french) are now deprecated in favor of the property name in english.
+
 
 ***** ChangeLog for 18.0.3 compared to 18.0.2 *****
 FIX: #25793 Cannot add time spent (#26405)

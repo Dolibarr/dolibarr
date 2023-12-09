@@ -59,7 +59,6 @@ abstract class ModeleThirdPartyDoc extends CommonDocGenerator
  */
 abstract class ModeleThirdPartyCode extends CommonNumRefGenerator
 {
-
 	/**
 	 * @var int Automatic numbering
 	 */
@@ -211,7 +210,6 @@ abstract class ModeleThirdPartyCode extends CommonNumRefGenerator
  */
 abstract class ModeleAccountancyCode extends CommonNumRefGenerator
 {
-
 	/**
 	 * @var string
 	 */

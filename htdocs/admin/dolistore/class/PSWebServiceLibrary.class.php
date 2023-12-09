@@ -31,7 +31,6 @@
  */
 class PrestaShopWebservice
 {
-
 	/** @var string Shop URL */
 	protected $url;
 
@@ -424,5 +423,4 @@ class PrestaShopWebservice
  */
 class PrestaShopWebserviceException extends Exception
 {
-
 }

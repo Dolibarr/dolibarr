@@ -47,7 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 $langs->loadLangs(array('bills', 'companies', 'donations', 'users'));
 
-$id = GETPOST('rowid') ?GETPOST('rowid', 'int') : GETPOST('id', 'int');
+$id = GETPOST('rowid') ? GETPOST('rowid', 'int') : GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
@@ -492,7 +492,7 @@ if ($action == 'create') {
 
 		// Country
 		print '<tr><td><label for="selectcountry_id">'.$langs->trans('Country').'</label></td><td class="maxwidthonsmartphone">';
-		print img_picto('', 'globe-americas', 'class="paddingrightonly"').$form->select_country(GETPOST('country_id') != '' ?GETPOST('country_id') : $object->country_id);
+		print img_picto('', 'globe-americas', 'class="paddingrightonly"').$form->select_country(GETPOST('country_id') != '' ? GETPOST('country_id') : $object->country_id);
 		if ($user->admin) {
 			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
@@ -567,11 +567,13 @@ if ($action == 'create') {
 if (!empty($id) && $action == 'edit') {
 	$result = $object->fetch($id);
 	if ($result < 0) {
-		dol_print_error($db, $object->error); exit;
+		dol_print_error($db, $object->error);
+		exit;
 	}
 	$result = $object->fetch_optionals();
 	if ($result < 0) {
-		dol_print_error($db); exit;
+		dol_print_error($db);
+		exit;
 	}
 
 	$hselected = 'card';
@@ -704,11 +706,13 @@ if (!empty($id) && $action != 'edit') {
 
 	$result = $object->fetch($id);
 	if ($result < 0) {
-		dol_print_error($db, $object->error); exit;
+		dol_print_error($db, $object->error);
+		exit;
 	}
 	$result = $object->fetch_optionals();
 	if ($result < 0) {
-		dol_print_error($db); exit;
+		dol_print_error($db);
+		exit;
 	}
 
 	$hselected = 'card';
@@ -827,7 +831,9 @@ if (!empty($id) && $action != 'edit') {
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
-		$i = 0; $total = 0; $totalpaid = 0;
+		$i = 0;
+		$total = 0;
+		$totalpaid = 0;
 		print '<table class="noborder paymenttable centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("RefPayment").'</td>';

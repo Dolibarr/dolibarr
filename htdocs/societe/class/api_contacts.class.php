@@ -367,7 +367,7 @@ class Contacts extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		$this->contact->oldcopy = clone $this->contact;
-		return $this->contact->delete();
+		return $this->contact->delete(DolibarrApiAccess::$user);
 	}
 
 	/**
@@ -460,7 +460,7 @@ class Contacts extends DolibarrApi
 	/**
 	 * Add a category to a contact
 	 *
-	 * @url POST {id}/categories/{category_id}
+	 * @url PUT {id}/categories/{category_id}
 	 *
 	 * @param   int		$id             Id of contact
 	 * @param   int     $category_id    Id of category

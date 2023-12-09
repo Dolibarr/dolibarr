@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2023      Charlene Benke       <charlene@patas_monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -490,7 +491,7 @@ if (empty($reshook)) {
 		$clone_task_files = GETPOST('clone_task_files') ? 1 : 0;
 		$clone_notes = GETPOST('clone_notes') ? 1 : 0;
 		$move_date = GETPOST('move_date') ? 1 : 0;
-		$clone_thirdparty = GETPOST('socid', 'int') ?GETPOST('socid', 'int') : 0;
+		$clone_thirdparty = GETPOST('socid', 'int') ? GETPOST('socid', 'int') : 0;
 
 		$result = $object->createFromClone($user, $object->id, $clone_contacts, $clone_tasks, $clone_project_files, $clone_task_files, $clone_notes, $move_date, 0, $clone_thirdparty);
 		if ($result <= 0) {
@@ -573,7 +574,9 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	$modele = !getDolGlobalString('PROJECT_ADDON') ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$classname = '';
+	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/project/".$modele.'.php', 0);
@@ -586,7 +589,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 	if ($filefound) {
 		$result = dol_include_once($reldir."core/modules/project/".$modele.'.php');
-		$modProject = new $classname;
+		$modProject = new $classname();
 
 		$defaultref = $modProject->getNextValue($thirdparty, $object);
 	}
@@ -690,7 +693,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			print '<br>';
 		}
 		if (isModEnabled('eventorganization')) {
-			print '<input type="checkbox" id="usage_organize_event" name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') ? ' checked="checked"' : '') :'').'"> ';
+			print '<input type="checkbox" id="usage_organize_event" name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') ? ' checked="checked"' : '') : '').'"> ';
 			$htmltext = $langs->trans("EventOrganizationDescriptionLong");
 			print '<label for="usage_organize_event">'.$form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext).'</label>';
 			print '<script>';
@@ -718,9 +721,9 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	// Thirdparty
 	if (isModEnabled('societe')) {
 		print '<tr><td>';
-		print (!getDolGlobalString('PROJECT_THIRDPARTY_REQUIRED') ? '' : '<span class="fieldrequired">');
+		print(!getDolGlobalString('PROJECT_THIRDPARTY_REQUIRED') ? '' : '<span class="fieldrequired">');
 		print $langs->trans("ThirdParty");
-		print (!getDolGlobalString('PROJECT_THIRDPARTY_REQUIRED') ? '' : '</span>');
+		print(!getDolGlobalString('PROJECT_THIRDPARTY_REQUIRED') ? '' : '</span>');
 		print '</td><td class="maxwidthonsmartphone">';
 		$filter = '';
 		if (getDolGlobalString('PROJECT_FILTER_FOR_THIRDPARTY_LIST')) {
@@ -1105,16 +1108,16 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		// Thirdparty
 		if (isModEnabled('societe')) {
 			print '<tr><td>';
-			print (!getDolGlobalString('PROJECT_THIRDPARTY_REQUIRED') ? '' : '<span class="fieldrequired">');
+			print(!getDolGlobalString('PROJECT_THIRDPARTY_REQUIRED') ? '' : '<span class="fieldrequired">');
 			print $langs->trans("ThirdParty");
-			print (!getDolGlobalString('PROJECT_THIRDPARTY_REQUIRED') ? '' : '</span>');
+			print(!getDolGlobalString('PROJECT_THIRDPARTY_REQUIRED') ? '' : '</span>');
 			print '</td><td>';
 			$filter = '';
 			if (getDolGlobalString('PROJECT_FILTER_FOR_THIRDPARTY_LIST')) {
 				$filter = $conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
 			}
 			$text = img_picto('', 'company', 'class="pictofixedwidth"');
-			$text .= $form->select_company($object->thirdparty->id, 'socid', $filter, 'None', 1, 0, array(), 0, 'minwidth300');
+			$text .= $form->select_company(!empty($object->thirdparty->id)?$object->thirdparty->id:"", 'socid', $filter, 'None', 1, 0, array(), 0, 'minwidth300');
 			if (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') && empty($conf->dol_use_jmobile)) {
 				$texthelp = $langs->trans("IfNeedToUseOtherObjectKeepEmpty");
 				print $form->textwithtooltip($text.' '.img_help(), $texthelp, 1, 0, '', '', 2);
@@ -1158,7 +1161,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			print $formproject->selectOpportunityStatus('opp_status', $object->opp_status, 1, 0, 0, 0, 'minwidth150 inline-block valignmiddle', 1, 1);
 
 			// Opportunity probability
-			print ' <input class="width50 right" type="text" id="opp_percent" name="opp_percent" title="'.dol_escape_htmltag($langs->trans("OpportunityProbability")).'" value="'.(GETPOSTISSET('opp_percent') ? GETPOST('opp_percent') : (strcmp($object->opp_percent, '') ?vatrate($object->opp_percent) : '')).'"> %';
+			print ' <input class="width50 right" type="text" id="opp_percent" name="opp_percent" title="'.dol_escape_htmltag($langs->trans("OpportunityProbability")).'" value="'.(GETPOSTISSET('opp_percent') ? GETPOST('opp_percent') : (strcmp($object->opp_percent, '') ? vatrate($object->opp_percent) : '')).'"> %';
 			print '<span id="oldopppercent" class="opacitymedium"></span>';
 			print '</div>';
 
@@ -1224,6 +1227,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 		// Tags-Categories
 		if (isModEnabled('categorie')) {
+			$arrayselected = array();
 			print '<tr><td>'.$langs->trans("Categories").'</td><td>';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_PROJECT, '', 'parent', 64, 0, 1);
 			$c = new Categorie($db);
@@ -1369,10 +1373,10 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		// Date start - end project
 		print '<tr><td>'.$langs->trans("Dates").'</td><td>';
 		$start = dol_print_date($object->date_start, 'day');
-		print ($start ? $start : '?');
+		print($start ? $start : '?');
 		$end = dol_print_date($object->date_end, 'day');
 		print ' <span class="opacitymedium">-</span> ';
-		print ($end ? $end : '?');
+		print($end ? $end : '?');
 		if ($object->hasDelay()) {
 			print img_warning("Late");
 		}
@@ -1517,7 +1521,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	print '<div class="tabsAction">';
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
-																							  // modified by hook
+	// modified by hook
 	if (empty($reshook)) {
 		if ($action != "edit" && $action != 'presend') {
 			// Create event
@@ -1612,7 +1616,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 				$params = array('backtopage' => $_SERVER["PHP_SELF"].'?id='.$object->id);
 
-				print dolGetButtonAction($langs->trans("Create"), '', 'default', $arrayforbutaction, '', 1, $params);
+				print dolGetButtonAction('', $langs->trans("Create"), 'default', $arrayforbutaction, '', 1, $params);
 			}
 
 			// Clone

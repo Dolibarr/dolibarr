@@ -108,7 +108,9 @@ if ($action == 'convert') {
 					$objectstatic = new Product($db); // Object init must be into loop to avoid to get value of previous step
 					$ret = $objectstatic->fetch($obj->rowid);
 					if ($ret > 0) {
-						$ret = 0; $retm = 0; $updatelevel1 = false;
+						$ret = 0;
+						$retm = 0;
+						$updatelevel1 = false;
 
 						// Update multiprice
 						$listofmulti = array_reverse($objectstatic->multiprices, true); // To finish with level 1
@@ -209,7 +211,9 @@ if ($action == 'convert') {
 				$objectstatic2 = new ProductFournisseur($db); // Object init must be into loop to avoid to get value of previous step
 				$ret = $objectstatic2->fetch_product_fournisseur_price($obj->rowid);
 				if ($ret > 0) {
-					$ret = 0; $retm = 0; $updatelevel1 = false;
+					$ret = 0;
+					$retm = 0;
+					$updatelevel1 = false;
 
 					$price_base_type = 'HT';
 					//$price_base_type = $objectstatic2->price_base_type;	// Get price_base_type of product/service to keep the same for update

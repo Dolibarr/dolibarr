@@ -179,7 +179,7 @@ class AccountingAccount extends CommonObject
 	 * @param 	string 	       $account_number 	        Account number
 	 * @param 	int|boolean    $limittocurrentchart     1 or true=Load record only if it is into current active chart of account
 	 * @param   string         $limittoachartaccount    'ABC'=Load record only if it is into chart account with code 'ABC' (better and faster than previous parameter if you have chart of account code).
-	 * @return 	int                                     <0 if KO, 0 if not found, Id of record if OK and found
+	 * @return 	int                                     Return integer <0 if KO, 0 if not found, Id of record if OK and found
 	 */
 	public function fetch($rowid = null, $account_number = null, $limittocurrentchart = 0, $limittoachartaccount = '')
 	{
@@ -249,7 +249,7 @@ class AccountingAccount extends CommonObject
 	 *
 	 * @param User $user User making action
 	 * @param int $notrigger Disable triggers
-	 * @return int                 <0 if KO, >0 if OK
+	 * @return int                 Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -350,7 +350,7 @@ class AccountingAccount extends CommonObject
 	 * Update record
 	 *
 	 * @param User $user 		User making update
-	 * @return int             	<0 if KO (-2 = duplicate), >0 if OK
+	 * @return int             	Return integer <0 if KO (-2 = duplicate), >0 if OK
 	 */
 	public function update($user)
 	{
@@ -395,7 +395,7 @@ class AccountingAccount extends CommonObject
 	/**
 	 * Check usage of accounting code
 	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function checkUsage()
 	{
@@ -430,7 +430,7 @@ class AccountingAccount extends CommonObject
 	 *
 	 * @param User $user User that deletes
 	 * @param int $notrigger 0=triggers after, 1=disable triggers
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -619,7 +619,7 @@ class AccountingAccount extends CommonObject
 	 *
 	 * @param int $id Id
 	 * @param int $mode 0=field active, 1=field reconcilable
-	 * @return int              <0 if KO, >0 if OK
+	 * @return int              Return integer <0 if KO, >0 if OK
 	 */
 	public function accountDeactivate($id, $mode = 0)
 	{
@@ -659,7 +659,7 @@ class AccountingAccount extends CommonObject
 	 *
 	 * @param int $id Id
 	 * @param int $mode 0=field active, 1=field reconcilable
-	 * @return int              <0 if KO, >0 if OK
+	 * @return int              Return integer <0 if KO, >0 if OK
 	 */
 	public function accountActivate($id, $mode = 0)
 	{
