@@ -3665,7 +3665,7 @@ if (!function_exists("llxFooter")) {
 		$forceping = GETPOST('forceping', 'alpha');
 		if (($_SERVER["PHP_SELF"] == DOL_URL_ROOT.'/index.php') || $forceping) {
 			//print '<!-- instance_unique_id='.$conf->file->instance_unique_id.' MAIN_FIRST_PING_OK_ID='.$conf->global->MAIN_FIRST_PING_OK_ID.' -->';
-			$hash_unique_id = md5('dolibarr'.$conf->file->instance_unique_id);	// Do not use dol_hash(), must not change if salt changes.
+			$hash_unique_id = dol_hash('dolibarr'.$conf->file->instance_unique_id, 'sha256');	// Note: if the global salt changes, this hash changes too so ping may be counted twice. We don't mind. It is for statistics purpose only.
 
 			if (!getDolGlobalString('MAIN_FIRST_PING_OK_DATE')
 				|| (!empty($conf->file->instance_unique_id) && ($hash_unique_id != $conf->global->MAIN_FIRST_PING_OK_ID) && ($conf->global->MAIN_FIRST_PING_OK_ID != 'disabled'))
@@ -3695,14 +3695,14 @@ if (!function_exists("llxFooter")) {
 						?>
 							<script>
 							jQuery(document).ready(function (tmp) {
-								console.log("Try Ping with hash_unique_id is md5('dolibarr'+instance_unique_id)");
+								console.log("Try Ping with hash_unique_id is dol_hash('dolibarr'+instance_unique_id, 'sha256')");
 								$.ajax({
 									  method: "POST",
 									  url: "<?php echo $url_for_ping ?>",
 									  timeout: 500,     // timeout milliseconds
 									  cache: false,
 									  data: {
-										  hash_algo: 'md5',
+										  hash_algo: 'dol_hash-sha256',
 										  hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>',
 										  action: 'dolibarrping',
 										  version: '<?php echo (float) DOL_VERSION; ?>',
@@ -3722,7 +3722,7 @@ if (!function_exists("llxFooter")) {
 												url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',
 												timeout: 500,     // timeout milliseconds
 												cache: false,
-												data: { hash_algo: 'md5', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: 'firstpingok', token: '<?php echo currentToken(); ?>' },	// for update
+												data: { hash_algo: 'dol_hash-sha256', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: 'firstpingok', token: '<?php echo currentToken(); ?>' },	// for update
 											  });
 									  },
 									  error: function (data,status,xhr) {   // error callback function
@@ -3732,7 +3732,7 @@ if (!function_exists("llxFooter")) {
 												  url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',
 												  timeout: 500,     // timeout milliseconds
 												  cache: false,
-												  data: { hash_algo: 'md5', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: 'firstpingko', token: '<?php echo currentToken(); ?>' },
+												  data: { hash_algo: 'dol_hash-sha256', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: 'firstpingko', token: '<?php echo currentToken(); ?>' },
 												});
 									  }
 								});
