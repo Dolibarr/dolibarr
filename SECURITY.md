@@ -92,8 +92,8 @@ Scope is the web application (backoffice) and the APIs.
 * Missing security-related HTTP headers which do not lead directly to a vulnerability
 * Reports from automated web vulnerability scanners (Acunetix, Vega, etc.) that have not been validated
 * Invalid or missing SPF (Sender Policy Framework) records (Incomplete or missing SPF/DKIM/DMARC)
-* Reports on features flagged as "experimental" or "development"
+* Reports on features flagged as "deprecated", "experimental" or "development"
 * Software version or private IP disclosure when logged-in user is admin
 * Stack traces or path disclosure when logged-in user is admin
 * Any vulnerabilities due to a configuration different than the one defined in chapter "Scope for qualified vulnerabilities".
-* Brute force attacks on login page, password forgotten page or any public pages (/public/*) are not qualified if the fail2ban recommended fail2ban rules were not installed.  
+* Brute force attacks on login page, password forgotten page or any public pages (/public/*) are not qualified if the recommended fail2ban rules were not installed.  
