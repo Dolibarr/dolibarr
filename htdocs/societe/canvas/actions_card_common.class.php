@@ -153,7 +153,7 @@ abstract class ActionsCardCommon
 			}
 
 			// Load object modCodeClient
-			$module = (!empty($conf->global->SOCIETE_CODECLIENT_ADDON) ? $conf->global->SOCIETE_CODECLIENT_ADDON : 'mod_codeclient_leopard');
+			$module = (getDolGlobalString('SOCIETE_CODECLIENT_ADDON') ? $conf->global->SOCIETE_CODECLIENT_ADDON : 'mod_codeclient_leopard');
 			if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php') {
 				$module = substr($module, 0, dol_strlen($module) - 4);
 			}

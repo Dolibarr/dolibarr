@@ -67,7 +67,10 @@ parameters:
 		- '#with no value type specified in iterable type array#'
 		- '#Empty array passed to foreach#'
 		- '#in isset\(\) is not nullable#'
+		- '#in isset\(\) is never defined#'
+		- '#(\$force_dolibarr_lib|\$dolibarr_main_db).*in empty\(\) is never defined.#'
 		- '#Sprain\\SwissQrBill\\#'
+		- '#Constructor of class DolEditor has an unused parameter \$toolbarlocation#'
 	internalErrorsCountLimit: 50
 	cache:
 	    nodesByFileCountMax: 512

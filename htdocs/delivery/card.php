@@ -135,13 +135,13 @@ if ($action == 'add') {
 		$action = 'create';
 	}
 } elseif ($action == 'confirm_valid' && $confirm == 'yes' &&
-	((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('expedition', 'delivery', 'creer'))
-	|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('expedition', 'delivery_advance', 'validate')))
+	((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'delivery', 'creer'))
+	|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'delivery_advance', 'validate')))
 ) {
 	$result = $object->valid($user);
 
 	// Define output language
-	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+	if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 		$outputlangs = $langs;
 		$newlang = '';
 		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -166,7 +166,7 @@ if ($action == 'add') {
 
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('expedition', 'delivery', 'supprimer')) {
 	$db->begin();
-	$result = $object->delete();
+	$result = $object->delete($user);
 
 	if ($result > 0) {
 		$db->commit();
@@ -510,7 +510,8 @@ if ($action == 'create') {
 			 */
 
 			$num_prod = count($object->lines);
-			$i = 0; $total = 0;
+			$i = 0;
+			$total = 0;
 
 			print '<table class="noborder centpercent">';
 
@@ -537,7 +538,7 @@ if ($action == 'create') {
 						$product->fetch($object->lines[$i]->fk_product);
 
 						// Define output language
-						if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+						if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
 							$outputlangs = $langs;
 							$newlang = '';
 							if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -600,10 +601,10 @@ if ($action == 'create') {
 
 					// Display lines extrafields
 					//if (!empty($extrafields)) {
-						$colspan = 2;
-						$mode = ($object->statut == 0) ? 'edit' : 'view';
+					$colspan = 2;
+					$mode = ($object->statut == 0) ? 'edit' : 'view';
 
-						$object->lines[$i]->fetch_optionals();
+					$object->lines[$i]->fetch_optionals();
 
 					if ($action == 'create_delivery') {
 						$srcLine = new ExpeditionLigne($db);
@@ -614,10 +615,10 @@ if ($action == 'create') {
 
 						$object->lines[$i]->array_options = array_merge($object->lines[$i]->array_options, $srcLine->array_options);
 					} else {
-							$srcLine = new DeliveryLine($db);
-							$extrafields->fetch_name_optionals_label($srcLine->table_element);
+						$srcLine = new DeliveryLine($db);
+						$extrafields->fetch_name_optionals_label($srcLine->table_element);
 					}
-						print $object->lines[$i]->showOptionals($extrafields, $mode, array('style' => 'class="oddeven"', 'colspan' => $colspan), '');
+					print $object->lines[$i]->showOptionals($extrafields, $mode, array('style' => 'class="oddeven"', 'colspan' => $colspan), '');
 					//}
 				}
 
@@ -642,8 +643,8 @@ if ($action == 'create') {
 				print '<div class="tabsAction">';
 
 				if ($object->statut == 0 && $num_prod > 0) {
-					if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('expedition', 'delivery', 'creer'))
-						|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('expedition', 'delivery_advance', 'validate'))) {
+					if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'delivery', 'creer'))
+						|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'delivery_advance', 'validate'))) {
 						print dolGetButtonAction('', $langs->trans('Validate'), 'default', $_SERVER["PHP_SELF"].'?action=valid&amp;token='.newToken().'&amp;id='.$object->id, '');
 					}
 				}

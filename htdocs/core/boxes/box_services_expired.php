@@ -29,7 +29,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_services_expired extends ModeleBoxes
 {
-
 	public $boxcode = "expiredservices"; // id of box
 	public $boximg = "object_contract";
 	public $boxlabel = "BoxOldestExpiredServices";
@@ -168,8 +167,8 @@ class box_services_expired extends ModeleBoxes
 				if ($num == 0) {
 					$langs->load("contracts");
 					$this->info_box_contents[$i][] = array(
-						'td' => 'class="nohover opacitymedium center"',
-						'text' => $langs->trans("NoExpiredServices"),
+						'td' => 'class="nohover center"',
+						'text' => '<span class="opacitymedium">'.$langs->trans("NoExpiredServices").'</span>'
 					);
 				}
 
@@ -183,8 +182,8 @@ class box_services_expired extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

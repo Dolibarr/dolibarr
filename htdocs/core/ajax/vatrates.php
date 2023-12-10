@@ -36,8 +36,8 @@ require '../../main.inc.php';
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');	// 'getSellerVATRates' or 'getBuyerVATRates'
 $htmlname	= GETPOST('htmlname', 'alpha');
-$selected	= (GETPOST('selected') ?GETPOST('selected') : '-1');
-$productid = (GETPOST('productid', 'int') ?GETPOST('productid', 'int') : 0);
+$selected	= (GETPOST('selected') ? GETPOST('selected') : '-1');
+$productid = (GETPOST('productid', 'int') ? GETPOST('productid', 'int') : 0);
 
 // Security check
 $result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);

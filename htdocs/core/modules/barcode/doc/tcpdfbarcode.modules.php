@@ -101,7 +101,7 @@ class modTcpdfbarcode extends ModeleBarCode
 	 *	@param	   string	    $readable	      Code can be read (What is this ? is this used ?)
 	 *	@param	   integer		$scale			  Scale (not used with this engine)
 	 *  @param     integer      $nooutputiferror  No output if error (not used with this engine)
-	 *	@return	   int			                  <0 if KO, >0 if OK
+	 *	@return	   int			                  Return integer <0 if KO, >0 if OK
 	 */
 	public function buildBarCode($code, $encoding, $readable = 'Y', $scale = 1, $nooutputiferror = 0)
 	{
@@ -149,7 +149,7 @@ class modTcpdfbarcode extends ModeleBarCode
 	 *	@param	   string	    $readable	      Code can be read
 	 *	@param	   integer		$scale			  Scale (not used with this engine)
 	 *  @param     integer      $nooutputiferror  No output if error (not used with this engine)
-	 *	@return	   int			                  <0 if KO, >0 if OK
+	 *	@return	   int			                  Return integer <0 if KO, >0 if OK
 	 */
 	public function writeBarCode($code, $encoding, $readable = 'Y', $scale = 1, $nooutputiferror = 0)
 	{

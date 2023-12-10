@@ -32,7 +32,7 @@ $graphwidth = DolGraph::getDefaultGraphSizeForStats('width', 700);
 $mapratio = 0.5;
 $graphheight = round($graphwidth * $mapratio);
 
-$mode = GETPOST('mode') ?GETPOST('mode') : '';
+$mode = GETPOST('mode') ? GETPOST('mode') : '';
 
 
 // Security check
@@ -77,7 +77,7 @@ if ($mode == 'memberbyregion') {
 
 llxHeader('', $title, '', '', 0, 0, $arrayjs);
 
-print load_fiche_titre($title, '',  $memberstatic->picto);
+print load_fiche_titre($title, '', $memberstatic->picto);
 
 //dol_mkdir($dir);
 
@@ -173,7 +173,7 @@ if ($mode) {
 			if ($mode == 'memberbyregion') { //+
 				$data[] = array(
 					'label'=>(($obj->code && $langs->trans("Country".$obj->code) != "Country".$obj->code) ? img_picto('', DOL_URL_ROOT.'/theme/common/flags/'.strtolower($obj->code).'.png', '', 1).' '.$langs->trans("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
-					'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code) != "Country".$obj->code) ? $langsen->transnoentitiesnoconv("Country".$obj->code) : ($obj->label ? $obj->label :'<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
+					'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code) != "Country".$obj->code) ? $langsen->transnoentitiesnoconv("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
 					'label2'=>($obj->label2 ? $obj->label2 : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>'),
 					'nb'=>$obj->nb,
 					'lastdate'=>$db->jdate($obj->lastdate),

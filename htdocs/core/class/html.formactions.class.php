@@ -167,7 +167,7 @@ class FormActions
 	 *  @param	string	$moreparambacktopage	More param for the backtopage
 	 *  @param	string	$morehtmlcenter			More html text on center of title line
 	 *  @param	int		$assignedtouser			Assign event by default to this user id (will be ignored if not enough permissions)
-	 *	@return	int								<0 if KO, >=0 if OK
+	 *	@return	int								Return integer <0 if KO, >=0 if OK
 	 */
 	public function showactions($object, $typeelement, $socid = 0, $forceshowtitle = 0, $morecss = 'listactions', $max = 0, $moreparambacktopage = '', $morehtmlcenter = '', $assignedtouser = 0)
 	{
@@ -186,7 +186,7 @@ class FormActions
 
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 		$caction = new CActionComm($this->db);
-		$arraylist = $caction->liste_array(1, 'code', '', (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : 0), '', 1);
+		$arraylist = $caction->liste_array(1, 'code', '', (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? 1 : 0), '', 1);
 
 		$num = count($listofactions);
 		if ($num || $forceshowtitle) {
@@ -277,7 +277,7 @@ class FormActions
 
 					// Type
 					$labeltype = $actionstatic->type_code;
-					if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($arraylist[$labeltype])) {
+					if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') && empty($arraylist[$labeltype])) {
 						$labeltype = 'AC_OTH';
 					}
 					if (preg_match('/^TICKET_MSG/', $actionstatic->code)) {
@@ -377,7 +377,7 @@ class FormActions
 			$selected = 'AC_OTH_AUTO';
 		}
 
-		if (!empty($conf->global->AGENDA_ALWAYS_HIDE_AUTO)) {
+		if (getDolGlobalString('AGENDA_ALWAYS_HIDE_AUTO')) {
 			unset($arraylist['AC_OTH_AUTO']);
 		}
 

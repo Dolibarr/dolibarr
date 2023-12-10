@@ -125,7 +125,7 @@ if (is_file(DOL_DOCUMENT_ROOT.'/includes/flowjs/flow.js')) {
 			testChunks:false
 		});
 		';
-		print 'if(flow.support){
+	print 'if(flow.support){
 			flow.assignBrowse(document.getElementById("buttonbigupload"));
 			flow.on("fileAdded", function(file, event){
 				console.log("Trigger event file added", file, event);

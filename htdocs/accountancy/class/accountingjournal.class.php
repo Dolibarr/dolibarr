@@ -84,12 +84,12 @@ class AccountingJournal extends CommonObject
 	/**
 	 * @var array 		Accounting account cached
 	 */
-	static public $accounting_account_cached = array();
+	public static $accounting_account_cached = array();
 
 	/**
 	 * @var array 		Nature mapping
 	 */
-	static public $nature_maps = array(
+	public static $nature_maps = array(
 		1 => 'variousoperations',
 		2 => 'sells',
 		3 => 'purchases',
@@ -114,7 +114,7 @@ class AccountingJournal extends CommonObject
 	 *
 	 * @param	int		$rowid				Id of record to load
 	 * @param 	string 	$journal_code		Journal code
-	 * @return	int							<0 if KO, Id of record if OK and found
+	 * @return	int							Return integer <0 if KO, Id of record if OK and found
 	 */
 	public function fetch($rowid = null, $journal_code = null)
 	{
@@ -168,7 +168,7 @@ class AccountingJournal extends CommonObject
 	 * @param array $filter filter array
 	 * @param string $filtermode filter mode (AND or OR)
 	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
@@ -379,15 +379,19 @@ class AccountingJournal extends CommonObject
 	 * @param 	int				$date_start			Filter 'start date'
 	 * @param 	int				$date_end			Filter 'end date'
 	 * @param 	string			$in_bookkeeping		Filter 'in bookkeeping' ('already', 'notyet')
-	 * @return 	array|int							<0 if KO, >0 if OK
+	 * @return 	array|int							Return integer <0 if KO, >0 if OK
 	 */
 	public function getData(User $user, $type = 'view', $date_start = null, $date_end = null, $in_bookkeeping = 'notyet')
 	{
 		global $hookmanager;
 
 		// Clean parameters
-		if (empty($type)) $type = 'view';
-		if (empty($in_bookkeeping)) $in_bookkeeping = 'notyet';
+		if (empty($type)) {
+			$type = 'view';
+		}
+		if (empty($in_bookkeeping)) {
+			$in_bookkeeping = 'notyet';
+		}
 
 		$data = array();
 
@@ -423,7 +427,7 @@ class AccountingJournal extends CommonObject
 	 * @param 	int				$date_start			Filter 'start date'
 	 * @param 	int				$date_end			Filter 'end date'
 	 * @param 	string			$in_bookkeeping		Filter 'in bookkeeping' ('already', 'notyet')
-	 * @return 	array|int							<0 if KO, >0 if OK
+	 * @return 	array|int							Return integer <0 if KO, >0 if OK
 	 */
 	public function getAssetData(User $user, $type = 'view', $date_start = null, $date_end = null, $in_bookkeeping = 'notyet')
 	{
@@ -619,7 +623,7 @@ class AccountingJournal extends CommonObject
 					$disposal_amount = $pre_data_info['disposal']['amount'];
 					$disposal_subject_to_vat = $pre_data_info['disposal']['subject_to_vat'];
 					$disposal_date_formatted = dol_print_date($disposal_date, 'day');
-					$disposal_vat = $conf->global->ASSET_DISPOSAL_VAT > 0 ? $conf->global->ASSET_DISPOSAL_VAT : 20;
+					$disposal_vat = getDolGlobalInt('ASSET_DISPOSAL_VAT') > 0 ? $conf->global->ASSET_DISPOSAL_VAT : 20;
 
 					// Get accountancy codes
 					//---------------------------
@@ -659,9 +663,11 @@ class AccountingJournal extends CommonObject
 							$lines[0][$accountancy_code_depreciation_asset] = -$last_cumulative_amount_ht;
 							$lines[0][$accountancy_code_asset] = $element_static->acquisition_value_ht;
 
-							$disposal_amount_vat = $disposal_subject_to_vat ? (double) price2num($disposal_amount * $disposal_vat / 100, 'MT') : 0;
+							$disposal_amount_vat = $disposal_subject_to_vat ? (float) price2num($disposal_amount * $disposal_vat / 100, 'MT') : 0;
 							$lines[1][$accountancy_code_receivable_on_assignment] = -($disposal_amount + $disposal_amount_vat);
-							if ($disposal_subject_to_vat) $lines[1][$accountancy_code_vat_collected] = $disposal_amount_vat;
+							if ($disposal_subject_to_vat) {
+								$lines[1][$accountancy_code_vat_collected] = $disposal_amount_vat;
+							}
 							$lines[1][$accountancy_code_proceeds_from_sales] = $disposal_amount;
 
 							foreach ($lines as $lines_block) {
@@ -778,7 +784,7 @@ class AccountingJournal extends CommonObject
 	 *                                          ),
 	 * 											);
 	 * @param	int		$max_nb_errors			Nb error authorized before stop the process
-	 * @return 	int								<0 if KO, >0 if OK
+	 * @return 	int								Return integer <0 if KO, >0 if OK
 	 */
 	public function writeIntoBookkeeping(User $user, &$journal_data = array(), $max_nb_errors = 10)
 	{
@@ -919,13 +925,15 @@ class AccountingJournal extends CommonObject
 	 * 													);
 	 * @param	int				$search_date_end		Search date end
 	 * @param	string			$sep					CSV separator
-	 * @return 	int|string								<0 if KO, >0 if OK
+	 * @return 	int|string								Return integer <0 if KO, >0 if OK
 	 */
 	public function exportCsv(&$journal_data = array(), $search_date_end = 0, $sep = '')
 	{
 		global $conf, $langs, $hookmanager;
 
-		if (empty($sep)) $sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
+		if (empty($sep)) {
+			$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
+		}
 		$out = '';
 
 		// Hook
@@ -976,7 +984,9 @@ class AccountingJournal extends CommonObject
 				);
 			}
 
-			if (!empty($header)) $out .= '"' . implode('"' . $sep . '"', $header) . '"' . "\n";
+			if (!empty($header)) {
+				$out .= '"' . implode('"' . $sep . '"', $header) . '"' . "\n";
+			}
 			foreach ($journal_data as $element_id => $element) {
 				foreach ($element['blocks'] as $lines) {
 					foreach ($lines as $line) {

@@ -312,7 +312,7 @@ $form = new Form($db);
 $formcompany = new FormCompany($db);
 
 $title = $langs->trans("ThirdParty")." - ".$langs->trans('Customer');
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->name." - ".$langs->trans('Customer');
 }
 
@@ -341,9 +341,9 @@ if ($object->id > 0) {
 	print '</td></tr>';
 
 	// Prefix
-	if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
+	if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
 		print '<tr><td>'.$langs->trans("Prefix").'</td><td>';
-		print ($object->prefix_comm ? $object->prefix_comm : '&nbsp;');
+		print($object->prefix_comm ? $object->prefix_comm : '&nbsp;');
 		print '</td></tr>';
 	}
 
@@ -505,14 +505,14 @@ if ($object->id > 0) {
 		print '<td>';
 		print $form->editfieldkey("OutstandingBill", 'outstanding_limit', $object->outstanding_limit, $object, $user->hasRight('societe', 'creer'));
 		print '</td><td>';
-		$limit_field_type = (!empty($conf->global->MAIN_USE_JQUERY_JEDITABLE)) ? 'numeric' : 'amount';
+		$limit_field_type = (getDolGlobalString('MAIN_USE_JQUERY_JEDITABLE')) ? 'numeric' : 'amount';
 		print $form->editfieldval("OutstandingBill", 'outstanding_limit', $object->outstanding_limit, $object, $user->hasRight('societe', 'creer'), $limit_field_type, ($object->outstanding_limit != '' ? price($object->outstanding_limit) : ''));
 		print '</td>';
 		print '</tr>';
 	}
 
 	if ($object->client) {
-		if (isModEnabled('commande') && !empty($conf->global->ORDER_MANAGE_MIN_AMOUNT)) {
+		if (isModEnabled('commande') && getDolGlobalString('ORDER_MANAGE_MIN_AMOUNT')) {
 			print '<!-- Minimim amount for orders -->'."\n";
 			print '<tr class="nowrap">';
 			print '<td>';
@@ -526,7 +526,7 @@ if ($object->id > 0) {
 
 
 	// Multiprice level
-	if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
+	if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
 		print '<tr><td class="nowrap">';
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans("PriceLevel");
@@ -546,7 +546,7 @@ if ($object->id > 0) {
 	}
 
 	// Warehouse
-	if (isModEnabled('stock') && !empty($conf->global->SOCIETE_ASK_FOR_WAREHOUSE)) {
+	if (isModEnabled('stock') && getDolGlobalString('SOCIETE_ASK_FOR_WAREHOUSE')) {
 		$langs->load('stocks');
 		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 		$formproduct = new FormProduct($db);
@@ -567,7 +567,7 @@ if ($object->id > 0) {
 	}
 
 	// Preferred shipping Method
-	if (!empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD)) {
+	if (getDolGlobalString('SOCIETE_ASK_FOR_SHIPPING_METHOD')) {
 		print '<tr><td class="nowrap">';
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('SendingMethod');
@@ -1387,7 +1387,7 @@ if ($object->id > 0) {
 				print price($objp->total_ht);
 				print '</td>';
 
-				if (!empty($conf->global->MAIN_SHOW_PRICE_WITH_TAX_IN_SUMMARIES)) {
+				if (getDolGlobalString('MAIN_SHOW_PRICE_WITH_TAX_IN_SUMMARIES')) {
 					print '<td class="right" style="min-width: 60px">';
 					print price($objp->total_ttc);
 					print '</td>';
@@ -1395,7 +1395,7 @@ if ($object->id > 0) {
 
 				print '<td class="nowrap right" style="min-width: 60px">';
 				print $langs->trans('FrequencyPer_'.$invoicetemplate->unit_frequency, $invoicetemplate->frequency).' - ';
-				print ($invoicetemplate->LibStatut($invoicetemplate->frequency, $invoicetemplate->suspended, 5, 0));
+				print($invoicetemplate->LibStatut($invoicetemplate->frequency, $invoicetemplate->suspended, 5, 0));
 				print '</td>';
 				print "</tr>\n";
 				$i++;
@@ -1512,7 +1512,7 @@ if ($object->id > 0) {
 				print price($objp->total_ht);
 				print '</td>';
 
-				if (!empty($conf->global->MAIN_SHOW_PRICE_WITH_TAX_IN_SUMMARIES)) {
+				if (getDolGlobalString('MAIN_SHOW_PRICE_WITH_TAX_IN_SUMMARIES')) {
 					print '<td class="right" style="min-width: 60px">';
 					print price($objp->total_ttc);
 					print '</td>';
@@ -1617,7 +1617,7 @@ if ($object->id > 0) {
 		}
 
 		// Add action
-		if (isModEnabled('agenda') && !empty($conf->global->MAIN_REPEATTASKONEACHTAB) && $object->status == 1) {
+		if (isModEnabled('agenda') && getDolGlobalString('MAIN_REPEATTASKONEACHTAB') && $object->status == 1) {
 			if ($user->hasRight('agenda', 'myactions', 'create')) {
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddAction").'</a></div>';
 			} else {
@@ -1628,12 +1628,12 @@ if ($object->id > 0) {
 
 	print '</div>';
 
-	if (!empty($conf->global->MAIN_DUPLICATE_CONTACTS_TAB_ON_CUSTOMER_CARD)) {
+	if (getDolGlobalString('MAIN_DUPLICATE_CONTACTS_TAB_ON_CUSTOMER_CARD')) {
 		// List of contacts
 		show_contacts($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id);
 	}
 
-	if (!empty($conf->global->MAIN_REPEATTASKONEACHTAB)) {
+	if (getDolGlobalString('MAIN_REPEATTASKONEACHTAB')) {
 		print load_fiche_titre($langs->trans("ActionsOnCompany"), '', '');
 
 		// List of todo actions

@@ -89,9 +89,9 @@ $originid  = (GETPOST('originid', 'int') ? GETPOST('originid', 'int') : GETPOST(
 $rank      = (GETPOST('rank', 'int') > 0) ? GETPOST('rank', 'int') : -1;
 
 // PDF
-$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
-$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
-$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
+$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0));
+$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0));
+$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0));
 
 $datelivraison = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), GETPOST('liv_sec', 'int'), GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
 
@@ -142,7 +142,7 @@ $usercancreate	= ($user->hasRight("fournisseur", "commande", "creer") || $user->
 $usercandelete	= (($user->hasRight("fournisseur", "commande", "supprimer") || $user->hasRight("supplier_order", "supprimer")) || ($usercancreate && isset($object->statut) && $object->statut == $object::STATUS_DRAFT));
 
 // Advanced permissions
-$usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($usercancreate)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight("fournisseur", "supplier_order_advance", "validate")));
+$usercanvalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($usercancreate)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight("fournisseur", "supplier_order_advance", "validate")));
 
 // Additional area permissions
 $usercanapprove			= $user->hasRight("fournisseur", "commande", "approuver");
@@ -163,7 +163,7 @@ $permissiontoadd	= $usercancreate; // Used by the include of actions_addupdatede
 // Project permission
 $caneditproject = false;
 if (isModEnabled('project')) {
-	$caneditproject = empty($conf->global->SUPPLIER_ORDER_FORBID_EDIT_PROJECT) || ($object->statut == CommandeFournisseur::STATUS_DRAFT && preg_match('/^[\(]?PROV/i', $object->ref));
+	$caneditproject = !getDolGlobalString('SUPPLIER_ORDER_FORBID_EDIT_PROJECT') || ($object->statut == CommandeFournisseur::STATUS_DRAFT && preg_match('/^[\(]?PROV/i', $object->ref));
 }
 
 $error = 0;
@@ -180,7 +180,7 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	$backurlforlist = DOL_URL_ROOT.'/fourn/commande/list.php'.($socid > 0 ? '?socid='.((int) $socid)  : '');
+	$backurlforlist = DOL_URL_ROOT.'/fourn/commande/list.php'.($socid > 0 ? '?socid='.((int) $socid) : '');
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
@@ -271,7 +271,7 @@ if (empty($reshook)) {
 	}
 
 	// Edit Thirdparty
-	if (!empty($conf->global->MAIN_CAN_EDIT_SUPPLIER_ON_SUPPLIER_ORDER) && $action == 'set_thirdparty' && $usercancreate && $object->statut == CommandeFournisseur::STATUS_DRAFT) {
+	if (getDolGlobalString('MAIN_CAN_EDIT_SUPPLIER_ON_SUPPLIER_ORDER') && $action == 'set_thirdparty' && $usercancreate && $object->statut == CommandeFournisseur::STATUS_DRAFT) {
 		$new_socid = GETPOST('new_socid', 'int');
 		if (!empty($new_socid) && $new_socid != $object->thirdparty->id) {
 			$db->begin();
@@ -508,7 +508,7 @@ if (empty($reshook)) {
 				$res = $productsupplier->fetch($idprod); // Load product from its id
 				// Call to init some price properties of $productsupplier
 				// So if a supplier price already exists for another thirdparty (first one found), we use it as reference price
-				if (!empty($conf->global->SUPPLIER_TAKE_FIRST_PRICE_IF_NO_PRICE_FOR_CURRENT_SUPPLIER)) {
+				if (getDolGlobalString('SUPPLIER_TAKE_FIRST_PRICE_IF_NO_PRICE_FOR_CURRENT_SUPPLIER')) {
 					$fksoctosearch = 0;
 					$productsupplier->get_buyprice(0, -1, $idprod, 'none', $fksoctosearch); // We force qty to -1 to be sure to find if a supplier price exist
 					if ($productsupplier->fourn_socid != $socid) {	// The price we found is for another supplier, so we clear supplier price
@@ -529,7 +529,7 @@ if (empty($reshook)) {
 				$label = $productsupplier->label;
 
 				// Define output language
-				if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
 					$outputlangs = $langs;
 					$newlang = '';
 					if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -547,20 +547,20 @@ if (empty($reshook)) {
 					$desc = $productsupplier->description;
 				}
 				// if we use supplier description of the products
-				if (!empty($productsupplier->desc_supplier) && !empty($conf->global->PRODUIT_FOURN_TEXTS)) {
+				if (!empty($productsupplier->desc_supplier) && getDolGlobalString('PRODUIT_FOURN_TEXTS')) {
 					$desc = $productsupplier->desc_supplier;
 				}
 
 				//If text set in desc is the same as product descpription (as now it's preloaded) whe add it only one time
-				if (trim($product_desc) == trim($desc) && !empty($conf->global->PRODUIT_AUTOFILL_DESC)) {
+				if (trim($product_desc) == trim($desc) && getDolGlobalString('PRODUIT_AUTOFILL_DESC')) {
 					$product_desc='';
 				}
 
-				if (!empty($product_desc) && !empty($conf->global->MAIN_NO_CONCAT_DESCRIPTION)) {
+				if (!empty($product_desc) && getDolGlobalString('MAIN_NO_CONCAT_DESCRIPTION')) {
 					$desc = $product_desc;
 				}
 				if (!empty($product_desc) && trim($product_desc) != trim($desc)) {
-					$desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION));
+					$desc = dol_concatdesc($desc, $product_desc, '', getDolGlobalString('MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION'));
 				}
 
 				$ref_supplier = $productsupplier->ref_supplier;
@@ -677,13 +677,14 @@ if (empty($reshook)) {
 			$ret = $object->fetch($object->id); // Reload to get new records
 
 			// Define output language
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 					$newlang = $object->thirdparty->default_lang;
-					if (GETPOST('lang_id', 'aZ09'))
+					if (GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
+					}
 				}
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
@@ -755,7 +756,7 @@ if (empty($reshook)) {
 		}
 
 		$productsupplier = new ProductFournisseur($db);
-		if (!empty($conf->global->SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY)) {
+		if (getDolGlobalString('SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY')) {
 			if ($line->fk_product > 0 && $productsupplier->get_buyprice(0, price2num(GETPOST('qty', 'int')), $line->fk_product, 'none', GETPOST('socid', 'int')) < 0) {
 				setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'warnings');
 			}
@@ -787,7 +788,7 @@ if (empty($reshook)) {
 			}
 
 			$ttc = price2num(GETPOST('price_ttc'), '', 2);
-			$ht = $ttc / (1 + ($vatratecleaned / 100));
+			$ht = (float) $ttc / (1 + ($vatratecleaned / 100));
 			$price_base_type = 'HT';
 		}
 
@@ -853,7 +854,7 @@ if (empty($reshook)) {
 
 		if ($result >= 0) {
 			// Define output language
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -904,7 +905,7 @@ if (empty($reshook)) {
 				$outputlangs = new Translate("", $conf);
 				$outputlangs->setDefaultLang($newlang);
 			}
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$ret = $object->fetch($object->id); // Reload to get new records
 				$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
@@ -943,7 +944,7 @@ if (empty($reshook)) {
 		$result = $object->valid($user);
 		if ($result >= 0) {
 			// Define output language
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -971,7 +972,7 @@ if (empty($reshook)) {
 		}
 
 		// If we have permission, and if we don't need to provide the idwarehouse, we go directly on approved step
-		if (!$error && empty($conf->global->SUPPLIER_ORDER_NO_DIRECT_APPROVE) && $usercanapprove && !(!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $object->hasProductsOrServices(1))) {
+		if (!$error && !getDolGlobalString('SUPPLIER_ORDER_NO_DIRECT_APPROVE') && $usercanapprove && !(getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER') && $object->hasProductsOrServices(1))) {
 			$action = 'confirm_approve'; // can make standard or first level approval also if permission is set
 		}
 
@@ -988,14 +989,14 @@ if (empty($reshook)) {
 		$idwarehouse = GETPOST('idwarehouse', 'int');
 
 		$qualified_for_stock_change = 0;
-		if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+		if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 			$qualified_for_stock_change = $object->hasProductsOrServices(2);
 		} else {
 			$qualified_for_stock_change = $object->hasProductsOrServices(1);
 		}
 
 		// Check parameters
-		if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $qualified_for_stock_change) {	// warning name of option should be STOCK_CALCULATE_ON_SUPPLIER_APPROVE_ORDER
+		if (isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER') && $qualified_for_stock_change) {	// warning name of option should be STOCK_CALCULATE_ON_SUPPLIER_APPROVE_ORDER
 			if (!$idwarehouse || $idwarehouse == -1) {
 				$error++;
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
@@ -1006,7 +1007,7 @@ if (empty($reshook)) {
 		if (!$error) {
 			$result = $object->approve($user, $idwarehouse, ($action == 'confirm_approve2' ? 1 : 0));
 			if ($result > 0) {
-				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+				if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 					$outputlangs = $langs;
 					$newlang = '';
 					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -1067,7 +1068,7 @@ if (empty($reshook)) {
 
 		$result = $object->commande($user, GETPOST("datecommande"), GETPOST("methode", 'int'), GETPOST('comment', 'alphanohtml'));
 		if ($result > 0) {
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -1262,7 +1263,8 @@ if (empty($reshook)) {
 					$element = $subelement = $origin;
 					$classname = ucfirst($subelement);
 					if ($origin == 'propal' || $origin == 'proposal') {
-						$element = 'comm/propal'; $subelement = 'propal';
+						$element = 'comm/propal';
+						$subelement = 'propal';
 						$classname = 'Propal';
 					}
 					if ($origin == 'order' || $origin == 'commande') {
@@ -1512,7 +1514,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if (!empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $usercancreate) {
+	if (getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB') && $usercancreate) {
 		if ($action == 'addcontact') {
 			if ($object->id > 0) {
 				$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
@@ -1595,7 +1597,8 @@ if ($action == 'create') {
 
 		if ($origin == 'propal' || $origin == 'proposal') {
 			$classname = 'Propal';
-			$element = 'comm/propal'; $subelement = 'propal';
+			$element = 'comm/propal';
+			$subelement = 'propal';
 		}
 		if ($origin == 'order' || $origin == 'commande') {
 			$classname = 'Commande';
@@ -1634,7 +1637,7 @@ if ($action == 'create') {
 		$demand_reason_id = (!empty($objectsrc->demand_reason_id) ? $objectsrc->demand_reason_id : (!empty($soc->demand_reason_id) ? $soc->demand_reason_id : 0));
 		//$remise_percent		= (!empty($objectsrc->remise_percent) ? $objectsrc->remise_percent : (!empty($soc->remise_supplier_percent) ? $soc->remise_supplier_percent : 0));
 		//$remise_absolue		= (!empty($objectsrc->remise_absolue) ? $objectsrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
-		$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '';
+		$dateinvoice		= !getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : '';
 
 		$datedelivery = (!empty($objectsrc->delivery_date) ? $objectsrc->delivery_date : '');
 
@@ -1642,7 +1645,7 @@ if ($action == 'create') {
 			if (!empty($objectsrc->multicurrency_code)) {
 				$currency_code = $objectsrc->multicurrency_code;
 			}
-			if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($objectsrc->multicurrency_tx)) {
+			if (getDolGlobalString('MULTICURRENCY_USE_ORIGIN_TX') && !empty($objectsrc->multicurrency_tx)) {
 				$currency_tx = $objectsrc->multicurrency_tx;
 			}
 		}
@@ -1665,10 +1668,10 @@ if ($action == 'create') {
 	}
 
 	// If not defined, set default value from constant
-	if (empty($cond_reglement_id) && !empty($conf->global->SUPPLIER_ORDER_DEFAULT_PAYMENT_TERM_ID)) {
+	if (empty($cond_reglement_id) && getDolGlobalString('SUPPLIER_ORDER_DEFAULT_PAYMENT_TERM_ID')) {
 		$cond_reglement_id = $conf->global->SUPPLIER_ORDER_DEFAULT_PAYMENT_TERM_ID;
 	}
-	if (empty($mode_reglement_id) && !empty($conf->global->SUPPLIER_ORDER_DEFAULT_PAYMENT_MODE_ID)) {
+	if (empty($mode_reglement_id) && getDolGlobalString('SUPPLIER_ORDER_DEFAULT_PAYMENT_MODE_ID')) {
 		$mode_reglement_id = $conf->global->SUPPLIER_ORDER_DEFAULT_PAYMENT_MODE_ID;
 	}
 
@@ -1712,7 +1715,7 @@ if ($action == 'create') {
 			$filter = '((s.fournisseur:=:1) AND (s.status:=:1))';
 			print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company((empty($socid) ? '' : $socid), 'socid', $filter, 'SelectThirdParty', 1, 0, null, 0, 'minwidth175 maxwidth500 widthcentpercentminusxx');
 			// reload page to retrieve customer informations
-			if (empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE_DISABLED)) {
+			if (!getDolGlobalString('RELOAD_PAGE_ON_SUPPLIER_CHANGE_DISABLED')) {
 				print '<script>
 				$(document).ready(function() {
 					$("#socid").change(function() {
@@ -1764,7 +1767,7 @@ if ($action == 'create') {
 		print '</td>';
 		print '<td>';
 		$usehourmin = 0;
-		if (!empty($conf->global->SUPPLIER_ORDER_USE_HOUR_FOR_DELIVERY_DATE)) {
+		if (getDolGlobalString('SUPPLIER_ORDER_USE_HOUR_FOR_DELIVERY_DATE')) {
 			$usehourmin = 1;
 		}
 		print img_picto('', 'action', 'class="pictofixedwidth"');
@@ -1772,7 +1775,7 @@ if ($action == 'create') {
 		print '</td></tr>';
 
 		// Bank Account
-		if (!empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER) && isModEnabled("banque")) {
+		if (getDolGlobalString('BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER') && isModEnabled("banque")) {
 			$langs->load("bank");
 			print '<tr><td>'.$langs->trans('BankAccount').'</td><td>';
 			print img_picto('', 'bank_account', 'class="pictofixedwidth"');
@@ -1786,7 +1789,7 @@ if ($action == 'create') {
 
 			$langs->load('projects');
 			print '<tr><td>'.$langs->trans('Project').'</td><td>';
-			print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $societe->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
+			print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects((!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $societe->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
 			print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?action=create&status=1'.(!empty($societe->id) ? '&socid='.$societe->id : "").'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create'.(!empty($societe->id) ? '&socid='.$societe->id : "")).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
 			print '</td></tr>';
 		}
@@ -1815,7 +1818,7 @@ if ($action == 'create') {
 
 		print '<tr><td>'.$langs->trans('NotePublic').'</td>';
 		print '<td>';
-		$doleditor = new DolEditor('note_public', isset($note_public) ? $note_public : GETPOST('note_public', 'restricthtml'), '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
+		$doleditor = new DolEditor('note_public', isset($note_public) ? $note_public : GETPOST('note_public', 'restricthtml'), '', 80, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td>';
 		//print '<textarea name="note_public" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea>';
@@ -1823,7 +1826,7 @@ if ($action == 'create') {
 
 		print '<tr><td>'.$langs->trans('NotePrivate').'</td>';
 		print '<td>';
-		$doleditor = new DolEditor('note_private', isset($note_private) ? $note_private : GETPOST('note_private', 'restricthtml'), '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
+		$doleditor = new DolEditor('note_private', isset($note_private) ? $note_private : GETPOST('note_private', 'restricthtml'), '', 80, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td>';
 		//print '<td><textarea name="note_private" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
@@ -1955,14 +1958,14 @@ if ($action == 'create') {
 	// Confirm approval
 	if ($action == 'approve' || $action == 'approve2') {
 		$qualified_for_stock_change = 0;
-		if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+		if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 			$qualified_for_stock_change = $object->hasProductsOrServices(2);
 		} else {
 			$qualified_for_stock_change = $object->hasProductsOrServices(1);
 		}
 
 		$formquestion = array();
-		if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $qualified_for_stock_change) {
+		if (isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER') && $qualified_for_stock_change) {
 			$langs->load("stocks");
 			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 			$formproduct = new FormProduct($db);
@@ -2030,7 +2033,7 @@ if ($action == 'create') {
 
 	// Confirmation to delete line
 	if ($action == 'ask_deleteline') {
-		 $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
 	}
 
 	$parameters = array('formConfirm' => $formconfirm, 'lineid'=>$lineid);
@@ -2055,7 +2058,7 @@ if ($action == 'create') {
 	$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $usercancreate, 'string'.(isset($conf->global->THIRDPARTY_REF_INPUT_SIZE) ? ':' . getDolGlobalString('THIRDPARTY_REF_INPUT_SIZE') : ''), '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref .= '<br>';
-	if (!empty($conf->global->MAIN_CAN_EDIT_SUPPLIER_ON_SUPPLIER_ORDER) && !empty($usercancreate) && $action == 'edit_thirdparty') {
+	if (getDolGlobalString('MAIN_CAN_EDIT_SUPPLIER_ON_SUPPLIER_ORDER') && !empty($usercancreate) && $action == 'edit_thirdparty') {
 		$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 		$morehtmlref .= '<input type="hidden" name="action" value="set_thirdparty">';
 		$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
@@ -2064,12 +2067,12 @@ if ($action == 'create') {
 		$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 		$morehtmlref .= '</form>';
 	}
-	if (empty($conf->global->MAIN_CAN_EDIT_SUPPLIER_ON_SUPPLIER_ORDER) || $action != 'edit_thirdparty') {
-		if (!empty($conf->global->MAIN_CAN_EDIT_SUPPLIER_ON_SUPPLIER_ORDER) && $object->statut == CommandeFournisseur::STATUS_DRAFT) {
+	if (!getDolGlobalString('MAIN_CAN_EDIT_SUPPLIER_ON_SUPPLIER_ORDER') || $action != 'edit_thirdparty') {
+		if (getDolGlobalString('MAIN_CAN_EDIT_SUPPLIER_ON_SUPPLIER_ORDER') && $object->statut == CommandeFournisseur::STATUS_DRAFT) {
 			$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=edit_thirdparty&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetThirdParty')).'</a>';
 		}
 		$morehtmlref .= $object->thirdparty->getNomUrl(1, 'supplier');
-		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
+		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
 			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
 		}
 	}
@@ -2083,7 +2086,7 @@ if ($action == 'create') {
 			if ($action != 'classify' && $caneditproject) {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -2114,7 +2117,7 @@ if ($action == 'create') {
 		// Date
 		if ($object->methode_commande_id > 0) {
 			$usehourmin = 0;
-			if (!empty($conf->global->SUPPLIER_ORDER_USE_HOUR_FOR_DELIVERY_DATE)) {
+			if (getDolGlobalString('SUPPLIER_ORDER_USE_HOUR_FOR_DELIVERY_DATE')) {
 				$usehourmin = 1;
 			}
 			print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>';
@@ -2135,7 +2138,7 @@ if ($action == 'create') {
 		print '</tr>';
 
 		// Relative and absolute discounts
-		if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+		if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
 			$filterabsolutediscount = "fk_invoice_supplier_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 			$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 		} else {
@@ -2245,7 +2248,7 @@ if ($action == 'create') {
 		}
 
 		// Bank Account
-		if (!empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER) && isModEnabled("banque")) {
+		if (getDolGlobalString('BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER') && isModEnabled("banque")) {
 			print '<tr><td class="nowrap">';
 			print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
 			print $langs->trans('BankAccount');
@@ -2285,7 +2288,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdate_livraison">';
 			$usehourmin = 0;
-			if (!empty($conf->global->SUPPLIER_ORDER_USE_HOUR_FOR_DELIVERY_DATE)) {
+			if (getDolGlobalString('SUPPLIER_ORDER_USE_HOUR_FOR_DELIVERY_DATE')) {
 				$usehourmin = 1;
 			}
 			print $form->selectDate($object->delivery_date ? $object->delivery_date : -1, 'liv_', $usehourmin, $usehourmin, '', "setdate_livraison");
@@ -2293,7 +2296,7 @@ if ($action == 'create') {
 			print '</form>';
 		} else {
 			$usehourmin = 'day';
-			if (!empty($conf->global->SUPPLIER_ORDER_USE_HOUR_FOR_DELIVERY_DATE)) {
+			if (getDolGlobalString('SUPPLIER_ORDER_USE_HOUR_FOR_DELIVERY_DATE')) {
 				$usehourmin = 'dayhour';
 			}
 			print $object->delivery_date ? dol_print_date($object->delivery_date, $usehourmin) : '&nbsp;';
@@ -2378,7 +2381,7 @@ if ($action == 'create') {
 		}
 
 		$alert = '';
-		if (!empty($conf->global->ORDER_MANAGE_MIN_AMOUNT) && $object->total_ht < $object->thirdparty->supplier_order_min_amount) {
+		if (getDolGlobalString('ORDER_MANAGE_MIN_AMOUNT') && $object->total_ht < $object->thirdparty->supplier_order_min_amount) {
 			$alert = ' ' . img_warning($langs->trans('OrderMinAmount') . ': ' . price($object->thirdparty->supplier_order_min_amount));
 		}
 
@@ -2405,13 +2408,13 @@ if ($action == 'create') {
 
 		print '<div class="clearboth"></div><br>';
 
-		if (!empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
+		if (getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
 			$blocname = 'contacts';
 			$title = $langs->trans('ContactsAddresses');
 			include DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php';
 		}
 
-		if (!empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
+		if (getDolGlobalString('MAIN_DISABLE_NOTES_TAB')) {
 			$blocname = 'notes';
 			$title = $langs->trans('Notes');
 			include DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php';
@@ -2441,9 +2444,11 @@ if ($action == 'create') {
 
 		// Add free products/services form
 		global $forceall, $senderissupplier, $dateSelector, $inputalsopricewithtax;
-		$forceall = 1; $dateSelector = 0; $inputalsopricewithtax = 1;
+		$forceall = 1;
+		$dateSelector = 0;
+		$inputalsopricewithtax = 1;
 		$senderissupplier = 2; // $senderissupplier=2 is same than 1 but disable test on minimum qty and disable autofill qty with minimum.
-		if (!empty($conf->global->SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY)) {
+		if (getDolGlobalString('SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY')) {
 			$senderissupplier = 1;
 		}
 
@@ -2461,9 +2466,12 @@ if ($action == 'create') {
 
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-				if (empty($reshook))
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				}
+				if (empty($reshook)) {
 					$object->formAddObjectLine(1, $societe, $mysoc);
+				}
 			}
 		}
 		print '</table>';
@@ -2491,7 +2499,7 @@ if ($action == 'create') {
 				if ($object->statut == 0 && $num > 0) {
 					if ($usercanvalidate) {
 						$tmpbuttonlabel = $langs->trans('Validate');
-						if ($usercanapprove && empty($conf->global->SUPPLIER_ORDER_NO_DIRECT_APPROVE)) {
+						if ($usercanapprove && !getDolGlobalString('SUPPLIER_ORDER_NO_DIRECT_APPROVE')) {
 							$tmpbuttonlabel = $langs->trans("ValidateAndApprove");
 						}
 
@@ -2516,7 +2524,7 @@ if ($action == 'create') {
 				// Approve
 				if ($object->statut == CommandeFournisseur::STATUS_VALIDATED) {
 					if ($usercanapprove) {
-						if (!empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) && $object->total_ht >= $conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED && !empty($object->user_approve_id)) {
+						if (getDolGlobalString('SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED') && $object->total_ht >= $conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED && !empty($object->user_approve_id)) {
 							print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("FirstApprovalAlreadyDone")).'">'.$langs->trans("ApproveOrder").'</a>';
 						} else {
 							print '<a class="butAction"	href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=approve">'.$langs->trans("ApproveOrder").'</a>';
@@ -2527,7 +2535,7 @@ if ($action == 'create') {
 				}
 
 				// Second approval (if option SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED is set)
-				if (!empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) && $object->total_ht >= $conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) {
+				if (getDolGlobalString('SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED') && $object->total_ht >= $conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) {
 					if ($object->statut == CommandeFournisseur::STATUS_VALIDATED) {
 						if ($usercanapprovesecond) {
 							if (!empty($object->user_approve_id2)) {
@@ -2552,7 +2560,7 @@ if ($action == 'create') {
 
 				// Send
 				if (empty($user->socid)) {
-					if (in_array($object->statut, array(CommandeFournisseur::STATUS_ACCEPTED, 3, 4, 5)) || !empty($conf->global->SUPPLIER_ORDER_SENDBYEMAIL_FOR_ALL_STATUS)) {
+					if (in_array($object->statut, array(CommandeFournisseur::STATUS_ACCEPTED, 3, 4, 5)) || getDolGlobalString('SUPPLIER_ORDER_SENDBYEMAIL_FOR_ALL_STATUS')) {
 						if ($usercanorder) {
 							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
 						}
@@ -2563,15 +2571,15 @@ if ($action == 'create') {
 				if (in_array($object->statut, array(CommandeFournisseur::STATUS_ACCEPTED))) {
 					$buttonshown = 0;
 					if (!$buttonshown && $usercanapprove) {
-						if (empty($conf->global->SUPPLIER_ORDER_REOPEN_BY_APPROVER_ONLY)
-							|| (!empty($conf->global->SUPPLIER_ORDER_REOPEN_BY_APPROVER_ONLY) && $user->id == $object->user_approve_id)) {
+						if (!getDolGlobalString('SUPPLIER_ORDER_REOPEN_BY_APPROVER_ONLY')
+							|| (getDolGlobalString('SUPPLIER_ORDER_REOPEN_BY_APPROVER_ONLY') && $user->id == $object->user_approve_id)) {
 							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("Disapprove").'</a>';
 							$buttonshown++;
 						}
 					}
-					if (!$buttonshown && $usercanapprovesecond && !empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED)) {
-						if (empty($conf->global->SUPPLIER_ORDER_REOPEN_BY_APPROVER2_ONLY)
-							|| (!empty($conf->global->SUPPLIER_ORDER_REOPEN_BY_APPROVER2_ONLY) && $user->id == $object->user_approve_id2)) {
+					if (!$buttonshown && $usercanapprovesecond && getDolGlobalString('SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED')) {
+						if (!getDolGlobalString('SUPPLIER_ORDER_REOPEN_BY_APPROVER2_ONLY')
+							|| (getDolGlobalString('SUPPLIER_ORDER_REOPEN_BY_APPROVER2_ONLY') && $user->id == $object->user_approve_id2)) {
 							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("Disapprove").'</a>';
 						}
 					}
@@ -2584,7 +2592,7 @@ if ($action == 'create') {
 
 				// Ship
 				$hasreception = 0;
-				if (isModEnabled('stock') && (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE))) {
+				if (isModEnabled('stock') && (getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER') || getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION') || getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION_CLOSE'))) {
 					$labelofbutton = $langs->trans('ReceiveProducts');
 					if ($conf->reception->enabled) {
 						$labelofbutton = $langs->trans("CreateReception");
@@ -2715,7 +2723,7 @@ if ($action == 'create') {
 			$action = 'presend';
 		}
 
-		if ($action != 'createorder' && $action != 'presend' ) {
+		if ($action != 'createorder' && $action != 'presend') {
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 
 			// Generated documents
@@ -2726,7 +2734,7 @@ if ($action == 'create') {
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 			$genallowed = $usercanread;
 			$delallowed = $usercancreate;
-			$modelpdf = (!empty($object->model_pdf) ? $object->model_pdf : (empty($conf->global->COMMANDE_SUPPLIER_ADDON_PDF) ? '' : $conf->global->COMMANDE_SUPPLIER_ADDON_PDF));
+			$modelpdf = (!empty($object->model_pdf) ? $object->model_pdf : (!getDolGlobalString('COMMANDE_SUPPLIER_ADDON_PDF') ? '' : $conf->global->COMMANDE_SUPPLIER_ADDON_PDF));
 
 			print $formfile->showdocuments('commande_fournisseur', $objref, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 0, 0, '', '', '', $object->thirdparty->default_lang, '', $object);
 			$somethingshown = $formfile->numoffiles;

@@ -118,15 +118,18 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		//$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
 		if (! function_exists('mb_substr')) {
-			print "\n".__METHOD__." function mb_substr must be enabled.\n"; die(1);
+			print "\n".__METHOD__." function mb_substr must be enabled.\n";
+			die(1);
 		}
 
 		if ($conf->global->MAIN_MAX_DECIMALS_UNIT != 5) {
-			print "\n".__METHOD__." bad setup for number of digits for unit amount. Must be 5 for this test.\n"; die(1);
+			print "\n".__METHOD__." bad setup for number of digits for unit amount. Must be 5 for this test.\n";
+			die(1);
 		}
 
 		if ($conf->global->MAIN_MAX_DECIMALS_TOT != 2) {
-			print "\n".__METHOD__." bad setup for number of digits for unit amount. Must be 2 for this test.\n"; die(1);
+			print "\n".__METHOD__." bad setup for number of digits for unit amount. Must be 2 for this test.\n";
+			die(1);
 		}
 
 		print __METHOD__."\n";
@@ -185,16 +188,16 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		// An attempt for SQL injection
 		$filter='if(now()=sysdate()%2Csleep(6)%2C0)';
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
-		$this->assertEquals($sql, 'Filter syntax error - Bad syntax of the search string');
+		$this->assertEquals('Filter syntax error - Bad syntax of the search string', $sql);
 
 		// A real search string
 		$filter='(((statut:=:1) or (entity:in:__AAA__)) and (abc:<:2.0) and (abc:!=:1.23))';
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
-		$this->assertEquals($sql, ' AND ((((statut = 1) or (entity IN (__AAA__))) and (abc < 2) and (abc <> 1.23)))');
+		$this->assertEquals(' AND ((((statut = 1) or (entity IN (__AAA__))) and (abc < 2) and (abc <> 1.23)))', $sql);
 
 		$filter="(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.date_creation:<:'2016-01-01 12:30:00') or (t.nature:is:NULL)";
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
-		$this->assertEquals($sql, " AND ((t.ref LIKE 'SO-%') or (t.date_creation < '20160101') or (t.date_creation < 0) or (t.nature IS NULL))");
+		$this->assertEquals(" AND ((t.ref LIKE 'SO-%') or (t.date_creation < '20160101') or (t.date_creation < 0) or (t.nature IS NULL))", $sql);
 
 		return true;
 	}
@@ -661,15 +664,18 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testDolConcat()
 	{
-		$text1="A string 1"; $text2="A string 2";	// text 1 and 2 are text, concat need only \n
+		$text1="A string 1";
+		$text2="A string 2";	// text 1 and 2 are text, concat need only \n
 		$after=dol_concatdesc($text1, $text2);
 		$this->assertEquals("A string 1\nA string 2", $after);
 
-		$text1="A<br>string 1"; $text2="A string 2";	// text 1 is html, concat need <br>\n
+		$text1="A<br>string 1";
+		$text2="A string 2";	// text 1 is html, concat need <br>\n
 		$after=dol_concatdesc($text1, $text2);
 		$this->assertEquals("A<br>string 1<br>\nA string 2", $after);
 
-		$text1="A string 1"; $text2="A <b>string</b> 2";	// text 2 is html, concat need <br>\n
+		$text1="A string 1";
+		$text2="A <b>string</b> 2";	// text 2 is html, concat need <br>\n
 		$after=dol_concatdesc($text1, $text2);
 		$this->assertEquals("A string 1<br>\nA <b>string</b> 2", $after);
 
@@ -1675,6 +1681,45 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		return true;
 	}
 
+	/**
+	 * testUtf8Check
+	 *
+	 * @return boolean
+	 */
+	public function testUtf8Check()
+	{
+		global $conf, $langs;
+
+		$chaine = 'This is an UTF8 string with a é.';
+		$result = utf8_check($chaine);
+		$this->assertEquals(true, $result);
+
+		$chaine = mb_convert_encoding('This is an UTF8 with a é.', 'ISO-8859-1', 'UTF-8');
+		$result = utf8_check($chaine);
+		$this->assertEquals(false, $result);
+
+		return true;
+	}
+
+	/**
+	 * testUtf8Valid
+	 *
+	 * @return boolean
+	 */
+	public function testUtf8Valid()
+	{
+		global $conf, $langs;
+
+		$chaine = 'This is an UTF8 string with a é.';
+		$result = utf8_valid($chaine);
+		$this->assertEquals(true, $result);
+
+		$chaine = mb_convert_encoding('This is an UTF8 with a é.', 'ISO-8859-1', 'UTF-8');
+		$result = utf8_valid($chaine);
+		$this->assertEquals(false, $result);
+
+		return true;
+	}
 
 	/**
 	 * testGetUserRemoteIP

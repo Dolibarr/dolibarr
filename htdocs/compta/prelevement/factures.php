@@ -45,7 +45,7 @@ $userid = GETPOST('userid', 'int');
 $type = GETPOST('type', 'aZ09');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -96,6 +96,7 @@ llxHeader('', $langs->trans("WithdrawalsReceipts"));
 if ($id > 0 || $ref) {
 	if ($object->fetch($id, $ref) >= 0) {
 		$head = prelevement_prepare_head($object);
+
 		print dol_get_fiche_head($head, 'invoices', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/orders_list.php?restore_lastsearch_values=1'.($object->type != 'bank-transfer' ? '' : '&type=bank-transfer').'">'.$langs->trans("BackToList").'</a>';
@@ -293,8 +294,9 @@ if ($resql) {
 	print '<input type="hidden" name="id" value="'.$id.'">';
 
 	$massactionbutton = '';
+	$title = ($salaryBonPl ? $langs->trans("Salaries") : ($object->type == 'bank-transfer' ? $langs->trans("SupplierInvoices") : $langs->trans("Invoices")));
 
-	print_barre_liste(($salaryBonPl ? $langs->trans("Salaries") : $langs->trans("Invoices")), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, '', '', $limit);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
 	print"\n<!-- debut table -->\n";
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
@@ -305,10 +307,9 @@ if ($resql) {
 		print_liste_field_titre("RefSupplierShort", $_SERVER["PHP_SELF"], "f.ref_supplier", '', $param, '', $sortfield, $sortorder);
 	}
 	print_liste_field_titre(($salaryBonPl ? "Employee" : "ThirdParty"), $_SERVER["PHP_SELF"], "s.nom", '', $param, '', $sortfield, $sortorder);
-	print_liste_field_titre(($salaryBonPl ? "AmountSalary": "AmountInvoice"), $_SERVER["PHP_SELF"], "f.total_ttc", "", $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre(($salaryBonPl ? "AmountSalary" : "AmountInvoice"), $_SERVER["PHP_SELF"], "f.total_ttc", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre("AmountRequested", $_SERVER["PHP_SELF"], "pl.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", $param, 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre('');
 	print "</tr>\n";
 
 	$totalinvoices = 0;
@@ -340,9 +341,8 @@ if ($resql) {
 
 		print '<tr class="oddeven">';
 
-
 		print '<td class="nowraponall">';
-		print ($salaryBonPl ? $salarytmp->getNomUrl(1) : $invoicetmp->getNomUrl(1));
+		print($salaryBonPl ? $salarytmp->getNomUrl(1) : $invoicetmp->getNomUrl(1));
 		print "</td>\n";
 
 		if ($object->type == 'bank-transfer' && !$salaryBonPl) {
@@ -352,11 +352,11 @@ if ($resql) {
 		}
 
 		print '<td class="tdoverflowmax125">';
-		print ($salaryBonPl ? $usertmp->getNomUrl(-1) : $thirdpartytmp->getNomUrl(1));
+		print($salaryBonPl ? $usertmp->getNomUrl(-1) : $thirdpartytmp->getNomUrl(1));
 		print "</td>\n";
 
 		// Amount of invoice
-		print '<td class="right"><span class="amount">'.price(($salaryBonPl ? $obj->amount :$obj->total_ttc))."</span></td>\n";
+		print '<td class="right"><span class="amount">'.price(($salaryBonPl ? $obj->amount : $obj->total_ttc))."</span></td>\n";
 
 		// Amount requested
 		print '<td class="right"><span class="amount">'.price($obj->amount_requested)."</span></td>\n";
@@ -375,8 +375,6 @@ if ($resql) {
 			print '<span class="error">'.$langs->trans("StatusRefused").'</span>';
 		}
 		print "</td>";
-
-		print "<td></td>";
 
 		print "</tr>\n";
 
@@ -402,7 +400,6 @@ if ($resql) {
 		}
 		print price($totalamount_requested);
 		print "</td>\n";
-		print '<td>&nbsp;</td>';
 		print '<td>&nbsp;</td>';
 		print "</tr>\n";
 	}

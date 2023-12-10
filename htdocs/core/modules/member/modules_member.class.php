@@ -71,6 +71,8 @@ abstract class ModeleNumRefMembers extends CommonNumRefGenerator
 
 	public $code_null; //
 
+	public $code_auto;
+
 
 	/**
 	 *  Return description of module parameters
@@ -87,7 +89,7 @@ abstract class ModeleNumRefMembers extends CommonNumRefGenerator
 
 		$strikestart = '';
 		$strikeend = '';
-		if (!empty($conf->global->MAIN_MEMBER_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) {
+		if (getDolGlobalString('MAIN_MEMBER_CODE_ALWAYS_REQUIRED') && !empty($this->code_null)) {
 			$strikestart = '<strike>';
 			$strikeend = '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
 		}
@@ -116,5 +118,17 @@ abstract class ModeleNumRefMembers extends CommonNumRefGenerator
 		$s .= $langs->trans("NextValue").' ('.$langs->trans("Member").'): <b>'.$nextval.'</b><br>';
 
 		return $s;
+	}
+
+	/**
+	 *  Return next value
+	 *
+	 *  @param  Societe		$objsoc		Object third party
+	 *  @param  Adherent	$object		Object we need next value for
+	 *  @return	string					next value
+	 */
+	public function getNextValue($objsoc, $object)
+	{
+		return '';
 	}
 }

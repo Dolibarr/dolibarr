@@ -29,7 +29,6 @@
  */
 class ExpenseReports extends DolibarrApi
 {
-
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */

@@ -227,21 +227,20 @@ function dolDecrypt($chain, $key = '')
  *  If constant MAIN_SECURITY_SALT is defined, we use it as a salt (used only if hashing algorightm is something else than 'password_hash').
  *
  * 	@param 		string		$chain		String to hash
- * 	@param		string		$type		Type of hash ('0':auto will use MAIN_SECURITY_HASH_ALGO else md5, '1':sha1, '2':sha1+md5, '3':md5, '4': for OpenLdap, '5':sha256, '6':password_hash). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
+ * 	@param		string		$type		Type of hash ('0':auto will use MAIN_SECURITY_HASH_ALGO else md5, '1':sha1, '2':sha1+md5, '3':md5, '4': for OpenLdap, '5':sha256, '6':password_hash).
+ * 										Use 'md5' if hash is not needed for security purpose. For security need, prefer 'auto'.
  * 	@return		string					Hash of string
  *  @see getRandomPassword(), dol_verifyHash()
  */
 function dol_hash($chain, $type = '0')
 {
-	global $conf;
-
 	// No need to add salt for password_hash
-	if (($type == '0' || $type == 'auto') && !empty($conf->global->MAIN_SECURITY_HASH_ALGO) && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'password_hash' && function_exists('password_hash')) {
+	if (($type == '0' || $type == 'auto') && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'password_hash' && function_exists('password_hash')) {
 		return password_hash($chain, PASSWORD_DEFAULT);
 	}
 
 	// Salt value
-	if (!empty($conf->global->MAIN_SECURITY_SALT) && $type != '4' && $type !== 'openldap') {
+	if (getDolGlobalString('MAIN_SECURITY_SALT') && $type != '4' && $type !== 'openldap') {
 		$chain = getDolGlobalString('MAIN_SECURITY_SALT') . $chain;
 	}
 
@@ -249,7 +248,7 @@ function dol_hash($chain, $type = '0')
 		return sha1($chain);
 	} elseif ($type == '2' || $type == 'sha1md5') {
 		return sha1(md5($chain));
-	} elseif ($type == '3' || $type == 'md5') {
+	} elseif ($type == '3' || $type == 'md5') {		// For hashing with no need of security
 		return md5($chain);
 	} elseif ($type == '4' || $type == 'openldap') {
 		return dolGetLdapPasswordHash($chain, getDolGlobalString('LDAP_PASSWORD_HASH_TYPE', 'md5'));
@@ -281,9 +280,7 @@ function dol_hash($chain, $type = '0')
  */
 function dol_verifyHash($chain, $hash, $type = '0')
 {
-	global $conf;
-
-	if ($type == '0' && !empty($conf->global->MAIN_SECURITY_HASH_ALGO) && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'password_hash' && function_exists('password_verify')) {
+	if ($type == '0' && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'password_hash' && function_exists('password_verify')) {
 		if (! empty($hash[0]) && $hash[0] == '$') {
 			return password_verify($chain, $hash);
 		} elseif (dol_strlen($hash) == 32) {
@@ -365,7 +362,7 @@ function dolGetLdapPasswordHash($password, $type = 'md5')
  */
 function restrictedArea(User $user, $features, $object = 0, $tableandshare = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid', $isdraft = 0, $mode = 0)
 {
-	global $db, $conf;
+	global $conf;
 	global $hookmanager;
 
 	// Define $objectid
@@ -389,7 +386,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 
 	$parentfortableentity = '';
 
-	// Fix syntax of $features param
+	// Fix syntax of $features param to support non standard module names.
 	$originalfeatures = $features;
 	if ($features == 'agenda') {
 		$tableandshare = 'actioncomm&societe';
@@ -494,7 +491,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		if ($featureforlistofmodule == 'supplier_proposal') {
 			$featureforlistofmodule = 'supplierproposal';
 		}
-		if (!empty($user->socid) && !empty($conf->global->MAIN_MODULES_FOR_EXTERNAL) && !in_array($featureforlistofmodule, $listofmodules)) {	// If limits on modules for external users, module must be into list of modules for external users
+		if (!empty($user->socid) && getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL') && !in_array($featureforlistofmodule, $listofmodules)) {	// If limits on modules for external users, module must be into list of modules for external users
 			$readok = 0;
 			$nbko++;
 			continue;
@@ -741,7 +738,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				}
 			} elseif ($feature == 'payment') {
 				if (!$user->hasRight('facture', 'paiement')) {
-						$deleteok = 0;
+					$deleteok = 0;
 				}
 			} elseif ($feature == 'payment_sc') {
 				if (!$user->hasRight('tax', 'charges', 'creer')) {
@@ -925,7 +922,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 			if (($feature == 'user' || $feature == 'usergroup') && isModEnabled('multicompany')) {	// Special for multicompany
-				if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+				if (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 					if ($conf->entity == 1 && $user->admin && !$user->entity) {
 						$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
 						$sql .= " AND dbt.entity IS NOT NULL";
@@ -1109,7 +1106,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$useridtocheck = 0;
 			if ($feature == 'holiday') {
 				$useridtocheck = $object->fk_user;
-				if (!in_array($object->fk_user, $childids) && !in_array($object->fk_validator, $childids)) {
+				if (!$user->hasRight('holiday', 'readall') && !in_array($useridtocheck, $childids) && !in_array($object->fk_validator, $childids)) {
 					return false;
 				}
 			}

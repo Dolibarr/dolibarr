@@ -61,7 +61,7 @@ class mailing_partnership extends MailingTargets
 	 *    This is the main function that returns the array of emails
 	 *
 	 *    @param	int		$mailing_id    	Id of mailing. No need to use it.
-	 *    @return   int 					<0 if error, number of emails added if ok
+	 *    @return   int 					Return integer <0 if error, number of emails added if ok
 	 */
 	public function add_to_target($mailing_id)
 	{

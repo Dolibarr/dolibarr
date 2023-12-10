@@ -129,7 +129,9 @@ if (empty($reshook)) {
 }
 
 $object->fields['fk_member']['visible'] = 0;
-if ($object->id > 0 && $object->status == $object::STATUS_REFUSED && empty($action)) $object->fields['reason_decline_or_cancel']['visible'] = 1;
+if ($object->id > 0 && $object->status == $object::STATUS_REFUSED && empty($action)) {
+	$object->fields['reason_decline_or_cancel']['visible'] = 1;
+}
 $object->fields['note_public']['visible'] = 1;
 
 

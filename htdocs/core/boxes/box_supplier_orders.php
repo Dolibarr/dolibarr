@@ -30,7 +30,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_supplier_orders extends ModeleBoxes
 {
-
 	public $boxcode = "latestsupplierorders";
 	public $boximg = "object_order";
 	public $boxlabel = "BoxLatestSupplierOrders";
@@ -79,7 +78,7 @@ class box_supplier_orders extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 		$thirdpartystatic = new Fournisseur($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLatest".(!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) ? "" : "Modified")."SupplierOrders", $max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLatest".(getDolGlobalString('MAIN_LASTBOX_ON_OBJECT_DATE') ? "" : "Modified")."SupplierOrders", $max));
 
 		if ($user->hasRight('fournisseur', 'commande', 'lire')) {
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
@@ -103,7 +102,7 @@ class box_supplier_orders extends ModeleBoxes
 			if ($user->socid) {
 				$sql .= " AND s.rowid = ".((int) $user->socid);
 			}
-			if (!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE)) {
+			if (getDolGlobalString('MAIN_LASTBOX_ON_OBJECT_DATE')) {
 				$sql .= " ORDER BY c.date_commande DESC, c.ref DESC ";
 			} else {
 				$sql .= " ORDER BY c.tms DESC, c.ref DESC ";
@@ -170,7 +169,7 @@ class box_supplier_orders extends ModeleBoxes
 				if ($num == 0) {
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="center"',
-						'text' => $langs->trans("NoSupplierOrder"),
+						'text' => '<span class="opacitymedium">'.$langs->trans("NoSupplierOrder").'</span>',
 					);
 				}
 

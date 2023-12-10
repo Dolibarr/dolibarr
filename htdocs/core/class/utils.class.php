@@ -271,7 +271,7 @@ class Utils
 
 		// MYSQL
 		if ($type == 'mysql' || $type == 'mysqli') {
-			if (empty($conf->global->SYSTEMTOOLS_MYSQLDUMP)) {
+			if (!getDolGlobalString('SYSTEMTOOLS_MYSQLDUMP')) {
 				$cmddump = $db->getPathOfDump();
 			} else {
 				$cmddump = $conf->global->SYSTEMTOOLS_MYSQLDUMP;
@@ -409,7 +409,7 @@ class Utils
 
 			$ok = 0;
 			if ($handle) {
-				if (!empty($conf->global->MAIN_EXEC_USE_POPEN)) {
+				if (getDolGlobalString('MAIN_EXEC_USE_POPEN')) {
 					$execmethod = $conf->global->MAIN_EXEC_USE_POPEN;
 				}
 				if (empty($execmethod)) {
@@ -713,7 +713,7 @@ class Utils
 			$command .= " 2>&1";
 		}
 
-		if (!empty($conf->global->MAIN_EXEC_USE_POPEN)) {
+		if (getDolGlobalString('MAIN_EXEC_USE_POPEN')) {
 			$execmethod = $conf->global->MAIN_EXEC_USE_POPEN;
 		}
 		if (empty($execmethod)) {
@@ -765,7 +765,7 @@ class Utils
 	 * Generate documentation of a Module
 	 *
 	 * @param 	string	$module		Module name
-	 * @return	int					<0 if KO, >0 if OK
+	 * @return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function generateDoc($module)
 	{
@@ -822,7 +822,7 @@ class Utils
 					return -1;
 				}
 
-				if (empty($conf->global->MODULEBUILDER_ASCIIDOCTOR) && empty($conf->global->MODULEBUILDER_ASCIIDOCTORPDF)) {
+				if (!getDolGlobalString('MODULEBUILDER_ASCIIDOCTOR') && !getDolGlobalString('MODULEBUILDER_ASCIIDOCTORPDF')) {
 					$this->error = 'Setup of module ModuleBuilder not complete';
 					return -1;
 				}
@@ -985,7 +985,7 @@ class Utils
 
 		$nbSaves = intval(getDolGlobalString('SYSLOG_FILE_SAVES', 10));
 
-		if (empty($conf->global->SYSLOG_FILE)) {
+		if (!getDolGlobalString('SYSLOG_FILE')) {
 			$mainlogdir = DOL_DATA_ROOT;
 			$mainlog = 'dolibarr.log';
 		} else {
@@ -1082,7 +1082,7 @@ class Utils
 	 *
 	 *	@param	string	$outputfile		Output file name
 	 *	@param	string	$tables			Table name or '*' for all
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function backupTables($outputfile, $tables = '*')
 	{
@@ -1282,7 +1282,7 @@ class Utils
 
 		if (!empty($from)) {
 			$from = dol_escape_htmltag($from);
-		} elseif (!empty($conf->global->MAIN_INFO_SOCIETE_MAIL)) {
+		} elseif (getDolGlobalString('MAIN_INFO_SOCIETE_MAIL')) {
 			$from = dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_MAIL);
 		} else {
 			$error++;
@@ -1290,7 +1290,7 @@ class Utils
 
 		if (!empty($sendto)) {
 			$sendto = dol_escape_htmltag($sendto);
-		} elseif (!empty($conf->global->MAIN_INFO_SOCIETE_MAIL)) {
+		} elseif (getDolGlobalString('MAIN_INFO_SOCIETE_MAIL')) {
 			$from = dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_MAIL);
 		} else {
 			$error++;

@@ -684,6 +684,7 @@ if (empty($reshook)) {
 		$newcardbutton .= dolGetButtonTitle($langs->trans('GroupByAccountAccounting'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?' . $url_param, '', 1, array('morecss' => 'marginleftonly btnTitleSelected'));
 		$newcardbutton .= dolGetButtonTitle($langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?type=sub&' . $url_param, '', 1, array('morecss' => 'marginleftonly'));
 	}
+	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=create');
 }
 
@@ -832,10 +833,10 @@ if (!empty($arrayfields['t.code_journal']['checked'])) {
 // Date document
 if (!empty($arrayfields['t.doc_date']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_start, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_end, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 	print '</div>';
 	print '</td>';
@@ -870,10 +871,10 @@ if (!empty($arrayfields['t.balance']['checked'])) {
 // Date export
 if (!empty($arrayfields['t.date_export']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_export_start, 'search_date_export_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_export_end, 'search_date_export_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 	print '</div>';
 	print '</td>';
@@ -881,10 +882,10 @@ if (!empty($arrayfields['t.date_export']['checked'])) {
 // Date validation
 if (!empty($arrayfields['t.date_validated']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_validation_start, 'search_date_validation_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_validation_end, 'search_date_validation_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 	print '</div>';
 	print '</td>';
@@ -965,7 +966,7 @@ $displayed_account_number = null; // Start with undefined to be able to distingu
 $i = 0;
 
 $totalarray = array();
-$totalarray['val'] = array ();
+$totalarray['val'] = array();
 $totalarray['nbfield'] = 0;
 $total_debit = 0;
 $total_credit = 0;
@@ -992,19 +993,43 @@ while ($i < min($num, $limit)) {
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		$colspan++;
 	}
-	if (!empty($arrayfields['t.piece_num']['checked'])) { $colspan++; }
-	if (!empty($arrayfields['t.code_journal']['checked'])) { $colspan++; }
-	if (!empty($arrayfields['t.doc_date']['checked'])) { $colspan++; }
-	if (!empty($arrayfields['t.doc_ref']['checked'])) { $colspan++; }
-	if (!empty($arrayfields['t.label_operation']['checked'])) { $colspan++; }
-	if (!empty($arrayfields['t.lettering_code']['checked'])) { $colspan++; }
+	if (!empty($arrayfields['t.piece_num']['checked'])) {
+		$colspan++;
+	}
+	if (!empty($arrayfields['t.code_journal']['checked'])) {
+		$colspan++;
+	}
+	if (!empty($arrayfields['t.doc_date']['checked'])) {
+		$colspan++;
+	}
+	if (!empty($arrayfields['t.doc_ref']['checked'])) {
+		$colspan++;
+	}
+	if (!empty($arrayfields['t.label_operation']['checked'])) {
+		$colspan++;
+	}
+	if (!empty($arrayfields['t.lettering_code']['checked'])) {
+		$colspan++;
+	}
 
-	if (!empty($arrayfields['t.balance']['checked'])) { $colspanend++; }
-	if (!empty($arrayfields['t.date_export']['checked'])) { $colspanend++; }
-	if (!empty($arrayfields['t.date_validating']['checked'])) { $colspanend++; }
-	if (!empty($arrayfields['t.import_key']['checked'])) { $colspanend++; }
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!empty($arrayfields['t.balance']['checked'])) {
 		$colspanend++;
+	}
+	if (!empty($arrayfields['t.date_export']['checked'])) {
+		$colspanend++;
+	}
+	if (!empty($arrayfields['t.date_validated']['checked'])) {
+		$colspanend++;
+	}
+	if (!empty($arrayfields['t.lettering_code']['checked'])) {
+		$colspanend++;
+	}
+	if (!empty($arrayfields['t.import_key']['checked'])) {
+		$colspanend++;
+	}
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		$colspan++;
+		$colspanend--;
 	}
 
 	// Is it a break ?
@@ -1019,7 +1044,9 @@ while ($i < min($num, $limit)) {
 			}
 			print '<td class="nowrap right">'.price(price2num($sous_total_debit, 'MT')).'</td>';
 			print '<td class="nowrap right">'.price(price2num($sous_total_credit, 'MT')).'</td>';
-			if ($colspanend > 0) print '<td colspan="'.$colspanend.'"></td>';
+			if ($colspanend > 0) {
+				print '<td colspan="'.$colspanend.'"></td>';
+			}
 			print '</tr>';
 			// Show balance of last shown account
 			$balance = $sous_total_debit - $sous_total_credit;
@@ -1036,7 +1063,9 @@ while ($i < min($num, $limit)) {
 				print price(price2num($sous_total_credit - $sous_total_debit, 'MT'));
 				print '</td>';
 			}
-			if ($colspanend > 0) print '<td colspan="'.$colspanend.'"></td>';
+			if ($colspanend > 0) {
+				print '<td colspan="'.$colspanend.'"></td>';
+			}
 			print '</tr>';
 		}
 
@@ -1307,7 +1336,9 @@ if ($num > 0 && $colspan > 0) {
 	print '<td class="right" colspan="'.$colspan.'">'.$langs->trans("TotalForAccount").' '.$accountg.':</td>';
 	print '<td class="nowrap right">'.price(price2num($sous_total_debit, 'MT')).'</td>';
 	print '<td class="nowrap right">'.price(price2num($sous_total_credit, 'MT')).'</td>';
-	if ($colspanend > 0) print '<td colspan="'.$colspanend.'"></td>';
+	if ($colspanend > 0) {
+		print '<td colspan="'.$colspanend.'"></td>';
+	}
 	print '</tr>';
 	// Show balance of last shown account
 	$balance = $sous_total_debit - $sous_total_credit;
@@ -1324,7 +1355,9 @@ if ($num > 0 && $colspan > 0) {
 		print price(price2num($sous_total_credit - $sous_total_debit, 'MT'));
 		print '</td>';
 	}
-	if ($colspanend > 0) print '<td colspan="'.$colspanend.'"></td>';
+	if ($colspanend > 0) {
+		print '<td colspan="'.$colspanend.'"></td>';
+	}
 	print '</tr>';
 }
 

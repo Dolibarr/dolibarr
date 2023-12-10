@@ -48,12 +48,24 @@ function dolSessionOpen($save_path, $session_name)
 	global $dolibarr_session_db_type, $dolibarr_session_db_host;
 	global $dolibarr_session_db_user, $dolibarr_session_db_pass, $dolibarr_session_db_name, $dolibarr_session_db_port;
 
-	if (empty($dolibarr_session_db_type)) {	$dolibarr_session_db_type = $dolibarr_main_db_type; }
-	if (empty($dolibarr_session_db_host)) {	$dolibarr_session_db_host = $dolibarr_main_db_host; }
-	if (empty($dolibarr_session_db_user)) {	$dolibarr_session_db_user = $dolibarr_main_db_user; }
-	if (empty($dolibarr_session_db_pass)) {	$dolibarr_session_db_pass = $dolibarr_main_db_pass; }
-	if (empty($dolibarr_session_db_name)) {	$dolibarr_session_db_name = $dolibarr_main_db_name; }
-	if (empty($dolibarr_session_db_port)) {	$dolibarr_session_db_port = $dolibarr_main_db_port; }
+	if (empty($dolibarr_session_db_type)) {
+		$dolibarr_session_db_type = $dolibarr_main_db_type;
+	}
+	if (empty($dolibarr_session_db_host)) {
+		$dolibarr_session_db_host = $dolibarr_main_db_host;
+	}
+	if (empty($dolibarr_session_db_user)) {
+		$dolibarr_session_db_user = $dolibarr_main_db_user;
+	}
+	if (empty($dolibarr_session_db_pass)) {
+		$dolibarr_session_db_pass = $dolibarr_main_db_pass;
+	}
+	if (empty($dolibarr_session_db_name)) {
+		$dolibarr_session_db_name = $dolibarr_main_db_name;
+	}
+	if (empty($dolibarr_session_db_port)) {
+		$dolibarr_session_db_port = $dolibarr_main_db_port;
+	}
 	//var_dump('open '.$database_name.' '.$table_name);
 
 	$dbsession = getDoliDBInstance($dolibarr_session_db_type, $dolibarr_session_db_host, $dolibarr_session_db_user, $dolibarr_session_db_pass, $dolibarr_session_db_name, (int) $dolibarr_session_db_port);

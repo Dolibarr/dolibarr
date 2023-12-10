@@ -221,7 +221,7 @@ print '<div class="underbanner clearboth"></div>';
 print '<table class="border centpercent">';
 
 // Prefix
-if (!empty($conf->global->SOCIETE_USEPREFIX)) { // Old not used prefix field
+if (getDolGlobalString('SOCIETE_USEPREFIX')) { // Old not used prefix field
 	print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
 }
 
@@ -650,7 +650,7 @@ print '</div>'."\n";
 
 print '</form>'."\n";
 
-if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
+if (in_array('builddoc', array_keys($arrayofmassactions)) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
 	$hidegeneratedfilelistifempty = 1;
 	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) {
 		$hidegeneratedfilelistifempty = 0;

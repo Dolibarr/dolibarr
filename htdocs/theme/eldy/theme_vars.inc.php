@@ -35,7 +35,7 @@ global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcolorongle
 $theme_bordercolor = array(235, 235, 224);
 $theme_datacolor = array(array(137, 86, 161), array(60, 147, 183), array(250, 190, 80), array(80, 166, 90), array(190, 190, 100), array(91, 115, 247), array(140, 140, 220), array(190, 120, 120), array(115, 125, 150), array(100, 170, 20), array(150, 135, 125), array(85, 135, 150), array(150, 135, 80), array(150, 80, 150));
 if (!defined('ISLOADEDBYSTEELSHEET')) {	// File is run after an include of a php page, not by the style sheet, if the constant is not defined.
-	if (!empty($conf->global->MAIN_OPTIMIZEFORCOLORBLIND)) { // user is loaded by dolgraph.class.php
+	if (getDolGlobalString('MAIN_OPTIMIZEFORCOLORBLIND')) { // user is loaded by dolgraph.class.php
 		if (getDolGlobalString('MAIN_OPTIMIZEFORCOLORBLIND') == 'flashy') {
 			$theme_datacolor = array(array(157, 56, 191), array(0, 147, 183), array(250, 190, 30), array(221, 75, 57), array(0, 166, 90), array(140, 140, 220), array(190, 120, 120), array(190, 190, 100), array(115, 125, 150), array(100, 170, 20), array(150, 135, 125), array(85, 135, 150), array(150, 135, 80), array(150, 80, 150));
 		} else {
@@ -69,7 +69,7 @@ $colortexttitle = '40, 40, 60';
 $colortexttitlelink = '10, 20, 100';
 $colortext = '0,0,0';
 $colortextlink = '10, 20, 100';
-$fontsize = '0.94em';
+$fontsize = '0.92em';
 $fontsizesmaller = '0.75em';
 $topMenuFontSize = '1.1em';
 $toolTipBgColor = 'rgba(255, 255, 255, 0.96)';

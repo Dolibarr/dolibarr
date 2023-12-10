@@ -332,7 +332,7 @@ interface Database
 	 * @param        array 	$unique_keys 	Associative array Name of fields that will be unique key => value
 	 * @param        array 	$fulltext_keys 	Field name table that will be indexed in fulltext
 	 * @param        array $keys 			Table of key fields names => value
-	 * @return       int                    <0 if KO, >=0 if OK
+	 * @return       int                    Return integer <0 if KO, >=0 if OK
 	 */
 	public function DDLCreateTable($table, $fields, $primary_key, $type, $unique_keys = null, $fulltext_keys = null, $keys = null);
 	// phpcs:enable
@@ -342,7 +342,7 @@ interface Database
 	 * Drop a table into database
 	 *
 	 * @param        string $table 			Name of table
-	 * @return       int                    <0 if KO, >=0 if OK
+	 * @return       int                    Return integer <0 if KO, >=0 if OK
 	 */
 	public function DDLDropTable($table);
 	// phpcs:enable
@@ -362,7 +362,7 @@ interface Database
 	 * @param    string $field_name 		Name of field to add
 	 * @param    string $field_desc 		Associative array of description of the field to insert [parameter name][parameter value]
 	 * @param    string $field_position 	Optional ex .: "after field stuff"
-	 * @return   int                        <0 if KO, >0 if OK
+	 * @return   int                        Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLAddField($table, $field_name, $field_desc, $field_position = "");
 	// phpcs:enable
@@ -373,7 +373,7 @@ interface Database
 	 *
 	 * @param    string $table 				Name of table
 	 * @param    string $field_name 		Name of field to drop
-	 * @return   int                        <0 if KO, >0 if OK
+	 * @return   int                        Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLDropField($table, $field_name);
 	// phpcs:enable
@@ -385,7 +385,7 @@ interface Database
 	 * @param    string 	$table 			Name of table
 	 * @param    string 	$field_name 	Name of field to modify
 	 * @param    string 	$field_desc 	Array with description of field format
-	 * @return   int                        <0 if KO, >0 if OK
+	 * @return   int                        Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLUpdateField($table, $field_name, $field_desc);
 	// phpcs:enable
@@ -430,7 +430,7 @@ interface Database
 	 * @param    string $dolibarr_main_db_user 	Username to create
 	 * @param    string $dolibarr_main_db_pass 	User password to create
 	 * @param    string $dolibarr_main_db_name 	Database name where user must be granted
-	 * @return   int                            <0 if KO, >=0 if OK
+	 * @return   int                            Return integer <0 if KO, >=0 if OK
 	 */
 	public function DDLCreateUser(
 		$dolibarr_main_db_host,
@@ -515,7 +515,7 @@ interface Database
 	/**
 	 * Returns the current line (as an object) for the resultset cursor
 	 *
-	 * @param   resource|Connection		$resultset 		Handler of the desired request
+	 * @param   resource|PgSql\Connection		$resultset 		Handler of the desired request
 	 * @return  Object                  				Object result line or false if KO or end of cursor
 	 */
 	public function fetch_object($resultset);

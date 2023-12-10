@@ -49,9 +49,9 @@ $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '
 $toselect = GETPOST('toselect', 'array');
 $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
 
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
-$search_ref = GETPOST("sref", "alpha") ?GETPOST("sref", "alpha") : GETPOST("search_ref", "alpha");
-$search_label = GETPOST("snom", "alpha") ?GETPOST("snom", "alpha") : GETPOST("search_label", "alpha");
+$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_ref = GETPOST("sref", "alpha") ? GETPOST("sref", "alpha") : GETPOST("search_ref", "alpha");
+$search_label = GETPOST("snom", "alpha") ? GETPOST("snom", "alpha") : GETPOST("search_label", "alpha");
 $search_status = GETPOST("search_status", "int");
 
 if (isModEnabled('categorie')) {
@@ -59,7 +59,7 @@ if (isModEnabled('categorie')) {
 }
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -217,7 +217,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 
 //For Multicompany PMP per entity
 $separatedPMP = false;
-if (!empty($conf->global->MULTICOMPANY_PRODUCT_SHARING_ENABLED) && !empty($conf->global->MULTICOMPANY_PMP_PER_ENTITY_ENABLED)) {
+if (getDolGlobalString('MULTICOMPANY_PRODUCT_SHARING_ENABLED') && getDolGlobalString('MULTICOMPANY_PMP_PER_ENTITY_ENABLED')) {
 	$separatedPMP = true;
 	$sql .= ", SUM(pa.pmp * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue, SUM(ps.reel) as stockqty";
 } else {
@@ -600,7 +600,7 @@ print $hookmanager->resPrint;
 // Status
 if (!empty($arrayfields['t.statut']['checked'])) {
 	print '<td class="liste_titre center parentonrightofpage">';
-	print $form->selectarray('search_status', $warehouse->statuts, $search_status, 1, 0, 0, '', 1, 0, 0, '', 'search_status width100 onrightofpage');
+	print $form->selectarray('search_status', $warehouse->labelStatus, $search_status, 1, 0, 0, '', 1, 0, 0, '', 'search_status width100 onrightofpage');
 	print '</td>';
 }
 
@@ -829,7 +829,7 @@ while ($i < $imaxinloop) {
 		// Selling value
 		if (!empty($arrayfields["estimatedstockvaluesell"]['checked'])) {
 			print '<td class="right">';
-			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 				if ($obj->sellvalue) {
 					print '<span class="amount">'.price(price2num($obj->sellvalue, 'MT'), 1).'</span>';
 				}
@@ -910,7 +910,7 @@ print '</div>'."\n";
 
 print '</form>'."\n";
 
-if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
+if (in_array('builddoc', array_keys($arrayofmassactions)) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
 	$hidegeneratedfilelistifempty = 1;
 	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) {
 		$hidegeneratedfilelistifempty = 0;

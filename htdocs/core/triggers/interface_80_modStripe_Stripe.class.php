@@ -61,7 +61,7 @@ class InterfaceStripe extends DolibarrTriggers
 	 * @param 	User 			$user 		Object user
 	 * @param 	Translate 		$langs 		Object langs
 	 * @param 	Conf 			$conf 		Object conf
-	 * @return 	int              			<0 if KO, 0 if no triggered ran, >0 if OK
+	 * @return 	int              			Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
@@ -80,7 +80,7 @@ class InterfaceStripe extends DolibarrTriggers
 
 		$service = 'StripeTest';
 		$servicestatus = 0;
-		if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha')) {
+		if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'alpha')) {
 			$service = 'StripeLive';
 			$servicestatus = 1;
 		}
@@ -152,7 +152,7 @@ class InterfaceStripe extends DolibarrTriggers
 
 						try {
 							// Update Tax info on Stripe
-							if (!empty($conf->global->STRIPE_SAVE_TAX_IDS)) {	// We setup to save Tax info on Stripe side. Warning: This may result in error when saving customer
+							if (getDolGlobalString('STRIPE_SAVE_TAX_IDS')) {	// We setup to save Tax info on Stripe side. Warning: This may result in error when saving customer
 								if (!empty($vatcleaned)) {
 									$isineec = isInEEC($object);
 									if ($object->country_code && $isineec) {
@@ -183,7 +183,7 @@ class InterfaceStripe extends DolibarrTriggers
 		if ($action == 'COMPANY_DELETE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-			if (!empty($conf->global->STRIPE_DELETE_STRIPE_ACCOUNT_WHEN_DELETING_THIRDPARTY)) {
+			if (getDolGlobalString('STRIPE_DELETE_STRIPE_ACCOUNT_WHEN_DELETING_THIRDPARTY')) {
 				// By default, we do not delete the stripe account. We may need to reuse it with its payment_intent, for example if delete is for a merge of thirdparties.
 				$stripeacc = $stripe->getStripeAccount($service); // No need of network access for this. May return '' if no Oauth defined.
 

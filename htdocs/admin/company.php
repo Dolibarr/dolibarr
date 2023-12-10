@@ -40,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 $action = GETPOST('action', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'admincompany'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'admincompany'; // To manage different context of search
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'companies', 'bills'));
@@ -50,6 +50,13 @@ if (!$user->admin) {
 }
 
 $error = 0;
+
+$tmparraysize = getDefaultImageSizes();
+$maxwidthsmall = $tmparraysize['maxwidthsmall'];
+$maxheightsmall = $tmparraysize['maxheightsmall'];
+$maxwidthmini = $tmparraysize['maxwidthmini'];
+$maxheightmini = $tmparraysize['maxheightmini'];
+$quality = $tmparraysize['quality'];
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('admincompany', 'globaladmin'));
@@ -142,6 +149,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 					if ($isimage > 0) {
 						// Create thumbs
 						//$object->addThumbs($newfile);    // We can't use addThumbs here yet because we need name of generated thumbs to add them into constants. TODO Check if need such constants. We should be able to retrieve value with get...
+
 
 						// Create small thumb, Used on logon for example
 						$imgThumbSmall = vignette($dirforimage.$original_file, $maxwidthsmall, $maxheightsmall, '_small', $quality);
