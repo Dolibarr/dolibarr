@@ -854,6 +854,7 @@ abstract class CommonObject
 
 		// Add extrafields
 		if (!empty($extrafields->attributes[$this->table_element]['label'])) {
+			$datas['opendivextra'] = '<div class="centpercent wordbreak divtooltipextra">';
 			foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
 				if ($extrafields->attributes[$this->table_element]['type'][$key] == 'separate') {
 					continue;
@@ -894,6 +895,7 @@ abstract class CommonObject
 					$count++;
 				}
 			}
+			$datas['closedivextra'] = '</div>';
 		}
 
 		$hookmanager->initHooks(array($this->element . 'dao'));
