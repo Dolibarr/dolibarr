@@ -382,6 +382,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
 		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 0;
 		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;
+		$conf->global->MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 0;
 
 		$_COOKIE["id"]=111;
 		$_POST["param0"]='A real string with <a href="rrr" title="aa&quot;bb">aaa</a> and " and \' and &amp; inside content';
@@ -721,25 +722,45 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
 
 		$conf->global->MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT = 3;
-		$_POST["pagecontentwithlinks"]='<img src="aaa"><img src="bbb"><img src="ccc"><span style="background: url(/ddd)"></span>';
+		$_POST["pagecontentwithlinks"]='<img src="aaa"><img src="bbb"><img src="/ccc"><span style="background: url(/ddd)"></span>';
 		$result=GETPOST("pagecontentwithlinks", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('ErrorTooManyLinksIntoHTMLString', $result, 'Test on limit on GETPOST fails');
 
 		// Test that img src="data:..." is excluded from the count of external links
 		$conf->global->MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT = 3;
-		$_POST["pagecontentwithlinks"]='<img src="data:abc"><img src="bbb"><img src="ccc"><span style="background: url(/ddd)"></span>';
+		$_POST["pagecontentwithlinks"]='<img src="data:abc"><img src="bbb"><img src="/ccc"><span style="background: url(/ddd)"></span>';
 		$result=GETPOST("pagecontentwithlinks", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('<img src="data:abc"><img src="bbb"><img src="ccc"><span style="background: url(/ddd)"></span>', $result, 'Test on limit on GETPOST fails');
+		$this->assertEquals('<img src="data:abc"><img src="bbb"><img src="/ccc"><span style="background: url(/ddd)"></span>', $result, 'Test on limit on GETPOST fails');
+
+		$conf->global->MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 2;
 
 		// Test that no links is allowed
-		$conf->global->MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 1;
-		$_POST["pagecontentwithlinks"]='<img src="data:abc"><img src="bbb"><img src="ccc"><span style="background: url(/ddd)"></span>';
+		$_POST["pagecontentwithlinks"]='<img src="data:abc"><img src="bbb"><img src="/ccc"><span style="background: url(/ddd)"></span>';
 		$result=GETPOST("pagecontentwithlinks", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('ErrorHTMLLinksNotAllowed', $result, 'Test on limit on GETPOST fails');
+		$this->assertEquals('ErrorHTMLLinksNotAllowed', $result, 'Test on limit on MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 2 (no links allowed)');
 
+		$conf->global->MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 1;
+
+		// Test that links on wrapper or local url are allowed
+		$_POST["pagecontentwithnowrapperlinks"]='<img src="data:abc"><img src="bbb"><img src="/ccc"><span style="background: url(/ddd)"></span>';
+		$result=GETPOST("pagecontentwithnowrapperlinks", 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('<img src="data:abc"><img src="bbb"><img src="/ccc"><span style="background: url(/ddd)"></span>', $result, 'Test on MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 1 (links on data or relative links ar allowed)');
+
+		// Test that links not on wrapper and not data are disallowed
+		$_POST["pagecontentwithnowrapperlinks"]='<img src="https://aaa">';
+		$result=GETPOST("pagecontentwithnowrapperlinks", 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('ErrorHTMLExternalLinksNotAllowed', $result, 'Test on MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 1 (no links to http allowed)');
+
+		// Test that links not on wrapper and not data are disallowed
+		$_POST["pagecontentwithnowrapperlinks"]='<span style="background: url(http://ddd)"></span>';
+		$result=GETPOST("pagecontentwithnowrapperlinks", 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('ErrorHTMLExternalLinksNotAllowed', $result, 'Test on MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 1 (no links to http allowed)');
 
 		return $result;
 	}

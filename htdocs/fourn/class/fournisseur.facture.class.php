@@ -254,7 +254,7 @@ class FactureFournisseur extends CommonInvoice
 	public $fk_facture_source;
 
 	public $fac_rec;
-
+	public $fk_fac_rec_source;
 
 	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),

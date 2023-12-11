@@ -2831,7 +2831,7 @@ class User extends CommonObject
 		}
 
 		// Info Login
-		$datas['opendiv'] = '<div class="centpercent">';
+		$datas['opendiv'] = '<div class="centpercent divtooltip">';
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("User").'</u> '.$this->getLibStatut(4);
 		$datas['name'] = '<br><b>'.$langs->trans('Name').':</b> '.dol_string_nohtmltag($this->getFullName($langs, ''));
 		if (!empty($this->login)) {

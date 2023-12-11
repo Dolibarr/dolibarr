@@ -751,7 +751,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 		$result = $objecttmp->fetch($toselectid);
 		if ($result > 0) {
 			$listofobjectid[$toselectid] = $toselectid;
-			$thirdpartyid = $objecttmp->fk_soc ? $objecttmp->fk_soc : $objecttmp->socid;
+			$thirdpartyid = !empty($objecttmp->fk_soc) ? $objecttmp->fk_soc : $objecttmp->socid;
 			$listofobjectthirdparties[$thirdpartyid] = $thirdpartyid;
 			$listofobjectref[$toselectid] = $objecttmp->ref;
 		}

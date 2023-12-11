@@ -713,7 +713,9 @@ print '<strong>MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES</strong> = '.(getDol
 print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": 1 - does not work on HTML5 with some old libxml libs)</span><br>";
 print '<br>';
 
-print '<strong>MAIN_DISALLOW_URL_INTO_DESCRIPTIONS</strong> = '.getDolGlobalString('MAIN_DISALLOW_URL_INTO_DESCRIPTIONS', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 1)</span>')."<br>";
+// MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 1, disallow url links except if on /medias
+// MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 2, disallow all external urls link
+print '<strong>MAIN_DISALLOW_URL_INTO_DESCRIPTIONS</strong> = '.getDolGlobalString('MAIN_DISALLOW_URL_INTO_DESCRIPTIONS', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 1=only local links allowed or 2=no links at all)</span>')."<br>";
 print '<br>';
 
 print '<strong>MAIN_ALLOW_SVG_FILES_AS_EXTERNAL_LINKS</strong> = '.getDolGlobalString('MAIN_ALLOW_SVG_FILES_AS_EXTERNAL_LINKS', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 0)</span>')."<br>";

@@ -69,7 +69,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 				'name' => $langs->trans('SyslogFilename'),
 				'constant' => 'SYSLOG_FILE',
 				'default' => 'DOL_DATA_ROOT/dolibarr.log',
-				'attr' => 'size="60"'
+				'css' => 'minwidth300 maxwidth500'
 			)
 		);
 	}

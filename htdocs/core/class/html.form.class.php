@@ -10769,7 +10769,7 @@ class Form
 	 * @param 	string 	$dol_openinpopup 	If the button are shown in a context of a page shown inside a popup, we put here the string name of popup.
 	 * @return  string                      Html code with the buttons
 	 */
-	public function buttonsSaveCancel($save_label = 'Save', $cancel_label = 'Cancel', $morebuttons = array(), $withoutdiv = 0, $morecss = '', $dol_openinpopup = '')
+	public function buttonsSaveCancel($save_label = 'Save', $cancel_label = 'Cancel', $morebuttons = array(), $withoutdiv = false, $morecss = '', $dol_openinpopup = '')
 	{
 		global $langs;
 

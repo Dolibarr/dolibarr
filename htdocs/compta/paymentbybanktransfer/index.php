@@ -92,21 +92,23 @@ $totaltoshow = 0;
 if (isModEnabled('supplier_invoice')) {
 	print '<tr class="oddeven"><td>'.$langs->trans("NbOfInvoiceToPayByBankTransfer").'</td>';
 	print '<td class="right">';
-	print '<a class="badge badge-info" href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0&type=bank-transfer">';
+	$amounttoshow = $bprev->SommeAPrelever('bank-transfer');
+	print '<a class="badge badge-info" href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0&type=bank-transfer" title="'.price($amounttoshow).'">';
 	print $bprev->nbOfInvoiceToPay('bank-transfer');
 	print '</a>';
 	print '</td></tr>';
-	$totaltoshow += $bprev->SommeAPrelever('bank-transfer');
+	$totaltoshow += $amounttoshow;
 }
 
 if (isModEnabled('salaries')) {
 	print '<tr class="oddeven"><td>'.$langs->trans("NbOfInvoiceToPayByBankTransferForSalaries").'</td>';
 	print '<td class="right">';
-	print '<a class="badge badge-info" href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0&type=bank-transfer&sourcetype=salary">';
+	$amounttoshow = $bprev->SommeAPrelever('bank-transfer', 'salary');
+	print '<a class="badge badge-info" href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0&type=bank-transfer&sourcetype=salary" title="'.price($amounttoshow).'">';
 	print $bprev->nbOfInvoiceToPay('bank-transfer', 'salary');
 	print '</a>';
 	print '</td></tr>';
-	$totaltoshow += $bprev->SommeAPrelever('bank-transfer', 'salary');
+	$totaltoshow += $amounttoshow;
 }
 
 print '<tr class="oddeven"><td>'.$langs->trans("Total").'</td>';
@@ -116,18 +118,15 @@ print '</span></td></tr></table></div><br>';
 
 
 /*
- * Invoices waiting for withdraw
+ * Invoices waiting for credit transfer
  */
 if (isModEnabled('supplier_invoice')) {
 	$sql = "SELECT f.ref, f.rowid, f.total_ttc, f.fk_statut, f.paye, f.type, f.datef, f.date_lim_reglement,";
 	$sql .= " pfd.date_demande, pfd.amount,";
 	$sql .= " s.nom as name, s.email, s.rowid as socid, s.tva_intra, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f,";
-	$sql .= " ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	}
-	$sql .= ", ".MAIN_DB_PREFIX."prelevement_demande as pfd";
+	$sql .= " ".MAIN_DB_PREFIX."societe as s,";
+	$sql .= " ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 	$sql .= " WHERE s.rowid = f.fk_soc";
 	$sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
 	$sql .= " AND f.total_ttc > 0";
@@ -137,16 +136,9 @@ if (isModEnabled('supplier_invoice')) {
 	$sql .= " AND pfd.traite = 0";
 	$sql .= " AND pfd.ext_payment_id IS NULL";
 	$sql .= " AND pfd.fk_facture_fourn = f.rowid";
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
-	}
 	if ($socid) {
 		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
-
-	$sqlForSalary = "SELECT * FROM ".MAIN_DB_PREFIX."salary as s, ".MAIN_DB_PREFIX."prelevement_demande as pd";
-	$sqlForSalary .= " WHERE s.rowid = pd.fk_salary AND s.paye = 0 AND pd.traite = 0";
-	$sqlForSalary .= " AND s.entity IN (".getEntity('salary').")";
 
 	$resql = $db->query($sql);
 
@@ -219,6 +211,10 @@ if (isModEnabled('supplier_invoice')) {
 }
 
 if (isModEnabled('salaries')) {
+	$sqlForSalary = "SELECT * FROM ".MAIN_DB_PREFIX."salary as s, ".MAIN_DB_PREFIX."prelevement_demande as pd";
+	$sqlForSalary .= " WHERE s.rowid = pd.fk_salary AND s.paye = 0 AND pd.traite = 0";
+	$sqlForSalary .= " AND s.entity IN (".getEntity('salary').")";
+
 	$resql2 = $db->query($sqlForSalary);
 	if ($resql2) {
 		$numRow = $db->num_rows($resql2);

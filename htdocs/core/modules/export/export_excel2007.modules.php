@@ -77,7 +77,7 @@ class ExportExcel2007 extends ModeleExports
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs;
+		global $langs;
 		$this->db = $db;
 
 		$this->id = 'excel2007'; // Same value then xxx in file name export_xxx.modules.php
@@ -117,6 +117,18 @@ class ExportExcel2007 extends ModeleExports
 	public function getDriverLabel()
 	{
 		return $this->label;
+	}
+
+	/**
+	 * getDriverLabel
+	 *
+	 * @return 	string			Return driver label
+	 */
+	public function getDriverLabelBis()
+	{
+		global $langs;
+		$langs->load("errors");
+		return $langs->trans("NumberOfLinesLimited");
 	}
 
 	/**
