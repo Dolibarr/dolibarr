@@ -49,5 +49,5 @@ return static function (RectorConfig $rectorConfig): void {
 	// Add all predefined rules to migrate to up to php 71
 	// $rectorConfig->sets([
 	//	LevelSetList::UP_TO_PHP_71
-	//]);
+	// ]);
 };
