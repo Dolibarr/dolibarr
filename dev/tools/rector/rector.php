@@ -18,12 +18,16 @@ return static function (RectorConfig $rectorConfig): void {
 	);
 	$rectorConfig->bootstrapFiles($arrayoftraitfiles);
 
-	$rectorConfig->paths([,
+	$rectorConfig->paths([
 		__DIR__ . '/../../../htdocs/',
 		__DIR__ . '/../../../scripts/',
 		__DIR__ . '/../../../test/phpunit/',
 	]);
 	$rectorConfig->skip([
+		'**/includes/**',
+		'**/custom/**',
+		__DIR__ . '/../../../htdocs/custom/',
+		__DIR__ . '/../../../htdocs/install/doctemplates/*'
 	]);
 	$rectorConfig->parallel(240);
 
