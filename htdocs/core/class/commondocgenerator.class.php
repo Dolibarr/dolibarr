@@ -811,10 +811,11 @@ abstract class CommonDocGenerator
 		} else {
 			// Set unused placeholders as blank
 			$extrafields->fetch_name_optionals_label("product");
-			$extralabels = $extrafields->attributes["product"]['label'];
-
-			foreach ($extralabels as $key => $label) {
-				$resarray['line_product_options_'.$key] = '';
+			if ($extrafields->attributes["product"]['count'] > 0) {
+				$extralabels = $extrafields->attributes["product"]['label'];
+				foreach ($extralabels as $key => $label) {
+					$resarray['line_product_options_'.$key] = '';
+				}
 			}
 		}
 
@@ -947,7 +948,7 @@ abstract class CommonDocGenerator
 		// phpcs:enable
 		global $conf;
 
-		if ($extrafields->attributes[$object->table_element]['count'] > 0){
+		if ($extrafields->attributes[$object->table_element]['count'] > 0) {
 			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label) {
 				$formatedarrayoption = $object->array_options;
 
