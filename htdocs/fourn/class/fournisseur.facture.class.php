@@ -168,8 +168,6 @@ class FactureFournisseur extends CommonInvoice
 	 */
 	public $datec;
 
-	public $datep;
-
 	/**
 	 * Date modification record (tms)
 	 *
