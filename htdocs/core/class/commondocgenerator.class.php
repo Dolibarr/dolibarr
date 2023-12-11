@@ -616,6 +616,9 @@ abstract class CommonDocGenerator
 			$resarray[$array_key.'_bank_label'] = (empty($bank_account) ? '' : $bank_account->label);
 			$resarray[$array_key.'_bank_number'] = (empty($bank_account) ? '' : $bank_account->number);
 			$resarray[$array_key.'_bank_proprio'] =(empty($bank_account) ? '' : $bank_account->proprio);
+			$resarray[$array_key.'_bank_address'] =(empty($bank_account) ? '' : $bank_account->address);
+			$resarray[$array_key.'_bank_state'] =(empty($bank_account) ? '' : $bank_account->state);
+			$resarray[$array_key.'_bank_country'] =(empty($bank_account) ? '' : $bank_account->country);
 		}
 
 		if (method_exists($object, 'getTotalDiscount') && in_array(get_class($object), array('Propal', 'Proposal', 'Commande', 'Facture', 'SupplierProposal', 'CommandeFournisseur', 'FactureFournisseur'))) {
