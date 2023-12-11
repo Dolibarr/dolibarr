@@ -480,9 +480,10 @@ class IntracommReport extends CommonObject
 	/**
 	 *	Generate XML file
 	 *
+	 *  @param		string		$content_xml	Content
 	 *	@return		void
 	 */
-	public function generateXMLFile()
+	public function generateXMLFile($content_xml)
 	{
 		$name = $this->period.'.xml';
 
@@ -490,7 +491,7 @@ class IntracommReport extends CommonObject
 		$fname = sys_get_temp_dir().'/'.$name;
 
 		$f = fopen($fname, 'w+');
-		fwrite($f, $this->content_xml);
+		fwrite($f, $content_xml);
 		fclose($f);
 
 		header('Content-Description: File Transfer');
