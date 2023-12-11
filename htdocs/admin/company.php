@@ -502,7 +502,7 @@ if (isModEnabled('barcode')) {
 	print '<tr class="oddeven"><td>';
 	print '<label for="barcode">'.$langs->trans("Gencod").'</label></td><td>';
 	print '<span class="fa fa-barcode pictofixedwidth"></span>';
-	print '<input name="barcode" id="barcode" class="minwidth150 widthcentpercentminusx maxwidth300" value="'.dol_escape_htmltag((GETPOSTISSET('barcode') ? GETPOST('barcode', 'alphanohtml') : (getDolGlobalString('MAIN_INFO_SOCIETE_GENCODE') ? $conf->global->MAIN_INFO_SOCIETE_GENCODE : ''))).'"></td></tr>';
+	print '<input name="barcode" id="barcode" class="minwidth150 widthcentpercentminusx maxwidth300" value="'.dol_escape_htmltag(GETPOSTISSET('barcode') ? GETPOST('barcode', 'alphanohtml') : getDolGlobalString('MAIN_INFO_SOCIETE_GENCOD', '')).'"></td></tr>';
 	print '</td></tr>';
 }
 
