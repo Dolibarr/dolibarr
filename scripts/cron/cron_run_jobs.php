@@ -171,6 +171,7 @@ if (!empty($id)) {
 	if (!is_numeric($id)) {
 		echo "Error: Bad value for parameter job id\n";
 		dol_syslog("cron_run_jobs.php Bad value for parameter job id", LOG_WARNING);
+		$object->call_trigger('CRONJOB_ERROR', $user);
 		exit();
 	}
 	$filter['t.rowid'] = $id;
@@ -180,6 +181,7 @@ $result = $object->fetchAll('ASC,ASC,ASC', 't.priority,t.entity,t.rowid', 0, 0, 
 if ($result < 0) {
 	echo "Error: ".$object->error;
 	dol_syslog("cron_run_jobs.php fetch Error ".$object->error, LOG_ERR);
+	$object->call_trigger('CRONJOB_ERROR', $user);
 	exit(-1);
 }
 
@@ -251,6 +253,7 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 				echo " - Error cronjobid: ".$line->id." cronjob->fetch: ".$cronjob->error."\n";
 				echo "Failed to fetch job ".$line->id."\n";
 				dol_syslog("cron_run_jobs.php::fetch Error ".$cronjob->error, LOG_ERR);
+				$object->call_trigger('CRONJOB_ERROR', $user);
 				exit(-1);
 			}
 			// Execute job
@@ -260,6 +263,7 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 				echo "At least one job failed. Go on menu Home-Setup-Admin tools to see result for each job.\n";
 				echo "You can also enable module Log if not yet enabled, run again and take a look into dolibarr.log file\n";
 				dol_syslog("cron_run_jobs.php::run_jobs Error ".$cronjob->error, LOG_ERR);
+				$object->call_trigger('CRONJOB_ERROR', $user);
 				$nbofjobslaunchedko++;
 				$resultstring = 'KO';
 			} else {
@@ -275,6 +279,7 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 				echo " - Error cronjobid: ".$line->id." cronjob->reprogram_job: ".$cronjob->error."\n";
 				echo "Enable module Log if not yet enabled, run again and take a look into dolibarr.log file\n";
 				dol_syslog("cron_run_jobs.php::reprogram_jobs Error ".$cronjob->error, LOG_ERR);
+				$object->call_trigger('CRONJOB_ERROR', $user);
 				exit(-1);
 			}
 

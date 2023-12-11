@@ -311,6 +311,9 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'SHIPPING_REOPEN':
 			//case 'SHIPPING_DELETE':
 
+			// Cron jobs
+			//case 'CRONJOB_ERROR':
+
 			// and more...
 
 			default:
