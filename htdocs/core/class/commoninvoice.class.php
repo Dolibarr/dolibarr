@@ -51,6 +51,12 @@ abstract class CommonInvoice extends CommonObject
 
 	/**
 	 * @var int Thirdparty ID
+	 * @deprecated
+	 * @see $socid
+	 */
+	public $fk_soc;
+	/**
+	 * @var int Thirdparty ID
 	 */
 	public $socid;
 
@@ -62,6 +68,8 @@ abstract class CommonInvoice extends CommonObject
 	 * @var integer
 	 */
 	public $date;
+
+	public $date_lim_reglement;
 
 	public $cond_reglement_id; // Id in llx_c_paiement
 	public $cond_reglement_code; // Code in llx_c_paiement

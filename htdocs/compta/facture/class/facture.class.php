@@ -181,8 +181,6 @@ class Facture extends CommonInvoice
 	public $fk_facture_source;
 	public $linked_objects = array();
 
-	public $date_lim_reglement;
-
 	/**
 	 * @var int ID Field to store bank id to use when payment mode is withdraw
 	 */
