@@ -140,6 +140,10 @@ class Website extends CommonObject
 	 */
 	public $lines;
 
+	/**
+	 * @var string name of template
+	 */
+	public $name_template;
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
@@ -331,7 +335,8 @@ class Website extends CommonObject
 		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_modif,";
 		$sql .= " t.date_creation,";
-		$sql .= " t.tms as date_modification";
+		$sql .= " t.tms as date_modification,";
+		$sql .= " t.name_template";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 		$sql .= " WHERE t.entity IN (".getEntity('website').")";
 		if (!empty($ref)) {
@@ -362,6 +367,7 @@ class Website extends CommonObject
 				$this->fk_user_modif = $obj->fk_user_modif;
 				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
+				$this->name_template = $obj->name_template;
 			}
 			$this->db->free($resql);
 
@@ -955,7 +961,6 @@ class Website extends CommonObject
 		}
 
 		$destdir = $conf->website->dir_temp.'/'.$website->ref;
-
 		dol_syslog("Clear temp dir ".$destdir);
 		$count = 0;
 		$countreallydeleted = 0;
@@ -1604,5 +1609,71 @@ class Website extends CommonObject
 		$out .= '</ul>';
 
 		return $out;
+	}
+
+	/**
+	 * Overite template by copy and past all files
+	 * @return int   1 if OK, -1 if KO
+	 */
+	public function overwriteTemplate()
+	{
+		global $conf;
+
+		$website = $this;
+		if (empty($website->id) || empty($website->ref)) {
+			setEventMessages("Website id or ref is not defined", null, 'errors');
+			return false;
+		}
+
+		$pathToInstallDir = DOL_DOCUMENT_ROOT . '/install/doctemplates/websites/'.urlencode($website->name_template);
+
+		//check if can write in
+		if (!is_writable($pathToInstallDir)) {
+			if (is_readable($pathToInstallDir)) {
+				$files = scandir($pathToInstallDir);
+				$x ='';
+				foreach ($files as $file) {
+					$x .= $file . "\n";
+				}
+			} else {
+				setEventMessages("Install dir ".$pathToInstallDir." is not readable", null, 'errors');
+				return false;
+			}
+		}
+
+		$srcdir = $conf->website->dir_output.'/'.$website->ref;
+		$destdir = $conf->install->dir_templates;
+
+		dol_syslog("Copy templates from ".$srcdir." into ".$destdir);
+		$result = dolCopyDir($srcdir, $destdir, 0, 1);
+
+		if ($result < 0) {
+			setEventMessages("Failed to copy templates", null, 'errors');
+			var_dump(2);
+		}
+
+		setEventMessages("Templates successfully overwritten", null, 'messages');
+		return true;
+	}
+
+	/**
+	 * update name_template in table after import template
+	 * @param  string    $name_template   name of template
+	 * @return int     1 if OK, -1 if KO
+	 */
+	public function setTemplateName($name_template)
+	{
+		$sql = "UPDATE ".$this->db->prefix()."website SET";
+		$sql .= " name_template = '".$this->db->escape($name_template)."'";
+		$sql .= " WHERE rowid = ".(int) $this->id;
+		$result = $this->db->query($sql);
+		//print_r($sql);exit;
+		if ($result) {
+			$this->db->commit();
+			return 1;
+		} else {
+			$this->db->rollback();
+			return -1;
+		}
 	}
 }
