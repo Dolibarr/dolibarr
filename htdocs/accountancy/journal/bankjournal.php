@@ -306,7 +306,7 @@ if ($result) {
 
 		// get_url may return -1 which is not traversable
 		if (is_array($links) && count($links) > 0) {
-			// Test if entry if for a social contribution or for a salary
+			// Test if entry is for a social contribution, salary or expense report.
 			// In such a case, we will ignore the bank url line for user
 			$is_sc = false;
 			$is_salary = false;
