@@ -152,7 +152,7 @@ if ($invoice->socid > 0) {
 
 // Assign a default project, if relevant
 if (isModEnabled('project') && !empty(getDolGlobalString("CASHDESK_ID_PROJECT".$takeposterminal))) {
-	$invoice->fk_project = (int)getDolGlobalString("CASHDESK_ID_PROJECT".$takeposterminal);
+	$invoice->fk_project = (int) getDolGlobalString("CASHDESK_ID_PROJECT".$takeposterminal);
 }
 
 // Change the currency of invoice if it was modified
