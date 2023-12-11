@@ -306,16 +306,28 @@ if ($result) {
 
 		// get_url may return -1 which is not traversable
 		if (is_array($links) && count($links) > 0) {
+			// Test if entry if for a social contribution or for a salary
+			// In such a case, we will ignore the bank url line for user
 			$is_sc = false;
+			$is_salary = false;
+			$is_expensereport = false;
 			foreach ($links as $v) {
 				if ($v['type'] == 'sc') {
 					$is_sc = true;
 					break;
 				}
+				if ($v['type'] == 'payment_salary') {
+					$is_salary = true;
+					break;
+				}
+				if ($v['type'] == 'payment_expensereport') {
+					$is_expensereport = true;
+					break;
+				}
 			}
 			// Now loop on each link of record in bank (code similar to bankentries_list.php)
 			foreach ($links as $key => $val) {
-				if ($links[$key]['type'] == 'user' && !$is_sc) {
+				if ($links[$key]['type'] == 'user' && !$is_sc && !$is_salary && !$is_expensereport) {
 					continue;
 				}
 				if (in_array($links[$key]['type'], array('sc', 'payment_sc', 'payment', 'payment_supplier', 'payment_vat', 'payment_expensereport', 'banktransfert', 'payment_donation', 'member', 'payment_loan', 'payment_salary', 'payment_various'))) {
@@ -365,6 +377,7 @@ if ($result) {
 					$userstatic->firstname = $tabuser[$obj->rowid]['firstname'];
 					$userstatic->lastname = $tabuser[$obj->rowid]['lastname'];
 					$userstatic->statut = $tabuser[$obj->rowid]['status'];
+					$userstatic->status = $tabuser[$obj->rowid]['status'];
 					$userstatic->accountancy_code = $tabuser[$obj->rowid]['accountancy_code'];
 					if ($userstatic->id > 0) {
 						$tabpay[$obj->rowid]["soclib"] = $userstatic->getNomUrl(1, 'accountancy', 0);
