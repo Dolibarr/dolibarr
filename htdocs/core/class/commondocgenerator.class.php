@@ -947,7 +947,7 @@ abstract class CommonDocGenerator
 		// phpcs:enable
 		global $conf;
 
-		if (is_array($extrafields->attributes[$object->table_element]['label'])) {
+		if ($extrafields->attributes[$object->table_element]['count'] > 0){
 			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label) {
 				$formatedarrayoption = $object->array_options;
 
