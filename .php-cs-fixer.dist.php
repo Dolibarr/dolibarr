@@ -41,6 +41,8 @@ return (new PhpCsFixer\Config())
 		// So we use target PHP70 for the moment.
 		'@PHP70Migration' => true,
 		//'@PHP71Migration' => true,
+                // Avoid adding public to const (incompatible with PHP 7.0):
+                'visibility_required' => ['elements'=>['property', 'method']],
 
 		//'strict_param' => true,
 		//'array_syntax' => ['syntax' => 'short'],
