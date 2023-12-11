@@ -1022,8 +1022,9 @@ IMG;
 		$matches = array();
 		preg_match($searchreg, $this->contentXml, $matches);
 		$this->contentXml = preg_replace($searchreg, "", $this->contentXml);
-		if ($matches)
+		if ($matches) {
 			return  $matches[1];
+		}
 		return "";
 	}
 }
