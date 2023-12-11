@@ -43,8 +43,9 @@ class PrestaShopWebservice
 	/** @var string PS version */
 	protected $version;
 
-	/** @var array compatible versions of PrestaShop Webservice */
+	/** @var string compatible min version of PrestaShop Webservice */
 	const PSCOMPATIBLEVERSIONMIN = '1.4.0.0';
+	/** @var string compatible max version of PrestaShop Webservice */
 	const PSCOMPATIBLEVERSIONMAX = '1.7.99.99';
 
 
