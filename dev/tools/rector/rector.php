@@ -7,7 +7,7 @@ use Rector\Core\ValueObject\PhpVersion;
 use Rector\Set\ValueObject\LevelSetList;
 
 return static function (RectorConfig $rectorConfig): void {
-	$rectorConfig->phpVersion(PhpVersion::PHP_82);
+	$rectorConfig->phpVersion(PhpVersion::PHP_71);
 	//$rectorConfig->indent(' ', 4);
 
 	// Traits seems not supported correctly by rector without declaring them as bootstrapFiles
@@ -19,6 +19,9 @@ return static function (RectorConfig $rectorConfig): void {
 	$rectorConfig->bootstrapFiles($arrayoftraitfiles);
 
 	$rectorConfig->paths([,
+		__DIR__ . '/../../../htdocs/',
+		__DIR__ . '/../../../scripts/',
+		__DIR__ . '/../../../test/phpunit/',
 	]);
 	$rectorConfig->skip([
 	]);
