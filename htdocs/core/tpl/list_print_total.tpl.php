@@ -14,15 +14,19 @@ if (isset($totalarray['pos'])) {
 	while ($i < $totalarray['nbfield']) {
 		$i++;
 		if (!empty($totalarray['pos'][$i])) {
+			// if $totalarray['type'] not present we consider it as number
+			if (empty($totalarray['type'][$i])) {
+				$totalarray['type'][$i] = 'real';
+			}
 			switch ($totalarray['type'][$i]) {
 				case 'duration':
 					print '<td class="right">';
-					print(!empty($totalarray['val'][$totalarray['pos'][$i]]) ? convertSecondToTime($totalarray['val'][$totalarray['pos'][$i]], 'allhourmin') : 0);
+					print (!empty($totalarray['val'][$totalarray['pos'][$i]]) ? convertSecondToTime($totalarray['val'][$totalarray['pos'][$i]], 'allhourmin') : 0);
 					print '</td>';
 					break;
-				case 'string':
+				case 'string':	// This type is no more used. type is now varchar(x)
 					print '<td class="left">';
-					print(!empty($totalarray['val'][$totalarray['pos'][$i]]) ? $totalarray['val'][$totalarray['pos'][$i]] : '');
+					print (!empty($totalarray['val'][$totalarray['pos'][$i]]) ? $totalarray['val'][$totalarray['pos'][$i]] : '');
 					print '</td>';
 					break;
 				case 'stock':

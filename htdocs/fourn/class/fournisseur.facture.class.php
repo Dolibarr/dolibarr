@@ -254,7 +254,7 @@ class FactureFournisseur extends CommonInvoice
 	public $fk_facture_source;
 
 	public $fac_rec;
-
+	public $fk_fac_rec_source;
 
 	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
@@ -934,7 +934,7 @@ class FactureFournisseur extends CommonInvoice
 				$this->socid				= $obj->fk_soc;
 				$this->datec				= $this->db->jdate($obj->datec);
 				$this->date					= $this->db->jdate($obj->datef);
-				$this->datep				= $this->db->jdate($obj->datef);
+				//$this->datep				= $this->db->jdate($obj->datef);
 				$this->tms                  = $this->db->jdate($obj->tms);
 				$this->libelle              = $obj->label; // deprecated
 				$this->label				= $obj->label;
