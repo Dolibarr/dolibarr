@@ -69,6 +69,7 @@ class IntracommReport extends CommonObject
 
 	public $exporttype;			// deb or des
 	public $type_declaration;	// 'introduction' or 'expedition'
+	public $numero_declaration;
 
 
 	/**
