@@ -934,7 +934,7 @@ class FactureFournisseur extends CommonInvoice
 				$this->socid				= $obj->fk_soc;
 				$this->datec				= $this->db->jdate($obj->datec);
 				$this->date					= $this->db->jdate($obj->datef);
-				$this->datep				= $this->db->jdate($obj->datef);
+				//$this->datep				= $this->db->jdate($obj->datef);
 				$this->tms                  = $this->db->jdate($obj->tms);
 				$this->libelle              = $obj->label; // deprecated
 				$this->label				= $obj->label;
