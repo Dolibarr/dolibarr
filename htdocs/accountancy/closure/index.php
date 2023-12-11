@@ -263,6 +263,7 @@ if (isset($current_fiscal_period)) {
 			'label' => $langs->trans('DateEnd'),
 			'value' => $current_fiscal_period['date_end']
 		);
+
 		$formconfirm = $form->formconfirm(
 			$_SERVER["PHP_SELF"] . '?fiscal_period_id=' . $current_fiscal_period['id'],
 			$langs->trans('AccountancyClosureAccountingReversal'),
