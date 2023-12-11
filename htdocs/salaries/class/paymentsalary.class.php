@@ -49,6 +49,13 @@ class PaymentSalary extends CommonObject
 	public $picto = 'payment';
 
 	/**
+	 * @var int chid
+	 * @deprecated
+	 * @see $fk_salary
+	 */
+	public $chid;
+
+	/**
 	 * @var int ID
 	 */
 	public $fk_salary;
@@ -132,13 +139,6 @@ class PaymentSalary extends CommonObject
 	 * @var int|string	validation date
 	 */
 	public $datev = '';
-
-	/**
-	 * @var int chid
-	 * @deprecated
-	 * @see $id from CommonObject
-	 */
-	public $chid;
 
 	/**
 	 * @var array
@@ -265,7 +265,7 @@ class PaymentSalary extends CommonObject
 							if ($remaintopay == 0) {
 								$result = $tmpsalary->setPaid($user);
 							} else {
-								dol_syslog("Remain to pay for conrib ".$contribid." not null. We do nothing.");
+								dol_syslog("Remain to pay for salary id=".$contribid." not null. We do nothing.");
 							}
 						}
 					}
@@ -583,7 +583,7 @@ class PaymentSalary extends CommonObject
 	 */
 	public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		// Clean data
 		$this->num_payment = trim($this->num_payment ? $this->num_payment : $this->num_paiement);
