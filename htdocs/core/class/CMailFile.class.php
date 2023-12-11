@@ -308,6 +308,19 @@ class CMailFile
 			}
 		}
 
+		if (getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO')) {
+			$tabto = explode(",", $to);
+			$listofemailstonotsendto = explode(',', getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO'));
+			foreach ($tabto as $key => $addrto) {
+				if (in_array($addrto, $listofemailstonotsendto)) {
+					unset($tabto[$key]);
+				}
+			}
+			if (empty($tabto)) {
+				$tabto[] = getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO_REPLACE');
+			}
+			$to = implode(',', $tabto);
+		}
 		// Add auto copy to if not already in $to (Note: Adding bcc for specific modules are also done from pages)
 		// For example MAIN_MAIL_AUTOCOPY_TO can be 'email@example.com, __USER_EMAIL__, ...'
 		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO')) {
@@ -326,8 +339,8 @@ class CMailFile
 				}
 				if ($emailtoadd) {
 					// Verify if there is email address to not send to inside MAIN_MAIL_AUTOCOPY_TO constant
-					if (getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_AUTOCOPY_TO')) {
-						$listofemailstonotsendto = explode(',', getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_AUTOCOPY_TO'));
+					if (getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO')) {
+						$listofemailstonotsendto = explode(',', getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO'));
 						if (in_array($emailtoadd, $listofemailstonotsendto)) {
 							unset($listofemailstoadd[$key]);
 						} else {
