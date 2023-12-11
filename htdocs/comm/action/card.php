@@ -471,10 +471,11 @@ if (empty($reshook) && $action == 'add') {
 				} else {
 					$db->commit();
 				}
-
+				
 				if (!empty($backtopage)) {
 					dol_syslog("Back to ".$backtopage.($moreparam ? (preg_match('/\?/', $backtopage) ? '&'.$moreparam : '?'.$moreparam) : ''));
-					header("Location: ".$backtopage.($moreparam ? (preg_match('/\?/', $backtopage) ? '&'.$moreparam : '?'.$moreparam) : ''));
+					$httpsIfNeeded = (preg_match('!^https://!', $backtopage)) ? '' : 'https://';
+					header("Location: ".$httpsIfNeeded.$backtopage.($moreparam ? (preg_match('/\?/', $backtopage) ? '&'.$moreparam : '?'.$moreparam) : ''));
 				} elseif ($idaction) {
 					header("Location: ".DOL_URL_ROOT.'/comm/action/card.php?id='.$idaction.($moreparam ? '&'.$moreparam : ''));
 				} else {
