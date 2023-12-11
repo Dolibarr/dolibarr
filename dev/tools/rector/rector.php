@@ -18,8 +18,7 @@ return static function (RectorConfig $rectorConfig): void {
 	);
 	$rectorConfig->bootstrapFiles($arrayoftraitfiles);
 
-	$rectorConfig->paths([
-		__DIR__ . '/../../../htdocs/custom/multismtp',
+	$rectorConfig->paths([,
 	]);
 	$rectorConfig->skip([
 	]);
