@@ -105,7 +105,7 @@ class GlobalToFunction extends AbstractRector
 				$nbofparam = count($node->getArgs());
 				if ($nbofparam == 1) {
 					$args = $node->getArgs();
-					foreach($args as $arg) {	// only 1 element in this array
+					foreach ($args as $arg) {	// only 1 element in this array
 						//var_dump($arg->value);exit;
 						if ($this->isGlobalVar($arg->value)) {
 							$constName = $this->getConstName($arg->value);
