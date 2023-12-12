@@ -768,7 +768,7 @@ print '<td class="titlefieldcreate">'.$langs->trans("FiscalYearInformation").'</
 print "</tr>\n";
 
 print '<tr class="oddeven"><td><label for="SOCIETE_FISCAL_MONTH_START">'.$langs->trans("FiscalMonthStart").'</label></td><td>';
-print $formother->select_month(getDolGlobalString('SOCIETE_FISCAL_MONTH_START') ? $conf->global->SOCIETE_FISCAL_MONTH_START : '', 'SOCIETE_FISCAL_MONTH_START', 0, 1, 'maxwidth100').'</td></tr>';
+print $formother->select_month(getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ? $conf->global->SOCIETE_FISCAL_MONTH_START : '', 'SOCIETE_FISCAL_MONTH_START', 0, 1, 'maxwidth100').'</td></tr>';
 
 print "</table>";
 

@@ -51,7 +51,7 @@ if (!$user->hasRight('accounting', 'bind', 'write')) {
 
 $accountingAccount = new AccountingAccount($db);
 
-$month_start = ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
+$month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 if (GETPOST("year", 'int')) {
 	$year_start = GETPOST("year", 'int');
 } else {
