@@ -149,7 +149,7 @@ $sqls=array(
 	),
 	'project'=>array(
 		// TODO set fk_project to null on object that refer to project
-		"DELETE FROM ".MAIN_DB_PREFIX."projet_task_time WHERE fk_task IN (select rowid FROM ".MAIN_DB_PREFIX."projet_task WHERE fk_projet IN (select rowid FROM ".MAIN_DB_PREFIX."projet where datec < '__DATE__'))",
+		"DELETE FROM ".MAIN_DB_PREFIX."llx_element_time WHERE elementtype = 'task' AND fk_element IN (select rowid FROM ".MAIN_DB_PREFIX."projet_task WHERE fk_projet IN (select rowid FROM ".MAIN_DB_PREFIX."projet where datec < '__DATE__'))",
 		"DELETE FROM ".MAIN_DB_PREFIX."projet_task WHERE fk_projet IN (select rowid FROM ".MAIN_DB_PREFIX."projet where datec < '__DATE__')",
 		"DELETE FROM ".MAIN_DB_PREFIX."projet where datec < '__DATE__'",
 	),
