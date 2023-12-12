@@ -297,14 +297,14 @@ if ($action == 'add' && empty($cancel)) {
 		if (!empty($auto_create_paiement) && !$error) {
 			// Create a line of payments
 			$paiement = new PaymentSalary($db);
-			$paiement->id           = $object->id;
+			$paiement->fk_salary    = $object->id;
 			$paiement->chid         = $object->id;	// deprecated
 			$paiement->datep        = $datep;
 			$paiement->datev		= $datev;
 			$paiement->amounts      = array($object->id=>$amount); // Tableau de montant
-			$paiement->paiementtype = $type_payment;
+			$paiement->fk_typepayment = $type_payment;
 			$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
-			$paiement->note = GETPOST("note", 'restricthtml');
+			$paiement->note_private = GETPOST("note", 'restricthtml');
 
 			if (!$error) {
 				$paymentid = $paiement->create($user, (int) GETPOST('closepaidsalary'));

@@ -383,7 +383,7 @@ $now = dol_now();
 $casenow = dol_print_date($now, "%Y-%m");
 
 // Loop on each month
-$nb_mois_decalage = GETPOSTISSET('date_startmonth') ? (GETPOST('date_startmonth', 'int') - 1) : (!getDolGlobalString('SOCIETE_FISCAL_MONTH_START') ? 0 : ($conf->global->SOCIETE_FISCAL_MONTH_START - 1));
+$nb_mois_decalage = GETPOSTISSET('date_startmonth') ? (GETPOST('date_startmonth', 'int') - 1) : (!getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ? 0 : ($conf->global->SOCIETE_FISCAL_MONTH_START - 1));
 for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 	$mois_modulo = $mois; // ajout
 	if ($mois > 12) {
