@@ -116,6 +116,11 @@ $coldisplay++;
 			<?php
 			echo ' - '.nl2br($line->product_label);
 			print '<input type="hidden" id="product_id" name="productid" value="'.(!empty($line->fk_product) ? $line->fk_product : 0).'">';
+			if ( getDolGlobalString('PRODUIT_LABEL_IN_FORM')){
+				print '<br><input type="text" name="product_label" id="product_label" class="flat left" style="width:100%; padding-right:0; padding-left:0;" placeholder='.$langs->trans("Label").' value="'.(nl2br($line->label)?nl2br($line->label) : nl2br($line->product_label)).'">' ;  //
+			// changement ici MM
+			}
+			
 		} else {
 			if ($senderissupplier) {
 				$form->select_produits_fournisseurs(!empty($line->fk_product) ? $line->fk_product : 0, 'productid');
