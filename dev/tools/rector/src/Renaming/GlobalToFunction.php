@@ -70,14 +70,15 @@ class GlobalToFunction extends AbstractRector
 	 */
 	public function getNodeTypes(): array
 	{
-		return [Equal::class, Greater::class, GreaterOrEqual::class, Smaller::class, SmallerOrEqual::class, BooleanAnd::class, Concat::class, ArrayDimFetch::class];
+		return [FuncCall::class, Equal::class, Greater::class, GreaterOrEqual::class, Smaller::class, SmallerOrEqual::class, BooleanAnd::class, Concat::class, ArrayDimFetch::class];
 	}
 
 	/**
 	 * refactor
 	 *
 	 * @param Node 	$node 		A node
-	 * @return    				Equal|Concat|ArrayDimFetch|void
+	 * @return    				FuncCall|Equal|Concat|ArrayDimFetch|void
+	 * 							return $node unchanged or void to do nothing
 	 */
 	public function refactor(Node $node)
 	{
@@ -94,6 +95,28 @@ class GlobalToFunction extends AbstractRector
 					new Name('getDolGlobalString'),
 					[new Arg($constName)]
 				);
+			}
+			return $node;
+		}
+
+		if ($node instanceof FuncCall) {
+			$tmpfunctionname = $this->getName($node);
+			if (in_array($tmpfunctionname, array('dol_escape_htmltag'))) {
+				$nbofparam = count($node->getArgs());
+				if ($nbofparam == 1) {
+					$args = $node->getArgs();
+					foreach($args as $arg) {	// only 1 element in this array
+						//var_dump($arg->value);exit;
+						if ($this->isGlobalVar($arg->value)) {
+							$constName = $this->getConstName($arg->value);
+							if (empty($constName)) {
+								return;
+							}
+							$a = new FuncCall(new Name('getDolGlobalString'), [new Arg($constName)]);
+							return new FuncCall(new Name($tmpfunctionname), [new Arg($a)]);
+						}
+					}
+				}
 			}
 			return $node;
 		}
@@ -257,7 +280,7 @@ class GlobalToFunction extends AbstractRector
 	 * Check if node is a global access with format conf->global->XXX
 	 *
 	 * @param Node 	$node 	A node
-	 * @return bool			Return true if noe is conf->global->XXX
+	 * @return bool			Return true if node is conf->global->XXX
 	 */
 	private function isGlobalVar($node)
 	{
