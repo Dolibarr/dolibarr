@@ -201,3 +201,25 @@ ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN element_type varchar(50
 ALTER TABLE llx_expensereport DROP INDEX idx_expensereport_fk_refuse, ADD INDEX idx_expensereport_fk_refuse(fk_user_refuse);
 
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (1,'66','Société publique locale');
+
+CREATE TABLE llx_element_geolocation
+(
+  rowid        integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+  latitude     double(24,8) DEFAULT 0 NOT NULL,
+  longitude    double(24,8) DEFAULT 0 NOT NULL,
+  element_type varchar(255) NOT NULL,
+  fk_element   integer NOT NULL
+) ENGINE=innodb;
+
+ALTER TABLE llx_element_geolocation ADD INDEX idx_element_geolocation_rowid (rowid);
+ALTER TABLE llx_element_geolocation ADD INDEX idx_element_geolocation_fk_element (fk_element);
+
+CREATE TABLE llx_element_geolocation_extrafields
+(
+    rowid      integer AUTO_INCREMENT PRIMARY KEY,
+    tms        timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    import_key varchar(14),
+    fk_object  integer NOT NULL
+) ENGINE=innodb;
+
+ALTER TABLE llx_element_geolocation_extrafields ADD INDEX idx_fk_object(fk_object);
