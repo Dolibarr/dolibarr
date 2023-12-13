@@ -89,18 +89,18 @@ print "</tr>";
 print '<tr class="oddeven">';
 print '<td class="fieldrequired">'.$langs->trans("KeyForCronAccess").'</td>';
 $disabled = '';
-if (!empty($conf->global->CRON_DISABLE_KEY_CHANGE)) {
+if (getDolGlobalString('CRON_DISABLE_KEY_CHANGE')) {
 	$disabled = ' disabled="disabled"';
 }
 print '<td>';
-if (empty($conf->global->CRON_DISABLE_KEY_CHANGE)) {
-	print '<input type="text" class="flat minwidth300"'.$disabled.' id="CRON_KEY" name="CRON_KEY" value="'.(GETPOST('CRON_KEY') ?GETPOST('CRON_KEY') : (!empty($conf->global->CRON_KEY) ? $conf->global->CRON_KEY : '')).'">';
+if (!getDolGlobalString('CRON_DISABLE_KEY_CHANGE')) {
+	print '<input type="text" class="flat minwidth300"'.$disabled.' id="CRON_KEY" name="CRON_KEY" value="'.(GETPOST('CRON_KEY') ? GETPOST('CRON_KEY') : (getDolGlobalString('CRON_KEY') ? $conf->global->CRON_KEY : '')).'">';
 	if (!empty($conf->use_javascript_ajax)) {
 		print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 	}
 } else {
-	print (!empty($conf->global->CRON_KEY) ? $conf->global->CRON_KEY : '');
-	print '<input type="hidden" id="CRON_KEY" name="CRON_KEY" value="'.(GETPOST('CRON_KEY') ?GETPOST('CRON_KEY') : (!empty($conf->global->CRON_KEY) ? $conf->global->CRON_KEY : '')).'">';
+	print(getDolGlobalString('CRON_KEY') ? $conf->global->CRON_KEY : '');
+	print '<input type="hidden" id="CRON_KEY" name="CRON_KEY" value="'.(GETPOST('CRON_KEY') ? GETPOST('CRON_KEY') : (getDolGlobalString('CRON_KEY') ? $conf->global->CRON_KEY : '')).'">';
 }
 print '</td>';
 print '<td>&nbsp;</td>';
@@ -118,7 +118,7 @@ print '</form>';
 print '<br><br><br>';
 
 //print $langs->trans("UseMenuModuleToolsToAddCronJobs", dol_buildpath('/cron/list.php?leftmenu=admintools', 1)).'<br>';
-if (!empty($conf->global->CRON_WARNING_DELAY_HOURS)) {
+if (getDolGlobalString('CRON_WARNING_DELAY_HOURS')) {
 	print info_admin($langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS)).'<br>';
 }
 

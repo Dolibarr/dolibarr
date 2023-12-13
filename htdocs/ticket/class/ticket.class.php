@@ -37,7 +37,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
  */
 class Ticket extends CommonObject
 {
-
 	/**
 	 * @var DoliDb Database handler
 	 */
@@ -233,14 +232,14 @@ class Ticket extends CommonObject
 	public $cache_msgs_ticket;
 
 	/**
-	 * @var array statuts labels
+	 * @var array status labels
 	 */
-	public $statuts;
+	public $labelStatus;
 
 	/**
-	 * @var array statuts short labels
+	 * @var array status short labels
 	 */
-	public $statuts_short;
+	public $labelStatusShort;
 
 	/**
 	 * @var int Notify thirdparty at create
@@ -362,7 +361,7 @@ class Ticket extends CommonObject
 
 		$this->db = $db;
 
-		$this->statuts_short = array(
+		$this->labelStatusShort = array(
 			self::STATUS_NOT_READ => 'Unread',
 			self::STATUS_READ => 'Read',
 			self::STATUS_ASSIGNED => 'Assigned',
@@ -372,7 +371,7 @@ class Ticket extends CommonObject
 			self::STATUS_CLOSED => 'SolvedClosed',
 			self::STATUS_CANCELED => 'Canceled'
 		);
-		$this->statuts = array(
+		$this->labelStatus = array(
 			self::STATUS_NOT_READ => 'Unread',
 			self::STATUS_READ => 'Read',
 			self::STATUS_ASSIGNED => 'Assigned',
@@ -480,7 +479,7 @@ class Ticket extends CommonObject
 	 *
 	 *  @param  User $user      User that creates
 	 *  @param  int  $notrigger 0=launch triggers after, 1=disable triggers
-	 *  @return int                      <0 if KO, Id of created object if OK
+	 *  @return int                      Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -637,7 +636,7 @@ class Ticket extends CommonObject
 	 *  @param	string		$ref			Ref
 	 *  @param	string		$track_id		Track id, a hash like ref
 	 *  @param	string		$email_msgid	Email msgid
-	 *  @return int              			<0 if KO, >0 if OK
+	 *  @return int              			Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id = '', $ref = '', $track_id = '', $email_msgid = '')
 	{
@@ -772,7 +771,7 @@ class Ticket extends CommonObject
 	 * @param  int    $offset    	Offset for query
 	 * @param  int    $arch      	archive or not (not used)
 	 * @param  array  $filter    	Filter for query
-	 * @return int 					<0 if KO, >0 if OK
+	 * @return int 					Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchAll($user, $sortorder = 'ASC', $sortfield = 't.datec', $limit = '', $offset = 0, $arch = '', $filter = '')
 	{
@@ -939,7 +938,7 @@ class Ticket extends CommonObject
 	 *
 	 *  @param  User $user      User that modifies
 	 *  @param  int  $notrigger 0=launch triggers after, 1=disable triggers
-	 *  @return int                     <0 if KO, >0 if OK
+	 *  @return int                     Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = 0, $notrigger = 0)
 	{
@@ -1073,7 +1072,7 @@ class Ticket extends CommonObject
 			if ($result < 0) {
 				$error++;
 			}
-			  // End call triggers
+			// End call triggers
 		}
 
 		// Commit or rollback
@@ -1095,7 +1094,7 @@ class Ticket extends CommonObject
 	 *
 	 *     @param  User $user      User that deletes
 	 *  @param  int  $notrigger 0=launch triggers after, 1=disable triggers
-	 *  @return int                     <0 if KO, >0 if OK
+	 *  @return int                     Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -1268,7 +1267,7 @@ class Ticket extends CommonObject
 	 */
 	public function printSelectStatus($selected = "")
 	{
-		print Form::selectarray('search_fk_statut', $this->statuts_short, $selected, $show_empty = 1, $key_in_label = 0, $value_as_key = 0, $option = '', $translate = 1, $maxlen = 0, $disabled = 0, $sort = '', $morecss = '');
+		print Form::selectarray('search_fk_statut', $this->labelStatusShort, $selected, $show_empty = 1, $key_in_label = 0, $value_as_key = 0, $option = '', $translate = 1, $maxlen = 0, $disabled = 0, $sort = '', $morecss = '');
 	}
 
 
@@ -1435,8 +1434,8 @@ class Ticket extends CommonObject
 		// phpcs:enable
 		global $langs, $hookmanager;
 
-		$labelStatus = $this->statuts[$status];
-		$labelStatusShort = $this->statuts_short[$status];
+		$labelStatus = $this->labelStatus[$status];
+		$labelStatusShort = $this->labelStatusShort[$status];
 
 		if ($status == self::STATUS_NOT_READ) {
 			$statusType = 'status0';
@@ -1576,11 +1575,11 @@ class Ticket extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowTicket");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -1609,7 +1608,7 @@ class Ticket extends CommonObject
 	 *
 	 *    @param    User		$user			Object user
 	 *    @param	int			$notrigger		No trigger
-	 *    @return   int							<0 if KO, 0=nothing done, >0 if OK
+	 *    @return   int							Return integer <0 if KO, 0=nothing done, >0 if OK
 	 */
 	public function markAsRead($user, $notrigger = 0)
 	{
@@ -1667,7 +1666,7 @@ class Ticket extends CommonObject
 	 *    @param    User	$user				Object user
 	 *    @param    int 	$id_assign_user		ID of user assigned
 	 *    @param    int 	$notrigger        	Disable trigger
-	 *    @return   int							<0 if KO, 0=Nothing done, >0 if OK
+	 *    @return   int							Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function assignUser($user, $id_assign_user, $notrigger = 0)
 	{
@@ -1726,7 +1725,7 @@ class Ticket extends CommonObject
 	 * @param 	array	$mimefilename_list  List of attached file name in message
 	 * @param 	boolean	$send_email      	Whether the message is sent by email
 	 * @param   int     $public_area    	0=Default, 1 if we are creating the message from a public area (so we can search contact from email to add it as contact of ticket if TICKET_ASSIGN_CONTACT_TO_MESSAGE is set)
-	 * @return 	int						  	<0 if KO, >0 if OK
+	 * @return 	int						  	Return integer <0 if KO, >0 if OK
 	 */
 	public function createTicketMessage($user, $notrigger = 0, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $send_email = false, $public_area = 0)
 	{
@@ -1772,7 +1771,7 @@ class Ticket extends CommonObject
 		$actioncomm->fk_project = $this->fk_project;
 
 		// add contact id from author email on public interface
-		if ($public_area && !empty($this->origin_email) && !empty($conf->global->TICKET_ASSIGN_CONTACT_TO_MESSAGE)) {
+		if ($public_area && !empty($this->origin_email) && getDolGlobalString('TICKET_ASSIGN_CONTACT_TO_MESSAGE')) {
 			$contacts = $this->searchContactByEmail($this->origin_email);
 			if (!empty($contacts)) {
 				// Ensure that contact is active and select first active contact
@@ -1865,7 +1864,7 @@ class Ticket extends CommonObject
 	 *
 	 *    @param    User    $user      	User that close
 	 *    @param	int		$mode		0=Close solved, 1=Close abandonned
-	 *    @return   int		           	<0 if KO, 0=nothing done, >0 if OK
+	 *    @return   int		           	Return integer <0 if KO, 0=nothing done, >0 if OK
 	 */
 	public function close(User $user, $mode = 0)
 	{
@@ -1884,7 +1883,7 @@ class Ticket extends CommonObject
 				$error = 0;
 
 				// Valid and close fichinter linked
-				if (isModEnabled('ficheinter') && !empty($conf->global->WORKFLOW_TICKET_CLOSE_INTERVENTION)) {
+				if (isModEnabled('ficheinter') && getDolGlobalString('WORKFLOW_TICKET_CLOSE_INTERVENTION')) {
 					dol_syslog("We have closed the ticket, so we close all linked interventions");
 					$this->fetchObjectLinked($this->id, $this->element, null, 'fichinter');
 					if ($this->linkedObjectsIds) {
@@ -2049,7 +2048,7 @@ class Ticket extends CommonObject
 	 *    Define parent commany of current ticket
 	 *
 	 *    @param  int $id		Id of thirdparty to set or '' to remove
-	 *    @return int           <0 if KO, >0 if OK
+	 *    @return int           Return integer <0 if KO, >0 if OK
 	 */
 	public function setCustomer($id)
 	{
@@ -2073,7 +2072,7 @@ class Ticket extends CommonObject
 	 *    Define progression of current ticket
 	 *
 	 *    @param  int $percent Progression percent
-	 *    @return int             <0 if KO, >0 if OK
+	 *    @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function setProgression($percent)
 	{
@@ -2097,7 +2096,7 @@ class Ticket extends CommonObject
 	 *     Link element with a contract
 	 *
 	 *     @param  int $contractid Contract id to link element to
-	 *     @return int                        <0 if KO, >0 if OK
+	 *     @return int                        Return integer <0 if KO, >0 if OK
 	 */
 	public function setContract($contractid)
 	{
@@ -2345,7 +2344,7 @@ class Ticket extends CommonObject
 		global $conf;
 
 		$defaultref = '';
-		$modele = empty($conf->global->TICKET_ADDON) ? 'mod_ticket_simple' : $conf->global->TICKET_ADDON;
+		$modele = !getDolGlobalString('TICKET_ADDON') ? 'mod_ticket_simple' : $conf->global->TICKET_ADDON;
 
 		// Search template files
 		$file = '';
@@ -2363,7 +2362,7 @@ class Ticket extends CommonObject
 
 		if ($filefound) {
 			$result = dol_include_once($reldir."core/modules/ticket/".$modele.'.php');
-			$modTicket = new $classname;
+			$modTicket = new $classname();
 
 			$defaultref = $modTicket->getNextValue($thirdparty, $this);
 		}
@@ -2399,7 +2398,7 @@ class Ticket extends CommonObject
 			if (is_resource($handle)) {
 				while (($file = readdir($handle)) !== false) {
 					if (!utf8_check($file)) {
-						$file = utf8_encode($file);	// To be sure data is stored in UTF8 in memory
+						$file = mb_convert_encoding($file, 'UTF-8', 'ISO-8859-1');	// To be sure data is stored in UTF8 in memory
 					}
 					if (dol_is_file($dir.$file)) {
 						return true;
@@ -2496,7 +2495,7 @@ class Ticket extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param  int[]|int 	$categories 	Category or categories IDs
-	 * @return int							<0 if KO, >0 if OK
+	 * @return int							Return integer <0 if KO, >0 if OK
 	 */
 	public function setCategories($categories)
 	{
@@ -2544,7 +2543,7 @@ class Ticket extends CommonObject
 	 * @param   int     $public_area    0=Default,
 	 * 									1=If we are creating the message from a public area, so confirmation email will be sent to the author
 	 * 									and we can search contact from email to add it as contact of ticket if TICKET_ASSIGN_CONTACT_TO_MESSAGE is set
-	 * @return  int						<0 if KO, >= 0 if OK
+	 * @return  int						Return integer <0 if KO, >= 0 if OK
 	 */
 	public function newMessage($user, &$action, $private = 1, $public_area = 0)
 	{
@@ -2610,7 +2609,7 @@ class Ticket extends CommonObject
 					 *
 					 * Send emails to assigned users (public area notification)
 					 */
-					if (!empty($conf->global->TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_ENABLED)) {
+					if (getDolGlobalString('TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_ENABLED')) {
 						// Retrieve internal contact datas
 						$internal_contacts = $object->getInfosTicketInternalContact(1);
 
@@ -2643,16 +2642,16 @@ class Ticket extends CommonObject
 						}
 
 						if (empty($sendto)) {
-							if (!empty($conf->global->TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL)) {
+							if (getDolGlobalString('TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL')) {
 								$sendto[getDolGlobalString('TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL')] = $conf->global->TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL;
-							} elseif (!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO)) {
+							} elseif (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')) {
 								$sendto[getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
 							}
 						}
 
 						// Add global email address recipient
-						if (!empty($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS) &&
-							!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) && !array_key_exists($conf->global->TICKET_NOTIFICATION_EMAIL_TO, $sendto)
+						if (getDolGlobalString('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS') &&
+							getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO') && !array_key_exists($conf->global->TICKET_NOTIFICATION_EMAIL_TO, $sendto)
 						) {
 							$sendto[getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
 						}
@@ -2755,9 +2754,9 @@ class Ticket extends CommonObject
 							$message .= '<br>'.$langs->trans('TicketNotificationEmailBodyInfosTrackUrlinternal').' : <a href="'.$url_internal_ticket.'">'.$object->track_id.'</a><br>';
 
 							// Add global email address recipient
-							if ($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS && !array_key_exists($conf->global->TICKET_NOTIFICATION_EMAIL_TO, $sendto)) {
-								if (!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO)) {
-									$sendto[getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
+							if (getDolGlobalString('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS') !== '' && !array_key_exists(getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO'), $sendto)) {
+								if (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO') !== '') {
+									$sendto[getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')] = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO');
 								}
 							}
 
@@ -2827,8 +2826,8 @@ class Ticket extends CommonObject
 								}
 
 								// If public interface is not enable, use link to internal page into mail
-								$url_public_ticket = (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) ?
-										(!empty($conf->global->TICKET_URL_PUBLIC_INTERFACE) ? getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE') . '/view.php' : dol_buildpath('/public/ticket/view.php', 2)) : dol_buildpath('/ticket/card.php', 2)).'?track_id='.$object->track_id;
+								$url_public_ticket = (getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE') ?
+										(getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE') !== '' ? getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE') . '/view.php' : dol_buildpath('/public/ticket/view.php', 2)) : dol_buildpath('/ticket/card.php', 2)).'?track_id='.$object->track_id;
 								$message .= '<br>'.$langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer').' : <a href="'.$url_public_ticket.'">'.$object->track_id.'</a><br>';
 
 								// Build final message
@@ -2850,9 +2849,9 @@ class Ticket extends CommonObject
 								}
 
 								// Add global email address recipient
-								if ($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS && !array_key_exists($conf->global->TICKET_NOTIFICATION_EMAIL_TO, $sendto)) {
-									if (!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO)) {
-										$sendto[getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
+								if (getDolGlobalString('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS') !== '' && !array_key_exists(getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO'), $sendto)) {
+									if (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO') !== '') {
+										$sendto[getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')] = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO');
 									}
 								}
 
@@ -2904,9 +2903,9 @@ class Ticket extends CommonObject
 	 */
 	public function sendTicketMessageByEmail($subject, $message, $send_internal_cc = 0, $array_receiver = array(), $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array())
 	{
-		global $conf, $langs;
+		global $conf, $langs, $user;
 
-		if ($conf->global->TICKET_DISABLE_ALL_MAILS) {
+		if (getDolGlobalInt('TICKET_DISABLE_ALL_MAILS')) {
 			dol_syslog(get_class($this).'::sendTicketMessageByEmail: Emails are disable into ticket setup by option TICKET_DISABLE_ALL_MAILS', LOG_WARNING);
 			return false;
 		}
@@ -2923,10 +2922,12 @@ class Ticket extends CommonObject
 		}
 
 		if ($send_internal_cc) {
-			$sendtocc = $conf->global->TICKET_NOTIFICATION_EMAIL_FROM;
+			$sendtocc = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
+		} else {
+			$sendtocc = '';
 		}
 
-		$from = $conf->global->TICKET_NOTIFICATION_EMAIL_FROM;
+		$from = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
 		$is_sent = false;
 		if (is_array($array_receiver) && count($array_receiver) > 0) {
 			foreach ($array_receiver as $key => $receiver) {
@@ -2939,7 +2940,7 @@ class Ticket extends CommonObject
 
 				$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO');
 
-				if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
+				if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO') !== '') {
 					$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 				}
 
@@ -2972,7 +2973,7 @@ class Ticket extends CommonObject
 					}
 				}
 
-				if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
+				if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO') !== '') {
 					$conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
 				}
 			}
@@ -2990,7 +2991,7 @@ class Ticket extends CommonObject
 	 *
 	 *  @param          User	$user   Object user
 	 *  @param          int		$mode   "opened" for askprice to close, "signed" for proposal to invoice
-	 *  @return         WorkboardResponse|int             <0 if KO, WorkboardResponse if OK
+	 *  @return         WorkboardResponse|int             Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $mode)
 	{
@@ -3057,7 +3058,7 @@ class Ticket extends CommonObject
 	/**
 	 *      Load indicator this->nb of global stats widget
 	 *
-	 *      @return     int         <0 if ko, >0 if ok
+	 *      @return     int         Return integer <0 if ko, >0 if ok
 	 */
 	public function load_state_board()
 	{

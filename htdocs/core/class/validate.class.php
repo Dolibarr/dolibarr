@@ -321,10 +321,18 @@ class Validate
 
 					if (!empty($object->table_element) && $object->isExistingObject($object->table_element, $id)) {
 						return true;
-					} else { $this->error = $this->outputLang->trans('RequireValidExistingElement'); }
-				} else { $this->error = $this->outputLang->trans('BadSetupOfFieldClassNotFoundForValidation'); }
-			} else { $this->error = $this->outputLang->trans('BadSetupOfFieldFileNotFound'); }
-		} else { $this->error = $this->outputLang->trans('BadSetupOfField'); }
+					} else {
+						$this->error = $this->outputLang->trans('RequireValidExistingElement');
+					}
+				} else {
+					$this->error = $this->outputLang->trans('BadSetupOfFieldClassNotFoundForValidation');
+				}
+			} else {
+				$this->error = $this->outputLang->trans('BadSetupOfFieldFileNotFound');
+			}
+		} else {
+			$this->error = $this->outputLang->trans('BadSetupOfField');
+		}
 		return false;
 	}
 }

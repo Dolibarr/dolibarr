@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2016-2017  Alexandre Spangaro	<aspangaro@open-dsi.fr>
+/* Copyright (C) 2016-2023  Alexandre Spangaro      <aspangaro@easya.solutions>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ if ($action == 'setlib' && $user->hasRight('tax', 'charges', 'creer')) {
 
 $title = $langs->trans("VAT")." - ".$langs->trans("Info");
 $help_url = '';
-llxHeader("", $title, $helpurl);
+llxHeader("", $title, $help_url);
 
 $object = new Tva($db);
 $object->fetch($id);

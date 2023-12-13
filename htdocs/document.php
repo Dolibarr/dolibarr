@@ -185,7 +185,7 @@ if (preg_match('/\.(html|htm)$/i', $original_file)) {
 if (isset($_GET["attachment"])) {
 	$attachment = GETPOST("attachment", 'alpha') ?true:false;
 }
-if (!empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) {
+if (getDolGlobalString('MAIN_DISABLE_FORCE_SAVEAS')) {
 	$attachment = false;
 }
 
@@ -311,7 +311,8 @@ header('Pragma: public');
 $readfile = true;
 
 // on view document, can output images with good orientation according to exif infos
-if (!$attachment && !empty($conf->global->MAIN_USE_EXIF_ROTATION) && image_format_supported($fullpath_original_file_osencoded) == 1) {
+// TODO Why this on document.php and not in viewimage.php ?
+if (!$attachment && getDolGlobalString('MAIN_USE_EXIF_ROTATION') && image_format_supported($fullpath_original_file_osencoded) == 1) {
 	$imgres = correctExifImageOrientation($fullpath_original_file_osencoded, null);
 	$readfile = !$imgres;
 }

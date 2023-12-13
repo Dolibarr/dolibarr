@@ -15,7 +15,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 }
 
 <?php
-if (!empty($conf->global->THEME_DARKMODEENABLED)) {
+if (getDolGlobalString('THEME_DARKMODEENABLED')) {
 	print "/* For dark mode */\n";
 	if ($conf->global->THEME_DARKMODEENABLED != 2) {
 		print "@media (prefers-color-scheme: dark) {";	// To test, click on the 3 dots menu, then Other options then Display then emulate prefer-color-schemes
@@ -83,8 +83,8 @@ span.butAction, span.butActionDelete {
 	text-transform: uppercase;
 	font-weight: bold;
 
-	margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.6' : '1'); ?>em;
-	padding: 0.6em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.7'); ?>em;
+	margin: 0em <?php echo($dol_optimize_smallscreen ? '0.6' : '1'); ?>em;
+	padding: 0.6em <?php echo($dol_optimize_smallscreen ? '0.6' : '0.7'); ?>em;
 	display: inline-block;
 	text-align: center;
 	cursor: pointer;
@@ -105,7 +105,7 @@ span.butAction, span.butActionDelete {
 	font-weight: normal;
 
 	margin: 0em 0.3em 0 0.3em !important;
-	padding: 0.2em <?php echo ($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em 0.3em;
+	padding: 0.2em <?php echo($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em 0.3em;
 	font-family: <?php print $fontlist ?>;
 	display: inline-block;
 	/* text-align: center; New button are on right of screen */
@@ -182,8 +182,8 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 
 	white-space: nowrap !important;
 	cursor: not-allowed !important;
-	margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.7' : '0.9'); ?>em;
-	padding: 0.2em <?php echo ($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em;
+	margin: 0em <?php echo($dol_optimize_smallscreen ? '0.7' : '0.9'); ?>em;
+	padding: 0.2em <?php echo($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em;
 	font-family: <?php print $fontlist ?> !important;
 	display: inline-block;
 	/* text-align: center;  New button are on right of screen */
@@ -296,7 +296,7 @@ div.pagination li:first-child a.btnTitle, div.pagination li.paginationafterarrow
 }
 
 /* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */
-@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2) ? round($nbtopmenuentries * 69, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */
+@media only screen and (max-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC2') ? round($nbtopmenuentries * 69, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */
 {
 	.butAction, .butActionRefused, .butActionDelete {
 		font-size: 0.95em;
@@ -309,7 +309,7 @@ div.pagination li:first-child a.btnTitle, div.pagination li.paginationafterarrow
 }
 
 /* rule to reduce top menu - 3rd reduction: The menu for user is on left */
-@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
+@media only screen and (max-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC3') ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
 	.butAction, .butActionRefused, .butActionDelete {
 		font-size: 0.9em;
@@ -325,7 +325,7 @@ div.pagination li:first-child a.btnTitle, div.pagination li.paginationafterarrow
 }
 
 
-<?php if (!empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) && (!$user->admin)) { ?>
+<?php if (getDolGlobalString('MAIN_BUTTON_HIDE_UNAUTHORIZED') && (!$user->admin)) { ?>
 .butActionRefused, .butActionNewRefused, .btnTitle.refused {
 	display: none !important;
 }

@@ -35,6 +35,11 @@ abstract class CommonInvoice extends CommonObject
 	use CommonIncoterm;
 
 	/**
+	 * @var string		Label used as ref for template invoices
+	 */
+	public $title;
+
+	/**
 	 * @var int		Type of invoice (See TYPE_XXX constants)
 	 */
 	public $type = self::TYPE_STANDARD;
@@ -44,6 +49,12 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public $subtype;
 
+	/**
+	 * @var int Thirdparty ID
+	 * @deprecated
+	 * @see $socid
+	 */
+	public $fk_soc;
 	/**
 	 * @var int Thirdparty ID
 	 */
@@ -57,6 +68,8 @@ abstract class CommonInvoice extends CommonObject
 	 * @var integer
 	 */
 	public $date;
+
+	public $date_lim_reglement;
 
 	public $cond_reglement_id; // Id in llx_c_paiement
 	public $cond_reglement_code; // Code in llx_c_paiement
@@ -87,18 +100,6 @@ abstract class CommonInvoice extends CommonObject
 	public $sumcreditnote;
 	public $sumcreditnote_multicurrency;
 	public $remaintopay;
-
-	// Multicurrency
-	/**
-	 * @var int ID
-	 */
-	public $fk_multicurrency;
-
-	public $multicurrency_code;
-	public $multicurrency_tx;
-	public $multicurrency_total_ht;
-	public $multicurrency_total_tva;
-	public $multicurrency_total_ttc;
 
 	/**
 	 * @var int
@@ -140,6 +141,13 @@ abstract class CommonInvoice extends CommonObject
 	 * @var string Close note
 	 */
 	public $close_note;
+
+
+	/**
+	 * ! Populate by Payment module like stripe
+	 * @var string message return by Online Payment module
+	 */
+	public $postactionmessages;
 
 
 	/**
@@ -280,7 +288,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  of FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS is on for purchase invoices (not recommended).
 	 *
 	 * 	@param 		int 	$multicurrency 		Return multicurrency_amount instead of amount
-	 *	@return		float						<0 and set ->error if KO, Sum of deposits amount otherwise
+	 *	@return		float						Return integer <0 and set ->error if KO, Sum of deposits amount otherwise
 	 *	@see getSommePaiement(), getSumCreditNotesUsed()
 	 */
 	public function getSumDepositsUsed($multicurrency = 0)
@@ -313,7 +321,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  Return amount (with tax) of all credit notes invoices + excess received used by invoice
 	 *
 	 * 	@param 		int 	$multicurrency 		Return multicurrency_amount instead of amount
-	 *	@return		float						<0 and set ->error if KO, Sum of credit notes and deposits amount otherwise
+	 *	@return		float						Return integer <0 and set ->error if KO, Sum of credit notes and deposits amount otherwise
 	 *	@see getSommePaiement(), getSumDepositsUsed()
 	 */
 	public function getSumCreditNotesUsed($multicurrency = 0)
@@ -340,7 +348,7 @@ abstract class CommonInvoice extends CommonObject
 	 *    	Return amount (with tax) of all converted amount for this credit note
 	 *
 	 * 		@param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
-	 *		@return		float						<0 if KO, Sum of credit notes and deposits amount otherwise
+	 *		@return		float						Return integer <0 if KO, Sum of credit notes and deposits amount otherwise
 	 */
 	public function getSumFromThisCreditNotesNotUsed($multicurrency = 0)
 	{
@@ -388,7 +396,7 @@ abstract class CommonInvoice extends CommonObject
 	 *	Returns the id of the invoice that replaces it
 	 *
 	 *	@param		string	$option		status filter ('', 'validated', ...)
-	 *	@return		int					<0 si KO, 0 if no invoice replaces it, id of invoice otherwise
+	 *	@return		int					Return integer <0 si KO, 0 if no invoice replaces it, id of invoice otherwise
 	 */
 	public function getIdReplacingInvoice($option = '')
 	{
@@ -534,7 +542,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  If there is payment -> no (-4)
 	 *  Otherwise -> yes (2)
 	 *
-	 *  @return    int         <=0 if no, >0 if yes
+	 *  @return    int         Return integer <=0 if no, >0 if yes
 	 */
 	public function is_erasable()
 	{
@@ -548,7 +556,7 @@ abstract class CommonInvoice extends CommonObject
 			return 1;
 		}
 
-		if (!empty($conf->global->INVOICE_CAN_NEVER_BE_REMOVED)) {
+		if (getDolGlobalString('INVOICE_CAN_NEVER_BE_REMOVED')) {
 			return 0;
 		}
 
@@ -568,7 +576,7 @@ abstract class CommonInvoice extends CommonObject
 
 				// If there is no invoice into the reset range and not already dispatched, we can delete
 				// If invoice to delete is last one and not already dispatched, we can delete
-				if (empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED) && $maxref != '' && $maxref != $this->ref) {
+				if (!getDolGlobalString('INVOICE_CAN_ALWAYS_BE_REMOVED') && $maxref != '' && $maxref != $this->ref) {
 					return -2;
 				}
 
@@ -585,7 +593,7 @@ abstract class CommonInvoice extends CommonObject
 		}
 
 		// Test if there is at least one payment. If yes, refuse to delete.
-		if (empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED) && $this->getSommePaiement() > 0) {
+		if (!getDolGlobalString('INVOICE_CAN_ALWAYS_BE_REMOVED') && $this->getSommePaiement() > 0) {
 			return -4;
 		}
 
@@ -595,7 +603,7 @@ abstract class CommonInvoice extends CommonObject
 	/**
 	 *	Return if an invoice was dispatched into bookkeeping
 	 *
-	 *	@return     int         <0 if KO, 0=no, 1=yes
+	 *	@return     int         Return integer <0 if KO, 0=no, 1=yes
 	 */
 	public function getVentilExportCompta()
 	{
@@ -687,51 +695,30 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public function getSubtypeLabel($table = '')
 	{
+		$subtypeLabel = '';
 		if ($table === 'facture' || $table === 'facture_fourn') {
-			$sql = "SELECT s.label FROM " . MAIN_DB_PREFIX . $table . " AS f";
-			$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "c_invoice_subtype AS s ON f.subtype = s.rowid";
+			$sql = "SELECT s.label FROM " . $this->db->prefix() . $table . " AS f";
+			$sql .= " INNER JOIN " . $this->db->prefix() . "c_invoice_subtype AS s ON f.subtype = s.rowid";
 			$sql .= " WHERE f.ref = '".$this->db->escape($this->ref)."'";
-
-			$resql = $this->db->query($sql);
-
-			if ($resql) {
-				$subtypeLabel = '';
-
-				while ($obj = $this->db->fetch_object($resql)) {
-					$subtypeLabel = $obj->label;
-				}
-
-				if (!empty($subtypeLabel)) {
-					return $subtypeLabel;
-				}
-			} else {
-				dol_print_error($this->db);
-				return -1;
-			}
 		} elseif ($table === 'facture_rec' || $table === 'facture_fourn_rec') {
-			$sql = "SELECT s.label FROM " . MAIN_DB_PREFIX . $table . " AS f";
-			$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "c_invoice_subtype AS s ON f.subtype = s.rowid";
-			$sql .= " WHERE f.titre = '".$this->db->escape($this->titre)."'";
-
-			$resql = $this->db->query($sql);
-
-			if ($resql) {
-				$subtypeLabel = '';
-
-				while ($obj = $this->db->fetch_object($resql)) {
-					$subtypeLabel = $obj->label;
-				}
-
-				if (!empty($subtypeLabel)) {
-					return $subtypeLabel;
-				}
-			} else {
-				dol_print_error($this->db);
-				return -1;
-			}
+			$sql = "SELECT s.label FROM " . $this->db->prefix() . $table . " AS f";
+			$sql .= " INNER JOIN " . $this->db->prefix() . "c_invoice_subtype AS s ON f.subtype = s.rowid";
+			$sql .= " WHERE f.titre = '".$this->db->escape($this->title)."'";
+		} else {
+			return -1;
 		}
 
-		return '';
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$subtypeLabel = $obj->label;
+			}
+		} else {
+			dol_print_error($this->db);
+			return -1;
+		}
+
+		return $subtypeLabel;
 	}
 
 	/**
@@ -975,7 +962,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  @param		string	$type						'direct-debit' or 'bank-transfer'
 	 *  @param		string	$sourcetype					Source ('facture' or 'supplier_invoice')
 	 *  @param		int		$checkduplicateamongall		0=Default (check among open requests only to find if request already exists). 1=Check also among requests completely processed and cancel if at least 1 request exists whatever is its status.
-	 *	@return     int         						<0 if KO, 0 if a request already exists, >0 if OK
+	 *	@return     int         						Return integer <0 if KO, 0 if a request already exists, >0 if OK
 	 */
 	public function demande_prelevement($fuser, $amount = 0, $type = 'direct-debit', $sourcetype = 'facture', $checkduplicateamongall = 0)
 	{
@@ -1097,11 +1084,12 @@ abstract class CommonInvoice extends CommonObject
 	 *	@param      User	$fuser      	User asking the direct debit transfer
 	 *  @param		int		$id				Invoice ID with remain to pay
 	 *  @param		string	$sourcetype		Source ('facture' or 'supplier_invoice')
-	 *	@return     int         			<0 if KO, >0 if OK
+	 *	@return     int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function makeStripeCardRequest($fuser, $id, $sourcetype = 'facture')
 	{
 		// TODO See in sellyoursaas
+		return 0;
 	}
 
 	/**
@@ -1114,22 +1102,22 @@ abstract class CommonInvoice extends CommonObject
 	 *  @param		string	$sourcetype		Source ('facture' or 'supplier_invoice')
 	 *  @param		string	$service		'StripeTest', 'StripeLive', ...
 	 *  @param		string	$forcestripe	To force another stripe env: 'cus_account@pk_...:sk_...'
-	 *	@return     int         			<0 if KO, >0 if OK
+	 *	@return     int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function makeStripeSepaRequest($fuser, $did, $type = 'direct-debit', $sourcetype = 'facture', $service = '', $forcestripe = '')
 	{
 		global $conf, $user, $langs;
 
-		if ($type != 'bank-transfer' && $type != 'credit-transfer' && empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) {
+		if ($type != 'bank-transfer' && $type != 'credit-transfer' && !getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT')) {
 			return 0;
 		}
-		if ($type != 'direct-debit' && empty($conf->global->STRIPE_SEPA_CREDIT_TRANSFER)) {
+		if ($type != 'direct-debit' && !getDolGlobalString('STRIPE_SEPA_CREDIT_TRANSFER')) {
 			return 0;
 		}
 		// Set a default value for service if not provided
 		if (empty($service)) {
 			$service = 'StripeTest';
-			if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha')) {
+			if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'alpha')) {
 				$service = 'StripeLive';
 			}
 		}
@@ -1270,7 +1258,9 @@ abstract class CommonInvoice extends CommonObject
 								// So it inits or erases the $stripearrayofkeysbyenv
 								$stripe = new Stripe($this->db);
 
-								if (empty($savstripearrayofkeysbyenv)) $savstripearrayofkeysbyenv = $stripearrayofkeysbyenv;
+								if (empty($savstripearrayofkeysbyenv)) {
+									$savstripearrayofkeysbyenv = $stripearrayofkeysbyenv;
+								}
 								dol_syslog("makeStripeSepaRequest Current Stripe environment is " . $stripearrayofkeysbyenv[$servicestatus]['publishable_key']);
 								dol_syslog("makeStripeSepaRequest Current Saved Stripe environment is ".$savstripearrayofkeysbyenv[$servicestatus]['publishable_key']);
 
@@ -1631,7 +1621,7 @@ abstract class CommonInvoice extends CommonObject
 	 *
 	 *  @param  User	$fuser      User making delete
 	 *  @param  int		$did        ID of request to delete
-	 *  @return	int					<0 if OK, >0 if KO
+	 *  @return	int					Return integer <0 if OK, >0 if KO
 	 */
 	public function demande_prelevement_delete($fuser, $did)
 	{
@@ -1997,13 +1987,6 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	public $info_bits = 0;
 
 	public $special_code = 0;
-
-	public $fk_multicurrency;
-	public $multicurrency_code;
-	public $multicurrency_subprice;
-	public $multicurrency_total_ht;
-	public $multicurrency_total_tva;
-	public $multicurrency_total_ttc;
 
 	public $fk_user_author;
 	public $fk_user_modif;

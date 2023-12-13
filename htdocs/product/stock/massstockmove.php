@@ -581,10 +581,10 @@ if ($maxmin > 0) {
 	print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
 }
 print '<input type="file" name="userfile" size="20" maxlength="80"> &nbsp; &nbsp; ';
-$out = (empty($conf->global->MAIN_UPLOAD_DOC) ? ' disabled' : '');
+$out = (!getDolGlobalString('MAIN_UPLOAD_DOC') ? ' disabled' : '');
 print '<input type="submit" class="button small smallpaddingimp" value="'.$langs->trans("ImportFromCSV").'"'.$out.' name="sendit">';
 $out = '';
-if (!empty($conf->global->MAIN_UPLOAD_DOC)) {
+if (getDolGlobalString('MAIN_UPLOAD_DOC')) {
 	$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
 	$maxphp = @ini_get('upload_max_filesize'); // In unknown
 	if (preg_match('/k$/i', $maxphp)) {
@@ -682,10 +682,10 @@ print '</td>';
 // Product
 print '<td class="nowraponall">';
 $filtertype = 0;
-if (!empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+if (getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 	$filtertype = '';
 }
-if ($conf->global->PRODUIT_LIMIT_SIZE <= 0) {
+if (getDolGlobalInt('PRODUIT_LIMIT_SIZE') <= 0) {
 	$limit = '';
 } else {
 	$limit = $conf->global->PRODUIT_LIMIT_SIZE;
@@ -822,7 +822,7 @@ function startsWith($haystack, $needle)
  *
  * @param Object $static_object static object to fetch
  * @param string $tmp_ref ref of the object to fetch
- * @return int <0 if Ko or Id of object
+ * @return int Return integer <0 if Ko or Id of object
  */
 function fetchref($static_object, $tmp_ref)
 {

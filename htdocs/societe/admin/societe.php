@@ -391,13 +391,13 @@ foreach ($dirsociete as $dirroot) {
 					dol_syslog($e->getMessage(), LOG_ERR);
 				}
 
-				$modCodeTiers = new $file;
+				$modCodeTiers = new $file();
 
 				// Show modules according to features level
-				if ($modCodeTiers->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+				if ($modCodeTiers->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 					continue;
 				}
-				if ($modCodeTiers->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+				if ($modCodeTiers->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 					continue;
 				}
 
@@ -477,7 +477,7 @@ foreach ($dirsociete as $dirroot) {
 					dol_syslog($e->getMessage(), LOG_ERR);
 				}
 
-				$modCodeCompta = new $file;
+				$modCodeCompta = new $file();
 
 				$arrayofmodules[$file] = $modCodeCompta;
 			}
@@ -570,9 +570,9 @@ foreach ($dirsociete as $dirroot) {
 
 				$modulequalified = 1;
 				if (!empty($module->version)) {
-					if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 						$modulequalified = 0;
-					} elseif ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+					} elseif ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 						$modulequalified = 0;
 					}
 				}
@@ -593,9 +593,9 @@ foreach ($dirsociete as $dirroot) {
 						print "<td class=\"center\">\n";
 						//if ($conf->global->COMPANY_ADDON_PDF != "$name")
 						//{
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'&token='.newToken().'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">';
-							print img_picto($langs->trans("Enabled"), 'switch_on');
-							print '</a>';
+						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'&token='.newToken().'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">';
+						print img_picto($langs->trans("Enabled"), 'switch_on');
+						print '</a>';
 						//}
 						//else
 						//{
@@ -695,9 +695,9 @@ foreach ($profid as $key => $val) {
 		$idprof_mandatory = 'SOCIETE_'.$key.'_MANDATORY';
 		$idprof_invoice_mandatory = 'SOCIETE_'.$key.'_INVOICE_MANDATORY';
 
-		$verif = (empty($conf->global->$idprof_unique) ?false:true);
-		$mandatory = (empty($conf->global->$idprof_mandatory) ?false:true);
-		$invoice_mandatory = (empty($conf->global->$idprof_invoice_mandatory) ?false:true);
+		$verif = (empty($conf->global->$idprof_unique) ? false : true);
+		$mandatory = (empty($conf->global->$idprof_mandatory) ? false : true);
+		$invoice_mandatory = (empty($conf->global->$idprof_invoice_mandatory) ? false : true);
 
 		if ($verif) {
 			print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofid&token='.newToken().'&value='.$key.'&status=0">';
@@ -738,7 +738,7 @@ foreach ($profid as $key => $val) {
 print '<tr class="oddeven">';
 print '<td colspan="2">'.$langs->trans('VATIntra')."</td>\n";
 
-if (!empty($conf->global->SOCIETE_VAT_INTRA_UNIQUE)) {
+if (getDolGlobalString('SOCIETE_VAT_INTRA_UNIQUE')) {
 	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setvatintraunique&token='.newToken().'&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 	print '</a></td>';
@@ -821,7 +821,7 @@ print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("AddRefInList").'</td>';
 print '<td>&nbsp;</td>';
 print '<td class="center">';
-if (!empty($conf->global->SOCIETE_ADD_REF_IN_LIST)) {
+if (getDolGlobalString('SOCIETE_ADD_REF_IN_LIST')) {
 	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&token='.newToken().'&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 } else {
@@ -835,7 +835,7 @@ print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("AddVatInList").'</td>';
 print '<td>&nbsp;</td>';
 print '<td class="center">';
-if (!empty($conf->global->SOCIETE_SHOW_VAT_IN_LIST)) {
+if (getDolGlobalString('SOCIETE_SHOW_VAT_IN_LIST')) {
 	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setvatinlist&token='.newToken().'&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 } else {
@@ -849,7 +849,7 @@ print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("AddAdressInList").'</td>';
 print '<td>&nbsp;</td>';
 print '<td class="center">';
-if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
+if (getDolGlobalString('COMPANY_SHOW_ADDRESS_SELECTLIST')) {
 	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaddadressinlist&token='.newToken().'&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 } else {
@@ -863,7 +863,7 @@ print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("AddEmailPhoneTownInContactList").'</td>';
 print '<td>&nbsp;</td>';
 print '<td class="center">';
-if (!empty($conf->global->CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST)) {
+if (getDolGlobalString('CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST')) {
 	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaddemailphonetownincontactlist&token='.newToken().'&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 } else {
@@ -879,7 +879,7 @@ if (isModEnabled("expedition")) {
 		print '<td width="80%">'.$langs->trans("AskForPreferredShippingMethod").'</td>';
 		print '<td>&nbsp;</td>';
 		print '<td class="center">';
-		if (!empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD)) {
+		if (getDolGlobalString('SOCIETE_ASK_FOR_SHIPPING_METHOD')) {
 			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaskforshippingmet&token='.newToken().'&value=0">';
 			print img_picto($langs->trans("Activated"), 'switch_on');
 		} else {
@@ -896,7 +896,7 @@ print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("DisableProspectCustomerType").'</td>';
 print '<td>&nbsp;</td>';
 print '<td class="center">';
-if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) {
+if (getDolGlobalString('SOCIETE_DISABLE_PROSPECTSCUSTOMERS')) {
 	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisableprospectcustomer&token='.newToken().'&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 } else {
@@ -906,7 +906,7 @@ if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) {
 print '</a></td>';
 print '</tr>';
 
-if (empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) {
+if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTSCUSTOMERS')) {
 	// Default Prospect/Customer thirdparty type on customer création
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("DefaultCustomerType").'</td>';

@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/class/job.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_job.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/hrm/class/skillrank.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('hrm', 'other', 'products'));   // why products?
@@ -87,8 +88,12 @@ $upload_dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->enti
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->hrm->enabled)) accessforbidden();
-if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) accessforbidden();
+if (empty($conf->hrm->enabled)) {
+	accessforbidden();
+}
+if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) {
+	accessforbidden();
+}
 
 
 /*
@@ -120,7 +125,9 @@ if (empty($reshook)) {
 
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
-	include DOL_DOCUMENT_ROOT . '/core/actions_addupdatedelete.inc.php';
+	if ($action != 'confirm_clone') {
+		include DOL_DOCUMENT_ROOT . '/core/actions_addupdatedelete.inc.php';
+	}
 
 	// Actions when linking object each other
 	include DOL_DOCUMENT_ROOT . '/core/actions_dellink.inc.php';
@@ -146,6 +153,56 @@ if (empty($reshook)) {
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_JOB_TO';
 	$trackid = 'job' . $object->id;
 	include DOL_DOCUMENT_ROOT . '/core/actions_sendmails.inc.php';
+
+	if ($action == 'confirm_clone' && $confirm != 'yes') {
+		$action = '';
+	}
+
+	if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->hasRight('salaries', 'write'))) {
+		$db->begin();
+
+		$originalId = $id;
+
+		$object->fetch($id);
+		$skillRequire = $object->getSkillRankForJob($originalId);
+		if ($object->id > 0) {
+			$object->id = $object->ref = null;
+
+			if (GETPOST('clone_label', 'alphanohtml')) {
+				$object->label = GETPOST('clone_label', 'alphanohtml');
+			} else {
+				$object->label = $langs->trans("CopyOf").' '.$object->label;
+			}
+			if (GETPOST('clone_skills_required')) {
+				$cloneSkillRequired = GETPOST('clone_skills_required');
+			}
+
+			$id = $object->create($user);
+			if ($id > 0) {
+				if (!empty($cloneSkillRequired)) {
+					$i = 0;
+					while ($i < count($skillRequire)) {
+						$skillrank = new SkillRank($db);
+						$skillrank->createFromClone($user, $skillRequire[$i]->rowid, $id);
+						$i++;
+					}
+				}
+				$db->commit();
+				$db->close();
+
+				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+				exit;
+			} else {
+				$id = $originalId;
+				$db->rollback();
+
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		} else {
+			$db->rollback();
+			dol_print_error($db, $object->error);
+		}
+	}
 }
 
 
@@ -275,8 +332,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Clone confirmation
 	if ($action == 'clone') {
 		// Create an array for form
-		$formquestion = array();
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+		$formquestion = array(
+			array('type' => 'text', 'name' => 'clone_label', 'label' => $langs->trans("Label"), 'value' => $langs->trans("CopyOf").' '.$object->label),
+			array('type' => 'checkbox', 'name' => 'clone_skills_required', 'label' => $langs->trans("RequiredSkills"), 'value' => '',),
+
+		);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->label), 'confirm_clone', $formquestion, 'yes', 1, 280);
 	}
 
 	// Confirmation of action xxxx
@@ -380,9 +441,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-				if (empty($reshook))
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				}
+				if (empty($reshook)) {
 					$object->formAddObjectLine(1, $mysoc, $soc);
+				}
 			}
 		}
 
@@ -412,6 +476,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=edit&token=' . newToken(), '', $permissiontoadd);
+
+			print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=clone&token=' . newToken(), '', $permissiontoadd);
 
 			// Delete (need delete permission, or if draft, just need create/modify permission)
 			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=delete&token=' . newToken(), '', $permissiontodelete);

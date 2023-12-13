@@ -101,7 +101,7 @@ $arrayofjs = array();
 $arrayofcss = array();
 top_htmlhead($head, $title, 0, 0, $arrayofjs, $arrayofcss);
 
-print '<body>'."\n";
+print '<body class="getmenudiv">'."\n";
 
 // Javascript to make menu active like Jmobile did.
 print '
@@ -123,6 +123,22 @@ print '
 
 	ul li.lilevel2 {
 		padding-left: 40px;	/* width = 20 for level0, 20 for level1 */
+	}
+
+	.getmenudiv a:hover {
+		text-decoration: none;
+	}
+
+	.pictofixedwidth {
+    	text-align: left;
+    	padding-right: 10px !important;
+	}
+
+	li.lilevel1 > a, li.lilevel1 > i {
+		padding-left: 30px !important;
+	}
+	li.lilevel2 a {
+		padding-left: 60px !important;
 	}
 
     a.alilevel0, span.spanlilevel0 {
@@ -237,10 +253,9 @@ $(document).ready(function(){
 
 
 if (empty($user->socid)) {	// If internal user or not defined
-	$conf->standard_menu = (empty($conf->global->MAIN_MENU_STANDARD_FORCED) ? (empty($conf->global->MAIN_MENU_STANDARD) ? 'eldy_menu.php' : $conf->global->MAIN_MENU_STANDARD) : $conf->global->MAIN_MENU_STANDARD_FORCED);
-} else // If external user
-{
-	$conf->standard_menu = (empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED) ? (empty($conf->global->MAIN_MENUFRONT_STANDARD) ? 'eldy_menu.php' : $conf->global->MAIN_MENUFRONT_STANDARD) : $conf->global->MAIN_MENUFRONT_STANDARD_FORCED);
+	$conf->standard_menu = (!getDolGlobalString('MAIN_MENU_STANDARD_FORCED') ? (!getDolGlobalString('MAIN_MENU_STANDARD') ? 'eldy_menu.php' : $conf->global->MAIN_MENU_STANDARD) : $conf->global->MAIN_MENU_STANDARD_FORCED);
+} else { // If external user
+	$conf->standard_menu = (!getDolGlobalString('MAIN_MENUFRONT_STANDARD_FORCED') ? (!getDolGlobalString('MAIN_MENUFRONT_STANDARD') ? 'eldy_menu.php' : $conf->global->MAIN_MENUFRONT_STANDARD) : $conf->global->MAIN_MENUFRONT_STANDARD_FORCED);
 }
 
 // Load the menu manager (only if not already done)

@@ -54,7 +54,7 @@ $listofreservedwords = array(
 	'EACH', 'ELSE', 'ELSEIF', 'ENCLOSED', 'ESCAPED', 'EXISTS', 'EXPLAIN', 'FALSE', 'FETCH', 'FLOAT', 'FLOAT4', 'FLOAT8', 'FORCE', 'FOREIGN', 'FULLTEXT', 'GRANT', 'GROUP', 'HAVING', 'HIGH_PRIORITY', 'HOUR_MICROSECOND', 'HOUR_MINUTE', 'HOUR_SECOND',
 	'IGNORE', 'IGNORE_SERVER_IDS', 'INDEX', 'INFILE', 'INNER', 'INOUT', 'INSENSITIVE', 'INSERT', 'INT', 'INTEGER', 'INTERVAL', 'INTO', 'ITERATE',
 	'KEYS', 'KEYWORD', 'LEADING', 'LEAVE', 'LEFT', 'LIKE', 'LIMIT', 'LINES', 'LOCALTIME', 'LOCALTIMESTAMP', 'LONGBLOB', 'LONGTEXT', 'MASTER_SSL_VERIFY_SERVER_CERT', 'MATCH', 'MEDIUMBLOB', 'MEDIUMINT', 'MEDIUMTEXT', 'MIDDLEINT', 'MINUTE_MICROSECOND', 'MINUTE_SECOND', 'MODIFIES', 'NATURAL', 'NOT', 'NO_WRITE_TO_BINLOG', 'NUMERIC',
-	'ON', 'OPTION', 'OPTIONALLY', 'OUTER', 'OUTFILE',
+	'OFFSET', 'ON', 'OPTION', 'OPTIONALLY', 'OUTER', 'OUTFILE',
 	'PARTITION', 'POSITION', 'PRECISION', 'PRIMARY', 'PROCEDURE', 'PURGE', 'RANGE', 'READS', 'READ_WRITE', 'REAL', 'REFERENCES', 'REGEXP', 'RELEASE', 'RENAME', 'REPEAT', 'REQUIRE', 'RESTRICT', 'RETURN', 'REVOKE', 'RIGHT', 'RLIKE',
 	'SCHEMAS', 'SECOND_MICROSECOND', 'SENSITIVE', 'SEPARATOR', 'SIGNAL', 'SMALLINT', 'SPATIAL', 'SPECIFIC', 'SQLEXCEPTION', 'SQLSTATE', 'SQLWARNING', 'SQL_BIG_RESULT', 'SQL_CALC_FOUND_ROWS', 'SQL_SMALL_RESULT', 'SSL', 'STARTING', 'STRAIGHT_JOIN',
 	'TABLE', 'TERMINATED', 'TINYBLOB', 'TINYINT', 'TINYTEXT', 'TRAILING', 'TRIGGER', 'UNDO', 'UNIQUE', 'UNSIGNED', 'UPDATE', 'USAGE', 'USING', 'UTC_DATE', 'UTC_TIME', 'UTC_TIMESTAMP', 'VALUES', 'VARBINARY', 'VARCHAR', 'VARYING',
@@ -317,7 +317,7 @@ if ($action == 'update') {
 		}
 
 		if (!$error) {
-			if (strlen(GETPOST('attrname', 'aZ09')) < 3 && empty($conf->global->MAIN_DISABLE_EXTRAFIELDS_CHECK_FOR_UPDATE)) {
+			if (strlen(GETPOST('attrname', 'aZ09')) < 3 && !getDolGlobalString('MAIN_DISABLE_EXTRAFIELDS_CHECK_FOR_UPDATE')) {
 				$error++;
 				$langs->load("errors");
 				$mesg[] = $langs->trans("ErrorValueLength", $langs->transnoentitiesnoconv("AttributeCode"), 3);
@@ -327,7 +327,7 @@ if ($action == 'update') {
 
 		// Check reserved keyword with more than 3 characters
 		if (!$error) {
-			if (in_array(strtoupper(GETPOST('attrname', 'aZ09')), $listofreservedwords) && empty($conf->global->MAIN_DISABLE_EXTRAFIELDS_CHECK_FOR_UPDATE)) {
+			if (in_array(strtoupper(GETPOST('attrname', 'aZ09')), $listofreservedwords) && !getDolGlobalString('MAIN_DISABLE_EXTRAFIELDS_CHECK_FOR_UPDATE')) {
 				$error++;
 				$langs->load("errors");
 				$mesg[] = $langs->trans("ErrorReservedKeyword", GETPOST('attrname', 'aZ09'));
@@ -378,7 +378,7 @@ if ($action == 'update') {
 					$pos,
 					$params,
 					(GETPOST('alwayseditable', 'alpha') ? 1 : 0),
-					(GETPOST('perms', 'alpha') ?GETPOST('perms', 'alpha') : ''),
+					(GETPOST('perms', 'alpha') ? GETPOST('perms', 'alpha') : ''),
 					$visibility,
 					GETPOST('help', 'alpha'),
 					GETPOST('default_value', 'alpha'),

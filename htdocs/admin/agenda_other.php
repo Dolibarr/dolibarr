@@ -121,7 +121,9 @@ if ($action == 'set') {
 	$commande->thirdparty = $specimenthirdparty;
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$classname = '';
+	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/action/doc/pdf_".$modele.".modules.php", 0);
@@ -220,7 +222,7 @@ if ($resql) {
 	dol_print_error($db);
 }
 
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 	print load_fiche_titre($langs->trans("AgendaModelModule"), '', '');
 
 	print '<table class="noborder centpercent">'."\n";
@@ -251,7 +253,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 
 						print '<tr class="oddeven">'."\n";
 						print "<td>";
-						print (empty($module->name) ? $name : $module->name);
+						print(empty($module->name) ? $name : $module->name);
 						print "</td>\n";
 						print "<td>\n";
 						require_once $dir.'/'.$file;

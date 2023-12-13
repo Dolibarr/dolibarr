@@ -56,9 +56,11 @@ class GlobalToFunction extends AbstractRector
 	{
 		return new RuleDefinition(
 			'Change $conf->global to getDolGlobal',
-			[new CodeSample('$conf->global->CONSTANT',
+			[new CodeSample(
+				'$conf->global->CONSTANT',
 				'getDolGlobalInt(\'CONSTANT\')'
-			)]);
+			)]
+		);
 	}
 
 	/**
@@ -68,14 +70,15 @@ class GlobalToFunction extends AbstractRector
 	 */
 	public function getNodeTypes(): array
 	{
-		return [Equal::class, Greater::class, GreaterOrEqual::class, Smaller::class, SmallerOrEqual::class, BooleanAnd::class, Concat::class, ArrayDimFetch::class];
+		return [FuncCall::class, Equal::class, Greater::class, GreaterOrEqual::class, Smaller::class, SmallerOrEqual::class, BooleanAnd::class, Concat::class, ArrayDimFetch::class];
 	}
 
 	/**
 	 * refactor
 	 *
 	 * @param Node 	$node 		A node
-	 * @return    				Equal|Concat|ArrayDimFetch|void
+	 * @return    				FuncCall|Equal|Concat|ArrayDimFetch|void
+	 * 							return $node unchanged or void to do nothing
 	 */
 	public function refactor(Node $node)
 	{
@@ -92,6 +95,34 @@ class GlobalToFunction extends AbstractRector
 					new Name('getDolGlobalString'),
 					[new Arg($constName)]
 				);
+			}
+			return $node;
+		}
+
+		if ($node instanceof FuncCall) {
+			$tmpfunctionname = $this->getName($node);
+			if (in_array($tmpfunctionname, array('dol_escape_htmltag', 'make_substitutions', 'min', 'max'))) {
+				$args = $node->getArgs();
+				$nbofparam = count($args);
+
+				if ($nbofparam >= 1) {
+					$tmpargs = $args;
+					foreach ($args as $key => $arg) {	// only 1 element in this array
+						//var_dump($key);
+						//var_dump($arg->value);exit;
+						if ($this->isGlobalVar($arg->value)) {
+							$constName = $this->getConstName($arg->value);
+							if (empty($constName)) {
+								return;
+							}
+							$a = new FuncCall(new Name('getDolGlobalString'), [new Arg($constName)]);
+							$tmpargs[$key] = new Arg($a);
+
+							$r = new FuncCall(new Name($tmpfunctionname), $tmpargs);
+							return $r;
+						}
+					}
+				}
 			}
 			return $node;
 		}
@@ -188,36 +219,36 @@ class GlobalToFunction extends AbstractRector
 				new FuncCall(
 					new Name($funcName),
 					[new Arg($constName)]
-					),
+				),
 				$node->right
-				);
+			);
 		}
 		if ($typeofcomparison == 'GreaterOrEqual') {
 			return new GreaterOrEqual(
 				new FuncCall(
 					new Name($funcName),
 					[new Arg($constName)]
-					),
+				),
 				$node->right
-				);
+			);
 		}
 		if ($typeofcomparison == 'Smaller') {
 			return new Smaller(
 				new FuncCall(
 					new Name($funcName),
 					[new Arg($constName)]
-					),
+				),
 				$node->right
-				);
+			);
 		}
 		if ($typeofcomparison == 'SmallerOrEqual') {
 			return new SmallerOrEqual(
 				new FuncCall(
 					new Name($funcName),
 					[new Arg($constName)]
-					),
+				),
 				$node->right
-				);
+			);
 		}
 	}
 
@@ -255,7 +286,7 @@ class GlobalToFunction extends AbstractRector
 	 * Check if node is a global access with format conf->global->XXX
 	 *
 	 * @param Node 	$node 	A node
-	 * @return bool			Return true if noe is conf->global->XXX
+	 * @return bool			Return true if node is conf->global->XXX
 	 */
 	private function isGlobalVar($node)
 	{

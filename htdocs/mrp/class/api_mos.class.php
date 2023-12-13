@@ -366,7 +366,7 @@ class Mos extends DolibarrApi
 			$pos = 0;
 			$arrayofarrayname = array("arraytoconsume","arraytoproduce");
 			foreach ($arrayofarrayname as $arrayname) {
-				foreach ($arrayname as $value) {
+				foreach (${$arrayname} as $value) {
 					$tmpproduct = new Product($this->db);
 					if (empty($value["objectid"])) {
 						throw new RestException(500, "Field objectid required in ".$arrayname);
