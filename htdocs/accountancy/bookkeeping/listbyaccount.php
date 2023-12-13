@@ -198,6 +198,8 @@ if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
+$error = 0;
+
 
 /*
  * Action
@@ -431,10 +433,10 @@ if (empty($reshook)) {
 					$error++;
 					break;
 				} elseif (isset($object->date_validation) || $object->date_validation != '') {
-                    setEventMessages($langs->trans("ValidatedRecordWhereFound"), null, 'errors');
-                    $error++;
-                    break;
-                }
+					setEventMessages($langs->trans("ValidatedRecordWhereFound"), null, 'errors');
+					$error++;
+					break;
+				}
 			}
 		}
 

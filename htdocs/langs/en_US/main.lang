@@ -545,6 +545,7 @@ Reportings=Reporting
 Draft=Draft
 Drafts=Drafts
 StatusInterInvoiced=Invoiced
+Done=Done
 Validated=Validated
 ValidatedToProduce=Validated (To produce)
 Opened=Open
