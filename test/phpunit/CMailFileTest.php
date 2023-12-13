@@ -26,9 +26,9 @@
 global $conf, $user, $langs, $db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/core/class/CMailFile.class.php';
-require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
+require_once dirname(__FILE__) . '/../../htdocs/master.inc.php';
+require_once dirname(__FILE__) . '/../../htdocs/core/class/CMailFile.class.php';
+require_once dirname(__FILE__) . '/../../htdocs/core/lib/files.lib.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -229,7 +229,7 @@ class CMailFileTest extends PHPUnit\Framework\TestCase
 		$msg .= '</body></html>';
 
 
-		$localobject = new CMailFile('Test', 'test@test.com', 'from@from.com', $msg, array(), array(), array(), '', '', 0, -1,'','','','','standard','','/tmp');
+		$localobject = new CMailFile('Test', 'test@test.com', 'from@from.com', $msg, array(), array(), array(), '', '', 0, -1, '', '', '', '', 'standard', '', '/tmp');
 
 		$result = count($localobject->html_images);
 		print __METHOD__ . " result count image detected in the mail=" . $result . "\n";
@@ -238,28 +238,26 @@ class CMailFileTest extends PHPUnit\Framework\TestCase
 
 		foreach ($localobject->html_images as $i => $val)
 			if ($localobject->html_images[$i]) {
-				if ($localobject->html_images[$i]['type'] == 'cidfromdata') {
-					if (preg_match('/img250x20\.png/i',$localobject->html_images[$i]['fullpath'])) {
-						print __METHOD__ . " content type must be image png =" . $localobject->html_images[$i]['content_type'] . "\n";
-						$this->assertEquals($localobject->html_images[$i]['content_type'], 'image/png');
+				if (preg_match('/img250x20\.png/i', $localobject->html_images[$i]['fullpath'])) {
+					print __METHOD__ . " content type must be image png =" . $localobject->html_images[$i]['content_type'] . "\n";
+					$this->assertEquals($localobject->html_images[$i]['content_type'], 'image/png');
 
-						print __METHOD__ . " type must be cidfromurl =" . $localobject->html_images[$i]['type'] . "\n";
-						$this->assertEquals($localobject->html_images[$i]['type'], 'cidfromurl');
+					print __METHOD__ . " type must be cidfromurl =" . $localobject->html_images[$i]['type'] . "\n";
+					$this->assertEquals($localobject->html_images[$i]['type'], 'cidfromurl');
 
-						$fileSize=9744;
-						print __METHOD__ . " File size must be =" . $fileSize . "\n";
-						$this->assertEquals(dol_filesize($localobject->html_images[$i]['fullpath']), $fileSize);
-					} elseif (preg_match('/\.png/i',$localobject->html_images[$i]['fullpath'])) {
-						print __METHOD__ . " content type must be image png =" . $localobject->html_images[$i]['content_type'] . "\n";
-						$this->assertEquals($localobject->html_images[$i]['content_type'], 'image/png');
+					$fileSize = 9744;
+					print __METHOD__ . " File size must be =" . $fileSize . "\n";
+					$this->assertEquals(dol_filesize($localobject->html_images[$i]['fullpath']), $fileSize);
+				} elseif (preg_match('/\.png/i', $localobject->html_images[$i]['fullpath'])) {
+					print __METHOD__ . " content type must be image png =" . $localobject->html_images[$i]['content_type'] . "\n";
+					$this->assertEquals($localobject->html_images[$i]['content_type'], 'image/png');
 
-						print __METHOD__ . " type must be cidfromdata =" . $localobject->html_images[$i]['type'] . "\n";
-						$this->assertEquals($localobject->html_images[$i]['type'], 'cidfromdata');
+					print __METHOD__ . " type must be cidfromdata =" . $localobject->html_images[$i]['type'] . "\n";
+					$this->assertEquals($localobject->html_images[$i]['type'], 'cidfromdata');
 
-						$fileSize=85;
-						print __METHOD__ . " File size must be =" . $fileSize . "\n";
-						$this->assertEquals(dol_filesize($localobject->html_images[$i]['fullpath']), $fileSize);
-					}
+					$fileSize = 85;
+					print __METHOD__ . " File size must be =" . $fileSize . "\n";
+					$this->assertEquals(dol_filesize($localobject->html_images[$i]['fullpath']), $fileSize);
 				}
 			}
 
