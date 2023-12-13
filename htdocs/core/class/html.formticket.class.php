@@ -135,7 +135,7 @@ class FormTicket
 
 		$this->action = 'add';
 
-		$this->withcompany = isModEnabled("societe");
+		$this->withcompany = !getDolGlobalInt("TICKETS_NO_COMPANY_ON_FORM") && isModEnabled("societe");
 		$this->withfromsocid = 0;
 		$this->withfromcontactid = 0;
 		$this->withreadid=0;
