@@ -3328,9 +3328,9 @@ if ($action == 'create') {
 
 			// Date
 			print '<tr><td>';
-			print $form->editfieldkey("DateInvoice", 'datef', $object->datep, $object, $form_permission, 'datepicker');
+			print $form->editfieldkey("DateInvoice", 'datef', $object->date, $object, $form_permission, 'datepicker');
 			print '</td><td colspan="3">';
-			print $form->editfieldval("Date", 'datef', $object->datep, $object, $form_permission, 'datepicker');
+			print $form->editfieldval("Date", 'datef', $object->date, $object, $form_permission, 'datepicker');
 			print '</td>';
 
 			// Default terms of the settlement
