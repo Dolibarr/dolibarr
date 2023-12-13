@@ -2720,7 +2720,7 @@ class Propal extends CommonObject
 				}
 			}
 
-			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE') && !getDolGlobalInt('PROPAL_DISABLE_AUTOUPDATE_ON_CLOSE')) {
 				// Define output language
 				$outputlangs = $langs;
 				if (getDolGlobalInt('MAIN_MULTILANGS')) {
