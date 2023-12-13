@@ -1818,7 +1818,8 @@ abstract class CommonInvoice extends CommonObject
 	}
 	
 	/**
-	 *	Delete lines (or dec qty) of an invoice src object if lines are already billed.
+	 *	Delete lines (or dec qty) of an invoice src object (propal, order) if lines are already billed.
+	 *  @see compta/facture/card.php
 	 *	called to avoid billing several times the same order lines
 	 *	only works with lines of products or services
 	 *
@@ -1828,7 +1829,8 @@ abstract class CommonInvoice extends CommonObject
 	public function srcObjDelBilledLines(&$objectsrc)
 	{
 		// doesnt work with "free lines", it seems to be to dangerous
-		if (isModEnabled("product")) {
+		// and only on standard invoices (no on credit, nor situation, nor replacement)
+		if (isModEnabled("product") && $this->type == $this::TYPE_STANDARD) {
 			$objectsrc->fetchObjectLinked();
 			if (is_array($objectsrc->linkedObjects) && is_array($objectsrc->linkedObjects[$this->element]))	{
 				foreach ($objectsrc->linkedObjects[$this->element] as $facture_ex) {
