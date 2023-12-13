@@ -1816,7 +1816,8 @@ abstract class CommonInvoice extends CommonObject
 	public function srcObjDelBilledLines(&$objectsrc)
 	{
 		// doesnt work with "free lines", it seems to be to dangerous
-		if (isModEnabled("product")) {
+		// and only on standard invoices (no on credit, nor situation, nor replacement)
+		if (isModEnabled("product") && $this->type == $this::TYPE_STANDARD) {
 			$objectsrc->fetchObjectLinked();
 			if (is_array($objectsrc->linkedObjects) && is_array($objectsrc->linkedObjects[$this->element]))	{
 				foreach ($objectsrc->linkedObjects[$this->element] as $facture_ex) {

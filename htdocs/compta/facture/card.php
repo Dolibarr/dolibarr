@@ -4076,13 +4076,9 @@ if ($action == 'create') {
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
-		if ($object->type == $object::TYPE_STANDARD) { // other types can drive to hazardous things
-			$objectsrc2 = clone $objectsrc; // src object cloned in case it'll be used later
-			$object->srcObjDelBilledLines($objectsrc2);
-			$objectsrc2->printOriginLinesList('', $selectedLines);
-		} else {
-			$objectsrc->printOriginLinesList('', $selectedLines);
-		}
+		$objectsrc2 = clone $objectsrc; // src object cloned in case it'll be used later
+		$object->srcObjDelBilledLines($objectsrc2);
+		$objectsrc2->printOriginLinesList('', $selectedLines);
 		print '</table>';
 		print '</div>';
 	}
