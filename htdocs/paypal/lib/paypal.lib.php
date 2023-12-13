@@ -556,7 +556,7 @@ function hash_call($methodName, $nvpStr)
 		$_SESSION['curl_error_no'] = curl_errno($ch);
 		$_SESSION['curl_error_msg'] = curl_error($ch);
 
-	//Execute the Error handling module to display errors.
+		//Execute the Error handling module to display errors.
 	} else {
 		//closing the curl
 		curl_close($ch);

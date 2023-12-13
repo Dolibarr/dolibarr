@@ -244,7 +244,7 @@ if (empty($reshook) && $action == 'add') {
 					$urlback = $backtopage;
 				} elseif (getDolGlobalString('MEMBER_URL_REDIRECT_SUBSCRIPTION')) {
 					$urlback = $conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION;
-				// TODO Make replacement of __AMOUNT__, etc...
+					// TODO Make replacement of __AMOUNT__, etc...
 				} else {
 					$urlback = $_SERVER["PHP_SELF"] . "?action=added&token=" . newToken();
 				}

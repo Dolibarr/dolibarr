@@ -2816,7 +2816,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					print '<td class="right">' . convertSecondToTime($totalarray['totalduration'], 'allhourmin') . '</td>';
 				} elseif (isset($totalarray['totalvaluefield']) && $totalarray['totalvaluefield'] == $i) {
 					print '<td class="right">' . price($totalarray['totalvalue']) . '</td>';
-				//} elseif ($totalarray['totalvaluebilledfield'] == $i) { print '<td class="center">'.price($totalarray['totalvaluebilled']).'</td>';
+					//} elseif ($totalarray['totalvaluebilledfield'] == $i) { print '<td class="center">'.price($totalarray['totalvaluebilled']).'</td>';
 				} else {
 					print '<td></td>';
 				}

@@ -132,7 +132,7 @@ if ($action == 'add_currency') {
 	if (GETPOSTISSET('modify_apilayer')) {
 		dolibarr_set_const($db, 'MULTICURRENCY_APP_ID', GETPOST('MULTICURRENCY_APP_ID', 'alpha'));
 		dolibarr_set_const($db, 'MULTICURRENCY_APP_SOURCE', GETPOST('MULTICURRENCY_APP_SOURCE', 'alpha'));
-	//dolibarr_set_const($db, 'MULTICURRENCY_ALTERNATE_SOURCE', GETPOST('MULTICURRENCY_ALTERNATE_SOURCE', 'alpha'));
+		//dolibarr_set_const($db, 'MULTICURRENCY_ALTERNATE_SOURCE', GETPOST('MULTICURRENCY_ALTERNATE_SOURCE', 'alpha'));
 	} else {
 		$multiurrency = new MultiCurrency($db);
 		$result = $multiurrency->syncRates(getDolGlobalString('MULTICURRENCY_APP_ID'));

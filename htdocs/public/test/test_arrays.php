@@ -89,7 +89,7 @@ if (empty($usedolheader)) {
 		*/
 
 		llxHeader('', '', '', '', 0, 0, $arrayjs, $arraycss);
-	}
+}
 
 
 // CONTENT

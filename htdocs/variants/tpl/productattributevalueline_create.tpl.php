@@ -53,8 +53,8 @@ $nolinesbefore = (count($this->lines) == 0 || $forcetoshowtitlelines);
 	?>
 	<td class="nobottom linecolref">
 		<?php $coldisplay++; if ($nolinesbefore) {
-		echo $langs->trans('Ref') . ': ';
-	} ?>
+			echo $langs->trans('Ref') . ': ';
+		} ?>
 		<input type="text" name="line_ref" id="line_ref" class="flat" value="<?php echo(GETPOSTISSET("line_ref") ? GETPOST("line_ref", 'alpha', 2) : ''); ?>" autofocus>
 		<?php
 		if (is_object($hookmanager)) {

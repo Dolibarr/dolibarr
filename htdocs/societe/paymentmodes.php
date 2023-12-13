@@ -707,7 +707,7 @@ if (empty($reshook)) {
 
 			if (empty($newsup)) {
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE fk_soc = ".$object->id." AND service = '".$db->escape($tmpservice)."' AND entity = ".$conf->entity;
-			// TODO Add site and site_account on oauth_token table
+				// TODO Add site and site_account on oauth_token table
 				//$sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE site = 'stripe' AND (site_account IS NULL or site_account = '".$db->escape($site_account)."') AND fk_soc = ".((int) $object->id)." AND service = '".$db->escape($service)."' AND entity = ".$conf->entity;
 			} else {
 				try {

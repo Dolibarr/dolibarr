@@ -555,7 +555,7 @@ $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."c_stcomm as st ON s.fk_stcomm = st.id";
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale == -2) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
-//elseif ($search_sale || (empty($user->rights->societe->client->voir) && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->societe->client->readallthirdparties_advance)) && !$socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	//elseif ($search_sale || (empty($user->rights->societe->client->voir) && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->societe->client->readallthirdparties_advance)) && !$socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 } elseif (!empty($search_sale) && $search_sale != '-1' || (!$user->hasRight('societe', 'client', 'voir') && !$socid)) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }

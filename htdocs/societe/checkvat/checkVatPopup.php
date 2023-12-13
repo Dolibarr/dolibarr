@@ -118,7 +118,7 @@ if (!$vatNumber) {
 		}
 		print $langs->trans("VATIntraSyntaxIsValid").': <span class="error">'.$langs->trans("No").'</span> (Might be a non europeen VAT)<br>';
 		print $langs->trans("ValueIsValid").': <span class="error">'.$langs->trans("No").'</span> (Might be a non europeen VAT)<br>';
-	//$messagetoshow=$soapclient->response;
+		//$messagetoshow=$soapclient->response;
 	} else {
 		// Syntaxe ok
 		if ($result['requestDate']) {

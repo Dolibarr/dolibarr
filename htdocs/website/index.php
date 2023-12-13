@@ -5140,22 +5140,22 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 
 		print $out;
 
-	/*file_put_contents($filetpl, $out);
-	dolChmod($filetpl);
+		/*file_put_contents($filetpl, $out);
+		dolChmod($filetpl);
 
-	// Output file on browser
-	dol_syslog("index.php include $filetpl $filename content-type=$type");
-	$original_file_osencoded=dol_osencode($filetpl);    // New file name encoded in OS encoding charset
+		// Output file on browser
+		dol_syslog("index.php include $filetpl $filename content-type=$type");
+		$original_file_osencoded=dol_osencode($filetpl);    // New file name encoded in OS encoding charset
 
-	// This test if file exists should be useless. We keep it to find bug more easily
-	if (! file_exists($original_file_osencoded))
-	{
-	dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file));
-	exit;
-	}
+		// This test if file exists should be useless. We keep it to find bug more easily
+		if (! file_exists($original_file_osencoded))
+		{
+		dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file));
+		exit;
+		}
 
-	//include_once $original_file_osencoded;
-	*/
+		//include_once $original_file_osencoded;
+		*/
 
 		/*print '<iframe class="websiteiframenoborder centpercent" src="'.DOL_URL_ROOT.'/public/website/index.php?website='.$websitekey.'&pageid='.$pageid.'"/>';
 		print '</iframe>';*/

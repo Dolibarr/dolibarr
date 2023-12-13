@@ -3310,7 +3310,7 @@ function migrate_actioncomm_element($db, $langs, $conf)
 			if ($resql) {
 				$db->commit();
 
-			// DDL commands must not be inside a transaction
+				// DDL commands must not be inside a transaction
 				// We will drop at next version because a migrate should be runnable several times if it fails.
 				//$sqlDrop = "ALTER TABLE ".MAIN_DB_PREFIX."actioncomm DROP COLUMN ".$field;
 				//$db->query($sqlDrop);

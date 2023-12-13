@@ -3137,7 +3137,7 @@ if (is_array($listofmodules) && count($listofmodules) > 0) {
 				$urlpage = $page;
 				if ($i++) {
 					$linktoenabledisable .= ' <a href="'.$urlpage.'" title="'.$langs->trans($page).'">'.img_picto(ucfirst($page), "setup").'</a>';
-				//    print '<a href="'.$page.'">'.ucfirst($page).'</a>&nbsp;';
+					//    print '<a href="'.$page.'">'.ucfirst($page).'</a>&nbsp;';
 				} else {
 					if (preg_match('/^([^@]+)@([^@]+)$/i', $urlpage, $regs)) {
 						$urltouse = dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1);
@@ -3913,7 +3913,7 @@ if ($module == 'initmodule') {
 						*/
 						print '</datalist>';
 						print '</td>';
-					//} elseif ($key == 'propvalidate') {
+						//} elseif ($key == 'propvalidate') {
 						//	print '<td class="titlefieldcreate">'.$attribute.'</td><td class="valuefieldcreate maxwidth50"><input type="number" step="1" min="0" max="1" class="text maxwidth100" value="'.dol_escape_htmltag(GETPOST($key, 'alpha')).'"></td>';
 					} elseif ($key == 'propvisible') {
 						print '<td class="titlefieldcreate">'.$attribute.'</td><td class="valuefieldcreate"><input class="maxwidth200" type="text" name="'.$key.'" value="'.dol_escape_htmltag(GETPOSTISSET($key) ? GETPOST($key, 'alpha') : "1").'"></td>';
@@ -4933,18 +4933,18 @@ if ($module == 'initmodule') {
 					});
 					</script>';
 
-				/*print '<br>';
-				print '<br>';
-				print '<br>';
-				print '<span class="opacitymedium">'.$langs->trans("or").'</span>';
-				print '<br>';
-				print '<br>';
-				//print '<input type="checkbox" name="initfromtablecheck"> ';
-				print $langs->trans("InitStructureFromExistingTable");
-				print '<input type="text" name="initfromtablename" value="" placeholder="'.$langs->trans("TableName").'">';
-				print '<input type="submit" class="button smallpaddingimp" name="createtablearray" value="'.dol_escape_htmltag($langs->trans("GenerateCode")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
-				print '<br>';
-				*/
+					/*print '<br>';
+					print '<br>';
+					print '<br>';
+					print '<span class="opacitymedium">'.$langs->trans("or").'</span>';
+					print '<br>';
+					print '<br>';
+					//print '<input type="checkbox" name="initfromtablecheck"> ';
+					print $langs->trans("InitStructureFromExistingTable");
+					print '<input type="text" name="initfromtablename" value="" placeholder="'.$langs->trans("TableName").'">';
+					print '<input type="submit" class="button smallpaddingimp" name="createtablearray" value="'.dol_escape_htmltag($langs->trans("GenerateCode")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
+					print '<br>';
+					*/
 				} elseif ($tabdic == 'deletedictionary') {
 					// Delete dic tab
 					print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -5394,7 +5394,7 @@ if ($module == 'initmodule') {
 				});
 				</script>';
 
-			// display permissions for each object
+				// display permissions for each object
 			} else {
 				$fullpathoffile = dol_buildpath($file, 0);
 

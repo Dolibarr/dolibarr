@@ -131,7 +131,7 @@ if (!function_exists("session_id")) {
 if (!extension_loaded("mbstring")) {
 	$langs->load("errors");
 	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "MBString")."<br>\n";
-// $checksok = 0; // If ko, just warning. So check must still be 1 (otherwise no way to install)
+	// $checksok = 0; // If ko, just warning. So check must still be 1 (otherwise no way to install)
 } else {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "MBString")."<br>\n";
 }
@@ -140,7 +140,7 @@ if (!extension_loaded("mbstring")) {
 if (!extension_loaded("json")) {
 	$langs->load("errors");
 	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "JSON")."<br>\n";
-// $checksok = 0; // If ko, just warning. So check must still be 1 (otherwise no way to install)
+	// $checksok = 0; // If ko, just warning. So check must still be 1 (otherwise no way to install)
 } else {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "JSON")."<br>\n";
 }
@@ -149,7 +149,7 @@ if (!extension_loaded("json")) {
 if (!function_exists("imagecreate")) {
 	$langs->load("errors");
 	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "GD")."<br>\n";
-// $checksok = 0;       // If ko, just warning. So check must still be 1 (otherwise no way to install)
+	// $checksok = 0;       // If ko, just warning. So check must still be 1 (otherwise no way to install)
 } else {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "GD")."<br>\n";
 }
@@ -158,7 +158,7 @@ if (!function_exists("imagecreate")) {
 if (!function_exists("curl_init")) {
 	$langs->load("errors");
 	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "Curl")."<br>\n";
-// $checksok = 0;       // If ko, just warning. So check must still be 1 (otherwise no way to install)
+	// $checksok = 0;       // If ko, just warning. So check must still be 1 (otherwise no way to install)
 } else {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "Curl")."<br>\n";
 }
@@ -174,7 +174,7 @@ if (!function_exists("easter_date")) {
 if (!function_exists("simplexml_load_string")) {
 	$langs->load("errors");
 	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "Xml")."<br>\n";
-// $checksok = 0;       // If ko, just warning. So check must still be 1 (otherwise no way to install)
+	// $checksok = 0;       // If ko, just warning. So check must still be 1 (otherwise no way to install)
 } else {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "Xml")."<br>\n";
 }
@@ -183,7 +183,7 @@ if (!function_exists("simplexml_load_string")) {
 if (!function_exists("utf8_encode")) {
 	$langs->load("errors");
 	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "UTF8")."<br>\n";
-// $checksok = 0; // If ko, just warning. So check must still be 1 (otherwise no way to install)
+	// $checksok = 0; // If ko, just warning. So check must still be 1 (otherwise no way to install)
 } else {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "UTF8")."<br>\n";
 }
@@ -193,7 +193,7 @@ if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@loc
 	if (!function_exists("locale_get_primary_language") || !function_exists("locale_get_region")) {
 		$langs->load("errors");
 		print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "Intl")."<br>\n";
-	// $checksok = 0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
+		// $checksok = 0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
 	} else {
 		print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "Intl")."<br>\n";
 	}
@@ -203,7 +203,7 @@ if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@loc
 if (!function_exists("imap_open")) {
 	$langs->load("errors");
 	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "IMAP")."<br>\n";
-// $checksok = 0;       // If ko, just warning. So check must still be 1 (otherwise no way to install)
+	// $checksok = 0;       // If ko, just warning. So check must still be 1 (otherwise no way to install)
 } else {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "IMAP")."<br>\n";
 }
@@ -212,7 +212,7 @@ if (!function_exists("imap_open")) {
 if (!class_exists('ZipArchive')) {
 	$langs->load("errors");
 	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "ZIP")."<br>\n";
-// $checksok = 0;       // If ko, just warning. So check must still be 1 (otherwise no way to install)
+	// $checksok = 0;       // If ko, just warning. So check must still be 1 (otherwise no way to install)
 } else {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "ZIP")."<br>\n";
 }

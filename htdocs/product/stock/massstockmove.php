@@ -247,7 +247,7 @@ if ($action == 'createmovements' && $user->hasRight('stock', 'mouvement', 'creer
 						$firstrecord = array_shift($arraybatchinfo);
 						$dlc = $firstrecord['eatby'];
 						$dluo = $firstrecord['sellby'];
-					//var_dump($batch);
+						//var_dump($batch);
 						//var_dump($arraybatchinfo);
 						//var_dump($firstrecord);
 						//var_dump($dlc);

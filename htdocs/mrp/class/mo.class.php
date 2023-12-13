@@ -1767,7 +1767,7 @@ class Mo extends CommonObject
 			$productstatic->fetch($line->fk_product);
 			$productstatic->load_virtual_stock();
 			$this->tpl['label'] .= $productstatic->getNomUrl(1);
-		//$this->tpl['label'].= ' - '.$productstatic->label;
+			//$this->tpl['label'].= ' - '.$productstatic->label;
 		} else {
 			// If origin MRP line is not a product, but another MRP
 			// TODO

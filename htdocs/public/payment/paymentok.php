@@ -1867,7 +1867,7 @@ if ($ispaymentok) {
 		$result = $mailfile->sendfile();
 		if ($result) {
 			dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
-		//dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0);
+			//dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0);
 		} else {
 			dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
 			//dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0);

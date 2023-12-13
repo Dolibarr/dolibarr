@@ -518,7 +518,7 @@ if (!empty($id) || !empty($ref)) {
 				$listofvariantselected .= '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
 			}
 			$listofvariantselected .= '</div>';
-		//print dol_get_fiche_end();
+			//print dol_get_fiche_end();
 		} else {
 			$title = $langs->trans('EditProductCombination');
 		}
@@ -654,12 +654,12 @@ if (!empty($id) || !empty($ref)) {
 					</select>
 					<?php
 					$htmltext = $langs->trans("GoOnMenuToCreateVairants", $langs->transnoentities("Product"), $langs->transnoentities("VariantAttributes"));
-			print $form->textwithpicto('', $htmltext);
-			/*
-			print ' &nbsp; &nbsp; <a href="'.DOL_URL_ROOT.'/variants/create.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=add&token='.newToken().'&id='.$object->id).'">';
-			print $langs->trans("Create");
-			print '</a>';
-			*/ ?>
+					print $form->textwithpicto('', $htmltext);
+					/*
+					print ' &nbsp; &nbsp; <a href="'.DOL_URL_ROOT.'/variants/create.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=add&token='.newToken().'&id='.$object->id).'">';
+					print $langs->trans("Create");
+					print '</a>';
+					*/ ?>
 				</td>
 			</tr>
 			<tr>
@@ -778,7 +778,7 @@ if (!empty($id) || !empty($ref)) {
 		<div style="text-align: center">
 		<input type="submit" name="create" <?php if (!is_array($productCombination2ValuePairs1)) {
 			print ' disabled="disabled"';
-		} ?> value="<?php echo $action == 'add' ? $langs->trans('Create') : $langs->trans("Save") ?>" class="button button-save">
+										   } ?> value="<?php echo $action == 'add' ? $langs->trans('Create') : $langs->trans("Save") ?>" class="button button-save">
 		&nbsp;
 		<input type="submit" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>" class="button button-cancel">
 		</div>

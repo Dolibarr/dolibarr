@@ -2321,7 +2321,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '<td>'.$form->editfieldkey('Employee', 'employee', '', $object, 0).'</td><td>';
 			if ($caneditfield) {
 				print '<input type="checkbox" name="employee" value="1"'.($object->employee ? ' checked="checked"' : '').'>';
-			//print $form->selectyesno("employee", $object->employee, 1);
+				//print $form->selectyesno("employee", $object->employee, 1);
 			} else {
 				print '<input type="checkbox" name="employee" disabled value="1"'.($object->employee ? ' checked="checked"' : '').'>';
 				/*if ($object->employee) {

@@ -2494,7 +2494,7 @@ class Project extends CommonObject
 			$return .= '<br>';
 			if ($this->public) {
 				$return .= img_picto($langs->trans('Visibility').': '.$langs->trans('SharedProject'), 'world', 'class="paddingrightonly valignmiddle"');
-			//print $langs->trans('SharedProject');
+				//print $langs->trans('SharedProject');
 			} else {
 				$return .= img_picto($langs->trans('Visibility').': '.$langs->trans('PrivateProject'), 'private', 'class="paddingrightonly valignmiddle"');
 				//print $langs->trans('PrivateProject');

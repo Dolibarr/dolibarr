@@ -397,7 +397,7 @@ if (empty($reshook) && $action == 'add') {
 					$urlback = $backtopage;
 				} elseif (getDolGlobalString('PROJECT_URL_REDIRECT_LEAD')) {
 					$urlback = $conf->global->PROJECT_URL_REDIRECT_LEAD;
-				// TODO Make replacement of __AMOUNT__, etc...
+					// TODO Make replacement of __AMOUNT__, etc...
 				} else {
 					$urlback = $_SERVER["PHP_SELF"]."?action=added&token=".newToken();
 				}

@@ -560,7 +560,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						$morehtml .= '<br>'.imap_last_error();
 					}
 					dol_syslog("Error ".$morehtml, LOG_WARNING);
-				//var_dump(imap_errors())
+					//var_dump(imap_errors())
 				} else {
 					dol_syslog("Imap connected. Now we call imap_num_msg()");
 					$morehtml .= imap_num_msg($connection);

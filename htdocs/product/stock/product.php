@@ -1356,15 +1356,15 @@ if (!$variants || getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PA
 						<?php
 
 						$productCombination2ValuePairs = $comb2val->fetchByFkCombination($currcomb->id);
-				$iMax = count($productCombination2ValuePairs);
+						$iMax = count($productCombination2ValuePairs);
 
-				for ($i = 0; $i < $iMax; $i++) {
-					echo dol_htmlentities($productCombination2ValuePairs[$i]);
+						for ($i = 0; $i < $iMax; $i++) {
+							echo dol_htmlentities($productCombination2ValuePairs[$i]);
 
-					if ($i !== ($iMax - 1)) {
-						echo ', ';
-					}
-				} ?>
+							if ($i !== ($iMax - 1)) {
+								echo ', ';
+							}
+						} ?>
 					</td>
 					<td style="text-align: center;"><?php echo $prodstatic->getLibStatut(2, 0) ?></td>
 					<td style="text-align: center;"><?php echo $prodstatic->getLibStatut(2, 1) ?></td>
