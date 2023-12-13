@@ -4535,6 +4535,9 @@ abstract class CommonObject
 		if ($elementTable == 'commande_fournisseur_dispatch') {
 			$fieldstatus = "status";
 		}
+		if ($elementTable == 'prelevement_bons') {
+			$fieldstatus = "statut";
+		}
 		if (isset($this->fields) && is_array($this->fields) && array_key_exists('status', $this->fields)) {
 			$fieldstatus = 'status';
 		}

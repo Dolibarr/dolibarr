@@ -602,6 +602,7 @@ class BonPrelevement extends CommonObject
 			if ($error == 0) {
 				$this->date_credit = $date;
 				$this->statut = self::STATUS_CREDITED;
+				$this->status = self::STATUS_CREDITED;
 
 				$this->db->commit();
 				return 0;
@@ -639,7 +640,7 @@ class BonPrelevement extends CommonObject
 			$sql .= " , statut = ".self::STATUS_TRANSFERED;
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			$sql .= " AND entity = ".((int) $conf->entity);
-			$sql .= " AND statut = 0";
+			$sql .= " AND statut = ".self::STATUS_DRAFT;
 
 			if ($this->db->query($sql)) {
 				$this->method_trans = $method;
@@ -655,8 +656,10 @@ class BonPrelevement extends CommonObject
 
 			if ($error == 0) {
 				$this->date_trans = $date;
-				$this->statut = 1;
+				$this->statut = self::STATUS_TRANSFERED;
+				$this->status = self::STATUS_TRANSFERED;
 				$this->user_trans = $user->id;
+
 				$this->db->commit();
 
 				return 0;
