@@ -189,6 +189,13 @@ print "<!-- BEGIN PHP TEMPLATE objectline_title.tpl.php -->\n";
 // Title line
 print "<thead>\n";
 print '<tr class="liste_titre nodrag nodrop">';
+$parameters = array(
+	'arrayofth' => &$arrayofthfields,
+);
+$reshook = $hookmanager->executeHooks('objectlineTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 // th fields
 print implode("\n", $arrayofthfields);
