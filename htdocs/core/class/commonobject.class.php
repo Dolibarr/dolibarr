@@ -6918,15 +6918,11 @@ abstract class CommonObject
 				case 'datetime':
 					if (empty($this->array_options["options_".$key])) {
 						$this->array_options["options_".$key] = null;
-					} else {
-						$this->array_options["options_".$key] = $this->db->idate($this->array_options["options_".$key]);
 					}
 					break;
 				case 'datetimegmt':
 					if (empty($this->array_options["options_".$key])) {
 						$this->array_options["options_".$key] = null;
-					} else {
-						$this->array_options["options_".$key] = $this->db->idate($this->array_options["options_".$key], 'gmt');
 					}
 					break;
 				case 'boolean':
@@ -7051,7 +7047,7 @@ abstract class CommonObject
 	 */
 	public function updateExtraLanguages($key, $trigger = null, $userused = null)
 	{
-		global $conf, $langs, $user;
+		global $user;
 
 		if (empty($userused)) {
 			$userused = $user;
