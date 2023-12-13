@@ -228,7 +228,7 @@ class SupplierInvoices extends DolibarrApi
 		}
 
 		if ($this->invoice->create(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500, "Error creating order", array_merge(array($this->invoice->error), $this->invoice->errors));
+			throw new RestException(500, "Error creating invoice ", array_merge(array($this->invoice->error), $this->invoice->errors));
 		}
 		return $this->invoice->id;
 	}
