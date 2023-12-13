@@ -276,7 +276,7 @@ class CMailFile
 				$resultImageData = $this->findHtmlImagesIsSrcData($upload_dir_tmp);
 				if ($resultImageData<0) {
 					dol_syslog("CMailFile::CMailfile: Error on findHtmlImagesInSrcData");
-					$this->error = 'ErrorInAddAttachementsImageBAseOnMedia';
+					$this->error = 'ErrorInAddAttachementsImageBaseOnMedia';
 					return;
 				}
 				$findimg += $resultImageData;
