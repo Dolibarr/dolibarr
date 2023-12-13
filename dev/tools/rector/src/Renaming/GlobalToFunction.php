@@ -101,11 +101,14 @@ class GlobalToFunction extends AbstractRector
 
 		if ($node instanceof FuncCall) {
 			$tmpfunctionname = $this->getName($node);
-			if (in_array($tmpfunctionname, array('dol_escape_htmltag'))) {
-				$nbofparam = count($node->getArgs());
-				if ($nbofparam == 1) {
-					$args = $node->getArgs();
-					foreach ($args as $arg) {	// only 1 element in this array
+			if (in_array($tmpfunctionname, array('dol_escape_htmltag', 'make_substitutions', 'min', 'max'))) {
+				$args = $node->getArgs();
+				$nbofparam = count($args);
+
+				if ($nbofparam >= 1) {
+					$tmpargs = $args;
+					foreach ($args as $key => $arg) {	// only 1 element in this array
+						//var_dump($key);
 						//var_dump($arg->value);exit;
 						if ($this->isGlobalVar($arg->value)) {
 							$constName = $this->getConstName($arg->value);
@@ -113,7 +116,10 @@ class GlobalToFunction extends AbstractRector
 								return;
 							}
 							$a = new FuncCall(new Name('getDolGlobalString'), [new Arg($constName)]);
-							return new FuncCall(new Name($tmpfunctionname), [new Arg($a)]);
+							$tmpargs[$key] = new Arg($a);
+
+							$r = new FuncCall(new Name($tmpfunctionname), $tmpargs);
+							return $r;
 						}
 					}
 				}
