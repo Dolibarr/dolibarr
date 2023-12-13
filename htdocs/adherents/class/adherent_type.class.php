@@ -868,7 +868,7 @@ class AdherentType extends CommonObject
 		$info = array();
 
 		// Object classes
-		$info["objectclass"] = explode(',', $conf->global->LDAP_MEMBER_TYPE_OBJECT_CLASS);
+		$info["objectclass"] = explode(',', getDolGlobalString('LDAP_MEMBER_TYPE_OBJECT_CLASS'));
 
 		if (empty($this->note_public) && !empty($this->note)) {		// For backward compatibility
 			$this->note_public = $this->note;

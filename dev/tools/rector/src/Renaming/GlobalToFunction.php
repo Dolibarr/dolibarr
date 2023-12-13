@@ -25,6 +25,7 @@ use PhpParser\Node\Expr\BinaryOp\Greater;
 use PhpParser\Node\Expr\BinaryOp\GreaterOrEqual;
 use PhpParser\Node\Expr\BinaryOp\Smaller;
 use PhpParser\Node\Expr\BinaryOp\SmallerOrEqual;
+use PhpParser\Node\Expr\BinaryOp\NotIdentical;
 
 /**
  * Class with Rector custom rule to fix code
@@ -70,7 +71,7 @@ class GlobalToFunction extends AbstractRector
 	 */
 	public function getNodeTypes(): array
 	{
-		return [FuncCall::class, Equal::class, Greater::class, GreaterOrEqual::class, Smaller::class, SmallerOrEqual::class, BooleanAnd::class, Concat::class, ArrayDimFetch::class];
+		return [FuncCall::class, Equal::class, Greater::class, GreaterOrEqual::class, Smaller::class, SmallerOrEqual::class, NotIdentical::class, BooleanAnd::class, Concat::class, ArrayDimFetch::class];
 	}
 
 	/**
@@ -101,7 +102,7 @@ class GlobalToFunction extends AbstractRector
 
 		if ($node instanceof FuncCall) {
 			$tmpfunctionname = $this->getName($node);
-			if (in_array($tmpfunctionname, array('dol_escape_htmltag', 'make_substitutions', 'min', 'max'))) {
+			if (in_array($tmpfunctionname, array('dol_escape_htmltag', 'make_substitutions', 'min', 'max', 'explode'))) {
 				$args = $node->getArgs();
 				$nbofparam = count($args);
 
@@ -126,6 +127,7 @@ class GlobalToFunction extends AbstractRector
 			}
 			return $node;
 		}
+
 		if ($node instanceof Concat) {
 			if ($this->isGlobalVar($node->left)) {
 				$constName = $this->getConstName($node->left);
@@ -154,6 +156,7 @@ class GlobalToFunction extends AbstractRector
 			}
 			return new Concat($leftConcat, $rightConcat);
 		}
+
 		if ($node instanceof BooleanAnd) {
 			$nodes = $this->resolveTwoNodeMatch($node);
 			if (!isset($nodes)) {
@@ -163,6 +166,9 @@ class GlobalToFunction extends AbstractRector
 			/** @var Equal $node */
 			$node = $nodes->getFirstExpr();
 		}
+
+		// Now process all comparison like:
+		// $conf->global->... Operator Value
 
 		$typeofcomparison = '';
 		if ($node instanceof Equal) {
@@ -180,6 +186,10 @@ class GlobalToFunction extends AbstractRector
 		if ($node instanceof SmallerOrEqual) {
 			$typeofcomparison = 'SmallerOrEqual';
 		}
+		if ($node instanceof NotIdentical) {
+			$typeofcomparison = 'NotIdentical';
+			//var_dump($node->left);
+		}
 		if (empty($typeofcomparison)) {
 			return;
 		}
@@ -189,7 +199,8 @@ class GlobalToFunction extends AbstractRector
 		}
 
 		// Test the type after the comparison conf->global->xxx to know the name of function
-		switch ($node->right->getType()) {
+		$typeright = $node->right->getType();
+		switch ($typeright) {
 			case 'Scalar_LNumber':
 				$funcName = 'getDolGlobalInt';
 				break;
@@ -250,6 +261,15 @@ class GlobalToFunction extends AbstractRector
 				$node->right
 			);
 		}
+		if ($typeofcomparison == 'NotIdentical') {
+			return new NotIdentical(
+				new FuncCall(
+					new Name($funcName),
+					[new Arg($constName)]
+					),
+				$node->right
+				);
+		}
 	}
 
 	/**
@@ -262,7 +282,7 @@ class GlobalToFunction extends AbstractRector
 	{
 		return $this->binaryOpManipulator->matchFirstAndSecondConditionNode(
 			$booleanAnd,
-			// $conf->global == $value
+			// Function to check if we are in the case $conf->global->... == $value
 			function (Node $node): bool {
 				if (!$node instanceof Equal) {
 					return \false;
