@@ -265,7 +265,7 @@ class CMailFile
 				$findimg = $this->findHtmlImages($dolibarr_main_data_root.'/medias');
 				if ($findimg<0) {
 					dol_syslog("CMailFile::CMailfile: Error on findHtmlImages");
-					$this->error = 'ErrorInAddAttachementsImageBAseOnMedia';
+					$this->error = 'ErrorInAddAttachementsImageBaseOnMedia';
 					return;
 				}
 			}
