@@ -7671,10 +7671,11 @@ class Form
 	 * @param	int				$outputmode			0=HTML select string, 1=Array
 	 * @param	int				$disabled			1=Html component is disabled
 	 * @param	string			$sortfield			Sort field
+	 * @param 	string 			$filter 			Add more filter
 	 * @return	string|array						Return HTML string
 	 * @see selectForForms()
 	 */
-	public function selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $outputmode = 0, $disabled = 0, $sortfield = '')
+	public function selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $outputmode = 0, $disabled = 0, $sortfield = '', $filter = '')
 	{
 		global $conf, $langs, $user, $hookmanager;
 
