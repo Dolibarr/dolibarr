@@ -137,7 +137,7 @@ if ($action == 'setfixednotif' && $user->admin) {
 
 				$newkey = 'NOTIFICATION_FIXEDEMAIL_'.$reg[1].'_THRESHOLD_HIGHER_'.((int) GETPOST($shortkey.'_amount'));
 				$newval = GETPOST($shortkey.'_key');
-				//print $newkey.' - '.$newval.'<br>';
+			//print $newkey.' - '.$newval.'<br>';
 			} elseif (preg_match('/^NOTIF_(.*)_new_key/', $key, $reg)) {
 				// Add a new entry
 				$newkey = 'NOTIFICATION_FIXEDEMAIL_'.$reg[1].'_THRESHOLD_HIGHER_'.((int) GETPOST($shortkey.'_amount'));
@@ -304,7 +304,7 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 		$model = 'expensereport_send';
 	} elseif ($notifiedevent['elementtype'] == 'order_supplier') {
 		$model = 'order_supplier_send';
-		// } elseif ($notifiedevent['elementtype'] == 'invoice_supplier') $model = 'invoice_supplier_send';
+	// } elseif ($notifiedevent['elementtype'] == 'invoice_supplier') $model = 'invoice_supplier_send';
 	} elseif ($notifiedevent['elementtype'] == 'member') {
 		$model = 'member';
 	}

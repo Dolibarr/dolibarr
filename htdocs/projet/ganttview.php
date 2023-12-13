@@ -297,7 +297,7 @@ if (count($tasksarray) > 0) {
 		if ($val->fk_parent != 0 && $task->hasChildren() > 0) {
 			$tasks[$taskcursor]['task_is_group'] = 1;
 			$tasks[$taskcursor]['task_css'] = 'ggroupblack';
-			//$tasks[$taskcursor]['task_css'] = 'gtaskblue';
+		//$tasks[$taskcursor]['task_css'] = 'gtaskblue';
 		} elseif ($task->hasChildren() > 0) {
 			$tasks[$taskcursor]['task_is_group'] = 1;
 			//$tasks[$taskcursor]['task_is_group'] = 0;

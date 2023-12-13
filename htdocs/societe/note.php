@@ -37,7 +37,7 @@ $langs->load("companies");
 
 
 // Get parameters
-$id = GETPOST('id') ?GETPOST('id', 'int') : GETPOST('socid', 'int');
+$id = GETPOST('id') ? GETPOST('id', 'int') : GETPOST('socid', 'int');
 $action = GETPOST('action', 'aZ09');
 
 

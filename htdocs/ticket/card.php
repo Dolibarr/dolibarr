@@ -755,57 +755,57 @@ if ($action == 'create' || $action == 'presend') {
 	$formticket->withcancel = 1;
 
 	$formticket->showForm(1, 'create', 0, null, $action);
-	/*} elseif ($action == 'edit' && $user->rights->ticket->write && $object->status < Ticket::STATUS_CLOSED) {
-	$formticket = new FormTicket($db);
+/*} elseif ($action == 'edit' && $user->rights->ticket->write && $object->status < Ticket::STATUS_CLOSED) {
+$formticket = new FormTicket($db);
 
-	$head = ticket_prepare_head($object);
+$head = ticket_prepare_head($object);
 
-	print '<form method="POST" name="form_ticket" id="form_edit_ticket" action="'.$_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="update">';
-	print '<input type="hidden" name="tack_id" value="'.$object->track_id.'">';
+print '<form method="POST" name="form_ticket" id="form_edit_ticket" action="'.$_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="update">';
+print '<input type="hidden" name="tack_id" value="'.$object->track_id.'">';
 
-	print dol_get_fiche_head($head, 'card', $langs->trans('Ticket'), 0, 'ticket');
+print dol_get_fiche_head($head, 'card', $langs->trans('Ticket'), 0, 'ticket');
 
-	print '<div class="fichecenter2">';
-	print '<table class="border" width="100%">';
+print '<div class="fichecenter2">';
+print '<table class="border" width="100%">';
 
-	// Type
-	print '<tr><td class="titlefield"><span class="fieldrequired"><label for="selecttype_code">'.$langs->trans("TicketTypeRequest").'</span></label></td><td>';
-	$formticket->selectTypesTickets((GETPOSTISSET('type_code') ? GETPOST('type_code') : $object->type_code), 'type_code', '', '2');
-	print '</td></tr>';
+// Type
+print '<tr><td class="titlefield"><span class="fieldrequired"><label for="selecttype_code">'.$langs->trans("TicketTypeRequest").'</span></label></td><td>';
+$formticket->selectTypesTickets((GETPOSTISSET('type_code') ? GETPOST('type_code') : $object->type_code), 'type_code', '', '2');
+print '</td></tr>';
 
-	// Severity
-	print '<tr><td><span class="fieldrequired"><label for="selectseverity_code">'.$langs->trans("TicketSeverity").'</span></label></td><td>';
-	$formticket->selectSeveritiesTickets((GETPOSTISSET('severity_code') ? GETPOST('severity_code') : $object->severity_code), 'severity_code', '', '2');
-	print '</td></tr>';
+// Severity
+print '<tr><td><span class="fieldrequired"><label for="selectseverity_code">'.$langs->trans("TicketSeverity").'</span></label></td><td>';
+$formticket->selectSeveritiesTickets((GETPOSTISSET('severity_code') ? GETPOST('severity_code') : $object->severity_code), 'severity_code', '', '2');
+print '</td></tr>';
 
-	// Group
-	print '<tr><td><span class="fieldrequired"><label for="selectcategory_code">'.$langs->trans("TicketCategory").'</span></label></td><td>';
-	$formticket->selectGroupTickets((GETPOSTISSET('category_code') ? GETPOST('category_code') : $object->category_code), 'category_code', '', '2');
-	print '</td></tr>';
+// Group
+print '<tr><td><span class="fieldrequired"><label for="selectcategory_code">'.$langs->trans("TicketCategory").'</span></label></td><td>';
+$formticket->selectGroupTickets((GETPOSTISSET('category_code') ? GETPOST('category_code') : $object->category_code), 'category_code', '', '2');
+print '</td></tr>';
 
-	// Subject
-	print '<tr><td><label for="subject"><span class="fieldrequired">'.$langs->trans("Subject").'</span></label></td><td>';
-	print '<input class="text minwidth200" id="subject" name="subject" value="'.dol_escape_htmltag(GETPOSTISSET('subject') ? GETPOST('subject', 'alpha') : $object->subject).'" />';
-	print '</td></tr>';
+// Subject
+print '<tr><td><label for="subject"><span class="fieldrequired">'.$langs->trans("Subject").'</span></label></td><td>';
+print '<input class="text minwidth200" id="subject" name="subject" value="'.dol_escape_htmltag(GETPOSTISSET('subject') ? GETPOST('subject', 'alpha') : $object->subject).'" />';
+print '</td></tr>';
 
-	// Other attributes
-	$parameters = array('colspan' => ' colspan="3"', 'colspanvalue' => '3');
-	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
-	if (empty($reshook)) {
-	print $object->showOptionals($extrafields, 'edit');
-	}
+// Other attributes
+$parameters = array('colspan' => ' colspan="3"', 'colspanvalue' => '3');
+$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+if (empty($reshook)) {
+print $object->showOptionals($extrafields, 'edit');
+}
 
-	print '</table>';
-	print '</div>';
+print '</table>';
+print '</div>';
 
-	print dol_get_fiche_end();
+print dol_get_fiche_end();
 
-	print $form->buttonsSaveCancel();
+print $form->buttonsSaveCancel();
 
-	print '</form>'; */
+print '</form>'; */
 } elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'dellink' || $action == 'presend' || $action == 'presend_addmessage' || $action == 'close' || $action == 'abandon' || $action == 'delete' || $action == 'editcustomer' || $action == 'progression' || $action == 'categories' || $action == 'reopen'
 	|| $action== 'edit_contrat' || $action == 'editsubject' || $action == 'edit_extras' || $action == 'update_extras' || $action == 'edit_extrafields' || $action == 'set_extrafields' || $action == 'classify' || $action == 'sel_contract' || $action == 'edit_message_init' || $action == 'set_status' || $action == 'dellink') {
 	if ($res > 0) {

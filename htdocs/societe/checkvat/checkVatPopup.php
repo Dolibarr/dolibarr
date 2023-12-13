@@ -21,7 +21,9 @@
  *		\brief      Popup screen to validate VAT
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');		// Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
+if (! defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1');
+}		// Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
 
 require "../../main.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -116,7 +118,7 @@ if (!$vatNumber) {
 		}
 		print $langs->trans("VATIntraSyntaxIsValid").': <span class="error">'.$langs->trans("No").'</span> (Might be a non europeen VAT)<br>';
 		print $langs->trans("ValueIsValid").': <span class="error">'.$langs->trans("No").'</span> (Might be a non europeen VAT)<br>';
-		//$messagetoshow=$soapclient->response;
+	//$messagetoshow=$soapclient->response;
 	} else {
 		// Syntaxe ok
 		if ($result['requestDate']) {

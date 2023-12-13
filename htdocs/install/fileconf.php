@@ -130,7 +130,7 @@ if (!empty($force_install_message)) {
 
 <table class="nobordernopadding<?php if ($force_install_noedit) {
 	print ' hidewhennoedit';
-							   } ?>">
+} ?>">
 
 	<tr>
 		<td colspan="3" class="label">
@@ -189,7 +189,7 @@ if (!empty($force_install_noedit)) {
 				   value="<?php print $dolibarr_main_data_root ?>"
 <?php if (!empty($force_install_noedit)) {
 			print ' disabled';
-} ?>
+		} ?>
 			>
 		</td>
 		<td class="comment"><?php
@@ -221,7 +221,7 @@ if (!empty($force_install_noedit)) {
 				   value="<?php print $dolibarr_main_url_root; ?> "
 <?php if (!empty($force_install_noedit)) {
 		print ' disabled';
-}
+	}
 ?>
 			>
 		</td>
@@ -244,11 +244,11 @@ if (!empty($force_install_noedit)) {
 							   id="main_force_https"
 							   name="main_force_https"
 				<?php if (!empty($force_install_mainforcehttps)) {
-					print ' checked';
-				} ?>
+			print ' checked';
+		} ?>
 				<?php if ($force_install_noedit == 2 && $force_install_mainforcehttps !== null) {
-					print ' disabled';
-				} ?>
+			print ' disabled';
+		} ?>
 			>
 		</td>
 		<td class="comment"><?php echo $langs->trans("CheckToForceHttps"); ?>
@@ -275,8 +275,8 @@ if (!empty($force_install_noedit)) {
 				   name="db_name"
 				   value="<?php echo (!empty($dolibarr_main_db_name)) ? $dolibarr_main_db_name : ($force_install_database ? $force_install_database : 'dolibarr'); ?>"
 				<?php if ($force_install_noedit == 2 && $force_install_database !== null) {
-					print ' disabled';
-				} ?>
+		print ' disabled';
+	} ?>
 			>
 		</td>
 		<td class="comment"><?php echo $langs->trans("DatabaseName"); ?></td>
@@ -388,8 +388,8 @@ if (!empty($force_install_noedit)) {
 			<select id="db_type"
 					name="db_type"
 				<?php if ($force_install_noedit == 2 && $force_install_type !== null) {
-					print ' disabled';
-				} ?>
+			print ' disabled';
+		} ?>
 			>
 				<?php print $option; ?>
 			</select>
@@ -407,8 +407,8 @@ if (!empty($force_install_noedit)) {
 				   name="db_host"
 				   value="<?php print(!empty($force_install_dbserver) ? $force_install_dbserver : (!empty($dolibarr_main_db_host) ? $dolibarr_main_db_host : 'localhost')); ?>"
 				<?php if ($force_install_noedit == 2 && $force_install_dbserver !== null) {
-					print ' disabled';
-				} ?>
+			print ' disabled';
+		} ?>
 			>
 		</td>
 		<td class="comment"><?php echo $langs->trans("ServerAddressDescription"); ?>
@@ -424,8 +424,8 @@ if (!empty($force_install_noedit)) {
 				   id="db_port"
 				   value="<?php print (!empty($force_install_port)) ? $force_install_port : $dolibarr_main_db_port; ?>"
 				<?php if ($force_install_noedit == 2 && $force_install_port !== null) {
-					print ' disabled';
-				} ?>
+			print ' disabled';
+		} ?>
 			>
 		</td>
 		<td class="comment"><?php echo $langs->trans("ServerPortDescription"); ?>
@@ -441,8 +441,8 @@ if (!empty($force_install_noedit)) {
 				   name="db_prefix"
 				   value="<?php echo(!empty($force_install_prefix) ? $force_install_prefix : (!empty($dolibarr_main_db_prefix) ? $dolibarr_main_db_prefix : 'llx_')); ?>"
 				<?php if ($force_install_noedit == 2 && $force_install_prefix !== null) {
-					print ' disabled';
-				} ?>
+			print ' disabled';
+		} ?>
 			>
 		</td>
 		<td class="comment"><?php echo $langs->trans("DatabasePrefixDescription"); ?></td>
@@ -502,7 +502,7 @@ if (!empty($force_install_noedit)) {
 					?>"
 				<?php if ($force_install_noedit == 2 && $force_install_databasepass !== null) {
 						print ' disabled';
-				} ?>
+					} ?>
 			>
 		</td>
 		<td class="comment"><?php echo $langs->trans("AdminPassword"); ?></td>
@@ -552,8 +552,8 @@ if (!empty($force_install_noedit)) {
 				   class="needroot"
 				   value="<?php print (!empty($force_install_databaserootlogin)) ? $force_install_databaserootlogin : (GETPOSTISSET('db_user_root') ? GETPOST('db_user_root') : (isset($db_user_root) ? $db_user_root : '')); ?>"
 				<?php if ($force_install_noedit > 0 && !empty($force_install_databaserootlogin)) {
-					print ' disabled';
-				} ?>
+		print ' disabled';
+	} ?>
 			>
 		</td>
 		<td class="comment"><?php echo $langs->trans("DatabaseRootLoginDescription"); ?>
@@ -593,7 +593,7 @@ if (!empty($force_install_noedit)) {
 					?>"
 				<?php if ($force_install_noedit > 0 && !empty($force_install_databaserootpass)) {
 						print ' disabled'; /* May be removed by javascript*/
-				} ?>
+					} ?>
 			>
 		</td>
 		<td class="comment"><?php echo $langs->trans("KeepEmptyIfNoPassword"); ?>

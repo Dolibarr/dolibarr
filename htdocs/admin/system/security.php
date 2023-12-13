@@ -313,7 +313,7 @@ print '<br>';
 print '<strong>$dolibarr_main_restrict_ip</strong>: ';
 if (empty($dolibarr_main_restrict_ip)) {
 	print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
-	//print ' <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("IPsOfUsers")).')</span>';
+//print ' <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("IPsOfUsers")).')</span>';
 } else {
 	print $dolibarr_main_restrict_ip;
 }
@@ -332,7 +332,7 @@ if (!getDolGlobalString('SECURITY_DISABLE_TEST_ON_OBFUSCATED_CONF')) {
 	print '<strong>$dolibarr_main_db_pass</strong>: ';
 	if (!empty($dolibarr_main_db_pass) && empty($dolibarr_main_db_encrypted_pass)) {
 		print img_picto('', 'warning').' '.$langs->trans("DatabasePasswordNotObfuscated").' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("SetOptionTo", $langs->transnoentitiesnoconv("MainDbPasswordFileConfEncrypted"), yn(1)).')</span>';
-		//print ' <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("IPsOfUsers")).')</span>';
+	//print ' <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("IPsOfUsers")).')</span>';
 	} else {
 		print img_picto('', 'tick').' '.$langs->trans("DatabasePasswordObfuscated");
 	}
@@ -350,7 +350,7 @@ print '<span class="bold"> -> PHP streams allowed = </span>';
 $arrayofstreams = stream_get_wrappers();
 if (!empty($arrayofstreams)) {
 	sort($arrayofstreams);
-	print (join(',', $arrayofstreams)).' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("TryToKeepOnly", 'file,http,https,php').')</span>'."\n";
+	print(join(',', $arrayofstreams)).' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("TryToKeepOnly", 'file,http,https,php').')</span>'."\n";
 }
 
 print '<br>';

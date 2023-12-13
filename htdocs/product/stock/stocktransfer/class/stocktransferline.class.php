@@ -476,7 +476,7 @@ class StockTransferLine extends CommonObjectLine
 					$firstrecord = array_shift($arraybatchinfo);
 					$dlc = $firstrecord['eatby'];
 					$dluo = $firstrecord['sellby'];
-					//var_dump($batch); var_dump($arraybatchinfo); var_dump($firstrecord); var_dump($dlc); var_dump($dluo); exit;
+				//var_dump($batch); var_dump($arraybatchinfo); var_dump($firstrecord); var_dump($dlc); var_dump($dluo); exit;
 				} else {
 					$dlc = '';
 					$dluo = '';

@@ -2304,7 +2304,7 @@ class Product extends CommonObject
 					$price_min = price2num($newminprice, 'MU');
 					$price_min_ttc = price2num($newminprice) * (1 + ($newvat / 100));
 					$price_min_ttc = price2num($price_min_ttc, 'MU');
-					//print 'X'.$newminprice.'-'.$price_min;
+				//print 'X'.$newminprice.'-'.$price_min;
 				} else {
 					$price_min = 0;
 					$price_min_ttc = 0;
@@ -2688,7 +2688,7 @@ class Product extends CommonObject
 							$this->multiprices_tva_tx[$i] = $result ? $result["tva_tx"].($result ? ' ('.$result['default_vat_code'].')' : '') : null;
 							$this->multiprices_recuperableonly[$i] = $result ? $result["recuperableonly"] : null;
 
-							// Price by quantity
+						// Price by quantity
 							/*
 							 $this->prices_by_qty[$i]=$result["price_by_qty"];
 							 $this->prices_by_qty_id[$i]=$result["rowid"];

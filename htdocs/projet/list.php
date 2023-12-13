@@ -1773,7 +1773,7 @@ while ($i < $imaxinloop) {
 			print '<td class="center">';
 			if ($obj->public) {
 				print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
-				//print $langs->trans('SharedProject');
+			//print $langs->trans('SharedProject');
 			} else {
 				print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
 				//print $langs->trans('PrivateProject');

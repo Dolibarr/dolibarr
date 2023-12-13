@@ -452,7 +452,7 @@ if ($action == "update_extras" && $permissiontoadd) {
 	if (GETPOSTISSET($attributekeylong.'day') && GETPOSTISSET($attributekeylong.'month') && GETPOSTISSET($attributekeylong.'year')) {
 		// This is properties of a date
 		$object->array_options['options_'.$attributekey] = dol_mktime(GETPOST($attributekeylong.'hour', 'int'), GETPOST($attributekeylong.'min', 'int'), GETPOST($attributekeylong.'sec', 'int'), GETPOST($attributekeylong.'month', 'int'), GETPOST($attributekeylong.'day', 'int'), GETPOST($attributekeylong.'year', 'int'));
-		//var_dump(dol_print_date($object->array_options['options_'.$attributekey]));exit;
+	//var_dump(dol_print_date($object->array_options['options_'.$attributekey]));exit;
 	} else {
 		$object->array_options['options_'.$attributekey] = GETPOST($attributekeylong, 'alpha');
 	}

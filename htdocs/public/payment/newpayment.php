@@ -382,7 +382,7 @@ if ($action == 'dopayment') {
 		if (empty($PAYPAL_API_PRICE) || !is_numeric($PAYPAL_API_PRICE)) {
 			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount"));
 			$action = '';
-			// } elseif (empty($EMAIL)) { $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("YourEMail"));
+		// } elseif (empty($EMAIL)) { $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("YourEMail"));
 			// } elseif (! isValidEMail($EMAIL)) { $mesg=$langs->trans("ErrorBadEMail",$EMAIL);
 		} elseif (!$origfulltag) {
 			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PaymentCode"));
@@ -2542,29 +2542,29 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 							billing_details: {
 								name: 'test'
 								<?php if (GETPOST('email', 'alpha') || (is_object($object) && is_object($object->thirdparty) && !empty($object->thirdparty->email))) {
-									?>, email: '<?php echo dol_escape_js(GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $object->thirdparty->email); ?>'<?php
-								} ?>
+						?>, email: '<?php echo dol_escape_js(GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $object->thirdparty->email); ?>'<?php
+					} ?>
 								<?php if (is_object($object) && is_object($object->thirdparty) && !empty($object->thirdparty->phone)) {
-									?>, phone: '<?php echo dol_escape_js($object->thirdparty->phone); ?>'<?php
-								} ?>
+						?>, phone: '<?php echo dol_escape_js($object->thirdparty->phone); ?>'<?php
+					} ?>
 								<?php if (is_object($object) && is_object($object->thirdparty)) {
-									?>, address: {
+						?>, address: {
 									city: '<?php echo dol_escape_js($object->thirdparty->town); ?>',
 									<?php if ($object->thirdparty->country_code) {
-										?>country: '<?php echo dol_escape_js($object->thirdparty->country_code); ?>',<?php
-									} ?>
+							?>country: '<?php echo dol_escape_js($object->thirdparty->country_code); ?>',<?php
+						} ?>
 									line1: '<?php echo dol_escape_js(preg_replace('/\s\s+/', ' ', $object->thirdparty->address)); ?>',
 									postal_code: '<?php echo dol_escape_js($object->thirdparty->zip); ?>'
 									}
 									<?php
-								} ?>
+					} ?>
 							}
 							},
 							save_payment_method:<?php if ($stripecu) {
-								print 'true';
-												} else {
-													print 'false';
-												} ?>	/* true when a customer was provided when creating payment intent. true ask to save the card */
+						print 'true';
+					} else {
+						print 'false';
+					} ?>	/* true when a customer was provided when creating payment intent. true ask to save the card */
 						},
 					}
 					).then(function(result) {
@@ -2636,29 +2636,29 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 							billing_details: {
 								name: cardholderName.value
 								<?php if (GETPOST('email', 'alpha') || (is_object($object) && is_object($object->thirdparty) && !empty($object->thirdparty->email))) {
-									?>, email: '<?php echo dol_escape_js(GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $object->thirdparty->email); ?>'<?php
-								} ?>
+						?>, email: '<?php echo dol_escape_js(GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $object->thirdparty->email); ?>'<?php
+					} ?>
 								<?php if (is_object($object) && is_object($object->thirdparty) && !empty($object->thirdparty->phone)) {
-									?>, phone: '<?php echo dol_escape_js($object->thirdparty->phone); ?>'<?php
-								} ?>
+						?>, phone: '<?php echo dol_escape_js($object->thirdparty->phone); ?>'<?php
+					} ?>
 								<?php if (is_object($object) && is_object($object->thirdparty)) {
-									?>, address: {
+						?>, address: {
 									city: '<?php echo dol_escape_js($object->thirdparty->town); ?>',
 									<?php if ($object->thirdparty->country_code) {
-										?>country: '<?php echo dol_escape_js($object->thirdparty->country_code); ?>',<?php
-									} ?>
+							?>country: '<?php echo dol_escape_js($object->thirdparty->country_code); ?>',<?php
+						} ?>
 									line1: '<?php echo dol_escape_js(preg_replace('/\s\s+/', ' ', $object->thirdparty->address)); ?>',
 									postal_code: '<?php echo dol_escape_js($object->thirdparty->zip); ?>'
 									}
 									<?php
-								} ?>
+					} ?>
 							}
 							},
 							save_payment_method:<?php if ($stripecu) {
-								print 'true';
-												} else {
-													print 'false';
-												} ?>	/* true when a customer was provided when creating payment intent. true ask to save the card */
+						print 'true';
+					} else {
+						print 'false';
+					} ?>	/* true when a customer was provided when creating payment intent. true ask to save the card */
 					}
 					).then(function(result) {
 						console.log(result);

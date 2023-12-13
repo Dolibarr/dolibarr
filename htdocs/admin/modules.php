@@ -918,7 +918,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 						$urlpage = $page;
 						if ($i++) {
 							$codetoconfig .= '<a href="'.$urlpage.'" title="'.$langs->trans($page).'">'.img_picto(ucfirst($page), "setup").'</a>';
-							//    print '<a href="'.$page.'">'.ucfirst($page).'</a>&nbsp;';
+						//    print '<a href="'.$page.'">'.ucfirst($page).'</a>&nbsp;';
 						} else {
 							if (preg_match('/^([^@]+)@([^@]+)$/i', $urlpage, $regs)) {
 								$urltouse = dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1);

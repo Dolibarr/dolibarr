@@ -199,7 +199,7 @@ class ProductCustomerPrice extends CommonObject
 					$this->price_min = price2num($this->price_min, 'MU');
 					$this->price_min_ttc = price2num($this->price_min) * (1 + ($this->tva_tx / 100));
 					$this->price_min_ttc = price2num($this->price_min_ttc, 'MU');
-					// print 'X'.$newminprice.'-'.$price_min;
+				// print 'X'.$newminprice.'-'.$price_min;
 				} else {
 					$this->price_min = 0;
 					$this->price_min_ttc = 0;
@@ -677,7 +677,7 @@ class ProductCustomerPrice extends CommonObject
 					$this->price_min = price2num($this->price_min, 'MU');
 					$this->price_min_ttc = price2num($this->price_min) * (1 + ($this->tva_tx / 100));
 					$this->price_min_ttc = price2num($this->price_min_ttc, 'MU');
-					// print 'X'.$newminprice.'-'.$price_min;
+				// print 'X'.$newminprice.'-'.$price_min;
 				} else {
 					$this->price_min = 0;
 					$this->price_min_ttc = 0;

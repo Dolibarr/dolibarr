@@ -414,7 +414,7 @@ if (empty($reshook)) {
 							$discountid = $discount->create($user);
 							if ($discountid > 0) {
 								$result = $objecttmp->insert_discount($discountid);
-								//$result=$discount->link_to_invoice($lineid,$id);
+							//$result=$discount->link_to_invoice($lineid,$id);
 							} else {
 								setEventMessages($discount->error, $discount->errors, 'errors');
 								$error++;

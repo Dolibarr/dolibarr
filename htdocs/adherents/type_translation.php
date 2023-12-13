@@ -82,7 +82,7 @@ if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $user->hasRight('
 	if ($forcelangprod == $current_lang) {
 		$object->label		 = GETPOST("libelle", 'alphanohtml');
 		$object->description = dol_htmlcleanlastbr(GETPOST("desc", 'restricthtml'));
-		//$object->other		 = dol_htmlcleanlastbr(GETPOST("other", 'restricthtml'));
+	//$object->other		 = dol_htmlcleanlastbr(GETPOST("other", 'restricthtml'));
 	} else {
 		$object->multilangs[$forcelangprod]["label"] = GETPOST("libelle", 'alphanohtml');
 		$object->multilangs[$forcelangprod]["description"] = dol_htmlcleanlastbr(GETPOST("desc", 'restricthtml'));
