@@ -510,7 +510,7 @@ if ($action == 'edit') {
 	}
 	print '</td></tr>';
 
-	if (getDolGlobalString('MAIN_MAIL_SENDMODE_TICKET') && $conf->global->MAIN_MAIL_SENDMODE_TICKET != 'default') {
+	if (getDolGlobalString('MAIN_MAIL_SENDMODE_TICKET') && getDolGlobalString('MAIN_MAIL_SENDMODE_TICKET') != 'default') {
 		// Host server
 		if ($linuxlike && (getDolGlobalString('MAIN_MAIL_SENDMODE_TICKET') == 'mail')) {
 			//print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike").'</td><td>'.$langs->trans("SeeLocalSendMailSetup").'</td></tr>';
@@ -615,8 +615,8 @@ if ($action == 'edit') {
 
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
 
-	if (getDolGlobalString('MAIN_MAIL_SENDMODE_TICKET') && $conf->global->MAIN_MAIL_SENDMODE_TICKET != 'default') {
-		if ($conf->global->MAIN_MAIL_SENDMODE_TICKET != 'mail' || !$linuxlike) {
+	if (getDolGlobalString('MAIN_MAIL_SENDMODE_TICKET') && getDolGlobalString('MAIN_MAIL_SENDMODE_TICKET') != 'default') {
+		if (getDolGlobalString('MAIN_MAIL_SENDMODE_TICKET') != 'mail' || !$linuxlike) {
 			if (function_exists('fsockopen') && $port && $server) {
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testconnect">'.$langs->trans("DoTestServerAvailability").'</a>';
 			}

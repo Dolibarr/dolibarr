@@ -3656,7 +3656,7 @@ abstract class CommonObject
 
 		if (!empty($MODULE)) {
 			if (!empty($conf->global->$MODULE)) {
-				$modsactivated = explode(',', $conf->global->$MODULE);
+				$modsactivated = explode(',', getDolGlobalString($MODULE));
 				foreach ($modsactivated as $mod) {
 					if (isModEnabled($mod)) {
 						return 1; // update was disabled by specific setup
