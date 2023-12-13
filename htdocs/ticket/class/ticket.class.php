@@ -2648,7 +2648,7 @@ class Ticket extends CommonObject
 						if (!empty($sendto)) {
 							$appli = getDolGlobalString('MAIN_APPLICATION_TITLE', $mysoc->name);
 
-							$subject = '['.$appli.'- ticket #'.$object->track_id.'] '.$langs->trans('TicketNewMessage');
+							$subject = '['.$appli.'- ticket #'.$object->track_id.': ' . $this->subject . '] '.$langs->trans('TicketNewMessage');
 
 							// Message send
 							$message = $langs->trans('TicketMessageMailIntroText');
