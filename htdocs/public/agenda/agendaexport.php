@@ -89,7 +89,7 @@ if (empty($conf->agenda->enabled)) {
 }
 
 // Not older than
-if (!isset($conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY)) {
+if (empty($conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY)) {
 	$conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY = 100; // default limit
 }
 
