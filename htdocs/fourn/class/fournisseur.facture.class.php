@@ -201,7 +201,6 @@ class FactureFournisseur extends CommonInvoice
 
 	// Warning: Do not set default value into property defintion. it must stay null.
 	// For example to avoid to have substition done when object is generic and not yet defined.
-	public $amount_ht;
 	public $localtax1;
 	public $localtax2;
 	public $total_ht;
@@ -3083,7 +3082,6 @@ class FactureFournisseur extends CommonInvoice
 			}
 		}
 
-		$this->amount_ht      = $xnbp * 100;
 		$this->total_ht       = $xnbp * 100;
 		$this->total_tva      = $xnbp * 19.6;
 		$this->total_ttc      = $xnbp * 119.6;
