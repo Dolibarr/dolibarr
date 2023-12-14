@@ -90,6 +90,7 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 		// We define date_start and date_end
 		$year_end = $year_start;
 		$month_start = GETPOST("month") ? GETPOST("month", 'int') : getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
+		$month_end ="";
 		if (!GETPOST('month')) {
 			if (!$year && $month_start > $month_current) {
 				$year_start--;
