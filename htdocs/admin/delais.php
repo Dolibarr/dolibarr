@@ -286,7 +286,7 @@ if ($action == 'edit') {
 print '<br>';
 
 
-if (!getDolGlobalString('MAIN_DISABLE_METEO') || $conf->global->MAIN_DISABLE_METEO != 1) {
+if (!getDolGlobalString('MAIN_DISABLE_METEO') || getDolGlobalInt('MAIN_DISABLE_METEO') != 1) {
 	// Show logo for weather
 	print '<span class="opacitymedium">'.$langs->trans("DescWeather").'</span> ';
 
@@ -331,7 +331,8 @@ if (!getDolGlobalString('MAIN_DISABLE_METEO') || $conf->global->MAIN_DISABLE_MET
 	if (getDolGlobalString('MAIN_METEO_LEVEL3')) {
 		$level3 = $conf->global->MAIN_METEO_LEVEL3;
 	}
-	$text = ''; $options = 'class="valignmiddle" height="60px"';
+	$text = '';
+	$options = 'class="valignmiddle" height="60px"';
 
 
 	if ($action == 'edit') {
@@ -373,9 +374,7 @@ if (!getDolGlobalString('MAIN_DISABLE_METEO') || $conf->global->MAIN_DISABLE_MET
 		print '</div>';
 		print '</div>';
 
-		print '</div>';
-
-		?>
+		print '</div>'; ?>
 
 		<script type="text/javascript">
 

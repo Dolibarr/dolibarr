@@ -105,7 +105,7 @@ class box_shipments extends ModeleBoxes
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
 			}
 			$sql .= " WHERE e.entity IN (".getEntity('expedition').")";
-			if (!empty($conf->global->ORDER_BOX_LAST_SHIPMENTS_VALIDATED_ONLY)) {
+			if (getDolGlobalString('ORDER_BOX_LAST_SHIPMENTS_VALIDATED_ONLY')) {
 				$sql .= " AND e.fk_statut = 1";
 			}
 			if ($user->socid > 0) {
@@ -172,8 +172,8 @@ class box_shipments extends ModeleBoxes
 
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
-					'td' => 'class="center opacitymedium"',
-					'text'=>$langs->trans("NoRecordedShipments")
+					'td' => 'class="center"',
+						'text'=> '<span class="opacitymedium">'.$langs->trans("NoRecordedShipments").'</span>'
 					);
 				}
 
@@ -187,8 +187,8 @@ class box_shipments extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

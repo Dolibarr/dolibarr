@@ -288,7 +288,7 @@ class Tickets extends DolibarrApi
 		if (!count($obj_ret)) {
 			throw new RestException(404, 'No ticket found');
 		}
-			return $obj_ret;
+		return $obj_ret;
 	}
 
 	/**
@@ -520,8 +520,8 @@ class Tickets extends DolibarrApi
 			"cache_types_tickets",
 			"cache_category_tickets",
 			"regeximgext",
-			"statuts_short",
-			"statuts"
+			"labelStatus",
+			"labelStatusShort"
 		);
 		foreach ($attr2clean as $toclean) {
 			unset($object->$toclean);

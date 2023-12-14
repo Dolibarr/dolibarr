@@ -53,9 +53,11 @@ class EmptyGlobalToFunction extends AbstractRector
 	{
 		return new RuleDefinition(
 			'Change $conf->global to getDolGlobal',
-			[new CodeSample('$conf->global->CONSTANT',
+			[new CodeSample(
+				'$conf->global->CONSTANT',
 				'getDolGlobalInt(\'CONSTANT\')'
-				)]);
+			)]
+		);
 	}
 
 	/**
@@ -106,7 +108,7 @@ class EmptyGlobalToFunction extends AbstractRector
 			return new FuncCall(
 				new Name('getDolGlobalString'),
 				[new Arg($constName)]
-				);
+			);
 		}
 
 
@@ -136,7 +138,7 @@ class EmptyGlobalToFunction extends AbstractRector
 			return new BooleanNot(new FuncCall(
 				new Name('getDolGlobalString'),
 				[new Arg($constName)]
-				));
+			));
 		}
 
 		return null;
@@ -169,7 +171,7 @@ class EmptyGlobalToFunction extends AbstractRector
 				}
 				return \true;
 			}
-			);
+		);
 	}
 
 	/**

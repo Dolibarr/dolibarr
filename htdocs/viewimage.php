@@ -254,9 +254,9 @@ $fullpath_original_file     = $check_access['original_file']; // $fullpath_origi
 if (!empty($hashp)) {
 	$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
 	$sqlprotectagainstexternals = '';
-} elseif (isset($_GET["publictakepos"])) {
-	if (!empty($conf->global->TAKEPOS_AUTO_ORDER)) {
-		$accessallowed = 1; // Only if TakePOS Public Auto Order is enabled and received publictakepos variable
+} elseif (GETPOSTINT("publictakepos")) {
+	if (getDolGlobalString('TAKEPOS_AUTO_ORDER') && in_array($modulepart, array('product', 'category'))) {
+		$accessallowed = 1; // When TakePOS Public Auto Order is enabled, we accept to see all images of product and categories
 	}
 } else {
 	// Basic protection (against external users only)

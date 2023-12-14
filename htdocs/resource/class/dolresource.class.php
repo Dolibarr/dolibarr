@@ -127,7 +127,7 @@ class Dolresource extends CommonObject
 	 *
 	 * @param	User	$user		User that creates
 	 * @param	int		$no_trigger	0=launch triggers after, 1=disable triggers
-	 * @return	int					if KO: <0, if OK: Id of created object
+	 * @return	int					Return integer if KO: <0, if OK: Id of created object
 	 */
 	public function create(User $user, int $no_trigger = 0): int
 	{
@@ -171,7 +171,8 @@ class Dolresource extends CommonObject
 		}
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error=-1; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -212,7 +213,7 @@ class Dolresource extends CommonObject
 	 *
 	 * @param	int		$id		Id of object
 	 * @param	string	$ref	Ref of object
-	 * @return	int				if KO: <0 , if OK: >0
+	 * @return	int				Return integer if KO: <0 , if OK: >0
 	 */
 	public function fetch($id, $ref = '')
 	{
@@ -280,7 +281,7 @@ class Dolresource extends CommonObject
 	 *
 	 * @param	User	$user		User that modifies
 	 * @param	int		$notrigger	0=launch triggers after, 1=disable triggers
-	 * @return	int					if KO: <0 , if OK: >0
+	 * @return	int					Return integer if KO: <0 , if OK: >0
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -336,7 +337,8 @@ class Dolresource extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -396,7 +398,7 @@ class Dolresource extends CommonObject
 	 * Load data of resource links into memory from database
 	 *
 	 * @param	int	$id		Id of link element_resources
-	 * @return	int			if KO: <0, if OK: >0
+	 * @return	int			Return integer if KO: <0, if OK: >0
 	 */
 	public function fetchElementResource($id)
 	{
@@ -449,7 +451,7 @@ class Dolresource extends CommonObject
 	 *
 	 * @param	int		$rowid			Id of resource line to delete
 	 * @param	int		$notrigger		Disable all triggers
-	 * @return	int						if OK: >0, if KO: <0
+	 * @return	int						Return integer if OK: >0, if KO: <0
 	 */
 	public function delete($rowid, $notrigger = 0)
 	{
@@ -528,7 +530,7 @@ class Dolresource extends CommonObject
 	 * @param	int			$limit			limit page
 	 * @param	int			$offset			page
 	 * @param	array		$filter			filter output
-	 * @return	int							if KO: <0, if OK number of lines loaded
+	 * @return	int							Return integer if KO: <0, if OK number of lines loaded
 	 */
 	public function fetchAll($sortorder, $sortfield, $limit, $offset, $filter = '')
 	{
@@ -615,7 +617,7 @@ class Dolresource extends CommonObject
 	 *
 	 * @param	User	$user		User that modifies
 	 * @param	int		$notrigger	0=launch triggers after, 1=disable triggers
-	 * @return	int					if KO: <0, if OK: >0
+	 * @return	int					Return integer if KO: <0, if OK: >0
 	 */
 	public function updateElementResource($user = null, $notrigger = 0)
 	{
@@ -659,7 +661,8 @@ class Dolresource extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -861,11 +864,11 @@ class Dolresource extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -925,7 +928,7 @@ class Dolresource extends CommonObject
 	/**
 	 * Load dashboard indicators this->nb de tableau de bord
 	 *
-	 * @return	int		if KO: <0, if OK: >0
+	 * @return	int		Return integer if KO: <0, if OK: >0
 	 */
 	public function loadStateBoard()
 	{

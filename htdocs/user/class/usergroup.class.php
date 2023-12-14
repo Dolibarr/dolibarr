@@ -161,9 +161,9 @@ class UserGroup extends CommonObject
 	 *	@param      int		$id				Id of group to load
 	 *	@param      string	$groupname		Name of group to load
 	 *  @param		boolean	$load_members	Load all members of the group
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
-	public function fetch($id = '', $groupname = '', $load_members = false)
+	public function fetch($id = 0, $groupname = '', $load_members = false)
 	{
 		global $conf;
 
@@ -568,7 +568,7 @@ class UserGroup extends CommonObject
 	 *  Charge dans l'objet group, la liste des permissions auquels le groupe a droit
 	 *
 	 *  @param      string	$moduletag	 	Name of module we want permissions ('' means all)
-	 *	@return     int						<0 if KO, >=0 if OK
+	 *	@return     int						Return integer <0 if KO, >=0 if OK
 	 */
 	public function getrights($moduletag = '')
 	{
@@ -656,7 +656,7 @@ class UserGroup extends CommonObject
 	 *	Delete a group
 	 *
 	 *	@param	User	$user		User that delete
-	 *	@return int    				<0 if KO, > 0 if OK
+	 *	@return int    				Return integer <0 if KO, > 0 if OK
 	 */
 	public function delete(User $user)
 	{
@@ -667,7 +667,7 @@ class UserGroup extends CommonObject
 	 *	Create group into database
 	 *
 	 *	@param		int		$notrigger	0=triggers enabled, 1=triggers disabled
-	 *	@return     int					<0 if KO, >=0 if OK
+	 *	@return     int					Return integer <0 if KO, >=0 if OK
 	 */
 	public function create($notrigger = 0)
 	{
@@ -689,7 +689,7 @@ class UserGroup extends CommonObject
 	 *		Update group into database
 	 *
 	 *      @param      int		$notrigger	    0=triggers enabled, 1=triggers disabled
-	 *    	@return     int						<0 if KO, >=0 if OK
+	 *    	@return     int						Return integer <0 if KO, >=0 if OK
 	 */
 	public function update($notrigger = 0)
 	{
@@ -776,7 +776,7 @@ class UserGroup extends CommonObject
 		$option = $params['option'] ?? '';
 
 		$datas = [];
-		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			$langs->load("users");
 			return ['optimize' => $langs->trans("ShowGroup")];
 		}
@@ -804,7 +804,7 @@ class UserGroup extends CommonObject
 	{
 		global $langs, $conf, $db, $hookmanager;
 
-		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpicto) {
+		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') && $withpicto) {
 			$withpicto = 0;
 		}
 
@@ -843,12 +843,12 @@ class UserGroup extends CommonObject
 
 		$linkclose = "";
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$langs->load("users");
 				$label = $langs->trans("ShowGroup");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		}
 
@@ -922,17 +922,17 @@ class UserGroup extends CommonObject
 		$info = array();
 
 		// Object classes
-		$info["objectclass"] = explode(',', $conf->global->LDAP_GROUP_OBJECT_CLASS);
+		$info["objectclass"] = explode(',', getDolGlobalString('LDAP_GROUP_OBJECT_CLASS'));
 
 		// Champs
-		if ($this->name && !empty($conf->global->LDAP_GROUP_FIELD_FULLNAME)) {
+		if ($this->name && getDolGlobalString('LDAP_GROUP_FIELD_FULLNAME')) {
 			$info[getDolGlobalString('LDAP_GROUP_FIELD_FULLNAME')] = $this->name;
 		}
 		//if ($this->name && !empty($conf->global->LDAP_GROUP_FIELD_NAME)) $info[$conf->global->LDAP_GROUP_FIELD_NAME] = $this->name;
-		if ($this->note && !empty($conf->global->LDAP_GROUP_FIELD_DESCRIPTION)) {
+		if ($this->note && getDolGlobalString('LDAP_GROUP_FIELD_DESCRIPTION')) {
 			$info[getDolGlobalString('LDAP_GROUP_FIELD_DESCRIPTION')] = dol_string_nohtmltag($this->note, 2);
 		}
-		if (!empty($conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS)) {
+		if (getDolGlobalString('LDAP_GROUP_FIELD_GROUPMEMBERS')) {
 			$valueofldapfield = array();
 			foreach ($this->members as $key => $val) {    // This is array of users for group into dolibarr database.
 				$muser = new User($this->db);
@@ -942,7 +942,7 @@ class UserGroup extends CommonObject
 			}
 			$info[getDolGlobalString('LDAP_GROUP_FIELD_GROUPMEMBERS')] = (!empty($valueofldapfield) ? $valueofldapfield : '');
 		}
-		if (!empty($conf->global->LDAP_GROUP_FIELD_GROUPID)) {
+		if (getDolGlobalString('LDAP_GROUP_FIELD_GROUPID')) {
 			$info[getDolGlobalString('LDAP_GROUP_FIELD_GROUPID')] = $this->id;
 		}
 		return $info;
@@ -995,7 +995,7 @@ class UserGroup extends CommonObject
 
 		// Positionne le modele sur le nom du modele a utiliser
 		if (!dol_strlen($modele)) {
-			if (!empty($conf->global->USERGROUP_ADDON_PDF)) {
+			if (getDolGlobalString('USERGROUP_ADDON_PDF')) {
 				$modele = $conf->global->USERGROUP_ADDON_PDF;
 			} else {
 				$modele = 'grass';
@@ -1007,7 +1007,7 @@ class UserGroup extends CommonObject
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 	}
 
-		/**
+	/**
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)

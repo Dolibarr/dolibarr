@@ -80,8 +80,6 @@ class FichinterRec extends Fichinter
 
 	public $id_origin;
 
-	public $statuts_logo;
-
 	/**
 	 * @var string Unit frequency
 	 */
@@ -123,14 +121,11 @@ class FichinterRec extends Fichinter
 		$this->db = $db;
 
 		//status dans l'ordre de l'intervention
-		$this->statuts[0] = 'Draft';
-		$this->statuts[1] = 'Closed';
+		$this->labelStatus[0] = 'Draft';
+		$this->labelStatus[1] = 'Closed';
 
-		$this->statuts_short[0] = 'Draft';
-		$this->statuts_short[1] = 'Closed';
-
-		$this->statuts_logo[0] = 'statut0';
-		$this->statuts_logo[1] = 'statut1';
+		$this->labelStatusShort[0] = 'Draft';
+		$this->labelStatusShort[1] = 'Closed';
 	}
 
 	/**
@@ -150,7 +145,7 @@ class FichinterRec extends Fichinter
 	 *
 	 *  @param      User    $user       User object
 	 *  @param      int     $notrigger  no trigger
-	 *  @return     int                 <0 if KO, id of fichinter if OK
+	 *  @return     int                 Return integer <0 if KO, id of fichinter if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -427,7 +422,7 @@ class FichinterRec extends Fichinter
 	 *
 	 *	@param      User	$user			Object user who delete
 	 *	@param		int		$notrigger		Disable trigger
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
@@ -482,7 +477,7 @@ class FichinterRec extends Fichinter
 	 *  @param		int			$special_code		Special code
 	 *  @param		string		$label				Label of the line
 	 *  @param		string		$fk_unit			Unit
-	 *  @return		int			 				    <0 if KO, Id of line if OK
+	 *  @return		int			 				    Return integer <0 if KO, Id of line if OK
 	 */
 	public function addline($desc, $duration, $date, $rang = -1, $pu_ht = 0, $qty = 0, $txtva = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = '', $pu_ttc = 0, $type = 0, $special_code = 0, $label = '', $fk_unit = null)
 	{
@@ -729,7 +724,7 @@ class FichinterRec extends Fichinter
 	 *
 	 *	@param	 	int		$frequency		value of frequency
 	 *	@param	 	string	$unit 			unit of frequency  (d, m, y)
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setFrequencyAndUnit($frequency, $unit)
 	{
@@ -768,7 +763,7 @@ class FichinterRec extends Fichinter
 	 *
 	 *	@param	 	datetime	$date					date of execution
 	 *	@param	 	int			$increment_nb_gen_done	0 do nothing more, >0 increment nb_gen_done
-	 *	@return		int									<0 if KO, >0 if OK
+	 *	@return		int									Return integer <0 if KO, >0 if OK
 	 */
 	public function setNextDate($date, $increment_nb_gen_done = 0)
 	{
@@ -800,7 +795,7 @@ class FichinterRec extends Fichinter
 	 *	Update the maximum period
 	 *
 	 *	@param	 	int		$nb		number of maximum period
-	 *	@return		int				<0 if KO, >0 if OK
+	 *	@return		int				Return integer <0 if KO, >0 if OK
 	 */
 	public function setMaxPeriod($nb)
 	{
@@ -831,7 +826,7 @@ class FichinterRec extends Fichinter
 	 *	Update the auto validate fichinter
 	 *
 	 *	@param	 	int		$validate		0 to create in draft, 1 to create and validate fichinter
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setAutoValidate($validate)
 	{
@@ -857,7 +852,7 @@ class FichinterRec extends Fichinter
 	/**
 	 *	Update the Number of Generation Done
 	 *
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function updateNbGenDone()
 	{

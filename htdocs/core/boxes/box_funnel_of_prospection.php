@@ -63,7 +63,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->enabled = ($conf->global->MAIN_FEATURES_LEVEL >= 1 ? 1 : 0); // Not enabled by default, still need some work
+		$this->enabled = (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 ? 1 : 0); // Not enabled by default, still need some work
 
 		$this->hidden = empty($user->rights->projet->lire);
 	}
@@ -290,8 +290,8 @@ class box_funnel_of_prospection extends ModeleBoxes
 				);
 			} else {
 				$this->info_box_contents[0][0] = array(
-					'td' => 'class="center opacitymedium"',
-					'text' => $langs->trans("NoRecordedCustomers")
+					'td' => 'class="center"',
+					'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedCustomers").'</span>'
 				);
 			}
 		} else {

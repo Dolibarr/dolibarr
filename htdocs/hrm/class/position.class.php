@@ -185,7 +185,7 @@ class Position extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			//$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -222,7 +222,7 @@ class Position extends CommonObject
 	 *
 	 * @param User $user User that creates
 	 * @param bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -337,7 +337,7 @@ class Position extends CommonObject
 	 *
 	 * @param int $id Id object
 	 * @param string $ref Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -351,7 +351,7 @@ class Position extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchLines()
 	{
@@ -447,7 +447,7 @@ class Position extends CommonObject
 	 *
 	 * @param User $user User that modifies
 	 * @param bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
@@ -459,7 +459,7 @@ class Position extends CommonObject
 	 *
 	 * @param User $user User that deletes
 	 * @param bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
@@ -491,7 +491,7 @@ class Position extends CommonObject
 	 *
 	 * @param User $user User making status change
 	 * @param int $notrigger 1=Does not execute triggers, 0= execute triggers
-	 * @return    int                        <=0 if OK, 0=Nothing done, >0 if KO
+	 * @return    int                        Return integer <=0 if OK, 0=Nothing done, >0 if KO
 	 */
 	public function validate($user, $notrigger = 0)
 	{
@@ -575,7 +575,8 @@ class Position extends CommonObject
 				$sql .= " WHERE filepath = 'position/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
@@ -623,7 +624,7 @@ class Position extends CommonObject
 	 *
 	 * @param User $user Object user that modify
 	 * @param int $notrigger 1=Does not execute triggers, 0=Execute triggers
-	 * @return    int                        <0 if KO, >0 if OK
+	 * @return    int                        Return integer <0 if KO, >0 if OK
 	 */
 	public function setDraft($user, $notrigger = 0)
 	{
@@ -647,7 +648,7 @@ class Position extends CommonObject
 	 *
 	 * @param User $user Object user that modify
 	 * @param int $notrigger 1=Does not execute triggers, 0=Execute triggers
-	 * @return    int                        <0 if KO, 0=Nothing done, >0 if OK
+	 * @return    int                        Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function cancel($user, $notrigger = 0)
 	{
@@ -671,7 +672,7 @@ class Position extends CommonObject
 	 *
 	 * @param User $user Object user that modify
 	 * @param int $notrigger 1=Does not execute triggers, 0=Execute triggers
-	 * @return    int                        <0 if KO, 0=Nothing done, >0 if OK
+	 * @return    int                        Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function reopen($user, $notrigger = 0)
 	{
@@ -732,7 +733,7 @@ class Position extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowPosition");
 				$linkclose .= ' alt="' . dol_escape_htmltag($label, 1) . '"';
 			}
@@ -874,9 +875,7 @@ class Position extends CommonObject
 			$vacantId = $keyprefix.$key.'vacant'.$keysuffix;
 
 			$out = parent::showInputField($val, $key, $value, $moreparam, $keysuffix, $keyprefix, $morecss);
-			$out .= '<label class="nowrap position-fk-user classfortooltip" title="'.dol_escape_js($langs->trans('VacantCheckboxHelper')).'"><input type="checkbox" id="'.$vacantId.'" name="'.$vacantId.'" />&nbsp;'.$langs->trans("Vacant").'</label>';
-
-			?>
+			$out .= '<label class="nowrap position-fk-user classfortooltip" title="'.dol_escape_js($langs->trans('VacantCheckboxHelper')).'"><input type="checkbox" id="'.$vacantId.'" name="'.$vacantId.'" />&nbsp;'.$langs->trans("Vacant").'</label>'; ?>
 			<script type="text/javascript">
 				$(document).ready(function () {
 					var checkbox = $('#<?php print $vacantId; ?>');
@@ -923,7 +922,7 @@ class Position extends CommonObject
 	}
 
 
-		/**
+	/**
 	 *    Load the info information in the object
 	 *
 	 * @param int $id Id of object
@@ -1001,11 +1000,11 @@ class Position extends CommonObject
 		global $langs, $conf;
 		$langs->load("hrm");
 
-		if (empty($conf->global->hrm_POSITION_ADDON)) {
+		if (!getDolGlobalString('hrm_POSITION_ADDON')) {
 			$conf->global->hrm_POSITION_ADDON = 'mod_position_standard';
 		}
 
-		if (!empty($conf->global->hrm_POSITION_ADDON)) {
+		if (getDolGlobalString('hrm_POSITION_ADDON')) {
 			$mybool = false;
 
 			$file = getDolGlobalString('hrm_POSITION_ADDON') . ".php";
@@ -1086,7 +1085,7 @@ class Position extends CommonObject
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->POSITION_ADDON_PDF)) {
+			} elseif (getDolGlobalString('POSITION_ADDON_PDF')) {
 				$modele = $conf->global->POSITION_ADDON_PDF;
 			}
 		}

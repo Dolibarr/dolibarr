@@ -53,7 +53,7 @@ if (($accountancyexport->getFormatCode($formatexportset) == 'fec' || $accountanc
 	}
 	$datetouseforfilename = $search_date_end;
 	$tmparray = dol_getdate($datetouseforfilename);
-	$fiscalmonth = !getDolGlobalString('SOCIETE_FISCAL_MONTH_START') ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START;
+	$fiscalmonth = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 	// Define end of month to use
 	if ($tmparray['mon'] < $fiscalmonth || $fiscalmonth == 1) {
 		$tmparray['mon'] = $fiscalmonth == 1 ? 12 : $fiscalmonth - 1;

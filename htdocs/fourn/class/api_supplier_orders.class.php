@@ -93,15 +93,14 @@ class SupplierOrders extends DolibarrApi
 	 * @param string	$product_ids	  Product ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string	$status			  Filter by order status : draft | validated | approved | running | received_start | received_end | cancelled | refused
 	 * @param string    $sqlfilters       Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.datec:<:'20160101')"
+	 * @param string    $sqlfilterlines   Other criteria to filter answers separated by a comma. Syntax example "(tl.fk_product:=:'17') and (tl.price:<:'250')"
 	 * @param string    $properties		  Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                      Array of order objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $product_ids = '', $status = '', $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $product_ids = '', $status = '', $sqlfilters = '', $sqlfilterlines = '', $properties = '')
 	{
-		global $db, $conf;
-
 		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "commande", "lire")) {
 			throw new RestException(401);
 		}
@@ -177,6 +176,16 @@ class SupplierOrders extends DolibarrApi
 			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
 			if ($errormessage) {
 				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			}
+		}
+		// Add sql filters for lines
+		if ($sqlfilterlines) {
+			$errormessage = '';
+			$sql .= " AND EXISTS (SELECT tl.rowid FROM ".MAIN_DB_PREFIX."commande_fournisseurdet AS tl WHERE tl.fk_commande = t.rowid";
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilterlines, $errormessage);
+			$sql .=	")";
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilterlines -> '.$errormessage);
 			}
 		}
 
@@ -614,27 +623,27 @@ class SupplierOrders extends DolibarrApi
 		);
 	}
 
-		/**
+	/**
 	 * Receives the order, dispatches products.
-		 *
+	 *
 	 * Example:
 	 * <code> {
 	 *   "closeopenorder": 1,
 	 *   "comment": "",
-		 *   "lines": [{
-		 *      "id": 14,
-		 *      "fk_product": 112,
-		 *      "qty": 18,
-		 *      "warehouse": 1,
-		 *      "price": 114,
-		 *      "comment": "",
-		 *      "eatby": 0,
-		 *      "sellby": 0,
-		 *      "batch": 0,
-		 *      "notrigger": 0
-		 *   }]
+	 *   "lines": [{
+	 *      "id": 14,
+	 *      "fk_product": 112,
+	 *      "qty": 18,
+	 *      "warehouse": 1,
+	 *      "price": 114,
+	 *      "comment": "",
+	 *      "eatby": 0,
+	 *      "sellby": 0,
+	 *      "batch": 0,
+	 *      "notrigger": 0
+	 *   }]
 	 * }</code>
-		 *
+	 *
 	 * @param   int		$id             Order ID
 	 * @param   integer	$closeopenorder	Close order if everything is received {@required false}
 	 * @param   string	$comment	Comment {@required false}
@@ -664,17 +673,19 @@ class SupplierOrders extends DolibarrApi
 		foreach ($lines as $line) {
 			$lineObj =(object) $line;
 
-			$result=$this->order->dispatchProduct(DolibarrApiAccess::$user,
-				  $lineObj->fk_product,
-				  $lineObj->qty,
-				  $lineObj->warehouse,
-				  $lineObj->price,
-				  $lineObj->comment,
-				  $lineObj->eatby,
-				  $lineObj->sellby,
-				  $lineObj->batch,
-				  $lineObj->id,
-				  $lineObj->notrigger);
+			$result=$this->order->dispatchProduct(
+				DolibarrApiAccess::$user,
+				$lineObj->fk_product,
+				$lineObj->qty,
+				$lineObj->warehouse,
+				$lineObj->price,
+				$lineObj->comment,
+				$lineObj->eatby,
+				$lineObj->sellby,
+				$lineObj->batch,
+				$lineObj->id,
+				$lineObj->notrigger
+			);
 
 			if ($result < 0) {
 				throw new RestException(500, 'Error dispatch order line '.$line->id.': '.$this->order->error);

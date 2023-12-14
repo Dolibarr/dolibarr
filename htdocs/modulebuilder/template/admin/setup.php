@@ -31,7 +31,8 @@ if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) {
 // Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
 $tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME']; $tmp2 = realpath(__FILE__); $i = strlen($tmp) - 1; $j = strlen($tmp2) - 1;
 while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) {
-	$i--; $j--;
+	$i--;
+	$j--;
 }
 if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1))."/main.inc.php")) {
 	$res = @include substr($tmp, 0, ($i + 1))."/main.inc.php";
@@ -91,39 +92,40 @@ if (!class_exists('FormSetup')) {
 $formSetup = new FormSetup($db);
 
 
-// HTTP HOST
-$item = $formSetup->newItem('NO_PARAM_JUST_TEXT');
+// Enter here all parameters in your setup page
+
+// Setup conf for selection of an URL
+$item = $formSetup->newItem('MYMODULE_MYPARAM1');
 $item->fieldOverride = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'];
 $item->cssClass = 'minwidth500';
 
-// Setup conf MYMODULE_MYPARAM1 as a simple string input
-$item = $formSetup->newItem('MYMODULE_MYPARAM1');
+// Setup conf for selection of a simple string input
+$item = $formSetup->newItem('MYMODULE_MYPARAM2');
 $item->defaultFieldValue = 'default value';
 
-// Setup conf MYMODULE_MYPARAM2 as a simple textarea input but we replace the text of field title
-$item = $formSetup->newItem('MYMODULE_MYPARAM2');
+// Setup conf for selection of a simple textarea input but we replace the text of field title
+$item = $formSetup->newItem('MYMODULE_MYPARAM3');
 $item->nameText = $item->getNameText().' more html text ';
 
-// Setup conf MYMODULE_MYPARAM3
-$item = $formSetup->newItem('MYMODULE_MYPARAM3');
+// Setup conf for a selection of a thirdparty
+$item = $formSetup->newItem('MYMODULE_MYPARAM4');
 $item->setAsThirdpartyType();
 
-// Setup conf MYMODULE_MYPARAM4 : exemple of quick define write style
-$formSetup->newItem('MYMODULE_MYPARAM4')->setAsYesNo();
+// Setup conf for a selection of a boolean
+$formSetup->newItem('MYMODULE_MYPARAM5')->setAsYesNo();
 
-// Setup conf MYMODULE_MYPARAM5
-$formSetup->newItem('MYMODULE_MYPARAM5')->setAsEmailTemplate('thirdparty');
+// Setup conf for a selection of an email template of type thirdparty
+$formSetup->newItem('MYMODULE_MYPARAM6')->setAsEmailTemplate('thirdparty');
 
-// Setup conf MYMODULE_MYPARAM6
-//$formSetup->newItem('MYMODULE_MYPARAM6')->setAsSecureKey();
+// Setup conf for a selection of a secured key
+//$formSetup->newItem('MYMODULE_MYPARAM7')->setAsSecureKey();
 
-// Setup conf MYMODULE_MYPARAM7
-$formSetup->newItem('MYMODULE_MYPARAM7')->setAsProduct();
+// Setup conf for a selection of a product
+$formSetup->newItem('MYMODULE_MYPARAM8')->setAsProduct();
 
-$formSetup->newItem('Title')->setAsTitle();
+// Add a title for a new section
+$formSetup->newItem('NewSection')->setAsTitle();
 
-// Setup conf MYMODULE_MYPARAM8
-$item = $formSetup->newItem('MYMODULE_MYPARAM8');
 $TField = array(
 	'test01' => $langs->trans('test01'),
 	'test02' => $langs->trans('test02'),
@@ -132,12 +134,15 @@ $TField = array(
 	'test05' => $langs->trans('test05'),
 	'test06' => $langs->trans('test06'),
 );
-$item->setAsMultiSelect($TField);
-$item->helpText = $langs->transnoentities('MYMODULE_MYPARAM8');
 
-
-// Setup conf MYMODULE_MYPARAM9
+// Setup conf for a simple combo list
 $formSetup->newItem('MYMODULE_MYPARAM9')->setAsSelect($TField);
+
+// Setup conf for a multiselect combo list
+$item = $formSetup->newItem('MYMODULE_MYPARAM10');
+$item->setAsMultiSelect($TField);
+$item->helpText = $langs->transnoentities('MYMODULE_MYPARAM10');
+
 
 
 // Setup conf MYMODULE_MYPARAM10
@@ -195,7 +200,9 @@ if ($action == 'updateMask') {
 	$tmpobject->initAsSpecimen();
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$classname = '';
+	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/mymodule/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
@@ -495,7 +502,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 									if ($modulequalified) {
 										print '<tr class="oddeven"><td width="100">';
-										print (empty($module->name) ? $name : $module->name);
+										print(empty($module->name) ? $name : $module->name);
 										print "</td><td>\n";
 										if (method_exists($module, 'info')) {
 											print $module->info($langs);

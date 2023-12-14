@@ -71,7 +71,7 @@ class Documents extends DolibarrApi
 		global $conf;
 
 		if (empty($modulepart)) {
-				throw new RestException(400, 'bad value for parameter modulepart');
+			throw new RestException(400, 'bad value for parameter modulepart');
 		}
 		if (empty($original_file)) {
 			throw new RestException(400, 'bad value for parameter original_file');
@@ -538,7 +538,7 @@ class Documents extends DolibarrApi
 			$upload_dir = $conf->categorie->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'category').$object->id."/photos/".dol_sanitizeFileName($object->ref);
 		} elseif ($modulepart == 'ecm') {
 			throw new RestException(500, 'Modulepart Ecm not implemented yet.');
-			// // require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
+			// require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
 			// if (!DolibarrApiAccess::$user->rights->ecm->read) {
 			// 	throw new RestException(401);
@@ -583,7 +583,7 @@ class Documents extends DolibarrApi
 			$objectType = $object->table_element;
 		}
 
-		$filearray = dol_dir_list($upload_dir, $type, $recursive, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+		$filearray = dol_dir_list($upload_dir, $type, $recursive, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 		if (empty($filearray)) {
 			throw new RestException(404, 'Search for modulepart '.$modulepart.' with Id '.$object->id.(!empty($object->ref) ? ' or Ref '.$object->ref : '').' does not return any document.');
 		} else {
@@ -694,15 +694,15 @@ class Documents extends DolibarrApi
 				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 				$object = new FactureFournisseur($this->db);
 			} elseif ($modulepart == 'commande' || $modulepart == 'order') {
-					$modulepart = 'commande';
+				$modulepart = 'commande';
 
-					require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-					$object = new Commande($this->db);
+				require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+				$object = new Commande($this->db);
 			} elseif ($modulepart == 'commande_fournisseur' || $modulepart == 'supplier_order') {
-					$modulepart = 'supplier_order';
+				$modulepart = 'supplier_order';
 
-					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-					$object = new CommandeFournisseur($this->db);
+				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+				$object = new CommandeFournisseur($this->db);
 			} elseif ($modulepart == 'projet' || $modulepart == 'project') {
 				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 				$object = new Project($this->db);

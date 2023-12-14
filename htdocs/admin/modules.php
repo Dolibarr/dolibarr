@@ -47,8 +47,9 @@ $langs->loadLangs(array("errors", "admin", "modulebuilder"));
 // if we set another view list mode, we keep it (till we change one more time)
 if (GETPOSTISSET('mode')) {
 	$mode = GETPOST('mode', 'alpha');
-	if ($mode =='common' || $mode =='commonkanban')
+	if ($mode =='common' || $mode =='commonkanban') {
 		dolibarr_set_const($db, "MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT", $mode, 'chaine', 0, '', $conf->entity);
+	}
 } else {
 	$mode = (!getDolGlobalString('MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT') ? 'commonkanban' : $conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT);
 }
@@ -66,8 +67,8 @@ $search_version = GETPOST('search_version', 'alpha');
 $options              = array();
 $options['per_page']  = 20;
 $options['categorie'] = ((int) (GETPOST('categorie', 'int') ? GETPOST('categorie', 'int') : 0));
-$options['start']     = ((int) (GETPOST('start', 'int') ?GETPOST('start', 'int') : 0));
-$options['end']       = ((int) (GETPOST('end', 'int') ?GETPOST('end', 'int') : 0));
+$options['start']     = ((int) (GETPOST('start', 'int') ? GETPOST('start', 'int') : 0));
+$options['end']       = ((int) (GETPOST('end', 'int') ? GETPOST('end', 'int') : 0));
 $options['search']    = GETPOST('search_keyword', 'alpha');
 $dolistore            = new Dolistore(false);
 
@@ -487,7 +488,7 @@ foreach ($modulesdir as $dir) {
 							print "admin/modules.php Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)<br>";
 						}
 					} catch (Exception $e) {
-						 dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
+						dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
 					}
 				}
 			}
@@ -534,9 +535,15 @@ asort($orders);
 $nbofactivatedmodules = count($conf->modules);
 
 $nbmodulesnotautoenabled = count($conf->modules);
-if (in_array('fckeditor', $conf->modules)) $nbmodulesnotautoenabled--;
-if (in_array('export', $conf->modules)) $nbmodulesnotautoenabled--;
-if (in_array('import', $conf->modules)) $nbmodulesnotautoenabled--;
+if (in_array('fckeditor', $conf->modules)) {
+	$nbmodulesnotautoenabled--;
+}
+if (in_array('export', $conf->modules)) {
+	$nbmodulesnotautoenabled--;
+}
+if (in_array('import', $conf->modules)) {
+	$nbmodulesnotautoenabled--;
+}
 
 print load_fiche_titre($langs->trans("ModulesSetup"), '', 'title_setup');
 
@@ -615,10 +622,10 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 0) {
 			$array_version['deprecated'] = $langs->trans("Deprecated");
 		}
-		if ($conf->global->MAIN_FEATURES_LEVEL > 0) {
+		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') > 0) {
 			$array_version['experimental'] = $langs->trans("Experimental");
 		}
-		if ($conf->global->MAIN_FEATURES_LEVEL > 1) {
+		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') > 1) {
 			$array_version['development'] = $langs->trans("Development");
 		}
 		$moreforfilter .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline-block">';
@@ -1106,7 +1113,7 @@ if ($mode == 'marketplace') {
 
 	print '<br>';
 
-	if (!getDolGlobalString('MAIN_DISABLE_DOLISTORE_SEARCH') && $conf->global->MAIN_FEATURES_LEVEL >= 1) {
+	if (!getDolGlobalString('MAIN_DISABLE_DOLISTORE_SEARCH') && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
 		// $options is array with filter criterias
 		//var_dump($options);
 		$dolistore->getRemoteCategories();
@@ -1119,8 +1126,7 @@ if ($mode == 'marketplace') {
 
 		print '<div class="liste_titre liste_titre_bydiv centpercent"><div class="divsearchfield">';
 
-		print '<form method="POST" class="centpercent" id="searchFormList" action="'.$dolistore->url.'">';
-		?>
+		print '<form method="POST" class="centpercent" id="searchFormList" action="'.$dolistore->url.'">'; ?>
 					<input type="hidden" name="token" value="<?php echo newToken(); ?>">
 					<input type="hidden" name="mode" value="marketplace">
 					<div class="divsearchfield">
@@ -1139,15 +1145,12 @@ if ($mode == 'marketplace') {
 
 
 		print '</div></div>';
-		print '<div class="clearboth"></div>';
-
-		?>
+		print '<div class="clearboth"></div>'; ?>
 
 			<div id="category-tree-left">
 				<ul class="tree">
 					<?php
-					echo $dolistore->get_categories();	// Do not use dol_escape_htmltag here, it is already a structured content
-					?>
+					echo $dolistore->get_categories();	// Do not use dol_escape_htmltag here, it is already a structured content?>
 				</ul>
 			</div>
 			<div id="listing-content">
@@ -1166,8 +1169,6 @@ if ($mode == 'marketplace') {
 
 if ($mode == 'deploy') {
 	print dol_get_fiche_head($head, $mode, '', -1);
-
-	print $deschelp;
 
 	$dolibarrdataroot = preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);
 	$allowonlineinstall = true;
@@ -1209,6 +1210,8 @@ if ($mode == 'deploy') {
 		$allowfromweb = 0;
 	}
 
+	print $deschelp;
+
 	if ($allowfromweb < 1) {
 		print $langs->trans("SomethingMakeInstallFromWebNotPossible");
 		print $message;
@@ -1218,6 +1221,7 @@ if ($mode == 'deploy') {
 
 	print '<br>';
 
+	// $allowfromweb = -1 if installation or setup not correct, 0 if not allowed, 1 if allowed
 	if ($allowfromweb >= 0) {
 		if ($allowfromweb == 1) {
 			//print $langs->trans("ThisIsProcessToFollow").'<br>';
@@ -1231,16 +1235,12 @@ if ($mode == 'deploy') {
 		}
 
 		if ($allowfromweb == 1) {
-			print '<span class="opacitymedium">'.$langs->trans("UnpackPackageInModulesRoot", $dirins).'</span><br>';
-
-			print '<br>';
-
 			print '<form enctype="multipart/form-data" method="POST" class="noborder" action="'.$_SERVER["PHP_SELF"].'" name="forminstall">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="install">';
 			print '<input type="hidden" name="mode" value="deploy">';
 
-			print $langs->trans("YouCanSubmitFile");
+			print $langs->trans("YouCanSubmitFile").'<br><br>';
 
 			$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
 			$maxphp = @ini_get('upload_max_filesize'); // In unknown
@@ -1354,15 +1354,15 @@ if ($mode == 'develop') {
 	print '<br>';
 
 	// Marketplace
-	print "<table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">\n";
-	print "<tr class=\"liste_titre\">\n";
+	print '<table summary="list_of_modules" class="noborder centpercent">'."\n";
+	print '<tr class="liste_titre">'."\n";
 	//print '<td>'.$langs->trans("Logo").'</td>';
 	print '<td colspan="2">'.$langs->trans("DevelopYourModuleDesc").'</td>';
 	print '<td>'.$langs->trans("URL").'</td>';
 	print '</tr>';
 
 	print '<tr class="oddeven" height="80">'."\n";
-	print '<td class="left">';
+	print '<td class="center">';
 	print '<div class="imgmaxheight50 logo_setup"></div>';
 	print '</td>';
 	print '<td>'.$langs->trans("TryToUseTheModuleBuilder", $langs->transnoentitiesnoconv("ModuleBuilder")).'</td>';
@@ -1377,11 +1377,13 @@ if ($mode == 'develop') {
 
 	print '<tr class="oddeven" height="80">'."\n";
 	$url = 'https://partners.dolibarr.org';
-	print '<td class="left">';
+	print '<td class="center">';
 	print'<a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner.png"></a>';
 	print '</td>';
 	print '<td>'.$langs->trans("DoliPartnersDesc").'</td>';
-	print '<td><a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
+	print '<td><a href="'.$url.'" target="_blank" rel="noopener noreferrer external">';
+	print img_picto('', 'url', 'class="pictofixedwidth"');
+	print $url.'</a></td>';
 	print '</tr>';
 
 	print "</table>\n";

@@ -30,7 +30,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modSocialNetworks extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -65,7 +64,7 @@ class modSocialNetworks extends DolibarrModules
 		$this->config_page_url = array(DOL_URL_ROOT.'/admin/dict.php?id=38');
 
 		// Dependencies
-		$this->hidden = !empty($conf->global->MODULE_SOCIALNETWORKS_DISABLED); // A condition to hide module
+		$this->hidden = getDolGlobalString('MODULE_SOCIALNETWORKS_DISABLED'); // A condition to hide module
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with

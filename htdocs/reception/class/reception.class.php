@@ -95,6 +95,7 @@ class Reception extends CommonObject
 	// A denormalized value
 	public $trueSize;
 	public $size_units;
+	public $user_author_id;
 
 	public $date_delivery; // Date delivery planed
 
@@ -165,10 +166,10 @@ class Reception extends CommonObject
 		global $langs, $conf;
 		$langs->load("receptions");
 
-		if (!empty($conf->global->RECEPTION_ADDON_NUMBER)) {
+		if (getDolGlobalString('RECEPTION_ADDON_NUMBER')) {
 			$mybool = false;
 
-			$file = $conf->global->RECEPTION_ADDON_NUMBER.".php";
+			$file = getDolGlobalString('RECEPTION_ADDON_NUMBER') . ".php";
 			$classname = $conf->global->RECEPTION_ADDON_NUMBER;
 
 			// Include file with class
@@ -208,7 +209,7 @@ class Reception extends CommonObject
 	 *
 	 *  @param	User	$user       Objet du user qui cree
 	 *  @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *  @return int 				<0 si erreur, id reception creee si ok
+	 *  @return int 				Return integer <0 si erreur, id reception creee si ok
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -269,12 +270,12 @@ class Reception extends CommonObject
 		$sql .= ", ".((int) $this->fk_project);
 		$sql .= ", ".($this->shipping_method_id > 0 ? ((int) $this->shipping_method_id) : "null");
 		$sql .= ", '".$this->db->escape($this->tracking_number)."'";
-		$sql .= ", ".(is_null($this->weight) ? "NULL" : ((double) $this->weight));
-		$sql .= ", ".(is_null($this->trueDepth) ? "NULL" : ((double) $this->trueDepth));
-		$sql .= ", ".(is_null($this->trueWidth) ? "NULL" : ((double) $this->trueWidth));
-		$sql .= ", ".(is_null($this->trueHeight) ? "NULL" : ((double) $this->trueHeight));
-		$sql .= ", ".(is_null($this->weight_units) ? "NULL" : ((double) $this->weight_units));
-		$sql .= ", ".(is_null($this->size_units) ? "NULL" : ((double) $this->size_units));
+		$sql .= ", ".(is_null($this->weight) ? "NULL" : ((float) $this->weight));
+		$sql .= ", ".(is_null($this->trueDepth) ? "NULL" : ((float) $this->trueDepth));
+		$sql .= ", ".(is_null($this->trueWidth) ? "NULL" : ((float) $this->trueWidth));
+		$sql .= ", ".(is_null($this->trueHeight) ? "NULL" : ((float) $this->trueHeight));
+		$sql .= ", ".(is_null($this->weight_units) ? "NULL" : ((float) $this->weight_units));
+		$sql .= ", ".(is_null($this->size_units) ? "NULL" : ((float) $this->size_units));
 		$sql .= ", ".(!empty($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= ", ".(!empty($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null");
 		$sql .= ", ".(!empty($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null");
@@ -488,7 +489,7 @@ class Reception extends CommonObject
 	 *
 	 *  @param      User		$user       Object user that validate
 	 *  @param		int			$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *  @return     int						<0 if OK, >0 if KO
+	 *  @return     int						Return integer <0 if OK, >0 if KO
 	 */
 	public function valid($user, $notrigger = 0)
 	{
@@ -504,8 +505,8 @@ class Reception extends CommonObject
 			return 0;
 		}
 
-		if (!((!getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->reception->creer))
-		|| (getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->reception->reception_advance->validate)))) {
+		if (!((!getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('reception', 'creer'))
+		|| (getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('reception', 'reception_advance', 'validate')))) {
 			$this->error = 'Permission denied';
 			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
 			return -1;
@@ -656,13 +657,15 @@ class Reception extends CommonObject
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'reception/".$this->db->escape($this->ref)."' AND entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'reception/".$this->db->escape($this->newref)."'";
 				$sql .= " WHERE filepath = 'reception/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
@@ -712,23 +715,24 @@ class Reception extends CommonObject
 	/**
 	 * Get status from all dispatched lines
 	 *
-	 * @return		int		                        <0 if KO, Status of reception if OK
+	 * @return		int		                        Return integer <0 if KO, Status of reception if OK
 	 */
 	public function getStatusDispatch()
 	{
-		global $conf;
-
 		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
 
 		$status = CommandeFournisseur::STATUS_RECEIVED_PARTIALLY;
 
 		if (!empty($this->origin) && $this->origin_id > 0 && ($this->origin == 'order_supplier' || $this->origin == 'commandeFournisseur')) {
-			if (empty($this->commandeFournisseur)) {
+			if (empty($this->origin_object)) {
 				$this->fetch_origin();
-				if (empty($this->commandeFournisseur->lines)) {
-					$res = $this->commandeFournisseur->fetch_lines();
-					if ($res < 0)	return $res;
+				if (empty($this->origin_object->lines)) {
+					$res = $this->origin_object->fetch_lines();
+					$this->commandeFournisseur = $this->origin_object;	// deprecated
+					if ($res < 0) {
+						return $res;
+					}
 				}
 			}
 
@@ -813,7 +817,7 @@ class Reception extends CommonObject
 	 * @param	integer		$sellby					sell-by date
 	 * @param	string		$batch					Lot number
 	 * @param	double		$cost_price			Line cost
-	 * @return	int							<0 if KO, index of line if OK
+	 * @return	int							Return integer <0 if KO, index of line if OK
 	 */
 	public function addline($entrepot_id, $id, $qty, $array_options = 0, $comment = '', $eatby = '', $sellby = '', $batch = '', $cost_price = 0)
 	{
@@ -890,7 +894,7 @@ class Reception extends CommonObject
 	 *
 	 *  @param	User	$user        	User that modify
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return int 			       	<0 if KO, >0 if OK
+	 *  @return int 			       	Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -990,7 +994,8 @@ class Reception extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -1063,7 +1068,8 @@ class Reception extends CommonObject
 					$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->trans("ReceptionDeletedInDolibarr", $this->ref), '', $obj->eatby, $obj->sellby, $obj->batch); // Price is set to 0, because we don't want to see WAP changed
 				}
 			} else {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -1375,7 +1381,6 @@ class Reception extends CommonObject
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
 		$this->statut               = 1;
-		$this->livraison_id         = 0;
 		$this->date                 = $now;
 		$this->date_creation        = $now;
 		$this->date_valid           = $now;
@@ -1385,11 +1390,10 @@ class Reception extends CommonObject
 		$this->entrepot_id          = 0;
 		$this->socid                = 1;
 
-		$this->commande_id          = 0;
-		$this->commande             = $order;
-
 		$this->origin_id            = 1;
 		$this->origin               = 'commande';
+		$this->origin_object        = $order;
+		$this->commandeFournisseur  = $order;	// deprecated
 
 		$this->note_private = 'Private note';
 		$this->note_public = 'Public note';
@@ -1403,7 +1407,7 @@ class Reception extends CommonObject
 			$line->label = $langs->trans("Description")." ".$xnbp;
 			$line->qty = 10;
 
-			$line->fk_product = $this->commande->lines[$xnbp]->fk_product;
+			$line->fk_product = $this->origin_object->lines[$xnbp]->fk_product;
 
 			$this->lines[] = $line;
 			$xnbp++;
@@ -1415,12 +1419,12 @@ class Reception extends CommonObject
 	 *
 	 *	@param      User			$user        		Objet utilisateur qui modifie
 	 *	@param      integer 		$delivery_date     Delivery date
-	 *	@return     int         						<0 if KO, >0 if OK
+	 *	@return     int         						Return integer <0 if KO, >0 if OK
 	 */
 	public function setDeliveryDate($user, $delivery_date)
 	{
 		// phpcs:enable
-		if ($user->rights->reception->creer) {
+		if ($user->hasRight('reception', 'creer')) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."reception";
 			$sql .= " SET date_delivery = ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : 'null');
 			$sql .= " WHERE rowid = ".((int) $this->id);
@@ -1533,7 +1537,7 @@ class Reception extends CommonObject
 	/**
 	 *	Classify the reception as closed (this record also the stock movement)
 	 *
-	 *	@return     int     <0 if KO, >0 if OK
+	 *	@return     int     Return integer <0 if KO, >0 if OK
 	 */
 	public function setClosed()
 	{
@@ -1626,7 +1630,8 @@ class Reception extends CommonObject
 							if ($result < 0) {
 								$this->error = $mouvS->error;
 								$this->errors = $mouvS->errors;
-								$error++; break;
+								$error++;
+								break;
 							}
 						} else {
 							// line with batch detail
@@ -1638,7 +1643,8 @@ class Reception extends CommonObject
 							if ($result < 0) {
 								$this->error = $mouvS->error;
 								$this->errors = $mouvS->errors;
-								$error++; break;
+								$error++;
+								break;
 							}
 						}
 					}
@@ -1672,7 +1678,7 @@ class Reception extends CommonObject
 	/**
 	 *	Classify the reception as invoiced (used for exemple by trigger when WORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE is on)
 	 *
-	 *	@return     int     <0 if ko, >0 if ok
+	 *	@return     int     Return integer <0 if ko, >0 if ok
 	 */
 	public function setBilled()
 	{
@@ -1716,7 +1722,7 @@ class Reception extends CommonObject
 	/**
 	 *	Classify the reception as validated/opened
 	 *
-	 *	@return     int     <0 if ko, >0 if ok
+	 *	@return     int     Return integer <0 if ko, >0 if ok
 	 */
 	public function reOpen()
 	{
@@ -1782,7 +1788,8 @@ class Reception extends CommonObject
 							if ($result < 0) {
 								$this->error = $mouvS->error;
 								$this->errors = $mouvS->errors;
-								$error++; break;
+								$error++;
+								break;
 							}
 						} else {
 							// line with batch detail
@@ -1793,7 +1800,8 @@ class Reception extends CommonObject
 							if ($result < 0) {
 								$this->error = $mouvS->error;
 								$this->errors = $mouvS->errors;
-								$error++; break;
+								$error++;
+								break;
 							}
 						}
 					}
@@ -1835,12 +1843,12 @@ class Reception extends CommonObject
 		}
 	}
 
-	 /**
-	  *	Set draft status
-	  *
-	  *	@param	User	$user			Object user that modify
-	  *	@return	int						<0 if KO, >0 if OK
-	  */
+	/**
+	 *	Set draft status
+	 *
+	 *	@param	User	$user			Object user that modify
+	 *	@return	int						Return integer <0 if KO, >0 if OK
+	 */
 	public function setDraft($user)
 	{
 		// phpcs:enable
@@ -1853,8 +1861,8 @@ class Reception extends CommonObject
 			return 0;
 		}
 
-		if (!((!getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->reception->creer))
-		|| (getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->reception->reception_advance->validate)))) {
+		if (!((!getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('reception', 'creer'))
+		|| (getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('reception', 'reception_advance', 'validate')))) {
 			$this->error = 'Permission denied';
 			return -1;
 		}
@@ -1925,7 +1933,8 @@ class Reception extends CommonObject
 							if ($result < 0) {
 								$this->error = $mouvS->error;
 								$this->errors = $mouvS->errors;
-								$error++; break;
+								$error++;
+								break;
 							}
 						}
 					}
@@ -2003,7 +2012,7 @@ class Reception extends CommonObject
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->RECEPTION_ADDON_PDF)) {
+			} elseif (getDolGlobalString('RECEPTION_ADDON_PDF')) {
 				$modele = $conf->global->RECEPTION_ADDON_PDF;
 			}
 		}

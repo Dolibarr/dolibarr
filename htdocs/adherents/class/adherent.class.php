@@ -377,7 +377,7 @@ class Adherent extends CommonObject
 	 *  @param	string	$moreinheader		Add more html headers
 	 *  @deprecated since V18
 	 *  @see sendEmail()
-	 *  @return	int							<0 if KO, >0 if OK
+	 *  @return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function send_an_email($text, $subject, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $addr_cc = "", $addr_bcc = "", $deliveryreceipt = 0, $msgishtml = -1, $errors_to = '', $moreinheader = '')
 	{
@@ -402,7 +402,7 @@ class Adherent extends CommonObject
 	 *  @param	string	$errors_to			erros to
 	 *  @param	string	$moreinheader		Add more html headers
 	 * 	@since V18
-	 *  @return	int							<0 if KO, >0 if OK
+	 *  @return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function sendEmail($text, $subject, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $addr_cc = "", $addr_bcc = "", $deliveryreceipt = 0, $msgishtml = -1, $errors_to = '', $moreinheader = '')
 	{
@@ -573,7 +573,7 @@ class Adherent extends CommonObject
 	 *
 	 *	@param	User	$user        	Objet user qui demande la creation
 	 *	@param  int		$notrigger		1 ne declenche pas les triggers, 0 sinon
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -634,7 +634,7 @@ class Adherent extends CommonObject
 					try {
 						require_once $modfile;
 						$modname = getDolGlobalString('MEMBER_CODEMEMBER_ADDON');
-						$modCodeMember = new $modname;
+						$modCodeMember = new $modname();
 						$this->ref = $modCodeMember->getNextValue($mysoc, $this);
 					} catch (Exception $e) {
 						dol_syslog($e->getMessage(), LOG_ERR);
@@ -704,7 +704,7 @@ class Adherent extends CommonObject
 	 *	@param	int		$nosyncuserpass		0=Synchronize linked user (password), 1=Do not synchronize linked user
 	 *	@param	int		$nosyncthirdparty	0=Synchronize linked thirdparty (standard info), 1=Do not synchronize linked thirdparty
 	 * 	@param	string	$action				Current action for hookmanager
-	 * 	@return	int							<0 if KO, >0 if OK
+	 * 	@return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user, $notrigger = 0, $nosyncuser = 0, $nosyncuserpass = 0, $nosyncthirdparty = 0, $action = 'update')
 	{
@@ -728,7 +728,7 @@ class Adherent extends CommonObject
 		$this->state_id = ($this->state_id > 0 ? $this->state_id : $this->state_id);
 		$this->note_public = ($this->note_public ? $this->note_public : $this->note_public);
 		$this->note_private = ($this->note_private ? $this->note_private : $this->note_private);
-		$this->url = $this->url ?clean_url($this->url, 0) : '';
+		$this->url = $this->url ? clean_url($this->url, 0) : '';
 		$this->setUpperOrLowerCase();
 		// Check parameters
 		if (getDolGlobalString('ADHERENT_MAIL_REQUIRED') && !isValidEMail($this->email)) {
@@ -975,7 +975,7 @@ class Adherent extends CommonObject
 	 * 	This function is called when we delete a subscription for example.
 	 *
 	 *	@param	User	$user			User making change
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function update_end_date($user)
 	{
@@ -1026,12 +1026,10 @@ class Adherent extends CommonObject
 	 *  @param	int		$rowid		Id of member to delete
 	 *	@param	User	$user		User object
 	 *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *  @return	int					<0 if KO, 0=nothing to do, >0 if OK
+	 *  @return	int					Return integer <0 if KO, 0=nothing to do, >0 if OK
 	 */
 	public function delete($rowid, $user, $notrigger = 0)
 	{
-		global $conf, $langs;
-
 		$result = 0;
 		$error = 0;
 		$errorflag = 0;
@@ -1153,7 +1151,6 @@ class Adherent extends CommonObject
 		// Mise a jour
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
 		$sql .= " SET pass_crypted = '".$this->db->escape($password_crypted)."'";
-		//if (!empty($conf->global->DATABASE_PWD_ENCRYPTED))
 		if ($isencrypted) {
 			$sql .= ", pass = null";
 		} else {
@@ -1512,7 +1509,7 @@ class Adherent extends CommonObject
 	 *	first_subscription_date, first_subscription_date_start, first_subscription_date_end, first_subscription_amount
 	 *	last_subscription_date, last_subscription_date_start, last_subscription_date_end, last_subscription_amount
 	 *
-	 *	@return		int			<0 if KO, >0 if OK
+	 *	@return		int			Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_subscriptions()
 	{
@@ -1577,7 +1574,7 @@ class Adherent extends CommonObject
 	 *	Function to get partnerships array
 	 *
 	 *  @param		string		$mode		'member' or 'thirdparty'
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchPartnerships($mode)
 	{
@@ -1685,7 +1682,7 @@ class Adherent extends CommonObject
 	 *  @param	string		$autocreatethirdparty	Auto create new thirdparty if member not yet linked to a thirdparty and we request an option that generate invoice.
 	 *  @param  string      $ext_payment_id         External id of payment (for example Stripe charge id)
 	 *  @param  string      $ext_payment_site       Name of external paymentmode (for example 'stripe')
-	 *	@return int									<0 if KO, >0 if OK
+	 *	@return int									Return integer <0 if KO, >0 if OK
 	 */
 	public function subscriptionComplementaryActions($subscriptionid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom = '', $emetteur_banque = '', $autocreatethirdparty = 0, $ext_payment_id = '', $ext_payment_site = '')
 	{
@@ -1923,7 +1920,7 @@ class Adherent extends CommonObject
 					$outputlangs->setDefaultLang($newlang);
 				}
 				// Generate PDF (whatever is option MAIN_DISABLE_PDF_AUTOUPDATE) so we can include it into email
-				//if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+				//if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE'))
 
 				$invoice->generateDocument($invoice->model_pdf, $outputlangs);
 			}
@@ -1941,7 +1938,7 @@ class Adherent extends CommonObject
 	 *		Function that validate a member
 	 *
 	 *		@param	User	$user		user adherent qui valide
-	 *		@return	int					<0 if KO, 0 if nothing done, >0 if OK
+	 *		@return	int					Return integer <0 if KO, 0 if nothing done, >0 if OK
 	 */
 	public function validate($user)
 	{
@@ -1994,7 +1991,7 @@ class Adherent extends CommonObject
 	 *		Fonction qui resilie un adherent
 	 *
 	 *		@param	User	$user		User making change
-	 *		@return	int					<0 if KO, >0 if OK
+	 *		@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function resiliate($user)
 	{
@@ -2044,7 +2041,7 @@ class Adherent extends CommonObject
 	 *		For historical purpose it add an "extra-subscription" type excluded
 	 *
 	 *		@param	User	$user		User making change
-	 *		@return	int					<0 if KO, >0 if OK
+	 *		@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function exclude($user)
 	{
@@ -2091,7 +2088,7 @@ class Adherent extends CommonObject
 	/**
 	 *  Function to add member into external tools mailing-list, spip, etc.
 	 *
-	 *  @return		int		<0 if KO, >0 if OK
+	 *  @return		int		Return integer <0 if KO, >0 if OK
 	 */
 	public function add_to_abo()
 	{
@@ -2143,7 +2140,7 @@ class Adherent extends CommonObject
 	/**
 	 *  Function to delete a member from external tools like mailing-list, spip, etc.
 	 *
-	 *  @return     int     <0 if KO, >0 if OK
+	 *  @return     int     Return integer <0 if KO, >0 if OK
 	 */
 	public function del_to_abo()
 	{
@@ -2330,7 +2327,7 @@ class Adherent extends CommonObject
 				$label = $langs->trans("ShowUser");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		}
 
@@ -2471,7 +2468,7 @@ class Adherent extends CommonObject
 	/**
 	 *      Charge indicateurs this->nb de tableau de bord
 	 *
-	 *      @return     int         <0 if KO, >0 if OK
+	 *      @return     int         Return integer <0 if KO, >0 if OK
 	 */
 	public function load_state_board()
 	{
@@ -2505,7 +2502,7 @@ class Adherent extends CommonObject
 	 *
 	 *      @param	User	$user   		Objet user
 	 *      @param  string	$mode           "expired" for membership to renew, "shift" for member to validate
-	 *      @return WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
+	 *      @return WorkboardResponse|int 	Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $mode)
 	{
@@ -2729,7 +2726,7 @@ class Adherent extends CommonObject
 		$keymodified = false;
 
 		// Object classes
-		$info["objectclass"] = explode(',', $conf->global->LDAP_MEMBER_OBJECT_CLASS);
+		$info["objectclass"] = explode(',', getDolGlobalString('LDAP_MEMBER_OBJECT_CLASS'));
 
 		$this->fullname = $this->getFullName($langs);
 
@@ -2754,7 +2751,7 @@ class Adherent extends CommonObject
 				$info[getDolGlobalString($constname)] = $this->$varname;
 
 				// Check if it is the LDAP key and if its value has been changed
-				if (getDolGlobalString('LDAP_KEY_MEMBERS') && $conf->global->LDAP_KEY_MEMBERS == getDolGlobalString($constname)) {
+				if (getDolGlobalString('LDAP_KEY_MEMBERS') && getDolGlobalString('LDAP_KEY_MEMBERS') == getDolGlobalString($constname)) {
 					if (!empty($this->oldcopy) && $this->$varname != $this->oldcopy->$varname) {
 						$keymodified = true; // For check if LDAP key has been modified
 					}
@@ -2823,15 +2820,15 @@ class Adherent extends CommonObject
 			if (getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED')) {
 				$info[getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED')] = dol_hash($this->pass, 'openldap'); // Create OpenLDAP password (see LDAP_PASSWORD_HASH_TYPE)
 			}
-		} elseif ($conf->global->LDAP_SERVER_PROTOCOLVERSION !== '3') {
+		} elseif (getDolGlobalString('LDAP_SERVER_PROTOCOLVERSION') !== '3') {
 			// Set LDAP password if possible
 			// If ldap key is modified and LDAPv3 we use ldap_rename function for avoid lose encrypt password
-			if (getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {
-				// Just for the default MD5 !
-				if (!getDolGlobalString('MAIN_SECURITY_HASH_ALGO')) {
+			if (getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {	// This should be on on default installation
+				// Just for the case we use old md5 encryption (deprecated, no more used, kept for compatibility)
+				if (!getDolGlobalString('MAIN_SECURITY_HASH_ALGO') || getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'md5') {
 					if ($this->pass_indatabase_crypted && getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED')) {
 						// Create OpenLDAP MD5 password from Dolibarr MD5 password
-						// Note: This suppose that "pass_indatabase_crypted" is a md5 (guaranted by the previous test if "(empty($conf->global->MAIN_SECURITY_HASH_ALGO))"
+						// Note: This suppose that "pass_indatabase_crypted" is a md5 (this should not happen anymore)"
 						$info[getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED')] = dolGetLdapPasswordHash($this->pass_indatabase_crypted, 'md5frommd5');
 					}
 				}
@@ -2934,7 +2931,7 @@ class Adherent extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param 	int[]|int 	$categories 	Category or categories IDs
-	 * @return 	int							<0 if KO, >0 if OK
+	 * @return 	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function setCategories($categories)
 	{
@@ -3231,7 +3228,7 @@ class Adherent extends CommonObject
 		return $nbko;
 	}
 
-		/**
+	/**
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
