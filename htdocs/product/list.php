@@ -168,10 +168,10 @@ if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
 	'p.ref'=>"Ref",
-	'pfp.ref_fourn'=>"RefSupplier",
 	'p.label'=>"ProductLabel",
 	'p.description'=>"Description",
 	"p.note"=>"Note",
+	'pfp.ref_fourn'=>"RefSupplier",
 
 );
 // multilang
@@ -457,7 +457,21 @@ if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 
 $sql .= ' WHERE p.entity IN ('.getEntity('product').')';
 if ($sall) {
-	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
+	// Clean $fieldstosearchall
+	$newfieldstosearchall = $fieldstosearchall;
+	unset($newfieldstosearchall['pfp.ref_fourn']);
+	unset($newfieldstosearchall['pfp.barcode']);
+
+	$sql .= ' AND (';
+	$sql .= natural_search(array_keys($newfieldstosearchall), $sall, 0, 1);
+	// Search also into a supplier reference 'pfp.ref_fourn'="RefSupplier"
+	$sql .= ' OR EXISTS (SELECT rowid FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp WHERE pfp.fk_product = p.rowid';
+	$sql .= ' AND ('.natural_search('pfp.ref_fourn', $sall, 0, 1);
+	if (isModEnabled('barcode')) {
+		// Search also into a supplier barcode 'pfp.barcode'='GencodBuyPrice';
+		$sql .= ' OR '.natural_search('pfp.barcode', $sall, 0, 1);
+	}
+	$sql .= ')))';
 }
 // if the type is not 1, we show all products (type = 0,2,3)
 if (dol_strlen($search_type) && $search_type != '-1') {
