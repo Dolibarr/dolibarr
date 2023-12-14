@@ -156,7 +156,7 @@ if (empty($reshook)) {
 			$error = 1;
 			setEventMessages('WithdrawalCantBeCreditedTwice', array(), 'errors');
 		} else {
-			$error = $object->set_infocredit($user, $dt);
+			$error = $object->set_infocredit($user, $dt, ($salaryBonPl ? 'salary' : ''));
 		}
 
 		if ($error) {
@@ -458,11 +458,18 @@ if ($id > 0 || $ref) {
 
 	// Lines into withdraw request
 	if ($salaryBonPl) {
-		$sql = "SELECT pl.rowid, pl.statut, pl.amount,pl.fk_user";
-		$sql .=" FROM llx_prelevement as p, llx_prelevement_lignes as pl, llx_salary as s";
-		$sql .= " WHERE pl.rowid = p.fk_prelevement_lignes";
-		$sql .= " AND p.fk_salary = s.rowid";
-		$sql .= " AND pl.fk_prelevement_bons = ".((int) $id);
+		$sql = "SELECT pl.rowid, pl.statut, pl.amount, pl.fk_user";
+		$sql .= " u.rowid as socid, u.login as name";
+		$sql .=" FROM llx_prelevement_lignes as pl";
+		$sql .= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
+		$sql .= " WHERE pl.fk_prelevement_bons = ".((int) $id);
+		$sql .= " AND pl.fk_prelevement_bons = pb.rowid";
+		$sql .= " AND pb.entity = ".((int) $conf->entity);	// No sharing of entity here
+		$sql .= " AND pl.fk_user = u.rowid";
+		if ($socid) {
+			$sql .= " AND u.rowid = ".((int) $socid);
+		}
+		$sql .= $db->order($sortfield, $sortorder);
 	} else {
 		$sql = "SELECT pl.rowid, pl.statut, pl.amount,";
 		$sql .= " s.rowid as socid, s.nom as name";

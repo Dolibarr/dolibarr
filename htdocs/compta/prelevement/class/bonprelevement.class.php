@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
+require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/userbankaccount.class.php';
 
@@ -449,13 +450,14 @@ class BonPrelevement extends CommonObject
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Set direct debit or credit transfer order to "paid" status.
-	 *  Then create the payment for each invoice of the prelemevement_bon.
+	 *  Then create the payment for each invoice or salary of the prelemevement_bon.
 	 *
 	 *	@param	User	$user			Id of user
 	 *	@param 	int		$date			date of action
+	 *  @param  string  $type        	'salary' for type=salary
 	 *	@return	int						>0 if OK, <0 if KO
 	 */
-	public function set_infocredit($user, $date)
+	public function set_infocredit($user, $date, $type = '')
 	{
 		// phpcs:enable
 		global $conf, $langs;
@@ -473,7 +475,7 @@ class BonPrelevement extends CommonObject
 			$this->db->begin();
 
 			$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_bons";
-			$sql .= " SET fk_user_credit = ".$user->id;
+			$sql .= " SET fk_user_credit = ".((int) $user->id);
 			$sql .= ", statut = ".self::STATUS_CREDITED;
 			$sql .= ", date_credit = '".$this->db->idate($date)."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
@@ -496,17 +498,22 @@ class BonPrelevement extends CommonObject
 				$amounts = array();
 				$amountsperthirdparty = array();
 
-				$facs = $this->getListInvoices(1);
+				$facs = $this->getListInvoices(1, $type);
 				if ($this->error) {
 					$error++;
 				}
 				//var_dump($facs);exit;
 
-				// Loop on each invoice. $facs=array(0=>id, 1=>amount requested)
+				// Loop on each invoice or salary.
+				// $facs=array(0=>id, 1=>amount requested)
 				$num = count($facs);
 				for ($i = 0; $i < $num; $i++) {
 					if ($this->type == 'bank-transfer') {
-						$fac = new FactureFournisseur($this->db);
+						if ($type == 'salary') {
+							$fac = new Salary($this->db);
+						} else {
+							$fac = new FactureFournisseur($this->db);
+						}
 					} else {
 						$fac = new Facture($this->db);
 					}
@@ -517,8 +524,14 @@ class BonPrelevement extends CommonObject
 					$amountsperthirdparty[$fac->socid][$fac->id] = $facs[$i][1];
 
 					$totalpaid = $fac->getSommePaiement();
-					$totalcreditnotes = $fac->getSumCreditNotesUsed();
-					$totaldeposits = $fac->getSumDepositsUsed();
+					$totalcreditnotes = 0;
+					if (method_exists($fac, 'getSumCreditNotesUsed')) {
+						$totalcreditnotes = $fac->getSumCreditNotesUsed();
+					}
+					$totaldeposits = 0;
+					if (method_exists($fac, 'getSumDepositsUsed')) {
+						$totaldeposits = $fac->getSumDepositsUsed();
+					}
 					$alreadypayed = $totalpaid + $totalcreditnotes + $totaldeposits;
 
 					// @TODO Move this after creation of payment
@@ -532,10 +545,14 @@ class BonPrelevement extends CommonObject
 				}
 				//var_dump($amountsperthirdparty);exit;
 
-				// Make one payment per customer
+				// Make one payment per customer or employee
 				foreach ($amountsperthirdparty as $thirdpartyid => $cursoramounts) {
 					if ($this->type == 'bank-transfer') {
-						$paiement = new PaiementFourn($this->db);
+						if ($type == 'salary') {
+							$paiement = new PaymentSalary($this->db);
+						} else {
+							$paiement = new PaiementFourn($this->db);
+						}
 					} else {
 						$paiement = new Paiement($this->db);
 					}
@@ -561,9 +578,15 @@ class BonPrelevement extends CommonObject
 						dol_syslog(get_class($this)."::set_infocredit AddPayment Error ".$this->error);
 					} else {
 						if ($this->type == 'bank-transfer') {
-							$modeforaddpayment = 'payment_supplier';
-							$labelforaddpayment = '(SupplierInvoicePayment)';
-							$addbankurl = 'credit-transfer';
+							if ($type == 'salary') {
+								$modeforaddpayment = 'payment_salary';
+								$labelforaddpayment = '(SalaryPayment)';
+								$addbankurl = 'credit-transfer';
+							} else {
+								$modeforaddpayment = 'payment_supplier';
+								$labelforaddpayment = '(SupplierInvoicePayment)';
+								$addbankurl = 'credit-transfer';
+							}
 						} else {
 							$modeforaddpayment = 'payment';
 							$labelforaddpayment = '(CustomerInvoicePayment)';
@@ -600,7 +623,7 @@ class BonPrelevement extends CommonObject
 
 			// End of procedure
 			if ($error == 0) {
-				$this->date_credit = $date;
+				$this->date_credit = $date;		// date credit or debit
 				$this->statut = self::STATUS_CREDITED;
 				$this->status = self::STATUS_CREDITED;
 
@@ -619,9 +642,9 @@ class BonPrelevement extends CommonObject
 	/**
 	 *	Set withdrawal to transmited status
 	 *
-	 *	@param	User		$user		id of user
-	 *	@param 	int	$date		date of action
-	 *	@param	string		$method		method of transmision to bank (0=Internet, 1=Api...)
+	 *	@param	User		$user		Id of user
+	 *	@param 	int			$date		Date of action
+	 *	@param	string		$method		Method of transmision to bank (0=Internet, 1=Api...)
 	 *	@return	int						>0 if OK, <0 if KO
 	 */
 	public function set_infotrans($user, $date, $method)
@@ -632,6 +655,7 @@ class BonPrelevement extends CommonObject
 		$error = 0;
 
 		dol_syslog(get_class($this)."::set_infotrans Start", LOG_INFO);
+
 		if ($this->db->begin()) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_bons ";
 			$sql .= " SET fk_user_trans = ".$user->id;
@@ -676,12 +700,13 @@ class BonPrelevement extends CommonObject
 	}
 
 	/**
-	 *	Get invoice list
+	 *	Get invoice or salary list
 	 *
 	 *  @param 	int		$amounts 	If you want to get the amount of the order for each invoice
-	 *	@return	array 				Array(Id of invoices, Amount to pay)
+	 *  @param  string  $type       'salary' for type=salary
+	 *	@return	array 				Array(Id of invoices/salary, Amount to pay)
 	 */
-	private function getListInvoices($amounts = 0)
+	private function getListInvoices($amounts = 0, $type = '')
 	{
 		global $conf;
 
@@ -689,9 +714,7 @@ class BonPrelevement extends CommonObject
 
 		dol_syslog(get_class($this)."::getListInvoices");
 
-		/*
-		 * Returns all invoices presented within same order
-		 */
+		// Returns all invoices presented within same order
 		$sql = "SELECT ";
 		if ($this->type == 'bank-transfer') {
 			$sql .= " p.fk_facture_fourn";
@@ -820,7 +843,7 @@ class BonPrelevement extends CommonObject
 	 *	Get number of invoices to pay
 	 *
 	 *	@param	string	$type		'direct-debit' or 'bank-transfer'
-	 *  @param  int     $forsalary   0= for facture & facture_supplier, 1=for salary
+	 *  @param  int     $forsalary  0= for facture & facture_supplier, 1=for salary
 	 *	@return	int					Return integer <O if KO, number of invoices if OK
 	 */
 	public function NbFactureAPrelever($type = 'direct-debit', $forsalary = 0)
