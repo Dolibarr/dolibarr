@@ -3037,7 +3037,7 @@ if ($action == 'create' && $usercancreate) {
 
 				// Cancel order
 				if ($object->statut == Commande::STATUS_VALIDATED && !empty($usercancancel)) {
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel&token='.newToken().'">'.$langs->trans("Cancel").'</a>';
+					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel&token='.newToken().'">'.$langs->trans("CancelOrder").'</a>';
 				}
 
 				// Delete order
