@@ -84,7 +84,7 @@ global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini;
 
 foreach ($filearray as $keyf => $valf) {
 	$ref = basename($valf['name']);
-	$filearrayimg = dol_dir_list($valf['fullname'], "files", 0, '(\.gif|\.png|\.jpg|\.jpeg|\.bmp)$', '(\.meta|_preview.*\.png)$');
+	$filearrayimg = dol_dir_list($valf['fullname'], "files", 0, '(\.gif|\.png|\.jpg|\.jpeg|\.bmp|\.webp)$', '(\.meta|_preview.*\.png)$');
 	foreach ($filearrayimg as $keyi => $vali) {
 		print 'Process image for ref '.$ref.' : '.$vali['name']."\n";
 

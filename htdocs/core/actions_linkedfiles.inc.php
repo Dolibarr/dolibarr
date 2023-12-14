@@ -123,8 +123,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 	if (GETPOST('section', 'alpha')) {
 		// For a delete from the ECM module, upload_dir is ECM root dir and urlfile contains relative path from upload_dir
 		$file = $upload_dir.(preg_match('/\/$/', $upload_dir) ? '' : '/').$urlfile;
-	} else // For a delete from the file manager into another module, or from documents pages, upload_dir contains already path to file from module dir, so we clean path into urlfile.
-	{
+	} else { // For a delete from the file manager into another module, or from documents pages, upload_dir contains already path to file from module dir, so we clean path into urlfile.
 		$urlfile = basename($urlfile);
 		$file = $upload_dir.(preg_match('/\/$/', $upload_dir) ? '' : '/').$urlfile;
 		if (!empty($upload_dirold)) {

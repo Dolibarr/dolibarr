@@ -65,7 +65,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 <?php
 if (getDolGlobalString('THEME_DARKMODEENABLED')) {
 	print "/* For dark mode */\n";
-	if ($conf->global->THEME_DARKMODEENABLED != 2) {
+	if (getDolGlobalInt('THEME_DARKMODEENABLED') != 2) {
 		print "@media (prefers-color-scheme: dark) {";	// To test, click on the 3 dots menu, then Other options then Display then emulate prefer-color-schemes
 	} else {
 		print "@media not print {";
@@ -146,7 +146,7 @@ body {
 }
 
 .thumbstat { font-weight: bold !important; }
-th a { font-weight: <?php echo ($useboldtitle ? 'bold' : 'normal'); ?> !important; }
+th a { font-weight: <?php echo($useboldtitle ? 'bold' : 'normal'); ?> !important; }
 a.tab { font-weight: 500 !important; }
 
 a:link, a:visited, a:hover, a:active, .classlink { color: var(--colortextlink); text-decoration: none;  }
@@ -786,10 +786,10 @@ textarea.centpercent {
 }
 
 .flip {
-	transform: scaleX(-1) translate(<?php print ($left == 'left' ? '' : '-'); ?>2px, 0);
+	transform: scaleX(-1) translate(<?php print($left == 'left' ? '' : '-'); ?>2px, 0);
 }
 .rotate90 {
-	transform: rotate(90deg) translate(0, <?php print ($left == 'left' ? '' : '-'); ?>2px);
+	transform: rotate(90deg) translate(0, <?php print($left == 'left' ? '' : '-'); ?>2px);
 }
 .center {
 	text-align: center;
@@ -823,19 +823,23 @@ textarea.centpercent {
 	float: right!important;
 }
 .nowrap {
-	white-space: <?php print ($dol_optimize_smallscreen ? 'normal' : 'nowrap'); ?>;
+	white-space: <?php print($dol_optimize_smallscreen ? 'normal' : 'nowrap'); ?>;
 }
 .nowraponsmartphone {
-	white-space: <?php print ($dol_optimize_smallscreen ? 'nowrap' : 'normal'); ?>;
+	white-space: <?php print($dol_optimize_smallscreen ? 'nowrap' : 'normal'); ?>;
 }
 .wraponsmartphone {
-	white-space: <?php print ($dol_optimize_smallscreen ? 'normal' : 'nowrap'); ?>;
+	white-space: <?php print($dol_optimize_smallscreen ? 'normal' : 'nowrap'); ?>;
 }
 .liste_titre .nowrap {
 	white-space: nowrap;
 }
 .nowraponall {	/* no wrap on all devices */
 	white-space: nowrap;
+}
+.nowrapfordate {	/* no wrap on all devices for dates */
+	white-space: nowrap;
+	display: inline-block;
 }
 .wrapimp {
 	white-space: normal !important;
@@ -1258,7 +1262,8 @@ if ($conf->browser->layout == 'phone') {
 .divsearchfieldfilter {
 	   white-space: nowrap;
 }
-<?php } ?>
+	<?php
+} ?>
 div.confirmmessage {
 	padding-top: 6px;
 }
@@ -2215,8 +2220,8 @@ div.vmenu, td.vmenu {
 
 
 div.fiche {
-	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '40' : '6')); ?>px;
-	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '36' : '6')); ?>px;
+	margin-<?php print $left; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '40' : '6')); ?>px;
+	margin-<?php print $right; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '36' : '6')); ?>px;
 	<?php if (!empty($dol_hide_leftmenu)) {
 		print 'margin-bottom: 12px;'."\n";
 	} ?>
@@ -2296,8 +2301,8 @@ div.secondcolumn div.box {
 @media only screen and (max-width: 1000px)
 {
 	div.fiche {
-		margin-<?php print $left; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print' ? 6 : ($dol_hide_leftmenu ? '6' : '20')); ?>px;
-		margin-<?php print $right; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print' ? 8 : 6); ?>px;
+		margin-<?php print $left; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : ($dol_hide_leftmenu ? '6' : '20')); ?>px;
+		margin-<?php print $right; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 8 : 6); ?>px;
 	}
 	div.fichecenter {
 		width: 100%;
@@ -2566,7 +2571,7 @@ div#tmenu_tooltip {
 <?php if (GETPOST('optioncss', 'aZ09') == 'print') {  ?>
 	display:none;
 <?php } else { ?>
-	padding-<?php echo $right; ?>: <?php echo ($maxwidthloginblock - 10); ?>px;
+	padding-<?php echo $right; ?>: <?php echo($maxwidthloginblock - 10); ?>px;
 <?php } ?>
 
   -webkit-touch-callout: none; /* iOS Safari */
@@ -2623,7 +2628,7 @@ span.mainmenuaspan.tmenudisabled {
 	cursor: not-allowed;
 }
 
-a.disabled {
+a.disabled, span.tmenu {
 	color: #aaa;
 	text-decoration: none !important;
 	cursor: default;
@@ -2734,7 +2739,7 @@ div.mainmenu {
 	position : relative;
 	background-repeat:no-repeat;
 	background-position:center top;
-	height: <?php echo ($heightmenu - 22); ?>px;
+	height: <?php echo($heightmenu - 22); ?>px;
 	margin-left: 0px;
 	min-width: 40px;
 }
@@ -2851,7 +2856,8 @@ li.tmenu:hover .tmenuimage:not(.menuhider), li.tmenu:hover .tmenuimage:not(.menu
 			continue;
 		}
 
-		$found = 0; $url = '';
+		$found = 0;
+		$url = '';
 		$constformoduleicon = 'MAIN_MODULE_'.strtoupper($val).'_ICON';
 		$iconformodule = getDolGlobalString($constformoduleicon);
 		if ($iconformodule) {
@@ -2894,7 +2900,7 @@ li.tmenu:hover .tmenuimage:not(.menuhider), li.tmenu:hover .tmenuimage:not(.menu
 	}
 	// End of part to add more div class css
 	?>
-<?php } // End test if $dol_hide_topmenu ?>
+<?php } // End test if $dol_hide_topmenu?>
 
 .tmenuimage {
 	padding:0 0 0 0 !important;
@@ -2948,7 +2954,7 @@ form#login {
 	max-width: 560px;
 <?php
 if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
-	print '	background-color: rgba(255, 255, 255, 0.9);';
+		print '	background-color: rgba(255, 255, 255, 0.9);';
 } else {
 	print '	background-color: #FFFFFF;';
 }
@@ -3052,7 +3058,7 @@ div.login_block {
 	<?php print $right; ?>: 0;
 	top: <?php print $disableimages ? '4px' : '0'; ?>;
 	line-height: 10px;
-	<?php // echo (empty($disableimages) && $maxwidthloginblock)?'max-width: '.$maxwidthloginblock.'px;':''; ?>
+	<?php // echo (empty($disableimages) && $maxwidthloginblock)?'max-width: '.$maxwidthloginblock.'px;':'';?>
 	<?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
 	display: none;
 	<?php } ?>
@@ -3299,7 +3305,7 @@ a.help:link, a.help:visited, a.help:hover, a.help:active, span.help {
 	font-size: x-small;
 	vertical-align: super;
 	opacity: 0.95;
-	transform: rotate(<?php echo ($left == 'left' ? '55deg' : '305deg'); ?>);
+	transform: rotate(<?php echo($left == 'left' ? '55deg' : '305deg'); ?>);
 }
 
 .vmenu div.blockvmenufirst, .vmenu div.blockvmenulogo, .vmenu div.blockvmenusearchphone, .vmenu div.blockvmenubookmarks
@@ -3667,7 +3673,7 @@ span.tabspan {
 
 #undertopmenu {
 	background-repeat: repeat-x;
-	margin-top: <?php echo ($dol_hide_topmenu ? '6' : '0'); ?>px;
+	margin-top: <?php echo($dol_hide_topmenu ? '6' : '0'); ?>px;
 }
 
 
@@ -4218,29 +4224,25 @@ table.hidepaginationnext .paginationnext {
 	box-shadow: unset;
 	-webkit-box-shadow: unset;
 }
-.oddeven, .evenodd, .impair, .nohover .impair:hover, tr.impair td.nohover, .tagtr.oddeven
+.oddeven, .evenodd, .impair, .pair, .nohover .impair:hover, tr.impair td.nohover, tr.pair td.nohover, .tagtr.oddeven
 {
 	font-family: <?php print $fontlist ?>;
 	margin-bottom: 1px;
 	color: var(--oddevencolor);
 }
-.impair, .nohover .impair:hover, tr.impair td.nohover
-{
+.impair, .nohover .impair:hover, tr.impair td.nohover {
 	background-color: var(--colorbacklineimpair2);
-}
-#GanttChartDIV {
-	background-color: var(--colorbacklineimpair2);
-}
-
-.oddeven, .evenodd, .pair, .nohover .pair:hover, tr.pair td.nohover, .tagtr.oddeven {
-	font-family: <?php print $fontlist ?>;
-	margin-bottom: 1px;
-	color: var(--oddevencolor);
 }
 .pair, .nohover .pair:hover, tr.pair td.nohover {
 	background-color: var(--colorbacklinepair2);
 }
+tr.oddeven.oddevendouble {
+	height: 60px !important;
+}
 
+#GanttChartDIV {
+	background-color: var(--colorbacklineimpair2);
+}
 table.dataTable tr.oddeven {
 	background-color: var(--colorbacklinepair2) !important;
 }
@@ -4485,7 +4487,7 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nt
 .noborder > tbody > tr:nth-child(even):not(:last-of-type) td:not(.liste_titre), .liste > tbody > tr:nth-child(even):not(:last-of-type) td:not(.liste_titre),
 .noborder .oddeven.tagtr:nth-child(even):not(:last-of-type) .tagtd:not(.liste_titre)
 {
-	border-bottom: 1px solid #eaeaea;
+	border-bottom: 1px solid #f0f0f0;
 }
 
 .noborder:not(.editmode) > tbody > tr:nth-child(odd):not(.liste_titre):not(.nooddeven), .liste > tbody > tr:nth-child(odd):not(.liste_titre):not(.nooddeven),
@@ -4500,7 +4502,7 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nt
 .noborder > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre),
 .noborder .oddeven.tagtr:nth-child(odd):not(:last-child) .tagtd:not(.liste_titre)
 {
-	border-bottom: 1px solid #eaeaea;
+	border-bottom: 1px solid #f0f0f0;
 }
 
 ul.noborder li:nth-child(even):not(.liste_titre) {
@@ -4622,13 +4624,13 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	.thumbstat {
 		flex: 1 1 110px;
 		margin-bottom: 8px;
-		min-width: <?php echo isset($_SESSION['dol_screenwidth']) ?min(160, round((int) $_SESSION['dol_screenwidth'] / 2 - 20)) : 150; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
+		min-width: <?php echo isset($_SESSION['dol_screenwidth']) ? min(160, round((int) $_SESSION['dol_screenwidth'] / 2 - 20)) : 150; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
 	}
 	.thumbstat150 {
 		flex: 1 1 110px;
 		margin-bottom: 8px;
-		min-width: <?php echo isset($_SESSION['dol_screenwidth']) ?min(160, round((int) $_SESSION['dol_screenwidth'] / 2 - 20)) : 160; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
-		max-width: <?php echo isset($_SESSION['dol_screenwidth']) ?min(161, round((int) $_SESSION['dol_screenwidth'] / 2 - 20)) : 161; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
+		min-width: <?php echo isset($_SESSION['dol_screenwidth']) ? min(160, round((int) $_SESSION['dol_screenwidth'] / 2 - 20)) : 160; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
+		max-width: <?php echo isset($_SESSION['dol_screenwidth']) ? min(161, round((int) $_SESSION['dol_screenwidth'] / 2 - 20)) : 161; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
 		/* width: ...px; If I use with, there is trouble on size of flex boxes solved with min + (max that is a little bit higer than min) */
 	}
 	.dashboardlineindicator {
@@ -5172,13 +5174,12 @@ div.ui-tooltip.mytooltip {
 
 <?php
 if (getDolGlobalString('THEME_DARKMODEENABLED')) {
-	print "/* For dark mode */\n";
-	if ($conf->global->THEME_DARKMODEENABLED != 2) {
+		print "/* For dark mode */\n";
+	if (getDolGlobalInt('THEME_DARKMODEENABLED') != 2) {
 		print "@media (prefers-color-scheme: dark) {";	// To test, click on the 3 dots menu, then Other options then Display then emulate prefer-color-schemes
 	} else {
 		print "@media not print {";
-	}
-	?>
+	} ?>
 	div.ui-tooltip.mytooltip {
 		border: 1px solid #bbb !important;
 	}
@@ -5214,16 +5215,6 @@ if (getDolGlobalString('THEME_DARKMODEENABLED')) {
 /* ============================================================================== */
 /* Calendar                                                                       */
 /* ============================================================================== */
-
-/*div.divfordateinput img.ui-datepicker-trigger {
-	float: left;
-	display: inline-block;
-	vertical-align: middle;
-	padding-top: 10px;
-}
-.hasDatepicker {
-	padding-bottom: 6px;
-}*/
 
 .ui-datepicker-calendar .ui-state-default, .ui-datepicker-calendar .ui-widget-content .ui-state-default,
 .ui-datepicker-calendar .ui-widget-header .ui-state-default, .ui-datepicker-calendar .ui-button,
@@ -5776,7 +5767,7 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 .ui-widget {
 	font-family:<?php echo $fontlist; ?>;
 }
-/* .ui-button { margin-left: -2px; <?php print (preg_match('/chrome/', $conf->browser->name) ? 'padding-top: 1px;' : ''); ?> } */
+/* .ui-button { margin-left: -2px; <?php print(preg_match('/chrome/', $conf->browser->name) ? 'padding-top: 1px;' : ''); ?> } */
 .ui-button { margin-left: -2px; }
 .ui-button-icon-only .ui-button-text { height: 8px; }
 .ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding: 2px 0px 6px 0px; }
@@ -5988,7 +5979,7 @@ pre#editfilecontentaceeditorid {
 /* ============================================================================== */
 
 div.scroll2 {
-	width: <?php print isset($_SESSION['dol_screenwidth']) ?max((int) $_SESSION['dol_screenwidth'] - 830, 450) : '450'; ?>px !important;
+	width: <?php print isset($_SESSION['dol_screenwidth']) ? max((int) $_SESSION['dol_screenwidth'] - 830, 450) : '450'; ?>px !important;
 }
 
 div#GanttChartDIVglisthead, div#GanttChartDIVgcharthead {

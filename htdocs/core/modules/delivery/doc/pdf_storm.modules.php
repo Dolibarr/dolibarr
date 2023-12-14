@@ -222,11 +222,6 @@ class pdf_storm extends ModelePDFDeliveryOrder
 					}
 				}
 
-				if (count($realpatharray) == 0) {
-					$this->posxpicture = $this->posxweightvol;
-				}
-
-
 
 				// Create pdf instance
 				$pdf = pdf_getInstance($this->format);
@@ -446,8 +441,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 									$showpricebeforepagebreak = 0;
 								}
 							}
-						} else // No pagebreak
-						{
+						} else { // No pagebreak
 							$pdf->commitTransaction();
 						}
 
@@ -659,7 +653,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 		if (empty($hidetop)) {
 			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
 			if (getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')) {
-				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, 5, 'F', null, explode(',', $conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR));
+				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, 5, 'F', null, explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
 			}
 		}
 

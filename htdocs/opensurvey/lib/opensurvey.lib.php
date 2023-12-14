@@ -217,7 +217,7 @@ function dol_survey_random($car)
 {
 	$string = "";
 	$chaine = "abcdefghijklmnopqrstuvwxyz123456789";
-	mt_srand((double) microtime() * 1000000);
+	mt_srand((float) microtime() * 1000000);
 	for ($i = 0; $i < $car; $i++) {
 		$string .= $chaine[mt_rand() % strlen($chaine)];
 	}

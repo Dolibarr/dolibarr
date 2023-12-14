@@ -70,7 +70,7 @@ if (isModEnabled('productbatch')) {
 	$langs->load('productbatch');
 }
 
-$origin = GETPOST('origin', 'alpha') ?GETPOST('origin', 'alpha') : 'reception'; // Example: commande, propal
+$origin = GETPOST('origin', 'alpha') ? GETPOST('origin', 'alpha') : 'reception'; // Example: commande, propal
 $origin_id = GETPOST('id', 'int') ? GETPOST('id', 'int') : '';
 $id = $origin_id;
 if (empty($origin_id)) {
@@ -83,7 +83,7 @@ if (empty($origin_id)) {
 	$origin_id  = GETPOST('originid', 'int'); // Id of order or propal
 }
 $ref = GETPOST('ref', 'alpha');
-$line_id = GETPOST('lineid', 'int') ?GETPOST('lineid', 'int') : '';
+$line_id = GETPOST('lineid', 'int') ? GETPOST('lineid', 'int') : '';
 $facid = GETPOST('facid', 'int');
 
 $action	= GETPOST('action', 'alpha');
@@ -530,8 +530,8 @@ if (empty($reshook)) {
 			$object->trueWidth = trim(GETPOST('trueWidth', 'int'));
 		}
 		if ($action == 'settrueHeight') {
-						$object->trueHeight = trim(GETPOST('trueHeight', 'int'));
-						$object->size_units = GETPOST('size_units', 'int');
+			$object->trueHeight = trim(GETPOST('trueHeight', 'int'));
+			$object->size_units = GETPOST('size_units', 'int');
 		}
 		if ($action == 'settrueDepth') {
 			$object->trueDepth = trim(GETPOST('trueDepth', 'int'));
@@ -761,7 +761,9 @@ if ($action == 'create2') {
 	print load_fiche_titre($langs->trans("CreateReception"), '', 'dollyrevert');
 
 	print '<br>'.$langs->trans("ReceptionCreationIsDoneFromOrder");
-	$action = ''; $id = ''; $ref = '';
+	$action = '';
+	$id = '';
+	$ref = '';
 }
 
 // Mode creation.
@@ -837,7 +839,7 @@ if ($action == 'create') {
 
 			// Project
 			if (isModEnabled('project')) {
-				$projectid = GETPOST('projectid', 'int') ?GETPOST('projectid', 'int') : 0;
+				$projectid = GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : 0;
 				if (empty($projectid) && !empty($objectsrc->fk_project)) {
 					$projectid = $objectsrc->fk_project;
 				}
@@ -1252,7 +1254,7 @@ if ($action == 'create') {
 							// Show warehouse combo list
 							$ent = "entl".$indiceAsked;
 							$idl = "idl".$indiceAsked;
-							$tmpentrepot_id = is_numeric(GETPOST($ent, 'int')) ?GETPOST($ent, 'int') : $warehouse_id;
+							$tmpentrepot_id = is_numeric(GETPOST($ent, 'int')) ? GETPOST($ent, 'int') : $warehouse_id;
 							if ($line->fk_product > 0) {
 								print '<!-- Show warehouse selection -->';
 								print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 0, 0, $line->fk_product, '', 1);
@@ -2092,8 +2094,12 @@ if ($action == 'create') {
 		$extralabelslines = $extrafields->attributes[$lines[$i]->table_element];
 		if (!empty($extralabelslines) && is_array($extralabelslines) && count($extralabelslines) > 0) {
 			$colspan = 8;
-			if (isModEnabled('stock')) { $colspan++; }
-			if (isModEnabled('productbatch')) { $colspan++; }
+			if (isModEnabled('stock')) {
+				$colspan++;
+			}
+			if (isModEnabled('productbatch')) {
+				$colspan++;
+			}
 
 			$line = new CommandeFournisseurDispatch($db);
 			$line->id = $lines[$i]->id;

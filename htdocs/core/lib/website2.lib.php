@@ -103,7 +103,9 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 			$filename = basename($filealias);
 			foreach (explode(',', $object->otherlang) as $sublang) {
 				// Avoid to erase main alias file if $sublang is empty string
-				if (empty(trim($sublang))) continue;
+				if (empty(trim($sublang))) {
+					continue;
+				}
 				$filealiassub = $dirname.'/'.$sublang.'/'.$filename;
 
 				$aliascontent = '<?php'."\n";
@@ -121,7 +123,7 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 		}
 	}
 
-	return ($result ?true:false);
+	return ($result ? true : false);
 }
 
 
@@ -322,7 +324,9 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper, $o
 					$dirname = dirname($fileindex);
 					foreach (explode(',', $object->otherlang) as $sublang) {
 						// Avoid to erase main alias file if $sublang is empty string
-						if (empty(trim($sublang))) continue;
+						if (empty(trim($sublang))) {
+							continue;
+						}
 						$fileindexsub = $dirname.'/'.$sublang.'/index.php';
 
 						// Same indexcontent than previously but with ../ instead of ./ for master and tpl file include/require_once.

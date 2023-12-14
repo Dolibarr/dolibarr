@@ -227,13 +227,16 @@ foreach ($filters as $key => $value) {
 }
 // Add extension
 if ($format == 'vcal') {
-	$shortfilename .= '.vcs'; $filename .= '.vcs';
+	$shortfilename .= '.vcs';
+	$filename .= '.vcs';
 }
 if ($format == 'ical') {
-	$shortfilename .= '.ics'; $filename .= '.ics';
+	$shortfilename .= '.ics';
+	$filename .= '.ics';
 }
 if ($format == 'rss') {
-	$shortfilename .= '.rss'; $filename .= '.rss';
+	$shortfilename .= '.rss';
+	$filename .= '.rss';
 }
 if ($shortfilename == 'dolibarrcalendar') {
 	$langs->load("errors");

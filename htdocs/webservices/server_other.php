@@ -174,7 +174,8 @@ function getVersions($authentication)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
@@ -216,7 +217,8 @@ function getDocument($authentication, $modulepart, $file, $refname = '')
 	}
 
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 
 	// Properties of doc
@@ -236,7 +238,8 @@ function getDocument($authentication, $modulepart, $file, $refname = '')
 	// Check parameters
 	if (!$error && (!$file || !$modulepart)) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter file and modulepart must be both provided.";
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = "Parameter file and modulepart must be both provided.";
 	}
 
 	if (!$error) {

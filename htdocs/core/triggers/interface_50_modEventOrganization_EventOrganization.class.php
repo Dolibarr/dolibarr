@@ -66,7 +66,7 @@ class InterfaceEventOrganization extends DolibarrTriggers
 	 * @param User		    $user       Object user
 	 * @param Translate 	$langs      Object langs
 	 * @param conf		    $conf       Object conf
-	 * @return int         				<0 if KO, 0 if no triggered ran, >0 if OK
+	 * @return int         				Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
@@ -79,7 +79,7 @@ class InterfaceEventOrganization extends DolibarrTriggers
 		// Actions
 		if ($action == 'PROJECT_VALIDATE') {
 			if (getDolGlobalString('EVENTORGANIZATION_TASK_LABEL') && !empty($object->usage_organize_event)) {
-				$taskToDo = explode("\n", $conf->global->EVENTORGANIZATION_TASK_LABEL);
+				$taskToDo = explode("\n", getDolGlobalString('EVENTORGANIZATION_TASK_LABEL'));
 				if (is_array($taskToDo) && count($taskToDo)>0) {
 					// Load translation files required by the page
 					$langs->loadLangs(array("eventorganization"));
@@ -93,7 +93,7 @@ class InterfaceEventOrganization extends DolibarrTriggers
 						$obj = !getDolGlobalString('PROJECT_TASK_ADDON') ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
 						if (getDolGlobalString('PROJECT_TASK_ADDON') && is_readable(DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON') . ".php")) {
 							require_once DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON') . '.php';
-							$modTask = new $obj;
+							$modTask = new $obj();
 							$defaultref = $modTask->getNextValue($object->thirdparty, null);
 						}
 						if (is_numeric($defaultref) && $defaultref <= 0) {

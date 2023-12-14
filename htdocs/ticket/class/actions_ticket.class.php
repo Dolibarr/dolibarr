@@ -117,7 +117,7 @@ class ActionsTicket extends CommonHookActions
 	 * @param	int		$id				ID of ticket
 	 * @param	string	$ref			Reference of ticket
 	 * @param	string	$track_id		Track ID of ticket (for public area)
-	 * @return int              		<0 if KO, >0 if OK
+	 * @return int              		Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id = 0, $ref = '', $track_id = '')
 	{
@@ -219,22 +219,13 @@ class ActionsTicket extends CommonHookActions
 			$doleditor = new DolEditor('message_initial', $msg, '100%', 250, 'dolibarr_details', 'In', true, $uselocalbrowser, $ckeditorenabledforticket, ROWS_9, '95%');
 			$doleditor->Create();
 		} else {
-			// Deal with format differences (text / HTML)
-			if (dol_textishtml($object->message)) {
-				print '<div class="longmessagecut">';
-				print dol_htmlwithnojs($object->message);
-				print '</div>';
-				/*print '<div class="clear center">';
-				print $langs->trans("More").'...';
-				print '</div>';*/
-			} else {
-				print '<div class="longmessagecut">';
-				print dol_nl2br($object->message);
-				print '</div>';
-				/*print '<div class="clear center">';
-				print $langs->trans("More").'...';
-				print '</div>';*/
-			}
+			print '<div class="longmessagecut">';
+			//print dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->message), 1, 1, 1, 0)), 1, 1, 'common', 0, 1);
+			print dolPrintHTML($object->message);
+			print '</div>';
+			/*print '<div class="clear center">';
+			print $langs->trans("More").'...';
+			print '</div>';*/
 
 			//print '<div>' . $object->message . '</div>';
 		}
@@ -265,7 +256,7 @@ class ActionsTicket extends CommonHookActions
 	 */
 	public function viewTicketMessages($show_private, $show_user, $object)
 	{
-		global $conf, $langs, $user;
+		global $langs, $user;
 
 		// Load logs in cache
 		$ret = $this->dao->loadCacheMsgsTicket();

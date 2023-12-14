@@ -430,8 +430,7 @@ class pdf_einstein extends ModelePDFCommandes
 								$showpricebeforepagebreak = 0;
 							}
 						}
-					} else // No pagebreak
-					{
+					} else { // No pagebreak
 						$pdf->commitTransaction();
 					}
 					$posYAfterDescription = $pdf->GetY();
@@ -669,7 +668,7 @@ class pdf_einstein extends ModelePDFCommandes
 	 *  @param  Commande	$object			Object order
 	 *	@param	int			$posy			Position y in PDF
 	 *	@param	Translate	$outputlangs	Object langs for output
-	 *	@return int							<0 if KO, >0 if OK
+	 *	@return int							Return integer <0 if KO, >0 if OK
 	 */
 	protected function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
@@ -1171,7 +1170,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
 			if (getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')) {
-				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, 5, 'F', null, explode(',', $conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR));
+				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, 5, 'F', null, explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
 			}
 		}
 

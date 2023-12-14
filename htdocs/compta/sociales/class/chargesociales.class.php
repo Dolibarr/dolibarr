@@ -66,7 +66,11 @@ class ChargeSociales extends CommonObject
 	public $type_label;
 	public $amount;
 	public $paye;
+	/**
+	 * @deprecated
+	 */
 	public $periode;
+	public $period;
 
 	/**
 	 * @var integer|string date_creation
@@ -144,12 +148,12 @@ class ChargeSociales extends CommonObject
 	 *
 	 *  @param	int     $id		Id
 	 *  @param	string  $ref	Ref
-	 *  @return	int <0 KO >0 OK
+	 *  @return	int Return integer <0 KO >0 OK
 	 */
 	public function fetch($id, $ref = '')
 	{
 		$sql = "SELECT cs.rowid, cs.date_ech";
-		$sql .= ", cs.libelle as label, cs.fk_type, cs.amount, cs.fk_projet as fk_project, cs.paye, cs.periode, cs.import_key";
+		$sql .= ", cs.libelle as label, cs.fk_type, cs.amount, cs.fk_projet as fk_project, cs.paye, cs.periode as period, cs.import_key";
 		$sql .= ", cs.fk_account, cs.fk_mode_reglement, cs.fk_user, note_public, note_private";
 		$sql .= ", c.libelle as type_label";
 		$sql .= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
@@ -186,7 +190,8 @@ class ChargeSociales extends CommonObject
 				$this->note_public = $obj->note_public;
 				$this->note_private = $obj->note_private;
 				$this->paye = $obj->paye;
-				$this->periode = $this->db->jdate($obj->periode);
+				$this->periode = $this->db->jdate($obj->period);
+				$this->period = $this->db->jdate($obj->period);
 				$this->import_key = $this->import_key;
 
 				$this->db->free($resql);
@@ -211,7 +216,7 @@ class ChargeSociales extends CommonObject
 		$newamount = price2num($this->amount, 'MT');
 
 		// Validation of parameters
-		if ($newamount == 0 || empty($this->date_ech) || empty($this->periode)) {
+		if ($newamount == 0 || empty($this->date_ech) || (empty($this->period) && empty($this->periode))) {
 			return false;
 		}
 
@@ -222,7 +227,7 @@ class ChargeSociales extends CommonObject
 	 *      Create a social contribution into database
 	 *
 	 *      @param	User	$user   User making creation
-	 *      @return int     		<0 if KO, id if OK
+	 *      @return int     		Return integer <0 if KO, id if OK
 	 */
 	public function create($user)
 	{
@@ -235,8 +240,8 @@ class ChargeSociales extends CommonObject
 		$newamount = price2num($this->amount, 'MT');
 
 		if (!$this->check()) {
-			 $this->error = "ErrorBadParameter";
-			 return -2;
+			$this->error = "ErrorBadParameter";
+			return -2;
 		}
 
 		$this->db->begin();
@@ -286,7 +291,7 @@ class ChargeSociales extends CommonObject
 	 *      Delete a social contribution
 	 *
 	 *      @param		User    $user   Object user making delete
-	 *      @return     		int 	<0 if KO, >0 if OK
+	 *      @return     		int 	Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user)
 	{
@@ -347,7 +352,7 @@ class ChargeSociales extends CommonObject
 	 *
 	 *      @param	User	$user           User that modify
 	 *      @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *      @return int     		        <0 if KO, >0 if OK
+	 *      @return int     		        Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user, $notrigger = 0)
 	{
@@ -438,7 +443,7 @@ class ChargeSociales extends CommonObject
 	 *	@deprecated
 	 *  @see setPaid()
 	 *  @param    User    $user       Object user making change
-	 *  @return   int					<0 if KO, >0 if OK
+	 *  @return   int					Return integer <0 if KO, >0 if OK
 	 */
 	public function set_paid($user)
 	{
@@ -451,7 +456,7 @@ class ChargeSociales extends CommonObject
 	 *    Tag social contribution as paid completely
 	 *
 	 *    @param    User    $user       Object user making change
-	 *    @return   int					<0 if KO, >0 if OK
+	 *    @return   int					Return integer <0 if KO, >0 if OK
 	 */
 	public function setPaid($user)
 	{
@@ -477,7 +482,7 @@ class ChargeSociales extends CommonObject
 	 *	@deprecated
 	 *  @see setUnpaid()
 	 *  @param	User	$user       Object user making change
-	 *  @return	int					<0 if KO, >0 if OK
+	 *  @return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function set_unpaid($user)
 	{
@@ -490,7 +495,7 @@ class ChargeSociales extends CommonObject
 	 *    Remove tag paid on social contribution
 	 *
 	 *    @param	User	$user       Object user making change
-	 *    @return	int					<0 if KO, >0 if OK
+	 *    @return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function setUnpaid($user)
 	{
@@ -693,7 +698,7 @@ class ChargeSociales extends CommonObject
 	 * 	Charge les informations d'ordre info dans l'objet entrepot
 	 *
 	 *  @param	int		$id     Id of social contribution
-	 *  @return	int				<0 if KO, >0 if OK
+	 *  @return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function info($id)
 	{
@@ -744,13 +749,14 @@ class ChargeSociales extends CommonObject
 		$this->date_creation = dol_now();
 		$this->date_ech = $this->date_creation + 3600 * 24 * 30;
 		$this->periode = $this->date_creation + 3600 * 24 * 30;
+		$this->period = $this->date_creation + 3600 * 24 * 30;
 		$this->amount = 100;
 		$this->label = 'Social contribution label';
 		$this->type = 1;
 		$this->type_label = 'Type of social contribution';
 	}
 
-		/**
+	/**
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)

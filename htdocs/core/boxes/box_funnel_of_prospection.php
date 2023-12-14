@@ -290,8 +290,8 @@ class box_funnel_of_prospection extends ModeleBoxes
 				);
 			} else {
 				$this->info_box_contents[0][0] = array(
-					'td' => 'class="center opacitymedium"',
-					'text' => $langs->trans("NoRecordedCustomers")
+					'td' => 'class="center"',
+					'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedCustomers").'</span>'
 				);
 			}
 		} else {

@@ -46,7 +46,7 @@ $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies', 'bill
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
-$mode = GETPOST('mode', 'alpha') ?GETPOST('mode', 'alpha') : 'real';
+$mode = GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : 'real';
 
 $type = GETPOST('type', 'aZ09');
 $sourcetype = GETPOST('sourcetype', 'aZ09');
@@ -54,7 +54,7 @@ $format = GETPOST('format', 'aZ09');
 $id_bankaccount = GETPOST('id_bankaccount', 'int');
 $executiondate = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -493,9 +493,9 @@ if ($resql) {
 	$tradinvoice = "Invoice";
 	if ($type == 'bank-transfer') {
 		if ($sourcetype != 'salary') {
-			  $tradinvoice = "SupplierInvoice";
+			$tradinvoice = "SupplierInvoice";
 		} else {
-			  $tradinvoice = "RefSalary";
+			$tradinvoice = "RefSalary";
 		}
 	}
 

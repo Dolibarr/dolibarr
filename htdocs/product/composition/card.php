@@ -235,7 +235,7 @@ if ($id > 0 || !empty($ref)) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		$shownav = 1;
-		if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+		if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 			$shownav = 0;
 		}
 
@@ -399,8 +399,8 @@ if ($id > 0 || !empty($ref)) {
 
 		$totalsell = 0;
 		$total = 0;
-		if (count($prods_arbo))	{
-			foreach ($prods_arbo as $value)	{
+		if (count($prods_arbo)) {
+			foreach ($prods_arbo as $value) {
 				$productstatic->fetch($value['id']);
 
 				if ($value['level'] <= 1) {
@@ -425,7 +425,9 @@ if ($id > 0 || !empty($ref)) {
 						if ($product_fourn->product_fourn_price_id > 0) {
 							print $product_fourn->display_price_product_fournisseur(0, 0);
 						} else {
-							print $langs->trans("NotDefined"); $notdefined++; $atleastonenotdefined++;
+							print $langs->trans("NotDefined");
+							$notdefined++;
+							$atleastonenotdefined++;
 						}
 					}
 					print '</td>';
@@ -440,7 +442,7 @@ if ($id > 0 || !empty($ref)) {
 					$total +=  $totalline;
 
 					print '<td class="right nowraponall">';
-					print ($notdefined ? '' : ($value['nb'] > 1 ? $value['nb'].'x ' : '').'<span class="amount">'.price($unitline, '', '', 0, 0, -1, $conf->currency)).'</span>';
+					print($notdefined ? '' : ($value['nb'] > 1 ? $value['nb'].'x ' : '').'<span class="amount">'.price($unitline, '', '', 0, 0, -1, $conf->currency)).'</span>';
 					print '</td>';
 
 					// Best selling price
@@ -452,7 +454,7 @@ if ($id > 0 || !empty($ref)) {
 						$totalsell += $totallinesell;
 					}
 					print '<td class="right" colspan="2">';
-					print ($notdefined ? '' : ($value['nb'] > 1 ? $value['nb'].'x ' : ''));
+					print($notdefined ? '' : ($value['nb'] > 1 ? $value['nb'].'x ' : ''));
 					if (is_numeric($pricesell)) {
 						print '<span class="amount">'.price($pricesell, '', '', 0, 0, -1, $conf->currency).'</span>';
 					} else {
@@ -551,7 +553,7 @@ if ($id > 0 || !empty($ref)) {
 			if ($atleastonenotdefined) {
 				print $langs->trans("Unknown").' ('.$langs->trans("SomeSubProductHaveNoPrices").')';
 			}
-			print ($atleastonenotdefined ? '' : price($total, '', '', 0, 0, -1, $conf->currency));
+			print($atleastonenotdefined ? '' : price($total, '', '', 0, 0, -1, $conf->currency));
 			print '</td>';
 
 			// Minimum selling price
@@ -563,7 +565,7 @@ if ($id > 0 || !empty($ref)) {
 			if ($atleastonenotdefined) {
 				print $langs->trans("Unknown").' ('.$langs->trans("SomeSubProductHaveNoPrices").')';
 			}
-			print ($atleastonenotdefined ? '' : price($totalsell, '', '', 0, 0, -1, $conf->currency));
+			print($atleastonenotdefined ? '' : price($totalsell, '', '', 0, 0, -1, $conf->currency));
 			print '</td>';
 
 			// Stock

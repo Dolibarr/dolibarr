@@ -186,7 +186,7 @@ class FormProjets extends Form
 		if ($socid > 0) {
 			if (!getDolGlobalString('PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY')) {
 				$sql .= " AND (p.fk_soc=" . ((int) $socid) . " OR p.fk_soc IS NULL)";
-			} elseif ($conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY != 'all') {    // PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY is 'all' or a list of ids separated by coma.
+			} elseif (getDolGlobalString('PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY') != 'all') {    // PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY is 'all' or a list of ids separated by coma.
 				$sql .= " AND (p.fk_soc IN (" . $this->db->sanitize(((int) $socid) . ", " . getDolGlobalString('PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY')) . ") OR p.fk_soc IS NULL)";
 			}
 		}
@@ -537,7 +537,9 @@ class FormProjets extends Form
 		}
 
 		$linkedtothirdparty = false;
-		if (!in_array($table_element, array(
+		if (!in_array(
+			$table_element,
+			array(
 				'don',
 				'expensereport_det',
 				'expensereport', 'loan',

@@ -153,7 +153,7 @@ class PaymentSocialContribution extends CommonObject
 	 *
 	 *  @param      User	$user   				User making payment
 	 *	@param		int		$closepaidcontrib   	1=Also close paid contributions to paid, 0=Do nothing more
-	 *  @return     int     						<0 if KO, id of payment if OK
+	 *  @return     int     						Return integer <0 if KO, id of payment if OK
 	 */
 	public function create($user, $closepaidcontrib = 0)
 	{
@@ -277,7 +277,7 @@ class PaymentSocialContribution extends CommonObject
 	 *  Load object in memory from database
 	 *
 	 *  @param	int		$id         Id object
-	 *  @return int         		<0 if KO, >0 if OK
+	 *  @return int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -344,7 +344,7 @@ class PaymentSocialContribution extends CommonObject
 	 *
 	 *  @param	User	$user        	User that modify
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return int         			<0 if KO, >0 if OK
+	 *  @return int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -427,7 +427,7 @@ class PaymentSocialContribution extends CommonObject
 	 *
 	 *  @param	User	$user        	User that delete
 	 *  @param  int		$notrigger		0=launch triggers after, 1=disable triggers
-	 *  @return int						<0 if KO, >0 if OK
+	 *  @return int						Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -557,7 +557,7 @@ class PaymentSocialContribution extends CommonObject
 	 *      @param  int		$accountid          Id of bank account to do link with
 	 *      @param  string	$emetteur_nom       Name of transmitter
 	 *      @param  string	$emetteur_banque    Name of bank
-	 *      @return int                 		<0 if KO, >0 if OK
+	 *      @return int                 		Return integer <0 if KO, >0 if OK
 	 */
 	public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
 	{
@@ -791,7 +791,7 @@ class PaymentSocialContribution extends CommonObject
 				$result .= ' ';
 			}
 			if ($withpicto != 2) {
-				$result .= $link.($maxlen ?dol_trunc($this->ref, $maxlen) : $this->ref).$linkend;
+				$result .= $link.($maxlen ? dol_trunc($this->ref, $maxlen) : $this->ref).$linkend;
 			}
 		}
 
@@ -802,7 +802,7 @@ class PaymentSocialContribution extends CommonObject
 	/**
 	 *	Return if object was dispatched into bookkeeping
 	 *
-	 *	@return     int         <0 if KO, 0=no, 1=yes
+	 *	@return     int         Return integer <0 if KO, 0=no, 1=yes
 	 */
 	public function getVentilExportCompta()
 	{

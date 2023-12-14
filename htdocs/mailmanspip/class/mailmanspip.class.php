@@ -288,7 +288,7 @@ class MailmanSpip
 	 *
 	 *	@param	Adherent	$object		Object with data (->email, ->pass, ->element, ->type)
 	 *  @param	string		$listes    	To force mailing-list (string separated with ,)
-	 *  @return	int		  				<0 if KO, >=0 if OK
+	 *  @return	int		  				Return integer <0 if KO, >=0 if OK
 	 */
 	public function add_to_mailman($object, $listes = '')
 	{
@@ -309,7 +309,7 @@ class MailmanSpip
 		if (isModEnabled('adherent')) {	// Synchro for members
 			if (getDolGlobalString('ADHERENT_MAILMAN_URL')) {
 				if ($listes == '' && getDolGlobalString('ADHERENT_MAILMAN_LISTS')) {
-					$lists = explode(',', $conf->global->ADHERENT_MAILMAN_LISTS);
+					$lists = explode(',', getDolGlobalString('ADHERENT_MAILMAN_LISTS'));
 				} else {
 					$lists = explode(',', $listes);
 				}
@@ -358,7 +358,7 @@ class MailmanSpip
 	 *
 	 *	@param	Adherent	$object		Object with data (->email, ->pass, ->element, ->type)
 	 *  @param	string	    $listes     To force mailing-list (string separated with ,)
-	 *  @return int         		    <0 if KO, >=0 if OK
+	 *  @return int         		    Return integer <0 if KO, >=0 if OK
 	 */
 	public function del_to_mailman($object, $listes = '')
 	{
@@ -379,7 +379,7 @@ class MailmanSpip
 		if (isModEnabled('adherent')) {	// Synchro for members
 			if (getDolGlobalString('ADHERENT_MAILMAN_UNSUB_URL')) {
 				if ($listes == '' && getDolGlobalString('ADHERENT_MAILMAN_LISTS')) {
-					$lists = explode(',', $conf->global->ADHERENT_MAILMAN_LISTS);
+					$lists = explode(',', getDolGlobalString('ADHERENT_MAILMAN_LISTS'));
 				} else {
 					$lists = explode(',', $listes);
 				}

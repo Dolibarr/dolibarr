@@ -28,7 +28,6 @@
  */
 class Shipments extends DolibarrApi
 {
-
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
@@ -554,7 +553,7 @@ class Shipments extends DolibarrApi
 	//  * @throws RestException 404
 	//  * @throws RestException 405
 	//  */
-	 /*
+	/*
 	public function setinvoiced($id)
 	{
 

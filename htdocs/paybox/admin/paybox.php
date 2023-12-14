@@ -100,7 +100,7 @@ if ($action == 'setvalue' && $user->admin) {
 	if (!($result > 0)) {
 		$error++;
 	}
-		$result = dolibarr_set_const($db, "PAYBOX_HMAC_KEY", dol_encode(GETPOST('PAYBOX_HMAC_KEY', 'alpha')), 'chaine', 0, '', $conf->entity);
+	$result = dolibarr_set_const($db, "PAYBOX_HMAC_KEY", dol_encode(GETPOST('PAYBOX_HMAC_KEY', 'alpha')), 'chaine', 0, '', $conf->entity);
 	if (!($result > 0)) {
 		$error++;
 	}

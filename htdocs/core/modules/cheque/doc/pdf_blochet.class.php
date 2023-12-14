@@ -444,7 +444,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$newfreetext = '';
 		$paramfreetext = 'BANK_CHEQUERECEIPT_FREE_TEXT';
 		if (!empty($conf->global->$paramfreetext)) {
-			$newfreetext = make_substitutions($conf->global->$paramfreetext, $substitutionarray);
+			$newfreetext = make_substitutions(getDolGlobalString($paramfreetext), $substitutionarray);
 		}
 
 		return pdf_pagefoot($pdf, $outputlangs, $newfreetext, $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);

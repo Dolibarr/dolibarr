@@ -136,7 +136,7 @@ if ($resql) {
 			$outputlangs->loadLangs(array("main", "contracts", "bills", "products"));
 
 			if (dol_strlen($obj->email)) {
-				$message .= $outputlangs->trans("Contract")." ".$obj->ref.": ".$langs->trans("Service")." ".dol_concatdesc($obj->plabel, $obj->description)." (".price($obj->total_ttc, 0, $outputlangs, 0, 0, - 1, $conf->currency).") ".$obj->name.", ".$outputlangs->trans("DateEndPlannedShort")." ".dol_print_date($db->jdate($obj->date_fin_validite), 'day')."\n\n";
+				$message .= $outputlangs->trans("Contract")." ".$obj->ref.": ".$langs->trans("Service")." ".dol_concatdesc($obj->plabel, $obj->description)." (".price($obj->total_ttc, 0, $outputlangs, 0, 0, -1, $conf->currency).") ".$obj->name.", ".$outputlangs->trans("DateEndPlannedShort")." ".dol_print_date($db->jdate($obj->date_fin_validite), 'day')."\n\n";
 				dol_syslog("email_expire_services_to_representatives.php: ".$obj->email);
 				$foundtoprocess++;
 			}
@@ -215,7 +215,7 @@ function sendEmailTo($mode, $oldemail, $message, $total, $userlang, $oldtarget, 
 	$sendto = $oldemail;
 	$from = !getDolGlobalString('MAIN_MAIL_EMAIL_FROM') ? '' : $conf->global->MAIN_MAIL_EMAIL_FROM;
 	$errorsto = !getDolGlobalString('MAIN_MAIL_ERRORS_TO') ? '' : $conf->global->MAIN_MAIL_ERRORS_TO;
-	$msgishtml = - 1;
+	$msgishtml = -1;
 
 	print "- Send email for ".$oldtarget." (".$oldemail."), total: ".$total."\n";
 	dol_syslog("email_expire_services_to_representatives.php: send mail to ".$oldemail);
@@ -236,7 +236,7 @@ function sendEmailTo($mode, $oldemail, $message, $total, $userlang, $oldtarget, 
 		$allmessage .= $newlangs->transnoentities("NoteListOfYourExpiredServices").($usehtml ? "<br>\n" : "\n").($usehtml ? "<br>\n" : "\n");
 	}
 	$allmessage .= $message.($usehtml ? "<br>\n" : "\n");
-	$allmessage .= $langs->trans("Total")." = ".price($total, 0, $userlang, 0, 0, - 1, $conf->currency).($usehtml ? "<br>\n" : "\n");
+	$allmessage .= $langs->trans("Total")." = ".price($total, 0, $userlang, 0, 0, -1, $conf->currency).($usehtml ? "<br>\n" : "\n");
 	if (getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_FOOTER')) {
 		$allmessage .= $conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_FOOTER;
 		if (dol_textishtml($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_FOOTER)) {

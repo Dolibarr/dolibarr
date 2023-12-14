@@ -153,7 +153,7 @@ class pdf_cyan extends ModelePDFPropales
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
-	  // phpcs:enable
+		// phpcs:enable
 		global $user, $langs, $conf, $mysoc, $db, $hookmanager, $nblines;
 
 		dol_syslog("write_file outputlangs->defaultlang=".(is_object($outputlangs) ? $outputlangs->defaultlang : 'null'));
@@ -397,8 +397,12 @@ class pdf_cyan extends ModelePDFPropales
 					$tmpuser->fetch($object->user_author_id);
 
 					$creator_info = $langs->trans("CaseFollowedBy").' '.$tmpuser->getFullName($langs);
-					if ($tmpuser->email) $creator_info .= ',  '.$langs->trans("EMail").': '.$tmpuser->email;
-					if ($tmpuser->office_phone) $creator_info .= ', '.$langs->trans("Phone").': '.$tmpuser->office_phone;
+					if ($tmpuser->email) {
+						$creator_info .= ',  '.$langs->trans("EMail").': '.$tmpuser->email;
+					}
+					if ($tmpuser->office_phone) {
+						$creator_info .= ', '.$langs->trans("Phone").': '.$tmpuser->office_phone;
+					}
 
 					$notetoshow = dol_concatdesc($notetoshow, $creator_info);
 				}
@@ -621,8 +625,7 @@ class pdf_cyan extends ModelePDFPropales
 									$showpricebeforepagebreak = 0;
 								}
 							}
-						} else // No pagebreak
-						{
+						} else { // No pagebreak
 							$pdf->commitTransaction();
 						}
 						$posYAfterDescription = $pdf->GetY();
@@ -852,14 +855,6 @@ class pdf_cyan extends ModelePDFPropales
 				// Display total zone
 				$posy = $this->drawTotalTable($pdf, $object, 0, $bottomlasttab, $outputlangs);
 
-				// Display payment area
-				/*
-				if ($deja_regle || $amount_credit_notes_included || $amount_deposits_included)
-				{
-					$posy=$this->drawPaymentsTable($pdf, $object, $posy, $outputlangs);
-				}
-				*/
-
 				// Customer signature area
 				if (!getDolGlobalString('PROPAL_DISABLE_SIGNATURE')) {
 					$posy = $this->drawSignatureArea($pdf, $object, $posy, $outputlangs);
@@ -966,19 +961,6 @@ class pdf_cyan extends ModelePDFPropales
 			$this->error = $langs->trans("ErrorConstantNotDefined", "PROP_OUTPUTDIR");
 			return 0;
 		}
-	}
-
-	/**
-	 *  Show payments table
-	 *
-	 *  @param	TCPDF		$pdf            Object PDF
-	 *  @param  Propal		$object         Object proposal
-	 *  @param  int			$posy           Position y in PDF
-	 *  @param  Translate	$outputlangs    Object langs for output
-	 *  @return int             			<0 if KO, >0 if OK
-	 */
-	protected function drawPaymentsTable(&$pdf, $object, $posy, $outputlangs)
-	{
 	}
 
 	/**
@@ -1482,7 +1464,7 @@ class pdf_cyan extends ModelePDFPropales
 
 			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
 			if (getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')) {
-				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, $this->tabTitleHeight, 'F', null, explode(',', $conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR));
+				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, $this->tabTitleHeight, 'F', null, explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
 			}
 		}
 
@@ -1493,7 +1475,7 @@ class pdf_cyan extends ModelePDFPropales
 		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height, $hidetop, $hidebottom); // Rect takes a length in 3rd parameter and 4th parameter
 
 		if (getDolGlobalString('MAIN_PDF_TITLE_TEXT_COLOR')) {
-			$arrayColorTextTitle = explode(',', $conf->global->MAIN_PDF_TITLE_TEXT_COLOR);
+			$arrayColorTextTitle = explode(',', getDolGlobalString('MAIN_PDF_TITLE_TEXT_COLOR'));
 			$pdf->SetTextColor($arrayColorTextTitle[0], $arrayColorTextTitle[1], $arrayColorTextTitle[2]);
 		}
 
@@ -1524,7 +1506,9 @@ class pdf_cyan extends ModelePDFPropales
 		global $conf, $langs;
 
 		$ltrdirection = 'L';
-		if ($outputlangs->trans("DIRECTION") == 'rtl') $ltrdirection = 'R';
+		if ($outputlangs->trans("DIRECTION") == 'rtl') {
+			$ltrdirection = 'R';
+		}
 
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "propal", "companies", "bills"));

@@ -496,8 +496,7 @@ class pdf_vinci extends ModelePDFMo
 									$showpricebeforepagebreak = 0;
 								}
 							}
-						} else // No pagebreak
-						{
+						} else { // No pagebreak
 							$pdf->commitTransaction();
 						}
 						$posYAfterDescription = $pdf->GetY();
@@ -548,8 +547,7 @@ class pdf_vinci extends ModelePDFMo
 									$showpricebeforepagebreak = 0;
 								}
 							}
-						} else // No pagebreak
-						{
+						} else { // No pagebreak
 							$pdf->commitTransaction();
 						}
 						$posYAfterDescription = max($posYAfterDescription, $pdf->GetY());
@@ -661,7 +659,7 @@ class pdf_vinci extends ModelePDFMo
 	 *  @param  CommandeFournisseur		$object			Object order
 	 *	@param	int			$posy			Position y in PDF
 	 *	@param	Translate	$outputlangs	Object langs for output
-	 *	@return int							<0 if KO, >0 if OK
+	 *	@return int							Return integer <0 if KO, >0 if OK
 	 */
 	protected function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
@@ -829,7 +827,7 @@ class pdf_vinci extends ModelePDFMo
 		} else {
 			//if (!empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
 			//{
-				//Local tax 1
+			//Local tax 1
 			foreach ($this->localtax1 as $localtax_type => $localtax_rate) {
 				if (in_array((string) $localtax_type, array('2', '4', '6'))) {
 					continue;
@@ -859,7 +857,7 @@ class pdf_vinci extends ModelePDFMo
 
 			//if (!empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
 			//{
-				//Local tax 2
+			//Local tax 2
 			foreach ($this->localtax2 as $localtax_type => $localtax_rate) {
 				if (in_array((string) $localtax_type, array('2', '4', '6'))) {
 					continue;
@@ -976,7 +974,7 @@ class pdf_vinci extends ModelePDFMo
 
 			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
 			if (getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')) {
-				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, $this->tabTitleHeight, 'F', null, explode(',', $conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR));
+				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, $this->tabTitleHeight, 'F', null, explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
 			}
 		}
 
@@ -1027,7 +1025,9 @@ class pdf_vinci extends ModelePDFMo
 		global $langs, $conf, $mysoc;
 
 		$ltrdirection = 'L';
-		if ($outputlangs->trans("DIRECTION") == 'rtl') $ltrdirection = 'R';
+		if ($outputlangs->trans("DIRECTION") == 'rtl') {
+			$ltrdirection = 'R';
+		}
 
 		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "orders", "companies", "bills", "sendings"));
@@ -1138,7 +1138,7 @@ class pdf_vinci extends ModelePDFMo
 			$pdf->SetFont('', 'B', $default_font_size + 3);
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, html_entity_decode($prodToMake->description), '', 'R');
+			$pdf->MultiCell($w, 3, html_entity_decode($prodToMake->description), '', 'R', false, 1, '', '', true, 0, false, true, 51, 'T', true);
 			$posy = $pdf->GetY() - 5;
 
 			// dimensions

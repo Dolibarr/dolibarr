@@ -261,7 +261,9 @@ if (empty($reshook) && $action == 'add') {
 		$modele = !getDolGlobalString('PROJECT_ADDON') ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
 
 		// Search template files
-		$file = ''; $classname = ''; $filefound = 0;
+		$file = '';
+		$classname = '';
+		$filefound = 0;
 		$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 		foreach ($dirmodels as $reldir) {
 			$file = dol_buildpath($reldir."core/modules/project/".$modele.'.php', 0);
@@ -274,7 +276,7 @@ if (empty($reshook) && $action == 'add') {
 
 		if ($filefound) {
 			$result = dol_include_once($reldir."core/modules/project/".$modele.'.php');
-			$modProject = new $classname;
+			$modProject = new $classname();
 
 			$defaultref = $modProject->getNextValue($thirdparty, $object);
 		}

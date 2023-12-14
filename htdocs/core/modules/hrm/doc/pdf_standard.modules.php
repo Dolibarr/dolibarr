@@ -39,9 +39,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class pdf_standard extends ModelePDFEvaluation
 {
-	 /**
-	  * @var DoliDb Database handler
-	  */
+	/**
+	 * @var DoliDb Database handler
+	 */
 	public $db;
 
 	/**
@@ -306,7 +306,7 @@ class pdf_standard extends ModelePDFEvaluation
 								$pdf->useTemplate($tplidx);
 							}
 							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
-								 $this->_pagehead($pdf, $object, 0, $outputlangs);
+								$this->_pagehead($pdf, $object, 0, $outputlangs);
 							}
 							$pdf->setPage($pageposafter + 1);
 							$showmorebeforepagebreak = 1;
@@ -347,8 +347,7 @@ class pdf_standard extends ModelePDFEvaluation
 								$showmorebeforepagebreak = 0;
 							}
 						}
-					} else // No pagebreak
-					{
+					} else { // No pagebreak
 						$pdf->commitTransaction();
 					}
 					$i++;

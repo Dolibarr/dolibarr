@@ -713,7 +713,7 @@ if ($step == 3 && $datatoimport) {
 
 			// readdir return value in ISO and we want UTF8 in memory
 			if (!utf8_check($file)) {
-				$file = utf8_encode($file);
+				$file = mb_convert_encoding($file, 'UTF-8', 'ISO-8859-1');
 			}
 
 			if (preg_match('/^\./', $file)) {
@@ -1201,7 +1201,7 @@ if ($step == 4 && $datatoimport) {
 				}
 			}
 			// Source required
-			$example = !empty($objimport->array_import_examplevalues[0][$tmpcode])?$objimport->array_import_examplevalues[0][$tmpcode]:"";
+			$example = !empty($objimport->array_import_examplevalues[0][$tmpcode]) ? $objimport->array_import_examplevalues[0][$tmpcode] : "";
 			// Example
 			if (empty($objimport->array_import_convertvalue[0][$tmpcode])) {	// If source file does not need convertion
 				if ($example) {
@@ -1867,7 +1867,8 @@ if ($step == 5 && $datatoimport) {
 		if ($result > 0) {
 			global $tablewithentity_cache;
 			$tablewithentity_cache = array();
-			$sourcelinenb = 0; $endoffile = 0;
+			$sourcelinenb = 0;
+			$endoffile = 0;
 
 			// Loop on each input file record
 			while (($sourcelinenb < $nboflines) && !$endoffile) {
@@ -2279,7 +2280,8 @@ if ($step == 6 && $datatoimport) {
 	if ($result > 0) {
 		global $tablewithentity_cache;
 		$tablewithentity_cache = array();
-		$sourcelinenb = 0; $endoffile = 0;
+		$sourcelinenb = 0;
+		$endoffile = 0;
 
 		while ($sourcelinenb < $nboflines && !$endoffile) {
 			$sourcelinenb++;
@@ -2466,7 +2468,7 @@ function show_elem($fieldssource, $pos, $key, $var, $nostyle = '')
 		}
 		if ($example) {
 			if (!utf8_check($example)) {
-				$example = utf8_encode($example);
+				$example = mb_convert_encoding($example, 'UTF-8', 'ISO-8859-1');
 			}
 			if (!empty($conf->dol_optimize_smallscreen)) {
 				//print '<br>';

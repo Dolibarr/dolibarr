@@ -45,9 +45,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
  */
 class pdf_crabe extends ModelePDFFactures
 {
-	 /**
-	  * @var DoliDb Database handler
-	  */
+	/**
+	 * @var DoliDb Database handler
+	 */
 	public $db;
 
 	/**
@@ -635,8 +635,7 @@ class pdf_crabe extends ModelePDFFactures
 								$showpricebeforepagebreak = 0;
 							}
 						}
-					} else // No pagebreak
-					{
+					} else { // No pagebreak
 						$pdf->commitTransaction();
 					}
 					$posYAfterDescription = $pdf->GetY();
@@ -907,7 +906,7 @@ class pdf_crabe extends ModelePDFFactures
 	 *  @param  int			$posy           	Position y in PDF
 	 *  @param  Translate	$outputlangs    	Object langs for output
 	 *  @param  int			$heightforfooter 	Height for footer
-	 *  @return int             				<0 if KO, >0 if OK
+	 *  @return int             				Return integer <0 if KO, >0 if OK
 	 */
 	protected function _tableau_versements(&$pdf, $object, $posy, $outputlangs, $heightforfooter = 0)
 	{
@@ -1703,7 +1702,7 @@ class pdf_crabe extends ModelePDFFactures
 
 			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
 			if (getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')) {
-				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, 5, 'F', null, explode(',', $conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR));
+				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, 5, 'F', null, explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
 			}
 		}
 
@@ -1796,7 +1795,9 @@ class pdf_crabe extends ModelePDFFactures
 		global $conf, $langs;
 
 		$ltrdirection = 'L';
-		if ($outputlangs->trans("DIRECTION") == 'rtl') $ltrdirection = 'R';
+		if ($outputlangs->trans("DIRECTION") == 'rtl') {
+			$ltrdirection = 'R';
+		}
 
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "bills", "propal", "companies"));

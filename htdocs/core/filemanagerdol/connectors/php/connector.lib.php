@@ -423,7 +423,7 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 			$CKEcallback,
 			$sFileUrl,
 			($sErrorNumber != 0 ? 'Error '.$sErrorNumber.' upload failed.' : 'Upload Successful')
-			);
+		);
 	}
 
 	exit;
@@ -926,7 +926,7 @@ function ConvertToXmlAttribute($value)
 	}
 
 	if (strtoupper(substr($os, 0, 3)) === 'WIN' || FindBadUtf8($value)) {
-		return (utf8_encode(htmlspecialchars($value)));
+		return (mb_convert_encoding(htmlspecialchars($value), 'UTF-8', 'ISO-8859-1'));
 	} else {
 		return (htmlspecialchars($value));
 	}

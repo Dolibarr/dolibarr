@@ -410,7 +410,7 @@ if (!$error && $massaction == 'confirm_presend') {
 					$tmp = explode(',', $user->email_aliases);
 					$from = trim($tmp[($reg[1] - 1)]);
 				} elseif (preg_match('/global_aliases_(\d+)/', $fromtype, $reg)) {
-					$tmp = explode(',', $conf->global->MAIN_INFO_SOCIETE_MAIL_ALIASES);
+					$tmp = explode(',', getDolGlobalString('MAIN_INFO_SOCIETE_MAIL_ALIASES'));
 					$from = trim($tmp[($reg[1] - 1)]);
 				} elseif (preg_match('/senderprofile_(\d+)_(\d+)/', $fromtype, $reg)) {
 					$sql = "SELECT rowid, label, email FROM ".MAIN_DB_PREFIX."c_email_senderprofile WHERE rowid = ".(int) $reg[1];
@@ -751,7 +751,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 		$result = $objecttmp->fetch($toselectid);
 		if ($result > 0) {
 			$listofobjectid[$toselectid] = $toselectid;
-			$thirdpartyid = $objecttmp->fk_soc ? $objecttmp->fk_soc : $objecttmp->socid;
+			$thirdpartyid = !empty($objecttmp->fk_soc) ? $objecttmp->fk_soc : $objecttmp->socid;
 			$listofobjectthirdparties[$thirdpartyid] = $thirdpartyid;
 			$listofobjectref[$toselectid] = $objecttmp->ref;
 		}
@@ -946,7 +946,7 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 			$resql = $db->query($sql);
 			if ($resql) {
 				$toselectnew = [];
-				while ( !empty($arr = $db->fetch_row($resql))) {
+				while (!empty($arr = $db->fetch_row($resql))) {
 					$toselectnew[] = $arr[0];
 				}
 				$toselect = (empty($toselectnew)) ? $toselect : $toselectnew;
@@ -1221,7 +1221,7 @@ if (!$error && ($action == 'affecttag' && $confirm == 'yes') && $permissiontoadd
 		$to_affecttag_type_array=array();
 		$categ_type_array=$categ->getMapList();
 		foreach ($categ_type_array as $categdef) {
-			if (in_array($categdef['code'],  $affecttag_type_array)) {
+			if (in_array($categdef['code'], $affecttag_type_array)) {
 				$to_affecttag_type_array[] = $categdef['code'];
 			}
 		}
@@ -1744,7 +1744,7 @@ if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $conf
 		$obj = !getDolGlobalString('PROJECT_TASK_ADDON') ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
 		if (getDolGlobalString('PROJECT_TASK_ADDON') && is_readable(DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON') . ".php")) {
 			require_once DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON') . '.php';
-			$modTask = new $obj;
+			$modTask = new $obj();
 			$defaultref = $modTask->getNextValue(0, $clone_task);
 		}
 

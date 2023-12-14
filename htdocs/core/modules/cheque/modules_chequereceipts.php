@@ -81,7 +81,7 @@ abstract class ModeleChequeReceipts extends CommonDocGenerator
  *	@param	string		$message		Message
  *	@param	string		$modele			Force le modele a utiliser ('' to not force)
  *	@param	Translate	$outputlangs	Object lang a utiliser pour traduction
- *	@return int        					<0 if KO, >0 if OK
+ *	@return int        					Return integer <0 if KO, >0 if OK
  * 	TODO Use commonDocGenerator
  */
 function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)

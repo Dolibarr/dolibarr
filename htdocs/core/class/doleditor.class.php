@@ -77,7 +77,7 @@ class DolEditor
 			$rows = round($height / 20);
 		}
 		if (!$cols) {
-			$cols = ($width ?round($width / 6) : 80);
+			$cols = ($width ? round($width / 6) : 80);
 		}
 		$shorttoolbarname = preg_replace('/_encoded$/', '', $toolbarname);
 
@@ -171,7 +171,7 @@ class DolEditor
 				if (!getDolGlobalString('FCKEDITOR_ENABLE_PDF')) {
 					$pluginstodisable .= ',exportpdf';
 				}
-				if (getDolGlobalString('MAIN_DISALLOW_URL_INTO_DESCRIPTIONS')) {
+				if (getDolGlobalInt('MAIN_DISALLOW_URL_INTO_DESCRIPTIONS') == 2) {
 					$this->uselocalbrowser = 0;	// Can't use browser to navigate into files. Only links with "<img src=data:..." are allowed.
 				}
 				$scaytautostartup = '';

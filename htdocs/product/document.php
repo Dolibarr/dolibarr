@@ -226,10 +226,10 @@ if ($object->id) {
 	}
 
 	// Build file list
-	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 
 	if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {    // For backward compatiblity, we scan also old dirs
-		$filearrayold = dol_dir_list($upload_dirold, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+		$filearrayold = dol_dir_list($upload_dirold, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 		$filearray = array_merge($filearray, $filearrayold);
 	}
 
@@ -243,7 +243,7 @@ if ($object->id) {
 	$object->next_prev_filter = "fk_product_type = ".((int) $object->type);
 
 	$shownav = 1;
-	if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+	if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 		$shownav = 0;
 	}
 

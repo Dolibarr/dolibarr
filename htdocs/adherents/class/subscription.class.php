@@ -135,7 +135,7 @@ class Subscription extends CommonObject
 	 *
 	 *	@param	User	$user			User that create
 	 *	@param  bool 	$notrigger 		false=launch triggers after, true=disable triggers
-	 *	@return	int						<0 if KO, Id subscription created if OK
+	 *	@return	int						Return integer <0 if KO, Id subscription created if OK
 	 */
 	public function create($user, $notrigger = false)
 	{
@@ -209,7 +209,7 @@ class Subscription extends CommonObject
 	 *  Method to load a subscription
 	 *
 	 *  @param	int		$rowid		Id subscription
-	 *  @return	int					<0 if KO, =0 if not found, >0 if OK
+	 *  @return	int					Return integer <0 if KO, =0 if not found, >0 if OK
 	 */
 	public function fetch($rowid)
 	{
@@ -256,7 +256,7 @@ class Subscription extends CommonObject
 	 *
 	 *	@param	User	$user			User who updated
 	 *	@param 	int		$notrigger		0=Disable triggers
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user, $notrigger = 0)
 	{
@@ -321,7 +321,7 @@ class Subscription extends CommonObject
 	 *
 	 *	@param	User	$user		User that delete
 	 *	@param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
-	 *	@return	int					<0 if KO, 0 if not found, >0 if OK
+	 *	@return	int					Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function delete($user, $notrigger = false)
 	{

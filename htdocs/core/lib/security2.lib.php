@@ -293,7 +293,7 @@ if (!function_exists('dol_loginfunction')) {
 		if (getDolGlobalString('MAIN_HOME')) {
 			$substitutionarray = getCommonSubstitutionArray($langs);
 			complete_substitutions_array($substitutionarray, $langs);
-			$texttoshow = make_substitutions($conf->global->MAIN_HOME, $substitutionarray, $langs);
+			$texttoshow = make_substitutions(getDolGlobalString('MAIN_HOME'), $substitutionarray, $langs);
 
 			$main_home = dol_htmlcleanlastbr($texttoshow);
 		}
@@ -377,7 +377,7 @@ function makesalt($type = CRYPT_SALT_LENGTH)
  *  Encode or decode database password in config file
  *
  *  @param   	int		$level   	Encode level: 0 no encoding, 1 encoding
- *	@return		int					<0 if KO, >0 if OK
+ *	@return		int					Return integer <0 if KO, >0 if OK
  */
 function encodedecode_dbpassconf($level = 0)
 {

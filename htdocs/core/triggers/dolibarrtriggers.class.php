@@ -214,7 +214,7 @@ abstract class DolibarrTriggers
 	 *  @param User         $user       Object user
 	 *  @param Translate    $langs      Object langs
 	 *  @param conf         $conf       Object conf
-	 *  @return int                     if KO: <0, if no trigger ran: 0, if OK: >0
+	 *  @return int                     Return integer if KO: <0, if no trigger ran: 0, if OK: >0
 	 */
 	abstract public function runTrigger(string $action, $object, User $user, Translate $langs, Conf $conf);
 }

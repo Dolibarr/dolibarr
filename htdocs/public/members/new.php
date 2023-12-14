@@ -110,7 +110,7 @@ $user->loadDefaultValues();
  * @param 	array  		$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '')
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
 {
 	global $user, $conf, $langs, $mysoc;
 
@@ -445,7 +445,7 @@ if (empty($reshook) && $action == 'add') {
 					$urlback = $_SERVER["PHP_SELF"]."?action=added&token=".newToken();
 				}
 
-				if (getDolGlobalString('MEMBER_NEWFORM_PAYONLINE') && $conf->global->MEMBER_NEWFORM_PAYONLINE != '-1') {
+				if (getDolGlobalString('MEMBER_NEWFORM_PAYONLINE') && getDolGlobalString('MEMBER_NEWFORM_PAYONLINE') != '-1') {
 					if (empty($adht->caneditamount)) {			// If edition of amount not allowed
 						// TODO Check amount is same than the amount required for the type of member or if not defined as the defeault amount into $conf->global->MEMBER_NEWFORM_AMOUNT
 						// It is not so important because a test is done on return of payment validation.
@@ -456,7 +456,7 @@ if (empty($reshook) && $action == 'add') {
 					if (GETPOST('email')) {
 						$urlback .= '&email='.urlencode(GETPOST('email'));
 					}
-					if ($conf->global->MEMBER_NEWFORM_PAYONLINE != '-1' && $conf->global->MEMBER_NEWFORM_PAYONLINE != 'all') {
+					if (getDolGlobalString('MEMBER_NEWFORM_PAYONLINE') != '-1' && getDolGlobalString('MEMBER_NEWFORM_PAYONLINE') != 'all') {
 						$urlback .= '&paymentmethod='.urlencode($conf->global->MEMBER_NEWFORM_PAYONLINE);
 					}
 				} else {
@@ -774,7 +774,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 
 		// Clean the amount
 		$amount = price2num($amount);
-		$showedamount = $amount>0? $amount: 0;
+		$showedamount = $amount>0 ? $amount : 0;
 		// $conf->global->MEMBER_NEWFORM_PAYONLINE is 'paypal', 'paybox' or 'stripe'
 		print '<tr><td>'.$langs->trans("Subscription");
 		if (getDolGlobalString('MEMBER_EXT_URL_SUBSCRIPTION_INFO')) {
@@ -789,7 +789,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 		if ($caneditamount) {
 			print '<input type="text" name="amount" id="amount" class="flat amount width50" value="'.$showedamount.'">';
 			print ' '.$langs->trans("Currency".$conf->currency).'<span class="opacitymedium"> – ';
-			print $amount > 0 ? $langs->trans("AnyAmountWithAdvisedAmount", price($amount, 0, $langs, 1, -1, -1, $conf->currency)): $langs->trans("AnyAmountWithoutAdvisedAmount");
+			print $amount > 0 ? $langs->trans("AnyAmountWithAdvisedAmount", price($amount, 0, $langs, 1, -1, -1, $conf->currency)) : $langs->trans("AnyAmountWithoutAdvisedAmount");
 			print '</span>';
 		} else {
 			print '<input type="hidden" name="amount" id="amount" class="flat amount" value="'.$showedamount.'">';
@@ -832,10 +832,11 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 } else {  // Show the table of membership types
 	// Get units
 	$measuringUnits = new CUnits($db);
-	$result = $measuringUnits->fetchAll('',	'',	0,	0, array('t.active' => 1));
+	$result = $measuringUnits->fetchAll('', '', 0, 0, array('t.active' => 1));
 	$units = array();
-	foreach ($measuringUnits->records as $lines)
+	foreach ($measuringUnits->records as $lines) {
 		$units[$lines->short_label] = $langs->trans(ucfirst($lines->label));
+	}
 
 	$publiccounters = getDolGlobalString("MEMBER_COUNTERS_ARE_PUBLIC");
 	$hidevoteallowed = getDolGlobalString("MEMBER_HIDE_VOTE_ALLOWED");
@@ -862,8 +863,12 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 		print '<th class="center">'.$langs->trans("MembershipDuration").'</th>';
 		print '<th class="center">'.$langs->trans("Amount").'</th>';
 		print '<th class="center">'.$langs->trans("MembersNature").'</th>';
-		if (empty($hidevoteallowed)) print '<th class="center">'.$langs->trans("VoteAllowed").'</th>';
-		if ($publiccounters) print '<th class="center">'.$langs->trans("Members").'</th>';
+		if (empty($hidevoteallowed)) {
+			print '<th class="center">'.$langs->trans("VoteAllowed").'</th>';
+		}
+		if ($publiccounters) {
+			print '<th class="center">'.$langs->trans("Members").'</th>';
+		}
 		print '<th class="center">'.$langs->trans("NewSubscription").'</th>';
 		print "</tr>\n";
 
@@ -905,9 +910,13 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 				print $langs->trans("MorAndPhy");
 			}
 			print '</td>';
-			if (empty($hidevoteallowed)) print '<td class="center">'.yn($objp->vote).'</td>';
-			$membercount = $objp->membercount>0? $objp->membercount: "–";
-			if ($publiccounters) print '<td class="center">'.$membercount.'</td>';
+			if (empty($hidevoteallowed)) {
+				print '<td class="center">'.yn($objp->vote).'</td>';
+			}
+			$membercount = $objp->membercount>0 ? $objp->membercount : "–";
+			if ($publiccounters) {
+				print '<td class="center">'.$membercount.'</td>';
+			}
 			print '<td class="center"><button class="button button-save reposition" name="typeid" type="submit" name="submit" value="'.$objp->rowid.'">'.$langs->trans("GetMembershipButtonLabel").'</button></td>';
 			print "</tr>";
 			$i++;

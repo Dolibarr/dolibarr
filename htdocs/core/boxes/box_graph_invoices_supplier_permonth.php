@@ -138,7 +138,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($shownb) {
-				$data1 = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09') == $refreshaction ?-1 : (3600 * 24)), ($WIDTH < 300 ? 2 : 0), $startmonth);
+				$data1 = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09') == $refreshaction ? -1 : (3600 * 24)), ($WIDTH < 300 ? 2 : 0), $startmonth);
 
 				$filenamenb = $dir."/".$prefix."invoicessuppliernbinyear-".$endyear.".png";
 				// default value for customer mode
@@ -178,7 +178,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showtot) {
-				$data2 = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09') == $refreshaction ?-1 : (3600 * 24)), ($WIDTH < 300 ? 2 : 0), $startmonth);
+				$data2 = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09') == $refreshaction ? -1 : (3600 * 24)), ($WIDTH < 300 ? 2 : 0), $startmonth);
 
 				$filenamenb = $dir."/".$prefix."invoicessupplieramountinyear-".$endyear.".png";
 				// default value for customer mode
