@@ -1804,7 +1804,7 @@ class CarbonInterval extends DateInterval implements CarbonConverterInterface
 
             $aTime = $aUnit ? $handleDeclensions('a_'.$unit, $count) : null;
 
-            $time = $aTime ?: $handleDeclensions($unit, $count) ?: $time;
+            $time = ($aTime ?: $handleDeclensions($unit, $count)) ?: $time;
         }
 
         $time = [':time' => $time];

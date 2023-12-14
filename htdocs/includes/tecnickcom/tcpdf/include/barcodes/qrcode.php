@@ -1718,7 +1718,7 @@ class QRcode {
 			return -1;
 		}
 		$buf = array($size, $index, $parity);
-		$entry = $this->newInputItem(QR_MODE_ST, 3, buf);
+		$entry = $this->newInputItem(QR_MODE_ST, 3, $buf);
 		array_unshift($items, $entry);
 		return $items;
 	}
