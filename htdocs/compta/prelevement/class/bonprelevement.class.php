@@ -216,7 +216,7 @@ class BonPrelevement extends CommonObject
 	/**
 	 * Add invoice to withdrawal
 	 *
-	 * @param	int		$invoice_id 	id invoice to add
+	 * @param	int		$invoice_id 	ID of invoice to add or ID of salary to add
 	 * @param	int		$client_id  	id invoice customer
 	 * @param	string	$client_nom 	customer name
 	 * @param	int		$amount 		amount of invoice
@@ -225,7 +225,7 @@ class BonPrelevement extends CommonObject
 	 * @param	string	$number bank 	account number
 	 * @param	string	$number_key 	number key of account number
 	 * @param	string	$type			'debit-order' or 'bank-transfer'
-	 * @param   string  $sourcetype     'salary' for invoice of salary
+	 * @param   string  $sourcetype     'salary' for salary, '' for invoices
 	 * @return	int						>0 if OK, <0 if KO
 	 */
 	public function AddFacture($invoice_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number, $number_key, $type = 'debit-order', $sourcetype = '')
@@ -234,7 +234,7 @@ class BonPrelevement extends CommonObject
 		$result = 0;
 		$line_id = 0;
 
-		// Add lines
+		// Add lines into prelevement_lignes
 		$result = $this->addline($line_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number, $number_key, $sourcetype);
 
 
@@ -244,7 +244,7 @@ class BonPrelevement extends CommonObject
 				if ($type != 'bank-transfer') {
 					$sql .= "fk_facture";
 				} else {
-					if (!empty($sourcetype)) {
+					if ($sourcetype == 'salary') {
 						$sql .= "fk_salary";
 					} else {
 						$sql .= "fk_facture_fourn";
@@ -279,21 +279,21 @@ class BonPrelevement extends CommonObject
 	/**
 	 *	Add line to withdrawal
 	 *
-	 *	@param	int		$line_id 		id line to add
-	 *	@param	int		$client_id  	id invoice customer
+	 *	@param	int		$line_id 		ID of line added (returned parameter)
+	 *	@param	int		$client_id  	ID of thirdparty for invoices, ID of user for salaries
 	 *	@param	string	$client_nom 	customer name
 	 *	@param	int		$amount 		amount of invoice
 	 *	@param	string	$code_banque 	code of bank withdrawal
 	 *	@param	string	$code_guichet 	code of bank's office
 	 *	@param	string	$number 		bank account number
 	 *	@param  string	$number_key 	number key of account number
-	 *  @param  string  $sourcetype     check if is salary invoice
+	 *  @param  string  $sourcetype     'salary' for salary, '' for invoices
 	 *	@return	int						>0 if OK, <0 if KO
 	 */
 	public function addline(&$line_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number, $number_key, $sourcetype = '')
 	{
 		$result = -1;
-		$concat = 0;
+		$concat = 0;	// ??? what is this for. Seems not used.
 
 		if ($concat == 1) {
 			/*
@@ -302,10 +302,10 @@ class BonPrelevement extends CommonObject
 			$sql = "SELECT rowid";
 			$sql .= " FROM  ".MAIN_DB_PREFIX."prelevement_lignes";
 			$sql .= " WHERE fk_prelevement_bons = ".((int) $this->id);
-			if (empty($sourcetype)) {
-				$sql .= " AND fk_soc =".((int) $client_id);
+			if ($sourcetype == 'salary') {
+				$sql .= " AND fk_soc = ".((int) $client_id);
 			} else {
-				$sql .= " AND fk_user =".((int) $client_id);
+				$sql .= " AND fk_user = ".((int) $client_id);
 			}
 			$sql .= " AND code_banque = '".$this->db->escape($code_banque)."'";
 			$sql .= " AND code_guichet = '".$this->db->escape($code_guichet)."'";
@@ -330,17 +330,17 @@ class BonPrelevement extends CommonObject
 			$sql .= ", code_guichet";
 			$sql .= ", number";
 			$sql .= ", cle_rib";
-			$sql .= (!empty($sourcetype) ? ", fk_user" : "");
+			$sql .= ($sourcetype == 'salary' ? ", fk_user" : "");
 			$sql .= ") VALUES (";
 			$sql .= $this->id;
-			$sql .= ", ".(empty($sourcetype) ? ((int) $client_id) : 0);
+			$sql .= ", ".(($sourcetype != 'salary') ? ((int) $client_id) : "0");	// fk_soc can't be null
 			$sql .= ", '".$this->db->escape($client_nom)."'";
 			$sql .= ", ".((float) price2num($amount));
 			$sql .= ", '".$this->db->escape($code_banque)."'";
 			$sql .= ", '".$this->db->escape($code_guichet)."'";
 			$sql .= ", '".$this->db->escape($number)."'";
 			$sql .= ", '".$this->db->escape($number_key)."'";
-			$sql .= (!empty($sourcetype) ? ", ". ((int) $client_id) : '');
+			$sql .= (($sourcetype == 'salary') ? ", ". ((int) $client_id) : '');
 			$sql .= ")";
 			if ($this->db->query($sql)) {
 				$line_id = $this->db->last_insert_id(MAIN_DB_PREFIX."prelevement_lignes");
@@ -1261,15 +1261,6 @@ class BonPrelevement extends CommonObject
 				// Add lines for the bon
 				if (count($factures_prev) > 0) {
 					foreach ($factures_prev as $fac) {	// Add a link in database for each invoice ro salary
-						// Fetch invoice
-						/*
-						$result = $fact->fetch($fac[0]);
-						if ($result < 0) {
-							$this->error = 'ERRORBONPRELEVEMENT Failed to load invoice with id '.$fac[0];
-							break;
-						}
-						*/
-
 						/*
 						 * Add standing order. This add record into llx_prelevement_lignes and llx_prelevement
 						 *
@@ -1287,7 +1278,6 @@ class BonPrelevement extends CommonObject
 						 * $fac[11] : IBAN
 						 * $fac[12] : frstrcur
 						 */
-
 						$ri = $this->AddFacture($fac[0], $fac[2], $fac[8], $fac[7], $fac[3], $fac[4], $fac[5], $fac[6], $type, $sourcetype);
 
 						if ($ri <> 0) {
