@@ -458,10 +458,11 @@ if ($id > 0 || $ref) {
 
 	// Lines into withdraw request
 	if ($salaryBonPl) {
-		$sql = "SELECT pl.rowid, pl.statut, pl.amount, pl.fk_user";
+		$sql = "SELECT pl.rowid, pl.statut, pl.amount, pl.fk_user,";
 		$sql .= " u.rowid as socid, u.login as name";
 		$sql .=" FROM llx_prelevement_lignes as pl";
 		$sql .= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
+		$sql .= ", ".MAIN_DB_PREFIX."user as u";
 		$sql .= " WHERE pl.fk_prelevement_bons = ".((int) $id);
 		$sql .= " AND pl.fk_prelevement_bons = pb.rowid";
 		$sql .= " AND pb.entity = ".((int) $conf->entity);	// No sharing of entity here
