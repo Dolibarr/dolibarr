@@ -1290,6 +1290,9 @@ if ($resql) {
 	$savnbfield = $totalarray['nbfield'];
 	$totalarray = array();
 	$totalarray['nbfield'] = 0;
+	$totalarray['totaldeb'] = 0;
+	$totalarray['totalcred'] = 0;
+	
 	$imaxinloop = ($limit ? min($num, $limit) : $num);
 	while ($i < $imaxinloop) {
 		$objp = $db->fetch_object($resql);
