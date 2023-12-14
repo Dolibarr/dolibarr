@@ -2759,7 +2759,7 @@ class BonPrelevement extends CommonObject
 		if ($id) {
 			$sql = "SELECT COUNT(*) AS nb FROM ".MAIN_DB_PREFIX."prelevement_lignes";
 			$sql .= " WHERE fk_prelevement_bons = ".((int) $id);
-			$sql .= " AND fk_soc = 0";
+			$sql .= " AND fk_soc = 0";	// fk_soc can't be NULL
 			$sql .= " AND fk_user IS NOT NULL";
 
 			$num = 0;
