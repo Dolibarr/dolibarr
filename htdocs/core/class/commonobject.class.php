@@ -678,6 +678,11 @@ abstract class CommonObject
 	 * @var	float		Amount already paid (used to show correct status)
 	 */
 	public $alreadypaid;
+	/**
+	 * @var	float		Amount already paid (used to show correct status)
+	 * @deprecated		Duplicate of $alreadypaid
+	 */
+	public $totalpaid;
 
 	/**
 	 * @var array		Array with label of status

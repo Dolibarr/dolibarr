@@ -268,6 +268,7 @@ class Salary extends CommonObject
 				$this->dateep			= $this->db->jdate($obj->dateep);
 				$this->note				= $obj->note;
 				$this->paye 			= $obj->paye;
+				$this->status 			= $obj->paye;
 				$this->fk_bank          = $obj->fk_bank;
 				$this->fk_user_author   = $obj->fk_user_author;
 				$this->fk_user_modif    = $obj->fk_user_modif;
@@ -479,19 +480,29 @@ class Salary extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 * @param array $params params to construct tooltip data
+	 *
+	 * @param array 	$params 		params to construct tooltip data
 	 * @since v18
 	 * @return array
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $conf, $langs, $user;
+		global $langs;
 
 		$langs->loadLangs(['salaries']);
 
+		// Complete datas
+		if (!empty($params['fromajaxtooltip']) && !isset($this->alreadypaid)) {
+			// Load the alreadypaid field
+			$this->alreadypaid = $this->getSommePaiement(0);
+		}
+
 		$datas = [];
-		$option = $params['option'] ?? '';
+
 		$datas['picto'] = '<u>'.$langs->trans("Salary").'</u>';
+		if (isset($this->status) && isset($this->alreadypaid)) {
+			$datas['picto'] .= ' '.$this->getLibStatut(5, $this->alreadypaid);
+		}
 		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
 		return $datas;
@@ -509,9 +520,7 @@ class Salary extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $db, $conf, $langs, $hookmanager;
-		global $dolibarr_main_authentication, $dolibarr_main_demo;
-		global $menumanager;
+		global $conf, $langs, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1;

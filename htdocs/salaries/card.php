@@ -877,7 +877,7 @@ if ($id > 0) {
 	$morehtmlref .= '</div>';
 
 	$totalpaid = $object->getSommePaiement();
-	$object->totalpaid = $totalpaid;
+	$object->alreadypaid = $totalpaid;
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
 
