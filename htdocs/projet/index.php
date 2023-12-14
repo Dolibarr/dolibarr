@@ -412,7 +412,7 @@ if ($resql) {
 	dol_print_error($db);
 }
 
-if (!getDolGlobalInt('PROJECT_USE_OPPORTUNITIES') || getDolGlobalInt('PROJECT_SHOW_OPEN_PROJECTS_LIST_ON_PROJECT_AREA')) {
+if ((!getDolGlobalInt('PROJECT_USE_OPPORTUNITIES') || getDolGlobalInt('PROJECT_SHOW_OPEN_PROJECTS_LIST_ON_PROJECT_AREA')) && !getDolGlobalInt('PROJECT_HIDE_OPEN_PROJECTS_LIST_ON_PROJECT_AREA')) {
 	// This list is surely very long and useless when we are using opportunities, so we hide it for this use case, but we allow to show it if
 	// we really want it and to allow interface backward compatibility.
 	print '<br>';
