@@ -38,12 +38,12 @@ class Categories extends DolibarrApi
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
-	static $FIELDS = array(
+	public static $FIELDS = array(
 		'label',
 		'type'
 	);
 
-	static $TYPES = array(
+	public static $TYPES = array(
 		0 => 'product',
 		1 => 'supplier',
 		2 => 'customer',

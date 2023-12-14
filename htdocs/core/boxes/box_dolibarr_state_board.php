@@ -116,10 +116,11 @@ class box_dolibarr_state_board extends ModeleBoxes
 				'members' => isModEnabled('adherent') && $user->hasRight('adherent', 'lire'),
 				'customers' => isModEnabled('societe') && $user->hasRight('societe', 'lire') && !getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS') && !getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS_STATS'),
 				'prospects' => isModEnabled('societe') && $user->hasRight('societe', 'lire') && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS') && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS_STATS'),
-				'suppliers' => ((isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->hasRight('fournisseur', 'lire'))
+				'suppliers' => (
+					(isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->hasRight('fournisseur', 'lire'))
 								 || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire'))
 								 || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))
-								 )
+				)
 								 && !getDolGlobalString('SOCIETE_DISABLE_SUPPLIERS_STATS'),
 				'contacts' => isModEnabled('societe') && $user->hasRight('societe', 'contact', 'lire'),
 				'products' => isModEnabled('product') && $user->hasRight('product', 'read'),

@@ -206,8 +206,7 @@ if (getDolGlobalString('TAKEPOS_SHOW_DATE_OF_PRINING')) {
 							echo price($line->total_ht, 1);
 										  } ?></td>
 				<?php
-			}
-			?>
+			} ?>
 			<td class="right"><?php if ($gift != 1) {
 				echo price($line->total_ttc, 1);
 							  } ?></td>
@@ -229,22 +228,22 @@ if (getDolGlobalString('TAKEPOS_SHOW_DATE_OF_PRINING')) {
 					  } ?></td>
 </tr>
 <?php if ($conf->global->TAKEPOS_TICKET_VAT_GROUPPED) {
-	$vat_groups = array();
+		$vat_groups = array();
 	foreach ($object->lines as $line) {
 		if (!array_key_exists($line->tva_tx, $vat_groups)) {
 			$vat_groups[$line->tva_tx] = 0;
 		}
 		$vat_groups[$line->tva_tx] += $line->total_tva;
 	}
-	// Loop on each VAT group
+		// Loop on each VAT group
 	foreach ($vat_groups as $key => $val) {
 		?>
 	<tr>
 		<th align="right"><?php if ($gift != 1) {
-			echo $langs->trans("VAT").' '.vatrate($key, 1);
+				echo $langs->trans("VAT").' '.vatrate($key, 1);
 						  } ?></th>
 		<td align="right"><?php if ($gift != 1) {
-			echo price($val, 1, '', 1, - 1, - 1, $conf->currency)."\n";
+				echo price($val, 1, '', 1, - 1, - 1, $conf->currency)."\n";
 						  } ?></td>
 	</tr>
 		<?php
@@ -376,7 +375,9 @@ if (getDolGlobalString('TAKEPOS_FOOTER') || getDolGlobalString($constFreeText)) 
 
 <script type="text/javascript">
 	<?php
-	if ($facid) print 'window.print();'; //Avoid print when is specimen
+	if ($facid) {
+		print 'window.print();';
+	} //Avoid print when is specimen
 	?>
 </script>
 

@@ -1062,7 +1062,7 @@ class DoliDBPgsql extends DoliDB
 	 *	@param	    array	$unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
 	 *	@param	    array	$fulltext_keys	Tableau des Nom de champs qui seront indexes en fulltext
 	 *	@param	    array	$keys 			Tableau des champs cles noms => valeur
-	 *	@return	    int						<0 if KO, >=0 if OK
+	 *	@return	    int						Return integer <0 if KO, >=0 if OK
 	 */
 	public function DDLCreateTable($table, $fields, $primary_key, $type, $unique_keys = null, $fulltext_keys = null, $keys = null)
 	{
@@ -1136,7 +1136,7 @@ class DoliDBPgsql extends DoliDB
 	 *	Drop a table into database
 	 *
 	 *	@param	    string	$table 			Name of table
-	 *	@return	    int						<0 if KO, >=0 if OK
+	 *	@return	    int						Return integer <0 if KO, >=0 if OK
 	 */
 	public function DDLDropTable($table)
 	{
@@ -1160,7 +1160,7 @@ class DoliDBPgsql extends DoliDB
 	 *	@param	string	$dolibarr_main_db_user 		Name of user to create
 	 *	@param	string	$dolibarr_main_db_pass 		Password of user to create
 	 *	@param	string	$dolibarr_main_db_name		Database name where user must be granted
-	 *	@return	int									<0 if KO, >=0 if OK
+	 *	@return	int									Return integer <0 if KO, >=0 if OK
 	 */
 	public function DDLCreateUser($dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name)
 	{
@@ -1207,7 +1207,7 @@ class DoliDBPgsql extends DoliDB
 	 *	@param	string	$field_name 		Name of field to add
 	 *	@param	string	$field_desc 		Tableau associatif de description du champ a inserer[nom du parametre][valeur du parametre]
 	 *	@param	string	$field_position 	Optionnel ex.: "after champtruc"
-	 *	@return	int							<0 if KO, >0 if OK
+	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLAddField($table, $field_name, $field_desc, $field_position = "")
 	{
@@ -1253,7 +1253,7 @@ class DoliDBPgsql extends DoliDB
 	 *	@param	string	$table 				Name of table
 	 *	@param	string	$field_name 		Name of field to modify
 	 *	@param	string	$field_desc 		Array with description of field format
-	 *	@return	int							<0 if KO, >0 if OK
+	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLUpdateField($table, $field_name, $field_desc)
 	{
@@ -1298,7 +1298,7 @@ class DoliDBPgsql extends DoliDB
 	 *
 	 *	@param	string	$table 			Name of table
 	 *	@param	string	$field_name 	Name of field to drop
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLDropField($table, $field_name)
 	{

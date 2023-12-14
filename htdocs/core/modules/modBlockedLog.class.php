@@ -92,7 +92,7 @@ class modBlockedLog extends DolibarrModules
 
 		$this->always_enabled = (!empty($conf->blockedlog->enabled)
 			&& getDolGlobalString('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY')
-			&& in_array((empty($mysoc->country_code) ? '' : $mysoc->country_code), explode(',', $conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY))
+			&& in_array((empty($mysoc->country_code) ? '' : $mysoc->country_code), explode(',', getDolGlobalString('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY')))
 			&& $this->alreadyUsed());
 
 		// Constants
@@ -207,7 +207,6 @@ class modBlockedLog extends DolibarrModules
 	 */
 	public function remove($options = '')
 	{
-
 		global $conf, $user;
 
 		$sql = array();

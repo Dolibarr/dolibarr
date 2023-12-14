@@ -30,7 +30,6 @@ require_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
  */
 class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 {
-
 	public $boxcode = "box_graph_nb_ticket_last_x_days";
 	public $boximg  = "ticket";
 	public $boxlabel;
@@ -193,14 +192,14 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 				);
 			} else {
 				$this->info_box_contents[0][0] = array(
-					'td' => 'class="center opacitymedium"',
-					'text' => $stringtoshow.$langs->trans("BoxNoTicketLastXDays", $days)
+					'td' => 'class="center"',
+					'text' => '<span class="opacitymedium">'.$stringtoshow.$langs->trans("BoxNoTicketLastXDays", $days).'</span>'
 				);
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
 				'td' => 'class="left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed"),
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

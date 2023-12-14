@@ -30,7 +30,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
  */
 class FormOrder extends Form
 {
-
 	/**
 	 *  Return combo list of differents status of a orders
 	 *
@@ -79,7 +78,7 @@ class FormOrder extends Form
 	 *	@param	string	$selected		Id of preselected input method
 	 *  @param  string	$htmlname 		Name of HTML select list
 	 *  @param  int		$addempty		0=list with no empty value, 1=list with empty value
-	 *  @return	int						<0 if KO, >0 if OK
+	 *  @return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function selectInputMethod($selected = '', $htmlname = 'source_id', $addempty = 0)
 	{

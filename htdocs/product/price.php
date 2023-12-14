@@ -134,7 +134,10 @@ if (empty($reshook)) {
 
 		$tva_tx = price2num(preg_replace('/\*/', '', $tva_tx)); // keep remove all after the numbers and dot
 		$npr = preg_match('/\*/', $tva_tx_txt) ? 1 : 0;
-		$localtax1 = 0; $localtax2 = 0; $localtax1_type = '0'; $localtax2_type = '0';
+		$localtax1 = 0;
+		$localtax2 = 0;
+		$localtax1_type = '0';
+		$localtax2_type = '0';
 		// If value contains the unique code of vat line (new recommanded method), we use it to find npr and local taxes
 
 		if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg)) {
@@ -389,7 +392,10 @@ if (empty($reshook)) {
 			$tva_tx = price2num(preg_replace('/\*/', '', $tva_tx)); // keep remove all after the numbers and dot
 
 			$npr = preg_match('/\*/', $tva_tx_txt) ? 1 : 0;
-			$localtax1 = 0; $localtax2 = 0; $localtax1_type = '0'; $localtax2_type = '0';
+			$localtax1 = 0;
+			$localtax2 = 0;
+			$localtax1_type = '0';
+			$localtax2_type = '0';
 			// If value contains the unique code of vat line (new recommanded method), we use it to find npr and local taxes
 			if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg)) {
 				// We look into database using code
@@ -643,7 +649,10 @@ if (empty($reshook)) {
 		$tva_tx = price2num(preg_replace('/\*/', '', $tva_tx)); // keep remove all after the numbers and dot
 
 		$npr = preg_match('/\*/', $tva_tx_txt) ? 1 : 0;
-		$localtax1 = 0; $localtax2 = 0; $localtax1_type = '0'; $localtax2_type = '0';
+		$localtax1 = 0;
+		$localtax2 = 0;
+		$localtax1_type = '0';
+		$localtax2_type = '0';
 		// If value contains the unique code of vat line (new recommanded method), we use it to find npr and local taxes
 		if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg)) {
 			// We look into database using code
@@ -763,7 +772,10 @@ if (empty($reshook)) {
 		$tva_tx = price2num(preg_replace('/\*/', '', $tva_tx)); // keep remove all after the numbers and dot
 
 		$npr = preg_match('/\*/', $tva_tx_txt) ? 1 : 0;
-		$localtax1 = 0; $localtax2 = 0; $localtax1_type = '0'; $localtax2_type = '0';
+		$localtax1 = 0;
+		$localtax2 = 0;
+		$localtax1_type = '0';
+		$localtax2_type = '0';
 		// If value contains the unique code of vat line (new recommanded method), we use it to find npr and local taxes
 		if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg)) {
 			// We look into database using code
@@ -876,7 +888,7 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_value
 $object->next_prev_filter = "fk_product_type = ".((int) $object->type);
 
 $shownav = 1;
-if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 	$shownav = 0;
 }
 
@@ -1520,8 +1532,7 @@ if ($action == 'edit_price' && $object->getRights()->creer) {
 
 		print '</form>';
 	} else {
-		print '<!-- Edit price per level -->'."\n";
-		?>
+		print '<!-- Edit price per level -->'."\n"; ?>
 		<script>
 
 			var showHidePriceRules = function () {
@@ -1912,7 +1923,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 	$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 	$sortfield = GETPOST('sortfield', 'aZ09comma');
 	$sortorder = GETPOST('sortorder', 'aZ09comma');
-	$page = (GETPOST("page", 'int') ?GETPOST("page", 'int') : 0);
+	$page = (GETPOST("page", 'int') ? GETPOST("page", 'int') : 0);
 	if (empty($page) || $page == -1) {
 		$page = 0;
 	}     // If $page is not defined, or '' or -1
@@ -1926,7 +1937,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 		$sortfield = "soc.nom";
 	}
 
-		// Build filter to diplay only concerned lines
+	// Build filter to diplay only concerned lines
 	$filter = array('t.fk_product' => $object->id);
 
 	if (!empty($search_soc)) {
@@ -2007,7 +2018,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 
 		print '<div class="center">';
 
-				// Update all child soc
+		// Update all child soc
 		print '<div class="marginbottomonly">';
 		print '<input type="checkbox" name="updatechildprice" id="updatechildprice" value="1"> ';
 		print '<label for="updatechildprice">'.$langs->trans('ForceUpdateChildPriceSoc').'</label>';

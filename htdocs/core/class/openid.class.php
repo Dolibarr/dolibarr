@@ -335,7 +335,8 @@ class SimpleOpenID
 		// phpcs:enable
 		$get = array();
 
-		$matches1 = array(); $matches2 = array();
+		$matches1 = array();
+		$matches2 = array();
 
 		// Get details of their OpenID server and (optional) delegate
 		preg_match_all('/<link[^>]*rel=[\'"]openid.server[\'"][^>]*href=[\'"]([^\'"]+)[\'"][^>]*\/?>/i', $content, $matches1);

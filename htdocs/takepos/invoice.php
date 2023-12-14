@@ -163,7 +163,9 @@ if (isModEnabled('multicurrency') && !empty($_SESSION["takeposcustomercurrency"]
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions', $parameters, $invoice, $action);    // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 if (empty($reshook)) {
 	// Action to record a payment on a TakePOS invoice
@@ -257,7 +259,7 @@ if (empty($reshook)) {
 			if ($res < 0) {
 				$error++;
 				$langs->load("admin");
-				dol_htmloutput_errors($invoice->error == 'NotConfigured' ? $langs->trans("NotConfigured").' (TakePos numbering module)': $invoice->error, $invoice->errors, 1);
+				dol_htmloutput_errors($invoice->error == 'NotConfigured' ? $langs->trans("NotConfigured").' (TakePos numbering module)' : $invoice->error, $invoice->errors, 1);
 			}
 		}
 
@@ -534,10 +536,11 @@ if (empty($reshook)) {
 			} else {
 				$prod->load_stock('warehouseopen');
 				$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
-				if ($prod->stock_warehouse[getDolGlobalString($constantforkey)]->detail_batch!="")
-				if (is_object($prod->stock_warehouse[getDolGlobalString($constantforkey)]) && count($prod->stock_warehouse[getDolGlobalString($constantforkey)]->detail_batch)) {
-					foreach ($prod->stock_warehouse[getDolGlobalString($constantforkey)]->detail_batch as $dbatch) {
-						$nbofsuggested++;
+				if ($prod->stock_warehouse[getDolGlobalString($constantforkey)]->detail_batch!="") {
+					if (is_object($prod->stock_warehouse[getDolGlobalString($constantforkey)]) && count($prod->stock_warehouse[getDolGlobalString($constantforkey)]->detail_batch)) {
+						foreach ($prod->stock_warehouse[getDolGlobalString($constantforkey)]->detail_batch as $dbatch) {
+							$nbofsuggested++;
+						}
 					}
 				}
 
@@ -557,7 +560,9 @@ if (empty($reshook)) {
 						print '<!-- Show details of lot -->';
 						print '<td class="left">';
 						$staticwarehouse = new Entrepot($db);
-						if ($warehouse_id > 0) $staticwarehouse->fetch($conf->global->$constantforkey);
+						if ($warehouse_id > 0) {
+							$staticwarehouse->fetch($conf->global->$constantforkey);
+						}
 						$detail = '';
 						$detail .= $langs->trans("LotSerial").': '.$dbatch->batch;
 						if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
@@ -607,7 +612,9 @@ if (empty($reshook)) {
 		if (getDolGlobalString('TAKEPOS_GROUP_SAME_PRODUCT')) {
 			foreach ($invoice->lines as $line) {
 				if ($line->product_ref == $prod->ref) {
-					if ($line->special_code==4) continue; // If this line is sended to printer create new line
+					if ($line->special_code==4) {
+						continue;
+					} // If this line is sended to printer create new line
 					// check if qty in stock
 					if (getDolGlobalString('TAKEPOS_QTY_IN_STOCK') && (($line->qty + $qty) > $prod->stock_reel)) {
 						$invoice->error = $langs->trans('NotEnoughInStock');
@@ -646,8 +653,9 @@ if (empty($reshook)) {
 					if ($pf->find_min_price_product_fournisseur($idproduct, $qty) > 0) {
 						$line['fk_fournprice'] = $pf->product_fourn_price_id;
 						$line['pa_ht'] = $pf->fourn_unitprice_with_discount;
-						if (getDolGlobalString('PRODUCT_CHARGES') && $pf->fourn_charges > 0)
+						if (getDolGlobalString('PRODUCT_CHARGES') && $pf->fourn_charges > 0) {
 							$line['pa_ht'] += $pf->fourn_charges / $pf->fourn_qty;
+						}
 					}
 				}
 			}
@@ -655,7 +663,9 @@ if (empty($reshook)) {
 			// complete line by hook
 			$parameters = array('prod' => $prod, 'line' => $line);
 			$reshook=$hookmanager->executeHooks('completeTakePosAddLine', $parameters, $invoice, $action);    // Note that $action and $line may have been modified by some hooks
-			if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			if ($reshook < 0) {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			}
 
 
 			if (empty($reshook)) {
@@ -709,9 +719,11 @@ if (empty($reshook)) {
 		$desc = GETPOST('addnote', 'alpha');
 		if ($idline==0) {
 			$invoice->update_note($desc, '_public');
-		} else foreach ($invoice->lines as $line) {
-			if ($line->id == $idline) {
-				$result = $invoice->updateline($line->id, $desc, $line->subprice, $line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
+		} else {
+			foreach ($invoice->lines as $line) {
+				if ($line->id == $idline) {
+					$result = $invoice->updateline($line->id, $desc, $line->subprice, $line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
+				}
 			}
 		}
 		$invoice->fetch($placeid);
@@ -882,9 +894,9 @@ if (empty($reshook)) {
 		$order_receipt_printer1 = "";
 		$order_receipt_printer2 = "";
 		$order_receipt_printer3 = "";
-		$catsprinter1 = explode(';', $conf->global->TAKEPOS_PRINTED_CATEGORIES_1);
-		$catsprinter2 = explode(';', $conf->global->TAKEPOS_PRINTED_CATEGORIES_2);
-		$catsprinter3 = explode(';', $conf->global->TAKEPOS_PRINTED_CATEGORIES_3);
+		$catsprinter1 = explode(';', getDolGlobalString('TAKEPOS_PRINTED_CATEGORIES_1'));
+		$catsprinter2 = explode(';', getDolGlobalString('TAKEPOS_PRINTED_CATEGORIES_2'));
+		$catsprinter3 = explode(';', getDolGlobalString('TAKEPOS_PRINTED_CATEGORIES_3'));
 		$linestoprint = 0;
 		foreach ($invoice->lines as $line) {
 			if ($line->special_code == "4") {
@@ -1070,10 +1082,12 @@ if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->la
 <script type="text/javascript">
 var selectedline=0;
 var selectedtext="";
-<?php if ($action=="valid") echo "var place=0;";?> // Set to default place after close sale
-var placeid=<?php echo ($placeid > 0 ? $placeid : 0); ?>;
+<?php if ($action=="valid") {
+	echo "var place=0;";
+}?> // Set to default place after close sale
+var placeid=<?php echo($placeid > 0 ? $placeid : 0); ?>;
 $(document).ready(function() {
-	var idoflineadded = <?php echo (empty($idoflineadded) ? 0 : $idoflineadded); ?>;
+	var idoflineadded = <?php echo(empty($idoflineadded) ? 0 : $idoflineadded); ?>;
 
 	$('.posinvoiceline').click(function(){
 		console.log("Click done on "+this.id);
@@ -1367,7 +1381,7 @@ $( document ).ready(function() {
 		$result = $adh->fetch('', '', $invoice->socid);
 		if ($result > 0) {
 			$adh->ref = $adh->getFullName($langs);
-			if (empty($adh->statut) || $adh->statut == Adherent::STATUS_EXCLUDED ) {
+			if (empty($adh->statut) || $adh->statut == Adherent::STATUS_EXCLUDED) {
 				$s .= "<s>";
 			}
 			$s .= $adh->getFullName($langs);
@@ -1399,17 +1413,17 @@ $( document ).ready(function() {
 
 <?php
 if (getDolGlobalString('TAKEPOS_CUSTOMER_DISPLAY')) {
-	echo "function CustomerDisplay(){";
-	echo "var line1='".$CUSTOMER_DISPLAY_line1."'.substring(0,20);";
-	echo "line1=line1.padEnd(20);";
-	echo "var line2='".$CUSTOMER_DISPLAY_line2."'.substring(0,20);";
-	echo "line2=line2.padEnd(20);";
-	echo "$.ajax({
+		echo "function CustomerDisplay(){";
+		echo "var line1='".$CUSTOMER_DISPLAY_line1."'.substring(0,20);";
+		echo "line1=line1.padEnd(20);";
+		echo "var line2='".$CUSTOMER_DISPLAY_line2."'.substring(0,20);";
+		echo "line2=line2.padEnd(20);";
+		echo "$.ajax({
 		type: 'GET',
 		data: { text: line1+line2 },
 		url: '".getDolGlobalString('TAKEPOS_PRINT_SERVER')."/display/index.php',
 	});";
-	echo "}";
+		echo "}";
 }
 ?>
 
@@ -1423,7 +1437,7 @@ if (!empty($conf->use_javascript_ajax)) {
 	print '<script src="'.DOL_URL_ROOT.'/core/js/lib_foot.js.php?lang='.$langs->defaultlang.'"></script>'."\n";
 }
 
-print '<!-- invoice.php place='.(int) $place.' invoice='.$invoice->ref.' mobilepage='.(empty($mobilepage) ? '' : $mobilepage).' $_SESSION["basiclayout"]='.(empty($_SESSION["basiclayout"])?'':$_SESSION["basiclayout"]).' conf->global->TAKEPOS_BAR_RESTAURANT='.getDolGlobalString('TAKEPOS_BAR_RESTAURANT').' -->'."\n";
+print '<!-- invoice.php place='.(int) $place.' invoice='.$invoice->ref.' mobilepage='.(empty($mobilepage) ? '' : $mobilepage).' $_SESSION["basiclayout"]='.(empty($_SESSION["basiclayout"]) ? '' : $_SESSION["basiclayout"]).' conf->global->TAKEPOS_BAR_RESTAURANT='.getDolGlobalString('TAKEPOS_BAR_RESTAURANT').' -->'."\n";
 print '<div class="div-table-responsive-no-min invoice">';
 print '<table id="tablelines" class="noborder noshadow postablelines centpercent">';
 if ($sectionwithinvoicelink && ($mobilepage == "invoice" || $mobilepage == "")) {
@@ -1469,7 +1483,9 @@ print '</td>';
 // complete header by hook
 $parameters=array();
 $reshook=$hookmanager->executeHooks('completeTakePosInvoiceHeader', $parameters, $invoice, $action);    // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 print $hookmanager->resPrint;
 
 if (empty($_SESSION["basiclayout"]) || $_SESSION["basiclayout"] != 1) {
@@ -1633,7 +1649,9 @@ if ($placeid > 0) {
 				// complete line by hook
 				$parameters=array('line' => $line);
 				$reshook=$hookmanager->executeHooks('completeTakePosInvoiceParentLine', $parameters, $invoice, $action);    // Note that $action and $object may have been modified by some hooks
-				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				}
 				$htmlsupplements[$line->fk_parent_line] .= $hookmanager->resPrint;
 
 				if (empty($_SESSION["basiclayout"]) || $_SESSION["basiclayout"] != 1) {
@@ -1727,7 +1745,9 @@ if ($placeid > 0) {
 				// complete line by hook
 				$parameters=array('line' => $line);
 				$reshook=$hookmanager->executeHooks('completeTakePosInvoiceLine', $parameters, $invoice, $action);    // Note that $action and $object may have been modified by some hooks
-				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				}
 				$htmlforlines .= $hookmanager->resPrint;
 
 				$htmlforlines .= '<td class="right">'.vatrate($line->remise_percent, true).'</td>';

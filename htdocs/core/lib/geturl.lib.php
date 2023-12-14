@@ -212,7 +212,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		if ($iptocheck) {
 			// Set CURLOPT_CONNECT_TO so curl will not try another resolution that may give a different result. Possible only on PHP v7+
 			if (defined('CURLOPT_CONNECT_TO')) {
-				$connect_to = array(sprintf("%s:%d:%s:%d", $newUrlArray['host'], empty($newUrlArray['port'])?'':$newUrlArray['port'], $iptocheck, empty($newUrlArray['port'])?'':$newUrlArray['port']));
+				$connect_to = array(sprintf("%s:%d:%s:%d", $newUrlArray['host'], empty($newUrlArray['port']) ? '' : $newUrlArray['port'], $iptocheck, empty($newUrlArray['port']) ? '' : $newUrlArray['port']));
 				//var_dump($newUrlArray);
 				//var_dump($connect_to);
 				curl_setopt($ch, CURLOPT_CONNECT_TO, $connect_to);
@@ -299,7 +299,7 @@ function isIPAllowed($iptocheck, $localurl)
 			$errormsg = 'Error bad hostname IP (IP is a local IP). Must be an external URL.';
 			return $errormsg;
 		}
-		if (getDolGlobalString('MAIN_SECURITY_ANTI_SSRF_SERVER_IP') && in_array($iptocheck, explode(',', $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP))) {
+		if (getDolGlobalString('MAIN_SECURITY_ANTI_SSRF_SERVER_IP') && in_array($iptocheck, explode(',', getDolGlobalString('MAIN_SECURITY_ANTI_SSRF_SERVER_IP')))) {
 			$errormsg = 'Error bad hostname IP (IP is a local IP defined into MAIN_SECURITY_SERVER_IP). Must be an external URL.';
 			return $errormsg;
 		}
@@ -310,7 +310,7 @@ function isIPAllowed($iptocheck, $localurl)
 			$errormsg = 'Error bad hostname '.$iptocheck.'. Must be a local URL.';
 			return $errormsg;
 		}
-		if (getDolGlobalString('MAIN_SECURITY_ANTI_SSRF_SERVER_IP') && !in_array($iptocheck, explode(',', $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP))) {
+		if (getDolGlobalString('MAIN_SECURITY_ANTI_SSRF_SERVER_IP') && !in_array($iptocheck, explode(',', getDolGlobalString('MAIN_SECURITY_ANTI_SSRF_SERVER_IP')))) {
 			$errormsg = 'Error bad hostname IP (IP is not a local IP defined into list MAIN_SECURITY_SERVER_IP). Must be a local URL in allowed list.';
 			return $errormsg;
 		}
@@ -345,15 +345,43 @@ function isIPAllowed($iptocheck, $localurl)
  */
 function getDomainFromURL($url, $mode = 0)
 {
+	$arrayof2levetopdomain = array(
+		'co.at', 'or.at', 'gv.at',
+		'avocat.fr', 'aeroport.fr', 'veterinaire.fr',
+		'com.ng', 'gov.ng', 'gov.ua', 'com.ua', 'in.ua', 'org.ua', 'edu.ua', 'net.ua',
+		'net.uk', 'org.uk', 'gov.uk', 'co.uk',
+		'com.mx'
+	);
+
+	// Set if tld is on 2 levels
+	$tldon2level = 0;
+	$parts = array_reverse(explode('.', $url));
+	if (!empty($parts[1]) && in_array($parts[1].'.'.$parts[0], $arrayof2levetopdomain)) {
+		$tldon2level = 1;
+	}
+
+	if ($tldon2level && $mode > 0) {
+		$mode++;
+	}
+
 	$tmpdomain = preg_replace('/^https?:\/\//i', '', $url); // Remove http(s)://
-	$tmpdomain = preg_replace('/\/.*$/i', '', $tmpdomain); // Remove part after domain
-	if ($mode == 2) {
+	$tmpdomain = preg_replace('/\/.*$/i', '', $tmpdomain); // Remove part after /
+	if ($mode == 3) {
+		$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)\.([^\.]+)\.([^\.]+)$/', '\1.\2.\3.\4', $tmpdomain);
+	} elseif ($mode == 2) {
 		$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)\.([^\.]+)$/', '\1.\2.\3', $tmpdomain); // Remove part 'www.' before 'abc.mydomain.com'
-	} else {
+	} elseif ($mode == 1) {
 		$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)$/', '\1.\2', $tmpdomain); // Remove part 'www.abc.' before 'mydomain.com'
 	}
+
 	if (empty($mode)) {
-		$tmpdomain = preg_replace('/\.[^\.]+$/', '', $tmpdomain); // Remove first level domain (.com, .net, ...)
+		if ($tldon2level) {
+			$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)\.([^\.]+)$/', '\1.\2.\3', $tmpdomain); // Remove part 'www.abc.' before 'mydomain.com'
+			$tmpdomain = preg_replace('/\.[^\.]+\.[^\.]+$/', '', $tmpdomain); // Remove TLD (.com.mx, .co.uk, ...)
+		} else {
+			$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)$/', '\1.\2', $tmpdomain); // Remove part 'www.abc.' before 'mydomain.com'
+			$tmpdomain = preg_replace('/\.[^\.]+$/', '', $tmpdomain); // Remove TLD (.com, .net, ...)
+		}
 	}
 
 	return $tmpdomain;

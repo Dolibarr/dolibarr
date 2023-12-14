@@ -43,7 +43,7 @@ $mode = GETPOST("mode", 'alpha');
 $id = GETPOST('id', 'int');
 $taskid = GETPOST('taskid', 'int');
 
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'perweekcard';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'perweekcard';
 
 $mine = 0;
 if ($mode == 'mine') {
@@ -62,10 +62,10 @@ $result = restrictedArea($user, 'projet', $projectid);
 
 $now = dol_now();
 
-$year = GETPOST('reyear', 'int') ?GETPOST('reyear', 'int') : (GETPOST("year", 'int') ?GETPOST("year", "int") : date("Y"));
-$month = GETPOST('remonth', 'int') ?GETPOST('remonth', 'int') : (GETPOST("month", 'int') ?GETPOST("month", "int") : date("m"));
-$day = GETPOST('reday', 'int') ?GETPOST('reday', 'int') : (GETPOST("day", 'int') ?GETPOST("day", "int") : date("d"));
-$week = GETPOST("week", "int") ?GETPOST("week", "int") : date("W");
+$year = GETPOST('reyear', 'int') ? GETPOST('reyear', 'int') : (GETPOST("year", 'int') ? GETPOST("year", "int") : date("Y"));
+$month = GETPOST('remonth', 'int') ? GETPOST('remonth', 'int') : (GETPOST("month", 'int') ? GETPOST("month", "int") : date("m"));
+$day = GETPOST('reday', 'int') ? GETPOST('reday', 'int') : (GETPOST("day", 'int') ? GETPOST("day", "int") : date("d"));
+$week = GETPOST("week", "int") ? GETPOST("week", "int") : date("W");
 
 $day = (int) $day;
 
@@ -518,7 +518,7 @@ $numstartworkingday = 1;
 $numendworkingday = 5;
 
 if (getDolGlobalString('MAIN_DEFAULT_WORKING_DAYS')) {
-	$tmparray = explode('-', $conf->global->MAIN_DEFAULT_WORKING_DAYS);
+	$tmparray = explode('-', getDolGlobalString('MAIN_DEFAULT_WORKING_DAYS'));
 	if (count($tmparray) >= 2) {
 		$numstartworkingday = $tmparray[0];
 		$numendworkingday = $tmparray[1];

@@ -765,7 +765,7 @@ class Utils
 	 * Generate documentation of a Module
 	 *
 	 * @param 	string	$module		Module name
-	 * @return	int					<0 if KO, >0 if OK
+	 * @return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function generateDoc($module)
 	{
@@ -1082,7 +1082,7 @@ class Utils
 	 *
 	 *	@param	string	$outputfile		Output file name
 	 *	@param	string	$tables			Table name or '*' for all
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function backupTables($outputfile, $tables = '*')
 	{
@@ -1283,7 +1283,7 @@ class Utils
 		if (!empty($from)) {
 			$from = dol_escape_htmltag($from);
 		} elseif (getDolGlobalString('MAIN_INFO_SOCIETE_MAIL')) {
-			$from = dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_MAIL);
+			$from = dol_escape_htmltag(getDolGlobalString('MAIN_INFO_SOCIETE_MAIL'));
 		} else {
 			$error++;
 		}
@@ -1291,7 +1291,7 @@ class Utils
 		if (!empty($sendto)) {
 			$sendto = dol_escape_htmltag($sendto);
 		} elseif (getDolGlobalString('MAIN_INFO_SOCIETE_MAIL')) {
-			$from = dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_MAIL);
+			$from = dol_escape_htmltag(getDolGlobalString('MAIN_INFO_SOCIETE_MAIL'));
 		} else {
 			$error++;
 		}

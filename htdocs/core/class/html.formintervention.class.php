@@ -81,7 +81,9 @@ class FormIntervention
 				$sql .= " AND f.fk_soc = ".((int) $socid);
 			}
 		}
-		if ($draftonly) $sql .= " AND f.fk_statut = 0";
+		if ($draftonly) {
+			$sql .= " AND f.fk_statut = 0";
+		}
 
 		dol_syslog(get_class($this)."::select_intervention", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -89,8 +91,11 @@ class FormIntervention
 			$out .= '<select id="interventionid" class="flat" name="'.dol_escape_htmltag($htmlname).'">';
 			if ($showempty) {
 				$out .= '<option value="0">';
-				if (!is_numeric($showempty)) $out .= $showempty;
-				else $out .= '&nbsp;';
+				if (!is_numeric($showempty)) {
+					$out .= $showempty;
+				} else {
+					$out .= '&nbsp;';
+				}
 				$out .= '</option>';
 			}
 			$num = $this->db->num_rows($resql);

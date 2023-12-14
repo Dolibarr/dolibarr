@@ -161,7 +161,7 @@ class pdf_standard extends ModelePDFMovement
 		$product_id = GETPOST("product_id");
 		$action = GETPOST('action', 'aZ09');
 		$cancel = GETPOST('cancel', 'alpha');
-		$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'movementlist';
+		$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'movementlist';
 
 		$idproduct = GETPOST('idproduct', 'int');
 		$year = GETPOST("year");
@@ -177,7 +177,7 @@ class pdf_standard extends ModelePDFMovement
 		$search_qty = trim(GETPOST("search_qty"));
 		$search_type_mouvement = GETPOST('search_type_mouvement', 'int');
 
-		$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+		$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 		$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 		$sortfield = GETPOST('sortfield', 'aZ09comma');
 		$sortorder = GETPOST('sortorder', 'aZ09comma');
@@ -512,8 +512,7 @@ class pdf_standard extends ModelePDFMovement
 									$showpricebeforepagebreak = 0;
 								}
 							}
-						} else // No pagebreak
-						{
+						} else { // No pagebreak
 							$pdf->commitTransaction();
 						}
 						$posYAfterDescription = $pdf->GetY();
@@ -812,7 +811,7 @@ class pdf_standard extends ModelePDFMovement
 
 			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
 			if (getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')) {
-				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, 5, 'F', null, explode(',', $conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR));
+				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, 5, 'F', null, explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
 			}
 		}
 

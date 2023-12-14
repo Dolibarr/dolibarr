@@ -72,7 +72,7 @@ $workflowcodes = array(
 		'enabled'=>(isModEnabled('commande') && isModEnabled('facture')),
 		'picto'=>'bill'
 	),
-	'WORKFLOW_TICKET_CREATE_INTERVENTION' => array (
+	'WORKFLOW_TICKET_CREATE_INTERVENTION' => array(
 		'family'=>'create',
 		'position'=>25,
 		'enabled'=>(isModEnabled('ticket') && isModEnabled('ficheinter')),

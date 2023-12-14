@@ -137,7 +137,7 @@ if ($resql) {
 			$replyto = $emailing->email_replyto;
 			$errorsto = $emailing->email_errorsto;
 			// Le message est-il en html
-			$msgishtml = - 1; // Unknown by default
+			$msgishtml = -1; // Unknown by default
 			if (preg_match('/[\s\t]*<html>/i', $message)) {
 				$msgishtml = 1;
 			}

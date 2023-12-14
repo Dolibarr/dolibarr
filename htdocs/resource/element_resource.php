@@ -447,7 +447,8 @@ if (!$ret) {
 				}
 				if (!empty($act->userassigned)) {	// Now concat assigned users
 					// Restore array with key with same value than param 'id'
-					$tmplist1 = $act->userassigned; $tmplist2 = array();
+					$tmplist1 = $act->userassigned;
+					$tmplist2 = array();
 					foreach ($tmplist1 as $key => $val) {
 						if ($val['id'] && $val['id'] != $act->userownerid) {
 							$listofuserid[$val['id']] = $val;
@@ -585,7 +586,7 @@ if (!$ret) {
 			print dol_get_fiche_head($head, 'resources', $titre, -1, $picto);
 
 			$shownav = 1;
-			if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+			if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 				$shownav = 0;
 			}
 			dol_banner_tab($product, 'ref', '', $shownav, 'ref', 'ref', '', '&element='.$element);

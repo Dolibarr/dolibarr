@@ -1219,7 +1219,7 @@ class FormOther
 		// $boxidactivatedforuser will be array of boxes choosed by user
 
 		$selectboxlist = '';
-		$boxactivated = InfoBox::listBoxes($db, 'activated', $areacode, (empty($user->conf->$confuserzone) ?null:$user), array(), 0); // Search boxes of common+user (or common only if user has no specific setup)
+		$boxactivated = InfoBox::listBoxes($db, 'activated', $areacode, (empty($user->conf->$confuserzone) ? null : $user), array(), 0); // Search boxes of common+user (or common only if user has no specific setup)
 
 		$boxidactivatedforuser = array();
 		foreach ($boxactivated as $box) {
@@ -1317,7 +1317,7 @@ class FormOther
 			if (!count($arrayboxtoactivatelabel)) {
 				$selectboxlist .= 'jQuery("#boxcombo").hide();';
 			}
-				$selectboxlist .= '
+			$selectboxlist .= '
 
 	        	jQuery("#boxhalfleft, #boxhalfright").sortable({
 	    	    	handle: \'.boxhandle\',

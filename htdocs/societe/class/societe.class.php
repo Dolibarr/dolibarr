@@ -896,7 +896,7 @@ class Societe extends CommonObject
 		if (empty($this->status)) {
 			$this->status = 0;
 		}
-		$this->name = $this->name ?trim($this->name) : trim($this->nom);
+		$this->name = $this->name ? trim($this->name) : trim($this->nom);
 		$this->setUpperOrLowerCase();
 		$this->nom = $this->name; // For backward compatibility
 		if (empty($this->client)) {
@@ -1073,7 +1073,7 @@ class Societe extends CommonObject
 	 * @param 	int		$no_email	    1=Do not send mailing, 0=Ok to recieve mailling
 	 * @param 	array	$tags		    Array of tag to affect to contact
 	 * @param   int     $notrigger	    1=Does not execute triggers, 0= execute triggers
-	 * @return 	int					    <0 if KO, >0 if OK
+	 * @return 	int					    Return integer <0 if KO, >0 if OK
 	 */
 	public function create_individual(User $user, $no_email = 0, $tags = array(), $notrigger = 0)
 	{
@@ -1205,8 +1205,11 @@ class Societe extends CommonObject
 		$array_to_check = array('IDPROF1', 'IDPROF2', 'IDPROF3', 'IDPROF4', 'IDPROF5', 'IDPROF6', 'EMAIL', 'TVA_INTRA', 'ACCOUNTANCY_CODE_CUSTOMER', 'ACCOUNTANCY_CODE_SUPPLIER');
 		foreach ($array_to_check as $key) {
 			$keymin = strtolower($key);
-			if ($key == 'ACCOUNTANCY_CODE_CUSTOMER') $keymin = 'code_compta';
-			elseif ($key == 'ACCOUNTANCY_CODE_SUPPLIER') $keymin = 'code_compta_fournisseur';
+			if ($key == 'ACCOUNTANCY_CODE_CUSTOMER') {
+				$keymin = 'code_compta';
+			} elseif ($key == 'ACCOUNTANCY_CODE_SUPPLIER') {
+				$keymin = 'code_compta_fournisseur';
+			}
 			$i = (int) preg_replace('/[^0-9]/', '', $key);
 			$vallabel = $this->$keymin;
 
@@ -1246,7 +1249,8 @@ class Societe extends CommonObject
 					if (!$error && $vallabel && getDolGlobalString('SOCIETE_EMAIL_UNIQUE')) {
 						if ($this->id_prof_exists($keymin, $vallabel, ($this->id > 0 ? $this->id : 0))) {
 							$langs->load("errors");
-							$error++; $this->errors[] = $langs->trans('Email')." ".$langs->trans("ErrorProdIdAlreadyExist", $vallabel).' ('.$langs->trans("ForbiddenBySetupRules").')';
+							$error++;
+							$this->errors[] = $langs->trans('Email')." ".$langs->trans("ErrorProdIdAlreadyExist", $vallabel).' ('.$langs->trans("ForbiddenBySetupRules").')';
 						}
 					}
 				} elseif ($key == 'TVA_INTRA') {
@@ -1254,7 +1258,8 @@ class Societe extends CommonObject
 					if ($vallabel && getDolGlobalString('SOCIETE_VAT_INTRA_UNIQUE')) {
 						if ($this->id_prof_exists($keymin, $vallabel, ($this->id > 0 ? $this->id : 0))) {
 							$langs->load("errors");
-							$error++; $this->errors[] = $langs->trans('VATIntra')." ".$langs->trans("ErrorProdIdAlreadyExist", $vallabel).' ('.$langs->trans("ForbiddenBySetupRules").')';
+							$error++;
+							$this->errors[] = $langs->trans('VATIntra')." ".$langs->trans("ErrorProdIdAlreadyExist", $vallabel).' ('.$langs->trans("ForbiddenBySetupRules").')';
 						}
 					}
 				} elseif ($key == 'ACCOUNTANCY_CODE_CUSTOMER' && !empty($this->client)) {
@@ -1310,7 +1315,7 @@ class Societe extends CommonObject
 	 *		@param	int		$allowmodcodefournisseur	Inclut modif code fournisseur et code compta fournisseur
 	 *		@param	string	$action						'add' or 'update' or 'merge'
 	 *		@param	int		$nosyncmember				Do not synchronize info of linked member
-	 *      @return int  			           			<0 if KO, >=0 if OK
+	 *      @return int  			           			Return integer <0 if KO, >=0 if OK
 	 */
 	public function update($id, $user = '', $call_trigger = 1, $allowmodcodeclient = 0, $allowmodcodefournisseur = 0, $action = 'update', $nosyncmember = 1)
 	{
@@ -1335,9 +1340,9 @@ class Societe extends CommonObject
 		$this->nom = $this->name; // For backward compatibility
 		$this->name_alias = trim($this->name_alias);
 		$this->ref_ext		= trim($this->ref_ext);
-		$this->address		= $this->address ?trim($this->address) : trim($this->address);
-		$this->zip = $this->zip ?trim($this->zip) : trim($this->zip);
-		$this->town = $this->town ?trim($this->town) : trim($this->town);
+		$this->address		= $this->address ? trim($this->address) : trim($this->address);
+		$this->zip = $this->zip ? trim($this->zip) : trim($this->zip);
+		$this->town = $this->town ? trim($this->town) : trim($this->town);
 		$this->state_id = trim($this->state_id);
 		$this->country_id = ($this->country_id > 0) ? $this->country_id : 0;
 		$this->phone		= trim($this->phone);
@@ -1347,15 +1352,15 @@ class Societe extends CommonObject
 		$this->fax			= preg_replace("/\s/", "", $this->fax);
 		$this->fax			= preg_replace("/\./", "", $this->fax);
 		$this->email		= trim($this->email);
-		$this->url			= $this->url ?clean_url($this->url, 0) : '';
+		$this->url			= $this->url ? clean_url($this->url, 0) : '';
 		$this->note_private = trim($this->note_private);
 		$this->note_public  = trim($this->note_public);
 		$this->idprof1		= trim($this->idprof1);
 		$this->idprof2		= trim($this->idprof2);
 		$this->idprof3		= trim($this->idprof3);
 		$this->idprof4		= trim($this->idprof4);
-		$this->idprof5		= (!empty($this->idprof5) ?trim($this->idprof5) : '');
-		$this->idprof6		= (!empty($this->idprof6) ?trim($this->idprof6) : '');
+		$this->idprof5		= (!empty($this->idprof5) ? trim($this->idprof5) : '');
+		$this->idprof6		= (!empty($this->idprof6) ? trim($this->idprof6) : '');
 		$this->prefix_comm = trim($this->prefix_comm);
 		$this->outstanding_limit = price2num($this->outstanding_limit);
 		$this->order_min_amount = price2num($this->order_min_amount);
@@ -1442,7 +1447,7 @@ class Societe extends CommonObject
 		}
 
 		//Web services
-		$this->webservices_url = $this->webservices_url ?clean_url($this->webservices_url, 0) : '';
+		$this->webservices_url = $this->webservices_url ? clean_url($this->webservices_url, 0) : '';
 		$this->webservices_key = trim($this->webservices_key);
 
 		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
@@ -2061,7 +2066,7 @@ class Societe extends CommonObject
 	 *    @param	int			$id             Id of third party to delete
 	 *    @param    User|null   $fuser          User who ask to delete thirdparty
 	 *    @param    int			$call_trigger   0=No, 1=yes
-	 *    @return	int							<0 if KO, 0 if nothing done, >0 if OK
+	 *    @return	int							Return integer <0 if KO, 0 if nothing done, >0 if OK
 	 */
 	public function delete($id, User $fuser = null, $call_trigger = 1)
 	{
@@ -2212,7 +2217,7 @@ class Societe extends CommonObject
 	/**
 	 *  Define third party as a customer
 	 *
-	 *	@return		int		<0 if KO, >0 if OK
+	 *	@return		int		Return integer <0 if KO, >0 if OK
 	 *  @deprecated
 	 *  @see setAsCustomer()
 	 */
@@ -2227,7 +2232,7 @@ class Societe extends CommonObject
 	/**
 	 *  Define third party as a customer
 	 *
-	 *	@return		int		<0 if KO, >0 if OK
+	 *	@return		int		Return integer <0 if KO, >0 if OK
 	 *  @since dolibarr v19
 	 */
 	public function setAsCustomer()
@@ -2259,7 +2264,7 @@ class Societe extends CommonObject
 	 *  @param	float	$remise		Value in % of the discount
 	 *  @param  string	$note		Note/Reason for changing the discount
 	 *  @param  User	$user		User who sets the discount
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function set_remise_client($remise, $note, User $user)
 	{
@@ -2320,7 +2325,7 @@ class Societe extends CommonObject
 	 *  @param	float	$remise		Value in % of the discount
 	 *  @param  string	$note		Note/Reason for changing the discount
 	 *  @param  User	$user		User who sets the discount
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function set_remise_supplier($remise, $note, User $user)
 	{
@@ -2384,7 +2389,7 @@ class Societe extends CommonObject
 	 *      @param  string	$vatrate     		VAT rate (may contain the vat code too). Exemple: '1.23', '1.23 (ABC)', ...
 	 *      @param	int		$discount_type		0 => customer discount, 1 => supplier discount
 	 *      @param	string	$price_base_type	Price base type 'HT' or 'TTC'
-	 *		@return	int							<0 if KO, id of discount record if OK
+	 *		@return	int							Return integer <0 if KO, id of discount record if OK
 	 */
 	public function set_remise_except($remise, User $user, $desc, $vatrate = '', $discount_type = 0, $price_base_type = 'HT')
 	{
@@ -2455,7 +2460,7 @@ class Societe extends CommonObject
 	 * 	@param	string	$filter			Other filter
 	 * 	@param	integer	$maxvalue		Filter on max value for discount
 	 * 	@param	int		$discount_type	0 => customer discount, 1 => supplier discount
-	 *	@return	int					<0 if KO, Credit note amount otherwise
+	 *	@return	int					Return integer <0 if KO, Credit note amount otherwise
 	 */
 	public function getAvailableDiscounts($user = '', $filter = '', $maxvalue = 0, $discount_type = 0)
 	{
@@ -2546,7 +2551,7 @@ class Societe extends CommonObject
 	 *
 	 * @param 	int		$price_level	Level of price
 	 * @param 	User	$user			Use making change
-	 * @return	int						<0 if KO, >0 if OK
+	 * @return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setPriceLevel($price_level, User $user)
 	{
@@ -2581,7 +2586,7 @@ class Societe extends CommonObject
 	 *
 	 *	@param	User	$user		Object user
 	 *	@param	int		$commid		Id of user
-	 *	@return	int					<=0 if KO, >0 if OK
+	 *	@return	int					Return integer <=0 if KO, >0 if OK
 	 */
 	public function add_commercial(User $user, $commid)
 	{
@@ -2929,7 +2934,7 @@ class Societe extends CommonObject
 				$label = $langs->trans("ShowCompany");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.' refurl valignmiddle"';
 			$target_value = array('_self', '_blank', '_parent', '_top');
 			if (in_array($target, $target_value)) {
@@ -3121,10 +3126,12 @@ class Societe extends CommonObject
 		if ($resql) {
 			$nump = $this->db->num_rows($resql);
 			if ($nump) {
-				$sepa = "("; $sepb = ")";
+				$sepa = "(";
+				$sepb = ")";
 				if ($mode == 'email') {
 					//$sepa="&lt;"; $sepb="&gt;";
-					$sepa = "<"; $sepb = ">";
+					$sepa = "<";
+					$sepb = ">";
 				}
 				$i = 0;
 				while ($i < $nump) {
@@ -3618,7 +3625,7 @@ class Societe extends CommonObject
 	 *    Define parent company of current company
 	 *
 	 *    @param	int		$id     Id of thirdparty to set or '' to remove
-	 *    @return	int     		<0 if KO, >0 if OK
+	 *    @return	int     		Return integer <0 if KO, >0 if OK
 	 */
 	public function setParent($id)
 	{
@@ -3657,7 +3664,7 @@ class Societe extends CommonObject
 	 *    @param	int		$idparent	Id of thirdparty to check
 	 *    @param	int		$idchild	Id of thirdparty to compare to
 	 *    @param    int     $counter    Counter to protect against infinite loops
-	 *    @return	int     			<0 if KO, 0 if OK or 1 if at some level a parent company was the child to compare to
+	 *    @return	int     			Return integer <0 if KO, 0 if OK or 1 if at some level a parent company was the child to compare to
 	 */
 	public function validateFamilyTree($idparent, $idchild, $counter = 0)
 	{
@@ -3795,7 +3802,7 @@ class Societe extends CommonObject
 				break;
 		}
 
-		 //Verify duplicate entries
+		//Verify duplicate entries
 		$sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."societe WHERE ".$field." = '".$this->db->escape($value)."' AND entity IN (".getEntity('societe').")";
 		if ($socid) {
 			$sql .= " AND rowid <> ".$socid;
@@ -3823,7 +3830,7 @@ class Societe extends CommonObject
 	 *
 	 *  @param	int			$idprof         1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
 	 *  @param  Societe		$soc            Objet societe
-	 *  @return int             			<=0 if KO, >0 if OK
+	 *  @return int             			Return integer <=0 if KO, >0 if OK
 	 *  TODO better to have this in a lib than into a business class
 	 */
 	public function id_prof_check($idprof, $soc)
@@ -4249,7 +4256,7 @@ class Societe extends CommonObject
 	 *  Set "blacklist" mailing status
 	 *
 	 *  @param	int		$no_email	1=Do not send mailing, 0=Ok to recieve mailling
-	 *  @return int					<0 if KO, >0 if OK
+	 *  @return int					Return integer <0 if KO, >0 if OK
 	 */
 	public function setNoEmail($no_email)
 	{
@@ -4306,7 +4313,7 @@ class Societe extends CommonObject
 	 *  get "blacklist" mailing status
 	 * 	set no_email attribut to 1 or 0
 	 *
-	 *  @return int					<0 if KO, >0 if OK
+	 *  @return int					Return integer <0 if KO, >0 if OK
 	 */
 	public function getNoEmail()
 	{
@@ -4334,7 +4341,7 @@ class Societe extends CommonObject
 	 * 	@param	string		$socname		Name of third party to force
 	 *	@param	string		$socalias		Alias name of third party to force
 	 *  @param	string		$customercode	Customer code
-	 *  @return int							<0 if KO, id of created account if OK
+	 *  @return int							Return integer <0 if KO, id of created account if OK
 	 */
 	public function create_from_member(Adherent $member, $socname = '', $socalias = '', $customercode = '')
 	{
@@ -4346,7 +4353,7 @@ class Societe extends CommonObject
 
 		if ($member->morphy == 'mor') {
 			if (empty($socname)) {
-				$socname = $member->company? $member->company : $member->societe;
+				$socname = $member->company ? $member->company : $member->societe;
 			}
 			if (!empty($fullname) && empty($socalias)) {
 				$socalias = $fullname;
@@ -4455,7 +4462,7 @@ class Societe extends CommonObject
 		// We define country_id, country_code and country
 		$country_id = $country_code = $country_label = '';
 		if (getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY')) {
-			$tmp = explode(':', $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
+			$tmp = explode(':', getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY'));
 			$country_id = $tmp[0];
 			if (!empty($tmp[1])) {   // If $conf->global->MAIN_INFO_SOCIETE_COUNTRY is "id:code:label"
 				$country_code = $tmp[1];
@@ -4477,9 +4484,10 @@ class Societe extends CommonObject
 
 		//TODO This could be replicated for region but function `getRegion` didn't exist, so I didn't added it.
 		// We define state_id, state_code and state
-		$state_id = 0; $state_code = $state_label = '';
+		$state_id = 0;
+		$state_code = $state_label = '';
 		if (getDolGlobalString('MAIN_INFO_SOCIETE_STATE')) {
-			$tmp = explode(':', $conf->global->MAIN_INFO_SOCIETE_STATE);
+			$tmp = explode(':', getDolGlobalString('MAIN_INFO_SOCIETE_STATE'));
 			$state_id = $tmp[0];
 			if (!empty($tmp[1])) {   // If $conf->global->MAIN_INFO_SOCIETE_STATE is "id:code:label"
 				$state_code = $tmp[1];
@@ -4683,7 +4691,7 @@ class Societe extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			return (($obj->nb > 0) ?true:false);
+			return (($obj->nb > 0) ? true : false);
 		} else {
 			$this->error = $this->db->lasterror();
 			return false;
@@ -5026,7 +5034,7 @@ class Societe extends CommonObject
 	 *  @param  int			$hidedesc       Hide description
 	 *  @param  int			$hideref        Hide ref
 	 *  @param  null|array  $moreparams     Array to provide more information
-	 *	@return int        					<0 if KO, >0 if OK
+	 *	@return int        					Return integer <0 if KO, >0 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
@@ -5083,7 +5091,7 @@ class Societe extends CommonObject
 	 *
 	 * @param 	int[]|int 	$categories 	Category ID or array of Categories IDs
 	 * @param 	string 		$type_categ 	Category type ('customer' or 'supplier')
-	 * @return	int							<0 if KO, >0 if OK
+	 * @return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function setCategories($categories, $type_categ)
 	{
@@ -5103,7 +5111,7 @@ class Societe extends CommonObject
 	 *
 	 * @param 	int[]|int 	$salesrep	 	User ID or array of user IDs
 	 * @param   bool        $onlyAdd        Only add (no delete before)
-	 * @return	int							<0 if KO, >0 if OK
+	 * @return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function setSalesRep($salesrep, $onlyAdd = false)
 	{
@@ -5148,7 +5156,7 @@ class Societe extends CommonObject
 	 *    Define third-party type of current company
 	 *
 	 *    @param	int		$typent_id	third party type rowid in llx_c_typent
-	 *    @return	int     			<0 if KO, >0 if OK
+	 *    @return	int     			Return integer <0 if KO, >0 if OK
 	 */
 	public function setThirdpartyType($typent_id)
 	{
@@ -5223,7 +5231,7 @@ class Societe extends CommonObject
 	 *
 	 * @param   string  $type   It can be only 'buy' or 'sell'
 	 * @param   string  $value  Accountancy code
-	 * @return  int             <0 KO >0 OK
+	 * @return  int             Return integer <0 KO >0 OK
 	 */
 	public function setAccountancyCode($type, $value)
 	{
@@ -5274,7 +5282,7 @@ class Societe extends CommonObject
 	 *	Function to get partnerships array
 	 *
 	 *  @param		string		$mode		'member' or 'thirdparty'
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchPartnerships($mode)
 	{

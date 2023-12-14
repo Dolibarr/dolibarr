@@ -42,11 +42,11 @@ $categid = GETPOST('categid');
 $label = GETPOST("label");
 
 $now = dol_now();
-$syear = (GETPOSTISSET('closeyear') ?GETPOST('closeyear', 'int') : dol_print_date($now, "%Y"));
-$smonth = (GETPOSTISSET('closemonth') ?GETPOST('closemonth', 'int') : dol_print_date($now, "%m"));
-$sday = (GETPOSTISSET('closeday') ?GETPOST('closeday', 'int') : dol_print_date($now, "%d"));
+$syear = (GETPOSTISSET('closeyear') ? GETPOST('closeyear', 'int') : dol_print_date($now, "%Y"));
+$smonth = (GETPOSTISSET('closemonth') ? GETPOST('closemonth', 'int') : dol_print_date($now, "%m"));
+$sday = (GETPOSTISSET('closeday') ? GETPOST('closeday', 'int') : dol_print_date($now, "%d"));
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -62,7 +62,7 @@ if (!$sortfield) {
 if (!$sortorder) {
 	$sortorder = 'ASC';
 }
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'thirdpartylist';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'thirdpartylist';
 
 if ($contextpage == 'takepos') {
 	$_GET['optioncss'] = 'print';
@@ -416,7 +416,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 		print '<td>';
 
 		$array = array();
-		$numterminals = max(1, $conf->global->TAKEPOS_NUM_TERMINALS);
+		$numterminals = max(1, getDolGlobalString('TAKEPOS_NUM_TERMINALS'));
 		for ($i = 1; $i <= $numterminals; $i++) {
 			$array[$i] = $i;
 		}
@@ -426,7 +426,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 			$selectedposnumber = 1;
 			$showempty = 0;
 		}
-		print $form->selectarray('posnumber', $array, GETPOSTISSET('posnumber') ?GETPOST('posnumber', 'int') : $selectedposnumber, $showempty);
+		print $form->selectarray('posnumber', $array, GETPOSTISSET('posnumber') ? GETPOST('posnumber', 'int') : $selectedposnumber, $showempty);
 		//print '<input name="posnumber" type="text" class="maxwidth50" value="'.(GETPOSTISSET('posnumber')?GETPOST('posnumber', 'alpha'):'0').'">';
 		print '</td>';
 		// Year
@@ -563,7 +563,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 				$object->fetch($id);
 				print $object->opening;
 			} else {
-				print (GETPOSTISSET('opening') ?price2num(GETPOST('opening', 'alpha')) : price($initialbalanceforterminal[$terminalid]['cash']));
+				print(GETPOSTISSET('opening') ? price2num(GETPOST('opening', 'alpha')) : price($initialbalanceforterminal[$terminalid]['cash']));
 			}
 			print '">';
 			print '</td>';
@@ -641,8 +641,8 @@ if (empty($action) || $action == "view" || $action == "close") {
 		print $langs->trans("Period");
 		print '</td><td>';
 		print $object->year_close;
-		print ($object->month_close ? "-" : "").$object->month_close;
-		print ($object->day_close ? "-" : "").$object->day_close;
+		print($object->month_close ? "-" : "").$object->month_close;
+		print($object->day_close ? "-" : "").$object->day_close;
 		print '</td></tr>';
 
 		print '</table>';
@@ -849,7 +849,7 @@ if (empty($action) || $action == "view" || $action == "close") {
 					$object->fetch($id);
 					print $object->opening;
 				} else {
-					print (GETPOSTISSET('opening') ?price2num(GETPOST('opening', 'alpha')) : price($initialbalanceforterminal[$terminalid]['cash']));
+					print(GETPOSTISSET('opening') ? price2num(GETPOST('opening', 'alpha')) : price($initialbalanceforterminal[$terminalid]['cash']));
 				}
 				print '">';
 				print '</td>';

@@ -50,7 +50,7 @@ $typeid = (int) GETPOST('typeid', 'int');
 $amount = price2num(GETPOST('amount', 'alpha'), 'MT');
 
 if (!$user->hasRight('adherent', 'cotisation', 'lire')) {
-	 accessforbidden();
+	accessforbidden();
 }
 
 $permissionnote = $user->hasRight('adherent', 'cotisation', 'creer'); // Used by the include of actions_setnotes.inc.php

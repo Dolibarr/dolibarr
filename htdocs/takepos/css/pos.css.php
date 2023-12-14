@@ -973,7 +973,8 @@ if (!getDolGlobalString('TAKEPOS_USE_ARROW_ON_NAVBAR')) {
 	display: none;
 }
 
-<?php } else { ?>
+	<?php
+} else { ?>
 .indicator {
 	background: #00000042;
 	padding: 15px 5px;

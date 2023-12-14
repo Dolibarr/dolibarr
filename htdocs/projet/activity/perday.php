@@ -43,7 +43,7 @@ $mode = GETPOST("mode", 'alpha');
 $id = GETPOST('id', 'int');
 $taskid = GETPOST('taskid', 'int');
 
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'perdaycard';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'perdaycard';
 
 $mine = 0;
 if ($mode == 'mine') {
@@ -62,10 +62,10 @@ $result = restrictedArea($user, 'projet', $projectid);
 
 $now = dol_now();
 
-$year = GETPOST('reyear', 'int') ?GETPOST('reyear', 'int') : (GETPOST("year", "int") ?GETPOST("year", "int") : (GETPOST("addtimeyear", "int") ?GETPOST("addtimeyear", "int") : date("Y")));
-$month = GETPOST('remonth', 'int') ?GETPOST('remonth', 'int') : (GETPOST("month", "int") ?GETPOST("month", "int") : (GETPOST("addtimemonth", "int") ?GETPOST("addtimemonth", "int") : date("m")));
-$day = GETPOST('reday', 'int') ?GETPOST('reday', 'int') : (GETPOST("day", "int") ?GETPOST("day", "int") : (GETPOST("addtimeday", "int") ?GETPOST("addtimeday", "int") : date("d")));
-$week = GETPOST("week", "int") ?GETPOST("week", "int") : date("W");
+$year = GETPOST('reyear', 'int') ? GETPOST('reyear', 'int') : (GETPOST("year", "int") ? GETPOST("year", "int") : (GETPOST("addtimeyear", "int") ? GETPOST("addtimeyear", "int") : date("Y")));
+$month = GETPOST('remonth', 'int') ? GETPOST('remonth', 'int') : (GETPOST("month", "int") ? GETPOST("month", "int") : (GETPOST("addtimemonth", "int") ? GETPOST("addtimemonth", "int") : date("m")));
+$day = GETPOST('reday', 'int') ? GETPOST('reday', 'int') : (GETPOST("day", "int") ? GETPOST("day", "int") : (GETPOST("addtimeday", "int") ? GETPOST("addtimeday", "int") : date("d")));
+$week = GETPOST("week", "int") ? GETPOST("week", "int") : date("W");
 
 $day = (int) $day;
 
@@ -96,8 +96,11 @@ if ($year && $month && $day) {
 }
 
 $daytoparsegmt = dol_now('gmt');
-if ($yearofday && $monthofday && $dayofday) $daytoparsegmt = dol_mktime(0, 0, 0, $monthofday, $dayofday, $yearofday, 'gmt'); // xxxofday is value of day after submit action 'addtime'
-elseif ($year && $month && $day) $daytoparsegmt = dol_mktime(0, 0, 0, $month, $day, $year, 'gmt'); // this are value submited after submit of action 'submitdateselect'
+if ($yearofday && $monthofday && $dayofday) {
+	$daytoparsegmt = dol_mktime(0, 0, 0, $monthofday, $dayofday, $yearofday, 'gmt');
+} elseif ($year && $month && $day) { // xxxofday is value of day after submit action 'addtime'
+	$daytoparsegmt = dol_mktime(0, 0, 0, $month, $day, $year, 'gmt');
+} // this are value submited after submit of action 'submitdateselect'
 
 if (empty($search_usertoprocessid) || $search_usertoprocessid == $user->id) {
 	$usertoprocess = $user;
@@ -629,7 +632,7 @@ $numstartworkingday = 1;
 $numendworkingday = 5;
 
 if (getDolGlobalString('MAIN_DEFAULT_WORKING_DAYS')) {
-	$tmparray = explode('-', $conf->global->MAIN_DEFAULT_WORKING_DAYS);
+	$tmparray = explode('-', getDolGlobalString('MAIN_DEFAULT_WORKING_DAYS'));
 	if (count($tmparray) >= 2) {
 		$numstartworkingday = $tmparray[0];
 		$numendworkingday = $tmparray[1];
@@ -750,11 +753,11 @@ if (count($tasksarray) > 0) {
 		$timeonothertasks = ($totalforeachday[$daytoparse] - $totalforvisibletasks[$daytoparse]);
 		//if ($timeonothertasks)
 		//{
-			print '<span class="timesheetalreadyrecorded" title="texttoreplace"><input type="text" class="center" size="2" disabled="" id="timespent[-1][0]" name="task[-1][0]" value="';
+		print '<span class="timesheetalreadyrecorded" title="texttoreplace"><input type="text" class="center" size="2" disabled="" id="timespent[-1][0]" name="task[-1][0]" value="';
 		if ($timeonothertasks) {
 			print convertSecondToTime($timeonothertasks, 'allhourmin');
 		}
-			print '"></span>';
+		print '"></span>';
 		//}
 		print '</td>';
 		print ' <td class="liste_total"></td>';
