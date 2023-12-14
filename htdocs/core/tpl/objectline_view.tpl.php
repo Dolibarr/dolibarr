@@ -497,8 +497,12 @@ if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlin
 		$coldisplay++;
 	}
 } else {
-	print '<td colspan="3"></td>';
-	$coldisplay = $coldisplay + 3;
+	$colspan = 3;
+	if (isModEnabled('asset') && $object->element == 'invoice_supplier') {
+		$colspan++;
+	}
+	print '<td colspan="'.$colspan.'"></td>';
+	$coldisplay = $coldisplay + $colspan;
 }
 
 if ($action == 'selectlines') { ?>

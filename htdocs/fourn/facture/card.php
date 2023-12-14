@@ -2751,6 +2751,7 @@ if ($action == 'create') {
 		// Intracomm report
 		if (isModEnabled('intracommreport')) {
 			$langs->loadLangs(array("intracommreport"));
+			print '<!-- If module intracomm on -->'."\n";
 			print '<tr><td>'.$langs->trans('IntracommReportTransportMode').'</td><td>';
 			$form->selectTransportMode(GETPOSTISSET('transport_mode_id') ? GETPOST('transport_mode_id') : $transport_mode_id, 'transport_mode_id');
 			print '</td></tr>';
@@ -3500,6 +3501,7 @@ if ($action == 'create') {
 			// Intracomm report
 			if (isModEnabled('intracommreport')) {
 				$langs->loadLangs(array("intracommreport"));
+				print '<!-- If module intracomm on -->'."\n";
 				print '<tr><td>';
 				print '<table class="nobordernopadding centpercent"><tr><td>';
 				print $langs->trans('IntracommReportTransportMode');
