@@ -254,6 +254,30 @@ class modFournisseur extends DolibarrModules
 		$this->rights[$r][5] = 'export';
 
 		$r++;
+		$this->rights[$r][0] = 1192;
+		$this->rights[$r][1] = 'Self-Approve LVL1';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'commande';
+		$this->rights[$r][5] = 'selfapprovelvl1';
+
+		$r++;
+		$this->rights[$r][0] = 1193;
+		$this->rights[$r][1] = 'Self-Approve LVL2';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'commande';
+		$this->rights[$r][5] = 'selfapprovelvl3';
+
+		$r++;
+		$this->rights[$r][0] = 1194;
+		$this->rights[$r][1] = 'Self-Approve LVL3';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'commande';
+		$this->rights[$r][5] = 'selfapprovelvl3';
+
+		$r++;
 		$this->rights[$r][0] = 1231;
 		$this->rights[$r][1] = 'Consulter les factures fournisseur';
 		$this->rights[$r][2] = 'r';

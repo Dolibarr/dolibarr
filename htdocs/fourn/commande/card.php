@@ -153,6 +153,19 @@ if (empty($conf->reception->enabled)) {
 } else {
 	$usercanreceive = $user->hasRight("reception", "creer");
 }
+if ( empty($usercanapprove) ) {
+	if ($object->total_ht <= $conf->global->SUPPLIER_ORDER_APPROVE_LVL1) {
+		$usercanapprove = !empty($user->rights->fournisseur->commande->selfapprovelvl1) ? $user->rights->fournisseur->commande->selfapprovelvl1 : 0;
+		$selfapprove = 1;
+	} elseif ($object->total_ht <= $conf->global->SUPPLIER_ORDER_APPROVE_LVL2) {
+		$usercanapprove = !empty($user->rights->fournisseur->commande->selfapprovelvl2) ? $user->rights->fournisseur->commande->selfapprovelvl2 : 0;
+		$selfapprove = 2;
+	} elseif ($object->total_ht <= $conf->global->SUPPLIER_ORDER_APPROVE_LVL3) {
+		$usercanapprove = !empty($user->rights->fournisseur->commande->selfapprovelvl3) ? $user->rights->fournisseur->commande->selfapprovelvl3 : 0;
+		$selfapprove = 3;
+	}
+}
+
 
 // Permissions for includes
 $permissionnote		= $usercancreate; // Used by the include of actions_setnotes.inc.php
@@ -1005,7 +1018,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$result = $object->approve($user, $idwarehouse, ($action == 'confirm_approve2' ? 1 : 0));
+			$result = $object->approve($user, $idwarehouse, ($action == 'confirm_approve2' ? 1 : 0), $selfapprove);
 			if ($result > 0) {
 				if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 					$outputlangs = $langs;
