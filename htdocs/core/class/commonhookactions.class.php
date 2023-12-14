@@ -36,4 +36,26 @@ abstract class CommonHookActions
 	 * @var array 	Array of results.
 	 */
 	public $results = array();
+
+	/**
+	 * Check context of hook
+	 * @param array $parameters Hook parameters.
+	 * @param array|string $allContexts Context to check
+	 * @return bool
+	 */
+	protected function isContext($parameters, $allContexts)
+	{
+		if (is_array($allContexts)) {
+			foreach ($allContexts as $context) {
+				if ($this->isContext($parameters, $context)) {
+					return true;
+				}
+			}
+		}
+		if ($parameters['currentcontext'] == $allContexts) {
+			return true;
+		}
+		$contexts = explode(':', $parameters['context']);
+		return in_array($allContexts, $contexts);
+	}
 }
