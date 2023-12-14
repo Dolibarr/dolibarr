@@ -675,12 +675,12 @@ abstract class CommonObject
 	public $sendtoid;
 
 	/**
-	 * @var	float		Amount already paid (used to show correct status)
+	 * @var	float		Amount already paid from getSommePaiement() (used to show correct status)
+	 * @deprecated		Duplicate of $totalpaid
 	 */
 	public $alreadypaid;
 	/**
-	 * @var	float		Amount already paid (used to show correct status)
-	 * @deprecated		Duplicate of $alreadypaid
+	 * @var	float		Amount already paid from getSommePaiement() (used to show correct status)
 	 */
 	public $totalpaid;
 

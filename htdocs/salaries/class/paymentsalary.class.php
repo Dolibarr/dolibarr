@@ -233,45 +233,43 @@ class PaymentSalary extends CommonObject
 		$this->db->begin();
 
 		if ($totalamount != 0) {
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_salary (entity, fk_salary, datec, datep, amount,";
-			$sql .= " fk_typepayment, num_payment, note, fk_user_author, fk_bank)";
-			$sql .= " VALUES (".((int) $conf->entity).", ".((int) $this->fk_salary).", '".$this->db->idate($now)."',";
-			$sql .= " '".$this->db->idate($this->datep)."',";
-			$sql .= " ".price2num($totalamount).",";
-			$sql .= " ".((int) $this->fk_typepayment).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".((int) $user->id).",";
-			$sql .= " 0)";
+			// Insert array of amounts
+			foreach ($this->amounts as $key => $amount) {
+				$salary_id = $key;
+				$amount = price2num($amount);
+				if (is_numeric($amount) && !empty($amount)) {
+					// We can have n payments for 1 salary but we can't have 1 payments for n salaries (for invoices link is n-n, not for salaries).
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_salary (entity, fk_salary, datec, datep, amount,";
+					$sql .= " fk_typepayment, num_payment, note, fk_user_author, fk_bank)";
+					$sql .= " VALUES (".((int) $conf->entity).", ".((int) $salary_id).", '".$this->db->idate($now)."',";
+					$sql .= " '".$this->db->idate($this->datep)."',";
+					$sql .= " ".price2num($amount).",";
+					$sql .= " ".((int) $this->fk_typepayment).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".((int) $user->id).",";
+					$sql .= " 0)";
 
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_salary");
+					$resql = $this->db->query($sql);
+					if ($resql) {
+						$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_salary");
+					}
 
-				// Insere tableau des montants / factures
-				foreach ($this->amounts as $key => $amount) {
-					$contribid = $key;
-					if (is_numeric($amount) && $amount <> 0) {
-						$amount = price2num($amount);
-
-						// If we want to closed payed invoices
-						if ($closepaidcontrib) {
-							$tmpsalary = new Salary($this->db);
-							$tmpsalary->fetch($contribid);
-							$paiement = $tmpsalary->getSommePaiement();
-							//$creditnotes=$tmpsalary->getSumCreditNotesUsed();
-							$creditnotes = 0;
-							//$deposits=$tmpsalary->getSumDepositsUsed();
-							$deposits = 0;
-							$alreadypayed = price2num($paiement + $creditnotes + $deposits, 'MT');
-							$remaintopay = price2num($tmpsalary->amount - $paiement - $creditnotes - $deposits, 'MT');
-							if ($remaintopay == 0) {
-								$result = $tmpsalary->setPaid($user);
-							} else {
-								dol_syslog("Remain to pay for salary id=".$contribid." not null. We do nothing.");
-							}
+					// If we want to closed payed invoices
+					if ($closepaidcontrib) {
+						$tmpsalary = new Salary($this->db);
+						$tmpsalary->fetch($salary_id);
+						$paiement = $tmpsalary->getSommePaiement();
+						//$creditnotes=$tmpsalary->getSumCreditNotesUsed();
+						$creditnotes = 0;
+						//$deposits=$tmpsalary->getSumDepositsUsed();
+						$deposits = 0;
+						$alreadypayed = price2num($paiement + $creditnotes + $deposits, 'MT');
+						$remaintopay = price2num($tmpsalary->amount - $paiement - $creditnotes - $deposits, 'MT');
+						if ($remaintopay == 0) {
+							$result = $tmpsalary->setPaid($user);
+						} else {
+							dol_syslog("Remain to pay for salary id=".$salary_id." not null. We do nothing.");
 						}
 					}
 				}
-			} else {
-				$error++;
 			}
 		}
 
@@ -284,7 +282,7 @@ class PaymentSalary extends CommonObject
 			$this->amount = $totalamount;
 			$this->total = $totalamount; // deprecated
 			$this->db->commit();
-			return $this->id;
+			return $this->id;	// id of the last payment inserted
 		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();

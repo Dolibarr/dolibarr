@@ -502,10 +502,9 @@ class BonPrelevement extends CommonObject
 				if ($this->error) {
 					$error++;
 				}
-				//var_dump($facs);exit;
 
 				// Loop on each invoice or salary.
-				// $facs=array(0=>id, 1=>amount requested)
+				// $facs should be array(0=>id, 1=>amount requested)
 				$num = count($facs);
 				for ($i = 0; $i < $num; $i++) {
 					if ($this->type == 'bank-transfer') {
@@ -521,7 +520,15 @@ class BonPrelevement extends CommonObject
 					$result = $fac->fetch($facs[$i][0]);
 
 					$amounts[$fac->id] = $facs[$i][1];
-					$amountsperthirdparty[$fac->socid][$fac->id] = $facs[$i][1];
+					if ($this->type == 'bank-transfer') {
+						if ($type == 'salary') {
+							$amountsperthirdparty[$fac->fk_user][$fac->id] = $facs[$i][1];
+						} else {
+							$amountsperthirdparty[$fac->socid][$fac->id] = $facs[$i][1];
+						}
+					} else {
+						$amountsperthirdparty[$fac->socid][$fac->id] = $facs[$i][1];
+					}
 
 					$totalpaid = $fac->getSommePaiement();
 					$totalcreditnotes = 0;
@@ -534,8 +541,13 @@ class BonPrelevement extends CommonObject
 					}
 					$alreadypayed = $totalpaid + $totalcreditnotes + $totaldeposits;
 
-					// @TODO Move this after creation of payment
-					if (price2num($alreadypayed + $facs[$i][1], 'MT') == $fac->total_ttc) {
+					// Set the main document to pay with status Paid.
+					// @TODO Move this after creation of payments done after
+					$amountofdocument = $fac->total_ttc;
+					if ($type == 'salary') {
+						$amountofdocument = $fac->amount;
+					}
+					if (price2num($alreadypayed + $facs[$i][1], 'MT') == price2num($amountofdocument, 'MT')) {
 						$result = $fac->setPaid($user);
 						if ($result < 0) {
 							$this->error = $fac->error;
@@ -543,7 +555,6 @@ class BonPrelevement extends CommonObject
 						}
 					}
 				}
-				//var_dump($amountsperthirdparty);exit;
 
 				// Make one payment per customer or employee
 				foreach ($amountsperthirdparty as $thirdpartyid => $cursoramounts) {
@@ -560,8 +571,16 @@ class BonPrelevement extends CommonObject
 					$paiement->amounts = $cursoramounts; // Array with detail of dispatching of payments for each invoice
 
 					if ($this->type == 'bank-transfer') {
-						$paiement->paiementid = 2;
-						$paiement->paiementcode = 'VIR';
+						if ($type == 'salary') {
+							$paiement->datep = $date;
+
+							$paiement->paiementid = 2;
+							$paiement->fk_typepayment = 2;
+							$paiement->paiementcode = 'VIR';
+						} else {
+							$paiement->paiementid = 2;
+							$paiement->paiementcode = 'VIR';
+						}
 					} else {
 						$paiement->paiementid = 3;
 						$paiement->paiementcode = 'PRE';
@@ -570,8 +589,9 @@ class BonPrelevement extends CommonObject
 					$paiement->num_payment = $this->ref; // Set ref of direct debit note
 					$paiement->id_prelevement = $this->id;
 
-					$paiement_id = $paiement->create($user); // This use ->paiementid, that is ID of payment mode
-					if ($paiement_id < 0) {
+					$result = $paiement->create($user); // This use ->paiementid, that is ID of payment mode
+
+					if ($result < 0) {
 						$error++;
 						$this->error = $paiement->error;
 						$this->errors = $paiement->errors;
@@ -594,6 +614,7 @@ class BonPrelevement extends CommonObject
 						}
 
 						$result = $paiement->addPaymentToBank($user, $modeforaddpayment, $labelforaddpayment, $fk_bank_account, '', '', 0, '', $addbankurl);
+
 						if ($result < 0) {
 							$error++;
 							$this->error = $paiement->error;
@@ -700,9 +721,9 @@ class BonPrelevement extends CommonObject
 	}
 
 	/**
-	 *	Get invoice or salary list
+	 *	Get invoice or salary list (with amount or not)
 	 *
-	 *  @param 	int		$amounts 	If you want to get the amount of the order for each invoice
+	 *  @param 	int		$amounts 	If you want to get the amount of the order for each invoice or salary
 	 *  @param  string  $type       'salary' for type=salary
 	 *	@return	array 				Array(Id of invoices/salary, Amount to pay)
 	 */
@@ -717,7 +738,11 @@ class BonPrelevement extends CommonObject
 		// Returns all invoices presented within same order
 		$sql = "SELECT ";
 		if ($this->type == 'bank-transfer') {
-			$sql .= " p.fk_facture_fourn";
+			if ($type == 'salary') {
+				$sql .= " p.fk_salary";
+			} else {
+				$sql .= " p.fk_facture_fourn";
+			}
 		} else {
 			$sql .= " p.fk_facture";
 		}
@@ -733,7 +758,11 @@ class BonPrelevement extends CommonObject
 		$sql .= " AND pb.entity = ".((int) $conf->entity);
 		if ($amounts) {
 			if ($this->type == 'bank-transfer') {
-				$sql .= " GROUP BY p.fk_facture_fourn";
+				if ($type == 'salary') {
+					$sql .= " GROUP BY p.fk_salary";
+				} else {
+					$sql .= " GROUP BY p.fk_facture_fourn";
+				}
 			} else {
 				$sql .= " GROUP BY p.fk_facture";
 			}
