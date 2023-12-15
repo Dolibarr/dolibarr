@@ -243,6 +243,7 @@ th,td {
 }
 .seedetail {
 	color: #000088;
+	cursor: pointer;
 }
 .box {
 	padding: 20px;
