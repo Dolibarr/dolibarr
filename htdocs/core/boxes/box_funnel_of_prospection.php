@@ -102,6 +102,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_lead_status as cls";
 		$sql .= " WHERE active=1";
 		$sql .= " AND cls.code <> 'LOST'";
+		$sql .= " AND cls.code <> 'WON'";
 		$sql .= $this->db->order('cls.rowid', 'ASC');
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -126,9 +127,6 @@ class box_funnel_of_prospection extends ModeleBoxes
 					case 'NEGO':
 						$colorseriesstat[$objp->rowid] = $badgeStatus4;
 						break;
-					case 'WON':
-						$colorseriesstat[$objp->rowid] = $badgeStatus6;
-						break;
 					default:
 						break;
 				}
@@ -152,7 +150,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 			$sql .= " WHERE p.entity IN (".getEntity('project').")";
 			$sql .= " AND p.fk_opp_status = cls.rowid";
 			$sql .= " AND p.fk_statut = 1"; // Opend projects only
-			$sql .= " AND cls.code NOT IN ('LOST')";
+			$sql .= " AND cls.code NOT IN ('LOST', 'WON')";
 			$sql .= " GROUP BY p.fk_opp_status, cls.code";
 			$resql = $this->db->query($sql);
 
@@ -236,6 +234,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 					$dolgraph->setShowPercent(1);
 					$dolgraph->setMirrorGraphValues(true);
 					$dolgraph->setBorderWidth(2);
+					$dolgraph->setBorderSkip('false');
 					$dolgraph->SetType(array('horizontalbars'));
 					$dolgraph->SetHeight('200');
 					$dolgraph->SetWidth('600');
