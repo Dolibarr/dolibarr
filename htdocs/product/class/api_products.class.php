@@ -316,6 +316,12 @@ class Products extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->product->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->product->$field = $value;
 		}
 		if ($this->product->create(DolibarrApiAccess::$user) < 0) {
@@ -362,6 +368,12 @@ class Products extends DolibarrApi
 			if ($field == 'stock_reel') {
 				throw new RestException(400, 'Stock reel cannot be updated here. Use the /stockmovements endpoint instead');
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->product->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->product->$field = $value;
 		}
 
@@ -1282,6 +1294,12 @@ class Products extends DolibarrApi
 			if ($field == 'rowid') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$prodattr->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$prodattr->$field = $value;
 		}
 
@@ -1589,6 +1607,12 @@ class Products extends DolibarrApi
 			if ($field == 'rowid') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$objectval->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$objectval->$field = $value;
 		}
 
@@ -1846,6 +1870,12 @@ class Products extends DolibarrApi
 			if ($field == 'rowid') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$prodcomb->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$prodcomb->$field = $value;
 		}
 
