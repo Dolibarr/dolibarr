@@ -229,7 +229,7 @@ th,td {
 .nowrap {
 	white-space: nowrap;
 }
-.opacity {
+.opacitymedium {
 	opacity: 0.5;
 }
 .centpercent {
@@ -298,7 +298,7 @@ $html .= '<body>'."\n";
 $html .= '<header>'."\n";
 $html .= '<h1>Advanced Project Statistics</h1>'."\n";
 $currentDate = date("Y-m-d H:i:s"); // Format: Year-Month-Day Hour:Minute:Second
-$html .= '<span class="opacity">Generated on '.$currentDate.' in '.($timeend - $timestart).' seconds</span>'."\n";
+$html .= '<span class="opacitymedium">Generated on '.$currentDate.' in '.($timeend - $timestart).' seconds</span>'."\n";
 $html .= '</header>'."\n";
 
 $html .= '<section class="chapter" id="linesofcode">'."\n";
@@ -390,7 +390,7 @@ foreach ($output_arrtd as $line) {
 }
 
 $html .= '<section class="chapter" id="technicaldebt">'."\n";
-$html .= '<h2>Technical debt - PHPStan level '.$phpstanlevel.' ('.$nblines.')</h2><br>'."\n";
+$html .= '<h2>Technical debt <span class="opacitymedium">(PHPStan level '.$phpstanlevel.' => '.$nblines.' warnings)</span></h2><br>'."\n";
 $html .= '<div class="div-table-responsive">'."\n";
 $html .= '<table class="list_technical_debt">'."\n";
 $html .= '<tr><td>File</td><td>Line</td><td>Type</td></tr>'."\n";

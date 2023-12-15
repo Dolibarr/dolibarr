@@ -8,7 +8,7 @@ parameters:
 	    - scripts
 	excludePaths:
 		analyseAndScan:
-		- htdocs/custom
+		- htdocs/custom/*
 		- htdocs/dev/*
 		- htdocs/doc/*
 		- htdocs/documents/*
