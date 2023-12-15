@@ -343,7 +343,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 			// Ref payment
 			$ptva_static->id = $obj->rowid;
 			$ptva_static->ref = $obj->rowid;
-			print '<td class="left">'.$ptva_static->getNomUrl(1)."</td>\n";
+			print '<td>'.$ptva_static->getNomUrl(1)."</td>\n";
 
 			// Date
 			print '<td class="center">'.dol_print_date($db->jdate($obj->date_payment), 'day')."</td>\n";
@@ -382,20 +382,26 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 		}
 		print '<tr class="liste_total">';
 
-		print '<td colspan="2">'.$langs->trans("Total").'</td>';
+		print '<td class="liste_total" colspan="2">'.$langs->trans("Total").'</td>';
 
 		// Total here has no sens because we can have several time the same line
 		//print '<td class="right">'.price($totaltopay).'</td>';
-		print '<td>&nbsp;</td>';
+		print '<td class="liste_total">&nbsp;</td>';
 
-		print '<td>&nbsp;</td>';
-		print '<td>&nbsp;</td>';
-		print '<td>&nbsp;</td>';
-		print '<td class="right">'.price($total)."</td>";
+		print '<td class="liste_total"></td>';
+		print '<td class="liste_total"></td>';
+		print '<td class="liste_total"></td>';
+
+		if (isModEnabled("banque")) {
+			print '<td class="liste_total"></td>';
+		}
+
+		print '<td class="liste_total right">'.price($total)."</td>";
 
 		print "</tr>";
 
 		print "</table>";
+
 		$db->free($result);
 	} else {
 		dol_print_error($db);
