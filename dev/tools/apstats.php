@@ -89,7 +89,7 @@ $resexec = (int) (empty($resexec) ? 0 : trim($resexec));
 */
 
 // Count lines of code of application
-$commandcheck = ($dirscc ? $dirscc.'/' : '').'scc . --exclude-dir=includes,custom';
+$commandcheck = ($dirscc ? $dirscc.'/' : '').'scc . --exclude-dir=includes,custom,theme/common/fontawesome-5,theme/common/octicons';
 print 'Execute SCC to count lines of code in project: '.$commandcheck."\n";
 $output_arrproj = array();
 $resexecproj = 0;
@@ -320,9 +320,9 @@ $html .= '</tr>';
 foreach (array('proj', 'dep') as $source) {
 	$html .= '<tr class="trgroup" id="source'.$source.'">';
 	if ($source == 'proj') {
-		$html .= '<td>All files from project only';
+		$html .= '<td>All files without dependencies';
 	} elseif ($source == 'dep') {
-		$html .= '<td>All files from dependencies';
+		$html .= '<td>All files of dependencies only';
 	}
 	$html .= ' &nbsp; &nbsp; <span class="seedetail" data-source="'.$source.'">(See detail per file type...)</span>';
 	$html .= '<td class="right">'.formatNumber($arrayofmetrics[$source]['Bytes']).'</td>';
