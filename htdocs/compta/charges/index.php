@@ -296,8 +296,11 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 	$result = $db->query($sql);
 	if ($result) {
 		$num = $db->num_rows($result);
+
 		$i = 0;
 		$total = 0;
+		$totaltopay = 0;
+
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "pv.datev", "", $param, '', $sortfield, $sortorder, 'nowraponall ');
@@ -311,14 +314,16 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 		}
 		print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "ptva.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 		print "</tr>\n";
-		$var = 1;
+
 		while ($i < $num) {
 			$obj = $db->fetch_object($result);
 
+			$totaltopay = $totaltopay + $obj->amount_tva;
 			$total = $total + $obj->amount;
 
 
 			print '<tr class="oddeven">';
+
 			print '<td class="left">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>'."\n";
 
 			$tva_static->id = $obj->id_tva;
@@ -369,7 +374,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 		}
 		print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").'</td>';
 		print '<td>&nbsp;</td>';
-		print '<td>&nbsp;</td>';
+		print '<td class="right">'.price($totaltopay).'</td>';
 		print '<td>&nbsp;</td>';
 		print '<td>&nbsp;</td>';
 		print '<td>&nbsp;</td>';
