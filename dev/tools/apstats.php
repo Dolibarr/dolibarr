@@ -89,7 +89,7 @@ $resexec = (int) (empty($resexec) ? 0 : trim($resexec));
 */
 
 // Count lines of code of application
-$commandcheck = ($dirscc ? $dirscc.'/' : '').'scc . --exclude-dir=includes,custom,theme/common/fontawesome-5,theme/common/octicons';
+$commandcheck = ($dirscc ? $dirscc.'/' : '').'scc . --exclude-dir=htdocs/includes,htdocs/custom,htdocs/theme/common/fontawesome-5,htdocs/theme/common/octicons';
 print 'Execute SCC to count lines of code in project: '.$commandcheck."\n";
 $output_arrproj = array();
 $resexecproj = 0;
@@ -97,7 +97,7 @@ exec($commandcheck, $output_arrproj, $resexecproj);
 
 
 // Count lines of code of dependencies
-$commandcheck = ($dirscc ? $dirscc.'/' : '').'scc htdocs/includes';
+$commandcheck = ($dirscc ? $dirscc.'/' : '').'scc htdocs/includes htdocs/theme/common/fontawesome-5 htdocs/theme/common/octicons';
 print 'Execute SCC to count lines of code in dependencies: '.$commandcheck."\n";
 $output_arrdep = array();
 $resexecdep = 0;
