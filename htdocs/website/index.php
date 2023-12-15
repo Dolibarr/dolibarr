@@ -2399,12 +2399,11 @@ if ($usercanedit && (($action == 'updatesource' || $action == 'updatecontent' ||
 }
 
 // Export site
-if ($action == 'exportsite' && $user->hasRight('website', 'export')) {
+if ($action == 'exportsite') {
 	$fileofzip = $object->exportWebSite();
 
 	if ($fileofzip) {
 		$file_name = basename($fileofzip);
-
 		header("Content-Type: application/zip");
 		header("Content-Disposition: attachment; filename=".$file_name);
 		header("Content-Length: ".filesize($fileofzip));
@@ -2420,7 +2419,6 @@ if ($action == 'exportsite' && $user->hasRight('website', 'export')) {
 // Overite site
 if ($action == 'overwitesite' && $user->hasRight('website', 'export')) {
 	$fileofzip = $object->overwriteTemplate();
-	var_dump($fileofzip);
 }
 // Regenerate site
 if ($action == 'regeneratesite' && $usercanedit) {
