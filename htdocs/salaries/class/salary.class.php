@@ -314,7 +314,7 @@ class Salary extends CommonObject
 		$this->id = 0;
 
 		$this->tms = '';
-		$this->fk_user = '';
+		$this->fk_user = 0;
 		$this->datep = '';
 		$this->datev = '';
 		$this->amount = '';
@@ -322,9 +322,9 @@ class Salary extends CommonObject
 		$this->datesp = '';
 		$this->dateep = '';
 		$this->note = '';
-		$this->fk_bank = '';
-		$this->fk_user_author = '';
-		$this->fk_user_modif = '';
+		$this->fk_bank = 0;
+		$this->fk_user_author = 0;
+		$this->fk_user_modif = 0;
 	}
 
 	/**
@@ -494,7 +494,7 @@ class Salary extends CommonObject
 		// Complete datas
 		if (!empty($params['fromajaxtooltip']) && !isset($this->alreadypaid)) {
 			// Load the alreadypaid field
-			$this->alreadypaid = $this->getSommePaiement(0);
+			$this->alreadypaid = $this->getSommePaiement();
 		}
 
 		$datas = [];
