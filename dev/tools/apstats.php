@@ -390,7 +390,7 @@ foreach ($output_arrtd as $line) {
 }
 
 $html .= '<section class="chapter" id="technicaldebt">'."\n";
-$html .= '<h2>Technical debt <span class="opacitymedium">(PHPStan level '.$phpstanlevel.' => '.$nblines.' warnings)</span></h2><br>'."\n";
+$html .= '<h2>Technical debt <span class="opacitymedium">(PHPStan level '.$phpstanlevel.' -> '.$nblines.' warnings)</span></h2><br>'."\n";
 $html .= '<div class="div-table-responsive">'."\n";
 $html .= '<table class="list_technical_debt">'."\n";
 $html .= '<tr><td>File</td><td>Line</td><td>Type</td></tr>'."\n";
