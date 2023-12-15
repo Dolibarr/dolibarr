@@ -590,7 +590,7 @@ class Account extends CommonObject
 
 		// Check parameters
 		if (!$oper) {
-			$this->error = "oper not defined";
+			$this->error = "Operation code not defined";
 			return -1;
 		}
 		if (!$this->id) {

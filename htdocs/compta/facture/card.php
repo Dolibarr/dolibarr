@@ -165,7 +165,7 @@ $permissiontoadd = $usercancreate; // Used by the include of actions_addupdatede
 // retained warranty invoice available type
 $retainedWarrantyInvoiceAvailableType = array();
 if (getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
-	$retainedWarrantyInvoiceAvailableType = explode('+', $conf->global->INVOICE_USE_RETAINED_WARRANTY);
+	$retainedWarrantyInvoiceAvailableType = explode('+', getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY'));
 }
 
 // Security check
@@ -1684,7 +1684,7 @@ if (empty($reshook)) {
 									if (!isset($conf->global->CONTRACT_EXCLUDE_SERVICES_STATUS_FOR_INVOICE)) {
 										$conf->global->CONTRACT_EXCLUDE_SERVICES_STATUS_FOR_INVOICE = '5';
 									}
-									if ($srcobject->element == 'contrat' && in_array($lines[$i]->statut, explode(',', $conf->global->CONTRACT_EXCLUDE_SERVICES_STATUS_FOR_INVOICE))) {
+									if ($srcobject->element == 'contrat' && in_array($lines[$i]->statut, explode(',', getDolGlobalString('CONTRACT_EXCLUDE_SERVICES_STATUS_FOR_INVOICE')))) {
 										continue;
 									}
 

@@ -707,7 +707,7 @@ if ($action == 'edit') {
 
 		// SMTPS PW
 		if (in_array(getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail'), array('smtps', 'swiftmailer')) && getDolGlobalString('MAIN_MAIL_SMTPS_AUTH_TYPE') != "XOAUTH2") {
-			print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTPS_PW").'</td><td>'.preg_replace('/./', '*', $conf->global->MAIN_MAIL_SMTPS_PW).'</td></tr>';
+			print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTPS_PW").'</td><td>'.preg_replace('/./', '*', getDolGlobalString('MAIN_MAIL_SMTPS_PW')).'</td></tr>';
 		}
 
 		// SMTPS oauth service
@@ -918,7 +918,7 @@ if ($action == 'edit') {
 		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_AUTOCOPY_TO").'</td>';
 		print '<td>';
 		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO')) {
-			$listofemail = explode(',', $conf->global->MAIN_MAIL_AUTOCOPY_TO);
+			$listofemail = explode(',', getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO'));
 			$i = 0;
 			foreach ($listofemail as $key => $val) {
 				if ($i) {

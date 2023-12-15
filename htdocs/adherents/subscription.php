@@ -1056,7 +1056,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 					print $langs->trans("CreateDolibarrThirdParty");
 					print '</a>)';
 				}
-				if (!getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS') || $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS != 'defaultforfoundationcountry') {
+				if (!getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS') || getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS') != 'defaultforfoundationcountry') {
 					print '. <span class="opacitymedium">'.$langs->trans("NoVatOnSubscription", 0).'</span>';
 				}
 				if (getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') && (isModEnabled('product') || isModEnabled('service'))) {
@@ -1086,7 +1086,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 					print $langs->trans("CreateDolibarrThirdParty");
 					print '</a>)';
 				}
-				if (!getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS') || $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS != 'defaultforfoundationcountry') {
+				if (!getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS') || getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS') != 'defaultforfoundationcountry') {
 					print '. <span class="opacitymedium">'.$langs->trans("NoVatOnSubscription", 0).'</span>';
 				}
 				if (getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') && (isModEnabled('product')|| isModEnabled('service'))) {

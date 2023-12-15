@@ -68,7 +68,7 @@ if (empty($conf->dav->enabled)) {
 
 // Restrict API to some IPs
 if (getDolGlobalString('DAV_RESTRICT_ON_IP')) {
-	$allowedip = explode(' ', $conf->global->DAV_RESTRICT_ON_IP);
+	$allowedip = explode(' ', getDolGlobalString('DAV_RESTRICT_ON_IP'));
 	$ipremote = getUserRemoteIP();
 	if (!in_array($ipremote, $allowedip)) {
 		dol_syslog('Remote ip is '.$ipremote.', not into list ' . getDolGlobalString('DAV_RESTRICT_ON_IP'));

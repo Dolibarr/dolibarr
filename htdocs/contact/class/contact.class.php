@@ -781,7 +781,7 @@ class Contact extends CommonObject
 		$info = array();
 
 		// Object classes
-		$info["objectclass"] = explode(',', $conf->global->LDAP_CONTACT_OBJECT_CLASS);
+		$info["objectclass"] = explode(',', getDolGlobalString('LDAP_CONTACT_OBJECT_CLASS'));
 
 		$this->fullname = $this->getFullName($langs);
 

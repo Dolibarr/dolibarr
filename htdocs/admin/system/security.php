@@ -350,7 +350,7 @@ print '<span class="bold"> -> PHP streams allowed = </span>';
 $arrayofstreams = stream_get_wrappers();
 if (!empty($arrayofstreams)) {
 	sort($arrayofstreams);
-	print (join(',', $arrayofstreams)).' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("TryToKeepOnly", 'file,http,https,php').')</span>'."\n";
+	print(join(',', $arrayofstreams)).' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("TryToKeepOnly", 'file,http,https,php').')</span>'."\n";
 }
 
 print '<br>';
@@ -627,13 +627,13 @@ print '<strong>MAIN_SECURITY_HASH_ALGO</strong> = '.getDolGlobalString('MAIN_SEC
 if (!getDolGlobalString('MAIN_SECURITY_HASH_ALGO')) {
 	print '<span class="opacitymedium"> &nbsp; &nbsp; If unset: \'md5\'</span>';
 }
-if ($conf->global->MAIN_SECURITY_HASH_ALGO != 'password_hash') {
+if (getDolGlobalString('MAIN_SECURITY_HASH_ALGO') != 'password_hash') {
 	print '<br><strong>MAIN_SECURITY_SALT</strong> = '.getDolGlobalString('MAIN_SECURITY_SALT', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').'<br>';
 } else {
 	print '<span class="opacitymedium">('.$langs->trans("Recommended").': password_hash)</span>';
 	print '<br>';
 }
-if ($conf->global->MAIN_SECURITY_HASH_ALGO != 'password_hash') {
+if (getDolGlobalString('MAIN_SECURITY_HASH_ALGO') != 'password_hash') {
 	print '<div class="info">The recommanded value for MAIN_SECURITY_HASH_ALGO is now \'password_hash\' but setting it now will make ALL existing passwords of all users not valid, so update is not possible.<br>';
 	print 'If you really want to switch, you must:<br>';
 	print '- Go on home - setup - other and add constant MAIN_SECURITY_HASH_ALGO to value \'password_hash\'<br>';
@@ -713,7 +713,9 @@ print '<strong>MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES</strong> = '.(getDol
 print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": 1 - does not work on HTML5 with some old libxml libs)</span><br>";
 print '<br>';
 
-print '<strong>MAIN_DISALLOW_URL_INTO_DESCRIPTIONS</strong> = '.getDolGlobalString('MAIN_DISALLOW_URL_INTO_DESCRIPTIONS', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 1)</span>')."<br>";
+// MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 1, disallow url links except if on /medias
+// MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 2, disallow all external urls link
+print '<strong>MAIN_DISALLOW_URL_INTO_DESCRIPTIONS</strong> = '.getDolGlobalString('MAIN_DISALLOW_URL_INTO_DESCRIPTIONS', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 1=only local links allowed or 2=no links at all)</span>')."<br>";
 print '<br>';
 
 print '<strong>MAIN_ALLOW_SVG_FILES_AS_EXTERNAL_LINKS</strong> = '.getDolGlobalString('MAIN_ALLOW_SVG_FILES_AS_EXTERNAL_LINKS', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 0)</span>')."<br>";
