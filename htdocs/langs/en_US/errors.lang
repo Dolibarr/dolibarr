@@ -151,6 +151,7 @@ ErrorToConnectToMysqlCheckInstance=Connect to database fails. Check database ser
 ErrorFailedToAddContact=Failed to add contact
 ErrorDateMustBeBeforeToday=The date must be lower than today
 ErrorDateMustBeInFuture=The date must be greater than today
+ErrorStartDateGreaterEnd=The start date is greater than the end date
 ErrorPaymentModeDefinedToWithoutSetup=A payment mode was set to type %s but setup of module Invoice was not completed to define information to show for this payment mode.
 ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
 ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
