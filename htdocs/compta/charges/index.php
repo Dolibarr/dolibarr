@@ -184,10 +184,11 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
-		$i = 0;
+
 		$total = 0;
 		$totalpaid = 0;
 
+		$i = 0;
 		while ($i < min($num, $limit)) {
 			$obj = $db->fetch_object($resql);
 
@@ -251,15 +252,22 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 			$totalpaid = $totalpaid + $obj->totalpaid;
 			$i++;
 		}
-		print '<tr class="liste_total"><td colspan="3" class="liste_total">'.$langs->trans("Total").'</td>';
-		print '<td class="liste_total right"></td>'; // A total here has no sense
-		print '<td align="center" class="liste_total">&nbsp;</td>';
-		print '<td align="center" class="liste_total">&nbsp;</td>';
-		print '<td align="center" class="liste_total">&nbsp;</td>';
+		print '<tr class="liste_total">';
+
+		print '<td colspan="3" class="liste_total">'.$langs->trans("Total").'</td>';
+
+		// Total here has no sens because we can have several time the same line
+		//print '<td class="liste_total right">'.price($total).'</td>';
+		print '<td class="liste_total right"></td>';
+
+		print '<td class="liste_total center">&nbsp;</td>';
+		print '<td class="liste_total center">&nbsp;</td>';
+		print '<td class="liste_total center">&nbsp;</td>';
 		if (isModEnabled("banque")) {
-			print '<td></td>';
+			print '<td class="liste_total center"></td>';
 		}
 		print '<td class="liste_total right">'.price($totalpaid)."</td>";
+
 		print "</tr>";
 	} else {
 		dol_print_error($db);
@@ -279,7 +287,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 	$sql .= " pct.code as payment_code,";
 	$sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel";
 	$sql .= " FROM ".MAIN_DB_PREFIX."tva as pv";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_vat as ptva ON (ptva.fk_tva = pv.rowid)";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_vat as ptva ON ptva.fk_tva = pv.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON (ptva.fk_bank = b.rowid)";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON ptva.fk_typepaiement = pct.id";
@@ -372,13 +380,19 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 
 			$i++;
 		}
-		print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").'</td>';
+		print '<tr class="liste_total">';
+
+		print '<td colspan="2">'.$langs->trans("Total").'</td>';
+
+		// Total here has no sens because we can have several time the same line
+		//print '<td class="right">'.price($totaltopay).'</td>';
 		print '<td>&nbsp;</td>';
-		print '<td class="right">'.price($totaltopay).'</td>';
+
 		print '<td>&nbsp;</td>';
 		print '<td>&nbsp;</td>';
 		print '<td>&nbsp;</td>';
 		print '<td class="right">'.price($total)."</td>";
+
 		print "</tr>";
 
 		print "</table>";
