@@ -460,7 +460,7 @@ print '</td></tr>'."\n";
 print '<tr class="oddeven"><td class="wordbreak"><label for="state_id">'.$langs->trans("State").'</label></td><td>';
 $state_id = 0;
 if (getDolGlobalString('MAIN_INFO_SOCIETE_STATE')) {
-	$tmp = explode(':', $conf->global->MAIN_INFO_SOCIETE_STATE);
+	$tmp = explode(':', getDolGlobalString('MAIN_INFO_SOCIETE_STATE'));
 	$state_id = $tmp[0];
 }
 print img_picto('', 'state', 'class="pictofixedwidth"');
@@ -768,7 +768,7 @@ print '<td class="titlefieldcreate">'.$langs->trans("FiscalYearInformation").'</
 print "</tr>\n";
 
 print '<tr class="oddeven"><td><label for="SOCIETE_FISCAL_MONTH_START">'.$langs->trans("FiscalMonthStart").'</label></td><td>';
-print $formother->select_month(getDolGlobalString('SOCIETE_FISCAL_MONTH_START') ? $conf->global->SOCIETE_FISCAL_MONTH_START : '', 'SOCIETE_FISCAL_MONTH_START', 0, 1, 'maxwidth100').'</td></tr>';
+print $formother->select_month(getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ? $conf->global->SOCIETE_FISCAL_MONTH_START : '', 'SOCIETE_FISCAL_MONTH_START', 0, 1, 'maxwidth100').'</td></tr>';
 
 print "</table>";
 

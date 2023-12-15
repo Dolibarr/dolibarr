@@ -2256,7 +2256,7 @@ class FactureFournisseur extends CommonInvoice
 			$supplierinvoiceline->fk_remise_except = $fk_remise_except;
 
 
-			$supplierinvoiceline->special_code = ((string) $special_code != '' ? $special_code : $this->special_code);
+			$supplierinvoiceline->special_code = (string) $special_code;
 			$supplierinvoiceline->fk_parent_line = $fk_parent_line;
 			$supplierinvoiceline->origin = $this->origin;
 			$supplierinvoiceline->origin_id = $origin_id;
@@ -3082,7 +3082,6 @@ class FactureFournisseur extends CommonInvoice
 			}
 		}
 
-		$this->amount_ht      = $xnbp * 100;
 		$this->total_ht       = $xnbp * 100;
 		$this->total_tva      = $xnbp * 19.6;
 		$this->total_ttc      = $xnbp * 119.6;
@@ -3699,7 +3698,6 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->product_type = $obj->product_type;
 		$this->product_label		= $obj->product_label;
 		$this->info_bits		    = $obj->info_bits;
-		$this->tva_npr = ($obj->info_bits & 1 == 1) ? 1 : 0;
 		$this->fk_parent_line    = $obj->fk_parent_line;
 		$this->special_code = $obj->special_code;
 		$this->rang = $obj->rang;
@@ -3723,7 +3721,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 */
 	public function delete($notrigger = 0)
 	{
-		global $user, $conf;
+		global $user;
 
 		dol_syslog(get_class($this)."::deleteline rowid=".((int) $this->id), LOG_DEBUG);
 

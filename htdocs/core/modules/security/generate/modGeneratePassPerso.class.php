@@ -101,7 +101,7 @@ class modGeneratePassPerso extends ModeleGenPassword
 		$this->Spe = "!@#$%&*()_-+={}[]\\|:;'/";
 		$this->Ambi = array("1", "I", "l", "|", "O", "0");
 
-		$tabConf = explode(";", $conf->global->USER_PASSWORD_PATTERN);
+		$tabConf = explode(";", getDolGlobalString('USER_PASSWORD_PATTERN'));
 		$this->length2 = $tabConf[0];
 		$this->NbMaj = $tabConf[1];
 		$this->NbNum = $tabConf[2];

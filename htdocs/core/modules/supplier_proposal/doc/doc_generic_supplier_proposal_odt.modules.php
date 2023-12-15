@@ -354,7 +354,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 				$newfreetext = '';
 				$paramfreetext = 'SUPPLIER_PROPOSAL_FREE_TEXT';
 				if (!empty($conf->global->$paramfreetext)) {
-					$newfreetext = make_substitutions($conf->global->$paramfreetext, $substitutionarray);
+					$newfreetext = make_substitutions(getDolGlobalString($paramfreetext), $substitutionarray);
 				}
 
 				// Open and load template

@@ -309,7 +309,7 @@ class MailmanSpip
 		if (isModEnabled('adherent')) {	// Synchro for members
 			if (getDolGlobalString('ADHERENT_MAILMAN_URL')) {
 				if ($listes == '' && getDolGlobalString('ADHERENT_MAILMAN_LISTS')) {
-					$lists = explode(',', $conf->global->ADHERENT_MAILMAN_LISTS);
+					$lists = explode(',', getDolGlobalString('ADHERENT_MAILMAN_LISTS'));
 				} else {
 					$lists = explode(',', $listes);
 				}
@@ -379,7 +379,7 @@ class MailmanSpip
 		if (isModEnabled('adherent')) {	// Synchro for members
 			if (getDolGlobalString('ADHERENT_MAILMAN_UNSUB_URL')) {
 				if ($listes == '' && getDolGlobalString('ADHERENT_MAILMAN_LISTS')) {
-					$lists = explode(',', $conf->global->ADHERENT_MAILMAN_LISTS);
+					$lists = explode(',', getDolGlobalString('ADHERENT_MAILMAN_LISTS'));
 				} else {
 					$lists = explode(',', $listes);
 				}

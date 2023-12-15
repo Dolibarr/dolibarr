@@ -646,6 +646,8 @@ while ($i < $imaxinloop) {
 	$salstatic->ref = $obj->rowid;
 	$salstatic->label = $obj->label;
 	$salstatic->paye = $obj->paye;
+	$salstatic->status = $obj->paye;
+	$salstatic->alreadypaid = $obj->alreadypayed;
 	$salstatic->datesp = $obj->datesp;
 	$salstatic->dateep = $obj->dateep;
 	$salstatic->amount = $obj->amount;
@@ -774,7 +776,7 @@ while ($i < $imaxinloop) {
 		}
 		$totalarray['val']['totalttcfield'] += $obj->amount;
 
-		print '<td class="nowraponall right">'.$salstatic->LibStatut($obj->paye, 5, $obj->alreadypayed).'</td>';
+		print '<td class="nowraponall right">'.$salstatic->getLibStatut(5, $obj->alreadypayed).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

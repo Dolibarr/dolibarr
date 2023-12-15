@@ -1101,7 +1101,7 @@ if (!function_exists('dol_getprefix')) {
 			global $conf;
 
 			if (getDolGlobalString('MAIL_PREFIX_FOR_EMAIL_ID')) {	// If MAIL_PREFIX_FOR_EMAIL_ID is set
-				if ($conf->global->MAIL_PREFIX_FOR_EMAIL_ID != 'SERVER_NAME') {
+				if (getDolGlobalString('MAIL_PREFIX_FOR_EMAIL_ID') != 'SERVER_NAME') {
 					return $conf->global->MAIL_PREFIX_FOR_EMAIL_ID;
 				} elseif (isset($_SERVER["SERVER_NAME"])) {	// If MAIL_PREFIX_FOR_EMAIL_ID is set to 'SERVER_NAME'
 					return $_SERVER["SERVER_NAME"];
@@ -2517,7 +2517,13 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		} else {
 			$morehtmlstatus .= '<span class="statusrefbuy">'.$object->getLibStatut(6, 1).'</span>';
 		}
-	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier', 'chargesociales', 'loan', 'tva', 'salary'))) {
+	} elseif (in_array($object->element, array('salary'))) {
+		$tmptxt = $object->getLibStatut(6, $object->alreadypaid);
+		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
+			$tmptxt = $object->getLibStatut(5, $object->alreadypaid);
+		}
+		$morehtmlstatus .= $tmptxt;
+	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier', 'chargesociales', 'loan', 'tva'))) {	// TODO Move this to use ->alreadypaid
 		$tmptxt = $object->getLibStatut(6, $object->totalpaid);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
 			$tmptxt = $object->getLibStatut(5, $object->totalpaid);
@@ -6042,7 +6048,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	}
 	$amount = (is_numeric($amount) ? $amount : 0); // Check if amount is numeric, for example, an error occured when amount value = o (letter) instead 0 (number)
 	if ($rounding == -1) {
-		$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
+		$rounding = min(getDolGlobalString('MAIN_MAX_DECIMALS_UNIT'), $conf->global->MAIN_MAX_DECIMALS_TOT);
 	}
 	$nbdecimal = $rounding;
 
@@ -6236,9 +6242,9 @@ function price2num($amount, $rounding = '', $option = 0)
 		} elseif ($rounding == 'MS') {
 			$nbofdectoround = isset($conf->global->MAIN_MAX_DECIMALS_STOCK) ? $conf->global->MAIN_MAX_DECIMALS_STOCK : 5;
 		} elseif ($rounding == 'CU') {
-			$nbofdectoround = max($conf->global->MAIN_MAX_DECIMALS_UNIT, 8);	// TODO Use param of currency
+			$nbofdectoround = max(getDolGlobalString('MAIN_MAX_DECIMALS_UNIT'), 8);	// TODO Use param of currency
 		} elseif ($rounding == 'CT') {
-			$nbofdectoround = max($conf->global->MAIN_MAX_DECIMALS_TOT, 8);		// TODO Use param of currency
+			$nbofdectoround = max(getDolGlobalString('MAIN_MAX_DECIMALS_TOT'), 8);		// TODO Use param of currency
 		} elseif (is_numeric($rounding)) {
 			$nbofdectoround = (int) $rounding;
 		}
@@ -6734,7 +6740,7 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 			// '1.23'
 			// or '1.23 (CODE)'
 			$defaulttx = '';
-			if ($conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS != 'none') {
+			if (getDolGlobalString('MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS') != 'none') {
 				$defaulttx = $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS;
 			}
 			/*if (preg_match('/\((.*)\)/', $defaulttx, $reg)) {
@@ -10353,7 +10359,7 @@ function printCommonFooter($zone = 'private')
 			// Google Analytics
 			// TODO Add a hook here
 			if (isModEnabled('google') && getDolGlobalString('MAIN_GOOGLE_AN_ID')) {
-				$tmptagarray = explode(',', $conf->global->MAIN_GOOGLE_AN_ID);
+				$tmptagarray = explode(',', getDolGlobalString('MAIN_GOOGLE_AN_ID'));
 				foreach ($tmptagarray as $tmptag) {
 					print "\n";
 					print "<!-- JS CODE TO ENABLE for google analtics tag -->\n";
@@ -11882,7 +11888,7 @@ function getElementProperties($element_type)
 		$subelement = $regs[2];
 	}
 
-	// For compat and To work with non standard path
+	// For compatibility and to work with non standard path
 	if ($element_type == "action") {
 		$classpath = 'comm/action/class';
 		$subelement = 'Actioncomm';
@@ -12034,6 +12040,11 @@ function getElementProperties($element_type)
 	} elseif ($element_type == 'salary') {
 		$classpath = 'salaries/class';
 		$module = 'salaries';
+	} elseif ($element_type == 'payment_salary') {
+		$classpath = 'salaries/class';
+		$classfile = 'paymentsalary';
+		$classname = 'PaymentSalary';
+		$module = 'salaries';
 	} elseif ($element_type == 'productlot') {
 		$module = 'productbatch';
 		$classpath = 'product/stock/class';
@@ -12105,6 +12116,8 @@ function getElementProperties($element_type)
 		'classname' => $classname,
 		'dir_output' => $dir_output
 	);
+
+	//var_dump($element_properties);
 	return $element_properties;
 }
 
