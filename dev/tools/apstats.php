@@ -38,6 +38,8 @@ error_reporting(E_ALL & ~E_DEPRECATED);
 define('PRODUCT', "apstats");
 define('VERSION', "1.0");
 
+$phpstanlevel = 2;
+
 
 print '***** '.constant('PRODUCT').' - '.constant('VERSION').' *****'."\n";
 if (empty($argv[1])) {
@@ -71,6 +73,7 @@ while ($i < $argc) {
 	$i++;
 }
 
+$timestart = time();
 
 // Count lines of code of Dolibarr itself
 /*
@@ -102,7 +105,7 @@ exec($commandcheck, $output_arrdep, $resexecdep);
 
 
 // Get technical debt
-$commandcheck = ($dirphpstan ? $dirphpstan.'/' : '').'phpstan -v analyze -a build/phpstan/bootstrap.php --memory-limit 5G --error-format=github';
+$commandcheck = ($dirphpstan ? $dirphpstan.'/' : '').'phpstan --level='.$phpstanlevel.' -v analyze -a build/phpstan/bootstrap.php --memory-limit 5G --error-format=github';
 print 'Execute PHPStan to get the technical debt: '.$commandcheck."\n";
 $output_arrtd = array();
 $resexectd = 0;
@@ -168,6 +171,8 @@ foreach (array('proj', 'dep') as $source) {
 		}
 	}
 }
+
+$timeend = time();
 
 
 /*
@@ -293,7 +298,7 @@ $html .= '<body>'."\n";
 $html .= '<header>'."\n";
 $html .= '<h1>Advanced Project Statistics</h1>'."\n";
 $currentDate = date("Y-m-d H:i:s"); // Format: Year-Month-Day Hour:Minute:Second
-$html .= '<span class="opacity">Generated on '.$currentDate.'</span>'."\n";
+$html .= '<span class="opacity">Generated on '.$currentDate.' in '.($timeend - $timestart).' seconds</span>'."\n";
 $html .= '</header>'."\n";
 
 $html .= '<section class="chapter" id="linesofcode">'."\n";
@@ -372,19 +377,24 @@ $html .= '<b>'.formatNumber($arraycocomo['proj']['people'] * $arraycocomo['proj'
 $html .= ' monthes people</b><br>';
 $html .= '</section>'."\n";
 
-$html .= '<section class="chapter" id="technicaldebt">'."\n";
-$html .= '<h2>Technical debt ('.count($output_arrtd).')</h2><br>'."\n";
-$html .= '<div class="div-table-responsive">'."\n";
-$html .= '<table class="list_technical_debt">'."\n";
-$html .= '<tr><td>File</td><td>Line</td><td>Type</td></tr>'."\n";
+$tmp = '';
+$nblines = 0;
 foreach ($output_arrtd as $line) {
 	$reg = array();
 	//print $line."\n";
 	preg_match('/^::error file=(.*),line=(\d+),col=(\d+)::(.*)$/', $line, $reg);
 	if (!empty($reg[1])) {
-		$html .= '<tr><td>'.$reg[1].'</td><td>'.$reg[2].'</td><td>'.$reg[4].'</td></tr>'."\n";
+		$tmp .= '<tr><td>'.$reg[1].'</td><td>'.$reg[2].'</td><td>'.$reg[4].'</td></tr>'."\n";
+		$nblines++;
 	}
 }
+
+$html .= '<section class="chapter" id="technicaldebt">'."\n";
+$html .= '<h2>Technical debt - PHPStan level '.$phpstanlevel.' ('.$nblines.')</h2><br>'."\n";
+$html .= '<div class="div-table-responsive">'."\n";
+$html .= '<table class="list_technical_debt">'."\n";
+$html .= '<tr><td>File</td><td>Line</td><td>Type</td></tr>'."\n";
+$html .= $tmp;
 $html .= '</table>';
 $html .= '</div>';
 $html .= '</section>'."\n";

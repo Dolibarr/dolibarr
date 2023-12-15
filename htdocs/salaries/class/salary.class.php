@@ -597,31 +597,47 @@ class Salary extends CommonObject
 	/**
 	 * 	Return amount of payments already done
 	 *
-	 *	@return		int		Amount of payment already done, <0 if KO
+	 *  @param 		int 			$multicurrency 		Return multicurrency_amount instead of amount. -1=Return both.
+	 *	@return		float|int|array						Amount of payment already done, <0 and set ->error if KO
 	 */
-	public function getSommePaiement()
+	public function getSommePaiement($multicurrency = 0)
 	{
 		$table = 'payment_salary';
 		$field = 'fk_salary';
 
 		$sql = "SELECT sum(amount) as amount";
+		//sum(multicurrency_amount) as multicurrency_amount		// Not yet supported
 		$sql .= " FROM ".MAIN_DB_PREFIX.$table;
 		$sql .= " WHERE ".$field." = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::getSommePaiement", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 
 		if ($resql) {
-			$amount = 0;
-
 			$obj = $this->db->fetch_object($resql);
-			if ($obj) {
-				$amount = $obj->amount ? $obj->amount : 0;
-			}
 
 			$this->db->free($resql);
-			return $amount;
+
+			if ($obj) {
+				if ($multicurrency < 0) {
+					//$this->sumpayed = $obj->amount;
+					//$this->sumpayed_multicurrency = $obj->multicurrency_amount;
+					//return array('alreadypaid'=>(float) $obj->amount, 'alreadypaid_multicurrency'=>(float) $obj->multicurrency_amount);
+					return array();	// Not yet supported
+				} elseif ($multicurrency) {
+					//$this->sumpayed_multicurrency = $obj->multicurrency_amount;
+					//return (float) $obj->multicurrency_amount;
+					return -1;		// Not yet supported
+				} else {
+					//$this->sumpayed = $obj->amount;
+					return (float) $obj->amount;
+				}
+			} else {
+				return 0;
+			}
 		} else {
+			$this->error = $this->db->lasterror();
 			return -1;
 		}
 	}
