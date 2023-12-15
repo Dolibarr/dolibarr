@@ -158,6 +158,11 @@ if (empty($reshook)) {
 
 	// Add new contact
 	if ($action == 'addcontact_confirm' && $user->rights->projet->creer) {
+		if (GETPOST('confirm', 'alpha') == 'no') {
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		}
+
 		$contactid = (GETPOST('userid') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 
