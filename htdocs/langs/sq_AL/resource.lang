@@ -1,36 +1,39 @@
 # Dolibarr language file - Source file is en_US - resource
-MenuResourceIndex=Resources
-MenuResourceAdd=New resource
-DeleteResource=Delete resource
-ConfirmDeleteResourceElement=Confirm delete the resource for this element
-NoResourceInDatabase=No resource in database.
-NoResourceLinked=No resource linked
+MenuResourceIndex=Burimet
+MenuResourceAdd=Burim i ri
+DeleteResource=Fshi burimin
+ConfirmDeleteResourceElement=Konfirmo fshirjen e burimit për këtë element
+NoResourceInDatabase=Asnjë burim në bazën e të dhënave.
+NoResourceLinked=Asnjë burim i lidhur
+ActionsOnResource=Ngjarjet rreth këtij burimi
+ResourcePageIndex=Lista e burimeve
+ResourceSingular=Burim
+ResourceCard=Karta e burimeve
+AddResource=Krijo një burim
+ResourceFormLabel_ref=Emri i burimit
+ResourceType=Lloji i burimit
+ResourceFormLabel_description=Përshkrimi i burimit
 
-ResourcePageIndex=Resources list
-ResourceSingular=Resource
-ResourceCard=Resource card
-AddResource=Create a resource
-ResourceFormLabel_ref=Resource name
-ResourceType=Resource type
-ResourceFormLabel_description=Resource description
+ResourcesLinkedToElement=Burimet e lidhura me elementin
 
-ResourcesLinkedToElement=Resources linked to element
+ShowResource=Trego burimin
 
-ShowResource=Show resource
+ResourceElementPage=Burimet e elementeve
+ResourceCreatedWithSuccess=Burimi u krijua me sukses
+RessourceLineSuccessfullyDeleted=Linja e burimit u fshi me sukses
+RessourceLineSuccessfullyUpdated=Linja e burimit u përditësua me sukses
+ResourceLinkedWithSuccess=Burim i lidhur me suksesin
 
-ResourceElementPage=Element resources
-ResourceCreatedWithSuccess=Resource successfully created
-RessourceLineSuccessfullyDeleted=Resource line successfully deleted
-RessourceLineSuccessfullyUpdated=Resource line successfully updated
-ResourceLinkedWithSuccess=Resource linked with success
+ConfirmDeleteResource=Konfirmo fshirjen e këtij burimi
+RessourceSuccessfullyDeleted=Burimi u fshi me sukses
+DictionaryResourceType=Lloji i burimeve
 
-ConfirmDeleteResource=Confirm to delete this resource
-RessourceSuccessfullyDeleted=Resource successfully deleted
-DictionaryResourceType=Type of resources
+SelectResource=Zgjidhni burimin
 
-SelectResource=Select resource
-
-IdResource=Id resource
+IdResource=Burimi i identifikimit
 AssetNumber=Numer serial
-ResourceTypeCode=Resource type code
-ImportDataset_resource_1=Resources
+ResourceTypeCode=Kodi i llojit të burimit
+ImportDataset_resource_1=Burimet
+
+ErrorResourcesAlreadyInUse=Disa burime janë në përdorim
+ErrorResourceUseInEvent=%s përdoret në ngjarjen %s

@@ -1,23 +1,23 @@
 # Dolibarr language file - Source file is en_US - help
-CommunitySupport=Forum/Wiki support
-EMailSupport=Emails support
-RemoteControlSupport=Online real time / remote support
-OtherSupport=Other support
-ToSeeListOfAvailableRessources=To contact/see available resources:
-HelpCenter=Help center
-DolibarrHelpCenter=Dolibarr Help and Support Center
-ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
-TypeOfSupport=Type of support
-TypeSupportCommunauty=Community (free)
-TypeSupportCommercial=Commercial
-TypeOfHelp=Type
-NeedHelpCenter=Need help or support?
-Efficiency=Efficiency
-TypeHelpOnly=Help only
-TypeHelpDev=Help+Development
-TypeHelpDevForm=Help+Development+Training
-BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
-LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
-PossibleLanguages=Supported languages
-SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
-SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>
+CommunitySupport=Mbështetje për forum/Wiki
+EMailSupport=Mbështetje për emailet
+RemoteControlSupport=Mbështetje në internet në kohë reale / në distancë
+OtherSupport=Mbështetje tjetër
+ToSeeListOfAvailableRessources=Për të kontaktuar/shih burimet në dispozicion:
+HelpCenter=Qendra e ndihmes
+DolibarrHelpCenter=Qendra e Ndihmës dhe Mbështetjes Dolibarr
+ToGoBackToDolibarr=Përndryshe, <a href="%s">kliko këtu për të vazhduar përdorimin e Dolibarr</a>.
+TypeOfSupport=Lloji i mbështetjes
+TypeSupportCommunauty=Komunitet (falas)
+TypeSupportCommercial=Komerciale
+TypeOfHelp=Lloji
+NeedHelpCenter=Keni nevojë për mbështetje?
+Efficiency=Efikasiteti
+TypeHelpOnly=Vetëm ndihmë
+TypeHelpDev=Ndihmë + Zhvillim
+TypeHelpDevForm=Ndihmë+Zhvillim+Trajnim
+BackToHelpCenter=Përndryshe, <a href="%s">kthehu në faqen kryesore të qendrës së ndihmës</a>.
+LinkToGoldMember=Ju mund të telefononi një nga trajnerët e parazgjedhur nga Dolibarr për gjuhën tuaj (%s) duke klikuar Widget-in e tyre (statusi dhe çmimi maksimal përditësohen automatikisht):
+PossibleLanguages=Gjuhët e mbështetura
+SubscribeToFoundation=Ndihmoni projektin Dolibarr, regjistrohuni në fondacion
+SeeOfficalSupport=Për mbështetjen zyrtare të Dolibarr në gjuhën tuaj: <br><b><a href="%s" target="_blank" rel="noopener noreferrer"></span ='notranslate'>%s</a></b>
