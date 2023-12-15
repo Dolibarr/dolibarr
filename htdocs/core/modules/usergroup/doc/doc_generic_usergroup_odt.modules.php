@@ -353,7 +353,7 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 				$newfreetext = '';
 				$paramfreetext = 'user_FREE_TEXT';
 				if (!empty($conf->global->$paramfreetext)) {
-					$newfreetext = make_substitutions($conf->global->$paramfreetext, $substitutionarray);
+					$newfreetext = make_substitutions(getDolGlobalString($paramfreetext), $substitutionarray);
 				}
 
 				// Open and load template

@@ -262,13 +262,13 @@ if ($resql) {
 
 		print '<tr class="oddeven">';
 		print '<td class="titlefield">'.$langs->trans("Title")."</td>";
-		print '<td><input type="text" class="flat minwidth300" name="external_rss_title_'.$idrss.'" value="'.dol_escape_htmltag($conf->global->$keyrsstitle).'"></td>';
+		print '<td><input type="text" class="flat minwidth300" name="external_rss_title_'.$idrss.'" value="'.dol_escape_htmltag(getDolGlobalString($keyrsstitle)).'"></td>';
 		print '</tr>'."\n";
 
 
 		print '<tr class="oddeven">';
 		print "<td>".$langs->trans("URL")."</td>";
-		print '<td><input type="text" class="flat minwidth300" name="external_rss_urlrss_'.$idrss.'" value="'.dol_escape_htmltag($conf->global->$keyrssurl).'"></td>';
+		print '<td><input type="text" class="flat minwidth300" name="external_rss_urlrss_'.$idrss.'" value="'.dol_escape_htmltag(getDolGlobalString($keyrssurl)).'"></td>';
 		print '</tr>'."\n";
 
 

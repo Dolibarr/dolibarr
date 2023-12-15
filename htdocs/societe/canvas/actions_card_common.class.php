@@ -203,7 +203,7 @@ abstract class ActionsCardCommon
 						break;
 					}
 				}
-				$modCodeFournisseur = new $module;
+				$modCodeFournisseur = new $module();
 				$this->tpl['auto_suppliercode'] = $modCodeFournisseur->code_auto;
 				// We verified if the tag prefix is used
 				if ($modCodeFournisseur->code_auto) {

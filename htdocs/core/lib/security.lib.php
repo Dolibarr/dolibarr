@@ -478,7 +478,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$feature2 = explode("|", $feature2);
 	}
 
-	$listofmodules = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
+	$listofmodules = explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL'));
 
 	// Check read permission from module
 	$readok = 1;

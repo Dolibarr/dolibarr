@@ -474,7 +474,7 @@ if ($action == 'create') {
 			$morehtmlref .= '</div>';
 
 			$shownav = 1;
-			if ($user->socid && !in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+			if ($user->socid && !in_array('stock', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 				$shownav = 0;
 			}
 

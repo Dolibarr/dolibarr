@@ -2751,6 +2751,7 @@ if ($action == 'create') {
 		// Intracomm report
 		if (isModEnabled('intracommreport')) {
 			$langs->loadLangs(array("intracommreport"));
+			print '<!-- If module intracomm on -->'."\n";
 			print '<tr><td>'.$langs->trans('IntracommReportTransportMode').'</td><td>';
 			$form->selectTransportMode(GETPOSTISSET('transport_mode_id') ? GETPOST('transport_mode_id') : $transport_mode_id, 'transport_mode_id');
 			print '</td></tr>';
@@ -3328,9 +3329,9 @@ if ($action == 'create') {
 
 			// Date
 			print '<tr><td>';
-			print $form->editfieldkey("DateInvoice", 'datef', $object->datep, $object, $form_permission, 'datepicker');
+			print $form->editfieldkey("DateInvoice", 'datef', $object->date, $object, $form_permission, 'datepicker');
 			print '</td><td colspan="3">';
-			print $form->editfieldval("Date", 'datef', $object->datep, $object, $form_permission, 'datepicker');
+			print $form->editfieldval("Date", 'datef', $object->date, $object, $form_permission, 'datepicker');
 			print '</td>';
 
 			// Default terms of the settlement
@@ -3500,6 +3501,7 @@ if ($action == 'create') {
 			// Intracomm report
 			if (isModEnabled('intracommreport')) {
 				$langs->loadLangs(array("intracommreport"));
+				print '<!-- If module intracomm on -->'."\n";
 				print '<tr><td>';
 				print '<table class="nobordernopadding centpercent"><tr><td>';
 				print $langs->trans('IntracommReportTransportMode');

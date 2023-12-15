@@ -36,7 +36,7 @@ MINPHPVERSION="7.0"
 echo "***** run-php-cs-fixer.sh *****"
 
 if [ "x$1" = "x" ]; then
-	echo "Syntax: run-php-cs-fixer.sh check|fix  [path]"
+	echo "Syntax: run-php-cs-fixer.sh check|fix  [path_from_root_project]"
 	exit 1;
 fi
 

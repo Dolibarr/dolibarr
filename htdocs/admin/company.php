@@ -460,7 +460,7 @@ print '</td></tr>'."\n";
 print '<tr class="oddeven"><td class="wordbreak"><label for="state_id">'.$langs->trans("State").'</label></td><td>';
 $state_id = 0;
 if (getDolGlobalString('MAIN_INFO_SOCIETE_STATE')) {
-	$tmp = explode(':', $conf->global->MAIN_INFO_SOCIETE_STATE);
+	$tmp = explode(':', getDolGlobalString('MAIN_INFO_SOCIETE_STATE'));
 	$state_id = $tmp[0];
 }
 print img_picto('', 'state', 'class="pictofixedwidth"');

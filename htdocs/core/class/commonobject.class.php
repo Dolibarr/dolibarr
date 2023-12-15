@@ -675,9 +675,14 @@ abstract class CommonObject
 	public $sendtoid;
 
 	/**
-	 * @var	float		Amount already paid (used to show correct status)
+	 * @var	float		Amount already paid from getSommePaiement() (used to show correct status)
+	 * @deprecated		Duplicate of $totalpaid
 	 */
 	public $alreadypaid;
+	/**
+	 * @var	float		Amount already paid from getSommePaiement() (used to show correct status)
+	 */
+	public $totalpaid;
 
 	/**
 	 * @var array		Array with label of status
@@ -3656,7 +3661,7 @@ abstract class CommonObject
 
 		if (!empty($MODULE)) {
 			if (!empty($conf->global->$MODULE)) {
-				$modsactivated = explode(',', $conf->global->$MODULE);
+				$modsactivated = explode(',', getDolGlobalString($MODULE));
 				foreach ($modsactivated as $mod) {
 					if (isModEnabled($mod)) {
 						return 1; // update was disabled by specific setup
@@ -4534,6 +4539,9 @@ abstract class CommonObject
 		}
 		if ($elementTable == 'commande_fournisseur_dispatch') {
 			$fieldstatus = "status";
+		}
+		if ($elementTable == 'prelevement_bons') {
+			$fieldstatus = "statut";
 		}
 		if (isset($this->fields) && is_array($this->fields) && array_key_exists('status', $this->fields)) {
 			$fieldstatus = 'status';
@@ -6820,15 +6828,23 @@ abstract class CommonObject
 				}
 			}
 
+			// $new_array_options will be used for direct update, so must contains formated data for the UPDATE.
+			$new_array_options = $this->array_options;
+
 			//dol_syslog("attributeLabel=".$attributeLabel, LOG_DEBUG);
 			//dol_syslog("attributeType=".$attributeType, LOG_DEBUG);
 			if (!empty($attrfieldcomputed)) {
 				if (getDolGlobalString('MAIN_STORE_COMPUTED_EXTRAFIELDS')) {
 					$value = dol_eval($attrfieldcomputed, 1, 0, '2');
 					dol_syslog($langs->trans("Extrafieldcomputed")." sur ".$attributeLabel."(".$value.")", LOG_DEBUG);
-					$this->array_options["options_".$key] = $value;
+
+					$new_array_options["options_".$key] = $value;
+
+					$this->array_options["options_".$key] = $new_array_options["options_".$key];
 				} else {
-					$this->array_options["options_".$key] = null;
+					$new_array_options["options_".$key] = null;
+
+					$this->array_options["options_".$key] = $new_array_options["options_".$key];
 				}
 			}
 
@@ -6838,7 +6854,9 @@ abstract class CommonObject
 						$this->errors[] = $langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
 						return -1;
 					} elseif ($value === '') {
-						$this->array_options["options_".$key] = null;
+						$new_array_options["options_".$key] = null;
+
+						$this->array_options["options_".$key] = $new_array_options["options_".$key];
 					}
 					break;
 				case 'double':
@@ -6851,19 +6869,24 @@ abstract class CommonObject
 						$value = null;
 					}
 					//dol_syslog("double value"." sur ".$attributeLabel."(".$value." is '".$attributeType."')", LOG_DEBUG);
-					$this->array_options["options_".$key] = $value;
+					$new_array_options["options_".$key] = $value;
+
+					$this->array_options["options_".$key] = $new_array_options["options_".$key];
 					break;
 				/*case 'select':	// Not required, we chosed value='0' for undefined values
 					 if ($value=='-1')
 					 {
-						 $this->array_options[$key] = null;
+						$new_array_options["options_".$key] = $value;
+
+						$this->array_options["options_".$key] = $new_array_options["options_".$key];
 					 }
 					 break;*/
 				case 'price':
-					$this->array_options["options_".$key] = price2num($this->array_options["options_".$key]);
+					$new_array_options["options_".$key] = price2num($this->array_options["options_".$key]);
+
+					$this->array_options["options_".$key] = $new_array_options["options_".$key];
 					break;
 				case 'password':
-					$new_array_options = array();
 					$algo = '';
 					if ($this->array_options["options_".$key] != '' && is_array($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options'])) {
 						// If there is an encryption choice, we use it to crypt data before insert
@@ -6917,26 +6940,34 @@ abstract class CommonObject
 				case 'date':
 				case 'datetime':
 					if (empty($this->array_options["options_".$key])) {
-						$this->array_options["options_".$key] = null;
+						$new_array_options["options_".$key] = null;
+
+						$this->array_options["options_".$key] = $new_array_options["options_".$key];
 					} else {
-						$this->array_options["options_".$key] = $this->db->idate($this->array_options["options_".$key]);
+						$new_array_options["options_".$key] = $this->db->idate($this->array_options["options_".$key]);
 					}
 					break;
 				case 'datetimegmt':
 					if (empty($this->array_options["options_".$key])) {
-						$this->array_options["options_".$key] = null;
+						$new_array_options["options_".$key] = null;
+
+						$this->array_options["options_".$key] = $new_array_options["options_".$key];
 					} else {
-						$this->array_options["options_".$key] = $this->db->idate($this->array_options["options_".$key], 'gmt');
+						$new_array_options["options_".$key] = $this->db->idate($this->array_options["options_".$key], 'gmt');
 					}
 					break;
 				case 'boolean':
 					if (empty($this->array_options["options_".$key])) {
-						$this->array_options["options_".$key] = null;
+						$new_array_options["options_".$key] = null;
+
+						$this->array_options["options_".$key] = $new_array_options["options_".$key];
 					}
 					break;
 				case 'link':
 					if ($this->array_options["options_".$key] === '') {
-						$this->array_options["options_".$key] = null;
+						$new_array_options["options_".$key] = null;
+
+						$this->array_options["options_".$key] = $new_array_options["options_".$key];
 					}
 					break;
 				/*
@@ -6995,12 +7026,12 @@ abstract class CommonObject
 				}
 			}
 
-			//var_dump('linealreadyfound='.$linealreadyfound.' sql='.$sql);
+			//var_dump('linealreadyfound='.$linealreadyfound.' sql='.$sql); exit;
 			if ($linealreadyfound) {
 				if ($this->array_options["options_".$key] === null) {
 					$sql = "UPDATE ".$this->db->prefix().$this->table_element."_extrafields SET ".$key." = null";
 				} else {
-					$sql = "UPDATE ".$this->db->prefix().$this->table_element."_extrafields SET ".$key." = '".$this->db->escape($this->array_options["options_".$key])."'";
+					$sql = "UPDATE ".$this->db->prefix().$this->table_element."_extrafields SET ".$key." = '".$this->db->escape($new_array_options["options_".$key])."'";
 				}
 				$sql .= " WHERE fk_object = ".((int) $this->id);
 
