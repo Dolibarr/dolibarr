@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - main
-DIRECTION=লিটার
+DIRECTION=ltr
 # Default for FONTFORPDF=helvetica
 # Note for Chinese:
 # msungstdlight or cid0ct are for traditional Chinese zh_TW (traditional does not render with Ubuntu pdf reader)
@@ -10,7 +10,7 @@ DIRECTION=লিটার
 # DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
 # freemono is for ru_RU or uk_UA, uz_UZ
 # freeserif is for Tamil
-FONTFORPDF=হেলভেটিকা
+FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
 SeparatorDecimal=.
 SeparatorThousand=,
