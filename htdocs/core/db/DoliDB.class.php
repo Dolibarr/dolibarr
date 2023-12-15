@@ -116,10 +116,10 @@ abstract class DoliDB implements Database
 	 *
 	 *	@param	string	$subject        string tested
 	 *	@param	string  $pattern        SQL pattern to match
-	 *	@param	string	$sqlstring      whether or not the string being tested is an SQL expression
+	 *	@param	int		$sqlstring      whether or not the string being tested is an SQL expression
 	 *	@return	string          		SQL string
 	 */
-	public function regexpsql($subject, $pattern, $sqlstring = false)
+	public function regexpsql($subject, $pattern, $sqlstring = 0)
 	{
 		if ($sqlstring) {
 			return "(". $subject ." REGEXP '" . $pattern . "')";
@@ -158,7 +158,7 @@ abstract class DoliDB implements Database
 	 *
 	 * @param   string 	$stringtosanitize 	String to escape
 	 * @param   int		$allowsimplequote 	1=Allow simple quotes in string. When string is used as a list of SQL string ('aa', 'bb', ...)
-	 * @param	string	$allowsequals		1=Allow equals sign
+	 * @param	int		$allowsequals		1=Allow equals sign
 	 * @return  string                      String escaped
 	 */
 	public function sanitize($stringtosanitize, $allowsimplequote = 0, $allowsequals = 0)
