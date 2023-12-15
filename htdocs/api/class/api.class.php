@@ -94,6 +94,8 @@ class DolibarrApi
 			}
 		} else {
 			// TODO Recall _checkValForAPI for each element of array
+
+			return $value;
 		}
 	}
 

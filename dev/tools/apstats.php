@@ -89,7 +89,7 @@ $resexec = (int) (empty($resexec) ? 0 : trim($resexec));
 */
 
 // Count lines of code of application
-$commandcheck = ($dirscc ? $dirscc.'/' : '').'scc . --exclude-dir=includes,custom';
+$commandcheck = ($dirscc ? $dirscc.'/' : '').'scc . --exclude-dir=htdocs/includes,htdocs/custom,htdocs/theme/common/fontawesome-5,htdocs/theme/common/octicons';
 print 'Execute SCC to count lines of code in project: '.$commandcheck."\n";
 $output_arrproj = array();
 $resexecproj = 0;
@@ -97,7 +97,7 @@ exec($commandcheck, $output_arrproj, $resexecproj);
 
 
 // Count lines of code of dependencies
-$commandcheck = ($dirscc ? $dirscc.'/' : '').'scc htdocs/includes';
+$commandcheck = ($dirscc ? $dirscc.'/' : '').'scc htdocs/includes htdocs/theme/common/fontawesome-5 htdocs/theme/common/octicons';
 print 'Execute SCC to count lines of code in dependencies: '.$commandcheck."\n";
 $output_arrdep = array();
 $resexecdep = 0;
@@ -243,6 +243,7 @@ th,td {
 }
 .seedetail {
 	color: #000088;
+	cursor: pointer;
 }
 .box {
 	padding: 20px;
@@ -319,9 +320,9 @@ $html .= '</tr>';
 foreach (array('proj', 'dep') as $source) {
 	$html .= '<tr class="trgroup" id="source'.$source.'">';
 	if ($source == 'proj') {
-		$html .= '<td>All files from project only';
+		$html .= '<td>All files without dependencies';
 	} elseif ($source == 'dep') {
-		$html .= '<td>All files from dependencies';
+		$html .= '<td>All files of dependencies only';
 	}
 	$html .= ' &nbsp; &nbsp; <span class="seedetail" data-source="'.$source.'">(See detail per file type...)</span>';
 	$html .= '<td class="right">'.formatNumber($arrayofmetrics[$source]['Bytes']).'</td>';
@@ -390,7 +391,7 @@ foreach ($output_arrtd as $line) {
 }
 
 $html .= '<section class="chapter" id="technicaldebt">'."\n";
-$html .= '<h2>Technical debt <span class="opacitymedium">(PHPStan level '.$phpstanlevel.' => '.$nblines.' warnings)</span></h2><br>'."\n";
+$html .= '<h2>Technical debt <span class="opacitymedium">(PHPStan level '.$phpstanlevel.' -> '.$nblines.' warnings)</span></h2><br>'."\n";
 $html .= '<div class="div-table-responsive">'."\n";
 $html .= '<table class="list_technical_debt">'."\n";
 $html .= '<tr><td>File</td><td>Line</td><td>Type</td></tr>'."\n";

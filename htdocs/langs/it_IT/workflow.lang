@@ -9,28 +9,30 @@ descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Creare automaticamente una fattura atti
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Crea automaticamente una fattura cliente dopo che un ordine cliente è stato chiuso (la nuova fattura avrà lo stesso importo dell'ordine)
 descWORKFLOW_TICKET_CREATE_INTERVENTION=Alla creazione del ticket, crea automaticamente un intervento.
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classifica come "da fatturare" la/e proposta/e commerciale/i quando l'ordine cliente collegato è impostato come da fatturare (e se l'ammontare dell'ordine è lo stesso ammontare della proposta commerciale firmata e collegata)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classifica "fatturate" le proposte collegate quando la fattura cliente è validata (e se l'importo della fattura è uguale all'importo totale delle proposte collegate)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classifica "fatturato" gli ordini cliente collegati quando la fattura cliente è validata (e se l'importo della fattura è uguale all'importo totale di ordini collegati)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classifica "da fatturare" gli ordini cliente collegati quando la fattura cliente è impostata su pagamento (e se l'importo della fattura è uguale all'importo totale di ordini collegati)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classifica "da spedire" l'ordine cliente collegato quando una spedizione viene convalidata (e se la quantità spedita da tutte le spedizioni è la stessa dell'ordine da aggiornare)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposals as billed when a sales order is set to billed (and if the amount of the order is the same as the total amount of the signed linked proposals)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposals as billed when a customer invoice is validated (and if the amount of the invoice is the same as the total amount of the signed linked proposals)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when a customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked sales orders). If you have 1 invoice validated for n orders, this may set all orders to billed too.
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source sales orders as billed when a customer invoice is set to paid (and if the amount of the invoice is the same as the total amount of the linked sales orders). If you have 1 invoice set billed for n orders, this may set all orders to billed too.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source sales orders as shipped when a shipment is validated (and if the quantity shipped by all shipments is the same as in the order to update)
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Classificare l'ordine cliente di origine collegato come spedito quando una spedizione viene chiusa (e se la quantità spedita da tutte le spedizioni è la stessa dell'ordine da aggiornare)
 # Autoclassify purchase proposal
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked proposals)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked proposals)
 # Autoclassify purchase order
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classifica "fatturato" gli ordini fornitori collegati quando la fattura fornitore viene convalidata. (e se l'importo della fattura è uguale all'importo totale di ordini collegati)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked orders)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Classificare l'ordine di acquisto di origine collegato come ricevuto quando viene convalidato un ricevimento (e se la quantità ricevuta da tutti i ricevimenti è la stessa dell'ordine di acquisto da aggiornare)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Classificare l'ordine di acquisto di origine collegata come ricevuto alla chiusura di un ricevimento (e se la quantità ricevuta da tutti i ricevimenti è la stessa dell'ordine di acquisto da aggiornare)
-# Autoclassify purchase invoice
-descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Classify receptions to "billed" when a linked purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when a customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked shipments)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Classify linked source shipment as billed when a customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked shipments)
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Classify linked source receptions as billed when a purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Classify linked source receptions as billed when a purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
 # Automatically link ticket to contract
-descWORKFLOW_TICKET_LINK_CONTRACT=Quando crei un biglietto, collega i contratti disponibili di terze parti corrispondenti
+descWORKFLOW_TICKET_LINK_CONTRACT=When creating a ticket, link all available contracts of matching third parties
 descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Quando si collegano i contratti, cercare tra quelli delle società madri
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Chiudi tutti gli interventi legati al ticket quando un ticket è chiuso
 AutomaticCreation=Creazione automatica
 AutomaticClassification=Classificazione automatica
-# Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked shipments)
 AutomaticClosing=Chiusura automatica
 AutomaticLinking=Collegamento automatico

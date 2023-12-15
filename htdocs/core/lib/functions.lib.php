@@ -11888,7 +11888,7 @@ function getElementProperties($element_type)
 		$subelement = $regs[2];
 	}
 
-	// For compat and To work with non standard path
+	// For compatibility and to work with non standard path
 	if ($element_type == "action") {
 		$classpath = 'comm/action/class';
 		$subelement = 'Actioncomm';
@@ -12040,6 +12040,11 @@ function getElementProperties($element_type)
 	} elseif ($element_type == 'salary') {
 		$classpath = 'salaries/class';
 		$module = 'salaries';
+	} elseif ($element_type == 'payment_salary') {
+		$classpath = 'salaries/class';
+		$classfile = 'paymentsalary';
+		$classname = 'PaymentSalary';
+		$module = 'salaries';
 	} elseif ($element_type == 'productlot') {
 		$module = 'productbatch';
 		$classpath = 'product/stock/class';
@@ -12111,6 +12116,8 @@ function getElementProperties($element_type)
 		'classname' => $classname,
 		'dir_output' => $dir_output
 	);
+
+	//var_dump($element_properties);
 	return $element_properties;
 }
 
