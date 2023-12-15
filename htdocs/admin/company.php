@@ -76,7 +76,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 		dolibarr_set_const($db, "MAIN_INFO_SOCIETE_COUNTRY", $s, 'chaine', 0, '', $conf->entity);
 
         if($mysoc->country_code == 'FR'  && !isset($conf->global->MAIN_PROFID1_IN_ADDRESS)){
-            // For FR, default value of option to show profid SIRET is on by default
+            // For FR, default value of option to show profid SIREN is on by default
             $res = dolibarr_set_const($db, "MAIN_PROFID1_IN_ADDRESS", 1, 'chaine', 0, '', $conf->entity);
         }
 
