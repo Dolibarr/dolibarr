@@ -1434,10 +1434,10 @@ class Invoices extends DolibarrApi
 		// Clean parameters amount if payment is for a credit note
 		if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE) {
 			$resteapayer = price2num($resteapayer, 'MT');
-			$amounts[$id] = -$resteapayer;
+			$amounts[$id] = price2num(-1 * $resteapayer, 'MT');
 			// Multicurrency
 			$newvalue = price2num($this->invoice->multicurrency_total_ttc, 'MT');
-			$multicurrency_amounts[$id] = -$newvalue;
+			$multicurrency_amounts[$id] = price2num(-1 * $newvalue, 'MT');
 		} else {
 			$resteapayer = price2num($resteapayer, 'MT');
 			$amounts[$id] = $resteapayer;
