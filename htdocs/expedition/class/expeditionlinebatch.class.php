@@ -105,7 +105,7 @@ class ExpeditionLineBatch extends CommonObject
 	 * @param	int		$id_line_expdet		rowid of expedtiondet record
 	 * @param	User	$f_user				User that create
 	 * @param	int		$notrigger			1 = disable triggers
-	 * @return	int							<0 if KO, Id of record (>0) if OK
+	 * @return	int							Return integer <0 if KO, Id of record (>0) if OK
 	 */
 	public function create($id_line_expdet, $f_user = null, $notrigger = 0)
 	{

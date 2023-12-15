@@ -127,7 +127,7 @@ class PriceExpression
 	 *  Load object in memory from the database
 	 *
 	 *  @param		int		$id    	Id object
-	 *  @return		int			    < 0 if KO, 0 if OK but not found, > 0 if OK
+	 *  @return		int			    Return integer < 0 if KO, 0 if OK but not found, > 0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -199,7 +199,7 @@ class PriceExpression
 	 *  Returns any existing rowid with specified title
 	 *
 	 *  @param		String	$title  Title of expression
-	 *  @return		int			    < 0 if KO, 0 if OK but not found, > 0 rowid
+	 *  @return		int			    Return integer < 0 if KO, 0 if OK but not found, > 0 rowid
 	 */
 	public function find_title($title)
 	{

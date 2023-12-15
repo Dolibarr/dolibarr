@@ -781,7 +781,7 @@ class Contact extends CommonObject
 		$info = array();
 
 		// Object classes
-		$info["objectclass"] = explode(',', $conf->global->LDAP_CONTACT_OBJECT_CLASS);
+		$info["objectclass"] = explode(',', getDolGlobalString('LDAP_CONTACT_OBJECT_CLASS'));
 
 		$this->fullname = $this->getFullName($langs);
 
@@ -883,7 +883,7 @@ class Contact extends CommonObject
 	 *  @param      int			$id         Id of contact
 	 *  @param      User		$user		User asking to change alert or birthday
 	 *  @param      int		    $notrigger	0=no, 1=yes
-	 *  @return     int         			<0 if KO, >=0 if OK
+	 *  @return     int         			Return integer <0 if KO, >=0 if OK
 	 */
 	public function update_perso($id, $user = null, $notrigger = 0)
 	{
@@ -1178,7 +1178,7 @@ class Contact extends CommonObject
 	 *  ref_commande (for order and/or shipments)
 	 *  ref_propale
 	 *
-	 *  @return     int             					<0 if KO, >=0 if OK
+	 *  @return     int             					Return integer <0 if KO, >=0 if OK
 	 */
 	public function load_ref_elements()
 	{
@@ -1678,7 +1678,7 @@ class Contact extends CommonObject
 	 *  Change status of a user
 	 *
 	 *	@param	int		$status		Status to set
-	 *  @return int     			<0 if KO, 0 if nothing is done, >0 if OK
+	 *  @return int     			Return integer <0 if KO, 0 if nothing is done, >0 if OK
 	 */
 	public function setstatus($status)
 	{
@@ -1758,7 +1758,7 @@ class Contact extends CommonObject
 	 * Fetch roles (default contact of some companies) for the current contact.
 	 * This load the array ->roles.
 	 *
-	 * @return 	int			<0 if KO, Nb of roles found if OK
+	 * @return 	int			Return integer <0 if KO, Nb of roles found if OK
 	 * @see updateRoles()
 	 */
 	public function fetchRoles()

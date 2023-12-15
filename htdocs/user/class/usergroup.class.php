@@ -568,7 +568,7 @@ class UserGroup extends CommonObject
 	 *  Charge dans l'objet group, la liste des permissions auquels le groupe a droit
 	 *
 	 *  @param      string	$moduletag	 	Name of module we want permissions ('' means all)
-	 *	@return     int						<0 if KO, >=0 if OK
+	 *	@return     int						Return integer <0 if KO, >=0 if OK
 	 */
 	public function getrights($moduletag = '')
 	{
@@ -656,7 +656,7 @@ class UserGroup extends CommonObject
 	 *	Delete a group
 	 *
 	 *	@param	User	$user		User that delete
-	 *	@return int    				<0 if KO, > 0 if OK
+	 *	@return int    				Return integer <0 if KO, > 0 if OK
 	 */
 	public function delete(User $user)
 	{
@@ -667,7 +667,7 @@ class UserGroup extends CommonObject
 	 *	Create group into database
 	 *
 	 *	@param		int		$notrigger	0=triggers enabled, 1=triggers disabled
-	 *	@return     int					<0 if KO, >=0 if OK
+	 *	@return     int					Return integer <0 if KO, >=0 if OK
 	 */
 	public function create($notrigger = 0)
 	{
@@ -689,7 +689,7 @@ class UserGroup extends CommonObject
 	 *		Update group into database
 	 *
 	 *      @param      int		$notrigger	    0=triggers enabled, 1=triggers disabled
-	 *    	@return     int						<0 if KO, >=0 if OK
+	 *    	@return     int						Return integer <0 if KO, >=0 if OK
 	 */
 	public function update($notrigger = 0)
 	{
@@ -922,7 +922,7 @@ class UserGroup extends CommonObject
 		$info = array();
 
 		// Object classes
-		$info["objectclass"] = explode(',', $conf->global->LDAP_GROUP_OBJECT_CLASS);
+		$info["objectclass"] = explode(',', getDolGlobalString('LDAP_GROUP_OBJECT_CLASS'));
 
 		// Champs
 		if ($this->name && getDolGlobalString('LDAP_GROUP_FIELD_FULLNAME')) {

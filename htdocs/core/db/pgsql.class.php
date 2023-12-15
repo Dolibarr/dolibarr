@@ -756,10 +756,10 @@ class DoliDBPgsql extends DoliDB
 	 *
 	 *	@param	string	$subject        string tested
 	 *	@param	string  $pattern        SQL pattern to match
-	 *	@param	string	$sqlstring      whether or not the string being tested is an SQL expression
+	 *	@param	int		$sqlstring      whether or not the string being tested is an SQL expression
 	 *	@return	string          		SQL string
 	 */
-	public function regexpsql($subject, $pattern, $sqlstring = false)
+	public function regexpsql($subject, $pattern, $sqlstring = 0)
 	{
 		if ($sqlstring) {
 			return "(". $subject ." ~ '" . $pattern . "')";
@@ -1062,7 +1062,7 @@ class DoliDBPgsql extends DoliDB
 	 *	@param	    array	$unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
 	 *	@param	    array	$fulltext_keys	Tableau des Nom de champs qui seront indexes en fulltext
 	 *	@param	    array	$keys 			Tableau des champs cles noms => valeur
-	 *	@return	    int						<0 if KO, >=0 if OK
+	 *	@return	    int						Return integer <0 if KO, >=0 if OK
 	 */
 	public function DDLCreateTable($table, $fields, $primary_key, $type, $unique_keys = null, $fulltext_keys = null, $keys = null)
 	{
@@ -1136,7 +1136,7 @@ class DoliDBPgsql extends DoliDB
 	 *	Drop a table into database
 	 *
 	 *	@param	    string	$table 			Name of table
-	 *	@return	    int						<0 if KO, >=0 if OK
+	 *	@return	    int						Return integer <0 if KO, >=0 if OK
 	 */
 	public function DDLDropTable($table)
 	{
@@ -1160,7 +1160,7 @@ class DoliDBPgsql extends DoliDB
 	 *	@param	string	$dolibarr_main_db_user 		Name of user to create
 	 *	@param	string	$dolibarr_main_db_pass 		Password of user to create
 	 *	@param	string	$dolibarr_main_db_name		Database name where user must be granted
-	 *	@return	int									<0 if KO, >=0 if OK
+	 *	@return	int									Return integer <0 if KO, >=0 if OK
 	 */
 	public function DDLCreateUser($dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name)
 	{

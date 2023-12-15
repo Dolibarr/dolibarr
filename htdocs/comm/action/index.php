@@ -1683,7 +1683,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 
 		$maxnbofchar = 80;
 
-		$tmp = explode('-', $conf->global->MAIN_DEFAULT_WORKING_HOURS);
+		$tmp = explode('-', getDolGlobalString('MAIN_DEFAULT_WORKING_HOURS'));
 		$minhour = round($tmp[0], 0);
 		$maxhour = round($tmp[1], 0);
 		if ($minhour > 23) {
@@ -2278,7 +2278,7 @@ function dol_color_minus($color, $minus, $minusunit = 16)
  *
  * @param   object  $a      Event A
  * @param   object  $b      Event B
- * @return  int             < 0 if event A should be before event B, > 0 otherwise, 0 if they have the exact same time slot
+ * @return  int             Return integer < 0 if event A should be before event B, > 0 otherwise, 0 if they have the exact same time slot
  */
 function sort_events_by_date($a, $b)
 {
@@ -2317,7 +2317,7 @@ function sort_events_by_date($a, $b)
  *
  * @param   object  $a      Event A
  * @param   object  $b      Event B
- * @return  int             < 0 if event A should be before event B, > 0 otherwise, 0 if they have the exact same percentage
+ * @return  int             Return integer < 0 if event A should be before event B, > 0 otherwise, 0 if they have the exact same percentage
  */
 function sort_events_by_percentage($a, $b)
 {

@@ -1121,7 +1121,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 *
 	 * @param  	string 	$reldir 			Relative directory where to scan files. Example: '/install/mysql/' or '/module/sql/'
 	 * @param	string	$onlywithsuffix		Only with the defined suffix
-	 * @return 	int             			<=0 if KO, >0 if OK
+	 * @return 	int             			Return integer <=0 if KO, >0 if OK
 	 */
 	protected function _load_tables($reldir, $onlywithsuffix = '')
 	{
@@ -1801,7 +1801,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	/**
 	 * Removes constants tagged 'deleteonunactive'
 	 *
-	 * @return int <0 if KO, 0 if OK
+	 * @return int Return integer <0 if KO, 0 if OK
 	 */
 	public function delete_const()
 	{
@@ -2506,7 +2506,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 * TODO : store results for $this->url_last_version and $this->needUpdate
 	 * Add a cron task to monitor for updates
 	 *
-	 * @return int <0 if Error, 0 == no update needed,  >0 if need update
+	 * @return int Return integer <0 if Error, 0 == no update needed,  >0 if need update
 	 */
 	public function checkForUpdate()
 	{

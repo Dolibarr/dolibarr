@@ -738,6 +738,9 @@ class Cronjob extends CommonObject
 		if (empty($this->email_alert)) {
 			$this->email_alert = '';
 		}
+		if (empty($this->datenextrun)) {
+			$this->datenextrun = dol_now();
+		}
 
 		// Check parameters
 		// Put here code to add a control on parameters values

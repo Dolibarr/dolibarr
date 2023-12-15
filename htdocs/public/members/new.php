@@ -110,7 +110,7 @@ $user->loadDefaultValues();
  * @param 	array  		$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '')
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
 {
 	global $user, $conf, $langs, $mysoc;
 
@@ -445,7 +445,7 @@ if (empty($reshook) && $action == 'add') {
 					$urlback = $_SERVER["PHP_SELF"]."?action=added&token=".newToken();
 				}
 
-				if (getDolGlobalString('MEMBER_NEWFORM_PAYONLINE') && $conf->global->MEMBER_NEWFORM_PAYONLINE != '-1') {
+				if (getDolGlobalString('MEMBER_NEWFORM_PAYONLINE') && getDolGlobalString('MEMBER_NEWFORM_PAYONLINE') != '-1') {
 					if (empty($adht->caneditamount)) {			// If edition of amount not allowed
 						// TODO Check amount is same than the amount required for the type of member or if not defined as the defeault amount into $conf->global->MEMBER_NEWFORM_AMOUNT
 						// It is not so important because a test is done on return of payment validation.
@@ -456,7 +456,7 @@ if (empty($reshook) && $action == 'add') {
 					if (GETPOST('email')) {
 						$urlback .= '&email='.urlencode(GETPOST('email'));
 					}
-					if ($conf->global->MEMBER_NEWFORM_PAYONLINE != '-1' && $conf->global->MEMBER_NEWFORM_PAYONLINE != 'all') {
+					if (getDolGlobalString('MEMBER_NEWFORM_PAYONLINE') != '-1' && getDolGlobalString('MEMBER_NEWFORM_PAYONLINE') != 'all') {
 						$urlback .= '&paymentmethod='.urlencode($conf->global->MEMBER_NEWFORM_PAYONLINE);
 					}
 				} else {

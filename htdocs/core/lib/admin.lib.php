@@ -164,7 +164,7 @@ function versiondolibarrarray()
  *  @param		int			$colspan					2=Add a colspan=2 on td
  *  @param		int			$onlysqltoimportwebsite		Only sql resquests used to import a website template are allowed
  *  @param		string		$database					Database (replace __DATABASE__ with this value)
- * 	@return		int										<=0 if KO, >0 if OK
+ * 	@return		int										Return integer <=0 if KO, >0 if OK
  */
 function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler = '', $okerror = 'default', $linelengthlimit = 32768, $nocommentremoval = 0, $offsetforchartofaccount = 0, $colspan = 0, $onlysqltoimportwebsite = 0, $database = '')
 {
@@ -1871,7 +1871,7 @@ function showModulesExludedForExternal($modules)
 	global $conf, $langs;
 
 	$text = $langs->trans("OnlyFollowingModulesAreOpenedToExternalUsers");
-	$listofmodules = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);	// List of modules qualified for external user management
+	$listofmodules = explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL'));	// List of modules qualified for external user management
 
 	$i = 0;
 	if (!empty($modules)) {

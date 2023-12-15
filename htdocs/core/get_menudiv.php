@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
  * bugs, to add new features and to dramatically increase speed.
@@ -101,7 +101,7 @@ $arrayofjs = array();
 $arrayofcss = array();
 top_htmlhead($head, $title, 0, 0, $arrayofjs, $arrayofcss);
 
-print '<body>'."\n";
+print '<body class="getmenudiv">'."\n";
 
 // Javascript to make menu active like Jmobile did.
 print '
@@ -123,6 +123,28 @@ print '
 
 	ul li.lilevel2 {
 		padding-left: 40px;	/* width = 20 for level0, 20 for level1 */
+	}
+
+	.getmenudiv a:hover {
+		text-decoration: none;
+	}
+
+	.pictofixedwidth {
+    	text-align: left;
+    	padding-right: 10px !important;
+	}
+
+	li.lilevel1 > a, li.lilevel1 > i {
+		padding-left: 30px !important;
+	}
+	li.lilevel2 a {
+		padding-left: 60px !important;
+	}
+	li.lilevel3 a {
+		padding-left: 90px !important;
+	}
+	li.lilevel4 a {
+		padding-left: 120px !important;
 	}
 
     a.alilevel0, span.spanlilevel0 {

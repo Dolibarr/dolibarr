@@ -1394,9 +1394,9 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					print '<span class="opacitymedium">'.$src->billing_details->name.'</span><br>....'.$src->sepa_debit->last4;
 					print '</td><td>';
 					if ($src->sepa_debit->country) {
-							$img = picto_from_langcode($src->sepa_debit->country);
-							print $img ? $img.' ' : '';
-							print getCountry($src->sepa_debit->country, 1);
+						$img = picto_from_langcode($src->sepa_debit->country);
+						print $img ? $img.' ' : '';
+						print getCountry($src->sepa_debit->country, 1);
 					} else {
 						print img_warning().' <span class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</span>';
 					}
@@ -1489,7 +1489,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			foreach ($balance->available as $cpt) {
 				$arrayzerounitcurrency = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
 				if (!in_array($cpt->currency, $arrayzerounitcurrency)) {
-						$currencybalance[$cpt->currency]['available'] = $cpt->amount / 100;
+					$currencybalance[$cpt->currency]['available'] = $cpt->amount / 100;
 				} else {
 					$currencybalance[$cpt->currency]['available'] = $cpt->amount;
 				}
@@ -1510,7 +1510,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 		if (is_array($currencybalance)) {
 			foreach ($currencybalance as $cpt) {
-				print '<tr><td>'.$langs->trans("Currency".strtoupper($cpt['currency'])).'</td><td>'.price($cpt['available'], 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td><td>'.price(isset($cpt->pending)?$cpt->pending:0, 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td><td>'.price($cpt['available'] + (isset($cpt->pending)?$cpt->pending:0), 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td></tr>';
+				print '<tr><td>'.$langs->trans("Currency".strtoupper($cpt['currency'])).'</td><td>'.price($cpt['available'], 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td><td>'.price(isset($cpt->pending) ? $cpt->pending : 0, 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td><td>'.price($cpt['available'] + (isset($cpt->pending) ? $cpt->pending : 0), 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td></tr>';
 			}
 		}
 
@@ -1525,7 +1525,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 	print load_fiche_titre($langs->trans("BankAccounts"), $morehtmlright, 'bank');
 
-	$nblocal = 0; $nbremote = 0;
+	$nblocal = 0;
+	$nbremote = 0;
 	$arrayofremoteban = array();
 
 	$rib_list = $object->get_all_rib();
@@ -1839,9 +1840,9 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print '<td class="center" width="50">';
 			if ((empty($customerstripe->invoice_settings) && $customerstripe->default_source != $src->id) ||
 				(!empty($customerstripe->invoice_settings) && $customerstripe->invoice_settings->default_payment_method != $src->id)) {
-					print '<a href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&source='.$src->id.'&action=setassourcedefault&token='.newToken().'">';
-					print img_picto($langs->trans("Default"), 'off');
-					print '</a>';
+				print '<a href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&source='.$src->id.'&action=setassourcedefault&token='.newToken().'">';
+				print img_picto($langs->trans("Default"), 'off');
+				print '</a>';
 			} else {
 				print img_picto($langs->trans("Default"), 'on');
 			}
@@ -2061,7 +2062,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 
 		print '<tr><td>'.$langs->trans("WithdrawMode").'</td><td>';
 		$tblArraychoice = array("FRST" => $langs->trans("FRST"), "RCUR" => $langs->trans("RECUR"));
-		print $form->selectarray("frstrecur", $tblArraychoice, dol_escape_htmltag(GETPOST('frstrecur', 'alpha') ?GETPOST('frstrecur', 'alpha') : $companybankaccount->frstrecur), 0);
+		print $form->selectarray("frstrecur", $tblArraychoice, dol_escape_htmltag(GETPOST('frstrecur', 'alpha') ? GETPOST('frstrecur', 'alpha') : $companybankaccount->frstrecur), 0);
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("ExternalSystemID")." ('pm_...' or 'src_...')</td>";

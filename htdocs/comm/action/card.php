@@ -69,7 +69,7 @@ $p2hour = GETPOST('p2hour', 'int');
 $p2min = GETPOST('p2min', 'int');
 
 $addreminder = GETPOST('addreminder', 'alpha');
-$offsetvalue = GETPOST('offsetvalue', 'int');
+$offsetvalue = GETPOSTINT('offsetvalue');
 $offsetunit = GETPOST('offsetunittype_duration', 'aZ09');
 $remindertype = GETPOST('selectremindertype', 'aZ09');
 $modelmail = GETPOST('actioncommsendmodel_mail', 'int');
@@ -536,7 +536,7 @@ if (empty($reshook) && $action == 'add') {
 				if ($addreminder == 'on') {
 					$actionCommReminder = new ActionCommReminder($db);
 
-					$dateremind = dol_time_plus_duree($datep, -$offsetvalue, $offsetunit);
+					$dateremind = dol_time_plus_duree($datep, -1 * $offsetvalue, $offsetunit);
 
 					$actionCommReminder->dateremind = $dateremind;
 					$actionCommReminder->typeremind = $remindertype;
@@ -653,7 +653,7 @@ if (empty($reshook) && $action == 'add') {
 						if ($addreminder == 'on') {
 							$actionCommReminder = new ActionCommReminder($db);
 
-							$dateremind = dol_time_plus_duree($datep, -$offsetvalue, $offsetunit);
+							$dateremind = dol_time_plus_duree($datep, -1 * $offsetvalue, $offsetunit);
 
 							$actionCommReminder->dateremind = $dateremind;
 							$actionCommReminder->typeremind = $remindertype;
@@ -981,7 +981,7 @@ if (empty($reshook) && $action == 'update') {
 				if ($addreminder == 'on' && $object->datep > dol_now()) {
 					$actionCommReminder = new ActionCommReminder($db);
 
-					$dateremind = dol_time_plus_duree($datep, -$offsetvalue, $offsetunit);
+					$dateremind = dol_time_plus_duree($datep, -1 * $offsetvalue, $offsetunit);
 
 					$actionCommReminder->dateremind = $dateremind;
 					$actionCommReminder->typeremind = $remindertype;
@@ -1744,7 +1744,7 @@ if ($id > 0) {
 		$object->percentage  = $percentage;
 		$object->priority    = GETPOST("priority", "alphanohtml");
 		$object->fulldayevent = GETPOST("fullday") ? 1 : 0;
-		$object->location    = GETPOST('location', "alpanohtml");
+		$object->location    = GETPOST('location', "alphanohtml");
 		$object->socid       = GETPOST("socid", "int");
 		$socpeopleassigned   = GETPOST("socpeopleassigned", 'array');
 		foreach ($socpeopleassigned as $tmpid) {

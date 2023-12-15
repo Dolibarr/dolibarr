@@ -167,7 +167,7 @@ class FormActions
 	 *  @param	string	$moreparambacktopage	More param for the backtopage
 	 *  @param	string	$morehtmlcenter			More html text on center of title line
 	 *  @param	int		$assignedtouser			Assign event by default to this user id (will be ignored if not enough permissions)
-	 *	@return	int								<0 if KO, >=0 if OK
+	 *	@return	int								Return integer <0 if KO, >=0 if OK
 	 */
 	public function showactions($object, $typeelement, $socid = 0, $forceshowtitle = 0, $morecss = 'listactions', $max = 0, $moreparambacktopage = '', $morehtmlcenter = '', $assignedtouser = 0)
 	{
@@ -296,7 +296,9 @@ class FormActions
 					print '</td>';
 
 					// Label
-					print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($actioncomm->label).'">'.$actioncomm->getNomUrl(0).'</td>';
+					print '<td class="tdoverflowmax200">';
+					print $actioncomm->getNomUrl(0);
+					print '</td>';
 
 					// Date
 					print '<td class="center nowraponall">'.dol_print_date($actioncomm->datep, 'dayhour', 'tzuserrel');

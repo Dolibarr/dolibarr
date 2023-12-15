@@ -630,7 +630,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 		return 'BadFirstParameterForGETPOST';
 	}
 	if (empty($check)) {
-		dol_syslog("Deprecated use of GETPOST, called with 1st param = ".$paramname." and 2nd param is '', when calling page ".$_SERVER["PHP_SELF"], LOG_WARNING);
+		dol_syslog("Deprecated use of GETPOST, called with 1st param = ".$paramname." and a 2nd param that is '', when calling page ".$_SERVER["PHP_SELF"], LOG_WARNING);
 		// Enable this line to know who call the GETPOST with '' $check parameter.
 		//var_dump(debug_backtrace()[0]);
 	}
@@ -659,7 +659,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 		//var_dump($user->default_values);
 
 		// Code for search criteria persistence.
-		// Retrieve values if restore_lastsearch_values
+		// Retrieve saved values if restore_lastsearch_values is set
 		if (!empty($_GET['restore_lastsearch_values'])) {        // Use $_GET here and not GETPOST
 			if (!empty($_SESSION['lastsearch_values_'.$relativepathstring])) {	// If there is saved values
 				$tmp = json_decode($_SESSION['lastsearch_values_'.$relativepathstring], true);
@@ -815,7 +815,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 		}
 	}
 
-	// Substitution variables for GETPOST (used to get final url with variable parameters or final default value with variable parameters)
+	// Substitution variables for GETPOST (used to get final url with variable parameters or final default value, when using variable parameters __XXX__ in the GET URL)
 	// Example of variables: __DAY__, __MONTH__, __YEAR__, __MYCOMPANY_COUNTRY_ID__, __USER_ID__, ...
 	// We do this only if var is a GET. If it is a POST, may be we want to post the text with vars as the setup text.
 	if (!is_array($out) && empty($_POST[$paramname]) && empty($noreplace)) {
@@ -873,7 +873,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 		}
 	}
 
-	// Check rule
+	// Check type of variable and make sanitization according to this
 	if (preg_match('/^array/', $check)) {	// If 'array' or 'array:restricthtml' or 'array:aZ09' or 'array:intcomma'
 		if (!is_array($out) || empty($out)) {
 			$out = array();
@@ -1075,6 +1075,9 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 				$out = filter_var($out, $filter, $options);
 			}
 			break;
+		default:
+			dol_syslog("Error, you call sanitizeVal() with a bad value for the check type. Data can't be sanitized.", LOG_ERR);
+			break;
 	}
 
 	return $out;
@@ -1098,7 +1101,7 @@ if (!function_exists('dol_getprefix')) {
 			global $conf;
 
 			if (getDolGlobalString('MAIL_PREFIX_FOR_EMAIL_ID')) {	// If MAIL_PREFIX_FOR_EMAIL_ID is set
-				if ($conf->global->MAIL_PREFIX_FOR_EMAIL_ID != 'SERVER_NAME') {
+				if (getDolGlobalString('MAIL_PREFIX_FOR_EMAIL_ID') != 'SERVER_NAME') {
 					return $conf->global->MAIL_PREFIX_FOR_EMAIL_ID;
 				} elseif (isset($_SERVER["SERVER_NAME"])) {	// If MAIL_PREFIX_FOR_EMAIL_ID is set to 'SERVER_NAME'
 					return $_SERVER["SERVER_NAME"];
@@ -2514,7 +2517,13 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		} else {
 			$morehtmlstatus .= '<span class="statusrefbuy">'.$object->getLibStatut(6, 1).'</span>';
 		}
-	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier', 'chargesociales', 'loan', 'tva', 'salary'))) {
+	} elseif (in_array($object->element, array('salary'))) {
+		$tmptxt = $object->getLibStatut(6, $object->alreadypaid);
+		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
+			$tmptxt = $object->getLibStatut(5, $object->alreadypaid);
+		}
+		$morehtmlstatus .= $tmptxt;
+	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier', 'chargesociales', 'loan', 'tva'))) {	// TODO Move this to use ->alreadypaid
 		$tmptxt = $object->getLibStatut(6, $object->totalpaid);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
 			$tmptxt = $object->getLibStatut(5, $object->totalpaid);
@@ -6039,7 +6048,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	}
 	$amount = (is_numeric($amount) ? $amount : 0); // Check if amount is numeric, for example, an error occured when amount value = o (letter) instead 0 (number)
 	if ($rounding == -1) {
-		$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
+		$rounding = min(getDolGlobalString('MAIN_MAX_DECIMALS_UNIT'), $conf->global->MAIN_MAX_DECIMALS_TOT);
 	}
 	$nbdecimal = $rounding;
 
@@ -6233,9 +6242,9 @@ function price2num($amount, $rounding = '', $option = 0)
 		} elseif ($rounding == 'MS') {
 			$nbofdectoround = isset($conf->global->MAIN_MAX_DECIMALS_STOCK) ? $conf->global->MAIN_MAX_DECIMALS_STOCK : 5;
 		} elseif ($rounding == 'CU') {
-			$nbofdectoround = max($conf->global->MAIN_MAX_DECIMALS_UNIT, 8);	// TODO Use param of currency
+			$nbofdectoround = max(getDolGlobalString('MAIN_MAX_DECIMALS_UNIT'), 8);	// TODO Use param of currency
 		} elseif ($rounding == 'CT') {
-			$nbofdectoround = max($conf->global->MAIN_MAX_DECIMALS_TOT, 8);		// TODO Use param of currency
+			$nbofdectoround = max(getDolGlobalString('MAIN_MAX_DECIMALS_TOT'), 8);		// TODO Use param of currency
 		} elseif (is_numeric($rounding)) {
 			$nbofdectoround = (int) $rounding;
 		}
@@ -6731,7 +6740,7 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 			// '1.23'
 			// or '1.23 (CODE)'
 			$defaulttx = '';
-			if ($conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS != 'none') {
+			if (getDolGlobalString('MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS') != 'none') {
 				$defaulttx = $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS;
 			}
 			/*if (preg_match('/\((.*)\)/', $defaulttx, $reg)) {
@@ -6753,7 +6762,7 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
  *  @param	int		$idprod         		Id of product
  *  @param  int		$local          		1 for localtax1, 2 for localtax 2
  *  @param  Societe	$thirdpartytouse    	Thirdparty with a ->country_code defined (FR, US, IT, ...)
- *  @return int             				<0 if KO, Vat rate if OK
+ *  @return int             				Return integer <0 if KO, Vat rate if OK
  *  @see get_product_vat_for_country()
  */
 function get_product_localtax_for_country($idprod, $local, $thirdpartytouse)
@@ -7138,7 +7147,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
  *	@param	string		$dir		Directory to create (Separator must be '/'. Example: '/mydir/mysubdir')
  *	@param	string		$dataroot	Data root directory (To avoid having the data root in the loop. Using this will also lost the warning, on first dir, saying PHP has no permission when open_basedir is used)
  *  @param	string		$newmask	Mask for new file (Defaults to $conf->global->MAIN_UMASK or 0755 if unavailable). Example: '0444'
- *	@return int         			< 0 if KO, 0 = already exists, > 0 if OK
+ *	@return int         			Return integer < 0 if KO, 0 = already exists, > 0 if OK
  */
 function dol_mkdir($dir, $dataroot = '', $newmask = '')
 {
@@ -7583,7 +7592,7 @@ function dol_nl2br($stringtoencode, $nl2brmode = 0, $forxml = false)
 }
 
 /**
- * Sanitize a HTML to remove js and dangerous content.
+ * Sanitize a HTML to remove js, dangerous content and external link.
  * This function is used by dolPrintHTML... function for example.
  *
  * @param	string	$stringtoencode				String to encode
@@ -7704,10 +7713,29 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 		if ($nblinks > getDolGlobalInt("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", 1000)) {
 			$out = 'ErrorTooManyLinksIntoHTMLString';
 		}
-		//
-		if (getDolGlobalString('MAIN_DISALLOW_URL_INTO_DESCRIPTIONS') || $check == 'restricthtmlnolink') {
+
+		if (getDolGlobalInt('MAIN_DISALLOW_URL_INTO_DESCRIPTIONS') == 2 || $check == 'restricthtmlnolink') {
 			if ($nblinks > 0) {
 				$out = 'ErrorHTMLLinksNotAllowed';
+			}
+		} elseif (getDolGlobalInt('MAIN_DISALLOW_URL_INTO_DESCRIPTIONS') == 1) {
+			$nblinks = 0;
+			// Loop on each url in src= and url(
+			$pattern = '/src=["\']?(http[^"\']+)|url\(["\']?(http[^\)]+)/';
+
+			$matches = array();
+			if (preg_match_all($pattern, $out, $matches)) {
+				// URLs are into $matches[1]
+				$urls = $matches[1];
+
+				// Affiche les URLs
+				foreach ($urls as $url) {
+					$nblinks++;
+					echo "Found url = ".$url . "\n";
+				}
+				if ($nblinks > 0) {
+					$out = 'ErrorHTMLExternalLinksNotAllowed';
+				}
 			}
 		}
 
@@ -9441,7 +9469,7 @@ function dol_osencode($str)
  * 		@param	string	$fieldid		Field to get
  *      @param  int		$entityfilter	Filter by entity
  *      @param	string	$filters		Filters to add. WARNING: string must be escaped for SQL and not coming from user input.
- *      @return int						<0 if KO, Id of code if OK
+ *      @return int						Return integer <0 if KO, Id of code if OK
  *      @see $langs->getLabelFromKey
  */
 function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid = 'id', $entityfilter = 0, $filters = '')
@@ -10331,7 +10359,7 @@ function printCommonFooter($zone = 'private')
 			// Google Analytics
 			// TODO Add a hook here
 			if (isModEnabled('google') && getDolGlobalString('MAIN_GOOGLE_AN_ID')) {
-				$tmptagarray = explode(',', $conf->global->MAIN_GOOGLE_AN_ID);
+				$tmptagarray = explode(',', getDolGlobalString('MAIN_GOOGLE_AN_ID'));
 				foreach ($tmptagarray as $tmptag) {
 					print "\n";
 					print "<!-- JS CODE TO ENABLE for google analtics tag -->\n";
@@ -11860,7 +11888,7 @@ function getElementProperties($element_type)
 		$subelement = $regs[2];
 	}
 
-	// For compat and To work with non standard path
+	// For compatibility and to work with non standard path
 	if ($element_type == "action") {
 		$classpath = 'comm/action/class';
 		$subelement = 'Actioncomm';
@@ -12012,6 +12040,11 @@ function getElementProperties($element_type)
 	} elseif ($element_type == 'salary') {
 		$classpath = 'salaries/class';
 		$module = 'salaries';
+	} elseif ($element_type == 'payment_salary') {
+		$classpath = 'salaries/class';
+		$classfile = 'paymentsalary';
+		$classname = 'PaymentSalary';
+		$module = 'salaries';
 	} elseif ($element_type == 'productlot') {
 		$module = 'productbatch';
 		$classpath = 'product/stock/class';
@@ -12083,6 +12116,8 @@ function getElementProperties($element_type)
 		'classname' => $classname,
 		'dir_output' => $dir_output
 	);
+
+	//var_dump($element_properties);
 	return $element_properties;
 }
 

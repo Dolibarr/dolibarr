@@ -79,7 +79,7 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 	if ($q == 0) {
 		// We define date_start and date_end
 		$year_end = $year_start + ($nbofyear - 1);
-		$month_start = GETPOST("month", 'int') ? GETPOST("month", 'int') : ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
+		$month_start = GETPOST("month", 'int') ? GETPOST("month", 'int') : getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 		$date_startmonth = $month_start;
 		if (!GETPOST('month')) {
 			if (!$year && $month_start > $month_current) {
@@ -240,7 +240,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	$builddate = dol_now();
 }
 
-report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array('modecompta'=>$modecompta, 'action' => ''), $calcmode);
+report_header($name, '', $period, $periodlink ?? '', $description, $builddate, $exportlink ?? '', array('modecompta'=>$modecompta, 'action' => ''), $calcmode);
 
 
 if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {

@@ -1,9 +1,9 @@
 # Dolibarr language file - Source file is en_US - mails
 Mailing=E-Mail-Versand
 EMailing=E-Mail-Kampagne
-EMailings=E-Mail-Kampagne
+EMailings=E-Mail-Kampagnen
 AllEMailings=Alle E-Mail-Kampagnen
-MailCard=E-Mail-Kampagnenkarte
+MailCard=E-Mail-Kampagne
 MailRecipients=Empfänger
 MailRecipient=Empfänger
 MailTitle=Bezeichnung
@@ -49,7 +49,7 @@ WarningNoEMailsAdded=Keine neuen E-Mail-Adressen für das Hinzufügen zur Empfä
 ConfirmValidMailing=Möchten Sie diese E-Mail-Kampagne wirklich freigeben?
 ConfirmResetMailing=Warnung: Durch die Neuinitialisierung des E-Mailings <b>%s</b> erlauben Sie das erneute Versenden dieser E-Mail in einem Massenversand. Sind Sie sicher, dass Sie das tun wollen?
 ConfirmDeleteMailing=Möchten Sie diese E-Mail-Kampagne wirklich löschen?
-NbOfUniqueEMails=Anzahl einmaliger E-Mail-Adressen
+NbOfUniqueEMails=Anzahl unterschiedlicher E-Mail-Adressen
 NbOfEMails=Anzahl der E-Mails 
 TotalNbOfDistinctRecipients=Anzahl der Empfänger
 NoTargetYet=Noch keine Empfänger ausgewählt (Bitte wechseln Sie zur Registerkarte "Empfänger")

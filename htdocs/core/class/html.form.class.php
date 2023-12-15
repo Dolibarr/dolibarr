@@ -1730,7 +1730,7 @@ class Form
 	 * @param bool 		$options_only 	Return options only (for ajax treatment)
 	 * @param string 	$moreparam 		Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
 	 * @param string 	$htmlid 		Html id to use instead of htmlname
-	 * @return    int                   <0 if KO, Nb of contact in list if OK
+	 * @return    int                   Return integer <0 if KO, Nb of contact in list if OK
 	 * @deprecated You can use selectcontacts directly (warning order of param was changed)
 	 */
 	public function select_contacts($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $morecss = '', $showsoc = 0, $forcecombo = 0, $events = array(), $options_only = false, $moreparam = '', $htmlid = '')
@@ -1762,7 +1762,7 @@ class Form
 	 * @param string 		$htmlid 			Html id to use instead of htmlname
 	 * @param bool 			$multiple 			add [] in the name of element and add 'multiple' attribut
 	 * @param integer 		$disableifempty 	Set tag 'disabled' on select if there is no choice
-	 * @return     int|string                   <0 if KO, HTML with select string if OK.
+	 * @return     int|string                   Return integer <0 if KO, HTML with select string if OK.
 	 */
 	public function selectcontacts($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $morecss = '', $options_only = false, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $multiple = false, $disableifempty = 0)
 	{
@@ -4880,7 +4880,7 @@ class Form
 	 * @param int 		$showcurrency 	Show currency in label
 	 * @param string 	$morecss 		More CSS
 	 * @param int 		$nooutput 		1=Return string, do not send to output
-	 * @return int                   	<0 if error, Num of bank account found if OK (0, 1, 2, ...)
+	 * @return int                   	Return integer <0 if error, Num of bank account found if OK (0, 1, 2, ...)
 	 */
 	public function select_comptes($selected = '', $htmlname = 'accountid', $status = 0, $filtre = '', $useempty = 0, $moreattrib = '', $showcurrency = 0, $morecss = '', $nooutput = 0)
 	{
@@ -4963,7 +4963,7 @@ class Form
 	 * @param string $filtre To filter list. This parameter must not come from input of users
 	 * @param int $useempty 1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
 	 * @param string $moreattrib To add more attribute on select
-	 * @return    int                            <0 if error, Num of establishment found if OK (0, 1, 2, ...)
+	 * @return    int                            Return integer <0 if error, Num of establishment found if OK (0, 1, 2, ...)
 	 */
 	public function selectEstablishments($selected = '', $htmlname = 'entity', $status = 0, $filtre = '', $useempty = 0, $moreattrib = '')
 	{
@@ -6559,7 +6559,7 @@ class Form
 				} else {
 					// We will use the rate defined into MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS
 					$defaulttx = '';
-					if ($conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS != 'none') {
+					if (getDolGlobalString('MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS') != 'none') {
 						$defaulttx = $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS;
 					}
 					if (preg_match('/\((.*)\)/', $defaulttx, $reg)) {
@@ -6823,7 +6823,7 @@ class Form
 
 		// You can set MAIN_POPUP_CALENDAR to 'eldy' or 'jquery'
 		$usecalendar = 'combo';
-		if (!empty($conf->use_javascript_ajax) && (!getDolGlobalString('MAIN_POPUP_CALENDAR') || $conf->global->MAIN_POPUP_CALENDAR != "none")) {
+		if (!empty($conf->use_javascript_ajax) && (!getDolGlobalString('MAIN_POPUP_CALENDAR') || getDolGlobalString('MAIN_POPUP_CALENDAR') != "none")) {
 			$usecalendar = ((!getDolGlobalString('MAIN_POPUP_CALENDAR') || getDolGlobalString('MAIN_POPUP_CALENDAR') == 'eldy') ? 'jquery' : $conf->global->MAIN_POPUP_CALENDAR);
 		}
 
@@ -8995,7 +8995,7 @@ class Form
 	 * @param string $morehtmlright More html to show on right of title
 	 * @param array $compatibleImportElementsList Array of compatibles elements object for "import from" action
 	 * @param string $title Title
-	 * @return    int                                                <0 if KO, >=0 if OK
+	 * @return    int                                                Return integer <0 if KO, >=0 if OK
 	 */
 	public function showLinkedObjectBlock($object, $morehtmlright = '', $compatibleImportElementsList = false, $title = 'RelatedObjects')
 	{
@@ -10769,7 +10769,7 @@ class Form
 	 * @param 	string 	$dol_openinpopup 	If the button are shown in a context of a page shown inside a popup, we put here the string name of popup.
 	 * @return  string                      Html code with the buttons
 	 */
-	public function buttonsSaveCancel($save_label = 'Save', $cancel_label = 'Cancel', $morebuttons = array(), $withoutdiv = 0, $morecss = '', $dol_openinpopup = '')
+	public function buttonsSaveCancel($save_label = 'Save', $cancel_label = 'Cancel', $morebuttons = array(), $withoutdiv = false, $morecss = '', $dol_openinpopup = '')
 	{
 		global $langs;
 

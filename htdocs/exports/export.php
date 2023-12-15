@@ -139,7 +139,7 @@ $step = GETPOST("step", "int") ? GETPOST("step", "int") : 1;
 $export_name = GETPOST("export_name", "alphanohtml");
 $hexa = GETPOST("hexa", "alpha");
 $exportmodelid = GETPOST("exportmodelid", "int");
-$field = GETPOST("field", "alpa");
+$field = GETPOST("field", "alpha");
 
 $objexport = new Export($db);
 $objexport->load_arrays($user, $datatoexport);
@@ -1074,7 +1074,7 @@ if ($step == 4 && $datatoexport) {
 }
 
 if ($step == 5 && $datatoexport) {
-	if (count($array_selected) < 1) {      // This occurs when going back to page after sessecion expired
+	if (count($array_selected) < 1) {      // This occurs when going back to page after session expired
 		// Switch to step 2
 		header("Location: ".DOL_URL_ROOT.'/exports/export.php?step=2&datatoexport='.$datatoexport);
 		exit;

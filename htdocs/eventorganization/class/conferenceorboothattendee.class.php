@@ -208,8 +208,8 @@ class ConferenceOrBoothAttendee extends CommonObject
 			$this->fields['fk_soc']['type'] .= ' AND rowid IN (SELECT DISTINCT c.fk_soc FROM '.MAIN_DB_PREFIX.'categorie_societe as c WHERE c.fk_categorie='.(int) $conf->global->EVENTORGANIZATION_FILTERATTENDEES_CAT.')';
 		}
 		if (isset($conf->global->EVENTORGANIZATION_FILTERATTENDEES_TYPE)
-			&& $conf->global->EVENTORGANIZATION_FILTERATTENDEES_TYPE !== ''
-			&& $conf->global->EVENTORGANIZATION_FILTERATTENDEES_TYPE !== '-1') {
+			&& getDolGlobalString('EVENTORGANIZATION_FILTERATTENDEES_TYPE') !== ''
+			&& getDolGlobalString('EVENTORGANIZATION_FILTERATTENDEES_TYPE') !== '-1') {
 			$this->fields['fk_soc']['type'] .= ' AND client = '.(int) $conf->global->EVENTORGANIZATION_FILTERATTENDEES_TYPE;
 		}
 
@@ -529,7 +529,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 *
 	 *	@param		User	$user     		User making status change
 	 *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return  	int						<=0 if OK, 0=Nothing done, >0 if KO
+	 *	@return  	int						Return integer <=0 if OK, 0=Nothing done, >0 if KO
 	 */
 	public function validate($user, $notrigger = 0)
 	{
@@ -660,7 +660,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	/**
 	 *		Load the project with id $this->fk_project into this->project
 	 *
-	 *		@return		int			<0 if KO, >=0 if OK
+	 *		@return		int			Return integer <0 if KO, >=0 if OK
 	 */
 	public function fetch_projet()
 	{
@@ -711,7 +711,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function cancel($user, $notrigger = 0)
 	{
@@ -735,7 +735,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function reopen($user, $notrigger = 0)
 	{

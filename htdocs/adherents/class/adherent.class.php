@@ -1026,7 +1026,7 @@ class Adherent extends CommonObject
 	 *  @param	int		$rowid		Id of member to delete
 	 *	@param	User	$user		User object
 	 *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *  @return	int					<0 if KO, 0=nothing to do, >0 if OK
+	 *  @return	int					Return integer <0 if KO, 0=nothing to do, >0 if OK
 	 */
 	public function delete($rowid, $user, $notrigger = 0)
 	{
@@ -1151,7 +1151,6 @@ class Adherent extends CommonObject
 		// Mise a jour
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
 		$sql .= " SET pass_crypted = '".$this->db->escape($password_crypted)."'";
-		//if (!empty($conf->global->DATABASE_PWD_ENCRYPTED))
 		if ($isencrypted) {
 			$sql .= ", pass = null";
 		} else {
@@ -1921,7 +1920,7 @@ class Adherent extends CommonObject
 					$outputlangs->setDefaultLang($newlang);
 				}
 				// Generate PDF (whatever is option MAIN_DISABLE_PDF_AUTOUPDATE) so we can include it into email
-				//if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+				//if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE'))
 
 				$invoice->generateDocument($invoice->model_pdf, $outputlangs);
 			}
@@ -1939,7 +1938,7 @@ class Adherent extends CommonObject
 	 *		Function that validate a member
 	 *
 	 *		@param	User	$user		user adherent qui valide
-	 *		@return	int					<0 if KO, 0 if nothing done, >0 if OK
+	 *		@return	int					Return integer <0 if KO, 0 if nothing done, >0 if OK
 	 */
 	public function validate($user)
 	{
@@ -2503,7 +2502,7 @@ class Adherent extends CommonObject
 	 *
 	 *      @param	User	$user   		Objet user
 	 *      @param  string	$mode           "expired" for membership to renew, "shift" for member to validate
-	 *      @return WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
+	 *      @return WorkboardResponse|int 	Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $mode)
 	{
@@ -2727,7 +2726,7 @@ class Adherent extends CommonObject
 		$keymodified = false;
 
 		// Object classes
-		$info["objectclass"] = explode(',', $conf->global->LDAP_MEMBER_OBJECT_CLASS);
+		$info["objectclass"] = explode(',', getDolGlobalString('LDAP_MEMBER_OBJECT_CLASS'));
 
 		$this->fullname = $this->getFullName($langs);
 
@@ -2752,7 +2751,7 @@ class Adherent extends CommonObject
 				$info[getDolGlobalString($constname)] = $this->$varname;
 
 				// Check if it is the LDAP key and if its value has been changed
-				if (getDolGlobalString('LDAP_KEY_MEMBERS') && $conf->global->LDAP_KEY_MEMBERS == getDolGlobalString($constname)) {
+				if (getDolGlobalString('LDAP_KEY_MEMBERS') && getDolGlobalString('LDAP_KEY_MEMBERS') == getDolGlobalString($constname)) {
 					if (!empty($this->oldcopy) && $this->$varname != $this->oldcopy->$varname) {
 						$keymodified = true; // For check if LDAP key has been modified
 					}
@@ -2821,15 +2820,15 @@ class Adherent extends CommonObject
 			if (getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED')) {
 				$info[getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED')] = dol_hash($this->pass, 'openldap'); // Create OpenLDAP password (see LDAP_PASSWORD_HASH_TYPE)
 			}
-		} elseif ($conf->global->LDAP_SERVER_PROTOCOLVERSION !== '3') {
+		} elseif (getDolGlobalString('LDAP_SERVER_PROTOCOLVERSION') !== '3') {
 			// Set LDAP password if possible
 			// If ldap key is modified and LDAPv3 we use ldap_rename function for avoid lose encrypt password
-			if (getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {
-				// Just for the default MD5 !
-				if (!getDolGlobalString('MAIN_SECURITY_HASH_ALGO')) {
+			if (getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {	// This should be on on default installation
+				// Just for the case we use old md5 encryption (deprecated, no more used, kept for compatibility)
+				if (!getDolGlobalString('MAIN_SECURITY_HASH_ALGO') || getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'md5') {
 					if ($this->pass_indatabase_crypted && getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED')) {
 						// Create OpenLDAP MD5 password from Dolibarr MD5 password
-						// Note: This suppose that "pass_indatabase_crypted" is a md5 (guaranted by the previous test if "(empty($conf->global->MAIN_SECURITY_HASH_ALGO))"
+						// Note: This suppose that "pass_indatabase_crypted" is a md5 (this should not happen anymore)"
 						$info[getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED')] = dolGetLdapPasswordHash($this->pass_indatabase_crypted, 'md5frommd5');
 					}
 				}

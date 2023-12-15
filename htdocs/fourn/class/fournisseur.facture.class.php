@@ -254,7 +254,7 @@ class FactureFournisseur extends CommonInvoice
 	public $fk_facture_source;
 
 	public $fac_rec;
-
+	public $fk_fac_rec_source;
 
 	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
@@ -934,7 +934,7 @@ class FactureFournisseur extends CommonInvoice
 				$this->socid				= $obj->fk_soc;
 				$this->datec				= $this->db->jdate($obj->datec);
 				$this->date					= $this->db->jdate($obj->datef);
-				$this->datep				= $this->db->jdate($obj->datef);
+				//$this->datep				= $this->db->jdate($obj->datef);
 				$this->tms                  = $this->db->jdate($obj->tms);
 				$this->libelle              = $obj->label; // deprecated
 				$this->label				= $obj->label;
@@ -1554,7 +1554,7 @@ class FactureFournisseur extends CommonInvoice
 	 *	@param  User	$user       Object user
 	 *	@param  string	$close_code	Code indicates whether the class has paid in full while payment is incomplete. Not implementd yet.
 	 *	@param  string	$close_note	Comment informs if the class has been paid while payment is incomplete. Not implementd yet.
-	 *	@return int         		<0 si ko, >0 si ok
+	 *	@return int         		Return integer <0 si ko, >0 si ok
 	 */
 	public function set_paid($user, $close_code = '', $close_note = '')
 	{
@@ -1569,7 +1569,7 @@ class FactureFournisseur extends CommonInvoice
 	 *	@param  User	$user       Object user
 	 *	@param  string	$close_code	Code indicates whether the class has paid in full while payment is incomplete. Not implementd yet.
 	 *	@param  string	$close_note	Comment informs if the class has been paid while payment is incomplete. Not implementd yet.
-	 *	@return int         		<0 si ko, >0 si ok
+	 *	@return int         		Return integer <0 si ko, >0 si ok
 	 */
 	public function setPaid($user, $close_code = '', $close_note = '')
 	{
@@ -1632,7 +1632,7 @@ class FactureFournisseur extends CommonInvoice
 	 *	@deprecated
 	 *  @see setUnpaid()
 	 *	@param      User	$user       Object user that change status
-	 *	@return     int         		<0 si ok, >0 si ok
+	 *	@return     int         		Return integer <0 si ok, >0 si ok
 	 */
 	public function set_unpaid($user)
 	{
@@ -1647,7 +1647,7 @@ class FactureFournisseur extends CommonInvoice
 	 *	or when the invoice was canceled and reopened.
 	 *
 	 *	@param      User	$user       Object user that change status
-	 *	@return     int         		<0 si ok, >0 si ok
+	 *	@return     int         		Return integer <0 si ok, >0 si ok
 	 */
 	public function setUnpaid($user)
 	{
@@ -1750,7 +1750,7 @@ class FactureFournisseur extends CommonInvoice
 	 *	@param  string	$force_number   Reference to force on invoice
 	 *	@param	int		$idwarehouse	Id of warehouse for stock change
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return int 			        <0 if KO, =0 if nothing to do, >0 if OK
+	 *	@return int 			        Return integer <0 if KO, =0 if nothing to do, >0 if OK
 	 */
 	public function validate($user, $force_number = '', $idwarehouse = 0, $notrigger = 0)
 	{
@@ -2256,7 +2256,7 @@ class FactureFournisseur extends CommonInvoice
 			$supplierinvoiceline->fk_remise_except = $fk_remise_except;
 
 
-			$supplierinvoiceline->special_code = ((string) $special_code != '' ? $special_code : $this->special_code);
+			$supplierinvoiceline->special_code = (string) $special_code;
 			$supplierinvoiceline->fk_parent_line = $fk_parent_line;
 			$supplierinvoiceline->origin = $this->origin;
 			$supplierinvoiceline->origin_id = $origin_id;
@@ -2679,7 +2679,7 @@ class FactureFournisseur extends CommonInvoice
 	 *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 *	@param      User	$user       Object user
-	 *	@return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
+	 *	@return WorkboardResponse|int Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user)
 	{
@@ -3082,7 +3082,6 @@ class FactureFournisseur extends CommonInvoice
 			}
 		}
 
-		$this->amount_ht      = $xnbp * 100;
 		$this->total_ht       = $xnbp * 100;
 		$this->total_tva      = $xnbp * 19.6;
 		$this->total_ttc      = $xnbp * 119.6;
@@ -3213,7 +3212,7 @@ class FactureFournisseur extends CommonInvoice
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
 	 *  @param   null|array  $moreparams     Array to provide more information
-	 *  @return     int         				<0 if KO, 0 if nothing done, >0 if OK
+	 *  @return     int         				Return integer <0 if KO, 0 if nothing done, >0 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
@@ -3640,7 +3639,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 * Retrieves a supplier invoice line
 	 *
 	 * @param    int    $rowid    Line id
-	 * @return   int              <0 KO; 0 NOT FOUND; 1 OK
+	 * @return   int              Return integer <0 KO; 0 NOT FOUND; 1 OK
 	 */
 	public function fetch($rowid)
 	{
@@ -3699,7 +3698,6 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->product_type = $obj->product_type;
 		$this->product_label		= $obj->product_label;
 		$this->info_bits		    = $obj->info_bits;
-		$this->tva_npr = ($obj->info_bits & 1 == 1) ? 1 : 0;
 		$this->fk_parent_line    = $obj->fk_parent_line;
 		$this->special_code = $obj->special_code;
 		$this->rang = $obj->rang;
@@ -3723,7 +3721,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 */
 	public function delete($notrigger = 0)
 	{
-		global $user, $conf;
+		global $user;
 
 		dol_syslog(get_class($this)."::deleteline rowid=".((int) $this->id), LOG_DEBUG);
 
@@ -4125,7 +4123,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	/**
 	 *  Mise a jour de l'objet ligne de commande en base
 	 *
-	 *  @return		int		<0 si ko, >0 si ok
+	 *  @return		int		Return integer <0 si ko, >0 si ok
 	 */
 	public function update_total()
 	{

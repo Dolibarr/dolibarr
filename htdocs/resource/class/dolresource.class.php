@@ -507,7 +507,7 @@ class Dolresource extends CommonObject
 	 *  @param	int			$limit		  	limit page
 	 *  @param	int			$offset    	  	page
 	 *  @param	array		$filter    	  	filter output
-	 *  @return int          				<0 if KO, Number of lines loaded if OK
+	 *  @return int          				Return integer <0 if KO, Number of lines loaded if OK
 	 */
 	public function fetchAll($sortorder, $sortfield, $limit, $offset, $filter = '')
 	{

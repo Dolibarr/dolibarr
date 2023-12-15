@@ -88,12 +88,12 @@ if ($action == 'updateMaskLot') {
 	dolibarr_set_const($db, "PRODUCTBATCH_SN_ADDON", $value, 'chaine', 0, '', $conf->entity);
 } elseif ($action == 'setmaskslot') {
 	dolibarr_set_const($db, "PRODUCTBATCH_LOT_USE_PRODUCT_MASKS", $value, 'bool', 0, '', $conf->entity);
-	if ($value == '1' && $conf->global->PRODUCTBATCH_LOT_ADDONS !== 'mod_lot_advanced') {
+	if ($value == '1' && getDolGlobalString('PRODUCTBATCH_LOT_ADDONS') !== 'mod_lot_advanced') {
 		dolibarr_set_const($db, "PRODUCTBATCH_LOT_ADDON", 'mod_lot_advanced', 'chaine', 0, '', $conf->entity);
 	}
 } elseif ($action == 'setmaskssn') {
 	dolibarr_set_const($db, "PRODUCTBATCH_SN_USE_PRODUCT_MASKS", $value, 'bool', 0, '', $conf->entity);
-	if ($value == '1' && $conf->global->PRODUCTBATCH_SN_ADDONS !== 'mod_sn_advanced') {
+	if ($value == '1' && getDolGlobalString('PRODUCTBATCH_SN_ADDONS') !== 'mod_sn_advanced') {
 		dolibarr_set_const($db, "PRODUCTBATCH_SN_ADDON", 'mod_sn_advanced', 'chaine', 0, '', $conf->entity);
 	}
 } elseif ($action == 'set') {

@@ -311,7 +311,7 @@ class CMailFile
 		// Add auto copy to if not already in $to (Note: Adding bcc for specific modules are also done from pages)
 		// For example MAIN_MAIL_AUTOCOPY_TO can be 'email@example.com, __USER_EMAIL__, ...'
 		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO')) {
-			$listofemailstoadd = explode(',', $conf->global->MAIN_MAIL_AUTOCOPY_TO);
+			$listofemailstoadd = explode(',', getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO'));
 			foreach ($listofemailstoadd as $key => $val) {
 				$emailtoadd = $listofemailstoadd[$key];
 				if (trim($emailtoadd) == '__USER_EMAIL__') {
@@ -1242,7 +1242,7 @@ class CMailFile
 	 * Read a file on disk and return encoded content for emails (mode = 'mail')
 	 *
 	 * @param	string	$sourcefile		Path to file to encode
-	 * @return 	int|string			    <0 if KO, encoded string if OK
+	 * @return 	int|string			    Return integer <0 if KO, encoded string if OK
 	 */
 	private function _encode_file($sourcefile)
 	{
@@ -1750,7 +1750,7 @@ class CMailFile
 					$_retVal = $socket;
 				}
 			} else {
-				$this->error = utf8_check('Error '.$errno.' - '.$errstr) ? 'Error '.$errno.' - '.$errstr : utf8_encode('Error '.$errno.' - '.$errstr);
+				$this->error = utf8_check('Error '.$errno.' - '.$errstr) ? 'Error '.$errno.' - '.$errstr : mb_convert_encoding('Error '.$errno.' - '.$errstr, 'UTF-8', 'ISO-8859-1');
 			}
 		}
 		return $_retVal;

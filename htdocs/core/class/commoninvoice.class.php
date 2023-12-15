@@ -51,6 +51,12 @@ abstract class CommonInvoice extends CommonObject
 
 	/**
 	 * @var int Thirdparty ID
+	 * @deprecated
+	 * @see $socid
+	 */
+	public $fk_soc;
+	/**
+	 * @var int Thirdparty ID
 	 */
 	public $socid;
 
@@ -62,6 +68,8 @@ abstract class CommonInvoice extends CommonObject
 	 * @var integer
 	 */
 	public $date;
+
+	public $date_lim_reglement;
 
 	public $cond_reglement_id; // Id in llx_c_paiement
 	public $cond_reglement_code; // Code in llx_c_paiement
@@ -280,7 +288,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  of FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS is on for purchase invoices (not recommended).
 	 *
 	 * 	@param 		int 	$multicurrency 		Return multicurrency_amount instead of amount
-	 *	@return		float						<0 and set ->error if KO, Sum of deposits amount otherwise
+	 *	@return		float						Return integer <0 and set ->error if KO, Sum of deposits amount otherwise
 	 *	@see getSommePaiement(), getSumCreditNotesUsed()
 	 */
 	public function getSumDepositsUsed($multicurrency = 0)
@@ -313,7 +321,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  Return amount (with tax) of all credit notes invoices + excess received used by invoice
 	 *
 	 * 	@param 		int 	$multicurrency 		Return multicurrency_amount instead of amount
-	 *	@return		float						<0 and set ->error if KO, Sum of credit notes and deposits amount otherwise
+	 *	@return		float						Return integer <0 and set ->error if KO, Sum of credit notes and deposits amount otherwise
 	 *	@see getSommePaiement(), getSumDepositsUsed()
 	 */
 	public function getSumCreditNotesUsed($multicurrency = 0)
@@ -340,7 +348,7 @@ abstract class CommonInvoice extends CommonObject
 	 *    	Return amount (with tax) of all converted amount for this credit note
 	 *
 	 * 		@param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
-	 *		@return		float						<0 if KO, Sum of credit notes and deposits amount otherwise
+	 *		@return		float						Return integer <0 if KO, Sum of credit notes and deposits amount otherwise
 	 */
 	public function getSumFromThisCreditNotesNotUsed($multicurrency = 0)
 	{
@@ -388,7 +396,7 @@ abstract class CommonInvoice extends CommonObject
 	 *	Returns the id of the invoice that replaces it
 	 *
 	 *	@param		string	$option		status filter ('', 'validated', ...)
-	 *	@return		int					<0 si KO, 0 if no invoice replaces it, id of invoice otherwise
+	 *	@return		int					Return integer <0 si KO, 0 if no invoice replaces it, id of invoice otherwise
 	 */
 	public function getIdReplacingInvoice($option = '')
 	{
@@ -534,7 +542,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  If there is payment -> no (-4)
 	 *  Otherwise -> yes (2)
 	 *
-	 *  @return    int         <=0 if no, >0 if yes
+	 *  @return    int         Return integer <=0 if no, >0 if yes
 	 */
 	public function is_erasable()
 	{
@@ -595,7 +603,7 @@ abstract class CommonInvoice extends CommonObject
 	/**
 	 *	Return if an invoice was dispatched into bookkeeping
 	 *
-	 *	@return     int         <0 if KO, 0=no, 1=yes
+	 *	@return     int         Return integer <0 if KO, 0=no, 1=yes
 	 */
 	public function getVentilExportCompta()
 	{
@@ -954,7 +962,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  @param		string	$type						'direct-debit' or 'bank-transfer'
 	 *  @param		string	$sourcetype					Source ('facture' or 'supplier_invoice')
 	 *  @param		int		$checkduplicateamongall		0=Default (check among open requests only to find if request already exists). 1=Check also among requests completely processed and cancel if at least 1 request exists whatever is its status.
-	 *	@return     int         						<0 if KO, 0 if a request already exists, >0 if OK
+	 *	@return     int         						Return integer <0 if KO, 0 if a request already exists, >0 if OK
 	 */
 	public function demande_prelevement($fuser, $amount = 0, $type = 'direct-debit', $sourcetype = 'facture', $checkduplicateamongall = 0)
 	{
@@ -1131,14 +1139,18 @@ abstract class CommonInvoice extends CommonObject
 			}
 
 			// Load the pending payment request to process (with rowid=$did)
-			$sql = "SELECT rowid, date_demande, amount, fk_facture, fk_facture_fourn, fk_prelevement_bons";
+			$sql = "SELECT rowid, date_demande, amount, fk_facture, fk_facture_fourn, fk_salary, fk_prelevement_bons";
 			$sql .= " FROM ".$this->db->prefix()."prelevement_demande";
 			$sql .= " WHERE rowid = ".((int) $did);
 			if ($type != 'bank-transfer' && $type != 'credit-transfer') {
-				$sql .= " AND fk_facture = ".((int) $this->id);		// Add a protection to not pay another invoice than current one
+				$sql .= " AND fk_facture = ".((int) $this->id);				// Add a protection to not pay another invoice than current one
 			}
 			if ($type != 'direct-debit') {
-				$sql .= " AND fk_facture_fourn = ".((int) $this->id);		// Add a protection to not pay another invoice than current one
+				if ($$sourcetype == 'salary') {
+					$sql .= " AND fk_salary = ".((int) $this->id);			// Add a protection to not pay another salary than current one
+				} else {
+					$sql .= " AND fk_facture_fourn = ".((int) $this->id);	// Add a protection to not pay another invoice than current one
+				}
 			}
 			$sql .= " AND traite = 0";	// To not process payment request that were already converted into a direct debit or credit transfer order (Note: fk_prelevement_bons is also empty when traite = 0)
 
@@ -1613,7 +1625,7 @@ abstract class CommonInvoice extends CommonObject
 	 *
 	 *  @param  User	$fuser      User making delete
 	 *  @param  int		$did        ID of request to delete
-	 *  @return	int					<0 if OK, >0 if KO
+	 *  @return	int					Return integer <0 if OK, >0 if KO
 	 */
 	public function demande_prelevement_delete($fuser, $did)
 	{

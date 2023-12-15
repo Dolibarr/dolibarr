@@ -285,7 +285,7 @@ class Establishment extends CommonObject
 	 * Load an object from database
 	 *
 	 * @param	int		$id		Id of record to load
-	 * @return	int				<0 if KO, >=0 if OK
+	 * @return	int				Return integer <0 if KO, >=0 if OK
 	 */
 	public function fetch($id)
 	{

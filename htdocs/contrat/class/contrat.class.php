@@ -680,7 +680,7 @@ class Contrat extends CommonObject
 	 *  @param	string	$ref_supplier	Supplier ref
 	 *  @param	int		$noextrafields	0=Default to load extrafields, 1=No extrafields
 	 *  @param	int		$nolines		0=Default to load lines, 1=No lines
-	 *  @return int     				<0 if KO, 0 if not found or if two records found for same ref, Id of contract if OK
+	 *  @return int     				Return integer <0 if KO, 0 if not found or if two records found for same ref, Id of contract if OK
 	 */
 	public function fetch($id, $ref = '', $ref_customer = '', $ref_supplier = '', $noextrafields = 0, $nolines = 0)
 	{
@@ -976,7 +976,7 @@ class Contrat extends CommonObject
 	 *  Create a contract into database
 	 *
 	 *  @param	User	$user       User that create
-	 *  @return int  				<0 if KO, id of contract if OK
+	 *  @return int  				Return integer <0 if KO, id of contract if OK
 	 */
 	public function create($user)
 	{
@@ -1168,7 +1168,7 @@ class Contrat extends CommonObject
 	 *  Delete object
 	 *
 	 *  @param	User		$user       User that deletes
-	 *  @return int         			< 0 if KO, > 0 if OK
+	 *  @return int         			Return integer < 0 if KO, > 0 if OK
 	 */
 	public function delete($user)
 	{
@@ -2282,7 +2282,7 @@ class Contrat extends CommonObject
 	 *
 	 *      @param	User	$user           Objet user
 	 *      @param  string	$mode           "inactive" pour services a activer, "expired" pour services expires
-	 *      @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
+	 *      @return WorkboardResponse|int Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $mode)
 	{
@@ -2378,7 +2378,7 @@ class Contrat extends CommonObject
 	/**
 	 *   Charge indicateurs this->nb de tableau de bord
 	 *
-	 *   @return     int         <0 si ko, >0 si ok
+	 *   @return     int         Return integer <0 si ko, >0 si ok
 	 */
 	public function load_state_board()
 	{
@@ -2543,7 +2543,7 @@ class Contrat extends CommonObject
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
 	 *  @param   	null|array  $moreparams     Array to provide more information
-	 * 	@return     int         				< 0 if KO, 0 = no doc generated, > 0 if OK
+	 * 	@return     int         				Return integer < 0 if KO, 0 = no doc generated, > 0 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
@@ -3413,7 +3413,7 @@ class ContratLigne extends CommonObjectLine
 	 */
 	public function update($user, $notrigger = 0)
 	{
-		global $conf, $langs, $mysoc;
+		global $mysoc;
 
 		$error = 0;
 
@@ -3615,10 +3615,10 @@ class ContratLigne extends CommonObjectLine
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Mise a jour en base des champs total_xxx de ligne
-	 *		Used by migration process
+	 *	Update in database the fields total_xxx of lines
+	 *	Used by migration process
 	 *
-	 *		@return		int		Return integer <0 if KO, >0 if OK
+	 *	@return		int		Return integer <0 if KO, >0 if OK
 	 */
 	public function update_total()
 	{
@@ -3656,7 +3656,7 @@ class ContratLigne extends CommonObjectLine
 	 */
 	public function insert($notrigger = 0)
 	{
-		global $conf, $user;
+		global $user;
 
 		$error = 0;
 
@@ -3753,8 +3753,6 @@ class ContratLigne extends CommonObjectLine
 	public function active_line($user, $date, $date_end = '', $comment = '')
 	{
 		// phpcs:enable
-		global $langs, $conf;
-
 		$error = 0;
 
 		$this->db->begin();
@@ -3813,9 +3811,6 @@ class ContratLigne extends CommonObjectLine
 	public function close_line($user, $date_end_real, $comment = '', $notrigger = 0)
 	{
 		// phpcs:enable
-		global $langs, $conf;
-
-		// Update object
 		$this->date_cloture = $date_end_real;
 		$this->date_end_real = $date_end_real;
 		$this->user_closing_id = $user->id;

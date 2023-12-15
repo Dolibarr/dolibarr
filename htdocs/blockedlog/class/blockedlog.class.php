@@ -211,7 +211,7 @@ class BlockedLog
 		// Add more action to track from a conf variable
 		// For example: STOCK_MOVEMENT,...
 		if (getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED')) {
-			$tmparrayofmoresupportedevents = explode(',', $conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED);
+			$tmparrayofmoresupportedevents = explode(',', getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED'));
 			foreach ($tmparrayofmoresupportedevents as $val) {
 				$this->trackedevents[$val] = 'log'.$val;
 			}

@@ -559,7 +559,7 @@ class Tva extends CommonObject
 	 *  Create in database
 	 *
 	 *	@param	User	$user		Object user that insert
-	 *	@return	int					<0 if KO, rowid in tva table if OK
+	 *	@return	int					Return integer <0 if KO, rowid in tva table if OK
 	 */
 	public function addPayment($user)
 	{

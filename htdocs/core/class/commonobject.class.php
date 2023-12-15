@@ -675,9 +675,14 @@ abstract class CommonObject
 	public $sendtoid;
 
 	/**
-	 * @var	float		Amount already paid (used to show correct status)
+	 * @var	float		Amount already paid from getSommePaiement() (used to show correct status)
+	 * @deprecated		Duplicate of $totalpaid
 	 */
 	public $alreadypaid;
+	/**
+	 * @var	float		Amount already paid from getSommePaiement() (used to show correct status)
+	 */
+	public $totalpaid;
 
 	/**
 	 * @var array		Array with label of status
@@ -769,7 +774,7 @@ abstract class CommonObject
 	 *  @param	int		$id      	Id of object
 	 *  @param  string	$ref     	Ref of object to check
 	 *  @param	string	$ref_ext	Ref ext of object to check
-	 *  @return int     			<0 if KO, 0 if OK but not found, >0 if OK and exists
+	 *  @return int     			Return integer <0 if KO, 0 if OK but not found, >0 if OK and exists
 	 */
 	public static function isExistingObject($element, $id, $ref = '', $ref_ext = '')
 	{
@@ -854,6 +859,7 @@ abstract class CommonObject
 
 		// Add extrafields
 		if (!empty($extrafields->attributes[$this->table_element]['label'])) {
+			$datas['opendivextra'] = '<div class="centpercent wordbreak divtooltipextra">';
 			foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
 				if ($extrafields->attributes[$this->table_element]['type'][$key] == 'separate') {
 					continue;
@@ -894,6 +900,7 @@ abstract class CommonObject
 					$count++;
 				}
 			}
+			$datas['closedivextra'] = '</div>';
 		}
 
 		$hookmanager->initHooks(array($this->element . 'dao'));
@@ -1091,7 +1098,7 @@ abstract class CommonObject
 	 *  @param 	int|string	$type_contact 		Type of contact (code or id). Must be id or code found into table llx_c_type_contact. For example: SALESREPFOLL
 	 *  @param  string		$source             external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
 	 *  @param  int			$notrigger			Disable all triggers
-	 *  @return int         	        		<0 if KO, 0 if already added or code not valid, >0 if OK
+	 *  @return int         	        		Return integer <0 if KO, 0 if already added or code not valid, >0 if OK
 	 */
 	public function add_contact($fk_socpeople, $type_contact, $source = 'external', $notrigger = 0)
 	{
@@ -1221,7 +1228,7 @@ abstract class CommonObject
 	 * 		@param	int		$statut	            New status of link
 	 *      @param  int		$type_contact_id    Id of contact type (not modified if 0)
 	 *      @param  int		$fk_socpeople	    Id of soc_people to update (not modified if 0)
-	 *      @return int                 		<0 if KO, >= 0 if OK
+	 *      @return int                 		Return integer <0 if KO, >= 0 if OK
 	 */
 	public function update_contact($rowid, $statut, $type_contact_id = 0, $fk_socpeople = 0)
 	{
@@ -1301,7 +1308,7 @@ abstract class CommonObject
 	 *
 	 *	  @param	string	$source		'' or 'internal' or 'external'
 	 *	  @param	string	$code		Type of contact (code or id)
-	 *    @return   int					<0 if KO, 0=Nothing done, >0 if OK
+	 *    @return   int					Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function delete_linked_contact($source = '', $code = '')
 	{
@@ -1446,7 +1453,7 @@ abstract class CommonObject
 	 * 		Update status of a contact linked to object
 	 *
 	 * 		@param	int		$rowid		Id of link between object and contact
-	 * 		@return	int					<0 if KO, >=0 if OK
+	 * 		@return	int					Return integer <0 if KO, >=0 if OK
 	 */
 	public function swapContactStatus($rowid)
 	{
@@ -1804,7 +1811,7 @@ abstract class CommonObject
 	 *	Properties ->barcode_type that is id of barcode. Type is used to find other properties, but
 	 *  if it is not defined, ->element must be defined to know default barcode type.
 	 *
-	 *	@return		int			<0 if KO, 0 if can't guess type of barcode (ISBN, EAN13...), >0 if OK (all barcode properties loaded)
+	 *	@return		int			Return integer <0 if KO, 0 if can't guess type of barcode (ISBN, EAN13...), >0 if OK (all barcode properties loaded)
 	 */
 	public function fetch_barcode()
 	{
@@ -1851,7 +1858,7 @@ abstract class CommonObject
 	/**
 	 *		Load the project with id $this->fk_project into this->project
 	 *
-	 *		@return		int			<0 if KO, >=0 if OK
+	 *		@return		int			Return integer <0 if KO, >=0 if OK
 	 */
 	public function fetch_project()
 	{
@@ -1863,7 +1870,7 @@ abstract class CommonObject
 	/**
 	 *		Load the project with id $this->fk_project into this->project
 	 *
-	 *		@return		int			<0 if KO, >=0 if OK
+	 *		@return		int			Return integer <0 if KO, >=0 if OK
 	 */
 	public function fetch_projet()
 	{
@@ -1889,7 +1896,7 @@ abstract class CommonObject
 	/**
 	 *		Load the product with id $this->fk_product into this->product
 	 *
-	 *		@return		int			<0 if KO, >=0 if OK
+	 *		@return		int			Return integer <0 if KO, >=0 if OK
 	 */
 	public function fetch_product()
 	{
@@ -2893,7 +2900,7 @@ abstract class CommonObject
 	 *  @deprecated
 	 *
 	 *	@param      int		$id		Address id
-	 *	@return     int				<0 si ko, >0 si ok
+	 *	@return     int				Return integer <0 si ko, >0 si ok
 	 */
 	public function setDeliveryAddress($id)
 	{
@@ -3654,7 +3661,7 @@ abstract class CommonObject
 
 		if (!empty($MODULE)) {
 			if (!empty($conf->global->$MODULE)) {
-				$modsactivated = explode(',', $conf->global->$MODULE);
+				$modsactivated = explode(',', getDolGlobalString($MODULE));
 				foreach ($modsactivated as $mod) {
 					if (isModEnabled($mod)) {
 						return 1; // update was disabled by specific setup
@@ -3912,7 +3919,7 @@ abstract class CommonObject
 	 *	@param		int		$origin_id	Linked element id
 	 * 	@param		User	$f_user		User that create
 	 * 	@param		int		$notrigger	1=Does not execute triggers, 0=execute triggers
-	 *	@return		int					<=0 if KO, >0 if OK
+	 *	@return		int					Return integer <=0 if KO, >0 if OK
 	 *	@see		fetchObjectLinked(), updateObjectLinked(), deleteObjectLinked()
 	 */
 	public function add_object_linked($origin = null, $origin_id = null, $f_user = null, $notrigger = 0)
@@ -4474,7 +4481,7 @@ abstract class CommonObject
 	 * @param	int		$fk_object_where		id of object we need to remove linked items
 	 * @param	string	$field_where			name of field of object we need to delete linked items
 	 * @param	string	$table_element			name of association table
-	 * @return 	int								<0 if KO, 0 if nothing done, >0 if OK and something done
+	 * @return 	int								Return integer <0 if KO, 0 if nothing done, >0 if OK and something done
 	 */
 	public static function deleteAllItemsLinkedByObjectID($fk_object_where, $field_where, $table_element)
 	{
@@ -4532,6 +4539,9 @@ abstract class CommonObject
 		}
 		if ($elementTable == 'commande_fournisseur_dispatch') {
 			$fieldstatus = "status";
+		}
+		if ($elementTable == 'prelevement_bons') {
+			$fieldstatus = "statut";
 		}
 		if (isset($this->fields) && is_array($this->fields) && array_key_exists('status', $this->fields)) {
 			$fieldstatus = 'status';
@@ -4629,7 +4639,7 @@ abstract class CommonObject
 	 *
 	 *  @param      int		$id     Record id
 	 *  @param      string	$ref    Record ref
-	 *  @return		int				<0 if KO, 0 if nothing done, >0 if OK
+	 *  @return		int				Return integer <0 if KO, 0 if nothing done, >0 if OK
 	 */
 	public function getCanvas($id = 0, $ref = '')
 	{
@@ -4696,7 +4706,7 @@ abstract class CommonObject
 	 *
 	 *  @param	int		$id			Force id of object
 	 *  @param	int		$entity		Force entity to check
-	 *  @return	int					<0 if KO, 0 if not used, >0 if already used
+	 *  @return	int					Return integer <0 if KO, 0 if not used, >0 if already used
 	 */
 	public function isObjectUsed($id = 0, $entity = 0)
 	{
@@ -4781,7 +4791,7 @@ abstract class CommonObject
 	 *  Function to say how many lines object contains
 	 *
 	 *	@param	int		$predefined		-1=All, 0=Count free product/service only, 1=Count predefined product/service only, 2=Count predefined product, 3=Count predefined service
-	 *  @return	int						<0 if KO, 0 if no predefined products, nb of lines with predefined products if found
+	 *  @return	int						Return integer <0 if KO, 0 if no predefined products, nb of lines with predefined products if found
 	 */
 	public function hasProductsOrServices($predefined = -1)
 	{
@@ -5461,7 +5471,7 @@ abstract class CommonObject
 	 *	@param		string	$resource_type		'resource'
 	 *	@param		int		$busy				Busy or not
 	 *	@param		int		$mandatory			Mandatory or not
-	 *	@return		int							<=0 if KO, >0 if OK
+	 *	@return		int							Return integer <=0 if KO, >0 if OK
 	 */
 	public function add_element_resource($resource_id, $resource_type, $busy = 0, $mandatory = 0)
 	{
@@ -6017,7 +6027,7 @@ abstract class CommonObject
 	 *  Function to get alternative languages of a data into $this->array_languages
 	 *  This method is NOT called by method fetch of objects but must be called separately.
 	 *
-	 *  @return	int						<0 if error, 0 if no values of alternative languages to find nor found, 1 if a value was found and loaded
+	 *  @return	int						Return integer <0 if error, 0 if no values of alternative languages to find nor found, 1 if a value was found and loaded
 	 *  @see fetch_optionnals()
 	 */
 	public function fetchValuesForExtraLanguages()
@@ -6195,7 +6205,7 @@ abstract class CommonObject
 	 *
 	 *  @param	int		$rowid			Id of line. Use the id of object if not defined. Deprecated. Function must be called without parameters.
 	 *  @param  array	$optionsArray   Array resulting of call of extrafields->fetch_name_optionals_label(). Deprecated. Function must be called without parameters.
-	 *  @return	int						<0 if error, 0 if no values of extrafield to find nor found, 1 if an attribute is found and value loaded
+	 *  @return	int						Return integer <0 if error, 0 if no values of extrafield to find nor found, 1 if an attribute is found and value loaded
 	 *  @see fetchValuesForExtraLanguages()
 	 */
 	public function fetch_optionals($rowid = null, $optionsArray = null)
@@ -6818,15 +6828,23 @@ abstract class CommonObject
 				}
 			}
 
+			// $new_array_options will be used for direct update, so must contains formated data for the UPDATE.
+			$new_array_options = $this->array_options;
+
 			//dol_syslog("attributeLabel=".$attributeLabel, LOG_DEBUG);
 			//dol_syslog("attributeType=".$attributeType, LOG_DEBUG);
 			if (!empty($attrfieldcomputed)) {
 				if (getDolGlobalString('MAIN_STORE_COMPUTED_EXTRAFIELDS')) {
 					$value = dol_eval($attrfieldcomputed, 1, 0, '2');
 					dol_syslog($langs->trans("Extrafieldcomputed")." sur ".$attributeLabel."(".$value.")", LOG_DEBUG);
-					$this->array_options["options_".$key] = $value;
+
+					$new_array_options["options_".$key] = $value;
+
+					$this->array_options["options_".$key] = $new_array_options["options_".$key];
 				} else {
-					$this->array_options["options_".$key] = null;
+					$new_array_options["options_".$key] = null;
+
+					$this->array_options["options_".$key] = $new_array_options["options_".$key];
 				}
 			}
 
@@ -6836,7 +6854,9 @@ abstract class CommonObject
 						$this->errors[] = $langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
 						return -1;
 					} elseif ($value === '') {
-						$this->array_options["options_".$key] = null;
+						$new_array_options["options_".$key] = null;
+
+						$this->array_options["options_".$key] = $new_array_options["options_".$key];
 					}
 					break;
 				case 'double':
@@ -6849,19 +6869,24 @@ abstract class CommonObject
 						$value = null;
 					}
 					//dol_syslog("double value"." sur ".$attributeLabel."(".$value." is '".$attributeType."')", LOG_DEBUG);
-					$this->array_options["options_".$key] = $value;
+					$new_array_options["options_".$key] = $value;
+
+					$this->array_options["options_".$key] = $new_array_options["options_".$key];
 					break;
 				/*case 'select':	// Not required, we chosed value='0' for undefined values
 					 if ($value=='-1')
 					 {
-						 $this->array_options[$key] = null;
+						$new_array_options["options_".$key] = $value;
+
+						$this->array_options["options_".$key] = $new_array_options["options_".$key];
 					 }
 					 break;*/
 				case 'price':
-					$this->array_options["options_".$key] = price2num($this->array_options["options_".$key]);
+					$new_array_options["options_".$key] = price2num($this->array_options["options_".$key]);
+
+					$this->array_options["options_".$key] = $new_array_options["options_".$key];
 					break;
 				case 'password':
-					$new_array_options = array();
 					$algo = '';
 					if ($this->array_options["options_".$key] != '' && is_array($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options'])) {
 						// If there is an encryption choice, we use it to crypt data before insert
@@ -6915,26 +6940,34 @@ abstract class CommonObject
 				case 'date':
 				case 'datetime':
 					if (empty($this->array_options["options_".$key])) {
-						$this->array_options["options_".$key] = null;
+						$new_array_options["options_".$key] = null;
+
+						$this->array_options["options_".$key] = $new_array_options["options_".$key];
 					} else {
-						$this->array_options["options_".$key] = $this->db->idate($this->array_options["options_".$key]);
+						$new_array_options["options_".$key] = $this->db->idate($this->array_options["options_".$key]);
 					}
 					break;
 				case 'datetimegmt':
 					if (empty($this->array_options["options_".$key])) {
-						$this->array_options["options_".$key] = null;
+						$new_array_options["options_".$key] = null;
+
+						$this->array_options["options_".$key] = $new_array_options["options_".$key];
 					} else {
-						$this->array_options["options_".$key] = $this->db->idate($this->array_options["options_".$key], 'gmt');
+						$new_array_options["options_".$key] = $this->db->idate($this->array_options["options_".$key], 'gmt');
 					}
 					break;
 				case 'boolean':
 					if (empty($this->array_options["options_".$key])) {
-						$this->array_options["options_".$key] = null;
+						$new_array_options["options_".$key] = null;
+
+						$this->array_options["options_".$key] = $new_array_options["options_".$key];
 					}
 					break;
 				case 'link':
 					if ($this->array_options["options_".$key] === '') {
-						$this->array_options["options_".$key] = null;
+						$new_array_options["options_".$key] = null;
+
+						$this->array_options["options_".$key] = $new_array_options["options_".$key];
 					}
 					break;
 				/*
@@ -6993,12 +7026,12 @@ abstract class CommonObject
 				}
 			}
 
-			//var_dump('linealreadyfound='.$linealreadyfound.' sql='.$sql);
+			//var_dump('linealreadyfound='.$linealreadyfound.' sql='.$sql); exit;
 			if ($linealreadyfound) {
 				if ($this->array_options["options_".$key] === null) {
 					$sql = "UPDATE ".$this->db->prefix().$this->table_element."_extrafields SET ".$key." = null";
 				} else {
-					$sql = "UPDATE ".$this->db->prefix().$this->table_element."_extrafields SET ".$key." = '".$this->db->escape($this->array_options["options_".$key])."'";
+					$sql = "UPDATE ".$this->db->prefix().$this->table_element."_extrafields SET ".$key." = '".$this->db->escape($new_array_options["options_".$key])."'";
 				}
 				$sql .= " WHERE fk_object = ".((int) $this->id);
 
@@ -8926,7 +8959,7 @@ abstract class CommonObject
 	 * @param float		$unitPrice		 Product unit price
 	 * @param float		$discountPercent Line discount percent
 	 * @param int		$fk_product		 Product id
-	 * @return	float                    <0 if KO, buyprice if OK
+	 * @return	float                    Return integer <0 if KO, buyprice if OK
 	 */
 	public function defineBuyPrice($unitPrice = 0.0, $discountPercent = 0.0, $fk_product = 0)
 	{
@@ -9975,7 +10008,7 @@ abstract class CommonObject
 	 * @param 	User 	$user       			User that deletes
 	 * @param 	bool 	$notrigger  			false=launch triggers after, true=disable triggers
 	 * @param	int		$forcechilddeletion		0=no, 1=Force deletion of children
-	 * @return 	int             				<0 if KO, 0=Nothing done because object has child, >0 if OK
+	 * @return 	int             				Return integer <0 if KO, 0=Nothing done because object has child, >0 if OK
 	 */
 	public function deleteCommon(User $user, $notrigger = false, $forcechilddeletion = 0)
 	{
@@ -10500,7 +10533,7 @@ abstract class CommonObject
 	 * @param  int		$fromId	Id object source
 	 * @param  int		$toId	Id object cible
 	 * @param  string	$type	Type of category ('product', ...)
-	 * @return int      < 0 if error, > 0 if ok
+	 * @return int      Return integer < 0 if error, > 0 if ok
 	 */
 	public function cloneCategories($fromId, $toId, $type = '')
 	{

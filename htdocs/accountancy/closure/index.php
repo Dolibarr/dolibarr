@@ -87,8 +87,8 @@ if (is_array($fiscal_periods)) {
 	}
 }
 
-$accounting_groups_used_for_balance_sheet_account = array_filter(array_map('trim', explode(',', $conf->global->ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT)), 'strlen');
-$accounting_groups_used_for_income_statement = array_filter(array_map('trim', explode(',', $conf->global->ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT)), 'strlen');
+$accounting_groups_used_for_balance_sheet_account = array_filter(array_map('trim', explode(',', getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT'))), 'strlen');
+$accounting_groups_used_for_income_statement = array_filter(array_map('trim', explode(',', getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT'))), 'strlen');
 
 
 /*
@@ -263,6 +263,7 @@ if (isset($current_fiscal_period)) {
 			'label' => $langs->trans('DateEnd'),
 			'value' => $current_fiscal_period['date_end']
 		);
+
 		$formconfirm = $form->formconfirm(
 			$_SERVER["PHP_SELF"] . '?fiscal_period_id=' . $current_fiscal_period['id'],
 			$langs->trans('AccountancyClosureAccountingReversal'),

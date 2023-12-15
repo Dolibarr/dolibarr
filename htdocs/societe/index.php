@@ -125,16 +125,20 @@ if ($result) {
 	while ($objp = $db->fetch_object($result)) {
 		$found = 0;
 		if (isModEnabled('societe') && $user->hasRight('societe', 'lire') && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS') && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS_STATS') && ($objp->client == 2 || $objp->client == 3)) {
-			$found = 1; $third['prospect']++;
+			$found = 1;
+			$third['prospect']++;
 		}
 		if (isModEnabled('societe') && $user->hasRight('societe', 'lire') && !getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS') && !getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS_STATS') && ($objp->client == 1 || $objp->client == 3)) {
-			$found = 1; $third['customer']++;
+			$found = 1;
+			$third['customer']++;
 		}
 		if (((isModEnabled('fournisseur') && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('supplier_order') && $user->hasRight('supplier_order', 'lire')) || (isModEnabled('supplier_invoice') && $user->hasRight('supplier_invoice', 'lire'))) && !getDolGlobalString('SOCIETE_DISABLE_SUPPLIERS_STATS') && $objp->fournisseur) {
-			$found = 1; $third['supplier']++;
+			$found = 1;
+			$third['supplier']++;
 		}
 		if (isModEnabled('societe') && $objp->client == 0 && $objp->fournisseur == 0) {
-			$found = 1; $third['other']++;
+			$found = 1;
+			$third['other']++;
 		}
 		if ($found) {
 			$total++;
