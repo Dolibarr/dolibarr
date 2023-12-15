@@ -1810,13 +1810,10 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$sql .= ' AND (';
 			foreach ($actioncode as $key => $code) {
 				if ($key != 0) {
-					$sql .= "OR (";
+					$sql .= " OR ";
 				}
 				if (!empty($code)) {
-					addEventTypeSQL($sql, $code);
-				}
-				if ($key != 0) {
-					$sql .= ")";
+					addEventTypeSQL($sql, $code, "");
 				}
 			}
 			$sql .= ')';
