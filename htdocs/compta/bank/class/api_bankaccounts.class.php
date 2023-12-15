@@ -158,6 +158,12 @@ class BankAccounts extends DolibarrApi
 
 		$account = new Account($this->db);
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$account->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$account->$field = $this->_checkValForAPI($field, $value, $account);
 		}
 		// Date of the initial balance (required to create an account).
@@ -333,6 +339,12 @@ class BankAccounts extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$account->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$account->$field = $this->_checkValForAPI($field, $value, $account);
 		}
 

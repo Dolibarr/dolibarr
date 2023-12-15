@@ -211,6 +211,12 @@ class Projects extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->project->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->project->$field = $value;
 		}
 		/*if (isset($request_data["lines"])) {
@@ -466,6 +472,12 @@ class Projects extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->project->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->project->$field = $value;
 		}
 
