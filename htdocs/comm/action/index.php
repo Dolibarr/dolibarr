@@ -1683,7 +1683,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 
 		$maxnbofchar = 80;
 
-		$tmp = explode('-', $conf->global->MAIN_DEFAULT_WORKING_HOURS);
+		$tmp = explode('-', getDolGlobalString('MAIN_DEFAULT_WORKING_HOURS'));
 		$minhour = round($tmp[0], 0);
 		$maxhour = round($tmp[1], 0);
 		if ($minhour > 23) {

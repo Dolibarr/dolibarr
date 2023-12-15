@@ -81,7 +81,7 @@ if ("Notification" in window) {
 	if (Notification.permission !== "granted") {
 		console.log("Ask Notification.permission");
 		Notification.requestPermission(function(result) {
-			console.log("result for requestPermission is "+result);
+			console.log("result for Notification.requestPermission is "+result);
 		});
 	}
 

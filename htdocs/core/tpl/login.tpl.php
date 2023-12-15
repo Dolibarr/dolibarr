@@ -115,7 +115,7 @@ print "<!-- BEGIN PHP TEMPLATE LOGIN.TPL.PHP -->\n";
 
 if (getDolGlobalString('ADD_UNSPLASH_LOGIN_BACKGROUND')) {
 	// For example $conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND = 'https://source.unsplash.com/random'?>
-	<body class="body bodylogin" style="background-image: url('<?php echo dol_escape_htmltag($conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND); ?>'); background-repeat: no-repeat; background-position: center center; background-attachment: fixed; background-size: cover; background-color: #ffffff;">
+	<body class="body bodylogin" style="background-image: url('<?php echo dol_escape_htmltag(getDolGlobalString('ADD_UNSPLASH_LOGIN_BACKGROUND')); ?>'); background-repeat: no-repeat; background-position: center center; background-attachment: fixed; background-size: cover; background-color: #ffffff;">
 	<?php
 } else {
 	?>
@@ -465,7 +465,7 @@ if (!empty($morelogincontent) && is_array($morelogincontent)) {
 // Google Analytics
 // TODO Remove this, and add content into hook getLoginPageExtraOptions() instead
 if (isModEnabled('google') && getDolGlobalString('MAIN_GOOGLE_AN_ID')) {
-	$tmptagarray = explode(',', $conf->global->MAIN_GOOGLE_AN_ID);
+	$tmptagarray = explode(',', getDolGlobalString('MAIN_GOOGLE_AN_ID'));
 	foreach ($tmptagarray as $tmptag) {
 		print "\n";
 		print "<!-- JS CODE TO ENABLE for google analtics tag -->\n";

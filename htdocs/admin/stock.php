@@ -776,7 +776,7 @@ if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('STOCK_SUPPORTS_SERVICES');
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("STOCK_SUPPORTS_SERVICES", $arrval, $conf->global->STOCK_SUPPORTS_SERVICES);
+	print $form->selectarray("STOCK_SUPPORTS_SERVICES", $arrval, getDolGlobalString('STOCK_SUPPORTS_SERVICES'));
 }
 print "</td>\n";
 print "</tr>\n";

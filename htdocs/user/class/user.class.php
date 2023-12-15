@@ -2831,7 +2831,7 @@ class User extends CommonObject
 		}
 
 		// Info Login
-		$datas['opendiv'] = '<div class="centpercent">';
+		$datas['opendiv'] = '<div class="centpercent divtooltip">';
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("User").'</u> '.$this->getLibStatut(4);
 		$datas['name'] = '<br><b>'.$langs->trans('Name').':</b> '.dol_string_nohtmltag($this->getFullName($langs, ''));
 		if (!empty($this->login)) {
@@ -3253,7 +3253,7 @@ class User extends CommonObject
 		$keymodified = false;
 
 		// Object classes
-		$info["objectclass"] = explode(',', $conf->global->LDAP_USER_OBJECT_CLASS);
+		$info["objectclass"] = explode(',', getDolGlobalString('LDAP_USER_OBJECT_CLASS'));
 
 		$this->fullname = $this->getFullName($langs);
 
@@ -3325,7 +3325,7 @@ class User extends CommonObject
 			if (getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED')) {
 				$info[getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED')] = dol_hash($this->pass, 'openldap'); // Create OpenLDAP password (see LDAP_PASSWORD_HASH_TYPE)
 			}
-		} elseif ($conf->global->LDAP_SERVER_PROTOCOLVERSION !== '3') {
+		} elseif (getDolGlobalString('LDAP_SERVER_PROTOCOLVERSION') !== '3') {
 			// Set LDAP password if possible
 			// If ldap key is modified and LDAPv3 we use ldap_rename function for avoid lose encrypt password
 			if (getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {

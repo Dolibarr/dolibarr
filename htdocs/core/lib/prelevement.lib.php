@@ -33,9 +33,11 @@
  */
 function prelevement_prepare_head(BonPrelevement $object)
 {
-	global $langs, $conf, $user;
+	global $langs, $conf;
+
 	$salary = $object->checkIfSalaryBonPrelevement();
-	$langs->load("withdrawals");
+
+	$langs->loadLangs(array("bills", "withdrawals"));
 
 	$h = 0;
 	$head = array();
@@ -50,8 +52,16 @@ function prelevement_prepare_head(BonPrelevement $object)
 	$head[$h][2] = 'prelevement';
 	$h++;
 
+	$titleoftab = $langs->trans("Bills");
+	if ($object->type == 'bank-transfer') {
+		$titleoftab = $langs->trans("SupplierBills");
+	}
+	if ($salary > 0) {
+		$titleoftab = $langs->trans("Salaries");
+	}
+
 	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$object->id;
-	$head[$h][1] = ($salary <= 0 ? $langs->trans("Bills") : $langs->trans("Salaries"));
+	$head[$h][1] = $titleoftab;
 	$head[$h][2] = 'invoices';
 	$h++;
 

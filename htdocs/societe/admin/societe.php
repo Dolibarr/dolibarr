@@ -391,7 +391,7 @@ foreach ($dirsociete as $dirroot) {
 					dol_syslog($e->getMessage(), LOG_ERR);
 				}
 
-				$modCodeTiers = new $file;
+				$modCodeTiers = new $file();
 
 				// Show modules according to features level
 				if ($modCodeTiers->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -477,7 +477,7 @@ foreach ($dirsociete as $dirroot) {
 					dol_syslog($e->getMessage(), LOG_ERR);
 				}
 
-				$modCodeCompta = new $file;
+				$modCodeCompta = new $file();
 
 				$arrayofmodules[$file] = $modCodeCompta;
 			}
@@ -593,9 +593,9 @@ foreach ($dirsociete as $dirroot) {
 						print "<td class=\"center\">\n";
 						//if ($conf->global->COMPANY_ADDON_PDF != "$name")
 						//{
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'&token='.newToken().'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">';
-							print img_picto($langs->trans("Enabled"), 'switch_on');
-							print '</a>';
+						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'&token='.newToken().'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">';
+						print img_picto($langs->trans("Enabled"), 'switch_on');
+						print '</a>';
 						//}
 						//else
 						//{
@@ -695,9 +695,9 @@ foreach ($profid as $key => $val) {
 		$idprof_mandatory = 'SOCIETE_'.$key.'_MANDATORY';
 		$idprof_invoice_mandatory = 'SOCIETE_'.$key.'_INVOICE_MANDATORY';
 
-		$verif = (empty($conf->global->$idprof_unique) ?false:true);
-		$mandatory = (empty($conf->global->$idprof_mandatory) ?false:true);
-		$invoice_mandatory = (empty($conf->global->$idprof_invoice_mandatory) ?false:true);
+		$verif = (empty($conf->global->$idprof_unique) ? false : true);
+		$mandatory = (empty($conf->global->$idprof_mandatory) ? false : true);
+		$invoice_mandatory = (empty($conf->global->$idprof_invoice_mandatory) ? false : true);
 
 		if ($verif) {
 			print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofid&token='.newToken().'&value='.$key.'&status=0">';

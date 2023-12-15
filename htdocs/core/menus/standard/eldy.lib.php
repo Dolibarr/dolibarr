@@ -51,7 +51,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	$leftmenu = (empty($_SESSION["leftmenu"]) ? '' : $_SESSION["leftmenu"]);
 
 	$id = 'mainmenu';
-	$listofmodulesforexternal = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
+	$listofmodulesforexternal = explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL'));
 
 	$substitarray = getCommonSubstitutionArray($langs, 0, null, null);
 
@@ -768,7 +768,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 	$substitarray = getCommonSubstitutionArray($langs, 0, null, null);
 
-	$listofmodulesforexternal = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
+	$listofmodulesforexternal = explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL'));
 
 	/**
 	 * We update newmenu with entries found into database
@@ -2247,7 +2247,7 @@ function get_left_menu_projects($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 				'perms'=>$user->hasRight('projet', 'lire'),
 				'module'=>'projet'
 			);
-			$listofmodulesforexternal = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
+			$listofmodulesforexternal = explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL'));
 			$showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
 
 			$titleboth = $langs->trans("LeadsOrProjects");

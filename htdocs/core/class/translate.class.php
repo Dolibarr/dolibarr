@@ -401,7 +401,7 @@ class Translate
 			$overwritekey = 'MAIN_OVERWRITE_TRANS_' . $this->defaultlang;
 			if (!empty($conf->global->$overwritekey)) {    // Overwrite translation with key1:newstring1,key2:newstring2
 				// Overwrite translation with param MAIN_OVERWRITE_TRANS_xx_XX
-				$tmparray = explode(',', $conf->global->$overwritekey);
+				$tmparray = explode(',', getDolGlobalString($overwritekey));
 				foreach ($tmparray as $tmp) {
 					$tmparray2 = explode(':', $tmp);
 					if (!empty($tmparray2[1])) {
@@ -637,7 +637,7 @@ class Translate
 			// Make some string replacement after translation
 			$replacekey = 'MAIN_REPLACE_TRANS_' . $this->defaultlang;
 			if (!empty($conf->global->$replacekey)) {    // Replacement translation variable with string1:newstring1;string2:newstring2
-				$tmparray = explode(';', $conf->global->$replacekey);
+				$tmparray = explode(';', getDolGlobalString($replacekey));
 				foreach ($tmparray as $tmp) {
 					$tmparray2 = explode(':', $tmp);
 					$str = preg_replace('/' . preg_quote($tmparray2[0]) . '/', $tmparray2[1], $str);
@@ -731,7 +731,7 @@ class Translate
 			// Make some string replacement after translation
 			$replacekey = 'MAIN_REPLACE_TRANS_' . $this->defaultlang;
 			if (!empty($conf->global->$replacekey)) {    // Replacement translation variable with string1:newstring1;string2:newstring2
-				$tmparray = explode(';', $conf->global->$replacekey);
+				$tmparray = explode(';', getDolGlobalString($replacekey));
 				foreach ($tmparray as $tmp) {
 					$tmparray2 = explode(':', $tmp);
 					$str = preg_replace('/' . preg_quote($tmparray2[0]) . '/', $tmparray2[1], $str);
@@ -872,7 +872,7 @@ class Translate
 					}
 				}
 				// We must keep only languages into MAIN_LANGUAGES_ALLOWED
-				if (getDolGlobalString('MAIN_LANGUAGES_ALLOWED') && !in_array($dir, explode(',', $conf->global->MAIN_LANGUAGES_ALLOWED))) {
+				if (getDolGlobalString('MAIN_LANGUAGES_ALLOWED') && !in_array($dir, explode(',', getDolGlobalString('MAIN_LANGUAGES_ALLOWED')))) {
 					continue;
 				}
 
