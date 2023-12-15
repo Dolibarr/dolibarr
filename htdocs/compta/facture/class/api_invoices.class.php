@@ -1580,7 +1580,7 @@ class Invoices extends DolibarrApi
 			}
 
 			if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE) {
-				$amount = -$amount;
+				$amount = price2num(-1 * $amount, 'MT');
 			}
 
 			if ($is_multicurrency) {
