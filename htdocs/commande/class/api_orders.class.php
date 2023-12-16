@@ -155,15 +155,18 @@ class Orders extends DolibarrApi
 	 * @param int			   $limit				Limit for list
 	 * @param int			   $page				Page number
 	 * @param string		   $thirdparty_ids		Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
+	 * @param string		   $status			    Filter by invoice status : STATUS_DRAFT | STATUS_VALIDATED | STATUS_CLOSED | STATUS_SHIPMENTONPROCESS | STATUS_ABANDONED 
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param string           $sqlfilterlines      Other criteria to filter answers separated by a comma. Syntax example "(tl.fk_product:=:'17') and (tl.price:<:'250')"
 	 * @param string		   $properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of order objects
 	 *
+	 * @throws RestException 400 Bad request
+	 * @throws RestException 401 Access denied
 	 * @throws RestException 404 Not found
 	 * @throws RestException 503 Error
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $sqlfilterlines = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $status = '', $sqlfilters = '', $sqlfilterlines = '', $properties = '')
 	{
 		if (!DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
 			throw new RestException(401);
@@ -203,6 +206,17 @@ class Orders extends DolibarrApi
 		// Insert sale filter
 		if ($search_sale > 0) {
 			$sql .= " AND sc.fk_user = ".((int) $search_sale);
+		}
+		// Filter by status
+		if (!empty($status)) {
+			// We allow lowercase and uppercase
+			$status = strtoupper($status);
+			// Check if status is valid
+			if (!in_array($status, array('STATUS_DRAFT', 'STATUS_VALIDATED', 'STATUS_CLOSED', 'STATUS_SHIPMENTONPROCESS', 'STATUS_ABANDONED'))) {
+				throw new RestException(400, 'Invalid status value -> '.$status);
+			}
+			$constant = constant('Commande::'.$status);
+			$sql .= sprintf(' AND t.fk_statut IN (%d)', $constant);
 		}
 		// Add sql filters
 		if ($sqlfilters) {
