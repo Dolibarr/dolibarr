@@ -1651,7 +1651,7 @@ function dolPrintHTML($s, $allowiframe = 0)
 }
 
 /**
- * Return a string ready to be output on an HTML attribute (alt, title, ...)
+ * Return a string ready to be output on an HTML attribute (alt, title, data-html, ...)
  *
  * @param	string	$s		String to print
  * @return	string			String ready for HTML output
@@ -1660,7 +1660,7 @@ function dolPrintHTMLForAttribute($s)
 {
 	// The dol_htmlentitiesbr will convert simple text into html
 	// The dol_escape_htmltag will escape html chars.
-	return dol_escape_htmltag(dol_htmlentitiesbr($s), 1, -1);
+	return dol_escape_htmltag(dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 0, 0, 0, array('br', 'b', 'font', 'span')), 1, -1, '', 0, 1);
 }
 
 /**
