@@ -53,12 +53,13 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, 
 #
 # Object
 #
+OrganizedEvent=Organized event
 EventOrganizationConfOrBooth= Konferencja lub stoisko
 EventOrganizationConfOrBoothes=Conferences or Boothes
-ManageOrganizeEvent = Manage the organization of an event
+ManageOrganizeEvent = Zarządzaj organizacją wydarzenia
 ConferenceOrBooth = Konferencja lub stoisko
 ConferenceOrBoothTab = Konferencja lub stoisko
-AmountPaid = Amount paid
+AmountPaid = Wartość zapłacona
 DateOfRegistration = Date of registration
 ConferenceOrBoothAttendee = Uczestnik konferencji lub stoiska
 ApplicantOrVisitor=Applicant or visitor
@@ -89,7 +90,7 @@ PriceOfRegistrationHelp=Price to pay to register or participate in the event
 PriceOfBooth=Cena abonamentu za stoisko
 PriceOfBoothHelp=Cena abonamentu za stoisko
 EventOrganizationICSLink=Link ICS for conferences
-ConferenceOrBoothInformation=Informacje o konferencji lub stoisku
+ConferenceOrBoothInformation=Conference Or Booth information
 Attendees=Uczestnicy
 ListOfAttendeesOfEvent=List of attendees of the event project
 DownloadICSLink = Pobierz link do ICS
@@ -97,6 +98,7 @@ EVENTORGANIZATION_SECUREKEY = Seed to secure the key for the public registration
 SERVICE_BOOTH_LOCATION = Usługa używana do wiersza faktury o lokalizacji stoiska
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to an event
 NbVotes=Liczba głosów
+
 #
 # Status
 #
@@ -105,9 +107,10 @@ EvntOrgSuggested = Zasugerowane
 EvntOrgConfirmed = Potwierdzone
 EvntOrgNotQualified = Brak kwalifikacji
 EvntOrgDone = Zrobione
-EvntOrgCancelled = Anulowane
+EvntOrgCancelled = Anulowany
+
 #
-# Public page
+# Other
 #
 SuggestForm = Strona sugestii
 SuggestOrVoteForConfOrBooth = Page for suggestion or vote
@@ -143,13 +146,8 @@ OrganizationEventBulkMailToAttendees=This is a remind about your participation i
 OrganizationEventBulkMailToSpeakers=This is a reminder on your participation in the event as a speaker
 OrganizationEventLinkToThirdParty=Link to third party (customer, supplier or partner)
 OrganizationEvenLabelName=Public name of the conference or booth
-
 NewSuggestionOfBooth=Application for a booth
-NewSuggestionOfConference=Application for a conference
-
-#
-# Vote page
-#
+NewSuggestionOfConference=Application to hold a conference
 EvntOrgRegistrationWelcomeMessage = Witamy na stronie z propozycjami konferencji lub stoisk.
 EvntOrgRegistrationConfWelcomeMessage = Witamy na stronie propozycji konferencji.
 EvntOrgRegistrationBoothWelcomeMessage = Witamy na stronie propozycji stoisk.
@@ -157,8 +155,8 @@ EvntOrgVoteHelpMessage = Tutaj możesz przeglądać i głosować na sugerowane w
 VoteOk = Twój głos został zaakceptowany.
 AlreadyVoted = Już zagłosowałeś na to wydarzenie.
 VoteError = Podczas głosowania wystąpił błąd, spróbuj ponownie.
-
 SubscriptionOk=Your registration has been recorded
+AmountOfRegistrationPaid=Amount of registration paid
 ConfAttendeeSubscriptionConfirmation = Confirmation of your subscription to an event
 Attendee = Uczestnik
 PaymentConferenceAttendee = Opłata za uczestnika konferencji
@@ -168,7 +166,15 @@ RegistrationAndPaymentWereAlreadyRecorder=A registration and a payment were alre
 EmailAttendee=Attendee email
 EmailCompany=Company email
 EmailCompanyForInvoice=Company email (for invoice, if different of attendee email)
-ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
-ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
+ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automatically your registration. Please contact us at %s for a manual validation
+ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automatically your registration. Please contact us at %s for a manual validation
 NoPublicActionsAllowedForThisEvent=No public actions are open to public for this event
 MaxNbOfAttendees=Max number of attendees
+DateStartEvent=Event start date
+DateEndEvent=Event end date
+ModifyStatus=Modify status
+ConfirmModifyStatus=Confirm status modification
+ConfirmModifyStatusQuestion=Are you sure you want to modify the %s selected record(s)?
+RecordsUpdated = %s Records updated
+RecordUpdated = Record updated
+NoRecordUpdated = No Record updated

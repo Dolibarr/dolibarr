@@ -1100,7 +1100,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
  *
  * @param	string		$mainmenu		Main menu
  * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider	Use menu hider
+ * @param	int 		$usemenuhider	Use menu hider
  * @param	string 		$leftmenu		Left menu
  * @param	int 		$type_user		Type of user
  * @return	void
@@ -1228,7 +1228,7 @@ function get_left_menu_home($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
  *
  * @param	string		$mainmenu		Main menu
  * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider	Use menu hider
+ * @param	int 		$usemenuhider	Use menu hider
  * @param	string 		$leftmenu		Left menu
  * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
@@ -1333,7 +1333,7 @@ function get_left_menu_thridparties($mainmenu, &$newmenu, $usemenuhider = 1, $le
  *
  * @param	string		$mainmenu		Main menu
  * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider	Use menu hider
+ * @param	int 		$usemenuhider	Use menu hider
  * @param	string 		$leftmenu		Left menu
  * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
@@ -1459,7 +1459,7 @@ function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $left
  *
  * @param	string		$mainmenu		Main menu
  * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider	Use menu hider
+ * @param	int 		$usemenuhider	Use menu hider
  * @param	string 		$leftmenu		Left menu
  * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
@@ -1640,7 +1640,7 @@ function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
  *
  * @param	string		$mainmenu		Main menu
  * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider	Use menu hider
+ * @param	int 		$usemenuhider	Use menu hider
  * @param	string 		$leftmenu		Left menu
  * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
@@ -1966,7 +1966,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
  *
  * @param	string		$mainmenu		Main menu
  * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider	Use menu hider
+ * @param	int 		$usemenuhider	Use menu hider
  * @param	string 		$leftmenu		Left menu
  * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
@@ -2049,7 +2049,7 @@ function get_left_menu_bank($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
  *
  * @param	string		$mainmenu		Main menu
  * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider	Use menu hider
+ * @param	int 		$usemenuhider	Use menu hider
  * @param	string 		$leftmenu		Left menu
  * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
@@ -2193,7 +2193,7 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
  *
  * @param	string		$mainmenu		Main menu
  * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider	Use menu hider
+ * @param	int 		$usemenuhider	Use menu hider
  * @param	string 		$leftmenu		Left menu
  * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
@@ -2227,7 +2227,7 @@ function get_left_menu_mrp($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
  *
  * @param	string		$mainmenu		Main menu
  * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider	Use menu hider
+ * @param	int 		$usemenuhider	Use menu hider
  * @param	string 		$leftmenu		Left menu
  * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
@@ -2302,7 +2302,7 @@ function get_left_menu_projects($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
  *
  * @param	string		$mainmenu		Main menu
  * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider	Use menu hider
+ * @param	int 		$usemenuhider	Use menu hider
  * @param	string 		$leftmenu		Left menu
  * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
@@ -2410,7 +2410,7 @@ function get_left_menu_hrm($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
  *
  * @param	string		$mainmenu		Main menu
  * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider	Use menu hider
+ * @param	int 		$usemenuhider	Use menu hider
  * @param	string 		$leftmenu		Left menu
  * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
@@ -2451,7 +2451,7 @@ function get_left_menu_tools($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu 
  *
  * @param	string		$mainmenu		Main menu
  * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider	Use menu hider
+ * @param	int 		$usemenuhider	Use menu hider
  * @param	string 		$leftmenu		Left menu
  * @param	int 		$type_user		Type of targeted user for menu
  * @return	void

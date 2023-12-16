@@ -1489,7 +1489,7 @@ class DolGraph
 				}
 				$this->stringtoshow .= 'data: [';
 
-				$this->stringtoshow .= $this->mirrorGraphValues ? '[' . -$serie[$i] . ',' . $serie[$i] . ']' : $serie[$i];
+				$this->stringtoshow .= $this->mirrorGraphValues ? '[-' . $serie[$i] . ',' . $serie[$i] . ']' : $serie[$i];
 				$this->stringtoshow .= ']';
 				$this->stringtoshow .= '}' . "\n";
 
