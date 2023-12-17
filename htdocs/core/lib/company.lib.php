@@ -2334,19 +2334,19 @@ function addEventTypeSQL(&$sql, $actioncode, $sqlANDOR = "AND")
 
 	if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 		if ($actioncode == 'AC_NON_AUTO') {
-			$sql .= " $sqlANDOR c.type != 'systemauto'";
+			$sql .= " $sqlANDOR c.type <> 'systemauto'";
 		} elseif ($actioncode == 'AC_ALL_AUTO') {
 			$sql .= " $sqlANDOR c.type = 'systemauto'";
 		} else {
 			if ($actioncode == 'AC_OTH') {
-				$sql .= " $sqlANDOR c.type != 'systemauto'";
+				$sql .= " $sqlANDOR c.type <> 'systemauto'";
 			} elseif ($actioncode == 'AC_OTH_AUTO') {
 				$sql .= " $sqlANDOR c.type = 'systemauto'";
 			}
 		}
 	} else {
 		if ($actioncode == 'AC_NON_AUTO') {
-			$sql .= " $sqlANDOR c.type != 'systemauto'";
+			$sql .= " $sqlANDOR c.type <> 'systemauto'";
 		} elseif ($actioncode == 'AC_ALL_AUTO') {
 			$sql .= " $sqlANDOR c.type = 'systemauto'";
 		} else {
