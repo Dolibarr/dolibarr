@@ -75,6 +75,11 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 		$s = $mysoc->country_id.':'.$mysoc->country_code.':'.$mysoc->country_label;
 		dolibarr_set_const($db, "MAIN_INFO_SOCIETE_COUNTRY", $s, 'chaine', 0, '', $conf->entity);
 
+        if($mysoc->country_code == 'FR'  && !isset($conf->global->MAIN_PROFID1_IN_ADDRESS)){
+            // For FR, default value of option to show profid SIREN is on by default
+            $res = dolibarr_set_const($db, "MAIN_PROFID1_IN_ADDRESS", 1, 'chaine', 0, '', $conf->entity);
+        }
+
 		activateModulesRequiredByCountry($mysoc->country_code);
 	}
 
