@@ -81,8 +81,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 			// For FR, default value of option to show profid SIREN is on by default
 			$res = dolibarr_set_const($db, "MAIN_PROFID1_IN_ADDRESS", 1, 'chaine', 0, '', $conf->entity);
 		}
-
-		$mysoc->country_id   = $tmparray['id'];
+		$mysoc->country_id = $tmparray['id'];
 		$mysoc->country_code = $tmparray['code'];
 		$mysoc->country_label = $tmparray['label'];
 
