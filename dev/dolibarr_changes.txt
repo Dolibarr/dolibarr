@@ -55,6 +55,11 @@ NUSOAP:
 	preg_match('/\$Revision: ([^ ]+)/', $this->revision, $rev);
 	$this->outgoing_headers[] = "X-SOAP-Server: $this->title/$this->version (".(isset($rev[1]) ? $rev[1] : '').")";
 
+* Line 6566 of file nusoap.php, replace
+
+	if (count($attrs) > 0) {
+	with
+	if (is_array($attrs) && count($attrs) > 0) {
 
 
 
