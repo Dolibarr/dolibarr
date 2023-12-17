@@ -1584,7 +1584,7 @@ function show_actions_todo($conf, $langs, $db, $filterobj, $objcon = '', $noprin
  * 		@param	mixed			   $filterobj	   Filter on object Adherent|Societe|Project|Product|CommandeFournisseur|Dolresource|Ticket... to list events linked to an object
  * 		@param	Contact		       $objcon		   Filter on object contact to filter events on a contact
  *      @param  int			       $noprint        Return string but does not output it
- *      @param  string		       $actioncode     Filter on actioncode
+ *      @param  string|string[]    $actioncode     Filter on actioncode
  *      @param  string             $donetodo       Filter on event 'done' or 'todo' or ''=nofilter (all).
  *      @param  array              $filters        Filter on other fields
  *      @param  string             $sortfield      Sort field
@@ -1810,13 +1810,10 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$sql .= ' AND (';
 			foreach ($actioncode as $key => $code) {
 				if ($key != 0) {
-					$sql .= "OR (";
+					$sql .= " OR ";
 				}
 				if (!empty($code)) {
-					addEventTypeSQL($sql, $code);
-				}
-				if ($key != 0) {
-					$sql .= ")";
+					addEventTypeSQL($sql, $code, "");
 				}
 			}
 			$sql .= ')';
