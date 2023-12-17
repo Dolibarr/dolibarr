@@ -244,7 +244,7 @@ class Skill extends CommonObject
 	 * createSkills
 	 *
 	 * @param int 	$i 		Rank from which we want to create skilldets (level $i to HRM_MAXRANK wil be created)
-	 * @return null
+	 * @return int          Return integer <0 if KO, Id of created object if OK
 	 */
 	public function createSkills($i = 1)
 	{
