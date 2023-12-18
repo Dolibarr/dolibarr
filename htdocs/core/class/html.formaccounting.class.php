@@ -292,7 +292,8 @@ class FormAccounting extends Form
 					if ($obj->rowid == $selected) {
 						$out .= ' selected';
 					}
-					$out .= ' data-html="'.dol_escape_htmltag(dol_string_onlythesehtmltags($titletoshowhtml, 1, 1, 0, 0, array('span'))).'"';
+					//$out .= ' data-html="'.dol_escape_htmltag(dol_string_onlythesehtmltags($titletoshowhtml, 1, 0, 0, 0, array('span'))).'"';
+					$out .= ' data-html="'.dolPrintHTMLForAttribute($titletoshowhtml).'"';
 					$out .= '>';
 					$out .= dol_escape_htmltag($titletoshow);
 					$out .= '</option>';

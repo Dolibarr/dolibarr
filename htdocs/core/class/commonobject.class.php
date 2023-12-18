@@ -167,8 +167,9 @@ abstract class CommonObject
 	 * @var CommonObject To store a cloned copy of object before to edit it and keep track of old properties
 	 */
 	public $oldcopy;
+
 	/**
-	 * @var CommonObject To store old value of a modified ref
+	 * @var string To store old value of a modified ref
 	 */
 	public $oldref;
 
@@ -675,9 +676,14 @@ abstract class CommonObject
 	public $sendtoid;
 
 	/**
-	 * @var	float		Amount already paid (used to show correct status)
+	 * @var	float		Amount already paid from getSommePaiement() (used to show correct status)
+	 * @deprecated		Duplicate of $totalpaid
 	 */
 	public $alreadypaid;
+	/**
+	 * @var	float		Amount already paid from getSommePaiement() (used to show correct status)
+	 */
+	public $totalpaid;
 
 	/**
 	 * @var array		Array with label of status

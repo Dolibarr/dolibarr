@@ -486,7 +486,6 @@ NotificationsDesc=E-Mail - Benachrichtigungen für Ereignisse können automatisc
 BillsSetup=Rechnungsmoduleinstellungen
 FreeLegalTextOnInvoices=Freier Rechtstext für Rechnungen
 WatermarkOnDraftInvoices=Wasserzeichen auf Rechnungs-Entwurf (keines, falls leer)
-SuppliersPayment=Lieferantenzahlungen
 PropalSetup=Angebotsmoduleinstellungen
 ProposalsNumberingModules=Angebotsnumerierungs-Module
 ProposalsPDFModules=PDF-Anbebotsmodule

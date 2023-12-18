@@ -232,6 +232,8 @@ class PrestaShopWebservice
 		if ($response != '') {
 			libxml_clear_errors();
 			libxml_use_internal_errors(true);
+			libxml_disable_entity_loader(true);	// Avoid load of external entities (security problem). Required only if LIBXML_VERSION < 20900
+
 			if (!function_exists('simplexml_load_string')) {
 				throw new PrestaShopWebserviceException('Method simplexml_load_string not available. Your PHP does not support xml.');
 			}

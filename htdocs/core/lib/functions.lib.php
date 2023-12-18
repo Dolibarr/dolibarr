@@ -1651,7 +1651,7 @@ function dolPrintHTML($s, $allowiframe = 0)
 }
 
 /**
- * Return a string ready to be output on an HTML attribute (alt, title, ...)
+ * Return a string ready to be output on an HTML attribute (alt, title, data-html, ...)
  *
  * @param	string	$s		String to print
  * @return	string			String ready for HTML output
@@ -1660,7 +1660,7 @@ function dolPrintHTMLForAttribute($s)
 {
 	// The dol_htmlentitiesbr will convert simple text into html
 	// The dol_escape_htmltag will escape html chars.
-	return dol_escape_htmltag(dol_htmlentitiesbr($s), 1, -1);
+	return dol_escape_htmltag(dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 0, 0, 0, array('br', 'b', 'font', 'span')), 1, -1, '', 0, 1);
 }
 
 /**
@@ -2517,7 +2517,13 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		} else {
 			$morehtmlstatus .= '<span class="statusrefbuy">'.$object->getLibStatut(6, 1).'</span>';
 		}
-	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier', 'chargesociales', 'loan', 'tva', 'salary'))) {
+	} elseif (in_array($object->element, array('salary'))) {
+		$tmptxt = $object->getLibStatut(6, $object->alreadypaid);
+		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
+			$tmptxt = $object->getLibStatut(5, $object->alreadypaid);
+		}
+		$morehtmlstatus .= $tmptxt;
+	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier', 'chargesociales', 'loan', 'tva'))) {	// TODO Move this to use ->alreadypaid
 		$tmptxt = $object->getLibStatut(6, $object->totalpaid);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
 			$tmptxt = $object->getLibStatut(5, $object->totalpaid);
@@ -7611,6 +7617,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 			if (!empty($out) && getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML') && $check != 'restricthtmlallowunvalid') {
 				try {
 					libxml_use_internal_errors(false);	// Avoid to fill memory with xml errors
+					libxml_disable_entity_loader(true);	// Avoid load of external entities (security problem). Required only if LIBXML_VERSION < 20900
 
 					$dom = new DOMDocument();
 					// Add a trick to solve pb with text without parent tag
@@ -9775,8 +9782,15 @@ function picto_from_langcode($codelang, $moreatt = '', $notitlealt = 0)
 		$flagImage = empty($tmparray[1]) ? $tmparray[0] : $tmparray[1];
 	}
 
+	$morecss = '';
+	$reg = array();
+	if (preg_match('/class="([^"]+)"/', $moreatt, $reg)) {
+		$morecss = $reg[1];
+		$moreatt = "";
+	}
+
 	// return img_picto_common($codelang, 'flags/'.strtolower($flagImage).'.png', $moreatt, 0, $notitlealt);
-	return '<span class="flag-sprite '.strtolower($flagImage).'"'.($moreatt ? ' '.$moreatt : '').(!$notitlealt ? ' title="'.$codelang.'"' : '').'></span>';
+	return '<span class="flag-sprite '.strtolower($flagImage).($morecss ? ' '.$morecss : '').'"'.($moreatt ? ' '.$moreatt : '').(!$notitlealt ? ' title="'.$codelang.'"' : '').'></span>';
 }
 
 /**
@@ -11882,7 +11896,7 @@ function getElementProperties($element_type)
 		$subelement = $regs[2];
 	}
 
-	// For compat and To work with non standard path
+	// For compatibility and to work with non standard path
 	if ($element_type == "action") {
 		$classpath = 'comm/action/class';
 		$subelement = 'Actioncomm';
@@ -12034,6 +12048,11 @@ function getElementProperties($element_type)
 	} elseif ($element_type == 'salary') {
 		$classpath = 'salaries/class';
 		$module = 'salaries';
+	} elseif ($element_type == 'payment_salary') {
+		$classpath = 'salaries/class';
+		$classfile = 'paymentsalary';
+		$classname = 'PaymentSalary';
+		$module = 'salaries';
 	} elseif ($element_type == 'productlot') {
 		$module = 'productbatch';
 		$classpath = 'product/stock/class';
@@ -12105,6 +12124,8 @@ function getElementProperties($element_type)
 		'classname' => $classname,
 		'dir_output' => $dir_output
 	);
+
+	//var_dump($element_properties);
 	return $element_properties;
 }
 

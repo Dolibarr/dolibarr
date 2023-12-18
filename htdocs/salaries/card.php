@@ -877,6 +877,7 @@ if ($id > 0) {
 	$morehtmlref .= '</div>';
 
 	$totalpaid = $object->getSommePaiement();
+	$object->alreadypaid = $totalpaid;
 	$object->totalpaid = $totalpaid;
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
@@ -1012,13 +1013,21 @@ if ($id > 0) {
 		print '<td class="right">'.$langs->trans("Amount").'</td>';
 		print '</tr>';
 
+		$paymentsalarytemp = new PaymentSalary($db);
+
 		if ($num > 0) {
 			$bankaccountstatic = new Account($db);
 			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
 
+				$paymentsalarytemp->id = $objp->rowid;
+				$paymentsalarytemp->ref = $objp->rowid;
+				$paymentsalarytemp->num_payment = $objp->num_payment;
+				$paymentsalarytemp->datep = $objp->dp;
+
 				print '<tr class="oddeven"><td>';
-				print '<a href="'.DOL_URL_ROOT.'/salaries/payment_salary/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"), "payment").' '.$objp->rowid.'</a></td>';
+				print $paymentsalarytemp->getNomUrl(1);
+				print '</td>';
 				print '<td>'.dol_print_date($db->jdate($objp->dp), 'dayhour', 'tzuserrel')."</td>\n";
 				$labeltype = $langs->trans("PaymentType".$objp->type_code) != ("PaymentType".$objp->type_code) ? $langs->trans("PaymentType".$objp->type_code) : $objp->paiement_type;
 				print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
