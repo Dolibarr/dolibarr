@@ -262,7 +262,7 @@ class RssParser
 				libxml_use_internal_errors(false);
 				libxml_disable_entity_loader(true);	// Avoid load of external entities (security problem). Required only if LIBXML_VERSION < 20900
 
-				$rss = simplexml_load_string($str, "SimpleXMLElement", LIBXML_NOCDATA|LIBXML_NOCDATA);
+				$rss = simplexml_load_string($str, "SimpleXMLElement", LIBXML_NOCDATA|LIBXML_NOENT);
 			} else {
 				if (!function_exists('xml_parser_create')) {
 					$this->error = 'Function xml_parser_create are not supported by your PHP';
