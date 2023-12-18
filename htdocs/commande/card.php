@@ -166,6 +166,8 @@ if (empty($reshook)) {
 		}
 	}
 
+	$selectedLines = "";
+
 	if ($cancel) {
 		if (!empty($backtopageforcancel)) {
 			header("Location: ".$backtopageforcancel);
