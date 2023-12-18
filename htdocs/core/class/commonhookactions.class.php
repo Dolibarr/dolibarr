@@ -51,6 +51,7 @@ abstract class CommonHookActions
 					return true;
 				}
 			}
+			return false;
 		}
 		if ($parameters['currentcontext'] == $allContexts) {
 			return true;
