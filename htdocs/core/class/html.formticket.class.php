@@ -1532,7 +1532,7 @@ class FormTicket
 					$ticketstat->socid = $ticketstat->fk_soc;
 					$ticketstat->fetch_thirdparty();
 
-					if (is_array($ticketstat->thirdparty->email) && !in_array($ticketstat->thirdparty->email, $sendto)) {
+					if (!empty($ticketstat->thirdparty->email) && !in_array($ticketstat->thirdparty->email, $sendto)) {
 						$sendto[] = $ticketstat->thirdparty->email.' <small class="opacitymedium">('.$langs->trans('Customer').')</small>';
 					}
 				}

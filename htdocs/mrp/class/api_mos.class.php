@@ -201,6 +201,12 @@ class Mos extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->mo->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->mo->$field = $value;
 		}
 
@@ -239,6 +245,12 @@ class Mos extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->mo->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->mo->$field = $value;
 		}
 
@@ -321,6 +333,13 @@ class Mos extends DolibarrApi
 			throw new RestException(401, 'Error bad status of MO');
 		}
 
+		// Code for consume and produce...
+		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/mrp/lib/mrp_mo.lib.php';
+
+		$stockmove = new MouvementStock($this->db);
+
 		$labelmovement = '';
 		$codemovement = '';
 		$autoclose = 1;
@@ -343,6 +362,11 @@ class Mos extends DolibarrApi
 			if ($field == 'arraytoproduce') {
 				$arraytoproduce = $value;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$stockmove->context['caller'] = $request_data['caller'];
+				continue;
+			}
 		}
 
 		if (empty($labelmovement)) {
@@ -351,13 +375,6 @@ class Mos extends DolibarrApi
 		if (empty($codemovement)) {
 			throw new RestException(500, "Field inventorycode not provided");
 		}
-
-		// Code for consume and produce...
-		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
-		dol_include_once('/mrp/lib/mrp_mo.lib.php');
-
-		$stockmove = new MouvementStock($this->db);
 
 		$consumptioncomplete = true;
 		$productioncomplete = true;

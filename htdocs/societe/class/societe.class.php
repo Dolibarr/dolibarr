@@ -1775,7 +1775,7 @@ class Societe extends CommonObject
 		global $langs;
 		global $conf;
 
-		if (empty($rowid) && empty($ref) && empty($ref_ext) && empty($barcode) && empty($idprof1) && empty($idprof2) && empty($idprof3) && empty($idprof4) && empty($idprof5) && empty($idprof6) && empty($email)) {
+		if (empty($rowid) && empty($ref) && empty($ref_ext) && empty($barcode) && empty($idprof1) && empty($idprof2) && empty($idprof3) && empty($idprof4) && empty($idprof5) && empty($idprof6) && empty($email) && empty($ref_alias)) {
 			return -1;
 		}
 
@@ -4462,7 +4462,7 @@ class Societe extends CommonObject
 		// We define country_id, country_code and country
 		$country_id = $country_code = $country_label = '';
 		if (getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY')) {
-			$tmp = explode(':', $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
+			$tmp = explode(':', getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY'));
 			$country_id = $tmp[0];
 			if (!empty($tmp[1])) {   // If $conf->global->MAIN_INFO_SOCIETE_COUNTRY is "id:code:label"
 				$country_code = $tmp[1];
@@ -4487,7 +4487,7 @@ class Societe extends CommonObject
 		$state_id = 0;
 		$state_code = $state_label = '';
 		if (getDolGlobalString('MAIN_INFO_SOCIETE_STATE')) {
-			$tmp = explode(':', $conf->global->MAIN_INFO_SOCIETE_STATE);
+			$tmp = explode(':', getDolGlobalString('MAIN_INFO_SOCIETE_STATE'));
 			$state_id = $tmp[0];
 			if (!empty($tmp[1])) {   // If $conf->global->MAIN_INFO_SOCIETE_STATE is "id:code:label"
 				$state_code = $tmp[1];

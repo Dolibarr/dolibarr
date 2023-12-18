@@ -676,7 +676,7 @@ if (getDolGlobalString('PROJECT_ELEMENTS_FOR_PLUS_MARGIN')) {
 			unset($listofreferent[$key]['margin']);
 		}
 	}
-	$newelementforplusmargin = explode(',', $conf->global->PROJECT_ELEMENTS_FOR_PLUS_MARGIN);
+	$newelementforplusmargin = explode(',', getDolGlobalString('PROJECT_ELEMENTS_FOR_PLUS_MARGIN'));
 	foreach ($newelementforplusmargin as $value) {
 		$listofreferent[trim($value)]['margin'] = 'add';
 	}
@@ -687,7 +687,7 @@ if (getDolGlobalString('PROJECT_ELEMENTS_FOR_MINUS_MARGIN')) {
 			unset($listofreferent[$key]['margin']);
 		}
 	}
-	$newelementforminusmargin = explode(',', $conf->global->PROJECT_ELEMENTS_FOR_MINUS_MARGIN);
+	$newelementforminusmargin = explode(',', getDolGlobalString('PROJECT_ELEMENTS_FOR_MINUS_MARGIN'));
 	foreach ($newelementforminusmargin as $value) {
 		$listofreferent[trim($value)]['margin'] = 'minus';
 	}

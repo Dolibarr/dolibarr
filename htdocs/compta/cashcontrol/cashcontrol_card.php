@@ -416,7 +416,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 		print '<td>';
 
 		$array = array();
-		$numterminals = max(1, $conf->global->TAKEPOS_NUM_TERMINALS);
+		$numterminals = max(1, getDolGlobalString('TAKEPOS_NUM_TERMINALS'));
 		for ($i = 1; $i <= $numterminals; $i++) {
 			$array[$i] = $i;
 		}

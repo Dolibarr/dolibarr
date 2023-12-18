@@ -918,7 +918,7 @@ if ($action == 'edit') {
 		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_AUTOCOPY_TO").'</td>';
 		print '<td>';
 		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO')) {
-			$listofemail = explode(',', $conf->global->MAIN_MAIL_AUTOCOPY_TO);
+			$listofemail = explode(',', getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO'));
 			$i = 0;
 			foreach ($listofemail as $key => $val) {
 				if ($i) {

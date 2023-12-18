@@ -126,7 +126,7 @@ if (getDolGlobalInt('TAKEPOS_BAR_RESTAURANT')) {
 	print '<td>'.$langs->trans("Parameters").'</td><td class="">'.$langs->trans("Value").'</td>';
 	print "</tr>\n";
 
-	if ($conf->global->TAKEPOS_PRINT_METHOD != "browser") {		// Why this ?
+	if (getDolGlobalString('TAKEPOS_PRINT_METHOD') != "browser") {		// Why this ?
 		print '<tr class="oddeven value"><td>';
 		print $langs->trans("OrderPrinters").' (<a href="'.DOL_URL_ROOT.'/takepos/admin/orderprinters.php?leftmenu=setup">'.$langs->trans("Setup").'</a>)';
 		print '</td>';

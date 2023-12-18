@@ -627,13 +627,13 @@ print '<strong>MAIN_SECURITY_HASH_ALGO</strong> = '.getDolGlobalString('MAIN_SEC
 if (!getDolGlobalString('MAIN_SECURITY_HASH_ALGO')) {
 	print '<span class="opacitymedium"> &nbsp; &nbsp; If unset: \'md5\'</span>';
 }
-if ($conf->global->MAIN_SECURITY_HASH_ALGO != 'password_hash') {
+if (getDolGlobalString('MAIN_SECURITY_HASH_ALGO') != 'password_hash') {
 	print '<br><strong>MAIN_SECURITY_SALT</strong> = '.getDolGlobalString('MAIN_SECURITY_SALT', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').'<br>';
 } else {
 	print '<span class="opacitymedium">('.$langs->trans("Recommended").': password_hash)</span>';
 	print '<br>';
 }
-if ($conf->global->MAIN_SECURITY_HASH_ALGO != 'password_hash') {
+if (getDolGlobalString('MAIN_SECURITY_HASH_ALGO') != 'password_hash') {
 	print '<div class="info">The recommanded value for MAIN_SECURITY_HASH_ALGO is now \'password_hash\' but setting it now will make ALL existing passwords of all users not valid, so update is not possible.<br>';
 	print 'If you really want to switch, you must:<br>';
 	print '- Go on home - setup - other and add constant MAIN_SECURITY_HASH_ALGO to value \'password_hash\'<br>';

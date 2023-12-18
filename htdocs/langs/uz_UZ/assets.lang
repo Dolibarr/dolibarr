@@ -168,7 +168,7 @@ AssetDepreciationReversal=Orqaga qaytish
 #
 # Errors
 #
-AssetErrorAssetOrAssetModelIDNotProvide=Obyekt identifikatori yoki model ovozi berilmagan
+AssetErrorAssetOrAssetModelIDNotProvide=Obyekt identifikatori yoki topilgan model taqdim etilmagan
 AssetErrorFetchAccountancyCodesForMode="%s" amortizatsiya rejimi uchun buxgalteriya hisoblarini olishda xatolik yuz berdi
 AssetErrorDeleteAccountancyCodesForMode=Buxgalteriya hisoblarini "%s" amortizatsiya rejimidan o'chirishda xatolik yuz berdi
 AssetErrorInsertAccountancyCodesForMode="%s" amortizatsiya rejimining buxgalteriya hisoblarini kiritishda xatolik yuz berdi.

@@ -18,7 +18,7 @@
 #
 
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = System Zarządzania wiedzą
+ModuleKnowledgeManagementName = System Zarządzania Wiedzą
 # Module description 'ModuleKnowledgeManagementDesc'
 ModuleKnowledgeManagementDesc=Zarządzaj Zarządzaniem wiedzą lub Obsługą klienta
 
@@ -39,6 +39,7 @@ KnowledgeManagementAboutPage = Strona informacyjna Zarządzania wiedzą
 
 KnowledgeManagementArea = Zarządzanie wiedzą
 MenuKnowledgeRecord = Baza wiedzy
+MenuKnowledgeRecordShort = Baza wiedzy
 ListKnowledgeRecord = Lista artykułów
 NewKnowledgeRecord = Nowy artykuł
 ValidateReply = Sprawdź poprawność rozwiązania
@@ -47,8 +48,14 @@ KnowledgeRecord = Artykuł
 KnowledgeRecordExtraFields = Extrapola dla artykułu
 GroupOfTicket=Grupa biletów
 YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
-SuggestedForTicketsInGroup=Suggested for tickets when group is
+SuggestedForTicketsInGroup=Suggested on ticket creation
 
 SetObsolete=Set as obsolete
 ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
 ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+BoxLastKnowledgerecordDescription=Last %s articles
+BoxLastKnowledgerecord=Last articles
+BoxLastKnowledgerecordContent=Last articles
+BoxLastKnowledgerecordModifiedContent=Last modified articles
+BoxLastModifiedKnowledgerecordDescription=Last %s modified articles
+BoxLastModifiedKnowledgerecord=Last modified articles

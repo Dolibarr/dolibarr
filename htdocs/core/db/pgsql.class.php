@@ -756,10 +756,10 @@ class DoliDBPgsql extends DoliDB
 	 *
 	 *	@param	string	$subject        string tested
 	 *	@param	string  $pattern        SQL pattern to match
-	 *	@param	string	$sqlstring      whether or not the string being tested is an SQL expression
+	 *	@param	int		$sqlstring      whether or not the string being tested is an SQL expression
 	 *	@return	string          		SQL string
 	 */
-	public function regexpsql($subject, $pattern, $sqlstring = false)
+	public function regexpsql($subject, $pattern, $sqlstring = 0)
 	{
 		if ($sqlstring) {
 			return "(". $subject ." ~ '" . $pattern . "')";

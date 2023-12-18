@@ -507,6 +507,7 @@ if ($tabname[$id]) {
 		}
 		if ($fieldlist[$field] == 'code') {
 			$valuetoshow = $langs->trans("Code");
+			$class = 'width75';
 		}
 		if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') {
 			$valuetoshow = $langs->trans("Label");
@@ -869,8 +870,11 @@ if ($resql) {
 								$key = $langs->trans("Country".strtoupper($obj->country_code));
 								$valuetoshow = ($key != "Country".strtoupper($obj->country_code) ? $obj->country_code." - ".$key : $obj->country);
 							}
-						} elseif (in_array($fieldlist[$field], array('label', 'range_account', 'formula'))) {
+						} elseif (in_array($fieldlist[$field], array('label', 'formula'))) {
 							$class = "tdoverflowmax250";
+							$title = $valuetoshow;
+						} elseif (in_array($fieldlist[$field], array('range_account'))) {
+							$class = "tdoverflowmax250 small";
 							$title = $valuetoshow;
 						} elseif ($fieldlist[$field] == 'region_id' || $fieldlist[$field] == 'country_id') {
 							$showfield = 0;
@@ -994,8 +998,11 @@ function fieldListAccountingCategories($fieldlist, $obj = '', $tabname = '', $co
 		} else {
 			print '<td>';
 			$class = '';
-			if (in_array($fieldlist[$field], array('code', 'range_account', 'label', 'formula'))) {
-				$class = 'maxwidth100';
+			if (in_array($fieldlist[$field], array('code', 'formula'))) {
+				$class = 'maxwidth75';
+			}
+			if (in_array($fieldlist[$field], array('label', 'range_account'))) {
+				$class = 'maxwidth150';
 			}
 			if ($fieldlist[$field] == 'position') {
 				$class = 'maxwidth50';

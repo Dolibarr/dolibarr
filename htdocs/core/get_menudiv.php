@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
  * bugs, to add new features and to dramatically increase speed.
@@ -139,6 +139,12 @@ print '
 	}
 	li.lilevel2 a {
 		padding-left: 60px !important;
+	}
+	li.lilevel3 a {
+		padding-left: 90px !important;
+	}
+	li.lilevel4 a {
+		padding-left: 120px !important;
 	}
 
     a.alilevel0, span.spanlilevel0 {

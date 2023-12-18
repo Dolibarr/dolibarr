@@ -342,7 +342,7 @@ if ($resql) {
 		print '<tr class="oddeven">';
 
 		print '<td class="nowraponall">';
-		print($salaryBonPl ? $salarytmp->getNomUrl(1) : $invoicetmp->getNomUrl(1));
+		print ($salaryBonPl ? $salarytmp->getNomUrl(1) : $invoicetmp->getNomUrl(1));
 		print "</td>\n";
 
 		if ($object->type == 'bank-transfer' && !$salaryBonPl) {
