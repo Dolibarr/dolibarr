@@ -913,33 +913,6 @@ class PaymentSalary extends CommonObject
 			$result .= $hookmanager->resPrint;
 		}
 
-		/*
-		if (empty($this->ref)) $this->ref = $this->lib;
-
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("SalaryPayment").'</u>';
-		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-		if (!empty($this->label)) {
-			$labeltoshow = $this->label;
-			$reg = array();
-			if (preg_match('/^\((.*)\)$/i', $this->label, $reg)) {
-				// Label generique car entre parentheses. On l'affiche en le traduisant
-				if ($reg[1] == 'paiement') $reg[1] = 'Payment';
-				$labeltoshow = $langs->trans($reg[1]);
-			}
-			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$labeltoshow;
-		}
-		if ($this->datep) {
-			$label .= '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->datep, 'day');
-		}
-
-		if (!empty($this->id)) {
-			$link = '<a href="'.DOL_URL_ROOT.'/salaries/payment_salary/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-			$linkend = '</a>';
-
-			if ($withpicto) $result .= ($link.img_object($label, 'payment', 'class="classfortooltip"').$linkend);
-			if ($withpicto != 2) $result .= $link.($maxlen ?dol_trunc($this->ref, $maxlen) : $this->ref).$linkend;
-		}
-		*/
 		return $result;
 	}
 
@@ -969,8 +942,10 @@ class PaymentSalary extends CommonObject
 			if (!empty($this->total_ttc)) {
 				$datas['AmountTTC'] = '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
 			}
-			if (!empty($this->datepaye)) {
-				$datas['Date'] = '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->datepaye, 'day');
+			if (!empty($this->datep)) {
+				$datas['Date'] = '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->datep, 'dayhour', 'tzuserrel');
+			} elseif (!empty($this->datepaye)) {
+				$datas['Date'] = '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->datepaye, 'dayhour', 'tzuserrel');
 			}
 		}
 

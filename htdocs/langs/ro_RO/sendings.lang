@@ -39,7 +39,7 @@ StatusSendingValidatedShort=Validată
 StatusSendingProcessedShort=Procesată
 SendingSheet=Aviz de expediţie
 ConfirmDeleteSending=Sigur doriți să ștergeți această livrare?
-ConfirmValidateSending=Sigur doriți să validați această livrare cu referința <b>%s</b>?
+ConfirmValidateSending=Ești sigur că vrei să validezi această expediere-livrare cu referința <b>%s</b>?
 ConfirmCancelSending=Sigur doriți să anulați livrarea?
 DocumentModelMerou=Model Merou A5
 WarningNoQtyLeftToSend=Atenţie, nu sunt produse care aşteaptă să fie livrate.
@@ -62,6 +62,7 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=Cantitatea de produs care a fost re
 NoProductToShipFoundIntoStock=Nu există niciun produs de livrat în depozitul <b>%s</b>. Corectați stocul sau reveniți pentru a alege un alt depozit.
 WeightVolShort=Greutate/Volum.
 ValidateOrderFirstBeforeShipment=Mai întâi trebuie să validezi comanda de vânzare înainte de a putea face livrări.
+NoLineGoOnTabToAddSome=Nicio linie/articol, mergi în fila "%s" pentru adăugare
 
 # Sending methods
 # ModelDocument
@@ -74,8 +75,12 @@ SumOfProductWeights=Greutatea totală a produselor
 # warehouse details
 DetailWarehouseNumber= Detalii depozit
 DetailWarehouseFormat= Greutate: %s (Cantitate: %d)
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Afișează ultima dată de intrare în stoc în timpul creării expedierii pentru numărul de serie sau lot
+CreationOptions=Opțiuni disponibile în timpul creării expedierii
 
 ShipmentDistribution=Expediere distribuție
 
-ErrorTooManyCombinationBatchcode=Nicio expediere pentru linia %s , deoarece au fost găsite prea multe combinații de depozit, produs, lot (%s).
-ErrorNoCombinationBatchcode=Nicio expediere pentru linia %s, deoarece nu a fost găsită nicio combinație de depozit, produs, lot. 
+ErrorTooManyCombinationBatchcode=Nicio expediere pentru linia %s, deoarece au fost găsite prea multe combinații de cod de depozit, produs, lot (%s).
+ErrorNoCombinationBatchcode=Nu s-a putut salva linia %s deoarece combinația depozit-produs-lot/serial (%s, %s, %s) nu a fost găsită în stoc.
+
+ErrorTooMuchShipped=Cantitatea livrată nu ar trebui să fie mai mare decât cea comandată pentru linia/articolul %s

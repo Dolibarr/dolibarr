@@ -28,7 +28,7 @@ Escpos-php             3.0           MIT License                 Yes            
 GeoIP2                 0.2.0         Apache License 2.0          Yes             Lib to make geoip convert
 MathPHP                2.8.1         MIT License                 Yes             Modern math library for PHP (only few files)
 Mobiledetect           2.8.41        MIT License                 Yes             Detect mobile devices browsers
-NuSoap                 0.9.5         LGPL 2.1+                   Yes             Library to develop SOAP Web services (not into rpm and deb package)
+NuSoap                 0.9.16        LGPL 2.1+                   Yes             Library to develop SOAP Web services. From https://github.com/f00b4r/nusoap/tree/v0.9.16
 PEAR Mail_MIME         1.8.9         BSD                         Yes             NuSoap dependency
 ParseDown              1.7.4         MIT License                 Yes             Markdown parser
 PCLZip                 2.8.4         LGPL-3+                     Yes             Library to zip/unzip files
