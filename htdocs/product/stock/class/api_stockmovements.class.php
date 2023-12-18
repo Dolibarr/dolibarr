@@ -170,7 +170,7 @@ class StockMovements extends DolibarrApi
 	 * @param string $dlc Eat-by date. {@from body} {@type date}
 	 * @param string $dluo Sell-by date. {@from body} {@type date}
 	 * @param string $origin_type   Origin type (Element of source object, like 'project', 'inventory', ...)
-	 * @param string $origin_id     Origin id (Id of source object)
+	 * @param int $origin_id     Origin id (Id of source object)
 	 *
 	 * @return  int                         ID of stock movement
 	 * @throws RestException
