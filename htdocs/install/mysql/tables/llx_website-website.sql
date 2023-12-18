@@ -41,5 +41,6 @@ CREATE TABLE llx_website
     pageviews_month BIGINT UNSIGNED DEFAULT 0,			-- increased by 1 at each page access, saved into pageviews_previous_month when on different month than lastaccess 
     pageviews_total BIGINT UNSIGNED DEFAULT 0,			-- increased by 1 at each page access, no reset
 	tms           timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    import_key    varchar(14)      -- import key	
+    import_key    varchar(14),      -- import key	
+	name_template varchar(255) NULL
 ) ENGINE=innodb;
