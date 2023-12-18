@@ -1102,6 +1102,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	@param	User	$user			Object user
 	 *	@param	int		$idwarehouse	Id of warhouse for stock change
 	 *  @param	int		$secondlevel	0=Standard approval, 1=Second level approval (used when option SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED is set)
+	 *  @param	int		$selfapprove	1=Self approval
 	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function approve($user, $idwarehouse = 0, $secondlevel = 0, $selfapprove = 0)
