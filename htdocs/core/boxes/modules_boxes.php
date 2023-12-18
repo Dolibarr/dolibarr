@@ -223,7 +223,10 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 			if (!empty($head['text']) || !empty($head['sublink']) || !empty($head['subpicto'])) {
 				$out .= '<tr class="liste_titre box_titre">';
 				$out .= '<th';
-				if ($nbcol > 0) {
+				if (!empty($head['nbcol'])) {
+					$nbcol = $head['nbcol'];
+				}
+				if ($nbcol > 1) {
 					$out .= ' colspan="'.$nbcol.'"';
 				}
 				$out .= '>';
