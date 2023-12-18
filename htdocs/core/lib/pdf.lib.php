@@ -1410,28 +1410,27 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 {
 	global $db, $conf, $langs;
 
-    $multilangsactive = getDolGlobalInt('MAIN_MULTILANGS');
-
-    //id
+	$multilangsactive = getDolGlobalInt('MAIN_MULTILANGS');
+	//id
 	$idprod = (!empty($object->lines[$i]->fk_product) ? $object->lines[$i]->fk_product : false);
-    //label
-    if(!empty($object->lines[$i]->label)){
-        $label = $object->lines[$i]->label;
-    } else {
-        $label = (!empty($object->lines[$i]->multilangs[$langs->defaultlang]['label'] && $multilangsactive) ? $object->lines[$i]->multilangs[$langs->defaultlang]['label'] : (!empty($object->lines[$i]->product_label) ? $object->lines[$i]->product_label : ''));
-    }
-    //description
-    if(!empty($object->lines[$i]->desc)){
-        $desc = $object->lines[$i]->desc;
-    } else {
-        $desc = (!empty($object->lines[$i]->multilangs[$langs->defaultlang]['description'] && $multilangsactive) ? $object->lines[$i]->multilangs[$langs->defaultlang]['description'] : (!empty($object->lines[$i]->description) ? $object->lines[$i]->description : ''));
-    }
-    //ref supplier
+	//label
+	if (!empty($object->lines[$i]->label)) {
+		$label = $object->lines[$i]->label;
+	} else {
+		$label = (!empty($object->lines[$i]->multilangs[$langs->defaultlang]['label'] && $multilangsactive) ? $object->lines[$i]->multilangs[$langs->defaultlang]['label'] : (!empty($object->lines[$i]->product_label) ? $object->lines[$i]->product_label : ''));
+	}
+	//description
+	if (!empty($object->lines[$i]->desc)) {
+		$desc = $object->lines[$i]->desc;
+	} else {
+		$desc = (!empty($object->lines[$i]->multilangs[$langs->defaultlang]['description'] && $multilangsactive) ? $object->lines[$i]->multilangs[$langs->defaultlang]['description'] : (!empty($object->lines[$i]->description) ? $object->lines[$i]->description : ''));
+	}
+	//ref supplier
 	$ref_supplier = (!empty($object->lines[$i]->ref_supplier) ? $object->lines[$i]->ref_supplier : (!empty($object->lines[$i]->ref_fourn) ? $object->lines[$i]->ref_fourn : '')); // TODO Not yet saved for supplier invoices, only supplier orders
 	//note
-    $note = (!empty($object->lines[$i]->note) ? $object->lines[$i]->note : '');
+	$note = (!empty($object->lines[$i]->note) ? $object->lines[$i]->note : '');
 	//dbatch
-    $dbatch = (!empty($object->lines[$i]->detail_batch) ? $object->lines[$i]->detail_batch : false);
+	$dbatch = (!empty($object->lines[$i]->detail_batch) ? $object->lines[$i]->detail_batch : false);
 
 	if ($issupplierline) {
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
