@@ -1410,12 +1410,28 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 {
 	global $db, $conf, $langs;
 
+    $multilangsactive = getDolGlobalInt('MAIN_MULTILANGS');
+
+    //id
 	$idprod = (!empty($object->lines[$i]->fk_product) ? $object->lines[$i]->fk_product : false);
-	$label = (!empty($object->lines[$i]->label) ? $object->lines[$i]->label : (!empty($object->lines[$i]->product_label) ? $object->lines[$i]->product_label : ''));
-	$desc = (!empty($object->lines[$i]->desc) ? $object->lines[$i]->desc : (!empty($object->lines[$i]->description) ? $object->lines[$i]->description : ''));
+    //label
+    if(!empty($object->lines[$i]->label)){
+        $label = $object->lines[$i]->label;
+    } else {
+        $label = (!empty($object->lines[$i]->multilangs[$langs->defaultlang]['label'] && $multilangsactive) ? $object->lines[$i]->multilangs[$langs->defaultlang]['label'] : (!empty($object->lines[$i]->product_label) ? $object->lines[$i]->product_label : ''));
+    }
+    //description
+    if(!empty($object->lines[$i]->desc)){
+        $desc = $object->lines[$i]->desc;
+    } else {
+        $desc = (!empty($object->lines[$i]->multilangs[$langs->defaultlang]['description'] && $multilangsactive) ? $object->lines[$i]->multilangs[$langs->defaultlang]['description'] : (!empty($object->lines[$i]->description) ? $object->lines[$i]->description : ''));
+    }
+    //ref supplier
 	$ref_supplier = (!empty($object->lines[$i]->ref_supplier) ? $object->lines[$i]->ref_supplier : (!empty($object->lines[$i]->ref_fourn) ? $object->lines[$i]->ref_fourn : '')); // TODO Not yet saved for supplier invoices, only supplier orders
-	$note = (!empty($object->lines[$i]->note) ? $object->lines[$i]->note : '');
-	$dbatch = (!empty($object->lines[$i]->detail_batch) ? $object->lines[$i]->detail_batch : false);
+	//note
+    $note = (!empty($object->lines[$i]->note) ? $object->lines[$i]->note : '');
+	//dbatch
+    $dbatch = (!empty($object->lines[$i]->detail_batch) ? $object->lines[$i]->detail_batch : false);
 
 	if ($issupplierline) {
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
@@ -1432,7 +1448,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	if ($idprod) {
 		$prodser->fetch($idprod);
 		// If a predefined product and multilang and on other lang, we renamed label with label translated
-		if (getDolGlobalInt('MAIN_MULTILANGS') && ($outputlangs->defaultlang != $langs->defaultlang)) {
+		if ($multilangsactive && ($outputlangs->defaultlang != $langs->defaultlang)) {
 			$translatealsoifmodified = (!empty($conf->global->MAIN_MULTILANG_TRANSLATE_EVEN_IF_MODIFIED)); // By default if value was modified manually, we keep it (no translation because we don't have it)
 
 			// TODO Instead of making a compare to see if param was modified, check that content contains reference translation. If yes, add the added part to the new translation

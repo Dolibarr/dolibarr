@@ -1680,7 +1680,7 @@ class Propal extends CommonObject
 				$this->lines = array();
 
 				// Lines
-				$result = $this->fetch_lines();
+				$result = $this->fetch_lines(0, (!empty(getDolGlobalInt('MAIN_MULTILANGS')) ? 1 : 0));
 				if ($result < 0) {
 					return -3;
 				}
