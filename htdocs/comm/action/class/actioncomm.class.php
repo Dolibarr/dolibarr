@@ -2414,7 +2414,7 @@ class ActionComm extends CommonObject
 		$this->reminders = array();
 
 		//Select all action comm reminders for event
-		$sql = "SELECT rowid as id, typeremind, dateremind, status, offsetvalue, offsetunit, fk_user";
+		$sql = "SELECT rowid as id, typeremind, dateremind, status, offsetvalue, offsetunit, fk_user, fk_email_template, lasterror";
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
 		$sql .= " WHERE fk_actioncomm = ".((int) $this->id);
 		if ($onlypast) {
@@ -2446,6 +2446,8 @@ class ActionComm extends CommonObject
 				$tmpactioncommreminder->offsetunit = $obj->offsetunit;
 				$tmpactioncommreminder->status = $obj->status;
 				$tmpactioncommreminder->fk_user = $obj->fk_user;
+				$tmpactioncommreminder->fk_email_template = $obj->fk_email_template;
+				$tmpactioncommreminder->lasterror = $obj->lasterror;
 
 				$this->reminders[$obj->id] = $tmpactioncommreminder;
 			}
