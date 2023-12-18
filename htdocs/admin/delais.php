@@ -286,7 +286,7 @@ if ($action == 'edit') {
 print '<br>';
 
 
-if (!getDolGlobalString('MAIN_DISABLE_METEO') || $conf->global->MAIN_DISABLE_METEO != 1) {
+if (!getDolGlobalString('MAIN_DISABLE_METEO') || getDolGlobalInt('MAIN_DISABLE_METEO') != 1) {
 	// Show logo for weather
 	print '<span class="opacitymedium">'.$langs->trans("DescWeather").'</span> ';
 

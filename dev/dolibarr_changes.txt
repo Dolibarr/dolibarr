@@ -44,23 +44,22 @@ With
 
 NUSOAP:
 -------
-* In file nusoap.php, to avoid a warning,
-Replace
-	if (isset($this->methodreturn) && ((get_class($this->methodreturn) == 'soap_fault') || (get_class($this->methodreturn) == 'nusoap_fault'))) {
-By
-	if (! is_array($this->methodreturn) && isset($this->methodreturn) && ((get_class($this->methodreturn) == 'soap_fault') || (get_class($this->methodreturn) == 'nusoap_fault'))) {
+* Line 1257 of file nusoap.php. Add:
 
-* In file nusoap.php, to avoid a warning,
-Replace call to serialize_val with no bugged value
+	libxml_disable_entity_loader(true);	// Avoid load of external entities (security problem). Required only for libxml < 2.
+	
+	
+* Line 4346 of file nusoap.php
 
-* In all files, replace constructor names into __construct. Replace also parent::constructor_name with parent::__construct
+	$rev = array();
+	preg_match('/\$Revision: ([^ ]+)/', $this->revision, $rev);
+	$this->outgoing_headers[] = "X-SOAP-Server: $this->title/$this->version (".(isset($rev[1]) ? $rev[1] : '').")";
 
-* Line 4222 of file nusoap.php
+* Line 6566 of file nusoap.php, replace
 
-		$rev = array();
-		preg_match('/\$Revision: ([^ ]+)/', $this->revision, $rev);
-		$this->outgoing_headers[] = "X-SOAP-Server: $this->title/$this->version (".(isset($rev[1]) ? $rev[1] : '').")";
-
+	if (count($attrs) > 0) {
+	with
+	if (is_array($attrs) && count($attrs) > 0) {
 
 
 

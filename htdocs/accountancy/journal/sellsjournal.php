@@ -94,10 +94,16 @@ $journal_label = $accountingjournalstatic->label;
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
 $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
 
-if (empty($date_startmonth) || empty($date_endmonth)) {
+if (empty($date_startmonth)) {
 	// Period by default on transfer
 	$dates = getDefaultDatesForTransfer();
 	$date_start = $dates['date_start'];
+	$pastmonthyear = $dates['pastmonthyear'];
+	$pastmonth = $dates['pastmonth'];
+}
+if (empty($date_endmonth)) {
+	// Period by default on transfer
+	$dates = getDefaultDatesForTransfer();
 	$date_end = $dates['date_end'];
 	$pastmonthyear = $dates['pastmonthyear'];
 	$pastmonth = $dates['pastmonth'];
@@ -464,7 +470,7 @@ if ($action == 'writebookkeeping' && !$error) {
 
 		// Warranty
 		if (!$errorforline) {
-			if (is_iterable($tabwarranty[$key])) {
+			if (is_array($tabwarranty[$key])) {
 				foreach ($tabwarranty[$key] as $k => $mt) {
 					$bookkeeping = new BookKeeping($db);
 					$bookkeeping->doc_date = $val["date"];
@@ -706,7 +712,7 @@ if ($action == 'writebookkeeping' && !$error) {
 
 		// Revenue stamp
 		if (!$errorforline) {
-			if (is_iterable($tabrevenuestamp[$key])) {
+			if (is_array($tabrevenuestamp[$key])) {
 				foreach ($tabrevenuestamp[$key] as $k => $mt) {
 					if ($mt) {
 						$accountingaccount->fetch(null, $k, true);    // TODO Use a cache for label
@@ -1144,7 +1150,7 @@ if (empty($action) || $action == 'view') {
 		}
 
 		// Warranty
-		if (is_iterable($tabwarranty[$key])) {
+		if (is_array($tabwarranty[$key])) {
 			foreach ($tabwarranty[$key] as $k => $mt) {
 				print '<tr class="oddeven">';
 				print "<!-- Thirdparty warranty -->";
@@ -1292,7 +1298,7 @@ if (empty($action) || $action == 'view') {
 		}
 
 		// Revenue stamp
-		if (is_iterable($tabrevenuestamp[$key])) {
+		if (is_array($tabrevenuestamp[$key])) {
 			foreach ($tabrevenuestamp[$key] as $k => $mt) {
 				print '<tr class="oddeven">';
 				print "<!-- Thirdparty revenuestamp -->";

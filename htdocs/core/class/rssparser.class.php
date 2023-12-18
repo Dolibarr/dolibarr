@@ -260,6 +260,8 @@ class RssParser
 			if (getDolGlobalString('EXTERNALRSS_USE_SIMPLEXML')) {
 				//print 'xx'.LIBXML_NOCDATA;
 				libxml_use_internal_errors(false);
+				libxml_disable_entity_loader(true);	// Avoid load of external entities (security problem). Required only if LIBXML_VERSION < 20900
+
 				$rss = simplexml_load_string($str, "SimpleXMLElement", LIBXML_NOCDATA|LIBXML_NOCDATA);
 			} else {
 				if (!function_exists('xml_parser_create')) {

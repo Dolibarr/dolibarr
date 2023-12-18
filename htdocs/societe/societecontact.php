@@ -38,12 +38,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 $langs->loadLangs(array('companies', 'orders'));
 
 // Get parameters
-$id = GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('socid', 'int');
+$id = GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('socid', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -270,9 +270,9 @@ if ($id > 0 || !empty($ref)) {
 
 						// Lastname
 						print "<td><a href=\"card.php?rowid=$objp->rowid\">";
-						print ((!empty($objp->lastname) || !empty($objp->firstname)) ? dol_trunc($memberstatic->getFullName($langs)) : '');
-						print (((!empty($objp->lastname) || !empty($objp->firstname)) && !empty($companyname)) ? ' / ' : '');
-						print (!empty($companyname) ? dol_trunc($companyname, 32) : '');
+						print((!empty($objp->lastname) || !empty($objp->firstname)) ? dol_trunc($memberstatic->getFullName($langs)) : '');
+						print(((!empty($objp->lastname) || !empty($objp->firstname)) && !empty($companyname)) ? ' / ' : '');
+						print(!empty($companyname) ? dol_trunc($companyname, 32) : '');
 						print "</a></td>\n";
 
 						// Login

@@ -173,6 +173,12 @@ class ExpenseReports extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->expensereport->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->expensereport->$field = $value;
 		}
 		/*if (isset($request_data["lines"])) {
@@ -420,6 +426,12 @@ class ExpenseReports extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->expensereport->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->expensereport->$field = $value;
 		}
 

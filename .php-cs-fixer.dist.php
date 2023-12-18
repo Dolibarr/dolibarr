@@ -8,6 +8,8 @@ $finder = (new PhpCsFixer\Finder())
 	'custom',
 	'documents',
 	'doctemplates',
+	'vendor',
+	'install/doctemplates',
 	'htdocs/custom',
 	'htdocs/includes',
 	'htdocs/install/doctemplates',

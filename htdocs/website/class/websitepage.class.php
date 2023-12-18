@@ -868,7 +868,7 @@ class WebsitePage extends CommonObject
 
 		$now = dol_now();
 
-		$this->fk_website = '';
+		$this->fk_website = 0;
 		$this->type_container = 'page';
 		$this->pageurl = 'specimen';
 		$this->aliasalt = 'specimenalt';
@@ -879,7 +879,7 @@ class WebsitePage extends CommonObject
 		$this->allowed_in_frames = 1;
 		$this->htmlheader = '';
 		$this->content = '<html><body>This is a html content</body></html>';
-		$this->status = '';
+		$this->status = self::STATUS_DRAFT;
 		$this->grabbed_from = '';
 		$this->date_creation = $now - (24 * 30 * 3600);
 		$this->date_modification = $now - (24 * 7 * 3600);

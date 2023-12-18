@@ -80,7 +80,7 @@ class InterfaceEventOrganization extends DolibarrTriggers
 		// Actions
 		if ($action == 'PROJECT_VALIDATE') {
 			if (getDolGlobalString('EVENTORGANIZATION_TASK_LABEL') && !empty($object->usage_organize_event)) {
-				$taskToDo = explode("\n", $conf->global->EVENTORGANIZATION_TASK_LABEL);
+				$taskToDo = explode("\n", getDolGlobalString('EVENTORGANIZATION_TASK_LABEL'));
 				if (is_array($taskToDo) && count($taskToDo)>0) {
 					// Load translation files required by the page
 					$langs->loadLangs(array("eventorganization"));
