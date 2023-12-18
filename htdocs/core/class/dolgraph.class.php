@@ -94,6 +94,7 @@ class DolGraph
 	public $bgcolorgrid = array(255, 255, 255); // array(R,G,B)
 	public $datacolor; // array(array(R,G,B),...)
 	public $borderwidth = 1;
+	public $borderskip = 'start';
 
 	private $stringtoshow; // To store string to output graph into HTML page
 
@@ -309,6 +310,18 @@ class DolGraph
 	public function setBorderWidth($borderwidth)
 	{
 		$this->borderwidth = $borderwidth;
+	}
+
+	/**
+	 * Set border skip
+	 *
+	 * @param 	int     $borderskip     Can be 'start' to skip start border, 'end' to skip end border, 'middle' to skip middle border,
+	 * 									'false' to not skip any border, 'true' to skip all border
+	 * @return	void
+	 */
+	public function setBorderSkip($borderskip)
+	{
+		$this->borderskip = $borderskip;
 	}
 
 	/**
@@ -1483,6 +1496,7 @@ class DolGraph
 					$this->stringtoshow .= 'borderWidth: \''.$this->borderwidth.'\', ';
 				}
 				$this->stringtoshow .= 'borderColor: \'' . $bordercolor . '\', ';
+				$this->stringtoshow .= 'borderSkipped: \'' . $this->borderskip . '\', ';
 				$this->stringtoshow .= 'backgroundColor: \'' . $color . '\', ';
 				if (!empty($arrayofgroupslegend) && !empty($arrayofgroupslegend[$i])) {
 					$this->stringtoshow .= 'stack: \'' . $arrayofgroupslegend[$i]['stacknum'] . '\', ';

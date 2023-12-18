@@ -139,12 +139,18 @@ class ContratTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
+		$soc = new Societe($db);
+		$soc->name = "ContratTest Unittest";
+		$socid = $soc->create($user);
+		$this->assertLessThan($socid, 0, $soc->errorsToString());
+
 		$localobject=new Contrat($db);
 		$localobject->initAsSpecimen();
+		$localobject->socid = $socid;
 		$result=$localobject->create($user);
 
 		print __METHOD__." result=".$result."\n";
-		$this->assertLessThan($result, 0);
+		$this->assertLessThan($result, 0, $localobject->errorsToString());
 
 		return $result;
 	}

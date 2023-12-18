@@ -1651,7 +1651,7 @@ function dolPrintHTML($s, $allowiframe = 0)
 }
 
 /**
- * Return a string ready to be output on an HTML attribute (alt, title, ...)
+ * Return a string ready to be output on an HTML attribute (alt, title, data-html, ...)
  *
  * @param	string	$s		String to print
  * @return	string			String ready for HTML output
@@ -1660,7 +1660,7 @@ function dolPrintHTMLForAttribute($s)
 {
 	// The dol_htmlentitiesbr will convert simple text into html
 	// The dol_escape_htmltag will escape html chars.
-	return dol_escape_htmltag(dol_htmlentitiesbr($s), 1, -1);
+	return dol_escape_htmltag(dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 0, 0, 0, array('br', 'b', 'font', 'span')), 1, -1, '', 0, 1);
 }
 
 /**
@@ -7617,6 +7617,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 			if (!empty($out) && getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML') && $check != 'restricthtmlallowunvalid') {
 				try {
 					libxml_use_internal_errors(false);	// Avoid to fill memory with xml errors
+					libxml_disable_entity_loader(true);	// Avoid load of external entities (security problem). Required only if LIBXML_VERSION < 20900
 
 					$dom = new DOMDocument();
 					// Add a trick to solve pb with text without parent tag
@@ -9781,8 +9782,15 @@ function picto_from_langcode($codelang, $moreatt = '', $notitlealt = 0)
 		$flagImage = empty($tmparray[1]) ? $tmparray[0] : $tmparray[1];
 	}
 
+	$morecss = '';
+	$reg = array();
+	if (preg_match('/class="([^"]+)"/', $moreatt, $reg)) {
+		$morecss = $reg[1];
+		$moreatt = "";
+	}
+
 	// return img_picto_common($codelang, 'flags/'.strtolower($flagImage).'.png', $moreatt, 0, $notitlealt);
-	return '<span class="flag-sprite '.strtolower($flagImage).'"'.($moreatt ? ' '.$moreatt : '').(!$notitlealt ? ' title="'.$codelang.'"' : '').'></span>';
+	return '<span class="flag-sprite '.strtolower($flagImage).($morecss ? ' '.$morecss : '').'"'.($moreatt ? ' '.$moreatt : '').(!$notitlealt ? ' title="'.$codelang.'"' : '').'></span>';
 }
 
 /**

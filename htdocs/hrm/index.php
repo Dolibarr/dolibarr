@@ -72,7 +72,7 @@ if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_IN
 	$setupcompanynotcomplete = 1;
 }
 
-$max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
 
 
 /*
@@ -89,6 +89,8 @@ if (isModEnabled('holiday') && !empty($setupcompanynotcomplete)) {
 /*
  * View
  */
+
+$listofsearchfields = array();
 
 $childids = $user->getAllChildIds();
 $childids[] = $user->id;
@@ -187,7 +189,7 @@ print '</div><div class="fichetwothirdright">';
 
 
 
-// Latest leave requests
+// Latest modified leave requests
 if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.photo, u.statut as user_status,";
 	$sql .= " x.rowid, x.ref, x.fk_type, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.tms as dm, x.statut as status";
@@ -271,7 +273,7 @@ if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 }
 
 
-// Latest expense report
+// Latest modified expense report
 if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'read')) {
 	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.statut as user_status, u.photo,";
 	$sql .= " x.rowid, x.ref, x.date_debut as date, x.tms as dm, x.total_ttc, x.fk_statut as status";
@@ -406,7 +408,7 @@ if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjo
 
 			$db->free($resql);
 		} else {
-			print '<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			print '<tr class="oddeven"><td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 		print "</table>";
 		print "</div>";
