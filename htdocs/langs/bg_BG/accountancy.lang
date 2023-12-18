@@ -16,8 +16,8 @@ ThisService=Тази услуга
 ThisProduct=Този продукт
 DefaultForService=Default for services
 DefaultForProduct=Default for products
-ProductForThisThirdparty=Product for this thirdparty
-ServiceForThisThirdparty=Service for this thirdparty
+ProductForThisThirdparty=Product for this third party
+ServiceForThisThirdparty=Service for this third party
 CantSuggest=Не може да се предложи
 AccountancySetupDoneFromAccountancyMenu=Повечето настройки на счетоводството се извършват от менюто %s
 ConfigAccountingExpert=Configuration of the module accounting (double entry)
@@ -38,7 +38,7 @@ DeleteCptCategory=Премахване на счетоводна сметка о
 ConfirmDeleteCptCategory=Сигурни ли сте, че искате да премахнете тази счетоводна сметка от групата счетоводни сметки?
 JournalizationInLedgerStatus=Статус на осчетоводяване
 AlreadyInGeneralLedger=Already transferred to accounting journals and ledger
-NotYetInGeneralLedger=Not yet transferred to accouting journals and ledger
+NotYetInGeneralLedger=Not yet transferred to accounting journals and ledger
 GroupIsEmptyCheckSetup=Групата е празна, проверете настройката на персонализираната счетоводна група
 DetailByAccount=Показване на детайли по сметка
 DetailBy=Detail by
@@ -53,15 +53,13 @@ ExportAccountingSourceDocHelp=With this tool, you can search and export the sour
 ExportAccountingSourceDocHelp2=To export your journals, use the menu entry %s - %s.
 ExportAccountingProjectHelp=Specify a project if you need an accounting report only for a specific project. Expense reports and loan payments are not included in project reports.
 ExportAccountancy=Export accountancy
-WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the accounting entries that have not been already exported (Export date is empty). If you want to include the accounting entries already exported to re-export them, click on the button above.
+WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the accounting entries that have not been already exported (Export date is empty). If you want to include the accounting entries already exported, click on the button above.
 VueByAccountAccounting=View by accounting account
 VueBySubAccountAccounting=View by accounting subaccount
 
 MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
 MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
 MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
-MainAccountForRevenueStampSaleNotDefined=Account (from the Chart of Account) for the revenue stamp (sales) not defined in setup
-MainAccountForRevenueStampPurchaseNotDefined=Account (from the Chart of Account) for the revenue stamp (purchases) not defined in setup
 MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
 MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
 MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
@@ -70,13 +68,14 @@ UserAccountNotDefined=Accounting account for user not defined in setup
 AccountancyArea=Секция за счетоводство
 AccountancyAreaDescIntro=Използването на счетоводния модул се извършва на няколко стъпки:
 AccountancyAreaDescActionOnce=Следните действия се изпълняват обикновено само веднъж или веднъж годишно...
-AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you automaticaly the correct default accounting account when transferring data in accounting
+AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you automatically the correct default accounting account when transferring data in accounting
 AccountancyAreaDescActionFreq=Следните действия се изпълняват обикновено всеки месец, седмица или ден при много големи компании...
 
 AccountancyAreaDescJournalSetup=STEP %s: Check content of your journal list from menu %s
 AccountancyAreaDescChartModel=СТЪПКА %s: Проверете дали съществува шаблон за сметкоплан или създайте такъв от меню %s
 AccountancyAreaDescChart=СТЪПКА %s: Изберете и / или попълнете вашият сметкоплан от меню %s
 
+AccountancyAreaDescFiscalPeriod=STEP %s: Define a fiscal year by default on which to integrate your accounting entries. For this, use the menu entry %s.
 AccountancyAreaDescVat=СТЪПКА %s: Определете счетоводните сметки за всяка ставка на ДДС. За това използвайте менюто %s.
 AccountancyAreaDescDefault=СТЪПКА %s: Определете счетоводните сметки по подразбиране. За това използвайте менюто %s.
 AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for each type of Expense report. For this, use the menu entry %s.
@@ -84,7 +83,7 @@ AccountancyAreaDescSal=СТЪПКА %s: Определете счетоводн�
 AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for Taxes (special expenses). For this, use the menu entry %s.
 AccountancyAreaDescDonation=СТЪПКА %s: Определете счетоводните сметки по подразбиране за дарения. За това използвайте менюто %s.
 AccountancyAreaDescSubscription=СТЪПКА %s: Определете счетоводните сметки по подразбиране за членски внос. За това използвайте менюто %s.
-AccountancyAreaDescMisc=СТЪПКА %s: Определете задължителната сметка по подразбиране и счетоводните сметки по подразбиране за различни транзакции. За това използвайте менюто %s.
+AccountancyAreaDescMisc=STEP %s: Define mandatory default accounts and default accounting accounts for miscellaneous transactions. For this, use the menu entry %s.
 AccountancyAreaDescLoan=СТЪПКА %s: Определете счетоводните сметки по подразбиране за кредити. За това използвайте менюто %s.
 AccountancyAreaDescBank=СТЪПКА %s: Определете счетоводните сметки и кодът на журнала за всяка банка и финансови сметки. За това използвайте менюто %s.
 AccountancyAreaDescProd=STEP %s: Define accounting accounts on your Products/Services. For this, use the menu entry %s.
@@ -95,6 +94,7 @@ AccountancyAreaDescAnalyze=СТЪПКА %s: Добавете или промен
 
 AccountancyAreaDescClosePeriod=СТЪПКА %s: Приключете периода, за да не може да се правят промени в бъдеще.
 
+TheFiscalPeriodIsNotDefined=A mandatory step in setup has not been completed (Fiscal period is not defined)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup has not been completed (accounting code journal not defined for all bank accounts)
 Selectchartofaccounts=Изберете активен сметкоплан
 ChangeAndLoad=Променяне и зареждане
@@ -171,8 +171,8 @@ ACCOUNTING_MANAGE_ZERO=Разрешава управление на различ
 BANK_DISABLE_DIRECT_INPUT=Деактивиране на директно добавяне на транзакция в банкова сметка
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Активиране на експортиране на журнали в състояние на чернова
 ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties, break ability to search on a part of value)
-ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, what is the period selected by default
+ACCOUNTING_DATE_START_BINDING=Disable binding & transfer in accountancy when date is below this date (the transactions before this date will be excluded by default)
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On the page to transfer data into accountancy, what is the period selected by default
 
 ACCOUNTING_SELL_JOURNAL=Sales journal - sales and returns
 ACCOUNTING_PURCHASE_JOURNAL=Purchase journal - purchase and returns
@@ -186,6 +186,8 @@ ACCOUNTING_SOCIAL_JOURNAL=Журнал за данъци
 ACCOUNTING_RESULT_PROFIT=Счетоводна сметка за резултат (печалба)
 ACCOUNTING_RESULT_LOSS=Счетоводна сметка за резултат (загуба)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Журнал за приключване
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=Accounting groups used for the balance sheet account (separate by comma)
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=Accounting groups used for the income statement (separate by comma)
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account (from the Chart Of Account) to be used as the account for transitional bank transfers
 TransitionalAccount=Преходна сметка за банков превод
@@ -290,7 +292,7 @@ DescVentilDoneCustomer=Consult here the list of the lines of invoices customers 
 DescVentilTodoCustomer=Bind invoice lines not already bound with a product account from chart of account
 ChangeAccount=Change the product/service account (from chart of account) for the selected lines with the following account:
 Vide=-
-DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product account from chart of account (only record not already transfered in accountancy are visible)
+DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product account from chart of account (only record not already transferred in accountancy are visible)
 DescVentilDoneSupplier=Преглед на списъка с редове на фактури за доставка и тяхната счетоводна сметка
 DescVentilTodoExpenseReport=Свържете редове на разходни отчети, които все още не са свързани със счетоводна сметка за такса
 DescVentilExpenseReport=Преглед на списъка с редове на разходни отчети, свързани (или не) със счетоводна сметка за такса
@@ -298,7 +300,7 @@ DescVentilExpenseReportMore=Ако настроите счетоводна см�
 DescVentilDoneExpenseReport=Преглед на списъка с редове на разходни отчети и тяхната счетоводна сметка за такса
 
 Closure=Annual closure
-DescClosure=Consult here the number of movements by month not yet validated & locked
+AccountancyClosureStep1Desc=Consult here the number of movements by month not yet validated & locked
 OverviewOfMovementsNotValidated=Overview of movements not validated and locked
 AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
 NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
@@ -341,7 +343,7 @@ AccountingJournalType3=Покупки
 AccountingJournalType4=Банка
 AccountingJournalType5=Разходни отчети
 AccountingJournalType8=Инвентар
-AccountingJournalType9=Има нови
+AccountingJournalType9=Retained earnings
 GenerationOfAccountingEntries=Generation of accounting entries
 ErrorAccountingJournalIsAlreadyUse=Този журнал вече се използва
 AccountingAccountForSalesTaxAreDefinedInto=Бележка: Счетоводната сметка за данък върху продажбите е дефинирана в меню <b>%s</b> - <b>%s</b>
@@ -352,12 +354,14 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disable binding & transfer in accountanc
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accountancy on expense reports (expense reports will not be taken into account in accounting)
 ACCOUNTING_ENABLE_LETTERING=Enable the lettering function in the accounting
 ACCOUNTING_ENABLE_LETTERING_DESC=When this options is enabled, you can define, on each accounting entry, a code so you can group different accounting movements together. In the past, when different journals was managed independently, this feature was necessary to group movement lines of different journals together. However, with Dolibarr accountancy, such a tracking code, called "<b>%s</b>" is already saved automatically, so an automatic lettering is already done, with no risk of error so this feature has become useless for a common usage. Manual lettering feature is provided for end users that really don't trust the computer engine making the transfer of data in accountancy.
-EnablingThisFeatureIsNotNecessary=Enabling this feature is no more necessary for a rigourous accounting management.
+EnablingThisFeatureIsNotNecessary=Enabling this feature is no more necessary for a rigorous accounting management.
 ACCOUNTING_ENABLE_AUTOLETTERING=Enable the automatic lettering when transferring to accounting
-ACCOUNTING_ENABLE_AUTOLETTERING_DESC=The code for the lettering is automatically generated and incremented and not choosed by the end user
+ACCOUNTING_ENABLE_AUTOLETTERING_DESC=The code for the lettering is automatically generated and incremented and not chosen by the end user
+ACCOUNTING_LETTERING_NBLETTERS=Number of letters when generating lettering code (default 3)
+ACCOUNTING_LETTERING_NBLETTERS_DESC=Some accounting software only accepts a two-letter code. This parameter allows you to set this aspect. The default number of letters is three.
 OptionsAdvanced=Advanced options
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Activate the management of VAT reverse charge on supplier purchases
-ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transfered into accountancy differently: A additionnal debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page.
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transferred into accountancy differently: A additional debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page.
 
 ## Export
 NotExportLettering=Do not export the lettering when generating the file
@@ -420,7 +424,7 @@ SaleLocal=Локална продажба
 SaleExport=Експортна продажба
 SaleEEC=Вътреобщностна продажба
 SaleEECWithVAT=Продажба в ЕИО с ДДС различен от нула, за която се предполага, че НЕ е вътреобщностна продажба, поради тази причина се препоръчва стандартната сметка за продукти.
-SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the thirdparty, or change the product account suggested for binding if needed.
+SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of third party is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the third party, or change the product account suggested for binding if needed.
 ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
 ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
@@ -441,16 +445,30 @@ AccountancyNoUnletteringModified=No unreconcile modified
 AccountancyOneUnletteringModifiedSuccessfully=One unreconcile successfully modified
 AccountancyUnletteringModifiedSuccessfully=%s unreconcile successfully modified
 
+## Closure
+AccountancyClosureStep1=Step 1 : Validate and lock movements
+AccountancyClosureStep2=Step 2 : Close fiscal period
+AccountancyClosureStep3=Step 3 : Extract entries (Optional)
+AccountancyClosureClose=Close fiscal period
+AccountancyClosureAccountingReversal=Extract and record "Retained earnings" entries
+AccountancyClosureStep3NewFiscalPeriod=Next fiscal period
+AccountancyClosureGenerateClosureBookkeepingRecords=Generate "Retained earnings" entries on the next fiscal period
+AccountancyClosureSeparateAuxiliaryAccounts=When generating the "Retained earnings" entries, detail the sub-ledger accounts
+AccountancyClosureCloseSuccessfully=Fiscal period has been closed successfully
+AccountancyClosureInsertAccountingReversalSuccessfully=Bookkeeping entries for "Retained earnings" has been inserted successfully
+
 ## Confirm box
 ConfirmMassUnletteringAuto=Bulk auto unreconcile confirmation
 ConfirmMassUnletteringManual=Bulk manual unreconcile confirmation
 ConfirmMassUnletteringQuestion=Are you sure you want to unreconcile the %s selected record(s)?
 ConfirmMassDeleteBookkeepingWriting=Потвърждение за масово изтриване
 ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all line entries related to the same transaction will be deleted). Are you sure you want to delete the %s selected entries?
+AccountancyClosureConfirmClose=Are you sure you want to close the current fiscal period ? <span class="warning">You understand that closing the fiscal period is an irreversible action and will permanently block any modification or deletion of entries over this period</span>.
+AccountancyClosureConfirmAccountingReversal=Are you sure you want to record entries for the "Retained earnings" ?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Някои задължителни стъпки за настройка не са направени, моля изпълнете ги.
-ErrorNoAccountingCategoryForThisCountry=Няма налична група счетоводни сметки за държава %s (Вижте Начално -> Настройка -> Речници)
+ErrorNoAccountingCategoryForThisCountry=No accounting account group available for country %s (See %s - %s - %s)
 ErrorInvoiceContainsLinesNotYetBounded=Опитвате се да осчетоводите някои редове на фактура <strong>%s</strong>, но някои други редове все още не са свързани към счетоводна сметка. Осчетоводяването на всички редове във фактурата е отхвърлено.
 ErrorInvoiceContainsLinesNotYetBoundedShort=Някои редове във фактурата не са свързани със счетоводна сметка.
 ExportNotSupported=Настроеният формат за експортиране не се поддържа в тази страница
@@ -465,6 +483,9 @@ AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
 AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
 ErrorAccountNumberAlreadyExists=The accounting number %s already exists
 ErrorArchiveAddFile=Can't put "%s" file in archive
+ErrorNoFiscalPeriodActiveFound=No active fiscal period found
+ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=The bookkeeping doc date is not inside the active fiscal period
+ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=The bookkeeping doc date is inside a closed fiscal period
 
 ## Import
 ImportAccountingEntries=Счетоводни записи

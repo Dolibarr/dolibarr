@@ -9,28 +9,30 @@ descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Creu anfoneb cwsmer yn awtomatig ar ôl
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Creu anfoneb cwsmer yn awtomatig ar ôl i orchymyn gwerthu gael ei gau (bydd gan yr anfoneb newydd yr un faint â'r archeb)
 descWORKFLOW_TICKET_CREATE_INTERVENTION=On ticket creation, automatically create an intervention.
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Dosbarthu cynnig ffynhonnell gysylltiedig fel y'i bil pan fydd archeb gwerthu yn cael ei bilio (ac os yw swm yr archeb yr un peth â chyfanswm y cynnig cysylltiedig wedi'i lofnodi)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Dosbarthu cynnig ffynhonnell gysylltiedig fel y'i bil pan ddilysir anfoneb cwsmer (ac os yw swm yr anfoneb yr un peth â chyfanswm y cynnig cysylltiedig wedi'i lofnodi)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Dosbarthu archeb gwerthu ffynhonnell gysylltiedig fel y'i bil pan ddilysir anfoneb y cwsmer (ac os yw swm yr anfoneb yr un peth â chyfanswm yr archeb gysylltiedig)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Dosbarthu archeb gwerthu ffynhonnell gysylltiedig fel y'i bil pan fydd anfoneb cwsmer yn cael ei thalu (ac os yw swm yr anfoneb yr un peth â chyfanswm yr archeb gysylltiedig)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Dosbarthwch archeb gwerthu ffynhonnell gysylltiedig fel un sy'n cael ei gludo pan fydd llwyth yn cael ei ddilysu (ac os yw'r swm a gludir gan bob llwyth yr un peth ag yn y gorchymyn i ddiweddaru)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposals as billed when a sales order is set to billed (and if the amount of the order is the same as the total amount of the signed linked proposals)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposals as billed when a customer invoice is validated (and if the amount of the invoice is the same as the total amount of the signed linked proposals)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when a customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked sales orders). If you have 1 invoice validated for n orders, this may set all orders to billed too.
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source sales orders as billed when a customer invoice is set to paid (and if the amount of the invoice is the same as the total amount of the linked sales orders). If you have 1 invoice set billed for n orders, this may set all orders to billed too.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source sales orders as shipped when a shipment is validated (and if the quantity shipped by all shipments is the same as in the order to update)
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Dosbarthwch archeb gwerthu ffynhonnell gysylltiedig fel un sy'n cael ei gludo pan fydd llwyth ar gau (ac os yw'r swm a gludir gan bob llwyth yr un peth ag yn y gorchymyn i ddiweddaru)
 # Autoclassify purchase proposal
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Dosbarthu cynnig gwerthwr ffynhonnell gysylltiedig fel y'i bil pan ddilysir anfoneb y gwerthwr (ac os yw swm yr anfoneb yr un peth â chyfanswm y cynnig cysylltiedig)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked proposals)
 # Autoclassify purchase order
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Dosbarthu archeb brynu ffynhonnell gysylltiedig fel y'i bil pan ddilysir anfoneb y gwerthwr (ac os yw swm yr anfoneb yr un peth â chyfanswm yr archeb gysylltiedig)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked orders)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Dosbarthwch archeb brynu ffynhonnell gysylltiedig fel y'i derbyniwyd pan ddilysir derbyniad (ac os yw'r swm a dderbynnir gan bob derbyniad yr un peth ag yn yr archeb brynu i ddiweddaru)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Dosbarthwch archeb brynu ffynhonnell gysylltiedig fel un a dderbyniwyd pan fydd derbyniad ar gau (ac os yw'r swm a dderbynnir gan bob derbynfa yr un peth ag yn yr archeb brynu i ddiweddaru)
-# Autoclassify purchase invoice
-descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Classify receptions to "billed" when a linked purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when a customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked shipments)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Classify linked source shipment as billed when a customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked shipments)
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Classify linked source receptions as billed when a purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Classify linked source receptions as billed when a purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
 # Automatically link ticket to contract
-descWORKFLOW_TICKET_LINK_CONTRACT=When creating a ticket, link available contracts of matching thirdparty
+descWORKFLOW_TICKET_LINK_CONTRACT=When creating a ticket, link all available contracts of matching third parties
 descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=When linking contracts, search among those of parents companies
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Caewch yr holl ymyriadau sy'n gysylltiedig â'r tocyn pan fydd tocyn ar gau
 AutomaticCreation=Creu awtomatig
 AutomaticClassification=Dosbarthiad awtomatig
-# Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked shipments)
 AutomaticClosing=Automatic closing
 AutomaticLinking=Automatic linking

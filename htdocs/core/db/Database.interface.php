@@ -516,7 +516,7 @@ interface Database
 	 * Returns the current line (as an object) for the resultset cursor
 	 *
 	 * @param   resource|PgSql\Connection		$resultset 		Handler of the desired request
-	 * @return  Object                  				Object result line or false if KO or end of cursor
+	 * @return  Object|false                    				Object result line or false if KO or end of cursor
 	 */
 	public function fetch_object($resultset);
 	// phpcs:enable

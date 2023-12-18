@@ -181,7 +181,7 @@ if (empty($reshook)) {
 
 		$amount = price2num(GETPOST("amount", 'alpha'));
 		if ($refund == 1) {
-			$amount = -$amount;
+			$amount = price2num(-1 * $amount);
 		}
 		$object->amount = $amount;
 		$object->label = GETPOST("label", 'alpha');

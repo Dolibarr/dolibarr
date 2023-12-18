@@ -45,3 +45,5 @@ OutOfOrder=Niedostępny
 InWorkingOrder=Sprawny
 ToReplace=Replace
 CantMoveNonExistantSerial=Błąd. Prosisz o ruch na rekordzie dla numeru seyjnego, który już nie istnieje. Być może ten sam numer seryjny trafia do tego samego magazynu kilka razy w tej samej przesyłce lub był używany w innej przesyłce. Usuń tę przesyłkę i przygotuj kolejną.
+TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Tabela lotów nie kompletna, uruchom naprawę z parametrem '...repair.php?standard=confirmed'
+IlligalQtyForSerialNumbers= Wymagana korekta stanu magazynowego ze względu na unikalny numer seryjny.

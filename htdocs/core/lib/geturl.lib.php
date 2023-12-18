@@ -299,7 +299,7 @@ function isIPAllowed($iptocheck, $localurl)
 			$errormsg = 'Error bad hostname IP (IP is a local IP). Must be an external URL.';
 			return $errormsg;
 		}
-		if (getDolGlobalString('MAIN_SECURITY_ANTI_SSRF_SERVER_IP') && in_array($iptocheck, explode(',', $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP))) {
+		if (getDolGlobalString('MAIN_SECURITY_ANTI_SSRF_SERVER_IP') && in_array($iptocheck, explode(',', getDolGlobalString('MAIN_SECURITY_ANTI_SSRF_SERVER_IP')))) {
 			$errormsg = 'Error bad hostname IP (IP is a local IP defined into MAIN_SECURITY_SERVER_IP). Must be an external URL.';
 			return $errormsg;
 		}
@@ -310,7 +310,7 @@ function isIPAllowed($iptocheck, $localurl)
 			$errormsg = 'Error bad hostname '.$iptocheck.'. Must be a local URL.';
 			return $errormsg;
 		}
-		if (getDolGlobalString('MAIN_SECURITY_ANTI_SSRF_SERVER_IP') && !in_array($iptocheck, explode(',', $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP))) {
+		if (getDolGlobalString('MAIN_SECURITY_ANTI_SSRF_SERVER_IP') && !in_array($iptocheck, explode(',', getDolGlobalString('MAIN_SECURITY_ANTI_SSRF_SERVER_IP')))) {
 			$errormsg = 'Error bad hostname IP (IP is not a local IP defined into list MAIN_SECURITY_SERVER_IP). Must be a local URL in allowed list.';
 			return $errormsg;
 		}

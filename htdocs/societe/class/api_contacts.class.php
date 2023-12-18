@@ -291,7 +291,19 @@ class Contacts extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
-			$this->contact->$field = $value;
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->contact->context['caller'] = $request_data['caller'];
+				continue;
+			}
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->contact->array_options[$index] = $val;
+				}
+				continue;
+			}
+
+			$this->contact->$field = $this->_checkValForAPI($field, $value, $this->contact);
 		}
 		if ($this->contact->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating contact", array_merge(array($this->contact->error), $this->contact->errors));
@@ -327,13 +339,20 @@ class Contacts extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
 				continue;
-			} elseif ($field == 'array_options' && is_array($value)) {
+			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->contact->context['caller'] = $request_data['caller'];
+				continue;
+			}
+			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
 					$this->contact->array_options[$index] = $val;
 				}
-			} else {
-				$this->contact->$field = $value;
+				continue;
 			}
+
+			$this->contact->$field = $this->_checkValForAPI($field, $value, $this->contact);
 		}
 
 		if (isModEnabled('mailing') && !empty($this->contact->email) && isset($this->contact->no_email)) {

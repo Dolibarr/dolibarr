@@ -75,8 +75,13 @@ if ($reshook < 0) {
 
 if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 || ($action == 'updateedit')) {
-	$tmparray = getCountry(GETPOST('country_id', 'int'), 'all', $db, $langs, 0);
+	$tmparray = getCountry(GETPOSTINT('country_id'), 'all', $db, $langs, 0);
 	if (!empty($tmparray['id'])) {
+		if ($tmparray['code'] == 'FR' && $tmparray['id'] != $mysoc->country_id) {
+			// For FR, default value of option to show profid SIREN is on by default
+			$res = dolibarr_set_const($db, "MAIN_PROFID1_IN_ADDRESS", 1, 'chaine', 0, '', $conf->entity);
+		}
+
 		$mysoc->country_id   = $tmparray['id'];
 		$mysoc->country_code = $tmparray['code'];
 		$mysoc->country_label = $tmparray['label'];
@@ -460,7 +465,7 @@ print '</td></tr>'."\n";
 print '<tr class="oddeven"><td class="wordbreak"><label for="state_id">'.$langs->trans("State").'</label></td><td>';
 $state_id = 0;
 if (getDolGlobalString('MAIN_INFO_SOCIETE_STATE')) {
-	$tmp = explode(':', $conf->global->MAIN_INFO_SOCIETE_STATE);
+	$tmp = explode(':', getDolGlobalString('MAIN_INFO_SOCIETE_STATE'));
 	$state_id = $tmp[0];
 }
 print img_picto('', 'state', 'class="pictofixedwidth"');
@@ -768,7 +773,7 @@ print '<td class="titlefieldcreate">'.$langs->trans("FiscalYearInformation").'</
 print "</tr>\n";
 
 print '<tr class="oddeven"><td><label for="SOCIETE_FISCAL_MONTH_START">'.$langs->trans("FiscalMonthStart").'</label></td><td>';
-print $formother->select_month(getDolGlobalString('SOCIETE_FISCAL_MONTH_START') ? $conf->global->SOCIETE_FISCAL_MONTH_START : '', 'SOCIETE_FISCAL_MONTH_START', 0, 1, 'maxwidth100').'</td></tr>';
+print $formother->select_month(getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ? $conf->global->SOCIETE_FISCAL_MONTH_START : '', 'SOCIETE_FISCAL_MONTH_START', 0, 1, 'maxwidth100').'</td></tr>';
 
 print "</table>";
 

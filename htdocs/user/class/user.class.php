@@ -82,6 +82,11 @@ class User extends CommonObject
 	public $id = 0;
 
 	/**
+	 * @var User old copy of User
+	 */
+	public $oldcopy;
+
+	/**
 	 * @var int
 	 * @deprecated
 	 * @see $status
@@ -3253,7 +3258,7 @@ class User extends CommonObject
 		$keymodified = false;
 
 		// Object classes
-		$info["objectclass"] = explode(',', $conf->global->LDAP_USER_OBJECT_CLASS);
+		$info["objectclass"] = explode(',', getDolGlobalString('LDAP_USER_OBJECT_CLASS'));
 
 		$this->fullname = $this->getFullName($langs);
 
@@ -3325,7 +3330,7 @@ class User extends CommonObject
 			if (getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED')) {
 				$info[getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED')] = dol_hash($this->pass, 'openldap'); // Create OpenLDAP password (see LDAP_PASSWORD_HASH_TYPE)
 			}
-		} elseif ($conf->global->LDAP_SERVER_PROTOCOLVERSION !== '3') {
+		} elseif (getDolGlobalString('LDAP_SERVER_PROTOCOLVERSION') !== '3') {
 			// Set LDAP password if possible
 			// If ldap key is modified and LDAPv3 we use ldap_rename function for avoid lose encrypt password
 			if (getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {

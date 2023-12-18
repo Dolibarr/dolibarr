@@ -267,6 +267,7 @@ if ($action == 'setenablevatreversecharge') {
 	}
 }
 
+
 /*
  * View
  */
@@ -274,11 +275,15 @@ if ($action == 'setenablevatreversecharge') {
 $form = new Form($db);
 
 $title = $langs->trans('ConfigAccountingExpert');
+
 llxHeader('', $title);
+
 
 $linkback = '';
 //$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1">' . $langs->trans("BackToModuleList") . '</a>';
 print load_fiche_titre($title, $linkback, 'accountancy');
+
+print '<br>';
 
 // Show message if accountancy hidden options are activated to help to resolve some problems
 if (!$user->admin) {
@@ -304,6 +309,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
 // Params
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans('Options').'</td>';
@@ -387,9 +393,12 @@ foreach ($list as $key) {
 	print '</tr>';
 }
 print '</table>';
+print '</div>';
+
 print '<br>';
 
 // Binding params
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans('BindingOptions').'</td>';
@@ -403,12 +412,12 @@ foreach ($list_binding as $key) {
 	$label = $langs->trans($key);
 	print '<td>'.$label.'</td>';
 	// Value
-	print '<td class="right">';
+	print '<td class="right minwidth75imp parentonrightofpage">';
 	if ($key == 'ACCOUNTING_DATE_START_BINDING') {
 		print $form->selectDate((getDolGlobalInt($key) ? (int) getDolGlobalInt($key) : -1), $key, 0, 0, 1);
 	} elseif ($key == 'ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER') {
 		$array = array(0=>$langs->trans("PreviousMonth"), 1=>$langs->trans("CurrentMonth"), 2=>$langs->trans("Fiscalyear"));
-		print $form->selectarray($key, $array, getDolGlobalInt('ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER', 0), 0, 0, 0, '', 0, 0, 0, '', 'onrightofpage');
+		print $form->selectarray($key, $array, getDolGlobalInt('ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER', 0), 0, 0, 0, '', 0, 0, 0, '', 'onrightofpage width200');
 	} else {
 		print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.getDolGlobalString($key).'">';
 	}
@@ -457,7 +466,8 @@ if (getDolGlobalString('ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS')) {
 print '</tr>';
 
 print '</table>';
-print '<br>';
+print '</div>';
+
 
 
 // Show advanced options
@@ -465,6 +475,7 @@ print '<br>';
 
 
 // Advanced params
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">' . $langs->trans('OptionsAdvanced') . '</td>';
@@ -533,6 +544,7 @@ if (getDolGlobalString('ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE')) {
 print '</tr>';
 
 print '</table>';
+print '</div>';
 
 
 print '<div class="center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Modify').'"></div>';
