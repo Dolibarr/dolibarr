@@ -1623,83 +1623,36 @@ class Website extends CommonObject
 			setEventMessages("Website id or ref is not defined", null, 'errors');
 			return false;
 		}
-
-		if (!is_writable($conf->website->dir_output)) {
-			setEventMessages("Temporary dir ".$conf->website->dir_output." is not writable", null, 'errors');
+		if (!is_writable($conf->website->dir_temp)) {
+			setEventMessages("Temporary dir ".$conf->website->dir_temp." is not writable", null, 'errors');
 			return '';
 		}
 
-		$sourcedir = $conf->website->dir_output."/".$website->ref;
-
 		$destdir = DOL_DOCUMENT_ROOT . '/install/doctemplates/websites/'.$website->name_template;
 
+		$filename = $this->exportWebSite();
+		if (!is_writable($destdir)) {
+			setEventMessages("Error to write in folder".$destdir, null, 'errors');
+			return '';
+		}
+		$destfile = $destdir.'/'.basename($filename);
+
 		// Copier le fichier zip dans le dossier de destination
-
-		if (is_dir($destdir) && is_dir($sourcedir)) {
-			$arraydestdir = dol_dir_list($destdir, "all", 0, '', '', 'name', SORT_ASC);
-			$arraysourcedir = dol_dir_list($sourcedir, "all", 1, '', '', 'name', SORT_ASC);
-		}
-		$destinationFileNames = array_column($arraydestdir, 'name');
-		//      var_dump($arraysourcedir);exit;
-		foreach ($arraysourcedir as $sourceFile) {
-			if ($this->extractNumberFromFilename($sourceFile['fullname']) > 1) {
-				if (!preg_match('/\.old$/', $sourceFile['name'])) {
-					$arraySource[] = $sourceFile['fullname'];
-				}
-			}
-		}
-		// for extract pages in destination folder
-		foreach ($arraydestdir as $destFile) {
-			if ($destFile['name'] == 'containers') {
-				$containersDir = dol_dir_list($destFile['fullname']);
-
-				foreach ($containersDir as $file) {
-					$extractPageFromDestDir = $this->extractNumberFromFilename($file['fullname']);
-					if ($extractPageFromDestDir > 1) {
-						$arrayDest[] = $file['fullname'];
-					}
-				}
+		if (file_exists($filename)) {
+			if (!copy($filename, $destfile)) {
+				setEventMessages("Failed to copy zip file to destination directory", null, 'errors');
+				return '';
 			}
 		}
 
-		$minCount = min(count($arraySource), count($arrayDest));
-		for ($i = 0; $i < $minCount; $i++) {
-			$sourceFilePath = $arraySource[$i];
-			$destFilePath = $arrayDest[$i];
+		$result = dol_uncompress($destfile, $destdir.'/');
 
-			$sourceContent = file_get_contents($sourceFilePath);
-			if ($sourceContent === false) {
-				echo "Erreur lors de la lecture du fichier source: " . basename($sourceFilePath) . "\n";
-			} else {
-				$destContent = file_get_contents($destFilePath);
-				if ($destContent === false) {
-					echo "Erreur lors de la lecture du fichier de destination: " . basename($destFilePath) . "\n";
-				} else {
-					if ($sourceContent !== $destContent) {
-						$numPage = $this->extractNumberFromFilename($sourceFilePath);
-
-						$differences = $this->showDifferences($sourceContent, $destContent, $numPage);
-
-						//var_dump($differences);
-						//var_dump($arrayreplacement);
-						// Les contenus sont différents, effectuer la copie
-
-						if (file_put_contents($destFilePath, $sourceContent) === false) {
-							echo "Échec de la copie du fichier: " . basename($sourceFilePath) . "\n";
-						} else {
-							if (count($differences) > 0) {
-								$result = dolReplaceInFile($destFilePath, $differences);
-								if ($result > 0) {
-									echo 'rename with correct number page';
-								}
-								echo "Fichier copié avec succès: " . basename($sourceFilePath) . "\n";
-							}
-						}
-					} else {
-						echo "Aucune modification détectée, copie non nécessaire pour: " . basename($sourceFilePath) . "\n";
-					}
-				}
-			}
+		if (!empty($result['error'])) {
+			setEventMessages('Failed to unzip file '.$destfile.'.', null, 'errors');
+			return -1;
+		} else {
+			dol_delete_file($destfile);
+			return 1;
 		}
 	}
 
@@ -1722,75 +1675,5 @@ class Website extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-	}
-
-	/**
-	 * extract num of page
-	 * @param  string  $filename   name of file
-	 * @return int 1 if OK, -1 if KO
-	 */
-	protected function extractNumberFromFilename($filename)
-	{
-		$matches = [];
-		if (preg_match('/page(\d+)\.tpl\.php/', $filename, $matches)) {
-			return (int) $matches[1];
-		}
-		return -1;
-	}
-
-	/**
-	 * remove espace in string
-	 * @param   string   $str    string
-	 * @return string
-	 */
-	protected function normalizeString($str)
-	{
-
-		$str = str_replace("\r\n", "\n", $str);
-		$str = str_replace("\r", "\n", $str);
-
-		$lines = explode("\n", $str);
-		$lines = array_map('trim', $lines);
-
-		return implode("\n", $lines);
-	}
-
-	/**
-	 * show difference between to string
-	 * @param string  $str1   first string
-	 * @param string  $str2   seconde string
-	 * @param string  $exceptNumPge    num of page file
-	 * @return array|int      -1 if KO, array if OK
-	 */
-	protected function showDifferences($str1, $str2, $exceptNumPge = '0')
-	{
-		$diff = [];
-		$str1 = $this->normalizeString($str1);
-		$str2 = $this->normalizeString($str2);
-
-		$lines1 = explode("\n", $str1);
-		$lines2 = explode("\n", $str2);
-
-		foreach ($lines1 as $lineNum => $lineContent) {
-			if (isset($lines2[$lineNum])) {
-				if ($lineContent !== $lines2[$lineNum]) {
-					$diff[$lines2[$lineNum]] = $lineContent;
-				}
-			} else {
-				$diff['new'] = "line " . ($lineNum + 1) . ": " . $lineContent;
-			}
-		}
-		foreach ($lines2 as $lineNum => $lineContent) {
-			if (!isset($lines1[$lineNum])) {
-				$diff[] = "Supplémentaire dans la destination à la ligne " . ($lineNum + 1) . ": " . $lineContent;
-			}
-		}
-		// search if except exist in array
-		foreach ($diff as $key => $line) {
-			if (str_contains($line, $exceptNumPge)) {
-				$lineNochange[$line] = $key;
-			}
-		}
-		return $lineNochange;
 	}
 }
