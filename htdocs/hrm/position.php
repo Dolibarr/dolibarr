@@ -906,7 +906,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="token" value="' . newToken() . '">';
 	print '<input type="hidden" name="action" value="add">';
 	if ($backtopage) {
-		print '<input type="hidden" name="backtopage" value="' . $backtopage . '">';
+        print '<input type="hidden" name="backtopage" value="' . $backtopage . '?fk_job='.$fk_job.'">';
 	}
 
 	if ($backtopageforcancel) {
