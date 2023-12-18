@@ -2076,7 +2076,7 @@ class Facture extends CommonInvoice
 				// Lines
 				$this->lines = array();
 
-				$result = $this->fetch_lines();
+                $result = $this->fetch_lines(0, (!empty(getDolGlobalInt('MAIN_MULTILANGS')) ? 1 : 0));
 				if ($result < 0) {
 					$this->error = $this->db->error();
 					return -3;
