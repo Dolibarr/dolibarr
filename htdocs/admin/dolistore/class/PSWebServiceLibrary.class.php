@@ -45,9 +45,9 @@ class PrestaShopWebservice
 	protected $version;
 
 	/** @var string Minimal version of PrestaShop to use with this library */
-	const psCompatibleVersionsMin = '1.4.0.0';
+	const PS_COMPATIBLE_VERSIONS_MIN = '1.4.0.0';
 	/** @var string Maximal version of PrestaShop to use with this library */
-	const psCompatibleVersionsMax = '8.1.1';
+	const PS_COMPATIBLE_VERSIONS_MAX = '8.1.1';
 
 	/**
 	 * PrestaShopWebservice constructor. Throw an exception when CURL is not installed/activated
@@ -72,7 +72,7 @@ class PrestaShopWebservice
 	 *
 	 * @throws PrestaShopWebserviceException if curl is not loaded
 	 */
-	function __construct($url, $key, $debug = true)
+	public function __construct($url, $key, $debug = true)
 	{
 		if (!extension_loaded('curl')) {
 			throw new PrestaShopWebserviceException(
@@ -217,8 +217,8 @@ class PrestaShopWebservice
 		if (array_key_exists('PSWS-Version', $headerArray)) {
 			$this->version = $headerArray['PSWS-Version'];
 			if (
-				version_compare(PrestaShopWebservice::psCompatibleVersionsMin, $headerArray['PSWS-Version']) == 1 ||
-				version_compare(PrestaShopWebservice::psCompatibleVersionsMax, $headerArray['PSWS-Version']) == -1
+				version_compare(PrestaShopWebservice::PS_COMPATIBLE_VERSIONS_MIN, $headerArray['PSWS-Version']) == 1 ||
+				version_compare(PrestaShopWebservice::PS_COMPATIBLE_VERSIONS_MAX, $headerArray['PSWS-Version']) == -1
 			) {
 				throw new PrestaShopWebserviceException(
 					'This library is not compatible with this version of PrestaShop. Please upgrade/downgrade this library'
@@ -308,7 +308,7 @@ class PrestaShopWebservice
 	 * 'postXml' => Full XML string to add resource<br><br>
 	 * Examples are given in the tutorial</p>
 	 *
-	 * @param array $options
+	 * @param array $options        Options
 	 *
 	 * @return SimpleXMLElement status_code, response
 	 * @throws PrestaShopWebserviceException
@@ -352,7 +352,7 @@ class PrestaShopWebservice
 	 * $xml = $ws->get(array('resource' => 'orders', 'id' => 1));
 	 *    // Here in $xml, a SimpleXMLElement object you can parse
 	 * foreach ($xml->children()->children() as $attName => $attValue)
-	 *    echo $attName.' = '.$attValue.'<br />';
+	 *    echo $attName.' = '.$attValue.'<br>';
 	 * }
 	 * catch (PrestaShopWebserviceException $ex)
 	 * {
@@ -524,7 +524,6 @@ class PrestaShopWebservice
 		$this->checkStatusCode($request);// check the response validity
 		return true;
 	}
-
 }
 
 /**
