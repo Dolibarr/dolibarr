@@ -36,7 +36,7 @@ $langs->loadLangs(array("compta", "bills", "other", "accountancy"));
 $validatemonth = GETPOST('validatemonth', 'int');
 $validateyear = GETPOST('validateyear', 'int');
 
-$month_start = ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
+$month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 if (GETPOST("year", 'int')) {
 	$year_start = GETPOST("year", 'int');
 } else {
@@ -166,7 +166,7 @@ if ($action == 'validatehistory') {
 		$db->rollback();
 	} else {
 		$db->commit();
-		setEventMessages($langs->trans('AutomaticBindingDone', $nbbinddone, $notpossible), null,  ($notpossible ? 'warnings' : 'mesgs'));
+		setEventMessages($langs->trans('AutomaticBindingDone', $nbbinddone, $notpossible), null, ($notpossible ? 'warnings' : 'mesgs'));
 		if ($nbbindfailed) {
 			setEventMessages($langs->trans('DoManualBindingForFailedRecord', $nbbindfailed), null, 'warnings');
 		}

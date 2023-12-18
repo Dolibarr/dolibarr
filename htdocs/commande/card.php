@@ -94,9 +94,9 @@ $originid  = (GETPOST('originid', 'int') ? GETPOST('originid', 'int') : GETPOST(
 $rank      = (GETPOST('rank', 'int') > 0) ? GETPOST('rank', 'int') : -1;
 
 // PDF
-$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
-$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
-$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
+$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0));
+$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0));
+$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0));
 
 // Security check
 if (!empty($user->socid)) {
@@ -123,13 +123,13 @@ $usercancreate  =  $user->hasRight("commande", "creer");
 $usercandelete  =  $user->hasRight("commande", "supprimer");
 
 // Advanced permissions
-$usercanclose       =  ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($usercancreate)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('commande', 'order_advance', 'close')));
-$usercanvalidate    =  ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('commande', 'order_advance', 'validate')));
-$usercancancel      =  ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('commande', 'order_advance', 'annuler')));
-$usercansend        =   (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->hasRight('commande', 'order_advance', 'send'));
-$usercangeneretedoc =   (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->hasRight('commande', 'order_advance', 'generetedoc'));
+$usercanclose       =  ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($usercancreate)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('commande', 'order_advance', 'close')));
+$usercanvalidate    =  ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $usercancreate) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('commande', 'order_advance', 'validate')));
+$usercancancel      =  ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $usercancreate) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('commande', 'order_advance', 'annuler')));
+$usercansend        =   (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || $user->hasRight('commande', 'order_advance', 'send'));
+$usercangeneretedoc =   (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || $user->hasRight('commande', 'order_advance', 'generetedoc'));
 
-$usermustrespectpricemin    = ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS));
+$usermustrespectpricemin    = ((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && empty($user->rights->produit->ignore_price_min_advance)) || !getDolGlobalString('MAIN_USE_ADVANCED_PERMS'));
 $usercancreatepurchaseorder = ($user->hasRight('fournisseur', 'commande', 'creer') || $user->hasRight('supplier_order', 'creer'));
 
 $permissionnote    = $usercancreate;     //  Used by the include of actions_setnotes.inc.php
@@ -206,11 +206,18 @@ if (empty($reshook)) {
 	} elseif ($action == 'reopen' && $usercancreate) {
 		// Reopen a closed order
 		if ($object->statut == Commande::STATUS_CANCELED || $object->statut == Commande::STATUS_CLOSED) {
-			$result = $object->set_reopen($user);
-			if ($result > 0) {
-				setEventMessages($langs->trans('OrderReopened', $object->ref), null);
+			if (dolGetGlobalInt('ORDER_REOPEN_TO_DRAFT')) {
+				$result = $object->setDraft($user, $idwarehouse);
+				if ($result < 0) {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
 			} else {
-				setEventMessages($object->error, $object->errors, 'errors');
+				$result = $object->set_reopen($user);
+				if ($result > 0) {
+					setEventMessages($langs->trans('OrderReopened', $object->ref), null);
+				} else {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
 			}
 		}
 	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $usercandelete) {
@@ -241,7 +248,7 @@ if (empty($reshook)) {
 				$outputlangs = new Translate("", $conf);
 				$outputlangs->setDefaultLang($newlang);
 			}
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$ret = $object->fetch($object->id); // Reload to get new records
 				$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
@@ -387,7 +394,7 @@ if (empty($reshook)) {
 									$date_end = $lines[$i]->date_end;
 								}
 
-									// Reset fk_parent_line for no child products and special product
+								// Reset fk_parent_line for no child products and special product
 								if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
 									$fk_parent_line = 0;
 								}
@@ -590,7 +597,7 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
 		} else {
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				// Define output language
 				$outputlangs = $langs;
 				$newlang = GETPOST('lang_id', 'alpha');
@@ -686,7 +693,7 @@ if (empty($reshook)) {
 		} else {
 			$idprod = GETPOST('idprod', 'int');
 
-			if (!empty($conf->global->MAIN_DISABLE_FREE_LINES) && $idprod <= 0) {
+			if (getDolGlobalString('MAIN_DISABLE_FREE_LINES') && $idprod <= 0) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProductOrService")), null, 'errors');
 				$error++;
 			}
@@ -755,7 +762,7 @@ if (empty($reshook)) {
 			// Clean parameters
 			$date_start = dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start'.$predef.'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
 			$date_end = dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end'.$predef.'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
-			$price_base_type = (GETPOST('price_base_type', 'alpha') ?GETPOST('price_base_type', 'alpha') : 'HT');
+			$price_base_type = (GETPOST('price_base_type', 'alpha') ? GETPOST('price_base_type', 'alpha') : 'HT');
 
 			$price_min = $price_min_ttc = 0;
 
@@ -782,13 +789,13 @@ if (empty($reshook)) {
 				$price_base_type = $prod->price_base_type;
 
 				// If price per segment
-				if (!empty($conf->global->PRODUIT_MULTIPRICES) && !empty($object->thirdparty->price_level)) {
+				if (getDolGlobalString('PRODUIT_MULTIPRICES') && !empty($object->thirdparty->price_level)) {
 					$pu_ht = $prod->multiprices[$object->thirdparty->price_level];
 					$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
 					$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
 					$price_min_ttc = $prod->multiprices_min_ttc[$object->thirdparty->price_level];
 					$price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
-					if (!empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL)) {  // using this option is a bug. kept for backward compatibility
+					if (getDolGlobalString('PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL')) {  // using this option is a bug. kept for backward compatibility
 						if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) {
 							$tva_tx = $prod->multiprices_tva_tx[$object->thirdparty->price_level];
 						}
@@ -796,7 +803,7 @@ if (empty($reshook)) {
 							$tva_npr = $prod->multiprices_recuperableonly[$object->thirdparty->price_level];
 						}
 					}
-				} elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+				} elseif (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 					// If price per customer
 					require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 
@@ -824,7 +831,7 @@ if (empty($reshook)) {
 					} else {
 						setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 					}
-				} elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) {
+				} elseif (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY')) {
 					// If price per quantity
 					if ($prod->prices_by_qty[0]) {	// yes, this product has some prices per quantity
 						// Search the correct price into loaded array product_price_by_qty using id of array retrieved into POST['pqp'].
@@ -845,7 +852,7 @@ if (empty($reshook)) {
 							break;
 						}
 					}
-				} elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
+				} elseif (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
 					// If price per quantity and customer
 					if ($prod->prices_by_qty[$object->thirdparty->price_level]) {	// yes, this product has some prices per quantity
 						// Search the correct price into loaded array product_price_by_qty using id of array retrieved into POST['pqp'].
@@ -889,7 +896,7 @@ if (empty($reshook)) {
 				$desc = '';
 
 				// Define output language
-				if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
 					$outputlangs = $langs;
 					$newlang = '';
 					if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -909,21 +916,21 @@ if (empty($reshook)) {
 				}
 
 				//If text set in desc is the same as product descpription (as now it's preloaded) whe add it only one time
-				if ($product_desc==$desc && !empty($conf->global->PRODUIT_AUTOFILL_DESC)) {
+				if ($product_desc==$desc && getDolGlobalString('PRODUIT_AUTOFILL_DESC')) {
 					$product_desc='';
 				}
 
-				if (!empty($product_desc) && !empty($conf->global->MAIN_NO_CONCAT_DESCRIPTION)) {
+				if (!empty($product_desc) && getDolGlobalString('MAIN_NO_CONCAT_DESCRIPTION')) {
 					$desc = $product_desc;
 				} else {
-					$desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION));
+					$desc = dol_concatdesc($desc, $product_desc, '', getDolGlobalString('MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION'));
 				}
 
 				// Add custom code and origin country into description
-				if (empty($conf->global->MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE) && (!empty($prod->customcode) || !empty($prod->country_code))) {
+				if (!getDolGlobalString('MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE') && (!empty($prod->customcode) || !empty($prod->country_code))) {
 					$tmptxt = '(';
 					// Define output language
-					if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
 						$outputlangs = $langs;
 						$newlang = '';
 						if (empty($newlang) && GETPOST('lang_id', 'alpha')) {
@@ -1045,7 +1052,7 @@ if (empty($reshook)) {
 					$ret = $object->fetch($object->id); // Reload to get new records
 					$object->fetch_thirdparty();
 
-					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+					if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 						// Define output language
 						$outputlangs = $langs;
 						$newlang = GETPOST('lang_id', 'alpha');
@@ -1183,11 +1190,11 @@ if (empty($reshook)) {
 			$type = $product->type;
 
 			$price_min = $product->price_min;
-			if ((!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) && !empty($object->thirdparty->price_level)) {
+			if ((getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) && !empty($object->thirdparty->price_level)) {
 				$price_min = $product->multiprices_min[$object->thirdparty->price_level];
 			}
 			$price_min_ttc = $product->price_min_ttc;
-			if ((!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) && !empty($object->thirdparty->price_level)) {
+			if ((getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) && !empty($object->thirdparty->price_level)) {
 				$price_min_ttc = $product->multiprices_min_ttc[$object->thirdparty->price_level];
 			}
 
@@ -1246,7 +1253,7 @@ if (empty($reshook)) {
 			$result = $object->updateline(GETPOST('lineid', 'int'), $description, $pu, $qty, $remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $price_base_type, $info_bits, $date_start, $date_end, $type, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $special_code, $array_options, GETPOST('units'), $pu_ht_devise);
 
 			if ($result >= 0) {
-				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+				if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 					// Define output language
 					$outputlangs = $langs;
 					$newlang = '';
@@ -1302,14 +1309,14 @@ if (empty($reshook)) {
 		$idwarehouse = GETPOST('idwarehouse', 'int');
 
 		$qualified_for_stock_change = 0;
-		if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+		if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 			$qualified_for_stock_change = $object->hasProductsOrServices(2);
 		} else {
 			$qualified_for_stock_change = $object->hasProductsOrServices(1);
 		}
 
 		// Check parameters
-		if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change) {
+		if (isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_VALIDATE_ORDER') && $qualified_for_stock_change) {
 			if (!$idwarehouse || $idwarehouse == -1) {
 				$error++;
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
@@ -1357,7 +1364,7 @@ if (empty($reshook)) {
 				if (! $error) {
 					$db->commit();
 
-					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+					if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 						$outputlangs = $langs;
 						$newlang = '';
 						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -1398,14 +1405,14 @@ if (empty($reshook)) {
 		$idwarehouse = GETPOST('idwarehouse');
 
 		$qualified_for_stock_change = 0;
-		if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+		if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 			$qualified_for_stock_change = $object->hasProductsOrServices(2);
 		} else {
 			$qualified_for_stock_change = $object->hasProductsOrServices(1);
 		}
 
 		// Check parameters
-		if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change) {
+		if (isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_VALIDATE_ORDER') && $qualified_for_stock_change) {
 			if (!$idwarehouse || $idwarehouse == -1) {
 				$error++;
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
@@ -1417,7 +1424,7 @@ if (empty($reshook)) {
 			$result = $object->setDraft($user, $idwarehouse);
 			if ($result >= 0) {
 				// Define output language
-				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+				if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 					$outputlangs = $langs;
 					$newlang = '';
 					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -1448,14 +1455,14 @@ if (empty($reshook)) {
 		$idwarehouse = GETPOST('idwarehouse', 'int');
 
 		$qualified_for_stock_change = 0;
-		if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+		if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 			$qualified_for_stock_change = $object->hasProductsOrServices(2);
 		} else {
 			$qualified_for_stock_change = $object->hasProductsOrServices(1);
 		}
 
 		// Check parameters
-		if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change) {
+		if (isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_VALIDATE_ORDER') && $qualified_for_stock_change) {
 			if (!$idwarehouse || $idwarehouse == -1) {
 				$error++;
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
@@ -1575,7 +1582,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Actions to build doc
-	$upload_dir = !empty($conf->commande->multidir_output[$object->entity])?$conf->commande->multidir_output[$object->entity]:$conf->commande->dir_output;
+	$upload_dir = !empty($conf->commande->multidir_output[$object->entity]) ? $conf->commande->multidir_output[$object->entity] : $conf->commande->dir_output;
 	$permissiontoadd = $usercancreate;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
@@ -1587,7 +1594,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 
-	if (!$error && !empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $usercancreate) {
+	if (!$error && getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB') && $usercancreate) {
 		if ($action == 'addcontact') {
 			if ($object->id > 0) {
 				$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
@@ -1733,7 +1740,7 @@ if ($action == 'create' && $usercancreate) {
 			$demand_reason_id = (!empty($objectsrc->demand_reason_id) ? $objectsrc->demand_reason_id : (!empty($soc->demand_reason_id) ? $soc->demand_reason_id : 0));
 			//$remise_percent		= (!empty($objectsrc->remise_percent) ? $objectsrc->remise_percent : (!empty($soc->remise_percent) ? $soc->remise_percent : 0));
 			//$remise_absolue		= (!empty($objectsrc->remise_absolue) ? $objectsrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
-			$dateorder = empty($conf->global->MAIN_AUTOFILL_DATE_ORDER) ? -1 : '';
+			$dateorder = !getDolGlobalString('MAIN_AUTOFILL_DATE_ORDER') ? -1 : '';
 
 			$date_delivery = (!empty($objectsrc->delivery_date) ? $objectsrc->delivery_date : '');
 
@@ -1741,7 +1748,7 @@ if ($action == 'create' && $usercancreate) {
 				if (!empty($objectsrc->multicurrency_code)) {
 					$currency_code = $objectsrc->multicurrency_code;
 				}
-				if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($objectsrc->multicurrency_tx)) {
+				if (getDolGlobalString('MULTICURRENCY_USE_ORIGIN_TX') && !empty($objectsrc->multicurrency_tx)) {
 					$currency_tx = $objectsrc->multicurrency_tx;
 				}
 			}
@@ -1763,7 +1770,7 @@ if ($action == 'create' && $usercancreate) {
 		$demand_reason_id   = $soc->demand_reason_id;
 		//$remise_percent     = $soc->remise_percent;
 		//$remise_absolue     = 0;
-		$dateorder          = empty($conf->global->MAIN_AUTOFILL_DATE_ORDER) ?-1 : '';
+		$dateorder          = !getDolGlobalString('MAIN_AUTOFILL_DATE_ORDER') ? -1 : '';
 
 		if (isModEnabled("multicurrency") && !empty($soc->multicurrency_code)) {
 			$currency_code = $soc->multicurrency_code;
@@ -1793,11 +1800,11 @@ if ($action == 'create' && $usercancreate) {
 	if ($soc->fk_warehouse > 0) {
 		$warehouse_id = $soc->fk_warehouse;
 	}
-	if (isModEnabled('stock') && empty($warehouse_id) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
-		if (empty($object->warehouse_id) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) {
+	if (isModEnabled('stock') && empty($warehouse_id) && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER')) {
+		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE')) {
 			$warehouse_id = $conf->global->MAIN_DEFAULT_WAREHOUSE;
 		}
-		if (empty($object->warehouse_id) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) {
+		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) {
 			$warehouse_id = $user->fk_warehouse;
 		}
 	}
@@ -1828,7 +1835,7 @@ if ($action == 'create' && $usercancreate) {
 
 		// Reference client
 		print '<tr><td>'.$langs->trans('RefCustomer').'</td><td>';
-		if (!empty($conf->global->MAIN_USE_PROPAL_REFCLIENT_FOR_ORDER) && !empty($origin) && !empty($originid)) {
+		if (getDolGlobalString('MAIN_USE_PROPAL_REFCLIENT_FOR_ORDER') && !empty($origin) && !empty($originid)) {
 			print '<input type="text" name="ref_client" value="'.$ref_client.'"></td>';
 		} else {
 			print '<input type="text" name="ref_client" value="'.GETPOST('ref_client').'"></td>';
@@ -1848,7 +1855,7 @@ if ($action == 'create' && $usercancreate) {
 			$filter = '((s.client:IN:1,2,3) AND (s.status:=:1))';
 			print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company('', 'socid', $filter, 'SelectThirdParty', 1, 0, null, 0, 'minwidth175 maxwidth500 widthcentpercentminusxx');
 			// reload page to retrieve customer informations
-			if (empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED)) {
+			if (!getDolGlobalString('RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED')) {
 				print '<script>
 				$(document).ready(function() {
 					$("#socid").change(function() {
@@ -1872,7 +1879,7 @@ if ($action == 'create' && $usercancreate) {
 			// Contacts (ask contact only if thirdparty already defined).
 			print "<tr><td>".$langs->trans("DefaultContact").'</td><td>';
 			print img_picto('', 'contact', 'class="pictofixedwidth"');
-			print $form->selectcontacts($soc->id, $contactid, 'contactid', 1, !empty($srccontactslist)?$srccontactslist:"", '', 1, 'maxwidth200 widthcentpercentminusx');
+			print $form->selectcontacts($soc->id, $contactid, 'contactid', 1, !empty($srccontactslist) ? $srccontactslist : "", '', 1, 'maxwidth200 widthcentpercentminusx');
 			print '</td></tr>';
 
 			// Ligne info remises tiers
@@ -1922,7 +1929,7 @@ if ($action == 'create' && $usercancreate) {
 		print '</td></tr>';
 
 		// Bank Account
-		if (!empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_ORDER) && isModEnabled("banque")) {
+		if (getDolGlobalString('BANK_ASK_PAYMENT_BANK_DURING_ORDER') && isModEnabled("banque")) {
 			print '<tr><td>'.$langs->trans('BankAccount').'</td><td>';
 			print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes($fk_account, 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
 			print '</td></tr>';
@@ -1937,18 +1944,18 @@ if ($action == 'create' && $usercancreate) {
 		}
 
 		// Warehouse
-		if (isModEnabled('stock') && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
+		if (isModEnabled('stock') && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER')) {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 			$formproduct = new FormProduct($db);
 			print '<tr><td>'.$langs->trans('Warehouse').'</td><td>';
-			print img_picto('', 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses((GETPOSTISSET('warehouse_id')?GETPOST('warehouse_id'):$warehouse_id), 'warehouse_id', '', 1, 0, 0, '', 0, 0, array(), 'maxwidth500 widthcentpercentminusxx');
+			print img_picto('', 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses((GETPOSTISSET('warehouse_id') ? GETPOST('warehouse_id') : $warehouse_id), 'warehouse_id', '', 1, 0, 0, '', 0, 0, array(), 'maxwidth500 widthcentpercentminusxx');
 			print '</td></tr>';
 		}
 
 		// Source / Channel - What trigger creation
 		print '<tr><td>'.$langs->trans('Channel').'</td><td>';
 		print img_picto('', 'question', 'class="pictofixedwidth"');
-		$form->selectInputReason((GETPOSTISSET('demand_reason_id')?GETPOST('demand_reason_id'):$demand_reason_id), 'demand_reason_id', '', 1, 'maxwidth200 widthcentpercentminusx');
+		$form->selectInputReason((GETPOSTISSET('demand_reason_id') ? GETPOST('demand_reason_id') : $demand_reason_id), 'demand_reason_id', '', 1, 'maxwidth200 widthcentpercentminusx');
 		print '</td></tr>';
 
 		// TODO How record was recorded OrderMode (llx_c_input_method)
@@ -1958,7 +1965,7 @@ if ($action == 'create' && $usercancreate) {
 			$langs->load("projects");
 			print '<tr>';
 			print '<td>'.$langs->trans("Project").'</td><td>';
-			print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects(($soc->id > 0 ? $soc->id : -1), (GETPOSTISSET('projectid')?GETPOST('projectid'):$projectid), 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
+			print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects(($soc->id > 0 ? $soc->id : -1), (GETPOSTISSET('projectid') ? GETPOST('projectid') : $projectid), 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
 			print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
 			print '</td>';
 			print '</tr>';
@@ -1991,7 +1998,7 @@ if ($action == 'create' && $usercancreate) {
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);
 		print $hookmanager->resPrint;
 		if (empty($reshook)) {
-			if (!empty($conf->global->THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_ORDER) && !empty($soc->id)) {
+			if (getDolGlobalString('THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_ORDER') && !empty($soc->id)) {
 				// copy from thirdparty
 				$tpExtrafields = new ExtraFields($db);
 				$tpExtrafieldLabels = $tpExtrafields->fetch_name_optionals_label($soc->table_element);
@@ -2018,7 +2025,7 @@ if ($action == 'create' && $usercancreate) {
 			print '<tr>';
 			print '<td>'.$form->editfieldkey("Currency", 'multicurrency_code', '', $object, 0).'</td>';
 			print '<td class="maxwidthonsmartphone">';
-			print img_picto('', 'currency', 'class="pictofixedwidth"').$form->selectMultiCurrency(((GETPOSTISSET('multicurrency_code') && !GETPOST('changecompany'))?GETPOST('multicurrency_code'):$currency_code), 'multicurrency_code', 0, '', false, 'maxwidth200 widthcentpercentminusx');
+			print img_picto('', 'currency', 'class="pictofixedwidth"').$form->selectMultiCurrency(((GETPOSTISSET('multicurrency_code') && !GETPOST('changecompany')) ? GETPOST('multicurrency_code') : $currency_code), 'multicurrency_code', 0, '', false, 'maxwidth200 widthcentpercentminusx');
 			print '</td></tr>';
 		}
 
@@ -2027,7 +2034,7 @@ if ($action == 'create' && $usercancreate) {
 		print '<td class="tdtop">'.$langs->trans('NotePublic').'</td>';
 		print '<td>';
 
-		$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
+		$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		// print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_public.'</textarea>';
 		print '</td></tr>';
@@ -2038,7 +2045,7 @@ if ($action == 'create' && $usercancreate) {
 			print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
 			print '<td>';
 
-			$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
+			$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
 			print $doleditor->Create(1);
 			// print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_private.'</textarea>';
 			print '</td></tr>';
@@ -2173,14 +2180,14 @@ if ($action == 'create' && $usercancreate) {
 			}
 
 			$qualified_for_stock_change = 0;
-			if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+			if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 				$qualified_for_stock_change = $object->hasProductsOrServices(2);
 			} else {
 				$qualified_for_stock_change = $object->hasProductsOrServices(1);
 			}
 
 			$formquestion = array();
-			if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change) {
+			if (isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_VALIDATE_ORDER') && $qualified_for_stock_change) {
 				$langs->load("stocks");
 				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 				$formproduct = new FormProduct($db);
@@ -2192,7 +2199,7 @@ if ($action == 'create' && $usercancreate) {
 					// 'text' => $langs->trans("ConfirmClone"),
 					// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
 					// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
-					array('type' => 'other', 'name' => 'idwarehouse', 'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse', 'int') ?GETPOST('idwarehouse', 'int') : 'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
+					array('type' => 'other', 'name' => 'idwarehouse', 'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse', 'int') ? GETPOST('idwarehouse', 'int') : 'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
 				);
 			}
 
@@ -2200,14 +2207,16 @@ if ($action == 'create' && $usercancreate) {
 			$nbMandated = 0;
 			foreach ($object->lines as $line) {
 				$res = $line->fetch_product();
-				if ($res  > 0  ) {
-					if ($line->product->isService() && $line->product->isMandatoryPeriod() && (empty($line->date_start) || empty($line->date_end) )) {
+				if ($res  > 0) {
+					if ($line->product->isService() && $line->product->isMandatoryPeriod() && (empty($line->date_start) || empty($line->date_end))) {
 						$nbMandated++;
 						break;
 					}
 				}
 			}
-			if ($nbMandated > 0 ) $text .= '<div><span class="clearboth nowraponall warning">'.$langs->trans("mandatoryPeriodNeedTobeSetMsgValidate").'</span></div>';
+			if ($nbMandated > 0) {
+				$text .= '<div><span class="clearboth nowraponall warning">'.$langs->trans("mandatoryPeriodNeedTobeSetMsgValidate").'</span></div>';
+			}
 
 			if (getDolGlobalInt('SALE_ORDER_SUGGEST_DOWN_PAYMENT_INVOICE_CREATION')) {
 				// This is a hidden option:
@@ -2264,7 +2273,7 @@ if ($action == 'create' && $usercancreate) {
 							'datenow' => true
 						);
 
-						if (!empty($conf->global->INVOICE_POINTOFTAX_DATE)) {
+						if (getDolGlobalString('INVOICE_POINTOFTAX_DATE')) {
 							$formquestion[] = array(
 								'type' => 'date',
 								'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
@@ -2326,7 +2335,7 @@ if ($action == 'create' && $usercancreate) {
 		// Confirm back to draft status
 		if ($action == 'modif') {
 			$qualified_for_stock_change = 0;
-			if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+			if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 				$qualified_for_stock_change = $object->hasProductsOrServices(2);
 			} else {
 				$qualified_for_stock_change = $object->hasProductsOrServices(1);
@@ -2334,7 +2343,7 @@ if ($action == 'create' && $usercancreate) {
 
 			$text = $langs->trans('ConfirmUnvalidateOrder', $object->ref);
 			$formquestion = array();
-			if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change) {
+			if (isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_VALIDATE_ORDER') && $qualified_for_stock_change) {
 				$langs->load("stocks");
 				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 				$formproduct = new FormProduct($db);
@@ -2346,7 +2355,7 @@ if ($action == 'create' && $usercancreate) {
 					// 'text' => $langs->trans("ConfirmClone"),
 					// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
 					// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
-					array('type' => 'other', 'name' => 'idwarehouse', 'label' => $langs->trans("SelectWarehouseForStockIncrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse') ?GETPOST('idwarehouse') : 'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
+					array('type' => 'other', 'name' => 'idwarehouse', 'label' => $langs->trans("SelectWarehouseForStockIncrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse') ? GETPOST('idwarehouse') : 'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
 				);
 			}
 
@@ -2365,7 +2374,7 @@ if ($action == 'create' && $usercancreate) {
 		 */
 		if ($action == 'cancel') {
 			$qualified_for_stock_change = 0;
-			if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+			if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 				$qualified_for_stock_change = $object->hasProductsOrServices(2);
 			} else {
 				$qualified_for_stock_change = $object->hasProductsOrServices(1);
@@ -2373,7 +2382,7 @@ if ($action == 'create' && $usercancreate) {
 
 			$text = $langs->trans('ConfirmCancelOrder', $object->ref);
 			$formquestion = array();
-			if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change) {
+			if (isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_VALIDATE_ORDER') && $qualified_for_stock_change) {
 				$langs->load("stocks");
 				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 				$formproduct = new FormProduct($db);
@@ -2385,7 +2394,7 @@ if ($action == 'create' && $usercancreate) {
 					// 'text' => $langs->trans("ConfirmClone"),
 					// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
 					// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
-					array('type' => 'other', 'name' => 'idwarehouse', 'label' => $langs->trans("SelectWarehouseForStockIncrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse') ?GETPOST('idwarehouse') : 'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
+					array('type' => 'other', 'name' => 'idwarehouse', 'label' => $langs->trans("SelectWarehouseForStockIncrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse') ? GETPOST('idwarehouse') : 'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
 				);
 			}
 
@@ -2431,7 +2440,7 @@ if ($action == 'create' && $usercancreate) {
 		$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string'.(isset($conf->global->THIRDPARTY_REF_INPUT_SIZE) ? ':' . getDolGlobalString('THIRDPARTY_REF_INPUT_SIZE') : ''), '', null, null, '', 1);
 		// Thirdparty
 		$morehtmlref .= '<br>'.$soc->getNomUrl(1, 'customer');
-		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
+		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
 			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
 		}
 		// Project
@@ -2484,7 +2493,7 @@ if ($action == 'create' && $usercancreate) {
 			}
 
 			// Relative and absolute discounts
-			if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+			if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 				$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 				$filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 			} else {
@@ -2582,7 +2591,7 @@ if ($action == 'create' && $usercancreate) {
 			}
 
 			// Warehouse
-			if (isModEnabled('stock') && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
+			if (isModEnabled('stock') && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER')) {
 				$langs->load('stocks');
 				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 				$formproduct = new FormProduct($db);
@@ -2724,7 +2733,7 @@ if ($action == 'create' && $usercancreate) {
 			}
 
 			// Bank Account
-			if (!empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_ORDER) && isModEnabled("banque")) {
+			if (getDolGlobalString('BANK_ASK_PAYMENT_BANK_DURING_ORDER') && isModEnabled("banque")) {
 				print '<tr><td>';
 				$editenable = $usercancreate;
 				print $form->editfieldkey("BankAccount", 'bankaccount', '', $object, $editenable);
@@ -2750,7 +2759,7 @@ if ($action == 'create' && $usercancreate) {
 			print '<table class="border tableforfield centpercent">';
 
 			$alert = '';
-			if (!empty($conf->global->ORDER_MANAGE_MIN_AMOUNT) && $object->total_ht < $object->thirdparty->order_min_amount) {
+			if (getDolGlobalString('ORDER_MANAGE_MIN_AMOUNT') && $object->total_ht < $object->thirdparty->order_min_amount) {
 				$alert = ' ' . img_warning($langs->trans('OrderMinAmount') . ': ' . price($object->thirdparty->order_min_amount));
 			}
 
@@ -2819,13 +2828,13 @@ if ($action == 'create' && $usercancreate) {
 
 			print '<div class="clearboth"></div><br>';
 
-			if (!empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
+			if (getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
 				$blocname = 'contacts';
 				$title = $langs->trans('ContactsAddresses');
 				include DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php';
 			}
 
-			if (!empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
+			if (getDolGlobalString('MAIN_DISABLE_NOTES_TAB')) {
 				$blocname = 'notes';
 				$title = $langs->trans('Notes');
 				include DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php';
@@ -2876,9 +2885,12 @@ if ($action == 'create' && $usercancreate) {
 					$parameters = array();
 					// Note that $action and $object may be modified by hook
 					$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action);
-					if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-					if (empty($reshook))
+					if ($reshook < 0) {
+						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+					}
+					if (empty($reshook)) {
 						$object->formAddObjectLine(1, $mysoc, $soc);
+					}
 				} else {
 					$parameters = array();
 					$reshook = $hookmanager->executeHooks('formEditObjectLine', $parameters, $object, $action);
@@ -2909,7 +2921,7 @@ if ($action == 'create' && $usercancreate) {
 
 				// Send
 				if (empty($user->socid)) {
-					if ($object->statut > Commande::STATUS_DRAFT || !empty($conf->global->COMMANDE_SENDBYEMAIL_FOR_ALL_STATUS)) {
+					if ($object->statut > Commande::STATUS_DRAFT || getDolGlobalString('COMMANDE_SENDBYEMAIL_FOR_ALL_STATUS')) {
 						if ($usercansend) {
 							print dolGetButtonAction('', $langs->trans('SendMail'), 'email', $_SERVER["PHP_SELF"].'?action=presend&token='.newToken().'&id='.$object->id.'&mode=init#formmailbeforetitle', '');
 						} else {
@@ -2919,7 +2931,7 @@ if ($action == 'create' && $usercancreate) {
 				}
 
 				// Valid
-				if ($object->statut == Commande::STATUS_DRAFT && ($object->total_ttc >= 0 || !empty($conf->global->ORDER_ENABLE_NEGATIVE)) && $usercanvalidate) {
+				if ($object->statut == Commande::STATUS_DRAFT && ($object->total_ttc >= 0 || getDolGlobalString('ORDER_ENABLE_NEGATIVE')) && $usercanvalidate) {
 					if ($numlines > 0) {
 						print dolGetButtonAction('', $langs->trans('Validate'), 'default', $_SERVER["PHP_SELF"].'?action=validate&amp;token='.newToken().'&amp;id='.$object->id, $object->id, 1);
 					} else {
@@ -2971,14 +2983,14 @@ if ($action == 'create' && $usercancreate) {
 				}
 
 				// Create shipment
-				if ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && ($object->getNbOfProductsLines() > 0 || !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {
+				if ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && ($object->getNbOfProductsLines() > 0 || getDolGlobalString('STOCK_SUPPORTS_SERVICES'))) {
 					if ((getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && $user->hasRight('expedition', 'creer')) || (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && $user->hasRight('expedition', 'delivery', 'creer'))) {
-						$arrayforbutaction[] = array('lang'=>'sendings', 'enabled'=>(isModEnabled("expedition") && ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && ($object->getNbOfProductsLines() > 0 || !empty($conf->global->STOCK_SUPPORTS_SERVICES)))), 'perm'=>$user->hasRight('expedition', 'creer'), 'label'=>'CreateShipment', 'url'=>'/expedition/shipment.php?id='.$object->id);
+						$arrayforbutaction[] = array('lang'=>'sendings', 'enabled'=>(isModEnabled("expedition") && ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && ($object->getNbOfProductsLines() > 0 || getDolGlobalString('STOCK_SUPPORTS_SERVICES')))), 'perm'=>$user->hasRight('expedition', 'creer'), 'label'=>'CreateShipment', 'url'=>'/expedition/shipment.php?id='.$object->id);
 						/*
 						if ($user->hasRight('expedition', 'creer')) {
-							print dolGetButtonAction('', $langs->trans('CreateShipment'), 'default', DOL_URL_ROOT.'/expedition/shipment.php?id='.$object->id, '');
+						print dolGetButtonAction('', $langs->trans('CreateShipment'), 'default', DOL_URL_ROOT.'/expedition/shipment.php?id='.$object->id, '');
 						} else {
-							print dolGetButtonAction($langs->trans('NotAllowed'), $langs->trans('CreateShipment'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
+						print dolGetButtonAction($langs->trans('NotAllowed'), $langs->trans('CreateShipment'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
 						}*/
 					} else {
 						$langs->load("errors");
@@ -2987,7 +2999,13 @@ if ($action == 'create' && $usercancreate) {
 				}
 
 				// Create bill
-				$arrayforbutaction[] = array('lang'=>'bills', 'enabled'=>(isModEnabled('facture') && $object->statut > Commande::STATUS_DRAFT && !$object->billed && $object->total_ttc >= 0), 'perm'=>($user->hasRight('facture', 'creer') && empty($conf->global->WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER)), 'label'=>'CreateBill', 'url'=>'/compta/facture/card.php?action=create&amp;token='.newToken().'&amp;origin='.urlencode($object->element).'&amp;originid='.$object->id.'&amp;socid='.$object->socid);
+				$arrayforbutaction[] = array(
+					'lang'=>'bills',
+					'enabled'=>(isModEnabled('facture') && $object->statut > Commande::STATUS_DRAFT && !$object->billed && $object->total_ttc >= 0),
+					'perm'=>($user->hasRight('facture', 'creer') && !getDolGlobalInt('WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER')),
+					'label'=>'CreateBill',
+					'url'=>'/compta/facture/card.php?action=create&amp;token='.newToken().'&amp;origin='.urlencode($object->element).'&amp;originid='.$object->id.'&amp;socid='.$object->socid
+				);
 				/*
 				 if (isModEnabled('facture') && $object->statut > Commande::STATUS_DRAFT && !$object->billed && $object->total_ttc >= 0) {
 				 if (isModEnabled('facture') && $user->hasRight('facture', 'creer') && empty($conf->global->WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER)) {
@@ -3009,12 +3027,12 @@ if ($action == 'create' && $usercancreate) {
 				// Set billed or unbilled
 				// Note: Even if module invoice is not enabled, we should be able to use button "Classified billed"
 				if ($object->statut > Commande::STATUS_DRAFT && !$object->billed && $object->total_ttc >= 0) {
-					if ($usercancreate && $object->statut >= Commande::STATUS_VALIDATED && empty($conf->global->WORKFLOW_DISABLE_CLASSIFY_BILLED_FROM_ORDER) && !getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT')) {
+					if ($usercancreate && $object->statut >= Commande::STATUS_VALIDATED && !getDolGlobalString('WORKFLOW_DISABLE_CLASSIFY_BILLED_FROM_ORDER') && !getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT')) {
 						print dolGetButtonAction('', $langs->trans('ClassifyBilled'), 'default', $_SERVER["PHP_SELF"].'?action=classifybilled&amp;token='.newToken().'&amp;id='.$object->id, '');
 					}
 				}
 				if ($object->statut > Commande::STATUS_DRAFT && $object->billed) {
-					if ($usercancreate && $object->statut >= Commande::STATUS_VALIDATED && empty($conf->global->WORKFLOW_DISABLE_CLASSIFY_BILLED_FROM_ORDER) && !getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT')) {
+					if ($usercancreate && $object->statut >= Commande::STATUS_VALIDATED && !getDolGlobalString('WORKFLOW_DISABLE_CLASSIFY_BILLED_FROM_ORDER') && !getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT')) {
 						print dolGetButtonAction('', $langs->trans('ClassifyUnBilled'), 'delete', $_SERVER["PHP_SELF"].'?action=classifyunbilled&amp;token='.newToken().'&amp;id='.$object->id, '');
 					}
 				}
@@ -3071,7 +3089,7 @@ if ($action == 'create' && $usercancreate) {
 
 			// Show online payment link
 			$useonlinepayment = (isModEnabled('paypal') || isModEnabled('stripe') || isModEnabled('paybox'));
-			if (!empty($conf->global->ORDER_HIDE_ONLINE_PAYMENT_ON_ORDER)) {
+			if (getDolGlobalString('ORDER_HIDE_ONLINE_PAYMENT_ON_ORDER')) {
 				$useonlinepayment = 0;
 			}
 			if ($object->statut != Commande::STATUS_DRAFT && $useonlinepayment) {

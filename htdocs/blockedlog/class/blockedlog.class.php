@@ -203,15 +203,15 @@ class BlockedLog
 
 		// Cashdesk
 		// $conf->global->BANK_ENABLE_POS_CASHCONTROL must be set to 1 by all external POS modules
-		$moduleposenabled = (!empty($conf->cashdesk->enabled) || !empty($conf->takepos->enabled) || !empty($conf->global->BANK_ENABLE_POS_CASHCONTROL));
+		$moduleposenabled = (!empty($conf->cashdesk->enabled) || !empty($conf->takepos->enabled) || getDolGlobalString('BANK_ENABLE_POS_CASHCONTROL'));
 		if ($moduleposenabled) {
 			$this->trackedevents['CASHCONTROL_VALIDATE'] = 'logCASHCONTROL_VALIDATE';
 		}
 
 		// Add more action to track from a conf variable
 		// For example: STOCK_MOVEMENT,...
-		if (!empty($conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED)) {
-			$tmparrayofmoresupportedevents = explode(',', $conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED);
+		if (getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED')) {
+			$tmparrayofmoresupportedevents = explode(',', getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED'));
 			foreach ($tmparrayofmoresupportedevents as $val) {
 				$this->trackedevents[$val] = 'log'.$val;
 			}
@@ -762,7 +762,7 @@ class BlockedLog
 				$this->date_creation 	= $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->tms);
 
-				$this->amounts			= (double) $obj->amounts;
+				$this->amounts			= (float) $obj->amounts;
 				$this->action 			= $obj->action;
 				$this->element			= $obj->element;
 
@@ -840,7 +840,6 @@ class BlockedLog
 	 */
 	public function setCertified()
 	{
-
 		$res = $this->db->query("UPDATE ".MAIN_DB_PREFIX."blockedlog SET certified=1 WHERE rowid=".((int) $this->id));
 		if (!$res) {
 			return false;
@@ -854,7 +853,7 @@ class BlockedLog
 	 *
 	 *	@param	User	$user      			Object user that create
 	 *  @param	int		$forcesignature		Force signature (for example '0000000000' when we disabled the module)
-	 *	@return	int							<0 if KO, >0 if OK
+	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user, $forcesignature = '')
 	{
@@ -865,7 +864,7 @@ class BlockedLog
 		$error = 0;
 
 		// Clean data
-		$this->amounts = (double) $this->amounts;
+		$this->amounts = (float) $this->amounts;
 
 		dol_syslog(get_class($this).'::create action='.$this->action.' fk_user='.$this->fk_user.' user_fullname='.$this->user_fullname, LOG_DEBUG);
 
@@ -1174,7 +1173,7 @@ class BlockedLog
 	{
 		global $db, $conf, $mysoc;
 
-		if (empty($conf->global->BLOCKEDLOG_ENTITY_FINGERPRINT)) { // creation of a unique fingerprint
+		if (!getDolGlobalString('BLOCKEDLOG_ENTITY_FINGERPRINT')) { // creation of a unique fingerprint
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';

@@ -40,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("sendings", "deliveries", 'companies', 'bills', 'products'));
 
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'shipmentlist'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'shipmentlist'; // To manage different context of search
 
 $socid = GETPOST('socid', 'int');
 
@@ -72,7 +72,7 @@ $search_datedelivery_start = dol_mktime(0, 0, 0, GETPOST('search_datedelivery_st
 $search_datedelivery_end = dol_mktime(23, 59, 59, GETPOST('search_datedelivery_endmonth', 'int'), GETPOST('search_datedelivery_endday', 'int'), GETPOST('search_datedelivery_endyear', 'int'));
 $search_datereceipt_start = dol_mktime(0, 0, 0, GETPOST('search_datereceipt_startmonth', 'int'), GETPOST('search_datereceipt_startday', 'int'), GETPOST('search_datereceipt_startyear', 'int'));
 $search_datereceipt_end = dol_mktime(23, 59, 59, GETPOST('search_datereceipt_endmonth', 'int'), GETPOST('search_datereceipt_endday', 'int'), GETPOST('search_datereceipt_endyear', 'int'));
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_user = GETPOST('search_user', 'int');
 $search_sale = GETPOST('search_sale', 'int');
 $search_categ_cus = GETPOST("search_categ_cus", 'int');
@@ -80,7 +80,7 @@ $search_product_category = GETPOST('search_product_category', 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -537,7 +537,7 @@ if ($search_zip) {
 if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
 	$param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
 }
-if ($search_datedelivery_start)	{
+if ($search_datedelivery_start) {
 	$param .= '&search_datedelivery_startday='.urlencode(dol_print_date($search_datedelivery_start, '%d')).'&search_datedelivery_startmonth='.urlencode(dol_print_date($search_datedelivery_start, '%m')).'&search_datedelivery_startyear='.urlencode(dol_print_date($search_datedelivery_start, '%Y'));
 }
 if ($search_datedelivery_end) {
@@ -729,7 +729,7 @@ if (!empty($arrayfields['country.code_iso']['checked'])) {
 // Company type
 if (!empty($arrayfields['typent.code']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
-	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
+	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (!getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
 	print '</td>';
 }
 // Weight
@@ -741,10 +741,10 @@ if (!empty($arrayfields['e.weight']['checked'])) {
 // Date delivery planned
 if (!empty($arrayfields['e.date_delivery']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_datedelivery_start ? $search_datedelivery_start : -1, 'search_datedelivery_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_datedelivery_end ? $search_datedelivery_end : -1, 'search_datedelivery_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td>';
@@ -771,10 +771,10 @@ if (!empty($arrayfields['l.ref']['checked'])) {
 if (!empty($arrayfields['l.date_delivery']['checked'])) {
 	// Date received
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_datereceipt_start ? $search_datereceipt_start : -1, 'search_datereceipt_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_datereceipt_end ? $search_datereceipt_end : -1, 'search_datereceipt_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td>';
@@ -944,8 +944,8 @@ while ($i < $imaxinloop) {
 		print '<tr class="oddeven">';
 
 		// Action column
-		if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
-			print '<td class="nowrap" align="center">';
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
 				if (in_array($obj->rowid, $arrayofselected)) {
@@ -967,8 +967,8 @@ while ($i < $imaxinloop) {
 
 		// Ref customer
 		if (!empty($arrayfields['e.ref_customer']['checked'])) {
-			print "<td>";
-			print $obj->ref_customer;
+			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->ref_customer).'">';
+			print dol_escape_htmltag($obj->ref_customer);
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -996,7 +996,7 @@ while ($i < $imaxinloop) {
 		// Zip
 		if (!empty($arrayfields['s.zip']['checked'])) {
 			print '<td class="nocellnopadd center">';
-			print $obj->zip;
+			print dol_escape_htmltag($obj->zip);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1013,7 +1013,7 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['country.code_iso']['checked'])) {
 			print '<td class="center">';
 			$tmparray = getCountry($obj->fk_pays, 'all');
-			print $tmparray['label'];
+			print dol_escape_htmltag($tmparray['label']);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1059,7 +1059,9 @@ while ($i < $imaxinloop) {
 			// Get code using getLabelFromKey
 			$code=$langs->getLabelFromKey($db, $shipment->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
 			print '<td class="center tdoverflowmax150" title="'.dol_escape_htmltag($langs->trans("SendingMethod".strtoupper($code))).'">';
-			if ($shipment->shipping_method_id > 0) print $langs->trans("SendingMethod".strtoupper($code));
+			if ($shipment->shipping_method_id > 0) {
+				print $langs->trans("SendingMethod".strtoupper($code));
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1137,8 +1139,8 @@ while ($i < $imaxinloop) {
 		}
 
 		// Action column
-		if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
-			print '<td class="nowrap" align="center">';
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
 				if (in_array($obj->rowid, $arrayofselected)) {

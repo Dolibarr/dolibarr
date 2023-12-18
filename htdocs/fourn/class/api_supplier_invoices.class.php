@@ -24,7 +24,7 @@ require_once DOL_DOCUMENT_ROOT . '/fourn/class/paiementfourn.class.php';
 /**
  * API class for supplier invoices
  *
- * @property DoliDB db
+ * @property DoliDB $db
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
@@ -222,14 +222,20 @@ class SupplierInvoices extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
-			$this->invoice->$field = $value;
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->invoice->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
+			$this->invoice->$field = $this->_checkValForAPI($field, $value, $this->invoice);
 		}
 		if (!array_key_exists('date', $request_data)) {
 			$this->invoice->date = dol_now();
 		}
 
 		if ($this->invoice->create(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500, "Error creating order", array_merge(array($this->invoice->error), $this->invoice->errors));
+			throw new RestException(500, "Error creating invoice ", array_merge(array($this->invoice->error), $this->invoice->errors));
 		}
 		return $this->invoice->id;
 	}
@@ -264,7 +270,13 @@ class SupplierInvoices extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
-			$this->invoice->$field = $value;
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->invoice->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
+			$this->invoice->$field = $this->_checkValForAPI($field, $value, $this->invoice);
 		}
 
 		if ($this->invoice->update($id, DolibarrApiAccess::$user)) {

@@ -136,7 +136,7 @@ class mod_task_universal extends ModeleNumRefTask
 			return 0;
 		}
 
-		$date = empty($object->date_c) ?dol_now() : $object->date_c;
+		$date = empty($object->date_c) ? dol_now() : $object->date_c;
 		$numFinal = get_next_value($db, $mask, 'projet_task', 'ref', '', (is_object($objsoc) ? $objsoc->code_client : ''), $date);
 
 		return  $numFinal;

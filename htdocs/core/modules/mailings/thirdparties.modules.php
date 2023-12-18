@@ -58,7 +58,7 @@ class mailing_thirdparties extends MailingTargets
 	 *    This is the main function that returns the array of emails
 	 *
 	 *    @param	int		$mailing_id    	Id of mailing. No need to use it.
-	 *    @return   int 					<0 if error, number of emails added if ok
+	 *    @return   int 					Return integer <0 if error, number of emails added if ok
 	 */
 	public function add_to_target($mailing_id)
 	{
@@ -330,13 +330,13 @@ class mailing_thirdparties extends MailingTargets
 		// filter_client_thirdparties
 		$s .= '<select id="filter_client_thirdparties" name="filter_client_thirdparties" class="flat minwidth100">';
 		$s .= '<option value="-1">'.$langs->trans('ProspectCustomer').'</option>';
-		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) {
+		if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTS')) {
 			$s .= '<option value="2">'.$langs->trans('Prospect').'</option>';
 		}
-		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) {
+		if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTS') && !getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS') && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTSCUSTOMERS')) {
 			$s .= '<option value="3">'.$langs->trans('ProspectCustomer').'</option>';
 		}
-		if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
+		if (!getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS')) {
 			$s .= '<option value="1">'.$langs->trans('Customer').'</option>';
 		}
 		$s .= '<option value="0">'.$langs->trans('NorProspectNorCustomer').'</option>';

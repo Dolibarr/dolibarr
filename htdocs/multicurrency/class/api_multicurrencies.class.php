@@ -259,6 +259,12 @@ class MultiCurrencies extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$multicurrency->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$multicurrency->$field = $value;
 		}
 
@@ -375,8 +381,9 @@ class MultiCurrencies extends DolibarrApi
 
 		// Clear all fields out of interrest
 		foreach ($object as $key => $value) {
-			if ($key == "id" || $key == "rate" || $key == "date_sync")
+			if ($key == "id" || $key == "rate" || $key == "date_sync") {
 				continue;
+			}
 			unset($object->$key);
 		}
 

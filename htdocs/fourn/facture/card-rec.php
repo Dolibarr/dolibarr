@@ -70,6 +70,8 @@ $ref_supplier = GETPOST('ref_supplier', 'alpha');
 $projectid = GETPOST('projectid', 'int');
 $year_date_when = GETPOST('year_date_when');
 $month_date_when = GETPOST('month_date_when');
+// Security check
+$socid = GETPOST('socid', 'int');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -115,10 +117,10 @@ $permissiontoedit = $user->hasRight("fournisseur", "facture", "creer") || $user-
 $usercanread = $user->hasRight("fournisseur", "facture", "lire") || $user->hasRight("supplier_invoice", "lire");
 $usercancreate = $user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer");
 $usercandelete = $user->hasRight("fournisseur", "facture", "supprimer") || $user->hasRight("supplier_invoice", "supprimer");
-$usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($usercancreate)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight("fournisseur", "supplier_invoice_advance", "validate")));
-$usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->hasRight("fournisseur", "supplier_invoice_advance", "send"));
+$usercanvalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($usercancreate)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight("fournisseur", "supplier_invoice_advance", "validate")));
+$usercansend = (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || $user->hasRight("fournisseur", "supplier_invoice_advance", "send"));
 
-$usercanproductignorepricemin = ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->hasRight("produit", "ignore_price_min_advance")) || empty($conf->global->MAIN_USE_ADVANCED_PERMS));
+$usercanproductignorepricemin = ((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight("produit", "ignore_price_min_advance")) || !getDolGlobalString('MAIN_USE_ADVANCED_PERMS'));
 $usercancreatemargin = $user->hasRight("margins", "creer");
 $usercanreadallmargin = $user->hasRight("margins", "liretous");
 $usercancreatewithdrarequest = $user->hasRight("prelevement", "bons", "creer");
@@ -128,7 +130,6 @@ $now = dol_now();
 $error = 0;
 
 $result = restrictedArea($user, 'supplier_invoicerec', $object->id, $objecttype);
-
 
 
 /*
@@ -494,7 +495,7 @@ if (empty($reshook)) {
 				$res = $productsupplier->fetch($idprod); // Load product from its id
 				// Call to init some price properties of $productsupplier
 				// So if a supplier price already exists for another thirdparty (first one found), we use it as reference price
-				if (!empty($conf->global->SUPPLIER_TAKE_FIRST_PRICE_IF_NO_PRICE_FOR_CURRENT_SUPPLIER)) {
+				if (getDolGlobalString('SUPPLIER_TAKE_FIRST_PRICE_IF_NO_PRICE_FOR_CURRENT_SUPPLIER')) {
 					$fksoctosearch = 0;
 					$productsupplier->get_buyprice(0, -1, $idprod, 'none', $fksoctosearch); // We force qty to -1 to be sure to find if a supplier price exist
 					if ($productsupplier->fourn_socid != $socid) {    // The price we found is for another supplier, so we clear supplier price
@@ -579,7 +580,7 @@ if (empty($reshook)) {
 				$desc = '';
 
 				// Define output language
-				if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
 					$outputlangs = $langs;
 					$newlang = '';
 					if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -601,10 +602,10 @@ if (empty($reshook)) {
 				$desc = dol_concatdesc($desc, $product_desc);
 
 				// Add custom code and origin country into description
-				if (empty($conf->global->MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE) && (!empty($prod->customcode) || !empty($prod->country_code))) {
+				if (!getDolGlobalString('MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE') && (!empty($prod->customcode) || !empty($prod->country_code))) {
 					$tmptxt = '(';
 					// Define output language
-					if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
 						$outputlangs = $langs;
 						$newlang = '';
 						if (empty($newlang) && GETPOST('lang_id', 'alpha')) {
@@ -795,14 +796,14 @@ if (empty($reshook)) {
 			$type = $product->type;
 
 			$price_min = $product->price_min;
-			if (!empty($conf->global->PRODUIT_MULTIPRICES) && !empty($object->thirdparty->price_level)) {
+			if (getDolGlobalString('PRODUIT_MULTIPRICES') && !empty($object->thirdparty->price_level)) {
 				$price_min = $product->multiprices_min[$object->thirdparty->price_level];
 			}
 
 			$label = $product->label;
 
 			// Check price is not lower than minimum (check is done only for standard or replacement invoices)
-			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->hasRight("produit", "ignore_price_min_advance")) || empty($conf->global->MAIN_USE_ADVANCED_PERMS)) && $price_min && (price2num($pu_ht) * (1 - $remise_percent / 100) < price2num($price_min))) {
+			if (((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight("produit", "ignore_price_min_advance")) || !getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) && $price_min && (price2num($pu_ht) * (1 - $remise_percent / 100) < price2num($price_min))) {
 				setEventMessages($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency)), null, 'errors');
 				$error++;
 			}
@@ -908,8 +909,12 @@ if ($action == 'create') {
 		print dol_get_fiche_head(null, '', '', 0);
 
 		$rowspan = 4;
-		if (isModEnabled('project')) $rowspan++;
-		if ($object->fk_account > 0) $rowspan++;
+		if (isModEnabled('project')) {
+			$rowspan++;
+		}
+		if ($object->fk_account > 0) {
+			$rowspan++;
+		}
 
 		print '<table class="border centpercent">';
 
@@ -952,8 +957,8 @@ if ($action == 'create') {
 		$substitutionarray['__INVOICE_YEAR__'] = $langs->trans("YearOfInvoice") . ' (' . $langs->trans("Example") . ': ' . dol_print_date($object->date, '%Y') . ')';
 		$substitutionarray['__INVOICE_NEXT_YEAR__'] = $langs->trans("NextYearOfInvoice") . ' (' . $langs->trans("Example") . ': ' . dol_print_date(dol_time_plus_duree($object->date, 1, 'y'), '%Y') . ')';
 		// Only on template invoices
-		$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_BEFORE_GEN__'] = $langs->trans("DateNextInvoiceBeforeGen") . ' (' . $langs->trans("Example") . ': ' . dol_print_date($object->date_when, 'dayhour') . ')';
-		$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_AFTER_GEN__'] = $langs->trans("DateNextInvoiceAfterGen") . ' (' . $langs->trans("Example") . ': ' . dol_print_date(dol_time_plus_duree($object->date_when, $object->frequency, $object->unit_frequency), 'dayhour') . ')';
+		$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_BEFORE_GEN__'] = $langs->trans("DateNextInvoiceBeforeGen") . (isset($object->date_when) ? ' (' . $langs->trans("Example") . ': ' .dol_print_date($object->date_when, 'dayhour') . ')' : '');
+		$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_AFTER_GEN__'] = $langs->trans("DateNextInvoiceAfterGen") . (isset($object->date_when) ? ' (' . $langs->trans("Example") . ': ' . dol_print_date(dol_time_plus_duree($object->date_when, $object->frequency, $object->unit_frequency), 'dayhour') . ')' : '');
 		$substitutionarray['__INVOICE_COUNTER_CURRENT__'] = $langs->trans("Count");
 		$substitutionarray['__INVOICE_COUNTER_MAX__'] = $langs->trans("MaxPeriodNumber");
 
@@ -1024,7 +1029,7 @@ if ($action == 'create') {
 		print $form->textwithpicto($langs->trans('NotePublic'), $htmltext, 1, 'help', '', 0, 2, 'notepublic');
 		print '</td>';
 		print '<td>';
-		$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
+		$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 
 		// Private note
@@ -1034,7 +1039,7 @@ if ($action == 'create') {
 			print $form->textwithpicto($langs->trans('NotePrivate'), $htmltext, 1, 'help', '', 0, 2, 'noteprivate');
 			print '</td>';
 			print '<td>';
-			$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
+			$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
 			print $doleditor->Create(1);
 			print '</td></tr>';
 		}
@@ -1076,7 +1081,7 @@ if ($action == 'create') {
 		print "</td></tr>";
 
 		// Auto generate document
-		if (!empty($conf->global->INVOICE_REC_CAN_DISABLE_DOCUMENT_FILE_GENERATION)) {
+		if (getDolGlobalString('INVOICE_REC_CAN_DISABLE_DOCUMENT_FILE_GENERATION')) {
 			print "<tr><td>" . $langs->trans("StatusOfAutoGeneratedDocuments") . "</td><td>";
 			$select = array('0' => $langs->trans('DoNotGenerateDoc'), '1' => $langs->trans('AutoGenerateDoc'));
 			print $form->selectarray('generate_pdf', $select, GETPOST('generate_pdf'));
@@ -1129,6 +1134,8 @@ if ($action == 'create') {
 	if ($object->id > 0) {
 		$object->fetch($object->id);
 		$object->fetch_thirdparty();
+
+		$formconfirm = '';
 
 		// Confirmation de la suppression d'une ligne produit
 		if ($action == 'ask_deleteline') {
@@ -1519,7 +1526,7 @@ if ($action == 'create') {
 		}
 		print '</td>';
 		// Auto generate documents
-		if (!empty($conf->global->INVOICE_REC_CAN_DISABLE_DOCUMENT_FILE_GENERATION)) {
+		if (getDolGlobalString('INVOICE_REC_CAN_DISABLE_DOCUMENT_FILE_GENERATION')) {
 			print '<tr>';
 			print '<td>';
 			if ($action == 'generate_pdf' || $object->frequency > 0) {
@@ -1617,9 +1624,12 @@ if ($action == 'create') {
 
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-				if (empty($reshook))
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				}
+				if (empty($reshook)) {
 					global $senderissupplier;
+				}
 				$senderissupplier = 2;
 				$object->formAddObjectLine(0, $object->thirdparty, $mysoc); // No date selector for template invoice
 			}

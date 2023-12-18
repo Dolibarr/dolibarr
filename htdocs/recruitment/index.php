@@ -330,18 +330,18 @@ print '</div><div class="fichetwothirdright">';
 
 
 $NBMAX = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
-$max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
 
 // Last modified job position
 if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjobposition', 'read')) {
 	$sql = "SELECT s.rowid, s.ref, s.label, s.date_creation, s.tms, s.status, COUNT(rc.rowid) as nbapplications";
 	$sql .= " FROM ".MAIN_DB_PREFIX."recruitment_recruitmentjobposition as s";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature as rc ON rc.fk_recruitmentjobposition = s.rowid";
-	if (isModEnabled('societe') && empty($user->rights->societe->client->voir) && !$socid) {
+	if (isModEnabled('societe') && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE s.entity IN (".getEntity($staticrecruitmentjobposition->element).")";
-	if (isModEnabled('societe') && empty($user->rights->societe->client->voir) && !$socid) {
+	if (isModEnabled('societe') && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= " AND s.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
@@ -393,7 +393,7 @@ if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjo
 
 			$db->free($resql);
 		} else {
-			print '<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			print '<tr class="oddeven"><td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 		print "</table>";
 		print "</div>";
@@ -408,11 +408,11 @@ if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjo
 	$sql = "SELECT rc.rowid, rc.ref, rc.email, rc.lastname, rc.firstname, rc.date_creation, rc.tms, rc.status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature as rc";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."recruitment_recruitmentjobposition as s ON rc.fk_recruitmentjobposition = s.rowid";
-	if (isModEnabled('societe') && empty($user->rights->societe->client->voir) && !$socid) {
+	if (isModEnabled('societe') && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE rc.entity IN (".getEntity($staticrecruitmentjobposition->element).")";
-	if (isModEnabled('societe') && empty($user->rights->societe->client->voir) && !$socid) {
+	if (isModEnabled('societe') && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= " AND s.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
@@ -459,7 +459,7 @@ if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjo
 
 			$db->free($resql);
 		} else {
-			print '<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			print '<tr class="oddeven"><td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 		print "</table>";
 		print "</div>";

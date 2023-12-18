@@ -89,7 +89,7 @@ trait CommonPeople
 
 		$ret .= dolGetFirstLastname($firstname, $lastname, $nameorder);
 
-		return dol_trunc($ret, $maxlen);
+		return dol_string_nohtmltag(dol_trunc($ret, $maxlen));
 	}
 
 	/**
@@ -131,7 +131,7 @@ trait CommonPeople
 			if (!empty($conf->use_javascript_ajax)) {
 				// Add picto with tooltip on map
 				$namecoords = '';
-				if ($this->element == 'contact' && !empty($conf->global->MAIN_SHOW_COMPANY_NAME_IN_BANNER_ADDRESS)) {
+				if ($this->element == 'contact' && getDolGlobalString('MAIN_SHOW_COMPANY_NAME_IN_BANNER_ADDRESS')) {
 					$namecoords .= $object->name.'<br>';
 				}
 				$namecoords .= $this->getFullName($langs, 1).'<br>'.$coords;
@@ -149,7 +149,7 @@ trait CommonPeople
 
 			// List of extra languages
 			$arrayoflangcode = array();
-			if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE)) {
+			if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
 				$arrayoflangcode[] = $conf->global->PDF_USE_ALSO_LANGUAGE_CODE;
 			}
 
@@ -180,8 +180,8 @@ trait CommonPeople
 		}
 
 		// If MAIN_FORCE_STATE_INTO_ADDRESS is on, state is already returned previously with getFullAddress
-		if (!in_array($this->country_code, $countriesusingstate) && empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)
-				&& empty($conf->global->SOCIETE_DISABLE_STATE) && $this->state) {
+		if (!in_array($this->country_code, $countriesusingstate) && !getDolGlobalString('MAIN_FORCE_STATE_INTO_ADDRESS')
+				&& !getDolGlobalString('SOCIETE_DISABLE_STATE') && $this->state) {
 			if (getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1 && $this->region) {
 				$out .= ($outdone ? ' - ' : '').$this->region.' - '.$this->state;
 			} else {
@@ -278,22 +278,22 @@ trait CommonPeople
 	{
 		global $conf;
 
-		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) {
+		if (getDolGlobalString('MAIN_FIRST_TO_UPPER')) {
 			$this->lastname = dol_ucwords(dol_strtolower($this->lastname));
 			$this->firstname = dol_ucwords(dol_strtolower($this->firstname));
 			$this->name = dol_ucwords(dol_strtolower($this->name));
 			if (property_exists($this, 'name_alias')) {
-				$this->name_alias = isset($this->name_alias)?dol_ucwords(dol_strtolower($this->name_alias)):'';
+				$this->name_alias = isset($this->name_alias) ? dol_ucwords(dol_strtolower($this->name_alias)) : '';
 			}
 		}
-		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) {
+		if (getDolGlobalString('MAIN_ALL_TO_UPPER')) {
 			$this->lastname = dol_strtoupper($this->lastname);
 			$this->name = dol_strtoupper($this->name);
 			if (property_exists($this, 'name_alias')) {
 				$this->name_alias = dol_strtoupper($this->name_alias);
 			}
 		}
-		if (!empty($conf->global->MAIN_ALL_TOWN_TO_UPPER)) {
+		if (getDolGlobalString('MAIN_ALL_TOWN_TO_UPPER')) {
 			$this->address = dol_strtoupper($this->address);
 			$this->town = dol_strtoupper($this->town);
 		}

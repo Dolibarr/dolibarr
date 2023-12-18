@@ -316,6 +316,12 @@ class Products extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->product->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->product->$field = $value;
 		}
 		if ($this->product->create(DolibarrApiAccess::$user) < 0) {
@@ -362,6 +368,12 @@ class Products extends DolibarrApi
 			if ($field == 'stock_reel') {
 				throw new RestException(400, 'Stock reel cannot be updated here. Use the /stockmovements endpoint instead');
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->product->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->product->$field = $value;
 		}
 
@@ -373,7 +385,7 @@ class Products extends DolibarrApi
 		$result = $this->product->update($id, DolibarrApiAccess::$user, 1, 'update', $updatetype);
 
 		// If price mode is 1 price per product
-		if ($result > 0 && !empty($conf->global->PRODUCT_PRICE_UNIQ)) {
+		if ($result > 0 && getDolGlobalString('PRODUCT_PRICE_UNIQ')) {
 			// We update price only if it was changed
 			$pricemodified = false;
 			if ($this->product->price_base_type != $oldproduct->price_base_type) {
@@ -617,7 +629,7 @@ class Products extends DolibarrApi
 			throw new RestException(401);
 		}
 
-		if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+		if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 			throw new RestException(400, 'API not available: this mode of pricing is not enabled by setup');
 		}
 
@@ -659,7 +671,7 @@ class Products extends DolibarrApi
 			throw new RestException(401);
 		}
 
-		if (empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+		if (!getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 			throw new RestException(400, 'API not available: this mode of pricing is not enabled by setup');
 		}
 
@@ -708,7 +720,7 @@ class Products extends DolibarrApi
 			throw new RestException(401);
 		}
 
-		if (empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) {
+		if (!getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY')) {
 			throw new RestException(400, 'API not available: this mode of pricing is not enabled by setup');
 		}
 
@@ -1282,6 +1294,12 @@ class Products extends DolibarrApi
 			if ($field == 'rowid') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$prodattr->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$prodattr->$field = $value;
 		}
 
@@ -1589,6 +1607,12 @@ class Products extends DolibarrApi
 			if ($field == 'rowid') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$objectval->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$objectval->$field = $value;
 		}
 
@@ -1846,6 +1870,12 @@ class Products extends DolibarrApi
 			if ($field == 'rowid') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$prodcomb->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$prodcomb->$field = $value;
 		}
 

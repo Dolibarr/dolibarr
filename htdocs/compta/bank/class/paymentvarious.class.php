@@ -197,7 +197,7 @@ class PaymentVarious extends CommonObject
 	 *
 	 * @param   User	$user        	User that modify
 	 * @param   int		$notrigger      0=no, 1=yes (no update trigger)
-	 * @return  int         			<0 if KO, >0 if OK
+	 * @return  int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -267,7 +267,7 @@ class PaymentVarious extends CommonObject
 	 *
 	 *  @param	int		$id         id object
 	 *  @param  User	$user       User that load
-	 *  @return int         		<0 if KO, >0 if OK
+	 *  @return int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $user = null)
 	{
@@ -339,7 +339,7 @@ class PaymentVarious extends CommonObject
 	 *  Delete object in database
 	 *
 	 *	@param	User	$user       User that delete
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user)
 	{
@@ -415,7 +415,7 @@ class PaymentVarious extends CommonObject
 	 *  Create in database
 	 *
 	 *  @param   User   $user   User that create
-	 *  @return  int            <0 if KO, >0 if OK
+	 *  @return  int            Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user)
 	{
@@ -589,7 +589,7 @@ class PaymentVarious extends CommonObject
 	 *  Update link between payment various and line generate into llx_bank
 	 *
 	 *  @param  int     $id_bank    Id bank account
-	 *	@return int                 <0 if KO, >0 if OK
+	 *	@return int                 Return integer <0 if KO, >0 if OK
 	 */
 	public function update_fk_bank($id_bank)
 	{
@@ -689,7 +689,7 @@ class PaymentVarious extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -760,7 +760,7 @@ class PaymentVarious extends CommonObject
 	/**
 	 *	Return if a various payment linked to a bank line id was dispatched into bookkeeping
 	 *
-	 *	@return     int         <0 if KO, 0=no, 1=yes
+	 *	@return     int         Return integer <0 if KO, 0=no, 1=yes
 	 */
 	public function getVentilExportCompta()
 	{

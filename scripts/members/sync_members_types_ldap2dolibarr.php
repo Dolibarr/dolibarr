@@ -119,7 +119,7 @@ if (!$confirmed) {
 	$input = trim(fgets(STDIN));
 }
 
-if (empty($conf->global->LDAP_MEMBER_TYPE_DN)) {
+if (!getDolGlobalString('LDAP_MEMBER_TYPE_DN')) {
 	print $langs->trans("Error").': '.$langs->trans("LDAP setup for members types not defined inside Dolibarr");
 	exit(-1);
 }

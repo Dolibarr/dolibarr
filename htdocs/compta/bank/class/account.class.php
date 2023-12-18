@@ -433,7 +433,7 @@ class Account extends CommonObject
 		if (empty($this->rappro)) {
 			return -1;
 		}
-		if ($this->courant == Account::TYPE_CASH && empty($conf->global->BANK_CAN_RECONCILIATE_CASHACCOUNT)) {
+		if ($this->courant == Account::TYPE_CASH && !getDolGlobalString('BANK_CAN_RECONCILIATE_CASHACCOUNT')) {
 			return -2;
 		}
 		if ($this->clos) {
@@ -452,7 +452,7 @@ class Account extends CommonObject
 	 *      @param  string	$url        Url (deprecated, we use now 'url_id' and 'type' instead)
 	 *      @param  string	$label      Link label
 	 *      @param  string	$type       Type of link ('payment', 'company', 'member', ...)
-	 *      @return int         		<0 if KO, id line if OK
+	 *      @return int         		Return integer <0 if KO, id line if OK
 	 */
 	public function add_url_line($line_id, $url_id, $url, $label, $type)
 	{
@@ -590,7 +590,7 @@ class Account extends CommonObject
 
 		// Check parameters
 		if (!$oper) {
-			$this->error = "oper not defined";
+			$this->error = "Operation code not defined";
 			return -1;
 		}
 		if (!$this->id) {
@@ -667,7 +667,7 @@ class Account extends CommonObject
 	 *
 	 *  @param	User	$user		Object user making creation
 	 *  @param  int     $notrigger  1=Disable triggers
-	 *  @return int        			< 0 if KO, > 0 if OK
+	 *  @return int        			Return integer < 0 if KO, > 0 if OK
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
@@ -701,6 +701,15 @@ class Account extends CommonObject
 		}
 
 		// Load librairies to check BAN
+		$balance = $this->balance;
+		if (empty($balance) && !empty($this->solde)) {
+			$balance = $this->solde;
+		}
+		if (empty($balance)) {
+			$balance = 0;
+		}
+
+		// Load the library to validate/check a BAN account
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 
 		$now = dol_now();
@@ -779,7 +788,7 @@ class Account extends CommonObject
 				$accline = new AccountLine($this->db);
 				$accline->datec = $now;
 				$accline->label = '('.$langs->trans("InitialBankBalance").')';
-				$accline->amount = price2num($this->solde);
+				$accline->amount = price2num($balance);
 				$accline->fk_user_author = $user->id;
 				$accline->fk_account = $this->id;
 				$accline->datev = $this->date_solde;
@@ -834,7 +843,7 @@ class Account extends CommonObject
 	 *
 	 *    	@param	User	$user       Object user making action
 	 *      @param  int     $notrigger  1=Disable triggers
-	 *		@return	int					<0 if KO, >0 if OK
+	 *		@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -938,7 +947,7 @@ class Account extends CommonObject
 	 *  Update BBAN (RIB) account fields
 	 *
 	 *  @param	User|null	$user       Object user making update
-	 *  @return	int						<0 if KO, >0 if OK
+	 *  @return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function update_bban(User $user = null)
 	{
@@ -993,7 +1002,7 @@ class Account extends CommonObject
 	 *
 	 *      @param	int		$id      	Id of bank account to get
 	 *      @param  string	$ref     	Ref of bank account to get
-	 *      @return	int					<0 if KO, >0 if OK
+	 *      @return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $ref = '')
 	{
@@ -1103,7 +1112,7 @@ class Account extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param 	int[]|int 	$categories 	Category or categories IDs
-	 * @return 	int							<0 if KO, >0 if OK
+	 * @return 	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function setCategories($categories)
 	{
@@ -1115,7 +1124,7 @@ class Account extends CommonObject
 	 *  Delete bank account from database
 	 *
 	 *  @param	User|null	$user	User deleting
-	 *  @return int      	       	<0 if KO, >0 if OK
+	 *  @return int      	       	Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user = null)
 	{
@@ -1285,7 +1294,7 @@ class Account extends CommonObject
 	 *
 	 *      @param	User	$user        		Objet user
 	 *		@param	int		$filteraccountid	To get info for a particular account id
-	 *      @return WorkboardResponse|int 		<0 if KO, WorkboardResponse if OK
+	 *      @return WorkboardResponse|int 		Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board(User $user, $filteraccountid = 0)
 	{
@@ -1342,7 +1351,7 @@ class Account extends CommonObject
 	 *      Charge indicateurs this->nb de tableau de bord
 	 *
 	 *		@param		int			$filteraccountid	To get info for a particular account id
-	 *      @return     int         <0 if KO, >0 if OK
+	 *      @return     int         Return integer <0 if KO, >0 if OK
 	 */
 	public function load_state_board($filteraccountid = 0)
 	{
@@ -1399,7 +1408,7 @@ class Account extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE ba.rappro > 0 and ba.clos = 0";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		if (empty($conf->global->BANK_CAN_RECONCILIATE_CASHACCOUNT)) {
+		if (!getDolGlobalString('BANK_CAN_RECONCILIATE_CASHACCOUNT')) {
 			$sql .= " AND ba.courant != 2";
 		}
 		$resql = $this->db->query($sql);
@@ -1518,7 +1527,7 @@ class Account extends CommonObject
 				$label = $langs->trans("BankAccount");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -1652,7 +1661,7 @@ class Account extends CommonObject
 	{
 		global $conf;
 
-		if (!empty($conf->global->MAIN_IBAN_IS_NEVER_MANDATORY)) {
+		if (getDolGlobalString('MAIN_IBAN_IS_NEVER_MANDATORY')) {
 			return 0;
 		}
 
@@ -1774,7 +1783,7 @@ class Account extends CommonObject
 				'BankAccountNumberKey'
 		);
 
-		if (!empty($conf->global->BANK_SHOW_ORDER_OPTION)) {
+		if (getDolGlobalString('BANK_SHOW_ORDER_OPTION')) {
 			if (is_numeric($conf->global->BANK_SHOW_ORDER_OPTION)) {
 				if (getDolGlobalString('BANK_SHOW_ORDER_OPTION') == '1') {
 					$fieldlists = array(
@@ -2035,7 +2044,7 @@ class AccountLine extends CommonObjectLine
 	 *  @param		int		$rowid   	Id of bank transaction to load
 	 *  @param      string	$ref     	Ref of bank transaction to load
 	 *  @param      string	$num     	External num to load (ex: num of transaction for paypal fee)
-	 *	@return		int					<0 if KO, 0 if OK but not found, >0 if OK and found
+	 *	@return		int					Return integer <0 if KO, 0 if OK but not found, >0 if OK and found
 	 */
 	public function fetch($rowid, $ref = '', $num = '')
 	{
@@ -2110,7 +2119,7 @@ class AccountLine extends CommonObjectLine
 	/**
 	 * Inserts a transaction to a bank account
 	 *
-	 * @return int <0 if KO, rowid of the line if OK
+	 * @return int Return integer <0 if KO, rowid of the line if OK
 	 */
 	public function insert()
 	{
@@ -2177,16 +2186,14 @@ class AccountLine extends CommonObjectLine
 	}
 
 	/**
-	 *      Delete bank transaction record
+	 * Delete bank transaction record
 	 *
 	 * @param	User|null	$user		User object that delete
 	 * @param	int			$notrigger	1=Does not execute triggers, 0= execute triggers
-	 * @return	int 					<0 if KO, >0 if OK
+	 * @return	int 					Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user = null, $notrigger = 0)
 	{
-		global $conf;
-
 		$nbko = 0;
 
 		if ($this->rappro) {
@@ -2208,7 +2215,7 @@ class AccountLine extends CommonObjectLine
 		}
 
 		// Protection to avoid any delete of accounted lines. Protection on by default
-		if (empty($conf->global->BANK_ALLOW_TRANSACTION_DELETION_EVEN_IF_IN_ACCOUNTING)) {
+		if (!getDolGlobalString('BANK_ALLOW_TRANSACTION_DELETION_EVEN_IF_IN_ACCOUNTING')) {
 			$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping WHERE doc_type = 'bank' AND fk_doc = ".((int) $this->id);
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -2266,7 +2273,7 @@ class AccountLine extends CommonObjectLine
 	 * 	Delete bank line records
 	 *
 	 *	@param	User|null	$user	User object that delete
-	 *  @return	int 				<0 if KO, >0 if OK
+	 *  @return	int 				Return integer <0 if KO, >0 if OK
 	 */
 	public function delete_urls(User $user = null)
 	{
@@ -2303,7 +2310,7 @@ class AccountLine extends CommonObjectLine
 	 *
 	 *		@param	User	$user			Object user making update
 	 *		@param 	int		$notrigger		0=Disable all triggers
-	 *		@return	int						<0 if KO, >0 if OK
+	 *		@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -2335,7 +2342,7 @@ class AccountLine extends CommonObjectLine
 	 *	@param	User	$user			Objet user making update
 	 *	@param 	int		$cat			Category id
 	 *	@param	int		$conciliated	1=Set transaction to conciliated, 0=Keep transaction non conciliated
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function update_conciliation(User $user, $cat, $conciliated = 1)
 	{
@@ -2345,7 +2352,7 @@ class AccountLine extends CommonObjectLine
 		$this->db->begin();
 
 		// Check statement field
-		if (!empty($conf->global->BANK_STATEMENT_REGEX_RULE)) {
+		if (getDolGlobalString('BANK_STATEMENT_REGEX_RULE')) {
 			if (!preg_match('/' . getDolGlobalString('BANK_STATEMENT_REGEX_RULE').'/', $this->num_releve)) {
 				$this->errors[] = $langs->trans("ErrorBankStatementNameMustFollowRegex", $conf->global->BANK_STATEMENT_REGEX_RULE);
 				return -1;
@@ -2679,7 +2686,7 @@ class AccountLine extends CommonObjectLine
 	/**
 	 *	Return if a bank line was dispatched into bookkeeping
 	 *
-	 *	@return     int         <0 if KO, 0=no, 1=yes
+	 *	@return     int         Return integer <0 if KO, 0=no, 1=yes
 	 */
 	public function getVentilExportCompta()
 	{

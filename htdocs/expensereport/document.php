@@ -84,10 +84,10 @@ $result = restrictedArea($user, 'expensereport', $id, 'expensereport');
 if ($object->id > 0) {
 	// Check current user can read this expense report
 	$canread = 0;
-	if (!empty($user->rights->expensereport->readall)) {
+	if ($user->hasRight('expensereport', 'readall')) {
 		$canread = 1;
 	}
-	if (!empty($user->rights->expensereport->lire) && in_array($object->fk_user_author, $childids)) {
+	if ($user->hasRight('expensereport', 'lire') && in_array($object->fk_user_author, $childids)) {
 		$canread = 1;
 	}
 	if (!$canread) {
@@ -133,7 +133,7 @@ if ($object->id) {
 
 
 	// Build file list
-	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 	$totalsize = 0;
 	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];

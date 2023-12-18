@@ -170,7 +170,7 @@ class Partnership extends CommonObject
 			$this->fields['fk_soc'] = array('type'=>'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label'=>'ThirdParty', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'picto'=>'company', 'css'=>'maxwidth500', 'csslist'=>'tdoverflowmax150');
 		}
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid']) && !empty($this->fields['ref'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid']) && !empty($this->fields['ref'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 
@@ -198,7 +198,7 @@ class Partnership extends CommonObject
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -409,7 +409,7 @@ class Partnership extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchLines()
 	{
@@ -503,7 +503,7 @@ class Partnership extends CommonObject
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
@@ -523,7 +523,7 @@ class Partnership extends CommonObject
 	 *
 	 * @param User $user       User that deletes
 	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
@@ -555,7 +555,7 @@ class Partnership extends CommonObject
 	 *
 	 *	@param		User	$user     		User making status change
 	 *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return  	int						<=0 if OK, 0=Nothing done, >0 if KO
+	 *	@return  	int						Return integer <=0 if OK, 0=Nothing done, >0 if KO
 	 */
 	public function validate($user, $notrigger = 0)
 	{
@@ -632,13 +632,15 @@ class Partnership extends CommonObject
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'partnership/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'partnership/".$this->db->escape($this->newref)."'";
 				$sql .= " WHERE filepath = 'partnership/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
@@ -685,7 +687,7 @@ class Partnership extends CommonObject
 	 *
 	 *	@param		User	$user     		User making status change
 	 *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return  	int						<=0 if OK, 0=Nothing done, >0 if KO
+	 *	@return  	int						Return integer <=0 if OK, 0=Nothing done, >0 if KO
 	 */
 	public function approve($user, $notrigger = 0)
 	{
@@ -762,13 +764,15 @@ class Partnership extends CommonObject
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'partnership/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'partnership/".$this->db->escape($this->newref)."'";
 				$sql .= " WHERE filepath = 'partnership/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
@@ -816,7 +820,7 @@ class Partnership extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setDraft($user, $notrigger = 0)
 	{
@@ -841,7 +845,7 @@ class Partnership extends CommonObject
 	 *	@param	User	$user			    Object user that modify
 	 *  @param  string  $reasondeclinenote  Reason decline
 	 *  @param	int		$notrigger		    1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						    <0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int						    Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function refused($user, $reasondeclinenote = '', $notrigger = 0)
 	{
@@ -868,7 +872,7 @@ class Partnership extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function cancel($user, $notrigger = 0)
 	{
@@ -892,7 +896,7 @@ class Partnership extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function reopen($user, $notrigger = 0)
 	{
@@ -983,11 +987,11 @@ class Partnership extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowPartnership");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -1181,11 +1185,11 @@ class Partnership extends CommonObject
 		global $langs, $conf;
 		$langs->load("partnership");
 
-		if (empty($conf->global->PARTNERSHIP_ADDON)) {
+		if (!getDolGlobalString('PARTNERSHIP_ADDON')) {
 			$conf->global->PARTNERSHIP_ADDON = 'mod_partnership_standard';
 		}
 
-		if (!empty($conf->global->PARTNERSHIP_ADDON)) {
+		if (getDolGlobalString('PARTNERSHIP_ADDON')) {
 			$mybool = false;
 
 			$file = getDolGlobalString('PARTNERSHIP_ADDON') . ".php";
@@ -1251,7 +1255,7 @@ class Partnership extends CommonObject
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->PARTNERSHIP_ADDON_PDF)) {
+			} elseif (getDolGlobalString('PARTNERSHIP_ADDON_PDF')) {
 				$modele = $conf->global->PARTNERSHIP_ADDON_PDF;
 			}
 		}

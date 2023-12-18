@@ -209,7 +209,7 @@ class WebsitePage extends CommonObject
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -239,7 +239,7 @@ class WebsitePage extends CommonObject
 	 * @param string    $page           Page name (website id must also be filled if this parameter is used). Exemple 'myaliaspage' or 'fr/myaliaspage'
 	 * @param string    $aliasalt       Alternative alias to search page (slow)
 	 *
-	 * @return int <0 if KO, 0 if not found, >0 if OK
+	 * @return int Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $website_id = null, $page = null, $aliasalt = null)
 	{
@@ -556,7 +556,7 @@ class WebsitePage extends CommonObject
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
@@ -594,7 +594,7 @@ class WebsitePage extends CommonObject
 	 *
 	 * @param User $user       User that deletes
 	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
@@ -769,7 +769,7 @@ class WebsitePage extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -846,7 +846,7 @@ class WebsitePage extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param 	int[]|int 	$categories 	Category ID or array of Categories IDs
-	 * @return	int							<0 if KO, >0 if OK
+	 * @return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function setCategories($categories)
 	{
@@ -868,7 +868,7 @@ class WebsitePage extends CommonObject
 
 		$now = dol_now();
 
-		$this->fk_website = '';
+		$this->fk_website = 0;
 		$this->type_container = 'page';
 		$this->pageurl = 'specimen';
 		$this->aliasalt = 'specimenalt';
@@ -879,7 +879,7 @@ class WebsitePage extends CommonObject
 		$this->allowed_in_frames = 1;
 		$this->htmlheader = '';
 		$this->content = '<html><body>This is a html content</body></html>';
-		$this->status = '';
+		$this->status = self::STATUS_DRAFT;
 		$this->grabbed_from = '';
 		$this->date_creation = $now - (24 * 30 * 3600);
 		$this->date_modification = $now - (24 * 7 * 3600);

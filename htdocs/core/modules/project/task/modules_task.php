@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
 
 
 /**
- *	Parent class for projects models
+ *	Parent class for task models
  */
 abstract class ModelePDFTask extends CommonDocGenerator
 {
@@ -58,7 +58,7 @@ abstract class ModelePDFTask extends CommonDocGenerator
 
 
 /**
- *  Classe mere des modeles de numerotation des references de projets
+ * Parent class of task reference numbering models
  */
 abstract class ModeleNumRefTask extends CommonNumRefGenerator
 {

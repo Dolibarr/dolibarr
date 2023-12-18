@@ -74,7 +74,7 @@ if (!$user->hasRight('takepos', 'run') && !defined('INCLUDE_PHONEPAGE_FROM_PUBLI
 if (empty($action)) {
 	// Code for llxHeader()
 	$title = 'TakePOS - Dolibarr '.DOL_VERSION;
-	if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+	if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 		$title = 'TakePOS - ' . getDolGlobalString('MAIN_APPLICATION_TITLE');
 	}
 	$head = '<meta name="apple-mobile-web-app-title" content="TakePOS"/>
@@ -158,12 +158,12 @@ if ($action == "productinfo") {
 <script type="text/javascript">
 	<?php
 	$categorie = new Categorie($db);
-	$categories = $categorie->get_full_arbo('product', (($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) ? $conf->global->TAKEPOS_ROOT_CATEGORY_ID : 0), 1);
+	$categories = $categorie->get_full_arbo('product', ((getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') > 0) ? $conf->global->TAKEPOS_ROOT_CATEGORY_ID : 0), 1);
 
 	// Search root category to know its level
 	//$conf->global->TAKEPOS_ROOT_CATEGORY_ID=0;
 	$levelofrootcategory = 0;
-	if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) {
+	if (getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') > 0) {
 		foreach ($categories as $key => $categorycursor) {
 			if ($categorycursor['id'] == $conf->global->TAKEPOS_ROOT_CATEGORY_ID) {
 				$levelofrootcategory = $categorycursor['level'];
@@ -184,10 +184,7 @@ if ($action == "productinfo") {
 	}
 
 	sort($maincategories);
-	sort($subcategories);
-
-
-	?>
+	sort($subcategories); ?>
 
 var categories = <?php echo json_encode($maincategories); ?>;
 var subcategories = <?php echo json_encode($subcategories); ?>;
@@ -215,8 +212,7 @@ function LoadPlace(placeid){
 	} else {
 		echo '$("#phonediv2").load("invoice.php?mobilepage=invoice&place="+place, function() {
 		});';
-	}
-	?>
+	} ?>
 	LoadCats();
 }
 
@@ -229,8 +225,7 @@ function AddProduct(placeid, productid){
 		});';
 	} else {
 		print 'AddProductConfirm(placeid, productid);';
-	}
-	?>
+	} ?>
 }
 
 function PublicPreOrder(){
@@ -247,8 +242,7 @@ function AddProductConfirm(placeid, productid){
 	} else {
 		echo '$("#phonediv2").load("invoice.php?mobilepage=invoice&action=addline&token='.newToken().'&place="+place+"&idproduct="+productid, function() {
 		});';
-	}
-	?>
+	} ?>
 
 	return true;
 }
@@ -277,8 +271,7 @@ function SetQty(place, selectedline, qty){
 		});
 	}
 		<?php
-	}
-	?>
+	} ?>
 	LoadCats();
 
 	return true;
@@ -299,8 +292,7 @@ function LoadCats(){
 	} else {
 		echo '$("#phonediv1").load("invoice.php?mobilepage=cats&place="+place, function() {
 		});';
-	}
-	?>
+	} ?>
 }
 
 function LoadProducts(idcat){
@@ -312,8 +304,7 @@ function LoadProducts(idcat){
 	} else {
 		echo '$("#phonediv1").load("invoice.php?mobilepage=products&catid="+idcat+"&place="+place, function() {
 		});';
-	}
-	?>
+	} ?>
 }
 
 function LoadPlacesList(){
@@ -332,8 +323,7 @@ function TakeposPrintingOrder(){
 	} else {
 		echo '$("#phonediv2").load("invoice.php?action=order&token='.newToken().'&place="+place, function() {
 		});';
-	}
-	?>
+	} ?>
 }
 
 function Exit(){
@@ -356,10 +346,9 @@ function CheckPlease(payment){
 
 <body style="background-color:#D1D1D1;">
 	<?php
-	if ($conf->global->TAKEPOS_NUM_TERMINALS != "1" && $_SESSION["takeposterminal"] == "") {
+	if (getDolGlobalString('TAKEPOS_NUM_TERMINALS') != "1" && $_SESSION["takeposterminal"] == "") {
 		print '<div class="dialog-info-takepos-terminal" id="dialog-info" title="TakePOS">'.$langs->trans('TerminalSelect').'</div>';
-	}
-	?>
+	} ?>
 <div class="container">
 	<div class="phonebuttonsrow">
 		<?php
@@ -372,8 +361,7 @@ function CheckPlease(payment){
 			print '<button type="button" class="publicphonebutton phoneblue" onclick="LoadCats();">'.strtoupper(substr($langs->trans('Categories'), 0, 5)).'</button>';
 			print '<button type="button" class="publicphonebutton phoneorange" onclick="PublicPreOrder();">'.strtoupper(substr($langs->trans('Order'), 0, 5)).'</button>';
 			print '<button type="button" class="publicphonebutton phonegreen" onclick="CheckPlease();">'.strtoupper(substr($langs->trans('Payment'), 0, 5)).'</button>';
-		}
-		?>
+		} ?>
 	</div>
 	<div class="phonerow2">
 		<div id="phonediv2" class="phonediv2"></div>

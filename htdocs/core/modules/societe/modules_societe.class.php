@@ -59,7 +59,6 @@ abstract class ModeleThirdPartyDoc extends CommonDocGenerator
  */
 abstract class ModeleThirdPartyCode extends CommonNumRefGenerator
 {
-
 	/**
 	 * @var int Automatic numbering
 	 */
@@ -136,7 +135,7 @@ abstract class ModeleThirdPartyCode extends CommonNumRefGenerator
 
 		$strikestart = '';
 		$strikeend = '';
-		if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) {
+		if (getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED') && !empty($this->code_null)) {
 			$strikestart = '<strike>';
 			$strikeend = '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
 		}
@@ -211,7 +210,6 @@ abstract class ModeleThirdPartyCode extends CommonNumRefGenerator
  */
 abstract class ModeleAccountancyCode extends CommonNumRefGenerator
 {
-
 	/**
 	 * @var string
 	 */

@@ -159,6 +159,12 @@ class MembersTypes extends DolibarrApi
 
 		$membertype = new AdherentType($this->db);
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$membertype->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$membertype->$field = $value;
 		}
 		if ($membertype->create(DolibarrApiAccess::$user) < 0) {
@@ -194,6 +200,12 @@ class MembersTypes extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$membertype->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			// Process the status separately because it must be updated using
 			// the validate(), resiliate() and exclude() methods of the class AdherentType.
 			$membertype->$field = $value;
@@ -229,7 +241,7 @@ class MembersTypes extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$res = $membertype->delete();
+		$res = $membertype->delete(DolibarrApiAccess::$user);
 		if ($res < 0) {
 			throw new RestException(500, "Can't delete, error occurs");
 		} elseif ($res == 0) {

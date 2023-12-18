@@ -73,7 +73,7 @@ $search_billed = GETPOST("search_billed", 'int');
 $sall = GETPOST('sall', 'alphanohtml');
 $optioncss = GETPOST('optioncss', 'alpha');
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -153,7 +153,8 @@ $result = restrictedArea($user, 'reception', $receptionid, '');
  */
 
 if (GETPOST('cancel')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction') && $massaction != 'confirm_createbills') {
 	$massaction = '';
@@ -230,7 +231,7 @@ if (empty($reshook)) {
 		sort($receptions);
 		foreach ($receptions as $id_reception) {
 			$rcp = new Reception($db);
-			 // We not allow invoice reception that are in draft status
+			// We not allow invoice reception that are in draft status
 			if ($rcp->fetch($id_reception) <= 0 || $rcp->statut == $rcp::STATUS_DRAFT) {
 				$errors[] = $langs->trans('StatusOfRefMustBe', $rcp->ref, $langs->transnoentities("StatusReceptionValidatedShort"));
 				$error++;
@@ -459,8 +460,9 @@ if (empty($reshook)) {
 
 							$rang = $i;
 							//there may already be rows from previous receptions
-							if (!empty($createbills_onebythird))
+							if (!empty($createbills_onebythird)) {
 								$rang = $TFactThirdNbLines[$rcp->socid];
+							}
 
 							$result = $objecttmp->addline(
 								$desc,
@@ -490,8 +492,9 @@ if (empty($reshook)) {
 
 							if ($result > 0) {
 								$lineid = $result;
-								if (!empty($createbills_onebythird)) //increment rang to keep order
+								if (!empty($createbills_onebythird)) { //increment rang to keep order
 									$TFactThirdNbLines[$rcp->socid]++;
+								}
 							} else {
 								$lineid = 0;
 								$error++;
@@ -613,7 +616,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_ty
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as ee ON e.rowid = ee.fk_source AND ee.sourcetype = 'reception' AND ee.targettype = 'delivery'";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."delivery as l ON l.rowid = ee.fk_target";
-if (empty($user->rights->societe->client->voir) && !$socid) {	// Internal user with no permission to see all
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {	// Internal user with no permission to see all
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 // Add joins from hooks
@@ -621,7 +624,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= " WHERE e.entity IN (".getEntity('reception').")";
-if (empty($user->rights->societe->client->voir) && !$socid) {	// Internal user with no permission to see all
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {	// Internal user with no permission to see all
 	$sql .= " AND e.fk_soc = sc.fk_soc";
 	$sql .= " AND sc.fk_user = ".((int) $user->id);
 }
@@ -837,7 +840,7 @@ $arrayofmassactions = array(
 	// 'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 
-if ($user->hasRight('fournisseur', 'facture', 'creer') || $user->rights->supplier_invoice->creer) {
+if ($user->hasRight('fournisseur', 'facture', 'creer') || $user->hasRight('supplier_invoice', 'creer')) {
 	$arrayofmassactions['createbills'] = $langs->trans("CreateInvoiceForThisReceptions");
 }
 if ($massaction == 'createbills') {
@@ -885,7 +888,7 @@ if ($massaction == 'createbills') {
 	print $langs->trans('ValidateInvoices');
 	print '</td>';
 	print '<td>';
-	if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
+	if (isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_BILL')) {
 		print $form->selectyesno('validate_invoices', 0, 1, 1);
 		print ' ('.$langs->trans("AutoValidationNotPossibleWhenStockIsDecreasedOnInvoiceValidation").')';
 	} else {
@@ -932,7 +935,7 @@ print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" :
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '<td class="liste_titre middle">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -979,16 +982,16 @@ if (!empty($arrayfields['country.code_iso']['checked'])) {
 // Company type
 if (!empty($arrayfields['typent.code']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
-	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
+	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (!getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
 	print '</td>';
 }
 // Date delivery planned
 if (!empty($arrayfields['e.date_delivery']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_delivery_start ? $search_date_delivery_start : -1, 'search_date_delivery_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_delivery_end ? $search_date_delivery_end : -1, 'search_date_delivery_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td>';
@@ -1013,10 +1016,10 @@ print $hookmanager->resPrint;
 // Date creation
 if (!empty($arrayfields['e.datec']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_create_start ? $search_date_create_start : -1, 'search_date_create_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_create_end ? $search_date_create_end : -1, 'search_date_create_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td>';
@@ -1039,7 +1042,7 @@ if (!empty($arrayfields['e.billed']['checked'])) {
 	print '</td>';
 }
 // Action column
-if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '<td class="liste_titre middle">';
 	$searchpicto = $form->showFilterAndCheckAddButtons(0);
 	print $searchpicto;
@@ -1048,7 +1051,7 @@ if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
-if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 }
 if (!empty($arrayfields['e.ref']['checked'])) {
@@ -1102,7 +1105,7 @@ if (!empty($arrayfields['e.fk_statut']['checked'])) {
 if (!empty($arrayfields['e.billed']['checked'])) {
 	print_liste_field_titre($arrayfields['e.billed']['label'], $_SERVER["PHP_SELF"], "e.billed", "", $param, '', $sortfield, $sortorder, 'center ');
 }
-if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 }
 print "</tr>\n";
@@ -1124,7 +1127,7 @@ while ($i < min($num, $limit)) {
 	print '<tr class="oddeven">';
 
 	// Action column
-	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td class="center">';
 		if ($massactionbutton || $massaction) {
 			// If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
@@ -1297,7 +1300,7 @@ while ($i < min($num, $limit)) {
 	}
 
 	// Action column
-	if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td class="center">';
 		if ($massactionbutton || $massaction) {
 			// If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined

@@ -37,7 +37,7 @@ function dolMd2Html($content, $parser = 'parsedown', $replaceimagepath = null)
 	$content = preg_replace('/<a href="([^"]+)" target="([^"]+)">([^<]+)<\/a>/', '[\3](\1)', $content);
 
 	// Replace HTML coments
-	$content = preg_replace('/<!--.*-->/ms', '', $content);	// We remove HTML comment that are not MD comment because they will be escaped and output when setSafeMode is set to true.
+	$content = preg_replace('/<!--.*-->/Ums', '', $content);	// We remove HTML comment that are not MD comment because they will be escaped and output when setSafeMode is set to true.
 
 	if (is_array($replaceimagepath)) {
 		foreach ($replaceimagepath as $key => $val) {
@@ -78,7 +78,7 @@ function dolMd2Asciidoc($content, $parser = 'dolibarr', $replaceimagepath = null
 	}
 	//if ($parser == 'dolibarr')
 	//{
-		$content = preg_replace('/<!--.*-->/msU', '', $content);
+	$content = preg_replace('/<!--.*-->/msU', '', $content);
 	//}
 	//else
 	//{

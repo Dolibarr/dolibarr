@@ -60,7 +60,7 @@ if (defined('PHP-BARCODE_PATH_COMMAND')) {
 	$genbarcode_loc = constant('PHP-BARCODE_PATH_COMMAND');
 } else {
 	$genbarcode_loc = '';
-	if (!empty($conf->global->GENBARCODE_LOCATION)) {
+	if (getDolGlobalString('GENBARCODE_LOCATION')) {
 		$genbarcode_loc = $conf->global->GENBARCODE_LOCATION;
 	}
 }
@@ -529,7 +529,8 @@ function isAValidEAN13($ean)
 		return false;
 	};
 
-	for ($i = 0; $i < count($eanAsArray)-1; $i++) {
+	$num = (count($eanAsArray) - 1);
+	for ($i = 0; $i < $num; $i++) {
 		if ($i % 2 === 0) {
 			$sumOddIndexes  += $eanAsArray[$i];
 		} else {

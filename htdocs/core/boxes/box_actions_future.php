@@ -186,8 +186,8 @@ class box_actions_future extends ModeleBoxes
 
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center opacitymedium"',
-						'text'=>$langs->trans("NoActionsToDo")
+						'td' => 'class="center"',
+						'text'=> '<span class="opacitymedium">'.$langs->trans("NoActionsToDo").'</span>'
 					);
 				}
 
@@ -201,8 +201,8 @@ class box_actions_future extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}
@@ -220,7 +220,7 @@ class box_actions_future extends ModeleBoxes
 		global $langs, $conf;
 		$out = parent::showBox($this->info_box_head, $this->info_box_contents, 1);
 
-		if (!empty($conf->global->SHOW_DIALOG_HOMEPAGE)) {
+		if (getDolGlobalString('SHOW_DIALOG_HOMEPAGE')) {
 			$actioncejour = false;
 			$contents = $this->info_box_contents;
 			if (is_countable($contents) && count($contents) > 0) {
@@ -261,7 +261,7 @@ class box_actions_future extends ModeleBoxes
 			if ($actioncejour) {
 				$out .= '<script nonce="'.getNonce().'">';
 				$out .= '$("#dialogboxaction").dialog({ autoOpen: true });';
-				if ($conf->global->SHOW_DIALOG_HOMEPAGE > 1) {    // autoclose after this delay
+				if (getDolGlobalInt('SHOW_DIALOG_HOMEPAGE') > 1) {    // autoclose after this delay
 					$out .= 'setTimeout(function(){';
 					$out .= '$("#dialogboxaction").dialog("close");';
 					$out .= '}, '.($conf->global->SHOW_DIALOG_HOMEPAGE * 1000).');';
