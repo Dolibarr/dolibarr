@@ -26,6 +26,7 @@
  */
 include_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
 
+
 /**
  * Class to manage the box to show funnel of prospections
  */
@@ -56,7 +57,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 	 */
 	public function __construct($db, $param = '')
 	{
-		global $user, $langs, $conf;
+		global $user, $langs;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array('boxes', 'projects'));
@@ -64,6 +65,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 		$this->db = $db;
 
 		$this->enabled = (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 ? 1 : 0); // Not enabled by default, still need some work
+		//$this->enabled = 1;
 
 		$this->hidden = empty($user->rights->projet->lire);
 	}
@@ -141,6 +143,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 
 		$this->info_box_head = array(
 			'text' => $langs->trans("Statistics").' - '.$langs->trans("BoxTitleFunnelOfProspection"),
+			'nbcol' => '2',
 			'graph' => '1'
 		);
 
@@ -247,7 +250,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 				$stringtoprint .= '</div>';
 
 				$line = 0;
-				$this->info_box_contents[$line][] = array(
+				/*$this->info_box_contents[$line][] = array(
 					'tr' => 'class="nohover left "',
 					'text' => ''
 				);
@@ -255,7 +258,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 					'tr' => 'class="nohover left "',
 					'text' => ''
 				);
-				$line++;
+				$line++;*/
 				$this->info_box_contents[$line][] = array(
 					'tr' => '',
 					'td' => 'class="center nopaddingleftimp nopaddingrightimp" colspan="2"',
