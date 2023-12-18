@@ -206,7 +206,7 @@ if (empty($reshook)) {
 	} elseif ($action == 'reopen' && $usercancreate) {
 		// Reopen a closed order
 		if ($object->statut == Commande::STATUS_CANCELED || $object->statut == Commande::STATUS_CLOSED) {
-			if (dolGetGlobalInt('ORDER_REOPEN_TO_DRAFT')) {
+			if (getDolGlobalInt('ORDER_REOPEN_TO_DRAFT')) {
 				$result = $object->setDraft($user, $idwarehouse);
 				if ($result < 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
