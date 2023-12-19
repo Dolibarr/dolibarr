@@ -1804,15 +1804,13 @@ class pdf_cyan extends ModelePDFPropales
 	 */
 	protected function drawSignatureArea(&$pdf, $object, $posy, $outputlangs)
 	{
-		global $conf;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 		$tab_top = $posy + 4;
 		$tab_hl = 4;
 
 		$posx = 120;
 		$largcol = ($this->page_largeur - $this->marge_droite - $posx);
-		$useborder = 0;
-		$index = 0;
+
 		// Total HT
 		$pdf->SetFillColor(255, 255, 255);
 		$pdf->SetXY($posx, $tab_top);
