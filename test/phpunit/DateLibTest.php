@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,11 +60,12 @@ class DateLibTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return DateLibTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -515,12 +517,16 @@ class DateLibTest extends PHPUnit\Framework\TestCase
 	{
 		global $conf;
 
-		$day=3; $month=2; $year=2015;
+		$day=3;
+		$month=2;
+		$year=2015;
 		$conf->global->MAIN_START_WEEK = 1;	// start on monday
 		$prev = dol_get_first_day_week($day, $month, $year);
 		$this->assertEquals(2, (int) $prev['first_day']);		// monday for month 2, year 2014 is the 2
 
-		$day=3; $month=2; $year=2015;
+		$day=3;
+		$month=2;
+		$year=2015;
 		$conf->global->MAIN_START_WEEK = 0;	// start on sunday
 		$prev = dol_get_first_day_week($day, $month, $year);
 		$this->assertEquals(1, (int) $prev['first_day']);		// sunday for month 2, year 2015 is the 1st

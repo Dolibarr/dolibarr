@@ -104,7 +104,7 @@ if (empty($reshook)) {
 	if ($action == 'confirm_cloture' && GETPOST('confirm', 'alpha') == 'yes') {
 		$object->fetch($id);
 		$result = $object->cloture($user);
-	} elseif ($action == 'setref_client' && $user->rights->commande->creer) {
+	} elseif ($action == 'setref_client' && $user->hasRight('commande', 'creer')) {
 		// Positionne ref commande client
 		$result = $object->set_ref_client($user, GETPOST('ref_client'));
 		if ($result < 0) {
@@ -112,7 +112,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setdatedelivery' && $user->rights->commande->creer) {
+	if ($action == 'setdatedelivery' && $user->hasRight('commande', 'creer')) {
 		$datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
 
 		$object->fetch($id);
@@ -122,7 +122,7 @@ if (empty($reshook)) {
 		}
 	}
 	/*
-	if ($action == 'setdeliveryaddress' && $user->rights->commande->creer)
+	if ($action == 'setdeliveryaddress' && $user->hasRight('commande', 'creer'))
 	{
 		$object = new Commande($db);
 		$object->fetch($id);
@@ -131,7 +131,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 	}
 	*/
-	if ($action == 'setmode' && $user->rights->commande->creer) {
+	if ($action == 'setmode' && $user->hasRight('commande', 'creer')) {
 		$object->fetch($id);
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
 		if ($result < 0) {
@@ -139,7 +139,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setavailability' && $user->rights->commande->creer) {
+	if ($action == 'setavailability' && $user->hasRight('commande', 'creer')) {
 		$object->fetch($id);
 		$result = $object->availability(GETPOST('availability_id'));
 		if ($result < 0) {
@@ -147,7 +147,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setdemandreason' && $user->rights->commande->creer) {
+	if ($action == 'setdemandreason' && $user->hasRight('commande', 'creer')) {
 		$object->fetch($id);
 		$result = $object->demand_reason(GETPOST('demand_reason_id'));
 		if ($result < 0) {
@@ -155,7 +155,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setconditions' && $user->rights->commande->creer) {
+	if ($action == 'setconditions' && $user->hasRight('commande', 'creer')) {
 		$object->fetch($id);
 		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
 		if ($result < 0) {
@@ -170,7 +170,7 @@ if (empty($reshook)) {
 	}
 
 	// shipping method
-	if ($action == 'setshippingmethod' && $user->rights->commande->creer) {
+	if ($action == 'setshippingmethod' && $user->hasRight('commande', 'creer')) {
 		$object->fetch($id);
 		$result = $object->setShippingMethod(GETPOST('shipping_method_id', 'int'));
 		if ($result < 0) {
@@ -179,7 +179,7 @@ if (empty($reshook)) {
 	}
 
 	// warehouse
-	if ($action == 'setwarehouse' && $user->rights->commande->creer) {
+	if ($action == 'setwarehouse' && $user->hasRight('commande', 'creer')) {
 		$object->fetch($id);
 		$result = $object->setWarehouse(GETPOST('warehouse_id', 'int'));
 		if ($result < 0) {
@@ -188,7 +188,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'update_extras') {
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
@@ -210,7 +210,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'set_thirdparty' && $user->rights->commande->creer) {
+	if ($action == 'set_thirdparty' && $user->hasRight('commande', 'creer')) {
 		$object->fetch($id);
 		$object->setValueFrom('fk_soc', $socid, '', '', 'date', '', $user, 'ORDER_MODIFY');
 
@@ -283,8 +283,8 @@ if ($id > 0 || !empty($ref)) {
 
 		$morehtmlref = '<div class="refidno">';
 		// Ref customer
-		$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_customer', $object->ref_client, $object, $user->rights->commande->creer, 'string', '', 0, 1);
-		$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_customer', $object->ref_client, $object, $user->rights->commande->creer, 'string', '', null, null, '', 1);
+		$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_customer', $object->ref_client, $object, $user->hasRight('commande', 'creer'), 'string', '', 0, 1);
+		$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_customer', $object->ref_client, $object, $user->hasRight('commande', 'creer'), 'string', '', null, null, '', 1);
 		// Thirdparty
 		$morehtmlref .= '<br>'.$soc->getNomUrl(1);
 		// Project
@@ -321,7 +321,7 @@ if ($id > 0 || !empty($ref)) {
 		print '<table class="border centpercent tableforfield">';
 
 		// Discounts for third party
-		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+		if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 			$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 			$filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 		} else {
@@ -378,10 +378,6 @@ if ($id > 0 || !empty($ref)) {
 			}
 		}
 		print '</td>';
-		// Note on several rows
-		//print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('NotePublic').' :<br>';
-		//print nl2br($object->note_public);
-		//print '</td>';
 		print '</tr>';
 
 		// Delivery delay
@@ -406,7 +402,7 @@ if ($id > 0 || !empty($ref)) {
 		print '<table width="100%" class="nobordernopadding"><tr><td>';
 		print $langs->trans('SendingMethod');
 		print '</td>';
-		if ($action != 'editshippingmethod' && $user->rights->expedition->creer) {
+		if ($action != 'editshippingmethod' && $user->hasRight('expedition', 'creer')) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editshippingmethod&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetShippingMode'), 1).'</a></td>';
 		}
 		print '</tr></table>';
@@ -420,14 +416,14 @@ if ($id > 0 || !empty($ref)) {
 		print '</tr>';
 
 		// Warehouse
-		if (isModEnabled('stock') && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
+		if (isModEnabled('stock') && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER')) {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 			$formproduct = new FormProduct($db);
 			print '<tr><td>';
 			print '<table width="100%" class="nobordernopadding"><tr><td>';
 			print $langs->trans('Warehouse');
 			print '</td>';
-			if ($action != 'editwarehouse' && $user->rights->commande->creer) {
+			if ($action != 'editwarehouse' && $user->hasRight('commande', 'creer')) {
 				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editwarehouse&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetWarehouse'), 1).'</a></td>';
 			}
 			print '</tr></table>';
@@ -517,7 +513,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<table width="100%" class="nobordernopadding"><tr><td>';
 			print $langs->trans('IncotermLabel');
 			print '<td><td class="right">';
-			if ($user->rights->commande->creer) {
+			if ($user->hasRight('commande', 'creer')) {
 				print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'/expedition/shipment.php?id='.$object->id.'&action=editincoterm&token='.newToken().'">'.img_edit().'</a>';
 			} else {
 				print '&nbsp;';
@@ -668,7 +664,7 @@ if ($id > 0 || !empty($ref)) {
 					// Product label
 					if ($objp->fk_product > 0) {
 						// Define output language
-						if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+						if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
 							$object->fetch_thirdparty();
 
 							$prod = new Product($db);
@@ -764,18 +760,18 @@ if ($id > 0 || !empty($ref)) {
 					// Nb of sending products for this line of order
 					$qtyAlreadyShipped = (!empty($object->expeditions[$objp->rowid]) ? $object->expeditions[$objp->rowid] : 0);
 					print $qtyAlreadyShipped;
-					print ($objp->unit_order ? ' '.$objp->unit_order : '').'</td>';
+					print($objp->unit_order ? ' '.$objp->unit_order : '').'</td>';
 
 					// Qty remains to ship
 					print '<td class="center">';
-					if ($type == 0 || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+					if ($type == 0 || getDolGlobalString('STOCK_SUPPORTS_SERVICES')|| getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
 						$toBeShipped[$objp->fk_product] = $objp->qty - $qtyAlreadyShipped;
 						$toBeShippedTotal += $toBeShipped[$objp->fk_product];
 						print $toBeShipped[$objp->fk_product];
 					} else {
-						print '0 ('.$langs->trans("Service").')';
+						print '0 <span class="opacitymedium">('.$langs->trans("Service").')</span>';
 					}
-					print ($objp->unit_order ? ' '.$objp->unit_order : '').'</td>';
+					print($objp->unit_order ? ' '.$objp->unit_order : '').'</td>';
 
 					if ($objp->fk_product > 0) {
 						$product = new Product($db);
@@ -783,24 +779,26 @@ if ($id > 0 || !empty($ref)) {
 						$product->load_stock('warehouseopen');
 					}
 
-					if ($objp->fk_product > 0 && ($type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) && isModEnabled('stock')) {
+					if ($objp->fk_product > 0 && ($type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) && isModEnabled('stock')) {
 						print '<td class="center">';
 						print $product->stock_reel;
 						if ($product->stock_reel < $toBeShipped[$objp->fk_product]) {
 							print ' '.img_warning($langs->trans("StockTooLow"));
-							if (!empty($conf->global->STOCK_CORRECT_STOCK_IN_SHIPMENT)) {
+							if (getDolGlobalString('STOCK_CORRECT_STOCK_IN_SHIPMENT')) {
 								$nbPiece = $toBeShipped[$objp->fk_product] - $product->stock_reel;
 								print ' &nbsp; '.$langs->trans("GoTo").' <a href="'.DOL_URL_ROOT.'/product/stock/product.php?id='.((int) $product->id).'&action=correction&nbpiece='.urlencode($nbPiece).'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.((int) $object->id)).'">'.$langs->trans("CorrectStock").'</a>';
 							}
 						}
 						print '</td>';
+					} elseif ($objp->fk_product > 0 && $type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES') && isModEnabled('stock')) {
+						print '<td class="center"><span class="opacitymedium">('.$langs->trans("Service").')</span></td>';
 					} else {
 						print '<td>&nbsp;</td>';
 					}
 					print "</tr>\n";
 
 					// Show subproducts lines
-					if ($objp->fk_product > 0 && !empty($conf->global->PRODUIT_SOUSPRODUITS)) {
+					if ($objp->fk_product > 0 && getDolGlobalString('PRODUIT_SOUSPRODUITS')) {
 						// Set tree of subproducts in product->sousprods
 						$product->get_sousproduits_arbo();
 						//var_dump($product->sousprods);exit;
@@ -848,7 +846,7 @@ if ($id > 0 || !empty($ref)) {
 
 			// Bouton expedier sans gestion des stocks
 			if (!isModEnabled('stock') && ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED)) {
-				if ($user->rights->expedition->creer) {
+				if ($user->hasRight('expedition', 'creer')) {
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/card.php?action=create&amp;origin=commande&amp;object_id='.$id.'">'.$langs->trans("CreateShipment").'</a>';
 					if ($toBeShippedTotal <= 0) {
 						print ' '.img_warning($langs->trans("WarningNoQtyLeftToSend"));
@@ -861,14 +859,14 @@ if ($id > 0 || !empty($ref)) {
 		}
 
 
-		// Bouton expedier avec gestion des stocks
+		// Button to create a shipment
 
 		if (isModEnabled('stock') && $object->statut == Commande::STATUS_DRAFT) {
 			print $langs->trans("ValidateOrderFirstBeforeShipment");
 		}
 
 		if (isModEnabled('stock') && ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED)) {
-			if ($user->rights->expedition->creer) {
+			if ($user->hasRight('expedition', 'creer')) {
 				//print load_fiche_titre($langs->trans("CreateShipment"));
 				print '<div class="tabsAction">';
 
@@ -911,7 +909,7 @@ if ($id > 0 || !empty($ref)) {
 				$somethingshown = 1;
 			} else {
 				print '<div class="tabsAction">';
-				print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CreateShipment").'</a>';
+				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans("CreateShipment").'</a>';
 				print '</div>';
 			}
 		}

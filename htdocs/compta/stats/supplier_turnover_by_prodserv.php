@@ -87,7 +87,7 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 	$q = GETPOST("q", "int");
 	if (empty($q)) {
 		// We define date_start and date_end
-		$month_start = GETPOST("month") ?GETPOST("month") : ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
+		$month_start = GETPOST("month") ? GETPOST("month") : getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 		$year_end = $year_start;
 		$month_end = $month_start;
 		if (!GETPOST("month")) {	// If month not forced
@@ -377,7 +377,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	print '</td></tr>';
 
 	// Array header
-	print "<tr class=\"liste_titre\">";
+	print '<tr class="liste_titre">';
 	print_liste_field_titre(
 		$langs->trans("Product"),
 		$_SERVER["PHP_SELF"],

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2018 Frédéric France       <frederic.france@netlogic.fr>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,11 +57,12 @@ class FactureTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return FactureTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -84,10 +86,12 @@ class FactureTest extends PHPUnit\Framework\TestCase
 		global $conf,$user,$langs,$db;
 
 		if (!isModEnabled('facture')) {
-			print __METHOD__." module customer invoice must be enabled.\n"; die(1);
+			print __METHOD__." module customer invoice must be enabled.\n";
+			die(1);
 		}
-		if (!empty($conf->ecotaxdeee->enabled)) {
-			print __METHOD__." ecotaxdeee module must not be enabled.\n"; die(1);
+		if (isModEnabled('ecotaxdeee')) {
+			print __METHOD__." ecotaxdeee module must not be enabled.\n";
+			die(1);
 		}
 
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
@@ -147,7 +151,7 @@ class FactureTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Facture($this->savdb);
+		$localobject=new Facture($db);
 		$localobject->initAsSpecimen();
 		$result=$localobject->create($user);
 		$this->assertLessThan($result, 0);
@@ -172,7 +176,7 @@ class FactureTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Facture($this->savdb);
+		$localobject=new Facture($db);
 		$result=$localobject->fetch($id);
 
 		$this->assertLessThan($result, 0);
@@ -228,7 +232,7 @@ class FactureTest extends PHPUnit\Framework\TestCase
 		$this->assertLessThan($result, 0);
 
 		// Test everything are still same than specimen
-		$newlocalobject=new Facture($this->savdb);
+		$newlocalobject=new Facture($db);
 		$newlocalobject->initAsSpecimen();
 		$this->changeProperties($newlocalobject);
 
@@ -241,7 +245,7 @@ class FactureTest extends PHPUnit\Framework\TestCase
 			$newlocalobject,
 			true,
 			array(
-				'newref','oldref','id','lines','client','thirdparty','brouillon','user_author','date_creation','date_validation','datem','date_modification',
+				'newref','oldref','id','lines','client','thirdparty','brouillon','user_creation_id','date_creation','date_validation','datem','date_modification',
 				'ref','statut','status','paye','specimen','ref','actiontypecode','actionmsg2','actionmsg','mode_reglement','cond_reglement',
 				'cond_reglement_doc', 'modelpdf',
 				'multicurrency_total_ht','multicurrency_total_tva',	'multicurrency_total_ttc','fk_multicurrency','multicurrency_code','multicurrency_tx',
@@ -308,11 +312,11 @@ class FactureTest extends PHPUnit\Framework\TestCase
 		unset($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED);
 		unset($conf->global->INVOICE_CAN_NEVER_BE_REMOVED);
 
-		$localobject=new Facture($this->savdb);
+		$localobject=new Facture($db);
 		$result=$localobject->fetch($id);
 
 		// Create another invoice and validate it after $localobject
-		$localobject2=new Facture($this->savdb);
+		$localobject2=new Facture($db);
 		$result=$localobject2->initAsSpecimen();
 		$result=$localobject2->create($user);
 		$result=$localobject2->validate($user);
@@ -378,10 +382,10 @@ class FactureTest extends PHPUnit\Framework\TestCase
 					continue;
 				}
 				if (! $ignoretype && ($oVarsA[$sKey] !== $oVarsB[$sKey])) {
-					$retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey])?get_class($oVarsA[$sKey]):$oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey])?get_class($oVarsB[$sKey]):$oVarsB[$sKey]);
+					$retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey]) ? get_class($oVarsA[$sKey]) : $oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey]) ? get_class($oVarsB[$sKey]) : $oVarsB[$sKey]);
 				}
 				if ($ignoretype && ($oVarsA[$sKey] != $oVarsB[$sKey])) {
-					$retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey])?get_class($oVarsA[$sKey]):$oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey])?get_class($oVarsB[$sKey]):$oVarsB[$sKey]);
+					$retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey]) ? get_class($oVarsA[$sKey]) : $oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey]) ? get_class($oVarsB[$sKey]) : $oVarsB[$sKey]);
 				}
 			}
 		}

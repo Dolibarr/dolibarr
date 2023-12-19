@@ -38,20 +38,8 @@ class ImportCsv extends ModeleImports
 	 */
 	public $db;
 
-	public $datatoimport;
-
 	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
-
-	/**
-	 * @var int ID
+	 * @var string Code of driver
 	 */
 	public $id;
 
@@ -86,6 +74,10 @@ class ImportCsv extends ModeleImports
 
 	public $nbupdate = 0; // # of update done during the import
 
+	public $charset = '';
+
+	public $col;
+
 
 	/**
 	 *	Constructor
@@ -96,9 +88,11 @@ class ImportCsv extends ModeleImports
 	public function __construct($db, $datatoimport)
 	{
 		global $conf, $langs;
+
+		parent::__construct();
 		$this->db = $db;
 
-		$this->separator = (GETPOST('separator') ?GETPOST('separator') : (empty($conf->global->IMPORT_CSV_SEPARATOR_TO_USE) ? ',' : $conf->global->IMPORT_CSV_SEPARATOR_TO_USE));
+		$this->separator = (GETPOST('separator') ? GETPOST('separator') : (!getDolGlobalString('IMPORT_CSV_SEPARATOR_TO_USE') ? ',' : $conf->global->IMPORT_CSV_SEPARATOR_TO_USE));
 		$this->enclosure = '"';
 		$this->escape = '"';
 
@@ -182,7 +176,7 @@ class ImportCsv extends ModeleImports
 	 *	Open input file
 	 *
 	 *	@param	string	$file		Path of filename
-	 *	@return	int					<0 if KO, >=0 if OK
+	 *	@return	int					Return integer <0 if KO, >=0 if OK
 	 */
 	public function import_open_file($file)
 	{
@@ -212,7 +206,7 @@ class ImportCsv extends ModeleImports
 	 * 	Return nb of records. File must be closed.
 	 *
 	 *	@param	string	$file		Path of filename
-	 * 	@return		int		<0 if KO, >=0 if OK
+	 * 	@return		int		Return integer <0 if KO, >=0 if OK
 	 */
 	public function import_get_nb_of_lines($file)
 	{
@@ -225,7 +219,7 @@ class ImportCsv extends ModeleImports
 	/**
 	 * 	Input header line from file
 	 *
-	 * 	@return		int		<0 if KO, >=0 if OK
+	 * 	@return		int		Return integer <0 if KO, >=0 if OK
 	 */
 	public function import_read_header()
 	{
@@ -238,7 +232,7 @@ class ImportCsv extends ModeleImports
 	/**
 	 * 	Return array of next record in input file.
 	 *
-	 * 	@return		Array		Array of field values. Data are UTF8 encoded. [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=not empty string)
+	 * 	@return		array|boolean		Array of field values. Data are UTF8 encoded. [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=not empty string)
 	 */
 	public function import_read_record()
 	{
@@ -257,21 +251,20 @@ class ImportCsv extends ModeleImports
 		$newarrayres = array();
 		if ($arrayres && is_array($arrayres)) {
 			foreach ($arrayres as $key => $val) {
-				if (!empty($conf->global->IMPORT_CSV_FORCE_CHARSET)) {	// Forced charset
+				if (getDolGlobalString('IMPORT_CSV_FORCE_CHARSET')) {	// Forced charset
 					if (strtolower($conf->global->IMPORT_CSV_FORCE_CHARSET) == 'utf8') {
 						$newarrayres[$key]['val'] = $val;
 						$newarrayres[$key]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we considere it's null
 					} else {
-						$newarrayres[$key]['val'] = utf8_encode($val);
+						$newarrayres[$key]['val'] = mb_convert_encoding($val, 'UTF-8', 'ISO-8859-1');
 						$newarrayres[$key]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we considere it's null
 					}
-				} else // Autodetect format (UTF8 or ISO)
-				{
+				} else { // Autodetect format (UTF8 or ISO)
 					if (utf8_check($val)) {
 						$newarrayres[$key]['val'] = $val;
 						$newarrayres[$key]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we considere it's null
 					} else {
-						$newarrayres[$key]['val'] = utf8_encode($val);
+						$newarrayres[$key]['val'] = mb_convert_encoding($val, 'UTF-8', 'ISO-8859-1');
 						$newarrayres[$key]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we considere it's null
 					}
 				}
@@ -307,7 +300,7 @@ class ImportCsv extends ModeleImports
 	 * @param	int		$maxfields						Max number of fields to use
 	 * @param	string	$importid						Import key
 	 * @param	array	$updatekeys						Array of keys to use to try to do an update first before insert. This field are defined into the module descriptor.
-	 * @return	int										<0 if KO, >0 if OK
+	 * @return	int										Return integer <0 if KO, >0 if OK
 	 */
 	public function import_insert($arrayrecord, $array_match_file_to_database, $objimport, $maxfields, $importid, $updatekeys)
 	{
@@ -359,7 +352,7 @@ class ImportCsv extends ModeleImports
 						if ($obj) {
 							$tablewithentity_cache[$tablename] = 1; // table contains entity field
 						} else {
-							$tablewithentity_cache[$tablename] = 0; // table does not contains entity field
+							$tablewithentity_cache[$tablename] = 0; // table does not contain entity field
 						}
 					} else {
 						dol_print_error($this->db);
@@ -446,9 +439,9 @@ class ImportCsv extends ModeleImports
 												//var_dump($arrayrecord[0]['val']);
 												/*include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancysystem.class.php';
 												 $tmpchartofaccount = new AccountancySystem($this->db);
-												 $tmpchartofaccount->fetch($conf->global->CHARTOFACCOUNTS);
+												 $tmpchartofaccount->fetch(getDolGlobalInt('CHARTOFACCOUNTS'));
 												 //var_dump($tmpchartofaccount->ref.' - '.$arrayrecord[0]['val']);
-												 if ((! ($conf->global->CHARTOFACCOUNTS > 0)) || $tmpchartofaccount->ref != $arrayrecord[0]['val'])
+												 if ((! (getDolGlobalInt('CHARTOFACCOUNTS') > 0)) || $tmpchartofaccount->ref != $arrayrecord[0]['val'])
 												 {
 												 $this->errors[$error]['lib']=$langs->trans('ErrorImportOfChartLimitedToCurrentChart', $tmpchartofaccount->ref);
 												 $this->errors[$error]['type']='RESTRICTONCURRENCTCHART';
@@ -616,7 +609,7 @@ class ImportCsv extends ModeleImports
 
 										if (!empty($classModForNumber) && !empty($pathModForNumber) && is_readable(DOL_DOCUMENT_ROOT.$pathModForNumber)) {
 											require_once DOL_DOCUMENT_ROOT.$pathModForNumber;
-											$modForNumber = new $classModForNumber;
+											$modForNumber = new $classModForNumber();
 
 											$tmpobject = null;
 											// Set the object with the date property when we can
@@ -649,12 +642,22 @@ class ImportCsv extends ModeleImports
 										break;
 									}
 									$classinstance = new $class($this->db);
-									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $listfields, ($key - 1)));
-									$newval = $res; 	// We get new value computed.
+									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $arrayfield, ($key - 1)));
+									if (empty($classinstance->error) && empty($classinstance->errors)) {
+										$newval = $res; 	// We get new value computed.
+									} else {
+										$this->errors[$error]['type'] = 'CLASSERROR';
+										$this->errors[$error]['lib'] = implode(
+											"\n",
+											array_merge([$classinstance->error], $classinstance->errors)
+										);
+										$errorforthistable++;
+										$error++;
+									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'numeric') {
 									$newval = price2num($newval);
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'accountingaccount') {
-									if (empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
+									if (!getDolGlobalString('ACCOUNTING_MANAGE_ZERO')) {
 										$newval = rtrim(trim($newval), "0");
 									} else {
 										$newval = trim($newval);
@@ -671,7 +674,7 @@ class ImportCsv extends ModeleImports
 								if (preg_match('/^(.+)@([^:]+)(:.+)?$/', $objimport->array_import_regex[0][$val], $reg)) {
 									$field = $reg[1];
 									$table = $reg[2];
-									$filter = !empty($reg[3]) ?substr($reg[3], 1) : '';
+									$filter = !empty($reg[3]) ? substr($reg[3], 1) : '';
 
 									$cachekey = $field.'@'.$table;
 									if (!empty($filter)) {
@@ -809,13 +812,23 @@ class ImportCsv extends ModeleImports
 										break;
 									}
 									$classinstance = new $class($this->db);
-									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $listfields, ($key - 1)));
-									$fieldArr = explode('.', $fieldname);
-									if (count($fieldArr) > 0) {
-										$fieldname = $fieldArr[1];
+									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $arrayfield, ($key - 1)));
+									if (empty($classinstance->error) && empty($classinstance->errors)) {
+										$fieldArr = explode('.', $fieldname);
+										if (count($fieldArr) > 0) {
+											$fieldname = $fieldArr[1];
+										}
+										$listfields[] = $fieldname;
+										$listvalues[] = $res;
+									} else {
+										$this->errors[$error]['type'] = 'CLASSERROR';
+										$this->errors[$error]['lib'] = implode(
+											"\n",
+											array_merge([$classinstance->error], $classinstance->errors)
+										);
+										$errorforthistable++;
+										$error++;
 									}
-									$listfields[] = $fieldname;
-									$listvalues[] = $res;
 								}
 							}
 						} else {
@@ -870,6 +883,10 @@ class ImportCsv extends ModeleImports
 										$filters[] = $col.' = '.$data[$key];
 									}
 								}
+								if (!empty($tablewithentity_cache[$tablename])) {
+									$where[] = "entity IN (".getEntity($this->getElementFromTableWithPrefix($tablename)).")";
+									$filters[] = "entity IN (".getEntity($this->getElementFromTableWithPrefix($tablename)).")";
+								}
 								$sqlSelect .= " WHERE ".implode(' AND ', $where);
 
 								$resql = $this->db->query($sqlSelect);
@@ -878,7 +895,9 @@ class ImportCsv extends ModeleImports
 									if ($num_rows == 1) {
 										$res = $this->db->fetch_object($resql);
 										$lastinsertid = $res->rowid;
-										if ($is_table_category_link) $lastinsertid = 'linktable'; // used to apply update on tables like llx_categorie_product and avoid being blocked for all file content if at least one entry already exists
+										if ($is_table_category_link) {
+											$lastinsertid = 'linktable';
+										} // used to apply update on tables like llx_categorie_product and avoid being blocked for all file content if at least one entry already exists
 										$last_insert_id_array[$tablename] = $lastinsertid;
 									} elseif ($num_rows > 1) {
 										$this->errors[$error]['lib'] = $langs->trans('MultipleRecordFoundWithTheseFilters', implode(', ', $filters));
@@ -905,6 +924,10 @@ class ImportCsv extends ModeleImports
 									$keyfield = 'rowid';
 								}
 								$sqlSelect .= " WHERE ".$keyfield." = ".((int) $lastinsertid);
+
+								if (!empty($tablewithentity_cache[$tablename])) {
+									$sqlSelect .= " AND entity IN (".getEntity($this->getElementFromTableWithPrefix($tablename)).")";
+								}
 
 								$resql = $this->db->query($sqlSelect);
 								if ($resql) {
@@ -949,6 +972,10 @@ class ImportCsv extends ModeleImports
 
 								if ($is_table_category_link) {
 									$sqlend = " WHERE " . implode(' AND ', $where);
+								}
+
+								if (!empty($tablewithentity_cache[$tablename])) {
+									$sqlend .= " AND entity IN (".getEntity($this->getElementFromTableWithPrefix($tablename)).")";
 								}
 
 								$sql = $sqlstart.$sqlend;
@@ -1039,4 +1066,4 @@ class ImportCsv extends ModeleImports
 function cleansep($value)
 {
 	return str_replace(array(',', ';'), '/', $value);
-};
+}

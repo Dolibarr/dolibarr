@@ -39,7 +39,7 @@ StatusSendingValidatedShort=Validado
 StatusSendingProcessedShort=Processado
 SendingSheet=Folha de expedição
 ConfirmDeleteSending=Tem certeza de que deseja eliminar esta expedição?
-ConfirmValidateSending=Tem a certeza de que deseja validar esta expedição com a referência <b> %s </b>?
+ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
 ConfirmCancelSending=Tem a certeza que deseja cancelar esta expedição?
 DocumentModelMerou=Mérou modelo A5
 WarningNoQtyLeftToSend=Atenção, não existe qualquer produto à espera de ser enviado.
@@ -48,7 +48,7 @@ DateDeliveryPlanned=Data prevista de entrega
 RefDeliveryReceipt=Ref. do recibo de entrega
 StatusReceipt=Estado do recibo de entrega
 DateReceived=Data da entrega recebida
-ClassifyReception=Classify reception
+ClassifyReception=Classify Received
 SendShippingByEMail=Send shipment by email
 SendShippingRef=Submissão da expedição %s
 ActionsOnShipping=Eventos em embarque
@@ -62,6 +62,7 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open purchase
 NoProductToShipFoundIntoStock=No product to ship found in warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
 WeightVolShort=Peso/Volume
 ValidateOrderFirstBeforeShipment=Deve validar a encomenda antes de poder efetuar expedições.
+NoLineGoOnTabToAddSome=No line, go on tab "%s" to add
 
 # Sending methods
 # ModelDocument
@@ -74,3 +75,12 @@ SumOfProductWeights=Soma dos pesos dos produtos
 # warehouse details
 DetailWarehouseNumber= Detalhes do armazém
 DetailWarehouseFormat= W:%s (Qty: %d)
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Display last date of entry in stock during shipment creation for serial number or batch
+CreationOptions=Available options during shipment creation
+
+ShipmentDistribution=Shipment distribution
+
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combinations of warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
+
+ErrorTooMuchShipped=Quantity shipped should not be greater than quantity ordered for line %s

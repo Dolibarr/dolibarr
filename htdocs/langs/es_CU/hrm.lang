@@ -1,0 +1,24 @@
+# Dolibarr language file - Source file is en_US - hrm
+HRM_EMAIL_EXTERNAL_SERVICE=Correo electrónico para evitar el servicio externo de HRM
+ConfirmDeleteEstablishment=¿Está seguro de que desea eliminar este establecimiento?
+OpenEtablishment=Establecimiento abierto
+DictionaryPublicHolidays=Licencia - Festivos
+DictionaryDepartment=HRM - Unidad organizativa
+DictionaryFunction=HRM - Puestos de trabajo
+ListOfEmployees=Lista de empleados
+HrmSetup=Configuración del módulo HRM
+JobCard=Tarjeta de trabajo
+SkillType=tipo de habilidad
+ErrNoSkillSelected=Ninguna habilidad seleccionada
+ErrSkillAlreadyAdded=Esta habilidad ya está en la lista.
+SkillHasNoLines=Esta habilidad no tiene líneas.
+SkillCard=tarjeta de habilidad
+EmployeeSkillsUpdated=Las habilidades de los empleados se han actualizado (consulte la pestaña "Habilidades" de la tarjeta del empleado)
+EmployeePosition=puesto de empleado
+group1ToCompare=Grupo de usuarios a analizar
+group2ToCompare=Segundo grupo de usuarios para comparar
+TypeSkill=tipo de habilidad
+SkillList=lista de habilidades
+AbandonmentComment=comentario de abandono
+NoEval=No se ha realizado ninguna evaluación para este empleado.
+HighestRank=rango más alto

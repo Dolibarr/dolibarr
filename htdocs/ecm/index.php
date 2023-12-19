@@ -38,7 +38,7 @@ $langs->loadLangs(array('ecm', 'companies', 'other', 'users', 'orders', 'propal'
 // Get parameters
 $socid = GETPOST('socid', 'int');
 $action = GETPOST('action', 'aZ09');
-$section = GETPOST('section', 'int') ?GETPOST('section', 'int') : GETPOST('section_id', 'int');
+$section = GETPOST('section', 'int') ? GETPOST('section', 'int') : GETPOST('section_id', 'int');
 if (!$section) {
 	$section = 0;
 }
@@ -89,6 +89,8 @@ $permissiontocreatedir = $user->hasRight('ecm', 'setup');
 $permissiontodelete = $user->hasRight('ecm', 'upload');
 $permissiontodeletedir = $user->hasRight('ecm', 'setup');
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('ecmindexcard', 'globalcard'));
 
 /*
  *	Actions
@@ -99,7 +101,7 @@ $permissiontodeletedir = $user->hasRight('ecm', 'setup');
 //include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 // Upload file (code similar but different than actions_linkedfiles.inc.php)
-if (GETPOST("sendit", 'alphanohtml') && !empty($conf->global->MAIN_UPLOAD_DOC) && $permissiontocreate) {
+if (GETPOST("sendit", 'alphanohtml') && getDolGlobalString('MAIN_UPLOAD_DOC') && $permissiontocreate) {
 	// Define relativepath and upload_dir
 	$relativepath = '';
 	if ($ecmdir->id) {
@@ -109,10 +111,13 @@ if (GETPOST("sendit", 'alphanohtml') && !empty($conf->global->MAIN_UPLOAD_DOC) &
 	}
 	$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
 
-	if (is_array($_FILES['userfile']['tmp_name'])) {
-		$userfiles = $_FILES['userfile']['tmp_name'];
-	} else {
-		$userfiles = array($_FILES['userfile']['tmp_name']);
+	$userfiles = [];
+	if (is_array($_FILES['userfile'])) {
+		if (is_array($_FILES['userfile']['tmp_name'])) {
+			$userfiles = $_FILES['userfile']['tmp_name'];
+		} else {
+			$userfiles = array($_FILES['userfile']['tmp_name']);
+		}
 	}
 
 	foreach ($userfiles as $key => $userfile) {
@@ -292,7 +297,7 @@ if ($action == 'refreshmanual' && $permissiontoread) {
 		}
 	}
 
-	$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories set cachenbofdoc = -1 WHERE cachenbofdoc < 0"; // If pb into cahce counting, we set to value -1 = "unknown"
+	$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories set cachenbofdoc = -1 WHERE cachenbofdoc < 0"; // If pb into cache counting, we set to value -1 = "unknown"
 	dol_syslog("sql = ".$sql);
 	$db->query($sql);
 
@@ -318,7 +323,7 @@ $moreheadjs = '';
 
 //$morejs=array();
 $morejs = array('includes/jquery/plugins/blockUI/jquery.blockUI.js', 'core/js/blockUI.js'); // Used by ecm/tpl/enabledfiletreeajax.tpl.pgp
-if (empty($conf->global->MAIN_ECM_DISABLE_JS)) {
+if (!getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
 	$morejs[] = "includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js";
 }
 
@@ -328,7 +333,7 @@ $moreheadjs .= '</script>'."\n";
 
 llxHeader($moreheadcss.$moreheadjs, $langs->trans("ECMArea"), '', '', '', '', $morejs, '', 0, 0);
 
-$head = ecm_prepare_dasboard_head('');
+$head = ecm_prepare_dasboard_head(null);
 print dol_get_fiche_head($head, 'index', '', -1, '');
 
 

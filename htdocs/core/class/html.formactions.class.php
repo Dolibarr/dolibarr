@@ -79,7 +79,8 @@ class FormActions
 
 		if (!empty($conf->use_javascript_ajax)) {
 			print "\n";
-			print "<script type=\"text/javascript\">
+			print '<script nonce="'.getNonce().'" type="text/javascript">';
+			print "
                 var htmlname = '".$htmlname."';
 
                 $(document).ready(function () {
@@ -115,7 +116,7 @@ class FormActions
                         $('.hideifna').show();
                     }
                     else {
-                    	if (defaultvalue == 50 && (percentage.val() == 0 || percentage.val() == 100)) { percentage.val(50) };
+                    	if (defaultvalue == 50 && (percentage.val() == 0 || percentage.val() == 100)) { percentage.val(50); }
                     	percentage.removeAttr('disabled');
                         $('.hideifna').show();
                     }
@@ -166,7 +167,7 @@ class FormActions
 	 *  @param	string	$moreparambacktopage	More param for the backtopage
 	 *  @param	string	$morehtmlcenter			More html text on center of title line
 	 *  @param	int		$assignedtouser			Assign event by default to this user id (will be ignored if not enough permissions)
-	 *	@return	int								<0 if KO, >=0 if OK
+	 *	@return	int								Return integer <0 if KO, >=0 if OK
 	 */
 	public function showactions($object, $typeelement, $socid = 0, $forceshowtitle = 0, $morecss = 'listactions', $max = 0, $moreparambacktopage = '', $morehtmlcenter = '', $assignedtouser = 0)
 	{
@@ -185,35 +186,11 @@ class FormActions
 
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 		$caction = new CActionComm($this->db);
-		$arraylist = $caction->liste_array(1, 'code', '', (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : 0), '', 1);
+		$arraylist = $caction->liste_array(1, 'code', '', (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? 1 : 0), '', 1);
 
 		$num = count($listofactions);
 		if ($num || $forceshowtitle) {
-			if ($typeelement == 'invoice') {
-				$title = $langs->trans('ActionsOnBill');
-			} elseif ($typeelement == 'invoice_supplier' || $typeelement == 'supplier_invoice') {
-				$title = $langs->trans('ActionsOnBill');
-			} elseif ($typeelement == 'propal') {
-				$title = $langs->trans('ActionsOnPropal');
-			} elseif ($typeelement == 'supplier_proposal') {
-				$title = $langs->trans('ActionsOnSupplierProposal');
-			} elseif ($typeelement == 'order') {
-				$title = $langs->trans('ActionsOnOrder');
-			} elseif ($typeelement == 'order_supplier' || $typeelement == 'supplier_order') {
-				$title = $langs->trans('ActionsOnOrder');
-			} elseif ($typeelement == 'shipping') {
-				$title = $langs->trans('ActionsOnShipping');
-			} elseif ($typeelement == 'fichinter') {
-				$title = $langs->trans('ActionsOnFicheInter');
-			} elseif ($typeelement == 'project') {
-				$title = $langs->trans('LatestLinkedEvents', $max ? $max : '');
-			} elseif ($typeelement == 'task') {
-				$title = $langs->trans('LatestLinkedEvents', $max ? $max : '');
-			} elseif ($typeelement == 'member') {
-				$title = $langs->trans('LatestLinkedEvents', $max ? $max : '');
-			} else {
-				$title = $langs->trans("LatestLinkedEvents", $max ? $max : '');
-			}
+			$title = $langs->trans("LatestLinkedEvents", $max ? $max : '');
 
 			$urlbacktopage = $_SERVER['PHP_SELF'].'?id='.$object->id.($moreparambacktopage ? '&'.$moreparambacktopage : '');
 
@@ -300,7 +277,7 @@ class FormActions
 
 					// Type
 					$labeltype = $actionstatic->type_code;
-					if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($arraylist[$labeltype])) {
+					if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') && empty($arraylist[$labeltype])) {
 						$labeltype = 'AC_OTH';
 					}
 					if (preg_match('/^TICKET_MSG/', $actionstatic->code)) {
@@ -319,7 +296,9 @@ class FormActions
 					print '</td>';
 
 					// Label
-					print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($actioncomm->label).'">'.$actioncomm->getNomUrl(0, 36).'</td>';
+					print '<td class="tdoverflowmax200">';
+					print $actioncomm->getNomUrl(0);
+					print '</td>';
 
 					// Date
 					print '<td class="center nowraponall">'.dol_print_date($actioncomm->datep, 'dayhour', 'tzuserrel');
@@ -400,7 +379,7 @@ class FormActions
 			$selected = 'AC_OTH_AUTO';
 		}
 
-		if (!empty($conf->global->AGENDA_ALWAYS_HIDE_AUTO)) {
+		if (getDolGlobalString('AGENDA_ALWAYS_HIDE_AUTO')) {
 			unset($arraylist['AC_OTH_AUTO']);
 		}
 

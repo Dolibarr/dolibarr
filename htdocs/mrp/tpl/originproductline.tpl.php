@@ -28,7 +28,7 @@ if (!empty($form) && !is_object($form)) {
 	$form = new Form($db);
 }
 
-$qtytoconsumeforline = $this->tpl['qty'] / ( !empty($this->tpl['efficiency']) ? $this->tpl['efficiency'] : 1 );
+$qtytoconsumeforline = $this->tpl['qty'] / (!empty($this->tpl['efficiency']) ? $this->tpl['efficiency'] : 1);
 /*if ((empty($this->tpl['qty_frozen']) && $this->tpl['qty_bom'] > 1)) {
 	$qtytoconsumeforline = $qtytoconsumeforline / $this->tpl['qty_bom'];
 }*/
@@ -52,7 +52,7 @@ if ($res) {
 		print ' ' . $langs->trans("or") . ' ';
 		print $tmpbom->getNomUrl(1);
 		print ' <a class="collapse_bom" id="collapse-' . $line->id . '" href="#">';
-		print (empty($conf->global->BOM_SHOW_ALL_BOM_BY_DEFAULT) ? img_picto('', 'folder') : img_picto('', 'folder-open'));
+		print(!getDolGlobalString('BOM_SHOW_ALL_BOM_BY_DEFAULT') ? img_picto('', 'folder') : img_picto('', 'folder-open'));
 	}
 	print '</a>';
 } else {
@@ -61,6 +61,8 @@ if ($res) {
 print '</td>';
 // Qty
 print '<td class="right">'.$this->tpl['qty'].(($this->tpl['efficiency'] > 0 && $this->tpl['efficiency'] < 1) ? ' / '.$form->textwithpicto($this->tpl['efficiency'], $langs->trans("ValueOfMeansLoss")).' = '.$qtytoconsumeforline : '').'</td>';
+// Unit
+print '<td class="right">'.measuringUnitString($this->tpl['fk_unit'], '', '', 1).'</td>';
 print '<td class="center">'.(empty($this->tpl['stock']) ? 0 : price2num($this->tpl['stock'], 'MS'));
 if ($this->tpl['seuil_stock_alerte'] != '' && ($this->tpl['stock'] < $this->tpl['seuil_stock_alerte'])) {
 	print ' '.img_warning($langs->trans("StockLowerThanLimit", $this->tpl['seuil_stock_alerte']));
@@ -113,7 +115,7 @@ if ($resql) {
 		$sub_bom_line->fetch($obj->rowid);
 
 		//If hidden conf is set, we show directly all the sub-BOM lines
-		if (empty($conf->global->BOM_SHOW_ALL_BOM_BY_DEFAULT)) {
+		if (!getDolGlobalString('BOM_SHOW_ALL_BOM_BY_DEFAULT')) {
 			print '<tr style="display:none" class="sub_bom_lines" parentid="'.$line->id.'">';
 		} else {
 			print '<tr class="sub_bom_lines" parentid="'.$line->id.'">';
@@ -136,6 +138,9 @@ if ($resql) {
 		} else {
 			print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty * $line->qty, 0, '', 0, 0).'</td>';
 		}
+
+		// Unit
+		print '<td class="linecolunit nowrap right" id="sub_bom_unit_'.$sub_bom_line->id.'">'.measuringUnitString($sub_bom_line->fk_unit, '', '', 1).'</td>';
 
 		// Stock réel
 		if ($sub_bom_product->stock_reel > 0) {

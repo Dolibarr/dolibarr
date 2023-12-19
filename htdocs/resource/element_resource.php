@@ -80,7 +80,7 @@ if ($socid > 0) { // Special for thirdparty
 	$element = 'societe';
 }
 
-if (!$user->rights->resource->read) {
+if (!$user->hasRight('resource', 'read')) {
 	accessforbidden();
 }
 
@@ -124,7 +124,7 @@ if (empty($reshook)) {
 
 			// TODO : add this check at update_linked_resource and when modifying event start or end date
 			// check if an event resource is already in use
-			if (!empty($conf->global->RESOURCE_USED_IN_EVENT_CHECK) && $objstat->element == 'action' && $resource_type == 'dolresource' && intval($busy) == 1) {
+			if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') && $objstat->element == 'action' && $resource_type == 'dolresource' && intval($busy) == 1) {
 				$eventDateStart = $objstat->datep;
 				$eventDateEnd   = $objstat->datef;
 				$isFullDayEvent = $objstat->fulldayevent;
@@ -193,13 +193,13 @@ if (empty($reshook)) {
 	}
 
 	// Update ressource
-	if ($action == 'update_linked_resource' && $user->rights->resource->write && !GETPOST('cancel', 'alpha')) {
+	if ($action == 'update_linked_resource' && $user->hasRight('resource', 'write') && !GETPOST('cancel', 'alpha')) {
 		$res = $object->fetch_element_resource($lineid);
 		if ($res) {
 			$object->busy = $busy;
 			$object->mandatory = $mandatory;
 
-			if (!empty($conf->global->RESOURCE_USED_IN_EVENT_CHECK) && $object->element_type == 'action' && $object->resource_type == 'dolresource' && intval($object->busy) == 1) {
+			if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') && $object->element_type == 'action' && $object->resource_type == 'dolresource' && intval($object->busy) == 1) {
 				$eventDateStart = $object->objelement->datep;
 				$eventDateEnd   = $object->objelement->datef;
 				$isFullDayEvent = $objstat->fulldayevent;
@@ -272,7 +272,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete a resource linked to an element
-	if ($action == 'confirm_delete_linked_resource' && $user->rights->resource->delete && $confirm === 'yes') {
+	if ($action == 'confirm_delete_linked_resource' && $user->hasRight('resource', 'delete') && $confirm === 'yes') {
 		$result = $object->delete_resource($lineid, $element);
 
 		if ($result >= 0) {
@@ -396,7 +396,7 @@ if (!$ret) {
 			print '<table class="border tableforfield centpercent">';
 
 			// Type
-			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
+			if (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 				print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td>';
 				print $act->getTypePicto();
 				print $langs->trans("Action".$act->type_code);
@@ -434,7 +434,7 @@ if (!$ret) {
 			print '</td></tr>';
 
 			// Location
-			if (empty($conf->global->AGENDA_DISABLE_LOCATION)) {
+			if (!getDolGlobalString('AGENDA_DISABLE_LOCATION')) {
 				print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3">'.$act->location.'</td></tr>';
 			}
 
@@ -447,7 +447,8 @@ if (!$ret) {
 				}
 				if (!empty($act->userassigned)) {	// Now concat assigned users
 					// Restore array with key with same value than param 'id'
-					$tmplist1 = $act->userassigned; $tmplist2 = array();
+					$tmplist1 = $act->userassigned;
+					$tmplist2 = array();
 					foreach ($tmplist1 as $key => $val) {
 						if ($val['id'] && $val['id'] != $act->userownerid) {
 							$listofuserid[$val['id']] = $val;
@@ -523,6 +524,8 @@ if (!$ret) {
 		$fichinter->fetch($element_id, $element_ref);
 		$fichinter->fetch_thirdparty();
 
+		$usercancreate = $user->hasRight('fichinter', 'creer');
+
 		if (is_object($fichinter)) {
 			$head = fichinter_prepare_head($fichinter);
 			print dol_get_fiche_head($head, 'resource', $langs->trans("InterventionCard"), -1, 'intervention');
@@ -533,40 +536,30 @@ if (!$ret) {
 
 			$morehtmlref = '<div class="refidno">';
 			// Ref customer
-			//$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
-			//$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
+			//$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $fichinter->ref_client, $fichinter, $user->rights->ficheinter->creer, 'string', '', 0, 1);
+			//$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $fichinter->ref_client, $fichinter, $user->rights->ficheinter->creer, 'string', '', null, null, '', 1);
+			$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $fichinter->ref_client, $fichinter, 0, 'string', '', 0, 1);
+			$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $fichinter->ref_client, $fichinter, 0, 'string', '', null, null, '', 1);
 			// Thirdparty
-			$morehtmlref .= $langs->trans('ThirdParty').' : '.$fichinter->thirdparty->getNomUrl(1);
+			$morehtmlref .= '<br>'.$fichinter->thirdparty->getNomUrl(1, 'customer');
 			// Project
 			if (isModEnabled('project')) {
 				$langs->load("projects");
-				$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-				if ($user->rights->commande->creer) {
+				$morehtmlref .= '<br>';
+				if ($usercancreate && 0) {
+					$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 					if ($action != 'classify') {
-						//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $fichinter->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-						$morehtmlref .= ' : ';
+						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$fichinter->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 					}
-					if ($action == 'classify') {
-						//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $fichinter->id, $fichinter->socid, $fichinter->fk_project, 'projectid', 0, 0, 1, 1);
-						$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$fichinter->id.'">';
-						$morehtmlref .= '<input type="hidden" name="action" value="classin">';
-						$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-						$morehtmlref .= $formproject->select_projects($fichinter->socid, $fichinter->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-						$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-						$morehtmlref .= '</form>';
-					} else {
-						$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$fichinter->id, $fichinter->socid, $fichinter->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
-					}
+					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$fichinter->id, $fichinter->socid, $fichinter->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 				} else {
 					if (!empty($fichinter->fk_project)) {
 						$proj = new Project($db);
 						$proj->fetch($fichinter->fk_project);
-						$morehtmlref .= ' : '.$proj->getNomUrl(1);
+						$morehtmlref .= $proj->getNomUrl(1);
 						if ($proj->title) {
-							$morehtmlref .= ' - '.$proj->title;
+							$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
 						}
-					} else {
-						$morehtmlref .= '';
 					}
 				}
 			}
@@ -593,7 +586,7 @@ if (!$ret) {
 			print dol_get_fiche_head($head, 'resources', $titre, -1, $picto);
 
 			$shownav = 1;
-			if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+			if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 				$shownav = 0;
 			}
 			dol_banner_tab($product, 'ref', '', $shownav, 'ref', 'ref', '', '&element='.$element);

@@ -26,6 +26,11 @@
 class BlockedLog
 {
 	/**
+	 * @var DoliDB	Database handler
+	 */
+	public $db;
+
+	/**
 	 * Id of the log
 	 * @var int
 	 */
@@ -198,15 +203,15 @@ class BlockedLog
 
 		// Cashdesk
 		// $conf->global->BANK_ENABLE_POS_CASHCONTROL must be set to 1 by all external POS modules
-		$moduleposenabled = (!empty($conf->cashdesk->enabled) || !empty($conf->takepos->enabled) || !empty($conf->global->BANK_ENABLE_POS_CASHCONTROL));
+		$moduleposenabled = (!empty($conf->cashdesk->enabled) || !empty($conf->takepos->enabled) || getDolGlobalString('BANK_ENABLE_POS_CASHCONTROL'));
 		if ($moduleposenabled) {
 			$this->trackedevents['CASHCONTROL_VALIDATE'] = 'logCASHCONTROL_VALIDATE';
 		}
 
 		// Add more action to track from a conf variable
 		// For example: STOCK_MOVEMENT,...
-		if (!empty($conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED)) {
-			$tmparrayofmoresupportedevents = explode(',', $conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED);
+		if (getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED')) {
+			$tmparrayofmoresupportedevents = explode(',', getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED'));
 			foreach ($tmparrayofmoresupportedevents as $val) {
 				$this->trackedevents[$val] = 'log'.$val;
 			}
@@ -718,6 +723,10 @@ class BlockedLog
 			}
 		}
 
+		// A trick to be sure all the object_data is an associative array
+		// json_encode and json_decode are not able to manage mixed object (with array/object, only full arrays or full objects)
+		$this->object_data = json_decode(json_encode($this->object_data, JSON_FORCE_OBJECT), false);
+
 		return 1;
 	}
 
@@ -747,15 +756,14 @@ class BlockedLog
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
 			if ($obj) {
-				$this->id = $obj->rowid;
-				$this->entity = $obj->entity;
-				$this->ref				= $obj->rowid;
+				$this->id 				= $obj->rowid;
+				$this->entity 			= $obj->entity;
 
-				$this->date_creation = $this->db->jdate($obj->date_creation);
-				$this->tms				= $this->db->jdate($obj->tms);
+				$this->date_creation 	= $this->db->jdate($obj->date_creation);
+				$this->date_modification = $this->db->jdate($obj->tms);
 
-				$this->amounts			= (double) $obj->amounts;
-				$this->action = $obj->action;
+				$this->amounts			= (float) $obj->amounts;
+				$this->action 			= $obj->action;
 				$this->element			= $obj->element;
 
 				$this->fk_object = $obj->fk_object;
@@ -769,7 +777,7 @@ class BlockedLog
 				$this->object_version = $obj->object_version;
 
 				$this->signature		= $obj->signature;
-				$this->signature_line = $obj->signature_line;
+				$this->signature_line 	= $obj->signature_line;
 				$this->certified		= ($obj->certified == 1);
 
 				return 1;
@@ -786,20 +794,41 @@ class BlockedLog
 
 
 	/**
+	 * Encode data
+	 *
+	 * @param	string	$data	Data to serialize
+	 * @param	string	$mode	0=serialize, 1=json_encode
+	 * @return 	string			Value serialized, an object (stdClass)
+	 */
+	public function dolEncodeBlockedData($data, $mode = 0)
+	{
+		try {
+			$aaa = json_encode($data);
+		} catch (Exception $e) {
+			//print $e->getErrs);
+		}
+		//var_dump($aaa);
+
+		return $aaa;
+	}
+
+
+	/**
 	 * Decode data
 	 *
 	 * @param	string	$data	Data to unserialize
 	 * @param	string	$mode	0=unserialize, 1=json_decode
-	 * @return 	string			Value unserialized
+	 * @return 	object			Value unserialized, an object (stdClass)
 	 */
 	public function dolDecodeBlockedData($data, $mode = 0)
 	{
 		try {
-			//include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-			$aaa = unserialize($data);
+			$aaa = (object) jsonOrUnserialize($data);
 		} catch (Exception $e) {
 			//print $e->getErrs);
 		}
+		//var_dump($aaa);
+
 		return $aaa;
 	}
 
@@ -811,7 +840,6 @@ class BlockedLog
 	 */
 	public function setCertified()
 	{
-
 		$res = $this->db->query("UPDATE ".MAIN_DB_PREFIX."blockedlog SET certified=1 WHERE rowid=".((int) $this->id));
 		if (!$res) {
 			return false;
@@ -825,7 +853,7 @@ class BlockedLog
 	 *
 	 *	@param	User	$user      			Object user that create
 	 *  @param	int		$forcesignature		Force signature (for example '0000000000' when we disabled the module)
-	 *	@return	int							<0 if KO, >0 if OK
+	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user, $forcesignature = '')
 	{
@@ -836,7 +864,7 @@ class BlockedLog
 		$error = 0;
 
 		// Clean data
-		$this->amounts = (double) $this->amounts;
+		$this->amounts = (float) $this->amounts;
 
 		dol_syslog(get_class($this).'::create action='.$this->action.' fk_user='.$this->fk_user.' user_fullname='.$this->user_fullname, LOG_DEBUG);
 
@@ -863,6 +891,9 @@ class BlockedLog
 		}
 
 		$this->date_creation = dol_now();
+
+		$this->object_version = ((float) DOL_VERSION);
+
 
 		$this->db->begin();
 
@@ -905,13 +936,21 @@ class BlockedLog
 		$sql .= $this->fk_object.",";
 		$sql .= "'".$this->db->idate($this->date_object)."',";
 		$sql .= "'".$this->db->escape($this->ref_object)."',";
-		$sql .= "'".$this->db->escape(serialize($this->object_data))."',";
+		$sql .= "'".$this->db->escape($this->dolEncodeBlockedData($this->object_data))."',";
 		$sql .= "'".$this->db->escape($this->object_version)."',";
 		$sql .= "0,";
 		$sql .= $this->fk_user.",";
 		$sql .= "'".$this->db->escape($this->user_fullname)."',";
 		$sql .= ($this->entity ? $this->entity : $conf->entity);
 		$sql .= ")";
+
+		/*
+		$a = serialize($this->object_data); $a2 = unserialize($a); $a4 = print_r($a2, true);
+		$b = json_encode($this->object_data); $b2 = json_decode($b); $b4 = print_r($b2, true);
+		var_dump($a4 == print_r($this->object_data, true) ? 'a=a' : 'a not = a');
+		var_dump($b4 == print_r($this->object_data, true) ? 'b=b' : 'b not = b');
+		exit;
+		*/
 
 		$res = $this->db->query($sql);
 		if ($res) {
@@ -952,7 +991,7 @@ class BlockedLog
 		$keyforsignature = $this->buildKeyForSignature();
 
 		//$signature_line = dol_hash($keyforsignature, '5'); // Not really usefull
-		$signature = dol_hash($previoushash.$keyforsignature, '5');
+		$signature = dol_hash($previoushash.$keyforsignature, 'sha256');
 		//var_dump($previoushash); var_dump($keyforsignature); var_dump($signature_line); var_dump($signature);
 
 		$res = ($signature === $this->signature);
@@ -984,8 +1023,8 @@ class BlockedLog
 	private function buildKeyForSignature()
 	{
 		//print_r($this->object_data);
-		if (((int) $this->object_version) > 12) {
-			return $this->date_creation.'|'.$this->action.'|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname.'|'.print_r($this->object_data, true);
+		if (((int) $this->object_version) >= 18) {
+			return $this->date_creation.'|'.$this->action.'|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname.'|'.json_encode($this->object_data, JSON_FORCE_OBJECT);
 		} else {
 			return $this->date_creation.'|'.$this->action.'|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname.'|'.print_r($this->object_data, true);
 		}
@@ -1006,7 +1045,7 @@ class BlockedLog
 		$previoussignature = '';
 
 		$sql = "SELECT rowid, signature FROM ".MAIN_DB_PREFIX."blockedlog";
-		$sql .= " WHERE entity=".$conf->entity;
+		$sql .= " WHERE entity = ".((int) $conf->entity);
 		if ($beforeid) {
 			$sql .= " AND rowid < ".(int) $beforeid;
 		}
@@ -1067,7 +1106,7 @@ class BlockedLog
 			 WHERE entity=".$conf->entity." AND certified = 1";
 		} else {
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
-			 WHERE entity=".$conf->entity." AND element='".$this->db->escape($element)."'";
+			 WHERE entity=".$conf->entity." AND element = '".$this->db->escape($element)."'";
 		}
 
 		if ($fk_object) {
@@ -1134,7 +1173,7 @@ class BlockedLog
 	{
 		global $db, $conf, $mysoc;
 
-		if (empty($conf->global->BLOCKEDLOG_ENTITY_FINGERPRINT)) { // creation of a unique fingerprint
+		if (!getDolGlobalString('BLOCKEDLOG_ENTITY_FINGERPRINT')) { // creation of a unique fingerprint
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';

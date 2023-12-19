@@ -102,6 +102,7 @@ UPDATE llx_holiday SET fk_user_approve = fk_user_valid WHERE statut = 3 AND fk_u
 ALTER TABLE llx_inventory ADD COLUMN categories_product VARCHAR(255) DEFAULT NULL AFTER fk_product;
 
 ALTER TABLE llx_societe ADD last_main_doc VARCHAR(255) NULL AFTER model_pdf;
+ALTER TABLE llx_user ADD last_main_doc VARCHAR(255) NULL AFTER model_pdf;
 
 ALTER TABLE llx_emailcollector_emailcollector MODIFY COLUMN lastresult text;
 ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN port varchar(10) DEFAULT '993';
@@ -409,4 +410,18 @@ ALTER TABLE llx_projet ADD COLUMN extraparams varchar(255);
 
 DELETE FROM llx_const WHERE name = 'TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST';
 
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('GR-ΠΡΩΤΟΧΡΟΝΙΑ', 0, 102, '', 0,  1,  1, 1);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('GR-ΘΕΟΦΑΝΕΙΑ', 0, 102, '', 0,  1,  6, 1);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('GR-25Η ΜΑΡΤΙΟΥ', 0, 102, '', 0,  3,  25, 1);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('GR-ΠΡΩΤΟΜΑΓΙΑ', 0, 102, '', 0,  5,  1, 1);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('GR-ΚΑΘΑΡΑ ΔΕΥΤΕΡΑ', 0, 102, 'ΚΑΘΑΡΑ_ΔΕΥΤΕΡΑ', 0,  0,  0, 1);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('GR-ΜΕΓΑΛΗ ΠΑΡΑΣΚΕΥΗ', 0, 102, 'ΜΕΓΑΛΗ_ΠΑΡΑΣΚΕΥΗ', 0,  0,  0, 1);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('GR-ΔΕΥΤΕΡΑ ΤΟΥ ΠΑΣΧΑ', 0, 102, 'ΔΕΥΤΕΡΑ_ΤΟΥ_ΠΑΣΧΑ', 0,  0,  0, 1);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('GR-ΤΟΥ ΑΓΙΟΥ ΠΝΕΥΜΑΤΟΣ', 0, 102, 'ΤΟΥ_ΑΓΙΟΥ_ΠΝΕΥΜΑΤΟΣ', 0,  0,  0, 1);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('GR-ΚΟΙΜΗΣΗ ΤΗΣ ΘΕΟΤΟΚΟΥ', 0, 102, '', 0,  8,  15, 1);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('GR-28Η ΟΚΤΩΒΡΙΟΥ', 0, 102, '', 0,  10, 28, 1);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('GR-ΧΡΙΣΤΟΥΓΕΝΝΑ', 0, 102, '', 0,  12, 25, 1);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('GR-ΣΥΝΑΞΗ ΘΕΟΤΟΚΟΥ', 0, 102, '', 0, 12, 26, 1);
+
+UPDATE llx_menu SET url = '/fourn/paiement/list.php?mainmenu=billing&leftmenu=suppliers_bills_payment' WHERE leftmenu = 'suppliers_bills_payment';
 

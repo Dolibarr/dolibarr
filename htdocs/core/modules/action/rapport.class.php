@@ -44,7 +44,6 @@ class CommActionRapport
 
 	public $errors;
 
-
 	/**
 	 * @var string description
 	 */
@@ -76,6 +75,10 @@ class CommActionRapport
 
 	public $page_largeur;
 
+	/**
+	 * @var array
+	 */
+	public $result;
 
 	/**
 	 * Constructor
@@ -130,7 +133,7 @@ class CommActionRapport
 			$outputlangs = $langs;
 		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!empty($conf->global->MAIN_USE_FPDF)) {
+		if (getDolGlobalString('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
@@ -209,14 +212,13 @@ class CommActionRapport
 				$this->errors = $hookmanager->errors;
 			}
 
-			if (!empty($conf->global->MAIN_UMASK)) {
-				@chmod($file, octdec($conf->global->MAIN_UMASK));
-			}
+			dolChmod($file);
 
 			$this->result = array('fullpath'=>$file);
 
 			return 1;
 		}
+		return 0;
 	}
 
 	/**
@@ -240,7 +242,7 @@ class CommActionRapport
 		$sql = "SELECT s.nom as thirdparty, s.rowid as socid, s.client,";
 		$sql .= " a.id, a.datep as dp, a.datep2 as dp2,";
 		$sql .= " a.fk_contact, a.note, a.percent as percent, a.fulldayevent, a.label, a.fk_project,";
-		$sql .= " c.code, c.libelle,";
+		$sql .= " c.code, c.libelle as label_type,";
 		$sql .= " u.login";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
@@ -321,7 +323,7 @@ class CommActionRapport
 
 				// Action code
 				$code = $obj->code;
-				if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
+				if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 					if ($code == 'AC_OTH') {
 						$code = 'AC_MANUAL';
 					}

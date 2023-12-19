@@ -92,7 +92,7 @@ if ($user->socid && $socid) {
 	$result = restrictedArea($user, 'societe', $socid);
 }
 
-$usercancreate = $user->rights->agenda->allactions->create || (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create);
+$usercancreate = $user->hasRight('agenda', 'allactions', 'create') || (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create'));
 $permissiontoadd = $usercancreate;
 
 
@@ -109,7 +109,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 $form = new Form($db);
 
-$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda';
+$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda|DE:Modul_Terminplanung';
 
 llxHeader('', $langs->trans("Agenda"), $help_url);
 
@@ -129,10 +129,14 @@ if ($object->id > 0) {
 	}
 
 	if ($object->authorid > 0) {
-		$tmpuser = new User($db); $res = $tmpuser->fetch($object->authorid); $object->author = $tmpuser;
+		$tmpuser = new User($db);
+		$res = $tmpuser->fetch($object->authorid);
+		$object->author = $tmpuser;
 	}
 	if ($object->usermodid > 0) {
-		$tmpuser = new User($db); $res = $tmpuser->fetch($object->usermodid); $object->usermod = $tmpuser;
+		$tmpuser = new User($db);
+		$res = $tmpuser->fetch($object->usermodid);
+		$object->usermod = $tmpuser;
 	}
 
 	$author = new User($db);
@@ -205,7 +209,7 @@ if ($object->id > 0) {
 	print '<table class="border tableforfield centpercent">';
 
 	// Type of event
-	if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
+	if (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 		print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td colspan="3">';
 		print $object->getTypePicto();
 		print $langs->trans("Action".$object->type_code);
@@ -243,7 +247,7 @@ if ($object->id > 0) {
 	print '</td></tr>';
 
 	// Location
-	if (empty($conf->global->AGENDA_DISABLE_LOCATION)) {
+	if (!getDolGlobalString('AGENDA_DISABLE_LOCATION')) {
 		print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3">'.$object->location.'</td></tr>';
 	}
 
@@ -287,7 +291,7 @@ if ($object->id > 0) {
 	print '<table class="border tableforfield centpercent">';
 
 	// Build file list
-	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 	$totalsize = 0;
 	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];
@@ -305,7 +309,7 @@ if ($object->id > 0) {
 
 
 	$modulepart = 'actions';
-	$permissiontoadd = $user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create;
+	$permissiontoadd = $user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create');
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {

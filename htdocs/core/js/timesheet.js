@@ -63,7 +63,7 @@ function regexEvent(objet,evt,type)
           case 'timeChar':
               //var regex= /^[0-9:]{1}$/;
               //alert(event.charCode);
-              var charCode = (evt.which) ? evt.which : event.keyCode;
+              var charCode = (evt.which) ? evt.which : evt.keyCode;
 
               if(((charCode >= 48) && (charCode <= 57)) || //num
                     (charCode===46) || (charCode===8)||// comma & periode
@@ -72,12 +72,9 @@ function regexEvent(objet,evt,type)
                   // ((charCode>=96) && (charCode<=105)) || //numpad
             	  return true;
 
-              }else
-              {
+              } else {
                   return false;
               }
-
-              break;
           default:
               break;
       }

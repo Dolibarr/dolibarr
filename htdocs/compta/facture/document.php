@@ -43,7 +43,7 @@ if (isModEnabled('project')) {
 $langs->loadLangs(array('propal', 'compta', 'other', 'bills', 'companies'));
 
 
-$id = (GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
+$id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
 $action = GETPOST('action', 'aZ09');
@@ -73,7 +73,7 @@ if ($object->fetch($id, $ref)) {
 	$upload_dir = $conf->facture->dir_output."/".dol_sanitizeFileName($object->ref);
 }
 
-$permissiontoadd = $user->rights->facture->creer;
+$permissiontoadd = $user->hasRight('facture', 'creer');
 
 // Security check
 if ($user->socid) {
@@ -126,7 +126,7 @@ if ($id > 0 || !empty($ref)) {
 		$totalpaid = $object->getSommePaiement();
 
 		// Build file list
-		$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+		$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 		$totalsize = 0;
 		foreach ($filearray as $key => $file) {
 			$totalsize += $file['size'];
@@ -184,8 +184,8 @@ if ($id > 0 || !empty($ref)) {
 		print dol_get_fiche_end();
 
 		$modulepart = 'facture';
-		$permissiontoadd = $user->rights->facture->creer;
-		$permtoedit = $user->rights->facture->creer;
+		$permissiontoadd = $user->hasRight('facture', 'creer');
+		$permtoedit = $user->hasRight('facture', 'creer');
 		$param = '&id='.$object->id;
 		include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 	} else {

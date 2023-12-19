@@ -53,6 +53,7 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = I formularen til at oprette/tilføje en
 #
 # Object
 #
+OrganizedEvent=Organiseret arrangement
 EventOrganizationConfOrBooth= Konference eller stand
 EventOrganizationConfOrBoothes=Konferencer eller stande
 ManageOrganizeEvent = Administrer tilrettelæggelsen af en begivenhed
@@ -145,7 +146,7 @@ OrganizationEventLinkToThirdParty=Link til tredjepart (kunde, leverandør eller 
 OrganizationEvenLabelName=Offentligt navn på konferencen eller standen
 
 NewSuggestionOfBooth=Ansøgning om bod
-NewSuggestionOfConference=Ansøgning om en konference
+NewSuggestionOfConference=Ansøgning om at afholde en konference
 
 #
 # Vote page
@@ -174,3 +175,9 @@ NoPublicActionsAllowedForThisEvent=Ingen offentlige handlinger er åbne for offe
 MaxNbOfAttendees=Max antal deltagere
 DateStartEvent=Begivenhedens startdato
 DateEndEvent=Begivenheds slutdato
+ModifyStatus=Rediger status
+ConfirmModifyStatus=Bekræft statusændring
+ConfirmModifyStatusQuestion=Er du sikker på, at du vil ændre %s valgte post(er)?
+RecordsUpdated = %s Optegnelser opdateret
+RecordUpdated = Rekord opdateret
+NoRecordUpdated = Ingen post opdateret

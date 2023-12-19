@@ -4,7 +4,7 @@
  * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  *
@@ -40,9 +40,7 @@ if (!defined('NOIPCHECK')) {
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
-if (!defined('NOIPCHECK')) {
-	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-}
+
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -76,7 +74,7 @@ if (empty($conf->partnership->enabled)) {
 	httponly_accessforbidden('Module Partnership not enabled');
 }
 
-if (empty($conf->global->PARTNERSHIP_ENABLE_PUBLIC)) {
+if (!getDolGlobalString('PARTNERSHIP_ENABLE_PUBLIC')) {
 	httponly_accessforbidden("Auto subscription form for public visitors has not been enabled");
 }
 
@@ -101,7 +99,7 @@ $user->loadDefaultValues();
  * @param 	array  		$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '')
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
 {
 	global $user, $conf, $langs, $mysoc;
 
@@ -128,15 +126,15 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 		print '<div class="logopublicpayment">';
 		print '<img id="dolpaymentlogo" src="'.$urllogo.'">';
 		print '</div>';
-		if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
+		if (!getDolGlobalString('MAIN_HIDE_POWERED_BY')) {
 			print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 		}
 		print '</div>';
 	}
 
-	if (!empty($conf->global->PARTNERSHIP_IMAGE_PUBLIC_REGISTRATION)) {
+	if (getDolGlobalString('PARTNERSHIP_IMAGE_PUBLIC_REGISTRATION')) {
 		print '<div class="backimagepublicregistration">';
-		print '<img id="idPARTNERSHIP_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->PARTNERSHIP_IMAGE_PUBLIC_REGISTRATION.'">';
+		print '<img id="idPARTNERSHIP_IMAGE_PUBLIC_INTERFACE" src="' . getDolGlobalString('PARTNERSHIP_IMAGE_PUBLIC_REGISTRATION').'">';
 		print '</div>';
 	}
 
@@ -152,9 +150,16 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
  */
 function llxFooterVierge()
 {
+	global $conf, $langs;
+
 	print '</div>';
 
 	printCommonFooter('public');
+
+	if (!empty($conf->use_javascript_ajax)) {
+		print "\n".'<!-- Includes JS Footer of Dolibarr -->'."\n";
+		print '<script src="'.DOL_URL_ROOT.'/core/js/lib_foot.js.php?lang='.$langs->defaultlang.'"></script>'."\n";
+	}
 
 	print "</body>\n";
 	print "</html>\n";
@@ -165,6 +170,7 @@ function llxFooterVierge()
 /*
  * Actions
  */
+
 $parameters = array();
 // Note that $action and $object may have been modified by some hooks
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
@@ -223,6 +229,7 @@ if (empty($reshook) && $action == 'add') {
 		$partnership->date_partnership_start = dol_now();
 		$partnership->fk_user_creat          = 0;
 		$partnership->fk_type                = GETPOST('partnershiptype', 'int');
+		$partnership->url                    = GETPOST('url');
 		//$partnership->typeid               = $conf->global->PARTNERSHIP_NEWFORM_FORCETYPE ? $conf->global->PARTNERSHIP_NEWFORM_FORCETYPE : GETPOST('typeid', 'int');
 		$partnership->ip = getUserRemoteIP();
 
@@ -247,16 +254,16 @@ if (empty($reshook) && $action == 'add') {
 				}
 			}
 		}
-		// test if societe already exist
+		// test if thirdparty already exists
 		$company = new Societe($db);
 		$result = $company->fetch(0, GETPOST('societe'));
-		if ($result == 0) { // si il ya pas d'entree sur le nom  on teste l'email
+		if ($result == 0) { // if entry with name not found, we search using the email
 			$result1 = $company->fetch(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, GETPOST('email'));
 			if ($result1 > 0) {
 				$error++;
 				$errmsg = $langs->trans("EmailAlreadyExistsPleaseRewriteYourCompanyName");
 			} else {
-				//create thirdparty
+				// create thirdparty
 				$company = new Societe($db);
 
 				$company->name        = GETPOST('societe');
@@ -367,7 +374,7 @@ if (empty($reshook) && $action == 'add') {
 					if ($subjecttosend && $texttosend) {
 						$moreinheader = 'X-Dolibarr-Info: send_an_email by public/members/new.php'."\r\n";
 
-						$result = $object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
+						$result = $object->sendEmail($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
 					}
 				}
 
@@ -414,7 +421,7 @@ if (empty($reshook) && $action == 'add') {
 
 				if (!empty($backtopage)) {
 					$urlback = $backtopage;
-				} elseif (!empty($conf->global->PARTNERSHIP_URL_REDIRECT_SUBSCRIPTION)) {
+				} elseif (getDolGlobalString('PARTNERSHIP_URL_REDIRECT_SUBSCRIPTION')) {
 					$urlback = $conf->global->PARTNERSHIP_URL_REDIRECT_SUBSCRIPTION;
 					// TODO Make replacement of __AMOUNT__, etc...
 				} else {
@@ -543,14 +550,14 @@ $extrafields->fetch_name_optionals_label($object->table_element); // fetch optio
 llxHeaderVierge($langs->trans("NewPartnershipRequest"));
 
 print '<br>';
-print load_fiche_titre($langs->trans("NewPartnershipRequest"), '', '', 0, 0, 'center');
+print load_fiche_titre(img_picto('', 'hands-helping', 'class="pictofixedwidth"').' &nbsp; '.$langs->trans("NewPartnershipRequest"), '', '', 0, 0, 'center');
 
 
 print '<div align="center">';
 print '<div id="divsubscribe">';
 
 print '<div class="center subscriptionformhelptext opacitymedium justify">';
-if (!empty($conf->global->PARTNERSHIP_NEWFORM_TEXT)) {
+if (getDolGlobalString('PARTNERSHIP_NEWFORM_TEXT')) {
 	print $langs->trans($conf->global->PARTNERSHIP_NEWFORM_TEXT)."<br>\n";
 } else {
 	print $langs->trans("NewPartnershipRequestDesc", getDolGlobalString("MAIN_INFO_SOCIETE_MAIL"))."<br>\n";
@@ -567,7 +574,8 @@ print '<input type="hidden" name="action" value="add" />';
 
 print '<br>';
 
-print '<br><span class="opacitymedium">'.$langs->trans("FieldsWithAreMandatory", '*').'</span><br>';
+$messagemandatory = '<span class="">'.$langs->trans("FieldsWithAreMandatory", '*').'</span>';
+//print '<br><span class="opacitymedium small">'.$langs->trans("FieldsWithAreMandatory", '*').'</span><br>';
 //print $langs->trans("FieldsWithIsForPublic",'**').'<br>';
 
 print dol_get_fiche_head('');
@@ -593,31 +601,31 @@ foreach ($listofpartnershipobj as $partnershipobj) {
 }
 
 if (getDolGlobalString('PARTNERSHIP_NEWFORM_FORCETYPE')) {
-	print $listofpartnership[$conf->global->PARTNERSHIP_NEWFORM_FORCETYPE];
-	print '<input type="hidden" id="partnershiptype" name="partnershiptype" value="'.$conf->global->PARTNERSHIP_NEWFORM_FORCETYPE.'">';
+	print $listofpartnership[getDolGlobalString('PARTNERSHIP_NEWFORM_FORCETYPE')];
+	print '<input type="hidden" id="partnershiptype" name="partnershiptype" value="' . getDolGlobalString('PARTNERSHIP_NEWFORM_FORCETYPE').'">';
 }
 
 print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."\n";
 if (!getDolGlobalString('PARTNERSHIP_NEWFORM_FORCETYPE')) {
-	print '<tr class="morphy"><td>'.$langs->trans('PartnershipType').' <span style="color: red">*</span></td><td>'."\n";
+	print '<tr class="morphy"><td class="classfortooltip" title="'.dol_escape_htmltag($messagemandatory).'">'.$langs->trans('PartnershipType').' <span class="star">*</span></td><td>'."\n";
 	print $form->selectarray("partnershiptype", $listofpartnership, GETPOSTISSET('partnershiptype') ? GETPOST('partnershiptype', 'int') : 'ifone', 1);
 	print '</td></tr>'."\n";
 }
 // Company
-print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").' <span style="color:red;">*</span></td><td>';
+print '<tr id="trcompany" class="trcompany"><td class="classfortooltip" title="'.dol_escape_htmltag($messagemandatory).'">'.$langs->trans("Company").' <span class="star">*</span></td><td>';
 print img_picto('', 'company', 'class="pictofixedwidth"');
-print '<input type="text" name="societe" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
+print '<input type="text" name="societe" class="minwidth150 maxwidth300 widthcentpercentminusxx" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
 // Lastname
-print '<tr><td>'.$langs->trans("Lastname").' <span style="color: red">*</span></td><td><input type="text" name="lastname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('lastname')).'"></td></tr>'."\n";
+print '<tr><td class="classfortooltip" title="'.dol_escape_htmltag($messagemandatory).'">'.$langs->trans("Lastname").' <span class="star">*</span></td><td><input type="text" name="lastname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('lastname')).'"></td></tr>'."\n";
 // Firstname
-print '<tr><td>'.$langs->trans("Firstname").' <span style="color: red">*</span></td><td><input type="text" name="firstname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('firstname')).'"></td></tr>'."\n";
+print '<tr><td class="classfortooltip" title="'.dol_escape_htmltag($messagemandatory).'">'.$langs->trans("Firstname").' <span class="star">*</span></td><td><input type="text" name="firstname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('firstname')).'"></td></tr>'."\n";
 // EMail
-print '<tr><td>'.$langs->trans("Email").' <span style="color:red;">*</span></td><td>';
+print '<tr><td class="classfortooltip" title="'.dol_escape_htmltag($messagemandatory).'">'.$langs->trans("Email").' <span class="star">*</span></td><td>';
 //print img_picto('', 'email', 'class="pictofixedwidth"');
-print '<input type="text" name="email" maxlength="255" class="minwidth200" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
+print '<input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
 // Url
-print '<tr><td>'.$langs->trans("Url").' <span style="color:red;">*</span></td><td>';
-print '<input type="text" name="url" maxlength="255" class="minwidth200" value="'.dol_escape_htmltag(GETPOST('url')).'">';
+print '<tr><td class="tdtop">'.$langs->trans("Url").' <span class="star">*</span></td><td>';
+print '<input type="text" name="url" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('url')).'">';
 if (getDolGlobalString('PARTNERSHIP_BACKLINKS_TO_CHECK')) {
 	$listofkeytocheck = explode('|', getDolGlobalString('PARTNERSHIP_BACKLINKS_TO_CHECK'));
 	$i = 0;
@@ -630,7 +638,7 @@ if (getDolGlobalString('PARTNERSHIP_BACKLINKS_TO_CHECK')) {
 }
 print '</td></tr>'."\n";
 // Address
-print '<tr><td>'.$langs->trans("Address").'</td><td>'."\n";
+print '<tr><td class="tdtop">'.$langs->trans("Address").'</td><td>'."\n";
 print '<textarea name="address" id="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('address', 'restricthtml'), 0, 1).'</textarea></td></tr>'."\n";
 // Zip / Town
 print '<tr><td>'.$langs->trans('Zip').' / '.$langs->trans('Town').'</td><td>';
@@ -642,7 +650,7 @@ print '</td></tr>';
 print '<tr><td>'.$langs->trans('Country').'</td><td>';
 print img_picto('', 'country', 'class="pictofixedwidth"');
 $country_id = GETPOST('country_id', 'int');
-if (!$country_id && !empty($conf->global->PARTNERSHIP_NEWFORM_FORCECOUNTRYCODE)) {
+if (!$country_id && getDolGlobalString('PARTNERSHIP_NEWFORM_FORCECOUNTRYCODE')) {
 	$country_id = getCountry($conf->global->PARTNERSHIP_NEWFORM_FORCECOUNTRYCODE, 2, $db, $langs);
 }
 if (!$country_id && !empty($conf->geoipmaxmind->enabled)) {
@@ -660,8 +668,8 @@ $country_code = getCountry($country_id, 2, $db, $langs);
 print $form->select_country($country_id, 'country_id');
 print '</td></tr>';
 // State
-if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
-	print '<tr><td>'.$langs->trans('State').'</td><td>';
+if (!getDolGlobalString('SOCIETE_DISABLE_STATE')) {
+	print '<tr><td class="wordbreak">'.$langs->trans('State').'</td><td>';
 	if ($country_code) {
 		print $formcompany->select_state(GETPOST("state_id"), $country_code);
 	}
@@ -675,7 +683,7 @@ $parameters['tpl_context']='public';	// define template context to public
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 // Comments
 print '<tr>';
-print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
+print '<td class="tdtop wordbreak">'.$langs->trans("Comments").'</td>';
 print '<td class="tdtop"><textarea name="note_private" id="note_private" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('note_private', 'restricthtml'), 0, 1).'</textarea></td>';
 print '</tr>'."\n";
 

@@ -76,7 +76,7 @@ $usercancreate = $user->hasRight("propal", "creer");
  * Add a new contact
  */
 
-if ($action == 'addcontact' && $user->rights->propal->creer) {
+if ($action == 'addcontact' && $user->hasRight('propal', 'creer')) {
 	if ($object->id > 0) {
 		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
@@ -94,12 +94,12 @@ if ($action == 'addcontact' && $user->rights->propal->creer) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-} elseif ($action == 'swapstatut' && $user->rights->propal->creer) {
+} elseif ($action == 'swapstatut' && $user->hasRight('propal', 'creer')) {
 	// Toggle the status of a contact
 	if ($object->id > 0) {
 		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 	}
-} elseif ($action == 'deletecontact' && $user->rights->propal->creer) {
+} elseif ($action == 'deletecontact' && $user->hasRight('propal', 'creer')) {
 	// Deletes a contact
 	$result = $object->delete_contact($lineid);
 

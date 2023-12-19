@@ -162,7 +162,7 @@ class html_cerfafr extends ModeleDon
 				$form = str_replace('__MAIN_INFO_SOCIETE_ADDRESS__', $mysoc->address, $form);
 				$form = str_replace('__MAIN_INFO_SOCIETE_ZIP__', $mysoc->zip, $form);
 				$form = str_replace('__MAIN_INFO_SOCIETE_TOWN__', $mysoc->town, $form);
-				$form = str_replace('__MAIN_INFO_SOCIETE_OBJECT__', $mysoc->object, $form);
+				$form = str_replace('__MAIN_INFO_SOCIETE_OBJECT__', $mysoc->socialobject, $form);
 				$form = str_replace('__DONATOR_FIRSTNAME__', $don->firstname, $form);
 				$form = str_replace('__DONATOR_LASTNAME__', $don->lastname, $form);
 				$form = str_replace('__DONATOR_SOCIETE__', $don->societe, $form);
@@ -207,7 +207,7 @@ class html_cerfafr extends ModeleDon
 
 				$art200 = '';
 				if ($mysoc->country_code == 'FR') {
-					if ($conf->global->DONATION_ART200 >= 1) {
+					if (getDolGlobalInt('DONATION_ART200') >= 1) {
 						$art200 = '<input type="checkbox" disabled="true" checked="checked" >200 du CGI';
 					} else {
 						$art200 = '<input type="checkbox" disabled="true">200 du CGI';
@@ -217,7 +217,7 @@ class html_cerfafr extends ModeleDon
 
 				$art238 = '';
 				if ($mysoc->country_code == 'FR') {
-					if ($conf->global->DONATION_ART238 >= 1) {
+					if (getDolGlobalInt('DONATION_ART238') >= 1) {
 						$art238 = '<input type="checkbox" disabled="true" checked="checked" >238 bis du CGI';
 					} else {
 						$art238 = '<input type="checkbox" disabled="true">238 bis du CGI';
@@ -227,7 +227,7 @@ class html_cerfafr extends ModeleDon
 
 				$art978 = '';
 				if ($mysoc->country_code == 'FR') {
-					if ($conf->global->DONATION_ART978 >= 1) {
+					if (getDolGlobalInt('DONATION_ART978') >= 1) {
 						$art978 = '<input type="checkbox" disabled="true" checked="checked" >978 du CGI';
 					} else {
 						$art978 = '<input type="checkbox" disabled="true">978 du CGI';
@@ -240,9 +240,7 @@ class html_cerfafr extends ModeleDon
 				$handle = fopen($file, "w");
 				fwrite($handle, $form);
 				fclose($handle);
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				$this->result = array('fullpath'=>$file);
 

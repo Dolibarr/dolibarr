@@ -205,7 +205,7 @@ class Cronjob extends CommonObject
 	 *
 	 *  @param	User	$user        User that creates
 	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return int      		   	 <0 if KO, Id of created object if OK
+	 *  @return int      		   	 Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -368,15 +368,15 @@ class Cronjob extends CommonObject
 		$sql .= " ".(!isset($this->datelastresult) || dol_strlen($this->datelastresult) == 0 ? 'NULL' : "'".$this->db->idate($this->datelastresult)."'").",";
 		$sql .= " ".(!isset($this->lastoutput) ? 'NULL' : "'".$this->db->escape($this->lastoutput)."'").",";
 		$sql .= " ".(!isset($this->unitfrequency) ? 'NULL' : "'".$this->db->escape($this->unitfrequency)."'").",";
-		$sql .= " ".(!isset($this->frequency) ? '0' : $this->frequency).",";
-		$sql .= " ".(!isset($this->status) ? '0' : $this->status).",";
+		$sql .= " ".(!isset($this->frequency) ? '0' : ((int) $this->frequency)).",";
+		$sql .= " ".(!isset($this->status) ? '0' : ((int) $this->status)).",";
 		$sql .= " ".($user->id ? (int) $user->id : "NULL").",";
 		$sql .= " ".($user->id ? (int) $user->id : "NULL").",";
 		$sql .= " ".(!isset($this->note_private) ? 'NULL' : "'".$this->db->escape($this->note_private)."'").",";
-		$sql .= " ".(!isset($this->nbrun) ? '0' : $this->db->escape($this->nbrun)).",";
-		$sql .= " ".(empty($this->maxrun) ? '0' : $this->db->escape($this->maxrun)).",";
+		$sql .= " ".(!isset($this->nbrun) ? '0' : ((int) $this->nbrun)).",";
+		$sql .= " ".(empty($this->maxrun) ? '0' : ((int) $this->maxrun)).",";
 		$sql .= " ".(!isset($this->libname) ? 'NULL' : "'".$this->db->escape($this->libname)."'").",";
-		$sql .= " ".(!isset($this->test) ? 'NULL' : "'".$this->db->escape($this->test)."'")."";
+		$sql .= " ".(!isset($this->test) ? 'NULL' : "'".$this->db->escape($this->test)."'");
 		$sql .= ")";
 
 		$this->db->begin();
@@ -409,7 +409,7 @@ class Cronjob extends CommonObject
 	 *  @param	int		$id    			Id object
 	 *  @param	string	$objectname		Object name
 	 *  @param	string	$methodname		Method name
-	 *  @return int          			<0 if KO, >0 if OK
+	 *  @return int          			Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $objectname = '', $methodname = '')
 	{
@@ -519,7 +519,7 @@ class Cronjob extends CommonObject
 	 *  @param	int			$status    	    display active or not
 	 *  @param	array		$filter    	    filter output
 	 *  @param  int         $processing     Processing or not
-	 *  @return int          			    <0 if KO, >0 if OK
+	 *  @return int          			    Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchAll($sortorder = 'DESC', $sortfield = 't.rowid', $limit = 0, $offset = 0, $status = 1, $filter = '', $processing = -1)
 	{
@@ -657,7 +657,7 @@ class Cronjob extends CommonObject
 	 *
 	 *  @param	User	$user        User that modifies
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 <0 if KO, >0 if OK
+	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -738,10 +738,13 @@ class Cronjob extends CommonObject
 		if (empty($this->email_alert)) {
 			$this->email_alert = '';
 		}
+		if (empty($this->datenextrun)) {
+			$this->datenextrun = dol_now();
+		}
 
 		// Check parameters
 		// Put here code to add a control on parameters values
-		if (dol_strlen($this->datenextrun) == 0) {
+		if (dol_strlen($this->datenextrun) == 0 && $this->status == self::STATUS_ENABLED) {
 			$this->errors[] = $langs->trans('CronFieldMandatory', $langs->transnoentitiesnoconv('CronDtNextLaunch'));
 			$error++;
 		}
@@ -819,7 +822,8 @@ class Cronjob extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// Commit or rollback
@@ -842,7 +846,7 @@ class Cronjob extends CommonObject
 	 *
 	 *	@param  User	$user        User that deletes
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 <0 if KO, >0 if OK
+	 *  @return	int					 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -976,6 +980,49 @@ class Cronjob extends CommonObject
 
 
 	/**
+	 * getTooltipContentArray
+	 * @param array $params params to construct tooltip data
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $langs;
+
+		$langs->load('cron');
+		$datas = [];
+
+		$datas['picto'] = img_picto('', 'object_'.$this->picto).' <u>'.$langs->trans("CronTask").'</u>';
+		if (isset($this->status)) {
+			$datas['picto'] .= ' '.$this->getLibStatut(5);
+		}
+		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.dol_escape_htmltag($this->ref);
+		$datas['label'] = '<br><b>'.$langs->trans('Title').':</b> '.$langs->trans($this->label);
+		if ($this->label != $langs->trans($this->label)) {
+			$datas['label']  .= ' <span class="opacitymedium">('.$this->label.')</span>';
+		}
+		if (!empty($this->params)) {
+			$datas['params'] = '<br><b>'.$langs->trans('Parameters').':</b> '.dol_escape_htmltag($this->params);
+		}
+		$datas['space'] = '<br>';
+
+		if (!empty($this->datestart) && $this->datestart >= dol_now()) {
+			$datas['crondtstart'] = '<br><b>'.$langs->trans('CronDtStart').':</b> '.dol_print_date($this->datestart, 'dayhour', 'tzuserrel');
+		}
+		if (!empty($this->dateend)) {
+			$datas['crondtend'] = '<br><b>'.$langs->trans('CronDtEnd').':</b> '.dol_print_date($this->dateend, 'dayhour', 'tzuserrel');
+		}
+		if (!empty($this->datelastrun)) {
+			$datas['cronlastlaunch'] = '<br><b>'.$langs->trans('CronDtLastLaunch').':</b> '.dol_print_date($this->datelastrun, 'dayhour', 'tzuserrel');
+		}
+		if (!empty($this->datenextrun)) {
+			$datas['crondtnextlaunch'] = '<br><b>'.$langs->trans('CronDtNextLaunch').':</b> '.dol_print_date($this->datenextrun, 'dayhour', 'tzuserrel');
+		}
+
+		return $datas;
+	}
+
+	/**
 	 *  Return a link to the object card (with optionaly the picto)
 	 *
 	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
@@ -988,8 +1035,6 @@ class Cronjob extends CommonObject
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
 		global $db, $conf, $langs;
-		global $dolibarr_main_authentication, $dolibarr_main_demo;
-		global $menumanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -997,20 +1042,18 @@ class Cronjob extends CommonObject
 
 		$result = '';
 
-		$label = img_picto('', 'object_'.$this->picto).' <u>'.$langs->trans("CronTask").'</u>';
-		if (isset($this->status)) {
-			$label .= ' '.$this->getLibStatut(5);
-		}
-		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-		$label .= '<br><b>'.$langs->trans('Title').':</b> '.$langs->trans($this->label);
-		if ($this->label != $langs->trans($this->label)) {
-			$label .= ' <span class="opacitymedium">('.$this->label.')</span>';
-		}
-		if (!empty($this->datestart)) {
-			$label .= '<br><b>'.$langs->trans('CronDtStart').':</b> '.dol_print_date($this->datestart, 'dayhour', 'tzuserrel');
-		}
-		if (!empty($this->dateend)) {
-			$label .= '<br><b>'.$langs->trans('CronDtEnd').':</b> '.dol_print_date($this->dateend, 'dayhour', 'tzuserrel');
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
 
 		$url = DOL_URL_ROOT.'/cron/card.php?id='.$this->id;
@@ -1018,7 +1061,7 @@ class Cronjob extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -1028,12 +1071,12 @@ class Cronjob extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowCronJob");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -1044,7 +1087,7 @@ class Cronjob extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), (($withpicto != 2) ? 'class="paddingright"' : ''), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
@@ -1060,7 +1103,7 @@ class Cronjob extends CommonObject
 	 *	Load object information
 	 *
 	 *  @param	int		$id		ID
-	 *	@return	int				<0 if KO, >0 if OK
+	 *	@return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function info($id)
 	{
@@ -1074,6 +1117,7 @@ class Cronjob extends CommonObject
 		if ($resql) {
 			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
+
 				$this->id = $obj->rowid;
 
 				$this->user_modification_id = $obj->fk_user_mod;
@@ -1098,7 +1142,7 @@ class Cronjob extends CommonObject
 	 * This function does not plan the next run. This is done by function ->reprogram_jobs
 	 *
 	 * @param   string		$userlogin    	User login
-	 * @return	int					 		<0 if KO, >0 if OK
+	 * @return	int					 		Return integer <0 if KO, >0 if OK
 	 */
 	public function run_jobs($userlogin)
 	{
@@ -1138,7 +1182,7 @@ class Cronjob extends CommonObject
 			return -1;
 		} else {
 			if (empty($user->id)) {
-				$this->error = " User user login:".$userlogin." do not exists";
+				$this->error = "User login: ".$userlogin." does not exist";
 				dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
 				$conf->setEntityValues($this->db, $savcurrententity);
 				return -1;
@@ -1231,7 +1275,7 @@ class Cronjob extends CommonObject
 			}
 
 			if (!$error) {
-				dol_syslog(get_class($this)."::run_jobs START ".$this->objectname."->".$this->methodename."(".$this->params.");", LOG_DEBUG);
+				dol_syslog(get_class($this)."::run_jobs START ".$this->objectname."->".$this->methodename."(".$this->params."); !!! Log for job may be into a different log file...", LOG_DEBUG);
 
 				// Create Object for the called module
 				$nameofclass = $this->objectname;
@@ -1379,7 +1423,7 @@ class Cronjob extends CommonObject
 			$result = $cmailfile->sendfile();	// Do not test result
 		}
 
-		return $error ?-1 : 1;
+		return $error ? -1 : 1;
 	}
 
 
@@ -1389,7 +1433,7 @@ class Cronjob extends CommonObject
 	 *
 	 * @param  string		$userlogin      User login
 	 * @param  integer      $now            Date returned by dol_now()
-	 * @return int					        <0 if KO, >0 if OK
+	 * @return int					        Return integer <0 if KO, >0 if OK
 	 */
 	public function reprogram_jobs($userlogin, $now)
 	{
@@ -1474,7 +1518,7 @@ class Cronjob extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoi le libelle d'un statut donne
+	 *  Return label of a giver status
 	 *
 	 *  @param	int		$status        	Id statut
 	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
@@ -1526,7 +1570,6 @@ class Cronjob extends CommonObject
  */
 class Cronjobline
 {
-
 	/**
 	 * @var int ID
 	 */
@@ -1594,6 +1637,5 @@ class Cronjobline
 	 */
 	public function __construct()
 	{
-		return 1;
 	}
 }

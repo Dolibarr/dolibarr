@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,11 +56,12 @@ class UserTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return UserTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -82,8 +84,9 @@ class UserTest extends PHPUnit\Framework\TestCase
 	{
 		global $conf,$user,$langs,$db;
 
-		if (!empty($conf->global->MAIN_MODULE_LDAP)) {
-			print "\n".__METHOD__." module LDAP must be disabled.\n"; die(1);
+		if (getDolGlobalString('MAIN_MODULE_LDAP')) {
+			print "\n".__METHOD__." module LDAP must be disabled.\n";
+			die(1);
 		}
 
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -145,7 +148,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 
 		print __METHOD__." USER_PASSWORD_GENERATED=".getDolGlobalString('USER_PASSWORD_GENERATED')."\n";
 
-		$localobject=new User($this->savdb);
+		$localobject=new User($db);
 		$localobject->initAsSpecimen();
 		$result=$localobject->create($user);
 
@@ -170,7 +173,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new User($this->savdb);
+		$localobject=new User($db);
 		$result=$localobject->fetch($id);
 
 		$this->assertLessThan($result, 0);
@@ -201,10 +204,10 @@ class UserTest extends PHPUnit\Framework\TestCase
 		$this->assertLessThan($result, 0);
 
 		// Test everything are still same than specimen
-		$newlocalobject=new User($this->savdb);
+		$newlocalobject=new User($db);
 		$newlocalobject->initAsSpecimen();
 		$this->changeProperties($newlocalobject);
-		$this->assertEquals($this->objCompare($localobject, $newlocalobject, true, array('id','socid','societe_id','specimen','note','ref','pass','pass_indatabase','pass_indatabase_crypted','pass_temp','datec','datem','datelastlogin','datepreviouslogin','iplastlogin','ippreviouslogin','trackid')), array());    // Actual, Expected
+		$this->assertEquals($this->objCompare($localobject, $newlocalobject, true, array('id','socid','societe_id','specimen','note','ref','pass','pass_indatabase','pass_indatabase_crypted','pass_temp','datec','datem','datelastlogin','datepreviouslogin','flagdelsessionsbefore','iplastlogin','ippreviouslogin','trackid')), array());    // Actual, Expected
 
 		return $localobject;
 	}
@@ -283,8 +286,10 @@ class UserTest extends PHPUnit\Framework\TestCase
 		//$this->assertNotEquals($user->date_creation, '');
 		$localobject->addrights(0, 'supplier_proposal');
 		$this->assertEquals($localobject->hasRight('member', ''), 0);
-		$this->assertEquals($localobject->hasRight('member', 'member'), 0);$this->assertEquals($localobject->hasRight('product', 'member', 'read'), 0);
-		$this->assertEquals($localobject->hasRight('member', 'member'), 0);$this->assertEquals($localobject->hasRight('produit', 'member', 'read'), 0);
+		$this->assertEquals($localobject->hasRight('member', 'member'), 0);
+		$this->assertEquals($localobject->hasRight('product', 'member', 'read'), 0);
+		$this->assertEquals($localobject->hasRight('member', 'member'), 0);
+		$this->assertEquals($localobject->hasRight('produit', 'member', 'read'), 0);
 
 		return $localobject;
 	}
@@ -418,7 +423,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new User($this->savdb);
+		$localobject=new User($db);
 		$result=$localobject->fetch($id);
 		$result=$localobject->delete($user);
 
@@ -443,7 +448,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new User($this->savdb);
+		$localobject=new User($db);
 		$result=$localobject->fetch(1);			// Other tests use the user id 1
 		$result=$localobject->addrights(0, 'supplier_proposal');
 
@@ -489,10 +494,10 @@ class UserTest extends PHPUnit\Framework\TestCase
 					continue;
 				}
 				if (! $ignoretype && ($oVarsA[$sKey] !== $oVarsB[$sKey])) {
-					$retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey])?get_class($oVarsA[$sKey]):$oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey])?get_class($oVarsB[$sKey]):$oVarsB[$sKey]);
+					$retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey]) ? get_class($oVarsA[$sKey]) : $oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey]) ? get_class($oVarsB[$sKey]) : $oVarsB[$sKey]);
 				}
 				if ($ignoretype && ($oVarsA[$sKey] != $oVarsB[$sKey])) {
-					$retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey])?get_class($oVarsA[$sKey]):$oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey])?get_class($oVarsB[$sKey]):$oVarsB[$sKey]);
+					$retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey]) ? get_class($oVarsA[$sKey]) : $oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey]) ? get_class($oVarsB[$sKey]) : $oVarsB[$sKey]);
 				}
 			}
 		}

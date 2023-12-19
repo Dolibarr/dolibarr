@@ -96,7 +96,6 @@
  */
 class EvalMath
 {
-
 	public $suppress_errors = false;
 
 	public $last_error = null;
@@ -155,8 +154,8 @@ class EvalMath
 		if (substr($expr, - 1, 1) == ';') {
 			$expr = substr($expr, 0, strlen($expr) - 1); // strip semicolons at the end
 		}
-														 // ===============
-														 // is it a variable assignment?
+		// ===============
+		// is it a variable assignment?
 		$matches = array();
 		if (preg_match('/^\s*([a-z]\w*)\s*=\s*(.+)$/', $expr, $matches)) {
 			if (in_array($matches[1], $this->vb)) { // make sure we're not assigning to a constant
@@ -198,9 +197,9 @@ class EvalMath
 	}
 
 	/**
-	 * vars
+	 * Function vars
 	 *
-	 * @return string Output
+	 * @return array	Output
 	 */
 	public function vars()
 	{
@@ -211,9 +210,9 @@ class EvalMath
 	}
 
 	/**
-	 * vars
+	 * Function funcs
 	 *
-	 * @return string Output
+	 * @return array	Output
 	 */
 	private function funcs()
 	{
@@ -229,8 +228,8 @@ class EvalMath
 	/**
 	 * Convert infix to postfix notation
 	 *
-	 * @param string $expr		Expression
-	 * @return string 			Output
+	 * @param 	string 			$expr		Expression
+	 * @return 	boolean|array 				Output
 	 */
 	private function nfx($expr)
 	{
@@ -244,11 +243,11 @@ class EvalMath
 		$ops_p = array('+' => 0, '-' => 0, '*' => 1, '/' => 1, '_' => 1, '^' => 2); // operator precedence
 
 		$expecting_op = false; // we use this in syntax-checking the expression
-							   // and determining when a - is a negation
+		// and determining when a - is a negation
 
 		$matches = array();
 		if (preg_match("/[^\w\s+*^\/()\.,-]/", $expr, $matches)) { // make sure the characters are all good
-			return $this->trigger(4, "illegal character '{$matches[0]}'", $matches[0]);
+			return $this->trigger(4, "illegal character '".$matches[0]."'", $matches[0]);
 		}
 
 		while (1) { // 1 Infinite Loop ;)
@@ -367,6 +366,7 @@ class EvalMath
 			}
 			$output[] = $op;
 		}
+
 		return $output;
 	}
 
@@ -382,7 +382,7 @@ class EvalMath
 		$stack = new EvalMathStack();
 
 		foreach ($tokens as $token) { // nice and easy
-									  // if the token is a binary operator, pop two values off the stack, do the operation, and push the result back on
+			// if the token is a binary operator, pop two values off the stack, do the operation, and push the result back on
 			$matches = array();
 			if (in_array($token, array('+', '-', '*', '/', '^'))) {
 				if (is_null($op2 = $stack->pop())) {
@@ -480,7 +480,6 @@ class EvalMath
  */
 class EvalMathStack
 {
-
 	public $stack = array();
 
 	public $count = 0;
@@ -488,8 +487,8 @@ class EvalMathStack
 	/**
 	 * push
 	 *
-	 * @param string $val		Val
-	 * @return void
+	 * @param 	string 	$val		Val
+	 * @return 	void
 	 */
 	public function push($val)
 	{
@@ -514,14 +513,15 @@ class EvalMathStack
 	/**
 	 * last
 	 *
-	 * @param int $n	N
-	 * @return mixed 	Stack
+	 * @param 	int 	$n		N
+	 * @return 	mixed 			Stack
 	 */
 	public function last($n = 1)
 	{
 		if (isset($this->stack[$this->count - $n])) {
 			return $this->stack[$this->count - $n];
 		}
-		return;
+
+		return '';
 	}
 }

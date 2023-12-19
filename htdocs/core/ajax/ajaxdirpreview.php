@@ -117,14 +117,14 @@ if (empty($url)) {	// autoset $url but it is better to have it defined before in
 // Load translation files required by the page
 $langs->loadLangs(array("ecm", "companies", "other"));
 
+if (empty($modulepart)) {
+	$modulepart = $module;
+}
+
 // Security check
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
-
-//print 'xxx'.$upload_dir;
-
-// Security:
 // On interdit les remontees de repertoire ainsi que les pipe dans les noms de fichiers.
 if (preg_match('/\.\./', $upload_dir) || preg_match('/[<>|]/', $upload_dir)) {
 	dol_syslog("Refused to deliver file ".$upload_dir);
@@ -132,11 +132,6 @@ if (preg_match('/\.\./', $upload_dir) || preg_match('/[<>|]/', $upload_dir)) {
 	dol_print_error(0, $langs->trans("ErrorFileNameInvalid", $upload_dir));
 	exit;
 }
-
-if (empty($modulepart)) {
-	$modulepart = $module;
-}
-
 // Check permissions
 if ($modulepart == 'ecm') {
 	if (!$user->hasRight('ecm', 'read')) {
@@ -197,7 +192,7 @@ if ($type == 'directory') {
 
 	$maxlengthname = 40;
 	$excludefiles = array('^SPECIMEN\.pdf$', '^\.', '(\.meta|_preview.*\.png)$', '^temp$', '^payments$', '^CVS$', '^thumbs$');
-	$sorting = (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC);
+	$sorting = (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC);
 
 	// Right area. If module is defined here, we are in automatic ecm.
 	$automodules = array(
@@ -315,7 +310,7 @@ if ($type == 'directory') {
 			  'max_file_size' => string '2097152' (length=7)
 			  'sendit' => string 'Envoyer fichier' (length=15)
 			 */
-			$relativepath = GETPOST('file', 'alpha') ?GETPOST('file', 'alpha') : GETPOST('section_dir', 'alpha');
+			$relativepath = GETPOST('file', 'alpha') ? GETPOST('file', 'alpha') : GETPOST('section_dir', 'alpha');
 			if ($relativepath && $relativepath != '/') {
 				$relativepath .= '/';
 			}
@@ -407,7 +402,7 @@ if (!empty($conf->dol_use_jmobile)) {
 if (empty($conf->use_javascript_ajax)) {
 	$useajax = 0;
 }
-if (!empty($conf->global->MAIN_ECM_DISABLE_JS)) {
+if (getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
 	$useajax = 0;
 }
 
@@ -448,7 +443,7 @@ if ($useajax || $action == 'deletefile') {
 
 if ($useajax) {
 	print '<!-- ajaxdirpreview.php: js to manage preview of doc -->'."\n";
-	print '<script type="text/javascript">';
+	print '<script nonce="'.getNonce().'" type="text/javascript">';
 
 	// Enable jquery handlers on new generated HTML objects (same code than into lib_footer.js.php)
 	// Because the content is reloaded by ajax call, we must also reenable some jquery hooks

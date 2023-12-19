@@ -60,11 +60,6 @@ class pdf_beluga extends ModelePDFProjects
 	public $db;
 
 	/**
-	 * @var string model name
-	 */
-	public $name;
-
-	/**
 	 * @var string model description (short text)
 	 */
 	public $description;
@@ -80,70 +75,23 @@ class pdf_beluga extends ModelePDFProjects
 	public $type;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 7.0 = array(7, 0)
-	 */
-	public $phpmin = array(7, 0);
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
 	public $version = 'dolibarr';
 
-	 /**
-	  * @var int page_largeur
-	  */
-	public $page_largeur;
-
-	/**
-	 * @var int page_hauteur
-	 */
-	public $page_hauteur;
-
-	/**
-	 * @var array format
-	 */
-	public $format;
-
-	/**
-	 * @var int marge_gauche
-	 */
-	public $marge_gauche;
-
-	/**
-	 * @var int marge_droite
-	 */
-	public $marge_droite;
-
-	/**
-	 * @var int marge_haute
-	 */
-	public $marge_haute;
-
-	/**
-	 * @var int marge_basse
-	 */
-	public $marge_basse;
-
 	/**
 	 * Page orientation
 	 * @var string 'P' or 'Portait' (default), 'L' or 'Landscape'
 	 */
-	private $orientation = '';
-
-	/**
-	 * Issuer
-	 * @var Societe
-	 */
-	public $emetteur;
+	private $orientation;
 
 	public $posxref;
 	public $posxdate;
-	public $posxsociete;
+	public $posxsociety;
 	public $posxamountht;
 	public $posxamountttc;
-	public $posstatut;
+	public $posxstatut;
 
 
 	/**
@@ -208,10 +156,10 @@ class pdf_beluga extends ModelePDFProjects
 		if ($this->page_largeur < 210) { // To work with US executive format
 			$this->posxref -= 20;
 			$this->posxdate -= 20;
-			$this->posxsociete -= 20;
+			$this->posxsociety -= 20;
 			$this->posxamountht -= 20;
 			$this->posxamountttc -= 20;
-			$this->posstatut -= 20;
+			$this->posxstatut -= 20;
 		}
 	}
 
@@ -235,7 +183,7 @@ class pdf_beluga extends ModelePDFProjects
 			$outputlangs = $langs;
 		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!empty($conf->global->MAIN_USE_FPDF)) {
+		if (getDolGlobalString('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
@@ -278,7 +226,7 @@ class pdf_beluga extends ModelePDFProjects
 				$heightforinfotot = 40; // Height reserved to output the info and total part
 				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
-				if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)) {
+				if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
 					$heightforfooter += 6;
 				}
 
@@ -288,8 +236,8 @@ class pdf_beluga extends ModelePDFProjects
 				}
 				$pdf->SetFont(pdf_getPDFFont($outputlangs));
 				// Set path to the background PDF File
-				if (!empty($conf->global->MAIN_ADD_PDF_BACKGROUND)) {
-					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+				if (getDolGlobalString('MAIN_ADD_PDF_BACKGROUND')) {
+					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
 				}
 
@@ -374,7 +322,7 @@ class pdf_beluga extends ModelePDFProjects
 						'class'=>'Propal',
 						'table'=>'propal',
 						'datefieldname'=>'datep',
-						'test'=>$conf->propal->enabled && $user->rights->propal->lire,
+						'test'=> isModEnabled('propal') && $user->hasRight('propal', 'lire'),
 						'lang'=>'propal'),
 					'order'=>array(
 						'name'=>"CustomersOrders",
@@ -382,7 +330,7 @@ class pdf_beluga extends ModelePDFProjects
 						'class'=>'Commande',
 						'table'=>'commande',
 						'datefieldname'=>'date_commande',
-						'test'=>$conf->commande->enabled && $user->rights->commande->lire,
+						'test'=> isModEnabled('commande') && $user->hasRight('commande', 'lire'),
 						'lang'=>'orders'),
 					'invoice'=>array(
 						'name'=>"CustomersInvoices",
@@ -391,7 +339,7 @@ class pdf_beluga extends ModelePDFProjects
 						'margin'=>'add',
 						'table'=>'facture',
 						'datefieldname'=>'datef',
-						'test'=>$conf->facture->enabled && $user->rights->facture->lire,
+						'test'=> isModEnabled('facture') && $user->hasRight('facture', 'lire'),
 						'lang'=>'bills'),
 					'invoice_predefined'=>array(
 						'name'=>"PredefinedInvoices",
@@ -399,7 +347,7 @@ class pdf_beluga extends ModelePDFProjects
 						'class'=>'FactureRec',
 						'table'=>'facture_rec',
 						'datefieldname'=>'datec',
-						'test'=>$conf->facture->enabled && $user->rights->facture->lire,
+						'test'=> isModEnabled('facture') && $user->hasRight('facture', 'lire'),
 						'lang'=>'bills'),
 					'order_supplier'=>array(
 						'name'=>"SuppliersOrders",
@@ -407,7 +355,7 @@ class pdf_beluga extends ModelePDFProjects
 						'class'=>'CommandeFournisseur',
 						'table'=>'commande_fournisseur',
 						'datefieldname'=>'date_commande',
-						'test'=>(isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->commande->lire) || (isModEnabled("supplier_order") && $user->rights->supplier_order->lire),
+						'test'=>(isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->rights->fournisseur->commande->lire) || (isModEnabled("supplier_order") && $user->rights->supplier_order->lire),
 						'lang'=>'orders'),
 					'invoice_supplier'=>array(
 						'name'=>"BillsSuppliers",
@@ -416,7 +364,7 @@ class pdf_beluga extends ModelePDFProjects
 						'margin'=>'minus',
 						'table'=>'facture_fourn',
 						'datefieldname'=>'datef',
-						'test'=>(isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->lire) || (isModEnabled("supplier_invoice") && $user->rights->supplier_invoice->lire),
+						'test'=>(isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->rights->fournisseur->facture->lire) || (isModEnabled("supplier_invoice") && $user->rights->supplier_invoice->lire),
 						'lang'=>'bills'),
 					'contract'=>array(
 						'name'=>"Contracts",
@@ -424,7 +372,7 @@ class pdf_beluga extends ModelePDFProjects
 						'class'=>'Contrat',
 						'table'=>'contrat',
 						'datefieldname'=>'date_contrat',
-						'test'=>$conf->contrat->enabled && $user->rights->contrat->lire,
+						'test'=> isModEnabled('contrat') && $user->hasRight('contrat', 'lire'),
 						'lang'=>'contract'),
 					'intervention'=>array(
 						'name'=>"Interventions",
@@ -433,7 +381,7 @@ class pdf_beluga extends ModelePDFProjects
 						'table'=>'fichinter',
 						'datefieldname'=>'date_valid',
 						'disableamount'=>1,
-						'test'=>$conf->ficheinter->enabled && $user->rights->ficheinter->lire,
+						'test'=>isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'lire'),
 						'lang'=>'interventions'),
 					'trip'=>array(
 						'name'=>"TripsAndExpenses",
@@ -443,7 +391,7 @@ class pdf_beluga extends ModelePDFProjects
 						'datefieldname'=>'dated',
 						'margin'=>'minus',
 						'disableamount'=>1,
-						'test'=>$conf->deplacement->enabled && $user->rights->deplacement->lire,
+						'test'=>isModEnabled('deplacement') && $user->rights->deplacement->lire,
 						'lang'=>'trip'),
 					'expensereport'=>array(
 						'name'=>"ExpensesReports",
@@ -453,7 +401,7 @@ class pdf_beluga extends ModelePDFProjects
 						'datefieldname'=>'dated',
 						'margin'=>'minus',
 						'disableamount'=>1,
-						'test'=>$conf->expensereport->enabled && $user->rights->expensereport->lire,
+						'test'=>isModEnabled('expensereport') && $user->rights->expensereport->lire,
 						'lang'=>'trip'),
 					'agenda'=>array(
 						'name'=>"Agenda",
@@ -462,7 +410,7 @@ class pdf_beluga extends ModelePDFProjects
 						'table'=>'actioncomm',
 						'datefieldname'=>'datep',
 						'disableamount'=>1,
-						'test'=>$conf->agenda->enabled && $user->rights->agenda->allactions->read,
+						'test'=> isModEnabled('agenda') && $user->rights->agenda->allactions->read,
 						'lang'=>'agenda')
 				);
 
@@ -596,7 +544,7 @@ class pdf_beluga extends ModelePDFProjects
 										// We found a page break
 
 										// Allows data in the first page if description is long enough to break in multiples pages
-										if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE)) {
+										if (getDolGlobalString('MAIN_PDF_DATA_ON_FIRST_PAGE')) {
 											$showpricebeforepagebreak = 1;
 										} else {
 											$showpricebeforepagebreak = 0;
@@ -632,8 +580,7 @@ class pdf_beluga extends ModelePDFProjects
 										}
 									}
 									//var_dump($i.' '.$posybefore.' '.$posyafter.' '.($this->page_hauteur -  ($heightforfooter + $heightforfreetext + $heightforinfotot)).' '.$showpricebeforepagebreak);
-								} else // No pagebreak
-								{
+								} else { // No pagebreak
 									$pdf->commitTransaction();
 								}
 								$posYAfterDescription = $pdf->GetY();
@@ -769,9 +716,7 @@ class pdf_beluga extends ModelePDFProjects
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				$this->result = array('fullpath'=>$file);
 

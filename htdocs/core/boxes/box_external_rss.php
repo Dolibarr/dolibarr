@@ -134,6 +134,9 @@ class box_external_rss extends ModeleBoxes
 				if (!$date && isset($item['pubdate'])) {
 					$date = $item['pubdate'];
 				}
+				if (!$date && isset($item['pubDate'])) {
+					$date = $item['pubDate'];
+				}
 				if (!$date && isset($item['dc']['date'])) {
 					$date = $item['dc']['date'];
 				}
@@ -157,9 +160,9 @@ class box_external_rss extends ModeleBoxes
 
 			$isutf8 = utf8_check($title);
 			if (!$isutf8 && $conf->file->character_set_client == 'UTF-8') {
-				$title = utf8_encode($title);
+				$title = mb_convert_encoding($title, 'UTF-8', 'ISO-8859-1');
 			} elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') {
-				$title = utf8_decode($title);
+				$title = mb_convert_encoding($title, 'ISO-8859-1');
 			}
 
 			$title = preg_replace("/([[:alnum:]])\?([[:alnum:]])/", "\\1'\\2", $title); // Gere probleme des apostrophes mal codee/decodee par utf8
@@ -170,9 +173,9 @@ class box_external_rss extends ModeleBoxes
 			$description = !empty($item['description']) ? $item['description'] : '';
 			$isutf8 = utf8_check($description);
 			if (!$isutf8 && $conf->file->character_set_client == 'UTF-8') {
-				$description = utf8_encode($description);
+				$description = mb_convert_encoding($description, 'UTF-8', 'ISO-8859-1');
 			} elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') {
-				$description = utf8_decode($description);
+				$description = mb_convert_encoding($description, 'ISO-8859-1');
 			}
 			$description = preg_replace("/([[:alnum:]])\?([[:alnum:]])/", "\\1'\\2", $description);
 			$description = preg_replace("/^\s+/", "", $description);
@@ -183,22 +186,22 @@ class box_external_rss extends ModeleBoxes
 				'td' => 'class="left" width="16"',
 				'text' => img_picto('', 'rss'),
 				'url' => $href,
-				'tooltip' => $tooltip,
+				'tooltip' => dol_escape_htmltag($tooltip),
 				'target' => 'newrss',
 			);
 
 			$this->info_box_contents[$line][1] = array(
 				'td' => 'class="tdoverflowmax300"',
-				'text' => $title,
+				'text' => dol_escape_htmltag($title),
 				'url' => $href,
-				'tooltip' => $tooltip,
+				'tooltip' => dol_escape_htmltag($tooltip),
 				'maxlength' => 0,
 				'target' => 'newrss',
 			);
 
 			$this->info_box_contents[$line][2] = array(
-				'td' => 'class="right nowrap"',
-				'text' => $date,
+				'td' => 'class="right nowraponall"',
+				'text' => dol_escape_htmltag($date),
 			);
 		}
 	}

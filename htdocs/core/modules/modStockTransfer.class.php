@@ -61,9 +61,9 @@ class modStockTransfer extends DolibarrModules
 		// Module description, used if translation string 'ModuleStockTransferDesc' not found (StockTransfer is name of module).
 		$this->description = $langs->trans("ModuleStockTransferDesc");
 		// Used only if file README.md and README-LL.md not found.
-		$this->descriptionlong = "StockTransfer description (Long)";
+		$this->descriptionlong = "Advanced management of stock transfer orders with generation of stock transfer sheets";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
-		$this->version = 'experimental';
+		$this->version = 'dolibarr';
 		// Url to the file with your last numberversion of this module
 		//$this->url_last_version = 'http://www.example.com/versionmodule.txt';
 
@@ -119,7 +119,7 @@ class modStockTransfer extends DolibarrModules
 		// Dependencies
 		// A condition to hide module
 		$this->hidden = false;
-		// List of module class names as string that must be enabled if this module is enabled. Example: array('always1'=>'modModuleToEnable1','always2'=>'modModuleToEnable2', 'FR1'=>'modModuleToEnableFR'...)
+		// List of module class names as string that must be enabled if this module is enabled. Example: array('always'=>array('modModuleToEnable1','modModuleToEnable2'), 'FR'=>array('modModuleToEnableFR'...))
 		$this->depends = array('modStock', 'modProduct');
 		$this->requiredby = array(); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
@@ -426,7 +426,9 @@ class modStockTransfer extends DolibarrModules
 		global  $conf, $langs;
 
 		$result = $this->_load_tables('/install/mysql/tables/', 'stocktransfer');
-		if ($result < 0) return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		if ($result < 0) {
+			return -1;
+		} // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
 
 		// Permissions
 		$this->remove($options);
@@ -437,17 +439,23 @@ class modStockTransfer extends DolibarrModules
 		$resql = $this->db->query('SELECT rowid FROM '.MAIN_DB_PREFIX.'c_type_contact WHERE code = "STDEST" AND element = "StockTransfer" AND source = "internal"');
 		$res = $this->db->fetch_object($resql);
 		$nextid=$this->getNextId();
-		if (empty($res)) $this->db->query('INSERT INTO '.MAIN_DB_PREFIX.'c_type_contact(rowid, element, source, code, libelle, active, module, position) VALUES('.((int) $nextid).', "StockTransfer", "internal", "STRESP", "Responsable du transfert de stocks", 1, NULL, 0)');
+		if (empty($res)) {
+			$this->db->query('INSERT INTO '.MAIN_DB_PREFIX.'c_type_contact(rowid, element, source, code, libelle, active, module, position) VALUES('.((int) $nextid).', "StockTransfer", "internal", "STRESP", "Responsable du transfert de stocks", 1, NULL, 0)');
+		}
 
 		$resql = $this->db->query('SELECT rowid FROM '.MAIN_DB_PREFIX.'c_type_contact WHERE code = "STFROM" AND element = "StockTransfer" AND source = "external"');
 		$res = $this->db->fetch_object($resql);
 		$nextid=$this->getNextId();
-		if (empty($res)) $this->db->query('INSERT INTO '.MAIN_DB_PREFIX.'c_type_contact(rowid, element, source, code, libelle, active, module, position) VALUES('.((int) $nextid).', "StockTransfer", "external", "STFROM", "Contact expéditeur transfert de stocks", 1, NULL, 0)');
+		if (empty($res)) {
+			$this->db->query('INSERT INTO '.MAIN_DB_PREFIX.'c_type_contact(rowid, element, source, code, libelle, active, module, position) VALUES('.((int) $nextid).', "StockTransfer", "external", "STFROM", "Contact expéditeur transfert de stocks", 1, NULL, 0)');
+		}
 
 		$resql = $this->db->query('SELECT rowid FROM '.MAIN_DB_PREFIX.'c_type_contact WHERE code = "STDEST" AND element = "StockTransfer" AND source = "external"');
 		$res = $this->db->fetch_object($resql);
 		$nextid=$this->getNextId();
-		if (empty($res)) $this->db->query('INSERT INTO '.MAIN_DB_PREFIX.'c_type_contact(rowid, element, source, code, libelle, active, module, position) VALUES('.((int) $nextid).', "StockTransfer", "external", "STDEST", "Contact destinataire transfert de stocks", 1, NULL, 0)');
+		if (empty($res)) {
+			$this->db->query('INSERT INTO '.MAIN_DB_PREFIX.'c_type_contact(rowid, element, source, code, libelle, active, module, position) VALUES('.((int) $nextid).', "StockTransfer", "external", "STDEST", "Contact destinataire transfert de stocks", 1, NULL, 0)');
+		}
 
 		return $this->_init($sql, $options);
 	}

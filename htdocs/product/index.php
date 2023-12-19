@@ -36,10 +36,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 
 $type = GETPOST("type", 'int');
-if ($type == '' && empty($user->rights->produit->lire)) {
+if ($type == '' && !$user->hasRight('produit', 'lire') && $user->hasRight('service', 'lire')) {
 	$type = '1'; // Force global page on service page only
 }
-if ($type == '' && empty($user->rights->service->lire)) {
+if ($type == '' && !$user->hasRight('service', 'lire') && $user->hasRight('produit', 'lire')) {
 	$type = '0'; // Force global page on product page only
 }
 
@@ -58,7 +58,7 @@ if ($type == '0') {
 } elseif ($type == '1') {
 	$result = restrictedArea($user, 'service');
 } else {
-	$result = restrictedArea($user, 'produit|service|expedition');
+	$result = restrictedArea($user, 'produit|service|expedition|reception');
 }
 
 
@@ -73,11 +73,11 @@ if (!isset($_GET["type"])) {
 	$transAreaType = $langs->trans("ProductsAndServicesArea");
 	$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 }
-if ((isset($_GET["type"]) && $_GET["type"] == 0) || empty($conf->service->enabled)) {
+if ((isset($_GET["type"]) && $_GET["type"] == 0) || !isModEnabled("service")) {
 	$transAreaType = $langs->trans("ProductsArea");
 	$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 }
-if ((isset($_GET["type"]) && $_GET["type"] == 1) || empty($conf->product->enabled)) {
+if ((isset($_GET["type"]) && $_GET["type"] == 1) || !isModEnabled("product")) {
 	$transAreaType = $langs->trans("ServicesArea");
 	$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 }
@@ -91,9 +91,9 @@ print load_fiche_titre($transAreaType, $linkback, 'product');
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This may be useless due to the global search combo
+if (getDolGlobalString('MAIN_SEARCH_FORM_ON_HOME_AREAS')) {     // This may be useless due to the global search combo
 	// Search contract
-	if ((isModEnabled("product") || isModEnabled("service")) && ($user->rights->produit->lire || $user->rights->service->lire)) {
+	if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
 		$listofsearchfields['search_product'] = array('text'=>'ProductOrService');
 	}
 
@@ -215,7 +215,7 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 }
 
 
-if (isModEnabled('categorie') && !empty($conf->global->CATEGORY_GRAPHSTATS_ON_PRODUCTS)) {
+if (isModEnabled('categorie') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_PRODUCTS')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	print '<br>';
 	print '<div class="div-table-responsive-no-min">';
@@ -249,7 +249,7 @@ if (isModEnabled('categorie') && !empty($conf->global->CATEGORY_GRAPHSTATS_ON_PR
 				$i++;
 			}
 			if ($i > $nbmax) {
-				$dataseries[] = array($langs->trans("Other"), round($rest));
+				$dataseries[] = array($langs->transnoentitiesnoconv("Other"), round($rest));
 			}
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
@@ -321,7 +321,7 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 			print '<table class="noborder centpercent">';
 
 			$colnb = 2;
-			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 				$colnb++;
 			}
 
@@ -341,9 +341,9 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 				$product_static->status_buy = $objp->tobuy;
 				$product_static->status_batch = $objp->tobatch;
 
-				$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('product', 'product_advance', 'read_prices'):$user->hasRight('product', 'read');
+				$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_prices') : $user->hasRight('product', 'read');
 				if ($product_static->isService()) {
-					$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('service', 'service_advance', 'read_prices'):$user->hasRight('service', 'read');
+					$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('service', 'service_advance', 'read_prices') : $user->hasRight('service', 'read');
 				}
 
 				// Multilangs
@@ -372,7 +372,7 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 				print dol_print_date($db->jdate($objp->datem), 'day', 'tzuserrel');
 				print "</td>";
 				// Sell price
-				if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+				if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 					if (isModEnabled('dynamicprices') && !empty($objp->fk_price_expression)) {
 						$product = new Product($db);
 						$product->fetch($objp->rowid);

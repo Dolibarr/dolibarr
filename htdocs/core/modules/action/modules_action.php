@@ -44,8 +44,6 @@ abstract class ModeleAction extends CommonDocGenerator
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$type = 'action';
 		$list = array();
 
@@ -81,7 +79,7 @@ function action_create($db, $object, $modele, $outputlangs, $hidedetails = 0, $h
 
 	// Position modele on the name of fichinter model to use
 	if (!dol_strlen($modele)) {
-		if (!empty($conf->global->ACTION_EVENT_ADDON_PDF)) {
+		if (getDolGlobalString('ACTION_EVENT_ADDON_PDF')) {
 			$modele = $conf->global->ACTION_EVENT_ADDON_PDF;
 		} else {
 			$modele = 'soleil';

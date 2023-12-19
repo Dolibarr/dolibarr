@@ -144,9 +144,12 @@ $form = new Form($db);
 
 $title = $langs->trans("LT".$object->ltt)." - ".$langs->trans("Card");
 $help_url = '';
-llxHeader('', $title, $helpurl);
+llxHeader('', $title, $help_url);
 
 if ($action == 'create') {
+	$datev = dol_mktime(12, 0, 0, GETPOST("datevmonth"), GETPOST("datevday"), GETPOST("datevyear"));
+	$datep = dol_mktime(12, 0, 0, GETPOST("datepmonth"), GETPOST("datepday"), GETPOST("datepyear"));
+
 	print load_fiche_titre($langs->transcountry($lttype == 2 ? "newLT2Payment" : "newLT1Payment", $mysoc->country_code));
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" name="formlocaltax" method="post">'."\n";

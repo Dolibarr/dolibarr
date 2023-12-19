@@ -41,7 +41,7 @@ $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 
-$statut = GETPOST('statut') ?GETPOST('statut') : 1;
+$statut = GETPOST('statut') ? GETPOST('statut') : 1;
 
 // Security check
 $socid = 0;
@@ -95,7 +95,7 @@ $vals = array();
 $sql = "SELECT count(cd.rowid) as nb, cd.statut as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ", ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE cd.fk_contrat = c.rowid AND c.fk_soc = s.rowid";
@@ -104,7 +104,7 @@ $sql .= " AND c.entity IN (".getEntity('contract', 0).")";
 if ($user->socid) {
 	$sql .= ' AND c.fk_soc = '.((int) $user->socid);
 }
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " GROUP BY cd.statut";
@@ -132,7 +132,7 @@ if ($resql) {
 $sql = "SELECT count(cd.rowid) as nb, cd.statut as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ", ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE cd.fk_contrat = c.rowid AND c.fk_soc = s.rowid";
@@ -141,7 +141,7 @@ $sql .= " AND c.entity IN (".getEntity('contract', 0).")";
 if ($user->socid) {
 	$sql .= ' AND c.fk_soc = '.((int) $user->socid);
 }
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " GROUP BY cd.statut";
@@ -194,7 +194,7 @@ foreach ($listofstatus as $status) {
 	if (empty($conf->use_javascript_ajax)) {
 		print '<tr class="oddeven">';
 		print '<td>'.$staticcontratligne->LibStatut($status, 0, ($bool ? 1 : 0)).'</td>';
-		print '<td class="right"><a href="services_list.php?mode='.$status.($bool ? '&filter=expired' : '').'">'.($nb[$status.$bool] ? $nb[$status.$bool] : 0).' '.$staticcontratligne->LibStatut($status, 3, ($bool ? 1 : 0)).'</a></td>';
+		print '<td class="right"><a href="services_list.php?search_status='.((int) $status).($bool ? '&filter=expired' : '').'">'.($nb[$status.$bool] ? $nb[$status.$bool] : 0).' '.$staticcontratligne->LibStatut($status, 3, ($bool ? 1 : 0)).'</a></td>';
 		print "</tr>\n";
 	}
 	if ($status == 4 && !$bool) {
@@ -224,7 +224,7 @@ foreach ($listofstatus as $status) {
 	if (empty($conf->use_javascript_ajax)) {
 		print '<tr class="oddeven">';
 		print '<td>'.$staticcontratligne->LibStatut($status, 0, ($bool ? 1 : 0)).'</td>';
-		print '<td class="right"><a href="services_list.php?mode='.$status.($bool ? '&filter=expired' : '').'">'.($nb[$status.$bool] ? $nb[$status.$bool] : 0).' '.$staticcontratligne->LibStatut($status, 3, ($bool ? 1 : 0)).'</a></td>';
+		print '<td class="right"><a href="services_list.php?search_status='.((int) $status).($bool ? '&filter=expired' : '').'">'.($nb[$status.$bool] ? $nb[$status.$bool] : 0).' '.$staticcontratligne->LibStatut($status, 3, ($bool ? 1 : 0)).'</a></td>';
 		if ($status == 4 && !$bool) {
 			$bool = true;
 		} else {
@@ -239,17 +239,17 @@ print "</table></div><br>";
 
 // Draft contracts
 
-if (isModEnabled('contrat') && $user->rights->contrat->lire) {
+if (isModEnabled('contrat') && $user->hasRight('contrat', 'lire')) {
 	$sql = "SELECT c.rowid, c.ref,";
 	$sql .= " s.nom as name, s.name_alias, s.logo, s.rowid as socid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur";
 	$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE s.rowid = c.fk_soc";
 	$sql .= " AND c.entity IN (".getEntity('contract', 0).")";
 	$sql .= " AND c.statut = 0";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
@@ -320,7 +320,7 @@ $sql .= " sum(".$db->ifsql("cd.statut=5", 1, 0).') as nb_closed,';
 $sql .= " c.rowid as cid, c.ref, c.datec, c.tms, c.statut,";
 $sql .= " s.nom as name, s.name_alias, s.logo, s.rowid as socid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
 }
 $sql .= " ".MAIN_DB_PREFIX."contrat as c";
@@ -328,7 +328,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."contratdet as cd ON c.rowid = cd.fk_contra
 $sql .= " WHERE c.fk_soc = s.rowid";
 $sql .= " AND c.entity IN (".getEntity('contract', 0).")";
 $sql .= " AND c.statut > 0";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($socid) {
@@ -410,7 +410,7 @@ $sql .= " s.nom as name, s.name_alias, s.logo, s.rowid as socid, s.client, s.fou
 $sql .= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype, p.entity as pentity";
 $sql .= " FROM (".MAIN_DB_PREFIX."contrat as c";
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= ", ".MAIN_DB_PREFIX."contratdet as cd";
@@ -418,7 +418,7 @@ $sql .= ") LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
 $sql .= " WHERE c.entity IN (".getEntity('contract', 0).")";
 $sql .= " AND cd.fk_contrat = c.rowid";
 $sql .= " AND c.fk_soc = s.rowid";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($socid) {
@@ -497,12 +497,12 @@ if ($resql) {
 print '<br>';
 
 // Not activated services
-$sql = "SELECT c.ref, c.fk_soc, cd.rowid as cid, cd.statut, cd.label, cd.fk_product, cd.description as note, cd.fk_contrat,";
+$sql = "SELECT c.ref, c.fk_soc as thirdpartyid, cd.rowid as cid, cd.statut, cd.label, cd.fk_product, cd.description as note, cd.fk_contrat,";
 $sql .= " s.nom as name, s.name_alias, s.logo, s.rowid as socid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
 $sql .= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype, p.entity as pentity";
 $sql .= " FROM (".MAIN_DB_PREFIX."contrat as c";
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= ", ".MAIN_DB_PREFIX."contratdet as cd";
@@ -512,7 +512,7 @@ $sql .= " AND c.statut = 1";
 $sql .= " AND cd.statut = 0";
 $sql .= " AND cd.fk_contrat = c.rowid";
 $sql .= " AND c.fk_soc = s.rowid";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($socid) {
@@ -534,7 +534,7 @@ if ($resql) {
 	while ($i < $num) {
 		$obj = $db->fetch_object($resql);
 
-		$staticcompany->id = $obj->fk_soc;
+		$staticcompany->id = $obj->thirdpartyid;
 		$staticcompany->name = $obj->name;
 		$staticcompany->name_alias = $obj->name_alias;
 		$staticcompany->photo = 1;
@@ -590,12 +590,12 @@ if ($resql) {
 print '<br>';
 
 // Expired services
-$sql = "SELECT c.ref, c.fk_soc, cd.rowid as cid, cd.statut, cd.label, cd.fk_product, cd.description as note, cd.fk_contrat,";
+$sql = "SELECT c.ref, c.fk_soc as thirdpartyid, cd.rowid as cid, cd.statut, cd.label, cd.fk_product, cd.description as note, cd.fk_contrat,";
 $sql .= " s.nom as name, s.name_alias, s.logo, s.rowid as socid, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
 $sql .= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype, p.entity as pentity";
 $sql .= " FROM (".MAIN_DB_PREFIX."contrat as c";
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= ", ".MAIN_DB_PREFIX."contratdet as cd";
@@ -606,7 +606,7 @@ $sql .= " AND cd.statut = 4";
 $sql .= " AND cd.date_fin_validite < '".$db->idate($now)."'";
 $sql .= " AND cd.fk_contrat = c.rowid";
 $sql .= " AND c.fk_soc = s.rowid";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($socid) {
@@ -622,13 +622,13 @@ if ($resql) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 
-	print '<tr class="liste_titre"><th colspan="4">'.$langs->trans("ListOfExpiredServices").' <a href="'.DOL_URL_ROOT.'/contrat/services_list.php?mode=4&amp;filter=expired"><span class="badge">'.$num.'</span></a></th>';
+	print '<tr class="liste_titre"><th colspan="4">'.$langs->trans("ListOfExpiredServices").' <a href="'.DOL_URL_ROOT.'/contrat/services_list.php?search_status=4&amp;filter=expired"><span class="badge">'.$num.'</span></a></th>';
 	print "</tr>\n";
 
 	while ($i < $num) {
 		$obj = $db->fetch_object($resql);
 
-		$staticcompany->id = $obj->fk_soc;
+		$staticcompany->id = $obj->thirdpartyid;
 		$staticcompany->name = $obj->name;
 		$staticcompany->name_alias = $obj->name_alias;
 		$staticcompany->photo = 1;

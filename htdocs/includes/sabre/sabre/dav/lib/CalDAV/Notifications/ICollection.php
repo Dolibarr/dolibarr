@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\CalDAV\Notifications;
 
 use Sabre\DAV;
@@ -18,6 +20,6 @@ use Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface ICollection extends DAV\ICollection {
-
+interface ICollection extends DAV\ICollection
+{
 }

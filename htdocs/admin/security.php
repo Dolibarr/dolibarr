@@ -130,7 +130,8 @@ if ($action == 'activate_encryptdbpassconf') {
 		header("Location: security.php");
 		exit;
 	} else {
-		setEventMessages($langs->trans('InstrucToClearPass', $dolibarr_main_db_pass), null, 'warnings');
+		//setEventMessages($langs->trans('InstrucToClearPass', $dolibarr_main_db_pass), null, 'warnings');
+		setEventMessages($langs->trans('InstrucToClearPass', $langs->transnoentitiesnoconv("DatabasePassword")), null, 'warnings');
 	}
 }
 
@@ -224,10 +225,10 @@ $tabConf = explode(";", getDolGlobalString('USER_PASSWORD_PATTERN'));
 
 foreach ($arrayhandler as $key => $module) {
 	// Show modules according to features level
-	if (!empty($module->version) && $module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+	if (!empty($module->version) && $module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 		continue;
 	}
-	if (!empty($module->version) && $module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+	if (!empty($module->version) && $module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 		continue;
 	}
 
@@ -273,7 +274,7 @@ print '</form>';
 
 
 // Pattern for Password Perso
-if ($conf->global->USER_PASSWORD_GENERATED == "Perso") {
+if (getDolGlobalString('USER_PASSWORD_GENERATED') == "Perso") {
 	print '<br>';
 
 	print '<div class="div-table-responsive-no-min">';

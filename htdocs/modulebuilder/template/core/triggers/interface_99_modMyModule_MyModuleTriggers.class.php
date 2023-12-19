@@ -86,11 +86,11 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 	 * @param User 			$user 		Object user
 	 * @param Translate 	$langs 		Object langs
 	 * @param Conf 			$conf 		Object conf
-	 * @return int              		<0 if KO, 0 if no triggered ran, >0 if OK
+	 * @return int              		Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		if (empty($conf->mymodule) || empty($conf->mymodule->enabled)) {
+		if (!isModEnabled('mymodule')) {
 			return 0; // If module is not enabled, we do nothing
 		}
 
@@ -107,7 +107,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			);
 
 			return call_user_func($callback, $action, $object, $user, $langs, $conf);
-		};
+		}
 
 		// Or you can execute some code here
 		switch ($action) {

@@ -47,7 +47,7 @@ if (isModEnabled('accounting')) {
 // Load translation files required by the page
 $langs->loadLangs(array('accountancy', 'admin', 'companies', 'compta', 'errors', 'holiday', 'hrm', 'resource'));
 
-$action = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view';
+$action = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view';
 $confirm = GETPOST('confirm', 'alpha');
 $id = 31;
 $rowid = GETPOST('rowid', 'alpha');
@@ -59,7 +59,7 @@ $actl[0] = img_picto($langs->trans("Disabled"), 'switch_off', 'class="size15x"')
 $actl[1] = img_picto($langs->trans("Activated"), 'switch_on', 'class="size15x"');
 
 $listoffset = GETPOST('listoffset', 'alpha');
-$listlimit = GETPOST('listlimit', 'int') > 0 ?GETPOST('listlimit', 'int') : 1000;
+$listlimit = GETPOST('listlimit', 'int') > 0 ? GETPOST('listlimit', 'int') : 1000;
 $active = 1;
 
 $sortfield = GETPOST("sortfield", 'aZ09comma');
@@ -125,17 +125,9 @@ $tabfieldinsert[31] = "pcg_version,label,fk_country";
 $tabrowid = array();
 $tabrowid[31] = "";
 
-// Condition to show dictionary in setup page
-$tabcond = array();
-$tabcond[31] = isModEnabled('accounting');
-
 // List of help for fields
 $tabhelp = array();
 $tabhelp[31] = array('pcg_version'=>$langs->trans("EnterAnyCode"));
-
-// List of check for fields (NOT USED YET)
-$tabfieldcheck = array();
-$tabfieldcheck[31] = array();
 
 
 // Define elementList and sourceList (used for dictionary type of contacts "llx_c_type_contact")
@@ -173,8 +165,11 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			if ($fieldnamekey == 'pcg_version') {
 				$fieldnamekey = 'Pcg_version';
 			}
-			if ($fieldnamekey == 'libelle' || ($fieldnamekey == 'label')) {
+			if ($fieldnamekey == 'label') {
 				$fieldnamekey = 'Label';
+			}
+			if ($fieldnamekey == 'country') {
+				$fieldnamekey = "Country";
 			}
 
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
@@ -296,11 +291,6 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			setEventMessages($db->error(), null, 'errors');
 		}
 	}
-	//$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
-}
-
-if (GETPOST('actioncancel', 'alpha')) {
-	//$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
 }
 
 if ($action == 'confirm_delete' && $confirm == 'yes') {       // delete
@@ -458,6 +448,7 @@ if ($id) {
 	print '<table class="noborder centpercent">';
 
 	// Form to add a new line
+
 	if ($tabname[$id]) {
 		$fieldlist = explode(',', $tabfield[$id]);
 
@@ -472,12 +463,14 @@ if ($id) {
 			if ($fieldlist[$field] == 'code') {
 				$valuetoshow = $langs->trans("Code");
 			}
-			if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') {
+			if ($fieldlist[$field] == 'label') {
 				$valuetoshow = $langs->trans("Label");
+				$class = 'minwidth300';
 			}
 			if ($fieldlist[$field] == 'country') {
 				if (in_array('region_id', $fieldlist)) {
-					print '<td>&nbsp;</td>'; continue;
+					print '<td>&nbsp;</td>';
+					continue;
 				}		// For region page, we do not show the country input
 				$valuetoshow = $langs->trans("Country");
 			}
@@ -487,6 +480,7 @@ if ($id) {
 			if ($fieldlist[$field] == 'pcg_version' || $fieldlist[$field] == 'fk_pcg_version') {
 				$valuetoshow = $langs->trans("Pcg_version");
 			}
+			//var_dump($value);
 
 			if ($valuetoshow != '') {
 				print '<td class="'.$class.'">';
@@ -504,8 +498,8 @@ if ($id) {
 		print '<td>';
 		print '<input type="hidden" name="id" value="'.$id.'">';
 		print '</td>';
-		print '<td style="min-width: 26px;"></td>';
-		print '<td style="min-width: 26px;"></td>';
+		print '<td></td>';
+		print '<td></td>';
 		print '</tr>';
 
 		// Line to enter new values
@@ -524,7 +518,8 @@ if ($id) {
 		$tmpaction = 'create';
 		$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
 		$reshook = $hookmanager->executeHooks('createDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
-		$error = $hookmanager->error; $errors = $hookmanager->errors;
+		$error = $hookmanager->error;
+		$errors = $hookmanager->errors;
 
 		if (empty($reshook)) {
 			fieldListAccountModel($fieldlist, $obj, $tabname[$id], 'add');
@@ -621,26 +616,31 @@ if ($id) {
 					$tmpaction = 'edit';
 					$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
 					$reshook = $hookmanager->executeHooks('editDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
-					$error = $hookmanager->error; $errors = $hookmanager->errors;
+					$error = $hookmanager->error;
+					$errors = $hookmanager->errors;
 
 					if (empty($reshook)) {
 						fieldListAccountModel($fieldlist, $obj, $tabname[$id], 'edit');
 					}
 
-					print '<td colspan="3" class="right"><a name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'">&nbsp;</a><input type="submit" class="button button-edit" name="actionmodify" value="'.$langs->trans("Modify").'">';
-					print '&nbsp;<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
+					print '<td colspan="3" class="right">';
+					print '<a name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'">&nbsp;</a><input type="submit" class="button button-edit" name="actionmodify" value="'.$langs->trans("Modify").'">';
+					print '&nbsp;<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
+					print '</td>';
 				} else {
 					$tmpaction = 'view';
 					$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
 					$reshook = $hookmanager->executeHooks('viewDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 
-					$error = $hookmanager->error; $errors = $hookmanager->errors;
+					$error = $hookmanager->error;
+					$errors = $hookmanager->errors;
 
 					if (empty($reshook)) {
 						foreach ($fieldlist as $field => $value) {
 							$showfield = 1;
 							$class = "left";
-							$valuetoshow = $obj->{$fieldlist[$field]};
+							$tmpvar = $fieldlist[$field];
+							$valuetoshow = $obj->$tmpvar;
 							if ($value == 'type_template') {
 								$valuetoshow = isset($elementList[$valuetoshow]) ? $elementList[$valuetoshow] : $valuetoshow;
 							}
@@ -673,9 +673,11 @@ if ($id) {
 					}
 
 					// Can an entry be erased or disabled ?
-					$iserasable = 1; $canbedisabled = 1; $canbemodified = 1; // true by default
+					$iserasable = 1;
+					$canbedisabled = 1;
+					$canbemodified = 1; // true by default
 
-					$url = $_SERVER["PHP_SELF"].'?token='.newToken().($page ? '&page='.$page : '').'&sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).'&code='.(!empty($obj->code) ?urlencode($obj->code) : '');
+					$url = $_SERVER["PHP_SELF"].'?token='.newToken().($page ? '&page='.$page : '').'&sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).'&code='.(!empty($obj->code) ? urlencode($obj->code) : '');
 					if ($param) {
 						$url .= '&'.$param;
 					}
@@ -709,6 +711,8 @@ if ($id) {
 
 				$i++;
 			}
+		} else {
+			print '<tr><td colspan="6"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 		}
 	} else {
 		dol_print_error($db);
@@ -738,9 +742,8 @@ $db->close();
  */
 function fieldListAccountModel($fieldlist, $obj = '', $tabname = '', $context = '')
 {
-	global $conf, $langs, $db;
+	global $langs, $db;
 	global $form;
-	global $region_id;
 	global $elementList, $sourceList;
 
 	$formadmin = new FormAdmin($db);
@@ -773,29 +776,23 @@ function fieldListAccountModel($fieldlist, $obj = '', $tabname = '', $context = 
 				print '<td>';
 			}
 			if ($fieldlist[$field] == 'type_cdr') {
-				print $form->selectarray($fieldlist[$field], array(0=>$langs->trans('None'), 1=>$langs->trans('AtEndOfMonth'), 2=>$langs->trans('CurrentNext')), (!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]}:''));
+				print $form->selectarray($fieldlist[$field], array(0=>$langs->trans('None'), 1=>$langs->trans('AtEndOfMonth'), 2=>$langs->trans('CurrentNext')), (!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]} : ''));
 			} else {
-				print $form->selectyesno($fieldlist[$field], (!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]}:''), 1);
+				print $form->selectyesno($fieldlist[$field], (!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]} : ''), 1);
 			}
 			print '</td>';
 		} elseif ($fieldlist[$field] == 'code' && isset($obj->{$fieldlist[$field]})) {
-			print '<td><input type="text" class="flat" value="'.(!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]}:'').'" size="10" name="'.$fieldlist[$field].'"></td>';
+			print '<td><input type="text" class="flat" value="'.(!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]} : '').'" size="10" name="'.$fieldlist[$field].'"></td>';
 		} else {
 			print '<td>';
-			$size = ''; $class = '';
-			if ($fieldlist[$field] == 'code') {
-				$size = 'size="8" ';
+			$class = '';
+			if ($fieldlist[$field] == 'pcg_version') {
+				$class = 'width150';
 			}
-			if ($fieldlist[$field] == 'position') {
-				$size = 'size="4" ';
+			if ($fieldlist[$field] == 'label') {
+				$class = 'width300';
 			}
-			if ($fieldlist[$field] == 'libelle') {
-				$size = 'centpercent';
-			}
-			if ($fieldlist[$field] == 'sortorder' || $fieldlist[$field] == 'sens' || $fieldlist[$field] == 'category_type') {
-				$size = 'size="2" ';
-			}
-			print '<input type="text" '.$size.' class="flat'.($class ? ' '.$class : '').'" value="'.(isset($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]}:'').'" name="'.$fieldlist[$field].'">';
+			print '<input type="text" class="flat'.($class ? ' '.$class : '').'" value="'.(isset($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]} : '').'" name="'.$fieldlist[$field].'">';
 			print '</td>';
 		}
 	}

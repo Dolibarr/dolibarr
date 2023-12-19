@@ -46,7 +46,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 
 	// Force master entity in transversal mode
 	$entity = $entitytotest;
-	if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+	if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 		$entity = 1;
 	}
 
@@ -61,7 +61,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 		$langs->loadLangs(array('main', 'other'));
 
 		$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLDAPFunctionsAreDisabledOnThisPHP").' '.$langs->transnoentitiesnoconv("TryAnotherConnectionMode");
-		return;
+		return '';
 	}
 
 	if ($usertotest) {
@@ -155,13 +155,15 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 				dol_syslog("functions_ldap::check_user_password_ldap $login authentication ok");
 				// For the case, we search the user id using a search key without the login (but using other fields like id),
 				// we need to get the real login to use in the ldap answer.
-				if (!empty($conf->global->LDAP_FIELD_LOGIN) && !empty($ldap->login)) {
+				if (getDolGlobalString('LDAP_FIELD_LOGIN') && !empty($ldap->login)) {
 					$login = $ldap->login;
 					dol_syslog("functions_ldap::check_user_password_ldap login is now $login (LDAP_FIELD_LOGIN=".getDolGlobalString('LDAP_FIELD_LOGIN').")");
 				}
 
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
+				// Note: Test on validity is done later natively with isNotIntoValidityDateRange() by core after calling checkLoginPassEntity() that call this method
+				/*
 				$tmpuser = new User($db);
 				$tmpuser->fetch('', $login, '', 1, ($entitytotest > 0 ? $entitytotest : -1));
 
@@ -179,7 +181,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 					$langs->loadLangs(array('main', 'errors'));
 					$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginDateValidity");
 					return '--bad-login-validity--';
-				}
+				}*/
 
 				// ldap2dolibarr synchronisation
 				if ($login && !empty($conf->ldap->enabled) && getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') == Ldap::SYNCHRO_LDAP_TO_DOLIBARR) {	// ldap2dolibarr synchronization
@@ -203,7 +205,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 
 					// On recherche le user dolibarr en fonction de son SID ldap (only for Active Directory)
 					$sid = null;
-					if ($conf->global->LDAP_SERVER_TYPE == "activedirectory") {
+					if (getDolGlobalString('LDAP_SERVER_TYPE') == "activedirectory") {
 						$sid = $ldap->getObjectSid($login);
 						if ($ldapdebug) {
 							print "DEBUG: sid = ".$sid."<br>\n";

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,11 +57,12 @@ class CategorieTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return CategorieTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -140,7 +142,7 @@ class CategorieTest extends PHPUnit\Framework\TestCase
 
 
 		// We create a category
-		$localobject=new Categorie($this->savdb);
+		$localobject=new Categorie($db);
 		$localobject->initAsSpecimen();
 
 		// Check it does not exist (return 0)
@@ -154,7 +156,7 @@ class CategorieTest extends PHPUnit\Framework\TestCase
 		$this->assertGreaterThan(0, $resultFirstCreate);
 
 		// We try to create another one with same ref
-		$localobject2=new Categorie($this->savdb);
+		$localobject2=new Categorie($db);
 		$localobject2->initAsSpecimen();
 
 		// Check it does exist (return 1)
@@ -186,7 +188,7 @@ class CategorieTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobjecttmp=new Categorie($this->savdb);
+		$localobjecttmp=new Categorie($db);
 		$localobjecttmp->initAsSpecimen();
 		$localobjecttmp->label='Specimen Category for product';
 		$localobjecttmp->type=0;    // product category
@@ -196,12 +198,12 @@ class CategorieTest extends PHPUnit\Framework\TestCase
 		$this->assertGreaterThan(0, $catid);
 
 		// Try to create product linked to category
-		$localobject2=new Product($this->savdb);
+		$localobject2=new Product($db);
 		$localobject2->initAsSpecimen();
 		$localobject2->ref.='-CATEG';
 		$localobject2->tva_npr=1;
 		$result=$localobject2->create($user);
-		$cat = new Categorie($this->savdb);
+		$cat = new Categorie($db);
 		$cat->id = $catid;
 		$cat->type = 0;
 		$result=$cat->add_type($localobject2, "product");
@@ -210,7 +212,7 @@ class CategorieTest extends PHPUnit\Framework\TestCase
 		$this->assertGreaterThan(0, $result);
 
 		// Get list of categories for product
-		$localcateg=new Categorie($this->savdb);
+		$localcateg=new Categorie($db);
 		$listofcateg=$localcateg->containing($localobject2->id, Categorie::TYPE_PRODUCT, 'label');
 		$this->assertTrue(in_array('Specimen Category for product', $listofcateg), 'Categ not found linked to product when it should');
 
@@ -234,7 +236,7 @@ class CategorieTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Categorie($this->savdb);
+		$localobject=new Categorie($db);
 		$result=$localobject->fetch($id);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
@@ -259,11 +261,12 @@ class CategorieTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject->note='New note after update';
+		$localobject->note_private ='New note after update';
 		$result=$localobject->update($user);
 
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertGreaterThan(0, $result);
+
 		return $localobject;
 	}
 
@@ -288,8 +291,6 @@ class CategorieTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 		*/
-		$localobject2=new Categorie($db);
-		$localobject2->initAsSpecimen();
 
 		$retarray=$localobject->liste_photos('/');
 		print __METHOD__." retarray size=".count($retarray)."\n";
@@ -315,7 +316,7 @@ class CategorieTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Categorie($this->savdb);
+		$localobject=new Categorie($db);
 		$result=$localobject->fetch($id);
 		$result=$localobject->delete($user);
 
@@ -339,7 +340,7 @@ class CategorieTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Categorie($this->savdb);
+		$localobject=new Categorie($db);
 		$retarray=$localobject->get_full_arbo(3);
 
 		print __METHOD__." retarray size=".count($retarray)."\n";

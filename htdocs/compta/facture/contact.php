@@ -39,7 +39,7 @@ if (isModEnabled('project')) {
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'companies'));
 
-$id     = (GETPOST('id') ?GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
+$id     = (GETPOST('id') ? GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
 $ref    = GETPOST('ref', 'alpha');
 $lineid = GETPOST('lineid', 'int');
 $socid  = GETPOST('socid', 'int');
@@ -53,7 +53,7 @@ if ($user->socid) {
 $object = new Facture($db);
 // Load object
 if ($id > 0 || !empty($ref)) {
-	$ret = $object->fetch($id, $ref, '', '', (!empty($conf->global->INVOICE_USE_SITUATION) ? $conf->global->INVOICE_USE_SITUATION : 0));
+	$ret = $object->fetch($id, $ref, '', '', (getDolGlobalString('INVOICE_USE_SITUATION') ? $conf->global->INVOICE_USE_SITUATION : 0));
 }
 
 $result = restrictedArea($user, 'facture', $object->id);
@@ -65,7 +65,7 @@ $usercancreate = $user->hasRight("facture", "creer");
  * Add a new contact
  */
 
-if ($action == 'addcontact' && $user->rights->facture->creer) {
+if ($action == 'addcontact' && $user->hasRight('facture', 'creer')) {
 	if ($result > 0 && $id > 0) {
 		$contactid = (GETPOST('userid') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
@@ -83,10 +83,10 @@ if ($action == 'addcontact' && $user->rights->facture->creer) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-} elseif ($action == 'swapstatut' && $user->rights->facture->creer) {
+} elseif ($action == 'swapstatut' && $user->hasRight('facture', 'creer')) {
 	// Toggle the status of a contact
 	$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
-} elseif ($action == 'deletecontact' && $user->rights->facture->creer) {
+} elseif ($action == 'deletecontact' && $user->hasRight('facture', 'creer')) {
 	// Deletes a contact
 	$result = $object->delete_contact($lineid);
 

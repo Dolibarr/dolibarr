@@ -30,7 +30,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-if (!empty($conf->ldap->enabled)) {
+if (isModEnabled('ldap')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 }
 
@@ -38,7 +38,7 @@ if (!empty($conf->ldap->enabled)) {
 $langs->loadLangs(array('errors', 'users', 'companies', 'ldap', 'other'));
 
 // Security check
-if (!empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK)) {
+if (getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK')) {
 	header("Location: ".DOL_URL_ROOT.'/');
 	exit;
 }
@@ -84,6 +84,8 @@ $parameters = array('username' => $username);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	$message = $hookmanager->error;
+} else {
+	$message = '';
 }
 
 if (empty($reshook)) {
@@ -94,10 +96,10 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			$message = '<div class="error">'.dol_escape_htmltag($langs->trans("ErrorTechnicalError")).'</div>';
 		} else {
-			global $dolibarr_main_instance_unique_id;
+			global $conf;
 
-			//print $edituser->pass_temp.'-'.$edituser->id.'-'.$dolibarr_main_instance_unique_id.' '.$passworduidhash;
-			if ($edituser->pass_temp && dol_verifyHash($edituser->pass_temp.'-'.$edituser->id.'-'.$dolibarr_main_instance_unique_id, $passworduidhash)) {
+			//print $edituser->pass_temp.'-'.$edituser->id.'-'.$conf->file->instance_unique_id.' '.$passworduidhash;
+			if ($edituser->pass_temp && dol_verifyHash($edituser->pass_temp.'-'.$edituser->id.'-'.$conf->file->instance_unique_id, $passworduidhash)) {
 				// Clear session
 				unset($_SESSION['dol_login']);
 				$_SESSION['dol_loginmesg'] = '<!-- warning -->'.$langs->transnoentitiesnoconv('NewPasswordValidated'); // Save message for the session page
@@ -133,7 +135,7 @@ if (empty($reshook)) {
 
 			// Set the message to show (must be the same if login/email exists or not
 			// to avoid to guess them.
-			$messagewarning = '<div class="warning paddingtopbottom'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent boxshadow').'">';
+			$messagewarning = '<div class="warning paddingtopbottom'.(!getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? '' : ' backgroundsemitransparent boxshadow').'">';
 			if (!$isanemail) {
 				$messagewarning .= $langs->trans("IfLoginExistPasswordRequestSent");
 			} else {
@@ -142,16 +144,16 @@ if (empty($reshook)) {
 			$messagewarning .= '</div>';
 
 			if ($result <= 0 && $edituser->error == 'USERNOTFOUND') {
-				usleep(20000);	// add delay to simulate setPassword and send_password actions delay (0.02s)
+				usleep(20000);	// add delay to simulate setPassword() and send_password() actions delay (0.02s)
 				$message .= $messagewarning;
 				$username = '';
 			} else {
 				if (empty($edituser->email)) {
-					usleep(20000);	// add delay to simulate setPassword and send_password actions delay (0.02s)
+					usleep(20000);	// add delay to simulate setPassword() and send_password() actions delay (0.02s)
 					$message .= $messagewarning;
 				} else {
 					$newpassword = $edituser->setPassword($user, '', 1);
-					if (is_numeric($newpassword) && $newpassword < 0) {
+					if (is_int($newpassword) && $newpassword < 0) {
 						// Technical failure
 						$message = '<div class="error">'.$langs->trans("ErrorFailedToChangePassword").'</div>';
 					} else {
@@ -179,7 +181,7 @@ $dol_url_root = DOL_URL_ROOT;
 
 // Title
 $title = 'Dolibarr '.DOL_VERSION;
-if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 	$title = $conf->global->MAIN_APPLICATION_TITLE;
 }
 
@@ -201,7 +203,7 @@ $disabled = 'disabled';
 if (preg_match('/dolibarr/i', $mode)) {
 	$disabled = '';
 }
-if (!empty($conf->global->MAIN_SECURITY_ENABLE_SENDPASSWORD)) {
+if (getDolGlobalString('MAIN_SECURITY_ENABLE_SENDPASSWORD')) {
 	$disabled = ''; // To force button enabled
 }
 

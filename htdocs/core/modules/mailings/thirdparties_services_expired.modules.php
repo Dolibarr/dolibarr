@@ -36,11 +36,6 @@ class mailing_thirdparties_services_expired extends MailingTargets
 	 */
 	public $picto = 'company';
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
 	public $arrayofproducts = array();
 
 
@@ -60,7 +55,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 		// List of services
 		$sql = "SELECT ref FROM ".MAIN_DB_PREFIX."product";
 		$sql .= " WHERE entity IN (".getEntity('product').")";
-		if (empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) {
+		if (!getDolGlobalString('CONTRACT_SUPPORT_PRODUCTS')) {
 			$sql .= " AND fk_product_type = 1"; // By default, only services
 		}
 		$sql .= " ORDER BY ref";
@@ -86,10 +81,12 @@ class mailing_thirdparties_services_expired extends MailingTargets
 	 *  This is the main function that returns the array of emails
 	 *
 	 *  @param	int		$mailing_id    	Id of mailing. No need to use it.
-	 *  @return int           			<0 if error, number of emails added if ok
+	 *  @return int           			Return integer <0 if error, number of emails added if ok
 	 */
 	public function add_to_target($mailing_id)
 	{
+		global $conf;
+
 		// phpcs:enable
 		$key = GETPOST('filter', 'int');
 
@@ -116,6 +113,9 @@ class mailing_thirdparties_services_expired extends MailingTargets
 		$sql .= " AND s.rowid = c.fk_soc AND cd.fk_contrat = c.rowid AND s.email != ''";
 		$sql .= " AND cd.statut= 4 AND cd.fk_product=p.rowid AND p.ref = '".$this->db->escape($product)."'";
 		$sql .= " AND cd.date_fin_validite < '".$this->db->idate($now)."'";
+		if (empty($this->evenunsubscribe)) {
+			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
+		}
 		$sql .= " ORDER BY s.email";
 
 		// Stocke destinataires dans cibles
@@ -189,6 +189,8 @@ class mailing_thirdparties_services_expired extends MailingTargets
 	 */
 	public function getNbOfRecipients($sql = '')
 	{
+		global $conf;
+
 		$now = dol_now();
 
 		// Example: return parent::getNbOfRecipients("SELECT count(*) as nb from dolibarr_table");
@@ -201,6 +203,9 @@ class mailing_thirdparties_services_expired extends MailingTargets
 		$sql .= " AND cd.statut= 4 AND cd.fk_product=p.rowid";
 		$sql .= " AND p.ref IN (".$this->db->sanitize("'".join("','", $this->arrayofproducts)."'", 1).")";
 		$sql .= " AND cd.date_fin_validite < '".$this->db->idate($now)."'";
+		if (empty($this->evenunsubscribe)) {
+			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
+		}
 
 		$a = parent::getNbOfRecipients($sql);
 
@@ -217,7 +222,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 	{
 		global $langs;
 
-		$s = '<select id="filter_services_expired" name="filter" class="flat">';
+		$s = img_picto('', 'product', 'class="pictofixedwidth"').'<select id="filter_services_expired" name="filter" class="flat">';
 		if (count($this->arrayofproducts)) {
 			$langs->loadLangs(array("products"));
 			$s .= '<option value="-1">'.$langs->trans("ProductOrService").'</option>';

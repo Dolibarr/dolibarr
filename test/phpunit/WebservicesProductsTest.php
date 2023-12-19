@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +43,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
 $conf->global->MAIN_UMASK='0666';
 
-if (empty($conf->service->enabled)) {
+if (!isModEnabled('service')) {
 	print "Error: Module service must be enabled.\n";
 	exit(1);
 }
@@ -65,11 +66,12 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return DateLibTest
+	 * @param 	string	$name		Name
+	 * @return WebservicesProductsTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;

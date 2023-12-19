@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017       Florian HENRY           <florian.henry@atm-consulting.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +45,8 @@ class LoanSchedule extends CommonObject
 	 */
 	public $fk_loan;
 
+	public $bank_account;
+	public $bank_line;
 	/**
 	 * @var string Create date
 	 */
@@ -91,6 +93,10 @@ class LoanSchedule extends CommonObject
 	 */
 	public $fk_user_modif;
 
+	/**
+	 * @var LoanSchedule[]
+	 * @see LoanSchedule::fetchAll()
+	 */
 	public $lines = array();
 
 	/**
@@ -118,7 +124,7 @@ class LoanSchedule extends CommonObject
 	 *  Use this->amounts to have list of lines for the payment
 	 *
 	 *  @param      User		$user   User making payment
-	 *  @return     int     			<0 if KO, id of payment if OK
+	 *  @return     int     			Return integer <0 if KO, id of payment if OK
 	 */
 	public function create($user)
 	{
@@ -209,7 +215,7 @@ class LoanSchedule extends CommonObject
 	 *  Load object in memory from database
 	 *
 	 *  @param	int		$id         Id object
-	 *  @return int         		<0 if KO, >0 if OK
+	 *  @return int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -284,7 +290,7 @@ class LoanSchedule extends CommonObject
 	 *
 	 *  @param	User	$user        	User that modify
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return int         			<0 if KO, >0 if OK
+	 *  @return int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = 0, $notrigger = 0)
 	{
@@ -334,10 +340,10 @@ class LoanSchedule extends CommonObject
 		$sql .= " num_payment=".(isset($this->num_payment) ? "'".$this->db->escape($this->num_payment)."'" : "null").",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
-		$sql .= " fk_bank=".(isset($this->fk_bank) ? $this->fk_bank : "null").",";
-		$sql .= " fk_payment_loan=".(isset($this->fk_payment_loan) ? $this->fk_payment_loan : "null").",";
-		$sql .= " fk_user_creat=".(isset($this->fk_user_creat) ? $this->fk_user_creat : "null").",";
-		$sql .= " fk_user_modif=".(isset($this->fk_user_modif) ? $this->fk_user_modif : "null")."";
+		$sql .= " fk_bank=".(isset($this->fk_bank) ? ((int) $this->fk_bank) : "null").",";
+		$sql .= " fk_payment_loan=".(isset($this->fk_payment_loan) ? ((int) $this->fk_payment_loan) : "null").",";
+		$sql .= " fk_user_creat=".(isset($this->fk_user_creat) ? ((int) $this->fk_user_creat) : "null").",";
+		$sql .= " fk_user_modif=".(isset($this->fk_user_modif) ? ((int) $this->fk_user_modif) : "null");
 
 		$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -346,7 +352,8 @@ class LoanSchedule extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// Commit or rollback
@@ -365,7 +372,7 @@ class LoanSchedule extends CommonObject
 	 *
 	 *  @param	User	$user        	User that delete
 	 *  @param  int		$notrigger		0=launch triggers after, 1=disable triggers
-	 *  @return int						<0 if KO, >0 if OK
+	 *  @return int						Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -381,7 +388,8 @@ class LoanSchedule extends CommonObject
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -423,7 +431,7 @@ class LoanSchedule extends CommonObject
 	 *  Load all object in memory from database
 	 *
 	 *  @param	int		$loanid     Id object
-	 *  @return int         		<0 if KO, >0 if OK
+	 *  @return int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchAll($loanid)
 	{
@@ -530,7 +538,7 @@ class LoanSchedule extends CommonObject
 	 *  lastpayment
 	 *
 	 *  @param  int    $loanid     Loan id
-	 *  @return int                < 0 if KO, Date > 0 if OK
+	 *  @return int                Return integer < 0 if KO, Date > 0 if OK
 	 */
 	private function lastPayment($loanid)
 	{
@@ -559,7 +567,6 @@ class LoanSchedule extends CommonObject
 	 */
 	public function paimenttorecord($loanid, $datemax)
 	{
-
 		$result = array();
 
 		$sql = "SELECT p.rowid";

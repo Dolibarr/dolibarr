@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2013       Olivier Geffroy         <jeff@jeffinfo.com>
- * Copyright (C) 2013-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -97,8 +97,8 @@ class Lettering extends BookKeeping
 		$object->fetch($socid);
 
 
-		if ($object->code_compta == '411CUSTCODE') {
-			$object->code_compta = '';
+		if ($object->code_compta_client == '411CUSTCODE') {
+			$object->code_compta_client = '';
 		}
 
 		if ($object->code_compta_fournisseur == '401SUPPCODE') {
@@ -106,7 +106,7 @@ class Lettering extends BookKeeping
 		}
 
 		/**
-		 * Prise en charge des lettering complexe avec prelevment , virement
+		 * Support for complex lettering with debit, credit transfer
 		 */
 		$sql = "SELECT DISTINCT bk.rowid, bk.doc_date, bk.doc_type, bk.doc_ref, bk.subledger_account, ";
 		$sql .= " bk.numero_compte , bk.label_compte, bk.debit , bk.credit, bk.montant ";
@@ -114,10 +114,10 @@ class Lettering extends BookKeeping
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as bk";
 		$sql .= " LEFT JOIN  ".MAIN_DB_PREFIX."bank_url as bu ON(bk.fk_doc = bu.fk_bank AND bu.type IN ('payment', 'payment_supplier') ) ";
 		$sql .= " WHERE ( ";
-		if ($object->code_compta != "") {
-			$sql .= " bk.subledger_account = '".$this->db->escape($object->code_compta)."'  ";
+		if ($object->code_compta_client != "") {
+			$sql .= " bk.subledger_account = '".$this->db->escape($object->code_compta_client)."'  ";
 		}
-		if ($object->code_compta != "" && $object->code_compta_fournisseur != "") {
+		if ($object->code_compta_client != "" && $object->code_compta_fournisseur != "") {
 			$sql .= " OR ";
 		}
 		if ($object->code_compta_fournisseur != "") {
@@ -149,10 +149,10 @@ class Lettering extends BookKeeping
 					$sql .= " AND facf.entity = ".$conf->entity;
 					$sql .= " AND code_journal IN (SELECT code FROM ".MAIN_DB_PREFIX."accounting_journal WHERE nature=4 AND entity=".$conf->entity.") ";
 					$sql .= " AND ( ";
-					if ($object->code_compta != "") {
-						$sql .= "  bk.subledger_account = '".$this->db->escape($object->code_compta)."'  ";
+					if ($object->code_compta_client != "") {
+						$sql .= "  bk.subledger_account = '".$this->db->escape($object->code_compta_client)."'  ";
 					}
-					if ($object->code_compta != "" && $object->code_compta_fournisseur != "") {
+					if ($object->code_compta_client != "" && $object->code_compta_fournisseur != "") {
 						$sql .= "  OR  ";
 					}
 					if ($object->code_compta_fournisseur != "") {
@@ -178,10 +178,10 @@ class Lettering extends BookKeeping
 						$sql .= " WHERE bk.code_journal IN (SELECT code FROM ".MAIN_DB_PREFIX."accounting_journal WHERE nature=3 AND entity=".$conf->entity.") ";
 						$sql .= " AND facf.entity = ".$conf->entity;
 						$sql .= " AND ( ";
-						if ($object->code_compta != "") {
-							$sql .= " bk.subledger_account = '".$this->db->escape($object->code_compta)."'  ";
+						if ($object->code_compta_client != "") {
+							$sql .= " bk.subledger_account = '".$this->db->escape($object->code_compta_client)."'  ";
 						}
-						if ($object->code_compta != "" && $object->code_compta_fournisseur != "") {
+						if ($object->code_compta_client != "" && $object->code_compta_fournisseur != "") {
 							$sql .= " OR ";
 						}
 						if ($object->code_compta_fournisseur != "") {
@@ -210,10 +210,10 @@ class Lettering extends BookKeeping
 					$sql .= " AND bk.code_journal IN (SELECT code FROM ".MAIN_DB_PREFIX."accounting_journal WHERE nature=4 AND entity=".$conf->entity.") ";
 					$sql .= " AND fac.entity IN (".getEntity('invoice', 0).")"; // We don't share object for accountancy
 					$sql .= " AND ( ";
-					if ($object->code_compta != "") {
-						$sql .= "  bk.subledger_account = '".$this->db->escape($object->code_compta)."'  ";
+					if ($object->code_compta_client != "") {
+						$sql .= "  bk.subledger_account = '".$this->db->escape($object->code_compta_client)."'  ";
 					}
-					if ($object->code_compta != "" && $object->code_compta_fournisseur != "") {
+					if ($object->code_compta_client != "" && $object->code_compta_fournisseur != "") {
 						$sql .= "  OR  ";
 					}
 					if ($object->code_compta_fournisseur != "") {
@@ -238,10 +238,10 @@ class Lettering extends BookKeeping
 						$sql .= " WHERE code_journal IN (SELECT code FROM ".MAIN_DB_PREFIX."accounting_journal WHERE nature=2 AND entity=".$conf->entity.") ";
 						$sql .= " AND fac.entity IN (".getEntity('invoice', 0).")"; // We don't share object for accountancy
 						$sql .= " AND ( ";
-						if ($object->code_compta != "") {
-							$sql .= "  bk.subledger_account = '".$this->db->escape($object->code_compta)."'  ";
+						if ($object->code_compta_client != "") {
+							$sql .= "  bk.subledger_account = '".$this->db->escape($object->code_compta_client)."'  ";
 						}
-						if ($object->code_compta != "" && $object->code_compta_fournisseur != "") {
+						if ($object->code_compta_client != "" && $object->code_compta_fournisseur != "") {
 							$sql .= "  OR  ";
 						}
 						if ($object->code_compta_fournisseur != "") {
@@ -288,7 +288,9 @@ class Lettering extends BookKeeping
 	public function updateLettering($ids = array(), $notrigger = false)
 	{
 		$error = 0;
-		$lettre = 'AAA';
+
+		// Generate a string with n char A where n is ACCOUNTING_LETTERING_NBLETTERS (So 'AA', 'AAA', ...)
+		$lettre = str_pad("", getDolGlobalInt('ACCOUNTING_LETTERING_NBLETTERS', 3), "A");
 
 		$sql = "SELECT DISTINCT ab2.lettering_code";
 		$sql .=	" FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
@@ -327,7 +329,6 @@ class Lettering extends BookKeeping
 		}
 
 		// Update request
-
 		$now = dol_now();
 		$affected_rows = 0;
 
@@ -399,7 +400,7 @@ class Lettering extends BookKeeping
 	 *
 	 * @param	array		$bookkeeping_ids		Lettering specific list of bookkeeping id
 	 * @param	bool		$unlettering			Do unlettering
-	 * @return	int									<0 if error (nb lettered = result -1), 0 if noting to lettering, >0 if OK (nb lettered)
+	 * @return	int									Return integer <0 if error (nb lettered = result -1), 0 if noting to lettering, >0 if OK (nb lettered)
 	 */
 	public function bookkeepingLetteringAll($bookkeeping_ids, $unlettering = false)
 	{
@@ -431,7 +432,7 @@ class Lettering extends BookKeeping
 	 *
 	 * @param	array		$bookkeeping_ids		Lettering specific list of bookkeeping id
 	 * @param	bool		$unlettering			Do unlettering
-	 * @return	int									<0 if error (nb lettered = result -1), 0 if noting to lettering, >0 if OK (nb lettered)
+	 * @return	int									Return integer <0 if error (nb lettered = result -1), 0 if noting to lettering, >0 if OK (nb lettered)
 	 */
 	public function bookkeepingLettering($bookkeeping_ids, $unlettering = false)
 	{
@@ -468,9 +469,15 @@ class Lettering extends BookKeeping
 						$group_error++;
 						break;
 					}
-					if (!isset($lettering_code)) $lettering_code = (string) $line_infos['lettering_code'];
-					if (!empty($line_infos['lettering_code'])) $do_it = true;
-				} elseif (!empty($line_infos['lettering_code'])) $do_it = false;
+					if (!isset($lettering_code)) {
+						$lettering_code = (string) $line_infos['lettering_code'];
+					}
+					if (!empty($line_infos['lettering_code'])) {
+						$do_it = true;
+					}
+				} elseif (!empty($line_infos['lettering_code'])) {
+					$do_it = false;
+				}
 			}
 
 			// Check balance amount
@@ -481,8 +488,11 @@ class Lettering extends BookKeeping
 
 			// Lettering/Unlettering the group of bookkeeping lines
 			if (!$group_error && $do_it) {
-				if ($unlettering) $result = $this->deleteLettering($bookkeeping_lines);
-				else $result = $this->updateLettering($bookkeeping_lines);
+				if ($unlettering) {
+					$result = $this->deleteLettering($bookkeeping_lines);
+				} else {
+					$result = $this->updateLettering($bookkeeping_lines);
+				}
 				if ($result < 0) {
 					$group_error++;
 				} elseif ($result > 0) {
@@ -508,7 +518,7 @@ class Lettering extends BookKeeping
 	 *
 	 * @param	array			$bookkeeping_ids				Lettering specific list of bookkeeping id
 	 * @param	bool			$only_has_subledger_account		Get only lines who have subledger account
-	 * @return	array|int										<0 if error otherwise all linked lines by block
+	 * @return	array|int										Return integer <0 if error otherwise all linked lines by block
 	 */
 	public function getLinkedLines($bookkeeping_ids, $only_has_subledger_account = true)
 	{
@@ -533,7 +543,9 @@ class Lettering extends BookKeeping
 			$sql .= "  AND pn.piece_num = ab.piece_num";
 			$sql .= " )";
 		}
-		if ($only_has_subledger_account) $sql .= " AND ab.subledger_account != ''";
+		if ($only_has_subledger_account) {
+			$sql .= " AND ab.subledger_account != ''";
+		}
 
 		dol_syslog(__METHOD__ . " - Get all bookkeeping lines", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -607,7 +619,9 @@ class Lettering extends BookKeeping
 				$sql .= "  AND dpn.piece_num = ab.piece_num";
 				$sql .= " )";
 				$sql .= ")";
-				if ($only_has_subledger_account) $sql .= " AND ab.subledger_account != ''";
+				if ($only_has_subledger_account) {
+					$sql .= " AND ab.subledger_account != ''";
+				}
 
 				dol_syslog(__METHOD__ . " - Get all bookkeeping lines linked", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -628,7 +642,9 @@ class Lettering extends BookKeeping
 				}
 				$this->db->free($resql);
 
-				if (!empty($group)) $grouped_lines[] = $group;
+				if (!empty($group)) {
+					$grouped_lines[] = $group;
+				}
 			}
 		}
 
@@ -639,7 +655,7 @@ class Lettering extends BookKeeping
 	 * Get all fk_doc by doc_type from list of bank ids
 	 *
 	 * @param	array			$bank_ids		List of bank ids
-	 * @return	array|int						<0 if error otherwise all fk_doc by doc_type
+	 * @return	array|int						Return integer <0 if error otherwise all fk_doc by doc_type
 	 */
 	public function getDocTypeAndFkDocFromBankLines($bank_ids)
 	{
@@ -682,7 +698,7 @@ class Lettering extends BookKeeping
 	 *
 	 * @param	array			$document_ids	List of document id
 	 * @param	string			$doc_type		Type of document ('customer_invoice' or 'supplier_invoice', ...)
-	 * @return	array|int						<0 if error otherwise all all bank ids from list of document ids of a type
+	 * @return	array|int						Return integer <0 if error otherwise all all bank ids from list of document ids of a type
 	 */
 	public function getBankLinesFromFkDocAndDocType($document_ids, $doc_type)
 	{
@@ -736,7 +752,7 @@ class Lettering extends BookKeeping
 	 *
 	 * @param	array			$document_ids	List of document id
 	 * @param	string			$doc_type		Type of document ('customer_invoice' or 'supplier_invoice', ...)
-	 * @return	array|int						<0 if error otherwise all linked document ids by group and type [ [ 'doc_type' => [ doc_id, ... ], ... ], ... ]
+	 * @return	array|int						Return integer <0 if error otherwise all linked document ids by group and type [ [ 'doc_type' => [ doc_id, ... ], ... ], ... ]
 	 */
 	public function getLinkedDocumentByGroup($document_ids, $doc_type)
 	{
@@ -830,7 +846,9 @@ class Lettering extends BookKeeping
 
 			foreach ($element_ids as $element_id) {
 				// Continue if element id in not found
-				if (!isset($link_by_element[$element_id])) continue;
+				if (!isset($link_by_element[$element_id])) {
+					continue;
+				}
 
 				// Set the element in the current group
 				$current_group[$element_id] = $element_id;

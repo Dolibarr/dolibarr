@@ -193,23 +193,28 @@ print '<br>';
 print '<form name="externalrssconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 print '<table class="noborder centpercent">';
+
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("NewRSS").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
 print '</tr>';
-print '<tr class="impair">';
+
+print '<tr class="oddeven">';
 print '<td width="100">'.$langs->trans("Title").'</td>';
 print '<td><input type="text" class="flat minwidth300" name="external_rss_title_'.($lastexternalrss + 1).'" value=""></td>';
 print '<td>'.$langs->trans('RSSUrlExample').'</td>';
 print '</tr>';
 
-print '<tr class="pair">';
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans('RSSUrl').'</td>';
 print '<td><input type="text" class="flat minwidth300" name="external_rss_urlrss_'.($lastexternalrss + 1).'" value=""></td>';
 print '<td>http://news.google.com/news?ned=us&topic=h&output=rss<br>http://www.dolibarr.org/rss</td>';
 print '</tr>';
 print '</table>';
+
+print '</div>';
 
 print $form->buttonsSaveCancel("Add", '');
 print '<input type="hidden" name="action" value="add">';
@@ -262,13 +267,13 @@ if ($resql) {
 
 		print '<tr class="oddeven">';
 		print '<td class="titlefield">'.$langs->trans("Title")."</td>";
-		print '<td><input type="text" class="flat minwidth300" name="external_rss_title_'.$idrss.'" value="'.dol_escape_htmltag($conf->global->$keyrsstitle).'"></td>';
+		print '<td><input type="text" class="flat minwidth300" name="external_rss_title_'.$idrss.'" value="'.dol_escape_htmltag(getDolGlobalString($keyrsstitle)).'"></td>';
 		print '</tr>'."\n";
 
 
 		print '<tr class="oddeven">';
 		print "<td>".$langs->trans("URL")."</td>";
-		print '<td><input type="text" class="flat minwidth300" name="external_rss_urlrss_'.$idrss.'" value="'.dol_escape_htmltag($conf->global->$keyrssurl).'"></td>';
+		print '<td><input type="text" class="flat minwidth300" name="external_rss_urlrss_'.$idrss.'" value="'.dol_escape_htmltag(getDolGlobalString($keyrssurl)).'"></td>';
 		print '</tr>'."\n";
 
 
@@ -296,9 +301,13 @@ if ($resql) {
 			$imageurl = $rssparser->getImageUrl();
 			$linkrss = $rssparser->getLink();
 			if (!preg_match('/^http/', $imageurl)) {
-				$imageurl = $linkrss.$imageurl;
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+				if (image_format_supported($imageurl) >= 0) {
+					// If we are sure imageurl is a path to an image file, and if it does not start with http, we append root url to it.
+					$imageurl = $linkrss.$imageurl;
+				}
 			}
-			if ($imageurl) {
+			if ($imageurl && preg_match('/^http/', $imageurl)) {
 				print '<img height="32" src="'.$imageurl.'">';
 			} else {
 				print $langs->trans("None");

@@ -57,7 +57,7 @@ restrictedArea($user, 'salaries', $object->id, 'salary', '');
  * Actions
  */
 
-if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'yes')) {
+if (($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'yes')) && $user->hasRight('salaries', 'write')) {
 	$error = 0;
 
 	if ($cancel) {
@@ -66,7 +66,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 		exit;
 	}
 
-	$datepaye = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
+	$datepaye = dol_mktime(GETPOST("rehour", 'int'), GETPOST("remin", 'int'), GETPOST("resec", 'int'), GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'), 'tzuserrel');
 
 	if (!(GETPOST("paiementtype", 'int') > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode")), null, 'errors');
@@ -106,10 +106,11 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 
 			// Create a line of payments
 			$paiement = new PaymentSalary($db);
-			$paiement->chid         = $id;
-			$paiement->datepaye     = $datepaye;
+			$paiement->fk_salary    = $id;
+			$paiement->chid         = $id;	// deprecated
+			$paiement->datep        = $datepaye;
 			$paiement->amounts      = $amounts; // Tableau de montant
-			$paiement->paiementtype = GETPOST("paiementtype", 'alphanohtml');
+			$paiement->fk_typepayment = GETPOST("paiementtype", 'alphanohtml');
 			$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
 			$paiement->note         = GETPOST("note", 'restricthtml');
 			$paiement->note_private = GETPOST("note", 'restricthtml');
@@ -125,6 +126,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 
 			if (!$error) {
 				$result = $paiement->addPaymentToBank($user, 'payment_salary', '(SalaryPayment)', GETPOST('accountid', 'int'), '', '');
+
 				if (!($result > 0)) {
 					$error++;
 					setEventMessages($paiement->error, null, 'errors');
@@ -210,9 +212,9 @@ if ($action == 'create') {
 	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td>'.price($total-$sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';*/
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
-	$datepaye = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
-	$datepayment = empty($conf->global->MAIN_AUTOFILL_DATE) ? (GETPOST("remonth") ? $datepaye : -1) : '';
-	print $form->selectDate($datepayment, '', '', '', '', "add_payment", 1, 1);
+	$datepaye = dol_mktime(GETPOST("rehour", 'int'), GETPOST("remin", 'int'), GETPOST("resec", 'int'), GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
+	$datepayment = !getDolGlobalString('MAIN_AUTOFILL_DATE') ? (GETPOST("remonth") ? $datepaye : -1) : '';
+	print $form->selectDate($datepayment, '', 1, 1, 0, "add_payment", 1, 1, 0, '', '', $salary->dateep, '', 1, $langs->trans("DateEnd"));
 	print "</td>";
 	print '</tr>';
 
@@ -236,7 +238,9 @@ if ($action == 'create') {
 
 	print '<tr>';
 	print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
-	print '<td class="tdtop"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_3.'"></textarea></td>';
+	print '<td class="tdtop"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_3.'">';
+	print GETPOST('note');
+	print '</textarea></td>';
 	print '</tr>';
 
 	print '</table>';

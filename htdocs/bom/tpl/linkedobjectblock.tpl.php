@@ -62,9 +62,9 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		$product_static->getNomUrl(1);
 	}
 	print '</td>';
-	echo '<td class="linkedcol-date">'.dol_print_date($objectlink->date_creation, 'day').'</td>';
+	echo '<td class="linkedcol-date center">'.dol_print_date($objectlink->date_creation, 'day').'</td>';
 	echo '<td class="linkedcol-amount right">';
-	if ($user->rights->commande->lire) {
+	if ($user->hasRight('commande', 'lire')) {
 		$total = $total + $objectlink->total_ht;
 		echo price($objectlink->total_ht);
 	}

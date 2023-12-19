@@ -26,15 +26,16 @@
  */
 include_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
 
+
 /**
- * Class to manage the box to show last projet
+ * Class to manage the box to show funnel of prospections
  */
 class box_funnel_of_prospection extends ModeleBoxes
 {
-	public $boxcode = "FunnelOfProspection";
-	public $boximg = "object_projectpub";
+	public $boxcode  = "FunnelOfProspection";
+	public $boximg   = "object_projectpub";
 	public $boxlabel = "BoxTitleFunnelOfProspection";
-	public $depends = array("projet");
+	public $depends  = array("projet");
 
 	public $version = 'development';
 
@@ -56,14 +57,15 @@ class box_funnel_of_prospection extends ModeleBoxes
 	 */
 	public function __construct($db, $param = '')
 	{
-		global $user, $langs, $conf;
+		global $user, $langs;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array('boxes', 'projects'));
 
 		$this->db = $db;
 
-		$this->enabled = ($conf->global->MAIN_FEATURES_LEVEL >= 1 ? 1 : 0); // Not enabled by default, still need some work
+		$this->enabled = (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 ? 1 : 0); // Not enabled by default, still need some work
+		//$this->enabled = 1;
 
 		$this->hidden = empty($user->rights->projet->lire);
 	}
@@ -98,11 +100,11 @@ class box_funnel_of_prospection extends ModeleBoxes
 		$listofopplabel = array();
 		$listofoppcode = array();
 		$colorseriesstat = array();
-		$bordercolorseries = array();
 		$sql = "SELECT cls.rowid, cls.code, cls.percent, cls.label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_lead_status as cls";
 		$sql .= " WHERE active=1";
 		$sql .= " AND cls.code <> 'LOST'";
+		$sql .= " AND cls.code <> 'WON'";
 		$sql .= $this->db->order('cls.rowid', 'ASC');
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -116,24 +118,16 @@ class box_funnel_of_prospection extends ModeleBoxes
 				$listofoppcode[$objp->rowid] = $objp->code;
 				switch ($objp->code) {
 					case 'PROSP':
-						$colorseriesstat[$objp->rowid] = '#FFFFFF';
-						$bordercolorseries[$objp->rowid] = $badgeStatus0;
+						$colorseriesstat[$objp->rowid] = '-'.$badgeStatus0;
 						break;
 					case 'QUAL':
-						$colorseriesstat[$objp->rowid] = '#FFFFFF';
-						$bordercolorseries[$objp->rowid] = $badgeStatus1;
+						$colorseriesstat[$objp->rowid] = '-'.$badgeStatus1;
 						break;
 					case 'PROPO':
 						$colorseriesstat[$objp->rowid] = $badgeStatus1;
-						$bordercolorseries[$objp->rowid] = $badgeStatus1;
 						break;
 					case 'NEGO':
 						$colorseriesstat[$objp->rowid] = $badgeStatus4;
-						$bordercolorseries[$objp->rowid] = $badgeStatus4;
-						break;
-					case 'WON':
-						$colorseriesstat[$objp->rowid] = $badgeStatus6;
-						$bordercolorseries[$objp->rowid] = $badgeStatus6;
 						break;
 					default:
 						break;
@@ -149,16 +143,17 @@ class box_funnel_of_prospection extends ModeleBoxes
 
 		$this->info_box_head = array(
 			'text' => $langs->trans("Statistics").' - '.$langs->trans("BoxTitleFunnelOfProspection"),
+			'nbcol' => '2',
 			'graph' => '1'
 		);
 
-		if ($user->rights->projet->lire || !empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+		if ($user->hasRight('projet', 'lire') || getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 			$sql = "SELECT p.fk_opp_status as opp_status, cls.code, COUNT(p.rowid) as nb, SUM(p.opp_amount) as opp_amount, SUM(p.opp_amount * p.opp_percent) as ponderated_opp_amount";
 			$sql .= " FROM ".MAIN_DB_PREFIX."projet as p, ".MAIN_DB_PREFIX."c_lead_status as cls";
 			$sql .= " WHERE p.entity IN (".getEntity('project').")";
 			$sql .= " AND p.fk_opp_status = cls.rowid";
 			$sql .= " AND p.fk_statut = 1"; // Opend projects only
-			$sql .= " AND cls.code NOT IN ('LOST')";
+			$sql .= " AND cls.code NOT IN ('LOST', 'WON')";
 			$sql .= " GROUP BY p.fk_opp_status, cls.code";
 			$resql = $this->db->query($sql);
 
@@ -234,7 +229,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 					$dolgraph->SetLegend($liststatus);
 					$dolgraph->setHideXValues(true);
 					$dolgraph->SetDataColor(array_values($colorseriesstat));
-					$dolgraph->setBorderColor(array_values($bordercolorseries));
+					//$dolgraph->setBorderColor(array_values($bordercolorseries));
 					$dolgraph->setShowLegend(2);
 					if (!empty($conf->dol_optimize_smallscreen)) {
 						$dolgraph->SetWidth(320);
@@ -242,6 +237,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 					$dolgraph->setShowPercent(1);
 					$dolgraph->setMirrorGraphValues(true);
 					$dolgraph->setBorderWidth(2);
+					$dolgraph->setBorderSkip('false');
 					$dolgraph->SetType(array('horizontalbars'));
 					$dolgraph->SetHeight('200');
 					$dolgraph->SetWidth('600');
@@ -254,7 +250,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 				$stringtoprint .= '</div>';
 
 				$line = 0;
-				$this->info_box_contents[$line][] = array(
+				/*$this->info_box_contents[$line][] = array(
 					'tr' => 'class="nohover left "',
 					'text' => ''
 				);
@@ -262,7 +258,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 					'tr' => 'class="nohover left "',
 					'text' => ''
 				);
-				$line++;
+				$line++;*/
 				$this->info_box_contents[$line][] = array(
 					'tr' => '',
 					'td' => 'class="center nopaddingleftimp nopaddingrightimp" colspan="2"',
@@ -296,8 +292,8 @@ class box_funnel_of_prospection extends ModeleBoxes
 				);
 			} else {
 				$this->info_box_contents[0][0] = array(
-					'td' => 'class="center opacitymedium"',
-					'text' => $langs->trans("NoRecordedCustomers")
+					'td' => 'class="center"',
+					'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedCustomers").'</span>'
 				);
 			}
 		} else {

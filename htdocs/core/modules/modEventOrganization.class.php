@@ -115,7 +115,7 @@ class modEventOrganization extends DolibarrModules
 		// Dependencies
 		// A condition to hide module
 		$this->hidden = false;
-		// List of module class names as string that must be enabled if this module is enabled. Example: array('always1'=>'modModuleToEnable1','always2'=>'modModuleToEnable2', 'FR1'=>'modModuleToEnableFR'...)
+		// List of module class names as string that must be enabled if this module is enabled. Example: array('always'=>array('modModuleToEnable1','modModuleToEnable2'), 'FR'=>array('modModuleToEnableFR'...))
 		$this->depends = array('modProjet','modCategorie');
 		$this->requiredby = array(); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
@@ -317,7 +317,9 @@ class modEventOrganization extends DolibarrModules
 		$this->export_label[$r]='ListOfAttendeesOfEvent';	// Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_icon[$r]=$this->picto;
 		// Define $this->export_fields_array, $this->export_TypeFields_array and $this->export_entities_array
-		$keyforclass = 'ConferenceOrBoothAttendee'; $keyforclassfile='/eventorganization/class/conferenceorboothattendee.class.php'; $keyforelement='conferenceorboothattendee';
+		$keyforclass = 'ConferenceOrBoothAttendee';
+		$keyforclassfile='/eventorganization/class/conferenceorboothattendee.class.php';
+		$keyforelement='conferenceorboothattendee';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
 		$this->export_entities_array[$r]['t.fk_invoice'] = 'invoice';
 		unset($this->export_fields_array[$r]['t.fk_project']);	// Remove field so we can add it at end just after
@@ -335,7 +337,9 @@ class modEventOrganization extends DolibarrModules
 		$this->export_TypeFields_array[$r]['t.fk_soc'] = 'Numeric';
 		//$this->export_fields_array[$r]['t.fieldtoadd']='FieldToAdd'; $this->export_TypeFields_array[$r]['t.fieldtoadd']='Text';
 		//unset($this->export_fields_array[$r]['t.fieldtoremove']);
-		$keyforselect='conferenceorboothattendee'; $keyforaliasextra='extra'; $keyforelement='conferenceorboothattendee';
+		$keyforselect='conferenceorboothattendee';
+		$keyforaliasextra='extra';
+		$keyforelement='conferenceorboothattendee';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		//$this->export_dependencies_array[$r] = array('aaaline'=>array('tl.rowid','tl.ref')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
 		//$this->export_special_array[$r] = array('t.field'=>'...');
@@ -402,7 +406,7 @@ class modEventOrganization extends DolibarrModules
 		if (empty($user->rights->societe->client->voir)) {
 			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.(empty($user) ? 0 : $user->id).' OR ac.fk_soc IS NULL)';
 		}
-		if (empty($user->rights->agenda->allactions->read)) {
+		if (!$user->hasRight('agenda', 'allactions', 'read')) {
 			$this->export_sql_end[$r] .= ' AND acr.fk_element = '.(empty($user) ? 0 : $user->id);
 		}
 		$this->export_sql_order[$r] = ' ORDER BY ac.datep';
@@ -479,6 +483,11 @@ class modEventOrganization extends DolibarrModules
 		// Insert some vars
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($this->db);
+
+		include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+		if (!is_object($user)) {
+			$user = new User($this->db); // To avoid error during migration
+		}
 
 		$template = $formmail->getEMailTemplate($this->db, 'conferenceorbooth', $user, $langs, 0, 1, '(EventOrganizationEmailAskConf)');
 		if ($template->id > 0) {

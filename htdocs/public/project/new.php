@@ -39,9 +39,7 @@ if (!defined('NOIPCHECK')) {
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
-if (!defined('NOIPCHECK')) {
-	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-}
+
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -68,7 +66,7 @@ $action = GETPOST('action', 'aZ09');
 // Load translation files
 $langs->loadLangs(array("members", "companies", "install", "other", "projects"));
 
-if (empty($conf->global->PROJECT_ENABLE_PUBLIC)) {
+if (!getDolGlobalString('PROJECT_ENABLE_PUBLIC')) {
 	print $langs->trans("Form for public lead registration has not been enabled");
 	exit;
 }
@@ -127,15 +125,15 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 		print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
 		print '>';
 		print '</div>';
-		if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
+		if (!getDolGlobalString('MAIN_HIDE_POWERED_BY')) {
 			print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 		}
 		print '</div>';
 	}
 
-	if (!empty($conf->global->PROJECT_IMAGE_PUBLIC_NEWLEAD)) {
+	if (getDolGlobalString('PROJECT_IMAGE_PUBLIC_NEWLEAD')) {
 		print '<div class="backimagepublicnewlead">';
-		print '<img id="idPROJECT_IMAGE_PUBLIC_NEWLEAD" src="'.$conf->global->PROJECT_IMAGE_PUBLIC_NEWLEAD.'">';
+		print '<img id="idPROJECT_IMAGE_PUBLIC_NEWLEAD" src="' . getDolGlobalString('PROJECT_IMAGE_PUBLIC_NEWLEAD').'">';
 		print '</div>';
 	}
 
@@ -208,6 +206,8 @@ if (empty($reshook) && $action == 'add') {
 		$errmsg .= $langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Project"))."<br>\n";
 	}
 
+	$visibility = getDolGlobalString('PROJET_VISIBILITY');
+
 	$proj = new Project($db);
 	$thirdparty = new Societe($db);
 
@@ -258,10 +258,12 @@ if (empty($reshook) && $action == 'add') {
 	if (!$error) {
 		// Defined the ref into $defaultref
 		$defaultref = '';
-		$modele = empty($conf->global->PROJECT_ADDON) ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
+		$modele = !getDolGlobalString('PROJECT_ADDON') ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
 
 		// Search template files
-		$file = ''; $classname = ''; $filefound = 0;
+		$file = '';
+		$classname = '';
+		$filefound = 0;
 		$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 		foreach ($dirmodels as $reldir) {
 			$file = dol_buildpath($reldir."core/modules/project/".$modele.'.php', 0);
@@ -274,7 +276,7 @@ if (empty($reshook) && $action == 'add') {
 
 		if ($filefound) {
 			$result = dol_include_once($reldir."core/modules/project/".$modele.'.php');
-			$modProject = new $classname;
+			$modProject = new $classname();
 
 			$defaultref = $modProject->getNextValue($thirdparty, $object);
 		}
@@ -287,10 +289,17 @@ if (empty($reshook) && $action == 'add') {
 			$defaultref = 'PJ'.dol_print_date(dol_now(), 'dayrfc');
 		}
 
+		if ($visibility === "1") {
+			$proj->public = 1;
+		} elseif ($visibility === "0") {
+			$proj->public = 0;
+		} elseif (empty($visibility)) {
+			$proj->public = 1;
+		}
+
 		$proj->ref         = $defaultref;
 		$proj->statut      = $proj::STATUS_DRAFT;
 		$proj->status      = $proj::STATUS_DRAFT;
-		$proj->public      = 1;
 		$proj->usage_opportunity = 1;
 		$proj->title       = $langs->trans("LeadFromPublicForm");
 		$proj->description = GETPOST("description", "alphanohtml");
@@ -363,7 +372,9 @@ if (empty($reshook) && $action == 'add') {
 						$msg     = $arraydefaultmessage->content;
 					}
 					if (empty($labeltosue)) {
-						$labeltouse = '['.$mysoc->name.'] '.$langs->trans("YourMessage");
+						$appli = $mysoc->name;
+
+						$labeltouse = '['.$appli.'] '.$langs->trans("YourMessage");
 						$msg = $langs->trans("YourMessageHasBeenReceived");
 					}
 
@@ -371,11 +382,10 @@ if (empty($reshook) && $action == 'add') {
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
 					$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
-
 					if ($subjecttosend && $texttosend) {
 						$moreinheader = 'X-Dolibarr-Info: send_an_email by public/lead/new.php'."\r\n";
 
-						$result = $object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
+						$result = $object->sendEmail($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
 					}
 					/*if ($result < 0) {
 						$error++;
@@ -385,7 +395,7 @@ if (empty($reshook) && $action == 'add') {
 
 				if (!empty($backtopage)) {
 					$urlback = $backtopage;
-				} elseif (!empty($conf->global->PROJECT_URL_REDIRECT_LEAD)) {
+				} elseif (getDolGlobalString('PROJECT_URL_REDIRECT_LEAD')) {
 					$urlback = $conf->global->PROJECT_URL_REDIRECT_LEAD;
 					// TODO Make replacement of __AMOUNT__, etc...
 				} else {
@@ -452,7 +462,7 @@ print '<div align="center">';
 print '<div id="divsubscribe">';
 
 print '<div class="center subscriptionformhelptext opacitymedium justify">';
-if (!empty($conf->global->PROJECT_NEWFORM_TEXT)) {
+if (getDolGlobalString('PROJECT_NEWFORM_TEXT')) {
 	print $langs->trans($conf->global->PROJECT_NEWFORM_TEXT)."<br>\n";
 } else {
 	print $langs->trans("FormForNewLeadDesc", getDolGlobalString("MAIN_INFO_SOCIETE_MAIL"))."<br>\n";
@@ -489,11 +499,11 @@ jQuery(document).ready(function () {
 print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."\n";
 
 // Lastname
-print '<tr><td>'.$langs->trans("Lastname").' <span style="color: red">*</span></td><td><input type="text" name="lastname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('lastname')).'" required></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Lastname").' <span class="star">*</span></td><td><input type="text" name="lastname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('lastname')).'" required></td></tr>'."\n";
 // Firstname
-print '<tr><td>'.$langs->trans("Firstname").' <span style="color: red">*</span></td><td><input type="text" name="firstname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('firstname')).'" required></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Firstname").' <span class="star">*</span></td><td><input type="text" name="firstname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('firstname')).'" required></td></tr>'."\n";
 // EMail
-print '<tr><td>'.$langs->trans("Email").' <span style="color: red">*</span></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'" required></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Email").' <span class="star">*</span></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'" required></td></tr>'."\n";
 // Company
 print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
 // Address
@@ -508,7 +518,7 @@ print '</td></tr>';
 // Country
 print '<tr><td>'.$langs->trans('Country').'</td><td>';
 $country_id = GETPOST('country_id');
-if (!$country_id && !empty($conf->global->PROJECT_NEWFORM_FORCECOUNTRYCODE)) {
+if (!$country_id && getDolGlobalString('PROJECT_NEWFORM_FORCECOUNTRYCODE')) {
 	$country_id = getCountry($conf->global->PROJECT_NEWFORM_FORCECOUNTRYCODE, 2, $db, $langs);
 }
 if (!$country_id && !empty($conf->geoipmaxmind->enabled)) {
@@ -526,7 +536,7 @@ $country_code = getCountry($country_id, 2, $db, $langs);
 print $form->select_country($country_id, 'country_id');
 print '</td></tr>';
 // State
-if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
+if (!getDolGlobalString('SOCIETE_DISABLE_STATE')) {
 	print '<tr><td>'.$langs->trans('State').'</td><td>';
 	if ($country_code) {
 		print $formcompany->select_state(GETPOST("state_id", 'int'), $country_code);
@@ -541,7 +551,7 @@ $parameters['tpl_context']='public';	// define template context to public
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 // Comments
 print '<tr>';
-print '<td class="tdtop">'.$langs->trans("Message").' <span style="color: red">*</span></td>';
+print '<td class="tdtop">'.$langs->trans("Message").' <span class="star">*</span></td>';
 print '<td class="tdtop"><textarea name="description" id="description" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_5.'" required>'.dol_escape_htmltag(GETPOST('description', 'restricthtml'), 0, 1).'</textarea></td>';
 print '</tr>'."\n";
 

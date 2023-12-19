@@ -20,7 +20,7 @@
 
 /**
  *  \defgroup   mrp     Module Mrp
- *  \brief      Mrp module descriptor.
+ *  \brief      Module to manage Manufacturing Orders (MO)
  *
  *  \file       htdocs/core/modules/modMrp.class.php
  *  \ingroup    mrp
@@ -117,7 +117,7 @@ class modMrp extends DolibarrModules
 		// Dependencies
 		// A condition to hide module
 		$this->hidden = false;
-		// List of module class names as string that must be enabled if this module is enabled. Example: array('always1'=>'modModuleToEnable1','always2'=>'modModuleToEnable2', 'FR1'=>'modModuleToEnableFR'...)
+		// List of module class names as string that must be enabled if this module is enabled. Example: array('always'=>array('modModuleToEnable1','modModuleToEnable2'), 'FR'=>array('modModuleToEnableFR'...))
 		$this->depends = array('modBom');
 		$this->requiredby = array('modWorkstation'); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
@@ -135,7 +135,7 @@ class modMrp extends DolibarrModules
 		//                             2 => array('MRP_MYNEWCONST2', 'chaine', 'myvalue', 'This is another constant to add', 0, 'current', 1)
 		// );
 		$this->const = array(
-			1=>array('MRP_MO_ADDON_PDF', 'chaine', 'alpha', 'Name of PDF model of MO', 0),
+			//1=>array('MRP_MO_ADDON_PDF', 'chaine', 'vinci', 'Name of default PDF model of MO', 0),
 			2=>array('MRP_MO_ADDON', 'chaine', 'mod_mo_standard', 'Name of numbering rules of MO', 0),
 			3=>array('MRP_MO_ADDON_PDF_ODT_PATH', 'chaine', 'DOL_DATA_ROOT/doctemplates/mrps', '', 0)
 		);
@@ -454,8 +454,8 @@ class modMrp extends DolibarrModules
 		}
 
 		$sql = array(
-			//"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape('standard')."' AND type = 'mo' AND entity = ".((int) $conf->entity),
-			//"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape('standard')."', 'mo', ".((int) $conf->entity).")"
+			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape('vinci')."' AND type = 'mrp' AND entity = ".((int) $conf->entity),
+			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape('vinci')."','mrp',".((int) $conf->entity).")"
 		);
 
 		return $this->_init($sql, $options);

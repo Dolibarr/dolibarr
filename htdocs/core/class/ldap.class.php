@@ -54,6 +54,11 @@ class Ldap
 	public $connectedServer;
 
 	/**
+	 * @var int server port
+	 */
+	public $serverPort;
+
+	/**
 	 * Base DN (e.g. "dc=foo,dc=com")
 	 */
 	public $dn;
@@ -69,6 +74,14 @@ class Ldap
 	 * Server DN
 	 */
 	public $domain;
+
+	public $domainFQDN;
+
+	/**
+	 * @var int bind
+	 */
+	public $bind;
+
 	/**
 	 * User administrateur Ldap
 	 * Active Directory ne supporte pas les connexions anonymes
@@ -96,13 +109,74 @@ class Ldap
 	 */
 	public $ldapErrorText;
 
+	/**
+	 * @var string
+	 */
+	public $filter;
+	/**
+	 * @var string
+	 */
+	public $filtergroup;
+	/**
+	 * @var string
+	 */
+	public $filtermember;
+
+	/**
+	 * @var string attr_login
+	 */
+	public $attr_login;
+
+	/**
+	 * @var string attr_sambalogin
+	 */
+	public $attr_sambalogin;
+
+	/**
+	 * @var string attr_name
+	 */
+	public $attr_name;
+
+	/**
+	 * @var string attr_firstname
+	 */
+	public $attr_firstname;
+
+	/**
+	 * @var string attr_mail
+	 */
+	public $attr_mail;
+
+	/**
+	 * @var string attr_phone
+	 */
+	public $attr_phone;
+
+	/**
+	 * @var string attr_fax
+	 */
+	public $attr_fax;
+
+	/**
+	 * @var string attr_mobile
+	 */
+	public $attr_mobile;
+
+	/**
+	 * @var int badpwdtime
+	 */
+	public $badpwdtime;
+
+	/**
+	 * @var string ladpUserDN
+	 */
+	public $ldapUserDN;
 
 	//Fetch user
 	public $name;
 	public $firstname;
 	public $login;
 	public $phone;
-	public $skype;
 	public $fax;
 	public $mail;
 	public $mobile;
@@ -146,10 +220,10 @@ class Ldap
 		global $conf;
 
 		// Server
-		if (!empty($conf->global->LDAP_SERVER_HOST)) {
+		if (getDolGlobalString('LDAP_SERVER_HOST')) {
 			$this->server[] = $conf->global->LDAP_SERVER_HOST;
 		}
-		if (!empty($conf->global->LDAP_SERVER_HOST_SLAVE)) {
+		if (getDolGlobalString('LDAP_SERVER_HOST_SLAVE')) {
 			$this->server[] = $conf->global->LDAP_SERVER_HOST_SLAVE;
 		}
 		$this->serverPort          = getDolGlobalInt('LDAP_SERVER_PORT', 389);
@@ -174,7 +248,6 @@ class Ldap
 		$this->attr_firstname  = getDolGlobalString('LDAP_FIELD_FIRSTNAME');
 		$this->attr_mail       = getDolGlobalString('LDAP_FIELD_MAIL');
 		$this->attr_phone      = getDolGlobalString('LDAP_FIELD_PHONE');
-		$this->attr_skype      = getDolGlobalString('LDAP_FIELD_SKYPE');
 		$this->attr_fax        = getDolGlobalString('LDAP_FIELD_FAX');
 		$this->attr_mobile     = getDolGlobalString('LDAP_FIELD_MOBILE');
 	}
@@ -187,7 +260,7 @@ class Ldap
 	 * 	Use this->server, this->serverPort, this->ldapProtocolVersion, this->serverType, this->searchUser, this->searchPassword
 	 * 	After return, this->connection and $this->bind are defined
 	 *
-	 *	@return		int		<0 if KO, 1 if bind anonymous, 2 if bind auth
+	 *	@return		int		Return integer <0 if KO, 1 if bind anonymous, 2 if bind auth
 	 */
 	public function connect_bind()
 	{
@@ -254,7 +327,7 @@ class Ldap
 					}
 
 					// Upgrade connexion to TLS, if requested by the configuration
-					if (!empty($conf->global->LDAP_SERVER_USE_TLS)) {
+					if (getDolGlobalString('LDAP_SERVER_USE_TLS')) {
 						// For test/debug
 						//ldap_set_option($this->connection, LDAP_OPT_DEBUG_LEVEL, 7);
 						//ldap_set_option($this->connection, LDAP_OPT_PROTOCOL_VERSION, 3);
@@ -451,11 +524,11 @@ class Ldap
 	 *	@param	string	$dn			DN entry key
 	 *	@param	array	$info		Attributes array
 	 *	@param	User		$user		Objet user that create
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function add($dn, $info, $user)
 	{
-		dol_syslog(get_class($this)."::add dn=".$dn." info=".json_encode($info));
+		dol_syslog(get_class($this)."::add dn=".$dn." info=".print_r($info, true));
 
 		// Check parameters
 		if (!$this->connection) {
@@ -499,11 +572,11 @@ class Ldap
 	 *	@param	string		$dn			DN entry key
 	 *	@param	array		$info		Attributes array
 	 *	@param	User		$user		Objet user that modify
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function modify($dn, $info, $user)
 	{
-		dol_syslog(get_class($this)."::modify dn=".$dn." info=".join(',', $info));
+		dol_syslog(get_class($this)."::modify dn=".$dn." info=".print_r($info, true));
 
 		// Check parameters
 		if (!$this->connection) {
@@ -557,7 +630,7 @@ class Ldap
 	 *	@param	string		$newparent		New parent (ou=xxx,dc=aaa,dc=bbb)
 	 *	@param	User			$user			Objet user that modify
 	 *	@param	bool			$deleteoldrdn	If true the old RDN value(s) is removed, else the old RDN value(s) is retained as non-distinguished values of the entry.
-	 *	@return	int							<0 if KO, >0 if OK
+	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function rename($dn, $newrdn, $newparent, $user, $deleteoldrdn = true)
 	{
@@ -601,7 +674,7 @@ class Ldap
 	 * 	@param	string	$olddn		Old DN entry key (before update)
 	 * 	@param	string	$newrdn		New RDN entry key (uid=qqq) (for ldap_rename)
 	 *	@param	string	$newparent	New parent (ou=xxx,dc=aaa,dc=bbb) (for ldap_rename)
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function update($dn, $info, $user, $olddn, $newrdn = false, $newparent = false)
 	{
@@ -651,7 +724,7 @@ class Ldap
 	 *	Ldap object connect and bind must have been done
 	 *
 	 *	@param	string	$dn			DN entry key
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($dn)
 	{
@@ -721,7 +794,7 @@ class Ldap
 	 *
 	 *	@param	string		$dn			DN entry key
 	 *	@param	array		$info		Attributes array
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function dump($dn, $info)
 	{
@@ -738,9 +811,7 @@ class Ldap
 		if ($fp) {
 			fputs($fp, $content);
 			fclose($fp);
-			if (!empty($conf->global->MAIN_UMASK)) {
-				@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
-			}
+			dolChmod($outputfile);
 			return 1;
 		} else {
 			return -1;
@@ -800,7 +871,7 @@ class Ldap
 	 *	@param	string		$dn			DN entry key
 	 *	@param	array		$info		Attributes array
 	 *	@param	User		$user		Objet user that create
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function addAttribute($dn, $info, $user)
 	{
@@ -846,7 +917,7 @@ class Ldap
 	 *	@param	string		$dn			DN entry key
 	 *	@param	array		$info		Attributes array
 	 *	@param	User		$user		Objet user that create
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function updateAttribute($dn, $info, $user)
 	{
@@ -892,7 +963,7 @@ class Ldap
 	 *	@param	string		$dn			DN entry key
 	 *	@param	array		$info		Attributes array
 	 *	@param	User		$user		Objet user that create
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function deleteAttribute($dn, $info, $user)
 	{
@@ -936,7 +1007,7 @@ class Ldap
 	 *
 	 *	@param	string	$dn			DN entry key
 	 *	@param	string	$filter		Filter
-	 *	@return	int|array			<0 or false if KO, array if OK
+	 *	@return	int|array			Return integer <0 or false if KO, array if OK
 	 */
 	public function getAttribute($dn, $filter)
 	{
@@ -977,7 +1048,7 @@ class Ldap
 	 *
 	 * 	@param	string	$filterrecord		Record
 	 * 	@param	string	$attribute			Attributes
-	 * 	@return void
+	 * 	@return array|boolean
 	 */
 	public function getAttributeValues($filterrecord, $attribute)
 	{
@@ -1020,7 +1091,7 @@ class Ldap
 	 *	@param	array	$attributeArray 	Array of fields required. Note this array must also contains field $useridentifier (Ex: sn,userPassword)
 	 *	@param	int		$activefilter		'1' or 'user'=use field this->filter as filter instead of parameter $search, 'group'=use field this->filtergroup as filter, 'member'=use field this->filtermember as filter
 	 *	@param	array	$attributeAsArray 	Array of fields wanted as an array not a string
-	 *	@return	array						Array of [id_record][ldap_field]=value
+	 *	@return	array|int					Array of [id_record][ldap_field]=value
 	 */
 	public function getRecords($search, $userDn, $useridentifier, $attributeArray, $activefilter = 0, $attributeAsArray = array())
 	{
@@ -1038,7 +1109,7 @@ class Ldap
 		if (!empty($activefilter)) {	// Use a predefined trusted filter (defined into setup by admin).
 			if (((string) $activefilter == '1' || (string) $activefilter == 'user') && $this->filter) {
 				$filter = '('.$this->filter.')';
-			} elseif (((string) $activefilter == 'group') && $this->filtergroup ) {
+			} elseif (((string) $activefilter == 'group') && $this->filtergroup) {
 				$filter = '('.$this->filtergroup.')';
 			} elseif (((string) $activefilter == 'member') && $this->filter) {
 				$filter = '('.$this->filtermember.')';
@@ -1286,7 +1357,6 @@ class Ldap
 			$this->firstname  = $this->convToOutputCharset($result[0][$this->attr_firstname][0], $this->ldapcharset);
 			$this->login      = $this->convToOutputCharset($result[0][$this->attr_login][0], $this->ldapcharset);
 			$this->phone      = $this->convToOutputCharset($result[0][$this->attr_phone][0], $this->ldapcharset);
-			$this->skype      = $this->convToOutputCharset($result[0][$this->attr_skype][0], $this->ldapcharset);
 			$this->fax        = $this->convToOutputCharset($result[0][$this->attr_fax][0], $this->ldapcharset);
 			$this->mail       = $this->convToOutputCharset($result[0][$this->attr_mail][0], $this->ldapcharset);
 			$this->mobile     = $this->convToOutputCharset($result[0][$this->attr_mobile][0], $this->ldapcharset);
@@ -1337,7 +1407,7 @@ class Ldap
 	 * 	UserAccountControl Flgs to more human understandable form...
 	 *
 	 *	@param	string		$uacf		UACF
-	 *	@return	void
+	 *	@return	array
 	 */
 	public function parseUACF($uacf)
 	{
@@ -1377,7 +1447,7 @@ class Ldap
 		}
 
 		//Return human friendly flags
-		return($retval);
+		return $retval;
 	}
 
 	/**
@@ -1389,17 +1459,17 @@ class Ldap
 	public function parseSAT($samtype)
 	{
 		$stypes = array(
-			805306368    =>    "NORMAL_ACCOUNT",
-			805306369    =>    "WORKSTATION_TRUST",
-			805306370    =>    "INTERDOMAIN_TRUST",
-			268435456    =>    "SECURITY_GLOBAL_GROUP",
-			268435457    =>    "DISTRIBUTION_GROUP",
-			536870912    =>    "SECURITY_LOCAL_GROUP",
-			536870913    =>    "DISTRIBUTION_LOCAL_GROUP"
+			805306368 => "NORMAL_ACCOUNT",
+			805306369 => "WORKSTATION_TRUST",
+			805306370 => "INTERDOMAIN_TRUST",
+			268435456 => "SECURITY_GLOBAL_GROUP",
+			268435457 => "DISTRIBUTION_GROUP",
+			536870912 => "SECURITY_LOCAL_GROUP",
+			536870913 => "DISTRIBUTION_LOCAL_GROUP"
 		);
 
 		$retval = "";
-		while (list($sat, $val) = each($stypes)) {
+		foreach ($stypes as $sat => $val) {
 			if ($samtype == $sat) {
 				$retval = $val;
 				break;
@@ -1409,7 +1479,7 @@ class Ldap
 			$retval = "UNKNOWN_TYPE_".$samtype;
 		}
 
-		return($retval);
+		return $retval;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1441,10 +1511,10 @@ class Ldap
 	{
 		global $conf;
 		if ($pagecodefrom == 'ISO-8859-1' && $conf->file->character_set_client == 'UTF-8') {
-			$str = utf8_encode($str);
+			$str = mb_convert_encoding($str, 'UTF-8', 'ISO-8859-1');
 		}
 		if ($pagecodefrom == 'UTF-8' && $conf->file->character_set_client == 'ISO-8859-1') {
-			$str = utf8_decode($str);
+			$str = mb_convert_encoding($str, 'ISO-8859-1');
 		}
 		return $str;
 	}
@@ -1460,10 +1530,10 @@ class Ldap
 	{
 		global $conf;
 		if ($pagecodeto == 'ISO-8859-1' && $conf->file->character_set_client == 'UTF-8') {
-			$str = utf8_decode($str);
+			$str = mb_convert_encoding($str, 'ISO-8859-1');
 		}
 		if ($pagecodeto == 'UTF-8' && $conf->file->character_set_client == 'ISO-8859-1') {
-			$str = utf8_encode($str);
+			$str = mb_convert_encoding($str, 'UTF-8', 'ISO-8859-1');
 		}
 		return $str;
 	}
@@ -1483,7 +1553,7 @@ class Ldap
 			$keygroup = 'LDAP_KEY_GROUPS';
 		}
 
-		$search = '('.$conf->global->$keygroup.'=*)';
+		$search = '(' . getDolGlobalString($keygroup).'=*)';
 		$result = $this->search($this->groups, $search);
 		if ($result) {
 			$c = $result['count'];

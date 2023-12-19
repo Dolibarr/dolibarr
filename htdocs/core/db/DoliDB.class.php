@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/db/Database.interface.php';
  */
 abstract class DoliDB implements Database
 {
-	/** @var bool|resource|SQLite3|PgSql\connection Database handler */
+	/** @var bool|resource|mysqli|SQLite3|PgSql\Connection Database handler */
 	public $db;
 	/** @var string Database type */
 	public $type;
@@ -37,8 +37,10 @@ abstract class DoliDB implements Database
 	public $forcecharset = 'utf8';
 	/** @var string Collate used to force collate when creating database */
 	public $forcecollate = 'utf8_unicode_ci';
+
 	/** @var resource Resultset of last query */
 	private $_results;
+
 	/** @var bool true if connected, else false */
 	public $connected;
 	/** @var bool true if database selected, else false */
@@ -73,7 +75,8 @@ abstract class DoliDB implements Database
 
 
 	/**
-	 *	Return the DB prefix
+	 *	Return the DB prefix found into prefix_db (if it was set manually by doing $dbhandler->prefix_db=...).
+	 *  Otherwise return MAIN_DB_PREFIX (common use).
 	 *
 	 *	@return string		The DB prefix
 	 */
@@ -113,10 +116,10 @@ abstract class DoliDB implements Database
 	 *
 	 *	@param	string	$subject        string tested
 	 *	@param	string  $pattern        SQL pattern to match
-	 *	@param	string	$sqlstring      whether or not the string being tested is an SQL expression
+	 *	@param	int		$sqlstring      whether or not the string being tested is an SQL expression
 	 *	@return	string          		SQL string
 	 */
-	public function regexpsql($subject, $pattern, $sqlstring = false)
+	public function regexpsql($subject, $pattern, $sqlstring = 0)
 	{
 		if ($sqlstring) {
 			return "(". $subject ." REGEXP '" . $pattern . "')";
@@ -155,7 +158,7 @@ abstract class DoliDB implements Database
 	 *
 	 * @param   string 	$stringtosanitize 	String to escape
 	 * @param   int		$allowsimplequote 	1=Allow simple quotes in string. When string is used as a list of SQL string ('aa', 'bb', ...)
-	 * @param	string	$allowsequals		1=Allow equals sign
+	 * @param	int		$allowsequals		1=Allow equals sign
 	 * @return  string                      String escaped
 	 */
 	public function sanitize($stringtosanitize, $allowsimplequote = 0, $allowsequals = 0)
@@ -280,7 +283,7 @@ abstract class DoliDB implements Database
 	 * @param	string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC'. Note: If the quantity fo sortorder values is lower than sortfield, we used the last value for missing values.
 	 * @return	string						String to provide syntax of a sort sql string
 	 */
-	public function order($sortfield = null, $sortorder = null)
+	public function order($sortfield = '', $sortorder = '')
 	{
 		if (!empty($sortfield)) {
 			$oldsortorder = '';

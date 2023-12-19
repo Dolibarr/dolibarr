@@ -54,7 +54,7 @@ $year = GETPOST("year", 'int');
 $search_sc_type = GETPOST('search_sc_type', 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -114,7 +114,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if ($sortfield) {
 	$param .= '&sortfield='.urlencode($sortfield);
@@ -177,12 +177,12 @@ if (preg_match('/^cs\./', $sortfield)
 	|| preg_match('/^pct\./', $sortfield)
 	|| preg_match('/^u\./', $sortfield)
 	|| preg_match('/^ba\./', $sortfield)) {
-		$sql .= $db->order($sortfield, $sortorder);
+	$sql .= $db->order($sortfield, $sortorder);
 }
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
@@ -288,7 +288,7 @@ while ($i < min($num, $limit)) {
 	print $socialcontrib->getNomUrl(1, '');
 	print '</td>';
 	// Type
-	print '<td title="'.dol_escape_htmltag($obj->label_sc).'" class="tdoverflowmax300">'.$obj->label_sc.'</td>';
+	print '<td title="'.dol_escape_htmltag($obj->type_label).'" class="tdoverflowmax300">'.$obj->type_label.'</td>';
 	// Date
 	$date = $obj->periode;
 	if (empty($date)) {

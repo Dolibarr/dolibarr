@@ -35,7 +35,7 @@ if (isModEnabled('facture')) {
 	$langs->load("bills");
 }
 
-$id = GETPOST('id') ?GETPOST('id', 'int') : GETPOST('socid', 'int');
+$id = GETPOST('id') ? GETPOST('id', 'int') : GETPOST('socid', 'int');
 
 // Security check
 if ($user->socid) {
@@ -52,7 +52,7 @@ if ($id > 0) {
 $hookmanager->initHooks(array('recapcomptacard', 'globalcard'));
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -98,7 +98,7 @@ $form = new Form($db);
 $userstatic = new User($db);
 
 $title = $langs->trans("ThirdParty").' - '.$langs->trans("Summary");
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->name.' - '.$langs->trans("Summary");
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
@@ -117,7 +117,7 @@ if ($id > 0) {
 	dol_banner_tab($object, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom', '', '', 0, '', '', 1);
 	print dol_get_fiche_end();
 
-	if (isModEnabled('facture') && $user->rights->facture->lire) {
+	if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
 		// Invoice list
 		print load_fiche_titre($langs->trans("CustomerPreview"));
 

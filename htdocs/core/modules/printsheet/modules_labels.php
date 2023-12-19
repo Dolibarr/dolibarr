@@ -51,8 +51,6 @@ class ModelePDFLabels
 	public function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$type = 'members_labels';
 		$list = array();
 
@@ -75,7 +73,7 @@ class ModelePDFLabels
  *	@param	string		$outputdir			Output directory
  *  @param  string      $template           pdf generenate document class to use default 'standardlabel'
  *  @param  string      $filename           Short file name of PDF output file
- *	@return int        						<0 if KO, >0 if OK
+ *	@return int        						Return integer <0 if KO, >0 if OK
  */
 function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outputdir = '', $template = 'standardlabel', $filename = 'tmp_address_sheet.pdf')
 {
@@ -96,7 +94,7 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 
 	// Positionne le modele sur le nom du modele a utiliser
 	if (!dol_strlen($modele)) {
-		if (!empty($conf->global->ADHERENT_ETIQUETTE_TYPE)) {
+		if (getDolGlobalString('ADHERENT_ETIQUETTE_TYPE')) {
 			$code = $conf->global->ADHERENT_ETIQUETTE_TYPE;
 		} else {
 			$code = $modele;
@@ -159,7 +157,7 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 			clearstatcache();
 
 			$attachment = true;
-			if (!empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) {
+			if (getDolGlobalString('MAIN_DISABLE_FORCE_SAVEAS')) {
 				$attachment = false;
 			}
 			$type = dol_mimetype($filename);

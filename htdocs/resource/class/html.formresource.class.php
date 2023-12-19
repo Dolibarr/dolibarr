@@ -77,7 +77,7 @@ class FormResource
 	 *  @param	int		$limit			Limit number of answers
 	 *  @param	string	$morecss		More css
 	 * 	@param	bool	$multiple       add [] in the name of element and add 'multiple' attribut
-	 * 	@return	string					HTML string with
+	 * 	@return	string|array			HTML string with
 	 */
 	public function select_resource_list($selected = '', $htmlname = 'fk_resource', $filter = '', $showempty = 0, $showtype = 0, $forcecombo = 0, $event = array(), $filterkey = '', $outputmode = 0, $limit = 20, $morecss = '', $multiple = false)
 	{
@@ -140,7 +140,7 @@ class FormResource
 			}
 			$out .= '</select>'."\n";
 
-			if (!empty($conf->use_javascript_ajax) && !empty($conf->global->RESOURCE_USE_SEARCH_TO_SELECT) && !$forcecombo) {
+			if (!empty($conf->use_javascript_ajax) && getDolGlobalString('RESOURCE_USE_SEARCH_TO_SELECT') && !$forcecombo) {
 				//$minLength = (is_numeric($conf->global->RESOURCE_USE_SEARCH_TO_SELECT)?$conf->global->RESOURCE_USE_SEARCH_TO_SELECT:2);
 				$out .= ajax_combobox($htmlname, $event, $conf->global->RESOURCE_USE_SEARCH_TO_SELECT);
 			} else {
@@ -212,18 +212,18 @@ class FormResource
 					print '<option value="'.$id.'"';
 				}
 				// Si selected est text, on compare avec code, sinon avec id
-				if (preg_match('/[a-z]/i', $selected) && $selected == $arraytypes['code']) {
+				if (!empty($selected) && preg_match('/[a-z]/i', $selected) && $selected == $arraytypes['code']) {
 					print ' selected';
 				} elseif ($selected == $id) {
 					print ' selected';
 				}
 				print '>';
 				if ($format == 0) {
-					$value = ($maxlength ?dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
+					$value = ($maxlength ? dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
 				} elseif ($format == 1) {
 					$value = $arraytypes['code'];
 				} elseif ($format == 2) {
-					$value = ($maxlength ?dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
+					$value = ($maxlength ? dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
 				} elseif ($format == 3) {
 					$value = $arraytypes['code'];
 				}

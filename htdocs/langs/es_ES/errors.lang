@@ -191,6 +191,7 @@ ErrorGlobalVariableUpdater4=El cliente SOAP ha fallado con el error '%s'
 ErrorGlobalVariableUpdater5=Sin variable global seleccionada
 ErrorFieldMustBeANumeric=El campo <b>%s</b> debe contener un valor numérico
 ErrorMandatoryParametersNotProvided=Los parámetro(s) obligatorio(s) no están todavía definidos
+ErrorOppStatusRequiredIfUsage=Establece que desea utilizar este proyecto para seguir una oportunidad, por lo que también debe completar el estado inicial de la oportunidad.
 ErrorOppStatusRequiredIfAmount=Ha indicado un importe estimado para esta oportunidad/lead. Debe indicar también su estado
 ErrorFailedToLoadModuleDescriptorForXXX=Error al cargar el descriptor de clase del módulo %s
 ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Definición incorrecta de la matriz de menú en el descriptor del módulo (valor incorrecto para la clave fk_menu)
@@ -262,6 +263,7 @@ ErrorParameterMustBeEnabledToAllwoThisFeature=Error, el parámetro <b> %s </b> d
 ErrorLoginDateValidity=Error, este inicio de sesión está fuera del rango de fechas de validez
 ErrorValueLength=Longitud del campo '<b>%s</b>' debe ser superior a '<b>%s</b>'
 ErrorReservedKeyword=La palabra '<b>%s</b>' es una palabra reservada
+ErrorFilenameReserved=El nombre de archivo <b> %s </b> no se puede usar porque es un comando reservado y protegido.
 ErrorNotAvailableWithThisDistribution=No disponible con esta distribución
 ErrorPublicInterfaceNotEnabled=La interfaz pública no estaba habilitada
 ErrorLanguageRequiredIfPageIsTranslationOfAnother=El idioma de la nueva página debe definirse si se establece como una traducción de otra página.
@@ -303,7 +305,22 @@ ErrorValueForTooLow=El valor para <b> %s </b> es demasiado bajo
 ErrorValueCantBeNull=El valor para <b> %s </b> no puede ser nulo
 ErrorDateOfMovementLowerThanDateOfFileTransmission=La fecha de la transacción bancaria no puede ser anterior a la fecha de transmisión del archivo
 ErrorTooMuchFileInForm=Demasiados archivos en el formulario, el número máximo es %s archivo(s)
-ErrorSessionInvalidatedAfterPasswordChange=La sesión ha sido invalidada tras un cambio de contraseña, estado o fechas de validez. Vuelva a iniciar sesión.
+ErrorSessionInvalidatedAfterPasswordChange=La sesión ha sido invalidada tras un cambio de contraseña, correo electrónico, estado o fechas de validez. Vuelva a iniciar sesión.
+ErrorExistingPermission = El permiso <b> %s </b> para el objeto <b> %s </b> ya existe
+ErrorFieldExist=El valor para <b> %s </b> ya existe
+ErrorEqualModule=Módulo inválido en <b> %s </b>
+ErrorFieldValue=El valor para <b> %s </b> es incorrecto
+ErrorCoherenceMenu= <b> %s </b> es necesario cuando <b> %s </b> es 'izquierda'
+ErrorUploadFileDragDrop=Hubo un error mientras se subían los archivos
+ErrorUploadFileDragDropPermissionDenied=Hubo un error mientras se subían los archivos: Permiso denegado
+ErrorFixThisHere= <a href="%s"> Arregla esto aquí </a>
+ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Error: la URL de su instancia actual (%s) no coincide con la URL definida en su configuración de inicio de sesión de OAuth2 (%s). No se permite iniciar sesión en OAuth2 en dicha configuración.
+ErrorMenuExistValue=Ya existe un menú con este título o URL
+ErrorSVGFilesNotAllowedAsLinksWithout=Los archivos SVG no están permitidos como enlaces externos sin la opción %s
+ErrorTypeMenu=Imposible agregar otro menú para el mismo módulo en la barra de navegación, aún no se maneja
+ErrorTableExist=La tabla <b> %s </b> ya existe
+ErrorDictionaryNotFound=Diccionario <b> %s </b> no encontrado
+ErrorFailedToCreateSymLinkToMedias=Error al crear los enlaces simbólicos %s para apuntar a %s
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=El parámetro PHP upload_max_filesize (%s) es más alto que el parámetro PHP post_max_size (%s). Esta no es una configuración consistente.
@@ -342,6 +359,17 @@ WarningPaypalPaymentNotCompatibleWithStrict=El valor 'Estricto' hace que las fun
 WarningThemeForcedTo=Advertencia, el tema ha sido forzado a <b> %s </b> por la constante oculta MAIN_FORCETHEME
 WarningPagesWillBeDeleted=Advertencia, esto también eliminará todas las páginas/contenedores existentes del sitio web. Debe exportar su sitio web antes, para tener una copia de seguridad para volver a importarlo más tarde.
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=La validación automática está deshabilitada cuando la opción para disminuir el stock está configurada en "Validación de facturas".
+WarningModuleNeedRefrech = El módulo <b> %s </b> ha sido deshabilitado. No olvides habilitarlo
+WarningPermissionAlreadyExist=Permisos existentes para este objeto
+WarningGoOnAccountancySetupToAddAccounts=Si esta lista está vacía, vaya al menú %s - %s - %s para cargar o crear cuentas para su plan de cuentas.
+WarningCorrectedInvoiceNotFound=Factura corregida no encontrada
+
+SwissQrOnlyVIR = La factura SwissQR solo se puede agregar en facturas configuradas para pagarse con pagos de transferencia de crédito.
+SwissQrCreditorAddressInvalid = La dirección del acreedor no es válida (¿están configurados el código postal y la ciudad? (%s)
+SwissQrCreditorInformationInvalid = La información del acreedor no es válida para IBAN (%s): %s
+SwissQrIbanNotImplementedYet = QR-IBAN aún no implementado
+SwissQrPaymentInformationInvalid = La información de pago no era válida para el total %s : %s
+SwissQrDebitorAddressInvalid = La información del deudor no era válida (%s)
 
 # Validate
 RequireValidValue = Valor no válido
@@ -363,3 +391,4 @@ BadSetupOfField = Error de configuración incorrecta del campo
 BadSetupOfFieldClassNotFoundForValidation = Error de configuración incorrecta del campo: clase no encontrada para validación
 BadSetupOfFieldFileNotFound = Error de configuración incorrecta del campo: no se encontró el archivo para su inclusión
 BadSetupOfFieldFetchNotCallable = Error de configuración incorrecta del campo: la recuperación no se puede llamar en la clase
+ErrorTooManyAttempts= Demasiados intentos. Por favor pruebe mas tarde

@@ -47,7 +47,7 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 	public function __construct($db)
 	{
 		$this->db = $db;
-		$this->enabled = isModEnabled('mymodule');
+		//$this->enabled = ...
 	}
 
 
@@ -96,7 +96,7 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 	 *  This is the main function that returns the array of emails
 	 *
 	 *  @param  int     $mailing_id     Id of emailing
-	 *  @return int                     <0 if error, number of emails added if ok
+	 *  @return int                     Return integer <0 if error, number of emails added if ok
 	 */
 	public function add_to_target($mailing_id)
 	{
@@ -183,13 +183,14 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 	 *  For example if this selector is used to extract 500 different
 	 *  emails from a text file, this function must return 500.
 	 *
-	 *  @param  string  $filter     Filter
-	 *  @param  string	$option     Options
-	 *  @return int                 Nb of recipients or -1 if KO
+	 *  @param		string			$sql 		Not use here
+	 *  @return 	int                 		Nb of recipients or -1 if KO
 	 */
-	public function getNbOfRecipients($filter = 1, $option = '')
+	public function getNbOfRecipients($sql = '')
 	{
-		$a = parent::getNbOfRecipients("select count(distinct(email)) as nb from ".MAIN_DB_PREFIX."myobject as p where email IS NOT NULL AND email != ''");
+		$sql = "select count(distinct(email)) as nb from ".MAIN_DB_PREFIX."myobject as p where email IS NOT NULL AND email != ''";
+
+		$a = parent::getNbOfRecipients($sql);
 
 		if ($a < 0) {
 			return -1;

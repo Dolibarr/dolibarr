@@ -82,10 +82,10 @@ YourPartnershipRefusedTopic=Subscrición rexeitada
 YourPartnershipAcceptedTopic=Subscrición aceptada
 YourPartnershipCanceledTopic=Subscrición cancelada
 
-YourPartnershipWillSoonBeCanceledContent=Informámoslle que a súa asociación pronto se cancelará (non se atopou  a ligazón de atraso)
-YourPartnershipRefusedContent=Informámoslle que a súa solicitude de subscrición foi rexeitada. 
+YourPartnershipWillSoonBeCanceledContent=Queremolo informar de que a súa subscrición se cancelará en breve (non obtivemos a renovación ou falta un requisito previo para a nosa asociación). Póñase en contacto connosco por correo electrónico se se trata dun erro.
+YourPartnershipRefusedContent=Queremos informarte de que a túa solicitude de subscrición foi rexeitada. Non se cumpriron os requisitos previos. Póñase en contacto connosco se precisa máis información.
 YourPartnershipAcceptedContent=Informámoslle que a súa solicitude de subscrición foi aceptada. 
-YourPartnershipCanceledContent=Informámoslle que a súa subscrición foi cancelada. 
+YourPartnershipCanceledContent=Queremos informarvos de que a nosa asociación foi cancelada. Póñase en contacto connosco se precisa máis información.
 
 CountLastUrlCheckError=Número de erros para as últimas URL revisadas
 LastCheckBacklink=Data da última URL revisada
@@ -93,4 +93,7 @@ ReasonDeclineOrCancel=Razón para declinar
 
 NewPartnershipRequest=Nova solicitude de colaboración
 NewPartnershipRequestDesc=Este formulario permíte solicitar formar parte dun dos nosos programas de colaboración. Se precisa axuda para cubrir este formulario, póñase en contacto por correo electrónico <b> %s </b> .
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Esta páxina debe conter polo menos unha ligazón a un dos seguintes dominios: %s
+
+IPOfApplicant=IP do solicitante
 

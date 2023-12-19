@@ -22,15 +22,34 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-if (!defined("NOCSRFCHECK")) {
-	define("NOCSRFCHECK", '1');
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1'); // Do not check anti CSRF attack test
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1'); // Do not check anti POST attack test
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1'); // Do not load ajax.lib.php library
+}
+if (!defined("NOLOGIN")) {
+	define("NOLOGIN", '1'); // If this page is public (can be called outside logged session)
+}
+if (!defined("NOSESSION")) {
+	define("NOSESSION", '1');
 }
 
-require '../master.inc.php';
+require '../main.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php'; // Include SOAP
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT."/commande/class/commande.class.php";
+
 
 
 dol_syslog("Call Dolibarr webservices interfaces");
@@ -38,7 +57,7 @@ dol_syslog("Call Dolibarr webservices interfaces");
 $langs->load("main");
 
 // Enable and test if module web services is enabled
-if (empty($conf->global->MAIN_MODULE_WEBSERVICES)) {
+if (!getDolGlobalString('MAIN_MODULE_WEBSERVICES')) {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
 	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
@@ -195,9 +214,6 @@ $order_fields = array(
 	'date_creation' => array('name'=>'date_creation', 'type'=>'xsd:dateTime'),
 	'date_validation' => array('name'=>'date_validation', 'type'=>'xsd:dateTime'),
 	'date_modification' => array('name'=>'date_modification', 'type'=>'xsd:dateTime'),
-	'remise' => array('name'=>'remise', 'type'=>'xsd:string'),
-	'remise_percent' => array('name'=>'remise_percent', 'type'=>'xsd:string'),
-	'remise_absolue' => array('name'=>'remise_absolue', 'type'=>'xsd:string'),
 	'source' => array('name'=>'source', 'type'=>'xsd:string'),
 	'note_private' => array('name'=>'note_private', 'type'=>'xsd:string'),
 	'note_public' => array('name'=>'note_public', 'type'=>'xsd:string'),
@@ -358,7 +374,7 @@ $server->register(
  * @param	string		$ref_ext			Ref_ext
  * @return	array							Array result
  */
-function getOrder($authentication, $id = '', $ref = '', $ref_ext = '')
+function getOrder($authentication, $id = 0, $ref = '', $ref_ext = '')
 {
 	global $db, $conf;
 
@@ -370,7 +386,8 @@ function getOrder($authentication, $id = '', $ref = '', $ref_ext = '')
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$socid = 0;
 
@@ -383,20 +400,22 @@ function getOrder($authentication, $id = '', $ref = '', $ref_ext = '')
 	// Check parameters
 	if (!$error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext))) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
 	}
 
 	if (!$error) {
 		$fuser->getrights();
 
-		if ($fuser->rights->commande->lire) {
+		if ($fuser->hasRight('commande', 'lire')) {
 			$order = new Commande($db);
 			$result = $order->fetch($id, $ref, $ref_ext);
 			if ($result > 0) {
 				// Security for external user
 				if ($socid && $socid != $order->socid) {
 					$error++;
-					$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
+					$errorcode = 'PERMISSION_DENIED';
+					$errorlabel = 'User does not have permission for this request';
 				}
 
 				if (!$error) {
@@ -447,14 +466,10 @@ function getOrder($authentication, $id = '', $ref = '', $ref_ext = '')
 					'total' => $order->total_ttc,
 					'project_id' => $order->fk_project,
 
-					'date' => $order->date ?dol_print_date($order->date, 'dayrfc') : '',
-					'date_creation' => $order->date_creation ?dol_print_date($order->date_creation, 'dayhourrfc') : '',
-					'date_validation' => $order->date_validation ?dol_print_date($order->date_creation, 'dayhourrfc') : '',
-					'date_modification' => $order->date_modification ?dol_print_date($order->date_modification, 'dayhourrfc') : '',
-
-					'remise' => $order->remise,
-					'remise_percent' => $order->remise_percent,
-					'remise_absolue' => $order->remise_absolue,
+					'date' => $order->date ? dol_print_date($order->date, 'dayrfc') : '',
+					'date_creation' => $order->date_creation ? dol_print_date($order->date_creation, 'dayhourrfc') : '',
+					'date_validation' => $order->date_validation ? dol_print_date($order->date_creation, 'dayhourrfc') : '',
+					'date_modification' => $order->date_modification ? dol_print_date($order->date_modification, 'dayhourrfc') : '',
 
 					'source' => $order->source,
 					'billed' => $order->billed,
@@ -514,7 +529,8 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
@@ -525,7 +541,8 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
 	// Check parameters
 	if (!$error && empty($idthirdparty)) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = 'Parameter id is not provided';
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = 'Parameter id is not provided';
 	}
 
 	if (!$error) {
@@ -601,11 +618,7 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
 					'total' => $order->total_ttc,
 					'project_id' => $order->fk_project,
 
-					'date' => $order->date_commande ?dol_print_date($order->date_commande, 'dayrfc') : '',
-
-					'remise' => $order->remise,
-					'remise_percent' => $order->remise_percent,
-					'remise_absolue' => $order->remise_absolue,
+					'date' => $order->date_commande ? dol_print_date($order->date_commande, 'dayrfc') : '',
 
 					'source' => $order->source,
 					'billed' => $order->billed,
@@ -637,7 +650,8 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
 			);
 		} else {
 			$error++;
-			$errorcode = $db->lasterrno(); $errorlabel = $db->lasterror();
+			$errorcode = $db->lasterrno();
+			$errorlabel = $db->lasterror();
 		}
 	}
 
@@ -654,7 +668,7 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
  *
  * @param	array		$authentication		Array of authentication information
  * @param	array		$order				Order info
- * @return	int								Id of new order
+ * @return	array							array of new order
  */
 function createOrder($authentication, $order)
 {
@@ -741,9 +755,9 @@ function createOrder($authentication, $order)
 			$extrafields = new ExtraFields($db);
 			$extrafields->fetch_name_optionals_label($elementtype, true);
 			if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
-				foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
-					$key = 'options_'.$key;
-					$newline->array_options[$key] = $line[$key];
+				foreach ($extrafields->attributes[$elementtype]['label'] as $tmpkey => $tmplabel) {
+					$tmpkey = 'options_'.$tmpkey;
+					$newline->array_options[$tmpkey] = $line[$tmpkey];
 				}
 			}
 
@@ -798,7 +812,7 @@ function createOrder($authentication, $order)
  * @param	int			$id_warehouse		Id of warehouse to use for stock decrease
  * @return	array							Array result
  */
-function validOrder($authentication, $id = '', $id_warehouse = 0)
+function validOrder($authentication, $id = 0, $id_warehouse = 0)
 {
 	global $db, $conf, $langs;
 
@@ -817,7 +831,7 @@ function validOrder($authentication, $id = '', $id_warehouse = 0)
 	if (!$error) {
 		$fuser->getrights();
 
-		if ($fuser->rights->commande->lire) {
+		if ($fuser->hasRight('commande', 'lire')) {
 			$order = new Commande($db);
 			$result = $order->fetch($id);
 
@@ -846,7 +860,7 @@ function validOrder($authentication, $id = '', $id_warehouse = 0)
 			$db->rollback();
 			$error++;
 			$errorcode = 'KO';
-			$errorlabel = $order->error;
+			$errorlabel = 'Bad permission';
 		}
 	}
 
@@ -879,12 +893,15 @@ function updateOrder($authentication, $order)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (empty($order['id']) && empty($order['ref']) && empty($order['ref_ext'])) {
-		$error++; $errorcode = 'KO'; $errorlabel = "Order id or ref or ref_ext is mandatory.";
+		$error++;
+		$errorcode = 'KO';
+		$errorlabel = "Order id or ref or ref_ext is mandatory.";
 	}
 
 	if (!$error) {

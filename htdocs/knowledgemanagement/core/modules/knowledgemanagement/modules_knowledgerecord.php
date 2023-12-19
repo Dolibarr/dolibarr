@@ -37,7 +37,6 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // requir
  */
 abstract class ModelePDFKnowledgeRecord extends CommonDocGenerator
 {
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation modules
@@ -86,7 +85,7 @@ abstract class ModeleNumRefKnowledgeRecord
 	/**
 	 *	Returns the default description of the numbering template
 	 *
-	 *	@return     string      Texte descripif
+	 *	@return     string      Descriptive text
 	 */
 	public function info()
 	{
@@ -138,21 +137,6 @@ abstract class ModeleNumRefKnowledgeRecord
 	 */
 	public function getVersion()
 	{
-		global $langs;
-		$langs->load("admin");
-
-		if ($this->version == 'development') {
-			return $langs->trans("VersionDevelopment");
-		}
-		if ($this->version == 'experimental') {
-			return $langs->trans("VersionExperimental");
-		}
-		if ($this->version == 'dolibarr') {
-			return DOL_VERSION;
-		}
-		if ($this->version) {
-			return $this->version;
-		}
-		return $langs->trans("NotAvailable");
+		return DOL_VERSION;
 	}
 }

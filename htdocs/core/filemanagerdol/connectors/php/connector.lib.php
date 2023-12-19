@@ -127,6 +127,7 @@ function SendErrorNode($number, $text)
 	} else {
 		echo '<Error number="'.$number.'" />';
 	}
+	return '';
 }
 
 
@@ -422,7 +423,7 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 			$CKEcallback,
 			$sFileUrl,
 			($sErrorNumber != 0 ? 'Error '.$sErrorNumber.' upload failed.' : 'Upload Successful')
-			);
+		);
 	}
 
 	exit;
@@ -527,7 +528,7 @@ function ServerMapFolder($resourceType, $folderPath, $sCommand)
 	// Ensure that the directory exists.
 	$sErrorMsg = CreateServerFolder($sResourceTypePath);
 	if ($sErrorMsg != '') {
-		SendError(1, "Error creating folder \"{$sResourceTypePath}\" ({$sErrorMsg})");
+		SendError(1, "Error creating folder \"$sResourceTypePath\" ($sErrorMsg)");
 	}
 
 	// Return the resource type directory combined with the required path.
@@ -925,7 +926,7 @@ function ConvertToXmlAttribute($value)
 	}
 
 	if (strtoupper(substr($os, 0, 3)) === 'WIN' || FindBadUtf8($value)) {
-		return (utf8_encode(htmlspecialchars($value)));
+		return (mb_convert_encoding(htmlspecialchars($value), 'UTF-8', 'ISO-8859-1'));
 	} else {
 		return (htmlspecialchars($value));
 	}

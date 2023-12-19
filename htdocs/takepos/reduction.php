@@ -46,7 +46,7 @@ $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is
 
 $invoiceid = GETPOST('invoiceid', 'int');
 
-if (empty($user->rights->takepos->run)) {
+if (!$user->hasRight('takepos', 'run')) {
 	accessforbidden();
 }
 
@@ -80,7 +80,7 @@ top_htmlhead($head, '', 0, 0, $arrayofjs, $arrayofcss);
 
 $langs->loadLangs(array('main', 'bills', 'cashdesk'));
 
-if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || !empty($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON)) {
+if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || getDolGlobalString('TAKEPOS_NUMPAD_USE_PAYMENT_ICON')) {
 	$htmlReductionPercent = '<span class="fa fa-2x fa-percent"></span>';
 	$htmlReductionAmount = '<span class="fa fa-2x fa-money"></span><br>'.$langs->trans('Amount');
 } else {
@@ -184,7 +184,7 @@ if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || !empty($conf->glob
 		}
 
 		if (reductionType === 'percent') {
-			var invoiceid = <?php echo ($invoiceid > 0 ? $invoiceid : 0); ?>;
+			var invoiceid = <?php echo($invoiceid > 0 ? $invoiceid : 0); ?>;
 			parent.$("#poslines").load("invoice.php?action=update_reduction_global&token=<?php echo newToken(); ?>&place=<?php echo $place; ?>&number="+reductionNumber+"&invoiceid="+invoiceid, function() {
 				Reset();
 				parent.$.colorbox.close();
@@ -212,19 +212,19 @@ if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || !empty($conf->glob
 <div style="position:absolute; top:33%; left:5%; height:52%; width:92%;">
 <?php
 
-print '<button type="button" class="calcbutton" onclick="AddReduction(7);">7</button>';
-print '<button type="button" class="calcbutton" onclick="AddReduction(8);">8</button>';
-print '<button type="button" class="calcbutton" onclick="AddReduction(9);">9</button>';
+print '<button type="button" class="calcbutton" onclick="AddReduction(\'7\');">7</button>';
+print '<button type="button" class="calcbutton" onclick="AddReduction(\'8\');">8</button>';
+print '<button type="button" class="calcbutton" onclick="AddReduction(\'9\');">9</button>';
 print '<button type="button" class="calcbutton2" id="reduction_type_percent" onclick="Edit(\'p\');">'.$htmlReductionPercent.'</button>';
-print '<button type="button" class="calcbutton" onclick="AddReduction(4);">4</button>';
-print '<button type="button" class="calcbutton" onclick="AddReduction(5);">5</button>';
-print '<button type="button" class="calcbutton" onclick="AddReduction(6);">6</button>';
+print '<button type="button" class="calcbutton" onclick="AddReduction(\'4\');">4</button>';
+print '<button type="button" class="calcbutton" onclick="AddReduction(\'5\');">5</button>';
+print '<button type="button" class="calcbutton" onclick="AddReduction(\'6\');">6</button>';
 print '<button type="button" class="calcbutton2" id="reduction_type_amount" onclick="Edit(\'a\');">'.$htmlReductionAmount.'</button>';
-print '<button type="button" class="calcbutton" onclick="AddReduction(1);">1</button>';
-print '<button type="button" class="calcbutton" onclick="AddReduction(2);">2</button>';
-print '<button type="button" class="calcbutton" onclick="AddReduction(3);">3</button>';
+print '<button type="button" class="calcbutton" onclick="AddReduction(\'1\');">1</button>';
+print '<button type="button" class="calcbutton" onclick="AddReduction(\'2\');">2</button>';
+print '<button type="button" class="calcbutton" onclick="AddReduction(\'3\');">3</button>';
 print '<button type="button" class="calcbutton3 poscolorblue" onclick="Reset();"><span id="printtext" style="font-weight: bold; font-size: 18pt;">C</span></button>';
-print '<button type="button" class="calcbutton" onclick="AddReduction(0);">0</button>';
+print '<button type="button" class="calcbutton" onclick="AddReduction(\'0\');">0</button>';
 print '<button type="button" class="calcbutton" onclick="AddReduction(\'.\');">.</button>';
 print '<button type="button" class="calcbutton">&nbsp;</button>';
 print '<button type="button" class="calcbutton3 poscolordelete" onclick="parent.$.colorbox.close();"><span id="printtext" style="font-weight: bold; font-size: 18pt;">X</span></button>';

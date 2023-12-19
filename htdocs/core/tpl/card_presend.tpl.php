@@ -1,6 +1,8 @@
 <?php
-/* Copyright (C)    2017-2018 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C)    2022	  Charlene Benke <charlene@patas-monkey.com>
+/* Copyright (C) 2017-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2022	    Charlene Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2023       Maxime Nicolas          <maxime@oarces.com>
+ * Copyright (C) 2023       Benjamin GREMBI         <benjamin@oarces.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +24,7 @@
  *
  * $trackid must be defined
  * $modelmail
- * $defaulttopic
+ * $defaulttopic and $defaulttopiclang
  * $diroutput
  * $arrayoffamiliestoexclude=array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...);
  */
@@ -40,7 +42,9 @@ if ($action == 'presend') {
 	$titreform = 'SendMail';
 
 	$object->fetch_projet();
-	if (!isset($file)) $file = null;
+	if (!isset($file)) {
+		$file = null;
+	}
 	$ref = dol_sanitizeFileName($object->ref);
 	if (!in_array($object->element, array('user', 'member'))) {
 		//$fileparams['fullname'] can be filled from the card
@@ -57,7 +61,7 @@ if ($action == 'presend') {
 			}
 		}
 
-		$file = isset($fileparams['fullname'])?$fileparams['fullname']:null;
+		$file = isset($fileparams['fullname']) ? $fileparams['fullname'] : null;
 	}
 
 	// Define output language
@@ -75,6 +79,9 @@ if ($action == 'presend') {
 		$outputlangs->setDefaultLang($newlang);
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array('commercial', 'bills', 'orders', 'contracts', 'members', 'propal', 'products', 'supplier_proposal', 'interventions', 'receptions', 'sendings'));
+		if (!empty($defaulttopiclang)) {
+			$outputlangs->loadLangs(array($defaulttopiclang));
+		}
 	}
 
 	$topicmail = '';
@@ -89,10 +96,10 @@ if ($action == 'presend') {
 	if (in_array($object->element, array('user', 'member'))) {
 		$forcebuilddoc = false;
 	}
-	if ($object->element == 'invoice_supplier' && empty($conf->global->INVOICE_SUPPLIER_ADDON_PDF)) {
+	if ($object->element == 'invoice_supplier' && !getDolGlobalString('INVOICE_SUPPLIER_ADDON_PDF')) {
 		$forcebuilddoc = false;
 	}
-	if ($object->element == 'societe' && empty($conf->global->COMPANY_ADDON_PDF)) {
+	if ($object->element == 'societe' && !getDolGlobalString('COMPANY_ADDON_PDF')) {
 		$forcebuilddoc = false;
 	}
 	if ($forcebuilddoc) {    // If there is no default value for supplier invoice, we do not generate file, even if modelpdf was set by a manual generation
@@ -108,7 +115,7 @@ if ($action == 'presend') {
 				$fileparams = dol_most_recent_file($diroutput.'/'.$ref, preg_quote($ref, '/').'[^\-]+');
 			}
 
-			$file = $fileparams['fullname'];
+			$file = isset($fileparams['fullname']) ? $fileparams['fullname'] : null;
 		}
 	}
 
@@ -117,42 +124,46 @@ if ($action == 'presend') {
 	print '<br>';
 	print load_fiche_titre($langs->trans($titreform));
 
-	print dol_get_fiche_head('');
+	print dol_get_fiche_head('', '', '', -1);
 
 	// Create form for email
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 	$formmail = new FormMail($db);
 
 	$formmail->param['langsmodels'] = (empty($newlang) ? $langs->defaultlang : $newlang);
-	$formmail->fromtype = (GETPOST('fromtype') ?GETPOST('fromtype') : (!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE) ? $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE : 'user'));
+	$formmail->fromtype = (GETPOST('fromtype') ? GETPOST('fromtype') : (getDolGlobalString('MAIN_MAIL_DEFAULT_FROMTYPE') ? $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE : 'user'));
 
 	if ($formmail->fromtype === 'user') {
 		$formmail->fromid = $user->id;
 	}
-
-	if ($object->element === 'facture' && !empty($conf->global->INVOICE_EMAIL_SENDER)) {
+	if ($object->element == 'salary' && getDolGlobalString('INVOICE_EMAIL_SENDER')) {
+		$formmail->frommail = $conf->global->SINVOICE_EMAIL_SENDER;
+		$formmail->fromname = (getDolGlobalString('INVOICE_EMAIL_SENDER_NAME') ? $conf->global->INVOICE_EMAIL_SENDER_NAME : '');
+		$formmail->fromtype = 'special';
+	}
+	if ($object->element === 'facture' && getDolGlobalString('INVOICE_EMAIL_SENDER')) {
 		$formmail->frommail = $conf->global->INVOICE_EMAIL_SENDER;
-		$formmail->fromname = (!empty($conf->global->INVOICE_EMAIL_SENDER_NAME) ? $conf->global->INVOICE_EMAIL_SENDER_NAME : '');
+		$formmail->fromname = (getDolGlobalString('INVOICE_EMAIL_SENDER_NAME') ? $conf->global->INVOICE_EMAIL_SENDER_NAME : '');
 		$formmail->fromtype = 'special';
 	}
-	if ($object->element === 'shipping' && !empty($conf->global->SHIPPING_EMAIL_SENDER)) {
+	if ($object->element === 'shipping' && getDolGlobalString('SHIPPING_EMAIL_SENDER')) {
 		$formmail->frommail = $conf->global->SHIPPING_EMAIL_SENDER;
-		$formmail->fromname = (!empty($conf->global->SHIPPING_EMAIL_SENDER_NAME) ? $conf->global->SHIPPING_EMAIL_SENDER_NAME : '');
+		$formmail->fromname = (getDolGlobalString('SHIPPING_EMAIL_SENDER_NAME') ? $conf->global->SHIPPING_EMAIL_SENDER_NAME : '');
 		$formmail->fromtype = 'special';
 	}
-	if ($object->element === 'commande' && !empty($conf->global->COMMANDE_EMAIL_SENDER)) {
+	if ($object->element === 'commande' && getDolGlobalString('COMMANDE_EMAIL_SENDER')) {
 		$formmail->frommail = $conf->global->COMMANDE_EMAIL_SENDER;
-		$formmail->fromname = (!empty($conf->global->COMMANDE_EMAIL_SENDER_NAME) ? $conf->global->COMMANDE_EMAIL_SENDER_NAME : '');
+		$formmail->fromname = (getDolGlobalString('COMMANDE_EMAIL_SENDER_NAME') ? $conf->global->COMMANDE_EMAIL_SENDER_NAME : '');
 		$formmail->fromtype = 'special';
 	}
-	if ($object->element === 'order_supplier' && !empty($conf->global->ORDER_SUPPLIER_EMAIL_SENDER)) {
+	if ($object->element === 'order_supplier' && getDolGlobalString('ORDER_SUPPLIER_EMAIL_SENDER')) {
 		$formmail->frommail = $conf->global->ORDER_SUPPLIER_EMAIL_SENDER;
-		$formmail->fromname = (!empty($conf->global->ORDER_SUPPLIER_EMAIL_SENDER_NAME) ? $conf->global->ORDER_SUPPLIER_EMAIL_SENDER_NAME : '');
+		$formmail->fromname = (getDolGlobalString('ORDER_SUPPLIER_EMAIL_SENDER_NAME') ? $conf->global->ORDER_SUPPLIER_EMAIL_SENDER_NAME : '');
 		$formmail->fromtype = 'special';
 	}
-	if ($object->element === 'recruitmentcandidature' ) {
-		$formmail->frommail = (!empty($conf->global->RECRUITMENT_EMAIL_SENDER) ? $conf->global->RECRUITMENT_EMAIL_SENDER : $recruitermail);
-		$formmail->fromname = (!empty($conf->global->RECRUITMENT_EMAIL_SENDER_NAME) ? $conf->global->RECRUITMENT_EMAIL_SENDER_NAME : (!empty($recruitername) ? $recruitername : ''));
+	if ($object->element === 'recruitmentcandidature') {
+		$formmail->frommail = (getDolGlobalString('RECRUITMENT_EMAIL_SENDER') ? $conf->global->RECRUITMENT_EMAIL_SENDER : $recruitermail);
+		$formmail->fromname = (getDolGlobalString('RECRUITMENT_EMAIL_SENDER_NAME') ? $conf->global->RECRUITMENT_EMAIL_SENDER_NAME : (!empty($recruitername) ? $recruitername : ''));
 		$formmail->fromtype = 'special';
 	}
 
@@ -194,7 +205,12 @@ if ($action == 'presend') {
 		$liste['contact'] = $object->getFullName($outputlangs)." <".$object->email.">";
 	} elseif ($object->element == 'user' || $object->element == 'member') {
 		$liste['thirdparty'] = $object->getFullName($outputlangs)." <".$object->email.">";
+	} elseif ($object->element == 'salary') {
+		$fuser = new User($db);
+		$fuser->fetch($object->fk_user);
+		$liste['thirdparty'] = $fuser->getFullName($outputlangs)." <".$fuser->email.">";
 	} else {
+		// For exemple if element is project
 		if (!empty($object->socid) && $object->socid > 0 && !is_object($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) {
 			$object->fetch_thirdparty();
 		}
@@ -204,7 +220,7 @@ if ($action == 'presend') {
 			}
 		}
 	}
-	if (!empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)) {
+	if (getDolGlobalString('MAIN_MAIL_ENABLED_USER_DEST_SELECT')) {
 		$listeuser = array();
 		$fuserdest = new User($db);
 
@@ -258,12 +274,11 @@ if ($action == 'presend') {
 	$substitutionarray['__CHECK_READ__'] = "";
 	if (is_object($object) && is_object($object->thirdparty)) {
 		$checkRead= '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php';
-		$checkRead.='?tag='.(!empty($object->thirdparty->tag)?urlencode($object->thirdparty->tag):"");
-		$checkRead.='&securitykey='.(!empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY)?urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY):"");
+		$checkRead.='?tag='.(!empty($object->thirdparty->tag) ? urlencode($object->thirdparty->tag) : "");
+		$checkRead.='&securitykey='.(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY') ? urlencode(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')) : "");
 		$checkRead.='" width="1" height="1" style="width:1px;height:1px" border="0"/>';
 		$substitutionarray['__CHECK_READ__'] = $checkRead;
 	}
-	$substitutionarray['__PERSONALIZED__'] = ''; // deprecated
 	$substitutionarray['__CONTACTCIVNAME__'] = '';
 	$parameters = array(
 		'mode' => 'formemail'
@@ -318,7 +333,7 @@ if ($action == 'presend') {
 	}
 
 	$contactarr = array();
-	$contactarr = $tmpobject->liste_contact(-1, 'external');
+	$contactarr = $tmpobject->liste_contact(-1, 'external', 0, '', 1);
 
 	if (is_array($contactarr) && count($contactarr) > 0) {
 		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';

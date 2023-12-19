@@ -21,7 +21,9 @@
  *		\brief      Popup screen to validate VAT
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');		// Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
+if (! defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1');
+}		// Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
 
 require "../../main.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -149,7 +151,7 @@ if (!$vatNumber) {
 print '<br>';
 print $langs->trans("VATIntraManualCheck", $langs->trans("VATIntraCheckURL"), $langs->transnoentitiesnoconv("VATIntraCheckURL")).'<br>';
 print '<br>';
-print '<div class="center"><input type="button" class="button" value="'.$langs->trans("CloseWindow").'" onclick="javascript: window.close()"></div>';
+print '<div class="center"><input type="button" class="button" value="'.$langs->trans("CloseWindow").'" onclick="window.close()"></div>';
 
 if ($messagetoshow) {
 	print '<br><br>';

@@ -44,15 +44,15 @@ function print_paybox_redirect($PRICE, $CURRENCY, $EMAIL, $urlok, $urlko, $TAG)
 
 	// Clean parameters
 	$PBX_IDENTIFIANT = "2"; // Identifiant pour v2 test
-	if (!empty($conf->global->PAYBOX_PBX_IDENTIFIANT)) {
+	if (getDolGlobalString('PAYBOX_PBX_IDENTIFIANT')) {
 		$PBX_IDENTIFIANT = $conf->global->PAYBOX_PBX_IDENTIFIANT;
 	}
 	$IBS_SITE = "1999888"; // Site test
-	if (!empty($conf->global->PAYBOX_IBS_SITE)) {
+	if (getDolGlobalString('PAYBOX_IBS_SITE')) {
 		$IBS_SITE = $conf->global->PAYBOX_IBS_SITE;
 	}
 	$IBS_RANG = "99"; // Rang test
-	if (!empty($conf->global->PAYBOX_IBS_RANG)) {
+	if (getDolGlobalString('PAYBOX_IBS_RANG')) {
 		$IBS_RANG = $conf->global->PAYBOX_IBS_RANG;
 	}
 	$IBS_DEVISE = "840"; // Currency (Dollar US by default)
@@ -146,8 +146,8 @@ function print_paybox_redirect($PRICE, $CURRENCY, $EMAIL, $urlok, $urlko, $TAG)
 		   "&PBX_OUTPUT=".$IBS_OUTPUT.
 		   "&PBX_SOURCE=".$PBX_SOURCE.
 		   "&PBX_TYPEPAIEMENT=".$PBX_TYPEPAIEMENT;
-		   "&PBX_HASH=".$PBX_HASH;
-		   "&PBX_TIME=".$PBX_TIME;
+	"&PBX_HASH=".$PBX_HASH;
+	"&PBX_TIME=".$PBX_TIME;
 
 	$binKey = pack("H*", dol_decode($conf->global->PAYBOX_HMAC_KEY));
 
@@ -176,12 +176,10 @@ function print_paybox_redirect($PRICE, $CURRENCY, $EMAIL, $urlok, $urlko, $TAG)
 	dol_syslog("PBX_HASH: $PBX_HASH", LOG_DEBUG);
 	dol_syslog("PBX_TIME: $PBX_TIME", LOG_DEBUG);
 
-	header("Content-type: text/html; charset=".$conf->file->character_set_client);
-	header("X-Content-Type-Options: nosniff");
+	top_httphead();
 
 	print '<html>'."\n";
 	print '<head>'."\n";
-	print "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=".$conf->file->character_set_client."\">\n";
 	print '</head>'."\n";
 	print '<body>'."\n";
 	print "\n";
@@ -225,5 +223,5 @@ function print_paybox_redirect($PRICE, $CURRENCY, $EMAIL, $urlok, $urlko, $TAG)
 	print '</body></html>'."\n";
 	print "\n";
 
-	return;
+	return 1;
 }
