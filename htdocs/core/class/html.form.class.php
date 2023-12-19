@@ -8735,10 +8735,10 @@ class Form
 					$tmplabelhtml = '';
 					if (is_array($value) && array_key_exists('id', $value) && array_key_exists('label', $value)) {
 						$tmpkey = $value['id'];
-						$tmpvalue = $value['label'];
-						$tmpcolor = $value['color'];
-						$tmppicto = $value['picto'];
-						$tmplabelhtml = !empty($value['labelhtml']) ? $value['labelhtml'] : '';
+						$tmpvalue = empty($value['label']) ? '' : $value['label'];
+						$tmpcolor = empty($value['color']) ? '' : $value['color'];
+						$tmppicto = empty($value['picto']) ? '' : $value['picto'];
+						$tmplabelhtml = empty($value['labelhtml']) ? '' : $value['labelhtml'];
 					}
 					$newval = ($translate ? $langs->trans($tmpvalue) : $tmpvalue);
 					$newval = ($key_in_label ? $tmpkey . ' - ' . $newval : $newval);
