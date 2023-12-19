@@ -432,26 +432,26 @@ class modAgenda extends DolibarrModules
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = "ExportDataset_event1";
 		$this->export_permission[$r] = array(array("agenda", "export"));
-		$this->export_fields_array[$r] = array('ac.id'=>"IdAgenda", 'ac.ref_ext'=>"ExternalRef", 'ac.datec'=>"DateCreation", 'ac.datep'=>"DateActionBegin",
-			'ac.datep2'=>"DateActionEnd", 'ac.label'=>"Title", 'ac.note'=>"Note", 'ac.percent'=>"Percent", 'ac.durationp'=>"Duration",
-			'cac.libelle'=>"ActionType",
+		$this->export_fields_array[$r] = array('ac.id'=>"IdAgenda", 'ac.ref_ext'=>"ExternalRef",'ac.ref'=>"Ref", 'ac.datec'=>"DateCreation", 'ac.datep'=>"DateActionBegin",
+			'ac.datep2'=>"DateActionEnd", 'ac.location' => 'Location', 'ac.label'=>"Title", 'ac.note'=>"Note", 'ac.percent'=>"Percentage", 'ac.durationp'=>"Duration",
+			'ac.fk_user_author'=>'CreatedById', 'ac.fk_user_action'=>'AffectedTo', 'ac.fk_user_mod'=>'ModifiedBy', 'ac.transparency'=>"Transparency", 'ac.priority'=>"Priority", 'ac.fk_element'=>"ElementID", 'ac.elementtype'=>"ElementType",
+			'cac.libelle'=>"ActionType", 'cac.code'=>"Code",
 			's.rowid'=>"IdCompany", 's.nom'=>'CompanyName', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town',
 			'co.code'=>'CountryCode', 's.phone'=>'Phone', 's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 's.idprof5'=>'ProfId5', 's.idprof6'=>'ProfId6',
 			's.code_compta'=>'CustomerAccountancyCode', 's.code_compta_fournisseur'=>'SupplierAccountancyCode', 's.tva_intra'=>'VATIntra',
 			'p.ref' => 'ProjectRef',
 		);
-		$this->export_TypeFields_array[$r] = array('ac.ref_ext'=>"Text", 'ac.datec'=>"Date", 'ac.datep'=>"Date",
-			'ac.datep2'=>"Date", 'ac.label'=>"Text", 'ac.note'=>"Text", 'ac.percent'=>"Numeric",
-			'ac.durationp'=>"Duree",
-			'cac.libelle'=>"List:c_actioncomm:libelle:libelle",
+		$this->export_TypeFields_array[$r] = array('ac.ref_ext'=>"Text", 'ac.ref'=>"Text", 'ac.datec'=>"Date", 'ac.datep'=>"Date",
+			'ac.datep2'=>"Date", 'ac.location' => 'Text', 'ac.label'=>"Text", 'ac.note'=>"Text", 'ac.percent'=>"Numeric",
+			'ac.durationp'=>"Duree",'ac.fk_user_author'=>'Numeric', 'ac.fk_user_action'=>'Numeric', 'ac.fk_user_mod'=>'Numeric', 'ac.transparency'=>"Numeric", 'ac.priority'=>"Numeric", 'ac.fk_element'=>"Numeric", 'ac.elementtype'=>"Text",
+			'cac.libelle'=>"List:c_actioncomm:libelle:libelle", 'cac.code'=>"Text",
 			's.nom'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text',
 			'co.code'=>'Text', 's.phone'=>'Text', 's.siren'=>'Text', 's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.idprof5'=>'Text', 's.idprof6'=>'Text',
 			's.code_compta'=>'Text', 's.code_compta_fournisseur'=>'Text', 's.tva_intra'=>'Text',
 			'p.ref' => 'Text',
 		);
-		$this->export_entities_array[$r] = array('ac.id'=>"action", 'ac.ref_ext'=>"action", 'ac.datec'=>"action", 'ac.datep'=>"action",
-			'ac.datep2'=>"action", 'ac.label'=>"action", 'ac.note'=>"action", 'ac.percent'=>"action", 'ac.durationp'=>"action",
-			'cac.libelle'=>"action",
+		$this->export_entities_array[$r] = array('ac.id'=>"action", 'ac.ref_ext'=>"action", 'ac.ref'=>"action", 'ac.datec'=>"action", 'ac.datep'=>"action",
+			'ac.datep2'=>"action", 'ac.location' => 'action', 'ac.label'=>"action", 'ac.note'=>"action", 'ac.percent'=>"action", 'ac.durationp'=>"action",'ac.fk_user_author'=>'user', 'ac.fk_user_action'=>'user', 'ac.fk_user_mod'=>'user', 'ac.transparency'=>"action", 'ac.priority'=>"action", 'ac.fk_element'=>"action", 'ac.elementtype'=>"action",
 			's.rowid'=>"company", 's.nom'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company',
 			'co.code'=>'company', 's.phone'=>'company', 's.siren'=>'company', 's.siret'=>'company', 's.ape'=>'company', 's.idprof4'=>'company', 's.idprof5'=>'company', 's.idprof6'=>'company',
 			's.code_compta'=>'company', 's.code_compta_fournisseur'=>'company', 's.tva_intra'=>'company',
@@ -475,6 +475,7 @@ class modAgenda extends DolibarrModules
 		if (!empty($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
 		}
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as uc ON ac.fk_user_author = uc.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co on s.fk_pays = co.rowid';
 		$this->export_sql_end[$r] .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = ac.fk_project";
 		$this->export_sql_end[$r] .= ' WHERE ac.entity IN ('.getEntity('agenda').')';
@@ -485,5 +486,119 @@ class modAgenda extends DolibarrModules
 			$this->export_sql_end[$r] .= ' AND acr.fk_element = '.(empty($user) ? 0 : $user->id);
 		}
 		$this->export_sql_order[$r] = ' ORDER BY ac.datep';
+
+		// Imports
+		$r = 0;
+
+		// Import Events
+		$r++;
+		$this->import_code[$r] = $this->rights_class.'_'.$r;
+		$this->import_label[$r] = "ExportDataset_event1";
+		$this->import_icon[$r] = $this->picto;
+		$this->import_entities_array[$r] = array();
+		$this->import_tables_array[$r] = array('ac' => MAIN_DB_PREFIX.'actioncomm', 'extra' => MAIN_DB_PREFIX.'actioncomm_extrafields');
+		$this->import_tables_creator_array[$r] = array('ac' => 'fk_user_author'); // Fields to store import user id
+		$this->import_fields_array[$r] = array(
+			'ac.ref_ext' => 'ExternalRef',
+			'ac.ref' => 'Ref',
+			'ac.datec' => 'DateCreation',
+			'ac.datep' => 'DateActionBegin',
+			'ac.datep2' => 'DateActionEnd',
+			'ac.location' => 'Location',
+			'ac.label' => 'Title',
+			'ac.note' => 'Note',
+			'ac.percent' => 'Percentage',
+			'ac.durationp' => 'Duration',
+			'ac.transparency' => 'Transparency',
+			'ac.priority' => 'Priority',
+			'uc.rowid' => 'CreatedById',
+			'ac.fk_action' => 'Code',
+			'ac.fk_soc' => 'IdCompany',
+			's.nom' => 'CompanyName',
+			's.address' => 'Address',
+			's.zip' => 'Zip',
+			's.town' => 'Town',
+			'co.code' => 'CountryCode',
+			's.phone' => 'Phone',
+			's.siren' => 'ProfId1',
+			's.siret' => 'ProfId2',
+			's.ape' => 'ProfId3',
+			's.idprof4' => 'ProfId4',
+			's.idprof5' => 'ProfId5',
+			's.idprof6' => 'ProfId6',
+			's.code_compta' => 'CustomerAccountancyCode',
+			's.code_compta_fournisseur' => 'SupplierAccountancyCode',
+			's.tva_intra' => 'VATIntra',
+			'ac.fk_project' => 'ProjectRef',
+			'ac.fk_user_mod' => 'ModifiedBy',
+			'ac.fk_user_action' => 'AffectedTo',
+			'ac.fk_element' => 'ElementID',
+			'ac.elementtype' => 'ElementType',
+		);
+		$import_sample = array();
+
+		// Add extra fields
+		$import_extrafield_sample = array();
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'actioncomm' AND entity IN (0, ".$conf->entity.")";
+		$resql = $this->db->query($sql);
+
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$fieldname = 'extra.'.$obj->name;
+				$fieldlabel = ucfirst($obj->label);
+				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
+			}
+		}
+		// End add extra fields
+
+		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
+		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'actioncomm');
+		$this->import_updatekeys_array[$r] = array('ac.fk_user_creat' => 'User');
+		$this->import_convertvalue_array[$r] = array(
+			'ac.fk_soc' => array(
+				'rule'    => 'fetchidfromref',
+				'file'    => '/societe/class/societe.class.php',
+				'class'   => 'Societe',
+				'method'  => 'fetch',
+				'element' => 'ThirdParty'
+			),
+			'ac.fk_user_action' => array(
+				'rule'    => 'fetchidfromref',
+				'file'    => '/user/class/user.class.php',
+				'class'   => 'User',
+				'method'  => 'fetch',
+				'element' => 'user'
+			),
+			'ac.fk_user_mod' => array(
+				'rule'    => 'fetchidfromref',
+				'file'    => '/user/class/user.class.php',
+				'class'   => 'User',
+				'method'  => 'fetch',
+				'element' => 'user'
+			),
+			'ac.fk_action' => array(
+				'rule' => 'fetchidfromcodeid',
+				'classfile' => '/comm/action/class/cactioncomm.class.php',
+				'class' => 'CActionComm',
+				'method' => 'fetch',
+				'dict' => 'DictionaryActions'
+			)
+		);
+
+		// Import Event Extra Fields
+		$keyforselect = 'actioncomm';
+		$keyforelement = 'action';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+
+		$this->import_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->import_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'actioncomm as ac';
+		$this->import_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'actioncomm_extrafields as extra ON ac.id = extra.fk_object';
+		$this->import_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_actioncomm as cac on ac.fk_action = cac.id';
+		$this->import_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s on ac.fk_soc = s.rowid';
+		$this->import_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co on s.fk_pays = co.rowid';
+		$this->import_sql_end[$r] .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = ac.fk_project";
+		$this->import_sql_end[$r] .= ' WHERE ac.entity IN ('.getEntity('agenda').')';
+		$this->import_sql_order[$r] = ' ORDER BY ac.datep';
 	}
 }
