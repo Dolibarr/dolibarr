@@ -1220,10 +1220,10 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 		foreach ($conf->file->dol_document_root as $key => $dirroot) {	// ex: array(["main"]=>"/home/main/htdocs", ["alt0"]=>"/home/dirmod/htdocs", ...)
 			if ($key == 'main') {
 				if ($type == 3) {
-					global $dolibarr_main_url_root;
+					/*global $dolibarr_main_url_root;*/
 
 					// Define $urlwithroot
-					$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+					$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($conf->file->dol_main_url_root));
 					$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 					//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
@@ -1244,10 +1244,10 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 						$res = (preg_match('/^http/i', $conf->file->dol_url_root[$key]) ? '' : DOL_MAIN_URL_ROOT).$conf->file->dol_url_root[$key].'/'.$path;
 					}
 					if ($type == 3) {
-						global $dolibarr_main_url_root;
+						/*global $dolibarr_main_url_root;*/
 
 						// Define $urlwithroot
-						$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+						$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($conf->file->dol_main_url_root));
 						$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 						//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
@@ -12594,10 +12594,21 @@ function dolForgeCriteriaCallback($matches)
 
 	if ($operator == 'IN') {	// IN is allowed for list of ID or code only
 		//if (!preg_match('/^\(.*\)$/', $tmpescaped)) {
-		$tmpescaped = '('.$db->escape($db->sanitize($tmpescaped, 1, 0)).')';
-		//} else {
-		//	$tmpescaped = $db->escape($db->sanitize($tmpescaped, 1));
-		//}
+		$tmpescaped2 = '(';
+		// Explode and sanitize each element in list
+		$tmpelemarray = explode(',', $tmpescaped);
+		foreach ($tmpelemarray as $tmpkey => $tmpelem) {
+			$reg = array();
+			if (preg_match('/^\'(.*)\'$/', $tmpelem, $reg)) {
+				$tmpelemarray[$tmpkey] = "'".$db->escape($db->sanitize($reg[1], 1, 1, 1))."'";
+			} else {
+				$tmpelemarray[$tmpkey] = $db->escape($db->sanitize($tmpelem, 1, 1, 1));
+			}
+		}
+		$tmpescaped2 .= join(',', $tmpelemarray);
+		$tmpescaped2 .= ')';
+
+		$tmpescaped = $tmpescaped2;
 	} elseif ($operator == 'LIKE' || $operator == 'NOT LIKE') {
 		if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
 			$tmpescaped = $regbis[1];

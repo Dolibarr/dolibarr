@@ -93,7 +93,7 @@ abstract class CommonObject
 	public $element;
 
 	/**
-	 * @var int 		The related element
+	 * @var string    Fieldname with ID of parent key if this field has a parent
 	 */
 	public $fk_element;
 
