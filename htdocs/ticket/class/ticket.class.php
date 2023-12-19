@@ -3128,7 +3128,7 @@ class Ticket extends CommonObject
 			$return .= '<div class="tdoverflowmax125 inline-block">'.$langs->getLabelFromKey($this->db, 'TicketTypeShort'.$this->type_code, 'c_ticket_type', 'code', 'label', $this->type_code).'</div>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

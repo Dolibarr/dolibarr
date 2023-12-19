@@ -6560,11 +6560,17 @@ class Product extends CommonObject
 				}
 			}
 		}
-		if (property_exists($this, 'stock_reel')) {
-			$return .= '<br><span class="info-box-status opacitymedium">'.$langs->trans('PhysicalStock').' : <span class="bold">'.$this->stock_reel.'</span></span>';
+		$br = 1;
+		if (property_exists($this, 'stock_reel') && $this->isProduct()) {
+			$return .= '<br><div class="info-box-status opacitymedium inline-block valignmiddle">'.img_picto($langs->trans('PhysicalStock'), 'stock').'</div><div class="inline-block valignmiddle paddingleft" title="'.$langs->trans('PhysicalStock').'">'.$this->stock_reel.'</div>';
+			$br = 0;
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .='<br><span class="info-box-status margintoponly">'.$this->getLibStatut(3, 1).' '.$this->getLibStatut(3, 0).'</span>';
+			if ($br) {
+				$return .= '<br><div class="info-box-status inline-block valignmiddle">'.$this->getLibStatut(3, 1).' '.$this->getLibStatut(3, 0).'</div>';
+			} else {
+				$return .= '<div class="info-box-status inline-block valignmiddle marginleftonly paddingleft">'.$this->getLibStatut(3, 1).' '.$this->getLibStatut(3, 0).'</div>';
+			}
 		}
 		$return .= '</div>';
 		$return .= '</div>';
