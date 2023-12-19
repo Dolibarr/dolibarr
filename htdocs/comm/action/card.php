@@ -2553,6 +2553,7 @@ if ($id > 0) {
 						print ' ('.$tmpuserstatic->getNomUrl(0, '', 0, 0, 16).')';
 					}
 					print ' - '.$actioncommreminder->offsetvalue.' '.$TDurationTypes[$actioncommreminder->offsetunit];
+
 					if ($actioncommreminder->status == $actioncommreminder::STATUS_TODO) {
 						print ' - <span class="opacitymedium">';
 						print $langs->trans("NotSent");
@@ -2560,6 +2561,10 @@ if ($id > 0) {
 					} elseif ($actioncommreminder->status == $actioncommreminder::STATUS_DONE) {
 						print ' - <span class="opacitymedium">';
 						print $langs->trans("Done");
+						print ' </span>';
+					} elseif ($actioncommreminder->status == $actioncommreminder::STATUS_ERROR) {
+						print ' - <span class="opacitymedium">';
+						print $form->textwithpicto($langs->trans("Error"), $actioncommreminder->lasterror);
 						print ' </span>';
 					}
 					print '<br>';

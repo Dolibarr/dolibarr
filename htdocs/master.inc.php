@@ -219,10 +219,6 @@ if (!defined('NOREQUIREDB') && !defined('NOREQUIRESOC')) {
 		// For DE, we need to invert our address with customer address
 		$conf->global->MAIN_INVERT_SENDER_RECIPIENT = 1;
 	}
-	if ($mysoc->country_code == 'FR' && !isset($conf->global->MAIN_PROFID1_IN_ADDRESS)) {
-		// For FR, default value of option to show profid SIRET is on by default. Decret n°2099-1299 2022-10-07
-		$conf->global->MAIN_PROFID1_IN_ADDRESS = 1;
-	}
 	if ($mysoc->country_code == 'FR' && !isset($conf->global->INVOICE_CATEGORY_OF_OPERATION)) {
 		// For FR, default value of option to show category of operations is on by default. Decret n°2099-1299 2022-10-07
 		$conf->global->INVOICE_CATEGORY_OF_OPERATION = 1;
@@ -241,14 +237,7 @@ if (!defined('NOREQUIREDB') && !defined('NOREQUIRESOC')) {
 		// The deposit invoice type is not allowed in Greece.
 		$conf->global->INVOICE_DISABLE_DEPOSIT = 1;
 	}
-	if ($mysoc->country_code == 'GR' && !isset($conf->global->INVOICE_CREDIT_NOTE_STANDALONE)) {
-		// Standalone credit note is compulsory in Greece.
-		$conf->global->INVOICE_CREDIT_NOTE_STANDALONE = 1;
-	}
-	if ($mysoc->country_code == 'GR' && !isset($conf->global->INVOICE_SUBTYPE_ENABLED)) {
-		// Invoice subtype is a requirement for Greece.
-		$conf->global->INVOICE_SUBTYPE_ENABLED = 1;
-	}
+
 	if (($mysoc->localtax1_assuj || $mysoc->localtax2_assuj) && !isset($conf->global->MAIN_NO_INPUT_PRICE_WITH_TAX)) {
 		// For countries using the 2nd or 3rd tax, we disable input/edit of lines using the price including tax (because 2nb and 3rd tax not yet taken into account).
 		// Work In Progress to support all taxes into unit price entry when MAIN_UNIT_PRICE_WITH_TAX_IS_FOR_ALL_TAXES is set.
@@ -259,7 +248,7 @@ if (!defined('NOREQUIREDB') && !defined('NOREQUIRESOC')) {
 
 // Set default language (must be after the setValues setting global $conf->global->MAIN_LANG_DEFAULT. Page main.inc.php will overwrite langs->defaultlang with user value later)
 if (!defined('NOREQUIRETRAN')) {
-	$langcode = (GETPOST('lang', 'aZ09') ? GETPOST('lang', 'aZ09', 1) : getDolGlobalString('MAIN_LANG_DEFAULT', 'auto'));
+	$langcode = (GETPOST('lang', 'aZ09') ? GETPOST('lang', 'aZ09', 1) : (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT));
 	if (defined('MAIN_LANG_DEFAULT')) {	// So a page can force the language whatever is setup and parameters in URL
 		$langcode = constant('MAIN_LANG_DEFAULT');
 	}
