@@ -289,7 +289,13 @@ class PrestaShopWebservice
 		if ($response != '') {
 			libxml_clear_errors();
 			libxml_use_internal_errors(true);
-			$xml = simplexml_load_string(trim($response), 'SimpleXMLElement', LIBXML_NOCDATA);
+			if (LIBXML_VERSION < 20900) {
+				// Avoid load of external entities (security problem).
+				// Required only if LIBXML_VERSION < 20900
+				libxml_disable_entity_loader(true);
+			}
+
+			$xml = simplexml_load_string(trim($response), 'SimpleXMLElement', LIBXML_NOCDATA|LIBXML_NONET);
 			if (libxml_get_errors()) {
 				$msg = var_export(libxml_get_errors(), true);
 				libxml_clear_errors();
