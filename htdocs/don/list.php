@@ -57,6 +57,7 @@ $search_status = (GETPOST("search_status", 'intcomma') != '') ? GETPOST("search_
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
+$search_thirdparty = GETPOST('search_thirdparty', 'alpha');
 $search_name = GETPOST('search_name', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
@@ -69,6 +70,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_all = "";
 	$search_ref = "";
 	$search_company = "";
+	$search_thirdparty = "";
 	$search_name = "";
 	$search_amount = "";
 	$search_status = '';
@@ -106,7 +108,10 @@ $sql = "SELECT d.rowid, d.datedon, d.fk_soc as socid, d.firstname, d.lastname, d
 $sql .= " d.amount, d.fk_statut as status,";
 $sql .= " p.rowid as pid, p.ref, p.title, p.public";
 $sql .= " FROM ".MAIN_DB_PREFIX."don as d LEFT JOIN ".MAIN_DB_PREFIX."projet AS p";
-$sql .= " ON p.rowid = d.fk_projet WHERE d.entity IN (".getEntity('donation').")";
+$sql .= " ON p.rowid = d.fk_projet";
+$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe AS s ON s.rowid = d.fk_soc";
+$sql .= " WHERE d.entity IN (". getEntity('donation') . ")";
+
 if ($search_status != '' && $search_status != '-4') {
 	$sql .= " AND d.fk_statut IN (".$db->sanitize($search_status).")";
 }
@@ -118,6 +123,9 @@ if (trim($search_all) != '') {
 }
 if (trim($search_company) != '') {
 	$sql .= natural_search('d.societe', $search_company);
+}
+if (trim($search_thirdparty) != '') {
+	$sql .= " AND s.nom LIKE '%" . $db->escape($search_thirdparty) . "%'";
 }
 if (trim($search_name) != '') {
 	$sql .= natural_search(array('d.lastname', 'd.firstname'), $search_name);
