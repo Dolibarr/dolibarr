@@ -178,7 +178,6 @@ include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 // Purge search criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
-	$search_categ = '';
 	$search_user = '';
 	$search_sale = '';
 	$search_product_category = '';
@@ -274,9 +273,6 @@ $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " e.date_creation as date_creation, e.tms as date_update,";
 $sql .= " u.login";
-if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
-	$sql .= ", cc.fk_categorie, cc.fk_soc";
-}
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -299,9 +295,6 @@ if ($search_all) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'commandedet as pd ON pd.rowid=ed.fk_origin_line';
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
-if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cc ON s.rowid = cc.fk_soc"; // We'll need this table joined to the select in order to filter by categ
-}
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
@@ -362,9 +355,6 @@ if ($search_tracking) {
 if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
 	$sql .= " AND s.fk_typent IN (".$db->sanitize($search_type_thirdparty).')';
 }
-if ($search_sale > 0) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);
-}
 if ($search_user > 0) {
 	// The contact on a shipment is also the contact of the order.
 	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = eesource.fk_source AND ec.fk_socpeople = ".((int) $search_user);
@@ -395,11 +385,43 @@ if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
-if ($search_categ_cus > 0) {
-	$sql .= " AND cc.fk_categorie = ".((int) $search_categ_cus);
+// Search on sale representative
+if ($search_sale && $search_sale != '-1') {
+	if ($search_sale == -2) {
+		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = e.fk_soc)";
+	} elseif ($search_sale > 0) {
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = e.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+	}
 }
-if ($search_categ_cus == -2) {
-	$sql .= " AND cc.fk_categorie IS NULL";
+// Search for tag/category ($searchCategoryCustomerList is an array of ID)
+$searchCategoryCustomerOperator = -1;
+$searchCategoryCustomerList = array($search_categ_cus);
+if (!empty($searchCategoryCustomerList)) {
+	$searchCategoryCustomerSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
+		if (intval($searchCategoryCustomer) == -2) {
+			$searchCategoryCustomerSqlList[] = "NOT EXISTS (SELECT cs.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as cs WHERE s.rowid = cs.fk_soc)";
+		} elseif (intval($searchCategoryCustomer) > 0) {
+			if ($searchCategoryCustomerOperator == 0) {
+				$searchCategoryCustomerSqlList[] = " EXISTS (SELECT cs.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as cs WHERE s.rowid = cs.fk_soc AND cs.fk_categorie = ".((int) $searchCategoryCustomer).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryCustomer);
+			}
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategoryCustomerSqlList[] = " EXISTS (SELECT cs.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as cs WHERE s.rowid = cs.fk_soc AND cs.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategoryCustomerOperator == 1) {
+		if (!empty($searchCategoryCustomerSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategoryCustomerSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategoryCustomerSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategoryCustomerSqlList).")";
+		}
+	}
 }
 // Search for tag/category ($searchCategoryProductList is an array of ID)
 $searchCategoryProductOperator = -1;
@@ -1179,7 +1201,7 @@ if ($num == 0) {
 			$colspan++;
 		}
 	}
-	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 }
 
 $db->free($resql);
