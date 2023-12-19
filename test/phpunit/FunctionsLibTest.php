@@ -183,7 +183,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testDolForgeCriteriaCallback()
 	{
-		global $conf, $langs;
+		global $conf, $langs, $db;
 
 		// An attempt for SQL injection
 		$filter='if(now()=sysdate()%2Csleep(6)%2C0)';
@@ -214,8 +214,12 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		// Check that ' is escaped into the last operand
 		$filter = "(t.fieldstring:=:'aaa'ttt')";
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
-		$this->assertEquals(" AND ((t.fieldstring = 'aaa\'ttt'))", $sql);
 
+		if ($db->type == 'mysqli') {
+			$this->assertEquals(" AND ((t.fieldstring = 'aaa\'ttt'))", $sql);	// with mysql
+		} else {
+			$this->assertEquals(" AND ((t.fieldstring = 'aaa''ttt'))", $sql);	// with pgsql
+		}
 
 		$filter = "(t.fk_soc:IN:1,2)";
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
@@ -225,9 +229,9 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
 		$this->assertEquals(" AND ((t.fk_soc IN ('1','2=b')))", $sql);
 
-		$filter = "(t.fk_soc:IN:SELECT rowid FROM llx_societe WHERE fournisseur = '1')";
+		$filter = "(t.fk_soc:IN:SELECT rowid FROM llx_societe WHERE fournisseur = 1)";
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
-		$this->assertEquals(" AND ((t.fk_soc IN (SELECT rowid FROM llx_societe WHERE fournisseur = \'1\')))", $sql);
+		$this->assertEquals(" AND ((t.fk_soc IN (SELECT rowid FROM llx_societe WHERE fournisseur = 1)))", $sql);
 
 		return true;
 	}
