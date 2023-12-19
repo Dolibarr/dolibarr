@@ -389,3 +389,6 @@ insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,931,
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,932, '新',0,'新疆维吾尔自治区');
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,933, '港',0,'香港特别行政区');
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,934, '澳',0,'澳门特别行政区');
+
+-- Regions Netherland (id country=17)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  17, 1701, '', 0, 'Nederland', 1);
