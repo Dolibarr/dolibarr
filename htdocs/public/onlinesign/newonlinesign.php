@@ -160,7 +160,7 @@ if ($source == 'proposal') {
 	$object = new CompanyBankAccount($db);
 	$result= $object->fetch($ref);
 } else {
-	httponly_accessforbidden($langs->trans('ErrorBadParameters')." - Bad value for source", 400, 1);
+	httponly_accessforbidden($langs->trans('ErrorBadParameters')." - Bad value for source. Value not supported.", 400, 1);
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
