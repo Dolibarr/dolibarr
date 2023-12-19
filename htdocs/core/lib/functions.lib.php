@@ -12594,10 +12594,21 @@ function dolForgeCriteriaCallback($matches)
 
 	if ($operator == 'IN') {	// IN is allowed for list of ID or code only
 		//if (!preg_match('/^\(.*\)$/', $tmpescaped)) {
-		$tmpescaped = '('.$db->escape($db->sanitize($tmpescaped, 1, 0)).')';
-		//} else {
-		//	$tmpescaped = $db->escape($db->sanitize($tmpescaped, 1));
-		//}
+		$tmpescaped2 = '(';
+		// Explode and sanitize each element in list
+		$tmpelemarray = explode(',', $tmpescaped);
+		foreach ($tmpelemarray as $tmpkey => $tmpelem) {
+			$reg = array();
+			if (preg_match('/^\'(.*)\'$/', $tmpelem, $reg)) {
+				$tmpelemarray[$tmpkey] = "'".$db->escape($db->sanitize($reg[1], 1, 1, 1))."'";
+			} else {
+				$tmpelemarray[$tmpkey] = $db->escape($db->sanitize($tmpelem, 1, 1, 1));
+			}
+		}
+		$tmpescaped2 .= join(',', $tmpelemarray);
+		$tmpescaped2 .= ')';
+
+		$tmpescaped = $tmpescaped2;
 	} elseif ($operator == 'LIKE' || $operator == 'NOT LIKE') {
 		if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
 			$tmpescaped = $regbis[1];
