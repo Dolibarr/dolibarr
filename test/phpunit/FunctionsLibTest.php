@@ -25,7 +25,7 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
@@ -198,6 +198,11 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$filter="(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.date_creation:<:'2016-01-01 12:30:00') or (t.nature:is:NULL)";
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
 		$this->assertEquals(" AND ((t.ref LIKE 'SO-%') or (t.date_creation < '20160101') or (t.date_creation < 0) or (t.nature IS NULL))", $sql);
+
+		$filter = 't.fk_soc IN (SELECT rowid FROM llx_societe WHERE fournisseur = 1)';
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals(" xxx", $sql);
+
 
 		return true;
 	}
@@ -388,11 +393,11 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		*/
 
 		$result=dol_buildpath('/google/oauth2callback.php', 2);
-		print __METHOD__." result=".$result."\n";
+		print __METHOD__." dol_buildpath result=".$result."\n";
 		$this->assertStringStartsWith('http', $result);
 
 		$result=dol_buildpath('/google/oauth2callback.php', 3);
-		print __METHOD__." result=".$result."\n";
+		print __METHOD__." dol_buildpath result=".$result."\n";
 		$this->assertStringStartsWith('http', $result);
 	}
 
@@ -1634,13 +1639,13 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$langs->load("main");
 
 		// Try simple replacement
-		$substit = array("__AAA__"=>'Not used', "__BBB__"=>'Not used', "__CCC__"=>"C replaced", "DDD"=>"D replaced");
+		$substit = array("__AAA__"=>'Not used', "__BBB__"=>'Not used', "__CCC__"=>"C instead", "DDD"=>"D instead");
 		$substit += getCommonSubstitutionArray($langs);
 
 		$chaine = 'This is a string with theme constant __[MAIN_THEME]__ and __(DIRECTION)__ and __CCC__ and DDD and __MYCOMPANY_NAME__ and __YEAR__';
 		$newstring = make_substitutions($chaine, $substit);
 		print __METHOD__." ".$newstring."\n";
-		$this->assertEquals($newstring, 'This is a string with theme constant eldy and ltr and C replaced and D replaced and '.$mysoc->name.' and '.dol_print_date(dol_now(), '%Y', 'gmt'));
+		$this->assertEquals($newstring, 'This is a string with theme constant eldy and ltr and C instead and D instead and '.$mysoc->name.' and '.dol_print_date(dol_now(), '%Y', 'gmt'));
 
 		// Try mix HTML not HTML, no change on initial text
 		$substit = array("__NOHTML__"=>'No html', "__HTML__"=>'<b>HTML</b>');
