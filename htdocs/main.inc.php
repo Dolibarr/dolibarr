@@ -2523,22 +2523,6 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 					closeTopMenuLoginDropdown();
                 }
             });
-
-	        jQuery(".butAction.dropdown-toggle").on("click", function(event) {
-				console.log("Click on .butAction.dropdown-toggle");
-				var parentholder = jQuery(".butAction.dropdown-toggle").closest(".dropdown");
-            	var offset = parentholder.offset();
-				var widthdocument = $(document).width();
-				var left = offset.left;
-				var right = widthdocument - offset.left - parentholder.width();
-				var widthpopup = parentholder.children(".dropdown-content").width();
-				console.log("left="+left+" right="+right+" width="+widthpopup+" widthdocument="+widthdocument);
-				if (widthpopup + right >= widthdocument) {
-					right = 10;
-				}
-	            parentholder.toggleClass("open");
-	            parentholder.children(".dropdown-content").css({"right": right+"px", "left": "auto"});
-	        });
 		';
 
 

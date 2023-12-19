@@ -1299,6 +1299,7 @@ $(document).ready(function() {
 });
 <?php } ?>
 
+
 jQuery(document).ready(function() {
 	// Force to hide menus when page is inside an iFrame so we can show any page into a dialog popup
 	if (window.location && window.location.pathname.indexOf("externalsite/frametop.php") == -1 && window.location !== window.parent.location ) {
@@ -1311,6 +1312,25 @@ jQuery(document).ready(function() {
 
 	// Code to set tooltip on search field
 	jQuery('table.liste tr.liste_titre_filter td.liste_titre input[name^="search"][type=text]:not(".maxwidthdate")').attr('title', '<?php echo dol_escape_js($langs->transnoentities("SearchSyntaxTooltipForStringOrNum")) ?>');
+});
+
+
+jQuery(document).ready(function() {
+	jQuery(".butAction.dropdown-toggle").on("click", function(event) {
+		console.log("Click on .butAction.dropdown-toggle");
+		var parentholder = jQuery(".butAction.dropdown-toggle").closest(".dropdown");
+			 var offset = parentholder.offset();
+		var widthdocument = $(document).width();
+		var left = offset.left;
+		var right = widthdocument - offset.left - parentholder.width();
+		var widthpopup = parentholder.children(".dropdown-content").width();
+		console.log("left="+left+" right="+right+" width="+widthpopup+" widthdocument="+widthdocument);
+		if (widthpopup + right >= widthdocument) {
+			right = 10;
+		}
+		parentholder.toggleClass("open");
+		parentholder.children(".dropdown-content").css({"right": right+"px", "left": "auto"});
+	});
 });
 
 
