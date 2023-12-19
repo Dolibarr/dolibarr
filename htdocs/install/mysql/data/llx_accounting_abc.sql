@@ -129,3 +129,6 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 
 -- Description of chart of account DZ NSCF
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  13, 'NSCF', 'Nouveau système comptable financier', 1);
+
+-- Description of chart of account NL STANDAARD
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  17, 'STANDAARD-NL', 'Rekeningschema Nederland', 1);
