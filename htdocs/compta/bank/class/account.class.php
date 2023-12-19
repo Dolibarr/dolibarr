@@ -1889,7 +1889,7 @@ class Account extends CommonObject
 			$return .= '<span class="opacitymedium">'.$langs->trans("Balance").'</span> : <span class="amount">'.price(price2num($this->solde(1), 'MT'), 0, $langs, 1, -1, -1, $this->currency_code).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
