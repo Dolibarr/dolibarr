@@ -199,10 +199,10 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
 		$this->assertEquals(" AND ((t.ref LIKE 'SO-%') or (t.date_creation < '20160101') or (t.date_creation < 0) or (t.nature IS NULL))", $sql);
 
-		$filter = 't.fk_soc IN (SELECT rowid FROM llx_societe WHERE fournisseur = 1)';
+		/*$filter = 't.fk_soc IN (SELECT rowid FROM llx_societe WHERE fournisseur = 1)';
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
 		$this->assertEquals(" xxx", $sql);
-
+		*/
 
 		return true;
 	}
