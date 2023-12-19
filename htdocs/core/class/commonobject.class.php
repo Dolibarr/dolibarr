@@ -167,8 +167,9 @@ abstract class CommonObject
 	 * @var CommonObject To store a cloned copy of object before to edit it and keep track of old properties
 	 */
 	public $oldcopy;
+
 	/**
-	 * @var CommonObject To store old value of a modified ref
+	 * @var string To store old value of a modified ref
 	 */
 	public $oldref;
 
@@ -5627,7 +5628,9 @@ abstract class CommonObject
 					$file = $prefix."_".$modele.".modules.php";
 				}
 
-				// On verifie l'emplacement du modele
+				$file = dol_sanitizeFileName($file);
+
+				// We chack if file exists
 				$file = dol_buildpath($reldir.$modelspath.$file, 0);
 				if (file_exists($file)) {
 					$filefound = $file;
@@ -5647,10 +5650,13 @@ abstract class CommonObject
 			return -1;
 		}
 
-		// If generator was found
-		global $db; // Required to solve a conception default making an include of code using $db instead of $this->db just after.
+		// Sanitize $filefound
+		$filefound = dol_sanitizePathName($filefound);
 
-		require_once $file;
+		// If generator was found
+		global $db; // Required to solve a conception default making an include of some code that uses $db instead of $this->db just after.
+
+		require_once $filefound;
 
 		$obj = new $classname($this->db);
 

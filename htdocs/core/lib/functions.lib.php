@@ -1220,10 +1220,10 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 		foreach ($conf->file->dol_document_root as $key => $dirroot) {	// ex: array(["main"]=>"/home/main/htdocs", ["alt0"]=>"/home/dirmod/htdocs", ...)
 			if ($key == 'main') {
 				if ($type == 3) {
-					global $dolibarr_main_url_root;
+					/*global $dolibarr_main_url_root;*/
 
 					// Define $urlwithroot
-					$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+					$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($conf->file->dol_main_url_root));
 					$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 					//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
@@ -1244,10 +1244,10 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 						$res = (preg_match('/^http/i', $conf->file->dol_url_root[$key]) ? '' : DOL_MAIN_URL_ROOT).$conf->file->dol_url_root[$key].'/'.$path;
 					}
 					if ($type == 3) {
-						global $dolibarr_main_url_root;
+						/*global $dolibarr_main_url_root;*/
 
 						// Define $urlwithroot
-						$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+						$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($conf->file->dol_main_url_root));
 						$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 						//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
@@ -1357,7 +1357,7 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
 }
 
 /**
- *	Clean a string to use it as a path name.
+ *	Clean a string to use it as a path name. Similare to dol_sanitizeFileName but accept / and \ chars.
  *  Replace also '--' and ' -' strings, they are used for parameters separation (Note: ' - ' is allowed).
  *
  *	@param	string	$str            String to clean
@@ -1651,7 +1651,7 @@ function dolPrintHTML($s, $allowiframe = 0)
 }
 
 /**
- * Return a string ready to be output on an HTML attribute (alt, title, ...)
+ * Return a string ready to be output on an HTML attribute (alt, title, data-html, ...)
  *
  * @param	string	$s		String to print
  * @return	string			String ready for HTML output
@@ -1660,7 +1660,7 @@ function dolPrintHTMLForAttribute($s)
 {
 	// The dol_htmlentitiesbr will convert simple text into html
 	// The dol_escape_htmltag will escape html chars.
-	return dol_escape_htmltag(dol_htmlentitiesbr($s), 1, -1);
+	return dol_escape_htmltag(dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 0, 0, 0, array('br', 'b', 'font', 'span')), 1, -1, '', 0, 1);
 }
 
 /**
@@ -7617,17 +7617,19 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 			if (!empty($out) && getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML') && $check != 'restricthtmlallowunvalid') {
 				try {
 					libxml_use_internal_errors(false);	// Avoid to fill memory with xml errors
+					libxml_disable_entity_loader(true);	// Avoid load of external entities (security problem). Required only if LIBXML_VERSION < 20900
 
 					$dom = new DOMDocument();
 					// Add a trick to solve pb with text without parent tag
 					// like '<h1>Foo</h1><p>bar</p>' that wrongly ends up, without the trick, with '<h1>Foo<p>bar</p></h1>'
 					// like 'abc' that wrongly ends up, without the trick, with '<p>abc</p>'
-					$out = '<div class="tricktoremove">'.$out.'</div>';
+
+					$out = '<?xml encoding="UTF-8"><div class="tricktoremove">'.$out.'</div>';
 					$dom->loadHTML($out, LIBXML_HTML_NODEFDTD|LIBXML_ERR_NONE|LIBXML_HTML_NOIMPLIED|LIBXML_NONET|LIBXML_NOWARNING|LIBXML_NOXMLDECL);
 					$out = trim($dom->saveHTML());
 
 					// Remove the trick added to solve pb with text without parent tag
-					$out = preg_replace('/^<div class="tricktoremove">/', '', $out);
+					$out = preg_replace('/^<\?xml encoding="UTF-8"><div class="tricktoremove">/', '', $out);
 					$out = preg_replace('/<\/div>$/', '', $out);
 				} catch (Exception $e) {
 					// If error, invalid HTML string with no way to clean it
@@ -9781,8 +9783,15 @@ function picto_from_langcode($codelang, $moreatt = '', $notitlealt = 0)
 		$flagImage = empty($tmparray[1]) ? $tmparray[0] : $tmparray[1];
 	}
 
+	$morecss = '';
+	$reg = array();
+	if (preg_match('/class="([^"]+)"/', $moreatt, $reg)) {
+		$morecss = $reg[1];
+		$moreatt = "";
+	}
+
 	// return img_picto_common($codelang, 'flags/'.strtolower($flagImage).'.png', $moreatt, 0, $notitlealt);
-	return '<span class="flag-sprite '.strtolower($flagImage).'"'.($moreatt ? ' '.$moreatt : '').(!$notitlealt ? ' title="'.$codelang.'"' : '').'></span>';
+	return '<span class="flag-sprite '.strtolower($flagImage).($morecss ? ' '.$morecss : '').'"'.($moreatt ? ' '.$moreatt : '').(!$notitlealt ? ' title="'.$codelang.'"' : '').'></span>';
 }
 
 /**

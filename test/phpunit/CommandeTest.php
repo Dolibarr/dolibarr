@@ -146,11 +146,17 @@ class CommandeTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
+		$soc = new Societe($db);
+		$soc->name = "CommandeTest Unittest";
+		$socid = $soc->create($user);
+		$this->assertLessThan($socid, 0, $soc->errorsToString());
+
 		$localobject=new Commande($db);
 		$localobject->initAsSpecimen();
+		$localobject->socid = $socid;
 		$result=$localobject->create($user);
 
-		$this->assertLessThan($result, 0);
+		$this->assertLessThan($result, 0, $localobject->errorsToString());
 		print __METHOD__." result=".$result."\n";
 		return $result;
 	}

@@ -827,6 +827,10 @@ input:-webkit-autofill {
 input[type=checkbox], input[type=radio] {
 	margin: 0 3px 0 3px;
 }
+.kanban input.checkforselect {
+	margin-right: 0px;
+	margin-top: 5px;
+}
 
 /* CSS for placeholder */
 .placeholder { color: #ccc; }
@@ -1673,6 +1677,12 @@ select.flat.selectlimit {
 }
 .tdoverflowmax300 {			/* For tdoverflow, the max-midth become a minimum ! */
 	max-width: 300px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.tdoverflowmax350 {			/* For tdoverflow, the max-midth become a minimum ! */
+	max-width: 350px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;

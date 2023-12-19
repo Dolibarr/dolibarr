@@ -261,7 +261,7 @@ for (noarg=1;noarg<argc;noarg++) {
 		if (strlen(argv[noarg]) < 3) { ++noarg; curseurarg=0; }
 		switch (option) {
 			case 's': strncpy(Host,argv[noarg]+curseurarg,sizeof(Host)); break;
-			case 'p': Port=atoi(argv[noarg]+curseurarg); break;
+			case 'p': Port=atoi(argv[noarg]+curseurarg); break;					// Get port from "-p80" (curseurarg = 2) or "-p 80" (curseurarg = 0)
 			case '?': help=-1;break;											// Help
 			case 'h': help=-1;break;											// Help
 			case 'v': help=-1;break;											// Help

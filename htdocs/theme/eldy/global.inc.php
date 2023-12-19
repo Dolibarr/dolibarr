@@ -245,6 +245,10 @@ input[type=submit], input[type=submit]:hover {
 input[type=checkbox], input[type=radio] {
 	margin: 0 3px 0 3px;
 }
+.kanban input.checkforselect {
+	margin-right: 0px;
+	margin-top: 5px;
+}
 input {
 	line-height: 1.3em;
 	padding: 4px;
@@ -1428,6 +1432,12 @@ select.flat.selectlimit {
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
+.tdoverflowmax350 {			/* For tdoverflow, the max-midth become a minimum ! */
+	max-width: 350px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
 .tdoverflowmax400 {			/* For tdoverflow, the max-midth become a minimum ! */
 	max-width: 400px;
 	overflow: hidden;
@@ -2068,7 +2078,7 @@ td.showDragHandle {
 	/*display: block;
 	float: left; */
 	display: table-cell;
-	border-<?php echo $right; ?>: 1px solid #E0E0E0;
+	border-<?php echo $right; ?>: 1px solid #ECECEC;
 	box-shadow: 3px 0 6px -2px #eee;
 	background: var(--colorbackvmenu1);
 	transition: left 0.5s ease;
@@ -3976,7 +3986,7 @@ table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.nobor
 	padding: 7px 8px 7px 8px;			/* t r b l */
 }
 table.liste td, table.noborder td, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
-	padding: 7px 8px 7px 8px;			/* t r b l */
+	padding: 8px 6px 8px 6px;			/* t r b l */
 	/* line-height: 22px; This create trouble on cell login on list of last events of a contract*/
 	height: 22px;
 }
