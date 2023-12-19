@@ -1738,8 +1738,6 @@ abstract class CommonObject
 	public function fetch_thirdparty($force_thirdparty_id = 0)
 	{
 		// phpcs:enable
-		global $conf;
-
 		if (empty($this->socid) && empty($this->fk_soc) && empty($force_thirdparty_id)) {
 			return 0;
 		}
