@@ -125,7 +125,7 @@ if (trim($search_company) != '') {
 	$sql .= natural_search('d.societe', $search_company);
 }
 if (trim($search_thirdparty) != '') {
-	$sql .= " AND s.nom LIKE '%" . $db->escape($search_thirdparty) . "%'";
+	$sql .= natural_search("s.nom", $search_thirdparty);
 }
 if (trim($search_name) != '') {
 	$sql .= natural_search(array('d.lastname', 'd.firstname'), $search_name);
