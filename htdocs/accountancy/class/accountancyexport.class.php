@@ -829,7 +829,7 @@ class AccountancyExport
 	 * @param 	array 		$objectLines 			data
 	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
 	 * @param 	array		$archiveFileList		[=array()] Archive file list : array of ['path', 'name']
-	 * @param 	bool		$withAttachment			[=0] Not add files or 1 to have attached in an archive
+	 * @param 	int			$withAttachment			[=0] Not add files or 1 to have attached in an archive
 	 * @return	array		Archive file list : array of ['path', 'name']
 	 */
 	public function exportQuadratus($objectLines, $exportFile = null, $archiveFileList = array(), $withAttachment = 0)
@@ -1309,7 +1309,7 @@ class AccountancyExport
 	 * @param 	array 		$objectLines 			data
 	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
 	 * @param 	array		$archiveFileList		[=array()] Archive file list : array of ['path', 'name']
-	 * @param 	bool		$withAttachment			[=0] Not add files or 1 to have attached in an archive
+	 * @param 	int			$withAttachment			[=0] Not add files or 1 to have attached in an archive
 	 * @return	array		Archive file list : array of ['path', 'name']
 	 */
 	public function exportFEC($objectLines, $exportFile = null, $archiveFileList = array(), $withAttachment = 0)
@@ -1520,7 +1520,7 @@ class AccountancyExport
 	 * @param 	array 		$objectLines 			data
 	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
 	 * @param 	array		$archiveFileList		[=array()] Archive file list : array of ['path', 'name']
-	 * @param 	bool		$withAttachment			[=0] Not add files or 1 to have attached in an archive
+	 * @param 	int			$withAttachment			[=0] Not add files or 1 to have attached in an archive
 	 * @return	array		Archive file list : array of ['path', 'name']
 	 */
 	public function exportFEC2($objectLines, $exportFile = null, $archiveFileList = array(), $withAttachment = 0)

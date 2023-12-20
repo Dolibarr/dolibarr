@@ -784,7 +784,7 @@ class ActionComm extends CommonObject
 	 *  @param  string	$ref    			Ref of action to get
 	 *  @param  string	$ref_ext			Ref ext to get
 	 *  @param	string	$email_msgid		Email msgid
-	 *  @param	string	$loadresources		1=Load also resources
+	 *  @param	int		$loadresources		1=Load also resources
 	 *  @return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $ref = '', $ref_ext = '', $email_msgid = '', $loadresources = 1)
@@ -1328,7 +1328,7 @@ class ActionComm extends CommonObject
 	 *  @param		string	$filter			Other filter
 	 *  @param		string	$sortfield		Sort on this field
 	 *  @param		string	$sortorder		ASC or DESC
-	 *  @param		string	$limit			Limit number of answers
+	 *  @param		int		$limit			Limit number of answers
 	 *  @return		ActionComm[]|string		Error string if KO, array with actions if OK
 	 */
 	public function getActions($socid = 0, $fk_element = 0, $elementtype = '', $filter = '', $sortfield = 'a.datep', $sortorder = 'DESC', $limit = 0)
@@ -1542,7 +1542,7 @@ class ActionComm extends CommonObject
 	 *  @param  int     $percent        Percent
 	 *  @param  int		$mode           0=Long label, 1=Short label, 2=Picto+Short label, 3=Picto, 4=Picto+Short label, 5=Short label+Picto, 6=Picto+Long label, 7=Very short label+Picto
 	 *  @param  int		$hidenastatus   1=Show nothing if status is "Not applicable"
-	 *  @param  int     $datestart      Date start of event
+	 *  @param  int|string     $datestart      Date start of event
 	 *  @return string		    		Label
 	 */
 	public function LibStatut($percent, $mode, $hidenastatus = 0, $datestart = '')
