@@ -441,6 +441,13 @@ class modAgenda extends DolibarrModules
 			's.code_compta'=>'CustomerAccountancyCode', 's.code_compta_fournisseur'=>'SupplierAccountancyCode', 's.tva_intra'=>'VATIntra',
 			'p.ref' => 'ProjectRef',
 		);
+		// Add multicompany field
+		if (!empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {
+			$nbofallowedentities = count(explode(',', getEntity('agenda')));
+			if (isModEnabled('multicompany') && $nbofallowedentities > 1) {
+				$this->export_fields_array[$r]['ac.entity'] = 'Entity';
+			}
+		}
 		$this->export_TypeFields_array[$r] = array('ac.ref_ext'=>"Text", 'ac.ref'=>"Text", 'ac.datec'=>"Date", 'ac.datep'=>"Date",
 			'ac.datep2'=>"Date", 'ac.location' => 'Text', 'ac.label'=>"Text", 'ac.note'=>"Text", 'ac.percent'=>"Numeric",
 			'ac.durationp'=>"Duree",'ac.fk_user_author'=>'Numeric', 'ac.fk_user_action'=>'Numeric', 'ac.fk_user_mod'=>'Numeric', 'ac.transparency'=>"Numeric", 'ac.priority'=>"Numeric", 'ac.fk_element'=>"Numeric", 'ac.elementtype'=>"Text",
@@ -448,7 +455,8 @@ class modAgenda extends DolibarrModules
 			's.nom'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text',
 			'co.code'=>'Text', 's.phone'=>'Text', 's.siren'=>'Text', 's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.idprof5'=>'Text', 's.idprof6'=>'Text',
 			's.code_compta'=>'Text', 's.code_compta_fournisseur'=>'Text', 's.tva_intra'=>'Text',
-			'p.ref' => 'Text',
+			'p.ref' => 'Text', 'ac.entity'=>'List:entity:label:rowid'
+
 		);
 		$this->export_entities_array[$r] = array('ac.id'=>"action", 'ac.ref_ext'=>"action", 'ac.ref'=>"action", 'ac.datec'=>"action", 'ac.datep'=>"action",
 			'ac.datep2'=>"action", 'ac.location' => 'action', 'ac.label'=>"action", 'ac.note'=>"action", 'ac.percent'=>"action", 'ac.durationp'=>"action",'ac.fk_user_author'=>'user', 'ac.fk_user_action'=>'user', 'ac.fk_user_mod'=>'user', 'ac.transparency'=>"action", 'ac.priority'=>"action", 'ac.fk_element'=>"action", 'ac.elementtype'=>"action",
@@ -485,6 +493,7 @@ class modAgenda extends DolibarrModules
 		if (!empty($user) && !$user->hasRight('agenda', 'allactions', 'read')) {
 			$this->export_sql_end[$r] .= ' AND acr.fk_element = '.(empty($user) ? 0 : $user->id);
 		}
+		$this->export_sql_end[$r] .= ' AND ac.entity IN ('.getEntity('agenda').')';
 		$this->export_sql_order[$r] = ' ORDER BY ac.datep';
 
 		// Imports
