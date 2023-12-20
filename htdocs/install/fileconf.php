@@ -285,7 +285,7 @@ if (!empty($force_install_noedit)) {
 
 	<?php
 	if (!isset($dolibarr_main_db_host)) {
-		$dolibarr_main_db_host = "localhost";
+		$dolibarr_main_db_host = "127.0.0.1";
 	}
 	?>
 	<tr>
