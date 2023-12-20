@@ -2851,7 +2851,7 @@ if ($action == 'create') {
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
-		
+
 		$objectsrc2 = clone $objectsrc; // src object cloned in case it'll be used later
 		$object->srcObjDelBilledLines($objectsrc2);
 		$objectsrc2->printOriginLinesList('', $selectedLines);
