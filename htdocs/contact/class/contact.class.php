@@ -356,8 +356,6 @@ class Contact extends CommonObject
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs;
-
 		$this->db = $db;
 		$this->statut = 1; // By default, status is enabled
 
