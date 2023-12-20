@@ -933,7 +933,7 @@ class ExtraFields
 	 * @param  string        $keyprefix      		Suffix string to add before name and id of field (can be used to avoid duplicate names)
 	 * @param  string        $morecss        		More css (to defined size of field. Old behaviour: may also be a numeric)
 	 * @param  int           $objectid       		Current object id
-	 * @param  string        $extrafieldsobjectkey	The key to use to store retreived data (for example $object->table_element)
+	 * @param  string        $extrafieldsobjectkey	The key to use to store retreived data (commonly $object->table_element)
 	 * @param  string        $mode                  1=Used for search filters
 	 * @return string
 	 */
@@ -1462,6 +1462,7 @@ class ExtraFields
 							}
 
 							// Si l'on a un AND ou un OR, avant ou après
+							$matchCondition = array();
 							preg_match('#(AND|OR|) *('.$word.') *(AND|OR|)#', $InfoFieldList[4], $matchCondition);
 							while (!empty($matchCondition[0])) {
 								// If the two sides differ but are not empty
@@ -1581,11 +1582,23 @@ class ExtraFields
 			}
 		} elseif ($type == 'link') {
 			$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath'
+			/* Removed.
+			The selectForForms is called with parameter $objectfield defined, so tha app can retreive the filter inside the ajax component instead of being provided as parameters. The
+			filter was use to pass SQL requests leading to serious SQL injection problem. This should not be possible. Also the call of the ajax was broken by some WAF.
 			if (strpos($param_list[0], '$ID$') !== false && !empty($objectid)) {
 				$param_list[0] = str_replace('$ID$', $objectid, $param_list[0]);
-			}
+			}*/
 			$showempty = (($required && $default != '') ? 0 : 1);
-			$out = $form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss);
+
+			$tmparray = explode(':', $param_list[0]);
+
+			$element = $extrafieldsobjectkey;		// $extrafieldsobjectkey comes from $object->table_element but we need $object->element
+			if ($element == 'socpeople') {
+				$element = 'contact';
+			}
+
+			//$out = $form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, '', 0, 0, '');
+			$out = $form->selectForForms($tmparray[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, '', 0, 0, '', $element.':options_'.$key);
 		} elseif ($type == 'password') {
 			// If prefix is 'search_', field is used as a filter, we use a common text field.
 			$out = '<input style="display:none" type="text" name="fakeusernameremembered">'; // Hidden field to reduce impact of evil Google Chrome autopopulate bug.
