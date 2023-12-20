@@ -601,7 +601,7 @@ if ($action == 'export_fileconfirm' && $user->rights->accounting->mouvements->ex
 		$withAttachment = !empty(trim(GETPOST('notifiedexportfull', 'alphanohtml'))) ? 1 : 0;
 
 		// Output data on screen or download
-		$result = $accountancyexport->export($object->lines, $formatexport, $withAttachment);
+		$result = $accountancyexport->export($object->lines, $formatexport, $withAttachment, 0, 2);
 
 		$error = 0;
 		if ($result < 0) {
