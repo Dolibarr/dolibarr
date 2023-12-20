@@ -71,7 +71,7 @@ class modAgenda extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->langfiles = array("companies");
+		$this->langfiles = array("companies","project");
 		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 
 		// Module parts
@@ -500,38 +500,21 @@ class modAgenda extends DolibarrModules
 		$this->import_tables_creator_array[$r] = array('ac' => 'fk_user_author'); // Fields to store import user id
 		$this->import_fields_array[$r] = array(
 			'ac.ref_ext' => 'ExternalRef',
-			'ac.ref' => 'Ref',
+			'ac.ref' => 'Ref*',
 			'ac.datec' => 'DateCreation',
 			'ac.datep' => 'DateActionBegin',
 			'ac.datep2' => 'DateActionEnd',
 			'ac.location' => 'Location',
-			'ac.label' => 'Title',
+			'ac.label' => 'Title*',
 			'ac.note' => 'Note',
 			'ac.percent' => 'Percentage',
-			'ac.durationp' => 'Duration',
 			'ac.transparency' => 'Transparency',
 			'ac.priority' => 'Priority',
-			'uc.rowid' => 'CreatedById',
-			'ac.fk_action' => 'Code',
-			'ac.fk_soc' => 'IdCompany',
-			's.nom' => 'CompanyName',
-			's.address' => 'Address',
-			's.zip' => 'Zip',
-			's.town' => 'Town',
-			'co.code' => 'CountryCode',
-			's.phone' => 'Phone',
-			's.siren' => 'ProfId1',
-			's.siret' => 'ProfId2',
-			's.ape' => 'ProfId3',
-			's.idprof4' => 'ProfId4',
-			's.idprof5' => 'ProfId5',
-			's.idprof6' => 'ProfId6',
-			's.code_compta' => 'CustomerAccountancyCode',
-			's.code_compta_fournisseur' => 'SupplierAccountancyCode',
-			's.tva_intra' => 'VATIntra',
+			'ac.fk_action' => 'Code*',
+			'ac.fk_soc' => 'ThirdPartyName',
 			'ac.fk_project' => 'ProjectRef',
 			'ac.fk_user_mod' => 'ModifiedBy',
-			'ac.fk_user_action' => 'AffectedTo',
+			'ac.fk_user_action' => 'AffectedTo*',
 			'ac.fk_element' => 'ElementID',
 			'ac.elementtype' => 'ElementType',
 		);
