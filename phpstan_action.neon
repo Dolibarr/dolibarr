@@ -46,16 +46,11 @@ parameters:
 	reportMagicMethods: false
 	reportMagicProperties: false
 	ignoreErrors:
-		- '#has an unused parameter \$param#'
 		- '#Result of function fieldList#'
 		- '#Caught class Stripe#'
-		- '#Function llxHeader invoked with#'
-		- '#Function llxHeaderVierge invoked with#'
-		- '#Function llxFooter invoked with#'
-		- '#Function llxFooterVierge invoked with#'
+		- '#Function llx.* invoked with#'
 		- '#If condition is always true#'
 		- '#always exists and is not falsy#'
-		- '#has no return type specified#'
 		- '#is always true#'
 		- '#is always fal#'
 		- '#always exists and is not nullable#'
@@ -66,8 +61,7 @@ parameters:
 		- '#in isset\(\) is never defined#'
 		- '#(\$force_dolibarr_lib|\$dolibarr_main_db).*in empty\(\) is never defined.#'
 		- '#Sprain\\SwissQrBill\\#'
-		- '#Constructor of class DolEditor has an unused parameter \$toolbarlocation#'
-		- '#Constructor of class DoliDB.* has an unused parameter \$type#'
+		- '#Constructor of class .* has an unused parameter #'
 		- '#Default value of the parameter#'
 	internalErrorsCountLimit: 50
 	cache:
