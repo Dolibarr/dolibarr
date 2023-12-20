@@ -1816,7 +1816,7 @@ abstract class CommonInvoice extends CommonObject
 		//var_dump($s);exit;
 		return $s;
 	}
-	
+
 	/**
 	 *	Delete lines (or dec qty) of an invoice src object (propal, order) if lines are already billed.
 	 *  @see compta/facture/card.php
