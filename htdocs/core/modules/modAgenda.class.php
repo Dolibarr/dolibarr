@@ -516,7 +516,7 @@ class modAgenda extends DolibarrModules
 			'ac.location' => 'Location',
 			'ac.label' => 'Title*',
 			'ac.note' => 'Note',
-			'ac.percent' => 'Percentage',
+			'ac.percent' => 'Percentage*',
 			'ac.transparency' => 'Transparency',
 			'ac.priority' => 'Priority',
 			'ac.fk_action' => 'Code*',
