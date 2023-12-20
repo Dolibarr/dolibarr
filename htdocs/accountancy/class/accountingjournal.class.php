@@ -533,8 +533,6 @@ class AccountingJournal extends CommonObject
 			$element_link = $element_static->getNomUrl(1, 'with_label');
 
 			$element_name_formatted_0 = dol_trunc($element_static->label, 16);
-			$element_name_formatted_1 = utf8_decode(dol_trunc($element_static->label, 32));
-			$element_name_formatted_2 = utf8_decode(dol_trunc($element_static->label, 16));
 			$label_operation = $element_static->getNomUrl(0, 'label', 16);
 
 			$element = array(

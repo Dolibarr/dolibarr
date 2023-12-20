@@ -2514,7 +2514,7 @@ class Project extends CommonObject
 			$return .= ' <div class="amount small marginrightonly inline-block">'.price($this->opp_amount).'</div>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<div class="info-box-status small inline-block">'.$this->getLibStatut(3).'</div>';
+			$return .= '<div class="info-box-status small inline-block valignmiddle">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';	// end div line status
 

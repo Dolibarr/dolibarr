@@ -638,7 +638,7 @@ if (empty($reshook)) {
 			$emailTo = $destinataire->email;
 
 			// CC
-			$emailCC = $conf->global->NDF_CC_EMAILS;
+			$emailCC = getDolGlobalString('NDF_CC_EMAILS');
 			if (empty($emailTo)) {
 				$emailTo = $emailCC;
 			}
@@ -646,7 +646,7 @@ if (empty($reshook)) {
 			// FROM
 			$expediteur = new User($db);
 			$expediteur->fetch($object->fk_user_approve > 0 ? $object->fk_user_approve : $object->fk_user_validator);
-			$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
+			$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 
 			if ($emailFrom && $emailTo) {
 				$filename = array();
@@ -654,9 +654,9 @@ if (empty($reshook)) {
 				$mimetype = array();
 
 				// SUBJECT
-				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+				$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 				if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-					$societeName = $conf->global->MAIN_APPLICATION_TITLE;
+					$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
 				}
 
 				$subject = $societeName." - ".$langs->transnoentities("ExpenseReportApproved");

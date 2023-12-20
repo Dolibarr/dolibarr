@@ -20,7 +20,7 @@
  */
 
 /**
- * \file        class/skill.class.php
+ * \file        htdocs/hrm/class/skill.class.php
  * \ingroup     hrm
  * \brief       This file is a CRUD class file for Skill (Create/Read/Update/Delete)
  */
@@ -244,14 +244,14 @@ class Skill extends CommonObject
 	 * createSkills
 	 *
 	 * @param int 	$i 		Rank from which we want to create skilldets (level $i to HRM_MAXRANK wil be created)
-	 * @return null
+	 * @return int          Return integer <0 if KO, Id of created object if OK
 	 */
 	public function createSkills($i = 1)
 	{
 		global $conf, $user, $langs;
 
-		$MaxNumberSkill = isset($conf->global->HRM_MAXRANK) ? $conf->global->HRM_MAXRANK : self::DEFAULT_MAX_RANK_PER_SKILL;
-		$defaultSkillDesc = getDolGlobalString('HRM_DEFAULT_SKILL_DESCRIPTION') ? $conf->global->HRM_DEFAULT_SKILL_DESCRIPTION : $langs->trans("NoDescription");
+		$MaxNumberSkill = getDolGlobalInt('HRM_MAXRANK', self::DEFAULT_MAX_RANK_PER_SKILL);
+		$defaultSkillDesc = getDolGlobalString('HRM_DEFAULT_SKILL_DESCRIPTION', $langs->trans("NoDescription"));
 
 		$error = 0;
 

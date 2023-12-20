@@ -98,7 +98,7 @@ class PaiementFourn extends Paiement
 	 *  @param	int		$fk_bank	Id of bank line associated to payment
 	 *  @return int		            Return integer <0 if KO, -2 if not found, >0 if OK
 	 */
-	public function fetch($id, $ref = '', $fk_bank = '')
+	public function fetch($id, $ref = '', $fk_bank = 0)
 	{
 		$error = 0;
 
