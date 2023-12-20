@@ -276,8 +276,6 @@ trait CommonPeople
 	 */
 	public function setUpperOrLowerCase()
 	{
-		global $conf;
-
 		if (getDolGlobalString('MAIN_FIRST_TO_UPPER')) {
 			$this->lastname = dol_ucwords(dol_strtolower($this->lastname));
 			$this->firstname = dol_ucwords(dol_strtolower($this->firstname));

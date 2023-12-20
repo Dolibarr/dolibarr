@@ -888,7 +888,7 @@ class Societe extends CommonObject
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
-		global $langs, $conf, $mysoc;
+		global $langs, $conf;
 
 		$error = 0;
 

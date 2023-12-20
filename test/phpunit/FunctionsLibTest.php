@@ -183,7 +183,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testDolForgeCriteriaCallback()
 	{
-		global $conf, $langs;
+		global $conf, $langs, $db;
 
 		// An attempt for SQL injection
 		$filter='if(now()=sysdate()%2Csleep(6)%2C0)';
@@ -195,14 +195,43 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
 		$this->assertEquals(' AND ((((statut = 1) or (entity IN (__AAA__))) and (abc < 2) and (abc <> 1.23)))', $sql);
 
+		// A real search string
 		$filter="(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.date_creation:<:'2016-01-01 12:30:00') or (t.nature:is:NULL)";
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
 		$this->assertEquals(" AND ((t.ref LIKE 'SO-%') or (t.date_creation < '20160101') or (t.date_creation < 0) or (t.nature IS NULL))", $sql);
 
-		/*$filter = 't.fk_soc IN (SELECT rowid FROM llx_societe WHERE fournisseur = 1)';
+		// A real search string
+		$filter = "(t.fieldstring:=:'aaa ttt')";
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
-		$this->assertEquals(" xxx", $sql);
-		*/
+		$this->assertEquals(" AND ((t.fieldstring = 'aaa ttt'))", $sql);
+
+
+		// Check that parenthesis are NOT allowed inside the last operand. Very important.
+		$filter = "(t.fieldint:=:(1,2))";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals("Filter syntax error - Bad syntax of the search string", $sql);
+
+		// Check that ' is escaped into the last operand
+		$filter = "(t.fieldstring:=:'aaa'ttt')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+
+		if ($db->type == 'mysqli') {
+			$this->assertEquals(" AND ((t.fieldstring = 'aaa\'ttt'))", $sql);	// with mysql
+		} else {
+			$this->assertEquals(" AND ((t.fieldstring = 'aaa''ttt'))", $sql);	// with pgsql
+		}
+
+		$filter = "(t.fk_soc:IN:1,2)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals(" AND ((t.fk_soc IN (1,2)))", $sql);
+
+		$filter = "(t.fk_soc:IN:'1','2=b')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals(" AND ((t.fk_soc IN ('1','2=b')))", $sql);
+
+		$filter = "(t.fk_soc:IN:SELECT rowid FROM llx_societe WHERE fournisseur = 1)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals(" AND ((t.fk_soc IN (SELECT rowid FROM llx_societe WHERE fournisseur = 1)))", $sql);
 
 		return true;
 	}
@@ -231,8 +260,8 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals($db->connected, 1, 'Savdb is connected');
 		$this->assertNotNull($newproduct1->db->db, 'newproduct1->db is not null');
 
-		$newproductcloned2 = dol_clone($newproduct1, 2);
-		var_dump($newproductcloned2);
+		//$newproductcloned2 = dol_clone($newproduct1, 2);
+		//var_dump($newproductcloned2);
 		//print __METHOD__." newproductcloned1->db must be null\n";
 		//$this->assertNull($newproductcloned1->db, 'newproductcloned1->db is null');
 	}

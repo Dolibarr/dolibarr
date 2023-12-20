@@ -36,6 +36,7 @@ if (isset($totalarray['pos'])) {
 					print '</td>';
 					break;
 			}
+			$subtotalarray['val'][$totalarray['pos'][$j]] = 0;
 		} else {
 			if ($j == 1) {
 				print '<td>'.$langs->trans("SubTotal").'</td>';
@@ -43,7 +44,6 @@ if (isset($totalarray['pos'])) {
 				print '<td></td>';
 			}
 		}
-		$subtotalarray['val'][$totalarray['pos'][$j]] = 0;
 	}
 	print '</tr>';
 }

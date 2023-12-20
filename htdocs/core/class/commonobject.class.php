@@ -93,7 +93,7 @@ abstract class CommonObject
 	public $element;
 
 	/**
-	 * @var int 		The related element
+	 * @var string    Fieldname with ID of parent key if this field has a parent
 	 */
 	public $fk_element;
 
@@ -1738,8 +1738,6 @@ abstract class CommonObject
 	public function fetch_thirdparty($force_thirdparty_id = 0)
 	{
 		// phpcs:enable
-		global $conf;
-
 		if (empty($this->socid) && empty($this->fk_soc) && empty($force_thirdparty_id)) {
 			return 0;
 		}
