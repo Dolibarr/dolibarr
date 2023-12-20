@@ -34,7 +34,7 @@ if (!defined('DOL_APPLICATION_TITLE')) {
 	define('DOL_APPLICATION_TITLE', 'Dolibarr');
 }
 if (!defined('DOL_VERSION')) {
-	define('DOL_VERSION', '19.0.0-dev'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
+	define('DOL_VERSION', '19.0.0-beta'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
 }
 
 if (!defined('EURO')) {
@@ -80,13 +80,16 @@ $result = @include_once $conffile; // Keep @ because with some error reporting t
 
 // Disable some not used PHP stream
 $listofwrappers = stream_get_wrappers();
-// We need '.phar' for geoip2. TODO Replace phar in geoip with exploded files so we can disable phar.
-$arrayofstreamtodisable = array('compress.zlib', 'compress.bzip2', 'ftps', 'glob', 'data', 'expect', 'ftp', 'ogg', 'rar', 'zip', 'zlib');
+// We need '.phar' for geoip2. TODO Replace phar in geoip with exploded files so we can disable phar by default.
+$arrayofstreamtodisable = array('compress.zlib', 'compress.bzip2', 'ftp', 'ftps', 'glob', 'data', 'expect', 'ogg', 'rar', 'zip', 'zlib');
+if (!empty($dolibarr_main_stream_to_disable) && is_array($dolibarr_main_stream_to_disable)) {
+	$arrayofstreamtodisable = $dolibarr_main_stream_to_disable;
+}
 foreach ($arrayofstreamtodisable as $streamtodisable) {
 	if (!empty($listofwrappers) && in_array($streamtodisable, $listofwrappers)) {
-		if (!empty($dolibarr_main_stream_enabled) && is_array($dolibarr_main_stream_enabled) && in_array($streamtodisable, $dolibarr_main_stream_enabled)) {
+		/*if (!empty($dolibarr_main_stream_do_not_disable) && is_array($dolibarr_main_stream_do_not_disable) && in_array($streamtodisable, $dolibarr_main_stream_do_not_disable)) {
 			continue;	// We do not disable this stream
-		}
+		}*/
 		stream_wrapper_unregister($streamtodisable);
 	}
 }

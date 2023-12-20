@@ -294,6 +294,12 @@ class Members extends DolibarrApi
 
 		$member = new Adherent($this->db);
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$member->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$member->$field = $value;
 		}
 		if ($member->create(DolibarrApiAccess::$user) < 0) {
@@ -329,6 +335,12 @@ class Members extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$member->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			// Process the status separately because it must be updated using
 			// the validate(), resiliate() and exclude() methods of the class Adherent.
 			if ($field == 'statut') {

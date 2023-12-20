@@ -208,8 +208,8 @@ class box_services_contracts extends ModeleBoxes
 				}
 				if ($num == 0) {
 					$this->info_box_contents[$i][0] = array(
-					'td' => 'class="center opacitymedium"',
-					'text'=>$langs->trans("NoContractedProducts")
+					'td' => 'class="center"',
+						'text'=> '<span class="opacitymedium">'.$langs->trans("NoContractedProducts").'</span>'
 					);
 				}
 
@@ -223,8 +223,8 @@ class box_services_contracts extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

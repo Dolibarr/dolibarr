@@ -142,7 +142,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 	 *
 	 * @param   int $rowid  Row id to load
 	 *
-	 * @return  int         <0 if KO, >0 if OK
+	 * @return  int         Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($rowid)
 	{
@@ -223,7 +223,10 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 			if (!empty($head['text']) || !empty($head['sublink']) || !empty($head['subpicto'])) {
 				$out .= '<tr class="liste_titre box_titre">';
 				$out .= '<th';
-				if ($nbcol > 0) {
+				if (!empty($head['nbcol'])) {
+					$nbcol = $head['nbcol'];
+				}
+				if ($nbcol > 1) {
 					$out .= ' colspan="'.$nbcol.'"';
 				}
 				$out .= '>';
@@ -374,7 +377,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 			$out .= "</div>\n";
 
 			$out .= "<!-- Box ".get_class($this)." end -->\n\n";
-			if (!empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
+			if (getDolGlobalString('MAIN_ACTIVATE_FILECACHE')) {
 				dol_filecache($cachedir, $filename, $out);
 			}
 		} else {

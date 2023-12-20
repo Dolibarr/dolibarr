@@ -140,7 +140,8 @@ if ($tmpobject) {
 			}
 			if ($result < 0) {
 				$nbko++;
-			} if ($result == 0) {
+			}
+			if ($result == 0) {
 				print 'File for ref '.$tmpobject->ref.' returned 0 during regeneration with template '.$tmpobject->model_pdf."\n";
 				$nbok++;
 			} else {

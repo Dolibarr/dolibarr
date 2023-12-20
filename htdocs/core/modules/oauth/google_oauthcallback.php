@@ -74,7 +74,7 @@ $currentUri = $uriFactory->createFromAbsolute($urlwithroot.'/core/modules/oauth/
  * Load the credential for the service
  */
 
-/** @var $serviceFactory \OAuth\ServiceFactory An OAuth service factory. */
+/** @var \OAuth\ServiceFactory $serviceFactory An OAuth service factory. */
 $serviceFactory = new \OAuth\ServiceFactory();
 $httpClient = new \OAuth\Common\Http\Client\CurlClient();
 // TODO Set options for proxy and timeout
@@ -322,7 +322,7 @@ if (!GETPOST('code')) {
 					$storage->clearToken('Google');
 
 					$tmpuser = new User($db);
-					$res = $tmpuser->fetch(0, '', '', 0, $entitytosearchuser, $useremail);
+					$res = $tmpuser->fetch(0, '', '', 0, $entitytosearchuser, $useremail, 0, 1);	// Load user. Can load with email_oauth2.
 
 					if ($res > 0) {
 						$username = $tmpuser->login;

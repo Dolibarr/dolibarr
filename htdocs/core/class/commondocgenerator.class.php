@@ -562,13 +562,13 @@ abstract class CommonDocGenerator
 			$array_key.'_incoterms' => (method_exists($object, 'display_incoterms') ? $object->display_incoterms() : ''),
 
 			$array_key.'_total_ht_locale'=>price($object->total_ht, 0, $outputlangs),
-			$array_key.'_total_vat_locale'=>(!empty($object->total_vat) ?price($object->total_vat, 0, $outputlangs) : price($object->total_tva, 0, $outputlangs)),
+			$array_key.'_total_vat_locale'=>(!empty($object->total_vat) ? price($object->total_vat, 0, $outputlangs) : price($object->total_tva, 0, $outputlangs)),
 			$array_key.'_total_localtax1_locale'=>price($object->total_localtax1, 0, $outputlangs),
 			$array_key.'_total_localtax2_locale'=>price($object->total_localtax2, 0, $outputlangs),
 			$array_key.'_total_ttc_locale'=>price($object->total_ttc, 0, $outputlangs),
 
 			$array_key.'_total_ht'=>price2num($object->total_ht),
-			$array_key.'_total_vat'=>(!empty($object->total_vat) ?price2num($object->total_vat) : price2num($object->total_tva)),
+			$array_key.'_total_vat'=>(!empty($object->total_vat) ? price2num($object->total_vat) : price2num($object->total_tva)),
 			$array_key.'_total_localtax1'=>price2num($object->total_localtax1),
 			$array_key.'_total_localtax2'=>price2num($object->total_localtax2),
 			$array_key.'_total_ttc'=>price2num($object->total_ttc),
@@ -756,8 +756,8 @@ abstract class CommonDocGenerator
 
 		// Units
 		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
-			  $resarray['line_unit'] = $outputlangs->trans($line->getLabelOfUnit('long'));
-			  $resarray['line_unit_short'] = $outputlangs->trans($line->getLabelOfUnit('short'));
+			$resarray['line_unit'] = $outputlangs->trans($line->getLabelOfUnit('long'));
+			$resarray['line_unit_short'] = $outputlangs->trans($line->getLabelOfUnit('short'));
 		}
 
 		// Retrieve extrafields
@@ -1232,7 +1232,7 @@ abstract class CommonDocGenerator
 	 *  @param	float		$curY    		curent Y position
 	 *  @param	string		$colKey    		the column key
 	 *  @param	string		$columnText   	column text
-	 *  @return	int							<0 if KO, >= if OK
+	 *  @return	int							Return integer <0 if KO, >= if OK
 	 */
 	public function printStdColumnContent($pdf, &$curY, $colKey, $columnText = '')
 	{
@@ -1348,7 +1348,9 @@ abstract class CommonDocGenerator
 		$extrafields = $this->extrafieldsCache;
 
 		$extrafieldOutputContent = '';
-		if (isset($object->array_options[$extrafieldOptionsKey])) $extrafieldOutputContent = $extrafields->showOutputField($extrafieldKey, $object->array_options[$extrafieldOptionsKey], '', $object->table_element);
+		if (isset($object->array_options[$extrafieldOptionsKey])) {
+			$extrafieldOutputContent = $extrafields->showOutputField($extrafieldKey, $object->array_options[$extrafieldOptionsKey], '', $object->table_element);
+		}
 
 		// TODO : allow showOutputField to be pdf public friendly, ex: in a link to object, clean getNomUrl to remove link and images... like a getName methode ...
 		if ($extrafields->attributes[$object->table_element]['type'][$extrafieldKey] == 'link') {
@@ -1427,7 +1429,7 @@ abstract class CommonDocGenerator
 		$params = $params + $defaultParams;
 
 		/**
-		 * @var $extrafields ExtraFields
+		 * @var ExtraFields $extrafields
 		 */
 
 		$html = '';
@@ -1656,7 +1658,7 @@ abstract class CommonDocGenerator
 	 *  @param	object			$object    		common object det
 	 *  @param	Translate		$outputlangs    langs
 	 *  @param	int			   $hidedetails		Do not show line details
-	 *  @return	int								<0 if KO, >=0 if OK
+	 *  @return	int								Return integer <0 if KO, >=0 if OK
 	 */
 	public function defineColumnExtrafield($object, $outputlangs, $hidedetails = 0)
 	{

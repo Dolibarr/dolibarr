@@ -31,7 +31,7 @@ class Orders extends DolibarrApi
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
-	static $FIELDS = array(
+	public static $FIELDS = array(
 		'socid',
 		'date'
 	);
@@ -156,16 +156,15 @@ class Orders extends DolibarrApi
 	 * @param int			   $page				Page number
 	 * @param string		   $thirdparty_ids		Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string           $sqlfilterlines      Other criteria to filter answers separated by a comma. Syntax example "(tl.fk_product:=:'17') and (tl.price:<:'250')"
 	 * @param string		   $properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of order objects
 	 *
 	 * @throws RestException 404 Not found
 	 * @throws RestException 503 Error
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $sqlfilterlines = '', $properties = '')
 	{
-		global $db, $conf;
-
 		if (!DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
 			throw new RestException(401);
 		}
@@ -213,7 +212,16 @@ class Orders extends DolibarrApi
 				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 		}
-
+		// Add sql filters for lines
+		if ($sqlfilterlines) {
+			$errormessage = '';
+			$sql .= " AND EXISTS (SELECT tl.rowid FROM ".MAIN_DB_PREFIX."commandedet AS tl WHERE tl.fk_commande = t.rowid";
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilterlines, $errormessage);
+			$sql .=	")";
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilterlines -> '.$errormessage);
+			}
+		}
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			if ($page < 0) {
@@ -274,6 +282,12 @@ class Orders extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->commande->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->commande->$field = $value;
 		}
 		/*if (isset($request_data["lines"])) {
@@ -599,7 +613,7 @@ class Orders extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		 $contacts = $this->commande->liste_contact();
+		$contacts = $this->commande->liste_contact();
 
 		foreach ($contacts as $contact) {
 			if ($contact['id'] == $contactid && $contact['code'] == $type) {
@@ -644,6 +658,12 @@ class Orders extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->commande->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->commande->$field = $value;
 		}
 
@@ -804,7 +824,6 @@ class Orders extends DolibarrApi
 	 */
 	public function setinvoiced($id)
 	{
-
 		if (!DolibarrApiAccess::$user->rights->commande->creer) {
 			throw new RestException(401);
 		}
@@ -941,7 +960,6 @@ class Orders extends DolibarrApi
 	 */
 	public function createOrderFromProposal($proposalid)
 	{
-
 		require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 
 		if (!DolibarrApiAccess::$user->hasRight('propal', 'lire')) {

@@ -40,12 +40,16 @@ $action = GETPOST('action', 'aZ09');
 $optioncss = GETPOST('optionscss', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ09');
 
+$mode = GETPOST('mode', 'aZ09') ? GETPOST('mode', 'aZ09') : 'searchkey';
+
 $langcode = GETPOST('langcode', 'alphanohtml');
 $transkey = GETPOST('transkey', 'alphanohtml');
-$transvalue = GETPOST('transvalue', 'restricthtml');
+if ($mode == 'searchkey') {
+	$transvalue = GETPOST('transvalue', 'alphanohtml');
+} else {
+	$transvalue = GETPOST('transvalue', 'restricthtml');
+}
 
-
-$mode = GETPOST('mode', 'aZ09') ? GETPOST('mode', 'aZ09') : 'searchkey';
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -73,7 +77,8 @@ $hookmanager->initHooks(array('admintranslation', 'globaladmin'));
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && !empty($massaction) && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
@@ -284,7 +289,7 @@ foreach ($modulesdir as $keydir => $tmpsearchdir) {
 	$dir_lang = dirname(dirname($searchdir))."/langs/".$langcode; // The 2 dirname is to go up in dir for 2 levels
 	$dir_lang_osencoded = dol_osencode($dir_lang);
 
-	$filearray = dol_dir_list($dir_lang_osencoded, 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ?SORT_ASC:SORT_DESC), 1);
+	$filearray = dol_dir_list($dir_lang_osencoded, 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ? SORT_ASC : SORT_DESC), 1);
 	foreach ($filearray as $file) {
 		$tmpfile = preg_replace('/.lang/i', '', basename($file['name']));
 		$moduledirname = (basename(dirname(dirname($dir_lang))));
@@ -516,7 +521,7 @@ if ($mode == 'searchkey') {
 	}
 	else
 	{*/
-		print '<input type="hidden" name="entitysearch" value="'.$conf->entity.'">';
+	print '<input type="hidden" name="entitysearch" value="'.$conf->entity.'">';
 	//}
 	print '</td>';
 	// Action column

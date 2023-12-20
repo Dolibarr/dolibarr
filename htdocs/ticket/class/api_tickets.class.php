@@ -288,7 +288,7 @@ class Tickets extends DolibarrApi
 		if (!count($obj_ret)) {
 			throw new RestException(404, 'No ticket found');
 		}
-			return $obj_ret;
+		return $obj_ret;
 	}
 
 	/**
@@ -307,6 +307,12 @@ class Tickets extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->ticket->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->ticket->$field = $value;
 		}
 		if (empty($this->ticket->ref)) {
@@ -340,6 +346,12 @@ class Tickets extends DolibarrApi
 		$result = $this->_validateMessage($request_data);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->ticket->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->ticket->$field = $value;
 		}
 		$ticketMessageText = $this->ticket->message;
@@ -378,6 +390,12 @@ class Tickets extends DolibarrApi
 		}
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->ticket->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->ticket->$field = $value;
 		}
 
@@ -520,8 +538,8 @@ class Tickets extends DolibarrApi
 			"cache_types_tickets",
 			"cache_category_tickets",
 			"regeximgext",
-			"statuts_short",
-			"statuts"
+			"labelStatus",
+			"labelStatusShort"
 		);
 		foreach ($attr2clean as $toclean) {
 			unset($object->$toclean);

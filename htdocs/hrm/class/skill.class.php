@@ -20,7 +20,7 @@
  */
 
 /**
- * \file        class/skill.class.php
+ * \file        htdocs/hrm/class/skill.class.php
  * \ingroup     hrm
  * \brief       This file is a CRUD class file for Skill (Create/Read/Update/Delete)
  */
@@ -186,7 +186,7 @@ class Skill extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -223,7 +223,7 @@ class Skill extends CommonObject
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -244,14 +244,14 @@ class Skill extends CommonObject
 	 * createSkills
 	 *
 	 * @param int 	$i 		Rank from which we want to create skilldets (level $i to HRM_MAXRANK wil be created)
-	 * @return null
+	 * @return int          Return integer <0 if KO, Id of created object if OK
 	 */
 	public function createSkills($i = 1)
 	{
 		global $conf, $user, $langs;
 
-		$MaxNumberSkill = isset($conf->global->HRM_MAXRANK) ? $conf->global->HRM_MAXRANK : self::DEFAULT_MAX_RANK_PER_SKILL;
-		$defaultSkillDesc = !empty($conf->global->HRM_DEFAULT_SKILL_DESCRIPTION) ? $conf->global->HRM_DEFAULT_SKILL_DESCRIPTION : $langs->trans("NoDescription");
+		$MaxNumberSkill = getDolGlobalInt('HRM_MAXRANK', self::DEFAULT_MAX_RANK_PER_SKILL);
+		$defaultSkillDesc = getDolGlobalString('HRM_DEFAULT_SKILL_DESCRIPTION', $langs->trans("NoDescription"));
 
 		$error = 0;
 
@@ -387,7 +387,7 @@ class Skill extends CommonObject
 	 *
 	 * @param int    $id   Id object
 	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -401,7 +401,7 @@ class Skill extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @return array|int         <0 if KO, array of skill level found
+	 * @return array|int         Return integer <0 if KO, array of skill level found
 	 */
 	public function fetchLines()
 	{
@@ -506,7 +506,7 @@ class Skill extends CommonObject
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
@@ -518,7 +518,7 @@ class Skill extends CommonObject
 	 *
 	 * @param User $user       User that deletes
 	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
@@ -549,7 +549,7 @@ class Skill extends CommonObject
 	 *
 	 *	@param		User	$user     		User making status change
 	 *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return  	int						<=0 if OK, 0=Nothing done, >0 if KO
+	 *	@return  	int						Return integer <=0 if OK, 0=Nothing done, >0 if KO
 	 */
 	public function validate($user, $notrigger = 0)
 	{
@@ -626,7 +626,15 @@ class Skill extends CommonObject
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'skill/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
+				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'skill/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'skill/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
@@ -674,7 +682,7 @@ class Skill extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setDraft($user, $notrigger = 0)
 	{
@@ -698,7 +706,7 @@ class Skill extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function cancel($user, $notrigger = 0)
 	{
@@ -722,7 +730,7 @@ class Skill extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function reopen($user, $notrigger = 0)
 	{
@@ -794,7 +802,7 @@ class Skill extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowSkill");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -991,11 +999,11 @@ class Skill extends CommonObject
 		global $langs, $conf;
 		$langs->load("hrm");
 
-		if (empty($conf->global->hrm_SKILL_ADDON)) {
+		if (!getDolGlobalString('hrm_SKILL_ADDON')) {
 			$conf->global->hrm_SKILL_ADDON = 'mod_skill_standard';
 		}
 
-		if (!empty($conf->global->hrm_SKILL_ADDON)) {
+		if (getDolGlobalString('hrm_SKILL_ADDON')) {
 			$mybool = false;
 
 			$file = getDolGlobalString('hrm_SKILL_ADDON') . ".php";
@@ -1061,7 +1069,7 @@ class Skill extends CommonObject
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->SKILL_ADDON_PDF)) {
+			} elseif (getDolGlobalString('SKILL_ADDON_PDF')) {
 				$modele = $conf->global->SKILL_ADDON_PDF;
 			}
 		}
@@ -1114,9 +1122,9 @@ class Skill extends CommonObject
 		global $langs;
 		$result = '';
 		switch ($code) {
-			case 0 : $result = $langs->trans("TypeKnowHow"); break; //"Savoir Faire"
-			case 1 : $result = $langs->trans("TypeHowToBe"); break; // "Savoir être"
-			case 9 : $result = $langs->trans("TypeKnowledge"); break; //"Savoir"
+			case 0: $result = $langs->trans("TypeKnowHow"); break; //"Savoir Faire"
+			case 1: $result = $langs->trans("TypeHowToBe"); break; // "Savoir être"
+			case 9: $result = $langs->trans("TypeKnowledge"); break; //"Savoir"
 		}
 		return $result;
 	}

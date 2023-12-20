@@ -348,7 +348,7 @@ foreach ($boxtoadd as $box) {
 		$langs->load("errors");
 		print $langs->trans("WarningUsingThisBoxSlowDown");
 	} else {
-		print ($box->note ? $box->note : '&nbsp;');
+		print($box->note ? $box->note : '&nbsp;');
 	}
 	print '</td>'."\n";
 	print '<td>';
@@ -404,7 +404,7 @@ foreach ($boxactivated as $key => $box) {
 	if ($box->note == '(WarningUsingThisBoxSlowDown)') {
 		print img_warning('', 0).' '.$langs->trans("WarningUsingThisBoxSlowDown");
 	} else {
-		print ($box->note ? $box->note : '&nbsp;');
+		print($box->note ? $box->note : '&nbsp;');
 	}
 	print '</td>';
 	print '<td>';
@@ -415,8 +415,8 @@ foreach ($boxactivated as $key => $box) {
 	$hasprevious = ($key != 0);
 	print '<td class="center">'.($key + 1).'</td>';
 	print '<td class="center nowraponall">';
-	print ($hasnext ? '<a class="reposition" href="boxes.php?action=switch&token='.newToken().'&switchfrom='.$box->rowid.'&switchto='.$boxactivated[$key + 1]->rowid.'">'.img_down().'</a>&nbsp;' : '');
-	print ($hasprevious ? '<a class="reposition" href="boxes.php?action=switch&token='.newToken().'&switchfrom='.$box->rowid.'&switchto='.$boxactivated[$key - 1]->rowid.'">'.img_up().'</a>' : '');
+	print($hasnext ? '<a class="reposition" href="boxes.php?action=switch&token='.newToken().'&switchfrom='.$box->rowid.'&switchto='.$boxactivated[$key + 1]->rowid.'">'.img_down().'</a>&nbsp;' : '');
+	print($hasprevious ? '<a class="reposition" href="boxes.php?action=switch&token='.newToken().'&switchfrom='.$box->rowid.'&switchto='.$boxactivated[$key - 1]->rowid.'">'.img_up().'</a>' : '');
 	print '</td>';
 	print '<td class="center">';
 	print '<a class="reposition" href="boxes.php?rowid='.$box->rowid.'&action=delete&token='.newToken().'">'.img_delete().'</a>';

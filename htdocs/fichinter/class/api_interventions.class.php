@@ -34,7 +34,6 @@ require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
  */
 class Interventions extends DolibarrApi
 {
-
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
@@ -54,7 +53,7 @@ class Interventions extends DolibarrApi
 	);
 
 	/**
-	 * @var fichinter $fichinter {@type fichinter}
+	 * @var Fichinter $fichinter {@type fichinter}
 	 */
 	public $fichinter;
 
@@ -211,6 +210,12 @@ class Interventions extends DolibarrApi
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->fichinter->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->fichinter->$field = $value;
 		}
 
@@ -256,7 +261,7 @@ class Interventions extends DolibarrApi
 	*/
 
 	/**
-	 * Add a line to given intervention
+	 * Add a line to a given intervention
 	 *
 	 * @param	int		$id             Id of intervention to update
 	 * @param   array   $request_data   Request data
@@ -274,6 +279,12 @@ class Interventions extends DolibarrApi
 		$result = $this->_validateLine($request_data);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->fichinter->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->fichinter->$field = $value;
 		}
 
@@ -366,7 +377,7 @@ class Interventions extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating Intervention: '.$this->commande->error);
+			throw new RestException(500, 'Error when validating Intervention: '.$this->fichinter->error);
 		}
 
 		$this->fichinter->fetchObjectLinked();
@@ -444,9 +455,8 @@ class Interventions extends DolibarrApi
 		// phpcs:enable
 		$object = parent::_cleanObjectDatas($object);
 
-		unset($object->statuts_short);
-		unset($object->statuts_logo);
-		unset($object->statuts);
+		unset($object->labelStatus);
+		unset($object->labelStatusShort);
 
 		return $object;
 	}

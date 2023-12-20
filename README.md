@@ -98,13 +98,13 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 
  Product Management
 
-- Products and/or Services catalog
+- Products and/or Services catalogue
 - Stock / Warehouse management + Inventory
 - Barcodes
 - Batches / Lots / Serials
 - Product Variants
 - Bill of Materials (BOM)
-- Manufacturing Orders
+- Manufacturing Orders (MO)
 
  Customer/Sales Management
 
@@ -114,7 +114,8 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Customer Orders management
 - Contracts/Subscription management
 - Interventions management
-- Ticket System
+- Ticket System  (+ Knowledge management)
+- Partnership management
 - Shipping management
 - Customer Invoices/Credit notes and payment management
 - Point of Sale (POS)
@@ -143,14 +144,16 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 
 - Shared calendar/agenda (with ical and vcal import/export for third-party tools integration)
 - Projects & Tasks management
+- Event organization
 - Ticket System
 - Surveys
 
- HR
+ HR - Human Resources Management
 
 - Employee's leaves management
 - Expense reports
 - Recruitment management
+- Employee/staff management
 - Timesheets
 
 ### Other application/modules
@@ -168,7 +171,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Payment platforms integration (PayPal, Stripe, Paybox...)
 - Email-Collector
 
-(around 100 modules available by default, 1000+ on the addon marketplace)
+(around 100 modules available by default, 1000+ addons at the official marketplace Dolistore.com)
 
 ### Other general features
 
@@ -239,7 +242,7 @@ See [COPYRIGHT](https://github.com/Dolibarr/dolibarr/blob/develop/COPYRIGHT) fil
 Follow Dolibarr project on:
 
 - [Facebook](https://www.facebook.com/dolibarr)
-- [Twitter](https://www.twitter.com/dolibarr)
+- [X](https://x.com/dolibarr)
 - [LinkedIn](https://www.linkedin.com/company/association-dolibarr)
 - [Reddit](https://www.reddit.com/r/Dolibarr_ERP_CRM/)
 - [YouTube](https://www.youtube.com/user/DolibarrERPCRM)

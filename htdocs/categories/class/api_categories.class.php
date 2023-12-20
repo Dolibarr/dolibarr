@@ -38,12 +38,12 @@ class Categories extends DolibarrApi
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
-	static $FIELDS = array(
+	public static $FIELDS = array(
 		'label',
 		'type'
 	);
 
-	static $TYPES = array(
+	public static $TYPES = array(
 		0 => 'product',
 		1 => 'supplier',
 		2 => 'customer',
@@ -204,6 +204,12 @@ class Categories extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->category->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->category->$field = $value;
 		}
 		if ($this->category->create(DolibarrApiAccess::$user) < 0) {
@@ -238,6 +244,12 @@ class Categories extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->category->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->category->$field = $value;
 		}
 

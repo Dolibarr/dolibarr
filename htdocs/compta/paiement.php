@@ -362,7 +362,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		// Invoice with Paypal transaction
 		// TODO add hook here
 		if (isModEnabled('paypalplus') && $conf->global->PAYPAL_ENABLE_TRANSACTION_MANAGEMENT && !empty($facture->ref_ext)) {
-			if (!empty($conf->global->PAYPAL_BANK_ACCOUNT)) {
+			if (getDolGlobalString('PAYPAL_BANK_ACCOUNT')) {
 				$accountid = $conf->global->PAYPAL_BANK_ACCOUNT;
 			}
 			$paymentnum = $facture->ref_ext;
@@ -391,7 +391,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			                    }
             					if ($(\'#fieldchqemetteur\').val() == \'\')
             					{
-            						var emetteur = ('.$facture->type.' == '.Facture::TYPE_CREDIT_NOTE.') ? \''.dol_escape_js(dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_NOM)).'\' : jQuery(\'#thirdpartylabel\').val();
+            						var emetteur = ('.$facture->type.' == '.Facture::TYPE_CREDIT_NOTE.') ? \''.dol_escape_js(dol_escape_htmltag(getDolGlobalString('MAIN_INFO_SOCIETE_NOM'))).'\' : jQuery(\'#thirdpartylabel\').val();
             						$(\'#fieldchqemetteur\').val(emetteur);
             					}
             				}
@@ -489,13 +489,13 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		// Date payment
 		print '<tr><td><span class="fieldrequired">'.$langs->trans('Date').'</span></td><td>';
 		$datepayment = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-		$datepayment = ($datepayment == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '') : $datepayment);
+		$datepayment = ($datepayment == '' ? (!getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : '') : $datepayment);
 		print $form->selectDate($datepayment, '', '', '', 0, "add_paiement", 1, 1, 0, '', '', $facture->date);
 		print '</td></tr>';
 
 		// Payment mode
 		print '<tr><td><span class="fieldrequired">'.$langs->trans('PaymentMode').'</span></td><td>';
-		$form->select_types_paiements((GETPOST('paiementcode') ?GETPOST('paiementcode') : $facture->mode_reglement_code), 'paiementcode', '', 2);
+		$form->select_types_paiements((GETPOST('paiementcode') ? GETPOST('paiementcode') : $facture->mode_reglement_code), 'paiementcode', '', 2);
 		print "</td>\n";
 		print '</tr>';
 
@@ -543,7 +543,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		print '</td></tr>';
 
 		// Go Source Invoice (useful when there are many invoices)
-		if ($action != 'add_paiement' && !empty($conf->global->FACTURE_PAYMENTS_SHOW_LINK_TO_INPUT_ORIGIN_IS_MORE_THAN)) {
+		if ($action != 'add_paiement' && getDolGlobalString('FACTURE_PAYMENTS_SHOW_LINK_TO_INPUT_ORIGIN_IS_MORE_THAN')) {
 			print '<tr><td></td>';
 			print '<td class="tdtop right">';
 			print '<a class="right" href="#amount_'.$facid.'">'.$langs->trans("GoSourceInvoice").'</a>';
@@ -565,11 +565,11 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		$sql .= ' WHERE f.entity IN ('.getEntity('facture').')';
 		$sql .= ' AND (f.fk_soc = '.((int) $facture->socid);
 		// Can pay invoices of all child of parent company
-		if (!empty($conf->global->FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS) && !empty($facture->thirdparty->parent)) {
+		if (getDolGlobalString('FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS') && !empty($facture->thirdparty->parent)) {
 			$sql .= ' OR f.fk_soc IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'societe WHERE parent = '.((int) $facture->thirdparty->parent).')';
 		}
 		// Can pay invoices of all child of myself
-		if (!empty($conf->global->FACTURE_PAYMENTS_ON_SUBSIDIARY_COMPANIES)) {
+		if (getDolGlobalString('FACTURE_PAYMENTS_ON_SUBSIDIARY_COMPANIES')) {
 			$sql .= ' OR f.fk_soc IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'societe WHERE parent = '.((int) $facture->thirdparty->id).')';
 		}
 		$sql .= ') AND f.paye = 0';
@@ -933,7 +933,7 @@ if (!GETPOST('action', 'aZ09')) {
 	if (empty($page) || $page == -1) {
 		$page = 0;
 	}
-	$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+	$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 	$offset = $limit * $page;
 
 	if (!$sortorder) {

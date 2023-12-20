@@ -79,7 +79,7 @@ if (GETPOST('action', 'alpha') == 'set') {
 	$res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CASH".$terminaltouse, (GETPOST('CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse, 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CHEQUE".$terminaltouse, (GETPOST('CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse, 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CB".$terminaltouse, (GETPOST('CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse, 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
-	if (isModEnabled('stripe') && !empty($conf->global->STRIPE_CARD_PRESENT)) {
+	if (isModEnabled('stripe') && getDolGlobalString('STRIPE_CARD_PRESENT')) {
 		$res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_STRIPETERMINAL".$terminaltouse, GETPOST('CASHDESK_ID_BANKACCOUNT_STRIPETERMINAL'.$terminaltouse, 'alpha'), 'chaine', 0, '', $conf->entity);
 	}
 	if (getDolGlobalInt('TAKEPOS_ENABLE_SUMUP')) {
@@ -194,19 +194,19 @@ if (isModEnabled("banque")) {
 	}
 	print '</td></tr>';
 
-	if (isModEnabled('stripe') && !empty($conf->global->STRIPE_CARD_PRESENT)) {
+	if (isModEnabled('stripe') && getDolGlobalString('STRIPE_CARD_PRESENT')) {
 		print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForStripeTerminal").'</td>'; // Force Stripe Terminal
 		print '<td>';
 		$service = 'StripeTest';
 		$servicestatus = 0;
-		if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha')) {
+		if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'alpha')) {
 			$service = 'StripeLive';
 			$servicestatus = 1;
 		}
 		global $stripearrayofkeysbyenv;
 		$site_account = $stripearrayofkeysbyenv[$servicestatus]['secret_key'];
 		\Stripe\Stripe::setApiKey($site_account);
-		if (isModEnabled('stripe') && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
+		if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('forcesandbox', 'alpha'))) {
 			$service = 'StripeTest';
 			$servicestatus = '0';
 			dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
@@ -264,24 +264,20 @@ if (isModEnabled("banque")) {
 if (isModEnabled('stock')) {
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskDoNotDecreaseStock").'</td>'; // Force warehouse (this is not a default value)
 	print '<td>';
-	if (!isModEnabled('productbatch') || getDolGlobalInt('CASHDESK_FORCE_DECREASE_STOCK')) {
-		print $form->selectyesno('CASHDESK_NO_DECREASE_STOCK'.$terminal, getDolGlobalInt('CASHDESK_NO_DECREASE_STOCK'.$terminal), 1);
-	} else {
-		if (getDolGlobalInt('CASHDESK_NO_DECREASE_STOCK'.$terminal)) {
-			$res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK".$terminal, 1, 'chaine', 0, '', $conf->entity);
-		}
-		print $langs->trans("Yes").'<br>';
-		print '<span class="opacitymedium">'.$langs->trans('StockDecreaseForPointOfSaleDisabledbyBatch').'</span>';
-	}
+	print $form->selectyesno('CASHDESK_NO_DECREASE_STOCK'.$terminal, getDolGlobalInt('CASHDESK_NO_DECREASE_STOCK'.$terminal), 1);
 	print '</td></tr>';
 
 	$disabled = getDolGlobalString('CASHDESK_NO_DECREASE_STOCK'.$terminal);
 
 
 	print '<tr class="oddeven"><td>';
-	if (!$disabled) { print '<span class="fieldrequired">'; }
+	if (!$disabled) {
+		print '<span class="fieldrequired">';
+	}
 	print $langs->trans("CashDeskIdWareHouse");
-	if (!$disabled) { print '</span>'; }
+	if (!$disabled) {
+		print '</span>';
+	}
 	if (!getDolGlobalString('CASHDESK_ID_WAREHOUSE'.$terminal)) {
 		print img_warning($langs->trans("DisableStockChange").' - '.$langs->trans("NoWarehouseDefinedForTerminal"));
 	}
@@ -390,10 +386,10 @@ if (getDolGlobalString('TAKEPOS_ADDON') == "terminal") {
 							$module = new $classname($db);
 
 							// Show modules according to features level
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								continue;
 							}
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 								continue;
 							}
 

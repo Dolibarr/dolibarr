@@ -306,7 +306,7 @@ foreach ($demoprofiles as $profilearray) {
 			$urlwithmod = $profilearray['url'];
 			$urlwithmod = $urlwithmod.(preg_match('/\?/', $urlwithmod) ? '&amp;' : '?').'urlfrom='.urlencode($urlfrom);
 			if (!empty($profilearray['disablemodules'])) {
-				  $urlwithmod = $urlwithmod.(preg_match('/\?/', $urlwithmod) ? '&amp;' : '?').'disablemodules='.$profilearray['disablemodules'];
+				$urlwithmod = $urlwithmod.(preg_match('/\?/', $urlwithmod) ? '&amp;' : '?').'disablemodules='.$profilearray['disablemodules'];
 			}
 		}
 
@@ -432,7 +432,7 @@ print '<br>';
 
 // TODO Replace this with a hook
 // Google Adsense (need Google module)
-if (isModEnabled('google') && !empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && !empty($conf->global->MAIN_GOOGLE_AD_SLOT)) {
+if (isModEnabled('google') && getDolGlobalString('MAIN_GOOGLE_AD_CLIENT') && getDolGlobalString('MAIN_GOOGLE_AD_SLOT')) {
 	if (empty($conf->dol_use_jmobile)) {
 		print '<div align="center">'."\n";
 		print '<script><!--'."\n";

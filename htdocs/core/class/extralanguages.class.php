@@ -99,8 +99,8 @@ class ExtraLanguages
 
 
 		$array_name_label = array();
-		if (!empty($conf->global->MAIN_USE_ALTERNATE_TRANSLATION_FOR)) {
-			$tmpelement = explode(';', $conf->global->MAIN_USE_ALTERNATE_TRANSLATION_FOR);
+		if (getDolGlobalString('MAIN_USE_ALTERNATE_TRANSLATION_FOR')) {
+			$tmpelement = explode(';', getDolGlobalString('MAIN_USE_ALTERNATE_TRANSLATION_FOR'));
 			foreach ($tmpelement as $elementstring) {
 				$reg = array();
 				preg_match('/^(.*):(.*)$/', $elementstring, $reg);

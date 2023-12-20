@@ -78,8 +78,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $error = 0;
 $websitekey = GETPOST('website', 'alpha');
-$pageid = GETPOST('page', 'alpha') ?GETPOST('page', 'alpha') : GETPOST('pageid', 'alpha');
-$pageref = GETPOST('pageref', 'alphanohtml') ?GETPOST('pageref', 'alphanohtml') : '';
+$pageid = GETPOST('page', 'alpha') ? GETPOST('page', 'alpha') : GETPOST('pageid', 'alpha');
+$pageref = GETPOST('pageref', 'alphanohtml') ? GETPOST('pageref', 'alphanohtml') : '';
 
 $accessallowed = 1;
 $type = '';
@@ -147,7 +147,7 @@ if (empty($pageid)) {
 }
 
 $appli = constant('DOL_APPLICATION_TITLE');
-if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 	$appli = $conf->global->MAIN_APPLICATION_TITLE;
 }
 

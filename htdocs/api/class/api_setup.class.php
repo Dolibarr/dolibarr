@@ -1598,22 +1598,22 @@ class Setup extends DolibarrApi
 		return $list;
 	}
 
-	 /**
-	  * Get the list of tickets categories.
-	  *
-	  * @param string    $sortfield  Sort field
-	  * @param string    $sortorder  Sort order
-	  * @param int       $limit      Number of items per page
-	  * @param int       $page       Page number (starting from zero)
-	  * @param int       $active     Payment term is active or not {@min 0} {@max 1}
-	  * @param string    $lang       Code of the language the label of the category must be translated to
-	  * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
-	  * @return array				List of ticket categories
-	  *
-	  * @url     GET dictionary/ticket_categories
-	  *
-	  * @throws RestException
-	  */
+	/**
+	 * Get the list of tickets categories.
+	 *
+	 * @param string    $sortfield  Sort field
+	 * @param string    $sortorder  Sort order
+	 * @param int       $limit      Number of items per page
+	 * @param int       $page       Page number (starting from zero)
+	 * @param int       $active     Payment term is active or not {@min 0} {@max 1}
+	 * @param string    $lang       Code of the language the label of the category must be translated to
+	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
+	 * @return array				List of ticket categories
+	 *
+	 * @url     GET dictionary/ticket_categories
+	 *
+	 * @throws RestException
+	 */
 	public function getTicketsCategories($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $lang = '', $sqlfilters = '')
 	{
 		$list = array();
@@ -1862,7 +1862,7 @@ class Setup extends DolibarrApi
 
 		if (!DolibarrApiAccess::$user->admin
 			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_COMPANY') || DolibarrApiAccess::$user->login != $conf->global->API_LOGINS_ALLOWED_FOR_GET_COMPANY)) {
-				throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_GET_COMPANY');
+			throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_GET_COMPANY');
 		}
 
 		unset($mysoc->pays);
@@ -2097,7 +2097,7 @@ class Setup extends DolibarrApi
 					$constvalue = (empty($constvalue) ? '0' : $constvalue);
 					// Value found
 					$value = '';
-					if ($constname && $conf->global->$constname != '') {
+					if ($constname && getDolGlobalString($constname) != '') {
 						$value = $conf->global->$constname;
 					}
 					$valueforchecksum = (empty($value) ? '0' : $value);

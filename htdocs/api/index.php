@@ -112,7 +112,7 @@ if (getDolGlobalString('MAIN_NGINX_FIX')) {
 }
 
 // Enable and test if module Api is enabled
-if (!isModEnabled('api') ) {
+if (!isModEnabled('api')) {
 	$langs->load("admin");
 	dol_syslog("Call of Dolibarr API interfaces with module API REST are disabled");
 	print $langs->trans("WarningModuleNotActive", 'Api').'.<br><br>';
@@ -198,7 +198,7 @@ UploadFormat::$allowedMimeTypes = array('image/jpeg', 'image/png', 'text/plain',
 
 // Restrict API to some IPs
 if (getDolGlobalString('API_RESTRICT_ON_IP')) {
-	$allowedip = explode(' ', $conf->global->API_RESTRICT_ON_IP);
+	$allowedip = explode(' ', getDolGlobalString('API_RESTRICT_ON_IP'));
 	$ipremote = getUserRemoteIP();
 	if (!in_array($ipremote, $allowedip)) {
 		dol_syslog('Remote ip is '.$ipremote.', not into list ' . getDolGlobalString('API_RESTRICT_ON_IP'));
@@ -343,7 +343,7 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 	// Test rules on endpoints. For example:
 	// $conf->global->API_ENDPOINT_RULES = 'endpoint1:1,endpoint2:1,...'
 	if (getDolGlobalString('API_ENDPOINT_RULES')) {
-		$listofendpoints = explode(',', $conf->global->API_ENDPOINT_RULES);
+		$listofendpoints = explode(',', getDolGlobalString('API_ENDPOINT_RULES'));
 		$endpointisallowed = false;
 
 		foreach ($listofendpoints as $endpointrule) {
@@ -363,7 +363,7 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 		}
 	}
 
-	dol_syslog('Search api file /'.$moduledirforclass.'/class/api_'.$classfile.'.class.php => dir_part_file='.$dir_part_file.' classname='.$classname);
+	dol_syslog('Search api file /'.$moduledirforclass.'/class/api_'.$classfile.'.class.php => dir_part_file='.$dir_part_file.', classname='.$classname);
 
 	$res = false;
 	if ($dir_part_file) {

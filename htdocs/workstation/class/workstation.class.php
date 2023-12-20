@@ -158,7 +158,7 @@ class Workstation extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
@@ -189,7 +189,7 @@ class Workstation extends CommonObject
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -335,7 +335,7 @@ class Workstation extends CommonObject
 	 *
 	 * @param int    $id   Id object
 	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -353,7 +353,7 @@ class Workstation extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchLines()
 	{
@@ -449,7 +449,7 @@ class Workstation extends CommonObject
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
@@ -489,7 +489,7 @@ class Workstation extends CommonObject
 	 *
 	 * @param User $user       User that deletes
 	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
@@ -520,7 +520,7 @@ class Workstation extends CommonObject
 	 *
 	 *	@param	int	$status			New status to set
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setStatus($status, $notrigger = 0)
 	{
@@ -541,7 +541,7 @@ class Workstation extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setEnabled($user, $notrigger = 0)
 	{
@@ -554,7 +554,7 @@ class Workstation extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setDisabled($user, $notrigger = 0)
 	{
@@ -633,11 +633,11 @@ class Workstation extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowWorkstation");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -731,7 +731,9 @@ class Workstation extends CommonObject
 
 		$statusType = 'status'.$status;
 		//if ($status == self::STATUS_DISABLED) $statusType = 'status6';
-		if ($status == self::STATUS_ENABLED) $statusType = 'status4';
+		if ($status == self::STATUS_ENABLED) {
+			$statusType = 'status4';
+		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
@@ -788,11 +790,11 @@ class Workstation extends CommonObject
 		global $langs, $conf;
 		$langs->load("workstation");
 
-		if (empty($conf->global->WORKSTATION_WORKSTATION_ADDON)) {
+		if (!getDolGlobalString('WORKSTATION_WORKSTATION_ADDON')) {
 			$conf->global->WORKSTATION_WORKSTATION_ADDON = 'mod_workstation_standard';
 		}
 
-		if (!empty($conf->global->WORKSTATION_WORKSTATION_ADDON)) {
+		if (getDolGlobalString('WORKSTATION_WORKSTATION_ADDON')) {
 			$mybool = false;
 
 			$file = getDolGlobalString('WORKSTATION_WORKSTATION_ADDON') . ".php";
@@ -860,7 +862,7 @@ class Workstation extends CommonObject
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->WORKSTATION_ADDON_PDF)) {
+			} elseif (getDolGlobalString('WORKSTATION_ADDON_PDF')) {
 				$modele = $conf->global->WORKSTATION_ADDON_PDF;
 			}
 		}
