@@ -868,7 +868,7 @@ if ($object->id > 0) {
 	$morehtmlref .= '</div>';
 
 	$shownav = 1;
-	if ($user->socid && !in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+	if ($user->socid && !in_array('stock', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 		$shownav = 0;
 	}
 
@@ -1662,7 +1662,7 @@ if (count($arrayofuniqueproduct) == 1 && !empty($year) && is_numeric($year)) {
 	//print '</td></tr>';
 }
 
-if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
+if (in_array('builddoc', array_keys($arrayofmassactions)) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
 	$hidegeneratedfilelistifempty = 1;
 	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) {
 		$hidegeneratedfilelistifempty = 0;

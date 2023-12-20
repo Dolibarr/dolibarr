@@ -410,7 +410,7 @@ if (!$error && $massaction == 'confirm_presend') {
 					$tmp = explode(',', $user->email_aliases);
 					$from = trim($tmp[($reg[1] - 1)]);
 				} elseif (preg_match('/global_aliases_(\d+)/', $fromtype, $reg)) {
-					$tmp = explode(',', $conf->global->MAIN_INFO_SOCIETE_MAIL_ALIASES);
+					$tmp = explode(',', getDolGlobalString('MAIN_INFO_SOCIETE_MAIL_ALIASES'));
 					$from = trim($tmp[($reg[1] - 1)]);
 				} elseif (preg_match('/senderprofile_(\d+)_(\d+)/', $fromtype, $reg)) {
 					$sql = "SELECT rowid, label, email FROM ".MAIN_DB_PREFIX."c_email_senderprofile WHERE rowid = ".(int) $reg[1];
@@ -751,7 +751,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 		$result = $objecttmp->fetch($toselectid);
 		if ($result > 0) {
 			$listofobjectid[$toselectid] = $toselectid;
-			$thirdpartyid = $objecttmp->fk_soc ? $objecttmp->fk_soc : $objecttmp->socid;
+			$thirdpartyid = !empty($objecttmp->fk_soc) ? $objecttmp->fk_soc : $objecttmp->socid;
 			$listofobjectthirdparties[$thirdpartyid] = $thirdpartyid;
 			$listofobjectref[$toselectid] = $objecttmp->ref;
 		}

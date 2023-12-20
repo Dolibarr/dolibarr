@@ -1,6 +1,6 @@
 parameters:
 	customRulesetUsed: true
-	level: 1
+	level: 2
 	fileExtensions:
 		- php
 	paths:
@@ -8,7 +8,7 @@ parameters:
 	    - scripts
 	excludePaths:
 		analyseAndScan:
-		- htdocs/custom
+		- htdocs/custom/*
 		- htdocs/dev/*
 		- htdocs/doc/*
 		- htdocs/documents/*

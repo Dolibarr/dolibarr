@@ -23,7 +23,7 @@ AddLoan=Створити позику
 FinancialCommitment=Фінансові зобов'язання
 InterestAmount=Інтерес
 CapitalRemain=Залишається капітал
-TermPaidAllreadyPaid = Цей термін уже оплачений
+TermPaidAllreadyPaid = Цей срок вже оплачений
 CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
 CantModifyInterestIfScheduleIsUsed = Ви не можете змінити відсотки, якщо використовуєте розклад
 # Admin

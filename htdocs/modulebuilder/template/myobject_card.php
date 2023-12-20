@@ -238,7 +238,7 @@ if ($action == 'create') {
 }
 $help_url = '';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-mymodule page-card');
 
 // Example : Adding jquery code
 // print '<script type="text/javascript">

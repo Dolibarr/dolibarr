@@ -1158,7 +1158,7 @@ class KnowledgeRecord extends CommonObject
 			$return .= '<span class="info-box-label">'.dolGetFirstLineOfText($this->question).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

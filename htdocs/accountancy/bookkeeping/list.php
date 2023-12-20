@@ -165,7 +165,7 @@ if (!in_array($action, array('delmouv', 'delmouvconfirm')) && !GETPOSTISSET('beg
 			$search_date_start = strtotime($fiscalYear->date_start);
 			$search_date_end = strtotime($fiscalYear->date_end);
 		} else {
-			$month_start = ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
+			$month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 			$year_start = dol_print_date(dol_now(), '%Y');
 			if (dol_print_date(dol_now(), '%m') < $month_start) {
 				$year_start--; // If current month is lower that starting fiscal month, we start last year
@@ -1198,7 +1198,7 @@ while ($i < min($num, $limit)) {
 			$labeltoshowalt .= $line->doc_ref;
 		}
 
-		print '<td class="nowraponall tdoverflowmax200" title="'.dol_escape_htmltag($labeltoshowalt).'">';
+		print '<td class="nowraponall tdoverflowmax250" title="'.dol_escape_htmltag($labeltoshowalt).'">';
 		print $labeltoshow;
 		print "</td>\n";
 		if (!$i) {

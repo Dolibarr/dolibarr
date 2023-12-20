@@ -51,6 +51,12 @@ abstract class CommonInvoice extends CommonObject
 
 	/**
 	 * @var int Thirdparty ID
+	 * @deprecated
+	 * @see $socid
+	 */
+	public $fk_soc;
+	/**
+	 * @var int Thirdparty ID
 	 */
 	public $socid;
 
@@ -62,6 +68,8 @@ abstract class CommonInvoice extends CommonObject
 	 * @var integer
 	 */
 	public $date;
+
+	public $date_lim_reglement;
 
 	public $cond_reglement_id; // Id in llx_c_paiement
 	public $cond_reglement_code; // Code in llx_c_paiement
@@ -1131,14 +1139,18 @@ abstract class CommonInvoice extends CommonObject
 			}
 
 			// Load the pending payment request to process (with rowid=$did)
-			$sql = "SELECT rowid, date_demande, amount, fk_facture, fk_facture_fourn, fk_prelevement_bons";
+			$sql = "SELECT rowid, date_demande, amount, fk_facture, fk_facture_fourn, fk_salary, fk_prelevement_bons";
 			$sql .= " FROM ".$this->db->prefix()."prelevement_demande";
 			$sql .= " WHERE rowid = ".((int) $did);
 			if ($type != 'bank-transfer' && $type != 'credit-transfer') {
-				$sql .= " AND fk_facture = ".((int) $this->id);		// Add a protection to not pay another invoice than current one
+				$sql .= " AND fk_facture = ".((int) $this->id);				// Add a protection to not pay another invoice than current one
 			}
 			if ($type != 'direct-debit') {
-				$sql .= " AND fk_facture_fourn = ".((int) $this->id);		// Add a protection to not pay another invoice than current one
+				if ($$sourcetype == 'salary') {
+					$sql .= " AND fk_salary = ".((int) $this->id);			// Add a protection to not pay another salary than current one
+				} else {
+					$sql .= " AND fk_facture_fourn = ".((int) $this->id);	// Add a protection to not pay another invoice than current one
+				}
 			}
 			$sql .= " AND traite = 0";	// To not process payment request that were already converted into a direct debit or credit transfer order (Note: fk_prelevement_bons is also empty when traite = 0)
 

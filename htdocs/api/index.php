@@ -198,7 +198,7 @@ UploadFormat::$allowedMimeTypes = array('image/jpeg', 'image/png', 'text/plain',
 
 // Restrict API to some IPs
 if (getDolGlobalString('API_RESTRICT_ON_IP')) {
-	$allowedip = explode(' ', $conf->global->API_RESTRICT_ON_IP);
+	$allowedip = explode(' ', getDolGlobalString('API_RESTRICT_ON_IP'));
 	$ipremote = getUserRemoteIP();
 	if (!in_array($ipremote, $allowedip)) {
 		dol_syslog('Remote ip is '.$ipremote.', not into list ' . getDolGlobalString('API_RESTRICT_ON_IP'));
@@ -343,7 +343,7 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 	// Test rules on endpoints. For example:
 	// $conf->global->API_ENDPOINT_RULES = 'endpoint1:1,endpoint2:1,...'
 	if (getDolGlobalString('API_ENDPOINT_RULES')) {
-		$listofendpoints = explode(',', $conf->global->API_ENDPOINT_RULES);
+		$listofendpoints = explode(',', getDolGlobalString('API_ENDPOINT_RULES'));
 		$endpointisallowed = false;
 
 		foreach ($listofendpoints as $endpointrule) {

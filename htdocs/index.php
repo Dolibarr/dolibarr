@@ -97,7 +97,7 @@ if (getDolGlobalString('MAIN_MOTD')) {
 	if (getDolGlobalString('MAIN_MOTD')) {
 		$substitutionarray = getCommonSubstitutionArray($langs);
 		complete_substitutions_array($substitutionarray, $langs);
-		$texttoshow = make_substitutions($conf->global->MAIN_MOTD, $substitutionarray, $langs);
+		$texttoshow = make_substitutions(getDolGlobalString('MAIN_MOTD'), $substitutionarray, $langs);
 
 		print "\n<!-- Start of welcome text -->\n";
 		print '<table width="100%" class="notopnoleftnoright"><tr><td>';

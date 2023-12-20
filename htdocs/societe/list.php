@@ -131,7 +131,7 @@ $place = GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'; // $place is
 $diroutputmassaction = $conf->societe->dir_output.'/temp/massgeneration/'.$user->id;
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -152,28 +152,32 @@ $pagenext = $page + 1;
 if ($type == 'c') {
 	if (empty($contextpage) || $contextpage == 'thirdpartylist') {
 		$contextpage = 'customerlist';
-	} if ($search_type == '') {
+	}
+	if ($search_type == '') {
 		$search_type = '1,3';
 	}
 }
 if ($type == 'p') {
 	if (empty($contextpage) || $contextpage == 'thirdpartylist') {
 		$contextpage = 'prospectlist';
-	} if ($search_type == '') {
+	}
+	if ($search_type == '') {
 		$search_type = '2,3';
 	}
 }
 if ($type == 't') {
 	if (empty($contextpage) || $contextpage == 'poslist') {
 		$contextpage = 'poslist';
-	} if ($search_type == '') {
+	}
+	if ($search_type == '') {
 		$search_type = '1,2,3';
 	}
 }
 if ($type == 'f') {
 	if (empty($contextpage) || $contextpage == 'thirdpartylist') {
 		$contextpage = 'supplierlist';
-	} if ($search_type == '') {
+	}
+	if ($search_type == '') {
 		$search_type = '4';
 	}
 }
@@ -243,7 +247,7 @@ $checkedprofid6 = 0;
 $checkprospectlevel = (in_array($contextpage, array('prospectlist')) ? 1 : 0);
 $checkstcomm = (in_array($contextpage, array('prospectlist')) ? 1 : 0);
 $arrayfields = array(
-	's.rowid'=>array('label'=>"TechnicalID", 'position'=>1, 'checked'=>(getDolGlobalString('MAIN_SHOW_TECHNICAL_ID')), 'enabled'=>(getDolGlobalString('MAIN_SHOW_TECHNICAL_ID'))),
+	's.rowid'=>array('label'=>"TechnicalID", 'position'=>1, 'checked'=>-1, 'enabled'=>1),
 	's.nom'=>array('label'=>"ThirdPartyName", 'position'=>2, 'checked'=>1),
 	's.name_alias'=>array('label'=>"AliasNameShort", 'position'=>3, 'checked'=>1),
 	's.barcode'=>array('label'=>"Gencod", 'position'=>5, 'checked'=>1, 'enabled'=>(isModEnabled('barcode'))),
@@ -326,8 +330,7 @@ if ($action == "change") {	// Change customer for TakePOS
 	}
 
 	$sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".((int) $idcustomer)." where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
-	$resql = $db->query($sql);
-	?>
+	$resql = $db->query($sql); ?>
 		<script>
 		console.log("Reload page invoice.php with place=<?php print $place; ?>");
 		parent.$("#poslines").load("invoice.php?place=<?php print $place; ?>", function() {

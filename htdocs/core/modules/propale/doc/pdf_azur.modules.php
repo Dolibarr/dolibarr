@@ -1360,7 +1360,7 @@ class pdf_azur extends ModelePDFPropales
 
 			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
 			if (getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')) {
-				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, 5, 'F', null, explode(',', $conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR));
+				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, 5, 'F', null, explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
 			}
 		}
 
@@ -1738,15 +1738,13 @@ class pdf_azur extends ModelePDFPropales
 	protected function _signature_area(&$pdf, $object, $posy, $outputlangs)
 	{
 		// phpcs:enable
-		global $conf;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 		$tab_top = $posy + 4;
 		$tab_hl = 4;
 
 		$posx = 120;
 		$largcol = ($this->page_largeur - $this->marge_droite - $posx);
-		$useborder = 0;
-		$index = 0;
+
 		// Total HT
 		$pdf->SetFillColor(255, 255, 255);
 		$pdf->SetXY($posx, $tab_top);
