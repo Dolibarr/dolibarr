@@ -12134,7 +12134,7 @@ function getElementProperties($element_type)
  * Fetch an object from its id and element_type
  * Inclusion of classes is automatic
  *
- * @param	int     	$element_id 	Element id
+ * @param	int     	$element_id 	Element id (Use this or element_id but not both)
  * @param	string  	$element_type 	Element type ('module' or 'myobject@mymodule' or 'mymodule_myobject')
  * @param	string     	$element_ref 	Element ref (Use this or element_id but not both)
  * @return 	int|object 					object || 0 || <0 if error
@@ -12154,13 +12154,17 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '')
 		if (class_exists($element_prop['classname'])) {
 			$classname = $element_prop['classname'];
 			$objecttmp = new $classname($db);
-			$ret = $objecttmp->fetch($element_id, $element_ref);
-			if ($ret >= 0) {
-				if (empty($objecttmp->module)) {
-					$objecttmp->module = $element_prop['module'];
-				}
 
-				return $objecttmp;
+			if ($element_id > 0 || !empty($element_ref)) {
+				$ret = $objecttmp->fetch($element_id, $element_ref);
+				if ($ret >= 0) {
+					if (empty($objecttmp->module)) {
+						$objecttmp->module = $element_prop['module'];
+					}
+					return $objecttmp;
+				}
+			} else {
+				return $objecttmp;	// returned an object without fetch
 			}
 		} else {
 			return -1;
