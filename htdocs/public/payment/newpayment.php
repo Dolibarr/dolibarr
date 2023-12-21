@@ -1651,10 +1651,10 @@ if ($source == 'member' || $source == 'membersubscription') {
 	}
 	print '</td><td class="CTableRow2">';
 	if (getDolGlobalString('MEMBER_MIN_AMOUNT') && $amount) {
-		$amount = max(0, $conf->global->MEMBER_MIN_AMOUNT, $amount);
+		$amount = max(0, getDolGlobalString('MEMBER_MIN_AMOUNT'), $amount);
 	}
 	$caneditamount = $adht->caneditamount;
-	$minimumamount = !getDolGlobalString('MEMBER_MIN_AMOUNT') ? $adht->amount : max($conf->global->MEMBER_MIN_AMOUNT, $adht->amount, $amount);
+	$minimumamount = !getDolGlobalString('MEMBER_MIN_AMOUNT') ? $adht->amount : max(getDolGlobalString('MEMBER_MIN_AMOUNT'), $adht->amount, $amount);
 
 	if ($caneditamount && $action != 'dopayment') {
 		if (GETPOSTISSET('newamount')) {
@@ -1811,7 +1811,7 @@ if ($source == 'donation') {
 	if (empty($amount) || !is_numeric($amount)) {
 		//$valtoshow=price2num(GETPOST("newamount",'alpha'),'MT');
 		if (getDolGlobalString('DONATION_MIN_AMOUNT') && $valtoshow) {
-			$valtoshow = max($conf->global->DONATION_MIN_AMOUNT, $valtoshow);
+			$valtoshow = max(getDolGlobalString('DONATION_MIN_AMOUNT'), $valtoshow);
 		}
 		print '<input type="hidden" name="amount" value="'.price2num(GETPOST("amount", 'alpha'), 'MT').'">';
 		print '<input class="flat maxwidth75" type="text" name="newamount" value="'.$valtoshow.'">';
@@ -1820,7 +1820,7 @@ if ($source == 'donation') {
 	} else {
 		$valtoshow = $amount;
 		if (getDolGlobalString('DONATION_MIN_AMOUNT') && $valtoshow) {
-			$valtoshow = max($conf->global->DONATION_MIN_AMOUNT, $valtoshow);
+			$valtoshow = max(getDolGlobalString('DONATION_MIN_AMOUNT'), $valtoshow);
 			$amount = $valtoshow;
 		}
 		print '<b class="amount">'.price($valtoshow, 1, $langs, 1, -1, -1, $currency).'</b>';	// Price with currency
@@ -2148,7 +2148,7 @@ if ($action != 'dopayment') {
 				}
 
 				print '<div class="button buttonpayment" id="div_dopayment_paypal">';
-				if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY != 'integral') {
+				if (getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY') != 'integral') {
 					print '<div style="line-height: 1em">&nbsp;</div>';
 				}
 				print '<span class="fa fa-paypal"></span> <input class="" type="submit" id="dopayment_paypal" name="dopayment_paypal" value="'.$langs->trans("PaypalDoPayment").'">';

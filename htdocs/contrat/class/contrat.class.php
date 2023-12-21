@@ -2943,7 +2943,7 @@ class Contrat extends CommonObject
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("DateContract").' : </span><span class="info-box-label">'.dol_print_date($this->date_contrat, 'day').'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(7).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(7).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
@@ -3413,7 +3413,7 @@ class ContratLigne extends CommonObjectLine
 	 */
 	public function update($user, $notrigger = 0)
 	{
-		global $conf, $langs, $mysoc;
+		global $mysoc;
 
 		$error = 0;
 
@@ -3615,10 +3615,10 @@ class ContratLigne extends CommonObjectLine
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Mise a jour en base des champs total_xxx de ligne
-	 *		Used by migration process
+	 *	Update in database the fields total_xxx of lines
+	 *	Used by migration process
 	 *
-	 *		@return		int		Return integer <0 if KO, >0 if OK
+	 *	@return		int		Return integer <0 if KO, >0 if OK
 	 */
 	public function update_total()
 	{
@@ -3656,7 +3656,7 @@ class ContratLigne extends CommonObjectLine
 	 */
 	public function insert($notrigger = 0)
 	{
-		global $conf, $user;
+		global $user;
 
 		$error = 0;
 
@@ -3753,8 +3753,6 @@ class ContratLigne extends CommonObjectLine
 	public function active_line($user, $date, $date_end = '', $comment = '')
 	{
 		// phpcs:enable
-		global $langs, $conf;
-
 		$error = 0;
 
 		$this->db->begin();
@@ -3813,9 +3811,6 @@ class ContratLigne extends CommonObjectLine
 	public function close_line($user, $date_end_real, $comment = '', $notrigger = 0)
 	{
 		// phpcs:enable
-		global $langs, $conf;
-
-		// Update object
 		$this->date_cloture = $date_end_real;
 		$this->date_end_real = $date_end_real;
 		$this->user_closing_id = $user->id;

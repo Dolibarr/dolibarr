@@ -234,7 +234,7 @@ $now = dol_now();
 $help_url = '';
 $title = $langs->trans('SalariesPayments');
 
-$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.admin, u.salary as current_salary, u.fk_soc as fk_soc, u.statut as status,";
+$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.admin, u.photo, u.gender, u.salary as current_salary, u.fk_soc as fk_soc, u.statut as status,";
 $sql .= " s.rowid, s.fk_user, s.amount, s.salary, sal.rowid as id_salary, sal.label, s.datep as datep, sal.dateep, b.datev as datev, s.fk_typepayment as type, s.num_payment, s.fk_bank,";
 $sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel, ba.iban_prefix as iban, ba.bic, ba.currency_code, ba.clos,";
 $sql .= " pst.code as payment_code";
@@ -297,7 +297,12 @@ $sql .= $db->order($sortfield, $sortorder);
 $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($resql);
+	if ($resql) {
+		$nbtotalofrecords = $db->num_rows($resql);
+	} else {
+		dol_print_error($db);
+	}
+
 	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
 		$page = 0;
 		$offset = 0;
@@ -593,6 +598,8 @@ while ($i < $imaxinloop) {
 	$userstatic->socid = $obj->fk_soc;
 	$userstatic->statut = $obj->status;
 	$userstatic->status = $obj->status;
+	$userstatic->gender = $obj->gender;
+	$userstatic->photo = $obj->photo;
 
 	$salstatic->id = $obj->id_salary;
 	$salstatic->ref = $obj->id_salary;
@@ -675,7 +682,7 @@ while ($i < $imaxinloop) {
 		if (!$i) $totalarray['nbfield']++;*/
 
 		// Employee
-		print "<td>".$userstatic->getNomUrl(1)."</td>\n";
+		print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(-1)."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

@@ -171,7 +171,7 @@ class DolEditor
 				if (!getDolGlobalString('FCKEDITOR_ENABLE_PDF')) {
 					$pluginstodisable .= ',exportpdf';
 				}
-				if (getDolGlobalString('MAIN_DISALLOW_URL_INTO_DESCRIPTIONS')) {
+				if (getDolGlobalInt('MAIN_DISALLOW_URL_INTO_DESCRIPTIONS') == 2) {
 					$this->uselocalbrowser = 0;	// Can't use browser to navigate into files. Only links with "<img src=data:..." are allowed.
 				}
 				$scaytautostartup = '';
@@ -263,7 +263,7 @@ class DolEditor
 
 			if ($titlecontent) {
 				$out .= '<div class="aceeditorstatusbar" id="statusBar'.$this->htmlname.'">'.$titlecontent;
-				$out .= ' &nbsp; - &nbsp; <a id="morelines" href="#" class="right morelines'.$this->htmlname.' reposition">'.dol_escape_htmltag($langs->trans("ShowMoreLines")).'</a> &nbsp; &nbsp; ';
+				$out .= ' &nbsp; - &nbsp; <span id="morelines" class="right classlink cursorpointer morelines'.$this->htmlname.'">'.dol_escape_htmltag($langs->trans("ShowMoreLines")).'</span> &nbsp; &nbsp; ';
 				$out .= '</div>';
 				$out .= '<script nonce="'.getNonce().'" type="text/javascript">'."\n";
 				$out .= 'jQuery(document).ready(function() {'."\n";

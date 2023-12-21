@@ -866,7 +866,7 @@ if (empty($reshook)) {
 			}
 
 			if (!GETPOST('ref_supplier')) {
-				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('RefSupplier')), null, 'errors');
+				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('RefSupplierBill')), null, 'errors');
 				$action = 'create';
 				$_GET['socid'] = $_POST['socid'];
 				$error++;
@@ -1034,7 +1034,7 @@ if (empty($reshook)) {
 			}
 
 			if (!GETPOST('ref_supplier')) {
-				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('RefSupplier')), null, 'errors');
+				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('RefSupplierBill')), null, 'errors');
 				$action = 'create';
 				$_GET['socid'] = $_POST['socid'];
 				$error++;
@@ -2381,7 +2381,7 @@ if ($action == 'create') {
 		}
 
 		// Ref supplier
-		print '<tr><td class="fieldrequired">'.$langs->trans('RefSupplier').'</td><td><input name="ref_supplier" value="'.(GETPOSTISSET('ref_supplier') ? GETPOST('ref_supplier') : (!empty($objectsrc->ref_supplier) ? $objectsrc->ref_supplier : '')).'" type="text"';
+		print '<tr><td class="fieldrequired">'.$langs->trans('RefSupplierBill').'</td><td><input name="ref_supplier" value="'.(GETPOSTISSET('ref_supplier') ? GETPOST('ref_supplier') : (!empty($objectsrc->ref_supplier) ? $objectsrc->ref_supplier : '')).'" type="text"';
 		if (!empty($societe->id) && $societe->id > 0) {
 			print ' autofocus';
 		}
@@ -2751,6 +2751,7 @@ if ($action == 'create') {
 		// Intracomm report
 		if (isModEnabled('intracommreport')) {
 			$langs->loadLangs(array("intracommreport"));
+			print '<!-- If module intracomm on -->'."\n";
 			print '<tr><td>'.$langs->trans('IntracommReportTransportMode').'</td><td>';
 			$form->selectTransportMode(GETPOSTISSET('transport_mode_id') ? GETPOST('transport_mode_id') : $transport_mode_id, 'transport_mode_id');
 			print '</td></tr>';
@@ -2960,7 +2961,7 @@ if ($action == 'create') {
 		if ($action == 'clone') {
 			// Create an array for form
 			$formquestion = array(
-				array('type' => 'text', 'name' => 'newsupplierref', 'label' => $langs->trans("RefSupplier"), 'value' => $langs->trans("CopyOf").' '.$object->ref_supplier),
+				array('type' => 'text', 'name' => 'newsupplierref', 'label' => $langs->trans("RefSupplierBill"), 'value' => $langs->trans("CopyOf").' '.$object->ref_supplier),
 				array('type' => 'date', 'name' => 'newdate', 'label' => $langs->trans("Date"), 'value' => dol_now())
 			);
 			// Ask confirmation to clone
@@ -3192,8 +3193,8 @@ if ($action == 'create') {
 
 		$morehtmlref = '<div class="refidno">';
 		// Ref supplier
-		$morehtmlref .= $form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $usercancreate, 'string', '', 0, 1);
-		$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $usercancreate, 'string', '', null, null, '', 1);
+		$morehtmlref .= $form->editfieldkey("RefSupplierBill", 'ref_supplier', $object->ref_supplier, $object, $usercancreate, 'string', '', 0, 1);
+		$morehtmlref .= $form->editfieldval("RefSupplierBill", 'ref_supplier', $object->ref_supplier, $object, $usercancreate, 'string', '', null, null, '', 1);
 		// Thirdparty
 		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'supplier');
 		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
@@ -3328,9 +3329,9 @@ if ($action == 'create') {
 
 			// Date
 			print '<tr><td>';
-			print $form->editfieldkey("DateInvoice", 'datef', $object->datep, $object, $form_permission, 'datepicker');
+			print $form->editfieldkey("DateInvoice", 'datef', $object->date, $object, $form_permission, 'datepicker');
 			print '</td><td colspan="3">';
-			print $form->editfieldval("Date", 'datef', $object->datep, $object, $form_permission, 'datepicker');
+			print $form->editfieldval("Date", 'datef', $object->date, $object, $form_permission, 'datepicker');
 			print '</td>';
 
 			// Default terms of the settlement
@@ -3500,6 +3501,7 @@ if ($action == 'create') {
 			// Intracomm report
 			if (isModEnabled('intracommreport')) {
 				$langs->loadLangs(array("intracommreport"));
+				print '<!-- If module intracomm on -->'."\n";
 				print '<tr><td>';
 				print '<table class="nobordernopadding centpercent"><tr><td>';
 				print $langs->trans('IntracommReportTransportMode');

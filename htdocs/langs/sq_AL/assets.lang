@@ -1,4 +1,4 @@
-# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+# Copyright (C) 2018-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,50 +16,171 @@
 #
 # Generic
 #
-Assets = Assets
-NewAsset = New asset
-AccountancyCodeAsset = Accounting code (asset)
-AccountancyCodeDepreciationAsset = Accounting code (depreciation asset account)
-AccountancyCodeDepreciationExpense = Accounting code (depreciation expense account)
-NewAssetType=New asset type
-AssetsTypeSetup=Asset type setup
-AssetTypeModified=Asset type modified
-AssetType=Asset type
-AssetsLines=Assets
+NewAsset=Aset i ri
+AccountancyCodeAsset=Kodi i kontabilitetit (pasuria)
+AccountancyCodeDepreciationAsset=Kodi i kontabilitetit (llogaria e aktivit të amortizimit)
+AccountancyCodeDepreciationExpense=Kodi i kontabilitetit (llogaria e shpenzimeve të amortizimit)
+AssetsLines=Asetet
 DeleteType=Fshi
-DeleteAnAssetType=Delete an asset type
-ConfirmDeleteAssetType=Are you sure you want to delete this asset type?
-ShowTypeCard=Show type '%s'
+DeleteAnAssetType=Fshi një model aktivi
+ConfirmDeleteAssetType=Je i sigurt që dëshiron ta fshish këtë model të punës?
+ShowTypeCard=Shfaq modelin '%s'
 
 # Module label 'ModuleAssetsName'
-ModuleAssetsName = Assets
+ModuleAssetsName=Asetet
 # Module description 'ModuleAssetsDesc'
-ModuleAssetsDesc = Assets description
+ModuleAssetsDesc=Përshkrimi i aseteve
 
 #
 # Admin page
 #
-AssetsSetup = Assets setup
-Settings = Settings
-AssetsSetupPage = Assets setup page
-ExtraFieldsAssetsType = Complementary attributes (Asset type)
-AssetsType=Asset type
-AssetsTypeId=Asset type id
-AssetsTypeLabel=Asset type label
-AssetsTypes=Assets types
+AssetSetup=Konfigurimi i aseteve
+AssetSetupPage=Faqja e konfigurimit të aseteve
+ExtraFieldsAssetModel=Atributet plotësuese (modeli i aktivit)
+
+AssetsType=Modeli i aseteve
+AssetsTypeId=ID-ja e modelit të aktivit
+AssetsTypeLabel=Etiketa e modelit të asetit
+AssetsTypes=Modelet e aseteve
+ASSET_ACCOUNTANCY_CATEGORY=Grupi i kontabilitetit të aktiveve fikse
 
 #
 # Menu
 #
-MenuAssets = Assets
-MenuNewAsset = New asset
-MenuTypeAssets = Type assets
-MenuListAssets = List
-MenuNewTypeAssets = New
-MenuListTypeAssets = List
+MenuAssets=Asetet
+MenuNewAsset=Aset i ri
+MenuAssetModels=Asetet model
+MenuListAssets=Listë
+MenuNewAssetModel=Modeli i aktivit të ri
+MenuListAssetModels=Listë
 
 #
 # Module
 #
-NewAssetType=New asset type
-NewAsset=New asset
+ConfirmDeleteAsset=Dëshiron vërtet ta heqësh këtë punë?
+
+#
+# Tab
+#
+AssetDepreciationOptions=Opsionet e amortizimit
+AssetAccountancyCodes=Accounting accounts
+AssetDepreciation=amortizimi
+
+#
+# Asset
+#
+Asset=Aseti
+Assets=Asetet
+AssetReversalAmountHT=Shuma e kthimit (pa taksa)
+AssetAcquisitionValueHT=Shuma e blerjes (pa taksa)
+AssetRecoveredVAT=TVSH e rikuperuar
+AssetReversalDate=Data e kthimit
+AssetDateAcquisition=Data e blerjes
+AssetDateStart=Data e fillimit
+AssetAcquisitionType=Lloji i blerjes
+AssetAcquisitionTypeNew=I ri
+AssetAcquisitionTypeOccasion=I perdorur
+AssetType=Lloji i aktivit
+AssetTypeIntangible=E paprekshme
+AssetTypeTangible=E prekshme
+AssetTypeInProgress=Në vazhdim
+AssetTypeFinancial=Financiare
+AssetNotDepreciated=I pa amortizuar
+AssetDisposal=Asgjesimi
+AssetConfirmDisposalAsk=Jeni i sigurt që dëshironi të asgjësoni aktivin <b> %s<span class='notranslate'>b09a4b739f17f>z?
+AssetConfirmReOpenAsk=Jeni i sigurt që dëshironi të rihapni aktivin <b> %s<span class='notranslate'>b09a4b739f17f>z?
+
+#
+# Asset status
+#
+AssetInProgress=Në vazhdim
+AssetDisposed=Të disponuar
+AssetRecorded=Llogaritur
+
+#
+# Asset disposal
+#
+AssetDisposalDate=Data e asgjësimit
+AssetDisposalAmount=Vlera e asgjësimit
+AssetDisposalType=Lloji i asgjësimit
+AssetDisposalDepreciated=Zhvlerësoni vitin e transferimit
+AssetDisposalSubjectToVat=Asgjesimi me TVSH
+
+#
+# Asset model
+#
+AssetModel=Modeli i aktivit
+AssetModels=Modelet e aseteve
+
+#
+# Asset depreciation options
+#
+AssetDepreciationOptionEconomic=Zhvlerësimi ekonomik
+AssetDepreciationOptionAcceleratedDepreciation=Amortizimi i përshpejtuar (taksa)
+AssetDepreciationOptionDepreciationType=Lloji i amortizimit
+AssetDepreciationOptionDepreciationTypeLinear=Linear
+AssetDepreciationOptionDepreciationTypeDegressive=Degresive
+AssetDepreciationOptionDepreciationTypeExceptional=Të jashtëzakonshme
+AssetDepreciationOptionDegressiveRate=Shkalla degresive
+AssetDepreciationOptionAcceleratedDepreciation=Amortizimi i përshpejtuar (taksa)
+AssetDepreciationOptionDuration=Kohëzgjatja
+AssetDepreciationOptionDurationType=Kohëzgjatja e llojit
+AssetDepreciationOptionDurationTypeAnnual=Vjetore
+AssetDepreciationOptionDurationTypeMonthly=Mujore
+AssetDepreciationOptionDurationTypeDaily=Ditore
+AssetDepreciationOptionRate=Vlerësimi (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=Baza e amortizimit (pa TVSH)
+AssetDepreciationOptionAmountBaseDeductibleHT=Baza e zbritshme (pa TVSH)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=Shuma totale e amortizimit të fundit (pa TVSH)
+
+#
+# Asset accountancy codes
+#
+AssetAccountancyCodeDepreciationEconomic=Zhvlerësimi ekonomik
+AssetAccountancyCodeAsset=Aseti
+AssetAccountancyCodeDepreciationAsset=amortizimi
+AssetAccountancyCodeDepreciationExpense=Shpenzimet e amortizimit
+AssetAccountancyCodeValueAssetSold=Vlera e asetit të hequr
+AssetAccountancyCodeReceivableOnAssignment=Të arkëtueshme në dispozicion
+AssetAccountancyCodeProceedsFromSales=Të ardhurat nga asgjësimi
+AssetAccountancyCodeVatCollected=TVSH e mbledhur
+AssetAccountancyCodeVatDeductible=TVSH-ja e rikuperuar në asete
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=Amortizimi i përshpejtuar (taksa)
+AssetAccountancyCodeAcceleratedDepreciation=Llogari
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=Shpenzimet e amortizimit
+AssetAccountancyCodeProvisionAcceleratedDepreciation=Riposedim/Provizion
+
+#
+# Asset depreciation
+#
+AssetBaseDepreciationHT=Baza e amortizimit (pa TVSH)
+AssetDepreciationBeginDate=Fillimi i amortizimit më
+AssetDepreciationDuration=Kohëzgjatja
+AssetDepreciationRate=Vlerësimi (%%)
+AssetDepreciationDate=Data e amortizimit
+AssetDepreciationHT=Amortizimi (pa TVSH)
+AssetCumulativeDepreciationHT=Amortizimi kumulativ (pa TVSH)
+AssetResidualHT=Vlera e mbetur (pa TVSH)
+AssetDispatchedInBookkeeping=Zhvlerësimi i regjistruar
+AssetFutureDepreciationLine=Zhvlerësimi i ardhshëm
+AssetDepreciationReversal=Përmbysja
+
+#
+# Errors
+#
+AssetErrorAssetOrAssetModelIDNotProvide=ID-ja e aktivit ose modeli i gjetur nuk është dhënë
+AssetErrorFetchAccountancyCodesForMode=Gabim gjatë marrjes së llogarive të kontabilitetit për modalitetin e amortizimit '%s'
+AssetErrorDeleteAccountancyCodesForMode=Gabim gjatë fshirjes së llogarive të kontabilitetit nga modaliteti i amortizimit '%s'
+AssetErrorInsertAccountancyCodesForMode=Gabim gjatë futjes së llogarive të kontabilitetit të mënyrës së amortizimit '%s'
+AssetErrorFetchDepreciationOptionsForMode=Gabim gjatë marrjes së opsioneve për modalitetin e amortizimit '%s'
+AssetErrorDeleteDepreciationOptionsForMode=Gabim gjatë fshirjes së opsioneve të modalitetit të amortizimit '%s'
+AssetErrorInsertDepreciationOptionsForMode=Gabim gjatë futjes së opsioneve të modalitetit të amortizimit '%s'
+AssetErrorFetchDepreciationLines=Gabim gjatë marrjes së linjave të amortizimit të regjistruara
+AssetErrorClearDepreciationLines=Gabim gjatë pastrimit të linjave të amortizimit të regjistruara (kthimi dhe në të ardhmen)
+AssetErrorAddDepreciationLine=Gabim gjatë shtimit të një linje amortizimi
+AssetErrorCalculationDepreciationLines=Gabim gjatë llogaritjes së linjave të amortizimit (rikuperimi dhe e ardhmja)
+AssetErrorReversalDateNotProvidedForMode=Data e kthimit nuk është dhënë për metodën e amortizimit '%s'
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=Data e kthimit duhet të jetë më e madhe ose e barabartë me fillimin e vitit aktual fiskal për metodën e amortizimit '%s'
+AssetErrorReversalAmountNotProvidedForMode=Shuma e kthimit nuk është dhënë për modalitetin e amortizimit '%s'.
+AssetErrorFetchCumulativeDepreciation=Gabim gjatë marrjes së shumës së amortizimit të akumuluar nga linja e amortizimit
+AssetErrorSetLastCumulativeDepreciation=Gabim gjatë regjistrimit të shumës së amortizimit të akumuluar të fundit

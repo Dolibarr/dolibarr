@@ -102,7 +102,7 @@ if (isset($user->socid) && $user->socid > 0) {
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-llxHeader("", $langs->trans("MyModuleArea"));
+llxHeader("", $langs->trans("MyModuleArea"), '', '', 0, 0, '', '', '', 'mod-mymodule page-index');
 
 print load_fiche_titre($langs->trans("MyModuleArea"), '', 'mymodule.png@mymodule');
 

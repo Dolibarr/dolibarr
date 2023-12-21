@@ -318,7 +318,7 @@ class doc_generic_asset_odt extends ModelePDFAsset
 				$newfreetext = '';
 				$paramfreetext = 'ORDER_FREE_TEXT';
 				if (!empty($conf->global->$paramfreetext)) {
-					$newfreetext = make_substitutions($conf->global->$paramfreetext, $substitutionarray);
+					$newfreetext = make_substitutions(getDolGlobalString($paramfreetext), $substitutionarray);
 				}
 
 				// Open and load template

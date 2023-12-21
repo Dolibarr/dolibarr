@@ -7,7 +7,7 @@
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2021 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2019	   Ferran Marcet	    <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -69,7 +69,7 @@ $p2hour = GETPOST('p2hour', 'int');
 $p2min = GETPOST('p2min', 'int');
 
 $addreminder = GETPOST('addreminder', 'alpha');
-$offsetvalue = GETPOST('offsetvalue', 'int');
+$offsetvalue = GETPOSTINT('offsetvalue');
 $offsetunit = GETPOST('offsetunittype_duration', 'aZ09');
 $remindertype = GETPOST('selectremindertype', 'aZ09');
 $modelmail = GETPOST('actioncommsendmodel_mail', 'int');
@@ -475,7 +475,8 @@ if (empty($reshook) && $action == 'add') {
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost(null, $object);
 	if ($ret < 0) {
-		$error++;
+		$error++; $donotclearsession = 1;
+		$action = 'create';
 	}
 
 
@@ -536,7 +537,7 @@ if (empty($reshook) && $action == 'add') {
 				if ($addreminder == 'on') {
 					$actionCommReminder = new ActionCommReminder($db);
 
-					$dateremind = dol_time_plus_duree($datep, -$offsetvalue, $offsetunit);
+					$dateremind = dol_time_plus_duree($datep, -1 * $offsetvalue, $offsetunit);
 
 					$actionCommReminder->dateremind = $dateremind;
 					$actionCommReminder->typeremind = $remindertype;
@@ -653,7 +654,7 @@ if (empty($reshook) && $action == 'add') {
 						if ($addreminder == 'on') {
 							$actionCommReminder = new ActionCommReminder($db);
 
-							$dateremind = dol_time_plus_duree($datep, -$offsetvalue, $offsetunit);
+							$dateremind = dol_time_plus_duree($datep, -1 * $offsetvalue, $offsetunit);
 
 							$actionCommReminder->dateremind = $dateremind;
 							$actionCommReminder->typeremind = $remindertype;
@@ -981,7 +982,7 @@ if (empty($reshook) && $action == 'update') {
 				if ($addreminder == 'on' && $object->datep > dol_now()) {
 					$actionCommReminder = new ActionCommReminder($db);
 
-					$dateremind = dol_time_plus_duree($datep, -$offsetvalue, $offsetunit);
+					$dateremind = dol_time_plus_duree($datep, -1 * $offsetvalue, $offsetunit);
 
 					$actionCommReminder->dateremind = $dateremind;
 					$actionCommReminder->typeremind = $remindertype;

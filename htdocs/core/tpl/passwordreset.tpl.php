@@ -327,7 +327,7 @@ if (!empty($morelogincontent) && is_array($morelogincontent)) {
 // Google Analytics
 // TODO Remove this, and add content into hook getPasswordForgottenPageExtraOptions() instead
 if (isModEnabled('google') && getDolGlobalString('MAIN_GOOGLE_AN_ID')) {
-	$tmptagarray = explode(',', $conf->global->MAIN_GOOGLE_AN_ID);
+	$tmptagarray = explode(',', getDolGlobalString('MAIN_GOOGLE_AN_ID'));
 	foreach ($tmptagarray as $tmptag) {
 		print "\n";
 		print "<!-- JS CODE TO ENABLE for google analtics tag -->\n";

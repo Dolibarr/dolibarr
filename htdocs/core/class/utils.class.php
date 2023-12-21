@@ -1283,7 +1283,7 @@ class Utils
 		if (!empty($from)) {
 			$from = dol_escape_htmltag($from);
 		} elseif (getDolGlobalString('MAIN_INFO_SOCIETE_MAIL')) {
-			$from = dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_MAIL);
+			$from = dol_escape_htmltag(getDolGlobalString('MAIN_INFO_SOCIETE_MAIL'));
 		} else {
 			$error++;
 		}
@@ -1291,7 +1291,7 @@ class Utils
 		if (!empty($sendto)) {
 			$sendto = dol_escape_htmltag($sendto);
 		} elseif (getDolGlobalString('MAIN_INFO_SOCIETE_MAIL')) {
-			$from = dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_MAIL);
+			$from = dol_escape_htmltag(getDolGlobalString('MAIN_INFO_SOCIETE_MAIL'));
 		} else {
 			$error++;
 		}
