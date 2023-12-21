@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
+/*
+ * Copyright (C) 2015      Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2023      Christian Foellmann     <christian@foellmann.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,13 +45,11 @@ class Status extends DolibarrApi
 	 */
 	public function index()
 	{
-		global $conf;
-
 		return array(
 			'success' => array(
 				'code' => 200,
 				'dolibarr_version' => DOL_VERSION,
-				'access_locked' => (!getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED') ? '0' : $conf->global->MAIN_ONLY_LOGIN_ALLOWED),
+				'access_locked' => (!getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED') ? '0' : getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')),
 			),
 		);
 	}
