@@ -18,7 +18,7 @@
 
 /**
  *       \file       htdocs/core/class/fileupload.class.php
- *       \brief      File to return Ajax response on file upload
+ *       \brief      File to return Ajax response on common file upload. For large files, see flowjs-server.php
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -44,7 +44,7 @@ class FileUpload
 	 */
 	public function __construct($options = null, $fk_element = null, $element = null)
 	{
-		global $db, $conf;
+		global $db;
 		global $hookmanager;
 
 		$hookmanager->initHooks(array('fileupload'));
@@ -56,8 +56,8 @@ class FileUpload
 		$this->element = $element;
 
 		$pathname = str_replace('/class', '', $element_prop['classpath']);
-		$filename = $element_prop['classfile'];
-		$dir_output = $element_prop['dir_output'];
+		$filename = dol_sanitizeFileName($element_prop['classfile']);
+		$dir_output = dol_sanitizePathName($element_prop['dir_output']);
 
 		//print 'fileupload.class.php: element='.$element.' pathname='.$pathname.' filename='.$filename.' dir_output='.$dir_output."\n";
 
@@ -131,7 +131,7 @@ class FileUpload
 				*/
 				'thumbnail' => array(
 					'upload_dir' => $dir_output.'/'.$object_ref.'/thumbs/',
-					'upload_url' => DOL_URL_ROOT.'/document.php?modulepart='.urlencode($element).'&attachment=1&file=/'.$object_ref.'/thumbs/',
+					'upload_url' => DOL_URL_ROOT.'/document.php?modulepart='.urlencode($element).'&attachment=1&file='.urlencode('/'.$object_ref.'/thumbs/'),
 					'max_width' => 80,
 					'max_height' => 80
 				)
@@ -211,20 +211,20 @@ class FileUpload
 	 */
 	protected function getFileObject($file_name)
 	{
-		$file_path = $this->options['upload_dir'].$file_name;
-		if (is_file($file_path) && $file_name[0] !== '.') {
+		$file_path = $this->options['upload_dir'].dol_sanitizeFileName($file_name);
+		if (dol_is_file($file_path) && $file_name[0] !== '.') {
 			$file = new stdClass();
 			$file->name = $file_name;
 			$file->mime = dol_mimetype($file_name, '', 2);
 			$file->size = filesize($file_path);
-			$file->url = $this->options['upload_url'].rawurlencode($file->name);
+			$file->url = $this->options['upload_url'].urlencode($file->name);
 			foreach ($this->options['image_versions'] as $version => $options) {
-				if (is_file($options['upload_dir'].$file_name)) {
+				if (dol_is_file($options['upload_dir'].$file_name)) {
 					$tmp = explode('.', $file->name);
 
 					// We save the path of mini file into file->... (seems not used)
 					$keyforfile = $version.'_url';
-					$file->$keyforfile = $options['upload_url'].rawurlencode($tmp[0].'_mini.'.$tmp[1]);
+					$file->$keyforfile = $options['upload_url'].urlencode($tmp[0].'_mini.'.$tmp[1]);
 				}
 			}
 			$this->setFileDeleteUrl($file);
@@ -280,7 +280,7 @@ class FileUpload
 	}
 
 	/**
-	 * Enter description here ...
+	 * Make validation on an uploaded file
 	 *
 	 * @param 	string	$uploaded_file		Uploade file
 	 * @param 	object	$file				File
@@ -303,7 +303,7 @@ class FileUpload
 			return false;
 		}
 		if ($uploaded_file && is_uploaded_file($uploaded_file)) {
-			$file_size = filesize($uploaded_file);
+			$file_size = dol_filesize($uploaded_file);
 		} else {
 			$file_size = $_SERVER['CONTENT_LENGTH'];
 		}
@@ -379,15 +379,14 @@ class FileUpload
 	{
 		// Remove path information and dots around the filename, to prevent uploading
 		// into different directories or replacing hidden system files.
-		// Also remove control characters and spaces (\x00..\x20) around the filename:
-		$file_name = trim(basename(stripslashes($name)), ".\x00..\x20");
+		$file_name = basename(dol_sanitizeFileName($name));
 		// Add missing file extension for known image types:
 		$matches = array();
 		if (strpos($file_name, '.') === false && preg_match('/^image\/(gif|jpe?g|png)/', $type, $matches)) {
 			$file_name .= '.'.$matches[1];
 		}
 		if ($this->options['discard_aborted_uploads']) {
-			while (is_file($this->options['upload_dir'].$file_name)) {
+			while (dol_is_file($this->options['upload_dir'].$file_name)) {
 				$file_name = $this->upcountName($file_name);
 			}
 		}
@@ -414,12 +413,16 @@ class FileUpload
 		$file->size = intval($size);
 		$file->type = $type;
 
+		// Sanitize to avoid stream execution when calling file_size(). Not that this is a second security because
+		// most streams are already disabled by stream_wrapper_unregister() in filefunc.inc.php
+		$uploaded_file = preg_replace('/\s*(http|ftp)s?:/i', '', $uploaded_file);
+
 		$validate = $this->validate($uploaded_file, $file, $error, $index);
 
 		if ($validate) {
 			if (dol_mkdir($this->options['upload_dir']) >= 0) {
-				$file_path = $this->options['upload_dir'].$file->name;
-				$append_file = !$this->options['discard_aborted_uploads'] && is_file($file_path) && $file->size > filesize($file_path);
+				$file_path = dol_sanitizePathName($this->options['upload_dir']).dol_sanitizeFileName($file->name);
+				$append_file = !$this->options['discard_aborted_uploads'] && dol_is_file($file_path) && $file->size > dol_filesize($file_path);
 
 				clearstatcache();
 
@@ -434,16 +437,16 @@ class FileUpload
 					// Non-multipart uploads (PUT method support)
 					file_put_contents($file_path, fopen('php://input', 'r'), $append_file ? FILE_APPEND : 0);
 				}
-				$file_size = filesize($file_path);
+				$file_size = dol_filesize($file_path);
 				if ($file_size === $file->size) {
-					$file->url = $this->options['upload_url'].rawurlencode($file->name);
+					$file->url = $this->options['upload_url'].urlencode($file->name);
 					foreach ($this->options['image_versions'] as $version => $options) {
 						if ($this->createScaledImage($file->name, $options)) {	// Creation of thumbs mini and small is ok
 							$tmp = explode('.', $file->name);
 
 							// We save the path of mini file into file->... (seems not used)
 							$keyforfile = $version.'_url';
-							$file->$keyforfile = $options['upload_url'].rawurlencode($tmp[0].'_mini.'.$tmp[1]);
+							$file->$keyforfile = $options['upload_url'].urlencode($tmp[0].'_mini.'.$tmp[1]);
 						}
 					}
 				} elseif ($this->options['discard_aborted_uploads']) {
@@ -537,7 +540,7 @@ class FileUpload
 		/* disabled. Param redirect seems not used
 		$redirect = isset($_REQUEST['redirect']) ? stripslashes($_REQUEST['redirect']) : null;
 		if ($redirect) {
-			header('Location: '.sprintf($redirect, rawurlencode($json)));
+			header('Location: '.sprintf($redirect, urlencode($json)));
 			return;
 		}
 		*/
@@ -559,14 +562,13 @@ class FileUpload
 	 */
 	public function delete()
 	{
-		$file_name = isset($_REQUEST['file']) ?
-		basename(stripslashes($_REQUEST['file'])) : null;
-		$file_path = $this->options['upload_dir'].$file_name;
-		$success = is_file($file_path) && $file_name[0] !== '.' && unlink($file_path);
+		$file_name = GETPOST('file') ? basename(GETPOST('file')) : null;
+		$file_path = $this->options['upload_dir'].dol_sanitizeFileName($file_name);
+		$success = dol_is_file($file_path) && $file_name[0] !== '.' && unlink($file_path);
 		if ($success) {
 			foreach ($this->options['image_versions'] as $version => $options) {
 				$file = $options['upload_dir'].$file_name;
-				if (is_file($file)) {
+				if (dol_is_file($file)) {
 					unlink($file);
 				}
 			}
