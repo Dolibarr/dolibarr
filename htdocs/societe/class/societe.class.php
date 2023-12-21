@@ -3838,6 +3838,9 @@ class Societe extends CommonObject
 		// phpcs:enable
 		global $conf;
 
+		// load the library necessary to check the professional identifiers
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/profid.lib.php';
+
 		$ok = 1;
 
 		if (getDolGlobalString('MAIN_DISABLEPROFIDRULES')) {
@@ -3845,36 +3848,8 @@ class Societe extends CommonObject
 		}
 
 		// Check SIREN if country FR
-		if ($idprof == 1 && $soc->country_code == 'FR') {
-			$chaine = trim($this->idprof1);
-			$chaine = preg_replace('/(\s)/', '', $chaine);
-
-			if (!is_numeric($chaine)) {
-				return -1;
-			}
-			if (dol_strlen($chaine) != 9) {
-				return -1;
-			}
-
-			// on prend chaque chiffre un par un
-			// si son index (position dans la chaîne en commence à 0 au premier caractère) est impair
-			// on double sa valeur et si cette dernière est supérieure à 9, on lui retranche 9
-			// on ajoute cette valeur à la somme totale
-			$sum = 0;
-			for ($index = 0; $index < 9; $index++) {
-				$number = (int) $chaine[$index];
-				if (($index % 2) != 0) {
-					if (($number *= 2) > 9) {
-						$number -= 9;
-					}
-				}
-				$sum += $number;
-			}
-
-			// le numéro est valide si la somme des chiffres est multiple de 10
-			if (($sum % 10) != 0) {
-				return -1;
-			}
+		if ($idprof == 1 && $soc->country_code == 'FR' && !isValidSiren($this->idprof1)) {
+			return -1;
 		}
 
 		// Verifie SIRET si pays FR
