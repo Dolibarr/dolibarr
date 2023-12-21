@@ -7609,12 +7609,14 @@ function dol_htmlentities($string, $flags = ENT_QUOTES|ENT_SUBSTITUTE, $encoding
 
 /**
  *	Check if a string is a correct iso string
- *	If not, it will we considered not HTML encoded even if it is by FPDF.
+ *	If not, it will not be considered as HTML encoded even if it is by FPDF.
  *	Example, if string contains euro symbol that has ascii code 128
  *
  *	@param	string		$s      	String to check
  *  @param	string		$clean		Clean if it is not an ISO. Warning, if file is utf8, you will get a bad formated file.
  *	@return	int|string  	   		0 if bad iso, 1 if good iso, Or the clean string if $clean is 1
+ *  @deprecated Duplicate of ascii_check()
+ *  @see ascii_check()
  */
 function dol_string_is_good_iso($s, $clean = 0)
 {
