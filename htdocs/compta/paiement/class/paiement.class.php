@@ -178,7 +178,7 @@ class Paiement extends CommonObject
 	 *    @param	int		$fk_bank	Id of bank line associated to payment
 	 *    @return   int		            Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch($id, $ref = '', $fk_bank = '')
+	public function fetch($id, $ref = '', $fk_bank = 0)
 	{
 		$sql = 'SELECT p.rowid, p.ref, p.ref_ext, p.datep as dp, p.amount, p.statut, p.ext_payment_id, p.ext_payment_site, p.fk_bank, p.multicurrency_amount,';
 		$sql .= ' c.code as type_code, c.libelle as type_label,';
