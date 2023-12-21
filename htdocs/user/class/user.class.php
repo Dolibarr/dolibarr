@@ -82,6 +82,11 @@ class User extends CommonObject
 	public $id = 0;
 
 	/**
+	 * @var User old copy of User
+	 */
+	public $oldcopy;
+
+	/**
 	 * @var int
 	 * @deprecated
 	 * @see $status
@@ -3198,7 +3203,7 @@ class User extends CommonObject
 			$return .= '<br><span class="info-box-label opacitymedium small">'.img_picto('', 'email').' '.$this->email.'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

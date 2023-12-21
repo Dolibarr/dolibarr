@@ -1488,10 +1488,10 @@ function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 
 			$newmenu->add("/compta/paiement/list.php?leftmenu=customers_bills_payment", $langs->trans("Payments"), 1, $user->hasRight('facture', 'lire'), '', $mainmenu, 'customers_bills_payment');
 
-			if (getDolGlobalString('BILL_ADD_PAYMENT_VALIDATION')) {
-				$newmenu->add("/compta/paiement/tovalidate.php?leftmenu=customers_bills_tovalid", $langs->trans("MenuToValid"), 2, $user->hasRight('facture', 'lire'), '', $mainmenu, 'customer_bills_tovalid');
+			if (getDolGlobalString('BILL_ADD_PAYMENT_VALIDATION') && preg_match('/customers_bills_payment/', $leftmenu)) {
+				$newmenu->add("/compta/paiement/tovalidate.php?leftmenu=customers_bills_payment_tovalid", $langs->trans("MenuToValid"), 2, $user->hasRight('facture', 'lire'), '', $mainmenu, 'customers_bills_payment_tovalid');
 			}
-			if ($usemenuhider || empty($leftmenu) || preg_match('/customers_bills/', $leftmenu)) {
+			if ($usemenuhider || empty($leftmenu) || preg_match('/customers_bills_payment/', $leftmenu)) {
 				$newmenu->add("/compta/paiement/rapport.php?leftmenu=customers_bills_payment_report", $langs->trans("Reportings"), 2, $user->hasRight('facture', 'lire'), '', $mainmenu, 'customers_bills_payment_report');
 			}
 

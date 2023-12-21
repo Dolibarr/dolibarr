@@ -111,8 +111,8 @@ if ($action == 'uploadfile') {
 		$nbfile = count($_FILES['userfile']['name']);
 		for ($i = 0; $i < $nbfile; $i++) {
 			$newsection = $newsectioniso;
-			$fileupload = $_FILES['userfile']['name'][$i];
-			$fileuploadpath = $_FILES['userfile']['tmp_name'][$i];
+			$fileupload = dol_sanitizeFileName($_FILES['userfile']['name'][$i]);
+			$fileuploadpath = dol_sanitizePathName($_FILES['userfile']['tmp_name'][$i]);
 			$result = dol_ftp_put($conn_id, $fileupload, $fileuploadpath, $newsection);
 
 			if ($result) {

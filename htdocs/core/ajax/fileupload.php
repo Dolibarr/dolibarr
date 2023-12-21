@@ -18,7 +18,7 @@
 
 /**
  *       \file       htdocs/core/ajax/fileupload.php
- *       \brief      File to return Ajax response on file upload
+ *       \brief      File to return Ajax response on common file upload. For large files, see flowjs-server.php
  */
 
 if (!defined('NOREQUIREMENU')) {
@@ -36,7 +36,7 @@ if (!defined('NOREQUIRESOC')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/fileupload.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/fileupload.class.php';	// Class to upload common files
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
 $id = GETPOST('fk_element', 'int');

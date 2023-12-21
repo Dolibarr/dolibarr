@@ -827,6 +827,10 @@ input:-webkit-autofill {
 input[type=checkbox], input[type=radio] {
 	margin: 0 3px 0 3px;
 }
+.kanban input.checkforselect {
+	margin-right: 0px;
+	margin-top: 5px;
+}
 
 /* CSS for placeholder */
 .placeholder { color: #ccc; }
@@ -1673,6 +1677,12 @@ select.flat.selectlimit {
 }
 .tdoverflowmax300 {			/* For tdoverflow, the max-midth become a minimum ! */
 	max-width: 300px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.tdoverflowmax350 {			/* For tdoverflow, the max-midth become a minimum ! */
+	max-width: 350px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -7802,6 +7812,9 @@ table.jPicker {
 		max-width: <?php echo max(24, ceil(300 / ($nbtopmenuentriesreal + 2))); ?>px;	/* size of viewport */
 		text-overflow: clip;
 	}
+	.menuhider div.tmenucenter {
+		max-width: 28px;
+	}
 	.mainmenuaspan {
 		  font-size: 10px;
 		  padding-left: 0;
@@ -7829,6 +7842,11 @@ table.jPicker {
 	}
 	li.tmenu, li.tmenusel {
 		min-width: 30px;
+	}
+	a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active,
+	a.tmenusel:link, a.tmenusel:visited, a.tmenusel:hover, a.tmenusel:active {
+		padding-left: 1px;
+		padding-right: 1px;
 	}
 
 	div.login_block {

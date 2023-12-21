@@ -206,11 +206,18 @@ if (empty($reshook)) {
 	} elseif ($action == 'reopen' && $usercancreate) {
 		// Reopen a closed order
 		if ($object->statut == Commande::STATUS_CANCELED || $object->statut == Commande::STATUS_CLOSED) {
-			$result = $object->set_reopen($user);
-			if ($result > 0) {
-				setEventMessages($langs->trans('OrderReopened', $object->ref), null);
+			if (getDolGlobalInt('ORDER_REOPEN_TO_DRAFT')) {
+				$result = $object->setDraft($user, $idwarehouse);
+				if ($result < 0) {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
 			} else {
-				setEventMessages($object->error, $object->errors, 'errors');
+				$result = $object->set_reopen($user);
+				if ($result > 0) {
+					setEventMessages($langs->trans('OrderReopened', $object->ref), null);
+				} else {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
 			}
 		}
 	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $usercandelete) {
@@ -3037,7 +3044,7 @@ if ($action == 'create' && $usercancreate) {
 
 				// Cancel order
 				if ($object->statut == Commande::STATUS_VALIDATED && !empty($usercancancel)) {
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel&token='.newToken().'">'.$langs->trans("Cancel").'</a>';
+					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel&token='.newToken().'">'.$langs->trans("CancelOrder").'</a>';
 				}
 
 				// Delete order

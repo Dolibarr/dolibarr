@@ -90,13 +90,13 @@ AccountancyAreaDescProd=STEP %s: Define accounting accounts on your Products/Ser
 
 AccountancyAreaDescBind=STEP %s: Check the binding between existing %s lines and accounting account is done, so application will be able to journalize transactions in Ledger in one click. Complete missing bindings. For this, use the menu entry %s.
 AccountancyAreaDescWriteRecords=STEP %s: Write transactions into the Ledger. For this, go into menu <strong>%s</strong>, and click into button <strong>%s</strong>.
-AccountancyAreaDescAnalyze=STEP %s: Add or edit existing transactions and generate reports and exports.
-
-AccountancyAreaDescClosePeriod=STEP %s: Close period so we can't make modification in a future.
+AccountancyAreaDescAnalyze=STEP %s: Read reportings or generate export files for other bookkeepers.
+AccountancyAreaDescClosePeriod=STEP %s: Close period so we can't transfer anymore data in the same period in a future.
 
 TheFiscalPeriodIsNotDefined=A mandatory step in setup has not been completed (Fiscal period is not defined)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup has not been completed (accounting code journal not defined for all bank accounts)
 Selectchartofaccounts=Select active chart of accounts
+CurrentChartOfAccount=Current active chart of account
 ChangeAndLoad=Change and load
 Addanaccount=Add an accounting account
 AccountAccounting=Accounting account
