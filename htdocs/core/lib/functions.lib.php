@@ -9023,7 +9023,7 @@ function setEventMessage($mesgs, $style = 'mesgs', $noduplicate = 0)
 	//dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);		This is not deprecated, it is used by setEventMessages function
 	if (!is_array($mesgs)) {
 		$mesgs = trim((string) $mesgs);
-		// If mesgs is a not an empty string 
+		// If mesgs is a not an empty string
 		if ($mesgs) {
 			if (!empty($noduplicate) && isset($_SESSION['dol_events'][$style]) && in_array($mesgs, $_SESSION['dol_events'][$style])) {
 				return;
