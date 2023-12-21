@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011-2022	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2011-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2011-2023	Laurent Destailleur	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,9 @@
  */
 
 /**
- *       \file       htdocs/core/class/fileupload.class.php
- *       \brief      File to return Ajax response on common file upload. For large files, see flowjs-server.php
+ *       \file      htdocs/core/class/fileupload.class.php
+ *       \brief     File to return Ajax response on common file upload.
+ *       			For large files, see flowjs-server.php
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -195,8 +196,7 @@ class FileUpload
 	 */
 	protected function setFileDeleteUrl($file)
 	{
-		$file->delete_url = $this->options['script_url']
-		.'?file='.urlencode($file->name).'&fk_element='.urlencode($this->fk_element).'&element='.urlencode($this->element);
+		$file->delete_url = $this->options['script_url'].'?file='.urlencode($file->name).'&fk_element='.urlencode($this->fk_element).'&element='.urlencode($this->element);
 		$file->delete_type = $this->options['delete_type'];
 		if ($file->delete_type !== 'DELETE') {
 			$file->delete_url .= '&_method=DELETE';
@@ -212,6 +212,7 @@ class FileUpload
 	protected function getFileObject($file_name)
 	{
 		$file_path = $this->options['upload_dir'].dol_sanitizeFileName($file_name);
+
 		if (dol_is_file($file_path) && $file_name[0] !== '.') {
 			$file = new stdClass();
 			$file->name = $file_name;
@@ -416,6 +417,7 @@ class FileUpload
 		// Sanitize to avoid stream execution when calling file_size(). Not that this is a second security because
 		// most streams are already disabled by stream_wrapper_unregister() in filefunc.inc.php
 		$uploaded_file = preg_replace('/\s*(http|ftp)s?:/i', '', $uploaded_file);
+		$uploaded_file = realpath($uploaded_file);	// A hack to be sure the file point to an existing file on disk (and is not a SSRF attack)
 
 		$validate = $this->validate($uploaded_file, $file, $error, $index);
 
