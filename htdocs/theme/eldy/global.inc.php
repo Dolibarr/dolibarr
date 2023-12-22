@@ -3622,6 +3622,9 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	background: var(--colorbacktabcard1) !important;
 	margin: 0 0.2em 0 0.2em !important;
 
+	border-right: 1px solid transparent;
+	border-left: 1px solid transparent;
+	border-top: 1px solid transparent;
 	/*border-right: 1px solid #CCC !important;
 	border-left: 1px solid #CCC !important; */
 	border-bottom: 3px solid var(--colorbackhmenu1) !important;

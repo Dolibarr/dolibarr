@@ -2443,23 +2443,23 @@ class ActionComm extends CommonObject
 		$this->reminders = array();
 
 		//Select all action comm reminders for event
-		$sql = "SELECT rowid as id, typeremind, dateremind, status, offsetvalue, offsetunit, fk_user";
+		$sql = "SELECT rowid as id, typeremind, dateremind, status, offsetvalue, offsetunit, fk_user, fk_email_template, lasterror";
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
 		$sql .= " WHERE fk_actioncomm = ".((int) $this->id);
 		if ($onlypast) {
 			$sql .= " AND dateremind <= '".$this->db->idate(dol_now())."'";
 		}
 		if ($type) {
-			$sql .= " AND typeremind ='".$this->db->escape($type)."'";
+			$sql .= " AND typeremind = '".$this->db->escape($type)."'";
 		}
 		if ($fk_user > 0) {
 			$sql .= " AND fk_user = ".((int) $fk_user);
 		}
 		if (!getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
-			$sql .= " AND typeremind != 'email'";
+			$sql .= " AND typeremind <> 'email'";
 		}
 		if (!getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
-			$sql .= " AND typeremind != 'browser'";
+			$sql .= " AND typeremind <> 'browser'";
 		}
 
 		$sql .= $this->db->order("dateremind", "ASC");
@@ -2475,6 +2475,8 @@ class ActionComm extends CommonObject
 				$tmpactioncommreminder->offsetunit = $obj->offsetunit;
 				$tmpactioncommreminder->status = $obj->status;
 				$tmpactioncommreminder->fk_user = $obj->fk_user;
+				$tmpactioncommreminder->fk_email_template = $obj->fk_email_template;
+				$tmpactioncommreminder->lasterror = $obj->lasterror;
 
 				$this->reminders[$obj->id] = $tmpactioncommreminder;
 			}
@@ -2523,7 +2525,8 @@ class ActionComm extends CommonObject
 
 		//Select all action comm reminders
 		$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
-		$sql .= " WHERE typeremind = 'email' AND status = 0";
+		$sql .= " WHERE typeremind = 'email'";
+		$sql .= " AND status = 0";	// 0=No yet sent, -1=Error. TODO Include reminder in error once we can count number of error, so we can try 5 times and not more on errors.
 		$sql .= " AND dateremind <= '".$this->db->idate($now)."'";
 		$sql .= " AND entity IN (".getEntity('actioncomm').")";
 		$sql .= $this->db->order("dateremind", "ASC");
@@ -2594,7 +2597,7 @@ class ActionComm extends CommonObject
 							if ($cMailFile->sendfile()) {
 								$nbMailSend++;
 							} else {
-								$errormesg = $cMailFile->error.' : '.$to;
+								$errormesg = 'Failed to send email to: '.$to.' '.$cMailFile->error.join(',', $cMailFile->errors);
 								$error++;
 							}
 						}
