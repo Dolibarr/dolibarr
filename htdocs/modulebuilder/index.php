@@ -474,7 +474,7 @@ if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontac
 		if ($varnametoupdate) {
 			// Now we update the object file to set $$varnametoupdate to 1
 			$srcfile = $dirins.'/'.strtolower($module).'/lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php';
-			$arrayreplacement = array('/\$'.$varnametoupdate.' = 0;/' => '$'.$varnametoupdate.' = 1;');
+			$arrayreplacement = array('/\$'.preg_quote($varnametoupdate, '/').' = 0;/' => '$'.$varnametoupdate.' = 1;');
 			dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
 		}
 	} else {
@@ -959,7 +959,7 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module)) {
 			}
 			if ($varnametoupdate) {
 				$srcfile = $dirins.'/'.strtolower($module).'/lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php';
-				$arrayreplacement = array('/\$'.$varnametoupdate.' = 1;/' => '$'.$varnametoupdate.' = 0;');
+				$arrayreplacement = array('/\$'.preg_quote($varnametoupdate, '/').' = 1;/' => '$'.preg_quote($varnametoupdate, '/').' = 0;');
 				dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
 			}
 		}
@@ -1483,7 +1483,8 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 				$error++;
 				setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Menus"), "mod".$module."class.php"), null, 'warnings');
 			} else {
-				dolReplaceInFile($moduledescriptorfile, array('/* END MODULEBUILDER LEFTMENU MYOBJECT */' => '/*LEFTMENU '.strtoupper($objectname).'*/'.$stringtoadd."\n\t\t".'/*END LEFTMENU '.strtoupper($objectname).'*/'."\n\t\t".'/* END MODULEBUILDER LEFTMENU MYOBJECT */'));
+				$arrayofreplacement = array('/* END MODULEBUILDER LEFTMENU MYOBJECT */' => '/*LEFTMENU '.strtoupper($objectname).'*/'.$stringtoadd."\n\t\t".'/*END LEFTMENU '.strtoupper($objectname).'*/'."\n\t\t".'/* END MODULEBUILDER LEFTMENU MYOBJECT */');
+				dolReplaceInFile($moduledescriptorfile, $arrayofreplacement);
 			}
 		}
 		// Add module descriptor to list of files to replace "MyObject' string with real name of object.

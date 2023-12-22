@@ -84,7 +84,7 @@ class pdf_vinci extends ModelePDFMo
 		global $langs, $mysoc;
 
 		// Load translation files required by the page
-		$langs->loadLangs(array("main", "bills"));
+		$langs->loadLangs(array("main", "bills", "mrp"));
 
 		$this->db = $db;
 		$this->name = "vinci";

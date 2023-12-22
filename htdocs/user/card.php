@@ -266,12 +266,12 @@ if (empty($reshook)) {
 			$object->login = GETPOST("login", 'alphanohtml');
 			$object->api_key = GETPOST("api_key", 'alphanohtml');
 			$object->gender = GETPOST("gender", 'aZ09');
-			$object->admin = GETPOST("admin", 'int');
+			$object->admin = GETPOSTINT("admin");
 			$object->address = GETPOST('address', 'alphanohtml');
 			$object->zip = GETPOST('zipcode', 'alphanohtml');
 			$object->town = GETPOST('town', 'alphanohtml');
-			$object->country_id = GETPOST('country_id', 'int');
-			$object->state_id = GETPOST('state_id', 'int');
+			$object->country_id = GETPOSTINT('country_id');
+			$object->state_id = GETPOSTINT('state_id');
 			$object->office_phone = GETPOST("office_phone", 'alphanohtml');
 			$object->office_fax = GETPOST("office_fax", 'alphanohtml');
 			$object->user_mobile = GETPOST("user_mobile", 'alphanohtml');
@@ -314,7 +314,7 @@ if (empty($reshook)) {
 			$object->dateendvalidity = $dateendvalidity;
 			$object->birth = $dateofbirth;
 
-			$object->fk_warehouse = GETPOST('fk_warehouse', 'int');
+			$object->fk_warehouse = GETPOSTINT('fk_warehouse');
 
 			$object->lang = GETPOST('default_lang', 'aZ09');
 
@@ -481,7 +481,7 @@ if (empty($reshook)) {
 				$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
 				$object->thm = price2num($object->thm);
 				$object->tjm = GETPOST("tjm", 'alphanohtml') != '' ? GETPOST("tjm", 'alphanohtml') : '';
-				$object->thm = price2num($object->thm);
+				$object->tjm = price2num($object->tjm);
 				$object->salary = GETPOST("salary", 'alphanohtml') != '' ? GETPOST("salary", 'alphanohtml') : '';
 				$object->salary = price2num($object->salary);
 				$object->salaryextra = GETPOST("salaryextra", 'alphanohtml') != '' ? GETPOST("salaryextra", 'alphanohtml') : '';

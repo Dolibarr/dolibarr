@@ -1543,9 +1543,16 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 
 	// X-Frame-Options
 	if (!defined('XFRAMEOPTIONS_ALLOWALL')) {
-		header("X-Frame-Options: SAMEORIGIN"); // Frames allowed only if on same domain (stop some XSS attacks)
+		header("X-Frame-Options: SAMEORIGIN"); // By default, frames allowed only if on same domain (stop some XSS attacks)
 	} else {
 		header("X-Frame-Options: ALLOWALL");
+	}
+
+	if (getDolGlobalString('MAIN_SECURITY_FORCE_ACCESS_CONTROL_ALLOW_ORIGIN')) {
+		$tmpurl = constant('DOL_MAIN_URL_ROOT');
+		$tmpurl = preg_replace('/^(https?:\/\/[^\/]+)\/.*$/', '\1', $tmpurl);
+		header('Access-Control-Allow-Origin: '.$tmpurl);
+		header('Vary: Origin');
 	}
 
 	// X-XSS-Protection
@@ -2540,22 +2547,6 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 					closeTopMenuLoginDropdown();
                 }
             });
-
-	        jQuery(".butAction.dropdown-toggle").on("click", function(event) {
-				console.log("Click on .butAction.dropdown-toggle");
-				var parentholder = jQuery(".butAction.dropdown-toggle").closest(".dropdown");
-            	var offset = parentholder.offset();
-				var widthdocument = $(document).width();
-				var left = offset.left;
-				var right = widthdocument - offset.left - parentholder.width();
-				var widthpopup = parentholder.children(".dropdown-content").width();
-				console.log("left="+left+" right="+right+" width="+widthpopup+" widthdocument="+widthdocument);
-				if (widthpopup + right >= widthdocument) {
-					right = 10;
-				}
-	            parentholder.toggleClass("open");
-	            parentholder.children(".dropdown-content").css({"right": right+"px", "left": "auto"});
-	        });
 		';
 
 

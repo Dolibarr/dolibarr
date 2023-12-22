@@ -134,65 +134,6 @@ function dol_getDefaultFormat(Translate $outputlangs = null)
 	return $selected;
 }
 
-/**
- *  Output content of a file $filename in version of current language (otherwise may use an alternate language)
- *
- *  @param	Translate	$langs          Object language to use for output
- *  @param  string		$filename       Relative filename to output
- *  @param  int			$searchalt      1=Search also in alternative languages
- *	@return	boolean						true if OK, false if KO
- */
-function dol_print_file($langs, $filename, $searchalt = 0)
-{
-	global $conf;
-
-	// Test if file is in lang directory
-	foreach ($langs->dir as $searchdir) {
-		$formfile = ($searchdir."/langs/".$langs->defaultlang."/".$filename);
-		dol_syslog('functions2::dol_print_file search file '.$formfile, LOG_DEBUG);
-		if (is_readable($formfile)) {
-			$content = file_get_contents($formfile);
-			$isutf8 = utf8_check($content);
-			if (!$isutf8 && $conf->file->character_set_client == 'UTF-8') {
-				print mb_convert_encoding($content, 'UTF-8', 'ISO-8859-1');
-			} elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') {
-				print mb_convert_encoding($content, 'ISO-8859-1');
-			} else {
-				print $content;
-			}
-			return true;
-		} else {
-			dol_syslog('functions2::dol_print_file not found', LOG_DEBUG);
-		}
-
-		if ($searchalt) {
-			// Test si fichier dans repertoire de la langue alternative
-			if ($langs->defaultlang != "en_US") {
-				$formfilealt = $searchdir."/langs/en_US/".$filename;
-			} else {
-				$formfilealt = $searchdir."/langs/fr_FR/".$filename;
-			}
-			dol_syslog('functions2::dol_print_file search alt file '.$formfilealt, LOG_DEBUG);
-			//print 'getcwd='.getcwd().' htmlfilealt='.$formfilealt.' X '.file_exists(getcwd().'/'.$formfilealt);
-			if (is_readable($formfilealt)) {
-				$content = file_get_contents($formfilealt);
-				$isutf8 = utf8_check($content);
-				if (!$isutf8 && $conf->file->character_set_client == 'UTF-8') {
-					print mb_convert_encoding($content, 'UTF-8', 'ISO-8859-1');
-				} elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') {
-					print mb_convert_encoding($content, 'ISO-8859-1', 'UTF-8');
-				} else {
-					print $content;
-				}
-				return true;
-			} else {
-				dol_syslog('functions2::dol_print_file not found', LOG_DEBUG);
-			}
-		}
-	}
-
-	return false;
-}
 
 /**
  *	Show informations on an object
