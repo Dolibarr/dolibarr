@@ -1417,13 +1417,29 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	if (!empty($object->lines[$i]->label)) {
 		$label = $object->lines[$i]->label;
 	} else {
-		$label = (!empty($object->lines[$i]->multilangs[$langs->defaultlang]['label'] && $multilangsactive) ? $object->lines[$i]->multilangs[$langs->defaultlang]['label'] : (!empty($object->lines[$i]->product_label) ? $object->lines[$i]->product_label : ''));
+		if (!empty($object->lines[$i]->multilangs[$langs->defaultlang]['label']) && $multilangsactive) {
+			$label = $object->lines[$i]->multilangs[$langs->defaultlang]['label'];
+		} else {
+			if (!empty($object->lines[$i]->product_label)) {
+				$label = $object->lines[$i]->product_label;
+			} else {
+				$label = '';
+			}
+		}
 	}
 	//description
 	if (!empty($object->lines[$i]->desc)) {
 		$desc = $object->lines[$i]->desc;
 	} else {
-		$desc = (!empty($object->lines[$i]->multilangs[$langs->defaultlang]['description'] && $multilangsactive) ? $object->lines[$i]->multilangs[$langs->defaultlang]['description'] : (!empty($object->lines[$i]->description) ? $object->lines[$i]->description : ''));
+		if (!empty($object->lines[$i]->multilangs[$langs->defaultlang]['description']) && $multilangsactive) {
+			$desc = $object->lines[$i]->multilangs[$langs->defaultlang]['description'];
+		} else {
+			if (!empty($object->lines[$i]->description)) {
+				$desc = $object->lines[$i]->description;
+			} else {
+				$desc = '';
+			}
+		}
 	}
 	//ref supplier
 	$ref_supplier = (!empty($object->lines[$i]->ref_supplier) ? $object->lines[$i]->ref_supplier : (!empty($object->lines[$i]->ref_fourn) ? $object->lines[$i]->ref_fourn : '')); // TODO Not yet saved for supplier invoices, only supplier orders
