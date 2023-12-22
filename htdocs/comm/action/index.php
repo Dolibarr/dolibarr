@@ -641,7 +641,7 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 		$s .= '</script>'."\n";
 
 		foreach ($showextcals as $val) {
-			$htmlname = md5($val['name']);
+			$htmlname = md5($val['name']);	// not used for security purpose, only to get a string with no special char
 
 			if (!empty($val['default']) || GETPOST('check_ext'.$htmlname, 'int')) {
 				$default = "checked";
