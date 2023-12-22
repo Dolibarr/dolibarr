@@ -45,12 +45,23 @@ class Status extends DolibarrApi
 	 */
 	public function index()
 	{
-		return array(
+		global $dolibarr_main_prod;
+
+		$response = array(
 			'success' => array(
 				'code' => 200,
 				'dolibarr_version' => DOL_VERSION,
 				'access_locked' => (!getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED') ? '0' : getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')),
 			),
 		);
+
+		if ( $dolibarr_main_prod == '0' ) {
+			$response['success']['environment']       = 'non-production';
+			$response['success']['timestamp_now_utc'] = dol_now();
+			$response['success']['timestamp_php_tz']  = date_default_timezone_get();
+			$response['success']['date_tz']           = dol_print_date(dol_now('gmt'), '%d-%m-%Y %H:%M:%S');
+		}
+
+		return $response;
 	}
 }
