@@ -265,7 +265,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Confirmation of action xxxx
 	if ($action == 'setdraft') {
-		$text = $langs->trans('ConfirmSetToDraft', $object->ref);
+		$text = $langs->trans('ConfirmSetToDraftInventory', $object->ref);
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SetToDraft'), $text, 'confirm_setdraft', '', 0, 1, 220);
 	}
 	// Confirmation to delete
