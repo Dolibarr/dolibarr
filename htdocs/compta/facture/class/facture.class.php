@@ -2113,7 +2113,7 @@ class Facture extends CommonInvoice
 	 *  @param		bool	$fetch_situation	Load also the previous and next situation invoice into $tab_previous_situation_invoice and $tab_next_situation_invoice
 	 *	@return     int         				>0 if OK, <0 if KO, 0 if not found
 	 */
-	public function fetch($rowid, $ref = '', $ref_ext = '', $notused = '', $fetch_situation = false)
+	public function fetch($rowid, $ref = '', $ref_ext = '', $notused = 0, $fetch_situation = false)
 	{
 		if (empty($rowid) && empty($ref) && empty($ref_ext)) {
 			return -1;
@@ -3747,8 +3747,8 @@ class Facture extends CommonInvoice
 	 *  @param		double		$txlocaltax2		Local tax 2 rate (deprecated, use instead txtva with code inside)
 	 *  @param    	int			$fk_product      	Id of predefined product/service
 	 *  @param    	double		$remise_percent  	Percent of discount on line
-	 *  @param    	int			$date_start      	Date start of service
-	 *  @param    	int			$date_end        	Date end of service
+	 *  @param    	int|string	$date_start      	Date start of service
+	 *  @param    	int|string	$date_end        	Date end of service
 	 *  @param    	int			$ventil          	Code of dispatching into accountancy
 	 *  @param    	int			$info_bits			Bits of type of lines
 	 *  @param    	int			$fk_remise_except	Id discount used
@@ -3785,7 +3785,7 @@ class Facture extends CommonInvoice
 		$date_end = '',
 		$ventil = 0,
 		$info_bits = 0,
-		$fk_remise_except = '',
+		$fk_remise_except = 0,
 		$price_base_type = 'HT',
 		$pu_ttc = 0,
 		$type = 0,
@@ -3797,7 +3797,7 @@ class Facture extends CommonInvoice
 		$fk_fournprice = null,
 		$pa_ht = 0,
 		$label = '',
-		$array_options = 0,
+		$array_options = array(),
 		$situation_percent = 100,
 		$fk_prev_id = 0,
 		$fk_unit = null,
@@ -4068,7 +4068,7 @@ class Facture extends CommonInvoice
 	 *  @param		integer		$rang		    	rank of line
 	 *  @return    	int             				Return integer < 0 if KO, > 0 if OK
 	 */
-	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $info_bits = 0, $type = self::TYPE_STANDARD, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $special_code = 0, $array_options = 0, $situation_percent = 100, $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $ref_ext = '', $rang = 0)
+	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $info_bits = 0, $type = self::TYPE_STANDARD, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $special_code = 0, $array_options = array(), $situation_percent = 100, $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $ref_ext = '', $rang = 0)
 	{
 		global $conf, $user;
 		// Deprecation warning
@@ -4709,7 +4709,7 @@ class Facture extends CommonInvoice
 	 *  @param    	string	$sortorder		Sort order
 	 *  @return     array|int             	-1 if KO, array with result if OK
 	 */
-	public function liste_array($shortlist = 0, $draft = 0, $excluser = '', $socid = 0, $limit = 0, $offset = 0, $sortfield = 'f.datef,f.rowid', $sortorder = 'DESC')
+	public function liste_array($shortlist = 0, $draft = 0, $excluser = null, $socid = 0, $limit = 0, $offset = 0, $sortfield = 'f.datef,f.rowid', $sortorder = 'DESC')
 	{
 		// phpcs:enable
 		global $conf, $user;
@@ -5581,7 +5581,7 @@ class Facture extends CommonInvoice
 	 *  @param		string	$dateYmd		date limit of retained warranty in Y m d format
 	 *  @return		int				>0 if OK, <0 if KO
 	 */
-	public function setRetainedWarrantyDateLimit($timestamp, $dateYmd = false)
+	public function setRetainedWarrantyDateLimit($timestamp, $dateYmd = '')
 	{
 		if (!$timestamp && $dateYmd) {
 			$timestamp = $this->db->jdate($dateYmd);
@@ -6449,7 +6449,7 @@ class FactureLigne extends CommonInvoiceLine
 	 *	@param		int		$notrigger	Disable triggers
 	 *	@return		int					Return integer <0 if KO, >0 if OK
 	 */
-	public function update($user = '', $notrigger = 0)
+	public function update($user = null, $notrigger = 0)
 	{
 		global $user, $conf;
 

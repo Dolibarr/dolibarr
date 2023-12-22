@@ -7862,12 +7862,14 @@ function dol_htmlentities($string, $flags = ENT_QUOTES|ENT_SUBSTITUTE, $encoding
 
 /**
  *	Check if a string is a correct iso string
- *	If not, it will we considered not HTML encoded even if it is by FPDF.
+ *	If not, it will not be considered as HTML encoded even if it is by FPDF.
  *	Example, if string contains euro symbol that has ascii code 128
  *
  *	@param	string		$s      	String to check
  *  @param	string		$clean		Clean if it is not an ISO. Warning, if file is utf8, you will get a bad formated file.
  *	@return	int|string  	   		0 if bad iso, 1 if good iso, Or the clean string if $clean is 1
+ *  @deprecated Duplicate of ascii_check()
+ *  @see ascii_check()
  */
 function dol_string_is_good_iso($s, $clean = 0)
 {
@@ -9022,7 +9024,8 @@ function setEventMessage($mesgs, $style = 'mesgs', $noduplicate = 0)
 {
 	//dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);		This is not deprecated, it is used by setEventMessages function
 	if (!is_array($mesgs)) {
-		// If mesgs is a string
+		$mesgs = trim((string) $mesgs);
+		// If mesgs is a not an empty string
 		if ($mesgs) {
 			if (!empty($noduplicate) && isset($_SESSION['dol_events'][$style]) && in_array($mesgs, $_SESSION['dol_events'][$style])) {
 				return;
@@ -9032,6 +9035,7 @@ function setEventMessage($mesgs, $style = 'mesgs', $noduplicate = 0)
 	} else {
 		// If mesgs is an array
 		foreach ($mesgs as $mesg) {
+			$mesg = trim((string) $mesg);
 			if ($mesg) {
 				if (!empty($noduplicate) && isset($_SESSION['dol_events'][$style]) && in_array($mesg, $_SESSION['dol_events'][$style])) {
 					return;

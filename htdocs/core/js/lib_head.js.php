@@ -1304,6 +1304,7 @@ $(document).ready(function() {
 } ?>
 
 
+
 jQuery(document).ready(function() {
 	// Force to hide menus when page is inside an iFrame so we can show any page into a dialog popup
 	if (window.location && window.location.pathname.indexOf("externalsite/frametop.php") == -1 && window.location !== window.parent.location ) {

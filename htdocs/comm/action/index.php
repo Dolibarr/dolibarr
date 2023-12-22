@@ -1743,8 +1743,8 @@ $db->close();
  * @param   string	$newparam        Parameters on current URL
  * @param   int		$showinfo        Add extended information (used by day and week view)
  * @param   int		$minheight       Minimum height for each event. 60px by default.
- * @param	string	$nonew			 0=Add "new entry button", 1=No "new entry button", -1=Only "new entry button"
- * @param	string	$bookcalcalendarsarray	 Used for Bookcal module array of calendar of bookcal
+ * @param	int		$nonew			 0=Add "new entry button", 1=No "new entry button", -1=Only "new entry button"
+ * @param	array	$bookcalcalendarsarray	 Used for Bookcal module array of calendar of bookcal
  * @return	void
  */
 function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint = 0, $maxnbofchar = 16, $newparam = '', $showinfo = 0, $minheight = 60, $nonew = 0, $bookcalcalendarsarray = array())

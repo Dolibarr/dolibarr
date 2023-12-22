@@ -491,7 +491,7 @@ class Account extends CommonObject
 	 *      @param  string      $type       To search using type
 	 *      @return array|int               Array of links array('url'=>, 'url_id'=>, 'label'=>, 'type'=> 'fk_bank'=> ) or -1 on error
 	 */
-	public function get_url($fk_bank = '', $url_id = '', $type = '')
+	public function get_url($fk_bank = 0, $url_id = 0, $type = '')
 	{
 		// phpcs:enable
 		$lines = array();
@@ -1258,7 +1258,7 @@ class Account extends CommonObject
 	 * 	Return current sold
 	 *
 	 * 	@param	int		$option		1=Exclude future operation date (this is to exclude input made in advance and have real account sold)
-	 *	@param	int		$date_end	Date until we want to get bank account sold
+	 *	@param	int|string		$date_end	Date until we want to get bank account sold
 	 *	@param	string	$field		dateo or datev
 	 *	@return	int		current sold (value date <= today)
 	 */
