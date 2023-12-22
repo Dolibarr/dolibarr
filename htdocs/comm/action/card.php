@@ -769,7 +769,8 @@ if (empty($reshook) && $action == 'update') {
 		}
 
 		if (!$datef && $percentage == 100) {
-			$error++; $donotclearsession = 1;
+			$error++;
+			$donotclearsession = 1;
 			setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateEnd")), $object->errors, 'errors');
 			$action = 'edit';
 		}
@@ -901,15 +902,19 @@ if (empty($reshook) && $action == 'update') {
 				$object->setCategories($categories);
 
 				$object->loadReminders($remindertype, 0, false);
-				if (!empty($object->reminders) && $object->datep > dol_now()) {
+
+				// If there is reminders, we remove them
+				if (!empty($object->reminders)) {
 					foreach ($object->reminders as $reminder) {
-						$reminder->delete($user);
+						if ($reminder->status < 1) {	// If already sent, we never remove it
+							$reminder->delete($user);
+						}
 					}
 					$object->reminders = array();
 				}
 
-				//Create reminders
-				if ($addreminder == 'on' && $object->datep > dol_now()) {
+				// Create reminders for every assigned user if reminder is on
+				if ($addreminder == 'on') {
 					$actionCommReminder = new ActionCommReminder($db);
 
 					$dateremind = dol_time_plus_duree($datep, -$offsetvalue, $offsetunit);
@@ -2056,8 +2061,12 @@ if ($id > 0) {
 				$actionCommReminder->offsetunit = 'i';
 				$actionCommReminder->typeremind = 'email';
 			}
+			$disabled = '';
+			if ($object->datep < dol_now()) {
+				//$disabled = 'disabled title="'.dol_escape_htmltag($langs->trans("EventExpired")).'"';
+			}
 
-			print '<label for="addreminder">'.img_picto('', 'bell', 'class="pictofixedwidth"').$langs->trans("AddReminder").'</label> <input type="checkbox" id="addreminder" name="addreminder" '.$checked.'><br>';
+			print '<label for="addreminder">'.img_picto('', 'bell', 'class="pictofixedwidth"').$langs->trans("AddReminder").'</label> <input type="checkbox" id="addreminder" name="addreminder"'.($checked ? ' '.$checked : '').($disabled ? ' '.$disabled : '').'><br>';
 
 			print '<div class="reminderparameters" '.(empty($checked) ? 'style="display: none;"' : '').'>';
 
@@ -2447,6 +2456,7 @@ if ($id > 0) {
 						print ' ('.$tmpuserstatic->getNomUrl(0, '', 0, 0, 16).')';
 					}
 					print ' - '.$actioncommreminder->offsetvalue.' '.$TDurationTypes[$actioncommreminder->offsetunit];
+
 					if ($actioncommreminder->status == $actioncommreminder::STATUS_TODO) {
 						print ' - <span class="opacitymedium">';
 						print $langs->trans("NotSent");
@@ -2454,6 +2464,10 @@ if ($id > 0) {
 					} elseif ($actioncommreminder->status == $actioncommreminder::STATUS_DONE) {
 						print ' - <span class="opacitymedium">';
 						print $langs->trans("Done");
+						print ' </span>';
+					} elseif ($actioncommreminder->status == $actioncommreminder::STATUS_ERROR) {
+						print ' - <span class="opacitymedium">';
+						print $form->textwithpicto($langs->trans("Error"), $actioncommreminder->lasterror);
 						print ' </span>';
 					}
 					print '<br>';
