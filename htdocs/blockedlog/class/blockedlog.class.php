@@ -797,7 +797,7 @@ class BlockedLog
 	 * Encode data
 	 *
 	 * @param	string	$data	Data to serialize
-	 * @param	string	$mode	0=serialize, 1=json_encode
+	 * @param	int		$mode	0=serialize, 1=json_encode
 	 * @return 	string			Value serialized, an object (stdClass)
 	 */
 	public function dolEncodeBlockedData($data, $mode = 0)
@@ -817,7 +817,7 @@ class BlockedLog
 	 * Decode data
 	 *
 	 * @param	string	$data	Data to unserialize
-	 * @param	string	$mode	0=unserialize, 1=json_decode
+	 * @param	int		$mode	0=unserialize, 1=json_decode
 	 * @return 	object			Value unserialized, an object (stdClass)
 	 */
 	public function dolDecodeBlockedData($data, $mode = 0)
@@ -852,7 +852,7 @@ class BlockedLog
 	 *	Create blocked log in database.
 	 *
 	 *	@param	User	$user      			Object user that create
-	 *  @param	int		$forcesignature		Force signature (for example '0000000000' when we disabled the module)
+	 *  @param	string		$forcesignature		Force signature (for example '0000000000' when we disabled the module)
 	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user, $forcesignature = '')
