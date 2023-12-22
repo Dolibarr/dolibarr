@@ -1327,7 +1327,7 @@ class FactureFournisseurRec extends CommonInvoice
 					}
 					if (!$error && ($facturerec->auto_validate || $forcevalidation)) {
 						$result = $new_fac_fourn->validate($user);
-						$laststep="Validate by user $user";
+						$laststep="Validate by user {$user->id}";
 						if ($result <= 0) {
 							$this->errors = $new_fac_fourn->errors;
 							$this->error = $new_fac_fourn->error;
