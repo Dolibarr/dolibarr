@@ -2106,7 +2106,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				if (!getDolGlobalString('PRODUCT_DISABLE_PUBLIC_URL')) {
 					print '<tr><td>'.$langs->trans("PublicUrl").'</td><td>';
 					print img_picto('', 'globe', 'class="pictofixedwidth"');
-					print '<input type="text" name="url" class="quatrevingtpercent" value="'.(GETPOSTISSET('url') ? GETPOST('url') : $object->url).'">';
+					print '<input type="text" name="url" class="maxwidth500 widthcentpercentminusx" value="'.(GETPOSTISSET('url') ? GETPOST('url') : $object->url).'">';
 					print '</td></tr>';
 				}
 

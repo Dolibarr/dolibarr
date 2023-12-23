@@ -100,7 +100,7 @@ class Workstation extends CommonObject
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'position'=>5, 'notnull'=>1, 'default'=>'1', 'index'=>1),
-		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>1, 'noteditable'=>'0', 'default'=>'', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
+		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>1, 'noteditable'=>'0', 'default'=>'', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object", 'csslist'=>'tdoverflowmax150'),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth300', 'csslist'=>'tdoverflowmax125', 'showoncombobox'=>'2',),
 		'type' => array('type'=>'varchar(8)', 'label'=>'Type', 'enabled'=>'1', 'position'=>32, 'default'=>1, 'notnull'=>1, 'visible'=>1, 'arrayofkeyval'=>array('HUMAN'=>'Human', 'MACHINE'=>'Machine', 'BOTH'=>'HumanMachine'),),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>61, 'notnull'=>0, 'visible'=>0,),
@@ -110,9 +110,9 @@ class Workstation extends CommonObject
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>512, 'notnull'=>-1, 'visible'=>-2,),
-		'nb_operators_required' => array('type'=>'integer', 'label'=>'NbOperatorsRequired', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1,),
-		'thm_operator_estimated' => array('type'=>'double', 'help'=>'THMOperatorEstimatedHelp','label'=>'THMOperatorEstimated', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1, 'css'=>'right'),
-		'thm_machine_estimated' => array('type'=>'double', 'help'=>'THMMachineEstimatedHelp', 'label'=>'THMMachineEstimated', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1, 'css'=>'right'),
+		'nb_operators_required' => array('type'=>'integer', 'label'=>'NbOperatorsRequired', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1, 'css'=>'right', 'csslist'=>'maxwidth75imp'),
+		'thm_operator_estimated' => array('type'=>'double', 'help'=>'THMOperatorEstimatedHelp','label'=>'THMOperatorEstimated', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1, 'css'=>'right', 'csslist'=>'maxwidth75imp'),
+		'thm_machine_estimated' => array('type'=>'double', 'help'=>'THMMachineEstimatedHelp', 'label'=>'THMMachineEstimated', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1, 'css'=>'right', 'csslist'=>'maxwidth75imp'),
 		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'default'=>1, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Disabled', '1'=>'Enabled'),),
 	);
 	public $rowid;
