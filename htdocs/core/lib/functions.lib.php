@@ -151,7 +151,6 @@ function getMultidirOutput($object, $module = '')
 function getDolGlobalString($key, $default = '')
 {
 	global $conf;
-	// return $conf->global->$key ?? $default;
 	return (string) (isset($conf->global->$key) ? $conf->global->$key : $default);
 }
 
@@ -166,7 +165,6 @@ function getDolGlobalString($key, $default = '')
 function getDolGlobalInt($key, $default = 0)
 {
 	global $conf;
-	// return $conf->global->$key ?? $default;
 	return (int) (isset($conf->global->$key) ? $conf->global->$key : $default);
 }
 
@@ -185,7 +183,6 @@ function getDolUserString($key, $default = '', $tmpuser = null)
 		$tmpuser = $user;
 	}
 
-	// return $conf->global->$key ?? $default;
 	return (string) (empty($tmpuser->conf->$key) ? $default : $tmpuser->conf->$key);
 }
 
@@ -204,7 +201,6 @@ function getDolUserInt($key, $default = 0, $tmpuser = null)
 		$tmpuser = $user;
 	}
 
-	// return $conf->global->$key ?? $default;
 	return (int) (empty($tmpuser->conf->$key) ? $default : $tmpuser->conf->$key);
 }
 
