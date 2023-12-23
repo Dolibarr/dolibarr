@@ -250,7 +250,7 @@ if (isModEnabled("banque")) {
 		$name = "CASHDESK_ID_BANKACCOUNT_".$modep->code.$terminaltouse;
 		print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountFor").' '.$langs->trans($modep->label).'</td>';
 		print '<td>';
-		if (!empty($conf->global->$name)) {
+		if (getDolGlobalString($name)) {
 			$atleastonefound++;
 		}
 		$cour = preg_match('/^LIQ.*/', $modep->code) ? 2 : 1;

@@ -6140,7 +6140,7 @@ class Product extends CommonObject
 	}
 
 	/**
-	 * Return if object is a product
+	 * Return if object is a product.
 	 *
 	 * @return boolean     True if it's a product
 	 */
@@ -6159,6 +6159,15 @@ class Product extends CommonObject
 		return ($this->type == Product::TYPE_SERVICE ? true : false);
 	}
 
+	/**
+	 * Return if object need to have its stock managed
+	 *
+	 * @return boolean     True if it's a service
+	 */
+	public function isStockManaged()
+	{
+		return ($this->isProduct() || getDolGlobalString('STOCK_SUPPORTS_SERVICES'));
+	}
 
 	/**
 	 * Return if  object have a constraint on mandatory_period
@@ -6169,6 +6178,18 @@ class Product extends CommonObject
 	{
 		return ($this->mandatory_period == 1 ? true : false);
 	}
+
+	/**
+	 * Return if object has a sell-by date or eat-by date
+	 *
+	 * @return boolean     True if it's has
+	 */
+	public function hasbatch()
+	{
+		return ($this->status_batch > 0 ? true : false);
+	}
+
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Get a barcode from the module to generate barcode values.
@@ -6211,8 +6232,6 @@ class Product extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		global $user, $langs, $conf, $mysoc;
-
 		$now = dol_now();
 
 		// Initialize parameters
@@ -6284,17 +6303,6 @@ class Product extends CommonObject
 			return -1;
 		}
 	}
-
-	/**
-	 * Return if object has a sell-by date or eat-by date
-	 *
-	 * @return boolean     True if it's has
-	 */
-	public function hasbatch()
-	{
-		return ($this->status_batch > 0 ? true : false);
-	}
-
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**

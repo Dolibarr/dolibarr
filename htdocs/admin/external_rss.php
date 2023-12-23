@@ -247,7 +247,7 @@ if ($resql) {
 		//print "x".$idrss;
 
 		$rssparser = new RssParser($db);
-		$result = $rssparser->parser($conf->global->$keyrssurl, 5, 300, $conf->externalrss->dir_temp);
+		$result = $rssparser->parser(getDolGlobalString($keyrssurl), 5, 300, $conf->externalrss->dir_temp);
 
 		print "<br>";
 		print '<form name="externalrssconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">'."\n";

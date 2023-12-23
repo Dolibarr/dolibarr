@@ -1893,8 +1893,7 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 				$const = $obj->description;
-				//irtoscan.=($dirtoscan?',':'').preg_replace('/[\r\n]+/',',',trim($conf->global->$const));
-				$dirtoscan = preg_replace('/[\r\n]+/', ',', trim($conf->global->$const));
+				$dirtoscan = preg_replace('/[\r\n]+/', ',', trim(getDolGlobalString($const)));
 
 				$listoffiles = array();
 

@@ -53,7 +53,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *  Constructor.
 	 *  This create an opened connexion to a database server and eventually to a database
 	 *
-	 *  @param      string	$type		Type of database (mysql, pgsql...)
+	 *  @param      string	$type		Type of database (mysql, pgsql...). Not used.
 	 *  @param	    string	$host		Address of database server
 	 *  @param	    string	$user		Nom de l'utilisateur autorise
 	 *  @param	    string	$pass		Mot de passe

@@ -367,7 +367,7 @@ for ($i = 1; $i <= 6; $i++) {
 		if ($conf->use_javascript_ajax) {
 			print ajax_constantonoff($keyforconstant);
 		} else {
-			print $form->selectyesno($keyforconstant, isset($conf->global->$keyforconstant) ? $conf->global->$keyforconstant : 0, 1, $noCountryCode);
+			print $form->selectyesno($keyforconstant, getDolGlobalString($keyforconstant, 0), 1, $noCountryCode);
 		}
 		print '</td></tr>';
 	}

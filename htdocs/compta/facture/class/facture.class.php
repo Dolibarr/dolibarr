@@ -1689,10 +1689,10 @@ class Facture extends CommonInvoice
 
 		$modelByTypeConfName = 'FACTURE_ADDON_PDF_' . $deposit->type;
 
-		if (!empty($conf->global->$modelByTypeConfName)) {
-			$deposit->model_pdf = $conf->global->$modelByTypeConfName;
+		if (getDolGlobalString($modelByTypeConfName)) {
+			$deposit->model_pdf = getDolGlobalString($modelByTypeConfName);
 		} elseif (getDolGlobalString('FACTURE_ADDON_PDF')) {
-			$deposit->model_pdf = $conf->global->FACTURE_ADDON_PDF;
+			$deposit->model_pdf = getDolGlobalString('FACTURE_ADDON_PDF');
 		}
 
 		if (!getDolGlobalString('MAIN_DISABLE_PROPAGATE_NOTES_FROM_ORIGIN')) {
@@ -3270,7 +3270,7 @@ class Facture extends CommonInvoice
 
 			// Check for mandatory
 			$keymandatory = 'INVOICE_'.$key.'_MANDATORY_FOR_VALIDATION';
-			if (!$vallabel && !empty($conf->global->$keymandatory)) {
+			if (!$vallabel && getDolGlobalString($keymandatory)) {
 				$langs->load("errors");
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val)), null, 'errors');
@@ -5219,8 +5219,8 @@ class Facture extends CommonInvoice
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->$thisTypeConfName)) {
-				$modele = $conf->global->$thisTypeConfName;
+			} elseif (getDolGlobalString($thisTypeConfName)) {
+				$modele = getDolGlobalString($thisTypeConfName);
 			} elseif (getDolGlobalString('FACTURE_ADDON_PDF')) {
 				$modele = $conf->global->FACTURE_ADDON_PDF;
 			}

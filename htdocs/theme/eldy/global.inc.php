@@ -1638,9 +1638,10 @@ maxscreenheightless200 {
 .clearboth  { clear:both; }
 
 .hideobject { display: none; }
-.minwidth25  { min-width: 25px; }
-.minwidth50  { min-width: 50px; }
-.minwidth75  { min-width: 75px; }
+.minwidth25 { min-width: 25px; }
+.minwidth50 { min-width: 50px; }
+.minwidth75 { min-width: 75px; }
+.nominwidth { min-width: fit-content !important; }
 /* rule for not too small screen only */
 @media only screen and (min-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC3') ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {

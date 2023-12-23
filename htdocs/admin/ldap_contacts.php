@@ -102,7 +102,7 @@ if ($action == 'setvalue' && $user->admin) {
 	$valkey = '';
 	$key = GETPOST("key");
 	if ($key) {
-		$valkey = $conf->global->$key;
+		$valkey = getDolGlobalString($key);
 	}
 	if (!dolibarr_set_const($db, 'LDAP_KEY_CONTACTS', $valkey, 'chaine', 0, '', $conf->entity)) {
 		$error++;

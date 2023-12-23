@@ -765,7 +765,7 @@ if (getDolGlobalString('PRODUCT_CANVAS_ABILITY')) {
 
 						$const = "PRODUCT_SPECIAL_".strtoupper($file);
 
-						if ($conf->global->$const) {
+						if (getDolGlobalString($const)) {
 							print img_picto($langs->trans("Active"), 'tick');
 							print '</td><td class="right">';
 							print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&spe='.urlencode($file).'&value=0">'.$langs->trans("Disable").'</a>';

@@ -89,7 +89,7 @@ class box_external_rss extends ModeleBoxes
 		$keyforparamtitle = "EXTERNAL_RSS_TITLE_".$site;
 
 		// Get RSS feed
-		$url = $conf->global->$keyforparamurl;
+		$url = getDolGlobalString($keyforparamurl);
 
 		$rssparser = new RssParser($this->db);
 		$result = $rssparser->parser($url, $this->max, $cachedelay, $conf->externalrss->dir_temp);
@@ -98,7 +98,7 @@ class box_external_rss extends ModeleBoxes
 		$description = $rssparser->getDescription();
 		$link = $rssparser->getLink();
 
-		$title = $langs->trans("BoxTitleLastRssInfos", $max, $conf->global->$keyforparamtitle);
+		$title = $langs->trans("BoxTitleLastRssInfos", $max, getDolGlobalString($keyforparamtitle));
 		if ($result < 0 || !empty($rssparser->error)) {
 			// Show warning
 			$errormessage = $langs->trans("FailedToRefreshDataInfoNotUpToDate", ($rssparser->getLastFetchDate() ? dol_print_date($rssparser->getLastFetchDate(), "dayhourtext") : $langs->trans("Unknown")));
