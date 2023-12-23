@@ -560,6 +560,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			/*
+			// Disable / Enable
 			if ($permissiontoadd) {
 				if ($object->status == $object::STATUS_ENABLED) {
 					print dolGetButtonAction('', $langs->trans('Disable'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=disable&token='.newToken(), '', $permissiontoadd);
