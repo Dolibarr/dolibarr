@@ -2098,7 +2098,7 @@ class Setup extends DolibarrApi
 					// Value found
 					$value = '';
 					if ($constname && getDolGlobalString($constname) != '') {
-						$value = $conf->global->$constname;
+						$value = getDolGlobalString($constname);
 					}
 					$valueforchecksum = (empty($value) ? '0' : $value);
 

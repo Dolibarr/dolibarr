@@ -173,7 +173,7 @@ if (empty($conf->use_javascript_ajax)) {
 		}
 		print '</td>';
 		print '<td class="center centpercent width100">';
-		$value = (isset($conf->global->$constante) ? $conf->global->$constante : 0);
+		$value = getDolGlobalInt($constante, 0);
 		if ($value == 0) {
 			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=enable_'.strtolower($const).'&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 		} elseif ($value == 1) {
