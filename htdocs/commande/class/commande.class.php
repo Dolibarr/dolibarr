@@ -3180,11 +3180,6 @@ class Commande extends CommonOrder
 
 			// Anciens indicateurs: $price, $subprice (a ne plus utiliser)
 			$price = $pu_ht;
-			if ($price_base_type == 'TTC') {
-				$subprice = $pu_ttc;
-			} else {
-				$subprice = $pu_ht;
-			}
 			$remise = 0;
 			if ($remise_percent > 0) {
 				$remise = round(((float) $pu * $remise_percent / 100), 2);
@@ -3239,7 +3234,7 @@ class Commande extends CommonOrder
 			$this->line->localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
 			$this->line->localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 			$this->line->remise_percent = $remise_percent;
-			$this->line->subprice       = $subprice;
+			$this->line->subprice       = $pu_ht;
 			$this->line->info_bits      = $info_bits;
 			$this->line->special_code   = $special_code;
 			$this->line->total_ht       = $total_ht;
