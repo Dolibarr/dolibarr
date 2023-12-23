@@ -660,7 +660,7 @@ while ($i < $imaxinloop) {
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
+			print '<tr class="trkanban"><td colspan="'.($savnbfield+1).'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
