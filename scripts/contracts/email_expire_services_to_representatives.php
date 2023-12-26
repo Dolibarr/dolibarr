@@ -211,7 +211,7 @@ function sendEmailTo($mode, $oldemail, $message, $total, $userlang, $oldtarget, 
 		$title = $newlangs->transnoentities("ListOfServicesToExpire");
 	}
 
-	$subject = (!getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_SUBJECT') ? $title : $conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_SUBJECT);
+	$subject = getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_SUBJECT', $title);
 	$sendto = $oldemail;
 	$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 	$errorsto = getDolGlobalString('MAIN_MAIL_ERRORS_TO');
