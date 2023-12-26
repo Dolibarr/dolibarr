@@ -1677,40 +1677,43 @@ class Website extends CommonObject
 							if (count($differences[$nomFichierModifie]) > 0) {
 								$result = $this->replaceLignEUsingNum($destFile['fullname'], $differences[$nomFichierModifie]);
 								if ($result !== false) {
-									setEventMessages("file ".$nomFichierModifie." was modified", null, 'warnings');
+									// save state file
+									$this->saveState($etatPrecedent, $fichierEtat);
+									setEventMessages("file <b>".$nomFichierModifie."</b> was modified in template <b>".$website->name_template."</b>", null, 'warnings');
+									header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
+									exit();
 								} else {
 									setEventMessages("file ".$nomFichierModifie." was not modified", null, 'errors');
 								}
 							}
 						}
-					} else {
+					} elseif (preg_match('/page(\d+)\.tpl\.php/', $nomFichierModifie)) {
 						// TO DO when file has not same name
-						// $succes = 0;
-						// $differences[$nomFichierModifie] = $this->compareFichierModifie($sourcedir, $destdir, $fichierModifie);
-
-						// if (count($differences[$nomFichierModifie]) > 0) {
-						// 	$result = $this->replaceLignEUsingNum($destFile['fullname'], $differences[$nomFichierModifie]);
-						// 	if ($result !== false) {
-						// 		$succes++;
-						// 	} else {
-						// 		setEventMessages("file ".$nomFichierModifie." was not modified", null, 'errors');
-						// 	}
-						// }
+						$succes = 0;
+						$differences[$nomFichierModifie] = $this->compareFichierModifie($sourcedir, $destdir, $fichierModifie);
+						if (count($differences[$nomFichierModifie]) > 0) {
+							$result = $this->replaceLignEUsingNum($differences[$nomFichierModifie]['file_destination']['fullname'], $differences[$nomFichierModifie]);
+							if ($result !== false) {
+								$succes++;
+							} else {
+								setEventMessages("file ".$nomFichierModifie." was not modified", null, 'errors');
+							}
+						}
 					}
 				}
-				// if ($succes) {
-				// 	setEventMessages("file ".$nomFichierModifie." was modified", null, 'warnings');
-				// }
+				if ($succes) {
+					// save state file
+					$this->saveState($etatPrecedent, $fichierEtat);
+					setEventMessages("file <b>".$differences[$nomFichierModifie]['file_destination']['name']."</b> was modified in template <b>".$website->name_template."</b>", null, 'warnings');
+					header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
+					exit();
+				}
 			}
 		} else {
-			setEventMessages("No files was modified", null, 'warnings');
+			setEventMessages("No file has been modified", null, 'warnings');
+			header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
+			exit();
 		}
-
-		// save state file
-		$this->saveState($etatPrecedent, $fichierEtat);
-
-		header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
-		exit();
 	}
 
 	/**
@@ -1805,53 +1808,65 @@ class Website extends CommonObject
 		}
 	}
 
-	// public function compareFichierModifie($dossierSource, $dossierDestination, $fichierModifie)
-	// {
+	/**
+	 * Compare two files has not same name but same content
+	 * @param  string   $dossierSource        filepath of folder source
+	 * @param  string   $dossierDestination   filepath of folder dest
+	 * @param  mixed   $fichierModifie       files modified
+	 * @return array    empty if KO, array if OK
+	 */
+	public function compareFichierModifie($dossierSource, $dossierDestination, $fichierModifie)
+	{
 
-	// 	// Initialiser les tableaux pour les fichiers filtrés
-	// 	$fichiersSource = [];
-	// 	$fichiersDestination = [];
+		$fichiersSource = [];
+		$fichiersDestination = [];
 
-	// 	// Parcourir et filtrer les fichiers source
-	// 	foreach (dol_dir_list($dossierSource, "files") as $file) {
-	// 		if (preg_match('/^page\d+/', $file['name']) && !str_contains($file['name'], '.old')) {
-	// 			$fichiersSource[] = $file;
-	// 		}
-	// 	}
+		//  filter files source
+		foreach (dol_dir_list($dossierSource, "files") as $file) {
+			if (preg_match('/^page\d+/', $file['name']) && !str_contains($file['name'], '.old')) {
+				$fichiersSource[] = $file;
+			}
+		}
 
-	// 	// Parcourir et filtrer les fichiers destination
-	// 	foreach (dol_dir_list($dossierDestination, "all", 1) as $file) {
-	// 		if (preg_match('/^page\d+/', $file['name']) && !str_contains($file['name'], '.old')) {
-	// 			$fichiersDestination[] = $file;
-	// 		}
-	// 	}
+		//  filter files destination
+		foreach (dol_dir_list($dossierDestination, "all", 1) as $file) {
+			if (preg_match('/^page\d+/', $file['name']) && !str_contains($file['name'], '.old')) {
+				$fichiersDestination[] = $file;
+			}
+		}
 
-	// 	// Trouver l'index du fichier modifié dans la liste triée
-	// 	$indexModifie = -1;
-	// 	foreach ($fichiersSource as $index => $file) {
-	// 		if ($file['name'] == basename($fichierModifie['fullname'])) {
-	// 			$indexModifie = $index;
-	// 			break;
-	// 		}
-	// 	}
+		// find index source and search it in folder destination
+		$numOfPageSource = 0;
+		$indexModifie = -1;
+		foreach ($fichiersSource as $index => $file) {
+			if ($file['name'] == basename($fichierModifie['fullname'])) {
+				$numOfPageSource = $this->extractNumberFromFilename($file['name']);
+				$indexModifie = $index;
+				break;
+			}
+		}
 
-	// 	if ($indexModifie != -1 && isset($fichiersDestination[$indexModifie])) {
-	// 		// Comparer le fichier modifié avec le fichier correspondant dans le dossier de destination
-	// 		$sameFichier= $fichiersDestination[$indexModifie]['fullname'];
-	// 		$sourceContent = file_get_contents($fichierModifie['fullname']);
-	// 		$destContent = file_get_contents($sameFichier);
-	// 		$differences = $this->showDifferences($destContent, $sourceContent);
-	// 		return $differences;
-	// 	}
-	// 	return array();
-	// }
+		if ($indexModifie != -1 && isset($fichiersDestination[$indexModifie])) {
+			$sameFichier= $fichiersDestination[$indexModifie]['fullname'];
+			$sourceContent = file_get_contents($fichierModifie['fullname']);
+			$destContent = file_get_contents($sameFichier);
+
+			$numOfPageDest = $this->extractNumberFromFilename($sameFichier);
+
+			$differences = $this->showDifferences($destContent, $sourceContent, array($numOfPageDest,$numOfPageSource));
+			$differences['file_destination'] = $fichiersDestination[$indexModifie];
+
+			return $differences;
+		}
+		return array();
+	}
 
 	/**
 	 * remove espace in string
 	 * @param   string   $str    string
 	 * @return string
 	 */
-	protected function normalizeString($str)
+	private function normalizeString($str)
 	{
 
 		$str = str_replace("\r\n", "\n", $str);
@@ -1867,26 +1882,30 @@ class Website extends CommonObject
 	 * show difference between to string
 	 * @param string  $str1   first string
 	 * @param string  $str2   seconde string
-	 * @param string  $exceptNumPge    num of page file
+	 * @param array  $exceptNumPge    num of page files we dont want to change
 	 * @return array|int      -1 if KO, array if OK
 	 */
-	protected function showDifferences($str1, $str2, $exceptNumPge = '0')
+	protected function showDifferences($str1, $str2, $exceptNumPge = array())
 	{
-		$diff = [];
+		$diff = array();
 		$str1 = $this->normalizeString($str1);
 		$str2 = $this->normalizeString($str2);
 
 		$lines1 = explode("\n", $str1);
 		$lines2 = explode("\n", $str2);
 
+		$linesShouldnChange = array();
+		$linesShouldnNotChange = array();
 		$maxLines = max(count($lines1), count($lines2));
-
 		for ($lineNum = 0; $lineNum < $maxLines; $lineNum++) {
 			$lineContent1 = $lines1[$lineNum] ?? '';
 			$lineContent2 = $lines2[$lineNum] ?? '';
 
-			if (str_contains($lineContent1, $exceptNumPge) || str_contains($lineContent2, $exceptNumPge)) {
-				continue;
+			if (str_contains($lineContent1, $exceptNumPge[0])) {
+				$linesShouldnChange[] = $lineContent1;
+			}
+			if (str_contains($lineContent2, $exceptNumPge[1])) {
+				$linesShouldnNotChange[] = $lineContent2;
 			}
 
 			if ($lineContent1 !== $lineContent2) {
@@ -1902,6 +1921,13 @@ class Website extends CommonObject
 				}
 			}
 		}
+		$pairesRemplacement = array();
+		foreach ($linesShouldnNotChange as $numLigne => $ligneRemplacement) {
+			if (isset($linesShouldnChange[$numLigne])) {
+				$pairesRemplacement[$ligneRemplacement] = $linesShouldnChange[$numLigne];
+			}
+		}
+		$diff['lignes_dont_change'] = $pairesRemplacement;
 
 		return $diff;
 	}
@@ -1912,12 +1938,13 @@ class Website extends CommonObject
 	 * @param array $differences array of differences between files
 	 * @return false|int  false if we cant replace
 	 */
-	public function replaceLignEUsingNum($desfFile, $differences)
+	protected function replaceLignEUsingNum($desfFile, $differences)
 	{
-		// if (file_exists($desfFile)) {
-		// 	dolChmod($desfFile,'766');
-		// }
-		$contentDest = file($desfFile, FILE_IGNORE_NEW_LINES);
+		if (file_exists($desfFile)) {
+			dolChmod($desfFile, '0664');
+			unset($differences['file_destination']);
+		}
+		$contentDest = file($desfFile);
 
 		foreach ($differences as $key => $ligneSource) {
 			if (preg_match('/(Ajoutée|Modifiée) à la ligne (\d+)/', $key, $matches)) {
@@ -1935,10 +1962,13 @@ class Website extends CommonObject
 			}
 		}
 		//Reindex the table keys
-
 		$contentDest = array_values($contentDest);
 		$stringreplacement = implode("\n", $contentDest);
-
 		file_put_contents($desfFile, $stringreplacement);
+		foreach ($differences['lignes_dont_change'] as $linechanged => $line) {
+			if (in_array($linechanged, $contentDest)) {
+				dolReplaceInFile($desfFile, array($linechanged => $line));
+			}
+		}
 	}
 }
