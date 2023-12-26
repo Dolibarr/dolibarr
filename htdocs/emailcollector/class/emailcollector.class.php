@@ -2654,8 +2654,8 @@ class EmailCollector extends CommonObject
 									} else {
 										if (($fk_element_type == 'ticket') && (!empty ($attachments))) {
 											// There is an attachment for the ticket -> store attachment
-											$ticket = New Ticket ($this->db);
-											$ticket->fetch ($fk_element_id);
+											$ticket = New Ticket($this->db);
+											$ticket->fetch($fk_element_id);
 											$destdir = $conf->ticket->dir_output.'/'.$ticket->ref;
 											if (!dol_is_dir($destdir)) {
 												dol_mkdir($destdir);
