@@ -3925,9 +3925,9 @@ if ($action == 'create') {
 		if (getDolGlobalString('INVOICE_USE_DEFAULT_DOCUMENT')) {
 			// Hidden conf
 			$paramkey = 'FACTURE_ADDON_PDF_'.$object->type;
-			$preselected = !empty($conf->global->$paramkey) ? $conf->global->$paramkey : $conf->global->FACTURE_ADDON_PDF;
+			$preselected = getDolGlobalString($paramkey, getDolGlobalString('FACTURE_ADDON_PDF'));
 		} else {
-			$preselected = $conf->global->FACTURE_ADDON_PDF;
+			$preselected = getDolGlobalString('FACTURE_ADDON_PDF');
 		}
 		print $form->selectarray('model', $liste, $preselected, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200 widthcentpercentminusx', 1);
 		print "</td></tr>";

@@ -86,8 +86,8 @@ if (!isModEnabled('mailing')) {
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 
-if (getDolGlobalString('MAILING_DELAY')) {
-	print 'A delay of '.((float) $conf->global->MAILING_DELAY).' seconds has been set between each email'."\n";
+if (getDolGlobalInt('MAILING_DELAY')) {
+	print 'A delay of '.((float) getDolGlobalInt('MAILING_DELAY')).' seconds has been set between each email'."\n";
 }
 
 if (getDolGlobalString('MAILING_LIMIT_SENDBYCLI') == '-1') {
@@ -153,7 +153,7 @@ if ($resql) {
 			if (getDolGlobalInt('MAILING_LIMIT_SENDBYCLI') > 0 && empty($max)) {
 				$sql2 .= " LIMIT " . getDolGlobalString('MAILING_LIMIT_SENDBYCLI');
 			} elseif (getDolGlobalInt('MAILING_LIMIT_SENDBYCLI') > 0 && $max > 0) {
-				$sql2 .= " LIMIT ".min($conf->global->MAILING_LIMIT_SENDBYCLI, $max);
+				$sql2 .= " LIMIT ".min(getDolGlobalInt('MAILING_LIMIT_SENDBYCLI'), $max);
 			} elseif ($max > 0) {
 				$sql2 .= " LIMIT ".((int) $max);
 			}
@@ -383,8 +383,8 @@ if ($resql) {
 									}
 								}
 
-								if (getDolGlobalString('MAILING_DELAY')) {
-									usleep((float) $conf->global->MAILING_DELAY * 1000000);
+								if (getDolGlobalInt('MAILING_DELAY')) {
+									usleep((float) getDolGlobalInt('MAILING_DELAY') * 1000000);
 								}
 							}
 						} else {

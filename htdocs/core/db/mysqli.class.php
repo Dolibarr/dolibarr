@@ -49,7 +49,7 @@ class DoliDBMysqli extends DoliDB
 	 *	Constructor.
 	 *	This create an opened connexion to a database server and eventually to a database
 	 *
-	 *	@param      string	$type		Type of database (mysql, pgsql...)
+	 *	@param      string	$type		Type of database (mysql, pgsql...). Not used.
 	 *	@param	    string	$host		Address of database server
 	 *	@param	    string	$user		Name of database user
 	 *	@param	    string	$pass		Password of database user

@@ -195,6 +195,7 @@ class DolEditor
             						/* property:xxx is same than CKEDITOR.config.property = xxx */
             						customConfig: ckeditorConfig,
 									removePlugins: \''.dol_escape_js($pluginstodisable).'\',
+									versionCheck: false,
             						readOnly: '.($this->readonly ? 'true' : 'false').',
                             		htmlEncodeOutput: '.dol_escape_js($htmlencode_force).',
             						allowedContent: '.($disallowAnyContent ? 'false' : 'true').',		/* Advanced Content Filter (ACF) is own when allowedContent is false */

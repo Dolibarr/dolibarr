@@ -175,7 +175,7 @@ if ($filtertype != 1) {
 		print '<td class="linecolworkstation nowrap right">';
 		$coldisplay++;
 		if ($res > 0) {
-			echo $workstation->getNomUrl();
+			echo $workstation->getNomUrl(1);
 		}
 		print '</td>';
 	}

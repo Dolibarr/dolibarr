@@ -402,10 +402,10 @@ if (!getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
 	$logosmall = $mysoc->logo_squarred_small ? $mysoc->logo_squarred_small : $mysoc->logo_small;
 	$logo = $mysoc->logo_squarred ? $mysoc->logo_squarred : $mysoc->logo;
 	$paramlogo = 'ONLINE_USER_LOGO_'.$suffix;
-	if (!empty($conf->global->$paramlogo)) {
-		$logosmall = $conf->global->$paramlogo;
+	if (getDolGlobalString($paramlogo)) {
+		$logosmall = getDolGlobalString($paramlogo);
 	} elseif (getDolGlobalString('ONLINE_USER_LOGO')) {
-		$logosmall = $conf->global->ONLINE_USER_LOGO;
+		$logosmall = getDolGlobalString('ONLINE_USER_LOGO');
 	}
 	//print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 	// Define urllogo
