@@ -1412,7 +1412,7 @@ class Adherent extends CommonObject
 
 				$this->civility_id = $obj->civility_code; // Bad. Kept for backard compatibility
 				$this->civility_code = $obj->civility_code;
-				$this->civility = $obj->civility_code ? ($langs->trans("Civility".$obj->civility_code) != ("Civility".$obj->civility_code) ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code) : '';
+				$this->civility = $obj->civility_code ? ($langs->trans("Civility".$obj->civility_code) != "Civility".$obj->civility_code ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code) : '';
 
 				$this->firstname = $obj->firstname;
 				$this->lastname = $obj->lastname;

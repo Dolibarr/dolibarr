@@ -231,7 +231,7 @@ class AdherentStats extends Stats
 				);
 				$totalrow = 0;
 				foreach ($MembersCountArray[$objp->fk_adherent_type] as $key=>$nb) {
-					if ($key!='label') {
+					if ($key != 'label') {
 						$totalrow += $nb;
 						$totalstatus[$key] += $nb;
 					}
@@ -311,7 +311,7 @@ class AdherentStats extends Stats
 				);
 				$totalrow = 0;
 				foreach ($MembersCountArray[$objp->fk_categorie] as $key=>$nb) {
-					if ($key!='label') {
+					if ($key != 'label') {
 						$totalrow += $nb;
 						$totalstatus[$key] += $nb;
 					}
