@@ -892,7 +892,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		$checkonentitydone = 0;
 
 		// Array to define rules of checks to do
-		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website', 'recruitment', 'chargesociales'); // Test on entity only (Objects with no link to company)
+		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website', 'recruitment', 'chargesociales', 'knowledgemanagement'); // Test on entity only (Objects with no link to company)
 		$checksoc = array('societe'); // Test for object Societe
 		$checkparentsoc = array('agenda', 'contact', 'contrat'); // Test on entity + link to third party on field $dbt_keyfield. Allowed if link is empty (Ex: contacts...).
 		$checkproject = array('projet', 'project'); // Test for project object
@@ -1051,7 +1051,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql .= " WHERE dbt.rowid IN (".$db->sanitize($objectid, 1).")";
 				$sql .= " AND dbt.".$dbt_keyfield." = ".((int) $user->socid);
-			} elseif (isModEnabled("societe") && empty($user->rights->societe->client->voir)&& ($feature != 'knowledgemanagement')) {
+			} elseif (isModEnabled("societe") && empty($user->rights->societe->client->voir)) {
 				// If internal user without permission to see all thirdparties: Check permission for internal users that are restricted on their objects
 				if ($feature != 'ticket') {
 					if (empty($dbt_keyfield)) {
