@@ -220,16 +220,16 @@ function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldtarget)
 	dol_syslog("email_unpaid_invoices_to_representatives.php: send mail to ".$oldemail);
 
 	$usehtml = 0;
-	if (getDolGlobalString('SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_FOOTER') && dol_textishtml($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_FOOTER)) {
+	if (getDolGlobalString('SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_FOOTER') && dol_textishtml(getDolGlobalString('SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_FOOTER'))) {
 		$usehtml += 1;
 	}
-	if (getDolGlobalString('SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_HEADER') && dol_textishtml($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_HEADER)) {
+	if (getDolGlobalString('SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_HEADER') && dol_textishtml(getDolGlobalString('SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_HEADER'))) {
 		$usehtml += 1;
 	}
 
 	$allmessage = '';
 	if (getDolGlobalString('SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_HEADER')) {
-		$allmessage .= $conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_HEADER;
+		$allmessage .= getDolGlobalString('SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_HEADER');
 	} else {
 		$allmessage .= $newlangs->transnoentities("ListOfYourUnpaidInvoices").($usehtml ? "<br>\n" : "\n").($usehtml ? "<br>\n" : "\n");
 		$allmessage .= $newlangs->transnoentities("NoteListOfYourUnpaidInvoices").($usehtml ? "<br>\n" : "\n");

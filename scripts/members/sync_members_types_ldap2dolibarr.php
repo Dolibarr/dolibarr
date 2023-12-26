@@ -62,7 +62,7 @@ print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 // List of fields to get from LDAP
-$required_fields = array($conf->global->LDAP_KEY_MEMBERS_TYPES, $conf->global->LDAP_MEMBER_TYPE_FIELD_FULLNAME, $conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION, $conf->global->LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS);
+$required_fields = array(getDolGlobalString('LDAP_KEY_MEMBERS_TYPES'), getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_FULLNAME'), getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_DESCRIPTION'), getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS'));
 
 // Remove from required_fields all entries not configured in LDAP (empty) and duplicated
 $required_fields = array_unique(array_values(array_filter($required_fields, "dolValidElementType")));
@@ -132,7 +132,7 @@ if ($result >= 0) {
 	// We disable synchro Dolibarr-LDAP
 	$conf->global->LDAP_MEMBER_TYPE_ACTIVE = 0;
 
-	$ldaprecords = $ldap->getRecords('*', getDolGlobalString('LDAP_MEMBER_TYPE_DN'), getDolGlobalString('LDAP_KEY_MEMBERS_TYPES'), $required_fields, 0, array($conf->global->LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS));
+	$ldaprecords = $ldap->getRecords('*', getDolGlobalString('LDAP_MEMBER_TYPE_DN'), getDolGlobalString('LDAP_KEY_MEMBERS_TYPES'), $required_fields, 0, array(getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS')));
 	if (is_array($ldaprecords)) {
 		$db->begin();
 

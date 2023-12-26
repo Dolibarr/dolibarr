@@ -233,7 +233,7 @@ if ($result >= 0) {
 			 * if (isset($ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_STATUS')])) {
 			 * $fuser->datec=dol_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE]);
 			 * $fuser->datevalid=dol_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE]);
-			 * $fuser->statut=$ldapuser[$conf->global->LDAP_FIELD_MEMBER_STATUS];
+			 * $fuser->statut=$ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_STATUS')];
 			 * }
 			 */
 			// if ($fuser->statut > 1) $fuser->statut=1;

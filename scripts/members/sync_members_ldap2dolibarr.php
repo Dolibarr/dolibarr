@@ -253,16 +253,16 @@ if ($result >= 0) {
 			// print_r($member);
 
 			$datefirst = '';
-			if ($conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE) {
+			if (getDolGlobalString('LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE')) {
 				$datefirst = dol_stringtotime($ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE')]);
 				$pricefirst = price2num($ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT')]);
 			}
 
 			$datelast = '';
-			if ($conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE) {
+			if (getDolGlobalString('LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE')) {
 				$datelast = dol_stringtotime($ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE')]);
 				$pricelast = price2num($ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT')]);
-			} elseif ($conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION) {
+			} elseif (getDolGlobalString('LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION')) {
 				$datelast = dol_time_plus_duree(dol_stringtotime($ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION')]), -1, 'y') + 60 * 60 * 24;
 				$pricelast = price2num($ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT')]);
 

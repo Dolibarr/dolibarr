@@ -264,10 +264,10 @@ function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldtarget)
 	dol_syslog("email_unpaid_invoices_to_customers.php: send mail to ".$oldemail);
 
 	$usehtml = 0;
-	if (getDolGlobalString('SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_FOOTER') && dol_textishtml($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_FOOTER)) {
+	if (getDolGlobalString('SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_FOOTER') && dol_textishtml(getDolGlobalString('SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_FOOTER'))) {
 		$usehtml += 1;
 	}
-	if (getDolGlobalString('SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_HEADER') && dol_textishtml($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_HEADER)) {
+	if (getDolGlobalString('SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_HEADER') && dol_textishtml(getDolGlobalString('SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_HEADER'))) {
 		$usehtml += 1;
 	}
 

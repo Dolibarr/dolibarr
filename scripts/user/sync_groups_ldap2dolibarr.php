@@ -131,7 +131,7 @@ if ($result >= 0) {
 	// We disable synchro Dolibarr-LDAP
 	$conf->global->LDAP_SYNCHRO_ACTIVE = 0;
 
-	$ldaprecords = $ldap->getRecords('*', $conf->global->LDAP_GROUP_DN, $conf->global->LDAP_KEY_GROUPS, $required_fields, 'group', array($conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS));
+	$ldaprecords = $ldap->getRecords('*', getDolGlobalString('LDAP_GROUP_DN'), getDolGlobalString('LDAP_KEY_GROUPS'), $required_fields, 'group', array(getDolGlobalString('LDAP_GROUP_FIELD_GROUPMEMBERS')));
 	if (is_array($ldaprecords)) {
 		$db->begin();
 
