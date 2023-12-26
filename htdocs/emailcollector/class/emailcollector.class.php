@@ -2652,8 +2652,7 @@ class EmailCollector extends CommonObject
 										$errorforactions++;
 										$this->errors = $actioncomm->errors;
 									} else {
-										if (($fk_element_type == 'ticket') && (!empty ($attachments)))
-										{
+										if (($fk_element_type == 'ticket') && (!empty ($attachments))) {
 											// There is an attachment for the ticket -> store attachment
 											$ticket = New Ticket ($this->db);
 											$ticket->fetch ($fk_element_id);
