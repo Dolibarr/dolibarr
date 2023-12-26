@@ -1137,7 +1137,7 @@ class CMailFile
 						dol_syslog("CMailFile::sendfile: mail end error=".$e->getMessage(), LOG_ERR);
 					}
 				}
-				if (!empty($conf->global->$keyforsslseflsigned)) {
+				if (getDolGlobalString($keyforsslseflsigned)) {
 					$this->transport->setStreamOptions(array('ssl' => array('allow_self_signed' => true, 'verify_peer' => false)));
 				}
 				//$smtps->_msgReplyTo  = 'reply@web.com';
@@ -1150,7 +1150,7 @@ class CMailFile
 				$this->mailer = new Swift_Mailer($this->transport);
 
 				// DKIM SIGN
-				if ($conf->global->MAIN_MAIL_EMAIL_DKIM_ENABLED) {
+				if (getDolGlobalString('MAIN_MAIL_EMAIL_DKIM_ENABLED')) {
 					$privateKey = $conf->global->MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY;
 					$domainName = $conf->global->MAIN_MAIL_EMAIL_DKIM_DOMAIN;
 					$selector = $conf->global->MAIN_MAIL_EMAIL_DKIM_SELECTOR;
