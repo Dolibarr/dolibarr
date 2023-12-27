@@ -598,7 +598,6 @@ if ($action == 'create') {
 
 
 			// Show list of products into warehouse
-			print '<br>';
 
 
 			$totalarray = array();
@@ -610,6 +609,7 @@ if ($action == 'create') {
 			// TODO Create $arrayfields with all fields to show
 
 			print load_fiche_titre($langs->trans("Stock"), '', 'stock');
+
 			print '<div class="div-table-responsive">';
 			print '<table class="noborder centpercent liste">';
 			print '<tr class="liste_titre">';
@@ -617,7 +617,7 @@ if ($action == 'create') {
 			$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
-			print_liste_field_titre("Product", "", "p.ref", "&amp;id=".$id, "", "", $sortfield, $sortorder);
+			print_liste_field_titre("Products", "", "p.ref", "&amp;id=".$id, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("Label", "", "p.label", "&amp;id=".$id, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("NumberOfUnit", "", "ps.reel", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
 			$totalarray['nbfield'] += 3;
