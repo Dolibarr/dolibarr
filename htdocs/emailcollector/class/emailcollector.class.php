@@ -3550,7 +3550,7 @@ class EmailCollector extends CommonObject
 
 		return $text;
 	}
-	
+
 	/**
 	 * Get UID of message as a string
 	 *
@@ -3561,8 +3561,7 @@ class EmailCollector extends CommonObject
 	{
 		if (is_object($imapemail)) {
 			return $imapemail->getAttributes()["uid"];
-		}
-		else {
+		} else {
 			return (string) $imapemail;
 		}
 	}
