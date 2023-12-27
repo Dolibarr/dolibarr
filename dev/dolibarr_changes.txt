@@ -152,9 +152,9 @@ with
         elseif (strpos($filename, '://') === false)
 
 * To avoid to have QRcode changed because generated with a random mask, replace
-define('QR_FIND_FROM_RANDOM', 2);
-with
-define('QR_FIND_FROM_RANDOM', false);
+	define('QR_FIND_FROM_RANDOM', 2);
+	with:
+	define('QR_FIND_FROM_RANDOM', false);
 
 * Removed useless directories ("examples", "tools")
 
@@ -173,15 +173,15 @@ In htdocs/includes/tecnickcom/tcpdf/tcpdf.php
 * In tecnickcom/tcpdf/include/tcpdf_static, in function intToRoman, right at the beginning
   of the function, replace:
 
-		$roman = '';
+	$roman = '';
 
-with:
+	with:
 
-		$roman = '';
-		if ($number >= 4000) {
-			// do not represent numbers above 4000 in Roman numerals
-			return strval($number);
-		}
+	$roman = '';
+	if ($number >= 4000) {
+		// do not represent numbers above 4000 in Roman numerals
+		return strval($number);
+	}
 
 
 
@@ -192,14 +192,14 @@ Add fpdf_tpl.php 1.2
 Add tcpdi.php
 
 Add tcpdi_parser.php and replace:
-require_once(dirname(__FILE__).'/include/tcpdf_filters.php');
-with:
-require_once(dirname(__FILE__).'/../tecnickcom/tcpdf/include/tcpdf_filters.php');
+	require_once(dirname(__FILE__).'/include/tcpdf_filters.php');
+	with:
+	require_once(dirname(__FILE__).'/../tecnickcom/tcpdf/include/tcpdf_filters.php');
 
 
 * Fix by replacing
 	} elseif (($key == '/Index') AND ($v[0] == PDF_TYPE_ARRAY AND count($v[1] >= 2))) {
-with
+	with
 	} elseif (($key == '/Index') AND ($v[0] == PDF_TYPE_ARRAY AND count($v[1]) >= 2)) {
 
 
@@ -262,16 +262,22 @@ Change content of file htdocs/includes/restler/framework/Luracast/Restler/explor
     	// @CHANGE LDR
         if (!is_string($haystack)) return false;
 
-* Add a test into AutoLoader.php to complete function loadThisLoader and test if property exists before calling it
+* Add a test into AutoLoader.php to complete function loadThisLoader and test if property exists before calling it. For this replace code
 
-			//avoid PHP Fatal error:  Uncaught Error: Access to undeclared static property: Composer\\Autoload\\ClassLoader::$loader
-			//in case of multiple autoloader systems
-			if(property_exists($b, $loader[1])) {
-				if (false !== $file = $b::$loader[1]($className)
-					&& $this->exists($className, $b::$loader[1])) {
-				return $file;
-				}
-			}
+	if (false !== $file = $b::$loader[1]($className) && $this->exists($className, $b::$loader[1])) {
+        	return $file;
+        }
+
+	with:
+
+	//avoid PHP Fatal error:  Uncaught Error: Access to undeclared static property: Composer\\Autoload\\ClassLoader::$loader
+	//in case of multiple autoloader systems
+	if(property_exists($b, $loader[1])) {
+		if (false !== $file = $b::$loader[1]($className)
+			&& $this->exists($className, $b::$loader[1])) {
+			return $file;
+		}
+	}
 
 
 PARSEDOWN
@@ -285,11 +291,10 @@ PARSEDOWN
 	...
 
 	// @CHANGE LDR
-    if (preg_match('/{([^}]+)}/', $remainder, $matches2))
-    {
-        $Element['attributes']['class'] = $matches2[1];
-       	$remainder = preg_replace('/{'.preg_quote($matches2[1],'/').'}/', '', $remainder);
-    }
+	if (preg_match('/{([^}]+)}/', $remainder, $matches2)) {
+		$Element['attributes']['class'] = $matches2[1];
+       		$remainder = preg_replace('/{'.preg_quote($matches2[1],'/').'}/', '', $remainder);
+    	}
 
 
 	// @CHANGE LDR
