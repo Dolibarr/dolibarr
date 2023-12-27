@@ -1656,14 +1656,13 @@ class Website extends CommonObject
 		$destdir = DOL_DOCUMENT_ROOT . '/install/doctemplates/websites/'.$website->name_template;
 		$arraydestdir = dol_dir_list($destdir, "all", 1);
 		$differences = [];
-
 		if (count($modifications) >1) {
 			foreach ($modifications as $fichierModifie) {
 				$nomFichierModifie = $fichierModifie['name'];
 				if ($nomFichierModifie == basename($fichierEtat)) {
 					continue;
 				}
-
+				$succes = 0;
 				// Find the corresponding file in the destination folder
 				foreach ($arraydestdir as $destFile) {
 					if ($destFile['name'] == $nomFichierModifie) {
@@ -1671,49 +1670,52 @@ class Website extends CommonObject
 						$destContent = file_get_contents($destFile['fullname']);
 
 						if ($sourceContent !== $destContent) {
-							$numPage = $this->extractNumberFromFilename($fichierModifie['fullname']);
-							$differences[$nomFichierModifie] = $this->showDifferences($destContent, $sourceContent, $numPage);
-
+							$differences[$nomFichierModifie] = $this->showDifferences($destContent, $sourceContent);
 							if (count($differences[$nomFichierModifie]) > 0) {
 								$result = $this->replaceLignEUsingNum($destFile['fullname'], $differences[$nomFichierModifie]);
 								if ($result !== false) {
-									// save state file
-									$this->saveState($etatPrecedent, $fichierEtat);
+									if ($result == -2) {
+										setEventMessages("No permissions to write in file <b>".$nomFichierModifie."</b> from template <b>".$website->name_template."</b>", null, 'errors');
+										header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
+										exit();
+									}
 									setEventMessages("file <b>".$nomFichierModifie."</b> was modified in template <b>".$website->name_template."</b>", null, 'warnings');
-									header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
-									exit();
 								} else {
 									setEventMessages("file ".$nomFichierModifie." was not modified", null, 'errors');
 								}
 							}
 						}
-					} elseif (preg_match('/page(\d+)\.tpl\.php/', $nomFichierModifie)) {
-						// TO DO when file has not same name
-						$succes = 0;
+					}
+					if (preg_match('/page(\d+)\.tpl\.php/', $nomFichierModifie)) {
 						$differences[$nomFichierModifie] = $this->compareFichierModifie($sourcedir, $destdir, $fichierModifie);
 						if (count($differences[$nomFichierModifie]) > 0) {
 							$result = $this->replaceLignEUsingNum($differences[$nomFichierModifie]['file_destination']['fullname'], $differences[$nomFichierModifie]);
 							if ($result !== false) {
+								if ($result == -2) {
+									setEventMessages("No permissions to write in file <b>".$nomFichierModifie."</b> from template <b>".$website->name_template."</b>", null, 'errors');
+									header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
+									exit();
+								}
 								$succes++;
-							} else {
-								setEventMessages("file ".$nomFichierModifie." was not modified", null, 'errors');
 							}
 						}
 					}
 				}
-				if ($succes) {
-					// save state file
-					$this->saveState($etatPrecedent, $fichierEtat);
-					setEventMessages("file <b>".$differences[$nomFichierModifie]['file_destination']['name']."</b> was modified in template <b>".$website->name_template."</b>", null, 'warnings');
-					header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
-					exit();
-				}
+			}
+			if ($succes>0) {
+				// save state file
+				$this->saveState($etatPrecedent, $fichierEtat);
+				setEventMessages("file <b>".$differences[$nomFichierModifie]['file_destination']['name']."</b> was modified in template <b>".$website->name_template."</b>", null, 'warnings');
+				header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
+				exit();
 			}
 		} else {
-			setEventMessages("No file has been modified", null, 'warnings');
-			header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
-			exit();
+			setEventMessages("No file has been modified", null, 'errors');
 		}
+		// save state file
+		$this->saveState($etatPrecedent, $fichierEtat);
+		header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
+		exit();
 	}
 
 	/**
@@ -1901,10 +1903,10 @@ class Website extends CommonObject
 			$lineContent1 = $lines1[$lineNum] ?? '';
 			$lineContent2 = $lines2[$lineNum] ?? '';
 
-			if (str_contains($lineContent1, $exceptNumPge[0])) {
+			if (strpos($lineContent1, $exceptNumPge[0])) {
 				$linesShouldnChange[] = $lineContent1;
 			}
-			if (str_contains($lineContent2, $exceptNumPge[1])) {
+			if (strpos($lineContent2, $exceptNumPge[1])) {
 				$linesShouldnNotChange[] = $lineContent2;
 			}
 
@@ -1940,12 +1942,25 @@ class Website extends CommonObject
 	 */
 	protected function replaceLignEUsingNum($desfFile, $differences)
 	{
+		$userId = fileowner($desfFile);
+		if ($userId !== false) {
+			// Obtain user information from the ID
+			if (function_exists('posix_getpwuid')&& function_exists('posix_getpwuid')) {
+				$uid = posix_geteuid();
+				$userInfoM = posix_getpwuid($uid);
+
+				$userInfo = posix_getpwuid($userId);
+				if ($userInfo['uid'] !== $userInfoM['uid']) {
+					return -2;
+				}
+			}
+		}
 		if (file_exists($desfFile)) {
 			dolChmod($desfFile, '0664');
-			unset($differences['file_destination']);
 		}
-		$contentDest = file($desfFile);
-
+		unset($differences['file_destination']);
+		$contentDest = file($desfFile, FILE_IGNORE_NEW_LINES);
+		//var_dump($desfFile);exit;
 		foreach ($differences as $key => $ligneSource) {
 			if (preg_match('/(Ajoutée|Modifiée) à la ligne (\d+)/', $key, $matches)) {
 				$typeModification = $matches[1];
