@@ -5007,7 +5007,7 @@ table.table-fiche-title {
 
 
 div.backgreypublicpayment {
-	background-color: var(--colorbacktitle1);
+	background-color: var(--colorbackgrey);
 	padding: 20px;
 	border-bottom: 1px solid #ddd;
 	text-align: center;
@@ -5015,7 +5015,10 @@ div.backgreypublicpayment {
 	top: 0;
 	z-index: 1005;
 }
-.backgreypublicpayment a { color: #222 !important; }
+.backgreypublicpayment a {
+	color: var(--colorblack) !important;
+	opacity: 0.9;
+}
 .poweredbypublicpayment {
 	float: right;
 	top: 8px;
