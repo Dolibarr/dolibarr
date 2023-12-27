@@ -71,7 +71,7 @@ parameters:
 		- '#Caught class Stripe#'
 		- '#Sprain\\SwissQrBill\\#'
 		- '#Constructor of class DolEditor has an unused parameter \$toolbarlocation#'
-		- '#Constructor of class DoliDB\w+ has an unused parameter $type#'
+		- '#Constructor of class DoliDB\w+ has an unused parameter \$type#'
 	internalErrorsCountLimit: 50
 	cache:
 	    nodesByFileCountMax: 512
