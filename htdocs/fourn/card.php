@@ -487,7 +487,7 @@ if ($object->id > 0) {
 		}
 	}
 
-	if (isModEnabled("supplier_invoice")) {
+	if (isModEnabled("supplier_invoice") && ($user->hasRight('fournisseur', 'facture', 'lire') || $user->hasRight('supplier_invoice', 'read'))) {
 		$warn = '';
 		$tmp = $object->getOutstandingBills('supplier');
 		$outstandingOpened = $tmp['opened'];
