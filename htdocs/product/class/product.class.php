@@ -1189,7 +1189,7 @@ class Product extends CommonObject
 					}
 					// Quantities in batch details are not same as stock quantity,
 					// so we add a default batch record to complete and get same qty in parent and child table
-					if ($ObjW->real <> $qty_batch) {
+					if ($ObjW->real != $qty_batch) {
 						$ObjBatch = new Productbatch($this->db);
 						$ObjBatch->batch = $valueforundefinedlot;
 						$ObjBatch->qty = ($ObjW->real - $qty_batch);
@@ -1874,13 +1874,13 @@ class Product extends CommonObject
 
 		$lastPrice = array(
 			'level' => $level ? $level : 1,
-			'multiprices' => doubleval($this->multiprices[$level]),
-			'multiprices_ttc' => doubleval($this->multiprices_ttc[$level]),
+			'multiprices' => (float) $this->multiprices[$level],
+			'multiprices_ttc' => (float) $this->multiprices_ttc[$level],
 			'multiprices_base_type' => $this->multiprices_base_type[$level],
-			'multiprices_min' => doubleval($this->multiprices_min[$level]),
-			'multiprices_min_ttc' => doubleval($this->multiprices_min_ttc[$level]),
-			'multiprices_tva_tx' => doubleval($this->multiprices_tva_tx[$level]),
-			'multiprices_recuperableonly' => doubleval($this->multiprices_recuperableonly[$level]),
+			'multiprices_min' => (float) $this->multiprices_min[$level],
+			'multiprices_min_ttc' => (float) $this->multiprices_min_ttc[$level],
+			'multiprices_tva_tx' => (float) $this->multiprices_tva_tx[$level],
+			'multiprices_recuperableonly' => (float) $this->multiprices_recuperableonly[$level],
 		);
 
 		return $lastPrice;
@@ -3151,7 +3151,7 @@ class Product extends CommonObject
 		if ($socid > 0) {
 			$sql .= " AND c.fk_soc = ".((int) $socid);
 		}
-		if ($filtrestatut <> '') {
+		if ($filtrestatut != '') {
 			$sql .= " AND c.fk_statut in (".$this->db->sanitize($filtrestatut).")";
 		}
 
@@ -3344,7 +3344,7 @@ class Product extends CommonObject
 		if ($socid > 0) {
 			$sql .= " AND e.fk_soc = ".((int) $socid);
 		}
-		if ($filtrestatut <> '') {
+		if ($filtrestatut != '') {
 			$sql .= " AND c.fk_statut IN (".$this->db->sanitize($filtrestatut).")";
 		}
 		if (!empty($filterShipmentStatus)) {
@@ -3426,7 +3426,7 @@ class Product extends CommonObject
 		if ($socid > 0) {
 			$sql .= " AND cf.fk_soc = ".((int) $socid);
 		}
-		if ($filtrestatut <> '') {
+		if ($filtrestatut != '') {
 			$sql .= " AND cf.fk_statut IN (".$this->db->sanitize($filtrestatut).")";
 		}
 		if (!empty($dateofvirtualstock)) {
@@ -3486,7 +3486,7 @@ class Product extends CommonObject
 		if ($socid > 0) {
 			$sql .= " AND m.fk_soc = ".((int) $socid);
 		}
-		if ($filtrestatut <> '') {
+		if ($filtrestatut != '') {
 			$sql .= " AND m.status IN (".$this->db->sanitize($filtrestatut).")";
 		}
 		if (!empty($dateofvirtualstock)) {

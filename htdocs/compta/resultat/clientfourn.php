@@ -375,7 +375,7 @@ if ($modecompta == 'BOOKKEEPING') {
 						}
 
 
-						if ($showaccountdetail == 'all' || $resultN <> 0) {
+						if ($showaccountdetail == 'all' || $resultN != 0) {
 							print '<tr>';
 							print '<td></td>';
 							print '<td class="tdoverflowmax200"> &nbsp; &nbsp; '.length_accountg($cpt['account_number']).' - '.$cpt['account_label'].'</td>';

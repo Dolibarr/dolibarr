@@ -2757,7 +2757,7 @@ if (empty($reshook)) {
 			$all_progress = GETPOST('all_progress', 'int');
 			foreach ($object->lines as $line) {
 				$percent = $line->get_prev_progress($object->id);
-				if (floatval($all_progress) < floatval($percent)) {
+				if ((float) $all_progress < (float) $percent) {
 					$mesg = $langs->trans("Line").' '.$i.' : '.$langs->trans("CantBeLessThanMinPercent");
 					setEventMessages($mesg, null, 'warnings');
 					$result = -1;
@@ -3847,7 +3847,7 @@ if ($action == 'create') {
 					if($( this ).prop("checked") && $.inArray($( this ).val(), '.json_encode($retainedWarrantyInvoiceAvailableType).' ) !== -1)
 					{
 						$(".retained-warranty-line").show();
-						$("#new-situation-invoice-retained-warranty").val("'.floatval($retained_warranty_js_default).'");
+						$("#new-situation-invoice-retained-warranty").val("'.(float) $retained_warranty_js_default.'");
 					}
 					else{
 						$(".retained-warranty-line").hide();
@@ -5264,7 +5264,7 @@ if ($action == 'create') {
 					}
 					print '</td>';
 
-					$label = ($langs->trans("PaymentType".$objp->payment_code) != ("PaymentType".$objp->payment_code)) ? $langs->trans("PaymentType".$objp->payment_code) : $objp->payment_label;
+					$label = ($langs->trans("PaymentType".$objp->payment_code) != "PaymentType".$objp->payment_code) ? $langs->trans("PaymentType".$objp->payment_code) : $objp->payment_label;
 					print '<td class="tdoverflowmax80" title="'.dol_escape_htmltag($label.' '.$objp->num_payment).'">'.dol_escape_htmltag($label.' '.$objp->num_payment).'</td>';
 					if (isModEnabled("banque")) {
 						$bankaccountstatic->id = $objp->baid;

@@ -764,7 +764,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 	$nbFerie = 0;
 
 	// Check to ensure we use correct parameters
-	if ((($timestampEnd - $timestampStart) % 86400) != 0) {
+	if (($timestampEnd - $timestampStart) % 86400 != 0) {
 		return 'Error Dates must use same hours and must be GMT dates';
 	}
 

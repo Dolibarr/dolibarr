@@ -845,7 +845,7 @@ class FormTicket
 					}
 
 					$label = ($arraycategories['label'] != '-' ? $arraycategories['label'] : '');
-					if ($outputlangs->trans("TicketCategoryShort".$arraycategories['code']) != ("TicketCategoryShort".$arraycategories['code'])) {
+					if ($outputlangs->trans("TicketCategoryShort".$arraycategories['code']) != "TicketCategoryShort".$arraycategories['code']) {
 						$label = $outputlangs->trans("TicketCategoryShort".$arraycategories['code']);
 					} elseif ($outputlangs->trans($arraycategories['code']) != $arraycategories['code']) {
 						$label = $outputlangs->trans($arraycategories['code']);
@@ -907,7 +907,7 @@ class FormTicket
 			}
 
 			print ajax_combobox('select'.$htmlname);
-		} elseif ($htmlname!='') {
+		} elseif ($htmlname != '') {
 			$selectedgroups = array();
 			$groupvalue = "";
 			$groupticket=GETPOST($htmlname, 'aZ09');
@@ -958,7 +958,7 @@ class FormTicket
 					$obj = $this->db->fetch_object($resql);
 					if ($obj) {
 						$label = ($obj->label != '-' ? $obj->label : '');
-						if ($outputlangs->trans("TicketCategoryShort".$obj->code) != ("TicketCategoryShort".$obj->code)) {
+						if ($outputlangs->trans("TicketCategoryShort".$obj->code) != "TicketCategoryShort".$obj->code) {
 							$label = $outputlangs->trans("TicketCategoryShort".$obj->code);
 						} elseif ($outputlangs->trans($obj->code) != $obj->code) {
 							$label = $outputlangs->trans($obj->code);
@@ -1029,7 +1029,7 @@ class FormTicket
 						$obj = $this->db->fetch_object($resql);
 						if ($obj) {
 							$label = ($obj->label != '-' ? $obj->label : '');
-							if ($outputlangs->trans("TicketCategoryShort".$obj->code) != ("TicketCategoryShort".$obj->code)) {
+							if ($outputlangs->trans("TicketCategoryShort".$obj->code) != "TicketCategoryShort".$obj->code) {
 								$label = $outputlangs->trans("TicketCategoryShort".$obj->code);
 							} elseif ($outputlangs->trans($obj->code) != $obj->code) {
 								$label = $outputlangs->trans($obj->code);

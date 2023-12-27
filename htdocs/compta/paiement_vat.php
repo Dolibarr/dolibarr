@@ -273,7 +273,7 @@ if ($action == 'create') {
 
 		print '<td class="center">';
 
-		if ($sumpaid <> $objp->amount) {
+		if ($sumpaid != $objp->amount) {
 			$namef = "amount_".$objp->id;
 			$nameRemain = "remain_".$objp->id;
 			/* Disabled, we autofil the amount with remain to pay by default

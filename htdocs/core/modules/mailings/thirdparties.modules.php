@@ -69,7 +69,7 @@ class mailing_thirdparties extends MailingTargets
 
 		$addDescription = "";
 		$addFilter = "";
-		if (GETPOSTISSET("filter_client_thirdparties") && GETPOST("filter_client_thirdparties") <> '-1') {
+		if (GETPOSTISSET("filter_client_thirdparties") && GETPOST("filter_client_thirdparties") != '-1') {
 			$addFilter .= " AND s.client=".((int) GETPOST("filter_client_thirdparties", 'int'));
 			$addDescription = $langs->trans('ProspectCustomer')."=";
 			if (GETPOST("filter_client_thirdparties") == 0) {
@@ -84,7 +84,7 @@ class mailing_thirdparties extends MailingTargets
 				$addDescription .= "Unknown status ".GETPOST("filter_client_thirdparties");
 			}
 		}
-		if (GETPOSTISSET("filter_supplier_thirdparties") && GETPOST("filter_supplier_thirdparties") <> '-1') {
+		if (GETPOSTISSET("filter_supplier_thirdparties") && GETPOST("filter_supplier_thirdparties") != '-1') {
 			$addFilter .= " AND s.fournisseur = ".((int) GETPOST("filter_supplier_thirdparties", 'int'));
 			$addDescription = $langs->trans('Supplier')."=";
 			if (GETPOST("filter_supplier_thirdparties") == 0) {
@@ -188,7 +188,7 @@ class mailing_thirdparties extends MailingTargets
 			$old = '';
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
-				if ($old <> $obj->email) {
+				if ($old != $obj->email) {
 					$otherTxt = ($obj->label ? $langs->transnoentities("Category").'='.$obj->label : '');
 					if (strlen($addDescription) > 0 && strlen($otherTxt) > 0) {
 						$otherTxt .= ";";

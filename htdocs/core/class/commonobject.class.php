@@ -4847,7 +4847,7 @@ abstract class CommonObject
 					$qty = $obj->qty;
 					$total_ht = $obj->total_ht;
 
-					$total_discount_line = floatval(price2num(($pu_ht * $qty) - $total_ht, 'MT'));
+					$total_discount_line = (float) price2num(($pu_ht * $qty) - $total_ht, 'MT');
 					$total_discount += $total_discount_line;
 
 					$i++;
