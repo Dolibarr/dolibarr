@@ -3659,7 +3659,7 @@ abstract class CommonObject
 		}
 
 		if (!empty($MODULE)) {
-			if (!empty($conf->global->$MODULE)) {
+			if (getDolGlobalString($MODULE)) {
 				$modsactivated = explode(',', getDolGlobalString($MODULE));
 				foreach ($modsactivated as $mod) {
 					if (isModEnabled($mod)) {
@@ -4847,7 +4847,7 @@ abstract class CommonObject
 					$qty = $obj->qty;
 					$total_ht = $obj->total_ht;
 
-					$total_discount_line = floatval(price2num(($pu_ht * $qty) - $total_ht, 'MT'));
+					$total_discount_line = (float) price2num(($pu_ht * $qty) - $total_ht, 'MT');
 					$total_discount += $total_discount_line;
 
 					$i++;
@@ -5661,8 +5661,8 @@ abstract class CommonObject
 		// If generator is ODT, we must have srctemplatepath defined, if not we set it.
 		if ($obj->type == 'odt' && empty($srctemplatepath)) {
 			$varfortemplatedir = $obj->scandir;
-			if ($varfortemplatedir && !empty($conf->global->$varfortemplatedir)) {
-				$dirtoscan = $conf->global->$varfortemplatedir;
+			if ($varfortemplatedir && getDolGlobalString($varfortemplatedir)) {
+				$dirtoscan = getDolGlobalString($varfortemplatedir);
 
 				$listoffiles = array();
 
@@ -5970,8 +5970,8 @@ abstract class CommonObject
 
 		$keyforfieldname = strtoupper($newelement.'_DEFAULT_'.$fieldname);
 		//var_dump($keyforfieldname);
-		if (isset($conf->global->$keyforfieldname)) {
-			return $conf->global->$keyforfieldname;
+		if (getDolGlobalString($keyforfieldname)) {
+			return getDolGlobalString($keyforfieldname);
 		}
 
 		// TODO Ad here a scan into table llx_overwrite_default with a filter on $this->element and $fieldname

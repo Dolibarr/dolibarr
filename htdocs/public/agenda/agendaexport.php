@@ -86,7 +86,7 @@ require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 $object = new ActionComm($db);
 
 // Not older than
-if (empty($conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY)) {
+if (!getDolGlobalString('MAIN_AGENDA_EXPORT_PAST_DELAY')) {
 	$conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY = 100; // default limit
 }
 

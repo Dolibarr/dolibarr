@@ -1689,10 +1689,10 @@ class Facture extends CommonInvoice
 
 		$modelByTypeConfName = 'FACTURE_ADDON_PDF_' . $deposit->type;
 
-		if (!empty($conf->global->$modelByTypeConfName)) {
-			$deposit->model_pdf = $conf->global->$modelByTypeConfName;
+		if (getDolGlobalString($modelByTypeConfName)) {
+			$deposit->model_pdf = getDolGlobalString($modelByTypeConfName);
 		} elseif (getDolGlobalString('FACTURE_ADDON_PDF')) {
-			$deposit->model_pdf = $conf->global->FACTURE_ADDON_PDF;
+			$deposit->model_pdf = getDolGlobalString('FACTURE_ADDON_PDF');
 		}
 
 		if (!getDolGlobalString('MAIN_DISABLE_PROPAGATE_NOTES_FROM_ORIGIN')) {
@@ -2488,7 +2488,7 @@ class Facture extends CommonInvoice
 			$this->import_key = trim($this->import_key);
 		}
 		if (isset($this->retained_warranty)) {
-			$this->retained_warranty = floatval($this->retained_warranty);
+			$this->retained_warranty = (float) $this->retained_warranty;
 		}
 
 
@@ -3270,7 +3270,7 @@ class Facture extends CommonInvoice
 
 			// Check for mandatory
 			$keymandatory = 'INVOICE_'.$key.'_MANDATORY_FOR_VALIDATION';
-			if (!$vallabel && !empty($conf->global->$keymandatory)) {
+			if (!$vallabel && getDolGlobalString($keymandatory)) {
 				$langs->load("errors");
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val)), null, 'errors');
@@ -5219,8 +5219,8 @@ class Facture extends CommonInvoice
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->$thisTypeConfName)) {
-				$modele = $conf->global->$thisTypeConfName;
+			} elseif (getDolGlobalString($thisTypeConfName)) {
+				$modele = getDolGlobalString($thisTypeConfName);
 			} elseif (getDolGlobalString('FACTURE_ADDON_PDF')) {
 				$modele = $conf->global->FACTURE_ADDON_PDF;
 			}
@@ -5432,7 +5432,7 @@ class Facture extends CommonInvoice
 		$hasDelay = $this->date_lim_reglement < ($now - $conf->facture->client->warning_delay);
 		if ($hasDelay && !empty($this->retained_warranty) && !empty($this->retained_warranty_date_limit)) {
 			$totalpaid = $this->getSommePaiement();
-			$totalpaid = floatval($totalpaid);
+			$totalpaid = (float) $totalpaid;
 			$RetainedWarrantyAmount = $this->getRetainedWarrantyAmount();
 			if ($totalpaid >= 0 && $RetainedWarrantyAmount >= 0) {
 				if (($totalpaid < $this->total_ttc - $RetainedWarrantyAmount) && $this->date_lim_reglement < ($now - $conf->facture->client->warning_delay)) {
@@ -5532,7 +5532,7 @@ class Facture extends CommonInvoice
 		}
 
 		if ($rounding < 0) {
-			$rounding = min(getDolGlobalString('MAIN_MAX_DECIMALS_UNIT'), $conf->global->MAIN_MAX_DECIMALS_TOT);
+			$rounding = min(getDolGlobalString('MAIN_MAX_DECIMALS_UNIT'), getDolGlobalString('MAIN_MAX_DECIMALS_TOT'));
 		}
 
 		if ($rounding > 0) {
@@ -5559,7 +5559,7 @@ class Facture extends CommonInvoice
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			if ($this->db->query($sql)) {
-				$this->retained_warranty = floatval($value);
+				$this->retained_warranty = (float) $value;
 				return 1;
 			} else {
 				dol_syslog(get_class($this).'::setRetainedWarranty Erreur '.$sql.' - '.$this->db->error());
@@ -6755,7 +6755,7 @@ class FactureLigne extends CommonInvoiceLine
 			if ($resql && $this->db->num_rows($resql) > 0) {
 				$res = $this->db->fetch_array($resql);
 
-				$returnPercent = floatval($res['situation_percent']);
+				$returnPercent = (float) $res['situation_percent'];
 
 				if ($include_credit_note) {
 					$sql = 'SELECT fd.situation_percent FROM '.MAIN_DB_PREFIX.'facturedet fd';
@@ -6767,7 +6767,7 @@ class FactureLigne extends CommonInvoiceLine
 					$res = $this->db->query($sql);
 					if ($res) {
 						while ($obj = $this->db->fetch_object($res)) {
-							$returnPercent = $returnPercent + floatval($obj->situation_percent);
+							$returnPercent = $returnPercent + (float) $obj->situation_percent;
 						}
 					} else {
 						dol_print_error($this->db);

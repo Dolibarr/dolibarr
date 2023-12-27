@@ -127,7 +127,7 @@ if (isModEnabled("product") || isModEnabled("service")) {
 
 	echo '</span>';
 }
-if (getDolGlobalString('BOM_SUB_BOM') && $filtertype!=1) {
+if (getDolGlobalString('BOM_SUB_BOM') && $filtertype != 1) {
 	print '<br><span class="opacitymedium">'.$langs->trans("or").'</span><br>'.$langs->trans("BOM");
 	print $form->select_bom('', 'bom_id', 0, 1, 0, '1', '', 1);
 }

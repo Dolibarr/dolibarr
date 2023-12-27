@@ -1309,7 +1309,7 @@ class BonPrelevement extends CommonObject
 						 */
 						$ri = $this->AddFacture($fac[0], $fac[2], $fac[8], $fac[7], $fac[3], $fac[4], $fac[5], $fac[6], $type, $sourcetype);
 
-						if ($ri <> 0) {
+						if ($ri != 0) {
 							$error++;
 						}
 

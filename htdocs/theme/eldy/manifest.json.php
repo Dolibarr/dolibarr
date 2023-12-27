@@ -73,14 +73,14 @@ $manifest->manifest_version = 3;
 
 $manifest->name = constant('DOL_APPLICATION_TITLE');
 if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-	$manifest->name = $conf->global->MAIN_APPLICATION_TITLE;
+	$manifest->name = getDolGlobalString('MAIN_APPLICATION_TITLE');
 }
 $manifest->short_name = $manifest->name;
 
 
-$manifest->theme_color = !getDolGlobalString('MAIN_MANIFEST_APPLI_THEME_COLOR') ? getDolGlobalString('THEME_ELDY_TOPMENU_BACK1', '#F05F40') : $conf->global->MAIN_MANIFEST_APPLI_THEME_COLOR;
-$manifest->background_color = !getDolGlobalString('MAIN_MANIFEST_APPLI_BG_COLOR') ? "#ffffff" : $conf->global->MAIN_MANIFEST_APPLI_BG_COLOR;
-$manifest->display = "standalone";
+$manifest->theme_color = getDolGlobalString('MAIN_MANIFEST_APPLI_THEME_COLOR', getDolGlobalString('THEME_ELDY_TOPMENU_BACK1', '#F05F40'));
+$manifest->background_color = getDolGlobalString('MAIN_MANIFEST_APPLI_BG_COLOR', "#ffffff");
+$manifest->display = getDolGlobalString('MAIN_MANIFEST_DISPLAY', "minimal-ui");
 $manifest->splash_pages = null;
 $manifest->icons = array();
 $manifest->start_url = constant('DOL_MAIN_URL_ROOT');

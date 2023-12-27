@@ -185,7 +185,7 @@ class ExtraFields
 	 *  This is a private method. For public method, use addExtraField.
 	 *
 	 *	@param	string	$attrname			code of attribute
-	 *  @param	int		$type				Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datehour','price','pricecy','phone','mail','password','url','select','checkbox', ...)
+	 *  @param	string	$type				Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datehour','price','pricecy','phone','mail','password','url','select','checkbox', ...)
 	 *  @param	string	$length				Size/length of attribute ('5', '24,8', ...)
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', 'contact', ...)
 	 *  @param	int		$unique				Is field unique or not
@@ -199,7 +199,7 @@ class ExtraFields
 	 *  @param	array	$moreparams			More parameters. Example: array('css'=>, 'csslist'=>, 'cssview'=>...)
 	 *  @return int      	           		Return integer <=0 if KO, >0 if OK
 	 */
-	private function create($attrname, $type = 'varchar', $length = 255, $elementtype = 'member', $unique = 0, $required = 0, $default_value = '', $param = '', $perms = '', $list = '0', $computed = '', $help = '', $moreparams = array())
+	private function create($attrname, $type = 'varchar', $length = '255', $elementtype = 'member', $unique = 0, $required = 0, $default_value = '', $param = array(), $perms = '', $list = '0', $computed = '', $help = '', $moreparams = array())
 	{
 		if ($elementtype == 'thirdparty') {
 			$elementtype = 'societe';
@@ -281,7 +281,7 @@ class ExtraFields
 	 *
 	 *	@param	string			$attrname		code of attribute
 	 *	@param	string			$label			label of attribute
-	 *  @param	int				$type			Type of attribute ('int', 'varchar', 'text', 'html', 'date', 'datehour', 'float')
+	 *  @param	string				$type			Type of attribute ('int', 'varchar', 'text', 'html', 'date', 'datehour', 'float')
 	 *  @param	int				$pos			Position of attribute
 	 *  @param	string			$size			Size/length of attribute ('5', '24,8', ...)
 	 *  @param  string			$elementtype	Element type ('member', 'product', 'thirdparty', ...)
@@ -303,7 +303,7 @@ class ExtraFields
 	 *  @return	int								Return integer <=0 if KO, >0 if OK
 	 *  @throws Exception
 	 */
-	private function create_label($attrname, $label = '', $type = '', $pos = 0, $size = 0, $elementtype = 'member', $unique = 0, $required = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array())
+	private function create_label($attrname, $label = '', $type = '', $pos = 0, $size = '', $elementtype = 'member', $unique = 0, $required = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array())
 	{
 		// phpcs:enable
 		global $conf, $user;
@@ -551,7 +551,7 @@ class ExtraFields
 	 * 	@return	int							>0 if OK, <=0 if KO
 	 *  @throws Exception
 	 */
-	public function update($attrname, $label, $type, $length, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array())
+	public function update($attrname, $label, $type, $length, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = array(), $alwayseditable = 0, $perms = '', $list = '', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array())
 	{
 		global $action, $hookmanager;
 
@@ -676,7 +676,7 @@ class ExtraFields
 	 *  @return	int							Return integer <=0 if KO, >0 if OK
 	 *  @throws Exception
 	 */
-	private function update_label($attrname, $label, $type, $size, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '0', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array())
+	private function update_label($attrname, $label, $type, $size, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = array(), $alwayseditable = 0, $perms = '', $list = '0', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array())
 	{
 		// phpcs:enable
 		global $conf, $user;
@@ -934,7 +934,7 @@ class ExtraFields
 	 * @param  string        $morecss        		More css (to defined size of field. Old behaviour: may also be a numeric)
 	 * @param  int           $objectid       		Current object id
 	 * @param  string        $extrafieldsobjectkey	The key to use to store retreived data (commonly $object->table_element)
-	 * @param  string        $mode                  1=Used for search filters
+	 * @param  int	         $mode                  1=Used for search filters
 	 * @return string
 	 */
 	public function showInputField($key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $objectid = 0, $extrafieldsobjectkey = '', $mode = 0)
@@ -2315,9 +2315,9 @@ class ExtraFields
 					$dateparamname_end   = $keysuffix . 'options_' . $key . $keyprefix . '_end';
 					if (GETPOST($dateparamname_start . 'year') && GETPOST($dateparamname_end . 'year')) {
 						// values provided as a date pair (start date + end date), each date being broken down as year, month, day, etc.
-						$dateparamname_end_hour = GETPOST($dateparamname_end . 'hour', 'int') !='-1' ? GETPOST($dateparamname_end . 'hour', 'int') : '23';
-						$dateparamname_end_min = GETPOST($dateparamname_end . 'min', 'int') !='-1' ? GETPOST($dateparamname_end . 'min', 'int') : '59';
-						$dateparamname_end_sec = GETPOST($dateparamname_end . 'sec', 'int') !='-1' ? GETPOST($dateparamname_end . 'sec', 'int') : '59';
+						$dateparamname_end_hour = GETPOST($dateparamname_end . 'hour', 'int') != '-1' ? GETPOST($dateparamname_end . 'hour', 'int') : '23';
+						$dateparamname_end_min = GETPOST($dateparamname_end . 'min', 'int') != '-1' ? GETPOST($dateparamname_end . 'min', 'int') : '59';
+						$dateparamname_end_sec = GETPOST($dateparamname_end . 'sec', 'int') != '-1' ? GETPOST($dateparamname_end . 'sec', 'int') : '59';
 						if ($key_type == 'datetimegmt') {
 							$value_key = array(
 								'start' => dol_mktime(GETPOST($dateparamname_start . 'hour', 'int'), GETPOST($dateparamname_start . 'min', 'int'), GETPOST($dateparamname_start . 'sec', 'int'), GETPOST($dateparamname_start . 'month', 'int'), GETPOST($dateparamname_start . 'day', 'int'), GETPOST($dateparamname_start . 'year', 'int'), 'gmt'),

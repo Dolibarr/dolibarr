@@ -2106,7 +2106,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				if (!getDolGlobalString('PRODUCT_DISABLE_PUBLIC_URL')) {
 					print '<tr><td>'.$langs->trans("PublicUrl").'</td><td>';
 					print img_picto('', 'globe', 'class="pictofixedwidth"');
-					print '<input type="text" name="url" class="quatrevingtpercent" value="'.(GETPOSTISSET('url') ? GETPOST('url') : $object->url).'">';
+					print '<input type="text" name="url" class="maxwidth500 widthcentpercentminusx" value="'.(GETPOSTISSET('url') ? GETPOST('url') : $object->url).'">';
 					print '</td></tr>';
 				}
 
@@ -2891,11 +2891,11 @@ if ($action != 'create' && $action != 'edit') {
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
 		if ($usercancreate) {
-			if (!isset($object->no_button_edit) || $object->no_button_edit <> 1) {
+			if (!isset($object->no_button_edit) || $object->no_button_edit != 1) {
 				print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id, '', $usercancreate);
 			}
 
-			if (!isset($object->no_button_copy) || $object->no_button_copy <> 1) {
+			if (!isset($object->no_button_copy) || $object->no_button_copy != 1) {
 				if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
 					$cloneProductUrl = '';
 					$cloneButtonId = 'action-clone';
@@ -2906,7 +2906,7 @@ if ($action != 'create' && $action != 'edit') {
 		$object_is_used = $object->isObjectUsed($object->id);
 
 		if ($usercandelete) {
-			if (empty($object_is_used) && (!isset($object->no_button_delete) || $object->no_button_delete <> 1)) {
+			if (empty($object_is_used) && (!isset($object->no_button_delete) || $object->no_button_delete != 1)) {
 				if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
 					print dolGetButtonAction($langs->trans('Delete'), '', 'delete', '#', 'action-delete', true);
 				} else {

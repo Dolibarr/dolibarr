@@ -3880,7 +3880,7 @@ class Societe extends CommonObject
 			}
 
 			// le numéro est valide si la somme des chiffres est multiple de 10
-			if (($sum % 10) != 0) {
+			if ($sum % 10 != 0) {
 				return -1;
 			}
 		}

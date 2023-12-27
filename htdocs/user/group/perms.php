@@ -326,7 +326,7 @@ if ($object->id > 0) {
 			$isexpanded = ! $ishidden;
 
 			// Break found, it's a new module to catch
-			if (isset($obj->module) && ($oldmod <> $obj->module)) {
+			if (isset($obj->module) && ($oldmod != $obj->module)) {
 				$oldmod = $obj->module;
 
 				$j++;
@@ -424,7 +424,7 @@ if ($object->id > 0) {
 			}
 
 			// Description of permission (2 columns)
-			$permlabel = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && ($langs->trans("PermissionAdvanced".$obj->id) != ("PermissionAdvanced".$obj->id)) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != ("Permission".$obj->id)) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
+			$permlabel = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && ($langs->trans("PermissionAdvanced".$obj->id) != "PermissionAdvanced".$obj->id) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != "Permission".$obj->id) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
 			print '<td>';
 			print $permlabel;
 			if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {

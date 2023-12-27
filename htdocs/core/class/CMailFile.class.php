@@ -780,12 +780,12 @@ class CMailFile
 				}
 
 				// Force parameters
-				//dol_syslog("CMailFile::sendfile conf->global->".$keyforsmtpserver."=".$conf->global->$keyforsmtpserver." cpnf->global->".$keyforsmtpport."=".$conf->global->$keyforsmtpport, LOG_DEBUG);
-				if (!empty($conf->global->$keyforsmtpserver)) {
-					ini_set('SMTP', $conf->global->$keyforsmtpserver);
+				//dol_syslog("CMailFile::sendfile conf->global->".$keyforsmtpserver."=".getDolGlobalString($keyforsmtpserver)." cpnf->global->".$keyforsmtpport."=".$conf->global->$keyforsmtpport, LOG_DEBUG);
+				if (getDolGlobalString($keyforsmtpserver)) {
+					ini_set('SMTP', getDolGlobalString($keyforsmtpserver));
 				}
-				if (!empty($conf->global->$keyforsmtpport)) {
-					ini_set('smtp_port', $conf->global->$keyforsmtpport);
+				if (getDolGlobalString($keyforsmtpport)) {
+					ini_set('smtp_port', getDolGlobalString($keyforsmtpport));
 				}
 
 				$res = true;
@@ -869,10 +869,10 @@ class CMailFile
 				}
 
 				// Restore parameters
-				if (!empty($conf->global->$keyforsmtpserver)) {
+				if (getDolGlobalString($keyforsmtpserver)) {
 					ini_restore('SMTP');
 				}
-				if (!empty($conf->global->$keyforsmtpport)) {
+				if (getDolGlobalString($keyforsmtpport)) {
 					ini_restore('smtp_port');
 				}
 			} elseif ($this->sendmode == 'smtps') {
@@ -1059,7 +1059,7 @@ class CMailFile
 				}
 
 				// If we use SSL/TLS
-				$server = $conf->global->$keyforsmtpserver;
+				$server = getDolGlobalString($keyforsmtpserver);
 				$secure = '';
 				if (!empty($conf->global->$keyfortls) && function_exists('openssl_open')) {
 					$secure = 'ssl';
@@ -1068,7 +1068,7 @@ class CMailFile
 					$secure = 'tls';
 				}
 
-				$this->transport = new Swift_SmtpTransport($server, $conf->global->$keyforsmtpport, $secure);
+				$this->transport = new Swift_SmtpTransport($server, getDolGlobalString($keyforsmtpport), $secure);
 
 				if (!empty($conf->global->$keyforsmtpid)) {
 					$this->transport->setUsername($conf->global->$keyforsmtpid);
@@ -1137,7 +1137,7 @@ class CMailFile
 						dol_syslog("CMailFile::sendfile: mail end error=".$e->getMessage(), LOG_ERR);
 					}
 				}
-				if (!empty($conf->global->$keyforsslseflsigned)) {
+				if (getDolGlobalString($keyforsslseflsigned)) {
 					$this->transport->setStreamOptions(array('ssl' => array('allow_self_signed' => true, 'verify_peer' => false)));
 				}
 				//$smtps->_msgReplyTo  = 'reply@web.com';
@@ -1150,7 +1150,7 @@ class CMailFile
 				$this->mailer = new Swift_Mailer($this->transport);
 
 				// DKIM SIGN
-				if ($conf->global->MAIN_MAIL_EMAIL_DKIM_ENABLED) {
+				if (getDolGlobalString('MAIN_MAIL_EMAIL_DKIM_ENABLED')) {
 					$privateKey = $conf->global->MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY;
 					$domainName = $conf->global->MAIN_MAIL_EMAIL_DKIM_DOMAIN;
 					$selector = $conf->global->MAIN_MAIL_EMAIL_DKIM_SELECTOR;

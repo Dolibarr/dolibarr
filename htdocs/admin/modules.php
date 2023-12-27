@@ -851,7 +851,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		}
 
 		// Activate/Disable and Setup (2 columns)
-		if (!empty($conf->global->$const_name)) {	// If module is already activated
+		if (getDolGlobalString($const_name)) {	// If module is already activated
 			// Set $codeenabledisable
 			$disableSetup = 0;
 			if (!empty($arrayofwarnings[$modName])) {

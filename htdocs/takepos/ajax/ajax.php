@@ -212,7 +212,7 @@ if ($action == 'getProducts') {
 							if (isset($barcode_value_list['qd'])) {
 								$qty_str .= '.' . $barcode_value_list['qd'];
 							}
-							$qty = floatval($qty_str);
+							$qty = (float) $qty_str;
 						}
 
 						$objProd = new Product($db);
