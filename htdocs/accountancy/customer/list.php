@@ -76,7 +76,7 @@ $search_tvaintra = GETPOST('search_tvaintra', 'alpha');
 
 // Define begin binding date
 if (empty($search_date_start) && getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
-	$search_date_start = $db->idate($conf->global->ACCOUNTING_DATE_START_BINDING);
+	$search_date_start = $db->idate(getDolGlobalString('ACCOUNTING_DATE_START_BINDING'));
 }
 
 // Load variable for pagination

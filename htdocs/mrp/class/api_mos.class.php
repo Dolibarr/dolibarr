@@ -392,7 +392,7 @@ class Mos extends DolibarrApi
 					if (empty($value["qty"])) {
 						throw new RestException(500, "Field qty required in ".$arrayname);
 					}
-					if ($value["qty"]!=0) {
+					if ($value["qty"] != 0) {
 						$qtytoprocess = $value["qty"];
 						if (isset($value["fk_warehouse"])) {	// If there is a warehouse to set
 							if (!($value["fk_warehouse"] > 0)) {	// If there is no warehouse set.

@@ -406,7 +406,7 @@ if ($action == 'create') {
 		}
 
 		// View mode
-		if ($action <> 'edit' && $action <> 're-edit') {
+		if ($action != 'edit' && $action != 're-edit') {
 			$head = stock_prepare_head($object);
 
 			print dol_get_fiche_head($head, 'card', $langs->trans("Warehouse"), -1, 'stock');

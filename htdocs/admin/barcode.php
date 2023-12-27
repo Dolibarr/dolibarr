@@ -162,7 +162,7 @@ foreach ($dirbarcode as $reldir) {
 	$handle = @opendir($newdir);
 	if (is_resource($handle)) {
 		while (($file = readdir($handle)) !== false) {
-			if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS') {
+			if (substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS') {
 				if (is_readable($newdir.$file)) {
 					if (preg_match('/(.*)\.modules\.php$/i', $file, $reg)) {
 						$filebis = $reg[1];

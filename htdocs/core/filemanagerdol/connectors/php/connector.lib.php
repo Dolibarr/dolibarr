@@ -649,7 +649,7 @@ function GetRootPath()
 
 	// This can check only that this script isn't run from a virtual dir
 	// But it avoids the problems that arise if it isn't checked
-	if ($position === false || $position <> strlen($sRealPath) - strlen($sSelfPath)) {
+	if ($position === false || $position != strlen($sRealPath) - strlen($sSelfPath)) {
 		SendError(1, 'Sorry, can\'t map "UserFilesPath" to a physical path. You must set the "UserFilesAbsolutePath" value in "editor/filemanager/connectors/php/config.inc.php".');
 	}
 

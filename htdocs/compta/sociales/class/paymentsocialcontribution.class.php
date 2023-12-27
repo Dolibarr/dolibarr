@@ -229,7 +229,7 @@ class PaymentSocialContribution extends CommonObject
 				// Insere tableau des montants / factures
 				foreach ($this->amounts as $key => $amount) {
 					$contribid = $key;
-					if (is_numeric($amount) && $amount <> 0) {
+					if (is_numeric($amount) && $amount != 0) {
 						$amount = price2num($amount);
 
 						// If we want to closed paid invoices
