@@ -191,7 +191,7 @@ if ($action == 'create') {
 
 	print '</form>';
 
-	dol_set_focus('input[name="label"]');
+	dol_set_focus('input[name="ref"]');
 } elseif (($id || $ref) && $action == 'edit') {
 	// Part to edit record
 	print load_fiche_titre($langs->trans("ProductAttribute"), '', 'object_' . $object->picto);
@@ -286,7 +286,9 @@ if ($action == 'create') {
 		print '<div class="tabsAction">' . "\n";
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
-		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		}
 
 		if (empty($reshook)) {
 			// Modify

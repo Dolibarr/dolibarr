@@ -1,6 +1,6 @@
 parameters:
 	customRulesetUsed: true
-	level: 0
+	level: 2
 	fileExtensions:
 		- php
 	paths:
@@ -8,12 +8,13 @@ parameters:
 	    - scripts
 	excludePaths:
 		analyseAndScan:
-		- htdocs/custom
+		- htdocs/custom/*
 		- htdocs/dev/*
 		- htdocs/doc/*
 		- htdocs/documents/*
 		- htdocs/install/doctemplates/*
 		- htdocs/langs/*
+		- htdocs/modulebuilder/template/test/*
 		- htdocs/support/*
 		- htdocs/test/*
 		analyse:
@@ -48,6 +49,29 @@ parameters:
 		- '#Undefined variable: \$error#'
 		- '#Undefined variable: \$errors#'
 		- '#Undefined variable: \$form#'
+		- '#has an unused parameter \$param#'
+		- '#Function llxHeader invoked with#'
+		- '#Function llxHeaderVierge invoked with#'
+		- '#Function llxFooter invoked with#'
+		- '#Function llxFooterVierge invoked with#'
+		- '#If condition is always true#'
+		- '#always exists and is not falsy#'
+		- '#is always true#'
+		- '#is always fal#'
+		- '#has no return type specified#'
+		- '#always exists and is not nullable#'
+		- '#PHPDoc tag @return has invalid value#'
+		- '#type has no value type specified in iterable type array#'
+		- '#with no value type specified in iterable type array#'
+		- '#Empty array passed to foreach#'
+		- '#Result of function fieldList#'
+		- '#in isset\(\) is not nullable#'
+		- '#in isset\(\) is never defined#'
+		- '#(\$force_dolibarr_lib|\$dolibarr_main_db).*in empty\(\) is never defined.#'
+		- '#Caught class Stripe#'
+		- '#Sprain\\SwissQrBill\\#'
+		- '#Constructor of class DolEditor has an unused parameter \$toolbarlocation#'
+		- '#Constructor of class DoliDB\w+ has an unused parameter \$type#'
 	internalErrorsCountLimit: 50
 	cache:
 	    nodesByFileCountMax: 512

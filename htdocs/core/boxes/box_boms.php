@@ -28,14 +28,14 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last orders
+ * Class to manage the box to show last modified BOMs
  */
 class box_boms extends ModeleBoxes
 {
-	public $boxcode = "lastboms";
-	public $boximg = "object_bom";
+	public $boxcode  = "lastboms";
+	public $boximg   = "object_bom";
 	public $boxlabel = "BoxTitleLatestModifiedBoms";
-	public $depends = array("bom");
+	public $depends  = array("bom");
 
 	/**
 	 * @var DoliDB Database handler.
@@ -84,7 +84,7 @@ class box_boms extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLatestModifiedBoms", $max));
 
-		if ($user->rights->bom->read) {
+		if ($user->hasRight('bom', 'read')) {
 			$sql = "SELECT p.ref as product_ref";
 			$sql .= ", p.rowid as productid";
 			$sql .= ", p.tosell";
@@ -135,7 +135,7 @@ class box_boms extends ModeleBoxes
 						'asis' => 1,
 					);
 
-					if (!empty($conf->global->BOM_BOX_LAST_BOMS_SHOW_VALIDATE_USER)) {
+					if (getDolGlobalString('BOM_BOX_LAST_BOMS_SHOW_VALIDATE_USER')) {
 						if ($objp->fk_user_valid > 0) {
 							$userstatic->fetch($objp->fk_user_valid);
 						}
@@ -161,8 +161,8 @@ class box_boms extends ModeleBoxes
 
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
-					'td' => 'class="center opacitymedium"',
-					'text'=>$langs->trans("NoRecordedOrders")
+					'td' => 'class="center"',
+					'text'=> '<span class="opacitymedium">'.$langs->trans("NoRecordedOrders").'</span>'
 					);
 				}
 
@@ -176,8 +176,8 @@ class box_boms extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

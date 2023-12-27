@@ -29,7 +29,7 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	require '../main.inc.php';
 
 	// Get parameters
-	$action     = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
+	$action     = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 	$massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 
 	$mode = GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : 'graph';

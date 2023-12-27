@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
 
 
 // Security check
-if (empty($user->rights->opensurvey->read)) {
+if (!$user->hasRight('opensurvey', 'read')) {
 	accessforbidden();
 }
 
@@ -85,7 +85,7 @@ if (empty($reshook)) {
 	// Delete
 	if ($action == 'delete_confirm') {
 		// Security check
-		if (!$user->rights->opensurvey->write) {
+		if (!$user->hasRight('opensurvey', 'write')) {
 			accessforbidden();
 		}
 
@@ -110,7 +110,7 @@ if (empty($reshook)) {
 	// Update
 	if ($action == 'update') {
 		// Security check
-		if (!$user->rights->opensurvey->write) {
+		if (!$user->hasRight('opensurvey', 'write')) {
 			accessforbidden();
 		}
 
@@ -169,7 +169,7 @@ if (empty($reshook)) {
 		$idcomment = GETPOST('idcomment', 'int');
 		if ($idcomment > 0) {
 			// Security check
-			if (!$user->rights->opensurvey->write) {
+			if (!$user->hasRight('opensurvey', 'write')) {
 				accessforbidden();
 			}
 
@@ -179,7 +179,7 @@ if (empty($reshook)) {
 
 	if ($action == 'edit') {
 		// Security check
-		if (!$user->rights->opensurvey->write) {
+		if (!$user->hasRight('opensurvey', 'write')) {
 			accessforbidden();
 		}
 	}
@@ -259,7 +259,7 @@ if ($action == 'edit') {
 	$doleditor = new DolEditor('nouveauxcommentaires', $object->description, '', 120, 'dolibarr_notes', 'In', 1, 1, 1, ROWS_7, '90%');
 	$doleditor->Create(0, '');
 } else {
-	print (dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true));
+	print(dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true));
 }
 print '</td></tr>';
 
@@ -372,7 +372,7 @@ print '</form>'."\n";
 
 print '<div class="tabsAction">';
 
-if ($action != 'edit' && $user->rights->opensurvey->write) {
+if ($action != 'edit' && $user->hasRight('opensurvey', 'write')) {
 	// Modify button
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.urlencode($numsondage).'">'.$langs->trans("Modify").'</a>';
 
@@ -411,7 +411,7 @@ $comments = $object->getComments();
 
 if (!empty($comments)) {
 	foreach ($comments as $comment) {
-		if ($user->rights->opensurvey->write) {
+		if ($user->hasRight('opensurvey', 'write')) {
 			print '<a class="reposition" href="'.DOL_URL_ROOT.'/opensurvey/card.php?action=deletecomment&token='.newToken().'&idcomment='.((int) $comment->id_comment).'&id='.urlencode($numsondage).'"> '.img_picto('', 'delete.png', '', false, 0, 0, '', '', 0).'</a> ';
 		}
 

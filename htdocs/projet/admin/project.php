@@ -41,8 +41,10 @@ if (!$user->admin) {
 	accessforbidden();
 }
 
-$value = GETPOST('value', 'alpha');
 $action = GETPOST('action', 'aZ09');
+$modulepart = GETPOST('modulepart', 'aZ09');
+
+$value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'project';
@@ -97,7 +99,9 @@ if ($action == 'updateMaskTask') {
 	$project->initAsSpecimen();
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$classname = '';
+	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/project/doc/pdf_".$modele.".modules.php", 0);
@@ -131,7 +135,9 @@ if ($action == 'updateMaskTask') {
 	$project->initAsSpecimen();
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$classname = '';
+	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/project/task/doc/pdf_".$modele.".modules.php", 0);
@@ -316,19 +322,19 @@ foreach ($dirmodels as $reldir) {
 
 					require_once $dir.$file.'.php';
 
-					$module = new $file;
+					$module = new $file();
 
 					// Show modules according to features level
-					if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 						continue;
 					}
-					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+					if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 						continue;
 					}
 
 					if ($module->isEnabled()) {
 						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-						print $module->info();
+						print $module->info($langs);
 						print '</td>';
 
 						// Show example of numbering model
@@ -384,7 +390,7 @@ foreach ($dirmodels as $reldir) {
 print '</table><br>';
 
 
-if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 	// Task numbering module
 	print load_fiche_titre($langs->trans("TasksNumberingModules"), '', '');
 
@@ -412,19 +418,19 @@ if (empty($conf->global->PROJECT_HIDE_TASKS)) {
 
 						require_once $dir.$file.'.php';
 
-						$module = new $file;
+						$module = new $file();
 
 						// Show modules according to features level
-						if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 							continue;
 						}
-						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+						if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 							continue;
 						}
 
 						if ($module->isEnabled()) {
 							print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-							print $module->info();
+							print $module->info($langs);
 							print '</td>';
 
 							// Show example of numbering module
@@ -544,16 +550,16 @@ foreach ($dirmodels as $reldir) {
 							$module = new $classname($db);
 
 							$modulequalified = 1;
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								$modulequalified = 0;
 							}
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 								$modulequalified = 0;
 							}
 
 							if ($modulequalified) {
 								print '<tr class="oddeven"><td width="100">';
-								print (empty($module->name) ? $name : $module->name);
+								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
 								if (method_exists($module, 'info')) {
 									print $module->info($langs);
@@ -565,13 +571,13 @@ foreach ($dirmodels as $reldir) {
 								// Active
 								if (in_array($name, $def)) {
 									print "<td class=\"center\">\n";
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">';
 									print img_picto($langs->trans("Enabled"), 'switch_on');
 									print '</a>';
 									print "</td>";
 								} else {
 									print "<td class=\"center\">\n";
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 									print "</td>";
 								}
 
@@ -580,7 +586,7 @@ foreach ($dirmodels as $reldir) {
 								if ($conf->global->PROJECT_ADDON_PDF == "$name") {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 								}
 								print '</td>';
 
@@ -620,7 +626,7 @@ print '</table><br>';
 
 
 
-if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 	/*
 	 * Modeles documents for Task
 	 */
@@ -684,16 +690,16 @@ if (empty($conf->global->PROJECT_HIDE_TASKS)) {
 								$module = new $classname($db);
 
 								$modulequalified = 1;
-								if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+								if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 									$modulequalified = 0;
 								}
-								if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+								if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 									$modulequalified = 0;
 								}
 
 								if ($modulequalified) {
 									print '<tr class="oddeven"><td width="100">';
-									print (empty($module->name) ? $name : $module->name);
+									print(empty($module->name) ? $name : $module->name);
 									print "</td><td>\n";
 									if (method_exists($module, 'info')) {
 										print $module->info($langs);
@@ -704,23 +710,23 @@ if (empty($conf->global->PROJECT_HIDE_TASKS)) {
 
 									// Active
 									if (in_array($name, $def)) {
-										print "<td class=\"center\">\n";
-										print '<a href="'.$_SERVER["PHP_SELF"].'?action=deltask&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">';
+										print '<td class="center">'."\n";
+										print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=deltask&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">';
 										print img_picto($langs->trans("Enabled"), 'switch_on');
 										print '</a>';
 										print "</td>";
 									} else {
-										print "<td class=\"center\">\n";
-										print '<a href="'.$_SERVER["PHP_SELF"].'?action=settask&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+										print '<td class="center">'."\n";
+										print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=settask&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 										print "</td>";
 									}
 
 									// Defaut
-									print "<td class=\"center\">";
+									print '<td class="center">';
 									if ($conf->global->PROJECT_TASK_ADDON_PDF == "$name") {
 										print img_picto($langs->trans("Default"), 'on');
 									} else {
-										print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoctask&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+										print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoctask&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 									}
 									print '</td>';
 
@@ -788,7 +794,7 @@ if (!$conf->use_javascript_ajax) {
 		'2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
 		'3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
 	);
-	print $form->selectarray("activate_PROJECT_USE_SEARCH_TO_SELECT", $arrval, $conf->global->PROJECT_USE_SEARCH_TO_SELECT);
+	print $form->selectarray("activate_PROJECT_USE_SEARCH_TO_SELECT", $arrval, getDolGlobalString("PROJECT_USE_SEARCH_TO_SELECT"));
 	print '</td><td class="right">';
 	print '<input type="submit" class="button small reposition" name="PROJECT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";
@@ -799,7 +805,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowToSelectProjectFromOtherCompany").'</td>';
 
 print '<td class="right" width="60" colspan="2">';
-print '<input type="text" id="projectToSelect" name="projectToSelect" value="'.$conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY.'"/>&nbsp;';
+print '<input type="text" id="projectToSelect" name="projectToSelect" value="' . getDolGlobalString('PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY').'"/>&nbsp;';
 print $form->textwithpicto('', $langs->trans('AllowToLinkFromOtherCompany'));
 print '<input type="submit" class="button small reposition" name="PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY" value="'.$langs->trans("Modify").'">';
 print '</td>';
@@ -819,7 +825,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("TimesheetPreventAfterFollowingMonths").'</td>';
 
 print '<td class="right" width="60" colspan="2">';
-print '<input type="number" class="width50" id="timesheetFreezeDuration" name="timesheetFreezeDuration" min="0" step="1" value="'.$conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS.'"/>&nbsp;';
+print '<input type="number" class="width50" id="timesheetFreezeDuration" name="timesheetFreezeDuration" min="0" step="1" value="' . getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS').'"/>&nbsp;';
 print '<input type="submit" class="button small reposition" name="PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS" value="'.$langs->trans("Modify").'">';
 print '</td>';
 print '</tr>';

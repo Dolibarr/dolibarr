@@ -21,21 +21,21 @@
 /**
  *	\file       htdocs/core/boxes/box_members_last_subscriptions.php
  *	\ingroup    adherent
- *	\brief      Module to show box of members
+ *	\brief      Module to show box of last members subscriptions
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last modofied members
+ * Class to manage the box to show last members subscriptions
  */
 class box_members_last_subscriptions extends ModeleBoxes
 {
-	public $boxcode = "box_members_last_subscriptions";
-	public $boximg = "object_user";
+	public $boxcode  = "box_members_last_subscriptions";
+	public $boximg   = "object_user";
 	public $boxlabel = "BoxLastMembersSubscriptions";
-	public $depends = array("adherent");
+	public $depends  = array("adherent");
 
 	/**
 	 * @var DoliDB Database handler.
@@ -62,7 +62,7 @@ class box_members_last_subscriptions extends ModeleBoxes
 		$this->db = $db;
 
 		// disable module for such cases
-		$listofmodulesforexternal = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
+		$listofmodulesforexternal = explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL'));
 		if (!in_array('adherent', $listofmodulesforexternal) && !empty($user->socid)) {
 			$this->enabled = 0; // disabled for external users
 		}
@@ -182,8 +182,8 @@ class box_members_last_subscriptions extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

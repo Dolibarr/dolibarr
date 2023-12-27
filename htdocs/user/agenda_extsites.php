@@ -40,9 +40,9 @@ $langs->loadLangs(array('agenda', 'admin', 'other'));
 $def = array();
 $actiontest = GETPOST('test', 'alpha');
 $actionsave = GETPOST('save', 'alpha');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'useragenda'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'useragenda'; // To manage different context of search
 
-if (empty($conf->global->AGENDA_EXT_NB)) {
+if (!getDolGlobalString('AGENDA_EXT_NB')) {
 	$conf->global->AGENDA_EXT_NB = 5;
 }
 $MAXAGENDA = $conf->global->AGENDA_EXT_NB;
@@ -71,7 +71,7 @@ $feature2 = (($socid && $user->hasRight('user', 'self', 'creer')) ? '' : 'user')
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
 // If user is not user that read and no permission to read other users, we stop
-if (($object->id != $user->id) && (!$user->rights->user->user->lire)) {
+if (($object->id != $user->id) && (!$user->hasRight('user', 'user', 'lire'))) {
 	accessforbidden();
 }
 
@@ -171,7 +171,7 @@ print dol_get_fiche_head($head, 'extsites', $langs->trans("User"), -1, 'user');
 
 $linkback = '';
 
-if ($user->rights->user->user->lire || $user->admin) {
+if ($user->hasRight('user', 'user', 'lire') || $user->admin) {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 }
 
@@ -180,9 +180,9 @@ $morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 
 $morehtmlref .= '</a>';
 
 $urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
-$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->trans("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
+$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->transnoentitiesnoconv("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
 
-dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin, 'rowid', 'ref', $morehtmlref);
+dol_banner_tab($object, 'id', $linkback, $user->hasRight('user', 'user', 'lire') || $user->admin, 'rowid', 'ref', $morehtmlref);
 
 print '<div class="fichecenter">';
 
@@ -221,7 +221,7 @@ print '<br>';
 print '<span class="opacitymedium">'.$langs->trans("AgendaExtSitesDesc")."</span><br>\n";
 print "<br>\n";
 
-$selectedvalue = empty($conf->global->AGENDA_DISABLE_EXT) ? 0 : $conf->global->AGENDA_DISABLE_EXT;
+$selectedvalue = !getDolGlobalString('AGENDA_DISABLE_EXT') ? 0 : $conf->global->AGENDA_DISABLE_EXT;
 if ($selectedvalue == 1) {
 	$selectedvalue = 0;
 } else {
@@ -252,18 +252,17 @@ while ($i <= $MAXAGENDA) {
 	// Nb
 	print '<td class="maxwidth50onsmartphone">'.$langs->trans("AgendaExtNb", $key)."</td>";
 	// Name
-	$name_value = (GETPOST('AGENDA_EXT_NAME_'.$id.'_'.$key) ?GETPOST('AGENDA_EXT_NAME_'.$id.'_'.$key) : (empty($object->conf->$name) ? '' : $object->conf->$name));
+	$name_value = (GETPOST('AGENDA_EXT_NAME_'.$id.'_'.$key) ? GETPOST('AGENDA_EXT_NAME_'.$id.'_'.$key) : (empty($object->conf->$name) ? '' : $object->conf->$name));
 	print '<td><input type="text" class="flat hideifnotset minwidth100 maxwidth100onsmartphone" name="AGENDA_EXT_NAME_'.$id.'_'.$key.'" value="'.$name_value.'"></td>';
 	// URL
-	$src_value = (GETPOST('AGENDA_EXT_SRC_'.$id.'_'.$key) ?GETPOST('AGENDA_EXT_SRC_'.$id.'_'.$key) : (empty($object->conf->$src) ? '' : $object->conf->$src));
+	$src_value = (GETPOST('AGENDA_EXT_SRC_'.$id.'_'.$key) ? GETPOST('AGENDA_EXT_SRC_'.$id.'_'.$key) : (empty($object->conf->$src) ? '' : $object->conf->$src));
 	print '<td><input type="url" class="flat hideifnotset width300" name="AGENDA_EXT_SRC_'.$id.'_'.$key.'" value="'.$src_value.'"></td>';
 	// Offset TZ
 	$offsettz_value = (GETPOST('AGENDA_EXT_OFFSETTZ_'.$id.'_'.$key) ? GETPOST('AGENDA_EXT_OFFSETTZ_'.$id.'_'.$key) : (empty($object->conf->$offsettz) ? '' : $object->conf->$offsettz));
 	print '<td><input type="text" class="flat hideifnotset" name="AGENDA_EXT_OFFSETTZ_'.$id.'_'.$key.'" value="'.$offsettz_value.'" size="1"></td>';
 	// Color (Possible colors are limited by Google)
 	print '<td class="nowraponall right">';
-	//print $formadmin->selectColor($conf->global->$color, "google_agenda_color".$key, $colorlist);
-	$color_value = (GETPOST("AGENDA_EXT_COLOR_".$id.'_'.$key) ?GETPOST("AGENDA_EXT_COLOR_".$id.'_'.$key) : (empty($object->conf->$color) ? 'ffffff' : $object->conf->$color));
+	$color_value = (GETPOST("AGENDA_EXT_COLOR_".$id.'_'.$key) ? GETPOST("AGENDA_EXT_COLOR_".$id.'_'.$key) : (empty($object->conf->$color) ? 'ffffff' : $object->conf->$color));
 	print $formother->selectColor($color_value, "AGENDA_EXT_COLOR_".$id.'_'.$key, '', 1, '', 'hideifnotset');
 	print '</td>';
 	print "</tr>";

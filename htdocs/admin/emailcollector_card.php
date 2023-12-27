@@ -59,7 +59,7 @@ $ref        = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'emailcollectorcard'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'emailcollectorcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $operationid = GETPOST('operationid', 'int');
@@ -181,8 +181,8 @@ if (GETPOST('addoperation', 'alpha')) {
 
 	if (in_array($emailcollectoroperation->type, array('loadthirdparty', 'loadandcreatethirdparty'))
 		&& empty($emailcollectoroperation->actionparam)) {
-			$error++;
-			setEventMessages($langs->trans("ErrorAParameterIsRequiredForThisOperation"), null, 'errors');
+		$error++;
+		setEventMessages($langs->trans("ErrorAParameterIsRequiredForThisOperation"), null, 'errors');
 	}
 
 	if (!$error) {
@@ -205,8 +205,8 @@ if ($action == 'updateoperation') {
 
 	if (in_array($emailcollectoroperation->type, array('loadthirdparty', 'loadandcreatethirdparty'))
 		&& empty($emailcollectoroperation->actionparam)) {
-			$error++;
-			setEventMessages($langs->trans("ErrorAParameterIsRequiredForThisOperation"), null, 'errors');
+		$error++;
+		setEventMessages($langs->trans("ErrorAParameterIsRequiredForThisOperation"), null, 'errors');
 	}
 
 	if (!$error) {
@@ -398,12 +398,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$connectstringserver = $object->getConnectStringIMAP();
 
 	if ($action == 'scan') {
-		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 			require_once DOL_DOCUMENT_ROOT.'/includes/webklex/php-imap/vendor/autoload.php';
 
 			if ($object->acces_type == 1) {
 				// Mode OAUth2 with PHP-IMAP
-				require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php';
+
+				$supportedoauth2array = getSupportedOauth2Array();
+
 				$keyforsupportedoauth2array = $object->oauth_service;
 				if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
 					$keyforprovider = preg_replace('/^.*-/', '', $keyforsupportedoauth2array);
@@ -437,7 +440,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							getDolGlobalString('OAUTH_'.$object->oauth_service.'_ID'),
 							getDolGlobalString('OAUTH_'.$object->oauth_service.'_SECRET'),
 							getDolGlobalString('OAUTH_'.$object->oauth_service.'_URLAUTHORIZE')
-							);
+						);
 						$serviceFactory = new \OAuth\ServiceFactory();
 						$oauthname = explode('-', $OAUTH_SERVICENAME);
 
@@ -532,8 +535,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						$connectstringtarget = $connectstringserver.$object->getEncodedUtf7($targetdir);
 					}
 
-					$timeoutconnect = empty($conf->global->MAIN_USE_CONNECT_TIMEOUT) ? 5 : $conf->global->MAIN_USE_CONNECT_TIMEOUT;
-					$timeoutread = empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT) ? 20 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT;
+					$timeoutconnect = !getDolGlobalString('MAIN_USE_CONNECT_TIMEOUT') ? 5 : $conf->global->MAIN_USE_CONNECT_TIMEOUT;
+					$timeoutread = !getDolGlobalString('MAIN_USE_RESPONSE_TIMEOUT') ? 20 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT;
 
 					dol_syslog("imap_open connectstring=".$connectstringsource." login=".$object->login." password=".$object->password." timeoutconnect=".$timeoutconnect." timeoutread=".$timeoutread);
 

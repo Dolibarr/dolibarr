@@ -82,7 +82,7 @@ function ticketAdminPrepareHead()
  */
 function ticket_prepare_head($object)
 {
-	global $db, $langs, $conf, $user;
+	global $langs, $conf, $user;
 
 	$h = 0;
 	$head = array();
@@ -195,7 +195,7 @@ function generate_random_id($car = 16)
 {
 	$string = "";
 	$chaine = "abcdefghijklmnopqrstuvwxyz123456789";
-	mt_srand((double) microtime() * 1000000);
+	mt_srand((float) microtime() * 1000000);
 	for ($i = 0; $i < $car; $i++) {
 		$string .= $chaine[mt_rand() % strlen($chaine)];
 	}

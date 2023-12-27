@@ -29,7 +29,6 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
  */
 class DolibarrApi
 {
-
 	/**
 	 * @var DoliDb        $db Database object
 	 */
@@ -57,7 +56,7 @@ class DolibarrApi
 		Defaults::$cacheDirectory = $cachedir;
 
 		$this->db = $db;
-		$production_mode = (empty($conf->global->API_PRODUCTION_MODE) ? false : true);
+		$production_mode = (!getDolGlobalString('API_PRODUCTION_MODE') ? false : true);
 		$this->r = new Restler($production_mode, $refreshCache);
 
 		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -79,19 +78,48 @@ class DolibarrApi
 	 * Display a short message an return a http code 200
 	 *
 	 * @param	string		$field		Field name
-	 * @param	string		$value		Value to check/clean
+	 * @param	mixed		$value		Value to check/clean
 	 * @param	Object		$object		Object
 	 * @return 	string					Value cleaned
 	 */
 	protected function _checkValForAPI($field, $value, $object)
 	{
 		// phpcs:enable
-		// TODO Use type detected in $object->fields
-		if (in_array($field, array('note', 'note_private', 'note_public', 'desc', 'description'))) {
-			return sanitizeVal($value, 'restricthtml');
+		if (!is_array($value)) {
+			// TODO Use type detected in $object->fields if $object known and we can
+			if (in_array($field, array('note', 'note_private', 'note_public', 'desc', 'description'))) {
+				return sanitizeVal($value, 'restricthtml');
+			} else {
+				return sanitizeVal($value, 'alphanohtml');
+			}
 		} else {
-			return sanitizeVal($value, 'alphanohtml');
+			// TODO Recall _checkValForAPI for each element of array
+
+			return $value;
 		}
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 * Filter properties that will be returned on object
+	 *
+	 * @param   Object  $object			Object to clean
+	 * @param   String  $properties		Comma separated list of properties names
+	 * @return	Object					Object with cleaned properties
+	 */
+	protected function _filterObjectProperties($object, $properties)
+	{
+		// If properties is empty, we return all properties
+		if (empty($properties)) {
+			return $object;
+		}
+		// Else we filter properties
+		foreach (get_object_vars($object) as $key => $value) {
+			if (!in_array($key, explode(',', $properties))) {
+				unset($object->$key);
+			}
+		}
+		return $object;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
@@ -156,11 +184,6 @@ class DolibarrApi
 		unset($object->newref);
 		unset($object->alreadypaid);
 		unset($object->openid);
-
-		unset($object->statuts);
-		unset($object->statuts_short);
-		unset($object->statuts_logo);
-		unset($object->statuts_long);
 
 		//unset($object->labelStatus);
 		//unset($object->labelStatusShort);

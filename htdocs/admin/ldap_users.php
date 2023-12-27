@@ -91,9 +91,6 @@ if ($action == 'setvalue' && $user->admin) {
 	if (!dolibarr_set_const($db, 'LDAP_FIELD_MOBILE', GETPOST("fieldmobile"), 'chaine', 0, '', $conf->entity)) {
 		$error++;
 	}
-	if (!dolibarr_set_const($db, 'LDAP_FIELD_SKYPE', GETPOST("fieldskype"), 'chaine', 0, '', $conf->entity)) {
-		$error++;
-	}
 	if (!dolibarr_set_const($db, 'LDAP_FIELD_FAX', GETPOST("fieldfax"), 'chaine', 0, '', $conf->entity)) {
 		$error++;
 	}
@@ -138,7 +135,7 @@ if ($action == 'setvalue' && $user->admin) {
 	$valkey = '';
 	$key = GETPOST("key");
 	if ($key) {
-		$valkey = $conf->global->$key;
+		$valkey = getDolGlobalString($key);
 	}
 	if (!dolibarr_set_const($db, 'LDAP_KEY_USERS', $valkey, 'chaine', 0, '', $conf->entity)) {
 		$error++;
@@ -292,13 +289,6 @@ print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldMobile").'</td><td>';
 print '<input size="25" type="text" name="fieldmobile" value="'.getDolGlobalString('LDAP_FIELD_MOBILE').'">';
 print '</td><td>'.$langs->trans("LDAPFieldMobileExample").'</td>';
 print '<td class="right"><input type="radio" name="key" value="LDAP_FIELD_MOBILE"'.(getDolGlobalString('LDAP_KEY_USERS') == getDolGlobalString('LDAP_FIELD_MOBILE') ? ' checked' : '')."></td>";
-print '</tr>';
-
-// Skype
-print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldSkype").'</td><td>';
-print '<input size="25" type="text" name="fieldskype" value="'.getDolGlobalString('LDAP_FIELD_SKYPE').'">';
-print '</td><td>'.$langs->trans("LDAPFieldSkypeExample").'</td>';
-print '<td class="right"><input type="radio" name="key" value="LDAP_FIELD_SKYPE"'.(getDolGlobalString('LDAP_KEY_USERS') == getDolGlobalString('LDAP_FIELD_SKYPE') ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Fax

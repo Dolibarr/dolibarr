@@ -135,11 +135,11 @@ $array_filtervalue = isset($_SESSION["export_filtered_fields"]) ? $_SESSION["exp
 $datatoexport = GETPOST("datatoexport", "aZ09");
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$step = GETPOST("step", "int") ?GETPOST("step", "int") : 1;
+$step = GETPOST("step", "int") ? GETPOST("step", "int") : 1;
 $export_name = GETPOST("export_name", "alphanohtml");
 $hexa = GETPOST("hexa", "alpha");
 $exportmodelid = GETPOST("exportmodelid", "int");
-$field = GETPOST("field", "alpa");
+$field = GETPOST("field", "alpha");
 
 $objexport = new Export($db);
 $objexport->load_arrays($user, $datatoexport);
@@ -269,7 +269,8 @@ if ($step == 1 || $action == 'cleanselect') {
 }
 
 if ($action == 'builddoc') {
-	$max_execution_time_for_importexport = (empty($conf->global->EXPORT_MAX_EXECUTION_TIME) ? 300 : $conf->global->EXPORT_MAX_EXECUTION_TIME); // 5mn if not defined
+	$separator = GETPOST('delimiter', 'alpha');
+	$max_execution_time_for_importexport = (!getDolGlobalString('EXPORT_MAX_EXECUTION_TIME') ? 300 : $conf->global->EXPORT_MAX_EXECUTION_TIME); // 5mn if not defined
 	$max_time = @ini_get("max_execution_time");
 	if ($max_time && $max_time < $max_execution_time_for_importexport) {
 		dol_syslog("max_execution_time=".$max_time." is lower than max_execution_time_for_importexport=".$max_execution_time_for_importexport.". We try to increase it dynamically.");
@@ -277,7 +278,7 @@ if ($action == 'builddoc') {
 	}
 
 	// Build export file
-	$result = $objexport->build_file($user, GETPOST('model', 'alpha'), $datatoexport, $array_selected, $array_filtervalue);
+	$result = $objexport->build_file($user, GETPOST('model', 'alpha'), $datatoexport, $array_selected, $array_filtervalue, '', $separator);
 	if ($result < 0) {
 		setEventMessages($objexport->error, $objexport->errors, 'errors');
 		$sqlusedforexport = $objexport->sqlusedforexport;
@@ -1032,7 +1033,7 @@ if ($step == 4 && $datatoexport) {
 		$sql = "SELECT rowid, label, fk_user, entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."export_model";
 		$sql .= " WHERE type = '".$db->escape($datatoexport)."'";
-		if (empty($conf->global->EXPORTS_SHARE_MODELS)) {	// EXPORTS_SHARE_MODELS means all templates are visible, whatever is owner.
+		if (!getDolGlobalString('EXPORTS_SHARE_MODELS')) {	// EXPORTS_SHARE_MODELS means all templates are visible, whatever is owner.
 			$sql .= " AND fk_user IN (0, ".((int) $user->id).")";
 		}
 		$sql .= " ORDER BY rowid";
@@ -1073,7 +1074,7 @@ if ($step == 4 && $datatoexport) {
 }
 
 if ($step == 5 && $datatoexport) {
-	if (count($array_selected) < 1) {      // This occurs when going back to page after sessecion expired
+	if (count($array_selected) < 1) {      // This occurs when going back to page after session expired
 		// Switch to step 2
 		header("Location: ".DOL_URL_ROOT.'/exports/export.php?step=2&datatoexport='.$datatoexport);
 		exit;

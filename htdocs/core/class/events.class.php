@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2007-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+/* Copyright (C) 2007-2019	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2023		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,6 +82,11 @@ class Events // extends CommonObject
 	public $user_agent;
 
 	/**
+	 * @var string label
+	 */
+	public $label;
+
+	/**
 	 * @var string description
 	 */
 	public $description;
@@ -139,7 +145,7 @@ class Events // extends CommonObject
 	 *   Create in database
 	 *
 	 *   @param      User	$user       User that create
-	 *   @return     int                <0 if KO, >0 if OK
+	 *   @return     int                Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user)
 	{
@@ -195,7 +201,7 @@ class Events // extends CommonObject
 	 *
 	 * @param	User    $user        	User that modify
 	 * @param   int		$notrigger	    0=no, 1=yes (no update trigger)
-	 * @return  int         			<0 if KO, >0 if OK
+	 * @return  int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -229,7 +235,7 @@ class Events // extends CommonObject
 	 *
 	 *  @param	int		$id         Id object
 	 *  @param  User	$user       User that load
-	 *  @return int         		<0 if KO, >0 if OK
+	 *  @return int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $user = null)
 	{
@@ -276,7 +282,7 @@ class Events // extends CommonObject
 	 *  Delete object in database
 	 *
 	 *	@param	User	$user       User that delete
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user)
 	{

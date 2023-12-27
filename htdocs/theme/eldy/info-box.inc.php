@@ -61,19 +61,19 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 }
 
 .info-box:not(.info-box-kanban) .progress .progress-bar {
-		float: left;
-		width: 0;
-		height: 100%;
-		font-size: 12px;
-		line-height: 20px;
-		color: #fff;
-		text-align: center;
-		background-color: #337ab7;
-		-webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
-		box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
-		-webkit-transition: width .6s ease;
-		-o-transition: width .6s ease;
-		transition: width .6s ease;
+	float: left;
+	width: 0;
+	height: 100%;
+	font-size: 12px;
+	line-height: 20px;
+	color: #fff;
+	text-align: center;
+	background-color: #337ab7;
+	-webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
+	box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
+	-webkit-transition: width .6s ease;
+	-o-transition: width .6s ease;
+	transition: width .6s ease;
 }
 .info-box-icon {
 	border-top-left-radius: 2px;
@@ -144,6 +144,12 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 
 .info-box-line {
 	line-height: 1.35em;
+}
+.info-box-line-text {
+	overflow: hidden;
+	width: calc(100% - 92px);
+	max-width: calc(100% - 82px);
+	text-overflow: ellipsis;
 }
 
 .info-box-icon-text {
@@ -219,7 +225,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	transform: translate(-50%, -50%);
 }
 
-<?php if (empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS) && !empty($conf->global->MAIN_INCLUDE_GLOBAL_STATS_IN_OPENED_DASHBOARD)) { ?>
+<?php if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_BOXSTATS') && getDolGlobalString('MAIN_INCLUDE_GLOBAL_STATS_IN_OPENED_DASHBOARD')) { ?>
 .info-box-icon-text{
 	opacity: 1;
 }
@@ -234,7 +240,10 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 }
 
 .info-box-content {
-	padding: 5px 10px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 10px;
+	padding-right: 5px;
 	margin-left: 84px;
 }
 .info-box-sm .info-box-content {
@@ -299,7 +308,7 @@ a.info-box-text{ text-decoration: none;}
 include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $prefix = '';
-if (!empty($conf->global->THEME_INFOBOX_COLOR_ON_BACKGROUND)) {
+if (getDolGlobalString('THEME_INFOBOX_COLOR_ON_BACKGROUND')) {
 	$prefix = 'background-';
 }
 
@@ -387,40 +396,40 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 
 .infobox-adherent, .infobox-member {
-	color: #79633f !important;
+	color: #79633f;
 }
 .infobox-project{
-	color: #6c6aa8 !important;
+	color: #6c6aa8;
 }
 .infobox-action{
-	color: #b06080 !important;
+	color: #b06080;
 }
 /* Color for customer object */
 .infobox-propal:not(.error),
 .infobox-facture:not(.error),
 .infobox-commande:not(.error) {
-	color: #65953d !important;
+	color: #65953d;
 }
 /* Color for vendor object */
 .infobox-supplier_proposal:not(.error),
 .infobox-invoice_supplier:not(.error),
 .infobox-order_supplier:not(.error) {
-	color: #599caf !important;
+	color: #599caf;
 }
 .infobox-contrat, .infobox-ticket{
-	color: #3bbfa8 !important;
+	color: #3bbfa8;
 }
 .infobox-bank_account{
-	color: #b0bb39 !important;
+	color: #b0bb39;
 }
 .infobox-adherent, .infobox-member {
-	color: #79633f !important;
+	color: #79633f;
 }
 .infobox-expensereport{
-	color: #79633f !important;
+	color: #79633f;
 }
 .infobox-holiday{
-	color: #755114 !important;
+	color: #755114;
 }
 
 
@@ -497,21 +506,21 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	/*justify-content: space-between;*/
 }
 
-.box-flex-grow-zero{
+.box-flex-grow-zero {
 	flex-grow: 0 !important;
 }
 
-.box-flex-item{
+.box-flex-item {
 	flex-grow : 1;
 	flex-shrink: 1;
 	flex-basis: auto;
-
 	width: 280px;
-	margin: 5px 8px 0px 8px;
 }
-.box-flex-item.filler{
-	margin: 0px 0px 0px 15px !important;
+.box-flex-item.filler {
 	height: 0;
+}
+.box-flex-item, .box-flex-item.filler {
+	margin: 5px 10px 0px 10px;
 }
 
 .info-box-title {
@@ -569,5 +578,16 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	}
 	.info-box {
 		border: 1px solid #e0e0e0;
+	}
+
+	.info-box-content {
+		padding-top: 5px;
+		padding-bottom: 5px;
+		padding-left: 10px;
+		padding-right: 2px;
+	}
+	.info-box-line-text {
+		width: calc(100% - 92px);
+		max-width: calc(100% - 82px);
 	}
 }

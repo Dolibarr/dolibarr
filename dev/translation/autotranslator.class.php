@@ -74,7 +74,6 @@ class autoTranslator
 	 */
 	private function parseRefLangTranslationFiles()
 	{
-
 		$files = $this->getTranslationFilesArray($this->_refLang);
 		$counter = 1;
 		foreach ($files as $file) {
@@ -276,7 +275,7 @@ class autoTranslator
 	private function getLineValue($line)
 	{
 		$arraykey = explode('=', $line, 2);
-		return trim(isset($arraykey[1])?$arraykey[1]:'');
+		return trim(isset($arraykey[1]) ? $arraykey[1] : '');
 	}
 
 	/**
@@ -334,8 +333,8 @@ class autoTranslator
 		//print "Url to translate: ".$url."\n";
 
 		if (! function_exists("curl_init")) {
-			  print "Error, your PHP does not support curl functions.\n";
-			  die();
+			print "Error, your PHP does not support curl functions.\n";
+			die();
 		}
 
 		$ch = curl_init();

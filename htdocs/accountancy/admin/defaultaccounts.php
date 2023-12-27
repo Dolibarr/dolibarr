@@ -88,14 +88,14 @@ $list_account[] = 'ACCOUNTING_VAT_BUY_ACCOUNT';
 
 $list_account[] = 'ACCOUNTING_VAT_PAY_ACCOUNT';
 
-if (!empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
+if (getDolGlobalString('ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE')) {
 	$list_account[] = 'ACCOUNTING_VAT_BUY_REVERSE_CHARGES_CREDIT';
 	$list_account[] = 'ACCOUNTING_VAT_BUY_REVERSE_CHARGES_DEBIT';
 }
 if (isModEnabled('banque')) {
 	$list_account[] = 'ACCOUNTING_ACCOUNT_TRANSFER_CASH';
 }
-if (!empty($conf->global->INVOICE_USE_RETAINED_WARRANTY)) {
+if (getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
 	$list_account[] = 'ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY';
 }
 if (isModEnabled('don')) {
@@ -265,8 +265,6 @@ foreach ($list_account as $key) {
 			print img_picto('', 'payment_vat', 'class="pictofixedwidth"');
 		} elseif (preg_match('/^ACCOUNTING_VAT/', $key)) {
 			print img_picto('', 'vat', 'class="pictofixedwidth"');
-			/*} elseif (preg_match('/^ACCOUNTING_REVENUESTAMP/', $key)) {
-			print img_picto('', 'vat', 'class="pictofixedwidth"');*/
 		} elseif (preg_match('/^ACCOUNTING_ACCOUNT_CUSTOMER/', $key)) {
 			print img_picto('', 'bill', 'class="pictofixedwidth"');
 		} elseif (preg_match('/^LOAN_ACCOUNTING_ACCOUNT/', $key)) {
@@ -280,6 +278,7 @@ foreach ($list_account as $key) {
 		} elseif (preg_match('/^ACCOUNTING_ACCOUNT_SUSPENSE/', $key)) {
 			print img_picto('', 'question', 'class="pictofixedwidth"');
 		}
+		// Note: account for revenue stamp are store into dictionary of revenue stamp. There is no default value.
 		print $label;
 		print '</td>';
 		// Value

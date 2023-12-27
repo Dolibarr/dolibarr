@@ -27,6 +27,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
 
 
 /**
@@ -34,12 +35,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
  */
 abstract class ModelePDFFicheinter extends CommonDocGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return list of active generation modules
@@ -65,96 +60,9 @@ abstract class ModelePDFFicheinter extends CommonDocGenerator
 /**
  *  Parent class numbering models of intervention sheet references
  */
-abstract class ModeleNumRefFicheinter
+abstract class ModeleNumRefFicheinter extends CommonNumRefGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	public $version;
-
-
-	/**
-	 * 	Return if a module can be used or not
-	 *
-	 * 	@return		boolean     true if module can be used
-	 */
-	public function isEnabled()
-	{
-		return true;
-	}
-
-	/**
-	 * 	Returns the default description of the numbering template
-	 *
-	 * 	@return     string      Descriptive text
-	 */
-	public function info()
-	{
-		global $langs;
-		$langs->load("ficheinter");
-		return $langs->trans("NoDescription");
-	}
-
-	/**
-	 * 	Return a numbering example
-	 *
-	 * 	@return     string      Example
-	 */
-	public function getExample()
-	{
-		global $langs;
-		$langs->load("ficheinter");
-		return $langs->trans("NoExample");
-	}
-
-	/**
-	 *  Checks if the numbers already in the database do not
-	 *  cause conflicts that would prevent this numbering working.
-	 *
-	 * 	@return     boolean     false if conflict, true if ok
-	 */
-	public function canBeActivated()
-	{
-		return true;
-	}
-
-	/**
-	 * 	Return the next assigned value
-	 *
-	 *  @param	Societe		$objsoc     Object thirdparty
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
-	 */
-	public function getNextValue($objsoc = 0, $object = '')
-	{
-		global $langs;
-		return $langs->trans("NotAvailable");
-	}
-
-	/**
-	 * 	Return the version of the numbering module
-	 *
-	 * 	@return     string      Value
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
-
-		if ($this->version == 'development') {
-			return $langs->trans("VersionDevelopment");
-		} elseif ($this->version == 'experimental') {
-			return $langs->trans("VersionExperimental");
-		} elseif ($this->version == 'dolibarr') {
-			return DOL_VERSION;
-		} elseif ($this->version) {
-			return $this->version;
-		} else {
-			return $langs->trans("NotAvailable");
-		}
-	}
+	// No overload code
 }
 
 
@@ -174,7 +82,7 @@ abstract class ModeleNumRefFicheinter
 function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 {
 	// phpcs:enable
-	global $conf, $langs, $user;
+	global $conf, $langs;
 	$langs->load("ficheinter");
 
 	$error = 0;
@@ -183,7 +91,7 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0,
 
 	// Positionne modele sur le nom du modele de fichinter a utiliser
 	if (!dol_strlen($modele)) {
-		if (!empty($conf->global->FICHEINTER_ADDON_PDF)) {
+		if (getDolGlobalString('FICHEINTER_ADDON_PDF')) {
 			$modele = $conf->global->FICHEINTER_ADDON_PDF;
 		} else {
 			$modele = 'soleil';

@@ -34,7 +34,7 @@ if (empty($user->admin)) {
 $langs->loadLangs(array("install", "other", "admin"));
 
 $optioncss = GETPOST('optioncss', 'alpha');
-$contextpage		= GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'moduleoverview';
+$contextpage		= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'moduleoverview';
 
 $search_name		= GETPOST("search_name", 'alpha');
 $search_id = GETPOST("search_id", 'alpha');
@@ -365,7 +365,7 @@ foreach ($moduleList as $module) {
 			$labelpermission .= ' : '.$arrayofpermissions[$permission]['label'];
 			$idperms .= ($idperms ? ", " : "").'<span title="'.$labelpermission.'">'.$permission.'</a>';
 
-			if (!empty($conf->global->MAIN_SHOW_PERMISSION)) {
+			if (getDolGlobalString('MAIN_SHOW_PERMISSION')) {
 				if (empty($langs->tab_translate[$translationKey])) {
 					$tooltip = 'Missing translation (key '.$translationkey.' not found in admin.lang)';
 					$idperms .= ' <img src="../../theme/eldy/img/warning.png" alt="Warning" title="'.$tooltip.'">';

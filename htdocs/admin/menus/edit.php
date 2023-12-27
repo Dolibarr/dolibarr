@@ -164,7 +164,8 @@ if ($action == 'add') {
 
 if ($action == 'update') {
 	if (!$cancel) {
-		$leftmenu = ''; $mainmenu = '';
+		$leftmenu = '';
+		$mainmenu = '';
 		if (GETPOST('menuIdParent', 'alphanohtml') && !is_numeric(GETPOST('menuIdParent', 'alphanohtml'))) {
 			$tmp = explode('&', GETPOST('menuIdParent', 'alphanohtml'));
 			foreach ($tmp as $s) {

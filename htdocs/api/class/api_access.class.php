@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/iUs
 require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/Resources.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/Defaults.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/RestException.php';
+
 use Luracast\Restler\iAuthenticate;
 use Luracast\Restler\iUseAuthentication;
 use Luracast\Restler\Resources;
@@ -43,6 +44,11 @@ use Luracast\Restler\RestException;
 class DolibarrApiAccess implements iAuthenticate
 {
 	const REALM = 'Restricted Dolibarr API';
+
+	/**
+	 * @var DoliDB	Database handler
+	 */
+	public $db;
 
 	/**
 	 * @var array $requires	role required by API method		user / external / admin

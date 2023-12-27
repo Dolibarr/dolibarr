@@ -1,0 +1,19 @@
+# Dolibarr language file - Source file is en_US - stripe
+StripeSetup=Configuración del módulo de Stripe
+StripeDesc=Ofrezca a sus clientes una página de pago en línea para pagos con tarjetas de crédito/débito a través de <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external"> Stripe </a> . Esto se puede utilizar para permitir que sus clientes realicen pagos ad-hoc o pagos relacionados con un objeto particular de Dolibarr (factura, pedido, ...)
+STRIPE_PAYONLINE_SENDEMAIL=Notificación por correo luego del intento de pago (exitoso o fallido)
+YouWillBeRedirectedOnStripe=Se le redirigirá a la página de Stripe protegida para ingresar su información de tarjeta de crédito
+ToOfferALinkForOnlinePayment=URL para el pago %s
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL para ofrecer una %s página de pago en línea de cualquier cantidad sin objeto existente
+YouCanAddTagOnUrl=También puede agregar el parámetro de URL <b>&tag=<i>valor</i></b> a cualquiera de esos URL (obligatorio solo para pagos no vinculados a un objeto) para agregar su propia etiqueta de comentario de pago. <br> Para la URL de pagos sin objeto existente, también puede agregar el parámetro <strong>&noidempotency=1</strong> para que el mismo enlace con la misma etiqueta se pueda usar varias veces (algún modo de pago puede limitar el pago a 1 para cada enlace diferente sin esto parámetro)
+SetupStripeToHavePaymentCreatedAutomatically=Configure su Stripe con url <b>%s</b> para que el pago se cree automáticamente cuando se valida con Stripe.
+STRIPE_CGI_URL_V2=Módulo URL de Stripe CGI para el pago
+NewStripePaymentFailed=Nuevo pago de Stripe probado pero fallido
+STRIPE_TEST_SECRET_KEY=Clave de prueba secreta
+STRIPE_TEST_PUBLISHABLE_KEY=Clave de prueba publicable
+STRIPE_LIVE_SECRET_KEY=Clave secreta en vivo
+STRIPE_LIVE_PUBLISHABLE_KEY=Clave en vivo que se puede publicar
+StripeLiveEnabled=Stripe activado en vivo (de lo contrario modo prueba/sandbox)
+StripeCustomerId=ID de cliente de Stripe
+ConfirmDeleteCard=¿Seguro que quieres eliminar esta tarjeta de crédito o débito?
+ClickHereToTryAgain=<a href="%s">Haga clic aquí para volver a intentarlo...</a>

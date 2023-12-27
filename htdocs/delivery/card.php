@@ -135,13 +135,13 @@ if ($action == 'add') {
 		$action = 'create';
 	}
 } elseif ($action == 'confirm_valid' && $confirm == 'yes' &&
-	((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery->creer))
-	|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery_advance->validate)))
+	((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'delivery', 'creer'))
+	|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'delivery_advance', 'validate')))
 ) {
 	$result = $object->valid($user);
 
 	// Define output language
-	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+	if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 		$outputlangs = $langs;
 		$newlang = '';
 		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -164,9 +164,9 @@ if ($action == 'add') {
 	}
 }
 
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expedition->delivery->supprimer) {
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('expedition', 'delivery', 'supprimer')) {
 	$db->begin();
-	$result = $object->delete();
+	$result = $object->delete($user);
 
 	if ($result > 0) {
 		$db->commit();
@@ -181,7 +181,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expeditio
 	}
 }
 
-if ($action == 'setdate_delivery' && $user->rights->expedition->delivery->creer) {
+if ($action == 'setdate_delivery' && $user->hasRight('expedition', 'delivery', 'creer')) {
 	$datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
 	$result = $object->setDeliveryDate($user, $datedelivery);
 	if ($result < 0) {
@@ -194,7 +194,7 @@ if ($action == 'setdate_delivery' && $user->rights->expedition->delivery->creer)
 
 // Update extrafields
 if ($action == 'update_extras') {
-	$object->oldcopy = dol_clone($object);
+	$object->oldcopy = dol_clone($object, 2);
 
 	// Fill array 'array_options' with data from update form
 	$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
@@ -325,8 +325,8 @@ if ($action == 'create') {
 
 			$morehtmlref = '<div class="refidno">';
 			// Ref customer shipment
-			$morehtmlref .= $form->editfieldkey("RefCustomer", '', $expedition->ref_customer, $expedition, $user->rights->expedition->creer, 'string', '', 0, 1);
-			$morehtmlref .= $form->editfieldval("RefCustomer", '', $expedition->ref_customer, $expedition, $user->rights->expedition->creer, 'string'.(isset($conf->global->THIRDPARTY_REF_INPUT_SIZE) ? ':'.$conf->global->THIRDPARTY_REF_INPUT_SIZE : ''), '', null, null, '', 1);
+			$morehtmlref .= $form->editfieldkey("RefCustomer", '', $expedition->ref_customer, $expedition, $user->hasRight('expedition', 'creer'), 'string', '', 0, 1);
+			$morehtmlref .= $form->editfieldval("RefCustomer", '', $expedition->ref_customer, $expedition, $user->hasRight('expedition', 'creer'), 'string'.(isset($conf->global->THIRDPARTY_REF_INPUT_SIZE) ? ':' . getDolGlobalString('THIRDPARTY_REF_INPUT_SIZE') : ''), '', null, null, '', 1);
 			$morehtmlref .= '<br>'.$langs->trans("RefDeliveryReceipt").' : '.$object->ref;
 			// Thirdparty
 			$morehtmlref .= '<br>'.$expedition->thirdparty->getNomUrl(1);
@@ -445,7 +445,7 @@ if ($action == 'create') {
 				print '<table class="centpercent nobordernopadding"><tr><td>';
 				print $langs->trans('IncotermLabel');
 				print '<td><td class="right">';
-				if ($user->rights->expedition->delivery->creer) {
+				if ($user->hasRight('expedition', 'delivery', 'creer')) {
 					print '<a class="editfielda" href="'.DOL_URL_ROOT.'/delivery/card.php?id='.$object->id.'&action=editincoterm&token='.newToken().'">'.img_edit().'</a>';
 				} else {
 					print '&nbsp;';
@@ -510,7 +510,8 @@ if ($action == 'create') {
 			 */
 
 			$num_prod = count($object->lines);
-			$i = 0; $total = 0;
+			$i = 0;
+			$total = 0;
 
 			print '<table class="noborder centpercent">';
 
@@ -537,7 +538,7 @@ if ($action == 'create') {
 						$product->fetch($object->lines[$i]->fk_product);
 
 						// Define output language
-						if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+						if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
 							$outputlangs = $langs;
 							$newlang = '';
 							if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -600,10 +601,10 @@ if ($action == 'create') {
 
 					// Display lines extrafields
 					//if (!empty($extrafields)) {
-						$colspan = 2;
-						$mode = ($object->statut == 0) ? 'edit' : 'view';
+					$colspan = 2;
+					$mode = ($object->statut == 0) ? 'edit' : 'view';
 
-						$object->lines[$i]->fetch_optionals();
+					$object->lines[$i]->fetch_optionals();
 
 					if ($action == 'create_delivery') {
 						$srcLine = new ExpeditionLigne($db);
@@ -614,10 +615,10 @@ if ($action == 'create') {
 
 						$object->lines[$i]->array_options = array_merge($object->lines[$i]->array_options, $srcLine->array_options);
 					} else {
-							$srcLine = new DeliveryLine($db);
-							$extrafields->fetch_name_optionals_label($srcLine->table_element);
+						$srcLine = new DeliveryLine($db);
+						$extrafields->fetch_name_optionals_label($srcLine->table_element);
 					}
-						print $object->lines[$i]->showOptionals($extrafields, $mode, array('style' => 'class="oddeven"', 'colspan' => $colspan), '');
+					print $object->lines[$i]->showOptionals($extrafields, $mode, array('style' => 'class="oddeven"', 'colspan' => $colspan), '');
 					//}
 				}
 
@@ -642,13 +643,13 @@ if ($action == 'create') {
 				print '<div class="tabsAction">';
 
 				if ($object->statut == 0 && $num_prod > 0) {
-					if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery->creer))
-						|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery_advance->validate))) {
+					if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'delivery', 'creer'))
+						|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'delivery_advance', 'validate'))) {
 						print dolGetButtonAction('', $langs->trans('Validate'), 'default', $_SERVER["PHP_SELF"].'?action=valid&amp;token='.newToken().'&amp;id='.$object->id, '');
 					}
 				}
 
-				if ($user->rights->expedition->delivery->supprimer) {
+				if ($user->hasRight('expedition', 'delivery', 'supprimer')) {
 					if (getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION')) {
 						print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;expid='.$object->origin_id.'&amp;action=delete&amp;token='.newToken().'&amp;backtopage='.urlencode(DOL_URL_ROOT.'/expedition/card.php?id='.$object->origin_id), '');
 					} else {

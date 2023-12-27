@@ -48,8 +48,11 @@ if ($user->socid > 0) {
 $result = restrictedArea($user, 'adherent', '', '', 'cotisation');
 
 $year = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-$startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
+$startyear = $year - (!getDolGlobalInt('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalInt('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
 $endyear = $year;
+if (getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER')) {
+	$endyear = dol_print_date(dol_time_plus_duree(dol_now('gmt'), (int) substr(getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER'), 0, -1), substr(getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER'), -1)), "%Y", 'gmt');
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "members"));

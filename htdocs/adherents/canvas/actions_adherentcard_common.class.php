@@ -275,7 +275,7 @@ abstract class ActionsAdherentCardCommon
 				$obj = $this->db->fetch_object($resql);
 
 				$this->object->country_code = $obj->code;
-				$this->object->country = $langs->trans("Country".$obj->code) ? $langs->trans("Country".$obj->code) : $obj->libelle;
+				$this->object->country = $langs->trans("Country".$obj->code) ? $langs->trans("Country".$obj->code) : $obj->label;
 			} else {
 				dol_print_error($this->db);
 			}

@@ -55,7 +55,7 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 			return 0;
 		}
 
-		return empty($conf->global->SYSLOG_DISABLE_LOGHANDLER_SYSLOG) ? 1 : 0; // Set SYSLOG_DISABLE_LOGHANDLER_SYSLOG to 1 to disable this loghandler
+		return !getDolGlobalString('SYSLOG_DISABLE_LOGHANDLER_SYSLOG') ? 1 : 0; // Set SYSLOG_DISABLE_LOGHANDLER_SYSLOG to 1 to disable this loghandler
 	}
 
 	/**
@@ -112,11 +112,11 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 	{
 		global $conf;
 
-		if (!empty($conf->global->MAIN_SYSLOG_DISABLE_SYSLOG)) {
+		if (getDolGlobalString('MAIN_SYSLOG_DISABLE_SYSLOG')) {
 			return; // Global option to disable output of this handler
 		}
 
-		if (!empty($conf->global->SYSLOG_FACILITY)) {  // Example LOG_USER
+		if (getDolGlobalString('SYSLOG_FACILITY')) {  // Example LOG_USER
 			$facility = constant($conf->global->SYSLOG_FACILITY);
 		} else {
 			$facility = constant('LOG_USER');

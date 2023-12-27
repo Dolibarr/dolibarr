@@ -17,9 +17,9 @@
  */
 
 /**
- *  \file       availabilities_document.php
- *  \ingroup    bookcal
- *  \brief      Tab for documents linked to Availabilities
+ *   \file       htdocs/bookcal/availabilities_document.php
+ *   \ingroup    bookcal
+ *   \brief      Tab for documents linked to Availabilities
  */
 
 // Load Dolibarr environment
@@ -90,8 +90,12 @@ if ($enablepermissioncheck) {
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (!isModEnabled('bookcal')) accessforbidden();
-if (!$permissiontoread) accessforbidden();
+if (!isModEnabled('bookcal')) {
+	accessforbidden();
+}
+if (!$permissiontoread) {
+	accessforbidden();
+}
 
 
 /*
@@ -122,7 +126,7 @@ if ($object->id) {
 
 
 	// Build file list
-	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 	$totalsize = 0;
 	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];

@@ -45,7 +45,9 @@ if (empty($object) || !is_object($object)) {
 }
 
 global $filtertype;
-if (empty($filtertype))	$filtertype = 0;
+if (empty($filtertype)) {
+	$filtertype = 0;
+}
 
 
 global $forceall, $senderissupplier, $inputalsopricewithtax, $outputalsopricetotalwithtax, $langs;
@@ -67,8 +69,11 @@ if (empty($outputalsopricetotalwithtax)) {
 }
 
 // add html5 elements
-if ($filtertype == 1) $domData  = ' data-element="'.$line->element.'service"';
-else $domData  = ' data-element="'.$line->element.'"';
+if ($filtertype == 1) {
+	$domData  = ' data-element="'.$line->element.'service"';
+} else {
+	$domData  = ' data-element="'.$line->element.'"';
+}
 
 $domData .= ' data-id="'.$line->id.'"';
 $domData .= ' data-qty="'.$line->qty.'"';
@@ -82,7 +87,7 @@ print "<!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->\n";
 print '<tr id="row-'.$line->id.'" class="drag drop oddeven" '.$domData.' >';
 
 // Line nb
-if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 	print '<td class="linecolnum center">'.($i + 1).'</td>';
 	$coldisplay++;
 }
@@ -100,7 +105,7 @@ if ($tmpbom->id > 0) {
 	print ' '.$langs->trans("or").' ';
 	print $tmpbom->getNomUrl(1);
 	print ' <a class="collapse_bom" id="collapse-'.$line->id.'" href="#">';
-	print (empty($conf->global->BOM_SHOW_ALL_BOM_BY_DEFAULT) ? img_picto('', 'folder') : img_picto('', 'folder-open'));
+	print(!getDolGlobalString('BOM_SHOW_ALL_BOM_BY_DEFAULT') ? img_picto('', 'folder') : img_picto('', 'folder-open'));
 	print '</a>';
 } else {
 	print $tmpproduct->getNomUrl(1);
@@ -128,7 +133,7 @@ print '</td>';
 if ($filtertype != 1) {
 	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		print '<td class="linecoluseunit nowrap left">';
-		$label = $tmpproduct->getLabelOfUnit('long');
+		$label = measuringUnitString($line->fk_unit, '', '', 1);
 		if ($label !== '') {
 			print $langs->trans($label);
 		}
@@ -157,7 +162,7 @@ if ($filtertype != 1) {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 		$unit = new CUnits($this->db);
 		$unit->fetch($line->fk_unit);
-		print (isset($unit->label) ? "&nbsp;".$langs->trans(ucwords($unit->label))."&nbsp;" : '');
+		print(isset($unit->label) ? "&nbsp;".$langs->trans(ucwords($unit->label))."&nbsp;" : '');
 	}
 
 	print '</td>';
@@ -169,7 +174,9 @@ if ($filtertype != 1) {
 
 		print '<td class="linecolworkstation nowrap right">';
 		$coldisplay++;
-		if ($res > 0) echo $workstation->getNomUrl();
+		if ($res > 0) {
+			echo $workstation->getNomUrl(1);
+		}
 		print '</td>';
 	}
 }
@@ -257,7 +264,7 @@ if ($resql) {
 		$sub_bom_line->fetch($obj->rowid);
 
 		//If hidden conf is set, we show directly all the sub-BOM lines
-		if (empty($conf->global->BOM_SHOW_ALL_BOM_BY_DEFAULT)) {
+		if (!getDolGlobalString('BOM_SHOW_ALL_BOM_BY_DEFAULT')) {
 			print '<tr style="display:none" class="sub_bom_lines" parentid="'.$line->id.'">';
 		} else {
 			print '<tr class="sub_bom_lines" parentid="'.$line->id.'">';
@@ -278,17 +285,21 @@ if ($resql) {
 		$label = $sub_bom_product->getLabelOfUnit('long');
 		if ($sub_bom_line->qty_frozen > 0) {
 			print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty, 0, '', 0, 0).'</td>';
-			if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+			if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 				print '<td class="linecoluseunit nowrap left">';
-				if ($label !== '') print $langs->trans($label);
+				if ($label !== '') {
+					print $langs->trans($label);
+				}
 				print '</td>';
 			}
 			print '<td class="linecolqtyfrozen nowrap right" id="sub_bom_qty_frozen_'.$sub_bom_line->id.'">'.$langs->trans('Yes').'</td>';
 		} else {
 			print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty * $line->qty, 0, '', 0, 0).'</td>';
-			if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+			if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 				print '<td class="linecoluseunit nowrap left">';
-				if ($label !== '') print $langs->trans($label);
+				if ($label !== '') {
+					print $langs->trans($label);
+				}
 				print '</td>';
 			}
 
@@ -316,7 +327,9 @@ if ($resql) {
 			$qty = convertDurationtoHour($sub_bom_line->qty, $unit);
 			$workstation = new Workstation($this->db);
 			$res = $workstation->fetch($sub_bom_product->fk_default_workstation);
-			if ($res > 0) $sub_bom_line->total_cost = price2num($qty * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated), 'MT');
+			if ($res > 0) {
+				$sub_bom_line->total_cost = price2num($qty * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated), 'MT');
+			}
 
 			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price(price2num($sub_bom_line->total_cost, 'MT')).'</span></td>';
 			$this->total_cost += $line->total_cost;

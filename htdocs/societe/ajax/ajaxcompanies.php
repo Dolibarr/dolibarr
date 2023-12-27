@@ -88,18 +88,18 @@ if (! $socid) {
 }
 
 $sql = "SELECT s.rowid, s.nom, s.name_alias, s.code_client, s.code_fournisseur, s.address, s.zip, s.town, s.email, s.siren, s.siret, s.ape, s.idprof4, s.idprof5, s.idprof6, s.client, s.fournisseur, s.datec, s.logo";
-if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
+if (getDolGlobalString('COMPANY_SHOW_ADDRESS_SELECTLIST')) {
 	$sql .= ", dictp.code as country_code";
 }
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
+if (getDolGlobalString('COMPANY_SHOW_ADDRESS_SELECTLIST')) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as dictp ON dictp.rowid = s.fk_pays";
 }
 $sql .= " WHERE s.entity IN (".getEntity('societe').")";
 if ($socid) {
 	$sql .= " AND (";
 	// Add criteria on name/code
-	if (!empty($conf->global->COMPANY_DONOTSEARCH_ANYWHERE)) {   // Can use index
+	if (getDolGlobalString('COMPANY_DONOTSEARCH_ANYWHERE')) {   // Can use index
 		$sql .= "s.nom LIKE '".$db->escape($db->escapeforlike($socid))."%'";
 		$sql .= " OR s.name_alias LIKE '".$db->escape($db->escapeforlike($socid))."%'";
 		$sql .= " OR s.code_client LIKE '".$db->escape($db->escapeforlike($socid))."%'";
@@ -110,7 +110,7 @@ if ($socid) {
 		$sql .= " OR s.code_client LIKE '%".$db->escape($db->escapeforlike($socid))."%'";
 		$sql .= " OR s.code_fournisseur LIKE '%".$db->escape($db->escapeforlike($socid))."%'";
 	}
-	if (!empty($conf->global->SOCIETE_ALLOW_SEARCH_ON_ROWID)) {
+	if (getDolGlobalString('SOCIETE_ALLOW_SEARCH_ON_ROWID')) {
 		$sql .= " OR s.rowid = ".((int) $socid);
 	}
 	$sql .= ")";
@@ -127,7 +127,7 @@ $resql = $db->query($sql);
 if ($resql) {
 	while ($row = $db->fetch_array($resql)) {
 		$label = '';
-		if (!empty($conf->global->SOCIETE_ADD_REF_IN_LIST)) {
+		if (getDolGlobalString('SOCIETE_ADD_REF_IN_LIST')) {
 			if (($row['client']) && (!empty($row['code_client']))) {
 				$label = $row['code_client'].' - ';
 			}
@@ -138,7 +138,7 @@ if ($resql) {
 
 		$label .= $row['nom'];
 
-		if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
+		if (getDolGlobalString('COMPANY_SHOW_ADDRESS_SELECTLIST')) {
 			$label .= ($row['address'] ? ' - '.$row['address'] : '').($row['zip'] ? ' - '.$row['zip'] : '').($row['town'] ? ' '.$row['town'] : '');
 			if (!empty($row['country_code'])) {
 				$label .= ', '.$langs->trans('Country'.$row['country_code']);

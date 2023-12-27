@@ -28,10 +28,26 @@ include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
  */
 class ActionsCardProduct
 {
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
+
+	public $dirmodule;
 	public $targetmodule;
 	public $canvas;
 	public $card;
 
+	public $name;
+	public $definition;
+	public $description;
+	public $price_base_type;
+	public $accountancy_code_sell;
+	public $accountancy_code_buy;
+	public $fieldListName;
+	public $next_prev_filter;
+
+	//! Object container
 	public $object;
 
 	//! Template container
@@ -39,6 +55,16 @@ class ActionsCardProduct
 
 	// List of fiels for action=list
 	public $field_list = array();
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
 
 
 	/**
@@ -59,7 +85,7 @@ class ActionsCardProduct
 		$this->card             = $card;
 
 		$this->name = "product";
-		$this->definition = "Product canvas (défaut)";
+		$this->definition = "Product canvas (default)";
 		$this->fieldListName    = "product_default";
 		$this->next_prev_filter = "canvas='product'";
 	}

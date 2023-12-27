@@ -485,24 +485,24 @@ class SMTPs
 		$host = preg_replace('@ssl://@i', '', $host); // Remove prefix
 		$host = preg_replace('@tls://@i', '', $host); // Remove prefix
 
-		if ($usetls && !empty($conf->global->MAIN_SMTPS_ADD_TLS_TO_HOST_FOR_HELO)) {
+		if ($usetls && getDolGlobalString('MAIN_SMTPS_ADD_TLS_TO_HOST_FOR_HELO')) {
 			$host = 'tls://'.$host;
 		}
 
 		$hosth = $host;	// so for example 'localhost' or 'smtp-relay.gmail.com'
 
-		if (!empty($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO)) {
+		if (getDolGlobalString('MAIL_SMTP_USE_FROM_FOR_HELO')) {
 			if (!is_numeric($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO)) {
 				// If value of MAIL_SMTP_USE_FROM_FOR_HELO is a string, we use it as domain name
 				$hosth = $conf->global->MAIL_SMTP_USE_FROM_FOR_HELO;
-			} elseif ($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO == 1) {
+			} elseif (getDolGlobalInt('MAIL_SMTP_USE_FROM_FOR_HELO') == 1) {
 				// If value of MAIL_SMTP_USE_FROM_FOR_HELO is 1, we use the domain in the from.
 				// So if the from to is 'aaa <bbb@ccc.com>', we will keep 'ccc.com'
 				$hosth = $this->getFrom('addr');
 				$hosth = preg_replace('/^.*</', '', $hosth);
 				$hosth = preg_replace('/>.*$/', '', $hosth);
 				$hosth = preg_replace('/.*@/', '', $hosth);
-			} elseif ($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO == 2) {
+			} elseif (getDolGlobalInt('MAIL_SMTP_USE_FROM_FOR_HELO') == 2) {
 				// If value of MAIL_SMTP_USE_FROM_FOR_HELO is 2, we use the domain in the $dolibarr_main_url_root.
 				global $dolibarr_main_url_root;
 				$hosth = getDomainFromURL($dolibarr_main_url_root, 1);
@@ -594,7 +594,7 @@ class SMTPs
 			}
 
 			// Default authentication method is LOGIN
-			if (empty($conf->global->MAIN_MAIL_SMTPS_AUTH_TYPE)) {
+			if (!getDolGlobalString('MAIN_MAIL_SMTPS_AUTH_TYPE')) {
 				$conf->global->MAIN_MAIL_SMTPS_AUTH_TYPE = 'LOGIN';
 			}
 
@@ -675,24 +675,24 @@ class SMTPs
 				$host = preg_replace('@ssl://@i', '', $host); // Remove prefix
 				$host = preg_replace('@tls://@i', '', $host); // Remove prefix
 
-				if ($usetls && !empty($conf->global->MAIN_SMTPS_ADD_TLS_TO_HOST_FOR_HELO)) {
+				if ($usetls && getDolGlobalString('MAIN_SMTPS_ADD_TLS_TO_HOST_FOR_HELO')) {
 					$host = 'tls://'.$host;
 				}
 
 				$hosth = $host;
 
-				if (!empty($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO)) {
+				if (getDolGlobalString('MAIL_SMTP_USE_FROM_FOR_HELO')) {
 					if (!is_numeric($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO)) {
 						// If value of MAIL_SMTP_USE_FROM_FOR_HELO is a string, we use it as domain name
 						$hosth = $conf->global->MAIL_SMTP_USE_FROM_FOR_HELO;
-					} elseif ($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO == 1) {
+					} elseif (getDolGlobalInt('MAIL_SMTP_USE_FROM_FOR_HELO') == 1) {
 						// If value of MAIL_SMTP_USE_FROM_FOR_HELO is 1, we use the domain in the from.
 						// So if the from to is 'aaa <bbb@ccc.com>', we will keep 'ccc.com'
 						$hosth = $this->getFrom('addr');
 						$hosth = preg_replace('/^.*</', '', $hosth);
 						$hosth = preg_replace('/>.*$/', '', $hosth);
 						$hosth = preg_replace('/.*@/', '', $hosth);
-					} elseif ($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO == 2) {
+					} elseif (getDolGlobalInt('MAIL_SMTP_USE_FROM_FOR_HELO') == 2) {
 						// If value of MAIL_SMTP_USE_FROM_FOR_HELO is 2, we use the domain in the $dolibarr_main_url_root.
 						global $dolibarr_main_url_root;
 						$hosth = getDomainFromURL($dolibarr_main_url_root, 1);
@@ -1562,7 +1562,7 @@ class SMTPs
 		// If we have ZERO, we have a problem
 		if ($keyCount === 0) {
 			die("Sorry, no content");
-		} elseif ($keyCount === 1 && empty($conf->global->MAIN_MAIL_USE_MULTI_PART)) {
+		} elseif ($keyCount === 1 && !getDolGlobalString('MAIN_MAIL_USE_MULTI_PART')) {
 			// If we have ONE, we can use the simple format
 			$_msgData = $this->_msgContent;
 			$_msgData = $_msgData[$_types[0]];
@@ -1578,7 +1578,7 @@ class SMTPs
 
 			$content .= "\r\n"
 			.  $_msgData['data']."\r\n";
-		} elseif ($keyCount >= 1 || !empty($conf->global->MAIN_MAIL_USE_MULTI_PART)) {
+		} elseif ($keyCount >= 1 || getDolGlobalString('MAIN_MAIL_USE_MULTI_PART')) {
 			// If we have more than ONE, we use the multi-part format
 			// Since this is an actual multi-part message
 			// We need to define a content message Boundary
@@ -1657,15 +1657,15 @@ class SMTPs
 						$content .= "--".$this->_getBoundary('related')."\r\n";
 					}
 
-					if (!key_exists('image', $this->_msgContent) && $_content['dataText'] && !empty($conf->global->MAIN_MAIL_USE_MULTI_PART)) {
+					if (!key_exists('image', $this->_msgContent) && $_content['dataText'] && getDolGlobalString('MAIN_MAIL_USE_MULTI_PART')) {
 						// Add plain text message part before html part
 						$content .= 'Content-Type: multipart/alternative; boundary="'.$this->_getBoundary('alternative').'"'."\r\n";
 						$content .= "\r\n";
-						   $content .= "--".$this->_getBoundary('alternative')."\r\n";
+						$content .= "--".$this->_getBoundary('alternative')."\r\n";
 
-						   $content .= "Content-Type: text/plain; charset=".$this->getCharSet()."\r\n";
-						   $content .= "\r\n".$_content['dataText']."\r\n";
-						   $content .= "--".$this->_getBoundary('alternative')."\r\n";
+						$content .= "Content-Type: text/plain; charset=".$this->getCharSet()."\r\n";
+						$content .= "\r\n".$_content['dataText']."\r\n";
+						$content .= "--".$this->_getBoundary('alternative')."\r\n";
 					}
 
 					$content .= 'Content-Type: '.$_content['mimeType'].'; charset='.$this->getCharSet();
@@ -1678,7 +1678,7 @@ class SMTPs
 
 					$content .= "\r\n".$_content['data']."\r\n";
 
-					if (!key_exists('image', $this->_msgContent) && $_content['dataText'] && !empty($conf->global->MAIN_MAIL_USE_MULTI_PART)) {
+					if (!key_exists('image', $this->_msgContent) && $_content['dataText'] && getDolGlobalString('MAIN_MAIL_USE_MULTI_PART')) {
 						// Add plain text message part after html part
 						$content .= "--".$this->_getBoundary('alternative')."--\r\n";
 					}

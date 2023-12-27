@@ -57,6 +57,13 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 
 	public $position = 30;
 
+	/**
+	 * @var string
+	 */
+	public $code;
+	public $customeraccountancycodecharacternumber;
+	public $supplieraccountancycodecharacternumber;
+
 
 	/**
 	 * 	Constructor
@@ -104,10 +111,10 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 		$texte .= '<input type="hidden" name="param4" value="COMPANY_DIGITARIA_MASK_NBCHARACTER_CUSTOMER">';
 		$texte .= '<input type="hidden" name="param5" value="COMPANY_DIGITARIA_CLEAN_WORDS">';
 		$texte .= '<table class="nobordernopadding centpercent">';
-		$s1 = $form->textwithpicto('<input type="text" class="flat" size="4" name="value1" value="'.$conf->global->COMPANY_DIGITARIA_MASK_SUPPLIER.'">', $tooltip, 1, 1);
-		$s2 = $form->textwithpicto('<input type="text" class="flat" size="4" name="value2" value="'.$conf->global->COMPANY_DIGITARIA_MASK_CUSTOMER.'">', $tooltip, 1, 1);
-		$s3 = $form->textwithpicto('<input type="text" class="flat" size="2" name="value3" value="'.$conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_SUPPLIER.'">', $tooltip, 1, 1);
-		$s4 = $form->textwithpicto('<input type="text" class="flat" size="2" name="value4" value="'.$conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_CUSTOMER.'">', $tooltip, 1, 1);
+		$s1 = $form->textwithpicto('<input type="text" class="flat" size="4" name="value1" value="' . getDolGlobalString('COMPANY_DIGITARIA_MASK_SUPPLIER').'">', $tooltip, 1, 1);
+		$s2 = $form->textwithpicto('<input type="text" class="flat" size="4" name="value2" value="' . getDolGlobalString('COMPANY_DIGITARIA_MASK_CUSTOMER').'">', $tooltip, 1, 1);
+		$s3 = $form->textwithpicto('<input type="text" class="flat" size="2" name="value3" value="' . getDolGlobalString('COMPANY_DIGITARIA_MASK_NBCHARACTER_SUPPLIER').'">', $tooltip, 1, 1);
+		$s4 = $form->textwithpicto('<input type="text" class="flat" size="2" name="value4" value="' . getDolGlobalString('COMPANY_DIGITARIA_MASK_NBCHARACTER_CUSTOMER').'">', $tooltip, 1, 1);
 		$texte .= '<tr><td>';
 		// trans remove html entities
 		$texte .= $langs->trans("ModuleCompanyCodeCustomer".$this->name, '{s2}', '{s4}')."<br>\n";
@@ -119,15 +126,15 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 			$texte .= $langs->trans('RemoveSpecialChars').' = '.yn(1)."<br>\n";
 		}
 		// Apply a regex replacement pattern on code if COMPANY_DIGITARIA_CLEAN_REGEX is set. Value must be a regex with parenthesis. The part into parenthesis is kept, the rest removed.
-		if (!empty($conf->global->COMPANY_DIGITARIA_CLEAN_REGEX)) {
-			$texte .= $langs->trans('COMPANY_DIGITARIA_CLEAN_REGEX').' = '.$conf->global->COMPANY_DIGITARIA_CLEAN_REGEX."<br>\n";
+		if (getDolGlobalString('COMPANY_DIGITARIA_CLEAN_REGEX')) {
+			$texte .= $langs->trans('COMPANY_DIGITARIA_CLEAN_REGEX').' = ' . getDolGlobalString('COMPANY_DIGITARIA_CLEAN_REGEX')."<br>\n";
 		}
 		// Unique index on code if COMPANY_DIGITARIA_UNIQUE_CODE is set to 1 or not set (default)
-		if (!isset($conf->global->COMPANY_DIGITARIA_UNIQUE_CODE) || !empty($conf->global->COMPANY_DIGITARIA_UNIQUE_CODE)) {
+		if (!isset($conf->global->COMPANY_DIGITARIA_UNIQUE_CODE) || getDolGlobalString('COMPANY_DIGITARIA_UNIQUE_CODE')) {
 			$texte .= $langs->trans('COMPANY_DIGITARIA_UNIQUE_CODE').' = '.yn(1)."<br>\n";
 		}
 		$texte .= '</td>';
-		$texte .= '<td class="right"><input type="submit" class="button button-edit reposition" name="modify" value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="right"><input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.$langs->trans("Modify").'"></td>';
 		$texte .= '</tr>';
 
 		$texte .= '<tr><td>';
@@ -139,7 +146,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1);
 		$texte .= "<br>\n";
 		$texte .= '<textarea class="flat" cols="60" name="value5">';
-		if (!empty($conf->global->COMPANY_DIGITARIA_CLEAN_WORDS)) {
+		if (getDolGlobalString('COMPANY_DIGITARIA_CLEAN_WORDS')) {
 			$texte .= $conf->global->COMPANY_DIGITARIA_CLEAN_WORDS;
 		}
 		$texte .= '</textarea>';
@@ -210,27 +217,27 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 			}
 
 			// Clean declared words
-			if (!empty($conf->global->COMPANY_DIGITARIA_CLEAN_WORDS)) {
-				$cleanWords = explode(";", $conf->global->COMPANY_DIGITARIA_CLEAN_WORDS);
+			if (getDolGlobalString('COMPANY_DIGITARIA_CLEAN_WORDS')) {
+				$cleanWords = explode(";", getDolGlobalString('COMPANY_DIGITARIA_CLEAN_WORDS'));
 				$codetouse = str_replace($cleanWords, "", $codetouse);
 			}
 			// Remove special char if COMPANY_DIGITARIA_REMOVE_SPECIAL is set to 1 or not set (default)
-			if (!isset($conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL) || !empty($conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL)) {
+			if (!isset($conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL) || getDolGlobalString('COMPANY_DIGITARIA_REMOVE_SPECIAL')) {
 				$codetouse = preg_replace('/([^a-z0-9])/i', '', $codetouse);
 			}
 			// Apply a regex replacement pattern on code if COMPANY_DIGITARIA_CLEAN_REGEX is set. Value must be a regex with parenthesis. The part into parenthesis is kept, the rest removed.
-			if (!empty($conf->global->COMPANY_DIGITARIA_CLEAN_REGEX)) {	// Example: $conf->global->COMPANY_DIGITARIA_CLEAN_REGEX='^..(..)..';
-				$codetouse = preg_replace('/'.$conf->global->COMPANY_DIGITARIA_CLEAN_REGEX.'/', '\1\2\3', $codetouse);
+			if (getDolGlobalString('COMPANY_DIGITARIA_CLEAN_REGEX')) {	// Example: $conf->global->COMPANY_DIGITARIA_CLEAN_REGEX='^..(..)..';
+				$codetouse = preg_replace('/' . getDolGlobalString('COMPANY_DIGITARIA_CLEAN_REGEX').'/', '\1\2\3', $codetouse);
 			}
 
 			$this->code = $prefix.strtoupper(substr($codetouse, 0, $width));
 			dol_syslog("mod_codecompta_digitaria::get_code search code proposed=".$this->code, LOG_DEBUG);
 
 			// Unique index on code if COMPANY_DIGITARIA_UNIQUE_CODE is set to 1 or not set (default)
-			if (!isset($conf->global->COMPANY_DIGITARIA_UNIQUE_CODE) || !empty($conf->global->COMPANY_DIGITARIA_UNIQUE_CODE)) {
+			if (!isset($conf->global->COMPANY_DIGITARIA_UNIQUE_CODE) || getDolGlobalString('COMPANY_DIGITARIA_UNIQUE_CODE')) {
 				$disponibility = $this->checkIfAccountancyCodeIsAlreadyUsed($db, $this->code, $type);
 
-				while ($disponibility <> 0 && $i < 1000) {
+				while ($disponibility != 0 && $i < 1000) {
 					$widthsupplier = $this->supplieraccountancycodecharacternumber;
 					$widthcustomer = $this->customeraccountancycodecharacternumber;
 
@@ -278,13 +285,13 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 		global $conf;
 
 		if ($type == 'supplier') {
-			if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+			if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 				$typethirdparty = 'accountancy_code_supplier';
 			} else {
 				$typethirdparty = 'code_compta_fournisseur';
 			}
 		} elseif ($type == 'customer') {
-			if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+			if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 				$typethirdparty = 'accountancy_code_customer';
 			} else {
 				$typethirdparty = 'code_compta';
@@ -294,7 +301,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 			return -1;
 		}
 
-		if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+		if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 			$sql = "SELECT " . $typethirdparty . " FROM " . MAIN_DB_PREFIX . "societe_perentity";
 			$sql .= " WHERE " . $typethirdparty . " = '" . $db->escape($code) . "'";
 		} else {

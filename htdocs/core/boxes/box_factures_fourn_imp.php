@@ -99,14 +99,14 @@ class box_factures_fourn_imp extends ModeleBoxes
 			$sql2 = " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql2 .= ",".MAIN_DB_PREFIX."facture_fourn as f";
 			$sql2 .= " LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf ON f.rowid = pf.fk_facturefourn";
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 				$sql2 .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql2 .= " WHERE f.fk_soc = s.rowid";
 			$sql2 .= " AND f.entity IN (".getEntity('supplier_invoice').")";
 			$sql2 .= " AND f.paye = 0";
 			$sql2 .= " AND fk_statut = 1";
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 				$sql2 .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {
@@ -211,8 +211,8 @@ class box_factures_fourn_imp extends ModeleBoxes
 
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center opacitymedium"',
-						'text'=>$langs->trans("NoUnpaidSupplierBills"),
+						'td' => 'class="center"',
+						'text'=> '<span class="opacitymedium">'.$langs->trans("NoUnpaidSupplierBills").'</span>',
 					);
 				}
 
@@ -255,8 +255,8 @@ class box_factures_fourn_imp extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

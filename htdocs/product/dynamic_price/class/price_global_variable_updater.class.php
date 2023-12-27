@@ -91,7 +91,7 @@ class PriceGlobalVariableUpdater
 	 *
 	 *  @param	User	$user        User that creates
 	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return int      		   	 <0 if KO, Id of created object if OK
+	 *  @return int      		   	 Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -117,7 +117,8 @@ class PriceGlobalVariableUpdater
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -153,7 +154,7 @@ class PriceGlobalVariableUpdater
 	 *  Load object in memory from the database
 	 *
 	 *  @param		int		$id    	Id object
-	 *  @return		int			    < 0 if KO, 0 if OK but not found, > 0 if OK
+	 *  @return		int			    Return integer < 0 if KO, 0 if OK but not found, > 0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -190,7 +191,7 @@ class PriceGlobalVariableUpdater
 	 *
 	 *  @param	User	$user        User that modifies
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 <0 if KO, >0 if OK
+	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = 0, $notrigger = 0)
 	{
@@ -214,7 +215,8 @@ class PriceGlobalVariableUpdater
 		dol_syslog(__METHOD__);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// if (! $error)
@@ -251,7 +253,7 @@ class PriceGlobalVariableUpdater
 	 * 	@param	int		$rowid		 Row id of global variable
 	 *	@param  User	$user        User that deletes
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 <0 if KO, >0 if OK
+	 *  @return	int					 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($rowid, $user, $notrigger = 0)
 	{
@@ -263,13 +265,13 @@ class PriceGlobalVariableUpdater
 		//{
 		//    if (! $notrigger)
 		//    {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
+		// Uncomment this and change MYOBJECT to your own tag if you
+		// want this action calls a trigger.
 
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_DELETE',$user);
-				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-				//// End call triggers
+		//// Call triggers
+		//$result=$this->call_trigger('MYOBJECT_DELETE',$user);
+		//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+		//// End call triggers
 		//    }
 		//}
 
@@ -280,7 +282,8 @@ class PriceGlobalVariableUpdater
 			dol_syslog(__METHOD__);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -442,7 +445,7 @@ class PriceGlobalVariableUpdater
 	/**
 	 *  Handles the processing of this updater
 	 *
-	 *  @return	int					 <0 if KO, 0 if OK but no global variable found, >0 if OK
+	 *  @return	int					 Return integer <0 if KO, 0 if OK but no global variable found, >0 if OK
 	 */
 	public function process()
 	{
@@ -557,7 +560,7 @@ class PriceGlobalVariableUpdater
 	 *  @param	string	$next_update Next update to write
 	 *  @param	User	$user        User that modifies
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 <0 if KO, >0 if OK
+	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update_next_update($next_update, $user = 0, $notrigger = 0)
 	{
@@ -577,7 +580,8 @@ class PriceGlobalVariableUpdater
 		dol_syslog(__METHOD__);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// Commit or rollback
@@ -601,7 +605,7 @@ class PriceGlobalVariableUpdater
 	 *  @param	string	$last_status Status to write
 	 *  @param	User	$user        User that modifies
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 <0 if KO, >0 if OK
+	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update_status($last_status, $user = 0, $notrigger = 0)
 	{
@@ -621,7 +625,8 @@ class PriceGlobalVariableUpdater
 		dol_syslog(__METHOD__);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// Commit or rollback

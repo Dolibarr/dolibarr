@@ -39,11 +39,6 @@ class mailing_partnership extends MailingTargets
 	 */
 	public $picto = 'partnership';
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
 	public $enabled = 'isModEnabled("partnership")';
 
 
@@ -66,7 +61,7 @@ class mailing_partnership extends MailingTargets
 	 *    This is the main function that returns the array of emails
 	 *
 	 *    @param	int		$mailing_id    	Id of mailing. No need to use it.
-	 *    @return   int 					<0 if error, number of emails added if ok
+	 *    @return   int 					Return integer <0 if error, number of emails added if ok
 	 */
 	public function add_to_target($mailing_id)
 	{
@@ -86,6 +81,9 @@ class mailing_partnership extends MailingTargets
 		if (GETPOST('filter', 'int') > 0) {
 			$sql .= " AND pt.rowid=".((int) GETPOST('filter', 'int'));
 		}
+		if (GETPOSTISSET('filter_status_partnership') && GETPOSTINT('filter_status_partnership') >= 0) {
+			$sql .= " AND p.status = ".GETPOSTINT('filter_status_partnership');
+		}
 		if (empty($this->evenunsubscribe)) {
 			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
 		}
@@ -101,6 +99,9 @@ class mailing_partnership extends MailingTargets
 		$sql .= " AND pt.rowid = p.fk_type";
 		if (GETPOST('filter', 'int') > 0) {
 			$sql .= " AND pt.rowid=".((int) GETPOST('filter', 'int'));
+		}
+		if (GETPOSTISSET('filter_status_partnership') && GETPOSTINT('filter_status_partnership') >= 0) {
+			$sql .= " AND p.status = ".GETPOSTINT('filter_status_partnership');
 		}
 		if (empty($this->evenunsubscribe)) {
 			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
@@ -120,7 +121,7 @@ class mailing_partnership extends MailingTargets
 			$old = '';
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
-				if ($old <> $obj->email) {
+				if ($old != $obj->email) {
 					$otherTxt = ($obj->label ? $langs->transnoentities("PartnershipType").'='.$obj->label : '');
 					if (strlen($addDescription) > 0 && strlen($otherTxt) > 0) {
 						$otherTxt .= ";";
@@ -214,13 +215,13 @@ class mailing_partnership extends MailingTargets
 	 */
 	public function formFilter()
 	{
-		global $conf, $langs;
+		global $conf, $langs, $form;
 
 		$langs->load("companies");
 
 		$s = '<select id="filter_partnership" name="filter" class="flat">';
 
-		// Show categories
+		// Show type of partnership
 		$sql = "SELECT rowid, label, code, active";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_partnership_type";
 		$sql .= " WHERE active = 1";
@@ -254,6 +255,13 @@ class mailing_partnership extends MailingTargets
 		}
 
 		$s .= '</select> ';
+
+		// filter_status_thirdparties
+		include_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
+		$tmppartnership = new Partnership($this->db);
+		$dummy = $tmppartnership->getLibStatut(0);	// We call this only to have $tmppartnership->labelStatus loaded
+
+		$s .= $form->selectarray('filter_status_partnership', $tmppartnership->labelStatus, GETPOST('filter_status_partnership'), $langs->trans("Status"));
 
 		return $s;
 	}

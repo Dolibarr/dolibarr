@@ -18,7 +18,7 @@
 
 /**
  *       \file       htdocs/core/ajax/fileupload.php
- *       \brief      File to return Ajax response on file upload
+ *       \brief      File to return Ajax response on common file upload. For large files, see flowjs-server.php
  */
 
 if (!defined('NOREQUIREMENU')) {
@@ -36,7 +36,7 @@ if (!defined('NOREQUIRESOC')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/fileupload.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/fileupload.class.php';	// Class to upload common files
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
 $id = GETPOST('fk_element', 'int');
@@ -50,7 +50,7 @@ $module = $object->module;
 $element = $object->element;
 
 $usesublevelpermission = ($module != $element ? $element : '');
-if ($usesublevelpermission && !isset($user->rights->$module->$element)) {	// There is no permission on object defined, we will check permission on module directly
+if ($usesublevelpermission && !$user->hasRight($module, $element)) {	// There is no permission on object defined, we will check permission on module directly
 	$usesublevelpermission = '';
 }
 
