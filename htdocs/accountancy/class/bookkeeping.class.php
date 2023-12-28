@@ -367,7 +367,7 @@ class BookKeeping extends CommonObject
 					$this->piece_num = $objnum->piece_num;
 				}
 
-				dol_syslog(get_class($this).":: create this->piece_num=".$this->piece_num, LOG_DEBUG);
+				dol_syslog(get_class($this)."::create this->piece_num=".$this->piece_num, LOG_DEBUG);
 				if (empty($this->piece_num)) {
 					$sqlnum = "SELECT MAX(piece_num)+1 as maxpiecenum";
 					$sqlnum .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
@@ -2124,7 +2124,7 @@ class BookKeeping extends CommonObject
 	 * @param array		$event		Event options
 	 * @param int		$select_in	Value is a aa.rowid (0 default) or aa.account_number (1)
 	 * @param int		$select_out	Set value returned by select 0=rowid (default), 1=account_number
-	 * @param int		$aabase		Set accounting_account base class to display empty=all or from 1 to 8 will display only account beginning by this number
+	 * @param string	$aabase		Set accounting_account base class to display empty=all or from 1 to 8 will display only account beginning by this number
 	 * @return string	String with HTML select
 	 */
 	public function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $aabase = '')

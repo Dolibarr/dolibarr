@@ -165,7 +165,7 @@ $permissiontoadd = $usercancreate; // Used by the include of actions_addupdatede
 // retained warranty invoice available type
 $retainedWarrantyInvoiceAvailableType = array();
 if (getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
-	$retainedWarrantyInvoiceAvailableType = explode('+', $conf->global->INVOICE_USE_RETAINED_WARRANTY);
+	$retainedWarrantyInvoiceAvailableType = explode('+', getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY'));
 }
 
 // Security check
@@ -1684,7 +1684,7 @@ if (empty($reshook)) {
 									if (!isset($conf->global->CONTRACT_EXCLUDE_SERVICES_STATUS_FOR_INVOICE)) {
 										$conf->global->CONTRACT_EXCLUDE_SERVICES_STATUS_FOR_INVOICE = '5';
 									}
-									if ($srcobject->element == 'contrat' && in_array($lines[$i]->statut, explode(',', $conf->global->CONTRACT_EXCLUDE_SERVICES_STATUS_FOR_INVOICE))) {
+									if ($srcobject->element == 'contrat' && in_array($lines[$i]->statut, explode(',', getDolGlobalString('CONTRACT_EXCLUDE_SERVICES_STATUS_FOR_INVOICE')))) {
 										continue;
 									}
 
@@ -2757,7 +2757,7 @@ if (empty($reshook)) {
 			$all_progress = GETPOST('all_progress', 'int');
 			foreach ($object->lines as $line) {
 				$percent = $line->get_prev_progress($object->id);
-				if (floatval($all_progress) < floatval($percent)) {
+				if ((float) $all_progress < (float) $percent) {
 					$mesg = $langs->trans("Line").' '.$i.' : '.$langs->trans("CantBeLessThanMinPercent");
 					setEventMessages($mesg, null, 'warnings');
 					$result = -1;
@@ -3847,7 +3847,7 @@ if ($action == 'create') {
 					if($( this ).prop("checked") && $.inArray($( this ).val(), '.json_encode($retainedWarrantyInvoiceAvailableType).' ) !== -1)
 					{
 						$(".retained-warranty-line").show();
-						$("#new-situation-invoice-retained-warranty").val("'.floatval($retained_warranty_js_default).'");
+						$("#new-situation-invoice-retained-warranty").val("'.(float) $retained_warranty_js_default.'");
 					}
 					else{
 						$(".retained-warranty-line").hide();
@@ -3925,9 +3925,9 @@ if ($action == 'create') {
 		if (getDolGlobalString('INVOICE_USE_DEFAULT_DOCUMENT')) {
 			// Hidden conf
 			$paramkey = 'FACTURE_ADDON_PDF_'.$object->type;
-			$preselected = !empty($conf->global->$paramkey) ? $conf->global->$paramkey : $conf->global->FACTURE_ADDON_PDF;
+			$preselected = getDolGlobalString($paramkey, getDolGlobalString('FACTURE_ADDON_PDF'));
 		} else {
-			$preselected = $conf->global->FACTURE_ADDON_PDF;
+			$preselected = getDolGlobalString('FACTURE_ADDON_PDF');
 		}
 		print $form->selectarray('model', $liste, $preselected, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200 widthcentpercentminusx', 1);
 		print "</td></tr>";
@@ -5264,7 +5264,7 @@ if ($action == 'create') {
 					}
 					print '</td>';
 
-					$label = ($langs->trans("PaymentType".$objp->payment_code) != ("PaymentType".$objp->payment_code)) ? $langs->trans("PaymentType".$objp->payment_code) : $objp->payment_label;
+					$label = ($langs->trans("PaymentType".$objp->payment_code) != "PaymentType".$objp->payment_code) ? $langs->trans("PaymentType".$objp->payment_code) : $objp->payment_label;
 					print '<td class="tdoverflowmax80" title="'.dol_escape_htmltag($label.' '.$objp->num_payment).'">'.dol_escape_htmltag($label.' '.$objp->num_payment).'</td>';
 					if (isModEnabled("banque")) {
 						$bankaccountstatic->id = $objp->baid;

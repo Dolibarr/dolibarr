@@ -113,7 +113,7 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 			$fileperm = '';
 			while (false !== ($file = readdir($dir))) {        // $file is always a basename (into directory $newpath)
 				if (!utf8_check($file)) {
-					$file = utf8_encode($file); // To be sure data is stored in utf8 in memory
+					$file = mb_convert_encoding($file, 'UTF-8', 'ISO-8859-1'); // To be sure data is stored in utf8 in memory
 				}
 				$fullpathfile = ($newpath ? $newpath.'/' : '').$file;
 
@@ -364,6 +364,7 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
 			$filearray[$key]['position'] = '999999'; // File not indexed are at end. So if we add a file, it will not replace an existing position
 			$filearray[$key]['cover'] = 0;
 			$filearray[$key]['acl'] = '';
+			$filearray[$key]['share'] = 0;
 
 			$rel_filename = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filearray[$key]['fullname']);
 
@@ -622,7 +623,7 @@ function dol_fileperm($pathoffile)
  * @param	string	$destfile			       Destination file (can't be a directory). If empty, will be same than source file.
  * @param	int		$newmask			       Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
  * @param	int		$indexdatabase		       1=index new file into database.
- * @param   int     $arrayreplacementisregex   1=Array of replacement is regex
+ * @param   int     $arrayreplacementisregex   1=Array of replacement is already an array with key that is a regex. Warning: the key must be escaped with preg_quote for '/'
  * @return	int							       Return integer <0 if error, 0 if nothing done (dest file already exists), >0 if OK
  * @see		dol_copy()
  */
@@ -1515,7 +1516,7 @@ function dol_delete_dir_recursive($dir, $count = 0, $nophperrors = 0, $onlysub =
 		if ($handle = opendir("$dir_osencoded")) {
 			while (false !== ($item = readdir($handle))) {
 				if (!utf8_check($item)) {
-					$item = utf8_encode($item); // should be useless
+					$item = mb_convert_encoding($item, 'UTF-8', 'ISO-8859-1'); // should be useless
 				}
 
 				if ($item != "." && $item != "..") {

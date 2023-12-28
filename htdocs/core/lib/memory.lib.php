@@ -82,7 +82,7 @@ function dol_setcache($memoryid, $data, $expire = 0)
 		global $dolmemcache;
 		if (empty($dolmemcache) || !is_object($dolmemcache)) {
 			$dolmemcache = new Memcached();
-			$tmparray = explode(':', $conf->global->MEMCACHED_SERVER);
+			$tmparray = explode(':', getDolGlobalString('MEMCACHED_SERVER'));
 			$result = $dolmemcache->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
 			if (!$result) {
 				return -1;
@@ -103,7 +103,7 @@ function dol_setcache($memoryid, $data, $expire = 0)
 		global $dolmemcache;
 		if (empty($dolmemcache) || !is_object($dolmemcache)) {
 			$dolmemcache = new Memcache();
-			$tmparray = explode(':', $conf->global->MEMCACHED_SERVER);
+			$tmparray = explode(':', getDolGlobalString('MEMCACHED_SERVER'));
 			$result = $dolmemcache->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
 			if (!$result) {
 				return -1;
@@ -152,7 +152,7 @@ function dol_getcache($memoryid)
 		global $m;
 		if (empty($m) || !is_object($m)) {
 			$m = new Memcached();
-			$tmparray = explode(':', $conf->global->MEMCACHED_SERVER);
+			$tmparray = explode(':', getDolGlobalString('MEMCACHED_SERVER'));
 			$result = $m->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
 			if (!$result) {
 				return -1;
@@ -177,7 +177,7 @@ function dol_getcache($memoryid)
 		global $m;
 		if (empty($m) || !is_object($m)) {
 			$m = new Memcache();
-			$tmparray = explode(':', $conf->global->MEMCACHED_SERVER);
+			$tmparray = explode(':', getDolGlobalString('MEMCACHED_SERVER'));
 			$result = $m->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
 			if (!$result) {
 				return -1;
@@ -272,7 +272,7 @@ function dol_setshmop($memoryid, $data, $expire)
 	if ($handle) {
 		$shm_bytes_written1 = shmop_write($handle, str_pad($size, 6), 0);
 		$shm_bytes_written2 = shmop_write($handle, $newdata, 6);
-		if (($shm_bytes_written1 + $shm_bytes_written2) != (6 + dol_strlen($newdata))) {
+		if ($shm_bytes_written1 + $shm_bytes_written2 != 6 + dol_strlen($newdata)) {
 			print "Couldn't write the entire length of data\n";
 		}
 		shmop_close($handle);

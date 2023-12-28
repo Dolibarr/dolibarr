@@ -104,7 +104,7 @@ if (GETPOST("button_delmvt_x") || GETPOST("button_delmvt.x") || GETPOST("button_
 }
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : (!getDolGlobalString('ACCOUNTING_LIMIT_LIST_VENTILATION') ? $conf->liste_limit : $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : getDolGlobalString('ACCOUNTING_LIMIT_LIST_VENTILATION', $conf->liste_limit);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $optioncss = GETPOST('optioncss', 'alpha');
@@ -141,7 +141,7 @@ if (empty($search_date_start) && empty($search_date_end) && !GETPOSTISSET('searc
 		$search_date_start = strtotime($fiscalYear->date_start);
 		$search_date_end = strtotime($fiscalYear->date_end);
 	} else {
-		$month_start = ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
+		$month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 		$year_start = dol_print_date(dol_now(), '%Y');
 		if (dol_print_date(dol_now(), '%m') < $month_start) {
 			$year_start--; // If current month is lower that starting fiscal month, we start last year
@@ -1200,12 +1200,9 @@ while ($i < min($num, $limit)) {
 			// Other type
 		}
 
-		print '<td class="maxwidth400">';
+		print '<td class="tdoverflowmax250">';
 
-		print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 		// Picto + Ref
-		print '<td class="nobordernopadding">';
-
 		if ($line->doc_type == 'customer_invoice' || $line->doc_type == 'supplier_invoice' || $line->doc_type == 'expense_report') {
 			print $objectstatic->getNomUrl(1, '', 0, 0, '', 0, -1, 1);
 			print $documentlink;
@@ -1216,7 +1213,6 @@ while ($i < min($num, $limit)) {
 		} else {
 			print $line->doc_ref;
 		}
-		print '</td></tr></table>';
 
 		print "</td>\n";
 		if (!$i) {
@@ -1228,7 +1224,11 @@ while ($i < min($num, $limit)) {
 	if (!empty($arrayfields['t.label_operation']['checked'])) {
 		// Affiche un lien vers la facture client/fournisseur
 		$doc_ref = preg_replace('/\(.*\)/', '', $line->doc_ref);
-		print strlen(length_accounta($line->subledger_account)) == 0 ? '<td>'.$line->label_operation.'</td>' : '<td>'.$line->label_operation.'<br><span style="font-size:0.8em">('.length_accounta($line->subledger_account).')</span></td>';
+		if (strlen(length_accounta($line->subledger_account)) == 0) {
+			print '<td class="small tdoverflowmax350 classfortooltip" title="'.dol_escape_htmltag($line->label_operation).'">'.dol_escape_htmltag($line->label_operation).'</td>';
+		} else {
+			print '<td class="small tdoverflowmax350 classfortooltip" title="'.dol_escape_htmltag($line->label_operation.($line->label_operation?'<br>':'').'<span style="font-size:0.8em">('.length_accounta($line->subledger_account).')').'">'.dol_escape_htmltag($line->label_operation).($line->label_operation?'<br>':'').'<span style="font-size:0.8em">('.dol_escape_htmltag(length_accounta($line->subledger_account)).')</span></td>';
+		}
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1236,7 +1236,7 @@ while ($i < min($num, $limit)) {
 
 	// Lettering code
 	if (!empty($arrayfields['t.lettering_code']['checked'])) {
-		print '<td class="center">'.$line->lettering_code.'</td>';
+		print '<td class="center">'.dol_escape_htmltag($line->lettering_code).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1295,7 +1295,7 @@ while ($i < min($num, $limit)) {
 	}
 
 	if (!empty($arrayfields['t.import_key']['checked'])) {
-		print '<td class="tdoverflowmax100">'.$line->import_key."</td>\n";
+		print '<td class="tdoverflowmax100">'.dol_escape_htmltag($line->import_key)."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

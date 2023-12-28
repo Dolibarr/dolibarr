@@ -134,10 +134,10 @@ function getMultidirOutput($object, $module = '')
 	if ($module == 'fichinter') {
 		$module = 'ficheinter';
 	}
-	if (isset($conf->$module)) {
-		return $conf->$module->multidir_output[(!empty($object->entity) ? $object->entity : $conf->entity)];
+	if (isset($conf->$module) && property_exists($conf->$module, 'multidir_output')) {
+		return $conf->$module->multidir_output[(empty($object->entity) ? $conf->entity : $object->entity)];
 	} else {
-		return 'error-diroutput-not-defined-ffor-this-object='.$module;
+		return 'error-diroutput-not-defined-for-this-object='.$module;
 	}
 }
 
@@ -151,7 +151,6 @@ function getMultidirOutput($object, $module = '')
 function getDolGlobalString($key, $default = '')
 {
 	global $conf;
-	// return $conf->global->$key ?? $default;
 	return (string) (isset($conf->global->$key) ? $conf->global->$key : $default);
 }
 
@@ -166,7 +165,6 @@ function getDolGlobalString($key, $default = '')
 function getDolGlobalInt($key, $default = 0)
 {
 	global $conf;
-	// return $conf->global->$key ?? $default;
 	return (int) (isset($conf->global->$key) ? $conf->global->$key : $default);
 }
 
@@ -185,7 +183,6 @@ function getDolUserString($key, $default = '', $tmpuser = null)
 		$tmpuser = $user;
 	}
 
-	// return $conf->global->$key ?? $default;
 	return (string) (empty($tmpuser->conf->$key) ? $default : $tmpuser->conf->$key);
 }
 
@@ -204,7 +201,6 @@ function getDolUserInt($key, $default = 0, $tmpuser = null)
 		$tmpuser = $user;
 	}
 
-	// return $conf->global->$key ?? $default;
 	return (int) (empty($tmpuser->conf->$key) ? $default : $tmpuser->conf->$key);
 }
 
@@ -630,7 +626,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 		return 'BadFirstParameterForGETPOST';
 	}
 	if (empty($check)) {
-		dol_syslog("Deprecated use of GETPOST, called with 1st param = ".$paramname." and 2nd param is '', when calling page ".$_SERVER["PHP_SELF"], LOG_WARNING);
+		dol_syslog("Deprecated use of GETPOST, called with 1st param = ".$paramname." and a 2nd param that is '', when calling page ".$_SERVER["PHP_SELF"], LOG_WARNING);
 		// Enable this line to know who call the GETPOST with '' $check parameter.
 		//var_dump(debug_backtrace()[0]);
 	}
@@ -659,7 +655,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 		//var_dump($user->default_values);
 
 		// Code for search criteria persistence.
-		// Retrieve values if restore_lastsearch_values
+		// Retrieve saved values if restore_lastsearch_values is set
 		if (!empty($_GET['restore_lastsearch_values'])) {        // Use $_GET here and not GETPOST
 			if (!empty($_SESSION['lastsearch_values_'.$relativepathstring])) {	// If there is saved values
 				$tmp = json_decode($_SESSION['lastsearch_values_'.$relativepathstring], true);
@@ -815,7 +811,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 		}
 	}
 
-	// Substitution variables for GETPOST (used to get final url with variable parameters or final default value with variable parameters)
+	// Substitution variables for GETPOST (used to get final url with variable parameters or final default value, when using variable parameters __XXX__ in the GET URL)
 	// Example of variables: __DAY__, __MONTH__, __YEAR__, __MYCOMPANY_COUNTRY_ID__, __USER_ID__, ...
 	// We do this only if var is a GET. If it is a POST, may be we want to post the text with vars as the setup text.
 	if (!is_array($out) && empty($_POST[$paramname]) && empty($noreplace)) {
@@ -873,7 +869,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 		}
 	}
 
-	// Check rule
+	// Check type of variable and make sanitization according to this
 	if (preg_match('/^array/', $check)) {	// If 'array' or 'array:restricthtml' or 'array:aZ09' or 'array:intcomma'
 		if (!is_array($out) || empty($out)) {
 			$out = array();
@@ -1075,6 +1071,9 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 				$out = filter_var($out, $filter, $options);
 			}
 			break;
+		default:
+			dol_syslog("Error, you call sanitizeVal() with a bad value for the check type. Data can't be sanitized.", LOG_ERR);
+			break;
 	}
 
 	return $out;
@@ -1098,7 +1097,7 @@ if (!function_exists('dol_getprefix')) {
 			global $conf;
 
 			if (getDolGlobalString('MAIL_PREFIX_FOR_EMAIL_ID')) {	// If MAIL_PREFIX_FOR_EMAIL_ID is set
-				if ($conf->global->MAIL_PREFIX_FOR_EMAIL_ID != 'SERVER_NAME') {
+				if (getDolGlobalString('MAIL_PREFIX_FOR_EMAIL_ID') != 'SERVER_NAME') {
 					return $conf->global->MAIL_PREFIX_FOR_EMAIL_ID;
 				} elseif (isset($_SERVER["SERVER_NAME"])) {	// If MAIL_PREFIX_FOR_EMAIL_ID is set to 'SERVER_NAME'
 					return $_SERVER["SERVER_NAME"];
@@ -1217,10 +1216,10 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 		foreach ($conf->file->dol_document_root as $key => $dirroot) {	// ex: array(["main"]=>"/home/main/htdocs", ["alt0"]=>"/home/dirmod/htdocs", ...)
 			if ($key == 'main') {
 				if ($type == 3) {
-					global $dolibarr_main_url_root;
+					/*global $dolibarr_main_url_root;*/
 
 					// Define $urlwithroot
-					$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+					$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($conf->file->dol_main_url_root));
 					$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 					//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
@@ -1241,10 +1240,10 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 						$res = (preg_match('/^http/i', $conf->file->dol_url_root[$key]) ? '' : DOL_MAIN_URL_ROOT).$conf->file->dol_url_root[$key].'/'.$path;
 					}
 					if ($type == 3) {
-						global $dolibarr_main_url_root;
+						/*global $dolibarr_main_url_root;*/
 
 						// Define $urlwithroot
-						$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+						$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($conf->file->dol_main_url_root));
 						$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 						//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
@@ -1354,7 +1353,7 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
 }
 
 /**
- *	Clean a string to use it as a path name.
+ *	Clean a string to use it as a path name. Similare to dol_sanitizeFileName but accept / and \ chars.
  *  Replace also '--' and ' -' strings, they are used for parameters separation (Note: ' - ' is allowed).
  *
  *	@param	string	$str            String to clean
@@ -1648,7 +1647,7 @@ function dolPrintHTML($s, $allowiframe = 0)
 }
 
 /**
- * Return a string ready to be output on an HTML attribute (alt, title, ...)
+ * Return a string ready to be output on an HTML attribute (alt, title, data-html, ...)
  *
  * @param	string	$s		String to print
  * @return	string			String ready for HTML output
@@ -1657,7 +1656,7 @@ function dolPrintHTMLForAttribute($s)
 {
 	// The dol_htmlentitiesbr will convert simple text into html
 	// The dol_escape_htmltag will escape html chars.
-	return dol_escape_htmltag(dol_htmlentitiesbr($s), 1, -1);
+	return dol_escape_htmltag(dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 0, 0, 0, array('br', 'b', 'font', 'span')), 1, -1, '', 0, 1);
 }
 
 /**
@@ -2514,7 +2513,13 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		} else {
 			$morehtmlstatus .= '<span class="statusrefbuy">'.$object->getLibStatut(6, 1).'</span>';
 		}
-	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier', 'chargesociales', 'loan', 'tva', 'salary'))) {
+	} elseif (in_array($object->element, array('salary'))) {
+		$tmptxt = $object->getLibStatut(6, $object->alreadypaid);
+		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
+			$tmptxt = $object->getLibStatut(5, $object->alreadypaid);
+		}
+		$morehtmlstatus .= $tmptxt;
+	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier', 'chargesociales', 'loan', 'tva'))) {	// TODO Move this to use ->alreadypaid
 		$tmptxt = $object->getLibStatut(6, $object->totalpaid);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
 			$tmptxt = $object->getLibStatut(5, $object->totalpaid);
@@ -6039,7 +6044,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	}
 	$amount = (is_numeric($amount) ? $amount : 0); // Check if amount is numeric, for example, an error occured when amount value = o (letter) instead 0 (number)
 	if ($rounding == -1) {
-		$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
+		$rounding = min(getDolGlobalString('MAIN_MAX_DECIMALS_UNIT'), getDolGlobalString('MAIN_MAX_DECIMALS_TOT'));
 	}
 	$nbdecimal = $rounding;
 
@@ -6233,9 +6238,9 @@ function price2num($amount, $rounding = '', $option = 0)
 		} elseif ($rounding == 'MS') {
 			$nbofdectoround = isset($conf->global->MAIN_MAX_DECIMALS_STOCK) ? $conf->global->MAIN_MAX_DECIMALS_STOCK : 5;
 		} elseif ($rounding == 'CU') {
-			$nbofdectoround = max($conf->global->MAIN_MAX_DECIMALS_UNIT, 8);	// TODO Use param of currency
+			$nbofdectoround = max(getDolGlobalString('MAIN_MAX_DECIMALS_UNIT'), 8);	// TODO Use param of currency
 		} elseif ($rounding == 'CT') {
-			$nbofdectoround = max($conf->global->MAIN_MAX_DECIMALS_TOT, 8);		// TODO Use param of currency
+			$nbofdectoround = max(getDolGlobalString('MAIN_MAX_DECIMALS_TOT'), 8);		// TODO Use param of currency
 		} elseif (is_numeric($rounding)) {
 			$nbofdectoround = (int) $rounding;
 		}
@@ -6731,7 +6736,7 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 			// '1.23'
 			// or '1.23 (CODE)'
 			$defaulttx = '';
-			if ($conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS != 'none') {
+			if (getDolGlobalString('MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS') != 'none') {
 				$defaulttx = $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS;
 			}
 			/*if (preg_match('/\((.*)\)/', $defaulttx, $reg)) {
@@ -7583,7 +7588,7 @@ function dol_nl2br($stringtoencode, $nl2brmode = 0, $forxml = false)
 }
 
 /**
- * Sanitize a HTML to remove js and dangerous content.
+ * Sanitize a HTML to remove js, dangerous content and external link.
  * This function is used by dolPrintHTML... function for example.
  *
  * @param	string	$stringtoencode				String to encode
@@ -7608,17 +7613,19 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 			if (!empty($out) && getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML') && $check != 'restricthtmlallowunvalid') {
 				try {
 					libxml_use_internal_errors(false);	// Avoid to fill memory with xml errors
+					libxml_disable_entity_loader(true);	// Avoid load of external entities (security problem). Required only if LIBXML_VERSION < 20900
 
 					$dom = new DOMDocument();
 					// Add a trick to solve pb with text without parent tag
 					// like '<h1>Foo</h1><p>bar</p>' that wrongly ends up, without the trick, with '<h1>Foo<p>bar</p></h1>'
 					// like 'abc' that wrongly ends up, without the trick, with '<p>abc</p>'
-					$out = '<div class="tricktoremove">'.$out.'</div>';
+
+					$out = '<?xml encoding="UTF-8"><div class="tricktoremove">'.$out.'</div>';
 					$dom->loadHTML($out, LIBXML_HTML_NODEFDTD|LIBXML_ERR_NONE|LIBXML_HTML_NOIMPLIED|LIBXML_NONET|LIBXML_NOWARNING|LIBXML_NOXMLDECL);
 					$out = trim($dom->saveHTML());
 
 					// Remove the trick added to solve pb with text without parent tag
-					$out = preg_replace('/^<div class="tricktoremove">/', '', $out);
+					$out = preg_replace('/^<\?xml encoding="UTF-8"><div class="tricktoremove">/', '', $out);
 					$out = preg_replace('/<\/div>$/', '', $out);
 				} catch (Exception $e) {
 					// If error, invalid HTML string with no way to clean it
@@ -7704,10 +7711,29 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 		if ($nblinks > getDolGlobalInt("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", 1000)) {
 			$out = 'ErrorTooManyLinksIntoHTMLString';
 		}
-		//
-		if (getDolGlobalString('MAIN_DISALLOW_URL_INTO_DESCRIPTIONS') || $check == 'restricthtmlnolink') {
+
+		if (getDolGlobalInt('MAIN_DISALLOW_URL_INTO_DESCRIPTIONS') == 2 || $check == 'restricthtmlnolink') {
 			if ($nblinks > 0) {
 				$out = 'ErrorHTMLLinksNotAllowed';
+			}
+		} elseif (getDolGlobalInt('MAIN_DISALLOW_URL_INTO_DESCRIPTIONS') == 1) {
+			$nblinks = 0;
+			// Loop on each url in src= and url(
+			$pattern = '/src=["\']?(http[^"\']+)|url\(["\']?(http[^\)]+)/';
+
+			$matches = array();
+			if (preg_match_all($pattern, $out, $matches)) {
+				// URLs are into $matches[1]
+				$urls = $matches[1];
+
+				// Affiche les URLs
+				foreach ($urls as $url) {
+					$nblinks++;
+					echo "Found url = ".$url . "\n";
+				}
+				if ($nblinks > 0) {
+					$out = 'ErrorHTMLExternalLinksNotAllowed';
+				}
 			}
 		}
 
@@ -7832,12 +7858,14 @@ function dol_htmlentities($string, $flags = ENT_QUOTES|ENT_SUBSTITUTE, $encoding
 
 /**
  *	Check if a string is a correct iso string
- *	If not, it will we considered not HTML encoded even if it is by FPDF.
+ *	If not, it will not be considered as HTML encoded even if it is by FPDF.
  *	Example, if string contains euro symbol that has ascii code 128
  *
  *	@param	string		$s      	String to check
  *  @param	string		$clean		Clean if it is not an ISO. Warning, if file is utf8, you will get a bad formated file.
  *	@return	int|string  	   		0 if bad iso, 1 if good iso, Or the clean string if $clean is 1
+ *  @deprecated Duplicate of ascii_check()
+ *  @see ascii_check()
  */
 function dol_string_is_good_iso($s, $clean = 0)
 {
@@ -8216,7 +8244,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
 			$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
 			$substitutionarray['__SUPPLIER_ORDER_DATE_DELIVERY__'] = (isset($object->delivery_date) ? dol_print_date($object->delivery_date, 'day', 0, $outputlangs) : '');
-			$substitutionarray['__SUPPLIER_ORDER_DELAY_DELIVERY__'] = (isset($object->availability_code) ? ($outputlangs->transnoentities("AvailabilityType".$object->availability_code) != ('AvailabilityType'.$object->availability_code) ? $outputlangs->transnoentities("AvailabilityType".$object->availability_code) : $outputlangs->convToOutputCharset(isset($object->availability) ? $object->availability : '')) : '');
+			$substitutionarray['__SUPPLIER_ORDER_DELAY_DELIVERY__'] = (isset($object->availability_code) ? ($outputlangs->transnoentities("AvailabilityType".$object->availability_code) != 'AvailabilityType'.$object->availability_code ? $outputlangs->transnoentities("AvailabilityType".$object->availability_code) : $outputlangs->convToOutputCharset(isset($object->availability) ? $object->availability : '')) : '');
 			$substitutionarray['__EXPIRATION_DATE__'] = (isset($object->fin_validite) ? dol_print_date($object->fin_validite, 'daytext') : '');
 
 			if (is_object($object) && ($object->element == 'adherent' || $object->element == 'member') && $object->id > 0) {
@@ -8992,7 +9020,8 @@ function setEventMessage($mesgs, $style = 'mesgs', $noduplicate = 0)
 {
 	//dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);		This is not deprecated, it is used by setEventMessages function
 	if (!is_array($mesgs)) {
-		// If mesgs is a string
+		$mesgs = trim((string) $mesgs);
+		// If mesgs is a not an empty string
 		if ($mesgs) {
 			if (!empty($noduplicate) && isset($_SESSION['dol_events'][$style]) && in_array($mesgs, $_SESSION['dol_events'][$style])) {
 				return;
@@ -9002,6 +9031,7 @@ function setEventMessage($mesgs, $style = 'mesgs', $noduplicate = 0)
 	} else {
 		// If mesgs is an array
 		foreach ($mesgs as $mesg) {
+			$mesg = trim((string) $mesg);
 			if ($mesg) {
 				if (!empty($noduplicate) && isset($_SESSION['dol_events'][$style]) && in_array($mesg, $_SESSION['dol_events'][$style])) {
 					return;
@@ -9753,8 +9783,15 @@ function picto_from_langcode($codelang, $moreatt = '', $notitlealt = 0)
 		$flagImage = empty($tmparray[1]) ? $tmparray[0] : $tmparray[1];
 	}
 
+	$morecss = '';
+	$reg = array();
+	if (preg_match('/class="([^"]+)"/', $moreatt, $reg)) {
+		$morecss = $reg[1];
+		$moreatt = "";
+	}
+
 	// return img_picto_common($codelang, 'flags/'.strtolower($flagImage).'.png', $moreatt, 0, $notitlealt);
-	return '<span class="flag-sprite '.strtolower($flagImage).'"'.($moreatt ? ' '.$moreatt : '').(!$notitlealt ? ' title="'.$codelang.'"' : '').'></span>';
+	return '<span class="flag-sprite '.strtolower($flagImage).($morecss ? ' '.$morecss : '').'"'.($moreatt ? ' '.$moreatt : '').(!$notitlealt ? ' title="'.$codelang.'"' : '').'></span>';
 }
 
 /**
@@ -10331,7 +10368,7 @@ function printCommonFooter($zone = 'private')
 			// Google Analytics
 			// TODO Add a hook here
 			if (isModEnabled('google') && getDolGlobalString('MAIN_GOOGLE_AN_ID')) {
-				$tmptagarray = explode(',', $conf->global->MAIN_GOOGLE_AN_ID);
+				$tmptagarray = explode(',', getDolGlobalString('MAIN_GOOGLE_AN_ID'));
 				foreach ($tmptagarray as $tmptag) {
 					print "\n";
 					print "<!-- JS CODE TO ENABLE for google analtics tag -->\n";
@@ -11860,7 +11897,7 @@ function getElementProperties($element_type)
 		$subelement = $regs[2];
 	}
 
-	// For compat and To work with non standard path
+	// For compatibility and to work with non standard path
 	if ($element_type == "action") {
 		$classpath = 'comm/action/class';
 		$subelement = 'Actioncomm';
@@ -12012,6 +12049,11 @@ function getElementProperties($element_type)
 	} elseif ($element_type == 'salary') {
 		$classpath = 'salaries/class';
 		$module = 'salaries';
+	} elseif ($element_type == 'payment_salary') {
+		$classpath = 'salaries/class';
+		$classfile = 'paymentsalary';
+		$classname = 'PaymentSalary';
+		$module = 'salaries';
 	} elseif ($element_type == 'productlot') {
 		$module = 'productbatch';
 		$classpath = 'product/stock/class';
@@ -12083,6 +12125,8 @@ function getElementProperties($element_type)
 		'classname' => $classname,
 		'dir_output' => $dir_output
 	);
+
+	//var_dump($element_properties);
 	return $element_properties;
 }
 
@@ -12090,7 +12134,7 @@ function getElementProperties($element_type)
  * Fetch an object from its id and element_type
  * Inclusion of classes is automatic
  *
- * @param	int     	$element_id 	Element id
+ * @param	int     	$element_id 	Element id (Use this or element_id but not both)
  * @param	string  	$element_type 	Element type ('module' or 'myobject@mymodule' or 'mymodule_myobject')
  * @param	string     	$element_ref 	Element ref (Use this or element_id but not both)
  * @return 	int|object 					object || 0 || <0 if error
@@ -12104,19 +12148,33 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '')
 
 	$element_prop = getElementProperties($element_type);
 
-	if (is_array($element_prop) && isModEnabled($element_prop['module'])) {
+	if ($element_prop['module'] == 'product' || $element_prop['module'] == 'service') {
+		// For example, for an extrafield 'product' (shared for both product and service) that is a link to an object,
+		// this is called with $element_type = 'product' when we need element properties of a service, we must return a product. If we create the
+		// extrafield for a service, it is not supported and not found when editing the product/service card. So we must keep 'product' for extrafields
+		// of service and we will return properties of a product.
+		$ismodenabled = (isModEnabled('product') || isModEnabled('service'));
+	} else {
+		$ismodenabled = isModEnabled($element_prop['module']);
+	}
+
+	if (is_array($element_prop) && $ismodenabled) {
 		dol_include_once('/'.$element_prop['classpath'].'/'.$element_prop['classfile'].'.class.php');
 
 		if (class_exists($element_prop['classname'])) {
 			$classname = $element_prop['classname'];
 			$objecttmp = new $classname($db);
-			$ret = $objecttmp->fetch($element_id, $element_ref);
-			if ($ret >= 0) {
-				if (empty($objecttmp->module)) {
-					$objecttmp->module = $element_prop['module'];
-				}
 
-				return $objecttmp;
+			if ($element_id > 0 || !empty($element_ref)) {
+				$ret = $objecttmp->fetch($element_id, $element_ref);
+				if ($ret >= 0) {
+					if (empty($objecttmp->module)) {
+						$objecttmp->module = $element_prop['module'];
+					}
+					return $objecttmp;
+				}
+			} else {
+				return $objecttmp;	// returned an object without fetch
 			}
 		} else {
 			return -1;
@@ -12535,25 +12593,38 @@ function dolForgeCriteriaCallback($matches)
 
 	$operator = strtoupper(preg_replace('/[^a-z<>!=]/i', '', trim($tmp[1])));
 
-	if ($operator == 'NOTLIKE') {
-		$operator = 'NOT LIKE';
+	$realOperator = [
+		'NOTLIKE' => 'NOT LIKE',
+		'ISNOT' => 'IS NOT',
+		'NOTIN' => 'NOT IN',
+		'!=' => '<>',
+	];
+
+	if (array_key_exists($operator, $realOperator)) {
+		$operator = $realOperator[$operator];
 	}
-	if ($operator == 'ISNOT') {
-		$operator = 'IS NOT';
-	}
-	if ($operator == '!=') {
-		$operator = '<>';
-	}
+
 
 	$tmpescaped = $tmp[2];
 	$regbis = array();
 
-	if ($operator == 'IN') {	// IN is allowed for list of ID or code only
+	if ($operator == 'IN' || $operator == 'NOT IN') {	// IN is allowed for list of ID or code only
 		//if (!preg_match('/^\(.*\)$/', $tmpescaped)) {
-		$tmpescaped = '('.$db->escape($db->sanitize($tmpescaped, 1, 0)).')';
-		//} else {
-		//	$tmpescaped = $db->escape($db->sanitize($tmpescaped, 1));
-		//}
+		$tmpescaped2 = '(';
+		// Explode and sanitize each element in list
+		$tmpelemarray = explode(',', $tmpescaped);
+		foreach ($tmpelemarray as $tmpkey => $tmpelem) {
+			$reg = array();
+			if (preg_match('/^\'(.*)\'$/', $tmpelem, $reg)) {
+				$tmpelemarray[$tmpkey] = "'".$db->escape($db->sanitize($reg[1], 1, 1, 1))."'";
+			} else {
+				$tmpelemarray[$tmpkey] = $db->escape($db->sanitize($tmpelem, 1, 1, 1));
+			}
+		}
+		$tmpescaped2 .= join(',', $tmpelemarray);
+		$tmpescaped2 .= ')';
+
+		$tmpescaped = $tmpescaped2;
 	} elseif ($operator == 'LIKE' || $operator == 'NOT LIKE') {
 		if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
 			$tmpescaped = $regbis[1];

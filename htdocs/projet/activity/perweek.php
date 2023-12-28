@@ -518,7 +518,7 @@ $numstartworkingday = 1;
 $numendworkingday = 5;
 
 if (getDolGlobalString('MAIN_DEFAULT_WORKING_DAYS')) {
-	$tmparray = explode('-', $conf->global->MAIN_DEFAULT_WORKING_DAYS);
+	$tmparray = explode('-', getDolGlobalString('MAIN_DEFAULT_WORKING_DAYS'));
 	if (count($tmparray) >= 2) {
 		$numstartworkingday = $tmparray[0];
 		$numendworkingday = $tmparray[1];

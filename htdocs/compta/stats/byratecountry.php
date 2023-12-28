@@ -63,7 +63,7 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 	$q = GETPOST("q", "int");
 	if (empty($q)) {
 		// We define date_start and date_end
-		$month_start = GETPOST("month") ? GETPOST("month") : ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
+		$month_start = GETPOST("month") ? GETPOST("month") : getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 		$year_end = $year_start;
 		$month_end = $month_start;
 		if (!GETPOST("month")) {	// If month not forced
@@ -300,7 +300,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	print '<td class="left">'.$langs->trans("Country").'</td>';
 	$i = 0;
 	while ($i < 12) {
-		$j = $i + (!getDolGlobalString('SOCIETE_FISCAL_MONTH_START') ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START);
+		$j = $i + (!getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START);
 		if ($j > 12) {
 			$j -= 12;
 		}
@@ -350,7 +350,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 			print $langs->trans("Country".$obj->code) != "Country".$obj->code ? $langs->trans("Country".$obj->code) : $obj->country;
 			print '</td>';
 			for ($i = 0; $i < 12; $i++) {
-				$j = $i + (!getDolGlobalString('SOCIETE_FISCAL_MONTH_START') ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START);
+				$j = $i + (!getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START);
 				if ($j > 12) {
 					$j -= 12;
 				}
@@ -369,14 +369,14 @@ if ($modecompta == 'CREANCES-DETTES') {
 		print '<td class="left"></td>';
 		print '<td></td>';
 		for ($i = 0; $i < 12; $i++) {
-			$j = $i + (!getDolGlobalString('SOCIETE_FISCAL_MONTH_START') ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START);
+			$j = $i + (!getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START);
 			if ($j > 12) {
 				$j -= 12;
 			}
 			$monthj = 'month'.str_pad($j, 2, '0', STR_PAD_LEFT);
-			print '<td class="right" width="6%">'.price($totalpermonth[$j]).'</td>';
+			print '<td class="right" width="6%">'.price((empty($totalpermonth[$j]) ? 0 : $totalpermonth[$j])).'</td>';
 		}
-		print '<td class="right" width="6%"><b>'.price($totalpermonth['total']).'</b></td>';
+		print '<td class="right" width="6%"><b>'.price((empty($totalpermonth['total']) ? 0 : $totalpermonth['total'])).'</b></td>';
 		print '</tr>';
 	} else {
 		print $db->lasterror(); // Show last sql error
@@ -387,7 +387,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	print '<td class="left">'.$langs->trans("Country").'</td>';
 	$i = 0;
 	while ($i < 12) {
-		$j = $i + (!getDolGlobalString('SOCIETE_FISCAL_MONTH_START') ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START);
+		$j = $i + (!getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START);
 		if ($j > 12) {
 			$j -= 12;
 		}
@@ -437,7 +437,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 			print $langs->trans("Country".$obj->code) != "Country".$obj->code ? $langs->trans("Country".$obj->code) : $obj->country;
 			print '</td>';
 			for ($i = 0; $i < 12; $i++) {
-				$j = $i + (!getDolGlobalString('SOCIETE_FISCAL_MONTH_START') ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START);
+				$j = $i + (!getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START);
 				if ($j > 12) {
 					$j -= 12;
 				}
@@ -456,7 +456,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 		print '<td class="left"></td>';
 		print '<td></td>';
 		for ($i = 0; $i < 12; $i++) {
-			$j = $i + (!getDolGlobalString('SOCIETE_FISCAL_MONTH_START') ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START);
+			$j = $i + (!getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START);
 			if ($j > 12) {
 				$j -= 12;
 			}

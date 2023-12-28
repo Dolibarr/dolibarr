@@ -4039,7 +4039,7 @@ class Form
 				$obj = $this->db->fetch_object($resql);
 
 				// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-				$label = ($langs->trans("PaymentConditionShort" . $obj->code) != ("PaymentConditionShort" . $obj->code) ? $langs->trans("PaymentConditionShort" . $obj->code) : ($obj->label != '-' ? $obj->label : ''));
+				$label = ($langs->trans("PaymentConditionShort" . $obj->code) != "PaymentConditionShort" . $obj->code ? $langs->trans("PaymentConditionShort" . $obj->code) : ($obj->label != '-' ? $obj->label : ''));
 				$this->cache_conditions_paiements[$obj->rowid]['code'] = $obj->code;
 				$this->cache_conditions_paiements[$obj->rowid]['label'] = $label;
 				$this->cache_conditions_paiements[$obj->rowid]['deposit_percent'] = $obj->deposit_percent;
@@ -4088,7 +4088,7 @@ class Form
 				$obj = $this->db->fetch_object($resql);
 
 				// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-				$label = ($langs->trans("AvailabilityType" . $obj->code) != ("AvailabilityType" . $obj->code) ? $langs->trans("AvailabilityType" . $obj->code) : ($obj->label != '-' ? $obj->label : ''));
+				$label = ($langs->trans("AvailabilityType" . $obj->code) != "AvailabilityType" . $obj->code ? $langs->trans("AvailabilityType" . $obj->code) : ($obj->label != '-' ? $obj->label : ''));
 				$this->cache_availability[$obj->rowid]['code'] = $obj->code;
 				$this->cache_availability[$obj->rowid]['label'] = $label;
 				$this->cache_availability[$obj->rowid]['position'] = $obj->position;
@@ -4170,7 +4170,7 @@ class Form
 
 				// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
 				$label = ($obj->label != '-' ? $obj->label : '');
-				if ($langs->trans("DemandReasonType" . $obj->code) != ("DemandReasonType" . $obj->code)) {
+				if ($langs->trans("DemandReasonType" . $obj->code) != "DemandReasonType" . $obj->code) {
 					$label = $langs->trans("DemandReasonType" . $obj->code); // So translation key DemandReasonTypeSRC_XXX will work
 				}
 				if ($langs->trans($obj->code) != $obj->code) {
@@ -4269,7 +4269,7 @@ class Form
 				$obj = $this->db->fetch_object($resql);
 
 				// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-				$label = ($langs->transnoentitiesnoconv("PaymentTypeShort" . $obj->code) != ("PaymentTypeShort" . $obj->code) ? $langs->transnoentitiesnoconv("PaymentTypeShort" . $obj->code) : ($obj->label != '-' ? $obj->label : ''));
+				$label = ($langs->transnoentitiesnoconv("PaymentTypeShort" . $obj->code) != "PaymentTypeShort" . $obj->code ? $langs->transnoentitiesnoconv("PaymentTypeShort" . $obj->code) : ($obj->label != '-' ? $obj->label : ''));
 				$this->cache_types_paiements[$obj->id]['id'] = $obj->id;
 				$this->cache_types_paiements[$obj->id]['code'] = $obj->code;
 				$this->cache_types_paiements[$obj->id]['label'] = $label;
@@ -4583,7 +4583,7 @@ class Form
 				$obj = $this->db->fetch_object($resql);
 
 				// If traduction exist, we use it else we take the default label
-				$label = ($langs->transnoentitiesnoconv("PaymentTypeShort" . $obj->code) != ("PaymentTypeShort" . $obj->code) ? $langs->transnoentitiesnoconv("PaymentTypeShort" . $obj->code) : ($obj->label != '-' ? $obj->label : ''));
+				$label = ($langs->transnoentitiesnoconv("PaymentTypeShort" . $obj->code) != "PaymentTypeShort" . $obj->code ? $langs->transnoentitiesnoconv("PaymentTypeShort" . $obj->code) : ($obj->label != '-' ? $obj->label : ''));
 				$this->cache_transport_mode[$obj->rowid]['rowid'] = $obj->rowid;
 				$this->cache_transport_mode[$obj->rowid]['code'] = $obj->code;
 				$this->cache_transport_mode[$obj->rowid]['label'] = $label;
@@ -6559,7 +6559,7 @@ class Form
 				} else {
 					// We will use the rate defined into MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS
 					$defaulttx = '';
-					if ($conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS != 'none') {
+					if (getDolGlobalString('MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS') != 'none') {
 						$defaulttx = $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS;
 					}
 					if (preg_match('/\((.*)\)/', $defaulttx, $reg)) {
@@ -6823,7 +6823,7 @@ class Form
 
 		// You can set MAIN_POPUP_CALENDAR to 'eldy' or 'jquery'
 		$usecalendar = 'combo';
-		if (!empty($conf->use_javascript_ajax) && (!getDolGlobalString('MAIN_POPUP_CALENDAR') || $conf->global->MAIN_POPUP_CALENDAR != "none")) {
+		if (!empty($conf->use_javascript_ajax) && (!getDolGlobalString('MAIN_POPUP_CALENDAR') || getDolGlobalString('MAIN_POPUP_CALENDAR') != "none")) {
 			$usecalendar = ((!getDolGlobalString('MAIN_POPUP_CALENDAR') || getDolGlobalString('MAIN_POPUP_CALENDAR') == 'eldy') ? 'jquery' : $conf->global->MAIN_POPUP_CALENDAR);
 		}
 
@@ -8000,62 +8000,101 @@ class Form
 	 * Can use autocomplete with ajax after x key pressed or a full combo, depending on setup.
 	 * This is the generic method that will replace all specific existing methods.
 	 *
-	 * @param 	string 	$objectdesc 		ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]
-	 * @param 	string 	$htmlname 			Name of HTML select component
-	 * @param 	int 	$preselectedvalue 	Preselected value (ID of element)
-	 * @param 	string 	$showempty 			''=empty values not allowed, 'string'=value show if we allow empty values (for example 'All', ...)
-	 * @param 	string 	$searchkey 			Search criteria
-	 * @param 	string 	$placeholder 		Place holder
-	 * @param 	string 	$morecss 			More CSS
-	 * @param 	string 	$moreparams 		More params provided to ajax call
-	 * @param 	int 	$forcecombo 		Force to load all values and output a standard combobox (with no beautification)
-	 * @param 	int 	$disabled 			1=Html component is disabled
-	 * @param 	string 	$selected_input_value Value of preselected input text (for use with ajax)
-	 * @return  string                      Return HTML string
+	 * @param 	string 	$objectdesc 			'ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]'. For hard coded custom needs. Try to prefer method using $objectfield instead of $objectdesc.
+	 * @param 	string 	$htmlname 				Name of HTML select component
+	 * @param 	int 	$preselectedvalue 		Preselected value (ID of element)
+	 * @param 	string 	$showempty 				''=empty values not allowed, 'string'=value show if we allow empty values (for example 'All', ...)
+	 * @param 	string 	$searchkey 				Search criteria
+	 * @param 	string 	$placeholder 			Place holder
+	 * @param 	string 	$morecss 				More CSS
+	 * @param 	string 	$moreparams 			More params provided to ajax call
+	 * @param 	int 	$forcecombo 			Force to load all values and output a standard combobox (with no beautification)
+	 * @param 	int 	$disabled 				1=Html component is disabled
+	 * @param 	string 	$selected_input_value 	Value of preselected input text (for use with ajax)
+	 * @param	string	$objectfield			Object:Field that contains the definition (in table $fields or extrafields). Example: 'Object:xxx' or 'Module_Object:xxx' or 'Object:options_xxx' or 'Module_Object:options_xxx'
+	 * @return  string	                      	Return HTML string
 	 * @see selectForFormsList(), select_thirdparty_list()
 	 */
-	public function selectForForms($objectdesc, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $disabled = 0, $selected_input_value = '')
+	public function selectForForms($objectdesc, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $disabled = 0, $selected_input_value = '', $objectfield = '')
 	{
-		global $conf, $user;
+		global $conf, $extrafields;
 
+		$objectdescorig = $objectdesc;
 		$objecttmp = null;
+		$InfoFieldList = array();
 
-		// Example of value for $objectdec:
-		// Bom:bom/class/bom.class.php:0:t.status=1
-		// Bom:bom/class/bom.class.php:0:t.status=1:ref
-		// Bom:bom/class/bom.class.php:0:(t.status:=:1):ref
-		$InfoFieldList = explode(":", $objectdesc, 4);
-		$vartmp = (empty($InfoFieldList[3]) ? '' : $InfoFieldList[3]);
-		$reg = array();
-		if (preg_match('/^.*:(\w*)$/', $vartmp, $reg)) {
-			$InfoFieldList[4] = $reg[1];    // take the sort field
-		}
-		$InfoFieldList[3] = preg_replace('/:\w*$/', '', $vartmp);    // take the filter field
+		if ($objectfield) {	// We must retreive the objectdesc from the field or extrafield
+			// Example: $objectfield = 'product:options_package'
+			$tmparray = explode(':', $objectfield);
+			$objectdesc = '';
 
-		$classname = $InfoFieldList[0];
-		$classpath = $InfoFieldList[1];
-		$addcreatebuttonornot = empty($InfoFieldList[2]) ? 0 : $InfoFieldList[2];
-		$filter = empty($InfoFieldList[3]) ? '' : $InfoFieldList[3];
-		$sortfield = empty($InfoFieldList[4]) ? '' : $InfoFieldList[4];
+			// Load object according to $id and $element
+			$objectforfieldstmp = fetchObjectByElement(0, strtolower($tmparray[0]));
 
-		if (!empty($classpath)) {
-			dol_include_once($classpath);
+			$reg = array();
+			if (preg_match('/^options_(.*)$/', $tmparray[1], $reg)) {
+				// For a property in extrafields
+				$key = $reg[1];
+				// fetch optionals attributes and labels
+				$extrafields->fetch_name_optionals_label($objectforfieldstmp->table_element);
 
-			if ($classname && class_exists($classname)) {
-				$objecttmp = new $classname($this->db);
-
-				// Make some replacement
-				$sharedentities = getEntity(strtolower($classname));
-				$filter = str_replace(
-					array('__ENTITY__', '__SHARED_ENTITIES__', '__USER_ID__'),
-					array($conf->entity, $sharedentities, $user->id),
-					$filter
-				);
+				if (!empty($extrafields->attributes[$objectforfieldstmp->table_element]['type'][$key]) && $extrafields->attributes[$objectforfieldstmp->table_element]['type'][$key] == 'link') {
+					if (!empty($extrafields->attributes[$objectforfieldstmp->table_element]['param'][$key]['options'])) {
+						$tmpextrafields = array_keys($extrafields->attributes[$objectforfieldstmp->table_element]['param'][$key]['options']);
+						$objectdesc = $tmpextrafields[0];
+					}
+				}
+			} else {
+				// For a property in ->fields
+				$objectdesc = $objectforfieldstmp->fields[$tmparray[1]]['type'];
+				$objectdesc = preg_replace('/^integer[^:]*:/', '', $objectdesc);
 			}
 		}
+
+		if ($objectdesc) {
+			// Example of value for $objectdesc:
+			// Bom:bom/class/bom.class.php:0:t.status=1
+			// Bom:bom/class/bom.class.php:0:t.status=1:ref
+			// Bom:bom/class/bom.class.php:0:(t.status:=:1) OR (t.field2:=:2):ref
+			$InfoFieldList = explode(":", $objectdesc, 4);
+			$vartmp = (empty($InfoFieldList[3]) ? '' : $InfoFieldList[3]);
+			$reg = array();
+			if (preg_match('/^.*:(\w*)$/', $vartmp, $reg)) {
+				$InfoFieldList[4] = $reg[1];    // take the sort field
+			}
+			$InfoFieldList[3] = preg_replace('/:\w*$/', '', $vartmp);    // take the filter field
+
+			$classname = $InfoFieldList[0];
+			$classpath = $InfoFieldList[1];
+			//$addcreatebuttonornot = empty($InfoFieldList[2]) ? 0 : $InfoFieldList[2];
+			$filter = empty($InfoFieldList[3]) ? '' : $InfoFieldList[3];
+			$sortfield = empty($InfoFieldList[4]) ? '' : $InfoFieldList[4];
+
+			// Load object according to $id and $element
+			$objecttmp = fetchObjectByElement(0, strtolower($InfoFieldList[0]));
+
+			// Fallback to another solution to get $objecttmp
+			if (empty($objecttmp) && !empty($classpath)) {
+				dol_include_once($classpath);
+
+				if ($classname && class_exists($classname)) {
+					$objecttmp = new $classname($this->db);
+				}
+			}
+		}
+
+		// Make some replacement in $filter. May not be used if we used the ajax mode with $objectfield. In such a case
+		// we propagate the $objectfield and not the filter and replacement is done by the ajax/selectobject.php component.
+		$sharedentities = getEntity($objecttmp->element);
+		$filter = str_replace(
+			array('__ENTITY__', '__SHARED_ENTITIES__', '__USER_ID__'),
+			array($conf->entity, $sharedentities, $user->id),
+			$filter
+		);
+
 		if (!is_object($objecttmp)) {
-			dol_syslog('Error bad setup of type for field ' . join(',', $InfoFieldList), LOG_WARNING);
-			return 'Error bad setup of type for field ' . join(',', $InfoFieldList);
+			dol_syslog('selectForForms: Error bad setup of field objectdescorig=' . $objectdescorig.', objectfield='.$objectfield, LOG_WARNING);
+			return 'selectForForms: Error bad setup of field objectdescorig=' . $objectdescorig.', objectfield='.$objectfield;
 		}
 
 		//var_dump($filter);
@@ -8069,6 +8108,8 @@ class Form
 		$confkeyforautocompletemode = strtoupper($prefixforautocompletemode) . '_USE_SEARCH_TO_SELECT'; // For example COMPANY_USE_SEARCH_TO_SELECT
 
 		dol_syslog(get_class($this) . "::selectForForms filter=" . $filter, LOG_DEBUG);
+
+		// Generate the combo HTML component
 		$out = '';
 		if (!empty($conf->use_javascript_ajax) && getDolGlobalString($confkeyforautocompletemode) && !$forcecombo) {
 			// No immediate load of all database
@@ -8079,13 +8120,12 @@ class Form
 				//unset($objecttmp);
 			}
 
-			$objectdesc = $classname . ':' . $classpath . ':' . $addcreatebuttonornot . ':' . $filter;
+			// Set url and param to call to get json of the search results
 			$urlforajaxcall = DOL_URL_ROOT . '/core/ajax/selectobject.php';
+			$urloption = 'htmlname=' . urlencode($htmlname) . '&outjson=1&objectdesc=' . urlencode($objectdescorig) . '&objectfield='.urlencode($objectfield) . ($sortfield ? '&sortfield=' . urlencode($sortfield) : '');
 
-			// No immediate load of all database
-			$urloption = 'htmlname=' . urlencode($htmlname) . '&outjson=1&objectdesc=' . urlencode($objectdesc) . '&filter=' . urlencode($filter) . ($sortfield ? '&sortfield=' . urlencode($sortfield) : '');
 			// Activate the auto complete using ajax call.
-			$out .= ajax_autocompleter($preselectedvalue, $htmlname, $urlforajaxcall, $urloption, $conf->global->$confkeyforautocompletemode, 0, array());
+			$out .= ajax_autocompleter($preselectedvalue, $htmlname, $urlforajaxcall, $urloption, getDolGlobalString($confkeyforautocompletemode), 0, array());
 			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.ui-autocomplete { z-index: 1010; }</style>';
 			$out .= '<input type="text" class="' . $morecss . '"' . ($disabled ? ' disabled="disabled"' : '') . ' name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . ($placeholder ? ' placeholder="' . dol_escape_htmltag($placeholder) . '"' : '') . ' />';
 		} else {
@@ -8101,7 +8141,7 @@ class Form
 	 * Output html form to select an object.
 	 * Note, this function is called by selectForForms or by ajax selectobject.php
 	 *
-	 * @param Object 		$objecttmp 			Object to knwo the table to scan for combo.
+	 * @param Object 		$objecttmp 			Object to know the table to scan for combo.
 	 * @param string 		$htmlname 			Name of HTML select component
 	 * @param int 			$preselectedvalue 	Preselected value (ID of element)
 	 * @param string 		$showempty 			''=empty values not allowed, 'string'=value show if we allow empty values (for example 'All', ...)
@@ -8113,13 +8153,13 @@ class Form
 	 * @param int 			$outputmode 		0=HTML select string, 1=Array
 	 * @param int 			$disabled 			1=Html component is disabled
 	 * @param string 		$sortfield 			Sort field
-	 * @param string 		$filter 			Add more filter
+	 * @param string 		$filter 			Add more filter (Universal Search Filter)
 	 * @return string|array                     Return HTML string
 	 * @see selectForForms()
 	 */
 	public function selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $outputmode = 0, $disabled = 0, $sortfield = '', $filter = '')
 	{
-		global $conf, $langs, $user, $hookmanager;
+		global $langs, $user, $hookmanager;
 
 		//print "$htmlname, $preselectedvalue, $showempty, $searchkey, $placeholder, $morecss, $moreparams, $forcecombo, $outputmode, $disabled";
 
@@ -8233,13 +8273,13 @@ class Form
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			// Construct $out and $outarray
-			$out .= '<select id="' . $htmlname . '" class="flat' . ($morecss ? ' ' . $morecss : '') . '"' . ($disabled ? ' disabled="disabled"' : '') . ($moreparams ? ' ' . $moreparams : '') . ' name="' . $htmlname . '">' . "\n";
+			$out .= '<select id="' . $htmlname . '" class="flat minwidth100' . ($morecss ? ' ' . $morecss : '') . '"' . ($disabled ? ' disabled="disabled"' : '') . ($moreparams ? ' ' . $moreparams : '') . ' name="' . $htmlname . '">' . "\n";
 
 			// Warning: Do not use textifempty = ' ' or '&nbsp;' here, or search on key will search on ' key'. Seems it is no more true with selec2 v4
 			$textifempty = '&nbsp;';
 
 			//if (!empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='';
-			if (!empty($conf->global->$confkeyforautocompletemode)) {
+			if (getDolGlobalInt($confkeyforautocompletemode)) {
 				if ($showempty && !is_numeric($showempty)) {
 					$textifempty = $langs->trans($showempty);
 				} else {
@@ -8289,7 +8329,7 @@ class Form
 
 			if (!$forcecombo) {
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$out .= ajax_combobox($htmlname, null, (!empty($conf->global->$confkeyforautocompletemode) ? $conf->global->$confkeyforautocompletemode : 0));
+				$out .= ajax_combobox($htmlname, null, getDolGlobalInt($confkeyforautocompletemode, 0));
 			}
 		} else {
 			dol_print_error($this->db);
@@ -8735,10 +8775,10 @@ class Form
 					$tmplabelhtml = '';
 					if (is_array($value) && array_key_exists('id', $value) && array_key_exists('label', $value)) {
 						$tmpkey = $value['id'];
-						$tmpvalue = $value['label'];
-						$tmpcolor = $value['color'];
-						$tmppicto = $value['picto'];
-						$tmplabelhtml = !empty($value['labelhtml']) ? $value['labelhtml'] : '';
+						$tmpvalue = empty($value['label']) ? '' : $value['label'];
+						$tmpcolor = empty($value['color']) ? '' : $value['color'];
+						$tmppicto = empty($value['picto']) ? '' : $value['picto'];
+						$tmplabelhtml = empty($value['labelhtml']) ? '' : $value['labelhtml'];
 					}
 					$newval = ($translate ? $langs->trans($tmpvalue) : $tmpvalue);
 					$newval = ($key_in_label ? $tmpkey . ' - ' . $newval : $newval);
@@ -9757,8 +9797,8 @@ class Form
 	{
 		global $conf, $langs;
 
-		$entity = (!empty($object->entity) ? $object->entity : $conf->entity);
-		$id = (!empty($object->id) ? $object->id : $object->rowid);
+		$entity = (empty($object->entity) ? $conf->entity : $object->entity);
+		$id = (empty($object->id) ? $object->rowid : $object->id);
 
 		$ret = '';
 		$dir = '';
@@ -9908,7 +9948,7 @@ class Form
 				if (isModEnabled('gravatar') && $email && empty($noexternsourceoverwrite)) {
 					// see https://gravatar.com/site/implement/images/php/
 					$ret .= '<!-- Put link to gravatar -->';
-					$ret .= '<img class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . '" alt="" title="' . $email . ' Gravatar avatar" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="https://www.gravatar.com/avatar/' . md5(strtolower(trim($email))) . '?s=' . $width . '&d=' . $defaultimg . '">'; // gravatar need md5 hash
+					$ret .= '<img class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . '" alt="" title="' . $email . ' Gravatar avatar" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="https://www.gravatar.com/avatar/' . dol_hash(strtolower(trim($email)), 'sha256', 1) . '?s=' . $width . '&d=' . $defaultimg . '">'; // gravatar need md5 hash
 				} else {
 					if ($nophoto == 'company') {
 						$ret .= '<div class="divforspanimg photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . '" alt="" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . '>' . img_picto('', 'company') . '</div>';
@@ -10769,7 +10809,7 @@ class Form
 	 * @param 	string 	$dol_openinpopup 	If the button are shown in a context of a page shown inside a popup, we put here the string name of popup.
 	 * @return  string                      Html code with the buttons
 	 */
-	public function buttonsSaveCancel($save_label = 'Save', $cancel_label = 'Cancel', $morebuttons = array(), $withoutdiv = 0, $morecss = '', $dol_openinpopup = '')
+	public function buttonsSaveCancel($save_label = 'Save', $cancel_label = 'Cancel', $morebuttons = array(), $withoutdiv = false, $morecss = '', $dol_openinpopup = '')
 	{
 		global $langs;
 
@@ -10852,7 +10892,7 @@ class Form
 				$obj = $this->db->fetch_object($resql);
 
 				// If translation exists, we use it, otherwise we take the default wording
-				$label = ($langs->trans("InvoiceSubtype" . $obj->rowid) != ("InvoiceSubtype" . $obj->rowid)) ? $langs->trans("InvoiceSubtype" . $obj->rowid) : (($obj->label != '-') ? $obj->label : '');
+				$label = ($langs->trans("InvoiceSubtype" . $obj->rowid) != "InvoiceSubtype" . $obj->rowid) ? $langs->trans("InvoiceSubtype" . $obj->rowid) : (($obj->label != '-') ? $obj->label : '');
 				$this->cache_invoice_subtype[$obj->rowid]['rowid'] = $obj->rowid;
 				$this->cache_invoice_subtype[$obj->rowid]['code'] = $obj->code;
 				$this->cache_invoice_subtype[$obj->rowid]['label'] = $label;

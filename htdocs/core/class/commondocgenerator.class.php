@@ -825,7 +825,7 @@ abstract class CommonDocGenerator
 	 *
 	 * @param   Expedition		$object             Main object to use as data source
 	 * @param   Translate		$outputlangs        Lang object to use for output
-	 * @param   array			$array_key	        Name of the key for return array
+	 * @param   string			$array_key	        Name of the key for return array
 	 * @return	array								Array of substitution
 	 */
 	public function get_substitutionarray_shipment($object, $outputlangs, $array_key = 'object')
@@ -1189,7 +1189,7 @@ abstract class CommonDocGenerator
 	 *  @param	bool		$insertAfterTarget  insert before or after target column ?
 	 *  @return	int         					new rank on success and -1 on error
 	 */
-	public function insertNewColumnDef($newColKey, $defArray, $targetCol = false, $insertAfterTarget = false)
+	public function insertNewColumnDef($newColKey, $defArray, $targetCol = '', $insertAfterTarget = false)
 	{
 		// prepare wanted rank
 		$rank = -1;
@@ -1429,7 +1429,7 @@ abstract class CommonDocGenerator
 		$params = $params + $defaultParams;
 
 		/**
-		 * @var $extrafields ExtraFields
+		 * @var ExtraFields $extrafields
 		 */
 
 		$html = '';
@@ -1712,7 +1712,7 @@ abstract class CommonDocGenerator
 				$def = array(
 					'rank' => intval($extrafields->attributes[$object->table_element]['pos'][$key]),
 					'width' => 25, // in mm
-					'status' => boolval($enabled),
+					'status' => (bool) $enabled,
 					'title' => array(
 						'label' => $outputlangs->transnoentities($label)
 					),

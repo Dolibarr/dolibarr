@@ -103,7 +103,7 @@ class AgendaEvents extends DolibarrApi
 	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array               Array of Agenda Events objects
 	 */
-	public function index($sortfield = "t.id", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = 0, $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.id", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = '', $sqlfilters = '', $properties = '')
 	{
 		global $db, $conf;
 
@@ -217,6 +217,12 @@ class AgendaEvents extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->actioncomm->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->actioncomm->$field = $this->_checkValForAPI($field, $value, $this->actioncomm);
 		}
 		/*if (isset($request_data["lines"])) {
@@ -267,6 +273,11 @@ class AgendaEvents extends DolibarrApi
 		}
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
+				continue;
+			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->actioncomm->context['caller'] = $request_data['caller'];
 				continue;
 			}
 

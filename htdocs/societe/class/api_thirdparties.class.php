@@ -268,6 +268,7 @@ class Thirdparties extends DolibarrApi
 				$this->company->context['caller'] = $request_data['caller'];
 				continue;
 			}
+
 			$this->company->$field = $value;
 		}
 
@@ -307,6 +308,12 @@ class Thirdparties extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->company->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->company->$field = $value;
 		}
 
@@ -1109,6 +1116,12 @@ class Thirdparties extends DolibarrApi
 		$account->socid = $id;
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->company->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$account->$field = $value;
 		}
 
@@ -1159,6 +1172,12 @@ class Thirdparties extends DolibarrApi
 
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$account->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$account->$field = $value;
 		}
 
@@ -1403,6 +1422,12 @@ class Thirdparties extends DolibarrApi
 			$account->fk_soc = $id;
 
 			foreach ($request_data as $field => $value) {
+				if ($field === 'caller') {
+					// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+					$account->context['caller'] = $request_data['caller'];
+					continue;
+				}
+
 				$account->$field = $value;
 			}
 
@@ -1460,6 +1485,12 @@ class Thirdparties extends DolibarrApi
 			}
 
 			foreach ($request_data as $field => $value) {
+				if ($field === 'caller') {
+					// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+					$account->context['caller'] = $request_data['caller'];
+					continue;
+				}
+
 				$account->$field = $value;
 			}
 
@@ -1493,6 +1524,12 @@ class Thirdparties extends DolibarrApi
 			$account->date_creation = $obj->date_creation;
 
 			foreach ($request_data as $field => $value) {
+				if ($field === 'caller') {
+					// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+					$account->context['caller'] = $request_data['caller'];
+					continue;
+				}
+
 				$account->$field = $value;
 			}
 
@@ -1549,6 +1586,12 @@ class Thirdparties extends DolibarrApi
 			$account->fetch($obj->rowid);
 
 			foreach ($request_data as $field => $value) {
+				if ($field === 'caller') {
+					// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+					$account->context['caller'] = $request_data['caller'];
+					continue;
+				}
+
 				$account->$field = $value;
 			}
 

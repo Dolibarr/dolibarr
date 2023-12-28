@@ -94,10 +94,16 @@ $journal_label = $accountingjournalstatic->label;
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
 $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
 
-if (empty($date_startmonth) || empty($date_endmonth)) {
+if (empty($date_startmonth)) {
 	// Period by default on transfer
 	$dates = getDefaultDatesForTransfer();
 	$date_start = $dates['date_start'];
+	$pastmonthyear = $dates['pastmonthyear'];
+	$pastmonth = $dates['pastmonth'];
+}
+if (empty($date_endmonth)) {
+	// Period by default on transfer
+	$dates = getDefaultDatesForTransfer();
 	$date_end = $dates['date_end'];
 	$pastmonthyear = $dates['pastmonthyear'];
 	$pastmonth = $dates['pastmonth'];
@@ -464,7 +470,7 @@ if ($action == 'writebookkeeping' && !$error) {
 
 		// Warranty
 		if (!$errorforline) {
-			if (is_iterable($tabwarranty[$key])) {
+			if (is_array($tabwarranty[$key])) {
 				foreach ($tabwarranty[$key] as $k => $mt) {
 					$bookkeeping = new BookKeeping($db);
 					$bookkeeping->doc_date = $val["date"];
@@ -706,7 +712,7 @@ if ($action == 'writebookkeeping' && !$error) {
 
 		// Revenue stamp
 		if (!$errorforline) {
-			if (is_iterable($tabrevenuestamp[$key])) {
+			if (is_array($tabrevenuestamp[$key])) {
 				foreach ($tabrevenuestamp[$key] as $k => $mt) {
 					if ($mt) {
 						$accountingaccount->fetch(null, $k, true);    // TODO Use a cache for label
@@ -863,12 +869,12 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 			print '"'.$key.'"'.$sep;
 			print '"'.$date.'"'.$sep;
 			print '"'.$val["ref"].'"'.$sep;
-			print '"'.utf8_decode(dol_trunc($companystatic->name, 32)).'"'.$sep;
+			print '"'.mb_convert_encoding(dol_trunc($companystatic->name, 32), 'ISO-8859-1').'"'.$sep;
 			print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
 			print '"'.length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY')).'"'.$sep;
 			print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
 			print '"'.$langs->trans("Thirdparty").'"'.$sep;
-			print '"'.utf8_decode(dol_trunc($companystatic->name, 16)).' - '.$invoicestatic->ref.' - '.$langs->trans("Retainedwarranty").'"'.$sep;
+			print '"'.mb_convert_encoding(dol_trunc($companystatic->name, 16), 'ISO-8859-1').' - '.$invoicestatic->ref.' - '.$langs->trans("Retainedwarranty").'"'.$sep;
 			print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
 			print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
 			print '"'.$journal.'"';
@@ -882,12 +888,12 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 			print '"'.$key.'"'.$sep;
 			print '"'.$date.'"'.$sep;
 			print '"'.$val["ref"].'"'.$sep;
-			print '"'.utf8_decode(dol_trunc($companystatic->name, 32)).'"'.$sep;
+			print '"'.mb_convert_encoding(dol_trunc($companystatic->name, 32), 'ISO-8859-1').'"'.$sep;
 			print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
 			print '"'.length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER')).'"'.$sep;
 			print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
 			print '"'.$langs->trans("Thirdparty").'"'.$sep;
-			print '"'.utf8_decode(dol_trunc($companystatic->name, 16)).' - '.$invoicestatic->ref.' - '.$langs->trans("Thirdparty").'"'.$sep;
+			print '"'.mb_convert_encoding(dol_trunc($companystatic->name, 16), 'ISO-8859-1').' - '.$invoicestatic->ref.' - '.$langs->trans("Thirdparty").'"'.$sep;
 			print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
 			print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
 			print '"'.$journal.'"';
@@ -903,12 +909,12 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 			print '"'.$key.'"'.$sep;
 			print '"'.$date.'"'.$sep;
 			print '"'.$val["ref"].'"'.$sep;
-			print '"'.utf8_decode(dol_trunc($companystatic->name, 32)).'"'.$sep;
+			print '"'.mb_convert_encoding(dol_trunc($companystatic->name, 32), 'ISO-8859-1').'"'.$sep;
 			print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 			print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 			print '""'.$sep;
-			print '"'.utf8_decode(dol_trunc($accountingaccount->label, 32)).'"'.$sep;
-			print '"'.utf8_decode(dol_trunc($companystatic->name, 16)).' - '.dol_trunc($accountingaccount->label, 32).'"'.$sep;
+			print '"'.mb_convert_encoding(dol_trunc($accountingaccount->label, 32), 'ISO-8859-1').'"'.$sep;
+			print '"'.mb_convert_encoding(dol_trunc($companystatic->name, 16), 'ISO-8859-1').' - '.dol_trunc($accountingaccount->label, 32).'"'.$sep;
 			print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
 			print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
 			print '"'.$journal.'"';
@@ -932,12 +938,12 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 					print '"'.$key.'"'.$sep;
 					print '"'.$date.'"'.$sep;
 					print '"'.$val["ref"].'"'.$sep;
-					print '"'.utf8_decode(dol_trunc($companystatic->name, 32)).'"'.$sep;
+					print '"'.mb_convert_encoding(dol_trunc($companystatic->name, 32), 'ISO-8859-1').'"'.$sep;
 					print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 					print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 					print '""'.$sep;
 					print '"'.$langs->trans("VAT").' - '.join(', ', $def_tva[$key][$k]).' %"'.$sep;
-					print '"'.utf8_decode(dol_trunc($companystatic->name, 16)).' - '.$invoicestatic->ref.' - '.$langs->trans("VAT").join(', ', $def_tva[$key][$k]).' %'.($numtax ? ' - Localtax '.$numtax : '').'"'.$sep;
+					print '"'.mb_convert_encoding(dol_trunc($companystatic->name, 16), 'ISO-8859-1').' - '.$invoicestatic->ref.' - '.$langs->trans("VAT").join(', ', $def_tva[$key][$k]).' %'.($numtax ? ' - Localtax '.$numtax : '').'"'.$sep;
 					print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
 					print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
 					print '"'.$journal.'"';
@@ -952,12 +958,12 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 			print '"'.$key.'"'.$sep;
 			print '"'.$date.'"'.$sep;
 			print '"'.$val["ref"].'"'.$sep;
-			print '"'.utf8_decode(dol_trunc($companystatic->name, 32)).'"'.$sep;
+			print '"'.mb_convert_encoding(dol_trunc($companystatic->name, 32), 'ISO-8859-1').'"'.$sep;
 			print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 			print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 			print '""'.$sep;
 			print '"'.$langs->trans("RevenueStamp").'"'.$sep;
-			print '"'.utf8_decode(dol_trunc($companystatic->name, 16)).' - '.$invoicestatic->ref.' - '.$langs->trans("RevenueStamp").'"'.$sep;
+			print '"'.mb_convert_encoding(dol_trunc($companystatic->name, 16), 'ISO-8859-1').' - '.$invoicestatic->ref.' - '.$langs->trans("RevenueStamp").'"'.$sep;
 			print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
 			print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
 			print '"'.$journal.'"';
@@ -1144,7 +1150,7 @@ if (empty($action) || $action == 'view') {
 		}
 
 		// Warranty
-		if (is_iterable($tabwarranty[$key])) {
+		if (is_array($tabwarranty[$key])) {
 			foreach ($tabwarranty[$key] as $k => $mt) {
 				print '<tr class="oddeven">';
 				print "<!-- Thirdparty warranty -->";
@@ -1292,7 +1298,7 @@ if (empty($action) || $action == 'view') {
 		}
 
 		// Revenue stamp
-		if (is_iterable($tabrevenuestamp[$key])) {
+		if (is_array($tabrevenuestamp[$key])) {
 			foreach ($tabrevenuestamp[$key] as $k => $mt) {
 				print '<tr class="oddeven">';
 				print "<!-- Thirdparty revenuestamp -->";

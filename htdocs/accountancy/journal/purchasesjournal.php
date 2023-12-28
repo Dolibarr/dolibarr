@@ -92,10 +92,16 @@ $journal_label = $accountingjournalstatic->label;
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
 $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
 
-if (empty($date_startmonth) || empty($date_endmonth)) {
+if (empty($date_startmonth)) {
 	// Period by default on transfer
 	$dates = getDefaultDatesForTransfer();
 	$date_start = $dates['date_start'];
+	$pastmonthyear = $dates['pastmonthyear'];
+	$pastmonth = $dates['pastmonth'];
+}
+if (empty($date_endmonth)) {
+	// Period by default on transfer
+	$dates = getDefaultDatesForTransfer();
 	$date_end = $dates['date_end'];
 	$pastmonthyear = $dates['pastmonthyear'];
 	$pastmonth = $dates['pastmonth'];
@@ -802,12 +808,12 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 			print '"'.$key.'"'.$sep;
 			print '"'.$date.'"'.$sep;
 			print '"'.$val["refsologest"].'"'.$sep;
-			print '"'.utf8_decode(dol_trunc($companystatic->name, 32)).'"'.$sep;
+			print '"'.mb_convert_encoding(dol_trunc($companystatic->name, 32), 'ISO-8859-1').'"'.$sep;
 			print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
 			print '"'.length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER')).'"'.$sep;
 			print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
 			print '"'.$langs->trans("Thirdparty").'"'.$sep;
-			print '"'.utf8_decode(dol_trunc($companystatic->name, 16)).' - '.$val["refsuppliersologest"].' - '.$langs->trans("Thirdparty").'"'.$sep;
+			print '"'.mb_convert_encoding(dol_trunc($companystatic->name, 16), 'ISO-8859-1').' - '.$val["refsuppliersologest"].' - '.$langs->trans("Thirdparty").'"'.$sep;
 			print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
 			print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
 			print '"'.$journal.'"';
@@ -823,12 +829,12 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 			print '"'.$key.'"'.$sep;
 			print '"'.$date.'"'.$sep;
 			print '"'.$val["refsologest"].'"'.$sep;
-			print '"'.utf8_decode(dol_trunc($companystatic->name, 32)).'"'.$sep;
+			print '"'.mb_convert_encoding(dol_trunc($companystatic->name, 32), 'ISO-8859-1').'"'.$sep;
 			print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 			print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 			print '""'.$sep;
-			print '"'.utf8_decode(dol_trunc($accountingaccount->label, 32)).'"'.$sep;
-			print '"'.utf8_decode(dol_trunc($companystatic->name, 16)).' - '.$val["refsuppliersologest"].' - '.dol_trunc($accountingaccount->label, 32).'"'.$sep;
+			print '"'.mb_convert_encoding(dol_trunc($accountingaccount->label, 32), 'ISO-8859-1').'"'.$sep;
+			print '"'.mb_convert_encoding(dol_trunc($companystatic->name, 16), 'ISO-8859-1').' - '.$val["refsuppliersologest"].' - '.dol_trunc($accountingaccount->label, 32).'"'.$sep;
 			print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
 			print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
 			print '"'.$journal.'"';
@@ -875,12 +881,12 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 					print '"'.$key.'"'.$sep;
 					print '"'.$date.'"'.$sep;
 					print '"'.$val["refsologest"].'"'.$sep;
-					print '"'.utf8_decode(dol_trunc($companystatic->name, 32)).'"'.$sep;
+					print '"'.mb_convert_encoding(dol_trunc($companystatic->name, 32), 'ISO-8859-1').'"'.$sep;
 					print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 					print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 					print '""'.$sep;
 					print '"'.$langs->trans("VAT").' - '.join(', ', $def_tva[$key][$k]).' %"'.$sep;
-					print '"'.utf8_decode(dol_trunc($companystatic->name, 16)).' - '.$val["refsuppliersologest"].' - '.$langs->trans("VAT").join(', ', $def_tva[$key][$k]).' %'.($numtax ? ' - Localtax '.$numtax : '').'"'.$sep;
+					print '"'.mb_convert_encoding(dol_trunc($companystatic->name, 16), 'ISO-8859-1').' - '.$val["refsuppliersologest"].' - '.$langs->trans("VAT").join(', ', $def_tva[$key][$k]).' %'.($numtax ? ' - Localtax '.$numtax : '').'"'.$sep;
 					print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
 					print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
 					print '"'.$journal.'"';
@@ -895,12 +901,12 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 						print '"'.$key.'"'.$sep;
 						print '"'.$date.'"'.$sep;
 						print '"'.$val["refsologest"].'"'.$sep;
-						print '"'.utf8_decode(dol_trunc($companystatic->name, 32)).'"'.$sep;
+						print '"'.mb_convert_encoding(dol_trunc($companystatic->name, 32), 'ISO-8859-1').'"'.$sep;
 						print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 						print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 						print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 						print '"'.$langs->trans("Thirdparty").'"'.$sep;
-						print '"'.utf8_decode(dol_trunc($companystatic->name, 16)).' - '.$val["refsuppliersologest"].' - '.$langs->trans("VAT").' NPR"'.$sep;
+						print '"'.mb_convert_encoding(dol_trunc($companystatic->name, 16), 'ISO-8859-1').' - '.$val["refsuppliersologest"].' - '.$langs->trans("VAT").' NPR"'.$sep;
 						print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
 						print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
 						print '"'.$journal.'"';

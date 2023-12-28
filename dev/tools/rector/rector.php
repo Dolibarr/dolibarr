@@ -26,6 +26,8 @@ return static function (RectorConfig $rectorConfig): void {
 	$rectorConfig->skip([
 		'**/includes/**',
 		'**/custom/**',
+		'**/vendor/**',
+		'**/rector/**',		// Disable this line to test the "test.php" file.
 		__DIR__ . '/../../../htdocs/custom/',
 		__DIR__ . '/../../../htdocs/install/doctemplates/*'
 	]);
@@ -39,8 +41,15 @@ return static function (RectorConfig $rectorConfig): void {
 	//$rectorConfig->rule(Rector\Php72\Rector\FuncCall\GetClassOnNullRector::class);
 	//$rectorConfig->rule(Rector\Php72\Rector\Assign\ListEachRector::class);
 	//$rectorConfig->rule(Rector\Php72\Rector\FuncCall\ParseStrWithResultArgumentRector::class);
-	//$rectorConfig->rule(ReplaceEachAssignmentWithKeyCurrentRector::class);
 	//$rectorConfig->rule(Rector\Php72\Rector\FuncCall\StringifyDefineRector::class);
+
+	//$rectorConfig->rule(ReplaceEachAssignmentWithKeyCurrentRector::class);
+
+	$rectorConfig->rule(Rector\CodeQuality\Rector\FuncCall\FloatvalToTypeCastRector::class);
+	$rectorConfig->rule(Rector\CodeQuality\Rector\FuncCall\BoolvalToTypeCastRector::class);
+	$rectorConfig->rule(Rector\CodeQuality\Rector\NotEqual\CommonNotEqualRector::class);
+	//$rectorconfig->rule(Rector\CodeQuality\Rector\If_\CompleteMissingIfElseBracketRector::class);
+	$rectorConfig->rule(Rector\CodeQuality\Rector\For_\ForRepeatedCountToOwnVariableRector::class);
 
 	$rectorConfig->rule(Dolibarr\Rector\Renaming\GlobalToFunction::class);
 	$rectorConfig->rule(Dolibarr\Rector\Renaming\UserRightsToFunction::class);

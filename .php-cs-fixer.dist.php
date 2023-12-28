@@ -8,6 +8,8 @@ $finder = (new PhpCsFixer\Finder())
 	'custom',
 	'documents',
 	'doctemplates',
+	'vendor',
+	'install/doctemplates',
 	'htdocs/custom',
 	'htdocs/includes',
 	'htdocs/install/doctemplates',
@@ -41,6 +43,8 @@ return (new PhpCsFixer\Config())
 		// So we use target PHP70 for the moment.
 		'@PHP70Migration' => true,
 		//'@PHP71Migration' => true,
+                // Avoid adding public to const (incompatible with PHP 7.0):
+                'visibility_required' => ['elements'=>['property', 'method']],
 
 		//'strict_param' => true,
 		//'array_syntax' => ['syntax' => 'short'],

@@ -323,11 +323,11 @@ if (empty($reshook)) {
 					$prod_batch->find(0, '', '', $line->batch, $line->fk_warehouse);
 					$mouvP = new MouvementStock($db);
 					$mouvP->origin = $invoice;
-					$mouvP->livraison($user, $line->fk_product, $conf->global->$constantforkey, $line->qty, $line->price, 'TakePOS', '', '', '', $prod_batch->batch, $line->batch);
+					$mouvP->livraison($user, $line->fk_product, getDolGlobalString($constantforkey), $line->qty, $line->price, 'TakePOS', '', '', '', $prod_batch->batch, $line->batch);
 				} else {
 					$mouvP = new MouvementStock($db);
 					$mouvP->origin = $invoice;
-					$mouvP->livraison($user, $line->fk_product, $conf->global->$constantforkey, $line->qty, $line->price, 'TakePOS', '', '', '');
+					$mouvP->livraison($user, $line->fk_product, getDolGlobalString($constantforkey), $line->qty, $line->price, 'TakePOS', '', '', '');
 				}
 			}
 		}
@@ -534,9 +534,10 @@ if (empty($reshook)) {
 			if (!empty($batch)) {
 				$action="setbatch";
 			} else {
+				$nbofsuggested = 0;
 				$prod->load_stock('warehouseopen');
 				$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
-				if ($prod->stock_warehouse[getDolGlobalString($constantforkey)]->detail_batch!="") {
+				if ($prod->stock_warehouse[getDolGlobalString($constantforkey)]->detail_batch != "") {
 					if (is_object($prod->stock_warehouse[getDolGlobalString($constantforkey)]) && count($prod->stock_warehouse[getDolGlobalString($constantforkey)]->detail_batch)) {
 						foreach ($prod->stock_warehouse[getDolGlobalString($constantforkey)]->detail_batch as $dbatch) {
 							$nbofsuggested++;
@@ -561,7 +562,7 @@ if (empty($reshook)) {
 						print '<td class="left">';
 						$staticwarehouse = new Entrepot($db);
 						if ($warehouse_id > 0) {
-							$staticwarehouse->fetch($conf->global->$constantforkey);
+							$staticwarehouse->fetch(getDolGlobalString($constantforkey));
 						}
 						$detail = '';
 						$detail .= $langs->trans("LotSerial").': '.$dbatch->batch;
@@ -894,9 +895,9 @@ if (empty($reshook)) {
 		$order_receipt_printer1 = "";
 		$order_receipt_printer2 = "";
 		$order_receipt_printer3 = "";
-		$catsprinter1 = explode(';', $conf->global->TAKEPOS_PRINTED_CATEGORIES_1);
-		$catsprinter2 = explode(';', $conf->global->TAKEPOS_PRINTED_CATEGORIES_2);
-		$catsprinter3 = explode(';', $conf->global->TAKEPOS_PRINTED_CATEGORIES_3);
+		$catsprinter1 = explode(';', getDolGlobalString('TAKEPOS_PRINTED_CATEGORIES_1'));
+		$catsprinter2 = explode(';', getDolGlobalString('TAKEPOS_PRINTED_CATEGORIES_2'));
+		$catsprinter3 = explode(';', getDolGlobalString('TAKEPOS_PRINTED_CATEGORIES_3'));
 		$linestoprint = 0;
 		foreach ($invoice->lines as $line) {
 			if ($line->special_code == "4") {

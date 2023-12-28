@@ -250,16 +250,24 @@ class Zapier extends DolibarrApi
 			throw new RestException(401);
 		}
 
+		dol_syslog("API Zapier create hook receive : ".print_r($request_data, true), LOG_DEBUG);
+
 		// Check mandatory fields
 		$fields = array(
 			'url',
 		);
-		dol_syslog("API Zapier create hook receive : ".print_r($request_data, true), LOG_DEBUG);
 		$result = $this->validate($request_data, $fields);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->hook->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->hook->$field = $value;
 		}
+
 		$this->hook->fk_user = DolibarrApiAccess::$user->id;
 		// we create the hook into database
 		if (!$this->hook->create(DolibarrApiAccess::$user)) {

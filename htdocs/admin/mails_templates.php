@@ -1354,7 +1354,7 @@ $db->close();
  *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
  *	@return		void
  */
-function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
+function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 {
 	global $langs, $user, $db;
 	global $form;

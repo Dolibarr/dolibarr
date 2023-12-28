@@ -293,7 +293,7 @@ if (!function_exists('dol_loginfunction')) {
 		if (getDolGlobalString('MAIN_HOME')) {
 			$substitutionarray = getCommonSubstitutionArray($langs);
 			complete_substitutions_array($substitutionarray, $langs);
-			$texttoshow = make_substitutions($conf->global->MAIN_HOME, $substitutionarray, $langs);
+			$texttoshow = make_substitutions(getDolGlobalString('MAIN_HOME'), $substitutionarray, $langs);
 
 			$main_home = dol_htmlcleanlastbr($texttoshow);
 		}

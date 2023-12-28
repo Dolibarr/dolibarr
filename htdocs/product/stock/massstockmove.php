@@ -195,7 +195,7 @@ if ($action == 'createmovements' && $user->hasRight('stock', 'mouvement', 'creer
 			$dlc = -1; // They are loaded later from serial
 			$dluo = -1; // They are loaded later from serial
 
-			if (!$error && $id_sw <> $id_tw && is_numeric($qty) && $id_product) {
+			if (!$error && $id_sw != $id_tw && is_numeric($qty) && $id_product) {
 				$result = $product->fetch($id_product);
 
 				$product->load_stock('novirtual'); // Load array product->stock_warehouse

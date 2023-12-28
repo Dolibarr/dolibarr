@@ -218,7 +218,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 
 			// Clean declared words
 			if (getDolGlobalString('COMPANY_DIGITARIA_CLEAN_WORDS')) {
-				$cleanWords = explode(";", $conf->global->COMPANY_DIGITARIA_CLEAN_WORDS);
+				$cleanWords = explode(";", getDolGlobalString('COMPANY_DIGITARIA_CLEAN_WORDS'));
 				$codetouse = str_replace($cleanWords, "", $codetouse);
 			}
 			// Remove special char if COMPANY_DIGITARIA_REMOVE_SPECIAL is set to 1 or not set (default)
@@ -237,7 +237,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 			if (!isset($conf->global->COMPANY_DIGITARIA_UNIQUE_CODE) || getDolGlobalString('COMPANY_DIGITARIA_UNIQUE_CODE')) {
 				$disponibility = $this->checkIfAccountancyCodeIsAlreadyUsed($db, $this->code, $type);
 
-				while ($disponibility <> 0 && $i < 1000) {
+				while ($disponibility != 0 && $i < 1000) {
 					$widthsupplier = $this->supplieraccountancycodecharacternumber;
 					$widthcustomer = $this->customeraccountancycodecharacternumber;
 

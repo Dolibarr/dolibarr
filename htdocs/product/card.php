@@ -152,7 +152,7 @@ if ($id > 0 || !empty($ref)) {
 	if ($result < 0) {
 		dol_print_error($db, $object->error, $object->errors);
 	}
-	$entity = (!empty($object->entity) ? $object->entity : $conf->entity);
+	$entity = (empty($object->entity) ? $conf->entity : $object->entity);
 	if (isModEnabled("product")) {
 		$upload_dir = $conf->product->multidir_output[$entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref);
 	} elseif (isModEnabled("service")) {
@@ -2106,7 +2106,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				if (!getDolGlobalString('PRODUCT_DISABLE_PUBLIC_URL')) {
 					print '<tr><td>'.$langs->trans("PublicUrl").'</td><td>';
 					print img_picto('', 'globe', 'class="pictofixedwidth"');
-					print '<input type="text" name="url" class="quatrevingtpercent" value="'.(GETPOSTISSET('url') ? GETPOST('url') : $object->url).'">';
+					print '<input type="text" name="url" class="maxwidth500 widthcentpercentminusx" value="'.(GETPOSTISSET('url') ? GETPOST('url') : $object->url).'">';
 					print '</td></tr>';
 				}
 
@@ -2409,7 +2409,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			$object->next_prev_filter = "fk_product_type = ".((int) $object->type);
 
 			$shownav = 1;
-			if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+			if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 				$shownav = 0;
 			}
 
@@ -2891,11 +2891,11 @@ if ($action != 'create' && $action != 'edit') {
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
 		if ($usercancreate) {
-			if (!isset($object->no_button_edit) || $object->no_button_edit <> 1) {
+			if (!isset($object->no_button_edit) || $object->no_button_edit != 1) {
 				print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id, '', $usercancreate);
 			}
 
-			if (!isset($object->no_button_copy) || $object->no_button_copy <> 1) {
+			if (!isset($object->no_button_copy) || $object->no_button_copy != 1) {
 				if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
 					$cloneProductUrl = '';
 					$cloneButtonId = 'action-clone';
@@ -2906,7 +2906,7 @@ if ($action != 'create' && $action != 'edit') {
 		$object_is_used = $object->isObjectUsed($object->id);
 
 		if ($usercandelete) {
-			if (empty($object_is_used) && (!isset($object->no_button_delete) || $object->no_button_delete <> 1)) {
+			if (empty($object_is_used) && (!isset($object->no_button_delete) || $object->no_button_delete != 1)) {
 				if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
 					print dolGetButtonAction($langs->trans('Delete'), '', 'delete', '#', 'action-delete', true);
 				} else {

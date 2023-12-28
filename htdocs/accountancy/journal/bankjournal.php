@@ -104,10 +104,16 @@ $error = 0;
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
 $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
 
-if (empty($date_startmonth) || empty($date_endmonth)) {
+if (empty($date_startmonth)) {
 	// Period by default on transfer
 	$dates = getDefaultDatesForTransfer();
 	$date_start = $dates['date_start'];
+	$pastmonthyear = $dates['pastmonthyear'];
+	$pastmonth = $dates['pastmonth'];
+}
+if (empty($date_endmonth)) {
+	// Period by default on transfer
+	$dates = getDefaultDatesForTransfer();
 	$date_end = $dates['date_end'];
 	$pastmonthyear = $dates['pastmonthyear'];
 	$pastmonth = $dates['pastmonth'];
@@ -306,16 +312,28 @@ if ($result) {
 
 		// get_url may return -1 which is not traversable
 		if (is_array($links) && count($links) > 0) {
+			// Test if entry is for a social contribution, salary or expense report.
+			// In such a case, we will ignore the bank url line for user
 			$is_sc = false;
+			$is_salary = false;
+			$is_expensereport = false;
 			foreach ($links as $v) {
 				if ($v['type'] == 'sc') {
 					$is_sc = true;
 					break;
 				}
+				if ($v['type'] == 'payment_salary') {
+					$is_salary = true;
+					break;
+				}
+				if ($v['type'] == 'payment_expensereport') {
+					$is_expensereport = true;
+					break;
+				}
 			}
 			// Now loop on each link of record in bank (code similar to bankentries_list.php)
 			foreach ($links as $key => $val) {
-				if ($links[$key]['type'] == 'user' && !$is_sc) {
+				if ($links[$key]['type'] == 'user' && !$is_sc && !$is_salary && !$is_expensereport) {
 					continue;
 				}
 				if (in_array($links[$key]['type'], array('sc', 'payment_sc', 'payment', 'payment_supplier', 'payment_vat', 'payment_expensereport', 'banktransfert', 'payment_donation', 'member', 'payment_loan', 'payment_salary', 'payment_various'))) {
@@ -365,6 +383,7 @@ if ($result) {
 					$userstatic->firstname = $tabuser[$obj->rowid]['firstname'];
 					$userstatic->lastname = $tabuser[$obj->rowid]['lastname'];
 					$userstatic->statut = $tabuser[$obj->rowid]['status'];
+					$userstatic->status = $tabuser[$obj->rowid]['status'];
 					$userstatic->accountancy_code = $tabuser[$obj->rowid]['accountancy_code'];
 					if ($userstatic->id > 0) {
 						$tabpay[$obj->rowid]["soclib"] = $userstatic->getNomUrl(1, 'accountancy', 0);
@@ -1286,7 +1305,7 @@ if (empty($action) || $action == 'view') {
 							if (!getDolGlobalString('ACCOUNTING_ACCOUNT_SUSPENSE') || getDolGlobalString('ACCOUNTING_ACCOUNT_SUSPENSE') == '-1') {
 								$accounttoshow = '<span class="error small">'.$langs->trans('UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking').'</span>';
 							} else {
-								$accounttoshow = '<span class="warning small">'.$langs->trans('UnknownAccountForThirdparty', length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE)).'</span>'; // We will use a waiting account
+								$accounttoshow = '<span class="warning small">'.$langs->trans('UnknownAccountForThirdparty', length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_SUSPENSE'))).'</span>'; // We will use a waiting account
 							}
 						} else {
 							// We will refuse writing
@@ -1377,7 +1396,8 @@ if (empty($action) || $action == 'view') {
 					{
 						print '<span class="error">'.$langs->trans("WaitAccountNotDefined").'</span>';
 					}
-					else */ print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE);
+					else */
+					print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE);
 					print "</td>";
 					// Subledger account
 					print "<td>";
@@ -1388,7 +1408,7 @@ if (empty($action) || $action == 'view') {
 					else print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE);
 					*/
 					print "</td>";
-					print "<td>".$reflabel."</td>";
+					print "<td>".dol_escape_htmltag($reflabel)."</td>";
 					print '<td class="center">'.$val["type_payment"]."</td>";
 					print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
 					print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";

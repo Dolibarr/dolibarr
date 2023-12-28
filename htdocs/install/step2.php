@@ -27,6 +27,7 @@
 include 'inc.php';
 require_once $dolibarr_main_document_root.'/core/class/conf.class.php';
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
+require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
 
 global $langs;
 
@@ -192,7 +193,7 @@ if ($action == "set") {
 			if ($fp) {
 				while (!feof($fp)) {
 					$buf = fgets($fp, 4096);
-					if (substr($buf, 0, 2) <> '--') {
+					if (substr($buf, 0, 2) != '--') {
 						$buf = preg_replace('/--(.+)*/', '', $buf);
 						$buffer .= $buf;
 					}
@@ -404,7 +405,7 @@ if ($action == "set") {
 				$buffer = '';
 				while (!feof($fp)) {
 					$buf = fgets($fp, 4096);
-					if (substr($buf, 0, 2) <> '--') {
+					if (substr($buf, 0, 2) != '--') {
 						$buffer .= $buf."§";
 					}
 				}
@@ -584,7 +585,7 @@ dolibarr_install_syslog("- step2: end");
 
 $conf->file->instance_unique_id = (empty($dolibarr_main_instance_unique_id) ? (empty($dolibarr_main_cookie_cryptkey) ? '' : $dolibarr_main_cookie_cryptkey) : $dolibarr_main_instance_unique_id); // Unique id of instance
 
-$hash_unique_id = md5('dolibarr'.$conf->file->instance_unique_id);
+$hash_unique_id = dol_hash('dolibarr'.$conf->file->instance_unique_id, 'sha256');	// Note: if the global salt changes, this hash changes too so ping may be counted twice. We don't mind. It is for statistics purpose only.
 
 $out  = '<input type="checkbox" name="dolibarrpingno" id="dolibarrpingno"'.((getDolGlobalString('MAIN_FIRST_PING_OK_ID') == 'disabled') ? '' : ' value="checked" checked="true"').'> ';
 $out .= '<label for="dolibarrpingno">'.$langs->trans("MakeAnonymousPing").'</label>';

@@ -1081,7 +1081,7 @@ if (!getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 						<a class="hideonsmartphone" onclick="FullScreen();" title="<?php echo dol_escape_htmltag($langs->trans("ClickFullScreenEscapeToLeave")); ?>"><span class="fa fa-expand-arrows-alt"></span></a>
 								<?php }?>
 					</div>
-								<?php
+					<?php
 				} ?>
 				<div class="login_block_user">
 				<?php
@@ -1223,7 +1223,7 @@ if (isset($_SESSION["takeposterminal"]) && $_SESSION["takeposterminal"]) {
 
 			$constantforkey = "CASHDESK_ID_BANKACCOUNT_" . $paycode . $_SESSION["takeposterminal"];
 			//var_dump($constantforkey.' '.getDolGlobalInt($constantforkey));
-			if (!empty($conf->global->$constantforkey) && getDolGlobalInt($constantforkey) > 0) {
+			if (getDolGlobalInt($constantforkey) > 0) {
 				array_push($paiementsModes, $obj);
 			}
 		}
@@ -1425,7 +1425,7 @@ if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
 						echo '<img class="imgwrapper" id="catimg'.$count.'" />';
 					}
 				} ?>
-				<?php if ($count != ($MAXCATEG - 2) && $count != ($MAXCATEG - 1)) { ?>
+				<?php if ($count != $MAXCATEG - 2 && $count != $MAXCATEG - 1) { ?>
 				<div class="description" id="catdivdesc<?php echo $count; ?>">
 					<div class="description_content" id="catdesc<?php echo $count; ?>"></div>
 				</div>
@@ -1471,7 +1471,7 @@ if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
 							print '<img class="imgwrapper" title="" id="proimg'.$count.'">';
 						}
 					} ?>
-					<?php if ($count != ($MAXPRODUCT - 2) && $count != ($MAXPRODUCT - 1) && !getDolGlobalString('TAKEPOS_HIDE_PRODUCT_IMAGES')) { ?>
+					<?php if ($count != $MAXPRODUCT - 2 && $count != $MAXPRODUCT - 1 && !getDolGlobalString('TAKEPOS_HIDE_PRODUCT_IMAGES')) { ?>
 					<div class="description" id="prodivdesc<?php echo $count; ?>">
 						<div class="description_content" id="prodesc<?php echo $count; ?>"></div>
 					</div>

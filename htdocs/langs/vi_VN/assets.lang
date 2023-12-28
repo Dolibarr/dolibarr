@@ -1,4 +1,4 @@
-# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+# Copyright (C) 2018-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,50 +16,171 @@
 #
 # Generic
 #
-Assets = Tài sản
-NewAsset = Tài sản mới
-AccountancyCodeAsset = Mã kế toán (tài sản)
-AccountancyCodeDepreciationAsset = Mã kế toán (tài khoản khấu hao tài sản)
-AccountancyCodeDepreciationExpense = Mã kế toán (tài khoản chi phí khấu hao)
-NewAssetType=Loại tài sản mới
-AssetsTypeSetup=Thiết lập loại tài sản
-AssetTypeModified=Loại tài sản sửa đổi
-AssetType=Loại tài sản
+NewAsset=Tài sản mới
+AccountancyCodeAsset=Mã kế toán (tài sản)
+AccountancyCodeDepreciationAsset=Mã kế toán (tài khoản khấu hao tài sản)
+AccountancyCodeDepreciationExpense=Mã kế toán (tài khoản chi phí khấu hao)
 AssetsLines=Tài sản
 DeleteType=Xóa
-DeleteAnAssetType=Xóa một loại tài sản
-ConfirmDeleteAssetType=Bạn có chắc chắn muốn xóa loại tài sản này?
-ShowTypeCard=Hiển thị loại '% s'
+DeleteAnAssetType=Xóa một mô hình tài sản
+ConfirmDeleteAssetType=Bạn có chắc muốn xóa mô hình tài sản này?
+ShowTypeCard=Hiển thị mô hình '%s'
 
 # Module label 'ModuleAssetsName'
-ModuleAssetsName = Tài sản
+ModuleAssetsName=Tài sản
 # Module description 'ModuleAssetsDesc'
-ModuleAssetsDesc = Mô tả tài sản
+ModuleAssetsDesc=Mô tả tài sản
 
 #
 # Admin page
 #
-AssetsSetup = Thiết lập tài sản
-Settings = Cài đặt
-AssetsSetupPage = Trang thiết lập tài sản
-ExtraFieldsAssetsType = Thuộc tính bổ sung (loại tài sản)
-AssetsType=Loại tài sản
-AssetsTypeId=ID Loại tài sản
-AssetsTypeLabel=Nhãn loại tài sản
-AssetsTypes=Các loại tài sản
+AssetSetup=Thiết lập tài sản
+AssetSetupPage=Trang thiết lập tài sản
+ExtraFieldsAssetModel=Thuộc tính bổ sung (Mô hình tài sản)
+
+AssetsType=Mô hình tài sản
+AssetsTypeId=ID mô hình tài sản
+AssetsTypeLabel=Nhãn mô hình nội dung
+AssetsTypes=Mô hình tài sản
+ASSET_ACCOUNTANCY_CATEGORY=Nhóm kế toán tài sản cố định
 
 #
 # Menu
 #
-MenuAssets = Tài sản
-MenuNewAsset = Tài sản mới
-MenuTypeAssets = Loại tài sản
-MenuListAssets = Danh sách
-MenuNewTypeAssets = Mới
-MenuListTypeAssets = Danh sách
+MenuAssets=Tài sản
+MenuNewAsset=Tài sản mới
+MenuAssetModels=Nội dung mô hình
+MenuListAssets=Danh sách
+MenuNewAssetModel=Mô hình tài sản mới
+MenuListAssetModels=Danh sách
 
 #
 # Module
 #
-NewAssetType=Loại tài sản mới
-NewAsset=Tài sản mới
+ConfirmDeleteAsset=Bạn có thực sự muốn xóa nội dung này không?
+
+#
+# Tab
+#
+AssetDepreciationOptions=Tùy chọn khấu hao
+AssetAccountancyCodes=Tài khoản kế toán
+AssetDepreciation=Khấu hao
+
+#
+# Asset
+#
+Asset=Tài sản
+Assets=Tài sản
+AssetReversalAmountHT=Số tiền hoàn lại (không có thuế)
+AssetAcquisitionValueHT=Số tiền mua lại (không có thuế)
+AssetRecoveredVAT=VAT được thu hồi
+AssetReversalDate=Ngày đảo ngược
+AssetDateAcquisition=Ngày mua lại
+AssetDateStart=Ngày khởi động
+AssetAcquisitionType=Loại mua lại
+AssetAcquisitionTypeNew=Mới
+AssetAcquisitionTypeOccasion=Đã sử dụng
+AssetType=Loại tài sản
+AssetTypeIntangible=Vô hình
+AssetTypeTangible=Hữu hình
+AssetTypeInProgress=Trong tiến trình xử lý
+AssetTypeFinancial=Tài chính
+AssetNotDepreciated=Không khấu hao
+AssetDisposal=Xử lý
+AssetConfirmDisposalAsk=Bạn có chắc chắn muốn thanh lý nội dung <b> %s</b> không?
+AssetConfirmReOpenAsk=Bạn có chắc chắn muốn mở lại nội dung <b> %s</b> không?
+
+#
+# Asset status
+#
+AssetInProgress=Trong tiến trình xử lý
+AssetDisposed=xử lý
+AssetRecorded=Đã hạch toán
+
+#
+# Asset disposal
+#
+AssetDisposalDate=Ngày xử lý
+AssetDisposalAmount=Giá trị thải bỏ
+AssetDisposalType=Loại xử lý
+AssetDisposalDepreciated=Khấu hao năm chuyển nhượng
+AssetDisposalSubjectToVat=Việc thải bỏ phải chịu thuế VAT
+
+#
+# Asset model
+#
+AssetModel=Mô hình tài sản
+AssetModels=Mô hình tài sản
+
+#
+# Asset depreciation options
+#
+AssetDepreciationOptionEconomic=Khấu hao kinh tế
+AssetDepreciationOptionAcceleratedDepreciation=Khấu hao nhanh (thuế)
+AssetDepreciationOptionDepreciationType=Loại khấu hao
+AssetDepreciationOptionDepreciationTypeLinear=tuyến tính
+AssetDepreciationOptionDepreciationTypeDegressive=thoái hóa
+AssetDepreciationOptionDepreciationTypeExceptional=Đặc biệt
+AssetDepreciationOptionDegressiveRate=Tỷ lệ giảm dần
+AssetDepreciationOptionAcceleratedDepreciation=Khấu hao nhanh (thuế)
+AssetDepreciationOptionDuration=Thời hạn
+AssetDepreciationOptionDurationType=Loại thời lượng
+AssetDepreciationOptionDurationTypeAnnual=Hàng năm
+AssetDepreciationOptionDurationTypeMonthly=Hàng tháng
+AssetDepreciationOptionDurationTypeDaily=Hằng ngày
+AssetDepreciationOptionRate=Tỷ lệ (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=Căn cứ khấu hao (chưa bao gồm VAT)
+AssetDepreciationOptionAmountBaseDeductibleHT=Căn cứ khấu trừ (chưa bao gồm VAT)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=Tổng số tiền khấu hao gần đây nhất (chưa bao gồm VAT)
+
+#
+# Asset accountancy codes
+#
+AssetAccountancyCodeDepreciationEconomic=Khấu hao kinh tế
+AssetAccountancyCodeAsset=Tài sản
+AssetAccountancyCodeDepreciationAsset=Khấu hao
+AssetAccountancyCodeDepreciationExpense=Chi phí khấu hao
+AssetAccountancyCodeValueAssetSold=Giá trị tài sản được xử lý
+AssetAccountancyCodeReceivableOnAssignment=Phải thu khi thanh lý
+AssetAccountancyCodeProceedsFromSales=Tiền thu được từ việc thanh lý
+AssetAccountancyCodeVatCollected=VAT đã thu
+AssetAccountancyCodeVatDeductible=Thuế GTGT của tài sản được thu hồi
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=Khấu hao nhanh (thuế)
+AssetAccountancyCodeAcceleratedDepreciation=Tài khoản
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=Chi phí khấu hao
+AssetAccountancyCodeProvisionAcceleratedDepreciation=Thu hồi/Cung cấp
+
+#
+# Asset depreciation
+#
+AssetBaseDepreciationHT=Cơ sở khấu hao (chưa bao gồm VAT)
+AssetDepreciationBeginDate=Bắt đầu khấu hao vào
+AssetDepreciationDuration=Thời hạn
+AssetDepreciationRate=Tỷ lệ (%%)
+AssetDepreciationDate=Ngày khấu hao
+AssetDepreciationHT=Khấu hao (không bao gồm VAT)
+AssetCumulativeDepreciationHT=Khấu hao lũy kế (chưa bao gồm VAT)
+AssetResidualHT=Giá trị còn lại (chưa bao gồm VAT)
+AssetDispatchedInBookkeeping=Khấu hao được ghi nhận
+AssetFutureDepreciationLine=Khấu hao trong tương lai
+AssetDepreciationReversal=Đảo ngược
+
+#
+# Errors
+#
+AssetErrorAssetOrAssetModelIDNotProvide=Id của nội dung hoặc mô hình được tìm thấy chưa được cung cấp
+AssetErrorFetchAccountancyCodesForMode=Lỗi khi truy xuất tài khoản kế toán ở chế độ khấu hao '%s'
+AssetErrorDeleteAccountancyCodesForMode=Lỗi khi xóa tài khoản kế toán khỏi chế độ khấu hao '%s'
+AssetErrorInsertAccountancyCodesForMode=Lỗi khi chèn tài khoản kế toán chế độ khấu hao '%s'
+AssetErrorFetchDepreciationOptionsForMode=Lỗi khi truy xuất các tùy chọn cho chế độ khấu hao '%s'
+AssetErrorDeleteDepreciationOptionsForMode=Lỗi khi xóa tùy chọn chế độ khấu hao '%s'
+AssetErrorInsertDepreciationOptionsForMode=Lỗi khi chèn tùy chọn chế độ khấu hao '%s'
+AssetErrorFetchDepreciationLines=Lỗi khi truy xuất dòng khấu hao đã ghi
+AssetErrorClearDepreciationLines=Lỗi khi xóa các dòng khấu hao đã ghi (đảo ngược và tương lai)
+AssetErrorAddDepreciationLine=Lỗi khi thêm dòng khấu hao
+AssetErrorCalculationDepreciationLines=Lỗi khi tính đường khấu hao (thu hồi và tương lai)
+AssetErrorReversalDateNotProvidedForMode=Ngày đảo ngược không được cung cấp cho phương pháp khấu hao '%s'
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=Ngày đảo ngược phải lớn hơn hoặc bằng ngày đầu năm tài chính hiện tại đối với phương pháp khấu hao '%s'
+AssetErrorReversalAmountNotProvidedForMode=Số tiền đảo ngược không được cung cấp cho chế độ khấu hao '%s'.
+AssetErrorFetchCumulativeDepreciation=Lỗi khi lấy số tiền khấu hao lũy kế từ dòng khấu hao
+AssetErrorSetLastCumulativeDepreciation=Lỗi khi ghi số tiền khấu hao lũy kế gần nhất

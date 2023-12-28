@@ -280,35 +280,35 @@ class Adherent extends CommonObject
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
-		'ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'default' => 1, 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 12, 'index' => 1),
+		'ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'default' => 1, 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 12, 'index' => 1),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => 1, 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 15, 'index' => 1),
 		'ref_ext' => array('type' => 'varchar(128)', 'label' => 'Ref ext', 'enabled' => 1, 'visible' => 0, 'position' => 20),
 		'civility' => array('type' => 'varchar(6)', 'label' => 'Civility', 'enabled' => 1, 'visible' => -1, 'position' => 25),
-		'lastname' => array('type' => 'varchar(50)', 'label' => 'Lastname', 'enabled' => 1, 'visible' => -1, 'position' => 30, 'showoncombobox'=>1),
-		'firstname' => array('type' => 'varchar(50)', 'label' => 'Firstname', 'enabled' => 1, 'visible' => -1, 'position' => 35, 'showoncombobox'=>1),
-		'login' => array('type' => 'varchar(50)', 'label' => 'Login', 'enabled' => 1, 'visible' => -1, 'position' => 40),
-		'gender' => array('type' => 'varchar(10)', 'label' => 'Gender', 'enabled' => 1, 'visible' => -1, 'position' => 250),
+		'lastname' => array('type' => 'varchar(50)', 'label' => 'Lastname', 'enabled' => 1, 'visible' => 1, 'position' => 30, 'showoncombobox'=>1),
+		'firstname' => array('type' => 'varchar(50)', 'label' => 'Firstname', 'enabled' => 1, 'visible' => 1, 'position' => 35, 'showoncombobox'=>1),
+		'login' => array('type' => 'varchar(50)', 'label' => 'Login', 'enabled' => 1, 'visible' => 1, 'position' => 40),
 		'pass' => array('type' => 'varchar(50)', 'label' => 'Pass', 'enabled' => 1, 'visible' => -1, 'position' => 45),
 		'pass_crypted' => array('type' => 'varchar(128)', 'label' => 'Pass crypted', 'enabled' => 1, 'visible' => -1, 'position' => 50),
-		'fk_adherent_type' => array('type' => 'integer', 'label' => 'Fk adherent type', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 55),
-		'morphy' => array('type' => 'varchar(3)', 'label' => 'MorPhy', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 60),
-		'societe' => array('type' => 'varchar(128)', 'label' => 'Societe', 'enabled' => 1, 'visible' => -1, 'position' => 65, 'showoncombobox'=>2),
-		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 1, 'visible' => -1, 'position' => 70),
+		'morphy' => array('type' => 'varchar(3)', 'label' => 'MemberNature', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 55),
+		'fk_adherent_type' => array('type' => 'integer', 'label' => 'Fk adherent type', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 60),
+		'societe' => array('type' => 'varchar(128)', 'label' => 'Societe', 'enabled' => 1, 'visible' => 1, 'position' => 65, 'showoncombobox'=>2),
+		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 1, 'visible' => 1, 'position' => 70),
 		'address' => array('type' => 'text', 'label' => 'Address', 'enabled' => 1, 'visible' => -1, 'position' => 75),
 		'zip' => array('type' => 'varchar(10)', 'label' => 'Zip', 'enabled' => 1, 'visible' => -1, 'position' => 80),
 		'town' => array('type' => 'varchar(50)', 'label' => 'Town', 'enabled' => 1, 'visible' => -1, 'position' => 85),
 		'state_id' => array('type' => 'integer', 'label' => 'State id', 'enabled' => 1, 'visible' => -1, 'position' => 90),
-		'country' => array('type' => 'integer:Ccountry:core/class/ccountry.class.php', 'label' => 'Country', 'enabled' => 1, 'visible' => -1, 'position' => 95),
-		'email' => array('type' => 'varchar(255)', 'label' => 'Email', 'enabled' => 1, 'visible' => -1, 'position' => 100),
-		'url' =>array('type'=>'varchar(255)', 'label'=>'Url', 'enabled'=>1, 'visible'=>-1, 'position'=>110),
-		'socialnetworks' => array('type' => 'text', 'label' => 'Socialnetworks', 'enabled' => 1, 'visible' => -1, 'position' => 105),
+		'country' => array('type' => 'integer:Ccountry:core/class/ccountry.class.php', 'label' => 'Country', 'enabled' => 1, 'visible' => 1, 'position' => 95),
 		'phone' => array('type' => 'varchar(30)', 'label' => 'Phone', 'enabled' => 1, 'visible' => -1, 'position' => 115),
 		'phone_perso' => array('type' => 'varchar(30)', 'label' => 'Phone perso', 'enabled' => 1, 'visible' => -1, 'position' => 120),
 		'phone_mobile' => array('type' => 'varchar(30)', 'label' => 'Phone mobile', 'enabled' => 1, 'visible' => -1, 'position' => 125),
+		'email' => array('type' => 'varchar(255)', 'label' => 'Email', 'enabled' => 1, 'visible' => 1, 'position' => 126),
+		'url' =>array('type'=>'varchar(255)', 'label'=>'Url', 'enabled'=>1, 'visible'=>-1, 'position'=>127),
+		'socialnetworks' => array('type' => 'text', 'label' => 'Socialnetworks', 'enabled' => 1, 'visible' => -1, 'position' => 128),
 		'birth' => array('type' => 'date', 'label' => 'DateOfBirth', 'enabled' => 1, 'visible' => -1, 'position' => 130),
+		'gender' => array('type' => 'varchar(10)', 'label' => 'Gender', 'enabled' => 1, 'visible' => -1, 'position' => 132),
 		'photo' => array('type' => 'varchar(255)', 'label' => 'Photo', 'enabled' => 1, 'visible' => -1, 'position' => 135),
 		'public' => array('type' => 'smallint(6)', 'label' => 'Public', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 145),
-		'datefin' => array('type' => 'datetime', 'label' => 'DateEnd', 'enabled' => 1, 'visible' => -1, 'position' => 150),
+		'datefin' => array('type' => 'datetime', 'label' => 'DateEnd', 'enabled' => 1, 'visible' => 1, 'position' => 150),
 		'default_lang' =>array('type'=>'varchar(6)', 'label'=>'Default lang', 'enabled'=>1, 'visible'=>-1, 'position'=> 153),
 		'note_public' => array('type' => 'text', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 155),
 		'note_private' => array('type' => 'text', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 160),
@@ -319,8 +319,7 @@ class Adherent extends CommonObject
 		'fk_user_mod' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fk user mod', 'enabled' => 1, 'visible' => -1, 'position' => 185),
 		'fk_user_valid' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'enabled' => 1, 'visible' => -1, 'position' => 190),
 		'canvas' => array('type' => 'varchar(32)', 'label' => 'Canvas', 'enabled' => 1, 'visible' => -1, 'position' => 195),
-		'statut' => array('type' => 'smallint(6)', 'label' => 'Statut', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 500,
-		'arrayofkeyval' => array(-1 => 'Draft', 1 => 'Validated', 0 => 'MemberStatusResiliatedShort', -2 => 'MemberStatusExcludedShort')),
+		'statut' => array('type' => 'smallint(6)', 'label' => 'Statut', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 500, 'arrayofkeyval' => array(-1 => 'Draft', 1 => 'Validated', 0 => 'MemberStatusResiliatedShort', -2 => 'MemberStatusExcludedShort')),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 800),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 805)
 	);
@@ -352,7 +351,7 @@ class Adherent extends CommonObject
 	{
 		$this->db = $db;
 		$this->statut = self::STATUS_DRAFT;
-		$this->status = $this->statut;
+		$this->status = self::STATUS_DRAFT;
 		// l'adherent n'est pas public par defaut
 		$this->public = 0;
 		// les champs optionnels sont vides
@@ -416,7 +415,7 @@ class Adherent extends CommonObject
 			}
 		}
 
-		dol_syslog('send_an_email msgishtml='.$msgishtml);
+		dol_syslog('sendEmail msgishtml='.$msgishtml);
 
 		$texttosend = $this->makeSubstitution($text);
 		$subjecttosend = $this->makeSubstitution($subject);
@@ -708,7 +707,7 @@ class Adherent extends CommonObject
 	 */
 	public function update($user, $notrigger = 0, $nosyncuser = 0, $nosyncuserpass = 0, $nosyncthirdparty = 0, $action = 'update')
 	{
-		global $conf, $langs, $hookmanager;
+		global $langs, $hookmanager;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -1151,7 +1150,6 @@ class Adherent extends CommonObject
 		// Mise a jour
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
 		$sql .= " SET pass_crypted = '".$this->db->escape($password_crypted)."'";
-		//if (!empty($conf->global->DATABASE_PWD_ENCRYPTED))
 		if ($isencrypted) {
 			$sql .= ", pass = null";
 		} else {
@@ -1362,7 +1360,7 @@ class Adherent extends CommonObject
 	 *  @param	bool	$fetch_subscriptions	To load member subscriptions
 	 *	@return int								>0 if OK, 0 if not found, <0 if KO
 	 */
-	public function fetch($rowid, $ref = '', $fk_soc = '', $ref_ext = '', $fetch_optionals = true, $fetch_subscriptions = true)
+	public function fetch($rowid, $ref = '', $fk_soc = 0, $ref_ext = '', $fetch_optionals = true, $fetch_subscriptions = true)
 	{
 		global $langs;
 
@@ -1414,7 +1412,7 @@ class Adherent extends CommonObject
 
 				$this->civility_id = $obj->civility_code; // Bad. Kept for backard compatibility
 				$this->civility_code = $obj->civility_code;
-				$this->civility = $obj->civility_code ? ($langs->trans("Civility".$obj->civility_code) != ("Civility".$obj->civility_code) ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code) : '';
+				$this->civility = $obj->civility_code ? ($langs->trans("Civility".$obj->civility_code) != "Civility".$obj->civility_code ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code) : '';
 
 				$this->firstname = $obj->firstname;
 				$this->lastname = $obj->lastname;
@@ -1680,7 +1678,7 @@ class Adherent extends CommonObject
 	 *	@param	string		$num_chq				Numero cheque (if Id bank account provided)
 	 *	@param	string		$emetteur_nom			Name of cheque writer
 	 *	@param	string		$emetteur_banque		Name of bank of cheque
-	 *  @param	string		$autocreatethirdparty	Auto create new thirdparty if member not yet linked to a thirdparty and we request an option that generate invoice.
+	 *  @param	int			$autocreatethirdparty	Auto create new thirdparty if member not yet linked to a thirdparty and we request an option that generate invoice.
 	 *  @param  string      $ext_payment_id         External id of payment (for example Stripe charge id)
 	 *  @param  string      $ext_payment_site       Name of external paymentmode (for example 'stripe')
 	 *	@return int									Return integer <0 if KO, >0 if OK
@@ -1921,7 +1919,7 @@ class Adherent extends CommonObject
 					$outputlangs->setDefaultLang($newlang);
 				}
 				// Generate PDF (whatever is option MAIN_DISABLE_PDF_AUTOUPDATE) so we can include it into email
-				//if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+				//if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE'))
 
 				$invoice->generateDocument($invoice->model_pdf, $outputlangs);
 			}
@@ -2046,8 +2044,6 @@ class Adherent extends CommonObject
 	 */
 	public function exclude($user)
 	{
-		global $langs, $conf;
-
 		$error = 0;
 
 		// Check parameters
@@ -2094,7 +2090,7 @@ class Adherent extends CommonObject
 	public function add_to_abo()
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $langs;
 
 		include_once DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php';
 		$mailmanspip = new MailmanSpip($this->db);
@@ -2727,7 +2723,7 @@ class Adherent extends CommonObject
 		$keymodified = false;
 
 		// Object classes
-		$info["objectclass"] = explode(',', $conf->global->LDAP_MEMBER_OBJECT_CLASS);
+		$info["objectclass"] = explode(',', getDolGlobalString('LDAP_MEMBER_OBJECT_CLASS'));
 
 		$this->fullname = $this->getFullName($langs);
 
@@ -2752,7 +2748,7 @@ class Adherent extends CommonObject
 				$info[getDolGlobalString($constname)] = $this->$varname;
 
 				// Check if it is the LDAP key and if its value has been changed
-				if (getDolGlobalString('LDAP_KEY_MEMBERS') && $conf->global->LDAP_KEY_MEMBERS == getDolGlobalString($constname)) {
+				if (getDolGlobalString('LDAP_KEY_MEMBERS') && getDolGlobalString('LDAP_KEY_MEMBERS') == getDolGlobalString($constname)) {
 					if (!empty($this->oldcopy) && $this->$varname != $this->oldcopy->$varname) {
 						$keymodified = true; // For check if LDAP key has been modified
 					}
@@ -2821,15 +2817,15 @@ class Adherent extends CommonObject
 			if (getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED')) {
 				$info[getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED')] = dol_hash($this->pass, 'openldap'); // Create OpenLDAP password (see LDAP_PASSWORD_HASH_TYPE)
 			}
-		} elseif ($conf->global->LDAP_SERVER_PROTOCOLVERSION !== '3') {
+		} elseif (getDolGlobalString('LDAP_SERVER_PROTOCOLVERSION') !== '3') {
 			// Set LDAP password if possible
 			// If ldap key is modified and LDAPv3 we use ldap_rename function for avoid lose encrypt password
-			if (getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {
-				// Just for the default MD5 !
-				if (!getDolGlobalString('MAIN_SECURITY_HASH_ALGO')) {
+			if (getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {	// This should be on on default installation
+				// Just for the case we use old md5 encryption (deprecated, no more used, kept for compatibility)
+				if (!getDolGlobalString('MAIN_SECURITY_HASH_ALGO') || getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'md5') {
 					if ($this->pass_indatabase_crypted && getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED')) {
 						// Create OpenLDAP MD5 password from Dolibarr MD5 password
-						// Note: This suppose that "pass_indatabase_crypted" is a md5 (guaranted by the previous test if "(empty($conf->global->MAIN_SECURITY_HASH_ALGO))"
+						// Note: This suppose that "pass_indatabase_crypted" is a md5 (this should not happen anymore)"
 						$info[getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED')] = dolGetLdapPasswordHash($this->pass_indatabase_crypted, 'md5frommd5');
 					}
 				}
@@ -3261,7 +3257,7 @@ class Adherent extends CommonObject
 			$return .= '<br><span class="info-box-label">'.$this->getmorphylib('', 2).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

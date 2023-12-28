@@ -348,7 +348,10 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 }
 
 .info-box-content {
-	padding: 5px 10px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 10px;
+	padding-right: 5px;
 	margin-left: 84px;
 }
 .info-box-sm .info-box-content {
@@ -601,6 +604,16 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	}
 	.info-box-sm .info-box-content {
 		margin-left: 60px;
+	}
+	.info-box-content {
+		padding-top: 5px;
+		padding-bottom: 5px;
+		padding-left: 10px;
+		padding-right: 2px;
+	}
+	.info-box-line-text {
+		width: calc(100% - 92px);
+		max-width: calc(100% - 82px);
 	}
 }
 

@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2023      Charlene Benke       <charlene@patas_monkey.com>
+ * Copyright (C) 2023      Christian Foellmann  <christian@foellmann.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -977,7 +978,11 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		// Status
 		print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td><td>';
 		print '<select class="flat" name="status" id="status">';
-		foreach ($object->labelStatusShort as $key => $val) {
+		$statuses = $object->labelStatusShort;
+		if (getDolGlobalString('MAIN_DISABLEDRAFTSTATUS') || getDolGlobalString('MAIN_DISABLEDRAFTSTATUS_PROJECT')) {
+			unset($statuses[$object::STATUS_DRAFT]);
+		}
+		foreach ($statuses as $key => $val) {
 			print '<option value="'.$key.'"'.((GETPOSTISSET('status') ? GETPOST('status') : $object->statut) == $key ? ' selected="selected"' : '').'>'.$langs->trans($val).'</option>';
 		}
 		print '</select>';
@@ -1117,7 +1122,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 				$filter = $conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
 			}
 			$text = img_picto('', 'company', 'class="pictofixedwidth"');
-			$text .= $form->select_company(!empty($object->thirdparty->id)?$object->thirdparty->id:"", 'socid', $filter, 'None', 1, 0, array(), 0, 'minwidth300');
+			$text .= $form->select_company(!empty($object->thirdparty->id) ? $object->thirdparty->id : "", 'socid', $filter, 'None', 1, 0, array(), 0, 'minwidth300');
 			if (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') && empty($conf->dol_use_jmobile)) {
 				$texthelp = $langs->trans("IfNeedToUseOtherObjectKeepEmpty");
 				print $form->textwithtooltip($text.' '.img_help(), $texthelp, 1, 0, '', '', 2);

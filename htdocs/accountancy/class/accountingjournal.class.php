@@ -470,7 +470,7 @@ class AccountingJournal extends CommonObject
 		}
 		// Define begin binding date
 		if (getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
-			$sql .= " AND ad.depreciation_date >= '" . $this->db->idate($conf->global->ACCOUNTING_DATE_START_BINDING) . "'";
+			$sql .= " AND ad.depreciation_date >= '" . $this->db->idate(getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) . "'";
 		}
 		$sql .= " ORDER BY ad.depreciation_date";
 
@@ -533,8 +533,6 @@ class AccountingJournal extends CommonObject
 			$element_link = $element_static->getNomUrl(1, 'with_label');
 
 			$element_name_formatted_0 = dol_trunc($element_static->label, 16);
-			$element_name_formatted_1 = utf8_decode(dol_trunc($element_static->label, 32));
-			$element_name_formatted_2 = utf8_decode(dol_trunc($element_static->label, 16));
 			$label_operation = $element_static->getNomUrl(0, 'label', 16);
 
 			$element = array(
@@ -618,12 +616,12 @@ class AccountingJournal extends CommonObject
 				$disposal_date = $pre_data_info['disposal']['date'];
 
 				if ((!($date_start && $date_end) || ($date_start <= $disposal_date && $disposal_date <= $date_end)) &&
-					(!getDolGlobalString('ACCOUNTING_DATE_START_BINDING') || $conf->global->ACCOUNTING_DATE_START_BINDING <= $disposal_date)
+					(!getDolGlobalString('ACCOUNTING_DATE_START_BINDING') || getDolGlobalInt('ACCOUNTING_DATE_START_BINDING') <= $disposal_date)
 				) {
 					$disposal_amount = $pre_data_info['disposal']['amount'];
 					$disposal_subject_to_vat = $pre_data_info['disposal']['subject_to_vat'];
 					$disposal_date_formatted = dol_print_date($disposal_date, 'day');
-					$disposal_vat = getDolGlobalInt('ASSET_DISPOSAL_VAT') > 0 ? $conf->global->ASSET_DISPOSAL_VAT : 20;
+					$disposal_vat = getDolGlobalInt('ASSET_DISPOSAL_VAT') > 0 ? getDolGlobalInt('ASSET_DISPOSAL_VAT') : 20;
 
 					// Get accountancy codes
 					//---------------------------
@@ -1017,7 +1015,7 @@ class AccountingJournal extends CommonObject
 					'found' => true,
 					'label' => $accountingaccount->label,
 					'code_formatted_1' => length_accounta(html_entity_decode($account)),
-					'label_formatted_1' => utf8_decode(dol_trunc($accountingaccount->label, 32)),
+					'label_formatted_1' => mb_convert_encoding(dol_trunc($accountingaccount->label, 32), 'ISO-8859-1'),
 					'label_formatted_2' => dol_trunc($accountingaccount->label, 32),
 				);
 			} else {
