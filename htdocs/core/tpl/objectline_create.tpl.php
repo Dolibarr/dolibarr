@@ -821,13 +821,13 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 
 						// Set values for any fields in the form options_SOMETHING
 						for (var key in data.array_options) {
-						  if (data.array_options.hasOwnProperty(key)) {
-						    var field = jQuery("#" + key);
-							if(field.length > 0){
-						    	console.log("objectline_create.tpl set content of options_" + key);
-								field.val(data.array_options[key]);
+							if (data.array_options.hasOwnProperty(key)) {
+								var field = jQuery("#" + key);
+								if(field.length > 0){
+									console.log("objectline_create.tpl set content of options_" + key);
+									field.val(data.array_options[key]);
+								}
 							}
-						  }
 						}
 
 						var tva_tx = data.tva_tx;
