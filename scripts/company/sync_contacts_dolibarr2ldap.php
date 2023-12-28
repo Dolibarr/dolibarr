@@ -103,7 +103,7 @@ if (!$confirmed) {
 }
 
 /*
- * if (!getDolGlobalSring('LDAP_CONTACT_ACTIVE')) {
+ * if (!getDolGlobalString('LDAP_CONTACT_ACTIVE')) {
  * print $langs->trans("LDAPSynchronizationNotSetupInDolibarr");
  * exit(-1);
  * }

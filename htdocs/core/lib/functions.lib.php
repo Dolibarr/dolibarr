@@ -12593,20 +12593,22 @@ function dolForgeCriteriaCallback($matches)
 
 	$operator = strtoupper(preg_replace('/[^a-z<>!=]/i', '', trim($tmp[1])));
 
-	if ($operator == 'NOTLIKE') {
-		$operator = 'NOT LIKE';
+	$realOperator = [
+		'NOTLIKE' => 'NOT LIKE',
+		'ISNOT' => 'IS NOT',
+		'NOTIN' => 'NOT IN',
+		'!=' => '<>',
+	];
+
+	if (array_key_exists($operator, $realOperator)) {
+		$operator = $realOperator[$operator];
 	}
-	if ($operator == 'ISNOT') {
-		$operator = 'IS NOT';
-	}
-	if ($operator == '!=') {
-		$operator = '<>';
-	}
+
 
 	$tmpescaped = $tmp[2];
 	$regbis = array();
 
-	if ($operator == 'IN') {	// IN is allowed for list of ID or code only
+	if ($operator == 'IN' || $operator == 'NOT IN') {	// IN is allowed for list of ID or code only
 		//if (!preg_match('/^\(.*\)$/', $tmpescaped)) {
 		$tmpescaped2 = '(';
 		// Explode and sanitize each element in list
