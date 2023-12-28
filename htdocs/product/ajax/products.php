@@ -59,7 +59,7 @@ $warehouseStatus = GETPOST('warehousestatus', 'alpha');
 $hidepriceinlabel = GETPOST('hidepriceinlabel', 'int');
 
 // Security check
-restrictedArea($user, 'produit|service', 0, 'product&product');
+restrictedArea($user, 'produit|service|commande|propal', 0, 'product&product');
 
 
 /*
