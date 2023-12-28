@@ -138,7 +138,7 @@ function getMultidirOutput($object, $module = '')
 		return $conf->$module->multidir_output[(!empty($object->entity) ? $object->entity : $conf->entity)];
 	} else {
 		return 'error-diroutput-not-defined-for-this-object='.$module;
-    }
+	}
 }
 
 /**
