@@ -2,7 +2,7 @@
 -- Copyright (C) 2002-2006  Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2008-2017  Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2005-2010  Regis Houssin        <regis.houssin@inodbox.com>
--- Copyright (C) 2023       Florian HENRY        <florian.henry@scopen.fr>
+-- Copyright (C) 2023       Florian Henry        <florian.henry@scopen.fr>
 
 --
 -- This program is free software; you can redistribute it and/or modify
