@@ -623,7 +623,6 @@ if ($result) {
 			$code_buy_t=$return['code_t'];
 		}
 		//var_dump($return);
-		//exit;
 
 		if (!empty($code_buy_p)) {
 			// Value was defined previously
