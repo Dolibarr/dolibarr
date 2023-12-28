@@ -122,6 +122,9 @@ function getServerTimeZoneInt($refgmtdate = 'now')
 function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforendofmonth = 0)
 {
 	global $conf;
+	if (empty($duration_value)){
+		return $time;
+	}
 	if ($duration_unit == 's') {
 		return $time + ($duration_value);
 	}
