@@ -1015,7 +1015,7 @@ class AccountingJournal extends CommonObject
 					'found' => true,
 					'label' => $accountingaccount->label,
 					'code_formatted_1' => length_accounta(html_entity_decode($account)),
-					'label_formatted_1' => utf8_decode(dol_trunc($accountingaccount->label, 32)),
+					'label_formatted_1' => mb_convert_encoding(dol_trunc($accountingaccount->label, 32), 'ISO-8859-1'),
 					'label_formatted_2' => dol_trunc($accountingaccount->label, 32),
 				);
 			} else {
