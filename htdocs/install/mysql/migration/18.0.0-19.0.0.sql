@@ -203,3 +203,33 @@ ALTER TABLE llx_expensereport DROP INDEX idx_expensereport_fk_refuse, ADD INDEX 
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (1,'66','Société publique locale');
 
 ALTER TABLE llx_prelevement_lignes ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+
+CREATE TABLE llx_product_thirdparty(
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	fk_product integer  NOT NULL,
+	fk_soc integer  NOT NULL,
+    fk_product_thirdparty_relation_type integer  NOT NULL,
+	date_start datetime,
+    date_end datetime,
+	fk_project integer,
+	description text,
+	note_public text,
+	note_private text,
+	date_creation datetime NOT NULL,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	fk_user_creat integer NOT NULL,
+	fk_user_modif integer,
+	last_main_doc varchar(255),
+	import_key varchar(14),
+	model_pdf varchar(255),
+	status integer DEFAULT 1 NOT NULL
+) ENGINE=innodb;
+
+
+CREATE TABLE llx_c_product_thirdparty_relation_type(
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	code varchar(24)  NOT NULL,
+	label varchar(128),
+    active tinyint default 1  NOT NULL
+) ENGINE=innodb;
