@@ -9797,8 +9797,8 @@ class Form
 	{
 		global $conf, $langs;
 
-		$entity = (!empty($object->entity) ? $object->entity : $conf->entity);
-		$id = (!empty($object->id) ? $object->id : $object->rowid);
+		$entity = (empty($object->entity) ? $conf->entity : $object->entity);
+		$id = (empty($object->id) ? $object->rowid : $object->id);
 
 		$ret = '';
 		$dir = '';

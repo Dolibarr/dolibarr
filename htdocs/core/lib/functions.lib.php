@@ -135,7 +135,7 @@ function getMultidirOutput($object, $module = '')
 		$module = 'ficheinter';
 	}
 	if (isset($conf->$module)) {
-		return $conf->$module->multidir_output[(!empty($object->entity) ? $object->entity : $conf->entity)];
+		return $conf->$module->multidir_output[(empty($object->entity) ? $conf->entity : $object->entity)];
 	} else {
 		return 'error-diroutput-not-defined-ffor-this-object='.$module;
 	}
