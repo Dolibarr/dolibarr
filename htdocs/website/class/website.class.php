@@ -1656,6 +1656,7 @@ class Website extends CommonObject
 		$destdir = DOL_DOCUMENT_ROOT . '/install/doctemplates/websites/'.$website->name_template;
 		$arraydestdir = dol_dir_list($destdir, "all", 1);
 		$differences = [];
+		var_dump($modifications);
 		if (count($modifications) >1) {
 			foreach ($modifications as $fichierModifie) {
 				$nomFichierModifie = $fichierModifie['name'];
@@ -1689,10 +1690,11 @@ class Website extends CommonObject
 					if (preg_match('/page(\d+)\.tpl\.php/', $nomFichierModifie)) {
 						$differences[$nomFichierModifie] = $this->compareFichierModifie($sourcedir, $destdir, $fichierModifie);
 						if (count($differences[$nomFichierModifie]) > 0) {
+							//var_dump($differences[$nomFichierModifie]);
 							$result = $this->replaceLignEUsingNum($differences[$nomFichierModifie]['file_destination']['fullname'], $differences[$nomFichierModifie]);
 							if ($result !== false) {
 								if ($result == -2) {
-									setEventMessages("No permissions to write in file <b>".$nomFichierModifie."</b> from template <b>".$website->name_template."</b>", null, 'errors');
+									setEventMessages("No permissions to write in file <b>".$differences[$nomFichierModifie]['file_destination']['name']."</b> from template <b>".$website->name_template."</b>", null, 'errors');
 									header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
 									exit();
 								}
@@ -1823,10 +1825,15 @@ class Website extends CommonObject
 		$fichiersSource = [];
 		$fichiersDestination = [];
 
+		$fichierWithNoPage = [];
+		$fichierWithNoPageInDest = [];
+
 		//  filter files source
 		foreach (dol_dir_list($dossierSource, "files") as $file) {
 			if (preg_match('/^page\d+/', $file['name']) && !str_contains($file['name'], '.old')) {
 				$fichiersSource[] = $file;
+			} else {
+				$fichierWithNoPage[] = $file;
 			}
 		}
 
@@ -1834,30 +1841,56 @@ class Website extends CommonObject
 		foreach (dol_dir_list($dossierDestination, "all", 1) as $file) {
 			if (preg_match('/^page\d+/', $file['name']) && !str_contains($file['name'], '.old')) {
 				$fichiersDestination[] = $file;
+			} else {
+				$fichierWithNoPageInDest[] = $file;
 			}
 		}
 
 		// find index source and search it in folder destination
 		$numOfPageSource = 0;
-		$indexModifie = -1;
 		foreach ($fichiersSource as $index => $file) {
 			if ($file['name'] == basename($fichierModifie['fullname'])) {
 				$numOfPageSource = $this->extractNumberFromFilename($file['name']);
-				$indexModifie = $index;
 				break;
 			}
 		}
 
-		if ($indexModifie != -1 && isset($fichiersDestination[$indexModifie])) {
-			$sameFichier= $fichiersDestination[$indexModifie]['fullname'];
+		//search numPage where was declared
+		$fileFounded = array();
+		foreach ($fichierWithNoPage as $filesource) {
+			$fileContent = file_get_contents($filesource['fullname']);
+			if (strpos($fileContent, "require './page".$numOfPageSource.".tpl.php'") !== false) {
+				$fileFounded = $filesource;
+				break;
+			}
+		}
+		// find file with same name and extract num page in destination folder
+		$numPageFounded = '';
+		foreach ($fichierWithNoPageInDest as $filedest) {
+			if ($filedest['name'] === $fileFounded['name']) {
+				$fileContent = file_get_contents($filedest['fullname']);
+				if (preg_match("/page\d+\.tpl\.php/", $fileContent, $matches)) {
+					$numPageFounded = $matches[0];
+					break;
+				}
+			}
+		}
+		//search file with the number of page founded
+		$fileNeeded = array();
+		foreach ($fichiersDestination as $index => $file) {
+			if ($file['name'] == $numPageFounded) {
+				$fileNeeded = $file;
+				break;
+			}
+		}
+
+		if (isset($fileNeeded)) {
 			$sourceContent = file_get_contents($fichierModifie['fullname']);
-			$destContent = file_get_contents($sameFichier);
+			$destContent = file_get_contents($fileNeeded['fullname']);
 
-			$numOfPageDest = $this->extractNumberFromFilename($sameFichier);
-
+			$numOfPageDest = $this->extractNumberFromFilename($fileNeeded['name']);
 			$differences = $this->showDifferences($destContent, $sourceContent, array($numOfPageDest,$numOfPageSource));
-			$differences['file_destination'] = $fichiersDestination[$indexModifie];
-
+			$differences['file_destination'] = $fileNeeded;
 			return $differences;
 		}
 		return array();
@@ -1870,14 +1903,9 @@ class Website extends CommonObject
 	 */
 	private function normalizeString($str)
 	{
-
 		$str = str_replace("\r\n", "\n", $str);
 		$str = str_replace("\r", "\n", $str);
-
-		$lines = explode("\n", $str);
-		$lines = array_map('trim', $lines);
-
-		return implode("\n", $lines);
+		return $str;
 	}
 
 	/**
@@ -1960,7 +1988,6 @@ class Website extends CommonObject
 		}
 		unset($differences['file_destination']);
 		$contentDest = file($desfFile, FILE_IGNORE_NEW_LINES);
-		//var_dump($desfFile);exit;
 		foreach ($differences as $key => $ligneSource) {
 			if (preg_match('/(Ajoutée|Modifiée) à la ligne (\d+)/', $key, $matches)) {
 				$typeModification = $matches[1];
