@@ -41,7 +41,8 @@ if (isset($totalarray['pos'])) {
 			$sumsarray = false;
 			$tbsumfields = [];
 			foreach ($totalarray['pos'] as $field) {
-				$tbsumfields[] = "sum($field) as `$field`";
+				$fieldforsum = preg_replace('/[^a-z0-9]/', '', $field);
+				$tbsumfields[] = "sum($field) as $fieldforsum";
 			}
 			if (isset($sqlfields)) { // In project, commande list, this var is defined
 				$sqlforgrandtotal = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT '. implode(",", $tbsumfields), $sql);
@@ -87,7 +88,7 @@ if (isset($totalarray['pos'])) {
  *
  * @param string $type of field (duration, string..)
  * @param string $val the value to display
- * 
+ *
  * @return void (direct print)
  */
 function printTotalValCell($type, $val)
