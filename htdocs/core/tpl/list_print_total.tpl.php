@@ -35,8 +35,8 @@ if (isset($totalarray['pos'])) {
 		}
 	}
 	print '</tr>';
-	// Add VMA : add grand total if necessary
-	if (getDolGlobalString('MAIN_GRANDTOTAL_LIST_SHOW') && (true || !(is_null($limit) || $num < $limit)))  { // we print grand total only if different of page total already printed above
+	// Add grand total if necessary ie only if different of page total already printed above
+	if (getDolGlobalString('MAIN_GRANDTOTAL_LIST_SHOW') && (!(is_null($limit) || $num < $limit))) {
 		if (isset($totalarray['pos']) && is_array($totalarray['pos']) && count($totalarray['pos']) > 0) {
 			$sumsarray = false;
 			$tbsumfields = [];
@@ -49,7 +49,6 @@ if (isset($totalarray['pos'])) {
 				$sqlforgrandtotal = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),=<>\:\-\']+\sFROM/', 'SELECT '. implode(",", $tbsumfields). ' FROM ', $sql);
 			}
 			$sqlforgrandtotal = preg_replace('/GROUP BY .*$/', '', $sqlforgrandtotal). '';
-			//echo $sqlforgrandtotal;
 			$resql = $db->query($sqlforgrandtotal);
 			if ($resql) {
 				$sumsarray = $db->fetch_array($resql);
@@ -57,7 +56,6 @@ if (isset($totalarray['pos'])) {
 				//dol_print_error($db); // as we're not sure it's ok for ALL lists, we don't print sq errors, they'll be in logs
 			}
 			if (is_array($sumsarray) && count($sumsarray) >0) {
-			// Show grand total line
 				print '<tr class="liste_grandtotal">';
 				$i = 0;
 				while ($i < $totalarray['nbfield']) {
@@ -86,11 +84,14 @@ if (isset($totalarray['pos'])) {
 }
 
 /** print a total cell value according to its type
- * 
+ *
  * @param string $type of field (duration, string..)
  * @param string $val the value to display
+ * 
+ * @return void (direct print)
  */
-function printTotalValCell($type, $val) {
+function printTotalValCell($type, $val)
+{
 	// if $totalarray['type'] not present we consider it as number
 	if (empty($type)) {
 		$type = 'real';
