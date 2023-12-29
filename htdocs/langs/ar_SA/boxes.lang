@@ -24,6 +24,7 @@ BoxFicheInter=أحدث التدخلات
 BoxCurrentAccounts=ميزان الحسابات المفتوحة
 BoxTitleMemberNextBirthdays=أعياد الميلاد لهذا الشهر (الأعضاء)
 BoxTitleMembersByType=الأعضاء حسب النوع والحالة
+BoxTitleMembersByTags=أعضاء بواسطة أوسمة و <span class='notranslate'>حالة< /فترة>
 BoxTitleMembersSubscriptionsByYear=اشتراكات الأعضاء حسب السنة
 BoxTitleLastRssInfos=آخر أخبار %s من %s
 BoxTitleLastProducts=المنتجات | الخدمات: آخر %s معدل 
@@ -44,8 +45,11 @@ BoxTitleSupplierOrdersAwaitingReception=أوامر الموردين في انت�
 BoxTitleLastModifiedContacts=جهات الاتصال | العناوين: آخر %s تعديل 
 BoxMyLastBookmarks=الإشارات المرجعية: أحدث %s
 BoxOldestExpiredServices=أقدم الخدمات النشطة منتهية الصلاحية
+BoxOldestActions=أقدم الأحداث للقيام بها
 BoxLastExpiredServices=أحدث %s أقدم جهات اتصال مع خدمات منتهية الصلاحية نشطة
 BoxTitleLastActionsToDo=أحدث إجراءات %s للقيام بها
+BoxTitleOldestActionsToDo=أقدم أحداث %s التي تم تنفيذها، لم تكتمل
+BoxTitleFutureActions=الأحداث القادمة %s القادمة
 BoxTitleLastContracts=أحدث عقود %s التي تم تعديلها
 BoxTitleLastModifiedDonations=آخر التبرعات %s التي تم تعديلها
 BoxTitleLastModifiedExpenses=أحدث تقارير المصروفات %s التي تم تعديلها
@@ -109,12 +113,34 @@ NumberOfLinesInSuspenseAccount=رقم البند في الحساب المعلق
 SuspenseAccountNotDefined=لم يتم تعريف الحساب المعلق
 BoxLastCustomerShipments=آخر شحنات العميل
 BoxTitleLastCustomerShipments=أحدث %s شحنات العملاء 
+BoxTitleLastLeaveRequests=Latest %s modified leave requests
 NoRecordedShipments=لا توجد شحنة مسجلة للعملاء
-BoxCustomersOutstandingBillReached=العملاء الذين بلغوا الحد الأقصى المسموح به
+BoxCustomersOutstandingBillReached=العملاء الذين وصلوا إلى الحد الأقصى المستحق
 # Pages
 UsersHome=المستخدمون والمجموعات الرئيسية
 MembersHome=عضوية المنزل
 ThirdpartiesHome=الصفحة الرئيسية الأطراف الثالثة
+productindex=المنتجات الرئيسية خدمات و
+mrpindex=الصفحة الرئيسية MRP
+commercialindex=تجاري منزلي
+projectsindex=مشاريع منزلية
+invoiceindex=فواتير المنزل
+hrmindex=فواتير المنزل
 TicketsHome=تذاكر المنزل
+stockindex=أسهم المنزل
+sendingindex=الشحنات المنزلية
+receptionindex=استقبالات منزلية
+activityindex=نشاط منزلي
+proposalindex=اقتراح المنزل
+ordersindex=أوامر بيع المنزل
+orderssuppliersindex=طلبات شراء المنازل
+contractindex=عقود المنزل
+interventionindex=التدخلات المنزلية
+suppliersproposalsindex=مقترحات موردي المنازل
+donationindex=التبرعات المنزلية
+specialexpensesindex=مصاريف خاصة بالمنزل
+expensereportindex=تقرير نفقات المنزل
+mailingindex=بريد المنزل
+opensurveyindex=الصفحة الرئيسية استطلاع مفتوح
 AccountancyHome=محاسبة المنزل
 ValidatedProjects=المشاريع المعتمدة

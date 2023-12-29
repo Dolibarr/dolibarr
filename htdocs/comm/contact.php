@@ -42,13 +42,13 @@ if (!$sortfield) {
 if ($page < 0) {
 	$page = 0;
 }
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
 
 $type = GETPOST('type', 'alpha');
-$search_lastname = GETPOST('search_nom') ?GETPOST('search_nom') : GETPOST('search_lastname'); // For backward compatibility
-$search_firstname = GETPOST('search_firstname') ?GETPOST('search_firstname') : GETPOST('search_firstname'); // For backward compatibility
-$search_company = GETPOST('search_societe') ?GETPOST('search_societe') : GETPOST('search_company'); // For backward compatibility
+$search_lastname = GETPOST('search_nom') ? GETPOST('search_nom') : GETPOST('search_lastname'); // For backward compatibility
+$search_firstname = GETPOST('search_firstname') ? GETPOST('search_firstname') : GETPOST('search_firstname'); // For backward compatibility
+$search_company = GETPOST('search_societe') ? GETPOST('search_societe') : GETPOST('search_company'); // For backward compatibility
 $contactname = GETPOST('contactname');
 $begin = GETPOST('begin', 'alpha');
 
@@ -83,14 +83,14 @@ if ($type == "f") {
 $sql = "SELECT s.rowid, s.nom as name, st.libelle as stcomm";
 $sql .= ", p.rowid as cidp, p.name, p.firstname, p.email, p.phone";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_stcomm as st,";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
 }
 $sql .= " ".MAIN_DB_PREFIX."socpeople as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 $sql .= " WHERE s.fk_stcomm = st.id";
 $sql .= " AND p.entity IN (".getEntity('contact').")";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($type == "c") {
@@ -129,7 +129,7 @@ if ($resql) {
 
 	$param = "&type=".$type;
 
-	$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ListOfContacts") : $langs->trans("ListOfContactsAddresses"));
+	$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("ListOfContacts") : $langs->trans("ListOfContactsAddresses"));
 	print_barre_liste($title.($label ? " (".$label.")" : ""), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num);
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'?type='.GETPOST("type", "alpha").'" method="GET">';

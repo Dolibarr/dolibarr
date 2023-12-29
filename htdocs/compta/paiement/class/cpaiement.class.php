@@ -25,17 +25,15 @@
  * \brief   This file is to manage CRUD function of type of payments
  */
 
+// Put here all includes required by your class file
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
+
 
 /**
  * Class Cpaiement
  */
-class Cpaiement
+class Cpaiement extends CommonDict
 {
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
 	/**
 	 * @var string Id to identify managed objects
 	 */
@@ -46,14 +44,12 @@ class Cpaiement
 	 */
 	public $table_element = 'c_paiement';
 
-	public $code;
-
 	/**
+	 * @var string
 	 * @deprecated
 	 * @see $label
 	 */
 	public $libelle;
-	public $label;
 
 	public $type;
 	public $active;
@@ -77,7 +73,7 @@ class Cpaiement
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
 	 *
-	 * @return int <0 if KO, Id of created object if OK
+	 * @return int Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -88,25 +84,25 @@ class Cpaiement
 		// Clean parameters
 
 		if (isset($this->code)) {
-			 $this->code = trim($this->code);
+			$this->code = trim($this->code);
 		}
 		if (isset($this->libelle)) {
-			 $this->libelle = trim($this->libelle);
+			$this->libelle = trim($this->libelle);
 		}
 		if (isset($this->label)) {
 			$this->label = trim($this->label);
 		}
 		if (isset($this->type)) {
-			 $this->type = trim($this->type);
+			$this->type = trim($this->type);
 		}
 		if (isset($this->active)) {
-			 $this->active = trim($this->active);
+			$this->active = trim($this->active);
 		}
 		if (isset($this->accountancy_code)) {
-			 $this->accountancy_code = trim($this->accountancy_code);
+			$this->accountancy_code = trim($this->accountancy_code);
 		}
 		if (isset($this->module)) {
-			 $this->module = trim($this->module);
+			$this->module = trim($this->module);
 		}
 
 
@@ -124,7 +120,7 @@ class Cpaiement
 		$sql .= 'accountancy_code,';
 		$sql .= 'module';
 		$sql .= ') VALUES (';
-		$sql .= ' '.(!isset($this->entity) ?getEntity('c_paiement') : $this->entity).',';
+		$sql .= ' '.(!isset($this->entity) ? getEntity('c_paiement') : $this->entity).',';
 		$sql .= ' '.(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").',';
 		$sql .= ' '.(!isset($this->libelle) ? 'NULL' : "'".$this->db->escape($this->libelle)."'").',';
 		$sql .= ' '.(!isset($this->type) ? 'NULL' : $this->type).',';
@@ -174,7 +170,7 @@ class Cpaiement
 	 * @param int    $id  Id object
 	 * @param string $ref Ref
 	 *
-	 * @return int <0 if KO, 0 if not found, >0 if OK
+	 * @return int Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -233,7 +229,7 @@ class Cpaiement
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
 	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
@@ -244,25 +240,25 @@ class Cpaiement
 		// Clean parameters
 
 		if (isset($this->code)) {
-			 $this->code = trim($this->code);
+			$this->code = trim($this->code);
 		}
 		if (isset($this->libelle)) {
-			 $this->libelle = trim($this->libelle);
+			$this->libelle = trim($this->libelle);
 		}
 		if (isset($this->label)) {
 			$this->label = trim($this->label);
 		}
 		if (isset($this->type)) {
-			 $this->type = trim($this->type);
+			$this->type = trim($this->type);
 		}
 		if (isset($this->active)) {
-			 $this->active = trim($this->active);
+			$this->active = trim($this->active);
 		}
 		if (isset($this->accountancy_code)) {
-			 $this->accountancy_code = trim($this->accountancy_code);
+			$this->accountancy_code = trim($this->accountancy_code);
 		}
 		if (isset($this->module)) {
-			 $this->module = trim($this->module);
+			$this->module = trim($this->module);
 		}
 
 
@@ -318,7 +314,7 @@ class Cpaiement
 	 * @param User $user      User that deletes
 	 * @param bool $notrigger false=launch triggers after, true=disable triggers
 	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{

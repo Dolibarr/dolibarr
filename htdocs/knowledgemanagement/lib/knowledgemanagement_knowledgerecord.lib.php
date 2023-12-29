@@ -52,7 +52,7 @@ function knowledgerecordPrepareHead($object)
 		$head[$h][0] = DOL_URL_ROOT.'/knowledgemanagement/knowledgerecord_note.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) {
-			$head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">'.$nbNote.'</span>' : '');
+			$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.$nbNote.'</span>' : '');
 		}
 		$head[$h][2] = 'note';
 		$h++;

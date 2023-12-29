@@ -67,7 +67,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 $sql = "SELECT count(p.rowid), p.fk_statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ", ".MAIN_DB_PREFIX."supplier_proposal as p";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE p.fk_soc = s.rowid";
@@ -75,7 +75,7 @@ $sql .= " AND p.entity IN (".getEntity('supplier_proposal').")";
 if ($user->socid) {
 	$sql .= ' AND p.fk_soc = '.((int) $user->socid);
 }
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " AND p.fk_statut IN (0,1,2,3,4)";
@@ -167,7 +167,7 @@ if (isModEnabled('supplier_proposal')) {
 	$sql = "SELECT c.rowid, c.ref, s.nom as socname, s.rowid as socid, s.canvas, s.client";
 	$sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposal as c";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE c.fk_soc = s.rowid";
@@ -176,7 +176,7 @@ if (isModEnabled('supplier_proposal')) {
 	if ($socid) {
 		$sql .= " AND c.fk_soc = ".((int) $socid);
 	}
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 
@@ -225,7 +225,7 @@ $sql = "SELECT c.rowid, c.ref, c.fk_statut, s.nom as socname, s.rowid as socid, 
 $sql .= " date_cloture as datec";
 $sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposal as c";
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE c.fk_soc = s.rowid";
@@ -234,7 +234,7 @@ $sql .= " AND c.entity = ".$conf->entity;
 if ($socid) {
 	$sql .= " AND c.fk_soc = ".((int) $socid);
 }
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " ORDER BY c.tms DESC";
@@ -298,7 +298,7 @@ if ($resql) {
 /*
  * Opened askprice
  */
-if (isModEnabled('supplier_proposal') && $user->rights->supplier_proposal->lire) {
+if (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire')) {
 	$langs->load("supplier_proposal");
 
 	$now = dol_now();
@@ -306,13 +306,13 @@ if (isModEnabled('supplier_proposal') && $user->rights->supplier_proposal->lire)
 	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client, p.rowid as supplier_proposalid, p.total_ttc, p.total_tva, p.total_ht, p.ref, p.fk_statut, p.datec as dp";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= ", ".MAIN_DB_PREFIX."supplier_proposal as p";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE p.fk_soc = s.rowid";
 	$sql .= " AND p.entity IN (".getEntity('supplier_proposal').")";
 	$sql .= " AND p.fk_statut = 1";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
@@ -330,7 +330,7 @@ if (isModEnabled('supplier_proposal') && $user->rights->supplier_proposal->lire)
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre"><th colspan="5">'.$langs->trans("RequestsOpened").' <a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?search_status=1"><span class="badge">'.$num.'</span></a></th></tr>';
 
-			$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
+			$nbofloop = min($num, (!getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
 			while ($i < $nbofloop) {
 				$obj = $db->fetch_object($result);
 

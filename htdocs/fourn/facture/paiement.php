@@ -67,7 +67,7 @@ $search_amount = GETPOST('search_amount', 'alpha'); // alpha because we must be 
 $search_company = GETPOST('search_company', 'alpha');
 $search_payment_num = GETPOST('search_payment_num', 'alpha');
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -346,7 +346,7 @@ if (empty($reshook)) {
 				$invoiceid = 0;
 				foreach ($paiement->amounts as $key => $amount) {
 					$facid = $key;
-					if (is_numeric($amount) && $amount <> 0) {
+					if (is_numeric($amount) && $amount != 0) {
 						if ($invoiceid != 0) {
 							$invoiceid = -1; // There is more than one invoice payed by this payment
 						} else {
@@ -386,20 +386,20 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	$result = $object->fetch($facid);
 
 	$datefacture = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-	$dateinvoice = ($datefacture == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '') : $datefacture);
+	$dateinvoice = ($datefacture == '' ? (!getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : '') : $datefacture);
 
 	$sql = 'SELECT s.nom as name, s.rowid as socid,';
 	$sql .= ' f.rowid, f.ref, f.ref_supplier, f.total_ttc as total, f.fk_mode_reglement, f.fk_account';
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 		$sql .= ", sc.fk_soc, sc.fk_user ";
 	}
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'facture_fourn as f';
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= ' WHERE f.fk_soc = s.rowid';
 	$sql .= ' AND f.rowid = '.((int) $facid);
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	$resql = $db->query($sql);
@@ -532,7 +532,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 			$parameters = array('facid'=>$facid, 'ref'=>$ref, 'objcanvas'=>$objcanvas);
 			$reshook = $hookmanager->executeHooks('paymentsupplierinvoices', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-			$error = $hookmanager->error; $errors = $hookmanager->errors;
+			$error = $hookmanager->error;
+			$errors = $hookmanager->errors;
 			if (empty($reshook)) {
 				/*
 				 * All unpaid supplier invoices
@@ -700,8 +701,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 										if (!empty($conf->use_javascript_ajax)) {
 											print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $multicurrency_remaintopay)."'");
 										}
-											print '<input type=hidden class="multicurrency_remain" name="'.$nameRemain.'" value="'.$multicurrency_remaintopay.'">';
-											print '<input type="text" size="8" class="multicurrency_amount" name="'.$namef.'" value="'.GETPOST($namef).'">';
+										print '<input type=hidden class="multicurrency_remain" name="'.$nameRemain.'" value="'.$multicurrency_remaintopay.'">';
+										print '<input type="text" size="8" class="multicurrency_amount" name="'.$namef.'" value="'.GETPOST($namef).'">';
 									} else {
 										print '<input type="text" size="8" name="'.$namef.'_disabled" value="'.GETPOST($namef).'" disabled>';
 										print '<input type="hidden" name="'.$namef.'" value="'.GETPOST($namef).'">';
@@ -723,7 +724,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 							print '<td class="right">';
 							print price($sign * $remaintopay);
-							if (!empty($conf->paymentbybanktransfer->enabled)) {
+							if (isModEnabled('paymentbybanktransfer')) {
 								$numdirectdebitopen = 0;
 								$totaldirectdebit = 0;
 								$sql = "SELECT COUNT(pfd.rowid) as nb, SUM(pfd.amount) as amount";
@@ -757,8 +758,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 								if (!empty($conf->use_javascript_ajax)) {
 									print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $remaintopay)."'");
 								}
-									print '<input type="hidden" class="remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
-									print '<input type="text" size="8" class="amount" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">'; // class is requied to be used by javascript callForResult();
+								print '<input type="hidden" class="remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
+								print '<input type="text" size="8" class="amount" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">'; // class is requied to be used by javascript callForResult();
 							} else {
 								print '<input type="text" size="8" name="'.$namef.'_disabled" value="'.dol_escape_htmltag(GETPOST($namef)).'" disabled>';
 								print '<input type="hidden" class="amount" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">'; // class is requied to be used by javascript callForResult();

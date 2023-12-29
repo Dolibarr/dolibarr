@@ -36,3 +36,7 @@ Codemulticurrency=valutakode
 UpdateRate=endre kursen
 CancelUpdate=avbryt
 NoEmptyRate=Kursfeltet må ikke være tomt
+CurrencyCodeId=Valuta-ID
+CurrencyCode=Valutakode
+CurrencyUnitPrice=Enhetspris i utenlandsk valuta
+CurrencyPrice=Pris i utenlandsk valuta

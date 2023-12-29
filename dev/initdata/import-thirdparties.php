@@ -63,8 +63,8 @@ $mode = $argv[1];
 $filepath = $argv[2];
 $filepatherr = $filepath.'.err';
 //$defaultlang = empty($argv[3])?'en_US':$argv[3];
-$startlinenb = empty($argv[3])?1:$argv[3];
-$endlinenb = empty($argv[4])?0:$argv[4];
+$startlinenb = empty($argv[3]) ? 1 : $argv[3];
+$endlinenb = empty($argv[4]) ? 0 : $argv[4];
 
 if (empty($mode) || ! in_array($mode, array('test','confirm','confirmforced')) || empty($filepath)) {
 	print "Usage:  $script_file (test|confirm|confirmforced) filepath.csv [startlinenb] [endlinenb]\n";
@@ -128,8 +128,8 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape)) 
 	$object->client = $fields[7];
 	$object->fournisseur = $fields[8];
 
-	$object->name = $fields[13]?trim($fields[13]):$fields[0];
-	$object->name_alias = $fields[0]!=$fields[13]?trim($fields[0]):'';
+	$object->name = $fields[13] ? trim($fields[13]) : $fields[0];
+	$object->name_alias = $fields[0] != $fields[13] ? trim($fields[0]) : '';
 
 	$object->address = trim($fields[14]);
 	$object->zip = trim($fields[15]);

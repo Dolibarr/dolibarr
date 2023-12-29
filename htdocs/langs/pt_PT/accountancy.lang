@@ -16,8 +16,8 @@ ThisService=Este serviço
 ThisProduct=Este produto
 DefaultForService=Default for services
 DefaultForProduct=Default for products
-ProductForThisThirdparty=Product for this thirdparty
-ServiceForThisThirdparty=Service for this thirdparty
+ProductForThisThirdparty=Product for this third party
+ServiceForThisThirdparty=Service for this third party
 CantSuggest=Não pode sugerir
 AccountancySetupDoneFromAccountancyMenu=A maioria da configuração da contabilidade é efetuada a partir do menu %s
 ConfigAccountingExpert=Configuration of the module accounting (double entry)
@@ -38,9 +38,10 @@ DeleteCptCategory=Remover conta contabilistica do grupo
 ConfirmDeleteCptCategory=Are you sure you want to remove this accounting account from the accounting account group?
 JournalizationInLedgerStatus=Status da jornalização
 AlreadyInGeneralLedger=Already transferred to accounting journals and ledger
-NotYetInGeneralLedger=Not yet transferred to accouting journals and ledger
+NotYetInGeneralLedger=Not yet transferred to accounting journals and ledger
 GroupIsEmptyCheckSetup=Grupo está vazio, verifique a configuração do grupo de contabilidade personalizado
 DetailByAccount=Mostrar detalhes por conta
+DetailBy=Detail by
 AccountWithNonZeroValues=Contas com valores diferentes de zero
 ListOfAccounts=Lista de contas
 CountriesInEEC=Países da CEE
@@ -51,26 +52,30 @@ AccountantFiles=Export source documents
 ExportAccountingSourceDocHelp=With this tool, you can search and export the source events that are used to generate your accountancy. <br>The exported ZIP file will contain the lists of requested items in CSV, as well as their attached files in their original format (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=To export your journals, use the menu entry %s - %s.
 ExportAccountingProjectHelp=Specify a project if you need an accounting report only for a specific project. Expense reports and loan payments are not included in project reports.
+ExportAccountancy=Export accountancy
+WarningDataDisappearsWhenDataIsExported=Warning, this list contains only the accounting entries that have not been already exported (Export date is empty). If you want to include the accounting entries already exported, click on the button above.
 VueByAccountAccounting=View by accounting account
 VueBySubAccountAccounting=View by accounting subaccount
 
-MainAccountForCustomersNotDefined=Principal conta contábil para clientes não definidos na configuração
-MainAccountForSuppliersNotDefined=Conta contábil principal para fornecedores não definidos na configuração
-MainAccountForUsersNotDefined=Principal conta contábil para usuários não definidos na configuração
-MainAccountForVatPaymentNotDefined=Principal conta contábil para pagamento de IVA não definida na configuração
-MainAccountForSubscriptionPaymentNotDefined=Main accounting account for subscription payment not defined in setup
+MainAccountForCustomersNotDefined=Main account (from the Chart of Account) for customers not defined in setup
+MainAccountForSuppliersNotDefined=Main account (from the Chart of Account) for vendors not defined in setup
+MainAccountForUsersNotDefined=Main account (from the Chart of Account) for users not defined in setup
+MainAccountForVatPaymentNotDefined=Account (from the Chart of Account) for VAT payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Account (from the Chart of Account) for membership payment not defined in setup
+MainAccountForRetainedWarrantyNotDefined=Account (from the Chart of Account) for the retained warranty not defined in setup
 UserAccountNotDefined=Accounting account for user not defined in setup
 
 AccountancyArea=Área de contabilidade
 AccountancyAreaDescIntro=O uso do módulo de contabilidade é feito em várias etapas:
 AccountancyAreaDescActionOnce=As seguintes ações são geralmente executadas apenas uma vez, ou uma vez por ano ...
-AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you automaticaly the correct default accounting account when transferring data in accounting
+AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you automatically the correct default accounting account when transferring data in accounting
 AccountancyAreaDescActionFreq=As seguintes ações são normalmente executadas a cada mês, semana ou dia para grandes empresas...
 
 AccountancyAreaDescJournalSetup=STEP %s: Check content of your journal list from menu %s
 AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists or create one from menu %s
 AccountancyAreaDescChart=STEP %s: Select and|or complete your chart of account from menu %s
 
+AccountancyAreaDescFiscalPeriod=STEP %s: Define a fiscal year by default on which to integrate your accounting entries. For this, use the menu entry %s.
 AccountancyAreaDescVat=PASSO %s: Defina a conta contabilística para cada taxa de IVA. Para tal pode usar a entrada %s do menu.
 AccountancyAreaDescDefault=STEP %s: definir contas contábeis padrão. Para isso, use a entrada do menu %s.
 AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for each type of Expense report. For this, use the menu entry %s.
@@ -78,7 +83,7 @@ AccountancyAreaDescSal=PASSO %s: Defina a conta contabilística para o pagamento
 AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for Taxes (special expenses). For this, use the menu entry %s.
 AccountancyAreaDescDonation=PASSO %s: Defina a conta contabilística para donativos. Para tal pode usar a entrada do menu %s.
 AccountancyAreaDescSubscription=STEP %s: Define default accounting accounts for member subscription. For this, use the menu entry %s.
-AccountancyAreaDescMisc=ETAPA %s: Defina contas padrão obrigatórias e contas contábeis padrão para transações diversas. Para isso, use a entrada do menu %s.
+AccountancyAreaDescMisc=STEP %s: Define mandatory default accounts and default accounting accounts for miscellaneous transactions. For this, use the menu entry %s.
 AccountancyAreaDescLoan=PASSO %s: Defina a conta contabilística para empréstimos. Para tal pode usar a entrada do menu %s.
 AccountancyAreaDescBank=STEP %s: defina as contas contábeis e o código do diário para cada banco e contas financeiras. Para isso, use a entrada do menu %s.
 AccountancyAreaDescProd=STEP %s: Define accounting accounts on your Products/Services. For this, use the menu entry %s.
@@ -89,6 +94,7 @@ AccountancyAreaDescAnalyze=PASSO %s: Adicionar ou editar transações e gerar re
 
 AccountancyAreaDescClosePeriod=PASSO %s: Fechar período para que não seja possível modificar no futuro.
 
+TheFiscalPeriodIsNotDefined=A mandatory step in setup has not been completed (Fiscal period is not defined)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup has not been completed (accounting code journal not defined for all bank accounts)
 Selectchartofaccounts=Selecione gráfico de contas ativo 
 ChangeAndLoad=Mudar e carregar
@@ -112,6 +118,7 @@ MenuLoanAccounts=Contas de empréstimo
 MenuProductsAccounts=Contas de produtos
 MenuClosureAccounts=Closure accounts
 MenuAccountancyClosure=Closure
+MenuExportAccountancy=Export accountancy
 MenuAccountancyValidationMovements=Validate movements
 ProductsBinding=Contas de produtos
 TransferInAccounting=Transfer in accounting
@@ -164,12 +171,12 @@ ACCOUNTING_MANAGE_ZERO=Allow to manage different number of zeros at the end of a
 BANK_DISABLE_DIRECT_INPUT=Desactivar a gravação direta de transação na conta bancária
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Ativar exportação de rascunho em diário
 ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties, break ability to search on a part of value)
-ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, what is the period selected by default
+ACCOUNTING_DATE_START_BINDING=Disable binding & transfer in accountancy when date is below this date (the transactions before this date will be excluded by default)
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On the page to transfer data into accountancy, what is the period selected by default
 
-ACCOUNTING_SELL_JOURNAL=Sales journal (sales and returns)
-ACCOUNTING_PURCHASE_JOURNAL=Purchase journal (purchase and returns)
-ACCOUNTING_BANK_JOURNAL=Cash journal (receipts and disbursements)
+ACCOUNTING_SELL_JOURNAL=Sales journal - sales and returns
+ACCOUNTING_PURCHASE_JOURNAL=Purchase journal - purchase and returns
+ACCOUNTING_BANK_JOURNAL=Cash journal - receipts and disbursements
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Diário de relatório de despesas
 ACCOUNTING_MISCELLANEOUS_JOURNAL=General journal
 ACCOUNTING_HAS_NEW_JOURNAL=Tem novo Jornal
@@ -179,6 +186,8 @@ ACCOUNTING_SOCIAL_JOURNAL=Diário social
 ACCOUNTING_RESULT_PROFIT=Result accounting account (Profit)
 ACCOUNTING_RESULT_LOSS=Result accounting account (Loss)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Journal of closure
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=Accounting groups used for the balance sheet account (separate by comma)
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=Accounting groups used for the income statement (separate by comma)
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account (from the Chart Of Account) to be used as the account for transitional bank transfers
 TransitionalAccount=Transitional bank transfer account
@@ -238,6 +247,7 @@ ConfirmDeleteMvt=This will delete all lines in accountancy for the year/month an
 ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted)
 FinanceJournal=Diário financeiro
 ExpenseReportsJournal=Diário de relatórios de despesas
+InventoryJournal=Inventory journal
 DescFinanceJournal=Diário financeiro incluindo todos os tipos de pagamentos por conta bancária
 DescJournalOnlyBindedVisible=This is a view of record that are bound to an accounting account and can be recorded into the Journals and Ledger.
 VATAccountNotDefined=Conta para efeitos de IVA não definido
@@ -282,7 +292,7 @@ DescVentilDoneCustomer=Consult here the list of the lines of invoices customers 
 DescVentilTodoCustomer=Bind invoice lines not already bound with a product account from chart of account
 ChangeAccount=Change the product/service account (from chart of account) for the selected lines with the following account:
 Vide=-
-DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product account from chart of account (only record not already transfered in accountancy are visible)
+DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product account from chart of account (only record not already transferred in accountancy are visible)
 DescVentilDoneSupplier=Consult here the list of the lines of vendor invoices and their accounting account
 DescVentilTodoExpenseReport=Vincule as linhas do relatórios de despesas de não vinculados a um honorário de uma conta de contabilística
 DescVentilExpenseReport=Consulte aqui a lista de linhas do relatório de despesas vinculadas (ou não) a um honorário da conta contabilística
@@ -290,11 +300,11 @@ DescVentilExpenseReportMore=Se você configurar uma conta contábil no tipo de l
 DescVentilDoneExpenseReport=Consulte aqui a lista das linhas de relatórios de despesas e os seus honorários da conta contabilística
 
 Closure=Annual closure
-DescClosure=Consult here the number of movements by month not yet validated & locked
+AccountancyClosureStep1Desc=Consult here the number of movements by month not yet validated & locked
 OverviewOfMovementsNotValidated=Overview of movements not validated and locked
 AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
 NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
-ValidateMovements=Validate and lock movements...
+ValidateMovements=Validate and lock movements
 DescValidateMovements=Any modification or deletion of writing, lettering and deletes will be prohibited. All entries for an exercise must be validated otherwise closing will not be possible
 
 ValidateHistory=Vincular automaticamente
@@ -313,7 +323,7 @@ ChangeBinding=Alterar vinculação
 Accounted=Contabilizado no ledger
 NotYetAccounted=Not yet transferred to accounting
 ShowTutorial=Show Tutorial
-NotReconciled=Not reconciled
+NotReconciled=Não reconciliado
 WarningRecordWithoutSubledgerAreExcluded=Warning, all lines without subledger account defined are filtered and excluded from this view
 AccountRemovedFromCurrentChartOfAccount=Accounting account that does not exist in the current chart of accounts
 
@@ -333,7 +343,7 @@ AccountingJournalType3=Compras
 AccountingJournalType4=Banco
 AccountingJournalType5=Relatórios de despesas
 AccountingJournalType8=Inventário
-AccountingJournalType9=Contém novo
+AccountingJournalType9=Retained earnings
 GenerationOfAccountingEntries=Generation of accounting entries
 ErrorAccountingJournalIsAlreadyUse=Este diário já está a ser utilizado
 AccountingAccountForSalesTaxAreDefinedInto=Nota: A conta de contabilidade para imposto sobre vendas é definida no menu <b> %s </ b> - <b> %s </ b>
@@ -343,12 +353,20 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=Disable binding & transfer in accountancy on
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disable binding & transfer in accountancy on purchases (vendor invoices will not be taken into account in accounting)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accountancy on expense reports (expense reports will not be taken into account in accounting)
 ACCOUNTING_ENABLE_LETTERING=Enable the lettering function in the accounting
+ACCOUNTING_ENABLE_LETTERING_DESC=When this options is enabled, you can define, on each accounting entry, a code so you can group different accounting movements together. In the past, when different journals was managed independently, this feature was necessary to group movement lines of different journals together. However, with Dolibarr accountancy, such a tracking code, called "<b>%s</b>" is already saved automatically, so an automatic lettering is already done, with no risk of error so this feature has become useless for a common usage. Manual lettering feature is provided for end users that really don't trust the computer engine making the transfer of data in accountancy.
+EnablingThisFeatureIsNotNecessary=Enabling this feature is no more necessary for a rigorous accounting management.
 ACCOUNTING_ENABLE_AUTOLETTERING=Enable the automatic lettering when transferring to accounting
+ACCOUNTING_ENABLE_AUTOLETTERING_DESC=The code for the lettering is automatically generated and incremented and not chosen by the end user
+ACCOUNTING_LETTERING_NBLETTERS=Number of letters when generating lettering code (default 3)
+ACCOUNTING_LETTERING_NBLETTERS_DESC=Some accounting software only accepts a two-letter code. This parameter allows you to set this aspect. The default number of letters is three.
+OptionsAdvanced=Advanced options
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Activate the management of VAT reverse charge on supplier purchases
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transferred into accountancy differently: A additional debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page.
 
 ## Export
 NotExportLettering=Do not export the lettering when generating the file
-NotifiedExportDate=Flag exported lines as Exported <span class="warning">(to modify a line, you will need to delete the whole transaction and re-transfert it into accounting)</span>
-NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+NotifiedExportDate=Flag not yet exported lines as Exported <span class="warning">(to modify a line flagged as exported, you will need to delete the whole transaction and re-transfert it into accounting)</span>
+NotifiedValidationDate=Validate and Lock the exported entries not yet already locked <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
 NotifiedExportFull=Export documents ?
 DateValidationAndLock=Date validation and lock
 ConfirmExportFile=Confirmation of the generation of the accounting export file ?
@@ -380,7 +398,7 @@ ChartofaccountsId=ID de plano de contas
 ## Tools - Init accounting account on product / service
 InitAccountancy=Iniciar contabilidade
 InitAccountancyDesc=Essa página pode ser usada para inicializar uma conta contábil em produtos e serviços que não tenham uma conta contábil definida para vendas e compras.
-DefaultBindingDesc=Esta página pode ser usada para definir uma conta padrão a ser usada para vincular registo de transações sobre salários, doações, impostos e IVA quando nenhuma conta contabilística específica estiver definida.
+DefaultBindingDesc=This page can be used to set the default accounts (from the chart of account) to use to link business objects with an account, like payment salaries, donation, taxes and VAT, when no specific account were already set.
 DefaultClosureDesc=This page can be used to set parameters used for accounting closures.
 Options=Opções
 OptionModeProductSell=Modo de vendas
@@ -406,7 +424,7 @@ SaleLocal=Local sale
 SaleExport=Export sale
 SaleEEC=Sale in EEC
 SaleEECWithVAT=Sale in EEC with a VAT not null, so we suppose this is NOT an intracommunautary sale and the suggested account is the standard product account.
-SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the thirdparty, or change the product account suggested for binding if needed.
+SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of third party is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the third party, or change the product account suggested for binding if needed.
 ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
 ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
@@ -427,16 +445,30 @@ AccountancyNoUnletteringModified=No unreconcile modified
 AccountancyOneUnletteringModifiedSuccessfully=One unreconcile successfully modified
 AccountancyUnletteringModifiedSuccessfully=%s unreconcile successfully modified
 
+## Closure
+AccountancyClosureStep1=Step 1 : Validate and lock movements
+AccountancyClosureStep2=Step 2 : Close fiscal period
+AccountancyClosureStep3=Step 3 : Extract entries (Optional)
+AccountancyClosureClose=Close fiscal period
+AccountancyClosureAccountingReversal=Extract and record "Retained earnings" entries
+AccountancyClosureStep3NewFiscalPeriod=Next fiscal period
+AccountancyClosureGenerateClosureBookkeepingRecords=Generate "Retained earnings" entries on the next fiscal period
+AccountancyClosureSeparateAuxiliaryAccounts=When generating the "Retained earnings" entries, detail the sub-ledger accounts
+AccountancyClosureCloseSuccessfully=Fiscal period has been closed successfully
+AccountancyClosureInsertAccountingReversalSuccessfully=Bookkeeping entries for "Retained earnings" has been inserted successfully
+
 ## Confirm box
 ConfirmMassUnletteringAuto=Bulk auto unreconcile confirmation
 ConfirmMassUnletteringManual=Bulk manual unreconcile confirmation
 ConfirmMassUnletteringQuestion=Are you sure you want to unreconcile the %s selected record(s)?
 ConfirmMassDeleteBookkeepingWriting=Confirmação de Múltiplas Eliminações
-ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted) Are you sure you want to delete the %s selected record(s)?
+ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all line entries related to the same transaction will be deleted). Are you sure you want to delete the %s selected entries?
+AccountancyClosureConfirmClose=Are you sure you want to close the current fiscal period ? <span class="warning">You understand that closing the fiscal period is an irreversible action and will permanently block any modification or deletion of entries over this period</span>.
+AccountancyClosureConfirmAccountingReversal=Are you sure you want to record entries for the "Retained earnings" ?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Não foram efetuados alguns passos obrigatórios da configuração, por favor complete-os
-ErrorNoAccountingCategoryForThisCountry=Não existe grupo de conta contabilística disponível para o país %s (Consulte Inicio->Configuração->Dicionários)
+ErrorNoAccountingCategoryForThisCountry=No accounting account group available for country %s (See %s - %s - %s)
 ErrorInvoiceContainsLinesNotYetBounded=Você tenta analisar algumas linhas da fatura <strong> %s </ strong>, mas algumas outras linhas ainda não estão limitadas à conta contábil. A revogação de todas as linhas de fatura desta fatura é recusada.
 ErrorInvoiceContainsLinesNotYetBoundedShort=Algumas linhas na fatura não estão vinculadas à conta contábil.
 ExportNotSupported=O formato de exportação configurado não é suportado nesta página
@@ -445,12 +477,15 @@ NoJournalDefined=Nenhum diário definido
 Binded=Linhas vinculadas
 ToBind=Linhas a vincular
 UseMenuToSetBindindManualy=Linhas ainda não encadernadas, use o menu <a href="%s"> %s </a> para fazer a encadernação manualmente
-SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Note: this module or page is not completely compatible with the experimental feature of situation invoices. Some data may be wrong.
 AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
 AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
 AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
 ErrorAccountNumberAlreadyExists=The accounting number %s already exists
 ErrorArchiveAddFile=Can't put "%s" file in archive
+ErrorNoFiscalPeriodActiveFound=No active fiscal period found
+ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=The bookkeeping doc date is not inside the active fiscal period
+ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=The bookkeeping doc date is inside a closed fiscal period
 
 ## Import
 ImportAccountingEntries=Entradas contábeis
@@ -475,9 +510,9 @@ FECFormatMulticurrencyAmount=Multicurrency amount (Montantdevise)
 FECFormatMulticurrencyCode=Multicurrency code (Idevise)
 
 DateExport=Date export
-WarningReportNotReliable=Atenção, este relatório não é baseado no Ledger, portanto, não contém transações modificadas manualmente no Ledger. Se a sua periodização estiver atualizada, a visão da contabilidade será mais precisa.
+WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contain transactions modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
 ExpenseReportJournal=Diário de relatórios de despesas
-DocsAlreadyExportedAreExcluded=Docs already exported are excluded
-ClickToHideAlreadyExportedLines=Click to hide already exported lines
+DocsAlreadyExportedAreIncluded=Docs already exported are included
+ClickToShowAlreadyExportedLines=Click to show already exported lines
 
 NAccounts=%s accounts

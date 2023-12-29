@@ -101,7 +101,7 @@ if (!isModEnabled('cron')) {
 }
 
 // Check security key
-if ($key != $conf->global->CRON_KEY) {
+if ($key != getDolGlobalString('CRON_KEY')) {
 	print "Error: securitykey is wrong\n";
 	exit(-1);
 }
@@ -142,7 +142,7 @@ if ($result < 0) {
 }
 
 // Reload langs
-$langcode = (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT);
+$langcode = getDolGlobalString('MAIN_LANG_DEFAULT', 'auto');
 if (!empty($user->conf->MAIN_LANG_DEFAULT)) {
 	$langcode = $user->conf->MAIN_LANG_DEFAULT;
 }
@@ -224,7 +224,7 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 			}
 
 			// Reload langs
-			$langcode = (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT);
+			$langcode = getDolGlobalString('MAIN_LANG_DEFAULT', 'auto');
 			if (!empty($user->conf->MAIN_LANG_DEFAULT)) {
 				$langcode = $user->conf->MAIN_LANG_DEFAULT;
 			}

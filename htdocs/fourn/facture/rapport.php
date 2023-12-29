@@ -36,7 +36,7 @@ $socid = '';
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
+$result = restrictedArea($user, 'fournisseur', 0, 'facture_fourn', 'facture');
 
 $action = GETPOST('action', 'aZ09');
 
@@ -47,7 +47,7 @@ if ($user->socid > 0) {
 }
 
 $dir = $conf->fournisseur->facture->dir_output.'/payments';
-if (empty($user->rights->societe->client->voir) || $socid) {
+if (!$user->hasRight("societe", "client", "voir") || $socid) {
 	$dir .= '/private/'.$user->id; // If user has no permission to see all, output dir is specific to user
 }
 
@@ -101,8 +101,8 @@ print load_fiche_titre($titre, '', 'supplier_invoice');
 print '<form method="post" action="rapport.php?year='.$year.'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="builddoc">';
-$cmonth = GETPOST("remonth") ?GETPOST("remonth") : date("n", time());
-$syear = GETPOST("reyear") ?GETPOST("reyear") : date("Y", time());
+$cmonth = GETPOST("remonth") ? GETPOST("remonth") : date("n", time());
+$syear = GETPOST("reyear") ? GETPOST("reyear") : date("Y", time());
 
 print $formother->select_month($cmonth, 'remonth');
 

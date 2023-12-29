@@ -125,7 +125,6 @@ class EcmDirectory extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
-		return 1;
 	}
 
 
@@ -133,7 +132,7 @@ class EcmDirectory extends CommonObject
 	 *  Create record into database
 	 *
 	 *  @param      User	$user       User that create
-	 *  @return     int      			<0 if KO, >0 if OK
+	 *  @return     int      			Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user)
 	{
@@ -208,7 +207,8 @@ class EcmDirectory extends CommonObject
 				$dir = $conf->ecm->dir_output.'/'.$this->getRelativePath();
 				$result = dol_mkdir($dir);
 				if ($result < 0) {
-					$error++; $this->error = "ErrorFailedToCreateDir";
+					$error++;
+					$this->error = "ErrorFailedToCreateDir";
 				}
 
 				// Call trigger
@@ -238,7 +238,7 @@ class EcmDirectory extends CommonObject
 	 *
 	 *  @param	User	$user        	User that modify
 	 *  @param 	int		$notrigger	    0=no, 1=yes (no update trigger)
-	 *  @return int 			       	<0 if KO, >0 if OK
+	 *  @return int 			       	Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -292,7 +292,7 @@ class EcmDirectory extends CommonObject
 	 *	Update cache of nb of documents into database
 	 *
 	 * 	@param	string	$value		'+' or '-' or new number
-	 *  @return int		         	<0 if KO, >0 if OK
+	 *  @return int		         	Return integer <0 if KO, >0 if OK
 	 */
 	public function changeNbOfFiles($value)
 	{
@@ -328,7 +328,7 @@ class EcmDirectory extends CommonObject
 	 * 	Load object in memory from database
 	 *
 	 *  @param	int		$id			Id of object
-	 *  @return int 		        <0 if KO, 0 if not found, >0 if OK
+	 *  @return int 		        Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -383,7 +383,7 @@ class EcmDirectory extends CommonObject
 	 *	@param	User	$user					User that delete
 	 *  @param	string	$mode					'all'=delete all, 'databaseonly'=only database entry, 'fileonly' (not implemented)
 	 *  @param	int		$deletedirrecursive		1=Agree to delete content recursiveley (otherwise an error will be returned when trying to delete)
-	 *	@return	int								<0 if KO, >0 if OK
+	 *	@return	int								Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $mode = 'all', $deletedirrecursive = 0)
 	{
@@ -502,7 +502,7 @@ class EcmDirectory extends CommonObject
 			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
-			$result .= ($max ?dol_trunc($newref, $max, 'middle') : $newref);
+			$result .= ($max ? dol_trunc($newref, $max, 'middle') : $newref);
 		}
 		$result .= $linkend;
 
@@ -558,7 +558,7 @@ class EcmDirectory extends CommonObject
 	/**
 	 * 	Load this->motherof that is array(id_son=>id_parent, ...)
 	 *
-	 *	@return		int		<0 if KO, >0 if OK
+	 *	@return		int		Return integer <0 if KO, >0 if OK
 	 */
 	public function load_motherof()
 	{

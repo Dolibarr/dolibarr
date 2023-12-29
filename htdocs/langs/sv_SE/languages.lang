@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - languages
 Language_am_ET=Etiopisk
+Language_af_ZA=Afrikaans (South Africa)
 Language_ar_AR=Arabiska
 Language_ar_DZ=Arabiska (Algeriet)
 Language_ar_EG=Arabiska (egypten)
@@ -31,6 +32,7 @@ Language_en_AU=Engelska (Australien)
 Language_en_CA=Engelska (Kanada)
 Language_en_GB=Engelska (Storbritannien)
 Language_en_IN=Engelska (Indien)
+Language_en_MY=English (Myanmar)
 Language_en_NZ=Engelska (Nya Zeeland)
 Language_en_SA=Engelska (Saudiarabien)
 Language_en_SG=Engelska (Singapore)
@@ -121,6 +123,6 @@ Language_ur_PK=Urdu
 Language_uz_UZ=Uzbekiska
 Language_vi_VN=Vietnamesiska
 Language_zh_CN=Kinesiska
-Language_zh_TW=Kinesiska (traditionell)
+Language_zh_TW=Chinese (Taiwan)
 Language_zh_HK=Kinesiska (Hong Kong)
 Language_bh_MY=Malay

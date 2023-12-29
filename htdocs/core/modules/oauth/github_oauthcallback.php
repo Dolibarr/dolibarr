@@ -56,7 +56,7 @@ $currentUri = $uriFactory->createFromAbsolute($urlwithroot.'/core/modules/oauth/
  * Load the credential for the service
  */
 
-/** @var $serviceFactory \OAuth\ServiceFactory An OAuth service factory. */
+/** @var \OAuth\ServiceFactory $serviceFactory  An OAuth service factory. */
 $serviceFactory = new \OAuth\ServiceFactory();
 $httpClient = new \OAuth\Common\Http\Client\CurlClient();
 // TODO Set options for proxy and timeout
@@ -138,6 +138,10 @@ if (GETPOST('code')) {     // We are coming from oauth provider page
 
 		$backtourl = $_SESSION["backtourlsavedbeforeoauthjump"];
 		unset($_SESSION["backtourlsavedbeforeoauthjump"]);
+
+		if (empty($backtourl)) {
+			$backtourl = DOL_URL_ROOT.'/';
+		}
 
 		header('Location: '.$backtourl);
 		exit();

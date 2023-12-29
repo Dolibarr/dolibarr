@@ -64,7 +64,7 @@ class box_task extends ModeleBoxes
 		$this->boxlabel = "Tasks";
 		$this->db = $db;
 
-		$this->hidden = (!empty($conf->global->PROJECT_HIDE_TASKS) || empty($user->rights->projet->lire));
+		$this->hidden = (getDolGlobalString('PROJECT_HIDE_TASKS') || empty($user->rights->projet->lire));
 	}
 
 	/**
@@ -115,7 +115,7 @@ class box_task extends ModeleBoxes
 		);
 
 		// list the summary of the orders
-		if ($user->rights->projet->lire) {
+		if ($user->hasRight('projet', 'lire')) {
 			$boxcontent .= '<div id="ancor-idfilter'.$this->boxcode.'" style="display: block; position: absolute; margin-top: -100px"></div>'."\n";
 			$boxcontent .= '<div id="idfilter'.$this->boxcode.'" class="center" >'."\n";
 			$boxcontent .= '<form class="flat " method="POST" action="'.$_SERVER["PHP_SELF"].'#ancor-idfilter'.$this->boxcode.'">'."\n";
@@ -145,7 +145,7 @@ class box_task extends ModeleBoxes
 
 			// Get list of project id allowed to user (in a string list separated by coma)
 			$projectsListId = '';
-			if (empty($user->rights->projet->all->lire)) {
+			if (!$user->hasRight('projet', 'all', 'lire')) {
 				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 			}
 
@@ -168,7 +168,7 @@ class box_task extends ModeleBoxes
 			$sql .= " AND p.fk_statut = ".Project::STATUS_VALIDATED;
 			$sql .= " AND (pt.progress < 100 OR pt.progress IS NULL ) "; // 100% is done and not displayed
 			$sql .= " AND p.usage_task = 1 ";
-			if (empty($user->rights->projet->all->lire)) {
+			if (!$user->hasRight('projet', 'all', 'lire')) {
 				$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users
 			}
 

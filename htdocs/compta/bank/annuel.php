@@ -36,7 +36,7 @@ $langs->loadLangs(array('banks', 'categories'));
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width', 380); // Large for one graph in a smarpthone.
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height', 160);
 
-$id = GETPOST('account') ?GETPOST('account', 'alpha') : GETPOST('id');
+$id = GETPOST('account') ? GETPOST('account', 'alpha') : GETPOST('id');
 $ref = GETPOST('ref');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -192,13 +192,16 @@ for ($annee = $year_start; $annee <= $year_end; $annee++) {
 }
 print '</tr>';
 
+for ($annee = $year_start; $annee <= $year_end; $annee++) {
+	$totsorties[$annee] = 0;
+	$totentrees[$annee] = 0;
+}
+
 for ($mois = 1; $mois < 13; $mois++) {
 	print '<tr class="oddeven">';
 	print "<td>".dol_print_date(dol_mktime(1, 1, 1, $mois, 1, 2000), "%B")."</td>";
-	for ($annee = $year_start; $annee <= $year_end; $annee++) {
-		$totsorties[$annee] = 0;
-		$totentrees[$annee] = 0;
 
+	for ($annee = $year_start; $annee <= $year_end; $annee++) {
 		$case = sprintf("%04s-%02s", $annee, $mois);
 
 		print '<td class="right" width="10%">&nbsp;';

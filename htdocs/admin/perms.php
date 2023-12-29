@@ -135,7 +135,7 @@ $sql = "SELECT r.id, r.libelle as label, r.module, r.perms, r.subperms, r.module
 $sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r";
 $sql .= " WHERE r.libelle NOT LIKE 'tou%'"; // On ignore droits "tous"
 $sql .= " AND r.entity = ".((int) $entity);
-if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$sql .= " AND r.perms NOT LIKE '%_advance'"; // Hide advanced perms if option is not enabled
 }
 $sql .= " ORDER BY r.family_position, r.module_position, r.module, r.id";
@@ -193,7 +193,7 @@ if ($result) {
 		}
 
 		// Break found, it's a new module to catch
-		if (isset($obj->module) && ($oldmod <> $obj->module)) {
+		if (isset($obj->module) && ($oldmod != $obj->module)) {
 			$oldmod = $obj->module;
 
 			// Break detected, we get objMod
@@ -248,10 +248,10 @@ if ($result) {
 		}
 
 		// Permission and tick
-		$permlabel = (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ($langs->trans("PermissionAdvanced".$obj->id) != ("PermissionAdvanced".$obj->id)) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != ("Permission".$obj->id)) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
+		$permlabel = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && ($langs->trans("PermissionAdvanced".$obj->id) != "PermissionAdvanced".$obj->id) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != "Permission".$obj->id) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
 		print '<td>';
 		print $permlabel;
-		if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+		if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 			if (preg_match('/_advance$/', $obj->perms)) {
 				print ' <span class="opacitymedium">('.$langs->trans("AdvancedModeOnly").')</span>';
 			}

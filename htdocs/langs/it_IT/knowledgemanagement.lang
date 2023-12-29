@@ -47,8 +47,14 @@ KnowledgeRecord = Articolo
 KnowledgeRecordExtraFields = Extracampi per l'art
 GroupOfTicket=Gruppo di biglietti
 YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
-SuggestedForTicketsInGroup=Consigliato per i biglietti quando il gruppo è
+SuggestedForTicketsInGroup=Suggerito per i tickets del gruppo
 
 SetObsolete=Imposta come obsoleto
 ConfirmCloseKM=Confermi la chiusura di questo articolo come obsoleto?
 ConfirmReopenKM=Vuoi ripristinare questo articolo allo stato "Convalidato"?
+BoxLastKnowledgerecordDescription=Last %s articles
+BoxLastKnowledgerecord=Last articles
+BoxLastKnowledgerecordContent=Last articles
+BoxLastKnowledgerecordModifiedContent=Last modified articles
+BoxLastModifiedKnowledgerecordDescription=Last %s modified articles
+BoxLastModifiedKnowledgerecord=Last modified articles

@@ -138,7 +138,7 @@ class FormBarCode
 
 		$out = '';
 
-		$sql = "SELECT rowid, code, libelle";
+		$sql = "SELECT rowid, code, libelle as label";
 		$sql .= " FROM ".$this->db->prefix()."c_barcode_type";
 		$sql .= " WHERE coder <> '0'";
 		$sql .= " AND entity = ".$conf->entity;
@@ -165,7 +165,7 @@ class FormBarCode
 				} else {
 					$out .= '<option value="'.$obj->rowid.'">';
 				}
-				$out .= $obj->libelle;
+				$out .= $obj->label;
 				$out .= '</option>';
 				$i++;
 			}

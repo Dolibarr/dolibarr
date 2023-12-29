@@ -63,11 +63,12 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 	/**
 	 *  Returns the description of the model numbering
 	 *
-	 * 	@return     string      Description Text
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
-		global $conf, $langs, $db;
+		global $langs, $db;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("bills", "admin"));
@@ -95,7 +96,7 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 		$texte .= ':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskinvoice" value="'.getDolGlobalString("SUPPLIER_INVOICE_TULIP_MASK").'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 

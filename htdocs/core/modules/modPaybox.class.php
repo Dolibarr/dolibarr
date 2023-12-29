@@ -29,7 +29,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 /**
  * 	Description and activation class for module Paybox
  */
-class modPayBox extends DolibarrModules
+class modPaybox extends DolibarrModules
 {
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
@@ -113,7 +113,7 @@ class modPayBox extends DolibarrModules
 
 
 		// Main menu entries
-		$this->menus = array(); // List of menus to add
+		$this->menu = array(); // List of menus to add
 		$r = 0;
 
 		// Add here entries to declare new menus

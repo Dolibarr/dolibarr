@@ -24,4 +24,4 @@ SalariesStatistics=薪資統計
 SalariesAndPayments=薪資與支付
 ConfirmDeleteSalaryPayment=您要刪除此筆薪資支付嗎?
 FillFieldFirst=先填寫員工欄位
-UpdateAmountWithLastSalary=使用上次薪資設定金額
+UpdateAmountWithLastSalary=Set amount of last salary

@@ -197,14 +197,14 @@ class CMailFile
 			}
 		}
 		if (empty($this->sendmode)) {
-			$this->sendmode = (!empty($conf->global->MAIN_MAIL_SENDMODE) ? $conf->global->MAIN_MAIL_SENDMODE : 'mail');
+			$this->sendmode = (getDolGlobalString('MAIN_MAIL_SENDMODE') ? $conf->global->MAIN_MAIL_SENDMODE : 'mail');
 		}
 
 		// We define end of line (RFC 821).
 		$this->eol = "\r\n";
 		// We define end of line for header fields (RFC 822bis section 2.3 says header must contains \r\n).
 		$this->eol2 = "\r\n";
-		if (!empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA)) {
+		if (getDolGlobalString('MAIN_FIX_FOR_BUGGED_MTA')) {
 			$this->eol = "\n";
 			$this->eol2 = "\n";
 			$moreinheader = str_replace("\r\n", "\n", $moreinheader);
@@ -249,7 +249,7 @@ class CMailFile
 		// Replace relative /viewimage to absolute path
 		$msg = preg_replace('/src="'.preg_quote(DOL_URL_ROOT, '/').'\/viewimage\.php/ims', 'src="'.$urlwithroot.'/viewimage.php', $msg, -1);
 
-		if (!empty($conf->global->MAIN_MAIL_FORCE_CONTENT_TYPE_TO_HTML)) {
+		if (getDolGlobalString('MAIN_MAIL_FORCE_CONTENT_TYPE_TO_HTML')) {
 			$this->msgishtml = 1; // To force to send everything with content type html.
 		}
 
@@ -258,7 +258,7 @@ class CMailFile
 			$this->html = $msg;
 
 			$findimg = 0;
-			if (!empty($conf->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_IN_MEDIAS)) {	// Off by default
+			if (getDolGlobalString('MAIN_MAIL_ADD_INLINE_IMAGES_IF_IN_MEDIAS')) {	// Off by default
 				// Search into the body for <img tags of links in medias files to replace them with an embedded file
 				// Note because media links are public, this should be useless, except avoid blocking images with email browser.
 				// This convert an embedd file with src="/viewimage.php?modulepart... into a cid link
@@ -266,7 +266,7 @@ class CMailFile
 				$findimg = $this->findHtmlImages($dolibarr_main_data_root.'/medias');
 			}
 
-			if (!empty($conf->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_DATA)) {
+			if (getDolGlobalString('MAIN_MAIL_ADD_INLINE_IMAGES_IF_DATA')) {
 				// Search into the body for <img src="data:image/ext;base64,..." to replace them with an embedded file
 				// This convert an embedded file with src="data:image... into a cid link + attached file
 				$findimg = $this->findHtmlImagesIsSrcData($upload_dir_tmp);
@@ -310,8 +310,8 @@ class CMailFile
 
 		// Add auto copy to if not already in $to (Note: Adding bcc for specific modules are also done from pages)
 		// For example MAIN_MAIL_AUTOCOPY_TO can be 'email@example.com, __USER_EMAIL__, ...'
-		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)) {
-			$listofemailstoadd = explode(',', $conf->global->MAIN_MAIL_AUTOCOPY_TO);
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO')) {
+			$listofemailstoadd = explode(',', getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO'));
 			foreach ($listofemailstoadd as $key => $val) {
 				$emailtoadd = $listofemailstoadd[$key];
 				if (trim($emailtoadd) == '__USER_EMAIL__') {
@@ -354,7 +354,7 @@ class CMailFile
 		$this->mimefilename_list = $mimefilename_list;
 		$this->cid_list = $cid_list;
 
-		if (!empty($conf->global->MAIN_MAIL_FORCE_SENDTO)) {
+		if (getDolGlobalString('MAIN_MAIL_FORCE_SENDTO')) {
 			$this->addr_to = dol_sanitizeEmail($conf->global->MAIN_MAIL_FORCE_SENDTO);
 			$this->addr_cc = '';
 			$this->addr_bcc = '';
@@ -521,7 +521,7 @@ class CMailFile
 			//$this->message->setFrom(array('john@doe.com' => 'John Doe'));
 			if (!empty($this->addr_from)) {
 				try {
-					if (!empty($conf->global->MAIN_FORCE_DISABLE_MAIL_SPOOFING)) {
+					if (getDolGlobalString('MAIN_FORCE_DISABLE_MAIL_SPOOFING')) {
 						// Prevent email spoofing for smtp server with a strict configuration
 						$regexp = '/([a-z0-9_\.\-\+])+\@(([a-z0-9\-])+\.)+([a-z0-9]{2,4})+/i'; // This regular expression extracts all emails from a string
 						$adressEmailFrom = array();
@@ -656,7 +656,7 @@ class CMailFile
 
 		$res = false;
 
-		if (empty($conf->global->MAIN_DISABLE_ALL_MAILS)) {
+		if (!getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
 			if (!is_object($hookmanager)) {
 				include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 				$hookmanager = new HookManager($db);
@@ -677,7 +677,7 @@ class CMailFile
 			}
 
 			$sendingmode = $this->sendmode;
-			if ($this->sendcontext == 'emailing' && !empty($conf->global->MAILING_NO_USING_PHPMAIL) && $sendingmode == 'mail') {
+			if ($this->sendcontext == 'emailing' && getDolGlobalString('MAILING_NO_USING_PHPMAIL') && $sendingmode == 'mail') {
 				// List of sending methods
 				$listofmethods = array();
 				$listofmethods['mail'] = 'PHP mail function';
@@ -692,7 +692,7 @@ class CMailFile
 				$this->errors[] = $langs->trans("MailSendSetupIs", $listofmethods[$sendingmode]);
 				$this->error .= '<br>'.$langs->trans("MailSendSetupIs2", $linktoadminemailbefore, $linktoadminemailend, $langs->transnoentitiesnoconv("MAIN_MAIL_SENDMODE"), $listofmethods['smtps']);
 				$this->errors[] = $langs->trans("MailSendSetupIs2", $linktoadminemailbefore, $linktoadminemailend, $langs->transnoentitiesnoconv("MAIN_MAIL_SENDMODE"), $listofmethods['smtps']);
-				if (!empty($conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS)) {
+				if (getDolGlobalString('MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS')) {
 					$this->error .= '<br>'.$langs->trans("MailSendSetupIs3", $conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS);
 					$this->errors[] = $langs->trans("MailSendSetupIs3", $conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS);
 				}
@@ -702,7 +702,7 @@ class CMailFile
 			}
 
 			// Check number of recipient is lower or equal than MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL
-			if (empty($conf->global->MAIL_MAX_NB_OF_RECIPIENTS_TO_IN_SAME_EMAIL)) {
+			if (!getDolGlobalString('MAIL_MAX_NB_OF_RECIPIENTS_TO_IN_SAME_EMAIL')) {
 				$conf->global->MAIL_MAX_NB_OF_RECIPIENTS_TO_IN_SAME_EMAIL = 10;
 			}
 			$tmparray1 = explode(',', $this->addr_to);
@@ -711,7 +711,7 @@ class CMailFile
 				dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_WARNING);
 				return false;
 			}
-			if (empty($conf->global->MAIL_MAX_NB_OF_RECIPIENTS_CC_IN_SAME_EMAIL)) {
+			if (!getDolGlobalString('MAIL_MAX_NB_OF_RECIPIENTS_CC_IN_SAME_EMAIL')) {
 				$conf->global->MAIL_MAX_NB_OF_RECIPIENTS_CC_IN_SAME_EMAIL = 10;
 			}
 			$tmparray2 = explode(',', $this->addr_cc);
@@ -720,7 +720,7 @@ class CMailFile
 				dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_WARNING);
 				return false;
 			}
-			if (empty($conf->global->MAIL_MAX_NB_OF_RECIPIENTS_BCC_IN_SAME_EMAIL)) {
+			if (!getDolGlobalString('MAIL_MAX_NB_OF_RECIPIENTS_BCC_IN_SAME_EMAIL')) {
 				$conf->global->MAIL_MAX_NB_OF_RECIPIENTS_BCC_IN_SAME_EMAIL = 10;
 			}
 			$tmparray3 = explode(',', $this->addr_bcc);
@@ -729,7 +729,7 @@ class CMailFile
 				dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_WARNING);
 				return false;
 			}
-			if (empty($conf->global->MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL)) {
+			if (!getDolGlobalString('MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL')) {
 				$conf->global->MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL = 10;
 			}
 			if ((count($tmparray1) + count($tmparray2) + count($tmparray3)) > $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL) {
@@ -780,12 +780,12 @@ class CMailFile
 				}
 
 				// Force parameters
-				//dol_syslog("CMailFile::sendfile conf->global->".$keyforsmtpserver."=".$conf->global->$keyforsmtpserver." cpnf->global->".$keyforsmtpport."=".$conf->global->$keyforsmtpport, LOG_DEBUG);
-				if (!empty($conf->global->$keyforsmtpserver)) {
-					ini_set('SMTP', $conf->global->$keyforsmtpserver);
+				//dol_syslog("CMailFile::sendfile conf->global->".$keyforsmtpserver."=".getDolGlobalString($keyforsmtpserver)." cpnf->global->".$keyforsmtpport."=".$conf->global->$keyforsmtpport, LOG_DEBUG);
+				if (getDolGlobalString($keyforsmtpserver)) {
+					ini_set('SMTP', getDolGlobalString($keyforsmtpserver));
 				}
-				if (!empty($conf->global->$keyforsmtpport)) {
-					ini_set('smtp_port', $conf->global->$keyforsmtpport);
+				if (getDolGlobalString($keyforsmtpport)) {
+					ini_set('smtp_port', getDolGlobalString($keyforsmtpport));
 				}
 
 				$res = true;
@@ -803,18 +803,18 @@ class CMailFile
 
 				if ($res) {
 					$additionnalparam = ''; // By default
-					if (!empty($conf->global->MAIN_MAIL_ALLOW_SENDMAIL_F)) {
+					if (getDolGlobalString('MAIN_MAIL_ALLOW_SENDMAIL_F')) {
 						// le "Return-Path" (retour des messages bounced) dans les header ne fonctionne pas avec tous les MTA
 						// Le forcage de la valeur grace à l'option -f de sendmail est donc possible si la constante MAIN_MAIL_ALLOW_SENDMAIL_F est definie.
 						// Having this variable defined may create problems with some sendmail (option -f refused)
 						// Having this variable not defined may create problems with some other sendmail (option -f required)
-						$additionnalparam .= ($additionnalparam ? ' ' : '').(!empty($conf->global->MAIN_MAIL_ERRORS_TO) ? '-f'.$this->getValidAddress($conf->global->MAIN_MAIL_ERRORS_TO, 2) : ($this->addr_from != '' ? '-f'.$this->getValidAddress($this->addr_from, 2) : ''));
+						$additionnalparam .= ($additionnalparam ? ' ' : '').(getDolGlobalString('MAIN_MAIL_ERRORS_TO') ? '-f'.$this->getValidAddress($conf->global->MAIN_MAIL_ERRORS_TO, 2) : ($this->addr_from != '' ? '-f'.$this->getValidAddress($this->addr_from, 2) : ''));
 					}
-					if (!empty($conf->global->MAIN_MAIL_SENDMAIL_FORCE_BA)) {    // To force usage of -ba option. This option tells sendmail to read From: or Sender: to setup sender
+					if (getDolGlobalString('MAIN_MAIL_SENDMAIL_FORCE_BA')) {    // To force usage of -ba option. This option tells sendmail to read From: or Sender: to setup sender
 						$additionnalparam .= ($additionnalparam ? ' ' : '').'-ba';
 					}
 
-					if (!empty($conf->global->MAIN_MAIL_SENDMAIL_FORCE_ADDPARAM)) {
+					if (getDolGlobalString('MAIN_MAIL_SENDMAIL_FORCE_ADDPARAM')) {
 						$additionnalparam .= ($additionnalparam ? ' ' : '').'-U '.$additionnalparam; // Use -U to add additionnal params
 					}
 
@@ -830,7 +830,7 @@ class CMailFile
 
 					$this->message = stripslashes($this->message);
 
-					if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
+					if (getDolGlobalString('MAIN_MAIL_DEBUG')) {
 						$this->dump_mail();
 					}
 
@@ -856,7 +856,7 @@ class CMailFile
 						$this->error .= $langs->trans("ErrorPhpMailDelivery");
 						dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 
-						if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
+						if (getDolGlobalString('MAIN_MAIL_DEBUG')) {
 							$this->save_dump_mail_in_err('Mail with topic '.$this->subject);
 						}
 					} else {
@@ -869,15 +869,15 @@ class CMailFile
 				}
 
 				// Restore parameters
-				if (!empty($conf->global->$keyforsmtpserver)) {
+				if (getDolGlobalString($keyforsmtpserver)) {
 					ini_restore('SMTP');
 				}
-				if (!empty($conf->global->$keyforsmtpport)) {
+				if (getDolGlobalString($keyforsmtpport)) {
 					ini_restore('smtp_port');
 				}
 			} elseif ($this->sendmode == 'smtps') {
 				if (!is_object($this->smtps)) {
-					$this->error = "Failed to send mail with smtps lib to HOST=".$server.", PORT=".$conf->global->$keyforsmtpport."<br>Constructor of object CMailFile was not initialized without errors.";
+					$this->error = "Failed to send mail with smtps lib<br>Constructor of object CMailFile was not initialized without errors.";
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					return false;
 				}
@@ -895,7 +895,7 @@ class CMailFile
 				}
 
 				// If we use SSL/TLS
-				$server = $conf->global->$keyforsmtpserver;
+				$server = getDolGlobalString($keyforsmtpserver);
 				$secure = '';
 				if (!empty($conf->global->$keyfortls) && function_exists('openssl_open')) {
 					$secure = 'ssl';
@@ -905,7 +905,7 @@ class CMailFile
 				}
 				$server = ($secure ? $secure.'://' : '').$server;
 
-				$port = $conf->global->$keyforsmtpport;
+				$port = getDolGlobalInt($keyforsmtpport);
 
 				$this->smtps->setHost($server);
 				$this->smtps->setPort($port); // 25, 465...;
@@ -924,7 +924,9 @@ class CMailFile
 				if (getDolGlobalString($keyforsmtpauthtype) === "XOAUTH2") {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
 
-					$keyforsupportedoauth2array = $conf->global->$keyforsmtpoauthservice;
+					$supportedoauth2array = getSupportedOauth2Array();
+
+					$keyforsupportedoauth2array = getDolGlobalString($keyforsmtpoauthservice);
 					if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
 						$keyforprovider = preg_replace('/^.*-/', '', $keyforsupportedoauth2array);
 					} else {
@@ -933,7 +935,7 @@ class CMailFile
 					$keyforsupportedoauth2array = preg_replace('/-.*$/', '', $keyforsupportedoauth2array);
 					$keyforsupportedoauth2array = 'OAUTH_'.$keyforsupportedoauth2array.'_NAME';
 
-					if (isset($supportedoauth2array)) {
+					if (!empty($supportedoauth2array)) {
 						$OAUTH_SERVICENAME = (empty($supportedoauth2array[$keyforsupportedoauth2array]['name']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['name'].($keyforprovider ? '-'.$keyforprovider : ''));
 					} else {
 						$OAUTH_SERVICENAME = 'Unknown';
@@ -983,30 +985,31 @@ class CMailFile
 				$res = true;
 				$from = $this->smtps->getFrom('org');
 				if ($res && !$from) {
-					$this->error = "Failed to send mail with smtps lib to HOST=".$server.", PORT=".$conf->global->$keyforsmtpport." - Sender address '$from' invalid";
+					$this->error = "Failed to send mail with smtps lib to HOST=".$server.", PORT=" . getDolGlobalString($keyforsmtpport)." - Sender address '$from' invalid";
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					$res = false;
 				}
 				$dest = $this->smtps->getTo();
 				if ($res && !$dest) {
-					$this->error = "Failed to send mail with smtps lib to HOST=".$server.", PORT=".$conf->global->$keyforsmtpport." - Recipient address '$dest' invalid";
+					$this->error = "Failed to send mail with smtps lib to HOST=".$server.", PORT=" . getDolGlobalString($keyforsmtpport)." - Recipient address '$dest' invalid";
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					$res = false;
 				}
 
 				if ($res) {
-					dol_syslog("CMailFile::sendfile: sendMsg, HOST=".$server.", PORT=".$conf->global->$keyforsmtpport, LOG_DEBUG);
+					dol_syslog("CMailFile::sendfile: sendMsg, HOST=".$server.", PORT=" . getDolGlobalString($keyforsmtpport), LOG_DEBUG);
 
-					if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
+					if (getDolGlobalString('MAIN_MAIL_DEBUG')) {
 						$this->smtps->setDebug(true);
 					}
 
 					$result = $this->smtps->sendMsg();
 
-					if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
+					if (getDolGlobalString('MAIN_MAIL_DEBUG')) {
 						$this->dump_mail();
 					}
 
+					$smtperrorcode = 0;
 					if (! $result) {
 						$smtperrorcode = $this->smtps->lastretval;	// SMTP error code
 						dol_syslog("CMailFile::sendfile: mail SMTP error code ".$smtperrorcode, LOG_WARNING);
@@ -1034,10 +1037,10 @@ class CMailFile
 						if (empty($this->error)) {
 							$this->error = $result;
 						}
-						dol_syslog("CMailFile::sendfile: mail end error with smtps lib to HOST=".$server.", PORT=".$conf->global->$keyforsmtpport." - ".$this->error, LOG_ERR);
+						dol_syslog("CMailFile::sendfile: mail end error with smtps lib to HOST=".$server.", PORT=" . getDolGlobalString($keyforsmtpport)." - ".$this->error, LOG_ERR);
 						$res = false;
 
-						if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
+						if (getDolGlobalString('MAIN_MAIL_DEBUG')) {
 							$this->save_dump_mail_in_err('Mail smtp error '.$smtperrorcode.' with topic '.$this->subject);
 						}
 					}
@@ -1056,7 +1059,7 @@ class CMailFile
 				}
 
 				// If we use SSL/TLS
-				$server = $conf->global->$keyforsmtpserver;
+				$server = getDolGlobalString($keyforsmtpserver);
 				$secure = '';
 				if (!empty($conf->global->$keyfortls) && function_exists('openssl_open')) {
 					$secure = 'ssl';
@@ -1065,7 +1068,7 @@ class CMailFile
 					$secure = 'tls';
 				}
 
-				$this->transport = new Swift_SmtpTransport($server, $conf->global->$keyforsmtpport, $secure);
+				$this->transport = new Swift_SmtpTransport($server, getDolGlobalString($keyforsmtpport), $secure);
 
 				if (!empty($conf->global->$keyforsmtpid)) {
 					$this->transport->setUsername($conf->global->$keyforsmtpid);
@@ -1074,7 +1077,9 @@ class CMailFile
 					$this->transport->setPassword($conf->global->$keyforsmtppw);
 				}
 				if (getDolGlobalString($keyforsmtpauthtype) === "XOAUTH2") {
-					require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php';
+
+					$supportedoauth2array = getSupportedOauth2Array();
 
 					$keyforsupportedoauth2array = getDolGlobalString($keyforsmtpoauthservice);
 					if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
@@ -1085,7 +1090,12 @@ class CMailFile
 					$keyforsupportedoauth2array = preg_replace('/-.*$/', '', $keyforsupportedoauth2array);
 					$keyforsupportedoauth2array = 'OAUTH_'.$keyforsupportedoauth2array.'_NAME';
 
-					$OAUTH_SERVICENAME = (empty($supportedoauth2array[$keyforsupportedoauth2array]['name']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['name'].($keyforprovider ? '-'.$keyforprovider : ''));
+					$OAUTH_SERVICENAME = 'Unknown';
+					if (array_key_exists($keyforsupportedoauth2array, $supportedoauth2array)
+						&& array_key_exists('name', $supportedoauth2array[$keyforsupportedoauth2array])
+						&& !empty($supportedoauth2array[$keyforsupportedoauth2array]['name'])) {
+						$OAUTH_SERVICENAME = $supportedoauth2array[$keyforsupportedoauth2array]['name'].(!empty($keyforprovider) ? '-'.$keyforprovider : '');
+					}
 
 					require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 
@@ -1127,7 +1137,7 @@ class CMailFile
 						dol_syslog("CMailFile::sendfile: mail end error=".$e->getMessage(), LOG_ERR);
 					}
 				}
-				if (!empty($conf->global->$keyforsslseflsigned)) {
+				if (getDolGlobalString($keyforsslseflsigned)) {
 					$this->transport->setStreamOptions(array('ssl' => array('allow_self_signed' => true, 'verify_peer' => false)));
 				}
 				//$smtps->_msgReplyTo  = 'reply@web.com';
@@ -1140,7 +1150,7 @@ class CMailFile
 				$this->mailer = new Swift_Mailer($this->transport);
 
 				// DKIM SIGN
-				if ($conf->global->MAIN_MAIL_EMAIL_DKIM_ENABLED) {
+				if (getDolGlobalString('MAIN_MAIL_EMAIL_DKIM_ENABLED')) {
 					$privateKey = $conf->global->MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY;
 					$domainName = $conf->global->MAIN_MAIL_EMAIL_DKIM_DOMAIN;
 					$selector = $conf->global->MAIN_MAIL_EMAIL_DKIM_SELECTOR;
@@ -1148,7 +1158,7 @@ class CMailFile
 					$this->message->attachSigner($signer->ignoreHeader('Return-Path'));
 				}
 
-				if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
+				if (getDolGlobalString('MAIN_MAIL_DEBUG')) {
 					// To use the ArrayLogger
 					$this->logger = new Swift_Plugins_Loggers_ArrayLogger();
 					// Or to use the Echo Logger
@@ -1156,7 +1166,7 @@ class CMailFile
 					$this->mailer->registerPlugin(new Swift_Plugins_LoggerPlugin($this->logger));
 				}
 
-				dol_syslog("CMailFile::sendfile: mailer->send, HOST=".$server.", PORT=".$conf->global->$keyforsmtpport, LOG_DEBUG);
+				dol_syslog("CMailFile::sendfile: mailer->send, HOST=".$server.", PORT=" . getDolGlobalString($keyforsmtpport), LOG_DEBUG);
 
 				// send mail
 				$failedRecipients = array();
@@ -1165,7 +1175,7 @@ class CMailFile
 				} catch (Exception $e) {
 					$this->errors[] = $e->getMessage();
 				}
-				if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
+				if (getDolGlobalString('MAIN_MAIL_DEBUG')) {
 					$this->dump_mail();
 				}
 
@@ -1177,7 +1187,7 @@ class CMailFile
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					$res = false;
 
-					if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
+					if (getDolGlobalString('MAIN_MAIL_DEBUG')) {
 						$this->save_dump_mail_in_err('Mail with topic '.$this->subject);
 					}
 				} else {
@@ -1212,7 +1222,6 @@ class CMailFile
 		}
 
 		error_reporting($errorlevel); // Reactive niveau erreur origine
-
 		return $res;
 	}
 
@@ -1233,7 +1242,7 @@ class CMailFile
 	 * Read a file on disk and return encoded content for emails (mode = 'mail')
 	 *
 	 * @param	string	$sourcefile		Path to file to encode
-	 * @return 	int|string			    <0 if KO, encoded string if OK
+	 * @return 	int|string			    Return integer <0 if KO, encoded string if OK
 	 */
 	private function _encode_file($sourcefile)
 	{
@@ -1281,6 +1290,14 @@ class CMailFile
 
 			fclose($fp);
 			dolChmod($outputfile);
+
+			// Move dolibarr_mail.log into a dolibarr_mail.YYYYMMDD.log
+			if (getDolGlobalString('MAIN_MAIL_DEBUG_LOG_WITH_DATE')) {
+				$destfile = $dolibarr_main_data_root."/dolibarr_mail.".dol_print_date(dol_now(), 'dayhourlog', 'gmt').".log";
+
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+				dol_move($outputfile, $destfile, 0, 1, 0, 0);
+			}
 		}
 	}
 
@@ -1398,7 +1415,7 @@ class CMailFile
 		// Sender
 		//$out.= "Sender: ".getValidAddress($this->addr_from,2)).$this->eol2;
 		$out .= "From: ".$this->getValidAddress($this->addr_from, 3, 1).$this->eol2;
-		if (!empty($conf->global->MAIN_MAIL_SENDMAIL_FORCE_BA)) {
+		if (getDolGlobalString('MAIN_MAIL_SENDMAIL_FORCE_BA')) {
 			$out .= "To: ".$this->getValidAddress($this->addr_to, 0, 1).$this->eol2;
 		}
 		// Return-Path is important because it is used by SPF. Some MTA does not read Return-Path from header but from command line. See option MAIN_MAIL_ALLOW_SENDMAIL_F for that.
@@ -1509,7 +1526,7 @@ class CMailFile
 
 		// Make RFC821 Compliant, replace bare linefeeds
 		$strContent = preg_replace("/(?<!\r)\n/si", "\r\n", $msgtext); // PCRE modifier /s means new lines are common chars
-		if (!empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA)) {
+		if (getDolGlobalString('MAIN_FIX_FOR_BUGGED_MTA')) {
 			$strContent = preg_replace("/\r\n/si", "\n", $strContent); // PCRE modifier /s means new lines are common chars
 		}
 
@@ -1519,7 +1536,7 @@ class CMailFile
 			$strContentAltText = preg_replace("/<br\s*[^>]*>/", " ", $strContent);
 			// TODO We could replace <img ...> with [Filename.ext] like Gmail do.
 			$strContentAltText = html_entity_decode(strip_tags($strContentAltText));	// Remove any HTML tags
-			$strContentAltText = trim(wordwrap($strContentAltText, 75, empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA) ? "\r\n" : "\n"));
+			$strContentAltText = trim(wordwrap($strContentAltText, 75, !getDolGlobalString('MAIN_FIX_FOR_BUGGED_MTA') ? "\r\n" : "\n"));
 
 			// Check if html header already in message, if not complete the message
 			$strContent = $this->checkIfHTML($strContent);
@@ -1528,7 +1545,7 @@ class CMailFile
 		// Make RFC2045 Compliant, split lines
 		//$strContent = rtrim(chunk_split($strContent));    // Function chunck_split seems ko if not used on a base64 content
 		// TODO Encode main content into base64 and use the chunk_split, or quoted-printable
-		$strContent = rtrim(wordwrap($strContent, 75, empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA) ? "\r\n" : "\n")); // TODO Using this method creates unexpected line break on text/plain content.
+		$strContent = rtrim(wordwrap($strContent, 75, !getDolGlobalString('MAIN_FIX_FOR_BUGGED_MTA') ? "\r\n" : "\n")); // TODO Using this method creates unexpected line break on text/plain content.
 
 		if ($this->msgishtml) {
 			if ($this->atleastoneimage) {
@@ -1541,7 +1558,7 @@ class CMailFile
 				$out .= "--".$this->related_boundary.$this->eol;
 			}
 
-			if (!$this->atleastoneimage && $strContentAltText && !empty($conf->global->MAIN_MAIL_USE_MULTI_PART)) {    // Add plain text message part before html part
+			if (!$this->atleastoneimage && $strContentAltText && getDolGlobalString('MAIN_MAIL_USE_MULTI_PART')) {    // Add plain text message part before html part
 				$out .= "Content-Type: multipart/alternative;".$this->eol." boundary=\"".$this->alternative_boundary."\"".$this->eol;
 				$out .= $this->eol;
 				$out .= "--".$this->alternative_boundary.$this->eol;
@@ -1555,7 +1572,7 @@ class CMailFile
 			//$out.= "Content-Transfer-Encoding: 7bit".$this->eol;	// TODO Use base64
 			$out .= $this->eol.$strContent.$this->eol;
 
-			if (!$this->atleastoneimage && $strContentAltText && !empty($conf->global->MAIN_MAIL_USE_MULTI_PART)) {    // Add plain text message part after html part
+			if (!$this->atleastoneimage && $strContentAltText && getDolGlobalString('MAIN_MAIL_USE_MULTI_PART')) {    // Add plain text message part after html part
 				$out .= "--".$this->alternative_boundary."--".$this->eol;
 			}
 		} else {
@@ -1710,9 +1727,10 @@ class CMailFile
 			// tls smtp start with no encryption
 			//if (!empty($conf->global->MAIN_MAIL_EMAIL_STARTTLS) && function_exists('openssl_open')) $host='tls://'.$host;
 
-			dol_syslog("Try socket connection to host=".$host." port=".$port);
+			dol_syslog("Try socket connection to host=".$host." port=".$port." timeout=".$timeout);
 			//See if we can connect to the SMTP server
-			$errno = 0; $errstr = '';
+			$errno = 0;
+			$errstr = '';
 			if ($socket = @fsockopen(
 				$host, // Host to test, IP or domain. Add ssl:// for SSL/TLS.
 				$port, // which Port number to use
@@ -1732,7 +1750,7 @@ class CMailFile
 					$_retVal = $socket;
 				}
 			} else {
-				$this->error = utf8_check('Error '.$errno.' - '.$errstr) ? 'Error '.$errno.' - '.$errstr : utf8_encode('Error '.$errno.' - '.$errstr);
+				$this->error = utf8_check('Error '.$errno.' - '.$errstr) ? 'Error '.$errno.' - '.$errstr : mb_convert_encoding('Error '.$errno.' - '.$errstr, 'UTF-8', 'ISO-8859-1');
 			}
 		}
 		return $_retVal;
@@ -1993,12 +2011,12 @@ class CMailFile
 					$newemail = '<'.$email.'>';
 				}
 				if ($format == 0 || $format == 3) {
-					if (!empty($conf->global->MAIN_MAIL_NO_FULL_EMAIL)) {
+					if (getDolGlobalString('MAIN_MAIL_NO_FULL_EMAIL')) {
 						$newemail = '<'.$email.'>';
 					} elseif (!$name) {
 						$newemail = '<'.$email.'>';
 					} else {
-						$newemail = ($format == 3 ? '"' : '').($encode ?self::encodetorfc2822($name) : $name).($format == 3 ? '"' : '').' <'.$email.'>';
+						$newemail = ($format == 3 ? '"' : '').($encode ? self::encodetorfc2822($name) : $name).($format == 3 ? '"' : '').' <'.$email.'>';
 					}
 				}
 
@@ -2042,7 +2060,7 @@ class CMailFile
 				$email = trim($val);
 			}
 
-			$ret[$email] = empty($conf->global->MAIN_MAIL_NO_FULL_EMAIL) ? $name : null;
+			$ret[$email] = !getDolGlobalString('MAIN_MAIL_NO_FULL_EMAIL') ? $name : null;
 		}
 
 		return $ret;
