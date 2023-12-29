@@ -1656,7 +1656,7 @@ class Website extends CommonObject
 		$destdir = DOL_DOCUMENT_ROOT . '/install/doctemplates/websites/'.$website->name_template;
 		$arraydestdir = dol_dir_list($destdir, "all", 1);
 		$differences = [];
-		var_dump($modifications);
+
 		if (count($modifications) >1) {
 			foreach ($modifications as $fichierModifie) {
 				$nomFichierModifie = $fichierModifie['name'];
@@ -1690,7 +1690,6 @@ class Website extends CommonObject
 					if (preg_match('/page(\d+)\.tpl\.php/', $nomFichierModifie)) {
 						$differences[$nomFichierModifie] = $this->compareFichierModifie($sourcedir, $destdir, $fichierModifie);
 						if (count($differences[$nomFichierModifie]) > 0) {
-							//var_dump($differences[$nomFichierModifie]);
 							$result = $this->replaceLignEUsingNum($differences[$nomFichierModifie]['file_destination']['fullname'], $differences[$nomFichierModifie]);
 							if ($result !== false) {
 								if ($result == -2) {
