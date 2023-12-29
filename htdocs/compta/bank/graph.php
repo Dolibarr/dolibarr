@@ -188,7 +188,8 @@ if ($result < 0) {
 
 		$subtotal = 0;
 		$day = dol_mktime(12, 0, 0, $month, 1, $year);
-		$textdate = strftime("%Y%m%d", $day);
+		//$textdate = strftime("%Y%m%d", $day);
+		$textdate = dol_print_date($day, "%Y%m%d");
 		$xyear = substr($textdate, 0, 4);
 		$xday = substr($textdate, 6, 2);
 		$xmonth = substr($textdate, 4, 2);
