@@ -2052,6 +2052,12 @@ class Setup extends DolibarrApi
 			throw new RestException(500, $langs->trans("ErrorURLMustEndWith", $xmlremote, '.xml'));
 		}
 
+		if (LIBXML_VERSION < 20900) {
+			// Avoid load of external entities (security problem).
+			// Required only if LIBXML_VERSION < 20900
+			libxml_disable_entity_loader(true);
+		}
+
 		if ($target == 'local') {
 			if (dol_is_file($xmlfile)) {
 				$xml = simplexml_load_file($xmlfile);

@@ -422,6 +422,12 @@ if (getDolGlobalString('MAIN_EASTER_EGG_COMMITSTRIP')) {
 		$resgetcommitstrip = getURLContent("https://www.commitstrip.com/en/feed/");
 	}
 	if ($resgetcommitstrip && $resgetcommitstrip['http_code'] == '200') {
+		if (LIBXML_VERSION < 20900) {
+			// Avoid load of external entities (security problem).
+			// Required only if LIBXML_VERSION < 20900
+			libxml_disable_entity_loader(true);
+		}
+
 		$xml = simplexml_load_string($resgetcommitstrip['content'], 'SimpleXMLElement', LIBXML_NOCDATA|LIBXML_NONET);
 		$little = $xml->channel->item[0]->children('content', true);
 		print preg_replace('/width="650" height="658"/', '', $little->encoded);
