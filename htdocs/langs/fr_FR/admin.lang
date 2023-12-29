@@ -1201,6 +1201,7 @@ Skin=Thème visuel
 DefaultSkin=Thème visuel par défaut
 MaxSizeList=Longueur maximale des listes
 DefaultMaxSizeList=Longueur maximale par défaut des listes
+DisplayGrandTotalInList=Affiche le total général (de toutes les pages) en bas des listes
 DefaultMaxSizeShortList=Longueur maximale par défaut des listes courtes (e.g. dans la fiche client)
 MessageOfDay=Message du jour
 MessageLogin=Message page de connexion

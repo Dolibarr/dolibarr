@@ -1201,6 +1201,7 @@ Skin=Skin theme
 DefaultSkin=Default skin theme
 MaxSizeList=Max length for list
 DefaultMaxSizeList=Default max length for lists
+DisplayGrandTotalInList=Display grand total (for all pages) in lists footer
 DefaultMaxSizeShortList=Default max length for short lists (i.e. in customer card)
 MessageOfDay=Message of the day
 MessageLogin=Login page message
