@@ -171,6 +171,7 @@ NEW: use account address in sepa mandate (#23642)
 NEW: VAT rate - Add entity
 NEW: webportal site account
 NEW: When an user unset the batch management of products, transformation of each batch stock mouvement in global stock mouvement
+FIX: #25828 wrong odt style naming
 
 SEC: #25512 applicative anti bruteforce - security on too many login attempts (#25520)
 SEC: Add action confirm_... as sensitive to need a CSRF token
