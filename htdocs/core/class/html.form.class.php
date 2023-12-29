@@ -3454,7 +3454,7 @@ class Form
 	 *    Return list of suppliers products
 	 *
 	 * @param int $socid Id of supplier thirdparty (0 = no filter)
-	 * @param stringc $selected Product price pre-selected (must be 'id' in product_fournisseur_price or 'idprod_IDPROD')
+	 * @param string $selected Product price pre-selected (must be 'id' in product_fournisseur_price or 'idprod_IDPROD')
 	 * @param string $htmlname Name of HTML select
 	 * @param string $filtertype Filter on product type (''=nofilter, 0=product, 1=service)
 	 * @param string $filtre Generic filter. Data must not come from user input.
