@@ -812,7 +812,7 @@ if ($action != "create" && $action != "edit") {
 
 	print '</form>' . "\n";
 
-	//  if (array_key_exists('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
+	//  if (in_array('builddoc', array_keys($arrayofmassactions)) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
 	//      $hidegeneratedfilelistifempty = 1;
 	//      if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) {
 	//          $hidegeneratedfilelistifempty = 0;
