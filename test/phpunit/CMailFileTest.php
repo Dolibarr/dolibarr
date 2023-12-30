@@ -213,7 +213,7 @@ class CMailFileTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testCMailFileHTMLWithImage
 	 *
-	 * @return int
+	 * @return 	int
 	 */
 	public function testCMailFileHTMLWithImage()
 	{
@@ -223,6 +223,7 @@ class CMailFileTest extends PHPUnit\Framework\TestCase
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+
 		$conf->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_IN_MEDIAS = 1;
 		$conf->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_DATA = 1;
 
