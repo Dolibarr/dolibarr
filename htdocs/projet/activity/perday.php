@@ -803,7 +803,7 @@ if (!empty($conf->use_javascript_ajax)) {
 	print "\n<!-- JS CODE TO ENABLE Tooltips on all object with class classfortooltip -->\n";
 	print '<script type="text/javascript">'."\n";
 	print "jQuery(document).ready(function () {\n";
-	print "		updateTotal(0,\''.$modeinput.'\');\n";
+	print "		updateTotal(0,'".dol_escape_js($modeinput)."');\n";
 	print '		jQuery(".timesheetalreadyrecorded").tooltip({
 					show: { collision: "flipfit", effect:\'toggle\', delay:50 },
 					hide: { effect:\'toggle\', delay: 50 },
