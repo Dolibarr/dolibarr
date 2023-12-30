@@ -208,14 +208,20 @@ class CMailFileTest extends PHPUnit\Framework\TestCase
 		return $result;
 	}
 
+	/**
+	 * testCMailFileHTMLWithImage
+	 *
+	 * @return 	int
+	 */
 	public function testCMailFileHTMLWithImage()
 	{
-
 		global $conf, $user, $langs, $db;
+
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+
 		$conf->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_IN_MEDIAS = 1;
 		$conf->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_DATA = 1;
 
@@ -237,29 +243,29 @@ class CMailFileTest extends PHPUnit\Framework\TestCase
 
 
 		foreach ($localobject->html_images as $i => $val)
-			if ($localobject->html_images[$i]) {
-				if (preg_match('/img250x20\.png/i', $localobject->html_images[$i]['fullpath'])) {
-					print __METHOD__ . " content type must be image png =" . $localobject->html_images[$i]['content_type'] . "\n";
-					$this->assertEquals($localobject->html_images[$i]['content_type'], 'image/png');
+		if ($localobject->html_images[$i]) {
+			if (preg_match('/img250x20\.png/i', $localobject->html_images[$i]['fullpath'])) {
+				print __METHOD__ . " content type must be image png =" . $localobject->html_images[$i]['content_type'] . "\n";
+				$this->assertEquals($localobject->html_images[$i]['content_type'], 'image/png');
 
-					print __METHOD__ . " type must be cidfromurl =" . $localobject->html_images[$i]['type'] . "\n";
-					$this->assertEquals($localobject->html_images[$i]['type'], 'cidfromurl');
+				print __METHOD__ . " type must be cidfromurl =" . $localobject->html_images[$i]['type'] . "\n";
+				$this->assertEquals($localobject->html_images[$i]['type'], 'cidfromurl');
 
-					$fileSize = 9744;
-					print __METHOD__ . " File size must be =" . $fileSize . "\n";
-					$this->assertEquals(dol_filesize($localobject->html_images[$i]['fullpath']), $fileSize);
-				} elseif (preg_match('/\.png/i', $localobject->html_images[$i]['fullpath'])) {
-					print __METHOD__ . " content type must be image png =" . $localobject->html_images[$i]['content_type'] . "\n";
-					$this->assertEquals($localobject->html_images[$i]['content_type'], 'image/png');
+				$fileSize = 9744;
+				print __METHOD__ . " File size must be =" . $fileSize . "\n";
+				$this->assertEquals(dol_filesize($localobject->html_images[$i]['fullpath']), $fileSize);
+			} elseif (preg_match('/\.png/i', $localobject->html_images[$i]['fullpath'])) {
+				print __METHOD__ . " content type must be image png =" . $localobject->html_images[$i]['content_type'] . "\n";
+				$this->assertEquals($localobject->html_images[$i]['content_type'], 'image/png');
 
-					print __METHOD__ . " type must be cidfromdata =" . $localobject->html_images[$i]['type'] . "\n";
-					$this->assertEquals($localobject->html_images[$i]['type'], 'cidfromdata');
+				print __METHOD__ . " type must be cidfromdata =" . $localobject->html_images[$i]['type'] . "\n";
+				$this->assertEquals($localobject->html_images[$i]['type'], 'cidfromdata');
 
-					$fileSize = 85;
-					print __METHOD__ . " File size must be =" . $fileSize . "\n";
-					$this->assertEquals(dol_filesize($localobject->html_images[$i]['fullpath']), $fileSize);
-				}
+				$fileSize = 85;
+				print __METHOD__ . " File size must be =" . $fileSize . "\n";
+				$this->assertEquals(dol_filesize($localobject->html_images[$i]['fullpath']), $fileSize);
 			}
+		}
 
 		return $result;
 	}
