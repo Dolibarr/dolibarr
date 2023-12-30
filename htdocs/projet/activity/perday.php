@@ -753,7 +753,7 @@ if (count($tasksarray) > 0) {
 		$timeonothertasks = ($totalforeachday[$daytoparse] - $totalforvisibletasks[$daytoparse]);
 		//if ($timeonothertasks)
 		//{
-		print '<span class="timesheetalreadyrecorded" title="texttoreplace"><input type="text" class="center" size="2" disabled="" id="timespent[-1][0]" name="task[-1][0]" value="';
+		print '<span class="timesheetalreadyrecorded" title="texttoreplace"><input type="text" class="center width40" disabled="" id="timespent[-1][0]" name="task[-1][0]" value="';
 		if ($timeonothertasks) {
 			print convertSecondToTime($timeonothertasks, 'allhourmin');
 		}
@@ -803,7 +803,7 @@ if (!empty($conf->use_javascript_ajax)) {
 	print "\n<!-- JS CODE TO ENABLE Tooltips on all object with class classfortooltip -->\n";
 	print '<script type="text/javascript">'."\n";
 	print "jQuery(document).ready(function () {\n";
-	print "		updateTotal(0,'".dol_escape_js($modeinput)."');\n";
+	print "		updateTotal(0, '".dol_escape_js($modeinput)."');\n";
 	print '		jQuery(".timesheetalreadyrecorded").tooltip({
 					show: { collision: "flipfit", effect:\'toggle\', delay:50 },
 					hide: { effect:\'toggle\', delay: 50 },
@@ -812,7 +812,7 @@ if (!empty($conf->use_javascript_ajax)) {
 						return \''.dol_escape_js($langs->trans("TimeAlreadyRecorded", $usertoprocess->getFullName($langs))).'\';
 					}
 				});'."\n";
-	print " 	jQuery('.inputhour, .inputminute').bind('keyup', function(e) { updateTotal(0, '".$modeinput."') });";
+	print " 	jQuery('.inputhour, .inputminute').bind('keyup', function(e) { updateTotal(0, '".dol_escape_js($modeinput)."') });";
 	print "\n});\n";
 	print '</script>';
 }
