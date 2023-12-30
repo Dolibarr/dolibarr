@@ -1044,8 +1044,8 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 		if ($mois > 12) {
 			$annee_decalage = $annee + 1;
 		}
-		$case = strftime("%Y-%m", dol_mktime(12, 0, 0, $mois_modulo, 1, $annee_decalage));
-
+		//$case = strftime("%Y-%m", dol_mktime(12, 0, 0, $mois_modulo, 1, $annee_decalage));
+		$case = dol_print_date(dol_mktime(12, 0, 0, $mois_modulo, 1, $annee_decalage), "%Y-%m");
 		print '<td class="right">';
 		if ($modecompta == 'CREANCES-DETTES' || $modecompta == 'BOOKKEEPING') {
 			if (isset($decaiss[$case]) && $decaiss[$case] != 0) {
