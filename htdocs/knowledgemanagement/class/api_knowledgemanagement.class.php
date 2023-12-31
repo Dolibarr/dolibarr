@@ -227,7 +227,7 @@ class KnowledgeManagement extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieving knowledgerecord list: '.$this->db->lasterror());
 		}
-		
+
 		return $obj_ret;
 	}
 
