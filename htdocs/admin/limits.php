@@ -94,7 +94,7 @@ if ($action == 'update' && !$cancel) {
 		setEventMessages($langs->trans("ErrorValueCantBeNull", dol_trunc(dol_string_nohtmltag($langs->transnoentitiesnoconv("MAIN_MAX_DECIMALS_SHOWN")), 40)), null, 'errors');
 		$action = 'edit';
 	}
-	if (! $error && ((float) $valmainmaxdecimalsshown < $valmainmaxdecimalsunit) { // Fix #27265 : || (float) $valmainmaxdecimalsshown < $valmainmaxdecimalstot)
+	if (! $error && ((float) $valmainmaxdecimalsshown < $valmainmaxdecimalsunit)) { // Fix #27265 : || (float) $valmainmaxdecimalsshown < $valmainmaxdecimalstot)
 		$langs->load("errors");
 		$error++;
 		setEventMessages($langs->trans("ErrorValueForTooLow", dol_trunc(dol_string_nohtmltag($langs->transnoentitiesnoconv("MAIN_MAX_DECIMALS_SHOWN")), 40)), null, 'errors');
