@@ -813,9 +813,9 @@ if ($object->allow_spy) {
 		print '<p class="affichageresultats">'."\n";
 
 		if (isset($meilleurecolonne) && $compteursujet == "1") {
-			print '<img src="'.dol_buildpath('/opensurvey/img/medaille.png', 1).'"> '.$langs->trans('TheBestChoice').": <b>".$meilleursujet."</b> ".$langs->trans('with')." <b>".$meilleurecolonne."</b>".$vote_str.".\n";
+			print '<img src="'.dol_buildpath('/opensurvey/img/medaille.png', 1).'"> '.$langs->trans('TheBestChoice').": <b>".$meilleursujet."</b> - <b>".$meilleurecolonne."</b> ".$vote_str.".\n";
 		} elseif (isset($meilleurecolonne)) {
-			print '<img src="'.dol_buildpath('/opensurvey/img/medaille.png', 1).'"> '.$langs->trans('TheBestChoices').": <b>".$meilleursujet."</b> ".$langs->trans('with')." <b>".$meilleurecolonne."</b>".$vote_str.".\n";
+			print '<img src="'.dol_buildpath('/opensurvey/img/medaille.png', 1).'"> '.$langs->trans('TheBestChoices').": <b>".$meilleursujet."</b> - <b>".$meilleurecolonne."</b> ".$vote_str.".\n";
 		}
 
 		print '</p><br>'."\n";
