@@ -680,6 +680,12 @@ class Invoices extends DolibarrApi
 			}
 
 			$this->invoice->$field = $value;
+
+			// If cond reglement => update date lim reglement
+            if ($field == 'cond_reglement_id') {
+                $this->invoice->date_lim_reglement = $this->invoice->calculate_date_lim_reglement();
+            }
+			
 		}
 
 		// update bank account
