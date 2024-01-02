@@ -189,7 +189,7 @@ class Societe extends CommonObject
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
+		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'noteditable'=>1, 'notnull'=> 1, 'index'=>1, 'position'=>1, 'comment'=>'Id', 'css'=>'left'),
 		'parent' =>array('type'=>'integer', 'label'=>'Parent', 'enabled'=>1, 'visible'=>-1, 'position'=>20),
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>25),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
@@ -3863,7 +3863,7 @@ class Societe extends CommonObject
 			$sum = 0;
 			for ($index = 0; $index < 9; $index++) {
 				$number = (int) $chaine[$index];
-				if (($index % 2) != 0) {
+				if ($index % 2 != 0) {
 					if (($number *= 2) > 9) {
 						$number -= 9;
 					}
@@ -3872,7 +3872,7 @@ class Societe extends CommonObject
 			}
 
 			// le numéro est valide si la somme des chiffres est multiple de 10
-			if (($sum % 10) != 0) {
+			if ($sum % 10 != 0) {
 				return -1;
 			}
 		}
@@ -3905,7 +3905,7 @@ class Societe extends CommonObject
 			}
 
 			// le numéro est valide si la somme des chiffres est multiple de 10
-			if (($sum % 10) != 0) {
+			if ($sum % 10 != 0) {
 				return -1;
 			}
 		}

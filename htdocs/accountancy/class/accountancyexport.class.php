@@ -103,7 +103,7 @@ class AccountancyExport
 
 		$this->db = $db;
 		$this->separator = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
-		$this->end_line = !getDolGlobalString('ACCOUNTING_EXPORT_ENDLINE') ? "\n" : (getDolGlobalInt('ACCOUNTING_EXPORT_ENDLINE') == 1 ? "\n" : "\r\n");
+		$this->end_line = getDolGlobalString('ACCOUNTING_EXPORT_ENDLINE') ? (getDolGlobalInt('ACCOUNTING_EXPORT_ENDLINE') == 1 ? "\n" : "\r\n") : "\n";
 
 		$hookmanager->initHooks(array('accountancyexport'));
 	}
@@ -201,9 +201,9 @@ class AccountancyExport
 			'param' => array(
 				self::$EXPORT_TYPE_CONFIGURABLE => array(
 					'label' => $langs->trans('Modelcsv_configurable'),
-					'ACCOUNTING_EXPORT_FORMAT' => !getDolGlobalString('ACCOUNTING_EXPORT_FORMAT') ? 'txt' : $conf->global->ACCOUNTING_EXPORT_FORMAT,
-					'ACCOUNTING_EXPORT_SEPARATORCSV' => !getDolGlobalString('ACCOUNTING_EXPORT_SEPARATORCSV') ? ',' : $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV,
-					'ACCOUNTING_EXPORT_ENDLINE' => !getDolGlobalString('ACCOUNTING_EXPORT_ENDLINE') ? 1 : $conf->global->ACCOUNTING_EXPORT_ENDLINE,
+					'ACCOUNTING_EXPORT_FORMAT' => getDolGlobalString('ACCOUNTING_EXPORT_FORMAT', 'txt'),
+					'ACCOUNTING_EXPORT_SEPARATORCSV' => getDolGlobalString('ACCOUNTING_EXPORT_SEPARATORCSV', ','),
+					'ACCOUNTING_EXPORT_ENDLINE' => getDolGlobalString('ACCOUNTING_EXPORT_ENDLINE', 1),
 					'ACCOUNTING_EXPORT_DATE' => getDolGlobalString('ACCOUNTING_EXPORT_DATE', '%Y-%m-%d'),
 				),
 				self::$EXPORT_TYPE_CEGID => array(
@@ -829,7 +829,7 @@ class AccountancyExport
 	 * @param 	array 		$objectLines 			data
 	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
 	 * @param 	array		$archiveFileList		[=array()] Archive file list : array of ['path', 'name']
-	 * @param 	bool		$withAttachment			[=0] Not add files or 1 to have attached in an archive
+	 * @param 	int			$withAttachment			[=0] Not add files or 1 to have attached in an archive
 	 * @return	array		Archive file list : array of ['path', 'name']
 	 */
 	public function exportQuadratus($objectLines, $exportFile = null, $archiveFileList = array(), $withAttachment = 0)
@@ -839,8 +839,6 @@ class AccountancyExport
 		$end_line = "\r\n";
 
 		// We should use dol_now function not time however this is wrong date to transfert in accounting
-		// $date_ecriture = dol_print_date(dol_now(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
-		// $date_ecriture = dol_print_date(time(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
 		foreach ($objectLines as $line) {
 			// Clean some data
 			$line->doc_ref = dol_string_unaccent($line->doc_ref);
@@ -938,7 +936,6 @@ class AccountancyExport
 
 			// Force date format : %d%m%y
 			if (!empty($line->date_lim_reglement)) {
-				//$tab['date_echeance'] = dol_print_date($line->date_lim_reglement, $conf->global->ACCOUNTING_EXPORT_DATE);
 				$tab['date_echeance'] = dol_print_date($line->date_lim_reglement, '%d%m%y'); // Format must be ddmmyy
 			} else {
 				$tab['date_echeance'] = '000000';
@@ -1061,10 +1058,6 @@ class AccountancyExport
 		$end_line = "\r\n";
 		$index = 1;
 
-		//We should use dol_now function not time however this is wrong date to transfert in accounting
-		//$date_ecriture = dol_print_date(dol_now(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
-		//$date_ecriture = dol_print_date(time(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
-
 		// Warning ! When truncation is necessary, no dot because 3 dots = three characters. The columns are shifted
 
 		foreach ($objectLines as $line) {
@@ -1109,7 +1102,6 @@ class AccountancyExport
 			$tab['code_stat'] = str_repeat(' ', 4);
 
 			if (!empty($line->date_lim_reglement)) {
-				//$tab['date_echeance'] = dol_print_date($line->date_lim_reglement, $conf->global->ACCOUNTING_EXPORT_DATE);
 				$tab['date_echeance'] = dol_print_date($line->date_lim_reglement, '%d%m%Y');
 			} else {
 				$tab['date_echeance'] = dol_print_date($line->doc_date, '%d%m%Y');
@@ -1276,7 +1268,7 @@ class AccountancyExport
 		$separator = $this->separator;
 
 		foreach ($objectLines as $line) {
-			$date_document = dol_print_date($line->doc_date, $conf->global->ACCOUNTING_EXPORT_DATE);
+			$date_document = dol_print_date($line->doc_date, getDolGlobalString('ACCOUNTING_EXPORT_DATE'));
 
 			$tab = array();
 			// export configurable
@@ -1309,7 +1301,7 @@ class AccountancyExport
 	 * @param 	array 		$objectLines 			data
 	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
 	 * @param 	array		$archiveFileList		[=array()] Archive file list : array of ['path', 'name']
-	 * @param 	bool		$withAttachment			[=0] Not add files or 1 to have attached in an archive
+	 * @param 	int			$withAttachment			[=0] Not add files or 1 to have attached in an archive
 	 * @return	array		Archive file list : array of ['path', 'name']
 	 */
 	public function exportFEC($objectLines, $exportFile = null, $archiveFileList = array(), $withAttachment = 0)
@@ -1520,7 +1512,7 @@ class AccountancyExport
 	 * @param 	array 		$objectLines 			data
 	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
 	 * @param 	array		$archiveFileList		[=array()] Archive file list : array of ['path', 'name']
-	 * @param 	bool		$withAttachment			[=0] Not add files or 1 to have attached in an archive
+	 * @param 	int			$withAttachment			[=0] Not add files or 1 to have attached in an archive
 	 * @return	array		Archive file list : array of ['path', 'name']
 	 */
 	public function exportFEC2($objectLines, $exportFile = null, $archiveFileList = array(), $withAttachment = 0)

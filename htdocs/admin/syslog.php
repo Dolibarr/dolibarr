@@ -232,8 +232,8 @@ foreach ($syslogModules as $moduleName) {
 			if (!empty($tmpoption)) {
 				if (GETPOSTISSET($tmpoption)) {
 					$value = GETPOST($tmpoption);
-				} elseif (!empty($conf->global->$tmpoption)) {
-					$value = $conf->global->$tmpoption;
+				} elseif (getDolGlobalString($tmpoption)) {
+					$value = getDolGlobalString($tmpoption);
 				}
 			} else {
 				$value = (isset($option['default']) ? $option['default'] : '');

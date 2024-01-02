@@ -55,6 +55,6 @@ create table llx_mailing
   joined_file2		varchar(255),
   joined_file3		varchar(255),
   joined_file4		varchar(255),
-  note_private    text,                       --
-  note_public     text,                       --
+  note_private    text,
+  note_public     text
 )ENGINE=innodb;

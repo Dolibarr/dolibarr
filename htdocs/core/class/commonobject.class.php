@@ -3659,7 +3659,7 @@ abstract class CommonObject
 		}
 
 		if (!empty($MODULE)) {
-			if (!empty($conf->global->$MODULE)) {
+			if (getDolGlobalString($MODULE)) {
 				$modsactivated = explode(',', getDolGlobalString($MODULE));
 				foreach ($modsactivated as $mod) {
 					if (isModEnabled($mod)) {
@@ -4342,7 +4342,7 @@ abstract class CommonObject
 	 *	@return     					int	>0 if OK, <0 if KO
 	 *	@see	add_object_linked(), updateObjectLinked(), fetchObjectLinked()
 	 */
-	public function deleteObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $rowid = '', $f_user = null, $notrigger = 0)
+	public function deleteObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $rowid = 0, $f_user = null, $notrigger = 0)
 	{
 		global $user;
 		$deletesource = false;
@@ -4847,7 +4847,7 @@ abstract class CommonObject
 					$qty = $obj->qty;
 					$total_ht = $obj->total_ht;
 
-					$total_discount_line = floatval(price2num(($pu_ht * $qty) - $total_ht, 'MT'));
+					$total_discount_line = (float) price2num(($pu_ht * $qty) - $total_ht, 'MT');
 					$total_discount += $total_discount_line;
 
 					$i++;
@@ -5661,8 +5661,8 @@ abstract class CommonObject
 		// If generator is ODT, we must have srctemplatepath defined, if not we set it.
 		if ($obj->type == 'odt' && empty($srctemplatepath)) {
 			$varfortemplatedir = $obj->scandir;
-			if ($varfortemplatedir && !empty($conf->global->$varfortemplatedir)) {
-				$dirtoscan = $conf->global->$varfortemplatedir;
+			if ($varfortemplatedir && getDolGlobalString($varfortemplatedir)) {
+				$dirtoscan = getDolGlobalString($varfortemplatedir);
 
 				$listoffiles = array();
 
@@ -5970,8 +5970,8 @@ abstract class CommonObject
 
 		$keyforfieldname = strtoupper($newelement.'_DEFAULT_'.$fieldname);
 		//var_dump($keyforfieldname);
-		if (isset($conf->global->$keyforfieldname)) {
-			return $conf->global->$keyforfieldname;
+		if (getDolGlobalString($keyforfieldname)) {
+			return getDolGlobalString($keyforfieldname);
 		}
 
 		// TODO Ad here a scan into table llx_overwrite_default with a filter on $this->element and $fieldname
@@ -7711,7 +7711,8 @@ abstract class CommonObject
 				}
 			}
 
-			$out = $form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, $moreparam, 0, empty($val['disabled']) ? 0 : 1);
+			//$out = $form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, $moreparam, 0, (empty($val['disabled']) ? 0 : 1), '');
+			$out = $form->selectForForms($param_list_array[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, $moreparam, 0, (empty($val['disabled']) ? 0 : 1), '', $this->element.':'.$key.$keysuffix);
 
 			if (!empty($param_list_array[2])) {		// If the entry into $fields is set, we must add a create button
 				if ((!GETPOSTISSET('backtopage') || strpos(GETPOST('backtopage'), $_SERVER['PHP_SELF']) === 0)	// // To avoid to open several times the 'Plus' button (we accept only one level)
@@ -8490,7 +8491,7 @@ abstract class CommonObject
 	 * @param	string		$display_type	"card" for form display, "line" for document line display (extrafields on propal line, order line, etc...)
 	 * @return 	string						String with html content to show
 	 */
-	public function showOptionals($extrafields, $mode = 'view', $params = null, $keysuffix = '', $keyprefix = '', $onetrtd = 0, $display_type = 'card')
+	public function showOptionals($extrafields, $mode = 'view', $params = null, $keysuffix = '', $keyprefix = '', $onetrtd = '', $display_type = 'card')
 	{
 		global $db, $conf, $langs, $action, $form, $hookmanager;
 
