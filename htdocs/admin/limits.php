@@ -108,7 +108,7 @@ if ($action == 'update' && !$cancel) {
 		dolibarr_set_const($db, $mainmaxdecimalsshown, $valmainmaxdecimalsshown, 'chaine', 0, '', $conf->entity);
 
 		dolibarr_set_const($db, $mainroundingruletot, $valmainroundingruletot, 'chaine', 0, '', $conf->entity);
-		
+
 		dolibarr_set_const($db, 'MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND', $valmainroundoftotalnottotalofround, 'chaine', 0, '', $conf->entity);
 
 		header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup".(!empty($currencycode) ? '&currencycode='.$currencycode : ''));
@@ -183,12 +183,12 @@ if ($action == 'edit') {
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("MAIN_ROUNDING_RULE_TOT"), $langs->trans("ParameterActiveForNextInputOnly"));
 	print '</td><td><input class="flat right" name="'.$mainroundingruletot.'" size="3" value="'.(GETPOSTISSET($mainroundingruletot) ? GETPOST($mainroundingruletot) : getDolGlobalString('MAIN_ROUNDING_RULE_TOT')).'"></td></tr>';
-	
+
 	print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("VatRoundingMeth"), $langs->trans("VatRoundingMethInfo")).'</td>';
 	print '<td>';
 	print $form::selectarray('MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND', $aVatRoundingMeth, GETPOSTISSET('MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND') ? GETPOST('MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND') : getDolGlobalString('MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND'));
 	print '</td></tr>';
-	
+
 	print '</table>';
 
 	print '<div class="center">';
@@ -219,7 +219,7 @@ if ($action == 'edit') {
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("MAIN_ROUNDING_RULE_TOT"), $langs->trans("ParameterActiveForNextInputOnly"));
 	print '</td><td align="right">'.(isset($conf->global->$mainroundingruletot) ? $conf->global->$mainroundingruletot : (getDolGlobalString('MAIN_ROUNDING_RULE_TOT') ? $conf->global->MAIN_ROUNDING_RULE_TOT : '')).'</td></tr>';
-	
+
 	print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("VatRoundingMeth"), $langs->trans("VatRoundingMethInfo")).'</td>';
 	print '<td>';
 	print $langs->trans($aVatRoundingMeth[getDolGlobalString('MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND')]);
