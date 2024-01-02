@@ -188,17 +188,10 @@ Add file fpdf_tpl.php 1.2
 
 Add file tcpdi.php
 
-<<<<<<< HEAD
 Add file tcpdi_parser.php and replace:
     require_once(dirname(__FILE__).'/include/tcpdf_filters.php');
 with:
     require_once(dirname(__FILE__).'/../tecnickcom/tcpdf/include/tcpdf_filters.php');
-=======
-Add tcpdi_parser.php and replace:
-	require_once(dirname(__FILE__).'/include/tcpdf_filters.php');
-	with:
-	require_once(dirname(__FILE__).'/../tecnickcom/tcpdf/include/tcpdf_filters.php');
->>>>>>> branch '13.0' of git@github.com:Dolibarr/dolibarr.git
 
 
 * Fix syntax error by replacing
@@ -218,21 +211,12 @@ with
     window.location.href=pRef
 
 * Replace
-<<<<<<< HEAD
     vTmpDiv=this.newNode(vTmpCell, 'div', null, null, vTaskList[i].getResource());
 with                       
     var vTmpNode=this.newNode(vTmpCell, 'div', null, '');
     vTmpNode=this.newNode(vTmpNode, 'a', null, '', vLangs[vLang]['moreinfo']);
     vTmpNode.setAttribute('href',vTaskList[i].getLink());
                         
-=======
-vTmpDiv=this.newNode(vTmpCell, 'div', null, null, vTaskList[i].getResource());
-with
-var vTmpNode=this.newNode(vTmpCell, 'div', null, '');
-vTmpNode=this.newNode(vTmpNode, 'a', null, '', vLangs[vLang]['moreinfo']);
-vTmpNode.setAttribute('href',vTaskList[i].getLink());
-
->>>>>>> branch '13.0' of git@github.com:Dolibarr/dolibarr.git
 * Replace '% Comp.' to have a smaller text column header
     'comp':'% Comp.'
 with
@@ -272,7 +256,6 @@ RESTLER:
     	// @CHANGE LDR
         if (!is_string($haystack)) return false;
 
-<<<<<<< HEAD
 * Replace  
 
 	$loaders = array_unique(static::$rogueLoaders);
@@ -282,12 +265,6 @@ RESTLER:
 	$loaders = array_unique(static::$rogueLoaders, SORT_REGULAR);
 
 
-+With swagger 2 provided into /explorer:
-----------------------------------------
-
-Change content of file htdocs/includes/restler/framework/Luracast/Restler/explorer/index.html
-
-=======
 * Add a test into AutoLoader.php to complete function loadThisLoader and test if property exists before calling it. For this replace code
 
 	if (false !== $file = $b::$loader[1]($className) && $this->exists($className, $b::$loader[1])) {
@@ -304,7 +281,13 @@ Change content of file htdocs/includes/restler/framework/Luracast/Restler/explor
 			return $file;
 		}
 	}
->>>>>>> branch '13.0' of git@github.com:Dolibarr/dolibarr.git
+
+
++With swagger 2 provided into /explorer:
+----------------------------------------
+
+Change content of file htdocs/includes/restler/framework/Luracast/Restler/explorer/index.html
+
 
 
 PARSEDOWN
