@@ -204,8 +204,8 @@ foreach (array('internal', 'external') as $source) {
 		$entry->thirdparty_name = "";
 		$entry->contact_html = "";
 		$entry->contact_name = "";
-		$entry->status_id = $contact['statuscontact'];
-		$entry->status = "";
+		$entry->status = 0;
+		$entry->status_html = "";
 
 		if ($contact['source'] == 'internal') {
 			$entry->nature = $langs->trans("User");
@@ -236,9 +236,11 @@ foreach (array('internal', 'external') as $source) {
 		}
 
 		if ($contact['source'] == 'internal') {
-			$entry->status = $userstatic->LibStatut($contact['statuscontact'], 3);
+			$entry->status = $contact['statuscontact'];
+			$entry->status_html = $userstatic->LibStatut($contact['statuscontact'], 3);
 		} elseif ($contact['source'] == 'external') {
-			$entry->status = $contactstatic->LibStatut($contact['statuscontact'], 3);
+			$entry->status = $contact['statuscontact'];
+			$entry->status_html = $contactstatic->LibStatut($contact['statuscontact'], 3);
 		}
 
 		$list[] = $entry;
@@ -298,11 +300,11 @@ print "</tr>";
 foreach ($list as $entry) {
 	print '<tr class="oddeven" data-rowid="' . $entry->id . '">';
 
-	print '<td class="tdoverflowmax200" data-thirdparty_id="' . $entry->thirdparty_id . '" data-thirdparty_name="' . $entry->thirdparty_name . '">'.$entry->thirdparty_html.'</td>';
-	print '<td class="tdoverflowmax200" data-contact_id="' . $entry->contact_id . '">'.$entry->contact_html.'</td>';
-	print '<td class="nowrap" data-nature="' . $entry->nature . '"><span class="opacitymedium">'.$entry->nature.'</span></td>';
-	print '<td class="tdoverflowmax200" data-type_id="' . $entry->type_id . '" data-type="' . $entry->type . '">'.$entry->type.'</td>';
-	print '<td class="tdoverflowmax200 center" data-status_id="' . $entry->status_id . '">'.$entry->status.'</td>';
+	print '<td class="tdoverflowmax200" data-thirdparty_id="' . ((int) $entry->thirdparty_id) . '" data-thirdparty_name="' . dol_escape_htmltag($entry->thirdparty_name) . '">'.$entry->thirdparty_html.'</td>';
+	print '<td class="tdoverflowmax200" data-contact_id="' . ((int) $entry->contact_id) . '">'.$entry->contact_html.'</td>';
+	print '<td class="nowrap" data-nature="' . dol_escape_htmltag($entry->nature) . '"><span class="opacitymedium">'.dol_escape_htmltag($entry->nature).'</span></td>';
+	print '<td class="tdoverflowmax200" data-type_id="' . ((int) $entry->type_id) . '" data-type="' . dol_escape_htmltag($entry->type) . '">'.dol_escape_htmltag($entry->type).'</td>';
+	print '<td class="tdoverflowmax200 center" data-status_id="' . ((int) $entry->status) . '">'.$entry->status_html.'</td>';
 
 	if ($permission) {
 		$href = $_SERVER["PHP_SELF"];
