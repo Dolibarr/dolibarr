@@ -281,9 +281,7 @@ class Invoices extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve invoice list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No invoice found');
-		}
+
 		return $obj_ret;
 	}
 

@@ -180,9 +180,7 @@ class Mos extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve MO list');
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No MO found');
-		}
+
 		return $obj_ret;
 	}
 
