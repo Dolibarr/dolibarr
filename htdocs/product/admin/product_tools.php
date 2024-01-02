@@ -65,7 +65,7 @@ if ($action == 'convert') {
 
 		$nbrecordsmodified = 0;
 
-		if (!getDolGlobalInt('VATUPDATE_NO_TRANSACTION') {
+		if (!getDolGlobalInt('VATUPDATE_NO_TRANSACTION')) {
 			$db->begin();
 		}
 
@@ -261,7 +261,7 @@ if ($action == 'convert') {
 			dol_print_error($db);
 		}
 
-		if (!getDolGlobalInt('VATUPDATE_NO_TRANSACTION') {
+		if (!getDolGlobalInt('VATUPDATE_NO_TRANSACTION')) {
 			if (!$error) {
 				$db->commit();
 			} else {
