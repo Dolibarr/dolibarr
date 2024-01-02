@@ -197,12 +197,14 @@ foreach (array('internal', 'external') as $source) {
 	foreach ($contactlist as $contact) {
 		$entry = new stdClass();
 		$entry->id   = $contact['rowid'];
+		$entry->type_id = $contact['fk_c_type_contact'];
 		$entry->type = $contact['libelle'];
 		$entry->nature = "";
 		$entry->thirdparty_html = "";
 		$entry->thirdparty_name = "";
 		$entry->contact_html = "";
 		$entry->contact_name = "";
+		$entry->status_id = $contact['statuscontact'];
 		$entry->status = "";
 
 		if ($contact['source'] == 'internal') {
@@ -213,6 +215,7 @@ foreach (array('internal', 'external') as $source) {
 
 		if ($contact['socid'] > 0) {
 			$companystatic->fetch($contact['socid']);
+			$entry->thirdparty_id   = $companystatic->id;
 			$entry->thirdparty_html = $companystatic->getNomUrl(1);
 			$entry->thirdparty_name = strtolower($companystatic->getFullName($langs));
 		} elseif ($contact['socid'] < 0) {
@@ -222,10 +225,12 @@ foreach (array('internal', 'external') as $source) {
 
 		if ($contact['source'] == 'internal') {
 			$userstatic->fetch($contact['id']);
+			$entry->contact_id   = $userstatic->id;
 			$entry->contact_html = $userstatic->getNomUrl(-1, '', 0, 0, 0, 0, '', 'valignmiddle');
 			$entry->contact_name = strtolower($userstatic->getFullName($langs));
 		} elseif ($contact['source'] == 'external') {
 			$contactstatic->fetch($contact['id']);
+			$entry->contact_id   = $contactstatic->id;
 			$entry->contact_html = $contactstatic->getNomUrl(1, '', 0, '', 0, 0);
 			$entry->contact_name = strtolower($contactstatic->getFullName($langs));
 		}
@@ -291,13 +296,13 @@ if ($permission) {
 print "</tr>";
 
 foreach ($list as $entry) {
-	print '<tr class="oddeven">';
+	print '<tr class="oddeven" data-rowid="' . $entry->id . '">';
 
-	print '<td class="tdoverflowmax200">'.$entry->thirdparty_html.'</td>';
-	print '<td class="tdoverflowmax200">'.$entry->contact_html.'</td>';
-	print '<td class="nowrap"><span class="opacitymedium">'.$entry->nature.'</span></td>';
-	print '<td class="tdoverflowmax200">'.$entry->type.'</td>';
-	print '<td class="tdoverflowmax200 center">'.$entry->status.'</td>';
+	print '<td class="tdoverflowmax200" data-thirdparty_id="' . $entry->thirdparty_id . '" data-thirdparty_name="' . $entry->thirdparty_name . '">'.$entry->thirdparty_html.'</td>';
+	print '<td class="tdoverflowmax200" data-contact_id="' . $entry->contact_id . '">'.$entry->contact_html.'</td>';
+	print '<td class="nowrap" data-nature="' . $entry->nature . '"><span class="opacitymedium">'.$entry->nature.'</span></td>';
+	print '<td class="tdoverflowmax200" data-type_id="' . $entry->type_id . '" data-type="' . $entry->type . '">'.$entry->type.'</td>';
+	print '<td class="tdoverflowmax200 center" data-status_id="' . $entry->status_id . '">'.$entry->status.'</td>';
 
 	if ($permission) {
 		$href = $_SERVER["PHP_SELF"];
