@@ -1272,7 +1272,7 @@ $( document ).ready(function() {
 	} elseif (getDolGlobalInt("TAKEPOS_NO_GENERIC_THIRDPARTY")) {
 		print '$("#idcustomer").val("");';
 
-    if (getDolGlobalInt('TAKEPOS_CHOOSE_CONTACT')) {
+		if (getDolGlobalInt('TAKEPOS_CHOOSE_CONTACT')) {
 			$contactids = $invoice->getIdContact('external', 'BILLING');
 			$contactid = $contactids[0];
 			if ($contactid > 0) {
