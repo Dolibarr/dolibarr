@@ -215,9 +215,7 @@ class SupplierOrders extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve supplier order list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No supplier order found');
-		}
+
 		return $obj_ret;
 	}
 

@@ -465,10 +465,6 @@ class Contacts extends DolibarrApi
 
 		$result = $categories->getListForItem($id, 'contact', $sortfield, $sortorder, $limit, $page);
 
-		if (empty($result)) {
-			throw new RestException(404, 'No category found');
-		}
-
 		if ($result < 0) {
 			throw new RestException(503, 'Error when retrieve category list : '.$categories->error);
 		}

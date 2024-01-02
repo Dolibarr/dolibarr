@@ -182,9 +182,7 @@ class Categories extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve category list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No category found');
-		}
+
 		return $obj_ret;
 	}
 
@@ -342,9 +340,6 @@ class Categories extends DolibarrApi
 		$categories = $this->category->getListForItem($id, $type, $sortfield, $sortorder, $limit, $page);
 
 		if (!is_array($categories)) {
-			if ($categories == 0) {
-				throw new RestException(404, 'No category found for this object');
-			}
 			throw new RestException(600, 'Error when fetching object categories', array_merge(array($this->category->error), $this->category->errors));
 		}
 		return $categories;

@@ -182,9 +182,7 @@ class Boms extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve bom list');
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No bom found');
-		}
+
 		return $obj_ret;
 	}
 
