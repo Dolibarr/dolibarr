@@ -804,7 +804,7 @@ if ($object->allow_spy) {
 		}
 	}
 
-	$meilleursujet = substr("$meilleursujet", 1);
+	//$meilleursujet = substr($meilleursujet, 1);
 	$meilleursujet = str_replace("°", "'", $meilleursujet);
 
 	// Show best choice
