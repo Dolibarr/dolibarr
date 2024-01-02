@@ -1132,7 +1132,6 @@ for ($i = 0; $i < $nbcolonnes; $i++) {
 		$meilleursujet .= ($meilleursujet ? ", " : "");
 
 		if ($object->format == "D") {
-			$meilleursujetexport = $toutsujet[$i];
 			//var_dump($toutsujet);
 			if (strpos($toutsujet[$i], '@') !== false) {
 				$toutsujetdate = explode("@", $toutsujet[$i]);
