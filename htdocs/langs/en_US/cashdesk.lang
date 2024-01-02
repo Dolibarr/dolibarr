@@ -153,3 +153,4 @@ LineDiscount=Line discount
 LineDiscountShort=Line disc.
 InvoiceDiscount=Invoice discount
 InvoiceDiscountShort=Invoice disc.
+ConfirmClosePayment=Are you sure you want to delete this payment ?
