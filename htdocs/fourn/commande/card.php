@@ -1057,7 +1057,7 @@ if (empty($reshook)) {
 
 		if ($cancel) {
 			$action = '';
-		} elseif ($methodecommande <= 0 && !dolGetGlobalInt('SUPPLIER_ORDER_MODE_OPTIONAL')) {
+		} elseif ($methodecommande <= 0 && !getDolGlobalInt('SUPPLIER_ORDER_MODE_OPTIONAL')) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("OrderMode")), null, 'errors');
 			$action = 'createorder';
 		}
