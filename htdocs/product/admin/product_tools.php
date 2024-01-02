@@ -261,7 +261,7 @@ if ($action == 'convert') {
 
 		// add hook for external modules
 		$parameters = array('oldvatrate' => $oldvatrate, 'newvatrate' => $newvatrate);
-		$reshook = $hookmanager->executeHooks('AFTER_VAT_UPDATE');
+		$reshook = $hookmanager->executeHooks('AFTER_VAT_UPDATE', $parameters);
 		if ($reshook < 0) {
 			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 			$error++;
