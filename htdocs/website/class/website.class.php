@@ -1656,7 +1656,7 @@ class Website extends CommonObject
 		$destdir = DOL_DOCUMENT_ROOT . '/install/doctemplates/websites/'.$website->name_template;
 		$arraydestdir = dol_dir_list($destdir, "all", 1);
 		$differences = [];
-
+		//var_dump($modifications);exit;
 		if (count($modifications) >1) {
 			foreach ($modifications as $fichierModifie) {
 				$nomFichierModifie = $fichierModifie['name'];
@@ -1925,18 +1925,30 @@ class Website extends CommonObject
 
 		$linesShouldnChange = array();
 		$linesShouldnNotChange = array();
+		$linefound = array();
+		$countNumPage = count($exceptNumPge);
+
+		for ($i = 0;$i< $countNumPage; $i++) {
+			$linefound[$i]['meta'] = '/content="' . preg_quote($exceptNumPge[$i], '/') . '" \/>/';
+			$linefound[$i]['output'] = '/dolWebsiteOutput\(\$tmp, "html", ' . preg_quote($exceptNumPge[$i], '/') . '\);/';
+		}
+
 		$maxLines = max(count($lines1), count($lines2));
 		for ($lineNum = 0; $lineNum < $maxLines; $lineNum++) {
 			$lineContent1 = $lines1[$lineNum] ?? '';
 			$lineContent2 = $lines2[$lineNum] ?? '';
-
-			if (strpos($lineContent1, $exceptNumPge[0])) {
+			if (preg_match($linefound[0]['output'], $lineContent1)) {
 				$linesShouldnChange[] = $lineContent1;
 			}
-			if (strpos($lineContent2, $exceptNumPge[1])) {
+			if (preg_match($linefound[1]['output'], $lineContent2)) {
 				$linesShouldnNotChange[] = $lineContent2;
 			}
-
+			if (preg_match($linefound[0]['meta'], $lineContent1)) {
+				$linesShouldnChange[] = $lineContent1;
+			}
+			if (preg_match($linefound[1]['meta'], $lineContent2)) {
+				$linesShouldnNotChange[] = $lineContent2;
+			}
 			if ($lineContent1 !== $lineContent2) {
 				if (isset($lines1[$lineNum]) && !isset($lines2[$lineNum])) {
 					// Ligne deleted de la source
@@ -1950,6 +1962,8 @@ class Website extends CommonObject
 				}
 			}
 		}
+
+
 		$pairesRemplacement = array();
 		foreach ($linesShouldnNotChange as $numLigne => $ligneRemplacement) {
 			if (isset($linesShouldnChange[$numLigne])) {
@@ -1958,6 +1972,20 @@ class Website extends CommonObject
 		}
 		$diff['lignes_dont_change'] = $pairesRemplacement;
 
+		// search path of image and replace it with the correcte path
+		$pattern = '/medias\/image\/'.$this->ref.'\/([^\'"\s]+)/';
+
+		foreach ($diff as $key => $value) {
+			// Assurez-vous que la valeur est une chaîne
+			if (is_string($value)) {
+				if (preg_match($pattern, $value)) {
+					//var_dump( "Trouvé dans".$this->name_template." / ". $key." : ".$value."\n");
+					$newValue = preg_replace($pattern, 'medias/image/'.$this->name_template.'/$1', $value);
+
+					$diff[$key] = $newValue;
+				}
+			}
+		}
 		return $diff;
 	}
 
