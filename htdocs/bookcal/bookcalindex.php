@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       bookcal/bookcalindex.php
+ *	\file       htdocs/bookcal/bookcalindex.php
  *	\ingroup    bookcal
  *	\brief      Home page of bookcal top menu
  */
