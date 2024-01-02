@@ -529,7 +529,7 @@ if (empty($reshook)) {
 		$object->fetch($id);
 		$object->revenuestamp = GETPOST('revenuestamp');
 		$result = $object->update($user);
-		$object->update_price(1);
+		$object->update_price(1, 'auto');
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
 		} else {
@@ -1276,7 +1276,7 @@ if (empty($reshook)) {
 							}
 						}
 
-						$object->update_price(1);
+						$object->update_price(1, 'auto');
 					}
 				}
 

@@ -2646,7 +2646,7 @@ class Facture extends CommonInvoice
 
 			$lineid = $facligne->insert();
 			if ($lineid > 0) {
-				$result = $this->update_price(1);
+				$result = $this->update_price(1, 'auto');
 				if ($result > 0) {
 					// Create link between discount and invoice line
 					$result = $remise->link_to_invoice($lineid, 0);
@@ -3331,7 +3331,7 @@ class Facture extends CommonInvoice
 		$this->newref = dol_sanitizeFileName($num);
 
 		if ($num) {
-			$this->update_price(1);
+			$this->update_price(1, 'auto');
 
 			// Validate
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
@@ -4340,7 +4340,7 @@ class Facture extends CommonInvoice
 
 		// sometimes it is better to not update price for each line, ie when updating situation on all lines
 		if ($update_price) {
-			$this->update_price(1);
+			$this->update_price(1, 'auto');
 		}
 	}
 
@@ -4385,7 +4385,7 @@ class Facture extends CommonInvoice
 		$line->oldline = $staticline;
 
 		if ($line->delete($user) > 0) {
-			$result = $this->update_price(1);
+			$result = $this->update_price(1, 'auto');
 
 			if ($result > 0) {
 				$this->db->commit();
@@ -4466,7 +4466,7 @@ class Facture extends CommonInvoice
 
 			if (!$error) {
 				$this->remise_percent = $remise;
-				$this->update_price(1);
+				$this->update_price(1, 'auto');
 
 				$this->db->commit();
 				return 1;

@@ -1959,10 +1959,19 @@ if (empty($reshook)) {
 	// Make calculation according to calculationrule
 	if ($action == 'calculate') {
 		$calculationrule = GETPOST('calculationrule');
-
+		switch($calculationrule) {
+			case 'totalofround':
+				$roundingadjust = '0';
+				break;
+			case 'roundoftotal':
+				$roundingadjust = '1';
+				break;
+			default:
+				$roundingadjust = 'auto';
+		}
 		$object->fetch($id);
 		$object->fetch_thirdparty();
-		$result = $object->update_price(0, (($calculationrule == 'totalofround') ? '0' : '1'), 0, $object->thirdparty);
+		$result = $object->update_price(0, $roundingadjust, 0, $object->thirdparty);
 		if ($result <= 0) {
 			dol_print_error($db, $result);
 			exit;

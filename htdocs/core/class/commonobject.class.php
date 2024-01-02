@@ -3670,7 +3670,7 @@ abstract class CommonObject
 		}
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
-
+		
 		$forcedroundingmode = $roundingadjust;
 		if ($forcedroundingmode == 'auto' && isset($conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND)) {
 			$forcedroundingmode = getDolGlobalString('MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND');
@@ -3803,7 +3803,7 @@ abstract class CommonObject
 				if ($forcedroundingmode == '1') {	// Check if we need adjustement onto line for vat. TODO This works on the company currency but not on foreign currency
 					$tmpvat = price2num($total_ht_by_vats[$obj->vatrate] * $obj->vatrate / 100, 'MT', 1);
 					$diff = price2num($total_tva_by_vats[$obj->vatrate] - $tmpvat, 'MT', 1);
-					//print 'Line '.$i.' rowid='.$obj->rowid.' vat_rate='.$obj->vatrate.' total_ht='.$obj->total_ht.' total_tva='.$obj->total_tva.' total_ttc='.$obj->total_ttc.' total_ht_by_vats='.$total_ht_by_vats[$obj->vatrate].' total_tva_by_vats='.$total_tva_by_vats[$obj->vatrate].' (new calculation = '.$tmpvat.') total_ttc_by_vats='.$total_ttc_by_vats[$obj->vatrate].($diff?" => DIFF":"")."<br>\n";
+//					print 'Line '.$i.' rowid='.$obj->rowid.' vat_rate='.$obj->vatrate.' total_ht='.$obj->total_ht.' total_tva='.$obj->total_tva.' total_ttc='.$obj->total_ttc.' total_ht_by_vats='.$total_ht_by_vats[$obj->vatrate].' total_tva_by_vats='.$total_tva_by_vats[$obj->vatrate].' (new calculation = '.$tmpvat.') total_ttc_by_vats='.$total_ttc_by_vats[$obj->vatrate].($diff?" => DIFF":"")."<br>\n";
 					if ($diff) {
 						if (abs($diff) > (10 * pow(10, -1 * getDolGlobalInt('MAIN_MAX_DECIMALS_TOT', 0)))) {
 							// If error is more than 10 times the accurancy of rounding. This should not happen.
@@ -3853,6 +3853,17 @@ abstract class CommonObject
 						$this->multicurrency_total_ttc -= $sit->multicurrency_total_ttc;
 					}
 				}
+			} elseif ($forcedroundingmode == '2') { // tva and ttc calculated and rounded on global sums, not on each line
+				$this->total_ht = $this->total_tva = $this->total_ttc = 0;
+				foreach ($total_ht_by_vats as $vatrate=>$total_ht) {
+					$this->total_ht += $total_ht;
+					$tva = $total_ht * $vatrate / 100;
+					$this->total_tva += $tva;
+					$this->total_ttc += ($total_ht + $tva);
+				}
+				// Add revenue stamp to total
+				$this->total_ttc += isset($this->revenuestamp) ? $this->revenuestamp : 0;
+				$this->multicurrency_total_ttc += isset($this->revenuestamp) ? ($this->revenuestamp * $multicurrency_tx) : 0;
 			}
 
 			// Clean total
@@ -5945,7 +5956,7 @@ abstract class CommonObject
 	 **/
 	public function getDefaultCreateValueFor($fieldname, $alternatevalue = null, $type = 'alphanohtml')
 	{
-		global $conf, $_POST;
+		global $conf;
 
 		// If param here has been posted, we use this value first.
 		if (GETPOSTISSET($fieldname)) {
@@ -6105,7 +6116,7 @@ abstract class CommonObject
 	 */
 	public function setValuesForExtraLanguages($onlykey = '')
 	{
-		global $_POST, $langs;
+		global $langs;
 
 		// Get extra fields
 		foreach ($_POST as $postfieldkey => $postfieldvalue) {
