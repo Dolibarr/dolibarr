@@ -209,7 +209,7 @@ if (empty($reshook) && $action == 'add') {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Email"))."<br>\n";
 	}
-	if (!GETPOST("country_id") && !empty(floatval($project->price_booth))) {
+	if (!GETPOST("country_id") && !empty((float) $project->price_booth)) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Country"))."<br>\n";
 	}
@@ -414,7 +414,7 @@ if (empty($reshook) && $action == 'add') {
 					$errmsg .= $conforbooth->error;
 				} else {
 					// If this is a paying booth, we have to redirect to payment page and create an invoice
-					if (!empty(floatval($project->price_booth))) {
+					if (!empty((float) $project->price_booth)) {
 						$productforinvoicerow = new Product($db);
 						$resultprod = $productforinvoicerow->fetch($conf->global->SERVICE_BOOTH_LOCATION);
 						if ($resultprod < 0) {
@@ -452,7 +452,7 @@ if (empty($reshook) && $action == 'add') {
 						if (!$error) {
 							// Add line to draft invoice
 							$vattouse = get_default_tva($mysoc, $thirdparty, $productforinvoicerow->id);
-							$result = $facture->addline($langs->trans("BoothLocationFee", $conforbooth->label, dol_print_date($conforbooth->datep, '%d/%m/%y %H:%M:%S'), dol_print_date($conforbooth->datep2, '%d/%m/%y %H:%M:%S')), floatval($project->price_booth), 1, $vattouse, 0, 0, $productforinvoicerow->id, 0, dol_now(), '', 0, 0, '', 'HT', 0, 1);
+							$result = $facture->addline($langs->trans("BoothLocationFee", $conforbooth->label, dol_print_date($conforbooth->datep, '%d/%m/%y %H:%M:%S'), dol_print_date($conforbooth->datep2, '%d/%m/%y %H:%M:%S')), (float) $project->price_booth, 1, $vattouse, 0, 0, $productforinvoicerow->id, 0, dol_now(), '', 0, 0, '', 'HT', 0, 1);
 							if ($result <= 0) {
 								$contact->error = $facture->error;
 								$contact->errors = $facture->errors;

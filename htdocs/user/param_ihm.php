@@ -57,7 +57,7 @@ if ($user->socid > 0) {
 $feature2 = (($socid && $user->hasRight("user", "self", "write")) ? '' : 'user');
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
-if ($user->id <> $id && !$canreaduser) {
+if ($user->id != $id && !$canreaduser) {
 	accessforbidden();
 }
 

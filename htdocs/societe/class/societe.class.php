@@ -3863,7 +3863,7 @@ class Societe extends CommonObject
 			$sum = 0;
 			for ($index = 0; $index < 9; $index++) {
 				$number = (int) $chaine[$index];
-				if (($index % 2) != 0) {
+				if ($index % 2 != 0) {
 					if (($number *= 2) > 9) {
 						$number -= 9;
 					}
@@ -3872,7 +3872,7 @@ class Societe extends CommonObject
 			}
 
 			// le numéro est valide si la somme des chiffres est multiple de 10
-			if (($sum % 10) != 0) {
+			if ($sum % 10 != 0) {
 				return -1;
 			}
 		}
@@ -3905,7 +3905,7 @@ class Societe extends CommonObject
 			}
 
 			// le numéro est valide si la somme des chiffres est multiple de 10
-			if (($sum % 10) != 0) {
+			if ($sum % 10 != 0) {
 				return -1;
 			}
 		}

@@ -233,7 +233,7 @@ class PaymentVAT extends CommonObject
 				// Insert table of amounts / invoices
 				foreach ($this->amounts as $key => $amount) {
 					$contribid = $key;
-					if (is_numeric($amount) && $amount <> 0) {
+					if (is_numeric($amount) && $amount != 0) {
 						$amount = price2num($amount);
 
 						// If we want to closed paid invoices

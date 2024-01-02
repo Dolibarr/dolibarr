@@ -685,7 +685,7 @@ class Facture extends CommonInvoice
 		$sql .= ", ".(empty($this->date_pointoftax) ? "null" : "'".$this->db->idate($this->date_pointoftax)."'");
 		$sql .= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= ", ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
-		$sql .= ", ".($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null");
+		$sql .= ", ".($this->ref_customer ? "'".$this->db->escape($this->ref_customer)."'" : ($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null"));
 		$sql .= ", ".($this->fk_account > 0 ? $this->fk_account : 'NULL');
 		$sql .= ", ".($this->module_source ? "'".$this->db->escape($this->module_source)."'" : "null");
 		$sql .= ", ".($this->pos_source != '' ? "'".$this->db->escape($this->pos_source)."'" : "null");
@@ -2488,7 +2488,7 @@ class Facture extends CommonInvoice
 			$this->import_key = trim($this->import_key);
 		}
 		if (isset($this->retained_warranty)) {
-			$this->retained_warranty = floatval($this->retained_warranty);
+			$this->retained_warranty = (float) $this->retained_warranty;
 		}
 
 
@@ -5432,7 +5432,7 @@ class Facture extends CommonInvoice
 		$hasDelay = $this->date_lim_reglement < ($now - $conf->facture->client->warning_delay);
 		if ($hasDelay && !empty($this->retained_warranty) && !empty($this->retained_warranty_date_limit)) {
 			$totalpaid = $this->getSommePaiement();
-			$totalpaid = floatval($totalpaid);
+			$totalpaid = (float) $totalpaid;
 			$RetainedWarrantyAmount = $this->getRetainedWarrantyAmount();
 			if ($totalpaid >= 0 && $RetainedWarrantyAmount >= 0) {
 				if (($totalpaid < $this->total_ttc - $RetainedWarrantyAmount) && $this->date_lim_reglement < ($now - $conf->facture->client->warning_delay)) {
@@ -5532,7 +5532,7 @@ class Facture extends CommonInvoice
 		}
 
 		if ($rounding < 0) {
-			$rounding = min(getDolGlobalString('MAIN_MAX_DECIMALS_UNIT'), $conf->global->MAIN_MAX_DECIMALS_TOT);
+			$rounding = min(getDolGlobalString('MAIN_MAX_DECIMALS_UNIT'), getDolGlobalString('MAIN_MAX_DECIMALS_TOT'));
 		}
 
 		if ($rounding > 0) {
@@ -5559,7 +5559,7 @@ class Facture extends CommonInvoice
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			if ($this->db->query($sql)) {
-				$this->retained_warranty = floatval($value);
+				$this->retained_warranty = (float) $value;
 				return 1;
 			} else {
 				dol_syslog(get_class($this).'::setRetainedWarranty Erreur '.$sql.' - '.$this->db->error());
@@ -6755,7 +6755,7 @@ class FactureLigne extends CommonInvoiceLine
 			if ($resql && $this->db->num_rows($resql) > 0) {
 				$res = $this->db->fetch_array($resql);
 
-				$returnPercent = floatval($res['situation_percent']);
+				$returnPercent = (float) $res['situation_percent'];
 
 				if ($include_credit_note) {
 					$sql = 'SELECT fd.situation_percent FROM '.MAIN_DB_PREFIX.'facturedet fd';
@@ -6767,7 +6767,7 @@ class FactureLigne extends CommonInvoiceLine
 					$res = $this->db->query($sql);
 					if ($res) {
 						while ($obj = $this->db->fetch_object($res)) {
-							$returnPercent = $returnPercent + floatval($obj->situation_percent);
+							$returnPercent = $returnPercent + (float) $obj->situation_percent;
 						}
 					} else {
 						dol_print_error($this->db);

@@ -1469,7 +1469,7 @@ class FormOther
 					} else {
 						print '<option value="'.$obj->{$keyfield}.'">';
 					}
-					$label = ($langs->trans($dictionarytable.$obj->{$keyfield}) != ($dictionarytable.$obj->{$labelfield}) ? $langs->trans($dictionarytable.$obj->{$keyfield}) : $obj->{$labelfield});
+					$label = ($langs->trans($dictionarytable.$obj->{$keyfield}) != $dictionarytable.$obj->{$labelfield} ? $langs->trans($dictionarytable.$obj->{$keyfield}) : $obj->{$labelfield});
 					print $label;
 					print '</option>';
 					$i++;

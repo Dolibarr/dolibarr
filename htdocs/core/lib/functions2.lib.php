@@ -97,7 +97,7 @@ function dolGetModulesDirs($subdir = '')
 					continue; // We discard module if it contains disabled into name.
 				}
 
-				if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes') {
+				if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS' && $file != 'includes') {
 					if (is_dir($dirroot.'/'.$file.'/core/modules'.$subdir.'/')) {
 						$modulesdir[$dirroot.'/'.$file.'/core/modules'.$subdir.'/'] = $dirroot.'/'.$file.'/core/modules'.$subdir.'/';
 					}
@@ -1690,7 +1690,7 @@ function weight_convert($weight, &$from_unit, $to_unit)
 	 *
 	 */
 	$weight = is_numeric($weight) ? $weight : 0;
-	while ($from_unit <> $to_unit) {
+	while ($from_unit != $to_unit) {
 		if ($from_unit > $to_unit) {
 			$weight = $weight * 10;
 			$from_unit = $from_unit - 1;
@@ -2513,7 +2513,7 @@ function colorHexToRgb($hex, $alpha = false, $returnArray = false)
 	$rgb['g'] = hexdec($length == 6 ? substr($hex, 2, 2) : ($length == 3 ? str_repeat(substr($hex, 1, 1), 2) : 0));
 	$rgb['b'] = hexdec($length == 6 ? substr($hex, 4, 2) : ($length == 3 ? str_repeat(substr($hex, 2, 1), 2) : 0));
 	if ($alpha !== false) {
-		$rgb['a'] = floatval($alpha);
+		$rgb['a'] = (float) $alpha;
 		$string = 'rgba('.implode(',', $rgb).')';
 	} else {
 		$string = 'rgb('.implode(',', $rgb).')';

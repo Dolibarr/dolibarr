@@ -134,10 +134,10 @@ function getMultidirOutput($object, $module = '')
 	if ($module == 'fichinter') {
 		$module = 'ficheinter';
 	}
-	if (isset($conf->$module)) {
-		return $conf->$module->multidir_output[(!empty($object->entity) ? $object->entity : $conf->entity)];
+	if (isset($conf->$module) && property_exists($conf->$module, 'multidir_output')) {
+		return $conf->$module->multidir_output[(empty($object->entity) ? $conf->entity : $object->entity)];
 	} else {
-		return 'error-diroutput-not-defined-ffor-this-object='.$module;
+		return 'error-diroutput-not-defined-for-this-object='.$module;
 	}
 }
 
@@ -6044,7 +6044,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	}
 	$amount = (is_numeric($amount) ? $amount : 0); // Check if amount is numeric, for example, an error occured when amount value = o (letter) instead 0 (number)
 	if ($rounding == -1) {
-		$rounding = min(getDolGlobalString('MAIN_MAX_DECIMALS_UNIT'), $conf->global->MAIN_MAX_DECIMALS_TOT);
+		$rounding = min(getDolGlobalString('MAIN_MAX_DECIMALS_UNIT'), getDolGlobalString('MAIN_MAX_DECIMALS_TOT'));
 	}
 	$nbdecimal = $rounding;
 
@@ -7613,7 +7613,11 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 			if (!empty($out) && getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML') && $check != 'restricthtmlallowunvalid') {
 				try {
 					libxml_use_internal_errors(false);	// Avoid to fill memory with xml errors
-					libxml_disable_entity_loader(true);	// Avoid load of external entities (security problem). Required only if LIBXML_VERSION < 20900
+					if (LIBXML_VERSION < 20900) {
+						// Avoid load of external entities (security problem).
+						// Required only if LIBXML_VERSION < 20900
+						libxml_disable_entity_loader(true);
+					}
 
 					$dom = new DOMDocument();
 					// Add a trick to solve pb with text without parent tag
@@ -8244,7 +8248,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
 			$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
 			$substitutionarray['__SUPPLIER_ORDER_DATE_DELIVERY__'] = (isset($object->delivery_date) ? dol_print_date($object->delivery_date, 'day', 0, $outputlangs) : '');
-			$substitutionarray['__SUPPLIER_ORDER_DELAY_DELIVERY__'] = (isset($object->availability_code) ? ($outputlangs->transnoentities("AvailabilityType".$object->availability_code) != ('AvailabilityType'.$object->availability_code) ? $outputlangs->transnoentities("AvailabilityType".$object->availability_code) : $outputlangs->convToOutputCharset(isset($object->availability) ? $object->availability : '')) : '');
+			$substitutionarray['__SUPPLIER_ORDER_DELAY_DELIVERY__'] = (isset($object->availability_code) ? ($outputlangs->transnoentities("AvailabilityType".$object->availability_code) != 'AvailabilityType'.$object->availability_code ? $outputlangs->transnoentities("AvailabilityType".$object->availability_code) : $outputlangs->convToOutputCharset(isset($object->availability) ? $object->availability : '')) : '');
 			$substitutionarray['__EXPIRATION_DATE__'] = (isset($object->fin_validite) ? dol_print_date($object->fin_validite, 'daytext') : '');
 
 			if (is_object($object) && ($object->element == 'adherent' || $object->element == 'member') && $object->id > 0) {
@@ -12148,7 +12152,17 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '')
 
 	$element_prop = getElementProperties($element_type);
 
-	if (is_array($element_prop) && isModEnabled($element_prop['module'])) {
+	if ($element_prop['module'] == 'product' || $element_prop['module'] == 'service') {
+		// For example, for an extrafield 'product' (shared for both product and service) that is a link to an object,
+		// this is called with $element_type = 'product' when we need element properties of a service, we must return a product. If we create the
+		// extrafield for a service, it is not supported and not found when editing the product/service card. So we must keep 'product' for extrafields
+		// of service and we will return properties of a product.
+		$ismodenabled = (isModEnabled('product') || isModEnabled('service'));
+	} else {
+		$ismodenabled = isModEnabled($element_prop['module']);
+	}
+
+	if (is_array($element_prop) && $ismodenabled) {
 		dol_include_once('/'.$element_prop['classpath'].'/'.$element_prop['classfile'].'.class.php');
 
 		if (class_exists($element_prop['classname'])) {
@@ -12583,20 +12597,22 @@ function dolForgeCriteriaCallback($matches)
 
 	$operator = strtoupper(preg_replace('/[^a-z<>!=]/i', '', trim($tmp[1])));
 
-	if ($operator == 'NOTLIKE') {
-		$operator = 'NOT LIKE';
+	$realOperator = [
+		'NOTLIKE' => 'NOT LIKE',
+		'ISNOT' => 'IS NOT',
+		'NOTIN' => 'NOT IN',
+		'!=' => '<>',
+	];
+
+	if (array_key_exists($operator, $realOperator)) {
+		$operator = $realOperator[$operator];
 	}
-	if ($operator == 'ISNOT') {
-		$operator = 'IS NOT';
-	}
-	if ($operator == '!=') {
-		$operator = '<>';
-	}
+
 
 	$tmpescaped = $tmp[2];
 	$regbis = array();
 
-	if ($operator == 'IN') {	// IN is allowed for list of ID or code only
+	if ($operator == 'IN' || $operator == 'NOT IN') {	// IN is allowed for list of ID or code only
 		//if (!preg_match('/^\(.*\)$/', $tmpescaped)) {
 		$tmpescaped2 = '(';
 		// Explode and sanitize each element in list

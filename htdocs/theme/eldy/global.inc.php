@@ -5007,7 +5007,7 @@ table.table-fiche-title {
 
 
 div.backgreypublicpayment {
-	background-color: #f0f0f0;
+	background-color: var(--colorbackgrey);
 	padding: 20px;
 	border-bottom: 1px solid #ddd;
 	text-align: center;
@@ -5015,7 +5015,10 @@ div.backgreypublicpayment {
 	top: 0;
 	z-index: 1005;
 }
-.backgreypublicpayment a { color: #222 !important; }
+.backgreypublicpayment a {
+	color: var(--colorblack) !important;
+	opacity: 0.9;
+}
 .poweredbypublicpayment {
 	float: right;
 	top: 8px;
@@ -5184,6 +5187,7 @@ div.ui-tooltip.mytooltip {
 	color: var(--tooltipfontcolor);
 	line-height: 1.6em;
 	min-width: 550px;
+	pointer-events: none;
 }
 
 <?php
@@ -7214,12 +7218,12 @@ div.tabsElem a.tab {
 	border: 1px solid #e8e8e8;
 	padding: 30px;
 	border-radius: 8px;
-	background-color: #f8f8f8;
+	background-color: var(--colorbackgrey);
 	/*box-shadow: 2px 2px 10px #ddd;*/
 }
 
 .publicnewmemberform #tablesubscribe {
-	color: #666;
+	color: var(--colortextbackvmenu);
 }
 
 @media only screen and (max-width: 767px)

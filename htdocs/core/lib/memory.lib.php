@@ -272,7 +272,7 @@ function dol_setshmop($memoryid, $data, $expire)
 	if ($handle) {
 		$shm_bytes_written1 = shmop_write($handle, str_pad($size, 6), 0);
 		$shm_bytes_written2 = shmop_write($handle, $newdata, 6);
-		if (($shm_bytes_written1 + $shm_bytes_written2) != (6 + dol_strlen($newdata))) {
+		if ($shm_bytes_written1 + $shm_bytes_written2 != 6 + dol_strlen($newdata)) {
 			print "Couldn't write the entire length of data\n";
 		}
 		shmop_close($handle);

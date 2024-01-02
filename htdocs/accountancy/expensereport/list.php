@@ -69,7 +69,7 @@ $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_en
 
 // Define begin binding date
 if (empty($search_date_start) && getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
-	$search_date_start = $db->idate($conf->global->ACCOUNTING_DATE_START_BINDING);
+	$search_date_start = $db->idate(getDolGlobalString('ACCOUNTING_DATE_START_BINDING'));
 }
 
 // Load variable for pagination

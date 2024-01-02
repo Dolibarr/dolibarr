@@ -152,8 +152,6 @@ class DiscountAbsolute
 	 */
 	public function fetch($rowid, $fk_facture_source = 0, $fk_invoice_supplier_source = 0)
 	{
-		global $conf;
-
 		// Check parameters
 		if (!$rowid && !$fk_facture_source && !$fk_invoice_supplier_source) {
 			$this->error = 'ErrorBadParameters';

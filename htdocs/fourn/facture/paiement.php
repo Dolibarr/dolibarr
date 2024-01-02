@@ -346,7 +346,7 @@ if (empty($reshook)) {
 				$invoiceid = 0;
 				foreach ($paiement->amounts as $key => $amount) {
 					$facid = $key;
-					if (is_numeric($amount) && $amount <> 0) {
+					if (is_numeric($amount) && $amount != 0) {
 						if ($invoiceid != 0) {
 							$invoiceid = -1; // There is more than one invoice payed by this payment
 						} else {

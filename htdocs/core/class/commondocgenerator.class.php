@@ -1712,7 +1712,7 @@ abstract class CommonDocGenerator
 				$def = array(
 					'rank' => intval($extrafields->attributes[$object->table_element]['pos'][$key]),
 					'width' => 25, // in mm
-					'status' => boolval($enabled),
+					'status' => (bool) $enabled,
 					'title' => array(
 						'label' => $outputlangs->transnoentities($label)
 					),

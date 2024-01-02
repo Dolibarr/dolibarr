@@ -1028,7 +1028,7 @@ class Contact extends CommonObject
 				$this->ref_ext	= $obj->ref_ext;
 
 				$this->civility_code    = $obj->civility_code;
-				$this->civility	        = $obj->civility_code ? ($langs->trans("Civility".$obj->civility_code) != ("Civility".$obj->civility_code) ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code) : '';
+				$this->civility	        = $obj->civility_code ? ($langs->trans("Civility".$obj->civility_code) != "Civility".$obj->civility_code ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code) : '';
 
 				$this->lastname		= $obj->lastname;
 				$this->firstname	= $obj->firstname;

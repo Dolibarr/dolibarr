@@ -102,7 +102,7 @@ $search_all = GETPOST('search_all', 'alphanohtml');
 $search = array();
 foreach ($object->fields as $key => $val) {
 	if ($key == "lang") {
-		$search[$key] = GETPOST('search_'.$key, 'alpha')!='0' ? GETPOST('search_'.$key, 'alpha') : '';
+		$search[$key] = GETPOST('search_'.$key, 'alpha') != '0' ? GETPOST('search_'.$key, 'alpha') : '';
 	} else {
 		$search[$key] = GETPOST('search_'.$key, 'alpha');
 	}

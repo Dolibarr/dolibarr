@@ -362,7 +362,7 @@ class Paiement extends CommonObject
 			// Insert links amount / invoices
 			foreach ($this->amounts as $key => $amount) {
 				$facid = $key;
-				if (is_numeric($amount) && $amount <> 0) {
+				if (is_numeric($amount) && $amount != 0) {
 					$amount = price2num($amount);
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement_facture (fk_facture, fk_paiement, amount, multicurrency_amount, multicurrency_code, multicurrency_tx)";
 					$sql .= " VALUES (".((int) $facid).", ".((int) $this->id).", ".((float) $amount).", ".((float) $this->multicurrency_amounts[$key]).", ".($currencyofpayment ? "'".$this->db->escape($currencyofpayment)."'" : 'NULL').", ".(!empty($this->multicurrency_tx) ? (float) $currencytxofpayment : 1).")";
