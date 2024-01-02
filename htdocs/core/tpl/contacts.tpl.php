@@ -200,6 +200,7 @@ foreach (array('internal', 'external') as $source) {
 		$entry->type_id = $contact['fk_c_type_contact'];
 		$entry->type = $contact['libelle'];
 		$entry->nature = "";
+		$entry->nature_html = "";
 		$entry->thirdparty_html = "";
 		$entry->thirdparty_name = "";
 		$entry->contact_html = "";
@@ -208,9 +209,11 @@ foreach (array('internal', 'external') as $source) {
 		$entry->status_html = "";
 
 		if ($contact['source'] == 'internal') {
-			$entry->nature = $langs->trans("User");
+			$entry->nature = 'user';
+			$entry->nature_html = $langs->trans("User");
 		} elseif ($contact['source'] == 'external') {
-			$entry->nature = $langs->trans("ThirdPartyContact");
+			$entry->nature = 'thirdparty';
+			$entry->nature_html = $langs->trans("ThirdPartyContact");
 		}
 
 		if ($contact['socid'] > 0) {
@@ -302,7 +305,7 @@ foreach ($list as $entry) {
 
 	print '<td class="tdoverflowmax200" data-thirdparty_id="' . ((int) $entry->thirdparty_id) . '" data-thirdparty_name="' . dol_escape_htmltag($entry->thirdparty_name) . '">'.$entry->thirdparty_html.'</td>';
 	print '<td class="tdoverflowmax200" data-contact_id="' . ((int) $entry->contact_id) . '">'.$entry->contact_html.'</td>';
-	print '<td class="nowrap" data-nature="' . dol_escape_htmltag($entry->nature) . '"><span class="opacitymedium">'.dol_escape_htmltag($entry->nature).'</span></td>';
+	print '<td class="nowrap" data-nature="' . dol_escape_htmltag($entry->nature) . '"><span class="opacitymedium">'.dol_escape_htmltag($entry->nature_html).'</span></td>';
 	print '<td class="tdoverflowmax200" data-type_id="' . ((int) $entry->type_id) . '" data-type="' . dol_escape_htmltag($entry->type) . '">'.dol_escape_htmltag($entry->type).'</td>';
 	print '<td class="tdoverflowmax200 center" data-status_id="' . ((int) $entry->status) . '">'.$entry->status_html.'</td>';
 
