@@ -49,6 +49,7 @@ $valmainmaxdecimalsunit = GETPOST($mainmaxdecimalsunit, 'int');
 $valmainmaxdecimalstot = GETPOST($mainmaxdecimalstot, 'int');
 $valmainmaxdecimalsshown = GETPOST($mainmaxdecimalsshown, 'alpha');	// Can be 'x.y' but also 'x...'
 $valmainroundingruletot = price2num(GETPOST($mainroundingruletot, 'alphanohtml'), '', 2);
+$valmainroundoftotalnottotalofround = GETPOST('MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND', 'int');
 
 if (!$user->admin) {
 	accessforbidden();
@@ -107,6 +108,8 @@ if ($action == 'update' && !$cancel) {
 		dolibarr_set_const($db, $mainmaxdecimalsshown, $valmainmaxdecimalsshown, 'chaine', 0, '', $conf->entity);
 
 		dolibarr_set_const($db, $mainroundingruletot, $valmainroundingruletot, 'chaine', 0, '', $conf->entity);
+		
+		dolibarr_set_const($db, 'MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND', $valmainroundoftotalnottotalofround, 'chaine', 0, '', $conf->entity);
 
 		header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup".(!empty($currencycode) ? '&currencycode='.$currencycode : ''));
 		exit;
@@ -128,6 +131,7 @@ llxHeader('', $title, $help_url);
 print load_fiche_titre($title, '', 'title_setup');
 
 $aCurrencies = array($conf->currency); // Default currency always first position
+$aVatRoundingMeth = ['' => $langs->trans("roundMethDef"), 0 => $langs->trans("totalOfRound"),  1 => $langs->trans("roundOfTotal")];
 
 if (isModEnabled('multicompany') && getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY')) {
 	require_once DOL_DOCUMENT_ROOT . '/core/lib/multicurrency.lib.php';
@@ -179,7 +183,12 @@ if ($action == 'edit') {
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("MAIN_ROUNDING_RULE_TOT"), $langs->trans("ParameterActiveForNextInputOnly"));
 	print '</td><td><input class="flat right" name="'.$mainroundingruletot.'" size="3" value="'.(GETPOSTISSET($mainroundingruletot) ? GETPOST($mainroundingruletot) : getDolGlobalString('MAIN_ROUNDING_RULE_TOT')).'"></td></tr>';
-
+	
+	print '<tr class="oddeven"><td>'.$langs->trans("VatRoundingMeth").'</td>';
+	print '<td>';
+	print $form::selectarray('MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND', $aVatRoundingMeth, GETPOSTISSET('MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND') ? GETPOST('MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND') : getDolGlobalString('MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND'));
+	print '</td></tr>';
+	
 	print '</table>';
 
 	print '<div class="center">';
@@ -210,6 +219,11 @@ if ($action == 'edit') {
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("MAIN_ROUNDING_RULE_TOT"), $langs->trans("ParameterActiveForNextInputOnly"));
 	print '</td><td align="right">'.(isset($conf->global->$mainroundingruletot) ? $conf->global->$mainroundingruletot : (getDolGlobalString('MAIN_ROUNDING_RULE_TOT') ? $conf->global->MAIN_ROUNDING_RULE_TOT : '')).'</td></tr>';
+	
+	print '<tr class="oddeven"><td>'.$langs->trans("VatRoundingMeth").'</td>';
+	print '<td>';
+	print $langs->trans($aVatRoundingMeth[getDolGlobalString('MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND')]);
+	print '</td></tr>';
 
 	print '</table>';
 	print '</div>';
