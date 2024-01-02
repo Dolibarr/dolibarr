@@ -259,6 +259,13 @@ if ($action == 'convert') {
 			dol_print_error($db);
 		}
 
+		// add hook for external modules
+		$reshook = $hookmanager->executeHooks('AFTER_VAT_UPDATE');
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			$error++;
+		}
+
 		if (!$error) {
 			$db->commit();
 		} else {
