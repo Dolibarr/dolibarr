@@ -24,6 +24,7 @@
  * 		\ingroup    bank
  * 		\brief      Page to setup the bank module
  */
+
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
@@ -87,7 +88,8 @@ if ($action == 'setbankcolorizemovement') {
 if ($actionsave) {
 	$db->begin();
 
-	$i = 1; $errorsaved = 0;
+	$i = 1;
+	$errorsaved = 0;
 	$error = 0;
 
 	// Save colors
@@ -209,13 +211,13 @@ print dol_get_fiche_head($head, 'general', $langs->trans("BankSetupModule"), -1,
 //Show bank account order
 print load_fiche_titre($langs->trans("BankOrderShow"), '', '');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td width="140">'.$langs->trans("Name").'</td>';
-print '<td>'.$langs->trans("Description").'</td>';
+print '<td>'.$langs->trans("Name").'</td>';
+print '<td class="minwidth100">'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
 print '<td class="center">'.$langs->trans("Status").'</td>';
-print '<td class="center" width="60">&nbsp;</td>';
 print "</tr>\n";
 
 $bankorder[0][0] = $langs->trans("BankOrderGlobal");
@@ -243,21 +245,21 @@ while ($i < $nbofbank) {
 	}
 	print "</td>\n";
 
-	if ($conf->global->BANK_SHOW_ORDER_OPTION == $i) {
+	if (getDolGlobalInt('BANK_SHOW_ORDER_OPTION') == $i) {
 		print '<td class="center">';
 		print img_picto($langs->trans("Activated"), 'on');
 		print '</td>';
 	} else {
-		print '<td class="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setbankorder&token='.newToken().'&value='.$i.'">';
+		print '<td class="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setbankorder&token='.newToken().'&value='.((int) $i).'">';
 		print img_picto($langs->trans("Disabled"), 'off');
 		print '</a></td>';
 	}
-	print '<td>&nbsp;</td>';
 	print '</tr>'."\n";
 	$i++;
 }
 
 print '</table>'."\n";
+print "</div>";
 
 print '<br><br>';
 
@@ -287,15 +289,16 @@ if ($resql) {
 	dol_print_error($db);
 }
 
-print "<table class=\"noborder\" width=\"100%\">\n";
-print "<tr class=\"liste_titre\">\n";
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">'."\n";
+print '<tr class="liste_titre">'."\n";
 print '<td>'.$langs->trans("Name").'</td>';
-print '<td>'.$langs->trans("Description").'</td>';
+print '<td class="minwidth100">'.$langs->trans("Description").'</td>';
 print '<td class="center" width="60">'.$langs->trans("Status")."</td>\n";
 print '<td class="center" width="60">'.$langs->trans("Default")."</td>\n";
 print '<td class="center" width="38">'.$langs->trans("ShortInfo").'</td>';
 print '<td class="center" width="38">'.$langs->trans("Preview").'</td>';
-print "</tr>\n";
+print '</tr>'."\n";
 
 clearstatcache();
 
@@ -322,10 +325,10 @@ foreach ($dirmodels as $reldir) {
 							$module = new $classname($db);
 
 							$modulequalified = 1;
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								$modulequalified = 0;
 							}
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 								$modulequalified = 0;
 							}
 
@@ -400,22 +403,24 @@ foreach ($dirmodels as $reldir) {
 	}
 }
 print '</table>';
-//}
+print '</div>';
 
 print '<br><br>';
 
 print load_fiche_titre($langs->trans("BankColorizeMovement"), '', '');
-print '<table class="noborder centpercent">';
-print "<tr class=\"liste_titre\">\n";
+
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">'."\n";
+print '<tr class="liste_titre">'."\n";
 print '<td colspan="4">'.$langs->trans("Name").'</td>';
-print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
+print '<td align="center" width="75">'.$langs->trans("Value").'</td>'."\n";
 print "</tr>\n";
 
-print '<tr class="oddeven"><td colspan="4" width="100">';
+print '<tr class="oddeven"><td colspan="4">';
 print $langs->trans('BankColorizeMovementDesc');
 print "</td>";
 // Active
-if ($conf->global->BANK_COLORIZE_MOVEMENT) {
+if (getDolGlobalInt('BANK_COLORIZE_MOVEMENT')) {
 	print '<td class="center">'."\n";
 	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=unsetbankcolorizemovement&token='.newToken().'">';
 	print img_picto($langs->trans("Enabled"), 'switch_on');
@@ -429,7 +434,7 @@ if ($conf->global->BANK_COLORIZE_MOVEMENT) {
 
 print "</tr>\n";
 
-if (!empty($conf->global->BANK_COLORIZE_MOVEMENT)) {
+if (getDolGlobalInt('BANK_COLORIZE_MOVEMENT')) {
 	$i = 1;
 	while ($i <= 2) {
 		$key = $i;
@@ -441,13 +446,14 @@ if (!empty($conf->global->BANK_COLORIZE_MOVEMENT)) {
 		print '<td colspan="4" width="180" class="nowrap">'.$langs->trans("BankColorizeMovementName".$key)."</td>";
 		// Color
 		print '<td class="nowrap right">';
-		print $formother->selectColor((GETPOST("BANK_COLORIZE_MOVEMENT_COLOR".$key) ?GETPOST("BANK_COLORIZE_MOVEMENT_COLOR".$key) : $conf->global->$color), "BANK_COLORIZE_MOVEMENT_COLOR".$key, 'bankmovementcolorconfig', 1, '', 'right hideifnotset');
+		print $formother->selectColor((GETPOST("BANK_COLORIZE_MOVEMENT_COLOR".$key) ? GETPOST("BANK_COLORIZE_MOVEMENT_COLOR".$key) : $conf->global->$color), "BANK_COLORIZE_MOVEMENT_COLOR".$key, 'bankmovementcolorconfig', 1, '', 'right hideifnotset');
 		print '</td>';
 		print "</tr>";
 		$i++;
 	}
 }
 print '</table>';
+print '</div>';
 
 print '<br><br>';
 
@@ -458,20 +464,21 @@ print '<br><br>';
 
 print load_fiche_titre($langs->trans("Other"), '', '');
 
-print "<table class=\"noborder\" width=\"100%\">\n";
-print "<tr class=\"liste_titre\">\n";
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">'."\n";
+print '<tr class="liste_titre">'."\n";
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
-print '<td class="center" width="60">'.$langs->trans("Status")."</td>\n";
+print '<td class="center width75">'.$langs->trans("Status")."</td>\n";
 print "</tr>\n";
 
-print '<tr class="oddeven"><td width="100">';
+print '<tr class="oddeven"><td>';
 print $langs->trans('AccountStatement');
 print "</td><td>\n";
 print $langs->trans('AutoReportLastAccountStatement');
 print '</td>';
 // Active
-if ($conf->global->BANK_REPORT_LAST_NUM_RELEVE) {
+if (getDolGlobalString('BANK_REPORT_LAST_NUM_RELEVE')) {
 	print '<td class="center">'."\n";
 	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=unsetreportlastnumreleve&token='.newToken().'">';
 	print img_picto($langs->trans("Enabled"), 'switch_on');
@@ -482,9 +489,21 @@ if ($conf->global->BANK_REPORT_LAST_NUM_RELEVE) {
 	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setreportlastnumreleve&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 	print "</td>";
 }
-
 print "</tr>\n";
+
+// Allow SEPA Mandate OnLine Sign
+if (!getDolGlobalInt('SOCIETE_DISABLE_BANKACCOUNT')) {
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans("AllowOnLineSign").'</td>';
+	print '<td>'.$langs->trans("BankAccountModelModule").'</td>';
+	print '<td class="center">';
+	print ajax_constantonoff('SOCIETE_RIB_ALLOW_ONLINESIGN', array(), null, 0, 0, 0, 2, 0, 1);
+	print '</td></tr>';
+}
+
 print '</table>';
+print '</div>';
+
 print dol_get_fiche_end();
 
 print $form->buttonsSaveCancel("Save", '');

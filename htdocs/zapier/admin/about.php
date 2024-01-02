@@ -42,8 +42,12 @@ if (!$user->admin) {
 	accessforbidden();
 }
 
-if (empty($conf->zapier->enabled)) accessforbidden();
-if (empty($user->admin)) accessforbidden();
+if (!isModEnabled('zapier')) {
+	accessforbidden();
+}
+if (empty($user->admin)) {
+	accessforbidden();
+}
 
 
 // Parameters

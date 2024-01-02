@@ -50,7 +50,7 @@ $errors = array();
  * Action
  */
 
-if ($action == 'update' && !GETPOST("cancel") && $user->rights->societe->contact->creer) {
+if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('societe', 'contact', 'creer')) {
 	$ret = $object->fetch($id);
 
 	// Note: Correct date should be completed with location to have exact GM time of birth.
@@ -65,7 +65,7 @@ if ($action == 'update' && !GETPOST("cancel") && $user->rights->societe->contact
 
 	$result = $object->update_perso($id, $user);
 	if ($result > 0) {
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Logo/Photo save
 		$dir = $conf->societe->dir_output.'/contact/'.get_exdir($object->id, 0, 0, 1, $object, 'contact').'/photos';
@@ -119,8 +119,8 @@ if ($action == 'update' && !GETPOST("cancel") && $user->rights->societe->contact
 
 $now = dol_now();
 
-$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/contactnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->lastname) {
+$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/contactnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->lastname) {
 	$title = $object->lastname;
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
@@ -157,7 +157,7 @@ if ($action == 'edit') {
 	print '<tr><td>'.$langs->trans("Firstname").'</td><td>'.$object->firstname.'</td>';
 
 	// Company
-	if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+	if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
 		if ($object->socid > 0) {
 			$objsoc = new Societe($db);
 			$objsoc->fetch($object->socid);
@@ -239,7 +239,7 @@ if ($action == 'edit') {
 	$morehtmlref .= '</a>';
 
 	$morehtmlref .= '<div class="refidno">';
-	if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+	if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
 		$objsoc = new Societe($db);
 		$objsoc->fetch($object->socid);
 		// Thirdparty
@@ -332,7 +332,7 @@ if ($action != 'edit') {
 	if ($user->socid == 0) {
 		print '<div class="tabsAction">';
 
-		if ($user->rights->societe->contact->creer) {
+		if ($user->hasRight('societe', 'contact', 'creer')) {
 			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans('Modify').'</a>';
 		}
 

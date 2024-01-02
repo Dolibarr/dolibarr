@@ -22,3 +22,4 @@ FormatDateHourText=%d %B %Y, %H:%M %p
 Unknown=Inconnue
 MenuMembers=Membres
 SearchIntoMembers=Membres
+UserExpired=Expirée

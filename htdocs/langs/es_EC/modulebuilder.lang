@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - modulebuilder
 ModuleBuilderDesc2=Ruta donde se generan / editan los módulos (primer directorio para módulos externos definidos en %s): <strong> %s </strong>
-ModuleBuilderDesc4=Un módulo se detecta como 'editable' cuando el archivo <strong>%s</strong>existe en la raíz del directorio del módulo
 ObjectKey=Clave de objeto
 FilesForObjectInitialized=Archivos para el nuevo objeto '%s' inicializado
 FilesForObjectUpdated=Archivos del objeto '%s' actualizados (archivos .sql y archivo .class.php)
@@ -48,8 +47,6 @@ NoTrigger=Sin disparador
 ListOfDictionariesEntries=Lista de entradas de diccionarios
 ListOfPermissionsDefined=Lista de permisos definidos
 SeeExamples=Ver ejemplos aquí
-EnabledDesc=Condición para tener este campo activo (Ejemplos:1 o $conf->global->MYMODULE_MYOPTION)
-VisibleDesc=¿Es visible el campo? (Ejemplos: 0=Nunca visible, 1=Visible en la lista y crear / actualizar / ver formularios, 2=Visible solo en la lista, 3=Visible solo en el formulario crear / actualizar / ver (no en la lista), 4=Visible en la lista y actualizar / ver solo el formulario (no crear), 5=Visible solo en el formulario de vista final de la lista (no crear, no actualizar) <br><br>El uso de un valor negativo significa que el campo no se muestra de forma predeterminada en la lista, pero puede seleccionarse para verlo). <br><br>Puede ser una expresión, por ejemplo: <br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
 IsAMeasureDesc=¿Se puede acumular el valor de campo para obtener un total en la lista? (Ejemplos: 1 o 0)
 SearchAllDesc=¿Se utiliza el campo para realizar una búsqueda desde la herramienta de búsqueda rápida? (Ejemplos: 1 o 0)
 SpecDefDesc=Ingrese aquí toda la documentación que desea proporcionar con su módulo que no está definido por otras pestañas. Puede usar .md o mejor, la rica sintaxis .asciidoc.
@@ -76,6 +73,6 @@ UseSpecificFamily =Use una familia específica
 UseSpecificAuthor =Use un autor específico
 UseSpecificVersion =Use una versión inicial específica
 IncludeDocGenerationHelp=Si marca esto, se generará algún código para agregar un cuadro "Generar documento" en el registro.
-ShowOnCombobox=Mostrar valor en el cuadro combinado
 KeyForTooltip=Clave para información sobre herramientas
 ForeignKey=Clave externa
+CRUDRead=Leer

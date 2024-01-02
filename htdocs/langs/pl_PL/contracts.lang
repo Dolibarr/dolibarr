@@ -2,7 +2,7 @@
 ContractsArea=Obszar kontraktów
 ListOfContracts=Lista kontraktów
 AllContracts=Wszystkie umowy
-ContractCard=Zamówienie karty
+ContractCard=Kontrakt
 ContractStatusNotRunning=Nie działa
 ContractStatusDraft=Szkic
 ContractStatusValidated=Zatwierdzone
@@ -78,7 +78,7 @@ CloseAllContracts=Zamknij wszystkie pozycje kontraktu
 DeleteContractLine=Usuń pozycję z kontraktu
 ConfirmDeleteContractLine=Czy na pewno chcesz usunąć tę linię umowy?
 MoveToAnotherContract=Przenieś usługi do innego kontraktu.
-ConfirmMoveToAnotherContract=Wybrałem nowy kontrakt docelowy  i potwierdzam chęć przesunięcia tego serwicu do tego kontaktu.
+ConfirmMoveToAnotherContract=I chose a new target contract and confirm I want to move this service into this contract.
 ConfirmMoveToAnotherContractQuestion=Wybierz, w której istniejącej umowie (tej samej strony trzeciej) chcesz przenieść tę usługę?
 PaymentRenewContractId=Renew contract %s (service %s)
 ExpiredSince=Data ważności

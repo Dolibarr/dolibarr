@@ -1,5 +1,5 @@
 ﻿/*
- Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.
+ Copyright (c) 2003-2023, CKSource Holding sp. z o.o. All rights reserved.
  For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 */
 CKEDITOR.dialog.add("form",function(a){var d={action:1,id:1,method:1,enctype:1,target:1};return{title:a.lang.forms.form.title,minWidth:350,minHeight:200,getModel:function(b){return b.elementPath().contains("form",1)||null},onShow:function(){var b=this.getModel(this.getParentEditor());b&&this.setupContent(b)},onOk:function(){var b=this.getParentEditor(),a=this.getModel(b);a||(a=b.document.createElement("form"),a.appendBogus(),b.insertElement(a));this.commitContent(a)},onLoad:function(){function a(b){this.setValue(b.getAttribute(this.id)||

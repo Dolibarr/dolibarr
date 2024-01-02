@@ -89,10 +89,14 @@ $upload_dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->enti
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->hrm->enabled)) accessforbidden();
-if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) accessforbidden();
+if (empty($conf->hrm->enabled)) {
+	accessforbidden();
+}
+if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) {
+	accessforbidden();
+}
 
-$MaxNumberSkill = isset($conf->global->HRM_MAXRANK) ? $conf->global->HRM_MAXRANK : Skill::DEFAULT_MAX_RANK_PER_SKILL;
+$MaxNumberSkill = getDolGlobalInt('HRM_MAXRANK', Skill::DEFAULT_MAX_RANK_PER_SKILL);
 
 
 /*
@@ -120,7 +124,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	$triggermodname = 'hrm_SKILL_MODIFY'; // Name of trigger action code to execute when we modify record
+	$triggermodname = 'HRM_SKILL_MODIFY'; // Name of trigger action code to execute when we modify record
 
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
@@ -167,10 +171,20 @@ if (empty($reshook)) {
 	}
 
 	// Actions to send emails
-	$triggersendname = 'hrm_SKILL_SENTBYMAIL';
+	$triggersendname = 'HRM_SKILL_SENTBYMAIL';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_SKILL_TO';
 	$trackid = 'skill' . $object->id;
 	include DOL_DOCUMENT_ROOT . '/core/actions_sendmails.inc.php';
+
+	if ($action == 'confirm_clone' && $confirm != 'yes') {
+		$action = '';
+	}
+
+	if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
+		$id = $result->id;
+		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+		exit;
+	}
 }
 
 
@@ -182,7 +196,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formproject = new FormProjets($db);
 
-$title = $langs->trans("skill");
+$title = $langs->trans("Skill");
 $help_url = '';
 llxHeader('', $title, $help_url);
 
@@ -194,7 +208,7 @@ if ($action == 'create') {
 	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
 	print '<input type="hidden" name="token" value="' . newToken() . '">';
 	print '<input type="hidden" name="action" value="add">';
-	$backtopage .= (strpos($backtopage, '?') > 0 ? '&' : '?' ) ."objecttype=job";
+	$backtopage .= (strpos($backtopage, '?') > 0 ? '&' : '?') ."objecttype=job";
 	if ($backtopage) {
 		print '<input type="hidden" name="backtopage" value="' . $backtopage . '">';
 	}
@@ -256,15 +270,14 @@ if (($id || $ref) && $action == 'edit') {
 	// Common attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_edit.tpl.php';
 
-	print '</table>';
-
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
 
+	print '</table>';
+
+	print '<hr>';
+
 	// SKILLDET
-
-	print dol_get_fiche_head(array(), '');
-
 	$SkilldetRecords = $object->fetchLines();
 
 	if (is_array($SkilldetRecords) && count($SkilldetRecords) == 0) {
@@ -301,7 +314,7 @@ if (($id || $ref) && $action == 'edit') {
 				//              if (!empty($val['help'])) {
 				//                  print $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
 				//              } else {
-					print $langs->trans($val['label']).'&nbsp;'.$langs->trans('rank').'&nbsp;'.$sk->rankorder;
+				print $langs->trans($val['label']).'&nbsp;'.$langs->trans('rank').'&nbsp;'.$sk->rankorder;
 				//              }
 				print '</td>';
 				print '<td class="valuefieldcreate">';
@@ -320,7 +333,7 @@ if (($id || $ref) && $action == 'edit') {
 					$check = 'restricthtml';
 				}
 
-					$skilldetArray = GETPOST("descriptionline", "array");
+				$skilldetArray = GETPOST("descriptionline", "array");
 				if (empty($skilldetArray)) {
 					$value = GETPOSTISSET($key) ? GETPOST($key, $check) : $sk->$key;
 				} else {
@@ -374,11 +387,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($action == 'deleteline') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&lineid=' . $lineid, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
 	}
-	// Clone confirmation
-	if ($action == 'clone') {
-		// Create an array for form
-		$formquestion = array();
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+	// Confirmation clone
+	if ($action === 'clone') {
+		$formquestion = array(
+			array('type' => 'text', 'name' => 'clone_label', 'label' => $langs->trans("Label"), 'value' => $langs->trans("CopyOf").' '.$object->label),
+		);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->label), 'confirm_clone', $formquestion, 'yes', 1, 280);
 	}
 
 	// Confirmation of action xxxx
@@ -462,15 +476,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=edit&token=' . newToken(), '', $permissiontoadd);
 
+			// Clone
+			if ($permissiontoadd) {
+				print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER["PHP_SELF"].'?action=clone&token='.newToken().'&id='.$object->id, '');
+			}
 			// Delete (need delete permission, or if draft, just need create/modify permission)
 			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=delete&token=' . newToken(), '', $permissiontodelete);
 		}
 		print '</div>' . "\n";
 	}
 }
-
-//*----------------------------------------------------------------------------
-//*----------------------------------------------------------------------------
 
 
 //*---------------------------------------------------------------------------
@@ -578,7 +593,7 @@ if ($action != "create" && $action != "edit") {
 	$title = $langs->transnoentitiesnoconv("Skilldets");
 	$morejs = array();
 	$morecss = array();
-	$nbtotalofrecords = 0;
+	$nbtotalofrecords = '';
 
 	// Build and execute select
 	// --------------------------------------------------------------------
@@ -590,27 +605,11 @@ if ($action != "create" && $action != "edit") {
 	} else {
 		$sql .= " WHERE 1 = 1 ";
 	}
+	$sql .= " AND fk_skill = ".((int) $id);
 
-	if (!empty($id)) {
-		$sql .= " AND fk_skill = " . ((int) $id) . " ";
-	}
-
-	// if total of record found is smaller than limit, no need to do paging and to restart another select with limits set.
-	if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit))) {
-		$num = $nbtotalofrecords;
-	} else {
-		if ($limit) {
-			$sql .= $db->plimit($limit + 1, $offset);
-		}
-
-		$resql = $db->query($sql);
-		if (!$resql) {
-			dol_print_error($db);
-			exit;
-		}
-
-		$num = $db->num_rows($resql);
-	}
+	$resql = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($resql);
+	$num = $db->num_rows($resql);
 
 	print '<form method="POST" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">' . "\n";
 	if ($optioncss != '') {
@@ -627,7 +626,7 @@ if ($action != "create" && $action != "edit") {
 		print '<input type="hidden" name="id" value="' . $id . '">';
 	}
 
-	$param_fk = "&fk_skill=" . $id . "&fk_user_creat=" . (!empty($user->rowid) ? $user->rowid :0);
+	$param_fk = "&fk_skill=" . $id . "&fk_user_creat=" . (!empty($user->rowid) ? $user->rowid : 0);
 	$backtopage = dol_buildpath('/hrm/skill_card.php', 1) . '?id=' . $id;
 	$param = "";
 	$massactionbutton = "";
@@ -694,7 +693,7 @@ if ($action != "create" && $action != "edit") {
 			print getTitleFieldOfList($arrayfields['t.' . $key]['label'], 0, $_SERVER['PHP_SELF'], 't.' . $key, '', $param, (!empty($cssforfield) ? 'class="' . $cssforfield . '"' : ''), $sortfield, $sortorder, (!empty($cssforfield) ? $cssforfield . ' ' : '')) . "\n";
 		}
 	}
-	print '<td></td>';
+	//print '<td></td>';
 	print '<td></td>';
 	print '</tr>' . "\n";
 
@@ -740,7 +739,7 @@ if ($action != "create" && $action != "edit") {
 			//if (in_array($key, array('fk_soc', 'fk_user', 'fk_warehouse'))) $cssforfield = 'tdoverflowmax100';
 
 			if (!empty($arrayfields['t.' . $key]['checked'])) {
-				print '<td' . ($cssforfield ? ' class="' . $cssforfield . '"' : '') . '>';
+				print '<td' . (empty($cssforfield) ? '' : ' class="' . $cssforfield . '"') . '>';
 				if ($key == 'status') {
 					print $objectline->getLibStatut(5);
 				} elseif ($key == 'rowid') {
@@ -814,10 +813,12 @@ if ($action != "create" && $action != "edit") {
 				$colspan++;
 			}
 		}
-		print '<tr><td colspan="' . $colspan . '" class="opacitymedium">' . $langs->trans("NoRecordFound") . '</td></tr>';
+		print '<tr><td colspan="' . $colspan . '"><span class="opacitymedium">' . $langs->trans("NoRecordFound") . '</span></td></tr>';
 	}
 
-	if (!empty($resql)) $db->free($resql);
+	if (!empty($resql)) {
+		$db->free($resql);
+	}
 
 	$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $objectline); // Note that $action and $objectline may have been modified by hook
@@ -828,7 +829,7 @@ if ($action != "create" && $action != "edit") {
 
 	print '</form>' . "\n";
 
-	//  if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
+	//  if (in_array('builddoc', array_keys($arrayofmassactions)) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
 	//      $hidegeneratedfilelistifempty = 1;
 	//      if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) {
 	//          $hidegeneratedfilelistifempty = 0;

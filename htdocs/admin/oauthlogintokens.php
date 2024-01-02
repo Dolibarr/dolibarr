@@ -26,9 +26,12 @@
 // Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // This define $list and $supportedoauth2array
+require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+
 use OAuth\Common\Storage\DoliStorage;
+
+$supportedoauth2array = getSupportedOauth2Array();
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'printing', 'oauth'));
@@ -360,7 +363,7 @@ if ($mode == 'setup' && $user->admin) {
 		if (is_object($tokenobj)) {
 			// Token refresh
 			print '<tr class="oddeven">';
-			print '<td'.($key['required'] ? ' class="required"' : '').'>';
+			print '<td'.(empty($key['required']) ? '' : ' class="required"').'>';
 			//var_dump($key);
 			print $langs->trans("TOKEN_REFRESH");
 			print '</td>';

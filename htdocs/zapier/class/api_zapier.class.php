@@ -19,7 +19,7 @@
 /**
  * \file    htdocs/zapier/class/api_zapier.class.php
  * \ingroup zapier
- * \brief   File for API management of hook.
+ * \brief   File for API management of Zapier hooks.
  */
 
 use Luracast\Restler\RestException;
@@ -66,8 +66,8 @@ class Zapier extends DolibarrApi
 	 *
 	 * Return an array with hook informations
 	 *
-	 * @param   int             $id 	ID of hook
-	 * @return  Object              	Object with cleaned properties
+	 * @param   int             $id		ID of hook
+	 * @return  Object					Object with cleaned properties
 	 *
 	 * @url GET /hooks/{id}
 	 * @throws  RestException
@@ -135,13 +135,14 @@ class Zapier extends DolibarrApi
 	 * @param int              $limit               Limit for list
 	 * @param int              $page                Page number
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string		   $properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of order objects
 	 *
 	 * @throws RestException
 	 *
 	 * @url GET /hooks/
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
 		global $db, $conf;
 
@@ -222,7 +223,7 @@ class Zapier extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$hook_static = new Hook($this->db);
 				if ($hook_static->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($hook_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($hook_static), $properties);
 				}
 				$i++;
 			}
@@ -249,18 +250,26 @@ class Zapier extends DolibarrApi
 			throw new RestException(401);
 		}
 
+		dol_syslog("API Zapier create hook receive : ".print_r($request_data, true), LOG_DEBUG);
+
 		// Check mandatory fields
 		$fields = array(
 			'url',
 		);
-		dol_syslog("API Zapier create hook receive : ".print_r($request_data, true), LOG_DEBUG);
 		$result = $this->validate($request_data, $fields);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->hook->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->hook->$field = $value;
 		}
+
 		$this->hook->fk_user = DolibarrApiAccess::$user->id;
-		// on crée le hook dans la base
+		// we create the hook into database
 		if (!$this->hook->create(DolibarrApiAccess::$user)) {
 			throw new RestException(500, "Error creating Hook", array_merge(array($this->hook->error), $this->hook->errors));
 		}
@@ -353,13 +362,6 @@ class Zapier extends DolibarrApi
 	{
 		// phpcs:disable
 		$object = parent::_cleanObjectDatas($object);
-
-		/*unset($object->note);
-        unset($object->address);
-        unset($object->barcode_type);
-        unset($object->barcode_type_code);
-        unset($object->barcode_type_label);
-        unset($object->barcode_type_coder);*/
 
 		return $object;
 	}

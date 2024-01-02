@@ -58,6 +58,7 @@ create table llx_user
   personal_mobile     varchar(20),
   email               varchar(255),
   personal_email      varchar(255),
+  email_oauth2        varchar(255),							  -- an email to validate OAuth2 authentication when email differs from the OAuth2 email 
   signature           text DEFAULT NULL,
 
   socialnetworks      text DEFAULT NULL,                      -- json with socialnetworks
@@ -79,6 +80,7 @@ create table llx_user
   note_public		      text,
   note_private            text          DEFAULT NULL,
   model_pdf               varchar(255)  DEFAULT NULL,
+  last_main_doc			      varchar(255),					              -- relative filepath+filename of last main generated document
   datelastlogin           datetime,
   datepreviouslogin       datetime,
   datelastpassvalidation  datetime,				                    -- last date we change password or we made a disconnect all

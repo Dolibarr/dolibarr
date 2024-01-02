@@ -54,7 +54,7 @@ $result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid
  * Actions
  */
 
-if ($action == 'setpricelevel' && $user->rights->societe->creer) {
+if ($action == 'setpricelevel' && $user->hasRight('societe', 'creer')) {
 	$soc = new Societe($db);
 	$soc->fetch($id);
 	$soc->setPriceLevel(GETPOST("price_level"), $user);
@@ -110,8 +110,8 @@ if ($_socid > 0) {
 		}
 		print '>'.$i;
 		$keyforlabel = 'PRODUIT_MULTIPRICES_LABEL'.$i;
-		if (!empty($conf->global->$keyforlabel)) {
-			print ' - '.$langs->trans($conf->global->$keyforlabel);
+		if (getDolGlobalString($keyforlabel)) {
+			print ' - '.$langs->trans(getDolGlobalString($keyforlabel));
 		}
 		print '</option>';
 	}

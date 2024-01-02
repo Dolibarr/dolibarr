@@ -59,3 +59,5 @@ if (!GETPOST('transkey', 'alphanohtml') && !GETPOST('transphrase', 'alphanohtml'
 		print dol_escape_htmltag($langs->trans(GETPOST('transkey', 'alphanohtml')));
 	}
 }
+
+$db->close();

@@ -149,7 +149,7 @@ ErrorFailedToValidatePasswordReset=Kennwort konnte nicht zurückgesetzt werden. 
 ErrorToConnectToMysqlCheckInstance=Verbindung zur Datenbank fehlgeschlagen. Prüfen Sie, ob der Mysql-Server läuft (in den meisten Fällen können Sie ihn von der Kommandozeile mit 'sudo service mysql start' starten).
 ErrorFailedToAddContact=Fehler beim Hinzufügen des Kontakts
 ErrorDateMustBeBeforeToday=Das Datum muss früher sein als heute
-ErrorDateMustBeInFuture=Das Datum muss älter sein als heute
+ErrorDateMustBeInFuture=Das Datum muss in der Zukunft liegen
 ErrorPaymentModeDefinedToWithoutSetup=Eine Zahlungsart wurde auf Typ %s gesetzt, aber das Rechnungsmodul wurde noch nicht konfiguriert dies anzuzeigen.
 ErrorPHPNeedModule=Fehler, Ihr PHP muss das Modul <b>%s</b> installiert haben um diese Option zu benutzen.
 ErrorOpenIDSetupNotComplete=Sie haben im Dolibarr Konfigurationsfile eingestellt, dass die Anmeldung mit OpenID möglich ist, aber die URL zum OpenID Service ist noch nicht in %s definiert.
@@ -191,6 +191,7 @@ ErrorGlobalVariableUpdater4=SOAP Client fehlgeschlagen mit Fehler '%s'
 ErrorGlobalVariableUpdater5=Keine globale Variable ausgewählt
 ErrorFieldMustBeANumeric=Feld <b>%s</b> muss ein numerischer Wert sein
 ErrorMandatoryParametersNotProvided=Erforderliche(r) Parameter wird nicht angeboten
+ErrorOppStatusRequiredIfUsage=Wenn Sie festlegen, dass Sie dieses Projekt nutzen möchten, um einer Opportunity zu verfolgen, müssen Sie auch den anfänglichen Status der Opportunity ausfüllen.
 ErrorOppStatusRequiredIfAmount=Sie legen einen geschätzten Betrag für diesen Lead fest. Sie müssen also auch ihren Status eingeben.
 ErrorFailedToLoadModuleDescriptorForXXX=Moduldeskriptor für Klasse %s konnte nicht geladen werden
 ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Falsche Definition von Menü Array in  Module Descriptor (falscher Wert für den Key  fk_menu)
@@ -304,12 +305,22 @@ ErrorValueForTooLow=Wert für <b>%s</b> ist zu niedrig
 ErrorValueCantBeNull=Der Wert für <b>%s</b> darf nicht null sein
 ErrorDateOfMovementLowerThanDateOfFileTransmission=Das Datum der Banküberweisung darf nicht vor dem Datum der Dateiübermittlung liegen
 ErrorTooMuchFileInForm=Zu viele Dateien im Formular, die maximale Anzahl beträgt %s Datei(en)
-ErrorSessionInvalidatedAfterPasswordChange=Die Sitzung wurde nach einer Änderung von Passwort, Status oder Gültigkeitsdaten ungültig. Bitte melden Sie sich erneut an.
+ErrorSessionInvalidatedAfterPasswordChange=Die Sitzung wurde aufgrund einer Änderung des Passworts, der E-Mail-Adresse, des Status oder des Gültigkeitsdatums ungültig. Bitte melden Sie sich erneut an.
 ErrorExistingPermission = Berechtigung <b>%s</b> für Objekt <b>%s</b> existiert bereits
 ErrorFieldExist=Der Wert für <b>%s</b> existiert bereits
 ErrorEqualModule=Modul ungültig in <b>%s</b>
 ErrorFieldValue=Der Wert für <b>%s</b> ist falsch
 ErrorCoherenceMenu= <b>%s</b> ist erforderlich, wenn <b>%s</b> 'left' ist
+ErrorUploadFileDragDrop=Beim Hochladen der Datei(en) ist ein Fehler aufgetreten
+ErrorUploadFileDragDropPermissionDenied=Beim Hochladen der Datei(en) ist ein Fehler aufgetreten: Berechtigung verweigert
+ErrorFixThisHere= <a href="%s">Beheben Sie dies hier</a>
+ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Fehler: Die URL Ihrer aktuellen Instanz (%s) stimmt nicht mit der URL überein, die in Ihrem OAuth2-Anmeldesetup (%s) definiert ist. Eine OAuth2-Anmeldung ist in einer solchen Konfiguration nicht zulässig.
+ErrorMenuExistValue=Es existiert bereits ein Menü mit diesem Titel oder dieser URL
+ErrorSVGFilesNotAllowedAsLinksWithout=SVG-Dateien sind ohne die Option %s nicht als externe Links zulässig
+ErrorTypeMenu=Es ist nicht möglich, ein weiteres Menü für dasselbe Modul in der Navigationsleiste hinzuzufügen (noch nicht unterstützt)
+ErrorTableExist=Tabelle <b>%s</b> existiert bereits
+ErrorDictionaryNotFound=Wörterbuch <b>%s</b> nicht gefunden
+ErrorFailedToCreateSymLinkToMedias=Failed to create the symlinks %s to point to %s
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Ihr PHP Parameter upload_max_filesize (%s) ist größer als Parameter post_max_size (%s). Dies ist eine inkonsistente Einstellung.
@@ -349,6 +360,16 @@ WarningThemeForcedTo=Warnung, das Theme wurde durch die versteckte Konstante MAI
 WarningPagesWillBeDeleted=Achtung: dadurch werden auch alle bestehenden Seiten/Container der Website gelöscht. Sie sollten Ihre Website vorher exportieren, damit Sie ein Backup haben, um sie später wieder zu importieren.
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=Die automatische Freigabe ist deaktiviert, wenn die Option zur Bestandsverringerung auf "Rechnungsfreigabe" eingestellt ist.
 WarningModuleNeedRefrech = Modul <b>%s</b> wurde deaktiviert. Vergessen Sie nicht, es zu aktivieren
+WarningPermissionAlreadyExist=Vorhandene Berechtigungen für dieses Objekt
+WarningGoOnAccountancySetupToAddAccounts=Wenn diese Liste leer ist, gehen Sie in das Menü %s - %s - %s um Konten für Ihren Kontenplan zu laden oder zu erstellen.
+WarningCorrectedInvoiceNotFound=Korrigierte Rechnung nicht gefunden
+
+SwissQrOnlyVIR = Eine SwissQR-Rechnung kann nur Rechnungen hinzugefügt werden, die per Überweisung bezahlt werden sollen.
+SwissQrCreditorAddressInvalid = Die Kreditorenadresse ist ungültig (sind PLZ und Stadt festgelegt? (%s)
+SwissQrCreditorInformationInvalid = Die Kreditorendaten sind ungültig für die IBAN (%s): %s
+SwissQrIbanNotImplementedYet = QR-IBAN noch nicht implementiert
+SwissQrPaymentInformationInvalid = Die Zahlungsinformationen waren für den Gesamtbetrag %s ungültig: %s
+SwissQrDebitorAddressInvalid = Debitoreninformationen waren ungültig (%s)
 
 # Validate
 RequireValidValue = Wert nicht gültig
@@ -370,3 +391,4 @@ BadSetupOfField = Fehler beim Setup des Feldes
 BadSetupOfFieldClassNotFoundForValidation = Fehler beim Setup des Feldes: Klasse für Validierung nicht gefunden
 BadSetupOfFieldFileNotFound = Fehler beim Setup des Feldes: einzubindende Datei nicht gefunden
 BadSetupOfFieldFetchNotCallable = Fehler beim Setup des Felds: Kann bei der Klasse nicht aufgerufen werden
+ErrorTooManyAttempts= Zu viele Versuche. Bitte später erneut versuchen

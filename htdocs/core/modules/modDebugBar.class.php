@@ -31,7 +31,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modDebugBar extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -82,7 +81,7 @@ class modDebugBar extends DolibarrModules
 		$this->rights[1][0] = 431; // id de la permission
 		$this->rights[1][1] = 'Use Debug Bar'; // libelle de la permission
 		$this->rights[1][2] = 'u'; // type de la permission (deprecie a ce jour)
-		$this->rights[1][3] = 1; // La permission est-elle une permission par defaut
+		$this->rights[1][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[1][4] = 'read';
 	}
 

@@ -128,6 +128,7 @@ class Mailing extends CommonObject
 
 	/**
 	 * @var int id of user create
+	 * @deprecated
 	 */
 	public $user_creation;
 
@@ -139,6 +140,7 @@ class Mailing extends CommonObject
 
 	/**
 	 * @var int id of user validate
+	 * @deprecated
 	 */
 	public $user_validation;
 
@@ -171,6 +173,11 @@ class Mailing extends CommonObject
 	public $date_validation;
 
 	/**
+	 * @var int date sending
+	 */
+	public $date_envoi;
+
+	/**
 	 * @var array extraparams
 	 */
 	public $extraparams = array();
@@ -181,9 +188,9 @@ class Mailing extends CommonObject
 	public $statut_dest = array();
 
 	/**
-	 * @var array statuts
+	 * @var array labelStatus
 	 */
-	public $statuts = array();
+	public $labelStatus = array();
 
 	/**
 	 * @var array substitutionarray
@@ -213,16 +220,16 @@ class Mailing extends CommonObject
 		$this->db = $db;
 
 		// List of language codes for status
-		$this->statuts[0] = 'MailingStatusDraft';
-		$this->statuts[1] = 'MailingStatusValidated';
-		$this->statuts[2] = 'MailingStatusSentPartialy';
-		$this->statuts[3] = 'MailingStatusSentCompletely';
+		$this->labelStatus[0] = 'MailingStatusDraft';
+		$this->labelStatus[1] = 'MailingStatusValidated';
+		$this->labelStatus[2] = 'MailingStatusSentPartialy';
+		$this->labelStatus[3] = 'MailingStatusSentCompletely';
 
-		$this->statut_dest[-1] = 'MailingStatusError';
 		$this->statut_dest[0] = 'MailingStatusNotSent';
 		$this->statut_dest[1] = 'MailingStatusSent';
 		$this->statut_dest[2] = 'MailingStatusRead';
 		$this->statut_dest[3] = 'MailingStatusReadAndUnsubscribe'; // Read but ask to not be contacted anymore
+		$this->statut_dest[-1] = 'MailingStatusError';
 	}
 
 	/**
@@ -230,15 +237,15 @@ class Mailing extends CommonObject
 	 *
 	 *  @param	User	$user 		Object of user making creation
 	 * 	@param	int		$notrigger	Disable triggers
-	 *  @return int				    <0 if KO, Id of created object if OK
+	 *  @return int				    Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 
 		// Check properties
-		if ($this->body === 'InvalidHTMLString') {
-			$this->error = 'InvalidHTMLString';
+		if (preg_match('/^InvalidHTMLStringCantBeCleaned/', $this->body)) {
+			$this->error = 'InvalidHTMLStringCantBeCleaned';
 			return -1;
 		}
 
@@ -301,13 +308,13 @@ class Mailing extends CommonObject
 	 *
 	 *  @param  User	$user 		Object of user making change
 	 * 	@param	int		$notrigger	Disable triggers
-	 *  @return int				    < 0 if KO, > 0 if OK
+	 *  @return int				    Return integer < 0 if KO, > 0 if OK
 	 */
 	public function update($user, $notrigger = 0)
 	{
 		// Check properties
-		if ($this->body === 'InvalidHTMLString') {
-			$this->error = 'InvalidHTMLString';
+		if (preg_match('/^InvalidHTMLStringCantBeCleaned/', $this->body)) {
+			$this->error = 'InvalidHTMLStringCantBeCleaned';
 			return -1;
 		}
 
@@ -359,7 +366,7 @@ class Mailing extends CommonObject
 	 *
 	 *	@param	int		$rowid      Id of emailing
 	 *	@param	string	$ref		Title to search from title
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($rowid, $ref = '')
 	{
@@ -394,7 +401,7 @@ class Mailing extends CommonObject
 				$this->title = $obj->title;
 
 				$this->sujet = $obj->sujet;
-				if (!empty($conf->global->FCKEDITOR_ENABLE_MAILING) && dol_textishtml(dol_html_entity_decode($obj->body, ENT_COMPAT | ENT_HTML5))) {
+				if (getDolGlobalString('FCKEDITOR_ENABLE_MAILING') && dol_textishtml(dol_html_entity_decode($obj->body, ENT_COMPAT | ENT_HTML5))) {
 					$this->body = dol_html_entity_decode($obj->body, ENT_COMPAT | ENT_HTML5);
 				} else {
 					$this->body = $obj->body;
@@ -408,10 +415,8 @@ class Mailing extends CommonObject
 				$this->email_replyto = $obj->email_replyto;
 				$this->email_errorsto = $obj->email_errorsto;
 
-				$this->user_creat = $obj->fk_user_creat;
-				$this->user_creation = $obj->fk_user_creat;
-				$this->user_valid = $obj->fk_user_valid;
-				$this->user_validation = $obj->fk_user_valid;
+				$this->user_creation_id = $obj->fk_user_creat;
+				$this->user_validation_id = $obj->fk_user_valid;
 
 				$this->date_creat = $this->db->jdate($obj->date_creat);
 				$this->date_creation = $this->db->jdate($obj->date_creat);
@@ -474,8 +479,8 @@ class Mailing extends CommonObject
 			$object->email_replyto      = '';
 			$object->email_errorsto     = '';
 
-			$object->user_creat         = $user->id;
-			$object->user_valid         = '';
+			$object->user_creation_id = $user->id;
+			$object->user_validation_id = '';
 
 			$object->date_creat         = '';
 			$object->date_valid         = '';
@@ -554,7 +559,7 @@ class Mailing extends CommonObject
 	 *  Validate emailing
 	 *
 	 *  @param	User	$user      	Objet user qui valide
-	 * 	@return	int					<0 if KO, >0 if OK
+	 * 	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function valid($user)
 	{
@@ -656,7 +661,7 @@ class Mailing extends CommonObject
 	 *  Change status of each recipient
 	 *
 	 *	@param	User	$user      	Objet user qui valide
-	 *  @return int         		<0 if KO, >0 if OK
+	 *  @return int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function reset_targets_status($user)
 	{
@@ -714,7 +719,7 @@ class Mailing extends CommonObject
 	 *  Refresh denormalized value ->nbemail into emailing record
 	 *  Note: There is also the method update_nb into modules_mailings that is used for this.
 	 *
-	 *  @return int        		<0 if KO, >0 if OK
+	 *  @return int        		Return integer <0 if KO, >0 if OK
 	 */
 	public function refreshNbOfTargets()
 	{
@@ -788,9 +793,7 @@ class Mailing extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $db, $conf, $langs, $hookmanager;
-		global $dolibarr_main_authentication, $dolibarr_main_demo;
-		global $menumanager;
+		global $conf, $langs, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -818,7 +821,7 @@ class Mailing extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -828,11 +831,11 @@ class Mailing extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowEMailing");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -844,7 +847,7 @@ class Mailing extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), (($withpicto != 2) ? 'class="paddingright"' : ''), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
@@ -890,8 +893,8 @@ class Mailing extends CommonObject
 		global $langs;
 		$langs->load("mailing");
 
-		$labelStatus = $langs->transnoentitiesnoconv($this->statuts[$status]);
-		$labelStatusShort = $langs->transnoentitiesnoconv($this->statuts[$status]);
+		$labelStatus = $langs->transnoentitiesnoconv($this->labelStatus[$status]);
+		$labelStatusShort = $langs->transnoentitiesnoconv($this->labelStatus[$status]);
 
 		$statusType = 'status'.$status;
 		if ($status == 2) {

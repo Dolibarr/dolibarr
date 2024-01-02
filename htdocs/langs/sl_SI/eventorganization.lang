@@ -53,6 +53,7 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = V obrazcu za ustvarjanje/dodajanje udel
 #
 # Object
 #
+OrganizedEvent=Organized event
 EventOrganizationConfOrBooth= Konferenca ali kabina
 EventOrganizationConfOrBoothes=Conferences or Boothes
 ManageOrganizeEvent = Vodite organizacijo dogodka
@@ -145,7 +146,7 @@ OrganizationEventLinkToThirdParty=Povezava do tretje osebe (stranka, dobavitelj 
 OrganizationEvenLabelName=Javno ime konference ali stojnice
 
 NewSuggestionOfBooth=Prijava za stojnico
-NewSuggestionOfConference=Prijava na konferenco
+NewSuggestionOfConference=Application to hold a conference
 
 #
 # Vote page
@@ -172,3 +173,5 @@ ErrorSeveralCompaniesWithEmailContactUs=Najdenih je bilo več podjetij s tem e-p
 ErrorSeveralCompaniesWithNameContactUs=Najdenih je bilo več podjetij s tem imenom, zato ne moremo samodejno potrditi vaše registracije. Za ročno preverjanje nas kontaktirajte na %s
 NoPublicActionsAllowedForThisEvent=Za ta dogodek niso odprta nobena javna dejanja
 MaxNbOfAttendees=Največje število udeležencev
+DateStartEvent=Event start date
+DateEndEvent=Event end date

@@ -41,7 +41,7 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook-nøkkel
 ONLINE_PAYMENT_WAREHOUSE=Lager som skal brukes for lagernedskrivning når nettbasert betaling er utført<br> (TODO Når alternativet for å redusere lagerbeholdningen gjøres på en faktura handling, og online betaling genererer fakturaen?)
 StripeLiveEnabled=Stripe live aktivert (ellers test/sandbox modus)
 StripeImportPayment=Importer Stripe-betalinger
-ExampleOfTestCreditCard=Eksempel på kredittkort for SEPA-test: %s => gyldig, %s => feil CVC, %s => utløpt, %s => belastning mislykkes
+ExampleOfTestCreditCard=Eksempel på kredittkort for en testbetaling: %s => gyldig, %s => feil CVC, %s => utløpt, %s => belastning mislykkes
 ExampleOfTestBankAcountForSEPA=Eksempel på bankkonto BAN for test av direkte belastning: %s
 StripeGateways=Stripe gateways
 OAUTH_STRIPE_TEST_ID=Stripe Connect Client ID (ca. _...)
@@ -51,6 +51,7 @@ StripeAccount=Stripe-konto
 StripeChargeList=Liste over Stripe-kostnader
 StripeTransactionList=Liste over stripe-transaksjoner
 StripeCustomerId=Stripe kunde-id
+StripePaymentId=Stripe betalings-ID
 StripePaymentModes=Stripe betalingsmåter
 LocalID=Lokal ID
 StripeID=Stripe ID

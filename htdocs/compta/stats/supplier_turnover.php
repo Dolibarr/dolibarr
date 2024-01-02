@@ -53,7 +53,7 @@ $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear, 
 
 // We define date_start and date_end
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
-	$q = GETPOST("q") ?GETPOST("q") : 0;
+	$q = GETPOST("q") ? GETPOST("q") : 0;
 	if ($q == 0) {
 		// We define date_start and date_end
 		$year_end = $year_start + $nbofyear - (getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') > 1 ? 0 : 1);
@@ -292,7 +292,7 @@ for ($annee = $year_start; $annee <= $year_end; $annee++) {
 		print '<a href="supplier_turnover_by_thirdparty.php?year='.$annee.($modecompta ? '&modecompta='.$modecompta : '').'">';
 	}
 	print $annee;
-	if ($conf->global->SOCIETE_FISCAL_MONTH_START > 1) {
+	if (getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') > 1) {
 		print '-'.($annee + 1);
 	}
 	if ($modecompta != 'BOOKKEEPING') {
@@ -328,7 +328,8 @@ $now_show_delta = 0;
 $minyear = substr($minyearmonth, 0, 4);
 $maxyear = substr($maxyearmonth, 0, 4);
 $nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-$nowyearmonth = strftime("%Y-%m", dol_now());
+//$nowyearmonth = strftime("%Y-%m", dol_now());
+$nowyearmonth = dol_print_date(dol_now(), "%Y-%m");
 $maxyearmonth = max($maxyearmonth, $nowyearmonth);
 $now = dol_now();
 $casenow = dol_print_date($now, "%Y-%m");
@@ -454,7 +455,7 @@ for ($annee = $year_start; $annee <= $year_end; $annee++) {
 		// Montant total HT
 		if ($total_ht[$annee] || ($annee >= $minyear && $annee <= max($nowyear, $maxyear))) {
 			print '<td class="nowrap right">';
-			print ($total_ht[$annee] ?price($total_ht[$annee]) : "0");
+			print($total_ht[$annee] ? price($total_ht[$annee]) : "0");
 			print "</td>";
 		} else {
 			print '<td>&nbsp;</td>';
@@ -463,7 +464,7 @@ for ($annee = $year_start; $annee <= $year_end; $annee++) {
 
 	// Montant total
 	if ($total[$annee] || ($annee >= $minyear && $annee <= max($nowyear, $maxyear))) {
-		print '<td class="nowrap right">'.($total[$annee] ?price($total[$annee]) : "0")."</td>";
+		print '<td class="nowrap right">'.($total[$annee] ? price($total[$annee]) : "0")."</td>";
 	} else {
 		print '<td>&nbsp;</td>';
 	}
@@ -473,7 +474,7 @@ for ($annee = $year_start; $annee <= $year_end; $annee++) {
 		if ($total[$annee - 1] && $total[$annee]) {
 			$percent = (round(($total[$annee] - $total[$annee - 1]) / $total[$annee - 1], 4) * 100);
 			print '<td class="nowrap borderrightlight right">';
-			print ($percent >= 0 ? "+$percent" : "$percent").'%';
+			print($percent >= 0 ? "+$percent" : "$percent").'%';
 			print '</td>';
 		}
 		if (!empty($total[$annee - 1]) && empty($total[$annee])) {

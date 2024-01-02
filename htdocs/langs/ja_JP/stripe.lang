@@ -41,7 +41,7 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhookライブキー
 ONLINE_PAYMENT_WAREHOUSE=オンライン支払が行われるときに在庫減少に使用する在庫<br>(TODO請求書のアクションで在庫を減らすオプションが実行され、オンライン支払がそれ自体で請求書を生成する場合？)
 StripeLiveEnabled=Stripe ライブが有効(それ以外の場合はテスト/サンドボックスモード)
 StripeImportPayment=Stripe 支払のインポート
-ExampleOfTestCreditCard=SEPA テストのクレジット カードの例: %s => 有効、%s => エラー CVC、%s => 有効期限切れ、%s => 請求失敗
+ExampleOfTestCreditCard=テスト支払いのクレジット カードの例: %s => 有効、%s => エラー CVC、%s => 期限切れ、%s => 請求失敗
 ExampleOfTestBankAcountForSEPA=口座振替テストの銀行口座 BAN の例: %s
 StripeGateways=Stripe ゲートウェイ
 OAUTH_STRIPE_TEST_ID=Stripe ConnectクライアントID(ca _...)
@@ -51,6 +51,7 @@ StripeAccount=Stripe アカウント
 StripeChargeList=Stripe 料金のリスト
 StripeTransactionList=Stripeトランザクションのリスト
 StripeCustomerId=Stripe の顧客ID
+StripePaymentId=Stripe 支払い ID
 StripePaymentModes=Stripe 支払モード
 LocalID=ローカルID
 StripeID=Stripe ID

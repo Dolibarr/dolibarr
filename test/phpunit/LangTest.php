@@ -196,11 +196,11 @@ class LangTest extends PHPUnit\Framework\TestCase
 
 			$result=$tmplangs->transnoentitiesnoconv("SeparatorDecimal");
 			print __METHOD__." SeparatorDecimal=".$result."\n";
-			$this->assertContains($result, array('.',',','/',' ','','None'), 'Error on decimal separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
+			$this->assertTrue(in_array($result, array('.',',','/',' ','','None')), 'Error on decimal separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
 
 			$result=$tmplangs->transnoentitiesnoconv("SeparatorThousand");
 			print __METHOD__." SeparatorThousand=".$result."\n";
-			$this->assertContains($result, array('.',',','/',' ','','\'','None','Space'), 'Error on thousand separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
+			$this->assertTrue(in_array($result, array('.',',','/',' ','','\'','None','Space')), 'Error on thousand separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
 
 			// Test java string contains only d,M,y,/,-,. and not m,...
 			$result=$tmplangs->transnoentitiesnoconv("FormatDateShortJava");
@@ -212,13 +212,14 @@ class LangTest extends PHPUnit\Framework\TestCase
 
 			unset($tmplangs);
 
+			print "Check also some syntax rules into the language file\n";
 			$filesarray2 = scandir(DOL_DOCUMENT_ROOT.'/langs/'.$code);
 			foreach ($filesarray2 as $key => $file) {
 				if (! preg_match('/\.lang$/', $file)) {
 					continue;
 				}
 
-				print 'Check lang file '.$file."\n";
+				//print 'Check lang file '.$file."\n";
 				$filecontent=file_get_contents(DOL_DOCUMENT_ROOT.'/langs/'.$code.'/'.$file);
 
 				$result=preg_match('/=--$/m', $filecontent);	// A special % char we don't want. We want the common one.

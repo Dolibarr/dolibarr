@@ -39,6 +39,31 @@ function salaries_prepare_head($object)
 	$head[$h][2] = 'card';
 	$h++;
 
+	if (isModEnabled('paymentbybanktransfer')) {
+		$nbStandingOrders = 0;
+		$sql = "SELECT COUNT(pfd.rowid) as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
+		$sql .= " WHERE pfd.fk_salary = ".((int) $object->id);
+		$sql .= " AND type = 'ban'";
+		$resql = $db->query($sql);
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				$nbStandingOrders = $obj->nb;
+			}
+		} else {
+			dol_print_error($db);
+		}
+		$langs->load("banks");
+		$head[$h][0] = DOL_URL_ROOT.'/salaries/virement_request.php?id='.$object->id.'&type=bank-transfer';
+		$head[$h][1] = $langs->trans('BankTransfer');
+		if ($nbStandingOrders > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbStandingOrders.'</span>';
+		}
+		$head[$h][2] = 'request_virement';
+		$h++;
+	}
+
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab

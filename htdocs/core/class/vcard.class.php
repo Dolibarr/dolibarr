@@ -260,14 +260,16 @@ class vCard
 	 *	Add a e-mail address to this vCard
 	 *
 	 *	@param	string	$address		E-mail address
-	 *	@param	string	$type			(optional) The type of the e-mail (typical "PREF;INTERNET" or "INTERNET")
+	 *	@param	string	$type			(optional) The type of the e-mail (typical "PREF" or "INTERNET")
 	 *	@return	void
 	 */
 	public function setEmail($address, $type = "")
 	{
 		$key = "EMAIL";
-		if ($type != "") {
-			$key .= ";".$type;
+		if ($type == "PREF") {
+			$key .= ";PREF=1";
+		} elseif (!empty($type)) {
+			$key .= ";TYPE=".dol_strtolower($type);
 		}
 		$this->properties[$key] = $address;
 	}
