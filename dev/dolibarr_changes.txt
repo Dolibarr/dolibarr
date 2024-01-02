@@ -110,15 +110,11 @@ with
 			if (!@TCPDF_STATIC::file_exists($file)) {
 				// DOL CHANGE If we keep this, the image is not visible on pages after the first one.
 				//var_dump($file.' '.(!@TCPDF_STATIC::file_exists($file)));
-<<<<<<< HEAD
 				//return false;	
                 $tfile = str_replace(' ', '%20', $file);
 				if (@TCPDF_STATIC::file_exists($tfile)) {
 					$file = $tfile;
 				}
-=======
-				//return false;
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
 			}
 
 * Replace in tcpdf.php
