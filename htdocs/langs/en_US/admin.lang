@@ -1304,6 +1304,12 @@ MAIN_MAX_DECIMALS_UNIT=Max. decimals for unit prices
 MAIN_MAX_DECIMALS_TOT=Max. decimals for total prices
 MAIN_MAX_DECIMALS_SHOWN=Max. decimals for prices <b>shown on screen</b>. Add an ellipsis <b>...</b> after this parameter (e.g. "2...") if you want to see "<b>...</b>" suffixed to the truncated price.
 MAIN_ROUNDING_RULE_TOT=Step of rounding range (for countries where rounding is done on something other than base 10. For example, put 0.05 if rounding is done by 0.05 steps)
+MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND=Compute HT and VAT sums on round of totals, not with total of rounds
+VatRoundingMeth=Rounding totals (HT and VAT) method
+VatRoundingMethInfo=<a href="https://wiki.dolibarr.org/index.php/R%C3%A8gles_de_param%C3%A9trage,_calcul_et_arrondi_de_TVA" target="_blank">@see this article on french wiki</a> This is used (mainly) in invoices : there are 2 methods to compute the totals 
+roundMethDef=By default
+totalOfRound=Total of rounds
+roundOfTotal=Round of totals
 UnitPriceOfProduct=Net unit price of a product
 TotalPriceAfterRounding=Total price (excl/vat/incl tax) after rounding
 ParameterActiveForNextInputOnly=Parameter effective for next input only

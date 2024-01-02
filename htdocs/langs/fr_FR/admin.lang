@@ -1304,6 +1304,12 @@ MAIN_MAX_DECIMALS_UNIT=Nombre de décimales maximum pour les prix unitaires
 MAIN_MAX_DECIMALS_TOT=Nombre de décimales maximum pour les prix totaux
 MAIN_MAX_DECIMALS_SHOWN=Nombre de décimales maximum pour les montants <b>affichés à l'écran</b> (Mettre <b>...</b> après ce nombre max (exemple "2...") si vous voulez voir "<b>...</b>" quand le nombre est tronqué à l'affichage écran)
 MAIN_ROUNDING_RULE_TOT=Pas de la plage d'arrondi (pour les pays où l'arrondi se fait sur autre chose que la base 10. Par exemple, mettre 0,05 si l'arrondi se fait par pas de 0,05)
+MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND=Calcule les sommes de HT et la TVA sur les arrondis des sommes, et non sur la somme des arrondis
+VatRoundingMeth=Méthode de calcul des arrondis de HT et TVA
+VatRoundingMethInfo=<a href="https://wiki.dolibarr.org/index.php/R%C3%A8gles_de_param%C3%A9trage,_calcul_et_arrondi_de_TVA" target="_blank">Voir cet article sur le wiki</a> Utilisé principalement dans les factures : il y a 2 méthodes de calcul des totaux 
+roundMethDef=Par défaut
+totalOfRound=Total des arrondis
+roundOfTotal=Arrondi de la somme
 UnitPriceOfProduct=Prix unitaire HT d'un produit
 TotalPriceAfterRounding=Prix total (HT/TVA/TTC) après arrondis
 ParameterActiveForNextInputOnly=Paramètre effectif pour les prochaines saisies uniquement

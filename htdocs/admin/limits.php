@@ -184,7 +184,7 @@ if ($action == 'edit') {
 	print $form->textwithpicto($langs->trans("MAIN_ROUNDING_RULE_TOT"), $langs->trans("ParameterActiveForNextInputOnly"));
 	print '</td><td><input class="flat right" name="'.$mainroundingruletot.'" size="3" value="'.(GETPOSTISSET($mainroundingruletot) ? GETPOST($mainroundingruletot) : getDolGlobalString('MAIN_ROUNDING_RULE_TOT')).'"></td></tr>';
 	
-	print '<tr class="oddeven"><td>'.$langs->trans("VatRoundingMeth").'</td>';
+	print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("VatRoundingMeth"), $langs->trans("VatRoundingMethInfo")).'</td>';
 	print '<td>';
 	print $form::selectarray('MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND', $aVatRoundingMeth, GETPOSTISSET('MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND') ? GETPOST('MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND') : getDolGlobalString('MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND'));
 	print '</td></tr>';
@@ -220,7 +220,7 @@ if ($action == 'edit') {
 	print $form->textwithpicto($langs->trans("MAIN_ROUNDING_RULE_TOT"), $langs->trans("ParameterActiveForNextInputOnly"));
 	print '</td><td align="right">'.(isset($conf->global->$mainroundingruletot) ? $conf->global->$mainroundingruletot : (getDolGlobalString('MAIN_ROUNDING_RULE_TOT') ? $conf->global->MAIN_ROUNDING_RULE_TOT : '')).'</td></tr>';
 	
-	print '<tr class="oddeven"><td>'.$langs->trans("VatRoundingMeth").'</td>';
+	print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("VatRoundingMeth"), $langs->trans("VatRoundingMethInfo")).'</td>';
 	print '<td>';
 	print $langs->trans($aVatRoundingMeth[getDolGlobalString('MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND')]);
 	print '</td></tr>';
