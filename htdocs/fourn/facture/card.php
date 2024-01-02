@@ -1959,7 +1959,7 @@ if (empty($reshook)) {
 	// Make calculation according to calculationrule
 	if ($action == 'calculate') {
 		$calculationrule = GETPOST('calculationrule');
-		switch($calculationrule) {
+		switch ($calculationrule) {
 			case 'totalofround':
 				$roundingadjust = '0';
 				break;
