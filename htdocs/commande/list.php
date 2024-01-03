@@ -875,7 +875,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label']) && is_arra
 if ($search_all) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'commandedet as pd ON c.rowid=pd.fk_commande';
 }
-if($search_all && getDolGlobalInt(strtoupper($object->table_element_line).'_SEARCHALL_EXTRAFIELDS_ENABLE') > 0) {
+if ($search_all && getDolGlobalInt(strtoupper($object->table_element_line).'_SEARCHALL_EXTRAFIELDS_ENABLE') > 0) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'commandedet_extrafields as efcd ON pd.rowid=efcd.fk_object';
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = c.fk_projet";
