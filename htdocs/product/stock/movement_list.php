@@ -1109,7 +1109,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 if (!empty($arrayfields['m.rowid']['checked'])) {
 	// Ref
 	print '<td class="liste_titre left">';
-	print '<input class="flat maxwidth25" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
+	print '<input class="flat maxwidth40" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['m.datem']['checked'])) {
