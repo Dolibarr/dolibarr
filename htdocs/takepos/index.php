@@ -545,7 +545,7 @@ function CloseBill() {
 	console.log("Open popup to enter payment on invoiceid="+invoiceid);
 	<?php
 	$alternative_payurl = getDolGlobalString('TAKEPOS_ALTERNATIVE_PAYMENT_SCREEN');
-	if (empty($payurl)) {
+	if (empty($alternative_payurl)) {
 		$payurl = "pay.php";
 	} else {
 		$payurl = dol_buildpath($alternative_payurl, 1);
