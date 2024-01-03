@@ -517,17 +517,17 @@ function societe_admin_prepare_head()
 /**
  *    Return country label, code or id from an id, code or label
  *
- *    @param      int		$searchkey      Id or code of country to search
- *    @param      string	$withcode   	'0'=Return label,
+ *    @param	int|string	$searchkey      Id or code of country to search
+ *    @param    string		$withcode   	'0'=Return label,
  *    										'1'=Return code + label,
  *    										'2'=Return code from id,
  *    										'3'=Return id from code,
  * 	   										'all'=Return array('id'=>,'code'=>,'label'=>)
- *    @param      DoliDB	$dbtouse       	Database handler (using in global way may fail because of conflicts with some autoload features)
- *    @param      Translate	$outputlangs	Langs object for output translation
- *    @param      int		$entconv       	0=Return value without entities and not converted to output charset, 1=Ready for html output
- *    @param      int		$searchlabel    Label of country to search (warning: searching on label is not reliable)
- *    @return     mixed       				Integer with country id or String with country code or translated country name or Array('id','code','label') or 'NotDefined'
+ *    @param	DoliDB		$dbtouse       	Database handler (using in global way may fail because of conflicts with some autoload features)
+ *    @param	Translate	$outputlangs	Langs object for output translation
+ *    @param	int			$entconv       	0=Return value without entities and not converted to output charset, 1=Ready for html output
+ *    @param	int			$searchlabel    Label of country to search (warning: searching on label is not reliable)
+ *    @return	mixed       				Integer with country id or String with country code or translated country name or Array('id','code','label') or 'NotDefined'
  */
 function getCountry($searchkey, $withcode = '', $dbtouse = 0, $outputlangs = '', $entconv = 1, $searchlabel = '')
 {
