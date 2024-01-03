@@ -228,8 +228,8 @@ if ($result) {
 			$def_tva[$obj->rowid][$compta_tva][vatrate($obj->tva_tx).($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : '')] = (vatrate($obj->tva_tx).($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''));
 		}
 
-		//$line = new SupplierInvoiceLine($db);
-		//$line->fetch($obj->fdid);
+		$line = new SupplierInvoiceLine($db);
+		$line->fetch($obj->fdid);
 
 		$tabfac[$obj->rowid]["date"] = $db->jdate($obj->df);
 		$tabfac[$obj->rowid]["datereg"] = $db->jdate($obj->dlr);
@@ -239,7 +239,7 @@ if ($result) {
 		$tabfac[$obj->rowid]["type"] = $obj->type;
 		$tabfac[$obj->rowid]["description"] = $obj->description;
 		$tabfac[$obj->rowid]["close_code"] = $obj->close_code; // close_code = 'replaced' for replacement invoices (not used in most european countries)
-		//$tabfac[$obj->rowid]["fk_facturefourndet"] = $obj->fdid;
+		$tabfac[$obj->rowid]["fk_facturefourndet"] = $obj->fdid;
 
 		// Avoid warnings
 		if (!isset($tabttc[$obj->rowid][$compta_soc])) {
@@ -450,7 +450,7 @@ if ($action == 'writebookkeeping' && !$error) {
 				$bookkeeping->date_creation = $now;
 				$bookkeeping->doc_type = 'supplier_invoice';
 				$bookkeeping->fk_doc = $key;
-				$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
+				$bookkeeping->fk_docdet = $val["fk_facturefourndet"];
 				$bookkeeping->thirdparty_code = $companystatic->code_fournisseur;
 
 				$bookkeeping->subledger_account = $tabcompany[$key]['code_compta_fournisseur'];
@@ -511,7 +511,7 @@ if ($action == 'writebookkeeping' && !$error) {
 					$bookkeeping->date_creation = $now;
 					$bookkeeping->doc_type = 'supplier_invoice';
 					$bookkeeping->fk_doc = $key;
-					$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
+					$bookkeeping->fk_docdet = $val["fk_facturefourndet"];
 					$bookkeeping->thirdparty_code = $companystatic->code_fournisseur;
 
 					if (getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_USE_AUXILIARY_ON_DEPOSIT')) {
@@ -609,7 +609,7 @@ if ($action == 'writebookkeeping' && !$error) {
 						$bookkeeping->date_creation = $now;
 						$bookkeeping->doc_type = 'supplier_invoice';
 						$bookkeeping->fk_doc = $key;
-						$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
+						$bookkeeping->fk_docdet = $val["fk_facturefourndet"];
 						$bookkeeping->thirdparty_code = $companystatic->code_fournisseur;
 
 						$bookkeeping->subledger_account = '';
@@ -662,7 +662,7 @@ if ($action == 'writebookkeeping' && !$error) {
 					$bookkeeping->date_creation = $now;
 					$bookkeeping->doc_type = 'supplier_invoice';
 					$bookkeeping->fk_doc = $key;
-					$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
+					$bookkeeping->fk_docdet = $val["fk_facturefourndet"];
 					$bookkeeping->thirdparty_code = $companystatic->code_fournisseur;
 
 					$bookkeeping->subledger_account = '';
