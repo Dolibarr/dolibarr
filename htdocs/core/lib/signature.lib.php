@@ -159,8 +159,8 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 		} else {
 			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (empty($obj->entity) ? '' : (int) $obj->entity) : ''), '0');
 		}
-	} else {
-		$securekeyseed = getDolGlobalString(dol_strtoupper($type).'ONLINE_SIGNATURE_SECURITY_TOKEN');
+	} else {	// For example $type = 'societe_rib'
+		$securekeyseed = getDolGlobalString(dol_strtoupper($type).'_ONLINE_SIGNATURE_SECURITY_TOKEN');
 		$out = $urltouse.'/public/onlinesign/newonlinesign.php?source='.$type.'&ref='.($mode ? '<span style="color: #666666">' : '');
 		if ($mode == 1) {
 			$out .= $type.'_ref';

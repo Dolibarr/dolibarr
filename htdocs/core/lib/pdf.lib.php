@@ -46,7 +46,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
  */
 function pdf_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf;
 
 	$h = 0;
 	$head = array();
@@ -1263,7 +1263,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 
 			// Option for set top margin height of footer after freetext
 			if (getDolGlobalString('PDF_FOOTER_TOP_MARGIN') || getDolGlobalInt('PDF_FOOTER_TOP_MARGIN') === 0) {
-				$posy -= floatval(getDolGlobalString('PDF_FOOTER_TOP_MARGIN'));
+				$posy -= (float) getDolGlobalString('PDF_FOOTER_TOP_MARGIN');
 			} else {
 				$posy--;
 			}
@@ -1317,7 +1317,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 
 				// Option for set top margin height of footer after freetext
 				if (getDolGlobalString('PDF_FOOTER_TOP_MARGIN') || getDolGlobalInt('PDF_FOOTER_TOP_MARGIN') === 0) {
-					$posy -= floatval(getDolGlobalString('PDF_FOOTER_TOP_MARGIN'));
+					$posy -= (float) getDolGlobalString('PDF_FOOTER_TOP_MARGIN');
 				} else {
 					$posy--;
 				}

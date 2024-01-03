@@ -245,9 +245,7 @@ class Proposals extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve propal list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No proposal found');
-		}
+
 		return $obj_ret;
 	}
 

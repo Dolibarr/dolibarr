@@ -266,12 +266,12 @@ if (empty($reshook)) {
 			$object->login = GETPOST("login", 'alphanohtml');
 			$object->api_key = GETPOST("api_key", 'alphanohtml');
 			$object->gender = GETPOST("gender", 'aZ09');
-			$object->admin = GETPOST("admin", 'int');
+			$object->admin = GETPOSTINT("admin");
 			$object->address = GETPOST('address', 'alphanohtml');
 			$object->zip = GETPOST('zipcode', 'alphanohtml');
 			$object->town = GETPOST('town', 'alphanohtml');
-			$object->country_id = GETPOST('country_id', 'int');
-			$object->state_id = GETPOST('state_id', 'int');
+			$object->country_id = GETPOSTINT('country_id');
+			$object->state_id = GETPOSTINT('state_id');
 			$object->office_phone = GETPOST("office_phone", 'alphanohtml');
 			$object->office_fax = GETPOST("office_fax", 'alphanohtml');
 			$object->user_mobile = GETPOST("user_mobile", 'alphanohtml');
@@ -314,7 +314,7 @@ if (empty($reshook)) {
 			$object->dateendvalidity = $dateendvalidity;
 			$object->birth = $dateofbirth;
 
-			$object->fk_warehouse = GETPOST('fk_warehouse', 'int');
+			$object->fk_warehouse = GETPOSTINT('fk_warehouse');
 
 			$object->lang = GETPOST('default_lang', 'aZ09');
 
@@ -481,7 +481,7 @@ if (empty($reshook)) {
 				$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
 				$object->thm = price2num($object->thm);
 				$object->tjm = GETPOST("tjm", 'alphanohtml') != '' ? GETPOST("tjm", 'alphanohtml') : '';
-				$object->thm = price2num($object->thm);
+				$object->tjm = price2num($object->tjm);
 				$object->salary = GETPOST("salary", 'alphanohtml') != '' ? GETPOST("salary", 'alphanohtml') : '';
 				$object->salary = price2num($object->salary);
 				$object->salaryextra = GETPOST("salaryextra", 'alphanohtml') != '' ? GETPOST("salaryextra", 'alphanohtml') : '';
@@ -2034,12 +2034,12 @@ if ($action == 'create' || $action == 'adduserldap') {
 						'class' => 'classfortooltip'
 					)
 				);
-				if ($user->id <> $id && $candisableuser && $object->statut == 0 &&
+				if ($user->id != $id && $candisableuser && $object->statut == 0 &&
 				((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $object->entity == 1))) {
 					print dolGetButtonAction($langs->trans('Reactivate'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=enable&token='.newToken(), '', true, $params);
 				}
 				// Disable user
-				if ($user->id <> $id && $candisableuser && $object->statut == 1 &&
+				if ($user->id != $id && $candisableuser && $object->statut == 1 &&
 				((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $object->entity == 1))) {
 					print dolGetButtonAction($langs->trans('DisableUser'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=disable&token='.newToken(), '', true, $params);
 				} else {
@@ -2049,7 +2049,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 					}
 				}
 				// Delete
-				if ($user->id <> $id && $candisableuser &&
+				if ($user->id != $id && $candisableuser &&
 				((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $object->entity == 1))) {
 					if ($user->admin || !$object->admin) { // If user edited is admin, delete is possible on for an admin
 						print dolGetButtonAction($langs->trans('DeleteUser'), '', 'default', $_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$object->id, '', true, $params);

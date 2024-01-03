@@ -491,7 +491,7 @@ class Account extends CommonObject
 	 *      @param  string      $type       To search using type
 	 *      @return array|int               Array of links array('url'=>, 'url_id'=>, 'label'=>, 'type'=> 'fk_bank'=> ) or -1 on error
 	 */
-	public function get_url($fk_bank = '', $url_id = '', $type = '')
+	public function get_url($fk_bank = 0, $url_id = 0, $type = '')
 	{
 		// phpcs:enable
 		$lines = array();
@@ -701,6 +701,15 @@ class Account extends CommonObject
 		}
 
 		// Load librairies to check BAN
+		$balance = $this->balance;
+		if (empty($balance) && !empty($this->solde)) {
+			$balance = $this->solde;
+		}
+		if (empty($balance)) {
+			$balance = 0;
+		}
+
+		// Load the library to validate/check a BAN account
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 
 		$now = dol_now();
@@ -779,7 +788,7 @@ class Account extends CommonObject
 				$accline = new AccountLine($this->db);
 				$accline->datec = $now;
 				$accline->label = '('.$langs->trans("InitialBankBalance").')';
-				$accline->amount = price2num($this->solde);
+				$accline->amount = price2num($balance);
 				$accline->fk_user_author = $user->id;
 				$accline->fk_account = $this->id;
 				$accline->datev = $this->date_solde;
@@ -1249,7 +1258,7 @@ class Account extends CommonObject
 	 * 	Return current sold
 	 *
 	 * 	@param	int		$option		1=Exclude future operation date (this is to exclude input made in advance and have real account sold)
-	 *	@param	int		$date_end	Date until we want to get bank account sold
+	 *	@param	int|string		$date_end	Date until we want to get bank account sold
 	 *	@param	string	$field		dateo or datev
 	 *	@return	int		current sold (value date <= today)
 	 */
@@ -1880,7 +1889,7 @@ class Account extends CommonObject
 			$return .= '<span class="opacitymedium">'.$langs->trans("Balance").'</span> : <span class="amount">'.price(price2num($this->solde(1), 'MT'), 0, $langs, 1, -1, -1, $this->currency_code).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

@@ -4,6 +4,7 @@ namespace Dolibarr\Rector\Renaming;
 
 use PhpParser\Node;
 use PhpParser\Node\Arg;
+use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpParser\Node\Expr\BinaryOp\BooleanAnd;
 use PhpParser\Node\Expr\BinaryOp\Concat;
@@ -12,6 +13,7 @@ use PhpParser\Node\Expr\BooleanNot;
 use PhpParser\Node\Expr\Empty_;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\Isset_;
+use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\String_;
@@ -72,7 +74,7 @@ class GlobalToFunction extends AbstractRector
 	 */
 	public function getNodeTypes(): array
 	{
-		return [FuncCall::class, Equal::class, NotEqual::class, Greater::class, GreaterOrEqual::class, Smaller::class, SmallerOrEqual::class, NotIdentical::class, BooleanAnd::class, Concat::class, ArrayDimFetch::class];
+		return [FuncCall::class, MethodCall::class, Equal::class, NotEqual::class, Greater::class, GreaterOrEqual::class, Smaller::class, SmallerOrEqual::class, NotIdentical::class, BooleanAnd::class, Concat::class, ArrayItem::class, ArrayDimFetch::class];
 	}
 
 	/**
@@ -84,6 +86,23 @@ class GlobalToFunction extends AbstractRector
 	 */
 	public function refactor(Node $node)
 	{
+		if ($node instanceof Node\Expr\ArrayItem) {
+			if (!isset($node->key)) {
+				return;
+			}
+			if ($this->isGlobalVar($node->value)) {
+				$constName = $this->getConstName($node->value);
+				if (empty($constName)) {
+					return;
+				}
+				$node->value = new FuncCall(
+					new Name('getDolGlobalString'),
+					[new Arg($constName)]
+					);
+			}
+			return $node;
+		}
+
 		if ($node instanceof Node\Expr\ArrayDimFetch) {
 			if (!isset($node->dim)) {
 				return;
@@ -103,7 +122,9 @@ class GlobalToFunction extends AbstractRector
 
 		if ($node instanceof FuncCall) {
 			$tmpfunctionname = $this->getName($node);
-			if (in_array($tmpfunctionname, array('dol_escape_htmltag', 'make_substitutions', 'min', 'max', 'explode'))) {
+			// If function is ok. We must avoid a lot of cases like isset(), empty()
+			if (in_array($tmpfunctionname, array('dol_escape_htmltag', 'dol_hash', 'make_substitutions', 'min', 'max', 'explode'))) {
+				//print "tmpfunctionname=".$tmpfunctionname."\n";
 				$args = $node->getArgs();
 				$nbofparam = count($args);
 
@@ -121,6 +142,37 @@ class GlobalToFunction extends AbstractRector
 							$tmpargs[$key] = new Arg($a);
 
 							$r = new FuncCall(new Name($tmpfunctionname), $tmpargs);
+							return $r;
+						}
+					}
+				}
+			}
+			return $node;
+		}
+
+		if ($node instanceof MethodCall) {
+			$tmpmethodname = $this->getName($node->name);
+			// If function is ok. We must avoid a lot of cases
+			if (in_array($tmpmethodname, array('idate'))) {
+				//print "tmpmethodname=".$tmpmethodname."\n";
+				$expr = $node->var;
+				$args = $node->getArgs();
+				$nbofparam = count($args);
+
+				if ($nbofparam >= 1) {
+					$tmpargs = $args;
+					foreach ($args as $key => $arg) {	// only 1 element in this array
+						//var_dump($key);
+						//var_dump($arg->value);exit;
+						if ($this->isGlobalVar($arg->value)) {
+							$constName = $this->getConstName($arg->value);
+							if (empty($constName)) {
+								return;
+							}
+							$a = new FuncCall(new Name('getDolGlobalString'), [new Arg($constName)]);
+							$tmpargs[$key] = new Arg($a);
+
+							$r = new MethodCall($expr, $tmpmethodname, $tmpargs);
 							return $r;
 						}
 					}

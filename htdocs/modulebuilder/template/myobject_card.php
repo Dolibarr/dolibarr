@@ -238,7 +238,7 @@ if ($action == 'create') {
 }
 $help_url = '';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-mymodule page-card');
 
 // Example : Adding jquery code
 // print '<script type="text/javascript">
@@ -560,6 +560,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			/*
+			// Disable / Enable
 			if ($permissiontoadd) {
 				if ($object->status == $object::STATUS_ENABLED) {
 					print dolGetButtonAction('', $langs->trans('Disable'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=disable&token='.newToken(), '', $permissiontoadd);

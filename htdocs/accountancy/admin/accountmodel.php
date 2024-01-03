@@ -125,17 +125,9 @@ $tabfieldinsert[31] = "pcg_version,label,fk_country";
 $tabrowid = array();
 $tabrowid[31] = "";
 
-// Condition to show dictionary in setup page
-$tabcond = array();
-$tabcond[31] = isModEnabled('accounting');
-
 // List of help for fields
 $tabhelp = array();
 $tabhelp[31] = array('pcg_version'=>$langs->trans("EnterAnyCode"));
-
-// List of check for fields (NOT USED YET)
-$tabfieldcheck = array();
-$tabfieldcheck[31] = array();
 
 
 // Define elementList and sourceList (used for dictionary type of contacts "llx_c_type_contact")
@@ -173,8 +165,11 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			if ($fieldnamekey == 'pcg_version') {
 				$fieldnamekey = 'Pcg_version';
 			}
-			if ($fieldnamekey == 'libelle' || ($fieldnamekey == 'label')) {
+			if ($fieldnamekey == 'label') {
 				$fieldnamekey = 'Label';
+			}
+			if ($fieldnamekey == 'country') {
+				$fieldnamekey = "Country";
 			}
 
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
@@ -453,6 +448,7 @@ if ($id) {
 	print '<table class="noborder centpercent">';
 
 	// Form to add a new line
+
 	if ($tabname[$id]) {
 		$fieldlist = explode(',', $tabfield[$id]);
 
@@ -467,8 +463,9 @@ if ($id) {
 			if ($fieldlist[$field] == 'code') {
 				$valuetoshow = $langs->trans("Code");
 			}
-			if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') {
+			if ($fieldlist[$field] == 'label') {
 				$valuetoshow = $langs->trans("Label");
+				$class = 'minwidth300';
 			}
 			if ($fieldlist[$field] == 'country') {
 				if (in_array('region_id', $fieldlist)) {
@@ -483,6 +480,7 @@ if ($id) {
 			if ($fieldlist[$field] == 'pcg_version' || $fieldlist[$field] == 'fk_pcg_version') {
 				$valuetoshow = $langs->trans("Pcg_version");
 			}
+			//var_dump($value);
 
 			if ($valuetoshow != '') {
 				print '<td class="'.$class.'">';
@@ -625,8 +623,10 @@ if ($id) {
 						fieldListAccountModel($fieldlist, $obj, $tabname[$id], 'edit');
 					}
 
-					print '<td colspan="3" class="right"><a name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'">&nbsp;</a><input type="submit" class="button button-edit" name="actionmodify" value="'.$langs->trans("Modify").'">';
-					print '&nbsp;<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
+					print '<td colspan="3" class="right">';
+					print '<a name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'">&nbsp;</a><input type="submit" class="button button-edit" name="actionmodify" value="'.$langs->trans("Modify").'">';
+					print '&nbsp;<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
+					print '</td>';
 				} else {
 					$tmpaction = 'view';
 					$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
@@ -711,6 +711,8 @@ if ($id) {
 
 				$i++;
 			}
+		} else {
+			print '<tr><td colspan="6"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 		}
 	} else {
 		dol_print_error($db);
@@ -738,11 +740,10 @@ $db->close();
  *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
  *	@return		void
  */
-function fieldListAccountModel($fieldlist, $obj = '', $tabname = '', $context = '')
+function fieldListAccountModel($fieldlist, $obj = null, $tabname = '', $context = '')
 {
-	global $conf, $langs, $db;
+	global $langs, $db;
 	global $form;
-	global $region_id;
 	global $elementList, $sourceList;
 
 	$formadmin = new FormAdmin($db);
@@ -784,21 +785,14 @@ function fieldListAccountModel($fieldlist, $obj = '', $tabname = '', $context = 
 			print '<td><input type="text" class="flat" value="'.(!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]} : '').'" size="10" name="'.$fieldlist[$field].'"></td>';
 		} else {
 			print '<td>';
-			$size = '';
 			$class = '';
-			if ($fieldlist[$field] == 'code') {
-				$size = 'size="8" ';
+			if ($fieldlist[$field] == 'pcg_version') {
+				$class = 'width150';
 			}
-			if ($fieldlist[$field] == 'position') {
-				$size = 'size="4" ';
+			if ($fieldlist[$field] == 'label') {
+				$class = 'width300';
 			}
-			if ($fieldlist[$field] == 'libelle') {
-				$size = 'centpercent';
-			}
-			if ($fieldlist[$field] == 'sortorder' || $fieldlist[$field] == 'sens' || $fieldlist[$field] == 'category_type') {
-				$size = 'size="2" ';
-			}
-			print '<input type="text" '.$size.' class="flat'.($class ? ' '.$class : '').'" value="'.(isset($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]} : '').'" name="'.$fieldlist[$field].'">';
+			print '<input type="text" class="flat'.($class ? ' '.$class : '').'" value="'.(isset($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]} : '').'" name="'.$fieldlist[$field].'">';
 			print '</td>';
 		}
 	}

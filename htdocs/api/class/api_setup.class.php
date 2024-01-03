@@ -1156,10 +1156,6 @@ class Setup extends DolibarrApi
 			throw new RestException(503, 'Error when retrieving list of extra fields : '.$this->db->lasterror());
 		}
 
-		if (!count($list)) {
-			throw new RestException(404, 'No extrafield found');
-		}
-
 		return $list;
 	}
 
@@ -2037,8 +2033,8 @@ class Setup extends DolibarrApi
 			$xmlremote = $conf->global->MAIN_FILECHECK_URL;
 		}
 		$param = 'MAIN_FILECHECK_URL_'.DOL_VERSION;
-		if (empty($xmlremote) && !empty($conf->global->$param)) {
-			$xmlremote = $conf->global->$param;
+		if (empty($xmlremote) && getDolGlobalString($param)) {
+			$xmlremote = getDolGlobalString($param);
 		}
 		if (empty($xmlremote)) {
 			$xmlremote = 'https://www.dolibarr.org/files/stable/signatures/filelist-'.DOL_VERSION.'.xml';
@@ -2050,6 +2046,12 @@ class Setup extends DolibarrApi
 		if ($xmlremote && !preg_match('/\.xml$/', $xmlremote)) {
 			$langs->load("errors");
 			throw new RestException(500, $langs->trans("ErrorURLMustEndWith", $xmlremote, '.xml'));
+		}
+
+		if (LIBXML_VERSION < 20900) {
+			// Avoid load of external entities (security problem).
+			// Required only if LIBXML_VERSION < 20900
+			libxml_disable_entity_loader(true);
 		}
 
 		if ($target == 'local') {
@@ -2098,7 +2100,7 @@ class Setup extends DolibarrApi
 					// Value found
 					$value = '';
 					if ($constname && getDolGlobalString($constname) != '') {
-						$value = $conf->global->$constname;
+						$value = getDolGlobalString($constname);
 					}
 					$valueforchecksum = (empty($value) ? '0' : $value);
 

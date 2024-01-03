@@ -154,7 +154,7 @@ if ($action == 'updateMask') {
 		$tmpobjectkey = GETPOST('object');
 		if (!empty($tmpobjectkey)) {
 			$constforval = 'EVENTORGANIZATION_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
-			if ($conf->global->$constforval == "$value") {
+			if (getDolGlobalString($constforval) == "$value") {
 				dolibarr_del_const($db, $constforval, $conf->entity);
 			}
 		}
@@ -279,7 +279,7 @@ if ($action == 'edit') {
 				print dolJSToSetRandomPassword($constname, 'generate_token'.$constname);
 			} elseif ($val['type'] == 'product') {
 				if (isModEnabled("product") || isModEnabled("service")) {
-					$selected = (empty($conf->global->$constname) ? '' : $conf->global->$constname);
+					$selected = getDolGlobalString($constname);
 					$form->select_produits($selected, $constname, '', 0);
 				}
 			} else {

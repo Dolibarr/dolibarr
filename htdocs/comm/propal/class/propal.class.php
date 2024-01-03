@@ -577,8 +577,8 @@ class Propal extends CommonObject
 	 *      @param		int			$fk_fournprice		Id supplier price
 	 *      @param		int			$pa_ht				Buying price without tax
 	 *      @param		string		$label				???
-	 *		@param      int			$date_start       	Start date of the line
-	 *		@param      int			$date_end         	End date of the line
+	 *		@param      int|string	$date_start       	Start date of the line
+	 *		@param      int|string	$date_end         	End date of the line
 	 *      @param		array		$array_options		extrafields array
 	 * 		@param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
 	 *      @param		string		$origin				Depend on global conf MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION can be 'orderdet', 'propaldet'..., else 'order','propal,'....
@@ -589,7 +589,7 @@ class Propal extends CommonObject
 	 *    	@return    	int         	    			>0 if OK, <0 if KO
 	 *    	@see       	add_product()
 	 */
-	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $fk_product = 0, $remise_percent = 0.0, $price_base_type = 'HT', $pu_ttc = 0.0, $info_bits = 0, $type = 0, $rang = -1, $special_code = 0, $fk_parent_line = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $origin = '', $origin_id = 0, $pu_ht_devise = 0, $fk_remise_except = 0, $noupdateafterinsertline = 0)
+	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $fk_product = 0, $remise_percent = 0.0, $price_base_type = 'HT', $pu_ttc = 0.0, $info_bits = 0, $type = 0, $rang = -1, $special_code = 0, $fk_parent_line = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $date_start = '', $date_end = '', $array_options = array(), $fk_unit = null, $origin = '', $origin_id = 0, $pu_ht_devise = 0, $fk_remise_except = 0, $noupdateafterinsertline = 0)
 	{
 		global $mysoc, $conf, $langs;
 
@@ -827,8 +827,8 @@ class Propal extends CommonObject
 	 *  @param		int			$pa_ht				Price (without tax) of product when it was bought
 	 *  @param		string		$label				???
 	 *  @param		int			$type				0/1=Product/service
-	 *	@param      int			$date_start       	Start date of the line
-	 *	@param      int			$date_end         	End date of the line
+	 *	@param      int|string	$date_start       	Start date of the line
+	 *	@param      int|string	$date_end         	End date of the line
 	 *  @param		array		$array_options		extrafields array
 	 * 	@param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param		double		$pu_ht_devise		Unit price in currency
@@ -836,7 +836,7 @@ class Propal extends CommonObject
 	 * @param       integer $rang   line rank
 	 *  @return     int     		        		0 if OK, <0 if KO
 	 */
-	public function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $desc = '', $price_base_type = 'HT', $info_bits = 0, $special_code = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $type = 0, $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $rang = 0)
+	public function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $desc = '', $price_base_type = 'HT', $info_bits = 0, $special_code = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $type = 0, $date_start = '', $date_end = '', $array_options = array(), $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $rang = 0)
 	{
 		global $mysoc, $langs;
 

@@ -98,7 +98,7 @@ class PaiementFourn extends Paiement
 	 *  @param	int		$fk_bank	Id of bank line associated to payment
 	 *  @return int		            Return integer <0 if KO, -2 if not found, >0 if OK
 	 */
-	public function fetch($id, $ref = '', $fk_bank = '')
+	public function fetch($id, $ref = '', $fk_bank = 0)
 	{
 		$error = 0;
 
@@ -243,7 +243,7 @@ class PaiementFourn extends Paiement
 
 		$this->db->begin();
 
-		if ($totalamount <> 0) { // On accepte les montants negatifs
+		if ($totalamount != 0) { // On accepte les montants negatifs
 			$ref = $this->getNextNumRef(is_object($thirdparty) ? $thirdparty : '');
 
 			if ($way == 'dolibarr') {
@@ -266,7 +266,7 @@ class PaiementFourn extends Paiement
 				// Insere tableau des montants / factures
 				foreach ($this->amounts as $key => $amount) {
 					$facid = $key;
-					if (is_numeric($amount) && $amount <> 0) {
+					if (is_numeric($amount) && $amount != 0) {
 						$amount = price2num($amount);
 						$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn_facturefourn (fk_facturefourn, fk_paiementfourn, amount, multicurrency_amount, multicurrency_code, multicurrency_tx)';
 						$sql .= " VALUES (".((int) $facid).", ".((int) $this->id).", ".((float) $amount).', '.((float) $this->multicurrency_amounts[$key]).', '.($currencyofpayment ? "'".$this->db->escape($currencyofpayment)."'" : 'NULL').', '.(!empty($currencytxofpayment) ? (float) $currencytxofpayment : 1).')';
@@ -408,7 +408,7 @@ class PaiementFourn extends Paiement
 			$error++;
 		}
 
-		if ($totalamount <> 0 && $error == 0) { // On accepte les montants negatifs
+		if ($totalamount != 0 && $error == 0) { // On accepte les montants negatifs
 			$this->amount = $total;
 			$this->total = $total;
 			$this->multicurrency_amount = $mtotal;

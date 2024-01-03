@@ -181,9 +181,7 @@ class Contracts extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve contrat list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No contract found');
-		}
+
 		return $obj_ret;
 	}
 

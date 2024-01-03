@@ -1512,7 +1512,7 @@ if ($action == 'create') {
 			$db->free($resql);
 
 			// Add new line
-			if ($object->statut == 0 && $user->hasRight('ficheinter', 'creer') && $action <> 'editline' && !getDolGlobalString('FICHINTER_DISABLE_DETAILS')) {
+			if ($object->statut == 0 && $user->hasRight('ficheinter', 'creer') && $action != 'editline' && !getDolGlobalString('FICHINTER_DISABLE_DETAILS')) {
 				if (!$num) {
 					print '<br>';
 					print '<table class="noborder centpercent">';

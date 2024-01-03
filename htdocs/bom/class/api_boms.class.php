@@ -182,9 +182,7 @@ class Boms extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve bom list');
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No bom found');
-		}
+
 		return $obj_ret;
 	}
 
@@ -559,7 +557,7 @@ class Boms extends DolibarrApi
 	 *
 	 * @return void
 	 */
-	private function checkRefNumbering(): void
+	private function checkRefNumbering()
 	{
 		$ref = substr($this->bom->ref, 1, 4);
 		if ($this->bom->status > 0 && $ref == 'PROV') {

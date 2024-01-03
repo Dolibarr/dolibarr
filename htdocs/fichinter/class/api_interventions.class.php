@@ -190,9 +190,7 @@ class Interventions extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve intervention list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No intervention found');
-		}
+
 		return $obj_ret;
 	}
 

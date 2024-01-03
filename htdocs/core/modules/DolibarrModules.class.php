@@ -619,7 +619,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		global $langs;
 		$langs->load("admin");
 
-		if ($langs->transnoentitiesnoconv("Module".$this->numero."Name") != ("Module".$this->numero."Name")) {
+		if ($langs->transnoentitiesnoconv("Module".$this->numero."Name") != "Module".$this->numero."Name") {
 			// If module name translation exists
 			return $langs->transnoentitiesnoconv("Module".$this->numero."Name");
 		} else {
@@ -632,7 +632,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				}
 			}
 
-			if ($langs->trans("Module".$this->name."Name") != ("Module".$this->name."Name")) {
+			if ($langs->trans("Module".$this->name."Name") != "Module".$this->name."Name") {
 				// If module name translation exists
 				return $langs->transnoentitiesnoconv("Module".$this->name."Name");
 			}
@@ -653,7 +653,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		global $langs;
 		$langs->load("admin");
 
-		if ($langs->transnoentitiesnoconv("Module".$this->numero."Desc") != ("Module".$this->numero."Desc")) {
+		if ($langs->transnoentitiesnoconv("Module".$this->numero."Desc") != "Module".$this->numero."Desc") {
 			// If module description translation exists
 			return $langs->transnoentitiesnoconv("Module".$this->numero."Desc");
 		} else {
@@ -666,7 +666,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				}
 			}
 
-			if ($langs->transnoentitiesnoconv("Module".$this->name."Desc") != ("Module".$this->name."Desc")) {
+			if ($langs->transnoentitiesnoconv("Module".$this->name."Desc") != "Module".$this->name."Desc") {
 				// If module name translation exists
 				return $langs->trans("Module".$this->name."Desc");
 			}

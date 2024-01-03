@@ -271,9 +271,6 @@ class Members extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve member list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No member found');
-		}
 
 		return $obj_ret;
 	}
@@ -542,10 +539,6 @@ class Members extends DolibarrApi
 		$categories = new Categorie($this->db);
 
 		$result = $categories->getListForItem($id, 'member', $sortfield, $sortorder, $limit, $page);
-
-		if (empty($result)) {
-			throw new RestException(404, 'No category found');
-		}
 
 		if ($result < 0) {
 			throw new RestException(503, 'Error when retrieve category list : '.$categories->error);

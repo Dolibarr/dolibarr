@@ -247,7 +247,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Email"))."<br>\n";
 	}
 	// If the price has been set, name is required for the invoice
-	if (!GETPOST("societe") && !empty(floatval($project->price_registration))) {
+	if (!GETPOST("societe") && !empty((float) $project->price_registration)) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Company"))."<br>\n";
 	}
@@ -444,7 +444,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 		}
 
 		// If price is empty, no need to create a thirdparty, so we force $resultfetchthirdparty as if we have already found thirdp party.
-		if (empty(floatval($project->price_registration))) {
+		if (empty((float) $project->price_registration)) {
 			$resultfetchthirdparty = 1;
 		}
 
@@ -505,7 +505,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 
 	if (!$error) {
 		// If the registration needs a payment
-		if (!empty(floatval($project->price_registration))) {
+		if (!empty((float) $project->price_registration)) {
 			$outputlangs = $langs;
 
 			// TODO Use default language of $thirdparty->default_lang to build $outputlang
@@ -576,7 +576,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 
 				// If there is no lines yet, we add one
 				if (empty($facture->lines)) {
-					$pu_ttc = floatval($project->price_registration);
+					$pu_ttc = (float) $project->price_registration;
 					$pu_ht = 0;
 					$price_base_type = 'TTC';
 
@@ -816,16 +816,16 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 
 		// Company
 		print '<tr id="trcompany" class="trcompany"><td>';
-		if (!empty(floatval($project->price_registration))) {
+		if (!empty((float) $project->price_registration)) {
 			print '<span class="fieldrequired">';
 		}
 		print $langs->trans("Company");
-		if (!empty(floatval($project->price_registration))) {
+		if (!empty((float) $project->price_registration)) {
 			print '</span>';
 		}
 		print '</td><td>';
 		print img_picto('', 'company', 'class="pictofixedwidth"');
-		print '<input type="text" name="societe" class="minwidth200 widthcentpercentminusx maxwidth300" value="' . dol_escape_htmltag(GETPOST('societe')) . '"'.(empty(floatval($project->price_registration)) ? '' : ' required').'></td></tr>' . "\n";
+		print '<input type="text" name="societe" class="minwidth200 widthcentpercentminusx maxwidth300" value="' . dol_escape_htmltag(GETPOST('societe')) . '"'.(empty((float) $project->price_registration) ? '' : ' required').'></td></tr>' . "\n";
 
 		// Email company for invoice
 		if ($project->price_registration) {

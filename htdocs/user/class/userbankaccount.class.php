@@ -315,7 +315,7 @@ class UserBankAccount extends Account
 			$country_code_in_EEC = getCountriesInEEC();
 			return in_array($this->country_code, $country_code_in_EEC);
 		} else {
-			return -1;
+			return false;
 		}
 	}
 }

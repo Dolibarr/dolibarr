@@ -775,18 +775,18 @@ class Salary extends CommonObject
 			//$langs->load("mymodule");
 			$this->labelStatus[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv('BillStatusNotPaid');
 			$this->labelStatus[self::STATUS_PAID] = $langs->transnoentitiesnoconv('BillStatusPaid');
-			if ($status == self::STATUS_UNPAID && $alreadypaid <> 0) {
+			if ($status == self::STATUS_UNPAID && $alreadypaid != 0) {
 				$this->labelStatus[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
 			}
 			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv('BillStatusNotPaid');
 			$this->labelStatusShort[self::STATUS_PAID] = $langs->transnoentitiesnoconv('BillStatusPaid');
-			if ($status == self::STATUS_UNPAID && $alreadypaid <> 0) {
+			if ($status == self::STATUS_UNPAID && $alreadypaid != 0) {
 				$this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
 			}
 		}
 
 		$statusType = 'status1';
-		if ($status == 0 && $alreadypaid <> 0) {
+		if ($status == 0 && $alreadypaid != 0) {
 			$statusType = 'status3';
 		}
 		if ($status == 1) {

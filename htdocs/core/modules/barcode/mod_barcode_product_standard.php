@@ -261,7 +261,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		} else {
 			if ($this->verif_syntax($code, $type) >= 0) {
 				$is_dispo = $this->verif_dispo($db, $code, $product);
-				if ($is_dispo <> 0) {
+				if ($is_dispo != 0) {
 					$result = -3;
 				} else {
 					$result = 0;

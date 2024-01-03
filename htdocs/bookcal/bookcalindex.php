@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       bookcal/bookcalindex.php
+ *	\file       htdocs/bookcal/bookcalindex.php
  *	\ingroup    bookcal
  *	\brief      Home page of bookcal top menu
  */
@@ -138,7 +138,7 @@ print '</div><div class="fichetwothirdright">';
 
 
 $NBMAX = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
-$max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
 
 /* BEGIN MODULEBUILDER LASTMODIFIED MYOBJECT
 // Last modified myobject
