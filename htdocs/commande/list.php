@@ -163,21 +163,21 @@ if (empty($user->socid)) {
 	$fieldstosearchall["c.note_private"] = "NotePrivate";
 }
 
-if(getDolGlobalInt(strtoupper($object->table_element).'_SEARCHALL_EXTRAFIELDS_ENABLE') > 0) {
-	if(!empty($extrafields->attributes[$object->table_element]['type'])) {
-		foreach($extrafields->attributes[$object->table_element]['type'] as $key => $type) {
-			if($type != 'separate') {
+if (getDolGlobalInt(strtoupper($object->table_element).'_SEARCHALL_EXTRAFIELDS_ENABLE') > 0) {
+	if (!empty($extrafields->attributes[$object->table_element]['type'])) {
+		foreach ($extrafields->attributes[$object->table_element]['type'] as $key => $type) {
+			if ($type != 'separate') {
 				$fieldstosearchall['ef.'.$key] = $langs->trans($extrafields->attributes[$object->table_element]['label'][$key]);
 			}
 		}
 	}
 }
-if(getDolGlobalInt(strtoupper($object->table_element_line).'_SEARCHALL_EXTRAFIELDS_ENABLE') > 0) {
+if (getDolGlobalInt(strtoupper($object->table_element_line).'_SEARCHALL_EXTRAFIELDS_ENABLE') > 0) {
 	$extraLine = new ExtraFields($db);
 	$extraLine->fetch_name_optionals_label($object->table_element_line);
-	if(!empty($extraLine->attributes[$object->table_element_line]['type'])) {
-		foreach($extraLine->attributes[$object->table_element_line]['type'] as $key => $type) {
-			if($type != 'separate') {
+	if (!empty($extraLine->attributes[$object->table_element_line]['type'])) {
+		foreach ($extraLine->attributes[$object->table_element_line]['type'] as $key => $type) {
+			if ($type != 'separate') {
 				$fieldstosearchall['efcd.'.$key] = $langs->trans($extraLine->attributes[$object->table_element_line]['label'][$key]);
 			}
 		}
