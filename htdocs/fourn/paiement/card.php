@@ -205,7 +205,7 @@ if ($result > 0) {
 	print '</td></tr>';
 
 	// Payment mode
-	$labeltype = $langs->trans("PaymentType".$object->type_code) != ("PaymentType".$object->type_code) ? $langs->trans("PaymentType".$object->type_code) : $object->type_label;
+	$labeltype = $langs->trans("PaymentType".$object->type_code) != "PaymentType".$object->type_code ? $langs->trans("PaymentType".$object->type_code) : $object->type_label;
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td>';
 	print '<td>'.$labeltype;
 	print $object->num_payment ? ' - '.$object->num_payment : '';

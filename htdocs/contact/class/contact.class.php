@@ -568,7 +568,7 @@ class Contact extends CommonObject
 	 */
 	public function update($id, $user = null, $notrigger = 0, $action = 'update', $nosyncuser = 0)
 	{
-		global $conf, $langs, $hookmanager;
+		global $conf;
 
 		$error = 0;
 
@@ -596,6 +596,7 @@ class Contact extends CommonObject
 			$this->civility_code = $this->civility_id; // For backward compatibility
 		}
 		$this->setUpperOrLowerCase();
+
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET";
@@ -1027,7 +1028,7 @@ class Contact extends CommonObject
 				$this->ref_ext	= $obj->ref_ext;
 
 				$this->civility_code    = $obj->civility_code;
-				$this->civility	        = $obj->civility_code ? ($langs->trans("Civility".$obj->civility_code) != ("Civility".$obj->civility_code) ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code) : '';
+				$this->civility	        = $obj->civility_code ? ($langs->trans("Civility".$obj->civility_code) != "Civility".$obj->civility_code ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code) : '';
 
 				$this->lastname		= $obj->lastname;
 				$this->firstname	= $obj->firstname;

@@ -100,7 +100,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
  */
 $title = $object->ref." - ".$langs->trans('Documents');
 $help_url = 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes|DE:Modul_Kundenaufträge';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-order page-card_documents');
 
 $form = new Form($db);
 
@@ -177,7 +177,7 @@ if ($id > 0 || !empty($ref)) {
 		$modulepart = 'commande';
 		$permissiontoadd = $user->rights->commande->creer;
 		$permtoedit = $user->rights->commande->creer;
-		$param = '&id='.$object->id.'&entity='.(!empty($object->entity) ? $object->entity : $conf->entity);
+		$param = '&id='.$object->id.'&entity='.(empty($object->entity) ? $conf->entity : $object->entity);
 		include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 	} else {
 		dol_print_error($db);

@@ -150,9 +150,7 @@ class mod_task_simple extends ModeleNumRefTask
 		}
 
 		$date = empty($object->date_c) ? dol_now() : $object->date_c;
-
-		//$yymm = strftime("%y%m",time());
-		$yymm = strftime("%y%m", $date);
+		$yymm = dol_print_date($date, "%y%m");
 
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is

@@ -1875,6 +1875,7 @@ tr.nobottom td {
 .minwidth25  { min-width: 25px; }
 .minwidth50  { min-width: 50px; }
 .minwidth75  { min-width: 75px; }
+.nominwidth { min-width: fit-content !important; }
 /* rule for not too small screen only */
 @media only screen and (min-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC3') ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)
 {
@@ -4053,7 +4054,7 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-bottom-color:  #BBB;
 	border-bottom-style: solid;
 
-	margin: 0px 0px 15px 0px;
+	margin: 0px 0px 20px 0px;
 
 	-webkit-border-radius: 0.1em;
 	border-radius: 0.1em;

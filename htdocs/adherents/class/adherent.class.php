@@ -351,7 +351,7 @@ class Adherent extends CommonObject
 	{
 		$this->db = $db;
 		$this->statut = self::STATUS_DRAFT;
-		$this->status = $this->statut;
+		$this->status = self::STATUS_DRAFT;
 		// l'adherent n'est pas public par defaut
 		$this->public = 0;
 		// les champs optionnels sont vides
@@ -415,7 +415,7 @@ class Adherent extends CommonObject
 			}
 		}
 
-		dol_syslog('send_an_email msgishtml='.$msgishtml);
+		dol_syslog('sendEmail msgishtml='.$msgishtml);
 
 		$texttosend = $this->makeSubstitution($text);
 		$subjecttosend = $this->makeSubstitution($subject);
@@ -707,7 +707,7 @@ class Adherent extends CommonObject
 	 */
 	public function update($user, $notrigger = 0, $nosyncuser = 0, $nosyncuserpass = 0, $nosyncthirdparty = 0, $action = 'update')
 	{
-		global $conf, $langs, $hookmanager;
+		global $langs, $hookmanager;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -1360,7 +1360,7 @@ class Adherent extends CommonObject
 	 *  @param	bool	$fetch_subscriptions	To load member subscriptions
 	 *	@return int								>0 if OK, 0 if not found, <0 if KO
 	 */
-	public function fetch($rowid, $ref = '', $fk_soc = '', $ref_ext = '', $fetch_optionals = true, $fetch_subscriptions = true)
+	public function fetch($rowid, $ref = '', $fk_soc = 0, $ref_ext = '', $fetch_optionals = true, $fetch_subscriptions = true)
 	{
 		global $langs;
 
@@ -1412,7 +1412,7 @@ class Adherent extends CommonObject
 
 				$this->civility_id = $obj->civility_code; // Bad. Kept for backard compatibility
 				$this->civility_code = $obj->civility_code;
-				$this->civility = $obj->civility_code ? ($langs->trans("Civility".$obj->civility_code) != ("Civility".$obj->civility_code) ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code) : '';
+				$this->civility = $obj->civility_code ? ($langs->trans("Civility".$obj->civility_code) != "Civility".$obj->civility_code ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code) : '';
 
 				$this->firstname = $obj->firstname;
 				$this->lastname = $obj->lastname;
@@ -1678,7 +1678,7 @@ class Adherent extends CommonObject
 	 *	@param	string		$num_chq				Numero cheque (if Id bank account provided)
 	 *	@param	string		$emetteur_nom			Name of cheque writer
 	 *	@param	string		$emetteur_banque		Name of bank of cheque
-	 *  @param	string		$autocreatethirdparty	Auto create new thirdparty if member not yet linked to a thirdparty and we request an option that generate invoice.
+	 *  @param	int			$autocreatethirdparty	Auto create new thirdparty if member not yet linked to a thirdparty and we request an option that generate invoice.
 	 *  @param  string      $ext_payment_id         External id of payment (for example Stripe charge id)
 	 *  @param  string      $ext_payment_site       Name of external paymentmode (for example 'stripe')
 	 *	@return int									Return integer <0 if KO, >0 if OK
@@ -2044,8 +2044,6 @@ class Adherent extends CommonObject
 	 */
 	public function exclude($user)
 	{
-		global $langs, $conf;
-
 		$error = 0;
 
 		// Check parameters
@@ -2092,7 +2090,7 @@ class Adherent extends CommonObject
 	public function add_to_abo()
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $langs;
 
 		include_once DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php';
 		$mailmanspip = new MailmanSpip($this->db);

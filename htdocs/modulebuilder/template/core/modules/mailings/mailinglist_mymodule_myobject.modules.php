@@ -123,7 +123,7 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 			$old = '';
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
-				if ($old <> $obj->email) {
+				if ($old != $obj->email) {
 					$target[$j] = array(
 						'email' => $obj->email,
 						'name' => $obj->lastname,

@@ -766,7 +766,6 @@ if ($job->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'
 	}
 }
 
-
 // End of page
 llxFooter();
 $db->close();

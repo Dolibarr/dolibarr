@@ -77,7 +77,7 @@ $feature2 = 'user';
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
-if ($user->id <> $id && !$canreaduser) {
+if ($user->id != $id && !$canreaduser) {
 	accessforbidden();
 }
 
