@@ -1752,14 +1752,13 @@ class CMailFile
 	{
 		// Build the array of image extensions
 		$extensions = array_keys($this->image_types);
-
 		// We search (into mail body this->html), if we find some strings like "... file=xxx.img"
 		// For example when:
 		// <img alt="" src="/viewimage.php?modulepart=medias&amp;entity=1&amp;file=image/picture.jpg" style="height:356px; width:1040px" />
 		$matches = array();
 		preg_match_all('/(?:"|\')([^"\']+\.('.implode('|', $extensions).'))(?:"|\')/Ui', $this->html, $matches); // If "xxx.ext" or 'xxx.ext' found
 
-		if (!empty($matches)) {
+		if (!empty($matches) && !empty($matches[1])) {
 			$i = 0;
 			// We are interested in $matches[1] only (the second set of parenthesis into regex)
 			foreach ($matches[1] as $full) {
@@ -1790,7 +1789,6 @@ class CMailFile
 					$i++;
 				}
 			}
-
 			if (!empty($this->html_images)) {
 				$inline = array();
 
