@@ -1561,6 +1561,11 @@ if (empty($reshook)) {
 								}
 
 								$descline .= ' - '.$srcobject->ref;
+
+								if(empty($tva)) {
+									$tva = getDolGlobalString('INVOICE_CREDIT_NOTE_DEFAULT_VAT_RATE', '20');
+								}
+
 								$result = $object->addline(
 									$descline,
 									$amount, // subprice
