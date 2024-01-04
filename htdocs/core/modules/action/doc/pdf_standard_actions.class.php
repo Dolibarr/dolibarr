@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/action/rapport.class.php
+ *	\file       htdocs/core/modules/action/doc/pdf_standard_actions.class.php
  *	\ingroup    commercial
  *	\brief      File to build PDF with events
  */
@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 /**
  *	Class to generate event report
  */
-class CommActionRapport
+class pdf_standard_actions
 {
 	/**
 	 * @var DoliDB Database handler.
@@ -89,7 +89,7 @@ class CommActionRapport
 	 */
 	public function __construct($db, $month, $year)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("commercial", "projects"));
@@ -120,11 +120,10 @@ class CommActionRapport
 	 *      Write the object to document file to disk
 	 *
 	 *      @param	int			$socid			Thirdparty id
-	 *      @param  int			$catid			Cat id
 	 *      @param  Translate	$outputlangs    Lang object for output language
 	 *      @return int             			1=OK, 0=KO
 	 */
-	public function write_file($socid = 0, $catid = 0, $outputlangs = '')
+	public function write_file($socid, $outputlangs)
 	{
 		// phpcs:enable
 		global $user, $conf, $langs, $hookmanager;
