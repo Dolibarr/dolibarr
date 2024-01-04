@@ -2689,34 +2689,34 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *    Return list of products for a customer.
+	 *  Return list of products for a customer.
 	 *  Called by select_produits.
 	 *
-	 * @param int $selected Preselected product
-	 * @param string $htmlname Name of select html
-	 * @param string $filtertype Filter on product type (''=nofilter, 0=product, 1=service)
-	 * @param int $limit Limit on number of returned lines
-	 * @param int $price_level Level of price to show
-	 * @param string $filterkey Filter on product
-	 * @param int $status -1=Return all products, 0=Products not on sell, 1=Products on sell
-	 * @param int $finished Filter on finished field: 2=No filter
-	 * @param int $outputmode 0=HTML select string, 1=Array
-	 * @param int $socid Thirdparty Id (to get also price dedicated to this customer)
-	 * @param string $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
-	 * @param int $forcecombo Force to use combo box
-	 * @param string $morecss Add more css on select
-	 * @param int $hidepriceinlabel 1=Hide prices in label
-	 * @param string $warehouseStatus Warehouse status filter to group/count stock. Following comma separated filter options can be used.
-	 *                                'warehouseopen' = count products from open warehouses,
-	 *                                'warehouseclosed' = count products from closed warehouses,
-	 *                                'warehouseinternal' = count products from warehouses for internal correct/transfer only
-	 * @param int $status_purchase Purchase status -1=Return all products, 0=Products not on purchase, 1=Products on purchase
-	 * @return     array|string                Array of keys for json
+	 * @param 	int 		$selected 				Preselected product
+	 * @param 	string 		$htmlname 				Name of select html
+	 * @param 	string 		$filtertype 			Filter on product type (''=nofilter, 0=product, 1=service)
+	 * @param 	int 		$limit 					Limit on number of returned lines
+	 * @param 	int 		$price_level 			Level of price to show
+	 * @param 	string 		$filterkey 				Filter on product
+	 * @param 	int 		$status 				-1=Return all products, 0=Products not on sell, 1=Products on sell
+	 * @param 	int 		$finished 				Filter on finished field: 2=No filter
+	 * @param 	int 		$outputmode 			0=HTML select string, 1=Array
+	 * @param 	int 		$socid 					Thirdparty Id (to get also price dedicated to this customer)
+	 * @param 	string 		$showempty 				'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * @param 	int 		$forcecombo 			Force to use combo box
+	 * @param 	string 		$morecss 				Add more css on select
+	 * @param 	int 		$hidepriceinlabel	 	1=Hide prices in label
+	 * @param 	string 		$warehouseStatus 		Warehouse status filter to group/count stock. Following comma separated filter options can be used.
+	 *                      	          			'warehouseopen' = count products from open warehouses,
+	 *                          	      			'warehouseclosed' = count products from closed warehouses,
+	 *                              		  		'warehouseinternal' = count products from warehouses for internal correct/transfer only
+	 * @param 	int 			$status_purchase 	Purchase status -1=Return all products, 0=Products not on purchase, 1=Products on purchase
+	 * @return  array|string    			        Array of keys for json
 	 */
-	public function select_produits_list($selected = '', $htmlname = 'productid', $filtertype = '', $limit = 20, $price_level = 0, $filterkey = '', $status = 1, $finished = 2, $outputmode = 0, $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $status_purchase = -1)
+	public function select_produits_list($selected = 0, $htmlname = 'productid', $filtertype = '', $limit = 20, $price_level = 0, $filterkey = '', $status = 1, $finished = 2, $outputmode = 0, $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $status_purchase = -1)
 	{
 		// phpcs:enable
-		global $langs, $conf;
+		global $langs;
 		global $hookmanager;
 
 		$out = '';
@@ -3072,7 +3072,7 @@ class Form
 	 * @param string 	$opt 			Option (var used for returned value in string option format)
 	 * @param array 	$optJson 		Option (var used for returned value in json format)
 	 * @param int 		$price_level 	Price level
-	 * @param string 	$selected 		Preselected value
+	 * @param int 		$selected 		Preselected value
 	 * @param int 		$hidepriceinlabel Hide price in label
 	 * @param string 	$filterkey 		Filter key to highlight
 	 * @param int 		$novirtualstock Do not load virtual stock, even if slow option STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO is on.
