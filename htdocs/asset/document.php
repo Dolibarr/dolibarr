@@ -101,7 +101,7 @@ $form = new Form($db);
 
 $title = $langs->trans("Asset").' - '.$langs->trans("Files");
 $help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-asset page-card_documents');
 
 if ($object->id) {
 	/*
