@@ -9991,22 +9991,22 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *    Return select list of groups
+	 * Return select list of groups
 	 *
-	 * @param string|object $selected Id group or group preselected
-	 * @param string $htmlname Field name in form
-	 * @param int $show_empty 0=liste sans valeur nulle, 1=ajoute valeur inconnue
-	 * @param string|array $exclude Array list of groups id to exclude
-	 * @param int $disabled If select list must be disabled
-	 * @param string|array $include Array list of groups id to include
-	 * @param array $enableonly Array list of groups id to be enabled. All other must be disabled
-	 * @param string $force_entity '0' or Ids of environment to force
-	 * @param bool $multiple add [] in the name of element and add 'multiple' attribut (not working with ajax_autocompleter)
-	 * @param string $morecss More css to add to html component
-	 * @return    string
+	 * @param int|object|object[] 	$selected 		Id group or group(s) preselected
+	 * @param string 				$htmlname 		Field name in form
+	 * @param int 					$show_empty 	0=liste sans valeur nulle, 1=ajoute valeur inconnue
+	 * @param string|array 			$exclude 		Array list of groups id to exclude
+	 * @param int 					$disabled 		If select list must be disabled
+	 * @param string|array 			$include 		Array list of groups id to include
+	 * @param array 				$enableonly 	Array list of groups id to be enabled. All other must be disabled
+	 * @param string 				$force_entity 	'0' or Ids of environment to force
+	 * @param bool 					$multiple 		add [] in the name of element and add 'multiple' attribut (not working with ajax_autocompleter)
+	 * @param string 				$morecss 		More css to add to html component
+	 * @return    string							HTML Componont to select a group
 	 * @see select_dolusers()
 	 */
-	public function select_dolgroups($selected = '', $htmlname = 'groupid', $show_empty = 0, $exclude = '', $disabled = 0, $include = '', $enableonly = array(), $force_entity = '0', $multiple = false, $morecss = '')
+	public function select_dolgroups($selected = 0, $htmlname = 'groupid', $show_empty = 0, $exclude = '', $disabled = 0, $include = '', $enableonly = array(), $force_entity = '0', $multiple = false, $morecss = '')
 	{
 		// phpcs:enable
 		global $conf, $user, $langs;
@@ -10028,7 +10028,7 @@ class Form
 
 		$out = '';
 
-		// On recherche les groupes
+		// Build sql to search groups
 		$sql = "SELECT ug.rowid, ug.nom as name";
 		if (isModEnabled('multicompany') && $conf->entity == 1 && $user->admin && !$user->entity) {
 			$sql .= ", e.label";
@@ -10085,7 +10085,8 @@ class Form
 					if ($disableline) {
 						$out .= ' disabled';
 					}
-					if ((isset($selected[0]) && is_object($selected[0]) && $selected[0]->id == $obj->rowid) || ((!isset($selected[0]) || !is_object($selected[0])) && !empty($selected) && in_array($obj->rowid, $selected))) {
+					if ((isset($selected[0]) && is_object($selected[0]) && $selected[0]->id == $obj->rowid)
+						|| ((!isset($selected[0]) || !is_object($selected[0])) && !empty($selected) && in_array($obj->rowid, $selected))) {
 						$out .= ' selected';
 					}
 					$out .= ' data-html="'.dol_escape_htmltag($labelhtml).'"';
@@ -10918,12 +10919,12 @@ class Form
 	/**
 	* Return list of invoice subtypes.
 	*
-	* @param int    $selected     Id of invoice subtype to preselect by default
-	* @param string $htmlname     Select field name
-	* @param int    $addempty     Add an empty entry
-	* @param int    $noinfoadmin  0=Add admin info, 1=Disable admin info
-	* @param string $morecss       Add more CSS on select tag
-	* @return string  String for the HTML select component
+	* @param int    $selected     	Id of invoice subtype to preselect by default
+	* @param string $htmlname     	Select field name
+	* @param int    $addempty     	Add an empty entry
+	* @param int    $noinfoadmin  	0=Add admin info, 1=Disable admin info
+	* @param string $morecss       	Add more CSS on select tag
+	* @return string  				String for the HTML select component
 	*/
 	public function getSelectInvoiceSubtype($selected = 0, $htmlname = 'subtypeid', $addempty = 0, $noinfoadmin = 0, $morecss = '')
 	{
