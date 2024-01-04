@@ -623,7 +623,9 @@ if ($id > 0 || !empty($ref)) {
 			$i = 0;
 			print '<thead>';
 			print '<tr class="liste_titre">';
-			print '<th>'.$langs->trans("Rank").'</th>';
+			if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
+				print '<th>'.$langs->trans("Rank").'</th>';
+			}
 			print '<th>'.$langs->trans("Description").'</th>';
 			print '<th class="center">'.$langs->trans("QtyOrdered").'</th>';
 			print '<th class="center">'.$langs->trans("QtyShipped").'</th>';
@@ -663,7 +665,9 @@ if ($id > 0 || !empty($ref)) {
 					print '<tr class="oddeven">';
 
 					// Rank
-					print '<td class="center">'.$objp->rang.'</td>';
+					if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
+						print '<td class="center">'.$objp->rang.'</td>';
+					}
 
 					// Product label
 					if ($objp->fk_product > 0) {
