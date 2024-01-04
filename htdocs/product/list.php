@@ -180,6 +180,7 @@ $fieldstosearchall = array(
 	'p.label'=>"ProductLabel",
 	'p.description'=>"Description",
 	"p.note"=>"Note",
+	'pfp.ref_fourn'=>"RefSupplier",
 
 );
 // multilang
@@ -258,14 +259,13 @@ $arrayfields = array(
 	'p.tobuy'=>array('label'=>$langs->transnoentitiesnoconv("Status").' ('.$langs->transnoentitiesnoconv("Buy").')', 'checked'=>1, 'position'=>1000)
 );
 
-if(! empty($conf->stock->enabled)) {
+if (! empty($conf->stock->enabled)) {
 	// service
-	if($type == 1) {
-		if(! empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+	if ($type == 1) {
+		if (! empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 			$arrayfields['p.stockable_product'] = array('label' => $langs->trans('StockableProduct'), 'checked' => 0, 'position' => 1001);
 		}
-	}
-	else {
+	} else {
 		//product
 		$arrayfields['p.stockable_product'] = array('label' => $langs->trans('StockableProduct'), 'checked' => 0, 'position' => 1001);
 	}
@@ -489,7 +489,21 @@ if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 
 $sql .= ' WHERE p.entity IN ('.getEntity('product').')';
 if ($sall) {
-	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
+	// Clean $fieldstosearchall
+	$newfieldstosearchall = $fieldstosearchall;
+	unset($newfieldstosearchall['pfp.ref_fourn']);
+	unset($newfieldstosearchall['pfp.barcode']);
+
+	$sql .= ' AND (';
+	$sql .= natural_search(array_keys($newfieldstosearchall), $sall, 0, 1);
+	// Search also into a supplier reference 'pfp.ref_fourn'="RefSupplier"
+	$sql .= ' OR EXISTS (SELECT rowid FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp WHERE pfp.fk_product = p.rowid';
+	$sql .= ' AND ('.natural_search('pfp.ref_fourn', $sall, 0, 1);
+	if (isModEnabled('barcode')) {
+		// Search also into a supplier barcode 'pfp.barcode'='GencodBuyPrice';
+		$sql .= ' OR '.natural_search('pfp.barcode', $sall, 0, 1);
+	}
+	$sql .= ')))';
 }
 // if the type is not 1, we show all products (type = 0,2,3)
 if (dol_strlen($search_type) && $search_type != '-1') {
@@ -786,7 +800,7 @@ if ($resql) {
 	if ($search_finished) {
 		$param = "&search_finished=".urlencode($search_finished);
 	}
-	if($search_stockable_product != '') {
+	if ($search_stockable_product != '') {
 		$param = "&search_stockable_product=".urlencode($search_stockable_product);
 	}
 	// Add $param from extra fields
@@ -1102,7 +1116,7 @@ if ($resql) {
 	}
 	// Managed_in_stock
 	$array = array('-1'=>'&nbsp;', '0'=>$langs->trans('No'), '1'=>$langs->trans('Yes'));
-	if (!empty($arrayfields['p.stockable_product']['checked'])){
+	if (!empty($arrayfields['p.stockable_product']['checked'])) {
 		print '<td class="liste_titre center">'.Form::selectarray('search_stockable_product', $array, $search_stockable_product).'</td>';
 	}
 	// Desired stock
@@ -1838,7 +1852,7 @@ if ($resql) {
 		}
 
 		// not managed in stock
-		if(! empty($arrayfields['p.stockable_product']['checked'])) {
+		if (! empty($arrayfields['p.stockable_product']['checked'])) {
 			print '<td class="nowrap center">';
 			print '<input type="checkbox" readonly disabled '.($object->stockable_product == 1 ? 'checked' : '').'>';
 			print '</td>';
