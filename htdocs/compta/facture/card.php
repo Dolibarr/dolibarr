@@ -1560,6 +1560,10 @@ if (empty($reshook)) {
 									$descline .= ' ('.$valuedeposit.'%)';
 								}
 
+								if(empty($tva)) {
+									$tva = getDolGlobalString('INVOICE_CREDIT_NOTE_DEFAULT_VAT_RATE', '20');
+								}
+
 								$descline .= ' - '.$srcobject->ref;
 								$result = $object->addline(
 									$descline,
