@@ -58,10 +58,10 @@ $result = restrictedArea($user, 'don');
  */
 
 $form = new Form($db);
+$title = $langs->trans("DonationsStatistics");
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-donation page-stats');
 
-llxHeader();
-
-print load_fiche_titre($langs->trans("StatisticsOfDonations"), $mesg);
+print load_fiche_titre($langs->trans("DonationsStatistics"), $mesg);
 
 
 dol_mkdir($dir);
