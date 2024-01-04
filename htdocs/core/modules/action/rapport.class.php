@@ -89,7 +89,7 @@ class CommActionRapport
 	 */
 	public function __construct($db, $month, $year)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("commercial", "projects"));
@@ -124,7 +124,7 @@ class CommActionRapport
 	 *      @param  Translate	$outputlangs    Lang object for output language
 	 *      @return int             			1=OK, 0=KO
 	 */
-	public function write_file($socid = 0, $catid = 0, $outputlangs = '')
+	public function write_file($socid = 0, $catid = 0, $outputlangs = null)
 	{
 		// phpcs:enable
 		global $user, $conf, $langs, $hookmanager;

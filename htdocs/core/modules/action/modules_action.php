@@ -70,7 +70,8 @@ abstract class ModeleAction extends CommonDocGenerator
 function action_create($db, $object, $modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 {
 	// phpcs:enable
-	global $conf, $langs, $user;
+	global $conf, $langs;
+
 	$langs->load("action");
 
 	$error = 0;
