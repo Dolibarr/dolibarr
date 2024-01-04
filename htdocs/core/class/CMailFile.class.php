@@ -1752,6 +1752,7 @@ class CMailFile
 	{
 		// Build the array of image extensions
 		$extensions = array_keys($this->image_types);
+
 		// We search (into mail body this->html), if we find some strings like "... file=xxx.img"
 		// For example when:
 		// <img alt="" src="/viewimage.php?modulepart=medias&amp;entity=1&amp;file=image/picture.jpg" style="height:356px; width:1040px" />
@@ -1789,6 +1790,7 @@ class CMailFile
 					$i++;
 				}
 			}
+
 			if (!empty($this->html_images)) {
 				$inline = array();
 
