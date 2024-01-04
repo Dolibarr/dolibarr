@@ -496,8 +496,8 @@ print_liste_field_titre("CronType", '', '', "", $param, '', $sortfield, $sortord
 print_liste_field_titre("CronFrequency", '', "", "", $param, '', $sortfield, $sortorder);
 //print_liste_field_titre("CronDtStart", $_SERVER["PHP_SELF"], "t.datestart", "", $param, 'align="center"', $sortfield, $sortorder);
 //print_liste_field_titre("CronDtEnd", $_SERVER["PHP_SELF"], "t.dateend", "", $param, 'align="center"', $sortfield, $sortorder);
-print_liste_field_titre("CronNbRun", $_SERVER["PHP_SELF"], "t.nbrun", "", $param, '', $sortfield, $sortorder, 'right tdoverflowmax50');
-print_liste_field_titre("CronDtLastLaunch", $_SERVER["PHP_SELF"], "t.datelastrun", "", $param, '', $sortfield, $sortorder, 'center ');
+print_liste_field_titre("CronNbRun", $_SERVER["PHP_SELF"], "t.nbrun", "", $param, '', $sortfield, $sortorder, 'right tdoverflowmax50 ');
+print_liste_field_titre("CronDtLastLaunch", $_SERVER["PHP_SELF"], "t.datelastrun", "", $param, '', $sortfield, $sortorder, 'center tdoverflowmax100 ');
 print_liste_field_titre("Duration", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center ');
 print_liste_field_titre("CronLastResult", $_SERVER["PHP_SELF"], "t.lastresult", "", $param, '', $sortfield, $sortorder, 'center ');
 print_liste_field_titre("CronLastOutput", $_SERVER["PHP_SELF"], "t.lastoutput", "", $param, '', $sortfield, $sortorder);
