@@ -557,7 +557,16 @@ function CloseBill() {
 			$.colorbox.close = originalClose;
 		};
 	<?php } ?>
-	$.colorbox({href:"pay.php?place="+place+"&invoiceid="+invoiceid, width:"80%", height:"90%", transition:"none", iframe:"true", title:""});
+
+  <?php
+	$alternative_payurl = getDolGlobalString('TAKEPOS_ALTERNATIVE_PAYMENT_SCREEN');
+	if (empty($alternative_payurl)) {
+		$payurl = "pay.php";
+	} else {
+		$payurl = dol_buildpath($alternative_payurl, 1);
+	}
+	?>
+	$.colorbox({href:"<?php echo $payurl; ?>?place="+place+"&invoiceid="+invoiceid, width:"80%", height:"90%", transition:"none", iframe:"true", title:""});
 }
 
 function Split() {

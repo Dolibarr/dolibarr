@@ -109,10 +109,6 @@ class KnowledgeManagement extends DolibarrApi
 
 		$result = $categories->getListForItem($id, 'knowledgemanagement', $sortfield, $sortorder, $limit, $page);
 
-		if (empty($result)) {
-			throw new RestException(404, 'No category found');
-		}
-
 		if ($result < 0) {
 			throw new RestException(503, 'Error when retrieve category list : '.join(',', array_merge(array($categories->error), $categories->errors)));
 		}
@@ -231,9 +227,7 @@ class KnowledgeManagement extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieving knowledgerecord list: '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No knowledgerecord found');
-		}
+
 		return $obj_ret;
 	}
 

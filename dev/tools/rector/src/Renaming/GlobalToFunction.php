@@ -4,6 +4,7 @@ namespace Dolibarr\Rector\Renaming;
 
 use PhpParser\Node;
 use PhpParser\Node\Arg;
+use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpParser\Node\Expr\BinaryOp\BooleanAnd;
 use PhpParser\Node\Expr\BinaryOp\Concat;
@@ -73,7 +74,7 @@ class GlobalToFunction extends AbstractRector
 	 */
 	public function getNodeTypes(): array
 	{
-		return [FuncCall::class, MethodCall::class, Equal::class, NotEqual::class, Greater::class, GreaterOrEqual::class, Smaller::class, SmallerOrEqual::class, NotIdentical::class, BooleanAnd::class, Concat::class, ArrayDimFetch::class];
+		return [FuncCall::class, MethodCall::class, Equal::class, NotEqual::class, Greater::class, GreaterOrEqual::class, Smaller::class, SmallerOrEqual::class, NotIdentical::class, BooleanAnd::class, Concat::class, ArrayItem::class, ArrayDimFetch::class];
 	}
 
 	/**
@@ -85,6 +86,23 @@ class GlobalToFunction extends AbstractRector
 	 */
 	public function refactor(Node $node)
 	{
+		if ($node instanceof Node\Expr\ArrayItem) {
+			if (!isset($node->key)) {
+				return;
+			}
+			if ($this->isGlobalVar($node->value)) {
+				$constName = $this->getConstName($node->value);
+				if (empty($constName)) {
+					return;
+				}
+				$node->value = new FuncCall(
+					new Name('getDolGlobalString'),
+					[new Arg($constName)]
+					);
+			}
+			return $node;
+		}
+
 		if ($node instanceof Node\Expr\ArrayDimFetch) {
 			if (!isset($node->dim)) {
 				return;

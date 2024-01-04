@@ -1156,10 +1156,6 @@ class Setup extends DolibarrApi
 			throw new RestException(503, 'Error when retrieving list of extra fields : '.$this->db->lasterror());
 		}
 
-		if (!count($list)) {
-			throw new RestException(404, 'No extrafield found');
-		}
-
 		return $list;
 	}
 
