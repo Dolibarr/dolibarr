@@ -1561,7 +1561,7 @@ if (empty($reshook)) {
 								}
 
 								if(empty($tva)) {
-									$tva = getDolGlobalString('INVOICE_CREDIT_NOTE_DEFAULT_VAT_RATE', '20');
+									$tva = isset($conf->global->INVOICE_CREDIT_NOTE_DEFAULT_VAT_RATE) ? getDolGlobalString('INVOICE_CREDIT_NOTE_DEFAULT_VAT_RATE') : 20;
 								}
 
 								$descline .= ' - '.$srcobject->ref;
