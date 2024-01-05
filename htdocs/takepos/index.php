@@ -1279,11 +1279,6 @@ if (! getDolGlobalString('TAKEPOS_HIDE_HISTORY')) {
 }
 $menus[$r++] = array('title'=>'<span class="fa fa-cube paddingrightonly"></span><div class="trunc">'.$langs->trans("FreeZone").'</div>', 'action'=>'FreeZone();');
 $menus[$r++] = array('title'=>'<span class="fa fa-percent paddingrightonly"></span><div class="trunc">'.$langs->trans("InvoiceDiscountShort").'</div>', 'action'=>'Reduction();');
-$menus[$r++] = array('title'=>'<span class="far fa-money-bill-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Payment").'</div>', 'action'=>'CloseBill();');
-
-if (getDolGlobalString('TAKEPOS_DIRECT_PAYMENT')) {
-	$menus[$r++] = array('title'=>'<span class="far fa-money-bill-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("DirectPayment").' <span class="opacitymedium">('.$langs->trans("Cash").')</span></div>', 'action'=>'DirectPayment();');
-}
 
 $menus[$r++] = array('title'=>'<span class="fas fa-cut paddingrightonly"></span><div class="trunc">'.$langs->trans("SplitSale").'</div>', 'action'=>'Split();');
 
@@ -1292,6 +1287,16 @@ if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
 	if (getDolGlobalString('TAKEPOS_ORDER_PRINTERS')) {
 		$menus[$r++] = array('title'=>'<span class="fa fa-blender-phone paddingrightonly"></span><div class="trunc">'.$langs->trans("Order").'</span>', 'action'=>'TakeposPrintingOrder();');
 	}
+}
+
+// Last action that close the sell (payments)
+$menus[$r++] = array('title'=>'<span class="far fa-money-bill-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Payment").'</div>', 'action'=>'CloseBill();');
+if (getDolGlobalString('TAKEPOS_DIRECT_PAYMENT')) {
+	$menus[$r++] = array('title'=>'<span class="far fa-money-bill-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("DirectPayment").' <span class="opacitymedium">('.$langs->trans("Cash").')</span></div>', 'action'=>'DirectPayment();');
+}
+
+// BAR RESTAURANT specific menu
+if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
 	//Button to print receipt before payment
 	if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
 		if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
