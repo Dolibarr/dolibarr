@@ -492,9 +492,9 @@ class SMTPs
 		$hosth = $host;	// so for example 'localhost' or 'smtp-relay.gmail.com'
 
 		if (getDolGlobalString('MAIL_SMTP_USE_FROM_FOR_HELO')) {
-			if (!is_numeric($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO)) {
+			if (!is_numeric(getDolGlobalString('MAIL_SMTP_USE_FROM_FOR_HELO'))) {
 				// If value of MAIL_SMTP_USE_FROM_FOR_HELO is a string, we use it as domain name
-				$hosth = $conf->global->MAIL_SMTP_USE_FROM_FOR_HELO;
+				$hosth = getDolGlobalString('MAIL_SMTP_USE_FROM_FOR_HELO');
 			} elseif (getDolGlobalInt('MAIL_SMTP_USE_FROM_FOR_HELO') == 1) {
 				// If value of MAIL_SMTP_USE_FROM_FOR_HELO is 1, we use the domain in the from.
 				// So if the from to is 'aaa <bbb@ccc.com>', we will keep 'ccc.com'
@@ -682,9 +682,9 @@ class SMTPs
 				$hosth = $host;
 
 				if (getDolGlobalString('MAIL_SMTP_USE_FROM_FOR_HELO')) {
-					if (!is_numeric($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO)) {
+					if (!is_numeric(getDolGlobalString('MAIL_SMTP_USE_FROM_FOR_HELO'))) {
 						// If value of MAIL_SMTP_USE_FROM_FOR_HELO is a string, we use it as domain name
-						$hosth = $conf->global->MAIL_SMTP_USE_FROM_FOR_HELO;
+						$hosth = getDolGlobalString('MAIL_SMTP_USE_FROM_FOR_HELO');
 					} elseif (getDolGlobalInt('MAIL_SMTP_USE_FROM_FOR_HELO') == 1) {
 						// If value of MAIL_SMTP_USE_FROM_FOR_HELO is 1, we use the domain in the from.
 						// So if the from to is 'aaa <bbb@ccc.com>', we will keep 'ccc.com'

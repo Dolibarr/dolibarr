@@ -203,7 +203,7 @@ if (session_id() && !empty($_SESSION["dol_entity"])) {
 if (!is_numeric($conf->entity)) {
 	$conf->entity = 1;
 }
-// Here we read database (llx_const table) and define $conf->global->XXX var.
+// Here we read database (llx_const table) and define conf var $conf->global->XXX.
 //print "We work with data into entity instance number '".$conf->entity."'";
 $conf->setValues($db);
 
@@ -255,7 +255,7 @@ if (!defined('NOREQUIREDB') && !defined('NOREQUIRESOC')) {
 }
 
 
-// Set default language (must be after the setValues setting global $conf->global->MAIN_LANG_DEFAULT. Page main.inc.php will overwrite langs->defaultlang with user value later)
+// Set default language (must be after the setValues setting global conf 'MAIN_LANG_DEFAULT'. Page main.inc.php will overwrite langs->defaultlang with user value later)
 if (!defined('NOREQUIRETRAN')) {
 	$langcode = (GETPOST('lang', 'aZ09') ? GETPOST('lang', 'aZ09', 1) : getDolGlobalString('MAIN_LANG_DEFAULT', 'auto'));
 	if (defined('MAIN_LANG_DEFAULT')) {	// So a page can force the language whatever is setup and parameters in URL

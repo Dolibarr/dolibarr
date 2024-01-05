@@ -77,8 +77,8 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 		if (!isset($conf->global->COMPANY_DIGITARIA_MASK_SUPPLIER) || trim($conf->global->COMPANY_DIGITARIA_MASK_SUPPLIER) == '') {
 			$conf->global->COMPANY_DIGITARIA_MASK_SUPPLIER = '401';
 		}
-		$this->prefixcustomeraccountancycode = $conf->global->COMPANY_DIGITARIA_MASK_CUSTOMER;
-		$this->prefixsupplieraccountancycode = $conf->global->COMPANY_DIGITARIA_MASK_SUPPLIER;
+		$this->prefixcustomeraccountancycode = getDolGlobalString('COMPANY_DIGITARIA_MASK_CUSTOMER');
+		$this->prefixsupplieraccountancycode = getDolGlobalString('COMPANY_DIGITARIA_MASK_SUPPLIER');
 
 		if (!isset($conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_CUSTOMER) || trim($conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_CUSTOMER) == '') {
 			$conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_CUSTOMER = '5';
@@ -86,8 +86,8 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 		if (!isset($conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_SUPPLIER) || trim($conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_SUPPLIER) == '') {
 			$conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_SUPPLIER = '5';
 		}
-		$this->customeraccountancycodecharacternumber = $conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_CUSTOMER;
-		$this->supplieraccountancycodecharacternumber = $conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_SUPPLIER;
+		$this->customeraccountancycodecharacternumber = getDolGlobalString('COMPANY_DIGITARIA_MASK_NBCHARACTER_CUSTOMER');
+		$this->supplieraccountancycodecharacternumber = getDolGlobalString('COMPANY_DIGITARIA_MASK_NBCHARACTER_SUPPLIER');
 	}
 
 	/**

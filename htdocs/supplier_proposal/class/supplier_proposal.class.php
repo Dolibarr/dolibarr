@@ -1149,7 +1149,7 @@ class SupplierProposal extends CommonObject
 
 		// Set ref
 		require_once DOL_DOCUMENT_ROOT."/core/modules/supplier_proposal/" . getDolGlobalString('SUPPLIER_PROPOSAL_ADDON').'.php';
-		$obj = $conf->global->SUPPLIER_PROPOSAL_ADDON;
+		$obj = getDolGlobalString('SUPPLIER_PROPOSAL_ADDON');
 		$modSupplierProposal = new $obj();
 		$this->ref = $modSupplierProposal->getNextValue($objsoc, $this);
 
@@ -2419,7 +2419,7 @@ class SupplierProposal extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('SUPPLIER_PROPOSAL_ADDON') . ".php";
-			$classname = $conf->global->SUPPLIER_PROPOSAL_ADDON;
+			$classname = getDolGlobalString('SUPPLIER_PROPOSAL_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -2704,7 +2704,7 @@ class SupplierProposal extends CommonObject
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('SUPPLIER_PROPOSAL_ADDON_PDF')) {
-				$modele = $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF;
+				$modele = getDolGlobalString('SUPPLIER_PROPOSAL_ADDON_PDF');
 			}
 		}
 

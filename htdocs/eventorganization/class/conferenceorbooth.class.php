@@ -782,7 +782,7 @@ class ConferenceOrBooth extends ActionComm
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('CONFERENCEORBOOTH_ADDON_PDF')) {
-				$modele = $conf->global->CONFERENCEORBOOTH_ADDON_PDF;
+				$modele = getDolGlobalString('CONFERENCEORBOOTH_ADDON_PDF');
 			}
 		}
 

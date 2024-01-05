@@ -1007,7 +1007,7 @@ class Availabilities extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('BOOKCAL_AVAILABILITIES_ADDON') . ".php";
-			$classname = $conf->global->BOOKCAL_AVAILABILITIES_ADDON;
+			$classname = getDolGlobalString('BOOKCAL_AVAILABILITIES_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -1070,7 +1070,7 @@ class Availabilities extends CommonObject
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('AVAILABILITIES_ADDON_PDF')) {
-				$modele = $conf->global->AVAILABILITIES_ADDON_PDF;
+				$modele = getDolGlobalString('AVAILABILITIES_ADDON_PDF');
 			}
 		}
 

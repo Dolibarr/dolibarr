@@ -955,7 +955,7 @@ class Entrepot extends CommonObject
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('STOCK_ADDON_PDF')) {
-				$modele = $conf->global->STOCK_ADDON_PDF;
+				$modele = getDolGlobalString('STOCK_ADDON_PDF');
 			}
 		}
 

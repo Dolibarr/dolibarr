@@ -3670,7 +3670,7 @@ class Propal extends CommonObject
 		global $conf, $langs;
 		$langs->load("propal");
 
-		$classname = $conf->global->PROPALE_ADDON;
+		$classname = getDolGlobalString('PROPALE_ADDON');
 
 		if (!empty($classname)) {
 			$mybool = false;
@@ -3945,7 +3945,7 @@ class Propal extends CommonObject
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('PROPALE_ADDON_PDF')) {
-				$modele = $conf->global->PROPALE_ADDON_PDF;
+				$modele = getDolGlobalString('PROPALE_ADDON_PDF');
 			}
 		}
 

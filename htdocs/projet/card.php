@@ -728,7 +728,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		print '</td><td class="maxwidthonsmartphone">';
 		$filter = '';
 		if (getDolGlobalString('PROJECT_FILTER_FOR_THIRDPARTY_LIST')) {
-			$filter = $conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
+			$filter = getDolGlobalString('PROJECT_FILTER_FOR_THIRDPARTY_LIST');
 		}
 		$text = img_picto('', 'company').$form->select_company(GETPOST('socid', 'int'), 'socid', $filter, 'SelectThirdParty', 1, 0, array(), 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
 		if (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') && empty($conf->dol_use_jmobile)) {
@@ -1119,7 +1119,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			print '</td><td>';
 			$filter = '';
 			if (getDolGlobalString('PROJECT_FILTER_FOR_THIRDPARTY_LIST')) {
-				$filter = $conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
+				$filter = getDolGlobalString('PROJECT_FILTER_FOR_THIRDPARTY_LIST');
 			}
 			$text = img_picto('', 'company', 'class="pictofixedwidth"');
 			$text .= $form->select_company(!empty($object->thirdparty->id) ? $object->thirdparty->id : "", 'socid', $filter, 'None', 1, 0, array(), 0, 'minwidth300');

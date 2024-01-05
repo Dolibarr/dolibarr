@@ -841,7 +841,7 @@ class Workstation extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('WORKSTATION_WORKSTATION_ADDON') . ".php";
-			$classname = $conf->global->WORKSTATION_WORKSTATION_ADDON;
+			$classname = getDolGlobalString('WORKSTATION_WORKSTATION_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -906,7 +906,7 @@ class Workstation extends CommonObject
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('WORKSTATION_ADDON_PDF')) {
-				$modele = $conf->global->WORKSTATION_ADDON_PDF;
+				$modele = getDolGlobalString('WORKSTATION_ADDON_PDF');
 			}
 		}
 

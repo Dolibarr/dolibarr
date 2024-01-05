@@ -397,7 +397,7 @@ class Tickets extends DolibarrApi
 			$this->ticket->$field = $value;
 		}
 
-		if ($this->ticket->update($id, DolibarrApiAccess::$user)) {
+		if ($this->ticket->update(DolibarrApiAccess::$user)) {
 			return $this->get($id);
 		}
 

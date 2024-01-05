@@ -2030,7 +2030,7 @@ class Setup extends DolibarrApi
 		// Remote file to compare to
 		$xmlremote = ($target == 'default' ? '' : $target);
 		if (empty($xmlremote) && getDolGlobalString('MAIN_FILECHECK_URL')) {
-			$xmlremote = $conf->global->MAIN_FILECHECK_URL;
+			$xmlremote = getDolGlobalString('MAIN_FILECHECK_URL');
 		}
 		$param = 'MAIN_FILECHECK_URL_'.DOL_VERSION;
 		if (empty($xmlremote) && getDolGlobalString($param)) {

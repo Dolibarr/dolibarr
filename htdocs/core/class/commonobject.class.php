@@ -1822,9 +1822,9 @@ abstract class CommonObject
 		$idtype = $this->barcode_type;
 		if (empty($idtype) && $idtype != '0') {	// If type of barcode no set, we try to guess. If set to '0' it means we forced to have type remain not defined
 			if ($this->element == 'product' && getDolGlobalString('PRODUIT_DEFAULT_BARCODE_TYPE')) {
-				$idtype = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
+				$idtype = getDolGlobalString('PRODUIT_DEFAULT_BARCODE_TYPE');
 			} elseif ($this->element == 'societe') {
-				$idtype = $conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY;
+				$idtype = getDolGlobalString('GENBARCODE_BARCODETYPE_THIRDPARTY');
 			} else {
 				dol_syslog('Call fetch_barcode with barcode_type not defined and cant be guessed', LOG_WARNING);
 			}

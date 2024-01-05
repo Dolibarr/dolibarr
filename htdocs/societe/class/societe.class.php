@@ -870,9 +870,9 @@ class Societe extends CommonObject
 		$this->status = 1;
 
 		if (getDolGlobalString('COMPANY_SHOW_ADDRESS_SELECTLIST')) {
-			$this->fields['address']['showoncombobox'] = $conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST;
-			$this->fields['zip']['showoncombobox'] = $conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST;
-			$this->fields['town']['showoncombobox'] = $conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST;
+			$this->fields['address']['showoncombobox'] = getDolGlobalString('COMPANY_SHOW_ADDRESS_SELECTLIST');
+			$this->fields['zip']['showoncombobox'] = getDolGlobalString('COMPANY_SHOW_ADDRESS_SELECTLIST');
+			$this->fields['town']['showoncombobox'] = getDolGlobalString('COMPANY_SHOW_ADDRESS_SELECTLIST');
 			//$this->fields['fk_pays']['showoncombobox'] = $conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST;
 		}
 	}
@@ -3354,7 +3354,7 @@ class Societe extends CommonObject
 		// phpcs:enable
 		global $conf;
 		if (getDolGlobalString('SOCIETE_CODECLIENT_ADDON')) {
-			$module = $conf->global->SOCIETE_CODECLIENT_ADDON;
+			$module = getDolGlobalString('SOCIETE_CODECLIENT_ADDON');
 
 			$dirsociete = array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
 			foreach ($dirsociete as $dirroot) {
@@ -3386,7 +3386,7 @@ class Societe extends CommonObject
 		// phpcs:enable
 		global $conf;
 		if (getDolGlobalString('SOCIETE_CODECLIENT_ADDON')) {
-			$module = $conf->global->SOCIETE_CODECLIENT_ADDON;
+			$module = getDolGlobalString('SOCIETE_CODECLIENT_ADDON');
 
 			$dirsociete = array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
 			foreach ($dirsociete as $dirroot) {
@@ -3415,7 +3415,7 @@ class Societe extends CommonObject
 		// phpcs:enable
 		global $conf;
 		if (getDolGlobalString('SOCIETE_CODECLIENT_ADDON')) {
-			$module = $conf->global->SOCIETE_CODECLIENT_ADDON;
+			$module = getDolGlobalString('SOCIETE_CODECLIENT_ADDON');
 
 			$dirsociete = array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
 			foreach ($dirsociete as $dirroot) {
@@ -3455,7 +3455,7 @@ class Societe extends CommonObject
 		// phpcs:enable
 		global $conf;
 		if (getDolGlobalString('SOCIETE_CODECLIENT_ADDON')) {
-			$module = $conf->global->SOCIETE_CODECLIENT_ADDON;
+			$module = getDolGlobalString('SOCIETE_CODECLIENT_ADDON');
 
 			$dirsociete = array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
 			foreach ($dirsociete as $dirroot) {
@@ -3501,7 +3501,7 @@ class Societe extends CommonObject
 		// phpcs:enable
 		global $conf;
 		if (getDolGlobalString('SOCIETE_CODECLIENT_ADDON')) {
-			$module = $conf->global->SOCIETE_CODECLIENT_ADDON;
+			$module = getDolGlobalString('SOCIETE_CODECLIENT_ADDON');
 
 			$dirsociete = array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
 			foreach ($dirsociete as $dirroot) {
@@ -3542,7 +3542,7 @@ class Societe extends CommonObject
 		// phpcs:enable
 		global $conf;
 		if (getDolGlobalString('SOCIETE_CODECLIENT_ADDON')) {
-			$module = $conf->global->SOCIETE_CODECLIENT_ADDON;
+			$module = getDolGlobalString('SOCIETE_CODECLIENT_ADDON');
 
 			$dirsociete = array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
 			foreach ($dirsociete as $dirroot) {
@@ -3581,7 +3581,7 @@ class Societe extends CommonObject
 		global $conf;
 
 		if (getDolGlobalString('SOCIETE_CODECOMPTA_ADDON')) {
-			$module=$conf->global->SOCIETE_CODECOMPTA_ADDON;
+			$module=getDolGlobalString('SOCIETE_CODECOMPTA_ADDON');
 			$res = false;
 			$dirsociete = array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
 			foreach ($dirsociete as $dirroot) {
@@ -4533,7 +4533,7 @@ class Societe extends CommonObject
 		$this->logo_squarred_mini = getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI');
 
 		// Define if company use vat or not
-		$this->tva_assuj = $conf->global->FACTURE_TVAOPTION;
+		$this->tva_assuj = getDolGlobalString('FACTURE_TVAOPTION');
 
 		// Define if company use local taxes
 		$this->localtax1_assuj = ((isset($conf->global->FACTURE_LOCAL_TAX1_OPTION) && (getDolGlobalString('FACTURE_LOCAL_TAX1_OPTION') == '1' || getDolGlobalString('FACTURE_LOCAL_TAX1_OPTION') == 'localtax1on')) ? 1 : 0);
@@ -5030,7 +5030,7 @@ class Societe extends CommonObject
 			// Positionne le modele sur le nom du modele a utiliser
 			if (!dol_strlen($modele)) {
 				if (getDolGlobalString('COMPANY_ADDON_PDF')) {
-					$modele = $conf->global->COMPANY_ADDON_PDF;
+					$modele = getDolGlobalString('COMPANY_ADDON_PDF');
 				} else {
 					print $langs->trans("Error")." ".$langs->trans("Error_COMPANY_ADDON_PDF_NotDefined");
 					return 0;

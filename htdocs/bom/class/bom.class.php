@@ -878,7 +878,7 @@ class BOM extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('BOM_ADDON') . ".php";
-			$classname = $conf->global->BOM_ADDON;
+			$classname = getDolGlobalString('BOM_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -1351,7 +1351,7 @@ class BOM extends CommonObject
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('BOM_ADDON_PDF')) {
-				$modele = $conf->global->BOM_ADDON_PDF;
+				$modele = getDolGlobalString('BOM_ADDON_PDF');
 			}
 		}
 

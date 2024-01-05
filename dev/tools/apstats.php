@@ -306,6 +306,7 @@ $html .= '<section class="chapter" id="linesofcode">'."\n";
 $html .= '<h2>Lines of code</h2>'."\n";
 
 $html .= '<div class="div-table-responsive">'."\n";
+$html .= '<div class="boxallwidth">'."\n";
 $html .= '<table class="centpercent">';
 $html .= '<tr class="loc">';
 $html .= '<th class="left">Language</th>';
@@ -363,19 +364,25 @@ $html .= '<td></td>';
 $html .= '</tr>';
 $html .= '</table>';
 $html .= '</div>';
+$html .= '</div>';
 
 $html .= '</section>'."\n";
 
 $html .= '<section class="chapter" id="projectvalue">'."\n";
 $html .= '<h2>Project value</h2><br>'."\n";
+
+$html .= '<div class="boxallwidth">'."\n";
 $html .= '<div class="box inline-box back1">';
-$html .= 'COCOMO (Basic organic model) value:<br>';
+$html .= 'COCOMO value<br><span class="small">(Basic organic model)</span><br>';
 $html .= '<b>$'.formatNumber((empty($arraycocomo['proj']['currency']) ? 0 : $arraycocomo['proj']['currency']) + (empty($arraycocomo['dep']['currency']) ? 0 : $arraycocomo['dep']['currency']), 2).'</b>';
 $html .= '</div>';
 $html .= '<div class="box inline-box back2">';
-$html .= 'COCOMO (Basic organic model) effort<br>';
+$html .= 'COCOMO effort<br><span class="small">(Basic organic model)</span><br>';
 $html .= '<b>'.formatNumber($arraycocomo['proj']['people'] * $arraycocomo['proj']['effort'] + $arraycocomo['dep']['people'] * $arraycocomo['dep']['effort']);
-$html .= ' monthes people</b><br>';
+$html .= ' monthes people</b>';
+$html .= '</div>';
+$html .= '</div>';
+
 $html .= '</section>'."\n";
 
 $tmp = '';
@@ -392,12 +399,16 @@ foreach ($output_arrtd as $line) {
 
 $html .= '<section class="chapter" id="technicaldebt">'."\n";
 $html .= '<h2>Technical debt <span class="opacitymedium">(PHPStan level '.$phpstanlevel.' -> '.$nblines.' warnings)</span></h2><br>'."\n";
+
 $html .= '<div class="div-table-responsive">'."\n";
+$html .= '<div class="boxallwidth">'."\n";
 $html .= '<table class="list_technical_debt">'."\n";
 $html .= '<tr><td>File</td><td>Line</td><td>Type</td></tr>'."\n";
 $html .= $tmp;
 $html .= '</table>';
 $html .= '</div>';
+$html .= '</div>';
+
 $html .= '</section>'."\n";
 
 $html .= '
