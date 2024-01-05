@@ -31,26 +31,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 class DiscountAbsolute extends CommonObject
 {
 	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error;
-
-	/**
-	 * @var string[]	Array of error strings
-	 */
-	public $errors = array();
-
-	/**
-	 * @var int 	ID discount
-	 */
-	public $id;
-
-	/**
 	 * @var int 	Thirdparty ID
 	 * @deprecated
 	 */
