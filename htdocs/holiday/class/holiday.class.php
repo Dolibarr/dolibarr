@@ -197,7 +197,7 @@ class Holiday extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('HOLIDAY_ADDON') . ".php";
-			$classname = $conf->global->HOLIDAY_ADDON;
+			$classname = getDolGlobalString('HOLIDAY_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);

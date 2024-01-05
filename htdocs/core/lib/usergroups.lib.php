@@ -76,7 +76,7 @@ function user_prepare_head(User $object)
 		if (!getDolGlobalString('AGENDA_EXT_NB')) {
 			$conf->global->AGENDA_EXT_NB = 5;
 		}
-		$MAXAGENDA = $conf->global->AGENDA_EXT_NB;
+		$MAXAGENDA = getDolGlobalString('AGENDA_EXT_NB');
 
 		$i = 1;
 		$nbagenda = 0;
@@ -329,7 +329,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 
 	$selected_theme = '';
 	if (empty($foruserprofile)) {
-		$selected_theme = $conf->global->MAIN_THEME;
+		$selected_theme = getDolGlobalString('MAIN_THEME');
 	} else {
 		$selected_theme = ((is_object($fuser) && !empty($fuser->conf->MAIN_THEME)) ? $fuser->conf->MAIN_THEME : '');
 	}
@@ -548,7 +548,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 			print ajax_constantonoff('MAIN_SHOW_LOGO', array(), null, 0, 0, 1);
 			//print $form->selectyesno('MAIN_SHOW_LOGO', $conf->global->MAIN_SHOW_LOGO, 1);
 		} else {
-			print yn($conf->global->MAIN_SHOW_LOGO);
+			print yn(getDolGlobalString('MAIN_SHOW_LOGO'));
 		}
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes"), 1, 'help', 'inline-block');
 		print '</td>';
@@ -568,7 +568,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 			print ajax_constantonoff('THEME_ELDY_USEBORDERONTABLE', array(), null, 0, 0, 1);
 			//print $form->selectyesno('THEME_ELDY_USEBORDERONTABLE', $conf->global->THEME_ELDY_USEBORDERONTABLE, 1);
 		} else {
-			print yn($conf->global->THEME_ELDY_USEBORDERONTABLE);
+			print yn(getDolGlobalString('THEME_ELDY_USEBORDERONTABLE'));
 		}
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes"), 1, 'help', 'inline-block');
 		print '</td>';

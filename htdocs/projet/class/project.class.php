@@ -1380,7 +1380,7 @@ class Project extends CommonObject
 
 		$result = '';
 		if (getDolGlobalString('PROJECT_OPEN_ALWAYS_ON_TAB')) {
-			$option = $conf->global->PROJECT_OPEN_ALWAYS_ON_TAB;
+			$option = getDolGlobalString('PROJECT_OPEN_ALWAYS_ON_TAB');
 		}
 		$params = [
 			'id' => $this->id,
@@ -2058,7 +2058,7 @@ class Project extends CommonObject
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('PROJECT_ADDON_PDF')) {
-				$modele = $conf->global->PROJECT_ADDON_PDF;
+				$modele = getDolGlobalString('PROJECT_ADDON_PDF');
 			}
 		}
 

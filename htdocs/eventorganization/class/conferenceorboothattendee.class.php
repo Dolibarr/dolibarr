@@ -973,7 +973,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('EVENTORGANIZATION_CONFERENCEORBOOTHATTENDEE_ADDON') . ".php";
-			$classname = $conf->global->EVENTORGANIZATION_CONFERENCEORBOOTHATTENDEE_ADDON;
+			$classname = getDolGlobalString('EVENTORGANIZATION_CONFERENCEORBOOTHATTENDEE_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -1036,7 +1036,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('CONFERENCEORBOOTHATTENDEE_ADDON_PDF')) {
-				$modele = $conf->global->CONFERENCEORBOOTHATTENDEE_ADDON_PDF;
+				$modele = getDolGlobalString('CONFERENCEORBOOTHATTENDEE_ADDON_PDF');
 			}
 		}
 

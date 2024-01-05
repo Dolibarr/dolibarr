@@ -238,7 +238,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 	if (!getDolGlobalString('SYSTEMTOOLS_MYSQLDUMP')) {
 		$fullpathofmysqldump = $db->getPathOfDump();
 	} else {
-		$fullpathofmysqldump = $conf->global->SYSTEMTOOLS_MYSQLDUMP;
+		$fullpathofmysqldump = getDolGlobalString('SYSTEMTOOLS_MYSQLDUMP');
 	}
 	print '<input type="text" name="mysqldump" style="width: 80%" value="'.$fullpathofmysqldump.'">';
 	print '</fieldset>';
@@ -281,7 +281,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 
 	$execmethod = 0;
 	if (getDolGlobalString('MAIN_EXEC_USE_POPEN')) {
-		$execmethod = $conf->global->MAIN_EXEC_USE_POPEN;
+		$execmethod = getDolGlobalString('MAIN_EXEC_USE_POPEN');
 	}
 	if (empty($execmethod)) {
 		$execmethod = 1;
@@ -409,7 +409,7 @@ if (in_array($type, array('pgsql'))) {
 	if (!getDolGlobalString('SYSTEMTOOLS_POSTGRESQLDUMP')) {
 		$fullpathofpgdump = $db->getPathOfDump();
 	} else {
-		$fullpathofpgdump = $conf->global->SYSTEMTOOLS_POSTGRESQLDUMP;
+		$fullpathofpgdump = getDolGlobalString('SYSTEMTOOLS_POSTGRESQLDUMP');
 	}
 	print '<br>';
 	print '<input type="text" name="postgresqldump" style="width: 80%" value="'.$fullpathofpgdump.'" />';

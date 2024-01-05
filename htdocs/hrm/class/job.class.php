@@ -965,7 +965,7 @@ class Job extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('hrm_JOB_ADDON') . ".php";
-			$classname = $conf->global->hrm_JOB_ADDON;
+			$classname = getDolGlobalString('hrm_JOB_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -1028,7 +1028,7 @@ class Job extends CommonObject
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('JOB_ADDON_PDF')) {
-				$modele = $conf->global->JOB_ADDON_PDF;
+				$modele = getDolGlobalString('JOB_ADDON_PDF');
 			}
 		}
 

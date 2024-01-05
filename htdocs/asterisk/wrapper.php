@@ -120,29 +120,29 @@ $caller = GETPOST('caller', 'alphanohtml');
 $called = GETPOST('called', 'alphanohtml');
 
 // IP address of Asterisk server
-$strHost = $conf->global->ASTERISK_HOST;
+$strHost = getDolGlobalString('ASTERISK_HOST');
 
 // Specify the type of extension through which your extension is connected.
 // ex: SIP/, IAX2/, ZAP/, etc
-$channel = $conf->global->ASTERISK_TYPE;
+$channel = getDolGlobalString('ASTERISK_TYPE');
 
 // Outgoing call sign
-$prefix = $conf->global->ASTERISK_INDICATIF;
+$prefix = getDolGlobalString('ASTERISK_INDICATIF');
 
 // Asterisk Port
-$port = $conf->global->ASTERISK_PORT;
+$port = getDolGlobalString('ASTERISK_PORT');
 
 // Context ( generalement from-internal )
-$strContext = $conf->global->ASTERISK_CONTEXT;
+$strContext = getDolGlobalString('ASTERISK_CONTEXT');
 
 // Waiting time before hanging up
-$strWaitTime = $conf->global->ASTERISK_WAIT_TIME;
+$strWaitTime = getDolGlobalString('ASTERISK_WAIT_TIME');
 
 // Priority
-$strPriority = $conf->global->ASTERISK_PRIORITY;
+$strPriority = getDolGlobalString('ASTERISK_PRIORITY');
 
 // Number of call attempts
-$strMaxRetry = $conf->global->ASTERISK_MAX_RETRY;
+$strMaxRetry = getDolGlobalString('ASTERISK_MAX_RETRY');
 
 
 /*

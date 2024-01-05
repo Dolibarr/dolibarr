@@ -221,10 +221,10 @@ class Ldap
 
 		// Server
 		if (getDolGlobalString('LDAP_SERVER_HOST')) {
-			$this->server[] = $conf->global->LDAP_SERVER_HOST;
+			$this->server[] = getDolGlobalString('LDAP_SERVER_HOST');
 		}
 		if (getDolGlobalString('LDAP_SERVER_HOST_SLAVE')) {
-			$this->server[] = $conf->global->LDAP_SERVER_HOST_SLAVE;
+			$this->server[] = getDolGlobalString('LDAP_SERVER_HOST_SLAVE');
 		}
 		$this->serverPort          = getDolGlobalInt('LDAP_SERVER_PORT', 389);
 		$this->ldapProtocolVersion = getDolGlobalString('LDAP_SERVER_PROTOCOLVERSION');

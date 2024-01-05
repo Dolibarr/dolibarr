@@ -111,7 +111,7 @@ $FILEFLAG = 'modulebuilder.txt';
 $now = dol_now();
 $newmask = 0;
 if (empty($newmask) && getDolGlobalString('MAIN_UMASK')) {
-	$newmask = $conf->global->MAIN_UMASK;
+	$newmask = getDolGlobalString('MAIN_UMASK');
 }
 if (empty($newmask)) {	// This should no happen
 	$newmask = '0664';
@@ -3663,7 +3663,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
 				print '<input type="hidden" name="module" value="'.$module.'">';
-				print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'newlangcode', 0, 0, 1, 0, 0, 'minwidth300', 1);
+				print $formadmin->select_language(getDolGlobalString('MAIN_LANG_DEFAULT'), 'newlangcode', 0, 0, 1, 0, 0, 'minwidth300', 1);
 				print '<input type="submit" name="addlanguage" class="button smallpaddingimp" value="'.dol_escape_htmltag($langs->trans("AddLanguageFile")).'"><br>';
 				print '</form>';
 

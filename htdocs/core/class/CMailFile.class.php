@@ -924,11 +924,11 @@ class CMailFile
 				$loginid = '';
 				$loginpass = '';
 				if (!empty($conf->global->$keyforsmtpid)) {
-					$loginid = $conf->global->$keyforsmtpid;
+					$loginid = getDolGlobalString($keyforsmtpid);
 					$this->smtps->setID($loginid);
 				}
 				if (!empty($conf->global->$keyforsmtppw)) {
-					$loginpass = $conf->global->$keyforsmtppw;
+					$loginpass = getDolGlobalString($keyforsmtppw);
 					$this->smtps->setPW($loginpass);
 				}
 
@@ -1162,9 +1162,9 @@ class CMailFile
 
 				// DKIM SIGN
 				if (getDolGlobalString('MAIN_MAIL_EMAIL_DKIM_ENABLED')) {
-					$privateKey = $conf->global->MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY;
-					$domainName = $conf->global->MAIN_MAIL_EMAIL_DKIM_DOMAIN;
-					$selector = $conf->global->MAIN_MAIL_EMAIL_DKIM_SELECTOR;
+					$privateKey = getDolGlobalString('MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY');
+					$domainName = getDolGlobalString('MAIN_MAIL_EMAIL_DKIM_DOMAIN');
+					$selector = getDolGlobalString('MAIN_MAIL_EMAIL_DKIM_SELECTOR');
 					$signer = new Swift_Signers_DKIMSigner($privateKey, $domainName, $selector);
 					$this->message->attachSigner($signer->ignoreHeader('Return-Path'));
 				}

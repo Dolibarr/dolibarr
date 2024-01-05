@@ -89,7 +89,7 @@ if (!preg_match('/\.zip$/i', $xmlfile) && dol_is_file($xmlfile.'.zip')) {
 // Remote file to compare to
 $xmlremote = GETPOST('xmlremote', 'alphanohtml');
 if (empty($xmlremote) && getDolGlobalString('MAIN_FILECHECK_URL')) {
-	$xmlremote = $conf->global->MAIN_FILECHECK_URL;
+	$xmlremote = getDolGlobalString('MAIN_FILECHECK_URL');
 }
 $param = 'MAIN_FILECHECK_URL_'.DOL_VERSION;
 if (empty($xmlremote) && getDolGlobalString($param)) {

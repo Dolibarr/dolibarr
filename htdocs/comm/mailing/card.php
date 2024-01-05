@@ -853,9 +853,9 @@ if ($action == 'create') {
 			 */
 			if ($action == 'sendall') {
 				// Define message to recommand from command line
-				$sendingmode = $conf->global->EMAILING_MAIL_SENDMODE;
+				$sendingmode = getDolGlobalString('EMAILING_MAIL_SENDMODE');
 				if (empty($sendingmode)) {
-					$sendingmode = $conf->global->MAIN_MAIL_SENDMODE;
+					$sendingmode = getDolGlobalString('MAIN_MAIL_SENDMODE');
 				}
 				if (empty($sendingmode)) {
 					$sendingmode = 'mail'; // If not defined, we use php mail function
@@ -1147,7 +1147,7 @@ if ($action == 'create') {
 				$formmail->withfrom = 0;
 				$formmail->withto = $user->email ? $user->email : 1;
 				$formmail->withtocc = 0;
-				$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
+				$formmail->withtoccc = getDolGlobalString('MAIN_EMAIL_USECCC');
 				$formmail->withtopic = 0;
 				$formmail->withtopicreadonly = 1;
 				$formmail->withfile = 0;

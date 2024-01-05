@@ -305,7 +305,7 @@ if (empty($tmp)) {
 	$tmp = 'utf-8'; // By default for other
 }
 if (getDolGlobalString('MAIN_FILESYSTEM_ENCODING')) {
-	$tmp = $conf->global->MAIN_FILESYSTEM_ENCODING;
+	$tmp = getDolGlobalString('MAIN_FILESYSTEM_ENCODING');
 }
 print '<tr class="oddeven"><td>&nbsp; => '.$langs->trans("File encoding").'</td><td>'.$tmp.'</td></tr>'."\n"; // date.timezone must be in valued defined in http://fr3.php.net/manual/en/timezones.europe.php
 

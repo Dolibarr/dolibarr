@@ -424,7 +424,7 @@ class Commande extends CommonOrder
 			$mybool = false;
 
 			$file = getDolGlobalString('COMMANDE_ADDON') . ".php";
-			$classname = $conf->global->COMMANDE_ADDON;
+			$classname = getDolGlobalString('COMMANDE_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -4132,7 +4132,7 @@ class Commande extends CommonOrder
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('COMMANDE_ADDON_PDF')) {
-				$modele = $conf->global->COMMANDE_ADDON_PDF;
+				$modele = getDolGlobalString('COMMANDE_ADDON_PDF');
 			}
 		}
 

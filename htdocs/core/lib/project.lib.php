@@ -781,10 +781,10 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				$plannedworkloadoutputformat = 'allhourmin';
 				$timespentoutputformat = 'allhourmin';
 				if (getDolGlobalString('PROJECT_PLANNED_WORKLOAD_FORMAT')) {
-					$plannedworkloadoutputformat = $conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT;
+					$plannedworkloadoutputformat = getDolGlobalString('PROJECT_PLANNED_WORKLOAD_FORMAT');
 				}
 				if (getDolGlobalString('PROJECT_TIMES_SPENT_FORMAT')) {
-					$timespentoutputformat = $conf->global->PROJECT_TIME_SPENT_FORMAT;
+					$timespentoutputformat = getDolGlobalString('PROJECT_TIME_SPENT_FORMAT');
 				}
 
 				// Planned Workload (in working hours)
@@ -2842,10 +2842,10 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 	$plannedworkloadoutputformat = 'allhourmin';
 	$timespentoutputformat = 'allhourmin';
 	if (getDolGlobalString('PROJECT_PLANNED_WORKLOAD_FORMAT')) {
-		$plannedworkloadoutputformat = $conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT;
+		$plannedworkloadoutputformat = getDolGlobalString('PROJECT_PLANNED_WORKLOAD_FORMAT');
 	}
 	if (getDolGlobalString('PROJECT_TIMES_SPENT_FORMAT')) {
-		$timespentoutputformat = $conf->global->PROJECT_TIME_SPENT_FORMAT;
+		$timespentoutputformat = getDolGlobalString('PROJECT_TIME_SPENT_FORMAT');
 	}
 
 	if (empty($task->progress) && !empty($hideOnProgressNull)) {

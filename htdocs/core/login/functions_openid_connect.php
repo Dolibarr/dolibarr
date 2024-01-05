@@ -82,7 +82,7 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 			// Get the user attribute (claim) matching the Dolibarr login
 			$login_claim = 'email'; // default
 			if (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM')) {
-				$login_claim = $conf->global->MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM;
+				$login_claim = getDolGlobalString('MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM');
 			}
 
 			if (property_exists($userinfo_content, $login_claim)) {

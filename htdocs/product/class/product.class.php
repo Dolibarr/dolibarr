@@ -1165,7 +1165,7 @@ class Product extends CommonObject
 				//$valueforundefinedlot = 'Undefined';  // In previous version, 39 and lower
 				$valueforundefinedlot = '000000';
 				if (getDolGlobalString('STOCK_DEFAULT_BATCH')) {
-					$valueforundefinedlot = $conf->global->STOCK_DEFAULT_BATCH;
+					$valueforundefinedlot = getDolGlobalString('STOCK_DEFAULT_BATCH');
 				}
 
 				dol_syslog("Flag batch of product id=".$this->id." is set to ON, so we will create missing records into product_batch");
@@ -6213,7 +6213,7 @@ class Product extends CommonObject
 					break;
 				}
 			}
-			$var = $conf->global->BARCODE_PRODUCT_ADDON_NUM;
+			$var = getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM');
 			$mod = new $var();
 
 			$result = $mod->getNextValue($object, $type);

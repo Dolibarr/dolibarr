@@ -994,7 +994,7 @@ class Target extends CommonObject
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('TARGET_ADDON_PDF')) {
-				$modele = $conf->global->TARGET_ADDON_PDF;
+				$modele = getDolGlobalString('TARGET_ADDON_PDF');
 			}
 		}
 

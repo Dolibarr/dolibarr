@@ -309,7 +309,7 @@ class FormProduct
 		if (strpos($htmlname, 'search_') !== 0) {
 			if (empty($user->fk_warehouse) || $user->fk_warehouse == -1) {
 				if (is_scalar($selected) && ($selected == '-2' || $selected == 'ifone') && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE')) {
-					$selected = $conf->global->MAIN_DEFAULT_WAREHOUSE;
+					$selected = getDolGlobalString('MAIN_DEFAULT_WAREHOUSE');
 				}
 			} else {
 				if (is_scalar($selected) && ($selected == '-2' || $selected == 'ifone') && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) {
@@ -431,7 +431,7 @@ class FormProduct
 		if (strpos($htmlname, 'search_') !== 0) {
 			if (empty($user->fk_workstation) || $user->fk_workstation == -1) {
 				if (($selected == '-2' || $selected == 'ifone') && getDolGlobalString('MAIN_DEFAULT_WORKSTATION')) {
-					$selected = $conf->global->MAIN_DEFAULT_WORKSTATION;
+					$selected = getDolGlobalString('MAIN_DEFAULT_WORKSTATION');
 				}
 			} else {
 				if (($selected == '-2' || $selected == 'ifone') && getDolGlobalString('MAIN_DEFAULT_WORKSTATION')) {

@@ -161,7 +161,7 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 
 			$prefix = "ER";
 			if (getDolGlobalString('EXPENSE_REPORT_PREFIX')) {
-				$prefix = $conf->global->EXPENSE_REPORT_PREFIX;
+				$prefix = getDolGlobalString('EXPENSE_REPORT_PREFIX');
 			}
 			$newref = str_replace(' ', '_', $user_author_infos).$expld_car.$prefix.$newref.$expld_car.dol_print_date($object->date_debut, '%y%m%d');
 
