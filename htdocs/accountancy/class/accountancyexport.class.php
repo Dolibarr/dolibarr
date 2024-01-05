@@ -47,7 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class AccountancyExport
 {
-	// Type of export. Used into $conf->global->ACCOUNTING_EXPORT_MODELCSV
+	// Types of export.
 	public static $EXPORT_TYPE_CONFIGURABLE = 1; // CSV
 	public static $EXPORT_TYPE_AGIRIS = 10;
 	public static $EXPORT_TYPE_EBP = 15;
@@ -102,7 +102,7 @@ class AccountancyExport
 		global $conf, $hookmanager;
 
 		$this->db = $db;
-		$this->separator = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
+		$this->separator = getDolGlobalString('ACCOUNTING_EXPORT_SEPARATORCSV');
 		$this->end_line = getDolGlobalString('ACCOUNTING_EXPORT_ENDLINE') ? (getDolGlobalInt('ACCOUNTING_EXPORT_ENDLINE') == 1 ? "\n" : "\r\n") : "\n";
 
 		$hookmanager->initHooks(array('accountancyexport'));
@@ -869,11 +869,11 @@ class AccountancyExport
 				if ($line->doc_type == 'customer_invoice') {
 					$tab['lib_alpha'] = strtoupper(str_pad('C'.self::trunc(dol_string_unaccent($line->subledger_label), 6), 7));
 					$tab['filler'] = str_repeat(' ', 52);
-					$tab['coll_compte'] = str_pad(self::trunc($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER, 8), 8);
+					$tab['coll_compte'] = str_pad(self::trunc(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER'), 8), 8);
 				} elseif ($line->doc_type == 'supplier_invoice') {
 					$tab['lib_alpha'] = strtoupper(str_pad('F'.self::trunc(dol_string_unaccent($line->subledger_label), 6), 7));
 					$tab['filler'] = str_repeat(' ', 52);
-					$tab['coll_compte'] = str_pad(self::trunc($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER, 8), 8);
+					$tab['coll_compte'] = str_pad(self::trunc(getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER'), 8), 8);
 				} else {
 					$tab['filler'] = str_repeat(' ', 59);
 					$tab['coll_compte'] = str_pad(' ', 8);

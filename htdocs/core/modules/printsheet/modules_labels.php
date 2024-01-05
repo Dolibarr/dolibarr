@@ -95,7 +95,7 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 	// Positionne le modele sur le nom du modele a utiliser
 	if (!dol_strlen($modele)) {
 		if (getDolGlobalString('ADHERENT_ETIQUETTE_TYPE')) {
-			$code = $conf->global->ADHERENT_ETIQUETTE_TYPE;
+			$code = getDolGlobalString('ADHERENT_ETIQUETTE_TYPE');
 		} else {
 			$code = $modele;
 		}

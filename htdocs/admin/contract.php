@@ -159,7 +159,7 @@ if ($action == 'updateMask') {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 } elseif ($action == "allowonlinesign") {
-	if (!dolibarr_set_const($db, "CONTRACT_ALLOW_ONLINESIGN", $value, 0, 'int', $conf->entity)) {
+	if (!dolibarr_set_const($db, "CONTRACT_ALLOW_ONLINESIGN", $value, 'int', 0, '', $conf->entity)) {
 		$error++;
 	}
 } elseif (preg_match('/set_(.*)/', $action, $reg)) {
@@ -512,7 +512,7 @@ print '</td></tr>'."\n";
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("HideClosedServiceByDefault").'</td>';
 print '<td class="right">';
-print $form->selectyesno("activate_hideClosedServiceByDefault", (getDolGlobalString('CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT') ? $conf->global->CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT : 0), 1);
+print $form->selectyesno("activate_hideClosedServiceByDefault", getDolGlobalInt('CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT', 0), 1);
 print '</td>';
 print '</tr>';
 

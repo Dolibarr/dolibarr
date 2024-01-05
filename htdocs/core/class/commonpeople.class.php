@@ -150,7 +150,7 @@ trait CommonPeople
 			// List of extra languages
 			$arrayoflangcode = array();
 			if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
-				$arrayoflangcode[] = $conf->global->PDF_USE_ALSO_LANGUAGE_CODE;
+				$arrayoflangcode[] = getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE');
 			}
 
 			if (is_array($arrayoflangcode) && count($arrayoflangcode)) {

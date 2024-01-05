@@ -300,7 +300,7 @@ class Contrat extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('CONTRACT_ADDON') . ".php";
-			$classname = $conf->global->CONTRACT_ADDON;
+			$classname = getDolGlobalString('CONTRACT_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -2555,7 +2555,7 @@ class Contrat extends CommonObject
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('CONTRACT_ADDON_PDF')) {
-				$modele = $conf->global->CONTRACT_ADDON_PDF;
+				$modele = getDolGlobalString('CONTRACT_ADDON_PDF');
 			}
 		}
 
@@ -2655,7 +2655,7 @@ class Contrat extends CommonObject
 
 		// Set ref
 		require_once DOL_DOCUMENT_ROOT."/core/modules/contract/" . getDolGlobalString('CONTRACT_ADDON').'.php';
-		$obj = $conf->global->CONTRACT_ADDON;
+		$obj = getDolGlobalString('CONTRACT_ADDON');
 		$modContract = new $obj();
 		$clonedObj->ref = $modContract->getNextValue($objsoc, $clonedObj);
 

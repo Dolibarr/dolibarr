@@ -217,9 +217,9 @@ if (isModEnabled("banque")) {
 		$stripe = new Stripe($db);
 		$stripeacc = $stripe->getStripeAccount($service);
 		if ($stripeacc) {
-			$readers = \Stripe\Terminal\Reader::all('', array("location" => $conf->global->STRIPE_LOCATION, "stripe_account" => $stripeacc));
+			$readers = \Stripe\Terminal\Reader::all('', array("location" => getDolGlobalString('STRIPE_LOCATION'), "stripe_account" => $stripeacc));
 		} else {
-			$readers = \Stripe\Terminal\Reader::all('', array("location" => $conf->global->STRIPE_LOCATION));
+			$readers = \Stripe\Terminal\Reader::all('', array("location" => getDolGlobalString('STRIPE_LOCATION')));
 		}
 
 		$reader = array();

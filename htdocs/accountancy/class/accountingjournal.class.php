@@ -930,7 +930,7 @@ class AccountingJournal extends CommonObject
 		global $conf, $langs, $hookmanager;
 
 		if (empty($sep)) {
-			$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
+			$sep = getDolGlobalString('ACCOUNTING_EXPORT_SEPARATORCSV');
 		}
 		$out = '';
 

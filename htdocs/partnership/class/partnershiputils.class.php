@@ -82,7 +82,7 @@ class PartnershipUtils
 		$this->error = '';
 		$partnershipsprocessed = array();
 
-		$gracedelay = $conf->global->PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL;
+		$gracedelay = getDolGlobalString('PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL');
 		if ($gracedelay < 1) {
 			$this->error = 'BadValueForDelayBeforeCancelCheckSetup';
 			return -1;

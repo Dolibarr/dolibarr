@@ -49,8 +49,8 @@ foreach ($dirmenus as $dirmenu) {
 
 $action = GETPOST('action', 'aZ09');
 
-$menu_handler_top = $conf->global->MAIN_MENU_STANDARD;
-$menu_handler_smartphone = $conf->global->MAIN_MENU_SMARTPHONE;
+$menu_handler_top = getDolGlobalString('MAIN_MENU_STANDARD');
+$menu_handler_smartphone = getDolGlobalString('MAIN_MENU_SMARTPHONE');
 $menu_handler_top = preg_replace('/_backoffice.php/i', '', $menu_handler_top);
 $menu_handler_top = preg_replace('/_frontoffice.php/i', '', $menu_handler_top);
 $menu_handler_smartphone = preg_replace('/_backoffice.php/i', '', $menu_handler_smartphone);
