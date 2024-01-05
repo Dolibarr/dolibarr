@@ -115,25 +115,32 @@ class BuildDocTest extends PHPUnit\Framework\TestCase
 		global $conf,$user,$langs,$db;
 
 		if (!isModEnabled('facture')) {
-			print __METHOD__." invoice module not enabled\n"; die(1);
+			print __METHOD__." invoice module not enabled\n";
+			die(1);
 		}
 		if (!isModEnabled('commande')) {
-			print __METHOD__." order module not enabled\n"; die(1);
+			print __METHOD__." order module not enabled\n";
+			die(1);
 		}
 		if (!isModEnabled('propal')) {
-			print __METHOD__." propal module not enabled\n"; die(1);
+			print __METHOD__." propal module not enabled\n";
+			die(1);
 		}
 		if (!isModEnabled('projet')) {
-			print __METHOD__." project module not enabled\n"; die(1);
+			print __METHOD__." project module not enabled\n";
+			die(1);
 		}
 		if (!isModEnabled('expedition')) {
-			print __METHOD__." shipment module not enabled\n"; die(1);
+			print __METHOD__." shipment module not enabled\n";
+			die(1);
 		}
 		if (!isModEnabled('ficheinter')) {
-			print __METHOD__." intervention module not enabled\n"; die(1);
+			print __METHOD__." intervention module not enabled\n";
+			die(1);
 		}
 		if (!isModEnabled('expensereport')) {
-			print __METHOD__." expensereport module not enabled\n"; die(1);
+			print __METHOD__." expensereport module not enabled\n";
+			die(1);
 		}
 
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.

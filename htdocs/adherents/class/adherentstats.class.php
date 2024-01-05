@@ -56,8 +56,6 @@ class AdherentStats extends Stats
 	 */
 	public function __construct($db, $socid = 0, $userid = 0)
 	{
-		global $conf;
-
 		$this->db = $db;
 		$this->socid = $socid;
 		$this->userid = $userid;
@@ -201,15 +199,16 @@ class AdherentStats extends Stats
 		}
 		$sql .= " WHERE t.entity IN (".getEntity('member_type').")";
 		$sql .= " AND t.statut = 1";
-		$sql .= " GROUP BY t.rowid";
+		$sql .= " GROUP BY t.rowid, t.libelle";
 
 		dol_syslog("box_members_by_type::select nb of members per type", LOG_DEBUG);
 		$result = $this->db->query($sql);
 
+		$MembersCountArray = array();
+
 		if ($result) {
 			$num = $this->db->num_rows($result);
 			$i = 0;
-			$MembersCountArray = [];
 			$totalstatus = array(
 				'label' => 'Total',
 				'members_draft' => 0,
@@ -232,7 +231,7 @@ class AdherentStats extends Stats
 				);
 				$totalrow = 0;
 				foreach ($MembersCountArray[$objp->fk_adherent_type] as $key=>$nb) {
-					if ($key!='label') {
+					if ($key != 'label') {
 						$totalrow += $nb;
 						$totalstatus[$key] += $nb;
 					}
@@ -244,6 +243,7 @@ class AdherentStats extends Stats
 			$MembersCountArray['total'] = $totalstatus;
 			$MembersCountArray['total']['all'] = array_sum($totalstatus);
 		}
+
 		return $MembersCountArray;
 	}
 
@@ -279,9 +279,10 @@ class AdherentStats extends Stats
 			$sql .= " AND d.datefin > '".$this->db->idate(dol_get_first_day($startYear))."'";
 		}
 		$sql .= " AND c.fk_parent = 0";
-		$sql .= " GROUP BY c.rowid";
+		$sql .= " GROUP BY c.rowid, c.label";
+		$sql .= " ORDER BY label ASC";
 
-		dol_syslog("box_members_by_type::select nb of members per type", LOG_DEBUG);
+		dol_syslog("box_members_by_tag::select nb of members per tag", LOG_DEBUG);
 		$result = $this->db->query($sql);
 
 		if ($result) {
@@ -310,12 +311,12 @@ class AdherentStats extends Stats
 				);
 				$totalrow = 0;
 				foreach ($MembersCountArray[$objp->fk_categorie] as $key=>$nb) {
-					if ($key!='label') {
+					if ($key != 'label') {
 						$totalrow += $nb;
 						$totalstatus[$key] += $nb;
 					}
 				}
-				$MembersCountArray[$objp->fk_categorie]['total_adhtype'] = $totalrow;
+				$MembersCountArray[$objp->fk_categorie]['total_adhtag'] = $totalrow;
 				$i++;
 			}
 			$this->db->free($result);

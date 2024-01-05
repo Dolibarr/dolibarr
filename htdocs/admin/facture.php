@@ -95,7 +95,9 @@ if ($action == 'updateMask') {
 	$facture->initAsSpecimen();
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$classname = '';
+	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/facture/doc/pdf_".$modele.".modules.php", 0);
@@ -308,7 +310,7 @@ foreach ($dirmodels as $reldir) {
 		$handle = opendir($dir);
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
-				if (!is_dir($dir.$file) || (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')) {
+				if (!is_dir($dir.$file) || (substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS')) {
 					$filebis = $file;
 					$classname = preg_replace('/\.php$/', '', $file);
 					// For compatibility
@@ -330,10 +332,10 @@ foreach ($dirmodels as $reldir) {
 						$module = new $classname($db);
 
 						// Show modules according to features level
-						if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 							continue;
 						}
-						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+						if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 							continue;
 						}
 
@@ -342,7 +344,7 @@ foreach ($dirmodels as $reldir) {
 							echo preg_replace('/\-.*$/', '', preg_replace('/mod_facture_/', '', preg_replace('/\.php$/', '', $file)));
 							print "</td><td>\n";
 
-							print $module->info();
+							print $module->info($langs);
 
 							print '</td>';
 
@@ -361,7 +363,7 @@ foreach ($dirmodels as $reldir) {
 
 							print '<td class="center">';
 							//print "> ".$conf->global->FACTURE_ADDON." - ".$file;
-							if ($conf->global->FACTURE_ADDON == $file || $conf->global->FACTURE_ADDON.'.php' == $file) {
+							if ($conf->global->FACTURE_ADDON == $file || getDolGlobalString('FACTURE_ADDON') . '.php' == $file) {
 								print img_picto($langs->trans("Activated"), 'switch_on');
 							} else {
 								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.preg_replace('/\.php$/', '', $file).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
@@ -434,7 +436,7 @@ foreach ($dirmodels as $reldir) {
 							print '<td class="center">';
 							print $form->textwithpicto('', $htmltooltip, 1, 0);
 
-							if ($conf->global->FACTURE_ADDON.'.php' == $file) {  // If module is the one used, we show existing errors
+							if (getDolGlobalString('FACTURE_ADDON') . '.php' == $file) {  // If module is the one used, we show existing errors
 								if (!empty($module->error)) {
 									dol_htmloutput_mesg($module->error, '', 'error', 1);
 								}
@@ -521,16 +523,16 @@ foreach ($dirmodels as $reldir) {
 							$module = new $classname($db);
 
 							$modulequalified = 1;
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								$modulequalified = 0;
 							}
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 								$modulequalified = 0;
 							}
 
 							if ($modulequalified) {
 								print '<tr class="oddeven"><td width="100">';
-								print (empty($module->name) ? $name : $module->name);
+								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
 								if (method_exists($module, 'info')) {
 									print $module->info($langs);
@@ -604,7 +606,7 @@ foreach ($dirmodels as $reldir) {
 print '</table>';
 print '</div>';
 
-if (!empty($conf->global->INVOICE_USE_DEFAULT_DOCUMENT)) { // Hidden conf
+if (getDolGlobalString('INVOICE_USE_DEFAULT_DOCUMENT')) { // Hidden conf
 	/*
 	 *  Document templates generators
 	 */
@@ -635,7 +637,7 @@ if (!empty($conf->global->INVOICE_USE_DEFAULT_DOCUMENT)) { // Hidden conf
 
 	foreach ($listtype as $type => $trans) {
 		$thisTypeConfName = 'FACTURE_ADDON_PDF_'.$type;
-		$current = !empty($conf->global->{$thisTypeConfName}) ? $conf->global->{$thisTypeConfName}:$conf->global->FACTURE_ADDON_PDF;
+		$current = getDolGlobalString($thisTypeConfName, getDolGlobalString('FACTURE_ADDON_PDF'));
 		print '<tr >';
 		print '<td>'.$trans.'</td>';
 		print '<td colspan="2" >'.$form->selectarray('invoicetypemodels['.$type.']', ModelePDFFactures::liste_modeles($db), $current, 0, 0, 0).'</td>';
@@ -777,7 +779,7 @@ print '<input type="hidden" name="action" value="set_INVOICE_FREE_TEXT" />';
 print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnInvoices"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 $variablename = 'INVOICE_FREE_TEXT';
-if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
+if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {
 	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.getDolGlobalString($variablename).'</textarea>';
 } else {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';

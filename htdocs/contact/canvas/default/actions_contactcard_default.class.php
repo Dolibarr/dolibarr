@@ -60,13 +60,13 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 		$out = '';
 
 		if ($action == 'view') {
-			$out .= (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contact") : $langs->trans("ContactAddress"));
+			$out .= (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("Contact") : $langs->trans("ContactAddress"));
 		}
 		if ($action == 'edit') {
-			$out .= (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("EditContact") : $langs->trans("EditContactAddress"));
+			$out .= (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("EditContact") : $langs->trans("EditContactAddress"));
 		}
 		if ($action == 'create') {
-			$out .= (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("NewContact") : $langs->trans("NewContactAddress"));
+			$out .= (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("NewContact") : $langs->trans("NewContactAddress"));
 		}
 
 		return $out;
@@ -110,7 +110,7 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 			$this->tpl['actionsdone'] = show_actions_done($conf, $langs, $db, $objsoc, $this->object, 1);
 		} else {
 			// Confirm delete contact
-			if ($action == 'delete' && $user->rights->societe->contact->supprimer) {
+			if ($action == 'delete' && $user->hasRight('societe', 'contact', 'supprimer')) {
 				$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id, $langs->trans("DeleteContact"), $langs->trans("ConfirmDeleteContact"), "confirm_delete", '', 0, 1);
 			}
 		}

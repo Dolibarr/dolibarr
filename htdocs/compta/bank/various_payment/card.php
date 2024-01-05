@@ -2,6 +2,7 @@
 /* Copyright (C) 2017-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2023       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2023       Joachim Kueter     		<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +55,7 @@ $amount = price2num(GETPOST("amount", "alpha"));
 $paymenttype = GETPOST("paymenttype", "aZ09");
 $accountancy_code = GETPOST("accountancy_code", "alpha");
 $projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : GETPOST('fk_project', 'int'));
-if (isModEnabled('accounting') && !empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
+if (isModEnabled('accounting') && getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
 	$subledger_account = GETPOST("subledger_account", "alpha") > 0 ? GETPOST("subledger_account", "alpha") : '';
 } else {
 	$subledger_account = GETPOST("subledger_account", "alpha");
@@ -222,7 +223,7 @@ if (empty($reshook)) {
 
 		$result = $object->fetch($id);
 
-		$object->accountancy_code = GETPOST('accountancy_code', 'alpha');
+		$object->accountancy_code = GETPOST('accountancy_code', 'alphanohtml');
 
 		$res = $object->update($user);
 		if ($res > 0) {
@@ -411,13 +412,13 @@ if ($action == 'create') {
 	// Date payment
 	print '<tr><td class="titlefieldcreate">';
 	print $form->editfieldkey('DatePayment', 'datep', '', $object, 0, 'string', '', 1).'</td><td>';
-	print $form->selectDate((empty($datep) ?-1 : $datep), "datep", '', '', '', 'add', 1, 1);
+	print $form->selectDate((empty($datep) ? -1 : $datep), "datep", '', '', '', 'add', 1, 1);
 	print '</td></tr>';
 
 	// Date value for bank
 	print '<tr><td>';
 	print $form->editfieldkey('DateValue', 'datev', '', $object, 0).'</td><td>';
-	print $form->selectDate((empty($datev) ?-1 : $datev), "datev", '', '', '', 'add', 1, 1);
+	print $form->selectDate((empty($datev) ? -1 : $datev), "datev", '', '', '', 'add', 1, 1);
 	print '</td></tr>';
 
 	// Label
@@ -484,7 +485,7 @@ if ($action == 'create') {
 	if (isModEnabled('accounting')) {
 		print '<tr><td>'.$langs->trans("SubledgerAccount").'</td>';
 		print '<td>';
-		if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
+		if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
 			print $formaccounting->select_auxaccount($subledger_account, 'subledger_account', 1, '');
 		} else {
 			print '<input type="text" class="maxwidth200 maxwidthonsmartphone" name="subledger_account" value="'.$subledger_account.'">';
@@ -498,7 +499,7 @@ if ($action == 'create') {
 
 	// Sens
 	print '<tr><td>';
-	$labelsens = $form->textwithpicto('Sens', $langs->trans("AccountingDirectionHelp"));
+	$labelsens = $form->textwithpicto($langs->trans('Sens'), $langs->trans("AccountingDirectionHelp"));
 	print $form->editfieldkey($labelsens, 'sens', '', $object, 0, 'string', '', 1).'</td><td>';
 	$sensarray = array('0' => $langs->trans("Debit"), '1' => $langs->trans("Credit"));
 	print $form->selectarray('sens', $sensarray, $sens, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
@@ -585,7 +586,17 @@ if ($id) {
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			if ($action == 'classify') {
+				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
+				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
+				$morehtmlref .= $formproject->select_projects(-1, $object->fk_project, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
+				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+				$morehtmlref .= '</form>';
+			} else {
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (property_exists($object, 'socid') ? $object->socid : 0), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			}
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -637,15 +648,25 @@ if ($id) {
 	// Account of Chart of account
 	$editvalue = '';
 	if (isModEnabled('accounting')) {
-		$editvalue = $formaccounting->select_account($object->accountancy_code, 'accountancy_code', 1, null, 1, 1);
-	}
+		print '<tr><td class="nowrap">';
+		print $form->editfieldkey('AccountAccounting', 'accountancy_code', $object->accountancy_code, $object, (!$alreadyaccounted && $user->hasRight('banque', 'modifier')), 'string', '', 0);
+		print '</td><td>';
+		if ($action == 'editaccountancy_code') {
+			print $form->editfieldval('AccountAccounting', 'accountancy_code', $object->accountancy_code, $object, (!$alreadyaccounted && $user->hasRight('banque', 'modifier')), 'string', '', 0);
+		} else {
+			$accountingaccount = new AccountingAccount($db);
+			$accountingaccount->fetch('', $object->accountancy_code, 1);
 
-	print '</td></tr>';
-	print '<tr><td class="nowrap">';
-	print $form->editfieldkey('AccountAccounting', 'accountancy_code', $object->accountancy_code, $object, (!$alreadyaccounted && $permissiontoadd), 'string', '', 0);
-	print '</td><td>';
-	print $form->editfieldval('AccountAccounting', 'accountancy_code', $object->accountancy_code, $object, (!$alreadyaccounted && $permissiontoadd), 'asis', $editvalue, 0, null, '', 1, 'lengthAccountg');
-	print '</td></tr>';
+			print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+		}
+		print '</td></tr>';
+	} else {
+		print '<tr><td class="nowrap">';
+		print $langs->trans("AccountAccounting");
+		print '</td><td>';
+		print $object->accountancy_code;
+		print '</td></tr>';
+	}
 
 	// Subledger account
 	print '<tr><td class="nowrap">';

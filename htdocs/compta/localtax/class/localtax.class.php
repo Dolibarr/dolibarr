@@ -50,6 +50,24 @@ class Localtax extends CommonObject
 	public $amount;
 
 	/**
+	 * @var int
+	 */
+	public $accountid;
+
+	/**
+	 * @var string
+	 */
+	public $fk_type;
+
+	public $paymenttype;
+
+	/**
+	 * @var int
+	 */
+	public $rappro;
+
+
+	/**
 	 * @var string local tax
 	 */
 	public $label;
@@ -84,7 +102,7 @@ class Localtax extends CommonObject
 	 *  Create in database
 	 *
 	 *  @param      User	$user       User that create
-	 *  @return     int      			<0 if KO, >0 if OK
+	 *  @return     int      			Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user)
 	{
@@ -153,7 +171,7 @@ class Localtax extends CommonObject
 	 *
 	 *	@param		User	$user        	User that modify
 	 *	@param		int		$notrigger		0=no, 1=yes (no update trigger)
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -212,11 +230,10 @@ class Localtax extends CommonObject
 	 *	Load object in memory from database
 	 *
 	 *	@param		int		$id		Object id
-	 *	@return		int				<0 if KO, >0 if OK
+	 *	@return		int				Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id)
 	{
-		global $langs;
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.localtaxtype,";
@@ -225,7 +242,7 @@ class Localtax extends CommonObject
 		$sql .= " t.datev,";
 		$sql .= " t.amount,";
 		$sql .= " t.label,";
-		$sql .= " t.note,";
+		$sql .= " t.note as note_private,";
 		$sql .= " t.fk_bank,";
 		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_modif,";
@@ -250,7 +267,8 @@ class Localtax extends CommonObject
 				$this->datev = $this->db->jdate($obj->datev);
 				$this->amount = $obj->amount;
 				$this->label = $obj->label;
-				$this->note  = $obj->note;
+				$this->note  = $obj->note_private;
+				$this->note_private  = $obj->note_private;
 				$this->fk_bank = $obj->fk_bank;
 				$this->fk_user_creat = $obj->fk_user_creat;
 				$this->fk_user_modif = $obj->fk_user_modif;
@@ -272,7 +290,7 @@ class Localtax extends CommonObject
 	 *	Delete object in database
 	 *
 	 *	@param		User	$user		User that delete
-	 *	@return		int					<0 if KO, >0 if OK
+	 *	@return		int					Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user)
 	{
@@ -449,7 +467,7 @@ class Localtax extends CommonObject
 	 *	Add a payment of localtax
 	 *
 	 *	@param		User	$user		Object user that insert
-	 *	@return		int					<0 if KO, rowid in localtax table if OK
+	 *	@return		int					Return integer <0 if KO, rowid in localtax table if OK
 	 */
 	public function addPayment($user)
 	{
@@ -515,7 +533,7 @@ class Localtax extends CommonObject
 
 					$bank_line_id = $acc->addline($this->datep, $this->paymenttype, $this->label, -abs($this->amount), '', '', $user);
 
-					// Mise a jour fk_bank dans llx_localtax. On connait ainsi la ligne de localtax qui a g�n�r� l'�criture bancaire
+					// Update fk_bank into llx_localtax so we know the line of localtax used to generate the bank entry.
 					if ($bank_line_id > 0) {
 						$this->update_fk_bank($bank_line_id);
 					} else {
@@ -555,7 +573,7 @@ class Localtax extends CommonObject
 	 *	Update the link betwen localtax payment and the line into llx_bank
 	 *
 	 *	@param		int		$id		Id bank account
-	 *	@return		int				<0 if KO, >0 if OK
+	 *	@return		int				Return integer <0 if KO, >0 if OK
 	 */
 	public function update_fk_bank($id)
 	{
@@ -650,7 +668,9 @@ class Localtax extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'label')) {
 			$return .= ' | <span class="info-box-label">'.$this->label.'</span>';
 		}

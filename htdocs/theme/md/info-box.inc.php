@@ -14,7 +14,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $prefix = '';
-if (!empty($conf->global->THEME_INFOBOX_COLOR_ON_BACKGROUND)) {
+if (getDolGlobalString('THEME_INFOBOX_COLOR_ON_BACKGROUND')) {
 	$prefix = 'background-';
 }
 
@@ -93,41 +93,41 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 
 
 .infobox-adherent, .infobox-member {
-	color: #79633f !important;
+	color: #79633f;
 }
 .infobox-project{
-	color: #6c6aa8 !important;
+	color: #6c6aa8;
 }
 .infobox-action{
-	color: #a47080 !important;
+	color: #a47080;
 }
 /* Color for customer object */
 .infobox-propal:not(.pictotitle):not(.error),
 .infobox-facture:not(.pictotitle):not(.error),
 .infobox-commande:not(.pictotitle):not(.error) {
-	color: #65953d !important;
+	color: #65953d;
 }
 /* Color for vendor object */
 .infobox-supplier_proposal:not(.pictotitle):not(.error),
 .infobox-invoice_supplier:not(.pictotitle):not(.error),
 .infobox-order_supplier:not(.pictotitle):not(.error) {
-	color: #599caf !important;
+	color: #599caf;
 }
 
 .infobox-contrat, .infobox-ticket{
-	color: #46a676 !important;
+	color: #46a676;
 }
 .infobox-bank_account{
-	color: #b0a53e !important;
+	color: #b0a53e;
 }
 .infobox-adherent, .infobox-member {
-	color: #79633f !important;
+	color: #79633f;
 }
 .infobox-expensereport{
-	color: #79633f !important;
+	color: #79633f;
 }
 .infobox-holiday{
-	color: #755114 !important;
+	color: #755114;
 }
 
 
@@ -253,6 +253,11 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 .info-box-line {
 	line-height: 1.2em;
 }
+.info-box-line-text {
+	overflow: hidden;
+	width: calc(100% - 76px);
+	text-overflow: ellipsis;
+}
 
 .info-box-icon-text {
 	box-sizing: border-box;
@@ -328,7 +333,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 }
 
 
-<?php if (empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS) && !empty($conf->global->MAIN_INCLUDE_GLOBAL_STATS_IN_OPENED_DASHBOARD)) { ?>
+<?php if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_BOXSTATS') && getDolGlobalString('MAIN_INCLUDE_GLOBAL_STATS_IN_OPENED_DASHBOARD')) { ?>
 .info-box-icon-text{
 	opacity: 1;
 }
@@ -343,7 +348,10 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 }
 
 .info-box-content {
-	padding: 5px 10px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 10px;
+	padding-right: 5px;
 	margin-left: 84px;
 }
 .info-box-sm .info-box-content {
@@ -401,7 +409,7 @@ a.info-box-text{ text-decoration: none;}
 include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $prefix = '';
-if (!empty($conf->global->THEME_INFOBOX_COLOR_ON_BACKGROUND)) {
+if (getDolGlobalString('THEME_INFOBOX_COLOR_ON_BACKGROUND')) {
 	$prefix = 'background-';
 }
 
@@ -596,6 +604,16 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	}
 	.info-box-sm .info-box-content {
 		margin-left: 60px;
+	}
+	.info-box-content {
+		padding-top: 5px;
+		padding-bottom: 5px;
+		padding-left: 10px;
+		padding-right: 2px;
+	}
+	.info-box-line-text {
+		width: calc(100% - 92px);
+		max-width: calc(100% - 82px);
 	}
 }
 

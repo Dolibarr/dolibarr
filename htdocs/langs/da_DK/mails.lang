@@ -93,7 +93,7 @@ MailingModuleDescEmailsFromUser=Emails indlæst af brugeren
 MailingModuleDescDolibarrUsers=Brugere med e-mails
 MailingModuleDescThirdPartiesByCategories=Tredje partier
 SendingFromWebInterfaceIsNotAllowed=Afsendelse fra webgrænseflade er ikke tilladt.
-EmailCollectorFilterDesc=Alle filtre skal matche for at en e-mail bliver indsamlet
+EmailCollectorFilterDesc=Alle filtre skal matche for at have en e-mail, der indsamles. <br> Du kan bruge tegnet "!" før søgestrengværdien, hvis du har brug for en negativ test
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Line %s filtjenester
@@ -180,3 +180,7 @@ DefaultBlacklistMailingStatus=Standardværdi for feltet '%s' ved oprettelse af e
 DefaultStatusEmptyMandatory=Tom men obligatorisk
 WarningLimitSendByDay=ADVARSEL: Opsætningen eller kontrakten for din instans begrænser dit antal e-mails pr. dag til <b>%s</b>. Forsøg på at sende mere kan resultere i, at din instans bliver langsommere eller suspenderet. Kontakt venligst din support, hvis du har brug for en højere kvote.
 NoMoreRecipientToSendTo=Ikke flere modtagere at sende e-mailen til
+EmailOptedOut=E-mail-ejeren har anmodet om ikke at kontakte ham med denne e-mail længere
+EvenUnsubscribe=Inkluder fravalgs-e-mails
+EvenUnsubscribeDesc=Inkluder fravalgs-e-mails, når du vælger e-mails som mål. Nyttig til for eksempel obligatoriske service-e-mails.
+XEmailsDoneYActionsDone=%s e-mails prækvalificeret, %s e-mails behandlet med succes (for %s registrering/handlinger udført)

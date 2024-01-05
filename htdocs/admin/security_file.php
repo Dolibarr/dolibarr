@@ -55,7 +55,7 @@ $error = 0;
  * Actions
  */
 
-if (GETPOST('sendit') && !empty($conf->global->MAIN_UPLOAD_DOC)) {
+if (GETPOST('sendit') && getDolGlobalString('MAIN_UPLOAD_DOC')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	dol_add_file_process($upload_dir, 1, 0, 'userfile');
@@ -64,8 +64,8 @@ if (GETPOST('sendit') && !empty($conf->global->MAIN_UPLOAD_DOC)) {
 if ($action == 'updateform') {
 	$antivircommand = GETPOST('MAIN_ANTIVIRUS_COMMAND', 'restricthtml'); // Use GETPOST restricthtml because we must accept ". Example c:\Progra~1\ClamWin\bin\clamscan.exe
 	$antivirparam = GETPOST('MAIN_ANTIVIRUS_PARAM', 'restricthtml'); // Use GETPOST restricthtml because we must accept ". Example --database="C:\Program Files (x86)\ClamWin\lib"
-	$antivircommand = dol_string_nospecial($antivircommand, '', array("|", ";", "<", ">", "&")); // Sanitize command
-	$antivirparam = dol_string_nospecial($antivirparam, '', array("|", ";", "<", ">", "&")); // Sanitize params
+	$antivircommand = dol_string_nospecial($antivircommand, '', array("|", ";", "<", ">", "&", "+")); // Sanitize command
+	$antivirparam = dol_string_nospecial($antivirparam, '', array("|", ";", "<", ">", "&", "+")); // Sanitize params
 
 	if ($antivircommand && !empty($dolibarr_main_restrict_os_commands)) {
 		$arrayofallowedcommand = explode(',', $dolibarr_main_restrict_os_commands);
@@ -155,7 +155,7 @@ if (isset($max)) {
 }
 print '</td>';
 print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_UPLOAD_DOC" type="text" size="6" value="'.dol_escape_htmltag($conf->global->MAIN_UPLOAD_DOC).'"> '.$langs->trans("Kb");
+print '<input class="flat" name="MAIN_UPLOAD_DOC" type="text" size="6" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_UPLOAD_DOC')).'"> '.$langs->trans("Kb");
 print '</td>';
 print '</tr>';
 
@@ -165,7 +165,7 @@ print '<td>';
 print $form->textwithpicto($langs->trans("UMask"), $langs->trans("UMaskExplanation"));
 print '</td>';
 print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_UMASK" type="text" size="6" value="'.dol_escape_htmltag($conf->global->MAIN_UMASK).'">';
+print '<input class="flat" name="MAIN_UMASK" type="text" size="6" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_UMASK')).'">';
 print '</td>';
 print '</tr>';
 
@@ -177,7 +177,7 @@ print '<span class="opacitymedium">'.$langs->trans("AntiVirusCommandExample").'<
 // Check command in inside safe_mode
 print '</td>';
 print '<td>';
-if (ini_get('safe_mode') && !empty($conf->global->MAIN_ANTIVIRUS_COMMAND)) {
+if (ini_get('safe_mode') && getDolGlobalString('MAIN_ANTIVIRUS_COMMAND')) {
 	$langs->load("errors");
 	$basedir = preg_replace('/"/', '', dirname($conf->global->MAIN_ANTIVIRUS_COMMAND));
 	$listdir = explode(';', ini_get('safe_mode_exec_dir'));
@@ -200,7 +200,7 @@ print '<td>'.$langs->trans("AntiVirusParam").'<br>';
 print '<span class="opacitymedium">'.$langs->trans("AntiVirusParamExample").'</span>';
 print '</td>';
 print '<td>';
-print '<input type="text" '.(defined('MAIN_ANTIVIRUS_PARAM') ? 'disabled ' : '').'name="MAIN_ANTIVIRUS_PARAM" class="minwidth500imp" value="'.(!empty($conf->global->MAIN_ANTIVIRUS_PARAM) ?dol_escape_htmltag($conf->global->MAIN_ANTIVIRUS_PARAM) : '').'">';
+print '<input type="text" '.(defined('MAIN_ANTIVIRUS_PARAM') ? 'disabled ' : '').'name="MAIN_ANTIVIRUS_PARAM" class="minwidth500imp" value="'.(getDolGlobalString('MAIN_ANTIVIRUS_PARAM') ? dol_escape_htmltag(getDolGlobalString('MAIN_ANTIVIRUS_PARAM')) : '').'">';
 if (defined('MAIN_ANTIVIRUS_PARAM')) {
 	print '<br><span class="opacitymedium">'.$langs->trans("ValueIsForcedBySystem").'</span>';
 }

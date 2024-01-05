@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
@@ -58,7 +58,7 @@ $msid = GETPOST('msid', 'int');
 $product_id = GETPOST("product_id", 'int');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'movementlist';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'movementlist';
 
 $idproduct = GETPOST('idproduct', 'int');
 $year = GETPOST("year", 'int');
@@ -74,7 +74,7 @@ $search_batch = trim(GETPOST("search_batch", 'alpha'));
 $search_qty = trim(GETPOST("search_qty", 'alpha'));
 $search_type_mouvement = GETPOST('search_type_mouvement', 'int');
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
@@ -133,7 +133,8 @@ $usercandelete = (($user->rights->stock->mouvement->supprimer));
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
@@ -418,7 +419,7 @@ if (empty($reshook) && $action != 'remove_file') {
  * View
  */
 
-$productlot = new ProductLot($db);
+$productlot = new Productlot($db);
 $productstatic = new Product($db);
 $warehousestatic = new Entrepot($db);
 $movement = new MouvementStock($db);
@@ -426,7 +427,7 @@ $userstatic = new User($db);
 $form = new Form($db);
 $formother = new FormOther($db);
 $formproduct = new FormProduct($db);
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
@@ -461,7 +462,7 @@ if ($msid > 0) {
 }
 $sql .= " AND m.fk_entrepot = e.rowid";
 $sql .= " AND e.entity IN (".getEntity('stock').")";
-if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 	$sql .= " AND p.fk_product_type = 0";
 }
 if ($id > 0) {
@@ -570,7 +571,7 @@ if ($resql) {
 		$morehtmlref .= '</div>';
 
 		$shownav = 1;
-		if ($user->socid && !in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+		if ($user->socid && !in_array('stock', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 			$shownav = 0;
 		}
 
@@ -669,11 +670,11 @@ if ($resql) {
 	if ((empty($action) || $action == 'list') && $id > 0) {
 		print "<div class=\"tabsAction\">\n";
 
-		if ($user->rights->stock->mouvement->creer) {
+		if ($user->hasRight('stock', 'mouvement', 'creer')) {
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=correction">'.$langs->trans("CorrectStock").'</a>';
 		}
 
-		if ($user->rights->stock->mouvement->creer) {
+		if ($user->hasRight('stock', 'mouvement', 'creer')) {
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert">'.$langs->trans("TransferStock").'</a>';
 		}
 

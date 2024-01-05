@@ -32,15 +32,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
-// Defini si peux lire/modifier utilisateurs et permisssions
+// Define if user can read permissions
 $canreadperms = ($user->admin || $user->hasRight("user", "user", "read"));
 $caneditperms = ($user->admin || $user->hasRight("user", "user", "write"));
 $candisableperms = ($user->admin || $user->hasRight("user", "user", "delete"));
 $feature2 = 'user';
 
 // Advanced permissions
-if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
-	$canreadperms = ($user->admin || $user->hasRight("user", "group_advance", "read"));
+$advancedpermsactive = false;
+if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+	$advancedpermsactive = true;
+	$canreadperms = ($user->admin || ($user->hasRight("user", "group_advance", "read") && $user->hasRight("user", "group_advance", "readperms")));
 	$caneditperms = ($user->admin || $user->hasRight("user", "group_advance", "write"));
 	$candisableperms = ($user->admin || $user->hasRight("user", "group_advance", "delete"));
 	$feature2 = 'group_advance';
@@ -53,12 +55,12 @@ $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'groupcard'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'groupcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $userid = GETPOST('user', 'int');
 
-$object = new Usergroup($db);
+$object = new UserGroup($db);
 $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -136,7 +138,7 @@ if (empty($reshook)) {
 					$error++;
 				}
 
-				if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+				if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 					$object->entity = 0;
 				} else {
 					if ($conf->entity == 1 && $user->admin && !$user->entity) {		// Same permissions test than the one used to show the combo of entities into the form
@@ -217,7 +219,7 @@ if (empty($reshook)) {
 				$error++;
 			}
 
-			if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+			if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 				$object->entity = 0;
 			} elseif (GETPOSTISSET("entity")) {
 				$object->entity = GETPOST("entity", "int");
@@ -278,7 +280,7 @@ if ($action == 'create') {
 
 	// Multicompany
 	if (isModEnabled('multicompany') && is_object($mc)) {
-		if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && !$user->entity) {
+		if (!getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1 && $user->admin && !$user->entity) {
 			print "<tr>".'<td class="tdtop">'.$langs->trans("Entity").'</td>';
 			print "<td>".$mc->select_entities($conf->entity);
 			print "</td></tr>\n";
@@ -349,7 +351,7 @@ if ($action == 'create') {
 			}
 
 			// Multicompany
-			if (isModEnabled('multicompany') && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && !$user->entity) {
+			if (isModEnabled('multicompany') && is_object($mc) && !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1 && $user->admin && !$user->entity) {
 				$mc->getInfo($object->entity);
 				print "<tr>".'<td class="titlefield">'.$langs->trans("Entity").'</td>';
 				print '<td class="valeur">'.dol_escape_htmltag($mc->label);
@@ -455,9 +457,9 @@ if ($action == 'create') {
 						print '<td class="tdoverflowmax150">';
 						print $useringroup->getNomUrl(-1, '', 0, 0, 24, 0, 'login');
 						if (isModEnabled('multicompany') && $useringroup->admin && empty($useringroup->entity)) {
-							print img_picto($langs->trans("SuperAdministrator"), 'redstar');
+							print img_picto($langs->trans("SuperAdministratorDesc"), 'redstar');
 						} elseif ($useringroup->admin) {
-							print img_picto($langs->trans("Administrator"), 'star');
+							print img_picto($langs->trans("AdministratorDesc"), 'star');
 						}
 						print '</td>';
 						print '<td>'.$useringroup->lastname.'</td>';
@@ -527,7 +529,7 @@ if ($action == 'create') {
 
 			// Multicompany
 			if (isModEnabled('multicompany') && is_object($mc)) {
-				if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && !$user->entity) {
+				if (!getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1 && $user->admin && !$user->entity) {
 					print "<tr>".'<td class="tdtop">'.$langs->trans("Entity").'</td>';
 					print "<td>".$mc->select_entities($object->entity);
 					print "</td></tr>\n";

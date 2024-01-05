@@ -53,6 +53,7 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = 使用表單建立/增加參與者,將�
 #
 # Object
 #
+OrganizedEvent=Organized event
 EventOrganizationConfOrBooth= 會議或展位
 EventOrganizationConfOrBoothes=Conferences or Boothes
 ManageOrganizeEvent = 管理活動的組織
@@ -145,7 +146,7 @@ OrganizationEventLinkToThirdParty=連結到合作方（客戶、供應商或合�
 OrganizationEvenLabelName=Public name of the conference or booth
 
 NewSuggestionOfBooth=申請展位
-NewSuggestionOfConference=申請會議
+NewSuggestionOfConference=Application to hold a conference
 
 #
 # Vote page
@@ -172,3 +173,5 @@ ErrorSeveralCompaniesWithEmailContactUs=已找到幾家收到此電子郵件的�
 ErrorSeveralCompaniesWithNameContactUs=已找到數家具有此名稱的公司，因此我們無法自動驗證您的註冊。請以 %s 聯繫我們進行手動驗證
 NoPublicActionsAllowedForThisEvent=本次活動不對外公開任何公開活動
 MaxNbOfAttendees=參加人數上限
+DateStartEvent=Event start date
+DateEndEvent=Event end date

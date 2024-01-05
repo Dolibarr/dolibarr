@@ -21,7 +21,7 @@
 -- Delete orphans
 -- V4 DELETE llx_commande_fournisseur FROM llx_commande_fournisseur LEFT JOIN llx_societe ON llx_commande_fournisseur.fk_soc = llx_societe.rowid WHERE llx_societe.rowid IS NULL; 
 
-ALTER TABLE llx_commande_fournisseur ADD UNIQUE INDEX uk_commande_fournisseur_ref (ref, fk_soc, entity);
+ALTER TABLE llx_commande_fournisseur ADD UNIQUE INDEX uk_commande_fournisseur_ref (ref, entity);
 
 ALTER TABLE llx_commande_fournisseur ADD INDEX idx_commande_fournisseur_fk_soc (fk_soc);
 ALTER TABLE llx_commande_fournisseur ADD CONSTRAINT fk_commande_fournisseur_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);

@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/iUs
 require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/Resources.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/Defaults.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/RestException.php';
+
 use Luracast\Restler\iAuthenticate;
 use Luracast\Restler\iUseAuthentication;
 use Luracast\Restler\Resources;
@@ -43,6 +44,11 @@ use Luracast\Restler\RestException;
 class DolibarrApiAccess implements iAuthenticate
 {
 	const REALM = 'Restricted Dolibarr API';
+
+	/**
+	 * @var DoliDB	Database handler
+	 */
+	public $db;
 
 	/**
 	 * @var array $requires	role required by API method		user / external / admin
@@ -113,7 +119,7 @@ class DolibarrApiAccess implements iAuthenticate
 		if ($api_key) {
 			$userentity = 0;
 
-			$sql = "SELECT u.login, u.datec, u.api_key, ";
+			$sql = "SELECT u.login, u.datec, u.api_key,";
 			$sql .= " u.tms as date_modification, u.entity";
 			$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 			$sql .= " WHERE u.api_key = '".$this->db->escape($api_key)."' OR u.api_key = '".$this->db->escape(dolEncrypt($api_key, '', '', 'dolibarr'))."'";
@@ -140,43 +146,49 @@ class DolibarrApiAccess implements iAuthenticate
 				throw new RestException(503, 'Error when fetching user api_key :'.$this->db->error_msg);
 			}
 
-			if ($stored_key != $api_key) {		// This should not happen since we did a search on api_key
+			if ($login && $stored_key != $api_key) {		// This should not happen since we did a search on api_key
 				$userClass::setCacheIdentifier($api_key);
 				return false;
 			}
 
+			$genericmessageerroruser = 'Error user not valid (not found with api key or bad status or bad validity dates) (conf->entity='.$conf->entity.')';
+
 			if (!$login) {
-				throw new RestException(503, 'Error when searching login user from api key');
+				dol_syslog("functions_isallowed::check_user_api_key Authentication KO for api key: Error when searching login user from api key", LOG_NOTICE);
+				sleep(1); // Anti brut force protection. Must be same delay when user and password are not valid.
+				throw new RestException(401, $genericmessageerroruser);
 			}
-
-
-			$genericmessageerroruser = 'Error user not valid (not found or bad status or bad validity dates) (conf->entity='.$conf->entity.')';
 
 			$fuser = new User($this->db);
 			$result = $fuser->fetch('', $login, '', 0, (empty($userentity) ? -1 : $conf->entity)); // If user is not entity 0, we search in working entity $conf->entity  (that may have been forced to a different value than user entity)
 			if ($result <= 0) {
-				throw new RestException(503, $genericmessageerroruser);
+				dol_syslog("functions_isallowed::check_user_api_key Authentication KO for '".$login."': Failed to fetch on entity", LOG_NOTICE);
+				sleep(1); // Anti brut force protection. Must be same delay when user and password are not valid.
+				throw new RestException(401, $genericmessageerroruser);
 			}
 
 			// Check if user status is enabled
 			if ($fuser->statut != $fuser::STATUS_ENABLED) {
 				// Status is disabled
-				dol_syslog("The user has been disabled");
-				throw new RestException(503, $genericmessageerroruser);
+				dol_syslog("functions_isallowed::check_user_api_key Authentication KO for '".$login."': The user has been disabled", LOG_NOTICE);
+				sleep(1); // Anti brut force protection. Must be same delay when user and password are not valid.
+				throw new RestException(401, $genericmessageerroruser);
 			}
 
 			// Check if session was unvalidated by a password change
 			if (($fuser->flagdelsessionsbefore && !empty($_SESSION["dol_logindate"]) && $fuser->flagdelsessionsbefore > $_SESSION["dol_logindate"])) {
 				// Session is no more valid
-				dol_syslog("The user has a date for session invalidation = ".$fuser->flagdelsessionsbefore." and a session date = ".$_SESSION["dol_logindate"].". We must invalidate its sessions.");
-				throw new RestException(503, $genericmessageerroruser);
+				dol_syslog("functions_isallowed::check_user_api_key Authentication KO for '".$login."': The user has a date for session invalidation = ".$fuser->flagdelsessionsbefore." and a session date = ".$_SESSION["dol_logindate"].". We must invalidate its sessions.");
+				sleep(1); // Anti brut force protection. Must be same delay when user and password are not valid.
+				throw new RestException(401, $genericmessageerroruser);
 			}
 
 			// Check date validity
 			if ($fuser->isNotIntoValidityDateRange()) {
 				// User validity dates are no more valid
-				dol_syslog("The user login has a validity between [".$fuser->datestartvalidity." and ".$fuser->dateendvalidity."], curren date is ".dol_now());
-				throw new RestException(503, $genericmessageerroruser);
+				dol_syslog("functions_isallowed::check_user_api_key Authentication KO for '".$login."': The user login has a validity between [".$fuser->datestartvalidity." and ".$fuser->dateendvalidity."], curren date is ".dol_now());
+				sleep(1); // Anti brut force protection. Must be same delay when user and password are not valid.
+				throw new RestException(401, $genericmessageerroruser);
 			}
 
 			// User seems valid

@@ -132,6 +132,10 @@ if ($action == 'update') {
 		dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_REF", GETPOST("MAIN_GENERATE_DOCUMENTS_HIDE_REF"), 'chaine', 0, '', $conf->entity);
 	}
 
+	if (GETPOSTISSET('MAIN_GENERATE_DOCUMENTS_SHOW_PRODUCT_BARCODE')) {
+		dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_SHOW_PRODUCT_BARCODE", GETPOST("MAIN_GENERATE_DOCUMENTS_SHOW_PRODUCT_BARCODE"), 'chaine', 0, '', $conf->entity);
+	}
+
 	if (GETPOSTISSET('MAIN_DOCUMENTS_LOGO_HEIGHT')) {
 		dolibarr_set_const($db, "MAIN_DOCUMENTS_LOGO_HEIGHT", GETPOST("MAIN_DOCUMENTS_LOGO_HEIGHT", 'int'), 'chaine', 0, '', $conf->entity);
 	}
@@ -343,7 +347,7 @@ print '<tr class="oddeven"><td>'.$langs->trans("ShowVATIntaInAddress").' - <span
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_TVAINTRA_NOT_IN_ADDRESS');
 } else {
-	print $form->selectyesno('MAIN_TVAINTRA_NOT_IN_ADDRESS', (!empty($conf->global->MAIN_TVAINTRA_NOT_IN_ADDRESS)) ? $conf->global->MAIN_TVAINTRA_NOT_IN_ADDRESS : 0, 1);
+	print $form->selectyesno('MAIN_TVAINTRA_NOT_IN_ADDRESS', (getDolGlobalString('MAIN_TVAINTRA_NOT_IN_ADDRESS')) ? $conf->global->MAIN_TVAINTRA_NOT_IN_ADDRESS : 0, 1);
 }
 print '</td></tr>';
 
@@ -363,7 +367,7 @@ for ($i = 1; $i <= 6; $i++) {
 		if ($conf->use_javascript_ajax) {
 			print ajax_constantonoff($keyforconstant);
 		} else {
-			print $form->selectyesno($keyforconstant, isset($conf->global->$keyforconstant) ? $conf->global->$keyforconstant : 0, 1, $noCountryCode);
+			print $form->selectyesno($keyforconstant, getDolGlobalString($keyforconstant, 0), 1, $noCountryCode);
 		}
 		print '</td></tr>';
 	}
@@ -395,7 +399,7 @@ print '<tr class="oddeven"><td>'.$langs->trans("SwapSenderAndRecipientOnPDF").'<
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_INVERT_SENDER_RECIPIENT');
 } else {
-	print $form->selectyesno('MAIN_INVERT_SENDER_RECIPIENT', (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) ? $conf->global->MAIN_INVERT_SENDER_RECIPIENT : 0, 1);
+	print $form->selectyesno('MAIN_INVERT_SENDER_RECIPIENT', (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) ? $conf->global->MAIN_INVERT_SENDER_RECIPIENT : 0, 1);
 }
 print '</td></tr>';
 
@@ -405,7 +409,7 @@ print '<tr class="oddeven"><td>'.$langs->trans("PlaceCustomerAddressToIsoLocatio
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_PDF_USE_ISO_LOCATION');
 } else {
-	print $form->selectyesno('MAIN_PDF_USE_ISO_LOCATION', (!empty($conf->global->MAIN_PDF_USE_ISO_LOCATION)) ? $conf->global->MAIN_PDF_USE_ISO_LOCATION : 0, 1);
+	print $form->selectyesno('MAIN_PDF_USE_ISO_LOCATION', (getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION')) ? $conf->global->MAIN_PDF_USE_ISO_LOCATION : 0, 1);
 }
 print '</td></tr>';
 
@@ -433,7 +437,7 @@ if ($mysoc->useLocalTax(1) || $mysoc->useLocalTax(2)) {
 		if ($conf->use_javascript_ajax) {
 			$text .= ajax_constantonoff('MAIN_PDF_MAIN_HIDE_SECOND_TAX');
 		} else {
-			$text .= $form->selectyesno('MAIN_PDF_MAIN_HIDE_SECOND_TAX', (!empty($conf->global->MAIN_PDF_MAIN_HIDE_SECOND_TAX)) ? $conf->global->MAIN_PDF_MAIN_HIDE_SECOND_TAX : 0, 1);
+			$text .= $form->selectyesno('MAIN_PDF_MAIN_HIDE_SECOND_TAX', (getDolGlobalString('MAIN_PDF_MAIN_HIDE_SECOND_TAX')) ? $conf->global->MAIN_PDF_MAIN_HIDE_SECOND_TAX : 0, 1);
 		}
 		$text .= '</td></tr>';
 	}
@@ -445,7 +449,7 @@ if ($mysoc->useLocalTax(1) || $mysoc->useLocalTax(2)) {
 		if ($conf->use_javascript_ajax) {
 			$text .= ajax_constantonoff('MAIN_PDF_MAIN_HIDE_THIRD_TAX');
 		} else {
-			$text .= $form->selectyesno('MAIN_PDF_MAIN_HIDE_THIRD_TAX', (!empty($conf->global->MAIN_PDF_MAIN_HIDE_THIRD_TAX)) ? $conf->global->MAIN_PDF_MAIN_HIDE_THIRD_TAX : 0, 1);
+			$text .= $form->selectyesno('MAIN_PDF_MAIN_HIDE_THIRD_TAX', (getDolGlobalString('MAIN_PDF_MAIN_HIDE_THIRD_TAX')) ? $conf->global->MAIN_PDF_MAIN_HIDE_THIRD_TAX : 0, 1);
 		}
 		$text .= '</td></tr>';
 	}
@@ -468,7 +472,7 @@ print '<tr class="oddeven"><td>'.$langs->trans("HideAnyVATInformationOnPDF").'</
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT');
 } else {
-	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT', (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) ? $conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT : 0, 1);
+	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT', (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT')) ? $conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT : 0, 1);
 }
 print '</td></tr>';
 
@@ -492,20 +496,20 @@ print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$lan
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("PDFIn2Languages"), $langs->trans("PDF_USE_ALSO_LANGUAGE_CODE"));
 print '</td><td>';
-$selected = GETPOSTISSET('PDF_USE_ALSO_LANGUAGE_CODE') ? GETPOST('PDF_USE_ALSO_LANGUAGE_CODE') : (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) ? $conf->global->PDF_USE_ALSO_LANGUAGE_CODE : 0);
+$selected = GETPOSTISSET('PDF_USE_ALSO_LANGUAGE_CODE') ? GETPOST('PDF_USE_ALSO_LANGUAGE_CODE') : (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') ? $conf->global->PDF_USE_ALSO_LANGUAGE_CODE : 0);
 print $formadmin->select_language($selected, 'PDF_USE_ALSO_LANGUAGE_CODE', 0, null, 1);
 print '</td></tr>';
 
 // Height of logo
 print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DOCUMENTS_LOGO_HEIGHT").'</td><td>';
-print '<input type="text" class="maxwidth50" name="MAIN_DOCUMENTS_LOGO_HEIGHT" value="'.(!empty($conf->global->MAIN_DOCUMENTS_LOGO_HEIGHT) ? $conf->global->MAIN_DOCUMENTS_LOGO_HEIGHT : 20).'">';
+print '<input type="text" class="maxwidth50" name="MAIN_DOCUMENTS_LOGO_HEIGHT" value="'.(getDolGlobalString('MAIN_DOCUMENTS_LOGO_HEIGHT') ? $conf->global->MAIN_DOCUMENTS_LOGO_HEIGHT : 20).'">';
 print '</td></tr>';
 
 // Show project
 if (isModEnabled('project')) {
 	print '<tr class="oddeven"><td>'.$langs->trans("PDF_SHOW_PROJECT").'</td><td>';
 	$tmparray = array('no' => 'No', 'showprojectref' => 'RefProject', 'showprojectlabel' => 'ShowProjectLabel');
-	$showprojectref = empty($conf->global->PDF_SHOW_PROJECT) ? (empty($conf->global->PDF_SHOW_PROJECT_TITLE) ? 'no' : 'showprojectlabel') : 'showprojectref';
+	$showprojectref = !getDolGlobalString('PDF_SHOW_PROJECT') ? (!getDolGlobalString('PDF_SHOW_PROJECT_TITLE') ? 'no' : 'showprojectlabel') : 'showprojectref';
 	print $form->selectarray('PDF_SHOW_PROJECT_REF_OR_LABEL', $tmparray, $showprojectref, 0, 0, 0, '', 1);
 	print '</td></tr>';
 }
@@ -528,9 +532,21 @@ print '<tr class="oddeven"><td>'.$langs->trans("HideRefOnPDF").'</td><td>';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_GENERATE_DOCUMENTS_HIDE_REF');
 } else {
-	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_REF', (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF)) ? $conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF : 0, 1);
+	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_REF', (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF')) ? $conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF : 0, 1);
 }
 print '</td></tr>';
+
+// Barcode
+
+if (isModEnabled('barcode')) {
+	print '<tr class="oddeven"><td>'.$langs->trans("ShowProductBarcodeOnPDF").'</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('MAIN_GENERATE_DOCUMENTS_SHOW_PRODUCT_BARCODE');
+	} else {
+		print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_SHOW_PRODUCT_BARCODE', (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_PRODUCT_BARCODE')) ? $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_PRODUCT_BARCODE : 0, 1);
+	}
+	print '</td></tr>';
+}
 
 // Desc
 
@@ -538,7 +554,7 @@ print '<tr class="oddeven"><td>'.$langs->trans("HideDescOnPDF").'</td><td>';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_GENERATE_DOCUMENTS_HIDE_DESC');
 } else {
-	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_DESC', (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC)) ? $conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC : 0, 1);
+	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_DESC', (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC')) ? $conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC : 0, 1);
 }
 print '</td></tr>';
 
@@ -548,7 +564,7 @@ print '<tr class="oddeven"><td>'.$langs->trans("HideDetailsOnPDF").'</td><td>';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS');
 } else {
-	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS', (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS)) ? $conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS : 0, 1);
+	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS', (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS')) ? $conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS : 0, 1);
 }
 print '</td></tr>';
 
@@ -558,7 +574,7 @@ print '<tr class="oddeven"><td>'.$langs->trans("BoldLabelOnPDF").'</td><td>';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('PDF_BOLD_PRODUCT_LABEL');
 } else {
-	print $form->selectyesno('PDF_BOLD_PRODUCT_LABEL', (!empty($conf->global->PDF_BOLD_PRODUCT_LABEL)) ? $conf->global->PDF_BOLD_PRODUCT_LABEL : 0, 1);
+	print $form->selectyesno('PDF_BOLD_PRODUCT_LABEL', (getDolGlobalString('PDF_BOLD_PRODUCT_LABEL')) ? $conf->global->PDF_BOLD_PRODUCT_LABEL : 0, 1);
 }
 print '</td></tr>';
 
@@ -568,7 +584,7 @@ print '<tr class="oddeven"><td>'.$langs->trans("BoldRefAndPeriodOnPDF").'</td><t
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('PDF_BOLD_PRODUCT_REF_AND_PERIOD');
 } else {
-	print $form->selectyesno('PDF_BOLD_PRODUCT_REF_AND_PERIOD', (!empty($conf->global->PDF_BOLD_PRODUCT_REF_AND_PERIOD)) ? $conf->global->PDF_BOLD_PRODUCT_REF_AND_PERIOD : 0, 1);
+	print $form->selectyesno('PDF_BOLD_PRODUCT_REF_AND_PERIOD', (getDolGlobalString('PDF_BOLD_PRODUCT_REF_AND_PERIOD')) ? $conf->global->PDF_BOLD_PRODUCT_REF_AND_PERIOD : 0, 1);
 }
 print '</td></tr>';
 
@@ -578,14 +594,14 @@ print '<tr class="oddeven"><td>'.$langs->trans("SHOW_SUBPRODUCT_REF_IN_PDF", $la
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('SHOW_SUBPRODUCT_REF_IN_PDF');
 } else {
-	print $form->selectyesno('SHOW_SUBPRODUCT_REF_IN_PDF', (!empty($conf->global->SHOW_SUBPRODUCT_REF_IN_PDF)) ? $conf->global->SHOW_SUBPRODUCT_REF_IN_PDF : 0, 1);
+	print $form->selectyesno('SHOW_SUBPRODUCT_REF_IN_PDF', (getDolGlobalString('SHOW_SUBPRODUCT_REF_IN_PDF')) ? $conf->global->SHOW_SUBPRODUCT_REF_IN_PDF : 0, 1);
 }
 print '</td></tr>';
 
 // Show more details in footer
 
 print '<tr class="oddeven"><td>'.$langs->trans("ShowDetailsInPDFPageFoot").'</td><td>';
-print $form->selectarray('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', $arraydetailsforpdffoot, (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS : 0));
+print $form->selectarray('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', $arraydetailsforpdffoot, (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS') ? $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS : 0));
 print '</td></tr>';
 
 // Show the first sales representative
@@ -606,12 +622,12 @@ print '<tr class="oddeven"><td>'.$langs->trans("PDF_SHOW_LINK_TO_ONLINE_PAYMENT"
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('PDF_SHOW_LINK_TO_ONLINE_PAYMENT');
 } else {
-	print $form->selectyesno('PDF_SHOW_LINK_TO_ONLINE_PAYMENT', (!empty($conf->global->PDF_SHOW_LINK_TO_ONLINE_PAYMENT)) ? $conf->global->PDF_SHOW_LINK_TO_ONLINE_PAYMENT : 0, 1);
+	print $form->selectyesno('PDF_SHOW_LINK_TO_ONLINE_PAYMENT', (getDolGlobalString('PDF_SHOW_LINK_TO_ONLINE_PAYMENT')) ? $conf->global->PDF_SHOW_LINK_TO_ONLINE_PAYMENT : 0, 1);
 }
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans("PDF_USE_A").'</td><td>';
-print $form->selectarray('PDF_USE_A', $arraylistofpdfformat, (empty($conf->global->PDF_USE_A) ? 0 : $conf->global->PDF_USE_A));
+print $form->selectarray('PDF_USE_A', $arraylistofpdfformat, (!getDolGlobalString('PDF_USE_A') ? 0 : $conf->global->PDF_USE_A));
 print '</td></tr>';
 
 print '</table>';

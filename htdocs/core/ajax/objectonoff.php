@@ -36,9 +36,6 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-if (!defined('NOREQUIRETRAN')) {
-	define('NOREQUIRETRAN', '1');
-}
 
 // Load Dolibarr environment
 require '../../main.inc.php';
@@ -64,7 +61,7 @@ $object->fields[$field] = array('type' => $format, 'enabled' => 1);
 $module = $object->module;
 $element = $object->element;
 $usesublevelpermission = ($module != $element ? $element : '');
-if ($usesublevelpermission && !isset($user->rights->$module->$element)) {	// There is no permission on object defined, we will check permission on module directly
+if ($usesublevelpermission && !$user->hasRight($module, $element)) {	// There is no permission on object defined, we will check permission on module directly
 	$usesublevelpermission = '';
 }
 

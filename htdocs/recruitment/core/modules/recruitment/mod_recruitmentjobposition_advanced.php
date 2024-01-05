@@ -54,11 +54,12 @@ class mod_recruitmentjobposition_advanced extends ModeleNumRefRecruitmentJobPosi
 	/**
 	 *  Returns the description of the numbering model
 	 *
+	 *	@param		Translate	$langs		Language
 	 *  @return     string      Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
-		global $conf, $langs, $db;
+		global $conf, $db;
 
 		$langs->load("bills");
 

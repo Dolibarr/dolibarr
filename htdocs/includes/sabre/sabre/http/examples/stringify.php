@@ -15,10 +15,9 @@ use Sabre\HTTP\Response;
 
 // Find the autoloader
 $paths = [
-    __DIR__ . '/../vendor/autoload.php',
-    __DIR__ . '/../../../autoload.php',
-    __DIR__ . '/vendor/autoload.php',
-
+    __DIR__.'/../vendor/autoload.php',
+    __DIR__.'/../../../autoload.php',
+    __DIR__.'/vendor/autoload.php',
 ];
 foreach ($paths as $path) {
     if (file_exists($path)) {
@@ -29,8 +28,8 @@ foreach ($paths as $path) {
 
 $request = new Request('POST', '/foo');
 $request->setHeaders([
-    'Host'         => 'example.org',
-    'Content-Type' => 'application/json'
+    'Host' => 'example.org',
+    'Content-Type' => 'application/json',
     ]);
 
 $request->setBody(json_encode(['foo' => 'bar']));
@@ -41,10 +40,10 @@ echo "\r\n\r\n";
 $response = new Response(424);
 $response->setHeaders([
     'Content-Type' => 'text/plain',
-    'Connection'   => 'close',
+    'Connection' => 'close',
     ]);
 
-$response->setBody("ABORT! ABORT!");
+$response->setBody('ABORT! ABORT!');
 
 echo $response;
 

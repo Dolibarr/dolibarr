@@ -39,7 +39,7 @@ StatusSendingValidatedShort=ກວດສອບແລ້ວ
 StatusSendingProcessedShort=ປະມວນຜົນແລ້ວ
 SendingSheet=ໃບສົ່ງ
 ConfirmDeleteSending=ເຈົ້າແນ່ໃຈບໍ່ວ່າເຈົ້າຕ້ອງການລຶບການຂົນສົ່ງນີ້?
-ConfirmValidateSending=ເຈົ້າແນ່ໃຈບໍ່ວ່າເຈົ້າຕ້ອງການກວດສອບການຈັດສົ່ງນີ້ດ້ວຍການອ້າງອີງ <b> %s </b>?
+ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
 ConfirmCancelSending=ເຈົ້າແນ່ໃຈບໍວ່າເຈົ້າຕ້ອງການຍົກເລີກການຂົນສົ່ງນີ້?
 DocumentModelMerou=ຮູບແບບ Merou A5
 WarningNoQtyLeftToSend=ຄໍາເຕືອນ, ບໍ່ມີຜະລິດຕະພັນລໍຖ້າການຂົນສົ່ງ.
@@ -48,7 +48,7 @@ DateDeliveryPlanned=ວັນທີຂອງການຈັດສົ່ງທີ
 RefDeliveryReceipt=ໃບຮັບເງິນການສົ່ງຄືນ
 StatusReceipt=ໃບຮັບເງິນການຈັດສົ່ງ
 DateReceived=ໄດ້ຮັບການຈັດສົ່ງວັນທີ
-ClassifyReception=ຈັດປະເພດການຮັບ
+ClassifyReception=Classify Received
 SendShippingByEMail=ສົ່ງການຂົນສົ່ງທາງອີເມລ
 SendShippingRef=ການສົ່ງການຂົນສົ່ງ %s
 ActionsOnShipping=ເຫດການກ່ຽວກັບການຂົນສົ່ງ
@@ -62,6 +62,7 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=ປະລິມານຜະລິ�
 NoProductToShipFoundIntoStock=ບໍ່ພົບສິນຄ້າທີ່ຈະສົ່ງໃນສາງ <b> %s </b>. ແກ້ໄຂຫຼັກຊັບຫຼືກັບຄືນເພື່ອເລືອກສາງອື່ນ.
 WeightVolShort=ນ້ ຳ ໜັກ/Vol.
 ValidateOrderFirstBeforeShipment=ກ່ອນອື່ນmustົດທ່ານຕ້ອງກວດສອບ ຄຳ ສັ່ງກ່ອນທີ່ຈະສາມາດຈັດສົ່ງໄດ້.
+NoLineGoOnTabToAddSome=No line, go on tab "%s" to add
 
 # Sending methods
 # ModelDocument
@@ -74,3 +75,12 @@ SumOfProductWeights=ຜົນລວມຂອງນໍ້າ ໜັກ ຜະລ�
 # warehouse details
 DetailWarehouseNumber= ລາຍລະອຽດສາງ
 DetailWarehouseFormat= W: %s (ຈໍານວນ: %d)
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Display last date of entry in stock during shipment creation for serial number or batch
+CreationOptions=Available options during shipment creation
+
+ShipmentDistribution=Shipment distribution
+
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combinations of warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
+
+ErrorTooMuchShipped=Quantity shipped should not be greater than quantity ordered for line %s

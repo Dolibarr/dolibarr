@@ -61,7 +61,7 @@ print load_fiche_titre($langs->trans("StocksArea"), '', 'stock');
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This may be useless due to the global search combo
+if (getDolGlobalString('MAIN_SEARCH_FORM_ON_HOME_AREAS')) {     // This may be useless due to the global search combo
 	print '<form method="post" action="'.DOL_URL_ROOT.'/product/stock/list.php">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<div class="div-table-responsive-no-min">';
@@ -149,7 +149,7 @@ $sql .= ", ".MAIN_DB_PREFIX."product as p";
 $sql .= " WHERE m.fk_product = p.rowid";
 $sql .= " AND m.fk_entrepot = e.rowid";
 $sql .= " AND e.entity IN (".getEntity('stock').")";
-if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 	$sql .= " AND p.fk_product_type = ".Product::TYPE_PRODUCT;
 }
 $sql .= $db->order("datem", "DESC");
@@ -201,7 +201,7 @@ if ($resql) {
 		$tmplotstatic->eatby = $objp->eatby;
 
 		print '<tr class="oddeven">';
-		print '<td class="nowraponall">'.img_picto($langs->trans("Ref").' '.$objp->mid, 'movement',  'class="pictofixedwidth"').dol_print_date($db->jdate($objp->datem), 'dayhour').'</td>';
+		print '<td class="nowraponall">'.img_picto($langs->trans("Ref").' '.$objp->mid, 'movement', 'class="pictofixedwidth"').dol_print_date($db->jdate($objp->datem), 'dayhour').'</td>';
 		print '<td class="tdoverflowmax150">';
 		print $producttmp->getNomUrl(1);
 		print "</td>\n";

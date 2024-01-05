@@ -108,8 +108,7 @@ class PriceParser
 			return $langs->trans("ErrorPriceExpression".$code, $info[0], $info[1]);
 		} elseif (in_array($code, array(7, 12, 13, 15, 16, 18))) { //Internal errors
 			return $langs->trans("ErrorPriceExpressionInternal", $code);
-		} else //Unknown errors
-		{
+		} else { //Unknown errors
 			return $langs->trans("ErrorPriceExpressionUnknown", $code);
 		}
 	}
@@ -157,7 +156,7 @@ class PriceParser
 		// Retrieve all extrafields if not already not know (should not happen)
 		if (! is_object($extrafields)) {
 			$extrafields = new ExtraFields($this->db);
-			$extrafields->fetch_name_optionals_label();
+			$extrafields->fetch_name_optionals_label($product->table_element);
 		}
 
 		$product->fetch_optionals();
@@ -270,8 +269,8 @@ class PriceParser
 			$supplier_min_price = 0;
 			$supplier_min_price_with_discount = 0;
 		} else {
-			 $supplier_min_price = $productFournisseur->fourn_unitprice;
-			 $supplier_min_price_with_discount = $productFournisseur->fourn_unitprice_with_discount;
+			$supplier_min_price = $productFournisseur->fourn_unitprice;
+			$supplier_min_price_with_discount = $productFournisseur->fourn_unitprice_with_discount;
 		}
 
 		//Accessible values by expressions

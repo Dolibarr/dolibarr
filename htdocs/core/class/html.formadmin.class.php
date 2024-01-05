@@ -62,13 +62,16 @@ class FormAdmin
 	 *  @param		int				$mainlangonly	1=Show only main languages ('fr_FR' no' fr_BE', 'es_ES' not 'es_MX', ...)
 	 *  @return		string							Return HTML select string with list of languages
 	 */
-	public function select_language($selected = '', $htmlname = 'lang_id', $showauto = 0, $filter = null, $showempty = '', $showwarning = 0, $disabled = 0, $morecss = '', $showcode = 0, $forcecombo = 0, $multiselect = 0, $onlykeys = null, $mainlangonly = 0)
+	public function select_language($selected = '', $htmlname = 'lang_id', $showauto = 0, $filter = array(), $showempty = '', $showwarning = 0, $disabled = 0, $morecss = '', $showcode = 0, $forcecombo = 0, $multiselect = 0, $onlykeys = array(), $mainlangonly = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs;
 
-		if (!empty($conf->global->MAIN_DEFAULT_LANGUAGE_FILTER)) {
-			$filter[$conf->global->MAIN_DEFAULT_LANGUAGE_FILTER] = 1;
+		if (getDolGlobalString('MAIN_DEFAULT_LANGUAGE_FILTER')) {
+			if (!is_array($filter)) {
+				$filter = array();
+			}
+			$filter[getDolGlobalString('MAIN_DEFAULT_LANGUAGE_FILTER')] = 1;
 		}
 
 		$langs_available = $langs->get_available_languages(DOL_DOCUMENT_ROOT, 12, 0, $mainlangonly);
@@ -198,7 +201,7 @@ class FormAdmin
 					$handle = opendir($dir);
 					if (is_resource($handle)) {
 						while (($file = readdir($handle)) !== false) {
-							if (is_file($dir."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && substr($file, 0, 5) != 'index') {
+							if (is_file($dir."/".$file) && substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS' && substr($file, 0, 5) != 'index') {
 								if (preg_match('/lib\.php$/i', $file)) {
 									continue; // We exclude library files
 								}
@@ -298,7 +301,7 @@ class FormAdmin
 					$handle = opendir($dir);
 					if (is_resource($handle)) {
 						while (($file = readdir($handle)) !== false) {
-							if (is_file($dir."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS') {
+							if (is_file($dir."/".$file) && substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS') {
 								$filelib = preg_replace('/(_backoffice|_frontoffice)?\.php$/i', '', $file);
 								if (preg_match('/^index/i', $filelib)) {
 									continue;
@@ -329,7 +332,7 @@ class FormAdmin
 		ksort($menuarray);
 
 		// Affichage liste deroulante des menus
-		print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
+		print '<select class="flat maxwidth100" id="'.$htmlname.'" name="'.$htmlname.'">';
 		$oldprefix = '';
 		foreach ($menuarray as $key => $val) {
 			$tab = explode('_', $key);
@@ -363,8 +366,6 @@ class FormAdmin
 	public function select_timezone($selected, $htmlname)
 	{
 		// phpcs:enable
-		global $langs, $conf;
-
 		print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
 		print '<option value="-1">&nbsp;</option>';
 
@@ -471,6 +472,43 @@ class FormAdmin
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 			$out .= ajax_combobox($htmlname);
 		}
+
+		return $out;
+	}
+
+
+	/**
+	 * Function to shwo the combo select to chose a type of field (varchar, int, email, ...)
+	 *
+	 * @param	string	$htmlname				Name of HTML select component
+	 * @param	string	$type					Type preselected
+	 * @param	string	$typewecanchangeinto	Array of possible switch combination from 1 type to another one. This will grey not possible combinations.
+	 * @return 	string							The combo HTML select component
+	 */
+	public function selectTypeOfFields($htmlname, $type, $typewecanchangeinto = array())
+	{
+		global $type2label;	// TODO Remove this
+
+		$out = '';
+
+		$out .= '<select class="flat type" id="'.$htmlname.'" name="'.$htmlname.'">';
+		foreach ($type2label as $key => $val) {
+			$selected = '';
+			if ($key == $type) {
+				$selected = ' selected="selected"';
+			}
+
+			// Set $valhtml with the picto for the type
+			$valhtml = ($key ? getPictoForType($key) : '').$val;
+
+			if (empty($typewecanchangeinto) || in_array($key, $typewecanchangeinto[$type])) {
+				$out .= '<option value="'.$key.'"'.$selected.' data-html="'.dol_escape_htmltag($valhtml).'">'.($val ? $val : '&nbsp;').'</option>';
+			} else {
+				$out .= '<option value="'.$key.'" disabled="disabled"'.$selected.' data-html="'.dol_escape_htmltag($valhtml).'">'.($val ? $val : '&nbsp;').'</option>';
+			}
+		}
+		$out .= '</select>';
+		$out .= ajax_combobox('type');
 
 		return $out;
 	}

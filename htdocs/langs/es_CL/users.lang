@@ -65,7 +65,6 @@ LoginToCreate=Inicia sesión para crear
 NameToCreate=Nombre de tercero a crear
 YourRole=Tus roles
 YourQuotaOfUsersIsReached=¡Su cuota de usuarios activos se alcanza!
-DontDowngradeSuperAdmin=Solo una superadmina puede degradar una superadmina
 HierarchicView=Vista Jerárquica
 UseTypeFieldToChange=Use el campo Tipo para cambiar
 OpenIDURL=URL OpenID

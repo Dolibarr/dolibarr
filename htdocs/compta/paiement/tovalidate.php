@@ -35,7 +35,7 @@ if ($user->socid > 0) {
 }
 
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -53,7 +53,7 @@ if (!$sortfield) {
 }
 
 // Security check
-if (empty($user->rights->facture->lire)) {
+if (!$user->hasRight('facture', 'lire')) {
 	accessforbidden();
 }
 

@@ -20,6 +20,7 @@
 create table llx_projet
 (
   rowid            	integer AUTO_INCREMENT PRIMARY KEY,
+  fk_project        integer DEFAULT NULL,       -- parent project rowid
   fk_soc           	integer,
   datec            	datetime,					-- date creation project
   tms              	timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
