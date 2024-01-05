@@ -6,6 +6,7 @@ use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\ArrayDimFetch;
+use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\BinaryOp\BooleanAnd;
 use PhpParser\Node\Expr\BinaryOp\Concat;
 use PhpParser\Node\Expr\BinaryOp\Equal;
@@ -74,7 +75,7 @@ class GlobalToFunction extends AbstractRector
 	 */
 	public function getNodeTypes(): array
 	{
-		return [FuncCall::class, MethodCall::class, Equal::class, NotEqual::class, Greater::class, GreaterOrEqual::class, Smaller::class, SmallerOrEqual::class, NotIdentical::class, BooleanAnd::class, Concat::class, ArrayItem::class, ArrayDimFetch::class];
+		return [Assign::class, FuncCall::class, MethodCall::class, Equal::class, NotEqual::class, Greater::class, GreaterOrEqual::class, Smaller::class, SmallerOrEqual::class, NotIdentical::class, BooleanAnd::class, Concat::class, ArrayItem::class, ArrayDimFetch::class];
 	}
 
 	/**
@@ -86,6 +87,22 @@ class GlobalToFunction extends AbstractRector
 	 */
 	public function refactor(Node $node)
 	{
+		if ($node instanceof Node\Expr\Assign) {
+			if (!isset($node->var)) {
+				return;
+			}
+			if ($this->isGlobalVar($node->expr)) {
+				$constName = $this->getConstName($node->expr);
+				if (empty($constName)) {
+					return;
+				}
+				$node->expr = new FuncCall(
+					new Name('getDolGlobalString'),
+					[new Arg($constName)]
+					);
+			}
+			return $node;
+		}
 		if ($node instanceof Node\Expr\ArrayItem) {
 			if (!isset($node->key)) {
 				return;
