@@ -1723,7 +1723,8 @@ if (empty($reshook)) {
 										}
 									} else {
 										// Positive line
-										$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
+										// we keep first type from product if exist, otherwise we keep type from line (free line)
+										$product_type = $lines[$i]->product_type ?? ($lines[$i]->type ?? 0);
 
 										// Date start
 										$date_start = false;
