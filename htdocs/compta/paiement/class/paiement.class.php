@@ -1125,7 +1125,7 @@ class Paiement extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('PAYMENT_ADDON') . ".php";
-			$classname = $conf->global->PAYMENT_ADDON;
+			$classname = getDolGlobalString('PAYMENT_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);

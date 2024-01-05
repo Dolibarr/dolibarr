@@ -1256,7 +1256,7 @@ function getMaxFileSizeArray()
 {
 	global $conf;
 
-	$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
+	$max = getDolGlobalString('MAIN_UPLOAD_DOC'); // In Kb
 	$maxphp = @ini_get('upload_max_filesize'); // In unknown
 	if (preg_match('/k$/i', $maxphp)) {
 		$maxphp = preg_replace('/k$/i', '', $maxphp);

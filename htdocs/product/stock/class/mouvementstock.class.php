@@ -1231,7 +1231,7 @@ class MouvementStock extends CommonObject
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('MOUVEMENT_ADDON_PDF')) {
-				$modele = $conf->global->MOUVEMENT_ADDON_PDF;
+				$modele = getDolGlobalString('MOUVEMENT_ADDON_PDF');
 			}
 		}
 

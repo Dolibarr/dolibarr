@@ -211,7 +211,7 @@ class pdf_crabe extends ModelePDFFactures
 
 		// Show Draft Watermark
 		if ($object->statut == $object::STATUS_DRAFT && (getDolGlobalString('FACTURE_DRAFT_WATERMARK'))) {
-			$this->watermark = $conf->global->FACTURE_DRAFT_WATERMARK;
+			$this->watermark = getDolGlobalString('FACTURE_DRAFT_WATERMARK');
 		}
 
 		global $outputlangsbis;

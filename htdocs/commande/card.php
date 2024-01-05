@@ -1646,7 +1646,7 @@ if ($action == 'create') {
 }
 $help_url = 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes|DE:Modul_Kundenaufträge';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-order page-card');
 
 $form = new Form($db);
 $formfile = new FormFile($db);
@@ -1803,7 +1803,7 @@ if ($action == 'create' && $usercancreate) {
 	}
 	if (isModEnabled('stock') && empty($warehouse_id) && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER')) {
 		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE')) {
-			$warehouse_id = $conf->global->MAIN_DEFAULT_WAREHOUSE;
+			$warehouse_id = getDolGlobalString('MAIN_DEFAULT_WAREHOUSE');
 		}
 		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) {
 			$warehouse_id = $user->fk_warehouse;
@@ -2016,7 +2016,7 @@ if ($action == 'create' && $usercancreate) {
 		print '<td>';
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
 		$liste = ModelePDFCommandes::liste_modeles($db);
-		$preselected = $conf->global->COMMANDE_ADDON_PDF;
+		$preselected = getDolGlobalString('COMMANDE_ADDON_PDF');
 		print img_picto('', 'pdf', 'class="pictofixedwidth"');
 		print $form->selectarray('model', $liste, $preselected, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200 widthcentpercentminusx', 1);
 		print "</td></tr>";
@@ -2916,7 +2916,7 @@ if ($action == 'create' && $usercancreate) {
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);
 			if (empty($reshook)) {
 				// Reopen a closed order
-				if (($object->statut == Commande::STATUS_CLOSED || $object->statut == Commande::STATUS_CANCELED) && $usercancreate) {
+				if (($object->statut == Commande::STATUS_CLOSED || $object->statut == Commande::STATUS_CANCELED) && $usercancreate && (!$object->billed || !getDolGlobalInt('ORDER_DONT_REOPEN_BILLED'))) {
 					print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&amp;token='.newToken().'&amp;id='.$object->id, '');
 				}
 

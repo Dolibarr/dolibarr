@@ -81,7 +81,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 		}
 
 		if (getDolGlobalString('INVOICE_NUMBERING_TERRE_FORCE_PREFIX')) {
-			$this->prefixinvoice = $conf->global->INVOICE_NUMBERING_TERRE_FORCE_PREFIX;
+			$this->prefixinvoice = getDolGlobalString('INVOICE_NUMBERING_TERRE_FORCE_PREFIX');
 		}
 	}
 

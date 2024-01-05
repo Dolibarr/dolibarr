@@ -208,7 +208,7 @@ if ($num == 1 && !getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sea
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-donation page-list');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
 
 // Example : Adding jquery code
 // print '<script type="text/javascript">

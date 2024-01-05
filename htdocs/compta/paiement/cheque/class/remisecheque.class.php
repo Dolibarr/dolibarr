@@ -412,7 +412,7 @@ class RemiseCheque extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('CHEQUERECEIPTS_ADDON') . ".php";
-			$classname = $conf->global->CHEQUERECEIPTS_ADDON;
+			$classname = getDolGlobalString('CHEQUERECEIPTS_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);

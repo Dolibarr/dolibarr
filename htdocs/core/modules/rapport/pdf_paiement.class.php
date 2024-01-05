@@ -400,7 +400,7 @@ class pdf_paiement extends CommonDocGenerator
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		$title = $conf->global->MAIN_INFO_SOCIETE_NOM;
+		$title = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 		switch ($this->doc_type) {
 			case "client":
 				$title .= ' - '.$outputlangs->transnoentities("ListOfCustomerPayments");

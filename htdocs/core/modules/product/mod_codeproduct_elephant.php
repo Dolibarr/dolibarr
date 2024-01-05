@@ -192,9 +192,9 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		// Get Mask value
 		$mask = '';
 		if ($type == 0 && getDolGlobalString('PRODUCT_ELEPHANT_MASK_PRODUCT')) {
-			$mask = $conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT;
+			$mask = getDolGlobalString('PRODUCT_ELEPHANT_MASK_PRODUCT');
 		} elseif ($type == 1 && getDolGlobalString('PRODUCT_ELEPHANT_MASK_SERVICE')) {
-			$mask = $conf->global->PRODUCT_ELEPHANT_MASK_SERVICE;
+			$mask = getDolGlobalString('PRODUCT_ELEPHANT_MASK_SERVICE');
 		}
 
 		if (empty($mask)) {
@@ -237,12 +237,12 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		// phpcs:enable
 		global $conf;
 
-		$mask = $conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT;
+		$mask = getDolGlobalString('PRODUCT_ELEPHANT_MASK_PRODUCT');
 		if (preg_match('/\{pre\}/i', $mask)) {
 			return 1;
 		}
 
-		$mask = $conf->global->PRODUCT_ELEPHANT_MASK_SERVICE;
+		$mask = getDolGlobalString('PRODUCT_ELEPHANT_MASK_SERVICE');
 		if (preg_match('/\{pre\}/i', $mask)) {
 			return 1;
 		}

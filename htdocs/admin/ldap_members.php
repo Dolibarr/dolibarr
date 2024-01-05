@@ -436,9 +436,9 @@ print '</form>';
 if (getDolGlobalString('LDAP_MEMBER_ACTIVE')) {
 	$butlabel = $langs->trans("LDAPTestSynchroMember");
 	$testlabel = 'testmember';
-	$key = $conf->global->LDAP_KEY_MEMBERS;
-	$dn = $conf->global->LDAP_MEMBER_DN;
-	$objectclass = $conf->global->LDAP_MEMBER_OBJECT_CLASS;
+	$key = getDolGlobalString('LDAP_KEY_MEMBERS');
+	$dn = getDolGlobalString('LDAP_MEMBER_DN');
+	$objectclass = getDolGlobalString('LDAP_MEMBER_OBJECT_CLASS');
 
 	show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass);
 }
