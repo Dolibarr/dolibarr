@@ -479,9 +479,9 @@ tr.selected, tr.selected td {
 }
 
 .centerinmiddle {
-	transform: translate(0,-50%);
 	position: relative;
-	top: 50%;
+	/* transform: translate(0,-50%);
+	top: 50%; */
 }
 .trunc {
 	white-space: nowrap;
