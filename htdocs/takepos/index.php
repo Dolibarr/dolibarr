@@ -198,7 +198,7 @@ if(localStorage.hasKeyboard) {
 }
 */
 
-function ClearSearch() {
+function ClearSearch(clearSearchResults) {
 	console.log("ClearSearch");
 	$("#search").val('');
 	$("#qty").html("<?php echo $langs->trans("Qty"); ?>").removeClass('clicked');
@@ -207,6 +207,9 @@ function ClearSearch() {
 	<?php if ($conf->browser->layout == 'classic') { ?>
 	setFocusOnSearchField();
 	<?php } ?>
+	if (clearSearchResults) {
+		$("#search").trigger('keyup');
+	}
 }
 
 // Set the focus on search field but only on desktop. On tablet or smartphone, we don't to avoid to have the keyboard open automatically
@@ -284,7 +287,7 @@ function MoreCategories(moreorless) {
 		$("#catwatermark"+i).show();
 	}
 
-	ClearSearch();
+	ClearSearch(false);
 }
 
 // LoadProducts
@@ -399,7 +402,7 @@ function LoadProducts(position, issubcat) {
 		}
 	});
 
-	ClearSearch();
+	ClearSearch(false);
 }
 
 function MoreProducts(moreorless) {
@@ -474,7 +477,7 @@ function MoreProducts(moreorless) {
 		}
 	});
 
-	ClearSearch();
+	ClearSearch(false);
 }
 
 function ClickProduct(position, qty = 1) {
@@ -498,7 +501,7 @@ function ClickProduct(position, qty = 1) {
 		});
 	}
 
-	ClearSearch();
+	ClearSearch(false);
 }
 
 function ChangeThirdparty(idcustomer) {
@@ -507,7 +510,7 @@ function ChangeThirdparty(idcustomer) {
 		$("#poslines").load("../societe/list.php?action=change&token=<?php echo newToken();?>&type=t&contextpage=poslist&idcustomer="+idcustomer+"&place="+place+"", function() {
 		});
 
-	ClearSearch();
+	ClearSearch(false);
 }
 
 function deleteline() {
@@ -515,7 +518,7 @@ function deleteline() {
 	$("#poslines").load("invoice.php?action=deleteline&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline, function() {
 		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
-	ClearSearch();
+	ClearSearch(false);
 }
 
 function Customer() {
@@ -603,7 +606,7 @@ function New() {
 			$("#poslines").load("invoice.php?action=delete&token=<?php echo newToken(); ?>&place=" + place, function () {
 				//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 			});
-			ClearSearch();
+			ClearSearch(false);
 		}
 	});
 }
@@ -732,7 +735,7 @@ function Search2(keyCodeForEnter, moreorless) {
 						?> ('+search_term+')');
 						$('#search').select();
 					}
-					else ClearSearch();
+					else ClearSearch(false);
 				}
 				// memorize search_term and start for pagination
 				$("#search_pagination").val($("#search").val());
@@ -798,7 +801,7 @@ function Edit(number) {
 				$("#price").html("<?php echo $langs->trans("Price"); ?>").removeClass('clicked');
 			});
 
-			ClearSearch();
+			ClearSearch(false);
 			return;
 		}
 		else {
@@ -812,7 +815,7 @@ function Edit(number) {
 				$("#reduction").html("<?php echo $langs->trans("LineDiscountShort"); ?>").removeClass('clicked');
 			});
 
-			ClearSearch();
+			ClearSearch(false);
 			return;
 		}
 		else {
@@ -1082,7 +1085,7 @@ if (!getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 				if ($reshook == 0) {  //Search method?>
 					<div class="login_block_other">
 				<input type="text" id="search" name="search" class="input-nobottom" onkeyup="Search2('<?php echo dol_escape_js($keyCodeForEnter); ?>', null);" placeholder="<?php echo dol_escape_htmltag($langs->trans("Search")); ?>" autofocus>
-					<a onclick="ClearSearch();"><span class="fa fa-backspace"></span></a>
+					<a onclick="ClearSearch(false);"><span class="fa fa-backspace"></span></a>
 					<a href="<?php echo DOL_URL_ROOT.'/'; ?>" target="backoffice" rel="opener"><!-- we need rel="opener" here, we are on same domain and we need to be able to reuse this tab several times -->
 					<span class="fas fa-home"></span></a>
 								<?php if (empty($conf->dol_use_jmobile)) {?>
@@ -1391,8 +1394,8 @@ if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
 		if (getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 			print '<!-- Show the search input text -->'."\n";
 			print '<div class="margintoponly">';
-			print '<input type="text" id="search" class="input-nobottom" name="search" onkeyup="Search2(\''.dol_escape_js($keyCodeForEnter).'\', null);" style="width: 80%; width:calc(100% - 51px); font-size: 150%;" placeholder="'.dol_escape_htmltag($langs->trans("Search")).'" autofocus> ';
-			print '<a class="marginleftonly hideonsmartphone" onclick="ClearSearch();">'.img_picto('', 'searchclear').'</a>';
+			print '<input type="text" id="search" class="input-search-takepos input-nobottom" name="search" onkeyup="Search2(\''.dol_escape_js($keyCodeForEnter).'\', null);" style="width: 80%; width:calc(100% - 51px); font-size: 150%;" placeholder="'.dol_escape_htmltag($langs->trans("Search")).'" autofocus> ';
+			print '<a class="marginleftonly hideonsmartphone" onclick="ClearSearch(false);">'.img_picto('', 'searchclear').'</a>';
 			print '</div>';
 		}
 		?>
