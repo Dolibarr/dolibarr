@@ -194,7 +194,7 @@ print '<br>';
 
 
 // Shmop
-if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {
+if (getDolGlobalInt('MAIN_OPTIMIZE_SPEED') & 0x02) {
 	$shmoparray = dol_listshmop();
 
 	print '<div class="div-table-responsive-no-min">';

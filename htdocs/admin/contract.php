@@ -512,7 +512,7 @@ print '</td></tr>'."\n";
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("HideClosedServiceByDefault").'</td>';
 print '<td class="right">';
-print $form->selectyesno("activate_hideClosedServiceByDefault", (getDolGlobalString('CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT') ? $conf->global->CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT : 0), 1);
+print $form->selectyesno("activate_hideClosedServiceByDefault", getDolGlobalInt('CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT', 0), 1);
 print '</td>';
 print '</tr>';
 

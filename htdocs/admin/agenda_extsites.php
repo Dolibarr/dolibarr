@@ -161,7 +161,7 @@ if (preg_match('/set_(.*)/', $action, $reg)) {
 		if (!getDolGlobalString('AGENDA_EXT_NB')) {
 			$conf->global->AGENDA_EXT_NB = 5;
 		}
-		$MAXAGENDA = !getDolGlobalString('AGENDA_EXT_NB') ? 5 : $conf->global->AGENDA_EXT_NB;
+		$MAXAGENDA = getDolGlobalInt('AGENDA_EXT_NB', 5);
 	}
 
 	if (!$error) {

@@ -123,7 +123,7 @@ class GlobalToFunction extends AbstractRector
 		if ($node instanceof FuncCall) {
 			$tmpfunctionname = $this->getName($node);
 			// If function is ok. We must avoid a lot of cases like isset(), empty()
-			if (in_array($tmpfunctionname, array('dol_escape_htmltag', 'dol_hash', 'make_substitutions', 'min', 'max', 'explode'))) {
+			if (in_array($tmpfunctionname, array('dol_escape_htmltag', 'dol_hash', 'explode', 'length_accountg', 'length_accounta', 'make_substitutions', 'min', 'max', 'trunc', 'urlencode', 'yn'))) {
 				//print "tmpfunctionname=".$tmpfunctionname."\n";
 				$args = $node->getArgs();
 				$nbofparam = count($args);
@@ -153,7 +153,7 @@ class GlobalToFunction extends AbstractRector
 		if ($node instanceof MethodCall) {
 			$tmpmethodname = $this->getName($node->name);
 			// If function is ok. We must avoid a lot of cases
-			if (in_array($tmpmethodname, array('idate'))) {
+			if (in_array($tmpmethodname, array('idate', 'sanitize', 'select_language'))) {
 				//print "tmpmethodname=".$tmpmethodname."\n";
 				$expr = $node->var;
 				$args = $node->getArgs();
