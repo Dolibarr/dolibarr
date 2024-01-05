@@ -1143,9 +1143,9 @@ if ($mode == 'marketplace') {
 		print $nextlink;
 		print '</form>';
 
-
 		print '</div></div>';
-		print '<div class="clearboth"></div>'; ?>
+		print '<div class="clearboth"></div>';
+		?>
 
 			<div id="category-tree-left">
 				<ul class="tree">

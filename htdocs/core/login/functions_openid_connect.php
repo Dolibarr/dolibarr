@@ -61,10 +61,10 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 		// Step 2: turn the authorization code into an access token, using client_secret
 		$auth_param = [
 			'grant_type'    => 'authorization_code',
-			'client_id'     => $conf->global->MAIN_AUTHENTICATION_OIDC_CLIENT_ID,
-			'client_secret' => $conf->global->MAIN_AUTHENTICATION_OIDC_CLIENT_SECRET,
+			'client_id'     => getDolGlobalString('MAIN_AUTHENTICATION_OIDC_CLIENT_ID'),
+			'client_secret' => getDolGlobalString('MAIN_AUTHENTICATION_OIDC_CLIENT_SECRET'),
 			'code'          => $auth_code,
-			'redirect_uri'  => $conf->global->MAIN_AUTHENTICATION_OIDC_REDIRECT_URL
+			'redirect_uri'  => getDolGlobalString('MAIN_AUTHENTICATION_OIDC_REDIRECT_URL')
 		];
 
 		$token_response = getURLContent($conf->global->MAIN_AUTHENTICATION_OIDC_TOKEN_URL, 'POST', http_build_query($auth_param));
