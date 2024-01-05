@@ -190,9 +190,7 @@ class Interventions extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve intervention list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No intervention found');
-		}
+
 		return $obj_ret;
 	}
 
@@ -210,6 +208,12 @@ class Interventions extends DolibarrApi
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->fichinter->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->fichinter->$field = $value;
 		}
 
@@ -255,7 +259,7 @@ class Interventions extends DolibarrApi
 	*/
 
 	/**
-	 * Add a line to given intervention
+	 * Add a line to a given intervention
 	 *
 	 * @param	int		$id             Id of intervention to update
 	 * @param   array   $request_data   Request data
@@ -273,6 +277,12 @@ class Interventions extends DolibarrApi
 		$result = $this->_validateLine($request_data);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->fichinter->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->fichinter->$field = $value;
 		}
 

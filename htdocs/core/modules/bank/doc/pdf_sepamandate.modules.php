@@ -264,7 +264,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 					$ics = $tmpbankfordirectdebit->ics;	// ICS for direct debit
 				}
 				if (empty($ics) && getDolGlobalString('PRELEVEMENT_ICS')) {
-					$ics = $conf->global->PRELEVEMENT_ICS;
+					$ics = getDolGlobalString('PRELEVEMENT_ICS');
 				}
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("CreditorIdentifier").' ('.$outputlangs->transnoentitiesnoconv("ICS").') : '.$ics, 0, 'L');
 
@@ -549,14 +549,13 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 		$pdf->SetFont('', '', $default_font_size - 2);
 
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentitiesnoconv("DateOfSignature"), 0, 'L', 0);
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentitiesnoconv("DateSigning"), 0, 'L', 0);
 		$pdf->MultiCell(100, 3, ' ');
 		$pdf->MultiCell(100, 3, '______________________', 0, 'L', 0);
 
 		$posx = $this->xPosSignArea;
 		$largcol = ($this->page_largeur - $this->marge_droite - $posx);
-		$useborder = 0;
-		$index = 0;
+
 		// Total HT
 		$pdf->SetFillColor(255, 255, 255);
 		$pdf->SetXY($posx, $tab_top);

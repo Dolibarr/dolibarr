@@ -109,10 +109,6 @@ class KnowledgeManagement extends DolibarrApi
 
 		$result = $categories->getListForItem($id, 'knowledgemanagement', $sortfield, $sortorder, $limit, $page);
 
-		if (empty($result)) {
-			throw new RestException(404, 'No category found');
-		}
-
 		if ($result < 0) {
 			throw new RestException(503, 'Error when retrieve category list : '.join(',', array_merge(array($categories->error), $categories->errors)));
 		}
@@ -231,9 +227,7 @@ class KnowledgeManagement extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieving knowledgerecord list: '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No knowledgerecord found');
-		}
+
 		return $obj_ret;
 	}
 
@@ -257,6 +251,12 @@ class KnowledgeManagement extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->knowledgerecord->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->knowledgerecord->$field = $this->_checkValForAPI($field, $value, $this->knowledgerecord);
 		}
 
@@ -299,6 +299,12 @@ class KnowledgeManagement extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->knowledgerecord->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->knowledgerecord->$field = $this->_checkValForAPI($field, $value, $this->knowledgerecord);
 		}
 

@@ -236,7 +236,7 @@ if (empty($reshook)) {
 			dol_syslog('Sale without lines');
 			dol_htmloutput_errors($langs->trans("NoLinesToBill", "TakePos"), null, 1);
 		} elseif (isModEnabled('stock') && getDolGlobalString($constantforkey) != "1" && !isModEnabled('productbatch')) {
-			$savconst = $conf->global->STOCK_CALCULATE_ON_BILL;
+			$savconst = getDolGlobalString('STOCK_CALCULATE_ON_BILL');
 
 			if (isModEnabled('productbatch') && !getDolGlobalInt('CASHDESK_FORCE_DECREASE_STOCK')) {
 				$conf->global->STOCK_CALCULATE_ON_BILL = 0;	// To not change the stock (not yet compatible with batch management)
@@ -323,11 +323,11 @@ if (empty($reshook)) {
 					$prod_batch->find(0, '', '', $line->batch, $line->fk_warehouse);
 					$mouvP = new MouvementStock($db);
 					$mouvP->origin = $invoice;
-					$mouvP->livraison($user, $line->fk_product, $conf->global->$constantforkey, $line->qty, $line->price, 'TakePOS', '', '', '', $prod_batch->batch, $line->batch);
+					$mouvP->livraison($user, $line->fk_product, getDolGlobalString($constantforkey), $line->qty, $line->price, 'TakePOS', '', '', '', $prod_batch->batch, $line->batch);
 				} else {
 					$mouvP = new MouvementStock($db);
 					$mouvP->origin = $invoice;
-					$mouvP->livraison($user, $line->fk_product, $conf->global->$constantforkey, $line->qty, $line->price, 'TakePOS', '', '', '');
+					$mouvP->livraison($user, $line->fk_product, getDolGlobalString($constantforkey), $line->qty, $line->price, 'TakePOS', '', '', '');
 				}
 			}
 		}
@@ -459,7 +459,7 @@ if (empty($reshook)) {
 
 		$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
 		if (isModEnabled('stock') && getDolGlobalString($constantforkey) != "1") {
-			$savconst = $conf->global->STOCK_CALCULATE_ON_BILL;
+			$savconst = getDolGlobalString('STOCK_CALCULATE_ON_BILL');
 			$conf->global->STOCK_CALCULATE_ON_BILL = 1;
 			$constantforkey = 'CASHDESK_ID_WAREHOUSE'.(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
 			dol_syslog("Validate invoice with stock change into warehouse defined into constant ".$constantforkey." = ".getDolGlobalString($constantforkey));
@@ -534,9 +534,10 @@ if (empty($reshook)) {
 			if (!empty($batch)) {
 				$action="setbatch";
 			} else {
+				$nbofsuggested = 0;
 				$prod->load_stock('warehouseopen');
 				$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
-				if ($prod->stock_warehouse[getDolGlobalString($constantforkey)]->detail_batch!="") {
+				if ($prod->stock_warehouse[getDolGlobalString($constantforkey)]->detail_batch != "") {
 					if (is_object($prod->stock_warehouse[getDolGlobalString($constantforkey)]) && count($prod->stock_warehouse[getDolGlobalString($constantforkey)]->detail_batch)) {
 						foreach ($prod->stock_warehouse[getDolGlobalString($constantforkey)]->detail_batch as $dbatch) {
 							$nbofsuggested++;
@@ -561,7 +562,7 @@ if (empty($reshook)) {
 						print '<td class="left">';
 						$staticwarehouse = new Entrepot($db);
 						if ($warehouse_id > 0) {
-							$staticwarehouse->fetch($conf->global->$constantforkey);
+							$staticwarehouse->fetch(getDolGlobalString($constantforkey));
 						}
 						$detail = '';
 						$detail .= $langs->trans("LotSerial").': '.$dbatch->batch;
@@ -1169,7 +1170,7 @@ if ($action == "order" && !empty($order_receipt_printer3)) {
 // Set focus to search field
 if ($action == "search" || $action == "valid") {
 	?>
-	parent.setFocusOnSearchField();
+	parent.ClearSearch(true);
 	<?php
 }
 

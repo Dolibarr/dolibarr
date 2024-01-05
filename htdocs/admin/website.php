@@ -681,7 +681,7 @@ $db->close();
  *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
  *	@return		void
  */
-function fieldListWebsites($fieldlist, $obj = '', $tabname = '', $context = '')
+function fieldListWebsites($fieldlist, $obj = null, $tabname = '', $context = '')
 {
 	global $conf, $langs, $db;
 	global $form;
@@ -700,7 +700,7 @@ function fieldListWebsites($fieldlist, $obj = '', $tabname = '', $context = '')
 
 		if ($fieldlist[$field] == 'lang') {
 			print '<td>';
-			print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'lang');
+			print $formadmin->select_language(getDolGlobalString('MAIN_LANG_DEFAULT'), 'lang');
 			print '</td>';
 		} elseif ($fieldlist[$field] == 'code' && isset($obj->$fieldname)) {
 			print '<td><input type="text" class="flat" value="'.(!empty($obj->$fieldname) ? $obj->$fieldname : '').'" size="10" name="'.$fieldlist[$field].'"></td>';

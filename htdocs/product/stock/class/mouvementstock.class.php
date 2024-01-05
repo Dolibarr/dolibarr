@@ -388,8 +388,8 @@ class MouvementStock extends CommonObject
 					}
 				} else { // If not found, we add record
 					$productlot = new Productlot($this->db);
-					$productlot->origin = !empty($this->origin) ? (empty($this->origin->origin_type) ? $this->origin->element : $this->origin->origin_type) : '';
-					$productlot->origin_id = !empty($this->origin) ? $this->origin->id : 0;
+					$productlot->origin = !empty($this->origin_type) ? $this->origin_type : '';
+					$productlot->origin_id = !empty($this->origin_id) ? $this->origin_id : 0;
 					$productlot->entity = $conf->entity;
 					$productlot->fk_product = $fk_product;
 					$productlot->batch = $batch;
@@ -1231,7 +1231,7 @@ class MouvementStock extends CommonObject
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('MOUVEMENT_ADDON_PDF')) {
-				$modele = $conf->global->MOUVEMENT_ADDON_PDF;
+				$modele = getDolGlobalString('MOUVEMENT_ADDON_PDF');
 			}
 		}
 

@@ -333,19 +333,33 @@ if (!$ret) {
 
 			print dol_get_fiche_head($head, 'resources', $langs->trans("Action"), -1, 'action');
 
-			$linkback = img_picto($langs->trans("BackToList"), 'object_list', 'class="hideonsmartphone pictoactionview"');
-			$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list">'.$langs->trans("BackToList").'</a>';
+			$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1">';
+			$linkback .= img_picto($langs->trans("BackToList"), 'object_calendarlist', 'class="pictoactionview pictofixedwidth"');
+			$linkback .= '<span class="hideonsmartphone">'.$langs->trans("BackToList").'</span>';
+			$linkback .= '</a>';
 
 			// Link to other agenda views
 			$out = '';
-			$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewPerUser"), 'object_calendarperuser', 'class="hideonsmartphone pictoactionview"');
-			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?mode=show_peruser&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewPerUser").'</a>';
-			$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewCal"), 'object_calendar', 'class="hideonsmartphone pictoactionview"');
-			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_month&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewCal").'</a>';
-			$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewWeek"), 'object_calendarweek', 'class="hideonsmartphone pictoactionview"');
-			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewWeek").'</a>';
-			$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="hideonsmartphone pictoactionview"');
-			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewDay").'</a>';
+			$out .= '</li><li class="noborder litext">';
+			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_month&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">';
+			$out .= img_picto($langs->trans("ViewCal"), 'object_calendar', 'class="pictofixedwidth pictoactionview"');
+			$out .= '<span class="hideonsmartphone">'.$langs->trans("ViewCal").'</span>';
+			$out .= '</a>';
+			$out .= '</li><li class="noborder litext">';
+			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">';
+			$out .= img_picto($langs->trans("ViewWeek"), 'object_calendarweek', 'class="pictofixedwidth pictoactionview"');
+			$out .= '<span class="hideonsmartphone">'.$langs->trans("ViewWeek").'</span>';
+			$out .= '</a>';
+			$out .= '</li><li class="noborder litext">';
+			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">';
+			$out .= img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="pictofixedwidth pictoactionview"');
+			$out .= '<span class="hideonsmartphone">'.$langs->trans("ViewDay").'</span>';
+			$out .= '</a>';
+			$out .= '</li><li class="noborder litext">';
+			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?mode=show_peruser&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">';
+			$out .= img_picto($langs->trans("ViewPerUser"), 'object_calendarperuser', 'class="pictofixedwidth pictoactionview"');
+			$out .= '<span class="hideonsmartphone">'.$langs->trans("ViewPerUser").'</span>';
+			$out .= '</a>';
 
 			// Add more views from hooks
 			$parameters = array();

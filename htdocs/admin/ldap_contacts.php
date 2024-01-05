@@ -102,7 +102,7 @@ if ($action == 'setvalue' && $user->admin) {
 	$valkey = '';
 	$key = GETPOST("key");
 	if ($key) {
-		$valkey = $conf->global->$key;
+		$valkey = getDolGlobalString($key);
 	}
 	if (!dolibarr_set_const($db, 'LDAP_KEY_CONTACTS', $valkey, 'chaine', 0, '', $conf->entity)) {
 		$error++;
@@ -285,9 +285,9 @@ print '</form>';
  */
 $butlabel = $langs->trans("LDAPTestSynchroContact");
 $testlabel = 'test';
-$key = $conf->global->LDAP_KEY_CONTACTS;
-$dn = $conf->global->LDAP_CONTACT_DN;
-$objectclass = $conf->global->LDAP_CONTACT_OBJECT_CLASS;
+$key = getDolGlobalString('LDAP_KEY_CONTACTS');
+$dn = getDolGlobalString('LDAP_CONTACT_DN');
+$objectclass = getDolGlobalString('LDAP_CONTACT_OBJECT_CLASS');
 
 show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass);
 

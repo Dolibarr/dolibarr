@@ -171,9 +171,7 @@ class SupplierProposals extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieving supplier proposal list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No supplier proposal found');
-		}
+
 		return $obj_ret;
 	}
 

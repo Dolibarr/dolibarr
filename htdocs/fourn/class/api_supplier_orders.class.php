@@ -215,9 +215,7 @@ class SupplierOrders extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve supplier order list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No supplier order found');
-		}
+
 		return $obj_ret;
 	}
 
@@ -238,7 +236,13 @@ class SupplierOrders extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
-			$this->order->$field = $value;
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->order->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
+			$this->order->$field = $this->_checkValForAPI($field, $value, $this->order);
 		}
 		if (!array_keys($request_data, 'date')) {
 			$this->order->date = dol_now();
@@ -284,7 +288,13 @@ class SupplierOrders extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
-			$this->order->$field = $value;
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->order->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
+			$this->order->$field = $this->_checkValForAPI($field, $value, $this->order);
 		}
 
 		if ($this->order->update(DolibarrApiAccess::$user)) {

@@ -140,7 +140,7 @@ if ($cat_id == 0) {
 }
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES' or 'BOOKKEEPING')
-$modecompta = $conf->global->ACCOUNTING_MODE;
+$modecompta = getDolGlobalString('ACCOUNTING_MODE');
 if (isModEnabled('accounting')) {
 	$modecompta = 'BOOKKEEPING';
 }

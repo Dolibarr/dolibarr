@@ -46,7 +46,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
  */
 function pdf_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf;
 
 	$h = 0;
 	$head = array();
@@ -97,7 +97,7 @@ function pdf_getFormat(Translate $outputlangs = null, $mode = 'setup')
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		$pdfformat = dol_getDefaultFormat($outputlangs);
 	} else {
-		$pdfformat = $conf->global->MAIN_PDF_FORMAT;
+		$pdfformat = getDolGlobalString('MAIN_PDF_FORMAT');
 	}
 
 	$sql = "SELECT code, label, width, height, unit FROM ".MAIN_DB_PREFIX."c_paper_format";
@@ -181,7 +181,7 @@ function pdf_getInstance($format = '', $metric = 'mm', $pagetype = 'P')
 
 	$pdfa = false; // PDF-1.3
 	if (getDolGlobalString('PDF_USE_A')) {
-		$pdfa = $conf->global->PDF_USE_A; 	// PDF/A-1 ou PDF/A-3
+		$pdfa = getDolGlobalString('PDF_USE_A'); 	// PDF/A-1 ou PDF/A-3
 	}
 
 	if (class_exists('TCPDI')) {
@@ -297,7 +297,7 @@ function pdf_getPDFFontSize($outputlangs)
 		}
 	}
 	if (getDolGlobalString('MAIN_PDF_FORCE_FONT_SIZE')) {
-		$size = $conf->global->MAIN_PDF_FORCE_FONT_SIZE;
+		$size = getDolGlobalString('MAIN_PDF_FORCE_FONT_SIZE');
 	}
 
 	return $size;
@@ -1263,7 +1263,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 
 			// Option for set top margin height of footer after freetext
 			if (getDolGlobalString('PDF_FOOTER_TOP_MARGIN') || getDolGlobalInt('PDF_FOOTER_TOP_MARGIN') === 0) {
-				$posy -= floatval(getDolGlobalString('PDF_FOOTER_TOP_MARGIN'));
+				$posy -= (float) getDolGlobalString('PDF_FOOTER_TOP_MARGIN');
 			} else {
 				$posy--;
 			}
@@ -1317,7 +1317,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 
 				// Option for set top margin height of footer after freetext
 				if (getDolGlobalString('PDF_FOOTER_TOP_MARGIN') || getDolGlobalInt('PDF_FOOTER_TOP_MARGIN') === 0) {
-					$posy -= floatval(getDolGlobalString('PDF_FOOTER_TOP_MARGIN'));
+					$posy -= (float) getDolGlobalString('PDF_FOOTER_TOP_MARGIN');
 				} else {
 					$posy--;
 				}

@@ -90,7 +90,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 
 					//For compatibility with Samba 4 AD
 					if ($ldap->serverType == "activedirectory") {
-						$info['userAccountControl'] = $conf->global->LDAP_USERACCOUNTCONTROL;
+						$info['userAccountControl'] = getDolGlobalString('LDAP_USERACCOUNTCONTROL');
 					}
 
 					$result = $ldap->add($dn, $info, $user);

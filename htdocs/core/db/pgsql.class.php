@@ -69,7 +69,7 @@ class DoliDBPgsql extends DoliDB
 	 *	Constructor.
 	 *	This create an opened connexion to a database server and eventually to a database
 	 *
-	 *	@param      string	$type		Type of database (mysql, pgsql...)
+	 *	@param      string	$type		Type of database (mysql, pgsql...). Not used.
 	 *	@param	    string	$host		Address of database server
 	 *	@param	    string	$user		Nom de l'utilisateur autorise
 	 *	@param	    string	$pass		Mot de passe
@@ -756,10 +756,10 @@ class DoliDBPgsql extends DoliDB
 	 *
 	 *	@param	string	$subject        string tested
 	 *	@param	string  $pattern        SQL pattern to match
-	 *	@param	string	$sqlstring      whether or not the string being tested is an SQL expression
+	 *	@param	int		$sqlstring      whether or not the string being tested is an SQL expression
 	 *	@return	string          		SQL string
 	 */
-	public function regexpsql($subject, $pattern, $sqlstring = false)
+	public function regexpsql($subject, $pattern, $sqlstring = 0)
 	{
 		if ($sqlstring) {
 			return "(". $subject ." ~ '" . $pattern . "')";

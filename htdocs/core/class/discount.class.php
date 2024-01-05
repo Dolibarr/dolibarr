@@ -152,8 +152,6 @@ class DiscountAbsolute
 	 */
 	public function fetch($rowid, $fk_facture_source = 0, $fk_invoice_supplier_source = 0)
 	{
-		global $conf;
-
 		// Check parameters
 		if (!$rowid && !$fk_facture_source && !$fk_invoice_supplier_source) {
 			$this->error = 'ErrorBadParameters';
@@ -532,7 +530,7 @@ class DiscountAbsolute
 	 *  @param      int			$multicurrency  Return multicurrency_amount instead of amount
 	 * 	@return		int						Return integer <0 if KO, amount otherwise
 	 */
-	public function getAvailableDiscounts($company = '', $user = '', $filter = '', $maxvalue = 0, $discount_type = 0, $multicurrency = 0)
+	public function getAvailableDiscounts($company = null, $user = null, $filter = '', $maxvalue = 0, $discount_type = 0, $multicurrency = 0)
 	{
 		global $conf;
 

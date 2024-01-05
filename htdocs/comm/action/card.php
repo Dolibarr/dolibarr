@@ -7,7 +7,7 @@
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2021 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2019	   Ferran Marcet	    <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -69,7 +69,7 @@ $p2hour = GETPOST('p2hour', 'int');
 $p2min = GETPOST('p2min', 'int');
 
 $addreminder = GETPOST('addreminder', 'alpha');
-$offsetvalue = GETPOST('offsetvalue', 'int');
+$offsetvalue = GETPOSTINT('offsetvalue');
 $offsetunit = GETPOST('offsetunittype_duration', 'aZ09');
 $remindertype = GETPOST('selectremindertype', 'aZ09');
 $modelmail = GETPOST('actioncommsendmodel_mail', 'int');
@@ -321,11 +321,11 @@ if (empty($reshook) && $action == 'add') {
 	if ($fulldayevent) {
 		$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
 		// For "full day" events, we must store date in GMT (It must be viewed as same moment everywhere)
-		$datep = dol_mktime($fulldayevent ? '00' : GETPOST("aphour", 'int'), $fulldayevent ? '00' : GETPOST("apmin", 'int'), $fulldayevent ? '00' : GETPOST("apsec", 'int'), GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), $tzforfullday ? $tzforfullday : 'tzuserrel');
-		$datef = dol_mktime($fulldayevent ? '23' : GETPOST("p2hour", 'int'), $fulldayevent ? '59' : GETPOST("p2min", 'int'), $fulldayevent ? '59' : GETPOST("apsec", 'int'), GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), $tzforfullday ? $tzforfullday : 'tzuserrel');
+		$datep = dol_mktime('00', '00', '00', GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), $tzforfullday ? $tzforfullday : 'tzuserrel');
+		$datef = dol_mktime('23', '59', '59', GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), $tzforfullday ? $tzforfullday : 'tzuserrel');
 	} else {
-		$datep = dol_mktime($fulldayevent ? '00' : GETPOST("aphour", 'int'), $fulldayevent ? '00' : GETPOST("apmin", 'int'), $fulldayevent ? '00' : GETPOST("apsec", 'int'), GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), 'tzuserrel');
-		$datef = dol_mktime($fulldayevent ? '23' : GETPOST("p2hour", 'int'), $fulldayevent ? '59' : GETPOST("p2min", 'int'), $fulldayevent ? '59' : GETPOST("apsec", 'int'), GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), 'tzuserrel');
+		$datep = dol_mktime(GETPOST("aphour", 'int'), GETPOST("apmin", 'int'), GETPOST("apsec", 'int'), GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), 'tzuserrel');
+		$datef = dol_mktime(GETPOST("p2hour", 'int'), GETPOST("p2min", 'int'), GETPOST("apsec", 'int'), GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), 'tzuserrel');
 	}
 
 	// Check parameters
@@ -475,7 +475,8 @@ if (empty($reshook) && $action == 'add') {
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost(null, $object);
 	if ($ret < 0) {
-		$error++;
+		$error++; $donotclearsession = 1;
+		$action = 'create';
 	}
 
 
@@ -536,7 +537,7 @@ if (empty($reshook) && $action == 'add') {
 				if ($addreminder == 'on') {
 					$actionCommReminder = new ActionCommReminder($db);
 
-					$dateremind = dol_time_plus_duree($datep, -$offsetvalue, $offsetunit);
+					$dateremind = dol_time_plus_duree($datep, -1 * $offsetvalue, $offsetunit);
 
 					$actionCommReminder->dateremind = $dateremind;
 					$actionCommReminder->typeremind = $remindertype;
@@ -653,7 +654,7 @@ if (empty($reshook) && $action == 'add') {
 						if ($addreminder == 'on') {
 							$actionCommReminder = new ActionCommReminder($db);
 
-							$dateremind = dol_time_plus_duree($datep, -$offsetvalue, $offsetunit);
+							$dateremind = dol_time_plus_duree($datep, -1 * $offsetvalue, $offsetunit);
 
 							$actionCommReminder->dateremind = $dateremind;
 							$actionCommReminder->typeremind = $remindertype;
@@ -970,18 +971,22 @@ if (empty($reshook) && $action == 'update') {
 				$object->setCategories($categories);
 
 				$object->loadReminders($remindertype, 0, false);
-				if (!empty($object->reminders) && $object->datep > dol_now()) {
+
+				// If there is reminders, we remove them
+				if (!empty($object->reminders)) {
 					foreach ($object->reminders as $reminder) {
-						$reminder->delete($user);
+						if ($reminder->status < 1) {	// If already sent, we never remove it
+							$reminder->delete($user);
+						}
 					}
 					$object->reminders = array();
 				}
 
-				// Create reminders
-				if ($addreminder == 'on' && $object->datep > dol_now()) {
+				// Create reminders for every assigned user if reminder is on
+				if ($addreminder == 'on') {
 					$actionCommReminder = new ActionCommReminder($db);
 
-					$dateremind = dol_time_plus_duree($datep, -$offsetvalue, $offsetunit);
+					$dateremind = dol_time_plus_duree($datep, -1 * $offsetvalue, $offsetunit);
 
 					$actionCommReminder->dateremind = $dateremind;
 					$actionCommReminder->typeremind = $remindertype;
@@ -1867,7 +1872,7 @@ if ($id > 0) {
 		print '<label for="fullday">'.$langs->trans("EventOnFullDay").'</label>';
 
 		// // Recurring event
-		// $userepeatevent = ($conf->global->MAIN_FEATURES_LEVEL == 2 ? 1 : 0);
+		// $userepeatevent = (getDolGlobalInt('MAIN_FEATURES_LEVEL') == 2 ? 1 : 0);
 		// if ($userepeatevent) {
 		// 	// Repeat
 		// 	//print '<tr><td></td><td colspan="3">';
@@ -2043,7 +2048,7 @@ if ($id > 0) {
 			print '<div>';
 			$events = array(); // 'method'=parameter action of url, 'url'=url to call that return new list of contacts
 			$events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
-			// TODO Refresh also list of project if $conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY not defined with list linked to socid ?
+			// TODO Refresh also list of project if conf PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY not defined with list linked to socid ?
 			// FIXME If we change company, we may get a project that does not match
 			print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company($object->socid, 'socid', '', 'SelectThirdParty', 1, 0, $events, 0, 'minwidth200');
 			print '</div>';
@@ -2159,8 +2164,12 @@ if ($id > 0) {
 				$actionCommReminder->offsetunit = 'i';
 				$actionCommReminder->typeremind = 'email';
 			}
+			$disabled = '';
+			if ($object->datep < dol_now()) {
+				//$disabled = 'disabled title="'.dol_escape_htmltag($langs->trans("EventExpired")).'"';
+			}
 
-			print '<label for="addreminder">'.img_picto('', 'bell', 'class="pictofixedwidth"').$langs->trans("AddReminder").'</label> <input type="checkbox" id="addreminder" name="addreminder" '.$checked.'><br>';
+			print '<label for="addreminder">'.img_picto('', 'bell', 'class="pictofixedwidth"').$langs->trans("AddReminder").'</label> <input type="checkbox" id="addreminder" name="addreminder"'.($checked ? ' '.$checked : '').($disabled ? ' '.$disabled : '').'><br>';
 
 			print '<div class="reminderparameters" '.(empty($checked) ? 'style="display: none;"' : '').'>';
 
@@ -2553,6 +2562,7 @@ if ($id > 0) {
 						print ' ('.$tmpuserstatic->getNomUrl(0, '', 0, 0, 16).')';
 					}
 					print ' - '.$actioncommreminder->offsetvalue.' '.$TDurationTypes[$actioncommreminder->offsetunit];
+
 					if ($actioncommreminder->status == $actioncommreminder::STATUS_TODO) {
 						print ' - <span class="opacitymedium">';
 						print $langs->trans("NotSent");
@@ -2560,6 +2570,10 @@ if ($id > 0) {
 					} elseif ($actioncommreminder->status == $actioncommreminder::STATUS_DONE) {
 						print ' - <span class="opacitymedium">';
 						print $langs->trans("Done");
+						print ' </span>';
+					} elseif ($actioncommreminder->status == $actioncommreminder::STATUS_ERROR) {
+						print ' - <span class="opacitymedium">';
+						print $form->textwithpicto($langs->trans("Error"), $actioncommreminder->lasterror);
 						print ' </span>';
 					}
 					print '<br>';

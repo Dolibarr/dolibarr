@@ -75,7 +75,8 @@ llxHeader('', $langs->trans("PurchasesJournal"), '', '', 0, 0, '', '', $morequer
 $form = new Form($db);
 
 $year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-$pastmonth = strftime("%m", dol_now()) - 1;
+//$pastmonth = strftime("%m", dol_now()) - 1;
+$pastmonth = dol_print_date(dol_now(), "%m") - 1;
 $pastmonthyear = $year_current;
 if ($pastmonth == 0) {
 	$pastmonth = 12;

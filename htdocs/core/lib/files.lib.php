@@ -623,7 +623,7 @@ function dol_fileperm($pathoffile)
  * @param	string	$destfile			       Destination file (can't be a directory). If empty, will be same than source file.
  * @param	int		$newmask			       Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
  * @param	int		$indexdatabase		       1=index new file into database.
- * @param   int     $arrayreplacementisregex   1=Array of replacement is regex
+ * @param   int     $arrayreplacementisregex   1=Array of replacement is already an array with key that is a regex. Warning: the key must be escaped with preg_quote for '/'
  * @return	int							       Return integer <0 if error, 0 if nothing done (dest file already exists), >0 if OK
  * @see		dol_copy()
  */
@@ -690,7 +690,7 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask 
 		return -3;
 	}
 	if (empty($newmask) && getDolGlobalString('MAIN_UMASK')) {
-		$newmask = $conf->global->MAIN_UMASK;
+		$newmask = getDolGlobalString('MAIN_UMASK');
 	}
 	if (empty($newmask)) {	// This should no happen
 		dol_syslog("Warning: dolReplaceInFile called with empty value for newmask and no default value defined", LOG_WARNING);
@@ -761,7 +761,7 @@ function dol_copy($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $te
 		return -3;
 	}
 	if (empty($newmask) && getDolGlobalString('MAIN_UMASK')) {
-		$newmask = $conf->global->MAIN_UMASK;
+		$newmask = getDolGlobalString('MAIN_UMASK');
 	}
 	if (empty($newmask)) {	// This should no happen
 		dol_syslog("Warning: dol_copy called with empty value for newmask and no default value defined", LOG_WARNING);
@@ -2509,7 +2509,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 				$zip->close();
 
 				if (empty($newmask) && getDolGlobalString('MAIN_UMASK')) {
-					$newmask = $conf->global->MAIN_UMASK;
+					$newmask = getDolGlobalString('MAIN_UMASK');
 				}
 				if (empty($newmask)) {	// This should no happen
 					dol_syslog("Warning: dol_copy called with empty value for newmask and no default value defined", LOG_WARNING);
@@ -2672,14 +2672,15 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$accessok = false;
 		$reg = array();
 		if (preg_match('/^(\d+)\/photos\//', $original_file, $reg)) {
-			if ($reg[0]) {
+			if ($reg[1]) {
 				$tmpobject = new User($db);
-				$tmpobject->fetch($reg[0], '', '', 1);
+				$tmpobject->fetch($reg[1], '', '', 1);
 				if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $tmpobject)) {
 					$securekey = GETPOST('securekey', 'alpha', 1);
 					// Security check
-					global $dolibarr_main_instance_unique_id;
-					$encodedsecurekey = dol_hash($dolibarr_main_instance_unique_id.'uservirtualcard'.$tmpobject->id.'-'.$tmpobject->login, 'md5');
+					global $dolibarr_main_cookie_cryptkey, $dolibarr_main_instance_unique_id;
+					$valuetouse = $dolibarr_main_instance_unique_id ? $dolibarr_main_instance_unique_id : $dolibarr_main_cookie_cryptkey; // Use $dolibarr_main_instance_unique_id first then $dolibarr_main_cookie_cryptkey
+					$encodedsecurekey = dol_hash($valuetouse.'uservirtualcard'.$tmpobject->id.'-'.$tmpobject->login, 'md5');
 					if ($encodedsecurekey == $securekey) {
 						$accessok = true;
 					}

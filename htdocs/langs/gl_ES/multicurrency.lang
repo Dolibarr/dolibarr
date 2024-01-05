@@ -40,3 +40,4 @@ CurrencyCodeId=ID de moeda
 CurrencyCode=Código de moeda
 CurrencyUnitPrice=Prezo unitario en moeda estranxeira
 CurrencyPrice=Prezo en moeda estranxeira
+MutltiCurrencyAutoUpdateCurrencies=Actualizar todos os tipo de cambio

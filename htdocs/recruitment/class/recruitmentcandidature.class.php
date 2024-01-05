@@ -954,7 +954,7 @@ class RecruitmentCandidature extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('RECRUITMENT_RECRUITMENTCANDIDATURE_ADDON') . ".php";
-			$classname = $conf->global->RECRUITMENT_RECRUITMENTCANDIDATURE_ADDON;
+			$classname = getDolGlobalString('RECRUITMENT_RECRUITMENTCANDIDATURE_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -1013,7 +1013,7 @@ class RecruitmentCandidature extends CommonObject
 
 		if (!dol_strlen($modele)) {
 			if (getDolGlobalString('RECRUITMENTCANDIDATURE_ADDON_PDF')) {
-				$modele = $conf->global->RECRUITMENTCANDIDATURE_ADDON_PDF;
+				$modele = getDolGlobalString('RECRUITMENTCANDIDATURE_ADDON_PDF');
 			} else {
 				$modele = ''; // No default value. For job application, we allow to disable all PDF generation
 			}
@@ -1088,7 +1088,7 @@ class RecruitmentCandidature extends CommonObject
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("phone").'</span> : <span class="info-box-label">'.$this->phone.'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

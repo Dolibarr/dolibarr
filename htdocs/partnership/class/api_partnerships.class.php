@@ -187,9 +187,7 @@ class Partnerships extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieving partnership list: '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No partnership found');
-		}
+
 		return $obj_ret;
 	}
 
@@ -213,6 +211,12 @@ class Partnerships extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->partnership->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->partnership->$field = $this->_checkValForAPI($field, $value, $this->partnership);
 		}
 
@@ -255,6 +259,12 @@ class Partnerships extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->partnership->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->partnership->$field = $this->_checkValForAPI($field, $value, $this->partnership);
 		}
 

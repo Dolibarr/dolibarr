@@ -1669,10 +1669,10 @@ if ($action == 'create') {
 
 	// If not defined, set default value from constant
 	if (empty($cond_reglement_id) && getDolGlobalString('SUPPLIER_ORDER_DEFAULT_PAYMENT_TERM_ID')) {
-		$cond_reglement_id = $conf->global->SUPPLIER_ORDER_DEFAULT_PAYMENT_TERM_ID;
+		$cond_reglement_id = getDolGlobalString('SUPPLIER_ORDER_DEFAULT_PAYMENT_TERM_ID');
 	}
 	if (empty($mode_reglement_id) && getDolGlobalString('SUPPLIER_ORDER_DEFAULT_PAYMENT_MODE_ID')) {
-		$mode_reglement_id = $conf->global->SUPPLIER_ORDER_DEFAULT_PAYMENT_MODE_ID;
+		$mode_reglement_id = getDolGlobalString('SUPPLIER_ORDER_DEFAULT_PAYMENT_MODE_ID');
 	}
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -2509,7 +2509,7 @@ if ($action == 'create') {
 					}
 				}
 				// Create event
-				/*if (isModEnabled('agenda') && !empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 	// Add hidden condition because this is not a "workflow" action so should appears somewhere else on page.
+				/*if (isModEnabled('agenda') && getDolGlobalString('MAIN_ADD_EVENT_ON_ELEMENT_CARD')) 	// Add hidden condition because this is not a "workflow" action so should appears somewhere else on page.
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddAction") . '</a></div>';
 				}*/
@@ -2635,7 +2635,7 @@ if ($action == 'create') {
 				//{
 				if (isModEnabled("supplier_invoice") && ($object->statut >= 2 && $object->statut != 7 && $object->billed != 1)) {  // statut 2 means approved, 7 means canceled
 					if ($user->hasRight('fournisseur', 'facture', 'creer') || $user->hasRight("supplier_invoice", "creer")) {
-						print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
+						print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("SupplierOrderCreateBill").'</a>';
 					}
 				}
 				//}

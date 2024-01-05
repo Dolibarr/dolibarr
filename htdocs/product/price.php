@@ -1078,7 +1078,7 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 			} else {
 				print $langs->trans("SellingPrice").' '.$i;
 				if (!empty($conf->global->$keyforlabel)) {
-					print ' - '.$langs->trans($conf->global->$keyforlabel);
+					print ' - '.$langs->trans(getDolGlobalString($keyforlabel));
 				}
 			}
 			print '</td>';
@@ -1111,7 +1111,7 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 			if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {      // TODO Fix the form included into a tr instead of a td
 				print '<tr><td>'.$langs->trans("PriceByQuantity").' '.$i;
 				if (!empty($conf->global->$keyforlabel)) {
-					print ' - '.$langs->trans($conf->global->$keyforlabel);
+					print ' - '.$langs->trans(getDolGlobalString($keyforlabel));
 				}
 				print '</td><td colspan="2">';
 
@@ -1495,7 +1495,7 @@ if ($action == 'edit_price' && $object->getRights()->creer) {
 		$product->fetch($id, $ref, '', 1); //Ignore the math expression when getting the price
 		print '<tr id="price_numeric"><td>';
 		$text = $langs->trans('SellingPrice');
-		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
+		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 1);
 		print '</td><td>';
 		if ($object->price_base_type == 'TTC') {
 			print '<input name="price" size="10" value="'.price($product->price_ttc).'">';
@@ -1507,7 +1507,7 @@ if ($action == 'edit_price' && $object->getRights()->creer) {
 		// Price minimum
 		print '<tr><td>';
 		$text = $langs->trans('MinPrice');
-		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
+		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 1);
 		print '</td><td>';
 		if ($object->price_base_type == 'TTC') {
 			print '<input name="price_min" size="10" value="'.price($object->price_min_ttc).'">';
@@ -1595,7 +1595,7 @@ if ($action == 'edit_price' && $object->getRights()->creer) {
 			print '<td>';
 			$keyforlabel = 'PRODUIT_MULTIPRICES_LABEL'.$i;
 			$text = $langs->trans('SellingPrice').' '.$i.' - '.getDolGlobalString($keyforlabel);
-			print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
+			print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 1);
 			print '</td>';
 
 			// VAT
@@ -1988,7 +1988,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 		// Price
 		print '<tr><td class="fieldrequired">';
 		$text = $langs->trans('SellingPrice');
-		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
+		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 1);
 		print '</td><td>';
 		if ($object->price_base_type == 'TTC') {
 			print '<input name="price" size="10" value="'.price($object->price_ttc).'">';
@@ -2000,7 +2000,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 		// Price minimum
 		print '<tr><td>';
 		$text = $langs->trans('MinPrice');
-		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
+		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 1);
 		if ($object->price_base_type == 'TTC') {
 			print '<td><input name="price_min" size="10" value="'.price($object->price_min_ttc).'">';
 		} else {
@@ -2073,7 +2073,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 		// Price
 		print '<tr><td class="fieldrequired">';
 		$text = $langs->trans('SellingPrice');
-		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
+		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 1);
 		print '</td><td>';
 		if ($prodcustprice->price_base_type == 'TTC') {
 			print '<input name="price" size="10" value="'.price($prodcustprice->price_ttc).'">';
@@ -2085,7 +2085,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 		// Price minimum
 		print '<tr><td>';
 		$text = $langs->trans('MinPrice');
-		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
+		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 1);
 		print '</td><td>';
 		if ($prodcustprice->price_base_type == 'TTC') {
 			print '<input name="price_min" size="10" value="'.price($prodcustprice->price_min_ttc).'">';

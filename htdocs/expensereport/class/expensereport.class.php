@@ -1663,7 +1663,7 @@ class ExpenseReport extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('EXPENSEREPORT_ADDON') . ".php";
-			$classname = $conf->global->EXPENSEREPORT_ADDON;
+			$classname = getDolGlobalString('EXPENSEREPORT_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -2436,7 +2436,7 @@ class ExpenseReport extends CommonObject
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('EXPENSEREPORT_ADDON_PDF')) {
-				$modele = $conf->global->EXPENSEREPORT_ADDON_PDF;
+				$modele = getDolGlobalString('EXPENSEREPORT_ADDON_PDF');
 			}
 		}
 
@@ -2801,7 +2801,7 @@ class ExpenseReport extends CommonObject
 			$return .= '<span class="info-box-label">'.dol_print_date($this->date_fin, 'day').'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

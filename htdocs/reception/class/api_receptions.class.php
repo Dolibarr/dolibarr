@@ -178,9 +178,7 @@ class Receptions extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve commande list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No reception found');
-		}
+
 		return $obj_ret;
 	}
 
@@ -199,6 +197,12 @@ class Receptions extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->reception->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->reception->$field = $value;
 		}
 		if (isset($request_data["lines"])) {
@@ -448,6 +452,12 @@ class Receptions extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->reception->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->reception->$field = $value;
 		}
 

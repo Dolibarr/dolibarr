@@ -43,7 +43,7 @@ class ExportCsvIso extends ExportCsv
 
 		$this->separator = ',';
 		if (getDolGlobalString('EXPORT_CSV_SEPARATOR_TO_USE')) {
-			$this->separator = $conf->global->EXPORT_CSV_SEPARATOR_TO_USE;
+			$this->separator = getDolGlobalString('EXPORT_CSV_SEPARATOR_TO_USE');
 		}
 
 		$conf->global->EXPORT_CSV_FORCE_CHARSET = 'ISO-8859-1';

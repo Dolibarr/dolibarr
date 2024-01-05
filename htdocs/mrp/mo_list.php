@@ -241,6 +241,7 @@ if (isset($extrafields->attributes[$object->table_element]['label']) && is_array
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."mrp_production as lineparent ON t.fk_parent_line = lineparent.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."mrp_mo as moparent ON lineparent.fk_mo = moparent.rowid";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON t.fk_product = p.rowid";
 // Add table from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -569,7 +570,11 @@ foreach ($object->fields as $key => $val) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'right';
 	}
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
-		print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($cssforfield ? 'class="'.$cssforfield.'"' : ''), $sortfield, $sortorder, ($cssforfield ? $cssforfield.' ' : ''))."\n";
+		if ($key == "fk_product") {
+			print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 'p.ref', '', $param, ($cssforfield ? 'class="'.$cssforfield.'"' : ''), $sortfield, $sortorder, ($cssforfield ? $cssforfield.' ' : ''))."\n";
+		} else {
+			print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($cssforfield ? 'class="'.$cssforfield.'"' : ''), $sortfield, $sortorder, ($cssforfield ? $cssforfield.' ' : ''))."\n";
+		}
 		$totalarray['nbfield']++;
 	}
 }

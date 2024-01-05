@@ -147,7 +147,7 @@ $title = $langs->trans("MyObject")." - ".$langs->trans('ContactsAddresses');
 //$title = $object->ref." - ".$langs->trans('ContactsAddresses');
 $help_url = '';
 //$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-mymodule page-card_contact');
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);

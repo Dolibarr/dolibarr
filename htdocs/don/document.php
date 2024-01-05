@@ -111,7 +111,7 @@ $title = $langs->trans('Donation')." - ".$langs->trans('Documents');
 
 $help_url = 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones|DE:Modul_Spenden';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-donation page-card_documents');
 
 
 if ($object->id) {

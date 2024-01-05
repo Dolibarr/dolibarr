@@ -7,6 +7,7 @@
  * Copyright (C) 2015		Bahfir Abbes			<bafbes@gmail.com>
  * Copyright (C) 2022		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2023       Christian Foellmann     <christian@foellmann.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1252,6 +1253,16 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 			// Parameters $object->sendtoid defined by caller
 			//$object->sendtoid=0;
+		} elseif ($action == 'PROJECT_DELETE') {
+			// Load translation files required by the page
+			$langs->loadLangs(array("agenda", "other", "projects"));
+
+			if (empty($object->actionmsg2)) {
+				$object->actionmsg2 = $langs->transnoentities("ProjectDeletedInDolibarr", $object->ref);
+			}
+			$object->actionmsg = $langs->transnoentities("ProjectDeletedInDolibarr", $object->ref);
+
+			$object->sendtoid = 0;
 		} elseif ($action == 'PROJECT_CLOSE') {
 			// Load translation files required by the page
 			$langs->loadLangs(array("agenda", "other", "projects"));

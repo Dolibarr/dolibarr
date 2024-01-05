@@ -602,7 +602,7 @@ class BOM extends CommonObject
 	 * @param	int		$fk_default_workstation	Default workstation
 	 * @return	int								Return integer <0 if KO, Id of created object if OK
 	 */
-	public function addLine($fk_product, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $fk_bom_child = null, $import_key = null, $fk_unit = '', $array_options = 0, $fk_default_workstation = null)
+	public function addLine($fk_product, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $fk_bom_child = null, $import_key = null, $fk_unit = '', $array_options = array(), $fk_default_workstation = null)
 	{
 		global $mysoc, $conf, $langs, $user;
 
@@ -710,7 +710,7 @@ class BOM extends CommonObject
 	 * @param	int		$fk_default_workstation	Default workstation
 	 * @return	int								Return integer <0 if KO, Id of updated BOM-Line if OK
 	 */
-	public function updateLine($rowid, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $import_key = null, $fk_unit = 0, $array_options = 0, $fk_default_workstation = null)
+	public function updateLine($rowid, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $import_key = null, $fk_unit = 0, $array_options = array(), $fk_default_workstation = null)
 	{
 		global $mysoc, $conf, $langs, $user;
 
@@ -878,7 +878,7 @@ class BOM extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('BOM_ADDON') . ".php";
-			$classname = $conf->global->BOM_ADDON;
+			$classname = getDolGlobalString('BOM_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -1351,7 +1351,7 @@ class BOM extends CommonObject
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('BOM_ADDON_PDF')) {
-				$modele = $conf->global->BOM_ADDON_PDF;
+				$modele = getDolGlobalString('BOM_ADDON_PDF');
 			}
 		}
 
@@ -1594,7 +1594,7 @@ class BOM extends CommonObject
 	 * @param 	int		$level		Protection against infinite loop
 	 * @return 	void
 	 */
-	public function getParentBomTreeRecursive(&$TParentBom, $bom_id = '', $level = 1)
+	public function getParentBomTreeRecursive(&$TParentBom, $bom_id = 0, $level = 1)
 	{
 
 		// Protection against infinite loop
@@ -1656,7 +1656,7 @@ class BOM extends CommonObject
 			$return .= '<br><span class="info-box-label">'.$prod->getNomUrl(1).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 
 		$return .= '</div>';

@@ -342,7 +342,7 @@ if (GETPOST('save') && !$cancel && $user->hasRight('banque', 'modifier')) {
 	if (price2num(GETPOST("addcredit")) > 0) {
 		$amount = price2num(GETPOST("addcredit"));
 	} else {
-		$amount = - price2num(GETPOST("adddebit"));
+		$amount = price2num(-1 * (float) price2num(GETPOST("adddebit")));
 	}
 
 	$operation = GETPOST("operation", 'alpha');
@@ -1290,6 +1290,9 @@ if ($resql) {
 	$savnbfield = $totalarray['nbfield'];
 	$totalarray = array();
 	$totalarray['nbfield'] = 0;
+	$totalarray['totaldeb'] = 0;
+	$totalarray['totalcred'] = 0;
+
 	$imaxinloop = ($limit ? min($num, $limit) : $num);
 	while ($i < $imaxinloop) {
 		$objp = $db->fetch_object($resql);

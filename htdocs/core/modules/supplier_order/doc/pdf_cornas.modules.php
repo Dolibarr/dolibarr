@@ -6,6 +6,7 @@
  * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet         <fmarcet@2byte.es>
  * Copyright (C) 2018-2022 Frédéric France       <frederic.france@netlogic.fr>
+ * Copyright (C) 2023		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -171,7 +172,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 
 		$hidetop = 0;
 		if (getDolGlobalString('MAIN_PDF_DISABLE_COL_HEAD_TITLE')) {
-			$hidetop = $conf->global->MAIN_PDF_DISABLE_COL_HEAD_TITLE;
+			$hidetop = getDolGlobalString('MAIN_PDF_DISABLE_COL_HEAD_TITLE');
 		}
 
 		// Loop on each lines to detect if there is at least one image to show
@@ -874,7 +875,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 
 			$pdf->SetFont('', '', $default_font_size - $diffsizetitle);
 			$pdf->SetXY($posxval, $posy);
-			$lib_condition_paiement = $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) != ('PaymentCondition'.$object->cond_reglement_code) ? $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) : $outputlangs->convToOutputCharset($object->cond_reglement_doc ? $object->cond_reglement_doc : $object->cond_reglement_label);
+			$lib_condition_paiement = ($outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) != 'PaymentCondition'.$object->cond_reglement_code) ? $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) : $outputlangs->convToOutputCharset($object->cond_reglement_doc ? $object->cond_reglement_doc : $object->cond_reglement_label);
 			$lib_condition_paiement = str_replace('\n', "\n", $lib_condition_paiement);
 			$pdf->MultiCell(80, 4, $lib_condition_paiement, 0, 'L');
 
@@ -890,7 +891,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 
 			$pdf->SetFont('', '', $default_font_size - $diffsizetitle);
 			$pdf->SetXY($posxval, $posy);
-			$lib_mode_reg = $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) != ('PaymentType'.$object->mode_reglement_code) ? $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) : $outputlangs->convToOutputCharset($object->mode_reglement);
+			$lib_mode_reg = $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) != 'PaymentType'.$object->mode_reglement_code ? $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) : $outputlangs->convToOutputCharset($object->mode_reglement);
 			$pdf->MultiCell(80, 5, $lib_mode_reg, 0, 'L');
 
 			$posy = $pdf->GetY() + 2;
@@ -1197,9 +1198,9 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 
-		$w = 100;
+		$w = 110;
 
-		$posx = $this->page_largeur - $this->marge_droite - 100;
+		$posx = $this->page_largeur - $this->marge_droite - $w;
 		$posy = $this->marge_haute;
 
 		$pdf->SetXY($this->marge_gauche, $posy);

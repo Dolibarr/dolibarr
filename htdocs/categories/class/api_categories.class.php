@@ -182,9 +182,7 @@ class Categories extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve category list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No category found');
-		}
+
 		return $obj_ret;
 	}
 
@@ -204,6 +202,12 @@ class Categories extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->category->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->category->$field = $value;
 		}
 		if ($this->category->create(DolibarrApiAccess::$user) < 0) {
@@ -238,6 +242,12 @@ class Categories extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->category->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->category->$field = $value;
 		}
 
@@ -330,9 +340,6 @@ class Categories extends DolibarrApi
 		$categories = $this->category->getListForItem($id, $type, $sortfield, $sortorder, $limit, $page);
 
 		if (!is_array($categories)) {
-			if ($categories == 0) {
-				throw new RestException(404, 'No category found for this object');
-			}
 			throw new RestException(600, 'Error when fetching object categories', array_merge(array($this->category->error), $this->category->errors));
 		}
 		return $categories;
