@@ -1656,50 +1656,114 @@ class Website extends CommonObject
 		$destdir = DOL_DOCUMENT_ROOT . '/install/doctemplates/websites/'.$website->name_template;
 		$arraydestdir = dol_dir_list($destdir, "all", 1);
 		$differences = [];
-		//var_dump($modifications);exit;
-		if (count($modifications) >1) {
+		$names = array_column($arraydestdir, 'name');
+		$namesSource = array_column($arraySourcedir, 'name');
+
+		if (count($modifications) > 1) {
 			foreach ($modifications as $fichierModifie) {
 				$nomFichierModifie = $fichierModifie['name'];
 				if ($nomFichierModifie == basename($fichierEtat)) {
 					continue;
 				}
 				$succes = 0;
+				
+				//check if it is a new file 
+				if ((!preg_match('/^page\d+\.tpl\.php$/', $nomFichierModifie)) && (!in_array($nomFichierModifie, $names))) {
+					if (file_exists($fichierModifie['fullname']) && dol_is_dir($destdir.'/containers')) {
+						$cp = dol_copy($fichierModifie['fullname'], $destdir.'/containers/'.$nomFichierModifie,'0664');
+						if ($cp > 0) {
+							if (file_exists($destdir.'/containers/'.$nomFichierModifie)){
+								$tabnumpage = array();
+								foreach ($arraydestdir as $fileDest) {
+									if ($this->extractNumberFromFilename($fileDest['name']) !== -1) {
+										$tabnumpage[] = $this->extractNumberFromFilename($fileDest['name']);
+									}
+								}
+								$getContentSource = file_get_contents($destdir.'/containers/'.$nomFichierModifie);
+								$nextpage = max($tabnumpage) + 1;
+								$chaineModifiee = preg_replace('/page\d+\.tpl\.php/', 'page' . $nextpage . '.tpl.php', $getContentSource);
+								$write = file_put_contents($destdir.'/containers/'.$nomFichierModifie, $chaineModifiee);
+								if ($write !== false) {
+									if(!touch($destdir.'/containers/'."page" . $nextpage . ".tpl.php")) {
+										setEventMessages("Please check permission to create  <b>page" . $nextpage . ".tpl.php</b> in template <b>".$website->name_template."</b>", null, 'errors');
+									}
+									$fileFounded = '';
+									foreach ($arraySourcedir as $file) {
+										if ($file['name'] == $nomFichierModifie) {
+											$fileContent = file_get_contents($file['fullname']);
+											if (preg_match("/page\d+\.tpl\.php/", $fileContent, $matches)) {
+												$fileFounded = $matches[0];
+												break;
+											}
+										}
+									}
+									foreach ($arraySourcedir as $file) {
+										if($file['name'] == $fileFounded) {
+											if (!is_writable($file['fullname'])){
+												dolChmod($file['fullname'],'0664');
+											}
+											$diff = $this->showDifferences(file_get_contents($destdir.'/containers/'."page" . $nextpage . ".tpl.php"),file_get_contents($file['fullname']),array($nextpage,$this->extractNumberFromFilename($file['name'])));
+											if ($diff != -1) {
+												$replace = $this->replaceLignEUsingNum($destdir.'/containers/'."page" . $nextpage . ".tpl.php", $diff);
+												if ($replace !== false) {
+													setEventMessages("Copy file <b>page".$nextpage.".tpl.php</b> in template <b>".$this->name_template."</b> with succes", null,'warnings');
+												}
+											}
+									
+										}
+									}
+								}
+								
+							}
+							$this->saveState($etatPrecedent, $fichierEtat);
+							setEventMessages("file <b>".$nomFichierModifie."</b> was created in template <b>".$website->name_template."</b>", null, 'warnings');
+							header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
+							exit();
+						}
+					}
+				
+					
+				}
 				// Find the corresponding file in the destination folder
-				foreach ($arraydestdir as $destFile) {
-					if ($destFile['name'] == $nomFichierModifie) {
-						$sourceContent = file_get_contents($fichierModifie['fullname']);
-						$destContent = file_get_contents($destFile['fullname']);
-
-						if ($sourceContent !== $destContent) {
-							$differences[$nomFichierModifie] = $this->showDifferences($destContent, $sourceContent);
+				if (in_array($nomFichierModifie, $namesSource)){
+					foreach ($arraydestdir as $destFile) {
+						if ($destFile['name'] == $nomFichierModifie) {
+							$sourceContent = file_get_contents($fichierModifie['fullname']);
+							$destContent = file_get_contents($destFile['fullname']);
+	
+							if ($sourceContent !== $destContent) {
+								$differences[$nomFichierModifie] = $this->showDifferences($destContent, $sourceContent);
+								if (count($differences[$nomFichierModifie]) > 0) {
+									$result = $this->replaceLignEUsingNum($destFile['fullname'], $differences[$nomFichierModifie]);
+									if ($result !== false) {
+										if ($result == -2) {
+											setEventMessages("No permissions to write in file <b>".$nomFichierModifie."</b> from template <b>".$website->name_template."</b>", null, 'errors');
+											header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
+											exit();
+										}
+										setEventMessages("file <b>".$nomFichierModifie."</b> was modified in template <b>".$website->name_template."</b>", null, 'warnings');
+									} else {
+										setEventMessages("file ".$nomFichierModifie." was not modified", null, 'errors');
+									}
+								}
+							}
+						}
+						if (preg_match('/page(\d+)\.tpl\.php/', $nomFichierModifie)) {
+							$differences[$nomFichierModifie] = $this->compareFichierModifie($sourcedir, $destdir, $fichierModifie);
 							if (count($differences[$nomFichierModifie]) > 0) {
-								$result = $this->replaceLignEUsingNum($destFile['fullname'], $differences[$nomFichierModifie]);
+								$result = $this->replaceLignEUsingNum($differences[$nomFichierModifie]['file_destination']['fullname'], $differences[$nomFichierModifie]);
 								if ($result !== false) {
 									if ($result == -2) {
-										setEventMessages("No permissions to write in file <b>".$nomFichierModifie."</b> from template <b>".$website->name_template."</b>", null, 'errors');
+										setEventMessages("No permissions to write in file <b>".$differences[$nomFichierModifie]['file_destination']['name']."</b> from template <b>".$website->name_template."</b>", null, 'errors');
 										header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
 										exit();
 									}
-									setEventMessages("file <b>".$nomFichierModifie."</b> was modified in template <b>".$website->name_template."</b>", null, 'warnings');
-								} else {
-									setEventMessages("file ".$nomFichierModifie." was not modified", null, 'errors');
+									$succes++;
 								}
 							}
 						}
-					}
-					if (preg_match('/page(\d+)\.tpl\.php/', $nomFichierModifie)) {
-						$differences[$nomFichierModifie] = $this->compareFichierModifie($sourcedir, $destdir, $fichierModifie);
-						if (count($differences[$nomFichierModifie]) > 0) {
-							$result = $this->replaceLignEUsingNum($differences[$nomFichierModifie]['file_destination']['fullname'], $differences[$nomFichierModifie]);
-							if ($result !== false) {
-								if ($result == -2) {
-									setEventMessages("No permissions to write in file <b>".$differences[$nomFichierModifie]['file_destination']['name']."</b> from template <b>".$website->name_template."</b>", null, 'errors');
-									header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
-									exit();
-								}
-								$succes++;
-							}
-						}
+						
+						
 					}
 				}
 			}
@@ -1885,11 +1949,13 @@ class Website extends CommonObject
 
 		if (isset($fileNeeded)) {
 			$sourceContent = file_get_contents($fichierModifie['fullname']);
-			$destContent = file_get_contents($fileNeeded['fullname']);
-
-			$numOfPageDest = $this->extractNumberFromFilename($fileNeeded['name']);
-			$differences = $this->showDifferences($destContent, $sourceContent, array($numOfPageDest,$numOfPageSource));
-			$differences['file_destination'] = $fileNeeded;
+			if (file_exists($fileNeeded['fullname'])) {
+				$destContent = file_get_contents($fileNeeded['fullname']);
+				
+				$numOfPageDest = $this->extractNumberFromFilename($fileNeeded['name']);
+				$differences = $this->showDifferences($destContent, $sourceContent, array($numOfPageDest,$numOfPageSource));
+				$differences['file_destination'] = $fileNeeded;
+			} 
 			return $differences;
 		}
 		return array();
@@ -1940,11 +2006,11 @@ class Website extends CommonObject
 			if (preg_match($linefound[0]['output'], $lineContent1)) {
 				$linesShouldnChange[] = $lineContent1;
 			}
-			if (preg_match($linefound[1]['output'], $lineContent2)) {
-				$linesShouldnNotChange[] = $lineContent2;
-			}
 			if (preg_match($linefound[0]['meta'], $lineContent1)) {
 				$linesShouldnChange[] = $lineContent1;
+			}
+			if (preg_match($linefound[1]['output'], $lineContent2)) {
+				$linesShouldnNotChange[] = $lineContent2;
 			}
 			if (preg_match($linefound[1]['meta'], $lineContent2)) {
 				$linesShouldnNotChange[] = $lineContent2;
@@ -1964,14 +2030,24 @@ class Website extends CommonObject
 		}
 
 
-		$pairesRemplacement = array();
-		foreach ($linesShouldnNotChange as $numLigne => $ligneRemplacement) {
-			if (isset($linesShouldnChange[$numLigne])) {
-				$pairesRemplacement[$ligneRemplacement] = $linesShouldnChange[$numLigne];
-			}
+		if (empty($linesShouldnChange)) {
+			$linesShouldnChange[0] = '<meta name="dolibarr:pageid" content="'.$exceptNumPge[0].'" />';
+			$linesShouldnChange[1] = '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "html", '.$exceptNumPge[0].');';
 		}
-		$diff['lignes_dont_change'] = $pairesRemplacement;
 
+		$pairesRemplacement = array();
+		if (!empty($linesShouldnNotChange)) {
+			$i =0;
+			foreach ($linesShouldnNotChange as $numLigne => $ligneRemplacement) {
+				if (isset($linesShouldnChange[$numLigne])) {
+					$pairesRemplacement[$ligneRemplacement] = $linesShouldnChange[$numLigne];
+				}else {
+					$pairesRemplacement[$ligneRemplacement] = $linesShouldnChange[$i];
+				}
+				$i++;
+			}
+			$diff['lignes_dont_change'] = $pairesRemplacement;
+		} 	
 		// search path of image and replace it with the correcte path
 		$pattern = '/medias\/image\/'.$this->ref.'\/([^\'"\s]+)/';
 
@@ -1979,9 +2055,7 @@ class Website extends CommonObject
 			// Assurez-vous que la valeur est une chaîne
 			if (is_string($value)) {
 				if (preg_match($pattern, $value)) {
-					//var_dump( "Trouvé dans".$this->name_template." / ". $key." : ".$value."\n");
-					$newValue = preg_replace($pattern, 'medias/image/'.$this->name_template.'/$1', $value);
-
+					$newValue = preg_replace($pattern, 'medias/image/'.$this->name_template.'/$1', $value);									
 					$diff[$key] = $newValue;
 				}
 			}
