@@ -954,7 +954,7 @@ class RecruitmentCandidature extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('RECRUITMENT_RECRUITMENTCANDIDATURE_ADDON') . ".php";
-			$classname = $conf->global->RECRUITMENT_RECRUITMENTCANDIDATURE_ADDON;
+			$classname = getDolGlobalString('RECRUITMENT_RECRUITMENTCANDIDATURE_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -1013,7 +1013,7 @@ class RecruitmentCandidature extends CommonObject
 
 		if (!dol_strlen($modele)) {
 			if (getDolGlobalString('RECRUITMENTCANDIDATURE_ADDON_PDF')) {
-				$modele = $conf->global->RECRUITMENTCANDIDATURE_ADDON_PDF;
+				$modele = getDolGlobalString('RECRUITMENTCANDIDATURE_ADDON_PDF');
 			} else {
 				$modele = ''; // No default value. For job application, we allow to disable all PDF generation
 			}

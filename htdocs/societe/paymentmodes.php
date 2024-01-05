@@ -1681,7 +1681,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					$modelselected = $arraykeys[0];
 				}
 				if (getDolGlobalString('BANKADDON_PDF')) {
-					$modelselected = $conf->global->BANKADDON_PDF;
+					$modelselected = getDolGlobalString('BANKADDON_PDF');
 				}
 
 				$out .= $form->selectarray('modelrib'.$rib->id, $modellist, $modelselected, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth125');

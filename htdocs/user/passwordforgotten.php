@@ -182,7 +182,7 @@ $dol_url_root = DOL_URL_ROOT;
 // Title
 $title = 'Dolibarr '.DOL_VERSION;
 if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-	$title = $conf->global->MAIN_APPLICATION_TITLE;
+	$title = getDolGlobalString('MAIN_APPLICATION_TITLE');
 }
 
 // Select templates

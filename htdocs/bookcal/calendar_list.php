@@ -17,7 +17,7 @@
  */
 
 /**
- *   	\file       calendar_list.php
+ *   	\file       htdocs/bookcal/calendar_list.php
  *		\ingroup    bookcal
  *		\brief      List page for calendar
  */

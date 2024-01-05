@@ -264,7 +264,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 					$ics = $tmpbankfordirectdebit->ics;	// ICS for direct debit
 				}
 				if (empty($ics) && getDolGlobalString('PRELEVEMENT_ICS')) {
-					$ics = $conf->global->PRELEVEMENT_ICS;
+					$ics = getDolGlobalString('PRELEVEMENT_ICS');
 				}
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("CreditorIdentifier").' ('.$outputlangs->transnoentitiesnoconv("ICS").') : '.$ics, 0, 'L');
 

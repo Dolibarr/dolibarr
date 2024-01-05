@@ -1784,7 +1784,7 @@ class Account extends CommonObject
 		);
 
 		if (getDolGlobalString('BANK_SHOW_ORDER_OPTION')) {
-			if (is_numeric($conf->global->BANK_SHOW_ORDER_OPTION)) {
+			if (is_numeric(getDolGlobalString('BANK_SHOW_ORDER_OPTION'))) {
 				if (getDolGlobalString('BANK_SHOW_ORDER_OPTION') == '1') {
 					$fieldlists = array(
 						'BankCode',
@@ -2354,7 +2354,7 @@ class AccountLine extends CommonObjectLine
 		// Check statement field
 		if (getDolGlobalString('BANK_STATEMENT_REGEX_RULE')) {
 			if (!preg_match('/' . getDolGlobalString('BANK_STATEMENT_REGEX_RULE').'/', $this->num_releve)) {
-				$this->errors[] = $langs->trans("ErrorBankStatementNameMustFollowRegex", $conf->global->BANK_STATEMENT_REGEX_RULE);
+				$this->errors[] = $langs->trans("ErrorBankStatementNameMustFollowRegex", getDolGlobalString('BANK_STATEMENT_REGEX_RULE'));
 				return -1;
 			}
 		}

@@ -65,7 +65,9 @@ if ($action == 'convert') {
 
 		$nbrecordsmodified = 0;
 
-		$db->begin();
+		if (!getDolGlobalInt('VATUPDATE_NO_TRANSACTION')) {
+			$db->begin();
+		}
 
 		// Clean vat code old
 		$vat_src_code_old = '';
@@ -259,6 +261,7 @@ if ($action == 'convert') {
 			dol_print_error($db);
 		}
 
+
 		// add hook for external modules
 		$parameters = array('oldvatrate' => $oldvatrate, 'newvatrate' => $newvatrate);
 		$reshook = $hookmanager->executeHooks('hookAfterVatUpdate', $parameters);
@@ -267,10 +270,12 @@ if ($action == 'convert') {
 			$error++;
 		}
 
-		if (!$error) {
-			$db->commit();
-		} else {
-			$db->rollback();
+		if (!getDolGlobalInt('VATUPDATE_NO_TRANSACTION')) {
+			if (!$error) {
+				$db->commit();
+			} else {
+				$db->rollback();
+			}
 		}
 
 		// Output result

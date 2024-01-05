@@ -316,7 +316,7 @@ if (empty($reshook) && $action == 'add') {
 			// Adding supplier tag and tag from setup to thirdparty
 			$category = new Categorie($db);
 
-			$resultcategory = $category->fetch($conf->global->EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH);
+			$resultcategory = $category->fetch(getDolGlobalString('EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH'));
 
 			if ($resultcategory<=0) {
 				$error++;
@@ -416,7 +416,7 @@ if (empty($reshook) && $action == 'add') {
 					// If this is a paying booth, we have to redirect to payment page and create an invoice
 					if (!empty((float) $project->price_booth)) {
 						$productforinvoicerow = new Product($db);
-						$resultprod = $productforinvoicerow->fetch($conf->global->SERVICE_BOOTH_LOCATION);
+						$resultprod = $productforinvoicerow->fetch(getDolGlobalString('SERVICE_BOOTH_LOCATION'));
 						if ($resultprod < 0) {
 							$error++;
 							$errmsg .= $productforinvoicerow->error;
@@ -516,7 +516,7 @@ if (empty($reshook) && $action == 'add') {
 		$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
 
 		$sendto = $thirdparty->email;
-		$from = $conf->global->MAILING_EMAIL_FROM;
+		$from = getDolGlobalString('MAILING_EMAIL_FROM');
 		$urlback = $_SERVER["REQUEST_URI"];
 		$trackid = 'proj'.$project->id;
 

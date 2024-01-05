@@ -1156,10 +1156,6 @@ class Setup extends DolibarrApi
 			throw new RestException(503, 'Error when retrieving list of extra fields : '.$this->db->lasterror());
 		}
 
-		if (!count($list)) {
-			throw new RestException(404, 'No extrafield found');
-		}
-
 		return $list;
 	}
 
@@ -2034,7 +2030,7 @@ class Setup extends DolibarrApi
 		// Remote file to compare to
 		$xmlremote = ($target == 'default' ? '' : $target);
 		if (empty($xmlremote) && getDolGlobalString('MAIN_FILECHECK_URL')) {
-			$xmlremote = $conf->global->MAIN_FILECHECK_URL;
+			$xmlremote = getDolGlobalString('MAIN_FILECHECK_URL');
 		}
 		$param = 'MAIN_FILECHECK_URL_'.DOL_VERSION;
 		if (empty($xmlremote) && getDolGlobalString($param)) {
