@@ -1007,7 +1007,7 @@ class Skill extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('hrm_SKILL_ADDON') . ".php";
-			$classname = $conf->global->hrm_SKILL_ADDON;
+			$classname = getDolGlobalString('hrm_SKILL_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -1070,7 +1070,7 @@ class Skill extends CommonObject
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('SKILL_ADDON_PDF')) {
-				$modele = $conf->global->SKILL_ADDON_PDF;
+				$modele = getDolGlobalString('SKILL_ADDON_PDF');
 			}
 		}
 

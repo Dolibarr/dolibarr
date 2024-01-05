@@ -1011,7 +1011,7 @@ class RecruitmentJobPosition extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('RECRUITMENT_RECRUITMENTJOBPOSITION_ADDON') . ".php";
-			$classname = $conf->global->RECRUITMENT_RECRUITMENTJOBPOSITION_ADDON;
+			$classname = getDolGlobalString('RECRUITMENT_RECRUITMENTJOBPOSITION_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -1070,7 +1070,7 @@ class RecruitmentJobPosition extends CommonObject
 
 		if (!dol_strlen($modele)) {
 			if (getDolGlobalString('RECRUITMENTJOBPOSITION_ADDON_PDF')) {
-				$modele = $conf->global->RECRUITMENTJOBPOSITION_ADDON_PDF;
+				$modele = getDolGlobalString('RECRUITMENTJOBPOSITION_ADDON_PDF');
 			} else {
 				$modele = ''; // No default value. For job position, we allow to disable all PDF generation
 			}

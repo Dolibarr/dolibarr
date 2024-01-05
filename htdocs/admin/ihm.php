@@ -383,7 +383,7 @@ if ($mode == 'other') {
 	// Default language
 	print '<tr class="oddeven"><td>'.$langs->trans("DefaultLanguage").'</td><td>';
 	print img_picto('', 'language', 'class="pictofixedwidth"');
-	print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'MAIN_LANG_DEFAULT', 1, null, '', 0, 0, 'minwidth300', 2);
+	print $formadmin->select_language(getDolGlobalString('MAIN_LANG_DEFAULT'), 'MAIN_LANG_DEFAULT', 1, null, '', 0, 0, 'minwidth300', 2);
 	//print '<input class="button button-save smallpaddingimp" type="submit" name="submit" value="'.$langs->trans("Save").'">';
 	print '</td>';
 	print '</tr>';

@@ -1250,7 +1250,7 @@ if (isset($_SESSION["takeposterminal"]) && $_SESSION["takeposterminal"]) {
 if (count($maincategories) == 0) {
 	if (getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') > 0) {
 		$tmpcategory = new Categorie($db);
-		$tmpcategory->fetch($conf->global->TAKEPOS_ROOT_CATEGORY_ID);
+		$tmpcategory->fetch(getDolGlobalString('TAKEPOS_ROOT_CATEGORY_ID'));
 		setEventMessages($langs->trans("TakeposNeedsAtLeastOnSubCategoryIntoParentCategory", $tmpcategory->label), null, 'errors');
 	} else {
 		setEventMessages($langs->trans("TakeposNeedsCategories"), null, 'errors');

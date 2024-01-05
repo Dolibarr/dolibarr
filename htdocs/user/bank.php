@@ -596,7 +596,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	print '</div><div class="fichehalfright">';
 
 	// Max number of elements in small lists
-	$MAXLIST = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
+	$MAXLIST = getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT');
 
 	// Latest payments of salaries
 	if (isModEnabled('salaries') &&

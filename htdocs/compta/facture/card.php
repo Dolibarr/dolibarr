@@ -3831,11 +3831,11 @@ if ($action == 'create') {
 			print '<tr class="retained-warranty-line" style="'.$rwStyle.'" ><td class="nowrap">'.$langs->trans('PaymentConditionsShortRetainedWarranty').'</td><td colspan="2">';
 			$retained_warranty_fk_cond_reglement = GETPOST('retained_warranty_fk_cond_reglement', 'int');
 			if (empty($retained_warranty_fk_cond_reglement)) {
-				$retained_warranty_fk_cond_reglement = $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID;
+				$retained_warranty_fk_cond_reglement = getDolGlobalString('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID');
 				if (!empty($objectsrc->retained_warranty_fk_cond_reglement)) { // use previous situation value
 					$retained_warranty_fk_cond_reglement = $objectsrc->retained_warranty_fk_cond_reglement;
 				} else {
-					$retained_warranty_fk_cond_reglement = $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID;
+					$retained_warranty_fk_cond_reglement = getDolGlobalString('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID');
 				}
 			}
 			print $form->getSelectConditionsPaiements($retained_warranty_fk_cond_reglement, 'retained_warranty_fk_cond_reglement', -1, 1);

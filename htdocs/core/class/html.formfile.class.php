@@ -877,7 +877,7 @@ class FormFile
 
 					$documenturl = DOL_URL_ROOT.'/document.php';
 					if (isset($conf->global->DOL_URL_ROOT_DOCUMENT_PHP)) {
-						$documenturl = $conf->global->DOL_URL_ROOT_DOCUMENT_PHP; // To use another wrapper
+						$documenturl = getDolGlobalString('DOL_URL_ROOT_DOCUMENT_PHP'); // To use another wrapper
 					}
 
 					// Show file name with link to download

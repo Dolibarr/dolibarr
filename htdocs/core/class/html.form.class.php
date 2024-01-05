@@ -423,7 +423,7 @@ class Form
 		// List of extra languages
 		$arrayoflangcode = array();
 		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
-			$arrayoflangcode[] = $conf->global->PDF_USE_ALSO_LANGUAGE_CODE;
+			$arrayoflangcode[] = getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE');
 		}
 
 		if (is_array($arrayoflangcode) && count($arrayoflangcode)) {
@@ -4348,7 +4348,7 @@ class Form
 		// Set default value if not already set by caller
 		if (empty($selected) && getDolGlobalString('MAIN_DEFAULT_PAYMENT_TERM_ID')) {
 			dol_syslog(__METHOD__ . "Using deprecated option MAIN_DEFAULT_PAYMENT_TERM_ID", LOG_NOTICE);
-			$selected = $conf->global->MAIN_DEFAULT_PAYMENT_TERM_ID;
+			$selected = getDolGlobalString('MAIN_DEFAULT_PAYMENT_TERM_ID');
 		}
 
 		$out .= '<select id="' . $htmlname . '" class="flat selectpaymentterms' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '">';
@@ -4453,7 +4453,7 @@ class Form
 		// Set default value if not already set by caller
 		if (empty($selected) && getDolGlobalString('MAIN_DEFAULT_PAYMENT_TYPE_ID')) {
 			dol_syslog(__METHOD__ . "Using deprecated option MAIN_DEFAULT_PAYMENT_TYPE_ID", LOG_NOTICE);
-			$selected = $conf->global->MAIN_DEFAULT_PAYMENT_TYPE_ID;
+			$selected = getDolGlobalString('MAIN_DEFAULT_PAYMENT_TYPE_ID');
 		}
 
 		$out .= '<select id="select' . $htmlname . '" class="flat selectpaymenttypes' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '">';
@@ -6566,7 +6566,7 @@ class Form
 					// We will use the rate defined into MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS
 					$defaulttx = '';
 					if (getDolGlobalString('MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS') != 'none') {
-						$defaulttx = $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS;
+						$defaulttx = getDolGlobalString('MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS');
 					}
 					if (preg_match('/\((.*)\)/', $defaulttx, $reg)) {
 						$defaultcode = $reg[1];
@@ -9684,7 +9684,7 @@ class Form
 			// List of extra languages
 			$arrayoflangcode = array();
 			if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
-				$arrayoflangcode[] = $conf->global->PDF_USE_ALSO_LANGUAGE_CODE;
+				$arrayoflangcode[] = getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE');
 			}
 
 			if (is_array($arrayoflangcode) && count($arrayoflangcode)) {

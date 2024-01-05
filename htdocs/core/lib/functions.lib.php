@@ -3552,7 +3552,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 		return '';
 	}
 	if (getDolGlobalString('MAIN_PHONE_SEPAR')) {
-		$separ = $conf->global->MAIN_PHONE_SEPAR;
+		$separ = getDolGlobalString('MAIN_PHONE_SEPAR');
 	}
 	if (empty($countrycode) && is_object($mysoc)) {
 		$countrycode = $mysoc->country_code;
@@ -5465,7 +5465,7 @@ function dol_print_error_email($prefixcode, $errormessage = '', $errormessages =
 	global $langs, $conf;
 
 	if (empty($email)) {
-		$email = $conf->global->MAIN_INFO_SOCIETE_MAIL;
+		$email = getDolGlobalString('MAIN_INFO_SOCIETE_MAIL');
 	}
 
 	$langs->load("errors");
@@ -5911,7 +5911,7 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 			//$pagesizechoices.=',0:'.$langs->trans("All");     // Not yet supported
 			//$pagesizechoices.=',2:2';
 			if (getDolGlobalString('MAIN_PAGESIZE_CHOICES')) {
-				$pagesizechoices = $conf->global->MAIN_PAGESIZE_CHOICES;
+				$pagesizechoices = getDolGlobalString('MAIN_PAGESIZE_CHOICES');
 			}
 
 			print '<li class="pagination">';
@@ -6091,7 +6091,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	}
 	// Si on depasse max
 	if ($trunc && $nbdecimal > $conf->global->MAIN_MAX_DECIMALS_SHOWN) {
-		$nbdecimal = $conf->global->MAIN_MAX_DECIMALS_SHOWN;
+		$nbdecimal = getDolGlobalString('MAIN_MAX_DECIMALS_SHOWN');
 		if (preg_match('/\.\.\./i', $conf->global->MAIN_MAX_DECIMALS_SHOWN)) {
 			// Si un affichage est tronque, on montre des ...
 			$end = '...';
@@ -6101,9 +6101,9 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	// If force rounding
 	if ((string) $forcerounding != '-1') {
 		if ($forcerounding === 'MU') {
-			$nbdecimal = $conf->global->MAIN_MAX_DECIMALS_UNIT;
+			$nbdecimal = getDolGlobalString('MAIN_MAX_DECIMALS_UNIT');
 		} elseif ($forcerounding === 'MT') {
-			$nbdecimal = $conf->global->MAIN_MAX_DECIMALS_TOT;
+			$nbdecimal = getDolGlobalString('MAIN_MAX_DECIMALS_TOT');
 		} elseif ($forcerounding >= 0) {
 			$nbdecimal = $forcerounding;
 		}
@@ -6232,9 +6232,9 @@ function price2num($amount, $rounding = '', $option = 0)
 	if ($rounding) {
 		$nbofdectoround = '';
 		if ($rounding == 'MU') {
-			$nbofdectoround = $conf->global->MAIN_MAX_DECIMALS_UNIT;
+			$nbofdectoround = getDolGlobalString('MAIN_MAX_DECIMALS_UNIT');
 		} elseif ($rounding == 'MT') {
-			$nbofdectoround = $conf->global->MAIN_MAX_DECIMALS_TOT;
+			$nbofdectoround = getDolGlobalString('MAIN_MAX_DECIMALS_TOT');
 		} elseif ($rounding == 'MS') {
 			$nbofdectoround = isset($conf->global->MAIN_MAX_DECIMALS_STOCK) ? $conf->global->MAIN_MAX_DECIMALS_STOCK : 5;
 		} elseif ($rounding == 'CU') {
@@ -6737,7 +6737,7 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 			// or '1.23 (CODE)'
 			$defaulttx = '';
 			if (getDolGlobalString('MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS') != 'none') {
-				$defaulttx = $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS;
+				$defaulttx = getDolGlobalString('MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS');
 			}
 			/*if (preg_match('/\((.*)\)/', $defaulttx, $reg)) {
 				$defaultcode = $reg[1];
@@ -9454,7 +9454,7 @@ function dol_osencode($str)
 		$tmp = 'utf-8'; // By default for other
 	}
 	if (getDolGlobalString('MAIN_FILESYSTEM_ENCODING')) {
-		$tmp = $conf->global->MAIN_FILESYSTEM_ENCODING;
+		$tmp = getDolGlobalString('MAIN_FILESYSTEM_ENCODING');
 	}
 
 	if ($tmp == 'iso-8859-1') {

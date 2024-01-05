@@ -1817,7 +1817,7 @@ class Adherent extends CommonObject
 				// Add line to draft invoice
 				$idprodsubscription = 0;
 				if (getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') && (isModEnabled("product") || isModEnabled("service"))) {
-					$idprodsubscription = $conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS;
+					$idprodsubscription = getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS');
 				}
 
 				$vattouse = 0;
@@ -2169,7 +2169,7 @@ class Adherent extends CommonObject
 			}
 		}
 
-		if ($conf->global->ADHERENT_USE_SPIP && isModEnabled('mailmanspip')) {
+		if (getDolGlobalString('ADHERENT_USE_SPIP') && isModEnabled('mailmanspip')) {
 			$result = $mailmanspip->del_to_spip($this);
 			if ($result < 0) {
 				$this->errors[] = $mailmanspip->error;
@@ -2598,7 +2598,7 @@ class Adherent extends CommonObject
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('ADHERENT_ADDON_PDF')) {
-				$modele = $conf->global->ADHERENT_ADDON_PDF;
+				$modele = getDolGlobalString('ADHERENT_ADDON_PDF');
 			}
 		}
 
@@ -2697,7 +2697,7 @@ class Adherent extends CommonObject
 			$dn = getDolGlobalString('LDAP_KEY_MEMBERS') . "=".$info[getDolGlobalString('LDAP_KEY_MEMBERS')]."," . getDolGlobalString('LDAP_MEMBER_DN');
 		}
 		if ($mode == 1) {
-			$dn = $conf->global->LDAP_MEMBER_DN;
+			$dn = getDolGlobalString('LDAP_MEMBER_DN');
 		}
 		if ($mode == 2) {
 			$dn = getDolGlobalString('LDAP_KEY_MEMBERS') . "=".$info[getDolGlobalString('LDAP_KEY_MEMBERS')];

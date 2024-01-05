@@ -61,7 +61,7 @@ if (defined('PHP-BARCODE_PATH_COMMAND')) {
 } else {
 	$genbarcode_loc = '';
 	if (getDolGlobalString('GENBARCODE_LOCATION')) {
-		$genbarcode_loc = $conf->global->GENBARCODE_LOCATION;
+		$genbarcode_loc = getDolGlobalString('GENBARCODE_LOCATION');
 	}
 }
 

@@ -968,7 +968,7 @@ class SkillRank extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('hrm_SKILLRANK_ADDON') . ".php";
-			$classname = $conf->global->hrm_SKILLRANK_ADDON;
+			$classname = getDolGlobalString('hrm_SKILLRANK_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -1031,7 +1031,7 @@ class SkillRank extends CommonObject
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('SKILLRANK_ADDON_PDF')) {
-				$modele = $conf->global->SKILLRANK_ADDON_PDF;
+				$modele = getDolGlobalString('SKILLRANK_ADDON_PDF');
 			}
 		}
 

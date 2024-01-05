@@ -926,7 +926,7 @@ class EvaluationLine extends CommonObjectLine
 			$mybool = false;
 
 			$file = getDolGlobalString('hrm_EVALUATIONLINE_ADDON') . ".php";
-			$classname = $conf->global->hrm_EVALUATIONLINE_ADDON;
+			$classname = getDolGlobalString('hrm_EVALUATIONLINE_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -989,7 +989,7 @@ class EvaluationLine extends CommonObjectLine
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('EVALUATIONLINE_ADDON_PDF')) {
-				$modele = $conf->global->EVALUATIONLINE_ADDON_PDF;
+				$modele = getDolGlobalString('EVALUATIONLINE_ADDON_PDF');
 			}
 		}
 

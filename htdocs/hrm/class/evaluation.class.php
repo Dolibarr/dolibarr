@@ -958,7 +958,7 @@ class Evaluation extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('HRMTEST_EVALUATION_ADDON') . ".php";
-			$classname = $conf->global->HRMTEST_EVALUATION_ADDON;
+			$classname = getDolGlobalString('HRMTEST_EVALUATION_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -1020,7 +1020,7 @@ class Evaluation extends CommonObject
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('EVALUATION_ADDON_PDF')) {
-				$modele = $conf->global->EVALUATION_ADDON_PDF;
+				$modele = getDolGlobalString('EVALUATION_ADDON_PDF');
 			}
 		}
 

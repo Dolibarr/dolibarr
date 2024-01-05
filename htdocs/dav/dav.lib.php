@@ -23,8 +23,8 @@
 
 // define CDAV_CONTACT_TAG if not
 if (!defined('CDAV_CONTACT_TAG')) {
-	if (isset($conf->global->CDAV_CONTACT_TAG)) {
-		define('CDAV_CONTACT_TAG', $conf->global->CDAV_CONTACT_TAG);
+	if (getDolGlobalString('CDAV_CONTACT_TAG')) {
+		define('CDAV_CONTACT_TAG', getDolGlobalString('CDAV_CONTACT_TAG'));
 	} else {
 		define('CDAV_CONTACT_TAG', '');
 	}

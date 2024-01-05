@@ -2632,9 +2632,9 @@ class Ticket extends CommonObject
 
 						if (empty($sendto)) {
 							if (getDolGlobalString('TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL')) {
-								$sendto[getDolGlobalString('TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL')] = $conf->global->TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL;
+								$sendto[getDolGlobalString('TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL')] = getDolGlobalString('TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL');
 							} elseif (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')) {
-								$sendto[getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
+								$sendto[getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')] = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO');
 							}
 						}
 
@@ -2642,7 +2642,7 @@ class Ticket extends CommonObject
 						if (getDolGlobalString('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS') &&
 							getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO') && !array_key_exists($conf->global->TICKET_NOTIFICATION_EMAIL_TO, $sendto)
 						) {
-							$sendto[getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
+							$sendto[getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')] = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO');
 						}
 
 						if (!empty($sendto)) {

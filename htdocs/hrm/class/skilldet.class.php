@@ -894,7 +894,7 @@ class Skilldet extends CommonObjectLine
 			$mybool = false;
 
 			$file = getDolGlobalString('hrm_SKILLDET_ADDON') . ".php";
-			$classname = $conf->global->hrm_SKILLDET_ADDON;
+			$classname = getDolGlobalString('hrm_SKILLDET_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -957,7 +957,7 @@ class Skilldet extends CommonObjectLine
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('SKILLDET_ADDON_PDF')) {
-				$modele = $conf->global->SKILLDET_ADDON_PDF;
+				$modele = getDolGlobalString('SKILLDET_ADDON_PDF');
 			}
 		}
 

@@ -768,7 +768,7 @@ class PaiementFourn extends Paiement
 			$mybool = false;
 
 			$file = getDolGlobalString('SUPPLIER_PAYMENT_ADDON') . ".php";
-			$classname = $conf->global->SUPPLIER_PAYMENT_ADDON;
+			$classname = getDolGlobalString('SUPPLIER_PAYMENT_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -844,7 +844,7 @@ class PaiementFourn extends Paiement
 		// Set the model on the model name to use
 		if (empty($modele)) {
 			if (getDolGlobalString('SUPPLIER_PAYMENT_ADDON_PDF')) {
-				$modele = $conf->global->SUPPLIER_PAYMENT_ADDON_PDF;
+				$modele = getDolGlobalString('SUPPLIER_PAYMENT_ADDON_PDF');
 			} else {
 				$modele = ''; // No default value. For supplier invoice, we allow to disable all PDF generation
 			}
