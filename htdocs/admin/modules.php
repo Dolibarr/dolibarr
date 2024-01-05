@@ -558,7 +558,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		$deschelp .= '<div class="info hideonsmartphone">'.$desc."<br></div>\n";
 	}
 	if (getDolGlobalString('MAIN_SETUP_MODULES_INFO')) {	// Show a custom message
-		$deschelp .= '<div class="info">'.$langs->trans($conf->global->MAIN_SETUP_MODULES_INFO)."<br></div>\n";
+		$deschelp .= '<div class="info">'.$langs->trans(getDolGlobalString('MAIN_SETUP_MODULES_INFO'))."<br></div>\n";
 	}
 	if ($deschelp) {
 		$deschelp .= '<br>';
@@ -851,7 +851,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		}
 
 		// Activate/Disable and Setup (2 columns)
-		if (!empty($conf->global->$const_name)) {	// If module is already activated
+		if (getDolGlobalString($const_name)) {	// If module is already activated
 			// Set $codeenabledisable
 			$disableSetup = 0;
 			if (!empty($arrayofwarnings[$modName])) {
@@ -1143,9 +1143,9 @@ if ($mode == 'marketplace') {
 		print $nextlink;
 		print '</form>';
 
-
 		print '</div></div>';
-		print '<div class="clearboth"></div>'; ?>
+		print '<div class="clearboth"></div>';
+		?>
 
 			<div id="category-tree-left">
 				<ul class="tree">
@@ -1242,7 +1242,7 @@ if ($mode == 'deploy') {
 
 			print $langs->trans("YouCanSubmitFile").'<br><br>';
 
-			$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
+			$max = getDolGlobalString('MAIN_UPLOAD_DOC'); // In Kb
 			$maxphp = @ini_get('upload_max_filesize'); // In unknown
 			if (preg_match('/k$/i', $maxphp)) {
 				$maxphp = preg_replace('/k$/i', '', $maxphp);

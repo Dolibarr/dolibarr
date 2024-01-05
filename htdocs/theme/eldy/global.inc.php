@@ -245,6 +245,10 @@ input[type=submit], input[type=submit]:hover {
 input[type=checkbox], input[type=radio] {
 	margin: 0 3px 0 3px;
 }
+.kanban input.checkforselect {
+	margin-right: 0px;
+	margin-top: 5px;
+}
 input {
 	line-height: 1.3em;
 	padding: 4px;
@@ -1634,9 +1638,10 @@ maxscreenheightless200 {
 .clearboth  { clear:both; }
 
 .hideobject { display: none; }
-.minwidth25  { min-width: 25px; }
-.minwidth50  { min-width: 50px; }
-.minwidth75  { min-width: 75px; }
+.minwidth25 { min-width: 25px; }
+.minwidth50 { min-width: 50px; }
+.minwidth75 { min-width: 75px; }
+.nominwidth { min-width: fit-content !important; }
 /* rule for not too small screen only */
 @media only screen and (min-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC3') ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
@@ -2074,7 +2079,7 @@ td.showDragHandle {
 	/*display: block;
 	float: left; */
 	display: table-cell;
-	border-<?php echo $right; ?>: 1px solid #E0E0E0;
+	border-<?php echo $right; ?>: 1px solid #ECECEC;
 	box-shadow: 3px 0 6px -2px #eee;
 	background: var(--colorbackvmenu1);
 	transition: left 0.5s ease;
@@ -3615,12 +3620,15 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 
 .tabactive, a.tab#active {
 	color: var(--colortextbacktab) !important;
-	background: var(--colorbacktabcard1) !important;
+	/* background: var(--colorbacktabcard1) !important; */
 	margin: 0 0.2em 0 0.2em !important;
 
-	border-right: 1px solid #CCC !important;
-	border-left: 1px solid #CCC !important;
-	border-top: 3px solid var(--colorbackhmenu1) !important;
+	border-right: 1px solid transparent;
+	border-left: 1px solid transparent;
+	border-top: 1px solid transparent;
+	/*border-right: 1px solid #CCC !important;
+	border-left: 1px solid #CCC !important; */
+	border-bottom: 3px solid var(--colorbackhmenu1) !important;
 }
 .tabunactive, a.tab#unactive {
 	border-right: 1px solid transparent;
@@ -3982,7 +3990,7 @@ table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.nobor
 	padding: 7px 8px 7px 8px;			/* t r b l */
 }
 table.liste td, table.noborder td, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
-	padding: 7px 8px 7px 8px;			/* t r b l */
+	padding: 8px 6px 8px 6px;			/* t r b l */
 	/* line-height: 22px; This create trouble on cell login on list of last events of a contract*/
 	height: 22px;
 }
@@ -4999,7 +5007,7 @@ table.table-fiche-title {
 
 
 div.backgreypublicpayment {
-	background-color: #f0f0f0;
+	background-color: var(--colorbackgrey);
 	padding: 20px;
 	border-bottom: 1px solid #ddd;
 	text-align: center;
@@ -5007,7 +5015,10 @@ div.backgreypublicpayment {
 	top: 0;
 	z-index: 1005;
 }
-.backgreypublicpayment a { color: #222 !important; }
+.backgreypublicpayment a {
+	color: var(--colorblack) !important;
+	opacity: 0.9;
+}
 .poweredbypublicpayment {
 	float: right;
 	top: 8px;
@@ -5176,6 +5187,7 @@ div.ui-tooltip.mytooltip {
 	color: var(--tooltipfontcolor);
 	line-height: 1.6em;
 	min-width: 550px;
+	pointer-events: none;
 }
 
 <?php
@@ -7206,12 +7218,12 @@ div.tabsElem a.tab {
 	border: 1px solid #e8e8e8;
 	padding: 30px;
 	border-radius: 8px;
-	background-color: #f8f8f8;
+	background-color: var(--colorbackgrey);
 	/*box-shadow: 2px 2px 10px #ddd;*/
 }
 
 .publicnewmemberform #tablesubscribe {
-	color: #666;
+	color: var(--colortextbackvmenu);
 }
 
 @media only screen and (max-width: 767px)

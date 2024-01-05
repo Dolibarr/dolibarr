@@ -151,9 +151,7 @@ class ExpenseReports extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve Expense Report list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No Expense Report found');
-		}
+
 		return $obj_ret;
 	}
 

@@ -1765,7 +1765,7 @@ if ($action == 'create') {
 					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 					$nbrows = ROWS_2;
 					if (getDolGlobalString('MAIN_INPUT_DESC_HEIGHT')) {
-						$nbrows = $conf->global->MAIN_INPUT_DESC_HEIGHT;
+						$nbrows = getDolGlobalString('MAIN_INPUT_DESC_HEIGHT');
 					}
 					$enable = (isset($conf->global->FCKEDITOR_ENABLE_DETAILS) ? $conf->global->FCKEDITOR_ENABLE_DETAILS : 0);
 					$doleditor = new DolEditor('product_desc', $objp->description, '', 92, 'dolibarr_details', '', false, true, $enable, $nbrows, '90%');

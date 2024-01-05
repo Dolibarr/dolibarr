@@ -1364,7 +1364,7 @@ class FormOther
 			// Define $box_max_lines
 			$box_max_lines = 5;
 			if (getDolGlobalString('MAIN_BOXES_MAXLINES')) {
-				$box_max_lines = $conf->global->MAIN_BOXES_MAXLINES;
+				$box_max_lines = getDolGlobalString('MAIN_BOXES_MAXLINES');
 			}
 
 			$ii = 0;
@@ -1469,7 +1469,7 @@ class FormOther
 					} else {
 						print '<option value="'.$obj->{$keyfield}.'">';
 					}
-					$label = ($langs->trans($dictionarytable.$obj->{$keyfield}) != ($dictionarytable.$obj->{$labelfield}) ? $langs->trans($dictionarytable.$obj->{$keyfield}) : $obj->{$labelfield});
+					$label = ($langs->trans($dictionarytable.$obj->{$keyfield}) != $dictionarytable.$obj->{$labelfield} ? $langs->trans($dictionarytable.$obj->{$keyfield}) : $obj->{$labelfield});
 					print $label;
 					print '</option>';
 					$i++;

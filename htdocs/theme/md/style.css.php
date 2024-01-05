@@ -105,7 +105,7 @@ $path = ''; // This value may be used in future for external module to overwrite
 $theme = 'md'; // Value of theme
 if (getDolGlobalString('MAIN_OVERWRITE_THEME_RES')) {
 	$path = '/' . getDolGlobalString('MAIN_OVERWRITE_THEME_RES');
-	$theme = $conf->global->MAIN_OVERWRITE_THEME_RES;
+	$theme = getDolGlobalString('MAIN_OVERWRITE_THEME_RES');
 }
 
 // Define image path files and other constants
@@ -826,6 +826,10 @@ input:-webkit-autofill {
 
 input[type=checkbox], input[type=radio] {
 	margin: 0 3px 0 3px;
+}
+.kanban input.checkforselect {
+	margin-right: 0px;
+	margin-top: 5px;
 }
 
 /* CSS for placeholder */
@@ -1871,6 +1875,7 @@ tr.nobottom td {
 .minwidth25  { min-width: 25px; }
 .minwidth50  { min-width: 50px; }
 .minwidth75  { min-width: 75px; }
+.nominwidth { min-width: fit-content !important; }
 /* rule for not too small screen only */
 @media only screen and (min-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC3') ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)
 {
@@ -4049,7 +4054,7 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-bottom-color:  #BBB;
 	border-bottom-style: solid;
 
-	margin: 0px 0px 15px 0px;
+	margin: 0px 0px 20px 0px;
 
 	-webkit-border-radius: 0.1em;
 	border-radius: 0.1em;
@@ -7808,6 +7813,9 @@ table.jPicker {
 		max-width: <?php echo max(24, ceil(300 / ($nbtopmenuentriesreal + 2))); ?>px;	/* size of viewport */
 		text-overflow: clip;
 	}
+	.menuhider div.tmenucenter {
+		max-width: 28px;
+	}
 	.mainmenuaspan {
 		  font-size: 10px;
 		  padding-left: 0;
@@ -7835,6 +7843,11 @@ table.jPicker {
 	}
 	li.tmenu, li.tmenusel {
 		min-width: 30px;
+	}
+	a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active,
+	a.tmenusel:link, a.tmenusel:visited, a.tmenusel:hover, a.tmenusel:active {
+		padding-left: 1px;
+		padding-right: 1px;
 	}
 
 	div.login_block {

@@ -340,9 +340,9 @@ $creditor = $mysoc->name;
 $paramcreditor = 'ONLINE_PAYMENT_CREDITOR';
 $paramcreditorlong = 'ONLINE_PAYMENT_CREDITOR_'.$suffix;
 if (!empty($conf->global->$paramcreditorlong)) {
-	$creditor = $conf->global->$paramcreditorlong;	// use label long of the seller to show
+	$creditor = getDolGlobalString($paramcreditorlong);	// use label long of the seller to show
 } elseif (!empty($conf->global->$paramcreditor)) {
-	$creditor = $conf->global->$paramcreditor;		// use label short of the seller to show
+	$creditor = getDolGlobalString($paramcreditor);		// use label short of the seller to show
 }
 
 $mesg = '';
@@ -433,7 +433,7 @@ if ($action == 'dopayment') {
 
 	if ($paymentmethod == 'paybox') {
 		$PRICE = price2num(GETPOST("newamount"), 'MT');
-		$email = $conf->global->ONLINE_PAYMENT_SENDEMAIL;
+		$email = getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL');
 		$thirdparty_id = GETPOST('thirdparty_id', 'int');
 
 		$origfulltag = GETPOST("fulltag", 'alpha');
@@ -892,9 +892,9 @@ $logosmall = $mysoc->logo_small;
 $logo = $mysoc->logo;
 $paramlogo = 'ONLINE_PAYMENT_LOGO_'.$suffix;
 if (!empty($conf->global->$paramlogo)) {
-	$logosmall = $conf->global->$paramlogo;
+	$logosmall = getDolGlobalString($paramlogo);
 } elseif (getDolGlobalString('ONLINE_PAYMENT_LOGO')) {
-	$logosmall = $conf->global->ONLINE_PAYMENT_LOGO;
+	$logosmall = getDolGlobalString('ONLINE_PAYMENT_LOGO');
 }
 //print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 // Define urllogo
@@ -1799,11 +1799,11 @@ if ($source == 'donation') {
 		if (empty($valtoshow)) {
 			if (getDolGlobalString('DONATION_NEWFORM_EDITAMOUNT')) {
 				if (getDolGlobalString('DONATION_NEWFORM_AMOUNT')) {
-					$valtoshow = $conf->global->DONATION_NEWFORM_AMOUNT;
+					$valtoshow = getDolGlobalString('DONATION_NEWFORM_AMOUNT');
 				}
 			} else {
 				if (getDolGlobalString('DONATION_NEWFORM_AMOUNT')) {
-					$amount = $conf->global->DONATION_NEWFORM_AMOUNT;
+					$amount = getDolGlobalString('DONATION_NEWFORM_AMOUNT');
 				}
 			}
 		}

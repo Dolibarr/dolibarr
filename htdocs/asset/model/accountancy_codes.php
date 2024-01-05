@@ -131,7 +131,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 
 $help_url = '';
-llxHeader('', $langs->trans('AssetModel'), $help_url);
+llxHeader('', $langs->trans('AssetModel'), $help_url, '', 0, 0, '', '', '', 'mod-asset page-model-card_accountancy');
 
 if ($id > 0 || !empty($ref)) {
 	$head = assetModelPrepareHead($object);

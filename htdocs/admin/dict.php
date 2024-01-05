@@ -2540,7 +2540,7 @@ $db->close();
  *  @param		string		$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
  *	@return		string						'' or value of entity into table
  */
-function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
+function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 {
 	global $conf, $langs, $db, $mysoc;
 	global $form;
@@ -2597,7 +2597,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			print '</td>';
 		} elseif ($value == 'lang') {
 			print '<td>';
-			print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'lang');
+			print $formadmin->select_language(getDolGlobalString('MAIN_LANG_DEFAULT'), 'lang');
 			print '</td>';
 		} elseif (in_array($value, array('element', 'source'))) {	// Example: the type and source of the element (for contact types)
 			$tmparray = array();

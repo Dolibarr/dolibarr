@@ -2503,7 +2503,7 @@ class User extends CommonObject
 		if (!$changelater) {
 			$url = $urlwithroot.'/';
 			if (getDolGlobalString('URL_REDIRECTION_AFTER_CHANGEPASSWORD')) {
-				$url = $conf->global->URL_REDIRECTION_AFTER_CHANGEPASSWORD;
+				$url = getDolGlobalString('URL_REDIRECTION_AFTER_CHANGEPASSWORD');
 			}
 
 			dol_syslog(get_class($this)."::send_password changelater is off, url=".$url);
@@ -3203,7 +3203,7 @@ class User extends CommonObject
 			$return .= '<br><span class="info-box-label opacitymedium small">'.img_picto('', 'email').' '.$this->email.'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
@@ -3232,7 +3232,7 @@ class User extends CommonObject
 		if ($mode == 0) {
 			$dn = getDolGlobalString('LDAP_KEY_USERS') . "=".$info[getDolGlobalString('LDAP_KEY_USERS')]."," . getDolGlobalString('LDAP_USER_DN');
 		} elseif ($mode == 1) {
-			$dn = $conf->global->LDAP_USER_DN;
+			$dn = getDolGlobalString('LDAP_USER_DN');
 		} elseif ($mode == 2) {
 			$dn = getDolGlobalString('LDAP_KEY_USERS') . "=".$info[getDolGlobalString('LDAP_KEY_USERS')];
 		}
@@ -3925,7 +3925,7 @@ class User extends CommonObject
 		// Positionne le modele sur le nom du modele a utiliser
 		if (!dol_strlen($modele)) {
 			if (getDolGlobalString('USER_ADDON_PDF')) {
-				$modele = $conf->global->USER_ADDON_PDF;
+				$modele = getDolGlobalString('USER_ADDON_PDF');
 			} else {
 				$modele = 'bluesky';
 			}

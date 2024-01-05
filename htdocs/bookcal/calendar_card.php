@@ -17,7 +17,7 @@
  */
 
 /**
- *   	\file       calendar_card.php
+ *   	\file       htdocs/bookcal/calendar_card.php
  *		\ingroup    bookcal
  *		\brief      Page to create/edit/view calendar
  */

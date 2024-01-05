@@ -428,6 +428,7 @@ if ($action == 'create') {
 	if ($objectbom->id > 0) {
 		print load_fiche_titre($titlelist);
 
+		print '<!-- list of product/services to consume -->'."\n";
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 

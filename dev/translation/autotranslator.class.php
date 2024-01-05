@@ -240,7 +240,7 @@ class autoTranslator
 			if ($this->_outputpagecode == 'UTF-8') {
 				$val=$this->translateTexts(array($value), substr($this->_refLang, 0, 2), substr($my_destlang, 0, 2));
 			} else {
-				$val=utf8_decode($this->translateTexts(array($value), substr($this->_refLang, 0, 2), substr($my_destlang, 0, 2)));
+				$val=mb_convert_encoding($this->translateTexts(array($value), substr($this->_refLang, 0, 2), substr($my_destlang, 0, 2)), 'ISO-8859-1');
 			}
 		}
 

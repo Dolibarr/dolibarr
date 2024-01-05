@@ -9,6 +9,9 @@
 if (!defined("NOLOGIN")) {
 	define("NOLOGIN", '1');
 }
+if (!defined("NOSESSION")) {
+	define("NOSESSION", '1');
+}
 if (!defined("NOHTTPSREDIRECT")) {
 	define("NOHTTPSREDIRECT", '1');
 }

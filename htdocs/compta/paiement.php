@@ -141,7 +141,7 @@ if (empty($reshook)) {
 			} elseif (substr($key, 0, 21) == 'multicurrency_amount_') {
 				$cursorfacid = substr($key, 21);
 				$multicurrency_amounts[$cursorfacid] = price2num(GETPOST($key));
-				$multicurrency_totalpayment += floatval($multicurrency_amounts[$cursorfacid]);
+				$multicurrency_totalpayment += (float) $multicurrency_amounts[$cursorfacid];
 				if (!empty($multicurrency_amounts[$cursorfacid])) {
 					$atleastonepaymentnotnull++;
 				}
@@ -301,7 +301,7 @@ if (empty($reshook)) {
 			$invoiceid = 0;
 			foreach ($paiement->amounts as $key => $amount) {
 				$facid = $key;
-				if (is_numeric($amount) && $amount <> 0) {
+				if (is_numeric($amount) && $amount != 0) {
 					if ($invoiceid != 0) {
 						$invoiceid = -1; // There is more than one invoice payed by this payment
 					} else {
@@ -363,7 +363,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		// TODO add hook here
 		if (isModEnabled('paypalplus') && $conf->global->PAYPAL_ENABLE_TRANSACTION_MANAGEMENT && !empty($facture->ref_ext)) {
 			if (getDolGlobalString('PAYPAL_BANK_ACCOUNT')) {
-				$accountid = $conf->global->PAYPAL_BANK_ACCOUNT;
+				$accountid = getDolGlobalString('PAYPAL_BANK_ACCOUNT');
 			}
 			$paymentnum = $facture->ref_ext;
 		}

@@ -491,7 +491,7 @@ class Account extends CommonObject
 	 *      @param  string      $type       To search using type
 	 *      @return array|int               Array of links array('url'=>, 'url_id'=>, 'label'=>, 'type'=> 'fk_bank'=> ) or -1 on error
 	 */
-	public function get_url($fk_bank = '', $url_id = '', $type = '')
+	public function get_url($fk_bank = 0, $url_id = 0, $type = '')
 	{
 		// phpcs:enable
 		$lines = array();
@@ -1258,7 +1258,7 @@ class Account extends CommonObject
 	 * 	Return current sold
 	 *
 	 * 	@param	int		$option		1=Exclude future operation date (this is to exclude input made in advance and have real account sold)
-	 *	@param	int		$date_end	Date until we want to get bank account sold
+	 *	@param	int|string		$date_end	Date until we want to get bank account sold
 	 *	@param	string	$field		dateo or datev
 	 *	@return	int		current sold (value date <= today)
 	 */
@@ -1784,7 +1784,7 @@ class Account extends CommonObject
 		);
 
 		if (getDolGlobalString('BANK_SHOW_ORDER_OPTION')) {
-			if (is_numeric($conf->global->BANK_SHOW_ORDER_OPTION)) {
+			if (is_numeric(getDolGlobalString('BANK_SHOW_ORDER_OPTION'))) {
 				if (getDolGlobalString('BANK_SHOW_ORDER_OPTION') == '1') {
 					$fieldlists = array(
 						'BankCode',
@@ -1889,7 +1889,7 @@ class Account extends CommonObject
 			$return .= '<span class="opacitymedium">'.$langs->trans("Balance").'</span> : <span class="amount">'.price(price2num($this->solde(1), 'MT'), 0, $langs, 1, -1, -1, $this->currency_code).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
@@ -2354,7 +2354,7 @@ class AccountLine extends CommonObjectLine
 		// Check statement field
 		if (getDolGlobalString('BANK_STATEMENT_REGEX_RULE')) {
 			if (!preg_match('/' . getDolGlobalString('BANK_STATEMENT_REGEX_RULE').'/', $this->num_releve)) {
-				$this->errors[] = $langs->trans("ErrorBankStatementNameMustFollowRegex", $conf->global->BANK_STATEMENT_REGEX_RULE);
+				$this->errors[] = $langs->trans("ErrorBankStatementNameMustFollowRegex", getDolGlobalString('BANK_STATEMENT_REGEX_RULE'));
 				return -1;
 			}
 		}

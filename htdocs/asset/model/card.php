@@ -144,7 +144,7 @@ $formfile = new FormFile($db);
 
 $title = $langs->trans("AssetModel") . ' - ' . $langs->trans("Card");
 $help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-asset page-model-card');
 
 // Part to create
 if ($action == 'create') {

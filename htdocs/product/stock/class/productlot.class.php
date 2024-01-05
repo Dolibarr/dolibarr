@@ -1237,7 +1237,7 @@ class Productlot extends CommonObject
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('PRODUCT_BATCH_ADDON_PDF')) {
-				$modele = $conf->global->PRODUCT_BATCH_ADDON_PDF;
+				$modele = getDolGlobalString('PRODUCT_BATCH_ADDON_PDF');
 			}
 		}
 
