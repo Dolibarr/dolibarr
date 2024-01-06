@@ -189,13 +189,13 @@ if ($action == 'add' && $user->hasRight('banque', 'transfer')) {
 					$error++;
 				}
 				if (!$error) {
-					$mesgs = $langs->trans("TransferFromToDone", '{s1}', '{s2}', $amount[$n], $langs->transnoentitiesnoconv("Currency".$conf->currency));
-					$mesgs = str_replace('{s1}', '<a href="bankentries_list.php?id='.$tmpaccountfrom->id.'&sortfield=b.datev,b.dateo,b.rowid&sortorder=desc">'.$tmpaccountfrom->label.'</a>', $mesgs);
-					$mesgs = str_replace('{s2}', '<a href="bankentries_list.php?id='.$tmpaccountto->id.'">'.$tmpaccountto->label.'</a>', $mesgs);
-					setEventMessages($mesgs, null, 'mesgs');
+					$mesg = $langs->trans("TransferFromToDone", '{s1}', '{s2}', $amount[$n], $langs->transnoentitiesnoconv("Currency".$conf->currency));
+					$mesg = str_replace('{s1}', '<a href="bankentries_list.php?id='.$tmpaccountfrom->id.'&sortfield=b.datev,b.dateo,b.rowid&sortorder=desc">'.$tmpaccountfrom->label.'</a>', $mesg);
+					$mesg = str_replace('{s2}', '<a href="bankentries_list.php?id='.$tmpaccountto->id.'">'.$tmpaccountto->label.'</a>', $mesg);
+					setEventMessage($mesg);
 				} else {
 					$error++;
-					setEventMessages($tmpaccountfrom->error.' '.$tmpaccountto->error, null, 'errors');
+					setEventMessage($tmpaccountfrom->error.' '.$tmpaccountto->error, 'errors');
 				}
 			}
 		}
