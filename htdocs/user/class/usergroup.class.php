@@ -898,7 +898,7 @@ class UserGroup extends CommonObject
 			$dn = getDolGlobalString('LDAP_KEY_GROUPS') . "=".$info[getDolGlobalString('LDAP_KEY_GROUPS')]."," . getDolGlobalString('LDAP_GROUP_DN');
 		}
 		if ($mode == 1) {
-			$dn = $conf->global->LDAP_GROUP_DN;
+			$dn = getDolGlobalString('LDAP_GROUP_DN');
 		}
 		if ($mode == 2) {
 			$dn = getDolGlobalString('LDAP_KEY_GROUPS') . "=".$info[getDolGlobalString('LDAP_KEY_GROUPS')];
@@ -996,7 +996,7 @@ class UserGroup extends CommonObject
 		// Positionne le modele sur le nom du modele a utiliser
 		if (!dol_strlen($modele)) {
 			if (getDolGlobalString('USERGROUP_ADDON_PDF')) {
-				$modele = $conf->global->USERGROUP_ADDON_PDF;
+				$modele = getDolGlobalString('USERGROUP_ADDON_PDF');
 			} else {
 				$modele = 'grass';
 			}

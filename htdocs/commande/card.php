@@ -166,6 +166,8 @@ if (empty($reshook)) {
 		}
 	}
 
+	$selectedLines = GETPOST('toselect', 'array');
+
 	if ($cancel) {
 		if (!empty($backtopageforcancel)) {
 			header("Location: ".$backtopageforcancel);
@@ -206,7 +208,7 @@ if (empty($reshook)) {
 	} elseif ($action == 'reopen' && $usercancreate) {
 		// Reopen a closed order
 		if ($object->statut == Commande::STATUS_CANCELED || $object->statut == Commande::STATUS_CLOSED) {
-			if (dolGetGlobalInt('ORDER_REOPEN_TO_DRAFT')) {
+			if (getDolGlobalInt('ORDER_REOPEN_TO_DRAFT')) {
 				$result = $object->setDraft($user, $idwarehouse);
 				if ($result < 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
@@ -265,7 +267,6 @@ if (empty($reshook)) {
 		// Add order
 		$datecommande = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 		$date_delivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
-		$selectedLines = GETPOST('toselect', 'array');
 
 		if ($datecommande == '') {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Date')), null, 'errors');
@@ -1645,7 +1646,7 @@ if ($action == 'create') {
 }
 $help_url = 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes|DE:Modul_Kundenaufträge';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-order page-card');
 
 $form = new Form($db);
 $formfile = new FormFile($db);
@@ -1802,7 +1803,7 @@ if ($action == 'create' && $usercancreate) {
 	}
 	if (isModEnabled('stock') && empty($warehouse_id) && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER')) {
 		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE')) {
-			$warehouse_id = $conf->global->MAIN_DEFAULT_WAREHOUSE;
+			$warehouse_id = getDolGlobalString('MAIN_DEFAULT_WAREHOUSE');
 		}
 		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) {
 			$warehouse_id = $user->fk_warehouse;
@@ -2015,7 +2016,7 @@ if ($action == 'create' && $usercancreate) {
 		print '<td>';
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
 		$liste = ModelePDFCommandes::liste_modeles($db);
-		$preselected = $conf->global->COMMANDE_ADDON_PDF;
+		$preselected = getDolGlobalString('COMMANDE_ADDON_PDF');
 		print img_picto('', 'pdf', 'class="pictofixedwidth"');
 		print $form->selectarray('model', $liste, $preselected, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200 widthcentpercentminusx', 1);
 		print "</td></tr>";
@@ -2915,7 +2916,7 @@ if ($action == 'create' && $usercancreate) {
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);
 			if (empty($reshook)) {
 				// Reopen a closed order
-				if (($object->statut == Commande::STATUS_CLOSED || $object->statut == Commande::STATUS_CANCELED) && $usercancreate) {
+				if (($object->statut == Commande::STATUS_CLOSED || $object->statut == Commande::STATUS_CANCELED) && $usercancreate && (!$object->billed || !getDolGlobalInt('ORDER_DONT_REOPEN_BILLED'))) {
 					print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&amp;token='.newToken().'&amp;id='.$object->id, '');
 				}
 
@@ -3044,7 +3045,7 @@ if ($action == 'create' && $usercancreate) {
 
 				// Cancel order
 				if ($object->statut == Commande::STATUS_VALIDATED && !empty($usercancancel)) {
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel&token='.newToken().'">'.$langs->trans("Cancel").'</a>';
+					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel&token='.newToken().'">'.$langs->trans("CancelOrder").'</a>';
 				}
 
 				// Delete order

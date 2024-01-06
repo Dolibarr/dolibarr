@@ -142,7 +142,7 @@ class pdf_espadon extends ModelePdfExpedition
 
 		// Show Draft Watermark
 		if ($object->statut == $object::STATUS_DRAFT && (getDolGlobalString('SHIPPING_DRAFT_WATERMARK'))) {
-			$this->watermark = $conf->global->SHIPPING_DRAFT_WATERMARK;
+			$this->watermark = getDolGlobalString('SHIPPING_DRAFT_WATERMARK');
 		}
 
 		global $outputlangsbis;

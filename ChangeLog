@@ -171,6 +171,7 @@ NEW: use account address in sepa mandate (#23642)
 NEW: VAT rate - Add entity
 NEW: webportal site account
 NEW: When an user unset the batch management of products, transformation of each batch stock mouvement in global stock mouvement
+FIX: #25828 wrong odt style naming
 
 SEC: #25512 applicative anti bruteforce - security on too many login attempts (#25520)
 SEC: Add action confirm_... as sensitive to need a CSRF token
@@ -199,6 +200,7 @@ QUAL: Standardize code and look and feel for dictionaries
 QUAL: Standardize code. Renamed ID of user properties into ->user_xxx_id
 QUAL: Use dol_clone with parameter 2 for ->oldcopy
 QUAL: use switch case instead of if elseif statements for actions
+QUAL: Better respect of REST API RFC.
 
 NEW: [Add hook in user bank page]
 NEW: #19501 Add two hooks in dolreceiptprinter.php (#26439)

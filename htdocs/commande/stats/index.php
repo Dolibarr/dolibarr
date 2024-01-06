@@ -101,7 +101,7 @@ if ($mode == 'supplier') {
 	$dir = $conf->fournisseur->commande->dir_temp;
 }
 
-llxHeader('', $title);
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-order page-stats');
 
 print load_fiche_titre($title, '', $picto);
 

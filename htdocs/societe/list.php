@@ -309,7 +309,7 @@ $result = restrictedArea($user, 'societe', $socid, '');
  * Actions
  */
 
-if ($action == "change") {	// Change customer for TakePOS
+if ($action == "change" && $user->hasRight('takepos', 'run')) {	// Change customer for TakePOS
 	$idcustomer = GETPOST('idcustomer', 'int');
 
 	// Check if draft invoice already exists, if not create it
@@ -538,7 +538,7 @@ $sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 //$sql .= ", COUNT(rc.rowid) as anotherfield";
 
-$sqlfields = $sql; // $sql fields to remove for count totall
+$sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s2 ON s.parent = s2.rowid";
@@ -609,6 +609,7 @@ if (!empty($searchCategoryCustomerList)) {
 		}
 	}
 }
+// Search Supplier Categories
 $searchCategorySupplierList = $search_categ_sup ? array($search_categ_sup) : array();
 $searchCategorySupplierOperator = 0;
 // Search for tag/category ($searchCategorySupplierList is an array of ID)
@@ -1695,6 +1696,8 @@ while ($i < $imaxinloop) {
 		$companystatic->fk_prospectlevel = $obj->fk_prospectlevel;
 		$companystatic->fk_parent = $obj->fk_parent;
 		$companystatic->entity = $obj->entity;
+
+		$object = $companystatic;
 	}
 
 	if ($mode == 'kanban') {

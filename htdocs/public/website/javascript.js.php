@@ -82,7 +82,7 @@ $type = '';
 
 $appli = constant('DOL_APPLICATION_TITLE');
 if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-	$appli = $conf->global->MAIN_APPLICATION_TITLE;
+	$appli = getDolGlobalString('MAIN_APPLICATION_TITLE');
 }
 
 //print 'Directory with '.$appli.' websites.<br>';

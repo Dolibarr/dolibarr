@@ -7,6 +7,7 @@
  * Copyright (C) 2021		Noé Cendrier			<noe.cendrier@altairis.fr>
  * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2022-2023	Charlene Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2023       Christian Foellmann     <christian@foellmann.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +75,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $result = restrictedArea($user, 'stock');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('warehousecard', 'globalcard'));
+$hookmanager->initHooks(array('warehousecard', 'stocklist', 'globalcard'));
 
 $object = new Entrepot($db);
 $extrafields = new ExtraFields($db);
@@ -406,7 +407,7 @@ if ($action == 'create') {
 		}
 
 		// View mode
-		if ($action <> 'edit' && $action <> 're-edit') {
+		if ($action != 'edit' && $action != 're-edit') {
 			$head = stock_prepare_head($object);
 
 			print dol_get_fiche_head($head, 'card', $langs->trans("Warehouse"), -1, 'stock');
@@ -597,7 +598,6 @@ if ($action == 'create') {
 
 
 			// Show list of products into warehouse
-			print '<br>';
 
 
 			$totalarray = array();
@@ -608,13 +608,16 @@ if ($action == 'create') {
 
 			// TODO Create $arrayfields with all fields to show
 
-			print '<table class="noborder centpercent">';
-			print "<tr class=\"liste_titre\">";
+			print load_fiche_titre($langs->trans("Stock"), '', 'stock');
+
+			print '<div class="div-table-responsive">';
+			print '<table class="noborder centpercent liste">';
+			print '<tr class="liste_titre">';
 			$parameters = array('totalarray' => &$totalarray);
 			$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
-			print_liste_field_titre("Product", "", "p.ref", "&amp;id=".$id, "", "", $sortfield, $sortorder);
+			print_liste_field_titre("Products", "", "p.ref", "&amp;id=".$id, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("Label", "", "p.label", "&amp;id=".$id, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("NumberOfUnit", "", "ps.reel", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
 			$totalarray['nbfield'] += 3;
@@ -857,7 +860,8 @@ if ($action == 'create') {
 			} else {
 				dol_print_error($db);
 			}
-			print "</table>\n";
+			print "</table>";
+			print '</div>';
 		}
 
 

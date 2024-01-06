@@ -324,7 +324,7 @@ if (empty($reshook)) {
 				$outputlangs = new Translate("", $conf);
 				$outputlangs->setDefaultLang($newlang);
 			}
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalStringempty('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$ret = $object->fetch($object->id); // Reload to get new records
 				$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}*/
@@ -866,7 +866,7 @@ if (empty($reshook)) {
 			}
 
 			if (!GETPOST('ref_supplier')) {
-				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('RefSupplier')), null, 'errors');
+				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('RefSupplierBill')), null, 'errors');
 				$action = 'create';
 				$_GET['socid'] = $_POST['socid'];
 				$error++;
@@ -1034,7 +1034,7 @@ if (empty($reshook)) {
 			}
 
 			if (!GETPOST('ref_supplier')) {
-				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('RefSupplier')), null, 'errors');
+				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('RefSupplierBill')), null, 'errors');
 				$action = 'create';
 				$_GET['socid'] = $_POST['socid'];
 				$error++;
@@ -2381,7 +2381,7 @@ if ($action == 'create') {
 		}
 
 		// Ref supplier
-		print '<tr><td class="fieldrequired">'.$langs->trans('RefSupplier').'</td><td><input name="ref_supplier" value="'.(GETPOSTISSET('ref_supplier') ? GETPOST('ref_supplier') : (!empty($objectsrc->ref_supplier) ? $objectsrc->ref_supplier : '')).'" type="text"';
+		print '<tr><td class="fieldrequired">'.$langs->trans('RefSupplierBill').'</td><td><input name="ref_supplier" value="'.(GETPOSTISSET('ref_supplier') ? GETPOST('ref_supplier') : (!empty($objectsrc->ref_supplier) ? $objectsrc->ref_supplier : '')).'" type="text"';
 		if (!empty($societe->id) && $societe->id > 0) {
 			print ' autofocus';
 		}
@@ -2961,7 +2961,7 @@ if ($action == 'create') {
 		if ($action == 'clone') {
 			// Create an array for form
 			$formquestion = array(
-				array('type' => 'text', 'name' => 'newsupplierref', 'label' => $langs->trans("RefSupplier"), 'value' => $langs->trans("CopyOf").' '.$object->ref_supplier),
+				array('type' => 'text', 'name' => 'newsupplierref', 'label' => $langs->trans("RefSupplierBill"), 'value' => $langs->trans("CopyOf").' '.$object->ref_supplier),
 				array('type' => 'date', 'name' => 'newdate', 'label' => $langs->trans("Date"), 'value' => dol_now())
 			);
 			// Ask confirmation to clone
@@ -3193,8 +3193,8 @@ if ($action == 'create') {
 
 		$morehtmlref = '<div class="refidno">';
 		// Ref supplier
-		$morehtmlref .= $form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $usercancreate, 'string', '', 0, 1);
-		$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $usercancreate, 'string', '', null, null, '', 1);
+		$morehtmlref .= $form->editfieldkey("RefSupplierBill", 'ref_supplier', $object->ref_supplier, $object, $usercancreate, 'string', '', 0, 1);
+		$morehtmlref .= $form->editfieldval("RefSupplierBill", 'ref_supplier', $object->ref_supplier, $object, $usercancreate, 'string', '', null, null, '', 1);
 		// Thirdparty
 		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'supplier');
 		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
@@ -4113,7 +4113,7 @@ if ($action == 'create') {
 				}
 
 				// Create event
-				/*if (isModEnabled('agenda') && !empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 	// Add hidden condition because this is not a "workflow" action so should appears somewhere else on page.
+				/*if (isModEnabled('agenda') && getDolGlobalString('MAIN_ADD_EVENT_ON_ELEMENT_CARD')) 	// Add hidden condition because this is not a "workflow" action so should appears somewhere else on page.
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddAction") . '</a></div>';
 				}*/

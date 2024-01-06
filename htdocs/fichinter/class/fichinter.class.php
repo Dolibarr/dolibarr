@@ -786,7 +786,7 @@ class Fichinter extends CommonObject
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('FICHEINTER_ADDON_PDF')) {
-				$modele = $conf->global->FICHEINTER_ADDON_PDF;
+				$modele = getDolGlobalString('FICHEINTER_ADDON_PDF');
 			}
 		}
 
@@ -1591,7 +1591,7 @@ class Fichinter extends CommonObject
 			$return .= '<br><span class="info-box-label ">'.$langs->trans("Duration").' : '.convertSecondToTime($this->duration, 'allhourmin').'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

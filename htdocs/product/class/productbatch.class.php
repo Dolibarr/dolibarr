@@ -523,10 +523,12 @@ class Productbatch extends CommonObject
 					$tmp->context['stock_date_entry'] = $obj->date_entree;
 				}
 
-				// Some properties of the lot
-				$tmp->lotid = $obj->lotid;	// ID in table of the details of properties of each lots
-				$tmp->sellby = $dbs->jdate($obj->sellby ? $obj->sellby : $obj->oldsellby);
-				$tmp->eatby = $dbs->jdate($obj->eatby ? $obj->eatby : $obj->oldeatby);
+				if ($fk_product > 0) {
+					// Some properties of the lot
+					$tmp->lotid = $obj->lotid;	// ID in table of the details of properties of each lots
+					$tmp->sellby = $dbs->jdate($obj->sellby ? $obj->sellby : $obj->oldsellby);
+					$tmp->eatby = $dbs->jdate($obj->eatby ? $obj->eatby : $obj->oldeatby);
+				}
 
 				$ret[$tmp->batch] = $tmp; // $ret is for a $fk_product_stock and unique key is on $fk_product_stock+batch
 				$i++;

@@ -825,7 +825,7 @@ class TimeSpent extends CommonObject
 			$return .= '<span class="info-box-label amount">'.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(5).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
@@ -953,7 +953,7 @@ class TimeSpent extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('TIMESPENT_timespent_ADDON') . ".php";
-			$classname = $conf->global->TIMESPENT_timespent_ADDON;
+			$classname = getDolGlobalString('TIMESPENT_timespent_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -1016,7 +1016,7 @@ class TimeSpent extends CommonObject
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('timespent_ADDON_PDF')) {
-				$modele = $conf->global->timespent_ADDON_PDF;
+				$modele = getDolGlobalString('timespent_ADDON_PDF');
 			}
 		}
 

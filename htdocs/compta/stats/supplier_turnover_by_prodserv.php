@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 $langs->loadLangs(array("products", "categories", "errors", 'accountancy'));
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
-$modecompta = $conf->global->ACCOUNTING_MODE;
+$modecompta = getDolGlobalString('ACCOUNTING_MODE');
 if (GETPOST("modecompta")) {
 	$modecompta = GETPOST("modecompta");
 }

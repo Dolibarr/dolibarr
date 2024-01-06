@@ -118,7 +118,7 @@ function dol_setcache($memoryid, $data, $expire = 0)
 		} else {
 			return -1;
 		}
-	} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {	// This is a really not reliable cache ! Use Memcached instead.
+	} elseif (getDolGlobalInt('MAIN_OPTIMIZE_SPEED') & 0x02) {	// This is a really not reliable cache ! Use Memcached instead.
 		// Using shmop
 		$result = dol_setshmop($memoryid, $data, $expire);
 	} else {
@@ -194,7 +194,7 @@ function dol_getcache($memoryid)
 		} else {
 			return null; // There is no way to make a difference between NOTFOUND and error when using Memcache. So do not use it, use Memcached instead.
 		}
-	} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {	// This is a really not reliable cache ! Use Memcached instead.
+	} elseif (getDolGlobalInt('MAIN_OPTIMIZE_SPEED') & 0x02) {	// This is a really not reliable cache ! Use Memcached instead.
 		// Using shmop
 		$data = dol_getshmop($memoryid);
 		return $data;
@@ -272,7 +272,7 @@ function dol_setshmop($memoryid, $data, $expire)
 	if ($handle) {
 		$shm_bytes_written1 = shmop_write($handle, str_pad($size, 6), 0);
 		$shm_bytes_written2 = shmop_write($handle, $newdata, 6);
-		if (($shm_bytes_written1 + $shm_bytes_written2) != (6 + dol_strlen($newdata))) {
+		if ($shm_bytes_written1 + $shm_bytes_written2 != 6 + dol_strlen($newdata)) {
 			print "Couldn't write the entire length of data\n";
 		}
 		shmop_close($handle);

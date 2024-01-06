@@ -22,8 +22,8 @@
  */
 
 /**
- *	\file       htdocs/compta/facture/prelevement.php
- *	\ingroup    facture
+ *	\file       htdocs/bookcal/booking_list.php
+ *	\ingroup    bookcal
  *	\brief      Management of direct debit order or credit tranfer of invoices
  */
 

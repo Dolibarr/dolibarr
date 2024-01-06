@@ -107,7 +107,7 @@ if ($object->element == 'product') {
 	print '<td>';
 	$ident = (GETPOST("dwid") ? GETPOST("dwid", 'int') : (GETPOST('id_entrepot') ? GETPOST('id_entrepot', 'int') : ($object->element == 'product' && $object->fk_default_warehouse ? $object->fk_default_warehouse : 'ifone')));
 	if (empty($ident) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE')) {
-		$ident = $conf->global->MAIN_DEFAULT_WAREHOUSE;
+		$ident = getDolGlobalString('MAIN_DEFAULT_WAREHOUSE');
 	}
 	print img_picto('', 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($ident, 'id_entrepot', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, null, 'minwidth100 maxwidth300 widthcentpercentminusx');
 	print '</td>';

@@ -117,7 +117,7 @@ function getDParameters($part)
  */
 function getAttachments($jk, $mbox)
 {
-	$structure = imap_fetchstructure($mbox, $jk);
+	$structure = imap_fetchstructure($mbox, $jk, FT_UID);
 	$parts = getParts($structure);
 	$fpos = 2;
 	$attachments = array();
@@ -153,7 +153,7 @@ function getAttachments($jk, $mbox)
  */
 function getFileData($jk, $fpos, $type, $mbox)
 {
-	$mege = imap_fetchbody($mbox, $jk, $fpos);
+	$mege = imap_fetchbody($mbox, $jk, $fpos, FT_UID);
 	$data = getDecodeValue($mege, $type);
 
 	return $data;

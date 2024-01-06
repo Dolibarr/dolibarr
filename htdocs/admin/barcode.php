@@ -162,7 +162,7 @@ foreach ($dirbarcode as $reldir) {
 	$handle = @opendir($newdir);
 	if (is_resource($handle)) {
 		while (($file = readdir($handle)) !== false) {
-			if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS') {
+			if (substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS') {
 				if (is_readable($newdir.$file)) {
 					if (preg_match('/(.*)\.modules\.php$/i', $file, $reg)) {
 						$filebis = $reg[1];
@@ -445,7 +445,7 @@ if (!isset($_SERVER['WINDIR'])) {
 	print '<input type="text" size="40" name="GENBARCODE_LOCATION" value="'.getDolGlobalString('GENBARCODE_LOCATION').'">';
 	if (getDolGlobalString('GENBARCODE_LOCATION') && !@file_exists($conf->global->GENBARCODE_LOCATION)) {
 		$langs->load("errors");
-		print '<br><span class="error">'.$langs->trans("ErrorFileNotFound", $conf->global->GENBARCODE_LOCATION).'</span>';
+		print '<br><span class="error">'.$langs->trans("ErrorFileNotFound", getDolGlobalString('GENBARCODE_LOCATION')).'</span>';
 	}
 	print '</td>';
 	print '<td>&nbsp;</td>';

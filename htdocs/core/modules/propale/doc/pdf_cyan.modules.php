@@ -186,7 +186,7 @@ class pdf_cyan extends ModelePDFPropales
 
 		$hidetop = 0;
 		if (getDolGlobalString('MAIN_PDF_DISABLE_COL_HEAD_TITLE')) {
-			$hidetop = $conf->global->MAIN_PDF_DISABLE_COL_HEAD_TITLE;
+			$hidetop = getDolGlobalString('MAIN_PDF_DISABLE_COL_HEAD_TITLE');
 		}
 
 		// Loop on each lines to detect if there is at least one image to show
@@ -1018,7 +1018,7 @@ class pdf_cyan extends ModelePDFPropales
 			$pdf->SetTextColor(0, 0, 0);
 			$pdf->SetFont('', '', $default_font_size - $diffsizetitle);
 			$pdf->SetXY($posxval, $posy);
-			$lib_availability = $outputlangs->transnoentities("AvailabilityType".$object->availability_code) != ('AvailabilityType'.$object->availability_code) ? $outputlangs->transnoentities("AvailabilityType".$object->availability_code) : $outputlangs->convToOutputCharset($object->availability);
+			$lib_availability = ($outputlangs->transnoentities("AvailabilityType".$object->availability_code) != 'AvailabilityType'.$object->availability_code) ? $outputlangs->transnoentities("AvailabilityType".$object->availability_code) : $outputlangs->convToOutputCharset($object->availability);
 			$lib_availability = str_replace('\n', "\n", $lib_availability);
 			$pdf->MultiCell(80, 4, $lib_availability, 0, 'L');
 
@@ -1059,7 +1059,7 @@ class pdf_cyan extends ModelePDFPropales
 
 			$pdf->SetFont('', '', $default_font_size - $diffsizetitle);
 			$pdf->SetXY($posxval, $posy);
-			$lib_condition_paiement = $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) != ('PaymentCondition'.$object->cond_reglement_code) ? $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) : $outputlangs->convToOutputCharset($object->cond_reglement_doc ? $object->cond_reglement_doc : $object->cond_reglement_label);
+			$lib_condition_paiement = $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) != 'PaymentCondition'.$object->cond_reglement_code ? $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) : $outputlangs->convToOutputCharset($object->cond_reglement_doc ? $object->cond_reglement_doc : $object->cond_reglement_label);
 			$lib_condition_paiement = str_replace('\n', "\n", $lib_condition_paiement);
 			if ($object->deposit_percent > 0) {
 				$lib_condition_paiement = str_replace('__DEPOSIT_PERCENT__', $object->deposit_percent, $lib_condition_paiement);
@@ -1080,7 +1080,7 @@ class pdf_cyan extends ModelePDFPropales
 				$pdf->MultiCell(80, 5, $titre, 0, 'L');
 				$pdf->SetFont('', '', $default_font_size - $diffsizetitle);
 				$pdf->SetXY($posxval, $posy);
-				$lib_mode_reg = $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) != ('PaymentType'.$object->mode_reglement_code) ? $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) : $outputlangs->convToOutputCharset($object->mode_reglement);
+				$lib_mode_reg = $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) != 'PaymentType'.$object->mode_reglement_code ? $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) : $outputlangs->convToOutputCharset($object->mode_reglement);
 				$pdf->MultiCell(80, 5, $lib_mode_reg, 0, 'L');
 
 				$posy = $pdf->GetY() + 2;

@@ -590,7 +590,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		print ($res == 0 && $object->status >= $object::STATUS_VALIDATED) ? '' : load_fiche_titre($langs->trans('BOMProductsList'), '', 'product');
 
-		print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '' : '') . '" method="POST">
+		print '	<form name="addproduct" id="listbomproducts" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '' : '') . '" method="POST">
     	<input type="hidden" name="token" value="' . newToken() . '">
     	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline') . '">
     	<input type="hidden" name="mode" value="">
@@ -642,7 +642,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		print ($res == 0 && $object->status >= $object::STATUS_VALIDATED) ? '' : load_fiche_titre($langs->trans('BOMServicesList'), '', 'service');
 
-		print '	<form name="addservice" id="addservice" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '' : '') . '" method="POST">
+		print '	<form name="addservice" id="listbomservices" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '' : '') . '" method="POST">
     	<input type="hidden" name="token" value="' . newToken() . '">
     	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline') . '">
     	<input type="hidden" name="mode" value="">

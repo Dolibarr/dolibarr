@@ -161,7 +161,7 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 
 			$prefix = "ER";
 			if (getDolGlobalString('EXPENSE_REPORT_PREFIX')) {
-				$prefix = $conf->global->EXPENSE_REPORT_PREFIX;
+				$prefix = getDolGlobalString('EXPENSE_REPORT_PREFIX');
 			}
 			$newref = str_replace(' ', '_', $user_author_infos).$expld_car.$prefix.$newref.$expld_car.dol_print_date($object->date_debut, '%y%m%d');
 
@@ -202,7 +202,7 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 			return 0;
 		}
 
-		$yymm = strftime("%y%m", $date);
+		$yymm = dol_print_date($date, "%y%m");
 
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is

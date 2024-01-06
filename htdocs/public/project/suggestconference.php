@@ -316,7 +316,7 @@ if (empty($reshook) && $action == 'add') {
 			// Adding supplier tag and tag from setup to thirdparty
 			$category = new Categorie($db);
 
-			$resultcategory = $category->fetch($conf->global->EVENTORGANIZATION_CATEG_THIRDPARTY_CONF);
+			$resultcategory = $category->fetch(getDolGlobalString('EVENTORGANIZATION_CATEG_THIRDPARTY_CONF'));
 
 			if ($resultcategory<=0) {
 				$error++;
@@ -447,7 +447,7 @@ if (empty($reshook) && $action == 'add') {
 					$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
 
 					$sendto = $thirdparty->email;
-					$from = $conf->global->MAILING_EMAIL_FROM;
+					$from = getDolGlobalString('MAILING_EMAIL_FROM');
 					$urlback = $_SERVER["REQUEST_URI"];
 					$trackid = 'proj'.$project->id;
 

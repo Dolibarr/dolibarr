@@ -102,9 +102,6 @@ class MultiCurrencies extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve currencies list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No currencies found');
-		}
 
 		return $obj_ret;
 	}

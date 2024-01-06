@@ -361,7 +361,7 @@ if (empty($reshook) && $action == 'add') {
 					$outputlangs->loadLangs(array("main", "members", "projects"));
 					// Get email content from template
 					$arraydefaultmessage = null;
-					$labeltouse = $conf->global->PROJECT_EMAIL_TEMPLATE_AUTOLEAD;
+					$labeltouse = getDolGlobalString('PROJECT_EMAIL_TEMPLATE_AUTOLEAD');
 
 					if (!empty($labeltouse)) {
 						$arraydefaultmessage = $formmail->getEMailTemplate($db, 'project', $user, $outputlangs, 0, 1, $labeltouse);
@@ -396,7 +396,7 @@ if (empty($reshook) && $action == 'add') {
 				if (!empty($backtopage)) {
 					$urlback = $backtopage;
 				} elseif (getDolGlobalString('PROJECT_URL_REDIRECT_LEAD')) {
-					$urlback = $conf->global->PROJECT_URL_REDIRECT_LEAD;
+					$urlback = getDolGlobalString('PROJECT_URL_REDIRECT_LEAD');
 					// TODO Make replacement of __AMOUNT__, etc...
 				} else {
 					$urlback = $_SERVER["PHP_SELF"]."?action=added&token=".newToken();
@@ -463,7 +463,7 @@ print '<div id="divsubscribe">';
 
 print '<div class="center subscriptionformhelptext opacitymedium justify">';
 if (getDolGlobalString('PROJECT_NEWFORM_TEXT')) {
-	print $langs->trans($conf->global->PROJECT_NEWFORM_TEXT)."<br>\n";
+	print $langs->trans(getDolGlobalString('PROJECT_NEWFORM_TEXT'))."<br>\n";
 } else {
 	print $langs->trans("FormForNewLeadDesc", getDolGlobalString("MAIN_INFO_SOCIETE_MAIL"))."<br>\n";
 }

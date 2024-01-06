@@ -185,9 +185,7 @@ class Tasks extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve task list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No task found');
-		}
+
 		return $obj_ret;
 	}
 

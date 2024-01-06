@@ -1313,7 +1313,7 @@ class Task extends CommonObjectLine
 			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
 
 			if ($this->timespent_date < $restrictBefore) {
-				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS);
+				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'));
 				$this->errors[] = $this->error;
 				return -1;
 			}
@@ -1757,7 +1757,7 @@ class Task extends CommonObjectLine
 			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
 
 			if ($this->timespent_date < $restrictBefore) {
-				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS);
+				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'));
 				$this->errors[] = $this->error;
 				return -1;
 			}
@@ -1858,7 +1858,7 @@ class Task extends CommonObjectLine
 			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
 
 			if ($this->timespent_date < $restrictBefore) {
-				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS);
+				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'));
 				$this->errors[] = $this->error;
 				return -1;
 			}
@@ -2243,7 +2243,7 @@ class Task extends CommonObjectLine
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('PROJECT_TASK_ADDON_PDF')) {
-				$modele = $conf->global->PROJECT_TASK_ADDON_PDF;
+				$modele = getDolGlobalString('PROJECT_TASK_ADDON_PDF');
 			}
 		}
 

@@ -403,7 +403,7 @@ if ($nolinesbefore) {
 		$nbrows = ROWS_2;
 		$enabled = (getDolGlobalString('FCKEDITOR_ENABLE_DETAILS') ? $conf->global->FCKEDITOR_ENABLE_DETAILS : 0);
 		if (getDolGlobalString('MAIN_INPUT_DESC_HEIGHT')) {
-			$nbrows = $conf->global->MAIN_INPUT_DESC_HEIGHT;
+			$nbrows = getDolGlobalString('MAIN_INPUT_DESC_HEIGHT');
 		}
 		$toolbarname = 'dolibarr_details';
 		if (getDolGlobalString('FCKEDITOR_ENABLE_DETAILS_FULL')) {
