@@ -3,6 +3,8 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 }
 
+$leftmenuwidth = 210;
+
 ?>
 /* <style type="text/css" > */
 
@@ -2734,7 +2736,7 @@ div.menu_titre {
 	padding-bottom: 4px;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	width: 188px;				/* required to have overflow working. must be same than menu_contenu */
+	width: <?php echo $leftmenuwidth - 2; ?>px;				/* required to have overflow working. must be same than menu_contenu */
 }
 .mainmenuaspan
 {
@@ -3233,11 +3235,11 @@ div.vmenu, td.vmenu {
 	padding: 0px;
 	padding-bottom: 0px;
 	padding-top: 1px;
-	width: 190px;
+	width: <?php echo $leftmenuwidth; ?>px;
 }
 
 .vmenu {
-	width: 190px;
+	width: <?php echo $leftmenuwidth; ?>px;
 	margin-left: 6px;
 	<?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
 	display: none;
@@ -3246,10 +3248,10 @@ div.vmenu, td.vmenu {
 
 /* Force vmenusearchselectcombo with type=text differently than without because beautify with select2 affect vmenusearchselectcombo differently */
 input.vmenusearchselectcombo[type=text] {
-	width: 180px !important;
+	width: <?php echo $leftmenuwidth - 10; ?>px !important;
 }
 .vmenusearchselectcombo {
-	width: 188px;
+	width: <?php echo $leftmenuwidth - 2; ?>px;
 }
 
 .menu_contenu {
@@ -3257,7 +3259,7 @@ input.vmenusearchselectcombo[type=text] {
 	padding-bottom: 3px;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	width: 188px;				/* required to have overflow working. must be same than .menu_titre */
+	width: <?php echo $leftmenuwidth - 2; ?>px;				/* required to have overflow working. must be same than .menu_titre */
 }
 #menu_contenu_logo { /* padding-top: 0; */ }
 .companylogo { }
