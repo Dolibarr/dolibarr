@@ -2399,7 +2399,7 @@ if ($usercanedit && (($action == 'updatesource' || $action == 'updatecontent' ||
 }
 
 // Export site
-if ($action == 'exportsite') {
+if ($action == 'exportsite' && $user->hasRight('website', 'export')) {
 	$fileofzip = $object->exportWebSite();
 
 	if ($fileofzip) {
