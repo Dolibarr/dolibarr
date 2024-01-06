@@ -1676,7 +1676,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				$out .= '<input type="hidden" name="socid" value="'.$object->id.'">';
 				$out .= '<input type="hidden" name="companybankid" value="'.$rib->id.'">';
 
-				if (is_array($modellist) && count($modellist) == 1) {    // If there is only one element
+				if (count($modellist) == 1) {    // If there is only one element
 					$arraykeys = array_keys($modellist);
 					$modelselected = $arraykeys[0];
 				}
@@ -1701,23 +1701,9 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					$out .= $formadmin->select_language($defaultlang, 'lang_idrib'.$rib->id, 0, 0, 0, 0, 0, $morecss);
 				}
 				// Button
-				$genbutton = '<input class="button buttongen reposition nomargintop nomarginbottom" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
-				$genbutton .= ' type="submit" value="'.$buttonlabel.'"';
-				if (!$allowgenifempty && !is_array($modellist) && empty($modellist)) {
-					$genbutton .= ' disabled';
-				}
-				$genbutton .= '>';
-				if ($allowgenifempty && !is_array($modellist) && empty($modellist) && empty($conf->dol_no_mouse_hover) && $modulepart != 'unpaid') {
-					$langs->load("errors");
-					$genbutton .= ' '.img_warning($langs->transnoentitiesnoconv("WarningNoDocumentModelActivated"));
-				}
-				if (!$allowgenifempty && !is_array($modellist) && empty($modellist) && empty($conf->dol_no_mouse_hover) && $modulepart != 'unpaid') {
-					$genbutton = '';
-				}
-				if (empty($modellist) && !$showempty && $modulepart != 'unpaid') {
-					$genbutton = '';
-				}
-				$out .= $genbutton;
+				$out = '<input class="button buttongen reposition nomargintop nomarginbottom" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
+				$out .= ' type="submit" value="'.$buttonlabel.'"';
+				$out .= '>';
 				$out .= '</form>';
 			}
 			print $out;
