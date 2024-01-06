@@ -1033,7 +1033,7 @@ if ($action == 'edit') {
 			}
 		}
 		// Test SPF default automatic email from
-		$defaultnoreplyemail = getDolGlobalString('MAIN_INFO_SOCIETE_MAIL');
+		$defaultnoreplyemail = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 		if ($defaultnoreplyemail != $companyemail) {	// We show if email differs
 			$dnsinfo = false;
 			if (!empty($defaultnoreplyemail) && function_exists('dns_get_record') && !getDolGlobalString('MAIN_DISABLE_DNS_GET_RECORD')) {
