@@ -22,6 +22,7 @@
  *  \brief      Page to add payment of a donation
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/paymentdonation.class.php';
@@ -66,7 +67,7 @@ if ($action == 'add_payment') {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Date")), null, 'errors');
 		$error++;
 	}
-	if (!empty($conf->banque->enabled) && !(GETPOST("accountid", 'int') > 0)) {
+	if (isModEnabled("banque") && !(GETPOST("accountid", 'int') > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToCredit")), null, 'errors');
 		$error++;
 	}
@@ -94,7 +95,7 @@ if ($action == 'add_payment') {
 			// Create a line of payments
 			$payment = new PaymentDonation($db);
 			$payment->chid         = $chid;
-			$payment->datepaid     = $datepaid;
+			$payment->datep     = $datepaid;
 			$payment->amounts      = $amounts; // Tableau de montant
 			$payment->paymenttype  = GETPOST("paymenttype", 'int');
 			$payment->num_payment  = GETPOST("num_payment", 'alphanohtml');
@@ -138,8 +139,8 @@ if ($action == 'add_payment') {
  */
 
 $form = new Form($db);
-
-llxHeader();
+$title = $langs->trans("Payment");
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-donation page-payment');
 
 
 $sql = "SELECT sum(p.amount) as total";
@@ -185,20 +186,20 @@ if ($action == 'create') {
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
 	$datepaid = dol_mktime(12, 0, 0, GETPOST("remonth"), GETPOST("reday"), GETPOST("reyear"));
-	$datepayment = empty($conf->global->MAIN_AUTOFILL_DATE) ? (GETPOST("remonth") ? $datepaid : -1) : 0;
+	$datepayment = !getDolGlobalString('MAIN_AUTOFILL_DATE') ? (GETPOST("remonth") ? $datepaid : -1) : 0;
 	print $form->selectDate($datepayment, '', 0, 0, 0, "add_payment", 1, 1, 0, '', '', $object->date, '', 1, $langs->trans("DonationDate"));
 	print "</td>";
 	print '</tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td colspan="2">';
-	$form->select_types_paiements(GETPOSTISSET("paymenttype") ? GETPOST("paymenttype") : $object->paymenttype, "paymenttype");
+	$form->select_types_paiements(GETPOSTISSET("paymenttype") ? GETPOST("paymenttype") : $object->fk_typepayment, "paymenttype");
 	print "</td>\n";
 	print '</tr>';
 
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans('AccountToCredit').'</td>';
 	print '<td colspan="2">';
-	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOST("accountid") : $object->accountid, "accountid", 0, '', 2); // Show open bank account list
+	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOST("accountid") : "0", "accountid", 0, '', 2); // Show open bank account list
 	print '</td></tr>';
 
 	// Number
@@ -263,7 +264,7 @@ if ($action == 'create') {
 		print "</tr>\n";
 		/*$total+=$objp->total;
 		$total_ttc+=$objp->total_ttc;
-		$totalrecu+=$objp->am;*/    //Useless code ?
+		$totalrecu+=$objp->am;*/	//Useless code ?
 		$i++;
 	}
 	/*if ($i > 1)
@@ -276,7 +277,7 @@ if ($action == 'create') {
 		print "<td class=\"right\"><b>".price($total_ttc - $totalrecu)."</b></td>";
 		print '<td class="center">&nbsp;</td>';
 		print "</tr>\n";
-	}*/    //Useless code ?
+	}*/	//Useless code ?
 
 	print "</table>";
 

@@ -25,6 +25,7 @@
  *      \brief       Page reporting Salesover by user
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
@@ -45,9 +46,9 @@ if (isModEnabled('comptabilite')) {
 if (isModEnabled('accounting')) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 }
-
+$hookmanager->initHooks(['cabyuserreportlist']);
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
-$modecompta = $conf->global->ACCOUNTING_MODE;
+$modecompta = getDolGlobalString('ACCOUNTING_MODE');
 if (GETPOST("modecompta")) {
 	$modecompta = GETPOST("modecompta");
 }
@@ -83,10 +84,10 @@ $date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_star
 $date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"), 'tzserver');		// We use timezone of server so report is same from everywhere
 // Quarter
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
-	$q = GETPOST("q") ?GETPOST("q") : 0;
+	$q = GETPOST("q") ? GETPOST("q") : 0;
 	if ($q == 0) {
 		// We define date_start and date_end
-		$month_start = GETPOST("month") ?GETPOST("month") : ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
+		$month_start = GETPOST("month") ? GETPOST("month") : getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 		$year_end = $year_start;
 		$month_end = $month_start;
 		if (!GETPOST("month")) {	// If month not forced
@@ -195,7 +196,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	$calcmode = $langs->trans("CalcModeDebt");
 	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 	$description = $langs->trans("RulesCADue");
-	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 		$description .= $langs->trans("DepositsAreNotIncluded");
 	} else {
 		$description .= $langs->trans("DepositsAreIncluded");
@@ -243,7 +244,7 @@ print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 // Extra parameters management
 foreach ($headerparams as $key => $value) {
-	 print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
+	print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
 }
 
 $catotal = 0;
@@ -254,7 +255,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.fk_user_author = u.rowid";
 	$sql .= " WHERE f.fk_statut in (1,2)";
-	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 		$sql .= " AND f.type IN (0,1,2,5)";
 	} else {
 		$sql .= " AND f.type IN (0,1,2,3,5)";
@@ -294,11 +295,13 @@ if ($result) {
 	$num = $db->num_rows($result);
 	$i = 0;
 	while ($i < $num) {
-		 $obj = $db->fetch_object($result);
-		$amount_ht[$obj->rowid] = $obj->amount;
+		$obj = $db->fetch_object($result);
+
+		$amount_ht[$obj->rowid] = (empty($obj->amount) ? 0 : $obj->amount);
 		$amount[$obj->rowid] = $obj->amount_ttc;
 		$name[$obj->rowid] = $obj->name.' '.$obj->firstname;
-		$catotal_ht += $obj->amount;
+
+		$catotal_ht += (empty($obj->amount) ? 0 : $obj->amount);
 		$catotal += $obj->amount_ttc;
 		$i++;
 	}
@@ -497,7 +500,7 @@ if (count($amount)) {
 
 		// Other stats
 		print '<td class="center">';
-		if (isModEnabled('propal') && $key > 0) {
+		if (isModEnabled("propal") && $key > 0) {
 			print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("ProposalStats"), "stats").'</a>&nbsp;';
 		}
 		if (isModEnabled('commande') && $key > 0) {

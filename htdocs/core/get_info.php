@@ -70,8 +70,8 @@ print '<div style="padding: 20px;">';
 
 // Define link to login card
 $appli = constant('DOL_APPLICATION_TITLE');
-if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
-	$appli = $conf->global->MAIN_APPLICATION_TITLE;
+if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
+	$appli = getDolGlobalString('MAIN_APPLICATION_TITLE');
 	if (preg_match('/\d\.\d/', $appli)) {
 		if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) {
 			$appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
@@ -88,7 +88,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL')) {
 }
 
 $logouttext = '';
-if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 	//$logouthtmltext=$appli.'<br>';
 	if ($_SESSION["dol_authmode"] != 'forceuser' && $_SESSION["dol_authmode"] != 'http') {
 		$logouthtmltext .= $langs->trans("Logout").'<br>';
@@ -137,7 +137,7 @@ if (!isset($form) || !is_object($form)) {
 }
 
 // Link to module builder
-if (!empty($conf->modulebuilder->enabled)) {
+if (isModEnabled('modulebuilder')) {
 	$text = '<a href="'.DOL_URL_ROOT.'/modulebuilder/index.php?mainmenu=home&leftmenu=admintools" target="modulebuilder">';
 	//$text.= img_picto(":".$langs->trans("ModuleBuilder"), 'printer_top.png', 'class="printer"');
 	$text .= '<span class="fa fa-bug atoplogin"></span>';

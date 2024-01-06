@@ -39,6 +39,7 @@ abstract class ActionsCardCommon
 
 	//! Template container
 	public $tpl = array();
+
 	//! Object container
 	public $object;
 
@@ -46,7 +47,6 @@ abstract class ActionsCardCommon
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
-
 
 	/**
 	 * @var string[] Error codes (or messages)
@@ -70,6 +70,8 @@ abstract class ActionsCardCommon
 			$object->fetch($id, $ref);
 		}
 		$this->object = $object;
+
+		return $object;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -151,7 +153,7 @@ abstract class ActionsCardCommon
 			}
 
 			// Load object modCodeClient
-			$module = (!empty($conf->global->SOCIETE_CODECLIENT_ADDON) ? $conf->global->SOCIETE_CODECLIENT_ADDON : 'mod_codeclient_leopard');
+			$module = (getDolGlobalString('SOCIETE_CODECLIENT_ADDON') ? $conf->global->SOCIETE_CODECLIENT_ADDON : 'mod_codeclient_leopard');
 			if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php') {
 				$module = substr($module, 0, dol_strlen($module) - 4);
 			}
@@ -186,11 +188,11 @@ abstract class ActionsCardCommon
 			$s = $modCodeClient->getToolTip($langs, $this->object, 0);
 			$this->tpl['help_customercode'] = $form->textwithpicto('', $s, 1);
 
-			if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+			if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 				$this->tpl['supplier_enabled'] = 1;
 
 				// Load object modCodeFournisseur
-				$module = $conf->global->SOCIETE_CODECLIENT_ADDON;
+				$module = getDolGlobalString('SOCIETE_CODECLIENT_ADDON');
 				if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php') {
 					$module = substr($module, 0, dol_strlen($module) - 4);
 				}
@@ -201,7 +203,7 @@ abstract class ActionsCardCommon
 						break;
 					}
 				}
-				$modCodeFournisseur = new $module;
+				$modCodeFournisseur = new $module();
 				$this->tpl['auto_suppliercode'] = $modCodeFournisseur->code_auto;
 				// We verified if the tag prefix is used
 				if ($modCodeFournisseur->code_auto) {
@@ -246,8 +248,8 @@ abstract class ActionsCardCommon
 			}
 
 			// Language
-			if (!empty($conf->global->MAIN_MULTILANGS)) {
-				$this->tpl['select_lang'] = $formadmin->select_language(($this->object->default_lang ? $this->object->default_lang : $conf->global->MAIN_LANG_DEFAULT), 'default_lang', 0, 0, 1);
+			if (getDolGlobalInt('MAIN_MULTILANGS')) {
+				$this->tpl['select_lang'] = $formadmin->select_language((empty($this->object->default_lang) ? getDolGlobalString('MAIN_LANG_DEFAULT') : $this->object->default_lang), 'default_lang', 0, 0, 1);
 			}
 
 			// VAT
@@ -306,12 +308,12 @@ abstract class ActionsCardCommon
 			$arr = $formcompany->typent_array(1);
 			$this->tpl['typent'] = $arr[$this->object->typent_code];
 
-			if (!empty($conf->global->MAIN_MULTILANGS)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS')) {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 				//$s=picto_from_langcode($this->default_lang);
 				//print ($s?$s.' ':'');
 				$langs->load("languages");
-				$this->tpl['default_lang'] = ($this->default_lang ? $langs->trans('Language_'.$this->object->default_lang) : '');
+				$this->tpl['default_lang'] = (empty($this->object->default_lang) ? '' : $langs->trans('Language_'.$this->object->default_lang));
 			}
 
 			$this->tpl['image_edit'] = img_edit();
@@ -342,7 +344,7 @@ abstract class ActionsCardCommon
 			}
 
 			// Linked member
-			if (!empty($conf->adherent->enabled)) {
+			if (isModEnabled('adherent')) {
 				$langs->load("members");
 				$adh = new Adherent($this->db);
 				$result = $adh->fetch('', '', $this->object->id);
@@ -380,7 +382,7 @@ abstract class ActionsCardCommon
 	 *  Assign POST values into object
 	 *
 	 *	@param		string		$action		Action string
-	 *  @return		string					HTML output
+	 *  @return		void
 	 */
 	private function assign_post($action)
 	{

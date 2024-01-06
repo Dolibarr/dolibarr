@@ -62,7 +62,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	print '<td class="linkedcol-ref" >'.$objectlink->ref_client.'</td>';
 	print '<td class="linkedcol-date center">'.dol_print_date($objectlink->date, 'day').'</td>';
 	print '<td class="linkedcol-amount right">';
-	if ($user->rights->propale->lire) {
+	if ($user->hasRight('propal', 'lire')) {
 		$total = $total + $objectlink->total_ht;
 		echo price($objectlink->total_ht);
 	}

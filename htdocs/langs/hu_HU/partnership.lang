@@ -20,6 +20,7 @@ ModulePartnershipName=Partnerség kezelése
 PartnershipDescription=Partnerség modul kezelés
 PartnershipDescriptionLong= Partnerség modul kezelés
 Partnership=Partnerség
+Partnerships=Partnerships
 AddPartnership=Partnerség hozzáadása
 CancelPartnershipForExpiredMembers=Partnerség: A lejárt előfizetéssel rendelkező tagok partnerségének megszüntetése
 PartnershipCheckBacklink=Partnerség: Ellenőrizze a hivatkozási hivatkozást
@@ -28,6 +29,7 @@ PartnershipCheckBacklink=Partnerség: Ellenőrizze a hivatkozási hivatkozást
 # Menu
 #
 NewPartnership=Új partnerség
+NewPartnershipbyWeb=Your partnership request has been added successfully. We may contact you soon...
 ListOfPartnerships=A partnerségek listája
 
 #

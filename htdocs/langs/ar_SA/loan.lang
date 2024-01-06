@@ -23,12 +23,12 @@ AddLoan=إنشاء قرض
 FinancialCommitment=التزام مالي
 InterestAmount=اهتمام
 CapitalRemain=يبقى رأس المال
-TermPaidAllreadyPaid = هذا المصطلح مدفوع بالفعل
-CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
+TermPaidAllreadyPaid = تم دفع هذا المصطلح بالفعل
+CantUseScheduleWithLoanStartedToPaid = لا يمكن إنشاء مخطط زمني لقرض بدفعة بدأت
 CantModifyInterestIfScheduleIsUsed = لا يمكنك تعديل الفائدة إذا كنت تستخدم الجدول الزمني
 # Admin
 ConfigLoan=التكوين للقرض وحدة
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accounting account capital by default
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Accounting account interest by default
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Accounting account insurance by default
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=الحساب (من دليل الحساب) الذي سيتم استخدامه بشكل افتراضي لرأس المال (القرض نموذج)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=الحساب (من دليل الحساب) الذي سيتم استخدامه بشكل افتراضي للفائدة (القرض نموذج)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=الحساب (من دليل الحساب) الذي سيتم استخدامه بشكل افتراضي للتأمين (القرض نموذج)
 CreateCalcSchedule=تحرير الالتزام المالي

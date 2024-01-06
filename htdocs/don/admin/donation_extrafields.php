@@ -22,6 +22,7 @@
  *  \brief      Page to setup extra fields of donations
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/donation.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -62,7 +63,8 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 
 $textobject = $langs->transnoentitiesnoconv("Donations");
 
-llxHeader('', $langs->trans("DonationsSetup"));
+$help_url = '';
+llxHeader('', $langs->trans("DonationsSetup"), $help_url, '', 0, 0, '', '', '', 'mod-donation page-admin_extrafields');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("DonationsSetup"), $linkback, 'title_setup');
@@ -76,13 +78,6 @@ require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
 print dol_get_fiche_end();
 
-
-// Buttons
-if ($action != 'create' && $action != 'edit') {
-	print '<div class="tabsAction">';
-	print '<a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?action=create">'.$langs->trans("NewAttribute").'</a>';
-	print "</div>";
-}
 
 
 /* ************************************************************************** */

@@ -97,8 +97,8 @@ class EmailSenderProfile extends CommonObject
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'visible'=>-1, 'enabled'=>1, 'position'=>20, 'notnull'=>1, 'index'=>1,),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'notnull'=>1),
 		'email' => array('type'=>'varchar(255)', 'label'=>'Email', 'visible'=>1, 'enabled'=>1, 'position'=>40, 'notnull'=>-1),
-		'private' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'User', 'visible'=>-1, 'enabled'=>1, 'position'=>50, 'default'=>'0', 'notnull'=>1),
-		'signature' => array('type'=>'text', 'label'=>'Signature', 'visible'=>3, 'enabled'=>1, 'position'=>400, 'notnull'=>-1, 'index'=>1,),
+		'private' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'User', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'default'=>'0', 'notnull'=>1),
+		'signature' => array('type'=>'html', 'label'=>'Signature', 'visible'=>3, 'enabled'=>1, 'position'=>400, 'notnull'=>-1, 'index'=>1,),
 		'position' => array('type'=>'integer', 'label'=>'Position', 'visible'=>1, 'enabled'=>1, 'position'=>405, 'notnull'=>-1, 'index'=>1,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'visible'=>-1, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'visible'=>-1, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
@@ -146,10 +146,10 @@ class EmailSenderProfile extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID')) {
 			$this->fields['rowid']['visible'] = 0;
 		}
-		if (empty($conf->multicompany->enabled)) {
+		if (!isModEnabled('multicompany')) {
 			$this->fields['entity']['enabled'] = 0;
 		}
 	}
@@ -159,7 +159,7 @@ class EmailSenderProfile extends CommonObject
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -222,7 +222,7 @@ class EmailSenderProfile extends CommonObject
 	 *
 	 * @param int    $id   Id object
 	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -236,7 +236,7 @@ class EmailSenderProfile extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchLines()
 	{
@@ -252,7 +252,7 @@ class EmailSenderProfile extends CommonObject
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
@@ -264,7 +264,7 @@ class EmailSenderProfile extends CommonObject
 	 *
 	 * @param User $user       User that deletes
 	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
@@ -305,10 +305,10 @@ class EmailSenderProfile extends CommonObject
 	}
 
 	/**
-	 *  Retourne le libelle du status d'un user (actif, inactif)
+	 *  Return the label of a given status
 	 *
-	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return	string 			       Label of status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -317,11 +317,11 @@ class EmailSenderProfile extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Return the status
+	 *  Return the label of a given status
 	 *
-	 *  @param	int		$status        	Id status
-	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 *  @return string 			       	Label of status
+	 *  @param	int		$status        Id status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
 	 */
 	public static function LibStatut($status, $mode = 0)
 	{

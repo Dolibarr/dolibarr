@@ -1,8 +1,6 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Entrega
 DeliveryRef=Ref. entrega
-DeliveryCard=Cartão de recibo
-DeliveryOrder=Recibo de entrega
 DeliveryStateSaved=Estado de entrega salvo
 SetDeliveryDate=Indicar a Data de Envio
 ValidateDeliveryReceipt=Confirmar a Nota de Entrega
@@ -12,7 +10,6 @@ DeleteDeliveryReceiptConfirm=Você tem certeza que deseja excluir o comprovante 
 DeliveryMethod=Método de entrega
 TrackingNumber=Número de rastreamento
 StatusDeliveryValidated=Recebida
-NameAndSignature=Nome e assinatura:
 GoodStatusDeclaration=Recebi a mercadorias acima em bom estado,
 Deliverer=Entregador :
 Sender=Remetente
@@ -22,3 +19,4 @@ NonShippable=Não disponivel para envio
 ShowShippableStatus=Mostrar status entregável
 ShowReceiving=Mostrar recibo de entrega
 NonExistentOrder=Pedido inexistente
+StockQuantitiesAlreadyAllocatedOnPreviousLines =Quantidades de estoque já alocadas em linhas anteriores

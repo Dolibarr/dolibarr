@@ -1,0 +1,92 @@
+# Copyright (C) 2018 Nicolas ZABOURI    <info@inovea-conseil.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Module label 'ModuledatapolicyName'
+Module4100Name = ডেটা গোপনীয়তা নীতি
+# Module description 'ModuledatapolicyDesc'
+Module4100Desc = ডেটা গোপনীয়তা পরিচালনার মডিউল (জিডিপিআরের সাথে সামঞ্জস্যপূর্ণ)
+
+#
+# Administration page
+#
+datapolicySetup = মডিউল ডেটা গোপনীয়তা নীতি সেটআপ
+Deletion = ডেটা মুছে ফেলা
+datapolicySetupPage = আপনার দেশের আইনের উপর নির্ভর করে (উদাহরণ <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">GDPR এর অনুচ্ছেদ 5</a>), ব্যক্তিগত ডেটা নির্দিষ্ট সময়ের জন্য রাখতে হবে সংরক্ষণাগারের উদ্দেশ্যে ব্যতীত যে উদ্দেশ্যে এগুলি সংগ্রহ করা হয়েছিল তার জন্য প্রয়োজনীয়তা অতিক্রম করে৷<br>বিনা ইভেন্ট (যে সময়কালটি আপনি নির্দেশ করবেন) একটি নির্দিষ্ট সময়ের পরে স্বয়ংক্রিয়ভাবে মুছে ফেলা হবে নিচে).
+NB_MONTHS = %s মাস
+ONE_YEAR = 1 বছর
+NB_YEARS = %s বছর
+DATAPOLICY_TIERS_CLIENT = ক্রেতা
+DATAPOLICY_TIERS_PROSPECT = সম্ভাবনা
+DATAPOLICY_TIERS_PROSPECT_CLIENT = প্রত্যাশা গ্রাহক
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = না সম্ভাবনা/না গ্রাহক
+DATAPOLICY_TIERS_FOURNISSEUR = সরবরাহকারী
+DATAPOLICY_CONTACT_CLIENT = ক্রেতা
+DATAPOLICY_CONTACT_PROSPECT = সম্ভাবনা
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = প্রত্যাশা গ্রাহক
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = না সম্ভাবনা/না গ্রাহক
+DATAPOLICY_CONTACT_FOURNISSEUR = সরবরাহকারী
+DATAPOLICY_ADHERENT = সদস্য
+DATAPOLICY_Tooltip_SETUP = যোগাযোগের ধরন - প্রতিটি প্রকারের জন্য আপনার পছন্দগুলি নির্দেশ করুন৷
+DATAPOLICYMail = ইমেল সেটআপ
+DATAPOLICYSUBJECTMAIL = ইমেইলের বিষয়
+DATAPOLICYCONTENTMAIL = ইমেইলের বিষয়বস্তু
+DATAPOLICYSUBSITUTION = আপনি আপনার ইমেলে নিম্নলিখিত ভেরিয়েবলগুলি ব্যবহার করতে পারেন (LINKACCEPT ব্যক্তির চুক্তি রেকর্ড করে একটি লিঙ্ক তৈরি করতে দেয়, LINKREFUSED ব্যক্তির অস্বীকৃতি রেকর্ড করা সম্ভব করে তোলে):
+DATAPOLICYACCEPT = চুক্তির পর বার্তা
+DATAPOLICYREFUSE = অসম্মতির পর বার্তা
+SendAgreementText = আপনি আপনার সমস্ত প্রাসঙ্গিক পরিচিতিদের একটি GDPR ইমেল পাঠাতে পারেন (যারা এখনও একটি ইমেল পাননি এবং যার জন্য আপনি তাদের GDPR চুক্তি সম্পর্কে কিছু নিবন্ধন করেননি)। এটি করতে, নিম্নলিখিত বোতামটি ব্যবহার করুন।
+SendAgreement = ইমেইল পাঠান
+AllAgreementSend = সব ইমেইল পাঠানো হয়েছে
+TXTLINKDATAPOLICYACCEPT = লিঙ্কের জন্য পাঠ্য "চুক্তি"
+TXTLINKDATAPOLICYREFUSE = লিঙ্কের জন্য পাঠ্য "অসম্মতি"
+
+
+#
+# Extrafields
+#
+DATAPOLICY_BLOCKCHECKBOX = জিডিপিআর: ব্যক্তিগত তথ্য প্রক্রিয়াকরণ
+DATAPOLICY_consentement = ব্যক্তিগত তথ্য প্রক্রিয়াকরণের জন্য সম্মতি প্রাপ্ত
+DATAPOLICY_opposition_traitement = তার ব্যক্তিগত তথ্য প্রক্রিয়াকরণের বিরোধিতা করে
+DATAPOLICY_opposition_prospection = প্রত্যাশার উদ্দেশ্যে তার ব্যক্তিগত ডেটা প্রক্রিয়াকরণের বিরোধিতা করে
+
+#
+# Popup
+#
+DATAPOLICY_POPUP_ANONYME_TITLE = একটি তৃতীয় পক্ষ বেনামী
+DATAPOLICY_POPUP_ANONYME_TEXTE = আপনি Dolibarr থেকে এই পরিচিতি মুছে ফেলতে পারবেন না কারণ সম্পর্কিত আইটেম আছে। জিডিপিআর অনুসারে, আপনি আপনার বাধ্যবাধকতাগুলিকে সম্মান করতে এই সমস্ত ডেটা বেনামী করে দেবেন। আপনি কি অবিরত করতে চান ?
+
+#
+# Button for portability
+#
+DATAPOLICY_PORTABILITE = পোর্টেবিলিটি জিডিপিআর
+DATAPOLICY_PORTABILITE_TITLE = ব্যক্তিগত তথ্য রপ্তানি
+DATAPOLICY_PORTABILITE_CONFIRMATION = আপনি এই পরিচিতির ব্যক্তিগত ডেটা রপ্তানি করতে চান৷ তুমি কি নিশ্চিত ?
+
+#
+# Notes added during an anonymization
+#
+ANONYMISER_AT = বেনামী %s
+
+# V2
+DATAPOLICYReturn = জিডিপিআর বৈধতা
+DATAPOLICY_date = চুক্তি/অসম্মতির তারিখ GDPR
+DATAPOLICY_send = চুক্তি ইমেল পাঠানোর তারিখ
+DATAPOLICYReturn = জিডিপিআর বৈধতা
+DATAPOLICY_SEND = GDPR ইমেল পাঠান
+MailSent = ইমেল পাঠানো হয়েছে
+
+# ERROR
+ErrorSubjectIsRequired = ত্রুটি: ইমেলের বিষয় প্রয়োজন। মডিউল সেটআপে এটি নির্দেশ করুন
+=একটি প্রযুক্তিগত সমস্যার কারণে, আমরা আপনার পছন্দ নিবন্ধন করতে অক্ষম ছিল. এর জন্য আমরা ক্ষমাপ্রার্থী। আমাদের আপনার পছন্দ পাঠাতে আমাদের সাথে যোগাযোগ করুন.
+NUMBER_MONTH_BEFORE_DELETION = মুছে ফেলার আগে মাসের সংখ্যা

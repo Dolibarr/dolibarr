@@ -53,13 +53,17 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = Yn y ffurf i greu / ychwanegu mynychwr,
 #
 # Object
 #
+OrganizedEvent=Organized event
 EventOrganizationConfOrBooth= Cynhadledd Neu Booth
+EventOrganizationConfOrBoothes=Conferences or Boothes
 ManageOrganizeEvent = Rheoli trefniadaeth digwyddiad
 ConferenceOrBooth = Cynhadledd Neu Booth
 ConferenceOrBoothTab = Cynhadledd Neu Booth
 AmountPaid = Swm a dalwyd
 DateOfRegistration = Dyddiad cofrestru
 ConferenceOrBoothAttendee = Mynychwr y Gynhadledd Neu Booth
+ApplicantOrVisitor=Applicant or visitor
+Speaker=Speaker
 
 #
 # Template Mail
@@ -112,15 +116,15 @@ EvntOrgRegistrationHelpMessage = Yma, gallwch chi bleidleisio dros gynhadledd ne
 EvntOrgRegistrationConfHelpMessage = Yma, gallwch awgrymu cynhadledd newydd i'w hanimeiddio yn ystod y digwyddiad.
 EvntOrgRegistrationBoothHelpMessage = Yma, gallwch wneud cais i gael bwth yn ystod y digwyddiad.
 ListOfSuggestedConferences = Rhestr o gynadleddau a awgrymir
-ListOfSuggestedBooths = Rhestr o fythau a awgrymir
-ListOfConferencesOrBooths=Rhestr o gynadleddau neu fythau o brosiect digwyddiad
+ListOfSuggestedBooths=Suggested booths
+ListOfConferencesOrBooths=Conferences or booths of event project
 SuggestConference = Awgrymu cynhadledd newydd
 SuggestBooth = Awgrymu bwth
 ViewAndVote = Gweld a phleidleisio ar gyfer digwyddiadau a awgrymir
 PublicAttendeeSubscriptionGlobalPage = Dolen gyhoeddus i gofrestru i'r digwyddiad
 PublicAttendeeSubscriptionPage = Dolen gyhoeddus ar gyfer cofrestru i'r digwyddiad hwn yn unig
 MissingOrBadSecureKey = Mae'r allwedd ddiogelwch yn annilys neu ar goll
-EvntOrgWelcomeMessage = Mae'r ffurflen hon yn eich galluogi i gofrestru fel cyfranogwr newydd i'r digwyddiad : <b> %s </b>
+EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event
 EvntOrgDuration = Mae'r gynhadledd hon yn dechrau ar %s ac yn gorffen ar %s.
 ConferenceAttendeeFee = Ffi mynychwyr y gynhadledd ar gyfer y digwyddiad : '%s' yn digwydd o %s i %s.
 BoothLocationFee = Lleoliad Booth ar gyfer y digwyddiad : '%s' yn digwydd o %s i %s
@@ -130,7 +134,7 @@ LabelOfconference=Label y gynhadledd
 ConferenceIsNotConfirmed=Nid yw cofrestriad ar gael, nid yw'r gynhadledd wedi'i chadarnhau eto
 DateMustBeBeforeThan=rhaid i %s fod cyn %s
 DateMustBeAfterThan=rhaid i %s fod ar ôl %s
-
+MaxNbOfAttendeesReached=The maximum number of participants has been reached
 NewSubscription=Cofrestru
 OrganizationEventConfRequestWasReceived=Mae eich awgrym ar gyfer cynhadledd wedi dod i law
 OrganizationEventBoothRequestWasReceived=Mae eich cais am fwth wedi dod i law
@@ -139,9 +143,10 @@ OrganizationEventPaymentOfRegistrationWasReceived=Mae eich taliad ar gyfer eich 
 OrganizationEventBulkMailToAttendees=Mae hwn yn atgoffa am eich cyfranogiad yn y digwyddiad fel mynychwr
 OrganizationEventBulkMailToSpeakers=Dyma nodyn i'ch atgoffa o'ch cyfranogiad yn y digwyddiad fel siaradwr
 OrganizationEventLinkToThirdParty=Cyswllt i drydydd parti (cwsmer, cyflenwr neu bartner)
+OrganizationEvenLabelName=Public name of the conference or booth
 
 NewSuggestionOfBooth=Cais am fwth
-NewSuggestionOfConference=Cais am gynhadledd
+NewSuggestionOfConference=Application to hold a conference
 
 #
 # Vote page
@@ -154,7 +159,7 @@ VoteOk = Mae eich pleidlais wedi ei derbyn.
 AlreadyVoted = Rydych chi eisoes wedi pleidleisio dros y digwyddiad hwn.
 VoteError = Mae gwall wedi digwydd yn ystod y bleidlais, ceisiwch eto.
 
-SubscriptionOk = Mae eich cofrestriad wedi'i ddilysu
+SubscriptionOk=Your registration has been recorded
 ConfAttendeeSubscriptionConfirmation = Cadarnhad o'ch tanysgrifiad i ddigwyddiad
 Attendee = Mynychwr
 PaymentConferenceAttendee = Taliad mynychwyr y gynhadledd
@@ -162,8 +167,11 @@ PaymentBoothLocation = Taliad lleoliad Booth
 DeleteConferenceOrBoothAttendee=Dileu mynychwr
 RegistrationAndPaymentWereAlreadyRecorder=Roedd cofrestriad a thaliad eisoes wedi'u cofnodi ar gyfer yr e-bost <b> %s </b>
 EmailAttendee=E-bost mynychwr
+EmailCompany=Company email
 EmailCompanyForInvoice=E-bost cwmni (ar gyfer anfoneb, os yw'n wahanol i e-bost mynychwr)
 ErrorSeveralCompaniesWithEmailContactUs=Mae sawl cwmni sydd â'r e-bost hwn wedi'u canfod felly ni allwn ddilysu eich cofrestriad yn awtomatig. Cysylltwch â ni yn %s i gael dilysiad â llaw
 ErrorSeveralCompaniesWithNameContactUs=Mae sawl cwmni gyda'r enw hwn wedi'u canfod felly ni allwn ddilysu eich cofrestriad yn awtomatig. Cysylltwch â ni yn %s i gael dilysiad â llaw
 NoPublicActionsAllowedForThisEvent=Nid oes unrhyw gamau gweithredu cyhoeddus yn agored i'r cyhoedd ar gyfer y digwyddiad hwn
 MaxNbOfAttendees=Max number of attendees
+DateStartEvent=Event start date
+DateEndEvent=Event end date

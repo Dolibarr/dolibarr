@@ -39,6 +39,9 @@
                 if (typeof(tpl.type) != 'undefined' && tpl.type) {
                     $('<span title="Type" />').addClass(csscls('type')).text(tpl.type).appendTo(li);
                 }
+                if (typeof(tpl.editorLink) != 'undefined' && tpl.editorLink) {
+                    $('<a href="'+ tpl.editorLink +'" />').addClass(csscls('editor-link')).text('file').appendTo(li);
+                }
                 if (tpl.params && !$.isEmptyObject(tpl.params)) {
                     var table = $('<table><tr><th colspan="2">Params</th></tr></table>').addClass(csscls('params')).appendTo(li);
                     for (var key in tpl.params) {

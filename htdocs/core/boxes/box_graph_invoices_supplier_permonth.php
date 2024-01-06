@@ -76,7 +76,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 
 		$startmonth = $conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1;
-		if (empty($conf->global->GRAPH_USE_FISCAL_YEAR)) {
+		if (!getDolGlobalString('GRAPH_USE_FISCAL_YEAR')) {
 			$startmonth = 1;
 		}
 
@@ -98,11 +98,11 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 		if ($user->socid) {
 			$socid = $user->socid;
 		}
-		if (empty($user->rights->societe->client->voir) || $socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') || $socid) {
 			$prefix .= 'private-'.$user->id.'-'; // If user has no permission to see all, output dir is specific to user
 		}
 
-		if ($user->rights->fournisseur->facture->lire) {
+		if ($user->hasRight('fournisseur', 'facture', 'lire')) {
 			$param_year = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_year';
 			$param_shownb = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_shownb';
 			$param_showtot = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_showtot';
@@ -128,7 +128,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 			if (empty($endyear)) {
 				$endyear = $nowarray['year'];
 			}
-			$startyear = $endyear - (empty($conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH) ? 2 : ($conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH - 1));
+			$startyear = $endyear - (!getDolGlobalString('MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH') ? 2 : ($conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH - 1));
 
 			$mode = 'supplier';
 			$WIDTH = (($shownb && $showtot) || !empty($conf->dol_optimize_smallscreen)) ? '256' : '320';
@@ -138,7 +138,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($shownb) {
-				$data1 = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09') == $refreshaction ?-1 : (3600 * 24)), ($WIDTH < 300 ? 2 : 0), $startmonth);
+				$data1 = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09') == $refreshaction ? -1 : (3600 * 24)), ($WIDTH < 300 ? 2 : 0), $startmonth);
 
 				$filenamenb = $dir."/".$prefix."invoicessuppliernbinyear-".$endyear.".png";
 				// default value for customer mode
@@ -178,7 +178,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showtot) {
-				$data2 = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09') == $refreshaction ?-1 : (3600 * 24)), ($WIDTH < 300 ? 2 : 0), $startmonth);
+				$data2 = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09') == $refreshaction ? -1 : (3600 * 24)), ($WIDTH < 300 ? 2 : 0), $startmonth);
 
 				$filenamenb = $dir."/".$prefix."invoicessupplieramountinyear-".$endyear.".png";
 				// default value for customer mode
@@ -223,7 +223,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 
 			if (!$mesg) {
 				$stringtoshow = '';
-				$stringtoshow .= '<script type="text/javascript">
+				$stringtoshow .= '<script nonce="'.getNonce().'" type="text/javascript">
 					jQuery(document).ready(function() {
 						jQuery("#idsubimg'.$this->boxcode.'").click(function() {
 							jQuery("#idfilter'.$this->boxcode.'").toggle();

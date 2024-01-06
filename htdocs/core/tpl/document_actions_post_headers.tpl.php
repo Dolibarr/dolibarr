@@ -41,6 +41,7 @@ if (empty($relativepathwithnofile)) {
 	$relativepathwithnofile = '';
 }
 
+// Set $permission from the $permissiontoadd var defined on calling page
 if (!isset($permission)) {
 	$permission = $permissiontoadd;
 }
@@ -82,9 +83,9 @@ if ($action == 'deletefile' || $action == 'deletelink') {
 // We define var to enable the feature to add prefix of uploaded files.
 // Caller of this include can make
 // $savingdocmask=dol_sanitizeFileName($object->ref).'-__file__';
-if (!isset($savingdocmask) || !empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_PREFIX)) {
+if (!isset($savingdocmask) || getDolGlobalString('MAIN_DISABLE_SUGGEST_REF_AS_PREFIX')) {
 	$savingdocmask = '';
-	if (empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_PREFIX)) {
+	if (!getDolGlobalString('MAIN_DISABLE_SUGGEST_REF_AS_PREFIX')) {
 		//var_dump($modulepart);
 		if (in_array($modulepart, array(
 			'facture_fournisseur',

@@ -9,12 +9,6 @@ if (!defined('NOREQUIRESOC')) {
 if (!defined('NOSTYLECHECK')) {
 	define('NOSTYLECHECK', '1'); // Do not check style html tag into posted data
 }
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1'); // Do not check anti CSRF attack test
-}
-if (!defined('NOTOKENRENEWAL')) {
-	define('NOTOKENRENEWAL', '1'); // Do not check anti POST attack test
-}
 //if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
 //if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
 //if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1'); // Do not load ajax.lib.php library
@@ -22,6 +16,7 @@ if (!defined("NOLOGIN")) {
 	define("NOLOGIN", '1'); // If this page is public (can be called outside logged session)
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 // Security
@@ -73,27 +68,27 @@ if (empty($usedolheader)) {
 
 	<?php
 } else {
-	$arraycss = array();
-	$arrayjs = array();
-	/*
-	$arraycss=array('/includes/jquery/plugins/datatables/media/css/jquery.dataTables.css',
-			'/includes/jquery/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css',
-			'/includes/jquery/plugins/datatables/extensions/ColReorder/css/colReorder.dataTables.min.css'
-	);
-	$arrayjs=array('/includes/jquery/plugins/datatables/media/js/jquery.dataTables.js',
-			'/includes/jquery/plugins/datatables/extensions/Buttons/js/dataTables.buttons.js',
-			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.colVis.min.js',
-			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js',
-			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.flash.min.js',
-			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.print.min.js',
-			'/includes/jquery/plugins/datatables/extensions/ColReorder/js/dataTables.colReorder.min.js',
-			'/includes/jszip/jszip.min.js',
-			'/includes/pdfmake/pdfmake.min.js',
-			'/includes/pdfmake/vfs_fonts.js'
-	);
-	*/
+		$arraycss = array();
+		$arrayjs = array();
+		/*
+		$arraycss=array('/includes/jquery/plugins/datatables/media/css/jquery.dataTables.css',
+				'/includes/jquery/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css',
+				'/includes/jquery/plugins/datatables/extensions/ColReorder/css/colReorder.dataTables.min.css'
+		);
+		$arrayjs=array('/includes/jquery/plugins/datatables/media/js/jquery.dataTables.js',
+				'/includes/jquery/plugins/datatables/extensions/Buttons/js/dataTables.buttons.js',
+				'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.colVis.min.js',
+				'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js',
+				'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.flash.min.js',
+				'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.print.min.js',
+				'/includes/jquery/plugins/datatables/extensions/ColReorder/js/dataTables.colReorder.min.js',
+				'/includes/jszip/jszip.min.js',
+				'/includes/pdfmake/pdfmake.min.js',
+				'/includes/pdfmake/vfs_fonts.js'
+		);
+		*/
 
-	llxHeader('', '', '', '', 0, 0, $arrayjs, $arraycss);
+		llxHeader('', '', '', '', 0, 0, $arrayjs, $arraycss);
 }
 
 

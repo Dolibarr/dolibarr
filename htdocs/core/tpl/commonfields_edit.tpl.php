@@ -69,10 +69,18 @@ foreach ($object->fields as $key => $val) {
 	}
 
 	if (in_array($val['type'], array('int', 'integer'))) {
-		$value = GETPOSTISSET($key) ?GETPOST($key, 'int') : $object->$key;
+		$value = GETPOSTISSET($key) ? GETPOST($key, 'int') : $object->$key;
 	} elseif ($val['type'] == 'double') {
 		$value = GETPOSTISSET($key) ? price2num(GETPOST($key, 'alphanohtml')) : $object->$key;
-	} elseif (preg_match('/^(text|html)/', $val['type'])) {
+	} elseif (preg_match('/^text/', $val['type'])) {
+		$tmparray = explode(':', $val['type']);
+		if (!empty($tmparray[1])) {
+			$check = $tmparray[1];
+		} else {
+			$check = 'nohtml';
+		}
+		$value = GETPOSTISSET($key) ? GETPOST($key, $check) : $object->$key;
+	} elseif (preg_match('/^html/', $val['type'])) {
 		$tmparray = explode(':', $val['type']);
 		if (!empty($tmparray[1])) {
 			$check = $tmparray[1];

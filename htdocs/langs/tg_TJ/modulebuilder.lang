@@ -1,14 +1,16 @@
 # Dolibarr language file - Source file is en_US - loan
+IdModule= Module id
 ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
 EnterNameOfModuleDesc=Enter the name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
-EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
+EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, the pages to list/add/edit/delete the object and the SQL files will be generated.
 EnterNameOfDictionaryDesc=Enter the name of the dictionary to create with no spaces. Use uppercase to separate words (For example: MyDico...). The class file, but also the SQL file will be generated.
 ModuleBuilderDesc2=Роҳе, ки модулҳо тавлид/таҳрир карда мешаванд (феҳристи аввал барои модулҳои беруна ба %s муайян карда шудааст): <strong> %s </strong>
 ModuleBuilderDesc3=Модулҳои тавлидшуда/таҳриршаванда ёфт шуданд: <strong> %s </strong>
-ModuleBuilderDesc4=Ҳангоме ки файли <strong> %s </strong> дар решаи директорияи модул мавҷуд аст, модул ҳамчун "таҳриршаванда" муайян карда мешавад
+ModuleBuilderDesc4=A module is detected as a 'module for Module Builer' when the file <strong>%s</strong> exists in the root of the module directory
 NewModule=Модули нав
 NewObjectInModulebuilder=Объекти нав
 NewDictionary=New dictionary
+ModuleName=Module name
 ModuleKey=Калиди модул
 ObjectKey=Калиди объект
 DicKey=Dictionary key
@@ -48,11 +50,14 @@ PathToModulePackage=Роҳ ба zip -и модул/бастаи барнома
 PathToModuleDocumentation=Роҳ ба файли ҳуҷҷатҳои модул/ариза (%s)
 SpaceOrSpecialCharAreNotAllowed=Ҷойҳо ё аломатҳои махсус иҷозат дода намешаванд.
 FileNotYetGenerated=Файл ҳоло тавлид нашудааст
+GenerateCode=Generate code
 RegenerateClassAndSql=Навсозии маҷбурии файлҳои .class ва .sql
 RegenerateMissingFiles=Файлҳои гумшударо эҷод кунед
 SpecificationFile=Файли ҳуҷҷатҳо
 LanguageFile=Файл барои забон
 ObjectProperties=Хусусиятҳои объект
+Property=Propery
+PropertyDesc=A property is an attribute that characterizes an object. This attribute has a code, a label and a type with several options.
 ConfirmDeleteProperty=Шумо мутмаин ҳастед, ки моликияти <strong> %s </strong> нест кардан мехоҳед? Ин рамзро дар синфи PHP тағир медиҳад, аммо сутунро аз таърифи ҷадвали объект хориҷ мекунад.
 NotNull=Не NULL
 NotNullDesc=1=Set database to NOT NULL, 0=Allow null values, -1=Allow null values by forcing value to NULL if empty ('' or 0)
@@ -81,15 +86,16 @@ IsAMeasure=Андоза аст
 DirScanned=Феҳрист скан шуд
 NoTrigger=Триггер нест
 NoWidget=Виджет нест
-GoToApiExplorer=Муҳаққиқи API
+ApiExplorer=API explorer
 ListOfMenusEntries=Рӯйхати вурудоти меню
 ListOfDictionariesEntries=Рӯйхати вурудоти луғатҳо
 ListOfPermissionsDefined=Рӯйхати иҷозатномаҳои муайяншуда
 SeeExamples=Намунаҳоро дар ин ҷо бубинед
-EnabledDesc=Шарти фаъол будани ин майдон (Намунаҳо: 1 ё $ conf-> global-> MYMODULE_MYOPTION)
-VisibleDesc=Оё майдон намоён аст? (Мисолҳо: 0 = Ҳеҷ гоҳ намоён нест, 1 = Дар рӯйхат намоён аст ва шаклҳоро эҷод/навсозӣ/дидан, 2 = Танҳо дар рӯйхат дидан, 3 = Танҳо дар шакли сохтан/навсозӣ/дидан (на рӯйхат), 4 = Дар рӯйхат намоён ва танҳо формаи навсозӣ/намоиш (офарида намешавад), 5 = Танҳо дар намуди рӯйхат намоён аст (эҷод карда намешавад, навсозӣ намешавад. <br> <br> Он метавонад ифода бошад, масалан: <br> preg_match ('/public/', $ _SERVER ['PHP_SELF'])? 0: 1 a0342fccfda19bz_ (0 user-> 1)> $ user-> 1)
-DisplayOnPdfDesc=Ин майдонро дар ҳуҷҷатҳои мувофиқи PDF намоиш диҳед, шумо метавонед мавқеъро бо майдони "Мавқеъ" идора кунед. <br> Айни замон, маълум моделҳои ҳамсозҳо PDF мебошанд: eratosthene (амрномаи), espadon (киштӣ), исфанҷеро (њисобнома), кабуд (propal / иқтибос), cornas (молрасон ва тартибот) <br> <br> <strong> Барои ҳуҷҷат: </strong> <br> 0 = нишон дода нашавад <br> 1 = Намоиши <br> 2 = нишон додани танҳо агар холӣ нест, <br> <br> <strong> Барои хати санад: </strong> <br> 0 = не нишон <br> 1 = дар сутуни <br> 3 = Намоиши дар сутуни Тавсифи хатти пас аз тавсифи <br> 4 = Намоиши дар сутуни тавсифи баъд аз намоиш тавсиф танҳо агар холӣ набошад
-DisplayOnPdf=Намоиши PDF
+EnabledDesc=Condition to have this field active.<br><br>Examples:<br>1<br>isModEnabled('MAIN_MODULE_MYMODULE')<br>getDolGlobalString('MYMODULE_OPTION')==2
+VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create), 5=Visible on list end view form only (not create, not update).<br><br>Using a negative value means field is not shown by default on list but can be selected for viewing).
+ItCanBeAnExpression=It can be an expression. Example:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>$user->hasRight('holiday', 'define_holiday')?1:5
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
+DisplayOnPdf=On PDF
 IsAMeasureDesc=Оё барои ба рӯйхат дохил шудан арзиши майдонро ҷамъ кардан мумкин аст? (Намунаҳо: 1 ё 0)
 SearchAllDesc=Оё майдон барои ҷустуҷӯи асбоби ҷустуҷӯи зуд истифода мешавад? (Намунаҳо: 1 ё 0)
 SpecDefDesc=Дар ин ҷо ҳама ҳуҷҷатҳое, ки шумо мехоҳед бо модули худ пешниҳод кунед, ки аз ҷониби дигар ҷадвалҳо муайян нашудаанд, ворид кунед. Шумо метавонед .md ё беҳтар, синтаксиси .asciidoc бойро истифода баред.
@@ -130,26 +136,44 @@ UseSpecificEditorURL = URL -и муҳаррири мушаххасро исти�
 UseSpecificFamily = Як оилаи мушаххасро истифода баред
 UseSpecificAuthor = Муаллифи мушаххасро истифода баред
 UseSpecificVersion = Як версияи мушаххаси ибтидоиро истифода баред
-IncludeRefGeneration=The reference of object must be generated automatically by custom numbering rules
+IncludeRefGeneration=The reference of this object must be generated automatically by custom numbering rules
 IncludeRefGenerationHelp=Check this if you want to include code to manage the generation of the reference automatically using custom numbering rules
-IncludeDocGeneration=I want to generate some documents from templates for the object
+IncludeDocGeneration=I want the feature to generate some documents (PDF, ODT) from templates for this object
 IncludeDocGenerationHelp=Агар шумо инро тафтиш кунед, барои илова кардани қуттии "Ҳуҷҷат эҷод кардан" дар сабт баъзе кодҳо тавлид карда мешаванд.
-ShowOnCombobox=Нишон додани арзиши дар combobox
+ShowOnCombobox=Show value into combo boxes
 KeyForTooltip=Калид барои маслиҳат
 CSSClass=CSS барои таҳрир/сохтани форма
 CSSViewClass=CSS барои хондан
 CSSListClass=CSS барои рӯйхат
 NotEditable=Таҳрир карда намешавад
 ForeignKey=Калиди хориҷӣ
-TypeOfFieldsHelp=Type of fields:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br>'1' means we add a + button after the combo to create the record<br>'filter' is a sql condition, example: 'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)'
+ForeignKeyDesc=If the value of this field must be guaranted to exists into another table. Enter here a value matching syntax: tablename.parentfieldtocheck
+TypeOfFieldsHelp=Example:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br>'1' means we add a + button after the combo to create the record<br>'filter' is a sql condition, example: 'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)'
+TypeOfFieldsHelpIntro=This is the type of the field/attribute.
 AsciiToHtmlConverter=Табдилдиҳандаи Ascii ба HTML
 AsciiToPdfConverter=Табдилдиҳандаи Ascii ба PDF
 TableNotEmptyDropCanceled=Ҷадвал холӣ нест. Таркиш бекор карда шуд.
 ModuleBuilderNotAllowed=Созандаи модул дастрас аст, аммо ба корбари шумо иҷозат дода намешавад.
 ImportExportProfiles=Профилҳои воридот ва содирот
-ValidateModBuilderDesc=Set this to 1 if you want to have the method $this->validateField() of object being called to validate the content of the field during insert or upadate. Set 0 if there is no validation required.
+ValidateModBuilderDesc=Set this to 1 if you want to have the method $this->validateField() of object being called to validate the content of the field during insert or update. Set 0 if there is no validation required.
 WarningDatabaseIsNotUpdated=Warning: The database is not updated automatically, you must destroy tables and disable-enable the module to have tables recreated
 LinkToParentMenu=Parent menu (fk_xxxxmenu)
 ListOfTabsEntries=List of tab entries
 TabsDefDesc=Define here the tabs provided by your module
 TabsDefDescTooltip=The tabs provided by your module/application are defined into the array <strong>$this->tabs</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.
+BadValueForType=Bad value for type %s
+DefinePropertiesFromExistingTable=Define properties from an existing table
+DefinePropertiesFromExistingTableDesc=If a table in the database (for the object to create) already exists, you can use it to define the properties of the object.
+DefinePropertiesFromExistingTableDesc2=Keep empty if the table does not exist yet. The code generator will use different kinds of fields to build an example of table that you can edit later.
+GeneratePermissions=I want to add the rights for this object
+GeneratePermissionsHelp=generate default rights for this object
+PermissionDeletedSuccesfuly=Permission has been successfully removed
+PermissionUpdatedSuccesfuly=Permission has been successfully updated
+PermissionAddedSuccesfuly=Permission has been successfully added
+MenuDeletedSuccessfuly=Menu has been successfully deleted
+MenuAddedSuccessfuly=Menu has been successfully added
+MenuUpdatedSuccessfuly=Menu has been successfully updated
+ApiObjectDeleted=API for object %s has been successfully deleted
+CRUDRead=Read
+CRUDCreateWrite=Create or Update
+FailedToAddCodeIntoDescriptor=Failed to add code into descriptor. Check that the string comment "%s" is still present into the file.

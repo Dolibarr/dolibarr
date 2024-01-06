@@ -23,6 +23,7 @@
  *  \brief      Page to add payment of an expense report
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
@@ -76,7 +77,7 @@ if ($action == 'add_payment') {
 		$error++;
 	}
 
-	if (!empty($conf->banque->enabled) && !($accountid > 0)) {
+	if (isModEnabled("banque") && !($accountid > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToDebit")), null, 'errors');
 		$error++;
 	}
@@ -106,8 +107,8 @@ if ($action == 'add_payment') {
 			// Create a line of payments
 			$payment = new PaymentExpenseReport($db);
 			$payment->fk_expensereport = $expensereport->id;
-			$payment->datepaid       = $datepaid;
-			$payment->amounts        = $amounts; // Tableau de montant
+			$payment->datep       	 = $datepaid;
+			$payment->amounts		 = $amounts; // Tableau de montant
 			$payment->total          = $total;
 			$payment->fk_typepayment = GETPOST("fk_typepayment", 'int');
 			$payment->num_payment    = GETPOST("num_payment", 'alphanothtml');
@@ -235,7 +236,7 @@ if ($action == 'create' || empty($action)) {
 
 	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
 	$datepaid = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
-	$datepayment = ($datepaid == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '') : $datepaid);
+	$datepayment = ($datepaid == '' ? (!getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : '') : $datepaid);
 	print $form->selectDate($datepayment, '', '', '', 0, "add_payment", 1, 1);
 	print "</td>";
 	print '</tr>';
@@ -245,7 +246,7 @@ if ($action == 'create' || empty($action)) {
 	print "</td>\n";
 	print '</tr>';
 
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled("banque")) {
 		print '<tr>';
 		print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 		print '<td colspan="2">';

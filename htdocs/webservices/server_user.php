@@ -20,11 +20,29 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-if (!defined("NOCSRFCHECK")) {
-	define("NOCSRFCHECK", '1');
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1'); // Do not check anti CSRF attack test
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1'); // Do not check anti POST attack test
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1'); // Do not load ajax.lib.php library
+}
+if (!defined("NOLOGIN")) {
+	define("NOLOGIN", '1'); // If this page is public (can be called outside logged session)
+}
+if (!defined("NOSESSION")) {
+	define("NOSESSION", '1');
 }
 
-require_once '../master.inc.php';
+require '../main.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php'; // Include SOAP
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -38,7 +56,7 @@ dol_syslog("Call User webservices interfaces");
 $langs->load("main");
 
 // Enable and test if module web services is enabled
-if (empty($conf->global->MAIN_MODULE_WEBSERVICES)) {
+if (!getDolGlobalString('MAIN_MODULE_WEBSERVICES')) {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
 	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
@@ -322,22 +340,24 @@ function getUser($authentication, $id, $ref = '', $ref_ext = '')
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (!$error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext))) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
 	}
 
 	if (!$error) {
 		$fuser->getrights();
 
-		if ($fuser->rights->user->user->lire
-			|| ($fuser->rights->user->self->creer && $id && $id == $fuser->id)
-			|| ($fuser->rights->user->self->creer && $ref && $ref == $fuser->login)
-			|| ($fuser->rights->user->self->creer && $ref_ext && $ref_ext == $fuser->ref_ext)) {
+		if ($fuser->hasRight('user', 'user', 'lire')
+			|| ($fuser->hasRight('user', 'self', 'creer') && $id && $id == $fuser->id)
+			|| ($fuser->hasRight('user', 'self', 'creer') && $ref && $ref == $fuser->login)
+			|| ($fuser->hasRight('user', 'self', 'creer') && $ref_ext && $ref_ext == $fuser->ref_ext)) {
 			$user = new User($db);
 			$result = $user->fetch($id, $ref, $ref_ext);
 			if ($result > 0) {
@@ -375,11 +395,13 @@ function getUser($authentication, $id, $ref = '', $ref_ext = '')
 				);
 			} else {
 				$error++;
-				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
+				$errorcode = 'NOT_FOUND';
+				$errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
 			}
 		} else {
 			$error++;
-			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
+			$errorcode = 'PERMISSION_DENIED';
+			$errorlabel = 'User does not have permission for this request';
 		}
 	}
 
@@ -398,7 +420,7 @@ function getUser($authentication, $id, $ref = '', $ref_ext = '')
  */
 function getListOfGroups($authentication)
 {
-	global $db, $conf;
+	global $db, $conf, $user;
 
 	dol_syslog("Function: getListOfGroups login=".$authentication['login']);
 
@@ -409,7 +431,8 @@ function getListOfGroups($authentication)
 	// Init and check authentication
 	$objectresp = array();
 	$arraygroups = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
@@ -418,7 +441,7 @@ function getListOfGroups($authentication)
 		$sql = "SELECT g.rowid, g.nom as name, g.entity, g.datec, COUNT(DISTINCT ugu.fk_user) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_usergroup = g.rowid";
-		if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($fuser->admin && !$fuser->entity))) {
+		if (isModEnabled('multicompany') && $conf->entity == 1 && (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') || ($user->admin && !$user->entity))) {
 			$sql .= " WHERE g.entity IS NOT NULL";
 		} else {
 			$sql .= " WHERE g.entity IN (0,".$conf->entity.")";
@@ -475,7 +498,8 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 	}
 
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
@@ -486,13 +510,14 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 
 	if (!$error && !$thirdpartywithuser) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter thirdparty must be provided.";
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = "Parameter thirdparty must be provided.";
 	}
 
 	if (!$error) {
 		$fuser->getrights();
 
-		if ($fuser->rights->societe->creer) {
+		if ($fuser->hasRight('societe', 'creer')) {
 			$thirdparty = new Societe($db);
 
 			// If a contact / company already exists with the email, return the corresponding socid
@@ -509,7 +534,8 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 				$row = $db->fetch_object($resql);
 				if ($row) {
 					$error++;
-					$errorcode = 'ALREADY_EXIST'; $errorlabel = 'Object not create : company or contact exists '.$thirdpartywithuser['email'];
+					$errorcode = 'ALREADY_EXIST';
+					$errorlabel = 'Object not create : company or contact exists '.$thirdpartywithuser['email'];
 				} else {
 					$db->begin();
 					/*
@@ -611,11 +637,13 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 								}
 							} else {
 								$error++;
-								$errorcode = 'NOT_CREATE'; $errorlabel = 'Object not create : '.$edituser->error;
+								$errorcode = 'NOT_CREATE';
+								$errorlabel = 'Object not create : '.$edituser->error;
 							}
 						} else {
 							$error++;
-							$errorcode = 'NOT_CREATE'; $errorlabel = 'Object not create : '.$contact->error;
+							$errorcode = 'NOT_CREATE';
+							$errorlabel = 'Object not create : '.$contact->error;
 						}
 
 						if (!$error) {
@@ -631,11 +659,13 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 			} else {
 				// retour creation KO
 				$error++;
-				$errorcode = 'NOT_CREATE'; $errorlabel = 'Object not create';
+				$errorcode = 'NOT_CREATE';
+				$errorlabel = 'Object not create';
 			}
 		} else {
 			$error++;
-			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
+			$errorcode = 'PERMISSION_DENIED';
+			$errorlabel = 'User does not have permission for this request';
 		}
 	}
 
@@ -659,7 +689,6 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
  */
 function setUserPassword($authentication, $shortuser)
 {
-
 	global $db, $conf;
 
 	dol_syslog("Function: setUserPassword login=".$authentication['login']);
@@ -669,7 +698,8 @@ function setUserPassword($authentication, $shortuser)
 	}
 
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
@@ -680,32 +710,36 @@ function setUserPassword($authentication, $shortuser)
 
 	if (!$error && !$shortuser) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter shortuser must be provided.";
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = "Parameter shortuser must be provided.";
 	}
 
 	if (!$error) {
 		$fuser->getrights();
 
-		if ($fuser->rights->user->user->password || $fuser->rights->user->self->password) {
+		if ($fuser->hasRight('user', 'user', 'password') || $fuser->hasRight('user', 'self', 'password')) {
 			$userstat = new User($db);
 			$res = $userstat->fetch('', $shortuser['login']);
 			if ($res) {
 				$res = $userstat->setPassword($userstat, $shortuser['password']);
-				if ($res) {
+				if (is_int($res) && $res < 0) {
+					$error++;
+					$errorcode = 'NOT_MODIFIED';
+					$errorlabel = 'Error when changing password';
+				} else {
 					$objectresp = array(
 						'result'=>array('result_code' => 'OK', 'result_label' => ''),
 					);
-				} else {
-					$error++;
-					$errorcode = 'NOT_MODIFIED'; $errorlabel = 'Error when changing password';
 				}
 			} else {
 				$error++;
-				$errorcode = 'NOT_FOUND'; $errorlabel = 'User not found';
+				$errorcode = 'NOT_FOUND';
+				$errorlabel = 'User not found';
 			}
 		} else {
 			$error++;
-			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
+			$errorcode = 'PERMISSION_DENIED';
+			$errorlabel = 'User does not have permission for this request';
 		}
 	}
 

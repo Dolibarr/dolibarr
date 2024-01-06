@@ -25,6 +25,7 @@
  *		\brief      Page to display expense tax ik
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
@@ -220,7 +221,7 @@ if ($action != 'edit') {
 	echo '<td class="linecoltype">' . $form->selectExpense('', 'fk_c_type_fees', 0, 1, 1) . '</td>';
 	echo '<td class="linecoltyperule">' . $form->selectarray('code_expense_rules_type', $tab_rules_type, '', 0) . '</td>';
 	echo '<td class="linecoldatestart">' . $form->selectDate(strtotime(date('Y-m-01', dol_now())), 'start', '', '', 0, '', 1, 0) . '</td>';
-	echo '<td class="linecoldateend>' . $form->selectDate(strtotime(date('Y-m-t', dol_now())), 'end', '', '', 0, '', 1, 0) . '</td>';
+	echo '<td class="linecoldateend">' . $form->selectDate(strtotime(date('Y-m-t', dol_now())), 'end', '', '', 0, '', 1, 0) . '</td>';
 	echo '<td class="linecolamount"><input type="text" value="" class="maxwidth100" name="amount" class="amount right" /></td>';
 	echo '<td class="linecolrestrictive">' . $form->selectyesno('restrictive', 0, 1) . '</td>';
 	echo '<td class="right linecolbutton"><input type="submit" class="button button-add" value="' . $langs->trans('Add') . '" /></td>';

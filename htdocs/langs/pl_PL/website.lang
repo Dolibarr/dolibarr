@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - website
 Shortname=Kod
+WebsiteName=Name of the website
 WebsiteSetupDesc=Tu utwórz witryny, które chcesz użyć. Następnie, przejdź do menu Witryny, aby je edytować.
 DeleteWebsite=Skasuj stronę
 ConfirmDeleteWebsite=Czy na pewno zamierzasz usunąć tę witrynę? Wszystkie jej strony i zawartość również zostaną usunięte. Pozostawione zostaną wszelkie pliki dosłane (np. do katalogu mediów, moduł ECM, ...).
@@ -10,21 +11,21 @@ WEBSITE_ALIASALT=Alternatywne nazwy/aliasy strony
 WEBSITE_ALIASALTDesc=Użyj tutaj listy innych nazw/aliasów, aby uzyskać dostęp do web strony za pomocą tych innych nazw/aliasów (na przykład: po zmianie nazwy/aliasu dostęp do web strony po starej nazwie/aliasie byłby niemożliwy. Taka lista temu zapobiega). Składnia jest następująca: <br> innanazwa1, innanazwa2, ...
 WEBSITE_CSS_URL=URL zewnętrznego pliku CSS
 WEBSITE_CSS_INLINE=Zawartość pliku CSS (wspólna dla wszystkich stron)
-WEBSITE_JS_INLINE=Zawartość pliku JavaScript (wspólna dla wszystkich stron)
+WEBSITE_JS_INLINE=JavaScript file content (common to all pages)
 WEBSITE_HTML_HEADER=Dodanie nagłówka HTML u dołu (wspólne dla wszystkich stron)
 WEBSITE_ROBOT=Plik robota (robots.txt)
 WEBSITE_HTACCESS=Plik .htaccess witryny
 WEBSITE_MANIFEST_JSON=Plik manifest.json witryny
-WEBSITE_README=Plik README.md
 WEBSITE_KEYWORDSDesc=Wartości rozdziel przecinkami
-EnterHereLicenseInformation=Tu wprowadź metadane lub informacje licencyjne, które wypełnią plik README.md. Przy rozprowadzaniu Twej witryny jako szablonu, plik ten zostanie dołączony do pakietu tego szablonu.
+EnterHereReadmeInformation=Enter here a description of the website. If you distribute your website as a template, the file will be included into the temptate package.
+EnterHereLicenseInformation=Enter here the LICENSE of the code of the website. If you distribute your website as a template, the file will be included into the temptate package.
 HtmlHeaderPage=Nagłówek HTML (tylko dla tej strony)
 PageNameAliasHelp=Nazwa lub alias strony. <br> Ten alias służy również do tworzenia adresu URL wspierającego SEO, gdy witrynę obsługuje web serwer (taki jak Apacke, Nginx, ...). Użyj przycisku „<strong>%s</strong>”, aby edytować ten alias.
 EditTheWebSiteForACommonHeader=Uwaga: Jeśli chcesz zdefiniować nagłówek dla wszystkich stron, edytuj nagłówek na poziomie witryny zamiast na poziomie strony/pojemnika.
 MediaFiles=Biblioteka mediów
 EditCss=Edytuj właściwości witryny
 EditMenu=Edytuj Menu
-EditMedias=Edytuj media
+EditMedias=Edit media
 EditPageMeta=Edytuj właściwości strony/pojemnika
 EditInLine=Edytuj w linii
 AddWebsite=Dodaj witrynę
@@ -42,10 +43,12 @@ ViewPageInNewTab=Zobacz stronę w nowej zakładce
 SetAsHomePage=Ustaw jako stronę domową
 RealURL=Prawdziwy adres URL
 ViewWebsiteInProduction=Zobacz stronę używając linków ze strony głównej
+Virtualhost=Virtual host or domain name
+VirtualhostDesc=The name of the Virtual host or domain (For example: www.mywebsite.com, mybigcompany.net, ...)
 SetHereVirtualHost= <u> Użyj z Apache / NGinx / ... </u> <br> Utwórz na swoim serwerze internetowym (Apache, Nginx, ...) dedykowany wirtualny host z włączoną obsługą PHP i katalog główny na <br> <strong>%s</strong>
 ExampleToUseInApacheVirtualHostConfig=Przykład do użycia w konfiguracji hosta wirtualnego Apache:
 YouCanAlsoTestWithPHPS=<u> Używaj z wbudowanym serwerem PHP </u> <br>Gdy w środowisku rozwojowym preferujesz testowanie web strony z web serwerem wbudowanym w PHP (wymagane PHP 5.5 lub nowsze), to uruchamiaj<br> <strong> php -S 0.0.0.0:8080 -t %s</strong>
-YouCanAlsoDeployToAnotherWHP=<u>Uruchom swoją witrynę u innego dostawcy wystąpień Dolibarr</u><br>Jeśli nie masz dostępnego w internecie web serwera, takiego jak Apache lub NGinx, to możesz eksportować i importować swoją witrynę do innego wystąpienia Dolibarr u kogoś oferującego wystąpienia Dolibarr mające moduł Website w pełni zintegrowany z web serwerem. Listę niektórych dostawców wystąpień Dolibarr znajdziesz w <a href="https://saas.dolibarr.org" target="_blank">https://saas.dolibarr.org</a>
+YouCanAlsoDeployToAnotherWHP=<u>Run your web site with another Dolibarr Hosting provider</u><br>If you don't have a web server like Apache or NGinx available on internet, you can export and import your web site onto another Dolibarr instance provided by another Dolibarr hosting provider that provide full integration with the Website module. You can find a list of some Dolibarr hosting providers on <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
 CheckVirtualHostPerms=Sprawdź również, czy użytkownik wirtualnego hosta (na przykład dane www) ma <strong> %s </strong> uprawnienia do plików w <br> <strong> %s</strong>
 ReadPerm=Czytanie
 WritePerm=Zapis
@@ -58,9 +61,9 @@ YouCanCreatePageOrImportTemplate=Możesz utworzyć nową stronę albo załadowa�
 SyntaxHelp=Pomoc na temat określonych wskazówek dotyczących składni
 YouCanEditHtmlSourceckeditor=Możesz edytować kod źródłowy HTML używając przycisku „Źródło” w edytorze.
 YouCanEditHtmlSource= <br> <span class="fa fa-bug"> </span> Możesz dołączyć kod PHP do tego źródła za pomocą tagów <strong> &lt;? php? &gt; </strong>. Dostępne są następujące zmienne globalne: $ conf, $ db, $ mysoc, $ user, $ website, $ websitepage, $ weblangs, $ pagelangs. <br> <br> <span class="fa fa-bug"> </span> Możesz także dołączyć zawartość innej strony / kontenera o następującej składni: <br> <strong> a03900aindf7d31Contiaser? ? &gt; </strong> <br> <br> <span class="fa fa-bug"> </span> Można zrobić przekierowanie do innej strony / pojemnik z następującą składnią (Uwaga: Nie Wyjście jakiejkolwiek zawartości przed przekierowaniem): <br> <strong> &lt; php redirectToContainer ( 'alias_of_container_to_redirect_to'); ? &gt; </strong> <br> <br> <span class="fa fa-link"> </span> Aby dodać link do innej strony, użyj składni: <br> <strong> &lt;a href = "alias_of_page_to_link_to.php" &gt;mylink&lt;a&gt; </strong> <br> <br> <span class="fa fa-download"> </span> Aby umieścić link do pobrania </strong> <strong> pliku zapisanego w dokumentach <strong> </strong>, użyj <strong> document.php </strong> wrapper: <br> Przykład, dla pliku w dokumentach / ecm (należy zarejestrować), składnia jest następująca: a0342fcccfdae19bz039 = <br> ] nazwa_pliku.ext "&gt; </strong> <br> Dla pliku w dokumentach / mediach (otwarty katalog dla publicznego dostępu) składnia jest następująca: <br> <strong> a03900dfred31ecz "/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt; </strong> <br> W przypadku pliku udostępnionego za pomocą linku do udostępniania (otwarty dostęp za pomocą klucza współdzielenia hashf pliku: </strong> <br>), dla pliku udostępnionego za pomocą linku do udostępniania (otwarty dostęp przy użyciu klucza współdzielenia hashf pliku: </strong> <br>). /document.php?hashp=publicsharekeyoffile"&gt; </strong> <br> <br> <span class="fa fa-picture-o"> </span> Aby to </strong> <strong> obrazu zapisane do tych <strong> dokumentów </strong>, za pomocą przycisków <strong> viewimage.php </strong> owijający: <br> przykład w przypadku obrazu do dokumentów / media (otwarte katalog dla dostępu publicznego), składnia jest następująca: <br> <strong> &lt;img src = "/ viewimage.php? modulepart = medias&amp;file = [katalog_względny /] nazwa_pliku.ext" a0065c2c071 "a0065c2c071" a0087c2c071
-#YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+#YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource2=W przypadku obrazu udostępnionego za pomocą linku do udostępniania (otwarty dostęp przy użyciu klucza współdzielenia skrótu pliku) składnia jest następująca: <br> <strong> &lt;img src = "/ viewimage.php? Hashp = 12345679012 ..." a0012c7dcbe087c65z071
-YouCanEditHtmlSourceMore= <br> Więcej przykładów kodu HTML lub dynamicznego dostępnych w <a href="%s" target="_blank"> dokumentacji wiki </a> <br>.
+YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank" rel="noopener noreferrer external">the wiki documentation</a><br>.
 ClonePage=Powiel stronę/pojemnik
 CloneSite=Duplikuj stronę
 SiteAdded=Dodano witrynę
@@ -80,7 +83,7 @@ BlogPost=Post na blogu
 WebsiteAccount=Konto witryny
 WebsiteAccounts=Konta witryny
 AddWebsiteAccount=Utwórz konto witryny
-BackToListForThirdParty=Powrót do listy dla firmy zewnętrznej
+BackToListForThirdParty=Back to list for the third parties
 DisableSiteFirst=Najpierw wyłącz witrynę
 MyContainerTitle=Tytuł mojej witryny
 AnotherContainer=W ten sposób można dołączyć zawartość innej web strony/pojemnika (może pojawić się błąd, gdy włączysz obsługę kodu dynamicznego a wbudowany podrzędny pojemnik nie istnieje)
@@ -88,7 +91,7 @@ SorryWebsiteIsCurrentlyOffLine=Przepraszamy, ta witryna jest obecnie niedostępn
 WEBSITE_USE_WEBSITE_ACCOUNTS=Włącz tabelę kont witryny
 WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Włącz tabelę kont witryny (login/hasło) dla każdej witryny/strony trzeciej
 YouMustDefineTheHomePage=Najpierw musisz zdefiniować domyślną stronę główną
-OnlyEditionOfSourceForGrabbedContentFuture=Ostrzeżenie: Tworzenie strony internetowej poprzez importowanie zewnętrznej strony internetowej jest zarezerwowane dla doświadczonych użytkowników. W zależności od złożoności strony źródłowej, wynik importu może różnić się od oryginału. Również jeśli strona źródłowa używa typowych stylów CSS lub konfliktu JavaScript, może to zakłócić wygląd lub funkcje edytora Witryny podczas pracy na tej stronie. Ta metoda jest szybszym sposobem tworzenia strony, ale zaleca się utworzenie nowej strony od podstaw lub na podstawie sugerowanego szablonu strony. <br> Należy również zauważyć, że wbudowany edytor może nie działać poprawnie, gdy jest używany na przechwyconej stronie zewnętrznej.
+OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users. Depending on the complexity of source page, the result of importation may differ from the original. Also if the source page uses common CSS styles or conflicting JavaScript, it may break the look or features of the Website editor when working on this page. This method is a quicker way to create a page but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor may not works correctty when used on a grabbed external page.
 OnlyEditionOfSourceForGrabbedContent=Po zaciągnięciu zawartości z zewnętrznej web witryny możliwa jest jedynie edycja kodu źródłowego HTML
 GrabImagesInto=Przechwyć także obrazy znalezione w CSS i na stronie.
 ImagesShouldBeSavedInto=Obrazy powinny być zapisane w katalogu
@@ -109,13 +112,13 @@ GoTo=Idź do
 DynamicPHPCodeContainsAForbiddenInstruction=Dodajesz dynamiczny kod PHP zawierający instrukcję PHP '<strong>%s</strong>' co jest domyślnie zabronione (podejrzyj ukryte opcje WEBSITE_PHP_ALLOW_xxx w celu powiększenia listy dozwolonych poleceń).
 NotAllowedToAddDynamicContent=Nie masz uprawnień do dodawania/edytowania kodu PHP w witrynie. Uzyskaj uprawnienia lub po prostu nie zmieniaj kodu PHP.
 ReplaceWebsiteContent=Wyszukaj lub Zamień zawartość witryny
-DeleteAlsoJs=Czy usunąć też wszelkie pliki JavaScript tej witryny?
-DeleteAlsoMedias=Czy usunąć też wszelkie pliki mediów tej witryny?
+DeleteAlsoJs=Delete also all JavaScript files specific to this website?
+DeleteAlsoMedias=Delete also all media files specific to this website?
 MyWebsitePages=Strony mej witryny
 SearchReplaceInto=Szukaj | Zamień na
 ReplaceString=Nowy łańcuch
 CSSContentTooltipHelp=Tu wprowadź kod CSS. W celu uniknięcia konfliktu tego kodu z kodem CSS aplikacji, każdą wprowadzoną tu deklarację poprzedź prefiksem .bodywebsite. Na przykład:<br><br>#mycssselector, input.myclass:hover { ... }<br>zamień na <br>.bodywebsite #mycssselector, .bodywebsite input.myclass:hover { ... }<br><br>Uwaga: Jeżeli masz duży plik z deklaracjami bez tego prefiksu, to możesz użyć 'lessc' do ich konwersji na nowe, poprzedzone prefiksem.
-LinkAndScriptsHereAreNotLoadedInEditor=Ostrzeżenie: ta zawartość jest wyprowadzana tylko wtedy, gdy witryna jest uzyskiwana z serwera. Nie jest używany w trybie edycji, więc jeśli chcesz załadować pliki javascript również w trybie edycji, po prostu dodaj swój tag „script src = ...” do strony.
+LinkAndScriptsHereAreNotLoadedInEditor=Warning: This content is output only when site is accessed from a server. It is not used in Edit mode so if you need to load JavaScript files also in edit mode, just add your tag 'script src=...' into the page.
 Dynamiccontent=Próbka web strony z dynamiczną zawartością
 ImportSite=Załaduj szablon witryny
 EditInLineOnOff=Tryb „Edytuj w linii” jest %s
@@ -137,7 +140,7 @@ PagesRegenerated=%s strony / kontenery zostały ponownie wygenerowane
 RegenerateWebsiteContent=Zregeneruj pliki pamięci podręcznej witryny internetowej
 AllowedInFrames=Dozwolone w ramkach
 DefineListOfAltLanguagesInWebsiteProperties=Zdefiniuj listę wszystkich dostępnych języków we właściwościach witryny internetowej.
-GenerateSitemaps=Wygeneruj plik mapy witryny internetowej
+GenerateSitemaps=Generate website sitemap.xml file
 ConfirmGenerateSitemaps=Jeśli potwierdzisz, usuniesz istniejący plik mapy witryny ...
 ConfirmSitemapsCreation=Potwierdź wygenerowanie mapy witryny
 SitemapGenerated=Wygenerowano plik mapy witryny <b>%s</b>
@@ -145,3 +148,18 @@ ImportFavicon=Favicon
 ErrorFaviconType=Favicon musi być w formacie PNG
 ErrorFaviconSize=Favicon musi mieć rozmiar 16x16, 32x32 lub 64x64
 FaviconTooltip=Prześlij obraz, który musi być w formacie PNG (16x16, 32x32 lub 64x64)
+NextContainer=Next page/container
+PreviousContainer=Previous page/container
+WebsiteMustBeDisabled=The website must have the status "%s"
+WebpageMustBeDisabled=The web page must have the status "%s"
+SetWebsiteOnlineBefore=When website is offline, all pages are offline. Change status of website first.
+Booking=Booking
+Reservation=Reservation
+PagesViewedPreviousMonth=Pages viewed (previous month)
+PagesViewedTotal=Pages viewed (total)
+Visibility=Widoczność
+Everyone=Everyone
+AssignedContacts=Przypisane kontakty
+WebsiteTypeLabel=Type of Web site
+WebsiteTypeDolibarrWebsite=Web site (CMS Dolibarr)
+WebsiteTypeDolibarrPortal=Native Dolibarr portal

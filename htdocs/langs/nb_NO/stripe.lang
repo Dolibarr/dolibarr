@@ -41,7 +41,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook-nøkkel
 ONLINE_PAYMENT_WAREHOUSE=Lager som skal brukes for lagernedskrivning når nettbasert betaling er utført<br> (TODO Når alternativet for å redusere lagerbeholdningen gjøres på en faktura handling, og online betaling genererer fakturaen?)
 StripeLiveEnabled=Stripe live aktivert (ellers test/sandbox modus)
 StripeImportPayment=Importer Stripe-betalinger
-ExampleOfTestCreditCard=Eksempel på kredittkort for test: %s => gyldig, %s => feil CVC, %s => utløpt, %s => belastning mislykket
+ExampleOfTestCreditCard=Eksempel på kredittkort for en testbetaling: %s => gyldig, %s => feil CVC, %s => utløpt, %s => belastning mislykkes
+ExampleOfTestBankAcountForSEPA=Eksempel på bankkonto BAN for test av direkte belastning: %s
 StripeGateways=Stripe gateways
 OAUTH_STRIPE_TEST_ID=Stripe Connect Client ID (ca. _...)
 OAUTH_STRIPE_LIVE_ID=Stripe Connect Client ID (ca. _...)
@@ -50,6 +51,7 @@ StripeAccount=Stripe-konto
 StripeChargeList=Liste over Stripe-kostnader
 StripeTransactionList=Liste over stripe-transaksjoner
 StripeCustomerId=Stripe kunde-id
+StripePaymentId=Stripe betalings-ID
 StripePaymentModes=Stripe betalingsmåter
 LocalID=Lokal ID
 StripeID=Stripe ID
@@ -61,6 +63,7 @@ DeleteACard=Slett kort
 ConfirmDeleteCard=Er du sikker på at du vil slette dette Kreditt- eller debetkortet?
 CreateCustomerOnStripe=Opprett kunde på Stripe
 CreateCardOnStripe=Lag kort på Stripe
+CreateBANOnStripe=Opprett bank på Stripe
 ShowInStripe=Vis i Stripe
 StripeUserAccountForActions=Brukerkonto til bruk for e-postvarsling av noen Stripe-hendelser (Stripe-utbetalinger)
 StripePayoutList=Liste over Stripe utbetalinger
@@ -69,3 +72,8 @@ ToOfferALinkForLiveWebhook=Link til oppsett av Stripe WebHook for oppkall av IPN
 PaymentWillBeRecordedForNextPeriod=Betalingen blir registrert for neste periode.
 ClickHereToTryAgain=<a href="%s">Klikk her for å prøve igjen ...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=På grunn av sterke regler for godkjenning av kunder, må opprettelse av et kort gjøres fra Stripe backoffice. Du kan klikke her for å slå på Stripe kundeoppføring: %s
+STRIPE_CARD_PRESENT=Kort til stede for Stripe-terminaler
+TERMINAL_LOCATION=Plassering (adresse) for Stripe Terminaler
+RequestDirectDebitWithStripe=Be om direktedebet med Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Aktiver direktedebet gjennom Stripe
+

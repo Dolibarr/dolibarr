@@ -25,6 +25,7 @@
  * \brief		Page to show book-entry
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
@@ -85,7 +86,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->mouvements->lire)) {
+if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
@@ -102,7 +103,7 @@ if ($cancel) {
 if ($action == "confirm_update") {
 	$error = 0;
 
-	if ((floatval($debit) != 0.0) && (floatval($credit) != 0.0)) {
+	if (((float) $debit != 0.0) && ((float) $credit != 0.0)) {
 		$error++;
 		setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
 		$action = 'update';
@@ -129,12 +130,12 @@ if ($action == "confirm_update") {
 			$object->debit = $debit;
 			$object->credit = $credit;
 
-			if (floatval($debit) != 0.0) {
+			if ((float) $debit != 0.0) {
 				$object->montant = $debit; // deprecated
 				$object->amount = $debit;
 				$object->sens = 'D';
 			}
-			if (floatval($credit) != 0.0) {
+			if ((float) $credit != 0.0) {
 				$object->montant = $credit; // deprecated
 				$object->amount = $credit;
 				$object->sens = 'C';
@@ -158,7 +159,7 @@ if ($action == "confirm_update") {
 } elseif ($action == "add") {
 	$error = 0;
 
-	if ((floatval($debit) != 0.0) && (floatval($credit) != 0.0)) {
+	if (((float) $debit != 0.0) && ((float) $credit != 0.0)) {
 		$error++;
 		setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
 		$action = '';
@@ -188,13 +189,13 @@ if ($action == "confirm_update") {
 		$object->fk_doc = GETPOSTINT('fk_doc');
 		$object->fk_docdet = GETPOSTINT('fk_docdet');
 
-		if (floatval($debit) != 0.0) {
+		if ((float) $debit != 0.0) {
 			$object->montant = $debit; // deprecated
 			$object->amount = $debit;
 			$object->sens = 'D';
 		}
 
-		if (floatval($credit) != 0.0) {
+		if ((float) $credit != 0.0) {
 			$object->montant = $credit; // deprecated
 			$object->amount = $credit;
 			$object->sens = 'C';
@@ -332,7 +333,9 @@ if ($action == 'valid') {
 $html = new Form($db);
 $formaccounting = new FormAccounting($db);
 
-llxHeader('', $langs->trans("CreateMvts"));
+$title = $langs->trans("CreateMvts");
+
+llxHeader('', $title);
 
 // Confirmation to delete the command
 if ($action == 'delete') {
@@ -341,7 +344,7 @@ if ($action == 'delete') {
 }
 
 if ($action == 'create') {
-	print load_fiche_titre($langs->trans("CreateMvts"));
+	print load_fiche_titre($title);
 
 	$object = new BookKeeping($db);
 	$next_num_mvt = $object->getNextNumMvt('_tmp');
@@ -409,7 +412,11 @@ if ($action == 'create') {
 	if (!empty($object->piece_num)) {
 		$backlink = '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?restore_lastsearch_values=1">'.$langs->trans('BackToList').'</a>';
 
-		print load_fiche_titre($langs->trans("UpdateMvts"), $backlink);
+		if ($mode == '_tmp') {
+			print load_fiche_titre($langs->trans("CreateMvts"), $backlink);
+		} else {
+			print load_fiche_titre($langs->trans("UpdateMvts"), $backlink);
+		}
 
 		$head = array();
 		$h = 0;
@@ -490,7 +497,7 @@ if ($action == 'create') {
 
 		// Ref document
 		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('Piece');
 		print '</td>';
 		if ($action != 'editdocref') {
@@ -605,7 +612,7 @@ if ($action == 'create') {
 
 		print dol_get_fiche_end();
 
-		print '<div style="clear:both"></div>';
+		print '<div class="clearboth"></div>';
 
 		print '<br>';
 
@@ -614,6 +621,7 @@ if ($action == 'create') {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
+			// List of movements
 			print load_fiche_titre($langs->trans("ListeMvts"), '', '');
 
 			print '<form action="'.$_SERVER["PHP_SELF"].'?piece_num='.$object->piece_num.'" method="post">';
@@ -641,8 +649,8 @@ if ($action == 'create') {
 				print_liste_field_titre("AccountAccountingShort");
 				print_liste_field_titre("SubledgerAccount");
 				print_liste_field_titre("LabelOperation");
-				print_liste_field_titre("Debit", "", "", "", "", 'class="right"');
-				print_liste_field_titre("Credit", "", "", "", "", 'class="right"');
+				print_liste_field_titre("AccountingDebit", "", "", "", "", 'class="right"');
+				print_liste_field_titre("AccountingCredit", "", "", "", "", 'class="right"');
 				if (empty($object->date_validation)) {
 					print_liste_field_titre("Action", "", "", "", "", 'width="60"', "", "", 'center ');
 				} else {
@@ -661,21 +669,21 @@ if ($action == 'create') {
 				}
 
 				foreach ($object->linesmvt as $line) {
-					print '<tr class="oddeven">';
+					print '<tr class="oddeven" data-lineid="'.((int) $line->id).'">';
 					$total_debit += $line->debit;
 					$total_credit += $line->credit;
 
 					if ($action == 'update' && $line->id == $id) {
 						print '<!-- td columns in edit mode -->';
 						print '<td>';
-						print $formaccounting->select_account((GETPOSTISSET("accountingaccount_number") ? GETPOST("accountingaccount_number", "alpha") : $line->numero_compte), 'accountingaccount_number', 1, array(), 1, 1, '');
+						print $formaccounting->select_account((GETPOSTISSET("accountingaccount_number") ? GETPOST("accountingaccount_number", "alpha") : $line->numero_compte), 'accountingaccount_number', 1, array(), 1, 1, 'minwidth200 maxwidth500');
 						print '</td>';
 						print '<td>';
 						// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because:
 						// It does not use the setup of "key pressed" to select a thirdparty and this hang browser on large databases.
 						// Also, it is not possible to use a value that is not in the list.
 						// Also, the label is not automatically filled when a value is selected.
-						if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
+						if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
 							print $formaccounting->select_auxaccount((GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account), 'subledger_account', 1, 'maxwidth250', '', 'subledger_label');
 						} else {
 							print '<input type="text" class="maxwidth150" name="subledger_account" value="'.(GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account).'" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccount")).'">';
@@ -694,14 +702,14 @@ if ($action == 'create') {
 						if ($action == "" || $action == 'add') {
 							print '<!-- td columns in add mode -->';
 							print '<td>';
-							print $formaccounting->select_account('', 'accountingaccount_number', 1, array(), 1, 1, '');
+							print $formaccounting->select_account('', 'accountingaccount_number', 1, array(), 1, 1, 'minwidth200 maxwidth500');
 							print '</td>';
 							print '<td>';
 							// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because:
 							// It does not use the setup of "key pressed" to select a thirdparty and this hang browser on large databases.
 							// Also, it is not possible to use a value that is not in the list.
 							// Also, the label is not automatically filled when a value is selected.
-							if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
+							if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
 								print $formaccounting->select_auxaccount('', 'subledger_account', 1, 'maxwidth250', '', 'subledger_label');
 							} else {
 								print '<input type="text" class="maxwidth150" name="subledger_account" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccount")) . '">';
@@ -711,7 +719,7 @@ if ($action == 'create') {
 							print '<td><input type="text" class="minwidth200" name="label_operation" value="' . $label_operation . '"/></td>';
 							print '<td class="right"><input type="text" size="6" class="right" name="debit" value=""/></td>';
 							print '<td class="right"><input type="text" size="6" class="right" name="credit" value=""/></td>';
-							print '<td class="center"><input type="submit" class="button" name="save" value="' . $langs->trans("Add") . '"></td>';
+							print '<td class="center"><input type="submit" class="button small" name="save" value="' . $langs->trans("Add") . '"></td>';
 						}
 					} else {
 						print '<!-- td columns in display mode -->';
@@ -729,8 +737,8 @@ if ($action == 'create') {
 						}
 						print '</td>';
 						print '<td>'.$line->label_operation.'</td>';
-						print '<td class="right nowraponall amount">'.price($line->debit).'</td>';
-						print '<td class="right nowraponall amount">'.price($line->credit).'</td>';
+						print '<td class="right nowraponall amount">'.($line->debit != 0 ? price($line->debit) : '').'</td>';
+						print '<td class="right nowraponall amount">'.($line->credit != 0 ? price($line->credit) : '').'</td>';
 
 						print '<td class="center nowraponall">';
 						if (empty($line->date_export) && empty($line->date_validation)) {

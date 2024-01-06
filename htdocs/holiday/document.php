@@ -28,6 +28,7 @@
  *       \brief      Page des documents joints sur les contrats
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -66,7 +67,7 @@ if (!$sortfield) {
 $childids = $user->getAllChildIds(1);
 
 $morefilter = '';
-if (!empty($conf->global->HOLIDAY_HIDE_FOR_NON_SALARIES)) {
+if (getDolGlobalString('HOLIDAY_HIDE_FOR_NON_SALARIES')) {
 	$morefilter = 'AND employee = 1';
 }
 
@@ -82,10 +83,10 @@ if (($id > 0) || $ref) {
 
 	// Check current user can read this leave request
 	$canread = 0;
-	if (!empty($user->rights->holiday->readall)) {
+	if ($user->hasRight('holiday', 'readall')) {
 		$canread = 1;
 	}
-	if (!empty($user->rights->holiday->read) && in_array($object->fk_user, $childids)) {
+	if ($user->hasRight('holiday', 'read') && in_array($object->fk_user, $childids)) {
 		$canread = 1;
 	}
 	if (!$canread) {
@@ -137,7 +138,7 @@ if ($object->id) {
 
 
 	// Build file list
-	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 	$totalsize = 0;
 	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];
@@ -239,7 +240,7 @@ if ($object->id) {
 	print '<table class="border tableforfield centpercent">'."\n";
 	print '<tbody>';
 
-	if (! empty($object->fk_user_create)) {
+	if (!empty($object->fk_user_create)) {
 		$userCreate=new User($db);
 		$userCreate->fetch($object->fk_user_create);
 		print '<tr>';

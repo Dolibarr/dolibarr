@@ -108,8 +108,7 @@ class PriceParser
 			return $langs->trans("ErrorPriceExpression".$code, $info[0], $info[1]);
 		} elseif (in_array($code, array(7, 12, 13, 15, 16, 18))) { //Internal errors
 			return $langs->trans("ErrorPriceExpressionInternal", $code);
-		} else //Unknown errors
-		{
+		} else { //Unknown errors
 			return $langs->trans("ErrorPriceExpressionUnknown", $code);
 		}
 	}
@@ -124,15 +123,15 @@ class PriceParser
 	 */
 	public function parseExpression($product, $expression, $values)
 	{
-		global $user;
-		global $hookmanager;
+		global $user, $hookmanager, $extrafields;
+
 		$action = 'PARSEEXPRESSION';
-		if ($result = $hookmanager->executeHooks('doDynamiPrice', array(
-								'expression' =>$expression,
-								'product' => $product,
-								'values' => $values
+		if ($reshook = $hookmanager->executeHooks('doDynamiPrice', array(
+								'expression' => &$expression,
+								'product' => &$product,
+								'values' => &$values
 		), $this, $action)) {
-			return $result;
+			return $hookmanager->resArray['return'];
 		}
 		//Check if empty
 		$expression = trim($expression);
@@ -150,10 +149,16 @@ class PriceParser
 			"length" => $product->length,
 			"surface" => $product->surface,
 			"price_min" => $product->price_min,
+			"cost_price" => $product->cost_price,
+			"pmp" => $product->pmp,
 		));
 
-		//Retrieve all extrafield for product and add it to values
-		$extrafields = new ExtraFields($this->db);
+		// Retrieve all extrafields if not already not know (should not happen)
+		if (! is_object($extrafields)) {
+			$extrafields = new ExtraFields($this->db);
+			$extrafields->fetch_name_optionals_label($product->table_element);
+		}
+
 		$product->fetch_optionals();
 		if (is_array($extrafields->attributes[$product->table_element]['label'])) {
 			foreach ($extrafields->attributes[$product->table_element]['label'] as $key => $label) {
@@ -264,8 +269,8 @@ class PriceParser
 			$supplier_min_price = 0;
 			$supplier_min_price_with_discount = 0;
 		} else {
-			 $supplier_min_price = $productFournisseur->fourn_unitprice;
-			 $supplier_min_price_with_discount = $productFournisseur->fourn_unitprice_with_discount;
+			$supplier_min_price = $productFournisseur->fourn_unitprice;
+			$supplier_min_price_with_discount = $productFournisseur->fourn_unitprice_with_discount;
 		}
 
 		//Accessible values by expressions

@@ -142,7 +142,7 @@ class ExpenseReportRule extends CommonObject
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -159,7 +159,7 @@ class ExpenseReportRule extends CommonObject
 	 *
 	 * @param int    $id   Id object
 	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -172,11 +172,24 @@ class ExpenseReportRule extends CommonObject
 
 
 	/**
+	 * Load object lines in memory from the database
+	 *
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
+	 */
+	public function fetchLines()
+	{
+		$this->lines = array();
+
+		$result = $this->fetchLinesCommon();
+		return $result;
+	}
+
+	/**
 	 * Update object into database
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
@@ -188,7 +201,7 @@ class ExpenseReportRule extends CommonObject
 	 *
 	 * @param User $user       User that deletes
 	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{

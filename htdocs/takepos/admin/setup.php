@@ -24,6 +24,7 @@
  *	\brief      Setup page for TakePos module
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
@@ -99,9 +100,9 @@ if ($action == 'set') {
 		$db->rollback();
 	}
 } elseif ($action == 'updateMask') {
-	$maskconst = GETPOST('maskconst', 'alpha');
+	$maskconst = GETPOST('maskconst', 'aZ09');
 	$maskvalue = GETPOST('maskvalue', 'alpha');
-	if ($maskconst) {
+	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
 		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 	}
 	if (!($res > 0)) {
@@ -168,19 +169,19 @@ foreach ($dirmodels as $reldir) {
 
 					require_once $dir.$file.'.php';
 
-					$module = new $file;
+					$module = new $file();
 
 					// Show modules according to features level
-					if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 						continue;
 					}
-					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+					if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 						continue;
 					}
 
 					if ($module->isEnabled()) {
 						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
-						print $module->info();
+						print $module->info($langs);
 						print '</td>';
 
 						// Show example of numbering module
@@ -260,11 +261,11 @@ print "</tr>\n";
 print '<tr class="oddeven"><td>';
 print $langs->trans("NumberOfTerminals");
 print '<td colspan="2">';
-print '<input type="number" name="TAKEPOS_NUM_TERMINALS" min="1" value="' . (empty($conf->global->TAKEPOS_NUM_TERMINALS) ? '1' : $conf->global->TAKEPOS_NUM_TERMINALS)  . '">';
+print '<input type="number" name="TAKEPOS_NUM_TERMINALS" min="1" value="' . (!getDolGlobalString('TAKEPOS_NUM_TERMINALS') ? '1' : $conf->global->TAKEPOS_NUM_TERMINALS)  . '">';
 print "</td></tr>\n";
 
 // Services
-if (isModEnabled('service')) {
+if (isModEnabled("service")) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("CashdeskShowServices");
 	print '<td colspan="2">';
@@ -287,7 +288,7 @@ print $langs->trans("SortProductField");
 print '<td colspan="2">';
 $prod = new Product($db);
 $array = array('rowid' => 'ID', 'ref' => 'Ref', 'label' => 'Label', 'datec' => 'DateCreation', 'tms' => 'DateModification');
-print $form->selectarray('TAKEPOS_SORTPRODUCTFIELD', $array, (empty($conf->global->TAKEPOS_SORTPRODUCTFIELD) ? 'rowid' : $conf->global->TAKEPOS_SORTPRODUCTFIELD), 0, 0, 0, '', 1);
+print $form->selectarray('TAKEPOS_SORTPRODUCTFIELD', $array, (!getDolGlobalString('TAKEPOS_SORTPRODUCTFIELD') ? 'rowid' : $conf->global->TAKEPOS_SORTPRODUCTFIELD), 0, 0, 0, '', 1);
 print "</td></tr>\n";
 
 print '<tr class="oddeven"><td>';
@@ -309,7 +310,7 @@ print '<tr class="oddeven"><td>';
 print $langs->trans("Paymentnumpad");
 print '<td colspan="2">';
 $array = array(0=>$langs->trans("Numberspad"), 1=>$langs->trans("BillsCoinsPad"));
-print $form->selectarray('TAKEPOS_NUMPAD', $array, (empty($conf->global->TAKEPOS_NUMPAD) ? '0' : $conf->global->TAKEPOS_NUMPAD), 0);
+print $form->selectarray('TAKEPOS_NUMPAD', $array, (!getDolGlobalString('TAKEPOS_NUMPAD') ? '0' : $conf->global->TAKEPOS_NUMPAD), 0);
 print "</td></tr>\n";
 
 // Numpad use payment icons
@@ -472,12 +473,12 @@ if (getDolGlobalInt('TAKEPOS_ENABLE_SUMUP')) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("SumupAffiliate");
 	print '<td colspan="2">';
-	print '<input type="text" name="TAKEPOS_SUMUP_AFFILIATE" value="'.$conf->global->TAKEPOS_SUMUP_AFFILIATE.'"></input>';
+	print '<input type="text" name="TAKEPOS_SUMUP_AFFILIATE" value="' . getDolGlobalString('TAKEPOS_SUMUP_AFFILIATE').'"></input>';
 	print "</td></tr>\n";
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("SumupAppId");
 	print '<td colspan="2">';
-	print '<input type="text" name="TAKEPOS_SUMUP_APPID" value="'.$conf->global->TAKEPOS_SUMUP_APPID.'"></input>';
+	print '<input type="text" name="TAKEPOS_SUMUP_APPID" value="' . getDolGlobalString('TAKEPOS_SUMUP_APPID').'"></input>';
 	print "</td></tr>\n";
 
 	print '</table>';

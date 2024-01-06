@@ -2,7 +2,7 @@
 ContractsArea=معاہدوں کا علاقہ
 ListOfContracts=معاہدوں کی فہرست
 AllContracts=تمام معاہدے
-ContractCard=معاہدہ کارڈ
+ContractCard=Contract
 ContractStatusNotRunning=نہیں چل رہا ہے۔
 ContractStatusDraft=مسودہ
 ContractStatusValidated=تصدیق شدہ
@@ -20,6 +20,7 @@ ContractsSubscriptions=معاہدے/سبسکرپشنز
 ContractsAndLine=معاہدے اور معاہدے کی لائن
 Contract=معاہدہ
 ContractLine=معاہدہ لائن
+ContractLines=Contract lines
 Closing=بند کرنا
 NoContracts=کوئی معاہدہ نہیں۔
 MenuServices=خدمات
@@ -79,7 +80,7 @@ ConfirmDeleteContractLine=کیا آپ واقعی اس معاہدہ لائن کو
 MoveToAnotherContract=سروس کو دوسرے معاہدے میں منتقل کریں۔
 ConfirmMoveToAnotherContract=میں نے نیا ہدف معاہدہ منتخب کیا اور تصدیق کی کہ میں اس سروس کو اس معاہدے میں منتقل کرنا چاہتا ہوں۔
 ConfirmMoveToAnotherContractQuestion=منتخب کریں کہ کون سا موجودہ معاہدہ (اسی تیسرے فریق کا) ہے، آپ اس سروس کو منتقل کرنا چاہتے ہیں؟
-PaymentRenewContractId=کنٹریکٹ لائن کی تجدید کریں (نمبر %s)
+PaymentRenewContractId=Renew contract %s (service %s)
 ExpiredSince=میعاد ختم ہونے کی تاریخ
 NoExpiredServices=کوئی میعاد ختم شدہ فعال خدمات نہیں ہیں۔
 ListOfServicesToExpireWithDuration=خدمات کی فہرست %s دنوں میں ختم ہونے والی ہے۔
@@ -102,3 +103,5 @@ TypeContact_contrat_external_SALESREPSIGN=کنٹریکٹ پر دستخط کرن�
 HideClosedServiceByDefault=بند خدمات کو بطور ڈیفالٹ چھپائیں۔
 ShowClosedServices=بند خدمات دکھائیں۔
 HideClosedServices=بند خدمات کو چھپائیں۔
+UserStartingService=User starting service
+UserClosingService=User closing service

@@ -26,7 +26,6 @@ create table llx_commande
   entity					integer DEFAULT 1 NOT NULL,		-- multi company id
 
   ref_ext					varchar(255),					-- reference into an external system (not used by dolibarr)
-  ref_int					varchar(255),					-- reference into an internal system (deprecated)
   ref_client				varchar(255),					-- reference for customer
 
   fk_soc					integer NOT NULL,
@@ -47,11 +46,14 @@ create table llx_commande
   remise_percent			real      default 0,
   remise_absolue			real      default 0,
   remise					real      default 0,
+  
   total_tva                 double(24,8)     default 0,
-  localtax1					double(24,8)     default 0,	-- total localtax1 
-  localtax2					double(24,8)     default 0,	-- total localtax2
+  localtax1					double(24,8)     default 0,		-- total localtax1 
+  localtax2					double(24,8)     default 0,		-- total localtax2
+  revenuestamp              double(24,8)     DEFAULT 0,		-- amount total revenuestamp (usefull for proforma that must match invoice)
   total_ht					double(24,8)     default 0,
   total_ttc					double(24,8)     default 0,
+
   note_private				text,
   note_public				text,
   model_pdf					varchar(255),
@@ -75,7 +77,7 @@ create table llx_commande
   fk_incoterms				integer,						-- for incoterms
   location_incoterms		varchar(255),					-- for incoterms
   import_key				varchar(14),
-  extraparams				varchar(255),					-- for stock other parameters with json format
+  extraparams				varchar(255),					-- to save other parameters with json format
   
   fk_multicurrency			integer,
   multicurrency_code		varchar(3),

@@ -2,7 +2,7 @@
 /* Copyright (C) 2005       Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2013       Charles-Fr BENKE        <charles.fr@benke.fr>
+ * Copyright (C) 2013-2023  Charlene BENKE          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  *		\brief       Page to report input-output of a bank account
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -35,8 +36,11 @@ $langs->loadLangs(array('banks', 'categories'));
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width', 380); // Large for one graph in a smarpthone.
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height', 160);
 
-$id = GETPOST('account') ?GETPOST('account', 'alpha') : GETPOST('id');
+$id = GETPOST('account') ? GETPOST('account', 'alpha') : GETPOST('id');
 $ref = GETPOST('ref');
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('bankannualreport', 'globalcard'));
 
 // Security check
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
@@ -47,7 +51,8 @@ if ($user->socid) {
 $result = restrictedArea($user, 'banque', $fieldvalue, 'bank_account&bank_account', '', '', $fieldtype);
 
 $year_start = GETPOST('year_start');
-$year_current = strftime("%Y", time());
+//$year_current = strftime("%Y", time());
+$year_current = dol_print_date(time(), "%Y");
 if (!$year_start) {
 	$year_start = $year_current - 2;
 	$year_end = $year_current;
@@ -60,10 +65,6 @@ if (!$year_start) {
 /*
  * View
  */
-
-$title = $langs->trans("FinancialAccount").' - '.$langs->trans("IOMonthlyReporting");
-$helpurl = "";
-llxHeader('', $title, $helpurl);
 
 $form = new Form($db);
 
@@ -81,6 +82,10 @@ if (!empty($ref)) {
 $annee = '';
 $totentrees = array();
 $totsorties = array();
+
+$title = $object->ref.' - '.$langs->trans("IOMonthlyReporting");
+$helpurl = "";
+llxHeader('', $title, $helpurl);
 
 // Ce rapport de tresorerie est base sur llx_bank (car doit inclure les transactions sans facture)
 // plutot que sur llx_paiement + llx_paiementfourn
@@ -188,9 +193,15 @@ for ($annee = $year_start; $annee <= $year_end; $annee++) {
 }
 print '</tr>';
 
+for ($annee = $year_start; $annee <= $year_end; $annee++) {
+	$totsorties[$annee] = 0;
+	$totentrees[$annee] = 0;
+}
+
 for ($mois = 1; $mois < 13; $mois++) {
 	print '<tr class="oddeven">';
 	print "<td>".dol_print_date(dol_mktime(1, 1, 1, $mois, 1, 2000), "%B")."</td>";
+
 	for ($annee = $year_start; $annee <= $year_end; $annee++) {
 		$case = sprintf("%04s-%02s", $annee, $mois);
 
@@ -456,7 +467,7 @@ if ($result < 0) {
 	print '</div></div><div class="fichehalfright"><div align="center">'; // do not use class="center" here, it will have no effect for the js graph inside.
 	print $show2;
 	print '</div></div></div>';
-	print '<div style="clear:both"></div>';
+	print '<div class="clearboth"></div>';
 }
 
 

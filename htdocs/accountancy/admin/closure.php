@@ -22,6 +22,7 @@
  * \brief		Setup page to configure accounting expert module
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -31,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 $langs->loadLangs(array("compta", "admin", "accountancy"));
 
 // Security check
-if (empty($user->rights->accounting->chartofaccount)) {
+if (!$user->hasRight('accounting', 'chartofaccount')) {
 	accessforbidden();
 }
 
@@ -54,6 +55,24 @@ if ($action == 'update') {
 
 	if (!empty($defaultjournal)) {
 		if (!dolibarr_set_const($db, 'ACCOUNTING_CLOSURE_DEFAULT_JOURNAL', $defaultjournal, 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+	} else {
+		$error++;
+	}
+
+	$accountinggroupsusedforbalancesheetaccount = GETPOST('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT', 'alphanohtml');
+	if (!empty($accountinggroupsusedforbalancesheetaccount)) {
+		if (!dolibarr_set_const($db, 'ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT', $accountinggroupsusedforbalancesheetaccount, 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+	} else {
+		$error++;
+	}
+
+	$accountinggroupsusedforincomestatement = GETPOST('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT', 'alpha');
+	if (!empty($accountinggroupsusedforincomestatement)) {
+		if (!dolibarr_set_const($db, 'ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT', $accountinggroupsusedforincomestatement, 'chaine', 0, '', $conf->entity)) {
 			$error++;
 		}
 	} else {
@@ -116,10 +135,24 @@ foreach ($list_account_main as $key) {
 
 // Journal
 print '<tr class="oddeven">';
-print '<td width="50%">'.$langs->trans("ACCOUNTING_CLOSURE_DEFAULT_JOURNAL").'</td>';
+print '<td class="fieldrequired">'.$langs->trans("ACCOUNTING_CLOSURE_DEFAULT_JOURNAL").'</td>';
 print '<td>';
-$defaultjournal = $conf->global->ACCOUNTING_CLOSURE_DEFAULT_JOURNAL;
+$defaultjournal = getDolGlobalString('ACCOUNTING_CLOSURE_DEFAULT_JOURNAL');
 print $formaccounting->select_journal($defaultjournal, "ACCOUNTING_CLOSURE_DEFAULT_JOURNAL", 9, 1, 0, 0);
+print '</td></tr>';
+
+// Accounting groups used for the balance sheet account
+print '<tr class="oddeven">';
+print '<td class="fieldrequired">'.$langs->trans("ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT").'</td>';
+print '<td>';
+print '<input type="text" size="100" id="ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT" name="ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT" value="' . dol_escape_htmltag(getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT')). '">';
+print '</td></tr>';
+
+// Accounting groups used for the income statement
+print '<tr class="oddeven">';
+print '<td class="fieldrequired">'.$langs->trans("ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT").'</td>';
+print '<td>';
+print '<input type="text" size="100" id="ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT" name="ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT" value="' . dol_escape_htmltag(getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT')). '">';
 print '</td></tr>';
 
 print "</table>\n";

@@ -41,6 +41,7 @@ if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
@@ -50,9 +51,10 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
+
 // Hook to be used by external payment modules (ie Payzen, ...)
-include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 $hookmanager = new HookManager($db);
+
 $hookmanager->initHooks(array('newpayment'));
 
 // For encryption
@@ -67,7 +69,7 @@ $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors",
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id');
 $securekeyreceived = GETPOST("securekey");
-$securekeytocompare = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 'md5');
+$securekeytocompare = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.$id, 'md5');
 
 if ($securekeytocompare != $securekeyreceived) {
 	print $langs->trans('MissingOrBadSecureKey');
@@ -91,7 +93,7 @@ if ($resultproject < 0) {
 
 // Security check
 if (empty($conf->eventorganization->enabled)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('Module Event organization not enabled');
 }
 
 
@@ -160,7 +162,7 @@ while ($i < $db->num_rows($result)) {
 
 // Get vote result
 $idvote = GETPOST("vote");
-$hashedvote = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'vote'.$idvote);
+$hashedvote = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'vote'.$idvote);
 
 if (strlen($idvote)) {
 	if (in_array($hashedvote, $listofvotes)) {
@@ -203,8 +205,8 @@ if (strlen($idvote)) {
  */
 
 $head = '';
-if (!empty($conf->global->ONLINE_PAYMENT_CSS_URL)) {
-	$head = '<link rel="stylesheet" type="text/css" href="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+if (getDolGlobalString('ONLINE_PAYMENT_CSS_URL')) {
+	$head = '<link rel="stylesheet" type="text/css" href="' . getDolGlobalString('ONLINE_PAYMENT_CSS_URL').'?lang='.$langs->defaultlang.'">'."\n";
 }
 
 $conf->dol_hide_topmenu = 1;
@@ -233,9 +235,9 @@ $logosmall = $mysoc->logo_small;
 $logo = $mysoc->logo;
 $paramlogo = 'ONLINE_PAYMENT_LOGO_'.$suffix;
 if (!empty($conf->global->$paramlogo)) {
-	$logosmall = $conf->global->$paramlogo;
-} elseif (!empty($conf->global->ONLINE_PAYMENT_LOGO)) {
-	$logosmall = $conf->global->ONLINE_PAYMENT_LOGO;
+	$logosmall = getDolGlobalString($paramlogo);
+} elseif (getDolGlobalString('ONLINE_PAYMENT_LOGO')) {
+	$logosmall = getDolGlobalString('ONLINE_PAYMENT_LOGO');
 }
 //print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 // Define urllogo
@@ -256,15 +258,15 @@ if ($urllogo) {
 	print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
 	print '>';
 	print '</div>';
-	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
+	if (!getDolGlobalString('MAIN_HIDE_POWERED_BY')) {
 		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 	}
 	print '</div>';
 }
 
-if (!empty($conf->global->PROJECT_IMAGE_PUBLIC_SUGGEST_BOOTH)) {
+if (getDolGlobalString('PROJECT_IMAGE_PUBLIC_SUGGEST_BOOTH')) {
 	print '<div class="backimagepublicsuggestbooth">';
-	print '<img id="idPROJECT_IMAGE_PUBLIC_SUGGEST_BOOTH" src="'.$conf->global->PROJECT_IMAGE_PUBLIC_SUGGEST_BOOTH.'">';
+	print '<img id="idPROJECT_IMAGE_PUBLIC_SUGGEST_BOOTH" src="' . getDolGlobalString('PROJECT_IMAGE_PUBLIC_SUGGEST_BOOTH').'">';
 	print '</div>';
 }
 
@@ -292,7 +294,7 @@ print '</table>'."\n";
 
 $object = null;
 
-htmlPrintOnlinePaymentFooter($mysoc, $langs, 1, $suffix, $object);
+htmlPrintOnlineFooter($mysoc, $langs, 1, $suffix, $object);
 
 llxFooter('', 'public');
 

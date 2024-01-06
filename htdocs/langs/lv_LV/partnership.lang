@@ -20,6 +20,7 @@ ModulePartnershipName=Partnerības vadība
 PartnershipDescription=Partnerības vadības modulis
 PartnershipDescriptionLong= Partnerības vadības modulis
 Partnership=Partnerība
+Partnerships=Partnerības
 AddPartnership=Pievienojiet partnerību
 CancelPartnershipForExpiredMembers=Partnerība: atceļ partnerību ar abonementiem, kuriem beidzies derīguma termiņš
 PartnershipCheckBacklink=Partnerība: pārbaudiet atsauces saiti
@@ -28,6 +29,7 @@ PartnershipCheckBacklink=Partnerība: pārbaudiet atsauces saiti
 # Menu
 #
 NewPartnership=Jauna partnerība
+NewPartnershipbyWeb=Jūsu partnerības pieprasījums ir veiksmīgi pievienots. Drīzumā varam ar jums sazināties...
 ListOfPartnerships=Partnerības saraksts
 
 #
@@ -91,4 +93,5 @@ ReasonDeclineOrCancel=Noraidīt iemeslu
 
 NewPartnershipRequest=Jauns partnerības pieprasījums
 NewPartnershipRequestDesc=Šī veidlapa ļauj jums pieprasīt dalību kādā no mūsu partnerības programmām. Ja jums nepieciešama palīdzība, lai aizpildītu šo veidlapu, lūdzu, sazinieties pa e-pastu <b> %s </b> .
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Šajā lapā ir jābūt vismaz vienai saitei uz vienu no šiem domēniem: %s
 

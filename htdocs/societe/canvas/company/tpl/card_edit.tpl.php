@@ -53,7 +53,7 @@ $contact = $GLOBALS['objcanvas']->control->object;
 	<td colspan="3"><input type="text" size="40" maxlength="60" name="nom" value="<?php echo $this->control->tpl['nom']; ?>"></td>
 </tr>
 
-<?php if (!empty($conf->global->SOCIETE_USEPREFIX)) { ?>
+<?php if (getDolGlobalString('SOCIETE_USEPREFIX')) { ?>
 <tr>
 	<td><?php echo $langs->trans("Prefix"); ?></td>
 	<td colspan="3">
@@ -120,7 +120,7 @@ if ($this->control->tpl['fournisseur']) {
 	}
 }
 
-if (!empty($conf->barcode->enabled)) { ?>
+if (isModEnabled('barcode')) { ?>
 <tr>
 	<td><?php echo $langs->trans('Gencod'); ?></td>
 	<td colspan="3"><input type="text" name="barcode" value="<?php echo $this->control->tpl['barcode']; ?>"></td>
@@ -211,7 +211,7 @@ for ($i = 1; $i <= 4; $i++) {
 	<td><?php echo $this->control->tpl['select_workforce']; echo $this->control->tpl['info_admin']; ?></td>
 </tr>
 
-<?php if (!empty($conf->global->MAIN_MULTILANGS)) { ?>
+<?php if (getDolGlobalInt('MAIN_MULTILANGS')) { ?>
 <tr>
 	<td><?php echo $langs->trans("DefaultLang"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['select_lang']; ?></td>

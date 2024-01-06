@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
  * Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
  *
@@ -103,10 +102,10 @@ class ProductAttributeValue extends CommonObjectLine
 		$this->db = $db;
 		$this->entity = $conf->entity;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
-		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
 
@@ -134,7 +133,7 @@ class ProductAttributeValue extends CommonObjectLine
 	 *
 	 * @param  User $user      Object user
 	 * @param  int  $notrigger Do not execute trigger
-	 * @return int <0 KO >0 OK
+	 * @return int Return integer <0 KO >0 OK
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
@@ -210,7 +209,7 @@ class ProductAttributeValue extends CommonObjectLine
 	 * Gets a product attribute value
 	 *
 	 * @param int $id Product attribute value id
-	 * @return int <0 KO, >0 OK
+	 * @return int Return integer <0 KO, >0 OK
 	 */
 	public function fetch($id)
 	{
@@ -260,10 +259,10 @@ class ProductAttributeValue extends CommonObjectLine
 	/**
 	 * Returns all product attribute values of a product attribute
 	 *
-	 * @param	int		$prodattr_id		Product attribute id
-	 * @param	bool	$only_used			Fetch only used attribute values
+	 * @param 	int 	$prodattr_id	 	Product attribute id
+	 * @param 	bool 	$only_used 			Fetch only used attribute values
 	 * @param	int		$returnonlydata		0: return object, 1: return only data
-	 * @return								ProductAttributeValue[]
+	 * @return 	ProductAttributeValue[]		Array of object
 	 */
 	public function fetchAllByProductAttribute($prodattr_id, $only_used = false, $returnonlydata = 0)
 	{
@@ -288,6 +287,8 @@ class ProductAttributeValue extends CommonObjectLine
 		if ($only_used) {
 			$sql .= " AND c2v.rowid IS NOT NULL AND p.tosell = 1";
 		}
+
+		$sql .= " ORDER BY v.position ASC";
 
 		$query = $this->db->query($sql);
 
@@ -314,7 +315,7 @@ class ProductAttributeValue extends CommonObjectLine
 	 *
 	 * @param  User	$user	   Object user
 	 * @param  int  $notrigger Do not execute trigger
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -385,7 +386,7 @@ class ProductAttributeValue extends CommonObjectLine
 	 *
 	 * @param  User $user      Object user
 	 * @param  int  $notrigger Do not execute trigger
-	 * @return int <0 KO, >0 OK
+	 * @return int Return integer <0 KO, >0 OK
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
@@ -447,7 +448,7 @@ class ProductAttributeValue extends CommonObjectLine
 	/**
 	 * Test if used by a product
 	 *
-	 * @return int <0 KO, =0 if No, =1 if Yes
+	 * @return int Return integer <0 KO, =0 if No, =1 if Yes
 	 */
 	public function isUsed()
 	{

@@ -49,7 +49,6 @@ ValidateProject=Valider le projet
 ConfirmValidateProject=Êtes-vous sûr de vouloir valider ce projet?
 CloseAProject=Prochain projet
 ConfirmCloseAProject=Êtes-vous sûr de vouloir fermer ce projet?
-AlsoCloseAProject=Fermez également le projet (maintenez-le ouvert si vous devez toujours suivre les tâches de production)
 ReOpenAProject=Projet ouvert
 ConfirmReOpenAProject=Êtes-vous sûr de vouloir rouvrir ce projet?
 ActionsOnProject=Événements sur projet

@@ -21,9 +21,11 @@
 
 //define('NOTOKENRENEWAL',1); // Disables token renewal
 //require '../../../../main.inc.php';
-require '../../connectors/php/config.php'; // This include the define('NOTOKENRENEWAL',1) and the require main.in.php
+require '../../connectors/php/config.inc.php'; // This include the define('NOTOKENRENEWAL',1) and the require main.in.php
 
 global $Config;
+
+top_httphead();
 
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
@@ -47,6 +49,7 @@ if (!empty($conf->modules_parts['theme'])) {	// This slow down
 }
 
 //print 'themepath='.$themepath.' themeparam='.$themeparam;exit;
+$themeparam = '';
 print '<link rel="stylesheet" type="text/css" href="'.$themepath.$themeparam.'">'."\n";
 ?>
 		<script type="text/javascript" src="js/fckxml.js"></script>
@@ -101,7 +104,7 @@ oConnector.CurrentFolder	= '/' ;
 var sConnUrl = GetUrlParam( 'Connector' );
 
 // Gecko has some problems when using relative URLs (not starting with slash).
-if ( sConnUrl.substr(0,1) != '/' && sConnUrl.indexOf( '://' ) < 0 )
+if ( sConnUrl.substring(0,1) != '/' && sConnUrl.indexOf( '://' ) < 0 )
 	sConnUrl = window.location.href.replace( /browser.php.*$/, '' ) + sConnUrl ;
 
 oConnector.ConnectorUrl = sConnUrl + ( sConnUrl.indexOf('?') != -1 ? '&' : '?' );

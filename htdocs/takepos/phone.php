@@ -25,9 +25,6 @@
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC','1');
 //if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN','1');
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1');
 }
@@ -65,18 +62,36 @@ if ($setterminal > 0) {
 
 $langs->loadLangs(array("bills", "orders", "commercial", "cashdesk", "receiptprinter"));
 
-if (empty($user->rights->takepos->run) && !defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+if (!$user->hasRight('takepos', 'run') && !defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 	accessforbidden();
 }
+
 
 /*
  * View
  */
 
+if (empty($action)) {
+	// Code for llxHeader()
+	$title = 'TakePOS - Dolibarr '.DOL_VERSION;
+	if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
+		$title = 'TakePOS - ' . getDolGlobalString('MAIN_APPLICATION_TITLE');
+	}
+	$head = '<meta name="apple-mobile-web-app-title" content="TakePOS"/>
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>';
+	$arrayofcss = array('/takepos/css/phone.css');
+
+	top_htmlhead($head, $title, 0, 0, '', $arrayofcss);
+} else {
+	top_httphead('text/html', 1);
+}
+
 if ($action == "productinfo") {
 	$prod = new Product($db);
 	$prod->fetch($idproduct);
-	print '<button type="button" class="publicphonebutton2 phoneblue total" onclick="AddProductConfirm(place, '.$idproduct.');">'.$langs->trans('Add').'</button>';
+	print '<button type="button" class="publicphonebutton2 phoneblue total" onclick="AddProductConfirm(place, '.$idproduct.')">'.$langs->trans('Add').'</button>';
 	print "<br><b>".$prod->label."</b><br>";
 	print '<img class="imgwrapper" width="60%" src="'.DOL_URL_ROOT.'/takepos/public/auto_order.php?genimg=pro&query=pro&id='.$idproduct.'">';
 	print "<br>".$prod->description;
@@ -100,7 +115,7 @@ if ($action == "productinfo") {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$printer = new dolReceiptPrinter($db);
-		$printer->initPrinter($conf->global->{'TAKEPOS_PRINTER_TO_USE'.$_SESSION["takeposterminal"]});
+		$printer->initPrinter(getDolGlobalString('TAKEPOS_PRINTER_TO_USE'.$_SESSION["takeposterminal"]));
 		$printer->printer->feed();
 		$printer->printer->feed();
 		$printer->printer->text($langs->trans('IM'));
@@ -115,8 +130,8 @@ if ($action == "productinfo") {
 		$printer->printer->feed();
 		$printer->close();
 	} else {
-		print '<button type="button" class="publicphonebutton2 phoneblue total" onclick="CheckPlease(\'Cash\');">'.$langs->trans('Cash').'</button>';
-		print '<button type="button" class="publicphonebutton2 phoneblue total" onclick="CheckPlease(\'CreditCard\');">'.$langs->trans('CreditCard').'</button>';
+		print '<button type="button" class="publicphonebutton2 phoneblue total" onclick="CheckPlease(\'Cash\')">'.$langs->trans('Cash').'</button>';
+		print '<button type="button" class="publicphonebutton2 phoneblue total" onclick="CheckPlease(\'CreditCard\')">'.$langs->trans('CreditCard').'</button>';
 		print '<br>';
 	}
 } elseif ($action == "editline") {
@@ -133,33 +148,22 @@ if ($action == "productinfo") {
 			print "<br>".$prod->description;
 			print "<br><b>".price($prod->price_ttc, 1, $langs, 1, -1, -1, $conf->currency)."</b>";
 			print '<br>';
-			print '<button type="button" class="publicphonebutton2 phonered width24" onclick="SetQty(place, '.$selectedline.', '.($line->qty - 1).');">-</button>';
-			print '<button type="button" class="publicphonebutton2 phonegreen width24" onclick="SetQty(place, '.$selectedline.', '.($line->qty + 1).');">+</button>';
-			print '<button type="button" class="publicphonebutton2 phoneblue width24" onclick="SetNote(place, '.$selectedline.');">'.$langs->trans('Note').'</button>';
+			print '<button type="button" class="publicphonebutton2 phonered width24" onclick="SetQty(place, '.$selectedline.', '.($line->qty - 1).')">-</button>';
+			print '<button type="button" class="publicphonebutton2 phonegreen width24" onclick="SetQty(place, '.$selectedline.', '.($line->qty + 1).')">+</button>';
+			print '<button type="button" class="publicphonebutton2 phoneblue width24" onclick="SetNote(place, '.$selectedline.')">'.$langs->trans('Note').'</button>';
 		}
 	}
 } else {
-	// Title
-	$title = 'TakePOS - Dolibarr '.DOL_VERSION;
-	if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
-		$title = 'TakePOS - '.$conf->global->MAIN_APPLICATION_TITLE;
-	}
-	$head = '<meta name="apple-mobile-web-app-title" content="TakePOS"/>
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>';
-	$arrayofcss = array('/takepos/css/phone.css');
-	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 	?>
 <script type="text/javascript">
 	<?php
 	$categorie = new Categorie($db);
-	$categories = $categorie->get_full_arbo('product', (($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) ? $conf->global->TAKEPOS_ROOT_CATEGORY_ID : 0), 1);
+	$categories = $categorie->get_full_arbo('product', ((getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') > 0) ? $conf->global->TAKEPOS_ROOT_CATEGORY_ID : 0), 1);
 
 	// Search root category to know its level
 	//$conf->global->TAKEPOS_ROOT_CATEGORY_ID=0;
 	$levelofrootcategory = 0;
-	if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) {
+	if (getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') > 0) {
 		foreach ($categories as $key => $categorycursor) {
 			if ($categorycursor['id'] == $conf->global->TAKEPOS_ROOT_CATEGORY_ID) {
 				$levelofrootcategory = $categorycursor['level'];
@@ -180,10 +184,7 @@ if ($action == "productinfo") {
 	}
 
 	sort($maincategories);
-	sort($subcategories);
-
-
-	?>
+	sort($subcategories); ?>
 
 var categories = <?php echo json_encode($maincategories); ?>;
 var subcategories = <?php echo json_encode($subcategories); ?>;
@@ -211,8 +212,7 @@ function LoadPlace(placeid){
 	} else {
 		echo '$("#phonediv2").load("invoice.php?mobilepage=invoice&place="+place, function() {
 		});';
-	}
-	?>
+	} ?>
 	LoadCats();
 }
 
@@ -221,16 +221,15 @@ function AddProduct(placeid, productid){
 	// If is a public terminal first show product information
 	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 		print 'place=placeid;
-		$("#phonediv1").load("auto_order.php?action=productinfo&place="+place+"&idproduct="+productid, function() {
+		$("#phonediv1").load("auto_order.php?action=productinfo&token='.newToken().'&place="+place+"&idproduct="+productid, function() {
 		});';
 	} else {
 		print 'AddProductConfirm(placeid, productid);';
-	}
-	?>
+	} ?>
 }
 
 function PublicPreOrder(){
-	$("#phonediv1").load("auto_order.php?action=publicpreorder&place="+place, function() {
+	$("#phonediv1").load("auto_order.php?action=publicpreorder&token=<?php echo newToken(); ?>&place="+place, function() {
 	});
 }
 
@@ -243,8 +242,9 @@ function AddProductConfirm(placeid, productid){
 	} else {
 		echo '$("#phonediv2").load("invoice.php?mobilepage=invoice&action=addline&token='.newToken().'&place="+place+"&idproduct="+productid, function() {
 		});';
-	}
-	?>
+	} ?>
+
+	return true;
 }
 
 function SetQty(place, selectedline, qty){
@@ -256,7 +256,7 @@ function SetQty(place, selectedline, qty){
 		});
 	}
 	else{
-		$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=updateqty&place="+place+"&idline="+selectedline+"&number="+qty, function() {
+		$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=updateqty&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+qty, function() {
 		});
 	}
 		<?php
@@ -267,18 +267,19 @@ function SetQty(place, selectedline, qty){
 		});
 	}
 	else{
-		$("#phonediv2").load("invoice.php?mobilepage=invoice&action=updateqty&place="+place+"&idline="+selectedline+"&number="+qty, function() {
+		$("#phonediv2").load("invoice.php?mobilepage=invoice&action=updateqty&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+qty, function() {
 		});
 	}
 		<?php
-	}
-	?>
+	} ?>
 	LoadCats();
+
+	return true;
 }
 
 function SetNote(place, selectedline){
 	var note = prompt("<?php $langs->trans('Note'); ?>", "");
-	$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=updateqty&place="+place+"&idline="+selectedline+"&number="+qty, function() {
+	$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=updateqty&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+qty, function() {
 	});
 	LoadCats();
 }
@@ -291,8 +292,7 @@ function LoadCats(){
 	} else {
 		echo '$("#phonediv1").load("invoice.php?mobilepage=cats&place="+place, function() {
 		});';
-	}
-	?>
+	} ?>
 }
 
 function LoadProducts(idcat){
@@ -304,8 +304,7 @@ function LoadProducts(idcat){
 	} else {
 		echo '$("#phonediv1").load("invoice.php?mobilepage=products&catid="+idcat+"&place="+place, function() {
 		});';
-	}
-	?>
+	} ?>
 }
 
 function LoadPlacesList(){
@@ -317,15 +316,14 @@ function TakeposPrintingOrder(){
 	console.log("TakeposPrintingOrder");
 	<?php
 	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-		echo '$("#phonediv2").load("auto_order.php?action=order&mobilepage=order&place="+place, function() {
+		echo '$("#phonediv2").load("auto_order.php?action=order&token='.newToken().'&mobilepage=order&place="+place, function() {
 		});';
-		echo '$("#phonediv1").load("auto_order.php?action=publicpayment&place="+place, function() {
+		echo '$("#phonediv1").load("auto_order.php?action=publicpayment&token='.newToken().'&place="+place, function() {
 		});';
 	} else {
-		echo '$("#phonediv2").load("invoice.php?action=order&place="+place, function() {
+		echo '$("#phonediv2").load("invoice.php?action=order&token='.newToken().'&place="+place, function() {
 		});';
-	}
-	?>
+	} ?>
 }
 
 function Exit(){
@@ -334,12 +332,12 @@ function Exit(){
 
 function CheckPlease(payment){
 	if (payment==undefined){
-		$("#phonediv1").load("auto_order.php?action=checkplease&place="+place, function() {
+		$("#phonediv1").load("auto_order.php?action=checkplease&token=<?php echo newToken(); ?>&place="+place, function() {
 		});
 	}
 	else{
 		console.log("Request the check to the waiter");
-		$("#phonediv1").load("auto_order.php?action=checkplease&place=<?php echo $place; ?>&payment="+payment, function() {
+		$("#phonediv1").load("auto_order.php?action=checkplease&token=<?php echo newToken(); ?>&place=<?php echo $place; ?>&payment="+payment, function() {
 		});
 	}
 }
@@ -348,10 +346,9 @@ function CheckPlease(payment){
 
 <body style="background-color:#D1D1D1;">
 	<?php
-	if ($conf->global->TAKEPOS_NUM_TERMINALS != "1" && $_SESSION["takeposterminal"] == "") {
+	if (getDolGlobalString('TAKEPOS_NUM_TERMINALS') != "1" && $_SESSION["takeposterminal"] == "") {
 		print '<div class="dialog-info-takepos-terminal" id="dialog-info" title="TakePOS">'.$langs->trans('TerminalSelect').'</div>';
-	}
-	?>
+	} ?>
 <div class="container">
 	<div class="phonebuttonsrow">
 		<?php
@@ -364,8 +361,7 @@ function CheckPlease(payment){
 			print '<button type="button" class="publicphonebutton phoneblue" onclick="LoadCats();">'.strtoupper(substr($langs->trans('Categories'), 0, 5)).'</button>';
 			print '<button type="button" class="publicphonebutton phoneorange" onclick="PublicPreOrder();">'.strtoupper(substr($langs->trans('Order'), 0, 5)).'</button>';
 			print '<button type="button" class="publicphonebutton phonegreen" onclick="CheckPlease();">'.strtoupper(substr($langs->trans('Payment'), 0, 5)).'</button>';
-		}
-		?>
+		} ?>
 	</div>
 	<div class="phonerow2">
 		<div id="phonediv2" class="phonediv2"></div>

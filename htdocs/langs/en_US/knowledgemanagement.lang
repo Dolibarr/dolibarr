@@ -39,6 +39,7 @@ KnowledgeManagementAboutPage = Knowledge Management about page
 
 KnowledgeManagementArea = Knowledge Management
 MenuKnowledgeRecord = Knowledge base
+MenuKnowledgeRecordShort = Knowledge base
 ListKnowledgeRecord = List of articles
 NewKnowledgeRecord = New article
 ValidateReply = Validate solution
@@ -47,8 +48,14 @@ KnowledgeRecord = Article
 KnowledgeRecordExtraFields = Extrafields for Article
 GroupOfTicket=Group of tickets
 YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
-SuggestedForTicketsInGroup=Suggested for tickets when group is
+SuggestedForTicketsInGroup=Suggested on ticket creation
 
 SetObsolete=Set as obsolete
 ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
 ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+BoxLastKnowledgerecordDescription=Last %s articles
+BoxLastKnowledgerecord=Last articles
+BoxLastKnowledgerecordContent=Last articles
+BoxLastKnowledgerecordModifiedContent=Last modified articles
+BoxLastModifiedKnowledgerecordDescription=Last %s modified articles
+BoxLastModifiedKnowledgerecord=Last modified articles

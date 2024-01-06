@@ -40,11 +40,6 @@ $modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions
 
 $value = GETPOST('value', 'alpha');
 
-/*$arrayofparameters = array(
-	'WORKSTATION_MYPARAM1'=>array('css'=>'minwidth200', 'enabled'=>1),
-	'WORKSTATION_MYPARAM2'=>array('css'=>'minwidth500', 'enabled'=>1)
-);*/
-
 $error = 0;
 $setupnotempty = 0;
 
@@ -63,11 +58,11 @@ if (!$user->admin) {
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
-	$maskconstorder = GETPOST('maskconstWorkstation', 'alpha');
+	$maskconst = GETPOST('maskconstWorkstation', 'aZ09');
 	$maskorder = GETPOST('maskWorkstation', 'alpha');
 
-	if ($maskconstorder) {
-		$res = dolibarr_set_const($db, $maskconstorder, $maskorder, 'chaine', 0, '', $conf->entity);
+	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
+		$res = dolibarr_set_const($db, $maskconst, $maskorder, 'chaine', 0, '', $conf->entity);
 	}
 
 	if (!($res > 0)) {
@@ -87,7 +82,9 @@ if ($action == 'updateMask') {
 	$tmpobject->initAsSpecimen();
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$classname = '';
+	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/workstation/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
@@ -123,7 +120,7 @@ if ($action == 'updateMask') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
 		$constforval = strtoupper($tmpobjectkey).'_ADDON_PDF';
-		if ($conf->global->$constforval == "$value") {
+		if (getDolGlobalString($constforval) == "$value") {
 			dolibarr_del_const($db, $constforval, $conf->entity);
 		}
 	}
@@ -266,10 +263,10 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 							$module = new $file($db);
 
 							// Show modules according to features level
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								continue;
 							}
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 								continue;
 							}
 
@@ -277,7 +274,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								dol_include_once('/'.$moduledir.'/class/'.strtolower($myTmpObjectKey).'.class.php');
 
 								print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-								print $module->info();
+								print $module->info($langs);
 								print '</td>';
 
 								// Show example of numbering model
@@ -295,7 +292,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 								print '<td class="center">';
 								$constforvar = 'WORKSTATION_'.strtoupper($myTmpObjectKey).'_ADDON';
-								if (getDolGlobalString($constforvar) == $file) {
+								if (getDolGlobalString($constforvar, 'mod_workstation_standard') == $file) {
 									print img_picto($langs->trans("Activated"), 'switch_on');
 								} else {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&object='.strtolower($myTmpObjectKey).'&value='.urlencode($file).'">';
@@ -304,12 +301,13 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								}
 								print '</td>';
 
-								$mytmpinstance = new $myTmpObjectKey($db);
+								$nameofclass = ucfirst($myTmpObjectKey);
+								$mytmpinstance = new $nameofclass($db);
 								$mytmpinstance->initAsSpecimen();
 
 								// Info
 								$htmltooltip = '';
-								$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+								$htmltooltip .= $langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
 
 								$nextval = $module->getNextValue($mytmpinstance);
 								if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
@@ -318,7 +316,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 										if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
 											$nextval = $langs->trans($nextval);
 										}
-											$htmltooltip .= $nextval.'<br>';
+										$htmltooltip .= $nextval.'<br>';
 									} else {
 										$htmltooltip .= $langs->trans($module->error).'<br>';
 									}
@@ -403,16 +401,16 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 									$module = new $classname($db);
 
 									$modulequalified = 1;
-									if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+									if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 										$modulequalified = 0;
 									}
-									if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+									if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 										$modulequalified = 0;
 									}
 
 									if ($modulequalified) {
 										print '<tr class="oddeven"><td width="100">';
-										print (empty($module->name) ? $name : $module->name);
+										print(empty($module->name) ? $name : $module->name);
 										print "</td><td>\n";
 										if (method_exists($module, 'info')) {
 											print $module->info($langs);
@@ -437,10 +435,10 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 										// Default
 										print '<td class="center">';
 										$constforvar = 'WORKSTATION_'.strtoupper($myTmpObjectKey).'_ADDON';
-										if (getDolGlobalString($constforvar) == $name) {
+										if (getDolGlobalString($constforvar, 'mod_workstation_standard') == $name) {
 											print img_picto($langs->trans("Default"), 'on');
 										} else {
-											print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+											print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 										}
 										print '</td>';
 

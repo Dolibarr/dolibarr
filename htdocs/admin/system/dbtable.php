@@ -24,6 +24,7 @@
  *  \brief          Page d'info des contraintes d'une table
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 $langs->load("admin");
@@ -115,7 +116,7 @@ if (!$base) {
 				print "<td>".(empty($row[7]) ? '' : $row[7])."</td>";
 
 				print "<td>".(isset($link[$row[0]][0]) ? $link[$row[0]][0] : '').".";
-				print (isset($link[$row[0]][1]) ? $link[$row[0]][1] : '')."</td>";
+				print(isset($link[$row[0]][1]) ? $link[$row[0]][1] : '')."</td>";
 
 				print '<!-- ALTER ALTER TABLE '.$table.' MODIFY '.$row[0].' '.$row[1].' COLLATE utf8_unicode_ci; -->';
 				print '</tr>';

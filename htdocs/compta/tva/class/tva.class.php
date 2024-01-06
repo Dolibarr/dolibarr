@@ -63,6 +63,26 @@ class Tva extends CommonObject
 	public $num_payment;
 
 	/**
+	 * @var DateTime
+	 */
+	public $datec;
+
+	/**
+	 * @var int ID
+	 */
+	public $fk_type;
+
+	/**
+	 * @var int
+	 */
+	public $paye;
+
+	/**
+	 * @var int
+	 */
+	public $rappro;
+
+	/**
 	 * @var integer|string totalpaid
 	 */
 	public $totalpaid;
@@ -116,7 +136,7 @@ class Tva extends CommonObject
 	 *  Create in database
 	 *
 	 *  @param      User	$user       User that create
-	 *  @return     int      			<0 if KO, >0 if OK
+	 *  @return     int      			Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user)
 	{
@@ -197,7 +217,7 @@ class Tva extends CommonObject
 	 *
 	 * @param   User	$user        	User that modify
 	 * @param	int		$notrigger	    0=no, 1=yes (no update trigger)
-	 * @return  int         			<0 if KO, >0 if OK
+	 * @return  int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user, $notrigger = 0)
 	{
@@ -226,7 +246,7 @@ class Tva extends CommonObject
 		$sql .= " label='".$this->db->escape($this->label)."',";
 		$sql .= " note='".$this->db->escape($this->note)."',";
 		$sql .= " fk_user_creat=".((int) $this->fk_user_creat).",";
-		$sql .= " fk_user_modif=".($this->fk_user_modif > 0 ? $this->fk_user_modif : $user->id)."";
+		$sql .= " fk_user_modif=".((int) ($this->fk_user_modif > 0 ? $this->fk_user_modif : $user->id));
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -258,7 +278,7 @@ class Tva extends CommonObject
 	 *    Tag TVA as payed completely
 	 *
 	 *    @param    User    $user       Object user making change
-	 *    @return   int					<0 if KO, >0 if OK
+	 *    @return   int					Return integer <0 if KO, >0 if OK
 	 */
 	public function setPaid($user)
 	{
@@ -278,7 +298,7 @@ class Tva extends CommonObject
 	 *    Remove tag payed on TVA
 	 *
 	 *    @param	User	$user       Object user making change
-	 *    @return	int					<0 if KO, >0 if OK
+	 *    @return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function setUnpaid($user)
 	{
@@ -299,15 +319,13 @@ class Tva extends CommonObject
 	 *  Load object in memory from database
 	 *
 	 *  @param	int		$id         id object
-	 *  @param  User	$user       User that load
-	 *  @return int         		<0 if KO, >0 if OK
+	 *  @param  string	$ref        Ref of VAT (not used yet)
+	 *  @return int         		Return integer <0 if KO, >0 if OK
 	 */
-	public function fetch($id, $user = null)
+	public function fetch($id, $ref = '')
 	{
-		global $langs;
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
-
 		$sql .= " t.tms,";
 		$sql .= " t.datep,";
 		$sql .= " t.datev,";
@@ -320,12 +338,11 @@ class Tva extends CommonObject
 		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_modif,";
 		$sql .= " t.fk_account";
-
 		$sql .= " FROM ".MAIN_DB_PREFIX."tva as t";
-		//$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON t.fk_bank = b.rowid";
 		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->num_rows($resql)) {
@@ -345,8 +362,8 @@ class Tva extends CommonObject
 				$this->fk_user_creat = $obj->fk_user_creat;
 				$this->fk_user_modif = $obj->fk_user_modif;
 				$this->fk_account = $obj->fk_account;
-				$this->fk_type = $obj->fk_type;
-				$this->rappro  = $obj->rappro;
+				$this->fk_type = empty($obj->fk_type) ? "" : $obj->fk_type;
+				$this->rappro  = empty($obj->rappro) ? "" : $obj->rappro;
 			}
 			$this->db->free($resql);
 
@@ -362,7 +379,7 @@ class Tva extends CommonObject
 	 *  Delete object in database
 	 *
 	 *	@param	User	$user       User that delete
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user)
 	{
@@ -423,7 +440,6 @@ class Tva extends CommonObject
 	 */
 	public function solde($year = 0)
 	{
-
 		$reglee = $this->tva_sum_reglee($year);
 
 		$payee = $this->tva_sum_payee($year);
@@ -434,7 +450,7 @@ class Tva extends CommonObject
 		return $solde;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Total of the VAT from invoices emitted by the thirdparty.
 	 *
@@ -443,7 +459,7 @@ class Tva extends CommonObject
 	 */
 	public function tva_sum_collectee($year = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 
 		$sql = "SELECT sum(f.total_tva) as amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.paye = 1";
@@ -468,7 +484,7 @@ class Tva extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	VAT payed
 	 *
@@ -477,7 +493,7 @@ class Tva extends CommonObject
 	 */
 	public function tva_sum_payee($year = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 
 		$sql = "SELECT sum(f.total_tva) as total_tva";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
@@ -503,7 +519,7 @@ class Tva extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Total of the VAT payed
 	 *
@@ -512,7 +528,7 @@ class Tva extends CommonObject
 	 */
 	public function tva_sum_reglee($year = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 
 		$sql = "SELECT sum(f.amount) as amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."tva as f";
@@ -543,7 +559,7 @@ class Tva extends CommonObject
 	 *  Create in database
 	 *
 	 *	@param	User	$user		Object user that insert
-	 *	@return	int					<0 if KO, rowid in tva table if OK
+	 *	@return	int					Return integer <0 if KO, rowid in tva table if OK
 	 */
 	public function addPayment($user)
 	{
@@ -572,11 +588,11 @@ class Tva extends CommonObject
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount"));
 			return -4;
 		}
-		if (isModEnabled('banque') && (empty($this->accountid) || $this->accountid <= 0)) {
+		if (isModEnabled("banque") && (empty($this->accountid) || $this->accountid <= 0)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Account"));
 			return -5;
 		}
-		if (isModEnabled('banque') && (empty($this->type_payment) || $this->type_payment <= 0)) {
+		if (isModEnabled("banque") && (empty($this->type_payment) || $this->type_payment <= 0)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode"));
 			return -5;
 		}
@@ -633,7 +649,7 @@ class Tva extends CommonObject
 
 			if ($this->id > 0) {
 				$ok = 1;
-				if (isModEnabled('banque') && !empty($this->amount)) {
+				if (isModEnabled("banque") && !empty($this->amount)) {
 					// Insert into llx_bank
 					require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
@@ -683,16 +699,16 @@ class Tva extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Update link between payment tva and line generate into llx_bank
 	 *
 	 *  @param	int		$id_bank    Id bank account
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function update_fk_bank($id_bank)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'tva SET fk_bank = '.(int) $id_bank;
 		$sql .= ' WHERE rowid = '.(int) $this->id;
 		$result = $this->db->query($sql);
@@ -736,7 +752,7 @@ class Tva extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -746,7 +762,7 @@ class Tva extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -809,7 +825,7 @@ class Tva extends CommonObject
 	 *	Informations of vat payment object
 	 *
 	 *	@param	int		$id     Id of vat payment
-	 *	@return	int				<0 if KO, >0 if OK
+	 *	@return	void
 	 */
 	public function info($id)
 	{
@@ -825,21 +841,10 @@ class Tva extends CommonObject
 
 				$this->id = $obj->rowid;
 
-				if ($obj->fk_user_creat) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_creat);
-					$this->user_creation = $cuser;
-				}
-
-				if ($obj->fk_user_modif) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modif);
-					$this->user_modification = $muser;
-				}
-
+				$this->user_creation_id = $obj->fk_user_creat;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->tms);
-				$this->import_key        = $obj->import_key;
 			}
 
 			$this->db->free($result);
@@ -849,7 +854,7 @@ class Tva extends CommonObject
 	}
 
 	/**
-	 *  Retourne le libelle du statut d'une TVA (impaye, payee)
+	 *  Return the label of the VAT status f object
 	 *
 	 *  @param	int		$mode       	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
 	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
@@ -862,7 +867,7 @@ class Tva extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoi le libelle d'un statut donne
+	 *  Return the label of a given VAT status
 	 *
 	 *  @param	int		$status        	Id status
 	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
@@ -886,18 +891,18 @@ class Tva extends CommonObject
 			//$langs->load("mymodule");
 			$this->labelStatus[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv('BillStatusNotPaid');
 			$this->labelStatus[self::STATUS_PAID] = $langs->transnoentitiesnoconv('BillStatusPaid');
-			if ($status == self::STATUS_UNPAID && $alreadypaid <> 0) {
+			if ($status == self::STATUS_UNPAID && $alreadypaid != 0) {
 				$this->labelStatus[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
 			}
 			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv('BillStatusNotPaid');
 			$this->labelStatusShort[self::STATUS_PAID] = $langs->transnoentitiesnoconv('BillStatusPaid');
-			if ($status == self::STATUS_UNPAID && $alreadypaid <> 0) {
+			if ($status == self::STATUS_UNPAID && $alreadypaid != 0) {
 				$this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
 			}
 		}
 
 		$statusType = 'status1';
-		if ($status == 0 && $alreadypaid <> 0) {
+		if ($status == 0 && $alreadypaid != 0) {
 			$statusType = 'status3';
 		}
 		if ($status == 1) {
@@ -905,5 +910,47 @@ class Tva extends CommonObject
 		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
+	}
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		global $langs;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		//$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
+		if (property_exists($this, 'amount')) {
+			$return .= ' | <span class="opacitymedium">'.$langs->trans("Amount").'</span> : <span class="info-box-label amount">'.price($this->amount).'</span>';
+		}
+		if (property_exists($this, 'type_payment')) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Payement").'</span> : <span class="info-box-label">'.$this->type_payment.'</span>';
+		}
+		if (property_exists($this, 'datev')) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("DateEnd").'</span> : <span class="info-box-label" >'.dol_print_date($this->datev).'</span>';
+		}
+		if (method_exists($this, 'LibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3, $this->alreadypaid).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }

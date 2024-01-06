@@ -35,7 +35,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modService extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -68,7 +67,7 @@ class modService extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 
 		// Config pages
 		$this->config_page_url = array("product.php@product");
@@ -102,6 +101,14 @@ class modService extends DolibarrModules
 		$this->rights[$r][4] = 'creer';
 		$r++;
 
+		$this->rights[$r][0] = 533; // id de la permission
+		$this->rights[$r][1] = 'Read prices services'; // libelle de la permission
+		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][4] = 'service_advance';
+		$this->rights[$r][5] = 'read_prices';
+		$r++;
+
 		$this->rights[$r][0] = 534; // id de la permission
 		$this->rights[$r][1] = 'Delete les services'; // libelle de la permission
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
@@ -127,7 +134,7 @@ class modService extends DolibarrModules
 		 'url'=>'/product/admin/product_tools.php?mainmenu=home&leftmenu=admintools',
 		 'langs'=>'products',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 		 'position'=>300,
-		 'enabled'=>'$conf->product->enabled && preg_match(\'/^(admintools|all)/\',$leftmenu)',   // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+		 'enabled'=>'isModEnabled("product") && preg_match(\'/^(admintools|all)/\',$leftmenu)',   // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 		 'perms'=>'1',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 		 'target'=>'',
 		 'user'=>0);				                // 0=Menu for internal users, 1=external users, 2=both
@@ -143,7 +150,7 @@ class modService extends DolibarrModules
 		//--------
 		$r = 0;
 
-		$alias_product_perentity = empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p" : "ppe";
+		$alias_product_perentity = !getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED') ? "p" : "ppe";
 
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
@@ -168,29 +175,29 @@ class modService extends DolibarrModules
 		if (is_object($mysoc) && $usenpr) {
 			$this->export_fields_array[$r]['p.recuperableonly'] = 'NPR';
 		}
-		if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled) || !empty($conf->margin->enabled)) {
+		if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice") || isModEnabled('margin')) {
 			$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('p.cost_price'=>'CostPrice'));
 		}
-		if (!empty($conf->stock->enabled)) {
+		if (isModEnabled('stock')) {
 			$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('p.stock'=>'Stock', 'p.seuil_stock_alerte'=>'StockLimit', 'p.desiredstock'=>'DesiredStock', 'p.pmp'=>'PMPValue'));
 		}
-		if (!empty($conf->barcode->enabled)) {
+		if (isModEnabled('barcode')) {
 			$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('p.barcode'=>'BarCode'));
 		}
 		$keyforselect = 'product';
 		$keyforelement = 'product';
 		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+		if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 			$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('s.nom'=>'Supplier', 'pf.ref_fourn'=>'SupplierRef', 'pf.quantity'=>'QtyMin', 'pf.remise_percent'=>'DiscountQtyMin', 'pf.unitprice'=>'BuyingPrice', 'pf.delivery_time_days'=>'NbDaysToDelivery'));
 		}
-		if (!empty($conf->global->EXPORTTOOL_CATEGORIES)) {
+		if (getDolGlobalString('EXPORTTOOL_CATEGORIES')) {
 			$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('group_concat(cat.label)'=>'Categories'));
 		}
-		if (!empty($conf->global->MAIN_MULTILANGS)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('l.lang'=>'Language', 'l.label'=>'TranslatedLabel', 'l.description'=>'TranslatedDescription', 'l.note'=>'TranslatedNote'));
 		}
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			$this->export_fields_array[$r]['p.fk_unit'] = 'Unit';
 		}
 		$this->export_TypeFields_array[$r] = array(
@@ -207,77 +214,77 @@ class modService extends DolibarrModules
 			'p.price_base_type'=>"Text", 'p.price'=>"Numeric", 'p.price_ttc'=>"Numeric", 'p.tva_tx'=>'Numeric',
 			'p.datec'=>'Date', 'p.tms'=>'Date'
 		);
-		if (!empty($conf->stock->enabled)) {
+		if (isModEnabled('stock')) {
 			$this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('p.stock'=>'Numeric', 'p.seuil_stock_alerte'=>'Numeric', 'p.desiredstock'=>'Numeric', 'p.pmp'=>'Numeric', 'p.cost_price'=>'Numeric'));
 		}
-		if (!empty($conf->barcode->enabled)) {
+		if (isModEnabled('barcode')) {
 			$this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('p.barcode'=>'Text'));
 		}
-		if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+		if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 			$this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('s.nom'=>'Text', 'pf.ref_fourn'=>'Text', 'pf.unitprice'=>'Numeric', 'pf.quantity'=>'Numeric', 'pf.remise_percent'=>'Numeric', 'pf.delivery_time_days'=>'Numeric'));
 		}
-		if (!empty($conf->global->MAIN_MULTILANGS)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('l.lang'=>'Text', 'l.label'=>'Text', 'l.description'=>'Text', 'l.note'=>'Text'));
 		}
-		if (!empty($conf->global->EXPORTTOOL_CATEGORIES)) {
+		if (getDolGlobalString('EXPORTTOOL_CATEGORIES')) {
 			$this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array("group_concat(cat.label)"=>'Text'));
 		}
 		$this->export_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
-		if (!empty($conf->global->EXPORTTOOL_CATEGORIES)) {
+		if (getDolGlobalString('EXPORTTOOL_CATEGORIES')) {
 			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array("group_concat(cat.label)"=>'category'));
 		}
-		if (!empty($conf->stock->enabled)) {
+		if (isModEnabled('stock')) {
 			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.stock'=>'product', 'p.pmp'=>'product'));
 		}
-		if (!empty($conf->barcode->enabled)) {
+		if (isModEnabled('barcode')) {
 			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.barcode'=>'product'));
 		}
-		if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+		if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('s.nom'=>'product_supplier_ref', 'pf.ref_fourn'=>'product_supplier_ref', 'pf.unitprice'=>'product_supplier_ref', 'pf.quantity'=>'product_supplier_ref', 'pf.remise_percent'=>'product_supplier_ref', 'pf.delivery_time_days'=>'product_supplier_ref'));
 		}
-		if (!empty($conf->global->MAIN_MULTILANGS)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('l.lang'=>'translation', 'l.label'=>'translation', 'l.description'=>'translation', 'l.note'=>'translation'));
 		}
-		if (!empty($conf->global->EXPORTTOOL_CATEGORIES)) {
+		if (getDolGlobalString('EXPORTTOOL_CATEGORIES')) {
 			$this->export_dependencies_array[$r] = array('category'=>'p.rowid');
 		}
-		if (!empty($conf->stock->enabled)) {
+		if (isModEnabled('stock')) {
 			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.stock'=>'product', 'p.pmp'=>'product'));
 		}
-		if (!empty($conf->barcode->enabled)) {
+		if (isModEnabled('barcode')) {
 			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.barcode'=>'product'));
 		}
-		if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+		if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('s.nom'=>'product_supplier_ref', 'pf.ref_fourn'=>'product_supplier_ref', 'pf.unitprice'=>'product_supplier_ref', 'pf.quantity'=>'product_supplier_ref', 'pf.remise_percent'=>'product_supplier_ref', 'pf.delivery_time_days'=>'product_supplier_ref'));
 		}
-		if (!empty($conf->global->MAIN_MULTILANGS)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('l.lang'=>'translation', 'l.label'=>'translation', 'l.description'=>'translation', 'l.note'=>'translation'));
 		}
-		if (!empty($conf->global->EXPORTTOOL_CATEGORIES)) {
+		if (getDolGlobalString('EXPORTTOOL_CATEGORIES')) {
 			$this->export_dependencies_array[$r] = array('category'=>'p.rowid');
 		}
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'product as p';
-		if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+		if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 			$this->export_sql_end[$r] .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
 		}
-		if (!empty($conf->global->EXPORTTOOL_CATEGORIES)) {
+		if (getDolGlobalString('EXPORTTOOL_CATEGORIES')) {
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product = p.rowid LEFT JOIN '.MAIN_DB_PREFIX.'categorie as cat ON cp.fk_categorie = cat.rowid';
 		}
-		if (!empty($conf->global->MAIN_MULTILANGS)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_lang as l ON l.fk_product = p.rowid';
 		}
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extra ON p.rowid = extra.fk_object';
-		if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+		if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_fournisseur_price as pf ON pf.fk_product = p.rowid LEFT JOIN '.MAIN_DB_PREFIX.'societe s ON s.rowid = pf.fk_soc';
 		}
 		$this->export_sql_end[$r] .= ' WHERE p.fk_product_type = 1 AND p.entity IN ('.getEntity('product').')';
-		if (!empty($conf->global->EXPORTTOOL_CATEGORIES)) {
+		if (getDolGlobalString('EXPORTTOOL_CATEGORIES')) {
 			$this->export_sql_order[$r] = ' GROUP BY p.rowid'; // FIXME The group by used a generic value to say "all fields in select except function fields"
 		}
 
-		if (empty($conf->product->enabled)) {	// We enable next import templates only if module product not already enabled (to avoid duplicate entries)
-			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+		if (!isModEnabled("product")) {	// We enable next import templates only if module product not already enabled (to avoid duplicate entries)
+			if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 				// Exports product multiprice
 				$r++;
 				$this->export_code[$r] = $this->rights_class.'_'.$r;
@@ -311,7 +318,7 @@ class modService extends DolibarrModules
 				$this->export_sql_end[$r] .= ' WHERE p.entity IN ('.getEntity('product').')'; // For product and service profile
 			}
 
-			if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+			if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 				// Exports product multiprice
 				$r++;
 				$this->export_code[$r] = $this->rights_class.'_'.$r;
@@ -344,7 +351,7 @@ class modService extends DolibarrModules
 				$this->export_sql_end[$r] .= ' WHERE p.entity IN ('.getEntity('product').')'; // For product and service profile
 			}
 
-			if (!empty($conf->global->PRODUIT_SOUSPRODUITS)) {
+			if (getDolGlobalString('PRODUIT_SOUSPRODUITS')) {
 				// Exports virtual products
 				$r++;
 				$this->export_code[$r] = $this->rights_class.'_'.$r;
@@ -360,10 +367,10 @@ class modService extends DolibarrModules
 					'p.price_base_type'=>"PriceBase", 'p.price'=>"UnitPriceHT", 'p.price_ttc'=>"UnitPriceTTC", 'p.tva_tx'=>'VATRate', 'p.tosell'=>"OnSell",
 					'p.tobuy'=>"OnBuy", 'p.datec'=>'DateCreation', 'p.tms'=>'DateModification'
 				);
-				if (!empty($conf->stock->enabled)) {
+				if (isModEnabled('stock')) {
 					$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('p.stock'=>'Stock', 'p.seuil_stock_alerte'=>'StockLimit', 'p.desiredstock'=>'DesiredStock', 'p.pmp'=>'PMPValue'));
 				}
-				if (!empty($conf->barcode->enabled)) {
+				if (isModEnabled('barcode')) {
 					$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('p.barcode'=>'BarCode'));
 				}
 				$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('pa.qty'=>'Qty', 'pa.incdec'=>'ComposedProductIncDecStock'));
@@ -376,10 +383,10 @@ class modService extends DolibarrModules
 					'p.price_base_type'=>"Text", 'p.price'=>"Numeric", 'p.price_ttc'=>"Numeric", 'p.tva_tx'=>'Numeric', 'p.tosell'=>"Boolean", 'p.tobuy'=>"Boolean",
 					'p.datec'=>'Date', 'p.tms'=>'Date'
 				);
-				if (!empty($conf->stock->enabled)) {
+				if (isModEnabled('stock')) {
 					$this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('p.stock'=>'Numeric', 'p.seuil_stock_alerte'=>'Numeric', 'p.desiredstock'=>'Numeric', 'p.pmp'=>'Numeric', 'p.cost_price'=>'Numeric'));
 				}
-				if (!empty($conf->barcode->enabled)) {
+				if (isModEnabled('barcode')) {
 					$this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('p.barcode'=>'Text'));
 				}
 				$this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('pa.qty'=>'Numeric'));
@@ -392,10 +399,10 @@ class modService extends DolibarrModules
 					'p.price_base_type'=>"virtualproduct", 'p.price'=>"virtualproduct", 'p.price_ttc'=>"virtualproduct", 'p.tva_tx'=>"virtualproduct",
 					'p.tosell'=>"virtualproduct", 'p.tobuy'=>"virtualproduct", 'p.datec'=>"virtualproduct", 'p.tms'=>"virtualproduct"
 				);
-				if (!empty($conf->stock->enabled)) {
+				if (isModEnabled('stock')) {
 					$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.stock'=>'virtualproduct', 'p.seuil_stock_alerte'=>'virtualproduct', 'p.desiredstock'=>'virtualproduct', 'p.pmp'=>'virtualproduct'));
 				}
-				if (!empty($conf->barcode->enabled)) {
+				if (isModEnabled('barcode')) {
 					$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.barcode'=>'virtualproduct'));
 				}
 				$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('pa.qty'=>"subproduct", 'pa.incdec'=>'subproduct'));
@@ -407,7 +414,7 @@ class modService extends DolibarrModules
 				$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p2.rowid'=>"subproduct", 'p2.ref'=>"subproduct", 'p2.label'=>"subproduct", 'p2.description'=>"subproduct"));
 				$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 				$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'product as p';
-				if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+				if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 					$this->export_sql_end[$r] .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as pac ON pac.fk_product = p.rowid AND pac.entity = " . ((int) $conf->entity);
 				}
 				$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extra ON p.rowid = extra.fk_object,';
@@ -540,7 +547,7 @@ class modService extends DolibarrModules
 			'p.recuperableonly' => '^[0|1]$',
 		);
 
-		if (!empty($conf->stock->enabled)) {//if Stock module enabled
+		if (isModEnabled('stock')) {//if Stock module enabled
 			$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array(
 				'p.fk_default_warehouse'=>'DefaultWarehouse',
 				'p.tobatch'=>'ManageLotSerial',
@@ -564,7 +571,7 @@ class modService extends DolibarrModules
 			));
 		}
 
-		if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled) || !empty($conf->margin->enabled)) {
+		if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice") || isModEnabled('margin')) {
 			$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('p.cost_price'=>'CostPrice'));
 		}
 		if (is_object($mysoc) && $usenpr) {
@@ -576,10 +583,10 @@ class modService extends DolibarrModules
 		if (is_object($mysoc) && $mysoc->useLocalTax(2)) {
 			$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('p.localtax2_tx'=>'LT2', 'p.localtax2_type'=>'LT2Type'));
 		}
-		if (!empty($conf->barcode->enabled)) {
+		if (isModEnabled('barcode')) {
 			$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('p.barcode'=>'BarCode'));
 		}
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			$this->import_fields_array[$r]['p.fk_unit'] = 'Unit';
 		}
 		// Add extra fields
@@ -648,14 +655,14 @@ class modService extends DolibarrModules
 			'p.finished' => '0 (raw material) / 1 (finished goods), matches field "code" in dictionary table "'.MAIN_DB_PREFIX.'c_product_nature"'
 		);
 		//clauses copied from import_fields_array
-		if (!empty($conf->stock->enabled)) {
+		if (isModEnabled('stock')) {
 			$import_sample = array_merge($import_sample, array(
 			'p.seuil_stock_alerte' => '',
 			'p.pmp' => '0',
 			'p.desiredstock' => ''
 			));
 		}
-		if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled) || !empty($conf->margin->enabled)) {
+		if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice") || isModEnabled('margin')) {
 			$import_sample = array_merge($import_sample, array('p.cost_price'=>'90'));
 		}
 		if (is_object($mysoc) && $usenpr) {
@@ -667,10 +674,10 @@ class modService extends DolibarrModules
 		if (is_object($mysoc) && $mysoc->useLocalTax(2)) {
 			$import_sample = array_merge($import_sample, array('p.localtax2_tx'=>'', 'p.localtax2_type'=>''));
 		}
-		if (!empty($conf->barcode->enabled)) {
+		if (isModEnabled('barcode')) {
 			$import_sample = array_merge($import_sample, array('p.barcode'=>''));
 		}
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			$import_sample = array_merge(
 				$import_sample,
 				array(
@@ -693,12 +700,12 @@ class modService extends DolibarrModules
 		}
 		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
 		$this->import_updatekeys_array[$r] = array('p.ref'=>'Ref');
-		if (!empty($conf->barcode->enabled)) {
+		if (isModEnabled('barcode')) {
 			$this->import_updatekeys_array[$r] = array_merge($this->import_updatekeys_array[$r], array('p.barcode'=>'BarCode')); //only show/allow barcode as update key if Barcode module enabled
 		}
 
-		if (empty($conf->product->enabled)) {	// We enable next import templates only if module product not already enabled (to avoid duplicate entries)
-			if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+		if (!isModEnabled("product")) {	// We enable next import templates only if module product not already enabled (to avoid duplicate entries)
+			if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 				// Import suppliers prices (note: this code is duplicated in module Service)
 				$r++;
 				$this->import_code[$r] = $this->rights_class.'_supplierprices';
@@ -714,7 +721,7 @@ class modService extends DolibarrModules
 					'sp.quantity' => "QtyMin*",
 					'sp.tva_tx' => 'VATRate',
 					'sp.default_vat_code' => 'VATCode',
-					'sp.delivery_time_days' => 'DeliveryDelay',
+					'sp.delivery_time_days' => 'NbDaysToDelivery',
 					'sp.supplier_reputation' => 'SupplierReputation'
 				);
 				if (is_object($mysoc) && $usenpr) {
@@ -732,7 +739,7 @@ class modService extends DolibarrModules
 					'sp.remise_percent'=>'DiscountQtyMin'
 				));
 
-				if (!empty($conf->multicurrency->enabled)) {
+				if (isModEnabled("multicurrency")) {
 					$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array(
 					'sp.fk_multicurrency'=>'CurrencyCodeId', //ideally this should be automatically obtained from the CurrencyCode on the next line
 					'sp.multicurrency_code'=>'CurrencyCode',
@@ -742,11 +749,11 @@ class modService extends DolibarrModules
 					));
 				}
 
-					$this->import_convertvalue_array[$r] = array(
+				$this->import_convertvalue_array[$r] = array(
 						'sp.fk_soc'=>array('rule'=>'fetchidfromref', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetch', 'element'=>'ThirdParty'),
 						'sp.fk_product'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/class/product.class.php', 'class'=>'Product', 'method'=>'fetch', 'element'=>'Product')
 					);
-					$this->import_examplevalues_array[$r] = array(
+				$this->import_examplevalues_array[$r] = array(
 					'sp.fk_product' => "ref:PRODUCT_REF or id:123456",
 					'sp.fk_soc' => "My Supplier",
 					'sp.ref_fourn' => "XYZ-F123456",
@@ -759,22 +766,22 @@ class modService extends DolibarrModules
 					'sp.delivery_time_days' => '5',
 					'sp.supplier_reputation' => 'FAVORITE / NOTTHGOOD / DONOTORDER'
 					);
-					if (is_object($mysoc) && $usenpr) {
-						$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array('sp.recuperableonly'=>''));
-					}
-					if (is_object($mysoc) && $mysoc->useLocalTax(1)) {
-						$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array('sp.localtax1_tx'=>'LT1', 'sp.localtax1_type'=>'LT1Type'));
-					}
-					if (is_object($mysoc) && $mysoc->useLocalTax(2)) {
-						$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array('sp.localtax2_tx'=>'LT2', 'sp.localtax2_type'=>'LT2Type'));
-					}
-					$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array(
+				if (is_object($mysoc) && $usenpr) {
+					$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array('sp.recuperableonly'=>''));
+				}
+				if (is_object($mysoc) && $mysoc->useLocalTax(1)) {
+					$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array('sp.localtax1_tx'=>'LT1', 'sp.localtax1_type'=>'LT1Type'));
+				}
+				if (is_object($mysoc) && $mysoc->useLocalTax(2)) {
+					$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array('sp.localtax2_tx'=>'LT2', 'sp.localtax2_type'=>'LT2Type'));
+				}
+				$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array(
 					'sp.price' => "50.00",
 					'sp.unitprice' => '10',
 					// TODO Make this field not required and calculate it from price and qty
 					'sp.remise_percent' => '20'
 					));
-				if (!empty($conf->multicurrency->enabled)) {
+				if (isModEnabled("multicurrency")) {
 					$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array(
 					'sp.fk_multicurrency'=>'eg: 2, rowid for code of multicurrency currency',
 					'sp.multicurrency_code'=>'GBP',
@@ -784,7 +791,7 @@ class modService extends DolibarrModules
 					'sp.multicurrency_price'=>''
 					));
 				}
-				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
+				if (getDolGlobalString('PRODUCT_USE_SUPPLIER_PACKAGING')) {
 					$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array(
 						'sp.packagning'=>'10',
 					));
@@ -793,7 +800,7 @@ class modService extends DolibarrModules
 				$this->import_updatekeys_array[$r] = array('sp.fk_product'=>'ProductOrService', 'sp.ref_fourn'=>'SupplierRef', 'sp.fk_soc'=>'Supplier');
 			}
 
-			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+			if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 				// Import products multiprices
 				$r++;
 				$this->import_code[$r] = $this->rights_class.'_multiprice';
@@ -807,7 +814,7 @@ class modService extends DolibarrModules
 					'pr.price'=>"PriceLevelUnitPriceHT", 'pr.price_ttc'=>"PriceLevelUnitPriceTTC",
 					'pr.price_min'=>"MinPriceLevelUnitPriceHT", 'pr.price_min_ttc'=>"MinPriceLevelUnitPriceTTC",
 					'pr.date_price'=>'DateCreation*');
-				if (!empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL)) {
+				if (getDolGlobalString('PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL')) {
 					$this->import_fields_array[$r]['pr.tva_tx'] = 'VATRate';
 				}
 				if (is_object($mysoc) && $usenpr) {
@@ -826,7 +833,7 @@ class modService extends DolibarrModules
 					'pr.date_price'=>'2013-04-10');
 			}
 
-			if (!empty($conf->global->MAIN_MULTILANGS)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS')) {
 				// Import translations of product names and descriptions
 				$r++;
 				$this->import_code[$r] = $this->rights_class.'_languages';

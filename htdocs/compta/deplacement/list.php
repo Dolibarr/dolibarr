@@ -25,6 +25,7 @@
  *  \brief      Page to list trips and expenses
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
@@ -48,7 +49,7 @@ $search_company = GETPOST('search_company', 'alpha');
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -96,15 +97,15 @@ $sql .= " u.lastname, u.firstname"; // Qui
 $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql .= ", ".MAIN_DB_PREFIX."deplacement as d";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON d.fk_soc = s.rowid";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 }
 $sql .= " WHERE d.fk_user = u.rowid";
 $sql .= " AND d.entity = ".$conf->entity;
-if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) {
+if (!$user->hasRight('deplacement', 'readall') && !$user->hasRight('deplacement', 'lire_tous')) {
 	$sql .= ' AND d.fk_user IN ('.$db->sanitize(join(',', $childids)).')';
 }
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= " AND (sc.fk_user = ".((int) $user->id)." OR d.fk_soc IS NULL) ";
 }
 if ($socid) {
@@ -130,7 +131,7 @@ $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
 
-	print_barre_liste($langs->trans("ListOfFees"), $page, $_SERVER["PHP_SELF"], "&socid=$socid", $sortfield, $sortorder, '', $num);
+	print_barre_liste($langs->trans("TripsAndExpenses"), $page, $_SERVER["PHP_SELF"], "&socid=$socid", $sortfield, $sortorder, '', $num);
 
 	$i = 0;
 	print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -154,7 +155,7 @@ if ($resql) {
 	print '&nbsp;';
 	print '</td>';
 	print '<td class="liste_titre" align="center">';
-	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
+	if (getDolGlobalString('MAIN_LIST_FILTER_ON_DAY')) {
 		print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
 	}
 	print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';

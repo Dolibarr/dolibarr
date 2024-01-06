@@ -21,11 +21,29 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-if (!defined("NOCSRFCHECK")) {
-	define("NOCSRFCHECK", '1');
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1'); // Do not check anti CSRF attack test
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1'); // Do not check anti POST attack test
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1'); // Do not load ajax.lib.php library
+}
+if (!defined("NOLOGIN")) {
+	define("NOLOGIN", '1'); // If this page is public (can be called outside logged session)
+}
+if (!defined("NOSESSION")) {
+	define("NOSESSION", '1');
 }
 
-require "../master.inc.php";
+require '../main.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php'; // Include SOAP
 require_once DOL_DOCUMENT_ROOT."/core/lib/ws.lib.php";
 require_once DOL_DOCUMENT_ROOT."/contact/class/contact.class.php";
@@ -35,7 +53,7 @@ require_once DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php";
 dol_syslog("Call Contact webservices interfaces");
 
 // Enable and test if module web services is enabled
-if (empty($conf->global->MAIN_MODULE_WEBSERVICES)) {
+if (!getDolGlobalString('MAIN_MODULE_WEBSERVICES')) {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
 	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
@@ -257,13 +275,15 @@ function getContact($authentication, $id, $ref_ext)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (!$error && ($id && $ref_ext)) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id and ref_ext can't be both provided. You must choose one or other but not both.";
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = "Parameter id and ref_ext can't be both provided. You must choose one or other but not both.";
 	}
 
 	if (!$error) {
@@ -274,8 +294,8 @@ function getContact($authentication, $id, $ref_ext)
 		if ($result > 0) {
 			// Only internal user who have contact read permission
 			// Or for external user who have contact read permission, with restrict on socid
-			if ($fuser->rights->societe->contact->lire && !$fuser->socid
-				|| ($fuser->rights->societe->contact->lire && ($fuser->socid == $contact->socid))
+			if ($fuser->hasRight('societe', 'contact', 'lire') && !$fuser->socid
+				|| ($fuser->hasRight('societe', 'contact', 'lire') && ($fuser->socid == $contact->socid))
 			) {
 				$contact_result_fields = array(
 					'id' => $contact->id,
@@ -334,11 +354,13 @@ function getContact($authentication, $id, $ref_ext)
 				);
 			} else {
 				$error++;
-				$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
+				$errorcode = 'PERMISSION_DENIED';
+				$errorlabel = 'User does not have permission for this request';
 			}
 		} else {
 			$error++;
-			$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref_ext='.$ref_ext;
+			$errorcode = 'NOT_FOUND';
+			$errorlabel = 'Object not found for id='.$id.' nor ref_ext='.$ref_ext;
 		}
 	}
 
@@ -371,12 +393,15 @@ function createContact($authentication, $contact)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (empty($contact['lastname'])) {
-		$error++; $errorcode = 'KO'; $errorlabel = "Name is mandatory.";
+		$error++;
+		$errorcode = 'KO';
+		$errorlabel = "Name is mandatory.";
 	}
 
 	if (!$error) {
@@ -475,13 +500,15 @@ function getContactsForThirdParty($authentication, $idthirdparty)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (!$error && empty($idthirdparty)) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = 'Parameter id is not provided';
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = 'Parameter id is not provided';
 	}
 
 	if (!$error) {
@@ -569,7 +596,8 @@ function getContactsForThirdParty($authentication, $idthirdparty)
 			);
 		} else {
 			$error++;
-			$errorcode = $db->lasterrno(); $errorlabel = $db->lasterror();
+			$errorcode = $db->lasterrno();
+			$errorlabel = $db->lasterror();
 		}
 	}
 
@@ -590,7 +618,7 @@ function getContactsForThirdParty($authentication, $idthirdparty)
  */
 function updateContact($authentication, $contact)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	$now = dol_now();
 
@@ -602,17 +630,21 @@ function updateContact($authentication, $contact)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (empty($contact['id']) && empty($contact['ref_ext'])) {
-		$error++; $errorcode = 'KO'; $errorlabel = "Contact id or ref_ext is mandatory.";
+		$error++;
+		$errorcode = 'KO';
+		$errorlabel = "Contact id or ref_ext is mandatory.";
 	}
 	// Check parameters
-	if (!$error && ($id && $ref_ext)) {
+	if (!$error && ($contact['id'] && $contact['ref_ext'])) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id and ref_ext can't be all provided. You must choose one of them.";
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = "Parameter id and ref_ext can't be all provided. You must choose one of them.";
 	}
 
 	if (!$error) {

@@ -24,11 +24,11 @@ FinancialCommitment=تعهد مالی
 InterestAmount=سود
 CapitalRemain=سرمایۀ مانده
 TermPaidAllreadyPaid = This term is allready paid
-CantUseScheduleWithLoanStartedToPaid = Can't use scheduler for a loan with payment started
+CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
 CantModifyInterestIfScheduleIsUsed = You can't modify interest if you use schedule
 # Admin
 ConfigLoan=پیکربندی واحد وام
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=حساب‌حساب‌داری سرمایۀ پیش‌فرض
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=حساب‌حساب‌داری سود پیش‌فرض
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=حساب‌حساب‌داری بیمۀ پیش‌فرض
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Account (from the Chart Of Account) to be used by default for capital (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Account (from the Chart Of Account) to be used by default for interest (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Account (from the Chart Of Account) to be used by default for insurance (Loan module)
 CreateCalcSchedule=ویرایش تعهد مالی

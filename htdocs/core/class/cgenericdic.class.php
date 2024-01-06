@@ -20,15 +20,16 @@
 
 /**
  * \file    htdocs/core/class/cgenericdic.class.php
- * \ingroup resource
+ * \ingroup core
  */
+
+// Put here all includes required by your class file
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
 
 /**
  * Class CGenericDic
- *
- * @see CommonObject
  */
-class CGenericDic
+class CGenericDic extends CommonDict
 {
 	/**
 	 * @var string Id to identify managed objects
@@ -48,7 +49,7 @@ class CGenericDic
 	public $code;
 
 	/**
-	 * @var string Type resource label
+	 * @var string Label
 	 */
 	public $label;
 
@@ -73,7 +74,7 @@ class CGenericDic
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
 	 *
-	 * @return int <0 if KO, Id of created object if OK
+	 * @return int Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -91,13 +92,13 @@ class CGenericDic
 		// Clean parameters
 
 		if (isset($this->code)) {
-			 $this->code = trim($this->code);
+			$this->code = trim($this->code);
 		}
 		if (isset($this->label)) {
-			 $this->label = trim($this->label);
+			$this->label = trim($this->label);
 		}
 		if (isset($this->active)) {
-			 $this->active = trim($this->active);
+			$this->active = trim($this->active);
 		}
 
 		// Insert request
@@ -153,7 +154,7 @@ class CGenericDic
 	 * @param string $code code
 	 * @param string $label Label
 	 *
-	 * @return int <0 if KO, 0 if not found, >0 if OK
+	 * @return int Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $code = '', $label = '')
 	{
@@ -226,7 +227,7 @@ class CGenericDic
 	 * @param array  $filter    filter array
 	 * @param string $filtermode filter mode (AND or OR)
 	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
@@ -296,7 +297,7 @@ class CGenericDic
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
 	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
@@ -316,13 +317,13 @@ class CGenericDic
 		// Clean parameters
 
 		if (isset($this->code)) {
-			 $this->code = trim($this->code);
+			$this->code = trim($this->code);
 		}
 		if (isset($this->label)) {
-			 $this->label = trim($this->label);
+			$this->label = trim($this->label);
 		}
 		if (isset($this->active)) {
-			 $this->active = trim($this->active);
+			$this->active = trim($this->active);
 		}
 
 		// Check parameters
@@ -372,7 +373,7 @@ class CGenericDic
 	 * @param User $user      User that deletes
 	 * @param bool $notrigger false=launch triggers after, true=disable triggers
 	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{

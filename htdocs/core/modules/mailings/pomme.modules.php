@@ -41,11 +41,6 @@ class mailing_pomme extends MailingTargets
 	 */
 	public $picto = 'user';
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
 
 	/**
 	 *	Constructor
@@ -78,6 +73,7 @@ class mailing_pomme extends MailingTargets
 		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 		$sql .= " WHERE u.email != ''"; // u.email IS NOT NULL est implicite dans ce test
 		$sql .= " AND u.entity IN (0,".$conf->entity.")";
+
 		$statssql[0] = $sql;
 
 		return $statssql;
@@ -100,6 +96,9 @@ class mailing_pomme extends MailingTargets
 		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 		$sql .= " WHERE u.email != ''"; // u.email IS NOT NULL est implicite dans ce test
 		$sql .= " AND u.entity IN (0,".$conf->entity.")";
+		if (empty($this->evenunsubscribe)) {
+			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = u.email and mu.entity = ".((int) $conf->entity).")";
+		}
 
 		// La requete doit retourner un champ "nb" pour etre comprise par parent::getNbOfRecipients
 		return parent::getNbOfRecipients($sql);
@@ -118,7 +117,7 @@ class mailing_pomme extends MailingTargets
 		$langs->load("users");
 
 		$s = '';
-		$s .= '<select id="filter_pomme"" name="filter" class="flat">';
+		$s .= '<select id="filter_pomme"" name="filter" class="flat minwidth100">';
 		$s .= '<option value="-1">'.$langs->trans("Status").'</option>';
 		$s .= '<option value="1">'.$langs->trans("Enabled").'</option>';
 		$s .= '<option value="0">'.$langs->trans("Disabled").'</option>';
@@ -126,7 +125,7 @@ class mailing_pomme extends MailingTargets
 		$s .= ajax_combobox("filter_pomme");
 
 		$s .= ' ';
-		$s .= '<select id="filteremployee_pomme" name="filteremployee" class="flat">';
+		$s .= '<select id="filteremployee_pomme" name="filteremployee" class="flat minwidth100">';
 		$s .= '<option value="-1">'.$langs->trans("Employee").'</option>';
 		$s .= '<option value="1">'.$langs->trans("Yes").'</option>';
 		$s .= '<option value="0">'.$langs->trans("No").'</option>';
@@ -154,7 +153,7 @@ class mailing_pomme extends MailingTargets
 	 *  Ajoute destinataires dans table des cibles
 	 *
 	 *  @param	int		$mailing_id    	Id of emailing
-	 *  @return int           			< 0 si erreur, nb ajout si ok
+	 *  @return int           			Return integer < 0 si erreur, nb ajout si ok
 	 */
 	public function add_to_target($mailing_id)
 	{
@@ -183,6 +182,9 @@ class mailing_pomme extends MailingTargets
 		if (GETPOSTISSET("filteremployee") && GETPOST("filteremployee") == '0') {
 			$sql .= " AND u.employee=0";
 		}
+		if (empty($this->evenunsubscribe)) {
+			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = u.email and mu.entity = ".((int) $conf->entity).")";
+		}
 		$sql .= " ORDER BY u.email";
 
 		// Stocke destinataires dans cibles
@@ -197,7 +199,7 @@ class mailing_pomme extends MailingTargets
 			$old = '';
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
-				if ($old <> $obj->email) {
+				if ($old != $obj->email) {
 					$cibles[$j] = array(
 						'email' => $obj->email,
 						'fk_contact' => $obj->fk_contact,

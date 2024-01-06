@@ -53,7 +53,9 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = Στη φόρμα για τη δημι�
 #
 # Object
 #
+OrganizedEvent=Οργανωμένη εκδήλωση
 EventOrganizationConfOrBooth= Συνέδριο ή Περίπτερο
+EventOrganizationConfOrBoothes=Συνέδρια ή Περίπτερα
 ManageOrganizeEvent = Διαχειριστείτε την οργάνωση μιας εκδήλωσης
 ConferenceOrBooth = Συνέδριο ή Περίπτερο
 ConferenceOrBoothTab = Συνέδριο ή Περίπτερο
@@ -114,15 +116,15 @@ EvntOrgRegistrationHelpMessage = Εδώ, μπορείτε να ψηφίσετε 
 EvntOrgRegistrationConfHelpMessage = Εδώ, μπορείτε να προτείνετε ένα νέο συνέδριο για προώθηση κατά τη διάρκεια της εκδήλωσης.
 EvntOrgRegistrationBoothHelpMessage = Εδώ, μπορείτε να κάνετε αίτηση για να έχετε ένα περίπτερο κατά τη διάρκεια της εκδήλωσης.
 ListOfSuggestedConferences = Λίστα προτεινόμενων συνεδρίων
-ListOfSuggestedBooths = Λίστα προτεινόμενων περιπτέρων
-ListOfConferencesOrBooths=Λίστα συνεδρίων ή περιπτέρων του έργου εκδήλωσης
+ListOfSuggestedBooths=Προτεινόμενα περίπτερα
+ListOfConferencesOrBooths=Συνέδρια ή περίπτερα του έργου εκδήλωσης
 SuggestConference = Προτείνετε ένα νέο συνέδριο
 SuggestBooth = Προτείνετε ένα περίπτερο
 ViewAndVote = Δείτε και ψηφίστε για προτεινόμενες εκδηλώσεις
 PublicAttendeeSubscriptionGlobalPage = Δημόσιος σύνδεσμος για εγγραφή στην εκδήλωση
 PublicAttendeeSubscriptionPage = Δημόσιος σύνδεσμος για εγγραφή σε αυτήν την εκδήλωση μόνο 
 MissingOrBadSecureKey = Το κλειδί ασφαλείας δεν είναι έγκυρο ή λείπει
-EvntOrgWelcomeMessage = Αυτή η φόρμα σάς επιτρέπει να εγγραφείτε ως νέος συμμετέχων στην εκδήλωση: <b> %s </b>
+EvntOrgWelcomeMessage = Αυτή η φόρμα σάς επιτρέπει να εγγραφείτε ως νέος συμμετέχων στην εκδήλωση
 EvntOrgDuration = Αυτό το συνέδριο ξεκινά στις %s και τελειώνει στις %s.
 ConferenceAttendeeFee = Χρέωση συμμετεχόντων στο συνέδριο για την εκδήλωση : "%s" που διεξάγεται από %s έως %s.
 BoothLocationFee = Θέση περιπτέρου για την εκδήλωση : "%s" που διεξάγεται από %s έως %s
@@ -132,7 +134,7 @@ LabelOfconference=Ταμπέλα συνεδρίου
 ConferenceIsNotConfirmed=Η εγγραφή δεν είναι διαθέσιμη, το συνέδριο δεν έχει επιβεβαιωθεί ακόμα
 DateMustBeBeforeThan=Το %s πρέπει να είναι πριν από το %s
 DateMustBeAfterThan=Το %s πρέπει να είναι μετά το %s
-
+MaxNbOfAttendeesReached=Ο μέγιστος αριθμός συμμετεχόντων έχει συμπληρωθεί
 NewSubscription=Εγγραφή
 OrganizationEventConfRequestWasReceived=Η πρότασή σας για μια διάσκεψη έχει ληφθεί
 OrganizationEventBoothRequestWasReceived=Το αίτημά σας για ένα περίπτερο έχει ληφθεί
@@ -144,7 +146,7 @@ OrganizationEventLinkToThirdParty=Σύνδεσμος με τρίτο μέρος 
 OrganizationEvenLabelName=Δημόσια ονομασία του συνεδρίου ή του περιπτέρου
 
 NewSuggestionOfBooth=Αίτηση για περίπτερο
-NewSuggestionOfConference=Αίτηση για συνέδριο
+NewSuggestionOfConference=Αίτηση για τη διεξαγωγή συνεδρίου
 
 #
 # Vote page
@@ -157,7 +159,7 @@ VoteOk = Η ψήφος σας έγινε αποδεκτή.
 AlreadyVoted = Έχετε ήδη ψηφίσει για αυτήν την εκδήλωση.
 VoteError = Παρουσιάστηκε σφάλμα κατά την ψηφοφορία, παρακαλώ δοκιμάστε ξανά.
 
-SubscriptionOk = Η εγγραφή σας έχει επικυρωθεί
+SubscriptionOk=Η εγγραφή σας έχει καταγραφεί
 ConfAttendeeSubscriptionConfirmation = Επιβεβαίωση της συνδρομής σας σε μια εκδήλωση
 Attendee = Συμμετέχων
 PaymentConferenceAttendee = Πληρωμή συμμετεχόντων στο συνέδριο
@@ -165,8 +167,17 @@ PaymentBoothLocation = Πληρωμή θέσης περιπτέρου
 DeleteConferenceOrBoothAttendee=Κατάργηση συμμετέχοντος
 RegistrationAndPaymentWereAlreadyRecorder=Μια εγγραφή και μια πληρωμή έχουν ήδη καταγραφεί για το email <b> %s </b>
 EmailAttendee=Email του συμμετέχοντα
+EmailCompany=Εταιρικό email
 EmailCompanyForInvoice=Διεύθυνση ηλεκτρονικού ταχυδρομείου εταιρείας (για τιμολόγιο, εάν διαφέρει από το email του συμμετέχοντα)
 ErrorSeveralCompaniesWithEmailContactUs=Έχουν βρεθεί πολλές εταιρείες με αυτό το email, επομένως δεν μπορούμε να επικυρώσουμε αυτόματα την εγγραφή σας. Παρακαλώ επικοινωνήστε μαζί μας στο %s 
 ErrorSeveralCompaniesWithNameContactUs=Έχουν βρεθεί πολλές εταιρείες με αυτό το όνομα, επομένως δεν μπορούμε να επικυρώσουμε αυτόματα την εγγραφή σας. Παρακαλώ επικοινωνήστε μαζί μας στο %s
 NoPublicActionsAllowedForThisEvent=Καμία δημόσια δράση δεν είναι ανοιχτή στο κοινό για αυτήν την εκδήλωση
 MaxNbOfAttendees=Μέγιστος αριθμός συμμετεχόντων
+DateStartEvent=Ημερομηνία έναρξης εκδήλωσης
+DateEndEvent=Ημερομηνία λήξης εκδήλωσης
+ModifyStatus=Τροποποίηση κατάστασης
+ConfirmModifyStatus=Επιβεβαιώστε την τροποποίηση κατάστασης
+ConfirmModifyStatusQuestion=Είστε σίγουροι ότι θέλετε να τροποποιήσετε τις %s επιλεγμένες εγγραφές;
+RecordsUpdated = Ενημερώθηκαν %s εγγραφές
+RecordUpdated = Η εγγραφή ενημερώθηκε
+NoRecordUpdated = Δεν ενημερώθηκε η εγγραφή

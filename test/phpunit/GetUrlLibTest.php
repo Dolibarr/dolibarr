@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2023		Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,11 +57,12 @@ class GetUrlLibTest extends PHPUnit\Framework\TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
+	 * @param 	string	$name		Name
 	 * @return FilesLibTest
 	 */
-	public function __construct()
+	public function __construct($name = '')
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -79,7 +81,7 @@ class GetUrlLibTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -92,7 +94,7 @@ class GetUrlLibTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -105,7 +107,7 @@ class GetUrlLibTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -120,7 +122,7 @@ class GetUrlLibTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}
@@ -187,37 +189,61 @@ class GetUrlLibTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
+		// Tests with param 0
+
 		$result=getDomainFromURL('http://localhost');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('localhost', $result, 'Test 0a');
+		$this->assertEquals('localhost', $result, 'Test localhost 0');
 
 		$result=getDomainFromURL('http://localhost', 1);
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('localhost', $result, 'Test 0b');
+		$this->assertEquals('localhost', $result, 'Test localhost 1');
 
 		$result=getDomainFromURL('https://dolimed.com');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('dolimed', $result, 'Test 1');
+		$this->assertEquals('dolimed', $result, 'Test dolimed.com 0');
 
 		$result=getDomainFromURL('http://www.dolimed.com/screenshots/afile');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('dolimed', $result, 'Test 2');
+		$this->assertEquals('dolimed', $result, 'Test dolimed.com/... 0');
 
 		$result=getDomainFromURL('http://www.with.dolimed.com/screenshots/afile');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('dolimed', $result, 'Test 3');
+		$this->assertEquals('dolimed', $result, 'Test ...dolimed.com/ 0');
+
+		// Tests with param 1
 
 		$result=getDomainFromURL('https://dolimed.com', 1);
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('dolimed.com', $result, 'Test 4');
+		$this->assertEquals('dolimed.com', $result, 'Test dolimed.com 1');
 
 		$result=getDomainFromURL('http://www.dolimed.com/screenshots/afile', 1);
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('dolimed.com', $result, 'Test 5');
+		$this->assertEquals('dolimed.com', $result, 'Test dolimed.com/... 1');
 
 		$result=getDomainFromURL('http://www.with.dolimed.com/screenshots/afile', 1);
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('dolimed.com', $result, 'Test 6');
+		$this->assertEquals('dolimed.com', $result, 'Test .../dolimed.com 1');
+
+		// Tests with param 2
+
+		$result=getDomainFromURL('http://www.with.dolimed.com/screenshots/afile', 2);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('with.dolimed.com', $result, 'Test .../dolimed.com 2');
+
+		// For domains with top domain on 2 levels
+
+		$result=getDomainFromURL('https://www.with.dolimed.com.mx', 0);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('dolimed', $result, 'Test dolimed.com.mx 0');
+
+		$result=getDomainFromURL('https://www.with.dolimed.com.mx', 1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('dolimed.com.mx', $result, 'Test dolimed.com.mx 1');
+
+		$result=getDomainFromURL('https://www.with.dolimed.com.mx', 2);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('with.dolimed.com.mx', $result, 'Test dolimed.com.mx 2');
 
 		return 1;
 	}

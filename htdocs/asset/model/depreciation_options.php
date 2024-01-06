@@ -22,6 +22,7 @@
  *  \brief      Card with depreciation options on Asset Model
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/asset.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/asset/class/assetmodel.class.php';
@@ -52,15 +53,21 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->asset->multidir_output[$object->entity] . "/" . $object->id;
 }
 
-$permissiontoread = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->asset->read) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->asset->model_advance->read)));
-$permissiontoadd = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->asset->write) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->asset->model_advance->write))); // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoread = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'read')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'model_advance', 'read')));
+$permissiontoadd = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'write')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'model_advance', 'write'))); // Used by the include of actions_addupdatedelete.inc.php
 
 // Security check (enable the most restrictive one)
-if ($user->socid > 0) accessforbidden();
+if ($user->socid > 0) {
+	accessforbidden();
+}
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 restrictedArea($user, 'asset', $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->asset->enabled)) accessforbidden();
-if (!$permissiontoread) accessforbidden();
+if (!isModEnabled('asset')) {
+	accessforbidden();
+}
+if (!$permissiontoread) {
+	accessforbidden();
+}
 
 $object->asset_depreciation_options = &$assetdepreciationoptions;
 $result = $assetdepreciationoptions->fetchDeprecationOptions(0, $object->id);
@@ -104,7 +111,9 @@ if (empty($reshook)) {
 
 	if ($action == "update") {
 		$result = $assetdepreciationoptions->setDeprecationOptionsFromPost(1);
-		if ($result > 0) $result = $assetdepreciationoptions->updateDeprecationOptions($user, 0, $object->id);
+		if ($result > 0) {
+			$result = $assetdepreciationoptions->updateDeprecationOptions($user, 0, $object->id);
+		}
 		if ($result < 0) {
 			setEventMessages($assetdepreciationoptions->error, $assetdepreciationoptions->errors, 'errors');
 			$action = 'edit';
@@ -124,7 +133,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 
 $help_url = '';
-llxHeader('', $langs->trans('AssetModel'), $help_url);
+llxHeader('', $langs->trans('AssetModel'), $help_url, '', 0, 0, '', '', '', 'mod-asset page-model-card_depreciation_options');
 
 if ($id > 0 || !empty($ref)) {
 	$head = assetModelPrepareHead($object);

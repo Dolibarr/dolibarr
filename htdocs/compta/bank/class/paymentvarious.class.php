@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ class PaymentVarious extends CommonObject
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element = 'variouspayment';
+	public $element = 'payment_various';
 
 	/**
 	 * @var string Name of table without prefix where object is stored
@@ -177,6 +177,12 @@ class PaymentVarious extends CommonObject
 	// END MODULEBUILDER PROPERTIES
 
 	/**
+	 * Draft status
+	 */
+	const STATUS_DRAFT = 0;
+
+
+	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
@@ -184,8 +190,6 @@ class PaymentVarious extends CommonObject
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
-		$this->element = 'payment_various';
-		$this->table_element = 'payment_various';
 	}
 
 	/**
@@ -193,7 +197,7 @@ class PaymentVarious extends CommonObject
 	 *
 	 * @param   User	$user        	User that modify
 	 * @param   int		$notrigger      0=no, 1=yes (no update trigger)
-	 * @return  int         			<0 if KO, >0 if OK
+	 * @return  int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -263,7 +267,7 @@ class PaymentVarious extends CommonObject
 	 *
 	 *  @param	int		$id         id object
 	 *  @param  User	$user       User that load
-	 *  @return int         		<0 if KO, >0 if OK
+	 *  @return int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $user = null)
 	{
@@ -335,7 +339,7 @@ class PaymentVarious extends CommonObject
 	 *  Delete object in database
 	 *
 	 *	@param	User	$user       User that delete
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user)
 	{
@@ -411,7 +415,7 @@ class PaymentVarious extends CommonObject
 	 *  Create in database
 	 *
 	 *  @param   User   $user   User that create
-	 *  @return  int            <0 if KO, >0 if OK
+	 *  @return  int            Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user)
 	{
@@ -441,11 +445,11 @@ class PaymentVarious extends CommonObject
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount"));
 			return -5;
 		}
-		if (isModEnabled('banque') && (empty($this->fk_account) || $this->fk_account <= 0)) {
+		if (isModEnabled("banque") && (empty($this->fk_account) || $this->fk_account <= 0)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("BankAccount"));
 			return -6;
 		}
-		if (isModEnabled('banque') && (empty($this->type_payment) || $this->type_payment <= 0)) {
+		if (isModEnabled("banque") && (empty($this->type_payment) || $this->type_payment <= 0)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode"));
 			return -7;
 		}
@@ -499,7 +503,7 @@ class PaymentVarious extends CommonObject
 			$this->ref = $this->id;
 
 			if ($this->id > 0) {
-				if (isModEnabled('banque') && !empty($this->amount)) {
+				if (isModEnabled("banque") && !empty($this->amount)) {
 					// Insert into llx_bank
 					require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
@@ -585,7 +589,7 @@ class PaymentVarious extends CommonObject
 	 *  Update link between payment various and line generate into llx_bank
 	 *
 	 *  @param  int     $id_bank    Id bank account
-	 *	@return int                 <0 if KO, >0 if OK
+	 *	@return int                 Return integer <0 if KO, >0 if OK
 	 */
 	public function update_fk_bank($id_bank)
 	{
@@ -603,10 +607,10 @@ class PaymentVarious extends CommonObject
 
 
 	/**
-	 * Retourne le libelle du statut
+	 *  Return the label of the status
 	 *
-	 * @param	int		$mode   	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 * @return  string   		   	Libelle
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -615,24 +619,28 @@ class PaymentVarious extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoi le libelle d'un statut donne
+	 *  Return the label of a given status
 	 *
-	 *  @param	int		$status     Id status
-	 *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 *  @return string      		Libelle
+	 *  @param	int		$status        Id status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
+		global $langs;
+
+		if (empty($status)) {
+			$status = 0;
+		}
+
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
-			global $langs;
-			//$langs->load("mymodule@mymodule");
-			/*$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
-			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			//$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
+			//$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
-			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');*/
+			//$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
+			//$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
 		}
 
 		$statusType = 'status'.$status;
@@ -671,7 +679,7 @@ class PaymentVarious extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -681,7 +689,7 @@ class PaymentVarious extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -736,19 +744,12 @@ class PaymentVarious extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
+				$this->user_creation = $obj->fk_user_author;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation = $this->db->jdate($obj->datec);
-				if ($obj->fk_user_modif) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modif);
-					$this->user_modif = $muser;
-				}
-				$this->date_modif = $this->db->jdate($obj->tms);
+				$this->date_modification = $this->db->jdate($obj->tms);
 			}
 			$this->db->free($result);
 		} else {
@@ -759,7 +760,7 @@ class PaymentVarious extends CommonObject
 	/**
 	 *	Return if a various payment linked to a bank line id was dispatched into bookkeeping
 	 *
-	 *	@return     int         <0 if KO, 0=no, 1=yes
+	 *	@return     int         Return integer <0 if KO, 0=no, 1=yes
 	 */
 	public function getVentilExportCompta()
 	{
@@ -785,5 +786,81 @@ class PaymentVarious extends CommonObject
 			return 1;
 		}
 		return 0;
+	}
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		global $langs;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
+		if (property_exists($this, 'fk_bank')) {
+			$return .= ' | <span class="info-box-status ">'.$this->fk_bank.'</span>';
+		}
+		if (property_exists($this, 'datep')) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Date").'</span> : <span class="info-box-label">'.dol_print_date($this->db->jdate($this->datep), 'day').'</span>';
+		}
+		if (property_exists($this, 'type_payment') && !empty($this->type_payment)) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Payment", $this->type_payment).'</span> : <span class="info-box-label">'.$this->type_payment.'</span>';
+		}
+		if (property_exists($this, 'accountancy_code')) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Account").'</span> : <span class="info-box-label" title="'.$this->accountancy_code.'">'.$this->accountancy_code.'</span>';
+		}
+		if (property_exists($this, 'amount')) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Debit").'</span> : <span class="info-box-label amount">'.price($this->amount).'</span>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
+	}
+
+	/**
+	 * Return General accounting account with defined length (used for product and miscellaneous)
+	 *
+	 * @param 	string	$account		General accounting account
+	 * @return	string          		String with defined length
+	 */
+	public function lengthAccountg($account)
+	{
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+
+		/*
+		if (isModEnabled('accounting')) {
+			$accountingaccount = new AccountingAccount($db);
+			$accountingaccount->fetch('', $valuetoshow, 1);
+		}*/
+
+		return length_accountg($account);
+	}
+
+	/**
+	 * Return Auxiliary accounting account of thirdparties with defined length
+	 *
+	 * @param 	string	$account		Auxiliary accounting account
+	 * @return	string          		String with defined length
+	 */
+	public function lengthAccounta($account)
+	{
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+
+		return length_accounta($account);
 	}
 }

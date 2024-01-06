@@ -30,7 +30,7 @@ dol_include_once('/recruitment/core/modules/recruitment/modules_recruitmentjobpo
 
 
 /**
- *	Class to manage customer Bom numbering rules advanced
+ *	Class to manage the Advanced numbering rule for Job position
  */
 class mod_recruitmentjobposition_advanced extends ModeleNumRefRecruitmentJobPosition
 {
@@ -54,11 +54,12 @@ class mod_recruitmentjobposition_advanced extends ModeleNumRefRecruitmentJobPosi
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Texte descripif
+	 *	@param		Translate	$langs		Language
+	 *  @return     string      Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
-		global $conf, $langs, $db;
+		global $conf, $db;
 
 		$langs->load("bills");
 
@@ -68,7 +69,7 @@ class mod_recruitmentjobposition_advanced extends ModeleNumRefRecruitmentJobPosi
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="updateMask">';
-		$texte .= '<input type="hidden" name="maskconst" value="RECRUITMENT_RECRUITMENTJOBPOSITION_ADVANCED_MASK">';
+		$texte .= '<input type="hidden" name="maskconstjob" value="RECRUITMENT_RECRUITMENTJOBPOSITION_ADVANCED_MASK">';
 		$texte .= '<table class="nobordernopadding centpercent">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("RecruitmentJobPosition"), $langs->transnoentities("RecruitmentJobPosition"));
@@ -79,7 +80,7 @@ class mod_recruitmentjobposition_advanced extends ModeleNumRefRecruitmentJobPosi
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskRecruitmentJobPosition" value="'.getDolGlobalString('RECRUITMENT_RECRUITMENTJOBPOSITION_ADVANCED_MASK').'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskjob" value="'.getDolGlobalString('RECRUITMENT_RECRUITMENTJOBPOSITION_ADVANCED_MASK').'">', $tooltip, 1, 1).'</td>';
 
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
@@ -98,20 +99,15 @@ class mod_recruitmentjobposition_advanced extends ModeleNumRefRecruitmentJobPosi
 	 */
 	public function getExample()
 	{
-		global $conf, $db, $langs, $mysoc;
+		global $conf, $langs, $mysoc;
 
-		$object = new RecruitmentJobPosition($db);
-		$object->initAsSpecimen();
-
-		/*$old_code_client = $mysoc->code_client;
+		$old_code_client = $mysoc->code_client;
 		$old_code_type = $mysoc->typent_code;
 		$mysoc->code_client = 'CCCCCCCCCC';
-		$mysoc->typent_code = 'TTTTTTTTTT';*/
-
-		$numExample = $this->getNextValue($object);
-
-		/*$mysoc->code_client = $old_code_client;
-		$mysoc->typent_code = $old_code_type;*/
+		$mysoc->typent_code = 'TTTTTTTTTT';
+		$numExample = $this->getNextValue($mysoc);
+		$mysoc->code_client = $old_code_client;
+		$mysoc->typent_code = $old_code_type;
 
 		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');

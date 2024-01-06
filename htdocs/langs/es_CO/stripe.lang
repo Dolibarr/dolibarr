@@ -20,7 +20,7 @@ STRIPE_LIVE_WEBHOOK_KEY=Clave en vivo de webhook
 ONLINE_PAYMENT_WAREHOUSE=Existencias a utilizar para la disminución de existencias cuando se realiza el pago en línea <br> (TODO ¿Cuándo se realiza la opción para disminuir las existencias en una acción en la factura y el pago en línea genera la factura por sí mismo?)
 StripeLiveEnabled=Stripe live habilitado (de lo contrario, modo prueba / sandbox)
 StripeImportPayment=Importar pagos de Stripe
-ExampleOfTestCreditCard=Ejemplo de tarjeta de crédito para prueba: %s => válido, %s => error CVC, %s => caducado, %s => falla de carga
+ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
 StripeGateways=Pasarelas de banda
 OAUTH_STRIPE_TEST_ID=ID de cliente de Stripe Connect (ca _...)
 OAUTH_STRIPE_LIVE_ID=ID de cliente de Stripe Connect (ca _...)

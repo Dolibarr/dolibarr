@@ -51,8 +51,6 @@ class ModelePDFCards
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$type = 'member';
 		$list = array();
 
@@ -75,7 +73,7 @@ class ModelePDFCards
  *	@param	string		$outputdir		Output directory
  *	@param	string		$template		pdf generenate document class to use default 'standard'
  *  @param	string		$filename		Name of output file (without extension)
- *	@return int							<0 if KO, >0 if OK
+ *	@return int							Return integer <0 if KO, >0 if OK
  */
 function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $outputdir = '', $template = 'standard', $filename = 'tmp_cards')
 {
@@ -96,8 +94,8 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 
 	// Positionne le modele sur le nom du modele a utiliser
 	if (!dol_strlen($modele)) {
-		if (!empty($conf->global->ADHERENT_CARDS_ADDON_PDF)) {
-			$code = $conf->global->ADHERENT_CARDS_ADDON_PDF;
+		if (getDolGlobalString('ADHERENT_CARDS_ADDON_PDF')) {
+			$code = getDolGlobalString('ADHERENT_CARDS_ADDON_PDF');
 		} else {
 			$code = $modele;
 		}

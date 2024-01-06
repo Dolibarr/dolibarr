@@ -29,6 +29,8 @@ BalanceBefore=توازن (پہلے)
 Balance=بقیہ
 Debit=ڈیبٹ
 Credit=کریڈٹ
+AccountingDebit=Debit
+AccountingCredit=Credit
 Piece=اکاؤنٹنگ ڈاکٹر
 AmountHTVATRealReceived=نیٹ جمع
 AmountHTVATRealPaid=خالص ادائیگی
@@ -80,7 +82,8 @@ MenuNewSocialContribution=نیا سماجی/مالیاتی ٹیکس
 NewSocialContribution=نیا سماجی/مالیاتی ٹیکس
 AddSocialContribution=سماجی/مالیاتی ٹیکس شامل کریں۔
 ContributionsToPay=ادا کرنے کے لیے سماجی/مالیاتی ٹیکس
-AccountancyTreasuryArea=بلنگ اور ادائیگی کا علاقہ
+AccountancyTreasuryArea=Accounting area
+InvoicesArea=Billing and payment area
 NewPayment=نئی ادائیگی
 PaymentCustomerInvoice=کسٹمر انوائس کی ادائیگی
 PaymentSupplierInvoice=وینڈر انوائس کی ادائیگی
@@ -128,14 +131,17 @@ SalesTurnoverMinimum=کم سے کم کاروبار
 ByExpenseIncome=اخراجات اور آمدنی سے
 ByThirdParties=تیسرے فریق کے ذریعہ
 ByUserAuthorOfInvoice=انوائس مصنف کے ذریعہ
-CheckReceipt=چیک ڈپازٹ
-CheckReceiptShort=چیک ڈپازٹ
-LastCheckReceiptShort=تازہ ترین %s چیک کی رسیدیں
+CheckReceipt=Deposit slip
+CheckReceiptShort=Deposit slip
+LastCheckReceiptShort=Latest %s deposit slips
+LastPaymentForDepositShort=Latest %s %s deposit slips
 NewCheckReceipt=نئی رعایت
-NewCheckDeposit=نیا چیک ڈپازٹ
+NewCheckDeposit=New deposit slip
 NewCheckDepositOn=اکاؤنٹ پر جمع کرنے کے لیے رسید بنائیں: %s
 NoWaitingChecks=کوئی چیک ڈپازٹ کے منتظر نہیں۔
+NoWaitingPaymentForDeposit=No %s payment awaiting deposit.
 DateChequeReceived=وصول کرنے کی تاریخ چیک کریں۔
+DatePaymentReceived=Date of document reception
 NbOfCheques=چیکوں کی تعداد
 PaySocialContribution=سماجی/مالیاتی ٹیکس ادا کریں۔
 PayVAT=VAT اعلامیہ ادا کریں۔
@@ -154,9 +160,10 @@ ConfirmDeleteVariousPayment=Are you sure you want to delete this various payment
 ExportDataset_tax_1=سماجی اور مالیاتی ٹیکس اور ادائیگیاں
 CalcModeVATDebt=موڈ <b> %sVAT پر عزم accounting%s </b> ۔
 CalcModeVATEngagement=موڈ <b> %sVAT آمدنی-خرچوں0ecb2ec87f49fz0 </b>
-CalcModeDebt=معلوم ریکارڈ شدہ دستاویزات کا تجزیہ یہاں تک کہ اگر وہ ابھی تک لیجر میں شمار نہ ہوں۔
-CalcModeEngagement=معلوم ریکارڈ شدہ ادائیگیوں کا تجزیہ، چاہے وہ ابھی تک لیجر میں شمار نہ ہوں۔
+CalcModeDebt=Analysis of known recorded documents
+CalcModeEngagement=Analysis of known recorded payments
 CalcModeBookkeeping=بک کیپنگ لیجر ٹیبل میں جرنلائزڈ ڈیٹا کا تجزیہ۔
+CalcModeNoBookKeeping=Even if they are not yet accounted in Ledger
 CalcModeLT1= موڈ <b> %sRE کسٹمر انوائس پر - سپلائرز invoices%s </b>
 CalcModeLT1Debt=موڈ <b> %sRE کسٹمر انوائس پر موڈ
 CalcModeLT1Rec= موڈ <b> %sRE سپلائرز انوائس پر
@@ -244,12 +251,14 @@ TurnoverPerProductInCommitmentAccountingNotRelevant=فی پروڈکٹ جمع ہ�
 TurnoverPerSaleTaxRateInCommitmentAccountingNotRelevant=فی سیل ٹیکس کی شرح سے جمع ہونے والے ٹرن اوور کی رپورٹ دستیاب نہیں ہے۔ یہ رپورٹ صرف ٹرن اوور انوائس کے لیے دستیاب ہے۔
 CalculationMode=کیلکولیشن موڈ
 AccountancyJournal=اکاؤنٹنگ کوڈ جرنل
-ACCOUNTING_VAT_SOLD_ACCOUNT=سیلز پر VAT کے لیے بطور ڈیفالٹ اکاؤنٹنگ اکاؤنٹ (اگر VAT ڈکشنری سیٹ اپ پر وضاحت نہیں کی گئی ہے تو استعمال کیا جاتا ہے)
-ACCOUNTING_VAT_BUY_ACCOUNT=خریداریوں پر VAT کے لیے بطور ڈیفالٹ اکاؤنٹنگ اکاؤنٹ (اگر VAT لغت کے سیٹ اپ پر وضاحت نہ کی گئی ہو تو استعمال کیا جاتا ہے)
-ACCOUNTING_VAT_PAY_ACCOUNT=VAT کی ادائیگی کے لیے بطور ڈیفالٹ اکاؤنٹنگ اکاؤنٹ
-ACCOUNTING_ACCOUNT_CUSTOMER=اکاؤنٹنگ اکاؤنٹ کسٹمر تھرڈ پارٹیز کے لیے استعمال کیا جاتا ہے۔
+ACCOUNTING_VAT_SOLD_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for VAT on sales (used if not defined on VAT dictionary setup)
+ACCOUNTING_VAT_BUY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for VAT on purchases (used if not defined on VAT dictionary setup)
+ACCOUNTING_VAT_PAY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for paying VAT
+ACCOUNTING_VAT_BUY_REVERSE_CHARGES_CREDIT=Account (from the Chart Of Account) to be used as the default account for VAT on purchases for reverse charges (Credit)
+ACCOUNTING_VAT_BUY_REVERSE_CHARGES_DEBIT=Account (from the Chart Of Account) to be used as the default account for VAT on purchases for reverse charges (Debit)
+ACCOUNTING_ACCOUNT_CUSTOMER=Account (from the Chart Of Account) used for "customer" third parties
 ACCOUNTING_ACCOUNT_CUSTOMER_Desc=تھرڈ پارٹی کارڈ پر بیان کردہ وقف اکاؤنٹنگ اکاؤنٹ صرف Subledger اکاؤنٹنگ کے لیے استعمال کیا جائے گا۔ یہ جنرل لیجر کے لیے اور سبلیجر اکاؤنٹنگ کی ڈیفالٹ ویلیو کے طور پر استعمال کیا جائے گا اگر تھرڈ پارٹی پر مخصوص کسٹمر اکاؤنٹنگ اکاؤنٹ کی وضاحت نہیں کی گئی ہے۔
-ACCOUNTING_ACCOUNT_SUPPLIER=وینڈر تھرڈ پارٹیز کے لیے اکاؤنٹنگ اکاؤنٹ استعمال کیا جاتا ہے۔
+ACCOUNTING_ACCOUNT_SUPPLIER=Account (from the Chart of Account) used for the "vendor" third parties
 ACCOUNTING_ACCOUNT_SUPPLIER_Desc=تھرڈ پارٹی کارڈ پر بیان کردہ وقف اکاؤنٹنگ اکاؤنٹ صرف Subledger اکاؤنٹنگ کے لیے استعمال کیا جائے گا۔ یہ جنرل لیجر کے لیے اور سبلیجر اکاؤنٹنگ کی ڈیفالٹ ویلیو کے طور پر استعمال کیا جائے گا اگر تیسرے فریق پر ڈیڈیکیٹڈ وینڈر اکاؤنٹنگ اکاؤنٹ کی وضاحت نہیں کی گئی ہے۔
 ConfirmCloneTax=سماجی/مالیاتی ٹیکس کے کلون کی تصدیق کریں۔
 ConfirmCloneVAT=VAT ڈیکلریشن کے کلون کی تصدیق کریں۔
@@ -300,3 +309,4 @@ InvoiceToPay15Days=ادائیگی کے لیے (15 سے 30 دن)
 InvoiceToPay30Days=ادائیگی کے لیے (> 30 دن)
 ConfirmPreselectAccount=اکاؤنٹنسی کوڈ کو پہلے سے منتخب کریں۔
 ConfirmPreselectAccountQuestion=کیا آپ واقعی اس اکاؤنٹنسی کوڈ کے ساتھ %s منتخب لائنوں کو پہلے سے منتخب کرنا چاہتے ہیں؟
+AmountPaidMustMatchAmountOfDownPayment=Amount paid must match amount of down payment

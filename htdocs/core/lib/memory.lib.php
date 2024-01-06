@@ -57,31 +57,32 @@ $shmoffset = 1000; // Max number of entries found into a language file. If too l
 
 
 /**
- * 	Save data into a memory area shared by all users, all sessions on server
+ * 	Save data into a memory area shared by all users, all sessions on server. Note: MAIN_CACHE_COUNT must be set.
  *
  *  @param	string      $memoryid		Memory id of shared area
  * 	@param	mixed		$data			Data to save. It must not be a null value.
  *  @param 	int			$expire			ttl in seconds, 0 never expire
- * 	@return	int							<0 if KO, 0 if nothing is done, Nb of bytes written if OK
+ * 	@return	int							Return integer <0 if KO, 0 if nothing is done, Nb of bytes written if OK
  *  @see dol_getcache()
  */
 function dol_setcache($memoryid, $data, $expire = 0)
 {
 	global $conf;
+
 	$result = 0;
 
 	if (strpos($memoryid, 'count_') === 0) {	// The memoryid key start with 'count_...'
-		if (empty($conf->global->MAIN_CACHE_COUNT)) {
+		if (!getDolGlobalString('MAIN_CACHE_COUNT')) {
 			return 0;
 		}
 	}
 
-	if (!empty($conf->memcached->enabled) && class_exists('Memcached')) {
+	if (isModEnabled('memcached') && class_exists('Memcached')) {
 		// Using a memcached server
 		global $dolmemcache;
 		if (empty($dolmemcache) || !is_object($dolmemcache)) {
 			$dolmemcache = new Memcached();
-			$tmparray = explode(':', $conf->global->MEMCACHED_SERVER);
+			$tmparray = explode(':', getDolGlobalString('MEMCACHED_SERVER'));
 			$result = $dolmemcache->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
 			if (!$result) {
 				return -1;
@@ -97,12 +98,12 @@ function dol_setcache($memoryid, $data, $expire = 0)
 		} else {
 			return -$rescode;
 		}
-	} elseif (!empty($conf->memcached->enabled) && class_exists('Memcache')) {	// This is a really not reliable cache ! Use Memcached instead.
+	} elseif (isModEnabled('memcached') && class_exists('Memcache')) {	// This is a really not reliable cache ! Use Memcached instead.
 		// Using a memcache server
 		global $dolmemcache;
 		if (empty($dolmemcache) || !is_object($dolmemcache)) {
 			$dolmemcache = new Memcache();
-			$tmparray = explode(':', $conf->global->MEMCACHED_SERVER);
+			$tmparray = explode(':', getDolGlobalString('MEMCACHED_SERVER'));
 			$result = $dolmemcache->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
 			if (!$result) {
 				return -1;
@@ -117,9 +118,13 @@ function dol_setcache($memoryid, $data, $expire = 0)
 		} else {
 			return -1;
 		}
-	} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {	// This is a really not reliable cache ! Use Memcached instead.
+	} elseif (getDolGlobalInt('MAIN_OPTIMIZE_SPEED') & 0x02) {	// This is a really not reliable cache ! Use Memcached instead.
 		// Using shmop
 		$result = dol_setshmop($memoryid, $data, $expire);
+	} else {
+		// No intersession cache system available, we use at least the perpage cache
+		$conf->cache['cachememory_'.$memoryid] = $data;
+		$result = is_array($data) ? count($data) : (is_scalar($data) ? strlen($data) : 0);
 	}
 
 	return $result;
@@ -129,7 +134,7 @@ function dol_setcache($memoryid, $data, $expire = 0)
  * 	Read a memory area shared by all users, all sessions on server
  *
  *  @param	string	$memoryid		Memory id of shared area
- * 	@return	int|mixed				<0 if KO, data if OK, null if not found into cache or no caching feature enabled
+ * 	@return	int|mixed				Return integer <0 if KO, data if OK, null if not found into cache or no caching feature enabled
  *  @see dol_setcache()
  */
 function dol_getcache($memoryid)
@@ -137,17 +142,17 @@ function dol_getcache($memoryid)
 	global $conf;
 
 	if (strpos($memoryid, 'count_') === 0) {	// The memoryid key start with 'count_...'
-		if (empty($conf->global->MAIN_CACHE_COUNT)) {
+		if (!getDolGlobalString('MAIN_CACHE_COUNT')) {
 			return null;
 		}
 	}
 
 	// Using a memcached server
-	if (!empty($conf->memcached->enabled) && class_exists('Memcached')) {
+	if (isModEnabled('memcached') && class_exists('Memcached')) {
 		global $m;
 		if (empty($m) || !is_object($m)) {
 			$m = new Memcached();
-			$tmparray = explode(':', $conf->global->MEMCACHED_SERVER);
+			$tmparray = explode(':', getDolGlobalString('MEMCACHED_SERVER'));
 			$result = $m->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
 			if (!$result) {
 				return -1;
@@ -168,11 +173,11 @@ function dol_getcache($memoryid)
 		} else {
 			return -$rescode;
 		}
-	} elseif (!empty($conf->memcached->enabled) && class_exists('Memcache')) {	// This is a really not reliable cache ! Use Memcached instead.
+	} elseif (isModEnabled('memcached') && class_exists('Memcache')) {	// This is a really not reliable cache ! Use Memcached instead.
 		global $m;
 		if (empty($m) || !is_object($m)) {
 			$m = new Memcache();
-			$tmparray = explode(':', $conf->global->MEMCACHED_SERVER);
+			$tmparray = explode(':', getDolGlobalString('MEMCACHED_SERVER'));
 			$result = $m->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
 			if (!$result) {
 				return -1;
@@ -189,10 +194,15 @@ function dol_getcache($memoryid)
 		} else {
 			return null; // There is no way to make a difference between NOTFOUND and error when using Memcache. So do not use it, use Memcached instead.
 		}
-	} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {	// This is a really not reliable cache ! Use Memcached instead.
+	} elseif (getDolGlobalInt('MAIN_OPTIMIZE_SPEED') & 0x02) {	// This is a really not reliable cache ! Use Memcached instead.
 		// Using shmop
 		$data = dol_getshmop($memoryid);
 		return $data;
+	} else {
+		// No intersession cache system available, we use at least the perpage cache
+		if (isset($conf->cache['cachememory_'.$memoryid])) {
+			return $conf->cache['cachememory_'.$memoryid];
+		}
 	}
 
 	return null;
@@ -204,7 +214,7 @@ function dol_getcache($memoryid)
  * 	Return shared memory address used to store dataset with key memoryid
  *
  *  @param	string	$memoryid		Memory id of shared area ('main', 'agenda', ...)
- * 	@return	int						<0 if KO, Memoy address of shared memory for key
+ * 	@return	int						Return integer <0 if KO, Memoy address of shared memory for key
  */
 function dol_getshmopaddress($memoryid)
 {
@@ -240,7 +250,7 @@ function dol_listshmop()
  *  @param	int		$memoryid		Memory id of shared area ('main', 'agenda', ...)
  * 	@param	string	$data			Data to save. Must be a not null value.
  *  @param 	int		$expire			ttl in seconds, 0 never expire
- * 	@return	int						<0 if KO, 0=Caching not available, Nb of bytes written if OK
+ * 	@return	int						Return integer <0 if KO, 0=Caching not available, Nb of bytes written if OK
  */
 function dol_setshmop($memoryid, $data, $expire)
 {
@@ -262,7 +272,7 @@ function dol_setshmop($memoryid, $data, $expire)
 	if ($handle) {
 		$shm_bytes_written1 = shmop_write($handle, str_pad($size, 6), 0);
 		$shm_bytes_written2 = shmop_write($handle, $newdata, 6);
-		if (($shm_bytes_written1 + $shm_bytes_written2) != (6 + dol_strlen($newdata))) {
+		if ($shm_bytes_written1 + $shm_bytes_written2 != 6 + dol_strlen($newdata)) {
 			print "Couldn't write the entire length of data\n";
 		}
 		shmop_close($handle);
@@ -277,7 +287,7 @@ function dol_setshmop($memoryid, $data, $expire)
  * 	Read a memory area shared by all users, all sessions on server
  *
  *  @param	string	$memoryid		Memory id of shared area ('main', 'agenda', ...)
- * 	@return	int						<0 if KO, data if OK, Null if no cache enabled or not found
+ * 	@return	int						Return integer <0 if KO, data if OK, Null if no cache enabled or not found
  */
 function dol_getshmop($memoryid)
 {

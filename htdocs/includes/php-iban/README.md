@@ -9,10 +9,6 @@ php-iban
 
 All parts of an IBAN can be retrieved, including country code, checksum, BBAN, financial institution or bank code, account number, and where a fixed-length national system is in use, also branch/sort code. Legacy national checksums may also be retrieved, validated and correctly set, where available, whether they apply to the account number portion, bank and branch identifiers, part or all of the above. IBAN country codes can be converted in to ISO3166-1 alpha-2 and IANA formats, the parent IBAN country acting as registrar for dependent territories may be queried, the official national currency (ISO4217 alpha code format), central bank name and central bank URL may also be queried to ease integration. IBANs may be converted between human and machine representation. IBANs may be obfuscated for presentation to humans in special circumstances such as relative identification. A database of example/test IBANs from different countries is included. Finally, highly accurate suggestions for originally intended input can be made when an incorrect IBAN is detected and is due to mistranscription error.
 
-Tested on PHP versions: ![PHP 5.2](https://img.shields.io/badge/version-PHP%205.2%2B-lightgrey.svg) ![PHP 5.3](https://img.shields.io/badge/version-PHP%205.3%2B-lightgrey.svg) ![PHP 5.4](https://img.shields.io/badge/version-PHP%205.4%2B-lightgrey.svg) ![PHP 5.5](https://img.shields.io/badge/version-PHP%205.5%2B-lightgrey.svg) ![PHP 5.6](https://img.shields.io/badge/version-PHP%205.6%2B-lightgrey.svg) ![PHP 7.0](https://img.shields.io/badge/version-PHP%207.0%2B-lightgrey.svg) ![PHP 7.4](https://img.shields.io/badge/version-PHP%207.4%2B-lightgrey.svg)
-
-Test on HHVM versions: ![HHVM 3.3](https://img.shields.io/badge/version-HHVM%203.3%2B-lightgrey.svg) ![HHVM 3.6](https://img.shields.io/badge/version-HHVM%203.6%2B-lightgrey.svg) ![HHVM 3.9](https://img.shields.io/badge/version-HHVM%203.9%2B-lightgrey.svg) ![HHVM 3.12](https://img.shields.io/badge/version-HHVM%203.12%2B-lightgrey.svg) ![HHVM 3.15](https://img.shields.io/badge/version-HHVM%203.15%2B-lightgrey.svg) ![HHVM 3.18](https://img.shields.io/badge/version-HHVM%203.18%2B-lightgrey.svg)
-
 The parser was built using regular expressions to adapt the contents of the _official_ IBAN registry available from SWIFT then manually modified for special cases such as [errors and omissions in SWIFT's official specifications](https://raw.githubusercontent.com/globalcitizen/php-iban/master/docs/COMEDY-OF-ERRORS).
 
 Various deficiencies in the initial adaptation have since been rectified, and the current version should be a fairly correct and reliable implementation.
@@ -256,14 +252,14 @@ The following table compares __php-iban__ to other PHP projects offering IBAN-re
 
 | Project                                                    | Lic. | Proc | OO  | Began  | Latest | Star | Watch | Fork | Installs | Home culture | Deps    |
 | ---------------------------------------------------------- | ---- | ---- | --- | ------ | ------ | ---- | ----- | ---- | -------- | ------------ | ------- |
-| __php-iban__                                               | LGPL | ✔    | ✔   | 2009   | 4.1.0  | 344  | 26    | 76   | ~2M*    | Global*      | *none*  |
+| __php-iban__                                               | LGPL | ✔    | ✔   | 2009   | 4.1.1  | 414  | 28    | 98   | ~3.5M*   | Global*      | *none*  |
 | [Iban](https://github.com/jschaedl/Iban)                   | MIT  | ✘    | ✔   | 2013   | 1.3.0  | 50   | 9     | 19   | 178.39k  | German       | lots    |
 | [IsoCodes](https://github.com/ronanguilloux/IsoCodes)      | GPL3 | ✘    | ✔   | 2012   | 2.1.1  | 466  | 22    | 54   | 145k     | French       | lots    |
 | [SepaUtil's](https://github.com/AbcAeffchen/SepaUtilities) | GPL3 | ✘    | ✔   | 2014   | 1.2.3  | 8    | 4     | 3    | 25k      | German       | phpunit |
 | [Symfony](https://github.com/symfony/symfony)              | MIT  | ✘    | ✔   | 2013   | 3.3.6  | 15k  | 1214  | 5.6k | 23M+     | French       | lots    |
 
 Notes:
- * Original download records for __php-iban__ releases were hosted on Google Code and are now lost. Prior to establishing a release process on Github, we just expected that people would download the code... so we're really not sure how many installs exist, but this is a fair guess (~11k + composer installs + a little bit now and then).
+ * Original download records for __php-iban__ releases were hosted on Google Code and are now lost. Prior to establishing a release process on Github, we just expected that people would download the code... so we're really not sure how many installs exist, but this is a fair guess (now over 3M composer installs + all prior google code and Github installs).
  * __php-iban__ also powers:
     * [adm-gravity-iban](https://github.com/InternativeNL/adm-gravity-iban)
     * [Azzana consulting's XML Solver for ISO20022](http://www.azzana-consulting.com/xmlsolver/)
@@ -323,6 +319,12 @@ Your Help Wanted
   * __Mauritania__ (MR) has a dual character checksum system but our example IBAN does not match MOD97-10 which would be the expected system. Previously the IBAN here was always fixed to '13' checksum digits, however as of registry v66 it is now dynamic, which suggests a changed or at least now nationally relaxed checksum system.
 
  * If you are willing to spend some time searching, we could do with some more test IBANs for most countries, especially smaller ones...
+
+News: August 2022
+-----------------
+
+__[Version 4.1.1](https://github.com/globalcitizen/php-iban/releases/tag/v4.1.1)__ has been released.
+ * Long-standing bug affecting Belgian pre-IBAN national checksum verification fixed - thanks to [Arne Peirs](https://github.com/Olympic1) for a [very well documented pull request](https://github.com/globalcitizen/php-iban/pull/119).
 
 News: July 2021
 ---------------

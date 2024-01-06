@@ -28,9 +28,12 @@
  */
 function partnershipAdminPrepareHead()
 {
-	global $langs, $conf;
+	global $langs, $conf, $db;
 
 	$langs->loadLangs(array("members", "partnership"));
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('partnership');
 
 	$h = 0;
 	$head = array();
@@ -43,6 +46,10 @@ function partnershipAdminPrepareHead()
 
 	$head[$h][0] = dol_buildpath("/partnership/admin/partnership_extrafields.php", 1);
 	$head[$h][1] = $langs->trans("ExtraFields");
+	$nbExtrafields = $extrafields->attributes['partnership']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'partnership_extrafields';
 	$h++;
 
@@ -50,13 +57,6 @@ function partnershipAdminPrepareHead()
 	$head[$h][1] = $langs->trans("BlankSubscriptionForm");
 	$head[$h][2] = 'website';
 	$h++;
-
-	/*
-	$head[$h][0] = dol_buildpath("/partnership/admin/about.php", 1);
-	$head[$h][1] = $langs->trans("About");
-	$head[$h][2] = 'about';
-	$h++;
-	*/
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
@@ -67,6 +67,8 @@ function partnershipAdminPrepareHead()
 	//	'entity:-tabname:Title:@partnership:/partnership/mypage.php?id=__ID__'
 	//); // to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'partnership');
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'partnership', 'remove');
 
 	return $head;
 }
@@ -102,7 +104,7 @@ function partnershipPrepareHead($object)
 		$head[$h][0] = dol_buildpath('/partnership/partnership_note.php', 1).'?id='.$object->id;
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) {
-			$head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">'.$nbNote.'</span>' : '');
+			$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.$nbNote.'</span>' : '');
 		}
 		$head[$h][2] = 'note';
 		$h++;

@@ -22,6 +22,7 @@
  *       \brief      Page fiche LDAP contact
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
@@ -79,7 +80,7 @@ if ($action == 'dolibarr2ldap') {
 
 $form = new Form($db);
 
-$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 
 llxHeader('', $title, 'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
 
@@ -136,13 +137,13 @@ print dol_get_fiche_end();
  */
 print '<div class="tabsAction">';
 
-if (!empty($conf->global->LDAP_CONTACT_ACTIVE) && getDolGlobalInt('LDAP_CONTACT_ACTIVE') != Ldap::SYNCHRO_LDAP_TO_DOLIBARR) {
+if (getDolGlobalString('LDAP_CONTACT_ACTIVE') && getDolGlobalInt('LDAP_CONTACT_ACTIVE') != Ldap::SYNCHRO_LDAP_TO_DOLIBARR) {
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
 }
 
 print "</div>\n";
 
-if (!empty($conf->global->LDAP_CONTACT_ACTIVE) && getDolGlobalInt('LDAP_CONTACT_ACTIVE') != Ldap::SYNCHRO_LDAP_TO_DOLIBARR) {
+if (getDolGlobalString('LDAP_CONTACT_ACTIVE') && getDolGlobalInt('LDAP_CONTACT_ACTIVE') != Ldap::SYNCHRO_LDAP_TO_DOLIBARR) {
 	print "<br>\n";
 }
 

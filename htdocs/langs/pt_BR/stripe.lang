@@ -22,7 +22,7 @@ STRIPE_LIVE_SECRET_KEY=Chave ao vivo secreta
 STRIPE_LIVE_PUBLISHABLE_KEY=Chave editável
 StripeLiveEnabled=Boleto ativado (caso contrário teste / modo cx)
 StripeImportPayment=Importação de pagamentos de franquia
-ExampleOfTestCreditCard=Exemplo de cartão de crédito para teste: %s => válido, %s => error CVC, %s => expired, %s => charge fails
+ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
 StripeAccount=Conta Stripe
 StripeTransactionList=Lista de transações Stripe
 LocalID=ID local

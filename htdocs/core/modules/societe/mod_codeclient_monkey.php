@@ -68,9 +68,6 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 */
 	public function __construct()
 	{
-		$this->nom = "Monkey";
-		$this->name = "Monkey";
-		$this->version = "dolibarr";
 		$this->code_null = 1;
 		$this->code_modifiable = 1;
 		$this->code_modifiable_invalide = 1;
@@ -151,7 +148,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		}
 
 		$date	= dol_now();
-		$yymm	= strftime("%y%m", $date);
+		$yymm	= dol_print_date($date, "%y%m", 'tzuserrel');
 
 		if ($max >= (pow(10, 5) - 1)) {
 			$num = $max + 1; // If counter > 99999, we do not format on 5 chars, we take number as it is
@@ -184,14 +181,14 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		$result = 0;
 		$code = strtoupper(trim($code));
 
-		if (empty($code) && $this->code_null && empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) {
+		if (empty($code) && $this->code_null && !getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED')) {
 			$result = 0;
-		} elseif (empty($code) && (!$this->code_null || !empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED))) {
+		} elseif (empty($code) && (!$this->code_null || getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED'))) {
 			$result = -2;
 		} else {
 			if ($this->verif_syntax($code) >= 0) {
 				$is_dispo = $this->verif_dispo($db, $code, $soc, $type);
-				if ($is_dispo <> 0) {
+				if ($is_dispo != 0) {
 					$result = -3;
 				} else {
 					$result = 0;

@@ -1,0 +1,92 @@
+# Copyright (C) 2018 Nicolas ZABOURI    <info@inovea-conseil.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Module label 'ModuledatapolicyName'
+Module4100Name = Chính sách bảo mật dữ liệu
+# Module description 'ModuledatapolicyDesc'
+Module4100Desc = Mô-đun quản lý quyền riêng tư dữ liệu (Tuân thủ GDPR)
+
+#
+# Administration page
+#
+datapolicySetup = Thiết lập chính sách bảo mật dữ liệu mô-đun
+Deletion = Xóa dữ liệu
+datapolicySetupPage = Tùy thuộc vào luật pháp của quốc gia bạn (Ví dụ <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Điều 5</a> của GDPR), dữ liệu cá nhân phải được lưu giữ trong khoảng thời gian không vượt quá mức cần thiết cho các mục đích mà chúng được thu thập, ngoại trừ mục đích lưu trữ.<br>Việc xóa sẽ được thực hiện tự động sau một khoảng thời gian nhất định mà không có sự kiện (khoảng thời gian mà bạn sẽ chỉ định dưới).
+NB_MONTHS = %s tháng
+ONE_YEAR = 1 năm
+NB_YEARS = %s năm
+DATAPOLICY_TIERS_CLIENT = Khách hàng
+DATAPOLICY_TIERS_PROSPECT = KH tiềm năng
+DATAPOLICY_TIERS_PROSPECT_CLIENT = Khách hàng tiềm năng
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = Cũng không phải khách hàng tiềm năng/Cũng không phải khách hàng
+DATAPOLICY_TIERS_FOURNISSEUR = Nhà cung cấp
+DATAPOLICY_CONTACT_CLIENT = Khách hàng
+DATAPOLICY_CONTACT_PROSPECT = KH tiềm năng
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = Khách hàng tiềm năng
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Cũng không phải khách hàng tiềm năng/Cũng không phải khách hàng
+DATAPOLICY_CONTACT_FOURNISSEUR = Nhà cung cấp
+DATAPOLICY_ADHERENT = Thành viên
+DATAPOLICY_Tooltip_SETUP = Loại liên hệ - Cho biết các lựa chọn của bạn cho từng loại.
+DATAPOLICYMail = Cài đặt email
+DATAPOLICYSUBJECTMAIL = Chủ đề của email
+DATAPOLICYCONTENTMAIL = Nội dung của email
+DATAPOLICYSUBSITUTION = Bạn có thể sử dụng các biến sau trong email của mình (LINKACCEPT cho phép tạo liên kết ghi lại sự đồng ý của người đó, LINKREFUSED cho phép ghi lại lời từ chối của người đó):
+DATAPOLICYACCEPT = Tin nhắn sau khi thỏa thuận
+DATAPOLICYREFUSE = Lời nhắn sau khi không đồng ý
+SendAgreementText = Bạn có thể gửi email GDPR đến tất cả các địa chỉ liên hệ có liên quan của mình (những người chưa nhận được email và bạn chưa đăng ký bất kỳ điều gì về thỏa thuận GDPR của họ). Để thực hiện việc này, hãy sử dụng nút sau.
+SendAgreement = Gửi email
+AllAgreementSend = Tất cả các email đã được gửi
+TXTLINKDATAPOLICYACCEPT = Văn bản cho liên kết "thỏa thuận"
+TXTLINKDATAPOLICYREFUSE = Văn bản cho liên kết "không đồng ý"
+
+
+#
+# Extrafields
+#
+DATAPOLICY_BLOCKCHECKBOX = GDPR: Xử lý dữ liệu cá nhân
+DATAPOLICY_consentement = Đã có sự đồng ý cho việc xử lý dữ liệu cá nhân
+DATAPOLICY_opposition_traitement = Phản đối việc xử lý dữ liệu cá nhân của anh ấy
+DATAPOLICY_opposition_prospection = Phản đối việc xử lý dữ liệu cá nhân của mình cho mục đích tìm kiếm
+
+#
+# Popup
+#
+DATAPOLICY_POPUP_ANONYME_TITLE = Ẩn danh bên thứ ba
+DATAPOLICY_POPUP_ANONYME_TEXTE = Bạn không thể xóa liên hệ này khỏi Dolibarr vì có các mục liên quan. Theo GDPR, bạn sẽ ẩn danh tất cả dữ liệu này để tôn trọng nghĩa vụ của mình. Bạn có muốn tiếp tục không ?
+
+#
+# Button for portability
+#
+DATAPOLICY_PORTABILITE = Tính di động GDPR
+DATAPOLICY_PORTABILITE_TITLE = Xuất dữ liệu cá nhân
+DATAPOLICY_PORTABILITE_CONFIRMATION = Bạn muốn xuất dữ liệu cá nhân của liên hệ này. Bạn có chắc không ?
+
+#
+# Notes added during an anonymization
+#
+ANONYMISER_AT = Ẩn danh %s
+
+# V2
+DATAPOLICYReturn = Xác thực GDPR
+DATAPOLICY_date = Ngày thỏa thuận/không đồng ý GDPR
+DATAPOLICY_send = Ngày gửi email thỏa thuận
+DATAPOLICYReturn = Xác thực GDPR
+DATAPOLICY_SEND = Gửi email GDPR
+MailSent = Email đã được gửi
+
+# ERROR
+ErrorSubjectIsRequired = Lỗi: Cần phải có chủ đề của email. Chỉ ra nó trong phần thiết lập mô-đun
+=Do sự cố kỹ thuật nên chúng tôi không thể đăng ký lựa chọn của bạn. Chúng tôi xin lỗi vì điều đó. Hãy liên hệ với chúng tôi để gửi cho chúng tôi sự lựa chọn của bạn.
+NUMBER_MONTH_BEFORE_DELETION = Số tháng trước khi xóa

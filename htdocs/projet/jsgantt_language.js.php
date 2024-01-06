@@ -67,7 +67,7 @@ var vLangs={'<?php print $langs->getDefaultLang(1); ?>':
 	'sunday':'<?php print $langs->transnoentities('Sunday'); ?>','monday':'<?php print $langs->transnoentities('Monday'); ?>','tuesday':'<?php print $langs->transnoentities('Tuesday'); ?>','wednesday':'<?php print $langs->transnoentities('Wednesday'); ?>','thursday':'<?php print $langs->transnoentities('Thursday'); ?>','friday':'<?php print $langs->transnoentities('Friday'); ?>','saturday':'<?php print $langs->transnoentities('Saturday'); ?>',
 	'sun':'<?php print $langs->transnoentities('SundayMin'); ?>','mon':'<?php print $langs->transnoentities('MondayMin'); ?>','tue':'<?php print $langs->transnoentities('TuesdayMin'); ?>','wed':'<?php print $langs->transnoentities('WednesdayMin'); ?>','thu':'<?php print $langs->transnoentities('ThursdayMin'); ?>','fri':'<?php print $langs->transnoentities('FridayMin'); ?>','sat':'<?php print $langs->transnoentities('SaturdayMin'); ?>'
 	}
-};
+}
 var vLang='<?php print $langs->getDefaultLang(1); ?>';
 <?php
 if (is_object($db)) {

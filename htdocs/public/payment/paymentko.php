@@ -46,18 +46,19 @@ if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
-if (!empty($conf->paypal->enabled)) {
+if (isModEnabled('paypal')) {
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
 }
 
 $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal", "stripe"));
 
-if (!empty($conf->paypal->enabled)) {
+if (isModEnabled('paypal')) {
 	$PAYPALTOKEN = GETPOST('TOKEN');
 	if (empty($PAYPALTOKEN)) {
 		$PAYPALTOKEN = GETPOST('token');
@@ -67,9 +68,9 @@ if (!empty($conf->paypal->enabled)) {
 		$PAYPALPAYERID = GETPOST('PayerID');
 	}
 }
-if (!empty($conf->paybox->enabled)) {
+if (isModEnabled('paybox')) {
 }
-if (!empty($conf->stripe->enabled)) {
+if (isModEnabled('stripe')) {
 }
 
 $FULLTAG = GETPOST('FULLTAG');
@@ -87,7 +88,7 @@ if (preg_match('/PM=([^\.]+)/', $FULLTAG, $reg)) {
 	$paymentmethod = $reg[1];
 }
 if (empty($paymentmethod)) {
-	dol_print_error(null, 'The back url does not contains a parameter fulltag that should help us to find the payment method used');
+	dol_print_error(null, 'The back url does not contain a parameter fulltag that should help us to find the payment method used');
 	exit;
 } else {
 	dol_syslog("paymentmethod=".$paymentmethod);
@@ -95,20 +96,20 @@ if (empty($paymentmethod)) {
 
 
 $validpaymentmethod = array();
-if (!empty($conf->paypal->enabled)) {
+if (isModEnabled('paypal')) {
 	$validpaymentmethod['paypal'] = 'paypal';
 }
-if (!empty($conf->paybox->enabled)) {
+if (isModEnabled('paybox')) {
 	$validpaymentmethod['paybox'] = 'paybox';
 }
-if (!empty($conf->stripe->enabled)) {
+if (isModEnabled('stripe')) {
 	$validpaymentmethod['stripe'] = 'stripe';
 }
 
 
 // Security check
 if (empty($validpaymentmethod)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('No valid payment mode');
 }
 
 
@@ -130,7 +131,9 @@ dol_syslog("Callback url when an online payment is refused or canceled. query_st
 
 $tracepost = "";
 foreach ($_POST as $k => $v) {
-	$tracepost .= "{$k} - {$v}\n";
+	if (is_scalar($k) && is_scalar($v)) {
+		$tracepost .= "$k - $v\n";
+	}
 }
 dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_payment');
 
@@ -163,8 +166,8 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 
 	// Send an email
 	$sendemail = '';
-	if (!empty($conf->global->ONLINE_PAYMENT_SENDEMAIL)) {
-		$sendemail = $conf->global->ONLINE_PAYMENT_SENDEMAIL;
+	if (getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL')) {
+		$sendemail = getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL');
 	}
 
 	// Send warning of error to administrator
@@ -173,7 +176,7 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 		$companylangs->setDefaultLang($mysoc->default_lang);
 		$companylangs->loadLangs(array('main', 'members', 'bills', 'paypal', 'paybox'));
 
-		$from = !empty($conf->global->MAILING_EMAIL_FROM) ? $conf->global->MAILING_EMAIL_FROM : getDolGlobalString("MAIN_MAIL_EMAIL_FROM");
+		$from = getDolGlobalString('MAILING_EMAIL_FROM') ? $conf->global->MAILING_EMAIL_FROM : getDolGlobalString("MAIN_MAIL_EMAIL_FROM");
 		$sendto = $sendemail;
 
 		$urlback = $_SERVER["REQUEST_URI"];
@@ -206,8 +209,8 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 }
 
 $head = '';
-if (!empty($conf->global->ONLINE_PAYMENT_CSS_URL)) {
-	$head = '<link rel="stylesheet" type="text/css" href="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+if (getDolGlobalString('ONLINE_PAYMENT_CSS_URL')) {
+	$head = '<link rel="stylesheet" type="text/css" href="' . getDolGlobalString('ONLINE_PAYMENT_CSS_URL').'?lang='.$langs->defaultlang.'">'."\n";
 }
 
 $conf->dol_hide_topmenu = 1;
@@ -227,9 +230,9 @@ $logosmall = $mysoc->logo_small;
 $logo = $mysoc->logo;
 $paramlogo = 'ONLINE_PAYMENT_LOGO_'.$suffix;
 if (!empty($conf->global->$paramlogo)) {
-	$logosmall = $conf->global->$paramlogo;
-} elseif (!empty($conf->global->ONLINE_PAYMENT_LOGO)) {
-	$logosmall = $conf->global->ONLINE_PAYMENT_LOGO;
+	$logosmall = getDolGlobalString($paramlogo);
+} elseif (getDolGlobalString('ONLINE_PAYMENT_LOGO')) {
+	$logosmall = getDolGlobalString('ONLINE_PAYMENT_LOGO');
 }
 //print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 // Define urllogo
@@ -250,14 +253,14 @@ if ($urllogo) {
 	print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
 	print '>';
 	print '</div>';
-	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
+	if (!getDolGlobalString('MAIN_HIDE_POWERED_BY')) {
 		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 	}
 	print '</div>';
 }
-if (!empty($conf->global->MAIN_IMAGE_PUBLIC_PAYMENT)) {
+if (getDolGlobalString('MAIN_IMAGE_PUBLIC_PAYMENT')) {
 	print '<div class="backimagepublicpayment">';
-	print '<img id="idMAIN_IMAGE_PUBLIC_PAYMENT" src="'.$conf->global->MAIN_IMAGE_PUBLIC_PAYMENT.'">';
+	print '<img id="idMAIN_IMAGE_PUBLIC_PAYMENT" src="' . getDolGlobalString('MAIN_IMAGE_PUBLIC_PAYMENT').'">';
 	print '</div>';
 }
 
@@ -285,7 +288,7 @@ if ($type || $tag) {
 print "\n</div>\n";
 
 
-htmlPrintOnlinePaymentFooter($mysoc, $langs, 0, $suffix);
+htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix);
 
 
 llxFooter('', 'public');

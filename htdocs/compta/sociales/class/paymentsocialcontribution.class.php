@@ -62,6 +62,26 @@ class PaymentSocialContribution extends CommonObject
 	public $datep = '';
 
 	/**
+	 * @var string
+	 */
+	public $type_code;
+
+	/**
+	 * @var string
+	 */
+	public $type_label;
+
+	/**
+	 * @var int
+	 */
+	public $bank_account;
+
+	/**
+	 * @var int
+	 */
+	public $bank_line;
+
+	/**
 	 * @deprecated
 	 * @see $amount
 	 */
@@ -133,7 +153,7 @@ class PaymentSocialContribution extends CommonObject
 	 *
 	 *  @param      User	$user   				User making payment
 	 *	@param		int		$closepaidcontrib   	1=Also close paid contributions to paid, 0=Do nothing more
-	 *  @return     int     						<0 if KO, id of payment if OK
+	 *  @return     int     						Return integer <0 if KO, id of payment if OK
 	 */
 	public function create($user, $closepaidcontrib = 0)
 	{
@@ -209,7 +229,7 @@ class PaymentSocialContribution extends CommonObject
 				// Insere tableau des montants / factures
 				foreach ($this->amounts as $key => $amount) {
 					$contribid = $key;
-					if (is_numeric($amount) && $amount <> 0) {
+					if (is_numeric($amount) && $amount != 0) {
 						$amount = price2num($amount);
 
 						// If we want to closed paid invoices
@@ -257,7 +277,7 @@ class PaymentSocialContribution extends CommonObject
 	 *  Load object in memory from database
 	 *
 	 *  @param	int		$id         Id object
-	 *  @return int         		<0 if KO, >0 if OK
+	 *  @return int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -324,7 +344,7 @@ class PaymentSocialContribution extends CommonObject
 	 *
 	 *  @param	User	$user        	User that modify
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return int         			<0 if KO, >0 if OK
+	 *  @return int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -365,20 +385,17 @@ class PaymentSocialContribution extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."paiementcharge SET";
-
-		$sql .= " fk_charge=".(isset($this->fk_charge) ? $this->fk_charge : "null").",";
+		$sql .= " fk_charge=".(isset($this->fk_charge) ? ((int) $this->fk_charge) : "null").",";
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
 		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " datep=".(dol_strlen($this->datep) != 0 ? "'".$this->db->idate($this->datep)."'" : 'null').",";
-		$sql .= " amount=".(isset($this->amount) ? $this->amount : "null").",";
-		$sql .= " fk_typepaiement=".(isset($this->fk_typepaiement) ? $this->fk_typepaiement : "null").",";
+		$sql .= " amount=".(isset($this->amount) ? price2num($this->amount) : "null").",";
+		$sql .= " fk_typepaiement=".(isset($this->fk_typepaiement) ? ((int) $this->fk_typepaiement) : "null").",";
 		$sql .= " num_paiement=".(isset($this->num_payment) ? "'".$this->db->escape($this->num_payment)."'" : "null").",";
 		$sql .= " note=".(isset($this->note) ? "'".$this->db->escape($this->note)."'" : "null").",";
-		$sql .= " fk_bank=".(isset($this->fk_bank) ? $this->fk_bank : "null").",";
-		$sql .= " fk_user_creat=".(isset($this->fk_user_creat) ? $this->fk_user_creat : "null").",";
-		$sql .= " fk_user_modif=".(isset($this->fk_user_modif) ? $this->fk_user_modif : "null")."";
-
-
+		$sql .= " fk_bank=".(isset($this->fk_bank) ? ((int) $this->fk_bank) : "null").",";
+		$sql .= " fk_user_creat=".(isset($this->fk_user_creat) ? ((int) $this->fk_user_creat) : "null").",";
+		$sql .= " fk_user_modif=".(isset($this->fk_user_modif) ? ((int) $this->fk_user_modif) : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -410,11 +427,10 @@ class PaymentSocialContribution extends CommonObject
 	 *
 	 *  @param	User	$user        	User that delete
 	 *  @param  int		$notrigger		0=launch triggers after, 1=disable triggers
-	 *  @return int						<0 if KO, >0 if OK
+	 *  @return int						Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		dol_syslog(get_class($this)."::delete");
@@ -424,7 +440,7 @@ class PaymentSocialContribution extends CommonObject
 		if ($this->bank_line > 0) {
 			$accline = new AccountLine($this->db);
 			$accline->fetch($this->bank_line);
-			$result = $accline->delete();
+			$result = $accline->delete($user);
 			if ($result < 0) {
 				$this->errors[] = $accline->error;
 				$error++;
@@ -541,7 +557,7 @@ class PaymentSocialContribution extends CommonObject
 	 *      @param  int		$accountid          Id of bank account to do link with
 	 *      @param  string	$emetteur_nom       Name of transmitter
 	 *      @param  string	$emetteur_banque    Name of bank
-	 *      @return int                 		<0 if KO, >0 if OK
+	 *      @return int                 		Return integer <0 if KO, >0 if OK
 	 */
 	public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
 	{
@@ -552,7 +568,7 @@ class PaymentSocialContribution extends CommonObject
 
 		$error = 0;
 
-		if (isModEnabled('banque')) {
+		if (isModEnabled("banque")) {
 			include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 			$acc = new Account($this->db);
@@ -667,10 +683,10 @@ class PaymentSocialContribution extends CommonObject
 
 
 	/**
-	 * Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
+	 *  Return the label of the status
 	 *
-	 * @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 * @return  string				Libelle
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -679,11 +695,11 @@ class PaymentSocialContribution extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Renvoi le libelle d'un statut donne
+	 *  Return the label of a given status
 	 *
-	 * @param   int		$status     Statut
-	 * @param   int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 * @return	string  		    Libelle du statut
+	 *  @param	int		$status        Id status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
@@ -775,7 +791,7 @@ class PaymentSocialContribution extends CommonObject
 				$result .= ' ';
 			}
 			if ($withpicto != 2) {
-				$result .= $link.($maxlen ?dol_trunc($this->ref, $maxlen) : $this->ref).$linkend;
+				$result .= $link.($maxlen ? dol_trunc($this->ref, $maxlen) : $this->ref).$linkend;
 			}
 		}
 
@@ -786,7 +802,7 @@ class PaymentSocialContribution extends CommonObject
 	/**
 	 *	Return if object was dispatched into bookkeeping
 	 *
-	 *	@return     int         <0 if KO, 0=no, 1=yes
+	 *	@return     int         Return integer <0 if KO, 0=no, 1=yes
 	 */
 	public function getVentilExportCompta()
 	{

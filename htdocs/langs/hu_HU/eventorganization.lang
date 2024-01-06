@@ -53,13 +53,17 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = A résztvevő létrehozására/hozzáad
 #
 # Object
 #
+OrganizedEvent=Organized event
 EventOrganizationConfOrBooth= Konferencia vagy stand
+EventOrganizationConfOrBoothes=Conferences or Boothes
 ManageOrganizeEvent = Egy esemény szervezésének kezelése
 ConferenceOrBooth = Konferencia vagy stand
 ConferenceOrBoothTab = Konferencia vagy stand
 AmountPaid = Fizetett összeg
 DateOfRegistration = A regisztráció dátuma
 ConferenceOrBoothAttendee = Konferencia vagy stand résztvevője
+ApplicantOrVisitor=Jelentkező vagy látogató
+Speaker=Hangszóró
 
 #
 # Template Mail
@@ -112,15 +116,15 @@ EvntOrgRegistrationHelpMessage = Itt szavazhat egy konferenciára, vagy javasolh
 EvntOrgRegistrationConfHelpMessage = Itt javasolhat egy új konferenciát, amelyet animálhat az esemény alatt.
 EvntOrgRegistrationBoothHelpMessage = Itt jelentkezhet, hogy standot tarthasson az esemény alatt.
 ListOfSuggestedConferences = A javasolt konferenciák listája
-ListOfSuggestedBooths = A javasolt fülkék listája
-ListOfConferencesOrBooths=A konferenciák vagy a rendezvényprojekt standjainak listája
+ListOfSuggestedBooths=Suggested booths
+ListOfConferencesOrBooths=Conferences or booths of event project
 SuggestConference = Új konferencia javaslata
 SuggestBooth = Javasolj egy fülkét
 ViewAndVote = A javasolt események megtekintése és szavazás
 PublicAttendeeSubscriptionGlobalPage = Nyilvános link az eseményre való regisztrációhoz
 PublicAttendeeSubscriptionPage = Nyilvános hivatkozás csak erre az eseményre való regisztrációhoz
 MissingOrBadSecureKey = A biztonsági kulcs érvénytelen vagy hiányzik
-EvntOrgWelcomeMessage = Ez az űrlap lehetővé teszi, hogy új résztvevőként regisztráljon az eseményre: <b>%s</b>
+EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event
 EvntOrgDuration = Ez a konferencia %s-kor kezdődik és %s-kor ér véget.
 ConferenceAttendeeFee = Konferencia résztvevői díja az eseményhez: '%s', %s és %s között.
 BoothLocationFee = A stand helye az eseményhez: '%s', %s és %s között
@@ -130,7 +134,7 @@ LabelOfconference=Konferencia címke
 ConferenceIsNotConfirmed=A regisztráció nem érhető el, a konferencia még nincs megerősítve
 DateMustBeBeforeThan=az %s előtt az %s előtt kell lennie
 DateMustBeAfterThan=%s %s után kell lennie
-
+MaxNbOfAttendeesReached=The maximum number of participants has been reached
 NewSubscription=Regisztráció
 OrganizationEventConfRequestWasReceived=A konferenciára vonatkozó javaslatát megkaptuk
 OrganizationEventBoothRequestWasReceived=A standra vonatkozó kérése megérkezett
@@ -139,9 +143,10 @@ OrganizationEventPaymentOfRegistrationWasReceived=Az esemény regisztrációján
 OrganizationEventBulkMailToAttendees=Ez egy emlékeztető arról, hogy résztvevőként részt vesz az eseményen
 OrganizationEventBulkMailToSpeakers=Emlékeztető arra, hogy előadóként vesz részt az eseményen
 OrganizationEventLinkToThirdParty=Harmadik félhez (ügyfélhez, szállítóhoz vagy partnerhez) mutató hivatkozás
+OrganizationEvenLabelName=A konferencia vagy stand nyilvános neve
 
 NewSuggestionOfBooth=Jelentkezés egy standra
-NewSuggestionOfConference=Jelentkezés egy konferenciára
+NewSuggestionOfConference=Application to hold a conference
 
 #
 # Vote page
@@ -154,7 +159,7 @@ VoteOk = Szavazatát elfogadták.
 AlreadyVoted = Már szavazott erre az eseményre.
 VoteError = Hiba történt a szavazás során, próbálja újra.
 
-SubscriptionOk = Regisztrációját ellenőriztük
+SubscriptionOk=Your registration has been recorded
 ConfAttendeeSubscriptionConfirmation = Egy eseményre való feliratkozás megerősítése
 Attendee = Résztvevő
 PaymentConferenceAttendee = Konferencia résztvevőinek kifizetése
@@ -162,8 +167,11 @@ PaymentBoothLocation = Fizetés a fülkében
 DeleteConferenceOrBoothAttendee=Részvevő eltávolítása
 RegistrationAndPaymentWereAlreadyRecorder=A <b>%s</b> e-mailhez már rögzítésre került egy regisztráció és egy fizetés
 EmailAttendee=Részvevő e-mail
+EmailCompany=Company email
 EmailCompanyForInvoice=Vállalati e-mail-cím (a számlához, ha eltér a résztvevő e-mail-címétől)
 ErrorSeveralCompaniesWithEmailContactUs=Több ilyen e-mail-címmel rendelkező céget találtunk, így nem tudjuk automatikusan ellenőrizni regisztrációját. Kérjük, vegye fel velünk a kapcsolatot a %s címen kézi ellenőrzésért
 ErrorSeveralCompaniesWithNameContactUs=Több ilyen nevű céget találtunk, így nem tudjuk automatikusan ellenőrizni regisztrációját. Kérjük, vegye fel velünk a kapcsolatot a %s címen kézi ellenőrzésért
 NoPublicActionsAllowedForThisEvent=Ennél az eseménynél nincs nyilvános művelet
 MaxNbOfAttendees=A résztvevők maximális száma
+DateStartEvent=Event start date
+DateEndEvent=Event end date

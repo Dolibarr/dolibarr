@@ -38,44 +38,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
  */
 class pdf_standard extends ModelePDFStock
 {
-	/**
-	 * @var DoliDb Database handler
-	 */
-	public $db;
-
-	/**
-	 * @var string model name
-	 */
-	public $name;
-
-	/**
-	 * @var string model description (short text)
-	 */
-	public $description;
-
-	/**
-	 * @var string document type
-	 */
-	public $type;
-
-	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.6 = array(5, 6)
-	 */
-	public $phpmin = array(5, 6);
-
-	/**
-	 * Dolibarr version of the loaded document
-	 * @var string
-	 */
-	public $version = 'dolibarr';
-
-	/**
-	 * Issuer
-	 * @var Societe
-	 */
-	public $emetteur;
-
 	public $wref;
 	public $posxdesc;
 	public $posxlabel;
@@ -111,13 +73,12 @@ class pdf_standard extends ModelePDFStock
 		$this->page_largeur = $formatarray['width'];
 		$this->page_hauteur = $formatarray['height'];
 		$this->format = array($this->page_largeur, $this->page_hauteur);
-		$this->marge_gauche = isset($conf->global->MAIN_PDF_MARGIN_LEFT) ? $conf->global->MAIN_PDF_MARGIN_LEFT : 10;
-		$this->marge_droite = isset($conf->global->MAIN_PDF_MARGIN_RIGHT) ? $conf->global->MAIN_PDF_MARGIN_RIGHT : 10;
-		$this->marge_haute = isset($conf->global->MAIN_PDF_MARGIN_TOP) ? $conf->global->MAIN_PDF_MARGIN_TOP : 10;
-		$this->marge_basse = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? $conf->global->MAIN_PDF_MARGIN_BOTTOM : 10;
+		$this->marge_gauche = getDolGlobalInt('MAIN_PDF_MARGIN_LEFT', 10);
+		$this->marge_droite = getDolGlobalInt('MAIN_PDF_MARGIN_RIGHT', 10);
+		$this->marge_haute = getDolGlobalInt('MAIN_PDF_MARGIN_TOP', 10);
+		$this->marge_basse = getDolGlobalInt('MAIN_PDF_MARGIN_BOTTOM', 10);
 
 		$this->option_logo = 1; // Display logo
-		$this->option_codestockservice = 0; // Display product-service code
 		$this->option_multilang = 1; // Available in several languages
 		$this->option_freetext = 0; // Support add of a personalised text
 
@@ -138,10 +99,10 @@ class pdf_standard extends ModelePDFStock
 		$this->posxdiscount = 155;
 		$this->postotalht = 175;
 
-		if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) || !empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN)) {
+		if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT') || getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN')) {
 			$this->posxtva = $this->posxup;
 		}
-		$this->posxpicture = $this->posxtva - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH) ? 20 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH); // width of images
+		$this->posxpicture = $this->posxtva - (!getDolGlobalString('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH') ? 20 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH); // width of images
 		if ($this->page_largeur < 210) { // To work with US executive format
 			$this->posxpicture -= 20;
 			$this->posxtva -= 20;
@@ -177,7 +138,7 @@ class pdf_standard extends ModelePDFStock
 			$outputlangs = $langs;
 		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!empty($conf->global->MAIN_USE_FPDF)) {
+		if (getDolGlobalString('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
@@ -227,7 +188,7 @@ class pdf_standard extends ModelePDFStock
 				$heightforinfotot = 40; // Height reserved to output the info and total part
 				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
-				if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)) {
+				if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
 					$heightforfooter += 6;
 				}
 
@@ -237,8 +198,8 @@ class pdf_standard extends ModelePDFStock
 				}
 				$pdf->SetFont(pdf_getPDFFont($outputlangs));
 				// Set path to the background PDF File
-				if (empty($conf->global->MAIN_DISABLE_FPDI) && !empty($conf->global->MAIN_ADD_PDF_BACKGROUND)) {
-					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+				if (!getDolGlobalString('MAIN_DISABLE_FPDI') && getDolGlobalString('MAIN_ADD_PDF_BACKGROUND')) {
+					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
 				}
 
@@ -251,7 +212,7 @@ class pdf_standard extends ModelePDFStock
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Stock")." ".$outputlangs->convToOutputCharset($object->label));
-				if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) {
+				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
 				}
 
@@ -270,7 +231,7 @@ class pdf_standard extends ModelePDFStock
 				$pdf->SetTextColor(0, 0, 0);
 
 				$tab_top = 65 + $top_shift;
-				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 + $top_shift : 10);
+				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
 
 				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
@@ -306,7 +267,7 @@ class pdf_standard extends ModelePDFStock
 						$objp = $this->db->fetch_object($resql);
 
 						// Multilangs
-						if (!empty($conf->global->MAIN_MULTILANGS)) { // si l'option est active
+						if (getDolGlobalInt('MAIN_MULTILANGS')) { // si l'option est active
 							$sql = "SELECT label";
 							$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
 							$sql .= " WHERE fk_product = ".((int) $objp->rowid);
@@ -353,7 +314,7 @@ class pdf_standard extends ModelePDFStock
 									if (!empty($tplidx)) {
 										$pdf->useTemplate($tplidx);
 									}
-									if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+									if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 										$this->_pagehead($pdf, $object, 0, $outputlangs);
 									}
 									$pdf->setPage($pageposafter + 1);
@@ -362,14 +323,13 @@ class pdf_standard extends ModelePDFStock
 								// We found a page break
 
 								// Allows data in the first page if description is long enough to break in multiples pages
-								if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE)) {
+								if (getDolGlobalString('MAIN_PDF_DATA_ON_FIRST_PAGE')) {
 									$showpricebeforepagebreak = 1;
 								} else {
 									$showpricebeforepagebreak = 0;
 								}
 							}
-						} else // No pagebreak
-						{
+						} else { // No pagebreak
 							$pdf->commitTransaction();
 						}
 						$posYAfterDescription = $pdf->GetY();
@@ -402,7 +362,7 @@ class pdf_standard extends ModelePDFStock
 
 						// Label
 						$pdf->SetXY($this->posxlabel + 0.8, $curY);
-						$pdf->MultiCell($this->posxqty - $this->posxlabel - 0.8, 3, dol_trunc($objp->produit, 24), 0, 'L');
+						$pdf->MultiCell($this->posxqty - $this->posxlabel - 0.8, 3, dol_trunc($productstatic->label, 24), 0, 'L');
 
 						// Quantity
 						$valtoshow = price2num($objp->value, 'MS');
@@ -423,7 +383,7 @@ class pdf_standard extends ModelePDFStock
 						$totalvalue += price2num($objp->ppmp * $objp->value, 'MT');
 
 						// Price sell min
-						if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+						if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 							$pricemin = $objp->price;
 							$pdf->SetXY($this->posxdiscount, $curY);
 							$pdf->MultiCell($this->postotalht - $this->posxdiscount, 3, price(price2num($pricemin, 'MU'), 0, $outputlangs), 0, 'R', 0);
@@ -435,7 +395,7 @@ class pdf_standard extends ModelePDFStock
 						$totalvaluesell += price2num($pricemin * $objp->value, 'MT');
 
 						// Add line
-						if (!empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1)) {
+						if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1)) {
 							$pdf->setPage($pageposafter);
 							$pdf->SetLineStyle(array('dash'=>'1,1', 'color'=>array(80, 80, 80)));
 							//$pdf->SetDrawColor(190,190,200);
@@ -457,7 +417,7 @@ class pdf_standard extends ModelePDFStock
 							$pagenb++;
 							$pdf->setPage($pagenb);
 							$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
-							if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 								$this->_pagehead($pdf, $object, 0, $outputlangs);
 							}
 							if (!empty($tplidx)) {
@@ -477,7 +437,7 @@ class pdf_standard extends ModelePDFStock
 								$pdf->useTemplate($tplidx);
 							}
 							$pagenb++;
-							if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 								$this->_pagehead($pdf, $object, 0, $outputlangs);
 							}
 						}
@@ -516,7 +476,7 @@ class pdf_standard extends ModelePDFStock
 						$pdf->MultiCell($this->posxdiscount - $this->posxunit - 0.8, 3, price(price2num($totalvalue, 'MT'), 0, $outputlangs), 0, 'R');
 
 						// Price sell min
-						if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+						if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 							// Total sell min
 							$pdf->SetXY($this->postotalht, $curY);
 							$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalht, 3, price(price2num($totalvaluesell, 'MT'), 0, $outputlangs), 0, 'R', 0);
@@ -595,9 +555,7 @@ class pdf_standard extends ModelePDFStock
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
 
 				$this->result = array('fullpath'=>$file);
 
@@ -649,8 +607,8 @@ class pdf_standard extends ModelePDFStock
 			$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
 
 			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
-			if (!empty($conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR)) {
-				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, 5, 'F', null, explode(',', $conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR));
+			if (getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')) {
+				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, 5, 'F', null, explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
 			}
 		}
 
@@ -748,7 +706,7 @@ class pdf_standard extends ModelePDFStock
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
 		// Show Draft Watermark
-		if ($object->statut == 0 && (!empty($conf->global->STOCK_DRAFT_WATERMARK))) {
+		if ($object->statut == 0 && (getDolGlobalString('STOCK_DRAFT_WATERMARK'))) {
 			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->STOCK_DRAFT_WATERMARK);
 		}
 
@@ -799,7 +757,7 @@ class pdf_standard extends ModelePDFStock
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 
-		// Parent entrepot
+		// Parent warehouse
 		$e = new Entrepot($this->db);
 		$hasparent = (!empty($object->fk_parent) && $e->fetch($object->fk_parent) > 0);
 
@@ -891,8 +849,7 @@ class pdf_standard extends ModelePDFStock
 	 */
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
-		global $conf;
-		$showdetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 0 : $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+		$showdetails = getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', 0);
 		return pdf_pagefoot($pdf, $outputlangs, 'PRODUCT_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 }

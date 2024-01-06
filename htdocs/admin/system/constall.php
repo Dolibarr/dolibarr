@@ -22,6 +22,7 @@
  *		\brief      Page to show all Dolibarr setup (config file and database constants)
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 // Load translation files required by the page
@@ -72,7 +73,6 @@ $configfileparameters = array(
 							'?dolibarr_main_auth_ldap_admin_pass',
 							'?dolibarr_main_auth_ldap_debug',
 							'separator',
-							'?dolibarr_lib_ADODB_PATH',
 							'?dolibarr_lib_FPDF_PATH',
 							'?dolibarr_lib_TCPDF_PATH',
 							'?dolibarr_lib_FPDI_PATH',
@@ -121,7 +121,6 @@ $configfilelib = array(
 					'dolibarr_main_auth_ldap_admin_pass',
 					'dolibarr_main_auth_ldap_debug',
 					'separator',
-					'dolibarr_lib_ADODB_PATH',
 					'dolibarr_lib_TCPDF_PATH',
 					'dolibarr_lib_FPDI_PATH',
 					'dolibarr_lib_NUSOAP_PATH',
@@ -205,7 +204,7 @@ print '<table class="noborder">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
-if (empty($conf->multicompany->enabled) || !$user->entity) {
+if (!isModEnabled('multicompany') || !$user->entity) {
 	print '<td>'.$langs->trans("Entity").'</td>'; // If superadmin or multicompany disabled
 }
 print "</tr>\n";
@@ -218,7 +217,7 @@ $sql .= ", type";
 $sql .= ", note";
 $sql .= ", entity";
 $sql .= " FROM ".MAIN_DB_PREFIX."const";
-if (empty($conf->multicompany->enabled)) {
+if (!isModEnabled('multicompany')) {
 	// If no multicompany mode, admins can see global and their constantes
 	$sql .= " WHERE entity IN (0,".$conf->entity.")";
 } else {
@@ -239,7 +238,7 @@ if ($resql) {
 		print '<tr class="oddeven">';
 		print '<td>'.$obj->name.'</td>'."\n";
 		print '<td>'.$obj->value.'</td>'."\n";
-		if (empty($conf->multicompany->enabled) || !$user->entity) {
+		if (!isModEnabled('multicompany') || !$user->entity) {
 			print '<td>'.$obj->entity.'</td>'."\n"; // If superadmin or multicompany disabled
 		}
 		print "</tr>\n";

@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\CardDAV;
 
 use Sabre\DAVACL;
 
 /**
- * AddressBook rootnode
+ * AddressBook rootnode.
  *
  * This object lists a collection of users, which can contain addressbooks.
  *
@@ -13,24 +15,24 @@ use Sabre\DAVACL;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class AddressBookRoot extends DAVACL\AbstractPrincipalCollection {
-
+class AddressBookRoot extends DAVACL\AbstractPrincipalCollection
+{
     /**
-     * Principal Backend
+     * Principal Backend.
      *
      * @var DAVACL\PrincipalBackend\BackendInterface
      */
     protected $principalBackend;
 
     /**
-     * CardDAV backend
+     * CardDAV backend.
      *
      * @var Backend\BackendInterface
      */
     protected $carddavBackend;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * This constructor needs both a principal and a carddav backend.
      *
@@ -39,26 +41,22 @@ class AddressBookRoot extends DAVACL\AbstractPrincipalCollection {
      * actually located in a different path, use the $principalPrefix argument
      * to override this.
      *
-     * @param DAVACL\PrincipalBackend\BackendInterface $principalBackend
-     * @param Backend\BackendInterface $carddavBackend
      * @param string $principalPrefix
      */
-    function __construct(DAVACL\PrincipalBackend\BackendInterface $principalBackend, Backend\BackendInterface $carddavBackend, $principalPrefix = 'principals') {
-
+    public function __construct(DAVACL\PrincipalBackend\BackendInterface $principalBackend, Backend\BackendInterface $carddavBackend, $principalPrefix = 'principals')
+    {
         $this->carddavBackend = $carddavBackend;
         parent::__construct($principalBackend, $principalPrefix);
-
     }
 
     /**
-     * Returns the name of the node
+     * Returns the name of the node.
      *
      * @return string
      */
-    function getName() {
-
+    public function getName()
+    {
         return Plugin::ADDRESSBOOK_ROOT;
-
     }
 
     /**
@@ -68,13 +66,10 @@ class AddressBookRoot extends DAVACL\AbstractPrincipalCollection {
      * at least contain a uri item. Other properties may or may not be
      * supplied by the authentication backend.
      *
-     * @param array $principal
      * @return \Sabre\DAV\INode
      */
-    function getChildForPrincipal(array $principal) {
-
+    public function getChildForPrincipal(array $principal)
+    {
         return new AddressBookHome($this->carddavBackend, $principal['uri']);
-
     }
-
 }

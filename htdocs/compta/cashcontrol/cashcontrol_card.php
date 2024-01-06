@@ -27,6 +27,7 @@
  *      \brief      Page to show a cash fence
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -41,11 +42,11 @@ $categid = GETPOST('categid');
 $label = GETPOST("label");
 
 $now = dol_now();
-$syear = (GETPOSTISSET('closeyear') ?GETPOST('closeyear', 'int') : dol_print_date($now, "%Y"));
-$smonth = (GETPOSTISSET('closemonth') ?GETPOST('closemonth', 'int') : dol_print_date($now, "%m"));
-$sday = (GETPOSTISSET('closeday') ?GETPOST('closeday', 'int') : dol_print_date($now, "%d"));
+$syear = (GETPOSTISSET('closeyear') ? GETPOST('closeyear', 'int') : dol_print_date($now, "%Y"));
+$smonth = (GETPOSTISSET('closemonth') ? GETPOST('closemonth', 'int') : dol_print_date($now, "%m"));
+$sday = (GETPOSTISSET('closeday') ? GETPOST('closeday', 'int') : dol_print_date($now, "%d"));
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -61,7 +62,7 @@ if (!$sortfield) {
 if (!$sortorder) {
 	$sortorder = 'ASC';
 }
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'thirdpartylist';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'thirdpartylist';
 
 if ($contextpage == 'takepos') {
 	$_GET['optioncss'] = 'print';
@@ -95,7 +96,7 @@ if ($user->socid > 0) {	// Protection if external user
 	//$socid = $user->socid;
 	accessforbidden();
 }
-if (!$user->rights->cashdesk->run && !$user->rights->takepos->run) {
+if (!$user->hasRight("cashdesk", "run") && !$user->hasRight("takepos", "run")) {
 	accessforbidden();
 }
 
@@ -104,15 +105,15 @@ if (!$user->rights->cashdesk->run && !$user->rights->takepos->run) {
  * Actions
  */
 
-$permissiontoadd = ($user->rights->cashdesk->run || $user->rights->takepos->run);
-$permissiontodelete = ($user->rights->cashdesk->run || $user->rights->takepos->run) || ($permissiontoadd && $object->status == 0);
+$permissiontoadd = ($user->hasRight("cashdesk", "run") || $user->hasRight("takepos", "run"));
+$permissiontodelete = ($user->hasRight("cashdesk", "run") || $user->hasRight("takepos", "run")) || ($permissiontoadd && $object->status == 0);
 if (empty($backtopage)) {
-	$backtopage = DOL_URL_ROOT.'/compta/cashcontrol/cashcontrol_card.php?id='.($id > 0 ? $id : '__ID__');
+	$backtopage = DOL_URL_ROOT.'/compta/cashcontrol/cashcontrol_card.php?id='.(!empty($id) && $id > 0 ? $id : '__ID__');
 }
 $backurlforlist = DOL_URL_ROOT.'/compta/cashcontrol/cashcontrol_list.php';
 $triggermodname = 'CACHCONTROL_MODIFY'; // Name of trigger action code to execute when we modify record
 
-if (empty($conf->global->CASHDESK_ID_BANKACCOUNT_CASH) && empty($conf->global->CASHDESK_ID_BANKACCOUNT_CASH1)) {
+if (!getDolGlobalString('CASHDESK_ID_BANKACCOUNT_CASH') && !getDolGlobalString('CASHDESK_ID_BANKACCOUNT_CASH1')) {
 	setEventMessages($langs->trans("CashDesk")." - ".$langs->trans("NotConfigured"), null, 'errors');
 }
 
@@ -128,7 +129,7 @@ if (GETPOST('cancel', 'alpha')) {
 if ($action == "reopen") {
 	$result = $object->setStatut($object::STATUS_DRAFT, null, '', 'CASHFENCE_REOPEN');
 	if ($result < 0) {
-		setEventMessages($object->error, $object->error, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	$action = 'view';
@@ -265,6 +266,10 @@ $initialbalanceforterminal = array();
 $theoricalamountforterminal = array();
 $theoricalnbofinvoiceforterminal = array();
 
+
+llxHeader('', $langs->trans("CashControl"));
+
+
 if ($action == "create" || $action == "start" || $action == 'close') {
 	if ($action == 'close') {
 		$posmodule = $object->posmodule;
@@ -290,7 +295,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 		}
 	}
 
-	if ($terminalid != '') {
+	if (isset($terminalid) && $terminalid != '') {
 		// Calculate $initialbalanceforterminal for terminal 0
 		foreach ($arrayofpaymentmode as $key => $val) {
 			if ($key != 'cash') {
@@ -300,7 +305,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 
 			// Get the bank account dedicated to this point of sale module/terminal
 			$vartouse = 'CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse;
-			$bankid = $conf->global->$vartouse;
+			$bankid = getDolGlobalInt($vartouse);
 
 			if ($bankid > 0) {
 				$sql = "SELECT SUM(amount) as total FROM ".MAIN_DB_PREFIX."bank";
@@ -376,8 +381,6 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 
 	//var_dump($theoricalamountforterminal); var_dump($theoricalnbofinvoiceforterminal);
 	if ($action != 'close') {
-		llxHeader('', $langs->trans("NewCashFence"));
-
 		print load_fiche_titre($langs->trans("CashControl")." - ".$langs->trans("New"), '', 'cash-register');
 
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -413,17 +416,17 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 		print '<td>';
 
 		$array = array();
-		$numterminals = max(1, $conf->global->TAKEPOS_NUM_TERMINALS);
+		$numterminals = max(1, getDolGlobalString('TAKEPOS_NUM_TERMINALS'));
 		for ($i = 1; $i <= $numterminals; $i++) {
 			$array[$i] = $i;
 		}
 		$selectedposnumber = 0;
 		$showempty = 1;
-		if ($conf->global->TAKEPOS_NUM_TERMINALS == '1') {
+		if (getDolGlobalString('TAKEPOS_NUM_TERMINALS') == '1') {
 			$selectedposnumber = 1;
 			$showempty = 0;
 		}
-		print $form->selectarray('posnumber', $array, GETPOSTISSET('posnumber') ?GETPOST('posnumber', 'int') : $selectedposnumber, $showempty);
+		print $form->selectarray('posnumber', $array, GETPOSTISSET('posnumber') ? GETPOST('posnumber', 'int') : $selectedposnumber, $showempty);
 		//print '<input name="posnumber" type="text" class="maxwidth50" value="'.(GETPOSTISSET('posnumber')?GETPOST('posnumber', 'alpha'):'0').'">';
 		print '</td>';
 		// Year
@@ -560,7 +563,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 				$object->fetch($id);
 				print $object->opening;
 			} else {
-				print (GETPOSTISSET('opening') ?price2num(GETPOST('opening', 'alpha')) : price($initialbalanceforterminal[$terminalid]['cash']));
+				print(GETPOSTISSET('opening') ? price2num(GETPOST('opening', 'alpha')) : price($initialbalanceforterminal[$terminalid]['cash']));
 			}
 			print '">';
 			print '</td>';
@@ -596,8 +599,6 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 
 if (empty($action) || $action == "view" || $action == "close") {
 	$result = $object->fetch($id);
-
-	llxHeader('', $langs->trans("CashControl"));
 
 	if ($result <= 0) {
 		print $langs->trans("ErrorRecordNotFound");
@@ -640,8 +641,8 @@ if (empty($action) || $action == "view" || $action == "close") {
 		print $langs->trans("Period");
 		print '</td><td>';
 		print $object->year_close;
-		print ($object->month_close ? "-" : "").$object->month_close;
-		print ($object->day_close ? "-" : "").$object->day_close;
+		print($object->month_close ? "-" : "").$object->month_close;
+		print($object->day_close ? "-" : "").$object->day_close;
 		print '</td></tr>';
 
 		print '</table>';
@@ -670,7 +671,7 @@ if (empty($action) || $action == "view" || $action == "close") {
 		print "</table>\n";
 
 		print '</div></div>';
-		print '<div style="clear:both"></div>';
+		print '<div class="clearboth"></div>';
 
 		print dol_get_fiche_end();
 
@@ -848,7 +849,7 @@ if (empty($action) || $action == "view" || $action == "close") {
 					$object->fetch($id);
 					print $object->opening;
 				} else {
-					print (GETPOSTISSET('opening') ?price2num(GETPOST('opening', 'alpha')) : price($initialbalanceforterminal[$terminalid]['cash']));
+					print(GETPOSTISSET('opening') ? price2num(GETPOST('opening', 'alpha')) : price($initialbalanceforterminal[$terminalid]['cash']));
 				}
 				print '">';
 				print '</td>';

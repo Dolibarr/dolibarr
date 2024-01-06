@@ -51,14 +51,14 @@ class Subscriptions extends DolibarrApi
 	 *
 	 * Return an array with subscription informations
 	 *
-	 * @param     int     $id ID of subscription
-	 * @return    Object data without useless information
+	 * @param   int     $id				ID of subscription
+	 * @return  Object					Object with cleaned properties
 	 *
-	 * @throws    RestException
+	 * @throws  RestException
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->cotisation->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'cotisation', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -81,17 +81,18 @@ class Subscriptions extends DolibarrApi
 	 * @param int       $limit      Limit for list
 	 * @param int       $page       Page number
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.import_key:<:'20160101')"
+	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return array Array of subscription objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "dateadh", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+	public function index($sortfield = "dateadh", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
 		global $conf;
 
 		$obj_ret = array();
 
-		if (!DolibarrApiAccess::$user->rights->adherent->cotisation->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'cotisation', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -101,11 +102,10 @@ class Subscriptions extends DolibarrApi
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
 				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -126,15 +126,12 @@ class Subscriptions extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$subscription = new Subscription($this->db);
 				if ($subscription->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($subscription);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($subscription), $properties);
 				}
 				$i++;
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieve subscription list : '.$this->db->lasterror());
-		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No Subscription found');
 		}
 
 		return $obj_ret;
@@ -148,7 +145,7 @@ class Subscriptions extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->cotisation->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'cotisation', 'creer')) {
 			throw new RestException(401);
 		}
 		// Check mandatory fields
@@ -156,6 +153,12 @@ class Subscriptions extends DolibarrApi
 
 		$subscription = new Subscription($this->db);
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$subscription->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$subscription->$field = $value;
 		}
 		if ($subscription->create(DolibarrApiAccess::$user) < 0) {
@@ -173,7 +176,7 @@ class Subscriptions extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'creer')) {
 			throw new RestException(401);
 		}
 
@@ -187,6 +190,12 @@ class Subscriptions extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$subscription->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$subscription->$field = $value;
 		}
 
@@ -206,7 +215,7 @@ class Subscriptions extends DolibarrApi
 	public function delete($id)
 	{
 		// The right to delete a subscription comes with the right to create one.
-		if (!DolibarrApiAccess::$user->rights->adherent->cotisation->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'cotisation', 'creer')) {
 			throw new RestException(401);
 		}
 		$subscription = new Subscription($this->db);

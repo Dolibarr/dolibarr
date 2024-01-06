@@ -60,8 +60,8 @@ if (defined('PHP-BARCODE_PATH_COMMAND')) {
 	$genbarcode_loc = constant('PHP-BARCODE_PATH_COMMAND');
 } else {
 	$genbarcode_loc = '';
-	if (!empty($conf->global->GENBARCODE_LOCATION)) {
-		$genbarcode_loc = $conf->global->GENBARCODE_LOCATION;
+	if (getDolGlobalString('GENBARCODE_LOCATION')) {
+		$genbarcode_loc = getDolGlobalString('GENBARCODE_LOCATION');
 	}
 }
 
@@ -257,7 +257,7 @@ function barcode_encode_ean($ean, $encoding = "EAN-13")
 		if ($a > 0) {
 			$text .= " ";
 		}
-		$text .= "$pos:12:{$ean[$a]}";
+		$text .= $pos.":12:".$ean[$a];
 		if ($a == 0) {
 			$pos += 12;
 		} elseif ($a == 6) {
@@ -305,7 +305,7 @@ function barcode_encode_upc($upc, $encoding = "UPC")
 		if ($a > 1) {
 			$text .= " ";
 		}
-		$text .= "$pos:12:{$upc[$a]}";
+		$text .= $pos.":12:".$upc[$a];
 		if ($a == 1) {
 			$pos += 15;
 		} elseif ($a == 6) {
@@ -334,7 +334,7 @@ function barcode_encode_upc($upc, $encoding = "UPC")
  */
 function barcode_encode_genbarcode($code, $encoding)
 {
-	global $genbarcode_loc;
+	global $conf, $db, $genbarcode_loc;
 
 	// Clean parameters
 	if (preg_match("/^ean$/i", $encoding) && strlen($code) == 13) {
@@ -343,27 +343,34 @@ function barcode_encode_genbarcode($code, $encoding)
 	if (!$encoding) {
 		$encoding = "ANY";
 	}
-	$encoding = preg_replace("/[\\\|]/", "_", $encoding);
-	$code = preg_replace("/[\\\|]/", "_", $code);
+	$encoding = dol_string_nospecial($encoding, '_');
+	$code = dol_string_nospecial($code, "_");
 
 	$command = escapeshellarg($genbarcode_loc);
-	//$paramclear=" \"".str_replace("\"", "\\\"",$code)."\" \"".str_replace("\"", "\\\"",strtoupper($encoding))."\"";
 	$paramclear = " ".escapeshellarg($code)." ".escapeshellarg(strtoupper($encoding));
 
 	$fullcommandclear = $command." ".$paramclear." 2>&1";
 	//print $fullcommandclear."<br>\n";exit;
 
 	dol_syslog("Run command ".$fullcommandclear);
-	$fp = popen($fullcommandclear, "r");
-	if ($fp) {
-		$bars = fgets($fp, 1024);
-		$text = fgets($fp, 1024);
-		$encoding = fgets($fp, 1024);
-		pclose($fp);
+
+	$outputfile = $conf->user->dir_temp.'/genbarcode.tmp'; // File used with popen method
+
+	// Execute a CLI
+	include_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
+	$utils = new Utils($db);
+	$result = $utils->executeCLI($fullcommandclear, $outputfile);
+
+	if (!empty($result['output'])) {
+		$tmparr = explode("\n", $result['output']);
+		$bars = $tmparr[0];
+		$text = $tmparr[1];
+		$encoding = $tmparr[2];
 	} else {
-		dol_syslog("barcode.lib.php::barcode_encode_genbarcode failed to run popen ".$fullcommandclear, LOG_ERR);
+		dol_syslog("barcode.lib.php::barcode_encode_genbarcode failed to run ".$fullcommandclear, LOG_ERR);
 		return false;
 	}
+
 	//var_dump($bars);
 	$ret = array(
 		"bars" => trim($bars),
@@ -503,4 +510,39 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
 		header("Content-Type: image/png; name=\"barcode.png\"");
 		imagepng($im);
 	}
+}
+
+/**
+ * Check if EAN13 code is valid
+ *
+ * @param string $ean	Code
+ * @return bool
+ */
+function isAValidEAN13($ean)
+{
+	$sumEvenIndexes = 0;
+	$sumOddIndexes  = 0;
+
+	$eanAsArray = array_map('intval', str_split($ean));
+
+	if (!(count($eanAsArray) === 13)) {
+		return false;
+	};
+
+	$num = (count($eanAsArray) - 1);
+	for ($i = 0; $i < $num; $i++) {
+		if ($i % 2 === 0) {
+			$sumOddIndexes  += $eanAsArray[$i];
+		} else {
+			$sumEvenIndexes += $eanAsArray[$i];
+		}
+	}
+
+	$rest = ($sumOddIndexes + (3 * $sumEvenIndexes)) % 10;
+
+	if ($rest !== 0) {
+		$rest = 10 - $rest;
+	}
+
+	return $rest === $eanAsArray[12];
 }

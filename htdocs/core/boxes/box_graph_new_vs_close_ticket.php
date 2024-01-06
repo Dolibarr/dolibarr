@@ -30,7 +30,6 @@ require_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
  */
 class box_graph_new_vs_close_ticket extends ModeleBoxes
 {
-
 	public $boxcode = "box_nb_tickets_type";
 	public $boximg = "ticket";
 	public $boxlabel;
@@ -85,7 +84,7 @@ class box_graph_new_vs_close_ticket extends ModeleBoxes
 			'limit' => dol_strlen($text)
 		);
 
-		if ($user->rights->ticket->read) {
+		if ($user->hasRight('ticket', 'read')) {
 			$data = array();
 			$totalnb = 0;
 			$sql = "SELECT COUNT(t.datec) as nb";
@@ -157,14 +156,14 @@ class box_graph_new_vs_close_ticket extends ModeleBoxes
 				);
 			} else {
 				$this->info_box_contents[0][0] = array(
-					'td' => 'class="center opacitymedium"',
-					'text' => $langs->trans("BoxNoTicketSeverity"),
+					'td' => 'class="center"',
+					'text' => '<span class="opacitymedium">'.$langs->trans("BoxNoTicketSeverity").'</span>'
 				);
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
 				'td' => 'class="left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed"),
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}
