@@ -1676,6 +1676,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				$out .= '<input type="hidden" name="socid" value="'.$object->id.'">';
 				$out .= '<input type="hidden" name="companybankid" value="'.$rib->id.'">';
 
+				$modelselected = '';
 				if (count($modellist) == 1) {    // If there is only one element
 					$arraykeys = array_keys($modellist);
 					$modelselected = $arraykeys[0];
