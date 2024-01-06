@@ -1687,8 +1687,6 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				$out .= $form->selectarray('modelrib'.$rib->id, $modellist, $modelselected, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth125');
 				$out .= ajax_combobox('modelrib'.$rib->id);
 
-				$allowgenifempty = 0;
-
 				// Language code (if multilang)
 				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
@@ -1701,7 +1699,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					$out .= $formadmin->select_language($defaultlang, 'lang_idrib'.$rib->id, 0, 0, 0, 0, 0, $morecss);
 				}
 				// Button
-				$out = '<input class="button buttongen reposition nomargintop nomarginbottom" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
+				$out .= '<input class="button buttongen reposition nomargintop nomarginbottom" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
 				$out .= ' type="submit" value="'.$buttonlabel.'"';
 				$out .= '>';
 				$out .= '</form>';
