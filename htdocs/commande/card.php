@@ -1978,13 +1978,13 @@ if ($action == 'create' && $usercancreate) {
 			print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), !empty($objectsrc->fk_incoterms) ? $objectsrc->fk_incoterms : $soc->fk_incoterms, 1).'</label></td>';
 			print '<td class="maxwidthonsmartphone">';
 			$incoterm_id = GETPOST('incoterm_id');
-			$incoterm_location = GETPOST('location_incoterms');
+			$location_incoterms = GETPOST('location_incoterms');
 			if (empty($incoterm_id)) {
 				$incoterm_id = (!empty($objectsrc->fk_incoterms) ? $objectsrc->fk_incoterms : $soc->fk_incoterms);
-				$incoterm_location = (!empty($objectsrc->location_incoterms) ? $objectsrc->location_incoterms : $soc->location_incoterms);
+				$location_incoterms = (!empty($objectsrc->location_incoterms) ? $objectsrc->location_incoterms : $soc->location_incoterms);
 			}
 			print img_picto('', 'incoterm', 'class="pictofixedwidth"');
-			print $form->select_incoterms($incoterm_id, $incoterm_location);
+			print $form->select_incoterms($incoterm_id, $location_incoterms);
 			print '</td></tr>';
 		}
 
