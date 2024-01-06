@@ -4285,7 +4285,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 		'MAIN_MODULE_SERVICE' => array('class' => 'modService'),
 		'MAIN_MODULE_COMMANDE' => array('class' => 'modCommande'),
 		'MAIN_MODULE_FACTURE' => array('class' => 'modFacture'),
-		'MAIN_MODULE_FICHEINTER' => array('class' => 'modFicheInter'),
+		'MAIN_MODULE_FICHEINTER' => array('class' => 'modFicheinter'),
 		'MAIN_MODULE_FOURNISSEUR' => array('class' => 'modFournisseur'),
 		'MAIN_MODULE_HOLIDAY' => array('class' => 'modHoliday', 'remove'=>1),
 		'MAIN_MODULE_EXPEDITION' => array('class' => 'modExpedition'),
