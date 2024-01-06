@@ -2076,8 +2076,6 @@ td.showDragHandle {
 }
 
 .side-nav {
-	/*display: block;
-	float: left; */
 	display: table-cell;
 	border-<?php echo $right; ?>: 1px solid #ECECEC;
 	box-shadow: 3px 0 6px -2px #eee;
