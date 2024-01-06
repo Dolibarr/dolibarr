@@ -1082,10 +1082,21 @@ class RecruitmentCandidature extends CommonObject
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		if (property_exists($this, 'fk_recruitmentjobposition')) {
-			$return .= '<br><span class="opacitymedium">'.$langs->trans('Job').'</span> : <span class="info-box-label">'.$this->fk_recruitmentjobposition.'</span>';
+			$return .= '<br>';
+			//$return .= '<span class="opacitymedium">';
+			//$return .= $langs->trans('Job').'</span> : ';
+			$return .= '<span class="info-box-label">';
+			$tmpjob = new RecruitmentJobPosition($this->db);
+			$tmpjob->fetch($this->fk_recruitmentjobposition);
+			//$return .= $this->fk_recruitmentjobposition;
+			$return .= $tmpjob->label;
+			$return .= '</span>';
 		}
-		if (property_exists($this, 'phone')) {
-			$return .= '<br><span class="opacitymedium">'.$langs->trans("phone").'</span> : <span class="info-box-label">'.$this->phone.'</span>';
+		if (property_exists($this, 'phone') && $this->phone) {
+			$return .= '<br><span class="info-box-label opacitymedium small">'.img_picto('', 'phone').' '.$this->phone.'</span>';
+		}
+		if (property_exists($this, 'email') && $this->email) {
+			$return .= '<br><span class="info-box-label opacitymedium small">'.img_picto('', 'email').' '.$this->email.'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
 			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';

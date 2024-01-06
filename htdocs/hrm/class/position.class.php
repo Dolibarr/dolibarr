@@ -1158,7 +1158,7 @@ class Position extends CommonObject
 			$return .= '<br><span class="info-box-label ">'.$arraydata['job'].'</span>';
 		}
 		if (property_exists($this, 'date_start') && property_exists($this, 'date_end')) {
-			$return .= '<br><div class ="margintoponly"><span class="info-box-label ">'.dol_print_date($this->db->jdate($this->date_start), 'day').'</span>';
+			$return .= '<br><div class ="nothing"><span class="info-box-label ">'.dol_print_date($this->db->jdate($this->date_start), 'day').'</span>';
 			$return .= ' - <span class="info-box-label ">'.dol_print_date($this->db->jdate($this->date_end), 'day').'</span></div>';
 		}
 		$return .= '</div>';

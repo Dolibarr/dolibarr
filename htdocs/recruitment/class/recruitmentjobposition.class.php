@@ -1135,21 +1135,19 @@ class RecruitmentJobPosition extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).($this->qty > 1 ? ' <span title="'.$langs->trans("NbOfEmployeesExpected").'">('.$this->qty.')</span>' : '').'</span>';
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
+		/*
 		if (property_exists($this, 'date_planned')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Date").'</span> : <span class="info-box-label">'.dol_print_date($this->db->jdate($this->date_planned), 'day').'</span>';
-		}
-		if (property_exists($this, 'qty')) {
-			$return .= '<br><span class="opacitymedium" title="'.$langs->trans("NbOfEmployeesExpected").'">'.$langs->trans("NbOfEmployeesExpected", '', '', '', '', 2).'</span> : <span class="info-box-label">'.$this->qty.'</span>';
-		}
+		}*/
 		if (property_exists($this, 'remuneration_suggested')) {
-			$return .= ' | <span class="opacitymedium">'.$langs->trans("Remuneration").'</span> : <span class="info-box-label">'.$this->remuneration_suggested.'</span>';
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Remuneration").'</span> : <span class="info-box-label">'.$this->remuneration_suggested.'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).' | <span class="opacitymedium" title="'.$langs->trans("RecruitmentCandidatures").'">'.$langs->trans("RecruitmentCandidatures", '', '', '', '', 5).'</span> : <span>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).' &nbsp; <span class="opacitymedium" title="'.$langs->trans("RecruitmentCandidatures").'">'.$langs->trans("RecruitmentCandidatures", '', '', '', '', 5).'</span> : <span>';
 			$return .= $arraydata['nbapplications'];
 			$return .= '</span></div>';
 		}
