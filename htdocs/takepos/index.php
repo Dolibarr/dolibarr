@@ -1082,21 +1082,24 @@ if (!getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 			<div id="topnav-right" class="topnav-right">
 				<?php
 				$reshook = $hookmanager->executeHooks('takepos_login_block_other');
-				if ($reshook == 0) {  //Search method?>
+				if ($reshook == 0) {  //Search method
+					?>
 					<div class="login_block_other">
-				<input type="text" id="search" name="search" class="input-nobottom" onkeyup="Search2('<?php echo dol_escape_js($keyCodeForEnter); ?>', null);" placeholder="<?php echo dol_escape_htmltag($langs->trans("Search")); ?>" autofocus>
-					<a onclick="ClearSearch(false);"><span class="fa fa-backspace"></span></a>
+					<input type="text" id="search" name="search" class="input-nobottom" onkeyup="Search2('<?php echo dol_escape_js($keyCodeForEnter); ?>', null);" placeholder="<?php echo dol_escape_htmltag($langs->trans("Search")); ?>" autofocus>
+					<a onclick="ClearSearch(false);" class="nohover"><span class="fa fa-backspace"></span></a>
 					<a href="<?php echo DOL_URL_ROOT.'/'; ?>" target="backoffice" rel="opener"><!-- we need rel="opener" here, we are on same domain and we need to be able to reuse this tab several times -->
 					<span class="fas fa-home"></span></a>
-								<?php if (empty($conf->dol_use_jmobile)) {?>
-						<a class="hideonsmartphone" onclick="FullScreen();" title="<?php echo dol_escape_htmltag($langs->trans("ClickFullScreenEscapeToLeave")); ?>"><span class="fa fa-expand-arrows-alt"></span></a>
-								<?php }?>
+					<?php if (empty($conf->dol_use_jmobile)) { ?>
+					<a class="hideonsmartphone" onclick="FullScreen();" title="<?php echo dol_escape_htmltag($langs->trans("ClickFullScreenEscapeToLeave")); ?>"><span class="fa fa-expand-arrows-alt"></span></a>
+					<?php } ?>
 					</div>
 					<?php
-				} ?>
+				}
+				?>
 				<div class="login_block_user">
 				<?php
-				print top_menu_user(1); ?>
+				print top_menu_user(1);
+				?>
 				</div>
 			</div>
 			<div class="arrows">
