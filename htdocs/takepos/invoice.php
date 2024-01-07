@@ -486,7 +486,7 @@ if (empty($reshook)) {
 	}
 
 	// If we add a line and no invoice yet, we create the invoice
-	if (($action == "addline" || $action == "freezone") && $placeid == 0 && $user->hasRight('facture', 'creer')) {
+	if (($action == "addline" || $action == "freezone") && $placeid == 0 && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
 		$invoice->socid = getDolGlobalString($constforcompanyid);
 		$invoice->date = dol_now('tzuserrel');		// We use the local date, only the day will be saved.
 		$invoice->module_source = 'takepos';
@@ -507,7 +507,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == "addline" && $user->hasRight('facture', 'creer')) {
+	if ($action == "addline" && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
 		$prod = new Product($db);
 		$prod->fetch($idproduct);
 
@@ -695,7 +695,7 @@ if (empty($reshook)) {
 		$invoice->fetch($placeid);
 	}
 
-	if ($action == "freezone" && $user->hasRight('facture', 'creer')) {
+	if ($action == "freezone" && $user->hasRight('takepos', 'run')) {
 		$customer = new Societe($db);
 		$customer->fetch($invoice->socid);
 
@@ -716,7 +716,7 @@ if (empty($reshook)) {
 		$invoice->fetch($placeid);
 	}
 
-	if ($action == "addnote" && $user->hasRight('facture', 'creer')) {
+	if ($action == "addnote" && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
 		$desc = GETPOST('addnote', 'alpha');
 		if ($idline==0) {
 			$invoice->update_note($desc, '_public');
@@ -730,8 +730,18 @@ if (empty($reshook)) {
 		$invoice->fetch($placeid);
 	}
 
-	if ($action == "deleteline" && $user->hasRight('facture', 'creer')) {
-		if ($idline > 0 and $placeid > 0) { // If invoice exists and line selected. To avoid errors if deleted from another device or no line selected.
+	if ($action == "deleteline" && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
+		/*
+		$permissiontoupdateline = ($user->hasRight('takepos', 'editlines') && ($user->hasRight('takepos', 'editorderedlines') || $line->special_code != "4"));
+		if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+			if ($invoice->status == $invoice::STATUS_DRAFT && $invoice->pos_source && $invoice->module_source == 'takepos') {
+				$permissiontoupdateline = true;
+				// TODO Add also a test on $_SESSION('publicobjectid'] defined at creation of object
+				// TODO Check also that invoice->ref is (PROV-POS1-2) with 1 = terminal and 2, the invoice ID
+			}
+		}*/
+
+		if ($idline > 0 && $placeid > 0) { // If invoice exists and line selected. To avoid errors if deleted from another device or no line selected.
 			$invoice->deleteline($idline);
 			$invoice->fetch($placeid);
 		} elseif ($placeid > 0) {             // If invoice exists but no line selected, proceed to delete last line.
@@ -742,15 +752,20 @@ if (empty($reshook)) {
 			$invoice->deleteline($deletelineid);
 			$invoice->fetch($placeid);
 		}
+
 		if (count($invoice->lines) == 0) {
 			$invoice->delete($user);
-			header("Location: ".DOL_URL_ROOT."/takepos/invoice.php");
+			if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+				header("Location: ".DOL_URL_ROOT."/takepos/public/auto_order.php");
+			} else {
+				header("Location: ".DOL_URL_ROOT."/takepos/invoice.php");
+			}
 			exit;
 		}
 	}
 
 	// Action to delete or discard an invoice
-	if ($action == "delete" && $user->hasRight('facture', 'creer')) {
+	if ($action == "delete" && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
 		// $placeid is the invoice id (it differs from place) and is defined if the place is set and the ref of invoice is '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')', so the fetch at begining of page works.
 		if ($placeid > 0) {
 			$result = $invoice->fetch($placeid);
@@ -794,6 +809,7 @@ if (empty($reshook)) {
 					if ($invoice->status == $invoice::STATUS_DRAFT && $invoice->pos_source && $invoice->module_source == 'takepos') {
 						$permissiontoupdateline = true;
 						// TODO Add also a test on $_SESSION('publicobjectid'] defined at creation of object
+						// TODO Check also that invoice->ref is (PROV-POS1-2) with 1 = terminal and 2, the invoice ID
 					}
 				}
 				if (!$permissiontoupdateline) {
@@ -830,6 +846,7 @@ if (empty($reshook)) {
 						if ($invoice->status == $invoice::STATUS_DRAFT && $invoice->pos_source && $invoice->module_source == 'takepos') {
 							$permissiontoupdateline = true;
 							// TODO Add also a test on $_SESSION('publicobjectid'] defined at creation of object
+							// TODO Check also that invoice->ref is (PROV-POS1-2) with 1 = terminal and 2, the invoice ID
 						}
 					}
 					if (!$permissiontoupdateline) {
@@ -874,6 +891,7 @@ if (empty($reshook)) {
 						if ($invoice->status == $invoice::STATUS_DRAFT && $invoice->pos_source && $invoice->module_source == 'takepos') {
 							$permissiontoupdateline = true;
 							// TODO Add also a test on $_SESSION('publicobjectid'] defined at creation of object
+							// TODO Check also that invoice->ref is (PROV-POS1-2) with 1 = terminal and 2, the invoice ID
 						}
 					}
 					if (!$permissiontoupdateline) {
@@ -895,13 +913,13 @@ if (empty($reshook)) {
 		$invoice->fetch($placeid);
 	}
 
-	if ($action=="setbatch" && $user->hasRight('takepos', 'run')) {
+	if ($action=="setbatch" && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
 		$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set batch=".$db->escape($batch).", fk_warehouse=".getDolGlobalString($constantforkey)." where rowid=".((int) $idoflineadded);
 		$db->query($sql);
 	}
 
-	if ($action == "order" && $placeid != 0 && $user->hasRight('takepos', 'run')) {
+	if ($action == "order" && $placeid != 0 && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter" || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
@@ -1558,7 +1576,7 @@ if (!empty($_SESSION["basiclayout"]) && $_SESSION["basiclayout"] == 1) {
 		$htmlforlines = '';
 		foreach ($categories as $row) {
 			if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-				$htmlforlines .= '<div class="leftcat';
+				$htmlforlines .= '<div id="leftcat" class="leftcat';
 			} else {
 				$htmlforlines .= '<tr class="drag drop oddeven posinvoiceline';
 			}
@@ -1576,7 +1594,6 @@ if (!empty($_SESSION["basiclayout"]) && $_SESSION["basiclayout"] == 1) {
 			}
 		}
 		$htmlforlines .= '</table>';
-		$htmlforlines .= '</table>';
 		print $htmlforlines;
 	}
 
@@ -1589,7 +1606,7 @@ if (!empty($_SESSION["basiclayout"]) && $_SESSION["basiclayout"] == 1) {
 		$htmlforlines = '';
 		foreach ($prods as $row) {
 			if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-				$htmlforlines .= '<div class="leftcat"';
+				$htmlforlines .= '<div id="rightproduct" class="leftcat"';
 			} else {
 				$htmlforlines .= '<tr class="drag drop oddeven posinvoiceline"';
 			}

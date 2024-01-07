@@ -47,7 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 
 if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-	// Decode place if it is an order from customer phone
+	// Decode place if it is an order from a customer phone
 	$place = GETPOSTISSET("key") ? dol_decode(GETPOST('key')) : GETPOST('place', 'aZ09');
 } else {
 	$place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Ba or Restaurant
@@ -55,6 +55,7 @@ if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 $action = GETPOST('action', 'aZ09');
 $setterminal = GETPOST('setterminal', 'int');
 $idproduct = GETPOST('idproduct', 'int');
+$mobilepage = GETPOST('mobilepage', 'alphanohtml');	// Set when page is loaded by a js .load()
 
 if ($setterminal > 0) {
 	$_SESSION["takeposterminal"] = $setterminal;
@@ -71,8 +72,8 @@ if (!$user->hasRight('takepos', 'run') && !defined('INCLUDE_PHONEPAGE_FROM_PUBLI
  * View
  */
 
-if (empty($action)) {
-	// Code for llxHeader()
+// llxHeader
+if (empty($mobilepage) && (empty($action) || ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->layout == 'phone') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')))) {
 	$title = 'TakePOS - Dolibarr '.DOL_VERSION;
 	if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 		$title = 'TakePOS - ' . getDolGlobalString('MAIN_APPLICATION_TITLE');
@@ -81,15 +82,19 @@ if (empty($action)) {
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="mobile-web-app-capable" content="yes">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>';
-	$arrayofcss = array('/takepos/css/phone.css');
+	$arrayofcss = array(
+		'/takepos/css/phone.css',
+	);
+	$arrayofjs = array('/takepos/js/jquery.colorbox-min.js');
+	$disablejs = 0;
+	$disablehead = 0;
+	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
-	top_htmlhead($head, $title, 0, 0, '', $arrayofcss);
+	print '<body style="background-color:#D1D1D1;">'."\n";
 } else {
-	top_htmlhead('');
+	top_httphead('text/html', 1);
 }
 
-//llxHeader();
-print '<body style="background-color:#D1D1D1;">';
 
 if ($action == "productinfo") {
 	$prod = new Product($db);
@@ -104,37 +109,41 @@ if ($action == "productinfo") {
 	print '<button type="button" class="publicphonebutton2 phoneblue total" onclick="TakeposPrintingOrder();">'.$langs->trans('Confirm').'</button>';
 	print "<br><br>";
 	print '<div class="comment">
-            <textarea class="textinput" placeholder="'.$langs->trans('Note').'"></textarea>
+            <textarea class="textinput " placeholder="'.$langs->trans('Note').'"></textarea>
 			</div>';
 	print '<br>';
 } elseif ($action == "publicpayment") {
 	$langs->loadLangs(array("orders"));
-	print '<h1>'.$langs->trans('StatusOrderDelivered').'</h1>';
+	print '<h1>'.$langs->trans('Ordered').'</h1>';
 	print '<button type="button" class="publicphonebutton2 phoneblue total" onclick="CheckPlease();">'.$langs->trans('Payment').'</button>';
 	print '<br>';
 } elseif ($action == "checkplease") {
 	if (GETPOSTISSET("payment")) {
-		print '<h1>'.$langs->trans('StatusOrderDelivered').'</h1>';
+		print '<h1>'.$langs->trans('Ordered').'</h1>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$printer = new dolReceiptPrinter($db);
 		$printer->initPrinter(getDolGlobalString('TAKEPOS_PRINTER_TO_USE'.$_SESSION["takeposterminal"]));
-		$printer->printer->feed();
-		$printer->printer->feed();
-		$printer->printer->text($langs->trans('IM'));
-		$printer->printer->feed();
-		$printer->printer->text($langs->trans('Place').": ".$place);
-		$printer->printer->feed();
-		$printer->printer->text($langs->trans('Payment').": ".$langs->trans(GETPOST('payment', 'alpha')));
-		$printer->printer->feed();
-		$printer->printer->feed();
-		$printer->printer->feed();
-		$printer->printer->feed();
-		$printer->printer->feed();
-		$printer->close();
+		if ($printer->getPrintConnector()) {
+			if (!is_null($printer->printer)) {
+				$printer->printer->feed();
+				$printer->printer->feed();
+				$printer->printer->text($langs->trans('IM'));
+				$printer->printer->feed();
+				$printer->printer->text($langs->trans('Place').": ".$place);
+				$printer->printer->feed();
+				$printer->printer->text($langs->trans('Payment').": ".$langs->trans(GETPOST('payment', 'alpha')));
+				$printer->printer->feed();
+				$printer->printer->feed();
+				$printer->printer->feed();
+				$printer->printer->feed();
+				$printer->printer->feed();
+			}
+			$printer->close();
+		}
 	} else {
-		print '<button type="button" class="publicphonebutton2 phoneblue total" onclick="CheckPlease(\'Cash\')">'.$langs->trans('Cash').'</button>';
-		print '<button type="button" class="publicphonebutton2 phoneblue total" onclick="CheckPlease(\'CreditCard\')">'.$langs->trans('CreditCard').'</button>';
+		print '<button type="button" class="publicphonebutton2 phoneblue total marginbottomonly" onclick="CheckPlease(\'Cash\')">'.$langs->trans('Cash').'</button>';
+		print '<button type="button" class="publicphonebutton2 phoneblue total marginbottomonly" onclick="CheckPlease(\'CreditCard\')">'.$langs->trans('CreditCard').'</button>';
 		print '<br>';
 	}
 } elseif ($action == "editline") {
@@ -159,18 +168,21 @@ if ($action == "productinfo") {
 } else {
 	?>
 	<div class="container">
-	<div class="phonebuttonsrow">
-	<?php
-	if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-		print '<button type="button" class="phonebutton uppercase" onclick="LoadPlacesList();">'.dol_trunc($langs->trans('Floors'), 5, 'right', 'UTF-8').'</button>';
-		print '<button type="button" class="phonebutton uppercase" onclick="LoadCats();">'.dol_trunc($langs->trans('Categories'), 5, 'right', 'UTF-8').'</button>';
-		print '<button type="button" class="phonebutton uppercase" onclick="TakeposPrintingOrder();">'.dol_trunc($langs->trans('Order'), 5, 'right', 'UTF-8').'</button>';
-		print '<button type="button" class="phonebutton uppercase" onclick="Exit();">'.dol_trunc($langs->trans('Logout'), 5, 'right', 'UTF-8').'</button>';
-	} else {
-		print '<button type="button" class="publicphonebutton phoneblue uppercase" onclick="LoadCats();">'.dol_trunc($langs->trans('Categories'), 8, 'right', 'UTF-8').'</button>';
-		print '<button type="button" class="publicphonebutton phoneorange uppercase" onclick="PublicPreOrder();">'.dol_trunc($langs->trans('Order'), 8, 'right', 'UTF-8').'</button>';
-		print '<button type="button" class="publicphonebutton phonegreen uppercase" onclick="CheckPlease();">'.dol_trunc($langs->trans('Payment'), 8, 'right', 'UTF-8').'</button>';
-	} ?>
+		<div class="phonebuttonsrow center">
+		<?php
+		if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+			print '<button type="button" class="phonebutton uppercase" onclick="LoadPlacesList();">'.dol_trunc($langs->trans('Floors'), 5, 'right', 'UTF-8').'</button>';
+			print '<button type="button" class="phonebutton uppercase" onclick="LoadCats();">'.dol_trunc($langs->trans('Categories'), 5, 'right', 'UTF-8').'</button>';
+			print '<button type="button" class="phonebutton uppercase" onclick="TakeposPrintingOrder();">'.dol_trunc($langs->trans('Order'), 5, 'right', 'UTF-8').'</button>';
+			print '<button type="button" class="phonebutton uppercase" onclick="CheckPlease();">'.dol_trunc($langs->trans('Payment'), 5, 'right', 'UTF-8').'</button>';
+			print '<button type="button" class="phonebutton uppercase" onclick="Exit();">'.dol_trunc($langs->trans('Logout'), 5, 'right', 'UTF-8').'</button>';
+		} else {
+			print '<button type="button" class="publicphonebutton phoneblue uppercase" onclick="LoadCats();">'.dol_trunc($langs->trans('Categories'), 8, 'right', 'UTF-8').'</button>';
+			print '<button type="button" class="publicphonebutton phoneorange uppercase" onclick="PublicPreOrder();">'.dol_trunc($langs->trans('Order'), 8, 'right', 'UTF-8').'</button>';
+			// Do not show the payment link when order done from public page (a customer must not be able to set its order to paid himself)
+			//print '<button type="button" class="publicphonebutton phonegreen uppercase" onclick="CheckPlease();">'.dol_trunc($langs->trans('Payment'), 8, 'right', 'UTF-8').'</button>';
+		}
+		?>
 		</div>
 		<div class="phonerow2">
 			<div id="phonediv2" class="phonediv2"></div>
@@ -233,12 +245,13 @@ if ($action == "productinfo") {
 		place=placeid;
 		<?php
 		if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-			echo '$("#phonediv2").load("auto_order.php?mobilepage=invoice&place="+place, function() {
+			echo '$("#phonediv2").load("auto_order.php?mobilepage=invoice&place="+place+" #tablelines", function() {
 			});';
 		} else {
-			echo '$("#phonediv2").load("invoice.php?mobilepage=invoice&place="+place, function() {
+			echo '$("#phonediv2").load("invoice.php?mobilepage=invoice&place="+place+" #tablelines", function() {
 			});';
-		} ?>
+		}
+		?>
 		LoadCats();
 	}
 
@@ -313,22 +326,22 @@ if ($action == "productinfo") {
 	function LoadCats(){
 		<?php
 		if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-			echo '$("#phonediv1").load("auto_order.php?mobilepage=cats&place="+place, function() {
+			echo '$("#phonediv1").load("auto_order.php?mobilepage=cats&place="+place+" #leftcat", function() {
 			});';
 		} else {
-			echo '$("#phonediv1").load("invoice.php?mobilepage=cats&place="+place, function() {
+			echo '$("#phonediv1").load("invoice.php?mobilepage=cats&place="+place+" #leftcat", function() {
 			});';
-		} ?>
+		}
+		?>
 	}
 
-	function LoadProducts(idcat){
-
+	function LoadProducts(idcat) {
 		<?php
 		if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-			echo '$("#phonediv1").load("auto_order.php?mobilepage=products&catid="+idcat+"&place="+place, function() {
+			echo '$("#phonediv1").load("auto_order.php?mobilepage=products&catid="+idcat+"&place="+place+" #rightproduct", function() {
 			});';
 		} else {
-			echo '$("#phonediv1").load("invoice.php?mobilepage=products&catid="+idcat+"&place="+place, function() {
+			echo '$("#phonediv1").load("invoice.php?mobilepage=products&catid="+idcat+"&place="+place+" #rightproduct", function() {
 			});';
 		} ?>
 	}
@@ -377,6 +390,12 @@ if ($action == "productinfo") {
 	}
 }
 
-llxFooter();
+if (empty($mobilepage) && (empty($action) || ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->layout == 'phone') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')))) {
+	print '</body>';
+	print '</html>';
+} else {
+	// Case file is loaded by a js .load()
+}
+
 
 $db->close();
