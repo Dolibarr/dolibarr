@@ -35,17 +35,7 @@ class box_activity extends ModeleBoxes
 	public $boxlabel = 'BoxGlobalActivity';
 	public $depends = array("facture");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
 	public $enabled = 1;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor

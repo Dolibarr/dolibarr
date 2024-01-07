@@ -33,16 +33,7 @@ class box_graph_orders_permonth extends ModeleBoxes
 	public $boxlabel = "BoxCustomersOrdersPerMonth";
 	public $depends  = array("commande");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 	public $widgettype = 'graph';
-
 
 	/**
 	 *  Constructor

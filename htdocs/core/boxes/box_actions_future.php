@@ -37,16 +37,7 @@ class box_actions_future extends ModeleBoxes
 	public $boxlabel = "BoxTitleFutureActions";
 	public $depends = array("agenda");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
 	public $enabled = 1;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor

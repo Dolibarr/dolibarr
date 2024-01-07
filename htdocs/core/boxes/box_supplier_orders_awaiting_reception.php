@@ -36,16 +36,6 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 	public $depends  = array("fournisseur");
 
 	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
-
-	/**
 	 *  Constructor
 	 *
 	 *  @param  DoliDB  $db         Database handler

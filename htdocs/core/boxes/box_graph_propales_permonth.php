@@ -33,16 +33,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 	public $boxlabel = "BoxProposalsPerMonth";
 	public $depends  = array("propal");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 	public $widgettype = 'graph';
-
 
 	/**
 	 *  Constructor

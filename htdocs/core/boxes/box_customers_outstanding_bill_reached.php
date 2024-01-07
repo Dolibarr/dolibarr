@@ -37,16 +37,7 @@ class box_customers_outstanding_bill_reached extends ModeleBoxes
 	public $boxlabel = "BoxCustomersOutstandingBillReached";
 	public $depends = array("facture", "societe");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
 	public $enabled = 1;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor
@@ -56,7 +47,7 @@ class box_customers_outstanding_bill_reached extends ModeleBoxes
 	 */
 	public function __construct($db, $param = '')
 	{
-		global $conf, $user;
+		global $user;
 
 		$this->db = $db;
 
