@@ -262,7 +262,9 @@ if (isModEnabled("banque")) {
 }
 
 if (isModEnabled('stock')) {
-	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskDoNotDecreaseStock").'</td>'; // Force warehouse (this is not a default value)
+	print '<tr class="oddeven"><td>';
+	print $form->textwithpicto($langs->trans("CashDeskDoNotDecreaseStock"), $langs->trans("CashDeskDoNotDecreaseStockHelp"));
+	print '</td>'; // Force warehouse (this is not a default value)
 	print '<td>';
 	print $form->selectyesno('CASHDESK_NO_DECREASE_STOCK'.$terminal, getDolGlobalInt('CASHDESK_NO_DECREASE_STOCK'.$terminal), 1);
 	print '</td></tr>';

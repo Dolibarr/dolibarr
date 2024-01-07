@@ -392,6 +392,13 @@ print '<td>';
 print ajax_constantonoff("TAKEPOS_SHOW_HT", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
 
+// Use price excl. taxes (HT) and not price incl. taxes (TTC)
+print '<tr class="oddeven"><td>';
+print $langs->trans('UsePriceHT');
+print '</td><td>';
+print ajax_constantonoff("TAKEPOS_CHANGE_PRICE_HT", array(), $conf->entity, 0, 0, 1, 0);
+print "</td></tr>\n";
+
 // Barcode rule to insert product
 if (isModEnabled('barcode')) {
 	print '<tr class="oddeven"><td>';
