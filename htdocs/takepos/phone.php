@@ -333,7 +333,7 @@ if ($action == "productinfo") {
 		<?php
 		if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 			// Load invoice.php to get categories by using auto_order so it will define INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE
-			echo '$("#phonediv1").load("'.DOL_URL_ROOT.'/takepos/public/auto_order.php?mobilepage=cats&place="+place+"", function() {
+			echo '$("#phonediv1").load("'.DOL_URL_ROOT.'/takepos/public/auto_order.php?format=div&mobilepage=cats&place="+place+" #tablelines", function() {
 			});';
 		} else {
 			echo '$("#phonediv1").load("'.DOL_URL_ROOT.'/takepos/invoice.php?mobilepage=cats&place="+place+"", function() {
@@ -400,12 +400,8 @@ if ($action == "productinfo") {
 	}
 }
 
-if (empty($mobilepage) && (empty($action) || ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->layout == 'phone') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')))) {
-	print '</body>';
-	print '</html>';
-} else {
-	// Case file is loaded by a js .load()
-}
+print '</body>';
+print '</html>';
 
 
 $db->close();
