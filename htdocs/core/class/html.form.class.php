@@ -761,7 +761,6 @@ class Form
 		if (preg_match('/onsmartphone$/', $tooltiptrigger) && empty($conf->dol_no_mouse_hover)) {
 			$tooltiptrigger = preg_replace('/^.*onsmartphone$/', '', $tooltiptrigger);
 		}
-
 		$alt = '';
 		if ($tooltiptrigger) {
 			$alt = $langs->transnoentitiesnoconv("ClickToShowHelp");
