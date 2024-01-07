@@ -1145,7 +1145,7 @@ $(document).ready(function() {
 		selectedtext=$('#'+selectedline).find("td:first").html();
 		<?php
 		if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-			print '$("#phonediv1").load("auto_order.php?action=editline&token='.newToken().'&placeid="+placeid+"&selectedline="+selectedline, function() {
+			print '$("#phonediv1").load("'.DOL_URL_ROOT.'/takepos/public/auto_order.php?action=editline&token='.newToken().'&placeid="+placeid+"&selectedline="+selectedline, function() {
 			});';
 		}
 		?>
@@ -1485,7 +1485,6 @@ if (!empty($conf->use_javascript_ajax)) {
 }
 
 $usediv = (GETPOST('format') == 'div');
-$usediv = 0;
 
 print '<!-- invoice.php place='.(int) $place.' invoice='.$invoice->ref.' mobilepage='.(empty($mobilepage) ? '' : $mobilepage).' $_SESSION["basiclayout"]='.(empty($_SESSION["basiclayout"]) ? '' : $_SESSION["basiclayout"]).' conf TAKEPOS_BAR_RESTAURANT='.getDolGlobalString('TAKEPOS_BAR_RESTAURANT').' -->'."\n";
 print '<div class="div-table-responsive-no-min invoice">';
@@ -1501,6 +1500,8 @@ if ($sectionwithinvoicelink && ($mobilepage == "invoice" || $mobilepage == "")) 
 		print '<tr><td colspan="4">'.$sectionwithinvoicelink.'</td></tr>';
 	}
 }
+
+// Show the list of selected product
 if (!$usediv) {
 	print '<tr class="liste_titre nodrag nodrop">';
 	print '<td class="linecoldescription">';
@@ -1525,20 +1526,12 @@ if (!$usediv) {
 			//print 'mobilepage='.$mobilepage;
 			print '<span class="opacitymedium">'.$langs->trans('Place')."</span> <b>".(empty($label) ? '?' : $label)."</b><br>";
 			print '<span class="opacitymedium">'.$langs->trans('Floor')."</span> <b>".(empty($floor) ? '?' : $floor)."</b>";
-		} elseif (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-			print $mysoc->name;
-		} elseif ($mobilepage == "cats") {
-			print $langs->trans('Category');
-		} elseif ($mobilepage == "products") {
-			print $langs->trans('Label');
 		}
-	} else {
-		print $langs->trans("Products");
 	}
 	print '</td>';
 }
 
-// complete header by hook
+// Complete header by hook
 $parameters=array();
 $reshook=$hookmanager->executeHooks('completeTakePosInvoiceHeader', $parameters, $invoice, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
