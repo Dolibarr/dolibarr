@@ -1134,8 +1134,14 @@ $(document).ready(function() {
 		console.log("Click done on "+this.id);
 		$('.posinvoiceline').removeClass("selected");
 		$(this).addClass("selected");
-		if (selectedline==this.id) return; // If is already selected
-		else selectedline=this.id;
+		if (!this.id) {
+			return;
+		}
+		if (selectedline == this.id) {
+			return; // If is already selected
+		} else {
+			selectedline = this.id;
+		}
 		selectedtext=$('#'+selectedline).find("td:first").html();
 		<?php
 		if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
@@ -1478,9 +1484,16 @@ if (!empty($conf->use_javascript_ajax)) {
 	print '<script src="'.DOL_URL_ROOT.'/core/js/lib_foot.js.php?lang='.$langs->defaultlang.'"></script>'."\n";
 }
 
+$usediv = (GETPOST('format') == 'div');
+$usediv = 0;
+
 print '<!-- invoice.php place='.(int) $place.' invoice='.$invoice->ref.' mobilepage='.(empty($mobilepage) ? '' : $mobilepage).' $_SESSION["basiclayout"]='.(empty($_SESSION["basiclayout"]) ? '' : $_SESSION["basiclayout"]).' conf TAKEPOS_BAR_RESTAURANT='.getDolGlobalString('TAKEPOS_BAR_RESTAURANT').' -->'."\n";
 print '<div class="div-table-responsive-no-min invoice">';
-print '<table id="tablelines" class="noborder noshadow postablelines centpercent">';
+if ($usediv) {
+	print '<div id="tablelines">';
+} else {
+	print '<table id="tablelines" class="noborder noshadow postablelines centpercent">';
+}
 if ($sectionwithinvoicelink && ($mobilepage == "invoice" || $mobilepage == "")) {
 	if (getDolGlobalString('TAKEPOS_SHOW_HT')) {
 		print '<tr><td colspan="5">'.$sectionwithinvoicelink.'</td></tr>';
@@ -1488,38 +1501,42 @@ if ($sectionwithinvoicelink && ($mobilepage == "invoice" || $mobilepage == "")) 
 		print '<tr><td colspan="4">'.$sectionwithinvoicelink.'</td></tr>';
 	}
 }
-print '<tr class="liste_titre nodrag nodrop">';
-print '<td class="linecoldescription">';
+if (!$usediv) {
+	print '<tr class="liste_titre nodrag nodrop">';
+	print '<td class="linecoldescription">';
+}
 // In phone version only show when it is invoice page
 if (empty($mobilepage) || $mobilepage == "invoice") {
 	print '<!-- hidden var used by some js functions -->';
 	print '<input type="hidden" name="invoiceid" id="invoiceid" value="'.$invoice->id.'">';
 	print '<input type="hidden" name="thirdpartyid" id="thirdpartyid" value="'.$invoice->socid.'">';
 }
-if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
-	$sql = "SELECT floor, label FROM ".MAIN_DB_PREFIX."takepos_floor_tables where rowid=".((int) $place);
-	$resql = $db->query($sql);
-	$obj = $db->fetch_object($resql);
-	if ($obj) {
-		$label = $obj->label;
-		$floor = $obj->floor;
+if (!$usediv) {
+	if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
+		$sql = "SELECT floor, label FROM ".MAIN_DB_PREFIX."takepos_floor_tables where rowid=".((int) $place);
+		$resql = $db->query($sql);
+		$obj = $db->fetch_object($resql);
+		if ($obj) {
+			$label = $obj->label;
+			$floor = $obj->floor;
+		}
+		if ($mobilepage == "invoice" || $mobilepage == "") {
+			// If not on smartphone version or if it is the invoice page
+			//print 'mobilepage='.$mobilepage;
+			print '<span class="opacitymedium">'.$langs->trans('Place')."</span> <b>".(empty($label) ? '?' : $label)."</b><br>";
+			print '<span class="opacitymedium">'.$langs->trans('Floor')."</span> <b>".(empty($floor) ? '?' : $floor)."</b>";
+		} elseif (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+			print $mysoc->name;
+		} elseif ($mobilepage == "cats") {
+			print $langs->trans('Category');
+		} elseif ($mobilepage == "products") {
+			print $langs->trans('Label');
+		}
+	} else {
+		print $langs->trans("Products");
 	}
-	if ($mobilepage == "invoice" || $mobilepage == "") {
-		// If not on smartphone version or if it is the invoice page
-		//print 'mobilepage='.$mobilepage;
-		print '<span class="opacitymedium">'.$langs->trans('Place')."</span> <b>".(empty($label) ? '?' : $label)."</b><br>";
-		print '<span class="opacitymedium">'.$langs->trans('Floor')."</span> <b>".(empty($floor) ? '?' : $floor)."</b>";
-	} elseif (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-		print $mysoc->name;
-	} elseif ($mobilepage == "cats") {
-		print $langs->trans('Category');
-	} elseif ($mobilepage == "products") {
-		print $langs->trans('Label');
-	}
-} else {
-	print $langs->trans("Products");
+	print '</td>';
 }
-print '</td>';
 
 // complete header by hook
 $parameters=array();
@@ -1565,22 +1582,22 @@ if (empty($_SESSION["basiclayout"]) || $_SESSION["basiclayout"] != 1) {
 } elseif ($mobilepage == "invoice") {
 	print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
 }
-print "</tr>\n";
-
+if (!$usediv) {
+	print "</tr>\n";
+}
 
 if (!empty($_SESSION["basiclayout"]) && $_SESSION["basiclayout"] == 1) {
 	if ($mobilepage == "cats") {
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$categorie = new Categorie($db);
 		$categories = $categorie->get_full_arbo('product');
-		$htmlforlines = '';
 		foreach ($categories as $row) {
 			if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-				$htmlforlines .= '<div id="leftcat" class="leftcat';
+				$htmlforlines .= '<div class="leftcat"';
 			} else {
-				$htmlforlines .= '<tr class="drag drop oddeven posinvoiceline';
+				$htmlforlines .= '<tr class="drag drop oddeven posinvoiceline"';
 			}
-			$htmlforlines .= '" onclick="LoadProducts('.$row['id'].');">';
+			$htmlforlines .= ' onclick="LoadProducts('.$row['id'].');">';
 			if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 				$htmlforlines .= '<img class="imgwrapper" width="33%" src="'.DOL_URL_ROOT.'/takepos/public/auto_order.php?genimg=cat&query=cat&id='.$row['id'].'"><br>';
 			} else {
@@ -1593,7 +1610,6 @@ if (!empty($_SESSION["basiclayout"]) && $_SESSION["basiclayout"] == 1) {
 				$htmlforlines .= '</td></tr>'."\n";
 			}
 		}
-		$htmlforlines .= '</table>';
 		print $htmlforlines;
 	}
 
@@ -1606,7 +1622,7 @@ if (!empty($_SESSION["basiclayout"]) && $_SESSION["basiclayout"] == 1) {
 		$htmlforlines = '';
 		foreach ($prods as $row) {
 			if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-				$htmlforlines .= '<div id="rightproduct" class="leftcat"';
+				$htmlforlines .= '<div class="leftcat"';
 			} else {
 				$htmlforlines .= '<tr class="drag drop oddeven posinvoiceline"';
 			}
@@ -1624,7 +1640,6 @@ if (!empty($_SESSION["basiclayout"]) && $_SESSION["basiclayout"] == 1) {
 				$htmlforlines .= '</tr>'."\n";
 			}
 		}
-		$htmlforlines .= '</table>';
 		print $htmlforlines;
 	}
 
@@ -1642,7 +1657,6 @@ if (!empty($_SESSION["basiclayout"]) && $_SESSION["basiclayout"] == 1) {
 			$htmlforlines .= '</td>';
 			$htmlforlines .= '</tr>'."\n";
 		}
-		$htmlforlines .= '</table>';
 		print $htmlforlines;
 	}
 }
@@ -1875,7 +1889,11 @@ if ($placeid > 0) {
 	print '</tr>';
 }
 
-print '</table>';
+if ($usediv) {
+	print '</div>';
+} else {
+	print '</table>';
+}
 
 if (($action == "valid" || $action == "history") && $invoice->type != Facture::TYPE_CREDIT_NOTE && !getDolGlobalString('TAKEPOS_NO_CREDITNOTE')) {
 	print '<button id="buttonprint" type="button" onclick="ModalBox(\'ModalCreditNote\')">'.$langs->trans('CreateCreditNote').'</button>';

@@ -276,10 +276,10 @@ if ($action == "productinfo") {
 		place=placeid;
 		<?php
 		if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-			echo '$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=addline&token='.newToken().'&place="+place+"&idproduct="+productid, function() {
+			echo '$("#phonediv2").load("'.DOL_URL_ROOT.'/takepos/public/auto_order.php?mobilepage=invoice&action=addline&token='.newToken().'&place="+place+"&idproduct="+productid, function() {
 			});';
 		} else {
-			echo '$("#phonediv2").load("invoice.php?mobilepage=invoice&action=addline&token='.newToken().'&place="+place+"&idproduct="+productid, function() {
+			echo '$("#phonediv2").load("'.DOL_URL_ROOT.'/takepos/invoice.php?load=1&mobilepage=invoice&action=addline&token='.newToken().'&place="+place+"&idproduct="+productid, function() {
 			});';
 		} ?>
 
@@ -287,26 +287,27 @@ if ($action == "productinfo") {
 	}
 
 	function SetQty(place, selectedline, qty){
+		console.log("We click on SetQty()");
 		<?php
 		if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 			?>
 		if (qty==0){
-			$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=deleteline&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline, function() {
+			$("#phonediv2").load("<?php echo DOL_URL_ROOT ?>/takepos/public/auto_order.php?mobilepage=invoice&action=deleteline&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline, function() {
 			});
 		}
 		else{
-			$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=updateqty&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+qty, function() {
+			$("#phonediv2").load("<?php echo DOL_URL_ROOT ?>/takepos/public/auto_order.php?mobilepage=invoice&action=updateqty&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+qty, function() {
 			});
 		}
 			<?php
 		} else {
 			?>
 		if (qty==0){
-			$("#phonediv2").load("invoice.php?mobilepage=invoice&action=deleteline&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline, function() {
+			$("#phonediv2").load("<?php echo DOL_URL_ROOT ?>/takepos/invoice.php?load=1&mobilepage=invoice&action=deleteline&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline, function() {
 			});
 		}
 		else{
-			$("#phonediv2").load("invoice.php?mobilepage=invoice&action=updateqty&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+qty, function() {
+			$("#phonediv2").load("<?php echo DOL_URL_ROOT ?>/takepos/invoice.php?load=1&mobilepage=invoice&action=updateqty&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+qty, function() {
 			});
 		}
 			<?php
@@ -317,31 +318,34 @@ if ($action == "productinfo") {
 	}
 
 	function SetNote(place, selectedline){
-		var note = prompt("<?php $langs->trans('Note'); ?>", "");
-		$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=updateqty&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+qty, function() {
+		console.log("We click on SetNote()");
+		var note = prompt("<?php dol_escape_js($langs->trans('Note')); ?>", "");
+		$("#phonediv2").load("<?php echo DOL_URL_ROOT ?>/takepos/public/auto_order.php?mobilepage=invoice&action=updateqty&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+qty, function() {
 		});
 		LoadCats();
 	}
 
 	function LoadCats(){
+		console.log("We click on LoadCats()");
 		<?php
 		if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-			echo '$("#phonediv1").load("auto_order.php?mobilepage=cats&place="+place+" #leftcat", function() {
+			echo '$("#phonediv1").load("'.DOL_URL_ROOT.'/takepos/public/auto_order.php?load=1&mobilepage=cats&place="+place+" #tablelines", function() {
 			});';
 		} else {
-			echo '$("#phonediv1").load("invoice.php?mobilepage=cats&place="+place+" #leftcat", function() {
+			echo '$("#phonediv1").load("'.DOL_URL_ROOT.'/takepos/invoice.php?load=1&mobilepage=cats&place="+place+" #tablelines", function() {
 			});';
 		}
 		?>
 	}
 
 	function LoadProducts(idcat) {
+		console.log("We click on LoadProducts()");
 		<?php
 		if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-			echo '$("#phonediv1").load("auto_order.php?mobilepage=products&catid="+idcat+"&place="+place+" #rightproduct", function() {
+			echo '$("#phonediv1").load("'.DOL_URL_ROOT.'/takepos/public/auto_order.php?load=1&mobilepage=products&catid="+idcat+"&place="+place+" #tablelines", function() {
 			});';
 		} else {
-			echo '$("#phonediv1").load("invoice.php?mobilepage=products&catid="+idcat+"&place="+place+" #rightproduct", function() {
+			echo '$("#phonediv1").load("'.DOL_URL_ROOT.'/takepos/invoice.php?load=1&mobilepage=products&catid="+idcat+"&place="+place+" #tablelines", function() {
 			});';
 		} ?>
 	}
@@ -376,7 +380,7 @@ if ($action == "productinfo") {
 		}
 		else{
 			console.log("Request the check to the waiter");
-			$("#phonediv1").load("auto_order.php?action=checkplease&token=<?php echo newToken(); ?>&place=<?php echo $place; ?>&payment="+payment, function() {
+			$("#phonediv1").load("auto_order.php?action=checkplease&token=<?php echo newToken(); ?>&place=<?php echo urlencode($place); ?>&payment="+payment, function() {
 			});
 		}
 	}
