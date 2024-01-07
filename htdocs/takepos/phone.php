@@ -167,8 +167,8 @@ if ($action == "productinfo") {
 		print '<button type="button" class="phonebutton uppercase" onclick="TakeposPrintingOrder();">'.dol_trunc($langs->trans('Order'), 3, 'right', 'UTF-8', 1).'</button>';
 		print '<button type="button" class="phonebutton uppercase" onclick="Exit();">'.dol_trunc($langs->trans('Logout'), 3, 'right', 'UTF-8', 1).'</button>';
 	} else {
-		print '<button type="button" class="publicphonebutton phoneblue uppercase" onclick="LoadCats();">'.dol_trunc($langs->trans('Categories'), 5, 'right', 'UTF-8').'</button>';
-		print '<button type="button" class="publicphonebutton phoneorange uppercase" onclick="PublicPreOrder();">'.dol_trunc($langs->trans('Order'), 5, 'right', 'UTF-8').'</button>';
+		print '<button type="button" class="publicphonebutton phoneblue uppercase" onclick="LoadCats();">'.dol_trunc($langs->trans('Categories'), 5, 'right', 'UTF-8', 1).'</button>';
+		print '<button type="button" class="publicphonebutton phoneorange uppercase" onclick="PublicPreOrder();">'.dol_trunc($langs->trans('Order'), 5, 'right', 'UTF-8', 1).'</button>';
 		print '<button type="button" class="publicphonebutton phonegreen uppercase" onclick="CheckPlease();">'.dol_trunc($langs->trans('Payment'), 5, 'right', 'UTF-8', 1).'</button>';
 	} ?>
 		</div>
