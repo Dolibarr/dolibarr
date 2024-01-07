@@ -65,7 +65,7 @@ $mobilepage = GETPOST('mobilepage', 'alpha');
 // Terminal is stored into $_SESSION["takeposterminal"];
 
 if (!$user->hasRight('takepos', 'run') && !defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-	accessforbidden();
+	accessforbidden('No permission to use the TakePOS');
 }
 
 if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->layout == 'phone') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
@@ -475,7 +475,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'history' || $action == 'creditnote') {
+	if (($action == 'history' || $action == 'creditnote') && $user->hasRight('takepos', 'run')) {
 		if ($action == 'creditnote') {
 			$placeid = $creditnote->id;
 		} else {
@@ -486,7 +486,7 @@ if (empty($reshook)) {
 	}
 
 	// If we add a line and no invoice yet, we create the invoice
-	if (($action == "addline" || $action == "freezone") && $placeid == 0) {
+	if (($action == "addline" || $action == "freezone") && $placeid == 0 && $user->hasRight('facture', 'creer')) {
 		$invoice->socid = getDolGlobalString($constforcompanyid);
 		$invoice->date = dol_now('tzuserrel');		// We use the local date, only the day will be saved.
 		$invoice->module_source = 'takepos';
@@ -507,7 +507,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == "addline") {
+	if ($action == "addline" && $user->hasRight('facture', 'creer')) {
 		$prod = new Product($db);
 		$prod->fetch($idproduct);
 
@@ -695,7 +695,7 @@ if (empty($reshook)) {
 		$invoice->fetch($placeid);
 	}
 
-	if ($action == "freezone") {
+	if ($action == "freezone" && $user->hasRight('facture', 'creer')) {
 		$customer = new Societe($db);
 		$customer->fetch($invoice->socid);
 
@@ -716,7 +716,7 @@ if (empty($reshook)) {
 		$invoice->fetch($placeid);
 	}
 
-	if ($action == "addnote") {
+	if ($action == "addnote" && $user->hasRight('facture', 'creer')) {
 		$desc = GETPOST('addnote', 'alpha');
 		if ($idline==0) {
 			$invoice->update_note($desc, '_public');
@@ -730,7 +730,7 @@ if (empty($reshook)) {
 		$invoice->fetch($placeid);
 	}
 
-	if ($action == "deleteline") {
+	if ($action == "deleteline" && $user->hasRight('facture', 'creer')) {
 		if ($idline > 0 and $placeid > 0) { // If invoice exists and line selected. To avoid errors if deleted from another device or no line selected.
 			$invoice->deleteline($idline);
 			$invoice->fetch($placeid);
@@ -750,7 +750,7 @@ if (empty($reshook)) {
 	}
 
 	// Action to delete or discard an invoice
-	if ($action == "delete") {
+	if ($action == "delete" && $user->hasRight('facture', 'creer')) {
 		// $placeid is the invoice id (it differs from place) and is defined if the place is set and the ref of invoice is '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')', so the fetch at begining of page works.
 		if ($placeid > 0) {
 			$result = $invoice->fetch($placeid);
@@ -786,11 +786,18 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == "updateqty") {
+	if ($action == "updateqty") {	// Test on permission is done later
 		foreach ($invoice->lines as $line) {
 			if ($line->id == $idline) {
-				if (!$user->hasRight('takepos', 'editlines') || (!$user->hasRight('takepos', 'editorderedlines') && $line->special_code == "4")) {
-					dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos"), null, 1);
+				$permissiontoupdateline = ($user->hasRight('takepos', 'editlines') && ($user->hasRight('takepos', 'editorderedlines') || $line->special_code != "4"));
+				if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+					if ($invoice->status == $invoice::STATUS_DRAFT && $invoice->pos_source && $invoice->module_source == 'takepos') {
+						$permissiontoupdateline = true;
+						// TODO Add also a test on $_SESSION('publicobjectid'] defined at creation of object
+					}
+				}
+				if (!$permissiontoupdateline) {
+					dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos").' - No permission to updateqty', null, 1);
 				} else {
 					$result = $invoice->updateline($line->id, $line->desc, $line->subprice, $number, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
 				}
@@ -800,7 +807,7 @@ if (empty($reshook)) {
 		$invoice->fetch($placeid);
 	}
 
-	if ($action == "updateprice") {
+	if ($action == "updateprice") {	// Test on permission is done later
 		$customer = new Societe($db);
 		$customer->fetch($invoice->socid);
 
@@ -818,8 +825,15 @@ if (empty($reshook)) {
 					dol_htmloutput_errors($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency)));
 					//echo $langs->trans("CantBeLessThanMinPrice");
 				} else {
-					if (!$user->hasRight('takepos', 'editlines') || (!$user->hasRight('takepos', 'editorderedlines') && $line->special_code == "4")) {
-						dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos"), null, 1);
+					$permissiontoupdateline = ($user->hasRight('takepos', 'editlines') && ($user->hasRight('takepos', 'editorderedlines') || $line->special_code != "4"));
+					if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+						if ($invoice->status == $invoice::STATUS_DRAFT && $invoice->pos_source && $invoice->module_source == 'takepos') {
+							$permissiontoupdateline = true;
+							// TODO Add also a test on $_SESSION('publicobjectid'] defined at creation of object
+						}
+					}
+					if (!$permissiontoupdateline) {
+						dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos").' - No permission to updateprice', null, 1);
 					} elseif (getDolGlobalInt('TAKEPOS_CHANGE_PRICE_HT')  == 1) {
 						$result = $invoice->updateline($line->id, $line->desc, $number, $line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
 					} else {
@@ -833,7 +847,7 @@ if (empty($reshook)) {
 		$invoice->fetch($placeid);
 	}
 
-	if ($action == "updatereduction") {
+	if ($action == "updatereduction") {	// Test on permission is done later
 		$customer = new Societe($db);
 		$customer->fetch($invoice->socid);
 
@@ -855,7 +869,14 @@ if (empty($reshook)) {
 					$langs->load("products");
 					dol_htmloutput_errors($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency)));
 				} else {
-					if (!$user->hasRight('takepos', 'editlines') || (!$user->hasRight('takepos', 'editorderedlines') && $line->special_code == "4")) {
+					$permissiontoupdateline = ($user->hasRight('takepos', 'editlines') && ($user->hasRight('takepos', 'editorderedlines') || $line->special_code != "4"));
+					if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+						if ($invoice->status == $invoice::STATUS_DRAFT && $invoice->pos_source && $invoice->module_source == 'takepos') {
+							$permissiontoupdateline = true;
+							// TODO Add also a test on $_SESSION('publicobjectid'] defined at creation of object
+						}
+					}
+					if (!$permissiontoupdateline) {
 						dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos"), null, 1);
 					} else {
 						$result = $invoice->updateline($line->id, $line->desc, $line->subprice, $line->qty, $number, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
@@ -866,7 +887,7 @@ if (empty($reshook)) {
 
 		// Reload data
 		$invoice->fetch($placeid);
-	} elseif ($action == 'update_reduction_global') {
+	} elseif ($action == 'update_reduction_global' && $user->hasRight('takepos', 'editlines')) {
 		foreach ($invoice->lines as $line) {
 			$result = $invoice->updateline($line->id, $line->desc, $line->subprice, $line->qty, $number, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
 		}
@@ -874,13 +895,13 @@ if (empty($reshook)) {
 		$invoice->fetch($placeid);
 	}
 
-	if ($action=="setbatch") {
+	if ($action=="setbatch" && $user->hasRight('takepos', 'run')) {
 		$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set batch=".$db->escape($batch).", fk_warehouse=".getDolGlobalString($constantforkey)." where rowid=".((int) $idoflineadded);
 		$db->query($sql);
 	}
 
-	if ($action == "order" and $placeid != 0) {
+	if ($action == "order" && $placeid != 0 && $user->hasRight('takepos', 'run')) {
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter" || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
@@ -1005,7 +1026,7 @@ if (empty($reshook)) {
 	}
 
 	$sectionwithinvoicelink = '';
-	if ($action == "valid" || $action == "history" || $action == 'creditnote') {
+	if (($action == "valid" || $action == "history" || $action == 'creditnote') && $user->hasRight('takepos', 'run')) {
 		$sectionwithinvoicelink .= '<!-- Section with invoice link -->'."\n";
 		$sectionwithinvoicelink .= '<span style="font-size:120%;" class="center">';
 		$sectionwithinvoicelink .= $invoice->getNomUrl(1, '', 0, 0, '', 0, 0, -1, '_backoffice')." - ";

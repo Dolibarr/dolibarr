@@ -63,7 +63,7 @@ if ($setterminal > 0) {
 $langs->loadLangs(array("bills", "orders", "commercial", "cashdesk", "receiptprinter"));
 
 if (!$user->hasRight('takepos', 'run') && !defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-	accessforbidden();
+	accessforbidden('No permission to run the takepos');
 }
 
 
@@ -162,14 +162,14 @@ if ($action == "productinfo") {
 	<div class="phonebuttonsrow">
 	<?php
 	if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-		print '<button type="button" class="phonebutton uppercase" onclick="LoadPlacesList();">'.dol_trunc($langs->trans('Floors'), 3, 'right', 'UTF-8', 1).'</button>';
-		print '<button type="button" class="phonebutton uppercase" onclick="LoadCats();">'.dol_trunc($langs->trans('Categories'), 3, 'right', 'UTF-8', 1).'</button>';
-		print '<button type="button" class="phonebutton uppercase" onclick="TakeposPrintingOrder();">'.dol_trunc($langs->trans('Order'), 3, 'right', 'UTF-8', 1).'</button>';
-		print '<button type="button" class="phonebutton uppercase" onclick="Exit();">'.dol_trunc($langs->trans('Logout'), 3, 'right', 'UTF-8', 1).'</button>';
+		print '<button type="button" class="phonebutton uppercase" onclick="LoadPlacesList();">'.dol_trunc($langs->trans('Floors'), 5, 'right', 'UTF-8').'</button>';
+		print '<button type="button" class="phonebutton uppercase" onclick="LoadCats();">'.dol_trunc($langs->trans('Categories'), 5, 'right', 'UTF-8').'</button>';
+		print '<button type="button" class="phonebutton uppercase" onclick="TakeposPrintingOrder();">'.dol_trunc($langs->trans('Order'), 5, 'right', 'UTF-8').'</button>';
+		print '<button type="button" class="phonebutton uppercase" onclick="Exit();">'.dol_trunc($langs->trans('Logout'), 5, 'right', 'UTF-8').'</button>';
 	} else {
-		print '<button type="button" class="publicphonebutton phoneblue uppercase" onclick="LoadCats();">'.dol_trunc($langs->trans('Categories'), 5, 'right', 'UTF-8').'</button>';
-		print '<button type="button" class="publicphonebutton phoneorange uppercase" onclick="PublicPreOrder();">'.dol_trunc($langs->trans('Order'), 5, 'right', 'UTF-8').'</button>';
-		print '<button type="button" class="publicphonebutton phonegreen uppercase" onclick="CheckPlease();">'.dol_trunc($langs->trans('Payment'), 5, 'right', 'UTF-8', 1).'</button>';
+		print '<button type="button" class="publicphonebutton phoneblue uppercase" onclick="LoadCats();">'.dol_trunc($langs->trans('Categories'), 8, 'right', 'UTF-8').'</button>';
+		print '<button type="button" class="publicphonebutton phoneorange uppercase" onclick="PublicPreOrder();">'.dol_trunc($langs->trans('Order'), 8, 'right', 'UTF-8').'</button>';
+		print '<button type="button" class="publicphonebutton phonegreen uppercase" onclick="CheckPlease();">'.dol_trunc($langs->trans('Payment'), 8, 'right', 'UTF-8').'</button>';
 	} ?>
 		</div>
 		<div class="phonerow2">
@@ -180,7 +180,6 @@ if ($action == "productinfo") {
 		</div>
 	</div>
 
-	?>
 	<script type="text/javascript">
 	<?php
 	$categorie = new Categorie($db);
