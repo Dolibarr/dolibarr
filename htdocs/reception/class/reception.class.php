@@ -170,7 +170,7 @@ class Reception extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('RECEPTION_ADDON_NUMBER') . ".php";
-			$classname = $conf->global->RECEPTION_ADDON_NUMBER;
+			$classname = getDolGlobalString('RECEPTION_ADDON_NUMBER');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -2051,7 +2051,7 @@ class Reception extends CommonObject
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('RECEPTION_ADDON_PDF')) {
-				$modele = $conf->global->RECEPTION_ADDON_PDF;
+				$modele = getDolGlobalString('RECEPTION_ADDON_PDF');
 			}
 		}
 

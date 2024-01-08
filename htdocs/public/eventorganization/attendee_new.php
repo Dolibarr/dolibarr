@@ -247,7 +247,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Email"))."<br>\n";
 	}
 	// If the price has been set, name is required for the invoice
-	if (!GETPOST("societe") && !empty(floatval($project->price_registration))) {
+	if (!GETPOST("societe") && !empty((float) $project->price_registration)) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Company"))."<br>\n";
 	}
@@ -444,7 +444,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 		}
 
 		// If price is empty, no need to create a thirdparty, so we force $resultfetchthirdparty as if we have already found thirdp party.
-		if (empty(floatval($project->price_registration))) {
+		if (empty((float) $project->price_registration)) {
 			$resultfetchthirdparty = 1;
 		}
 
@@ -505,7 +505,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 
 	if (!$error) {
 		// If the registration needs a payment
-		if (!empty(floatval($project->price_registration))) {
+		if (!empty((float) $project->price_registration)) {
 			$outputlangs = $langs;
 
 			// TODO Use default language of $thirdparty->default_lang to build $outputlang
@@ -516,7 +516,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 
 			$resultprod = 0;
 			if (getDolGlobalInt('SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION') > 0) {
-				$resultprod = $productforinvoicerow->fetch($conf->global->SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION);
+				$resultprod = $productforinvoicerow->fetch(getDolGlobalString('SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION'));
 			}
 
 			// Create the draft invoice for the payment
@@ -576,7 +576,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 
 				// If there is no lines yet, we add one
 				if (empty($facture->lines)) {
-					$pu_ttc = floatval($project->price_registration);
+					$pu_ttc = (float) $project->price_registration;
 					$pu_ht = 0;
 					$price_base_type = 'TTC';
 
@@ -605,7 +605,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 					if (getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
 						$redirection .= '&securekey='.dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $sourcetouse . $reftouse, 2); // Use the source in the hash to avoid duplicates if the references are identical
 					} else {
-						$redirection .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
+						$redirection .= '&securekey='.urlencode(getDolGlobalString('PAYMENT_SECURITY_TOKEN'));
 					}
 				}
 
@@ -650,7 +650,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
 
 			$sendto = $thirdparty->email;
-			$from = $conf->global->MAILING_EMAIL_FROM;
+			$from = getDolGlobalString('MAILING_EMAIL_FROM');
 			$urlback = $_SERVER["REQUEST_URI"];
 
 			$ishtml = dol_textishtml($texttosend); // May contain urls
@@ -816,16 +816,16 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 
 		// Company
 		print '<tr id="trcompany" class="trcompany"><td>';
-		if (!empty(floatval($project->price_registration))) {
+		if (!empty((float) $project->price_registration)) {
 			print '<span class="fieldrequired">';
 		}
 		print $langs->trans("Company");
-		if (!empty(floatval($project->price_registration))) {
+		if (!empty((float) $project->price_registration)) {
 			print '</span>';
 		}
 		print '</td><td>';
 		print img_picto('', 'company', 'class="pictofixedwidth"');
-		print '<input type="text" name="societe" class="minwidth200 widthcentpercentminusx maxwidth300" value="' . dol_escape_htmltag(GETPOST('societe')) . '"'.(empty(floatval($project->price_registration)) ? '' : ' required').'></td></tr>' . "\n";
+		print '<input type="text" name="societe" class="minwidth200 widthcentpercentminusx maxwidth300" value="' . dol_escape_htmltag(GETPOST('societe')) . '"'.(empty((float) $project->price_registration) ? '' : ' required').'></td></tr>' . "\n";
 
 		// Email company for invoice
 		if ($project->price_registration) {

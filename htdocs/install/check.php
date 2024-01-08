@@ -200,12 +200,14 @@ if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@loc
 }
 
 // Check if Imap is supported
-if (!function_exists("imap_open")) {
-	$langs->load("errors");
-	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "IMAP")."<br>\n";
-	// $checksok = 0;       // If ko, just warning. So check must still be 1 (otherwise no way to install)
-} else {
-	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "IMAP")."<br>\n";
+if (PHP_VERSION_ID <= 80300) {
+	if (!function_exists("imap_open")) {
+		$langs->load("errors");
+		print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "IMAP")."<br>\n";
+		// $checksok = 0;       // If ko, just warning. So check must still be 1 (otherwise no way to install)
+	} else {
+		print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "IMAP")."<br>\n";
+	}
 }
 
 // Check if Zip is supported

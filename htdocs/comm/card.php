@@ -538,8 +538,8 @@ if ($object->id > 0) {
 		print '</td><td>';
 		print $object->price_level;
 		$keyforlabel = 'PRODUIT_MULTIPRICES_LABEL'.$object->price_level;
-		if (!empty($conf->global->$keyforlabel)) {
-			print ' - '.$langs->trans($conf->global->$keyforlabel);
+		if (getDolGlobalString($keyforlabel)) {
+			print ' - '.$langs->trans(getDolGlobalString($keyforlabel));
 		}
 		print "</td>";
 		print '</tr>';
@@ -693,7 +693,7 @@ if ($object->id > 0) {
 	$boxstat = '';
 
 	// Nbre max d'elements des petites listes
-	$MAXLIST = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
+	$MAXLIST = getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT');
 
 	// Lien recap
 	$boxstat .= '<div class="box divboxtable box-halfright">';

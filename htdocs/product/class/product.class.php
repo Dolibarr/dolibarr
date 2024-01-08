@@ -1165,7 +1165,7 @@ class Product extends CommonObject
 				//$valueforundefinedlot = 'Undefined';  // In previous version, 39 and lower
 				$valueforundefinedlot = '000000';
 				if (getDolGlobalString('STOCK_DEFAULT_BATCH')) {
-					$valueforundefinedlot = $conf->global->STOCK_DEFAULT_BATCH;
+					$valueforundefinedlot = getDolGlobalString('STOCK_DEFAULT_BATCH');
 				}
 
 				dol_syslog("Flag batch of product id=".$this->id." is set to ON, so we will create missing records into product_batch");
@@ -1189,7 +1189,7 @@ class Product extends CommonObject
 					}
 					// Quantities in batch details are not same as stock quantity,
 					// so we add a default batch record to complete and get same qty in parent and child table
-					if ($ObjW->real <> $qty_batch) {
+					if ($ObjW->real != $qty_batch) {
 						$ObjBatch = new Productbatch($this->db);
 						$ObjBatch->batch = $valueforundefinedlot;
 						$ObjBatch->qty = ($ObjW->real - $qty_batch);
@@ -1874,13 +1874,13 @@ class Product extends CommonObject
 
 		$lastPrice = array(
 			'level' => $level ? $level : 1,
-			'multiprices' => doubleval($this->multiprices[$level]),
-			'multiprices_ttc' => doubleval($this->multiprices_ttc[$level]),
+			'multiprices' => (float) $this->multiprices[$level],
+			'multiprices_ttc' => (float) $this->multiprices_ttc[$level],
 			'multiprices_base_type' => $this->multiprices_base_type[$level],
-			'multiprices_min' => doubleval($this->multiprices_min[$level]),
-			'multiprices_min_ttc' => doubleval($this->multiprices_min_ttc[$level]),
-			'multiprices_tva_tx' => doubleval($this->multiprices_tva_tx[$level]),
-			'multiprices_recuperableonly' => doubleval($this->multiprices_recuperableonly[$level]),
+			'multiprices_min' => (float) $this->multiprices_min[$level],
+			'multiprices_min_ttc' => (float) $this->multiprices_min_ttc[$level],
+			'multiprices_tva_tx' => (float) $this->multiprices_tva_tx[$level],
+			'multiprices_recuperableonly' => (float) $this->multiprices_recuperableonly[$level],
 		);
 
 		return $lastPrice;
@@ -3151,7 +3151,7 @@ class Product extends CommonObject
 		if ($socid > 0) {
 			$sql .= " AND c.fk_soc = ".((int) $socid);
 		}
-		if ($filtrestatut <> '') {
+		if ($filtrestatut != '') {
 			$sql .= " AND c.fk_statut in (".$this->db->sanitize($filtrestatut).")";
 		}
 
@@ -3344,7 +3344,7 @@ class Product extends CommonObject
 		if ($socid > 0) {
 			$sql .= " AND e.fk_soc = ".((int) $socid);
 		}
-		if ($filtrestatut <> '') {
+		if ($filtrestatut != '') {
 			$sql .= " AND c.fk_statut IN (".$this->db->sanitize($filtrestatut).")";
 		}
 		if (!empty($filterShipmentStatus)) {
@@ -3426,7 +3426,7 @@ class Product extends CommonObject
 		if ($socid > 0) {
 			$sql .= " AND cf.fk_soc = ".((int) $socid);
 		}
-		if ($filtrestatut <> '') {
+		if ($filtrestatut != '') {
 			$sql .= " AND cf.fk_statut IN (".$this->db->sanitize($filtrestatut).")";
 		}
 		if (!empty($dateofvirtualstock)) {
@@ -3486,7 +3486,7 @@ class Product extends CommonObject
 		if ($socid > 0) {
 			$sql .= " AND m.fk_soc = ".((int) $socid);
 		}
-		if ($filtrestatut <> '') {
+		if ($filtrestatut != '') {
 			$sql .= " AND m.status IN (".$this->db->sanitize($filtrestatut).")";
 		}
 		if (!empty($dateofvirtualstock)) {
@@ -6140,7 +6140,7 @@ class Product extends CommonObject
 	}
 
 	/**
-	 * Return if object is a product
+	 * Return if object is a product.
 	 *
 	 * @return boolean     True if it's a product
 	 */
@@ -6159,6 +6159,15 @@ class Product extends CommonObject
 		return ($this->type == Product::TYPE_SERVICE ? true : false);
 	}
 
+	/**
+	 * Return if object need to have its stock managed
+	 *
+	 * @return boolean     True if it's a service
+	 */
+	public function isStockManaged()
+	{
+		return ($this->isProduct() || getDolGlobalString('STOCK_SUPPORTS_SERVICES'));
+	}
 
 	/**
 	 * Return if  object have a constraint on mandatory_period
@@ -6169,6 +6178,18 @@ class Product extends CommonObject
 	{
 		return ($this->mandatory_period == 1 ? true : false);
 	}
+
+	/**
+	 * Return if object has a sell-by date or eat-by date
+	 *
+	 * @return boolean     True if it's has
+	 */
+	public function hasbatch()
+	{
+		return ($this->status_batch > 0 ? true : false);
+	}
+
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Get a barcode from the module to generate barcode values.
@@ -6192,7 +6213,7 @@ class Product extends CommonObject
 					break;
 				}
 			}
-			$var = $conf->global->BARCODE_PRODUCT_ADDON_NUM;
+			$var = getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM');
 			$mod = new $var();
 
 			$result = $mod->getNextValue($object, $type);
@@ -6211,8 +6232,6 @@ class Product extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		global $user, $langs, $conf, $mysoc;
-
 		$now = dol_now();
 
 		// Initialize parameters
@@ -6284,17 +6303,6 @@ class Product extends CommonObject
 			return -1;
 		}
 	}
-
-	/**
-	 * Return if object has a sell-by date or eat-by date
-	 *
-	 * @return boolean     True if it's has
-	 */
-	public function hasbatch()
-	{
-		return ($this->status_batch > 0 ? true : false);
-	}
-
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**

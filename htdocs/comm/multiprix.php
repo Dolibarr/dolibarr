@@ -110,8 +110,8 @@ if ($_socid > 0) {
 		}
 		print '>'.$i;
 		$keyforlabel = 'PRODUIT_MULTIPRICES_LABEL'.$i;
-		if (!empty($conf->global->$keyforlabel)) {
-			print ' - '.$langs->trans($conf->global->$keyforlabel);
+		if (getDolGlobalString($keyforlabel)) {
+			print ' - '.$langs->trans(getDolGlobalString($keyforlabel));
 		}
 		print '</option>';
 	}

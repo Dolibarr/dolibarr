@@ -2957,7 +2957,7 @@ class FactureFournisseur extends CommonInvoice
 		$mybool = false;
 
 		$file = getDolGlobalString('INVOICE_SUPPLIER_ADDON_NUMBER') . ".php";
-		$classname = $conf->global->INVOICE_SUPPLIER_ADDON_NUMBER;
+		$classname = getDolGlobalString('INVOICE_SUPPLIER_ADDON_NUMBER');
 
 		// Include file with class
 		$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -3223,7 +3223,7 @@ class FactureFournisseur extends CommonInvoice
 		// Set the model on the model name to use
 		if (empty($modele)) {
 			if (getDolGlobalString('INVOICE_SUPPLIER_ADDON_PDF')) {
-				$modele = $conf->global->INVOICE_SUPPLIER_ADDON_PDF;
+				$modele = getDolGlobalString('INVOICE_SUPPLIER_ADDON_PDF');
 			} else {
 				$modele = ''; // No default value. For supplier invoice, we allow to disable all PDF generation
 			}

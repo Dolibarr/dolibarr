@@ -179,8 +179,8 @@ if (isModEnabled('holiday')) {
 		print '</td>';
 		print '</tr>';
 		print '</table></div><br>';
-	} elseif (!is_numeric($conf->global->HOLIDAY_HIDE_BALANCE)) {
-		print $langs->trans($conf->global->HOLIDAY_HIDE_BALANCE).'<br>';
+	} elseif (!is_numeric(getDolGlobalString('HOLIDAY_HIDE_BALANCE'))) {
+		print $langs->trans(getDolGlobalString('HOLIDAY_HIDE_BALANCE')).'<br>';
 	}
 }
 

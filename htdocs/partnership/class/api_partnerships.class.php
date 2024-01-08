@@ -187,9 +187,7 @@ class Partnerships extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieving partnership list: '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No partnership found');
-		}
+
 		return $obj_ret;
 	}
 

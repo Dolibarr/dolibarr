@@ -1781,4 +1781,20 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 
 		return true;
 	}
+
+	/**
+	 * testFetchObjectByElement
+	 *
+	 * @return boolean;
+	 */
+	public function testFetchObjectByElement()
+	{
+		global $conf, $langs;
+
+		$result = fetchObjectByElement(0, 'product');
+
+		$this->assertTrue(is_object($result));
+
+		return true;
+	}
 }

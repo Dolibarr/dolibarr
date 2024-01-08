@@ -954,7 +954,7 @@ class BonPrelevement extends CommonObject
 	 *  @param	string	$type				'direct-debit' or 'bank-transfer'
 	 *  @param	int		$did				ID of an existing payment request. If $did is defined, we use the existing payment request.
 	 *  @param	int		$fk_bank_account	Bank account ID the receipt is generated for. Will use the ID into the setup of module Direct Debit or Credit Transfer if 0.
-	 *  @param	int		$sourcetype			'invoice' or 'salary'
+	 *  @param	string	$sourcetype			'invoice' or 'salary'
 	 *	@return	int							Return integer <0 if KO, No of invoice included into file if OK
 	 */
 	public function create($banque = 0, $agence = 0, $mode = 'real', $format = 'ALL', $executiondate = '', $notrigger = 0, $type = 'direct-debit', $did = 0, $fk_bank_account = 0, $sourcetype = 'invoice')
@@ -1309,7 +1309,7 @@ class BonPrelevement extends CommonObject
 						 */
 						$ri = $this->AddFacture($fac[0], $fac[2], $fac[8], $fac[7], $fac[3], $fac[4], $fac[5], $fac[6], $type, $sourcetype);
 
-						if ($ri <> 0) {
+						if ($ri != 0) {
 							$error++;
 						}
 

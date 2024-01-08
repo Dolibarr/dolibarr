@@ -1550,7 +1550,7 @@ class Asset extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('ASSET_ASSET_ADDON') . ".php";
-			$classname = $conf->global->ASSET_ASSET_ADDON;
+			$classname = getDolGlobalString('ASSET_ASSET_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);

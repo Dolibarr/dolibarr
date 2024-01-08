@@ -212,7 +212,7 @@ if ($action == 'getProducts') {
 							if (isset($barcode_value_list['qd'])) {
 								$qty_str .= '.' . $barcode_value_list['qd'];
 							}
-							$qty = floatval($qty_str);
+							$qty = (float) $qty_str;
 						}
 
 						$objProd = new Product($db);
@@ -286,7 +286,7 @@ if ($action == 'getProducts') {
 		$sql .= " AND archive = 0";
 	}*/
 	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1) {
-		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'product_stock as ps';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as ps';
 		$sql .= ' ON (p.rowid = ps.fk_product';
 		if (getDolGlobalString('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal'])) {
 			$sql .= " AND ps.fk_entrepot = ".((int) getDolGlobalInt("CASHDESK_ID_WAREHOUSE".$_SESSION['takeposterminal']));
@@ -381,6 +381,7 @@ if ($action == 'getProducts') {
 				} else {
 					$row = array();
 				}
+				$rows[] = $row;
 			} else {
 				// add
 				if (count($hookmanager->resArray)) {

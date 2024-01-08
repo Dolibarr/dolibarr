@@ -134,9 +134,7 @@ class Users extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve User list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No User found');
-		}
+
 		return $obj_ret;
 	}
 
@@ -590,9 +588,7 @@ class Users extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve Group list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No Group found');
-		}
+
 		return $obj_ret;
 	}
 

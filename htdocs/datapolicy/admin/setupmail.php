@@ -140,7 +140,7 @@ print '<span class="opacitymedium">';
 print $langs->trans('DATAPOLICYSUBSITUTION');
 print '__LINKACCEPT__,__LINKREFUSED__,__FIRSTNAME__,__NAME__,__CIVILITY__';
 print '</span>';
-$doleditor = new DolEditor($content, $conf->global->$content, '', 250, 'Full', '', false, true, 1, 200, 70);
+$doleditor = new DolEditor($content, getDolGlobalString($content), '', 250, 'Full', '', false, true, 1, 200, 70);
 $doleditor->Create();
 print '</td><tr>';
 print '<tr class"oddeven"><td class="fieldrequired">';

@@ -277,9 +277,6 @@ class Products extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve product list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No product found');
-		}
 
 		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
 		if ($pagination_data) {
@@ -600,10 +597,6 @@ class Products extends DolibarrApi
 		$categories = new Categorie($this->db);
 
 		$result = $categories->getListForItem($id, 'product', $sortfield, $sortorder, $limit, $page);
-
-		if (empty($result)) {
-			throw new RestException(404, 'No category found');
-		}
 
 		if ($result < 0) {
 			throw new RestException(503, 'Error when retrieve category list : '.join(',', array_merge(array($categories->error), $categories->errors)));
@@ -953,9 +946,7 @@ class Products extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve product list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No product found');
-		}
+
 		return $obj_ret;
 	}
 
@@ -1078,10 +1069,6 @@ class Products extends DolibarrApi
 			$tmp->entity = $obj->entity;
 
 			$return[] = $this->_filterObjectProperties($this->_cleanObjectDatas($tmp), $properties);
-		}
-
-		if (!count($return)) {
-			throw new RestException(404, 'No product attribute found');
 		}
 
 		return $return;
@@ -1752,8 +1739,12 @@ class Products extends DolibarrApi
 			throw new RestException(401);
 		}
 
-		if (empty($id) || empty($features) || !is_array($features)) {
-			throw new RestException(401);
+		if (empty($id)) {
+			throw new RestException(400, 'Product ID is mandatory');
+		}
+
+		if (empty($features) || !is_array($features)) {
+			throw new RestException(400, 'Features is mandatory and should be IDs of attribute values indexed by IDs of attributes');
 		}
 
 		$weight_impact = price2num($weight_impact);
@@ -1763,10 +1754,10 @@ class Products extends DolibarrApi
 		$prodattr_val = new ProductAttributeValue($this->db);
 		foreach ($features as $id_attr => $id_value) {
 			if ($prodattr->fetch((int) $id_attr) < 0) {
-				throw new RestException(401);
+				throw new RestException(400, 'Invalid attribute ID: '.$id_attr);
 			}
 			if ($prodattr_val->fetch((int) $id_value) < 0) {
-				throw new RestException(401);
+				throw new RestException(400, 'Invalid attribute value ID: '.$id_value);
 			}
 		}
 
@@ -1947,10 +1938,6 @@ class Products extends DolibarrApi
 					unset($stockData[$warehouse_id]);
 				}
 			}
-		}
-
-		if (empty($stockData)) {
-			throw new RestException(404, 'No stock found');
 		}
 
 		return array('stock_warehouses'=>$stockData);

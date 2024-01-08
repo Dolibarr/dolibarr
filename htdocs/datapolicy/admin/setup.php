@@ -145,7 +145,7 @@ if ($action == 'edit') {
 			print '</td><td>';
 			print '<select name="'.$key.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'">';
 			foreach ($valTab as $key1 => $val1) {
-				print '<option value="'.$key1.'" '.($conf->global->$key == $key1 ? 'selected="selected"' : '').'>';
+				print '<option value="'.$key1.'" '.(getDolGlobalString($key) == $key1 ? 'selected="selected"' : '').'>';
 				print $val1;
 				print '</option>';
 			}

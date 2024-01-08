@@ -153,7 +153,7 @@ class Delivery extends CommonObject
 		dol_syslog("Delivery::create");
 
 		if (empty($this->model_pdf)) {
-			$this->model_pdf = $conf->global->DELIVERY_ADDON_PDF;
+			$this->model_pdf = getDolGlobalString('DELIVERY_ADDON_PDF');
 		}
 
 		$error = 0;
@@ -413,7 +413,7 @@ class Delivery extends CommonObject
 			|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'delivery_advance', 'validate'))) {
 			if (getDolGlobalString('DELIVERY_ADDON_NUMBER')) {
 				// Setting the command numbering module name
-				$modName = $conf->global->DELIVERY_ADDON_NUMBER;
+				$modName = getDolGlobalString('DELIVERY_ADDON_NUMBER');
 
 				if (is_readable(DOL_DOCUMENT_ROOT.'/core/modules/delivery/'.$modName.'.php')) {
 					require_once DOL_DOCUMENT_ROOT.'/core/modules/delivery/'.$modName.'.php';
@@ -1130,7 +1130,7 @@ class Delivery extends CommonObject
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('DELIVERY_ADDON_PDF')) {
-				$modele = $conf->global->DELIVERY_ADDON_PDF;
+				$modele = getDolGlobalString('DELIVERY_ADDON_PDF');
 			}
 		}
 

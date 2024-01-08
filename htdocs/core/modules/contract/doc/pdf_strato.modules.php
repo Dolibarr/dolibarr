@@ -155,7 +155,7 @@ class pdf_strato extends ModelePDFContract
 
 		// Show Draft Watermark
 		if ($object->statut == $object::STATUS_DRAFT && (getDolGlobalString('CONTRACT_DRAFT_WATERMARK'))) {
-			$this->watermark = $conf->global->CONTRACT_DRAFT_WATERMARK;
+			$this->watermark = getDolGlobalString('CONTRACT_DRAFT_WATERMARK');
 		}
 
 		global $outputlangsbis;

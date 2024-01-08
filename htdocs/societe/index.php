@@ -215,7 +215,7 @@ if (isModEnabled('categorie') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_THIR
 	$sql .= " FROM ".MAIN_DB_PREFIX."categorie_societe as cs";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cs.fk_categorie = c.rowid";
 	$sql .= " WHERE c.type = 2";
-	if (!is_numeric($conf->global->CATEGORY_GRAPHSTATS_ON_THIRDPARTIES)) {
+	if (!is_numeric(getDolGlobalString('CATEGORY_GRAPHSTATS_ON_THIRDPARTIES'))) {
 		$sql .= " AND c.label like '".$db->escape($conf->global->CATEGORY_GRAPHSTATS_ON_THIRDPARTIES)."'";
 	}
 	$sql .= " AND c.entity IN (".getEntity('category').")";

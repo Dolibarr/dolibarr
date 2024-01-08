@@ -400,7 +400,7 @@ class pdf_paiement extends CommonDocGenerator
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		$title = $conf->global->MAIN_INFO_SOCIETE_NOM;
+		$title = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 		switch ($this->doc_type) {
 			case "client":
 				$title .= ' - '.$outputlangs->transnoentities("ListOfCustomerPayments");
@@ -490,7 +490,7 @@ class pdf_paiement extends CommonDocGenerator
 				$pdf->SetFont('', '', $default_font_size - 1);
 				$yp = 0;
 			}
-			if ($oldprowid <> $lines[$j][7]) {
+			if ($oldprowid != $lines[$j][7]) {
 				if ($yp > $this->tab_height - 15) {
 					$pdf->SetFillColor(255, 255, 255);
 					$pdf->Rect($this->marge_gauche + 1, $this->tab_top + 10 + $yp, $this->posxpaymentamount - $this->marge_droite - 3, $this->line_height, 'F', array(), array());
@@ -547,7 +547,7 @@ class pdf_paiement extends CommonDocGenerator
 			$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxpaymentamount, $this->line_height, $lines[$j][6], 0, 'R', 0);
 			$yp = $yp + 5;
 
-			if ($oldprowid <> $lines[$j][7]) {
+			if ($oldprowid != $lines[$j][7]) {
 				$oldprowid = $lines[$j][7];
 			}
 

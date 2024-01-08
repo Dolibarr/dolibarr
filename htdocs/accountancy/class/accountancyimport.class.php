@@ -66,7 +66,7 @@ class AccountancyImport
 	public function cleanAmount(&$arrayrecord, $listfields, $record_key)
 	{
 		$value_trim = trim($arrayrecord[$record_key]['val']);
-		return floatval($value_trim);
+		return (float) $value_trim;
 	}
 
 	/**
@@ -98,8 +98,8 @@ class AccountancyImport
 			$debit_index = $field_index_list['debit'];
 			$credit_index = $field_index_list['credit'];
 
-			$debit  = floatval($arrayrecord[$debit_index]['val']);
-			$credit = floatval($arrayrecord[$credit_index]['val']);
+			$debit  = (float) $arrayrecord[$debit_index]['val'];
+			$credit = (float) $arrayrecord[$credit_index]['val'];
 			if (!empty($debit)) {
 				$amount = $debit;
 			} else {
@@ -127,7 +127,7 @@ class AccountancyImport
 		if (isset($field_index_list['debit'])) {
 			$debit_index = $field_index_list['debit'];
 
-			$debit = floatval($arrayrecord[$debit_index]['val']);
+			$debit = (float) $arrayrecord[$debit_index]['val'];
 			if (!empty($debit)) {
 				$sens = 'D';
 			} else {

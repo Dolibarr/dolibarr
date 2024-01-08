@@ -300,7 +300,7 @@ class Contrat extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('CONTRACT_ADDON') . ".php";
-			$classname = $conf->global->CONTRACT_ADDON;
+			$classname = getDolGlobalString('CONTRACT_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -1474,10 +1474,10 @@ class Contrat extends CommonObject
 	 *  @param  int			$pa_ht				Buying price HT
 	 *  @param	array		$array_options		extrafields array
 	 * 	@param 	string		$fk_unit 			Code of the unit to use. Null to use the default one
-	 * 	@param 	string		$rang 				Position
+	 * 	@param 	int			$rang 				Position
 	 *  @return int             				Return integer <0 if KO, >0 if OK
 	 */
-	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type = 'HT', $pu_ttc = 0.0, $info_bits = 0, $fk_fournprice = null, $pa_ht = 0, $array_options = 0, $fk_unit = null, $rang = 0)
+	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type = 'HT', $pu_ttc = 0.0, $info_bits = 0, $fk_fournprice = null, $pa_ht = 0, $array_options = array(), $fk_unit = null, $rang = 0)
 	{
 		global $user, $langs, $conf, $mysoc;
 		$error = 0;
@@ -1706,10 +1706,10 @@ class Contrat extends CommonObject
 	 *  @param  int			$pa_ht				Buying price HT
 	 *  @param	array		$array_options		extrafields array
 	 * 	@param 	string		$fk_unit 			Code of the unit to use. Null to use the default one
-	 * 	@param 	string		$rang 				Position
+	 * 	@param 	int			$rang 				Position
 	 *  @return int              				Return integer <0 if KO, >0 if OK
 	 */
-	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $tvatx, $localtax1tx = 0.0, $localtax2tx = 0.0, $date_start_real = '', $date_end_real = '', $price_base_type = 'HT', $info_bits = 0, $fk_fournprice = null, $pa_ht = 0, $array_options = 0, $fk_unit = null, $rang = 0)
+	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $tvatx, $localtax1tx = 0.0, $localtax2tx = 0.0, $date_start_real = '', $date_end_real = '', $price_base_type = 'HT', $info_bits = 0, $fk_fournprice = null, $pa_ht = 0, $array_options = array(), $fk_unit = null, $rang = 0)
 	{
 		global $user, $conf, $langs, $mysoc;
 
@@ -2555,7 +2555,7 @@ class Contrat extends CommonObject
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('CONTRACT_ADDON_PDF')) {
-				$modele = $conf->global->CONTRACT_ADDON_PDF;
+				$modele = getDolGlobalString('CONTRACT_ADDON_PDF');
 			}
 		}
 
@@ -2655,7 +2655,7 @@ class Contrat extends CommonObject
 
 		// Set ref
 		require_once DOL_DOCUMENT_ROOT."/core/modules/contract/" . getDolGlobalString('CONTRACT_ADDON').'.php';
-		$obj = $conf->global->CONTRACT_ADDON;
+		$obj = getDolGlobalString('CONTRACT_ADDON');
 		$modContract = new $obj();
 		$clonedObj->ref = $modContract->getNextValue($objsoc, $clonedObj);
 
