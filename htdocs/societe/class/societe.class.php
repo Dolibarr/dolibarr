@@ -3856,7 +3856,6 @@ class Societe extends CommonObject
 		if ($idprof == 2 && $soc->country_code == 'FR' && !isValidSiret($this->idprof2)) {
 			return -1;
 		}
-		
 
 		//Verify CIF/NIF/NIE if pays ES
 		//Returns: 1 if NIF ok, 2 if CIF ok, 3 if NIE ok, -1 if NIF bad, -2 if CIF bad, -3 if NIE bad, 0 if unexpected bad
