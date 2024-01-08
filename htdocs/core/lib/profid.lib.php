@@ -67,7 +67,7 @@ function isValidSiren($siren)
  *  @return		boolean					True if valid, False otherwise
  */
 function isValidSiret($siret)
-{	
+{
 	$siret = trim($siret);
 	$siret = preg_replace('/(\s)/', '', $siret);
 
