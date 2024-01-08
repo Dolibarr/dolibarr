@@ -38,6 +38,8 @@ function isValidSiren($siren)
 		return false;
 	}
 
+	// TODO : use the Luhn algorithm instead
+
 	// we take each figure one by one and:
 	// - if its index is odd then we double its value,
 	// - if the latter is higher than 9 then we substract 9 from it,
@@ -55,4 +57,42 @@ function isValidSiren($siren)
 
 	// the siren is valid if the sum is a multiple of 10
 	return (($sum % 10) == 0) ? true : false;
+}
+
+
+/**
+ *  Check the validity of a SIRET.
+ *
+ *  @param		string		$siret		SIRET to check
+ *  @return		boolean					True if valid, False otherwise
+ */
+function isValidSiret($siret)
+{	
+	$siret = trim($siret);
+	$siret = preg_replace('/(\s)/', '', $siret);
+
+	if (!is_numeric($siret) || dol_strlen($siret) != 14) {
+		return false;
+	}
+
+	// TODO: use the Luhn algorithm instead
+	// TODO: handle the exception of "La Poste" (356 000 000 #####)
+
+	// we take each figure one by one and:
+	// - if its index is even then we double its value,
+	// - if the latter is higher than 9 then we substract 9 from it,
+	// - and finally we add the result to the overall sum.
+	$sum = 0;
+	for ($index = 0; $index < 14; $index++) {
+		$number = (int) $siret[$index];
+		if ($index % 2 == 0) {
+			if (($number *= 2) > 9) {
+				$number -= 9;
+			}
+		}
+		$sum += $number;
+	}
+
+	// the SIRET is valid if the sum is a multiple of 10
+	return $sum % 10 == 0;
 }
