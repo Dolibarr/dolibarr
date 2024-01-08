@@ -15,7 +15,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-if (isModEnabled('categorie') && $user->rights->categorie->lire) {
+if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
@@ -254,7 +254,7 @@ if (getDolGlobalInt('MAIN_MULTILANGS')) {
 	print '</td></tr>'."\n";
 }
 
-if (isModEnabled('categorie') && $user->rights->categorie->lire) {
+if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 	// Customer Categories
 	print '<tr><td>'.$langs->trans("CustomersCategoryShort");
 	if (!empty($array_query['cust_categ'])) {
@@ -268,7 +268,7 @@ if (isModEnabled('categorie') && $user->rights->categorie->lire) {
 }
 
 // Standard Extrafield feature
-if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
+if (!getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED')) {
 	$socstatic = new Societe($db);
 	$elementtype = $socstatic->table_element;
 	// fetch optionals attributes and labels
@@ -446,7 +446,7 @@ print '</td></tr></table>';
 print '</td><td>'."\n";
 print '</td></tr>'."\n";
 
-if (isModEnabled('categorie') && $user->rights->categorie->lire) {
+if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 	// Customer Categories
 	print '<tr><td>'.$langs->trans("ContactCategoriesShort");
 	if (!empty($array_query['contact_categ'])) {
@@ -460,7 +460,7 @@ if (isModEnabled('categorie') && $user->rights->categorie->lire) {
 }
 
 // Standard Extrafield feature
-if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
+if (!getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED')) {
 	$contactstatic = new Contact($db);
 	$elementype = $contactstatic->table_element;
 	// fetch optionals attributes and labels

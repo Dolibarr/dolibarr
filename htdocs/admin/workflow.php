@@ -72,7 +72,7 @@ $workflowcodes = array(
 		'enabled'=>(isModEnabled('commande') && isModEnabled('facture')),
 		'picto'=>'bill'
 	),
-	'WORKFLOW_TICKET_CREATE_INTERVENTION' => array (
+	'WORKFLOW_TICKET_CREATE_INTERVENTION' => array(
 		'family'=>'create',
 		'position'=>25,
 		'enabled'=>(isModEnabled('ticket') && isModEnabled('ficheinter')),
@@ -131,7 +131,7 @@ $workflowcodes = array(
 	'WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION'=>array(
 		'family'=>'classify_supplier_order',
 		'position'=>63,
-		'enabled'=>(!empty($conf->global->MAIN_FEATURES_LEVEL) && isModEnabled("reception") && isModEnabled('supplier_order')),
+		'enabled'=>(getDolGlobalString('MAIN_FEATURES_LEVEL') && isModEnabled("reception") && isModEnabled('supplier_order')),
 		'picto'=>'supplier_order',
 		'warning'=>''
 	),
@@ -139,7 +139,7 @@ $workflowcodes = array(
 	'WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED'=>array(
 		'family'=>'classify_supplier_order',
 		'position'=>64,
-		'enabled'=>(!empty($conf->global->MAIN_FEATURES_LEVEL) && isModEnabled("reception") && isModEnabled('supplier_order')),
+		'enabled'=>(getDolGlobalString('MAIN_FEATURES_LEVEL') && isModEnabled("reception") && isModEnabled('supplier_order')),
 		'picto'=>'supplier_order',
 		'warning'=>''
 	),
@@ -153,20 +153,40 @@ $workflowcodes = array(
 	),
 
 	// Automatic classification shipping
+	/* Replaced by next option
 	'WORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE' => array(
 		'family' => 'classify_shipping',
 		'position' => 90,
 		'enabled' => isModEnabled("expedition") && isModEnabled("facture"),
+		'picto' => 'shipment',
+		'deprecated' => 1
+	),
+	*/
+
+	'WORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE' => array(
+		'family' => 'classify_shipping',
+		'position' => 91,
+		'enabled' => isModEnabled("expedition") && isModEnabled("facture") && getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT') !== '0',
 		'picto' => 'shipment'
 	),
 
 	// Automatic classification reception
-	'WORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE'=>array(
+	/*
+	'WORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE'=>array(
 		'family'=>'classify_reception',
 		'position'=>95,
 		'enabled'=>(isModEnabled("reception") && (isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))),
 		'picto'=>'reception'
 	),
+	*/
+
+	'WORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE' => array(
+		'family' => 'classify_reception',
+		'position' => 91,
+		'enabled' => isModEnabled("reception") && isModEnabled("supplier_invoice") && getDolGlobalString('WORKFLOW_BILL_ON_RECEPTION') !== '0',
+		'picto' => 'shipment'
+	),
+
 
 	'separator2'=>array('family'=>'separator', 'position'=>400, 'enabled' => (isModEnabled('ticket') && isModEnabled('contract'))),
 
@@ -284,6 +304,9 @@ foreach ($workflowcodes as $key => $params) {
 	if (!empty($params['warning'])) {
 		print ' '.img_warning($langs->transnoentitiesnoconv($params['warning']));
 	}
+	if (!empty($params['deprecated'])) {
+		print ' '.img_warning($langs->transnoentitiesnoconv("Deprecated"));
+	}
 
 	print '</td>';
 
@@ -292,7 +315,7 @@ foreach ($workflowcodes as $key => $params) {
 	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff($key);
 	} else {
-		if (!empty($conf->global->$key)) {
+		if (getDolGlobalString($key)) {
 			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=del'.$key.'&token='.newToken().'">';
 			print img_picto($langs->trans("Activated"), 'switch_on');
 			print '</a>';

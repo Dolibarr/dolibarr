@@ -31,7 +31,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modDeplacement extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -80,7 +79,7 @@ class modDeplacement extends DolibarrModules
 		$this->rights[1][0] = 171;
 		$this->rights[1][1] = 'Lire ses notes de frais et deplacements et celles de sa hierarchy';
 		$this->rights[1][2] = 'r';
-		$this->rights[1][3] = 1;
+		$this->rights[1][3] = 0;
 		$this->rights[1][4] = 'lire';
 
 		$this->rights[2][0] = 172;
@@ -129,12 +128,12 @@ class modDeplacement extends DolibarrModules
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'user as u';
 		$this->export_sql_end[$r] .= ', '.MAIN_DB_PREFIX.'deplacement as d';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON d.fk_soc = s.rowid';
-		if (empty($user->rights->societe->client->voir)) {
+		if (!empty($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
 		}
 		$this->export_sql_end[$r] .= ' WHERE d.fk_user = u.rowid';
 		$this->export_sql_end[$r] .= ' AND d.entity IN ('.getEntity('deplacement').')';
-		if (empty($user->rights->societe->client->voir)) {
+		if (!empty($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.(empty($user) ? 0 : $user->id).' OR d.fk_soc IS NULL)';
 		}
 
@@ -142,7 +141,7 @@ class modDeplacement extends DolibarrModules
 			$childids = $user->getAllChildIds();
 			$childids[] = $user->id;
 
-			if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) {
+			if (!$user->hasRight('deplacement', 'readall') && !$user->hasRight('deplacement', 'lire_tous')) {
 				$this->export_sql_end[$r] .= ' AND d.fk_user IN ('.$this->db->sanitize(join(',', $childids)).')';
 			}
 		}

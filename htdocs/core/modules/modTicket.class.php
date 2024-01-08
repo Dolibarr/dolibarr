@@ -119,7 +119,8 @@ class modTicket extends DolibarrModules
 			11 => array('TICKET_MESSAGE_MAIL_SIGNATURE', 'chaine', $default_footer, 'Signature to use by default for messages sent from Dolibarr', 0),
 			12 => array('MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER', 'chaine', "1", 'Disable the rendering of headers in tickets', 0),
 			13 => array('MAIN_SECURITY_ENABLECAPTCHA_TICKET', 'chaine', getDolGlobalInt('MAIN_SECURITY_ENABLECAPTCHA_TICKET'), 'Enable captcha code by default', 0),
-			14 => array('TICKET_SHOW_COMPANY_LOGO', 'chaine', getDolGlobalInt('TICKET_SHOW_COMPANY_LOGO'), 'Enable logo header on ticket public page', 0)
+			14 => array('TICKET_SHOW_COMPANY_LOGO', 'chaine', getDolGlobalInt('TICKET_SHOW_COMPANY_LOGO'), 'Enable logo header on ticket public page', 0),
+			15 => array('TICKET_SHOW_COMPANY_FOOTER', 'chaine', getDolGlobalInt('TICKET_SHOW_COMPANY_FOOTER'), 'Enable footer on ticket public page', 0)
 		);
 
 
@@ -147,15 +148,15 @@ class modTicket extends DolibarrModules
 				"TicketDictResolution"
 			),
 			'tabsql' => array(
-				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_type as f',
-				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_severity as f',
-				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default, f.public, f.fk_parent FROM '.MAIN_DB_PREFIX.'c_ticket_category as f',
-				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_resolution as f'
+				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default, f.entity FROM '.MAIN_DB_PREFIX.'c_ticket_type as f WHERE f.entity IN ('.getEntity('c_ticket_type').')',
+				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default, f.entity FROM '.MAIN_DB_PREFIX.'c_ticket_severity as f WHERE f.entity IN ('.getEntity('c_ticket_severity').')',
+				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default, f.public, f.fk_parent, f.entity FROM '.MAIN_DB_PREFIX.'c_ticket_category as f WHERE f.entity IN ('.getEntity('c_ticket_category').')',
+				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default, f.entity FROM '.MAIN_DB_PREFIX.'c_ticket_resolution as f WHERE f.entity IN ('.getEntity('c_ticket_resolution').')'
 			),
 			'tabsqlsort' => array("pos ASC", "pos ASC", "pos ASC", "pos ASC"),
 			'tabfield' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default,public,fk_parent", "code,label,pos,use_default"),
 			'tabfieldvalue' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default,public,fk_parent", "code,label,pos,use_default"),
-			'tabfieldinsert' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default,public,fk_parent", "code,label,pos,use_default"),
+			'tabfieldinsert' => array("code,label,pos,use_default,entity", "code,label,pos,use_default,entity", "code,label,pos,use_default,public,fk_parent,entity", "code,label,pos,use_default,entity"),
 			'tabrowid' => array("rowid", "rowid", "rowid", "rowid"),
 			'tabcond' => array(isModEnabled("ticket"), isModEnabled("ticket"), isModEnabled("ticket"), isModEnabled("ticket") && getDolGlobalString('TICKET_ENABLE_RESOLUTION')),
 			'tabhelp' => array(
@@ -226,7 +227,7 @@ class modTicket extends DolibarrModules
 		*/
 
 		// Main menu entries
-		$this->menus = array(); // List of menus to add
+		$this->menu = array(); // List of menus to add
 		$r = 0;
 
 		/*$this->menu[$r] = array('fk_menu' => 0, // Put 0 if this is a top menu
@@ -336,9 +337,13 @@ class modTicket extends DolibarrModules
 		$this->export_label[$r]='ExportDataset_ticket_1';	// Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_permission[$r] = array(array("ticket", "export"));
 		$this->export_icon[$r]='ticket';
-		$keyforclass = 'Ticket';$keyforclassfile='/ticket/class/ticket.class.php';$keyforelement='ticket';
+		$keyforclass = 'Ticket';
+		$keyforclassfile='/ticket/class/ticket.class.php';
+		$keyforelement='ticket';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
-		$keyforselect='ticket'; $keyforaliasextra='extra'; $keyforelement='ticket';
+		$keyforselect='ticket';
+		$keyforaliasextra='extra';
+		$keyforelement='ticket';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'ticket as t';

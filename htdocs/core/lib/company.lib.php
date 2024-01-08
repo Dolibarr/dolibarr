@@ -52,8 +52,8 @@ function societe_prepare_head(Societe $object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if (empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES)) {
-		if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->hasRight('societe', 'contact', 'lire')) {
+	if (!getDolGlobalString('MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES')) {
+		if (!getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB') && $user->hasRight('societe', 'contact', 'lire')) {
 			//$nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
 			$nbContact = 0;
 			// Enable caching of thirdrparty count Contacts
@@ -106,19 +106,19 @@ function societe_prepare_head(Societe $object)
 	if ($object->client == 1 || $object->client == 2 || $object->client == 3) {
 		$head[$h][0] = DOL_URL_ROOT.'/comm/card.php?socid='.$object->id;
 		$head[$h][1] = '';
-		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && ($object->client == 2 || $object->client == 3)) {
+		if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTS') && ($object->client == 2 || $object->client == 3)) {
 			$head[$h][1] .= $langs->trans("Prospect");
 		}
-		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && $object->client == 3) {
+		if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTS') && !getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS') && $object->client == 3) {
 			$head[$h][1] .= ' | ';
 		}
-		if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && ($object->client == 1 || $object->client == 3)) {
+		if (!getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS') && ($object->client == 1 || $object->client == 3)) {
 			$head[$h][1] .= $langs->trans("Customer");
 		}
 		$head[$h][2] = 'customer';
 		$h++;
 
-		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 			$langs->load("products");
 			// price
 			$head[$h][0] = DOL_URL_ROOT.'/societe/price.php?socid='.$object->id;
@@ -131,14 +131,14 @@ function societe_prepare_head(Societe $object)
 	if (isModEnabled('supplier_proposal') || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 		$supplier_module_enabled = 1;
 	}
-	if ($supplier_module_enabled == 1 && $object->fournisseur && !empty($user->rights->fournisseur->lire)) {
+	if ($supplier_module_enabled == 1 && $object->fournisseur && $user->hasRight('fournisseur', 'lire')) {
 		$head[$h][0] = DOL_URL_ROOT.'/fourn/card.php?socid='.$object->id;
 		$head[$h][1] = $langs->trans("Supplier");
 		$head[$h][2] = 'supplier';
 		$h++;
 	}
 
-	if (isModEnabled('project') && (!empty($user->rights->projet->lire))) {
+	if (isModEnabled('project') && ($user->hasRight('projet', 'lire'))) {
 		$nbProject = 0;
 		// Enable caching of thirdrparty count projects
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
@@ -171,7 +171,7 @@ function societe_prepare_head(Societe $object)
 	}
 
 	// Tab to link resources
-	if (isModEnabled('resource') && !empty($conf->global->RESOURCE_ON_THIRDPARTIES)) {
+	if (isModEnabled('resource') && getDolGlobalString('RESOURCE_ON_THIRDPARTIES')) {
 		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=societe&element_id='.$object->id;
 		$head[$h][1] = $langs->trans("Resources");
 		$head[$h][2] = 'resources';
@@ -180,7 +180,7 @@ function societe_prepare_head(Societe $object)
 
 	// Related items
 	if ((isModEnabled('commande') || isModEnabled('propal') || isModEnabled('facture') || isModEnabled('ficheinter') || isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))
-		&& empty($conf->global->THIRDPARTIES_DISABLE_RELATED_OBJECT_TAB)) {
+		&& !getDolGlobalString('THIRDPARTIES_DISABLE_RELATED_OBJECT_TAB')) {
 		$head[$h][0] = DOL_URL_ROOT.'/societe/consumption.php?socid='.$object->id;
 		$head[$h][1] = $langs->trans("Referers");
 		$head[$h][2] = 'consumption';
@@ -188,7 +188,7 @@ function societe_prepare_head(Societe $object)
 	}
 
 	// Bank accounts
-	if (empty($conf->global->SOCIETE_DISABLE_BANKACCOUNT)) {
+	if (!getDolGlobalInt('SOCIETE_DISABLE_BANKACCOUNT')) {
 		$nbBankAccount = 0;
 		$foundonexternalonlinesystem = 0;
 		$langs->load("bills");
@@ -200,7 +200,7 @@ function societe_prepare_head(Societe $object)
 			//$title = $langs->trans("BankAccountsAndGateways");
 
 			$servicestatus = 0;
-			if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha')) {
+			if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'alpha')) {
 				$servicestatus = 1;
 			}
 
@@ -242,13 +242,28 @@ function societe_prepare_head(Societe $object)
 		$h++;
 	}
 
-	if (isModEnabled('website') && (!empty($conf->global->WEBSITE_USE_WEBSITE_ACCOUNTS)) && ($user->hasRight('societe', 'lire'))) {
+	if (
+		((isModEnabled('website') && getDolGlobalString('WEBSITE_USE_WEBSITE_ACCOUNTS')) || isModEnabled('webportal'))
+		&& $user->hasRight('societe', 'lire')
+	) {
+		$site_filter_list = array();
+		if (isModEnabled('website')) {
+			$site_filter_list[] = 'dolibarr_website';
+		}
+		if (isModEnabled('webportal')) {
+			$site_filter_list[] = 'dolibarr_portal';
+		}
+
 		$head[$h][0] = DOL_URL_ROOT.'/societe/website.php?id='.urlencode($object->id);
 		$head[$h][1] = $langs->trans("WebSiteAccounts");
 		$nbNote = 0;
 		$sql = "SELECT COUNT(n.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_account as n";
-		$sql .= " WHERE fk_soc = ".((int) $object->id).' AND fk_website > 0';
+		$sql .= " WHERE fk_soc = ".((int) $object->id);
+		$sql .= " AND entity IN (".getEntity('thirdpartyaccount').")";
+		if (!empty($site_filter_list)) {
+			$sql .= " AND n.site IN (".$db->sanitize("'".implode("','", $site_filter_list)."'", 1).")";
+		}
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
@@ -264,7 +279,7 @@ function societe_prepare_head(Societe $object)
 	}
 
 	if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty') == 'thirdparty') {
-		if (!empty($user->rights->partnership->read)) {
+		if ($user->hasRight('partnership', 'read')) {
 			$langs->load("partnership");
 			$nbPartnership = is_array($object->partnerships) ? count($object->partnerships) : 0;
 			$head[$h][0] = DOL_URL_ROOT.'/partnership/partnership_list.php?socid='.$object->id;
@@ -273,6 +288,7 @@ function societe_prepare_head(Societe $object)
 			$sql = "SELECT COUNT(n.rowid) as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX."partnership as n";
 			$sql .= " WHERE fk_soc = ".((int) $object->id);
+			$sql .= " AND entity IN (".getEntity('partnership').")";
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
@@ -375,7 +391,7 @@ function societe_prepare_head(Societe $object)
 
 	$head[$h][0] = DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
-	if (isModEnabled('agenda')&& (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda')&& ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$nbEvent = 0;
 		// Enable caching of thirdparty count actioncomm
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
@@ -387,6 +403,7 @@ function societe_prepare_head(Societe $object)
 			$sql = "SELECT COUNT(id) as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm";
 			$sql .= " WHERE fk_soc = ".((int) $object->id);
+			$sql .= " AND entity IN (".getEntity('agenda').")";
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
@@ -426,7 +443,7 @@ function societe_prepare_head(Societe $object)
  */
 function societe_prepare_head2($object)
 {
-	global $langs, $conf, $user;
+	global $langs;
 	$h = 0;
 	$head = array();
 
@@ -452,7 +469,7 @@ function societe_prepare_head2($object)
  */
 function societe_admin_prepare_head()
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $db;
 
 	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('societe');
@@ -500,17 +517,17 @@ function societe_admin_prepare_head()
 /**
  *    Return country label, code or id from an id, code or label
  *
- *    @param      int		$searchkey      Id or code of country to search
- *    @param      string	$withcode   	'0'=Return label,
+ *    @param	int|string	$searchkey      Id or code of country to search
+ *    @param    string		$withcode   	'0'=Return label,
  *    										'1'=Return code + label,
  *    										'2'=Return code from id,
  *    										'3'=Return id from code,
  * 	   										'all'=Return array('id'=>,'code'=>,'label'=>)
- *    @param      DoliDB	$dbtouse       	Database handler (using in global way may fail because of conflicts with some autoload features)
- *    @param      Translate	$outputlangs	Langs object for output translation
- *    @param      int		$entconv       	0=Return value without entities and not converted to output charset, 1=Ready for html output
- *    @param      int		$searchlabel    Label of country to search (warning: searching on label is not reliable)
- *    @return     mixed       				Integer with country id or String with country code or translated country name or Array('id','code','label') or 'NotDefined'
+ *    @param	DoliDB		$dbtouse       	Database handler (using in global way may fail because of conflicts with some autoload features)
+ *    @param	Translate	$outputlangs	Langs object for output translation
+ *    @param	int			$entconv       	0=Return value without entities and not converted to output charset, 1=Ready for html output
+ *    @param	int			$searchlabel    Label of country to search (warning: searching on label is not reliable)
+ *    @return	mixed       				Integer with country id or String with country code or translated country name or Array('id','code','label') or 'NotDefined'
  */
 function getCountry($searchkey, $withcode = '', $dbtouse = 0, $outputlangs = '', $entconv = 1, $searchlabel = '')
 {
@@ -716,7 +733,7 @@ function getFormeJuridiqueLabel($code)
 		return '';
 	}
 
-	$sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."c_forme_juridique";
+	$sql = "SELECT libelle as label FROM ".MAIN_DB_PREFIX."c_forme_juridique";
 	$sql .= " WHERE code = '".$db->escape($code)."'";
 
 	dol_syslog("Company.lib::getFormeJuridiqueLabel", LOG_DEBUG);
@@ -727,7 +744,7 @@ function getFormeJuridiqueLabel($code)
 		if ($num) {
 			$obj = $db->fetch_object($resql);
 
-			$label = ($obj->libelle != '-' ? $obj->libelle : '');
+			$label = ($obj->label != '-' ? $obj->label : '');
 
 			return $langs->trans($label);
 		} else {
@@ -809,7 +826,7 @@ function isInEEC($object)
  */
 function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatelink = 0, $morehtmlright = '')
 {
-	global $user, $action, $hookmanager;
+	global $user, $action, $hookmanager, $form, $massactionbutton, $massaction, $arrayofselected, $arrayofmassactions;
 
 	$i = -1;
 
@@ -840,6 +857,12 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 			$num = $db->num_rows($result);
 
 			print '<tr class="liste_titre">';
+			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print '<td class="center">';
+				$selectedfields = (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
+				print $selectedfields;
+				print '</td>';
+			}
 			print '<td>'.$langs->trans("Ref").'</td>';
 			print '<td>'.$langs->trans("Name").'</td>';
 			print '<td class="center">'.$langs->trans("DateStart").'</td>';
@@ -848,6 +871,12 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 			print '<td class="center">'.$langs->trans("OpportunityStatusShort").'</td>';
 			print '<td class="right">'.$langs->trans("OpportunityProbabilityShort").'</td>';
 			print '<td class="right">'.$langs->trans("Status").'</td>';
+			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print '<td class="center">';
+				$selectedfields = (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
+				print $selectedfields;
+				print '</td>';
+			}
 			print '</tr>';
 
 			if ($num > 0) {
@@ -864,12 +893,23 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 					// To verify role of users
 					$userAccess = $projecttmp->restrictedProjectArea($user);
 
-					if ($user->rights->projet->lire && $userAccess > 0) {
+					if ($user->hasRight('projet', 'lire') && $userAccess > 0) {
 						print '<tr class="oddeven">';
 
+						if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+							print '<td class="nowrap center actioncolumn">';
+							if ($massactionbutton || $massaction) {
+								$selected = 0;
+								if (in_array($obj->id, $arrayofselected)) {
+									$selected = 1;
+								}
+								print '<input id="cb'.$obj->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->id.'"'.($selected ? ' checked="checked"' : '').'>';
+							}
+							print '</td>';
+						}
 						// Ref
 						print '<td class="nowraponall">';
-						print $projecttmp->getNomUrl(1);
+						print $projecttmp->getNomUrl(1, '', 0, '', '-', 0, 1, '', 'project:'.$_SERVER["PHP_SELF"].'?socid=__SOCID__');
 						print '</td>';
 
 						// Label
@@ -899,6 +939,18 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 						// Status
 						print '<td class="right">'.$projecttmp->getLibStatut(5).'</td>';
 
+						// Action column
+						if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+							print '<td class="nowrap center actioncolumn">';
+							if ($massactionbutton || $massaction) {
+								$selected = 0;
+								if (in_array($obj->id, $arrayofselected)) {
+									$selected = 1;
+								}
+								print '<input id="cb'.$obj->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->id.'"'.($selected ? ' checked="checked"' : '').'>';
+							}
+							print '</td>';
+						}
 						print '</tr>';
 					}
 					$i++;
@@ -1011,7 +1063,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$extrafields->fetch_name_optionals_label($contactstatic->table_element);
 
 	$contactstatic->fields = array(
-		'rowid'     =>array('type'=>'integer', 'label'=>"TechnicalID", 'enabled'=>(!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) ? 1 : 0), 'visible'=>(!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) ? 1 : 0), 'position'=>1),
+		'rowid'     =>array('type'=>'integer', 'label'=>"TechnicalID", 'enabled'=>(getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') ? 1 : 0), 'visible'=>(getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') ? 1 : 0), 'position'=>1),
 		'name'      =>array('type'=>'varchar(128)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1),
 		'poste'     =>array('type'=>'varchar(128)', 'label'=>'PostOrFunction', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>2, 'index'=>1, 'position'=>20),
 		'address'   =>array('type'=>'varchar(128)', 'label'=>'Address', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>3, 'index'=>1, 'position'=>30),
@@ -1023,7 +1075,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 
 	// Definition of fields for list
 	$arrayfields = array(
-		't.rowid'=>array('label'=>"TechnicalID", 'checked'=>(!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) ? 1 : 0), 'enabled'=>(!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) ? 1 : 0), 'position'=>1),
+		't.rowid'=>array('label'=>"TechnicalID", 'checked'=>(getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') ? 1 : 0), 'enabled'=>(getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') ? 1 : 0), 'position'=>1),
 		't.name'=>array('label'=>"Name", 'checked'=>1, 'position'=>10),
 		't.poste'=>array('label'=>"PostOrFunction", 'checked'=>1, 'position'=>20),
 		't.address'=>array('label'=>(empty($conf->dol_optimize_smallscreen) ? $langs->trans("Address").' / '.$langs->trans("Phone").' / '.$langs->trans("Email") : $langs->trans("Address")), 'checked'=>1, 'position'=>30),
@@ -1080,13 +1132,13 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 
 	$newcardbutton = '';
 	if ($user->hasRight('societe', 'contact', 'creer')) {
-		$addcontact = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
+		$addcontact = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
 		$newcardbutton .= dolGetButtonTitle($addcontact, '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contact/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage));
 	}
 
 	print "\n";
 
-	$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ContactsForCompany") : $langs->trans("ContactsAddressesForCompany"));
+	$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("ContactsForCompany") : $langs->trans("ContactsAddressesForCompany"));
 	print load_fiche_titre($title, $newcardbutton, '');
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
@@ -1097,9 +1149,12 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
+	$arrayofmassactions = array();
+	$mode = 'view';
+
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
-	//if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
+	$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
+	$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print "\n".'<table class="tagtable liste">'."\n";
@@ -1147,6 +1202,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as t";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as ef on (t.rowid = ef.fk_object)";
 	$sql .= " WHERE t.fk_soc = ".((int) $object->id);
+	$sql .= " AND t.entity IN (" .getEntity('socpeople') .")";
 	$sql .= " AND ((t.fk_user_creat = ".((int) $user->id)." AND t.priv = 1) OR t.priv = 0)";
 	if ($search_rowid) {
 		$sql .= natural_search('t.rowid', $search_rowid);
@@ -1199,6 +1255,12 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	// Fields title search
 	// --------------------------------------------------------------------
 	print '<tr class="liste_titre">';
+	// Action column
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="liste_titre" align="right">';
+		print $form->showFilterButtons();
+		print '</td>';
+	}
 	foreach ($contactstatic->fields as $key => $val) {
 		$align = '';
 		if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {
@@ -1241,15 +1303,21 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $contactstatic); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Action column
-	print '<td class="liste_titre" align="right">';
-	print $form->showFilterButtons();
-	print '</td>';
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="liste_titre" align="right">';
+		print $form->showFilterButtons();
+		print '</td>';
+	}
 	print '</tr>'."\n";
 
 
 	// Fields title label
 	// --------------------------------------------------------------------
 	print '<tr class="liste_titre">';
+	// Action column
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ')."\n";
+	}
 	foreach ($contactstatic->fields as $key => $val) {
 		$align = '';
 		if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {
@@ -1281,7 +1349,10 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ')."\n";
+	// Action column
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ')."\n";
+	}
 	print '</tr>'."\n";
 
 	$i = -1;
@@ -1330,6 +1401,27 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 			}
 
 			print '<tr class="oddeven">';
+
+			// Actions
+			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print '<td class="nowrap center">';
+
+				// Add to agenda
+				if (isModEnabled('agenda')&& $user->hasRight('agenda', 'myactions', 'create')) {
+					print '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&actioncode=&contactid='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
+					print img_object($langs->trans("Event"), "action");
+					print '</a> &nbsp; ';
+				}
+
+				// Edit
+				if ($user->hasRight('societe', 'contact', 'creer')) {
+					print '<a class="editfielda paddingleft" href="'.DOL_URL_ROOT.'/contact/card.php?action=edit&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($backtopage).'">';
+					print img_edit();
+					print '</a>';
+				}
+
+				print '</td>';
+			}
 
 			// ID
 			if (!empty($arrayfields['t.rowid']['checked'])) {
@@ -1406,23 +1498,25 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
 			// Actions
-			print '<td align="right">';
+			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				print '<td class="nowrap center">';
 
-			// Add to agenda
-			if (isModEnabled('agenda')&& $user->hasRight('agenda', 'myactions', 'create')) {
-				print '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&actioncode=&contactid='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
-				print img_object($langs->trans("Event"), "action");
-				print '</a> &nbsp; ';
+				// Add to agenda
+				if (isModEnabled('agenda')&& $user->hasRight('agenda', 'myactions', 'create')) {
+					print '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&actioncode=&contactid='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
+					print img_object($langs->trans("Event"), "action");
+					print '</a> &nbsp; ';
+				}
+
+				// Edit
+				if ($user->hasRight('societe', 'contact', 'creer')) {
+					print '<a class="editfielda paddingleft" href="'.DOL_URL_ROOT.'/contact/card.php?action=edit&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($backtopage).'">';
+					print img_edit();
+					print '</a>';
+				}
+
+				print '</td>';
 			}
-
-			// Edit
-			if ($user->hasRight('societe', 'contact', 'creer')) {
-				print '<a class="editfielda paddingleft" href="'.DOL_URL_ROOT.'/contact/card.php?action=edit&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($backtopage).'">';
-				print img_edit();
-				print '</a>';
-			}
-
-			print '</td>';
 
 			print "</tr>\n";
 			$i++;
@@ -1490,7 +1584,7 @@ function show_actions_todo($conf, $langs, $db, $filterobj, $objcon = '', $noprin
  * 		@param	mixed			   $filterobj	   Filter on object Adherent|Societe|Project|Product|CommandeFournisseur|Dolresource|Ticket... to list events linked to an object
  * 		@param	Contact		       $objcon		   Filter on object contact to filter events on a contact
  *      @param  int			       $noprint        Return string but does not output it
- *      @param  string		       $actioncode     Filter on actioncode
+ *      @param  string|string[]    $actioncode     Filter on actioncode
  *      @param  string             $donetodo       Filter on event 'done' or 'todo' or ''=nofilter (all).
  *      @param  array              $filters        Filter on other fields
  *      @param  string             $sortfield      Sort field
@@ -1592,7 +1686,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		// Fields from hook
 		$parameters = array('sql' => &$sql, 'filterobj' => $filterobj, 'objcon' => $objcon);
 		$reshook = $hookmanager->executeHooks('showActionsDoneListSelect', $parameters);    // Note that $action and $object may have been modified by hook
-		if (!empty($hookmanager->resPrint)) $sql.= $hookmanager->resPrint;
+		if (!empty($hookmanager->resPrint)) {
+			$sql.= $hookmanager->resPrint;
+		}
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_action";
@@ -1608,7 +1704,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		// Fields from hook
 		$parameters = array('sql' => &$sql, 'filterobj' => $filterobj, 'objcon' => $objcon);
 		$reshook = $hookmanager->executeHooks('showActionsDoneListFrom', $parameters);    // Note that $action and $object may have been modified by hook
-		if (!empty($hookmanager->resPrint)) $sql.= $hookmanager->resPrint;
+		if (!empty($hookmanager->resPrint)) {
+			$sql.= $hookmanager->resPrint;
+		}
 
 		if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur'))) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
@@ -1631,8 +1729,12 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$sql .= ", ".MAIN_DB_PREFIX."bom_bom as o";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
 			$sql .= ", ".MAIN_DB_PREFIX."contrat as o";
-		} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && (!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref']) || $filterobj->fields['label'] && is_array($filterobj->fields['label'])) && $filterobj->table_element && $filterobj->element) {
+		} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid'])
+			&& ((!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref'])) || (!empty($filterobj->fields['label']) && is_array($filterobj->fields['label'])) || (!empty($filterobj->fields['titre']) && is_array($filterobj->fields['titre'])))
+			&& $filterobj->table_element && $filterobj->element) {
 			$sql .= ", ".MAIN_DB_PREFIX.$filterobj->table_element." as o";
+		} elseif (is_object($filterobj)) {
+			return 'Bad value for $filterobj';
 		}
 
 		$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
@@ -1683,12 +1785,16 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
-			} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && (!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref']) || $filterobj->fields['label'] && is_array($filterobj->fields['label'])) && $filterobj->table_element && $filterobj->element) {
-				// Generic case
+			} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid'])
+				&& ((!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref'])) || (!empty($filterobj->fields['label']) && is_array($filterobj->fields['label'])) || (!empty($filterobj->fields['titre']) && is_array($filterobj->fields['titre'])))
+				&& $filterobj->table_element && $filterobj->element) {
+				// Generic case (if there is a $filterobj and a field rowid and (ref or label) exists.
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = '".$db->escape($filterobj->element).($module ? "@".$module : "")."'";
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
+			} elseif (is_object($filterobj)) {
+				return 'Bad value for $filterobj';
 			}
 		}
 
@@ -1704,13 +1810,10 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$sql .= ' AND (';
 			foreach ($actioncode as $key => $code) {
 				if ($key != 0) {
-					$sql .= "OR (";
+					$sql .= " OR ";
 				}
 				if (!empty($code)) {
-					addEventTypeSQL($sql, $code);
-				}
-				if ($key != 0) {
-					$sql .= ")";
+					addEventTypeSQL($sql, $code, "");
 				}
 			}
 			$sql .= ')';
@@ -1723,7 +1826,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		// Fields from hook
 		$parameters = array('sql' => &$sql, 'filterobj' => $filterobj, 'objcon' => $objcon, 'module' => $module);
 		$reshook = $hookmanager->executeHooks('showActionsDoneListWhere', $parameters);    // Note that $action and $object may have been modified by hook
-		if (!empty($hookmanager->resPrint)) $sql.= $hookmanager->resPrint;
+		if (!empty($hookmanager->resPrint)) {
+			$sql.= $hookmanager->resPrint;
+		}
 
 		if (is_array($actioncode)) {
 			foreach ($actioncode as $code) {
@@ -1865,6 +1970,15 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		$out .= '<table class="noborder centpercent">';
 
 		$out .= '<tr class="liste_titre">';
+
+		// Action column
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			$out .= '<th class="liste_titre width50 middle">';
+			$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
+			$out .= $searchpicto;
+			$out .= '</th>';
+		}
+
 		if ($donetodo) {
 			$out .= '<td class="liste_titre"></td>';
 		}
@@ -1872,7 +1986,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		$out .= '<td class="liste_titre"><input type="text" class="width50" name="search_rowid" value="'.(isset($filters['search_rowid']) ? $filters['search_rowid'] : '').'"></td>';
 		$out .= '<td class="liste_titre"></td>';
 		$out .= '<td class="liste_titre">';
-		$out .= $formactions->select_type_actions($actioncode, "actioncode", '', empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1, 0, (empty($conf->global->AGENDA_USE_MULTISELECT_TYPE) ? 0 : 1), 1, 'minwidth100 maxwidth150');
+		$out .= $formactions->select_type_actions($actioncode, "actioncode", '', !getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? 1 : -1, 0, (!getDolGlobalString('AGENDA_USE_MULTISELECT_TYPE') ? 0 : 1), 1, 'minwidth100 maxwidth150');
 		$out .= '</td>';
 		$out .= '<td class="liste_titre maxwidth100onsmartphone"><input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="'.$filters['search_agenda_label'].'"></td>';
 		$out .= '<td class="liste_titre center">';
@@ -1882,13 +1996,19 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		$out .= '<td class="liste_titre"></td>';
 		$out .= '<td class="liste_titre"></td>';
 		// Action column
-		$out .= '<td class="liste_titre" align="middle">';
-		$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
-		$out .= $searchpicto;
-		$out .= '</td>';
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			$out .= '<td class="liste_titre" align="middle">';
+			$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
+			$out .= $searchpicto;
+			$out .= '</td>';
+		}
 		$out .= '</tr>';
 
 		$out .= '<tr class="liste_titre">';
+		// Action column
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			$out .= getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'maxwidthsearch ');
+		}
 		if ($donetodo) {
 			$tmp = '';
 			if (get_class($filterobj) == 'Societe') {
@@ -1911,12 +2031,15 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		$out .= getTitleFieldOfList("RelatedObjects", 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
 		$out .= getTitleFieldOfList("ActionOnContact", 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'tdoverflowmax125 ', 0, '', 0);
 		$out .= getTitleFieldOfList("Status", 0, $_SERVER["PHP_SELF"], 'a.percent', '', $param, '', $sortfield, $sortorder, 'center ');
-		$out .= getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'maxwidthsearch ');
+		// Action column
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			$out .= getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'maxwidthsearch ');
+		}
 		$out .= '</tr>';
 
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 		$caction = new CActionComm($db);
-		$arraylist = $caction->liste_array(1, 'code', '', (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : 0), '', 1);
+		$arraylist = $caction->liste_array(1, 'code', '', (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? 1 : 0), '', 1);
 
 		foreach ($histo as $key => $value) {
 			$actionstatic->fetch($histo[$key]['id']); // TODO Do we need this, we already have a lot of data of line into $histo
@@ -1925,6 +2048,11 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$actionstatic->type_code = $histo[$key]['acode'];
 
 			$out .= '<tr class="oddeven">';
+
+			// Action column
+			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				$out .= '<td></td>';
+			}
 
 			// Done or todo
 			if ($donetodo) {
@@ -1944,10 +2072,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$out .= '</td>';
 
 			// Author of event
-			$out .= '<td class="tdoverflowmax150">';
-			//$userstatic->id=$histo[$key]['userid'];
-			//$userstatic->login=$histo[$key]['login'];
-			//$out.=$userstatic->getLoginUrl(1);
+			$out .= '<td class="tdoverflowmax125">';
 			if ($histo[$key]['userid'] > 0) {
 				if (isset($userlinkcache[$histo[$key]['userid']])) {
 					$link = $userlinkcache[$histo[$key]['userid']];
@@ -1962,10 +2087,10 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 
 			// Type
 			$labeltype = $actionstatic->type_code;
-			if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($arraylist[$labeltype])) {
+			if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') && empty($arraylist[$labeltype])) {
 				$labeltype = 'AC_OTH';
 			}
-			if (preg_match('/^TICKET_MSG/', $actionstatic->code)) {
+			if (!empty($actionstatic->code) && preg_match('/^TICKET_MSG/', $actionstatic->code)) {
 				$labeltype = $langs->trans("Message");
 			} else {
 				if (!empty($arraylist[$labeltype])) {
@@ -1975,17 +2100,18 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 					$labeltype .= ' - '.$arraylist[$actionstatic->code]; // Use code in priority on type_code
 				}
 			}
-			$out .= '<td class="tdoverflowmax150" title="'.$labeltype.'">';
+			$out .= '<td class="tdoverflowmax125" title="'.$labeltype.'">';
 			$out .= $actionstatic->getTypePicto();
+			//if (empty($conf->dol_optimize_smallscreen)) {
 			$out .= $labeltype;
+			//}
 			$out .= '</td>';
 
 			// Title/Label of event
 			$out .= '<td class="tdoverflowmax300"';
 			if (isset($histo[$key]['type']) && $histo[$key]['type'] == 'action') {
 				$transcode = $langs->trans("Action".$histo[$key]['acode']);
-				$libelle = ($transcode != "Action".$histo[$key]['acode'] ? $transcode : $histo[$key]['alabel']);
-				//$actionstatic->libelle=$libelle;
+				//$libelle = ($transcode != "Action".$histo[$key]['acode'] ? $transcode : $histo[$key]['alabel']);
 				$libelle = $histo[$key]['note'];
 				$actionstatic->id = $histo[$key]['id'];
 				$out .= ' title="'.dol_escape_htmltag($libelle).'">';
@@ -2030,9 +2156,6 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			}
 			$out .= "</td>\n";
 
-			// Title of event
-			//$out.='<td>'.dol_trunc($histo[$key]['note'], 40).'</td>';
-
 			// Linked object
 			$out .= '<td class="nowraponall">';
 			if (isset($histo[$key]['elementtype']) && !empty($histo[$key]['fk_element'])) {
@@ -2046,8 +2169,6 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 					$elementlinkcache[$histo[$key]['elementtype']][$histo[$key]['fk_element']] = $link;
 				}
 				$out .= $link;
-			} else {
-				$out .= '&nbsp;';
 			}
 			$out .= '</td>';
 
@@ -2086,8 +2207,10 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			// Status
 			$out .= '<td class="nowrap center">'.$actionstatic->LibStatut($histo[$key]['percent'], 2, 0, $histo[$key]['datestart']).'</td>';
 
-			// Actions
-			$out .= '<td></td>';
+			// Action column
+			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				$out .= '<td></td>';
+			}
 
 			$out .= "</tr>\n";
 			$i++;
@@ -2158,7 +2281,7 @@ function show_subsidiaries($conf, $langs, $db, $object)
 			$socstatic->name_alias = $obj->name_alias;
 			$socstatic->email = $obj->email;
 			$socstatic->code_client = $obj->code_client;
-			$socstatic->code_fournisseur = $obj->code_client;
+			$socstatic->code_fournisseur = $obj->code_fournisseur;
 			$socstatic->code_compta = $obj->code_compta;
 			$socstatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 			$socstatic->email = $obj->email;
@@ -2206,21 +2329,21 @@ function addEventTypeSQL(&$sql, $actioncode, $sqlANDOR = "AND")
 	global $conf, $db;
 	// Condition on actioncode
 
-	if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
+	if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 		if ($actioncode == 'AC_NON_AUTO') {
-			$sql .= " $sqlANDOR c.type != 'systemauto'";
+			$sql .= " $sqlANDOR c.type <> 'systemauto'";
 		} elseif ($actioncode == 'AC_ALL_AUTO') {
 			$sql .= " $sqlANDOR c.type = 'systemauto'";
 		} else {
 			if ($actioncode == 'AC_OTH') {
-				$sql .= " $sqlANDOR c.type != 'systemauto'";
+				$sql .= " $sqlANDOR c.type <> 'systemauto'";
 			} elseif ($actioncode == 'AC_OTH_AUTO') {
 				$sql .= " $sqlANDOR c.type = 'systemauto'";
 			}
 		}
 	} else {
 		if ($actioncode == 'AC_NON_AUTO') {
-			$sql .= " $sqlANDOR c.type != 'systemauto'";
+			$sql .= " $sqlANDOR c.type <> 'systemauto'";
 		} elseif ($actioncode == 'AC_ALL_AUTO') {
 			$sql .= " $sqlANDOR c.type = 'systemauto'";
 		} else {
@@ -2369,26 +2492,27 @@ function htmlPrintOnlineFooter($fromcompany, $langs, $addformmessage = 0, $suffi
 
 	print '<!-- htmlPrintOnlineFooter -->'."\n";
 
-	print '<footer class="center paddingleft paddingright opacitymedium centpercent">'."\n";
+	// css centpercent has been removed from class="..." because not compatible with paddingleft/right and there is an horizontal scroll appearring on payment page for example.
+	print '<footer class="center paddingleft paddingright opacitymedium">'."\n";
 	print '<br>';
 	if ($addformmessage) {
 		print '<!-- object = '.(empty($object) ? 'undefined' : $object->element).' -->';
 		print '<br>';
 
 		$parammessageform = 'ONLINE_PAYMENT_MESSAGE_FORM_'.$suffix;
-		if (!empty($conf->global->$parammessageform)) {
-			print $langs->transnoentities($conf->global->$parammessageform);
-		} elseif (!empty($conf->global->ONLINE_PAYMENT_MESSAGE_FORM)) {
-			print $langs->transnoentities($conf->global->ONLINE_PAYMENT_MESSAGE_FORM);
+		if (getDolGlobalString($parammessageform) !== '') {
+			print $langs->transnoentities(getDolGlobalString($parammessageform));
+		} elseif (getDolGlobalString('ONLINE_PAYMENT_MESSAGE_FORM')  !== '') {
+			print $langs->transnoentities(getDolGlobalString('ONLINE_PAYMENT_MESSAGE_FORM'));
 		}
 
 		// Add other message if VAT exists
 		if (!empty($object->total_vat) || !empty($object->total_tva)) {
 			$parammessageform = 'ONLINE_PAYMENT_MESSAGE_FORMIFVAT_'.$suffix;
-			if (!empty($conf->global->$parammessageform)) {
-				print $langs->transnoentities($conf->global->$parammessageform);
-			} elseif (!empty($conf->global->ONLINE_PAYMENT_MESSAGE_FORMIFVAT)) {
-				print $langs->transnoentities($conf->global->ONLINE_PAYMENT_MESSAGE_FORMIFVAT);
+			if (getDolGlobalString($parammessageform)  !== '') {
+				print $langs->transnoentities(getDolGlobalString($parammessageform));
+			} elseif (getDolGlobalString('ONLINE_PAYMENT_MESSAGE_FORMIFVAT') !== '') {
+				print $langs->transnoentities(getDolGlobalString('ONLINE_PAYMENT_MESSAGE_FORMIFVAT'));
 			}
 		}
 	}

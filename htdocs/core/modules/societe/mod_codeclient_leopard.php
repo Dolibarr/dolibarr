@@ -88,6 +88,18 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 		return $langs->trans("LeopardNumRefModelDesc");
 	}
 
+	/**
+	 * Return an example of result returned by getNextValue
+	 *
+	 * @param	Translate	$langs		Object langs
+	 * @param	societe		$objsoc		Object thirdparty
+	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 * @return	string					Return string example
+	 */
+	public function getExample($langs, $objsoc = 0, $type = -1)
+	{
+		return '';
+	}
 
 	/**
 	 * Return an example of result returned by getNextValue
@@ -123,9 +135,9 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 		$result = 0;
 		$code = trim($code);
 
-		if (empty($code) && $this->code_null && empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) {
+		if (empty($code) && $this->code_null && !getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED')) {
 			$result = 0;
-		} elseif (empty($code) && (!$this->code_null || !empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED))) {
+		} elseif (empty($code) && (!$this->code_null || getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED'))) {
 			$result = -2;
 		}
 

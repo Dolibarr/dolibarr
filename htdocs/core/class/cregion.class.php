@@ -22,33 +22,17 @@
  *      \brief      This file is a CRUD class file (Create/Read/Update/Delete) for c_regions dictionary
  */
 
+// Put here all includes required by your class file
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
+
+
 /**
  * 	Class to manage dictionary Regions
  */
-class Cregion
+class Cregion extends CommonDict
 {
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
-
 	//public $element = 'cregion'; //!< Id that identify managed objects
 	//public $table_element = 'c_regions'; //!< Name of table without prefix where object is stored
-
-	/**
-	 * @var int ID
-	 */
-	public $id;
 
 	public $code_region;
 	public $fk_pays;
@@ -63,7 +47,6 @@ class Cregion
 	 */
 	public $cheflieu;
 
-	public $active;
 
 	/**
 	 *  Constructor
@@ -81,7 +64,7 @@ class Cregion
 	 *
 	 *  @param      User	$user        User that create
 	 *  @param      int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return     int      		   	 <0 if KO, Id of created object if OK
+	 *  @return     int      		   	 Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -122,7 +105,7 @@ class Cregion
 		$sql .= " ".(!isset($this->fk_pays) ? 'NULL' : "'".$this->db->escape($this->fk_pays)."'").",";
 		$sql .= " ".(!isset($this->name) ? 'NULL' : "'".$this->db->escape($this->name)."'").",";
 		$sql .= " ".(!isset($this->cheflieu) ? 'NULL' : "'".$this->db->escape($this->cheflieu)."'").",";
-		$sql .= " ".(!isset($this->active) ? 'NULL' : "'".$this->db->escape($this->active)."'")."";
+		$sql .= " ".(!isset($this->active) ? 'NULL' : "'".$this->db->escape($this->active)."'");
 		$sql .= ")";
 
 		$this->db->begin();
@@ -211,7 +194,7 @@ class Cregion
 	 *
 	 *  @param      User	$user        User that modify
 	 *  @param      int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return     int     		   	 <0 if KO, >0 if OK
+	 *  @return     int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -245,7 +228,7 @@ class Cregion
 		$sql .= " fk_pays=".(isset($this->fk_pays) ? "'".$this->db->escape($this->fk_pays)."'" : "null").",";
 		$sql .= " nom=".(isset($this->name) ? "'".$this->db->escape($this->name)."'" : "null").",";
 		$sql .= " cheflieu=".(isset($this->cheflieu) ? "'".$this->db->escape($this->cheflieu)."'" : "null").",";
-		$sql .= " active=".(isset($this->active) ? $this->active : "null")."";
+		$sql .= " active=".(isset($this->active) ? $this->active : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -277,7 +260,7 @@ class Cregion
 	 *
 	 *	@param  User	$user        User that delete
 	 *  @param	int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 <0 if KO, >0 if OK
+	 *  @return	int					 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{

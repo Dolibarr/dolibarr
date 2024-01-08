@@ -17,10 +17,12 @@
  */
 
 /**
- * \defgroup   HRM 	Module hrm
- * \file       htdocs/core/modules/modHRM.class.php
- * \ingroup    HRM
- * \brief      Description and activation file for the module HRM
+ *  \defgroup   HRM 	Module hrm
+ *  \brief      Module for Human Resource Management (HRM)
+ *
+ *  \file       htdocs/core/modules/modHRM.class.php
+ *  \ingroup    HRM
+ *  \brief      Description and activation file for the module HRM
  */
 include_once DOL_DOCUMENT_ROOT."/core/modules/DolibarrModules.class.php";
 
@@ -112,7 +114,6 @@ class modHRM extends DolibarrModules
 		// Constants
 		// Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',0),
 		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0) );
-		//                             2=>array('MAIN_MODULE_MYMODULE_NEEDSMARTY','chaine',1,'Constant to say module need smarty',0)
 		$this->const = array(); // List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 0 or 'allentities')
 		$r = 0;
 
@@ -285,6 +286,7 @@ class modHRM extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
+		global $conf;
 		// Permissions
 		$this->remove($options);
 
@@ -293,7 +295,10 @@ class modHRM extends DolibarrModules
 			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
 		}
 
-		$sql = array();
+		$sql = array(
+			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard' AND type='evaluation' AND entity = ".((int) $conf->entity),
+			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard','evaluation',".((int) $conf->entity).")"
+		);
 
 		return $this->_init($sql, $options);
 	}

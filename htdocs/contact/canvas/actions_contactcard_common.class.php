@@ -70,7 +70,7 @@ abstract class ActionsContactCardCommon
 		}
 		else
 		{*/
-			$object = new Contact($this->db);
+		$object = new Contact($this->db);
 		if (!empty($id)) {
 			$object->fetch($id);
 		}
@@ -129,7 +129,7 @@ abstract class ActionsContactCardCommon
 			$this->tpl['select_civility'] = $formcompany->select_civility($this->object->civility_id);
 
 			// Predefined with third party
-			if ((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) {
+			if ((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || getDolGlobalString('CONTACT_USE_COMPANY_ADDRESS')) {
 				if (dol_strlen(trim($this->object->address)) == 0) {
 					$this->tpl['address'] = $objsoc->address;
 				}
@@ -253,7 +253,7 @@ abstract class ActionsContactCardCommon
 
 			$this->tpl['visibility'] = $this->object->LibPubPriv($this->object->priv);
 
-			$this->tpl['note'] = nl2br($this->object->note);
+			$this->tpl['note'] = $this->object->note_private;
 		}
 
 		if ($action == 'create_user') {
@@ -278,7 +278,7 @@ abstract class ActionsContactCardCommon
 	/**
 	 *  Assign POST values into object
 	 *
-	 *  @return		string					HTML output
+	 *  @return		void
 	 */
 	private function assign_post()
 	{

@@ -39,6 +39,7 @@ KnowledgeManagementAboutPage = Knowledge Management about page
 
 KnowledgeManagementArea = Knowledge Management
 MenuKnowledgeRecord = Knowledge base
+MenuKnowledgeRecordShort = Knowledge base
 ListKnowledgeRecord = List of articles
 NewKnowledgeRecord = New article
 ValidateReply = Validate solution

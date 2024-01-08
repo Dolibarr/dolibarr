@@ -39,11 +39,6 @@ class mailing_eventorganization extends MailingTargets
 	 */
 	public $picto = 'conferenceorbooth';
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
 	public $enabled = 'isModEnabled("eventorganization")';
 
 
@@ -66,7 +61,7 @@ class mailing_eventorganization extends MailingTargets
 	 *    This is the main function that returns the array of emails
 	 *
 	 *    @param	int		$mailing_id    	Id of mailing. No need to use it.
-	 *    @return   int 					<0 if error, number of emails added if ok
+	 *    @return   int 					Return integer <0 if error, number of emails added if ok
 	 */
 	public function add_to_target($mailing_id)
 	{
@@ -104,7 +99,7 @@ class mailing_eventorganization extends MailingTargets
 			$old = '';
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
-				if ($old <> $obj->email) {
+				if ($old != $obj->email) {
 					$otherTxt = ($obj->ref ? $langs->transnoentities("Project").'='.$obj->ref : '');
 					if (strlen($addDescription) > 0 && strlen($otherTxt) > 0) {
 						$otherTxt .= ";";
@@ -164,6 +159,8 @@ class mailing_eventorganization extends MailingTargets
 	 */
 	public function getNbOfRecipients($sql = '')
 	{
+		global $conf;
+
 		$sql = "SELECT COUNT(DISTINCT(e.email)) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."eventorganization_conferenceorboothattendee as e, ";
 		$sql .= " ".MAIN_DB_PREFIX."projet as p";

@@ -93,4 +93,5 @@ ReasonDeclineOrCancel=Afvis grund
 
 NewPartnershipRequest=Ny partnerskabsanmodning
 NewPartnershipRequestDesc=Denne formular giver dig mulighed for at anmode om at blive en del af et af vores partnerskabsprogram. Hvis du har brug for hjælp til at udfylde denne formular, bedes du kontakte via e-mail <b> %s </b> .
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Denne side skal indeholde mindst ét link til et af følgende domæner: %s
 

@@ -66,7 +66,7 @@ class AntiVir
 	 *  Return also true (virus found) if file end with '.virus' (so we can make test safely).
 	 *
 	 *	@param	string	$file		File to scan
-	 *	@return	int					<0 if KO (-98 if error, -99 if virus), 0 if OK
+	 *	@return	int					Return integer <0 if KO (-98 if error, -99 if virus), 0 if OK
 	 */
 	public function dol_avscan_file($file)
 	{
@@ -138,8 +138,8 @@ class AntiVir
 		$bz2archivememlim = 0; // limit memory usage for bzip2 (0/1)
 		$maxfilesize = 10485760; // archived files larger than this value (in bytes) will not be scanned
 
-		$command = $conf->global->MAIN_ANTIVIRUS_COMMAND;
-		$param = $conf->global->MAIN_ANTIVIRUS_PARAM;
+		$command = getDolGlobalString('MAIN_ANTIVIRUS_COMMAND');
+		$param = getDolGlobalString('MAIN_ANTIVIRUS_PARAM');
 
 		$param = preg_replace('/%maxreclevel/', $maxreclevel, $param);
 		$param = preg_replace('/%maxfiles/', $maxfiles, $param);

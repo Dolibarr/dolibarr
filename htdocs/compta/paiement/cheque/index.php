@@ -103,7 +103,7 @@ foreach ($arrayofpaymentmodetomanage as $val) {
 		if ($val == 'CHQ') {
 			print $langs->trans("BankChecks");
 		} else {
-			print ($langs->trans("PaymentType".$val) != "PaymentType".$val ? $langs->trans("PaymentType".$val) : $langs->trans("PaymentMode").' '.$val);
+			print($langs->trans("PaymentType".$val) != "PaymentType".$val ? $langs->trans("PaymentType".$val) : $langs->trans("PaymentMode").' '.$val);
 		}
 		print '</td>';
 		print '<td class="right">';

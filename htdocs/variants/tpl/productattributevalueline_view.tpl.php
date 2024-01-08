@@ -46,8 +46,8 @@ $coldisplay = 0;
 ?>
 <!-- BEGIN PHP TEMPLATE productattributevalueline_view.tpl.php -->
 <tr  id="row-<?php print $line->id?>" class="drag drop oddeven" <?php print $domData; ?> >
-<?php if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
-	<td class="linecolnum center"><span class="opacitymedium"><?php $coldisplay++; ?><?php print ($i + 1); ?></span></td>
+<?php if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) { ?>
+	<td class="linecolnum center"><span class="opacitymedium"><?php $coldisplay++; ?><?php print($i + 1); ?></span></td>
 <?php } ?>
 	<td class="linecolref nowrap"><?php $coldisplay++; ?><div id="line_<?php print $line->id; ?>"></div>
 		<?php print $line->ref ?>

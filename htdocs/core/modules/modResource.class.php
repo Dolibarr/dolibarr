@@ -32,7 +32,6 @@ include_once DOL_DOCUMENT_ROOT."/core/modules/DolibarrModules.class.php";
  */
 class modResource extends DolibarrModules
 {
-
 	/**
 	 * 	Constructor. Define names, constants, directories, boxes, permissions
 	 *

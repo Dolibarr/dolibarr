@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\Xml;
 
 /**
@@ -15,6 +17,6 @@ namespace Sabre\Xml;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface Element extends XmlSerializable, XmlDeserializable {
-
+interface Element extends XmlSerializable, XmlDeserializable
+{
 }

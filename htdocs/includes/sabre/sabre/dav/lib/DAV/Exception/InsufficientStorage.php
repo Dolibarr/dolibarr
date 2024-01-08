@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\Exception;
 
 use Sabre\DAV;
 
 /**
- * InsufficientStorage
+ * InsufficientStorage.
  *
  * This Exception can be thrown, when for example a harddisk is full or a quota is exceeded
  *
@@ -13,17 +15,15 @@ use Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class InsufficientStorage extends DAV\Exception {
-
+class InsufficientStorage extends DAV\Exception
+{
     /**
-     * Returns the HTTP statuscode for this exception
+     * Returns the HTTP statuscode for this exception.
      *
      * @return int
      */
-    function getHTTPCode() {
-
+    public function getHTTPCode()
+    {
         return 507;
-
     }
-
 }

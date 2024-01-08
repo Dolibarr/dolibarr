@@ -41,14 +41,18 @@ $langs->loadLangs(array('bills', 'banks', 'companies', 'salaries'));
 $id = GETPOST("id", 'int');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 
 $salary = new Salary($db);
 
 $object = new PaymentSalary($db);
 if ($id > 0) {
 	$result = $object->fetch($id);
-	if (!$result) dol_print_error($db, 'Failed to get payment id '.$id);
+	if (!$result) {
+		dol_print_error($db, 'Failed to get payment id '.$id);
+	}
 }
 restrictedArea($user, 'salaries', $object->fk_salary, 'salary', '');	// $object is payment of salary
 
@@ -165,7 +169,7 @@ print '<tr><td>'.$langs->trans('Numero').'</td><td>'.dol_escape_htmltag($object-
 print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount, 0, $langs, 1, -1, -1, $conf->currency).'</td></tr>';
 
 // Note
-print '<tr><td>'.$langs->trans('Note').'</td><td>'.dol_nl2br($object->note_private).'</td></tr>';
+print '<tr><td>'.$langs->trans('Note').'</td><td class="valeur sensiblehtmlcontent">'.dol_string_onlythesehtmltags(dol_htmlcleanlastbr($object->note_private)).'</td></tr>';
 
 // Bank account
 if (isModEnabled("banque")) {
@@ -264,7 +268,7 @@ if ($resql) {
 print '<div class="tabsAction">';
 
 if ($action == '') {
-	if ($user->rights->salaries->delete) {
+	if ($user->hasRight('salaries', 'delete')) {
 		if (!$disable_delete) {
 			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 1);
 		} else {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\CalDAV;
 
 use Sabre\DAV\Sharing\Plugin as SPlugin;
@@ -11,8 +13,8 @@ use Sabre\DAV\Sharing\Plugin as SPlugin;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class SharedCalendar extends Calendar implements ISharedCalendar {
-
+class SharedCalendar extends Calendar implements ISharedCalendar
+{
     /**
      * Returns the 'access level' for the instance of this shared resource.
      *
@@ -21,10 +23,9 @@ class SharedCalendar extends Calendar implements ISharedCalendar {
      *
      * @return int
      */
-    function getShareAccess() {
-
+    public function getShareAccess()
+    {
         return isset($this->calendarInfo['share-access']) ? $this->calendarInfo['share-access'] : SPlugin::ACCESS_NOTSHARED;
-
     }
 
     /**
@@ -38,10 +39,9 @@ class SharedCalendar extends Calendar implements ISharedCalendar {
      *
      * @return string
      */
-    function getShareResourceUri() {
-
+    public function getShareResourceUri()
+    {
         return $this->calendarInfo['share-resource-uri'];
-
     }
 
     /**
@@ -50,12 +50,10 @@ class SharedCalendar extends Calendar implements ISharedCalendar {
      * Every item must be a Sharee object.
      *
      * @param \Sabre\DAV\Xml\Element\Sharee[] $sharees
-     * @return void
      */
-    function updateInvites(array $sharees) {
-
+    public function updateInvites(array $sharees)
+    {
         $this->caldavBackend->updateInvites($this->calendarInfo['id'], $sharees);
-
     }
 
     /**
@@ -74,10 +72,9 @@ class SharedCalendar extends Calendar implements ISharedCalendar {
      *
      * @return \Sabre\DAV\Xml\Element\Sharee[]
      */
-    function getInvites() {
-
+    public function getInvites()
+    {
         return $this->caldavBackend->getInvites($this->calendarInfo['id']);
-
     }
 
     /**
@@ -87,12 +84,10 @@ class SharedCalendar extends Calendar implements ISharedCalendar {
      * subscribable calendar.
      *
      * @param bool $value
-     * @return void
      */
-    function setPublishStatus($value) {
-
+    public function setPublishStatus($value)
+    {
         $this->caldavBackend->setPublishStatus($this->calendarInfo['id'], $value);
-
     }
 
     /**
@@ -107,13 +102,13 @@ class SharedCalendar extends Calendar implements ISharedCalendar {
      *
      * @return array
      */
-    function getACL() {
-
+    public function getACL()
+    {
         $acl = [];
 
         switch ($this->getShareAccess()) {
-            case SPlugin::ACCESS_NOTSHARED :
-            case SPlugin::ACCESS_SHAREDOWNER :
+            case SPlugin::ACCESS_NOTSHARED:
+            case SPlugin::ACCESS_SHAREDOWNER:
                 $acl[] = [
                     'privilege' => '{DAV:}share',
                     'principal' => $this->calendarInfo['principaluri'],
@@ -121,76 +116,10 @@ class SharedCalendar extends Calendar implements ISharedCalendar {
                 ];
                 $acl[] = [
                     'privilege' => '{DAV:}share',
-                    'principal' => $this->calendarInfo['principaluri'] . '/calendar-proxy-write',
+                    'principal' => $this->calendarInfo['principaluri'].'/calendar-proxy-write',
                     'protected' => true,
                 ];
-                // No break intentional!
-            case SPlugin::ACCESS_READWRITE :
-                $acl[] = [
-                    'privilege' => '{DAV:}write',
-                    'principal' => $this->calendarInfo['principaluri'],
-                    'protected' => true,
-                ];
-                $acl[] = [
-                    'privilege' => '{DAV:}write',
-                    'principal' => $this->calendarInfo['principaluri'] . '/calendar-proxy-write',
-                    'protected' => true,
-                ];
-                // No break intentional!
-            case SPlugin::ACCESS_READ :
-                $acl[] = [
-                    'privilege' => '{DAV:}write-properties',
-                    'principal' => $this->calendarInfo['principaluri'],
-                    'protected' => true,
-                ];
-                $acl[] = [
-                    'privilege' => '{DAV:}write-properties',
-                    'principal' => $this->calendarInfo['principaluri'] . '/calendar-proxy-write',
-                    'protected' => true,
-                ];
-                $acl[] = [
-                    'privilege' => '{DAV:}read',
-                    'principal' => $this->calendarInfo['principaluri'],
-                    'protected' => true,
-                ];
-                $acl[] = [
-                    'privilege' => '{DAV:}read',
-                    'principal' => $this->calendarInfo['principaluri'] . '/calendar-proxy-read',
-                    'protected' => true,
-                ];
-                $acl[] = [
-                    'privilege' => '{DAV:}read',
-                    'principal' => $this->calendarInfo['principaluri'] . '/calendar-proxy-write',
-                    'protected' => true,
-                ];
-                $acl[] = [
-                    'privilege' => '{' . Plugin::NS_CALDAV . '}read-free-busy',
-                    'principal' => '{DAV:}authenticated',
-                    'protected' => true,
-                ];
-                break;
-        }
-        return $acl;
-
-    }
-
-
-    /**
-     * This method returns the ACL's for calendar objects in this calendar.
-     * The result of this method automatically gets passed to the
-     * calendar-object nodes in the calendar.
-     *
-     * @return array
-     */
-    function getChildACL() {
-
-        $acl = [];
-
-        switch ($this->getShareAccess()) {
-            case SPlugin::ACCESS_NOTSHARED :
-                // No break intentional
-            case SPlugin::ACCESS_SHAREDOWNER :
-                // No break intentional
+                // no break intentional!
             case SPlugin::ACCESS_READWRITE:
                 $acl[] = [
                     'privilege' => '{DAV:}write',
@@ -199,10 +128,73 @@ class SharedCalendar extends Calendar implements ISharedCalendar {
                 ];
                 $acl[] = [
                     'privilege' => '{DAV:}write',
-                    'principal' => $this->calendarInfo['principaluri'] . '/calendar-proxy-write',
+                    'principal' => $this->calendarInfo['principaluri'].'/calendar-proxy-write',
                     'protected' => true,
                 ];
-                // No break intentional
+                // no break intentional!
+            case SPlugin::ACCESS_READ:
+                $acl[] = [
+                    'privilege' => '{DAV:}write-properties',
+                    'principal' => $this->calendarInfo['principaluri'],
+                    'protected' => true,
+                ];
+                $acl[] = [
+                    'privilege' => '{DAV:}write-properties',
+                    'principal' => $this->calendarInfo['principaluri'].'/calendar-proxy-write',
+                    'protected' => true,
+                ];
+                $acl[] = [
+                    'privilege' => '{DAV:}read',
+                    'principal' => $this->calendarInfo['principaluri'],
+                    'protected' => true,
+                ];
+                $acl[] = [
+                    'privilege' => '{DAV:}read',
+                    'principal' => $this->calendarInfo['principaluri'].'/calendar-proxy-read',
+                    'protected' => true,
+                ];
+                $acl[] = [
+                    'privilege' => '{DAV:}read',
+                    'principal' => $this->calendarInfo['principaluri'].'/calendar-proxy-write',
+                    'protected' => true,
+                ];
+                $acl[] = [
+                    'privilege' => '{'.Plugin::NS_CALDAV.'}read-free-busy',
+                    'principal' => '{DAV:}authenticated',
+                    'protected' => true,
+                ];
+                break;
+        }
+
+        return $acl;
+    }
+
+    /**
+     * This method returns the ACL's for calendar objects in this calendar.
+     * The result of this method automatically gets passed to the
+     * calendar-object nodes in the calendar.
+     *
+     * @return array
+     */
+    public function getChildACL()
+    {
+        $acl = [];
+
+        switch ($this->getShareAccess()) {
+            case SPlugin::ACCESS_NOTSHARED:
+            case SPlugin::ACCESS_SHAREDOWNER:
+            case SPlugin::ACCESS_READWRITE:
+                $acl[] = [
+                    'privilege' => '{DAV:}write',
+                    'principal' => $this->calendarInfo['principaluri'],
+                    'protected' => true,
+                ];
+                $acl[] = [
+                    'privilege' => '{DAV:}write',
+                    'principal' => $this->calendarInfo['principaluri'].'/calendar-proxy-write',
+                    'protected' => true,
+                ];
+                // no break intentional
             case SPlugin::ACCESS_READ:
                 $acl[] = [
                     'privilege' => '{DAV:}read',
@@ -211,19 +203,17 @@ class SharedCalendar extends Calendar implements ISharedCalendar {
                 ];
                 $acl[] = [
                     'privilege' => '{DAV:}read',
-                    'principal' => $this->calendarInfo['principaluri'] . '/calendar-proxy-write',
+                    'principal' => $this->calendarInfo['principaluri'].'/calendar-proxy-write',
                     'protected' => true,
                 ];
                 $acl[] = [
                     'privilege' => '{DAV:}read',
-                    'principal' => $this->calendarInfo['principaluri'] . '/calendar-proxy-read',
+                    'principal' => $this->calendarInfo['principaluri'].'/calendar-proxy-read',
                     'protected' => true,
                 ];
                 break;
         }
 
         return $acl;
-
     }
-
 }

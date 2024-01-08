@@ -205,7 +205,7 @@ class Cronjob extends CommonObject
 	 *
 	 *  @param	User	$user        User that creates
 	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return int      		   	 <0 if KO, Id of created object if OK
+	 *  @return int      		   	 Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -409,7 +409,7 @@ class Cronjob extends CommonObject
 	 *  @param	int		$id    			Id object
 	 *  @param	string	$objectname		Object name
 	 *  @param	string	$methodname		Method name
-	 *  @return int          			<0 if KO, >0 if OK
+	 *  @return int          			Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $objectname = '', $methodname = '')
 	{
@@ -519,7 +519,7 @@ class Cronjob extends CommonObject
 	 *  @param	int			$status    	    display active or not
 	 *  @param	array		$filter    	    filter output
 	 *  @param  int         $processing     Processing or not
-	 *  @return int          			    <0 if KO, >0 if OK
+	 *  @return int          			    Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchAll($sortorder = 'DESC', $sortfield = 't.rowid', $limit = 0, $offset = 0, $status = 1, $filter = '', $processing = -1)
 	{
@@ -657,7 +657,7 @@ class Cronjob extends CommonObject
 	 *
 	 *  @param	User	$user        User that modifies
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 <0 if KO, >0 if OK
+	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -737,6 +737,9 @@ class Cronjob extends CommonObject
 		}
 		if (empty($this->email_alert)) {
 			$this->email_alert = '';
+		}
+		if (empty($this->datenextrun)) {
+			$this->datenextrun = dol_now();
 		}
 
 		// Check parameters
@@ -819,7 +822,8 @@ class Cronjob extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// Commit or rollback
@@ -842,7 +846,7 @@ class Cronjob extends CommonObject
 	 *
 	 *	@param  User	$user        User that deletes
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 <0 if KO, >0 if OK
+	 *  @return	int					 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -1057,7 +1061,7 @@ class Cronjob extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -1067,11 +1071,11 @@ class Cronjob extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowCronJob");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -1099,7 +1103,7 @@ class Cronjob extends CommonObject
 	 *	Load object information
 	 *
 	 *  @param	int		$id		ID
-	 *	@return	int				<0 if KO, >0 if OK
+	 *	@return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function info($id)
 	{
@@ -1113,6 +1117,7 @@ class Cronjob extends CommonObject
 		if ($resql) {
 			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
+
 				$this->id = $obj->rowid;
 
 				$this->user_modification_id = $obj->fk_user_mod;
@@ -1137,7 +1142,7 @@ class Cronjob extends CommonObject
 	 * This function does not plan the next run. This is done by function ->reprogram_jobs
 	 *
 	 * @param   string		$userlogin    	User login
-	 * @return	int					 		<0 if KO, >0 if OK
+	 * @return	int					 		Return integer <0 if KO, >0 if OK
 	 */
 	public function run_jobs($userlogin)
 	{
@@ -1177,7 +1182,7 @@ class Cronjob extends CommonObject
 			return -1;
 		} else {
 			if (empty($user->id)) {
-				$this->error = " User user login:".$userlogin." do not exists";
+				$this->error = "User login: ".$userlogin." does not exist";
 				dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
 				$conf->setEntityValues($this->db, $savcurrententity);
 				return -1;
@@ -1270,7 +1275,7 @@ class Cronjob extends CommonObject
 			}
 
 			if (!$error) {
-				dol_syslog(get_class($this)."::run_jobs START ".$this->objectname."->".$this->methodename."(".$this->params.");", LOG_DEBUG);
+				dol_syslog(get_class($this)."::run_jobs START ".$this->objectname."->".$this->methodename."(".$this->params."); !!! Log for job may be into a different log file...", LOG_DEBUG);
 
 				// Create Object for the called module
 				$nameofclass = $this->objectname;
@@ -1418,7 +1423,7 @@ class Cronjob extends CommonObject
 			$result = $cmailfile->sendfile();	// Do not test result
 		}
 
-		return $error ?-1 : 1;
+		return $error ? -1 : 1;
 	}
 
 
@@ -1428,7 +1433,7 @@ class Cronjob extends CommonObject
 	 *
 	 * @param  string		$userlogin      User login
 	 * @param  integer      $now            Date returned by dol_now()
-	 * @return int					        <0 if KO, >0 if OK
+	 * @return int					        Return integer <0 if KO, >0 if OK
 	 */
 	public function reprogram_jobs($userlogin, $now)
 	{
@@ -1565,7 +1570,6 @@ class Cronjob extends CommonObject
  */
 class Cronjobline
 {
-
 	/**
 	 * @var int ID
 	 */
@@ -1633,6 +1637,5 @@ class Cronjobline
 	 */
 	public function __construct()
 	{
-		return 1;
 	}
 }

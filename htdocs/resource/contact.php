@@ -41,7 +41,7 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
-$object = new DolResource($db);
+$object = new Dolresource($db);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';     // Must be include, not include_once
@@ -53,7 +53,7 @@ if ($user->socid) {
 $result = restrictedArea($user, 'resource', $object->id, 'resource');
 
 // Security check
-if (!$user->rights->resource->read) {
+if (!$user->hasRight('resource', 'read')) {
 	accessforbidden();
 }
 
@@ -64,7 +64,7 @@ if (!$user->rights->resource->read) {
  */
 
 // Add a new contact
-if ($action == 'addcontact' && $user->rights->resource->write) {
+if ($action == 'addcontact' && $user->hasRight('resource', 'write')) {
 	if ($result > 0 && $id > 0) {
 		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
@@ -84,10 +84,10 @@ if ($action == 'addcontact' && $user->rights->resource->write) {
 
 		setEventMessages($mesg, null, 'errors');
 	}
-} elseif ($action == 'swapstatut' && $user->rights->resource->write) {
+} elseif ($action == 'swapstatut' && $user->hasRight('resource', 'write')) {
 	// Toggle the status of a contact
 	$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
-} elseif ($action == 'deletecontact' && $user->rights->resource->write) {
+} elseif ($action == 'deletecontact' && $user->hasRight('resource', 'write')) {
 	// Erase a contact
 	$result = $object->delete_contact(GETPOST('lineid', 'int'));
 
@@ -151,10 +151,10 @@ if ($id > 0 || !empty($ref)) {
 
 	print '<br>';
 
-	if (!empty($conf->global->RESOURCE_HIDE_ADD_CONTACT_USER)) {
+	if (getDolGlobalString('RESOURCE_HIDE_ADD_CONTACT_USER')) {
 		$hideaddcontactforuser = 1;
 	}
-	if (!empty($conf->global->RESOURCE_HIDE_ADD_CONTACT_THIPARTY)) {
+	if (getDolGlobalString('RESOURCE_HIDE_ADD_CONTACT_THIPARTY')) {
 		$hideaddcontactforthirdparty = 1;
 	}
 
