@@ -131,7 +131,7 @@ class Fichinter extends CommonObject
 	/**
 	 * @var int status
 	 */
-	public $statut = 0; // 0=draft, 1=validated, 2=invoiced, 3=Terminate
+	public $statut = 0; // 0=draft, 1=validated, 2=invoiced, 3=Terminate, 4=signed
 
 	/**
 	 * @var string description
@@ -175,11 +175,6 @@ class Fichinter extends CommonObject
 	const STATUS_VALIDATED = 1;
 
 	/**
-	 * Signed
-	 */
-	const STATUS_SIGNED = 4;
-
-	/**
 	 * Billed
 	 */
 	const STATUS_BILLED = 2;
@@ -188,6 +183,11 @@ class Fichinter extends CommonObject
 	 * Closed
 	 */
 	const STATUS_CLOSED = 3;
+
+	/**
+	 * Signed
+	 */
+	const STATUS_SIGNED = 4;
 
 	/**
 	 * Date delivery

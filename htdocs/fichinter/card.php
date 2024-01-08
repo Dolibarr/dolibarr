@@ -1648,10 +1648,12 @@ if ($action == 'create') {
 				}
 
 				// Sign
-				if ($user->hasRight('ficheinter', 'creer') && $object->statut > Fichinter::STATUS_DRAFT && $object->statut < Fichinter::STATUS_SIGNED) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=sign&token='.newToken().'">'.$langs->trans("InterventionSign").'</a></div>';
-				} else {
-					print '<div class="inline-block divButActionRefused"><span class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Sign").'</span></div>';
+				if ($object->statut > Fichinter::STATUS_DRAFT && $object->statut < Fichinter::STATUS_CLOSED) {
+					if ($user->hasRight('ficheinter', 'creer') && $object->statut > Fichinter::STATUS_DRAFT && $object->statut < Fichinter::STATUS_CLOSED && $object->statut != Fichinter::STATUS_SIGNED) {
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=sign&token='.newToken().'">'.$langs->trans("InterventionSign").'</a></div>';
+					} else {
+						print '<div class="inline-block divButActionRefused"><span class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Sign").'</span></div>';
+					}
 				}
 
 				// Modify
@@ -1707,7 +1709,7 @@ if ($action == 'create') {
 				// Invoicing
 				if (isModEnabled('facture') && $object->statut > Fichinter::STATUS_DRAFT) {
 					$langs->load("bills");
-					if ($object->statut < Fichinter::STATUS_BILLED) {
+					if ($object->statut < Fichinter::STATUS_BILLED || $object->statut == Fichinter::STATUS_SIGNED) {
 						if ($user->hasRight('facture', 'creer')) {
 							print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddBill").'</a></div>';
 						} else {
@@ -1725,7 +1727,7 @@ if ($action == 'create') {
 				}
 
 				// Done
-				if (!getDolGlobalString('FICHINTER_CLASSIFY_BILLED') && $object->statut > Fichinter::STATUS_DRAFT && $object->statut < Fichinter::STATUS_CLOSED) {
+				if (!getDolGlobalString('FICHINTER_CLASSIFY_BILLED') && $object->statut > Fichinter::STATUS_DRAFT && $object->statut != Fichinter::STATUS_CLOSED) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=classifydone&token='.newToken().'">'.$langs->trans("InterventionClassifyDone").'</a></div>';
 				}
 
@@ -1766,7 +1768,7 @@ if ($action == 'create') {
 		}
 
 		// Show online signature link
-		if ($object->statut > Fichinter::STATUS_DRAFT && getDolGlobalString('FICHINTER_ALLOW_ONLINE_SIGN') && $object->statut < Fichinter::STATUS_SIGNED) {
+		if ($object->statut > Fichinter::STATUS_DRAFT && getDolGlobalString('FICHINTER_ALLOW_ONLINE_SIGN') && $object->statut < Fichinter::STATUS_CLOSED && $object->statut != Fichinter::STATUS_SIGNED) {
 			print '<br><!-- Link to sign -->';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 
