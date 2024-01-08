@@ -53,7 +53,7 @@ dol_include_once('/webportal/class/webportalpartnership.class.php');
 $prefix = dol_getprefix('');
 $sessionname = 'WEBPORTAL_SESSID_' . $prefix;
 $sessiontimeout = 'WEBPORTAL_SESSTIMEOUT_' . $prefix;
-if (!empty($_COOKIE[$sessiontimeout])) {
+if (!empty($_COOKIE[$sessiontimeout]) && session_status()===PHP_SESSION_NONE) {
 	ini_set('session.gc_maxlifetime', $_COOKIE[$sessiontimeout]);
 }
 

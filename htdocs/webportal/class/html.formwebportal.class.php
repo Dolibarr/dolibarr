@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
+ * Copyright (C) 2023-2024	Patrice Andreani		<pandreani@easya.solutions>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -344,21 +345,22 @@ class FormWebPortal extends Form
 	 * Can use autocomplete with ajax after x key pressed or a full combo, depending on setup.
 	 * This is the generic method that will replace all specific existing methods.
 	 *
-	 * @param string $objectdesc ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]
-	 * @param string $htmlname Name of HTML select component
-	 * @param int $preselectedvalue Preselected value (ID of element)
-	 * @param string $showempty ''=empty values not allowed, 'string'=value show if we allow empty values (for example 'All', ...)
-	 * @param string $searchkey Search criteria
-	 * @param string $placeholder Place holder
-	 * @param string $morecss More CSS
-	 * @param string $moreparams More params provided to ajax call
-	 * @param int $forcecombo Force to load all values and output a standard combobox (with no beautification)
-	 * @param int $disabled 1=Html component is disabled
-	 * @param string $selected_input_value Value of preselected input text (for use with ajax)
-	 * @return  string                      Return HTML string
+	 * @param 	string 	$objectdesc 			'ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]'. For hard coded custom needs. Try to prefer method using $objectfield instead of $objectdesc.
+	 * @param 	string 	$htmlname 				Name of HTML select component
+	 * @param 	int 	$preselectedvalue 		Preselected value (ID of element)
+	 * @param 	string 	$showempty 				''=empty values not allowed, 'string'=value show if we allow empty values (for example 'All', ...)
+	 * @param 	string 	$searchkey 				Search criteria
+	 * @param 	string 	$placeholder 			Place holder
+	 * @param 	string 	$morecss 				More CSS
+	 * @param 	string 	$moreparams 			More params provided to ajax call
+	 * @param 	int 	$forcecombo 			Force to load all values and output a standard combobox (with no beautification)
+	 * @param 	int 	$disabled 				1=Html component is disabled
+	 * @param 	string 	$selected_input_value 	Value of preselected input text (for use with ajax)
+	 * @param	string	$objectfield			Object:Field that contains the definition (in table $fields or $extrafields). Example: 'Object:xxx' or 'Module_Object:xxx' or 'Object:options_xxx' or 'Module_Object:options_xxx'
+	 * @return  string	                      	Return HTML string
 	 * @see selectForFormsList(), select_thirdparty_list()
 	 */
-	public function selectForForms($objectdesc, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $disabled = 0, $selected_input_value = '')
+	public function selectForForms($objectdesc, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $disabled = 0, $selected_input_value = '', $objectfield = '')
 	{
 		global $conf;
 
@@ -413,19 +415,19 @@ class FormWebPortal extends Form
 	 * Output html form to select an object.
 	 * Note, this function is called by selectForForms or by ajax selectobject.php
 	 *
-	 * @param Object $objecttmp Object to knwo the table to scan for combo.
-	 * @param string $htmlname Name of HTML select component
-	 * @param int $preselectedvalue Preselected value (ID of element)
-	 * @param string $showempty ''=empty values not allowed, 'string'=value show if we allow empty values (for example 'All', ...)
-	 * @param string $searchkey Search value
-	 * @param string $placeholder Place holder
-	 * @param string $morecss More CSS
-	 * @param string $moreparams More params provided to ajax call
-	 * @param int $forcecombo Force to load all values and output a standard combobox (with no beautification)
-	 * @param int $outputmode 0=HTML select string, 1=Array
-	 * @param int $disabled 1=Html component is disabled
-	 * @param string $sortfield Sort field
-	 * @param string $filter Add more filter
+	 * @param Object 		$objecttmp 			Object to know the table to scan for combo.
+	 * @param string 		$htmlname 			Name of HTML select component
+	 * @param int 			$preselectedvalue 	Preselected value (ID of element)
+	 * @param string 		$showempty 			''=empty values not allowed, 'string'=value show if we allow empty values (for example 'All', ...)
+	 * @param string 		$searchkey 			Search value
+	 * @param string 		$placeholder 		Place holder
+	 * @param string 		$morecss 			More CSS
+	 * @param string 		$moreparams 		More params provided to ajax call
+	 * @param int 			$forcecombo 		Force to load all values and output a standard combobox (with no beautification)
+	 * @param int 			$outputmode 		0=HTML select string, 1=Array
+	 * @param int 			$disabled 			1=Html component is disabled
+	 * @param string 		$sortfield 			Sort field
+	 * @param string 		$filter 			Add more filter (Universal Search Filter)
 	 * @return string|array                     Return HTML string
 	 * @see selectForForms()
 	 */
