@@ -199,6 +199,11 @@ if (empty($reshook)) {
 		} else {
 			$mesg = $object->error;
 		}
+	} elseif ($action == 'confirm_sign' && $confirm == 'yes' && $user->hasRight('ficheinter', 'creer')) {
+		$result = $object->setSign($user);
+		if ($result < 0) {
+			dol_print_error($db, $object->error);
+		}
 	} elseif ($action == 'confirm_modify' && $confirm == 'yes' && $user->hasRight('ficheinter', 'creer')) {
 		$result = $object->setDraft($user);
 		if ($result >= 0) {
@@ -1137,6 +1142,11 @@ if ($action == 'create') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateIntervention'), $text, 'confirm_validate', '', 1, 1);
 	}
 
+	// Confirm sign
+	if ($action == 'sign') {
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SignIntervention'), $langs->trans('ConfirmSignIntervention'), 'confirm_sign', '', 0, 1);
+	}
+
 	// Confirm done
 	if ($action == 'classifydone') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('CloseIntervention'), $langs->trans('ConfirmCloseIntervention'), 'confirm_done', '', 0, 1);
@@ -1637,6 +1647,13 @@ if ($action == 'create') {
 					}
 				}
 
+				// Sign
+				if ($user->hasRight('ficheinter', 'creer') && $object->statut > Fichinter::STATUS_DRAFT && $object->statut < Fichinter::STATUS_SIGNED) {
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=sign&token='.newToken().'">'.$langs->trans("InterventionSign").'</a></div>';
+				} else {
+					print '<div class="inline-block divButActionRefused"><span class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Sign").'</span></div>';
+				}
+
 				// Modify
 				if ($object->statut == Fichinter::STATUS_VALIDATED && ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'creer')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'ficheinter_advance', 'unvalidate')))) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=modify">';
@@ -1749,7 +1766,7 @@ if ($action == 'create') {
 		}
 
 		// Show online signature link
-		if ($object->statut != Fichinter::STATUS_DRAFT && getDolGlobalString('FICHINTER_ALLOW_ONLINE_SIGN')) {
+		if ($object->statut > Fichinter::STATUS_DRAFT && getDolGlobalString('FICHINTER_ALLOW_ONLINE_SIGN') && $object->statut < Fichinter::STATUS_SIGNED) {
 			print '<br><!-- Link to sign -->';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 
