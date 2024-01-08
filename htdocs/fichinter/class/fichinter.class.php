@@ -885,10 +885,12 @@ class Fichinter extends CommonObject
 			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
 			$this->labelStatus[self::STATUS_BILLED] = $langs->transnoentitiesnoconv('StatusInterInvoiced');
 			$this->labelStatus[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('Done');
+			$this->labelStatus[self::STATUS_SIGNED] = $langs->transnoentitiesnoconv('Signed');
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
 			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
 			$this->labelStatusShort[self::STATUS_BILLED] = $langs->transnoentitiesnoconv('StatusInterInvoiced');
 			$this->labelStatusShort[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('Done');
+			$this->labelStatusShort[self::STATUS_SIGNED] = $langs->transnoentitiesnoconv('Signed');
 		}
 
 		$statuscode = 'status'.$status;
