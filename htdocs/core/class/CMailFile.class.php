@@ -264,12 +264,23 @@ class CMailFile
 				// This convert an embedd file with src="/viewimage.php?modulepart... into a cid link
 				// TODO Exclude viewimage used for the read tracker ?
 				$findimg = $this->findHtmlImages($dolibarr_main_data_root.'/medias');
+				if ($findimg<0) {
+					dol_syslog("CMailFile::CMailfile: Error on findHtmlImages");
+					$this->error = 'ErrorInAddAttachementsImageBaseOnMedia';
+					return;
+				}
 			}
 
 			if (getDolGlobalString('MAIN_MAIL_ADD_INLINE_IMAGES_IF_DATA')) {
 				// Search into the body for <img src="data:image/ext;base64,..." to replace them with an embedded file
 				// This convert an embedded file with src="data:image... into a cid link + attached file
-				$findimg = $this->findHtmlImagesIsSrcData($upload_dir_tmp);
+				$resultImageData = $this->findHtmlImagesIsSrcData($upload_dir_tmp);
+				if ($resultImageData<0) {
+					dol_syslog("CMailFile::CMailfile: Error on findHtmlImagesInSrcData");
+					$this->error = 'ErrorInAddAttachementsImageBaseOnMedia';
+					return;
+				}
+				$findimg += $resultImageData;
 			}
 
 			// Set atleastoneimage if there is at least one embedded file (into ->html_images)
@@ -693,8 +704,8 @@ class CMailFile
 				$this->error .= '<br>'.$langs->trans("MailSendSetupIs2", $linktoadminemailbefore, $linktoadminemailend, $langs->transnoentitiesnoconv("MAIN_MAIL_SENDMODE"), $listofmethods['smtps']);
 				$this->errors[] = $langs->trans("MailSendSetupIs2", $linktoadminemailbefore, $linktoadminemailend, $langs->transnoentitiesnoconv("MAIN_MAIL_SENDMODE"), $listofmethods['smtps']);
 				if (getDolGlobalString('MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS')) {
-					$this->error .= '<br>'.$langs->trans("MailSendSetupIs3", $conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS);
-					$this->errors[] = $langs->trans("MailSendSetupIs3", $conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS);
+					$this->error .= '<br>'.$langs->trans("MailSendSetupIs3", getDolGlobalString('MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS'));
+					$this->errors[] = $langs->trans("MailSendSetupIs3", getDolGlobalString('MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS'));
 				}
 
 				dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_WARNING);
@@ -913,11 +924,11 @@ class CMailFile
 				$loginid = '';
 				$loginpass = '';
 				if (!empty($conf->global->$keyforsmtpid)) {
-					$loginid = $conf->global->$keyforsmtpid;
+					$loginid = getDolGlobalString($keyforsmtpid);
 					$this->smtps->setID($loginid);
 				}
 				if (!empty($conf->global->$keyforsmtppw)) {
-					$loginpass = $conf->global->$keyforsmtppw;
+					$loginpass = getDolGlobalString($keyforsmtppw);
 					$this->smtps->setPW($loginpass);
 				}
 
@@ -1151,9 +1162,9 @@ class CMailFile
 
 				// DKIM SIGN
 				if (getDolGlobalString('MAIN_MAIL_EMAIL_DKIM_ENABLED')) {
-					$privateKey = $conf->global->MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY;
-					$domainName = $conf->global->MAIN_MAIL_EMAIL_DKIM_DOMAIN;
-					$selector = $conf->global->MAIN_MAIL_EMAIL_DKIM_SELECTOR;
+					$privateKey = getDolGlobalString('MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY');
+					$domainName = getDolGlobalString('MAIN_MAIL_EMAIL_DKIM_DOMAIN');
+					$selector = getDolGlobalString('MAIN_MAIL_EMAIL_DKIM_SELECTOR');
 					$signer = new Swift_Signers_DKIMSigner($privateKey, $domainName, $selector);
 					$this->message->attachSigner($signer->ignoreHeader('Return-Path'));
 				}
@@ -1902,7 +1913,7 @@ class CMailFile
 
 		// We search (into mail body this->html), if we find some strings like "... file=xxx.img"
 		// For example when:
-		// <img alt="" src="/viewimage.php?modulepart=medias&amp;entity=1&amp;file=image/picture.jpg" style="height:356px; width:1040px" />
+		// <img alt="" src="/src="data:image....;base64,...." />
 		$matches = array();
 		preg_match_all('/src="data:image\/('.implode('|', $extensions).');base64,([^"]+)"/Ui', $this->html, $matches); // If "xxx.ext" or 'xxx.ext' found
 
@@ -1913,7 +1924,7 @@ class CMailFile
 				return -1;
 			}
 
-			$i = 0;
+			$i = count($this->html_images);
 			foreach ($matches[1] as $key => $ext) {
 				// We save the image to send in disk
 				$filecontent = $matches[2][$key];

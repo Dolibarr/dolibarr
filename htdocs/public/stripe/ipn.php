@@ -59,21 +59,21 @@ require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 // You can find your endpoint's secret in your webhook settings
 if (isset($_GET['connect'])) {
 	if (isset($_GET['test'])) {
-		$endpoint_secret = $conf->global->STRIPE_TEST_WEBHOOK_CONNECT_KEY;
+		$endpoint_secret = getDolGlobalString('STRIPE_TEST_WEBHOOK_CONNECT_KEY');
 		$service = 'StripeTest';
 		$servicestatus = 0;
 	} else {
-		$endpoint_secret = $conf->global->STRIPE_LIVE_WEBHOOK_CONNECT_KEY;
+		$endpoint_secret = getDolGlobalString('STRIPE_LIVE_WEBHOOK_CONNECT_KEY');
 		$service = 'StripeLive';
 		$servicestatus = 1;
 	}
 } else {
 	if (isset($_GET['test'])) {
-		$endpoint_secret = $conf->global->STRIPE_TEST_WEBHOOK_KEY;
+		$endpoint_secret = getDolGlobalString('STRIPE_TEST_WEBHOOK_KEY');
 		$service = 'StripeTest';
 		$servicestatus = 0;
 	} else {
-		$endpoint_secret = $conf->global->STRIPE_LIVE_WEBHOOK_KEY;
+		$endpoint_secret = getDolGlobalString('STRIPE_LIVE_WEBHOOK_KEY');
 		$service = 'StripeLive';
 		$servicestatus = 1;
 	}
@@ -90,7 +90,7 @@ if (empty($endpoint_secret)) {
 if (getDolGlobalString('STRIPE_USER_ACCOUNT_FOR_ACTIONS')) {
 	// We set the user to use for all ipn actions in Dolibarr
 	$user = new User($db);
-	$user->fetch($conf->global->STRIPE_USER_ACCOUNT_FOR_ACTIONS);
+	$user->fetch(getDolGlobalString('STRIPE_USER_ACCOUNT_FOR_ACTIONS'));
 	$user->getrights();
 } else {
 	httponly_accessforbidden('Error: Setup of module Stripe not complete for mode '.dol_escape_htmltag($service).'. The STRIPE_USER_ACCOUNT_FOR_ACTIONS is not defined.', 400, 1);
@@ -162,9 +162,9 @@ if (isModEnabled('multicompany') && !empty($conf->stripeconnect->enabled) && is_
 $stripe = new Stripe($db);
 
 // Subject
-$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-	$societeName = $conf->global->MAIN_APPLICATION_TITLE;
+	$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
 }
 
 top_httphead();
@@ -227,10 +227,10 @@ if ($event->type == 'payout.created') {
 		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 		$accountfrom = new Account($db);
-		$accountfrom->fetch($conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS);
+		$accountfrom->fetch(getDolGlobalString('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS'));
 
 		$accountto = new Account($db);
-		$accountto->fetch($conf->global->STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS);
+		$accountto->fetch(getDolGlobalString('STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS'));
 
 		if (($accountto->id != $accountfrom->id) && empty($error)) {
 			$bank_line_id_from = 0;

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,32 +23,13 @@
  *		\brief      File of class to manage absolute discounts
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 /**
  *		Class to manage absolute discounts
  */
-class DiscountAbsolute
+class DiscountAbsolute extends CommonObject
 {
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error;
-
-	/**
-	 * @var string[]	Array of error strings
-	 */
-	public $errors = array();
-
-	/**
-	 * @var int 	ID discount
-	 */
-	public $id;
-
 	/**
 	 * @var int 	Thirdparty ID
 	 * @deprecated

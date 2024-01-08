@@ -144,7 +144,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 		// Show Draft Watermark
 		if ($object->statut == $object::STATUS_DRAFT && (getDolGlobalString('FICHINTER_DRAFT_WATERMARK'))) {
-			$this->watermark = $conf->global->FICHINTER_DRAFT_WATERMARK;
+			$this->watermark = getDolGlobalString('FICHINTER_DRAFT_WATERMARK');
 		}
 
 		if ($conf->ficheinter->dir_output) {

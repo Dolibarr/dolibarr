@@ -120,7 +120,7 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// We get cursor rule
-		$mask = $conf->global->CHEQUERECEIPTS_THYME_MASK;
+		$mask = getDolGlobalString('CHEQUERECEIPTS_THYME_MASK');
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';

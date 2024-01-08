@@ -853,9 +853,9 @@ if ($action == 'create') {
 			 */
 			if ($action == 'sendall') {
 				// Define message to recommand from command line
-				$sendingmode = $conf->global->EMAILING_MAIL_SENDMODE;
+				$sendingmode = getDolGlobalString('EMAILING_MAIL_SENDMODE');
 				if (empty($sendingmode)) {
-					$sendingmode = $conf->global->MAIN_MAIL_SENDMODE;
+					$sendingmode = getDolGlobalString('MAIN_MAIL_SENDMODE');
 				}
 				if (empty($sendingmode)) {
 					$sendingmode = 'mail'; // If not defined, we use php mail function
@@ -879,7 +879,7 @@ if ($action == 'create') {
 					setEventMessages($messagetoshow, null, 'warnings');
 
 					if (getDolGlobalString('MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS')) {
-						setEventMessages($langs->trans("MailSendSetupIs3", $conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS), null, 'warnings');
+						setEventMessages($langs->trans("MailSendSetupIs3", getDolGlobalString('MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS')), null, 'warnings');
 					}
 					$_GET["action"] = '';
 				} elseif (getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') < 0) {
@@ -908,11 +908,11 @@ if ($action == 'create') {
 					$text = '';
 
 					if (isset($conf->global->MAILING_LIMIT_SENDBYDAY) && getDolGlobalInt('MAILING_LIMIT_SENDBYDAY') >= 0) {
-						$text .= $langs->trans('WarningLimitSendByDay', $conf->global->MAILING_LIMIT_SENDBYDAY);
+						$text .= $langs->trans('WarningLimitSendByDay', getDolGlobalString('MAILING_LIMIT_SENDBYDAY'));
 						$text .= '<br><br>';
 					}
 					$text .= $langs->trans('ConfirmSendingEmailing').'<br>';
-					$text .= $langs->trans('LimitSendingEmailing', $conf->global->MAILING_LIMIT_SENDBYWEB);
+					$text .= $langs->trans('LimitSendingEmailing', getDolGlobalString('MAILING_LIMIT_SENDBYWEB'));
 
 					if (!isset($conf->global->MAILING_LIMIT_SENDBYCLI) || getDolGlobalInt('MAILING_LIMIT_SENDBYCLI') >= 0) {
 						$text .= '<br><br>';
@@ -1000,7 +1000,7 @@ if ($action == 'create') {
 				$text = '';
 				if ((getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) && ($object->statut == 1 || ($object->statut == 2 && $nbtry < $nbemail))) {
 					if (getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') > 0) {
-						$text .= $langs->trans('LimitSendingEmailing', $conf->global->MAILING_LIMIT_SENDBYWEB);
+						$text .= $langs->trans('LimitSendingEmailing', getDolGlobalString('MAILING_LIMIT_SENDBYWEB'));
 					} else {
 						$text .= $langs->trans('SendingFromWebInterfaceIsNotAllowed');
 					}
@@ -1147,7 +1147,7 @@ if ($action == 'create') {
 				$formmail->withfrom = 0;
 				$formmail->withto = $user->email ? $user->email : 1;
 				$formmail->withtocc = 0;
-				$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
+				$formmail->withtoccc = getDolGlobalString('MAIN_EMAIL_USECCC');
 				$formmail->withtopic = 0;
 				$formmail->withtopicreadonly = 1;
 				$formmail->withfile = 0;
@@ -1290,7 +1290,7 @@ if ($action == 'create') {
 				$text = '';
 				if ((getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) && ($object->statut == 1 || $object->statut == 2)) {
 					if (getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') > 0) {
-						$text .= $langs->trans('LimitSendingEmailing', $conf->global->MAILING_LIMIT_SENDBYWEB);
+						$text .= $langs->trans('LimitSendingEmailing', getDolGlobalString('MAILING_LIMIT_SENDBYWEB'));
 					} else {
 						$text .= $langs->trans('SendingFromWebInterfaceIsNotAllowed');
 					}

@@ -190,9 +190,7 @@ class MyModuleApi extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieving myobject list: '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No myobject found');
-		}
+
 		return $obj_ret;
 	}
 
