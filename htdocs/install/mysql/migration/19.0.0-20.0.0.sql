@@ -158,3 +158,7 @@ ALTER TABLE llx_user_extrafields DROP INDEX idx_user_extrafields;
 ALTER TABLE llx_user_extrafields ADD UNIQUE INDEX uk_user_extrafields (fk_object);
 ALTER TABLE llx_usergroup_extrafields DROP INDEX idx_usergroup_extrafields;
 ALTER TABLE llx_usergroup_extrafields ADD UNIQUE INDEX uk_usergroup_extrafields (fk_object);
+
+UPDATE llx_categorie SET date_creation = tms, tms = tms WHERE date_creation IS NULL AND tms IS NOT NULL;
+
+
