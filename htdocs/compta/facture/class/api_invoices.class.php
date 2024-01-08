@@ -367,47 +367,46 @@ class Invoices extends DolibarrApi
 		return $this->_cleanObjectDatas($this->invoice);
 	}
 
+	/**
+	* Create an invoice using a contract.
+	*
+	* @param int   $contractid       Id of the contract
+	* @return     Object                          Object with cleaned properties
+	*
+	* @url     POST /createfromcontract/{contractid}
+	*
+	* @throws RestException 400
+	* @throws RestException 401
+	* @throws RestException 404
+    * @throws RestException 405
+    */
+	public function createInvoiceFromContract($contractid)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
-    	/**
-    	* Create an invoice using a contract.
-    	*
-    	* @param int   $contractid       Id of the contract
-    	* @return     Object                          Object with cleaned properties
-    	*
-    	* @url     POST /createfromcontract/{contractid}
-    	*
-    	* @throws RestException 400
-    	* @throws RestException 401
-    	* @throws RestException 404
-    	* @throws RestException 405
-    	*/
-		public function createInvoiceFromContract($contractid)
-    	{
-    		require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
-
-    		if (!DolibarrApiAccess::$user->hasRight('contrat', 'lire')) {
-        		throw new RestException(401);
-            }
-            if (!DolibarrApiAccess::$user->rights->facture->creer) {
-                throw new RestException(401);
-            }
-        	if (empty($contractid)) {
-                throw new RestException(400, 'Contract ID is mandatory');
-            }
-
-			$contract = new Contrat($this->db);
-            $result = $contract->fetch($contractid);
-            if (!$result) {
-                throw new RestException(404, 'Contract not found');
-            }
-
-        	$result = $this->invoice->createFromContract($contract, DolibarrApiAccess::$user);
-            if ($result < 0) {
-                throw new RestException(405, $this->invoice->error);
-            }
-            $this->invoice->fetchObjectLinked();
-            return $this->_cleanObjectDatas($this->invoice);
+    	if (!DolibarrApiAccess::$user->hasRight('contrat', 'lire')) {
+        	throw new RestException(401);
+        }
+    	if (!DolibarrApiAccess::$user->rights->facture->creer) {
+			throw new RestException(401);
 		}
+        if (empty($contractid)) {
+			throw new RestException(400, 'Contract ID is mandatory');
+        }
+
+		$contract = new Contrat($this->db);
+		$result = $contract->fetch($contractid);
+		if (!$result) {
+			throw new RestException(404, 'Contract not found');
+        }
+
+		$result = $this->invoice->createFromContract($contract, DolibarrApiAccess::$user);
+		if ($result < 0) {
+			throw new RestException(405, $this->invoice->error);
+		}
+		$this->invoice->fetchObjectLinked();
+		return $this->_cleanObjectDatas($this->invoice);
+	}
 
 	/**
 	 * Get lines of an invoice
