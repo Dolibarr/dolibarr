@@ -975,7 +975,7 @@ if ($resql) {
 		}
 
 		$parameters['obj'] = $obj;
-		$reshook = $hookmanager->executeHooks('eventElements', $parameters, $event, $action); // Note that $action and $object may have been modified by some hooks
+		$reshook = $hookmanager->executeHooks('hookEventElements', $parameters, $event, $action); // Note that $action and $object may have been modified by some hooks
 		$event = $hookmanager->resPrint;
 		if ($reshook < 0) {
 			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
