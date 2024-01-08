@@ -268,12 +268,12 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		// phpcs:enable
 		global $conf;
 
-		$mask = $conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER;
+		$mask = getDolGlobalString('COMPANY_ELEPHANT_MASK_CUSTOMER');
 		if (preg_match('/\{pre\}/i', $mask)) {
 			return 1;
 		}
 
-		$mask = $conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER;
+		$mask = getDolGlobalString('COMPANY_ELEPHANT_MASK_SUPPLIER');
 		if (preg_match('/\{pre\}/i', $mask)) {
 			return 1;
 		}

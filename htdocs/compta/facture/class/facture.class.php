@@ -685,7 +685,7 @@ class Facture extends CommonInvoice
 		$sql .= ", ".(empty($this->date_pointoftax) ? "null" : "'".$this->db->idate($this->date_pointoftax)."'");
 		$sql .= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= ", ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
-		$sql .= ", ".($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null");
+		$sql .= ", ".($this->ref_customer ? "'".$this->db->escape($this->ref_customer)."'" : ($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null"));
 		$sql .= ", ".($this->fk_account > 0 ? $this->fk_account : 'NULL');
 		$sql .= ", ".($this->module_source ? "'".$this->db->escape($this->module_source)."'" : "null");
 		$sql .= ", ".($this->pos_source != '' ? "'".$this->db->escape($this->pos_source)."'" : "null");
@@ -4576,7 +4576,7 @@ class Facture extends CommonInvoice
 				$conf->global->TAKEPOS_REF_ADDON = 'mod_takepos_ref_simple';
 			}
 
-			$addon = $conf->global->TAKEPOS_REF_ADDON;
+			$addon = getDolGlobalString('TAKEPOS_REF_ADDON');
 		} else {
 			$langs->load('bills');
 
@@ -4593,7 +4593,7 @@ class Facture extends CommonInvoice
 				$conf->global->FACTURE_ADDON = 'mod_facture_mercure';
 			}
 
-			$addon = $conf->global->FACTURE_ADDON;
+			$addon = getDolGlobalString('FACTURE_ADDON');
 		}
 
 		if (!empty($addon)) {
@@ -5222,7 +5222,7 @@ class Facture extends CommonInvoice
 			} elseif (getDolGlobalString($thisTypeConfName)) {
 				$modele = getDolGlobalString($thisTypeConfName);
 			} elseif (getDolGlobalString('FACTURE_ADDON_PDF')) {
-				$modele = $conf->global->FACTURE_ADDON_PDF;
+				$modele = getDolGlobalString('FACTURE_ADDON_PDF');
 			}
 		}
 
@@ -5785,7 +5785,7 @@ class Facture extends CommonInvoice
 							}
 
 							// Errors Recipient
-							$errors_to = $conf->global->MAIN_MAIL_ERRORS_TO;
+							$errors_to = getDolGlobalString('MAIN_MAIL_ERRORS_TO');
 
 							$trackid = 'inv'.$tmpinvoice->id;
 							$sendcontext = 'standard';

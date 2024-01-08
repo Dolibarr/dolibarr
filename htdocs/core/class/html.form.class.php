@@ -423,7 +423,7 @@ class Form
 		// List of extra languages
 		$arrayoflangcode = array();
 		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
-			$arrayoflangcode[] = $conf->global->PDF_USE_ALSO_LANGUAGE_CODE;
+			$arrayoflangcode[] = getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE');
 		}
 
 		if (is_array($arrayoflangcode) && count($arrayoflangcode)) {
@@ -761,7 +761,6 @@ class Form
 		if (preg_match('/onsmartphone$/', $tooltiptrigger) && empty($conf->dol_no_mouse_hover)) {
 			$tooltiptrigger = preg_replace('/^.*onsmartphone$/', '', $tooltiptrigger);
 		}
-
 		$alt = '';
 		if ($tooltiptrigger) {
 			$alt = $langs->transnoentitiesnoconv("ClickToShowHelp");
@@ -1062,7 +1061,7 @@ class Form
 	 * @param 	string 	$htmloption 			Options html on select object
 	 * @param 	int 	$forcecombo 			Force to load all values and output a standard combobox (with no beautification)
 	 * @param 	array 	$events 				Event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
-	 * @param 	array 	$disableautocomplete 	Disable autocomplete
+	 * @param 	int 	$disableautocomplete 	Disable autocomplete
 	 * @return 	string                       	HTML string with select and input
 	 */
 	public function select_incoterms($selected = '', $location_incoterms = '', $page = '', $htmlname = 'incoterm_id', $htmloption = '', $forcecombo = 1, $events = array(), $disableautocomplete = 0)
@@ -1764,7 +1763,7 @@ class Form
 	 * @param integer 		$disableifempty 	Set tag 'disabled' on select if there is no choice
 	 * @return     int|string                   Return integer <0 if KO, HTML with select string if OK.
 	 */
-	public function selectcontacts($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $morecss = '', $options_only = false, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $multiple = false, $disableifempty = 0)
+	public function selectcontacts($socid, $selected = array(), $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $morecss = '', $options_only = false, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $multiple = false, $disableifempty = 0)
 	{
 		global $conf, $langs, $hookmanager, $action;
 
@@ -1973,13 +1972,13 @@ class Form
 	 * @param array $exclude Array list of users id to exclude
 	 * @param int $disabled If select list must be disabled
 	 * @param array|string $include Array list of users id to include. User '' for all users or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
-	 * @param int $enableonly Array list of users id to be enabled. All other must be disabled
+	 * @param array|int $enableonly Array list of users id to be enabled. All other must be disabled
 	 * @param string $force_entity '0' or Ids of environment to force
 	 * @return    void
 	 * @deprecated        Use select_dolusers instead
 	 * @see select_dolusers()
 	 */
-	public function select_users($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0')
+	public function select_users($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = array(), $force_entity = '0')
 	{
 		// phpcs:enable
 		print $this->select_dolusers($selected, $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity);
@@ -2011,7 +2010,7 @@ class Form
 	 * @return array|string                    HTML select string
 	 * @see select_dolgroups()
 	 */
-	public function select_dolusers($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = 0, $maxlength = 0, $showstatus = 0, $morefilter = '', $show_every = 0, $enableonlytext = '', $morecss = '', $notdisabled = 0, $outputmode = 0, $multiple = false, $forcecombo = 0)
+	public function select_dolusers($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '', $maxlength = 0, $showstatus = 0, $morefilter = '', $show_every = 0, $enableonlytext = '', $morecss = '', $notdisabled = 0, $outputmode = 0, $multiple = false, $forcecombo = 0)
 	{
 		// phpcs:enable
 		global $conf, $user, $langs, $hookmanager;
@@ -2262,8 +2261,8 @@ class Form
 	 * @param array 	$exclude 			Array list of users id to exclude
 	 * @param int 		$disabled 			If select list must be disabled
 	 * @param array 	$include 			Array list of users id to include or 'hierarchy' to have only supervised users
-	 * @param array 	$enableonly 		Array list of users id to be enabled. All other must be disabled
-	 * @param int 		$force_entity 		'0' or Ids of environment to force
+	 * @param array|int	$enableonly 		Array list of users id to be enabled. All other must be disabled
+	 * @param string	$force_entity 		'0' or Ids of environment to force
 	 * @param int 		$maxlength 			Maximum length of string into list (0=no limit)
 	 * @param int 		$showstatus 		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
 	 * @param string 	$morefilter 		Add more filters into sql request
@@ -2274,7 +2273,7 @@ class Form
 	 * @return    string                    HTML select string
 	 * @see select_dolgroups()
 	 */
-	public function select_dolusers_forevent($action = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $maxlength = 0, $showstatus = 0, $morefilter = '', $showproperties = 0, $listofuserid = array(), $listofcontactid = array(), $listofotherid = array())
+	public function select_dolusers_forevent($action = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = array(), $enableonly = array(), $force_entity = '0', $maxlength = 0, $showstatus = 0, $morefilter = '', $showproperties = 0, $listofuserid = array(), $listofcontactid = array(), $listofotherid = array())
 	{
 		// phpcs:enable
 		global $langs;
@@ -2357,7 +2356,7 @@ class Form
 	 * @param int 		$disabled 			If select list must be disabled
 	 * @param array 	$include 			Array list of users id to include or 'hierarchy' to have only supervised users
 	 * @param array 	$enableonly 		Array list of users id to be enabled. All other must be disabled
-	 * @param int 		$force_entity 		'0' or Ids of environment to force
+	 * @param string	$force_entity 		'0' or Ids of environment to force
 	 * @param int 		$maxlength 			Maximum length of string into list (0=no limit)
 	 * @param int 		$showstatus 		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
 	 * @param string 	$morefilter 		Add more filters into sql request
@@ -2365,7 +2364,7 @@ class Form
 	 * @param array 	$listofresourceid 	Array with properties of each resource
 	 * @return    string                    HTML select string
 	 */
-	public function select_dolresources_forevent($action = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $maxlength = 0, $showstatus = 0, $morefilter = '', $showproperties = 0, $listofresourceid = array())
+	public function select_dolresources_forevent($action = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = array(), $enableonly = array(), $force_entity = '0', $maxlength = 0, $showstatus = 0, $morefilter = '', $showproperties = 0, $listofresourceid = array())
 	{
 		// phpcs:enable
 		global $langs;
@@ -2460,11 +2459,11 @@ class Form
 	 *                                				'warehouseclosed' = count products from closed warehouses,
 	 *                               				'warehouseinternal' = count products from warehouses for internal correct/transfer only
 	 * @param array 		$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
-	 * @param string 		$nooutput 				No print, return the output into a string
+	 * @param int	 		$nooutput 				No print, return the output into a string
 	 * @param int 			$status_purchase 		Purchase status -1=Return all products, 0=Products not on purchase, 1=Products on purchase
 	 * @return        void|string
 	 */
-	public function select_produits($selected = '', $htmlname = 'productid', $filtertype = '', $limit = 0, $price_level = 0, $status = 1, $finished = 2, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $selected_combinations = null, $nooutput = 0, $status_purchase = -1)
+	public function select_produits($selected = 0, $htmlname = 'productid', $filtertype = '', $limit = 0, $price_level = 0, $status = 1, $finished = 2, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $selected_combinations = null, $nooutput = 0, $status_purchase = -1)
 	{
 		// phpcs:enable
 		global $langs, $conf;
@@ -2611,7 +2610,7 @@ class Form
 	/**
 	 *  Return list of BOM for customer in Ajax if Ajax activated or go to select_produits_list
 	 *
-	 * @param int $selected Preselected BOM id
+	 * @param string $selected Preselected BOM id
 	 * @param string $htmlname Name of HTML select field (must be unique in page).
 	 * @param int $limit Limit on number of returned lines
 	 * @param int $status Sell status -1=Return all bom, 0=Draft BOM, 1=Validated BOM
@@ -2689,34 +2688,34 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *    Return list of products for a customer.
+	 *  Return list of products for a customer.
 	 *  Called by select_produits.
 	 *
-	 * @param int $selected Preselected product
-	 * @param string $htmlname Name of select html
-	 * @param string $filtertype Filter on product type (''=nofilter, 0=product, 1=service)
-	 * @param int $limit Limit on number of returned lines
-	 * @param int $price_level Level of price to show
-	 * @param string $filterkey Filter on product
-	 * @param int $status -1=Return all products, 0=Products not on sell, 1=Products on sell
-	 * @param int $finished Filter on finished field: 2=No filter
-	 * @param int $outputmode 0=HTML select string, 1=Array
-	 * @param int $socid Thirdparty Id (to get also price dedicated to this customer)
-	 * @param string $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
-	 * @param int $forcecombo Force to use combo box
-	 * @param string $morecss Add more css on select
-	 * @param int $hidepriceinlabel 1=Hide prices in label
-	 * @param string $warehouseStatus Warehouse status filter to group/count stock. Following comma separated filter options can be used.
-	 *                                'warehouseopen' = count products from open warehouses,
-	 *                                'warehouseclosed' = count products from closed warehouses,
-	 *                                'warehouseinternal' = count products from warehouses for internal correct/transfer only
-	 * @param int $status_purchase Purchase status -1=Return all products, 0=Products not on purchase, 1=Products on purchase
-	 * @return     array|string                Array of keys for json
+	 * @param 	int 		$selected 				Preselected product
+	 * @param 	string 		$htmlname 				Name of select html
+	 * @param 	string 		$filtertype 			Filter on product type (''=nofilter, 0=product, 1=service)
+	 * @param 	int 		$limit 					Limit on number of returned lines
+	 * @param 	int 		$price_level 			Level of price to show
+	 * @param 	string 		$filterkey 				Filter on product
+	 * @param 	int 		$status 				-1=Return all products, 0=Products not on sell, 1=Products on sell
+	 * @param 	int 		$finished 				Filter on finished field: 2=No filter
+	 * @param 	int 		$outputmode 			0=HTML select string, 1=Array
+	 * @param 	int 		$socid 					Thirdparty Id (to get also price dedicated to this customer)
+	 * @param 	string 		$showempty 				'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * @param 	int 		$forcecombo 			Force to use combo box
+	 * @param 	string 		$morecss 				Add more css on select
+	 * @param 	int 		$hidepriceinlabel	 	1=Hide prices in label
+	 * @param 	string 		$warehouseStatus 		Warehouse status filter to group/count stock. Following comma separated filter options can be used.
+	 *                      	          			'warehouseopen' = count products from open warehouses,
+	 *                          	      			'warehouseclosed' = count products from closed warehouses,
+	 *                              		  		'warehouseinternal' = count products from warehouses for internal correct/transfer only
+	 * @param 	int 			$status_purchase 	Purchase status -1=Return all products, 0=Products not on purchase, 1=Products on purchase
+	 * @return  array|string    			        Array of keys for json
 	 */
-	public function select_produits_list($selected = '', $htmlname = 'productid', $filtertype = '', $limit = 20, $price_level = 0, $filterkey = '', $status = 1, $finished = 2, $outputmode = 0, $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $status_purchase = -1)
+	public function select_produits_list($selected = 0, $htmlname = 'productid', $filtertype = '', $limit = 20, $price_level = 0, $filterkey = '', $status = 1, $finished = 2, $outputmode = 0, $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $status_purchase = -1)
 	{
 		// phpcs:enable
-		global $langs, $conf;
+		global $langs;
 		global $hookmanager;
 
 		$out = '';
@@ -3072,7 +3071,7 @@ class Form
 	 * @param string 	$opt 			Option (var used for returned value in string option format)
 	 * @param array 	$optJson 		Option (var used for returned value in json format)
 	 * @param int 		$price_level 	Price level
-	 * @param string 	$selected 		Preselected value
+	 * @param int 		$selected 		Preselected value
 	 * @param int 		$hidepriceinlabel Hide price in label
 	 * @param string 	$filterkey 		Filter key to highlight
 	 * @param int 		$novirtualstock Do not load virtual stock, even if slow option STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO is on.
@@ -3454,7 +3453,7 @@ class Form
 	 *    Return list of suppliers products
 	 *
 	 * @param int $socid Id of supplier thirdparty (0 = no filter)
-	 * @param int $selected Product price pre-selected (must be 'id' in product_fournisseur_price or 'idprod_IDPROD')
+	 * @param string $selected Product price pre-selected (must be 'id' in product_fournisseur_price or 'idprod_IDPROD')
 	 * @param string $htmlname Name of HTML select
 	 * @param string $filtertype Filter on product type (''=nofilter, 0=product, 1=service)
 	 * @param string $filtre Generic filter. Data must not come from user input.
@@ -3906,7 +3905,7 @@ class Form
 	 * @param int $selected_supplier Pre-selected supplier if more than 1 result
 	 * @return        string
 	 */
-	public function select_product_fourn_price($productid, $htmlname = 'productfournpriceid', $selected_supplier = '')
+	public function select_product_fourn_price($productid, $htmlname = 'productfournpriceid', $selected_supplier = 0)
 	{
 		// phpcs:enable
 		global $langs, $conf;
@@ -4107,7 +4106,7 @@ class Form
 	/**
 	 *      Retourne la liste des types de delais de livraison possibles
 	 *
-	 * @param int $selected Id du type de delais pre-selectionne
+	 * @param string $selected Id du type de delais pre-selectionne
 	 * @param string $htmlname Nom de la zone select
 	 * @param string $filtertype To add a filter
 	 * @param int $addempty Add empty entry
@@ -4197,7 +4196,7 @@ class Form
 	 *    Return list of input reason (events that triggered an object creation, like after sending an emailing, making an advert, ...)
 	 *  List found into table c_input_reason loaded by loadCacheInputReason
 	 *
-	 * @param int $selected Id or code of type origin to select by default
+	 * @param string $selected Id or code of type origin to select by default
 	 * @param string $htmlname Nom de la zone select
 	 * @param string $exclude To exclude a code value (Example: SRC_PROP)
 	 * @param int $addempty Add an empty entry
@@ -4301,16 +4300,22 @@ class Form
 	 * @param int $addempty Add an empty entry
 	 * @param int $noinfoadmin 0=Add admin info, 1=Disable admin info
 	 * @param string $morecss Add more CSS on select tag
-	 * @param string $deposit_percent < 0 : deposit_percent input makes no sense (for example, in list filters)
+	 * @param int	 $deposit_percent < 0 : deposit_percent input makes no sense (for example, in list filters)
 	 *                                0 : use default deposit percentage from entry
 	 *                                > 0 : force deposit percentage (for example, from company object)
+	 * @param int $noprint if set to one we return the html to print, if 0 (default) we print it
 	 * @return    void
 	 * @deprecated
 	 */
-	public function select_conditions_paiements($selected = 0, $htmlname = 'condid', $filtertype = -1, $addempty = 0, $noinfoadmin = 0, $morecss = '', $deposit_percent = -1)
+	public function select_conditions_paiements($selected = 0, $htmlname = 'condid', $filtertype = -1, $addempty = 0, $noinfoadmin = 0, $morecss = '', $deposit_percent = -1, $noprint = 0)
 	{
 		// phpcs:enable
-		print $this->getSelectConditionsPaiements($selected, $htmlname, $filtertype, $addempty, $noinfoadmin, $morecss, $deposit_percent);
+		$out = $this->getSelectConditionsPaiements($selected, $htmlname, $filtertype, $addempty, $noinfoadmin, $morecss, $deposit_percent);
+		if (empty($noprint)) {
+			print $out;
+		} else {
+			return $out;
+		}
 	}
 
 
@@ -4325,7 +4330,7 @@ class Form
 	 * @param int $addempty Add an empty entry
 	 * @param int $noinfoadmin 0=Add admin info, 1=Disable admin info
 	 * @param string $morecss Add more CSS on select tag
-	 * @param string $deposit_percent < 0 : deposit_percent input makes no sense (for example, in list filters)
+	 * @param int	 $deposit_percent < 0 : deposit_percent input makes no sense (for example, in list filters)
 	 *                                0 : use default deposit percentage from entry
 	 *                                > 0 : force deposit percentage (for example, from company object)
 	 * @return    string                        String for the HTML select component
@@ -4342,7 +4347,7 @@ class Form
 		// Set default value if not already set by caller
 		if (empty($selected) && getDolGlobalString('MAIN_DEFAULT_PAYMENT_TERM_ID')) {
 			dol_syslog(__METHOD__ . "Using deprecated option MAIN_DEFAULT_PAYMENT_TERM_ID", LOG_NOTICE);
-			$selected = $conf->global->MAIN_DEFAULT_PAYMENT_TERM_ID;
+			$selected = getDolGlobalString('MAIN_DEFAULT_PAYMENT_TERM_ID');
 		}
 
 		$out .= '<select id="' . $htmlname . '" class="flat selectpaymentterms' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '">';
@@ -4447,7 +4452,7 @@ class Form
 		// Set default value if not already set by caller
 		if (empty($selected) && getDolGlobalString('MAIN_DEFAULT_PAYMENT_TYPE_ID')) {
 			dol_syslog(__METHOD__ . "Using deprecated option MAIN_DEFAULT_PAYMENT_TYPE_ID", LOG_NOTICE);
-			$selected = $conf->global->MAIN_DEFAULT_PAYMENT_TYPE_ID;
+			$selected = getDolGlobalString('MAIN_DEFAULT_PAYMENT_TYPE_ID');
 		}
 
 		$out .= '<select id="select' . $htmlname . '" class="flat selectpaymenttypes' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '">';
@@ -4522,7 +4527,7 @@ class Form
 	 *
 	 * @param string $selected Id pre-selectionne
 	 * @param string $htmlname Nom de la zone select
-	 * @param string $addjscombo Add js combo
+	 * @param int	 $addjscombo Add js combo
 	 * @return    string                    Code of HTML select to chose tax or not
 	 */
 	public function selectPriceBaseType($selected = '', $htmlname = 'price_base_type', $addjscombo = 0)
@@ -4737,7 +4742,7 @@ class Form
 	 *    Display form to select shipping mode
 	 *
 	 * @param string $page Page
-	 * @param int $selected Id of shipping mode
+	 * @param string $selected Id of shipping mode
 	 * @param string $htmlname Name of select html field
 	 * @param int $addempty 1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
 	 * @return    void
@@ -5028,7 +5033,7 @@ class Form
 	 *    Display form to select bank account
 	 *
 	 * @param string $page Page
-	 * @param int $selected Id of bank account
+	 * @param string $selected Id of bank account
 	 * @param string $htmlname Name of select html field
 	 * @param int $addempty 1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
 	 * @return    void
@@ -5184,7 +5189,7 @@ class Form
 	 * @deprecated
 	 * @see formconfirm()
 	 */
-	public function form_confirm($page, $title, $question, $action, $formquestion = '', $selectedchoice = "", $useajax = 0, $height = 170, $width = 500)
+	public function form_confirm($page, $title, $question, $action, $formquestion = array(), $selectedchoice = "", $useajax = 0, $height = 170, $width = 500)
 	{
 		// phpcs:enable
 		dol_syslog(__METHOD__ . ': using form_confirm is deprecated. Use formconfim instead.', LOG_WARNING);
@@ -5623,7 +5628,7 @@ class Form
 	 *
 	 * @param 	int 		$page 				Page
 	 * @param 	int 		$socid 				Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
-	 * @param 	int 		$selected 			Id pre-selected project
+	 * @param 	string 		$selected 			Id pre-selected project
 	 * @param 	string 		$htmlname 			Name of select field
 	 * @param 	int 		$discard_closed 	Discard closed projects (0=Keep,1=hide completely except $selected,2=Disable)
 	 * @param 	int 		$maxlength 			Max length
@@ -5683,7 +5688,7 @@ class Form
 	 * @param int 		$addempty 			Add empty entry
 	 * @param string 	$type 				Type ('direct-debit' or 'bank-transfer')
 	 * @param int 		$filtertype 		If > 0, include payment terms with deposit percentage (for objects other than invoices and invoice templates)
-	 * @param string 	$deposit_percent 	< 0 : deposit_percent input makes no sense (for example, in list filters)
+	 * @param int	 	$deposit_percent 	< 0 : deposit_percent input makes no sense (for example, in list filters)
 	 *                                		0 : use default deposit percentage from entry
 	 *                                		> 0 : force deposit percentage (for example, from company object)
 	 * @param int 		$nooutput 			No print is done. String is returned.
@@ -5863,7 +5868,7 @@ class Form
 	 * @param array $include List of users id to include
 	 * @return    void
 	 */
-	public function form_users($page, $selected = '', $htmlname = 'userid', $exclude = '', $include = '')
+	public function form_users($page, $selected = '', $htmlname = 'userid', $exclude = array(), $include = array())
 	{
 		// phpcs:enable
 		global $langs;
@@ -5894,7 +5899,7 @@ class Form
 	 *    Show form with payment mode
 	 *
 	 * @param string $page Page
-	 * @param int $selected Id mode pre-selectionne
+	 * @param string $selected Id mode pre-selectionne
 	 * @param string $htmlname Name of select html field
 	 * @param string $filtertype To filter on field type in llx_c_paiement ('CRDT' or 'DBIT' or array('code'=>xx,'label'=>zz))
 	 * @param int $active Active or not, -1 = all
@@ -5940,7 +5945,7 @@ class Form
 	 *    Show form with transport mode
 	 *
 	 * @param string $page Page
-	 * @param int $selected Id mode pre-select
+	 * @param string $selected Id mode pre-select
 	 * @param string $htmlname Name of select html field
 	 * @param int $active Active or not, -1 = all
 	 * @param int $addempty 1=Add empty entry
@@ -6004,7 +6009,7 @@ class Form
 	 * @param string $currency Currency code to explain the rate
 	 * @return    void
 	 */
-	public function form_multicurrency_rate($page, $rate = '', $htmlname = 'multicurrency_tx', $currency = '')
+	public function form_multicurrency_rate($page, $rate = 0.0, $htmlname = 'multicurrency_tx', $currency = '')
 	{
 		// phpcs:enable
 		global $langs, $mysoc, $conf;
@@ -6142,7 +6147,7 @@ class Form
 	 *
 	 * @param string $page Page
 	 * @param Societe $societe Filter on third party
-	 * @param int $selected Id contact pre-selectionne
+	 * @param string $selected Id contact pre-selectionne
 	 * @param string $htmlname Name of HTML select. If 'none', we just show contact link.
 	 * @return    void
 	 */
@@ -6250,7 +6255,7 @@ class Form
 	 *
 	 * @param string $selected preselected currency code
 	 * @param string $htmlname name of HTML select list
-	 * @param string $mode 0 = Add currency symbol into label, 1 = Add 3 letter iso code
+	 * @param int	 $mode 0 = Add currency symbol into label, 1 = Add 3 letter iso code
 	 * @param string $useempty '1'=Allow empty value
 	 * @return    string
 	 */
@@ -6468,7 +6473,7 @@ class Form
 	 * @param int $mode 0=Use vat rate as key in combo list, 1=Add VAT code after vat rate into key, -1=Use id of vat line as key
 	 * @return    string
 	 */
-	public function load_tva($htmlname = 'tauxtva', $selectedrate = '', $societe_vendeuse = '', $societe_acheteuse = '', $idprod = 0, $info_bits = 0, $type = '', $options_only = false, $mode = 0)
+	public function load_tva($htmlname = 'tauxtva', $selectedrate = '', $societe_vendeuse = null, $societe_acheteuse = null, $idprod = 0, $info_bits = 0, $type = '', $options_only = false, $mode = 0)
 	{
 		// phpcs:enable
 		global $langs, $conf, $mysoc;
@@ -6560,7 +6565,7 @@ class Form
 					// We will use the rate defined into MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS
 					$defaulttx = '';
 					if (getDolGlobalString('MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS') != 'none') {
-						$defaulttx = $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS;
+						$defaulttx = getDolGlobalString('MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS');
 					}
 					if (preg_match('/\((.*)\)/', $defaulttx, $reg)) {
 						$defaultcode = $reg[1];
@@ -6653,7 +6658,7 @@ class Form
 	 *                - local date in user area, if set_time is '' (so if set_time is '', output may differs when done from two different location)
 	 *                - Empty (fields empty), if set_time is -1 (in this case, parameter empty must also have value 1)
 	 *
-	 * @param integer $set_time Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
+	 * @param integer|string $set_time Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
 	 * @param string $prefix Prefix for fields name
 	 * @param int $h 1 or 2=Show also hours (2=hours on a new line), -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show hour always empty
 	 * @param int $m 1=Show also minutes, -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show minutes always empty
@@ -6670,7 +6675,7 @@ class Form
 	 * @deprecated
 	 * @see    selectDate(), form_date(), select_month(), select_year(), select_dayofweek()
 	 */
-	public function select_date($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $nooutput = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '')
+	public function select_date($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $nooutput = 0, $disabled = 0, $fullday = 0, $addplusone = '', $adddateof = '')
 	{
 		// phpcs:enable
 		dol_syslog(__METHOD__ . ': using select_date is deprecated. Use selectDate instead.', LOG_WARNING);
@@ -6690,11 +6695,11 @@ class Form
 	 *              - local date in user area, if set_time is '' (so if set_time is '', output may differs when done from two different location)
 	 *              - Empty (fields empty), if set_time is -1 (in this case, parameter empty must also have value 1)
 	 *
-	 * @param integer $set_time Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
-	 * @param integer $set_time_end Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
+	 * @param integer|string $set_time Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
+	 * @param integer|string $set_time_end Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
 	 * @param string $prefix Prefix for fields name
-	 * @param string $empty 0=Fields required, 1=Empty inputs are allowed, 2=Empty inputs are allowed for hours only
-	 * @param string $forcenewline Force new line between the 2 dates.
+	 * @param int	 $empty 0=Fields required, 1=Empty inputs are allowed, 2=Empty inputs are allowed for hours only
+	 * @param int	 $forcenewline Force new line between the 2 dates.
 	 * @return string                        Html for selectDate
 	 * @see    form_date(), select_month(), select_year(), select_dayofweek()
 	 */
@@ -6726,7 +6731,7 @@ class Form
 	 * @param int 					$d 				1=Show days, month, years
 	 * @param int 					$addnowlink 	Add a link "Now", 1 with server time, 2 with local computer time
 	 * @param int 					$disabled 		Disable input fields
-	 * @param int 					$fullday 		When a checkbox with id #fullday is checked, hours are set with 00:00 (if value if 'fulldaystart') or 23:59 (if value is 'fulldayend')
+	 * @param int|string			$fullday 		When a checkbox with id #fullday is checked, hours are set with 00:00 (if value if 'fulldaystart') or 23:59 (if value is 'fulldayend')
 	 * @param string 				$addplusone 	Add a link "+1 hour". Value must be name of another selectDate field.
 	 * @param int|string|array      $adddateof 		Add a link "Date of ..." using the following date. Must be array(array('adddateof'=>..., 'labeladddateof'=>...))
 	 * @param string 				$openinghours 	Specify hour start and hour end for the select ex 8,20
@@ -7222,7 +7227,7 @@ class Form
 	 *  Function to show a form to select a duration on a page
 	 *
 	 * @param string $prefix Prefix for input fields
-	 * @param int $iSecond Default preselected duration (number of seconds or '')
+	 * @param int|string $iSecond Default preselected duration (number of seconds or '')
 	 * @param int $disabled Disable the combo box
 	 * @param string $typehour If 'select' then input hour and input min is a combo,
 	 *                         If 'text' input hour is in text and input min is a text,
@@ -7312,7 +7317,7 @@ class Form
 	/**
 	 *  Return list of tickets in Ajax if Ajax activated or go to selectTicketsList
 	 *
-	 * @param int $selected Preselected tickets
+	 * @param string $selected Preselected tickets
 	 * @param string $htmlname Name of HTML select field (must be unique in page).
 	 * @param string $filtertype To add a filter
 	 * @param int $limit Limit on number of returned lines
@@ -7325,7 +7330,7 @@ class Form
 	 * @param int $forcecombo Force to use combo box
 	 * @param string $morecss Add more css on select
 	 * @param array $selected_combinations Selected combinations. Format: array([attrid] => attrval, [...])
-	 * @param string $nooutput No print, return the output into a string
+	 * @param int $nooutput No print, return the output into a string
 	 * @return        string
 	 */
 	public function selectTickets($selected = '', $htmlname = 'ticketid', $filtertype = '', $limit = 0, $status = 1, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $selected_combinations = null, $nooutput = 0)
@@ -7382,7 +7387,7 @@ class Form
 	 *    Return list of tickets.
 	 *  Called by selectTickets.
 	 *
-	 * @param int $selected Preselected ticket
+	 * @param string $selected Preselected ticket
 	 * @param string $htmlname Name of select html
 	 * @param string $filtertype Filter on ticket type
 	 * @param int $limit Limit on number of returned lines
@@ -7538,7 +7543,7 @@ class Form
 	/**
 	 *  Return list of projects in Ajax if Ajax activated or go to selectTicketsList
 	 *
-	 * @param 	int 	$selected 				Preselected tickets
+	 * @param 	string 	$selected 				Preselected tickets
 	 * @param 	string 	$htmlname 				Name of HTML select field (must be unique in page).
 	 * @param 	string 	$filtertype				To add a filter
 	 * @param 	int 	$limit 					Limit on number of returned lines
@@ -7551,7 +7556,7 @@ class Form
 	 * @param 	int 	$forcecombo 			Force to use combo box
 	 * @param 	string 	$morecss 				Add more css on select
 	 * @param 	array 	$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
-	 * @param 	string 	$nooutput 				No print, return the output into a string
+	 * @param 	int 	$nooutput 				No print, return the output into a string
 	 * @return 	string
 	 */
 	public function selectProjects($selected = '', $htmlname = 'projectid', $filtertype = '', $limit = 0, $status = 1, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $selected_combinations = null, $nooutput = 0)
@@ -7607,7 +7612,7 @@ class Form
 	 *    Return list of projects.
 	 *  Called by selectProjects.
 	 *
-	 * @param int $selected Preselected project
+	 * @param string $selected Preselected project
 	 * @param string $htmlname Name of select html
 	 * @param string $filtertype Filter on project type
 	 * @param int $limit Limit on number of returned lines
@@ -7767,7 +7772,7 @@ class Form
 	/**
 	 *  Return list of members in Ajax if Ajax activated or go to selectTicketsList
 	 *
-	 * @param int $selected Preselected tickets
+	 * @param string $selected Preselected tickets
 	 * @param string $htmlname Name of HTML select field (must be unique in page).
 	 * @param string $filtertype To add a filter
 	 * @param int $limit Limit on number of returned lines
@@ -7780,7 +7785,7 @@ class Form
 	 * @param int $forcecombo Force to use combo box
 	 * @param string $morecss Add more css on select
 	 * @param array $selected_combinations Selected combinations. Format: array([attrid] => attrval, [...])
-	 * @param string $nooutput No print, return the output into a string
+	 * @param int	$nooutput No print, return the output into a string
 	 * @return        string
 	 */
 	public function selectMembers($selected = '', $htmlname = 'adherentid', $filtertype = '', $limit = 0, $status = 1, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $selected_combinations = null, $nooutput = 0)
@@ -7840,7 +7845,7 @@ class Form
 	 *    Return list of adherents.
 	 *  Called by selectMembers.
 	 *
-	 * @param int $selected Preselected adherent
+	 * @param string $selected Preselected adherent
 	 * @param string $htmlname Name of select html
 	 * @param string $filtertype Filter on adherent type
 	 * @param int $limit Limit on number of returned lines
@@ -8011,13 +8016,13 @@ class Form
 	 * @param 	int 	$forcecombo 			Force to load all values and output a standard combobox (with no beautification)
 	 * @param 	int 	$disabled 				1=Html component is disabled
 	 * @param 	string 	$selected_input_value 	Value of preselected input text (for use with ajax)
-	 * @param	string	$objectfield			Object:Field that contains the definition (in table $fields or extrafields). Example: 'Object:xxx' or 'Module_Object:xxx' or 'Object:options_xxx' or 'Module_Object:options_xxx'
+	 * @param	string	$objectfield			Object:Field that contains the definition (in table $fields or $extrafields). Example: 'Object:xxx' or 'Module_Object:xxx' or 'Object:options_xxx' or 'Module_Object:options_xxx'
 	 * @return  string	                      	Return HTML string
 	 * @see selectForFormsList(), select_thirdparty_list()
 	 */
 	public function selectForForms($objectdesc, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $disabled = 0, $selected_input_value = '', $objectfield = '')
 	{
-		global $conf, $extrafields;
+		global $conf, $extrafields, $user;
 
 		$objectdescorig = $objectdesc;
 		$objecttmp = null;
@@ -9037,7 +9042,7 @@ class Form
 	 * @param string $title Title
 	 * @return    int                                                Return integer <0 if KO, >=0 if OK
 	 */
-	public function showLinkedObjectBlock($object, $morehtmlright = '', $compatibleImportElementsList = false, $title = 'RelatedObjects')
+	public function showLinkedObjectBlock($object, $morehtmlright = '', $compatibleImportElementsList = array(), $title = 'RelatedObjects')
 	{
 		global $conf, $langs, $hookmanager;
 		global $bc, $action;
@@ -9678,7 +9683,7 @@ class Form
 			// List of extra languages
 			$arrayoflangcode = array();
 			if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
-				$arrayoflangcode[] = $conf->global->PDF_USE_ALSO_LANGUAGE_CODE;
+				$arrayoflangcode[] = getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE');
 			}
 
 			if (is_array($arrayoflangcode) && count($arrayoflangcode)) {
@@ -9797,8 +9802,8 @@ class Form
 	{
 		global $conf, $langs;
 
-		$entity = (!empty($object->entity) ? $object->entity : $conf->entity);
-		$id = (!empty($object->id) ? $object->id : $object->rowid);
+		$entity = (empty($object->entity) ? $conf->entity : $object->entity);
+		$id = (empty($object->id) ? $object->rowid : $object->id);
 
 		$ret = '';
 		$dir = '';
@@ -9985,22 +9990,22 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *    Return select list of groups
+	 * Return select list of groups
 	 *
-	 * @param string|object $selected Id group or group preselected
-	 * @param string $htmlname Field name in form
-	 * @param int $show_empty 0=liste sans valeur nulle, 1=ajoute valeur inconnue
-	 * @param string|array $exclude Array list of groups id to exclude
-	 * @param int $disabled If select list must be disabled
-	 * @param string|array $include Array list of groups id to include
-	 * @param int $enableonly Array list of groups id to be enabled. All other must be disabled
-	 * @param string $force_entity '0' or Ids of environment to force
-	 * @param bool $multiple add [] in the name of element and add 'multiple' attribut (not working with ajax_autocompleter)
-	 * @param string $morecss More css to add to html component
-	 * @return    string
+	 * @param int|object|object[] 	$selected 		Id group or group(s) preselected
+	 * @param string 				$htmlname 		Field name in form
+	 * @param int 					$show_empty 	0=liste sans valeur nulle, 1=ajoute valeur inconnue
+	 * @param string|array 			$exclude 		Array list of groups id to exclude
+	 * @param int 					$disabled 		If select list must be disabled
+	 * @param string|array 			$include 		Array list of groups id to include
+	 * @param array 				$enableonly 	Array list of groups id to be enabled. All other must be disabled
+	 * @param string 				$force_entity 	'0' or Ids of environment to force
+	 * @param bool 					$multiple 		add [] in the name of element and add 'multiple' attribut (not working with ajax_autocompleter)
+	 * @param string 				$morecss 		More css to add to html component
+	 * @return    string							HTML Componont to select a group
 	 * @see select_dolusers()
 	 */
-	public function select_dolgroups($selected = '', $htmlname = 'groupid', $show_empty = 0, $exclude = '', $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $multiple = false, $morecss = '')
+	public function select_dolgroups($selected = 0, $htmlname = 'groupid', $show_empty = 0, $exclude = '', $disabled = 0, $include = '', $enableonly = array(), $force_entity = '0', $multiple = false, $morecss = '')
 	{
 		// phpcs:enable
 		global $conf, $user, $langs;
@@ -10022,7 +10027,7 @@ class Form
 
 		$out = '';
 
-		// On recherche les groupes
+		// Build sql to search groups
 		$sql = "SELECT ug.rowid, ug.nom as name";
 		if (isModEnabled('multicompany') && $conf->entity == 1 && $user->admin && !$user->entity) {
 			$sql .= ", e.label";
@@ -10079,7 +10084,8 @@ class Form
 					if ($disableline) {
 						$out .= ' disabled';
 					}
-					if ((isset($selected[0]) && is_object($selected[0]) && $selected[0]->id == $obj->rowid) || ((!isset($selected[0]) || !is_object($selected[0])) && !empty($selected) && in_array($obj->rowid, $selected))) {
+					if ((isset($selected[0]) && is_object($selected[0]) && $selected[0]->id == $obj->rowid)
+						|| ((!isset($selected[0]) || !is_object($selected[0])) && !empty($selected) && in_array($obj->rowid, $selected))) {
 						$out .= ' selected';
 					}
 					$out .= ' data-html="'.dol_escape_htmltag($labelhtml).'"';
@@ -10364,7 +10370,7 @@ class Form
 	 *  Output a combo list with invoices qualified for a third party
 	 *
 	 * @param int $socid Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
-	 * @param int $selected Id invoice preselected
+	 * @param string $selected Id invoice preselected
 	 * @param string $htmlname Name of HTML select
 	 * @param int $maxlength Maximum length of label
 	 * @param int $option_only Return only html options lines without the select tag
@@ -10515,7 +10521,7 @@ class Form
 	/**
 	 *  Output a combo list with invoices qualified for a third party
 	 *
-	 * @param int $selected Id invoice preselected
+	 * @param string $selected Id invoice preselected
 	 * @param string $htmlname Name of HTML select
 	 * @param int $maxlength Maximum length of label
 	 * @param int $option_only Return only html options lines without the select tag
@@ -10912,12 +10918,12 @@ class Form
 	/**
 	* Return list of invoice subtypes.
 	*
-	* @param int    $selected     Id of invoice subtype to preselect by default
-	* @param string $htmlname     Select field name
-	* @param int    $addempty     Add an empty entry
-	* @param int    $noinfoadmin  0=Add admin info, 1=Disable admin info
-	* @param string $morecss       Add more CSS on select tag
-	* @return string  String for the HTML select component
+	* @param int    $selected     	Id of invoice subtype to preselect by default
+	* @param string $htmlname     	Select field name
+	* @param int    $addempty     	Add an empty entry
+	* @param int    $noinfoadmin  	0=Add admin info, 1=Disable admin info
+	* @param string $morecss       	Add more CSS on select tag
+	* @return string  				String for the HTML select component
 	*/
 	public function getSelectInvoiceSubtype($selected = 0, $htmlname = 'subtypeid', $addempty = 0, $noinfoadmin = 0, $morecss = '')
 	{

@@ -190,9 +190,7 @@ class Projects extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve project list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No project found');
-		}
+
 		return $obj_ret;
 	}
 

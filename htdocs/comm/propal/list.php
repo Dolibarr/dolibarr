@@ -75,13 +75,13 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'pr
 $mode 		= GETPOST('mode', 'alpha');
 
 // Search Fields
+$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_user 	= GETPOST('search_user', 'int');
 $search_sale 	= GETPOST('search_sale', 'int');
 $search_ref 	= GETPOST('sf_ref') ? GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
 $search_refcustomer = GETPOST('search_refcustomer', 'alpha');
 $search_refproject = GETPOST('search_refproject', 'alpha');
 $search_project = GETPOST('search_project', 'alpha');
-
 $search_societe = GETPOST('search_societe', 'alpha');
 $search_societe_alias = GETPOST('search_societe_alias', 'alpha');
 $search_montant_ht = GETPOST('search_montant_ht', 'alpha');
@@ -130,8 +130,6 @@ $search_fk_cond_reglement = GETPOST("search_fk_cond_reglement", 'int');
 $search_fk_shipping_method = GETPOST("search_fk_shipping_method", 'int');
 $search_fk_input_reason = GETPOST("search_fk_input_reason", 'int');
 $search_fk_mode_reglement = GETPOST("search_fk_mode_reglement", 'int');
-$search_btn = GETPOST('button_search', 'alpha');
-$search_remove_btn = GETPOST('button_removefilter', 'alpha');
 $search_date_signature_startday = GETPOST('search_date_signature_startday', 'int');
 $search_date_signature_startmonth = GETPOST('search_date_signature_startmonth', 'int');
 $search_date_signature_startyear = GETPOST('search_date_signature_startyear', 'int');
@@ -140,23 +138,20 @@ $search_date_signature_endmonth = GETPOST('search_date_signature_endmonth', 'int
 $search_date_signature_endyear = GETPOST('search_date_signature_endyear', 'int');
 $search_date_signature_start = dol_mktime(0, 0, 0, $search_date_signature_startmonth, $search_date_signature_startday, $search_date_signature_startyear);
 $search_date_signature_end = dol_mktime(23, 59, 59, $search_date_signature_endmonth, $search_date_signature_endday, $search_date_signature_endyear);
-
 $search_status = GETPOST('search_status', 'alpha');
 
 $optioncss = GETPOST('optioncss', 'alpha');
 $object_statut = GETPOST('search_statut', 'alpha');
-
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
-$mesg = (GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
 
 // Pagination
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1 || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) {
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -327,7 +322,6 @@ if (empty($reshook)) {
 
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
-		$search_categ = '';
 		$search_user = '';
 		$search_sale = '';
 		$search_ref = '';
@@ -563,7 +557,7 @@ $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
 $sql = 'SELECT';
-if ($sall || $search_user > 0) {
+if ($search_all || $search_user > 0) {
 	$sql = 'SELECT DISTINCT';
 }
 $sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax , s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client,';
@@ -602,7 +596,7 @@ $sql .= ', '.MAIN_DB_PREFIX.'propal as p';
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (p.rowid = ef.fk_object)";
 }
-if ($sall) {
+if ($search_all) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'propaldet as pd ON p.rowid = pd.fk_propal';
 }
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON p.fk_user_author = u.rowid';
@@ -690,8 +684,8 @@ if ($search_multicurrency_montant_vat != '') {
 if ($search_multicurrency_montant_ttc != '') {
 	$sql .= natural_search('p.multicurrency_total_ttc', $search_multicurrency_montant_ttc, 1);
 }
-if ($sall) {
-	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
+if ($search_all) {
+	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
 if ($search_fk_cond_reglement > 0) {
 	$sql .= " AND p.fk_cond_reglement = ".((int) $search_fk_cond_reglement);
@@ -872,7 +866,7 @@ if ($socid > 0) {
 
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 
-if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sall) {
+if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all) {
 	$obj = $db->fetch_object($resql);
 
 	$id = $obj->rowid;
@@ -894,8 +888,8 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
-if ($sall) {
-	$param .= '&sall='.urlencode($sall);
+if ($search_all) {
+	$param .= '&search_all='.urlencode($search_all);
 }
 if ($search_date_startday) {
 	$param .= '&search_date_startday='.urlencode($search_date_startday);
@@ -1135,11 +1129,11 @@ if ($search_date_signature_endyear) {
 		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassNoSignature"), $langs->trans("ConfirmMassNoSignatureQuestion"), "nosign", null, '', 0, 200, 500, 1);
 	}
 
-	if ($sall) {
+	if ($search_all) {
 		foreach ($fieldstosearchall as $key => $val) {
 			$fieldstosearchall[$key] = $langs->trans($val);
 		}
-		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).join(', ', $fieldstosearchall).'</div>';
+		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
 	}
 
 	$i = 0;

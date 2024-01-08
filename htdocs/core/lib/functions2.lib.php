@@ -1059,7 +1059,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	if (is_numeric($yearoffsettype) && $yearoffsettype >= 1) {
 		$maskraz = $yearoffsettype; // For backward compatibility
 	} elseif ($yearoffsettype === '0' || (!empty($yearoffsettype) && !is_numeric($yearoffsettype) && getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') > 1)) {
-		$maskraz = $conf->global->SOCIETE_FISCAL_MONTH_START;
+		$maskraz = getDolGlobalString('SOCIETE_FISCAL_MONTH_START');
 	}
 	//print "maskraz=".$maskraz;	// -1=no reset
 

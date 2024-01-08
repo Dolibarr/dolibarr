@@ -230,9 +230,7 @@ class Zapier extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve hook list');
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No hook found');
-		}
+
 		return $obj_ret;
 	}
 

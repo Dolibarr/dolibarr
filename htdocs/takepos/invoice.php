@@ -236,7 +236,7 @@ if (empty($reshook)) {
 			dol_syslog('Sale without lines');
 			dol_htmloutput_errors($langs->trans("NoLinesToBill", "TakePos"), null, 1);
 		} elseif (isModEnabled('stock') && getDolGlobalString($constantforkey) != "1" && !isModEnabled('productbatch')) {
-			$savconst = $conf->global->STOCK_CALCULATE_ON_BILL;
+			$savconst = getDolGlobalString('STOCK_CALCULATE_ON_BILL');
 
 			if (isModEnabled('productbatch') && !getDolGlobalInt('CASHDESK_FORCE_DECREASE_STOCK')) {
 				$conf->global->STOCK_CALCULATE_ON_BILL = 0;	// To not change the stock (not yet compatible with batch management)
@@ -459,7 +459,7 @@ if (empty($reshook)) {
 
 		$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
 		if (isModEnabled('stock') && getDolGlobalString($constantforkey) != "1") {
-			$savconst = $conf->global->STOCK_CALCULATE_ON_BILL;
+			$savconst = getDolGlobalString('STOCK_CALCULATE_ON_BILL');
 			$conf->global->STOCK_CALCULATE_ON_BILL = 1;
 			$constantforkey = 'CASHDESK_ID_WAREHOUSE'.(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
 			dol_syslog("Validate invoice with stock change into warehouse defined into constant ".$constantforkey." = ".getDolGlobalString($constantforkey));
@@ -1049,6 +1049,7 @@ if (empty($reshook)) {
 	}
 }
 
+
 /*
  * View
  */
@@ -1170,7 +1171,7 @@ if ($action == "order" && !empty($order_receipt_printer3)) {
 // Set focus to search field
 if ($action == "search" || $action == "valid") {
 	?>
-	parent.setFocusOnSearchField();
+	parent.ClearSearch(true);
 	<?php
 }
 
@@ -1438,7 +1439,7 @@ if (!empty($conf->use_javascript_ajax)) {
 	print '<script src="'.DOL_URL_ROOT.'/core/js/lib_foot.js.php?lang='.$langs->defaultlang.'"></script>'."\n";
 }
 
-print '<!-- invoice.php place='.(int) $place.' invoice='.$invoice->ref.' mobilepage='.(empty($mobilepage) ? '' : $mobilepage).' $_SESSION["basiclayout"]='.(empty($_SESSION["basiclayout"]) ? '' : $_SESSION["basiclayout"]).' conf->global->TAKEPOS_BAR_RESTAURANT='.getDolGlobalString('TAKEPOS_BAR_RESTAURANT').' -->'."\n";
+print '<!-- invoice.php place='.(int) $place.' invoice='.$invoice->ref.' mobilepage='.(empty($mobilepage) ? '' : $mobilepage).' $_SESSION["basiclayout"]='.(empty($_SESSION["basiclayout"]) ? '' : $_SESSION["basiclayout"]).' conf TAKEPOS_BAR_RESTAURANT='.getDolGlobalString('TAKEPOS_BAR_RESTAURANT').' -->'."\n";
 print '<div class="div-table-responsive-no-min invoice">';
 print '<table id="tablelines" class="noborder noshadow postablelines centpercent">';
 if ($sectionwithinvoicelink && ($mobilepage == "invoice" || $mobilepage == "")) {
@@ -1505,7 +1506,6 @@ if (empty($_SESSION["basiclayout"]) || $_SESSION["basiclayout"] != 1) {
 				$multicurrency->fetch(0, $_SESSION["takeposcustomercurrency"]);
 				print '<br><span id="linecolht-span-total" style="font-size:0.9em; font-style:italic;">(' . price($invoice->total_ht * $multicurrency->rate->rate) . ' ' . $_SESSION["takeposcustomercurrency"] . ')</span>';
 			}
-			print '</td>';
 		}
 		print '</td>';
 	}
@@ -1521,7 +1521,6 @@ if (empty($_SESSION["basiclayout"]) || $_SESSION["basiclayout"] != 1) {
 			$multicurrency->fetch(0, $_SESSION["takeposcustomercurrency"]);
 			print '<br><span id="linecolht-span-total" style="font-size:0.9em; font-style:italic;">('.price($invoice->total_ttc * $multicurrency->rate->rate).' '.$_SESSION["takeposcustomercurrency"].')</span>';
 		}
-		print '</td>';
 	}
 	print '</td>';
 } elseif ($mobilepage == "invoice") {
@@ -1569,11 +1568,12 @@ if (!empty($_SESSION["basiclayout"]) && $_SESSION["basiclayout"] == 1) {
 		$htmlforlines = '';
 		foreach ($prods as $row) {
 			if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-				$htmlforlines .= '<div class="leftcat';
+				$htmlforlines .= '<div class="leftcat"';
 			} else {
-				$htmlforlines .= '<tr class="drag drop oddeven posinvoiceline';
+				$htmlforlines .= '<tr class="drag drop oddeven posinvoiceline"';
 			}
-			$htmlforlines .= '" onclick="AddProduct(\''.$place.'\', '.$row->id.')">';
+			$htmlforlines .= ' onclick="AddProduct(\''.$place.'\', '.$row->id.')"';
+			$htmlforlines .= '>';
 			if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 				$htmlforlines .= '<img class="imgwrapper" width="33%" src="'.DOL_URL_ROOT.'/takepos/public/auto_order.php?genimg=pro&query=pro&id='.$row->id.'"><br>';
 				$htmlforlines .= $row->label.' '.price($row->price_ttc, 1, $langs, 1, -1, -1, $conf->currency);
@@ -1582,6 +1582,7 @@ if (!empty($_SESSION["basiclayout"]) && $_SESSION["basiclayout"] == 1) {
 				$htmlforlines .= '<td class="left">';
 				$htmlforlines .= $row->label;
 				$htmlforlines .= '<div class="right">'.price($row->price_ttc, 1, $langs, 1, -1, -1, $conf->currency).'</div>';
+				$htmlforlines .= '</td>';
 				$htmlforlines .= '</tr>'."\n";
 			}
 		}
@@ -1816,17 +1817,22 @@ if ($placeid > 0) {
 			print $htmlforlines;
 		}
 	} else {
-		print '<tr class="drag drop oddeven"><td class="left"><span class="opacitymedium">'.$langs->trans("Empty").'</span></td><td></td><td></td><td></td>';
-		if (getDolGlobalString('TAKEPOS_SHOW_HT')) {
-			print '<td></td>';
+		print '<tr class="drag drop oddeven"><td class="left"><span class="opacitymedium">'.$langs->trans("Empty").'</span></td><td></td>';
+		if (empty($_SESSION["basiclayout"]) || $_SESSION["basiclayout"] != 1) {
+			print '<td></td><td></td>';
+			if (getDolGlobalString('TAKEPOS_SHOW_HT')) {
+				print '<td></td>';
+			}
 		}
 		print '</tr>';
 	}
 } else {      // No invoice generated yet
-	print '<tr class="drag drop oddeven"><td class="left"><span class="opacitymedium">'.$langs->trans("Empty").'</span></td><td></td><td></td><td></td>';
-
-	if (getDolGlobalString('TAKEPOS_SHOW_HT')) {
-		print '<td></td>';
+	print '<tr class="drag drop oddeven"><td class="left"><span class="opacitymedium">'.$langs->trans("Empty").'</span></td><td></td>';
+	if (empty($_SESSION["basiclayout"]) || $_SESSION["basiclayout"] != 1) {
+		print '<td></td><td></td>';
+		if (getDolGlobalString('TAKEPOS_SHOW_HT')) {
+			print '<td></td>';
+		}
 	}
 	print '</tr>';
 }

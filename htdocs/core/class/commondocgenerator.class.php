@@ -509,7 +509,7 @@ abstract class CommonDocGenerator
 	public function get_substitutionarray_object($object, $outputlangs, $array_key = 'object')
 	{
 		// phpcs:enable
-		global $conf, $extrafields;
+		global $extrafields;
 
 		$sumpayed = $sumdeposit = $sumcreditnote = '';
 		$already_payed_all = 0;
@@ -831,8 +831,10 @@ abstract class CommonDocGenerator
 	public function get_substitutionarray_shipment($object, $outputlangs, $array_key = 'object')
 	{
 		// phpcs:enable
-		global $conf, $extrafields;
-		dol_include_once('/core/lib/product.lib.php');
+		global $extrafields;
+
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+
 		$object->list_delivery_methods($object->shipping_method_id);
 		$calculatedVolume = ($object->trueWidth * $object->trueHeight * $object->trueDepth);
 

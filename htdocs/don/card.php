@@ -391,7 +391,7 @@ $title = $langs->trans("Donation");
 
 $help_url = 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones|DE:Modul_Spenden';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-donation page-card');
 
 $form = new Form($db);
 $formfile = new FormFile($db);

@@ -152,7 +152,7 @@ if ($id > 0 || !empty($ref)) {
 	if ($result < 0) {
 		dol_print_error($db, $object->error, $object->errors);
 	}
-	$entity = (!empty($object->entity) ? $object->entity : $conf->entity);
+	$entity = (empty($object->entity) ? $conf->entity : $object->entity);
 	if (isModEnabled("product")) {
 		$upload_dir = $conf->product->multidir_output[$entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref);
 	} elseif (isModEnabled("service")) {
@@ -2076,7 +2076,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					} else {
 						$fk_barcode_type = $object->barcode_type;
 						if (empty($fk_barcode_type) && getDolGlobalString('PRODUIT_DEFAULT_BARCODE_TYPE')) {
-							$fk_barcode_type = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
+							$fk_barcode_type = getDolGlobalString('PRODUIT_DEFAULT_BARCODE_TYPE');
 						}
 					}
 					require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';

@@ -281,7 +281,7 @@ class Translate
 				// Using a memcached server
 				if (isModEnabled('memcached') && getDolGlobalString('MEMCACHED_SERVER')) {
 					$usecachekey = $newdomain . '_' . $langofdir . '_' . md5($file_lang); // Should not contains special chars
-				} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {
+				} elseif (getDolGlobalInt('MAIN_OPTIMIZE_SPEED') & 0x02) {
 					// Using cache with shmop. Speed gain: 40ms - Memory overusage: 200ko (Size of session cache file)
 					$usecachekey = $newdomain;
 				}
@@ -473,7 +473,7 @@ class Translate
 		// Using a memcached server
 		if (isModEnabled('memcached') && getDolGlobalString('MEMCACHED_SERVER')) {
 			$usecachekey = $newdomain . '_' . $langofdir; // Should not contains special chars
-		} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {
+		} elseif (getDolGlobalInt('MAIN_OPTIMIZE_SPEED') & 0x02) {
 			// Using cache with shmop. Speed gain: 40ms - Memory overusage: 200ko (Size of session cache file)
 			$usecachekey = $newdomain;
 		}

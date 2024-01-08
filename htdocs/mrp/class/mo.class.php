@@ -975,7 +975,7 @@ class Mo extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('MRP_MO_ADDON') . ".php";
-			$classname = $conf->global->MRP_MO_ADDON;
+			$classname = getDolGlobalString('MRP_MO_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -1625,7 +1625,7 @@ class Mo extends CommonObject
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('MO_ADDON_PDF')) {
-				$modele = $conf->global->MO_ADDON_PDF;
+				$modele = getDolGlobalString('MO_ADDON_PDF');
 			}
 		}
 

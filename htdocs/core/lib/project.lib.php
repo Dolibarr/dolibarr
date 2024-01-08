@@ -781,10 +781,10 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				$plannedworkloadoutputformat = 'allhourmin';
 				$timespentoutputformat = 'allhourmin';
 				if (getDolGlobalString('PROJECT_PLANNED_WORKLOAD_FORMAT')) {
-					$plannedworkloadoutputformat = $conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT;
+					$plannedworkloadoutputformat = getDolGlobalString('PROJECT_PLANNED_WORKLOAD_FORMAT');
 				}
 				if (getDolGlobalString('PROJECT_TIMES_SPENT_FORMAT')) {
-					$timespentoutputformat = $conf->global->PROJECT_TIME_SPENT_FORMAT;
+					$timespentoutputformat = getDolGlobalString('PROJECT_TIME_SPENT_FORMAT');
 				}
 
 				// Planned Workload (in working hours)
@@ -1702,7 +1702,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				$idw = 0;
 
 				$tableCell = '';
-				$tableCell .= '<span class="timesheetalreadyrecorded" title="texttoreplace"><input type="text" class="center" size="2" disabled id="timespent['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="'.$alreadyspent.'"></span>';
+				$tableCell .= '<span class="timesheetalreadyrecorded" title="texttoreplace"><input type="text" class="center width40" disabled id="timespent['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="'.$alreadyspent.'"></span>';
 				$tableCell .= '<span class="hideonsmartphone"> + </span>';
 				//$tableCell.='&nbsp;&nbsp;&nbsp;';
 				$tableCell .= $form->select_duration($lines[$i]->id.'duration', '', $disabledtask, 'text', 0, 1);
@@ -2103,11 +2103,11 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 					//$tableCell .= 'idw='.$idw.' '.$conf->global->MAIN_START_WEEK.' '.$numstartworkingday.'-'.$numendworkingday;
 					$placeholder = '';
 					if ($alreadyspent) {
-						$tableCell .= '<span class="timesheetalreadyrecorded" title="texttoreplace"><input type="text" class="center smallpadd" size="2" disabled id="timespent['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="'.$alreadyspent.'"></span>';
+						$tableCell .= '<span class="timesheetalreadyrecorded" title="texttoreplace"><input type="text" class="center smallpadd width40" disabled id="timespent['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="'.$alreadyspent.'"></span>';
 						//$placeholder=' placeholder="00:00"';
 						//$tableCell.='+';
 					}
-					$tableCell .= '<input type="text" alt="'.($disabledtaskday ? '' : $alttitle).'" title="'.($disabledtaskday ? '' : $alttitle).'" '.($disabledtaskday ? 'disabled' : $placeholder).' class="center smallpadd" size="2" id="timeadded['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="" cols="2"  maxlength="5"';
+					$tableCell .= '<input type="text" alt="'.($disabledtaskday ? '' : $alttitle).'" title="'.($disabledtaskday ? '' : $alttitle).'" '.($disabledtaskday ? 'disabled' : $placeholder).' class="center smallpadd width40" id="timeadded['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="" cols="2"  maxlength="5"';
 					$tableCell .= ' onkeypress="return regexEvent(this,event,\'timeChar\')"';
 					$tableCell .= ' onkeyup="updateTotal('.$idw.',\''.$modeinput.'\')"';
 					$tableCell .= ' onblur="regexEvent(this,event,\''.$modeinput.'\'); updateTotal('.$idw.',\''.$modeinput.'\')" />';
@@ -2387,12 +2387,12 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 					$tableCell = '<td class="center hide weekend">';
 					$placeholder = '';
 					if ($alreadyspent) {
-						$tableCell .= '<span class="timesheetalreadyrecorded" title="texttoreplace"><input type="text" class="center smallpadd" size="2" disabled id="timespent['.$inc.']['.((int) $weekNb).']" name="task['.$lines[$i]->id.']['.$weekNb.']" value="'.$alreadyspent.'"></span>';
+						$tableCell .= '<span class="timesheetalreadyrecorded" title="texttoreplace"><input type="text" class="center smallpadd width40" disabled id="timespent['.$inc.']['.((int) $weekNb).']" name="task['.$lines[$i]->id.']['.$weekNb.']" value="'.$alreadyspent.'"></span>';
 						//$placeholder=' placeholder="00:00"';
 						//$tableCell.='+';
 					}
 
-					$tableCell .= '<input type="text" alt="'.($disabledtaskweek ? '' : $alttitle).'" title="'.($disabledtaskweek ? '' : $alttitle).'" '.($disabledtaskweek ? 'disabled' : $placeholder).' class="center smallpadd" size="2" id="timeadded['.$inc.']['.((int) $weekNb).']" name="task['.$lines[$i]->id.']['.($TFirstDay[$weekNb] - 1).']" value="" cols="2"  maxlength="5"';
+					$tableCell .= '<input type="text" alt="'.($disabledtaskweek ? '' : $alttitle).'" title="'.($disabledtaskweek ? '' : $alttitle).'" '.($disabledtaskweek ? 'disabled' : $placeholder).' class="center smallpadd width40" id="timeadded['.$inc.']['.((int) $weekNb).']" name="task['.$lines[$i]->id.']['.($TFirstDay[$weekNb] - 1).']" value="" cols="2"  maxlength="5"';
 					$tableCell .= ' onkeypress="return regexEvent(this,event,\'timeChar\')"';
 					$tableCell .= ' onkeyup="updateTotal('.$weekNb.',\''.$modeinput.'\')"';
 					$tableCell .= ' onblur="regexEvent(this,event,\''.$modeinput.'\'); updateTotal('.$weekNb.',\''.$modeinput.'\')" />';
@@ -2818,7 +2818,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 		print '<table width="100%">';
 		print '<tr>';
 		print '<td>'.$langs->trans("Year").'</td>';
-		print '<td class="right"><input type="text" size="4" class="flat" name="project_year_filter" value="'.$project_year_filter.'"/>';
+		print '<td class="right"><input type="text" size="4" class="flat" name="project_year_filter" value="'.((int) $project_year_filter).'"/>';
 		print "</tr>\n";
 		print '</table></form>';
 	}
@@ -2842,10 +2842,10 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 	$plannedworkloadoutputformat = 'allhourmin';
 	$timespentoutputformat = 'allhourmin';
 	if (getDolGlobalString('PROJECT_PLANNED_WORKLOAD_FORMAT')) {
-		$plannedworkloadoutputformat = $conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT;
+		$plannedworkloadoutputformat = getDolGlobalString('PROJECT_PLANNED_WORKLOAD_FORMAT');
 	}
 	if (getDolGlobalString('PROJECT_TIMES_SPENT_FORMAT')) {
-		$timespentoutputformat = $conf->global->PROJECT_TIME_SPENT_FORMAT;
+		$timespentoutputformat = getDolGlobalString('PROJECT_TIME_SPENT_FORMAT');
 	}
 
 	if (empty($task->progress) && !empty($hideOnProgressNull)) {

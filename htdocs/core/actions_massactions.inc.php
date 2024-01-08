@@ -1619,12 +1619,12 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 						$expediteur = new User($db);
 						$expediteur->fetch($objecttmp->fk_validator);
 						//$emailFrom = $expediteur->email;		Email of user can be an email into another company. Sending will fails, we must use the generic email.
-						$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
+						$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 
 						// Subject
-						$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+						$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 						if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-							$societeName = $conf->global->MAIN_APPLICATION_TITLE;
+							$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
 						}
 
 						$subject = $societeName." - ".$langs->transnoentitiesnoconv("HolidaysValidated");

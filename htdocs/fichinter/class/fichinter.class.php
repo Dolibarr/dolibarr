@@ -786,7 +786,7 @@ class Fichinter extends CommonObject
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('FICHEINTER_ADDON_PDF')) {
-				$modele = $conf->global->FICHEINTER_ADDON_PDF;
+				$modele = getDolGlobalString('FICHEINTER_ADDON_PDF');
 			}
 		}
 

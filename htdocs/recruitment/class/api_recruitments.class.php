@@ -226,9 +226,7 @@ class Recruitments extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieving jobposition list: '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No jobposition found');
-		}
+
 		return $obj_ret;
 	}
 
@@ -333,9 +331,7 @@ class Recruitments extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieving candidature list: '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No candidature found');
-		}
+
 		return $obj_ret;
 	}
 
