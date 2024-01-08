@@ -464,7 +464,8 @@ if (empty($reshook)) {
 		}
 		$result = $object->update($user);
 		if ($result < 0) {
-			dol_print_error($db, $object->error);
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = 'editinvoicedate';
 		}
 	} elseif ($action == 'setdate_pointoftax' && $usercancreate) {
 		$object->fetch($id);
@@ -1723,7 +1724,8 @@ if (empty($reshook)) {
 										}
 									} else {
 										// Positive line
-										$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
+										// we keep first type from product if exist, otherwise we keep type from line (free line) and at last default Product
+										$product_type = $lines[$i]->product_type ?? ($lines[$i]->type ?? Product::TYPE_PRODUCT);
 
 										// Date start
 										$date_start = false;

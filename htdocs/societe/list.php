@@ -1696,6 +1696,8 @@ while ($i < $imaxinloop) {
 		$companystatic->fk_prospectlevel = $obj->fk_prospectlevel;
 		$companystatic->fk_parent = $obj->fk_parent;
 		$companystatic->entity = $obj->entity;
+
+		$object = $companystatic;
 	}
 
 	if ($mode == 'kanban') {

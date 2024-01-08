@@ -261,6 +261,15 @@ if ($action == 'convert') {
 			dol_print_error($db);
 		}
 
+
+		// add hook for external modules
+		$parameters = array('oldvatrate' => $oldvatrate, 'newvatrate' => $newvatrate);
+		$reshook = $hookmanager->executeHooks('hookAfterVatUpdate', $parameters);
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			$error++;
+		}
+
 		if (!getDolGlobalInt('VATUPDATE_NO_TRANSACTION')) {
 			if (!$error) {
 				$db->commit();

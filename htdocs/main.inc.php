@@ -2407,7 +2407,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	//if ($_SESSION['dol_dst'] > 0) $dropdownBody .= yn(1);
 	//else $dropdownBody .= yn(0);
 
-	$dropdownBody .= '<br><b>'.$langs->trans("Browser").':</b> '.$conf->browser->name.($conf->browser->version ? ' '.$conf->browser->version : '').' ('.dol_escape_htmltag($_SERVER['HTTP_USER_AGENT']).')';
+	$dropdownBody .= '<br><b>'.$langs->trans("Browser").':</b> '.$conf->browser->name.($conf->browser->version ? ' '.$conf->browser->version : '').' <small class="opacitymedium">('.dol_escape_htmltag($_SERVER['HTTP_USER_AGENT']).')</small>';
 	$dropdownBody .= '<br><b>'.$langs->trans("Layout").':</b> '.$conf->browser->layout;
 	$dropdownBody .= '<br><b>'.$langs->trans("Screen").':</b> '.$_SESSION['dol_screenwidth'].' x '.$_SESSION['dol_screenheight'];
 	if ($conf->browser->layout == 'phone') {

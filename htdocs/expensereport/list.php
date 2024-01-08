@@ -276,7 +276,7 @@ if ($id > 0) {
 
 $sql = "SELECT d.rowid, d.ref, d.fk_user_author, d.total_ht, d.total_tva, d.total_ttc, d.fk_statut as status,";
 $sql .= " d.date_debut, d.date_fin, d.date_create, d.tms as date_modif, d.date_valid, d.date_approve, d.note_private, d.note_public,";
-$sql .= " u.rowid as id_user, u.firstname, u.lastname, u.login, u.email, u.statut, u.photo";
+$sql .= " u.rowid as id_user, u.firstname, u.lastname, u.login, u.email, u.statut as user_status, u.photo";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -768,6 +768,16 @@ if ($resql) {
 			$expensereportstatic->date_approve = $db->jdate($obj->date_approve);
 			$expensereportstatic->note_private = $obj->note_private;
 			$expensereportstatic->note_public = $obj->note_public;
+			$expensereportstatic->fk_user = $obj->id_user;
+
+			$usertmp->id = $obj->id_user;
+			$usertmp->lastname = $obj->lastname;
+			$usertmp->firstname = $obj->firstname;
+			$usertmp->login = $obj->login;
+			$usertmp->statut = $obj->user_status;
+			$usertmp->status = $obj->user_status;
+			$usertmp->photo = $obj->photo;
+			$usertmp->email = $obj->email;
 
 			if ($mode == 'kanban') {
 				if ($i == 0) {
@@ -781,7 +791,7 @@ if ($resql) {
 				if ($massactionbutton || $massaction) {
 					$selected = 0;
 
-					print $expensereportstatic->getKanbanView('', array('userauthor' => $usertmp->getNomUrl(1), 'selected' => in_array($expensereportstatic->id, $arrayofselected)));
+					print $expensereportstatic->getKanbanView('', array('userauthor' => $usertmp, 'selected' => in_array($expensereportstatic->id, $arrayofselected)));
 				}
 				if ($i == ($imaxinloop - 1)) {
 					print '</div>';
@@ -840,13 +850,6 @@ if ($resql) {
 				// User
 				if (!empty($arrayfields['user']['checked'])) {
 					print '<td class="left">';
-					$usertmp->id = $obj->id_user;
-					$usertmp->lastname = $obj->lastname;
-					$usertmp->firstname = $obj->firstname;
-					$usertmp->login = $obj->login;
-					$usertmp->statut = $obj->statut;
-					$usertmp->photo = $obj->photo;
-					$usertmp->email = $obj->email;
 					print $usertmp->getNomUrl(-1);
 					print '</td>';
 					if (!$i) {
@@ -979,7 +982,7 @@ if ($resql) {
 				$colspan++;
 			}
 		}
-		print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 
 	// Show total line
