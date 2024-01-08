@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2017 	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2023	Lionel Vessiller		<lvessiller@easya.solutions>
- * Copyright (C) 2023	John Botella			<john.botella@atm-consulting.fr>
+/* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
+ * Copyright (C) 2023-2024	John Botella			<john.botella@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
