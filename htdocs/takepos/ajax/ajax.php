@@ -130,14 +130,14 @@ if ($action == 'getProducts') {
 
 	if ($result && $thirdparty->id > 0) {
 		$rows = array();
-			$rows[] = array(
+		$rows[] = array(
 				'rowid' => $thirdparty->id,
 				'name' => $thirdparty->name,
 				'barcode' => $thirdparty->barcode,
 				'object' => 'thirdparty'
 			);
-			echo json_encode($rows);
-			exit;
+		echo json_encode($rows);
+		exit;
 	}
 
 	// Search
@@ -150,7 +150,7 @@ if ($action == 'getProducts') {
 
 	// Define $filteroncategids, the filter on category ID if there is a Root category defined.
 	$filteroncategids = '';
-	if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) {	// A root category is defined, we must filter on products inside this category tree
+	if (getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') > 0) {	// A root category is defined, we must filter on products inside this category tree
 		$object = new Categorie($db);
 		//$result = $object->fetch($conf->global->TAKEPOS_ROOT_CATEGORY_ID);
 		$arrayofcateg = $object->get_full_arbo('product', $conf->global->TAKEPOS_ROOT_CATEGORY_ID, 1);
@@ -212,14 +212,14 @@ if ($action == 'getProducts') {
 							if (isset($barcode_value_list['qd'])) {
 								$qty_str .= '.' . $barcode_value_list['qd'];
 							}
-							$qty = floatval($qty_str);
+							$qty = (float) $qty_str;
 						}
 
 						$objProd = new Product($db);
 						$objProd->fetch($obj->rowid);
 
 						$ig = '../public/theme/common/nophoto.png';
-						if (empty($conf->global->TAKEPOS_HIDE_PRODUCT_IMAGES)) {
+						if (!getDolGlobalString('TAKEPOS_HIDE_PRODUCT_IMAGES')) {
 							$image = $objProd->show_photos('product', $conf->product->multidir_output[$objProd->entity], 'small', 1);
 
 							$match = array();
@@ -286,7 +286,7 @@ if ($action == 'getProducts') {
 		$sql .= " AND archive = 0";
 	}*/
 	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1) {
-		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'product_stock as ps';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as ps';
 		$sql .= ' ON (p.rowid = ps.fk_product';
 		if (getDolGlobalString('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal'])) {
 			$sql .= " AND ps.fk_entrepot = ".((int) getDolGlobalInt("CASHDESK_ID_WAREHOUSE".$_SESSION['takeposterminal']));
@@ -381,6 +381,7 @@ if ($action == 'getProducts') {
 				} else {
 					$row = array();
 				}
+				$rows[] = $row;
 			} else {
 				// add
 				if (count($hookmanager->resArray)) {

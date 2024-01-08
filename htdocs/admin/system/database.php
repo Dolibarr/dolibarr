@@ -108,7 +108,8 @@ if (!count($listofvars) && !count($listofstatus)) {
 			print $param;
 			print '</td>';
 			print '<td class="wordbreak">';
-			$show = 0; $text = '';
+			$show = 0;
+			$text = '';
 			foreach ($arraytest as $key => $val) {
 				if ($key != $param) {
 					continue;

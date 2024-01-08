@@ -89,8 +89,8 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 			setEventMessages($langs->trans("VoteNameAlreadyExists"), null, 'errors');
 			$error++;
 		} else {
-			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'opensurvey_user_studs (nom, id_sondage, reponses)';
-			$sql .= " VALUES ('".$db->escape($nom)."', '".$db->escape($numsondage)."','".$db->escape($nouveauchoix)."')";
+			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'opensurvey_user_studs (nom, id_sondage, reponses, date_creation)';
+			$sql .= " VALUES ('".$db->escape($nom)."', '".$db->escape($numsondage)."', '".$db->escape($nouveauchoix)."', '".$db->idate(dol_now())."')";
 			$resql = $db->query($sql);
 			if (!$resql) {
 				dol_print_error($db);
@@ -486,7 +486,7 @@ if ($action == 'edit') {
 	$doleditor = new DolEditor('nouveauxcommentaires', $object->description, '', 120, 'dolibarr_notes', 'In', 1, 1, 1, ROWS_7, '90%');
 	$doleditor->Create(0, '');
 } else {
-	print (dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true));
+	print(dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true));
 }
 print '</td></tr>';
 
@@ -1132,7 +1132,6 @@ for ($i = 0; $i < $nbcolonnes; $i++) {
 		$meilleursujet .= ($meilleursujet ? ", " : "");
 
 		if ($object->format == "D") {
-			$meilleursujetexport = $toutsujet[$i];
 			//var_dump($toutsujet);
 			if (strpos($toutsujet[$i], '@') !== false) {
 				$toutsujetdate = explode("@", $toutsujet[$i]);
@@ -1148,7 +1147,7 @@ for ($i = 0; $i < $nbcolonnes; $i++) {
 		$compteursujet++;
 	}
 }
-$meilleursujet = substr($meilleursujet, 1);
+//$meilleursujet = substr($meilleursujet, 1);
 $meilleursujet = str_replace("°", "'", $meilleursujet);
 
 // Show best choice
@@ -1157,9 +1156,9 @@ if ($nbofcheckbox >= 2) {
 	print '<p class="affichageresultats">'."\n";
 
 	if (isset($meilleurecolonne) && $compteursujet == "1") {
-		print "<img src=\"".DOL_URL_ROOT.'/opensurvey/img/medaille.png'."\"> ".$langs->trans('TheBestChoice').": <b>".$meilleursujet." </b>".$langs->trans("with")." <b>".$meilleurecolonne."</b> ".$vote_str.".\n";
+		print '<img src="'.DOL_URL_ROOT.'/opensurvey/img/medaille.png"> '.$langs->trans('TheBestChoice').": <b>".$meilleursujet."</b> - <b>".$meilleurecolonne."</b> ".$vote_str.".\n";
 	} elseif (isset($meilleurecolonne)) {
-		print "<img src=\"".DOL_URL_ROOT.'/opensurvey/img/medaille.png'."\"> ".$langs->trans('TheBestChoices').": <b>".$meilleursujet." </b>".$langs->trans("with")." <b>".$meilleurecolonne."</b> ".$vote_str.".\n";
+		print '<img src="'.DOL_URL_ROOT.'/opensurvey/img/medaille.png"> '.$langs->trans('TheBestChoices').": <b>".$meilleursujet."</b> - <b>".$meilleurecolonne."</b> ".$vote_str.".\n";
 	}
 	print '<br></p><br>'."\n";
 }

@@ -34,7 +34,7 @@ class Invoices extends DolibarrApi
 	 *
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
-	static $FIELDS = array(
+	public static $FIELDS = array(
 		'socid',
 	);
 
@@ -281,9 +281,7 @@ class Invoices extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve invoice list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No invoice found');
-		}
+
 		return $obj_ret;
 	}
 
@@ -302,6 +300,12 @@ class Invoices extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->invoice->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->invoice->$field = $value;
 		}
 		if (!array_key_exists('date', $request_data)) {
@@ -322,19 +326,19 @@ class Invoices extends DolibarrApi
 		return $this->invoice->id;
 	}
 
-	 /**
-	  * Create an invoice using an existing order.
-	  *
-	  * @param int   $orderid       Id of the order
-	  * @return	Object				Object with cleaned properties
-	  *
-	  * @url     POST /createfromorder/{orderid}
-	  *
-	  * @throws RestException 400
-	  * @throws RestException 401
-	  * @throws RestException 404
-	  * @throws RestException 405
-	  */
+	/**
+	 * Create an invoice using an existing order.
+	 *
+	 * @param int   $orderid       Id of the order
+	 * @return	Object				Object with cleaned properties
+	 *
+	 * @url     POST /createfromorder/{orderid}
+	 *
+	 * @throws RestException 400
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 405
+	 */
 	public function createInvoiceFromOrder($orderid)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
@@ -623,6 +627,12 @@ class Invoices extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->invoice->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->invoice->$field = $value;
 		}
 
@@ -749,7 +759,7 @@ class Invoices extends DolibarrApi
 			$request_data->origin,
 			$request_data->origin_id,
 			$request_data->fk_parent_line,
-			empty($request_data->fk_fournprice) ?null:$request_data->fk_fournprice,
+			empty($request_data->fk_fournprice) ? null : $request_data->fk_fournprice,
 			$pa_ht,
 			$request_data->label,
 			$request_data->array_options,
@@ -1224,22 +1234,22 @@ class Invoices extends DolibarrApi
 		return $this->_cleanObjectDatas($this->invoice);
 	}
 
-	 /**
-	  * Add a discount line into an invoice (as an invoice line) using an existing absolute discount
-	  *
-	  * Note that this consume the discount.
-	  *
-	  * @param int   $id             Id of invoice
-	  * @param int   $discountid     Id of discount
-	  * @return int
-	  *
-	  * @url     POST {id}/usediscount/{discountid}
-	  *
-	  * @throws RestException 400
-	  * @throws RestException 401
-	  * @throws RestException 404
-	  * @throws RestException 405
-	  */
+	/**
+	 * Add a discount line into an invoice (as an invoice line) using an existing absolute discount
+	 *
+	 * Note that this consume the discount.
+	 *
+	 * @param int   $id             Id of invoice
+	 * @param int   $discountid     Id of discount
+	 * @return int
+	 *
+	 * @url     POST {id}/usediscount/{discountid}
+	 *
+	 * @throws RestException 400
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 405
+	 */
 	public function useDiscount($id, $discountid)
 	{
 		if (!DolibarrApiAccess::$user->rights->facture->creer) {
@@ -1269,22 +1279,22 @@ class Invoices extends DolibarrApi
 		return $result;
 	}
 
-	 /**
-	  * Add an available credit note discount to payments of an existing invoice.
-	  *
-	  *  Note that this consume the credit note.
-	  *
-	  * @param int   $id            Id of invoice
-	  * @param int   $discountid    Id of a discount coming from a credit note
-	  * @return	int
-	  *
-	  * @url     POST {id}/usecreditnote/{discountid}
-	  *
-	  * @throws RestException 400
-	  * @throws RestException 401
-	  * @throws RestException 404
-	  * @throws RestException 405
-	  */
+	/**
+	 * Add an available credit note discount to payments of an existing invoice.
+	 *
+	 *  Note that this consume the credit note.
+	 *
+	 * @param int   $id            Id of invoice
+	 * @param int   $discountid    Id of a discount coming from a credit note
+	 * @return	int
+	 *
+	 * @url     POST {id}/usecreditnote/{discountid}
+	 *
+	 * @throws RestException 400
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 405
+	 */
 	public function useCreditNote($id, $discountid)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
@@ -1331,7 +1341,6 @@ class Invoices extends DolibarrApi
 	 */
 	public function getPayments($id)
 	{
-
 		if (!DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
 			throw new RestException(401);
 		}
@@ -1423,10 +1432,10 @@ class Invoices extends DolibarrApi
 		// Clean parameters amount if payment is for a credit note
 		if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE) {
 			$resteapayer = price2num($resteapayer, 'MT');
-			$amounts[$id] = -$resteapayer;
+			$amounts[$id] = price2num(-1 * $resteapayer, 'MT');
 			// Multicurrency
 			$newvalue = price2num($this->invoice->multicurrency_total_ttc, 'MT');
-			$multicurrency_amounts[$id] = -$newvalue;
+			$multicurrency_amounts[$id] = price2num(-1 * $newvalue, 'MT');
 		} else {
 			$resteapayer = price2num($resteapayer, 'MT');
 			$amounts[$id] = $resteapayer;
@@ -1569,7 +1578,7 @@ class Invoices extends DolibarrApi
 			}
 
 			if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE) {
-				$amount = -$amount;
+				$amount = price2num(-1 * $amount, 'MT');
 			}
 
 			if ($is_multicurrency) {
@@ -1601,7 +1610,7 @@ class Invoices extends DolibarrApi
 		if (isModEnabled("banque")) {
 			$label = '(CustomerInvoicePayment)';
 			if ($paymentobj->paiementcode == 'CHQ' && empty($chqemetteur)) {
-				  throw new RestException(400, 'Emetteur is mandatory when payment code is '.$paymentobj->paiementcode);
+				throw new RestException(400, 'Emetteur is mandatory when payment code is '.$paymentobj->paiementcode);
 			}
 			if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE) {
 				$label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note

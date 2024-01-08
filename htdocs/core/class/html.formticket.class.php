@@ -425,7 +425,7 @@ class FormTicket
 				} else {
 					$subject = GETPOST('subject', 'alpha');
 				}
-				print '<input class="text minwidth500" id="subject" name="subject" value="'.$subject.'"'.(empty($this->withemail)?' autofocus':'').' />';
+				print '<input class="text minwidth500" id="subject" name="subject" value="'.$subject.'"'.(empty($this->withemail) ? ' autofocus' : '').' />';
 			}
 			print '</td></tr>';
 		}
@@ -446,7 +446,7 @@ class FormTicket
 		$doleditor->Create();
 		print '</td></tr>';
 
-		if ($public && !empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA_TICKET)) {
+		if ($public && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_TICKET')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 			print '<tr><td class="titlefield"><label for="email"><span class="fieldrequired">'.$langs->trans("SecurityCode").'</span></label></td><td>';
 			print '<span class="span-icon-security inline-block">';
@@ -555,7 +555,7 @@ class FormTicket
 				print img_picto('', 'company', 'class="paddingright"');
 				print $form->select_company($this->withfromsocid, 'socid', '', 1, 1, '', $events, 0, 'minwidth200');
 				print '</td></tr>';
-				if (!empty($conf->use_javascript_ajax) && !empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) {
+				if (!empty($conf->use_javascript_ajax) && getDolGlobalString('COMPANY_USE_SEARCH_TO_SELECT')) {
 					$htmlname = 'socid';
 					print '<script nonce="'.getNonce().'" type="text/javascript">
                     $(document).ready(function () {
@@ -726,7 +726,7 @@ class FormTicket
 
 		$ticketstat->loadCacheTypesTickets();
 
-		print '<select id="select'.$htmlname.'" class="flat minwidth100'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.($multiselect?'[]':'').'"'.($multiselect?' multiple':'').'>';
+		print '<select id="select'.$htmlname.'" class="flat minwidth100'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.($multiselect ? '[]' : '').'"'.($multiselect ? ' multiple' : '').'>';
 		if ($empty) {
 			print '<option value="">&nbsp;</option>';
 		}
@@ -845,7 +845,7 @@ class FormTicket
 					}
 
 					$label = ($arraycategories['label'] != '-' ? $arraycategories['label'] : '');
-					if ($outputlangs->trans("TicketCategoryShort".$arraycategories['code']) != ("TicketCategoryShort".$arraycategories['code'])) {
+					if ($outputlangs->trans("TicketCategoryShort".$arraycategories['code']) != "TicketCategoryShort".$arraycategories['code']) {
 						$label = $outputlangs->trans("TicketCategoryShort".$arraycategories['code']);
 					} elseif ($outputlangs->trans($arraycategories['code']) != $arraycategories['code']) {
 						$label = $outputlangs->trans($arraycategories['code']);
@@ -907,11 +907,11 @@ class FormTicket
 			}
 
 			print ajax_combobox('select'.$htmlname);
-		} elseif ($htmlname!='') {
+		} elseif ($htmlname != '') {
 			$selectedgroups = array();
 			$groupvalue = "";
 			$groupticket=GETPOST($htmlname, 'aZ09');
-			$child_id=GETPOST($htmlname.'_child_id', 'aZ09')?GETPOST($htmlname.'_child_id', 'aZ09'):0;
+			$child_id=GETPOST($htmlname.'_child_id', 'aZ09') ? GETPOST($htmlname.'_child_id', 'aZ09') : 0;
 			if (!empty($groupticket)) {
 				$tmpgroupticket = $groupticket;
 				$sql = "SELECT ctc.rowid, ctc.fk_parent, ctc.code";
@@ -958,7 +958,7 @@ class FormTicket
 					$obj = $this->db->fetch_object($resql);
 					if ($obj) {
 						$label = ($obj->label != '-' ? $obj->label : '');
-						if ($outputlangs->trans("TicketCategoryShort".$obj->code) != ("TicketCategoryShort".$obj->code)) {
+						if ($outputlangs->trans("TicketCategoryShort".$obj->code) != "TicketCategoryShort".$obj->code) {
 							$label = $outputlangs->trans("TicketCategoryShort".$obj->code);
 						} elseif ($outputlangs->trans($obj->code) != $obj->code) {
 							$label = $outputlangs->trans($obj->code);
@@ -970,9 +970,9 @@ class FormTicket
 
 						$isparent = $obj->isparent;
 						if (is_array($selectedgroups)) {
-							$iselected = in_array($obj->code, $selectedgroups) ?'selected':'';
+							$iselected = in_array($obj->code, $selectedgroups) ? 'selected' : '';
 						} else {
-							$iselected = $groupticket == $obj->code ?'selected':'';
+							$iselected = $groupticket == $obj->code ? 'selected' : '';
 						}
 						$stringtoprint .= '<option '.$iselected.' class="'.$htmlname.dol_escape_htmltag($grouprowid).'" value="'.dol_escape_htmltag($groupvalue).'" data-html="'.dol_escape_htmltag($grouplabel).'">'.dol_escape_htmltag($grouplabel).'</option>';
 						if ($isparent == 'NOTPARENT') {
@@ -1029,7 +1029,7 @@ class FormTicket
 						$obj = $this->db->fetch_object($resql);
 						if ($obj) {
 							$label = ($obj->label != '-' ? $obj->label : '');
-							if ($outputlangs->trans("TicketCategoryShort".$obj->code) != ("TicketCategoryShort".$obj->code)) {
+							if ($outputlangs->trans("TicketCategoryShort".$obj->code) != "TicketCategoryShort".$obj->code) {
 								$label = $outputlangs->trans("TicketCategoryShort".$obj->code);
 							} elseif ($outputlangs->trans($obj->code) != $obj->code) {
 								$label = $outputlangs->trans($obj->code);
@@ -1047,13 +1047,13 @@ class FormTicket
 								$arraycodenotparent[] = $groupvalue;
 							}
 							if (is_array($selectedgroups)) {
-								$iselected = in_array($obj->code, $selectedgroups) ?'selected':'';
+								$iselected = in_array($obj->code, $selectedgroups) ? 'selected' : '';
 							} else {
-								$iselected = $groupticket == $obj->code ?'selected':'';
+								$iselected = $groupticket == $obj->code ? 'selected' : '';
 							}
 							$stringtoprint .= '<option '.$iselected.' class="'.$htmlname.'_'.dol_escape_htmltag($fatherid).'_child_'.$levelid.'" value="'.dol_escape_htmltag($groupvalue).'" data-html="'.dol_escape_htmltag($grouplabel).'">'.dol_escape_htmltag($grouplabel).'</option>';
 							if (empty($tabscript[$groupcodefather])) {
-								$tabscript[$groupcodefather] = 'if ($("#'.$htmlname.($levelid > 1 ?'_child_'.($levelid-1):'').'").val() == "'.dol_escape_js($groupcodefather).'"){
+								$tabscript[$groupcodefather] = 'if ($("#'.$htmlname.($levelid > 1 ? '_child_'.($levelid-1) : '').'").val() == "'.dol_escape_js($groupcodefather).'"){
 									$(".'.$htmlname.'_'.dol_escape_htmltag($fatherid).'_child_'.$levelid.'").show()
 									console.log("We show childs tickets of '.$groupcodefather.' group ticket")
 								}else{
@@ -1071,7 +1071,7 @@ class FormTicket
 
 				$stringtoprint .='<script nonce="'.getNonce().'">';
 				$stringtoprint .='arraynotparents = '.json_encode($arraycodenotparent).';';	// when the last visible combo list is number x, this is the array of group
-				$stringtoprint .='if (arraynotparents.includes($("#'.$htmlname.($levelid > 1 ?'_child_'.($levelid-1):'').'").val())){
+				$stringtoprint .='if (arraynotparents.includes($("#'.$htmlname.($levelid > 1 ? '_child_'.($levelid-1) : '').'").val())){
 					console.log("'.$htmlname.'_child_'.$levelid.'")
 					if($("#'.$htmlname.'_child_'.$levelid.'").val() == "" && ($("#'.$htmlname.'_child_'.$levelid.'").attr("child_id")>'.$child_id.')){
 						$("#'.$htmlname.'_child_'.$levelid.'").hide();
@@ -1083,8 +1083,8 @@ class FormTicket
 						console.log("We choose '.$htmlname.' input and reload hidden input");
 					}
 				}
-				$("#'.$htmlname.($levelid > 1 ?'_child_'.($levelid-1):'').'").change(function() {
-					child_id = $("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid:'').'").attr("child_id");
+				$("#'.$htmlname.($levelid > 1 ? '_child_'.($levelid-1) : '').'").change(function() {
+					child_id = $("#'.$htmlname.($levelid > 1 ? '_child_'.$levelid : '').'").attr("child_id");
 
 					/* Change of value to select this value*/
 					if (arraynotparents.includes($(this).val()) || $(this).attr("child_id") == '.$use_multilevel.') {
@@ -1386,7 +1386,7 @@ class FormTicket
 		';
 
 		// If constant set, allow to send private messages as email
-		if (empty($conf->global->TICKET_SEND_PRIVATE_EMAIL)) {
+		if (!getDolGlobalString('TICKET_SEND_PRIVATE_EMAIL')) {
 			print 'jQuery("#send_msg_email").click(function() {
 					console.log("Click send_msg_email");
 					if(jQuery(this).is(":checked")) {
@@ -1454,11 +1454,11 @@ class FormTicket
 			$res = $ticketstat->fetch('', '', $this->track_id);
 
 			print '<tr><td></td><td>';
-			$checkbox_selected = (GETPOST('send_email') == "1" ? ' checked' : (getDolGlobalInt('TICKETS_MESSAGE_FORCE_MAIL')?'checked':''));
+			$checkbox_selected = (GETPOST('send_email') == "1" ? ' checked' : (getDolGlobalInt('TICKETS_MESSAGE_FORCE_MAIL') ? 'checked' : ''));
 			print '<input type="checkbox" name="send_email" value="1" id="send_msg_email" '.$checkbox_selected.'/> ';
 			print '<label for="send_msg_email">'.$langs->trans('SendMessageByEmail').'</label>';
 			$texttooltip = $langs->trans("TicketMessageSendEmailHelp");
-			if (empty($conf->global->TICKET_SEND_PRIVATE_EMAIL)) {
+			if (!getDolGlobalString('TICKET_SEND_PRIVATE_EMAIL')) {
 				$texttooltip .= ' '.$langs->trans("TicketMessageSendEmailHelp2b");
 			} else {
 				$texttooltip .= ' '.$langs->trans("TicketMessageSendEmailHelp2a", '{s1}');
@@ -1480,7 +1480,7 @@ class FormTicket
 			// Zone to select its email template
 			if (count($modelmail_array) > 0) {
 				print '<tr class="email_line"><td></td><td colspan="2"><div style="padding: 3px 0 3px 0">'."\n";
-				 print $langs->trans('SelectMailModel').': '.$formmail->selectarray('modelmailselected', $modelmail_array, $this->param['models_id'], 1, 0, "", "", 0, 0, 0, '', 'minwidth200');
+				print $langs->trans('SelectMailModel').': '.$formmail->selectarray('modelmailselected', $modelmail_array, $this->param['models_id'], 1, 0, "", "", 0, 0, 0, '', 'minwidth200');
 				if ($user->admin) {
 					print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 				}
@@ -1532,7 +1532,7 @@ class FormTicket
 					$ticketstat->socid = $ticketstat->fk_soc;
 					$ticketstat->fetch_thirdparty();
 
-					if (is_array($ticketstat->thirdparty->email) && !in_array($ticketstat->thirdparty->email, $sendto)) {
+					if (!empty($ticketstat->thirdparty->email) && !in_array($ticketstat->thirdparty->email, $sendto)) {
 						$sendto[] = $ticketstat->thirdparty->email.' <small class="opacitymedium">('.$langs->trans('Customer').')</small>';
 					}
 				}
@@ -1700,7 +1700,7 @@ class FormTicket
 		print "</form><br>\n";
 
 		// Disable enter key if option MAIN_MAILFORM_DISABLE_ENTERKEY is set
-		if (!empty($conf->global->MAIN_MAILFORM_DISABLE_ENTERKEY)) {
+		if (getDolGlobalString('MAIN_MAILFORM_DISABLE_ENTERKEY')) {
 			print '<script type="text/javascript">';
 			print 'jQuery(document).ready(function () {';
 			print '		$(document).on("keypress", \'#ticket\', function (e) {		/* Note this is called at every key pressed ! */

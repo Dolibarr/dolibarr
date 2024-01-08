@@ -14,7 +14,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $prefix = '';
-if (!empty($conf->global->THEME_INFOBOX_COLOR_ON_BACKGROUND)) {
+if (getDolGlobalString('THEME_INFOBOX_COLOR_ON_BACKGROUND')) {
 	$prefix = 'background-';
 }
 
@@ -333,7 +333,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 }
 
 
-<?php if (empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS) && !empty($conf->global->MAIN_INCLUDE_GLOBAL_STATS_IN_OPENED_DASHBOARD)) { ?>
+<?php if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_BOXSTATS') && getDolGlobalString('MAIN_INCLUDE_GLOBAL_STATS_IN_OPENED_DASHBOARD')) { ?>
 .info-box-icon-text{
 	opacity: 1;
 }
@@ -348,7 +348,10 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 }
 
 .info-box-content {
-	padding: 5px 10px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 10px;
+	padding-right: 5px;
 	margin-left: 84px;
 }
 .info-box-sm .info-box-content {
@@ -406,7 +409,7 @@ a.info-box-text{ text-decoration: none;}
 include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $prefix = '';
-if (!empty($conf->global->THEME_INFOBOX_COLOR_ON_BACKGROUND)) {
+if (getDolGlobalString('THEME_INFOBOX_COLOR_ON_BACKGROUND')) {
 	$prefix = 'background-';
 }
 
@@ -601,6 +604,16 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	}
 	.info-box-sm .info-box-content {
 		margin-left: 60px;
+	}
+	.info-box-content {
+		padding-top: 5px;
+		padding-bottom: 5px;
+		padding-left: 10px;
+		padding-right: 2px;
+	}
+	.info-box-line-text {
+		width: calc(100% - 92px);
+		max-width: calc(100% - 82px);
 	}
 }
 

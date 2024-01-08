@@ -60,12 +60,13 @@ class box_activity extends ModeleBoxes
 		$this->db = $db;
 
 		// FIXME: Pb into some status
-		$this->enabled = ($conf->global->MAIN_FEATURES_LEVEL); // Not enabled by default due to bugs (see previous comments)
+		$this->enabled = (getDolGlobalString('MAIN_FEATURES_LEVEL')); // Not enabled by default due to bugs (see previous comments)
 
-		$this->hidden = !((isModEnabled('facture') && $user->hasRight('facture', 'read'))
+		$this->hidden = !(
+			(isModEnabled('facture') && $user->hasRight('facture', 'read'))
 			|| (isModEnabled('commande') && $user->hasRight('commande', 'read'))
 			|| (isModEnabled('propal') && $user->hasRight('propal', 'read'))
-			);
+		);
 	}
 
 	/**
@@ -90,8 +91,8 @@ class box_activity extends ModeleBoxes
 		$savMAIN_ACTIVATE_FILECACHE = getDolGlobalInt('MAIN_ACTIVATE_FILECACHE');
 		$conf->global->MAIN_ACTIVATE_FILECACHE = 1;
 
-		if (!empty($conf->global->MAIN_BOX_ACTIVITY_DURATION)) {
-			$nbofperiod = $conf->global->MAIN_BOX_ACTIVITY_DURATION;
+		if (getDolGlobalString('MAIN_BOX_ACTIVITY_DURATION')) {
+			$nbofperiod = getDolGlobalString('MAIN_BOX_ACTIVITY_DURATION');
 		}
 
 		$textHead = $langs->trans("Activity").' - '.$langs->trans("LastXMonthRolling", $nbofperiod);

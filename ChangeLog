@@ -9,6 +9,7 @@ For users:
 ----------
 NEW: Compatibility with PHP 8.2
 NEW: Module for Advanced stock transfert is now stable (#26594)
+NEW: Module Workstation (used to enhance the module BOM and Manufacturing Order) is now stable
 NEW: Add a confirmation popup when deleting extrafields
 NEW: Add type 'icon' type for extrafields
 NEW: Close #20930 Use ajax for state loading after country change
@@ -170,10 +171,12 @@ NEW: use account address in sepa mandate (#23642)
 NEW: VAT rate - Add entity
 NEW: webportal site account
 NEW: When an user unset the batch management of products, transformation of each batch stock mouvement in global stock mouvement
+FIX: #25828 wrong odt style naming
 
 SEC: #25512 applicative anti bruteforce - security on too many login attempts (#25520)
 SEC: Add action confirm_... as sensitive to need a CSRF token
 SEC: Disable not used PHP streams
+SEC: Add option MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY
 
 
 For developers or integrators:
@@ -197,6 +200,7 @@ QUAL: Standardize code and look and feel for dictionaries
 QUAL: Standardize code. Renamed ID of user properties into ->user_xxx_id
 QUAL: Use dol_clone with parameter 2 for ->oldcopy
 QUAL: use switch case instead of if elseif statements for actions
+QUAL: Better respect of REST API RFC.
 
 NEW: [Add hook in user bank page]
 NEW: #19501 Add two hooks in dolreceiptprinter.php (#26439)
@@ -231,12 +235,14 @@ WARNING:
 --------
 
 The following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* The hook changeHelpURL is replaced by llxHeader
 * The property ->brouillon has been removed from all classes. It was not reliable and was a duplicate of ->status == self::STATUS_DRAFT.
 * The duplicated and deprecated property ->date_livraison that was renamed into ->delivery_date has been completely removed.
 * The property ->user_close to store ID of closing user has been renamed into ->user_closing_id.
 * The property ->user_validation to store ID of user validating has been renamed into ->user_validation_id.
 * The property ->user_creation to store ID of user of creation has been renamed into ->user_creation_id.
 * The property ->user_modification to store ID of user of modification has been renamed into ->user_modification_id.
+* The private array ->status_short, ->statuts and ->status_long are now array ->labelStatusShort and ->labelStatus everywhere.
 * The duplicate property ->user_creat, ->date_creat, ->date_valid has been removed (use instead user_creation, date_creation, date_validation). 
 * The method get_substitutionarray_shipment_lines() has been removed. Use the generic get_substitutionarray_lines() instead.
 * The method ProductcustomerPrice->fetch_all_log() has been renamed into camel case ->fetchAllLog()
@@ -245,7 +251,48 @@ The following changes may create regressions for some external modules, but were
 * It was possible to use a variable $soc or $right inside a PHP code condition of some extrafields properties, this is no more true (this 2 variables are no more global variables).
 * New hook files of modules actions_mymodule.class.php should now "extends CommonHookActions"
 * Endpoint for API /partnershipapi and /recruitment has been renamed into /partnerships and /recruitments to follow name conventions.
+* Hidden option ACCOUNTANCY_AUTOFIX_MISSING_LINK_TO_USEr_ON_SALARY_BANK_PAYMENT has been renamed into ACCOUNTANCY_AUTOFIX_MISSING_LINK_TO_USER_ON_SALARY_BANK_PAYMENT
+* The delete() method of AdherentType, Contact, Delivery, MultiCurrency, CurrencyRate now need $user as first parameter.
+* A very high number of class properties (with old name in french) are now deprecated in favor of the property name in english.
 
+
+***** ChangeLog for 18.0.4 compared to 18.0.3 *****
+FIX: $this->newref already exists and could have been modified by trigger but we still use a local variable for the filesystem-based renaming
+FIX: 16.0 only, backport fix for SQL error on global search product
+FIX: #25399 (#26694)
+FIX: #25458 intervention localizations (backport v17) (#26757)
+FIX: #26518
+FIX: #26536 Accountancy - Balance - Not divided lines by label & account, only by account (#26547)
+FIX: #26553 Supplier invoice - Do not display the delete button for reconciled payment (#26554)
+FIX: #26735
+FIX: #26994
+FIX: Accountancy - Possibility to write in bookkeeping expense report operation with some line not bound (#26545)
+FIX: add display of an error when attempting to delete a committed transaction (#26573)
+FIX: avoid warning : Cannot use a scalar value as an array (#26437)
+FIX: backport SQL error on global search product
+FIX: # Bug Estimated Stock at date value in V14 (#26479)
+FIX: commande context (#26497)
+FIX: delivery note disappear after generation
+FIX: double hook and paging search param in product list (#26767)
+FIX: Email reminder template must not be visible when option is off
+FIX: escape HTML tags in return value of getFullName() (#26735)
+FIX: Fix set private note (#26610)
+FIX: Fix when options FAC_FORCE_DATE_VALIDATION and INVOICE_CHECK_POSTERIOR_DATE enabled. The date is forced after the test and not before
+FIX: menu auguria
+FIX: pagination parameters on save and cancel buttons (#26605)
+FIX: pdf cornas page head multicell width (backport v17)
+FIX: php8 fatal on edit supplier order when multicurrency is activated (#26758)
+FIX: possible inconsistency between llx_ecm_files and file system when BILL_SUPPLIER_VALIDATES changes ref
+FIX: regression on planned bank entries (#26556)
+FIX: Social contribution - Payment list - Wrong information in type column (#26561)
+FIX: special_code update line keep old value. (#26819)
+FIX: substitute project variables in invoice documents (#26445)
+FIX: Test on permission for holiday tooltips
+FIX: v17: Param $notrigger in $societe->create() causes method to return true regardless of actual result of database functions (#26499)
+FIX: v18 SQL error in llx_c_forme_juridique.sql when installing
+FIX: Warehouse Global Amounts not displayed (#26478)
+FIX: warning param $lineID getSpecialCode is negatif (#26826)
+FIX: warning php8.2 undefined_array_key (#26830)
 
 ***** ChangeLog for 18.0.3 compared to 18.0.2 *****
 FIX: #25793 Cannot add time spent (#26405)

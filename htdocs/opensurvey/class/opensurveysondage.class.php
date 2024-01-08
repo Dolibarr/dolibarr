@@ -181,7 +181,7 @@ class Opensurveysondage extends CommonObject
 	 *
 	 *  @param	User    $user        User that creates
 	 *  @param  int     $notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return int                  <0 if KO, Id of created object if OK
+	 *  @return int                  Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
@@ -230,10 +230,11 @@ class Opensurveysondage extends CommonObject
 
 		$this->db->begin();
 
-		   dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error && !$notrigger) {
@@ -265,7 +266,7 @@ class Opensurveysondage extends CommonObject
 	 *
 	 *  @param	int		$id    				Id object
 	 *  @param	string	$numsurvey			Ref of survey (admin or not)
-	 *  @return int          				<0 if KO, >0 if OK
+	 *  @return int          				Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $numsurvey = '')
 	{
@@ -333,11 +334,10 @@ class Opensurveysondage extends CommonObject
 	 *
 	 *  @param	User    $user        User that modifies
 	 *  @param  int     $notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 <0 if KO, >0 if OK
+	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters
@@ -399,7 +399,7 @@ class Opensurveysondage extends CommonObject
 	 *	@param  User	$user        		User that deletes
 	 *  @param  int		$notrigger	 		0=launch triggers after, 1=disable triggers
 	 *  @param	string	$numsondage			Num sondage admin to delete
-	 *  @return	int					 		<0 if KO, >0 if OK
+	 *  @return	int					 		Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 0, $numsondage = '')
 	{
@@ -435,7 +435,8 @@ class Opensurveysondage extends CommonObject
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -519,11 +520,11 @@ class Opensurveysondage extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -549,7 +550,7 @@ class Opensurveysondage extends CommonObject
 	/**
 	 * Return array of lines
 	 *
-	 * @return 	int		<0 if KO, >0 if OK
+	 * @return 	int		Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_lines()
 	{

@@ -24,7 +24,9 @@
  *		\brief      Page to edit absolute discounts for a customer
  */
 
-if (! defined('CSRFCHECK_WITH_TOKEN')) define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
+if (! defined('CSRFCHECK_WITH_TOKEN')) {
+	define('CSRFCHECK_WITH_TOKEN', '1');
+}		// Force use of CSRF protection with tokens even for GET
 
 // Load Dolibarr environment
 require '../main.inc.php';
@@ -42,7 +44,7 @@ $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 // Security check
-$socid = GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('socid', 'int');
+$socid = GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('socid', 'int');
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
@@ -62,8 +64,8 @@ $permissiontocreate = ($user->rights->societe->creer || $user->rights->facture->
  */
 
 if (GETPOST('cancel', 'alpha') && !empty($backtopage)) {
-	 header("Location: ".$backtopage);
-	 exit;
+	header("Location: ".$backtopage);
+	exit;
 }
 
 if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permissiontocreate) {
@@ -204,7 +206,7 @@ if (GETPOST('action', 'aZ09') == 'confirm_remove' && GETPOST("confirm") == 'yes'
 	$db->begin();
 
 	$discount = new DiscountAbsolute($db);
-	$result = $discount->fetch(GETPOST("remid"));
+	$result = $discount->fetch(GETPOSTINT("remid"));
 	$result = $discount->delete($user);
 	if ($result > 0) {
 		$db->commit();

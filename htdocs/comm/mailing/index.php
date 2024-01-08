@@ -86,7 +86,7 @@ $handle = opendir($dir);
 
 if (is_resource($handle)) {
 	while (($file = readdir($handle)) !== false) {
-		if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS') {
+		if (substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS') {
 			if (preg_match("/(.*)\.(.*)\.(.*)/i", $file, $reg)) {
 				$modulename = $reg[1];
 				if ($modulename == 'example') {

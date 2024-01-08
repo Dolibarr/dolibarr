@@ -29,7 +29,6 @@
  */
 class ExpenseReports extends DolibarrApi
 {
-
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
@@ -152,9 +151,7 @@ class ExpenseReports extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve Expense Report list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No Expense Report found');
-		}
+
 		return $obj_ret;
 	}
 
@@ -174,6 +171,12 @@ class ExpenseReports extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->expensereport->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->expensereport->$field = $value;
 		}
 		/*if (isset($request_data["lines"])) {
@@ -421,6 +424,12 @@ class ExpenseReports extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->expensereport->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->expensereport->$field = $value;
 		}
 

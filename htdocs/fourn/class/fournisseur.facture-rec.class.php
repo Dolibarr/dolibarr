@@ -83,6 +83,11 @@ class FactureFournisseurRec extends CommonInvoice
 	public $ref_supplier;
 	public $socid;
 
+	/**
+	 * @deprecated
+	 */
+	public $fk_soc;
+
 	public $suspended; // status
 
 	/**
@@ -121,14 +126,6 @@ class FactureFournisseurRec extends CommonInvoice
 	public $cond_reglement_id;
 
 	public $date_lim_reglement;
-
-	public $fk_multicurrency;
-	public $multicurrency_code;
-	public $multicurrency_tx;
-	public $multicurrency_subprice;
-	public $multicurrency_total_ht;
-	public $multicurrency_total_tva;
-	public $multicurrency_total_ttc;
 
 	public $usenewprice = 0;
 	public $frequency;
@@ -263,7 +260,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @param 	User 	$user 			User object
 	 * @param 	int 	$facFournId		Id invoice
 	 * @param 	int 	$notrigger 		No trigger
-	 * @return	int                    	<0 if KO, id of invoice created if OK
+	 * @return	int                    	Return integer <0 if KO, id of invoice created if OK
 	 */
 	public function create($user, $facFournId, $notrigger = 0)
 	{
@@ -437,8 +434,7 @@ class FactureFournisseurRec extends CommonInvoice
 									$error++;
 								}
 							}
-						} else // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
-						{
+						} else { // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
 							$origin_id = $tmp_origin_id;
 							$ret = $this->add_object_linked($origin, $origin_id);
 							if (!$ret) {
@@ -490,7 +486,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 *
 	 *  @param		User	$user					User
 	 *  @param		int		$notrigger				No trigger
-	 *	@return    	int             				<0 if KO, Id of line if OK
+	 *	@return    	int             				Return integer <0 if KO, Id of line if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -500,7 +496,11 @@ class FactureFournisseurRec extends CommonInvoice
 		$sql .= " titre = '" . (!empty($this->title) ? $this->db->escape($this->title) : "")."'," ;
 		$sql .= " ref_supplier = '". (!empty($this->ref_supplier) ? $this->db->escape($this->ref_supplier) : "")."',";
 		$sql .= " entity = ". (!empty($this->entity) ? ((int) $this->entity) : 1) . ',';
-		if ($this->fk_soc > 0) $sql .= " fk_soc = ". (int) $this->fk_soc. ',';
+		if (!empty($this->socid) && $this->socid > 0) {
+			$sql .= " fk_soc = ". ((int) $this->socid). ',';
+		} elseif (!empty($this->fk_soc) && $this->fk_soc > 0) {	// For backward compatibility
+			$sql .= " fk_soc = ". ((int) $this->fk_soc). ',';
+		}
 		$sql .= " suspended = ". (!empty($this->suspended) ? ((int) $this->suspended) : 0) . ',';
 		$sql .= " libelle = ". (!empty($this->libelle) ? "'".$this->db->escape($this->libelle)."'" : 'NULL') . ",";
 		$sql .= " vat_src_code = ". (!empty($this->vat_src_code) ? "'".$this->db->escape($this->vat_src_code)."'" : 'NULL') . ',';
@@ -608,7 +608,7 @@ class FactureFournisseurRec extends CommonInvoice
 				$this->id                       = $obj->rowid;
 				$this->titre                    = $obj->title;
 				$this->title                    = $obj->title;
-				$this->ref                      = $obj->$keyforref;
+				$this->ref                      = $obj->title;
 				$this->ref_supplier             = $obj->ref_supplier;
 				$this->entity                   = $obj->entity;
 				$this->socid                    = $obj->fk_soc;
@@ -800,7 +800,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 *	@param     	User	$user          	User that delete.
 	 *	@param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *	@param		int		$idwarehouse	Id warehouse to use for stock change.
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 0, $idwarehouse = -1)
 	{
@@ -879,7 +879,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @param int 		$rang 			Position of line
 	 * @param string 	$fk_unit 		Unit
 	 * @param int 		$pu_ht_devise 	Unit price in currency
-	 * @return int                  	<0 if KO, Id of line if OK
+	 * @return int                  	Return integer <0 if KO, Id of line if OK
 	 * @throws Exception
 	 */
 	public function addline($fk_product, $ref, $label, $desc, $pu_ht, $pu_ttc, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $type = 0, $date_start = 0, $date_end = 0, $info_bits = 0, $special_code = 0, $rang = -1, $fk_unit = null, $pu_ht_devise = 0)
@@ -1019,7 +1019,7 @@ class FactureFournisseurRec extends CommonInvoice
 			$sql .= ', ' . (int) $special_code;
 			$sql .= ', ' . (int) $rang;
 			$sql .= ', ' . ($fk_unit ? (int) $fk_unit : 'NULL');
-			$sql .= ', ' . (int) $user;
+			$sql .= ', ' . (int) $user->id;
 			$sql .= ', ' . (int) $this->fk_multicurrency;
 			$sql .= ", '" . $this->db->escape($this->multicurrency_code) . "'";
 			$sql .= ', ' . price2num($pu_ht_devise, 'CU');
@@ -1072,7 +1072,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @param string 	$fk_unit 			Unit
 	 * @param double	$pu_ht_devise 		Unit price in currency
 	 * @param double    $pu_ttc             Unit price TTC (> 0 even for credit note)
-	 * @return int  		                <0 if KO, Id of line if OK
+	 * @return int  		                Return integer <0 if KO, Id of line if OK
 	 * @throws Exception
 	 */
 	public function updateline($rowid, $fk_product, $ref, $label, $desc, $pu_ht, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $type = 0, $date_start = 0, $date_end = 0, $info_bits = 0, $special_code = 0, $rang = -1, $fk_unit = null, $pu_ht_devise = 0, $pu_ttc = 0)
@@ -1106,7 +1106,6 @@ class FactureFournisseurRec extends CommonInvoice
 
 			$txlocaltax1 = empty($txlocaltax1) ? 0 : price2num($txlocaltax1);
 			$txlocaltax2 = empty($txlocaltax2) ? 0 : price2num($txlocaltax2);
-			$this->multicurrency_subprice = empty($this->multicurrency_subprice) ? 0 : $this->multicurrency_subprice;
 			$this->multicurrency_total_ht = empty($this->multicurrency_total_ht) ? 0 : $this->multicurrency_total_ht;
 			$this->multicurrency_total_tva = empty($this->multicurrency_total_tva) ? 0 : $this->multicurrency_total_tva;
 			$this->multicurrency_total_ttc = empty($this->multicurrency_total_ttc) ? 0 : $this->multicurrency_total_ttc;
@@ -1196,6 +1195,7 @@ class FactureFournisseurRec extends CommonInvoice
 				return -1;
 			}
 		}
+		return 0;
 	}
 
 
@@ -1306,6 +1306,7 @@ class FactureFournisseurRec extends CommonInvoice
 			}
 
 			$saventity = $conf->entity;
+			$laststep="None";
 
 			while ($i < $num) {     // Loop on each template invoice. If $num = 0, test is false at first pass.
 				$line = $this->db->fetch_object($resql);
@@ -1316,6 +1317,7 @@ class FactureFournisseurRec extends CommonInvoice
 
 				$new_fac_fourn = null;
 				$facturerec = new FactureFournisseurRec($this->db);
+				$laststep="Fetch {$line->rowid}";
 				$facturerec->fetch($line->rowid);
 
 				if ($facturerec->id > 0) {
@@ -1341,6 +1343,7 @@ class FactureFournisseurRec extends CommonInvoice
 					$new_fac_fourn->libelle = $facturerec->label;	// deprecated
 
 					$invoiceidgenerated = $new_fac_fourn->create($user);
+					$laststep="Create invoiceidgenerated $invoiceidgenerated";
 					if ($invoiceidgenerated <= 0) {
 						$this->errors = $new_fac_fourn->errors;
 						$this->error = $new_fac_fourn->error;
@@ -1348,6 +1351,7 @@ class FactureFournisseurRec extends CommonInvoice
 					}
 					if (!$error && ($facturerec->auto_validate || $forcevalidation)) {
 						$result = $new_fac_fourn->validate($user);
+						$laststep = "Validate by user {$user->login}";
 						if ($result <= 0) {
 							$this->errors = $new_fac_fourn->errors;
 							$this->error = $new_fac_fourn->error;
@@ -1357,7 +1361,9 @@ class FactureFournisseurRec extends CommonInvoice
 
 					if (!$error && $facturerec->generate_pdf) {
 						// We refresh the object in order to have all necessary data (like date_lim_reglement)
+						$laststep = "Refresh ".$new_fac_fourn->id;
 						$new_fac_fourn->fetch($new_fac_fourn->id);
+						$laststep = "GenerateDocument ".$new_fac_fourn->id;
 						$result = $new_fac_fourn->generateDocument($facturerec->model_pdf, $langs);
 						if ($result < 0) {
 							$this->errors = $new_fac_fourn->errors;
@@ -1382,7 +1388,7 @@ class FactureFournisseurRec extends CommonInvoice
 					$nb_create++;
 					$this->output .= $langs->trans('InvoiceGeneratedFromTemplate', $new_fac_fourn->ref, $facturerec->title)."\n";
 				} else {
-					$this->db->rollback('createRecurringInvoices Process invoice template id=' .$facturerec->id. ', title=' .$facturerec->title);
+					$this->db->rollback('createRecurringInvoices Process invoice template error='.$error.' invoiceidgenerated='.$invoiceidgenerated.' LastStep='.$laststep.' id=' .$facturerec->id. ', title=' .$facturerec->title);
 				}
 
 				$parameters = array(
@@ -1420,7 +1426,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @param  int		$save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 * @return string 			         			String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '', $notooltip = '', $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '', $notooltip = 0, $save_lastsearch_value = -1)
 	{
 		global $langs, $hookmanager;
 
@@ -1721,8 +1727,7 @@ class FactureFournisseurRec extends CommonInvoice
 					$line->total_ttc = 59.8;
 					$line->total_tva = 9.8;
 					$line->remise_percent = 50;
-				} else // (product line)
-				{
+				} else { // (product line)
 					$prodid = mt_rand(1, $num_prods);
 					$line->fk_product = $prodids[$prodid];
 					$line->total_ht = 100;
@@ -1784,7 +1789,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 *
 	 *	@param     	int		$frequency		value of frequency
 	 *	@param     	string	$unit 			unit of frequency  (d, m, y)
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setFrequencyAndUnit($frequency, $unit)
 	{
@@ -1824,7 +1829,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 *
 	 *	@param     	datetime	$date					date of execution
 	 *	@param     	int			$increment_nb_gen_done	0 do nothing more, >0 increment nb_gen_done
-	 *	@return		int									<0 if KO, >0 if OK
+	 *	@return		int									Return integer <0 if KO, >0 if OK
 	 */
 	public function setNextDate($date, $increment_nb_gen_done = 0)
 	{
@@ -1857,7 +1862,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 *	Update the maximum period
 	 *
 	 *	@param     	int		$nb		number of maximum period
-	 *	@return		int				<0 if KO, >0 if OK
+	 *	@return		int				Return integer <0 if KO, >0 if OK
 	 */
 	public function setMaxPeriod($nb)
 	{
@@ -1889,7 +1894,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 *	Update the auto validate flag of invoice
 	 *
 	 *	@param     	int		$validate		0 to create in draft, 1 to create and validate invoice
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setAutoValidate($validate)
 	{
@@ -1917,7 +1922,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 *	Update the auto generate documents
 	 *
 	 *	@param     	int		$validate		0 no document, 1 to generate document
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setGeneratePdf($validate)
 	{
@@ -1945,7 +1950,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 *  Update the model for documents
 	 *
 	 *  @param     	string		$model		model of document generator
-	 *  @return		int						<0 if KO, >0 if OK
+	 *  @return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setModelPdf($model)
 	{
@@ -2015,7 +2020,6 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 
 	public $fk_user_author;
 	public $fk_user_modif;
-	public $fk_multicurrency;
 
 
 	/**
@@ -2023,9 +2027,9 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 	 *
 	 * @param User $user Object user
 	 * @param int $notrigger Disable triggers
-	 * @return        int                    <0 if KO, >0 if OK
+	 * @return        int                    Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false)
+	public function delete(User $user, $notrigger = 0)
 	{
 		$error = 0;
 		$this->db->begin();
@@ -2151,7 +2155,7 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 	 *
 	 *  @param		User	$user					User
 	 *  @param		int		$notrigger				No trigger
-	 *	@return    	int             				<0 if KO, Id of line if OK
+	 *	@return    	int             				Return integer <0 if KO, Id of line if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{

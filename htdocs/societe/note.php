@@ -37,7 +37,7 @@ $langs->load("companies");
 
 
 // Get parameters
-$id = GETPOST('id') ?GETPOST('id', 'int') : GETPOST('socid', 'int');
+$id = GETPOST('id') ? GETPOST('id', 'int') : GETPOST('socid', 'int');
 $action = GETPOST('action', 'aZ09');
 
 
@@ -83,7 +83,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 
 $title = $langs->trans("ThirdParty").' - '.$langs->trans("Notes");
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->name.' - '.$langs->trans("Notes");
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
@@ -119,7 +119,7 @@ if ($object->id > 0) {
 	print $object->getTypeUrl(1);
 	print '</td></tr>';
 
-	if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
+	if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
 		print '<tr><td class="'.$cssclass.'">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
 	}
 

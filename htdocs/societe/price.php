@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 
 	$prodcustprice = new ProductCustomerPrice($db);
@@ -55,7 +55,7 @@ $search_price 	= GETPOST('search_price');
 $search_price_ttc = GETPOST('search_price_ttc');
 
 // Security check
-$socid = GETPOST('socid', 'int') ?GETPOST('socid', 'int') : GETPOST('id', 'int');
+$socid = GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -109,7 +109,10 @@ if (empty($reshook)) {
 			$vatratecode = '';
 			$tva_tx = preg_replace('/[^0-9\.].*$/', '', $tva_tx_txt); // keep remove all after the numbers and dot
 			$npr = preg_match('/\*/', $tva_tx_txt) ? 1 : 0;
-			$localtax1 = 0; $localtax2 = 0; $localtax1_type = '0'; $localtax2_type = '0';
+			$localtax1 = 0;
+			$localtax2 = 0;
+			$localtax1_type = '0';
+			$localtax2_type = '0';
 			// If value contains the unique code of vat line (new recommended method), we use it to find npr and local taxes
 			if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg)) {
 				// We look into database using code (we can't use get_localtax() because it depends on buyer that is not known). Same in update price.
@@ -222,7 +225,7 @@ print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><t
 print $object->getTypeUrl(1);
 print '</td></tr>';
 
-if (!empty($conf->global->SOCIETE_USEPREFIX)) { // Old not used prefix field
+if (getDolGlobalString('SOCIETE_USEPREFIX')) { // Old not used prefix field
 	print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
 }
 
@@ -256,12 +259,12 @@ print dol_get_fiche_end();
 
 
 
-if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 	$prodcustprice = new ProductCustomerPrice($db);
 
 	$sortfield = GETPOST('sortfield', 'aZ09comma');
 	$sortorder = GETPOST('sortorder', 'aZ09comma');
-	$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+	$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 	$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 	if (empty($page) || $page == -1) {
 		$page = 0;
@@ -276,7 +279,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		$sortfield = "soc.nom";
 	}
 
-		// Build filter to display only concerned lines
+	// Build filter to display only concerned lines
 	$filter = array(
 		't.fk_soc' => $object->id
 	);
@@ -340,7 +343,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		// Price
 		print '<tr><td width="20%">';
 		$text = $langs->trans('SellingPrice');
-		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
+		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 1);
 		print '</td><td>';
 		print '<input name="price" size="10" value="'.GETPOST('price', 'int').'">';
 		print '</td></tr>';
@@ -348,7 +351,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		// Price minimum
 		print '<tr><td>';
 		$text = $langs->trans('MinPrice');
-		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
+		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 1);
 		print '<td><input name="price_min" size="10" value="'.GETPOST('price_min', 'int').'">';
 		print '</td></tr>';
 
@@ -409,7 +412,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			// Price
 			print '<tr><td>';
 			$text = $langs->trans('SellingPrice');
-			print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
+			print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 1);
 			print '</td><td>';
 			if ($prodcustprice->price_base_type == 'TTC') {
 				print '<input name="price" size="10" value="'.price($prodcustprice->price_ttc).'">';
@@ -421,7 +424,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			// Price minimum
 			print '<tr><td>';
 			$text = $langs->trans('MinPrice');
-			print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
+			print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 1);
 			print '</td><td>';
 			if ($prodcustprice->price_base_type == 'TTC') {
 				print '<input name="price_min" size="10" value="'.price($prodcustprice->price_min_ttc).'">';

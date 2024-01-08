@@ -96,7 +96,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontodelete) {
 
 // Execute jobs
 if ($action == 'confirm_execute' && $confirm == "yes" && $permissiontoexecute) {
-	if (!empty($conf->global->CRON_KEY) && $conf->global->CRON_KEY != $securitykey) {
+	if (getDolGlobalString('CRON_KEY') && $conf->global->CRON_KEY != $securitykey) {
 		setEventMessages('Security key '.$securitykey.' is wrong', null, 'errors');
 		$action = '';
 	} else {
@@ -802,7 +802,7 @@ if (($action == "create") || ($action == "edit")) {
 	} elseif (empty($object->status)) {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("JobDisabled")).'">'.$langs->trans("CronExecute").'</a>';
 	} else {
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=execute&token='.newToken().'&id='.$object->id.(empty($conf->global->CRON_KEY) ? '' : '&securitykey='.urlencode($conf->global->CRON_KEY)).'">'.$langs->trans("CronExecute").'</a>';
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=execute&token='.newToken().'&id='.$object->id.(!getDolGlobalString('CRON_KEY') ? '' : '&securitykey='.urlencode(getDolGlobalString('CRON_KEY'))).'">'.$langs->trans("CronExecute").'</a>';
 	}
 
 	if (!$user->hasRight('cron', 'create')) {

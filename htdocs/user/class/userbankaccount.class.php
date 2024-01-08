@@ -87,7 +87,7 @@ class UserBankAccount extends Account
 	 *
 	 * @param	User|null	$user		User
 	 * @param	int			$notrigger	1=Disable triggers
-	 * @return	int						<0 if KO, >= 0 if OK
+	 * @return	int						Return integer <0 if KO, >= 0 if OK
 	 */
 	public function create(User $user = null, $notrigger = 0)
 	{
@@ -115,10 +115,14 @@ class UserBankAccount extends Account
 	 *
 	 *	@param	User|null	$user		Object user
 	 *	@param	int			$notrigger	1=Disable triggers
-	 *	@return	int						<=0 if KO, >0 if OK
+	 *	@return	int						Return integer <=0 if KO, >0 if OK
 	 */
 	public function update(User $user = null, $notrigger = 0)
 	{
+		$error = 0;
+
+		$this->db->begin();
+
 		if (!$this->id) {
 			$this->create();
 		}
@@ -146,11 +150,28 @@ class UserBankAccount extends Account
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$result = $this->db->query($sql);
-		if ($result) {
-			return 1;
+		if (!$result) {
+			$error++;
+			$this->errors[] = $this->db->lasterror();
+		}
+
+		// Triggers
+		if (!$error && !$notrigger) {
+			// Call triggers
+			$result = $this->call_trigger(strtoupper(get_class($this)).'_MODIFY', $user);
+			if ($result < 0) {
+				$error++;
+			} //Do also here what you must do to rollback action if trigger fail
+			// End call triggers
+		}
+
+		// Commit or rollback
+		if ($error) {
+			$this->db->rollback();
+			return -1;
 		} else {
-			dol_print_error($this->db);
-			return 0;
+			$this->db->commit();
+			return $this->id;
 		}
 	}
 
@@ -160,7 +181,7 @@ class UserBankAccount extends Account
 	 *	@param	int		$id			Id of record
 	 *	@param	string	$ref		Ref of record
 	 *  @param  int     $userid     User id
-	 * 	@return	int					<0 if KO, >0 if OK
+	 * 	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $ref = '', $userid = 0)
 	{
@@ -230,7 +251,7 @@ class UserBankAccount extends Account
 	 *  Delete user bank account from database
 	 *
 	 *  @param	User|null	$user	User deleting
-	 *  @return int             	<0 if KO, >0 if OK
+	 *  @return int             	Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user = null)
 	{
@@ -310,13 +331,12 @@ class UserBankAccount extends Account
 	 */
 	public function checkCountryBankAccount()
 	{
-
 		if (!empty($this->country_code)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 			$country_code_in_EEC = getCountriesInEEC();
 			return in_array($this->country_code, $country_code_in_EEC);
 		} else {
-			return -1;
+			return false;
 		}
 	}
 }

@@ -420,11 +420,11 @@ class Commande extends CommonOrder
 		global $langs, $conf;
 		$langs->load("order");
 
-		if (!empty($conf->global->COMMANDE_ADDON)) {
+		if (getDolGlobalString('COMMANDE_ADDON')) {
 			$mybool = false;
 
 			$file = getDolGlobalString('COMMANDE_ADDON') . ".php";
-			$classname = $conf->global->COMMANDE_ADDON;
+			$classname = getDolGlobalString('COMMANDE_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -463,7 +463,7 @@ class Commande extends CommonOrder
 	 *	@param		User	$user     		User making status change
 	 *	@param		int		$idwarehouse	Id of warehouse to use for stock decrease
 	 *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return  	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return  	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function valid($user, $idwarehouse = 0, $notrigger = 0)
 	{
@@ -479,8 +479,8 @@ class Commande extends CommonOrder
 			return 0;
 		}
 
-		if (!((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('commande', 'creer'))
-			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('commande', 'order_advance', 'validate')))) {
+		if (!((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('commande', 'creer'))
+			|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('commande', 'order_advance', 'validate')))) {
 			$this->error = 'NotEnoughPermissions';
 			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
 			return -1;
@@ -568,13 +568,15 @@ class Commande extends CommonOrder
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'commande/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'commande/".$this->db->escape($this->newref)."'";
 				$sql .= " WHERE filepath = 'commande/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
@@ -623,7 +625,7 @@ class Commande extends CommonOrder
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *	@param	int		$idwarehouse	Warehouse ID to use for stock change (Used only if option STOCK_CALCULATE_ON_VALIDATE_ORDER is on)
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setDraft($user, $idwarehouse = -1)
 	{
@@ -637,8 +639,8 @@ class Commande extends CommonOrder
 			return 0;
 		}
 
-		if (!((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('commande', 'creer'))
-			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('commande', 'order_advance', 'validate')))) {
+		if (!((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('commande', 'creer'))
+			|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('commande', 'order_advance', 'validate')))) {
 			$this->error = 'Permission denied';
 			return -1;
 		}
@@ -673,7 +675,9 @@ class Commande extends CommonOrder
 						// We increment stock of product (and sub-products)
 						$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("OrderBackToDraftInDolibarr", $this->ref));
 						if ($result < 0) {
-							$error++; $this->error = $mouvP->error; break;
+							$error++;
+							$this->error = $mouvP->error;
+							break;
 						}
 					}
 				}
@@ -709,7 +713,7 @@ class Commande extends CommonOrder
 	 *	Function used when order is reopend after being closed.
 	 *
 	 *	@param      User	$user       Object user that change status
-	 *	@return     int         		<0 if KO, 0 if nothing is done, >0 if OK
+	 *	@return     int         		Return integer <0 if KO, 0 if nothing is done, >0 if OK
 	 */
 	public function set_reopen($user)
 	{
@@ -764,7 +768,7 @@ class Commande extends CommonOrder
 	 *
 	 * 	@param      User	$user       Objet user that close
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
-	 *	@return		int					<0 if KO, >0 if OK
+	 *	@return		int					Return integer <0 if KO, >0 if OK
 	 */
 	public function cloture($user, $notrigger = 0)
 	{
@@ -772,8 +776,8 @@ class Commande extends CommonOrder
 
 		$error = 0;
 
-		$usercanclose = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->commande->creer))
-			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->commande->order_advance->close)));
+		$usercanclose = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->commande->creer))
+			|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->commande->order_advance->close)));
 
 		if ($usercanclose) {
 			if ($this->statut == self::STATUS_CLOSED) {
@@ -824,7 +828,7 @@ class Commande extends CommonOrder
 	 * 	If stock is decremented on order validation, we must reincrement it
 	 *
 	 *	@param	int		$idwarehouse	Id warehouse to use for stock change.
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function cancel($idwarehouse = -1)
 	{
@@ -897,7 +901,7 @@ class Commande extends CommonOrder
 	 *
 	 *	@param		User	$user 		Objet user that make creation
 	 *	@param		int	    $notrigger	Disable all triggers
-	 *	@return 	int			        <0 if KO, >0 if OK
+	 *	@return 	int			        Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -942,7 +946,7 @@ class Commande extends CommonOrder
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -2;
 		}
-		if (!empty($conf->global->ORDER_REQUIRE_SOURCE) && $this->source < 0) {
+		if (getDolGlobalString('ORDER_REQUIRE_SOURCE') && $this->source < 0) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Source"));
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -1;
@@ -1024,7 +1028,7 @@ class Commande extends CommonOrder
 						$vatrate .= ' ('.$line->vat_src_code.')';
 					}
 
-					if (!empty($conf->global->MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION)) {
+					if (getDolGlobalString('MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION')) {
 						$originid = $line->origin_id;
 						$origintype = $line->origin;
 					} else {
@@ -1109,8 +1113,7 @@ class Commande extends CommonOrder
 										$error++;
 									}
 								}
-							} else // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
-							{
+							} else { // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
 								$origin_id = $tmp_origin_id;
 								$ret = $this->add_object_linked($origin, $origin_id);
 								if (!$ret) {
@@ -1121,7 +1124,7 @@ class Commande extends CommonOrder
 						}
 					}
 
-					if (!$error && $this->id && !empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN) && !empty($this->origin) && !empty($this->origin_id)) {   // Get contact from origin object
+					if (!$error && $this->id && getDolGlobalString('MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN') && !empty($this->origin) && !empty($this->origin_id)) {   // Get contact from origin object
 						$originforcontact = $this->origin;
 						$originidforcontact = $this->origin_id;
 						if ($originforcontact == 'shipping') {     // shipment and order share the same contacts. If creating from shipment we take data of order
@@ -1188,7 +1191,7 @@ class Commande extends CommonOrder
 
 			return 0;
 		} else {
-			dol_print_error($this->db);
+			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
 		}
@@ -1245,7 +1248,7 @@ class Commande extends CommonOrder
 		$this->date_commande = dol_now();
 		$this->date_creation      = '';
 		$this->date_validation    = '';
-		if (empty($conf->global->MAIN_KEEP_REF_CUSTOMER_ON_CLONING)) {
+		if (!getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING')) {
 			$this->ref_client = '';
 			$this->ref_customer = '';
 		}
@@ -1310,7 +1313,7 @@ class Commande extends CommonOrder
 	 *
 	 *  @param      Object			$object 	        Object source
 	 *  @param		User			$user				User making creation
-	 *  @return     int             					<0 if KO, 0 if nothing done, 1 if OK
+	 *  @return     int             					Return integer <0 if KO, 0 if nothing done, 1 if OK
 	 */
 	public function createFromProposal($object, User $user)
 	{
@@ -1367,7 +1370,7 @@ class Commande extends CommonOrder
 				$line->array_options[$options_key] = $value;
 			}
 
-				$this->lines[$i] = $line;
+			$this->lines[$i] = $line;
 		}
 
 		$this->entity               = $object->entity;
@@ -1387,7 +1390,7 @@ class Commande extends CommonOrder
 		$this->ref_client           = $object->ref_client;
 		$this->ref_customer         = $object->ref_client;
 
-		if (empty($conf->global->MAIN_DISABLE_PROPAGATE_NOTES_FROM_ORIGIN)) {
+		if (!getDolGlobalString('MAIN_DISABLE_PROPAGATE_NOTES_FROM_ORIGIN')) {
 			$this->note_private         = $object->note_private;
 			$this->note_public          = $object->note_public;
 		}
@@ -1395,26 +1398,26 @@ class Commande extends CommonOrder
 		$this->origin = $object->element;
 		$this->origin_id = $object->id;
 
-				// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if not using origin rate)
+		// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if not using origin rate)
 		if (!empty($conf->multicurrency->enabled)) {
 			if (!empty($object->multicurrency_code)) {
 				$this->multicurrency_code = $object->multicurrency_code;
 			}
-			if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($object->multicurrency_tx)) {
+			if (getDolGlobalString('MULTICURRENCY_USE_ORIGIN_TX') && !empty($object->multicurrency_tx)) {
 				$this->multicurrency_tx = $object->multicurrency_tx;
 			}
 
 			if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) {
-					$tmparray = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $this->date_commande);
-					$this->fk_multicurrency = $tmparray[0];
-					$this->multicurrency_tx = $tmparray[1];
+				$tmparray = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $this->date_commande);
+				$this->fk_multicurrency = $tmparray[0];
+				$this->multicurrency_tx = $tmparray[1];
 			} else {
-					$this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
+				$this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
 			}
 			if (empty($this->fk_multicurrency)) {
-					$this->multicurrency_code = $conf->currency;
-					$this->fk_multicurrency = 0;
-					$this->multicurrency_tx = 1;
+				$this->multicurrency_code = $conf->currency;
+				$this->fk_multicurrency = 0;
+				$this->multicurrency_tx = 1;
 			}
 		}
 
@@ -1451,7 +1454,7 @@ class Commande extends CommonOrder
 
 			if (!$error) {
 				// Validate immediatly the order
-				if (!empty($conf->global->ORDER_VALID_AFTER_CLOSE_PROPAL)) {
+				if (getDolGlobalString('ORDER_VALID_AFTER_CLOSE_PROPAL')) {
 					$this->fetch($ret);
 					$this->valid($user);
 				}
@@ -1480,8 +1483,8 @@ class Commande extends CommonOrder
 	 *	@param      int				$fk_remise_except	Id remise
 	 *	@param      string			$price_base_type	HT or TTC
 	 *	@param      float			$pu_ttc    		    Prix unitaire TTC
-	 *	@param      int				$date_start       	Start date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-	 *	@param      int				$date_end         	End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+	 *	@param      int|string		$date_start       	Start date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+	 *	@param      int|string		$date_end         	End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
 	 *	@param      int				$type				Type of line (0=product, 1=service). Not used if fk_product is defined, the type of product is used.
 	 *	@param      int				$rang             	Position of line
 	 *	@param		int				$special_code		Special code (also used by externals modules!)
@@ -1505,7 +1508,7 @@ class Commande extends CommonOrder
 	 *	par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,produit)
 	 *	et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
 	 */
-	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $info_bits = 0, $fk_remise_except = 0, $price_base_type = 'HT', $pu_ttc = 0, $date_start = '', $date_end = '', $type = 0, $rang = -1, $special_code = 0, $fk_parent_line = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $array_options = 0, $fk_unit = null, $origin = '', $origin_id = 0, $pu_ht_devise = 0, $ref_ext = '', $noupdateafterinsertline = 0)
+	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $info_bits = 0, $fk_remise_except = 0, $price_base_type = 'HT', $pu_ttc = 0, $date_start = '', $date_end = '', $type = 0, $rang = -1, $special_code = 0, $fk_parent_line = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $array_options = array(), $fk_unit = null, $origin = '', $origin_id = 0, $pu_ht_devise = 0, $ref_ext = '', $noupdateafterinsertline = 0)
 	{
 		global $mysoc, $conf, $langs, $user;
 
@@ -1588,7 +1591,7 @@ class Commande extends CommonOrder
 				$result = $product->fetch($fk_product);
 				$product_type = $product->type;
 
-				if (!empty($conf->global->STOCK_MUST_BE_ENOUGH_FOR_ORDER) && $product_type == 0 && $product->stock_reel < $qty) {
+				if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_ORDER') && $product_type == 0 && $product->stock_reel < $qty) {
 					$langs->load("errors");
 					$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnOrder', $product->ref);
 					$this->errors[] = $this->error;
@@ -1752,8 +1755,8 @@ class Commande extends CommonOrder
 	 *	@param  int     $idproduct          Product Id
 	 *	@param  float   $qty                Quantity
 	 *	@param  float   $remise_percent     Product discount relative
-	 * 	@param  int     $date_start         Start date of the line
-	 * 	@param  int     $date_end           End date of the line
+	 * 	@param  int|string   $date_start         Start date of the line
+	 * 	@param  int|string   $date_end           End date of the line
 	 * 	@return void
 	 *
 	 *	TODO	Remplacer les appels a cette fonction par generation objet Ligne
@@ -2071,7 +2074,7 @@ class Commande extends CommonOrder
 	 *
 	 *	@param		int		$only_product			Return only physical products, not services
 	 *	@param		int		$loadalsotranslation	Return translation for products
-	 *	@return		int								<0 if KO, >0 if OK
+	 *	@return		int								Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_lines($only_product = 0, $loadalsotranslation = 0)
 	{
@@ -2202,7 +2205,7 @@ class Commande extends CommonOrder
 	/**
 	 *	Return number of line with type product.
 	 *
-	 *	@return		int		<0 if KO, Nbr of product lines if OK
+	 *	@return		int		Return integer <0 if KO, Nbr of product lines if OK
 	 */
 	public function getNbOfProductsLines()
 	{
@@ -2218,7 +2221,7 @@ class Commande extends CommonOrder
 	/**
 	 *	Return number of line with type service.
 	 *
-	 *	@return		int		<0 if KO, Nbr of service lines if OK
+	 *	@return		int		Return integer <0 if KO, Nbr of service lines if OK
 	 */
 	public function getNbOfServicesLines()
 	{
@@ -2234,7 +2237,7 @@ class Commande extends CommonOrder
 	/**
 	 *	Count number of shipments for this order
 	 *
-	 * 	@return     int                			<0 if KO, Nb of shipment found if OK
+	 * 	@return     int                			Return integer <0 if KO, Nb of shipment found if OK
 	 */
 	public function getNbOfShipments()
 	{
@@ -2270,7 +2273,7 @@ class Commande extends CommonOrder
 	 *
 	 *	@param      int		$filtre_statut      Filter on shipment status
 	 *  @param		int		$fk_product			Add a filter on a product
-	 * 	@return     int                			<0 if KO, Nb of lines found if OK
+	 * 	@return     int                			Return integer <0 if KO, Nb of lines found if OK
 	 */
 	public function loadExpeditions($filtre_statut = -1, $fk_product = 0)
 	{
@@ -2442,7 +2445,7 @@ class Commande extends CommonOrder
 	 * 	@param     	User		$user		User qui positionne la remise
 	 * 	@param     	float		$remise		Discount (percent)
 	 * 	@param     	int			$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return		int 					<0 if KO, >0 if OK
+	 *	@return		int 					Return integer <0 if KO, >0 if OK
 	 */
 	public function set_remise($user, $remise, $notrigger = 0)
 	{
@@ -2457,12 +2460,12 @@ class Commande extends CommonOrder
 	 * 	@param     	User		$user		User setting the discount
 	 * 	@param     	float		$remise		Discount (percent)
 	 * 	@param     	int			$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return		int 					<0 if KO, >0 if OK
+	 *	@return		int 					Return integer <0 if KO, >0 if OK
 	 *	@deprecated remise_percent is a deprecated field for object parent
 	 */
 	public function setDiscount($user, $remise, $notrigger = 0)
 	{
-		$remise = trim($remise) ?trim($remise) : 0;
+		$remise = trim($remise) ? trim($remise) : 0;
 
 		if ($user->hasRight('commande', 'creer')) {
 			$error = 0;
@@ -2521,7 +2524,7 @@ class Commande extends CommonOrder
 	 * 		@param     	User		$user 		User qui positionne la remise
 	 * 		@param     	float		$remise		Discount
 	 * 		@param     	int			$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *		@return		int 					<0 if KO, >0 if OK
+	 *		@return		int 					Return integer <0 if KO, >0 if OK
 	 */
 	/*
 	public function set_remise_absolue($user, $remise, $notrigger = 0)
@@ -2588,7 +2591,7 @@ class Commande extends CommonOrder
 	 *	@param      User	$user       Object user making change
 	 *	@param      int		$date		Date
 	 * 	@param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return     int         		<0 if KO, >0 if OK
+	 *	@return     int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function set_date($user, $date, $notrigger = 0)
 	{
@@ -2646,7 +2649,7 @@ class Commande extends CommonOrder
 	 *	@param      User 	$user        		Object user that modify
 	 *	@param      int		$delivery_date		Delivery date
 	 *  @param  	int		$notrigger			1=Does not execute triggers, 0= execute triggers
-	 *	@return     int         				<0 if ko, >0 if ok
+	 *	@return     int         				Return integer <0 if ko, >0 if ok
 	 *	@deprecated Use  setDeliveryDate
 	 */
 	public function set_date_livraison($user, $delivery_date, $notrigger = 0)
@@ -2661,7 +2664,7 @@ class Commande extends CommonOrder
 	 *	@param      User	$user        		Objet utilisateur qui modifie
 	 *	@param      int		$delivery_date     Delivery date
 	 *  @param     	int		$notrigger			1=Does not execute triggers, 0= execute triggers
-	 *	@return     int         				<0 si ko, >0 si ok
+	 *	@return     int         				Return integer <0 si ko, >0 si ok
 	 */
 	public function setDeliveryDate($user, $delivery_date, $notrigger = 0)
 	{
@@ -2725,7 +2728,7 @@ class Commande extends CommonOrder
 	 *  @param    	string	$sortorder		Sort order
 	 *  @return     int|array             		-1 if KO, array with result if OK
 	 */
-	public function liste_array($shortlist = 0, $draft = 0, $excluser = '', $socid = 0, $limit = 0, $offset = 0, $sortfield = 'c.date_commande', $sortorder = 'DESC')
+	public function liste_array($shortlist = 0, $draft = 0, $excluser = null, $socid = 0, $limit = 0, $offset = 0, $sortfield = 'c.date_commande', $sortorder = 'DESC')
 	{
 		// phpcs:enable
 		global $user;
@@ -2918,7 +2921,7 @@ class Commande extends CommonOrder
 	 *	@param      User	$user           User that make change
 	 *	@param      string	$ref_client     Customer ref
 	 *  @param     	int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return     int             		<0 if KO, >0 if OK
+	 *	@return     int             		Return integer <0 if KO, >0 if OK
 	 */
 	public function set_ref_client($user, $ref_client, $notrigger = 0)
 	{
@@ -2974,7 +2977,7 @@ class Commande extends CommonOrder
 	 *
 	 * @param	User    $user       Object user making the change
 	 * @param	int		$notrigger	1=Does not execute triggers, 0=execute triggers
-	 * @return	int                 <0 if KO, 0 if already billed,  >0 if OK
+	 * @return	int                 Return integer <0 if KO, 0 if already billed,  >0 if OK
 	 */
 	public function classifyBilled(User $user, $notrigger = 0)
 	{
@@ -3028,7 +3031,7 @@ class Commande extends CommonOrder
 	 *
 	 * @param	User    $user       Object user making the change
 	 * @param	int		$notrigger	1=Does not execute triggers, 0=execute triggers
-	 * @return  int     			<0 if ko, >0 if ok
+	 * @return  int     			Return integer <0 if ko, >0 if ok
 	 */
 	public function classifyUnBilled(User $user, $notrigger = 0)
 	{
@@ -3089,8 +3092,8 @@ class Commande extends CommonOrder
 	 *  @param		float			$txlocaltax2		Local tax 2 rate
 	 *  @param    	string			$price_base_type	HT or TTC
 	 *  @param    	int				$info_bits        	Miscellaneous informations on line
-	 *  @param    	int				$date_start        	Start date of the line
-	 *  @param    	int				$date_end          	End date of the line
+	 *  @param    	int|string		$date_start        	Start date of the line
+	 *  @param    	int|string		$date_end          	End date of the line
 	 * 	@param		int				$type				Type of line (0=product, 1=service)
 	 * 	@param		int				$fk_parent_line		Id of parent line (0 in most cases, used by modules adding sublevels into lines).
 	 * 	@param		int				$skip_update_total	Keep fields total_xxx to 0 (used for special lines by some modules)
@@ -3104,9 +3107,9 @@ class Commande extends CommonOrder
 	 * 	@param		int				$notrigger			disable line update trigger
 	 * 	@param		string			$ref_ext			external reference
 	 * @param       integer $rang   line rank
-	 *  @return   	int              					< 0 if KO, > 0 if OK
+	 *  @return   	int              					Return integer < 0 if KO, > 0 if OK
 	 */
-	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $price_base_type = 'HT', $info_bits = 0, $date_start = '', $date_end = '', $type = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $special_code = 0, $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $ref_ext = '', $rang = 0)
+	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $price_base_type = 'HT', $info_bits = 0, $date_start = '', $date_end = '', $type = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $special_code = 0, $array_options = array(), $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $ref_ext = '', $rang = 0)
 	{
 		global $conf, $mysoc, $langs, $user;
 
@@ -3214,7 +3217,7 @@ class Commande extends CommonOrder
 				$result = $product->fetch($line->fk_product);
 				$product_type = $product->type;
 
-				if (!empty($conf->global->STOCK_MUST_BE_ENOUGH_FOR_ORDER) && $product_type == 0 && $product->stock_reel < $qty) {
+				if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_ORDER') && $product_type == 0 && $product->stock_reel < $qty) {
 					$langs->load("errors");
 					$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnOrder', $product->ref);
 					$this->errors[] = $this->error;
@@ -3316,7 +3319,7 @@ class Commande extends CommonOrder
 	 *
 	 *      @param      User	$user        	User that modify
 	 *      @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *      @return     int      			   	<0 if KO, >0 if OK
+	 *      @return     int      			   	Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -3388,7 +3391,8 @@ class Commande extends CommonOrder
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -3426,7 +3430,7 @@ class Commande extends CommonOrder
 	 *
 	 *	@param	User	$user		User object
 	 *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 * 	@return	int					<=0 if KO, >0 if OK
+	 * 	@return	int					Return integer <=0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -3558,7 +3562,7 @@ class Commande extends CommonOrder
 	 *
 	 *	@param		User	$user   Object user
 	 *	@param		string	$mode   Mode ('toship', 'tobill', 'shippedtobill')
-	 *	@return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
+	 *	@return WorkboardResponse|int Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $mode)
 	{
@@ -3754,7 +3758,7 @@ class Commande extends CommonOrder
 		$datas = [];
 		$nofetch = !empty($params['nofetch']);
 
-		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			return ['optimize' => $langs->trans("Order")];
 		}
 
@@ -3866,11 +3870,11 @@ class Commande extends CommonOrder
 
 		$linkclose = '';
 		if (empty($notooltip) && $user->hasRight('commande', 'lire')) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("Order");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.'"';
 
 			$target_value = array('_self', '_blank', '_parent', '_top');
@@ -4060,7 +4064,7 @@ class Commande extends CommonOrder
 	/**
 	 *	Charge indicateurs this->nb de tableau de bord
 	 *
-	 *	@return     int         <0 si ko, >0 si ok
+	 *	@return     int         Return integer <0 si ko, >0 si ok
 	 */
 	public function load_state_board()
 	{
@@ -4127,8 +4131,8 @@ class Commande extends CommonOrder
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->COMMANDE_ADDON_PDF)) {
-				$modele = $conf->global->COMMANDE_ADDON_PDF;
+			} elseif (getDolGlobalString('COMMANDE_ADDON_PDF')) {
+				$modele = getDolGlobalString('COMMANDE_ADDON_PDF');
 			}
 		}
 
@@ -4294,7 +4298,7 @@ class OrderLine extends CommonOrderLine
 	 *  Load line order
 	 *
 	 *  @param  int		$rowid          Id line order
-	 *  @return	int						<0 if KO, >0 if OK
+	 *  @return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($rowid)
 	{
@@ -4383,7 +4387,7 @@ class OrderLine extends CommonOrderLine
 	 *
 	 *	@param      User	$user        	User that modify
 	 *  @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *	@return	 int  <0 si ko, >0 si ok
+	 *	@return	 int  Return integer <0 si ko, >0 si ok
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
@@ -4469,12 +4473,10 @@ class OrderLine extends CommonOrderLine
 	 *
 	 *	@param      User	$user        	User that modify
 	 *	@param      int		$notrigger		1 = disable triggers
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function insert($user = null, $notrigger = 0)
 	{
-		global $langs, $conf;
-
 		$error = 0;
 
 		$pa_ht_isemptystring = (empty($this->pa_ht) && $this->pa_ht == ''); // If true, we can use a default value. If this->pa_ht = '0', we must use '0'.
@@ -4549,8 +4551,8 @@ class OrderLine extends CommonOrderLine
 		$sql .= ' fk_product, product_type, remise_percent, subprice, price, fk_remise_except,';
 		$sql .= ' special_code, rang, fk_product_fournisseur_price, buy_price_ht,';
 		$sql .= ' info_bits, total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, date_start, date_end,';
-		$sql .= ' fk_unit';
-		$sql .= ', fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
+		$sql .= ' fk_unit,';
+		$sql .= ' fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
 		$sql .= ')';
 		$sql .= " VALUES (".$this->fk_commande.",";
 		$sql .= " ".($this->fk_parent_line > 0 ? "'".$this->db->escape($this->fk_parent_line)."'" : "null").",";
@@ -4567,7 +4569,7 @@ class OrderLine extends CommonOrderLine
 		$sql .= ' '.((!empty($this->fk_product) && $this->fk_product > 0) ? $this->fk_product : "null").',';
 		$sql .= " '".$this->db->escape($this->product_type)."',";
 		$sql .= " '".price2num($this->remise_percent)."',";
-		$sql .= " ".(price2num($this->subprice) !== '' ?price2num($this->subprice) : "null").",";
+		$sql .= " ".(price2num($this->subprice) !== '' ? price2num($this->subprice) : "null").",";
 		$sql .= " ".($this->price != '' ? "'".price2num($this->price)."'" : "null").",";
 		$sql .= ' '.(!empty($this->fk_remise_except) ? $this->fk_remise_except : "null").',';
 		$sql .= ' '.((int) $this->special_code).',';
@@ -4636,12 +4638,10 @@ class OrderLine extends CommonOrderLine
 	 *
 	 *	@param      User	$user        	User that modify
 	 *	@param      int		$notrigger		1 = disable triggers
-	 *	@return		int		<0 si ko, >0 si ok
+	 *	@return		int		Return integer <0 si ko, >0 si ok
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
-		global $conf, $langs;
-
 		$error = 0;
 
 		$pa_ht_isemptystring = (empty($this->pa_ht) && $this->pa_ht == ''); // If true, we can use a default value. If this->pa_ht = '0', we must use '0'.
@@ -4801,7 +4801,7 @@ class OrderLine extends CommonOrderLine
 	 *	Update DB line fields total_xxx
 	 *	Used by migration
 	 *
-	 *	@return		int		<0 if KO, >0 if OK
+	 *	@return		int		Return integer <0 if KO, >0 if OK
 	 */
 	public function update_total()
 	{

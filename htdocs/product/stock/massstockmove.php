@@ -195,7 +195,7 @@ if ($action == 'createmovements' && $user->hasRight('stock', 'mouvement', 'creer
 			$dlc = -1; // They are loaded later from serial
 			$dluo = -1; // They are loaded later from serial
 
-			if (!$error && $id_sw <> $id_tw && is_numeric($qty) && $id_product) {
+			if (!$error && $id_sw != $id_tw && is_numeric($qty) && $id_product) {
 				$result = $product->fetch($id_product);
 
 				$product->load_stock('novirtual'); // Load array product->stock_warehouse
@@ -581,11 +581,11 @@ if ($maxmin > 0) {
 	print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
 }
 print '<input type="file" name="userfile" size="20" maxlength="80"> &nbsp; &nbsp; ';
-$out = (empty($conf->global->MAIN_UPLOAD_DOC) ? ' disabled' : '');
+$out = (!getDolGlobalString('MAIN_UPLOAD_DOC') ? ' disabled' : '');
 print '<input type="submit" class="button small smallpaddingimp" value="'.$langs->trans("ImportFromCSV").'"'.$out.' name="sendit">';
 $out = '';
-if (!empty($conf->global->MAIN_UPLOAD_DOC)) {
-	$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
+if (getDolGlobalString('MAIN_UPLOAD_DOC')) {
+	$max = getDolGlobalString('MAIN_UPLOAD_DOC'); // In Kb
 	$maxphp = @ini_get('upload_max_filesize'); // In unknown
 	if (preg_match('/k$/i', $maxphp)) {
 		$maxphp = preg_replace('/k$/i', '', $maxphp);
@@ -682,13 +682,13 @@ print '</td>';
 // Product
 print '<td class="nowraponall">';
 $filtertype = 0;
-if (!empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+if (getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 	$filtertype = '';
 }
-if ($conf->global->PRODUIT_LIMIT_SIZE <= 0) {
+if (getDolGlobalInt('PRODUIT_LIMIT_SIZE') <= 0) {
 	$limit = '';
 } else {
-	$limit = $conf->global->PRODUIT_LIMIT_SIZE;
+	$limit = getDolGlobalString('PRODUIT_LIMIT_SIZE');
 }
 
 print img_picto($langs->trans("Product"), 'product', 'class="paddingright"');
@@ -822,7 +822,7 @@ function startsWith($haystack, $needle)
  *
  * @param Object $static_object static object to fetch
  * @param string $tmp_ref ref of the object to fetch
- * @return int <0 if Ko or Id of object
+ * @return int Return integer <0 if Ko or Id of object
  */
 function fetchref($static_object, $tmp_ref)
 {

@@ -182,9 +182,7 @@ class Boms extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve bom list');
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No bom found');
-		}
+
 		return $obj_ret;
 	}
 
@@ -203,6 +201,12 @@ class Boms extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->bom->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->bom->$field = $value;
 		}
 
@@ -241,6 +245,12 @@ class Boms extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->bom->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->bom->$field = $value;
 		}
 
@@ -537,7 +547,7 @@ class Boms extends DolibarrApi
 			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
 			}
-				$myobject[$field] = $data[$field];
+			$myobject[$field] = $data[$field];
 		}
 		return $myobject;
 	}
@@ -547,7 +557,7 @@ class Boms extends DolibarrApi
 	 *
 	 * @return void
 	 */
-	private function checkRefNumbering(): void
+	private function checkRefNumbering()
 	{
 		$ref = substr($this->bom->ref, 1, 4);
 		if ($this->bom->status > 0 && $ref == 'PROV') {

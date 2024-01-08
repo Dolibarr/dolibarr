@@ -504,10 +504,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				$result = $this->db->query($sql, $ignoreerror);
 				if (!$result) {
 					if (!$ignoreerror) {
-						 $this->error = $this->db->lasterror();
-						 $err++;
+						$this->error = $this->db->lasterror();
+						$err++;
 					} else {
-						 dol_syslog(get_class($this)."::_init Warning ".$this->db->lasterror(), LOG_WARNING);
+						dol_syslog(get_class($this)."::_init Warning ".$this->db->lasterror(), LOG_WARNING);
 					}
 				}
 			}
@@ -585,7 +585,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		}
 
 		// Run complementary sql requests
-		$num = count($array_sql);
+		$num = count((array) $array_sql);
 		for ($i = 0; $i < $num; $i++) {
 			if (!$err) {
 				dol_syslog(get_class($this)."::_remove", LOG_DEBUG);
@@ -619,7 +619,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		global $langs;
 		$langs->load("admin");
 
-		if ($langs->transnoentitiesnoconv("Module".$this->numero."Name") != ("Module".$this->numero."Name")) {
+		if ($langs->transnoentitiesnoconv("Module".$this->numero."Name") != "Module".$this->numero."Name") {
 			// If module name translation exists
 			return $langs->transnoentitiesnoconv("Module".$this->numero."Name");
 		} else {
@@ -632,7 +632,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				}
 			}
 
-			if ($langs->trans("Module".$this->name."Name") != ("Module".$this->name."Name")) {
+			if ($langs->trans("Module".$this->name."Name") != "Module".$this->name."Name") {
 				// If module name translation exists
 				return $langs->transnoentitiesnoconv("Module".$this->name."Name");
 			}
@@ -653,7 +653,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		global $langs;
 		$langs->load("admin");
 
-		if ($langs->transnoentitiesnoconv("Module".$this->numero."Desc") != ("Module".$this->numero."Desc")) {
+		if ($langs->transnoentitiesnoconv("Module".$this->numero."Desc") != "Module".$this->numero."Desc") {
 			// If module description translation exists
 			return $langs->transnoentitiesnoconv("Module".$this->numero."Desc");
 		} else {
@@ -666,7 +666,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				}
 			}
 
-			if ($langs->transnoentitiesnoconv("Module".$this->name."Desc") != ("Module".$this->name."Desc")) {
+			if ($langs->transnoentitiesnoconv("Module".$this->name."Desc") != "Module".$this->name."Desc") {
 				// If module name translation exists
 				return $langs->trans("Module".$this->name."Desc");
 			}
@@ -1121,7 +1121,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 *
 	 * @param  	string 	$reldir 			Relative directory where to scan files. Example: '/install/mysql/' or '/module/sql/'
 	 * @param	string	$onlywithsuffix		Only with the defined suffix
-	 * @return 	int             			<=0 if KO, >0 if OK
+	 * @return 	int             			Return integer <=0 if KO, >0 if OK
 	 */
 	protected function _load_tables($reldir, $onlywithsuffix = '')
 	{
@@ -1172,7 +1172,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 								}
 							}
 							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'llx_') {
-								$result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
+								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, '', 1);
 								if ($result <= 0) {
 									$error++;
 								}
@@ -1197,7 +1197,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 								}
 							}
 							if (preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'llx_') {
-								$result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
+								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, '', 1);
 								if ($result <= 0) {
 									$error++;
 								}
@@ -1222,7 +1222,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 								}
 							}
 							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 9) == 'functions') {
-								$result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
+								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, '', 1);
 								if ($result <= 0) {
 									$error++;
 								}
@@ -1234,7 +1234,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 						// Run data_xxx.sql files (Must be done after llx_mytable.key.sql)
 						$files = array();
 						while (($file = readdir($handle)) !== false) {
-								   $files[] = $file;
+							$files[] = $file;
 						}
 						sort($files);
 						foreach ($files as $file) {
@@ -1247,7 +1247,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 								}
 							}
 							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'data') {
-								$result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
+								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, '', 1);
 								if ($result <= 0) {
 									$error++;
 								}
@@ -1259,7 +1259,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 						// Run update_xxx.sql files
 						$files = array();
 						while (($file = readdir($handle)) !== false) {
-								   $files[] = $file;
+							$files[] = $file;
 						}
 						sort($files);
 						foreach ($files as $file) {
@@ -1272,7 +1272,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 								}
 							}
 							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 6) == 'update') {
-								$result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
+								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, '', 1);
 								if ($result <= 0) {
 									$error++;
 								}
@@ -1551,7 +1551,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 							}
 							$sql .= " entity, test)";
 							$sql .= " VALUES (";
-							$sql .= "'".$this->db->escape(empty($this->rights_class) ?strtolower($this->name) : $this->rights_class)."', ";
+							$sql .= "'".$this->db->escape(empty($this->rights_class) ? strtolower($this->name) : $this->rights_class)."', ";
 							$sql .= "'".$this->db->idate($now)."', ";
 							$sql .= ($datestart ? "'".$this->db->idate($datestart)."'" : "'".$this->db->idate($now)."'").", ";
 							$sql .= ($dateend ? "'".$this->db->idate($dateend)."'" : "NULL").", ";
@@ -1619,10 +1619,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		if (is_array($this->cronjobs)) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."cronjob";
-			$sql .= " WHERE module_name = '".$this->db->escape(empty($this->rights_class) ?strtolower($this->name) : $this->rights_class)."'";
+			$sql .= " WHERE module_name = '".$this->db->escape(empty($this->rights_class) ? strtolower($this->name) : $this->rights_class)."'";
 			$sql .= " AND entity = ".$conf->entity;
 			$sql .= " AND test = '1'"; // We delete on lines that are not set with a complete test that is '$conf->module->enabled' so when module is disabled, the cron is also removed.
-			  // For crons declared with a '$conf->module->enabled', there is no need to delete the line, so we don't loose setup if we reenable module.
+			// For crons declared with a '$conf->module->enabled', there is no need to delete the line, so we don't loose setup if we reenable module.
 
 			dol_syslog(get_class($this)."::delete_cronjobs", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -1713,7 +1713,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 					$resql = $this->db->query($sql);
 					if (!$resql) {
-						 dol_syslog($this->db->lasterror(), LOG_ERR);
+						dol_syslog($this->db->lasterror(), LOG_ERR);
 						if ($this->db->lasterrno() != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 							$this->error = $this->db->lasterror();
 							$this->errors[] = $this->db->lasterror();
@@ -1801,7 +1801,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	/**
 	 * Removes constants tagged 'deleteonunactive'
 	 *
-	 * @return int <0 if KO, 0 if OK
+	 * @return int Return integer <0 if KO, 0 if OK
 	 */
 	public function delete_const()
 	{
@@ -1901,10 +1901,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 									$sql .= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$this->db->escape($r_modul)."','".$this->db->escape($r_type)."',".$r_def.",'".$this->db->escape($r_perms)."')";
 								}
 							} else {
-								 $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
-								 $sql .= " (id, entity, libelle, module, type, bydefault)";
-								 $sql .= " VALUES ";
-								 $sql .= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$this->db->escape($r_modul)."','".$this->db->escape($r_type)."',".$r_def.")";
+								$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
+								$sql .= " (id, entity, libelle, module, type, bydefault)";
+								$sql .= " VALUES ";
+								$sql .= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$this->db->escape($r_modul)."','".$this->db->escape($r_type)."',".$r_def.")";
 							}
 
 							$resqlinsert = $this->db->query($sql, 1);
@@ -1946,7 +1946,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 								} else {
 									dol_syslog(get_class($this)."::insert_permissions Failed to add the permission to user because fetch return an error", LOG_ERR);
 								}
-								 $i++;
+								$i++;
 							}
 						} else {
 							dol_print_error($this->db);
@@ -1984,7 +1984,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		$err = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."rights_def";
-		$sql .= " WHERE module = '".$this->db->escape(empty($this->rights_class) ?strtolower($this->name) : $this->rights_class)."'";
+		$sql .= " WHERE module = '".$this->db->escape(empty($this->rights_class) ? strtolower($this->name) : $this->rights_class)."'";
 		$sql .= " AND entity = ".$conf->entity;
 		dol_syslog(get_class($this)."::delete_permissions", LOG_DEBUG);
 		if (!$this->db->query($sql)) {
@@ -2111,7 +2111,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		$err = 0;
 
 		//$module=strtolower($this->name);        TODO When right_class will be same than module name
-		$module = empty($this->rights_class) ?strtolower($this->name) : $this->rights_class;
+		$module = empty($this->rights_class) ? strtolower($this->name) : $this->rights_class;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
 		$sql .= " WHERE module = '".$this->db->escape($module)."'";
@@ -2139,6 +2139,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		global $langs, $conf;
 
 		$err = 0;
+		$name = '';
 
 		if (isset($this->dirs) && is_array($this->dirs)) {
 			foreach ($this->dirs as $key => $value) {
@@ -2164,7 +2165,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				}
 
 				// Define directory full path ($dir must start with "/")
-				if (empty($conf->global->MAIN_MODULE_MULTICOMPANY) || $conf->entity == 1) {
+				if (!getDolGlobalString('MAIN_MODULE_MULTICOMPANY') || $conf->entity == 1) {
 					$fulldir = DOL_DATA_ROOT.$dir;
 				} else {
 					$fulldir = DOL_DATA_ROOT."/".$conf->entity.$dir;
@@ -2172,9 +2173,9 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				// Create dir if it does not exists
 				if (!empty($fulldir) && !file_exists($fulldir)) {
 					if (dol_mkdir($fulldir, DOL_DATA_ROOT) < 0) {
-						 $this->error = $langs->trans("ErrorCanNotCreateDir", $fulldir);
-						 dol_syslog(get_class($this)."::_init ".$this->error, LOG_ERR);
-						 $err++;
+						$this->error = $langs->trans("ErrorCanNotCreateDir", $fulldir);
+						dol_syslog(get_class($this)."::_init ".$this->error, LOG_ERR);
+						$err++;
 					}
 				}
 
@@ -2328,10 +2329,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					$resql = $this->db->query($sql, 1);
 					if (!$resql) {
 						if ($this->db->lasterrno() != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-							 $error++;
-							 $this->error = $this->db->lasterror();
+							$error++;
+							$this->error = $this->db->lasterror();
 						} else {
-							 dol_syslog(get_class($this)."::insert_module_parts for ".$this->const_name."_".strtoupper($key)." Record already exists.", LOG_WARNING);
+							dol_syslog(get_class($this)."::insert_module_parts for ".$this->const_name."_".strtoupper($key)." Record already exists.", LOG_WARNING);
 						}
 					}
 				}
@@ -2505,7 +2506,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 * TODO : store results for $this->url_last_version and $this->needUpdate
 	 * Add a cron task to monitor for updates
 	 *
-	 * @return int <0 if Error, 0 == no update needed,  >0 if need update
+	 * @return int Return integer <0 if Error, 0 == no update needed,  >0 if need update
 	 */
 	public function checkForUpdate()
 	{

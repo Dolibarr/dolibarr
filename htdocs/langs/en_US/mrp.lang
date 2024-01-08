@@ -65,6 +65,8 @@ ToProduce=To produce
 ToObtain=To obtain
 QtyAlreadyConsumed=Qty already consumed
 QtyAlreadyProduced=Qty already produced
+QtyAlreadyConsumedShort=Qty consumed
+QtyAlreadyProducedShort=Qty produced
 QtyRequiredIfNoLoss=Qty required to produce the quantity defined into the BOM if there is no loss (if the manufacturing efficiency is 100%%)
 ConsumeOrProduce=Consume or Produce
 ConsumeAndProduceAll=Consume and Produce All
@@ -128,3 +130,10 @@ Manufacturing=Manufacturing
 Disassemble=Disassemble
 ProducedBy=Produced by
 QtyTot=Qty Total
+
+QtyCantBeSplit= Quantity cannot be split
+NoRemainQtyToDispatch=No quantity remaining to divide
+
+THMOperatorEstimatedHelp=Estimated cost of operator per hour. Will be used to estimate cost of a BOM using this workstation.
+THMMachineEstimatedHelp=Estimated cost of machine per hour. Will be used to estimate cost of a BOM using this workstation.
+

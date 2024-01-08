@@ -197,7 +197,7 @@ class RssParser
 	 * 	@param	int		$maxNb		Max nb of records to get (0 for no limit)
 	 * 	@param	int		$cachedelay	0=No cache, nb of seconds we accept cache files (cachedir must also be defined)
 	 * 	@param	string	$cachedir	Directory where to save cache file (For example $conf->externalrss->dir_temp)
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function parser($urlRSS, $maxNb = 0, $cachedelay = 60, $cachedir = '')
 	{
@@ -257,10 +257,16 @@ class RssParser
 
 		if ($str !== false) {
 			// Convert $str into xml
-			if (!empty($conf->global->EXTERNALRSS_USE_SIMPLEXML)) {
+			if (getDolGlobalString('EXTERNALRSS_USE_SIMPLEXML')) {
 				//print 'xx'.LIBXML_NOCDATA;
 				libxml_use_internal_errors(false);
-				$rss = simplexml_load_string($str, "SimpleXMLElement", LIBXML_NOCDATA|LIBXML_NOCDATA);
+				if (LIBXML_VERSION < 20900) {
+					// Avoid load of external entities (security problem).
+					// Required only if LIBXML_VERSION < 20900
+					libxml_disable_entity_loader(true);
+				}
+
+				$rss = simplexml_load_string($str, "SimpleXMLElement", LIBXML_NOCDATA);
 			} else {
 				if (!function_exists('xml_parser_create')) {
 					$this->error = 'Function xml_parser_create are not supported by your PHP';
@@ -324,7 +330,7 @@ class RssParser
 			// Save description entries
 			if ($rss->_format == 'rss') {
 				//var_dump($rss);
-				if (!empty($conf->global->EXTERNALRSS_USE_SIMPLEXML)) {
+				if (getDolGlobalString('EXTERNALRSS_USE_SIMPLEXML')) {
 					if (!empty($rss->channel->language)) {
 						$this->_language = sanitizeVal((string) $rss->channel->language);
 					}
@@ -377,7 +383,7 @@ class RssParser
 					}
 				}
 
-				if (!empty($conf->global->EXTERNALRSS_USE_SIMPLEXML)) {
+				if (getDolGlobalString('EXTERNALRSS_USE_SIMPLEXML')) {
 					$items = $rss->channel->item; // With simplexml
 				} else {
 					$items = $rss->items; // With xmlparse
@@ -385,7 +391,7 @@ class RssParser
 				//var_dump($items);exit;
 			} elseif ($rss->_format == 'atom') {
 				//var_dump($rss);
-				if (!empty($conf->global->EXTERNALRSS_USE_SIMPLEXML)) {
+				if (getDolGlobalString('EXTERNALRSS_USE_SIMPLEXML')) {
 					if (!empty($rss->generator)) {
 						$this->_generator = sanitizeVal((string) $rss->generator);
 					}
@@ -423,7 +429,7 @@ class RssParser
 						$this->_imageurl = sanitizeVal($this->getAtomImageUrl($rss->channel));
 					}
 				}
-				if (!empty($conf->global->EXTERNALRSS_USE_SIMPLEXML)) {
+				if (getDolGlobalString('EXTERNALRSS_USE_SIMPLEXML')) {
 					$tmprss = xml2php($rss);
 					$items = $tmprss['entry'];
 				} else {
@@ -440,7 +446,7 @@ class RssParser
 				foreach ($items as $item) {
 					//var_dump($item);exit;
 					if ($rss->_format == 'rss') {
-						if (!empty($conf->global->EXTERNALRSS_USE_SIMPLEXML)) {
+						if (getDolGlobalString('EXTERNALRSS_USE_SIMPLEXML')) {
 							$itemLink = sanitizeVal((string) $item->link);
 							$itemTitle = sanitizeVal((string) $item->title);
 							$itemDescription = sanitizeVal((string) $item->description);
@@ -464,7 +470,7 @@ class RssParser
 							}
 						}
 					} elseif ($rss->_format == 'atom') {
-						if (!empty($conf->global->EXTERNALRSS_USE_SIMPLEXML)) {
+						if (getDolGlobalString('EXTERNALRSS_USE_SIMPLEXML')) {
 							$itemLink = (isset($item['link']) ? sanitizeVal((string) $item['link']) : '');
 							$itemTitle = sanitizeVal((string) $item['title']);
 							$itemDescription = sanitizeVal($this->getAtomItemDescription($item));

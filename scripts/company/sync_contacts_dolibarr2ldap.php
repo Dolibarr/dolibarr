@@ -89,7 +89,7 @@ print "----- To LDAP database:\n";
 print "host=" . getDolGlobalString('LDAP_SERVER_HOST')."\n";
 print "port=" . getDolGlobalString('LDAP_SERVER_PORT')."\n";
 print "login=" . getDolGlobalString('LDAP_ADMIN_DN')."\n";
-print "pass=".preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)."\n";
+print "pass=".preg_replace('/./i', '*', getDolGlobalString('LDAP_ADMIN_PASS'))."\n";
 print "DN target=" . getDolGlobalString('LDAP_CONTACT_DN')."\n";
 print "\n";
 
@@ -103,8 +103,7 @@ if (!$confirmed) {
 }
 
 /*
- * if (! $conf->global->LDAP_CONTACT_ACTIVE)
- * {
+ * if (!getDolGlobalString('LDAP_CONTACT_ACTIVE')) {
  * print $langs->trans("LDAPSynchronizationNotSetupInDolibarr");
  * exit(-1);
  * }

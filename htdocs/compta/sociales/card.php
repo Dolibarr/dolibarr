@@ -201,6 +201,7 @@ if (empty($reshook)) {
 			$object->label = GETPOST('label', 'alpha');
 			$object->date_ech = $dateech;
 			$object->periode = $dateperiod;
+			$object->period = $dateperiod;
 			$object->amount = $amount;
 			$object->fk_user			= $fk_user;
 			$object->mode_reglement_id = (int) GETPOST('mode_reglement_id', 'int');
@@ -236,6 +237,7 @@ if (empty($reshook)) {
 
 			$object->date_ech = $dateech;
 			$object->periode = $dateperiod;
+			$object->period = $dateperiod;
 			$object->amount = $amount;
 			$object->fk_user = $fk_user;
 
@@ -271,6 +273,7 @@ if (empty($reshook)) {
 
 			if (GETPOST('clone_for_next_month', 'int')) {	// This can be true only if TAX_ADD_CLONE_FOR_NEXT_MONTH_CHECKBOX has been set
 				$object->periode = dol_time_plus_duree($object->periode, 1, 'm');
+				$object->period = dol_time_plus_duree($object->periode, 1, 'm');
 				$object->date_ech = dol_time_plus_duree($object->date_ech, 1, 'm');
 			} else {
 				// Note date_ech is often a little bit higher than dateperiod
@@ -278,6 +281,7 @@ if (empty($reshook)) {
 				$newdateech = dol_mktime(0, 0, 0, GETPOST('clone_date_echmonth', 'int'), GETPOST('clone_date_echday', 'int'), GETPOST('clone_date_echyear', 'int'));
 				if ($newdateperiod) {
 					$object->periode = $newdateperiod;
+					$object->period = $newdateperiod;
 					if (empty($newdateech)) {
 						$object->date_ech = $object->periode;
 					}
@@ -288,6 +292,7 @@ if (empty($reshook)) {
 						// TODO We can here get dol_get_last_day of previous month:
 						// $object->periode = dol_get_last_day(year of $object->date_ech - 1m, month or $object->date_ech -1m)
 						$object->periode = $object->date_ech;
+						$object->period = $object->date_ech;
 					}
 				}
 			}
@@ -364,7 +369,7 @@ if ($action == 'create') {
 	print $langs->trans("Type");
 	print '</td>';
 	print '<td>';
-	$formsocialcontrib->select_type_socialcontrib(GETPOST("actioncode", 'alpha') ?GETPOST("actioncode", 'alpha') : '', 'actioncode', 1);
+	$formsocialcontrib->select_type_socialcontrib(GETPOST("actioncode", 'alpha') ? GETPOST("actioncode", 'alpha') : '', 'actioncode', 1);
 	print '</td>';
 	print '</tr>';
 
@@ -455,7 +460,7 @@ if ($id > 0) {
 			$formquestion = array(
 				array('type' => 'text', 'name' => 'clone_label', 'label' => $langs->trans("Label"), 'value' => $langs->trans("CopyOf").' '.$object->label, 'tdclass'=>'fieldrequired'),
 			);
-			if (!empty($conf->global->TAX_ADD_CLONE_FOR_NEXT_MONTH_CHECKBOX)) {
+			if (getDolGlobalString('TAX_ADD_CLONE_FOR_NEXT_MONTH_CHECKBOX')) {
 				$formquestion[] = array('type' => 'checkbox', 'name' => 'clone_for_next_month', 'label' => $langs->trans("CloneTaxForNextMonth"), 'value' => 1);
 			} else {
 				$formquestion[] = array('type' => 'date', 'datenow'=>1, 'name' => 'clone_date_ech', 'label' => $langs->trans("Date"), 'value' => -1);
@@ -549,7 +554,7 @@ if ($id > 0) {
 				if ($action != 'classify') {
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.((int) $object->id).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'fk_project' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'fk_project' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);
@@ -714,7 +719,7 @@ if ($id > 0) {
 					print '</td>';
 
 					print '<td>'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
-					$labeltype = $langs->trans("PaymentType".$objp->type_code) != ("PaymentType".$objp->type_code) ? $langs->trans("PaymentType".$objp->type_code) : $objp->paiement_type;
+					$labeltype = $langs->trans("PaymentType".$objp->type_code) != "PaymentType".$objp->type_code ? $langs->trans("PaymentType".$objp->type_code) : $objp->paiement_type;
 					print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
 					if (isModEnabled("banque")) {
 						$bankaccountstatic->id = $objp->baid;

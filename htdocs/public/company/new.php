@@ -106,7 +106,7 @@ $user->loadDefaultValues();
  * @param 	array  		$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '')
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
 {
 	global $conf, $langs, $mysoc;
 
@@ -133,13 +133,13 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 		print '<div class="logopublicpayment">';
 		print '<img id="dolpaymentlogo" src="' . $urllogo . '">';
 		print '</div>';
-		if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
+		if (!getDolGlobalString('MAIN_HIDE_POWERED_BY')) {
 			print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">' . $langs->trans("PoweredBy") . '<br><img class="poweredbyimg" src="' . DOL_URL_ROOT . '/theme/dolibarr_logo.svg" width="80px"></a></div>';
 		}
 		print '</div>';
 	}
 
-	if (!empty($conf->global->MEMBER_IMAGE_PUBLIC_REGISTRATION)) {
+	if (getDolGlobalString('MEMBER_IMAGE_PUBLIC_REGISTRATION')) {
 		print '<div class="backimagepublicregistration">';
 		print '<img id="idEVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE" src="' . getDolGlobalString('MEMBER_IMAGE_PUBLIC_REGISTRATION') . '">';
 		print '</div>';
@@ -200,7 +200,7 @@ if (empty($reshook) && $action == 'add') {
 	}
 
 	// Check Captcha code if is enabled
-	if (!empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA)) {
+	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
 		$sessionkey = 'dol_antispam_value';
 		$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
 		if (!$ok) {
@@ -242,8 +242,8 @@ if (empty($reshook) && $action == 'add') {
 
 				if (!empty($backtopage)) {
 					$urlback = $backtopage;
-				} elseif (!empty($conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION)) {
-					$urlback = $conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION;
+				} elseif (getDolGlobalString('MEMBER_URL_REDIRECT_SUBSCRIPTION')) {
+					$urlback = getDolGlobalString('MEMBER_URL_REDIRECT_SUBSCRIPTION');
 					// TODO Make replacement of __AMOUNT__, etc...
 				} else {
 					$urlback = $_SERVER["PHP_SELF"] . "?action=added&token=" . newToken();
@@ -306,8 +306,8 @@ print '<div align="center">';
 print '<div id="divsubscribe">';
 
 print '<div class="center subscriptionformhelptext opacitymedium justify">';
-if (!empty($conf->global->COMPANY_NEWFORM_TEXT)) {
-	print $langs->trans($conf->global->COMPANY_NEWFORM_TEXT) . "<br>\n";
+if (getDolGlobalString('COMPANY_NEWFORM_TEXT')) {
+	print $langs->trans(getDolGlobalString('COMPANY_NEWFORM_TEXT')) . "<br>\n";
 } else {
 	print $langs->trans("ContactUsDesc", getDolGlobalString("MAIN_INFO_SOCIETE_MAIL")) . "<br>\n";
 }
@@ -411,9 +411,9 @@ print '<td>' . img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"') . 
 print '</tr>';
 
 // Email / Web
-print '<tr><td>' . $form->editfieldkey('EMail', 'email', '', $objectsoc, 0, 'string', '', empty($conf->global->SOCIETE_EMAIL_MANDATORY) ? '' : $conf->global->SOCIETE_EMAIL_MANDATORY) . '</td>';
+print '<tr><td>' . $form->editfieldkey('EMail', 'email', '', $objectsoc, 0, 'string', '', !getDolGlobalString('SOCIETE_EMAIL_MANDATORY') ? '' : $conf->global->SOCIETE_EMAIL_MANDATORY) . '</td>';
 print '<td>' . img_picto('', 'object_email', 'class="pictofixedwidth"') . ' <input type="text" class="maxwidth200 widthcentpercentminusx" name="email" id="email" value="' . $objectsoc->email . '"></td>';
-if (isModEnabled('mailing') && !empty($conf->global->THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION)) {
+if (isModEnabled('mailing') && getDolGlobalString('THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION')) {
 	if ($conf->browser->layout == 'phone') {
 		print '</tr><tr>';
 	}
@@ -436,7 +436,7 @@ print '</tr>' . "\n";
 
 
 // Display Captcha code if is enabled
-if (!empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA)) {
+if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
 	require_once DOL_DOCUMENT_ROOT . '/core/lib/security2.lib.php';
 	print '<tr><td class="titlefield"><label for="email"><span class="fieldrequired">' . $langs->trans("SecurityCode") . '</span></label></td><td>';
 	print '<span class="span-icon-security inline-block">';

@@ -69,6 +69,8 @@ class CSMSFile
 
 	public $fk_project;
 
+	public $deliveryreceipt;
+
 
 	/**
 	 *	CSMSFile
@@ -109,6 +111,7 @@ class CSMSFile
 		$this->deferred = $deferred;
 		$this->priority = $priority;
 		$this->class = $class;
+		$this->deliveryreceipt = $deliveryreceipt;
 		$this->message = $msg;
 		$this->nostop = false;
 	}
@@ -133,11 +136,11 @@ class CSMSFile
 
 		$this->message = stripslashes($this->message);
 
-		if (!empty($conf->global->MAIN_SMS_DEBUG)) {
+		if (getDolGlobalString('MAIN_SMS_DEBUG')) {
 			$this->dump_sms();
 		}
 
-		if (empty($conf->global->MAIN_DISABLE_ALL_SMS)) {
+		if (!getDolGlobalString('MAIN_DISABLE_ALL_SMS')) {
 			// Action according to the choosed sending method
 			if (getDolGlobalString('MAIN_SMS_SENDMODE')) {
 				$sendmode = getDolGlobalString('MAIN_SMS_SENDMODE');	// $conf->global->MAIN_SMS_SENDMODE looks like a value 'module'
@@ -161,6 +164,7 @@ class CSMSFile
 						$sms->class = $this->class;
 						$sms->message = $this->message;
 						$sms->nostop = $this->nostop;
+						$sms->deliveryreceipt = $this->deliveryreceipt;
 
 						$sms->socid = $this->socid;
 						$sms->contact_id = $this->contact_id;
@@ -176,7 +180,7 @@ class CSMSFile
 						} else {
 							dol_syslog("CSMSFile::sendfile: sms send success with id=".$res, LOG_DEBUG);
 							//var_dump($res);        // 1973128
-							if (!empty($conf->global->MAIN_SMS_DEBUG)) {
+							if (getDolGlobalString('MAIN_SMS_DEBUG')) {
 								$this->dump_sms_result($res);
 							}
 						}
@@ -226,6 +230,7 @@ class CSMSFile
 			fputs($fp, "Class: ".$this->class."\n");
 			fputs($fp, "Deferred: ".$this->deferred."\n");
 			fputs($fp, "DisableStop: ".$this->nostop."\n");
+			fputs($fp, "DeliveryReceipt: ".$this->deliveryreceipt."\n");
 			fputs($fp, "Message:\n".$this->message);
 
 			fclose($fp);

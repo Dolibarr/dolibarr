@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancycategory.class.php
 // Load translation files required by the page
 $langs->loadLangs(array("errors", "admin", "companies", "resource", "holiday", "accountancy", "hrm"));
 
-$action = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view';
+$action = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view';
 $confirm = GETPOST('confirm', 'alpha');
 $id = 32;
 $rowid = GETPOST('rowid', 'alpha');
@@ -53,7 +53,7 @@ $actl[0] = img_picto($langs->trans("Disabled"), 'switch_off', 'class="size15x"')
 $actl[1] = img_picto($langs->trans("Activated"), 'switch_on', 'class="size15x"');
 
 $listoffset = GETPOST('listoffset', 'alpha');
-$listlimit = GETPOST('listlimit', 'int') > 0 ?GETPOST('listlimit', 'int') : 1000;
+$listlimit = GETPOST('listlimit', 'int') > 0 ? GETPOST('listlimit', 'int') : 1000;
 
 $sortfield = GETPOST("sortfield", 'aZ09comma');
 $sortorder = GETPOST("sortorder", 'aZ09comma');
@@ -507,6 +507,7 @@ if ($tabname[$id]) {
 		}
 		if ($fieldlist[$field] == 'code') {
 			$valuetoshow = $langs->trans("Code");
+			$class = 'width75';
 		}
 		if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') {
 			$valuetoshow = $langs->trans("Label");
@@ -581,7 +582,8 @@ if ($tabname[$id]) {
 	$tmpaction = 'create';
 	$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
 	$reshook = $hookmanager->executeHooks('createDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
-	$error = $hookmanager->error; $errors = $hookmanager->errors;
+	$error = $hookmanager->error;
+	$errors = $hookmanager->errors;
 
 	if (empty($reshook)) {
 		fieldListAccountingCategories($fieldlist, $obj, $tabname[$id], 'add');
@@ -784,7 +786,8 @@ if ($resql) {
 				$tmpaction = 'edit';
 				$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
 				$reshook = $hookmanager->executeHooks('editDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
-				$error = $hookmanager->error; $errors = $hookmanager->errors;
+				$error = $hookmanager->error;
+				$errors = $hookmanager->errors;
 
 				// Actions
 				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -810,13 +813,16 @@ if ($resql) {
 				}
 			} else {
 				// Can an entry be erased or disabled ?
-				$iserasable = 1; $canbedisabled = 1; $canbemodified = 1; // true by default
+				$iserasable = 1;
+				$canbedisabled = 1;
+				$canbemodified = 1; // true by default
 				if (isset($obj->code)) {
 					if (($obj->code == '0' || $obj->code == '' || preg_match('/unknown/i', $obj->code))) {
-						$iserasable = 0; $canbedisabled = 0;
+						$iserasable = 0;
+						$canbedisabled = 0;
 					}
 				}
-				$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).'&code='.(!empty($obj->code) ?urlencode($obj->code) : '');
+				$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).'&code='.(!empty($obj->code) ? urlencode($obj->code) : '');
 				if ($param) {
 					$url .= '&'.$param;
 				}
@@ -828,7 +834,8 @@ if ($resql) {
 				$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
 				$reshook = $hookmanager->executeHooks('viewDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 
-				$error = $hookmanager->error; $errors = $hookmanager->errors;
+				$error = $hookmanager->error;
+				$errors = $hookmanager->errors;
 
 				// Actions
 				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -863,8 +870,11 @@ if ($resql) {
 								$key = $langs->trans("Country".strtoupper($obj->country_code));
 								$valuetoshow = ($key != "Country".strtoupper($obj->country_code) ? $obj->country_code." - ".$key : $obj->country);
 							}
-						} elseif (in_array($fieldlist[$field], array('label', 'range_account', 'formula'))) {
+						} elseif (in_array($fieldlist[$field], array('label', 'formula'))) {
 							$class = "tdoverflowmax250";
+							$title = $valuetoshow;
+						} elseif (in_array($fieldlist[$field], array('range_account'))) {
+							$class = "tdoverflowmax250 small";
 							$title = $valuetoshow;
 						} elseif ($fieldlist[$field] == 'region_id' || $fieldlist[$field] == 'country_id') {
 							$showfield = 0;
@@ -872,7 +882,7 @@ if ($resql) {
 
 						// Show value for field
 						if ($showfield) {
-							print '<!-- '.$fieldlist[$field].' --><td class="'.$class.'"'.($title ? ' title="'.dol_escape_htmltag($title).'"': '').'>'.dol_escape_htmltag($valuetoshow).'</td>';
+							print '<!-- '.$fieldlist[$field].' --><td class="'.$class.'"'.($title ? ' title="'.dol_escape_htmltag($title).'"' : '').'>'.dol_escape_htmltag($valuetoshow).'</td>';
 						}
 					}
 				}
@@ -948,7 +958,7 @@ $db->close();
  *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
  *	@return		void
  */
-function fieldListAccountingCategories($fieldlist, $obj = '', $tabname = '', $context = '')
+function fieldListAccountingCategories($fieldlist, $obj = null, $tabname = '', $context = '')
 {
 	global $conf, $langs, $db;
 	global $form, $mysoc;
@@ -981,20 +991,23 @@ function fieldListAccountingCategories($fieldlist, $obj = '', $tabname = '', $co
 			}
 		} elseif ($fieldlist[$field] == 'category_type') {
 			print '<td>';
-			print $form->selectyesno($fieldlist[$field], (!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]}:''), 1);
+			print $form->selectyesno($fieldlist[$field], (!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]} : ''), 1);
 			print '</td>';
 		} elseif ($fieldlist[$field] == 'code' && isset($obj->{$fieldlist[$field]})) {
-			print '<td><input type="text" class="flat minwidth100" value="'.(!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]}:'').'" name="'.$fieldlist[$field].'"></td>';
+			print '<td><input type="text" class="flat minwidth100" value="'.(!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]} : '').'" name="'.$fieldlist[$field].'"></td>';
 		} else {
 			print '<td>';
 			$class = '';
-			if (in_array($fieldlist[$field], array('code', 'range_account', 'label', 'formula'))) {
-				$class = 'maxwidth100';
+			if (in_array($fieldlist[$field], array('code', 'formula'))) {
+				$class = 'maxwidth75';
+			}
+			if (in_array($fieldlist[$field], array('label', 'range_account'))) {
+				$class = 'maxwidth150';
 			}
 			if ($fieldlist[$field] == 'position') {
 				$class = 'maxwidth50';
 			}
-			print '<input type="text" class="flat'.($class ? ' '.$class : '').'" value="'.(isset($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]}:'').'" name="'.$fieldlist[$field].'">';
+			print '<input type="text" class="flat'.($class ? ' '.$class : '').'" value="'.(isset($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]} : '').'" name="'.$fieldlist[$field].'">';
 			print '</td>';
 		}
 	}

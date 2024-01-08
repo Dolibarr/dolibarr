@@ -78,18 +78,24 @@ class DolibarrApi
 	 * Display a short message an return a http code 200
 	 *
 	 * @param	string		$field		Field name
-	 * @param	string		$value		Value to check/clean
+	 * @param	mixed		$value		Value to check/clean
 	 * @param	Object		$object		Object
 	 * @return 	string					Value cleaned
 	 */
 	protected function _checkValForAPI($field, $value, $object)
 	{
 		// phpcs:enable
-		// TODO Use type detected in $object->fields
-		if (in_array($field, array('note', 'note_private', 'note_public', 'desc', 'description'))) {
-			return sanitizeVal($value, 'restricthtml');
+		if (!is_array($value)) {
+			// TODO Use type detected in $object->fields if $object known and we can
+			if (in_array($field, array('note', 'note_private', 'note_public', 'desc', 'description'))) {
+				return sanitizeVal($value, 'restricthtml');
+			} else {
+				return sanitizeVal($value, 'alphanohtml');
+			}
 		} else {
-			return sanitizeVal($value, 'alphanohtml');
+			// TODO Recall _checkValForAPI for each element of array
+
+			return $value;
 		}
 	}
 
@@ -178,11 +184,6 @@ class DolibarrApi
 		unset($object->newref);
 		unset($object->alreadypaid);
 		unset($object->openid);
-
-		unset($object->statuts);
-		unset($object->statuts_short);
-		unset($object->statuts_logo);
-		unset($object->statuts_long);
 
 		//unset($object->labelStatus);
 		//unset($object->labelStatusShort);
