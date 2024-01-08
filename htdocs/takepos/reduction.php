@@ -208,11 +208,6 @@ if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || getDolGlobalString
 		return true;
 	}
 
-	$(document).ready(function() {
-		// focus on manual input
-		$("#reduction_total").focus();
-	});
-
 	// manual input validation
 	function formvalid(type) {
 		reductionType = type;
