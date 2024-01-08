@@ -9550,16 +9550,19 @@ function isStringVarMatching($var, $regextext, $matchrule = 1)
  * Verify if condition in string is ok or not
  *
  * @param 	string		$strToEvaluate	String with condition to check
+ * @param	string	$onlysimplestring	'0' (deprecated, used for computed property of extrafields)=Accept all chars,
+ * 										'1' (most common use)=Accept only simple string with char 'a-z0-9\s^$_+-.*>&|=!?():"\',/@';',
+ * 										'2' (rarely used)=Accept also '[]'
  * @return 	boolean						True or False. Note: It returns also True if $strToEvaluate is ''. False if error
  */
-function verifCond($strToEvaluate)
+function verifCond($strToEvaluate, $onlysimplestring = '1')
 {
 	//print $strToEvaluate."<br>\n";
 	$rights = true;
 	if (isset($strToEvaluate) && $strToEvaluate !== '') {
 		//var_dump($strToEvaluate);
 		//$rep = dol_eval($strToEvaluate, 1, 0, '1'); // to show the error
-		$rep = dol_eval($strToEvaluate, 1, 1, '2'); // The dol_eval() must contains all the "global $xxx;" for all variables $xxx found into the string condition
+		$rep = dol_eval($strToEvaluate, 1, 1, $onlysimplestring); // The dol_eval() must contains all the "global $xxx;" for all variables $xxx found into the string condition
 		$rights = $rep && (!is_string($rep) || strpos($rep, 'Bad string syntax to evaluate') === false);
 		//var_dump($rights);
 	}
@@ -10092,7 +10095,7 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 						continue;
 					}
 
-					if (verifCond($values[4])) {
+					if (verifCond($values[4], '2')) {
 						if ($values[3]) {
 							if ($filterorigmodule) {	// If a filter of module origin has been requested
 								if (strpos($values[3], '@')) {	// This is an external module
@@ -10179,7 +10182,7 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 				}
 				$tabname = str_replace('-', '', $values[1]);
 				foreach ($head as $key => $val) {
-					$condition = (!empty($values[3]) ? verifCond($values[3]) : 1);
+					$condition = (!empty($values[3]) ? verifCond($values[3], '2') : 1);
 					//var_dump($key.' - '.$tabname.' - '.$head[$key][2].' - '.$values[3].' - '.$condition);
 					if ($head[$key][2] == $tabname && $condition) {
 						unset($head[$key]);
