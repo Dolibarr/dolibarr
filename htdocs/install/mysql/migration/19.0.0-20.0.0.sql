@@ -161,4 +161,7 @@ ALTER TABLE llx_usergroup_extrafields ADD UNIQUE INDEX uk_usergroup_extrafields 
 
 UPDATE llx_categorie SET date_creation = tms, tms = tms WHERE date_creation IS NULL AND tms IS NOT NULL;
 
-
+ALTER TABLE llx_product_price ADD COLUMN price_label varchar(255) AFTER fk_user_author;
+ALTER TABLE llx_product_customer_price_log ADD COLUMN price_label varchar(255) AFTER fk_user;
+ALTER TABLE llx_product_customer_price ADD COLUMN price_label varchar(255) AFTER fk_user;
+ALTER TABLE llx_product ADD COLUMN price_label varchar(255) AFTER price_base_type;
