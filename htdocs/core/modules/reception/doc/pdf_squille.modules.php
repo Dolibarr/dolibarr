@@ -154,7 +154,7 @@ class pdf_squille extends ModelePdfReception
 
 		// Show Draft Watermark
 		if ($object->statut == $object::STATUS_DRAFT && (getDolGlobalString('RECEPTION_DRAFT_WATERMARK'))) {
-			$this->watermark = $conf->global->RECEPTION_DRAFT_WATERMARK;
+			$this->watermark = getDolGlobalString('RECEPTION_DRAFT_WATERMARK');
 		}
 
 		$nblines = count($object->lines);

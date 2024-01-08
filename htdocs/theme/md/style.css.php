@@ -105,7 +105,7 @@ $path = ''; // This value may be used in future for external module to overwrite
 $theme = 'md'; // Value of theme
 if (getDolGlobalString('MAIN_OVERWRITE_THEME_RES')) {
 	$path = '/' . getDolGlobalString('MAIN_OVERWRITE_THEME_RES');
-	$theme = $conf->global->MAIN_OVERWRITE_THEME_RES;
+	$theme = getDolGlobalString('MAIN_OVERWRITE_THEME_RES');
 }
 
 // Define image path files and other constants

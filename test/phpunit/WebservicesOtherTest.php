@@ -159,7 +159,7 @@ class WebservicesOtherTest extends PHPUnit\Framework\TestCase
 
 		// Call the WebService method and store its result in $result.
 		$authentication=array(
-			'dolibarrkey'=>$conf->global->WEBSERVICES_KEY,
+			'dolibarrkey'=>getDolGlobalString('WEBSERVICES_KEY'),
 			'sourceapplication'=>'DEMO',
 			'login'=>'admin',
 			'password'=>'admin',

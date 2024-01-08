@@ -230,8 +230,8 @@ if ($resql) {
 
 			print '<td class="nobordernopadding">';
 			print $obj->societe;
-			print($obj->societe && ($obj->lastname || $obj->firstname) ? ' / ' : '');
-			print dolGetFirstLastname($obj->lastname, $obj->firstname);
+			print ($obj->societe && ($obj->lastname || $obj->firstname) ? ' / ' : '');
+			print dolGetFirstLastname($obj->firstname, $obj->lastname);
 			print '</td>';
 
 			print '<td class="right nobordernopadding nowraponall amount">';

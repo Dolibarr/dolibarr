@@ -151,7 +151,7 @@ if (!function_exists('dol_loginfunction')) {
 		$appli = constant('DOL_APPLICATION_TITLE');
 		$title = $appli.' '.constant('DOL_VERSION');
 		if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-			$title = $conf->global->MAIN_APPLICATION_TITLE;
+			$title = getDolGlobalString('MAIN_APPLICATION_TITLE');
 		}
 		$titletruedolibarrversion = constant('DOL_VERSION'); // $title used by login template after the @ to inform of true Dolibarr version
 
@@ -309,12 +309,12 @@ if (!function_exists('dol_loginfunction')) {
 			$favicon = DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=mycompany&file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini);
 		}
 		if (getDolGlobalString('MAIN_FAVICON_URL')) {
-			$favicon = $conf->global->MAIN_FAVICON_URL;
+			$favicon = getDolGlobalString('MAIN_FAVICON_URL');
 		}
 
 		$jquerytheme = 'base';
 		if (getDolGlobalString('MAIN_USE_JQUERY_THEME')) {
-			$jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
+			$jquerytheme = getDolGlobalString('MAIN_USE_JQUERY_THEME');
 		}
 
 		// Set dol_hide_topmenu, dol_hide_leftmenu, dol_optimize_smallscreen, dol_no_mouse_hover

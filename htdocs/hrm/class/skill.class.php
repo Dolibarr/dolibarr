@@ -83,7 +83,7 @@ class Skill extends CommonObject
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
-	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM)
+	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")')
 	 *  'position' is the sort order of field.
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
@@ -1007,7 +1007,7 @@ class Skill extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('hrm_SKILL_ADDON') . ".php";
-			$classname = $conf->global->hrm_SKILL_ADDON;
+			$classname = getDolGlobalString('hrm_SKILL_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -1070,7 +1070,7 @@ class Skill extends CommonObject
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('SKILL_ADDON_PDF')) {
-				$modele = $conf->global->SKILL_ADDON_PDF;
+				$modele = getDolGlobalString('SKILL_ADDON_PDF');
 			}
 		}
 

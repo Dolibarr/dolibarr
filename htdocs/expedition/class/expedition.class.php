@@ -296,7 +296,7 @@ class Expedition extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('EXPEDITION_ADDON_NUMBER') . ".php";
-			$classname = $conf->global->EXPEDITION_ADDON_NUMBER;
+			$classname = getDolGlobalString('EXPEDITION_ADDON_NUMBER');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -2558,7 +2558,7 @@ class Expedition extends CommonObject
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('EXPEDITION_ADDON_PDF')) {
-				$modele = $conf->global->EXPEDITION_ADDON_PDF;
+				$modele = getDolGlobalString('EXPEDITION_ADDON_PDF');
 			}
 		}
 

@@ -3036,7 +3036,7 @@ class EmailCollector extends CommonObject
 								if (empty($tickettocreate->ref)) {
 									// Get next Ref
 									$defaultref = '';
-									$modele = !getDolGlobalString('TICKET_ADDON') ? 'mod_ticket_simple' : $conf->global->TICKET_ADDON;
+									$modele = getDolGlobalString('TICKET_ADDON', 'mod_ticket_simple');
 
 									// Search template files
 									$file = '';

@@ -1127,6 +1127,8 @@ while ($i < $imaxinloop) {
 	}
 	$memberstatic->company = $companyname;
 
+	$object = $memberstatic;
+
 	if ($mode == 'kanban') {
 		if ($i == 0) {
 			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';

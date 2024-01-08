@@ -45,7 +45,7 @@ function isValidSiren($siren)
 	$sum = 0;
 	for ($index = 0; $index < 9; $index++) {
 		$number = (int) $siren[$index];
-		if (($index % 2) != 0) {
+		if ($index % 2 != 0) {
 			if (($number *= 2) > 9) {
 				$number -= 9;
 			}

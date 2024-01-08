@@ -423,7 +423,7 @@ class Form
 		// List of extra languages
 		$arrayoflangcode = array();
 		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
-			$arrayoflangcode[] = $conf->global->PDF_USE_ALSO_LANGUAGE_CODE;
+			$arrayoflangcode[] = getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE');
 		}
 
 		if (is_array($arrayoflangcode) && count($arrayoflangcode)) {
@@ -761,7 +761,6 @@ class Form
 		if (preg_match('/onsmartphone$/', $tooltiptrigger) && empty($conf->dol_no_mouse_hover)) {
 			$tooltiptrigger = preg_replace('/^.*onsmartphone$/', '', $tooltiptrigger);
 		}
-
 		$alt = '';
 		if ($tooltiptrigger) {
 			$alt = $langs->transnoentitiesnoconv("ClickToShowHelp");
@@ -2689,34 +2688,34 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *    Return list of products for a customer.
+	 *  Return list of products for a customer.
 	 *  Called by select_produits.
 	 *
-	 * @param int $selected Preselected product
-	 * @param string $htmlname Name of select html
-	 * @param string $filtertype Filter on product type (''=nofilter, 0=product, 1=service)
-	 * @param int $limit Limit on number of returned lines
-	 * @param int $price_level Level of price to show
-	 * @param string $filterkey Filter on product
-	 * @param int $status -1=Return all products, 0=Products not on sell, 1=Products on sell
-	 * @param int $finished Filter on finished field: 2=No filter
-	 * @param int $outputmode 0=HTML select string, 1=Array
-	 * @param int $socid Thirdparty Id (to get also price dedicated to this customer)
-	 * @param string $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
-	 * @param int $forcecombo Force to use combo box
-	 * @param string $morecss Add more css on select
-	 * @param int $hidepriceinlabel 1=Hide prices in label
-	 * @param string $warehouseStatus Warehouse status filter to group/count stock. Following comma separated filter options can be used.
-	 *                                'warehouseopen' = count products from open warehouses,
-	 *                                'warehouseclosed' = count products from closed warehouses,
-	 *                                'warehouseinternal' = count products from warehouses for internal correct/transfer only
-	 * @param int $status_purchase Purchase status -1=Return all products, 0=Products not on purchase, 1=Products on purchase
-	 * @return     array|string                Array of keys for json
+	 * @param 	int 		$selected 				Preselected product
+	 * @param 	string 		$htmlname 				Name of select html
+	 * @param 	string 		$filtertype 			Filter on product type (''=nofilter, 0=product, 1=service)
+	 * @param 	int 		$limit 					Limit on number of returned lines
+	 * @param 	int 		$price_level 			Level of price to show
+	 * @param 	string 		$filterkey 				Filter on product
+	 * @param 	int 		$status 				-1=Return all products, 0=Products not on sell, 1=Products on sell
+	 * @param 	int 		$finished 				Filter on finished field: 2=No filter
+	 * @param 	int 		$outputmode 			0=HTML select string, 1=Array
+	 * @param 	int 		$socid 					Thirdparty Id (to get also price dedicated to this customer)
+	 * @param 	string 		$showempty 				'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * @param 	int 		$forcecombo 			Force to use combo box
+	 * @param 	string 		$morecss 				Add more css on select
+	 * @param 	int 		$hidepriceinlabel	 	1=Hide prices in label
+	 * @param 	string 		$warehouseStatus 		Warehouse status filter to group/count stock. Following comma separated filter options can be used.
+	 *                      	          			'warehouseopen' = count products from open warehouses,
+	 *                          	      			'warehouseclosed' = count products from closed warehouses,
+	 *                              		  		'warehouseinternal' = count products from warehouses for internal correct/transfer only
+	 * @param 	int 			$status_purchase 	Purchase status -1=Return all products, 0=Products not on purchase, 1=Products on purchase
+	 * @return  array|string    			        Array of keys for json
 	 */
-	public function select_produits_list($selected = '', $htmlname = 'productid', $filtertype = '', $limit = 20, $price_level = 0, $filterkey = '', $status = 1, $finished = 2, $outputmode = 0, $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $status_purchase = -1)
+	public function select_produits_list($selected = 0, $htmlname = 'productid', $filtertype = '', $limit = 20, $price_level = 0, $filterkey = '', $status = 1, $finished = 2, $outputmode = 0, $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $status_purchase = -1)
 	{
 		// phpcs:enable
-		global $langs, $conf;
+		global $langs;
 		global $hookmanager;
 
 		$out = '';
@@ -3072,7 +3071,7 @@ class Form
 	 * @param string 	$opt 			Option (var used for returned value in string option format)
 	 * @param array 	$optJson 		Option (var used for returned value in json format)
 	 * @param int 		$price_level 	Price level
-	 * @param string 	$selected 		Preselected value
+	 * @param int 		$selected 		Preselected value
 	 * @param int 		$hidepriceinlabel Hide price in label
 	 * @param string 	$filterkey 		Filter key to highlight
 	 * @param int 		$novirtualstock Do not load virtual stock, even if slow option STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO is on.
@@ -4348,7 +4347,7 @@ class Form
 		// Set default value if not already set by caller
 		if (empty($selected) && getDolGlobalString('MAIN_DEFAULT_PAYMENT_TERM_ID')) {
 			dol_syslog(__METHOD__ . "Using deprecated option MAIN_DEFAULT_PAYMENT_TERM_ID", LOG_NOTICE);
-			$selected = $conf->global->MAIN_DEFAULT_PAYMENT_TERM_ID;
+			$selected = getDolGlobalString('MAIN_DEFAULT_PAYMENT_TERM_ID');
 		}
 
 		$out .= '<select id="' . $htmlname . '" class="flat selectpaymentterms' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '">';
@@ -4453,7 +4452,7 @@ class Form
 		// Set default value if not already set by caller
 		if (empty($selected) && getDolGlobalString('MAIN_DEFAULT_PAYMENT_TYPE_ID')) {
 			dol_syslog(__METHOD__ . "Using deprecated option MAIN_DEFAULT_PAYMENT_TYPE_ID", LOG_NOTICE);
-			$selected = $conf->global->MAIN_DEFAULT_PAYMENT_TYPE_ID;
+			$selected = getDolGlobalString('MAIN_DEFAULT_PAYMENT_TYPE_ID');
 		}
 
 		$out .= '<select id="select' . $htmlname . '" class="flat selectpaymenttypes' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '">';
@@ -6566,7 +6565,7 @@ class Form
 					// We will use the rate defined into MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS
 					$defaulttx = '';
 					if (getDolGlobalString('MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS') != 'none') {
-						$defaulttx = $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS;
+						$defaulttx = getDolGlobalString('MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS');
 					}
 					if (preg_match('/\((.*)\)/', $defaulttx, $reg)) {
 						$defaultcode = $reg[1];
@@ -8017,7 +8016,7 @@ class Form
 	 * @param 	int 	$forcecombo 			Force to load all values and output a standard combobox (with no beautification)
 	 * @param 	int 	$disabled 				1=Html component is disabled
 	 * @param 	string 	$selected_input_value 	Value of preselected input text (for use with ajax)
-	 * @param	string	$objectfield			Object:Field that contains the definition (in table $fields or extrafields). Example: 'Object:xxx' or 'Module_Object:xxx' or 'Object:options_xxx' or 'Module_Object:options_xxx'
+	 * @param	string	$objectfield			Object:Field that contains the definition (in table $fields or $extrafields). Example: 'Object:xxx' or 'Module_Object:xxx' or 'Object:options_xxx' or 'Module_Object:options_xxx'
 	 * @return  string	                      	Return HTML string
 	 * @see selectForFormsList(), select_thirdparty_list()
 	 */
@@ -9684,7 +9683,7 @@ class Form
 			// List of extra languages
 			$arrayoflangcode = array();
 			if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
-				$arrayoflangcode[] = $conf->global->PDF_USE_ALSO_LANGUAGE_CODE;
+				$arrayoflangcode[] = getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE');
 			}
 
 			if (is_array($arrayoflangcode) && count($arrayoflangcode)) {
@@ -9991,22 +9990,22 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *    Return select list of groups
+	 * Return select list of groups
 	 *
-	 * @param string|object $selected Id group or group preselected
-	 * @param string $htmlname Field name in form
-	 * @param int $show_empty 0=liste sans valeur nulle, 1=ajoute valeur inconnue
-	 * @param string|array $exclude Array list of groups id to exclude
-	 * @param int $disabled If select list must be disabled
-	 * @param string|array $include Array list of groups id to include
-	 * @param array $enableonly Array list of groups id to be enabled. All other must be disabled
-	 * @param string $force_entity '0' or Ids of environment to force
-	 * @param bool $multiple add [] in the name of element and add 'multiple' attribut (not working with ajax_autocompleter)
-	 * @param string $morecss More css to add to html component
-	 * @return    string
+	 * @param int|object|object[] 	$selected 		Id group or group(s) preselected
+	 * @param string 				$htmlname 		Field name in form
+	 * @param int 					$show_empty 	0=liste sans valeur nulle, 1=ajoute valeur inconnue
+	 * @param string|array 			$exclude 		Array list of groups id to exclude
+	 * @param int 					$disabled 		If select list must be disabled
+	 * @param string|array 			$include 		Array list of groups id to include
+	 * @param array 				$enableonly 	Array list of groups id to be enabled. All other must be disabled
+	 * @param string 				$force_entity 	'0' or Ids of environment to force
+	 * @param bool 					$multiple 		add [] in the name of element and add 'multiple' attribut (not working with ajax_autocompleter)
+	 * @param string 				$morecss 		More css to add to html component
+	 * @return    string							HTML Componont to select a group
 	 * @see select_dolusers()
 	 */
-	public function select_dolgroups($selected = '', $htmlname = 'groupid', $show_empty = 0, $exclude = '', $disabled = 0, $include = '', $enableonly = array(), $force_entity = '0', $multiple = false, $morecss = '')
+	public function select_dolgroups($selected = 0, $htmlname = 'groupid', $show_empty = 0, $exclude = '', $disabled = 0, $include = '', $enableonly = array(), $force_entity = '0', $multiple = false, $morecss = '')
 	{
 		// phpcs:enable
 		global $conf, $user, $langs;
@@ -10028,7 +10027,7 @@ class Form
 
 		$out = '';
 
-		// On recherche les groupes
+		// Build sql to search groups
 		$sql = "SELECT ug.rowid, ug.nom as name";
 		if (isModEnabled('multicompany') && $conf->entity == 1 && $user->admin && !$user->entity) {
 			$sql .= ", e.label";
@@ -10085,7 +10084,8 @@ class Form
 					if ($disableline) {
 						$out .= ' disabled';
 					}
-					if ((isset($selected[0]) && is_object($selected[0]) && $selected[0]->id == $obj->rowid) || ((!isset($selected[0]) || !is_object($selected[0])) && !empty($selected) && in_array($obj->rowid, $selected))) {
+					if ((isset($selected[0]) && is_object($selected[0]) && $selected[0]->id == $obj->rowid)
+						|| ((!isset($selected[0]) || !is_object($selected[0])) && !empty($selected) && in_array($obj->rowid, $selected))) {
 						$out .= ' selected';
 					}
 					$out .= ' data-html="'.dol_escape_htmltag($labelhtml).'"';
@@ -10918,12 +10918,12 @@ class Form
 	/**
 	* Return list of invoice subtypes.
 	*
-	* @param int    $selected     Id of invoice subtype to preselect by default
-	* @param string $htmlname     Select field name
-	* @param int    $addempty     Add an empty entry
-	* @param int    $noinfoadmin  0=Add admin info, 1=Disable admin info
-	* @param string $morecss       Add more CSS on select tag
-	* @return string  String for the HTML select component
+	* @param int    $selected     	Id of invoice subtype to preselect by default
+	* @param string $htmlname     	Select field name
+	* @param int    $addempty     	Add an empty entry
+	* @param int    $noinfoadmin  	0=Add admin info, 1=Disable admin info
+	* @param string $morecss       	Add more CSS on select tag
+	* @return string  				String for the HTML select component
 	*/
 	public function getSelectInvoiceSubtype($selected = 0, $htmlname = 'subtypeid', $addempty = 0, $noinfoadmin = 0, $morecss = '')
 	{

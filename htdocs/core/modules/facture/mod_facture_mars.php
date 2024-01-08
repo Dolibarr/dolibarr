@@ -65,7 +65,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 		}
 
 		if (getDolGlobalString('INVOICE_NUMBERING_MARS_FORCE_PREFIX')) {
-			$this->prefixinvoice = $conf->global->INVOICE_NUMBERING_MARS_FORCE_PREFIX;
+			$this->prefixinvoice = getDolGlobalString('INVOICE_NUMBERING_MARS_FORCE_PREFIX');
 		}
 	}
 

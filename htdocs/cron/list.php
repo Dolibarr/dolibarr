@@ -433,7 +433,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 $text = $langs->trans("HoursOnThisPageAreOnServerTZ").' '.$stringcurrentdate.'<br>';
 if (getDolGlobalString('CRON_WARNING_DELAY_HOURS')) {
-	$text .= $langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS);
+	$text .= $langs->trans("WarningCronDelayed", getDolGlobalString('CRON_WARNING_DELAY_HOURS'));
 }
 print info_admin($text);
 //print '<br>';

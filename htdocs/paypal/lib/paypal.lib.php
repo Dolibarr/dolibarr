@@ -224,7 +224,7 @@ function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType,
 	$nvpstr = $nvpstr."&SOLUTIONTYPE=".urlencode($solutionType);
 	$nvpstr = $nvpstr."&LANDINGPAGE=".urlencode($landingPage);
 	if (getDolGlobalString('PAYPAL_CUSTOMER_SERVICE_NUMBER')) {
-		$nvpstr = $nvpstr."&CUSTOMERSERVICENUMBER=".urlencode($conf->global->PAYPAL_CUSTOMER_SERVICE_NUMBER); // Hotline phone number
+		$nvpstr = $nvpstr."&CUSTOMERSERVICENUMBER=".urlencode(getDolGlobalString('PAYPAL_CUSTOMER_SERVICE_NUMBER')); // Hotline phone number
 	}
 
 	$paypalprefix = 'PAYMENTREQUEST_0_';
@@ -273,10 +273,10 @@ function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType,
 		$nvpstr = $nvpstr."&LOGOIMG=".urlencode($urllogo);
 	}
 	if (getDolGlobalString('PAYPAL_BRANDNAME')) {
-		$nvpstr = $nvpstr."&BRANDNAME=".urlencode($conf->global->PAYPAL_BRANDNAME); // BRANDNAME
+		$nvpstr = $nvpstr."&BRANDNAME=".urlencode(getDolGlobalString('PAYPAL_BRANDNAME')); // BRANDNAME
 	}
 	if (getDolGlobalString('PAYPAL_NOTETOBUYER')) {
-		$nvpstr = $nvpstr."&NOTETOBUYER=".urlencode($conf->global->PAYPAL_NOTETOBUYER); // PAYPAL_NOTETOBUYER
+		$nvpstr = $nvpstr."&NOTETOBUYER=".urlencode(getDolGlobalString('PAYPAL_NOTETOBUYER')); // PAYPAL_NOTETOBUYER
 	}
 
 	$_SESSION["FinalPaymentAmt"] = $paymentAmount;
@@ -468,19 +468,19 @@ function hash_call($methodName, $nvpStr)
 	// Clean parameters
 	$PAYPAL_API_USER = "";
 	if (getDolGlobalString('PAYPAL_API_USER')) {
-		$PAYPAL_API_USER = $conf->global->PAYPAL_API_USER;
+		$PAYPAL_API_USER = getDolGlobalString('PAYPAL_API_USER');
 	}
 	$PAYPAL_API_PASSWORD = "";
 	if (getDolGlobalString('PAYPAL_API_PASSWORD')) {
-		$PAYPAL_API_PASSWORD = $conf->global->PAYPAL_API_PASSWORD;
+		$PAYPAL_API_PASSWORD = getDolGlobalString('PAYPAL_API_PASSWORD');
 	}
 	$PAYPAL_API_SIGNATURE = "";
 	if (getDolGlobalString('PAYPAL_API_SIGNATURE')) {
-		$PAYPAL_API_SIGNATURE = $conf->global->PAYPAL_API_SIGNATURE;
+		$PAYPAL_API_SIGNATURE = getDolGlobalString('PAYPAL_API_SIGNATURE');
 	}
 	$PAYPAL_API_SANDBOX = "";
 	if (getDolGlobalString('PAYPAL_API_SANDBOX')) {
-		$PAYPAL_API_SANDBOX = $conf->global->PAYPAL_API_SANDBOX;
+		$PAYPAL_API_SANDBOX = getDolGlobalString('PAYPAL_API_SANDBOX');
 	}
 	// TODO END problem with triggers
 

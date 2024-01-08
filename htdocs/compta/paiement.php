@@ -363,7 +363,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		// TODO add hook here
 		if (isModEnabled('paypalplus') && $conf->global->PAYPAL_ENABLE_TRANSACTION_MANAGEMENT && !empty($facture->ref_ext)) {
 			if (getDolGlobalString('PAYPAL_BANK_ACCOUNT')) {
-				$accountid = $conf->global->PAYPAL_BANK_ACCOUNT;
+				$accountid = getDolGlobalString('PAYPAL_BANK_ACCOUNT');
 			}
 			$paymentnum = $facture->ref_ext;
 		}
