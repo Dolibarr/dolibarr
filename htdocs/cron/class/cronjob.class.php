@@ -187,6 +187,7 @@ class Cronjob extends CommonObject
 	const STATUS_DISABLED = 0;
 	const STATUS_ENABLED = 1;
 	const STATUS_ARCHIVED = 2;
+	const MAXIMUM_LENGTH_FOR_LASTOUTPUT_FIELD = 65535;
 
 
 	/**
@@ -1268,14 +1269,14 @@ class Cronjob extends CommonObject
 					dol_syslog(get_class($this)."::run_jobs END result=".$result." error=".$errmsg, LOG_ERR);
 
 					$this->error = $errmsg;
-					if (!empty($object->output) && $this->canSetLastOutput(mb_strlen(trim($object->output."\n".$errmsg)))) $this->lastoutput = $object->output."\n".$errmsg;
+					if (!empty($object->output) && $this::MAXIMUM_LENGTH_FOR_LASTOUTPUT_FIELD > mb_strlen(trim($object->output."\n".$errmsg))) $this->lastoutput = $object->output."\n".$errmsg;
 					else $this->lastoutput = $errmsg;
 					$this->lastresult = is_numeric($result) ? $result : -1;
 					$retval = $this->lastresult;
 					$error++;
 				} else {
 					dol_syslog(get_class($this)."::run_jobs END");
-					if (!empty($object->output) && $this->canSetLastOutput(mb_strlen(trim($object->output)))) $this->lastoutput = $object->output;
+					if (!empty($object->output) && $this::MAXIMUM_LENGTH_FOR_LASTOUTPUT_FIELD > mb_strlen(trim($object->output))) $this->lastoutput = $object->output;
 					else $this->lastoutput = "";
 					$this->lastresult = var_export($result, true);
 					$retval = $this->lastresult;
@@ -1519,33 +1520,6 @@ class Cronjob extends CommonObject
 		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
-	}
-
-	/**
-	 * Check if the lastoutput column can be set for the cronjob table.
-	 *
-	 * @param int $lastoutput_length The length of lastoutput.
-	 * @return bool True if lastoutput can be set, false otherwise.
-	 */
-	function canSetLastOutput($lastoutput_length) {
-		global $dolibarr_main_db_name;
-
-		$sql = "SELECT character_maximum_length
-            FROM information_schema.columns
-            WHERE table_name = '".MAIN_DB_PREFIX."cronjob'
-            AND column_name = 'lastoutput'
-            AND table_schema = '$dolibarr_main_db_name'";
-		$resql = $this->db->query($sql);
-
-		if($resql) {
-			$row = $this->db->fetch_object($resql);
-			if($row->character_maximum_length >= $lastoutput_length) return true;
-		}
-		else {
-			dol_syslog($this->db->lasterror(), 'LOG_ERR');
-		}
-
-		return false;
 	}
 }
 
