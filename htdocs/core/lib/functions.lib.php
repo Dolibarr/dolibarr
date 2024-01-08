@@ -12158,6 +12158,8 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '')
 		// extrafield for a service, it is not supported and not found when editing the product/service card. So we must keep 'product' for extrafields
 		// of service and we will return properties of a product.
 		$ismodenabled = (isModEnabled('product') || isModEnabled('service'));
+	} elseif ($element_prop['module'] == 'societeaccount') {
+		$ismodenabled = isModEnabled('website') || isModEnabled('webportal');
 	} else {
 		$ismodenabled = isModEnabled($element_prop['module']);
 	}
