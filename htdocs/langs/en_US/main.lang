@@ -549,6 +549,7 @@ Reportings=Reporting
 Draft=Draft
 Drafts=Drafts
 StatusInterInvoiced=Invoiced
+InterStatusSigned=Signed
 Done=Done
 Validated=Validated
 ValidatedToProduce=Validated (To produce)

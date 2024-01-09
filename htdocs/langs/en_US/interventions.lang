@@ -75,6 +75,6 @@ NextDateToIntervention=Date for next intervention generation
 NoIntervention=No intervention
 InterventionSign=Set Signed
 SignIntervention=Sign intervention
-ConfirmSignIntervention=Are you sure you want to set this intervention as signed?
+ConfirmSignIntervention=Are you sure you want to set intervention <b>%s</b> as signed?
 InterStatusSigned=Signed
 InterventionSignedInDolibarr=Intervention %s signed
