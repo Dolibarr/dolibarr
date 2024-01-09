@@ -41,6 +41,14 @@ With
 	protected $connector;
 
 
+SABRE:
+------
+rm -fr ./htdocs/includes/sabre/sabre/bin;
+rm -fr ./htdocs/includes/sabre/sabre/*/bin;
+rm -fr ./htdocs/includes/sabre/sabre/*/*/bin;
+rm -fr ./htdocs/includes/sabre/sabre/*/*/*/bin;
+rm -fr ./htdocs/includes/sabre/sabre/*/*/*/*/bin;
+
 
 NUSOAP:
 -------
