@@ -11880,6 +11880,8 @@ function getElementProperties($element_type)
 
 	$regs = array();
 
+	//$element_type='facture';
+
 	$classfile = $classname = $classpath = $subdir = $dir_output = '';
 
 	// Parse element/subelement
@@ -12086,6 +12088,13 @@ function getElementProperties($element_type)
 		$module = 'tax';
 		$subdir = '/vat';
 		$table_element = 'tva';
+	} elseif ($element_type == 'emailsenderprofile') {
+		$module = '';
+		$classpath = 'core/class';
+		$classfile = 'emailsenderprofile';
+		$classname = 'EmailSenderProfile';
+		$table_element = 'c_email_senderprofile';
+		$subelement = '';
 	}
 
 	if (empty($classfile)) {
@@ -12162,7 +12171,7 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '')
 		$ismodenabled = isModEnabled($element_prop['module']);
 	}
 
-	if (is_array($element_prop) && $ismodenabled) {
+	if (is_array($element_prop) && (empty($element_prop['module']) || $ismodenabled)) {
 		dol_include_once('/'.$element_prop['classpath'].'/'.$element_prop['classfile'].'.class.php');
 
 		if (class_exists($element_prop['classname'])) {
