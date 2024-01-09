@@ -7713,7 +7713,6 @@ abstract class CommonObject
 					}
 				}
 			}
-
 			$objectfield = $this->element.($this->module ? '@'.$this->module : '').':'.$key.$keysuffix;
 			$out = $form->selectForForms($param_list_array[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, $moreparam, 0, (empty($val['disabled']) ? 0 : 1), '', $objectfield);
 
