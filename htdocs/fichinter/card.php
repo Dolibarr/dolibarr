@@ -202,8 +202,10 @@ if (empty($reshook)) {
 	} elseif ($action == 'confirm_sign' && $confirm == 'yes' && $user->hasRight('ficheinter', 'creer')) {
 		$result = $object->setSign($user);
 		if ($result < 0) {
-			dol_print_error($db, $object->error);
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
+		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+		exit;
 	} elseif ($action == 'confirm_modify' && $confirm == 'yes' && $user->hasRight('ficheinter', 'creer')) {
 		$result = $object->setDraft($user);
 		if ($result >= 0) {
@@ -1144,7 +1146,14 @@ if ($action == 'create') {
 
 	// Confirm sign
 	if ($action == 'sign') {
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SignIntervention'), $langs->trans('ConfirmSignIntervention'), 'confirm_sign', '', 0, 1);
+		$text = $langs->trans('ConfirmSignIntervention', $object->ref);
+		if (isModEnabled('notification')) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
+			$notify = new Notify($db);
+			$text .= '<br>';
+			$text .= $notify->confirmMessage('FICHINTER_SIGN', $object->socid, $object);
+		}
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SignIntervention'), $text, 'confirm_sign', '', 0, 1);
 	}
 
 	// Confirm done
