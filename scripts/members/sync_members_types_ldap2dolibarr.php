@@ -62,7 +62,7 @@ print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 // List of fields to get from LDAP
-$required_fields = array($conf->global->LDAP_KEY_MEMBERS_TYPES, $conf->global->LDAP_MEMBER_TYPE_FIELD_FULLNAME, $conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION, $conf->global->LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS);
+$required_fields = array(getDolGlobalString('LDAP_KEY_MEMBERS_TYPES'), getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_FULLNAME'), getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_DESCRIPTION'), getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS'));
 
 // Remove from required_fields all entries not configured in LDAP (empty) and duplicated
 $required_fields = array_unique(array_values(array_filter($required_fields, "dolValidElementType")));
@@ -97,12 +97,12 @@ print "Mails sending disabled (useless in batch mode)\n";
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1; // On bloque les mails
 print "\n";
 print "----- Synchronize all records from LDAP database:\n";
-print "host=".$conf->global->LDAP_SERVER_HOST."\n";
-print "port=".$conf->global->LDAP_SERVER_PORT."\n";
-print "login=".$conf->global->LDAP_ADMIN_DN."\n";
-print "pass=".preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)."\n";
-print "DN to extract=".$conf->global->LDAP_MEMBER_TYPE_DN."\n";
-print 'Filter=('.$conf->global->LDAP_KEY_MEMBERS_TYPES.'=*)'."\n";
+print "host=" . getDolGlobalString('LDAP_SERVER_HOST')."\n";
+print "port=" . getDolGlobalString('LDAP_SERVER_PORT')."\n";
+print "login=" . getDolGlobalString('LDAP_ADMIN_DN')."\n";
+print "pass=".preg_replace('/./i', '*', getDolGlobalString('LDAP_ADMIN_PASS'))."\n";
+print "DN to extract=" . getDolGlobalString('LDAP_MEMBER_TYPE_DN')."\n";
+print 'Filter=(' . getDolGlobalString('LDAP_KEY_MEMBERS_TYPES').'=*)'."\n";
 print "----- To Dolibarr database:\n";
 print "type=".$conf->db->type."\n";
 print "host=".$conf->db->host."\n";
@@ -119,7 +119,7 @@ if (!$confirmed) {
 	$input = trim(fgets(STDIN));
 }
 
-if (empty($conf->global->LDAP_MEMBER_TYPE_DN)) {
+if (!getDolGlobalString('LDAP_MEMBER_TYPE_DN')) {
 	print $langs->trans("Error").': '.$langs->trans("LDAP setup for members types not defined inside Dolibarr");
 	exit(-1);
 }
@@ -132,16 +132,16 @@ if ($result >= 0) {
 	// We disable synchro Dolibarr-LDAP
 	$conf->global->LDAP_MEMBER_TYPE_ACTIVE = 0;
 
-	$ldaprecords = $ldap->getRecords('*', $conf->global->LDAP_MEMBER_TYPE_DN, $conf->global->LDAP_KEY_MEMBERS_TYPES, $required_fields, 0, array($conf->global->LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS));
+	$ldaprecords = $ldap->getRecords('*', getDolGlobalString('LDAP_MEMBER_TYPE_DN'), getDolGlobalString('LDAP_KEY_MEMBERS_TYPES'), $required_fields, 0, array(getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS')));
 	if (is_array($ldaprecords)) {
 		$db->begin();
 
 		// Warning $ldapuser has a key in lowercase
 		foreach ($ldaprecords as $key => $ldapgroup) {
 			$membertype = new AdherentType($db);
-			$membertype->fetch($ldapgroup[$conf->global->LDAP_KEY_MEMBERS_TYPES]);
-			$membertype->label = $ldapgroup[$conf->global->LDAP_MEMBER_TYPE_FIELD_FULLNAME];
-			$membertype->description = $ldapgroup[$conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION];
+			$membertype->fetch($ldapgroup[getDolGlobalString('LDAP_KEY_MEMBERS_TYPES')]);
+			$membertype->label = $ldapgroup[getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_FULLNAME')];
+			$membertype->description = $ldapgroup[getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_DESCRIPTION')];
 			$membertype->entity = $conf->entity;
 
 			// print_r($ldapgroup);

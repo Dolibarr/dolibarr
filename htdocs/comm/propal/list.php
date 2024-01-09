@@ -71,17 +71,17 @@ $show_files = GETPOST('show_files', 'int');
 $confirm 	= GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'alpha');
 $toselect 	= GETPOST('toselect', 'array');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'proposallist';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'proposallist';
 $mode 		= GETPOST('mode', 'alpha');
 
 // Search Fields
+$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_user 	= GETPOST('search_user', 'int');
 $search_sale 	= GETPOST('search_sale', 'int');
-$search_ref 	= GETPOST('sf_ref') ?GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
+$search_ref 	= GETPOST('sf_ref') ? GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
 $search_refcustomer = GETPOST('search_refcustomer', 'alpha');
 $search_refproject = GETPOST('search_refproject', 'alpha');
 $search_project = GETPOST('search_project', 'alpha');
-
 $search_societe = GETPOST('search_societe', 'alpha');
 $search_societe_alias = GETPOST('search_societe_alias', 'alpha');
 $search_montant_ht = GETPOST('search_montant_ht', 'alpha');
@@ -130,8 +130,6 @@ $search_fk_cond_reglement = GETPOST("search_fk_cond_reglement", 'int');
 $search_fk_shipping_method = GETPOST("search_fk_shipping_method", 'int');
 $search_fk_input_reason = GETPOST("search_fk_input_reason", 'int');
 $search_fk_mode_reglement = GETPOST("search_fk_mode_reglement", 'int');
-$search_btn = GETPOST('button_search', 'alpha');
-$search_remove_btn = GETPOST('button_removefilter', 'alpha');
 $search_date_signature_startday = GETPOST('search_date_signature_startday', 'int');
 $search_date_signature_startmonth = GETPOST('search_date_signature_startmonth', 'int');
 $search_date_signature_startyear = GETPOST('search_date_signature_startyear', 'int');
@@ -140,23 +138,20 @@ $search_date_signature_endmonth = GETPOST('search_date_signature_endmonth', 'int
 $search_date_signature_endyear = GETPOST('search_date_signature_endyear', 'int');
 $search_date_signature_start = dol_mktime(0, 0, 0, $search_date_signature_startmonth, $search_date_signature_startday, $search_date_signature_startyear);
 $search_date_signature_end = dol_mktime(23, 59, 59, $search_date_signature_endmonth, $search_date_signature_endday, $search_date_signature_endyear);
-
 $search_status = GETPOST('search_status', 'alpha');
 
 $optioncss = GETPOST('optioncss', 'alpha');
 $object_statut = GETPOST('search_statut', 'alpha');
 
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
-$mesg = (GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
-
 // Pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1 || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) {
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -234,21 +229,21 @@ $arrayfields = array(
 	'p.total_ht'=>array('label'=>"AmountHT", 'checked'=>1),
 	'p.total_tva'=>array('label'=>"AmountVAT", 'checked'=>0),
 	'p.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>0),
-	'p.total_ht_invoiced'=>array('label'=>"AmountInvoicedHT", 'checked'=>0, 'enabled'=>!empty($conf->global->PROPOSAL_SHOW_INVOICED_AMOUNT)),
-	'p.total_invoiced'=>array('label'=>"AmountInvoicedTTC", 'checked'=>0, 'enabled'=>!empty($conf->global->PROPOSAL_SHOW_INVOICED_AMOUNT)),
+	'p.total_ht_invoiced'=>array('label'=>"AmountInvoicedHT", 'checked'=>0, 'enabled'=>getDolGlobalString('PROPOSAL_SHOW_INVOICED_AMOUNT')),
+	'p.total_invoiced'=>array('label'=>"AmountInvoicedTTC", 'checked'=>0, 'enabled'=>getDolGlobalString('PROPOSAL_SHOW_INVOICED_AMOUNT')),
 	'p.multicurrency_code'=>array('label'=>'Currency', 'checked'=>0, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1)),
 	'p.multicurrency_tx'=>array('label'=>'CurrencyRate', 'checked'=>0, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1)),
 	'p.multicurrency_total_ht'=>array('label'=>'MulticurrencyAmountHT', 'checked'=>0, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1)),
 	'p.multicurrency_total_tva'=>array('label'=>'MulticurrencyAmountVAT', 'checked'=>0, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1)),
 	'p.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1)),
-	'p.multicurrency_total_ht_invoiced'=>array('label'=>'MulticurrencyAmountInvoicedHT', 'checked'=>0, 'enabled'=>isModEnabled("multicurrency") && !empty($conf->global->PROPOSAL_SHOW_INVOICED_AMOUNT)),
-	'p.multicurrency_total_invoiced'=>array('label'=>'MulticurrencyAmountInvoicedTTC', 'checked'=>0, 'enabled'=>isModEnabled("multicurrency") && !empty($conf->global->PROPOSAL_SHOW_INVOICED_AMOUNT)),
+	'p.multicurrency_total_ht_invoiced'=>array('label'=>'MulticurrencyAmountInvoicedHT', 'checked'=>0, 'enabled'=>isModEnabled("multicurrency") && getDolGlobalString('PROPOSAL_SHOW_INVOICED_AMOUNT')),
+	'p.multicurrency_total_invoiced'=>array('label'=>'MulticurrencyAmountInvoicedTTC', 'checked'=>0, 'enabled'=>isModEnabled("multicurrency") && getDolGlobalString('PROPOSAL_SHOW_INVOICED_AMOUNT')),
 	'u.login'=>array('label'=>"Author", 'checked'=>1, 'position'=>10),
 	'sale_representative'=>array('label'=>"SaleRepresentativesOfThirdParty", 'checked'=>-1),
 	'total_pa' => array('label' => (getDolGlobalString('MARGIN_TYPE') == '1' ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') ? 0 : 1)),
 	'total_margin' => array('label' => 'Margin', 'checked' => 0, 'position' => 301, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') ? 0 : 1)),
-	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') || empty($conf->global->DISPLAY_MARGIN_RATES) ? 0 : 1)),
-	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') || empty($conf->global->DISPLAY_MARK_RATES) ? 0 : 1)),
+	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') || !getDolGlobalString('DISPLAY_MARGIN_RATES') ? 0 : 1)),
+	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') || !getDolGlobalString('DISPLAY_MARK_RATES') ? 0 : 1)),
 	'p.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
 	'p.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
 	'p.date_cloture'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>500),
@@ -281,6 +276,10 @@ foreach ($object->fields as $key => $val) {
 	}
 }*/
 
+if (!$user->hasRight('societe', 'client', 'voir')) {
+	$search_sale = $user->id;
+}
+
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
@@ -288,7 +287,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $permissiontoread = $user->hasRight('propal', 'lire');
 $permissiontoadd = $user->hasRight('propal', 'creer');
 $permissiontodelete = $user->hasRight('propal', 'supprimer');
-if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$permissiontovalidate = $user->hasRight('propal', 'propal_advance', 'validate');
 	$permissiontoclose = $user->hasRight('propal', 'propal_advance', 'close');
 	$permissiontosendbymail = $user->hasRight('propal', 'propal_advance', 'send');
@@ -317,85 +316,85 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
-include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
-
-// Do we click on purge search criteria ?
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
-	$search_categ = '';
-	$search_user = '';
-	$search_sale = '';
-	$search_ref = '';
-	$search_refcustomer = '';
-	$search_refproject = '';
-	$search_project = '';
-	$search_societe = '';
-	$search_societe_alias = '';
-	$search_montant_ht = '';
-	$search_montant_vat = '';
-	$search_montant_ttc = '';
-	$search_warehouse = '';
-	$search_multicurrency_code = '';
-	$search_multicurrency_tx = '';
-	$search_multicurrency_montant_ht = '';
-	$search_multicurrency_montant_vat = '';
-	$search_multicurrency_montant_ttc = '';
-	$search_login = '';
-	$search_product_category = '';
-	$search_town = '';
-	$search_zip = "";
-	$search_state = "";
-	$search_type = '';
-	$search_country = '';
-	$search_type_thirdparty = '';
-	$search_date_startday = '';
-	$search_date_startmonth = '';
-	$search_date_startyear = '';
-	$search_date_endday = '';
-	$search_date_endmonth = '';
-	$search_date_endyear = '';
-	$search_date_start = '';
-	$search_date_end = '';
-	$search_date_end_startday = '';
-	$search_date_end_startmonth = '';
-	$search_date_end_startyear = '';
-	$search_date_end_endday = '';
-	$search_date_end_endmonth = '';
-	$search_date_end_endyear = '';
-	$search_date_end_start = '';
-	$search_date_end_end = '';
-	$search_date_delivery_startday = '';
-	$search_date_delivery_startmonth = '';
-	$search_date_delivery_startyear = '';
-	$search_date_delivery_endday = '';
-	$search_date_delivery_endmonth = '';
-	$search_date_delivery_endyear = '';
-	$search_date_delivery_start = '';
-	$search_date_delivery_end = '';
-	$search_availability = '';
-	$search_status = '';
-	$object_statut = '';
-	$toselect = array();
-	$search_array_options = array();
-	$search_categ_cus = 0;
-	$search_fk_cond_reglement = '';
-	$search_fk_shipping_method = '';
-	$search_fk_input_reason = '';
-	$search_fk_mode_reglement = '';
-	$search_date_signature_startday = '';
-	$search_date_signature_startmonth = '';
-	$search_date_signature_startyear = '';
-	$search_date_signature_endday = '';
-	$search_date_signature_endmonth = '';
-	$search_date_signature_endyear = '';
-	$search_date_signature_start = '';
-	$search_date_signature_end = '';
-}
-if ($object_statut != '') {
-	$search_status = $object_statut;
-}
-
-
 if (empty($reshook)) {
+	// Selection of new fields
+	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+
+	// Purge search criteria
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+		$search_user = '';
+		$search_sale = '';
+		$search_ref = '';
+		$search_refcustomer = '';
+		$search_refproject = '';
+		$search_project = '';
+		$search_societe = '';
+		$search_societe_alias = '';
+		$search_montant_ht = '';
+		$search_montant_vat = '';
+		$search_montant_ttc = '';
+		$search_warehouse = '';
+		$search_multicurrency_code = '';
+		$search_multicurrency_tx = '';
+		$search_multicurrency_montant_ht = '';
+		$search_multicurrency_montant_vat = '';
+		$search_multicurrency_montant_ttc = '';
+		$search_login = '';
+		$search_product_category = '';
+		$search_town = '';
+		$search_zip = "";
+		$search_state = "";
+		$search_type = '';
+		$search_country = '';
+		$search_type_thirdparty = '';
+		$search_date_startday = '';
+		$search_date_startmonth = '';
+		$search_date_startyear = '';
+		$search_date_endday = '';
+		$search_date_endmonth = '';
+		$search_date_endyear = '';
+		$search_date_start = '';
+		$search_date_end = '';
+		$search_date_end_startday = '';
+		$search_date_end_startmonth = '';
+		$search_date_end_startyear = '';
+		$search_date_end_endday = '';
+		$search_date_end_endmonth = '';
+		$search_date_end_endyear = '';
+		$search_date_end_start = '';
+		$search_date_end_end = '';
+		$search_date_delivery_startday = '';
+		$search_date_delivery_startmonth = '';
+		$search_date_delivery_startyear = '';
+		$search_date_delivery_endday = '';
+		$search_date_delivery_endmonth = '';
+		$search_date_delivery_endyear = '';
+		$search_date_delivery_start = '';
+		$search_date_delivery_end = '';
+		$search_availability = '';
+		$search_status = '';
+		$object_statut = '';
+		$search_categ_cus = 0;
+		$search_fk_cond_reglement = '';
+		$search_fk_shipping_method = '';
+		$search_fk_input_reason = '';
+		$search_fk_mode_reglement = '';
+		$search_date_signature_startday = '';
+		$search_date_signature_startmonth = '';
+		$search_date_signature_startyear = '';
+		$search_date_signature_endday = '';
+		$search_date_signature_endmonth = '';
+		$search_date_signature_endyear = '';
+		$search_date_signature_start = '';
+		$search_date_signature_end = '';
+		$toselect = array();
+		$search_array_options = array();
+	}
+	if ($object_statut != '') {
+		$search_status = $object_statut;
+	}
+
+	// Mass actions
 	$objectclass = 'Propal';
 	$objectlabel = 'Proposals';
 	$uploaddir = $conf->propal->multidir_output[$conf->entity];
@@ -473,7 +472,7 @@ if ($action == "nosign" && $permissiontoclose) {
 		$error = 0;
 		foreach ($toselect as $checked) {
 			if ($tmpproposal->fetch($checked) > 0) {
-				if ($tmpproposal->statut == $tmpproposal::STATUS_VALIDATED || (!empty($conf->global->PROPAL_SKIP_ACCEPT_REFUSE) && $tmpproposal->statut == $tmpproposal::STATUS_DRAFT)) {
+				if ($tmpproposal->statut == $tmpproposal::STATUS_VALIDATED || (getDolGlobalString('PROPAL_SKIP_ACCEPT_REFUSE') && $tmpproposal->statut == $tmpproposal::STATUS_DRAFT)) {
 					$tmpproposal->statut = $tmpproposal::STATUS_NOTSIGNED;
 					if ($tmpproposal->closeProposal($user, $tmpproposal::STATUS_NOTSIGNED) > 0) {
 						setEventMessage($tmpproposal->ref." ".$langs->trans('NoSigned'), 'mesgs');
@@ -558,15 +557,15 @@ $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
 $sql = 'SELECT';
-if ($sall || $search_user > 0) {
+if ($search_all || $search_user > 0) {
 	$sql = 'SELECT DISTINCT';
 }
-$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax , s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, ';
+$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax , s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client,';
 $sql .= " typent.code as typent_code,";
 $sql .= " ava.rowid as availability,";
 $sql .= " country.code as country_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
-$sql .= ' p.rowid, p.entity as propal_entity, p.note_private, p.total_ht, p.total_tva, p.total_ttc, p.localtax1, p.localtax2, p.ref, p.ref_client, p.fk_statut as status, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,p.date_livraison as ddelivery,';
+$sql .= ' p.rowid, p.entity as propal_entity, p.note_private, p.total_ht, p.total_tva, p.total_ttc, p.localtax1, p.localtax2, p.ref, p.ref_client, p.fk_statut as status, p.fk_user_author, p.datep as dp, p.fin_validite as dfv, p.date_livraison as ddelivery,';
 $sql .= ' p.fk_multicurrency, p.multicurrency_code, p.multicurrency_tx, p.multicurrency_total_ht, p.multicurrency_total_tva, p.multicurrency_total_ttc,';
 $sql .= ' p.datec as date_creation, p.tms as date_update, p.date_cloture as date_cloture,';
 $sql .= ' p.date_signature as dsignature,';
@@ -574,12 +573,6 @@ $sql .= ' p.note_public, p.note_private,';
 $sql .= ' p.fk_cond_reglement,p.deposit_percent,p.fk_mode_reglement,p.fk_shipping_method,p.fk_input_reason,';
 $sql .= " pr.rowid as project_id, pr.ref as project_ref, pr.title as project_label,";
 $sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity as user_entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender';
-if (empty($user->rights->societe->client->voir) && !$socid) {
-	$sql .= ", sc.fk_soc, sc.fk_user";
-}
-if (!empty($search_categ_cus) && $search_categ_cus != '-1') {
-	$sql .= ", cc.fk_categorie, cc.fk_soc";
-}
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -598,25 +591,17 @@ $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
-if (!empty($search_categ_cus) && $search_categ_cus != '-1') {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cc ON s.rowid = cc.fk_soc"; // We'll need this table joined to the select in order to filter by categ
-}
+
 $sql .= ', '.MAIN_DB_PREFIX.'propal as p';
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (p.rowid = ef.fk_object)";
 }
-if ($sall) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'propaldet as pd ON p.rowid=pd.fk_propal';
+if ($search_all) {
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'propaldet as pd ON p.rowid = pd.fk_propal';
 }
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON p.fk_user_author = u.rowid';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as pr ON pr.rowid = p.fk_projet";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_availability as ava on (ava.rowid = p.fk_availability)";
-// We'll need this table joined to the select in order to filter by sale
-if ($search_sale == -2) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON (sc.fk_soc = p.fk_soc)";
-} elseif ($search_sale > 0 || (empty($user->rights->societe->client->voir) && !$socid)) {
-	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-}
 if ($search_user > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_contact as c";
 	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
@@ -629,10 +614,6 @@ $sql .= $hookmanager->resPrint;
 
 $sql .= ' WHERE p.fk_soc = s.rowid';
 $sql .= ' AND p.entity IN ('.getEntity('propal').')';
-if (empty($user->rights->societe->client->voir) && !$socid) { //restriction
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
-}
-
 if ($search_town) {
 	$sql .= natural_search('s.town', $search_town);
 }
@@ -703,17 +684,9 @@ if ($search_multicurrency_montant_vat != '') {
 if ($search_multicurrency_montant_ttc != '') {
 	$sql .= natural_search('p.multicurrency_total_ttc', $search_multicurrency_montant_ttc, 1);
 }
-if ($sall) {
-	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
+if ($search_all) {
+	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
-
-if ($search_categ_cus > 0) {
-	$sql .= " AND cc.fk_categorie = ".((int) $search_categ_cus);
-}
-if ($search_categ_cus == -2) {
-	$sql .= " AND cc.fk_categorie IS NULL";
-}
-
 if ($search_fk_cond_reglement > 0) {
 	$sql .= " AND p.fk_cond_reglement = ".((int) $search_fk_cond_reglement);
 }
@@ -750,11 +723,6 @@ if ($search_date_delivery_start) {
 if ($search_date_delivery_end) {
 	$sql .= " AND p.date_livraison <= '".$db->idate($search_date_delivery_end)."'";
 }
-if ($search_sale == -2) {
-	$sql .= " AND sc.fk_user IS NULL";
-} elseif ($search_sale > 0) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);
-}
 if ($search_user > 0) {
 	$sql .= " AND c.fk_c_type_contact = tc.rowid AND tc.element='propal' AND tc.source='internal' AND c.element_id = p.rowid AND c.fk_socpeople = ".((int) $search_user);
 }
@@ -763,6 +731,44 @@ if ($search_date_signature_start) {
 }
 if ($search_date_signature_end) {
 	$sql .= " AND p.date_signature <= '".$db->idate($search_date_signature_end)."'";
+}
+// Search on sale representative
+if ($search_sale && $search_sale != '-1') {
+	if ($search_sale == -2) {
+		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc)";
+	} elseif ($search_sale > 0) {
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+	}
+}
+// Search for tag/category ($searchCategoryCustomerList is an array of ID)
+$searchCategoryCustomerOperator = -1;
+$searchCategoryCustomerList = array($search_categ_cus);
+if (!empty($searchCategoryCustomerList)) {
+	$searchCategoryCustomerSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
+		if (intval($searchCategoryCustomer) == -2) {
+			$searchCategoryCustomerSqlList[] = "NOT EXISTS (SELECT cs.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as cs WHERE s.rowid = cs.fk_soc)";
+		} elseif (intval($searchCategoryCustomer) > 0) {
+			if ($searchCategoryCustomerOperator == 0) {
+				$searchCategoryCustomerSqlList[] = " EXISTS (SELECT cs.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as cs WHERE s.rowid = cs.fk_soc AND cs.fk_categorie = ".((int) $searchCategoryCustomer).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryCustomer);
+			}
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategoryCustomerSqlList[] = " EXISTS (SELECT cs.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as cs WHERE s.rowid = cs.fk_soc AND cs.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategoryCustomerOperator == 1) {
+		if (!empty($searchCategoryCustomerSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategoryCustomerSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategoryCustomerSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategoryCustomerSqlList).")";
+		}
+	}
 }
 // Search for tag/category ($searchCategoryProductList is an array of ID)
 $searchCategoryProductOperator = -1;
@@ -796,6 +802,7 @@ if (!empty($searchCategoryProductList)) {
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
+//print $sql;
 
 // Add where from hooks
 $parameters = array();
@@ -828,6 +835,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$db->free($resql);
 }
 
+// Complete request and execute it with limit
 $sql .= $db->order($sortfield, $sortorder);
 $sql .= ', p.ref DESC';
 if ($limit) {
@@ -835,213 +843,216 @@ if ($limit) {
 }
 
 $resql = $db->query($sql);
+if (!$resql) {
+	dol_print_error($db);
+	exit;
+}
 
-if ($resql) {
 	$objectstatic = new Propal($db);
 	$userstatic = new User($db);
 
-	if ($socid > 0) {
-		$soc = new Societe($db);
-		$soc->fetch($socid);
-		$title = $langs->trans('Proposals').' - '.$soc->name;
-		if (empty($search_societe)) {
-			$search_societe = $soc->name;
-		}
-	} else {
-		$title = $langs->trans('Proposals');
+if ($socid > 0) {
+	$soc = new Societe($db);
+	$soc->fetch($socid);
+	$title = $langs->trans('Proposals').' - '.$soc->name;
+	if (empty($search_societe)) {
+		$search_societe = $soc->name;
 	}
+} else {
+	$title = $langs->trans('Proposals');
+}
 
 	$num = $db->num_rows($resql);
 
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 
-	if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall) {
-		$obj = $db->fetch_object($resql);
+if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all) {
+	$obj = $db->fetch_object($resql);
 
-		$id = $obj->rowid;
+	$id = $obj->rowid;
 
-		header("Location: ".DOL_URL_ROOT.'/comm/propal/card.php?id='.$id);
-		exit;
-	}
+	header("Location: ".DOL_URL_ROOT.'/comm/propal/card.php?id='.$id);
+	exit;
+}
 
 	$help_url = 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos';
 	llxHeader('', $title, $help_url);
 
 	$param = '&search_status='.urlencode($search_status);
-	if (!empty($mode)) {
-		$param .= '&mode='.urlencode($mode);
-	}
-	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
-		$param .= '&contextpage='.urlencode($contextpage);
-	}
-	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.((int) $limit);
-	}
-	if ($sall) {
-		$param .= '&sall='.urlencode($sall);
-	}
-	if ($search_date_startday) {
-		$param .= '&search_date_startday='.urlencode($search_date_startday);
-	}
-	if ($search_date_startmonth) {
-		$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
-	}
-	if ($search_date_startyear) {
-		$param .= '&search_date_startyear='.urlencode($search_date_startyear);
-	}
-	if ($search_date_endday) {
-		$param .= '&search_date_endday='.urlencode($search_date_endday);
-	}
-	if ($search_date_endmonth) {
-		$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
-	}
-	if ($search_date_endyear) {
-		$param .= '&search_date_endyear='.urlencode($search_date_endyear);
-	}
-	if ($search_date_end_startday) {
-		$param .= '&search_date_end_startday='.urlencode($search_date_end_startday);
-	}
-	if ($search_date_end_startmonth) {
-		$param .= '&search_date_end_startmonth='.urlencode($search_date_end_startmonth);
-	}
-	if ($search_date_end_startyear) {
-		$param .= '&search_date_end_startyear='.urlencode($search_date_end_startyear);
-	}
-	if ($search_date_end_endday) {
-		$param .= '&search_date_end_endday='.urlencode($search_date_end_endday);
-	}
-	if ($search_date_end_endmonth) {
-		$param .= '&search_date_end_endmonth='.urlencode($search_date_end_endmonth);
-	}
-	if ($search_date_end_endyear) {
-		$param .= '&search_date_end_endyear='.urlencode($search_date_end_endyear);
-	}
-	if ($search_date_delivery_startday)	{
-		$param .= '&search_date_delivery_startday='.urlencode($search_date_delivery_startday);
-	}
-	if ($search_date_delivery_startmonth) {
-		$param .= '&search_date_delivery_startmonth='.urlencode($search_date_delivery_startmonth);
-	}
-	if ($search_date_delivery_startyear) {
-		$param .= '&search_date_delivery_startyear='.urlencode($search_date_delivery_startyear);
-	}
-	if ($search_date_delivery_endday) {
-		$param .= '&search_date_delivery_endday='.urlencode($search_date_delivery_endday);
-	}
-	if ($search_date_delivery_endmonth) {
-		$param .= '&search_date_delivery_endmonth='.urlencode($search_date_delivery_endmonth);
-	}
-	if ($search_date_delivery_endyear) {
-		$param .= '&search_date_delivery_endyear='.urlencode($search_date_delivery_endyear);
-	}
-	if ($search_ref) {
-		$param .= '&search_ref='.urlencode($search_ref);
-	}
-	if ($search_refcustomer) {
-		$param .= '&search_refcustomer='.urlencode($search_refcustomer);
-	}
-	if ($search_refproject) {
-		$param .= '&search_refproject='.urlencode($search_refproject);
-	}
-	if ($search_societe) {
-		$param .= '&search_societe='.urlencode($search_societe);
-	}
-	if ($search_societe_alias) {
-		$param .= '&search_societe_alias='.urlencode($search_societe_alias);
-	}
-	if ($search_user > 0) {
-		$param .= '&search_user='.urlencode($search_user);
-	}
-	if ($search_sale > 0) {
-		$param .= '&search_sale='.urlencode($search_sale);
-	}
-	if ($search_montant_ht) {
-		$param .= '&search_montant_ht='.urlencode($search_montant_ht);
-	}
-	if ($search_multicurrency_code != '') {
-		$param .= '&search_multicurrency_code='.urlencode($search_multicurrency_code);
-	}
-	if ($search_multicurrency_tx != '') {
-		$param .= '&search_multicurrency_tx='.urlencode($search_multicurrency_tx);
-	}
-	if ($search_multicurrency_montant_ht != '') {
-		$param .= '&search_multicurrency_montant_ht='.urlencode($search_multicurrency_montant_ht);
-	}
-	if ($search_multicurrency_montant_vat != '') {
-		$param .= '&search_multicurrency_montant_vat='.urlencode($search_multicurrency_montant_vat);
-	}
-	if ($search_multicurrency_montant_ttc != '') {
-		$param .= '&search_multicurrency_montant_ttc='.urlencode($search_multicurrency_montant_ttc);
-	}
-	if ($search_login) {
-		$param .= '&search_login='.urlencode($search_login);
-	}
-	if ($search_town) {
-		$param .= '&search_town='.urlencode($search_town);
-	}
-	if ($search_zip) {
-		$param .= '&search_zip='.urlencode($search_zip);
-	}
-	if ($socid > 0) {
-		$param .= '&socid='.urlencode($socid);
-	}
-	if ($optioncss != '') {
-		$param .= '&optioncss='.urlencode($optioncss);
-	}
-	if ($search_categ_cus > 0) {
-		$param .= '&search_categ_cus='.urlencode($search_categ_cus);
-	}
-	if ($search_product_category != '') {
-		$param .= '&search_product_category='.urlencode($search_product_category);
-	}
-	if ($search_fk_cond_reglement > 0) {
-		$param .= '&search_fk_cond_reglement='.urlencode($search_fk_cond_reglement);
-	}
-	if ($search_fk_shipping_method > 0) {
-		$param .= '&search_fk_shipping_method='.urlencode($search_fk_shipping_method);
-	}
-	if ($search_fk_input_reason > 0) {
-		$param .= '&search_fk_input_reason='.urlencode($search_fk_input_reason);
-	}
-	if ($search_fk_mode_reglement > 0) {
-		$param .= '&search_fk_mode_reglement='.urlencode($search_fk_mode_reglement);
-	}
-	if ($search_type_thirdparty > 0) {
-		$param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
-	}
-	if ($search_town) {
-		$param .= '&search_town='.urlencode($search_town);
-	}
-	if ($search_zip) {
-		$param .= '&search_zip='.urlencode($search_zip);
-	}
-	if ($search_state) {
-		$param .= '&search_state='.urlencode($search_state);
-	}
-	if ($search_town) {
-		$param .= '&search_town='.urlencode($search_town);
-	}
-	if ($search_country) {
-		$param .= '&search_country='.urlencode($search_country);
-	}
-	if ($search_date_signature_startday) {
-		$param .= '&search_date_signature_startday='.urlencode($search_date_signature_startday);
-	}
-	if ($search_date_signature_startmonth) {
-		$param .= '&search_date_signature_startmonth='.urlencode($search_date_signature_startmonth);
-	}
-	if ($search_date_signature_startyear) {
-		$param .= '&search_date_signature_startyear='.urlencode($search_date_signature_startyear);
-	}
-	if ($search_date_signature_endday) {
-		$param .= '&search_date_signature_endday='.urlencode($search_date_signature_endday);
-	}
-	if ($search_date_signature_endmonth) {
-		$param .= '&search_date_signature_endmonth='.urlencode($search_date_signature_endmonth);
-	}
-	if ($search_date_signature_endyear) {
-		$param .= '&search_date_signature_endyear='.urlencode($search_date_signature_endyear);
-	}
+if (!empty($mode)) {
+	$param .= '&mode='.urlencode($mode);
+}
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+	$param .= '&contextpage='.urlencode($contextpage);
+}
+if ($limit > 0 && $limit != $conf->liste_limit) {
+	$param .= '&limit='.((int) $limit);
+}
+if ($search_all) {
+	$param .= '&search_all='.urlencode($search_all);
+}
+if ($search_date_startday) {
+	$param .= '&search_date_startday='.urlencode($search_date_startday);
+}
+if ($search_date_startmonth) {
+	$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
+}
+if ($search_date_startyear) {
+	$param .= '&search_date_startyear='.urlencode($search_date_startyear);
+}
+if ($search_date_endday) {
+	$param .= '&search_date_endday='.urlencode($search_date_endday);
+}
+if ($search_date_endmonth) {
+	$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
+}
+if ($search_date_endyear) {
+	$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+}
+if ($search_date_end_startday) {
+	$param .= '&search_date_end_startday='.urlencode($search_date_end_startday);
+}
+if ($search_date_end_startmonth) {
+	$param .= '&search_date_end_startmonth='.urlencode($search_date_end_startmonth);
+}
+if ($search_date_end_startyear) {
+	$param .= '&search_date_end_startyear='.urlencode($search_date_end_startyear);
+}
+if ($search_date_end_endday) {
+	$param .= '&search_date_end_endday='.urlencode($search_date_end_endday);
+}
+if ($search_date_end_endmonth) {
+	$param .= '&search_date_end_endmonth='.urlencode($search_date_end_endmonth);
+}
+if ($search_date_end_endyear) {
+	$param .= '&search_date_end_endyear='.urlencode($search_date_end_endyear);
+}
+if ($search_date_delivery_startday) {
+	$param .= '&search_date_delivery_startday='.urlencode($search_date_delivery_startday);
+}
+if ($search_date_delivery_startmonth) {
+	$param .= '&search_date_delivery_startmonth='.urlencode($search_date_delivery_startmonth);
+}
+if ($search_date_delivery_startyear) {
+	$param .= '&search_date_delivery_startyear='.urlencode($search_date_delivery_startyear);
+}
+if ($search_date_delivery_endday) {
+	$param .= '&search_date_delivery_endday='.urlencode($search_date_delivery_endday);
+}
+if ($search_date_delivery_endmonth) {
+	$param .= '&search_date_delivery_endmonth='.urlencode($search_date_delivery_endmonth);
+}
+if ($search_date_delivery_endyear) {
+	$param .= '&search_date_delivery_endyear='.urlencode($search_date_delivery_endyear);
+}
+if ($search_ref) {
+	$param .= '&search_ref='.urlencode($search_ref);
+}
+if ($search_refcustomer) {
+	$param .= '&search_refcustomer='.urlencode($search_refcustomer);
+}
+if ($search_refproject) {
+	$param .= '&search_refproject='.urlencode($search_refproject);
+}
+if ($search_societe) {
+	$param .= '&search_societe='.urlencode($search_societe);
+}
+if ($search_societe_alias) {
+	$param .= '&search_societe_alias='.urlencode($search_societe_alias);
+}
+if ($search_user > 0) {
+	$param .= '&search_user='.urlencode($search_user);
+}
+if ($search_sale > 0) {
+	$param .= '&search_sale='.urlencode($search_sale);
+}
+if ($search_montant_ht) {
+	$param .= '&search_montant_ht='.urlencode($search_montant_ht);
+}
+if ($search_multicurrency_code != '') {
+	$param .= '&search_multicurrency_code='.urlencode($search_multicurrency_code);
+}
+if ($search_multicurrency_tx != '') {
+	$param .= '&search_multicurrency_tx='.urlencode($search_multicurrency_tx);
+}
+if ($search_multicurrency_montant_ht != '') {
+	$param .= '&search_multicurrency_montant_ht='.urlencode($search_multicurrency_montant_ht);
+}
+if ($search_multicurrency_montant_vat != '') {
+	$param .= '&search_multicurrency_montant_vat='.urlencode($search_multicurrency_montant_vat);
+}
+if ($search_multicurrency_montant_ttc != '') {
+	$param .= '&search_multicurrency_montant_ttc='.urlencode($search_multicurrency_montant_ttc);
+}
+if ($search_login) {
+	$param .= '&search_login='.urlencode($search_login);
+}
+if ($search_town) {
+	$param .= '&search_town='.urlencode($search_town);
+}
+if ($search_zip) {
+	$param .= '&search_zip='.urlencode($search_zip);
+}
+if ($socid > 0) {
+	$param .= '&socid='.urlencode($socid);
+}
+if ($optioncss != '') {
+	$param .= '&optioncss='.urlencode($optioncss);
+}
+if ($search_categ_cus > 0) {
+	$param .= '&search_categ_cus='.urlencode($search_categ_cus);
+}
+if ($search_product_category != '') {
+	$param .= '&search_product_category='.urlencode($search_product_category);
+}
+if ($search_fk_cond_reglement > 0) {
+	$param .= '&search_fk_cond_reglement='.urlencode($search_fk_cond_reglement);
+}
+if ($search_fk_shipping_method > 0) {
+	$param .= '&search_fk_shipping_method='.urlencode($search_fk_shipping_method);
+}
+if ($search_fk_input_reason > 0) {
+	$param .= '&search_fk_input_reason='.urlencode($search_fk_input_reason);
+}
+if ($search_fk_mode_reglement > 0) {
+	$param .= '&search_fk_mode_reglement='.urlencode($search_fk_mode_reglement);
+}
+if ($search_type_thirdparty > 0) {
+	$param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
+}
+if ($search_town) {
+	$param .= '&search_town='.urlencode($search_town);
+}
+if ($search_zip) {
+	$param .= '&search_zip='.urlencode($search_zip);
+}
+if ($search_state) {
+	$param .= '&search_state='.urlencode($search_state);
+}
+if ($search_town) {
+	$param .= '&search_town='.urlencode($search_town);
+}
+if ($search_country) {
+	$param .= '&search_country='.urlencode($search_country);
+}
+if ($search_date_signature_startday) {
+	$param .= '&search_date_signature_startday='.urlencode($search_date_signature_startday);
+}
+if ($search_date_signature_startmonth) {
+	$param .= '&search_date_signature_startmonth='.urlencode($search_date_signature_startmonth);
+}
+if ($search_date_signature_startyear) {
+	$param .= '&search_date_signature_startyear='.urlencode($search_date_signature_startyear);
+}
+if ($search_date_signature_endday) {
+	$param .= '&search_date_signature_endday='.urlencode($search_date_signature_endday);
+}
+if ($search_date_signature_endmonth) {
+	$param .= '&search_date_signature_endmonth='.urlencode($search_date_signature_endmonth);
+}
+if ($search_date_signature_endyear) {
+	$param .= '&search_date_signature_endyear='.urlencode($search_date_signature_endyear);
+}
 
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -1082,7 +1093,8 @@ if ($resql) {
 	$newcardbutton = '';
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
-	$newcardbutton = dolGetButtonTitle($langs->trans('NewPropal'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('propal', 'creer'));
+	$newcardbutton .= dolGetButtonTitleSeparator();
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewPropal'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('propal', 'creer'));
 
 	// Fields title search
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -1117,11 +1129,11 @@ if ($resql) {
 		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassNoSignature"), $langs->trans("ConfirmMassNoSignatureQuestion"), "nosign", null, '', 0, 200, 500, 1);
 	}
 
-	if ($sall) {
+	if ($search_all) {
 		foreach ($fieldstosearchall as $key => $val) {
 			$fieldstosearchall[$key] = $langs->trans($val);
 		}
-		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).join(', ', $fieldstosearchall).'</div>';
+		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
 	}
 
 	$i = 0;
@@ -1129,7 +1141,7 @@ if ($resql) {
 	$moreforfilter = '';
 
 	// If the user can view prospects other than his'
-	if ($user->rights->user->user->lire) {
+	if ($user->hasRight('user', 'user', 'lire')) {
 		$langs->load("commercial");
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');
@@ -1137,7 +1149,7 @@ if ($resql) {
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view prospects other than his'
-	if ($user->rights->user->user->lire) {
+	if ($user->hasRight('user', 'user', 'lire')) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('LinkedToSpecificUsers');
 		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_user, 'search_user', $tmptitle, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth250 widthcentpercentminusx');
@@ -1158,7 +1170,7 @@ if ($resql) {
 		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1, $tmptitle, (empty($conf->dol_optimize_smallscreen) ? 'maxwidth300 widthcentpercentminusx' : 'maxwidth250 widthcentpercentminusx'));
 		$moreforfilter .= '</div>';
 	}
-	if (isModEnabled('stock') && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL)) {
+	if (isModEnabled('stock') && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL')) {
 		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 		$formproduct = new FormProduct($db);
 		$moreforfilter .= '<div class="divsearchfield">';
@@ -1190,7 +1202,7 @@ if ($resql) {
 	print '<tr class="liste_titre_filter">';
 
 	// Action column
-	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td class="liste_titre" align="middle">';
 		$searchpicto = $form->showFilterButtons('left');
 		print $searchpicto;
@@ -1248,17 +1260,17 @@ if ($resql) {
 	// Company type
 	if (!empty($arrayfields['typent.code']['checked'])) {
 		print '<td class="liste_titre maxwidth100onsmartphone" align="center">';
-		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
+		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (!getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
 		print ajax_combobox('search_type_thirdparty');
 		print '</td>';
 	}
 	// Date
 	if (!empty($arrayfields['p.date']['checked'])) {
 		print '<td class="liste_titre center">';
-		print '<div class="nowrap">';
+		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
-		print '<div class="nowrap">';
+		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 		print '</div>';
 		print '</td>';
@@ -1266,10 +1278,10 @@ if ($resql) {
 	// Date end
 	if (!empty($arrayfields['p.fin_validite']['checked'])) {
 		print '<td class="liste_titre center">';
-		print '<div class="nowrap">';
+		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_date_end_start ? $search_date_end_start : -1, 'search_date_end_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
-		print '<div class="nowrap">';
+		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_date_end_end ? $search_date_end_end : -1, 'search_date_end_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 		print '</div>';
 		print '</td>';
@@ -1277,10 +1289,10 @@ if ($resql) {
 	// Date delivery
 	if (!empty($arrayfields['p.date_livraison']['checked'])) {
 		print '<td class="liste_titre center">';
-		print '<div class="nowrap">';
+		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_date_delivery_start ? $search_date_delivery_start : -1, 'search_date_delivery_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
-		print '<div class="nowrap">';
+		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_date_delivery_end ? $search_date_delivery_end : -1, 'search_date_delivery_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
 		print '</td>';
@@ -1288,10 +1300,10 @@ if ($resql) {
 	// Date Signature
 	if (!empty($arrayfields['p.date_signature']['checked'])) {
 		print '<td class="liste_titre center">';
-		print '<div class="nowrap">';
+		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_date_signature_start ? $search_date_signature_start : -1, 'search_date_signature_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
-		print '<div class="nowrap">';
+		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_date_signature_end ? $search_date_signature_end : -1, 'search_date_signature_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
 		print '</td>';
@@ -1454,12 +1466,12 @@ if ($resql) {
 	}
 	// Status
 	if (!empty($arrayfields['p.fk_statut']['checked'])) {
-		print '<td class="liste_titre right parentonrightofpage">';
+		print '<td class="liste_titre center parentonrightofpage">';
 		$formpropal->selectProposalStatus($search_status, 1, 0, 1, 'customer', 'search_statut', 'search_status width100 onrightofpage');
 		print '</td>';
 	}
 	// Action column
-	if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td class="liste_titre" align="middle">';
 		$searchpicto = $form->showFilterButtons();
 		print $searchpicto;
@@ -1478,122 +1490,161 @@ if ($resql) {
 
 	// Fields title
 	print '<tr class="liste_titre">';
-	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['p.ref']['checked'])) {
 		print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"], 'p.ref', '', $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['p.ref_client']['checked'])) {
 		print_liste_field_titre($arrayfields['p.ref_client']['label'], $_SERVER["PHP_SELF"], 'p.ref_client', '', $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['pr.ref']['checked'])) {
 		print_liste_field_titre($arrayfields['pr.ref']['label'], $_SERVER["PHP_SELF"], 'pr.ref', '', $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['pr.title']['checked'])) {
 		print_liste_field_titre($arrayfields['pr.title']['label'], $_SERVER["PHP_SELF"], 'pr.title', '', $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['s.nom']['checked'])) {
 		print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], 's.nom', '', $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['s.name_alias']['checked'])) {
 		print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER["PHP_SELF"], 's.name_alias', '', $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['s.town']['checked'])) {
 		print_liste_field_titre($arrayfields['s.town']['label'], $_SERVER["PHP_SELF"], 's.town', '', $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['s.zip']['checked'])) {
 		print_liste_field_titre($arrayfields['s.zip']['label'], $_SERVER["PHP_SELF"], 's.zip', '', $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['state.nom']['checked'])) {
 		print_liste_field_titre($arrayfields['state.nom']['label'], $_SERVER["PHP_SELF"], "state.nom", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['country.code_iso']['checked'])) {
 		print_liste_field_titre($arrayfields['country.code_iso']['label'], $_SERVER["PHP_SELF"], "country.code_iso", "", $param, 'class="center"', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['typent.code']['checked'])) {
 		print_liste_field_titre($arrayfields['typent.code']['label'], $_SERVER["PHP_SELF"], "typent.code", "", $param, 'class="center"', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['p.date']['checked'])) {
 		print_liste_field_titre($arrayfields['p.date']['label'], $_SERVER["PHP_SELF"], 'p.datep', '', $param, 'class="center"', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['p.fin_validite']['checked'])) {
 		print_liste_field_titre($arrayfields['p.fin_validite']['label'], $_SERVER["PHP_SELF"], 'dfv', '', $param, 'class="center"', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['p.date_livraison']['checked'])) {
 		print_liste_field_titre($arrayfields['p.date_livraison']['label'], $_SERVER["PHP_SELF"], 'p.date_livraison', '', $param, 'class="center"', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['p.date_signature']['checked'])) {
 		print_liste_field_titre($arrayfields['p.date_signature']['label'], $_SERVER["PHP_SELF"], 'p.date_signature', '', $param, 'class="center"', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['ava.rowid']['checked'])) {
 		print_liste_field_titre($arrayfields['ava.rowid']['label'], $_SERVER["PHP_SELF"], 'availability', '', $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['p.fk_shipping_method']['checked'])) {
 		print_liste_field_titre($arrayfields['p.fk_shipping_method']['label'], $_SERVER["PHP_SELF"], "p.fk_shipping_method", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['p.fk_input_reason']['checked'])) {
 		print_liste_field_titre($arrayfields['p.fk_input_reason']['label'], $_SERVER["PHP_SELF"], "p.fk_input_reason", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['p.fk_cond_reglement']['checked'])) {
 		print_liste_field_titre($arrayfields['p.fk_cond_reglement']['label'], $_SERVER["PHP_SELF"], "p.fk_cond_reglement", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['p.fk_mode_reglement']['checked'])) {
 		print_liste_field_titre($arrayfields['p.fk_mode_reglement']['label'], $_SERVER["PHP_SELF"], "p.fk_mode_reglement", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['p.total_ht']['checked'])) {
-		print_liste_field_titre($arrayfields['p.total_ht']['label'], $_SERVER["PHP_SELF"], 'p.total_ht', '', $param, 'class="right"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['p.total_ht']['label'], $_SERVER["PHP_SELF"], 'p.total_ht', '', $param, '', $sortfield, $sortorder, 'right ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['p.total_tva']['checked'])) {
-		print_liste_field_titre($arrayfields['p.total_tva']['label'], $_SERVER["PHP_SELF"], 'p.total_tva', '', $param, 'class="right"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['p.total_tva']['label'], $_SERVER["PHP_SELF"], 'p.total_tva', '', $param, '', $sortfield, $sortorder, 'right ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['p.total_ttc']['checked'])) {
-		print_liste_field_titre($arrayfields['p.total_ttc']['label'], $_SERVER["PHP_SELF"], 'p.total_ttc', '', $param, 'class="right"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['p.total_ttc']['label'], $_SERVER["PHP_SELF"], 'p.total_ttc', '', $param, '', $sortfield, $sortorder, 'right ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['p.total_ht_invoiced']['checked'])) {
-		print_liste_field_titre($arrayfields['p.total_ht_invoiced']['label'], $_SERVER["PHP_SELF"], '', '', $param, 'class="right"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['p.total_ht_invoiced']['label'], $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['p.total_invoiced']['checked'])) {
-		print_liste_field_titre($arrayfields['p.total_invoiced']['label'], $_SERVER["PHP_SELF"], '', '', $param, 'class="right"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['p.total_invoiced']['label'], $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['p.multicurrency_code']['checked'])) {
 		print_liste_field_titre($arrayfields['p.multicurrency_code']['label'], $_SERVER['PHP_SELF'], 'p.multicurrency_code', '', $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['p.multicurrency_tx']['checked'])) {
 		print_liste_field_titre($arrayfields['p.multicurrency_tx']['label'], $_SERVER['PHP_SELF'], 'p.multicurrency_tx', '', $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['p.multicurrency_total_ht']['checked'])) {
-		print_liste_field_titre($arrayfields['p.multicurrency_total_ht']['label'], $_SERVER['PHP_SELF'], 'p.multicurrency_total_ht', '', $param, 'class="right"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['p.multicurrency_total_ht']['label'], $_SERVER['PHP_SELF'], 'p.multicurrency_total_ht', '', $param, '', $sortfield, $sortorder, 'right ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['p.multicurrency_total_tva']['checked'])) {
-		print_liste_field_titre($arrayfields['p.multicurrency_total_tva']['label'], $_SERVER['PHP_SELF'], 'p.multicurrency_total_tva', '', $param, 'class="right"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['p.multicurrency_total_tva']['label'], $_SERVER['PHP_SELF'], 'p.multicurrency_total_tva', '', $param, '', $sortfield, $sortorder, 'right ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['p.multicurrency_total_ttc']['checked'])) {
-		print_liste_field_titre($arrayfields['p.multicurrency_total_ttc']['label'], $_SERVER['PHP_SELF'], 'p.multicurrency_total_ttc', '', $param, 'class="right"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['p.multicurrency_total_ttc']['label'], $_SERVER['PHP_SELF'], 'p.multicurrency_total_ttc', '', $param, '', $sortfield, $sortorder, 'right ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['p.multicurrency_total_ht_invoiced']['checked'])) {
-		print_liste_field_titre($arrayfields['p.multicurrency_total_ht_invoiced']['label'], $_SERVER["PHP_SELF"], '', '', $param, 'class="right"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['p.multicurrency_total_ht_invoiced']['label'], $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['p.multicurrency_total_invoiced']['checked'])) {
-		print_liste_field_titre($arrayfields['p.multicurrency_total_invoiced']['label'], $_SERVER["PHP_SELF"], '', '', $param, 'class="right"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['p.multicurrency_total_invoiced']['label'], $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['u.login']['checked'])) {
-		print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER["PHP_SELF"], 'u.login', '', $param, 'class="center"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER["PHP_SELF"], 'u.login', '', $param, '', $sortfield, $sortorder, 'center ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['sale_representative']['checked'])) {
 		print_liste_field_titre($arrayfields['sale_representative']['label'], $_SERVER["PHP_SELF"], "", "", "$param", '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['total_pa']['checked'])) {
-		print_liste_field_titre($arrayfields['total_pa']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'class="right"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['total_pa']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'right ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['total_margin']['checked'])) {
-		print_liste_field_titre($arrayfields['total_margin']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'class="right"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['total_margin']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'right ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['total_margin_rate']['checked'])) {
-		print_liste_field_titre($arrayfields['total_margin_rate']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'class="right"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['total_margin_rate']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'right ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['total_mark_rate']['checked'])) {
-		print_liste_field_titre($arrayfields['total_mark_rate']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'class="right"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['total_mark_rate']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'right ');
+		$totalarray['nbfield']++;
 	}
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -1610,31 +1661,39 @@ if ($resql) {
 
 	print $hookmanager->resPrint;
 	if (!empty($arrayfields['p.datec']['checked'])) {
-		print_liste_field_titre($arrayfields['p.datec']['label'], $_SERVER["PHP_SELF"], "p.datec", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['p.datec']['label'], $_SERVER["PHP_SELF"], "p.datec", "", $param, '', $sortfield, $sortorder, 'center nowraponall ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['p.tms']['checked'])) {
-		print_liste_field_titre($arrayfields['p.tms']['label'], $_SERVER["PHP_SELF"], "p.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['p.tms']['label'], $_SERVER["PHP_SELF"], "p.tms", "", $param, '', $sortfield, $sortorder, 'center nowraponall ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['p.date_cloture']['checked'])) {
 		print_liste_field_titre($arrayfields['p.date_cloture']['label'], $_SERVER["PHP_SELF"], "p.date_cloture", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['p.note_public']['checked'])) {
 		print_liste_field_titre($arrayfields['p.note_public']['label'], $_SERVER["PHP_SELF"], "p.note_public", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['p.note_private']['checked'])) {
 		print_liste_field_titre($arrayfields['p.note_private']['label'], $_SERVER["PHP_SELF"], "p.note_private", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['p.fk_statut']['checked'])) {
-		print_liste_field_titre($arrayfields['p.fk_statut']['label'], $_SERVER["PHP_SELF"], "p.fk_statut", "", $param, 'class="right"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['p.fk_statut']['label'], $_SERVER["PHP_SELF"], "p.fk_statut", "", $param, '', $sortfield, $sortorder, 'center ');
+		$totalarray['nbfield']++;
 	}
-	if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+		$totalarray['nbfield']++;
 	}
 	print '</tr>'."\n";
 
-	$now = dol_now();
-	$i = 0;
+	// Loop on record
+	// --------------------------------------------------------------------
 	$typenArray = null;
+	$now = dol_now();
 
 	$with_margin_info = false;
 	if (isModEnabled('margin') && (
@@ -1642,20 +1701,23 @@ if ($resql) {
 		|| !empty($arrayfields['total_margin']['checked'])
 		|| !empty($arrayfields['total_margin_rate']['checked'])
 		|| !empty($arrayfields['total_mark_rate']['checked'])
-		)
+	)
 	) {
 		$with_margin_info = true;
 	}
 	$total_ht = 0;
 	$total_margin = 0;
 
+	$i = 0;
 	$savnbfield = $totalarray['nbfield'];
 	$totalarray = array();
 	$totalarray['nbfield'] = 0;
-
 	$imaxinloop = ($limit ? min($num, $limit) : $num);
 	while ($i < $imaxinloop) {
 		$obj = $db->fetch_object($resql);
+		if (empty($obj)) {
+			break; // Should not happen
+		}
 
 		$objectstatic->id = $obj->rowid;
 		$objectstatic->ref = $obj->ref;
@@ -1694,7 +1756,7 @@ if ($resql) {
 				$invoice = new Facture($db);
 				$invoice->fetch($invoiceData->facid);
 
-				if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS) && $invoice->type == Facture::TYPE_DEPOSIT) {
+				if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS') && $invoice->type == Facture::TYPE_DEPOSIT) {
 					continue;
 				}
 
@@ -1720,9 +1782,8 @@ if ($resql) {
 			}
 			// Output Kanban
 			$userstatic->fetch($obj->fk_user_author);
-			$objectstatic->author = $userstatic->getNomUrl(1);
-			$objectstatic->fk_project = $projectstatic->getNomUrl(1);
-			print $objectstatic->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
+			$arrayofparams = array('selected' => in_array($object->id, $arrayofselected), 'authorlink' => $userstatic->getNomUrl(-2), 'projectlink' => $projectstatic->getNomUrl(2));
+			print $objectstatic->getKanbanView('', $arrayofparams);
 			if ($i == ($imaxinloop - 1)) {
 				print '</div>';
 				print '</td></tr>';
@@ -1731,7 +1792,7 @@ if ($resql) {
 			print '<tr class="oddeven">';
 
 			// Action column
-			if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 				print '<td class="nowrap" align="center">';
 				if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 					$selected = 0;
@@ -2272,13 +2333,13 @@ if ($resql) {
 			}
 			// Status
 			if (!empty($arrayfields['p.fk_statut']['checked'])) {
-				print '<td class="nowrap right">'.$objectstatic->getLibStatut(5).'</td>';
+				print '<td class="nowrap center">'.$objectstatic->getLibStatut(5).'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
 			}
 			// Action column
-			if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 				print '<td class="nowrap" align="center">';
 				if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 					$selected = 0;
@@ -2325,24 +2386,26 @@ if ($resql) {
 
 	print '</form>'."\n";
 
-	$hidegeneratedfilelistifempty = 1;
-	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) {
-		$hidegeneratedfilelistifempty = 0;
+	if (in_array('builddoc', array_keys($arrayofmassactions)) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
+		$hidegeneratedfilelistifempty = 1;
+		if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) {
+			$hidegeneratedfilelistifempty = 0;
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+		$formfile = new FormFile($db);
+
+		// Show list of available documents
+		$urlsource = $_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+		$urlsource .= str_replace('&amp;', '&', $param);
+
+		$filedir = $diroutputmassaction;
+		$genallowed = $permissiontoread;
+		$delallowed = $permissiontoadd;
+
+		print $formfile->showdocuments('massfilesarea_proposals', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 	}
 
-	// Show list of available documents
-	$urlsource = $_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
-	$urlsource .= str_replace('&amp;', '&', $param);
-
-	$filedir = $diroutputmassaction;
-	$genallowed = $user->hasRight('propal', 'lire');
-	$delallowed = $user->hasRight('propal', 'creer');
-
-	print $formfile->showdocuments('massfilesarea_proposals', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
-} else {
-	dol_print_error($db);
-}
-
-// End of page
-llxFooter();
-$db->close();
+	// End of page
+	llxFooter();
+	$db->close();

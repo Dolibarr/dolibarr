@@ -48,10 +48,6 @@ class mailing_fraise extends MailingTargets
 	 */
 	public $picto = 'user';
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
 
 	/**
 	 *    Constructor
@@ -232,7 +228,7 @@ class mailing_fraise extends MailingTargets
 	 *  Ajoute destinataires dans table des cibles
 	 *
 	 *  @param    int        $mailing_id        Id of emailing
-	 *  @return int                       < 0 si erreur, nb ajout si ok
+	 *  @return int                       Return integer < 0 si erreur, nb ajout si ok
 	 */
 	public function add_to_target($mailing_id)
 	{
@@ -301,7 +297,7 @@ class mailing_fraise extends MailingTargets
 			$old = '';
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
-				if ($old <> $obj->email) {
+				if ($old != $obj->email) {
 					$cibles[$j] = array(
 								'email' => $obj->email,
 								'fk_contact' => $obj->fk_contact,

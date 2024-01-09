@@ -59,11 +59,12 @@ package-lock.json
 doc/install.lock
 /.asciidoctorconfig.adoc
 
-# Qodana
-.idea/vcs.xml
-.idea/modules.xml
-.idea/workspace.xml
-.idea/inspectionProfiles/Project_Default.xml
-.idea/jsLinters/jshint.xml
+.idea
 /composer.json
 /composer.lock
+
+/build/phpstan/phpstan
+/build/phpstan/bootstrap_custom.php
+phpstan_custom.neon
+/.php-cs-fixer.cache
+/.php_cs.cache

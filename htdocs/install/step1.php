@@ -32,31 +32,31 @@ include 'inc.php';
 
 global $langs;
 
-$action = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : (empty($argv[1]) ? '' : $argv[1]);
-$setuplang = GETPOST('selectlang', 'aZ09', 3) ?GETPOST('selectlang', 'aZ09', 3) : (empty($argv[2]) ? 'auto' : $argv[2]);
+$action = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : (empty($argv[1]) ? '' : $argv[1]);
+$setuplang = GETPOST('selectlang', 'aZ09', 3) ? GETPOST('selectlang', 'aZ09', 3) : (empty($argv[2]) ? 'auto' : $argv[2]);
 $langs->setDefaultLang($setuplang);
 
 $langs->loadLangs(array("admin", "install", "errors"));
 
 // Dolibarr pages directory
-$main_dir = GETPOST('main_dir') ?GETPOST('main_dir') : (empty($argv[3]) ? '' : $argv[3]);
+$main_dir = GETPOST('main_dir') ? GETPOST('main_dir') : (empty($argv[3]) ? '' : $argv[3]);
 // Directory for generated documents (invoices, orders, ecm, etc...)
 $main_data_dir = GETPOST('main_data_dir') ? GETPOST('main_data_dir') : (empty($argv[4]) ? ($main_dir.'/documents') : $argv[4]);
 // Dolibarr root URL
-$main_url = GETPOST('main_url') ?GETPOST('main_url') : (empty($argv[5]) ? '' : $argv[5]);
+$main_url = GETPOST('main_url') ? GETPOST('main_url') : (empty($argv[5]) ? '' : $argv[5]);
 // Database login information
-$userroot = GETPOST('db_user_root', 'alpha') ?GETPOST('db_user_root', 'alpha') : (empty($argv[6]) ? '' : $argv[6]);
-$passroot = GETPOST('db_pass_root', 'none') ?GETPOST('db_pass_root', 'none') : (empty($argv[7]) ? '' : $argv[7]);
+$userroot = GETPOST('db_user_root', 'alpha') ? GETPOST('db_user_root', 'alpha') : (empty($argv[6]) ? '' : $argv[6]);
+$passroot = GETPOST('db_pass_root', 'none') ? GETPOST('db_pass_root', 'none') : (empty($argv[7]) ? '' : $argv[7]);
 // Database server
-$db_type = GETPOST('db_type', 'aZ09') ?GETPOST('db_type', 'aZ09') : (empty($argv[8]) ? '' : $argv[8]);
-$db_host = GETPOST('db_host', 'alpha') ?GETPOST('db_host', 'alpha') : (empty($argv[9]) ? '' : $argv[9]);
-$db_name = GETPOST('db_name', 'aZ09') ?GETPOST('db_name', 'aZ09') : (empty($argv[10]) ? '' : $argv[10]);
-$db_user = GETPOST('db_user', 'alpha') ?GETPOST('db_user', 'alpha') : (empty($argv[11]) ? '' : $argv[11]);
-$db_pass = GETPOST('db_pass', 'none') ?GETPOST('db_pass', 'none') : (empty($argv[12]) ? '' : $argv[12]);
-$db_port = GETPOST('db_port', 'int') ?GETPOST('db_port', 'int') : (empty($argv[13]) ? '' : $argv[13]);
-$db_prefix = GETPOST('db_prefix', 'aZ09') ?GETPOST('db_prefix', 'aZ09') : (empty($argv[14]) ? '' : $argv[14]);
-$db_create_database = GETPOST('db_create_database', 'alpha') ?GETPOST('db_create_database', 'alpha') : (empty($argv[15]) ? '' : $argv[15]);
-$db_create_user = GETPOST('db_create_user', 'alpha') ?GETPOST('db_create_user', 'alpha') : (empty($argv[16]) ? '' : $argv[16]);
+$db_type = GETPOST('db_type', 'aZ09') ? GETPOST('db_type', 'aZ09') : (empty($argv[8]) ? '' : $argv[8]);
+$db_host = GETPOST('db_host', 'alpha') ? GETPOST('db_host', 'alpha') : (empty($argv[9]) ? '' : $argv[9]);
+$db_name = GETPOST('db_name', 'aZ09') ? GETPOST('db_name', 'aZ09') : (empty($argv[10]) ? '' : $argv[10]);
+$db_user = GETPOST('db_user', 'alpha') ? GETPOST('db_user', 'alpha') : (empty($argv[11]) ? '' : $argv[11]);
+$db_pass = GETPOST('db_pass', 'none') ? GETPOST('db_pass', 'none') : (empty($argv[12]) ? '' : $argv[12]);
+$db_port = GETPOST('db_port', 'int') ? GETPOST('db_port', 'int') : (empty($argv[13]) ? '' : $argv[13]);
+$db_prefix = GETPOST('db_prefix', 'aZ09') ? GETPOST('db_prefix', 'aZ09') : (empty($argv[14]) ? '' : $argv[14]);
+$db_create_database = GETPOST('db_create_database', 'alpha') ? GETPOST('db_create_database', 'alpha') : (empty($argv[15]) ? '' : $argv[15]);
+$db_create_user = GETPOST('db_create_user', 'alpha') ? GETPOST('db_create_user', 'alpha') : (empty($argv[16]) ? '' : $argv[16]);
 // Force https
 $main_force_https = ((GETPOST("main_force_https", 'alpha') && (GETPOST("main_force_https", 'alpha') == "on" || GETPOST("main_force_https", 'alpha') == 1)) ? '1' : '0');
 // Use alternative directory
@@ -335,12 +335,16 @@ if (!$error && $db->connected) {
 
 		$defaultCharacterSet = $db->forcecharset;
 		$defaultDBSortingCollation = $db->forcecollate;
-	} else // If already created, we take current value
-	{
+	} else { // If already created, we take current value
 		$defaultCharacterSet = $db->getDefaultCharacterSetDatabase();
 		$defaultDBSortingCollation = $db->getDefaultCollationDatabase();
 	}
 
+	// It seems some PHP driver mysqli does not support utf8mb3
+	if ($defaultCharacterSet == 'utf8mb3' || $defaultDBSortingCollation == 'utf8mb3_unicode_ci') {
+		$defaultCharacterSet = 'utf8';
+		$defaultDBSortingCollation = 'utf8_unicode_ci';
+	}
 	// Force to avoid utf8mb4 because index on field char 255 reach limit of 767 char for indexes (example with mysql 5.6.34 = mariadb 10.0.29)
 	// TODO Remove this when utf8mb4 is supported
 	if ($defaultCharacterSet == 'utf8mb4' || $defaultDBSortingCollation == 'utf8mb4_unicode_ci') {
@@ -578,8 +582,8 @@ if (!$error && $db->connected && $action == "set") {
 							print '<td><img src="../theme/eldy/img/tick.png" alt="Ok"></td></tr>';
 						} else {
 							if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS'
-							|| $db->errno() == 'DB_ERROR_KEY_NAME_ALREADY_EXISTS'
-							|| $db->errno() == 'DB_ERROR_USER_ALREADY_EXISTS') {
+								|| $db->errno() == 'DB_ERROR_KEY_NAME_ALREADY_EXISTS'
+								|| $db->errno() == 'DB_ERROR_USER_ALREADY_EXISTS') {
 								dolibarr_install_syslog("step1: user already exists");
 								print '<tr><td>';
 								print $langs->trans("UserCreation").' : ';
@@ -920,7 +924,7 @@ function write_conf_file($conffile)
 		fputs($fp, '$dolibarr_main_force_https=\''.$main_force_https.'\';');
 		fputs($fp, "\n");
 
-		fputs($fp, '$dolibarr_main_restrict_os_commands=\'mysqldump, mysql, pg_dump, pgrestore, clamdscan, clamscan.exe\';');
+		fputs($fp, '$dolibarr_main_restrict_os_commands=\'mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pgrestore, clamdscan, clamscan.exe\';');
 		fputs($fp, "\n");
 
 		fputs($fp, '$dolibarr_nocsrfcheck=\'0\';');
@@ -937,57 +941,68 @@ function write_conf_file($conffile)
 		// Write params to overwrites default lib path
 		fputs($fp, "\n");
 		if (empty($force_dolibarr_lib_FPDF_PATH)) {
-			fputs($fp, '//'); $force_dolibarr_lib_FPDF_PATH = '';
+			fputs($fp, '//');
+			$force_dolibarr_lib_FPDF_PATH = '';
 		}
 		fputs($fp, '$dolibarr_lib_FPDF_PATH=\''.$force_dolibarr_lib_FPDF_PATH.'\';');
 		fputs($fp, "\n");
 		if (empty($force_dolibarr_lib_TCPDF_PATH)) {
-			fputs($fp, '//'); $force_dolibarr_lib_TCPDF_PATH = '';
+			fputs($fp, '//');
+			$force_dolibarr_lib_TCPDF_PATH = '';
 		}
 		fputs($fp, '$dolibarr_lib_TCPDF_PATH=\''.$force_dolibarr_lib_TCPDF_PATH.'\';');
 		fputs($fp, "\n");
 		if (empty($force_dolibarr_lib_FPDI_PATH)) {
-			fputs($fp, '//'); $force_dolibarr_lib_FPDI_PATH = '';
+			fputs($fp, '//');
+			$force_dolibarr_lib_FPDI_PATH = '';
 		}
 		fputs($fp, '$dolibarr_lib_FPDI_PATH=\''.$force_dolibarr_lib_FPDI_PATH.'\';');
 		fputs($fp, "\n");
 		if (empty($force_dolibarr_lib_TCPDI_PATH)) {
-			fputs($fp, '//'); $force_dolibarr_lib_TCPDI_PATH = '';
+			fputs($fp, '//');
+			$force_dolibarr_lib_TCPDI_PATH = '';
 		}
 		fputs($fp, '$dolibarr_lib_TCPDI_PATH=\''.$force_dolibarr_lib_TCPDI_PATH.'\';');
 		fputs($fp, "\n");
 		if (empty($force_dolibarr_lib_GEOIP_PATH)) {
-			fputs($fp, '//'); $force_dolibarr_lib_GEOIP_PATH = '';
+			fputs($fp, '//');
+			$force_dolibarr_lib_GEOIP_PATH = '';
 		}
 		fputs($fp, '$dolibarr_lib_GEOIP_PATH=\''.$force_dolibarr_lib_GEOIP_PATH.'\';');
 		fputs($fp, "\n");
 		if (empty($force_dolibarr_lib_NUSOAP_PATH)) {
-			fputs($fp, '//'); $force_dolibarr_lib_NUSOAP_PATH = '';
+			fputs($fp, '//');
+			$force_dolibarr_lib_NUSOAP_PATH = '';
 		}
 		fputs($fp, '$dolibarr_lib_NUSOAP_PATH=\''.$force_dolibarr_lib_NUSOAP_PATH.'\';');
 		fputs($fp, "\n");
 		if (empty($force_dolibarr_lib_ODTPHP_PATH)) {
-			fputs($fp, '//'); $force_dolibarr_lib_ODTPHP_PATH = '';
+			fputs($fp, '//');
+			$force_dolibarr_lib_ODTPHP_PATH = '';
 		}
 		fputs($fp, '$dolibarr_lib_ODTPHP_PATH=\''.$force_dolibarr_lib_ODTPHP_PATH.'\';');
 		fputs($fp, "\n");
 		if (empty($force_dolibarr_lib_ODTPHP_PATHTOPCLZIP)) {
-			fputs($fp, '//'); $force_dolibarr_lib_ODTPHP_PATHTOPCLZIP = '';
+			fputs($fp, '//');
+			$force_dolibarr_lib_ODTPHP_PATHTOPCLZIP = '';
 		}
 		fputs($fp, '$dolibarr_lib_ODTPHP_PATHTOPCLZIP=\''.$force_dolibarr_lib_ODTPHP_PATHTOPCLZIP.'\';');
 		fputs($fp, "\n");
 		if (empty($force_dolibarr_js_CKEDITOR)) {
-			fputs($fp, '//'); $force_dolibarr_js_CKEDITOR = '';
+			fputs($fp, '//');
+			$force_dolibarr_js_CKEDITOR = '';
 		}
 		fputs($fp, '$dolibarr_js_CKEDITOR=\''.$force_dolibarr_js_CKEDITOR.'\';');
 		fputs($fp, "\n");
 		if (empty($force_dolibarr_js_JQUERY)) {
-			fputs($fp, '//'); $force_dolibarr_js_JQUERY = '';
+			fputs($fp, '//');
+			$force_dolibarr_js_JQUERY = '';
 		}
 		fputs($fp, '$dolibarr_js_JQUERY=\''.$force_dolibarr_js_JQUERY.'\';');
 		fputs($fp, "\n");
 		if (empty($force_dolibarr_js_JQUERY_UI)) {
-			fputs($fp, '//'); $force_dolibarr_js_JQUERY_UI = '';
+			fputs($fp, '//');
+			$force_dolibarr_js_JQUERY_UI = '';
 		}
 		fputs($fp, '$dolibarr_js_JQUERY_UI=\''.$force_dolibarr_js_JQUERY_UI.'\';');
 		fputs($fp, "\n");
@@ -995,12 +1010,14 @@ function write_conf_file($conffile)
 		// Write params to overwrites default font path
 		fputs($fp, "\n");
 		if (empty($force_dolibarr_font_DOL_DEFAULT_TTF)) {
-			fputs($fp, '//'); $force_dolibarr_font_DOL_DEFAULT_TTF = '';
+			fputs($fp, '//');
+			$force_dolibarr_font_DOL_DEFAULT_TTF = '';
 		}
 		fputs($fp, '$dolibarr_font_DOL_DEFAULT_TTF=\''.$force_dolibarr_font_DOL_DEFAULT_TTF.'\';');
 		fputs($fp, "\n");
 		if (empty($force_dolibarr_font_DOL_DEFAULT_TTF_BOLD)) {
-			fputs($fp, '//'); $force_dolibarr_font_DOL_DEFAULT_TTF_BOLD = '';
+			fputs($fp, '//');
+			$force_dolibarr_font_DOL_DEFAULT_TTF_BOLD = '';
 		}
 		fputs($fp, '$dolibarr_font_DOL_DEFAULT_TTF_BOLD=\''.$force_dolibarr_font_DOL_DEFAULT_TTF_BOLD.'\';');
 		fputs($fp, "\n");

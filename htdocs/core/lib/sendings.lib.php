@@ -54,7 +54,7 @@ function shipping_prepare_head($object)
 		$h++;
 	}
 
-	if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && $user->rights->expedition->delivery->lire) {
+	if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && $user->hasRight('expedition', 'delivery', 'lire')) {
 		// delivery link
 		$object->fetchObjectLinked($object->id, $object->element);
 		if (isset($object->linkedObjectsIds['delivery']) && is_array($object->linkedObjectsIds['delivery']) && count($object->linkedObjectsIds['delivery']) > 0) {        // If there is a delivery
@@ -68,7 +68,7 @@ function shipping_prepare_head($object)
 		}
 	}
 
-	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
+	if (!getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
 		$objectsrc = $object;
 		if ($object->origin == 'commande' && $object->origin_id > 0) {
 			$objectsrc = new Commande($db);
@@ -140,7 +140,7 @@ function delivery_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	if (getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && $user->rights->expedition->lire) {
+	if (getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && $user->hasRight('expedition', 'lire')) {
 		$head[$h][0] = DOL_URL_ROOT."/expedition/card.php?id=".$object->origin_id;
 		$head[$h][1] = $langs->trans("SendingCard");
 		$head[$h][2] = 'shipping';
@@ -169,7 +169,7 @@ function delivery_prepare_head($object)
 		$tmpobject = $object;
 	}
 
-	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
+	if (!getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
 		$objectsrc = $tmpobject;
 		if ($tmpobject->origin == 'commande' && $tmpobject->origin_id > 0) {
 			$objectsrc = new Commande($db);
@@ -228,8 +228,8 @@ function delivery_prepare_head($object)
  *
  * @param   string		$origin			Origin ('commande', ...)
  * @param	int			$origin_id		Origin id
- * @param	string		$filter			Filter
- * @return	int							<0 if KO, >0 if OK
+ * @param	string		$filter			Filter (Do not use a string from a user input)
+ * @return	int							Return integer <0 if KO, >0 if OK
  */
 function show_list_sending_receive($origin, $origin_id, $filter = '')
 {
@@ -242,14 +242,12 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 
 	$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.date_start, obj.date_end,";
 	$sql .= " ed.rowid as edrowid, ed.qty as qty_shipped, ed.fk_expedition as expedition_id, ed.fk_origin_line, ed.fk_entrepot as warehouse_id,";
-	$sql .= " e.rowid as sendingid, e.ref as exp_ref, e.date_creation, e.date_delivery, e.date_expedition,";
-	//if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) $sql .= " l.rowid as livraison_id, l.ref as livraison_ref, l.date_delivery, ld.qty as qty_received,";
+	$sql .= " e.rowid as sendingid, e.ref as exp_ref, e.date_creation, e.date_delivery, e.date_expedition, e.billed, e.fk_statut as status,";
 	$sql .= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, p.tobatch as product_tobatch,';
 	$sql .= ' p.description as product_desc';
-	$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
-	$sql .= ", ".MAIN_DB_PREFIX."expedition as e";
-	$sql .= ", ".MAIN_DB_PREFIX.$origin."det as obj";
-	//if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."delivery as l ON l.fk_expedition = e.rowid LEFT JOIN ".MAIN_DB_PREFIX."deliverydet as ld ON ld.fk_delivery = l.rowid  AND obj.rowid = ld.fk_origin_line";
+	$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed,";
+	$sql .= " ".MAIN_DB_PREFIX."expedition as e,";
+	$sql .= " ".MAIN_DB_PREFIX.$origin."det as obj";	// for example llx_commandedet
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON obj.fk_product = p.rowid";
 	//TODO Add link to expeditiondet_batch
 	$sql .= " WHERE e.entity IN (".getEntity('expedition').")";
@@ -259,8 +257,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 	if ($filter) {
 		$sql .= $filter;
 	}
-
-	$sql .= " ORDER BY obj.fk_product";
+	$sql .= " ORDER BY obj.rowid, obj.fk_product";
 
 	dol_syslog("show_list_sending_receive", LOG_DEBUG);
 	$resql = $db->query($sql);
@@ -302,17 +299,24 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
 
+				$expedition->id = $objp->expedition_id;
+				$expedition->ref = $objp->exp_ref;
+				$expedition->billed = $objp->billed;
+				$expedition->statut = $objp->status;
+				$expedition->status = $objp->status;
+
 				print '<tr class="oddeven">';
 
 				// Sending id
 				print '<td class="nowrap left">';
-				print '<a href="'.DOL_URL_ROOT.'/expedition/card.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"), 'sending').' '.$objp->exp_ref.'<a>';
+				print $expedition->getNomUrl(1);
+				//print '<a href="'.DOL_URL_ROOT.'/expedition/card.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"), 'sending').' '.$objp->exp_ref.'<a>';
 				print '</td>';
 
 				// Description
 				if ($objp->fk_product > 0) {
 					// Define output language
-					if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
 						$object = new $origin($db);
 						$object->fetch($origin_id);
 						$object->fetch_thirdparty();
@@ -346,6 +350,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 					$product_static->id = $objp->fk_product;
 					$product_static->ref = $objp->ref;
 					$product_static->status_batch = $objp->product_tobatch;
+
 					$text = $product_static->getNomUrl(1);
 					$text .= ' - '.$label;
 					$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($objp->description));
@@ -436,7 +441,6 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 				// Informations on receipt
 				if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
 					include_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';
-					$expedition->id = $objp->sendingid;
 					$expedition->fetchObjectLinked($expedition->id, $expedition->element);
 					//var_dump($expedition->linkedObjects);
 

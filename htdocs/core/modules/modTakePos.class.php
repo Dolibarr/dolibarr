@@ -25,6 +25,7 @@
  *  \brief      Description and activation file for the module TakePos
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 
 /**
@@ -217,12 +218,12 @@ class modTakePos extends DolibarrModules
 								'titre'=>'PointOfSaleShort',
 								'mainmenu'=>'takepos',
 								'leftmenu'=>'',
-								'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
+								'prefix' => img_picto('', $this->picto, 'class="pictofixedwidth"'),
 								'url'=>'/takepos/index.php',
 								'langs'=>'cashdesk', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>1000 + $r,
-								'enabled'=>'$conf->takepos->enabled', // Define condition to show or hide menu entry. Use '$conf->takepos->enabled' if entry must be visible if module is enabled.
-								'perms'=>'$user->rights->takepos->run', // Use 'perms'=>'$user->rights->takepos->level1->level2' if you want your menu with a permission rules
+								'enabled'=>'isModEnabled("takepos")', // Define condition to show or hide menu entry. Use '$conf->takepos->enabled' if entry must be visible if module is enabled.
+								'perms'=>'$user->hasRight("takepos", "run")', // Use 'perms'=>'$user->rights->takepos->level1->level2' if you want your menu with a permission rules
 								'target'=>'takepos',
 								'user'=>2); // 0=Menu for internal users, 1=external users, 2=both
 
@@ -266,9 +267,81 @@ class modTakePos extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf, $db;
+		global $conf, $langs, $user, $mysoc;
+		$langs->load("cashdesk");
 
-		dolibarr_set_const($db, "TAKEPOS_PRINT_METHOD", "browser", 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($this->db, "TAKEPOS_PRINT_METHOD", "browser", 'chaine', 0, '', $conf->entity);
+
+		// Default customer for Point of sale
+		if (!getDolGlobalInt('CASHDESK_ID_THIRDPARTY1')) {	// If a customer has already ben set into the TakePos setup page
+			$societe = new Societe($this->db);
+			$nametouse = $langs->trans("DefaultPOSThirdLabel");
+
+			$searchcompanyid = $societe->fetch(0, $nametouse);
+			if ($searchcompanyid == 0) {
+				$societe->name = $nametouse;
+				$societe->client = 1;
+				$societe->code_client = -1;
+				$societe->code_fournisseur = -1;
+				$societe->note_private = "Default customer automaticaly created by Point Of Sale module activation. Can be used as the default generic customer in the Point Of Sale setup. Can also be edited or removed if you don't need a generic customer.";
+
+				$searchcompanyid = $societe->create($user);
+			}
+			if ($searchcompanyid > 0) {
+				// We already have or we have create a thirdparty with id = $searchcompanyid, so we link use it into setup
+				dolibarr_set_const($this->db, "CASHDESK_ID_THIRDPARTY1", $searchcompanyid, 'chaine', 0, '', $conf->entity);
+			} else {
+				setEventMessages($societe->error, $societe->errors, 'errors');
+			}
+		}
+
+		//Create category if not exists
+		$categories = new Categorie($this->db);
+		$cate_arbo = $categories->get_full_arbo('product', 0, 1);
+		if (is_array($cate_arbo)) {
+			if (!count($cate_arbo)) {
+				$category = new Categorie($this->db);
+
+				$category->label = $langs->trans("DefaultPOSCatLabel");
+				$category->type = Categorie::TYPE_PRODUCT;
+
+				$result = $category->create($user);
+
+				if ($result > 0) {
+					/* TODO Create a generic product only if there is no product yet. If 0 product,  we create 1. If there is already product, it is better to show a message to ask to add product in the category */
+					/*
+					$product = new Product($this->db);
+					$product->status = 1;
+					$product->ref = "takepos";
+					$product->label = $langs->trans("DefaultPOSProductLabel");
+					$product->create($user);
+					$product->setCategories($result);
+					 */
+				} else {
+					setEventMessages($category->error, $category->errors, 'errors');
+				}
+			}
+		}
+
+		//Create cash account if not exists
+		if (!getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CASH1')) {
+			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+			$cashaccount = new Account($this->db);
+			$searchaccountid = $cashaccount->fetch(0, "CASH-POS");
+			if ($searchaccountid == 0) {
+				$cashaccount->ref = "CASH-POS";
+				$cashaccount->label = $langs->trans("DefaultCashPOSLabel");
+				$cashaccount->courant = 2;
+				$cashaccount->country_id = $mysoc->country_id ? $mysoc->country_id : 1;
+				$cashaccount->date_solde = dol_now();
+				$searchaccountid = $cashaccount->create($user);
+			}
+			if ($searchaccountid > 0) {
+				dolibarr_set_const($this->db, "CASHDESK_ID_BANKACCOUNT_CASH1", $searchaccountid, 'chaine', 0, '', $conf->entity);
+			} else {
+				setEventMessages($cashaccount->error, $cashaccount->errors, 'errors');
+			}
+		}
 
 		$result = $this->_load_tables('/install/mysql/', 'takepos');
 		if ($result < 0) {

@@ -31,9 +31,14 @@ Consumption=Consumption
 ValueOfMeansLoss=Value of 0.95 means an average of 5%% of loss during the manufacturing or the disassembly
 ValueOfMeansLossForProductProduced=Value of 0.95 means an average of 5%% of loss of produced product
 DeleteBillOfMaterials=Delete Bill Of Materials
+CancelMo=Cancel Manufacturing Order
+MoCancelConsumedAndProducedLines=Cancel also all the consumed and produced lines (delete lines and rollback stocks)
+ConfirmCancelMo=Are you sure you want to cancel this Manufacturing Order?
 DeleteMo=Delete Manufacturing Order
 ConfirmDeleteBillOfMaterials=Are you sure you want to delete this Bill Of Materials?
 ConfirmDeleteMo=Are you sure you want to delete this Manufacturing Order?
+DeleteMoChild = Delete the child MOs linked to this MO %s
+MoChildsDeleted = All child MOs have been deleted
 MenuMRP=Manufacturing Orders
 NewMO=New Manufacturing Order
 QtyToProduce=Qty to produce
@@ -60,6 +65,8 @@ ToProduce=To produce
 ToObtain=To obtain
 QtyAlreadyConsumed=Qty already consumed
 QtyAlreadyProduced=Qty already produced
+QtyAlreadyConsumedShort=Qty consumed
+QtyAlreadyProducedShort=Qty produced
 QtyRequiredIfNoLoss=Qty required to produce the quantity defined into the BOM if there is no loss (if the manufacturing efficiency is 100%%)
 ConsumeOrProduce=Consume or Produce
 ConsumeAndProduceAll=Consume and Produce All
@@ -123,3 +130,10 @@ Manufacturing=Manufacturing
 Disassemble=Disassemble
 ProducedBy=Produced by
 QtyTot=Qty Total
+
+QtyCantBeSplit= Quantity cannot be split
+NoRemainQtyToDispatch=No quantity remaining to divide
+
+THMOperatorEstimatedHelp=Estimated cost of operator per hour. Will be used to estimate cost of a BOM using this workstation.
+THMMachineEstimatedHelp=Estimated cost of machine per hour. Will be used to estimate cost of a BOM using this workstation.
+

@@ -17,9 +17,9 @@
  */
 
 /**
- *  \file       availabilities_note.php
- *  \ingroup    bookcal
- *  \brief      Tab for notes on Availabilities
+ *   \file       htdocs/bookcal/availabilities_note.php
+ *   \ingroup    bookcal
+ *   \brief      Tab for notes on Availabilities
  */
 
 // Load Dolibarr environment
@@ -70,8 +70,12 @@ if ($enablepermissioncheck) {
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (!isModEnabled('bookcal')) accessforbidden();
-if (!$permissiontoread) accessforbidden();
+if (!isModEnabled('bookcal')) {
+	accessforbidden();
+}
+if (!$permissiontoread) {
+	accessforbidden();
+}
 
 
 /*
@@ -148,7 +152,7 @@ if ($id > 0 || !empty($ref)) {
 	 }
 	 }
 	 }*/
-	 $morehtmlref .= '</div>';
+	$morehtmlref .= '</div>';
 
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);

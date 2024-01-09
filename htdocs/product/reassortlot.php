@@ -40,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'productbatch', 'categories'));
 
-$action     = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
+$action     = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'myobjectlist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
@@ -63,7 +63,7 @@ $sbarcode = GETPOST("sbarcode", 'int');
 $search_stock_physique = GETPOST('search_stock_physique', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -210,10 +210,10 @@ if (empty($reshook)) {
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
 		|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha')) {
-			$massaction = ''; // Protection to avoid mass action if we force a new search during a mass action confirmation
+		$massaction = ''; // Protection to avoid mass action if we force a new search during a mass action confirmation
 	}
 
-		// Mass actions
+	// Mass actions
 		/*$objectclass = 'MyObject';
 		$objectlabel = 'MyObject';
 		$uploaddir = $conf->mymodule->dir_output;
@@ -438,7 +438,7 @@ $num = $db->num_rows($resql);
 
 $i = 0;
 
-if ($num == 1 && GETPOST('autojumpifoneonly') && ($search_all or $snom or $sref)) {
+if ($num == 1 && GETPOST('autojumpifoneonly') && ($search_all || $snom || $sref)) {
 	$objp = $db->fetch_object($resql);
 	header("Location: card.php?id=$objp->rowid");
 	exit;
@@ -574,7 +574,7 @@ if (isModEnabled('categorie')) {
 	$moreforfilter .= '</div>';
 }
 
-$moreforfilter.='<label for="search_subjecttolotserial">'.$langs->trans("SubjectToLotSerialOnly").' </label><input type="checkbox" id="search_subjecttolotserial" name="search_subjecttolotserial" value="1"'.($search_subjecttolotserial?' checked':'').'>';
+$moreforfilter.='<label for="search_subjecttolotserial">'.$langs->trans("SubjectToLotSerialOnly").' </label><input type="checkbox" id="search_subjecttolotserial" name="search_subjecttolotserial" value="1"'.($search_subjecttolotserial ? ' checked' : '').'>';
 
 
 if (!empty($moreforfilter)) {
@@ -594,7 +594,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -614,7 +614,7 @@ if (isModEnabled("service") && $type == 1) {
 
 print '<td class="liste_titre"><input class="flat" type="text" name="search_warehouse" size="6" value="'.dol_escape_htmltag($search_warehouse).'"></td>';
 print '<td class="liste_titre center"><input class="flat" type="text" name="search_batch" size="6" value="'.dol_escape_htmltag($search_batch).'"></td>';
-if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 	print '<td class="liste_titre center">';
 	$key = 'sellby';
 	print '<div class="nowrap">';
@@ -625,7 +625,7 @@ if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 	print '</div>';
 	print '</td>';
 }
-if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 	print '<td class="liste_titre center">';
 	$key = 'eatby';
 	print '<div class="nowrap">';
@@ -647,7 +647,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -662,7 +662,7 @@ $totalarray['nbfield'] = 0;
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 // Action column
-if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print_liste_field_titre('');
 }
 print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref", '', $param, "", $sortfield, $sortorder);
@@ -673,10 +673,10 @@ if (isModEnabled("service") && $type == 1) {
 print_liste_field_titre("Warehouse", $_SERVER["PHP_SELF"], "e.ref", '', $param, "", $sortfield, $sortorder);
 //print_liste_field_titre("DesiredStock", $_SERVER["PHP_SELF"], "p.desiredstock",$param,"",'',$sortfield,$sortorder, 'right );
 print_liste_field_titre("Batch", $_SERVER["PHP_SELF"], "pb.batch", '', $param, "", $sortfield, $sortorder, 'center ');
-if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 	print_liste_field_titre("SellByDate", $_SERVER["PHP_SELF"], "pl.sellby", '', $param, "", $sortfield, $sortorder, 'center ');
 }
-if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 	print_liste_field_titre("EatByDate", $_SERVER["PHP_SELF"], "pl.eatby", '', $param, "", $sortfield, $sortorder, 'center ');
 }
 print_liste_field_titre("PhysicalStock", $_SERVER["PHP_SELF"], "stock_physique", '', $param, "", $sortfield, $sortorder, 'right ');
@@ -689,7 +689,7 @@ print_liste_field_titre("ProductStatusOnBuy", $_SERVER["PHP_SELF"], "p.tobuy", "
 $parameters = array('param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print_liste_field_titre('');
 }
 print "</tr>\n";
@@ -749,7 +749,7 @@ while ($i < $imaxinloop) {
 	print '<tr>';
 
 	// Action column
-	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td></td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -812,14 +812,14 @@ while ($i < $imaxinloop) {
 	}
 	print '</td>';
 
-	if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+	if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 		print '<td class="center">'.dol_print_date($db->jdate($objp->sellby), 'day').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 
-	if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+	if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 		print '<td class="center">'.dol_print_date($db->jdate($objp->eatby), 'day').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -830,15 +830,25 @@ while ($i < $imaxinloop) {
 	//if ($objp->seuil_stock_alerte && ($objp->stock_physique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
 	if (is_null($objp->stock_physique)) {
 		if (!empty($objp->reel)) {
-			if ($objp->reel < 0) { print '<span class="warning">'; }
+			if ($objp->reel < 0) {
+				print '<span class="warning">';
+			}
 			print price2num($objp->reel, 'MS');
-			if ($objp->reel < 0) { print '</span>'; }
+			if ($objp->reel < 0) {
+				print '</span>';
+			}
+			print($objp->stock_physique < 0 ? ' '.img_warning() : '');
 		}
 	} else {
 		if (!empty($objp->stock_physique)) {
-			if ($objp->stock_physique < 0) { print '<span class="warning">'; }
+			if ($objp->stock_physique < 0) {
+				print '<span class="warning">';
+			}
 			print price2num($objp->stock_physique, 'MS');
-			if ($objp->stock_physique < 0) { print '</span>'; }
+			if ($objp->stock_physique < 0) {
+				print '</span>';
+			}
+			print($objp->stock_physique < 0 ? ' '.img_warning() : (($objp->stock_physique > 1 && $objp->tobatch == 2) ? ' '.img_warning($langs->trans('IlligalQtyForSerialNumbers')) : ''));
 		}
 	}
 	print '</td>';
@@ -870,7 +880,7 @@ while ($i < $imaxinloop) {
 	print $hookmanager->resPrint;
 
 	// Action column
-	if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td></td>';
 		if (!$i) {
 			$totalarray['nbfield']++;

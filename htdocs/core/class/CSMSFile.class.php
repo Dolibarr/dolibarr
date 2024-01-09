@@ -36,9 +36,24 @@
 class CSMSFile
 {
 	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
+
+	/**
+	 * @var string[] Array of Error code (or message)
+	 */
+	public $errors = array();
+
+	/**
+	 * @var string end of line character
+	 */
+	public $eol;
 
 	public $addr_from;
 	public $addr_to;
@@ -53,6 +68,8 @@ class CSMSFile
 	public $member_id;
 
 	public $fk_project;
+
+	public $deliveryreceipt;
 
 
 	/**
@@ -80,12 +97,12 @@ class CSMSFile
 		}
 
 		// If ending method not defined
-		if (empty($conf->global->MAIN_SMS_SENDMODE)) {
+		if (!getDolGlobalString('MAIN_SMS_SENDMODE')) {
 			$this->error = 'No SMS Engine defined';
 			throw new Exception('No SMS Engine defined');
 		}
 
-		dol_syslog("CSMSFile::CSMSFile: MAIN_SMS_SENDMODE=".$conf->global->MAIN_SMS_SENDMODE." charset=".$conf->file->character_set_client." from=".$from.", to=".$to.", msg length=".strlen($msg), LOG_DEBUG);
+		dol_syslog("CSMSFile::CSMSFile: MAIN_SMS_SENDMODE=".getDolGlobalString('MAIN_SMS_SENDMODE')." charset=".$conf->file->character_set_client." from=".$from.", to=".$to.", msg length=".strlen($msg), LOG_DEBUG);
 		dol_syslog("CSMSFile::CSMSFile: deferred=".$deferred." priority=".$priority." class=".$class, LOG_DEBUG);
 
 		// Action according to choosed sending method
@@ -94,6 +111,7 @@ class CSMSFile
 		$this->deferred = $deferred;
 		$this->priority = $priority;
 		$this->class = $class;
+		$this->deliveryreceipt = $deliveryreceipt;
 		$this->message = $msg;
 		$this->nostop = false;
 	}
@@ -118,73 +136,57 @@ class CSMSFile
 
 		$this->message = stripslashes($this->message);
 
-		if (!empty($conf->global->MAIN_SMS_DEBUG)) {
+		if (getDolGlobalString('MAIN_SMS_DEBUG')) {
 			$this->dump_sms();
 		}
 
-		if (empty($conf->global->MAIN_DISABLE_ALL_SMS)) {
-			// Action according to choosed sending method
-			if ($conf->global->MAIN_SMS_SENDMODE == 'ovh') {    // Backward compatibility    @deprecated
-				dol_include_once('/ovh/class/ovhsms.class.php');
-				$sms = new OvhSms($this->db);
-				$sms->expe = $this->addr_from;
-				$sms->dest = $this->addr_to;
-				$sms->message = $this->message;
-				$sms->deferred = $this->deferred;
-				$sms->priority = $this->priority;
-				$sms->class = $this->class;
-				$sms->nostop = $this->nostop;
-
-				$sms->socid = $this->socid;
-				$sms->contact_id = $this->contact_id;
-				$sms->member_id = $this->member_id;
-				$sms->project = $this->fk_project;
-
-				$res = $sms->SmsSend();
-
-				if ($res <= 0) {
-					$this->error = $sms->error;
-					dol_syslog("CSMSFile::sendfile: sms send error=".$this->error, LOG_ERR);
-				} else {
-					dol_syslog("CSMSFile::sendfile: sms send success with id=".$res, LOG_DEBUG);
-					//var_dump($res);        // 1973128
-					if (!empty($conf->global->MAIN_SMS_DEBUG)) {
-						$this->dump_sms_result($res);
-					}
+		if (!getDolGlobalString('MAIN_DISABLE_ALL_SMS')) {
+			// Action according to the choosed sending method
+			if (getDolGlobalString('MAIN_SMS_SENDMODE')) {
+				$sendmode = getDolGlobalString('MAIN_SMS_SENDMODE');	// $conf->global->MAIN_SMS_SENDMODE looks like a value 'module'
+				$classmoduleofsender = getDolGlobalString('MAIN_MODULE_'.strtoupper($sendmode).'_SMS', $sendmode);	// $conf->global->MAIN_MODULE_XXX_SMS looks like a value 'class@module'
+				if ($classmoduleofsender == 'ovh') {
+					$classmoduleofsender = 'ovhsms@ovh';	// For backward compatibility
 				}
-			} elseif (!empty($conf->global->MAIN_SMS_SENDMODE)) {    // $conf->global->MAIN_SMS_SENDMODE looks like a value 'class@module'
-				$tmp = explode('@', $conf->global->MAIN_SMS_SENDMODE);
+
+				$tmp = explode('@', $classmoduleofsender);
 				$classfile = $tmp[0];
 				$module = (empty($tmp[1]) ? $tmp[0] : $tmp[1]);
-				dol_include_once('/'.$module.'/class/'.$classfile.'.class.php');
+				dol_include_once('/'.$module.'/class/'.strtolower($classfile).'.class.php');
 				try {
 					$classname = ucfirst($classfile);
-					$sms = new $classname($this->db);
-					$sms->expe = $this->addr_from;
-					$sms->dest = $this->addr_to;
-					$sms->deferred = $this->deferred;
-					$sms->priority = $this->priority;
-					$sms->class = $this->class;
-					$sms->message = $this->message;
-					$sms->nostop = $this->nostop;
+					if (class_exists($classname)) {
+						$sms = new $classname($this->db);
+						$sms->expe = $this->addr_from;
+						$sms->dest = $this->addr_to;
+						$sms->deferred = $this->deferred;
+						$sms->priority = $this->priority;
+						$sms->class = $this->class;
+						$sms->message = $this->message;
+						$sms->nostop = $this->nostop;
+						$sms->deliveryreceipt = $this->deliveryreceipt;
 
-					$sms->socid = $this->socid;
-					$sms->contact_id = $this->contact_id;
-					$sms->member_id = $this->member_id;
-					$sms->fk_project = $this->fk_project;
+						$sms->socid = $this->socid;
+						$sms->contact_id = $this->contact_id;
+						$sms->member_id = $this->member_id;
+						$sms->fk_project = $this->fk_project;
 
-					$res = $sms->SmsSend();
+						$res = $sms->SmsSend();
 
-					$this->error = $sms->error;
-					$this->errors = $sms->errors;
-					if ($res <= 0) {
-						dol_syslog("CSMSFile::sendfile: sms send error=".$this->error, LOG_ERR);
-					} else {
-						dol_syslog("CSMSFile::sendfile: sms send success with id=".$res, LOG_DEBUG);
-						//var_dump($res);        // 1973128
-						if (!empty($conf->global->MAIN_SMS_DEBUG)) {
-							$this->dump_sms_result($res);
+						$this->error = $sms->error;
+						$this->errors = $sms->errors;
+						if ($res <= 0) {
+							dol_syslog("CSMSFile::sendfile: sms send error=".$this->error, LOG_ERR);
+						} else {
+							dol_syslog("CSMSFile::sendfile: sms send success with id=".$res, LOG_DEBUG);
+							//var_dump($res);        // 1973128
+							if (getDolGlobalString('MAIN_SMS_DEBUG')) {
+								$this->dump_sms_result($res);
+							}
 						}
+					} else {
+						$sms = new stdClass();
+						$sms->error = 'The SMS manager "'.$classfile.'" defined into SMS setup MAIN_MODULE_'.strtoupper($sendmode).'_SMS is not found';
 					}
 				} catch (Exception $e) {
 					dol_print_error('', 'Error to get list of senders: '.$e->getMessage());
@@ -228,6 +230,7 @@ class CSMSFile
 			fputs($fp, "Class: ".$this->class."\n");
 			fputs($fp, "Deferred: ".$this->deferred."\n");
 			fputs($fp, "DisableStop: ".$this->nostop."\n");
+			fputs($fp, "DeliveryReceipt: ".$this->deliveryreceipt."\n");
 			fputs($fp, "Message:\n".$this->message);
 
 			fclose($fp);

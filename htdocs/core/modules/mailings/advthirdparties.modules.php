@@ -37,11 +37,6 @@ class mailing_advthirdparties extends MailingTargets
 	 */
 	public $picto = 'company';
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
 	public $enabled = 'isModEnabled("societe")';
 
 
@@ -64,7 +59,7 @@ class mailing_advthirdparties extends MailingTargets
 	 *    @param	array	$socid  		Array of id soc to add
 	 *    @param	int		$type_of_target	Defined in advtargetemailing.class.php
 	 *    @param	array	$contactid 		Array of contact id to add
-	 *    @return   int 					<0 if error, number of emails added if ok
+	 *    @return   int 					Return integer <0 if error, number of emails added if ok
 	 */
 	public function add_to_target_spec($mailing_id, $socid, $type_of_target, $contactid)
 	{

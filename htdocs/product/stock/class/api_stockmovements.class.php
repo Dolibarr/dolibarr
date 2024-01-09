@@ -57,10 +57,10 @@ class StockMovements extends DolibarrApi
 	 *
 	 * Return an array with stock movement informations
 	 *
-	 * @param 	int 	$id 			ID of movement
-	 * @return  Object              	Object with cleaned properties
+	 * @param	int		$id				ID of movement
+	 * @return  Object					Object with cleaned properties
 	 *
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	/*
 	public function get($id)
@@ -89,11 +89,12 @@ class StockMovements extends DolibarrApi
 	 * @param int		$limit		Limit for list
 	 * @param int		$page		Page number
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.product_id:=:1) and (t.date_creation:<:'20160101')"
+	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                Array of warehouse objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
 		global $conf;
 
@@ -136,16 +137,14 @@ class StockMovements extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$stockmovement_static = new MouvementStock($this->db);
 				if ($stockmovement_static->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($stockmovement_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($stockmovement_static), $properties);
 				}
 				$i++;
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieve stock movement list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No stock movement found');
-		}
+
 		return $obj_ret;
 	}
 
@@ -169,7 +168,7 @@ class StockMovements extends DolibarrApi
 	 * @param string $dlc Eat-by date. {@from body} {@type date}
 	 * @param string $dluo Sell-by date. {@from body} {@type date}
 	 * @param string $origin_type   Origin type (Element of source object, like 'project', 'inventory', ...)
-	 * @param string $origin_id     Origin id (Id of source object)
+	 * @param int $origin_id     Origin id (Id of source object)
 	 *
 	 * @return  int                         ID of stock movement
 	 * @throws RestException
