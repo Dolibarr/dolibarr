@@ -15,7 +15,7 @@
  * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018	    Philippe Grand	        <philippe.grand@atoo-net.com>
  * Copyright (C) 2019-2020  Josep Lluís Amador      <joseplluis@lliuretic.cat>
- * Copyright (C) 2019-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Open-Dsi         		<support@open-dsi.fr>
  * Copyright (C) 2022		ButterflyOfFire         <butterflyoffire+dolibarr@protonmail.com>
  * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
@@ -3313,7 +3313,7 @@ class Societe extends CommonObject
 	/**
 	 * Return Array of RIB
 	 *
-	 * @return     array|int        0 if KO, Array of CompanyBanckAccount if OK
+	 * @return    CompanyBankAccount[]|int        Return 0 if KO, Array of CompanyBankAccount if OK
 	 */
 	public function get_all_rib()
 	{
