@@ -504,7 +504,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= ' WHERE p.entity IN ('.getEntity('contact').')';
-if (!$user->hasRight('societe', 'client', 'voir')) { //restriction
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND (sc.fk_user = ".((int) $user->id)." OR p.fk_soc IS NULL)";
 }
 if (!empty($userid)) {    // propre au commercial

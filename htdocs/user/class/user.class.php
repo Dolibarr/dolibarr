@@ -816,6 +816,13 @@ class User extends CommonObject
 			return 0;
 		}
 
+		// Special case for external user
+		if (!empty($this->socid)) {
+			if ($module = 'societe' && $permlevel1 = 'client' && $permlevel2 == 'voir') {
+				return 0;	// An external user never has the permission ->societe->client->voir to see all thirdparties (always restricted to himself)
+			}
+		}
+
 		// For compatibility with bad naming permissions on permlevel1
 		if ($permlevel1 == 'propale') {
 			$permlevel1 = 'propal';
