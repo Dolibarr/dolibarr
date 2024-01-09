@@ -36,7 +36,7 @@ class FormAdmin
 
 	/**
 	 * @var string error message
- 	 */
+	 */
 	public $error;
 
 
