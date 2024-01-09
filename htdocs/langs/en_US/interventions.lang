@@ -77,3 +77,4 @@ InterventionSign=Set Signed
 SignIntervention=Sign intervention
 ConfirmSignIntervention=Are you sure you want to set this intervention as signed?
 InterStatusSigned=Signed
+InterventionSignedInDolibarr=Intervention %s signed
