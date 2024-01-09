@@ -29,7 +29,14 @@
  */
 class FormAdmin
 {
+	/**
+	 * @var DoliDB Database handler.
+	 */
 	public $db;
+
+	/**
+	 * @var string error message
+ 	 */
 	public $error;
 
 
@@ -273,6 +280,8 @@ class FormAdmin
 			print $val."\n"; // Show menu entry
 		}
 		print '</select>';
+
+		return;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
