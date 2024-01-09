@@ -902,7 +902,7 @@ if ($action == 'create') {
 
 	$object->date = dol_now();
 
-	$obj = $conf->global->FICHEINTER_ADDON;
+	$obj = getDolGlobalString('FICHEINTER_ADDON');
 	$obj = "mod_".$obj;
 
 	//$modFicheinter = new $obj;

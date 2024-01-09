@@ -103,7 +103,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 					// Check crypted password
 					$cryptType = '';
 					if (getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {
-						$cryptType = $conf->global->DATABASE_PWD_ENCRYPTED;
+						$cryptType = getDolGlobalString('DATABASE_PWD_ENCRYPTED');
 					}
 
 					// By default, we use default setup for encryption rule

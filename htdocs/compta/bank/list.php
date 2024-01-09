@@ -639,7 +639,7 @@ foreach ($accounts as $key => $type) {
 			}
 		}
 		//print $object->getKanbanView('', array('thirdparty'=>$object->thirdparty, 'selected' => $selected));
-		print $object->getKanbanView('', array('selected' => $selected));
+		print $objecttmp->getKanbanView('', array('selected' => $selected));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';

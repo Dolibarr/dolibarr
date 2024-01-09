@@ -464,7 +464,8 @@ if (empty($reshook)) {
 		}
 		$result = $object->update($user);
 		if ($result < 0) {
-			dol_print_error($db, $object->error);
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = 'editinvoicedate';
 		}
 	} elseif ($action == 'setdate_pointoftax' && $usercancreate) {
 		$object->fetch($id);
@@ -1723,7 +1724,8 @@ if (empty($reshook)) {
 										}
 									} else {
 										// Positive line
-										$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
+										// we keep first type from product if exist, otherwise we keep type from line (free line) and at last default Product
+										$product_type = $lines[$i]->product_type ?? ($lines[$i]->type ?? Product::TYPE_PRODUCT);
 
 										// Date start
 										$date_start = false;
@@ -3831,11 +3833,11 @@ if ($action == 'create') {
 			print '<tr class="retained-warranty-line" style="'.$rwStyle.'" ><td class="nowrap">'.$langs->trans('PaymentConditionsShortRetainedWarranty').'</td><td colspan="2">';
 			$retained_warranty_fk_cond_reglement = GETPOST('retained_warranty_fk_cond_reglement', 'int');
 			if (empty($retained_warranty_fk_cond_reglement)) {
-				$retained_warranty_fk_cond_reglement = $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID;
+				$retained_warranty_fk_cond_reglement = getDolGlobalString('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID');
 				if (!empty($objectsrc->retained_warranty_fk_cond_reglement)) { // use previous situation value
 					$retained_warranty_fk_cond_reglement = $objectsrc->retained_warranty_fk_cond_reglement;
 				} else {
-					$retained_warranty_fk_cond_reglement = $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID;
+					$retained_warranty_fk_cond_reglement = getDolGlobalString('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID');
 				}
 			}
 			print $form->getSelectConditionsPaiements($retained_warranty_fk_cond_reglement, 'retained_warranty_fk_cond_reglement', -1, 1);

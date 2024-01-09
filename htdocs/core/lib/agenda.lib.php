@@ -28,30 +28,29 @@
 /**
  * Show filter form in agenda view
  *
- * @param	Form	$form			Form object
- * @param	int		$canedit		Can edit filter fields
- * @param	int		$status			Status
- * @param 	int		$year			Year
- * @param 	int		$month			Month
- * @param 	int		$day			Day
- * @param 	int		$showbirthday	Show birthday
- * @param 	string	$filtera		Filter on create by user
- * @param 	string	$filtert		Filter on assigned to user
- * @param 	string	$filterd		Filter of done by user
- * @param 	int		$pid			Product id
- * @param 	int		$socid			Third party id
- * @param	string	$action			Action string
- * @param	array	$showextcals	Array with list of external calendars (used to show links to select calendar), or -1 to show no legend
+ * @param	Form			$form			Form object
+ * @param	int				$canedit		Can edit filter fields
+ * @param	int				$status			Status
+ * @param 	int				$year			Year
+ * @param 	int				$month			Month
+ * @param 	int				$day			Day
+ * @param 	int				$showbirthday	Show birthday
+ * @param 	string			$filtera		Filter on create by user
+ * @param 	string			$filtert		Filter on assigned to user
+ * @param 	string			$filterd		Filter of done by user
+ * @param 	int				$pid			Product id
+ * @param 	int				$socid			Third party id
+ * @param	string			$action			Action string
+ * @param	array			$showextcals	Array with list of external calendars (used to show links to select calendar), or -1 to show no legend
  * @param	string|array	$actioncode		Preselected value(s) of actioncode for filter on event type
- * @param	int		$usergroupid	Id of group to filter on users
- * @param	string	$excludetype	A type to exclude ('systemauto', 'system', '')
- * @param	int   	$resourceid	    Preselected value of resource for filter on resource
+ * @param	int				$usergroupid	Id of group to filter on users
+ * @param	string			$excludetype	A type to exclude ('systemauto', 'system', '')
+ * @param	int   			$resourceid	    Preselected value of resource for filter on resource
  * @return	void
  */
 function print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, $filtera, $filtert, $filterd, $pid, $socid, $action, $showextcals = array(), $actioncode = '', $usergroupid = '', $excludetype = '', $resourceid = 0)
 {
-	global $conf, $user, $langs, $db, $hookmanager;
-	global $begin_h, $end_h, $begin_d, $end_d;
+	global $user, $langs, $db, $hookmanager;
 	global $massaction;
 
 	$langs->load("companies");
@@ -162,12 +161,12 @@ function show_array_actions_to_do($max = 5)
 	$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a LEFT JOIN ";
 	$sql .= " ".MAIN_DB_PREFIX."c_actioncomm as c ON c.id = a.fk_action";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
 	$sql .= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep2 > '".$db->idate($now)."'))";
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
@@ -278,12 +277,12 @@ function show_array_last_actions_done($max = 5)
 	$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a LEFT JOIN ";
 	$sql .= " ".MAIN_DB_PREFIX."c_actioncomm as c ON c.id = a.fk_action ";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
 	$sql .= " AND (a.percent >= 100 OR (a.percent = -1 AND a.datep2 <= '".$db->idate($now)."'))";
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {

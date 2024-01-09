@@ -936,7 +936,7 @@ class StockTransferLine extends CommonObjectLine
 			$mybool = false;
 
 			$file = getDolGlobalString('STOCKTRANSFER_STOCKTRANSFERLINE_ADDON') . ".php";
-			$classname = $conf->global->STOCKTRANSFER_STOCKTRANSFERLINE_ADDON;
+			$classname = getDolGlobalString('STOCKTRANSFER_STOCKTRANSFERLINE_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -999,7 +999,7 @@ class StockTransferLine extends CommonObjectLine
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('STOCKTRANSFERLINE_ADDON_PDF')) {
-				$modele = $conf->global->STOCKTRANSFERLINE_ADDON_PDF;
+				$modele = getDolGlobalString('STOCKTRANSFERLINE_ADDON_PDF');
 			}
 		}
 

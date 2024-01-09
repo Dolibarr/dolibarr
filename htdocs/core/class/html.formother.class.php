@@ -1364,7 +1364,7 @@ class FormOther
 			// Define $box_max_lines
 			$box_max_lines = 5;
 			if (getDolGlobalString('MAIN_BOXES_MAXLINES')) {
-				$box_max_lines = $conf->global->MAIN_BOXES_MAXLINES;
+				$box_max_lines = getDolGlobalString('MAIN_BOXES_MAXLINES');
 			}
 
 			$ii = 0;

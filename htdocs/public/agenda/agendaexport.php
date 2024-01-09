@@ -131,7 +131,7 @@ if (GETPOST("actiontype", 'alpha')) {
 if (GETPOST("notolderthan", 'int')) {
 	$filters['notolderthan'] = GETPOST("notolderthan", "int");
 } else {
-	$filters['notolderthan'] = $conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY;
+	$filters['notolderthan'] = getDolGlobalString('MAIN_AGENDA_EXPORT_PAST_DELAY');
 }
 if (GETPOST("module", 'alpha')) {
 	$filters['module'] = GETPOST("module", 'alpha');
@@ -250,7 +250,7 @@ $agenda = new ActionComm($db);
 
 $cachedelay = 0;
 if (getDolGlobalString('MAIN_AGENDA_EXPORT_CACHE')) {
-	$cachedelay = $conf->global->MAIN_AGENDA_EXPORT_CACHE;
+	$cachedelay = getDolGlobalString('MAIN_AGENDA_EXPORT_CACHE');
 }
 
 $exportholidays = GETPOST('includeholidays', 'int');

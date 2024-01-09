@@ -2076,7 +2076,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					} else {
 						$fk_barcode_type = $object->barcode_type;
 						if (empty($fk_barcode_type) && getDolGlobalString('PRODUIT_DEFAULT_BARCODE_TYPE')) {
-							$fk_barcode_type = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
+							$fk_barcode_type = getDolGlobalString('PRODUIT_DEFAULT_BARCODE_TYPE');
 						}
 					}
 					require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';

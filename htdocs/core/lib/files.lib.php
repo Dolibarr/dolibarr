@@ -690,7 +690,7 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask 
 		return -3;
 	}
 	if (empty($newmask) && getDolGlobalString('MAIN_UMASK')) {
-		$newmask = $conf->global->MAIN_UMASK;
+		$newmask = getDolGlobalString('MAIN_UMASK');
 	}
 	if (empty($newmask)) {	// This should no happen
 		dol_syslog("Warning: dolReplaceInFile called with empty value for newmask and no default value defined", LOG_WARNING);
@@ -761,7 +761,7 @@ function dol_copy($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $te
 		return -3;
 	}
 	if (empty($newmask) && getDolGlobalString('MAIN_UMASK')) {
-		$newmask = $conf->global->MAIN_UMASK;
+		$newmask = getDolGlobalString('MAIN_UMASK');
 	}
 	if (empty($newmask)) {	// This should no happen
 		dol_syslog("Warning: dol_copy called with empty value for newmask and no default value defined", LOG_WARNING);
@@ -2509,7 +2509,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 				$zip->close();
 
 				if (empty($newmask) && getDolGlobalString('MAIN_UMASK')) {
-					$newmask = $conf->global->MAIN_UMASK;
+					$newmask = getDolGlobalString('MAIN_UMASK');
 				}
 				if (empty($newmask)) {	// This should no happen
 					dol_syslog("Warning: dol_copy called with empty value for newmask and no default value defined", LOG_WARNING);
