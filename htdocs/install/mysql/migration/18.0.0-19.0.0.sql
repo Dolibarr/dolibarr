@@ -203,4 +203,3 @@ ALTER TABLE llx_expensereport DROP INDEX idx_expensereport_fk_refuse, ADD INDEX 
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (1,'66','Société publique locale');
 
 ALTER TABLE llx_prelevement_lignes ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
-
