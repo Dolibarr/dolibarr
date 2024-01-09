@@ -40,4 +40,4 @@ CREATE TABLE llx_product_thirdparty
     import_key                          varchar(14),
     model_pdf                           varchar(255),
     status                              integer DEFAULT 1 NOT NULL
-) ENGINE = innodb;
+) ENGINE=innodb;
