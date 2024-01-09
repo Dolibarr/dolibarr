@@ -158,3 +158,6 @@ ALTER TABLE llx_user_extrafields DROP INDEX idx_user_extrafields;
 ALTER TABLE llx_user_extrafields ADD UNIQUE INDEX uk_user_extrafields (fk_object);
 ALTER TABLE llx_usergroup_extrafields DROP INDEX idx_usergroup_extrafields;
 ALTER TABLE llx_usergroup_extrafields ADD UNIQUE INDEX uk_usergroup_extrafields (fk_object);
+
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_SIGN','Intervention is signed','Executed when a intervention is signed','ficheinter',31);
+

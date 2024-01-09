@@ -723,7 +723,7 @@ class Fichinter extends CommonObject
 			if ($this->db->query($sql)) {
 				if (!$notrigger) {
 					// Call trigger
-					$result = $this->call_trigger('FICHINTER_SIGN', $user); // TODO add new trigger
+					$result = $this->call_trigger('FICHINTER_SIGN', $user);
 					if ($result < 0) {
 						$error++;
 					}
