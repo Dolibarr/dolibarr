@@ -64,7 +64,7 @@ class CUnits extends CommonDict
 	 *
 	 *  @param      User	$user        User that create
 	 *  @param      int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return     int      		   	 <0 if KO, Id of created object if OK
+	 *  @return     int      		   	 Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -149,7 +149,7 @@ class CUnits extends CommonDict
 	 *  @param		string	$code			Code
 	 *  @param		string	$short_label	Short Label ('g', 'kg', ...)
 	 *  @param		string	$unit_type		Unit type ('size', 'surface', 'volume', 'weight', ...)
-	 *  @return     int						<0 if KO, >0 if OK
+	 *  @return     int						Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $code = '', $short_label = '', $unit_type = '')
 	{
@@ -292,7 +292,7 @@ class CUnits extends CommonDict
 	 *
 	 *  @param      User	$user        User that modify
 	 *  @param      int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return     int     		   	 <0 if KO, >0 if OK
+	 *  @return     int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -364,7 +364,7 @@ class CUnits extends CommonDict
 	 *
 	 *	@param  User	$user        User that delete
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 <0 if KO, >0 if OK
+	 *  @return	int					 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -402,11 +402,10 @@ class CUnits extends CommonDict
 	 * @param string $code code of unit
 	 * @param string $mode 0= id , short_label=Use short label as value, code=use code
 	 * @param string $unit_type weight,size,surface,volume,qty,time...
-	 * @return int            <0 if KO, Id of code if OK
+	 * @return int            Return integer <0 if KO, Id of code if OK
 	 */
 	public function getUnitFromCode($code, $mode = 'code', $unit_type = '')
 	{
-
 		if ($mode == 'short_label') {
 			return dol_getIdFromCode($this->db, $code, 'c_units', 'short_label', 'rowid', 0, " AND unit_type = '".$this->db->escape($unit_type)."'");
 		} elseif ($mode == 'code') {
@@ -425,7 +424,7 @@ class CUnits extends CommonDict
 	 */
 	public function unitConverter($value, $fk_unit, $fk_new_unit = 0)
 	{
-		$value = floatval(price2num($value));
+		$value = (float) price2num($value);
 		$fk_unit = intval($fk_unit);
 
 		// Calcul en unité de base
@@ -464,10 +463,10 @@ class CUnits extends CommonDict
 				// TODO : if base exists in unit dictionary table, remove this convertion exception and update convertion infos in database.
 				// Example time hour currently scale 3600 will become scale 2 base 60
 				if ($unit->unit_type == 'time') {
-					return floatval($unit->scale);
+					return (float) $unit->scale;
 				}
 
-				return pow($base, floatval($unit->scale));
+				return pow($base, (float) $unit->scale);
 			}
 		}
 

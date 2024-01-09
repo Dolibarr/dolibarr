@@ -175,8 +175,8 @@ jQuery(function($){
 		dayNamesMin: tradDaysMin,
 		weekHeader: '<?php echo $langs->trans("Week"); ?>',
 		dateFormat: '<?php echo $langs->trans("FormatDateShortJQuery"); ?>',	/* Note dd/mm/yy means year on 4 digit in jquery format */
-		firstDay: <?php echo (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : '1'); ?>,
-		isRTL: <?php echo ($langs->trans("DIRECTION") == 'rtl' ? 'true' : 'false'); ?>,
+		firstDay: <?php echo(isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : '1'); ?>,
+		isRTL: <?php echo($langs->trans("DIRECTION") == 'rtl' ? 'true' : 'false'); ?>,
 		showMonthAfterYear: false,  	/* TODO add specific to country	*/
 		 yearSuffix: ''			/* TODO add specific to country */
 	};
@@ -1277,7 +1277,7 @@ function price2numjs(amount) {
 
 
 <?php
-if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && !defined('DISABLE_JQUERY_JNOTIFY')) {
+if (!getDolGlobalString('MAIN_DISABLE_JQUERY_JNOTIFY') && !defined('DISABLE_JQUERY_JNOTIFY')) {
 	?>
 // Defined properties for JNotify
 $(document).ready(function() {
@@ -1300,7 +1300,10 @@ $(document).ready(function() {
 		});
 	}
 });
-<?php } ?>
+	<?php
+} ?>
+
+
 
 jQuery(document).ready(function() {
 	// Force to hide menus when page is inside an iFrame so we can show any page into a dialog popup
@@ -1317,6 +1320,25 @@ jQuery(document).ready(function() {
 });
 
 
+jQuery(document).ready(function() {
+	jQuery(".butAction.dropdown-toggle").on("click", function(event) {
+		console.log("Click on .butAction.dropdown-toggle");
+		var parentholder = jQuery(".butAction.dropdown-toggle").closest(".dropdown");
+			 var offset = parentholder.offset();
+		var widthdocument = $(document).width();
+		var left = offset.left;
+		var right = widthdocument - offset.left - parentholder.width();
+		var widthpopup = parentholder.children(".dropdown-content").width();
+		console.log("left="+left+" right="+right+" width="+widthpopup+" widthdocument="+widthdocument);
+		if (widthpopup + right >= widthdocument) {
+			right = 10;
+		}
+		parentholder.toggleClass("open");
+		parentholder.children(".dropdown-content").css({"right": right+"px", "left": "auto"});
+	});
+});
+
+
 /*
  * Hacky fix for a bug in select2 with jQuery 3.6.0's new nested-focus "protection"
  * see: https://github.com/select2/select2/issues/5993
@@ -1326,7 +1348,7 @@ jQuery(document).ready(function() {
  */
 
 <?php
-if (empty($conf->global->MAIN_DISABLE_SELECT2_FOCUS_PROTECTION) && !defined('DISABLE_SELECT2_FOCUS_PROTECTION')) {
+if (!getDolGlobalString('MAIN_DISABLE_SELECT2_FOCUS_PROTECTION') && !defined('DISABLE_SELECT2_FOCUS_PROTECTION')) {
 	?>
 $(document).on('select2:open', (e) => {
 	console.log("Execute the focus (click on combo or use space when on component");

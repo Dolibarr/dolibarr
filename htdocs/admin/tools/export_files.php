@@ -59,7 +59,7 @@ if ($page < 0) {
 } elseif (empty($page)) {
 	$page = 0;
 }
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
 
 if (!$user->admin) {

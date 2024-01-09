@@ -146,7 +146,7 @@ class MenuManager
 		require_once DOL_DOCUMENT_ROOT.'/core/class/menu.class.php';
 		$this->menu = new Menu();
 
-		if (empty($conf->global->MAIN_MENU_INVERT)) {
+		if (!getDolGlobalString('MAIN_MENU_INVERT')) {
 			if ($mode == 'top') {
 				print_auguria_menu($this->db, $this->atarget, $this->type_user, $this->tabMenu, $this->menu, 0, $mode);
 			}
@@ -174,6 +174,7 @@ class MenuManager
 			// $this->menu->liste is top menu
 			//var_dump($this->menu->liste);exit;
 			$lastlevel = array();
+			$showmenu = true;  // Is current menu shown - define here to keep static code checker happy
 			print '<!-- Generate menu list from menu handler '.$this->name.' -->'."\n";
 			foreach ($this->menu->liste as $key => $val) {		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
 				print '<ul class="ulmenu" data-inset="true">';
@@ -248,7 +249,7 @@ class MenuManager
 					$lastlevel2 = array();
 					foreach ($submenu->liste as $key2 => $val2) {		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
 						$showmenu = true;
-						if (!empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED) && empty($val2['enabled'])) {
+						if (getDolGlobalString('MAIN_MENU_HIDE_UNAUTHORIZED') && empty($val2['enabled'])) {
 							$showmenu = false;
 						}
 

@@ -182,5 +182,5 @@ WarningLimitSendByDay=ADVERTENCIA: a configuración ou o contrato da súa instan
 NoMoreRecipientToSendTo=Non hai máis destinatarios aos que enviar o correo electrónico
 EmailOptedOut=O propietario do correo electrónico solicitou que non se poña en contacto con el neste correo electrónico nunca mais
 EvenUnsubscribe=Incluír correos electrónicos excluidos
-EvenUnsubscribeDesc=Incluír correos electrónicos excluidos cando seleccione correos electrónicos como obxectivos. Útil para correos electrónicos de servizo obrigatorio, por exemplo.
+EvenUnsubscribeDesc=Incluír correos electrónicos excluidos cando seleccione correos electrónicos como destinos. Útil para correos electrónicos de servizo obrigatorio, por exemplo.
 XEmailsDoneYActionsDone=Correos electrónicos %s precalificados, correos electrónicos %s procesados correctamente (para %s rexistro/accións realizadas)

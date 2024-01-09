@@ -74,8 +74,13 @@ $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_en
 $search_country = GETPOST('search_country', 'alpha');
 $search_tvaintra = GETPOST('search_tvaintra', 'alpha');
 
+// Define begin binding date
+if (empty($search_date_start) && getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
+	$search_date_start = $db->idate(getDolGlobalString('ACCOUNTING_DATE_START_BINDING'));
+}
+
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : (!getDolGlobalString('ACCOUNTING_LIMIT_LIST_VENTILATION') ? $conf->liste_limit : $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : getDolGlobalString('ACCOUNTING_LIMIT_LIST_VENTILATION', $conf->liste_limit);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -89,7 +94,7 @@ if (!$sortfield) {
 	$sortfield = "f.datef, f.ref, l.rowid";
 }
 if (!$sortorder) {
-	if ($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO > 0) {
+	if (getDolGlobalInt('ACCOUNTING_LIST_SORT_VENTILATION_TODO') > 0) {
 		$sortorder = "DESC";
 	} else {
 		$sortorder = "ASC";
@@ -121,7 +126,8 @@ if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
@@ -281,10 +287,6 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa4 ON " . $alias_so
 
 $sql .= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
 $sql .= " AND l.product_type <= 2";
-// Define begin binding date
-if (getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
-	$sql .= " AND f.datef >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
-}
 // Add search filter like
 if ($search_societe) {
 	$sql .= natural_search('s.nom', $search_societe);
@@ -489,10 +491,10 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth25" name="search_lineid" value="'.dol_escape_htmltag($search_lineid).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_invoice" value="'.dol_escape_htmltag($search_invoice).'"></td>';
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td>';
@@ -658,7 +660,7 @@ if ($result) {
 		// Description of line
 		print '<td class="tdoverflowonsmartphone small">';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($facture_static_det->desc, 1));
-		$trunclength = !getDolGlobalString('ACCOUNTING_LENGTH_DESCRIPTION') ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
+		$trunclength = getDolGlobalInt('ACCOUNTING_LENGTH_DESCRIPTION', 32);
 		print $form->textwithtooltip(dol_trunc($text, $trunclength), $facture_static_det->desc);
 		print '</td>';
 
@@ -693,7 +695,7 @@ if ($result) {
 		if ($product_static->tva_tx !== $facture_static_det->tva_tx && price2num($product_static->tva_tx) && price2num($facture_static_det->tva_tx)) {	// Note: having a vat rate of 0 is often the normal case when sells is intra b2b or to export
 			$code_vat_differ = 'warning bold';
 		}
-		print '<td class="right'.($code_vat_differ?' '.$code_vat_differ:'').'">';
+		print '<td class="right'.($code_vat_differ ? ' '.$code_vat_differ : '').'">';
 		print vatrate($facture_static_det->tva_tx.($facture_static_det->vat_src_code ? ' ('.$facture_static_det->vat_src_code.')' : ''));
 		print '</td>';
 
@@ -713,7 +715,8 @@ if ($result) {
 		print '<td class="small">';
 		// First show default account for any products
 		$s = '1. '.(($facture_static_det->product_type == 1) ? $langs->trans("DefaultForService") : $langs->trans("DefaultForProduct")).': ';
-		$shelp = ''; $ttype = 'help';
+		$shelp = '';
+		$ttype = 'help';
 		if ($suggestedaccountingaccountbydefaultfor == 'eec') {
 			$shelp .= $langs->trans("SaleEEC");
 		} elseif ($suggestedaccountingaccountbydefaultfor == 'eecwithvat') {
@@ -730,7 +733,8 @@ if ($result) {
 		if ($product_static->id > 0) {
 			print '<br>';
 			$s = '2. '.(($facture_static_det->product_type == 1) ? $langs->trans("ThisService") : $langs->trans("ThisProduct")).': ';
-			$shelp = ''; $ttype = 'help';
+			$shelp = '';
+			$ttype = 'help';
 			if ($suggestedaccountingaccountfor == 'eec') {
 				$shelp = $langs->trans("SaleEEC");
 			} elseif ($suggestedaccountingaccountfor == 'eecwithvat') {

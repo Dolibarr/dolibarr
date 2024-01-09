@@ -113,6 +113,17 @@ class Don extends CommonObject
 	public $phone;
 	public $phone_mobile;
 
+
+	/**
+	 * @var string
+	 */
+	public $mode_reglement;
+
+	/**
+	 * @var string
+	 */
+	public $mode_reglement_code;
+
 	/**
 	 * @var int 0 or 1
 	 */
@@ -163,7 +174,7 @@ class Don extends CommonObject
 	 */
 	public function __construct($db)
 	{
-		 $this->db = $db;
+		$this->db = $db;
 	}
 
 
@@ -353,7 +364,7 @@ class Don extends CommonObject
 	 *
 	 * @param	User	$user		User who created the donation
 	 * @param	int		$notrigger	Disable triggers
-	 * @return  int  		        <0 if KO, id of created donation if OK
+	 * @return  int  		        Return integer <0 if KO, id of created donation if OK
 	 * TODO    add numbering module for Ref
 	 */
 	public function create($user, $notrigger = 0)
@@ -561,7 +572,7 @@ class Don extends CommonObject
 	 *
 	 *    @param       User		$user            User
 	 *    @param       int		$notrigger       Disable triggers
-	 *    @return      int       			      <0 if KO, 0 if not possible, >0 if OK
+	 *    @return      int       			      Return integer <0 if KO, 0 if not possible, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -623,13 +634,13 @@ class Don extends CommonObject
 	 *
 	 *      @param      int		$id      Id of donation to load
 	 *      @param      string	$ref        Ref of donation to load
-	 *      @return     int      			<0 if KO, >0 if OK
+	 *      @return     int      			Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $ref = '')
 	{
 		$sql = "SELECT d.rowid, d.datec, d.date_valid, d.tms as datem, d.datedon,";
-		$sql .= " d.fk_soc as socid,d.firstname, d.lastname, d.societe, d.amount, d.fk_statut, d.address, d.zip, d.town, ";
-		$sql .= " d.fk_country, d.country as country_olddata, d.public, d.amount, d.fk_payment, d.paid, d.note_private, d.note_public, d.email, d.phone, ";
+		$sql .= " d.fk_soc as socid, d.firstname, d.lastname, d.societe, d.amount, d.fk_statut as status, d.address, d.zip, d.town, ";
+		$sql .= " d.fk_country, d.public, d.amount, d.fk_payment, d.paid, d.note_private, d.note_public, d.email, d.phone, ";
 		$sql .= " d.phone_mobile, d.fk_projet as fk_project, d.model_pdf,";
 		$sql .= " p.ref as project_ref,";
 		$sql .= " cp.libelle as payment_label, cp.code as payment_code,";
@@ -664,14 +675,14 @@ class Don extends CommonObject
 				$this->firstname          = $obj->firstname;
 				$this->lastname           = $obj->lastname;
 				$this->societe            = $obj->societe;
-				$this->statut             = $obj->fk_statut;
+				$this->status             = $obj->status;
+				$this->statut             = $obj->status;
 				$this->address            = $obj->address;
 				$this->zip                = $obj->zip;
 				$this->town               = $obj->town;
 				$this->country_id         = $obj->fk_country;
 				$this->country_code       = $obj->country_code;
 				$this->country            = $obj->country;
-				$this->country_olddata    = $obj->country_olddata; // deprecated
 				$this->email              = $obj->email;
 				$this->phone              = $obj->phone;
 				$this->phone_mobile       = $obj->phone_mobile;
@@ -704,7 +715,7 @@ class Don extends CommonObject
 	 *
 	 *	@param		User		$user		User that validate
 	 *  @param		int			$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setValid($user, $notrigger = 0)
 	{
@@ -718,7 +729,7 @@ class Don extends CommonObject
 	 *    @param	int		$id   		id of donation
 	 *    @param  	int		$userid  	User who validate the donation/promise
 	 *    @param	int		$notrigger	Disable triggers
-	 *    @return   int     			<0 if KO, >0 if OK
+	 *    @return   int     			Return integer <0 if KO, >0 if OK
 	 */
 	public function valid_promesse($id, $userid, $notrigger = 0)
 	{
@@ -763,7 +774,7 @@ class Don extends CommonObject
 	 *
 	 *    @param	int		$id           	    id of donation
 	 *    @param    int		$modepayment   	    mode of payment
-	 *    @return   int      					<0 if KO, >0 if OK
+	 *    @return   int      					Return integer <0 if KO, >0 if OK
 	 */
 	public function setPaid($id, $modepayment = 0)
 	{
@@ -793,7 +804,7 @@ class Don extends CommonObject
 	 *    Set donation to status cancelled
 	 *
 	 *    @param	int		$id   	    id of donation
-	 *    @return   int     			<0 if KO, >0 if OK
+	 *    @return   int     			Return integer <0 if KO, >0 if OK
 	 */
 	public function set_cancel($id)
 	{
@@ -819,7 +830,7 @@ class Don extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function reopen($user, $notrigger = 0)
 	{
@@ -870,7 +881,7 @@ class Don extends CommonObject
 	/**
 	 *	Charge indicateurs this->nb pour le tableau de bord
 	 *
-	 *	@return     int         <0 if KO, >0 if OK
+	 *	@return     int         Return integer <0 if KO, >0 if OK
 	 */
 	public function load_state_board()
 	{
@@ -1013,8 +1024,8 @@ class Don extends CommonObject
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->DON_ADDON_MODEL)) {
-				$modele = $conf->global->DON_ADDON_MODEL;
+			} elseif (getDolGlobalString('DON_ADDON_MODEL')) {
+				$modele = getDolGlobalString('DON_ADDON_MODEL');
 			}
 		}
 
@@ -1039,7 +1050,9 @@ class Don extends CommonObject
 		}
 
 		// Search template files
-		$file = ''; $classname = ''; $filefound = 0;
+		$file = '';
+		$classname = '';
+		$filefound = 0;
 		$dirmodels = array('/');
 		if (is_array($conf->modules_parts['models'])) {
 			$dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
@@ -1112,7 +1125,7 @@ class Don extends CommonObject
 	/**
 	 * Function to get reamain to pay for a donation
 	 *
-	 * @return   int      					<0 if KO, > reamain to pay if  OK
+	 * @return   int      					Return integer <0 if KO, > reamain to pay if  OK
 	 */
 	public function getRemainToPay()
 	{
@@ -1136,7 +1149,7 @@ class Don extends CommonObject
 		}
 	}
 
-		/**
+	/**
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)

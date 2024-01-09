@@ -41,7 +41,6 @@ if (isModEnabled('workstation')) {
  */
 class BOM extends CommonObject
 {
-
 	/**
 	 * @var string ID of module.
 	 */
@@ -269,7 +268,7 @@ class BOM extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -298,7 +297,7 @@ class BOM extends CommonObject
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -405,7 +404,7 @@ class BOM extends CommonObject
 	 *
 	 * @param int    $id   Id object
 	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -422,7 +421,7 @@ class BOM extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchLines()
 	{
@@ -437,7 +436,7 @@ class BOM extends CommonObject
 	 *
 	 * 	@param int    $typeproduct   0 type product, 1 type service
 
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchLinesbytypeproduct($typeproduct = 0)
 	{
@@ -563,7 +562,7 @@ class BOM extends CommonObject
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
@@ -579,7 +578,7 @@ class BOM extends CommonObject
 	 *
 	 * @param User $user       User that deletes
 	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
@@ -601,9 +600,9 @@ class BOM extends CommonObject
 	 * @param	string	$fk_unit				Unit
 	 * @param	array	$array_options			extrafields array
 	 * @param	int		$fk_default_workstation	Default workstation
-	 * @return	int								<0 if KO, Id of created object if OK
+	 * @return	int								Return integer <0 if KO, Id of created object if OK
 	 */
-	public function addLine($fk_product, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $fk_bom_child = null, $import_key = null, $fk_unit = '', $array_options = 0, $fk_default_workstation = null)
+	public function addLine($fk_product, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $fk_bom_child = null, $import_key = null, $fk_unit = '', $array_options = array(), $fk_default_workstation = null)
 	{
 		global $mysoc, $conf, $langs, $user;
 
@@ -709,9 +708,9 @@ class BOM extends CommonObject
 	 * @param	int		$fk_unit				Unit of line
 	 * @param	array	$array_options			extrafields array
 	 * @param	int		$fk_default_workstation	Default workstation
-	 * @return	int								<0 if KO, Id of updated BOM-Line if OK
+	 * @return	int								Return integer <0 if KO, Id of updated BOM-Line if OK
 	 */
-	public function updateLine($rowid, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $import_key = null, $fk_unit = 0, $array_options = 0, $fk_default_workstation = null)
+	public function updateLine($rowid, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $import_key = null, $fk_unit = 0, $array_options = array(), $fk_default_workstation = null)
 	{
 		global $mysoc, $conf, $langs, $user;
 
@@ -761,11 +760,11 @@ class BOM extends CommonObject
 			$rankToUse = (int) $position;
 			if ($rankToUse != $line->oldcopy->position) { // check if position have a new value
 				foreach ($this->lines as $bl) {
-					if ($bl->position >= $rankToUse AND $bl->position < ($line->oldcopy->position + 1)) { // move rank up
+					if ($bl->position >= $rankToUse and $bl->position < ($line->oldcopy->position + 1)) { // move rank up
 						$bl->position++;
 						$bl->update($user);
 					}
-					if ($bl->position <= $rankToUse AND $bl->position > ($line->oldcopy->position)) { // move rank down
+					if ($bl->position <= $rankToUse and $bl->position > ($line->oldcopy->position)) { // move rank down
 						$bl->position--;
 						$bl->update($user);
 					}
@@ -781,7 +780,10 @@ class BOM extends CommonObject
 			$line->import_key = $import_key;
 			$line->position = $rankToUse;
 
-			if (!empty($fk_unit)) $line->fk_unit = $fk_unit;
+
+			if (!empty($fk_unit)) {
+				$line->fk_unit = $fk_unit;
+			}
 
 
 			if (is_array($array_options) && count($array_options) > 0) {
@@ -872,11 +874,11 @@ class BOM extends CommonObject
 		global $langs, $conf;
 		$langs->load("mrp");
 
-		if (!empty($conf->global->BOM_ADDON)) {
+		if (getDolGlobalString('BOM_ADDON')) {
 			$mybool = false;
 
 			$file = getDolGlobalString('BOM_ADDON') . ".php";
-			$classname = $conf->global->BOM_ADDON;
+			$classname = getDolGlobalString('BOM_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -913,7 +915,7 @@ class BOM extends CommonObject
 	 *
 	 *	@param		User	$user     		User making status change
 	 *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return  	int						<=0 if OK, 0=Nothing done, >0 if KO
+	 *	@return  	int						Return integer <=0 if OK, 0=Nothing done, >0 if KO
 	 */
 	public function validate($user, $notrigger = 0)
 	{
@@ -985,13 +987,15 @@ class BOM extends CommonObject
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'bom/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'bom/".$this->db->escape($this->newref)."'";
 				$sql .= " WHERE filepath = 'bom/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
@@ -1038,7 +1042,7 @@ class BOM extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setDraft($user, $notrigger = 0)
 	{
@@ -1062,7 +1066,7 @@ class BOM extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function cancel($user, $notrigger = 0)
 	{
@@ -1086,7 +1090,7 @@ class BOM extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function reopen($user, $notrigger = 0)
 	{
@@ -1119,7 +1123,7 @@ class BOM extends CommonObject
 
 		$datas = [];
 
-		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			return ['optimize' => $langs->trans("ShowBillOfMaterials")];
 		}
 		$picto = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("BillOfMaterials").'</u>';
@@ -1192,11 +1196,11 @@ class BOM extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowBillOfMaterials");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -1346,8 +1350,8 @@ class BOM extends CommonObject
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->BOM_ADDON_PDF)) {
-				$modele = $conf->global->BOM_ADDON_PDF;
+			} elseif (getDolGlobalString('BOM_ADDON_PDF')) {
+				$modele = getDolGlobalString('BOM_ADDON_PDF');
 			}
 		}
 
@@ -1406,7 +1410,7 @@ class BOM extends CommonObject
 	 * BOM costs calculation based on cost_price or pmp of each BOM line.
 	 * Set the property ->total_cost and ->unit_cost of BOM.
 	 *
-	 * @return int			<0 if KO, >0 if OK
+	 * @return int			Return integer <0 if KO, >0 if OK
 	 */
 	public function calculateCosts()
 	{
@@ -1471,14 +1475,15 @@ class BOM extends CommonObject
 					$unitforline = measuringUnitString($line->fk_unit, '', '', 1);
 					$qtyhourforline = convertDurationtoHour($line->qty, $unitforline);
 
-					if (isModEnabled('workstation') && !empty($tmpproduct->fk_default_workstation)) {
+					if (isModEnabled('workstation') && !empty($line->fk_default_workstation)) {
 						$workstation = new Workstation($this->db);
-						$res = $workstation->fetch($tmpproduct->fk_default_workstation);
+						$res = $workstation->fetch($line->fk_default_workstation);
 
-						if ($res > 0) $line->total_cost = price2num($qtyhourforline * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated), 'MT');
-						else {
+						if ($res > 0) {
+							$line->total_cost = price2num($qtyhourforline * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated), 'MT');
+						} else {
 							$this->error = $workstation->error;
-								return -3;
+							return -3;
 						}
 					} else {
 						$defaultdurationofservice = $tmpproduct->duration;
@@ -1540,7 +1545,9 @@ class BOM extends CommonObject
 		if (!empty($this->lines)) {
 			foreach ($this->lines as $line) {
 				if (!empty($line->childBom)) {
-					foreach ($line->childBom as $childBom) $childBom->getNetNeeds($TNetNeeds, $line->qty*$qty);
+					foreach ($line->childBom as $childBom) {
+						$childBom->getNetNeeds($TNetNeeds, $line->qty*$qty);
+					}
 				} else {
 					if (empty($TNetNeeds[$line->fk_product])) {
 						$TNetNeeds[$line->fk_product] = 0;
@@ -1587,7 +1594,7 @@ class BOM extends CommonObject
 	 * @param 	int		$level		Protection against infinite loop
 	 * @return 	void
 	 */
-	public function getParentBomTreeRecursive(&$TParentBom, $bom_id = '', $level = 1)
+	public function getParentBomTreeRecursive(&$TParentBom, $bom_id = 0, $level = 1)
 	{
 
 		// Protection against infinite loop
@@ -1595,7 +1602,9 @@ class BOM extends CommonObject
 			return;
 		}
 
-		if (empty($bom_id)) $bom_id=$this->id;
+		if (empty($bom_id)) {
+			$bom_id=$this->id;
+		}
 
 		$sql = 'SELECT l.fk_bom, b.label
 				FROM '.MAIN_DB_PREFIX.'bom_bomline l
@@ -1647,7 +1656,7 @@ class BOM extends CommonObject
 			$return .= '<br><span class="info-box-label">'.$prod->getNomUrl(1).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 
 		$return .= '</div>';
@@ -1806,7 +1815,7 @@ class BOMLine extends CommonObjectLine
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -1835,7 +1844,7 @@ class BOMLine extends CommonObjectLine
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -1851,7 +1860,7 @@ class BOMLine extends CommonObjectLine
 	 *
 	 * @param int    $id   Id object
 	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -1939,7 +1948,7 @@ class BOMLine extends CommonObjectLine
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
@@ -1955,7 +1964,7 @@ class BOMLine extends CommonObjectLine
 	 *
 	 * @param User $user       User that deletes
 	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
@@ -2002,7 +2011,7 @@ class BOMLine extends CommonObjectLine
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowBillOfMaterialsLine");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}

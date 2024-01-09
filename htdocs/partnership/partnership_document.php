@@ -83,10 +83,18 @@ $managedfor = getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty');
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'partnership', $object->id);
-if (empty($conf->partnership->enabled)) accessforbidden();
-if (empty($permissiontoread)) accessforbidden();
-if ($object->id > 0 && !($object->fk_member > 0) && $managedfor == 'member') accessforbidden();
-if ($object->id > 0 && !($object->fk_soc > 0) && $managedfor == 'thirdparty') accessforbidden();
+if (empty($conf->partnership->enabled)) {
+	accessforbidden();
+}
+if (empty($permissiontoread)) {
+	accessforbidden();
+}
+if ($object->id > 0 && !($object->fk_member > 0) && $managedfor == 'member') {
+	accessforbidden();
+}
+if ($object->id > 0 && !($object->fk_soc > 0) && $managedfor == 'thirdparty') {
+	accessforbidden();
+}
 
 
 
@@ -118,7 +126,7 @@ if ($object->id) {
 
 
 	// Build file list
-	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 	$totalsize = 0;
 	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];

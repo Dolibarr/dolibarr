@@ -107,7 +107,7 @@ class Warehouses extends DolibarrApi
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot AS t LEFT JOIN ".MAIN_DB_PREFIX."entrepot_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 		if ($category > 0) {
-			$sql .= ", ".$this->db->prefix()."categorie_societe as c";
+			$sql .= ", ".$this->db->prefix()."categorie_warehouse as c";
 		}
 		$sql .= ' WHERE t.entity IN ('.getEntity('stock').')';
 		// Select warehouses of given category
@@ -150,9 +150,7 @@ class Warehouses extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve warehouse list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No warehouse found');
-		}
+
 		return $obj_ret;
 	}
 
@@ -173,6 +171,12 @@ class Warehouses extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->warehouse->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->warehouse->$field = $value;
 		}
 		if ($this->warehouse->create(DolibarrApiAccess::$user) < 0) {
@@ -207,6 +211,12 @@ class Warehouses extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->warehouse->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->warehouse->$field = $value;
 		}
 

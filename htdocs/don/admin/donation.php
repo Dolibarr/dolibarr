@@ -173,7 +173,9 @@ if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
 }
 
-llxHeader('', $langs->trans("DonationsSetup"), 'DonConfiguration');
+$help_url = '';
+llxHeader('', $langs->trans("DonationsSetup"), $help_url, '', 0, 0, '', '', '', 'mod-donation page-admin');
+
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("DonationsSetup"), $linkback, 'title_setup');
 
@@ -228,10 +230,10 @@ if (is_resource($handle)) {
 			$module = new $classname($db);
 
 			// Show modules according to features level
-			if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+			if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 				continue;
 			}
-			if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+			if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 				continue;
 			}
 

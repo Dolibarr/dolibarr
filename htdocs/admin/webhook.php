@@ -97,7 +97,9 @@ if ($action == 'updateMask') {
 	$tmpobject->initAsSpecimen();
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$classname = '';
+	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/webhook/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
@@ -140,7 +142,7 @@ if ($action == 'updateMask') {
 		$tmpobjectkey = GETPOST('object');
 		if (!empty($tmpobjectkey)) {
 			$constforval = 'WEBHOOK_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
-			if ($conf->global->$constforval == "$value") {
+			if (getDolGlobalString($constforval) == "$value") {
 				dolibarr_del_const($db, $constforval, $conf->entity);
 			}
 		}
@@ -268,7 +270,7 @@ if ($action == 'edit') {
 					print dolJSToSetRandomPassword($constname, 'generate_token'.$constname);
 				} elseif ($val['type'] == 'product') {
 					if (isModEnabled("product") || isModEnabled("service")) {
-						$selected = (empty($conf->global->$constname) ? '' : $conf->global->$constname);
+						$selected = getDolGlobalString($constname);
 						$form->select_produits($selected, $constname, '', 0);
 					}
 				} else {
@@ -327,7 +329,7 @@ if ($action == 'edit') {
 						$result = $c->fetch(getDolGlobalString($constname));
 						if ($result < 0) {
 							setEventMessages(null, $c->errors, 'errors');
-						} elseif ($result > 0 ) {
+						} elseif ($result > 0) {
 							$ways = $c->print_all_ways(' &gt;&gt; ', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formated text
 							$toprint = array();
 							foreach ($ways as $way) {
@@ -416,10 +418,10 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 							$module = new $file($db);
 
 							// Show modules according to features level
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								continue;
 							}
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 								continue;
 							}
 
@@ -445,7 +447,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 								print '<td class="center">';
 								$constforvar = 'WEBHOOK_'.strtoupper($myTmpObjectKey).'_ADDON';
-								if ($conf->global->$constforvar == $file) {
+								if (getDolGlobalString($constforvar) == $file) {
 									print img_picto($langs->trans("Activated"), 'switch_on');
 								} else {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&object='.strtolower($myTmpObjectKey).'&value='.urlencode($file).'">';
@@ -553,16 +555,16 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 									$module = new $classname($db);
 
 									$modulequalified = 1;
-									if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+									if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 										$modulequalified = 0;
 									}
-									if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+									if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 										$modulequalified = 0;
 									}
 
 									if ($modulequalified) {
 										print '<tr class="oddeven"><td width="100">';
-										print (empty($module->name) ? $name : $module->name);
+										print(empty($module->name) ? $name : $module->name);
 										print "</td><td>\n";
 										if (method_exists($module, 'info')) {
 											print $module->info($langs);
@@ -587,7 +589,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 										// Default
 										print '<td class="center">';
 										$constforvar = 'WEBHOOK_'.strtoupper($myTmpObjectKey).'_ADDON';
-										if ($conf->global->$constforvar == $name) {
+										if (getDolGlobalString($constforvar) == $name) {
 											//print img_picto($langs->trans("Default"), 'on');
 											// Even if choice is the default value, we allow to disable it. Replace this with previous line if you need to disable unset
 											print '<a href="'.$_SERVER["PHP_SELF"].'?action=unsetdoc&token='.newToken().'&object='.urlencode(strtolower($myTmpObjectKey)).'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'&amp;type='.urlencode($type).'" alt="'.$langs->trans("Disable").'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';

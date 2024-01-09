@@ -50,7 +50,9 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if (isModEnabled('accounting')) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
+	if (isModEnabled('accounting')) {
+		require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
+	}
 
 	foreach ($assetaccountancycodes->accountancy_codes_fields as $mode_key => $mode_info) {
 		//if (empty($object->enabled_modes[$mode_key])) continue;

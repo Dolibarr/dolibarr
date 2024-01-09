@@ -116,7 +116,7 @@ print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 	// What is use case of this 2 options ?
 
 	print '<tr class="oddeven">';
@@ -125,7 +125,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 	if ($conf->use_javascript_ajax) {
 		print ajax_constantonoff('MODULEBUILDER_USE_ABOUT');
 	} else {
-		if (empty($conf->global->MODULEBUILDER_USE_ABOUT)) {
+		if (!getDolGlobalString('MODULEBUILDER_USE_ABOUT')) {
 			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=set_MODULEBUILDER_USE_ABOUT&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 		} else {
 			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=del_MODULEBUILDER_USE_ABOUT&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
@@ -148,7 +148,7 @@ print '<input type="text" name="MODULEBUILDER_SPECIFIC_EDITOR_URL" value="'.getD
 print '</td>';
 print '</tr>';
 
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("UseSpecificFamily").'</td>';
 	print '<td>';

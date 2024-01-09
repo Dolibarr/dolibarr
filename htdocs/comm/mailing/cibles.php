@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 $langs->loadLangs(array("mails", "admin"));
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -86,7 +86,7 @@ if (version_compare(phpversion(), '7.0', '>=')) {
 }
 
 // Security check
-if (!$user->hasRight('mailing', 'lire') || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) {
+if (!$user->hasRight('mailing', 'lire') || (!getDolGlobalString('EXTERNAL_USERS_ARE_AUTHORIZED') && $user->socid > 0)) {
 	accessforbidden();
 }
 //$result = restrictedArea($user, 'mailing');
@@ -346,9 +346,9 @@ if ($object->fetch($id) >= 0) {
 	$nbemail = ($object->nbemail ? $object->nbemail : 0);
 	if (is_numeric($nbemail)) {
 		$text = '';
-		if ((!empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) && ($object->statut == 1 || ($object->statut == 2 && $nbtry < $nbemail))) {
-			if ($conf->global->MAILING_LIMIT_SENDBYWEB > 0) {
-				$text .= $langs->trans('LimitSendingEmailing', $conf->global->MAILING_LIMIT_SENDBYWEB);
+		if ((getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) && ($object->statut == 1 || ($object->statut == 2 && $nbtry < $nbemail))) {
+			if (getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') > 0) {
+				$text .= $langs->trans('LimitSendingEmailing', getDolGlobalString('MAILING_LIMIT_SENDBYWEB'));
 			} else {
 				$text .= $langs->trans('SendingFromWebInterfaceIsNotAllowed');
 			}
@@ -402,7 +402,7 @@ if ($object->fetch($id) >= 0) {
 
 	// Show email selectors
 	if ($allowaddtarget && $user->hasRight('mailing', 'creer')) {
-		print load_fiche_titre($langs->trans("ToAddRecipientsChooseHere"), ($user->admin ?info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"), 1) : ''), 'generic');
+		print load_fiche_titre($langs->trans("ToAddRecipientsChooseHere"), ($user->admin ? info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"), 1) : ''), 'generic');
 
 		print '<div class="div-table-responsive">';
 		print '<div class="tagtable centpercentwithout1imp liste_titre_bydiv borderbottom" id="tablelines">';
@@ -430,7 +430,7 @@ if ($object->fetch($id) >= 0) {
 			$handle = @opendir($dir);
 			if (is_resource($handle)) {
 				while (($file = readdir($handle)) !== false) {
-					if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS') {
+					if (substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS') {
 						$reg = array();
 						if (preg_match("/(.*)\.modules\.php$/i", $file, $reg)) {
 							if ($reg[1] == 'example') {

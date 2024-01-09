@@ -79,7 +79,9 @@ $hookmanager->initHooks(array('skilltab', 'globalcard')); // Note that conf->hoo
 
 // Load object
 include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
-$object->loadPersonalConf();
+if (method_exists($object, 'loadPersonalConf')) {
+	$object->loadPersonalConf();
+}
 
 // Permissions
 $permissiontoread = $user->hasRight('hrm', 'all', 'read');
@@ -145,10 +147,14 @@ if (empty($reshook)) {
 				$skillAdded->fk_object = $id;
 				$skillAdded->objecttype = $objecttype;
 				$ret = $skillAdded->create($user);
-				if ($ret < 0) setEventMessages($skillAdded->error, null, 'errors');
+				if ($ret < 0) {
+					setEventMessages($skillAdded->error, null, 'errors');
+				}
 				//else unset($TSkillsToAdd);
 			}
-			if ($ret > 0) setEventMessages($langs->trans("SaveAddSkill"), null);
+			if ($ret > 0) {
+				setEventMessages($langs->trans("SaveAddSkill"), null);
+			}
 		}
 	} elseif ($action == 'saveSkill') {
 		if (!empty($TNote)) {
@@ -369,7 +375,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="clearboth"></div><br>';
 
 	if ($objecttype != 'user' && $permissiontoadd) {
-		// form pour ajouter des compétences
+		// form to add new skills
+		print '<br>';
 		print '<form name="addSkill" method="post" action="' . $_SERVER['PHP_SELF'] . '">';
 		print '<input type="hidden" name="objecttype" value="' . $objecttype . '">';
 		print '<input type="hidden" name="id" value="' . $id . '">';
@@ -442,9 +449,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		print '</table>';
-		if ($objecttype != 'user' && $permissiontoadd) print '<td><input class="button pull-right" type="submit" value="' . $langs->trans('SaveRank') . '"></td>';
+		if ($objecttype != 'user' && $permissiontoadd) {
+			print '<td><input class="button pull-right" type="submit" value="' . $langs->trans('SaveRank') . '"></td>';
+		}
 		print '</div>';
-		if ($objecttype != 'user' && $permissiontoadd) print '</form>';
+		if ($objecttype != 'user' && $permissiontoadd) {
+			print '</form>';
+		}
 	}
 
 

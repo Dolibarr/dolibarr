@@ -80,8 +80,10 @@ SoldAmount=Solde
 PurchasedAmount=Montant des achats
 NewPrice=Nouveau prix
 MinPrice=Prix de vente min.
+MinPriceHT=Min. prix de vente (hors taxe)
+MinPriceTTC=Prix de vente min. (TTC)
 EditSellingPriceLabel=Modifier le libellé du prix de vente
-CantBeLessThanMinPrice=Le prix de vente ne doit pas être inférieur au minimum pour ce produit (%s HT). Ce message peut aussi être provoqué par une remise trop importante.
+CantBeLessThanMinPrice=Le prix de vente ne peut pas être inférieur au minimum autorisé pour ce produit (%s sans taxe). Ce message peut également apparaître si vous saisissez une remise importante.
 CantBeLessThanMinPriceInclTax=Le prix de vente ne peut pas être inférieur au minimum autorisé pour ce produit (%s taxes comprises). Ce message peut également apparaître si vous saisissez une remise trop importante.
 ContractStatusClosed=Clôturé
 ErrorProductAlreadyExists=Un produit avec la référence %s existe déjà.
@@ -352,12 +354,13 @@ PackagingForThisProductDesc=Vous achèterez automatiquement un multiple de cette
 QtyRecalculatedWithPackaging=La quantité de la ligne a été recalculée en fonction de l'emballage du fournisseur
 
 #Attributes
+Attributes=Attributs
 VariantAttributes=Attributs de variante
 ProductAttributes=Attributs de variantes pour les produits
 ProductAttributeName=Attribut de variante %s
 ProductAttribute=Attribut de variante
 ProductAttributeDeleteDialog=Êtes-vous sur de vouloir supprimer cet attribut ? Toutes les valeurs en seront effacées.
-ProductAttributeValueDeleteDialog=Êtes-vous sur de vouloir supprimer la valeur "%s" avec la référence "%s" de cet attribut ?
+ProductAttributeValueDeleteDialog=Êtes-vous sûr de vouloir supprimer la valeur "%s" avec la référence "%s" de cet attribut ?
 ProductCombinationDeleteDialog=Êtes-vous sur de vouloir supprimer la variante de ce produit "<strong>%s</strong>" ?
 ProductCombinationAlreadyUsed=Une erreur s'est produite lors de la suppression de la variante. Vérifiez qu'elle ne soit pas utilisée par un autre objet.
 ProductCombinations=Variantes
@@ -433,4 +436,4 @@ ConfirmEditExtrafieldQuestion = Voulez-vous vraiment modifier cet extrafield ?
 ModifyValueExtrafields = Modifier la valeur d'un extrafield
 OrProductsWithCategories=Ou des produits avec des tags/catégories
 WarningTransferBatchStockMouvToGlobal = Si vous souhaitez désérialiser ce produit, tout son stock sérialisé sera transformé en stock global
-WarningConvertFromBatchToSerial=Si vous disposez actuellement d'une quantité supérieure ou égale à 2 pour le produit, passer à ce choix signifie que vous aurez toujours un produit avec différents objets du même lot (alors que vous souhaitez un <span class='notranslate'>Numéro de série</ durée>). Le doublon restera jusqu'à ce qu'un inventaire ou un mouvement de stock manuel pour résoudre ce problème soit effectué.
+WarningConvertFromBatchToSerial=Si vous disposez actuellement d'une quantité supérieure ou égale à 2 pour le produit, passer à ce choix signifie que vous aurez toujours un produit avec différents objets du même lot (alors que vous souhaitez un numéro de série unique). Le doublon restera jusqu'à ce qu'un inventaire ou un mouvement de stock manuel soit effectué pour résoudre ce problème.

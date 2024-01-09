@@ -131,7 +131,7 @@ $place = GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'; // $place is
 $diroutputmassaction = $conf->societe->dir_output.'/temp/massgeneration/'.$user->id;
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -152,28 +152,32 @@ $pagenext = $page + 1;
 if ($type == 'c') {
 	if (empty($contextpage) || $contextpage == 'thirdpartylist') {
 		$contextpage = 'customerlist';
-	} if ($search_type == '') {
+	}
+	if ($search_type == '') {
 		$search_type = '1,3';
 	}
 }
 if ($type == 'p') {
 	if (empty($contextpage) || $contextpage == 'thirdpartylist') {
 		$contextpage = 'prospectlist';
-	} if ($search_type == '') {
+	}
+	if ($search_type == '') {
 		$search_type = '2,3';
 	}
 }
 if ($type == 't') {
 	if (empty($contextpage) || $contextpage == 'poslist') {
 		$contextpage = 'poslist';
-	} if ($search_type == '') {
+	}
+	if ($search_type == '') {
 		$search_type = '1,2,3';
 	}
 }
 if ($type == 'f') {
 	if (empty($contextpage) || $contextpage == 'thirdpartylist') {
 		$contextpage = 'supplierlist';
-	} if ($search_type == '') {
+	}
+	if ($search_type == '') {
 		$search_type = '4';
 	}
 }
@@ -220,7 +224,7 @@ if (isModEnabled('barcode')) {
 	$fieldstosearchall['s.barcode'] = 'Gencod';
 }
 // Personalized search criterias. Example: $conf->global->THIRDPARTY_QUICKSEARCH_ON_FIELDS = 's.nom=ThirdPartyName;s.name_alias=AliasNameShort;s.code_client=CustomerCode'
-if (!empty($conf->global->THIRDPARTY_QUICKSEARCH_ON_FIELDS)) {
+if (getDolGlobalString('THIRDPARTY_QUICKSEARCH_ON_FIELDS')) {
 	$fieldstosearchall = dolExplodeIntoArray($conf->global->THIRDPARTY_QUICKSEARCH_ON_FIELDS);
 }
 
@@ -243,7 +247,7 @@ $checkedprofid6 = 0;
 $checkprospectlevel = (in_array($contextpage, array('prospectlist')) ? 1 : 0);
 $checkstcomm = (in_array($contextpage, array('prospectlist')) ? 1 : 0);
 $arrayfields = array(
-	's.rowid'=>array('label'=>"TechnicalID", 'position'=>1, 'checked'=>(!empty($conf->global->MAIN_SHOW_TECHNICAL_ID)), 'enabled'=>(!empty($conf->global->MAIN_SHOW_TECHNICAL_ID))),
+	's.rowid'=>array('label'=>"TechnicalID", 'position'=>1, 'checked'=>-1, 'enabled'=>1),
 	's.nom'=>array('label'=>"ThirdPartyName", 'position'=>2, 'checked'=>1),
 	's.name_alias'=>array('label'=>"AliasNameShort", 'position'=>3, 'checked'=>1),
 	's.barcode'=>array('label'=>"Gencod", 'position'=>5, 'checked'=>1, 'enabled'=>(isModEnabled('barcode'))),
@@ -279,7 +283,7 @@ $arrayfields = array(
 	's.status'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 	's.import_key'=>array('label'=>"ImportId", 'checked'=>0, 'position'=>1100),
 );
-if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
+if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
 	$arrayfields['s.price_level'] = array('label'=>"PriceLevel", 'position'=>30, 'checked'=>0);
 }
 
@@ -305,7 +309,7 @@ $result = restrictedArea($user, 'societe', $socid, '');
  * Actions
  */
 
-if ($action == "change") {	// Change customer for TakePOS
+if ($action == "change" && $user->hasRight('takepos', 'run')) {	// Change customer for TakePOS
 	$idcustomer = GETPOST('idcustomer', 'int');
 
 	// Check if draft invoice already exists, if not create it
@@ -326,8 +330,7 @@ if ($action == "change") {	// Change customer for TakePOS
 	}
 
 	$sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".((int) $idcustomer)." where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
-	$resql = $db->query($sql);
-	?>
+	$resql = $db->query($sql); ?>
 		<script>
 		console.log("Reload page invoice.php with place=<?php print $place; ?>");
 		parent.$("#poslines").load("invoice.php?place=<?php print $place; ?>", function() {
@@ -518,10 +521,6 @@ $sql .= " staff.code as staff_code,";
 $sql .= " country.code as country_code, country.label as country_label,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " region.code_region as region_code, region.nom as region_name";
-// We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
-if ($search_sale && $search_sale != '-1') {
-	$sql .= ", sc.fk_soc, sc.fk_user";
-}
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -535,7 +534,7 @@ $sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 //$sql .= ", COUNT(rc.rowid) as anotherfield";
 
-$sqlfields = $sql; // $sql fields to remove for count totall
+$sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s2 ON s.parent = s2.rowid";
@@ -549,32 +548,21 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_effectif as staff on (staff.id = s.fk_ef
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as region on (region.code_region = state.fk_region)";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."c_stcomm as st ON s.fk_stcomm = st.id";
-// We'll need this table joined to the select in order to filter by sale
-if ($search_sale == -2) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
-	//elseif ($search_sale || (empty($user->rights->societe->client->voir) && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->societe->client->readallthirdparties_advance)) && !$socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-} elseif (!empty($search_sale) && $search_sale != '-1' || (!$user->hasRight('societe', 'client', 'voir') && !$socid)) {
-	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-}
 // Add table from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= " WHERE s.entity IN (".getEntity('societe').")";
-//if (empty($user->rights->societe->client->voir) && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->societe->client->readallthirdparties_advance)) && !$socid)	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
-}
-if ($search_sale && $search_sale != '-1' && $search_sale != '-2') {
-	$sql .= " AND s.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
-}
 if (!$user->hasRight('fournisseur', 'lire')) {
 	$sql .= " AND (s.fournisseur <> 1 OR s.client <> 0)"; // client=0, fournisseur=0 must be visible
 }
-if ($search_sale == -2) {
-	$sql .= " AND sc.fk_user IS NULL";
-} elseif ($search_sale > 0) {
-	$sql .= " AND sc.fk_user = ".((int) $search_sale);
+// Search on sale representative
+if ($search_sale && $search_sale != '-1') {
+	if ($search_sale == -2) {
+		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid)";
+	} elseif ($search_sale > 0) {
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid AND sc.fk_user = ".((int) $search_sale).")";
+	}
 }
 $searchCategoryCustomerList = $search_categ_cus ? array($search_categ_cus) : array();
 $searchCategoryCustomerOperator = 0;
@@ -606,6 +594,7 @@ if (!empty($searchCategoryCustomerList)) {
 		}
 	}
 }
+// Search Supplier Categories
 $searchCategorySupplierList = $search_categ_sup ? array($search_categ_sup) : array();
 $searchCategorySupplierOperator = 0;
 // Search for tag/category ($searchCategorySupplierList is an array of ID)
@@ -827,10 +816,10 @@ $num = $db->num_rows($resql);
 
 
 // Direct jump if only one record found
-if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && ($search_all != '' || $search_cti != '') && $action != 'list') {
+if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && ($search_all != '' || $search_cti != '') && $action != 'list') {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
-	if (!empty($conf->global->SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD)) {
+	if (getDolGlobalString('SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD')) {
 		if ($obj->client > 0) {
 			header("Location: ".DOL_URL_ROOT.'/comm/card.php?socid='.$id);
 			exit;
@@ -1087,7 +1076,7 @@ if (!empty($type)) {
 	}
 }
 
-if ($contextpage == 'poslist' && $type == 't' && (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))) {
+if ($contextpage == 'poslist' && $type == 't' && (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES'))) {
 	print get_htmloutput_mesg(img_warning('default').' '.$langs->trans("BecarefullChangeThirdpartyBeforeAddProductToInvoice"), '', 'warning', 1);
 }
 
@@ -1314,7 +1303,7 @@ if (!empty($arrayfields['country.code_iso']['checked'])) {
 if (!empty($arrayfields['typent.code']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
 	// We use showempty=0 here because there is already an unknown value into dictionary.
-	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), 'minwidth50 maxwidth125', 1);
+	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (!getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), 'minwidth50 maxwidth125', 1);
 	print '</td>';
 }
 // Multiprice level
@@ -1437,10 +1426,10 @@ print $hookmanager->resPrint;
 // Creation date
 if (!empty($arrayfields['s.datec']['checked'])) {
 	print '<td class="liste_titre center nowraponall">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_creation_start ? $search_date_creation_start : -1, 'search_date_creation_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_creation_end ? $search_date_creation_end : -1, 'search_date_creation_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td>';
@@ -1448,10 +1437,10 @@ if (!empty($arrayfields['s.datec']['checked'])) {
 // Modification date
 if (!empty($arrayfields['s.tms']['checked'])) {
 	print '<td class="liste_titre center nowraponall">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_modif_start ? $search_date_modif_start : -1, 'search_date_modif_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_modif_end ? $search_date_modif_end : -1, 'search_date_modif_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td>';
@@ -1692,6 +1681,8 @@ while ($i < $imaxinloop) {
 		$companystatic->fk_prospectlevel = $obj->fk_prospectlevel;
 		$companystatic->fk_parent = $obj->fk_parent;
 		$companystatic->entity = $obj->entity;
+
+		$object = $companystatic;
 	}
 
 	if ($mode == 'kanban') {
@@ -1738,7 +1729,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		if (!empty($arrayfields['s.nom']['checked'])) {
-			print '<td'.(empty($conf->global->MAIN_SOCIETE_SHOW_COMPLETE_NAME) ? ' class="tdoverflowmax200"' : '').' data-key="ref">';
+			print '<td'.(!getDolGlobalString('MAIN_SOCIETE_SHOW_COMPLETE_NAME') ? ' class="tdoverflowmax200"' : '').' data-key="ref">';
 			if ($contextpage == 'poslist') {
 				print dol_escape_htmltag($companystatic->name);
 			} else {

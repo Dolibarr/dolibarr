@@ -179,7 +179,7 @@ class AccountingAccount extends CommonObject
 	 * @param 	string 	       $account_number 	        Account number
 	 * @param 	int|boolean    $limittocurrentchart     1 or true=Load record only if it is into current active chart of account
 	 * @param   string         $limittoachartaccount    'ABC'=Load record only if it is into chart account with code 'ABC' (better and faster than previous parameter if you have chart of account code).
-	 * @return 	int                                     <0 if KO, 0 if not found, Id of record if OK and found
+	 * @return 	int                                     Return integer <0 if KO, 0 if not found, Id of record if OK and found
 	 */
 	public function fetch($rowid = null, $account_number = null, $limittocurrentchart = 0, $limittoachartaccount = '')
 	{
@@ -249,7 +249,7 @@ class AccountingAccount extends CommonObject
 	 *
 	 * @param User $user User making action
 	 * @param int $notrigger Disable triggers
-	 * @return int                 <0 if KO, >0 if OK
+	 * @return int                 Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -350,7 +350,7 @@ class AccountingAccount extends CommonObject
 	 * Update record
 	 *
 	 * @param User $user 		User making update
-	 * @return int             	<0 if KO (-2 = duplicate), >0 if OK
+	 * @return int             	Return integer <0 if KO (-2 = duplicate), >0 if OK
 	 */
 	public function update($user)
 	{
@@ -395,12 +395,13 @@ class AccountingAccount extends CommonObject
 	/**
 	 * Check usage of accounting code
 	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function checkUsage()
 	{
 		global $langs;
 
+		// TODO Looks a stupid check
 		$sql = "(SELECT fk_code_ventilation FROM ".MAIN_DB_PREFIX."facturedet";
 		$sql .= " WHERE fk_code_ventilation=".((int) $this->id).")";
 		$sql .= "UNION";
@@ -429,7 +430,7 @@ class AccountingAccount extends CommonObject
 	 *
 	 * @param User $user User that deletes
 	 * @param int $notrigger 0=triggers after, 1=disable triggers
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -618,7 +619,7 @@ class AccountingAccount extends CommonObject
 	 *
 	 * @param int $id Id
 	 * @param int $mode 0=field active, 1=field reconcilable
-	 * @return int              <0 if KO, >0 if OK
+	 * @return int              Return integer <0 if KO, >0 if OK
 	 */
 	public function accountDeactivate($id, $mode = 0)
 	{
@@ -658,7 +659,7 @@ class AccountingAccount extends CommonObject
 	 *
 	 * @param int $id Id
 	 * @param int $mode 0=field active, 1=field reconcilable
-	 * @return int              <0 if KO, >0 if OK
+	 * @return int              Return integer <0 if KO, >0 if OK
 	 */
 	public function accountActivate($id, $mode = 0)
 	{
@@ -877,9 +878,9 @@ class AccountingAccount extends CommonObject
 				if ($factureDet->desc == "(DEPOSIT)" || $facture->type == $facture::TYPE_DEPOSIT) {
 					$accountdeposittoventilated = new self($this->db);
 					if ($type == 'customer') {
-						$result = $accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT, 1);
+						$result = $accountdeposittoventilated->fetch('', getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT'), 1);
 					} elseif ($type == 'supplier') {
-						$result = $accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT, 1);
+						$result = $accountdeposittoventilated->fetch('', getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT'), 1);
 					}
 					if (isset($result) && $result < 0) {
 						return -1;
@@ -900,9 +901,9 @@ class AccountingAccount extends CommonObject
 					if ($facture->type == $facture::TYPE_CREDIT_NOTE && $invoiceSource->type == $facture::TYPE_DEPOSIT) {
 						$accountdeposittoventilated = new self($this->db);
 						if ($type == 'customer') {
-							$accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT, 1);
+							$accountdeposittoventilated->fetch('', getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT'), 1);
 						} elseif ($type == 'supplier') {
-							$accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT, 1);
+							$accountdeposittoventilated->fetch('', getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT'), 1);
 						}
 						$code_l = $accountdeposittoventilated->ref;
 						$code_p = '';

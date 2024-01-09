@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('NOREQUIREUSER')) {
 	define('NOREQUIREUSER', '1');
 }

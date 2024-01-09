@@ -367,7 +367,7 @@ for ($i = 1; $i <= 6; $i++) {
 		if ($conf->use_javascript_ajax) {
 			print ajax_constantonoff($keyforconstant);
 		} else {
-			print $form->selectyesno($keyforconstant, isset($conf->global->$keyforconstant) ? $conf->global->$keyforconstant : 0, 1, $noCountryCode);
+			print $form->selectyesno($keyforconstant, getDolGlobalString($keyforconstant, 0), 1, $noCountryCode);
 		}
 		print '</td></tr>';
 	}
@@ -543,7 +543,7 @@ if (isModEnabled('barcode')) {
 	if ($conf->use_javascript_ajax) {
 		print ajax_constantonoff('MAIN_GENERATE_DOCUMENTS_SHOW_PRODUCT_BARCODE');
 	} else {
-		print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_SHOW_PRODUCT_BARCODE', (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_PRODUCT_BARCODE)) ? $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_PRODUCT_BARCODE : 0, 1);
+		print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_SHOW_PRODUCT_BARCODE', (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_PRODUCT_BARCODE')) ? $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_PRODUCT_BARCODE : 0, 1);
 	}
 	print '</td></tr>';
 }

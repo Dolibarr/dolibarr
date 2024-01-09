@@ -74,7 +74,7 @@ if (!$user->hasRight('takepos', 'run') && !defined('INCLUDE_PHONEPAGE_FROM_PUBLI
 if (empty($action)) {
 	// Code for llxHeader()
 	$title = 'TakePOS - Dolibarr '.DOL_VERSION;
-	if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+	if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 		$title = 'TakePOS - ' . getDolGlobalString('MAIN_APPLICATION_TITLE');
 	}
 	$head = '<meta name="apple-mobile-web-app-title" content="TakePOS"/>
@@ -85,8 +85,11 @@ if (empty($action)) {
 
 	top_htmlhead($head, $title, 0, 0, '', $arrayofcss);
 } else {
-	top_httphead('text/html', 1);
+	top_htmlhead('');
 }
+
+//llxHeader();
+print '<body style="background-color:#D1D1D1;">';
 
 if ($action == "productinfo") {
 	$prod = new Product($db);
@@ -155,15 +158,38 @@ if ($action == "productinfo") {
 	}
 } else {
 	?>
-<script type="text/javascript">
+	<div class="container">
+	<div class="phonebuttonsrow">
+	<?php
+	if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+		print '<button type="button" class="phonebutton uppercase" onclick="LoadPlacesList();">'.dol_trunc($langs->trans('Floors'), 3, 'right', 'UTF-8', 1).'</button>';
+		print '<button type="button" class="phonebutton uppercase" onclick="LoadCats();">'.dol_trunc($langs->trans('Categories'), 3, 'right', 'UTF-8', 1).'</button>';
+		print '<button type="button" class="phonebutton uppercase" onclick="TakeposPrintingOrder();">'.dol_trunc($langs->trans('Order'), 3, 'right', 'UTF-8', 1).'</button>';
+		print '<button type="button" class="phonebutton uppercase" onclick="Exit();">'.dol_trunc($langs->trans('Logout'), 3, 'right', 'UTF-8', 1).'</button>';
+	} else {
+		print '<button type="button" class="publicphonebutton phoneblue uppercase" onclick="LoadCats();">'.dol_trunc($langs->trans('Categories'), 5, 'right', 'UTF-8', 1).'</button>';
+		print '<button type="button" class="publicphonebutton phoneorange uppercase" onclick="PublicPreOrder();">'.dol_trunc($langs->trans('Order'), 5, 'right', 'UTF-8', 1).'</button>';
+		print '<button type="button" class="publicphonebutton phonegreen uppercase" onclick="CheckPlease();">'.dol_trunc($langs->trans('Payment'), 5, 'right', 'UTF-8', 1).'</button>';
+	} ?>
+		</div>
+		<div class="phonerow2">
+			<div id="phonediv2" class="phonediv2"></div>
+		</div>
+		<div class="phonerow1">
+			<div id="phonediv1" class="phonediv1"></div>
+		</div>
+	</div>
+
+	?>
+	<script type="text/javascript">
 	<?php
 	$categorie = new Categorie($db);
-	$categories = $categorie->get_full_arbo('product', (($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) ? $conf->global->TAKEPOS_ROOT_CATEGORY_ID : 0), 1);
+	$categories = $categorie->get_full_arbo('product', ((getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') > 0) ? $conf->global->TAKEPOS_ROOT_CATEGORY_ID : 0), 1);
 
 	// Search root category to know its level
 	//$conf->global->TAKEPOS_ROOT_CATEGORY_ID=0;
 	$levelofrootcategory = 0;
-	if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) {
+	if (getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') > 0) {
 		foreach ($categories as $key => $categorycursor) {
 			if ($categorycursor['id'] == $conf->global->TAKEPOS_ROOT_CATEGORY_ID) {
 				$levelofrootcategory = $categorycursor['level'];
@@ -185,205 +211,171 @@ if ($action == "productinfo") {
 
 	sort($maincategories);
 	sort($subcategories);
-
-
 	?>
 
-var categories = <?php echo json_encode($maincategories); ?>;
-var subcategories = <?php echo json_encode($subcategories); ?>;
+	var categories = <?php echo json_encode($maincategories); ?>;
+	var subcategories = <?php echo json_encode($subcategories); ?>;
 
-var currentcat;
-var pageproducts=0;
-var pagecategories=0;
-var pageactions=0;
-var place="<?php echo $place; ?>";
-var editaction="qty";
-var editnumber="";
+	var currentcat;
+	var pageproducts=0;
+	var pagecategories=0;
+	var pageactions=0;
+	var place="<?php echo $place; ?>";
+	var editaction="qty";
+	var editnumber="";
 
 
-$( document ).ready(function() {
-	console.log("Refresh");
-	LoadPlace(place);
-});
-
-function LoadPlace(placeid){
-	place=placeid;
-	<?php
-	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-		echo '$("#phonediv2").load("auto_order.php?mobilepage=invoice&place="+place, function() {
-		});';
-	} else {
-		echo '$("#phonediv2").load("invoice.php?mobilepage=invoice&place="+place, function() {
-		});';
-	}
-	?>
-	LoadCats();
-}
-
-function AddProduct(placeid, productid){
-	<?php
-	// If is a public terminal first show product information
-	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-		print 'place=placeid;
-		$("#phonediv1").load("auto_order.php?action=productinfo&token='.newToken().'&place="+place+"&idproduct="+productid, function() {
-		});';
-	} else {
-		print 'AddProductConfirm(placeid, productid);';
-	}
-	?>
-}
-
-function PublicPreOrder(){
-	$("#phonediv1").load("auto_order.php?action=publicpreorder&token=<?php echo newToken(); ?>&place="+place, function() {
+	$( document ).ready(function() {
+		console.log("Refresh");
+		LoadPlace(place);
 	});
-}
 
-function AddProductConfirm(placeid, productid){
-	place=placeid;
-	<?php
-	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-		echo '$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=addline&token='.newToken().'&place="+place+"&idproduct="+productid, function() {
-		});';
-	} else {
-		echo '$("#phonediv2").load("invoice.php?mobilepage=invoice&action=addline&token='.newToken().'&place="+place+"&idproduct="+productid, function() {
-		});';
+	function LoadPlace(placeid){
+		place=placeid;
+		<?php
+		if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+			echo '$("#phonediv2").load("auto_order.php?mobilepage=invoice&place="+place, function() {
+			});';
+		} else {
+			echo '$("#phonediv2").load("invoice.php?mobilepage=invoice&place="+place, function() {
+			});';
+		} ?>
+		LoadCats();
 	}
-	?>
 
-	return true;
-}
+	function AddProduct(placeid, productid){
+		<?php
+		// If is a public terminal first show product information
+		if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+			print 'place=placeid;
+			$("#phonediv1").load("auto_order.php?action=productinfo&token='.newToken().'&place="+place+"&idproduct="+productid, function() {
+			});';
+		} else {
+			print 'AddProductConfirm(placeid, productid);';
+		} ?>
+	}
 
-function SetQty(place, selectedline, qty){
-	<?php
-	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-		?>
-	if (qty==0){
-		$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=deleteline&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline, function() {
+	function PublicPreOrder(){
+		$("#phonediv1").load("auto_order.php?action=publicpreorder&token=<?php echo newToken(); ?>&place="+place, function() {
 		});
 	}
-	else{
+
+	function AddProductConfirm(placeid, productid){
+		place=placeid;
+		<?php
+		if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+			echo '$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=addline&token='.newToken().'&place="+place+"&idproduct="+productid, function() {
+			});';
+		} else {
+			echo '$("#phonediv2").load("invoice.php?mobilepage=invoice&action=addline&token='.newToken().'&place="+place+"&idproduct="+productid, function() {
+			});';
+		} ?>
+
+		return true;
+	}
+
+	function SetQty(place, selectedline, qty){
+		<?php
+		if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+			?>
+		if (qty==0){
+			$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=deleteline&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline, function() {
+			});
+		}
+		else{
+			$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=updateqty&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+qty, function() {
+			});
+		}
+			<?php
+		} else {
+			?>
+		if (qty==0){
+			$("#phonediv2").load("invoice.php?mobilepage=invoice&action=deleteline&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline, function() {
+			});
+		}
+		else{
+			$("#phonediv2").load("invoice.php?mobilepage=invoice&action=updateqty&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+qty, function() {
+			});
+		}
+			<?php
+		} ?>
+		LoadCats();
+
+		return true;
+	}
+
+	function SetNote(place, selectedline){
+		var note = prompt("<?php $langs->trans('Note'); ?>", "");
 		$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=updateqty&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+qty, function() {
 		});
+		LoadCats();
 	}
+
+	function LoadCats(){
 		<?php
-	} else {
-		?>
-	if (qty==0){
-		$("#phonediv2").load("invoice.php?mobilepage=invoice&action=deleteline&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline, function() {
-		});
+		if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+			echo '$("#phonediv1").load("auto_order.php?mobilepage=cats&place="+place, function() {
+			});';
+		} else {
+			echo '$("#phonediv1").load("invoice.php?mobilepage=cats&place="+place, function() {
+			});';
+		} ?>
 	}
-	else{
-		$("#phonediv2").load("invoice.php?mobilepage=invoice&action=updateqty&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+qty, function() {
-		});
-	}
+
+	function LoadProducts(idcat){
+
 		<?php
+		if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+			echo '$("#phonediv1").load("auto_order.php?mobilepage=products&catid="+idcat+"&place="+place, function() {
+			});';
+		} else {
+			echo '$("#phonediv1").load("invoice.php?mobilepage=products&catid="+idcat+"&place="+place, function() {
+			});';
+		} ?>
 	}
-	?>
-	LoadCats();
 
-	return true;
-}
-
-function SetNote(place, selectedline){
-	var note = prompt("<?php $langs->trans('Note'); ?>", "");
-	$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=updateqty&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+qty, function() {
-	});
-	LoadCats();
-}
-
-function LoadCats(){
-	<?php
-	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-		echo '$("#phonediv1").load("auto_order.php?mobilepage=cats&place="+place, function() {
-		});';
-	} else {
-		echo '$("#phonediv1").load("invoice.php?mobilepage=cats&place="+place, function() {
-		});';
-	}
-	?>
-}
-
-function LoadProducts(idcat){
-
-	<?php
-	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-		echo '$("#phonediv1").load("auto_order.php?mobilepage=products&catid="+idcat+"&place="+place, function() {
-		});';
-	} else {
-		echo '$("#phonediv1").load("invoice.php?mobilepage=products&catid="+idcat+"&place="+place, function() {
-		});';
-	}
-	?>
-}
-
-function LoadPlacesList(){
-	$("#phonediv1").load("invoice.php?mobilepage=places", function() {
-	});
-}
-
-function TakeposPrintingOrder(){
-	console.log("TakeposPrintingOrder");
-	<?php
-	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-		echo '$("#phonediv2").load("auto_order.php?action=order&token='.newToken().'&mobilepage=order&place="+place, function() {
-		});';
-		echo '$("#phonediv1").load("auto_order.php?action=publicpayment&token='.newToken().'&place="+place, function() {
-		});';
-	} else {
-		echo '$("#phonediv2").load("invoice.php?action=order&token='.newToken().'&place="+place, function() {
-		});';
-	}
-	?>
-}
-
-function Exit(){
-	window.location.href='../user/logout.php?token=<?php echo newToken(); ?>';
-}
-
-function CheckPlease(payment){
-	if (payment==undefined){
-		$("#phonediv1").load("auto_order.php?action=checkplease&token=<?php echo newToken(); ?>&place="+place, function() {
+	function LoadPlacesList(){
+		$("#phonediv1").load("invoice.php?mobilepage=places", function() {
 		});
 	}
-	else{
-		console.log("Request the check to the waiter");
-		$("#phonediv1").load("auto_order.php?action=checkplease&token=<?php echo newToken(); ?>&place=<?php echo $place; ?>&payment="+payment, function() {
-		});
+
+	function TakeposPrintingOrder(){
+		console.log("TakeposPrintingOrder");
+		<?php
+		if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+			echo '$("#phonediv2").load("auto_order.php?action=order&token='.newToken().'&mobilepage=order&place="+place, function() {
+			});';
+			echo '$("#phonediv1").load("auto_order.php?action=publicpayment&token='.newToken().'&place="+place, function() {
+			});';
+		} else {
+			echo '$("#phonediv2").load("invoice.php?action=order&token='.newToken().'&place="+place, function() {
+			});';
+		} ?>
 	}
-}
 
-</script>
+	function Exit(){
+		window.location.href='../user/logout.php?token=<?php echo newToken(); ?>';
+	}
 
-<body style="background-color:#D1D1D1;">
+	function CheckPlease(payment){
+		if (payment==undefined){
+			$("#phonediv1").load("auto_order.php?action=checkplease&token=<?php echo newToken(); ?>&place="+place, function() {
+			});
+		}
+		else{
+			console.log("Request the check to the waiter");
+			$("#phonediv1").load("auto_order.php?action=checkplease&token=<?php echo newToken(); ?>&place=<?php echo $place; ?>&payment="+payment, function() {
+			});
+		}
+	}
+
+	</script>
+
+
 	<?php
-	if ($conf->global->TAKEPOS_NUM_TERMINALS != "1" && $_SESSION["takeposterminal"] == "") {
+	if (getDolGlobalString('TAKEPOS_NUM_TERMINALS') != "1" && $_SESSION["takeposterminal"] == "") {
 		print '<div class="dialog-info-takepos-terminal" id="dialog-info" title="TakePOS">'.$langs->trans('TerminalSelect').'</div>';
 	}
-	?>
-<div class="container">
-	<div class="phonebuttonsrow">
-		<?php
-		if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-			print '<button type="button" class="phonebutton" onclick="LoadPlacesList();">'.strtoupper(substr($langs->trans('Floors'), 0, 3)).'</button>';
-			print '<button type="button" class="phonebutton" onclick="LoadCats();">'.strtoupper(substr($langs->trans('Categories'), 0, 3)).'</button>';
-			print '<button type="button" class="phonebutton" onclick="TakeposPrintingOrder();">'.strtoupper(substr($langs->trans('Order'), 0, 3)).'</button>';
-			print '<button type="button" class="phonebutton" onclick="Exit();">'.strtoupper(substr($langs->trans('Logout'), 0, 3)).'</button>';
-		} else {
-			print '<button type="button" class="publicphonebutton phoneblue" onclick="LoadCats();">'.strtoupper(substr($langs->trans('Categories'), 0, 5)).'</button>';
-			print '<button type="button" class="publicphonebutton phoneorange" onclick="PublicPreOrder();">'.strtoupper(substr($langs->trans('Order'), 0, 5)).'</button>';
-			print '<button type="button" class="publicphonebutton phonegreen" onclick="CheckPlease();">'.strtoupper(substr($langs->trans('Payment'), 0, 5)).'</button>';
-		}
-		?>
-	</div>
-	<div class="phonerow2">
-		<div id="phonediv2" class="phonediv2"></div>
-	</div>
-	<div class="phonerow1">
-		<div id="phonediv1" class="phonediv1"></div>
-	</div>
-</div>
-</body>
-	<?php
 }
 
 llxFooter();

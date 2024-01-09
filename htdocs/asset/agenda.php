@@ -85,10 +85,14 @@ if ($id > 0 || !empty($ref)) {
 $permissiontoadd = $user->hasRight('asset', 'write'); // Used by the include of actions_addupdatedelete.inc.php
 
 // Security check (enable the most restrictive one)
-if ($user->socid > 0) accessforbidden();
+if ($user->socid > 0) {
+	accessforbidden();
+}
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (!isModEnabled('asset')) accessforbidden();
+if (!isModEnabled('asset')) {
+	accessforbidden();
+}
 
 
 /*
@@ -125,9 +129,9 @@ $form = new Form($db);
 
 if ($object->id > 0) {
 	$title = $langs->trans("Agenda");
-	//if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
+	//if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
 	$help_url = 'EN:Module_Agenda_En|DE:Modul_Terminplanung';
-	llxHeader('', $title, $help_url);
+	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-asset page-card_agenda');
 
 	if (isModEnabled('notification')) {
 		$langs->load("mails");

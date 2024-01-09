@@ -47,7 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class AccountancyExport
 {
-	// Type of export. Used into $conf->global->ACCOUNTING_EXPORT_MODELCSV
+	// Types of export.
 	public static $EXPORT_TYPE_CONFIGURABLE = 1; // CSV
 	public static $EXPORT_TYPE_AGIRIS = 10;
 	public static $EXPORT_TYPE_EBP = 15;
@@ -102,8 +102,8 @@ class AccountancyExport
 		global $conf, $hookmanager;
 
 		$this->db = $db;
-		$this->separator = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
-		$this->end_line = !getDolGlobalString('ACCOUNTING_EXPORT_ENDLINE') ? "\n" : (getDolGlobalInt('ACCOUNTING_EXPORT_ENDLINE') == 1 ? "\n" : "\r\n");
+		$this->separator = getDolGlobalString('ACCOUNTING_EXPORT_SEPARATORCSV');
+		$this->end_line = getDolGlobalString('ACCOUNTING_EXPORT_ENDLINE') ? (getDolGlobalInt('ACCOUNTING_EXPORT_ENDLINE') == 1 ? "\n" : "\r\n") : "\n";
 
 		$hookmanager->initHooks(array('accountancyexport'));
 	}
@@ -201,9 +201,9 @@ class AccountancyExport
 			'param' => array(
 				self::$EXPORT_TYPE_CONFIGURABLE => array(
 					'label' => $langs->trans('Modelcsv_configurable'),
-					'ACCOUNTING_EXPORT_FORMAT' => !getDolGlobalString('ACCOUNTING_EXPORT_FORMAT') ? 'txt' : $conf->global->ACCOUNTING_EXPORT_FORMAT,
-					'ACCOUNTING_EXPORT_SEPARATORCSV' => !getDolGlobalString('ACCOUNTING_EXPORT_SEPARATORCSV') ? ',' : $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV,
-					'ACCOUNTING_EXPORT_ENDLINE' => !getDolGlobalString('ACCOUNTING_EXPORT_ENDLINE') ? 1 : $conf->global->ACCOUNTING_EXPORT_ENDLINE,
+					'ACCOUNTING_EXPORT_FORMAT' => getDolGlobalString('ACCOUNTING_EXPORT_FORMAT', 'txt'),
+					'ACCOUNTING_EXPORT_SEPARATORCSV' => getDolGlobalString('ACCOUNTING_EXPORT_SEPARATORCSV', ','),
+					'ACCOUNTING_EXPORT_ENDLINE' => getDolGlobalString('ACCOUNTING_EXPORT_ENDLINE', 1),
 					'ACCOUNTING_EXPORT_DATE' => getDolGlobalString('ACCOUNTING_EXPORT_DATE', '%Y-%m-%d'),
 				),
 				self::$EXPORT_TYPE_CEGID => array(
@@ -325,7 +325,7 @@ class AccountancyExport
 	 * @param	int		$outputMode					[=0] Print on screen
 	 * 												or 1 to write in file and uses a temp directory - Forced by default when use withAttachment = 1
 	 * 												or 2 to write in file a default export directory (accounting/export/)
-	 * @return 	int		<0 if KO, >0 OK
+	 * @return 	int		Return integer <0 if KO, >0 OK
 	 */
 	public function export(&$TData, $formatexportset, $withAttachment = 0, $downloadMode = 0, $outputMode = 0)
 	{
@@ -341,6 +341,10 @@ class AccountancyExport
 		$exportFile = null;
 		$exportFileName = '';
 		$exportFilePath = '';
+		$exportFileFullName ='';
+		$downloadFileMimeType = '';
+		$downloadFileFullName = '';
+		$downloadFilePath = '';
 		$archiveFullName = '';
 		$archivePath = '';
 		$archiveFileList = array();
@@ -485,7 +489,7 @@ class AccountancyExport
 			case self::$EXPORT_TYPE_FEC2:
 				$archiveFileList = $this->exportFEC2($TData, $exportFile, $archiveFileList, $withAttachment);
 				break;
-			case self::$EXPORT_TYPE_ISUITEEXPERT :
+			case self::$EXPORT_TYPE_ISUITEEXPERT:
 				$this->exportiSuiteExpert($TData, $exportFile);
 				break;
 			default:
@@ -825,7 +829,7 @@ class AccountancyExport
 	 * @param 	array 		$objectLines 			data
 	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
 	 * @param 	array		$archiveFileList		[=array()] Archive file list : array of ['path', 'name']
-	 * @param 	bool		$withAttachment			[=0] Not add files or 1 to have attached in an archive
+	 * @param 	int			$withAttachment			[=0] Not add files or 1 to have attached in an archive
 	 * @return	array		Archive file list : array of ['path', 'name']
 	 */
 	public function exportQuadratus($objectLines, $exportFile = null, $archiveFileList = array(), $withAttachment = 0)
@@ -835,8 +839,6 @@ class AccountancyExport
 		$end_line = "\r\n";
 
 		// We should use dol_now function not time however this is wrong date to transfert in accounting
-		// $date_ecriture = dol_print_date(dol_now(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
-		// $date_ecriture = dol_print_date(time(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
 		foreach ($objectLines as $line) {
 			// Clean some data
 			$line->doc_ref = dol_string_unaccent($line->doc_ref);
@@ -867,11 +869,11 @@ class AccountancyExport
 				if ($line->doc_type == 'customer_invoice') {
 					$tab['lib_alpha'] = strtoupper(str_pad('C'.self::trunc(dol_string_unaccent($line->subledger_label), 6), 7));
 					$tab['filler'] = str_repeat(' ', 52);
-					$tab['coll_compte'] = str_pad(self::trunc($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER, 8), 8);
+					$tab['coll_compte'] = str_pad(self::trunc(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER'), 8), 8);
 				} elseif ($line->doc_type == 'supplier_invoice') {
 					$tab['lib_alpha'] = strtoupper(str_pad('F'.self::trunc(dol_string_unaccent($line->subledger_label), 6), 7));
 					$tab['filler'] = str_repeat(' ', 52);
-					$tab['coll_compte'] = str_pad(self::trunc($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER, 8), 8);
+					$tab['coll_compte'] = str_pad(self::trunc(getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER'), 8), 8);
 				} else {
 					$tab['filler'] = str_repeat(' ', 59);
 					$tab['coll_compte'] = str_pad(' ', 8);
@@ -934,7 +936,6 @@ class AccountancyExport
 
 			// Force date format : %d%m%y
 			if (!empty($line->date_lim_reglement)) {
-				//$tab['date_echeance'] = dol_print_date($line->date_lim_reglement, $conf->global->ACCOUNTING_EXPORT_DATE);
 				$tab['date_echeance'] = dol_print_date($line->date_lim_reglement, '%d%m%y'); // Format must be ddmmyy
 			} else {
 				$tab['date_echeance'] = '000000';
@@ -999,7 +1000,9 @@ class AccountancyExport
 								// skip native invoice pdfs (canelle)
 								// We want to retrieve an attachment representative of the supplier invoice, not a fake document generated by Dolibarr.
 								if ($line->doc_type == 'supplier_invoice') {
-									if ($fileFound['name'] === $objectFileName.'.pdf') continue;
+									if ($fileFound['name'] === $objectFileName.'.pdf') {
+										continue;
+									}
 								} elseif ($fileFound['name'] !== $objectFileName.'.pdf') {
 									continue;
 								}
@@ -1055,10 +1058,6 @@ class AccountancyExport
 		$end_line = "\r\n";
 		$index = 1;
 
-		//We should use dol_now function not time however this is wrong date to transfert in accounting
-		//$date_ecriture = dol_print_date(dol_now(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
-		//$date_ecriture = dol_print_date(time(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
-
 		// Warning ! When truncation is necessary, no dot because 3 dots = three characters. The columns are shifted
 
 		foreach ($objectLines as $line) {
@@ -1103,7 +1102,6 @@ class AccountancyExport
 			$tab['code_stat'] = str_repeat(' ', 4);
 
 			if (!empty($line->date_lim_reglement)) {
-				//$tab['date_echeance'] = dol_print_date($line->date_lim_reglement, $conf->global->ACCOUNTING_EXPORT_DATE);
 				$tab['date_echeance'] = dol_print_date($line->date_lim_reglement, '%d%m%Y');
 			} else {
 				$tab['date_echeance'] = dol_print_date($line->doc_date, '%d%m%Y');
@@ -1137,7 +1135,6 @@ class AccountancyExport
 	 */
 	public function exportEbp($objectLines, $exportFile = null)
 	{
-
 		$separator = ',';
 		$end_line = "\n";
 
@@ -1271,7 +1268,7 @@ class AccountancyExport
 		$separator = $this->separator;
 
 		foreach ($objectLines as $line) {
-			$date_document = dol_print_date($line->doc_date, $conf->global->ACCOUNTING_EXPORT_DATE);
+			$date_document = dol_print_date($line->doc_date, getDolGlobalString('ACCOUNTING_EXPORT_DATE'));
 
 			$tab = array();
 			// export configurable
@@ -1304,7 +1301,7 @@ class AccountancyExport
 	 * @param 	array 		$objectLines 			data
 	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
 	 * @param 	array		$archiveFileList		[=array()] Archive file list : array of ['path', 'name']
-	 * @param 	bool		$withAttachment			[=0] Not add files or 1 to have attached in an archive
+	 * @param 	int			$withAttachment			[=0] Not add files or 1 to have attached in an archive
 	 * @return	array		Archive file list : array of ['path', 'name']
 	 */
 	public function exportFEC($objectLines, $exportFile = null, $archiveFileList = array(), $withAttachment = 0)
@@ -1468,7 +1465,9 @@ class AccountancyExport
 									// skip native invoice pdfs (canelle)
 									// We want to retrieve an attachment representative of the supplier invoice, not a fake document generated by Dolibarr.
 									if ($line->doc_type == 'supplier_invoice') {
-										if ($fileFound['name'] === $objectFileName.'.pdf') continue;
+										if ($fileFound['name'] === $objectFileName.'.pdf') {
+											continue;
+										}
 									} elseif ($fileFound['name'] !== $objectFileName.'.pdf') {
 										continue;
 									}
@@ -1513,7 +1512,7 @@ class AccountancyExport
 	 * @param 	array 		$objectLines 			data
 	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
 	 * @param 	array		$archiveFileList		[=array()] Archive file list : array of ['path', 'name']
-	 * @param 	bool		$withAttachment			[=0] Not add files or 1 to have attached in an archive
+	 * @param 	int			$withAttachment			[=0] Not add files or 1 to have attached in an archive
 	 * @return	array		Archive file list : array of ['path', 'name']
 	 */
 	public function exportFEC2($objectLines, $exportFile = null, $archiveFileList = array(), $withAttachment = 0)
@@ -1677,7 +1676,9 @@ class AccountancyExport
 									// skip native invoice pdfs (canelle)
 									// We want to retrieve an attachment representative of the supplier invoice, not a fake document generated by Dolibarr.
 									if ($line->doc_type == 'supplier_invoice') {
-										if ($fileFound['name'] === $objectFileName.'.pdf') continue;
+										if ($fileFound['name'] === $objectFileName.'.pdf') {
+											continue;
+										}
 									} elseif ($fileFound['name'] !== $objectFileName.'.pdf') {
 										continue;
 									}
@@ -1879,7 +1880,6 @@ class AccountancyExport
 	 */
 	public function exportLDCompta($objectLines, $exportFile = null)
 	{
-
 		$separator = ';';
 		$end_line = "\r\n";
 
@@ -2486,7 +2486,6 @@ class AccountancyExport
 	 */
 	public function exportGestimumV5($objectLines, $exportFile = null)
 	{
-
 		$separator = ',';
 		$end_line = "\r\n";
 

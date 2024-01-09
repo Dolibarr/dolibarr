@@ -373,7 +373,7 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'subscripti
 
 					// Get email content from template
 					$arraydefaultmessage = null;
-					$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION;
+					$labeltouse = getDolGlobalString('ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION');
 
 					if (!empty($labeltouse)) {
 						$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
@@ -869,7 +869,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 	print "\n\n<!-- Form add subscription -->\n";
 
 	if ($conf->use_javascript_ajax) {
-		//var_dump($bankdirect.'-'.$bankviainvoice.'-'.$invoiceonly.'-'.empty($conf->global->ADHERENT_BANK_USE));
+		//var_dump($bankdirect.'-'.$bankviainvoice.'-'.$invoiceonly);
 		print "\n".'<script type="text/javascript">';
 		print '$(document).ready(function () {
 					$(".bankswitchclass, .bankswitchclass2").'.(($bankdirect || $bankviainvoice) ? 'show()' : 'hide()').';
@@ -1056,12 +1056,12 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 					print $langs->trans("CreateDolibarrThirdParty");
 					print '</a>)';
 				}
-				if (!getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS') || $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS != 'defaultforfoundationcountry') {
+				if (!getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS') || getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS') != 'defaultforfoundationcountry') {
 					print '. <span class="opacitymedium">'.$langs->trans("NoVatOnSubscription", 0).'</span>';
 				}
 				if (getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') && (isModEnabled('product') || isModEnabled('service'))) {
 					$prodtmp = new Product($db);
-					$result = $prodtmp->fetch($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
+					$result = $prodtmp->fetch(getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS'));
 					if ($result < 0) {
 						setEventMessage($prodtmp->error, 'errors');
 					}
@@ -1086,12 +1086,12 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 					print $langs->trans("CreateDolibarrThirdParty");
 					print '</a>)';
 				}
-				if (!getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS') || $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS != 'defaultforfoundationcountry') {
+				if (!getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS') || getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS') != 'defaultforfoundationcountry') {
 					print '. <span class="opacitymedium">'.$langs->trans("NoVatOnSubscription", 0).'</span>';
 				}
 				if (getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') && (isModEnabled('product')|| isModEnabled('service'))) {
 					$prodtmp = new Product($db);
-					$result = $prodtmp->fetch($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
+					$result = $prodtmp->fetch(getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS'));
 					if ($result < 0) {
 						setEventMessage($prodtmp->error, 'errors');
 					}
@@ -1158,7 +1158,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 		$outputlangs->loadLangs(array("main", "members"));
 		// Get email content from template
 		$arraydefaultmessage = null;
-		$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION;
+		$labeltouse = getDolGlobalString('ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION');
 
 		if (!empty($labeltouse)) {
 			$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);

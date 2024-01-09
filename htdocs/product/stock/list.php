@@ -49,9 +49,9 @@ $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '
 $toselect = GETPOST('toselect', 'array');
 $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
 
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
-$search_ref = GETPOST("sref", "alpha") ?GETPOST("sref", "alpha") : GETPOST("search_ref", "alpha");
-$search_label = GETPOST("snom", "alpha") ?GETPOST("snom", "alpha") : GETPOST("search_label", "alpha");
+$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_ref = GETPOST("sref", "alpha") ? GETPOST("sref", "alpha") : GETPOST("search_ref", "alpha");
+$search_label = GETPOST("snom", "alpha") ? GETPOST("snom", "alpha") : GETPOST("search_label", "alpha");
 $search_status = GETPOST("search_status", "int");
 
 if (isModEnabled('categorie')) {
@@ -59,7 +59,7 @@ if (isModEnabled('categorie')) {
 }
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -217,7 +217,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 
 //For Multicompany PMP per entity
 $separatedPMP = false;
-if (!empty($conf->global->MULTICOMPANY_PRODUCT_SHARING_ENABLED) && !empty($conf->global->MULTICOMPANY_PMP_PER_ENTITY_ENABLED)) {
+if (getDolGlobalString('MULTICOMPANY_PRODUCT_SHARING_ENABLED') && getDolGlobalString('MULTICOMPANY_PMP_PER_ENTITY_ENABLED')) {
 	$separatedPMP = true;
 	$sql .= ", SUM(pa.pmp * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue, SUM(ps.reel) as stockqty";
 } else {
@@ -561,10 +561,10 @@ foreach ($object->fields as $key => $val) {
 			print $object->showInputField($val, $key, (isset($search[$key]) ? $search[$key] : ''), '', '', 'search_', $cssforfield.' maxwidth250', 1);
 		} elseif (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
 			print '<div class="nowrap">';
-			print $form->selectDate($search[$key.'_dtstart'] ? $search[$key.'_dtstart'] : '', "search_".$key."_dtstart", 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+			print $form->selectDate(isset($search[$key.'_dtstart']) ? $search[$key.'_dtstart'] : '', "search_".$key."_dtstart", 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 			print '</div>';
 			print '<div class="nowrap">';
-			print $form->selectDate($search[$key.'_dtend'] ? $search[$key.'_dtend'] : '', "search_".$key."_dtend", 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+			print $form->selectDate(isset($search[$key.'_dtend']) ? $search[$key.'_dtend'] : '', "search_".$key."_dtend", 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 			print '</div>';
 		} elseif ($key == 'lang') {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
@@ -600,7 +600,7 @@ print $hookmanager->resPrint;
 // Status
 if (!empty($arrayfields['t.statut']['checked'])) {
 	print '<td class="liste_titre center parentonrightofpage">';
-	print $form->selectarray('search_status', $warehouse->statuts, $search_status, 1, 0, 0, '', 1, 0, 0, '', 'search_status width100 onrightofpage');
+	print $form->selectarray('search_status', $warehouse->labelStatus, $search_status, 1, 0, 0, '', 1, 0, 0, '', 'search_status width100 onrightofpage');
 	print '</td>';
 }
 
@@ -613,7 +613,6 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 print '</tr>'."\n";
 
-$totalarray = array();
 $totalarray['nbfield'] = 0;
 
 // Fields title label
@@ -648,16 +647,19 @@ foreach ($object->fields as $key => $val) {
 if (!empty($arrayfields["stockqty"]['checked'])) {
 	print_liste_field_titre("PhysicalStock", $_SERVER["PHP_SELF"], "stockqty", '', $param, '', $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
+	$totalarray['type'][$totalarray['nbfield']] = 'stock';
 }
 
 if (!empty($arrayfields["estimatedvalue"]['checked'])) {
 	print_liste_field_titre("EstimatedStockValue", $_SERVER["PHP_SELF"], "estimatedvalue", '', $param, '', $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
+	$totalarray['type'][$totalarray['nbfield']] = 'price';
 }
 
 if (!empty($arrayfields["estimatedstockvaluesell"]['checked'])) {
 	print_liste_field_titre("EstimatedStockValueSell", $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
+	$totalarray['type'][$totalarray['nbfield']] = 'price';
 }
 
 // Extra fields
@@ -686,7 +688,6 @@ $warehouse = new Entrepot($db);
 // --------------------------------------------------------------------
 $i = 0;
 $savnbfield = $totalarray['nbfield'];
-$totalarray = array();
 $totalarray['nbfield'] = 0;
 $imaxinloop = ($limit ? min($num, $limit) : $num);
 while ($i < $imaxinloop) {
@@ -831,7 +832,7 @@ while ($i < $imaxinloop) {
 		// Selling value
 		if (!empty($arrayfields["estimatedstockvaluesell"]['checked'])) {
 			print '<td class="right">';
-			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 				if ($obj->sellvalue) {
 					print '<span class="amount">'.price(price2num($obj->sellvalue, 'MT'), 1).'</span>';
 				}
@@ -912,7 +913,7 @@ print '</div>'."\n";
 
 print '</form>'."\n";
 
-if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
+if (in_array('builddoc', array_keys($arrayofmassactions)) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
 	$hidegeneratedfilelistifempty = 1;
 	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) {
 		$hidegeneratedfilelistifempty = 0;

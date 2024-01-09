@@ -27,6 +27,7 @@
 include 'inc.php';
 require_once $dolibarr_main_document_root.'/core/class/conf.class.php';
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
+require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
 
 global $langs;
 
@@ -43,8 +44,8 @@ error_reporting(0);      // Disable all errors
 @set_time_limit(1800);   // Need 1800 on some very slow OS like Windows 7/64
 error_reporting($err);
 
-$action = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : (empty($argv[1]) ? '' : $argv[1]);
-$setuplang = GETPOST('selectlang', 'aZ09', 3) ?GETPOST('selectlang', 'aZ09', 3) : (empty($argv[2]) ? 'auto' : $argv[2]);
+$action = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : (empty($argv[1]) ? '' : $argv[1]);
+$setuplang = GETPOST('selectlang', 'aZ09', 3) ? GETPOST('selectlang', 'aZ09', 3) : (empty($argv[2]) ? 'auto' : $argv[2]);
 $langs->setDefaultLang($setuplang);
 
 $langs->loadLangs(array("admin", "install"));
@@ -192,7 +193,7 @@ if ($action == "set") {
 			if ($fp) {
 				while (!feof($fp)) {
 					$buf = fgets($fp, 4096);
-					if (substr($buf, 0, 2) <> '--') {
+					if (substr($buf, 0, 2) != '--') {
 						$buf = preg_replace('/--(.+)*/', '', $buf);
 						$buffer .= $buf;
 					}
@@ -293,7 +294,7 @@ if ($action == "set") {
 					$buf = fgets($fp, 4096);
 
 					// Special case of lines allowed for some version only
-					 // MySQL
+					// MySQL
 					if ($choix == 1 && preg_match('/^--\sV([0-9\.]+)/i', $buf, $reg)) {
 						$versioncommande = explode('.', $reg[1]);
 						//var_dump($versioncommande);
@@ -305,7 +306,7 @@ if ($action == "set") {
 							//print "Ligne $i qualifiee par version: ".$buf.'<br>';
 						}
 					}
-					 // PGSQL
+					// PGSQL
 					if ($choix == 2 && preg_match('/^--\sPOSTGRESQL\sV([0-9\.]+)/i', $buf, $reg)) {
 						$versioncommande = explode('.', $reg[1]);
 						//var_dump($versioncommande);
@@ -404,7 +405,7 @@ if ($action == "set") {
 				$buffer = '';
 				while (!feof($fp)) {
 					$buf = fgets($fp, 4096);
-					if (substr($buf, 0, 2) <> '--') {
+					if (substr($buf, 0, 2) != '--') {
 						$buffer .= $buf."§";
 					}
 				}
@@ -584,7 +585,7 @@ dolibarr_install_syslog("- step2: end");
 
 $conf->file->instance_unique_id = (empty($dolibarr_main_instance_unique_id) ? (empty($dolibarr_main_cookie_cryptkey) ? '' : $dolibarr_main_cookie_cryptkey) : $dolibarr_main_instance_unique_id); // Unique id of instance
 
-$hash_unique_id = md5('dolibarr'.$conf->file->instance_unique_id);
+$hash_unique_id = dol_hash('dolibarr'.$conf->file->instance_unique_id, 'sha256');	// Note: if the global salt changes, this hash changes too so ping may be counted twice. We don't mind. It is for statistics purpose only.
 
 $out  = '<input type="checkbox" name="dolibarrpingno" id="dolibarrpingno"'.((getDolGlobalString('MAIN_FIRST_PING_OK_ID') == 'disabled') ? '' : ' value="checked" checked="true"').'> ';
 $out .= '<label for="dolibarrpingno">'.$langs->trans("MakeAnonymousPing").'</label>';

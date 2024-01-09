@@ -83,7 +83,6 @@ class doc_generic_supplier_invoice_odt extends ModelePDFSuppliersInvoices
 		$this->option_tva = 0; // Manage the vat option FACTURE_TVAOPTION
 		$this->option_modereg = 0; // Display payment mode
 		$this->option_condreg = 0; // Display payment terms
-		$this->option_codeproduitservice = 0; // Display product-service code
 		$this->option_multilang = 1; // Available in several languages
 		$this->option_escompte = 0; // Displays if there has been a discount
 		$this->option_credit_note = 0; // Support credit notes
@@ -162,7 +161,7 @@ class doc_generic_supplier_invoice_odt extends ModelePDFSuppliersInvoices
 
 		// Scan directories
 		$nbofiles = count($listoffiles);
-		if (!empty($conf->global->SUPPLIER_INVOICE_ADDON_PDF_ODT_PATH)) {
+		if (getDolGlobalString('SUPPLIER_INVOICE_ADDON_PDF_ODT_PATH')) {
 			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>';
 			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
 			$texte .= count($listoffiles);
@@ -245,7 +244,7 @@ class doc_generic_supplier_invoice_odt extends ModelePDFSuppliersInvoices
 				//$dir = $conf->fournisseur->facture->dir_output.'/'.$objectref;
 				$dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$objectref;
 				$file = $dir."/".$objectref.".pdf";
-				if (!empty($conf->global->SUPPLIER_REF_IN_NAME)) {
+				if (getDolGlobalString('SUPPLIER_REF_IN_NAME')) {
 					$file = $dir."/".$objectref.($objectrefsupplier ? "_".$objectrefsupplier : "").".pdf";
 				}
 			}
@@ -301,7 +300,7 @@ class doc_generic_supplier_invoice_odt extends ModelePDFSuppliersInvoices
 				$contactobject = null;
 				if (!empty($usecontact)) {
 					// We can use the company of contact instead of thirdparty company
-					if ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT))) {
+					if ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT'))) {
 						$object->contact->fetch_thirdparty();
 						$socobject = $object->contact->thirdparty;
 						$contactobject = $object->contact;
@@ -331,7 +330,7 @@ class doc_generic_supplier_invoice_odt extends ModelePDFSuppliersInvoices
 				$newfreetext = '';
 				$paramfreetext = 'INVOICE_FREE_TEXT';
 				if (!empty($conf->global->$paramfreetext)) {
-					$newfreetext = make_substitutions($conf->global->$paramfreetext, $substitutionarray);
+					$newfreetext = make_substitutions(getDolGlobalString($paramfreetext), $substitutionarray);
 				}
 
 				// Open and load template
@@ -394,8 +393,7 @@ class doc_generic_supplier_invoice_odt extends ModelePDFSuppliersInvoices
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}
-						} else // Text
-						{
+						} else { // Text
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
 					} catch (OdfException $e) {
@@ -407,8 +405,11 @@ class doc_generic_supplier_invoice_odt extends ModelePDFSuppliersInvoices
 					$foundtagforlines = 1;
 					try {
 						$listlines = $odfHandler->setSegment('lines');
-					} catch (OdfException $e) {
+					} catch (OdfExceptionSegmentNotFound $e) {
 						// We may arrive here if tags for lines not present into template
+						$foundtagforlines = 0;
+						dol_syslog($e->getMessage(), LOG_INFO);
+					} catch (OdfException $e) {
 						$foundtagforlines = 0;
 						dol_syslog($e->getMessage(), LOG_INFO);
 					}
@@ -456,7 +457,7 @@ class doc_generic_supplier_invoice_odt extends ModelePDFSuppliersInvoices
 				$reshook = $hookmanager->executeHooks('beforeODTSave', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
 				// Write new file
-				if (!empty($conf->global->MAIN_ODT_AS_PDF)) {
+				if (getDolGlobalString('MAIN_ODT_AS_PDF')) {
 					try {
 						$odfHandler->exportAsAttachedPDF($file);
 					} catch (Exception $e) {

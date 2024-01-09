@@ -78,8 +78,8 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('don', '
 /*
  * View
  */
-
-llxHeader();
+$title = $langs->trans("Payment");
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-donation page-payment_card');
 
 $don = new Don($db);
 $form = new Form($db);

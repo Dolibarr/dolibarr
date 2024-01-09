@@ -126,7 +126,7 @@ $form = new Form($db);
 
 if ($object->id > 0) {
 	$title = $langs->trans("Agenda");
-	//if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
+	//if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
 	$help_url = 'EN:Module_Agenda_En|DE:Modul_Terminplanung';
 	llxHeader('', $title, $help_url);
 
@@ -238,7 +238,7 @@ if ($object->id > 0) {
 		$cachekey = 'count_events_propal_'.$object->id;
 		$nbEvent = dol_getcache($cachekey);
 
-		print_barre_liste($langs->trans("ActionsOnPropal").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>': ''), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 1);
+		print_barre_liste($langs->trans("ActionsOnPropal").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : ''), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 1);
 		//print_barre_liste($langs->trans("ActionsOnPropal"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 1);
 
 		// List of all actions

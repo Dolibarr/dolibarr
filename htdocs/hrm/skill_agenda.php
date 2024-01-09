@@ -98,8 +98,12 @@ $permissiontoadd = $user->rights->hrm->all->write; // Used by the include of act
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->hrm->enabled)) accessforbidden();
-if (!$permissiontoread) accessforbidden();
+if (empty($conf->hrm->enabled)) {
+	accessforbidden();
+}
+if (!$permissiontoread) {
+	accessforbidden();
+}
 
 
 /*
@@ -136,7 +140,7 @@ $form = new Form($db);
 
 if ($object->id > 0) {
 	$title = $langs->trans("Agenda");
-	//if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
+	//if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
 	$help_url = 'EN:Module_Agenda_En|DE:Modul_Terminplanung';
 	llxHeader('', $title, $help_url);
 

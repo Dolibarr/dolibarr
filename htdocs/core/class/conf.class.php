@@ -29,7 +29,7 @@
 /**
  *  Class to stock current configuration
  */
-class Conf
+class Conf extends stdClass
 {
 	/**
 	 * @var Object 	Associative array with properties found in conf file
@@ -235,7 +235,7 @@ class Conf
 	 *
 	 * @param	DoliDB	$db			Database handler
 	 * @param	int		$entity		Entity to get
-	 * @return	int					< 0 if KO, >= 0 if OK
+	 * @return	int					Return integer < 0 if KO, >= 0 if OK
 	 */
 	public function setEntityValues($db, $entity)
 	{
@@ -253,7 +253,7 @@ class Conf
 	 *  Note that this->db->xxx, this->file->xxx have been already set when setValues is called.
 	 *
 	 *  @param      DoliDB      $db     Database handler
-	 *  @return     int                 < 0 if KO, >= 0 if OK
+	 *  @return     int                 Return integer < 0 if KO, >= 0 if OK
 	 */
 	public function setValues($db)
 	{
@@ -262,7 +262,9 @@ class Conf
 		// Unset all old modules values
 		if (!empty($this->modules)) {
 			foreach ($this->modules as $m) {
-				if (isset($this->$m)) unset($this->$m);
+				if (isset($this->$m)) {
+					unset($this->$m);
+				}
 			}
 		}
 
@@ -394,11 +396,14 @@ class Conf
 									$modulename = 'supplier_proposal';
 								}
 								$this->modules[$modulename] = $modulename; // Add this module in list of enabled modules
+
 								// deprecated in php 8.2
+								//if (version_compare(phpversion(), '8.2') < 0) {
 								if (!isset($this->$modulename) || !is_object($this->$modulename)) {
-									$this->$modulename = new stdClass();
+									$this->$modulename = new stdClass();	// We need this to use the ->enabled and the ->multidir, ->dir...
 								}
-								$this->$modulename->enabled = true;
+								$this->$modulename->enabled = true;	// TODO Remove this
+								//}
 							}
 						}
 					}
@@ -684,15 +689,23 @@ class Conf
 				// If module lot/serial enabled, we force the inc/dec mode to STOCK_CALCULATE_ON_SHIPMENT_CLOSE and STOCK_CALCULATE_ON_RECEPTION_CLOSE
 				$this->global->STOCK_CALCULATE_ON_BILL = 0;
 				$this->global->STOCK_CALCULATE_ON_VALIDATE_ORDER = 0;
-				if (empty($this->global->STOCK_CALCULATE_ON_SHIPMENT)) $this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE = 1;
-				if (empty($this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) $this->global->STOCK_CALCULATE_ON_SHIPMENT = 1;
+				if (empty($this->global->STOCK_CALCULATE_ON_SHIPMENT)) {
+					$this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE = 1;
+				}
+				if (empty($this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
+					$this->global->STOCK_CALCULATE_ON_SHIPMENT = 1;
+				}
 				$this->global->STOCK_CALCULATE_ON_SUPPLIER_BILL = 0;
 				$this->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER = 0;
 				if (!isModEnabled('reception')) {
 					$this->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER = 1;
 				} else {
-					if (empty($this->global->STOCK_CALCULATE_ON_RECEPTION)) $this->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE = 1;
-					if (empty($this->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) $this->global->STOCK_CALCULATE_ON_RECEPTION = 1;
+					if (empty($this->global->STOCK_CALCULATE_ON_RECEPTION)) {
+						$this->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE = 1;
+					}
+					if (empty($this->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
+						$this->global->STOCK_CALCULATE_ON_RECEPTION = 1;
+					}
 				}
 			}
 
@@ -995,7 +1008,7 @@ class Conf
 			}
 
 			if (!isset($this->global->MAIL_SMTP_USE_FROM_FOR_HELO)) {
-				$this->global->MAIL_SMTP_USE_FROM_FOR_HELO = 2;
+				$this->global->MAIL_SMTP_USE_FROM_FOR_HELO = 2;	// Use the domain in $dolibarr_main_url_root (mydomain.com)
 			}
 
 			if (!defined('MAIN_ANTIVIRUS_BYPASS_COMMAND_AND_PARAM')) {

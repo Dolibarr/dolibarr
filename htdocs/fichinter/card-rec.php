@@ -51,7 +51,7 @@ if (isModEnabled('contrat')) {
 $langs->loadLangs(array("interventions", "admin", "compta", "bills"));
 
 // Security check
-$id = (GETPOST('fichinterid', 'int') ?GETPOST('fichinterid', 'int') : GETPOST('id', 'int'));
+$id = (GETPOST('fichinterid', 'int') ? GETPOST('fichinterid', 'int') : GETPOST('id', 'int'));
 $ref = GETPOST('ref', 'alpha');
 $date_next_execution = GETPOST('date_next_execution', 'alpha');
 $action = GETPOST('action', 'aZ09');
@@ -147,7 +147,7 @@ if ($action == 'add') {
 	$reday = GETPOST('reday');
 	$rehour = GETPOST('rehour');
 	$remin = GETPOST('remin');
-	$nb_gen_max = (GETPOST('nb_gen_max', 'int') ?GETPOST('nb_gen_max', 'int') : 0);
+	$nb_gen_max = (GETPOST('nb_gen_max', 'int') ? GETPOST('nb_gen_max', 'int') : 0);
 	if (GETPOST('frequency')) {
 		if (empty($reyear) || empty($remonth) || empty($reday)) {
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("Date")), null, 'errors');
@@ -332,7 +332,7 @@ if ($action == 'create') {
 		// Author
 		print "<tr><td>".$langs->trans("Author")."</td><td>".$user->getFullName($langs)."</td></tr>";
 
-		if (empty($conf->global->FICHINTER_DISABLE_DETAILS)) {
+		if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS')) {
 			// Duration
 			print '<tr><td>'.$langs->trans("TotalDuration").'</td>';
 			print '<td colspan="3">'.convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
@@ -343,7 +343,7 @@ if ($action == 'create') {
 		if (isModEnabled('project')) {
 			$formproject = new FormProjets($db);
 			print "<tr><td>".$langs->trans("Project")."</td><td>";
-			$projectid = GETPOST('projectid') ?GETPOST('projectid') : $object->fk_project;
+			$projectid = GETPOST('projectid') ? GETPOST('projectid') : $object->fk_project;
 
 			$numprojet = $formproject->select_projects($object->thirdparty->id, $projectid, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, '');
 			print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->thirdparty->id;
@@ -377,7 +377,7 @@ if ($action == 'create') {
 		print $form->textwithpicto($langs->trans("Frequency"), $langs->transnoentitiesnoconv('toolTipFrequency'));
 		print "</td><td>";
 		print '<input type="text" name="frequency" value="'.GETPOST('frequency', 'int').'" size="4">&nbsp;';
-		print $form->selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), (GETPOST('unit_frequency') ?GETPOST('unit_frequency') : 'm'));
+		print $form->selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), (GETPOST('unit_frequency') ? GETPOST('unit_frequency') : 'm'));
 		print "</td></tr>";
 
 		// First date of execution for cron
@@ -554,7 +554,7 @@ if ($action == 'create') {
 
 			print "<tr><td>".$langs->trans("Author").'</td><td colspan="3">'.$author->getFullName($langs)."</td></tr>";
 
-			if (empty($conf->global->FICHINTER_DISABLE_DETAILS)) {
+			if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS')) {
 				// Duration
 				print '<tr><td class="titlefield">'.$langs->trans("TotalDuration").'</td>';
 				print '<td colspan="3">';
@@ -783,7 +783,7 @@ if ($action == 'create') {
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter_rec as f";
 		$sql .= " , ".MAIN_DB_PREFIX."societe as s ";
-		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " , ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE f.fk_soc = s.rowid";
@@ -791,12 +791,14 @@ if ($action == 'create') {
 		if (!empty($socid)) {
 			$sql .= " AND s.rowid = ".((int) $socid);
 		}
-		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
+		/*
 		if (!empty($search_ref)) {
 			$sql .= natural_search('f.titre', $search_ref);
 		}
+		*/
 		if (!empty($search_societe)) {
 			$sql .= natural_search('s.nom', $search_societe);
 		}

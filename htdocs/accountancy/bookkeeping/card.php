@@ -103,7 +103,7 @@ if ($cancel) {
 if ($action == "confirm_update") {
 	$error = 0;
 
-	if ((floatval($debit) != 0.0) && (floatval($credit) != 0.0)) {
+	if (((float) $debit != 0.0) && ((float) $credit != 0.0)) {
 		$error++;
 		setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
 		$action = 'update';
@@ -130,12 +130,12 @@ if ($action == "confirm_update") {
 			$object->debit = $debit;
 			$object->credit = $credit;
 
-			if (floatval($debit) != 0.0) {
+			if ((float) $debit != 0.0) {
 				$object->montant = $debit; // deprecated
 				$object->amount = $debit;
 				$object->sens = 'D';
 			}
-			if (floatval($credit) != 0.0) {
+			if ((float) $credit != 0.0) {
 				$object->montant = $credit; // deprecated
 				$object->amount = $credit;
 				$object->sens = 'C';
@@ -159,7 +159,7 @@ if ($action == "confirm_update") {
 } elseif ($action == "add") {
 	$error = 0;
 
-	if ((floatval($debit) != 0.0) && (floatval($credit) != 0.0)) {
+	if (((float) $debit != 0.0) && ((float) $credit != 0.0)) {
 		$error++;
 		setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
 		$action = '';
@@ -189,13 +189,13 @@ if ($action == "confirm_update") {
 		$object->fk_doc = GETPOSTINT('fk_doc');
 		$object->fk_docdet = GETPOSTINT('fk_docdet');
 
-		if (floatval($debit) != 0.0) {
+		if ((float) $debit != 0.0) {
 			$object->montant = $debit; // deprecated
 			$object->amount = $debit;
 			$object->sens = 'D';
 		}
 
-		if (floatval($credit) != 0.0) {
+		if ((float) $credit != 0.0) {
 			$object->montant = $credit; // deprecated
 			$object->amount = $credit;
 			$object->sens = 'C';

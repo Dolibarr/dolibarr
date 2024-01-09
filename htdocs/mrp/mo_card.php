@@ -49,7 +49,7 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'mocard'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'mocard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $TBomLineId = GETPOST('bomlineid', 'array');
@@ -289,7 +289,7 @@ if (empty($reshook)) {
 		$result = $object->setStatut($object::STATUS_PRODUCED, 0, '', 'MRP_MO_PRODUCED');
 		if ($result >= 0) {
 			// Define output language
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -365,9 +365,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	mrpCollapseBomManagement();
-
-	?>
+	mrpCollapseBomManagement(); ?>
 	<script>
 		 $(document).ready(function () {
 			 jQuery('#fk_bom').change(function() {
@@ -430,6 +428,7 @@ if ($action == 'create') {
 	if ($objectbom->id > 0) {
 		print load_fiche_titre($titlelist);
 
+		print '<!-- list of product/services to consume -->'."\n";
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 
@@ -496,8 +495,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($action == 'delete') {
 		$numberofmochilds = count($object->getAllMoChilds());
 
-		if ($numberofmochilds > 0)$label = $langs->trans("DeleteMoChild", '('.strval($numberofmochilds).')');
-		else $label = $langs->trans("DeleteMoChild");
+		if ($numberofmochilds > 0) {
+			$label = $langs->trans("DeleteMoChild", '('.strval($numberofmochilds).')');
+		} else {
+			$label = $langs->trans("DeleteMoChild");
+		}
 
 		$formquestion = array(
 			array('type' => 'checkbox', 'name' => 'deletechilds', 'label' => $label, 'value' => 0),
@@ -505,7 +507,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				'label' => $langs->trans('MoCancelConsumedAndProducedLines'),
 				'name' => 'alsoCancelConsumedAndProducedLines',
 				'type' => 'checkbox',
-				'value' => empty($conf->global->MO_ALSO_CANCEL_CONSUMED_AND_PRODUCED_LINES_BY_DEFAULT) ? 0 : 1
+				'value' => !getDolGlobalString('MO_ALSO_CANCEL_CONSUMED_AND_PRODUCED_LINES_BY_DEFAULT') ? 0 : 1
 			)
 		);
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteMo'), $langs->trans('ConfirmDeleteMo'), 'confirm_delete', $formquestion, 0, 1);
@@ -599,7 +601,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Thirdparty
 	if (is_object($object->thirdparty)) {
 		$morehtmlref .= $object->thirdparty->getNomUrl(1, 'customer');
-		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
+		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
 			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
 		}
 	}

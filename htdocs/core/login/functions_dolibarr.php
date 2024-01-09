@@ -41,7 +41,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 
 	// Force master entity in transversal mode
 	$entity = $entitytotest;
-	if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+	if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 		$entity = 1;
 	}
 
@@ -102,8 +102,8 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 
 					// Check crypted password
 					$cryptType = '';
-					if (!empty($conf->global->DATABASE_PWD_ENCRYPTED)) {
-						$cryptType = $conf->global->DATABASE_PWD_ENCRYPTED;
+					if (getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {
+						$cryptType = getDolGlobalString('DATABASE_PWD_ENCRYPTED');
 					}
 
 					// By default, we use default setup for encryption rule

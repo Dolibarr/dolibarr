@@ -135,7 +135,7 @@ class box_boms extends ModeleBoxes
 						'asis' => 1,
 					);
 
-					if (!empty($conf->global->BOM_BOX_LAST_BOMS_SHOW_VALIDATE_USER)) {
+					if (getDolGlobalString('BOM_BOX_LAST_BOMS_SHOW_VALIDATE_USER')) {
 						if ($objp->fk_user_valid > 0) {
 							$userstatic->fetch($objp->fk_user_valid);
 						}
@@ -161,8 +161,8 @@ class box_boms extends ModeleBoxes
 
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
-					'td' => 'class="center opacitymedium"',
-					'text'=>$langs->trans("NoRecordedOrders")
+					'td' => 'class="center"',
+					'text'=> '<span class="opacitymedium">'.$langs->trans("NoRecordedOrders").'</span>'
 					);
 				}
 
@@ -176,8 +176,8 @@ class box_boms extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

@@ -91,10 +91,10 @@ if ($id > 0 || !empty($ref)) {
 
 	// Check current user can read this salary
 	$canread = 0;
-	if (!empty($user->rights->salaries->readall)) {
+	if ($user->hasRight('salaries', 'readall')) {
 		$canread = 1;
 	}
-	if (!empty($user->rights->salaries->read) && $object->fk_user > 0 && in_array($object->fk_user, $childids)) {
+	if ($user->hasRight('salaries', 'read') && $object->fk_user > 0 && in_array($object->fk_user, $childids)) {
 		$canread = 1;
 	}
 	if (!$canread) {
@@ -133,13 +133,13 @@ restrictedArea($user, 'salaries', $object->id, 'salary', '');
  */
 
 // Link to a project
-if ($action == 'classin' && $user->rights->banque->modifier) {
+if ($action == 'classin' && $user->hasRight('banque', 'modifier')) {
 	$object->fetch($id);
 	$object->setProject($projectid);
 }
 
 // set label
-if ($action == 'setlabel' && $user->rights->salaries->write) {
+if ($action == 'setlabel' && $user->hasRight('salaries', 'write')) {
 	$object->fetch($id);
 	$object->label = $label;
 	$object->update($user);
@@ -153,7 +153,7 @@ if ($reshook < 0) {
 
 
 if ($action == "new") {
-		//var_dump($object);exit;
+	//var_dump($object);exit;
 	if ($object->id > 0) {
 		$db->begin();
 
@@ -167,12 +167,12 @@ if ($action == "new") {
 
 			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 		} else {
-				dol_print_error($db, $error);
-				$db->rollback();
+			dol_print_error($db, $error);
+			$db->rollback();
 			setEventMessages($obj->error, $obj->errors, 'errors');
 		}
 	}
-		$action = '';
+	$action = '';
 }
 
 if ($action == "delete" && $permissiontodelete) {
@@ -217,7 +217,7 @@ $userstatic->fetch($object->fk_user);
 
 // Label
 if ($action != 'editlabel') {
-	$morehtmlref .= $form->editfieldkey("Label", 'label', $object->label, $object, $user->rights->salaries->write, 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldkey("Label", 'label', $object->label, $object, $user->hasRight('salaries', 'write'), 'string', '', 0, 1);
 	$morehtmlref .= $object->label;
 } else {
 	$morehtmlref .= $langs->trans('Label').' :&nbsp;';
@@ -299,8 +299,9 @@ print '<tr><td>';
 print '<table class="nobordernopadding" width="100%"><tr><td>';
 print $langs->trans('DefaultPaymentMode');
 print '</td>';
-if ($action != 'editmode')
+if ($action != 'editmode') {
 	print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
+}
 print '</tr></table>';
 print '</td><td>';
 
@@ -317,7 +318,7 @@ if (isModEnabled("banque")) {
 	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 	print $langs->trans('DefaultBankAccount');
 	print '<td>';
-	if ($action != 'editbankaccount' && $user->rights->salaries->write) {
+	if ($action != 'editbankaccount' && $user->hasRight('salaries', 'write')) {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 	}
 	print '</tr></table>';
@@ -365,7 +366,8 @@ if ($resql) {
 
 	$num = $db->num_rows($resql);
 
-	$i = 0; $total = 0;
+	$i = 0;
+	$total = 0;
 
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder paymenttable">';
@@ -387,7 +389,7 @@ if ($resql) {
 			print '<tr class="oddeven"><td>';
 			print '<a href="'.DOL_URL_ROOT.'/salaries/payment_salary/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"), "payment").' '.$objp->rowid.'</a></td>';
 			print '<td>'.dol_print_date($db->jdate($objp->dp), 'dayhour', 'tzuserrel')."</td>\n";
-			$labeltype = $langs->trans("PaymentType".$objp->type_code) != ("PaymentType".$objp->type_code) ? $langs->trans("PaymentType".$objp->type_code) : $objp->paiement_type;
+			$labeltype = $langs->trans("PaymentType".$objp->type_code) != "PaymentType".$objp->type_code ? $langs->trans("PaymentType".$objp->type_code) : $objp->paiement_type;
 			print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
 			if (isModEnabled("banque")) {
 				$bankaccountstatic->id = $objp->baid;
@@ -405,8 +407,9 @@ if ($resql) {
 				}
 
 				print '<td class="right">';
-				if ($bankaccountstatic->id)
+				if ($bankaccountstatic->id) {
 					print $bankaccountstatic->getNomUrl(1, 'transactions');
+				}
 				print '</td>';
 			}
 			print '<td class="right nowrap amountcard">'.price($objp->amount)."</td>\n";
@@ -423,7 +426,7 @@ if ($resql) {
 	// print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid").' :</td><td class="right nowrap amountcard">'.price($totalpaid)."</td></tr>\n";
 	// print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected").' :</td><td class="right nowrap amountcard">'.price($object->amount)."</td></tr>\n";
 
-	 $resteapayer = $object->amount - $totalpaid;
+	$resteapayer = $object->amount - $totalpaid;
 	// $cssforamountpaymentcomplete = 'amountpaymentcomplete';
 
 	// print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("RemainderToPay")." :</td>";
@@ -611,7 +614,7 @@ if ($resql) {
 			}
 
 			if ($type != 'bank-transfer') {
-				if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) {
+				if (getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT')) {
 					$langs->load("stripe");
 					if ($obj->fk_prelevement_bons > 0) {
 						print ' &nbsp; ';
@@ -619,7 +622,7 @@ if ($resql) {
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripedirectdebit&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequestDirectDebitWithStripe").'</a>';
 				}
 			} else {
-				if (!empty($conf->global->STRIPE_SEPA_CREDIT_TRANSFER)) {
+				if (getDolGlobalString('STRIPE_SEPA_CREDIT_TRANSFER')) {
 					$langs->load("stripe");
 					if ($obj->fk_prelevement_bons > 0) {
 						print ' &nbsp; ';
