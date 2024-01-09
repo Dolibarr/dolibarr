@@ -1447,7 +1447,7 @@ class Form
 		if (getDolGlobalString('COMPANY_SHOW_ADDRESS_SELECTLIST')) {
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "c_country as dictp ON dictp.rowid = s.fk_pays";
 		}
-		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", " . $this->db->prefix() . "societe_commerciaux as sc";
 		}
 		$sql .= " WHERE s.entity IN (" . getEntity('societe') . ")";
@@ -1459,7 +1459,7 @@ class Form
 			// if not, by testSqlAndScriptInject() only.
 			$sql .= " AND (" . $filter . ")";
 		}
-		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " . ((int) $user->id);
 		}
 		if (getDolGlobalString('COMPANY_HIDE_INACTIVE_IN_COMBOBOX')) {
@@ -8219,7 +8219,7 @@ class Form
 				$sql .= " INNER JOIN " . $this->db->prefix() . $tmparray[1] . " as parenttable ON parenttable.rowid = t." . $tmparray[0];
 			}
 			if ($objecttmp->ismultientitymanaged === 'fk_soc@societe') {
-				if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+				if (!$user->hasRight('societe', 'client', 'voir')) {
 					$sql .= ", " . $this->db->prefix() . "societe_commerciaux as sc";
 				}
 			}
@@ -8253,7 +8253,7 @@ class Form
 					}
 				}
 				if ($objecttmp->ismultientitymanaged === 'fk_soc@societe') {
-					if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+					if (!$user->hasRight('societe', 'client', 'voir')) {
 						$sql .= " AND t.rowid = sc.fk_soc AND sc.fk_user = " . ((int) $user->id);
 					}
 				}

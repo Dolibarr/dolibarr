@@ -2833,7 +2833,7 @@ class Societe extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $notooltip = 0, $save_lastsearch_value = -1, $noaliasinname = 0, $target = '')
 	{
-		global $conf, $langs, $hookmanager;
+		global $conf, $langs, $hookmanager, $user;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -2946,7 +2946,6 @@ class Societe extends CommonObject
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
 
-		global $user;
 		if (!$user->hasRight('societe', 'client', 'voir') && $user->socid > 0 && $this->id != $user->socid) {
 			$linkstart = '';
 			$linkend = '';
