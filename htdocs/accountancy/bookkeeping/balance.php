@@ -522,7 +522,6 @@ if ($action != 'export_csv') {
 				// Show subtotal per accounting account
 				if ($displayed_account != "") {
 					print '<tr class="liste_total">';
-					print '<td class="right">'.$langs->trans("SubTotal").':</td><td class="right"></td>';
 					print '<td class="right">'.$langs->trans("SubTotal").':</td>';
 					if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 						print '<td></td>';
