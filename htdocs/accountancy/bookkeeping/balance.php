@@ -522,7 +522,7 @@ if ($action != 'export_csv') {
 				// Show subtotal per accounting account
 				if ($displayed_account != "") {
 					print '<tr class="liste_total">';
-					print '<td class="right">'.$langs->trans("SubTotal").':</td>';
+					print '<td class="right">'.$langs->trans("SubTotal").':</td><td class="right"></td>';
 					if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
 						print '<td class="right nowraponall amount">'.price($sous_total_opening_balance).'</td>';
 					}
