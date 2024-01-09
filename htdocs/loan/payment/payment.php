@@ -177,7 +177,7 @@ if ($action == 'add_payment') {
 			// Update loan schedule with payment value
 			if (!$error && !empty($line)) {
 				// If payment values are modified, recalculate schedule
-				if (($line->amount_capital <> $pay_amount_capital) || ($line->amount_insurance <> $pay_amount_insurance) || ($line->amount_interest <> $pay_amount_interest)) {
+				if (($line->amount_capital != $pay_amount_capital) || ($line->amount_insurance != $pay_amount_insurance) || ($line->amount_interest != $pay_amount_interest)) {
 					$arr_term = loanCalcMonthlyPayment(($pay_amount_capital + $pay_amount_interest), $remaindertopay, ($loan->rate / 100), $echance, $loan->nbterm);
 					foreach ($arr_term as $k => $v) {
 						// Update fk_bank for current line

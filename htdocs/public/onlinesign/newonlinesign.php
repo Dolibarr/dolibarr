@@ -160,7 +160,7 @@ if ($source == 'proposal') {
 	$object = new CompanyBankAccount($db);
 	$result= $object->fetch($ref);
 } else {
-	httponly_accessforbidden($langs->trans('ErrorBadParameters')." - Bad value for source", 400, 1);
+	httponly_accessforbidden($langs->trans('ErrorBadParameters')." - Bad value for source. Value not supported.", 400, 1);
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -262,9 +262,9 @@ $logosmall = $mysoc->logo_small;
 $logo = $mysoc->logo;
 $paramlogo = 'ONLINE_SIGN_LOGO_'.$suffix;
 if (!empty($conf->global->$paramlogo)) {
-	$logosmall = $conf->global->$paramlogo;
+	$logosmall = getDolGlobalString($paramlogo);
 } elseif (getDolGlobalString('ONLINE_SIGN_LOGO')) {
-	$logosmall = $conf->global->ONLINE_SIGN_LOGO;
+	$logosmall = getDolGlobalString('ONLINE_SIGN_LOGO');
 }
 //print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 // Define urllogo
@@ -663,13 +663,16 @@ print '<tr><td class="center">';
 
 if ($action == "dosign" && empty($cancel)) {
 	print '<div class="tablepublicpayment">';
-	print '<input type="button" class="buttonDelete small" id="clearsignature" value="'.$langs->trans("ClearSignature").'">';
-	print '<input type="text" class="paddingleftonly marginleftonly paddingrightonly marginrightonly" id="name"  placeholder="'.$langs->trans("Lastname").'">';
+	print '<input type="text" class="paddingleftonly marginleftonly paddingrightonly marginrightonly marginbottomonly" id="name"  placeholder="'.$langs->trans("Lastname").'" autofocus>';
 	print '<div id="signature" style="border:solid;"></div>';
 	print '</div>';
+	print '<input type="button" class="small noborderbottom cursorpointer buttonreset" id="clearsignature" value="'.$langs->trans("ClearSignature").'">';
+
 	// Do not use class="reposition" here: It breaks the submit and there is a message on top to say it's ok, so going back top is better.
-	print '<input type="button" class="button" id="signbutton" value="'.$langs->trans("Sign").'">';
-	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '<div>';
+	print '<input type="button" class="button marginleftonly marginrightonly" id="signbutton" value="'.$langs->trans("Sign").'">';
+	print '<input type="submit" class="button butActionDelete marginleftonly marginrightonly" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 
 	// Add js code managed into the div #signature
 	print '<script language="JavaScript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jSignature/jSignature.js"></script>
@@ -683,7 +686,8 @@ if ($action == "dosign" && empty($cancel)) {
 		if(!$._data($("#signbutton")[0], "events")){
 			$("#signbutton").on("click",function(){
 				console.log("We click on button sign");
-				$("#signbutton").val(\''.dol_escape_js($langs->transnoentities('PleaseBePatient')).'\');
+				document.body.style.cursor = \'wait\';
+				/* $("#signbutton").val(\''.dol_escape_js($langs->transnoentities('PleaseBePatient')).'\'); */
 				var signature = $("#signature").jSignature("getData", "image");
 				var name = document.getElementById("name").value;
 				$.ajax({

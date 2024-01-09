@@ -75,7 +75,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 $sql = "SELECT count(f.rowid), f.fk_statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ", ".MAIN_DB_PREFIX."fichinter as f";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE f.entity IN (".getEntity('intervention').")";
@@ -83,7 +83,7 @@ $sql .= " AND f.fk_soc = s.rowid";
 if ($user->socid) {
 	$sql .= ' AND f.fk_soc = '.((int) $user->socid);
 }
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " GROUP BY f.fk_statut";
@@ -176,7 +176,7 @@ if (isModEnabled('ficheinter')) {
 	$sql = "SELECT f.rowid, f.ref, s.nom as name, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE f.entity IN (".getEntity('intervention').")";
@@ -185,7 +185,7 @@ if (isModEnabled('ficheinter')) {
 	if ($socid) {
 		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 
@@ -226,7 +226,7 @@ $sql = "SELECT f.rowid, f.ref, f.fk_statut, f.date_valid as datec, f.tms as date
 $sql .= " s.nom as name, s.rowid as socid";
 $sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f,";
 $sql .= " ".MAIN_DB_PREFIX."societe as s";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE f.entity IN (".getEntity('intervention').")";
@@ -235,7 +235,7 @@ $sql .= " AND f.fk_soc = s.rowid";
 if ($socid) {
 	$sql .= " AND f.fk_soc = ".((int) $socid);
 }
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " ORDER BY f.tms DESC";
@@ -299,7 +299,7 @@ if (isModEnabled('ficheinter')) {
 	$sql = "SELECT f.rowid, f.ref, f.fk_statut, s.nom as name, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE f.entity IN (".getEntity('intervention').")";
@@ -308,7 +308,7 @@ if (isModEnabled('ficheinter')) {
 	if ($socid) {
 		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " ORDER BY f.rowid DESC";

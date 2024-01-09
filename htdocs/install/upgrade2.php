@@ -530,6 +530,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				'MAIN_MODULE_EXPENSEREPORT'=>'newboxdefonly',
 				'MAIN_MODULE_FACTURE'=>'newboxdefonly',
 				'MAIN_MODULE_FOURNISSEUR'=>'newboxdefonly',
+				'MAIN_MODULE_FICHEINTER'=>'newboxdefonly',
 				'MAIN_MODULE_HOLIDAY'=>'newboxdefonly',
 				'MAIN_MODULE_MARGIN'=>'menuonly',
 				'MAIN_MODULE_MRP'=>'menuonly',
@@ -4151,9 +4152,9 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/modules/mailings/poire.modules.php',
 		'/core/modules/mailings/kiwi.modules.php',
 		'/core/boxes/box_members.php',
-		'/includes/restler/framework/Luracast/Restler/Data/Object.php',
 
 		'/includes/restler/framework/Luracast/Restler/Data/Object.php',
+		'/includes/nusoap/lib/class.*',
 		'/phenix/inc/triggers/interface_modPhenix_Phenixsynchro.class.php',
 		'/webcalendar/inc/triggers/interface_modWebcalendar_webcalsynchro.class.php',
 
@@ -4163,7 +4164,6 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/categories/class/api_deprecated_category.class.php',
 		'/compta/facture/class/api_invoice.class.php',
 		'/commande/class/api_commande.class.php',
-		'/user/class/api_user.class.php',
 		'/partnership/class/api_partnership.class.php',
 		'/product/class/api_product.class.php',
 		'/recruitment/class/api_recruitment.class.php',
@@ -4171,6 +4171,7 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/societe/class/api_thirdparty.class.php',
 		'/support/online.php',
 		'/takepos/class/actions_takepos.class.php',
+		'/user/class/api_user.class.php',
 
 		'/install/mysql/tables/llx_c_ticketsup_category.key.sql',
 		'/install/mysql/tables/llx_c_ticketsup_category.sql',
@@ -4180,9 +4181,16 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/install/mysql/tables/llx_c_ticketsup_type.sql'
 	);
 
+	/*
+	print '<tr><td colspan="4">';
+	print '<b>'.$langs->trans('DeleteOldFiles')."</b><br>\n";
+	print '</td></tr>';
+	*/
+
 	foreach ($filetodeletearray as $filetodelete) {
 		//print '<b>'DOL_DOCUMENT_ROOT.$filetodelete."</b><br>\n";
-		if (file_exists(DOL_DOCUMENT_ROOT.$filetodelete)) {
+		if (file_exists(DOL_DOCUMENT_ROOT.$filetodelete) || preg_match('/\*/', $filetodelete)) {
+			//print "Process file ".$filetodelete."\n";
 			$result = dol_delete_file(DOL_DOCUMENT_ROOT.$filetodelete, 0, 0, 0, null, true, false);
 			if (!$result) {
 				$langs->load("errors");
@@ -4277,14 +4285,17 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 		'MAIN_MODULE_SERVICE' => array('class' => 'modService'),
 		'MAIN_MODULE_COMMANDE' => array('class' => 'modCommande'),
 		'MAIN_MODULE_FACTURE' => array('class' => 'modFacture'),
+		'MAIN_MODULE_FICHEINTER' => array('class' => 'modFicheinter'),
 		'MAIN_MODULE_FOURNISSEUR' => array('class' => 'modFournisseur'),
 		'MAIN_MODULE_HOLIDAY' => array('class' => 'modHoliday', 'remove'=>1),
+		'MAIN_MODULE_EXPEDITION' => array('class' => 'modExpedition'),
 		'MAIN_MODULE_EXPENSEREPORT' => array('class' => 'modExpenseReport'),
 		'MAIN_MODULE_DON' => array('class' => 'modDon'),
 		'MAIN_MODULE_ECM' => array('class' => 'modECM', 'remove'=>1),
 		'MAIN_MODULE_KNOWLEDGEMANAGEMENT' => array('class' => 'modKnowledgeManagement', 'remove'=>1),
 		'MAIN_MODULE_EVENTORGANIZATION' => array('class' => 'modEventOrganization', 'remove'=>1),
 		'MAIN_MODULE_PAYBOX' => array('class' => 'modPaybox', 'remove'=>1),
+		'MAIN_MODULE_PROPAL' => array('class' => 'modPropale'),
 		'MAIN_MODULE_SUPPLIERPROPOSAL' => array('class' => 'modSupplierProposal', 'remove'=>1),
 		'MAIN_MODULE_OPENSURVEY' => array('class' => 'modOpenSurvey', 'remove'=>1),
 		'MAIN_MODULE_PRODUCTBATCH' => array('class' => 'modProductBatch', 'remove'=>1),

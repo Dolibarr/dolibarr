@@ -134,9 +134,7 @@ class Users extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve User list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No User found');
-		}
+
 		return $obj_ret;
 	}
 
@@ -326,6 +324,11 @@ class Users extends DolibarrApi
 				// This properties can't be set/modified with API
 				throw new RestException(401, 'The property '.$field." can't be set/modified using the APIs");
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->useraccount->context['caller'] = $request_data['caller'];
+				continue;
+			}
 			/*if ($field == 'pass') {
 				if (empty(DolibarrApiAccess::$user->rights->user->user->password)) {
 					throw new RestException(401, 'You are not allowed to modify/set password of other users');
@@ -372,12 +375,12 @@ class Users extends DolibarrApi
 		}
 
 		foreach ($request_data as $field => $value) {
-			if ($field == 'id') {
-				continue;
-			}
 			if (in_array($field, array('pass_crypted', 'pass_indatabase', 'pass_indatabase_crypted', 'pass_temp', 'api_key'))) {
 				// This properties can't be set/modified with API
 				throw new RestException(401, 'The property '.$field." can't be set/modified using the APIs");
+			}
+			if ($field == 'id') {
+				continue;
 			}
 			if ($field == 'pass') {
 				if ($this->useraccount->id != DolibarrApiAccess::$user->id && empty(DolibarrApiAccess::$user->rights->user->user->password)) {
@@ -387,6 +390,12 @@ class Users extends DolibarrApi
 					throw new RestException(401, 'You are not allowed to modify your own password');
 				}
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->useraccount->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			if (DolibarrApiAccess::$user->admin) {	// If user for API is admin
 				if ($field == 'admin' && $value != $this->useraccount->admin && empty($value)) {
 					throw new RestException(401, 'Reseting the admin status of a user is not possible using the API');
@@ -399,9 +408,10 @@ class Users extends DolibarrApi
 			if ($field == 'entity' && $value != $this->useraccount->entity) {
 				throw new RestException(401, 'Changing entity of a user using the APIs is not possible');
 			}
+
 			// The status must be updated using setstatus() because it
 			// is not handled by the update() method.
-			if ($field == 'statut') {
+			if ($field == 'statut' || $field == 'status') {
 				$result = $this->useraccount->setstatus($value);
 				if ($result < 0) {
 					throw new RestException(500, 'Error when updating status of user: '.$this->useraccount->error);
@@ -578,9 +588,7 @@ class Users extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve Group list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No Group found');
-		}
+
 		return $obj_ret;
 	}
 

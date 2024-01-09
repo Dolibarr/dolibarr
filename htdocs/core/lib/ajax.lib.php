@@ -46,8 +46,6 @@
  */
 function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLength = 2, $autoselect = 0, $ajaxoptions = array(), $moreparams = '')
 {
-	global $conf;
-
 	if (empty($minLength)) {
 		$minLength = 1;
 	}
@@ -619,7 +617,7 @@ function ajax_event($htmlname, $events)
  *  @param	int		$revertonoff			1=Revert on/off
  *  @param	int		$strict					Use only "disabled" with delConstant and "enabled" with setConstant
  *  @param	int		$forcereload			Force to reload page if we click/change value (this is supported only when there is no 'alert' option in input)
- *  @param	string	$marginleftonlyshort	1 = Add a short left margin on picto, 2 = Add a larger left margin on picto, 0 = No left margin.
+ *  @param	int		$marginleftonlyshort	1 = Add a short left margin on picto, 2 = Add a larger left margin on picto, 0 = No left margin.
  *  @param	int		$forcenoajax			1 = Force to use a ahref link instead of ajax code.
  *  @param	int		$setzeroinsteadofdel	1 = Set constantto '0' instead of deleting it
  *  @param	string	$suffix					Suffix to use on the name of the switch_on picto. Example: '', '_red'

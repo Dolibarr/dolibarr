@@ -309,7 +309,7 @@ $result = restrictedArea($user, 'societe', $socid, '');
  * Actions
  */
 
-if ($action == "change") {	// Change customer for TakePOS
+if ($action == "change" && $user->hasRight('takepos', 'run')) {	// Change customer for TakePOS
 	$idcustomer = GETPOST('idcustomer', 'int');
 
 	// Check if draft invoice already exists, if not create it
@@ -521,10 +521,6 @@ $sql .= " staff.code as staff_code,";
 $sql .= " country.code as country_code, country.label as country_label,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " region.code_region as region_code, region.nom as region_name";
-// We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
-if ($search_sale && $search_sale != '-1') {
-	$sql .= ", sc.fk_soc, sc.fk_user";
-}
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -538,7 +534,7 @@ $sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 //$sql .= ", COUNT(rc.rowid) as anotherfield";
 
-$sqlfields = $sql; // $sql fields to remove for count totall
+$sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s2 ON s.parent = s2.rowid";
@@ -552,32 +548,21 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_effectif as staff on (staff.id = s.fk_ef
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as region on (region.code_region = state.fk_region)";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."c_stcomm as st ON s.fk_stcomm = st.id";
-// We'll need this table joined to the select in order to filter by sale
-if ($search_sale == -2) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
-	//elseif ($search_sale || (empty($user->rights->societe->client->voir) && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->societe->client->readallthirdparties_advance)) && !$socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-} elseif (!empty($search_sale) && $search_sale != '-1' || (!$user->hasRight('societe', 'client', 'voir') && !$socid)) {
-	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-}
 // Add table from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= " WHERE s.entity IN (".getEntity('societe').")";
-//if (empty($user->rights->societe->client->voir) && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->societe->client->readallthirdparties_advance)) && !$socid)	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
-}
-if ($search_sale && $search_sale != '-1' && $search_sale != '-2') {
-	$sql .= " AND s.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
-}
 if (!$user->hasRight('fournisseur', 'lire')) {
 	$sql .= " AND (s.fournisseur <> 1 OR s.client <> 0)"; // client=0, fournisseur=0 must be visible
 }
-if ($search_sale == -2) {
-	$sql .= " AND sc.fk_user IS NULL";
-} elseif ($search_sale > 0) {
-	$sql .= " AND sc.fk_user = ".((int) $search_sale);
+// Search on sale representative
+if ($search_sale && $search_sale != '-1') {
+	if ($search_sale == -2) {
+		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid)";
+	} elseif ($search_sale > 0) {
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid AND sc.fk_user = ".((int) $search_sale).")";
+	}
 }
 $searchCategoryCustomerList = $search_categ_cus ? array($search_categ_cus) : array();
 $searchCategoryCustomerOperator = 0;
@@ -609,6 +594,7 @@ if (!empty($searchCategoryCustomerList)) {
 		}
 	}
 }
+// Search Supplier Categories
 $searchCategorySupplierList = $search_categ_sup ? array($search_categ_sup) : array();
 $searchCategorySupplierOperator = 0;
 // Search for tag/category ($searchCategorySupplierList is an array of ID)
@@ -1695,6 +1681,8 @@ while ($i < $imaxinloop) {
 		$companystatic->fk_prospectlevel = $obj->fk_prospectlevel;
 		$companystatic->fk_parent = $obj->fk_parent;
 		$companystatic->entity = $obj->entity;
+
+		$object = $companystatic;
 	}
 
 	if ($mode == 'kanban') {

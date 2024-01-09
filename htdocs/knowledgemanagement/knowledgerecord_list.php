@@ -61,7 +61,7 @@ $searchCategoryKnowledgemanagementOperator = 0;
 if (GETPOSTISSET('formfilteraction')) {
 	$searchCategoryKnowledgemanagementOperator = GETPOST('search_category_knowledgemanagement_operator', 'int');
 } elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
-	$searchCategoryKnowledgemanagementOperator = $conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT;
+	$searchCategoryKnowledgemanagementOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
 }
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -102,7 +102,7 @@ $search_all = GETPOST('search_all', 'alphanohtml');
 $search = array();
 foreach ($object->fields as $key => $val) {
 	if ($key == "lang") {
-		$search[$key] = GETPOST('search_'.$key, 'alpha')!='0' ? GETPOST('search_'.$key, 'alpha') : '';
+		$search[$key] = GETPOST('search_'.$key, 'alpha') != '0' ? GETPOST('search_'.$key, 'alpha') : '';
 	} else {
 		$search[$key] = GETPOST('search_'.$key, 'alpha');
 	}

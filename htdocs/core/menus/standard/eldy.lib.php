@@ -1100,7 +1100,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
  *
  * @param	string		$mainmenu		Main menu
  * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider	Use menu hider
+ * @param	int 		$usemenuhider	Use menu hider
  * @param	string 		$leftmenu		Left menu
  * @param	int 		$type_user		Type of user
  * @return	void
@@ -1228,7 +1228,7 @@ function get_left_menu_home($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
  *
  * @param	string		$mainmenu		Main menu
  * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider	Use menu hider
+ * @param	int 		$usemenuhider	Use menu hider
  * @param	string 		$leftmenu		Left menu
  * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
@@ -1333,7 +1333,7 @@ function get_left_menu_thridparties($mainmenu, &$newmenu, $usemenuhider = 1, $le
  *
  * @param	string		$mainmenu		Main menu
  * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider	Use menu hider
+ * @param	int 		$usemenuhider	Use menu hider
  * @param	string 		$leftmenu		Left menu
  * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
@@ -1459,7 +1459,7 @@ function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $left
  *
  * @param	string		$mainmenu		Main menu
  * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider	Use menu hider
+ * @param	int 		$usemenuhider	Use menu hider
  * @param	string 		$leftmenu		Left menu
  * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
@@ -1488,10 +1488,10 @@ function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 
 			$newmenu->add("/compta/paiement/list.php?leftmenu=customers_bills_payment", $langs->trans("Payments"), 1, $user->hasRight('facture', 'lire'), '', $mainmenu, 'customers_bills_payment');
 
-			if (getDolGlobalString('BILL_ADD_PAYMENT_VALIDATION')) {
-				$newmenu->add("/compta/paiement/tovalidate.php?leftmenu=customers_bills_tovalid", $langs->trans("MenuToValid"), 2, $user->hasRight('facture', 'lire'), '', $mainmenu, 'customer_bills_tovalid');
+			if (getDolGlobalString('BILL_ADD_PAYMENT_VALIDATION') && preg_match('/customers_bills_payment/', $leftmenu)) {
+				$newmenu->add("/compta/paiement/tovalidate.php?leftmenu=customers_bills_payment_tovalid", $langs->trans("MenuToValid"), 2, $user->hasRight('facture', 'lire'), '', $mainmenu, 'customers_bills_payment_tovalid');
 			}
-			if ($usemenuhider || empty($leftmenu) || preg_match('/customers_bills/', $leftmenu)) {
+			if ($usemenuhider || empty($leftmenu) || preg_match('/customers_bills_payment/', $leftmenu)) {
 				$newmenu->add("/compta/paiement/rapport.php?leftmenu=customers_bills_payment_report", $langs->trans("Reportings"), 2, $user->hasRight('facture', 'lire'), '', $mainmenu, 'customers_bills_payment_report');
 			}
 
@@ -1640,7 +1640,7 @@ function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
  *
  * @param	string		$mainmenu		Main menu
  * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider	Use menu hider
+ * @param	int 		$usemenuhider	Use menu hider
  * @param	string 		$leftmenu		Left menu
  * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
@@ -1966,7 +1966,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
  *
  * @param	string		$mainmenu		Main menu
  * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider	Use menu hider
+ * @param	int 		$usemenuhider	Use menu hider
  * @param	string 		$leftmenu		Left menu
  * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
@@ -2049,7 +2049,7 @@ function get_left_menu_bank($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
  *
  * @param	string		$mainmenu		Main menu
  * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider	Use menu hider
+ * @param	int 		$usemenuhider	Use menu hider
  * @param	string 		$leftmenu		Left menu
  * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
@@ -2193,7 +2193,7 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
  *
  * @param	string		$mainmenu		Main menu
  * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider	Use menu hider
+ * @param	int 		$usemenuhider	Use menu hider
  * @param	string 		$leftmenu		Left menu
  * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
@@ -2227,7 +2227,7 @@ function get_left_menu_mrp($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
  *
  * @param	string		$mainmenu		Main menu
  * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider	Use menu hider
+ * @param	int 		$usemenuhider	Use menu hider
  * @param	string 		$leftmenu		Left menu
  * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
@@ -2302,7 +2302,7 @@ function get_left_menu_projects($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
  *
  * @param	string		$mainmenu		Main menu
  * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider	Use menu hider
+ * @param	int 		$usemenuhider	Use menu hider
  * @param	string 		$leftmenu		Left menu
  * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
@@ -2410,7 +2410,7 @@ function get_left_menu_hrm($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
  *
  * @param	string		$mainmenu		Main menu
  * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider	Use menu hider
+ * @param	int 		$usemenuhider	Use menu hider
  * @param	string 		$leftmenu		Left menu
  * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
@@ -2451,7 +2451,7 @@ function get_left_menu_tools($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu 
  *
  * @param	string		$mainmenu		Main menu
  * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider	Use menu hider
+ * @param	int 		$usemenuhider	Use menu hider
  * @param	string 		$leftmenu		Left menu
  * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
@@ -2478,9 +2478,6 @@ function get_left_menu_members($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 			$newmenu->add("/adherents/stats/index.php?leftmenu=members", $langs->trans("MenuMembersStats"), 1, $user->hasRight('adherent', 'read'));
 
 			$newmenu->add("/adherents/cartes/carte.php?leftmenu=export", $langs->trans("MembersCards"), 1, $user->hasRight('adherent', 'export'));
-			if (getDolGlobalString('MEMBER_LINK_TO_HTPASSWDFILE') && ($usemenuhider || empty($leftmenu) || $leftmenu == 'none' || $leftmenu == "members" || $leftmenu == "export")) {
-				$newmenu->add("/adherents/htpasswd.php?leftmenu=export", $langs->trans("Filehtpasswd"), 1, $user->hasRight('adherent', 'export'));
-			}
 
 			if (isModEnabled('categorie')) {
 				$langs->load("categories");

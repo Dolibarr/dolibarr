@@ -93,7 +93,7 @@ abstract class CommonObject
 	public $element;
 
 	/**
-	 * @var int 		The related element
+	 * @var string    Fieldname with ID of parent key if this field has a parent
 	 */
 	public $fk_element;
 
@@ -167,8 +167,9 @@ abstract class CommonObject
 	 * @var CommonObject To store a cloned copy of object before to edit it and keep track of old properties
 	 */
 	public $oldcopy;
+
 	/**
-	 * @var CommonObject To store old value of a modified ref
+	 * @var string To store old value of a modified ref
 	 */
 	public $oldref;
 
@@ -675,9 +676,14 @@ abstract class CommonObject
 	public $sendtoid;
 
 	/**
-	 * @var	float		Amount already paid (used to show correct status)
+	 * @var	float		Amount already paid from getSommePaiement() (used to show correct status)
+	 * @deprecated		Duplicate of $totalpaid
 	 */
 	public $alreadypaid;
+	/**
+	 * @var	float		Amount already paid from getSommePaiement() (used to show correct status)
+	 */
+	public $totalpaid;
 
 	/**
 	 * @var array		Array with label of status
@@ -1732,8 +1738,6 @@ abstract class CommonObject
 	public function fetch_thirdparty($force_thirdparty_id = 0)
 	{
 		// phpcs:enable
-		global $conf;
-
 		if (empty($this->socid) && empty($this->fk_soc) && empty($force_thirdparty_id)) {
 			return 0;
 		}
@@ -1818,9 +1822,9 @@ abstract class CommonObject
 		$idtype = $this->barcode_type;
 		if (empty($idtype) && $idtype != '0') {	// If type of barcode no set, we try to guess. If set to '0' it means we forced to have type remain not defined
 			if ($this->element == 'product' && getDolGlobalString('PRODUIT_DEFAULT_BARCODE_TYPE')) {
-				$idtype = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
+				$idtype = getDolGlobalString('PRODUIT_DEFAULT_BARCODE_TYPE');
 			} elseif ($this->element == 'societe') {
-				$idtype = $conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY;
+				$idtype = getDolGlobalString('GENBARCODE_BARCODETYPE_THIRDPARTY');
 			} else {
 				dol_syslog('Call fetch_barcode with barcode_type not defined and cant be guessed', LOG_WARNING);
 			}
@@ -3655,7 +3659,7 @@ abstract class CommonObject
 		}
 
 		if (!empty($MODULE)) {
-			if (!empty($conf->global->$MODULE)) {
+			if (getDolGlobalString($MODULE)) {
 				$modsactivated = explode(',', getDolGlobalString($MODULE));
 				foreach ($modsactivated as $mod) {
 					if (isModEnabled($mod)) {
@@ -4338,7 +4342,7 @@ abstract class CommonObject
 	 *	@return     					int	>0 if OK, <0 if KO
 	 *	@see	add_object_linked(), updateObjectLinked(), fetchObjectLinked()
 	 */
-	public function deleteObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $rowid = '', $f_user = null, $notrigger = 0)
+	public function deleteObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $rowid = 0, $f_user = null, $notrigger = 0)
 	{
 		global $user;
 		$deletesource = false;
@@ -4843,7 +4847,7 @@ abstract class CommonObject
 					$qty = $obj->qty;
 					$total_ht = $obj->total_ht;
 
-					$total_discount_line = floatval(price2num(($pu_ht * $qty) - $total_ht, 'MT'));
+					$total_discount_line = (float) price2num(($pu_ht * $qty) - $total_ht, 'MT');
 					$total_discount += $total_discount_line;
 
 					$i++;
@@ -5622,7 +5626,9 @@ abstract class CommonObject
 					$file = $prefix."_".$modele.".modules.php";
 				}
 
-				// On verifie l'emplacement du modele
+				$file = dol_sanitizeFileName($file);
+
+				// We chack if file exists
 				$file = dol_buildpath($reldir.$modelspath.$file, 0);
 				if (file_exists($file)) {
 					$filefound = $file;
@@ -5642,18 +5648,21 @@ abstract class CommonObject
 			return -1;
 		}
 
-		// If generator was found
-		global $db; // Required to solve a conception default making an include of code using $db instead of $this->db just after.
+		// Sanitize $filefound
+		$filefound = dol_sanitizePathName($filefound);
 
-		require_once $file;
+		// If generator was found
+		global $db; // Required to solve a conception default making an include of some code that uses $db instead of $this->db just after.
+
+		require_once $filefound;
 
 		$obj = new $classname($this->db);
 
 		// If generator is ODT, we must have srctemplatepath defined, if not we set it.
 		if ($obj->type == 'odt' && empty($srctemplatepath)) {
 			$varfortemplatedir = $obj->scandir;
-			if ($varfortemplatedir && !empty($conf->global->$varfortemplatedir)) {
-				$dirtoscan = $conf->global->$varfortemplatedir;
+			if ($varfortemplatedir && getDolGlobalString($varfortemplatedir)) {
+				$dirtoscan = getDolGlobalString($varfortemplatedir);
 
 				$listoffiles = array();
 
@@ -5961,8 +5970,8 @@ abstract class CommonObject
 
 		$keyforfieldname = strtoupper($newelement.'_DEFAULT_'.$fieldname);
 		//var_dump($keyforfieldname);
-		if (isset($conf->global->$keyforfieldname)) {
-			return $conf->global->$keyforfieldname;
+		if (getDolGlobalString($keyforfieldname)) {
+			return getDolGlobalString($keyforfieldname);
 		}
 
 		// TODO Ad here a scan into table llx_overwrite_default with a filter on $this->element and $fieldname
@@ -7684,8 +7693,11 @@ abstract class CommonObject
 				}
 			}
 		} elseif ($type == 'link') {
-			$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath[:AddCreateButtonOrNot[:Filter[:Sortfield]]]'
-			$param_list_array = explode(':', $param_list[0]);
+			// $param_list='ObjectName:classPath[:AddCreateButtonOrNot[:Filter[:Sortfield]]]'
+			// Filter can contains some ':' inside.
+			$param_list = array_keys($param['options']);
+			$param_list_array = explode(':', $param_list[0], 4);
+
 			$showempty = (($required && $default != '') ? 0 : 1);
 
 			if (!preg_match('/search_/', $keyprefix)) {
@@ -7702,7 +7714,8 @@ abstract class CommonObject
 				}
 			}
 
-			$out = $form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, $moreparam, 0, empty($val['disabled']) ? 0 : 1);
+			$objectfield = $this->element.($this->module ? '@'.$this->module : '').':'.$key.$keysuffix;
+			$out = $form->selectForForms($param_list_array[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, $moreparam, 0, (empty($val['disabled']) ? 0 : 1), '', $objectfield);
 
 			if (!empty($param_list_array[2])) {		// If the entry into $fields is set, we must add a create button
 				if ((!GETPOSTISSET('backtopage') || strpos(GETPOST('backtopage'), $_SERVER['PHP_SELF']) === 0)	// // To avoid to open several times the 'Plus' button (we accept only one level)
@@ -8481,7 +8494,7 @@ abstract class CommonObject
 	 * @param	string		$display_type	"card" for form display, "line" for document line display (extrafields on propal line, order line, etc...)
 	 * @return 	string						String with html content to show
 	 */
-	public function showOptionals($extrafields, $mode = 'view', $params = null, $keysuffix = '', $keyprefix = '', $onetrtd = 0, $display_type = 'card')
+	public function showOptionals($extrafields, $mode = 'view', $params = null, $keysuffix = '', $keyprefix = '', $onetrtd = '', $display_type = 'card')
 	{
 		global $db, $conf, $langs, $action, $form, $hookmanager;
 

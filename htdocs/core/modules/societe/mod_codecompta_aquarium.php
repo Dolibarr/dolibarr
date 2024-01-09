@@ -71,8 +71,8 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 			$this->prefixcustomeraccountancycode = '';
 			$this->prefixsupplieraccountancycode = '';
 		} else {
-			$this->prefixcustomeraccountancycode = $conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER;
-			$this->prefixsupplieraccountancycode = $conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER;
+			$this->prefixcustomeraccountancycode = getDolGlobalString('COMPANY_AQUARIUM_MASK_CUSTOMER');
+			$this->prefixsupplieraccountancycode = getDolGlobalString('COMPANY_AQUARIUM_MASK_SUPPLIER');
 		}
 	}
 

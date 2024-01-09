@@ -429,7 +429,7 @@ if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlin
 			!empty($product_static->accountancy_code_buy_intra) ||
 			!empty($product_static->accountancy_code_buy_export)
 		) {
-			$accountancy_category_asset = $conf->global->ASSET_ACCOUNTANCY_CATEGORY;
+			$accountancy_category_asset = getDolGlobalString('ASSET_ACCOUNTANCY_CATEGORY');
 			$filters = array();
 			if (!empty($product_static->accountancy_code_buy)) {
 				$filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy) . "'";
@@ -497,8 +497,12 @@ if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlin
 		$coldisplay++;
 	}
 } else {
-	print '<td colspan="3"></td>';
-	$coldisplay = $coldisplay + 3;
+	$colspan = 3;
+	if (isModEnabled('asset') && $object->element == 'invoice_supplier') {
+		$colspan++;
+	}
+	print '<td colspan="'.$colspan.'"></td>';
+	$coldisplay = $coldisplay + $colspan;
 }
 
 if ($action == 'selectlines') { ?>

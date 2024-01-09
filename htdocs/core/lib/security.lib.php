@@ -229,10 +229,11 @@ function dolDecrypt($chain, $key = '')
  * 	@param 		string		$chain		String to hash
  * 	@param		string		$type		Type of hash ('0':auto will use MAIN_SECURITY_HASH_ALGO else md5, '1':sha1, '2':sha1+md5, '3':md5, '4': for OpenLdap, '5':sha256, '6':password_hash).
  * 										Use 'md5' if hash is not needed for security purpose. For security need, prefer 'auto'.
+ * 	@param 		string		$nosalt		Do not include any salt
  * 	@return		string					Hash of string
  *  @see getRandomPassword(), dol_verifyHash()
  */
-function dol_hash($chain, $type = '0')
+function dol_hash($chain, $type = '0', $nosalt = 0)
 {
 	// No need to add salt for password_hash
 	if (($type == '0' || $type == 'auto') && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'password_hash' && function_exists('password_hash')) {
@@ -240,7 +241,7 @@ function dol_hash($chain, $type = '0')
 	}
 
 	// Salt value
-	if (getDolGlobalString('MAIN_SECURITY_SALT') && $type != '4' && $type !== 'openldap') {
+	if (getDolGlobalString('MAIN_SECURITY_SALT') && $type != '4' && $type !== 'openldap' && empty($nosalt)) {
 		$chain = getDolGlobalString('MAIN_SECURITY_SALT') . $chain;
 	}
 
@@ -1255,7 +1256,7 @@ function getMaxFileSizeArray()
 {
 	global $conf;
 
-	$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
+	$max = getDolGlobalString('MAIN_UPLOAD_DOC'); // In Kb
 	$maxphp = @ini_get('upload_max_filesize'); // In unknown
 	if (preg_match('/k$/i', $maxphp)) {
 		$maxphp = preg_replace('/k$/i', '', $maxphp);

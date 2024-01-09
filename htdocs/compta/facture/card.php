@@ -464,7 +464,8 @@ if (empty($reshook)) {
 		}
 		$result = $object->update($user);
 		if ($result < 0) {
-			dol_print_error($db, $object->error);
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = 'editinvoicedate';
 		}
 	} elseif ($action == 'setdate_pointoftax' && $usercancreate) {
 		$object->fetch($id);
@@ -1723,7 +1724,8 @@ if (empty($reshook)) {
 										}
 									} else {
 										// Positive line
-										$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
+										// we keep first type from product if exist, otherwise we keep type from line (free line) and at last default Product
+										$product_type = $lines[$i]->product_type ?? ($lines[$i]->type ?? Product::TYPE_PRODUCT);
 
 										// Date start
 										$date_start = false;
@@ -2757,7 +2759,7 @@ if (empty($reshook)) {
 			$all_progress = GETPOST('all_progress', 'int');
 			foreach ($object->lines as $line) {
 				$percent = $line->get_prev_progress($object->id);
-				if (floatval($all_progress) < floatval($percent)) {
+				if ((float) $all_progress < (float) $percent) {
 					$mesg = $langs->trans("Line").' '.$i.' : '.$langs->trans("CantBeLessThanMinPercent");
 					setEventMessages($mesg, null, 'warnings');
 					$result = -1;
@@ -3831,11 +3833,11 @@ if ($action == 'create') {
 			print '<tr class="retained-warranty-line" style="'.$rwStyle.'" ><td class="nowrap">'.$langs->trans('PaymentConditionsShortRetainedWarranty').'</td><td colspan="2">';
 			$retained_warranty_fk_cond_reglement = GETPOST('retained_warranty_fk_cond_reglement', 'int');
 			if (empty($retained_warranty_fk_cond_reglement)) {
-				$retained_warranty_fk_cond_reglement = $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID;
+				$retained_warranty_fk_cond_reglement = getDolGlobalString('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID');
 				if (!empty($objectsrc->retained_warranty_fk_cond_reglement)) { // use previous situation value
 					$retained_warranty_fk_cond_reglement = $objectsrc->retained_warranty_fk_cond_reglement;
 				} else {
-					$retained_warranty_fk_cond_reglement = $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID;
+					$retained_warranty_fk_cond_reglement = getDolGlobalString('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID');
 				}
 			}
 			print $form->getSelectConditionsPaiements($retained_warranty_fk_cond_reglement, 'retained_warranty_fk_cond_reglement', -1, 1);
@@ -3847,7 +3849,7 @@ if ($action == 'create') {
 					if($( this ).prop("checked") && $.inArray($( this ).val(), '.json_encode($retainedWarrantyInvoiceAvailableType).' ) !== -1)
 					{
 						$(".retained-warranty-line").show();
-						$("#new-situation-invoice-retained-warranty").val("'.floatval($retained_warranty_js_default).'");
+						$("#new-situation-invoice-retained-warranty").val("'.(float) $retained_warranty_js_default.'");
 					}
 					else{
 						$(".retained-warranty-line").hide();
@@ -3925,9 +3927,9 @@ if ($action == 'create') {
 		if (getDolGlobalString('INVOICE_USE_DEFAULT_DOCUMENT')) {
 			// Hidden conf
 			$paramkey = 'FACTURE_ADDON_PDF_'.$object->type;
-			$preselected = !empty($conf->global->$paramkey) ? $conf->global->$paramkey : $conf->global->FACTURE_ADDON_PDF;
+			$preselected = getDolGlobalString($paramkey, getDolGlobalString('FACTURE_ADDON_PDF'));
 		} else {
-			$preselected = $conf->global->FACTURE_ADDON_PDF;
+			$preselected = getDolGlobalString('FACTURE_ADDON_PDF');
 		}
 		print $form->selectarray('model', $liste, $preselected, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200 widthcentpercentminusx', 1);
 		print "</td></tr>";
@@ -5264,7 +5266,7 @@ if ($action == 'create') {
 					}
 					print '</td>';
 
-					$label = ($langs->trans("PaymentType".$objp->payment_code) != ("PaymentType".$objp->payment_code)) ? $langs->trans("PaymentType".$objp->payment_code) : $objp->payment_label;
+					$label = ($langs->trans("PaymentType".$objp->payment_code) != "PaymentType".$objp->payment_code) ? $langs->trans("PaymentType".$objp->payment_code) : $objp->payment_label;
 					print '<td class="tdoverflowmax80" title="'.dol_escape_htmltag($label.' '.$objp->num_payment).'">'.dol_escape_htmltag($label.' '.$objp->num_payment).'</td>';
 					if (isModEnabled("banque")) {
 						$bankaccountstatic->id = $objp->baid;

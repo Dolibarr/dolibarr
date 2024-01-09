@@ -90,7 +90,7 @@ button.publicphonebutton {
 	vertical-align: middle;
 	text-align: center;
 	overflow: visible; /* removes extra width in IE */
-	width:33%;
+	width:33.33%;
 	height:50px;
 	font-weight: bold;
 	color: #fff;
@@ -106,7 +106,6 @@ button.publicphonebutton {
 	color: #fff;
 	background-color: #5cb85c;
 	border-color: #4cae4c;
-	font-size:20px;
 	text-align:center;
 	width:20px;
 }
@@ -168,7 +167,7 @@ button.publicphonebutton2 {
 	vertical-align: middle;
 	text-align: center;
 	overflow: visible; /* removes extra width in IE */
-	width:33%;
+	width:33.33%;
 	font-weight: bold;
 	padding: 8px 16px;
 }

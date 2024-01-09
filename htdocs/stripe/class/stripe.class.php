@@ -1275,9 +1275,9 @@ class Stripe extends CommonObject
 				// With Stripe Connect
 				$fee = $amount * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE;
 				if ($fee >= $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL && $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL > $conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
-					$fee = $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL;
+					$fee = getDolGlobalString('STRIPE_APPLICATION_FEE_MAXIMAL');
 				} elseif ($fee < $conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
-					$fee = $conf->global->STRIPE_APPLICATION_FEE_MINIMAL;
+					$fee = getDolGlobalString('STRIPE_APPLICATION_FEE_MINIMAL');
 				}
 
 				if (!in_array($currency, $arrayzerounitcurrency)) {

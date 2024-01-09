@@ -84,7 +84,7 @@ if (GETPOST('submitproduct') && GETPOST('submitproduct')) {
 		$fk_barcode_type = $producttmp->barcode_type;
 
 		if (empty($fk_barcode_type) && getDolGlobalString('PRODUIT_DEFAULT_BARCODE_TYPE')) {
-			$fk_barcode_type = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
+			$fk_barcode_type = getDolGlobalString('PRODUIT_DEFAULT_BARCODE_TYPE');
 		}
 
 		if (empty($forbarcode) || empty($fk_barcode_type)) {
@@ -100,7 +100,7 @@ if (GETPOST('submitthirdparty') && GETPOST('submitthirdparty')) {
 		$fk_barcode_type = $thirdpartytmp->barcode_type_code;
 
 		if (empty($fk_barcode_type) && getDolGlobalString('GENBARCODE_BARCODETYPE_THIRDPARTY')) {
-			$fk_barcode_type = $conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY;
+			$fk_barcode_type = getDolGlobalString('GENBARCODE_BARCODETYPE_THIRDPARTY');
 		}
 
 		if (empty($forbarcode) || empty($fk_barcode_type)) {

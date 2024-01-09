@@ -258,7 +258,7 @@ class RemiseCheque extends CommonObject
 			}
 
 			if ($this->id > 0 && $this->errno == 0) {
-				if ($this->updateAmount() <> 0) {
+				if ($this->updateAmount() != 0) {
 					$this->errno = -1027;
 					dol_syslog("RemiseCheque::Create Error update amount ".$this->errno, LOG_ERR);
 				}
@@ -291,7 +291,7 @@ class RemiseCheque extends CommonObject
 	 *	@param  User	$user 		User that delete
 	 *	@return	int
 	 */
-	public function delete($user = '')
+	public function delete($user = null)
 	{
 		global $conf;
 
@@ -307,7 +307,7 @@ class RemiseCheque extends CommonObject
 		if ($resql) {
 			$num = $this->db->affected_rows($resql);
 
-			if ($num <> 1) {
+			if ($num != 1) {
 				$this->errno = -2;
 				dol_syslog("Remisecheque::Delete Erreur Lecture ID ($this->errno)");
 			}
@@ -412,7 +412,7 @@ class RemiseCheque extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('CHEQUERECEIPTS_ADDON') . ".php";
-			$classname = $conf->global->CHEQUERECEIPTS_ADDON;
+			$classname = getDolGlobalString('CHEQUERECEIPTS_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);

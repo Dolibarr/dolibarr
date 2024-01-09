@@ -289,11 +289,11 @@ if (function_exists("ldap_connect")) {
 			if (getDolGlobalString('LDAP_ADMIN_DN') && getDolGlobalString('LDAP_ADMIN_PASS')) {
 				if ($result == 2) {
 					print img_picto('', 'info').' ';
-					print '<span class="ok">'.$langs->trans("LDAPBindOK", $ldap->connectedServer, getDolGlobalString('LDAP_SERVER_PORT'), $conf->global->LDAP_ADMIN_DN, preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)).'</span>';
+					print '<span class="ok">'.$langs->trans("LDAPBindOK", $ldap->connectedServer, getDolGlobalString('LDAP_SERVER_PORT'), getDolGlobalString('LDAP_ADMIN_DN'), preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)).'</span>';
 					print '<br>';
 				} else {
 					print img_picto('', 'error').' ';
-					print '<span class="error">'.$langs->trans("LDAPBindKO", $ldap->connectedServer, getDolGlobalString('LDAP_SERVER_PORT'), $conf->global->LDAP_ADMIN_DN, preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)).'</span>';
+					print '<span class="error">'.$langs->trans("LDAPBindKO", $ldap->connectedServer, getDolGlobalString('LDAP_SERVER_PORT'), getDolGlobalString('LDAP_ADMIN_DN'), preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)).'</span>';
 					print '<br>';
 					print $langs->trans("Error").' '.$ldap->error;
 					print '<br>';

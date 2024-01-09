@@ -805,7 +805,7 @@ class ProductFournisseurPrice extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('BUYPRICEHISTORY_PRODUCTFOURNISSEURPRICE_ADDON') . ".php";
-			$classname = $conf->global->BUYPRICEHISTORY_PRODUCTFOURNISSEURPRICE_ADDON;
+			$classname = getDolGlobalString('BUYPRICEHISTORY_PRODUCTFOURNISSEURPRICE_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -868,7 +868,7 @@ class ProductFournisseurPrice extends CommonObject
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('PRODUCTFOURNISSEURPRICE_ADDON_PDF')) {
-				$modele = $conf->global->PRODUCTFOURNISSEURPRICE_ADDON_PDF;
+				$modele = getDolGlobalString('PRODUCTFOURNISSEURPRICE_ADDON_PDF');
 			}
 		}
 

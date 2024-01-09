@@ -517,17 +517,17 @@ function societe_admin_prepare_head()
 /**
  *    Return country label, code or id from an id, code or label
  *
- *    @param      int		$searchkey      Id or code of country to search
- *    @param      string	$withcode   	'0'=Return label,
+ *    @param	int|string	$searchkey      Id or code of country to search
+ *    @param    string		$withcode   	'0'=Return label,
  *    										'1'=Return code + label,
  *    										'2'=Return code from id,
  *    										'3'=Return id from code,
  * 	   										'all'=Return array('id'=>,'code'=>,'label'=>)
- *    @param      DoliDB	$dbtouse       	Database handler (using in global way may fail because of conflicts with some autoload features)
- *    @param      Translate	$outputlangs	Langs object for output translation
- *    @param      int		$entconv       	0=Return value without entities and not converted to output charset, 1=Ready for html output
- *    @param      int		$searchlabel    Label of country to search (warning: searching on label is not reliable)
- *    @return     mixed       				Integer with country id or String with country code or translated country name or Array('id','code','label') or 'NotDefined'
+ *    @param	DoliDB		$dbtouse       	Database handler (using in global way may fail because of conflicts with some autoload features)
+ *    @param	Translate	$outputlangs	Langs object for output translation
+ *    @param	int			$entconv       	0=Return value without entities and not converted to output charset, 1=Ready for html output
+ *    @param	int			$searchlabel    Label of country to search (warning: searching on label is not reliable)
+ *    @return	mixed       				Integer with country id or String with country code or translated country name or Array('id','code','label') or 'NotDefined'
  */
 function getCountry($searchkey, $withcode = '', $dbtouse = 0, $outputlangs = '', $entconv = 1, $searchlabel = '')
 {
@@ -1584,7 +1584,7 @@ function show_actions_todo($conf, $langs, $db, $filterobj, $objcon = '', $noprin
  * 		@param	mixed			   $filterobj	   Filter on object Adherent|Societe|Project|Product|CommandeFournisseur|Dolresource|Ticket... to list events linked to an object
  * 		@param	Contact		       $objcon		   Filter on object contact to filter events on a contact
  *      @param  int			       $noprint        Return string but does not output it
- *      @param  string		       $actioncode     Filter on actioncode
+ *      @param  string|string[]    $actioncode     Filter on actioncode
  *      @param  string             $donetodo       Filter on event 'done' or 'todo' or ''=nofilter (all).
  *      @param  array              $filters        Filter on other fields
  *      @param  string             $sortfield      Sort field
@@ -1810,13 +1810,10 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$sql .= ' AND (';
 			foreach ($actioncode as $key => $code) {
 				if ($key != 0) {
-					$sql .= "OR (";
+					$sql .= " OR ";
 				}
 				if (!empty($code)) {
-					addEventTypeSQL($sql, $code);
-				}
-				if ($key != 0) {
-					$sql .= ")";
+					addEventTypeSQL($sql, $code, "");
 				}
 			}
 			$sql .= ')';
@@ -2284,7 +2281,7 @@ function show_subsidiaries($conf, $langs, $db, $object)
 			$socstatic->name_alias = $obj->name_alias;
 			$socstatic->email = $obj->email;
 			$socstatic->code_client = $obj->code_client;
-			$socstatic->code_fournisseur = $obj->code_client;
+			$socstatic->code_fournisseur = $obj->code_fournisseur;
 			$socstatic->code_compta = $obj->code_compta;
 			$socstatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 			$socstatic->email = $obj->email;
@@ -2334,19 +2331,19 @@ function addEventTypeSQL(&$sql, $actioncode, $sqlANDOR = "AND")
 
 	if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 		if ($actioncode == 'AC_NON_AUTO') {
-			$sql .= " $sqlANDOR c.type != 'systemauto'";
+			$sql .= " $sqlANDOR c.type <> 'systemauto'";
 		} elseif ($actioncode == 'AC_ALL_AUTO') {
 			$sql .= " $sqlANDOR c.type = 'systemauto'";
 		} else {
 			if ($actioncode == 'AC_OTH') {
-				$sql .= " $sqlANDOR c.type != 'systemauto'";
+				$sql .= " $sqlANDOR c.type <> 'systemauto'";
 			} elseif ($actioncode == 'AC_OTH_AUTO') {
 				$sql .= " $sqlANDOR c.type = 'systemauto'";
 			}
 		}
 	} else {
 		if ($actioncode == 'AC_NON_AUTO') {
-			$sql .= " $sqlANDOR c.type != 'systemauto'";
+			$sql .= " $sqlANDOR c.type <> 'systemauto'";
 		} elseif ($actioncode == 'AC_ALL_AUTO') {
 			$sql .= " $sqlANDOR c.type = 'systemauto'";
 		} else {

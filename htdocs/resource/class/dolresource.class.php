@@ -532,7 +532,7 @@ class Dolresource extends CommonObject
 	 * @param	array		$filter			filter output
 	 * @return	int							Return integer if KO: <0, if OK number of lines loaded
 	 */
-	public function fetchAll($sortorder, $sortfield, $limit, $offset, $filter = '')
+	public function fetchAll($sortorder, $sortfield, $limit, $offset, $filter = [])
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
@@ -779,7 +779,7 @@ class Dolresource extends CommonObject
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
-				$label = ($langs->trans("ResourceTypeShort".$obj->code) != ("ResourceTypeShort".$obj->code) ? $langs->trans("ResourceTypeShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
+				$label = ($langs->trans("ResourceTypeShort".$obj->code) != "ResourceTypeShort".$obj->code ? $langs->trans("ResourceTypeShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
 				$this->cache_code_type_resource[$obj->rowid]['code'] = $obj->code;
 				$this->cache_code_type_resource[$obj->rowid]['label'] = $label;
 				$this->cache_code_type_resource[$obj->rowid]['active'] = $obj->active;

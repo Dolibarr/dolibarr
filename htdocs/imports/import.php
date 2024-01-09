@@ -646,7 +646,7 @@ if ($step == 3 && $datatoimport) {
 	print '<input type="submit" class="button small" value="'.$langs->trans("AddFile").'"'.$out.' name="sendit">';
 	$out = '';
 	if (getDolGlobalString('MAIN_UPLOAD_DOC')) {
-		$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
+		$max = getDolGlobalString('MAIN_UPLOAD_DOC'); // In Kb
 		$maxphp = @ini_get('upload_max_filesize'); // In unknown
 		if (preg_match('/k$/i', $maxphp)) {
 			$maxphp = (int) substr($maxphp, 0, -1);

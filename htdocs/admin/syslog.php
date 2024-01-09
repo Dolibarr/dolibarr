@@ -226,14 +226,16 @@ foreach ($syslogModules as $moduleName) {
 
 	print '<td class="nowrap">';
 	$setuparray = $module->configure();
+
 	if ($setuparray) {
 		foreach ($setuparray as $option) {
 			$tmpoption = $option['constant'];
+			$value = '';
 			if (!empty($tmpoption)) {
 				if (GETPOSTISSET($tmpoption)) {
 					$value = GETPOST($tmpoption);
-				} elseif (!empty($conf->global->$tmpoption)) {
-					$value = $conf->global->$tmpoption;
+				} else {
+					$value = getDolGlobalString($tmpoption);
 				}
 			} else {
 				$value = (isset($option['default']) ? $option['default'] : '');

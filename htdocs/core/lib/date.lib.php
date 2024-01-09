@@ -122,11 +122,11 @@ function getServerTimeZoneInt($refgmtdate = 'now')
 function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforendofmonth = 0)
 {
 	global $conf;
+	if (empty($duration_value)) {
+		return $time;
+	}
 	if ($duration_unit == 's') {
 		return $time + ($duration_value);
-	}
-	if ($duration_value == 0) {
-		return $time;
 	}
 	if ($duration_unit == 'i') {
 		return $time + (60 * $duration_value);
@@ -764,7 +764,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 	$nbFerie = 0;
 
 	// Check to ensure we use correct parameters
-	if ((($timestampEnd - $timestampStart) % 86400) != 0) {
+	if (($timestampEnd - $timestampStart) % 86400 != 0) {
 		return 'Error Dates must use same hours and must be GMT dates';
 	}
 

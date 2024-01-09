@@ -20,7 +20,7 @@
 /**
  *		\file       htdocs/admin/security.php
  *      \ingroup    setup
- *      \brief      Page de configuration du module securite
+ *      \brief      Page of setup of security
  */
 
 // Load Dolibarr environment

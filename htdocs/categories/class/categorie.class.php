@@ -1385,7 +1385,7 @@ class Categorie extends CommonObject
 	 * @param	string	$sep	     Separator
 	 * @param	string	$url	     Url ('', 'none' or 'urltouse')
 	 * @param   int     $nocolor     0
-	 * @param	string	$addpicto	 Add picto into link
+	 * @param	int		$addpicto	 Add picto into link
 	 * @return	array
 	 */
 	public function print_all_ways($sep = '&gt;&gt;', $url = '', $nocolor = 0, $addpicto = 0)

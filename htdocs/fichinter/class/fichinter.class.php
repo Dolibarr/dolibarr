@@ -224,7 +224,7 @@ class Fichinter extends CommonObject
 		$sql = "SELECT count(fi.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as fi";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON fi.fk_soc = s.rowid";
-		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
@@ -786,7 +786,7 @@ class Fichinter extends CommonObject
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('FICHEINTER_ADDON_PDF')) {
-				$modele = $conf->global->FICHEINTER_ADDON_PDF;
+				$modele = getDolGlobalString('FICHEINTER_ADDON_PDF');
 			}
 		}
 
@@ -1361,7 +1361,7 @@ class Fichinter extends CommonObject
 	 *  @param		array	$array_options			Array option
 	 *	@return    	int             				>0 if ok, <0 if ko
 	 */
-	public function addline($user, $fichinterid, $desc, $date_intervention, $duration, $array_options = '')
+	public function addline($user, $fichinterid, $desc, $date_intervention, $duration, $array_options = [])
 	{
 		dol_syslog(get_class($this)."::addline $fichinterid, $desc, $date_intervention, $duration");
 
@@ -1591,7 +1591,7 @@ class Fichinter extends CommonObject
 			$return .= '<br><span class="info-box-label ">'.$langs->trans("Duration").' : '.convertSecondToTime($this->duration, 'allhourmin').'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

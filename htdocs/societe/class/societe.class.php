@@ -189,7 +189,7 @@ class Societe extends CommonObject
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
+		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'noteditable'=>1, 'notnull'=> 1, 'index'=>1, 'position'=>1, 'comment'=>'Id', 'css'=>'left'),
 		'parent' =>array('type'=>'integer', 'label'=>'Parent', 'enabled'=>1, 'visible'=>-1, 'position'=>20),
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>25),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
@@ -870,9 +870,9 @@ class Societe extends CommonObject
 		$this->status = 1;
 
 		if (getDolGlobalString('COMPANY_SHOW_ADDRESS_SELECTLIST')) {
-			$this->fields['address']['showoncombobox'] = $conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST;
-			$this->fields['zip']['showoncombobox'] = $conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST;
-			$this->fields['town']['showoncombobox'] = $conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST;
+			$this->fields['address']['showoncombobox'] = getDolGlobalString('COMPANY_SHOW_ADDRESS_SELECTLIST');
+			$this->fields['zip']['showoncombobox'] = getDolGlobalString('COMPANY_SHOW_ADDRESS_SELECTLIST');
+			$this->fields['town']['showoncombobox'] = getDolGlobalString('COMPANY_SHOW_ADDRESS_SELECTLIST');
 			//$this->fields['fk_pays']['showoncombobox'] = $conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST;
 		}
 	}
@@ -888,7 +888,7 @@ class Societe extends CommonObject
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
-		global $langs, $conf, $mysoc;
+		global $langs, $conf;
 
 		$error = 0;
 
@@ -1775,7 +1775,7 @@ class Societe extends CommonObject
 		global $langs;
 		global $conf;
 
-		if (empty($rowid) && empty($ref) && empty($ref_ext) && empty($barcode) && empty($idprof1) && empty($idprof2) && empty($idprof3) && empty($idprof4) && empty($idprof5) && empty($idprof6) && empty($email)) {
+		if (empty($rowid) && empty($ref) && empty($ref_ext) && empty($barcode) && empty($idprof1) && empty($idprof2) && empty($idprof3) && empty($idprof4) && empty($idprof5) && empty($idprof6) && empty($email) && empty($ref_alias)) {
 			return -1;
 		}
 
@@ -2833,7 +2833,7 @@ class Societe extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $notooltip = 0, $save_lastsearch_value = -1, $noaliasinname = 0, $target = '')
 	{
-		global $conf, $langs, $hookmanager;
+		global $conf, $langs, $hookmanager, $user;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -2946,7 +2946,6 @@ class Societe extends CommonObject
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
 
-		global $user;
 		if (!$user->hasRight('societe', 'client', 'voir') && $user->socid > 0 && $this->id != $user->socid) {
 			$linkstart = '';
 			$linkend = '';
@@ -3354,7 +3353,7 @@ class Societe extends CommonObject
 		// phpcs:enable
 		global $conf;
 		if (getDolGlobalString('SOCIETE_CODECLIENT_ADDON')) {
-			$module = $conf->global->SOCIETE_CODECLIENT_ADDON;
+			$module = getDolGlobalString('SOCIETE_CODECLIENT_ADDON');
 
 			$dirsociete = array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
 			foreach ($dirsociete as $dirroot) {
@@ -3386,7 +3385,7 @@ class Societe extends CommonObject
 		// phpcs:enable
 		global $conf;
 		if (getDolGlobalString('SOCIETE_CODECLIENT_ADDON')) {
-			$module = $conf->global->SOCIETE_CODECLIENT_ADDON;
+			$module = getDolGlobalString('SOCIETE_CODECLIENT_ADDON');
 
 			$dirsociete = array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
 			foreach ($dirsociete as $dirroot) {
@@ -3415,7 +3414,7 @@ class Societe extends CommonObject
 		// phpcs:enable
 		global $conf;
 		if (getDolGlobalString('SOCIETE_CODECLIENT_ADDON')) {
-			$module = $conf->global->SOCIETE_CODECLIENT_ADDON;
+			$module = getDolGlobalString('SOCIETE_CODECLIENT_ADDON');
 
 			$dirsociete = array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
 			foreach ($dirsociete as $dirroot) {
@@ -3455,7 +3454,7 @@ class Societe extends CommonObject
 		// phpcs:enable
 		global $conf;
 		if (getDolGlobalString('SOCIETE_CODECLIENT_ADDON')) {
-			$module = $conf->global->SOCIETE_CODECLIENT_ADDON;
+			$module = getDolGlobalString('SOCIETE_CODECLIENT_ADDON');
 
 			$dirsociete = array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
 			foreach ($dirsociete as $dirroot) {
@@ -3501,7 +3500,7 @@ class Societe extends CommonObject
 		// phpcs:enable
 		global $conf;
 		if (getDolGlobalString('SOCIETE_CODECLIENT_ADDON')) {
-			$module = $conf->global->SOCIETE_CODECLIENT_ADDON;
+			$module = getDolGlobalString('SOCIETE_CODECLIENT_ADDON');
 
 			$dirsociete = array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
 			foreach ($dirsociete as $dirroot) {
@@ -3542,7 +3541,7 @@ class Societe extends CommonObject
 		// phpcs:enable
 		global $conf;
 		if (getDolGlobalString('SOCIETE_CODECLIENT_ADDON')) {
-			$module = $conf->global->SOCIETE_CODECLIENT_ADDON;
+			$module = getDolGlobalString('SOCIETE_CODECLIENT_ADDON');
 
 			$dirsociete = array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
 			foreach ($dirsociete as $dirroot) {
@@ -3581,7 +3580,7 @@ class Societe extends CommonObject
 		global $conf;
 
 		if (getDolGlobalString('SOCIETE_CODECOMPTA_ADDON')) {
-			$module=$conf->global->SOCIETE_CODECOMPTA_ADDON;
+			$module=getDolGlobalString('SOCIETE_CODECOMPTA_ADDON');
 			$res = false;
 			$dirsociete = array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
 			foreach ($dirsociete as $dirroot) {
@@ -3838,6 +3837,9 @@ class Societe extends CommonObject
 		// phpcs:enable
 		global $conf;
 
+		// load the library necessary to check the professional identifiers
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/profid.lib.php';
+
 		$ok = 1;
 
 		if (getDolGlobalString('MAIN_DISABLEPROFIDRULES')) {
@@ -3845,36 +3847,8 @@ class Societe extends CommonObject
 		}
 
 		// Check SIREN if country FR
-		if ($idprof == 1 && $soc->country_code == 'FR') {
-			$chaine = trim($this->idprof1);
-			$chaine = preg_replace('/(\s)/', '', $chaine);
-
-			if (!is_numeric($chaine)) {
-				return -1;
-			}
-			if (dol_strlen($chaine) != 9) {
-				return -1;
-			}
-
-			// on prend chaque chiffre un par un
-			// si son index (position dans la chaîne en commence à 0 au premier caractère) est impair
-			// on double sa valeur et si cette dernière est supérieure à 9, on lui retranche 9
-			// on ajoute cette valeur à la somme totale
-			$sum = 0;
-			for ($index = 0; $index < 9; $index++) {
-				$number = (int) $chaine[$index];
-				if (($index % 2) != 0) {
-					if (($number *= 2) > 9) {
-						$number -= 9;
-					}
-				}
-				$sum += $number;
-			}
-
-			// le numéro est valide si la somme des chiffres est multiple de 10
-			if (($sum % 10) != 0) {
-				return -1;
-			}
+		if ($idprof == 1 && $soc->country_code == 'FR' && !isValidSiren($this->idprof1)) {
+			return -1;
 		}
 
 		// Verifie SIRET si pays FR
@@ -3905,7 +3879,7 @@ class Societe extends CommonObject
 			}
 
 			// le numéro est valide si la somme des chiffres est multiple de 10
-			if (($sum % 10) != 0) {
+			if ($sum % 10 != 0) {
 				return -1;
 			}
 		}
@@ -4558,7 +4532,7 @@ class Societe extends CommonObject
 		$this->logo_squarred_mini = getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI');
 
 		// Define if company use vat or not
-		$this->tva_assuj = $conf->global->FACTURE_TVAOPTION;
+		$this->tva_assuj = getDolGlobalString('FACTURE_TVAOPTION');
 
 		// Define if company use local taxes
 		$this->localtax1_assuj = ((isset($conf->global->FACTURE_LOCAL_TAX1_OPTION) && (getDolGlobalString('FACTURE_LOCAL_TAX1_OPTION') == '1' || getDolGlobalString('FACTURE_LOCAL_TAX1_OPTION') == 'localtax1on')) ? 1 : 0);
@@ -5055,7 +5029,7 @@ class Societe extends CommonObject
 			// Positionne le modele sur le nom du modele a utiliser
 			if (!dol_strlen($modele)) {
 				if (getDolGlobalString('COMPANY_ADDON_PDF')) {
-					$modele = $conf->global->COMPANY_ADDON_PDF;
+					$modele = getDolGlobalString('COMPANY_ADDON_PDF');
 				} else {
 					print $langs->trans("Error")." ".$langs->trans("Error_COMPANY_ADDON_PDF_NotDefined");
 					return 0;
@@ -5321,7 +5295,7 @@ class Societe extends CommonObject
 			$return .= '<br><span class="info-box-label opacitymedium">'.$this->code_client.'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

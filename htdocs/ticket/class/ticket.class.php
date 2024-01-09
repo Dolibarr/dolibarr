@@ -716,15 +716,15 @@ class Ticket extends CommonObject
 				$this->timing = $obj->timing;
 
 				$this->type_code = $obj->type_code;
-				$label_type = ($langs->trans("TicketTypeShort".$obj->type_code) != ("TicketTypeShort".$obj->type_code) ? $langs->trans("TicketTypeShort".$obj->type_code) : ($obj->type_label != '-' ? $obj->type_label : ''));
+				$label_type = ($langs->trans("TicketTypeShort".$obj->type_code) != "TicketTypeShort".$obj->type_code ? $langs->trans("TicketTypeShort".$obj->type_code) : ($obj->type_label != '-' ? $obj->type_label : ''));
 				$this->type_label = $label_type;
 
 				$this->category_code = $obj->category_code;
-				$label_category = ($langs->trans("TicketCategoryShort".$obj->category_code) != ("TicketCategoryShort".$obj->category_code) ? $langs->trans("TicketCategoryShort".$obj->category_code) : ($obj->category_label != '-' ? $obj->category_label : ''));
+				$label_category = ($langs->trans("TicketCategoryShort".$obj->category_code) != "TicketCategoryShort".$obj->category_code ? $langs->trans("TicketCategoryShort".$obj->category_code) : ($obj->category_label != '-' ? $obj->category_label : ''));
 				$this->category_label = $label_category;
 
 				$this->severity_code = $obj->severity_code;
-				$label_severity = ($langs->trans("TicketSeverityShort".$obj->severity_code) != ("TicketSeverityShort".$obj->severity_code) ? $langs->trans("TicketSeverityShort".$obj->severity_code) : ($obj->severity_label != '-' ? $obj->severity_label : ''));
+				$label_severity = ($langs->trans("TicketSeverityShort".$obj->severity_code) != "TicketSeverityShort".$obj->severity_code ? $langs->trans("TicketSeverityShort".$obj->severity_code) : ($obj->severity_label != '-' ? $obj->severity_label : ''));
 				$this->severity_label = $label_severity;
 
 				$this->datec = $this->db->jdate($obj->datec);
@@ -792,8 +792,8 @@ class Ticket extends CommonObject
 		$sql .= " t.date_read,";
 		$sql .= " t.date_last_msg_sent,";
 		$sql .= " t.date_close,";
-		$sql .= " t.tms";
-		$sql .= ", type.label as type_label, category.label as category_label, severity.label as severity_label";
+		$sql .= " t.tms,";
+		$sql .= " type.label as type_label, category.label as category_label, severity.label as severity_label";
 		// Add fields for extrafields
 		if ($extrafields->attributes[$this->table_element]['count']> 0) {
 			foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
@@ -801,21 +801,17 @@ class Ticket extends CommonObject
 			}
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_type as type ON type.code=t.type_code";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_category as category ON category.code=t.category_code";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_severity as severity ON severity.code=t.severity_code";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid=t.fk_soc";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as uc ON uc.rowid=t.fk_user_create";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as ua ON ua.rowid=t.fk_user_assign";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_type as type ON type.code = t.type_code";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_category as category ON category.code = t.category_code";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_severity as severity ON severity.code = t.severity_code";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = t.fk_soc";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as uc ON uc.rowid = t.fk_user_create";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as ua ON ua.rowid = t.fk_user_assign";
 		if ($extrafields->attributes[$this->table_element]['count']> 0) {
 			if (is_array($extrafields->attributes[$this->table_element]['label']) && count($extrafields->attributes[$this->table_element]['label'])) {
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."ticket_extrafields as ef on (t.rowid = ef.fk_object)";
 			}
 		}
-		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
-			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		}
-
 		$sql .= " WHERE t.entity IN (".getEntity('ticket').")";
 
 		// Manage filter
@@ -838,10 +834,25 @@ class Ticket extends CommonObject
 				}
 			}
 		}
-		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
-			$sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
-		} elseif ($user->socid) {
-			$sql .= " AND t.fk_soc = ".((int) $user->socid);
+
+		// Case of external user
+		$socid = $user->socid ? $user->socid : 0;
+		// If the internal user must only see his customers, force searching by him
+		$search_sale = 0;
+		if (!$user->hasRight('societe', 'client', 'voir')) {
+			$search_sale = $user->id;
+		}
+		// Search on sale representative
+		if ($search_sale && $search_sale != '-1') {
+			if ($search_sale == -2) {
+				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+			} elseif ($search_sale > 0) {
+				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+			}
+		}
+		// Search on socid
+		if ($socid) {
+			$sql .= " AND t.fk_soc = ".((int) $socid);
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -884,15 +895,15 @@ class Ticket extends CommonObject
 					$line->progress = $obj->progress;
 					$line->timing = $obj->timing;
 
-					$label_type = ($langs->trans("TicketTypeShort".$obj->type_code) != ("TicketTypeShort".$obj->type_code) ? $langs->trans("TicketTypeShort".$obj->type_code) : ($obj->type_label != '-' ? $obj->type_label : ''));
+					$label_type = ($langs->trans("TicketTypeShort".$obj->type_code) != "TicketTypeShort".$obj->type_code ? $langs->trans("TicketTypeShort".$obj->type_code) : ($obj->type_label != '-' ? $obj->type_label : ''));
 					$line->type_label = $label_type;
 
 					$this->category_code = $obj->category_code;
-					$label_category = ($langs->trans("TicketCategoryShort".$obj->category_code) != ("TicketCategoryShort".$obj->category_code) ? $langs->trans("TicketCategoryShort".$obj->category_code) : ($obj->category_label != '-' ? $obj->category_label : ''));
+					$label_category = ($langs->trans("TicketCategoryShort".$obj->category_code) != "TicketCategoryShort".$obj->category_code ? $langs->trans("TicketCategoryShort".$obj->category_code) : ($obj->category_label != '-' ? $obj->category_label : ''));
 					$line->category_label = $label_category;
 
 					$this->severity_code = $obj->severity_code;
-					$label_severity = ($langs->trans("TicketSeverityShort".$obj->severity_code) != ("TicketSeverityShort".$obj->severity_code) ? $langs->trans("TicketSeverityShort".$obj->severity_code) : ($obj->severity_label != '-' ? $obj->severity_label : ''));
+					$label_severity = ($langs->trans("TicketSeverityShort".$obj->severity_code) != "TicketSeverityShort".$obj->severity_code ? $langs->trans("TicketSeverityShort".$obj->severity_code) : ($obj->severity_label != '-' ? $obj->severity_label : ''));
 					$line->severity_label = $label_severity;
 
 					$line->datec = $this->db->jdate($obj->datec);
@@ -929,7 +940,7 @@ class Ticket extends CommonObject
 	 *  @param  int  $notrigger 0=launch triggers after, 1=disable triggers
 	 *  @return int                     Return integer <0 if KO, >0 if OK
 	 */
-	public function update($user = 0, $notrigger = 0)
+	public function update($user, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -1286,7 +1297,7 @@ class Ticket extends CommonObject
 			$i = 0;
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
-				$label = ($langs->trans("TicketTypeShort".$obj->code) != ("TicketTypeShort".$obj->code) ? $langs->trans("TicketTypeShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
+				$label = ($langs->trans("TicketTypeShort".$obj->code) != "TicketTypeShort".$obj->code ? $langs->trans("TicketTypeShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
 				$this->cache_types_tickets[$obj->rowid]['code'] = $obj->code;
 				$this->cache_types_tickets[$obj->rowid]['label'] = $label;
 				$this->cache_types_tickets[$obj->rowid]['use_default'] = $obj->use_default;
@@ -1342,7 +1353,7 @@ class Ticket extends CommonObject
 
 				// If  translation exists, we use it to store already translated string.
 				// Warning: You should not use this and recompute the translated string into caller code to get the value into expected language
-				$label = ($langs->trans("TicketCategoryShort".$obj->code) != ("TicketCategoryShort".$obj->code) ? $langs->trans("TicketCategoryShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
+				$label = ($langs->trans("TicketCategoryShort".$obj->code) != "TicketCategoryShort".$obj->code ? $langs->trans("TicketCategoryShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
 				$this->cache_category_tickets[$obj->rowid]['label'] = $label;
 
 				$i++;
@@ -1382,7 +1393,7 @@ class Ticket extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				$this->cache_severity_tickets[$obj->rowid]['code'] = $obj->code;
-				$label = ($langs->trans("TicketSeverityShort".$obj->code) != ("TicketSeverityShort".$obj->code) ? $langs->trans("TicketSeverityShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
+				$label = ($langs->trans("TicketSeverityShort".$obj->code) != "TicketSeverityShort".$obj->code ? $langs->trans("TicketSeverityShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
 				$this->cache_severity_tickets[$obj->rowid]['label'] = $label;
 				$this->cache_severity_tickets[$obj->rowid]['use_default'] = $obj->use_default;
 				$this->cache_severity_tickets[$obj->rowid]['pos'] = $obj->pos;
@@ -2632,9 +2643,9 @@ class Ticket extends CommonObject
 
 						if (empty($sendto)) {
 							if (getDolGlobalString('TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL')) {
-								$sendto[getDolGlobalString('TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL')] = $conf->global->TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL;
+								$sendto[getDolGlobalString('TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL')] = getDolGlobalString('TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL');
 							} elseif (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')) {
-								$sendto[getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
+								$sendto[getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')] = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO');
 							}
 						}
 
@@ -2642,7 +2653,7 @@ class Ticket extends CommonObject
 						if (getDolGlobalString('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS') &&
 							getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO') && !array_key_exists($conf->global->TICKET_NOTIFICATION_EMAIL_TO, $sendto)
 						) {
-							$sendto[getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
+							$sendto[getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')] = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO');
 						}
 
 						if (!empty($sendto)) {
@@ -3060,7 +3071,7 @@ class Ticket extends CommonObject
 		$sql = "SELECT count(p.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
-		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
@@ -3128,7 +3139,7 @@ class Ticket extends CommonObject
 			$return .= '<div class="tdoverflowmax125 inline-block">'.$langs->getLabelFromKey($this->db, 'TicketTypeShort'.$this->type_code, 'c_ticket_type', 'code', 'label', $this->type_code).'</div>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

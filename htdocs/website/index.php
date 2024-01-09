@@ -3079,7 +3079,7 @@ if (!GETPOST('hide_websitemenu')) {
 		}
 		if (getDolGlobalString('WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER')) {
 			$htmltext .= '<!-- Message defined translate key set into WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER -->';
-			$htmltext .= '<br>'.$langs->trans($conf->global->WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER);
+			$htmltext .= '<br>'.$langs->trans(getDolGlobalString('WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER'));
 		} else {
 			$htmltext .= $langs->trans("SetHereVirtualHost", $dataroot);
 			$htmltext .= '<br>';
@@ -4808,7 +4808,7 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 					print '</td>';
 
 					// Categories - Tags
-					print '<td>';
+					print '<td class="center">';
 					if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 						// Get current categories
 						$existing = $c->containing($answerrecord->id, Categorie::TYPE_WEBSITE_PAGE, 'object');

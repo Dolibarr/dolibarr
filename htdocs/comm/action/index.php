@@ -48,7 +48,7 @@ if (!isset($conf->global->AGENDA_MAX_EVENTS_DAY_VIEW)) {
 if (!getDolGlobalString('AGENDA_EXT_NB')) {
 	$conf->global->AGENDA_EXT_NB = 5;
 }
-$MAXAGENDA = $conf->global->AGENDA_EXT_NB;
+$MAXAGENDA = getDolGlobalString('AGENDA_EXT_NB');
 $DELAYFORCACHE = 300;	// 300 seconds
 
 $disabledefaultvalues = GETPOST('disabledefaultvalues', 'int');
@@ -315,8 +315,8 @@ if (empty($mode) || $mode == 'show_month') {
 	$next_year  = $next['year'];
 	$next_month = $next['month'];
 
-	$max_day_in_prev_month = date("t", dol_mktime(0, 0, 0, $prev_month, 1, $prev_year, 'gmt')); // Nb of days in previous month
-	$max_day_in_month = date("t", dol_mktime(0, 0, 0, $month, 1, $year)); // Nb of days in next month
+	$max_day_in_prev_month = date("t", dol_mktime(12, 0, 0, $prev_month, 1, $prev_year, 'gmt')); // Nb of days in previous month
+	$max_day_in_month = date("t", dol_mktime(12, 0, 0, $month, 1, $year, 'gmt')); // Nb of days in next month
 	// tmpday is a negative or null cursor to know how many days before the 1st to show on month view (if tmpday=0, 1st is monday)
 	$tmpday = -date("w", dol_mktime(12, 0, 0, $month, 1, $year, 'gmt')) + 2; // date('w') is 0 fo sunday
 	$tmpday += ((isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1) - 1);
@@ -641,7 +641,7 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 		$s .= '</script>'."\n";
 
 		foreach ($showextcals as $val) {
-			$htmlname = md5($val['name']);
+			$htmlname = md5($val['name']);	// not used for security purpose, only to get a string with no special char
 
 			if (!empty($val['default']) || GETPOST('check_ext'.$htmlname, 'int')) {
 				$default = "checked";
@@ -712,9 +712,6 @@ $sql .= ' a.fk_soc, a.fk_contact, a.fk_project, a.fk_bookcal_calendar,';
 $sql .= ' a.fk_element, a.elementtype,';
 $sql .= ' ca.code as type_code, ca.libelle as type_label, ca.color as type_color, ca.type as type_type, ca.picto as type_picto';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm as ca, '.MAIN_DB_PREFIX."actioncomm as a";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
-}
 // We must filter on resource table
 if ($resourceid > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_resources as r";
@@ -763,10 +760,21 @@ if ($resourceid > 0) {
 if ($pid) {
 	$sql .= " AND a.fk_project=".((int) $pid);
 }
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-	$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".((int) $user->id).")";
+// If the internal user must only see his customers, force searching by him
+$search_sale = 0;
+if (!$user->hasRight('societe', 'client', 'voir')) {
+	$search_sale = $user->id;
 }
-if ($socid > 0) {
+// Search on sale representative
+if ($search_sale && $search_sale != '-1') {
+	if ($search_sale == -2) {
+		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc)";
+	} elseif ($search_sale > 0) {
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+	}
+}
+// Search on socid
+if ($socid) {
 	$sql .= " AND a.fk_soc = ".((int) $socid);
 }
 // We must filter on assignement table
@@ -1743,8 +1751,8 @@ $db->close();
  * @param   string	$newparam        Parameters on current URL
  * @param   int		$showinfo        Add extended information (used by day and week view)
  * @param   int		$minheight       Minimum height for each event. 60px by default.
- * @param	string	$nonew			 0=Add "new entry button", 1=No "new entry button", -1=Only "new entry button"
- * @param	string	$bookcalcalendarsarray	 Used for Bookcal module array of calendar of bookcal
+ * @param	int		$nonew			 0=Add "new entry button", 1=No "new entry button", -1=Only "new entry button"
+ * @param	array	$bookcalcalendarsarray	 Used for Bookcal module array of calendar of bookcal
  * @return	void
  */
 function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint = 0, $maxnbofchar = 16, $newparam = '', $showinfo = 0, $minheight = 60, $nonew = 0, $bookcalcalendarsarray = array())

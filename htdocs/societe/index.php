@@ -100,11 +100,11 @@ $total = 0;
 
 $sql = "SELECT s.rowid, s.client, s.fournisseur";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= ' WHERE s.entity IN ('.getEntity('societe').')';
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if (!$user->hasRight('fournisseur', 'lire')) {
@@ -215,7 +215,7 @@ if (isModEnabled('categorie') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_THIR
 	$sql .= " FROM ".MAIN_DB_PREFIX."categorie_societe as cs";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cs.fk_categorie = c.rowid";
 	$sql .= " WHERE c.type = 2";
-	if (!is_numeric($conf->global->CATEGORY_GRAPHSTATS_ON_THIRDPARTIES)) {
+	if (!is_numeric(getDolGlobalString('CATEGORY_GRAPHSTATS_ON_THIRDPARTIES'))) {
 		$sql .= " AND c.label like '".$db->escape($conf->global->CATEGORY_GRAPHSTATS_ON_THIRDPARTIES)."'";
 	}
 	$sql .= " AND c.entity IN (".getEntity('category').")";
@@ -294,11 +294,11 @@ $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
 }
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= ' WHERE s.entity IN ('.getEntity('societe').')';
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if (!$user->hasRight('fournisseur', 'lire')) {

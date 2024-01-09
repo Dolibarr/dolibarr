@@ -74,7 +74,7 @@ if ($user->id == $id && (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user
 }
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
-if ($user->id <> $id && !$canreaduser) {
+if ($user->id != $id && !$canreaduser) {
 	accessforbidden();
 }
 
@@ -512,7 +512,7 @@ if ($result) {
 		//var_dump($permsgroupbyentitypluszero);
 
 		// Break found, it's a new module to catch
-		if (isset($obj->module) && ($oldmod <> $obj->module)) {
+		if (isset($obj->module) && ($oldmod != $obj->module)) {
 			$oldmod = $obj->module;
 
 			$j++;
@@ -664,7 +664,7 @@ if ($result) {
 		}
 
 		// Description of permission (2 columns)
-		$permlabel = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && ($langs->trans("PermissionAdvanced".$obj->id) != ("PermissionAdvanced".$obj->id)) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != ("Permission".$obj->id)) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
+		$permlabel = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && ($langs->trans("PermissionAdvanced".$obj->id) != "PermissionAdvanced".$obj->id) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != "Permission".$obj->id) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
 		if (!$user->admin) {
 			print '<td colspan="2">';
 		} else {

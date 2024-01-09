@@ -102,9 +102,6 @@ class MultiCurrencies extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve currencies list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No currencies found');
-		}
 
 		return $obj_ret;
 	}
@@ -259,6 +256,12 @@ class MultiCurrencies extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$multicurrency->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$multicurrency->$field = $value;
 		}
 

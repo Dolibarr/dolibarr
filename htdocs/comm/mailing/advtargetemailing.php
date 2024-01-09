@@ -447,7 +447,7 @@ if ($object->fetch($id) >= 0) {
 	print '</td><td colspan="3">';
 	$nbemail = ($object->nbemail ? $object->nbemail : '0');
 	if (getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) {
-		$text = $langs->trans('LimitSendingEmailing', $conf->global->MAILING_LIMIT_SENDBYWEB);
+		$text = $langs->trans('LimitSendingEmailing', getDolGlobalString('MAILING_LIMIT_SENDBYWEB'));
 		print $form->textwithpicto($nbemail, $text, 1, 'warning');
 	} else {
 		print $nbemail;
