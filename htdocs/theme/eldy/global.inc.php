@@ -2043,7 +2043,7 @@ td.showDragHandle {
 	float: left;
 }
 .classforhorizontalscrolloftabs #id-right {
-	width: calc(100% - 210px);
+	width: calc(100% - <?php echo $leftmenuwidth + 20 ?>px);
 	display: inline-block;
 }
 
