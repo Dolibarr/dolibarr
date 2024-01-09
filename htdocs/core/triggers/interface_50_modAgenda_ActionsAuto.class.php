@@ -600,6 +600,10 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			if (empty($object->actionmsg)) {
 				$object->actionmsg = $langs->transnoentities("InterventionSignedInDolibarr", $object->ref);
 			}
+
+			$object->sendtoid = 0;
+			$object->fk_element = 0;
+			$object->elementtype = '';
 		} elseif ($action == 'FICHINTER_CLOSE') {
 			// Load translation files required by the page
 			$langs->loadLangs(array("agenda", "other", "interventions"));

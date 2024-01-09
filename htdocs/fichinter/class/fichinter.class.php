@@ -714,22 +714,21 @@ class Fichinter extends CommonObject
 
 			$sql = 'UPDATE ' . MAIN_DB_PREFIX . $this->table_element;
 			$sql .= ' SET fk_statut = ' . self::STATUS_SIGNED . ',';
-			$sql .= " datet = '" . $this->db->idate($now) . "',";
 			$sql .= " fk_user_modif = " . ((int) $user->id);
 			$sql .= " WHERE rowid = " . ((int) $this->id);
 			$sql .= " AND fk_statut > " . self::STATUS_DRAFT;
 			$sql .= " AND entity = " . ((int) $conf->entity);
 
-			if ($this->db->query($sql)) {
-				if (!$notrigger) {
+			dol_syslog(get_class($this)."::setSign", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				if (!$error) {
 					// Call trigger
 					$result = $this->call_trigger('FICHINTER_SIGN', $user);
 					if ($result < 0) {
 						$error++;
 					}
-					// End call triggers
 				}
-
 				if (!$error) {
 					$this->statut = self::STATUS_SIGNED;
 					$this->db->commit();
