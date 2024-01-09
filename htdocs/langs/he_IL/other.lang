@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - other
 SecurityCode=Security code
 NumberingShort=N°
-Tools=Tools
+Tools=כלים
 TMenuTools=Tools
 ToolsDesc=All tools not included in other menu entries are grouped here.<br>All the tools can be accessed via the left menu.
 Birthday=Birthday
