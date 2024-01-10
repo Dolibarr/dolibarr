@@ -65,8 +65,10 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 
 	/**
 	 *	Constructor
+	 *
+	 *	@param DoliDB		$db		Database object
 	 */
-	public function __construct()
+	public function __construct($db)
 	{
 		$this->code_null = 1;
 		$this->code_modifiable = 1;
