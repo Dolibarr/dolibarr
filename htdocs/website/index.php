@@ -2673,7 +2673,7 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 
 	// Add the entry Sitemap: into the robot file.
 	$robotcontent = @file_get_contents($filerobot);
-	$result = preg_replace('/<?php // BEGIN PHP[^?]END PHP ?>\n/ims', '', $robotcontent);
+	$result = preg_replace('/<?php \/\/ BEGIN PHP[^?]END PHP ?>\n/ims', '', $robotcontent);
 	if ($result) {
 		$robotcontent = $result;
 	}
