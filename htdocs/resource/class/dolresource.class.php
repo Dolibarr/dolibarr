@@ -35,17 +35,17 @@ class Dolresource extends CommonObject
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element;
+	public $element = 'dolresource';
 
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element;
+	public $table_element = 'resource';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto;
+	public $picto = 'resource';
 
 	/**
 	 * @var string address variables
@@ -115,9 +115,6 @@ class Dolresource extends CommonObject
 	public function __construct(DoliDb $db)
 	{
 		$this->db = $db;
-		$this->element = 'dolresource';
-		$this->table_element = 'resource';
-		$this->picto = 'resource';
 		$this->tms = '';
 		$this->cache_code_type_resource = array();
 	}
