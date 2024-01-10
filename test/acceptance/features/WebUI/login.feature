@@ -23,5 +23,4 @@ Feature: user login
       | dolibarr | pass     |
       | dolibarr | passw    |
       | dolibarr |          |
-      | dolibarr |          |
       | dolibarr | password |
