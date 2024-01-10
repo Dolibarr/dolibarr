@@ -1254,8 +1254,8 @@ if ($action == 'create') {
 
 		$morehtmlref .= '<div class="refidno">';
 		// Ref customer
-		//$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->hasRight('facture', 'creer'), 'string', '', 0, 1);
-		//$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->hasRight('facture', 'creer'), 'string', '', null, null, '', 1);
+		//$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_customer, $object, $user->hasRight('facture', 'creer'), 'string', '', 0, 1);
+		//$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_customer, $object, $user->hasRight('facture', 'creer'), 'string', '', null, null, '', 1);
 		// Thirdparty
 		$morehtmlref .= $object->thirdparty->getNomUrl(1, 'customer');
 		// Project

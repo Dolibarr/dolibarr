@@ -39,6 +39,21 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 	public $db;
 
 	/**
+	 * @var string param
+	 */
+	public $param;
+
+	/**
+	 * @var array box info heads
+	 */
+	public $info_box_head = array();
+
+	/**
+	 * @var array box info content
+	 */
+	public $info_box_contents = array();
+
+	/**
 	 * @var string Error message
 	 */
 	public $error = '';
@@ -405,7 +420,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 	 */
 	public static function getWidgetsList($forcedirwidget = null)
 	{
-		global $conf, $langs, $db;
+		global $langs, $db;
 
 		$files = array();
 		$fullpath = array();
@@ -521,6 +536,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 			}
 			$j++;
 		}
+
 		return $widget;
 	}
 }

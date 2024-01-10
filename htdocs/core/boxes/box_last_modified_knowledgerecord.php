@@ -41,7 +41,7 @@ class box_last_modified_knowledgerecord extends ModeleBoxes
 	public $boximg = "knowledgemanagement";
 
 	/**
-	 * @var string boc label
+	 * @var string box label
 	 */
 	public $boxlabel;
 
@@ -49,26 +49,6 @@ class box_last_modified_knowledgerecord extends ModeleBoxes
 	 * @var array box dependancies
 	 */
 	public $depends = array("knowledgemanagement");
-
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	/**
-	 * @var string param
-	 */
-	public $param;
-
-	/**
-	 * @var array box info heads
-	 */
-	public $info_box_head = array();
-
-	/**
-	 * @var array box info content
-	 */
-	public $info_box_contents = array();
 
 	/**
 	 * Constructor

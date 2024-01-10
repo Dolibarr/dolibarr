@@ -783,7 +783,7 @@ if ($action == 'create') {
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter_rec as f";
 		$sql .= " , ".MAIN_DB_PREFIX."societe as s ";
-		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " , ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE f.fk_soc = s.rowid";
@@ -791,12 +791,14 @@ if ($action == 'create') {
 		if (!empty($socid)) {
 			$sql .= " AND s.rowid = ".((int) $socid);
 		}
-		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
+		/*
 		if (!empty($search_ref)) {
 			$sql .= natural_search('f.titre', $search_ref);
 		}
+		*/
 		if (!empty($search_societe)) {
 			$sql .= natural_search('s.nom', $search_societe);
 		}

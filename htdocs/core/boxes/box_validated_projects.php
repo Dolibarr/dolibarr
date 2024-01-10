@@ -38,18 +38,7 @@ class box_validated_projects extends ModeleBoxes
 	public $boxlabel;
 	//var $depends = array("projet");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 	public $enabled = 1;
-
 
 	/**
 	 *  Constructor
