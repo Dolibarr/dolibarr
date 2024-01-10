@@ -89,8 +89,10 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 
 	/**
 	 *	Constructor
+	 *
+	 *	@param DoliDB		$db		Database object
 	 */
-	public function __construct()
+	public function __construct($db)
 	{
 		$this->code_null = 0;
 		$this->code_modifiable = 1;
