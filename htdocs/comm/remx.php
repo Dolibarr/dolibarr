@@ -206,7 +206,7 @@ if (GETPOST('action', 'aZ09') == 'confirm_remove' && GETPOST("confirm") == 'yes'
 	$db->begin();
 
 	$discount = new DiscountAbsolute($db);
-	$result = $discount->fetch(GETPOST("remid"));
+	$result = $discount->fetch(GETPOSTINT("remid"));
 	$result = $discount->delete($user);
 	if ($result > 0) {
 		$db->commit();

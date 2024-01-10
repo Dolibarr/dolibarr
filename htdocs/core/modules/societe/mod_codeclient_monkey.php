@@ -188,7 +188,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		} else {
 			if ($this->verif_syntax($code) >= 0) {
 				$is_dispo = $this->verif_dispo($db, $code, $soc, $type);
-				if ($is_dispo <> 0) {
+				if ($is_dispo != 0) {
 					$result = -3;
 				} else {
 					$result = 0;

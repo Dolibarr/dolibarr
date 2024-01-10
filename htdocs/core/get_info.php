@@ -71,7 +71,7 @@ print '<div style="padding: 20px;">';
 // Define link to login card
 $appli = constant('DOL_APPLICATION_TITLE');
 if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-	$appli = $conf->global->MAIN_APPLICATION_TITLE;
+	$appli = getDolGlobalString('MAIN_APPLICATION_TITLE');
 	if (preg_match('/\d\.\d/', $appli)) {
 		if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) {
 			$appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core

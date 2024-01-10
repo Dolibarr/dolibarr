@@ -1007,7 +1007,7 @@ class KnowledgeRecord extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('KNOWLEDGEMANAGEMENT_KNOWLEDGERECORD_ADDON') . ".php";
-			$classname = $conf->global->KNOWLEDGEMANAGEMENT_KNOWLEDGERECORD_ADDON;
+			$classname = getDolGlobalString('KNOWLEDGEMANAGEMENT_KNOWLEDGERECORD_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -1070,7 +1070,7 @@ class KnowledgeRecord extends CommonObject
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('KNOWLEDGERECORD_ADDON_PDF')) {
-				$modele = $conf->global->KNOWLEDGERECORD_ADDON_PDF;
+				$modele = getDolGlobalString('KNOWLEDGERECORD_ADDON_PDF');
 			}
 		}
 

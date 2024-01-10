@@ -136,9 +136,6 @@ class MembersTypes extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve member type list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No member type found');
-		}
 
 		return $obj_ret;
 	}

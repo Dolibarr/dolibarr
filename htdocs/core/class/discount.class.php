@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,32 +23,13 @@
  *		\brief      File of class to manage absolute discounts
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 /**
  *		Class to manage absolute discounts
  */
-class DiscountAbsolute
+class DiscountAbsolute extends CommonObject
 {
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error;
-
-	/**
-	 * @var string[]	Array of error strings
-	 */
-	public $errors = array();
-
-	/**
-	 * @var int 	ID discount
-	 */
-	public $id;
-
 	/**
 	 * @var int 	Thirdparty ID
 	 * @deprecated
@@ -152,8 +134,6 @@ class DiscountAbsolute
 	 */
 	public function fetch($rowid, $fk_facture_source = 0, $fk_invoice_supplier_source = 0)
 	{
-		global $conf;
-
 		// Check parameters
 		if (!$rowid && !$fk_facture_source && !$fk_invoice_supplier_source) {
 			$this->error = 'ErrorBadParameters';
@@ -532,7 +512,7 @@ class DiscountAbsolute
 	 *  @param      int			$multicurrency  Return multicurrency_amount instead of amount
 	 * 	@return		int						Return integer <0 if KO, amount otherwise
 	 */
-	public function getAvailableDiscounts($company = '', $user = '', $filter = '', $maxvalue = 0, $discount_type = 0, $multicurrency = 0)
+	public function getAvailableDiscounts($company = null, $user = null, $filter = '', $maxvalue = 0, $discount_type = 0, $multicurrency = 0)
 	{
 		global $conf;
 

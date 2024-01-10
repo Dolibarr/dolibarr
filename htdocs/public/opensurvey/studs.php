@@ -788,7 +788,6 @@ if ($object->allow_spy) {
 		if (isset($sumfor[$i]) && isset($meilleurecolonne) && $sumfor[$i] == $meilleurecolonne) {
 			$meilleursujet .= ($meilleursujet ? ", " : "");
 			if ($object->format == "D") {
-				$meilleursujetexport = $toutsujet[$i];
 				if (strpos($toutsujet[$i], '@') !== false) {
 					$toutsujetdate = explode("@", $toutsujet[$i]);
 					$meilleursujet .= dol_print_date($toutsujetdate[0], 'daytext').' ('.dol_print_date($toutsujetdate[0], '%A').') - '.$toutsujetdate[1];
@@ -804,7 +803,7 @@ if ($object->allow_spy) {
 		}
 	}
 
-	$meilleursujet = substr("$meilleursujet", 1);
+	//$meilleursujet = substr($meilleursujet, 1);
 	$meilleursujet = str_replace("°", "'", $meilleursujet);
 
 	// Show best choice
@@ -813,9 +812,9 @@ if ($object->allow_spy) {
 		print '<p class="affichageresultats">'."\n";
 
 		if (isset($meilleurecolonne) && $compteursujet == "1") {
-			print '<img src="'.dol_buildpath('/opensurvey/img/medaille.png', 1).'"> '.$langs->trans('TheBestChoice').": <b>".$meilleursujet."</b> ".$langs->trans('with')." <b>".$meilleurecolonne."</b>".$vote_str.".\n";
+			print '<img src="'.dol_buildpath('/opensurvey/img/medaille.png', 1).'"> '.$langs->trans('TheBestChoice').": <b>".$meilleursujet."</b> - <b>".$meilleurecolonne."</b> ".$vote_str.".\n";
 		} elseif (isset($meilleurecolonne)) {
-			print '<img src="'.dol_buildpath('/opensurvey/img/medaille.png', 1).'"> '.$langs->trans('TheBestChoices').": <b>".$meilleursujet."</b> ".$langs->trans('with')." <b>".$meilleurecolonne."</b>".$vote_str.".\n";
+			print '<img src="'.dol_buildpath('/opensurvey/img/medaille.png', 1).'"> '.$langs->trans('TheBestChoices').": <b>".$meilleursujet."</b> - <b>".$meilleurecolonne."</b> ".$vote_str.".\n";
 		}
 
 		print '</p><br>'."\n";

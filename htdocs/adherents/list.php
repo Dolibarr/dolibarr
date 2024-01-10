@@ -150,31 +150,56 @@ $arrayfields = array(
 	'd.lastname'=>array('label'=>"Lastname", 'checked'=>1),
 	'd.firstname'=>array('label'=>"Firstname", 'checked'=>1),
 	'd.gender'=>array('label'=>"Gender", 'checked'=>0),
-	'd.company'=>array('label'=>"Company", 'checked'=>1),
+	'd.company'=>array('label'=>"Company", 'checked'=>1, 'position'=>70),
 	'd.login'=>array('label'=>"Login", 'checked'=>1),
 	'd.morphy'=>array('label'=>"MemberNature", 'checked'=>1),
-	't.libelle'=>array('label'=>"Type", 'checked'=>1),
-	'd.email'=>array('label'=>"Email", 'checked'=>1),
+	't.libelle'=>array('label'=>"Type", 'checked'=>1, 'position'=>55),
 	'd.address'=>array('label'=>"Address", 'checked'=>0),
 	'd.zip'=>array('label'=>"Zip", 'checked'=>0),
 	'd.town'=>array('label'=>"Town", 'checked'=>0),
 	'd.phone'=>array('label'=>"Phone", 'checked'=>0),
 	'd.phone_perso'=>array('label'=>"PhonePerso", 'checked'=>0),
 	'd.phone_mobile'=>array('label'=>"PhoneMobile", 'checked'=>0),
-	'state.nom'=>array('label'=>"State", 'checked'=>0),
-	'country.code_iso'=>array('label'=>"Country", 'checked'=>0),
+	'd.email'=>array('label'=>"Email", 'checked'=>1),
+	'state.nom'=>array('label'=>"State", 'checked'=>0, 'position'=>90),
+	'country.code_iso'=>array('label'=>"Country", 'checked'=>0, 'position'=>95),
 	/*'d.note_public'=>array('label'=>"NotePublic", 'checked'=>0),
 	'd.note_private'=>array('label'=>"NotePrivate", 'checked'=>0),*/
-	'd.datefin'=>array('label'=>"EndSubscription", 'checked'=>1, 'position'=>500),
-	'd.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
-	'd.birth'=>array('label'=>"Birthday", 'checked'=>0, 'position'=>500),
-	'd.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
-	'd.statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
-	'd.import_key'=>array('label'=>"ImportId", 'checked'=>0, 'position'=>1100),
+	'd.datefin'=>array('label'=>"EndSubscription"),
+	'd.datec'=>array('label'=>"DateCreation"),
+	'd.birth'=>array('label'=>"Birthday"),
+	'd.tms'=>array('label'=>"DateModificationShort"),
+	'd.statut'=>array('label'=>"Status"),
+	'd.import_key'=>array('label'=>"ImportId"),
 );
 
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
+$object->fields = dol_sort_array($object->fields, 'position');
+//$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
+
+// Complete array of fields for columns
+$tableprefix = 'd';
+foreach ($object->fields as $key => $val) {
+	if (!array_key_exists($tableprefix.'.'.$key, $arrayfields)) {	// Discard record not into $arrayfields
+		continue;
+	}
+	// If $val['visible']==0, then we never show the field
+
+	if (!empty($val['visible'])) {
+		$visible = (int) dol_eval($val['visible'], 1);
+		$arrayfields[$tableprefix.'.'.$key] = array(
+			'label'=>$val['label'],
+			'checked'=>(($visible < 0) ? 0 : 1),
+			'enabled'=>dol_eval($val['enabled'], 1),
+			'position'=>$val['position'],
+			'help'=> isset($val['help']) ? $val['help'] : ''
+		);
+	}
+}
+$arrayfields = dol_sort_array($arrayfields, 'position');
+//var_dump($arrayfields);exit;
 
 // Security check
 $result = restrictedArea($user, 'adherent');
@@ -1101,6 +1126,8 @@ while ($i < $imaxinloop) {
 		$companynametoshow = $obj->company;
 	}
 	$memberstatic->company = $companyname;
+
+	$object = $memberstatic;
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {

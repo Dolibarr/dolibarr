@@ -193,7 +193,7 @@ if ($action == "set") {
 			if ($fp) {
 				while (!feof($fp)) {
 					$buf = fgets($fp, 4096);
-					if (substr($buf, 0, 2) <> '--') {
+					if (substr($buf, 0, 2) != '--') {
 						$buf = preg_replace('/--(.+)*/', '', $buf);
 						$buffer .= $buf;
 					}
@@ -405,7 +405,7 @@ if ($action == "set") {
 				$buffer = '';
 				while (!feof($fp)) {
 					$buf = fgets($fp, 4096);
-					if (substr($buf, 0, 2) <> '--') {
+					if (substr($buf, 0, 2) != '--') {
 						$buffer .= $buf."§";
 					}
 				}

@@ -119,7 +119,7 @@ if ($object->id > 0) {
 
 	// Payment mode
 	$morehtmlref .= '<br>'.$langs->trans('PaymentMode').' : ';
-	$morehtmlref .= $langs->trans("PaymentType".$object->type_code) != ("PaymentType".$object->type_code) ? $langs->trans("PaymentType".$object->type_code) : $object->type_label;
+	$morehtmlref .= $langs->trans("PaymentType".$object->type_code) != "PaymentType".$object->type_code ? $langs->trans("PaymentType".$object->type_code) : $object->type_label;
 	$morehtmlref .= $object->num_payment ? ' - '.$object->num_payment : '';
 
 	// Thirdparty

@@ -618,7 +618,7 @@ class dolReceiptPrinter extends Printer
 	 */
 	public function sendToPrinter($object, $templateid, $printerid)
 	{
-		global $conf, $mysoc, $langs, $user;
+		global $mysoc, $langs, $user;
 		global $hookmanager;
 
 		$langs->load('bills');
@@ -675,7 +675,7 @@ class dolReceiptPrinter extends Printer
 		$this->template = str_replace('{dol_value_vendor_lastname}', $user->lastname, $this->template);
 		$this->template = str_replace('{dol_value_vendor_mail}', $user->email, $this->template);
 
-		$parameters = array('object'=>$object);
+		$parameters = array('object' => $object);
 		$action = '';
 		$reshook = $hookmanager->executeHooks('sendToPrinterBefore', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook < 0) {
@@ -687,14 +687,24 @@ class dolReceiptPrinter extends Printer
 		// parse template
 		$this->template = str_replace("{", "<", $this->template);
 		$this->template = str_replace("}", ">", $this->template);
+
+		if (LIBXML_VERSION < 20900) {
+			// Avoid load of external entities (security problem).
+			// Required only if LIBXML_VERSION < 20900
+			libxml_disable_entity_loader(true);
+		}
+
+		$vals = array();
+		$index = array();
+
 		$p = xml_parser_create();
 		xml_parse_into_struct($p, $this->template, $vals, $index);
 		xml_parser_free($p);
+
 		//print '<pre>'.print_r($index, true).'</pre>';
 		//print '<pre>'.print_r($vals, true).'</pre>';
 		// print ticket
-		$level = 0;
-		$nbcharactbyline = (getDolGlobalString('RECEIPT_PRINTER_NB_CHARACT_BY_LINE') ? $conf->global->RECEIPT_PRINTER_NB_CHARACT_BY_LINE : 48);
+		$nbcharactbyline = getDolGlobalInt('RECEIPT_PRINTER_NB_CHARACT_BY_LINE', 48);
 		$ret = $this->initPrinter($printerid);
 		if ($ret > 0) {
 			setEventMessages($this->error, $this->errors, 'errors');

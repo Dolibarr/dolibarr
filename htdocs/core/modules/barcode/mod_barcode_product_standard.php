@@ -184,7 +184,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/barcode.lib.php'; // to be able to call function barcode_gen_ean_sum($ean)
 
 		if (empty($type)) {
-			$type = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
+			$type = getDolGlobalString('PRODUIT_DEFAULT_BARCODE_TYPE');
 		} //get barcode type configuration for products if $type not set
 
 		// TODO
@@ -192,7 +192,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		// Get Mask value
 		$mask = '';
 		if (getDolGlobalString('BARCODE_STANDARD_PRODUCT_MASK')) {
-			$mask = $conf->global->BARCODE_STANDARD_PRODUCT_MASK;
+			$mask = getDolGlobalString('BARCODE_STANDARD_PRODUCT_MASK');
 		}
 
 		if (empty($mask)) {
@@ -261,7 +261,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		} else {
 			if ($this->verif_syntax($code, $type) >= 0) {
 				$is_dispo = $this->verif_dispo($db, $code, $product);
-				if ($is_dispo <> 0) {
+				if ($is_dispo != 0) {
 					$result = -3;
 				} else {
 					$result = 0;

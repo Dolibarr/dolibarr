@@ -188,7 +188,8 @@ if ($result < 0) {
 
 		$subtotal = 0;
 		$day = dol_mktime(12, 0, 0, $month, 1, $year);
-		$textdate = strftime("%Y%m%d", $day);
+		//$textdate = strftime("%Y%m%d", $day);
+		$textdate = dol_print_date($day, "%Y%m%d");
 		$xyear = substr($textdate, 0, 4);
 		$xday = substr($textdate, 6, 2);
 		$xmonth = substr($textdate, 4, 2);
@@ -207,7 +208,8 @@ if ($result < 0) {
 			$labels[$i] = $xday;
 
 			$day += 86400;
-			$textdate = strftime("%Y%m%d", $day);
+			//$textdate = strftime("%Y%m%d", $day);
+			$textdate = dol_print_date($day, "%Y%m%d");
 			$xyear = substr($textdate, 0, 4);
 			$xday = substr($textdate, 6, 2);
 			$xmonth = substr($textdate, 4, 2);
@@ -332,7 +334,8 @@ if ($result < 0) {
 		$subtotal = 0;
 		$now = time();
 		$day = dol_mktime(12, 0, 0, 1, 1, $year);
-		$textdate = strftime("%Y%m%d", $day);
+		//$textdate = strftime("%Y%m%d", $day);
+		$textdate = dol_print_date($day, "%Y%m%d");
 		$xyear = substr($textdate, 0, 4);
 		$xday = substr($textdate, 6, 2);
 
@@ -352,7 +355,8 @@ if ($result < 0) {
 			}*/
 			$labels[$i] = dol_print_date($day, "%Y%m");
 			$day += 86400;
-			$textdate = strftime("%Y%m%d", $day);
+			//$textdate = strftime("%Y%m%d", $day);
+			$textdate = dol_print_date($day, "%Y%m%d");
 			$xyear = substr($textdate, 0, 4);
 			$xday = substr($textdate, 6, 2);
 			$i++;
@@ -449,7 +453,8 @@ if ($result < 0) {
 		$subtotal = 0;
 
 		$day = $min;
-		$textdate = strftime("%Y%m%d", $day);
+		//$textdate = strftime("%Y%m%d", $day);
+		$textdate = dol_print_date($day, "%Y%m%d");
 		//print "x".$textdate;
 		$i = 0;
 		while ($day <= ($max + 86400)) {	// On va au dela du dernier jour
@@ -469,7 +474,8 @@ if ($result < 0) {
 			$labels[$i] = substr($textdate, 0, 6);
 
 			$day += 86400;
-			$textdate = strftime("%Y%m%d", $day);
+			//$textdate = strftime("%Y%m%d", $day);
+			$textdate = dol_print_date($day, "%Y%m%d");
 			$i++;
 		}
 

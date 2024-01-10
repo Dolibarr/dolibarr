@@ -178,7 +178,7 @@ class Paiement extends CommonObject
 	 *    @param	int		$fk_bank	Id of bank line associated to payment
 	 *    @return   int		            Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch($id, $ref = '', $fk_bank = '')
+	public function fetch($id, $ref = '', $fk_bank = 0)
 	{
 		$sql = 'SELECT p.rowid, p.ref, p.ref_ext, p.datep as dp, p.amount, p.statut, p.ext_payment_id, p.ext_payment_site, p.fk_bank, p.multicurrency_amount,';
 		$sql .= ' c.code as type_code, c.libelle as type_label,';
@@ -362,7 +362,7 @@ class Paiement extends CommonObject
 			// Insert links amount / invoices
 			foreach ($this->amounts as $key => $amount) {
 				$facid = $key;
-				if (is_numeric($amount) && $amount <> 0) {
+				if (is_numeric($amount) && $amount != 0) {
 					$amount = price2num($amount);
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement_facture (fk_facture, fk_paiement, amount, multicurrency_amount, multicurrency_code, multicurrency_tx)";
 					$sql .= " VALUES (".((int) $facid).", ".((int) $this->id).", ".((float) $amount).", ".((float) $this->multicurrency_amounts[$key]).", ".($currencyofpayment ? "'".$this->db->escape($currencyofpayment)."'" : 'NULL').", ".(!empty($this->multicurrency_tx) ? (float) $currencytxofpayment : 1).")";
@@ -1125,7 +1125,7 @@ class Paiement extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('PAYMENT_ADDON') . ".php";
-			$classname = $conf->global->PAYMENT_ADDON;
+			$classname = getDolGlobalString('PAYMENT_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);

@@ -160,6 +160,7 @@ if (getDolGlobalInt('TAKEPOS_BAR_RESTAURANT')) {
 
 	print '<tr class="oddeven value"><td>';
 	print $langs->trans("BasicPhoneLayout");
+	print ' ('.$langs->trans("Experimental").')';
 	print '</td>';
 	print '<td class="">';
 	//print $form->selectyesno("TAKEPOS_PHONE_BASIC_LAYOUT", $conf->global->TAKEPOS_PHONE_BASIC_LAYOUT, 1);

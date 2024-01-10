@@ -325,7 +325,7 @@ if ($socid > 0) {
 if ($socid) {
 	$sql .= " AND e.fk_soc = ".((int) $socid);
 }
-if ($search_status <> '' && $search_status >= 0) {
+if ($search_status != '' && $search_status >= 0) {
 	$sql .= " AND e.fk_statut = ".((int) $search_status);
 }
 if ($search_ref_customer != '') {

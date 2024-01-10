@@ -90,6 +90,7 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 		// We define date_start and date_end
 		$year_end = $year_start;
 		$month_start = GETPOST("month") ? GETPOST("month", 'int') : getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
+		$month_end = "";
 		if (!GETPOST('month')) {
 			if (!$year && $month_start > $month_current) {
 				$year_start--;
@@ -135,7 +136,7 @@ $nbofyear = ($year_end - $year_start) + 1;
 //var_dump("year_start=".$year_start." year_end=".$year_end." nbofyear=".$nbofyear." date_start=".dol_print_date($date_start, 'dayhour')." date_end=".dol_print_date($date_end, 'dayhour'));
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES' or 'BOOKKEEPING')
-$modecompta = $conf->global->ACCOUNTING_MODE;
+$modecompta = getDolGlobalString('ACCOUNTING_MODE');
 if (isModEnabled('accounting')) {
 	$modecompta = 'BOOKKEEPING';
 }
@@ -375,7 +376,7 @@ if ($modecompta == 'BOOKKEEPING') {
 						}
 
 
-						if ($showaccountdetail == 'all' || $resultN <> 0) {
+						if ($showaccountdetail == 'all' || $resultN != 0) {
 							print '<tr>';
 							print '<td></td>';
 							print '<td class="tdoverflowmax200"> &nbsp; &nbsp; '.length_accountg($cpt['account_number']).' - '.$cpt['account_label'].'</td>';
