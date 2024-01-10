@@ -534,7 +534,7 @@ if (count($typeleaves) == 0) {
 		foreach ($arrayfields as $key => $val) {
 			if (!empty($val['checked'])) {
 				if ($key == 'cp.nbHoliday') {
-					foreach ($typeleaves as $key => $val) {
+					foreach ($typeleaves as $leave_key => $leave_val) {
 						$colspan++;
 					}
 				} else {
