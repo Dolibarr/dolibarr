@@ -7693,8 +7693,11 @@ abstract class CommonObject
 				}
 			}
 		} elseif ($type == 'link') {
-			$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath[:AddCreateButtonOrNot[:Filter[:Sortfield]]]'
-			$param_list_array = explode(':', $param_list[0]);
+			// $param_list='ObjectName:classPath[:AddCreateButtonOrNot[:Filter[:Sortfield]]]'
+			// Filter can contains some ':' inside.
+			$param_list = array_keys($param['options']);
+			$param_list_array = explode(':', $param_list[0], 4);
+
 			$showempty = (($required && $default != '') ? 0 : 1);
 
 			if (!preg_match('/search_/', $keyprefix)) {
@@ -7710,9 +7713,8 @@ abstract class CommonObject
 					}
 				}
 			}
-
-			//$out = $form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, $moreparam, 0, (empty($val['disabled']) ? 0 : 1), '');
-			$out = $form->selectForForms($param_list_array[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, $moreparam, 0, (empty($val['disabled']) ? 0 : 1), '', $this->element.':'.$key.$keysuffix);
+			$objectfield = $this->element.($this->module ? '@'.$this->module : '').':'.$key.$keysuffix;
+			$out = $form->selectForForms($param_list_array[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, $moreparam, 0, (empty($val['disabled']) ? 0 : 1), '', $objectfield);
 
 			if (!empty($param_list_array[2])) {		// If the entry into $fields is set, we must add a create button
 				if ((!GETPOSTISSET('backtopage') || strpos(GETPOST('backtopage'), $_SERVER['PHP_SELF']) === 0)	// // To avoid to open several times the 'Plus' button (we accept only one level)

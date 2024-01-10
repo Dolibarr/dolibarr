@@ -572,10 +572,11 @@ div.description_content {
 .topnav-left a {
 	padding: 7px 4px 7px 4px;
 	margin: 8px;
-	margin-left: 4px;
+	margin-left: 5px;
+	margin-right: 5px;
 	border-radius: 3px;
 }
-.topnav-left a:hover, .topnav .login_block_other a:hover {
+.topnav-left a:hover:not(.nohover), .topnav .login_block_other a:hover:not(.nohover) {
 	background-color: #ddd;
 	color: black;
 }

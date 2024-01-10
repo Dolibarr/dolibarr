@@ -56,6 +56,7 @@ $hookmanager->initHooks(array('orderssuppliersindex'));
  */
 
 llxHeader('', $langs->trans("SuppliersOrdersArea"));
+llxHeader('', $langs->trans("SuppliersOrdersArea"), '', '', 0, 0, '', '', '', 'mod-supplier-order page-stats');
 
 $commandestatic = new CommandeFournisseur($db);
 $userstatic = new User($db);
