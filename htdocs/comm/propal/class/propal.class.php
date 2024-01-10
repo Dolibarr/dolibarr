@@ -2892,7 +2892,7 @@ class Propal extends CommonObject
 			}
 
 			if (!$error) {
-				$this->status = self::STATUS_CANCELED;
+				$this->statut = self::STATUS_CANCELED;
 				$this->db->commit();
 				return 1;
 			} else {
