@@ -1,0 +1,61 @@
+# This is a basic workflow to check code with PHPSTAN tool
+
+name: PHPSTAN
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on pull request events but only for the develop branch
+  pull_request:
+    branches: [ develop ]
+concurrency:
+    group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+    cancel-in-progress: true
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version:
+          # PHPStan requires PHP >= 7.2.
+          - "7.2"
+          - "8.2"
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+        with:
+         fetch-depth: 0
+      - name: Setup PHP
+        id: setup-php
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "${{ matrix.php-version }}"
+          tools: phpstan, cs2pr
+          extensions: calendar, json, imagick, gd, zip, mbstring, intl, opcache, imap, mysql, pgsql, sqlite3, ldap, xml, mcrypt
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14.x
+          registry-url: 'https://registry.npmjs.org'
+      - name: Restore phpstan cache
+        uses: actions/cache/restore@v3
+        with:
+          path: ./tmp
+          key: "phpstan-cache-PR-${{ matrix.php-version }}-${{ github.run_id }}"
+          restore-keys: |
+            phpstan-cache-PR-${{ matrix.php-version }}-
+      - name: Debug
+        run: cd ./tmp && ls -al
+      - name: Run PHPSTAN
+        run: phpstan -vvv analyse --error-format=checkstyle --memory-limit 4G -c phpstan_action.neon | cs2pr --graceful-warnings
+        # continue-on-error: true
+      - name: "Save phpstan cache"
+        uses: actions/cache/save@v3
+        if: always()
+        with:
+          path: ./tmp
+          key: "phpstan-cache-PR-${{ matrix.php-version }}-${{ github.run_id }}"
