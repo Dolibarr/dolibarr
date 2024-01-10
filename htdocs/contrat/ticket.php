@@ -158,7 +158,7 @@ print '<div class="underbanner clearboth"></div>';
 
 
 /*
- * Referers types
+ * Referrers types
  */
 
 $title=$langs->trans("ListTicketsLinkToContract");

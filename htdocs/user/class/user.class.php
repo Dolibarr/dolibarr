@@ -193,7 +193,7 @@ class User extends CommonObject
 	public $pass;
 
 	/**
-	 * @var string Crypted password in memory
+	 * @var string Encrypted password in memory
 	 */
 	public $pass_crypted;
 
@@ -1840,7 +1840,7 @@ class User extends CommonObject
 				if (is_int($newpass) && $newpass < 0) {
 					$result = -2;
 				}
-			} elseif (!empty($this->pass_crypted)) {	// If a crypted password is already known, we save it directly into database because the previous create did not save it.
+			} elseif (!empty($this->pass_crypted)) {	// If an encrypted password is already known, we save it directly into database because the previous create did not save it.
 				$sql = "UPDATE ".$this->db->prefix()."user";
 				$sql .= " SET pass_crypted = '".$this->db->escape($this->pass_crypted)."'";
 				$sql .= " WHERE rowid=".((int) $this->id);
@@ -2110,7 +2110,7 @@ class User extends CommonObject
 			// Update password
 			if (!empty($this->pass)) {
 				if ($this->pass != $this->pass_indatabase && !dol_verifyHash($this->pass, $this->pass_indatabase_crypted)) {
-					// If a new value for password is set and different than the one crypted into database
+					// If a new value for password is set and different than the one encrypted into database
 					$result = $this->setPassword($user, $this->pass, 0, $notrigger, $nosyncmemberpass, 0, 1);
 					if (is_int($result) && $result < 0) {
 						return -5;
@@ -2324,7 +2324,7 @@ class User extends CommonObject
 	 *	@param	int		$changelater			0=Default, 1=Save password into pass_temp to change password only after clicking on confirm email
 	 *	@param	int		$notrigger				1=Does not launch triggers
 	 *	@param	int		$nosyncmember	        Do not synchronize linked member
-	 *  @param	int		$passwordalreadycrypted 0=Value is cleartext password, 1=Value is crypted value.
+	 *  @param	int		$passwordalreadycrypted 0=Value is cleartext password, 1=Value is encrypted value.
 	 *  @param	int		$flagdelsessionsbefore  1=Save also the current date to ask to invalidate all other session before this date.
 	 *  @return string 			          		If OK return clear password, 0 if no change (warning, you may retreive 1 instead of 0 even if password was same), < 0 if error
 	 */

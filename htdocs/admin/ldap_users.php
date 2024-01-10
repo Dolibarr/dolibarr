@@ -256,14 +256,14 @@ print '</td><td>'.$langs->trans("LDAPFieldLoginSambaExample").'</td>';
 print '<td class="right"><input type="radio" name="key" value="LDAP_FIELD_LOGIN_SAMBA"'.(getDolGlobalString('LDAP_KEY_USERS') == getDolGlobalString('LDAP_FIELD_LOGIN_SAMBA') ? ' checked' : '')."></td>";
 print '</tr>';
 
-// Password not crypted
+// Password not encrypted
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldPasswordNotCrypted").'</td><td>';
 print '<input size="25" type="text" name="fieldpassword" value="'.getDolGlobalString('LDAP_FIELD_PASSWORD').'">';
 print '</td><td>'.$langs->trans("LDAPFieldPasswordExample").'</td>';
 print '<td class="right">&nbsp;</td>';
 print '</tr>';
 
-// Password crypted
+// Password encrypted
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldPasswordCrypted").'</td><td>';
 print '<input size="25" type="text" name="fieldpasswordcrypted" value="'.getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED').'">';
 print '</td><td>'.$langs->trans("LDAPFieldPasswordExample").'</td>';

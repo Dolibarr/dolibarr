@@ -6469,7 +6469,7 @@ abstract class CommonObject
 					case 'password':
 						$algo = '';
 						if ($this->array_options[$key] != '' && is_array($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options'])) {
-							// If there is an encryption choice, we use it to crypt data before insert
+							// If there is an encryption choice, we use it to encrypt data before insert
 							$tmparrays = array_keys($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options']);
 							$algo = reset($tmparrays);
 							if ($algo != '') {
@@ -6479,7 +6479,7 @@ abstract class CommonObject
 								if (is_object($this->oldcopy)) {	// If this->oldcopy is not defined, we can't know if we change attribute or not, so we must keep value
 									//var_dump('iii'.$algo.' '.$this->oldcopy->array_options[$key].' -> '.$this->array_options[$key]);
 									if (isset($this->oldcopy->array_options[$key]) && $this->array_options[$key] == $this->oldcopy->array_options[$key]) {
-										// If old value crypted in database is same than submited new value, it means we don't change it, so we don't update.
+										// If old value encrypted in database is same than submited new value, it means we don't change it, so we don't update.
 										if ($algo == 'dolcrypt') {	// dolibarr reversible encryption
 											if (!preg_match('/^dolcrypt:/', $this->array_options[$key])) {
 												$new_array_options[$key] = dolEncrypt($this->array_options[$key]);	// warning, must be called when on the master
@@ -6893,7 +6893,7 @@ abstract class CommonObject
 				case 'password':
 					$algo = '';
 					if ($this->array_options["options_".$key] != '' && is_array($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options'])) {
-						// If there is an encryption choice, we use it to crypt data before insert
+						// If there is an encryption choice, we use it to encrypt data before insert
 						$tmparrays = array_keys($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options']);
 						$algo = reset($tmparrays);
 						if ($algo != '') {
@@ -6903,7 +6903,7 @@ abstract class CommonObject
 							//var_dump($key.' '.$this->array_options["options_".$key].' '.$algo);
 							if (is_object($this->oldcopy)) {		// If this->oldcopy is not defined, we can't know if we change attribute or not, so we must keep value
 								//var_dump($this->oldcopy->array_options["options_".$key]); var_dump($this->array_options["options_".$key]);
-								if (isset($this->oldcopy->array_options["options_".$key]) && $this->array_options["options_".$key] == $this->oldcopy->array_options["options_".$key]) {	// If old value crypted in database is same than submited new value, it means we don't change it, so we don't update.
+								if (isset($this->oldcopy->array_options["options_".$key]) && $this->array_options["options_".$key] == $this->oldcopy->array_options["options_".$key]) {	// If old value encrypted in database is same than submited new value, it means we don't change it, so we don't update.
 									if ($algo == 'dolcrypt') {	// dolibarr reversible encryption
 										if (!preg_match('/^dolcrypt:/', $this->array_options["options_".$key])) {
 											$new_array_options["options_".$key] = dolEncrypt($this->array_options["options_".$key]);	// warning, must be called when on the master
