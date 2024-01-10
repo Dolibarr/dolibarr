@@ -512,7 +512,7 @@ function dol_shutdown()
 /**
  * Return true if we are in a context of submitting the parameter $paramname from a POST of a form.
  * Warning:
- * For action=add, use:     $var = GETPOST('var');		// No GETPOSTISSET, so GETPOST always called and default value is retreived if not a form POST, and value of form is retreived if it is a form POST.
+ * For action=add, use:     $var = GETPOST('var');		// No GETPOSTISSET, so GETPOST always called and default value is retrieved if not a form POST, and value of form is retrieved if it is a form POST.
  * For action=update, use:  $var = GETPOSTISSET('var') ? GETPOST('var') : $object->var;
  *
  * @param 	string	$paramname		Name or parameter to test
@@ -762,7 +762,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 												$out .= dol_string_nospecial($val, '', $forbidden_chars_to_replace);
 											}
 										}
-										//break;	// No break for sortfield and sortorder so we can cumulate fields (is it realy usefull ?)
+										//break;	// No break for sortfield and sortorder so we can cumulate fields (is it really useful ?)
 									}
 								}
 							}
@@ -898,7 +898,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 	// Note: There is no reason to allow the backtopage, backtolist or backtourl parameter to contains an external URL. Only relative URLs are allowed.
 	if ($paramname == 'backtopage' || $paramname == 'backtolist' || $paramname == 'backtourl') {
 		$out = str_replace('\\', '/', $out);								// Can be before the loop because only 1 char is replaced. No risk to get it after other replacements.
-		$out = str_replace(array(':', ';', '@', "\t", ' '), '', $out);		// Can be before the loop because only 1 char is replaced. No risk to retreive it after other replacements.
+		$out = str_replace(array(':', ';', '@', "\t", ' '), '', $out);		// Can be before the loop because only 1 char is replaced. No risk to retrieve it after other replacements.
 		do {
 			$oldstringtoclean = $out;
 			$out = str_ireplace(array('javascript', 'vbscript', '&colon', '&#'), '', $out);
@@ -1297,7 +1297,7 @@ function dol_clone($object, $native = 0)
 			}
 		}
 	} else {
-		$myclone = clone $object; // PHP clone is a shallow copy only, not a real clone, so properties of references will keep the reference (refering to the same target/variable)
+		$myclone = clone $object; // PHP clone is a shallow copy only, not a real clone, so properties of references will keep the reference (referring to the same target/variable)
 	}
 
 	return $myclone;
@@ -1342,7 +1342,7 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
 	// List of special chars for filenames in windows are defined on page https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file
 	// Char '>' '<' '|' '$' and ';' are special chars for shells.
 	// Char '/' and '\' are file delimiters.
-	// Chars '--' can be used into filename to inject special paramaters like --use-compress-program to make command with file as parameter making remote execution of command
+	// Chars '--' can be used into filename to inject special parameters like --use-compress-program to make command with file as parameter making remote execution of command
 	$filesystem_forbidden_chars = array('<', '>', '/', '\\', '?', '*', '|', '"', ':', '°', '$', ';', '`');
 	$tmp = dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
 	$tmp = preg_replace('/\-\-+/', '_', $tmp);
@@ -1367,7 +1367,7 @@ function dol_sanitizePathName($str, $newstr = '_', $unaccent = 1)
 {
 	// List of special chars for filenames in windows are defined on page https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file
 	// Char '>' '<' '|' '$' and ';' are special chars for shells.
-	// Chars '--' can be used into filename to inject special paramaters like --use-compress-program to make command with file as parameter making remote execution of command
+	// Chars '--' can be used into filename to inject special parameters like --use-compress-program to make command with file as parameter making remote execution of command
 	$filesystem_forbidden_chars = array('<', '>', '?', '*', '|', '"', '°', '$', ';', '`');
 	$tmp = dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
 	$tmp = preg_replace('/\-\-+/', '_', $tmp);
@@ -1842,7 +1842,7 @@ function dol_ucwords($string, $encoding = "UTF-8")
  *  @param	int			$ident					1=Increase ident of 1 (after log), -1=Decrease ident of 1 (before log)
  *  @param	string		$suffixinfilename		When output is a file, append this suffix into default log filename. Example '_stripe', '_mail'
  *  @param	string		$restricttologhandler	Force output of log only to this log handler
- *  @param	array|null	$logcontext				If defined, an array with extra informations (can be used by some log handlers)
+ *  @param	array|null	$logcontext				If defined, an array with extra information (can be used by some log handlers)
  *  @return	void
  */
 function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename = '', $restricttologhandler = '', $logcontext = null)
@@ -1927,7 +1927,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 			// This is when PHP session is ran outside a web server, like from Windows command line (Not always defined, but useful if OS defined it).
 			$data['ip'] = $_SERVER['COMPUTERNAME'].(empty($_SERVER['USERNAME']) ? '' : '@'.$_SERVER['USERNAME']);
 		} elseif (!empty($_SERVER['LOGNAME'])) {
-			// This is when PHP session is ran outside a web server, like from Linux command line (Not always defined, but usefull if OS defined it).
+			// This is when PHP session is ran outside a web server, like from Linux command line (Not always defined, but useful if OS defined it).
 			$data['ip'] = '???@'.$_SERVER['LOGNAME'];
 		}
 
@@ -2004,8 +2004,8 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 	$out .= '>'.$buttonstring.'</a>';
 
 	if (!empty($conf->use_javascript_ajax)) {
-		// Add code to open url using the popup. Add also hidden field to retreive the returned variables
-		$out .= '<!-- code to open popup and variables to retreive returned variables -->';
+		// Add code to open url using the popup. Add also hidden field to retrieve the returned variables
+		$out .= '<!-- code to open popup and variables to retrieve returned variables -->';
 		$out .= '<div id="idfordialog'.$name.'" class="hidden">div for dialog</div>';
 		$out .= '<div id="varforreturndialogid'.$name.'" class="hidden">div for returned id</div>';
 		$out .= '<div id="varforreturndialoglabel'.$name.'" class="hidden">div for returned label</div>';
@@ -2300,8 +2300,8 @@ function dol_get_fiche_end($notab = 0)
  *  @param	string	$paramid   		Name of parameter to use to name the id into the URL next/previous link
  *  @param	string	$morehtml  		More html content to output just before the nav bar
  *  @param	int		$shownav	  	Show Condition (navigation is shown if value is 1)
- *  @param	string	$fieldid   		Nom du champ en base a utiliser pour select next et previous (we make the select max and min on this field). Use 'none' for no prev/next search.
- *  @param	string	$fieldref   	Nom du champ objet ref (object->ref) a utiliser pour select next et previous
+ *  @param	string	$fieldid   		Name of the field in DB to use to select next et previous (we make the select max and min on this field). Use 'none' for no prev/next search.
+ *  @param	string	$fieldref   	Name of the field (object->ref) to use to select next et previous
  *  @param	string	$morehtmlref  	More html to show after the ref (see $morehtmlleft for before)
  *  @param	string	$moreparam  	More param to add in nav link url.
  *	@param	int		$nodbprefix		Do not include DB prefix to forge table name
@@ -2427,7 +2427,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 
 					// If PDF file exists
 					if ($pdfexists) {
-						// Conversion du PDF en image png si fichier png non existant
+						// Conversion du PDF en image png si fichier png non existent
 						if (!file_exists($fileimage) || (filemtime($fileimage) < filemtime($filepdf))) {
 							if (!getDolGlobalString('MAIN_DISABLE_PDF_THUMBS')) {		// If you experience trouble with pdf thumb generation and imagick, you can disable here.
 								include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -2653,7 +2653,7 @@ function dol_bc($var, $moreclass = '')
 }
 
 /**
- *      Return a formated address (part address/zip/town/state) according to country rules.
+ *      Return a formatted address (part address/zip/town/state) according to country rules.
  *      See https://en.wikipedia.org/wiki/Address
  *
  *      @param  Object		$object			A company or contact object
@@ -2662,7 +2662,7 @@ function dol_bc($var, $moreclass = '')
  *      @param	Translate	$outputlangs	Object lang that contains language for text translation.
  *      @param	int			$mode			0=Standard output, 1=Remove address
  *  	@param	string		$extralangcode	User extralanguage $langcode as values for address, town
- *      @return string						Formated string
+ *      @return string						Formatted string
  *      @see dol_print_address()
  */
 function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs = '', $mode = 0, $extralangcode = '')
@@ -2753,7 +2753,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
  *	Format a string.
  *
  *	@param	string	$fmt		Format of strftime function (http://php.net/manual/fr/function.strftime.php)
- *  @param	int		$ts			Timesamp (If is_gmt is true, timestamp is already includes timezone and daylight saving offset, if is_gmt is false, timestamp is a GMT timestamp and we must compensate with server PHP TZ)
+ *  @param	int		$ts			Timestamp (If is_gmt is true, timestamp is already includes timezone and daylight saving offset, if is_gmt is false, timestamp is a GMT timestamp and we must compensate with server PHP TZ)
  *  @param	int		$is_gmt		See comment of timestamp parameter
  *	@return	string				A formatted string
  */
@@ -2783,7 +2783,7 @@ function dol_strftime($fmt, $ts = false, $is_gmt = false)
  *                                      'tzuserrel' => output string is for user TZ (current browser TZ with dst or not, depending on date position)
  *	@param	Translate	$outputlangs	Object lang that contains language for text translation.
  *  @param  boolean		$encodetooutput false=no convert into output pagecode
- * 	@return string      				Formated date or '' if time is null
+ * 	@return string      				Formatted date or '' if time is null
  *
  *  @see        dol_mktime(), dol_stringtotime(), dol_getdate(), selectDate()
  */
@@ -3021,13 +3021,13 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 
 /**
  *  Return an array with locale date info.
- *  WARNING: This function use PHP server timezone by default to return locale informations.
+ *  WARNING: This function use PHP server timezone by default to return locale information.
  *  Be aware to add the third parameter to "UTC" if you need to work on UTC.
  *
  *	@param	int			$timestamp      Timestamp
  *	@param	boolean		$fast           Fast mode. deprecated.
  *  @param	string		$forcetimezone	'' to use the PHP server timezone. Or use a form like 'gmt', 'Europe/Paris' or '+0200' to force timezone.
- *	@return	array						Array of informations
+ *	@return	array						Array of information
  *										'seconds' => $secs,
  *										'minutes' => $min,
  *										'hours' => $hour,
@@ -3066,7 +3066,7 @@ function dol_getdate($timestamp, $fast = false, $forcetimezone = '')
 }
 
 /**
- *	Return a timestamp date built from detailed informations (by default a local PHP server timestamp)
+ *	Return a timestamp date built from detailed information (by default a local PHP server timestamp)
  * 	Replace function mktime not available under Windows if year < 1970
  *	PHP mktime is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows
  *
@@ -3076,7 +3076,7 @@ function dol_getdate($timestamp, $fast = false, $forcetimezone = '')
  *	@param	int			$month			Month (1 to 12)
  *	@param	int			$day			Day (1 to 31)
  *	@param	int			$year			Year
- *	@param	mixed		$gm				True or 1 or 'gmt'=Input informations are GMT values
+ *	@param	mixed		$gm				True or 1 or 'gmt'=Input information are GMT values
  *										False or 0 or 'tzserver' = local to server TZ
  *										'auto'
  *										'tzuser' = local to user TZ taking dst into account at the current date. Not yet implemented.
@@ -3206,7 +3206,7 @@ function dol_now($mode = 'auto')
 
 
 /**
- * Return string with formated size
+ * Return string with formatted size
  *
  * @param	int		$size		Size to print
  * @param	int		$shortvalue	Tell if we want long value to use another unit (Ex: 1.5Kb instead of 1500b)
@@ -3484,7 +3484,7 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
  *	@param	string	$profIDtype		Type of profID to format ('1', '2', '3', '4', '5', '6' or 'VAT')
  *	@param	string	$countrycode	Country code to use for formatting
  *	@param	int		$addcpButton	Add button to copy to clipboard (1 => show only on hoover ; 2 => always display )
- *	@return string					Formated profID
+ *	@return string					Formatted profID
  */
 function dol_print_profids($profID, $profIDtype, $countrycode = '', $addcpButton = 1)
 {
@@ -3540,7 +3540,7 @@ function dol_print_profids($profID, $profIDtype, $countrycode = '', $addcpButton
  *  @param	string  $withpicto      Show picto ('fax', 'phone', 'mobile')
  *  @param	string	$titlealt	    Text to show on alt
  *  @param  int     $adddivfloat    Add div float around phone.
- * 	@return string 				    Formated phone number
+ * 	@return string 				    Formatted phone number
  */
 function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addlink = '', $separ = "&nbsp;", $withpicto = '', $titlealt = '', $adddivfloat = 0)
 {
@@ -3732,11 +3732,11 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 		}
 	} elseif (strtoupper($countrycode) == "LU") {
 		// Luxembourg
-		if (dol_strlen($phone) == 10) {// fixe 6 chiffres +352_AA_BB_CC
+		if (dol_strlen($phone) == 10) {// fix 6 digits +352_AA_BB_CC
 			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 2);
-		} elseif (dol_strlen($phone) == 11) {// fixe 7 chiffres +352_AA_BB_CC_D
+		} elseif (dol_strlen($phone) == 11) {// fix 7 digits +352_AA_BB_CC_D
 			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 2).$separ.substr($newphone, 10, 1);
-		} elseif (dol_strlen($phone) == 12) {// fixe 8 chiffres +352_AA_BB_CC_DD
+		} elseif (dol_strlen($phone) == 12) {// fix 8 digits +352_AA_BB_CC_DD
 			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 2).$separ.substr($newphone, 10, 2);
 		} elseif (dol_strlen($phone) == 13) {// mobile +352_AAA_BB_CC_DD
 			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 3).$separ.substr($newphone, 7, 2).$separ.substr($newphone, 9, 2).$separ.substr($newphone, 11, 2);
@@ -3771,7 +3771,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 								'__PASS__'=>$clicktodial_password);
 			$url = make_substitutions($url, $substitarray);
 			if (!getDolGlobalString('CLICKTODIAL_DO_NOT_USE_AJAX_CALL')) {
-				// Default and recommended: New method using ajax without submiting a page making a javascript history.go(-1) back
+				// Default and recommended: New method using ajax without submitting a page making a javascript history.go(-1) back
 				$newphoneastart = '<a href="'.$url.'" class="cssforclicktodial">';	// Call of ajax is handled by the lib_foot.js.php on class 'cssforclicktodial'
 				$newphoneaend = '</a>';
 			} else {
@@ -3848,11 +3848,11 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 }
 
 /**
- * 	Return an IP formated to be shown on screen
+ * 	Return an IP formatted to be shown on screen
  *
  * 	@param	string	$ip			IP
  * 	@param	int		$mode		0=return IP + country/flag, 1=return only country/flag, 2=return only IP
- * 	@return string 				Formated IP, with country if GeoIP module is enabled
+ * 	@return string 				Formatted IP, with country if GeoIP module is enabled
  */
 function dol_print_ip($ip, $mode = 0)
 {
@@ -3907,7 +3907,7 @@ function getUserRemoteIP()
 }
 
 /**
- * Return if we are using a HTTPS connexion
+ * Return if we are using a HTTPS connection
  * Check HTTPS (no way to be modified by user but may be empty or wrong if user is using a proxy)
  * Take HTTP_X_FORWARDED_PROTO (defined when using proxy)
  * Then HTTP_X_FORWARDED_SSL
@@ -4048,7 +4048,7 @@ function dol_print_address($address, $htmlid, $element, $id, $noprint = 0, $char
 /**
  *	Return true if email syntax is ok.
  *
- *	@param	    string		$address    			email (Ex: "toto@examle.com". Long form "John Do <johndo@example.com>" will be false)
+ *	@param	    string		$address    			email (Ex: "toto@example.com". Long form "John Do <johndo@example.com>" will be false)
  *  @param		int			$acceptsupervisorkey	If 1, the special string '__SUPERVISOREMAIL__' is also accepted as valid
  *  @param		int			$acceptuserkey			If 1, the special string '__USER_EMAIL__' is also accepted as valid
  *	@return     boolean     						true if email syntax is OK, false if KO or empty string
@@ -4645,7 +4645,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			if ($type == 'main') {
 				continue;
 			}
-			// This need a lot of time, that's why enabling alternative dir like "custom" dir is not recommanded
+			// This need a lot of time, that's why enabling alternative dir like "custom" dir is not recommended
 			if (file_exists($dirroot.'/'.$path.'/img/'.$picto)) {
 				$url = DOL_URL_ROOT.$conf->file->dol_url_root[$type];
 				break;
@@ -4849,7 +4849,7 @@ function img_edit_remove($titlealt = 'default', $other = '')
 }
 
 /**
- *	Show logo editer/modifier fiche
+ *	Show logo edit/modify fiche
  *
  *	@param  string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  integer	$float      If you have to put the style "float: right"
@@ -5415,7 +5415,7 @@ function dol_print_error($db = '', $error = '', $errors = null)
 	}
 	if (empty($dolibarr_main_prod) && $_SERVER['DOCUMENT_ROOT'] && function_exists('xdebug_print_function_stack') && function_exists('xdebug_call_file')) {
 		xdebug_print_function_stack();
-		$out .= '<b>XDebug informations:</b>'."<br>\n";
+		$out .= '<b>XDebug information:</b>'."<br>\n";
 		$out .= 'File: '.xdebug_call_file()."<br>\n";
 		$out .= 'Line: '.xdebug_call_line()."<br>\n";
 		$out .= 'Function: '.xdebug_call_function()."<br>\n";
@@ -5427,8 +5427,8 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		if (function_exists('top_httphead')) {	// In CLI context, the method does not exists
 			top_httphead();
 		}
-		//http_response_code(500);		// If we use 500, message is not ouput with some command line tools
-		http_response_code(202);		// If we use 202, this is not really an error message, but this allow to ouput message on command line tools
+		//http_response_code(500);		// If we use 500, message is not output with some command line tools
+		http_response_code(202);		// If we use 202, this is not really an error message, but this allow to output message on command line tools
 	}
 
 	if (empty($dolibarr_main_prod)) {
@@ -5439,7 +5439,7 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		}
 		$langs->loadLangs(array("main", "errors")); // Reload main because language may have been set only on previous line so we have to reload files we need.
 		// This should not happen, except if there is a bug somewhere. Enabled and check log in such case.
-		print 'This website or feature is currently temporarly not available or failed after a technical error.<br><br>This may be due to a maintenance operation. Current status of operation ('.dol_print_date(dol_now(), 'dayhourrfc').') are on next line...<br><br>'."\n";
+		print 'This website or feature is currently temporarily not available or failed after a technical error.<br><br>This may be due to a maintenance operation. Current status of operation ('.dol_print_date(dol_now(), 'dayhourrfc').') are on next line...<br><br>'."\n";
 		print $langs->trans("DolibarrHasDetectedError").'. ';
 		print $langs->trans("YouCanSetOptionDolibarrMainProdToZero");
 		if (!defined("MAIN_CORE_ERROR")) {
@@ -5490,9 +5490,9 @@ function dol_print_error_email($prefixcode, $errormessage = '', $errormessages =
  *	@param	string	$name        Label of field
  *	@param	string	$file        Url used when we click on sort picto
  *	@param	string	$field       Field to use for new sorting
- *	@param	string	$begin       ("" by defaut)
+ *	@param	string	$begin       ("" by default)
  *	@param	string	$moreparam   Add more parameters on sort url links ("" by default)
- *	@param  string	$moreattrib  Options of attribute td ("" by defaut)
+ *	@param  string	$moreattrib  Options of attribute td ("" by default)
  *	@param  string	$sortfield   Current field used to sort
  *	@param  string	$sortorder   Current sort order
  *  @param	string	$prefix		 Prefix for css. Use space after prefix to add your own CSS tag, for example 'mycss '.
@@ -5512,9 +5512,9 @@ function print_liste_field_titre($name, $file = "", $field = "", $begin = "", $m
  *	@param	int		$thead		 		0=To use with standard table format, 1=To use inside <thead><tr>, 2=To use with <div>
  *	@param	string	$file        		Url used when we click on sort picto
  *	@param	string	$field       		Field to use for new sorting. Empty if this field is not sortable. Example "t.abc" or "t.abc,t.def"
- *	@param	string	$begin       		("" by defaut)
+ *	@param	string	$begin       		("" by default)
  *	@param	string	$moreparam   		Add more parameters on sort url links ("" by default)
- *	@param  string	$moreattrib  		Add more attributes on th ("" by defaut). To add more css class, use param $prefix.
+ *	@param  string	$moreattrib  		Add more attributes on th ("" by default). To add more css class, use param $prefix.
  *	@param  string	$sortfield   		Current field used to sort (Ex: 'd.datep,d.id')
  *	@param  string	$sortorder   		Current sort order (Ex: 'asc,desc')
  *  @param	string	$prefix		 		Prefix for css. Use space after prefix to add your own CSS tag, for example 'mycss '.
@@ -5721,7 +5721,7 @@ function load_fiche_titre($titre, $morehtmlright = '', $picto = 'generic', $pict
  *	@param	string	    $options         	More parameters for links ('' by default, does not include sortfield neither sortorder). Value must be 'urlencoded' before calling function.
  *	@param	string    	$sortfield       	Field to sort on ('' by default)
  *	@param	string	    $sortorder       	Order to sort ('' by default)
- *	@param	string	    $morehtmlcenter     String in the middle ('' by default). We often find here string $massaction comming from $form->selectMassAction()
+ *	@param	string	    $morehtmlcenter     String in the middle ('' by default). We often find here string $massaction coming from $form->selectMassAction()
  *	@param	int		    $num				Number of records found by select with limit+1
  *	@param	int|string  $totalnboflines		Total number of records/lines for all pages (if known). Use a negative value of number to not show number. Use '' if unknown.
  *	@param	string	    $picto				Icon to use before title (should be a 32x32 transparent png file)
@@ -5975,7 +5975,7 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 
 
 /**
- *	Return a string with VAT rate label formated for view output
+ *	Return a string with VAT rate label formatted for view output
  *	Used into pdf and HTML pages
  *
  *	@param	string	$rate			Rate value to format ('19.6', '19,6', '19.6%', '19,6%', '19.6 (CODEX)', ...)
@@ -5983,7 +5983,7 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
  *	@param	int		$info_bits		Miscellaneous information on vat (0=Default, 1=French NPR vat)
  *	@param	int		$usestarfornpr	-1=Never show, 0 or 1=Use '*' for NPR vat rates
  *  @param	int		$html			Used for html output
- *  @return	string					String with formated amounts ('19,6' or '19,6%' or '8.5% (NPR)' or '8.5% *' or '19,6 (CODEX)')
+ *  @return	string					String with formatted amounts ('19,6' or '19,6%' or '8.5% (NPR)' or '8.5% *' or '19,6 (CODEX)')
  */
 function vatrate($rate, $addpercent = false, $info_bits = 0, $usestarfornpr = 0, $html = 0)
 {
@@ -6026,11 +6026,11 @@ function vatrate($rate, $addpercent = false, $info_bits = 0, $usestarfornpr = 0,
  *		@param	float				$amount			Amount to format
  *		@param	integer				$form			Type of format, HTML or not (not by default)
  *		@param	Translate|string	$outlangs		Object langs for output. '' use default lang. 'none' use international separators.
- *		@param	int					$trunc			1=Truncate if there is more decimals than MAIN_MAX_DECIMALS_SHOWN (default), 0=Does not truncate. Deprecated because amount are rounded (to unit or total amount accurancy) before beeing inserted into database or after a computation, so this parameter should be useless.
+ *		@param	int					$trunc			1=Truncate if there is more decimals than MAIN_MAX_DECIMALS_SHOWN (default), 0=Does not truncate. Deprecated because amount are rounded (to unit or total amount accuracy) before being inserted into database or after a computation, so this parameter should be useless.
  *		@param	int					$rounding		MINIMUM number of decimal to show: 0=no change, -1=we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT)
  *		@param	int|string			$forcerounding	MAXIMUM number of decimal to forcerounding decimal: -1=no change, 'MU' or 'MT' or numeric to round to MU or MT or to a given number of decimal
  *		@param	string				$currency_code	To add currency symbol (''=add nothing, 'auto'=Use default currency, 'XXX'=add currency symbols for XXX currency)
- *		@return	string								String with formated amount
+ *		@return	string								String with formatted amount
  *
  *		@see	price2num()							Revert function of price
  */
@@ -6042,7 +6042,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	if (empty($amount)) {
 		$amount = 0; // To have a numeric value if amount not defined or = ''
 	}
-	$amount = (is_numeric($amount) ? $amount : 0); // Check if amount is numeric, for example, an error occured when amount value = o (letter) instead 0 (number)
+	$amount = (is_numeric($amount) ? $amount : 0); // Check if amount is numeric, for example, an error occurred when amount value = o (letter) instead 0 (number)
 	if ($rounding == -1) {
 		$rounding = min(getDolGlobalString('MAIN_MAX_DECIMALS_UNIT'), getDolGlobalString('MAIN_MAX_DECIMALS_TOT'));
 	}
@@ -6079,8 +6079,8 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	//print "amount=".$amount."-";
 	$amount = str_replace(',', '.', $amount); // should be useless
 	//print $amount."-";
-	$datas = explode('.', $amount);
-	$decpart = isset($datas[1]) ? $datas[1] : '';
+	$data = explode('.', $amount);
+	$decpart = isset($data[1]) ? $data[1] : '';
 	$decpart = preg_replace('/0+$/i', '', $decpart); // Supprime les 0 de fin de partie decimale
 	//print "decpart=".$decpart."<br>";
 	$end = '';
@@ -6826,8 +6826,8 @@ function get_product_localtax_for_country($idprod, $local, $thirdpartytouse)
  *	 VATRULE 5: If (seller and buyer in European Community) and (buyer = company) then VAT by default=0. End of rule
  *	 VATRULE 6: Otherwise the VAT proposed by default=0. End of rule.
  *
- *	@param	Societe		$thirdparty_seller    	Objet societe vendeuse
- *	@param  Societe		$thirdparty_buyer   	Objet societe acheteuse
+ *	@param	Societe		$thirdparty_seller    	Object Seller company
+ *	@param  Societe		$thirdparty_buyer   	Object Buyer company
  *	@param  int			$idprod					Id product
  *	@param	int			$idprodfournprice		Id product_fournisseur_price (for supplier order/invoice)
  *	@return float|string   				      	Vat rate to use with format 5.0 or '5.0 (XXX)', -1 if we can't guess it
@@ -6972,15 +6972,15 @@ function get_default_npr(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 
 /**
  *	Function that return localtax of a product line (according to seller, buyer and product vat rate)
- *   Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
- *	 Si le (pays vendeur = pays acheteur) alors TVA par defaut=TVA du produit vendu. Fin de regle.
- *	 Sinon TVA proposee par defaut=0. Fin de regle.
+ *   If the seller is not subject to VAT, then default VAT=0. Rule/Test ends.
+ *	 If (seller country == buyer country) default VAT=sold product VAT. Rule/Test ends.
+ *	 Else, default VAT=0. Rule/Test ends
  *
- *	@param	Societe		$thirdparty_seller    	Thirdparty seller
- *	@param  Societe		$thirdparty_buyer   	Thirdparty buyer
+ *	@param	Societe		$thirdparty_seller    	Third party seller
+ *	@param  Societe		$thirdparty_buyer   	Third party buyer
  *  @param	int			$local					Localtax to process (1 or 2)
  *	@param  int			$idprod					Id product
- *	@return integer        				       	localtax, -1 si ne peut etre determine
+ *	@return int	        				       	localtax, -1 if it can not be determined
  *  @see get_default_tva(), get_default_npr()
  */
 function get_default_localtax($thirdparty_seller, $thirdparty_buyer, $local, $idprod = 0)
@@ -7030,7 +7030,7 @@ function get_default_localtax($thirdparty_seller, $thirdparty_buyer, $local, $id
  *
  *	@param	string|int	$yesno			Value to test (1, 'yes', 'true' or 0, 'no', 'false')
  *	@param	integer		$case			1=Yes/No, 0=yes/no, 2=Disabled checkbox, 3=Disabled checkbox + Yes/No
- *	@param	int			$color			0=texte only, 1=Text is formated with a color font style ('ok' or 'error'), 2=Text is formated with 'ok' color.
+ *	@param	int			$color			0=texte only, 1=Text is formatted with a color font style ('ok' or 'error'), 2=Text is formatted with 'ok' color.
  *	@return	string						HTML string
  */
 function yn($yesno, $case = 1, $color = 0)
@@ -7039,7 +7039,7 @@ function yn($yesno, $case = 1, $color = 0)
 
 	$result = 'unknown';
 	$classname = '';
-	if ($yesno == 1 || (isset($yesno) && (strtolower($yesno) == 'yes' || strtolower($yesno) == 'true'))) { 	// A mettre avant test sur no a cause du == 0
+	if ($yesno == 1 || (isset($yesno) && (strtolower($yesno) == 'yes' || strtolower($yesno) == 'true'))) { 	// To set to 'no' before the test because of the '== 0'
 		$result = $langs->trans('yes');
 		if ($case == 1 || $case == 3) {
 			$result = $langs->trans("Yes");
@@ -7085,7 +7085,7 @@ function yn($yesno, $case = 1, $color = 0)
  *
  *	@param	string|int	$num            Id of object (deprecated, $object will be used in future)
  *	@param  int			$level		    Level of subdirs to return (1, 2 or 3 levels). (deprecated, global option will be used in future)
- * 	@param	int			$alpha		    0=Keep number only to forge path, 1=Use alpha part afer the - (By default, use 0). (deprecated, global option will be used in future)
+ * 	@param	int			$alpha		    0=Keep number only to forge path, 1=Use alpha part after the - (By default, use 0). (deprecated, global option will be used in future)
  *  @param  int			$withoutslash   0=With slash at end (except if '/', we return ''), 1=without slash at end
  *  @param	Object		$object			Object to use to get ref to forge the path.
  *  @param	string		$modulepart		Type of object ('invoice_supplier, 'donation', 'invoice', ...'). Use '' for autodetect from $object.
@@ -7176,11 +7176,11 @@ function dol_mkdir($dir, $dataroot = '', $newmask = '')
 		}
 		$regs = array();
 		if (preg_match("/^.:$/", $ccdir, $regs)) {
-			continue; // Si chemin Windows incomplet, on poursuit par rep suivant
+			continue; // If the Windows path is incomplete, continue with next directory
 		}
 
-		// Attention, le is_dir() peut echouer bien que le rep existe.
-		// (ex selon config de open_basedir)
+		// Attention, is_dir() can fail event if the directory exists
+		// (i.e. according the open_basedir configuration)
 		if ($ccdir) {
 			$ccdir_osencoded = dol_osencode($ccdir);
 			if (!@is_dir($ccdir_osencoded)) {
@@ -7198,11 +7198,11 @@ function dol_mkdir($dir, $dataroot = '', $newmask = '')
 					$nberr++;
 				} else {
 					dol_syslog("functions.lib::dol_mkdir: Directory '".$ccdir."' created", LOG_DEBUG);
-					$nberr = 0; // On remet a zero car si on arrive ici, cela veut dire que les echecs precedents peuvent etre ignore
+					$nberr = 0; // At this point in the code, the previous failures can be ignored -> set $nberr to 0
 					$nbcreated++;
 				}
 			} else {
-				$nberr = 0; // On remet a zero car si on arrive ici, cela veut dire que les echecs precedents peuvent etre ignores
+				$nberr = 0; // At this point in the code, the previous failures can be ignored -> set $nberr to 0
 			}
 		}
 	}
@@ -7275,7 +7275,7 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
 	if ($strip_tags) {
 		$temp = strip_tags($temp);
 	} else {
-		// Remove '<' into remainging, so remove non closing html tags like '<abc' or '<<abc'. Note: '<123abc' is not a html tag (can be kept), but '<abc123' is (must be removed).
+		// Remove '<' into remaining, so remove non closing html tags like '<abc' or '<<abc'. Note: '<123abc' is not a html tag (can be kept), but '<abc123' is (must be removed).
 		$pattern = "/<[^<>]+>/";
 		// Example of $temp: <a href="/myurl" title="<u>A title</u>">0000-021</a>
 		// pass 1 - $temp after pass 1: <a href="/myurl" title="A title">0000-021
@@ -7320,7 +7320,7 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
  *	@param	string	$stringtoclean			String to clean
  *  @param	int		$cleanalsosomestyles	Remove absolute/fixed positioning from inline styles
  *  @param	int		$removeclassattribute	1=Remove the class attribute from tags
- *  @param	int		$cleanalsojavascript	Remove also occurence of 'javascript:'.
+ *  @param	int		$cleanalsojavascript	Remove also occurrence of 'javascript:'.
  *  @param	int		$allowiframe			Allow iframe tags.
  *  @param	array	$allowed_tags			List of allowed tags to replace the default list
  *  @param	int		$allowlink				Allow "link" tags.
@@ -7866,7 +7866,7 @@ function dol_htmlentities($string, $flags = ENT_QUOTES|ENT_SUBSTITUTE, $encoding
  *	Example, if string contains euro symbol that has ascii code 128
  *
  *	@param	string		$s      	String to check
- *  @param	string		$clean		Clean if it is not an ISO. Warning, if file is utf8, you will get a bad formated file.
+ *  @param	string		$clean		Clean if it is not an ISO. Warning, if file is utf8, you will get a bad formatted file.
  *	@return	int|string  	   		0 if bad iso, 1 if good iso, Or the clean string if $clean is 1
  *  @deprecated Duplicate of ascii_check()
  *  @see ascii_check()
@@ -7916,10 +7916,10 @@ function dol_nboflines($s, $maxchar = 0)
 
 
 /**
- *	Return nb of lines of a formated text with \n and <br> (WARNING: string must not have mixed \n and br separators)
+ *	Return nb of lines of a formatted text with \n and <br> (WARNING: string must not have mixed \n and br separators)
  *
  *	@param	string	$text      		Text
- *	@param	int		$maxlinesize  	Largeur de ligne en caracteres (ou 0 si pas de limite - defaut)
+ *	@param	int		$maxlinesize  	Linewidth in character count (default = 0 == nolimit)
  * 	@param	string	$charset		Give the charset used to encode the $text variable in memory.
  *	@return int						Number of lines
  *	@see	dol_nboflines(), dolGetFirstLineOfText()
@@ -8165,7 +8165,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				/*$substitutionarray['__MEMBER_NOTE_PUBLIC__'] = '__MEMBER_NOTE_PUBLIC__';
 				$substitutionarray['__MEMBER_NOTE_PRIVATE__'] = '__MEMBER_NOTE_PRIVATE__';*/
 			}
-			// add variables subtitutions ticket
+			// add substitution variables for ticket
 			if (isModEnabled('ticket') && (!is_object($object) || $object->element == 'ticket') && (empty($exclude) || !in_array('ticket', $exclude)) && (empty($include) || in_array('ticket', $include))) {
 				$substitutionarray['__TICKET_TRACKID__'] = '__TICKET_TRACKID__';
 				$substitutionarray['__TICKET_SUBJECT__'] = '__TICKET_SUBJECT__';
@@ -8403,7 +8403,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATE__'] = dol_print_date($datenextexpiration, 'dayrfc');
 				$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATETIME__'] = dol_print_date($datenextexpiration, 'standard');
 			}
-			// add substition variable for ticket
+			// add substitution variables for ticket
 			if (is_object($object) && $object->element == 'ticket') {
 				$substitutionarray['__TICKET_TRACKID__'] = $object->track_id;
 				$substitutionarray['__REF__'] = $object->ref;
@@ -8595,7 +8595,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__AMOUNT_TAX3__']     = is_object($object) ? $object->total_localtax2 : '';
 		}
 
-		// Amount keys formated in a currency
+		// Amount keys formatted in a currency
 		$substitutionarray['__AMOUNT_EXCL_TAX_FORMATED__'] = is_object($object) ? ($object->total_ht ? price($object->total_ht, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
 		$substitutionarray['__AMOUNT_FORMATED__']          = is_object($object) ? ($object->total_ttc ? price($object->total_ttc, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
 		$substitutionarray['__AMOUNT_REMAIN_FORMATED__'] = is_object($object) ? ($object->total_ttc ? price($object->total_ttc - $already_payed_all, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
@@ -9085,11 +9085,11 @@ function setEventMessages($mesg, $mesgs, $style = 'mesgs', $messagekey = '', $no
 }
 
 /**
- *	Print formated messages to output (Used to show messages on html output).
+ *	Print formatted messages to output (Used to show messages on html output).
  *  Note: Calling dol_htmloutput_events is done into pages by standard llxFooter() function, so there is
- *  no need to call it explicitely.
+ *  no need to call it explicitly.
  *
- *  @param	int		$disabledoutputofmessages	Clear all messages stored into session without diplaying them
+ *  @param	int		$disabledoutputofmessages	Clear all messages stored into session without displaying them
  *  @return	void
  *  @see    									dol_htmloutput_mesg()
  */
@@ -9120,7 +9120,7 @@ function dol_htmloutput_events($disabledoutputofmessages = 0)
 }
 
 /**
- *	Get formated messages to output (Used to show messages on html output).
+ *	Get formatted messages to output (Used to show messages on html output).
  *  This include also the translation of the message key.
  *
  *	@param	string		$mesgstring		Message string or message key
@@ -9192,7 +9192,7 @@ function get_htmloutput_mesg($mesgstring = '', $mesgarray = '', $style = 'ok', $
 }
 
 /**
- *  Get formated error messages to output (Used to show messages on html output).
+ *  Get formatted error messages to output (Used to show messages on html output).
  *
  *  @param  string	$mesgstring         Error message
  *  @param  array	$mesgarray          Error messages array
@@ -9208,7 +9208,7 @@ function get_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembe
 }
 
 /**
- *	Print formated messages to output (Used to show messages on html output).
+ *	Print formatted messages to output (Used to show messages on html output).
  *
  *	@param	string		$mesgstring		Message string or message key
  *	@param	string[]	$mesgarray      Array of message strings or message keys
@@ -9278,7 +9278,7 @@ function dol_htmloutput_mesg($mesgstring = '', $mesgarray = array(), $style = 'o
 }
 
 /**
- *  Print formated error messages to output (Used to show messages on html output).
+ *  Print formatted error messages to output (Used to show messages on html output).
  *
  *  @param	string	$mesgstring          Error message
  *  @param  array	$mesgarray           Error messages array
@@ -10046,12 +10046,12 @@ function getLanguageCodeFromCountryCode($countrycode)
  *          		            	        'supplier_invoice' to add a tab in purchase invoice view
  *                  		    	        'invoice'          to add a tab in sales invoice view
  *                          			    'order'            to add a tab in sales order view
- *                          				'contract'		   to add a tabl in contract view
+ *                          				'contract'		   to add a table in contract view
  *                      			        'product'          to add a tab in product view
  *                              			'propal'           to add a tab in propal view
  *                              			'user'             to add a tab in user view
  *                              			'group'            to add a tab in group view
- * 		        	               	     	'member'           to add a tab in fundation member view
+ * 		        	               	     	'member'           to add a tab in foundation member view
  *      		                        	'categories_x'	   to add a tab in category view ('x': type of category (0=product, 1=supplier, 2=customer, 3=member)
  *      									'ecm'			   to add a tab for another ecm view
  *                                          'stock'            to add a tab for warehouse view
@@ -10239,7 +10239,7 @@ function printCommonFooter($zone = 'private')
 
 		print "\n";
 		if (!empty($conf->use_javascript_ajax)) {
-			print "\n<!-- A script section to add menuhider handler on backoffice, manage focus and madatory fields, tuning info, ... -->\n";
+			print "\n<!-- A script section to add menuhider handler on backoffice, manage focus and mandatory fields, tuning info, ... -->\n";
 			print '<script>'."\n";
 			print 'jQuery(document).ready(function() {'."\n";
 
@@ -10290,7 +10290,7 @@ function printCommonFooter($zone = 'private')
 								// Set focus on field
 								print 'jQuery("input[name=\''.$paramkey.'\']").focus();'."\n";
 								print 'jQuery("textarea[name=\''.$paramkey.'\']").focus();'."\n";
-								print 'jQuery("select[name=\''.$paramkey.'\']").focus();'."\n"; // Not really usefull, but we keep it in case of.
+								print 'jQuery("select[name=\''.$paramkey.'\']").focus();'."\n"; // Not really useful, but we keep it in case of.
 							}
 						}
 					}
@@ -10524,7 +10524,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 		$fields = array($fields);
 	}
 
-	$i1 = 0;	// count the nb of and criteria added (all fields / criterias)
+	$i1 = 0;	// count the nb of and criteria added (all fields / criteria)
 	foreach ($crits as $crit) {		// Loop on each AND criteria
 		$crit = trim($crit);
 		$i2 = 0;	// count the nb of valid criteria added for this this first criteria
@@ -10597,7 +10597,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 							$newres .= ' OR '.$field." LIKE '%,".$db->escape($val)."'";
 							$newres .= ' OR '.$field." LIKE '%,".$db->escape($val).",%'";
 							$newres .= ')';
-							$i2++; // a criteria for 1 more field was added to string (we can add several citeria for the same field as it is a multiselect search criteria)
+							$i2++; // a criteria for 1 more field was added to string (we can add several criteria for the same field as it is a multiselect search criteria)
 						}
 					}
 				}
@@ -10699,7 +10699,7 @@ function showDirectDownloadLink($object)
  * Return the filename of file to get the thumbs
  *
  * @param   string  $file           Original filename (full or relative path)
- * @param   string  $extName        Extension to differenciate thumb file name ('', '_small', '_mini')
+ * @param   string  $extName        Extension to differentiate thumb file name ('', '_small', '_mini')
  * @param   string  $extImgTarget   Force image extension for thumbs. Use '' to keep same extension than original image (default).
  * @return  string                  New file name (full or relative path, including the thumbs/). May be the original path if no thumb can exists.
  */
@@ -11306,7 +11306,7 @@ function roundUpToNextMultiple($n, $x = 5)
  * @param   string  $type       type of badge : Primary Secondary Success Danger Warning Info Light Dark status0 status1 status2 status3 status4 status5 status6 status7 status8 status9
  * @param   string  $mode       default '' , 'pill', 'dot'
  * @param   string  $url        the url for link
- * @param   array   $params     various params for future : recommended rather than adding more fuction arguments. array('attr'=>array('title'=>'abc'))
+ * @param   array   $params     various params for future : recommended rather than adding more function arguments. array('attr'=>array('title'=>'abc'))
  * @return  string              Html badge
  */
 function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '', $params = array())
@@ -11479,11 +11479,11 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  *                              'classOverride' => '' // to replace class attribute of the button
  *                              ],
  *                              'confirm' => [
- *                              'url' => 'http://', // Overide Url to go when user click on action btn, if empty default url is $url.?confirm=yes, for no js compatibility use $url for fallback confirm.
- *                              'title' => '', // Overide title of modal,  if empty default title use "ConfirmBtnCommonTitle" lang key
- *                              'action-btn-label' => '', // Overide label of action button,  if empty default label use "Confirm" lang key
- *                              'cancel-btn-label' => '', // Overide label of cancel button,  if empty default label use "CloseDialog" lang key
- *                              'content' => '', // Overide text of content,  if empty default content use "ConfirmBtnCommonContent" lang key
+ *                              'url' => 'http://', // Override Url to go when user click on action btn, if empty default url is $url.?confirm=yes, for no js compatibility use $url for fallback confirm.
+ *                              'title' => '', // Override title of modal,  if empty default title use "ConfirmBtnCommonTitle" lang key
+ *                              'action-btn-label' => '', // Override label of action button,  if empty default label use "Confirm" lang key
+ *                              'cancel-btn-label' => '', // Override label of cancel button,  if empty default label use "CloseDialog" lang key
+ *                              'content' => '', // Override text of content,  if empty default content use "ConfirmBtnCommonContent" lang key
  *                              'modal' => true, // true|false to display dialog as a modal (with dark background)
  *                              'isDropDrown' => false, // true|false to display dialog as a dropdown (with dark background)
  *                              ],
@@ -11590,7 +11590,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 			$params['confirm']['url'] = $url . (strpos($url, '?') > 0 ? '&' : '?') . 'confirm=yes';
 		}
 
-		// for js desabled compatibility set $url as call to confirm action and $params['confirm']['url'] to confirmed action
+		// for js disabled compatibility set $url as call to confirm action and $params['confirm']['url'] to confirmed action
 		$attr['data-confirm-url'] = $params['confirm']['url'];
 		$attr['data-confirm-title'] = !empty($params['confirm']['title']) ? $params['confirm']['title'] : $langs->trans('ConfirmBtnCommonTitle', $label);
 		$attr['data-confirm-content'] = !empty($params['confirm']['content']) ? $params['confirm']['content'] : $langs->trans('ConfirmBtnCommonContent', $label);
@@ -12176,7 +12176,7 @@ function getNonce()
 
 
 /**
- * Start a table with headers and a optinal clickable number (don't forget to use "finishSimpleTable()" after the last table row)
+ * Start a table with headers and a optional clickable number (don't forget to use "finishSimpleTable()" after the last table row)
  *
  * @param string	$header		The first left header of the table (automatic translated)
  * @param string	$link		(optional) The link to a internal dolibarr page, when click on the number (without the first "/")
@@ -12264,8 +12264,8 @@ function finishSimpleTable($addLineBreak = false)
  * @param integer	$num					The count of the rows of the table, when it is zero (0) the "$noneWord" is shown instead
  * @param integer	$nbofloop				(optional)	The maximum count of rows thaht the table show (when it is zero (0) no summary line will show, expect "$noneWord" when $num === 0)
  * @param integer	$total					(optional)	The total value thaht is shown after when the table has minimum of one entire
- * @param string	$noneWord				(optional)	The word that is shown when the table has no entires ($num === 0)
- * @param boolean	$extraRightColumn		(optional)	Add a addtional column after the summary word and total number
+ * @param string	$noneWord				(optional)	The word that is shown when the table has no entries ($num === 0)
+ * @param boolean	$extraRightColumn		(optional)	Add a additional column after the summary word and total number
  * @return void
  */
 function addSummaryTableLine($tableColumnCount, $num, $nbofloop = 0, $total = 0, $noneWord = "None", $extraRightColumn = false)
