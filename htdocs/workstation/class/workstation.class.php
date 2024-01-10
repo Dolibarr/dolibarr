@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017       Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2020       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2023       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2023-2024  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,23 +115,67 @@ class Workstation extends CommonObject
 		'thm_machine_estimated' => array('type'=>'double', 'help'=>'THMMachineEstimatedHelp', 'label'=>'THMMachineEstimated', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1, 'css'=>'right', 'csslist'=>'maxwidth75imp'),
 		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'default'=>1, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Disabled', '1'=>'Enabled'),),
 	);
+
+	/**
+	 * @var int rowid ID
+	 */
 	public $rowid;
+
+	/**
+	 * @var string ref of workstation
+	 */
 	public $ref;
+
+	/**
+	 * @var string label of workstation
+	 */
 	public $label;
+
+	/**
+	 * @var string type
+	 */
 	public $type;	// HUMAN, MACHINE, ...
 
+	/**
+	 * @var integer|string date_creation
+	 */
 	public $date_creation;
+
+	/**
+	 * @var int timestamp
+	 */
 	public $tms;
+
+	/**
+	 * @var int User ID
+	 */
 	public $fk_user_creat;
+
+	/**
+	 * @var int User ID
+	 */
 	public $fk_user_modif;
 
 	/**
 	 * @var int status enabled or disabled
 	 */
 	public $status;
+
+	/**
+	 * @var int nb operators required
+	 */
 	public $nb_operators_required;
+
+	/**
+	 * @var float thm operator estimated
+	 */
 	public $thm_operator_estimated;
+
+	/**
+	 * @var float thm machine estimated
+	 */
 	public $thm_machine_estimated;
+
 	// END MODULEBUILDER PROPERTIES
 
 	/**
