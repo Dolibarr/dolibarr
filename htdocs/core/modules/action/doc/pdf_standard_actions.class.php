@@ -223,7 +223,7 @@ class pdf_standard_actions
 	/**
 	 * Write content of pages
 	 *
-	 * @param   PDF			$pdf			Object pdf
+	 * @param   TCPDF		$pdf			Object pdf
 	 * @param	Translate   $outputlangs	Object langs
 	 * @return  int							1
 	 */
@@ -349,11 +349,11 @@ class pdf_standard_actions
 	}
 
 	/**
-	 *  Show top header of page.
+	 *	Show top header of page.
 	 *
-	 * 	@param	PDF			$pdf     		Object PDF
-	 *  @param  Translate	$outputlangs	Object lang for output
-	 * 	@param	int			$pagenb			Page nb
+	 *	@param	TCPDF		$pdf     		Object PDF
+	 *	@param  Translate	$outputlangs	Object lang for output
+	 *	@param	int			$pagenb			Page nb
 	 *  @return	integer
 	 */
 	private function _pagehead(&$pdf, $outputlangs, $pagenb)

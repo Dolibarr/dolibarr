@@ -1200,7 +1200,7 @@ function updateDictionaryInFile($module, $file, $dicts)
  * @param string $file The file path to the Dolibarr module builder file where the dictionaries are defined.
  * @param string $namedic The name of the dictionary, which will also be used as the base for the table name.
  * @param array|null $dictionnaires An optional array containing pre-existing dictionary data, including 'tabname', 'tablib', 'tabsql', etc.
- * @return void
+ * @return int|void Return int < 0 if error, return nothing on success
  */
 function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = null)
 {
