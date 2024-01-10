@@ -49,7 +49,7 @@ jobs:
           restore-keys: |
             phpstan-cache-PR-${{ matrix.php-version }}-
       - name: Debug
-        run: cd ./build/phpstan/tmp && ls -al
+        run: cd ./github/tmp && ls -al
       - name: Run PHPSTAN
         run: phpstan -vvv analyse --error-format=checkstyle --memory-limit 4G -c phpstan_action.neon | cs2pr --graceful-warnings
         # continue-on-error: true
