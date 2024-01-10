@@ -3362,7 +3362,7 @@ class Societe extends CommonObject
 					break;
 				}
 			}
-			$mod = new $module();
+			$mod = new $module($this->db);
 
 			$this->code_client = $mod->getNextValue($objsoc, $type);
 			$this->prefixCustomerIsRequired = $mod->prefixIsRequired;
@@ -3394,7 +3394,7 @@ class Societe extends CommonObject
 					break;
 				}
 			}
-			$mod = new $module();
+			$mod = new $module($this->db);
 
 			$this->code_fournisseur = $mod->getNextValue($objsoc, $type);
 
@@ -3424,7 +3424,7 @@ class Societe extends CommonObject
 				}
 			}
 
-			$mod = new $module();
+			$mod = new $module($this->db);
 
 			dol_syslog(get_class($this)."::codeclient_modifiable code_client=".$this->code_client." module=".$module);
 			if ($mod->code_modifiable_null && !$this->code_client) {
@@ -3464,7 +3464,7 @@ class Societe extends CommonObject
 				}
 			}
 
-			$mod = new $module();
+			$mod = new $module($this->db);
 
 			dol_syslog(get_class($this)."::codefournisseur_modifiable code_founisseur=".$this->code_fournisseur." module=".$module);
 			if ($mod->code_modifiable_null && !$this->code_fournisseur) {
@@ -3510,7 +3510,7 @@ class Societe extends CommonObject
 				}
 			}
 
-			$mod = new $module();
+			$mod = new $module($this->db);
 
 			dol_syslog(get_class($this)."::check_codeclient code_client=".$this->code_client." module=".$module);
 			$result = $mod->verif($this->db, $this->code_client, $this, 0);
@@ -3551,7 +3551,7 @@ class Societe extends CommonObject
 				}
 			}
 
-			$mod = new $module();
+			$mod = new $module($this->db);
 
 			dol_syslog(get_class($this)."::check_codefournisseur code_fournisseur=".$this->code_fournisseur." module=".$module);
 			$result = $mod->verif($this->db, $this->code_fournisseur, $this, 1);
