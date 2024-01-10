@@ -10906,15 +10906,11 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 		$imgmime = 'text.png';
 		$srclang = 'lang';
 		$famime = 'file-text-o';
-	}  // phpcs:ignore
-	// Certificate files
-	elseif (preg_match('/\.(crt|cer|key|pub)$/i', $tmpfile)) {
+	} elseif (preg_match('/\.(crt|cer|key|pub)$/i', $tmpfile)) {	// Certificate files
 		$mime = 'text/plain';
 		$imgmime = 'text.png';
 		$famime = 'file-text-o';
-	}  // phpcs:ignore
-	// XML based (HTML/XML/XAML)
-	elseif (preg_match('/\.(html|htm|shtml)$/i', $tmpfile)) {
+	} elseif (preg_match('/\.(html|htm|shtml)$/i', $tmpfile)) {		// XML based (HTML/XML/XAML)
 		$mime = 'text/html';
 		$imgmime = 'html.png';
 		$srclang = 'html';
@@ -10929,9 +10925,7 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 		$imgmime = 'other.png';
 		$srclang = 'xaml';
 		$famime = 'file-text-o';
-	}  // phpcs:ignore
-	// Languages
-	elseif (preg_match('/\.bas$/i', $tmpfile)) {
+	} elseif (preg_match('/\.bas$/i', $tmpfile)) {					// Languages
 		$mime = 'text/plain';
 		$imgmime = 'text.png';
 		$srclang = 'bas';
@@ -10986,9 +10980,7 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 		$imgmime = 'jscript.png';
 		$srclang = 'js';
 		$famime = 'file-code-o';
-	}  // phpcs:ignore
-	// Open office
-	elseif (preg_match('/\.odp$/i', $tmpfile)) {
+	} elseif (preg_match('/\.odp$/i', $tmpfile)) {					// Open office
 		$mime = 'application/vnd.oasis.opendocument.presentation';
 		$imgmime = 'ooffice.png';
 		$famime = 'file-powerpoint-o';
@@ -11000,9 +10992,7 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 		$mime = 'application/vnd.oasis.opendocument.text';
 		$imgmime = 'ooffice.png';
 		$famime = 'file-word-o';
-	}  // phpcs:ignore
-	// MS Office
-	elseif (preg_match('/\.mdb$/i', $tmpfile)) {
+	} elseif (preg_match('/\.mdb$/i', $tmpfile)) {					// MS Office
 		$mime = 'application/msaccess';
 		$imgmime = 'mdb.png';
 		$famime = 'file-o';
@@ -11038,15 +11028,11 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 		$mime = 'application/x-mspowerpoint';
 		$imgmime = 'ppt.png';
 		$famime = 'file-powerpoint-o';
-	}  // phpcs:ignore
-	// Other
-	elseif (preg_match('/\.pdf$/i', $tmpfile)) {
+	} elseif (preg_match('/\.pdf$/i', $tmpfile)) {					// Other
 		$mime = 'application/pdf';
 		$imgmime = 'pdf.png';
 		$famime = 'file-pdf-o';
-	}  // phpcs:ignore
-	// Scripts
-	elseif (preg_match('/\.bat$/i', $tmpfile)) {
+	} elseif (preg_match('/\.bat$/i', $tmpfile)) {					// Scripts
 		$mime = 'text/x-bat';
 		$imgmime = 'script.png';
 		$srclang = 'dos';
@@ -11066,9 +11052,7 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 		$imgmime = 'script.png';
 		$srclang = 'bash';
 		$famime = 'file-code-o';
-	}  // phpcs:ignore
-	// Images
-	elseif (preg_match('/\.ico$/i', $tmpfile)) {
+	} elseif (preg_match('/\.ico$/i', $tmpfile)) {					// Images
 		$mime = 'image/x-icon';
 		$imgmime = 'image.png';
 		$famime = 'file-image-o';
@@ -11100,9 +11084,7 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 		$mime = 'image/webp';
 		$imgmime = 'image.png';
 		$famime = 'file-image-o';
-	}  // phpcs:ignore
-	// Calendar
-	elseif (preg_match('/\.vcs$/i', $tmpfile)) {
+	} elseif (preg_match('/\.vcs$/i', $tmpfile)) {					// Calendar
 		$mime = 'text/calendar';
 		$imgmime = 'other.png';
 		$famime = 'file-text-o';
@@ -11110,21 +11092,15 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 		$mime = 'text/calendar';
 		$imgmime = 'other.png';
 		$famime = 'file-text-o';
-	}  // phpcs:ignore
-	// Other
-	elseif (preg_match('/\.torrent$/i', $tmpfile)) {
+	} elseif (preg_match('/\.torrent$/i', $tmpfile)) {				// Other
 		$mime = 'application/x-bittorrent';
 		$imgmime = 'other.png';
 		$famime = 'file-o';
-	}  // phpcs:ignore
-	// Audio
-	elseif (preg_match('/\.(mp3|ogg|au|wav|wma|mid)$/i', $tmpfile)) {
+	} elseif (preg_match('/\.(mp3|ogg|au|wav|wma|mid)$/i', $tmpfile)) {	// Audio
 		$mime = 'audio';
 		$imgmime = 'audio.png';
 		$famime = 'file-audio-o';
-	}  // phpcs:ignore
-	// Video
-	elseif (preg_match('/\.mp4$/i', $tmpfile)) {
+	} elseif (preg_match('/\.mp4$/i', $tmpfile)) {					// Video
 		$mime = 'video/mp4';
 		$imgmime = 'video.png';
 		$famime = 'file-video-o';
@@ -11152,32 +11128,24 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 		$mime = 'video';
 		$imgmime = 'video.png';
 		$famime = 'file-video-o';
-	}  // phpcs:ignore
-	// Archive
-	elseif (preg_match('/\.(zip|rar|gz|tgz|z|cab|bz2|7z|tar|lzh|zst)$/i', $tmpfile)) {
+	} elseif (preg_match('/\.(zip|rar|gz|tgz|z|cab|bz2|7z|tar|lzh|zst)$/i', $tmpfile)) {	// Archive
 		// application/xxx where zzz is zip, ...
 		$mime = 'archive';
 		$imgmime = 'archive.png';
 		$famime = 'file-archive-o';
-	}  // phpcs:ignore
-	// Exe
-	elseif (preg_match('/\.(exe|com)$/i', $tmpfile)) {
+	} elseif (preg_match('/\.(exe|com)$/i', $tmpfile)) {					// Exe
 		$mime = 'application/octet-stream';
 		$imgmime = 'other.png';
 		$famime = 'file-o';
-	}  // phpcs:ignore
-	// Lib
-	elseif (preg_match('/\.(dll|lib|o|so|a)$/i', $tmpfile)) {
+	} elseif (preg_match('/\.(dll|lib|o|so|a)$/i', $tmpfile)) {				// Lib
 		$mime = 'library';
 		$imgmime = 'library.png';
 		$famime = 'file-o';
-	}  // phpcs:ignore
-	// Err
-	elseif (preg_match('/\.err$/i', $tmpfile)) {
+	} elseif (preg_match('/\.err$/i', $tmpfile)) {							 // phpcs:ignore
 		$mime = 'error';
 		$imgmime = 'error.png';
 		$famime = 'file-text-o';
-	}  // phpcs:ignore
+	}
 
 	// Return mimetype string
 	switch ((int) $mode) {
