@@ -291,7 +291,7 @@ class RemiseCheque extends CommonObject
 	 *	@param  User	$user 		User that delete
 	 *	@return	int
 	 */
-	public function delete($user = null)
+	public function delete($user)
 	{
 		global $conf;
 
