@@ -64,6 +64,14 @@ abstract class ModeleThirdPartyDoc extends CommonDocGenerator
  */
 abstract class ModeleThirdPartyCode
 {
+
+	/**
+	 * Constructor
+	 *
+	 *  @param DoliDB       $db     Database object
+	 */
+	abstract public function __construct($db);
+
 	/**
 	 * @var string Error code (or message)
 	 */

@@ -65,8 +65,10 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 
 	/**
 	 * 	Constructor
+	 *
+	 *	@param DoliDB		$db		Database object
 	 */
-	public function __construct()
+	public function __construct($db)
 	{
 		$this->nom = "Monkey";
 		$this->name = "Monkey";
