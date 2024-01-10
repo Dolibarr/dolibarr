@@ -5,14 +5,12 @@ if (empty($context) || !is_object($context)) {
 	exit;
 }
 
-
-
-
 ?>
 <div class="login-page__container">
 	<div class="login-screen">
 		<div class="login-screen__content">
-			<form class="login">
+			<form class="login" method="POST">
+				<?php echo $context->getFormToken(); ?>
 				<input type="hidden" name="action_login" value="login">
 
 				<div class="login__logo"><!-- see --login-logo css var to change logo --></div>

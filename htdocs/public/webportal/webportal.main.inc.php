@@ -116,7 +116,7 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 			//) {
 			//	$context->setEventMessage($langs->trans("ErrorBadValueForCode"), 'errors');
 			//	if (empty($focus_element)) $focus_element = 'security_code';
-			//	$error++;s
+			//	$error++;
 			//}
 
 			if (!$error) {

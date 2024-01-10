@@ -649,16 +649,16 @@ class Context
 	 *
 	 * @param	string	$login		Login
 	 * @param	string	$pass		Password
-	 * @return  int		Third-party account id
+	 * @return  int		Third-party account id || <0 if error
 	 */
 	public function getThirdPartyAccountFromLogin($login, $pass)
 	{
 		$id = 0;
 
-		$sql = "SELECT sa.rowid as id";
+		$sql = "SELECT sa.rowid as id, sa.pass_crypted";
 		$sql .= " FROM " . $this->db->prefix() . "societe_account as sa";
 		$sql .= " WHERE BINARY sa.login = '" . $this->db->escape($login) . "'"; // case sensitive
-		$sql .= " AND BINARY sa.pass_crypted = '" . $this->db->escape($pass) . "'"; // case sensitive
+		//$sql .= " AND BINARY sa.pass_crypted = '" . $this->db->escape($pass) . "'"; // case sensitive
 		$sql .= " AND sa.site = 'dolibarr_portal'";
 		$sql .= " AND sa.status = 1";
 		$sql .= " AND sa.entity IN (" . getEntity('societe') . ")";
@@ -667,8 +667,41 @@ class Context
 		$result = $this->db->query($sql);
 		if ($result) {
 			if ($this->db->num_rows($result) == 1) {
+				$passok = false;
 				$obj = $this->db->fetch_object($result);
-				$id = $obj->id;
+				if ($obj) {
+					$passcrypted = $obj->pass_crypted;
+
+					// Check crypted password
+					$cryptType = '';
+					if (getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {
+						$cryptType = getDolGlobalString('DATABASE_PWD_ENCRYPTED');
+					}
+
+					// By default, we use default setup for encryption rule
+					if (!in_array($cryptType, array('auto'))) {
+						$cryptType = 'auto';
+					}
+
+					// Check crypted password according to crypt algorithm
+					if ($cryptType == 'auto') {
+						if ($passcrypted && dol_verifyHash($pass, $passcrypted, '0')) {
+							$passok = true;
+						}
+					}
+
+					// Password ok ?
+					if ($passok) {
+						$id = $obj->id;
+					} else {
+						dol_syslog(__METHOD__ .' Authentication KO bad password for ' . $login . ', cryptType=' . $cryptType, LOG_NOTICE);
+						sleep(1); // Brut force protection. Must be same delay when login is not valid
+						return -3;
+					}
+				}
+			} else {
+				dol_syslog(__METHOD__ . ' Many third-party account found for login"' . $login . '" and site="dolibarr_portal"', LOG_ERR);
+				return -2;
 			}
 		} else {
 			$this->error = $this->db->lasterror();
