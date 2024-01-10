@@ -1,7 +1,7 @@
 parameters:
 	bootstrapFiles:
 		- build/phpstan/bootstrap_action.php
-	tmpDir: ./build/phpstan/tmp
+	tmpDir: ./github/tmp
 	parallel:
 		jobSize: 20
 		processTimeout: 600.0

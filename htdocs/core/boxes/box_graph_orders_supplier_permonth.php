@@ -33,16 +33,7 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
 	public $boxlabel = "BoxSuppliersOrdersPerMonth";
 	public $depends = array("fournisseur");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 	public $widgettype = 'graph';
-
 
 	/**
 	 *  Constructor

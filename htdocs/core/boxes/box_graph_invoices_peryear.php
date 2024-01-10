@@ -34,15 +34,6 @@ class box_graph_invoices_peryear extends ModeleBoxes
 	public $depends  = array("facture");
 
 	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
-
-	/**
 	 *  Constructor
 	 *
 	 * 	@param	DoliDB	$db			Database handler
