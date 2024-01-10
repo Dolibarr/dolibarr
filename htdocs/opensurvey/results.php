@@ -165,6 +165,7 @@ if (GETPOST("ajoutercolonne") && GETPOST('nouvellecolonne') && $object->format =
 		dol_print_error($db);
 	} else {
 		header('Location: results.php?id='.$object->id_sondage);
+		exit;
 	}
 }
 

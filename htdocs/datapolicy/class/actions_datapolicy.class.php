@@ -127,6 +127,7 @@ class ActionsDatapolicy extends CommonHookActions
 
 					setEventMessages($langs->trans('ANONYMISER_SUCCESS'), array());
 					header('Location:'.$_SERVER["PHP_SELF"]."?socid=".$object->id);
+					exit;
 				}
 			}
 		} elseif ($parameters['currentcontext'] == 'contactcard' && $action == 'send_datapolicy') {

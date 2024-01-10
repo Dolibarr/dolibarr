@@ -987,8 +987,8 @@ if (!defined('NOLOGIN')) {
 					// Account has been removed after login
 					dol_syslog("Can't load user even if session logged. _SESSION['dol_login']=".$login, LOG_WARNING);
 			} elseif ($user->flagdelsessionsbefore && !empty($_SESSION["dol_logindate"]) && $user->flagdelsessionsbefore > $_SESSION["dol_logindate"]) {
-						// Session is no more valid
-							dol_syslog("The user has a date for session invalidation = ".$user->flagdelsessionsbefore." and a session date = ".$_SESSION["dol_logindate"].". We must invalidate its sessions.");
+					// Session is no more valid
+					dol_syslog("The user has a date for session invalidation = ".$user->flagdelsessionsbefore." and a session date = ".$_SESSION["dol_logindate"].". We must invalidate its sessions.");
 			} elseif ($user->status != $user::STATUS_ENABLED) {
 				// User is not enabled
 				dol_syslog("The user login is disabled");
@@ -996,10 +996,10 @@ if (!defined('NOLOGIN')) {
 				// User validity dates are no more valid
 				dol_syslog("The user login has a validity between [".$user->datestartvalidity." and ".$user->dateendvalidity."], curren date is ".dol_now());
 			}
-							session_destroy();
-							session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie
-							session_name($sessionname);
-							session_start();
+			session_destroy();
+			session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie
+			session_name($sessionname);
+			session_start();
 
 			if ($resultFetchUser == 0) {
 				$langs->loadLangs(array('main', 'errors'));
@@ -1019,23 +1019,23 @@ if (!defined('NOLOGIN')) {
 				$user->context['audit'] = 'ErrorUserSessionWasInvalidated - login='.$login;
 			}
 
-							// Call trigger
-							$result = $user->call_trigger('USER_LOGIN_FAILED', $user);
+			// Call trigger
+			$result = $user->call_trigger('USER_LOGIN_FAILED', $user);
 			if ($result < 0) {
 				$error++;
 			}
-							// End call triggers
+			// End call triggers
 
-							// Hooks on failed login
-							$action = '';
-							$hookmanager->initHooks(array('login'));
-							$parameters = array('dol_authmode' => (isset($dol_authmode) ? $dol_authmode : ''), 'dol_loginmesg' => $_SESSION["dol_loginmesg"]);
-							$reshook = $hookmanager->executeHooks('afterLoginFailed', $parameters, $user, $action); // Note that $action and $object may have been modified by some hooks
+			// Hooks on failed login
+			$action = '';
+			$hookmanager->initHooks(array('login'));
+			$parameters = array('dol_authmode' => (isset($dol_authmode) ? $dol_authmode : ''), 'dol_loginmesg' => $_SESSION["dol_loginmesg"]);
+			$reshook = $hookmanager->executeHooks('afterLoginFailed', $parameters, $user, $action); // Note that $action and $object may have been modified by some hooks
 			if ($reshook < 0) {
 				$error++;
 			}
 
-							$paramsurl = array();
+			$paramsurl = array();
 			if (GETPOST('textbrowser', 'int')) {
 				$paramsurl[] = 'textbrowser='.GETPOST('textbrowser', 'int');
 			}
@@ -1045,8 +1045,9 @@ if (!defined('NOLOGIN')) {
 			if (GETPOST('lang', 'aZ09')) {
 				$paramsurl[] = 'lang='.GETPOST('lang', 'aZ09');
 			}
-							header('Location: '.DOL_URL_ROOT.'/index.php'.(count($paramsurl) ? '?'.implode('&', $paramsurl) : ''));
-							exit;
+
+			header('Location: '.DOL_URL_ROOT.'/index.php'.(count($paramsurl) ? '?'.implode('&', $paramsurl) : ''));
+			exit;
 		} else {
 			// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 			$hookmanager->initHooks(array('main'));
