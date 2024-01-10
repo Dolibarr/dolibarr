@@ -36,17 +36,7 @@ class box_task extends ModeleBoxes
 	public $boxlabel;
 	public $depends = array("projet");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-	public $enabled = 1; // enable because fixed ;-).
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
+	public $enabled = 1;
 
 	/**
 	 *  Constructor
