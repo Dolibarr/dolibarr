@@ -44,7 +44,7 @@ jobs:
       - name: Restore phpstan cache
         uses: actions/cache/restore@v3
         with:
-          path: ./tmp
+          path: ./github/tmp
           key: "phpstan-cache-PR-${{ matrix.php-version }}-${{ github.run_id }}"
           restore-keys: |
             phpstan-cache-PR-${{ matrix.php-version }}-
@@ -57,5 +57,5 @@ jobs:
         uses: actions/cache/save@v3
         if: always()
         with:
-          path: ./tmp
+          path: ./github/tmp
           key: "phpstan-cache-PR-${{ matrix.php-version }}-${{ github.run_id }}"
