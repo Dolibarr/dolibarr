@@ -282,7 +282,7 @@ if (count($tasksarray) > 0) {
 	foreach ($tasksarray as $key => $val) {	// Task array are sorted by "project, position, date"
 		$task->fetch($val->id, '');
 
-		$idparent = ($val->fk_parent ? $val->fk_parent : '-'.$val->fk_project); // If start with -, id is a project id
+		$idparent = ($val->fk_task_parent ? $val->fk_task_parent : '-'.$val->fk_project); // If start with -, id is a project id
 
 		$tasks[$taskcursor]['task_id'] = $val->id;
 		$tasks[$taskcursor]['task_alternate_id'] = ($taskcursor + 1); // An id that has same order than position (required by ganttchart)
@@ -294,7 +294,7 @@ if (count($tasksarray) > 0) {
 		$tasks[$taskcursor]['task_position'] = $val->rang;
 		$tasks[$taskcursor]['task_planned_workload'] = $val->planned_workload;
 
-		if ($val->fk_parent != 0 && $task->hasChildren() > 0) {
+		if ($val->fk_task_parent != 0 && $task->hasChildren() > 0) {
 			$tasks[$taskcursor]['task_is_group'] = 1;
 			$tasks[$taskcursor]['task_css'] = 'ggroupblack';
 			//$tasks[$taskcursor]['task_css'] = 'gtaskblue';
