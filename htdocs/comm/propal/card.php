@@ -241,6 +241,7 @@ if (empty($reshook)) {
 		$result = $object->setCancel($user);
 		if ($result > 0) {
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+			exit();
 		} else {
 			$langs->load("errors");
 			setEventMessages($object->error, $object->errors, 'errors');
