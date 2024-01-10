@@ -165,15 +165,15 @@ if (empty($user->socid)) {
 
 $checkedtypetiers = 0;
 $arrayfields = array(
-	'c.ref'=>array('label'=>"Ref", 'checked'=>1, 'position'=>5),
-	'c.ref_client'=>array('label'=>"RefCustomerOrder", 'checked'=>-1, 'position'=>10),
+	'c.ref'=>array('label'=>"Ref", 'checked'=>1, 'position'=>5, 'searchall'=>1),
+	'c.ref_client'=>array('label'=>"RefCustomerOrder", 'checked'=>-1, 'position'=>10, 'searchall'=>1),
 	'p.ref'=>array('label'=>"ProjectRef", 'checked'=>-1, 'enabled'=>(!isModEnabled('project') ? 0 : 1), 'position'=>20),
 	'p.title'=>array('label'=>"ProjectLabel", 'checked'=>0, 'enabled'=>(!isModEnabled('project') ? 0 : 1), 'position'=>25),
-	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1, 'position'=>30),
-	's.name_alias'=>array('label'=>"AliasNameShort", 'checked'=>-1, 'position'=>31),
+	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1, 'position'=>30, 'searchall'=>1),
+	's.name_alias'=>array('label'=>"AliasNameShort", 'checked'=>-1, 'position'=>31, 'searchall'=>1),
 	's2.nom'=>array('label'=>'ParentCompany', 'position'=>32, 'checked'=>0),
-	's.town'=>array('label'=>"Town", 'checked'=>-1, 'position'=>35),
-	's.zip'=>array('label'=>"Zip", 'checked'=>-1, 'position'=>40),
+	's.town'=>array('label'=>"Town", 'checked'=>-1, 'position'=>35, 'searchall'=>1),
+	's.zip'=>array('label'=>"Zip", 'checked'=>-1, 'position'=>40, 'searchall'=>1),
 	'state.nom'=>array('label'=>"StateShort", 'checked'=>0, 'position'=>45),
 	'country.code_iso'=>array('label'=>"Country", 'checked'=>0, 'position'=>50),
 	'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers, 'position'=>55),
@@ -200,13 +200,21 @@ $arrayfields = array(
 	'c.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>120),
 	'c.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>125),
 	'c.date_cloture'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>130),
-	'c.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'enabled'=>(!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES')), 'position'=>135),
+	'c.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'enabled'=>(!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES')), 'position'=>135, 'searchall'=>1),
 	'c.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'enabled'=>(!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES')), 'position'=>140),
 	'shippable'=>array('label'=>"Shippable", 'checked'=>1,'enabled'=>(isModEnabled("expedition")), 'position'=>990),
 	'c.facture'=>array('label'=>"Billed", 'checked'=>1, 'enabled'=>(!getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT')), 'position'=>995),
 	'c.import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>999),
 	'c.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000)
 );
+
+$parameters = array('fieldstosearchall'=>$fieldstosearchall);
+$reshook = $hookmanager->executeHooks('completeFieldsToSearchAll', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook > 0) {
+	$fieldstosearchall = empty($hookmanager->resArray['fieldstosearchall']) ? array() : $hookmanager->resArray['fieldstosearchall'];
+} elseif ($reshook == 0) {
+	$fieldstosearchall = array_merge($fieldstosearchall, empty($hookmanager->resArray['fieldstosearchall']) ? array() : $hookmanager->resArray['fieldstosearchall']);
+}
 
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -1162,7 +1170,7 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $s
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-order page-list');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 

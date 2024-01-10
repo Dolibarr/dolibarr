@@ -56,7 +56,7 @@ $list = array(
  * Actions
  */
 
-$accounting_mode = !getDolGlobalString('ACCOUNTING_MODE') ? 'RECETTES-DEPENSES' : $conf->global->ACCOUNTING_MODE;
+$accounting_mode = getDolGlobalString('ACCOUNTING_MODE', 'RECETTES-DEPENSES');
 
 if ($action == 'update') {
 	$error = 0;

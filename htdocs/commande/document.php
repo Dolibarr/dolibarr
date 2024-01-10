@@ -58,10 +58,10 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 if (getDolGlobalString('MAIN_DOC_SORT_FIELD')) {
-	$sortfield = $conf->global->MAIN_DOC_SORT_FIELD;
+	$sortfield = getDolGlobalString('MAIN_DOC_SORT_FIELD');
 }
 if (getDolGlobalString('MAIN_DOC_SORT_ORDER')) {
-	$sortorder = $conf->global->MAIN_DOC_SORT_ORDER;
+	$sortorder = getDolGlobalString('MAIN_DOC_SORT_ORDER');
 }
 
 if (!$sortorder) {
@@ -100,7 +100,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
  */
 $title = $object->ref." - ".$langs->trans('Documents');
 $help_url = 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes|DE:Modul_Kundenaufträge';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-order page-card_documents');
 
 $form = new Form($db);
 

@@ -300,7 +300,7 @@ class Contrat extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('CONTRACT_ADDON') . ".php";
-			$classname = $conf->global->CONTRACT_ADDON;
+			$classname = getDolGlobalString('CONTRACT_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -2292,7 +2292,7 @@ class Contrat extends CommonObject
 		$this->from = " FROM ".MAIN_DB_PREFIX."contrat as c";
 		$this->from .= ", ".MAIN_DB_PREFIX."contratdet as cd";
 		$this->from .= ", ".MAIN_DB_PREFIX."societe as s";
-		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$this->from .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 
@@ -2323,7 +2323,7 @@ class Contrat extends CommonObject
 		if ($user->socid) {
 			$sql .= " AND c.fk_soc = ".((int) $user->socid);
 		}
-		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 
@@ -2391,7 +2391,7 @@ class Contrat extends CommonObject
 		$sql = "SELECT count(c.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
-		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
@@ -2555,7 +2555,7 @@ class Contrat extends CommonObject
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('CONTRACT_ADDON_PDF')) {
-				$modele = $conf->global->CONTRACT_ADDON_PDF;
+				$modele = getDolGlobalString('CONTRACT_ADDON_PDF');
 			}
 		}
 
@@ -2655,7 +2655,7 @@ class Contrat extends CommonObject
 
 		// Set ref
 		require_once DOL_DOCUMENT_ROOT."/core/modules/contract/" . getDolGlobalString('CONTRACT_ADDON').'.php';
-		$obj = $conf->global->CONTRACT_ADDON;
+		$obj = getDolGlobalString('CONTRACT_ADDON');
 		$modContract = new $obj();
 		$clonedObj->ref = $modContract->getNextValue($objsoc, $clonedObj);
 

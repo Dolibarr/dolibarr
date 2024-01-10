@@ -61,7 +61,7 @@ if (defined('PHP-BARCODE_PATH_COMMAND')) {
 } else {
 	$genbarcode_loc = '';
 	if (getDolGlobalString('GENBARCODE_LOCATION')) {
-		$genbarcode_loc = $conf->global->GENBARCODE_LOCATION;
+		$genbarcode_loc = getDolGlobalString('GENBARCODE_LOCATION');
 	}
 }
 
@@ -510,6 +510,8 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
 		header("Content-Type: image/png; name=\"barcode.png\"");
 		imagepng($im);
 	}
+
+	return;
 }
 
 /**

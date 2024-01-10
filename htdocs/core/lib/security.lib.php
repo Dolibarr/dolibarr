@@ -1254,9 +1254,8 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
  */
 function getMaxFileSizeArray()
 {
-	global $conf;
+	$max = getDolGlobalString('MAIN_UPLOAD_DOC'); // In Kb
 
-	$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
 	$maxphp = @ini_get('upload_max_filesize'); // In unknown
 	if (preg_match('/k$/i', $maxphp)) {
 		$maxphp = preg_replace('/k$/i', '', $maxphp);

@@ -206,7 +206,7 @@ if (empty($reshook)) {
 }
 
 if ($action == 'export_csv') {
-	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
+	$sep = getDolGlobalString('ACCOUNTING_EXPORT_SEPARATORCSV');
 
 	$filename = 'balance';
 	$type_export = 'balance';

@@ -124,7 +124,7 @@ function fetchConnectionToken() {
 		<?php
 		$urlconnexiontoken = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=getConnexionToken&token='.newToken().'&servicestatus='.urlencode($servicestatus);
 		if (getDolGlobalString('STRIPE_LOCATION')) {
-			$urlconnexiontoken .= '&location='.urlencode($conf->global->STRIPE_LOCATION);
+			$urlconnexiontoken .= '&location='.urlencode(getDolGlobalString('STRIPE_LOCATION'));
 		}
 		if (!empty($stripeacc)) {
 			$urlconnexiontoken .= '&stripeacc='.urlencode($stripeacc);
@@ -564,7 +564,7 @@ $action_buttons = array(
 		"class" => "poscolordelete"
 	),
 );
-$numpad = $conf->global->TAKEPOS_NUMPAD;
+$numpad = getDolGlobalString('TAKEPOS_NUMPAD');
 if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && getDolGlobalString('STRIPE_CARD_PRESENT')) {
 	print '<span id="card-present-alert">';
 	dol_htmloutput_mesg($langs->trans('ConnectingToStripeTerminal', 'Stripe'), '', 'warning', 1);

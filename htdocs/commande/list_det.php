@@ -85,7 +85,7 @@ if (isModEnabled('categorie')) {
 	if (GETPOSTISSET('formfilteraction')) {
 		$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator');
 	} elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
-		$searchCategoryProductOperator = $conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT;
+		$searchCategoryProductOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
 	}
 }
 

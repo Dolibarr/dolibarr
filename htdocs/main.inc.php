@@ -987,8 +987,8 @@ if (!defined('NOLOGIN')) {
 					// Account has been removed after login
 					dol_syslog("Can't load user even if session logged. _SESSION['dol_login']=".$login, LOG_WARNING);
 			} elseif ($user->flagdelsessionsbefore && !empty($_SESSION["dol_logindate"]) && $user->flagdelsessionsbefore > $_SESSION["dol_logindate"]) {
-						// Session is no more valid
-							dol_syslog("The user has a date for session invalidation = ".$user->flagdelsessionsbefore." and a session date = ".$_SESSION["dol_logindate"].". We must invalidate its sessions.");
+					// Session is no more valid
+					dol_syslog("The user has a date for session invalidation = ".$user->flagdelsessionsbefore." and a session date = ".$_SESSION["dol_logindate"].". We must invalidate its sessions.");
 			} elseif ($user->status != $user::STATUS_ENABLED) {
 				// User is not enabled
 				dol_syslog("The user login is disabled");
@@ -996,10 +996,10 @@ if (!defined('NOLOGIN')) {
 				// User validity dates are no more valid
 				dol_syslog("The user login has a validity between [".$user->datestartvalidity." and ".$user->dateendvalidity."], curren date is ".dol_now());
 			}
-							session_destroy();
-							session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie
-							session_name($sessionname);
-							session_start();
+			session_destroy();
+			session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie
+			session_name($sessionname);
+			session_start();
 
 			if ($resultFetchUser == 0) {
 				$langs->loadLangs(array('main', 'errors'));
@@ -1019,23 +1019,23 @@ if (!defined('NOLOGIN')) {
 				$user->context['audit'] = 'ErrorUserSessionWasInvalidated - login='.$login;
 			}
 
-							// Call trigger
-							$result = $user->call_trigger('USER_LOGIN_FAILED', $user);
+			// Call trigger
+			$result = $user->call_trigger('USER_LOGIN_FAILED', $user);
 			if ($result < 0) {
 				$error++;
 			}
-							// End call triggers
+			// End call triggers
 
-							// Hooks on failed login
-							$action = '';
-							$hookmanager->initHooks(array('login'));
-							$parameters = array('dol_authmode' => (isset($dol_authmode) ? $dol_authmode : ''), 'dol_loginmesg' => $_SESSION["dol_loginmesg"]);
-							$reshook = $hookmanager->executeHooks('afterLoginFailed', $parameters, $user, $action); // Note that $action and $object may have been modified by some hooks
+			// Hooks on failed login
+			$action = '';
+			$hookmanager->initHooks(array('login'));
+			$parameters = array('dol_authmode' => (isset($dol_authmode) ? $dol_authmode : ''), 'dol_loginmesg' => $_SESSION["dol_loginmesg"]);
+			$reshook = $hookmanager->executeHooks('afterLoginFailed', $parameters, $user, $action); // Note that $action and $object may have been modified by some hooks
 			if ($reshook < 0) {
 				$error++;
 			}
 
-							$paramsurl = array();
+			$paramsurl = array();
 			if (GETPOST('textbrowser', 'int')) {
 				$paramsurl[] = 'textbrowser='.GETPOST('textbrowser', 'int');
 			}
@@ -1045,8 +1045,9 @@ if (!defined('NOLOGIN')) {
 			if (GETPOST('lang', 'aZ09')) {
 				$paramsurl[] = 'lang='.GETPOST('lang', 'aZ09');
 			}
-							header('Location: '.DOL_URL_ROOT.'/index.php'.(count($paramsurl) ? '?'.implode('&', $paramsurl) : ''));
-							exit;
+
+			header('Location: '.DOL_URL_ROOT.'/index.php'.(count($paramsurl) ? '?'.implode('&', $paramsurl) : ''));
+			exit;
 		} else {
 			// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 			$hookmanager->initHooks(array('main'));
@@ -1715,10 +1716,6 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		if (empty($conf->dol_use_jmobile)) {
 			print '<link rel="shortcut icon" type="image/x-icon" href="'.$favicon.'"/>'."\n"; // Not required into an Android webview
 		}
-
-		//if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="top" title="'.$langs->trans("Home").'" href="'.(DOL_URL_ROOT?DOL_URL_ROOT:'/').'">'."\n";
-		//if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="copyright" title="GNU General Public License" href="https://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
-		//if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="author" title="Dolibarr Development Team" href="https://www.dolibarr.org">'."\n";
 
 		// Mobile appli like icon
 		$manifest = DOL_URL_ROOT.'/theme/'.$conf->theme.'/manifest.json.php';
@@ -3363,7 +3360,7 @@ function main_area($title = '')
 			print '<table class="centpercent div-table-responsive">'."\n";
 			print '<tbody>';
 			print '<tr><td rowspan="0" class="width20p">';
-			if ($conf->global->MAIN_SHOW_LOGO && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') && getDolGlobalString('MAIN_INFO_SOCIETE_LOGO')) {
+			if (getDolGlobalString('MAIN_SHOW_LOGO') && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') && getDolGlobalString('MAIN_INFO_SOCIETE_LOGO')) {
 				print '<img id="mysoc-info-header-logo" style="max-width:100%" alt="" src="'.DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=mycompany&file='.urlencode('logos/'.dol_escape_htmltag(getDolGlobalString('MAIN_INFO_SOCIETE_LOGO'))).'">';
 			}
 			print '</td><td  rowspan="0" class="width50p"></td></tr>'."\n";
@@ -3674,7 +3671,7 @@ if (!function_exists("llxFooter")) {
 
 						print "\n".'<!-- Includes JS for Ping of Dolibarr forceping='.$forceping.' MAIN_FIRST_PING_OK_DATE='.getDolGlobalString("MAIN_FIRST_PING_OK_DATE").' MAIN_FIRST_PING_OK_ID='.getDolGlobalString("MAIN_FIRST_PING_OK_ID").' MAIN_LAST_PING_KO_DATE='.getDolGlobalString("MAIN_LAST_PING_KO_DATE").' -->'."\n";
 						print "\n<!-- JS CODE TO ENABLE the anonymous Ping -->\n";
-						$url_for_ping = (!getDolGlobalString('MAIN_URL_FOR_PING') ? "https://ping.dolibarr.org/" : $conf->global->MAIN_URL_FOR_PING);
+						$url_for_ping = getDolGlobalString('MAIN_URL_FOR_PING', "https://ping.dolibarr.org/");
 						// Try to guess the distrib used
 						$distrib = 'standard';
 						if ($_SERVER["SERVER_ADMIN"] == 'doliwamp@localhost') {

@@ -13,7 +13,7 @@
  * Copyright (C) 2014		Cédric GROSS				<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2018-2023  Frédéric France             <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France             <frederic.france@netlogic.fr>
  * Copyright (C) 2019-2023  Thibault Foucart            <support@ptibogxiv.net>
  * Copyright (C) 2020       Open-Dsi         			<support@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL         	<gauthier.verdol@atm-consulting.fr>
@@ -3552,7 +3552,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 		return '';
 	}
 	if (getDolGlobalString('MAIN_PHONE_SEPAR')) {
-		$separ = $conf->global->MAIN_PHONE_SEPAR;
+		$separ = getDolGlobalString('MAIN_PHONE_SEPAR');
 	}
 	if (empty($countrycode) && is_object($mysoc)) {
 		$countrycode = $mysoc->country_code;
@@ -5465,7 +5465,7 @@ function dol_print_error_email($prefixcode, $errormessage = '', $errormessages =
 	global $langs, $conf;
 
 	if (empty($email)) {
-		$email = $conf->global->MAIN_INFO_SOCIETE_MAIL;
+		$email = getDolGlobalString('MAIN_INFO_SOCIETE_MAIL');
 	}
 
 	$langs->load("errors");
@@ -5911,7 +5911,7 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 			//$pagesizechoices.=',0:'.$langs->trans("All");     // Not yet supported
 			//$pagesizechoices.=',2:2';
 			if (getDolGlobalString('MAIN_PAGESIZE_CHOICES')) {
-				$pagesizechoices = $conf->global->MAIN_PAGESIZE_CHOICES;
+				$pagesizechoices = getDolGlobalString('MAIN_PAGESIZE_CHOICES');
 			}
 
 			print '<li class="pagination">';
@@ -6091,7 +6091,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	}
 	// Si on depasse max
 	if ($trunc && $nbdecimal > $conf->global->MAIN_MAX_DECIMALS_SHOWN) {
-		$nbdecimal = $conf->global->MAIN_MAX_DECIMALS_SHOWN;
+		$nbdecimal = getDolGlobalString('MAIN_MAX_DECIMALS_SHOWN');
 		if (preg_match('/\.\.\./i', $conf->global->MAIN_MAX_DECIMALS_SHOWN)) {
 			// Si un affichage est tronque, on montre des ...
 			$end = '...';
@@ -6101,9 +6101,9 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	// If force rounding
 	if ((string) $forcerounding != '-1') {
 		if ($forcerounding === 'MU') {
-			$nbdecimal = $conf->global->MAIN_MAX_DECIMALS_UNIT;
+			$nbdecimal = getDolGlobalString('MAIN_MAX_DECIMALS_UNIT');
 		} elseif ($forcerounding === 'MT') {
-			$nbdecimal = $conf->global->MAIN_MAX_DECIMALS_TOT;
+			$nbdecimal = getDolGlobalString('MAIN_MAX_DECIMALS_TOT');
 		} elseif ($forcerounding >= 0) {
 			$nbdecimal = $forcerounding;
 		}
@@ -6232,9 +6232,9 @@ function price2num($amount, $rounding = '', $option = 0)
 	if ($rounding) {
 		$nbofdectoround = '';
 		if ($rounding == 'MU') {
-			$nbofdectoround = $conf->global->MAIN_MAX_DECIMALS_UNIT;
+			$nbofdectoround = getDolGlobalString('MAIN_MAX_DECIMALS_UNIT');
 		} elseif ($rounding == 'MT') {
-			$nbofdectoround = $conf->global->MAIN_MAX_DECIMALS_TOT;
+			$nbofdectoround = getDolGlobalString('MAIN_MAX_DECIMALS_TOT');
 		} elseif ($rounding == 'MS') {
 			$nbofdectoround = isset($conf->global->MAIN_MAX_DECIMALS_STOCK) ? $conf->global->MAIN_MAX_DECIMALS_STOCK : 5;
 		} elseif ($rounding == 'CU') {
@@ -6737,7 +6737,7 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 			// or '1.23 (CODE)'
 			$defaulttx = '';
 			if (getDolGlobalString('MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS') != 'none') {
-				$defaulttx = $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS;
+				$defaulttx = getDolGlobalString('MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS');
 			}
 			/*if (preg_match('/\((.*)\)/', $defaulttx, $reg)) {
 				$defaultcode = $reg[1];
@@ -8531,7 +8531,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				if (is_object($object) && $object->element == 'propal') {
 					$substitutionarray['__URL_PROPOSAL__'] = DOL_MAIN_URL_ROOT."/comm/propal/card.php?id=".$object->id;
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
-					$substitutionarray['__ONLINE_SIGN_URL__'] = getOnlineSignatureUrl(0, 'proposal', $object->ref);
+					$substitutionarray['__ONLINE_SIGN_URL__'] = getOnlineSignatureUrl(0, 'proposal', $object->ref, 1, $object);
 				}
 				if (is_object($object) && $object->element == 'commande') {
 					$substitutionarray['__URL_ORDER__'] = DOL_MAIN_URL_ROOT."/commande/card.php?id=".$object->id;
@@ -8542,12 +8542,12 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				if (is_object($object) && $object->element == 'contrat') {
 					$substitutionarray['__URL_CONTRACT__'] = DOL_MAIN_URL_ROOT."/contrat/card.php?id=".$object->id;
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
-					$substitutionarray['__ONLINE_SIGN_URL__'] = getOnlineSignatureUrl(0, 'contract', $object->ref);
+					$substitutionarray['__ONLINE_SIGN_URL__'] = getOnlineSignatureUrl(0, 'contract', $object->ref, 1, $object);
 				}
 				if (is_object($object) && $object->element == 'fichinter') {
 					$substitutionarray['__URL_FICHINTER__'] = DOL_MAIN_URL_ROOT."/fichinter/card.php?id=".$object->id;
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
-					$substitutionarray['__ONLINE_SIGN_FICHINTER_URL__'] = getOnlineSignatureUrl(0, 'fichinter', $object->ref);
+					$substitutionarray['__ONLINE_SIGN_FICHINTER_URL__'] = getOnlineSignatureUrl(0, 'fichinter', $object->ref, 1, $object);
 				}
 				if (is_object($object) && $object->element == 'supplier_proposal') {
 					$substitutionarray['__URL_SUPPLIER_PROPOSAL__'] = DOL_MAIN_URL_ROOT."/supplier_proposal/card.php?id=".$object->id;
@@ -9454,7 +9454,7 @@ function dol_osencode($str)
 		$tmp = 'utf-8'; // By default for other
 	}
 	if (getDolGlobalString('MAIN_FILESYSTEM_ENCODING')) {
-		$tmp = $conf->global->MAIN_FILESYSTEM_ENCODING;
+		$tmp = getDolGlobalString('MAIN_FILESYSTEM_ENCODING');
 	}
 
 	if ($tmp == 'iso-8859-1') {
@@ -10349,7 +10349,7 @@ function printCommonFooter($zone = 'private')
 				if (getDolGlobalString('MEMCACHED_SERVER')) {
 					print 'MEMCACHED_SERVER=' . getDolGlobalString('MEMCACHED_SERVER').' - ';
 				}
-				print 'MAIN_OPTIMIZE_SPEED='.(isset($conf->global->MAIN_OPTIMIZE_SPEED) ? $conf->global->MAIN_OPTIMIZE_SPEED : 'off');
+				print 'MAIN_OPTIMIZE_SPEED=' . getDolGlobalString('MAIN_OPTIMIZE_SPEED', 'off');
 				if (!empty($micro_start_time)) {   // Works only if MAIN_SHOW_TUNING_INFO is defined at $_SERVER level. Not in global variable.
 					$micro_end_time = microtime(true);
 					print ' - Build time: '.ceil(1000 * ($micro_end_time - $micro_start_time)).' ms';
@@ -12167,6 +12167,8 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '')
 		// extrafield for a service, it is not supported and not found when editing the product/service card. So we must keep 'product' for extrafields
 		// of service and we will return properties of a product.
 		$ismodenabled = (isModEnabled('product') || isModEnabled('service'));
+	} elseif ($element_prop['module'] == 'societeaccount') {
+		$ismodenabled = isModEnabled('website') || isModEnabled('webportal');
 	} else {
 		$ismodenabled = isModEnabled($element_prop['module']);
 	}

@@ -1872,7 +1872,7 @@ if ($id > 0) {
 		print '<label for="fullday">'.$langs->trans("EventOnFullDay").'</label>';
 
 		// // Recurring event
-		// $userepeatevent = ($conf->global->MAIN_FEATURES_LEVEL == 2 ? 1 : 0);
+		// $userepeatevent = (getDolGlobalInt('MAIN_FEATURES_LEVEL') == 2 ? 1 : 0);
 		// if ($userepeatevent) {
 		// 	// Repeat
 		// 	//print '<tr><td></td><td colspan="3">';
@@ -2048,7 +2048,7 @@ if ($id > 0) {
 			print '<div>';
 			$events = array(); // 'method'=parameter action of url, 'url'=url to call that return new list of contacts
 			$events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
-			// TODO Refresh also list of project if $conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY not defined with list linked to socid ?
+			// TODO Refresh also list of project if conf PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY not defined with list linked to socid ?
 			// FIXME If we change company, we may get a project that does not match
 			print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company($object->socid, 'socid', '', 'SelectThirdParty', 1, 0, $events, 0, 'minwidth200');
 			print '</div>';

@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/action/rapport.class.php
+ *	\file       htdocs/core/modules/action/doc/pdf_standard_actions.class.php
  *	\ingroup    commercial
  *	\brief      File to build PDF with events
  */
@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 /**
  *	Class to generate event report
  */
-class CommActionRapport
+class pdf_standard_actions
 {
 	/**
 	 * @var DoliDB Database handler.
@@ -120,11 +120,10 @@ class CommActionRapport
 	 *      Write the object to document file to disk
 	 *
 	 *      @param	int			$socid			Thirdparty id
-	 *      @param  int			$catid			Cat id
 	 *      @param  Translate	$outputlangs    Lang object for output language
 	 *      @return int             			1=OK, 0=KO
 	 */
-	public function write_file($socid = 0, $catid = 0, $outputlangs = null)
+	public function write_file($socid, $outputlangs)
 	{
 		// phpcs:enable
 		global $user, $conf, $langs, $hookmanager;
@@ -224,7 +223,7 @@ class CommActionRapport
 	/**
 	 * Write content of pages
 	 *
-	 * @param   PDF			$pdf			Object pdf
+	 * @param   TCPDF		$pdf			Object pdf
 	 * @param	Translate   $outputlangs	Object langs
 	 * @return  int							1
 	 */
@@ -350,11 +349,11 @@ class CommActionRapport
 	}
 
 	/**
-	 *  Show top header of page.
+	 *	Show top header of page.
 	 *
-	 * 	@param	PDF			$pdf     		Object PDF
-	 *  @param  Translate	$outputlangs	Object lang for output
-	 * 	@param	int			$pagenb			Page nb
+	 *	@param	TCPDF		$pdf     		Object PDF
+	 *	@param  Translate	$outputlangs	Object lang for output
+	 *	@param	int			$pagenb			Page nb
 	 *  @return	integer
 	 */
 	private function _pagehead(&$pdf, $outputlangs, $pagenb)

@@ -558,7 +558,7 @@ if ($action == 'edit') {
 			print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_EMAIL_TLS").'</td><td>';
 			if (isset($conf->global->MAIN_MAIL_SENDMODE_TICKET) && in_array($conf->global->MAIN_MAIL_SENDMODE_TICKET, array('smtps', 'swiftmailer'))) {
 				if (function_exists('openssl_open')) {
-					print yn($conf->global->MAIN_MAIL_EMAIL_TLS_TICKET);
+					print yn(getDolGlobalString('MAIN_MAIL_EMAIL_TLS_TICKET'));
 				} else {
 					print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
 				}
@@ -575,7 +575,7 @@ if ($action == 'edit') {
 			print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_EMAIL_STARTTLS").'</td><td>';
 			if (isset($conf->global->MAIN_MAIL_SENDMODE_TICKET) && in_array($conf->global->MAIN_MAIL_SENDMODE_TICKET, array('smtps', 'swiftmailer'))) {
 				if (function_exists('openssl_open')) {
-					print yn($conf->global->MAIN_MAIL_EMAIL_STARTTLS_TICKET);
+					print yn(getDolGlobalString('MAIN_MAIL_EMAIL_STARTTLS_TICKET'));
 				} else {
 					print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
 				}
