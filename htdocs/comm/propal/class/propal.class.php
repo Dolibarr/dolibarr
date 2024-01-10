@@ -2866,12 +2866,11 @@ class Propal extends CommonObject
 	/**
 	 *	Cancel the proposal
 	 *
-	 *	@return		int		Return integer if KO <0 , if OK >0
+	 *	@param  	User	$user	Object user
+	 *	@return		int				Return integer if KO <0 , if OK >0
 	 */
-	public function setCancel()
+	public function setCancel(User $user)
 	{
-		global $user;
-
 		$error = 0;
 
 		$this->db->begin();

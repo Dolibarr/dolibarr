@@ -235,6 +235,15 @@ if (empty($reshook)) {
 				}
 			}
 		}
+	} elseif ($action == 'confirm_cancel' && $confirm == 'yes' && $usercanclose) {
+		// Cancel proposal
+		$result = $object->setCancel($user);
+		if ($result > 0) {
+			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+		} else {
+			$langs->load("errors");
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $usercandelete) {
 		// Delete proposal
 		$result = $object->delete($user);
@@ -2383,6 +2392,9 @@ if ($action == 'create') {
 		} else {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?statut=3&id=' . $object->id, $langs->trans('Close'), '', 'confirm_closeas', $formquestion, '', 1, 250);
 		}
+	} elseif ($action == 'cancel') {
+		// Confirm cancel
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("Cancel"), $langs->trans('ConfirmCancelPropal', $object->ref), 'confirm_cancel', '', 0, 1);
 	} elseif ($action == 'delete') {
 		// Confirm delete
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp', $object->ref), 'confirm_delete', '', 0, 1);
@@ -3083,6 +3095,11 @@ if ($action == 'create') {
 						print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&token='.newToken().'&action=closeas&token='.newToken() . (!getDolGlobalString('MAIN_JUMP_TAG') ? '' : '#close') . '"';
 						print '>' . $langs->trans('SetRefusedAndClose') . '</a>';
 					}
+				}
+
+				// Cancel propal
+				if ($object->status > Propal::STATUS_DRAFT && $usercanclose) {
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel&token='.newToken().'">'.$langs->trans("CancelPropal").'</a>';
 				}
 
 				// Clone
