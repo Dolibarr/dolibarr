@@ -44,7 +44,7 @@ jobs:
       - name: Restore phpstan cache
         uses: actions/cache/restore@v3
         with:
-          path: ./tmp
+          path: ./build/phpstan/tmp
           key: "phpstan-cache-PR-${{ matrix.php-version }}-${{ github.run_id }}"
           restore-keys: |
             phpstan-cache-PR-${{ matrix.php-version }}-
