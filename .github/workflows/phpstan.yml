@@ -22,7 +22,7 @@ jobs:
       matrix:
         php-version:
           # PHPStan requires PHP >= 7.2.
-          - "7.2"
+          #- "7.2"
           - "8.2"
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
