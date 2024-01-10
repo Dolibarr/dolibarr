@@ -292,7 +292,7 @@ function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $s
 			}
 			// Sort the data
 			if ($sortorder) {
-				array_multisort($myarray, $sortorder, $file_list);
+				array_multisort($myarray, $sortorder, SORT_REGULAR, $file_list);
 			}
 		}
 
