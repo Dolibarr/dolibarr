@@ -537,7 +537,7 @@ class Fichinter extends CommonObject
 
 		dol_syslog(get_class($this)."::setDraft", LOG_DEBUG);
 
-		$this->oldcopy = clone $this;
+		$this->oldcopy = dol_clone($this, 2);
 
 		$this->db->begin();
 
