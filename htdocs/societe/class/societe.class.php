@@ -3846,42 +3846,14 @@ class Societe extends CommonObject
 			return 1;
 		}
 
-		// Check SIREN if country FR
+		// Check SIREN
 		if ($idprof == 1 && $soc->country_code == 'FR' && !isValidSiren($this->idprof1)) {
 			return -1;
 		}
 
-		// Verifie SIRET si pays FR
-		if ($idprof == 2 && $soc->country_code == 'FR') {
-			$chaine = trim($this->idprof2);
-			$chaine = preg_replace('/(\s)/', '', $chaine);
-
-			if (!is_numeric($chaine)) {
-				return -1;
-			}
-			if (dol_strlen($chaine) != 14) {
-				return -1;
-			}
-
-			// on prend chaque chiffre un par un
-			// si son index (position dans la chaîne en commence à 0 au premier caractère) est pair
-			// on double sa valeur et si cette dernière est supérieure à 9, on lui retranche 9
-			// on ajoute cette valeur à la somme totale
-			$sum = 0;
-			for ($index = 0; $index < 14; $index++) {
-				$number = (int) $chaine[$index];
-				if (($index % 2) == 0) {
-					if (($number *= 2) > 9) {
-						$number -= 9;
-					}
-				}
-				$sum += $number;
-			}
-
-			// le numéro est valide si la somme des chiffres est multiple de 10
-			if ($sum % 10 != 0) {
-				return -1;
-			}
+		// Check SIRET
+		if ($idprof == 2 && $soc->country_code == 'FR' && !isValidSiret($this->idprof2)) {
+			return -1;
 		}
 
 		//Verify CIF/NIF/NIE if pays ES
