@@ -3477,7 +3477,9 @@ class Propal extends CommonObject
 		}
 
 		$statusType = '';
-		if ($status == self::STATUS_DRAFT) {
+		if ($status == self::STATUS_CANCELED) {
+			$statusType = 'status9';
+		} elseif ($status == self::STATUS_DRAFT) {
 			$statusType = 'status0';
 		} elseif ($status == self::STATUS_VALIDATED) {
 			$statusType = 'status1';
