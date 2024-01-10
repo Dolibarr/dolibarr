@@ -2,7 +2,7 @@
 /* Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2018-2021 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2022      Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  *
@@ -588,11 +588,11 @@ function project_admin_prepare_head()
  * @param 	string		$var				    Color
  * @param 	int			$showproject		    Show project columns
  * @param	int			$taskrole			    Array of roles of user for each tasks
- * @param	int			$projectsListId		    List of id of project allowed to user (string separated with comma)
+ * @param	string		$projectsListId		    List of id of project allowed to user (string separated with comma)
  * @param	int			$addordertick		    Add a tick to move task
  * @param   int         $projectidfortotallink  0 or Id of project to use on total line (link to see all time consumed for project)
  * @param   string      $dummy					Not used.
- * @param   string      $showbilltime           Add the column 'TimeToBill' and 'TimeBilled'
+ * @param   int         $showbilltime           Add the column 'TimeToBill' and 'TimeBilled'
  * @param   array       $arrayfields            Array with displayed coloumn information
  * @param   array       $arrayofselected        Array with selected fields
  * @return	int									Nb of tasks shown
