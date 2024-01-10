@@ -20,8 +20,8 @@ Feature: user login
     And error message "Bad value for login or password" should be displayed in the webUI
     Examples:
       | username | password |
-      | dolibar  | pass     |
+      | dolibarr | pass     |
       | dolibarr | passw    |
-      | dolibar  |          |
       | dolibarr |          |
-      | dolibar  | password |
+      | dolibarr |          |
+      | dolibarr | password |

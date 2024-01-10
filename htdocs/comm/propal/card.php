@@ -12,7 +12,7 @@
  * Copyright (C) 2013-2014 Florian Henry         <florian.henry@open-concept.pro>
  * Copyright (C) 2014      Ferran Marcet         <fmarcet@2byte.es>
  * Copyright (C) 2016      Marcos García         <marcosgdf@gmail.com>
- * Copyright (C) 2018-2021 Frédéric France       <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024 Frédéric France       <frederic.france@netlogic.fr>
  * Copyright (C) 2020	   Nicolas ZABOURI       <info@inovea-conseil.com>
  * Copyright (C) 2022	   Gauthier VERDOL       <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023	   Lenin Rivas       	 <lenin.rivas777@gmail.com>
@@ -3150,7 +3150,7 @@ if ($action == 'create') {
 		if ($object->statut != Propal::STATUS_DRAFT && $useonlinesignature) {
 			print '<br><!-- Link to sign -->';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
-			print showOnlineSignatureUrl('proposal', $object->ref).'<br>';
+			print showOnlineSignatureUrl('proposal', $object->ref, $object).'<br>';
 		}
 
 		print '</div><div class="fichehalfright">';

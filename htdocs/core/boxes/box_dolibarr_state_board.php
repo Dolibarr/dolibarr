@@ -37,16 +37,7 @@ class box_dolibarr_state_board extends ModeleBoxes
 	public $boxlabel = "BoxDolibarrStateBoard";
 	public $depends = array("user");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
 	public $enabled = 1;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor
@@ -56,8 +47,6 @@ class box_dolibarr_state_board extends ModeleBoxes
 	 */
 	public function __construct($db, $param = '')
 	{
-		global $conf, $user;
-
 		$this->db = $db;
 	}
 
@@ -69,7 +58,7 @@ class box_dolibarr_state_board extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $conf;
+		global $user, $langs;
 		$langs->load("boxes");
 
 		$this->max = $max;
