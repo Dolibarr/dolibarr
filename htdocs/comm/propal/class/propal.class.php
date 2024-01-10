@@ -3461,11 +3461,13 @@ class Propal extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			$langs->load("propal");
+			$this->labelStatus[-1] = $langs->transnoentitiesnoconv("PropalStatusCanceled");
 			$this->labelStatus[0] = $langs->transnoentitiesnoconv("PropalStatusDraft");
 			$this->labelStatus[1] = $langs->transnoentitiesnoconv("PropalStatusValidated");
 			$this->labelStatus[2] = $langs->transnoentitiesnoconv("PropalStatusSigned");
 			$this->labelStatus[3] = $langs->transnoentitiesnoconv("PropalStatusNotSigned");
 			$this->labelStatus[4] = $langs->transnoentitiesnoconv("PropalStatusBilled");
+			$this->labelStatusShort[-1] = $langs->transnoentitiesnoconv("PropalStatusCanceledShort");
 			$this->labelStatusShort[0] = $langs->transnoentitiesnoconv("PropalStatusDraftShort");
 			$this->labelStatusShort[1] = $langs->transnoentitiesnoconv("PropalStatusValidatedShort");
 			$this->labelStatusShort[2] = $langs->transnoentitiesnoconv("PropalStatusSignedShort");
