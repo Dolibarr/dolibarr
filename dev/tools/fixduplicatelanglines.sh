@@ -17,22 +17,22 @@ fi
 if [ "x$1" = "xlist" ]
 then
 	echo "Search duplicate line for lang en_US"
-    for file in `find htdocs/langs/en_US -type f -name *.lang`
-    do
-        if [ `sort "$file" | grep -v '^$' | uniq -d | wc -l` -gt 0 ]
-        then
-            echo "***** $file"
-            sort "$file" | grep -v '^$' | uniq -d
-        fi
-    done
+	for file in `find htdocs/langs/en_US -type f -name *.lang`
+	do
+		if [ `sort "$file" | grep -v '^$' | uniq -d | wc -l` -gt 0 ]
+		then
+			echo "***** $file"
+			sort "$file" | grep -v '^$' | uniq -d
+		fi
+	done
 fi
 
 # To fix
 if [ "x$1" = "xfix" ]
 then
 	echo "Fix duplicate line for lang en_US"
-    for file in `find htdocs/langs/en_US -type f -name *.lang`
-    do
-    	awk -i inplace ' !x[$0]++' "$file"
-    done;
+	for file in `find htdocs/langs/en_US -type f -name *.lang`
+	do
+		awk -i inplace ' !x[$0]++' "$file"
+	done;
 fi
