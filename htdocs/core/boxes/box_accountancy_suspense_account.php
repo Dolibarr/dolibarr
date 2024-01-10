@@ -38,17 +38,6 @@ class box_accountancy_suspense_account extends ModeleBoxes
 	public $depends = array("accounting");
 
 	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
-
-	/**
 	 *  Constructor
 	 *
 	 *  @param  DoliDB  $db         Database handler
