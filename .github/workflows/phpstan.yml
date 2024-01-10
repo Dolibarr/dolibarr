@@ -44,12 +44,12 @@ jobs:
       - name: Restore phpstan cache
         uses: actions/cache/restore@v3
         with:
-          path: ./github/tmp
+          path: ./.github/tmp
           key: "phpstan-cache-PR-${{ matrix.php-version }}-${{ github.run_id }}"
           restore-keys: |
             phpstan-cache-PR-${{ matrix.php-version }}-
       - name: Debug
-        run: cd ./github/tmp && ls -al
+        run: cd ./.github/tmp && ls -al
       - name: Run PHPSTAN
         run: phpstan -vvv analyse --error-format=checkstyle --memory-limit 4G -c phpstan_action.neon | cs2pr --graceful-warnings
         # continue-on-error: true
@@ -57,5 +57,5 @@ jobs:
         uses: actions/cache/save@v3
         if: always()
         with:
-          path: ./github/tmp
+          path: ./.github/tmp
           key: "phpstan-cache-PR-${{ matrix.php-version }}-${{ github.run_id }}"
