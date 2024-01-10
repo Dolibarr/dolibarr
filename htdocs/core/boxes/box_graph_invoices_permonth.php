@@ -33,14 +33,6 @@ class box_graph_invoices_permonth extends ModeleBoxes
 	public $boxlabel = "BoxCustomersInvoicesPerMonth";
 	public $depends  = array("facture");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 	public $widgettype = 'graph';
 
 
