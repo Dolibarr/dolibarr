@@ -630,7 +630,7 @@ class MultiCurrency extends CommonObject
 				return 1;
 			}
 
-			return -1; // Alternate souce not found
+			return -1; // Alternate source not found
 		}
 
 		return 0; // Nothing to do

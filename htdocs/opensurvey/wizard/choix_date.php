@@ -76,8 +76,8 @@ if (GETPOST('confirmation')) {
 						$debutcreneau = explode(":", $creneaux[1]);
 						$fincreneau = explode(":", $creneaux[2]);
 
-						//comparaison des heures de fin et de debut
-						//si correctes, on entre les données dans la variables de session
+						// Compare hours for start and end
+						// If correct, add the data in the session variables
 						if ($debutcreneau[0] < 24 && $fincreneau[0] < 24 && $debutcreneau[1] < 60 && $fincreneau[1] < 60 && ($debutcreneau[0] < $fincreneau[0] || ($debutcreneau[0] == $fincreneau[0] && $debutcreneau[1] < $fincreneau[1]))) {
 							$_SESSION["horaires$i"][$j] = $creneaux[1].'-'.$creneaux[2];
 						} else { //sinon message d'erreur et nettoyage de la case
@@ -89,8 +89,8 @@ if (GETPOST('confirmation')) {
 						$debutcreneau = preg_split("/h/i", $creneaux[1]);
 						$fincreneau = preg_split("/h/i", $creneaux[2]);
 
-						//comparaison des heures de fin et de debut
-						//si correctes, on entre les données dans la variables de session
+						// Compare hours for start and end
+						// If correct, add the data in the session variables
 						if ($debutcreneau[0] < 24 && $fincreneau[0] < 24 && $debutcreneau[1] < 60 && $fincreneau[1] < 60 && ($debutcreneau[0] < $fincreneau[0] || ($debutcreneau[0] == $fincreneau[0] && $debutcreneau[1] < $fincreneau[1]))) {
 							$_SESSION["horaires$i"][$j] = $creneaux[1].'-'.$creneaux[2];
 						} else { //sinon message d'erreur et nettoyage de la case
@@ -155,7 +155,7 @@ if (GETPOST('confirmation')) {
 							$choixdate .= ",";
 							$choixdate .= $_SESSION["totalchoixjour"][$i];
 							$choixdate .= "@";
-							// On remplace la virgule et l'arobase pour ne pas avoir de problème par la suite
+							// Replace the comma and the '@' token to avoid issues
 							$choixdate .= str_replace(array(',', '@'), array('&#44;', '&#64;'), $_SESSION["horaires$i"][$j]);
 						}
 					}
@@ -555,11 +555,11 @@ if (issetAndNoEmpty('totalchoixjour', $_SESSION) || $erreur) {
 
 		//affichage des cases d'horaires
 		for ($j = 0; $j < $_SESSION["nbrecaseshoraires"]; $j++) {
-			//si on voit une erreur, le fond de la case est rouge
 			if (isset($errheure[$i][$j]) && $errheure[$i][$j]) {
+			    // When an error is found, the checkbox background is red
 				print '<td><input type=text size="10" maxlength="11" name=horaires'.$i.'[] value="'.$_SESSION["horaires$i"][$j].'" style="background-color:#FF6666;"></td>'."\n";
 			} else {
-				//sinon la case est vide normalement
+				// Else the color is empty (in principle)
 				print '<td><input type=text size="10" maxlength="11" name=horaires'.$i.'[] value="'.$_SESSION["horaires$i"][$j].'"></td>'."\n";
 			}
 		}
