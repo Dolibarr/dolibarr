@@ -1722,7 +1722,7 @@ class EmailCollector extends CommonObject
 					if (preg_match('/^(Re|AW)\s*:\s+/i', $headers['Subject'])) {
 						$isanswer = 1;
 					}
-					if (getDolglobalString('EMAILCOLLECTOR_USE_IN_REPLY_TO_TO_DETECT_ANSWERS')) {
+					if (getDolGlobalString('EMAILCOLLECTOR_USE_IN_REPLY_TO_TO_DETECT_ANSWERS')) {
 						// Note: "In-Reply-To" to detect if mail is an answer of another mail is not reliable because we can have:
 						// Message-ID=A, In-Reply-To=B, References=B and message can BE an answer but may be NOT (for example a transfer of an email rewriten)
 						if (!empty($headers['In-Reply-To'])) {

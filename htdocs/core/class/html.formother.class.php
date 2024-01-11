@@ -1014,8 +1014,8 @@ class FormOther
 		//print $rouge.$vert.$bleu;
 		imagefill($image, 0, 0, $couleur); //on remplit l'image
 		// On cree la couleur et on l'attribue a une variable pour ne pas la perdre
-		ImagePng($image, $file); //renvoie une image sous format png
-		ImageDestroy($image);
+		imagepng($image, $file); //renvoie une image sous format png
+		imagedestroy($image);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
