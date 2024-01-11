@@ -3637,7 +3637,7 @@
         <xsd:all>
           <xsd:element name="type" type="xsd:string"/>
           <xsd:element name="priority" type="xsd:string"/>
-          <xsd:element name="connexion" type="xsd:string"/>
+          <xsd:element name="connection" type="xsd:string"/>
           <xsd:element name="bandwidth" type="xsd:int"/>
           <xsd:element name="bandwidthOvhToOvh" type="xsd:int"/>
           <xsd:element name="bandwidthOvhToInternet" type="xsd:int"/>

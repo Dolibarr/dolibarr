@@ -379,7 +379,7 @@ $html .= '</div>';
 $html .= '<div class="box inline-box back2">';
 $html .= 'COCOMO effort<br><span class="small">(Basic organic model)</span><br>';
 $html .= '<b>'.formatNumber($arraycocomo['proj']['people'] * $arraycocomo['proj']['effort'] + $arraycocomo['dep']['people'] * $arraycocomo['dep']['effort']);
-$html .= ' monthes people</b>';
+$html .= ' months people</b>';
 $html .= '</div>';
 $html .= '</div>';
 
@@ -432,7 +432,7 @@ if ($fh) {
 
 	print 'Generation of output file '.$outputfile.' done.'."\n";
 } else {
-	print 'Failed to open '.$outputfile.' for ouput.'."\n";
+	print 'Failed to open '.$outputfile.' for output.'."\n";
 }
 
 
@@ -441,7 +441,7 @@ if ($fh) {
  *
  * @param	string|int		$number			Number to format
  * @param	int				$nbdec			Number of decimal digits
- * @return	string							Formated string
+ * @return	string							Formatted string
  */
 function formatNumber($number, $nbdec = 0)
 {
