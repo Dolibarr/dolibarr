@@ -2205,7 +2205,6 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 						} elseif (!empty($reshook)) {
 							print $hookmanager->resPrint;
 						}
-						print '<br>';
 					}
 
 					// Show location
