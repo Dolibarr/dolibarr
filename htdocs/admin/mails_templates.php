@@ -715,7 +715,7 @@ if ($action == 'create') {
 	foreach ($fieldlist as $field => $value) {
 		// Determine le nom du champ par rapport aux noms possibles
 		// dans les dictionnaires de donnees
-		$valuetoshow = ucfirst($fieldlist[$field]); // Par defaut
+		$valuetoshow = ucfirst($fieldlist[$field]); // Par default
 		$valuetoshow = $langs->trans($valuetoshow); // try to translate
 		$css = "left";
 		if ($fieldlist[$field] == 'module') {
@@ -975,7 +975,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print getTitleFieldOfList('');
 }
 foreach ($fieldlist as $field => $value) {
-	$showfield = 1; // By defaut
+	$showfield = 1; // By default
 	$css = "left";
 	$sortable = 1;
 	$valuetoshow = '';
@@ -987,7 +987,7 @@ foreach ($fieldlist as $field => $value) {
 	$css=$tmp['align'];
 	$sortable=$tmp['sortable'];
 	*/
-	$valuetoshow = ucfirst($fieldlist[$field]); // By defaut
+	$valuetoshow = ucfirst($fieldlist[$field]); // By default
 	$valuetoshow = $langs->trans($valuetoshow); // try to translate
 	if ($fieldlist[$field] == 'module') {
 		$css = 'tdoverflowmax100';
@@ -1351,7 +1351,7 @@ $db->close();
  * 	@param		array	$fieldlist		Array of fields
  * 	@param		Object	$obj			If we show a particular record, obj is filled with record fields
  *  @param		string	$tabname		Name of SQL table
- *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
+ *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we don't want it to be rendered
  *	@return		void
  */
 function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')

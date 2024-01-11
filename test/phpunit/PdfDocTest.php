@@ -22,6 +22,7 @@
  *		\ingroup    test
  *      \brief      PHPUnit test
  *		\remarks	To run this script as CLI:  phpunit filename.php
+ *      			See also BuildDocTest to PDF generation
  */
 
 global $conf,$user,$langs,$db;

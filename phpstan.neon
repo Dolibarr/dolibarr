@@ -31,7 +31,6 @@ parameters:
 	checkThisOnly: true
 	checkUnionTypes: false
 	checkExplicitMixedMissingReturn: false
-	checkPhpDocMissingReturn: false
 	reportMaybes: false
 	reportMaybesInMethodSignatures: false
 	reportStaticMethodSignatures: false

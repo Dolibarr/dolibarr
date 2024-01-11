@@ -537,7 +537,7 @@ $tabcond[44] = isModEnabled('asset');
 // List of help for fields (no more used, help is defined into tabcomplete)
 $tabhelp = array();
 
-// Table to store complete informations (will replace all other table). Key is table name.
+// Table to store complete information (will replace all other table). Key is table name.
 $tabcomplete = array(
 	'c_forme_juridique'=>array(
 		'picto'=>'company',
@@ -601,7 +601,7 @@ complete_dictionary_with_modules($taborder, $tabname, $tablib, $tabsql, $tabsqls
 $i = 0;
 foreach ($tabcomplete as $key => $value) {
 	$i++;
-	// When a dictionnary is commented
+	// When a dictionary is commented
 	if (!isset($tabcond[$i])) {
 		continue;
 	}
@@ -627,7 +627,7 @@ if ($id > 0) {
 	}
 }
 
-// Defaut sortorder
+// Default sortorder
 if (empty($sortfield)) {
 	$tmp1 = explode(',', empty($tabcomplete[$keytable]['sqlsort']) ? '' : $tabcomplete[$keytable]['sqlsort']);
 	$tmp2 = explode(' ', $tmp1[0]);
@@ -741,7 +741,7 @@ if (empty($reshook)) {
 			if ($value == 'country' && in_array($tablib[$id], array('DictionaryPublicHolidays', 'DictionaryCanton', 'DictionaryCompanyType', 'DictionaryHolidayTypes', 'DictionaryRevenueStamp'))) {
 				continue; // For some pages, country is not mandatory
 			}
-			// Discard check of mandatory fiedls for other fields
+			// Discard check of mandatory fields for other fields
 			if ($value == 'localtax1' && !GETPOST('localtax1_type')) {
 				continue;
 			}
@@ -1386,7 +1386,7 @@ if ($id > 0) {
 					}
 
 					// Define field friendly name from its technical name
-					$valuetoshow = ucfirst($value); // Par defaut
+					$valuetoshow = ucfirst($value); // Par default
 					$valuetoshow = $langs->trans($valuetoshow); // try to translate
 					$class = '';
 
@@ -2537,7 +2537,7 @@ $db->close();
  * 	@param		array		$fieldlist		Array of fields
  * 	@param		Object		$obj			If we show a particular record, obj is filled with record fields
  *  @param		string		$tabname		Name of SQL table
- *  @param		string		$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
+ *  @param		string		$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we don't want it to be rendered
  *	@return		string						'' or value of entity into table
  */
 function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')

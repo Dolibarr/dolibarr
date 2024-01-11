@@ -4021,6 +4021,8 @@ class Commande extends CommonOrder
 		$this->multicurrency_tx = 1;
 		$this->multicurrency_code = $conf->currency;
 
+		$this->status = $this::STATUS_DRAFT;
+
 		// Lines
 		$nbp = 5;
 		$xnbp = 0;

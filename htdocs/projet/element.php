@@ -376,7 +376,7 @@ print dol_get_fiche_end();
 print '<br>';
 
 /*
- * Referers types
+ * Referrer types
  */
 
 $listofreferent = array(

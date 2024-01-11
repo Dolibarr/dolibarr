@@ -165,6 +165,12 @@ INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) value
 
 UPDATE llx_categorie SET date_creation = tms, tms = tms WHERE date_creation IS NULL AND tms IS NOT NULL;
 
+ALTER TABLE llx_product_price ADD COLUMN price_label varchar(255) AFTER fk_user_author;
+ALTER TABLE llx_product_customer_price_log ADD COLUMN price_label varchar(255) AFTER fk_user;
+ALTER TABLE llx_product_customer_price ADD COLUMN price_label varchar(255) AFTER fk_user;
+ALTER TABLE llx_product ADD COLUMN price_label varchar(255) AFTER price_base_type;
+
+
 CREATE TABLE llx_product_thirdparty
 (
     rowid                               integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
@@ -195,3 +201,4 @@ CREATE TABLE llx_c_product_thirdparty_relation_type
     label  varchar(128),
     active tinyint default 1 NOT NULL
 ) ENGINE = innodb;
+
