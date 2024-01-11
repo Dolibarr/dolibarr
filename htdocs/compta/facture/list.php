@@ -961,7 +961,7 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $s
 	$obj = $db->fetch_object($resql);
 	$id = $obj->id;
 
-	header("Location: ".DOL_URL_ROOT.'/compta/facture/card.php?facid='.$id);
+	header("Location: ".DOL_URL_ROOT.'/compta/facture/card.php?id='.$id);
 	exit;
 }
 
