@@ -643,6 +643,40 @@ if ($dirins && $action == 'initwidget' && !empty($module)) {
 }
 
 
+// init EmailSelector
+if ($dirins && $action == 'initemailing' && !empty($module)) {
+	dol_mkdir($dirins.'/'.strtolower($module).'/core/modules/mailings');
+	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
+	$srcfile = $srcdir.'/core/modules/mailings/mailing_mymodule_myobject.modules.php';
+	$destfile = $dirins.'/'.strtolower($module).'/core/modules/mailings/mailing_'.strtolower($module).'_selector1.modules.php';
+	//var_dump($srcfile);
+	//var_dump($destfile);
+	$result = dol_copy($srcfile, $destfile, 0, 0);
+
+	if ($result > 0) {
+		$modulename = ucfirst($module); // Force first letter in uppercase
+
+		//var_dump($phpfileval['fullname']);
+		$arrayreplacement = array(
+			'mymodule'=>strtolower($modulename),
+			'MyModule'=>$modulename,
+			'MYMODULE'=>strtoupper($modulename),
+			'My module'=>$modulename,
+			'my module'=>$modulename,
+			'Mon module'=>$modulename,
+			'mon module'=>$modulename,
+			'htdocs/modulebuilder/template'=>strtolower($modulename),
+			'---Put here your own copyright and developer email---'=>dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
+		);
+
+		dolReplaceInFile($destfile, $arrayreplacement);
+	} else {
+		$langs->load("errors");
+		setEventMessages($langs->trans('ErrorFailToCreateFile', $destfile), null, 'errors');
+	}
+}
+
+
 // init CSS
 if ($dirins && $action == 'initcss' && !empty($module)) {
 	dol_mkdir($dirins.'/'.strtolower($module).'/css');
@@ -3299,7 +3333,7 @@ if ($module == 'initmodule') {
 		$countMenus = count($moduleobj->menu);
 		$countTriggers = countItemsInDirectory(dol_buildpath($modulelowercase, 0)."/core/triggers");
 		$countWidgets = countItemsInDirectory(dol_buildpath($modulelowercase, 0)."/core/boxes");
-		$countEmailingSelectors = countItemsInDirectory(dol_buildpath($modulelowercase, 0)."/core/emailings");
+		$countEmailingSelectors = countItemsInDirectory(dol_buildpath($modulelowercase, 0)."/core/modules/mailings");
 		$countCss = countItemsInDirectory(dol_buildpath($modulelowercase, 0)."/css");
 		$countJs = countItemsInDirectory(dol_buildpath($modulelowercase, 0)."/js");
 		$countCLI = countItemsInDirectory(dol_buildpath($modulelowercase, 0)."/scripts");
@@ -5947,7 +5981,7 @@ if ($module == 'initmodule') {
 			print '<!-- tab=emailings -->'."\n";
 			require_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
 
-			$emailingselectors = MailingTargets::getEmailingSelectorsList(array('/'.strtolower($module).'/core/mailings'));
+			$emailingselectors = MailingTargets::getEmailingSelectorsList(array('/'.strtolower($module).'/core/modules/mailings'));
 
 			if ($action != 'editfile' || empty($file)) {
 				print '<span class="opacitymedium">'.$langs->trans("EmailingSelectorDesc").'</span><br>';
