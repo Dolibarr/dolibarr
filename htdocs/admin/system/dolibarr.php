@@ -85,7 +85,7 @@ print '<tr class="liste_titre"><td class="titlefieldcreate">'.$langs->trans("Ver
 print '<tr class="oddeven"><td>'.$langs->trans("CurrentVersion").' ('.$langs->trans("Programs").')</td><td>'.DOL_VERSION;
 // If current version differs from last upgrade
 if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')) {
-	// Compare version with last install database version (upgrades never occured)
+	// Compare version with last install database version (upgrades never occurred)
 	if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_INSTALL) {
 		print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, getDolGlobalString('MAIN_VERSION_LAST_INSTALL')));
 	}

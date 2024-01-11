@@ -186,8 +186,8 @@ if ($action == 'updateMask') {
 		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
 } elseif ($action == 'setmod') {
-	// TODO Verifier si module numerotation choisi peut etre active
-	// par appel methode canBeActivated
+	// TODO Verify if the chosen numbering module can be active
+	// by calling method canBeActivated
 
 	dolibarr_set_const($db, "PROPALE_ADDON", $value, 'chaine', 0, '', $conf->entity);
 } elseif (preg_match('/set_(.*)/', $action, $reg)) {
@@ -437,7 +437,7 @@ foreach ($dirmodels as $reldir) {
 									print "</td>";
 								}
 
-								// Defaut
+								// Default
 								print "<td align=\"center\">";
 								if ($conf->global->PROPALE_ADDON_PDF == "$name") {
 									print img_picto($langs->trans("Default"), 'on');
