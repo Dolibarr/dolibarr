@@ -1433,6 +1433,9 @@ if ($id > 0) {
 						$valuetoshow = $langs->trans("RateOfTaxN", '3');
 						$class = "center";
 					}
+					if ($value == 'type_vat') {
+						$valuetoshow = $langs->trans("VATType");
+					}
 					if ($value == 'organization') {
 						$valuetoshow = $langs->trans("Organization");
 					}
@@ -1845,7 +1848,9 @@ if ($id > 0) {
 			}
 
 			if ($value == 'type_vat') {
-				$valuetoshow = $langs->trans("VATType"); $cssprefix = "center "; $sortable = 0;
+				$valuetoshow = $langs->trans("VATType");
+				$cssprefix = "center ";
+				$sortable = 0;
 			}
 			if ($value == 'localtax1_type') {
 				$valuetoshow = $langs->trans("UseLocalTax")." 2";
