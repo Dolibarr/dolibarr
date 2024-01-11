@@ -618,22 +618,24 @@ class Reception extends CommonObject
 			}
 		}
 
-		// Change status of order to "reception in process" or "totally received"
-		$status = $this->getStatusDispatch();
-		if ($status < 0) {
-			$error++;
-		} else {
-			$trigger_key = '';
-			if ($status == CommandeFournisseur::STATUS_RECEIVED_COMPLETELY) {
-				$ret = $this->commandeFournisseur->Livraison($user, dol_now(), 'tot', '');
-				if ($ret < 0) {
-					$error++;
-					$this->errors = array_merge($this->errors, $this->commandeFournisseur->errors);
-				}
+		if (!$error) {
+			// Change status of order to "reception in process" or "totally received"
+			$status = $this->getStatusDispatch();
+			if ($status < 0) {
+				$error++;
 			} else {
-				$ret = $this->setStatut($status, $this->origin_id, 'commande_fournisseur', $trigger_key);
-				if ($ret < 0) {
-					$error++;
+				$trigger_key = '';
+				if ($status == CommandeFournisseur::STATUS_RECEIVED_COMPLETELY) {
+					$ret = $this->commandeFournisseur->Livraison($user, dol_now(), 'tot', '');
+					if ($ret < 0) {
+						$error++;
+						$this->errors = array_merge($this->errors, $this->commandeFournisseur->errors);
+					}
+				} else {
+					$ret = $this->setStatut($status, $this->origin_id, 'commande_fournisseur', $trigger_key);
+					if ($ret < 0) {
+						$error++;
+					}
 				}
 			}
 		}
