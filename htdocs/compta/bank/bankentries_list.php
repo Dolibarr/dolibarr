@@ -250,7 +250,7 @@ if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', '
 	&& (!GETPOSTISSET('pageplusone') || (GETPOST('pageplusone') == GETPOST('pageplusoneold')))) {
 	$error = 0;
 
-	// Definition, nettoyage parametres
+	// Definition, nettoyage parameters
 	$num_releve = GETPOST("num_releve", "alpha");
 
 	if ($num_releve) {
@@ -722,7 +722,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 }
 
 if (($id > 0 || !empty($ref)) && ((string) $page == '')) {
-	// We open a list of transaction of a dedicated account and no page was set by defaut
+	// We open a list of transaction of a dedicated account and no page was set by default
 	// We force on last page.
 	$page = ($nbtotalofpages - 1);
 	$offset = $limit * $page;
