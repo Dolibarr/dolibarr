@@ -768,14 +768,14 @@ if (empty($reshook)) {
 				continue; // For a column name 'sortorder', we use the field name 'position'
 			}
 			if ((!GETPOSTISSET($value) || GETPOST($value) == '')
-					&& (
-						!in_array($value, array('decalage', 'module', 'accountancy_code', 'accountancy_code_sell', 'accountancy_code_buy', 'tracking', 'picto', 'deposit_percent'))  // Fields that are not mandatory
+				&& (
+					!in_array($value, array('decalage', 'module', 'accountancy_code', 'accountancy_code_sell', 'accountancy_code_buy', 'tracking', 'picto', 'deposit_percent'))  // Fields that are not mandatory
 					&& ($id != 10 || ($value != 'code' && $value != 'note')) // Field code and note is not mandatory for dictionary table 10
 					)
 				) {
-				$ok = 0;
-				$fieldnamekey = $value;
-				// We take translate key of field
+					$ok = 0;
+					$fieldnamekey = $value;
+					// We take translate key of field
 				if ($fieldnamekey == 'libelle' || ($fieldnamekey == 'label')) {
 					$fieldnamekey = 'Label';
 				}
@@ -828,7 +828,7 @@ if (empty($reshook)) {
 					$fieldnamekey = 'UseByDefault';
 				}
 
-				setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
+					setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
 			}
 		}
 		// Other special checks
@@ -1353,325 +1353,6 @@ if ($id > 0) {
 		print "<br>\n";
 	}
 
-	// Form to add a new line
-	if ($tabname[$id]) {
-		$withentity = null;
-
-		$fieldlist = explode(',', $tabfield[$id]);
-
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder centpercent">';
-
-		// Line for title
-		print '<!-- line title to add new entry -->';
-		$tdsoffields = '<tr class="liste_titre">';
-		foreach ($fieldlist as $field => $value) {
-			if ($value == 'entity') {
-				$withentity = getEntity($tabname[$id]);
-				continue;
-			}
-
-			// Define field friendly name from its technical name
-			$valuetoshow = ucfirst($value); // Par defaut
-			$valuetoshow = $langs->trans($valuetoshow); // try to translate
-			$class = '';
-
-			if ($value == 'pos') {
-				$valuetoshow = $langs->trans("Position"); $class = 'right';
-			}
-			if ($value == 'source') {
-				$valuetoshow = $langs->trans("Contact");
-			}
-			if ($value == 'price') {
-				$valuetoshow = $langs->trans("PriceUHT");
-			}
-			if ($value == 'taux') {
-				if ($tabname[$id] != "c_revenuestamp") {
-					$valuetoshow = $langs->trans("Rate");
-				} else {
-					$valuetoshow = $langs->trans("Amount");
-				}
-				$class = 'center';
-			}
-			if ($value == 'type_vat') {
-				$valuetoshow = $langs->trans("VATType"); $class = "center"; $sortable = 0;
-			}
-			if ($value == 'localtax1_type') {
-				$valuetoshow = $langs->trans("UseLocalTax")." 2"; $class = "center"; $sortable = 0;
-			}
-			if ($value == 'localtax1') {
-				$valuetoshow = $langs->trans("RateOfTaxN", '2'); $class = "center";
-			}
-			if ($value == 'localtax2_type') {
-				$valuetoshow = $langs->trans("UseLocalTax")." 3"; $class = "center"; $sortable = 0;
-			}
-			if ($value == 'localtax2') {
-				$valuetoshow = $langs->trans("RateOfTaxN", '3'); $class = "center";
-			}
-			if ($value == 'organization') {
-				$valuetoshow = $langs->trans("Organization");
-			}
-			if ($value == 'lang') {
-				$valuetoshow = $langs->trans("Language");
-			}
-			if ($value == 'type') {
-				if ($tabname[$id] == "c_paiement") {
-					$valuetoshow = $form->textwithtooltip($langs->trans("Type"), $langs->trans("TypePaymentDesc"), 2, 1, img_help(1, ''));
-				} else {
-					$valuetoshow = $langs->trans("Type");
-				}
-			}
-			if ($value == 'code') {
-				$valuetoshow = $langs->trans("Code"); $class = 'maxwidth100';
-			}
-			if ($value == 'libelle' || $value == 'label') {
-				$valuetoshow = $form->textwithtooltip($langs->trans("Label"), $langs->trans("LabelUsedByDefault"), 2, 1, img_help(1, ''));
-			}
-			if ($value == 'libelle_facture') {
-				$valuetoshow = $form->textwithtooltip($langs->trans("LabelOnDocuments"), $langs->trans("LabelUsedByDefault"), 2, 1, img_help(1, ''));
-			}
-			if ($value == 'deposit_percent') {
-				$valuetoshow = $langs->trans('DepositPercent');
-				$class = 'right';
-			}
-			if ($value == 'country') {
-				if (in_array('region_id', $fieldlist)) {
-					print '<td>&nbsp;</td>'; continue;
-				}		// For region page, we do not show the country input
-				$valuetoshow = $langs->trans("Country");
-			}
-			if ($value == 'recuperableonly') {
-				$valuetoshow = $langs->trans("NPR"); $class = "center";
-			}
-			if ($value == 'nbjour') {
-				$valuetoshow = $langs->trans("NbOfDays");
-				$class = 'right';
-			}
-			if ($value == 'type_cdr') {
-				$valuetoshow = $langs->trans("AtEndOfMonth"); $class = "center";
-			}
-			if ($value == 'decalage') {
-				$valuetoshow = $langs->trans("Offset");
-				$class = 'right';
-			}
-			if ($value == 'width' || $value == 'nx') {
-				$valuetoshow = $langs->trans("Width");
-			}
-			if ($value == 'height' || $value == 'ny') {
-				$valuetoshow = $langs->trans("Height");
-			}
-			if ($value == 'unit' || $value == 'metric') {
-				$valuetoshow = $langs->trans("MeasuringUnit");
-			}
-			if ($value == 'region_id' || $value == 'country_id') {
-				$valuetoshow = '';
-			}
-			if ($value == 'accountancy_code') {
-				$valuetoshow = $langs->trans("AccountancyCode");
-			}
-			if ($value == 'accountancy_code_sell') {
-				$valuetoshow = $langs->trans("AccountancyCodeSell");
-			}
-			if ($value == 'accountancy_code_buy') {
-				$valuetoshow = $langs->trans("AccountancyCodeBuy");
-			}
-			if ($value == 'pcg_version' || $value == 'fk_pcg_version') {
-				$valuetoshow = $langs->trans("Pcg_version");
-			}
-			if ($value == 'account_parent') {
-				$valuetoshow = $langs->trans("Accountparent");
-			}
-			if ($value == 'pcg_type') {
-				$valuetoshow = $langs->trans("Pcg_type");
-			}
-			if ($value == 'pcg_subtype') {
-				$valuetoshow = $langs->trans("Pcg_subtype");
-			}
-			if ($value == 'sortorder') {
-				$valuetoshow = $langs->trans("SortOrder");
-				$class = 'center';
-			}
-			if ($value == 'short_label') {
-				$valuetoshow = $langs->trans("ShortLabel");
-			}
-			if ($value == 'fk_parent') {
-				$valuetoshow = $langs->trans("ParentID"); $class = 'center';
-			}
-			if ($value == 'range_account') {
-				$valuetoshow = $langs->trans("Range");
-			}
-			if ($value == 'sens') {
-				$valuetoshow = $langs->trans("Sens");
-			}
-			if ($value == 'category_type') {
-				$valuetoshow = $langs->trans("Calculated");
-			}
-			if ($value == 'formula') {
-				$valuetoshow = $langs->trans("Formula");
-			}
-			if ($value == 'paper_size') {
-				$valuetoshow = $langs->trans("PaperSize");
-			}
-			if ($value == 'orientation') {
-				$valuetoshow = $langs->trans("Orientation");
-			}
-			if ($value == 'leftmargin') {
-				$valuetoshow = $langs->trans("LeftMargin");
-			}
-			if ($value == 'topmargin') {
-				$valuetoshow = $langs->trans("TopMargin");
-			}
-			if ($value == 'spacex') {
-				$valuetoshow = $langs->trans("SpaceX");
-			}
-			if ($value == 'spacey') {
-				$valuetoshow = $langs->trans("SpaceY");
-			}
-			if ($value == 'font_size') {
-				$valuetoshow = $langs->trans("FontSize");
-			}
-			if ($value == 'custom_x') {
-				$valuetoshow = $langs->trans("CustomX");
-			}
-			if ($value == 'custom_y') {
-				$valuetoshow = $langs->trans("CustomY");
-			}
-			if ($value == 'percent') {
-				$valuetoshow = $langs->trans("Percentage");
-			}
-			if ($value == 'affect') {
-				$valuetoshow = $langs->trans("WithCounter");
-			}
-			if ($value == 'delay') {
-				$valuetoshow = $langs->trans("NoticePeriod");
-			}
-			if ($value == 'newbymonth') {
-				$valuetoshow = $langs->trans("NewByMonth");
-			}
-			if ($value == 'fk_tva') {
-				$valuetoshow = $langs->trans("VAT");
-			}
-			if ($value == 'range_ik') {
-				$valuetoshow = $langs->trans("RangeIk");
-			}
-			if ($value == 'fk_c_exp_tax_cat') {
-				$valuetoshow = $langs->trans("CarCategory");
-			}
-			if ($value == 'revenuestamp_type') {
-				$valuetoshow = $langs->trans('TypeOfRevenueStamp');
-			}
-			if ($value == 'use_default') {
-				$valuetoshow = $langs->trans('Default'); $class = 'center';
-			}
-			if ($value == 'unit_type') {
-				$valuetoshow = $langs->trans('TypeOfUnit');
-			}
-			if ($value == 'public' && $tablib[$id] == 'TicketDictCategory') {
-				$valuetoshow = $langs->trans('TicketGroupIsPublic'); $class = 'center';
-			}
-			if ($value == 'block_if_negative') {
-				$valuetoshow = $langs->trans('BlockHolidayIfNegative');
-			}
-			if ($value == 'type_duration') {
-				$valuetoshow = $langs->trans('Unit');
-			}
-
-			if ($id == 2) {	// Special case for state page
-				if ($value == 'region_id') {
-					$valuetoshow = '&nbsp;'; $showfield = 1;
-				}
-				if ($value == 'region') {
-					$valuetoshow = $langs->trans("Country").'/'.$langs->trans("Region"); $showfield = 1;
-				}
-			}
-
-			if ($valuetoshow != '') {
-				$tooltiphelp = (isset($tabcomplete[$tabname[$id]]['help'][$value]) ? $tabcomplete[$tabname[$id]]['help'][$value] : '');
-
-				$tdsoffields .= '<th'.($class ? ' class="'.$class.'"' : '').'>';
-				if ($tooltiphelp && preg_match('/^http(s*):/i', $tooltiphelp)) {
-					$tdsoffields .= '<a href="'.$tooltiphelp.'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
-				} elseif ($tooltiphelp) {
-					$tdsoffields .= $form->textwithpicto($valuetoshow, $tooltiphelp);
-				} else {
-					$tdsoffields .= $valuetoshow;
-				}
-				$tdsoffields .= '</th>';
-			}
-		}
-
-		if ($id == 4) {
-			$tdsoffields .= '<th></th>';
-			$tdsoffields .= '<th></th>';
-		}
-		$tdsoffields .= '<th>';
-		$tdsoffields .= '<input type="hidden" name="id" value="'.$id.'">';
-		if (!is_null($withentity)) {
-			$tdsoffields .= '<input type="hidden" name="entity" value="'.$withentity.'">';
-		}
-		$tdsoffields .= '</th>';
-		$tdsoffields .= '<th style="min-width: 26px;"></th>';
-		$tdsoffields .= '<th style="min-width: 26px;"></th>';
-		$tdsoffields .= '</tr>';
-
-		print $tdsoffields;
-
-
-		// Line to enter new values
-		print '<!-- line input to add new entry -->';
-		print '<tr class="oddeven nodrag nodrop nohover">';
-
-		$obj = new stdClass();
-		// If data was already input, we define them in obj to populate input fields.
-		if (GETPOST('actionadd')) {
-			foreach ($fieldlist as $key => $val) {
-				if (GETPOST($val) != '') {
-					$obj->$val = GETPOST($val);
-				}
-			}
-		}
-
-		$tmpaction = 'create';
-		$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
-		$reshook = $hookmanager->executeHooks('createDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
-		$error = $hookmanager->error; $errors = $hookmanager->errors;
-
-		if ($id == 3) {
-			unset($fieldlist[2]); // Remove field ??? if dictionary Regions
-		}
-
-		if (empty($reshook)) {
-			fieldList($fieldlist, $obj, $tabname[$id], 'add');
-		}
-
-		if ($id == 4) {
-			print '<td></td>';
-			print '<td></td>';
-		}
-		print '<td colspan="3" class="center">';
-		if ($action != 'edit') {
-			print '<input type="submit" class="button button-add small" name="actionadd" value="'.$langs->trans("Add").'">';
-		} else {
-			print '<input type="submit" class="button button-add small disabled" name="actionadd" value="'.$langs->trans("Add").'">';
-		}
-		print '</td>';
-
-		print "</tr>";
-
-		print '</table>';
-		print '</div>';
-	}
-
-	print '</form>';
-
-
-	print '<br>';
-
-
-	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
-
 	// List of available record in database
 	dol_syslog("htdocs/admin/dict", LOG_DEBUG);
 
@@ -1684,9 +1365,9 @@ if ($id > 0) {
 
 		$newcardbutton = '';
 		/*$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
-		$newcardbutton .= dolGetButtonTitleSeparator();
-		*/
+		 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+		 $newcardbutton .= dolGetButtonTitleSeparator();
+		 */
 		$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/admin/dict.php?action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
 
 		print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'tools', 0, $newcardbutton, '', $listlimit, 1, 0, 1);
