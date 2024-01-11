@@ -281,10 +281,10 @@ if ($resql) {
 			}
 			$transactionspertype[$objp->code] += 1;
 		} else {
-			if ($conf->global->$var1 == $bankaccount->id) {
+			if (getDolGlobalString($var1) == $bankaccount->id) {
 				$cash += $objp->amount;
-				// } elseif ($conf->global->$var2 == $bankaccount->id) $bank+=$objp->amount;
-				//elseif ($conf->global->$var3 == $bankaccount->id) $cheque+=$objp->amount;
+				// } elseif (getDolGlobalString($var2) == $bankaccount->id) $bank+=$objp->amount;
+				//elseif (getDolGlobalString($var3) == $bankaccount->id) $cheque+=$objp->amount;
 				if (empty($transactionspertype['CASH'])) {
 					$transactionspertype['CASH'] = 0;
 				}

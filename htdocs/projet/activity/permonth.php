@@ -567,7 +567,7 @@ if (count($tasksarray) > 0) {
 
 			$timeonothertasks = ($totalforeachweek[$weekNb] - $totalforvisibletasks[$weekNb]);
 			if ($timeonothertasks) {
-				print '<span class="timesheetalreadyrecorded" title="texttoreplace"><input type="text" class="center smallpadd" size="2" disabled="" id="timespent[-1]['.$weekNb.']" name="task[-1]['.$weekNb.']" value="';
+				print '<span class="timesheetalreadyrecorded" title="texttoreplace"><input type="text" class="center smallpadd width40" disabled="" id="timespent[-1]['.$weekNb.']" name="task[-1]['.$weekNb.']" value="';
 				print convertSecondToTime($timeonothertasks, 'allhourmin');
 				print '"></span>';
 			}
@@ -619,7 +619,7 @@ if ($conf->use_javascript_ajax) {
 				});'."\n";
 
 	foreach ($TWeek as $week_number) {
-		print '    updateTotal('.$week_number.',\''.$modeinput.'\');';
+		print "    updateTotal(".((int) $week_number).", '".dol_escape_js($modeinput)."');";
 	}
 	print "\n});\n";
 	print '</script>';

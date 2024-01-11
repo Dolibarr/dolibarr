@@ -368,7 +368,7 @@ class SimpleOpenID
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 		if (empty($url)) {
-			$url = $conf->global->MAIN_AUTHENTICATION_OPENID_URL;
+			$url = getDolGlobalString('MAIN_AUTHENTICATION_OPENID_URL');
 		}
 
 		$response = getURLContent($url, 'GET', '', 1, array(), array('http', 'https'));
@@ -493,7 +493,7 @@ class SimpleOpenID
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 		if (empty($url)) {
-			$url = $conf->global->MAIN_AUTHENTICATION_OPENID_URL;
+			$url = getDolGlobalString('MAIN_AUTHENTICATION_OPENID_URL');
 		}
 
 		dol_syslog(get_class($this).'::sendDiscoveryRequestToGetXRDS get XRDS');

@@ -12,10 +12,11 @@
  * Copyright (C) 2013-2014 Florian Henry         <florian.henry@open-concept.pro>
  * Copyright (C) 2014      Ferran Marcet         <fmarcet@2byte.es>
  * Copyright (C) 2016      Marcos García         <marcosgdf@gmail.com>
- * Copyright (C) 2018-2021 Frédéric France       <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024 Frédéric France       <frederic.france@netlogic.fr>
  * Copyright (C) 2020	   Nicolas ZABOURI       <info@inovea-conseil.com>
  * Copyright (C) 2022	   Gauthier VERDOL       <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023	   Lenin Rivas       	 <lenin.rivas777@gmail.com>
+ * Copyright (C) 2023	   William Mead			 <william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -234,6 +235,16 @@ if (empty($reshook)) {
 					$action = '';
 				}
 			}
+		}
+	} elseif ($action == 'confirm_cancel' && $confirm == 'yes' && $usercanclose) {
+		// Cancel proposal
+		$result = $object->setCancel($user);
+		if ($result > 0) {
+			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+			exit();
+		} else {
+			$langs->load("errors");
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $usercandelete) {
 		// Delete proposal
@@ -785,7 +796,7 @@ if (empty($reshook)) {
 	} elseif ($action == 'confirm_reopen' && $usercanclose && !GETPOST('cancel', 'alpha')) {
 		// Reopen proposal
 		// prevent browser refresh from reopening proposal several times
-		if ($object->statut == Propal::STATUS_SIGNED || $object->statut == Propal::STATUS_NOTSIGNED || $object->statut == Propal::STATUS_BILLED) {
+		if ($object->statut == Propal::STATUS_SIGNED || $object->statut == Propal::STATUS_NOTSIGNED || $object->statut == Propal::STATUS_BILLED || $object->statut == Propal::STATUS_CANCELED) {
 			$db->begin();
 
 			$result = $object->reopen($user, !getDolGlobalString('PROPAL_SKIP_ACCEPT_REFUSE'));
@@ -1840,7 +1851,7 @@ if ($action == 'create') {
 	}
 	if (isModEnabled('stock') && empty($warehouse_id) && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER')) {
 		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE')) {
-			$warehouse_id = $conf->global->MAIN_DEFAULT_WAREHOUSE;
+			$warehouse_id = getDolGlobalString('MAIN_DEFAULT_WAREHOUSE');
 		}
 		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) {
 			$warehouse_id = $user->fk_warehouse;
@@ -2383,6 +2394,9 @@ if ($action == 'create') {
 		} else {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?statut=3&id=' . $object->id, $langs->trans('Close'), '', 'confirm_closeas', $formquestion, '', 1, 250);
 		}
+	} elseif ($action == 'cancel') {
+		// Confirm cancel
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("CancelPropal"), $langs->trans('ConfirmCancelPropal', $object->ref), 'confirm_cancel', '', 0, 1);
 	} elseif ($action == 'delete') {
 		// Confirm delete
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp', $object->ref), 'confirm_delete', '', 0, 1);
@@ -3005,7 +3019,7 @@ if ($action == 'create') {
 				}
 
 				// ReOpen
-				if (((getDolGlobalString('PROPAL_REOPEN_UNSIGNED_ONLY') && $object->statut == Propal::STATUS_NOTSIGNED) || (!getDolGlobalString('PROPAL_REOPEN_UNSIGNED_ONLY') && ($object->statut == Propal::STATUS_SIGNED || $object->statut == Propal::STATUS_NOTSIGNED || $object->statut == Propal::STATUS_BILLED))) && $usercanclose) {
+				if (((getDolGlobalString('PROPAL_REOPEN_UNSIGNED_ONLY') && $object->statut == Propal::STATUS_NOTSIGNED) || (!getDolGlobalString('PROPAL_REOPEN_UNSIGNED_ONLY') && ($object->statut == Propal::STATUS_SIGNED || $object->statut == Propal::STATUS_NOTSIGNED || $object->statut == Propal::STATUS_BILLED || $object->statut == Propal::STATUS_CANCELED))) && $usercanclose) {
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().(!getDolGlobalString('MAIN_JUMP_TAG') ? '' : '#reopen').'"';
 					print '>'.$langs->trans('ReOpen').'</a>';
 				}
@@ -3085,6 +3099,11 @@ if ($action == 'create') {
 					}
 				}
 
+				// Cancel propal
+				if ($object->status > Propal::STATUS_DRAFT && $usercanclose) {
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel&token='.newToken().'">'.$langs->trans("CancelPropal").'</a>';
+				}
+
 				// Clone
 				if ($usercancreate) {
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&token='.newToken().'&object='.$object->element.'">'.$langs->trans("ToClone").'</a>';
@@ -3132,7 +3151,7 @@ if ($action == 'create') {
 		if ($object->statut != Propal::STATUS_DRAFT && $useonlinesignature) {
 			print '<br><!-- Link to sign -->';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
-			print showOnlineSignatureUrl('proposal', $object->ref).'<br>';
+			print showOnlineSignatureUrl('proposal', $object->ref, $object).'<br>';
 		}
 
 		print '</div><div class="fichehalfright">';

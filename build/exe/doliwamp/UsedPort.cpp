@@ -253,6 +253,7 @@ int main(int argc, char **argv)
 //----------------
 int noarg,curseurarg,help=0,invalide=0;
 char option;
+char *endptr;
 
 for (noarg=1;noarg<argc;noarg++) {
 	if (((argv[noarg][0])=='/') || ((argv[noarg][0])=='-')) {
@@ -261,13 +262,27 @@ for (noarg=1;noarg<argc;noarg++) {
 		if (strlen(argv[noarg]) < 3) { ++noarg; curseurarg=0; }
 		switch (option) {
 			case 's': strncpy(Host,argv[noarg]+curseurarg,sizeof(Host)); break;
-			case 'p': Port=atoi(argv[noarg]+curseurarg); break;
+			case 'p': Port=strtol(argv[noarg] + curseurarg, &endptr, 10); break;					// Get port from "-p80" (curseurarg = 2) or "-p 80" (curseurarg = 0)
 			case '?': help=-1;break;											// Help
 			case 'h': help=-1;break;											// Help
 			case 'v': help=-1;break;											// Help
 			default: invalide=-1;break;
 		}
 	}
+}
+
+// Check for conversion errors
+if (*endptr != '\0') {
+    // Handle error: Invalid input format
+    printf("Invalid port number format\n");
+    exit(-1);
+}
+
+// Check for overflow
+if (Port < 0 || Port > INT_MAX) {
+    // Handle error: Port number out of range
+    printf("Port number out of range\n");
+    exit(-1);
 }
 
 help=!(Port > 0);

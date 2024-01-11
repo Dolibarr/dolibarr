@@ -58,10 +58,10 @@ $result = restrictedArea($user, 'don');
  */
 
 $form = new Form($db);
+$title = $langs->trans("DonationsStatistics");
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-donation page-stats');
 
-llxHeader();
-
-print load_fiche_titre($langs->trans("StatisticsOfDonations"), $mesg);
+print load_fiche_titre($langs->trans("DonationsStatistics"), $mesg);
 
 
 dol_mkdir($dir);
@@ -74,7 +74,7 @@ $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 
-if (!$user->hasRight('societe', 'client', 'voir') || $user->socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$filenamenb = $dir.'/donationnbinyear-'.$user->id.'-'.$year.'.png';
 } else {
 	$filenamenb = $dir.'/donationnbinyear-'.$year.'.png';

@@ -103,7 +103,7 @@ $error = 0;
 
 // If install, check password and password_verification used to create admin account
 if ($action == "set") {
-	if ($pass <> $pass_verif) {
+	if ($pass != $pass_verif) {
 		header("Location: step4.php?error=1&selectlang=$setuplang".(isset($login) ? '&login='.$login : ''));
 		exit;
 	}
@@ -145,7 +145,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 		if (!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
 			$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
 			$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
-			$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially crypted
+			$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially encrypted
 		} else {
 			$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 		}

@@ -74,7 +74,6 @@ if (getDolGlobalString('DAV_RESTRICT_ON_IP')) {
 		dol_syslog('Remote ip is '.$ipremote.', not into list ' . getDolGlobalString('DAV_RESTRICT_ON_IP'));
 		print 'DAV not allowed from the IP '.$ipremote;
 		header('HTTP/1.1 503 DAV not allowed from your IP '.$ipremote);
-		//print $conf->global->DAV_RESTRICT_ON_IP;
 		exit(0);
 	}
 }

@@ -450,7 +450,7 @@ if ($id) {
 
 			// Determine le nom du champ par rapport aux noms possibles
 			// dans les dictionnaires de donnees
-			$valuetoshow = ucfirst($fieldlist[$field]); // Par defaut
+			$valuetoshow = ucfirst($fieldlist[$field]); // By default
 			$valuetoshow = $langs->trans($valuetoshow); // try to translate
 			$align = '';
 			if ($fieldlist[$field] == 'lang') {
@@ -528,7 +528,7 @@ if ($id) {
 			foreach ($fieldlist as $field => $value) {
 				// Determine le nom du champ par rapport aux noms possibles
 				// dans les dictionnaires de donnees
-				$showfield = 1; // Par defaut
+				$showfield = 1; // By default
 				$align = "left";
 				$sortable = 1;
 				$valuetoshow = '';
@@ -543,7 +543,7 @@ if ($id) {
 				$align=$tmp['align'];
 				$sortable=$tmp['sortable'];
 				*/
-				$valuetoshow = ucfirst($fieldlist[$field]); // Par defaut
+				$valuetoshow = ucfirst($fieldlist[$field]); // By default
 				$valuetoshow = $langs->trans($valuetoshow); // try to translate
 				if ($fieldlist[$field] == 'lang') {
 					$valuetoshow = $langs->trans("Language");
@@ -678,10 +678,10 @@ $db->close();
  * 	@param		array	$fieldlist		Array of fields
  * 	@param		Object	$obj			If we show a particular record, obj is filled with record fields
  *  @param		string	$tabname		Name of SQL table
- *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
+ *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we don't want it to be rendered
  *	@return		void
  */
-function fieldListWebsites($fieldlist, $obj = '', $tabname = '', $context = '')
+function fieldListWebsites($fieldlist, $obj = null, $tabname = '', $context = '')
 {
 	global $conf, $langs, $db;
 	global $form;
@@ -700,7 +700,7 @@ function fieldListWebsites($fieldlist, $obj = '', $tabname = '', $context = '')
 
 		if ($fieldlist[$field] == 'lang') {
 			print '<td>';
-			print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'lang');
+			print $formadmin->select_language(getDolGlobalString('MAIN_LANG_DEFAULT'), 'lang');
 			print '</td>';
 		} elseif ($fieldlist[$field] == 'code' && isset($obj->$fieldname)) {
 			print '<td><input type="text" class="flat" value="'.(!empty($obj->$fieldname) ? $obj->$fieldname : '').'" size="10" name="'.$fieldlist[$field].'"></td>';

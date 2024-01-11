@@ -193,7 +193,7 @@ print '<br>';
 print '<form name="externalrssconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
-print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
@@ -247,7 +247,7 @@ if ($resql) {
 		//print "x".$idrss;
 
 		$rssparser = new RssParser($db);
-		$result = $rssparser->parser($conf->global->$keyrssurl, 5, 300, $conf->externalrss->dir_temp);
+		$result = $rssparser->parser(getDolGlobalString($keyrssurl), 5, 300, $conf->externalrss->dir_temp);
 
 		print "<br>";
 		print '<form name="externalrssconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">'."\n";

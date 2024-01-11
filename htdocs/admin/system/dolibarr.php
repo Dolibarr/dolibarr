@@ -52,6 +52,12 @@ if ($action == 'getlastversion') {
 	$result = getURLContent('https://sourceforge.net/projects/dolibarr/rss');
 	//var_dump($result['content']);
 	if (function_exists('simplexml_load_string')) {
+		if (LIBXML_VERSION < 20900) {
+			// Avoid load of external entities (security problem).
+			// Required only if LIBXML_VERSION < 20900
+			libxml_disable_entity_loader(true);
+		}
+
 		$sfurl = simplexml_load_string($result['content'], 'SimpleXMLElement', LIBXML_NOCDATA|LIBXML_NONET);
 	} else {
 		setEventMessages($langs->trans("ErrorPHPDoesNotSupport", "xml"), null, 'errors');
@@ -79,14 +85,14 @@ print '<tr class="liste_titre"><td class="titlefieldcreate">'.$langs->trans("Ver
 print '<tr class="oddeven"><td>'.$langs->trans("CurrentVersion").' ('.$langs->trans("Programs").')</td><td>'.DOL_VERSION;
 // If current version differs from last upgrade
 if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')) {
-	// Compare version with last install database version (upgrades never occured)
+	// Compare version with last install database version (upgrades never occurred)
 	if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_INSTALL) {
-		print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, $conf->global->MAIN_VERSION_LAST_INSTALL));
+		print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, getDolGlobalString('MAIN_VERSION_LAST_INSTALL')));
 	}
 } else {
 	// Compare version with last upgrade database version
 	if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_UPGRADE) {
-		print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, $conf->global->MAIN_VERSION_LAST_UPGRADE));
+		print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')));
 	}
 }
 
@@ -188,7 +194,7 @@ print '<br>';
 
 
 // Shmop
-if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {
+if (getDolGlobalInt('MAIN_OPTIMIZE_SPEED') & 0x02) {
 	$shmoparray = dol_listshmop();
 
 	print '<div class="div-table-responsive-no-min">';
@@ -254,7 +260,7 @@ if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli') {
 }
 $txt = $langs->trans("OSTZ").' (variable system TZ): '.(!empty($_ENV["TZ"]) ? $_ENV["TZ"] : $langs->trans("NotDefined")).'<br>'."\n";
 $txt .= $langs->trans("PHPTZ").' (date_default_timezone_get() / php.ini date.timezone): '.(getServerTimeZoneString()." / ".(ini_get("date.timezone") ? ini_get("date.timezone") : $langs->trans("NotDefined")))."<br>\n"; // date.timezone must be in valued defined in http://fr3.php.net/manual/en/timezones.europe.php
-$txt .= $langs->trans("Dolibarr constant MAIN_SERVER_TZ").': '.(!getDolGlobalString('MAIN_SERVER_TZ') ? $langs->trans("NotDefined") : $conf->global->MAIN_SERVER_TZ);
+$txt .= $langs->trans("Dolibarr constant MAIN_SERVER_TZ").': '.getDolGlobalString('MAIN_SERVER_TZ', $langs->trans("NotDefined"));
 print '<tr class="oddeven"><td>'.$langs->trans("CurrentTimeZone").'</td><td>'; // Timezone server PHP
 $a = getServerTimeZoneInt('now');
 $b = getServerTimeZoneInt('winter');
@@ -299,7 +305,7 @@ if (empty($tmp)) {
 	$tmp = 'utf-8'; // By default for other
 }
 if (getDolGlobalString('MAIN_FILESYSTEM_ENCODING')) {
-	$tmp = $conf->global->MAIN_FILESYSTEM_ENCODING;
+	$tmp = getDolGlobalString('MAIN_FILESYSTEM_ENCODING');
 }
 print '<tr class="oddeven"><td>&nbsp; => '.$langs->trans("File encoding").'</td><td>'.$tmp.'</td></tr>'."\n"; // date.timezone must be in valued defined in http://fr3.php.net/manual/en/timezones.europe.php
 

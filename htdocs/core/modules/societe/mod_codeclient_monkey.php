@@ -65,8 +65,10 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 
 	/**
 	 * 	Constructor
+	 *
+	 *	@param DoliDB		$db		Database object
 	 */
-	public function __construct()
+	public function __construct($db)
 	{
 		$this->code_null = 1;
 		$this->code_modifiable = 1;
@@ -188,7 +190,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		} else {
 			if ($this->verif_syntax($code) >= 0) {
 				$is_dispo = $this->verif_dispo($db, $code, $soc, $type);
-				if ($is_dispo <> 0) {
+				if ($is_dispo != 0) {
 					$result = -3;
 				} else {
 					$result = 0;

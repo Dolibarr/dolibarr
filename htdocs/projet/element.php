@@ -376,7 +376,7 @@ print dol_get_fiche_end();
 print '<br>';
 
 /*
- * Referers types
+ * Referrer types
  */
 
 $listofreferent = array(
@@ -1616,9 +1616,6 @@ foreach ($listofreferent as $key => $value) {
 				print '<tr><td>'.$elementarray.'</td></tr>';
 			} else {
 				$colspan = 7;
-				if (in_array($tablename, array('projet_task'))) {
-					$colspan = 5;
-				}
 				if ($tablename == 'fichinter') {
 					$colspan++;
 				}

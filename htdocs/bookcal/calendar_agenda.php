@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file       calendar_agenda.php
+ *  \file       htdocs/bookcal/calendar_agenda.php
  *  \ingroup    bookcal
  *  \brief      Tab of events on Calendar
  */

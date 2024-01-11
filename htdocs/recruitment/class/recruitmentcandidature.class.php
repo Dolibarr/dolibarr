@@ -132,7 +132,7 @@ class RecruitmentCandidature extends CommonObject
 		'fk_user' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'LinkedToDolibarrUser', 'enabled'=>'1', 'position'=>600, 'notnull'=>0, 'visible'=>-1, 'csslist'=>'tdoverflowmax100'),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
 		'model_pdf' => array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>'1', 'position'=>1010, 'notnull'=>-1, 'visible'=>0,),
-		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'default'=>0, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Received', '3'=>'ContractProposed', '5'=>'ContractSigned', '8'=>'Refused', '9'=>'Canceled')),
+		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'visible'=>2, 'index'=>1, 'default'=>0, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Received', '3'=>'ContractProposed', '5'=>'ContractSigned', '8'=>'Refused', '9'=>'Canceled')),
 	);
 	public $rowid;
 	public $entity;
@@ -954,7 +954,7 @@ class RecruitmentCandidature extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('RECRUITMENT_RECRUITMENTCANDIDATURE_ADDON') . ".php";
-			$classname = $conf->global->RECRUITMENT_RECRUITMENTCANDIDATURE_ADDON;
+			$classname = getDolGlobalString('RECRUITMENT_RECRUITMENTCANDIDATURE_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -1013,7 +1013,7 @@ class RecruitmentCandidature extends CommonObject
 
 		if (!dol_strlen($modele)) {
 			if (getDolGlobalString('RECRUITMENTCANDIDATURE_ADDON_PDF')) {
-				$modele = $conf->global->RECRUITMENTCANDIDATURE_ADDON_PDF;
+				$modele = getDolGlobalString('RECRUITMENTCANDIDATURE_ADDON_PDF');
 			} else {
 				$modele = ''; // No default value. For job application, we allow to disable all PDF generation
 			}
@@ -1082,13 +1082,24 @@ class RecruitmentCandidature extends CommonObject
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		if (property_exists($this, 'fk_recruitmentjobposition')) {
-			$return .= '<br><span class="opacitymedium">'.$langs->trans('Job').'</span> : <span class="info-box-label">'.$this->fk_recruitmentjobposition.'</span>';
+			$return .= '<br>';
+			//$return .= '<span class="opacitymedium">';
+			//$return .= $langs->trans('Job').'</span> : ';
+			$return .= '<span class="info-box-label">';
+			$tmpjob = new RecruitmentJobPosition($this->db);
+			$tmpjob->fetch($this->fk_recruitmentjobposition);
+			//$return .= $this->fk_recruitmentjobposition;
+			$return .= $tmpjob->label;
+			$return .= '</span>';
 		}
-		if (property_exists($this, 'phone')) {
-			$return .= '<br><span class="opacitymedium">'.$langs->trans("phone").'</span> : <span class="info-box-label">'.$this->phone.'</span>';
+		if (property_exists($this, 'phone') && $this->phone) {
+			$return .= '<br><span class="info-box-label opacitymedium small">'.img_picto('', 'phone').' '.$this->phone.'</span>';
+		}
+		if (property_exists($this, 'email') && $this->email) {
+			$return .= '<br><span class="info-box-label opacitymedium small">'.img_picto('', 'email').' '.$this->email.'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

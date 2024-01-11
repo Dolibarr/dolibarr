@@ -389,6 +389,10 @@ if ($id > 0 || !empty($ref)) {
 		if (isModEnabled('stock')) {
 			print '<td class="right">'.$langs->trans('Stock').'</td>';
 		}
+		// Hook fields
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
 		// Qty in kit
 		print '<td class="right">'.$langs->trans('Qty').'</td>';
 		// Stoc inc/dev
@@ -467,6 +471,11 @@ if ($id > 0 || !empty($ref)) {
 						print '<td class="right">'.$value['stock'].'</td>'; // Real stock
 					}
 
+					// Hook fields
+					$parameters = array();
+					$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $productstatic); // Note that $action and $object may have been modified by hook
+					print $hookmanager->resPrint;
+
 					// Qty + IncDec
 					if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
 						print '<td class="center"><input type="text" value="'.$nb_of_subproduct.'" name="TProduct['.$productstatic->id.'][qty]" class="right width40" /></td>';
@@ -516,6 +525,11 @@ if ($id > 0 || !empty($ref)) {
 					if (isModEnabled('stock')) {
 						print '<td></td>'; // Real stock
 					}
+
+					// Hook fields
+					$parameters = array();
+					$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $productstatic); // Note that $action and $object may have been modified by hook
+					print $hookmanager->resPrint;
 
 					// Qty in kit
 					print '<td class="right">'.dol_escape_htmltag($value['nb']).'</td>';

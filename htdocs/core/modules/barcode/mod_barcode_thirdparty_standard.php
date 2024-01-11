@@ -185,7 +185,7 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/barcode.lib.php'; // to be able to call function barcode_gen_ean_sum($ean)
 
 		if (empty($type)) {
-			$type = $conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY;
+			$type = getDolGlobalString('GENBARCODE_BARCODETYPE_THIRDPARTY');
 		} //get barcode type configuration for companies if $type not set
 
 		// TODO
@@ -193,7 +193,7 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 		// Get Mask value
 		$mask = '';
 		if (getDolGlobalString('BARCODE_STANDARD_THIRDPARTY_MASK')) {
-			$mask = $conf->global->BARCODE_STANDARD_THIRDPARTY_MASK;
+			$mask = getDolGlobalString('BARCODE_STANDARD_THIRDPARTY_MASK');
 		}
 
 		if (empty($mask)) {
@@ -262,7 +262,7 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 		} else {
 			if ($this->verif_syntax($code, $type) >= 0) {
 				$is_dispo = $this->verif_dispo($db, $code, $thirdparty);
-				if ($is_dispo <> 0) {
+				if ($is_dispo != 0) {
 					$result = -3;
 				} else {
 					$result = 0;

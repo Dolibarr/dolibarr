@@ -69,7 +69,7 @@ class Users extends DolibarrApi
 	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array               Array of User objects
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = 0, $category = 0, $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = '0', $category = 0, $sqlfilters = '', $properties = '')
 	{
 		global $conf;
 
@@ -134,9 +134,7 @@ class Users extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve User list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No User found');
-		}
+
 		return $obj_ret;
 	}
 
@@ -534,7 +532,7 @@ class Users extends DolibarrApi
 	 * @throws RestException 404 User not found
 	 * @throws RestException 503 Error
 	 */
-	public function listGroups($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $group_ids = 0, $sqlfilters = '', $properties = '')
+	public function listGroups($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $group_ids = '0', $sqlfilters = '', $properties = '')
 	{
 		global $conf;
 
@@ -590,9 +588,7 @@ class Users extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve Group list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No Group found');
-		}
+
 		return $obj_ret;
 	}
 

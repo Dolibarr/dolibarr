@@ -133,7 +133,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 
 $help_url = '';
-llxHeader('', $langs->trans('Asset'), $help_url);
+llxHeader('', $langs->trans('Asset'), $help_url, '', 0, 0, '', '', '', 'mod-asset page-card_depreciation_options');
 
 if ($id > 0 || !empty($ref)) {
 	$head = assetPrepareHead($object);

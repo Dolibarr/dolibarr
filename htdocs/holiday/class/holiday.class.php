@@ -197,7 +197,7 @@ class Holiday extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('HOLIDAY_ADDON') . ".php";
-			$classname = $conf->global->HOLIDAY_ADDON;
+			$classname = getDolGlobalString('HOLIDAY_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -2490,7 +2490,7 @@ class Holiday extends CommonObject
 			}
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

@@ -151,7 +151,7 @@ if (!function_exists('dol_loginfunction')) {
 		$appli = constant('DOL_APPLICATION_TITLE');
 		$title = $appli.' '.constant('DOL_VERSION');
 		if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-			$title = $conf->global->MAIN_APPLICATION_TITLE;
+			$title = getDolGlobalString('MAIN_APPLICATION_TITLE');
 		}
 		$titletruedolibarrversion = constant('DOL_VERSION'); // $title used by login template after the @ to inform of true Dolibarr version
 
@@ -309,12 +309,12 @@ if (!function_exists('dol_loginfunction')) {
 			$favicon = DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=mycompany&file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini);
 		}
 		if (getDolGlobalString('MAIN_FAVICON_URL')) {
-			$favicon = $conf->global->MAIN_FAVICON_URL;
+			$favicon = getDolGlobalString('MAIN_FAVICON_URL');
 		}
 
 		$jquerytheme = 'base';
 		if (getDolGlobalString('MAIN_USE_JQUERY_THEME')) {
-			$jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
+			$jquerytheme = getDolGlobalString('MAIN_USE_JQUERY_THEME');
 		}
 
 		// Set dol_hide_topmenu, dol_hide_leftmenu, dol_optimize_smallscreen, dol_no_mouse_hover
@@ -335,11 +335,11 @@ if (!function_exists('dol_loginfunction')) {
 }
 
 /**
- *  Fonction pour initialiser un salt pour la fonction crypt.
+ *  Initialise the salt for the crypt function.
  *
- *  @param		int		$type		2=>renvoi un salt pour cryptage DES
- *									12=>renvoi un salt pour cryptage MD5
- *									non defini=>renvoi un salt pour cryptage par defaut
+ *  @param		int		$type		2 =>Return a salt for DES encryption
+ *									12=>Return a salt for MD5 encryption
+ *									Undefined=>Return a salt for default encryption
  *	@return		string				Salt string
  */
 function makesalt($type = CRYPT_SALT_LENGTH)
@@ -351,7 +351,7 @@ function makesalt($type = CRYPT_SALT_LENGTH)
 			$saltprefix = '$1$';
 			$saltsuffix = '$';
 			break;
-		case 8:		// 8 (Pour compatibilite, ne devrait pas etre utilise)
+		case 8:		// 8 (For compatibility, do not use this)
 			$saltlen = 8;
 			$saltprefix = '$1$';
 			$saltsuffix = '$';
@@ -393,7 +393,7 @@ function encodedecode_dbpassconf($level = 0)
 			$lineofpass = 0;
 
 			$reg = array();
-			if (preg_match('/^[^#]*dolibarr_main_db_encrypted_pass[\s]*=[\s]*(.*)/i', $buffer, $reg)) {	// Old way to save crypted value
+			if (preg_match('/^[^#]*dolibarr_main_db_encrypted_pass[\s]*=[\s]*(.*)/i', $buffer, $reg)) {	// Old way to save encrypted value
 				$val = trim($reg[1]); // This also remove CR/LF
 				$val = preg_replace('/^["\']/', '', $val);
 				$val = preg_replace('/["\'][\s;]*$/', '', $val);

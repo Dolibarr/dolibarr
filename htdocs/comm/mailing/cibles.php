@@ -348,7 +348,7 @@ if ($object->fetch($id) >= 0) {
 		$text = '';
 		if ((getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) && ($object->statut == 1 || ($object->statut == 2 && $nbtry < $nbemail))) {
 			if (getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') > 0) {
-				$text .= $langs->trans('LimitSendingEmailing', $conf->global->MAILING_LIMIT_SENDBYWEB);
+				$text .= $langs->trans('LimitSendingEmailing', getDolGlobalString('MAILING_LIMIT_SENDBYWEB'));
 			} else {
 				$text .= $langs->trans('SendingFromWebInterfaceIsNotAllowed');
 			}
@@ -430,7 +430,7 @@ if ($object->fetch($id) >= 0) {
 			$handle = @opendir($dir);
 			if (is_resource($handle)) {
 				while (($file = readdir($handle)) !== false) {
-					if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS') {
+					if (substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS') {
 						$reg = array();
 						if (preg_match("/(.*)\.modules\.php$/i", $file, $reg)) {
 							if ($reg[1] == 'example') {

@@ -975,7 +975,7 @@ class Mo extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('MRP_MO_ADDON') . ".php";
-			$classname = $conf->global->MRP_MO_ADDON;
+			$classname = getDolGlobalString('MRP_MO_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -1625,7 +1625,7 @@ class Mo extends CommonObject
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('MO_ADDON_PDF')) {
-				$modele = $conf->global->MO_ADDON_PDF;
+				$modele = getDolGlobalString('MO_ADDON_PDF');
 			}
 		}
 
@@ -1757,19 +1757,18 @@ class Mo extends CommonObject
 	 */
 	public function printOriginLine($line, $var, $restrictlist = '', $defaulttpldir = '/core/tpl', $selectedLines = array())
 	{
-		global $langs, $conf;
+		$productstatic = new Product($this->db);
 
 		$this->tpl['id'] = $line->id;
 
 		$this->tpl['label'] = '';
-		if (!empty($line->fk_product)) {
-			$productstatic = new Product($this->db);
+		if (!empty($line->fk_product) && $line->fk_product > 0) {
 			$productstatic->fetch($line->fk_product);
 			$productstatic->load_virtual_stock();
 			$this->tpl['label'] .= $productstatic->getNomUrl(1);
 			//$this->tpl['label'].= ' - '.$productstatic->label;
 		} else {
-			// If origin MRP line is not a product, but another MRP
+			// If origin MO line is not a product, but another MO
 			// TODO
 		}
 
@@ -1787,8 +1786,8 @@ class Mo extends CommonObject
 		$this->tpl['disable_stock_change'] = $line->disable_stock_change;
 		$this->tpl['efficiency'] = $line->efficiency;
 
-		$tpl = DOL_DOCUMENT_ROOT.'/mrp/tpl/originproductline.tpl.php';
-		$res = include $tpl;
+		global $conf;	// used into template
+		$res = include DOL_DOCUMENT_ROOT.'/mrp/tpl/originproductline.tpl.php';
 	}
 
 	/**
@@ -1964,7 +1963,7 @@ class Mo extends CommonObject
 			$return .= '<br><span class="info-box-label">'.$langs->trans('Quantity').' : '.$this->qty.'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

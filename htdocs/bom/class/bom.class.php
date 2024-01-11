@@ -602,7 +602,7 @@ class BOM extends CommonObject
 	 * @param	int		$fk_default_workstation	Default workstation
 	 * @return	int								Return integer <0 if KO, Id of created object if OK
 	 */
-	public function addLine($fk_product, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $fk_bom_child = null, $import_key = null, $fk_unit = '', $array_options = 0, $fk_default_workstation = null)
+	public function addLine($fk_product, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $fk_bom_child = null, $import_key = null, $fk_unit = '', $array_options = array(), $fk_default_workstation = null)
 	{
 		global $mysoc, $conf, $langs, $user;
 
@@ -710,7 +710,7 @@ class BOM extends CommonObject
 	 * @param	int		$fk_default_workstation	Default workstation
 	 * @return	int								Return integer <0 if KO, Id of updated BOM-Line if OK
 	 */
-	public function updateLine($rowid, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $import_key = null, $fk_unit = 0, $array_options = 0, $fk_default_workstation = null)
+	public function updateLine($rowid, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $import_key = null, $fk_unit = 0, $array_options = array(), $fk_default_workstation = null)
 	{
 		global $mysoc, $conf, $langs, $user;
 
@@ -878,7 +878,7 @@ class BOM extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('BOM_ADDON') . ".php";
-			$classname = $conf->global->BOM_ADDON;
+			$classname = getDolGlobalString('BOM_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -1351,7 +1351,7 @@ class BOM extends CommonObject
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('BOM_ADDON_PDF')) {
-				$modele = $conf->global->BOM_ADDON_PDF;
+				$modele = getDolGlobalString('BOM_ADDON_PDF');
 			}
 		}
 
@@ -1361,6 +1361,38 @@ class BOM extends CommonObject
 		} else {
 			return 0;
 		}
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return if at least one photo is available
+	 *
+	 * @param  string $sdir Directory to scan
+	 * @return boolean                 True if at least one photo is available, False if not
+	 */
+	public function is_photo_available($sdir)
+	{
+		// phpcs:enable
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+
+		$sdir .= '/'.get_exdir(0, 0, 0, 0, $this, 'bom');
+
+		$dir_osencoded = dol_osencode($sdir);
+		if (file_exists($dir_osencoded)) {
+			$handle = opendir($dir_osencoded);
+			if (is_resource($handle)) {
+				while (($file = readdir($handle)) !== false) {
+					if (!utf8_check($file)) {
+						$file = mb_convert_encoding($file, 'UTF-8', 'ISO-8859-1'); // To be sure data is stored in UTF8 in memory
+					}
+					if (dol_is_file($sdir.$file) && image_format_supported($file) >= 0) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -1594,7 +1626,7 @@ class BOM extends CommonObject
 	 * @param 	int		$level		Protection against infinite loop
 	 * @return 	void
 	 */
-	public function getParentBomTreeRecursive(&$TParentBom, $bom_id = '', $level = 1)
+	public function getParentBomTreeRecursive(&$TParentBom, $bom_id = 0, $level = 1)
 	{
 
 		// Protection against infinite loop
@@ -1656,7 +1688,7 @@ class BOM extends CommonObject
 			$return .= '<br><span class="info-box-label">'.$prod->getNomUrl(1).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 
 		$return .= '</div>';
@@ -1761,13 +1793,25 @@ class BOMLine extends CommonObjectLine
 	 * @var string description
 	 */
 	public $description;
+
+	/**
+	 * @var double qty
+	 */
 	public $qty;
 
 	/**
 	 * @var int qty frozen
 	 */
 	public $qty_frozen;
+
+	/**
+	 * @var int disable stock change
+	 */
 	public $disable_stock_change;
+
+	/**
+	 * @var double efficiency
+	 */
 	public $efficiency;
 
 	/**
@@ -1791,11 +1835,15 @@ class BOMLine extends CommonObjectLine
 	 */
 	public $unit_cost = 0;
 
-
 	/**
 	 * @var Bom     array of Bom in line
 	 */
 	public $childBom = array();
+
+	/**
+	 * @var int Service unit
+	 */
+	public $fk_unit;
 
 	/**
 	 * @var int Service Workstation

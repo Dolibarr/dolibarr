@@ -2,7 +2,7 @@
 /* Copyright (C) 2003       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2015-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -419,7 +419,7 @@ if (empty($reshook)) {
 			// FROM
 			$expediteur = new User($db);
 			$expediteur->fetch($object->fk_user_author);
-			$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
+			$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 
 			if ($emailTo && $emailFrom) {
 				$filename = array();
@@ -427,9 +427,9 @@ if (empty($reshook)) {
 				$mimetype = array();
 
 				// SUBJECT
-				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+				$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 				if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-					$societeName = $conf->global->MAIN_APPLICATION_TITLE;
+					$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
 				}
 
 				$subject = $societeName." - ".$langs->transnoentities("ExpenseReportWaitingForApproval");
@@ -528,7 +528,7 @@ if (empty($reshook)) {
 			// FROM
 			$expediteur = new User($db);
 			$expediteur->fetch($object->fk_user_author);
-			$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
+			$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 
 			if ($emailFrom && $emailTo) {
 				$filename = array();
@@ -536,9 +536,9 @@ if (empty($reshook)) {
 				$mimetype = array();
 
 				// SUBJECT
-				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+				$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 				if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-					$societeName = $conf->global->MAIN_APPLICATION_TITLE;
+					$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
 				}
 
 				$subject = $societeName." - ".$langs->transnoentities("ExpenseReportWaitingForReApproval");
@@ -756,7 +756,7 @@ if (empty($reshook)) {
 			// FROM
 			$expediteur = new User($db);
 			$expediteur->fetch($object->fk_user_refuse);
-			$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
+			$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 
 			if ($emailFrom && $emailTo) {
 				$filename = array();
@@ -764,9 +764,9 @@ if (empty($reshook)) {
 				$mimetype = array();
 
 				// SUBJECT
-				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+				$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 				if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-					$societeName = $conf->global->MAIN_APPLICATION_TITLE;
+					$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
 				}
 
 				$subject = $societeName." - ".$langs->transnoentities("ExpenseReportRefused");
@@ -872,7 +872,7 @@ if (empty($reshook)) {
 					// FROM
 					$expediteur = new User($db);
 					$expediteur->fetch($object->fk_user_cancel);
-					$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
+					$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 
 					if ($emailFrom && $emailTo) {
 						$filename = array();
@@ -880,9 +880,9 @@ if (empty($reshook)) {
 						$mimetype = array();
 
 						// SUBJECT
-						$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+						$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 						if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-							$societeName = $conf->global->MAIN_APPLICATION_TITLE;
+							$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
 						}
 
 						$subject = $societeName." - ".$langs->transnoentities("ExpenseReportCanceled");
@@ -1054,7 +1054,7 @@ if (empty($reshook)) {
 			// FROM
 			$expediteur = new User($db);
 			$expediteur->fetch($user->id);
-			$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
+			$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 
 			if ($emailFrom && $emailTo) {
 				$filename = array();
@@ -1062,9 +1062,9 @@ if (empty($reshook)) {
 				$mimetype = array();
 
 				// SUBJECT
-				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+				$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 				if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-					$societeName = $conf->global->MAIN_APPLICATION_TITLE;
+					$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
 				}
 
 				$subject = $societeName." - ".$langs->transnoentities("ExpenseReportPaid");
@@ -1471,7 +1471,7 @@ if ($action == 'create') {
 	} else {
 		$defaultselectuser = (empty($user->fk_user_expense_validator) ? $user->fk_user : $user->fk_user_expense_validator); // Will work only if supervisor has permission to approve so is inside include_users
 		if (getDolGlobalString('EXPENSEREPORT_DEFAULT_VALIDATOR')) {
-			$defaultselectuser = $conf->global->EXPENSEREPORT_DEFAULT_VALIDATOR; // Can force default approver
+			$defaultselectuser = getDolGlobalString('EXPENSEREPORT_DEFAULT_VALIDATOR'); // Can force default approver
 		}
 		if (GETPOST('fk_user_validator', 'int') > 0) {
 			$defaultselectuser = GETPOST('fk_user_validator', 'int');
@@ -1970,7 +1970,7 @@ if ($action == 'create') {
 					print $paymentexpensereportstatic->getNomUrl(1);
 					print '</td>';
 					print '<td>'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
-					$labeltype = $langs->trans("PaymentType".$objp->payment_code) != ("PaymentType".$objp->payment_code) ? $langs->trans("PaymentType".$objp->payment_code) : $objp->payment_type;
+					$labeltype = $langs->trans("PaymentType".$objp->payment_code) != "PaymentType".$objp->payment_code ? $langs->trans("PaymentType".$objp->payment_code) : $objp->payment_type;
 					print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
 					// Bank account
 					if (isModEnabled("banque")) {
@@ -2184,14 +2184,14 @@ if ($action == 'create') {
 										$minifile = getImageFileNameForSize($fileinfo['basename'], '_mini', '.png'); // For backward compatibility of old thumbs that were created with filename in lower case and with .png extension
 									}
 									//print $file['path'].'/'.$minifile.'<br>';
-									$urlforhref = getAdvancedPreviewUrl($modulepart, $relativepath.'/'.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(!empty($object->entity) ? $object->entity : $conf->entity));
+									$urlforhref = getAdvancedPreviewUrl($modulepart, $relativepath.'/'.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(empty($object->entity) ? $conf->entity : $object->entity));
 									if (empty($urlforhref)) {
-										$urlforhref = DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity) ? $object->entity : $conf->entity).'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']));
+										$urlforhref = DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(empty($object->entity) ? $conf->entity : $object->entity).'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']));
 										print '<a href="'.$urlforhref.'" class="aphoto" target="_blank" rel="noopener noreferrer">';
 									} else {
 										print '<a href="'.$urlforhref['url'].'" class="'.$urlforhref['css'].'" target="'.$urlforhref['target'].'" mime="'.$urlforhref['mime'].'">';
 									}
-									print '<img class="photo" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity) ? $object->entity : $conf->entity).'&file='.urlencode($relativepath.'/'.$minifile).'" title="">';
+									print '<img class="photo" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(empty($object->entity) ? $conf->entity : $object->entity).'&file='.urlencode($relativepath.'/'.$minifile).'" title="">';
 									print '</a>';
 								} else {
 									$modulepart = 'expensereport';
@@ -2223,7 +2223,7 @@ if ($action == 'create') {
 											// If the preview file is found
 											if (file_exists($fileimage)) {
 												$thumbshown = 1;
-												$urlforhref = getAdvancedPreviewUrl($modulepart, $relativepath.'/'.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(!empty($object->entity) ? $object->entity : $conf->entity));
+												$urlforhref = getAdvancedPreviewUrl($modulepart, $relativepath.'/'.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(empty($object->entity) ? $conf->entity : $object->entity));
 												print '<a href="'.$urlforhref['url'].'" class="'.$urlforhref['css'].'" target="'.$urlforhref['target'].'" mime="'.$urlforhref['mime'].'">';
 												print '<img height="'.$heightforphotref.'" class="photo photowithmargin photowithborder" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($relativepathimage).'">';
 												print '</a>';
@@ -2364,7 +2364,7 @@ if ($action == 'create') {
 						// VAT
 						$selectedvat = price2num($line->vatrate).(!empty($line->vat_src_code) ? ' ('.$line->vat_src_code.')' : '');
 						print '<td class="right">';
-						print $form->load_tva('vatrate', (GETPOSTISSET("vatrate") ? GETPOST("vatrate") : $selectedvat), $mysoc, '', 0, 0, '', false, 1);
+						print $form->load_tva('vatrate', (GETPOSTISSET("vatrate") ? GETPOST("vatrate") : $selectedvat), $mysoc, '', 0, 0, '', false, 1, 2);
 						print '</td>';
 
 						// Unit price

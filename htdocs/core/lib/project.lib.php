@@ -2,7 +2,7 @@
 /* Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2018-2021 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2022      Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  *
@@ -588,11 +588,11 @@ function project_admin_prepare_head()
  * @param 	string		$var				    Color
  * @param 	int			$showproject		    Show project columns
  * @param	int			$taskrole			    Array of roles of user for each tasks
- * @param	int			$projectsListId		    List of id of project allowed to user (string separated with comma)
+ * @param	string		$projectsListId		    List of id of project allowed to user (string separated with comma)
  * @param	int			$addordertick		    Add a tick to move task
  * @param   int         $projectidfortotallink  0 or Id of project to use on total line (link to see all time consumed for project)
  * @param   string      $dummy					Not used.
- * @param   string      $showbilltime           Add the column 'TimeToBill' and 'TimeBilled'
+ * @param   int         $showbilltime           Add the column 'TimeToBill' and 'TimeBilled'
  * @param   array       $arrayfields            Array with displayed coloumn information
  * @param   array       $arrayofselected        Array with selected fields
  * @return	int									Nb of tasks shown
@@ -781,10 +781,10 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				$plannedworkloadoutputformat = 'allhourmin';
 				$timespentoutputformat = 'allhourmin';
 				if (getDolGlobalString('PROJECT_PLANNED_WORKLOAD_FORMAT')) {
-					$plannedworkloadoutputformat = $conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT;
+					$plannedworkloadoutputformat = getDolGlobalString('PROJECT_PLANNED_WORKLOAD_FORMAT');
 				}
 				if (getDolGlobalString('PROJECT_TIMES_SPENT_FORMAT')) {
-					$timespentoutputformat = $conf->global->PROJECT_TIME_SPENT_FORMAT;
+					$timespentoutputformat = getDolGlobalString('PROJECT_TIME_SPENT_FORMAT');
 				}
 
 				// Planned Workload (in working hours)
@@ -1702,7 +1702,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				$idw = 0;
 
 				$tableCell = '';
-				$tableCell .= '<span class="timesheetalreadyrecorded" title="texttoreplace"><input type="text" class="center" size="2" disabled id="timespent['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="'.$alreadyspent.'"></span>';
+				$tableCell .= '<span class="timesheetalreadyrecorded" title="texttoreplace"><input type="text" class="center width40" disabled id="timespent['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="'.$alreadyspent.'"></span>';
 				$tableCell .= '<span class="hideonsmartphone"> + </span>';
 				//$tableCell.='&nbsp;&nbsp;&nbsp;';
 				$tableCell .= $form->select_duration($lines[$i]->id.'duration', '', $disabledtask, 'text', 0, 1);
@@ -2103,11 +2103,11 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 					//$tableCell .= 'idw='.$idw.' '.$conf->global->MAIN_START_WEEK.' '.$numstartworkingday.'-'.$numendworkingday;
 					$placeholder = '';
 					if ($alreadyspent) {
-						$tableCell .= '<span class="timesheetalreadyrecorded" title="texttoreplace"><input type="text" class="center smallpadd" size="2" disabled id="timespent['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="'.$alreadyspent.'"></span>';
+						$tableCell .= '<span class="timesheetalreadyrecorded" title="texttoreplace"><input type="text" class="center smallpadd width40" disabled id="timespent['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="'.$alreadyspent.'"></span>';
 						//$placeholder=' placeholder="00:00"';
 						//$tableCell.='+';
 					}
-					$tableCell .= '<input type="text" alt="'.($disabledtaskday ? '' : $alttitle).'" title="'.($disabledtaskday ? '' : $alttitle).'" '.($disabledtaskday ? 'disabled' : $placeholder).' class="center smallpadd" size="2" id="timeadded['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="" cols="2"  maxlength="5"';
+					$tableCell .= '<input type="text" alt="'.($disabledtaskday ? '' : $alttitle).'" title="'.($disabledtaskday ? '' : $alttitle).'" '.($disabledtaskday ? 'disabled' : $placeholder).' class="center smallpadd width40" id="timeadded['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="" cols="2"  maxlength="5"';
 					$tableCell .= ' onkeypress="return regexEvent(this,event,\'timeChar\')"';
 					$tableCell .= ' onkeyup="updateTotal('.$idw.',\''.$modeinput.'\')"';
 					$tableCell .= ' onblur="regexEvent(this,event,\''.$modeinput.'\'); updateTotal('.$idw.',\''.$modeinput.'\')" />';
@@ -2387,12 +2387,12 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 					$tableCell = '<td class="center hide weekend">';
 					$placeholder = '';
 					if ($alreadyspent) {
-						$tableCell .= '<span class="timesheetalreadyrecorded" title="texttoreplace"><input type="text" class="center smallpadd" size="2" disabled id="timespent['.$inc.']['.((int) $weekNb).']" name="task['.$lines[$i]->id.']['.$weekNb.']" value="'.$alreadyspent.'"></span>';
+						$tableCell .= '<span class="timesheetalreadyrecorded" title="texttoreplace"><input type="text" class="center smallpadd width40" disabled id="timespent['.$inc.']['.((int) $weekNb).']" name="task['.$lines[$i]->id.']['.$weekNb.']" value="'.$alreadyspent.'"></span>';
 						//$placeholder=' placeholder="00:00"';
 						//$tableCell.='+';
 					}
 
-					$tableCell .= '<input type="text" alt="'.($disabledtaskweek ? '' : $alttitle).'" title="'.($disabledtaskweek ? '' : $alttitle).'" '.($disabledtaskweek ? 'disabled' : $placeholder).' class="center smallpadd" size="2" id="timeadded['.$inc.']['.((int) $weekNb).']" name="task['.$lines[$i]->id.']['.($TFirstDay[$weekNb] - 1).']" value="" cols="2"  maxlength="5"';
+					$tableCell .= '<input type="text" alt="'.($disabledtaskweek ? '' : $alttitle).'" title="'.($disabledtaskweek ? '' : $alttitle).'" '.($disabledtaskweek ? 'disabled' : $placeholder).' class="center smallpadd width40" id="timeadded['.$inc.']['.((int) $weekNb).']" name="task['.$lines[$i]->id.']['.($TFirstDay[$weekNb] - 1).']" value="" cols="2"  maxlength="5"';
 					$tableCell .= ' onkeypress="return regexEvent(this,event,\'timeChar\')"';
 					$tableCell .= ' onkeyup="updateTotal('.$weekNb.',\''.$modeinput.'\')"';
 					$tableCell .= ' onblur="regexEvent(this,event,\''.$modeinput.'\'); updateTotal('.$weekNb.',\''.$modeinput.'\')" />';
@@ -2818,7 +2818,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 		print '<table width="100%">';
 		print '<tr>';
 		print '<td>'.$langs->trans("Year").'</td>';
-		print '<td class="right"><input type="text" size="4" class="flat" name="project_year_filter" value="'.$project_year_filter.'"/>';
+		print '<td class="right"><input type="text" size="4" class="flat" name="project_year_filter" value="'.((int) $project_year_filter).'"/>';
 		print "</tr>\n";
 		print '</table></form>';
 	}
@@ -2842,10 +2842,10 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 	$plannedworkloadoutputformat = 'allhourmin';
 	$timespentoutputformat = 'allhourmin';
 	if (getDolGlobalString('PROJECT_PLANNED_WORKLOAD_FORMAT')) {
-		$plannedworkloadoutputformat = $conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT;
+		$plannedworkloadoutputformat = getDolGlobalString('PROJECT_PLANNED_WORKLOAD_FORMAT');
 	}
 	if (getDolGlobalString('PROJECT_TIMES_SPENT_FORMAT')) {
-		$timespentoutputformat = $conf->global->PROJECT_TIME_SPENT_FORMAT;
+		$timespentoutputformat = getDolGlobalString('PROJECT_TIME_SPENT_FORMAT');
 	}
 
 	if (empty($task->progress) && !empty($hideOnProgressNull)) {
@@ -2860,7 +2860,7 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 	$progressBarClass = 'progress-bar-info';
 	$progressCalculated = 0;
 	if ($task->planned_workload) {
-		$progressCalculated = round(100 * floatval($task->duration_effective) / floatval($task->planned_workload), 2);
+		$progressCalculated = round(100 * (float) $task->duration_effective / (float) $task->planned_workload, 2);
 
 		// this conf is actually hidden, by default we use 10% for "be carefull or warning"
 		$warningRatio = getDolGlobalString('PROJECT_TIME_SPEND_WARNING_PERCENT') ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.10;
@@ -2869,11 +2869,11 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 		$diffTitle .= '<br>'.$langs->trans('ProgressCalculated').' : '.$progressCalculated.(isset($progressCalculated) ? '%' : '');
 
 		//var_dump($progressCalculated.' '.$warningRatio.' '.$task->progress.' '.floatval($task->progress * $warningRatio));
-		if (floatval($progressCalculated) > floatval($task->progress * $warningRatio)) {
+		if ((float) $progressCalculated > (float) ($task->progress * $warningRatio)) {
 			$progressBarClass = 'progress-bar-danger';
 			$title = $langs->trans('TheReportedProgressIsLessThanTheCalculatedProgressionByX', abs($task->progress - $progressCalculated).' '.$langs->trans("point"));
 			$diff = '<span class="text-danger classfortooltip paddingrightonly" title="'.dol_htmlentities($title.$diffTitle).'" ><i class="fa fa-caret-down"></i> '.($task->progress - $progressCalculated).'%</span>';
-		} elseif (floatval($progressCalculated) > floatval($task->progress)) { // warning if close at 10%
+		} elseif ((float) $progressCalculated > (float) $task->progress) { // warning if close at 10%
 			$progressBarClass = 'progress-bar-warning';
 			$title = $langs->trans('TheReportedProgressIsLessThanTheCalculatedProgressionByX', abs($task->progress - $progressCalculated).' '.$langs->trans("point"));
 			$diff = '<span class="text-warning classfortooltip paddingrightonly" title="'.dol_htmlentities($title.$diffTitle).'" ><i class="fa fa-caret-left"></i> '.($task->progress - $progressCalculated).'%</span>';
@@ -2937,18 +2937,18 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 
 	$out .= '</span>';
 	$out .= '    <div class="progress sm '.$spaced.'">';
-	$diffval = floatval($task->progress) - floatval($progressCalculated);
+	$diffval = (float) $task->progress - (float) $progressCalculated;
 	if ($diffval >= 0) {
 		// good
-		$out .= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.floatval($task->progress).'%" title="'.floatval($task->progress).'%">';
+		$out .= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.(float) $task->progress.'%" title="'.(float) $task->progress.'%">';
 		if (!empty($task->progress)) {
-			$out .= '        <div class="progress-bar progress-bar-consumed" style="width: '.floatval($progressCalculated / (floatval($task->progress) == 0 ? 1 : $task->progress) * 100).'%" title="'.floatval($progressCalculated).'%"></div>';
+			$out .= '        <div class="progress-bar progress-bar-consumed" style="width: '.(float) ($progressCalculated / ((float) $task->progress == 0 ? 1 : $task->progress) * 100).'%" title="'.(float) $progressCalculated.'%"></div>';
 		}
 		$out .= '        </div>';
 	} else {
 		// bad
-		$out .= '        <div class="progress-bar progress-bar-consumed-late" style="width: '.floatval($progressCalculated).'%" title="'.floatval($progressCalculated).'%">';
-		$out .= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.($task->progress ? floatval($task->progress / (floatval($progressCalculated) == 0 ? 1 : $progressCalculated) * 100).'%' : '1px').'" title="'.floatval($task->progress).'%"></div>';
+		$out .= '        <div class="progress-bar progress-bar-consumed-late" style="width: '.(float) $progressCalculated.'%" title="'.(float) $progressCalculated.'%">';
+		$out .= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.($task->progress ? (float) ($task->progress / ((float) $progressCalculated == 0 ? 1 : $progressCalculated) * 100).'%' : '1px').'" title="'.(float) $task->progress.'%"></div>';
 		$out .= '        </div>';
 	}
 	$out .= '    </div>';
@@ -2977,17 +2977,17 @@ function getTaskProgressBadge($task, $label = '', $tooltip = '')
 		// define color according to time spend vs workload
 		$badgeClass = 'badge ';
 		if ($task->planned_workload) {
-			$progressCalculated = round(100 * floatval($task->duration_effective) / floatval($task->planned_workload), 2);
+			$progressCalculated = round(100 * (float) $task->duration_effective / (float) $task->planned_workload, 2);
 
 			// this conf is actually hidden, by default we use 10% for "be carefull or warning"
 			$warningRatio = getDolGlobalString('PROJECT_TIME_SPEND_WARNING_PERCENT') ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.10;
 
-			if (floatval($progressCalculated) > floatval($task->progress * $warningRatio)) {
+			if ((float) $progressCalculated > (float) ($task->progress * $warningRatio)) {
 				$badgeClass .= 'badge-danger';
 				if (empty($tooltip)) {
 					$tooltip = $task->progress.'% < '.$langs->trans("TimeConsumed").' '.$progressCalculated.'%';
 				}
-			} elseif (floatval($progressCalculated) > floatval($task->progress)) { // warning if close at 10%
+			} elseif ((float) $progressCalculated > (float) $task->progress) { // warning if close at 10%
 				$badgeClass .= 'badge-warning';
 				if (empty($tooltip)) {
 					$tooltip = $task->progress.'% < '.$langs->trans("TimeConsumed").' '.$progressCalculated.'%';

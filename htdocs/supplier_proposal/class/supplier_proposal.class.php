@@ -1149,7 +1149,7 @@ class SupplierProposal extends CommonObject
 
 		// Set ref
 		require_once DOL_DOCUMENT_ROOT."/core/modules/supplier_proposal/" . getDolGlobalString('SUPPLIER_PROPOSAL_ADDON').'.php';
-		$obj = $conf->global->SUPPLIER_PROPOSAL_ADDON;
+		$obj = getDolGlobalString('SUPPLIER_PROPOSAL_ADDON');
 		$modSupplierProposal = new $obj();
 		$this->ref = $modSupplierProposal->getNextValue($objsoc, $this);
 
@@ -2223,7 +2223,7 @@ class SupplierProposal extends CommonObject
 
 		$sql = "SELECT p.rowid, p.ref, p.datec as datec, p.date_cloture as datefin";
 		$sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposal as p";
-		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = " AND";
@@ -2380,7 +2380,7 @@ class SupplierProposal extends CommonObject
 		$sql = "SELECT count(p.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposal as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
-		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
@@ -2419,7 +2419,7 @@ class SupplierProposal extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('SUPPLIER_PROPOSAL_ADDON') . ".php";
-			$classname = $conf->global->SUPPLIER_PROPOSAL_ADDON;
+			$classname = getDolGlobalString('SUPPLIER_PROPOSAL_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -2704,7 +2704,7 @@ class SupplierProposal extends CommonObject
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('SUPPLIER_PROPOSAL_ADDON_PDF')) {
-				$modele = $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF;
+				$modele = getDolGlobalString('SUPPLIER_PROPOSAL_ADDON_PDF');
 			}
 		}
 
@@ -2783,7 +2783,7 @@ class SupplierProposal extends CommonObject
 			$return .='<br><span class="opacitymedium" >'.$langs->trans("AmountHT").' : </span><span class="info-box-label amount">'.price($this->total_ttc).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

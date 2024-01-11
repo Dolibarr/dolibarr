@@ -29,7 +29,14 @@
  */
 class FormAdmin
 {
+	/**
+	 * @var DoliDB Database handler.
+	 */
 	public $db;
+
+	/**
+	 * @var string error message
+	 */
 	public $error;
 
 
@@ -201,7 +208,7 @@ class FormAdmin
 					$handle = opendir($dir);
 					if (is_resource($handle)) {
 						while (($file = readdir($handle)) !== false) {
-							if (is_file($dir."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && substr($file, 0, 5) != 'index') {
+							if (is_file($dir."/".$file) && substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS' && substr($file, 0, 5) != 'index') {
 								if (preg_match('/lib\.php$/i', $file)) {
 									continue; // We exclude library files
 								}
@@ -273,6 +280,8 @@ class FormAdmin
 			print $val."\n"; // Show menu entry
 		}
 		print '</select>';
+
+		return;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -301,7 +310,7 @@ class FormAdmin
 					$handle = opendir($dir);
 					if (is_resource($handle)) {
 						while (($file = readdir($handle)) !== false) {
-							if (is_file($dir."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS') {
+							if (is_file($dir."/".$file) && substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS') {
 								$filelib = preg_replace('/(_backoffice|_frontoffice)?\.php$/i', '', $file);
 								if (preg_match('/^index/i', $filelib)) {
 									continue;
@@ -419,7 +428,7 @@ class FormAdmin
 	 * 	@param		int		$forcecombo		Force to load all values and output a standard combobox (with no beautification)
 	 *  @return		string					Return HTML output
 	 */
-	public function select_paper_format($selected = '', $htmlname = 'paperformat_id', $filter = 0, $showempty = 0, $forcecombo = 0)
+	public function select_paper_format($selected = '', $htmlname = 'paperformat_id', $filter = '', $showempty = 0, $forcecombo = 0)
 	{
 		// phpcs:enable
 		global $langs;
@@ -482,7 +491,7 @@ class FormAdmin
 	 *
 	 * @param	string	$htmlname				Name of HTML select component
 	 * @param	string	$type					Type preselected
-	 * @param	string	$typewecanchangeinto	Array of possible switch combination from 1 type to another one. This will grey not possible combinations.
+	 * @param	array   $typewecanchangeinto	Array of possible switch combination from 1 type to another one. This will grey not possible combinations.
 	 * @return 	string							The combo HTML select component
 	 */
 	public function selectTypeOfFields($htmlname, $type, $typewecanchangeinto = array())

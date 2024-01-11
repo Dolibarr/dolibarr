@@ -97,7 +97,7 @@ function pdf_getFormat(Translate $outputlangs = null, $mode = 'setup')
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		$pdfformat = dol_getDefaultFormat($outputlangs);
 	} else {
-		$pdfformat = $conf->global->MAIN_PDF_FORMAT;
+		$pdfformat = getDolGlobalString('MAIN_PDF_FORMAT');
 	}
 
 	$sql = "SELECT code, label, width, height, unit FROM ".MAIN_DB_PREFIX."c_paper_format";
@@ -181,10 +181,10 @@ function pdf_getInstance($format = '', $metric = 'mm', $pagetype = 'P')
 
 	$pdfa = false; // PDF-1.3
 	if (getDolGlobalString('PDF_USE_A')) {
-		$pdfa = $conf->global->PDF_USE_A; 	// PDF/A-1 ou PDF/A-3
+		$pdfa = getDolGlobalString('PDF_USE_A'); 	// PDF/A-1 ou PDF/A-3
 	}
 
-	if (class_exists('TCPDI')) {
+	if (!getDolGlobalString('MAIN_DISABLE_TCPDI') && class_exists('TCPDI')) {
 		$pdf = new TCPDI($pagetype, $metric, $format, true, 'UTF-8', false, $pdfa);
 	} else {
 		$pdf = new TCPDF($pagetype, $metric, $format, true, 'UTF-8', false, $pdfa);
@@ -297,7 +297,7 @@ function pdf_getPDFFontSize($outputlangs)
 		}
 	}
 	if (getDolGlobalString('MAIN_PDF_FORCE_FONT_SIZE')) {
-		$size = $conf->global->MAIN_PDF_FORCE_FONT_SIZE;
+		$size = getDolGlobalString('MAIN_PDF_FORCE_FONT_SIZE');
 	}
 
 	return $size;
@@ -781,8 +781,6 @@ function pdf_getSubstitutionArray($outputlangs, $exclude = null, $object = null,
  */
 function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
 {
-	global $langs, $mysoc, $user;
-
 	// Print Draft Watermark
 	if ($unit == 'pt') {
 		$k = 1;
@@ -810,6 +808,7 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
 	$watermark_y = $h / 3;
 	$pdf->SetFont('', 'B', 40);
 	$pdf->SetTextColor(255, 192, 203);
+
 	//rotate
 	$pdf->_out(sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm', cos($watermark_angle), sin($watermark_angle), -sin($watermark_angle), cos($watermark_angle), $watermark_x * $k, ($h - $watermark_y) * $k, -$watermark_x * $k, -($h - $watermark_y) * $k));
 	//print watermark
@@ -1013,7 +1012,7 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
  */
 function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_basse, $marge_gauche, $page_hauteur, $object, $showdetails = 0, $hidefreetext = 0, $page_largeur = 0, $watermark = '')
 {
-	global $conf, $user, $mysoc, $hookmanager;
+	global $conf, $hookmanager;
 
 	$outputlangs->load("dict");
 	$line = '';
@@ -1263,7 +1262,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 
 			// Option for set top margin height of footer after freetext
 			if (getDolGlobalString('PDF_FOOTER_TOP_MARGIN') || getDolGlobalInt('PDF_FOOTER_TOP_MARGIN') === 0) {
-				$posy -= floatval(getDolGlobalString('PDF_FOOTER_TOP_MARGIN'));
+				$posy -= (float) getDolGlobalString('PDF_FOOTER_TOP_MARGIN');
 			} else {
 				$posy--;
 			}
@@ -1317,7 +1316,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 
 				// Option for set top margin height of footer after freetext
 				if (getDolGlobalString('PDF_FOOTER_TOP_MARGIN') || getDolGlobalInt('PDF_FOOTER_TOP_MARGIN') === 0) {
-					$posy -= floatval(getDolGlobalString('PDF_FOOTER_TOP_MARGIN'));
+					$posy -= (float) getDolGlobalString('PDF_FOOTER_TOP_MARGIN');
 				} else {
 					$posy--;
 				}

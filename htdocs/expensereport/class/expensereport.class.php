@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_ik.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_rule.class.php';
 
+
 /**
  * Class to manage Trips and Expenses
  */
@@ -1663,7 +1664,7 @@ class ExpenseReport extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('EXPENSEREPORT_ADDON') . ".php";
-			$classname = $conf->global->EXPENSEREPORT_ADDON;
+			$classname = getDolGlobalString('EXPENSEREPORT_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -2436,7 +2437,7 @@ class ExpenseReport extends CommonObject
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('EXPENSEREPORT_ADDON_PDF')) {
-				$modele = $conf->global->EXPENSEREPORT_ADDON_PDF;
+				$modele = getDolGlobalString('EXPENSEREPORT_ADDON_PDF');
 			}
 		}
 
@@ -2792,8 +2793,8 @@ class ExpenseReport extends CommonObject
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (property_exists($this, 'fk_user_author') && !empty($this->id)) {
-			$return .= '<br><span class="info-box-label">'.$this->fk_user_author.'</span>';
+		if (array_key_exists('userauthor', $arraydata)) {
+			$return .= '<br><span class="info-box-label">'.$arraydata['userauthor']->getNomUrl(-1).'</span>';
 		}
 		if (property_exists($this, 'date_debut') && property_exists($this, 'date_fin')) {
 			$return .= '<br><span class="info-box-label">'.dol_print_date($this->date_debut, 'day').'</span>';
@@ -2801,7 +2802,7 @@ class ExpenseReport extends CommonObject
 			$return .= '<span class="info-box-label">'.dol_print_date($this->date_fin, 'day').'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

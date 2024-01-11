@@ -89,8 +89,10 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 
 	/**
 	 *	Constructor
+	 *
+	 *	@param DoliDB		$db		Database object
 	 */
-	public function __construct()
+	public function __construct($db)
 	{
 		$this->code_null = 0;
 		$this->code_modifiable = 1;
@@ -268,12 +270,12 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		// phpcs:enable
 		global $conf;
 
-		$mask = $conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER;
+		$mask = getDolGlobalString('COMPANY_ELEPHANT_MASK_CUSTOMER');
 		if (preg_match('/\{pre\}/i', $mask)) {
 			return 1;
 		}
 
-		$mask = $conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER;
+		$mask = getDolGlobalString('COMPANY_ELEPHANT_MASK_SUPPLIER');
 		if (preg_match('/\{pre\}/i', $mask)) {
 			return 1;
 		}
@@ -329,7 +331,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 				return -6;
 			} else {
 				$is_dispo = $this->verif_dispo($db, $code, $soc, $type);
-				if ($is_dispo <> 0) {
+				if ($is_dispo != 0) {
 					$result = -3;
 				}
 			}

@@ -546,10 +546,10 @@ class AdvanceTargetingMailing extends CommonObject
 
 		if (count($arrayquery) > 0) {
 			if (array_key_exists('cust_saleman', $arrayquery)) {
-				$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as saleman ON saleman.fk_soc=t.rowid ";
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as saleman ON saleman.fk_soc = t.rowid";
 			}
 			if (array_key_exists('cust_categ', $arrayquery)) {
-				$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as custcateg ON custcateg.fk_soc=t.rowid ";
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_societe as custcateg ON custcateg.fk_soc = t.rowid";
 			}
 
 			if (!empty($arrayquery['cust_name'])) {
@@ -787,10 +787,10 @@ class AdvanceTargetingMailing extends CommonObject
 
 				if (!empty($withThirdpartyFilter)) {
 					if (array_key_exists('cust_saleman', $arrayquery)) {
-						$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as saleman ON saleman.fk_soc=ts.rowid ";
+						$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as saleman ON saleman.fk_soc = ts.rowid";
 					}
 					if (array_key_exists('cust_categ', $arrayquery)) {
-						$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as custcateg ON custcateg.fk_soc=ts.rowid ";
+						$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_societe as custcateg ON custcateg.fk_soc = ts.rowid";
 					}
 
 					if (!empty($arrayquery['cust_name'])) {

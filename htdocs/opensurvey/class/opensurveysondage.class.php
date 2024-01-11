@@ -338,7 +338,6 @@ class Opensurveysondage extends CommonObject
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters
