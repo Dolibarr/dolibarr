@@ -69,7 +69,7 @@ class Users extends DolibarrApi
 	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array               Array of User objects
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = 0, $category = 0, $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = '0', $category = 0, $sqlfilters = '', $properties = '')
 	{
 		global $conf;
 
@@ -532,7 +532,7 @@ class Users extends DolibarrApi
 	 * @throws RestException 404 User not found
 	 * @throws RestException 503 Error
 	 */
-	public function listGroups($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $group_ids = 0, $sqlfilters = '', $properties = '')
+	public function listGroups($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $group_ids = '0', $sqlfilters = '', $properties = '')
 	{
 		global $conf;
 

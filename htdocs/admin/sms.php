@@ -283,7 +283,7 @@ if ($action == 'edit') {
 		$formsms->withcancel = 1;
 		// Tableau des substitutions
 		$formsms->substit = $substitutionarrayfortest;
-		// Tableau des parametres complementaires du post
+		// Tableau des parameters complementaires du post
 		$formsms->param["action"] = "send";
 		$formsms->param["models"] = "body";
 		$formsms->param["smsid"] = 0;

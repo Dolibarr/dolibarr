@@ -63,7 +63,7 @@ class Invoices extends DolibarrApi
 	/**
 	 * Get properties of a invoice object
 	 *
-	 * Return an array with invoice informations
+	 * Return an array with invoice information
 	 *
 	 * @param	int		$id				ID of invoice
 	 * @param   int     $contact_list	0:Return array contains all properties, 1:Return array contains just id, -1: Do not return contacts/adddesses
@@ -79,7 +79,7 @@ class Invoices extends DolibarrApi
 	/**
 	 * Get properties of an invoice object by ref
 	 *
-	 * Return an array with invoice informations
+	 * Return an array with invoice information
 	 *
 	 * @param   string		$ref			Ref of object
 	 * @param   int         $contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
@@ -97,7 +97,7 @@ class Invoices extends DolibarrApi
 	/**
 	 * Get properties of an invoice object by ref_ext
 	 *
-	 * Return an array with invoice informations
+	 * Return an array with invoice information
 	 *
 	 * @param   string		$ref_ext		External reference of object
 	 * @param   int         $contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
@@ -115,7 +115,7 @@ class Invoices extends DolibarrApi
 	/**
 	 * Get properties of an invoice object
 	 *
-	 * Return an array with invoice informations
+	 * Return an array with invoice information
 	 *
 	 * @param   int         $id				ID of order
 	 * @param	string		$ref			Ref of object
@@ -171,7 +171,7 @@ class Invoices extends DolibarrApi
 	 * @param string	$thirdparty_ids	  Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string	$status			  Filter by invoice status : draft | unpaid | paid | cancelled
 	 * @param string    $sqlfilters       Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                      Array of invoice objects
 	 *
 	 * @throws RestException 404 Not found
@@ -290,7 +290,7 @@ class Invoices extends DolibarrApi
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->invoice->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -617,7 +617,7 @@ class Invoices extends DolibarrApi
 				continue;
 			}
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->invoice->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -677,7 +677,7 @@ class Invoices extends DolibarrApi
 	/**
 	 * Add a line to a given invoice
 	 *
-	 * Exemple of POST query :
+	 * Example of POST query :
 	 * {
 	 *     "desc": "Desc", "subprice": "1.00000000", "qty": "1", "tva_tx": "20.000", "localtax1_tx": "0.000", "localtax2_tx": "0.000",
 	 *     "fk_product": "1", "remise_percent": "0", "date_start": "", "date_end": "", "fk_code_ventilation": 0,  "info_bits": "0",
@@ -770,7 +770,7 @@ class Invoices extends DolibarrApi
 	 * Adds a contact to an invoice
 	 *
 	 * @param   int		$id					Order ID
-	 * @param   int		$fk_socpeople			Id of thirdparty contact (if source = 'external') or id of user (if souce = 'internal') to link
+	 * @param   int		$fk_socpeople			Id of thirdparty contact (if source = 'external') or id of user (if source = 'internal') to link
 	 * @param   string	$type_contact           Type of contact (code). Must a code found into table llx_c_type_contact. For example: BILLING
 	 * @param   string  $source					external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
 	 * @param   int     $notrigger              Disable all triggers
@@ -1098,10 +1098,10 @@ class Invoices extends DolibarrApi
 
 		$canconvert = 0;
 		if ($this->invoice->type == Facture::TYPE_DEPOSIT && empty($discountcheck->id)) {
-			$canconvert = 1; // we can convert deposit into discount if deposit is payed (completely, partially or not at all) and not already converted (see real condition into condition used to show button converttoreduc)
+			$canconvert = 1; // we can convert deposit into discount if deposit is paid (completely, partially or not at all) and not already converted (see real condition into condition used to show button converttoreduc)
 		}
 		if (($this->invoice->type == Facture::TYPE_CREDIT_NOTE || $this->invoice->type == Facture::TYPE_STANDARD) && $this->invoice->paye == 0 && empty($discountcheck->id)) {
-			$canconvert = 1; // we can convert credit note into discount if credit note is not payed back and not already converted and amount of payment is 0 (see real condition into condition used to show button converttoreduc)
+			$canconvert = 1; // we can convert credit note into discount if credit note is not paid back and not already converted and amount of payment is 0 (see real condition into condition used to show button converttoreduc)
 		}
 		if ($canconvert) {
 			$this->db->begin();
@@ -1203,7 +1203,7 @@ class Invoices extends DolibarrApi
 
 			if (empty($error)) {
 				if ($this->invoice->type != Facture::TYPE_DEPOSIT) {
-					// Classe facture
+					// Set the invoice as paid
 					$result = $this->invoice->setPaid(DolibarrApiAccess::$user);
 					if ($result >= 0) {
 						$this->db->commit();
@@ -1710,7 +1710,7 @@ class Invoices extends DolibarrApi
 	/**
 	 * Get properties of a template invoice object
 	 *
-	 * Return an array with invoice informations
+	 * Return an array with invoice information
 	 *
 	 * @param	int		$id				ID of template invoice
 	 * @param   int     $contact_list	0:Return array contains all properties, 1:Return array contains just id, -1: Do not return contacts/adddesses
@@ -1728,7 +1728,7 @@ class Invoices extends DolibarrApi
 	/**
 	 * Get properties of an invoice object
 	 *
-	 * Return an array with invoice informations
+	 * Return an array with invoice information
 	 *
 	 * @param   int         $id				ID of order
 	 * @param	string		$ref			Ref of object

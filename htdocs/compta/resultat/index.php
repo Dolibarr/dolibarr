@@ -1013,7 +1013,7 @@ for ($annee = $year_start; $annee <= $year_end_for_table; $annee++) {
 }
 print '</tr>';
 print '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Month").'</td>';
-// Loop on each year to ouput
+// Loop on each year to output
 for ($annee = $year_start; $annee <= $year_end_for_table; $annee++) {
 	print '<td class="liste_titre" align="center">';
 	$htmlhelp = '';

@@ -187,7 +187,7 @@ if (empty($reshook)) {
 
 			if ($result >= 0) {
 				setEventMessages($langs->trans('RessourceSuccessfullyDeleted'), null, 'mesgs');
-				Header('Location: '.DOL_URL_ROOT.'/resource/list.php');
+				header('Location: '.DOL_URL_ROOT.'/resource/list.php');
 				exit;
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');

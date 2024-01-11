@@ -291,7 +291,7 @@ class RemiseCheque extends CommonObject
 	 *	@param  User	$user 		User that delete
 	 *	@return	int
 	 */
-	public function delete($user = null)
+	public function delete($user)
 	{
 		global $conf;
 
@@ -473,7 +473,7 @@ class RemiseCheque extends CommonObject
 	/**
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
-	 *      @param  User	$user       Objet user
+	 *      @param  User	$user       Object user
 	 *      @param	string	$type		Type of payment mode deposit ('CHQ', 'TRA', ...)
 	 *      @return WorkboardResponse|int Return integer <0 if KO, WorkboardResponse if OK
 	 */
@@ -526,7 +526,7 @@ class RemiseCheque extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Charge indicateurs this->nb de tableau de bord
+	 *      Load indicators this->nb for the state board
 	 *
 	 *      @param	string	$type		Type of payment mode deposit ('CHQ', 'TRA', ...)
 	 *      @return int         		Return integer <0 if ko, >0 if ok
@@ -647,7 +647,7 @@ class RemiseCheque extends CommonObject
 	/**
 	 *	Mets a jour le montant total
 	 *
-	 *	@return 	int		0 en cas de succes
+	 *	@return 	int		0 en cas de success
 	 */
 	public function updateAmount()
 	{

@@ -1568,7 +1568,7 @@ if ($action == 'create') {
 	$title = $langs->trans("NewOrderSupplier");
 }
 $help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-supplier-order page-card');
 
 $now = dol_now();
 

@@ -4,7 +4,7 @@
  * Copyright (C) 2012-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2019       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2023       Lenin Rivas         <lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -292,7 +292,7 @@ function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $s
 			}
 			// Sort the data
 			if ($sortorder) {
-				array_multisort($myarray, $sortorder, $file_list);
+				array_multisort($myarray, $sortorder, SORT_REGULAR, $file_list);
 			}
 		}
 
@@ -717,7 +717,7 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask 
  */
 function dol_copy($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $testvirus = 0, $indexdatabase = 0)
 {
-	global $conf, $db, $user;
+	global $db, $user;
 
 	dol_syslog("files.lib.php::dol_copy srcfile=".$srcfile." destfile=".$destfile." newmask=".$newmask." overwriteifexists=".$overwriteifexists);
 
@@ -746,7 +746,7 @@ function dol_copy($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $te
 	// Check virus
 	$testvirusarray = array();
 	if ($testvirus) {
-		$testvirusarray = dolCheckVirus($srcfile);
+		$testvirusarray = dolCheckVirus($srcfile, $destfile);
 		if (count($testvirusarray)) {
 			dol_syslog("files.lib.php::dol_copy canceled because a virus was found into source file. we ignore the copy request.", LOG_WARNING);
 			return -3;
@@ -967,7 +967,7 @@ function dol_move($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $te
 		// Check virus
 		$testvirusarray = array();
 		if ($testvirus) {
-			$testvirusarray = dolCheckVirus($newpathofsrcfile);
+			$testvirusarray = dolCheckVirus($newpathofsrcfile, $newpathofdestfile);
 			if (count($testvirusarray)) {
 				dol_syslog("files.lib.php::dol_move canceled because a virus was found into source file. we ignore the move request.", LOG_WARNING);
 				return false;
@@ -1176,11 +1176,22 @@ function dol_unescapefile($filename)
  * Check virus into a file
  *
  * @param   string      $src_file       Source file to check
- * @return  array                       Array of errors or empty array if not virus found
+ * @param   string      $dest_file      Destination file name (to know the expected type)
+ * @return  array                       Array of errors, or empty array if not virus found
  */
-function dolCheckVirus($src_file)
+function dolCheckVirus($src_file, $dest_file = '')
 {
-	global $conf, $db;
+	global $db;
+
+	if (preg_match('/\.pdf$/i', $dest_file)) {
+		dol_syslog("dolCheckVirus Check pdf does not contains js file");
+		if (!getDolGlobalString('MAIN_ANTIVIRUS_ALLOW_JS_IN_PDF')) {
+			$tmp = file_get_contents(trim($src_file));
+			if (preg_match('/[\n\s]+\/JavaScript[\n\s]+/m', $tmp)) {
+				return array('File is a PDF with javascript inside');
+			}
+		}
+	}
 
 	if (getDolGlobalString('MAIN_ANTIVIRUS_COMMAND')) {
 		if (!class_exists('AntiVir')) {
@@ -1257,7 +1268,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		// Security:
 		// If we need to make a virus scan
 		if (empty($disablevirusscan) && file_exists($src_file)) {
-			$checkvirusarray = dolCheckVirus($src_file);
+			$checkvirusarray = dolCheckVirus($src_file, $dest_file);
 			if (count($checkvirusarray)) {
 				dol_syslog('Files.lib::dol_move_uploaded_file File "'.$src_file.'" (target name "'.$dest_file.'") KO with antivirus: errors='.join(',', $checkvirusarray), LOG_WARNING);
 				return 'ErrorFileIsInfectedWithAVirus: '.join(',', $checkvirusarray);
@@ -1885,10 +1896,14 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 					$nbok++;
 				} else {
 					$langs->load("errors");
-					if ($resupload < 0) {	// Unknown error
+					if (is_numeric($resupload) && $resupload < 0) {	// Unknown error
 						setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
 					} elseif (preg_match('/ErrorFileIsInfectedWithAVirus/', $resupload)) {	// Files infected by a virus
-						setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
+						if (preg_match('/File is a PDF with javascript inside/', $resupload)) {
+							setEventMessages($langs->trans("ErrorFileIsAnInfectedPDFWithJSInside"), null, 'errors');
+						} else {
+							setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
+						}
 					} else { // Known error
 						setEventMessages($langs->trans($resupload), null, 'errors');
 					}
@@ -2218,7 +2233,7 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring 
 				// Create recursive directory iterator
 				/** @var SplFileInfo[] $files */
 				$files = new RecursiveIteratorIterator(
-					new RecursiveDirectoryIterator($rootPath),
+					new RecursiveDirectoryIterator($rootPath, FilesystemIterator::UNIX_PATHS),
 					RecursiveIteratorIterator::LEAVES_ONLY
 				);
 
@@ -2481,7 +2496,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 				// This does not return symbolic links
 				/** @var SplFileInfo[] $files */
 				$files = new RecursiveIteratorIterator(
-					new RecursiveDirectoryIterator($inputdir),
+					new RecursiveDirectoryIterator($inputdir, FilesystemIterator::UNIX_PATHS),
 					RecursiveIteratorIterator::LEAVES_ONLY
 				);
 

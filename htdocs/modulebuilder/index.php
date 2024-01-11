@@ -643,6 +643,40 @@ if ($dirins && $action == 'initwidget' && !empty($module)) {
 }
 
 
+// init EmailSelector
+if ($dirins && $action == 'initemailing' && !empty($module)) {
+	dol_mkdir($dirins.'/'.strtolower($module).'/core/modules/mailings');
+	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
+	$srcfile = $srcdir.'/core/modules/mailings/mailing_mymodule_myobject.modules.php';
+	$destfile = $dirins.'/'.strtolower($module).'/core/modules/mailings/mailing_'.strtolower($module).'_selector1.modules.php';
+	//var_dump($srcfile);
+	//var_dump($destfile);
+	$result = dol_copy($srcfile, $destfile, 0, 0);
+
+	if ($result > 0) {
+		$modulename = ucfirst($module); // Force first letter in uppercase
+
+		//var_dump($phpfileval['fullname']);
+		$arrayreplacement = array(
+			'mymodule'=>strtolower($modulename),
+			'MyModule'=>$modulename,
+			'MYMODULE'=>strtoupper($modulename),
+			'My module'=>$modulename,
+			'my module'=>$modulename,
+			'Mon module'=>$modulename,
+			'mon module'=>$modulename,
+			'htdocs/modulebuilder/template'=>strtolower($modulename),
+			'---Put here your own copyright and developer email---'=>dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
+		);
+
+		dolReplaceInFile($destfile, $arrayreplacement);
+	} else {
+		$langs->load("errors");
+		setEventMessages($langs->trans('ErrorFailToCreateFile', $destfile), null, 'errors');
+	}
+}
+
+
 // init CSS
 if ($dirins && $action == 'initcss' && !empty($module)) {
 	dol_mkdir($dirins.'/'.strtolower($module).'/css');
@@ -3299,6 +3333,7 @@ if ($module == 'initmodule') {
 		$countMenus = count($moduleobj->menu);
 		$countTriggers = countItemsInDirectory(dol_buildpath($modulelowercase, 0)."/core/triggers");
 		$countWidgets = countItemsInDirectory(dol_buildpath($modulelowercase, 0)."/core/boxes");
+		$countEmailingSelectors = countItemsInDirectory(dol_buildpath($modulelowercase, 0)."/core/modules/mailings");
 		$countCss = countItemsInDirectory(dol_buildpath($modulelowercase, 0)."/css");
 		$countJs = countItemsInDirectory(dol_buildpath($modulelowercase, 0)."/js");
 		$countCLI = countItemsInDirectory(dol_buildpath($modulelowercase, 0)."/scripts");
@@ -3355,6 +3390,11 @@ if ($module == 'initmodule') {
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=widgets&module='.$module.($forceddirread ? '@'.$dirread : '');
 		$head2[$h][1] = ($countWidgets <= 0 ? $langs->trans("Widgets") : $langs->trans("Widgets").'<span class="marginleftonlyshort badge">'.$countWidgets."</span>");
 		$head2[$h][2] = 'widgets';
+		$h++;
+
+		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=emailings&module='.$module.($forceddirread ? '@'.$dirread : '');
+		$head2[$h][1] = ($countEmailingSelectors <= 0 ? $langs->trans("EmailingSelectors") : $langs->trans("EmailingSelectors").'<span class="marginleftonlyshort badge">'.$countEmailingSelectors."</span>");
+		$head2[$h][2] = 'emailings';
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=exportimport&module='.$module.($forceddirread ? '@'.$dirread : '');
@@ -5908,6 +5948,58 @@ if ($module == 'initmodule') {
 				} else {
 					print '<tr><td><span class="fa fa-file-o"></span> '.$langs->trans("WidgetFile").' : <span class="opacitymedium">'.$langs->trans("NoWidget").'</span>';
 					print '</td><td><a href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initwidget&token='.newToken().'&format=php">'.img_picto('Generate', 'generate', 'class="paddingleft"').'</a>';
+					print '</td></tr>';
+				}
+				print '</table>';
+			} else {
+				$fullpathoffile = dol_buildpath($file, 0);
+
+				$content = file_get_contents($fullpathoffile);
+
+				// New module
+				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
+				print '<input type="hidden" name="action" value="savefile">';
+				print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
+				print '<input type="hidden" name="tab" value="'.$tab.'">';
+				print '<input type="hidden" name="module" value="'.$module.'">';
+
+				$doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
+				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
+				print '<br>';
+				print '<center>';
+				print '<input type="submit" class="button buttonforacesave button-save" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+				print ' &nbsp; ';
+				print '<input type="submit" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+				print '</center>';
+
+				print '</form>';
+			}
+		}
+
+		if ($tab == 'emailings') {
+			print '<!-- tab=emailings -->'."\n";
+			require_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
+
+			$emailingselectors = MailingTargets::getEmailingSelectorsList(array('/'.strtolower($module).'/core/modules/mailings'));
+
+			if ($action != 'editfile' || empty($file)) {
+				print '<span class="opacitymedium">'.$langs->trans("EmailingSelectorDesc").'</span><br>';
+				print '<br>';
+
+				print '<table>';
+				if (!empty($emailingselectors)) {
+					foreach ($emailingselectors as $emailingselector) {
+						$pathtofile = $emailingselector['relpath'];
+
+						print '<tr><td><span class="fa fa-file-o"></span> '.$langs->trans("EmailingSelectorFile").' : <strong class="wordbreak">'.$pathtofile.'</strong>';
+						print '</td><td><a class="editfielda paddingleft paddingright" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&token='.newToken().'&format=php&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+						print '</td><td><a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=confirm_removefile&token='.newToken().'&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Delete"), 'delete').'</a></td>';
+						print '</tr>';
+					}
+				} else {
+					print '<tr><td><span class="fa fa-file-o"></span> '.$langs->trans("EmailingSelectorFile").' : <span class="opacitymedium">'.$langs->trans("NoEmailingSelector").'</span>';
+					print '</td><td><a href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initemailing&token='.newToken().'&format=php">'.img_picto('Generate', 'generate', 'class="paddingleft"').'</a>';
 					print '</td></tr>';
 				}
 				print '</table>';

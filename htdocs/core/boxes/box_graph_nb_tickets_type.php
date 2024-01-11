@@ -35,12 +35,7 @@ class box_graph_nb_tickets_type extends ModeleBoxes
 	public $boxlabel;
 	public $depends = array("ticket");
 
-	public $param;
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 	public $widgettype = 'graph';
-
 
 	/**
 	 * Constructor

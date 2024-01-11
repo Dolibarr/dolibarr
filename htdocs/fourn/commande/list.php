@@ -1021,6 +1021,7 @@ if ($resql) {
 	}
 
 	llxHeader('', $title, $help_url);
+	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-supplier-order page-list');
 
 	$param = '';
 	if (!empty($mode)) {

@@ -3,7 +3,7 @@
 # Count number of different contributors and number of commits for a given year.
 # Can be used for statistics (for example to generate the inforgraphy of the year)
 #
- 
+
 if [ "x$1" = "x" ]; then
 	echo "Usage: $0 YEARSTART [YEAREND]"
 	exit
