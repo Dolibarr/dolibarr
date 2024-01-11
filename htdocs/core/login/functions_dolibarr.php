@@ -110,7 +110,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 					if (!in_array($cryptType, array('auto'))) {
 						$cryptType = 'auto';
 					}
-					// Check crypted password according to crypt algorithm
+					// Check encrypted password according to encryption algorithm
 					if ($cryptType == 'auto') {
 						if ($passcrypted && dol_verifyHash($passtyped, $passcrypted, '0')) {
 							$passok = true;
