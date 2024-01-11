@@ -1118,8 +1118,8 @@ class Adherent extends CommonObject
 	 *
 	 *    @param	User	$user           Object user de l'utilisateur qui fait la modification
 	 *    @param 	string	$password       New password (to generate if empty)
-	 *    @param    int		$isencrypted    0 ou 1 si il faut crypter le mot de passe en base (0 par defaut)
-	 *	  @param	int		$notrigger		1=Ne declenche pas les triggers
+	 *    @param    int		$isencrypted    0 ou 1 if the password needs to be encrypted in the DB (default: 0)
+	 *	  @param	int		$notrigger		1=Does not raise the triggers
 	 *    @param	int		$nosyncuser		Do not synchronize linked user
 	 *    @return   string           		If OK return clear password, 0 if no change, < 0 if error
 	 */
@@ -2812,7 +2812,7 @@ class Adherent extends CommonObject
 		// When password is modified
 		if (!empty($this->pass)) {
 			if (getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD')) {
-				$info[getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD')] = $this->pass; // this->pass = mot de passe non crypte
+				$info[getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD')] = $this->pass; // this->pass = Unencrypted password
 			}
 			if (getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED')) {
 				$info[getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED')] = dol_hash($this->pass, 'openldap'); // Create OpenLDAP password (see LDAP_PASSWORD_HASH_TYPE)
@@ -2832,7 +2832,7 @@ class Adherent extends CommonObject
 			} elseif (!empty($this->pass_indatabase)) {
 				// Use $this->pass_indatabase value if exists
 				if (getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD')) {
-					$info[getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD')] = $this->pass_indatabase; // $this->pass_indatabase = mot de passe non crypte
+					$info[getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD')] = $this->pass_indatabase; // $this->pass_indatabase = Unencrypted password
 				}
 				if (getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED')) {
 					$info[getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED')] = dol_hash($this->pass_indatabase, 'openldap'); // Create OpenLDAP password (see LDAP_PASSWORD_HASH_TYPE)

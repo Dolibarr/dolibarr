@@ -35,20 +35,20 @@ counter=0;
 offset=0;
 for file in $path*$ext
 do
-    width=`identify -format "%[fx:w]" "$file"`;
-    height=`identify -format "%[fx:h]" "$file"`;
-    idname=`basename "$file" $ext`;
-    clean=${idname// /-}
-    echo -e ".$classname.$clean {" >> $css;
-    echo -e "\tbackground-position:0 -${offset}px;" >> $css;
-    echo -e "\twidth: ${width}px;" >> $css;
-    echo -e "\theight: ${height}px;\n}" >> $css;
+	width=`identify -format "%[fx:w]" "$file"`;
+	height=`identify -format "%[fx:h]" "$file"`;
+	idname=`basename "$file" $ext`;
+	clean=${idname// /-}
+	echo -e ".$classname.$clean {" >> $css;
+	echo -e "\tbackground-position:0 -${offset}px;" >> $css;
+	echo -e "\twidth: ${width}px;" >> $css;
+	echo -e "\theight: ${height}px;\n}" >> $css;
 
-    echo -e "<div style=\"display:inline-block;width:100px;\"><div style=\"overflow-x:hidden;text-overflow:ellipsis;white-space:nowrap;\">$clean</div> <a href=\"#\" class=\"$classname $clean\"></a></div>\n" >> $html;
+	echo -e "<div style=\"display:inline-block;width:100px;\"><div style=\"overflow-x:hidden;text-overflow:ellipsis;white-space:nowrap;\">$clean</div> <a href=\"#\" class=\"$classname $clean\"></a></div>\n" >> $html;
 
-    let offset+=$height;
-    let counter+=1;
-    echo -e "\t#$counter done";
+	let offset+=$height;
+	let counter+=1;
+	echo -e "\t#$counter done";
 done
 
 echo -e "<h2>Full sprite:</h2>\n<img src=\"$classname$ext\" />" >> $html;

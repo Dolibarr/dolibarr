@@ -139,7 +139,7 @@ class Thirdparties extends DolibarrApi
 		}
 
 		// case of external user, we force socids
-		$socids = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
+		$socids = DolibarrApiAccess::$user->socid ? (string) DolibarrApiAccess::$user->socid : '';
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
@@ -148,9 +148,6 @@ class Thirdparties extends DolibarrApi
 		}
 
 		$sql = "SELECT t.rowid";
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
-			$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
-		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as t";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields AS ef ON ef.fk_object = t.rowid";	// So we will be able to filter on extrafields
 		if ($category > 0) {
@@ -161,13 +158,9 @@ class Thirdparties extends DolibarrApi
 				$sql .= ", ".MAIN_DB_PREFIX."categorie_fournisseur as cc";
 			}
 		}
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
-			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
-		}
 		$sql .= ", ".MAIN_DB_PREFIX."c_stcomm as st";
 		$sql .= " WHERE t.entity IN (".getEntity('societe').")";
 		$sql .= " AND t.fk_stcomm = st.id";
-
 		if ($mode == 1) {
 			$sql .= " AND t.client IN (1, 3)";
 		} elseif ($mode == 2) {
@@ -177,7 +170,6 @@ class Thirdparties extends DolibarrApi
 		} elseif ($mode == 4) {
 			$sql .= " AND t.fournisseur IN (1)";
 		}
-
 		// Select thirdparties of given category
 		if ($category > 0) {
 			if (!empty($mode) && $mode != 4) {
@@ -188,20 +180,16 @@ class Thirdparties extends DolibarrApi
 				$sql .= " AND ((c.fk_categorie = ".((int) $category)." AND c.fk_soc = t.rowid) OR (cc.fk_categorie = ".((int) $category)." AND cc.fk_soc = t.rowid))";
 			}
 		}
-
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
-			$sql .= " AND t.rowid = sc.fk_soc";
-		}
-		//if ($email != NULL) $sql.= " AND s.email = \"".$email."\"";
 		if ($socids) {
 			$sql .= " AND t.rowid IN (".$this->db->sanitize($socids).")";
 		}
-		if ($search_sale > 0) {
-			$sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
-		}
-		// Insert sale filter
-		if ($search_sale > 0) {
-			$sql .= " AND sc.fk_user = ".((int) $search_sale);
+		// Search on sale representative
+		if ($search_sale && $search_sale != '-1') {
+			if ($search_sale == -2) {
+				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.rowid)";
+			} elseif ($search_sale > 0) {
+				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.rowid AND sc.fk_user = ".((int) $search_sale).")";
+			}
 		}
 		// Add sql filters
 		if ($sqlfilters) {

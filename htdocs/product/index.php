@@ -5,7 +5,7 @@
  * Copyright (C) 2014-2016  Charlie BENKE           <charlie@patas-monkey.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019       Pierre Ardoin           <mapiolca@me.com>
- * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -365,7 +365,7 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall tdoverflowmax100">';
-				print $product_static->getNomUrl(1, '', 16);
+				print $product_static->getNomUrl(1);
 				print "</td>\n";
 				print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($objp->label).'">'.dol_escape_htmltag($objp->label).'</td>';
 				print '<td title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($db->jdate($objp->datem), 'dayhour', 'tzuserrel')).'">';

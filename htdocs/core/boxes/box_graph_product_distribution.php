@@ -34,18 +34,7 @@ class box_graph_product_distribution extends ModeleBoxes
 	public $boxlabel = "BoxProductDistribution";
 	public $depends = array("product|service", "facture|propal|commande");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 	public $widgettype = 'graph';
-
 
 	/**
 	 *  Constructor
@@ -55,7 +44,7 @@ class box_graph_product_distribution extends ModeleBoxes
 	 */
 	public function __construct($db, $param)
 	{
-		global $user, $conf;
+		global $user;
 
 		$this->db = $db;
 

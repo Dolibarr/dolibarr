@@ -509,7 +509,7 @@ class Dolresource extends CommonObject
 	 *  @param	array		$filter    	  	filter output
 	 *  @return int          				Return integer <0 if KO, Number of lines loaded if OK
 	 */
-	public function fetchAll($sortorder, $sortfield, $limit, $offset, $filter = '')
+	public function fetchAll($sortorder, $sortfield, $limit, $offset, $filter = [])
 	{
 		// phpcs:enable
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';

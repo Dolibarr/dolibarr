@@ -297,7 +297,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-if (!$user->hasRight('societe', 'client', 'voir') || $user->socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$search_sale = $user->id;
 }
 
@@ -612,7 +612,7 @@ $sql .= ' f.fk_fac_rec_source,';
 $sql .= ' p.rowid as project_id, p.ref as project_ref, p.title as project_label,';
 $sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender';
 // We need dynamount_payed to be able to sort on status (value is surely wrong because we can count several lines several times due to other left join or link with contacts. But what we need is just 0 or > 0).
-// A Better solution to be able to sort on already payed or remain to pay is to store amount_payed in a denormalized field.
+// A Better solution to be able to sort on already paid or remain to pay is to store amount_payed in a denormalized field.
 // We disable this. It create a bug when searching with sall and sorting on status. Also it create performance troubles.
 /*
 if (!$sall) {
@@ -783,10 +783,10 @@ if ($search_status != '-1' && $search_status != '') {
 			$sql .= " AND f.fk_statut = 1"; // unpayed
 		}
 		if ($search_status == '2') {
-			$sql .= " AND f.fk_statut = 2"; // payed     Not that some corrupted data may contains f.fk_statut = 1 AND f.paye = 1 (it means payed too but should not happend. If yes, reopen and reclassify billed)
+			$sql .= " AND f.fk_statut = 2"; // paid     Not that some corrupted data may contains f.fk_statut = 1 AND f.paye = 1 (it means paid too but should not happen. If yes, reopen and reclassify billed)
 		}
 		if ($search_status == '3') {
-			$sql .= " AND f.fk_statut = 3"; // abandonned
+			$sql .= " AND f.fk_statut = 3"; // abandoned
 		}
 	} else {
 		$sql .= " AND f.fk_statut IN (".$db->sanitize($db->escape($search_status)).")"; // When search_status is '1,2' for example

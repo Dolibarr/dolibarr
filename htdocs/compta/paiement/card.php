@@ -554,7 +554,7 @@ if ($resql) {
 			// Expected to pay
 			print '<td class="right"><span class="amount">'.price($objp->total_ttc).'</span></td>';
 
-			// Amount payed
+			// Amount paid
 			print '<td class="right"><span class="amount">'.price($objp->amount).'</span></td>';
 
 			// Remain to pay

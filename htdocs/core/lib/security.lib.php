@@ -92,7 +92,7 @@ function dol_decode($chain, $key = '1')
 }
 
 /**
- * Return a string of random bytes (hexa string) with length = $length fro cryptographic purposes.
+ * Return a string of random bytes (hexa string) with length = $length for cryptographic purposes.
  *
  * @param 	int			$length		Length of random string
  * @return	string					Random string
@@ -130,7 +130,7 @@ function dolEncrypt($chain, $key = '', $ciphering = 'AES-256-CTR', $forceseed = 
 
 	$reg = array();
 	if (preg_match('/^dolcrypt:([^:]+):(.+)$/', $chain, $reg)) {
-		// The $chain is already a crypted string
+		// The $chain is already a encrypted string
 		return $chain;
 	}
 
@@ -1254,9 +1254,8 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
  */
 function getMaxFileSizeArray()
 {
-	global $conf;
-
 	$max = getDolGlobalString('MAIN_UPLOAD_DOC'); // In Kb
+
 	$maxphp = @ini_get('upload_max_filesize'); // In unknown
 	if (preg_match('/k$/i', $maxphp)) {
 		$maxphp = preg_replace('/k$/i', '', $maxphp);

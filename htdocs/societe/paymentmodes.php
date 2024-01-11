@@ -1719,7 +1719,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				$useonlinesignature = 1;
 				if ($useonlinesignature) {
 					require_once DOL_DOCUMENT_ROOT . '/core/lib/signature.lib.php';
-					print showOnlineSignatureUrl($companybankaccount->element, $rib->id);
+					print showOnlineSignatureUrl($companybankaccount->element, $rib->id, $rib);
 				}
 				print '</td>';
 			}

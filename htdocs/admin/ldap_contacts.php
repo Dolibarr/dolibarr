@@ -132,7 +132,7 @@ print load_fiche_titre($langs->trans("LDAPSetup"), $linkback, 'title_setup');
 
 $head = ldap_prepare_head();
 
-// Test si fonction LDAP actives
+// Test si function LDAP actives
 if (!function_exists("ldap_connect")) {
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
@@ -281,7 +281,7 @@ print '</form>';
 
 
 /*
- * Test de la connexion
+ * Test the connection
  */
 $butlabel = $langs->trans("LDAPTestSynchroContact");
 $testlabel = 'test';
@@ -294,7 +294,7 @@ show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass);
 
 if (function_exists("ldap_connect")) {
 	if ($_GET["action"] == 'test') {
-		// Creation objet
+		// Create object
 		$object = new Contact($db);
 		$object->initAsSpecimen();
 

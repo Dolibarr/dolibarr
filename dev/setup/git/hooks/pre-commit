@@ -1,7 +1,7 @@
 #!/bin/sh
 # To install this precommit file: put this file in your local repo in .git/hooks directory and make it executable.
 # You may need to set th DIRPHPCS to the path to your phpcs install.
-# If phpcs check fail and AUTOFIX is set to 1, then it run phpcbf to fix automaticaly the syntax, and git commit is canceled.
+# If phpcs checks fail and AUTOFIX is set to 1, then it run phpcbf to fix automatically the syntax, and git commit is canceled.
 # If you have a multiprocessor computer, you can add to the option --parallel=xx
 # When running git commit, it first execute this file checking only modified files, so it is faster than running on all files
 # To run the fix manually: cd ~/git/dolibarr; phpcbf -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true "fileordir"
@@ -16,9 +16,9 @@ echo "Running precommit hook in .git/hooks/pre-commit" 1>&2;
 # Determine if a file list is passed
 if [ "$#" -eq 1 ]
 then
-    oIFS=$IFS
-    IFS='
-    '
+  oIFS=$IFS
+  IFS='
+  '
     SFILES="$1"
     IFS=$oIFS
 fi
@@ -47,11 +47,11 @@ then
 
     # Check Dolibarr standard
     ${DIRPHPCS}phpcs -s -p -d memory_limit=-1 --parallel=2 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true $FILES
-    
+
     # Check a common standard
     #${DIRPHPCS}phpcs -s -p -d memory_limit=-1 --parallel=2 --extensions=php --colors --tab-width=4 --standard=PSR2 --encoding=utf-8 --runtime-set ignore_warnings_on_exit true $FILES
-    
-    result2=$?    
+
+    result2=$?
 
     if [ "x$result2" != "x0" ]
     then
@@ -59,12 +59,12 @@ then
         if [ "x$AUTOFIX" != "x0" ]
         then
             ${DIRPHPCS}phpcbf -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true $FILES
-            
+
             #${DIRPHPCS}phpcbf -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=htdocs/custom/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true $FILES
-            
+
             echo "Found some errors in syntax rules. An automatic fix has been applied. Check it before commit." 1>&2;
             exit 1
-        else 
+        else
             echo "Found some errors in syntax rules. Fix the error(s) before commit." 1>&2;
             exit 1
         fi

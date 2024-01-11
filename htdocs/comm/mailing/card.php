@@ -907,8 +907,8 @@ if ($action == 'create') {
 
 					$text = '';
 
-					if (isset($conf->global->MAILING_LIMIT_SENDBYDAY) && getDolGlobalInt('MAILING_LIMIT_SENDBYDAY') >= 0) {
-						$text .= $langs->trans('WarningLimitSendByDay', getDolGlobalString('MAILING_LIMIT_SENDBYDAY'));
+					if (getDolGlobalInt('MAILING_LIMIT_SENDBYDAY') > 0) {
+						$text .= $langs->trans('WarningLimitSendByDay', getDolGlobalInt('MAILING_LIMIT_SENDBYDAY'));
 						$text .= '<br><br>';
 					}
 					$text .= $langs->trans('ConfirmSendingEmailing').'<br>';

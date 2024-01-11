@@ -177,7 +177,7 @@ print load_fiche_titre($langs->trans("LDAPSetup"), $linkback, 'title_setup');
 
 $head = ldap_prepare_head();
 
-// Test si fonction LDAP actives
+// Test si function LDAP actives
 if (!function_exists("ldap_connect")) {
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
@@ -268,14 +268,14 @@ print '</td><td>'.$langs->trans("LDAPFieldLoginSambaExample").'</td>';
 print '<td class="right"><input type="radio" name="key" value="LDAP_MEMBER_FIELD_LOGIN_SAMBA"'.(($conf->global->LDAP_KEY_MEMBERS && $conf->global->LDAP_KEY_MEMBERS == $conf->global->LDAP_MEMBER_FIELD_LOGIN_SAMBA) ? ' checked' : '')."></td>";
 print '</tr>';
 
-// Password not crypted
+// Password not encrypted
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldPasswordNotCrypted").'</td><td>';
 print '<input size="25" type="text" name="fieldpassword" value="' . getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD').'">';
 print '</td><td>'.$langs->trans("LDAPFieldPasswordExample").'</td>';
 print '<td class="right">&nbsp;</td>';
 print '</tr>';
 
-// Password crypted
+// Password encrypted
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldPasswordCrypted").'</td><td>';
 print '<input size="25" type="text" name="fieldpasswordcrypted" value="' . getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED').'">';
 print '</td><td>'.$langs->trans("LDAPFieldPasswordExample").'</td>';
@@ -431,7 +431,7 @@ print '</form>';
 
 
 /*
- * Test de la connexion
+ * Test the connection
  */
 if (getDolGlobalString('LDAP_MEMBER_ACTIVE')) {
 	$butlabel = $langs->trans("LDAPTestSynchroMember");
@@ -445,7 +445,7 @@ if (getDolGlobalString('LDAP_MEMBER_ACTIVE')) {
 
 if (function_exists("ldap_connect")) {
 	if ($_GET["action"] == 'testmember') {
-		// Creation objet
+		// Create object
 		$object = new Adherent($db);
 		$object->initAsSpecimen();
 
