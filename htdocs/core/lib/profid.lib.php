@@ -84,6 +84,16 @@ function isValidSiret($siret)
 		return false;
 	}
 
-	// TODO: handle the exception of "La Poste" (356 000 000 #####)
-	return isValidLuhn($siret);
+	if (isValidLuhn($siret)) {
+		return true;
+	} elseif ( (substr($siret, 0, 9) == "356000000") && (array_sum(str_split($siret)) %5 == 0) ) {
+		/**
+		 *  Specific case of "La Poste" businesses (SIRET such as "356 000 000 XXXXX"),
+		 *  for which the rule becomes: the sum of the 14 digits must be a multiple of 5.
+		 *  See https://fr.wikipedia.org/wiki/SIRET for details.
+		 */
+		return true;
+	} else {
+		return false;
+	}
 }
