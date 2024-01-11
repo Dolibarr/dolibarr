@@ -96,4 +96,67 @@ function isValidSiret($siret)
 	} else {
 		return false;
 	}
+
+
+/**
+ *  Check the syntax validity of a Portuguese (PT) Tax Identification Number (TIN).
+ *  (NIF = Número de Identificação Fiscal)
+ *
+ *  @param		string		$str		NIF to check
+ *  @return		boolean					True if valid, False otherwise
+ *  @since		Dolibarr V20
+ */
+function isValidTinForPT($str)
+{
+	$str = trim($str);
+	$str = preg_replace('/(\s)/', '', $str);
+
+	if (preg_match('/(^[0-9]{9}$)/', $str)) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+
+/**
+ *  Check the syntax validity of an Algerian (DZ) Tax Identification Number (TIN).
+ *  (NIF = Numéro d'Identification Fiscale)
+ *
+ *  @param		string		$str		TIN to check
+ *  @return		boolean					True if valid, False otherwise
+ *  @since		Dolibarr V20
+ */
+function isValidTinForDZ($str)
+{
+	$str = trim($str);
+	$str = preg_replace('/(\s)/', '', $str);
+
+	if (preg_match('/(^[0-9]{15}$)/', $str)) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+
+/**
+ *  Check the syntax validity of a Belgium (BE) Tax Identification Number (TIN).
+ *  (NN = Numéro National)
+ *
+ *  @param		string		$str		NN to check
+ *  @return		boolean					True if valid, False otherwise
+ *  @since		Dolibarr V20
+ */
+function isValidTinForBE($str)
+{
+	// https://economie.fgov.be/fr/themes/entreprises/banque-carrefour-des/actualites/structure-du-numero
+	$str = trim($str);
+	$str = preg_replace('/(\s)/', '', $str);
+
+	if (preg_match('/(^[0-9]{4}\.[0-9]{3}\.[0-9]{3}$)/', $str)) {
+		return true;
+	} else {
+		return false;
+	}
 }
