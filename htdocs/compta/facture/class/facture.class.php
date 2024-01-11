@@ -1999,7 +1999,7 @@ class Facture extends CommonInvoice
 		if ($option == 'withdraw') {
 			$url = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$this->id;
 		} else {
-			$url = DOL_URL_ROOT.'/compta/facture/card.php?facid='.$this->id;
+			$url = DOL_URL_ROOT.'/compta/facture/card.php?id='.$this->id;
 		}
 
 		if (!$user->hasRight("facture", "read")) {
