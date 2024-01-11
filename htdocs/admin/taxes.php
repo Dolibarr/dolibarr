@@ -197,7 +197,7 @@ if (empty($mysoc->tva_assuj)) {
 
 	print '<table class="noborder centpercent">';
 
-	// Cas des parametres TAX_MODE_SELL/BUY_SERVICE/PRODUCT
+	// Case for the parameters TAX_MODE_SELL/BUY_SERVICE/PRODUCT
 	print '<tr class="liste_titre">';
 	print '<td class="titlefield">'.$langs->trans('OptionVatMode').'</td><td>'.$langs->trans('Description').'</td>';
 	print "</tr>\n";

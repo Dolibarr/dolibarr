@@ -149,7 +149,7 @@ if ($action == 'updateMask') {
 	}
 } elseif ($action == 'setmod') {
 	// TODO Verifier si module numerotation choisi peut etre active
-	// par appel methode canBeActivated
+	// par appel method canBeActivated
 
 	dolibarr_set_const($db, "FACTURE_ADDON", $value, 'chaine', 0, '', $conf->entity);
 } elseif ($action == 'setribchq') {
@@ -389,7 +389,7 @@ foreach ($dirmodels as $reldir) {
 									$htmltooltip .= $langs->trans($module->error).'<br>';
 								}
 							}
-							// Example for remplacement
+							// Example for replacement
 							$facture->type = 1;
 							$nextval = $module->getNextValue($mysoc, $facture);
 							if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
@@ -554,7 +554,7 @@ foreach ($dirmodels as $reldir) {
 									print "</td>";
 								}
 
-								// Defaut
+								// Default
 								print '<td class="center">';
 								if ($conf->global->FACTURE_ADDON_PDF == "$name") {
 									print img_picto($langs->trans("Default"), 'on');

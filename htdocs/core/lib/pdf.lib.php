@@ -184,7 +184,7 @@ function pdf_getInstance($format = '', $metric = 'mm', $pagetype = 'P')
 		$pdfa = getDolGlobalString('PDF_USE_A'); 	// PDF/A-1 ou PDF/A-3
 	}
 
-	if (class_exists('TCPDI')) {
+	if (!getDolGlobalString('MAIN_DISABLE_TCPDI') && class_exists('TCPDI')) {
 		$pdf = new TCPDI($pagetype, $metric, $format, true, 'UTF-8', false, $pdfa);
 	} else {
 		$pdf = new TCPDF($pagetype, $metric, $format, true, 'UTF-8', false, $pdfa);
@@ -781,8 +781,6 @@ function pdf_getSubstitutionArray($outputlangs, $exclude = null, $object = null,
  */
 function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
 {
-	global $langs, $mysoc, $user;
-
 	// Print Draft Watermark
 	if ($unit == 'pt') {
 		$k = 1;
@@ -810,6 +808,7 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
 	$watermark_y = $h / 3;
 	$pdf->SetFont('', 'B', 40);
 	$pdf->SetTextColor(255, 192, 203);
+
 	//rotate
 	$pdf->_out(sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm', cos($watermark_angle), sin($watermark_angle), -sin($watermark_angle), cos($watermark_angle), $watermark_x * $k, ($h - $watermark_y) * $k, -$watermark_x * $k, -($h - $watermark_y) * $k));
 	//print watermark
@@ -1013,7 +1012,7 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
  */
 function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_basse, $marge_gauche, $page_hauteur, $object, $showdetails = 0, $hidefreetext = 0, $page_largeur = 0, $watermark = '')
 {
-	global $conf, $user, $mysoc, $hookmanager;
+	global $conf, $hookmanager;
 
 	$outputlangs->load("dict");
 	$line = '';

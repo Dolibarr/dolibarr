@@ -224,7 +224,7 @@ if ($action == 'install') {
 				$modulenamearrays[$modulename] = $modulename;
 				//var_dump($modulenamearrays);exit;
 
-				// Lop on each packacge of the metapackage
+				// Lop on each package of the metapackage
 				foreach ($modulenamearrays as $modulenameval) {
 					if (strpos($modulenameval, '#') === 0) {
 						continue; // Discard comments
@@ -940,7 +940,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		} else { // Module not yet activated
 			// Set $codeenabledisable
 			if (!empty($objMod->always_enabled)) {
-				// A 'always_enabled' module should not never be disabled. If this happen, we keep a link to reenable it.
+				// A 'always_enabled' module should not never be disabled. If this happen, we keep a link to re-enable it.
 				$codeenabledisable .= '<!-- Message to show: an always_enabled module has been disabled -->'."\n";
 				$codeenabledisable .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&token='.newToken().'&module_position='.$module_position.'&action=set&token='.newToken().'&value='.$modName.'&mode='.$mode.$param.'"';
 				$codeenabledisable .= '>';
@@ -1119,7 +1119,7 @@ if ($mode == 'marketplace') {
 	print '<br>';
 
 	if (!getDolGlobalString('MAIN_DISABLE_DOLISTORE_SEARCH') && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
-		// $options is array with filter criterias
+		// $options is array with filter criteria
 		//var_dump($options);
 		$dolistore->getRemoteCategories();
 		$dolistore->getRemoteProducts($options);

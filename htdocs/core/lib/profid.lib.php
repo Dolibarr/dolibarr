@@ -24,10 +24,36 @@
 
 
 /**
- *  Check the validity of a SIREN.
+ *  Check if a string passes the Luhn agorithm test.
+ *  @param		string|int		$str		string to check
+ *  @return		bool						True if the string passes the Luhn algorithm check, False otherwise
+ *  @since		Dolibarr V20
+ */
+function isValidLuhn($str)
+{
+	$str = (string) $str;
+	$len = dol_strlen($str);
+	$parity = $len % 2;
+	$sum = 0;
+	for ($i = $len-1; $i >= 0; $i--) {
+		$d = (int) $str[$i];
+		if ($i % 2 == $parity) {
+			if (($d *= 2) > 9) {
+				$d -= 9;
+			}
+		}
+		$sum += $d;
+	}
+	return $sum % 10 == 0;
+}
+
+
+/**
+ *  Check the syntax validity of a SIREN.
  *
  *  @param		string		$siren		SIREN to check
  *  @return		boolean					True if valid, False otherwise
+ *  @since		Dolibarr V20
  */
 function isValidSiren($siren)
 {
@@ -38,33 +64,16 @@ function isValidSiren($siren)
 		return false;
 	}
 
-	// TODO : use the Luhn algorithm instead
-
-	// we take each figure one by one and:
-	// - if its index is odd then we double its value,
-	// - if the latter is higher than 9 then we substract 9 from it,
-	// - anf finally we add the result to the overall sum.
-	$sum = 0;
-	for ($index = 0; $index < 9; $index++) {
-		$number = (int) $siren[$index];
-		if ($index % 2 != 0) {
-			if (($number *= 2) > 9) {
-				$number -= 9;
-			}
-		}
-		$sum += $number;
-	}
-
-	// the siren is valid if the sum is a multiple of 10
-	return (($sum % 10) == 0) ? true : false;
+	return isValidLuhn($siren);
 }
 
 
 /**
- *  Check the validity of a SIRET.
+ *  Check the syntax validity of a SIRET.
  *
  *  @param		string		$siret		SIRET to check
  *  @return		boolean					True if valid, False otherwise
+ *  @since		Dolibarr V20
  */
 function isValidSiret($siret)
 {
@@ -75,24 +84,6 @@ function isValidSiret($siret)
 		return false;
 	}
 
-	// TODO: use the Luhn algorithm instead
 	// TODO: handle the exception of "La Poste" (356 000 000 #####)
-
-	// we take each figure one by one and:
-	// - if its index is even then we double its value,
-	// - if the latter is higher than 9 then we substract 9 from it,
-	// - and finally we add the result to the overall sum.
-	$sum = 0;
-	for ($index = 0; $index < 14; $index++) {
-		$number = (int) $siret[$index];
-		if ($index % 2 == 0) {
-			if (($number *= 2) > 9) {
-				$number -= 9;
-			}
-		}
-		$sum += $number;
-	}
-
-	// the SIRET is valid if the sum is a multiple of 10
-	return $sum % 10 == 0;
+	return isValidLuhn($siret);
 }
