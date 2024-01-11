@@ -96,6 +96,7 @@ function isValidSiret($siret)
 	} else {
 		return false;
 	}
+}
 
 
 /**
