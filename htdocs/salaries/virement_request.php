@@ -613,7 +613,7 @@ if ($resql) {
 				print $withdrawreceipt->getNomUrl(1);
 			}
 
-			if ($type != 'bank-transfer') {
+			if (!in_array($type, array('bank-transfer', 'salaire', 'salary'))) {
 				if (getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT')) {
 					$langs->load("stripe");
 					if ($obj->fk_prelevement_bons > 0) {
@@ -627,7 +627,7 @@ if ($resql) {
 					if ($obj->fk_prelevement_bons > 0) {
 						print ' &nbsp; ';
 					}
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripecredittransfer&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequestDirectDebitWithStripe").'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripecredittransfer&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequesCreditTransferWithStripe").'</a>';
 				}
 			}
 			print '</td>';
