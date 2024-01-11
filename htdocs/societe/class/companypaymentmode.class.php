@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2024       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -431,7 +431,7 @@ class CompanyPaymentMode extends CommonObject
 	 * Set a Payment mode as Default
 	 *
 	 * @param   int     $id    		Payment mode ID
-	 * @param	string	$alltypes	1=The default is for all payment types instead of per type
+	 * @param	int 	$alltypes	1=The default is for all payment types instead of per type
 	 * @return  int             	0 if KO, 1 if OK
 	 */
 	public function setAsDefault($id = 0, $alltypes = 0)
