@@ -177,7 +177,7 @@ print load_fiche_titre($langs->trans("LDAPSetup"), $linkback, 'title_setup');
 
 $head = ldap_prepare_head();
 
-// Test si fonction LDAP actives
+// Test si function LDAP actives
 if (!function_exists("ldap_connect")) {
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
@@ -431,7 +431,7 @@ print '</form>';
 
 
 /*
- * Test de la connexion
+ * Test the connection
  */
 if (getDolGlobalString('LDAP_MEMBER_ACTIVE')) {
 	$butlabel = $langs->trans("LDAPTestSynchroMember");
@@ -445,7 +445,7 @@ if (getDolGlobalString('LDAP_MEMBER_ACTIVE')) {
 
 if (function_exists("ldap_connect")) {
 	if ($_GET["action"] == 'testmember') {
-		// Creation objet
+		// Create object
 		$object = new Adherent($db);
 		$object->initAsSpecimen();
 

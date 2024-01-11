@@ -57,7 +57,7 @@ if (GETPOSTISSET('AGENDA_EXPORT_FIX_TZ')) {
 	$AGENDA_EXPORT_FIX_TZ = trim(GETPOST('AGENDA_EXPORT_FIX_TZ', 'alpha'));
 }
 
-// Sauvegardes parametres
+// Sauvegardes parameters
 if ($actionsave) {
 	$i = 0;
 

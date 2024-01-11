@@ -165,7 +165,7 @@ print load_fiche_titre($langs->trans("LDAPSetup"), $linkback, 'title_setup');
 
 $head = ldap_prepare_head();
 
-// Test si fonction LDAP actives
+// Test if the LDAP functionality is available
 if (!function_exists("ldap_connect")) {
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
@@ -187,7 +187,7 @@ print '<tr class="liste_titre">';
 print '<td colspan="4">'.$langs->trans("LDAPSynchronizeUsers").'</td>';
 print "</tr>\n";
 
-// DN Pour les utilisateurs
+// DN (Domain Name) for the users
 print '<!-- LDAP_USER_DN -->';
 print '<tr class="oddeven"><td><span class="fieldrequired">'.$langs->trans("LDAPUserDn").'</span></td><td>';
 print '<input size="48" type="text" name="user" value="'.getDolGlobalString('LDAP_USER_DN').'">';
@@ -394,7 +394,7 @@ print '</form>';
 
 
 /*
- * Test de la connexion
+ * Test de la connection
  */
 if (getDolGlobalString('LDAP_SYNCHRO_ACTIVE') == Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 	$butlabel = $langs->trans("LDAPTestSynchroUser");
@@ -415,7 +415,7 @@ if (getDolGlobalString('LDAP_SYNCHRO_ACTIVE') == Ldap::SYNCHRO_DOLIBARR_TO_LDAP)
 
 if (function_exists("ldap_connect")) {
 	if ($action == 'testuser') {
-		// Creation objet
+		// Create object
 		$object = new User($db);
 		$object->initAsSpecimen();
 
@@ -458,7 +458,7 @@ if (function_exists("ldap_connect")) {
 	}
 
 	if ($action == 'testsearchuser') {
-		// Creation objet
+		// Create object
 		$object = new User($db);
 		$object->initAsSpecimen();
 

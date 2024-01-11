@@ -48,7 +48,7 @@ class Dolistore
 	public $url; // the url of this page
 	public $shop_url; // the url of the shop
 	public $lang; // the integer representing the lang in the store
-	public $debug_api; // usefull if no dialog
+	public $debug_api; // useful if no dialog
 
 	public $api;
 	public $products;
@@ -177,7 +177,7 @@ class Dolistore
 			$opt['sort']           = 'id_desc';
 			$opt['filter[active]'] = '[1]';
 			$opt['limit']          = "$this->start,$this->end";
-			// $opt['filter[id]'] contais list of product id that are result of search
+			// $opt['filter[id]'] contains list of product id that are result of search
 
 			// Call API to get the detail
 			dol_syslog("Call API with opt = ".var_export($opt, true));
@@ -246,7 +246,7 @@ class Dolistore
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Return list of product formated for output
+	 * Return list of product formatted for output
 	 *
 	 * @return string			HTML output
 	 */
