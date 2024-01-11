@@ -74,7 +74,7 @@ $hookmanager->initHooks(array('printsheettools'));
 $parameters = array();
 
 // Note that $action and $object may have been modified by some
-$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); 
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
