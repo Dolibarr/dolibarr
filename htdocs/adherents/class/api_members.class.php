@@ -53,7 +53,7 @@ class Members extends DolibarrApi
 	/**
 	 * Get properties of a member object
 	 *
-	 * Return an array with member informations
+	 * Return an array with member information
 	 *
 	 * @param   int     $id				ID of member
 	 * @return  Object					Object with cleaned properties
@@ -86,7 +86,7 @@ class Members extends DolibarrApi
 	/**
 	 * Get properties of a member object by linked thirdparty
 	 *
-	 * Return an array with member informations
+	 * Return an array with member information
 	 *
 	 * @param     int     $thirdparty	ID of third party
 	 *
@@ -119,7 +119,7 @@ class Members extends DolibarrApi
 	/**
 	 * Get properties of a member object by linked thirdparty email
 	 *
-	 * Return an array with member informations
+	 * Return an array with member information
 	 *
 	 * @param  string $email            Email of third party
 	 *
@@ -158,7 +158,7 @@ class Members extends DolibarrApi
 	/**
 	 * Get properties of a member object by linked thirdparty barcode
 	 *
-	 * Return an array with member informations
+	 * Return an array with member information
 	 *
 	 * @param  string $barcode			Barcode of third party
 	 *
@@ -207,7 +207,7 @@ class Members extends DolibarrApi
 	 * @param int		$category   Use this param to filter list by category
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma.
 	 *                              Example: "(t.ref:like:'SO-%') and ((t.date_creation:<:'20160101') or (t.nature:is:NULL))"
-	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                Array of member objects
 	 *
 	 * @throws RestException
@@ -292,7 +292,7 @@ class Members extends DolibarrApi
 		$member = new Adherent($this->db);
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$member->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -333,7 +333,7 @@ class Members extends DolibarrApi
 				continue;
 			}
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$member->context['caller'] = $request_data['caller'];
 				continue;
 			}

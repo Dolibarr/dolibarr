@@ -1854,7 +1854,7 @@ class BookKeeping extends CommonObject
 	}
 
 	/**
-	 * Load all informations of accountancy document
+	 * Load all information of accountancy document
 	 *
 	 * @param  int     $piecenum   Id of line to get
 	 * @param  string  $mode       Mode
