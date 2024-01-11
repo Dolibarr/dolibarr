@@ -648,7 +648,7 @@ if ($dirins && $action == 'initwidget' && !empty($module)) {
 if ($dirins && $action == 'initemailing' && !empty($module)) {
 	dol_mkdir($dirins.'/'.strtolower($module).'/core/modules/mailings');
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
-	$srcfile = $srcdir.'/core/modules/mailings/mailing_mymodule_myobject.modules.php';
+	$srcfile = $srcdir.'/core/modules/mailings/mailing_mymodule_selector1.modules.php';
 	$destfile = $dirins.'/'.strtolower($module).'/core/modules/mailings/mailing_'.strtolower($module).'_selector1.modules.php';
 	//var_dump($srcfile);
 	//var_dump($destfile);
