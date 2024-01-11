@@ -859,7 +859,7 @@ class Categorie extends CommonObject
 	 * @param	string		$sortorder	Sort order ('ASC' or 'DESC');
 	 * @param   array       $filter     Filter array. Example array('field'=>'valueforlike', 'customsql'=>...)
 	 * @param   string      $filtermode Filter mode (AND or OR)
-	 * @return  CommonObject[]|int              	-1 if KO, array of instance of object if OK
+	 * @return  CommonObject[]|int[]|int              	Return -1 if KO, array of instance of object if OK
 	 * @see containsObject()
 	 */
 	public function getObjectsInCateg($type, $onlyids = 0, $limit = 0, $offset = 0, $sortfield = '', $sortorder = 'ASC', $filter = array(), $filtermode = 'AND')
