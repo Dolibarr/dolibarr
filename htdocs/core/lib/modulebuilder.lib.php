@@ -1167,7 +1167,7 @@ function updateDictionaryInFile($module, $file, $dicts)
 			$dicData .= "array(" . implode(",", $conditions) . ")";
 		} elseif ($key === 'tabhelp') {
 			$helpItems = array();
-			foreach ($value as $key => $helpValue) {
+			foreach ($value as $helpValue) {
 				$helpItems[] = "array('code'=>\$langs->trans('".$helpValue['code']."'), 'field2' => 'field2tooltip')";
 			}
 			$dicData .= "array(" . implode(",", $helpItems) . ")";

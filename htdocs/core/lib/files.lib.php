@@ -4,7 +4,7 @@
  * Copyright (C) 2012-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2019       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2023       Lenin Rivas         <lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -292,7 +292,7 @@ function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $s
 			}
 			// Sort the data
 			if ($sortorder) {
-				array_multisort($myarray, $sortorder, $file_list);
+				array_multisort($myarray, $sortorder, SORT_REGULAR, $file_list);
 			}
 		}
 
@@ -2218,7 +2218,7 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring 
 				// Create recursive directory iterator
 				/** @var SplFileInfo[] $files */
 				$files = new RecursiveIteratorIterator(
-					new RecursiveDirectoryIterator($rootPath),
+					new RecursiveDirectoryIterator($rootPath, FilesystemIterator::UNIX_PATHS),
 					RecursiveIteratorIterator::LEAVES_ONLY
 				);
 
@@ -2481,7 +2481,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 				// This does not return symbolic links
 				/** @var SplFileInfo[] $files */
 				$files = new RecursiveIteratorIterator(
-					new RecursiveDirectoryIterator($inputdir),
+					new RecursiveDirectoryIterator($inputdir, FilesystemIterator::UNIX_PATHS),
 					RecursiveIteratorIterator::LEAVES_ONLY
 				);
 
