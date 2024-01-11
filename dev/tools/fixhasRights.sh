@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 #
 # Example of script to fix code writing of permissions
 #
