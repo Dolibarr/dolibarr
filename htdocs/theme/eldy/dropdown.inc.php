@@ -2,7 +2,7 @@
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 } ?>
-/* <style type="text/css" > dont remove this line it's an ide hack */
+/* <style type="text/css" > don't remove this line it's an ide hack */
 /*
  * Dropdown of user popup
  */

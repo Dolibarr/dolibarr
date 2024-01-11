@@ -131,7 +131,7 @@ class Website extends CommonObject
 	public $use_manifest;
 
 	/**
-	 * @var int	Postion
+	 * @var int	Position
 	 */
 	public $position;
 

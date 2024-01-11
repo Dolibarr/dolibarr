@@ -37,7 +37,7 @@ if (!$user->admin) {
 
 $actionsave = GETPOST("save");
 
-// Sauvegardes parametres
+// Sauvegardes parameters
 if ($actionsave) {
 	$i = 0;
 

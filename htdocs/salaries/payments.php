@@ -115,7 +115,7 @@ if (!GETPOST('search_type_id', 'int')) {
 
 $childids = $user->getAllChildIds(1);
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {
