@@ -154,7 +154,7 @@ if ($action == 'add' && $user->hasRight('banque', 'transfer')) {
 				$bank_line_id_to = 0;
 				$result = 0;
 
-				// By default, electronic transfert from bank to bank
+				// By default, electronic transfer from bank to bank
 				$typefrom = $type[$n];
 				$typeto = $type[$n];
 				if ($tmpaccountto->courant == Account::TYPE_CASH || $tmpaccountfrom->courant == Account::TYPE_CASH) {

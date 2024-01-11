@@ -157,7 +157,7 @@ if (isModEnabled('supplier_invoice')) {
 				$invoicestatic->id = $obj->rowid;
 				$invoicestatic->ref = $obj->ref;
 				$invoicestatic->status = $obj->fk_statut;
-				$invoicestatic->statut = $obj->fk_statut;	// For backward comaptibility
+				$invoicestatic->statut = $obj->fk_statut;	// For backward compatibility
 				$invoicestatic->paye = $obj->paye;
 				$invoicestatic->type = $obj->type;
 				$invoicestatic->date = $db->jdate($obj->datef);
