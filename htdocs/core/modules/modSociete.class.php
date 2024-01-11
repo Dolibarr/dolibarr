@@ -375,7 +375,7 @@ class modSociete extends DolibarrModules
 			's.code_compta'=>"AccountancyCode", 's.code_compta_fournisseur'=>"SupplierAccountancyCode",
 			's.client'=>'Customer', 's.fournisseur'=>'Supplier',
 			's.address'=>'Address', 's.zip'=>"Zip", 's.town'=>"Town", 's.phone'=>'Phone', 's.email'=>"Email",
-			'c.note_private'=>'NotePrivate', 'c.note_public'=>"NotePublic",
+			's.note_private'=>'NotePrivate', 's.note_public'=>"NotePublic",
 			't.code'=>"ThirdPartyType"
 		);
 		// Add multicompany field
