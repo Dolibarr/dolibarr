@@ -94,7 +94,7 @@ if (@file_exists($forcedfile)) {
  *	View
  */
 
-session_start(); // To be able to keep info into session (used for not losing pass during navigation. pass must not transit through parmaeters)
+session_start(); // To be able to keep info into session (used for not losing pass during navigation. pass must not transit through parameters)
 
 pHeader($langs->trans("ConfigurationFile"), "step1", "set", "", (empty($force_dolibarr_js_JQUERY) ? '' : $force_dolibarr_js_JQUERY.'/'), 'main-inside-bis');
 
@@ -730,7 +730,7 @@ jQuery(document).ready(function() {	// TODO Test $( window ).load(function() to 
 
 <?php
 
-// $db->close();	Not database connexion yet
+// $db->close();	Not database connection yet
 
 dolibarr_install_syslog("- fileconf: end");
 pFooter($err, $setuplang, 'jscheckparam');

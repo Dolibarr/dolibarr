@@ -94,7 +94,7 @@ class SupplierOrders extends DolibarrApi
 	 * @param string	$status			  Filter by order status : draft | validated | approved | running | received_start | received_end | cancelled | refused
 	 * @param string    $sqlfilters       Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.datec:<:'20160101')"
 	 * @param string    $sqlfilterlines   Other criteria to filter answers separated by a comma. Syntax example "(tl.fk_product:=:'17') and (tl.price:<:'250')"
-	 * @param string    $properties		  Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string    $properties		  Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                      Array of order objects
 	 *
 	 * @throws RestException
@@ -229,7 +229,7 @@ class SupplierOrders extends DolibarrApi
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->order->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -281,7 +281,7 @@ class SupplierOrders extends DolibarrApi
 				continue;
 			}
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->order->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -299,7 +299,7 @@ class SupplierOrders extends DolibarrApi
 	/**
 	 * Get contacts of given supplier order
 	 *
-	 * Return an array with contact informations
+	 * Return an array with contact information
 	 *
 	 * @param	int		$id			ID of supplier order
 	 * @param	string	$source		Source of the contact (internal, external, all).

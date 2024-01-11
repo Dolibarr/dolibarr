@@ -198,7 +198,7 @@ class ExpenseReportIk extends CommonObject
 		$ranges = $this->getRangesByCategory($fk_c_exp_tax_cat);
 		// prevent out of range -1 indice
 		$indice = $default_range  - 1;
-		// substract 1 because array start from 0
+		// subtract 1 because array start from 0
 		if (empty($ranges) || $indice < 0 || !isset($ranges[$indice])) {
 			return false;
 		} else {

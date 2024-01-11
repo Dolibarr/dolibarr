@@ -90,7 +90,7 @@ if (GETPOST('action') == 'sendmail')    {
                                 role="form"
                             >
                                 <input type="hidden" name="action" value="sendmail">
-                                <input type="hidden" name="toekn" value="<?php echo newToken(); ?>">
+                                <input type="hidden" name="token" value="<?php echo newToken(); ?>">
                                 
                                 <div class="col-lg-6 col-6">
                                     <label for="contact-name" class="form-label"

@@ -590,7 +590,7 @@ if (!$user->hasRight('holiday', 'readall')) {
 	$include = 'hierarchyme'; // Can see only its hierarchyl
 }
 
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 // Fields title search
@@ -691,7 +691,7 @@ if (!empty($arrayfields['cp.date_valid']['checked'])) {
 	print '</td>';
 }
 
-// Date appoval
+// Date approval
 if (!empty($arrayfields['cp.date_approval']['checked'])) {
 	print '<td class="liste_titre center nowraponall">';
 	print '</td>';
