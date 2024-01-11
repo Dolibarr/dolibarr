@@ -280,6 +280,7 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 		}
 
 		// Delete dir and files that can be generated in sub tabs later if we need them (we want a minimal module first)
+		dol_delete_dir_recursive($destdir.'/ajax');
 		dol_delete_dir_recursive($destdir.'/build/doxygen');
 		dol_delete_dir_recursive($destdir.'/core/modules/mailings');
 		dol_delete_dir_recursive($destdir.'/core/modules/'.strtolower($modulename));
@@ -311,7 +312,7 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 		dol_delete_file($destdir.'/myobject_agenda.php');
 		dol_delete_file($destdir.'/myobject_list.php');
 		dol_delete_file($destdir.'/lib/'.strtolower($modulename).'_myobject.lib.php');
-		dol_delete_file($destdir.'/test/phpunit/functionnal/'.$modulename.'FunctionnalTest.php');
+		dol_delete_file($destdir.'/test/phpunit/functional/'.$modulename.'FunctionalTest.php');
 		dol_delete_file($destdir.'/test/phpunit/MyObjectTest.php');
 		dol_delete_file($destdir.'/sql/llx_'.strtolower($modulename).'_myobject.sql');
 		dol_delete_file($destdir.'/sql/llx_'.strtolower($modulename).'_myobject_extrafields.sql');
