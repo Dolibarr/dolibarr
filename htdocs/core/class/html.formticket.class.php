@@ -53,6 +53,8 @@ class FormTicket
 	 */
 	public $track_id;
 
+	public $trackid;
+
 	/**
 	 * @var int ID
 	 */
@@ -264,23 +266,26 @@ class FormTicket
                             jQuery("#company_name").val("");
                             jQuery("#contact_phone").val("");
 
-                            jQuery.getJSON(
+                            jQuery.post(
                                 "'.dol_escape_js(dol_buildpath('/public/ticket/ajax/ajax.php', 1)).'",
 								{
 									action: "getContacts",
-									email: jQuery("#email").val()
+									email: jQuery("#email").val(),
+									token: "'.currentToken().'"
 								},
 								function(response) {
+									var response = jQuery.parseJSON(response);
 									if (response.error) {
                                         jQuery("#contact_search_result").html("<span class=\"error\">"+response.error+"</span>");
 									} else {
                                         var contact_list = response.contacts;
-										if (contact_list.length == 1) {
+
+										if (typeof(contact_list) !== "undefined" && contact_list.length) {
                                             var contact = contact_list[0];
 											jQuery("#contact_id").val(contact.id);
 											jQuery("#contact_search_result").html(contact.firstname+" "+contact.lastname);
                                             jQuery(".contact_field").hide();
-										} else if (contact_list.length <= 0) {
+										} else {
                                             jQuery("#contact_search_line").hide();
                                             jQuery(".contact_field").show();
 										}
@@ -289,7 +294,7 @@ class FormTicket
                             ).fail(function(jqxhr, textStatus, error) {
     							var error_msg = "'.dol_escape_js($langs->trans('ErrorAjaxRequestFailed')).'"+" ["+textStatus+"] : "+error;
                                 jQuery("#contact_search_result").html("<span class=\"error\">"+error_msg+"</span>");
-                            });
+                            }, "json");
                         });
                     });
                     </script>';
