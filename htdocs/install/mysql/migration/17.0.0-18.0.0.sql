@@ -87,8 +87,6 @@ ALTER TABLE llx_payment_salary MODIFY COLUMN datep datetime;
 INSERT INTO llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1179, 117, 'I-28'  , 28,   0, '0',   0, '0', 0, 'IGST',      1);
 INSERT INTO llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1176, 117, 'C+S-18',  0,   9, '1',   9, '1', 0, 'CGST+SGST - Same state sales', 1);
 
-ALTER TABLE llx_c_tva ADD COLUMN type_vat smallint NOT NULL DEFAULT '0' AFTER fk_pays;
-
 ALTER TABLE llx_user ADD COLUMN flagdelsessionsbefore datetime DEFAULT NULL;
 
 ALTER TABLE llx_website ADD COLUMN pageviews_previous_month BIGINT UNSIGNED DEFAULT 0;

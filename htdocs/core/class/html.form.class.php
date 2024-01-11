@@ -6372,13 +6372,12 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *  Load into the cache vat rates of a country
+	 *  Load into the cache ->cache_vatrates, all the vat rates of a country
 	 *
 	 *  @param	string	$country_code		Country code with quotes ("'CA'", or "'CA,IN,...'")
-	 *  @param	int	    $type_vat			0=All type, 1=VAT rate sale, 2=VAT rate purchase
 	 *  @return	int							Nb of loaded lines, 0 if already loaded, <0 if KO
 	 */
-	public function load_cache_vatrates($country_code, $type_vat = 0)
+	public function load_cache_vatrates($country_code)
 	{
 		// phpcs:enable
 		global $langs, $user;
@@ -6390,13 +6389,10 @@ class Form
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = "SELECT DISTINCT t.rowid, t.type_vat, t.code, t.taux, t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.recuperableonly";
+		$sql = "SELECT t.rowid, t.type_vat, t.code, t.taux, t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.recuperableonly";
 		$sql .= " FROM ".$this->db->prefix()."c_tva as t, ".$this->db->prefix()."c_country as c";
 		$sql .= " WHERE t.fk_pays = c.rowid";
 		$sql .= " AND t.active > 0";
-		if ($type_vat > 0) {
-			$sql .= " AND t.type_vat IN (0, ".((int) $type_vat).")";
-		}
 		$sql .= " AND t.entity IN (".getEntity('c_tva').")";
 		$sql .= " AND c.code IN (" . $this->db->sanitize($country_code, 1) . ")";
 		$sql .= " ORDER BY t.code ASC, t.taux ASC, t.recuperableonly ASC";
@@ -6408,17 +6404,18 @@ class Form
 				for ($i = 0; $i < $num; $i++) {
 					$obj = $this->db->fetch_object($resql);
 
-					$this->cache_vatrates[$i]['rowid']			= $obj->rowid;
-					$this->cache_vatrates[$i]['type_vat']		= $obj->type_vat;
-					$this->cache_vatrates[$i]['code']			= $obj->code;
-					$this->cache_vatrates[$i]['txtva']			= $obj->taux;
-					$this->cache_vatrates[$i]['nprtva']			= $obj->recuperableonly;
-					$this->cache_vatrates[$i]['localtax1']	    = $obj->localtax1;
-					$this->cache_vatrates[$i]['localtax1_type']	= $obj->localtax1_type;
-					$this->cache_vatrates[$i]['localtax2']	    = $obj->localtax2;
-					$this->cache_vatrates[$i]['localtax2_type']	= $obj->localtax1_type;
-					$this->cache_vatrates[$i]['label']			= $obj->taux . '%' . ($obj->code ? ' (' . $obj->code . ')' : ''); // Label must contains only 0-9 , . % or *
-					$this->cache_vatrates[$i]['labelallrates']	= $obj->taux . '/' . ($obj->localtax1 ? $obj->localtax1 : '0') . '/' . ($obj->localtax2 ? $obj->localtax2 : '0') . ($obj->code ? ' (' . $obj->code . ')' : ''); // Must never be used as key, only label
+					$tmparray = array();
+					$tmparray['rowid']			= $obj->rowid;
+					$tmparray['type_vat']		= $obj->type_vat;
+					$tmparray['code']			= $obj->code;
+					$tmparray['txtva']			= $obj->taux;
+					$tmparray['nprtva']			= $obj->recuperableonly;
+					$tmparray['localtax1']	    = $obj->localtax1;
+					$tmparray['localtax1_type']	= $obj->localtax1_type;
+					$tmparray['localtax2']	    = $obj->localtax2;
+					$tmparray['localtax2_type']	= $obj->localtax1_type;
+					$tmparray['label']			= $obj->taux . '%' . ($obj->code ? ' (' . $obj->code . ')' : ''); // Label must contains only 0-9 , . % or *
+					$tmparray['labelallrates']	= $obj->taux . '/' . ($obj->localtax1 ? $obj->localtax1 : '0') . '/' . ($obj->localtax2 ? $obj->localtax2 : '0') . ($obj->code ? ' (' . $obj->code . ')' : ''); // Must never be used as key, only label
 					$positiverates = '';
 					if ($obj->taux) {
 						$positiverates .= ($positiverates ? '/' : '') . $obj->taux;
@@ -6432,7 +6429,9 @@ class Form
 					if (empty($positiverates)) {
 						$positiverates = '0';
 					}
-					$this->cache_vatrates[$i]['labelpositiverates'] = $positiverates . ($obj->code ? ' (' . $obj->code . ')' : ''); // Must never be used as key, only label
+					$tmparray['labelpositiverates'] = $positiverates . ($obj->code ? ' (' . $obj->code . ')' : ''); // Must never be used as key, only label
+
+					$this->cache_vatrates[$i] = $tmparray;
 				}
 
 				return $num;
@@ -6468,12 +6467,12 @@ class Form
 	 *  @param  int		      $idprod             Id product. O if unknown of NA.
 	 *  @param  int		      $info_bits          Miscellaneous information on line (1 for NPR)
 	 *  @param  int|string    $type               ''=Unknown, 0=Product, 1=Service (Used if idprod not defined)
-	 *                         If seller not subject to VAT, default VAT=0. End of rule.
-	 *                         If (seller country==buyer country), then default VAT=product's VAT. End of rule.
-	 *                         If (seller and buyer in EU) and sold product = new means of transportation (car, boat, airplane), default VAT =0 (VAT must be paid by the buyer to his country's tax office and not the seller). End of rule.
-	 *                         If (seller and buyer in EU) and buyer=private person, then default VAT=VAT of sold product.  End of rule.
-	 *                         If (seller and buyer in EU) and buyer=company then default VAT =0. End of rule.
-	 *                         Else, default proposed VAT==0. End of rule.
+	 *                                            If seller not subject to VAT, default VAT=0. End of rule.
+	 *                                            If (seller country==buyer country), then default VAT=product's VAT. End of rule.
+	 *                                            If (seller and buyer in EU) and sold product = new means of transportation (car, boat, airplane), default VAT =0 (VAT must be paid by the buyer to his country's tax office and not the seller). End of rule.
+	 *                                            If (seller and buyer in EU) and buyer=private person, then default VAT=VAT of sold product.  End of rule.
+	 *                                            If (seller and buyer in EU) and buyer=company then default VAT =0. End of rule.
+	 *                                            Else, default proposed VAT==0. End of rule.
 	 *  @param	bool	     $options_only		  Return HTML options lines only (for ajax treatment)
 	 *  @param  int          $mode                0=Use vat rate as key in combo list, 1=Add VAT code after vat rate into key, -1=Use id of vat line as key
 	 *  @param  int          $type_vat            0=All type, 1=VAT rate sale, 2=VAT rate purchase
@@ -6541,8 +6540,17 @@ class Form
 			}
 		}
 
-		// Now we get list
-		$num = $this->load_cache_vatrates($code_country, $type_vat); // If no vat defined, return -1 with message into this->error
+		// Now we load the list of VAT
+		$this->load_cache_vatrates($code_country); // If no vat defined, return -1 with message into this->error
+		// Keep only the VAT qualified for $type_vat
+		$arrayofvatrates = array();
+		foreach ($this->cache_vatrates as $cachevalue) {
+			if (empty($cachevalue['type_vat']) || $cachevalue['type_vat'] != $type_vat) {
+				$arrayofvatrates[] = $cachevalue;
+			}
+		}
+
+		$num = count($arrayofvatrates);
 
 		if ($num > 0) {
 			// Definition du taux a pre-selectionner (si defaulttx non force et donc vaut -1 ou '')
@@ -6566,7 +6574,7 @@ class Form
 			if ($defaulttx < 0 || dol_strlen($defaulttx) == 0) {
 				if (!getDolGlobalString('MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS')) {
 					// We take the last one found in list
-					$defaulttx = $this->cache_vatrates[$num - 1]['txtva'];
+					$defaulttx = $arrayofvatrates[$num - 1]['txtva'];
 				} else {
 					// We will use the rate defined into MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS
 					$defaulttx = '';
@@ -6597,7 +6605,7 @@ class Form
 			}
 
 			$selectedfound = false;
-			foreach ($this->cache_vatrates as $rate) {
+			foreach ($arrayofvatrates as $rate) {
 				// Keep only 0 if seller is not subject to VAT
 				if ($disabled && $rate['txtva'] != 0) {
 					continue;
