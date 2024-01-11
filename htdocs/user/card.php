@@ -1886,7 +1886,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 					if ($user->admin && $user->id == $object->id) {
 						$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '');
 						$valuetoshow .= '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
-						$valuetoshow .= '<!-- Crypted into '.$object->pass_indatabase_crypted.' -->';
+						$valuetoshow .= '<!-- Encrypted into '.$object->pass_indatabase_crypted.' -->';
 					} else {
 						$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '');
 						$valuetoshow .= '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';

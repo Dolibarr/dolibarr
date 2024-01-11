@@ -1082,6 +1082,7 @@ class FormSetupItem
 		} elseif (!empty($errors)) {
 			$this->errors[] = $errors;
 		}
+		return;
 	}
 
 	/**

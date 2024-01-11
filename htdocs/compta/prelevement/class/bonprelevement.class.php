@@ -126,7 +126,7 @@ class BonPrelevement extends CommonObject
 	 *  'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
 	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
-	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 or 2 if field can be used for measure. Field type must be summable like integer or double(24,8). Use 1 in most cases, or 2 if you don't want to see the column total into list (for example for percentage)
 	 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'cssview'=>'wordbreak', 'csslist'=>'tdoverflowmax200'
@@ -661,11 +661,11 @@ class BonPrelevement extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Set withdrawal to transmited status
+	 *	Set withdrawal to transmitted status
 	 *
 	 *	@param	User		$user		Id of user
 	 *	@param 	int			$date		Date of action
-	 *	@param	string		$method		Method of transmision to bank (0=Internet, 1=Api...)
+	 *	@param	string		$method		Method of transmission to bank (0=Internet, 1=Api...)
 	 *	@return	int						>0 if OK, <0 if KO
 	 */
 	public function set_infotrans($user, $date, $method)
@@ -1220,7 +1220,7 @@ class BonPrelevement extends CommonObject
 			if (!$error) {
 				$ref = substr($year, -2).$month;
 
-				// Get next free nunber for the ref of bon prelevement
+				// Get next free number for the ref of bon prelevement
 				$sql = "SELECT substring(ref from char_length(ref) - 1)";	// To extract "YYMMXX" from "TYYMMXX"
 				$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons";
 				$sql .= " WHERE ref LIKE '_".$this->db->escape($ref)."%'";
@@ -1725,7 +1725,7 @@ class BonPrelevement extends CommonObject
 				$i = 0;
 
 				/*
-				 * Section Debitor (sepa Debiteurs bloc lines)
+				 * Section Debitor (sepa Debiteurs block lines)
 				 */
 
 				$sql = "SELECT soc.rowid as socid, soc.code_client as code, soc.address, soc.zip, soc.town, c.code as country_code,";
@@ -1779,7 +1779,7 @@ class BonPrelevement extends CommonObject
 					$result = -2;
 				}
 
-				// Define $fileEmetteurSection. Start of bloc PmtInf. Will contains all $nbtotalDrctDbtTxInf
+				// Define $fileEmetteurSection. Start of block PmtInf. Will contains all $nbtotalDrctDbtTxInf
 				if ($result != -2) {
 					$fileEmetteurSection .= $this->EnregEmetteurSEPA($conf, $date_actu, $nbtotalDrctDbtTxInf, $this->total, $CrLf, $format, $type, $fk_bank_account);
 				}
@@ -1843,7 +1843,7 @@ class BonPrelevement extends CommonObject
 				$i = 0;
 
 				/*
-				 * Section Creditor (sepa Crediteurs bloc lines)
+				 * Section Creditor (sepa Crediteurs block lines)
 				 */
 				if (!empty($user_dest)) {
 					$sql = "SELECT u.rowid as userId, u.address, u.zip, u.town, c.code as country_code, CONCAT(u.firstname,' ',u.lastname) as nom,";
@@ -1915,7 +1915,7 @@ class BonPrelevement extends CommonObject
 					fputs($this->file, 'ERROR CREDITOR '.$sql.$CrLf); // CREDITORS = Suppliers
 					$result = -2;
 				}
-				// Define $fileEmetteurSection. Start of bloc PmtInf. Will contains all $nbtotalDrctDbtTxInf
+				// Define $fileEmetteurSection. Start of block PmtInf. Will contains all $nbtotalDrctDbtTxInf
 				if ($result != -2) {
 					$fileEmetteurSection .= $this->EnregEmetteurSEPA($conf, $date_actu, $nbtotalDrctDbtTxInf, $this->total, $CrLf, $format, $type);
 				}
@@ -1959,7 +1959,7 @@ class BonPrelevement extends CommonObject
 			}
 		}
 
-		// Build file for Other Countries with unknow format
+		// Build file for Other Countries with unknown format
 		if (!$found) {
 			if ($type != 'bank-transfer') {
 				$sql = "SELECT pl.amount";
@@ -2667,7 +2667,7 @@ class BonPrelevement extends CommonObject
 	/**
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
-	 *      @param      User	$user       	Objet user
+	 *      @param      User	$user       	Object user
 	 *      @param		string	$mode			Mode 'direct_debit' or 'credit_transfer'
 	 *      @return 	WorkboardResponse|int 	Return integer <0 if KO, WorkboardResponse if OK
 	 */

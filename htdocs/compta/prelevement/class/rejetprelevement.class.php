@@ -68,7 +68,7 @@ class RejetPrelevement
 	 *  Constructor
 	 *
 	 *  @param	DoliDb	$db			Database handler
-	 *  @param 	User	$user       Objet user
+	 *  @param 	User	$user       Object user
 	 *  @param	string	$type		Type ('direct-debit' for direct debit or 'bank-transfer' for credit transfer)
 	 */
 	public function __construct($db, $user, $type)
@@ -299,7 +299,7 @@ class RejetPrelevement
 				dol_syslog("RejetPrelevement::_send_email Erreur envoi email");
 			}
 		} else {
-			dol_syslog("RejetPrelevement::_send_email Userid invalide");
+			dol_syslog("RejetPrelevement::_send_email Userid invalid");
 		}
 	}
 

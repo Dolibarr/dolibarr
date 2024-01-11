@@ -808,7 +808,7 @@ if ($action == 'create') {
 			}
 			print '</td></tr>';
 
-			// TODO Add a link "Show more..." for all ohter informations.
+			// TODO Add a link "Show more..." for all other information.
 
 			// Show fields of bank account
 			foreach ($object->getFieldsToShow() as $val) {
@@ -890,7 +890,7 @@ if ($action == 'create') {
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Modify").'</a>';
 		}
 
-		$canbedeleted = $object->can_be_deleted(); // Renvoi vrai si compte sans mouvements
+		$canbedeleted = $object->can_be_deleted(); // Return true if account without movements
 		if ($user->hasRight('banque', 'configurer') && $canbedeleted) {
 			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Delete").'</a>';
 		}

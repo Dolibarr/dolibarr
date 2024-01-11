@@ -176,7 +176,7 @@ $bankline = new AccountLine($db);
 llxHeader('', $langs->trans('ListPayment'));
 
 if (GETPOST("orphelins", "alpha")) {
-	// Payments not linked to an invoice. Should not happend. For debug only.
+	// Payments not linked to an invoice. Should not happen. For debug only.
 	$sql = "SELECT p.rowid, p.ref, p.datep, p.amount, p.statut, p.num_paiement as num_payment,";
 	$sql .= " c.code as paiement_code";
 

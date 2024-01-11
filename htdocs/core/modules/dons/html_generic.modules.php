@@ -177,6 +177,8 @@ class html_generic extends ModeleDon
 		fwrite($handle, $contents);
 		fclose($handle);
 		dolChmod($path);
+
+		return;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

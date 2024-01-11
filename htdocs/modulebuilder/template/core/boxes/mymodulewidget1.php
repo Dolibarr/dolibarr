@@ -58,26 +58,6 @@ class mymodulewidget1 extends ModeleBoxes
 	public $depends = array('mymodule');
 
 	/**
-	 * @var DoliDb Database handler
-	 */
-	public $db;
-
-	/**
-	 * @var mixed More parameters
-	 */
-	public $param;
-
-	/**
-	 * @var array Header informations. Usually created at runtime by loadBox().
-	 */
-	public $info_box_head = array();
-
-	/**
-	 * @var array Contents informations. Usually created at runtime by loadBox().
-	 */
-	public $info_box_contents = array();
-
-	/**
 	 * @var string 	Widget type ('graph' means the widget is a graph widget)
 	 */
 	public $widgettype = 'graph';

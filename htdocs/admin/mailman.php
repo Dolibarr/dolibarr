@@ -78,7 +78,7 @@ if ($action == 'update' || $action == 'add') {
 	}
 }
 
-// Action activation d'un sous module du module adherent
+// Action to activate a submodule of the 'adherent' module
 if ($action == 'set') {
 	$result = dolibarr_set_const($db, $_GET["name"], $_GET["value"], '', 0, '', $conf->entity);
 	if ($result < 0) {
@@ -86,7 +86,7 @@ if ($action == 'set') {
 	}
 }
 
-// Action desactivation d'un sous module du module adherent
+// Action to deactivate a submodule of the 'adherent' module
 if ($action == 'unset') {
 	$result = dolibarr_del_const($db, $_GET["name"], $conf->entity);
 	if ($result < 0) {
@@ -157,7 +157,7 @@ if (getDolGlobalString('ADHERENT_USE_MAILMAN')) {
 	//$link.=$langs->trans("Disable");
 	$link .= img_picto($langs->trans("Activated"), 'switch_on');
 	$link .= '</a>';
-	// Edition des varibales globales
+	// Edit the global variables
 	$constantes = array(
 		'ADHERENT_MAILMAN_ADMIN_PASSWORD',
 		'ADHERENT_MAILMAN_URL',

@@ -135,8 +135,8 @@ if ($action == 'updateMask') {
 } elseif ($action == 'unsetdoc') {
 	dolibarr_del_const($db, "CONTRACT_ADDON_PDF", $conf->entity);
 } elseif ($action == 'setmod') {
-	// TODO Verifier si module numerotation choisi peut etre active
-	// par appel methode canBeActivated
+	// TODO Verify si the chosen numbering module can be activated by
+	// the method call canBeActivated
 
 	dolibarr_set_const($db, "CONTRACT_ADDON", $value, 'chaine', 0, '', $conf->entity);
 } elseif ($action == 'set_other') {
@@ -410,7 +410,7 @@ foreach ($dirmodels as $reldir) {
 									print "</td>";
 								}
 
-								// Defaut
+								// Default
 								print '<td class="center">';
 								if (getDolGlobalString('CONTRACT_ADDON_PDF') == $name) {
 									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=unsetdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'&type=order_supplier" alt="'.$langs->trans("Disable").'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
@@ -522,7 +522,7 @@ print '<td>'.$langs->trans("AllowOnlineSign").'</td>';
 print '<td class="right">';
 if (getDolGlobalString('CONTRACT_ALLOW_ONLINESIGN')) {
 	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=allowonlinesign&token='.newToken().'&value=0">';
-	print img_picto($langs->trans("Activited"), 'switch_on');
+	print img_picto($langs->trans("Activated"), 'switch_on');
 	print '</a>';
 } else {
 	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=allowonlinesign&token='.newToken().'&value=1">';

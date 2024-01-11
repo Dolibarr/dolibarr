@@ -189,7 +189,6 @@ class RssParser
 		return $this->_rssarray;
 	}
 
-
 	/**
 	 * 	Parse rss URL
 	 *
@@ -201,8 +200,6 @@ class RssParser
 	 */
 	public function parser($urlRSS, $maxNb = 0, $cachedelay = 60, $cachedir = '')
 	{
-		global $conf;
-
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
@@ -276,6 +273,11 @@ class RssParser
 				try {
 					$xmlparser = xml_parser_create(null);
 
+					xml_parser_set_option($xmlparser, XML_OPTION_CASE_FOLDING, 0);
+					xml_parser_set_option($xmlparser, XML_OPTION_SKIP_WHITE, 1);
+					xml_parser_set_option($xmlparser, XML_OPTION_TARGET_ENCODING, "UTF-8");
+					//xml_set_external_entity_ref_handler($xmlparser, 'extEntHandler');	// Seems to have no effect even when function extEntHandler exists.
+
 					if (!is_resource($xmlparser) && !is_object($xmlparser)) {
 						$this->error = "ErrorFailedToCreateParser";
 						return -1;
@@ -288,6 +290,7 @@ class RssParser
 					$status = xml_parse($xmlparser, $str, false);
 
 					xml_parser_free($xmlparser);
+
 					$rss = $this;
 					//var_dump($status.' '.$rss->_format);exit;
 				} catch (Exception $e) {
@@ -807,6 +810,22 @@ class RssParser
 		return "";
 	}
 }
+
+
+/*
+ * A method for the xml_set_external_entity_ref_handler()
+ *
+ * @param XMLParser $parser
+ * @param string $ent
+ * @param string|false $base
+ * @param string $sysID
+ * @param string[false $pubID
+ * @return bool
+function extEntHandler($parser, $ent, $base, $sysID, $pubID)  {
+	print 'extEntHandler ran';
+	return true;
+}
+*/
 
 
 /**

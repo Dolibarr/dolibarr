@@ -222,8 +222,8 @@ class modTakePos extends DolibarrModules
 								'url'=>'/takepos/index.php',
 								'langs'=>'cashdesk', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>1000 + $r,
-								'enabled'=>'$conf->takepos->enabled', // Define condition to show or hide menu entry. Use '$conf->takepos->enabled' if entry must be visible if module is enabled.
-								'perms'=>'$user->rights->takepos->run', // Use 'perms'=>'$user->rights->takepos->level1->level2' if you want your menu with a permission rules
+								'enabled'=>'isModEnabled("takepos")', // Define condition to show or hide menu entry. Use '$conf->takepos->enabled' if entry must be visible if module is enabled.
+								'perms'=>'$user->hasRight("takepos", "run")', // Use 'perms'=>'$user->rights->takepos->level1->level2' if you want your menu with a permission rules
 								'target'=>'takepos',
 								'user'=>2); // 0=Menu for internal users, 1=external users, 2=both
 

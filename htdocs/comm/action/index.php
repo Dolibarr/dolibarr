@@ -711,10 +711,12 @@ $sql .= ' a.transparency, a.priority, a.fulldayevent, a.location,';
 $sql .= ' a.fk_soc, a.fk_contact, a.fk_project, a.fk_bookcal_calendar,';
 $sql .= ' a.fk_element, a.elementtype,';
 $sql .= ' ca.code as type_code, ca.libelle as type_label, ca.color as type_color, ca.type as type_type, ca.picto as type_picto';
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
 $sql .= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm as ca, '.MAIN_DB_PREFIX."actioncomm as a";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
-}
 // We must filter on resource table
 if ($resourceid > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_resources as r";
@@ -763,10 +765,21 @@ if ($resourceid > 0) {
 if ($pid) {
 	$sql .= " AND a.fk_project=".((int) $pid);
 }
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-	$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".((int) $user->id).")";
+// If the internal user must only see his customers, force searching by him
+$search_sale = 0;
+if (!$user->hasRight('societe', 'client', 'voir')) {
+	$search_sale = $user->id;
 }
-if ($socid > 0) {
+// Search on sale representative
+if ($search_sale && $search_sale != '-1') {
+	if ($search_sale == -2) {
+		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc)";
+	} elseif ($search_sale > 0) {
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+	}
+}
+// Search on socid
+if ($socid) {
 	$sql .= " AND a.fk_soc = ".((int) $socid);
 }
 // We must filter on assignement table
@@ -968,6 +981,14 @@ if ($resql) {
 			//print 'Event '.$i.' id='.$event->id.' (start='.dol_print_date($event->datep).'-end='.dol_print_date($event->datef);
 			//print ' startincalendar='.dol_print_date($event->date_start_in_calendar).'-endincalendar='.dol_print_date($event->date_end_in_calendar).') was added in '.$j.' different index key of array<br>';
 		}
+
+		$parameters['obj'] = $obj;
+		$reshook = $hookmanager->executeHooks('hookEventElements', $parameters, $event, $action); // Note that $action and $object may have been modified by some hooks
+		$event = $hookmanager->resPrint;
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		}
+
 		$i++;
 	}
 } else {
@@ -1753,6 +1774,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	global $action, $mode, $filter, $filtert, $status, $actioncode, $usergroup; // Filters used into search form
 	global $theme_datacolor;
 	global $cachethirdparties, $cachecontacts, $cacheusers, $colorindexused;
+	global $hookmanager;
 
 	if ($conf->use_javascript_ajax) {	// Enable the "Show more button..."
 		$conf->global->MAIN_JS_SWITCH_AGENDA = 1;
@@ -2049,130 +2071,139 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 						$listofusertoshow = '';
 						$listofusertoshow .= '<br>'.$cacheusers[$tmpid]->getNomUrl(-1, '', 0, 0, 0, 0, '', 'paddingright valignmiddle');
 						print $listofusertoshow;
+					}
+
+					$reshook = $hookmanager->executeHooks('eventOptions', $parameters, $event, $action); // Note that $action and $object may have been modified by some hooks
+					if ($reshook < 0) {
+						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 					} else {
-						// Other calendar
-						if (empty($event->fulldayevent)) {
-							//print $event->getNomUrl(2).' ';
-						}
+						if (empty($reshook)) {
+							// Other calendar
+							if (empty($event->fulldayevent)) {
+								//print $event->getNomUrl(2).' ';
+							}
 
-						// Date
-						if (empty($event->fulldayevent)) {
-							// Show hours (start ... end)
-							$tmpyearstart  = dol_print_date($event->date_start_in_calendar, '%Y', 'tzuserrel');
-							$tmpmonthstart = dol_print_date($event->date_start_in_calendar, '%m', 'tzuserrel');
-							$tmpdaystart   = dol_print_date($event->date_start_in_calendar, '%d', 'tzuserrel');
-							$tmpyearend    = dol_print_date($event->date_end_in_calendar, '%Y', 'tzuserrel');
-							$tmpmonthend   = dol_print_date($event->date_end_in_calendar, '%m', 'tzuserrel');
-							$tmpdayend     = dol_print_date($event->date_end_in_calendar, '%d', 'tzuserrel');
+							// Date
+							if (empty($event->fulldayevent)) {
+								// Show hours (start ... end)
+								$tmpyearstart  = dol_print_date($event->date_start_in_calendar, '%Y', 'tzuserrel');
+								$tmpmonthstart = dol_print_date($event->date_start_in_calendar, '%m', 'tzuserrel');
+								$tmpdaystart   = dol_print_date($event->date_start_in_calendar, '%d', 'tzuserrel');
+								$tmpyearend    = dol_print_date($event->date_end_in_calendar, '%Y', 'tzuserrel');
+								$tmpmonthend   = dol_print_date($event->date_end_in_calendar, '%m', 'tzuserrel');
+								$tmpdayend     = dol_print_date($event->date_end_in_calendar, '%d', 'tzuserrel');
 
-							// Hour start
-							if ($tmpyearstart == $annee && $tmpmonthstart == $mois && $tmpdaystart == $jour) {
-								$daterange .= dol_print_date($event->date_start_in_calendar, 'hour', 'tzuserrel');
-								if ($event->date_end_in_calendar && $event->date_start_in_calendar != $event->date_end_in_calendar) {
-									if ($tmpyearstart == $tmpyearend && $tmpmonthstart == $tmpmonthend && $tmpdaystart == $tmpdayend) {
-										$daterange .= '-';
+								// Hour start
+								if ($tmpyearstart == $annee && $tmpmonthstart == $mois && $tmpdaystart == $jour) {
+									$daterange .= dol_print_date($event->date_start_in_calendar, 'hour', 'tzuserrel');
+									if ($event->date_end_in_calendar && $event->date_start_in_calendar != $event->date_end_in_calendar) {
+										if ($tmpyearstart == $tmpyearend && $tmpmonthstart == $tmpmonthend && $tmpdaystart == $tmpdayend) {
+											$daterange .= '-';
+										}
+										//else
+										//print '...';
 									}
-									//else
-									//print '...';
 								}
-							}
-							if ($event->date_end_in_calendar && $event->date_start_in_calendar != $event->date_end_in_calendar) {
-								if ($tmpyearstart != $tmpyearend || $tmpmonthstart != $tmpmonthend || $tmpdaystart != $tmpdayend) {
-									$daterange .= '...';
+								if ($event->date_end_in_calendar && $event->date_start_in_calendar != $event->date_end_in_calendar) {
+									if ($tmpyearstart != $tmpyearend || $tmpmonthstart != $tmpmonthend || $tmpdaystart != $tmpdayend) {
+										$daterange .= '...';
+									}
 								}
-							}
-							// Hour end
-							if ($event->date_end_in_calendar && $event->date_start_in_calendar != $event->date_end_in_calendar) {
-								if ($tmpyearend == $annee && $tmpmonthend == $mois && $tmpdayend == $jour) {
-									$daterange .= dol_print_date($event->date_end_in_calendar, 'hour', 'tzuserrel');
+								// Hour end
+								if ($event->date_end_in_calendar && $event->date_start_in_calendar != $event->date_end_in_calendar) {
+									if ($tmpyearend == $annee && $tmpmonthend == $mois && $tmpdayend == $jour) {
+										$daterange .= dol_print_date($event->date_end_in_calendar, 'hour', 'tzuserrel');
+									}
 								}
-							}
-						} else {
-							if ($showinfo) {
-								print $langs->trans("EventOnFullDay")."<br>\n";
-							}
-						}
-
-						// Show title
-						$titletoshow = $daterange;
-						$titletoshow .= ($titletoshow ? ' ' : '').dol_escape_htmltag($event->label ? $event->label : $event->libelle);
-
-						if ($event->type_code != 'ICALEVENT') {
-							$savlabel = $event->label ? $event->label : $event->libelle;
-							$event->label = $titletoshow;
-							$event->libelle = $titletoshow;		// deprecatd
-							// Note: List of users are inside $event->userassigned. Link may be clickable depending on permissions of user.
-							$titletoshow = (($event->type_picto || $event->type_code) ? $event->getTypePicto() : '');
-							$titletoshow .= $event->getNomUrl(0, $maxnbofchar, 'cal_event cal_event_title', '', 0, 0);
-							$event->label = $savlabel;
-							$event->libelle = $savlabel;
-						}
-
-						// Loop on each assigned user
-						$listofusertoshow = '';
-						$posuserassigned = 0;
-						foreach ($event->userassigned as $tmpid => $tmpdata) {
-							if (!$posuserassigned && $titletoshow) {
-								$listofusertoshow .= '<br>';
-							}
-							$posuserassigned++;
-							if (empty($cacheusers[$tmpid])) {
-								$newuser = new User($db);
-								$newuser->fetch($tmpid);
-								$cacheusers[$tmpid] = $newuser;
-							}
-
-							$listofusertoshow .= $cacheusers[$tmpid]->getNomUrl(-3, '', 0, 0, 0, 0, '', 'valignmiddle');
-						}
-
-						print $titletoshow;
-						print $listofusertoshow;
-
-						if ($event->type_code == 'ICALEVENT') {
-							print '<br>('.dol_trunc($event->icalname, $maxnbofchar).')';
-						}
-
-						$thirdparty_id = ($event->socid > 0 ? $event->socid : ((is_object($event->societe) && $event->societe->id > 0) ? $event->societe->id : 0));
-						$contact_id = ($event->contact_id > 0 ? $event->contact_id : ((is_object($event->contact) && $event->contact->id > 0) ? $event->contact->id : 0));
-
-						// If action related to company / contact
-						$linerelatedto = '';
-						if ($thirdparty_id > 0) {
-							if (!isset($cachethirdparties[$thirdparty_id]) || !is_object($cachethirdparties[$thirdparty_id])) {
-								$thirdparty = new Societe($db);
-								$thirdparty->fetch($thirdparty_id);
-								$cachethirdparties[$thirdparty_id] = $thirdparty;
 							} else {
-								$thirdparty = $cachethirdparties[$thirdparty_id];
+								if ($showinfo) {
+									print $langs->trans("EventOnFullDay")."<br>\n";
+								}
 							}
-							if (!empty($thirdparty->id)) {
-								$linerelatedto .= $thirdparty->getNomUrl(1, '', 0);
+
+							// Show title
+							$titletoshow = $daterange;
+							$titletoshow .= ($titletoshow ? ' ' : '').dol_escape_htmltag($event->label ? $event->label : $event->libelle);
+
+							if ($event->type_code != 'ICALEVENT') {
+								$savlabel = $event->label ? $event->label : $event->libelle;
+								$event->label = $titletoshow;
+								$event->libelle = $titletoshow;		// deprecatd
+								// Note: List of users are inside $event->userassigned. Link may be clickable depending on permissions of user.
+								$titletoshow = (($event->type_picto || $event->type_code) ? $event->getTypePicto() : '');
+								$titletoshow .= $event->getNomUrl(0, $maxnbofchar, 'cal_event cal_event_title', '', 0, 0);
+								$event->label = $savlabel;
+								$event->libelle = $savlabel;
 							}
-						}
-						if (!empty($contact_id) && $contact_id > 0) {
-							if (empty($cachecontacts[$contact_id]) || !is_object($cachecontacts[$contact_id])) {
-								$contact = new Contact($db);
-								$contact->fetch($contact_id);
-								$cachecontacts[$contact_id] = $contact;
-							} else {
-								$contact = $cachecontacts[$contact_id];
+
+							// Loop on each assigned user
+							$listofusertoshow = '';
+							$posuserassigned = 0;
+							foreach ($event->userassigned as $tmpid => $tmpdata) {
+								if (!$posuserassigned && $titletoshow) {
+									$listofusertoshow .= '<br>';
+								}
+								$posuserassigned++;
+								if (empty($cacheusers[$tmpid])) {
+									$newuser = new User($db);
+									$newuser->fetch($tmpid);
+									$cacheusers[$tmpid] = $newuser;
+								}
+
+								$listofusertoshow .= $cacheusers[$tmpid]->getNomUrl(-3, '', 0, 0, 0, 0, '', 'valignmiddle');
+							}
+
+							print $titletoshow;
+							print $listofusertoshow;
+
+							if ($event->type_code == 'ICALEVENT') {
+								print '<br>('.dol_trunc($event->icalname, $maxnbofchar).')';
+							}
+
+							$thirdparty_id = ($event->socid > 0 ? $event->socid : ((is_object($event->societe) && $event->societe->id > 0) ? $event->societe->id : 0));
+							$contact_id = ($event->contact_id > 0 ? $event->contact_id : ((is_object($event->contact) && $event->contact->id > 0) ? $event->contact->id : 0));
+
+							// If action related to company / contact
+							$linerelatedto = '';
+							if ($thirdparty_id > 0) {
+								if (!isset($cachethirdparties[$thirdparty_id]) || !is_object($cachethirdparties[$thirdparty_id])) {
+									$thirdparty = new Societe($db);
+									$thirdparty->fetch($thirdparty_id);
+									$cachethirdparties[$thirdparty_id] = $thirdparty;
+								} else {
+									$thirdparty = $cachethirdparties[$thirdparty_id];
+								}
+								if (!empty($thirdparty->id)) {
+									$linerelatedto .= $thirdparty->getNomUrl(1, '', 0);
+								}
+							}
+							if (!empty($contact_id) && $contact_id > 0) {
+								if (empty($cachecontacts[$contact_id]) || !is_object($cachecontacts[$contact_id])) {
+									$contact = new Contact($db);
+									$contact->fetch($contact_id);
+									$cachecontacts[$contact_id] = $contact;
+								} else {
+									$contact = $cachecontacts[$contact_id];
+								}
+								if ($linerelatedto) {
+									$linerelatedto .= '&nbsp;';
+								}
+								if (!empty($contact->id)) {
+									$linerelatedto .= $contact->getNomUrl(1, '', 0);
+								}
+							}
+							if (!empty($event->fk_element) && $event->fk_element > 0 && !empty($event->elementtype) && getDolGlobalString('AGENDA_SHOW_LINKED_OBJECT')) {
+								include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+								if ($linerelatedto) {
+									$linerelatedto .= '<br>';
+								}
+								$linerelatedto .= dolGetElementUrl($event->fk_element, $event->elementtype, 1);
 							}
 							if ($linerelatedto) {
-								$linerelatedto .= '&nbsp;';
+								print ' '.$linerelatedto;
 							}
-							if (!empty($contact->id)) {
-								$linerelatedto .= $contact->getNomUrl(1, '', 0);
-							}
-						}
-						if (!empty($event->fk_element) && $event->fk_element > 0 && !empty($event->elementtype) && getDolGlobalString('AGENDA_SHOW_LINKED_OBJECT')) {
-							include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-							if ($linerelatedto) {
-								$linerelatedto .= '<br>';
-							}
-							$linerelatedto .= dolGetElementUrl($event->fk_element, $event->elementtype, 1);
-						}
-						if ($linerelatedto) {
-							print ' '.$linerelatedto;
+						} elseif (!empty($reshook)) {
+							print $hookmanager->resPrint;
 						}
 					}
 
