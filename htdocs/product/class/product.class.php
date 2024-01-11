@@ -2088,7 +2088,24 @@ class Product extends CommonObject
 	public function get_buyprice($prodfournprice, $qty, $product_id = 0, $fourn_ref = '', $fk_soc = 0)
 	{
 		// phpcs:enable
-		global $conf;
+		global $action, $hookmanager;
+
+		// Call hook if any
+		if (is_object($hookmanager)) {
+			$parameters = array(
+				'prodfournprice' => $prodfournprice,
+				'qty' => $qty,
+				'product_id' => $product_id,
+				'fourn_ref' => $fourn_ref,
+				'fk_soc' => $fk_soc,
+			);
+			// Note that $action and $object may have been modified by some hooks
+			$reshook = $hookmanager->executeHooks('getBuyPrice', $parameters, $this, $action);
+			if ($reshook > 0) {
+				return $hookmanager->resArray;
+			}
+		}
+
 		$result = 0;
 
 		// We do a first search with a select by searching with couple prodfournprice and qty only (later we will search on triplet qty/product_id/fourn_ref)
