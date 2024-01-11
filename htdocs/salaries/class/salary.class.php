@@ -296,7 +296,7 @@ class Salary extends CommonObject
 	 *  @param  bool 	$notrigger 	false=launch triggers after, true=disable triggers
 	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($user, $notrigger = 0)
+	public function delete($user, $notrigger = false)
 	{
 		return $this->deleteCommon($user, $notrigger);
 	}
