@@ -185,7 +185,7 @@ if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($obj
 
 // Security check
 $socid = $object->socid;
-//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 $result = restrictedArea($user, 'projet', $object->id, 'projet&project');
 
 $hookmanager->initHooks(array('projectOverview'));
@@ -1249,7 +1249,7 @@ foreach ($listofreferent as $key => $value) {
 				// Remove link
 				print '<td style="width: 24px">';
 				if ($tablename != 'projet_task' && $tablename != 'stock_mouvement') {
-					if (!getDolGlobalString('PROJECT_DISABLE_UNLINK_FROM_OVERVIEW') || $user->admin) {		// PROJECT_DISABLE_UNLINK_FROM_OVERVIEW is empty by defaut, so this test true
+					if (!getDolGlobalString('PROJECT_DISABLE_UNLINK_FROM_OVERVIEW') || $user->admin) {		// PROJECT_DISABLE_UNLINK_FROM_OVERVIEW is empty by default, so this test true
 						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=unlink&tablename='.$tablename.'&elementselect='.$element->id.($project_field ? '&projectfield='.$project_field : '').'" class="reposition">';
 						print img_picto($langs->trans('Unlink'), 'unlink');
 						print '</a>';

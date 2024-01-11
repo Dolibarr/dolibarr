@@ -52,7 +52,7 @@ $projectid = GETPOSTISSET("id") ? GETPOST("id", "int", 1) : GETPOST("projectid",
 
 // Security check
 $socid = 0;
-// For external user, no check is done on company because readability is managed by public status of project and assignement.
+// For external user, no check is done on company because readability is managed by public status of project and assignment.
 // if ($user->societe_id > 0) $socid=$user->societe_id;
 $result = restrictedArea($user, 'projet', $projectid);
 

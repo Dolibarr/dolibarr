@@ -321,7 +321,7 @@ if ($id > 0 || !empty($ref)) {
 
 		$nbofsubsubproducts = count($prods_arbo); // This include sub sub product into nb
 		$prodschild = $object->getChildsArbo($id, 1);
-		$nbofsubproducts = count($prodschild); // This include only first level of childs
+		$nbofsubproducts = count($prodschild); // This include only first level of children
 
 
 		print '<div class="fichecenter">';
