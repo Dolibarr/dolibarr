@@ -157,7 +157,7 @@ function getRankOrderResults($obj)
 	} elseif ($obj->rankorder < $obj->required_rank) {
 		$key = 'lesser';
 	}
-	return '<span title="'.strtoupper($obj->label).': ' .$results[$key]['title']. '" class="radio_js_bloc_number TNote_1" style="' . htmlspecialchars($results[$key]['style'], ENT_QUOTES) . '">' . strtoupper(substr($obj->label, 0, 3)) .(strlen($obj->label) > 3 ? '..' : '').'</span>';
+	return '<span title="'.mb_strtoupper($obj->label, 'UTF-8').': ' .$results[$key]['title']. '" class="radio_js_bloc_number TNote_1" style="' . htmlspecialchars($results[$key]['style'], ENT_QUOTES) . '">' . mb_strtoupper(dol_trunc($obj->label, 3), 'UTF-8').'</span>';
 }
 
 /**
