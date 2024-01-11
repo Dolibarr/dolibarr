@@ -634,7 +634,7 @@ if (getDolGlobalString('MAIN_SECURITY_HASH_ALGO') != 'password_hash') {
 	print '<br>';
 }
 if (getDolGlobalString('MAIN_SECURITY_HASH_ALGO') != 'password_hash') {
-	print '<div class="info">The recommanded value for MAIN_SECURITY_HASH_ALGO is now \'password_hash\' but setting it now will make ALL existing passwords of all users not valid, so update is not possible.<br>';
+	print '<div class="info">The recommended value for MAIN_SECURITY_HASH_ALGO is now \'password_hash\' but setting it now will make ALL existing passwords of all users not valid, so update is not possible.<br>';
 	print 'If you really want to switch, you must:<br>';
 	print '- Go on home - setup - other and add constant MAIN_SECURITY_HASH_ALGO to value \'password_hash\'<br>';
 	print '- In same session, WITHOUT LOGGING OUT, go into your admin user record and set a new password<br>';

@@ -1015,7 +1015,6 @@ class Asset extends CommonObject
 				$period_amount = (float) price2num($depreciation_period_amount / $fields['duration'], 'MT');
 				$first_period_found = false;
 				// TODO fix declaration of $begin_period
-				// @phpstan-ignore-next-line
 				$first_period_date = isset($begin_period) && $begin_period > $fiscal_period_start ? $begin_period : $fiscal_period_start;
 
 				$ref_date_format = "%Y" . ($fields['duration_type'] == 1 || $fields['duration_type'] == 2 ? '-%m' : '') . ($fields['duration_type'] == 2 ? '-%d' : '');

@@ -37,7 +37,6 @@ parameters:
 	checkThisOnly: true
 	checkUnionTypes: false
 	checkExplicitMixedMissingReturn: false
-	checkPhpDocMissingReturn: false
 	reportMaybes: false
 	reportMaybesInMethodSignatures: false
 	reportStaticMethodSignatures: false
@@ -49,16 +48,9 @@ parameters:
 		- '#Result of function fieldList#'
 		- '#Caught class Stripe#'
 		- '#Function llx.* invoked with#'
-		- '#If condition is always true#'
 		- '#always exists and is not falsy#'
-		- '#is always true#'
 		- '#is always fal#'
 		- '#always exists and is not nullable#'
-		- '#type has no value type specified in iterable type array#'
-		- '#with no value type specified in iterable type array#'
-		- '#Empty array passed to foreach#'
-		- '#in isset\(\) is not nullable#'
-		- '#in isset\(\) is never defined#'
 		- '#(\$force_dolibarr_lib|\$dolibarr_main_db).*in empty\(\) is never defined.#'
 		- '#Sprain\\SwissQrBill\\#'
 		- '#Constructor of class .* has an unused parameter #'

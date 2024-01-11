@@ -21,31 +21,31 @@ cd /tmp/git/dolibarr
 firstline=1
 for i in "${Releases[@]}"
 do
-  if [ $firstline -eq 1 ]; then
-    firstline=0
-  	continue
-  fi
-  
-  #echo "=== Version $i (counter $counter):"
-  echo "=== Version $i (counter $counter):"
-  echo "Get common commit ID between origin/${Releases[counter]} and origin/${Releases[counter+1]}"
-  echo "git merge-base origin/${Releases[counter]} origin/${Releases[counter+1]}"
-  commitidcommon=`git merge-base origin/${Releases[counter]} origin/${Releases[counter+1]}`
-  echo "Found commitid=$commitidcommon"
-  
-  echo "Checkout into version $i"
-  git checkout $i  
-  #git shortlog -s -n  --after=YYYY-MM-DD --before=YYYY-MM-DD | tr '[:lower:]' '[:upper:]' > /tmp/github_commits_perversion.txt
-  git shortlog -s -n $commitidcommon.. | tr '[:lower:]' '[:upper:]' > /tmp/github_commits_perversion.txt
-  #cat /tmp/github_commits_perversion.txt
-  echo "Total for version $i:"
-  echo -n "- Nb of commits: " 
-  git log $commitidcommon.. --pretty=oneline | tr '[:lower:]' '[:upper:]' > /tmp/github_commits_perversion2.txt
-  cat /tmp/github_commits_perversion2.txt | wc -l
-  echo -n "- Nb of different authors: " 
-  awk ' { print $2 } ' < /tmp/github_commits_perversion.txt | sort -u | wc -l
-  echo "=======================" 
-  echo
-  let "counter +=1"
+	if [ $firstline -eq 1 ]; then
+		firstline=0
+		continue
+	fi
+
+	#echo "=== Version $i (counter $counter):"
+	echo "=== Version $i (counter $counter):"
+	echo "Get common commit ID between origin/${Releases[counter]} and origin/${Releases[counter+1]}"
+	echo "git merge-base origin/${Releases[counter]} origin/${Releases[counter+1]}"
+	commitidcommon=`git merge-base origin/${Releases[counter]} origin/${Releases[counter+1]}`
+	echo "Found commitid=$commitidcommon"
+
+	echo "Checkout into version $i"
+	git checkout $i
+	#git shortlog -s -n  --after=YYYY-MM-DD --before=YYYY-MM-DD | tr '[:lower:]' '[:upper:]' > /tmp/github_commits_perversion.txt
+	git shortlog -s -n $commitidcommon.. | tr '[:lower:]' '[:upper:]' > /tmp/github_commits_perversion.txt
+	#cat /tmp/github_commits_perversion.txt
+	echo "Total for version $i:"
+	echo -n "- Nb of commits: "
+	git log $commitidcommon.. --pretty=oneline | tr '[:lower:]' '[:upper:]' > /tmp/github_commits_perversion2.txt
+	cat /tmp/github_commits_perversion2.txt | wc -l
+	echo -n "- Nb of different authors: "
+	awk ' { print $2 } ' < /tmp/github_commits_perversion.txt | sort -u | wc -l
+	echo "======================="
+	echo
+	let "counter +=1"
 done
 

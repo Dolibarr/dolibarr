@@ -316,12 +316,12 @@ class MailingTargets // This can't be abstract as it is used for some method
 		$orders = array();
 		$i = 0;
 
-		$dirwidget = array('/core/emailings/'); // $conf->modules_parts['emailings'] is not required
+		$diremailselector = array('/core/modules/mailings/'); // $conf->modules_parts['emailings'] is not required
 		if (is_array($forcedir)) {
-			$dirwidget = $forcedir;
+			$diremailselector = $forcedir;
 		}
 
-		foreach ($dirwidget as $reldir) {
+		foreach ($diremailselector as $reldir) {
 			$dir = dol_buildpath($reldir, 0);
 			$newdir = dol_osencode($dir);
 
@@ -334,20 +334,22 @@ class MailingTargets // This can't be abstract as it is used for some method
 			if (is_resource($handle)) {
 				while (($file = readdir($handle)) !== false) {
 					$reg = array();
-					if (is_readable($newdir.'/'.$file) && preg_match('/^(.+)\.php/', $file, $reg)) {
+					if (is_readable($newdir.'/'.$file) && preg_match('/^(.+)\.modules.php/', $file, $reg)) {
 						if (preg_match('/\.back$/', $file) || preg_match('/^(.+)\.disabled\.php/', $file)) {
 							continue;
 						}
 
 						$part1 = $reg[1];
 
-						$modName = ucfirst($reg[1]);
-						//print "file=$file"; print "modName=$modName"; exit;
+						//$modName = ucfirst($reg[1]);
+						$modName = 'mailing_'.$reg[1];	// name of selector submodule
+						//print "file=$file modName=$modName"; exit;
 						if (in_array($modName, $modules)) {
 							$langs->load("errors");
-							print '<div class="error">'.$langs->trans("Error").' : '.$langs->trans("ErrorDuplicateWidget", $modName, "").'</div>';
+							print '<div class="error">'.$langs->trans("Error").' : '.$langs->trans("ErrorDuplicateEmalingSelector", $modName, "").'</div>';
 						} else {
 							try {
+								//print $newdir.'/'.$file;
 								include_once $newdir.'/'.$file;
 							} catch (Exception $e) {
 								print $e->getMessage();
@@ -357,7 +359,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 						$files[$i] = $file;
 						$fullpath[$i] = $dir.'/'.$file;
 						$relpath[$i] = preg_replace('/^\//', '', $reldir).'/'.$file;
-						$iscoreorexternal[$i] = ($reldir == '/core/boxes/' ? 'internal' : 'external');
+						$iscoreorexternal[$i] = ($reldir == '/core/modules/mailings/' ? 'internal' : 'external');
 						$modules[$i] = $modName;
 						$orders[$i] = $part1; // Set sort criteria value
 
@@ -374,7 +376,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 		$widget = array();
 		$j = 0;
 
-		// Loop on each widget
+		// Loop on each emailing selector
 		foreach ($orders as $key => $value) {
 			$modName = $modules[$key];
 			if (empty($modName)) {
@@ -382,7 +384,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 			}
 
 			if (!class_exists($modName)) {
-				print 'Error: A widget file was found but its class "'.$modName.'" was not found.'."<br>\n";
+				print 'Error: An emailing selector file was found but its class "'.$modName.'" was not found.'."<br>\n";
 				continue;
 			}
 

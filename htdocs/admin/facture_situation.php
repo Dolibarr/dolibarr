@@ -61,7 +61,7 @@ $form = new Form($db);
 $formSetup = new FormSetup($db);
 
 
-// Setup conf MYMODULE_MYPARAM4 : exemple of quick define write style
+// Setup conf MYMODULE_MYPARAM4 : example of quick define write style
 $formSetup->newItem('INVOICE_USE_SITUATION')
 	->setAsYesNo()
 	->nameText = $langs->trans('UseSituationInvoices');
