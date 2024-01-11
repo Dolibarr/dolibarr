@@ -18,6 +18,7 @@
  * Copyright (C) 2022       ATM Consulting          <contact@atm-consulting.fr>
  * Copyright (C) 2022       OpenDSI                 <support@open-dsi.fr>
  * Copyright (C) 2022      	Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,14 +137,14 @@ class Propal extends CommonObject
 	 * Status of the quote
 	 * @var int
 	 * @deprecated Try to use $status now
-	 * @see Propal::STATUS_DRAFT, Propal::STATUS_VALIDATED, Propal::STATUS_SIGNED, Propal::STATUS_NOTSIGNED, Propal::STATUS_BILLED
+	 * @see Propal::STATUS_DRAFT, Propal::STATUS_VALIDATED, Propal::STATUS_SIGNED, Propal::STATUS_NOTSIGNED, Propal::STATUS_BILLED, Propal::STATUS_CANCELED
 	 */
 	public $statut;
 
 	/**
 	 * Status of the quote
 	 * @var int
-	 * @see Propal::STATUS_DRAFT, Propal::STATUS_VALIDATED, Propal::STATUS_SIGNED, Propal::STATUS_NOTSIGNED, Propal::STATUS_BILLED
+	 * @see Propal::STATUS_DRAFT, Propal::STATUS_VALIDATED, Propal::STATUS_SIGNED, Propal::STATUS_NOTSIGNED, Propal::STATUS_BILLED, Propal::STATUS_CANCELED
 	 */
 	public $status;
 
@@ -191,12 +192,6 @@ class Propal extends CommonObject
 	public $datep;
 
 	/**
-	 * @var int	Date expected for delivery
-	 * @deprecated
-	 */
-	public $date_livraison; // deprecated; Use delivery_date instead.
-
-	/**
 	 * @var integer|string 	$delivery_date;
 	 */
 	public $delivery_date; // Date expected of shipment (date starting shipment, not the reception that occurs some days after)
@@ -205,8 +200,6 @@ class Propal extends CommonObject
 	public $fin_validite;
 
 	public $user_author_id;
-	public $user_valid_id;
-	public $user_close_id;
 
 	/**
 	 * @deprecated
@@ -224,25 +217,14 @@ class Propal extends CommonObject
 	 */
 	public $total;
 
-	public $cond_reglement_code;
-	public $cond_reglement_doc;
-	public $mode_reglement_code;
+	public $cond_reglement_code;	// code
+	public $cond_reglement;			// label
+	public $cond_reglement_doc;		// label doc
+
+	public $mode_reglement_code;	// code
+	public $mode_reglement;			// label
 
 	public $deposit_percent;
-
-	/**
-	 * @deprecated
-	 */
-	public $remise_percent;
-
-	/**
-	 * @deprecated
-	 */
-	public $remise;
-	/**
-	 * @deprecated
-	 */
-	public $remise_absolue;
 
 	/**
 	 * @var int ID
@@ -270,10 +252,16 @@ class Propal extends CommonObject
 	 */
 	public $availability_code;
 
+	/**
+	 * @var string availabilty label
+	 */
+	public $availability;
+
 	public $duree_validite;
 
-	public $demand_reason_id;
-	public $demand_reason_code;
+	public $demand_reason_id;		// id
+	public $demand_reason_code;		// code
+	public $demand_reason;			// label
 
 	public $warehouse_id;
 
@@ -352,9 +340,6 @@ class Propal extends CommonObject
 		'fk_user_valid' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
 		'fk_user_cloture' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user cloture', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
 		'price' =>array('type'=>'double', 'label'=>'Price', 'enabled'=>1, 'visible'=>-1, 'position'=>105),
-		//'remise_percent' =>array('type'=>'double', 'label'=>'RelativeDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>110),
-		//'remise_absolue' =>array('type'=>'double', 'label'=>'CustomerRelativeDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>115),
-		//'remise' =>array('type'=>'double', 'label'=>'Remise', 'enabled'=>1, 'visible'=>-1, 'position'=>120),
 		'total_ht' =>array('type'=>'double(24,8)', 'label'=>'TotalHT', 'enabled'=>1, 'visible'=>-1, 'position'=>125, 'isameasure'=>1),
 		'total_tva' =>array('type'=>'double(24,8)', 'label'=>'VAT', 'enabled'=>1, 'visible'=>-1, 'position'=>130, 'isameasure'=>1),
 		'localtax1' =>array('type'=>'double(24,8)', 'label'=>'LocalTax1', 'enabled'=>1, 'visible'=>-1, 'position'=>135, 'isameasure'=>1),
@@ -389,6 +374,10 @@ class Propal extends CommonObject
 	);
 	// END MODULEBUILDER PROPERTIES
 
+	/**
+	 * Canceled status
+	 */
+	const STATUS_CANCELED = -1;
 	/**
 	 * Draft status
 	 */
@@ -439,7 +428,7 @@ class Propal extends CommonObject
 	 * 	@param  int		$idproduct       	Product Id to add
 	 * 	@param  int		$qty             	Quantity
 	 * 	@param  int		$remise_percent  	Discount effected on Product
-	 *  @return	int							<0 if KO, >0 if OK
+	 *  @return	int							Return integer <0 if KO, >0 if OK
 	 *
 	 *	TODO	Replace calls to this function by generation objet Ligne
 	 */
@@ -593,8 +582,8 @@ class Propal extends CommonObject
 	 *      @param		int			$fk_fournprice		Id supplier price
 	 *      @param		int			$pa_ht				Buying price without tax
 	 *      @param		string		$label				???
-	 *		@param      int			$date_start       	Start date of the line
-	 *		@param      int			$date_end         	End date of the line
+	 *		@param      int|string	$date_start       	Start date of the line
+	 *		@param      int|string	$date_end         	End date of the line
 	 *      @param		array		$array_options		extrafields array
 	 * 		@param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
 	 *      @param		string		$origin				Depend on global conf MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION can be 'orderdet', 'propaldet'..., else 'order','propal,'....
@@ -605,7 +594,7 @@ class Propal extends CommonObject
 	 *    	@return    	int         	    			>0 if OK, <0 if KO
 	 *    	@see       	add_product()
 	 */
-	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $fk_product = 0, $remise_percent = 0.0, $price_base_type = 'HT', $pu_ttc = 0.0, $info_bits = 0, $type = 0, $rang = -1, $special_code = 0, $fk_parent_line = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $origin = '', $origin_id = 0, $pu_ht_devise = 0, $fk_remise_except = 0, $noupdateafterinsertline = 0)
+	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $fk_product = 0, $remise_percent = 0.0, $price_base_type = 'HT', $pu_ttc = 0.0, $info_bits = 0, $type = 0, $rang = -1, $special_code = 0, $fk_parent_line = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $date_start = '', $date_end = '', $array_options = array(), $fk_unit = null, $origin = '', $origin_id = 0, $pu_ht_devise = 0, $fk_remise_except = 0, $noupdateafterinsertline = 0)
 	{
 		global $mysoc, $conf, $langs;
 
@@ -667,7 +656,7 @@ class Propal extends CommonObject
 				$result = $product->fetch($fk_product);
 				$product_type = $product->type;
 
-				if (!empty($conf->global->STOCK_MUST_BE_ENOUGH_FOR_PROPOSAL) && $product_type == 0 && $product->stock_reel < $qty) {
+				if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_PROPOSAL') && $product_type == 0 && $product->stock_reel < $qty) {
 					$langs->load("errors");
 					$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnProposal', $product->ref);
 					$this->db->rollback();
@@ -843,8 +832,8 @@ class Propal extends CommonObject
 	 *  @param		int			$pa_ht				Price (without tax) of product when it was bought
 	 *  @param		string		$label				???
 	 *  @param		int			$type				0/1=Product/service
-	 *	@param      int			$date_start       	Start date of the line
-	 *	@param      int			$date_end         	End date of the line
+	 *	@param      int|string	$date_start       	Start date of the line
+	 *	@param      int|string	$date_end         	End date of the line
 	 *  @param		array		$array_options		extrafields array
 	 * 	@param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param		double		$pu_ht_devise		Unit price in currency
@@ -852,7 +841,7 @@ class Propal extends CommonObject
 	 * @param       integer $rang   line rank
 	 *  @return     int     		        		0 if OK, <0 if KO
 	 */
-	public function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $desc = '', $price_base_type = 'HT', $info_bits = 0, $special_code = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $type = 0, $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $rang = 0)
+	public function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $desc = '', $price_base_type = 'HT', $info_bits = 0, $special_code = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $type = 0, $date_start = '', $date_end = '', $array_options = array(), $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $rang = 0)
 	{
 		global $mysoc, $langs;
 
@@ -1074,7 +1063,7 @@ class Propal extends CommonObject
 	 *
 	 * 	@param		User	$user		User that create
 	 * 	@param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *  @return     int     			<0 if KO, >=0 if OK
+	 *  @return     int     			Return integer <0 if KO, >=0 if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -1108,7 +1097,7 @@ class Propal extends CommonObject
 		}
 
 		// Set tmp vars
-		$delivery_date = empty($this->delivery_date) ? $this->date_livraison : $this->delivery_date;
+		$delivery_date = $this->delivery_date;
 
 		dol_syslog(get_class($this)."::create");
 
@@ -1144,9 +1133,6 @@ class Propal extends CommonObject
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (";
 		$sql .= "fk_soc";
 		$sql .= ", price";
-		$sql .= ", remise";			// deprecated
-		$sql .= ", remise_percent";	// deprecated
-		$sql .= ", remise_absolue";	// deprecated
 		$sql .= ", total_tva";
 		$sql .= ", total_ttc";
 		$sql .= ", datep";
@@ -1179,9 +1165,6 @@ class Propal extends CommonObject
 		$sql .= " VALUES (";
 		$sql .= $this->socid;
 		$sql .= ", 0";
-		$sql .= ", ".((float) $this->remise);												// deprecated
-		$sql .= ", ".($this->remise_percent ? ((float) $this->remise_percent) : 'NULL');	// deprecated
-		$sql .= ", ".($this->remise_absolue ? ((float) $this->remise_absolue) : 'NULL');	// deprecated
 		$sql .= ", 0";
 		$sql .= ", 0";
 		$sql .= ", '".$this->db->idate($this->date)."'";
@@ -1209,7 +1192,7 @@ class Propal extends CommonObject
 		$sql .= ", ".setEntity($this);
 		$sql .= ", ".(int) $this->fk_multicurrency;
 		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
-		$sql .= ", ".(double) $this->multicurrency_tx;
+		$sql .= ", ".(float) $this->multicurrency_tx;
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -1242,8 +1225,7 @@ class Propal extends CommonObject
 									$error++;
 								}
 							}
-						} else // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
-						{
+						} else { // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
 							$origin_id = $tmp_origin_id;
 							$ret = $this->add_object_linked($origin, $origin_id);
 							if (!$ret) {
@@ -1279,7 +1261,7 @@ class Propal extends CommonObject
 							$vatrate .= ' ('.$line->vat_src_code.')';
 						}
 
-						if (!empty($conf->global->MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION)) {
+						if (getDolGlobalString('MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION')) {
 							$originid = $line->origin_id;
 							$origintype = $line->origin;
 						} else {
@@ -1455,7 +1437,7 @@ class Propal extends CommonObject
 		// update prices
 		if ($update_prices === true || $update_desc === true) {
 			if ($objsoc->id > 0 && !empty($object->lines)) {
-				if ($update_prices === true && !empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+				if ($update_prices === true && getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 					// If price per customer
 					require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
 				}
@@ -1472,14 +1454,14 @@ class Propal extends CommonObject
 								$tva_tx = get_default_tva($mysoc, $objsoc, $prod->id);
 								$remise_percent = $objsoc->remise_percent;
 
-								if (!empty($conf->global->PRODUIT_MULTIPRICES) && $objsoc->price_level > 0) {
+								if (getDolGlobalString('PRODUIT_MULTIPRICES') && $objsoc->price_level > 0) {
 									$pu_ht = $prod->multiprices[$objsoc->price_level];
-									if (!empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL)) {  // using this option is a bug. kept for backward compatibility
+									if (getDolGlobalString('PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL')) {  // using this option is a bug. kept for backward compatibility
 										if (isset($prod->multiprices_tva_tx[$objsoc->price_level])) {
 											$tva_tx = $prod->multiprices_tva_tx[$objsoc->price_level];
 										}
 									}
-								} elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+								} elseif (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 									$prodcustprice = new ProductCustomerPrice($this->db);
 									$filter = array('t.fk_product' => $prod->id, 't.fk_soc' => $objsoc->id);
 									$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
@@ -1515,11 +1497,11 @@ class Propal extends CommonObject
 
 		// Clear fields
 		$object->user_author = $user->id;
-		$object->user_valid = 0;
+		$object->user_validation_id = 0;
 		$object->date = $now;
 		$object->datep = $now; // deprecated
 		$object->fin_validite = $object->date + ($object->duree_validite * 24 * 3600);
-		if (empty($conf->global->MAIN_KEEP_REF_CUSTOMER_ON_CLONING)) {
+		if (!getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING')) {
 			$object->ref_client = '';
 		}
 		if (getDolGlobalInt('MAIN_DONT_KEEP_NOTE_ON_CLONING') == 1) {
@@ -1535,7 +1517,7 @@ class Propal extends CommonObject
 			$error++;
 		}
 
-		if (!$error) {
+		if (!$error && !getDolGlobalInt('MAIN_IGNORE_CONTACTS_ON_CLONING')) {
 			// copy internal contacts
 			if ($object->copy_linked_contact($this, 'internal') < 0) {
 				$error++;
@@ -1587,7 +1569,7 @@ class Propal extends CommonObject
 	 */
 	public function fetch($rowid, $ref = '', $ref_ext = '', $forceentity = 0)
 	{
-		$sql = "SELECT p.rowid, p.ref, p.entity, p.remise, p.remise_percent, p.remise_absolue, p.fk_soc";
+		$sql = "SELECT p.rowid, p.ref, p.entity, p.fk_soc";
 		$sql .= ", p.total_ttc, p.total_tva, p.localtax1, p.localtax2, p.total_ht";
 		$sql .= ", p.datec";
 		$sql .= ", p.date_signature as dates";
@@ -1650,9 +1632,6 @@ class Propal extends CommonObject
 				$this->ref_customer         = $obj->ref_client;
 				$this->ref_ext              = $obj->ref_ext;
 
-				$this->remise               = $obj->remise;				// TODO deprecated
-				$this->remise_percent       = $obj->remise_percent;		// TODO deprecated
-				$this->remise_absolue       = $obj->remise_absolue;		// TODO deprecated
 				$this->total                = $obj->total_ttc;			// TODO deprecated
 				$this->total_ttc            = $obj->total_ttc;
 				$this->total_ht             = $obj->total_ht;
@@ -1667,7 +1646,6 @@ class Propal extends CommonObject
 				$this->project = null; // Clear if another value was already set by fetch_projet
 
 				$this->model_pdf            = $obj->model_pdf;
-				$this->modelpdf             = $obj->model_pdf; // deprecated
 				$this->last_main_doc = $obj->last_main_doc;
 				$this->note                 = $obj->note_private; // TODO deprecated
 				$this->note_private         = $obj->note_private;
@@ -1685,7 +1663,6 @@ class Propal extends CommonObject
 				$this->date                 = $this->db->jdate($obj->dp); // Proposal date
 				$this->datep                = $this->db->jdate($obj->dp); // deprecated
 				$this->fin_validite         = $this->db->jdate($obj->dfv);
-				$this->date_livraison       = $this->db->jdate($obj->delivery_date); // deprecated
 				$this->delivery_date        = $this->db->jdate($obj->delivery_date);
 				$this->shipping_method_id   = ($obj->fk_shipping_method > 0) ? $obj->fk_shipping_method : null;
 				$this->warehouse_id         = ($obj->fk_warehouse > 0) ? $obj->fk_warehouse : null;
@@ -1710,8 +1687,8 @@ class Propal extends CommonObject
 				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 				$this->user_author_id = $obj->fk_user_author;
-				$this->user_valid_id = $obj->fk_user_valid;
-				$this->user_close_id = $obj->fk_user_cloture;
+				$this->user_validation_id = $obj->fk_user_valid;
+				$this->user_closing_id = $obj->fk_user_cloture;
 
 				//Incoterms
 				$this->fk_incoterms = $obj->fk_incoterms;
@@ -1756,7 +1733,7 @@ class Propal extends CommonObject
 	 *
 	 *      @param      User	$user        	User that modify
 	 *      @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *      @return     int      			   	<0 if KO, >0 if OK
+	 *      @return     int      			   	Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -1808,7 +1785,7 @@ class Propal extends CommonObject
 		$sql .= " total_ttc=".(isset($this->total_ttc) ? $this->total_ttc : "null").",";
 		$sql .= " fk_statut=".(isset($this->statut) ? $this->statut : "null").",";
 		$sql .= " fk_user_author=".(isset($this->user_author_id) ? $this->user_author_id : "null").",";
-		$sql .= " fk_user_valid=".(isset($this->user_valid) ? $this->user_valid : "null").",";
+		$sql .= " fk_user_valid=".(isset($this->user_validation_id) ? $this->user_validation_id : "null").",";
 		$sql .= " fk_projet=".(isset($this->fk_project) ? $this->fk_project : "null").",";
 		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? $this->cond_reglement_id : "null").",";
 		$sql .= " deposit_percent=".(!empty($this->deposit_percent) ? "'".$this->db->escape($this->deposit_percent)."'" : "null").",";
@@ -1867,7 +1844,7 @@ class Propal extends CommonObject
 	 *	@param		int			$only_product			Return only physical products
 	 *	@param		int			$loadalsotranslation	Return translation for products
 	 *	@param		string		$sqlforgedfilters		Filter on other fields
-	 *	@return		int									<0 if KO, >0 if OK
+	 *	@return		int									Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_lines($only_product = 0, $loadalsotranslation = 0, $sqlforgedfilters = '')
 	{
@@ -1998,7 +1975,7 @@ class Propal extends CommonObject
 	 *
 	 *  @param	User	$user       Object user that validate
 	 *  @param	int		$notrigger	1=Does not execute triggers, 0=execute triggers
-	 *  @return int         		<0 if KO, 0=Nothing done, >=0 if OK
+	 *  @return int         		Return integer <0 if KO, 0=Nothing done, >=0 if OK
 	 */
 	public function valid($user, $notrigger = 0)
 	{
@@ -2014,8 +1991,8 @@ class Propal extends CommonObject
 			return 0;
 		}
 
-		if (!((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->propal->creer))
-		|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->propal->propal_advance->validate)))) {
+		if (!((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('propal', 'creer'))
+		|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('propal', 'propal_advance', 'validate')))) {
 			$this->error = 'ErrorPermissionDenied';
 			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
 			return -1;
@@ -2072,6 +2049,13 @@ class Propal extends CommonObject
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'propale/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'propale/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++;
+					$this->error = $this->db->lasterror();
+				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
@@ -2098,7 +2082,7 @@ class Propal extends CommonObject
 			$this->ref = $num;
 			$this->statut = self::STATUS_VALIDATED;
 			$this->status = self::STATUS_VALIDATED;
-			$this->user_valid_id = $user->id;
+			$this->user_validation_id = $user->id;
 			$this->datev = $now;
 			$this->date_validation = $now;
 
@@ -2118,7 +2102,7 @@ class Propal extends CommonObject
 	 *  @param  User		$user      	Object user that modify
 	 *  @param  int			$date		Date
 	 *  @param  int			$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *  @return	int         			<0 if KO, >0 if OK
+	 *  @return	int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function set_date($user, $date, $notrigger = 0)
 	{
@@ -2129,7 +2113,7 @@ class Propal extends CommonObject
 			return -1;
 		}
 
-		if (!empty($user->rights->propal->creer)) {
+		if ($user->hasRight('propal', 'creer')) {
 			$error = 0;
 
 			$this->db->begin();
@@ -2182,12 +2166,12 @@ class Propal extends CommonObject
 	 *	@param		User	$user        		Object user that modify
 	 *	@param      int		$date_end_validity	End of validity date
 	 *  @param  	int		$notrigger			1=Does not execute triggers, 0= execute triggers
-	 *	@return     int         				<0 if KO, >0 if OK
+	 *	@return     int         				Return integer <0 if KO, >0 if OK
 	 */
 	public function set_echeance($user, $date_end_validity, $notrigger = 0)
 	{
 		// phpcs:enable
-		if (!empty($user->rights->propal->creer)) {
+		if ($user->hasRight('propal', 'creer')) {
 			$error = 0;
 
 			$this->db->begin();
@@ -2241,7 +2225,7 @@ class Propal extends CommonObject
 	 *	@param      User 	$user        		Object user that modify
 	 *	@param      int		$delivery_date		Delivery date
 	 *  @param  	int		$notrigger			1=Does not execute triggers, 0= execute triggers
-	 *	@return     int         				<0 if ko, >0 if ok
+	 *	@return     int         				Return integer <0 if ko, >0 if ok
 	 *	@deprecated Use  setDeliveryDate
 	 */
 	public function set_date_livraison($user, $delivery_date, $notrigger = 0)
@@ -2256,11 +2240,11 @@ class Propal extends CommonObject
 	 *	@param      User 	$user        		Object user that modify
 	 *	@param      int		$delivery_date     Delivery date
 	 *  @param  	int		$notrigger			1=Does not execute triggers, 0= execute triggers
-	 *	@return     int         				<0 if ko, >0 if ok
+	 *	@return     int         				Return integer <0 if ko, >0 if ok
 	 */
 	public function setDeliveryDate($user, $delivery_date, $notrigger = 0)
 	{
-		if (!empty($user->rights->propal->creer)) {
+		if ($user->hasRight('propal', 'creer')) {
 			$error = 0;
 
 			$this->db->begin();
@@ -2278,7 +2262,6 @@ class Propal extends CommonObject
 
 			if (!$error) {
 				$this->oldcopy = clone $this;
-				$this->date_livraison = $delivery_date;
 				$this->delivery_date = $delivery_date;
 			}
 
@@ -2314,12 +2297,12 @@ class Propal extends CommonObject
 	 *  @param		User	$user		  	Object user that modify
 	 *  @param      int		$id				Availability id
 	 *  @param  	int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *  @return     int           			<0 if KO, >0 if OK
+	 *  @return     int           			Return integer <0 if KO, >0 if OK
 	 */
 	public function set_availability($user, $id, $notrigger = 0)
 	{
 		// phpcs:enable
-		if (!empty($user->rights->propal->creer) && $this->statut >= self::STATUS_DRAFT) {
+		if ($user->hasRight('propal', 'creer') && $this->statut >= self::STATUS_DRAFT) {
 			$error = 0;
 
 			$this->db->begin();
@@ -2377,12 +2360,12 @@ class Propal extends CommonObject
 	 *  @param		User	$user		Object user that modify
 	 *  @param      int		$id			Input reason id
 	 *  @param  	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *  @return     int           		<0 if KO, >0 if OK
+	 *  @return     int           		Return integer <0 if KO, >0 if OK
 	 */
 	public function set_demand_reason($user, $id, $notrigger = 0)
 	{
 		// phpcs:enable
-		if (!empty($user->rights->propal->creer) && $this->statut >= self::STATUS_DRAFT) {
+		if ($user->hasRight('propal', 'creer') && $this->statut >= self::STATUS_DRAFT) {
 			$error = 0;
 
 			$this->db->begin();
@@ -2401,7 +2384,7 @@ class Propal extends CommonObject
 
 			if (!$error) {
 				$this->oldcopy = clone $this;
-				$this->fk_input_reason = $id;
+
 				$this->demand_reason_id = $id;
 			}
 
@@ -2442,12 +2425,12 @@ class Propal extends CommonObject
 	 *  @param      User	$user			Object user that modify
 	 *  @param      string	$ref_client		Customer reference
 	 *  @param  	int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *  @return     int						<0 if ko, >0 if ok
+	 *  @return     int						Return integer <0 if ko, >0 if ok
 	 */
 	public function set_ref_client($user, $ref_client, $notrigger = 0)
 	{
 		// phpcs:enable
-		if (!empty($user->rights->propal->creer)) {
+		if ($user->hasRight('propal', 'creer')) {
 			$error = 0;
 
 			$this->db->begin();
@@ -2499,15 +2482,16 @@ class Propal extends CommonObject
 	 *	@param      User	$user       Object user that modify
 	 *	@param      double	$remise     Amount discount
 	 *  @param  	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return     int         		<0 if ko, >0 if ok
+	 *	@return     int         		Return integer <0 if ko, >0 if ok
 	 *	@deprecated remise_percent is a deprecated field for object parent
 	 */
+	/*
 	public function set_remise_percent($user, $remise, $notrigger = 0)
 	{
 		// phpcs:enable
 		$remise = trim($remise) ?trim($remise) : 0;
 
-		if (!empty($user->rights->propal->creer)) {
+		if ($user->hasRight('propal', 'creer')) {
 			$remise = price2num($remise, 2);
 
 			$error = 0;
@@ -2554,7 +2538,7 @@ class Propal extends CommonObject
 
 		return -1;
 	}
-
+	*/
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -2563,8 +2547,9 @@ class Propal extends CommonObject
 	 *	@param      User	$user       Object user that modify
 	 *	@param      double	$remise     Amount discount
 	 *  @param  	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return     int         		<0 if ko, >0 if ok
+	 *	@return     int         		Return integer <0 if ko, >0 if ok
 	 */
+	/*
 	public function set_remise_absolue($user, $remise, $notrigger = 0)
 	{
 		// phpcs:enable
@@ -2573,7 +2558,7 @@ class Propal extends CommonObject
 		}
 		$remise = price2num($remise);
 
-		if (!empty($user->rights->propal->creer)) {
+		if ($user->hasRight('propal', 'creer')) {
 			$error = 0;
 
 			$this->db->begin();
@@ -2618,7 +2603,7 @@ class Propal extends CommonObject
 
 		return -1;
 	}
-
+	*/
 
 
 	/**
@@ -2628,7 +2613,7 @@ class Propal extends CommonObject
 	 *	@param      int		$status		Status
 	 *	@param      string	$note		Comment
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return     int         		<0 if KO, >0 if OK
+	 *	@return     int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function reopen($user, $status, $note = '', $notrigger = 0)
 	{
@@ -2687,7 +2672,7 @@ class Propal extends CommonObject
 	 *	@param      int		$status		Status (self::STATUS_BILLED or self::STATUS_REFUSED)
 	 *	@param      string	$note		Complete private note with this note
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
-	 *	@return     int         		<0 if KO, >0 if OK
+	 *	@return     int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function closeProposal($user, $status, $note = '', $notrigger = 0)
 	{
@@ -2700,7 +2685,7 @@ class Propal extends CommonObject
 
 		$newprivatenote = dol_concatdesc($this->note_private, $note);
 
-		if (empty($conf->global->PROPALE_KEEP_OLD_SIGNATURE_INFO)) {
+		if (!getDolGlobalString('PROPALE_KEEP_OLD_SIGNATURE_INFO')) {
 			$date_signature = $now;
 			$fk_user_signature = $user->id;
 		} else {
@@ -2721,12 +2706,12 @@ class Propal extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			// Status self::STATUS_REFUSED by default
-			$modelpdf = !empty($conf->global->PROPALE_ADDON_PDF_ODT_CLOSED) ? $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED : $this->model_pdf;
+			$modelpdf = getDolGlobalString('PROPALE_ADDON_PDF_ODT_CLOSED') ? $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED : $this->model_pdf;
 			$trigger_name = 'PROPAL_CLOSE_REFUSED';		// used later in call_trigger()
 
 			if ($status == self::STATUS_SIGNED) {	// Status self::STATUS_SIGNED
 				$trigger_name = 'PROPAL_CLOSE_SIGNED';	// used later in call_trigger()
-				$modelpdf = !empty($conf->global->PROPALE_ADDON_PDF_ODT_TOBILL) ? $conf->global->PROPALE_ADDON_PDF_ODT_TOBILL : $this->model_pdf;
+				$modelpdf = getDolGlobalString('PROPALE_ADDON_PDF_ODT_TOBILL') ? $conf->global->PROPALE_ADDON_PDF_ODT_TOBILL : $this->model_pdf;
 
 				// The connected company is classified as a client
 				$soc=new Societe($this->db);
@@ -2740,7 +2725,7 @@ class Propal extends CommonObject
 				}
 			}
 
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE') && !getDolGlobalInt('PROPAL_DISABLE_AUTOUPDATE_ON_CLOSE')) {
 				// Define output language
 				$outputlangs = $langs;
 				if (getDolGlobalInt('MAIN_MULTILANGS')) {
@@ -2750,9 +2735,9 @@ class Propal extends CommonObject
 				}
 
 				// PDF
-				$hidedetails = (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0);
-				$hidedesc = (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0);
-				$hideref = (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0);
+				$hidedetails = (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0);
+				$hidedesc = (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0);
+				$hideref = (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0);
 
 				//$ret=$object->fetch($id);    // Reload to get new records
 				$this->generateDocument($modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -2775,7 +2760,7 @@ class Propal extends CommonObject
 				// End call triggers
 			}
 
-			if (!$error ) {
+			if (!$error) {
 				$this->db->commit();
 				return 1;
 			} else {
@@ -2800,7 +2785,7 @@ class Propal extends CommonObject
 	 *	@param  	User	$user    	Object user
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@param      string	$note		Complete private note with this note
-	 *	@return     int     			<0 if KO, 0 = nothing done, >0 if OK
+	 *	@return     int     			Return integer <0 if KO, 0 = nothing done, >0 if OK
 	 */
 	public function classifyBilled(User $user, $notrigger = 0, $note = '')
 	{
@@ -2833,7 +2818,7 @@ class Propal extends CommonObject
 		if (!$error) {
 			$modelpdf = $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED ? $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED : $this->model_pdf;
 
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				// Define output language
 				$outputlangs = $langs;
 				if (getDolGlobalInt('MAIN_MULTILANGS')) {
@@ -2843,9 +2828,9 @@ class Propal extends CommonObject
 				}
 
 				// PDF
-				$hidedetails = (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0);
-				$hidedesc = (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0);
-				$hideref = (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0);
+				$hidedetails = (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0);
+				$hidedesc = (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0);
+				$hideref = (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0);
 
 				//$ret=$object->fetch($id);    // Reload to get new records
 				$this->generateDocument($modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -2879,13 +2864,60 @@ class Propal extends CommonObject
 		}
 	}
 
+	/**
+	 *	Cancel the proposal
+	 *
+	 *	@param  	User	$user	Object user
+	 *	@return		int				Return integer if KO <0 , if OK >0
+	 */
+	public function setCancel(User $user)
+	{
+		$error = 0;
+
+		$this->db->begin();
+
+		$sql = "UPDATE ". MAIN_DB_PREFIX . "propal";
+		$sql .= " SET fk_statut = " . self::STATUS_CANCELED . ",";
+		$sql .= " fk_user_modif = " . ((int) $user->id);
+		$sql .= " WHERE rowid = " . ((int) $this->id);
+
+		dol_syslog(get_class($this)."::cancel", LOG_DEBUG);
+		if ($this->db->query($sql)) {
+			if (!$error) {
+				// Call trigger
+				$result = $this->call_trigger('PROPAL_CANCEL', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+
+			if (!$error) {
+				$this->statut = self::STATUS_CANCELED;
+				$this->db->commit();
+				return 1;
+			} else {
+				foreach ($this->errors as $errmsg) {
+					dol_syslog(get_class($this)."::cancel ".$errmsg, LOG_ERR);
+					$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+				}
+				$this->db->rollback();
+				return -1;
+			}
+		} else {
+			$this->error = $this->db->error();
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Set draft status
 	 *
 	 *	@param		User	$user		Object user that modify
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return		int					<0 if KO, >0 if OK
+	 *	@return		int					Return integer <0 if KO, >0 if OK
 	 */
 	public function setDraft($user, $notrigger = 0)
 	{
@@ -2966,24 +2998,30 @@ class Propal extends CommonObject
 		$sql = "SELECT s.rowid, s.nom as name, s.client,";
 		$sql .= " p.rowid as propalid, p.fk_statut, p.total_ht, p.ref, p.remise, ";
 		$sql .= " p.datep as dp, p.fin_validite as datelimite";
-		if (empty($user->rights->societe->client->voir) && !$socid) {
-			$sql .= ", sc.fk_soc, sc.fk_user";
-		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
-		if (empty($user->rights->societe->client->voir) && !$socid) {
-			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		}
 		$sql .= " WHERE p.entity IN (".getEntity('propal').")";
 		$sql .= " AND p.fk_soc = s.rowid";
 		$sql .= " AND p.fk_statut = c.id";
-		if (empty($user->rights->societe->client->voir) && !$socid) { //restriction
-			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+
+		// If the internal user must only see his customers, force searching by him
+		$search_sale = 0;
+		if (!$user->hasRight('societe', 'client', 'voir')) {
+			$search_sale = $user->id;
 		}
+		// Search on sale representative
+		if ($search_sale && $search_sale != '-1') {
+			if ($search_sale == -2) {
+				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc)";
+			} elseif ($search_sale > 0) {
+				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+			}
+		}
+		// Search on socid
 		if ($socid) {
-			$sql .= " AND s.rowid = ".((int) $socid);
+			$sql .= " AND p.fk_soc = ".((int) $socid);
 		}
 		if ($draft) {
-			$sql .= " AND p.fk_statut = ".self::STATUS_DRAFT;
+			$sql .= " AND p.fk_statut = ".((int) self::STATUS_DRAFT);
 		}
 		if ($notcurrentuser > 0) {
 			$sql .= " AND p.fk_user_author <> ".((int) $user->id);
@@ -3180,6 +3218,7 @@ class Propal extends CommonObject
 		// Delete record into ECM index and physically
 		if (!$error) {
 			$res = $this->deleteEcmFiles(0); // Deleting files physically is done later with the dol_delete_dir_recursive
+			$res = $this->deleteEcmFiles(1); // Deleting files physically is done later with the dol_delete_dir_recursive
 			if (!$res) {
 				$error++;
 			}
@@ -3202,7 +3241,7 @@ class Propal extends CommonObject
 					}
 				}
 				if (file_exists($dir)) {
-					$res = @dol_delete_dir_recursive($dir);
+					$res = @dol_delete_dir_recursive($dir);		// delete files physically + into ecm tables
 					if (!$res) {
 						$this->error = 'ErrorFailToDeleteDir';
 						$this->errors[] = $this->error;
@@ -3299,7 +3338,7 @@ class Propal extends CommonObject
 		// phpcs:enable
 		global $user;
 
-		if ($this->statut >= self::STATUS_DRAFT) {
+		if ($this->status >= self::STATUS_DRAFT) {
 			$error = 0;
 
 			$this->db->begin();
@@ -3377,15 +3416,8 @@ class Propal extends CommonObject
 				$this->date_signature    = $this->db->jdate($obj->date_signature);
 				$this->date_cloture      = $this->db->jdate($obj->date_cloture);
 
-				$cuser = new User($this->db);
-				$cuser->fetch($obj->fk_user_author);
-				$this->user_creation = $cuser;
-
-				if ($obj->fk_user_valid) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
-				}
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_validation_id = $obj->fk_user_valid;
 
 				if ($obj->fk_user_signature) {
 					$user_signature = new User($this->db);
@@ -3393,11 +3425,7 @@ class Propal extends CommonObject
 					$this->user_signature = $user_signature;
 				}
 
-				if ($obj->fk_user_cloture) {
-					$cluser = new User($this->db);
-					$cluser->fetch($obj->fk_user_cloture);
-					$this->user_cloture = $cluser;
-				}
+				$this->user_closing_id = $obj->fk_user_cloture;
 			}
 			$this->db->free($result);
 		} else {
@@ -3434,11 +3462,13 @@ class Propal extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			$langs->load("propal");
+			$this->labelStatus[-1] = $langs->transnoentitiesnoconv("PropalStatusCanceled");
 			$this->labelStatus[0] = $langs->transnoentitiesnoconv("PropalStatusDraft");
 			$this->labelStatus[1] = $langs->transnoentitiesnoconv("PropalStatusValidated");
 			$this->labelStatus[2] = $langs->transnoentitiesnoconv("PropalStatusSigned");
 			$this->labelStatus[3] = $langs->transnoentitiesnoconv("PropalStatusNotSigned");
 			$this->labelStatus[4] = $langs->transnoentitiesnoconv("PropalStatusBilled");
+			$this->labelStatusShort[-1] = $langs->transnoentitiesnoconv("PropalStatusCanceledShort");
 			$this->labelStatusShort[0] = $langs->transnoentitiesnoconv("PropalStatusDraftShort");
 			$this->labelStatusShort[1] = $langs->transnoentitiesnoconv("PropalStatusValidatedShort");
 			$this->labelStatusShort[2] = $langs->transnoentitiesnoconv("PropalStatusSignedShort");
@@ -3447,7 +3477,9 @@ class Propal extends CommonObject
 		}
 
 		$statusType = '';
-		if ($status == self::STATUS_DRAFT) {
+		if ($status == self::STATUS_CANCELED) {
+			$statusType = 'status9';
+		} elseif ($status == self::STATUS_DRAFT) {
 			$statusType = 'status0';
 		} elseif ($status == self::STATUS_VALIDATED) {
 			$statusType = 'status1';
@@ -3477,7 +3509,7 @@ class Propal extends CommonObject
 	 *
 	 *      @param          User	$user   Object user
 	 *      @param          string	$mode   "opened" for proposal to close, "signed" for proposal to invoice
-	 *      @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
+	 *      @return WorkboardResponse|int Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $mode)
 	{
@@ -3488,11 +3520,6 @@ class Propal extends CommonObject
 
 		$sql = "SELECT p.rowid, p.ref, p.datec as datec, p.fin_validite as datefin, p.total_ht";
 		$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc";
-			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
-			$clause = " AND";
-		}
 		$sql .= $clause." p.entity IN (".getEntity('propal').")";
 		if ($mode == 'opened') {
 			$sql .= " AND p.fk_statut = ".self::STATUS_VALIDATED;
@@ -3500,8 +3527,18 @@ class Propal extends CommonObject
 		if ($mode == 'signed') {
 			$sql .= " AND p.fk_statut = ".self::STATUS_SIGNED;
 		}
-		if ($user->socid) {
-			$sql .= " AND p.fk_soc = ".((int) $user->socid);
+		// If the internal user must only see his customers, force searching by him
+		$search_sale = 0;
+		if (!$user->hasRight('societe', 'client', 'voir')) {
+			$search_sale = $user->id;
+		}
+		// Search on sale representative
+		if ($search_sale && $search_sale != '-1') {
+			if ($search_sale == -2) {
+				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc)";
+			} elseif ($search_sale > 0) {
+				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+			}
 		}
 
 		$resql = $this->db->query($sql);
@@ -3652,7 +3689,7 @@ class Propal extends CommonObject
 	/**
 	 *      Charge indicateurs this->nb de tableau de bord
 	 *
-	 *      @return     int         <0 if ko, >0 if ok
+	 *      @return     int         Return integer <0 if ko, >0 if ok
 	 */
 	public function load_state_board()
 	{
@@ -3665,12 +3702,21 @@ class Propal extends CommonObject
 		$sql = "SELECT count(p.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
-			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
-			$clause = "AND";
-		}
 		$sql .= " ".$clause." p.entity IN (".getEntity('propal').")";
+
+		// If the internal user must only see his customers, force searching by him
+		$search_sale = 0;
+		if (!$user->hasRight('societe', 'client', 'voir')) {
+			$search_sale = $user->id;
+		}
+		// Search on sale representative
+		if ($search_sale && $search_sale != '-1') {
+			if ($search_sale == -2) {
+				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc)";
+			} elseif ($search_sale > 0) {
+				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+			}
+		}
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -3700,7 +3746,7 @@ class Propal extends CommonObject
 		global $conf, $langs;
 		$langs->load("propal");
 
-		$classname = $conf->global->PROPALE_ADDON;
+		$classname = getDolGlobalString('PROPALE_ADDON');
 
 		if (!empty($classname)) {
 			$mybool = false;
@@ -3753,7 +3799,7 @@ class Propal extends CommonObject
 		$datas = [];
 		$nofetch = !empty($params['nofetch']);
 
-		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			return ['optimize' => $langs->trans("Proposal")];
 		}
 		if ($user->hasRight('propal', 'lire')) {
@@ -3865,11 +3911,11 @@ class Propal extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip) && $user->hasRight('propal', 'lire')) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("Proposal");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.'"';
 		}
 
@@ -3974,8 +4020,8 @@ class Propal extends CommonObject
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->PROPALE_ADDON_PDF)) {
-				$modele = $conf->global->PROPALE_ADDON_PDF;
+			} elseif (getDolGlobalString('PROPALE_ADDON_PDF')) {
+				$modele = getDolGlobalString('PROPALE_ADDON_PDF');
 			}
 		}
 
@@ -4038,18 +4084,20 @@ class Propal extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
-		if (property_exists($this, 'fk_project')) {
-			$return .= '<span class="info-box-ref"> | '.$this->fk_project.'</span>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (property_exists($this, 'author')) {
-			$return .= '<br><span class="info-box-label">'.$this->author.'</span>';
+		if (!empty($arraydata['projectlink'])) {
+			$return .= '<span class="info-box-ref"> | '.$arraydata['projectlink'].'</span>';
+		}
+		if (!empty($arraydata['authorlink'])) {
+			$return .= '<br><span class="info-box-label">'.$arraydata['authorlink'].'</span>';
 		}
 		if (property_exists($this, 'total_ht')) {
-			$return .='<br><span class="" >'.$langs->trans("AmountHT").' : </span><span class="info-box-label amount">'.price($this->total_ht).'</span>';
+			$return .='<br><span class="info-box-label amount" title="'.$langs->trans("AmountHT").'">'.price($this->total_ht).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
@@ -4211,7 +4259,7 @@ class PropaleLigne extends CommonObjectLine
 	 *	Retrieve the propal line object
 	 *
 	 *	@param	int		$rowid		Propal line id
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($rowid)
 	{
@@ -4299,7 +4347,7 @@ class PropaleLigne extends CommonObjectLine
 	 *  Insert object line propal in database
 	 *
 	 *	@param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function insert($notrigger = 0)
 	{
@@ -4470,7 +4518,7 @@ class PropaleLigne extends CommonObjectLine
 	 *
 	 *  @param	User	$user		Object user
 	 *	@param 	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return	 int  				<0 if ko, >0 if ok
+	 *	@return	 int  				Return integer <0 if ko, >0 if ok
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
@@ -4520,7 +4568,7 @@ class PropaleLigne extends CommonObjectLine
 	 *	Update propal line object into DB
 	 *
 	 *	@param 	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return	int					<0 if ko, >0 if ok
+	 *	@return	int					Return integer <0 if ko, >0 if ok
 	 */
 	public function update($notrigger = 0)
 	{
@@ -4677,7 +4725,7 @@ class PropaleLigne extends CommonObjectLine
 	 *	Update DB line fields total_xxx
 	 *	Used by migration
 	 *
-	 *	@return		int		<0 if KO, >0 if OK
+	 *	@return		int		Return integer <0 if KO, >0 if OK
 	 */
 	public function update_total()
 	{

@@ -20,7 +20,7 @@
  */
 
 /**
- * \file        class/skill.class.php
+ * \file        htdocs/hrm/class/skill.class.php
  * \ingroup     hrm
  * \brief       This file is a CRUD class file for Skill (Create/Read/Update/Delete)
  */
@@ -83,7 +83,7 @@ class Skill extends CommonObject
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
-	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM)
+	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")')
 	 *  'position' is the sort order of field.
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
@@ -114,8 +114,8 @@ class Skill extends CommonObject
 		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>3,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
-		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
-		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
+		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php:0', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
+		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php:0', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
 		'required_level' => array('type'=>'integer', 'label'=>'requiredLevel', 'enabled'=>'1', 'position'=>50, 'notnull'=>1, 'visible'=>0,),
 		'date_validite' => array('type'=>'integer', 'label'=>'date_validite', 'enabled'=>'1', 'position'=>52, 'notnull'=>1, 'visible'=>0,),
 		'temps_theorique' => array('type'=>'double(24,8)', 'label'=>'temps_theorique', 'enabled'=>'1', 'position'=>54, 'notnull'=>1, 'visible'=>0,),
@@ -186,7 +186,7 @@ class Skill extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -223,7 +223,7 @@ class Skill extends CommonObject
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -244,14 +244,14 @@ class Skill extends CommonObject
 	 * createSkills
 	 *
 	 * @param int 	$i 		Rank from which we want to create skilldets (level $i to HRM_MAXRANK wil be created)
-	 * @return null
+	 * @return int          Return integer <0 if KO, Id of created object if OK
 	 */
 	public function createSkills($i = 1)
 	{
 		global $conf, $user, $langs;
 
-		$MaxNumberSkill = isset($conf->global->HRM_MAXRANK) ? $conf->global->HRM_MAXRANK : self::DEFAULT_MAX_RANK_PER_SKILL;
-		$defaultSkillDesc = !empty($conf->global->HRM_DEFAULT_SKILL_DESCRIPTION) ? $conf->global->HRM_DEFAULT_SKILL_DESCRIPTION : $langs->trans("NoDescription");
+		$MaxNumberSkill = getDolGlobalInt('HRM_MAXRANK', self::DEFAULT_MAX_RANK_PER_SKILL);
+		$defaultSkillDesc = getDolGlobalString('HRM_DEFAULT_SKILL_DESCRIPTION', $langs->trans("NoDescription"));
 
 		$error = 0;
 
@@ -387,7 +387,7 @@ class Skill extends CommonObject
 	 *
 	 * @param int    $id   Id object
 	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -401,7 +401,7 @@ class Skill extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @return array|int         <0 if KO, array of skill level found
+	 * @return array|int         Return integer <0 if KO, array of skill level found
 	 */
 	public function fetchLines()
 	{
@@ -506,7 +506,7 @@ class Skill extends CommonObject
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
@@ -518,7 +518,7 @@ class Skill extends CommonObject
 	 *
 	 * @param User $user       User that deletes
 	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
@@ -549,7 +549,7 @@ class Skill extends CommonObject
 	 *
 	 *	@param		User	$user     		User making status change
 	 *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return  	int						<=0 if OK, 0=Nothing done, >0 if KO
+	 *	@return  	int						Return integer <=0 if OK, 0=Nothing done, >0 if KO
 	 */
 	public function validate($user, $notrigger = 0)
 	{
@@ -608,7 +608,7 @@ class Skill extends CommonObject
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('SKILL_VALIDATE', $user);
+				$result = $this->call_trigger('HRM_SKILL_VALIDATE', $user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -626,7 +626,15 @@ class Skill extends CommonObject
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'skill/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
+				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'skill/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'skill/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
@@ -674,7 +682,7 @@ class Skill extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setDraft($user, $notrigger = 0)
 	{
@@ -698,7 +706,7 @@ class Skill extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function cancel($user, $notrigger = 0)
 	{
@@ -722,7 +730,7 @@ class Skill extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function reopen($user, $notrigger = 0)
 	{
@@ -777,6 +785,7 @@ class Skill extends CommonObject
 		}
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Label').':</b> '.$this->label;
+		$label .= '<br><b>'.$langs->trans('Description').':</b> '.dol_htmlentitiesbr(dolGetFirstLineOfText($this->description, 10), 1);
 
 		$url = dol_buildpath('/hrm/skill_card.php', 1).'?id='.$this->id;
 
@@ -793,7 +802,7 @@ class Skill extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowSkill");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -928,6 +937,7 @@ class Skill extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_creat;
@@ -989,15 +999,15 @@ class Skill extends CommonObject
 		global $langs, $conf;
 		$langs->load("hrm");
 
-		if (empty($conf->global->hrm_SKILL_ADDON)) {
+		if (!getDolGlobalString('hrm_SKILL_ADDON')) {
 			$conf->global->hrm_SKILL_ADDON = 'mod_skill_standard';
 		}
 
-		if (!empty($conf->global->hrm_SKILL_ADDON)) {
+		if (getDolGlobalString('hrm_SKILL_ADDON')) {
 			$mybool = false;
 
-			$file = $conf->global->hrm_SKILL_ADDON.".php";
-			$classname = $conf->global->hrm_SKILL_ADDON;
+			$file = getDolGlobalString('hrm_SKILL_ADDON') . ".php";
+			$classname = getDolGlobalString('hrm_SKILL_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -1059,8 +1069,8 @@ class Skill extends CommonObject
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->SKILL_ADDON_PDF)) {
-				$modele = $conf->global->SKILL_ADDON_PDF;
+			} elseif (getDolGlobalString('SKILL_ADDON_PDF')) {
+				$modele = getDolGlobalString('SKILL_ADDON_PDF');
 			}
 		}
 
@@ -1112,9 +1122,9 @@ class Skill extends CommonObject
 		global $langs;
 		$result = '';
 		switch ($code) {
-			case 0 : $result = $langs->trans("TypeKnowHow"); break; //"Savoir Faire"
-			case 1 : $result = $langs->trans("TypeHowToBe"); break; // "Savoir être"
-			case 9 : $result = $langs->trans("TypeKnowledge"); break; //"Savoir"
+			case 0: $result = $langs->trans("TypeKnowHow"); break; //"Savoir Faire"
+			case 1: $result = $langs->trans("TypeHowToBe"); break; // "Savoir être"
+			case 9: $result = $langs->trans("TypeKnowledge"); break; //"Savoir"
 		}
 		return $result;
 	}
@@ -1139,7 +1149,9 @@ class Skill extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'skill_type')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Type").'</span>';
 			$return .= ' : <span class="info-box-label ">'.$this->fields['skill_type']['arrayofkeyval'][$this->skill_type].'</span>';

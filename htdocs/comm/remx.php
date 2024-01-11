@@ -24,7 +24,9 @@
  *		\brief      Page to edit absolute discounts for a customer
  */
 
-if (! defined('CSRFCHECK_WITH_TOKEN')) define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
+if (! defined('CSRFCHECK_WITH_TOKEN')) {
+	define('CSRFCHECK_WITH_TOKEN', '1');
+}		// Force use of CSRF protection with tokens even for GET
 
 // Load Dolibarr environment
 require '../main.inc.php';
@@ -42,7 +44,7 @@ $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 // Security check
-$socid = GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('socid', 'int');
+$socid = GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('socid', 'int');
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
@@ -62,8 +64,8 @@ $permissiontocreate = ($user->rights->societe->creer || $user->rights->facture->
  */
 
 if (GETPOST('cancel', 'alpha') && !empty($backtopage)) {
-	 header("Location: ".$backtopage);
-	 exit;
+	header("Location: ".$backtopage);
+	exit;
 }
 
 if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permissiontocreate) {
@@ -204,7 +206,7 @@ if (GETPOST('action', 'aZ09') == 'confirm_remove' && GETPOST("confirm") == 'yes'
 	$db->begin();
 
 	$discount = new DiscountAbsolute($db);
-	$result = $discount->fetch(GETPOST("remid"));
+	$result = $discount->fetch(GETPOSTINT("remid"));
 	$result = $discount->delete($user);
 	if ($result > 0) {
 		$db->commit();
@@ -337,7 +339,7 @@ if ($socid > 0) {
 
 
 	if ($action == 'create_remise') {
-		if ($user->rights->societe->creer) {
+		if ($user->hasRight('societe', 'creer')) {
 			print '<br>';
 
 			$discount_type = GETPOSTISSET('discount_type') ? GETPOST('discount_type', 'alpha') : 0;
@@ -392,7 +394,7 @@ if ($socid > 0) {
 			print dol_get_fiche_end();
 		}
 
-		if ($user->rights->societe->creer) {
+		if ($user->hasRight('societe', 'creer')) {
 			print '<div class="center">';
 			print '<input type="submit" class="button" name="submit" value="'.$langs->trans("AddGlobalDiscount").'">';
 			if (!empty($backtopage)) {
@@ -534,7 +536,7 @@ if ($socid > 0) {
 					print $tmpuser->getNomUrl(-1);
 					print '</td>';
 
-					if ($user->rights->societe->creer || $user->rights->facture->creer) {
+					if ($user->hasRight('societe', 'creer') || $user->hasRight('facture', 'creer')) {
 						print '<td class="center nowrap">';
 						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=split&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_split($langs->trans("SplitDiscount")).'</a>';
 						print '<a class="reposition marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=remove&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_delete($langs->trans("RemoveDiscount")).'</a>';
@@ -681,7 +683,7 @@ if ($socid > 0) {
 					print $tmpuser->getNomUrl(-1);
 					print '</td>';
 
-					if ($user->rights->societe->creer || $user->rights->facture->creer) {
+					if ($user->hasRight('societe', 'creer') || $user->hasRight('facture', 'creer')) {
 						print '<td class="center nowrap">';
 						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=split&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_split($langs->trans("SplitDiscount")).'</a>';
 						print '<a class="reposition marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=remove&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_delete($langs->trans("RemoveDiscount")).'</a>';

@@ -47,7 +47,7 @@ class Inventory extends CommonObject
 	public $table_element = 'inventory';
 
 	/**
-	 * @var array  Does inventory support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int  Does inventory support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 1;
 
@@ -100,7 +100,7 @@ class Inventory extends CommonObject
 		'rowid'              => array('type'=>'integer', 'label'=>'TechnicalID', 'visible'=>-1, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>'Id',),
 		'ref'                => array('type'=>'varchar(64)', 'label'=>'Ref', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>'Reference of object', 'css'=>'maxwidth150'),
 		'entity'             => array('type'=>'integer', 'label'=>'Entity', 'visible'=>0, 'enabled'=>1, 'position'=>20, 'notnull'=>1, 'index'=>1,),
-		'title'              => array('type'=>'varchar(255)', 'label'=>'Label', 'visible'=>1, 'enabled'=>1, 'position'=>25, 'css'=>'minwidth300', 'csslist'=>'tdoverflowmax150'),
+		'title'              => array('type'=>'varchar(255)', 'label'=>'Label', 'visible'=>1, 'enabled'=>1, 'position'=>25, 'css'=>'minwidth300', 'csslist'=>'tdoverflowmax150', 'alwayseditable'=>1),
 		'fk_warehouse'       => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Warehouse', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'index'=>1, 'help'=>'InventoryForASpecificWarehouse', 'picto'=>'stock', 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'csslist'=>'tdoverflowmax150'),
 		'fk_product'         => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'get_name_url_params' => '0::0:-1:0::1', 'visible'=>1, 'enabled'=>1, 'position'=>32, 'index'=>1, 'help'=>'InventoryForASpecificProduct', 'picto'=>'product', 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'csslist'=>'tdoverflowmax150'),
 		'categories_product' => array('type'=>'chkbxlst:categorie:label:rowid::type=0:0:', 'label'=>'OrProductsWithCategories', 'visible'=>3, 'enabled'=>1, 'position'=>33, 'help'=>'', 'picto'=>'category', 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx'),
@@ -230,7 +230,7 @@ class Inventory extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID')) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany')) {
@@ -244,7 +244,7 @@ class Inventory extends CommonObject
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -259,7 +259,7 @@ class Inventory extends CommonObject
 	 * @param  	User 	$user      				User that creates
 	 * @param	bool 	$notrigger 				false=launch triggers after, true=disable triggers
 	 * @param	int		$include_sub_warehouse	Include sub warehouses
-	 * @return 	int             				<0 if KO, Id of created object if OK
+	 * @return 	int             				Return integer <0 if KO, Id of created object if OK
 	 */
 	public function validate(User $user, $notrigger = false, $include_sub_warehouse = 0)
 	{
@@ -286,7 +286,7 @@ class Inventory extends CommonObject
 			$sql .= " ".$this->db->prefix()."product as p, ".$this->db->prefix()."entrepot as e";
 			$sql .= " WHERE p.entity IN (".getEntity('product').")";
 			$sql .= " AND ps.fk_product = p.rowid AND ps.fk_entrepot = e.rowid";
-			if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+			if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 				$sql .= " AND p.fk_product_type = 0";
 			}
 			if ($this->fk_product > 0) {
@@ -307,6 +307,13 @@ class Inventory extends CommonObject
 				$sql .= " FROM ".$this->db->prefix()."categorie_product AS cp";
 				$sql .= " WHERE cp.fk_product = ps.fk_product";
 				$sql .= " AND cp.fk_categorie IN (".$this->db->sanitize($this->categories_product).")";
+				$sql .= ")";
+			}
+			if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+				$sql .= " AND NOT EXISTS (";
+				$sql .= " SELECT pa.rowid";
+				$sql .= " FROM ".$this->db->prefix()."product_association as pa";
+				$sql .= " WHERE pa.fk_product_pere = ps.fk_product";
 				$sql .= ")";
 			}
 
@@ -365,7 +372,7 @@ class Inventory extends CommonObject
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function setDraft(User $user, $notrigger = false)
 	{
@@ -395,7 +402,7 @@ class Inventory extends CommonObject
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function setRecorded(User $user, $notrigger = false)
 	{
@@ -417,7 +424,7 @@ class Inventory extends CommonObject
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function setCanceled(User $user, $notrigger = false)
 	{
@@ -490,7 +497,7 @@ class Inventory extends CommonObject
 	 *
 	 * @param int    $id   Id object
 	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -502,7 +509,7 @@ class Inventory extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	/*public function fetchLines()
 	 {
@@ -518,7 +525,7 @@ class Inventory extends CommonObject
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
@@ -530,7 +537,7 @@ class Inventory extends CommonObject
 	 *
 	 * @param User $user       User that deletes
 	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
@@ -586,7 +593,7 @@ class Inventory extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowInventory");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -675,7 +682,9 @@ class Inventory extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'label')) {
 			$return .= ' <div class="inline-block opacitymedium valignmiddle tdoverflowmax100">'.$this->label.'</div>';
 		}
@@ -684,7 +693,7 @@ class Inventory extends CommonObject
 			$return .= '<span class="info-box-label amount">'.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
@@ -712,23 +721,9 @@ class Inventory extends CommonObject
 
 				$this->id = $obj->rowid;
 
-				if ($obj->fk_user_creat > 0) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_creat);
-					$this->user_creation = $cuser;
-				}
-
-				if ($obj->fk_user_modif > 0) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modif);
-					$this->user_creation = $muser;
-				}
-
-				if ($obj->fk_user_valid > 0) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
-				}
+				$this->user_creation_id = $obj->fk_user_creat;
+				$this->user_modification_id = $obj->fk_user_modif;
+				$this->user_validation_id = $obj->fk_user_valid;
 
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);
@@ -758,7 +753,7 @@ class Inventory extends CommonObject
 	 *
 	 * @param int 	$id 				Id of warehouse
 	 * @param array	$TChildWarehouse  	Array of child warehouses
-	 * @return int             			<0 if KO, >0 if OK
+	 * @return int             			Return integer <0 if KO, >0 if OK
 	 */
 	public function getChildWarehouse($id, &$TChildWarehouse)
 	{
@@ -794,7 +789,7 @@ class InventoryLine extends CommonObjectLine
 	public $table_element = 'inventorydet';
 
 	/**
-	 * @var array  Does inventory support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int  Does inventory support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 0;
 
@@ -867,7 +862,7 @@ class InventoryLine extends CommonObjectLine
 	 *
 	 * @param User $user       User that creates
 	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -879,7 +874,7 @@ class InventoryLine extends CommonObjectLine
 	 *
 	 * @param int    $id   Id object
 	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -893,7 +888,7 @@ class InventoryLine extends CommonObjectLine
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
@@ -905,7 +900,7 @@ class InventoryLine extends CommonObjectLine
 	 *
 	 * @param User $user       User that deletes
 	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{

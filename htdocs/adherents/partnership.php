@@ -129,7 +129,9 @@ if (empty($reshook)) {
 }
 
 $object->fields['fk_member']['visible'] = 0;
-if ($object->id > 0 && $object->status == $object::STATUS_REFUSED && empty($action)) $object->fields['reason_decline_or_cancel']['visible'] = 1;
+if ($object->id > 0 && $object->status == $object::STATUS_REFUSED && empty($action)) {
+	$object->fields['reason_decline_or_cancel']['visible'] = 1;
+}
 $object->fields['note_public']['visible'] = 1;
 
 
@@ -171,7 +173,7 @@ if ($id > 0) {
 	print '<table class="border centpercent tableforfield">';
 
 	// Login
-	if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
+	if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
 		print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
 	}
 

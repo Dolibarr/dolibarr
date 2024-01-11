@@ -48,6 +48,10 @@ class FormAccounting extends Form
 	 * @var int Nb of accounts found
 	 */
 	public $nbaccounts;
+	/**
+	 * @var int Nb of accounts category found
+	 */
+	public $nbaccounts_category;
 
 
 	/**
@@ -235,7 +239,7 @@ class FormAccounting extends Form
 	public function select_accounting_category($selected = '', $htmlname = 'account_category', $useempty = 0, $maxlen = 0, $help = 1, $allcountries = 0)
 	{
 		// phpcs:enable
-		global $db, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		if (empty($mysoc->country_id) && empty($mysoc->country_code) && empty($allcountries)) {
 			dol_print_error('', 'Call to select_accounting_account with mysoc country not yet defined');
@@ -263,11 +267,15 @@ class FormAccounting extends Form
 			$sql .= " ORDER BY c.label ASC";
 		}
 
+		$this->nbaccounts_category = 0;
+
 		dol_syslog(get_class($this).'::'.__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			if ($num) {
+				$this->nbaccounts_category = $num;
+
 				$out = '<select class="flat minwidth200" id="'.$htmlname.'" name="'.$htmlname.'">';
 				$i = 0;
 
@@ -284,7 +292,8 @@ class FormAccounting extends Form
 					if ($obj->rowid == $selected) {
 						$out .= ' selected';
 					}
-					$out .= ' data-html="'.dol_escape_htmltag(dol_string_onlythesehtmltags($titletoshowhtml, 1, 1, 0, 0, array('span'))).'"';
+					//$out .= ' data-html="'.dol_escape_htmltag(dol_string_onlythesehtmltags($titletoshowhtml, 1, 0, 0, 0, array('span'))).'"';
+					$out .= ' data-html="'.dolPrintHTMLForAttribute($titletoshowhtml).'"';
 					$out .= '>';
 					$out .= dol_escape_htmltag($titletoshow);
 					$out .= '</option>';
@@ -441,7 +450,7 @@ class FormAccounting extends Form
 		}
 
 
-		$out .= Form::selectarray($htmlname, $options, $selected, ($showempty ? (is_numeric($showempty) ? 1 : $showempty): 0), 0, 0, '', 0, 0, 0, '', $morecss, 1);
+		$out .= Form::selectarray($htmlname, $options, $selected, ($showempty ? (is_numeric($showempty) ? 1 : $showempty) : 0), 0, 0, '', 0, 0, 0, '', $morecss, 1);
 
 		$this->nbaccounts = count($options) - ($showempty == 2 ? 1 : 0);
 
@@ -525,7 +534,7 @@ class FormAccounting extends Form
 
 		// Build select
 		$out = '';
-		$out .= Form::selectarray($htmlname, $aux_account, $selectid, ($showempty ? (is_numeric($showempty) ? 1 : $showempty): 0), 0, 0, '', 0, 0, 0, '', $morecss, 1);
+		$out .= Form::selectarray($htmlname, $aux_account, $selectid, ($showempty ? (is_numeric($showempty) ? 1 : $showempty) : 0), 0, 0, '', 0, 0, 0, '', $morecss, 1);
 		//automatic filling if we give the name of the subledger_label input
 		if (!empty($conf->use_javascript_ajax) && !empty($labelhtmlname)) {
 			$out .= '<script nonce="'.getNonce().'">

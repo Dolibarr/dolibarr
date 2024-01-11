@@ -50,12 +50,13 @@ class FichinterRec extends Fichinter
 	/**
 	 * {@inheritdoc}
 	 */
-	protected $table_ref_field = 'titre';
+	protected $table_ref_field = 'title';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'intervention';
+
 
 	/**
 	 * @var string title
@@ -66,6 +67,23 @@ class FichinterRec extends Fichinter
 	public $amount;
 	public $tva;
 	public $total;
+
+	/**
+	 * @var int
+	 */
+	public $auto_validate;
+
+	/**
+	 * @var int Frequency
+	 */
+	public $frequency;
+
+	public $id_origin;
+
+	/**
+	 * @var string Unit frequency
+	 */
+	public $unit_frequency;
 
 	/**
 	 * @var int Proposal Id
@@ -103,14 +121,11 @@ class FichinterRec extends Fichinter
 		$this->db = $db;
 
 		//status dans l'ordre de l'intervention
-		$this->statuts[0] = 'Draft';
-		$this->statuts[1] = 'Closed';
+		$this->labelStatus[0] = 'Draft';
+		$this->labelStatus[1] = 'Closed';
 
-		$this->statuts_short[0] = 'Draft';
-		$this->statuts_short[1] = 'Closed';
-
-		$this->statuts_logo[0] = 'statut0';
-		$this->statuts_logo[1] = 'statut1';
+		$this->labelStatusShort[0] = 'Draft';
+		$this->labelStatusShort[1] = 'Closed';
 	}
 
 	/**
@@ -130,7 +145,7 @@ class FichinterRec extends Fichinter
 	 *
 	 *  @param      User    $user       User object
 	 *  @param      int     $notrigger  no trigger
-	 *  @return     int                 <0 if KO, id of fichinter if OK
+	 *  @return     int                 Return integer <0 if KO, id of fichinter if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -156,7 +171,7 @@ class FichinterRec extends Fichinter
 
 		if ($result > 0) {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."fichinter_rec (";
-			$sql .= "titre";
+			$sql .= "title";
 			$sql .= ", fk_soc";
 			$sql .= ", entity";
 			$sql .= ", datec";
@@ -268,7 +283,7 @@ class FichinterRec extends Fichinter
 	 */
 	public function fetch($rowid = 0, $ref = '', $ref_ext = '')
 	{
-		$sql = 'SELECT f.titre as title, f.fk_soc';
+		$sql = 'SELECT f.title as title, f.fk_soc';
 		$sql .= ', f.datec, f.duree, f.fk_projet, f.fk_contrat, f.description';
 		$sql .= ', f.note_private, f.note_public, f.fk_user_author';
 		$sql .= ', f.frequency, f.unit_frequency, f.date_when, f.date_last_gen, f.nb_gen_done, f.nb_gen_max, f.auto_validate';
@@ -277,7 +292,7 @@ class FichinterRec extends Fichinter
 		if ($rowid > 0) {
 			$sql .= " WHERE f.rowid = ".((int) $rowid);
 		} elseif ($ref) {
-			$sql .= " WHERE f.titre = '".$this->db->escape($ref)."'";
+			$sql .= " WHERE f.title = '".$this->db->escape($ref)."'";
 		}
 
 		dol_syslog(get_class($this)."::fetch rowid=".$rowid, LOG_DEBUG);
@@ -288,9 +303,8 @@ class FichinterRec extends Fichinter
 				$obj = $this->db->fetch_object($result);
 
 				$this->id = $rowid;
-				$this->titre				= $obj->title;
 				$this->title				= $obj->title;
-				$this->ref = $obj->title;
+				$this->ref                  = $obj->title;
 				$this->description = $obj->description;
 				$this->datec				= $obj->datec;
 				$this->duration = $obj->duree;
@@ -302,8 +316,7 @@ class FichinterRec extends Fichinter
 				$this->note_private = $obj->note_private;
 				$this->note_public			= $obj->note_public;
 				$this->user_author			= $obj->fk_user_author;
-				$this->model_pdf			= !empty($obj->model_pdf) ? $obj->model_pdf : "";
-				$this->modelpdf				= !empty($obj->model_pdf) ? $obj->model_pdf : ""; // deprecated
+				$this->model_pdf			= empty($obj->model_pdf) ? "" : $obj->model_pdf;
 				$this->rang = !empty($obj->rang) ? $obj->rang : "";
 				$this->special_code = !empty($obj->special_code) ? $obj->special_code : "";
 				$this->frequency			= $obj->frequency;
@@ -409,7 +422,7 @@ class FichinterRec extends Fichinter
 	 *
 	 *	@param      User	$user			Object user who delete
 	 *	@param		int		$notrigger		Disable trigger
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
@@ -464,7 +477,7 @@ class FichinterRec extends Fichinter
 	 *  @param		int			$special_code		Special code
 	 *  @param		string		$label				Label of the line
 	 *  @param		string		$fk_unit			Unit
-	 *  @return		int			 				    <0 if KO, Id of line if OK
+	 *  @return		int			 				    Return integer <0 if KO, Id of line if OK
 	 */
 	public function addline($desc, $duration, $date, $rang = -1, $pu_ht = 0, $qty = 0, $txtva = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = '', $pu_ttc = 0, $type = 0, $special_code = 0, $label = '', $fk_unit = null)
 	{
@@ -585,7 +598,7 @@ class FichinterRec extends Fichinter
 	public function set_auto($user, $freq, $courant)
 	{
 		// phpcs:enable
-		if ($user->rights->fichinter->creer) {
+		if ($user->hasRight('fichinter', 'creer')) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter_rec ";
 			$sql .= " SET frequency='".$this->db->escape($freq)."'";
 			$sql .= ", date_last_gen='".$this->db->escape($courant)."'";
@@ -711,7 +724,7 @@ class FichinterRec extends Fichinter
 	 *
 	 *	@param	 	int		$frequency		value of frequency
 	 *	@param	 	string	$unit 			unit of frequency  (d, m, y)
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setFrequencyAndUnit($frequency, $unit)
 	{
@@ -750,7 +763,7 @@ class FichinterRec extends Fichinter
 	 *
 	 *	@param	 	datetime	$date					date of execution
 	 *	@param	 	int			$increment_nb_gen_done	0 do nothing more, >0 increment nb_gen_done
-	 *	@return		int									<0 if KO, >0 if OK
+	 *	@return		int									Return integer <0 if KO, >0 if OK
 	 */
 	public function setNextDate($date, $increment_nb_gen_done = 0)
 	{
@@ -782,7 +795,7 @@ class FichinterRec extends Fichinter
 	 *	Update the maximum period
 	 *
 	 *	@param	 	int		$nb		number of maximum period
-	 *	@return		int				<0 if KO, >0 if OK
+	 *	@return		int				Return integer <0 if KO, >0 if OK
 	 */
 	public function setMaxPeriod($nb)
 	{
@@ -813,7 +826,7 @@ class FichinterRec extends Fichinter
 	 *	Update the auto validate fichinter
 	 *
 	 *	@param	 	int		$validate		0 to create in draft, 1 to create and validate fichinter
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setAutoValidate($validate)
 	{
@@ -839,7 +852,7 @@ class FichinterRec extends Fichinter
 	/**
 	 *	Update the Number of Generation Done
 	 *
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function updateNbGenDone()
 	{

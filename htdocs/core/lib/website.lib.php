@@ -424,8 +424,8 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		$content = str_replace(' contenteditable="true"', ' contenteditable="false"', $content);
 	}
 
-	if (!empty($conf->global->WEBSITE_ADD_CSS_TO_BODY)) {
-		$content = str_replace('<body id="bodywebsite" class="bodywebsite', '<body id="bodywebsite" class="bodywebsite '.$conf->global->WEBSITE_ADD_CSS_TO_BODY, $content);
+	if (getDolGlobalString('WEBSITE_ADD_CSS_TO_BODY')) {
+		$content = str_replace('<body id="bodywebsite" class="bodywebsite', '<body id="bodywebsite" class="bodywebsite ' . getDolGlobalString('WEBSITE_ADD_CSS_TO_BODY'), $content);
 	}
 
 	$content = dolReplaceSmileyCodeWithUTF8($content);
@@ -441,7 +441,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
  * @param   int		$websiteid			ID of website
  * @param	string	$websitepagetype	Type of page ('blogpost', 'page', ...)
  * @param	int		$websitepageid		ID of page
- * @return  int							<0 if KO, >0 if OK
+ * @return  int							Return integer <0 if KO, >0 if OK
  */
 function dolWebsiteIncrementCounter($websiteid, $websitepagetype, $websitepageid)
 {
@@ -557,8 +557,7 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 				$newurl = $currenturi.'&pageref='.urlencode($containerref);
 			}
 		}
-	} else // When page called from virtual host server
-	{
+	} else { // When page called from virtual host server
 		$newurl = '/'.$containerref.'.php';
 	}
 

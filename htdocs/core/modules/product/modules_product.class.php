@@ -61,6 +61,24 @@ abstract class ModelePDFProduct extends CommonDocGenerator
 abstract class ModeleProductCode extends CommonNumRefGenerator
 {
 	/**
+	 * @var int Automatic numbering
+	 */
+	public $code_auto;
+
+	/**
+	 * @var string Editable code
+	 */
+	public $code_modifiable;
+
+	public $code_modifiable_invalide; // Modified code if it is invalid
+
+	/**
+	 * @var int Code facultatif
+	 */
+	public $code_null;
+
+
+	/**
 	 *  Return next value available
 	 *
 	 *	@param	Product		$objproduct		Object product
@@ -118,7 +136,7 @@ abstract class ModeleProductCode extends CommonNumRefGenerator
 
 		$strikestart = '';
 		$strikeend = '';
-		if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) {
+		if (getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED') && !empty($this->code_null)) {
 			$strikestart = '<strike>';
 			$strikeend = '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
 		}

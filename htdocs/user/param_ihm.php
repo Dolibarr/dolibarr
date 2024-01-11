@@ -37,7 +37,7 @@ $canreaduser = ($user->admin || $user->hasRight("user", "user", "read"));
 
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'userihm'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'userihm'; // To manage different context of search
 
 if (!isset($id) || empty($id)) {
 	accessforbidden();
@@ -57,7 +57,7 @@ if ($user->socid > 0) {
 $feature2 = (($socid && $user->hasRight("user", "self", "write")) ? '' : 'user');
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
-if ($user->id <> $id && !$canreaduser) {
+if ($user->id != $id && !$canreaduser) {
 	accessforbidden();
 }
 
@@ -111,7 +111,7 @@ if (empty($reshook)) {
 			}
 
 			if (GETPOST("check_SIZE_LISTE_LIMIT") == "on") {
-				$tabparam["MAIN_SIZE_LISTE_LIMIT"] = GETPOST("main_size_liste_limit", 'int');
+				$tabparam["MAIN_SIZE_LISTE_LIMIT"] = GETPOST("MAIN_SIZE_LISTE_LIMIT", 'int');
 			} else {
 				$tabparam["MAIN_SIZE_LISTE_LIMIT"] = '';
 			}
@@ -264,7 +264,7 @@ if ($reshook < 0) {
 }
 
 foreach ($tmparray as $key => $val) {
-	$tmparray[$key]['data-html'] = img_picto($langs->trans($val['label']), $val['picto'], 'class="pictofixedwidth"').$langs->trans($val['label']);
+	$tmparray[$key]['data-html'] = img_picto($langs->trans($val['label']), empty($val['picto']) ? 'generic' : $val['picto'], 'class="pictofixedwidth"').$langs->trans($val['label']);
 	$tmparray[$key]['label'] = $langs->trans($val['label']);
 }
 
@@ -307,8 +307,8 @@ if ($action == 'edit') {
                 if (jQuery("#check_MAIN_LANG_DEFAULT").prop("checked")) { jQuery("#main_lang_default").removeAttr(\'disabled\'); }
         		else { jQuery("#main_lang_default").attr(\'disabled\',\'disabled\'); }
 
-                if (jQuery("#check_SIZE_LISTE_LIMIT").prop("checked")) { jQuery("#main_size_liste_limit").removeAttr(\'disabled\'); }
-        		else { jQuery("#main_size_liste_limit").attr(\'disabled\',\'disabled\'); }
+                if (jQuery("#check_SIZE_LISTE_LIMIT").prop("checked")) { jQuery("#MAIN_SIZE_LISTE_LIMIT").removeAttr(\'disabled\'); }
+        		else { jQuery("#MAIN_SIZE_LISTE_LIMIT").attr(\'disabled\',\'disabled\'); }
 
                 if (jQuery("#check_AGENDA_DEFAULT_VIEW").prop("checked")) { jQuery("#AGENDA_DEFAULT_VIEW").removeAttr(\'disabled\'); }
         		else { jQuery("#AGENDA_DEFAULT_VIEW").attr(\'disabled\',\'disabled\'); }
@@ -342,7 +342,7 @@ if ($action == 'edit') {
 	print '<td>';
 	$s = picto_from_langcode($conf->global->MAIN_LANG_DEFAULT);
 	print $s ? $s.' ' : '';
-	print ($conf->global->MAIN_LANG_DEFAULT == 'auto' ? $langs->trans("AutoDetectLang") : $langs->trans("Language_".$conf->global->MAIN_LANG_DEFAULT));
+	print(getDolGlobalString('MAIN_LANG_DEFAULT') == 'auto' ? $langs->trans("AutoDetectLang") : $langs->trans("Language_" . getDolGlobalString('MAIN_LANG_DEFAULT')));
 	print '</td>';
 	print '<td class="nowrap" width="20%"><input class="oddeven" name="check_MAIN_LANG_DEFAULT" id="check_MAIN_LANG_DEFAULT" type="checkbox" '.(!empty($object->conf->MAIN_LANG_DEFAULT) ? " checked" : "");
 	print empty($dolibarr_main_demo) ? '' : ' disabled="disabled"'; // Disabled for demo
@@ -354,7 +354,7 @@ if ($action == 'edit') {
 	// Landing page
 	print '<tr class="oddeven"><td>'.$langs->trans("LandingPage").'</td>';
 	print '<td>';
-	print (empty($conf->global->MAIN_LANDING_PAGE) ? '' : $conf->global->MAIN_LANDING_PAGE);
+	print(!getDolGlobalString('MAIN_LANDING_PAGE') ? '' : $conf->global->MAIN_LANDING_PAGE);
 	print '</td>';
 	print '<td class="nowrap" width="20%"><input class="oddeven" name="check_MAIN_LANDING_PAGE" id="check_MAIN_LANDING_PAGE" type="checkbox" '.(!empty($object->conf->MAIN_LANDING_PAGE) ? " checked" : "");
 	print empty($dolibarr_main_demo) ? '' : ' disabled="disabled"'; // Disabled for demo
@@ -378,11 +378,11 @@ if ($action == 'edit') {
 
 	// Max size of lists
 	print '<tr class="oddeven"><td>'.$langs->trans("MaxSizeList").'</td>';
-	print '<td>'.$conf->global->MAIN_SIZE_LISTE_LIMIT.'</td>';
+	print '<td>' . getDolGlobalString('MAIN_SIZE_LISTE_LIMIT').'</td>';
 	print '<td class="nowrap" width="20%"><input class="oddeven" name="check_SIZE_LISTE_LIMIT" id="check_SIZE_LISTE_LIMIT" type="checkbox" '.(!empty($object->conf->MAIN_SIZE_LISTE_LIMIT) ? " checked" : "");
 	print empty($dolibarr_main_demo) ? '' : ' disabled="disabled"'; // Disabled for demo
 	print '> <label for="check_SIZE_LISTE_LIMIT">'.$langs->trans("UsePersonalValue").'</label></td>';
-	print '<td><input class="flat" name="main_size_liste_limit" id="main_size_liste_limit" size="4" value="'.(!empty($object->conf->MAIN_SIZE_LISTE_LIMIT) ? $object->conf->MAIN_SIZE_LISTE_LIMIT : '').'"></td></tr>';
+	print '<td><input class="flat" name="MAIN_SIZE_LISTE_LIMIT" id="MAIN_SIZE_LISTE_LIMIT" size="4" value="'.(!empty($object->conf->MAIN_SIZE_LISTE_LIMIT) ? $object->conf->MAIN_SIZE_LISTE_LIMIT : '').'"></td></tr>';
 
 	print '</table><br>';
 
@@ -401,7 +401,7 @@ if ($action == 'edit') {
 	$morehtmlref .= '</a>';
 
 	$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
-	$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->trans("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
+	$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->transnoentitiesnoconv("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
 
 	dol_banner_tab($object, 'id', $linkback, $user->hasRight("user", "user", "read") || $user->admin, 'rowid', 'ref', $morehtmlref);
 
@@ -446,20 +446,20 @@ if ($action == 'edit') {
 	print '<tr class="oddeven"><td>'.$langs->trans("Language").'</td>';
 	print '<td>';
 	$s = picto_from_langcode($conf->global->MAIN_LANG_DEFAULT);
-	print ($s ? $s.' ' : '');
-	print (isset($conf->global->MAIN_LANG_DEFAULT) && $conf->global->MAIN_LANG_DEFAULT == 'auto' ? $langs->trans("AutoDetectLang") : $langs->trans("Language_".$conf->global->MAIN_LANG_DEFAULT));
+	print($s ? $s.' ' : '');
+	print(getDolGlobalString('MAIN_LANG_DEFAULT') == 'auto' ? $langs->trans("AutoDetectLang") : $langs->trans("Language_" . getDolGlobalString('MAIN_LANG_DEFAULT')));
 	print '</td>';
 	print '<td class="nowrap"><input class="oddeven" type="checkbox" disabled '.(!empty($object->conf->MAIN_LANG_DEFAULT) ? " checked" : "").'> '.$langs->trans("UsePersonalValue").'</td>';
 	print '<td>';
 	$s = (isset($object->conf->MAIN_LANG_DEFAULT) ? picto_from_langcode($object->conf->MAIN_LANG_DEFAULT) : '');
-	print ($s ? $s.' ' : '');
-	print (isset($object->conf->MAIN_LANG_DEFAULT) && $object->conf->MAIN_LANG_DEFAULT == 'auto' ? $langs->trans("AutoDetectLang") : (!empty($object->conf->MAIN_LANG_DEFAULT) ? $langs->trans("Language_".$object->conf->MAIN_LANG_DEFAULT) : ''));
+	print($s ? $s.' ' : '');
+	print(isset($object->conf->MAIN_LANG_DEFAULT) && $object->conf->MAIN_LANG_DEFAULT == 'auto' ? $langs->trans("AutoDetectLang") : (!empty($object->conf->MAIN_LANG_DEFAULT) ? $langs->trans("Language_".$object->conf->MAIN_LANG_DEFAULT) : ''));
 	print '</td></tr>';
 
 	// Landing page
 	print '<tr class="oddeven"><td>'.$langs->trans("LandingPage").'</td>';
 	print '<td>';
-	print (empty($conf->global->MAIN_LANDING_PAGE) ? '' : $conf->global->MAIN_LANDING_PAGE);
+	print(!getDolGlobalString('MAIN_LANDING_PAGE') ? '' : $conf->global->MAIN_LANDING_PAGE);
 	print '</td>';
 	print '<td class="nowrap"><input class="oddeven" name="check_MAIN_LANDING_PAGE" disabled id="check_MAIN_LANDING_PAGE" type="checkbox" '.(!empty($object->conf->MAIN_LANDING_PAGE) ? " checked" : "");
 	print empty($dolibarr_main_demo) ? '' : ' disabled="disabled"'; // Disabled for demo
@@ -505,7 +505,7 @@ if ($action == 'edit') {
 
 	// Max size for lists
 	print '<tr class="oddeven"><td>'.$langs->trans("MaxSizeList").'</td>';
-	print '<td>'.(!empty($conf->global->MAIN_SIZE_LISTE_LIMIT) ? $conf->global->MAIN_SIZE_LISTE_LIMIT : '&nbsp;').'</td>';
+	print '<td>'.(getDolGlobalString('MAIN_SIZE_LISTE_LIMIT') ? $conf->global->MAIN_SIZE_LISTE_LIMIT : '&nbsp;').'</td>';
 	print '<td class="nowrap" width="20%"><input class="oddeven" type="checkbox" disabled '.(!empty($object->conf->MAIN_SIZE_LISTE_LIMIT) ? " checked" : "").'> '.$langs->trans("UsePersonalValue").'</td>';
 	print '<td>'.(!empty($object->conf->MAIN_SIZE_LISTE_LIMIT) ? $object->conf->MAIN_SIZE_LISTE_LIMIT : '&nbsp;').'</td></tr>';
 

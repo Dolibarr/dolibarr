@@ -153,7 +153,6 @@ class Website extends CommonObject
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
-		return 1;
 	}
 
 	/**
@@ -162,7 +161,7 @@ class Website extends CommonObject
 	 * @param  User $user      	User that creates
 	 * @param  bool $notrigger 	false=launch triggers after, true=disable triggers
 	 *
-	 * @return int 				<0 if KO, 0 if already exists, ID of created object if OK
+	 * @return int 				Return integer <0 if KO, 0 if already exists, ID of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -175,16 +174,16 @@ class Website extends CommonObject
 
 		// Clean parameters
 		if (isset($this->entity)) {
-			 $this->entity = (int) $this->entity;
+			$this->entity = (int) $this->entity;
 		}
 		if (isset($this->ref)) {
-			 $this->ref = trim($this->ref);
+			$this->ref = trim($this->ref);
 		}
 		if (isset($this->description)) {
-			 $this->description = trim($this->description);
+			$this->description = trim($this->description);
 		}
 		if (isset($this->status)) {
-			 $this->status = (int) $this->status;
+			$this->status = (int) $this->status;
 		}
 		if (empty($this->date_creation)) {
 			$this->date_creation = $now;
@@ -311,7 +310,7 @@ class Website extends CommonObject
 	 *
 	 * @param 	int    $id  	Id object
 	 * @param 	string $ref 	Ref
-	 * @return 	int 			<0 if KO, 0 if not found, >0 if OK
+	 * @return 	int 			Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -387,7 +386,7 @@ class Website extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchLines()
 	{
@@ -491,7 +490,7 @@ class Website extends CommonObject
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
 	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
@@ -504,16 +503,16 @@ class Website extends CommonObject
 		// Clean parameters
 
 		if (isset($this->entity)) {
-			 $this->entity = (int) $this->entity;
+			$this->entity = (int) $this->entity;
 		}
 		if (isset($this->ref)) {
-			 $this->ref = trim($this->ref);
+			$this->ref = trim($this->ref);
 		}
 		if (isset($this->description)) {
-			 $this->description = trim($this->description);
+			$this->description = trim($this->description);
 		}
 		if (isset($this->status)) {
-			 $this->status = (int) $this->status;
+			$this->status = (int) $this->status;
 		}
 
 		// Remove spaces and be sure we have main language only
@@ -603,7 +602,7 @@ class Website extends CommonObject
 	 * @param User $user      	User that deletes
 	 * @param bool $notrigger 	false=launch triggers, true=disable triggers
 	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
@@ -958,7 +957,8 @@ class Website extends CommonObject
 		$destdir = $conf->website->dir_temp.'/'.$website->ref;
 
 		dol_syslog("Clear temp dir ".$destdir);
-		$count = 0; $countreallydeleted = 0;
+		$count = 0;
+		$countreallydeleted = 0;
 		$counttodelete = dol_delete_dir_recursive($destdir, $count, 1, 0, $countreallydeleted);
 		if ($counttodelete != $countreallydeleted) {
 			setEventMessages("Failed to clean temp directory ".$destdir, null, 'errors');
@@ -1168,7 +1168,7 @@ class Website extends CommonObject
 	 * Open a zip with all data of web site and load it into database.
 	 *
 	 * @param 	string		$pathtofile		Full path of zip file
-	 * @return  int							<0 if KO, Id of new website if OK
+	 * @return  int							Return integer <0 if KO, Id of new website if OK
 	 */
 	public function importWebSite($pathtofile)
 	{
@@ -1327,7 +1327,7 @@ class Website extends CommonObject
 	 * Rebuild all files of all the pages/containers of a website. Rebuild also the index and wrapper.php file.
 	 * Note: Files are already regenerated during importWebSite so this function is useless when importing a website.
 	 *
-	 * @return 	int						<0 if KO, >=0 if OK
+	 * @return 	int						Return integer <0 if KO, >=0 if OK
 	 */
 	public function rebuildWebSiteFiles()
 	{

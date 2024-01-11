@@ -114,15 +114,15 @@ function llxHeaderSurvey($title, $head = "", $disablejs = 0, $disablehead = 0, $
 		print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
 		print '>';
 		print '</div>';
-		if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
+		if (!getDolGlobalString('MAIN_HIDE_POWERED_BY')) {
 			print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 		}
 		print '</div>';
 	}
 
-	if (!empty($conf->global->OPENSURVEY_IMAGE_PUBLIC_INTERFACE)) {
+	if (getDolGlobalString('OPENSURVEY_IMAGE_PUBLIC_INTERFACE')) {
 		print '<div class="backimagepublicopensurvey">';
-		print '<img id="idOPENSURVEY_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->OPENSURVEY_IMAGE_PUBLIC_INTERFACE.'">';
+		print '<img id="idOPENSURVEY_IMAGE_PUBLIC_INTERFACE" src="' . getDolGlobalString('OPENSURVEY_IMAGE_PUBLIC_INTERFACE').'">';
 		print '</div>';
 	}
 
@@ -217,7 +217,7 @@ function dol_survey_random($car)
 {
 	$string = "";
 	$chaine = "abcdefghijklmnopqrstuvwxyz123456789";
-	mt_srand((double) microtime() * 1000000);
+	mt_srand((float) microtime() * 1000000);
 	for ($i = 0; $i < $car; $i++) {
 		$string .= $chaine[mt_rand() % strlen($chaine)];
 	}

@@ -234,7 +234,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 	/*
 	if ($action == 'update_extras') {
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
@@ -436,7 +436,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/productlot_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	$shownav = 1;
-	if ($user->socid && !in_array('batch', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+	if ($user->socid && !in_array('batch', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 		$shownav = 0;
 	}
 
@@ -456,7 +456,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '</td></tr>';
 
 	// Sell by
-	if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+	if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 		print '<tr><td>';
 		print $form->editfieldkey($langs->trans('SellByDate'), 'sellby', $object->sellby, $object, $user->hasRight('stock', 'creer'), 'datepicker');
 		print '</td><td>';
@@ -466,7 +466,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	// Eat by
-	if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+	if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 		print '<tr><td>';
 		print $form->editfieldkey($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $user->hasRight('stock', 'creer'), 'datepicker');
 		print '</td><td>';
@@ -475,7 +475,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '</tr>';
 	}
 
-	if (!empty($conf->global->PRODUCT_LOT_ENABLE_TRACEABILITY)) {
+	if (getDolGlobalString('PRODUCT_LOT_ENABLE_TRACEABILITY')) {
 		print '<tr><td>'.$form->editfieldkey($langs->trans('ManufacturingDate'), 'manufacturing_date', $object->manufacturing_date, $object, $user->hasRight('stock', 'creer')).'</td>';
 		print '<td>'.$form->editfieldval($langs->trans('ManufacturingDate'), 'manufacturing_date', $object->manufacturing_date, $object, $user->hasRight('stock', 'creer'), 'datepicker').'</td>';
 		print '</tr>';
@@ -488,7 +488,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	// Quality control
-	if (!empty($conf->global->PRODUCT_LOT_ENABLE_QUALITY_CONTROL)) {
+	if (getDolGlobalString('PRODUCT_LOT_ENABLE_QUALITY_CONTROL')) {
 		print '<tr><td>'.$form->editfieldkey($langs->trans('EndOfLife'), 'eol_date', $object->eol_date, $object, $user->hasRight('stock', 'creer')).'</td>';
 		print '<td>'.$form->editfieldval($langs->trans('EndOfLife'), 'eol_date', $object->eol_date, $object, $user->hasRight('stock', 'creer'), 'datepicker').'</td>';
 		print '</tr>';

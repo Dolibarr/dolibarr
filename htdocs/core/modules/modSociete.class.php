@@ -36,7 +36,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modSociete extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -283,17 +282,17 @@ class modSociete extends DolibarrModules
 			'st.code'=>'ProspectStatus', 'payterm.libelle'=>'PaymentConditions', 'paymode.libelle'=>'PaymentMode',
 			's.outstanding_limit'=>'OutstandingBill', 'pbacc.ref'=>'PaymentBankAccount', 'incoterm.code'=>'IncotermLabel'
 		);
-		if (!empty($conf->global->SOCIETE_USEPREFIX)) {
+		if (getDolGlobalString('SOCIETE_USEPREFIX')) {
 			$this->export_fields_array[$r]['s.prefix'] = 'Prefix';
 		}
-		if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+		if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 			$this->export_fields_array[$r]['s.price_level'] = 'PriceLevel';
 		}
-		if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
+		if (getDolGlobalString('ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY')) {
 			$this->export_fields_array[$r] += array('s.accountancy_code_sell'=>'ProductAccountancySellCode', 's.accountancy_code_buy'=>'ProductAccountancyBuyCode');
 		}
 		// Add multicompany field
-		if (!empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {
+		if (getDolGlobalString('MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED')) {
 			$nbofallowedentities = count(explode(',', getEntity('societe'))); // If project are shared, nb will be > 1
 			if (isModEnabled('multicompany') && $nbofallowedentities > 1) {
 				$this->export_fields_array[$r] += array('s.entity'=>'Entity');
@@ -314,7 +313,8 @@ class modSociete extends DolibarrModules
 			's.phone'=>"Text", 's.fax'=>"Text",
 			's.url'=>"Text", 's.email'=>"Text", 's.default_lang'=>"Text", 's.canvas' => "Text",
 			's.siret'=>"Text", 's.siren'=>"Text", 's.ape'=>"Text", 's.idprof4'=>"Text", 's.idprof5'=>"Text", 's.idprof6'=>"Text",
-			's.tva_intra'=>"Text", 's.capital'=>"Numeric", 's.note_private'=>"Text", 's.note_public'=>"Text",
+			's.tva_intra'=>"Text", 's.capital'=>"Numeric",
+			's.note_private'=>"Text", 's.note_public'=>"Text",
 			't.code'=>"List:c_typent:libelle:code",
 			'ce.code'=>"List:c_effectif:libelle:code",
 			"cfj.libelle"=>"Text",
@@ -349,9 +349,9 @@ class modSociete extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as pbacc ON s.fk_account = pbacc.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as incoterm ON s.fk_incoterms = incoterm.rowid';
 		$this->export_sql_end[$r] .= ' WHERE s.entity IN ('.getEntity('societe').')';
-		if (is_object($user) && empty($user->rights->societe->client->voir)) {
+		if (is_object($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.((int) $user->id).' ';
-			if (!empty($conf->global->SOCIETE_EXPORT_SUBORDINATES_CHILDS)) {
+			if (getDolGlobalString('SOCIETE_EXPORT_SUBORDINATES_CHILDS')) {
 				$subordinatesids = $user->getAllChildIds();
 				$this->export_sql_end[$r] .= count($subordinatesids) > 0 ? ' OR (sc.fk_user IN ('.$this->db->sanitize(implode(',', $subordinatesids)).')' : '';
 			}
@@ -368,15 +368,17 @@ class modSociete extends DolibarrModules
 			'c.rowid'=>"IdContact", 'c.civility'=>"CivilityCode", 'c.lastname'=>'Lastname', 'c.firstname'=>'Firstname', 'c.poste'=>'PostOrFunction',
 			'c.datec'=>"DateCreation", 'c.tms'=>"DateLastModification", 'c.priv'=>"ContactPrivate", 'c.address'=>"Address", 'c.zip'=>"Zip", 'c.town'=>"Town",
 			'd.nom'=>'State', 'r.nom'=>'Region', 'co.label'=>"Country", 'co.code'=>"CountryCode", 'c.phone'=>"Phone", 'c.fax'=>"Fax", 'c.phone_mobile'=>"Mobile", 'c.email'=>"EMail",
+			'c.note_private'=>'NotePrivate', 'c.note_public'=>"NotePublic",
 			'c.statut'=>"Status",
 			's.rowid'=>"IdCompany", 's.nom'=>"CompanyName", 's.status'=>"Status", 's.code_client'=>"CustomerCode", 's.code_fournisseur'=>"SupplierCode",
 			's.code_compta'=>"AccountancyCode", 's.code_compta_fournisseur'=>"SupplierAccountancyCode",
 			's.client'=>'Customer', 's.fournisseur'=>'Supplier',
 			's.address'=>'Address', 's.zip'=>"Zip", 's.town'=>"Town", 's.phone'=>'Phone', 's.email'=>"Email",
+			's.note_private'=>'NotePrivate', 's.note_public'=>"NotePublic",
 			't.code'=>"ThirdPartyType"
 		);
 		// Add multicompany field
-		if (!empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {
+		if (getDolGlobalString('MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED')) {
 			if (isModEnabled('multicompany')) {
 				$nbofallowedentities = count(explode(',', getEntity('contact')));
 				if ($nbofallowedentities > 1) {
@@ -427,7 +429,7 @@ class modSociete extends DolibarrModules
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'socpeople as c';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON c.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as extrasoc ON s.rowid = extrasoc.fk_object';
-		if (is_object($user) && empty($user->rights->societe->client->voir)) {
+		if (is_object($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
 		}
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON c.fk_departement = d.rowid';
@@ -436,9 +438,9 @@ class modSociete extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople_extrafields as extra ON extra.fk_object = c.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id';
 		$this->export_sql_end[$r] .= ' WHERE c.entity IN ('.getEntity('contact').')';
-		if (is_object($user) && empty($user->rights->societe->client->voir)) {
+		if (is_object($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.((int) $user->id).' ';
-			if (!empty($conf->global->SOCIETE_EXPORT_SUBORDINATES_CHILDS)) {
+			if (getDolGlobalString('SOCIETE_EXPORT_SUBORDINATES_CHILDS')) {
 				$subordinatesids = $user->getAllChildIds();
 				$this->export_sql_end[$r] .= count($subordinatesids) > 0 ? ' OR (sc.fk_user IN ('.$this->db->sanitize(implode(',', $subordinatesids)).')' : '';
 			}
@@ -511,10 +513,10 @@ class modSociete extends DolibarrModules
 			's.fk_multicurrency' => 'MulticurrencyUsed',
 			's.multicurrency_code' => 'MulticurrencyCurrency'
 		);
-		if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+		if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 			$this->import_fields_array[$r]['s.price_level'] = 'PriceLevel';
 		}
-		if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
+		if (getDolGlobalString('ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY')) {
 			$this->import_fields_array[$r] += array('s.accountancy_code_sell'=>'ProductAccountancySellCode', 's.accountancy_code_buy'=>'ProductAccountancyBuyCode');
 		}
 		// Add social networks fields

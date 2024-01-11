@@ -187,7 +187,7 @@ if ($action == 'add' && $user->hasRight('adherent', 'configurer')) {
 if ($action == 'update' && $user->hasRight('adherent', 'configurer')) {
 	$object->fetch($rowid);
 
-	$object->oldcopy = dol_clone($object);
+	$object->oldcopy = dol_clone($object, 2);
 
 	$object->label= trim($label);
 	$object->morphy	= trim($morphy);
@@ -200,7 +200,7 @@ if ($action == 'update' && $user->hasRight('adherent', 'configurer')) {
 	$object->note_public = trim($comment);
 	$object->note_private = '';
 	$object->mail_valid = trim($mail_valid);
-	$object->vote = (boolean) trim($vote);
+	$object->vote = (bool) trim($vote);
 
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -222,7 +222,7 @@ if ($action == 'update' && $user->hasRight('adherent', 'configurer')) {
 
 if ($action == 'confirm_delete' && $user->hasRight('adherent', 'configurer')) {
 	$object->fetch($rowid);
-	$res = $object->delete();
+	$res = $object->delete($user);
 
 	if ($res > 0) {
 		setEventMessages($langs->trans("MemberTypeDeleted"), null, 'mesgs');
@@ -280,6 +280,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
 
 		if ($user->hasRight('adherent', 'configurer')) {
+			$newcardbutton .= dolGetButtonTitleSeparator();
 			$newcardbutton .= dolGetButtonTitle($langs->trans('NewMemberType'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/type.php?action=create');
 		}
 
@@ -533,7 +534,7 @@ if ($rowid > 0) {
 
 		// Amount
 		print '<tr><td class="titlefield">'.$langs->trans("Amount").'</td><td>';
-		print ((is_null($object->amount) || $object->amount === '') ? '' : '<span class="amount">'.price($object->amount).'</span>');
+		print((is_null($object->amount) || $object->amount === '') ? '' : '<span class="amount">'.price($object->amount).'</span>');
 		print '</tr>';
 
 		print '<tr><td>'.$form->textwithpicto($langs->trans("CanEditAmountShort"), $langs->transnoentities("CanEditAmount")).'</td><td>';
@@ -550,7 +551,7 @@ if ($rowid > 0) {
 		} elseif ($object->duration_value > 0) {
 			$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
 		}
-		print (!empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? $langs->trans($dur[$object->duration_unit]) : '')."&nbsp;";
+		print(!empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? $langs->trans($dur[$object->duration_unit]) : '')."&nbsp;";
 		print '</td></tr>';
 
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
@@ -971,7 +972,7 @@ if ($rowid > 0) {
 
 		print '<tr><td>'.$langs->trans("Amount").'</td><td>';
 		print '<input name="amount" size="5" value="';
-		print ((is_null($object->amount) || $object->amount === '') ? '' : price($object->amount));
+		print((is_null($object->amount) || $object->amount === '') ? '' : price($object->amount));
 		print '">';
 		print '</td></tr>';
 

@@ -52,8 +52,8 @@ if ($user->socid) {
 $result = restrictedArea($user, 'salaries', '', '', '');
 
 $nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-$year = GETPOST('year') > 0 ?GETPOST('year') : $nowyear;
-$startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
+$year = GETPOST('year') > 0 ? GETPOST('year') : $nowyear;
+$startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
 $endyear = $year;
 
 
@@ -75,7 +75,7 @@ dol_mkdir($dir);
 
 $useridtofilter = $userid; // Filter from parameters
 
-if (empty($user->rights->salaries->readall) && empty($useridtofilter)) {
+if (!$user->hasRight('salaries', 'readall') && empty($useridtofilter)) {
 	$useridtofilter = $user->getAllChildIds(1);
 }
 
@@ -95,7 +95,8 @@ $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
 if (!$mesg) {
 	$px1->SetData($data);
-	$i = $startyear; $legend = array();
+	$i = $startyear;
+	$legend = array();
 	while ($i <= $endyear) {
 		$legend[] = $i;
 		$i++;
@@ -125,7 +126,8 @@ $px2 = new DolGraph();
 $mesg = $px2->isGraphKo();
 if (!$mesg) {
 	$px2->SetData($data);
-	$i = $startyear; $legend = array();
+	$i = $startyear;
+	$legend = array();
 	while ($i <= $endyear) {
 		$legend[] = $i;
 		$i++;
@@ -154,7 +156,8 @@ $px3 = new DolGraph();
 $mesg = $px3->isGraphKo();
 if (!$mesg) {
 	$px3->SetData($data);
-	$i = $startyear; $legend = array();
+	$i = $startyear;
+	$legend = array();
 	while ($i <= $endyear) {
 		$legend[] = $i;
 		$i++;
@@ -209,7 +212,7 @@ print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->tra
 // User
 print '<tr><td>'.$langs->trans("Employee").'</td><td>';
 print img_picto('', 'user', 'class="pictofixedwidth"');
-print $form->select_dolusers(($userid ? $userid : -1), 'userid', 1, '', 0, empty($user->rights->salaries->readall) ? 'hierarchyme' : '', '', 0, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+print $form->select_dolusers(($userid ? $userid : -1), 'userid', 1, '', 0, !$user->hasRight('salaries', 'readall') ? 'hierarchyme' : '', '', 0, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 print '</td></tr>';
 // Year
 print '<tr><td>'.$langs->trans("Year").'</td><td>';

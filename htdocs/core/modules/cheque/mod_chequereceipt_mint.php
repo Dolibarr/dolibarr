@@ -109,9 +109,9 @@ class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Societe		$objsoc     Object thirdparty
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
+	 *  @param	Societe			$objsoc     Object thirdparty
+	 *  @param  RemiseCheque	$object		Object we need next value for
+	 *  @return string      				Value if KO, <0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
@@ -139,7 +139,7 @@ class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 
 		//$date=time();
 		$date = $object->date_bordereau;
-		$yymm = strftime("%y%m", $date);
+		$yymm = dol_print_date($date, "%y%m");
 
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is

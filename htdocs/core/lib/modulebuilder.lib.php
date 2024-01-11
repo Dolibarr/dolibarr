@@ -32,7 +32,7 @@
  *  @param	string      $readdir		Directory source (use $destdir when not defined)
  *  @param	string		$addfieldentry	Array of 1 field entry to add array('key'=>,'type'=>,''label'=>,'visible'=>,'enabled'=>,'position'=>,'notnull'=>','index'=>,'searchall'=>,'comment'=>,'help'=>,'isameasure')
  *  @param	string		$delfieldentry	Id of field to remove
- * 	@return	int|object					<=0 if KO, Object if OK
+ * 	@return	int|object					Return integer <=0 if KO, Object if OK
  *  @see rebuildObjectSql()
  */
 function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir = '', $addfieldentry = array(), $delfieldentry = '')
@@ -121,74 +121,75 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 		if (count($object->fields)) {
 			foreach ($object->fields as $key => $val) {
 				$i++;
-				$texttoinsert .= "\t\t'".$key."' => array('type'=>'".$val['type']."',";
-				$texttoinsert .= " 'label'=>'".$val['label']."',";
+				$texttoinsert .= "\t\t".'"'.$key.'" => array(';
+				$texttoinsert .= '"type"=>"'.dol_escape_php($val['type']).'",';
+				$texttoinsert .= ' "label"=>"'.dol_escape_php($val['label']).'",';
 				if (!empty($val['picto'])) {
-					$texttoinsert .= " 'picto'=>'".$val['picto']."',";
+					$texttoinsert .= ' "picto"=>"'.dol_escape_php($val['picto']).'",';
 				}
-				$texttoinsert .= " 'enabled'=>'".($val['enabled'] !== '' ? $val['enabled'] : 1)."',";
-				$texttoinsert .= " 'position'=>".($val['position'] !== '' ? $val['position'] : 50).",";
-				$texttoinsert .= " 'notnull'=>".(empty($val['notnull']) ? 0 : $val['notnull']).",";
-				$texttoinsert .= " 'visible'=>".($val['visible'] !== '' ? $val['visible'] : -1).",";
+				$texttoinsert .= ' "enabled"=>"'.($val['enabled'] !== '' ? dol_escape_php($val['enabled']) : 1).'",';
+				$texttoinsert .= " 'position'=>".($val['position'] !== '' ? (int) $val['position'] : 50).",";
+				$texttoinsert .= " 'notnull'=>".(empty($val['notnull']) ? 0 : (int) $val['notnull']).",";
+				$texttoinsert .= ' "visible"=>"'.($val['visible'] !== '' ? dol_escape_js($val['visible']) : -1).'",';
 				if (!empty($val['noteditable'])) {
-					$texttoinsert .= " 'noteditable'=>'".$val['noteditable']."',";
+					$texttoinsert .= ' "noteditable"=>"'.dol_escape_php($val['noteditable']).'",';
 				}
 				if (!empty($val['alwayseditable'])) {
-					$texttoinsert .= " 'alwayseditable'=>'".$val['alwayseditable']."',";
+					$texttoinsert .= ' "alwayseditable"=>"'.dol_escape_php($val['alwayseditable']).'",';
 				}
 				if (!empty($val['default']) || (isset($val['default']) && $val['default'] === '0')) {
-					$texttoinsert .= " 'default'=>'".$val['default']."',";
+					$texttoinsert .= ' "default"=>"'.dol_escape_php($val['default']).'",';
 				}
 				if (!empty($val['index'])) {
-					$texttoinsert .= " 'index'=>".$val['index'].",";
+					$texttoinsert .= ' "index"=>"'.(int) $val['index'].'",';
 				}
 				if (!empty($val['foreignkey'])) {
-					$texttoinsert .= " 'foreignkey'=>'".$val['foreignkey']."',";
+					$texttoinsert .= ' "foreignkey"=>"'.(int) $val['foreignkey'].'",';
 				}
 				if (!empty($val['searchall'])) {
-					$texttoinsert .= " 'searchall'=>".$val['searchall'].",";
+					$texttoinsert .= ' "searchall"=>"'.(int) $val['searchall'].'",';
 				}
 				if (!empty($val['isameasure'])) {
-					$texttoinsert .= " 'isameasure'=>'".$val['isameasure']."',";
+					$texttoinsert .= ' "isameasure"=>"'.(int) $val['isameasure'].'",';
 				}
 				if (!empty($val['css'])) {
-					$texttoinsert .= " 'css'=>'".$val['css']."',";
+					$texttoinsert .= ' "css"=>"'.dol_escape_php($val['css']).'",';
 				}
 				if (!empty($val['cssview'])) {
-					$texttoinsert .= " 'cssview'=>'".$val['cssview']."',";
+					$texttoinsert .= ' "cssview"=>"'.dol_escape_php($val['cssview']).'",';
 				}
 				if (!empty($val['csslist'])) {
-					$texttoinsert .= " 'csslist'=>'".$val['csslist']."',";
+					$texttoinsert .= ' "csslist"=>"'.dol_escape_php($val['csslist']).'",';
 				}
 				if (!empty($val['help'])) {
-					$texttoinsert .= " 'help'=>\"".preg_replace('/"/', '', $val['help'])."\",";
+					$texttoinsert .= ' "help"=>"'.dol_escape_php($val['help']).'",';
 				}
 				if (!empty($val['showoncombobox'])) {
-					$texttoinsert .= " 'showoncombobox'=>'".$val['showoncombobox']."',";
+					$texttoinsert .= ' "showoncombobox"=>"'.(int) $val['showoncombobox'].'",';
 				}
 				if (!empty($val['disabled'])) {
-					$texttoinsert .= " 'disabled'=>'".$val['disabled']."',";
+					$texttoinsert .= ' "disabled"=>"'.(int) $val['disabled'].'",';
 				}
 				if (!empty($val['autofocusoncreate'])) {
-					$texttoinsert .= " 'autofocusoncreate'=>'".$val['autofocusoncreate']."',";
+					$texttoinsert .= ' "autofocusoncreate"=>"'.(int) $val['autofocusoncreate'].'",';
 				}
 				if (!empty($val['arrayofkeyval'])) {
-					$texttoinsert .= " 'arrayofkeyval'=>array(";
+					$texttoinsert .= ' "arrayofkeyval"=>array(';
 					$i = 0;
 					foreach ($val['arrayofkeyval'] as $key2 => $val2) {
 						if ($i) {
 							$texttoinsert .= ", ";
 						}
-						$texttoinsert .= "'".$key2."'=>'".$val2."'";
+						$texttoinsert .= '"'.dol_escape_php($key2).'" => "'.dol_escape_php($val2).'"';
 						$i++;
 					}
-					$texttoinsert .= "),";
+					$texttoinsert .= '),';
 				}
 				if (!empty($val['validate'])) {
-					$texttoinsert .= " 'validate'=>'".$val['validate']."',";
+					$texttoinsert .= ' "validate"=>"'.(int) $val['validate'].'",';
 				}
 				if (!empty($val['comment'])) {
-					$texttoinsert .= " 'comment'=>\"".preg_replace('/"/', '', $val['comment'])."\"";
+					$texttoinsert .= ' "comment"=>"'.dol_escape_php($val['comment']).'"';
 				}
 
 				$texttoinsert .= "),\n";
@@ -249,7 +250,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
  *  @param	string      $readdir		Directory source (use $destdir when not defined)
  *  @param	Object		$object			If object was already loaded/known, it is pass to avoid another include and new.
  *  @param	string		$moduletype		'external' or 'internal'
- * 	@return	int							<=0 if KO, >0 if OK
+ * 	@return	int							Return integer <=0 if KO, >0 if OK
  *  @see rebuildObjectClass()
  */
 function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '', $object = null, $moduletype = 'external')
@@ -336,7 +337,14 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 				$type = 'double'; // html modulebuilder type is a text type in database
 			} elseif (in_array($type, array('link', 'sellist', 'duration'))) {
 				$type = 'integer';
+			} elseif ($type == 'mail') {
+				$type = 'varchar(128)';
+			} elseif ($type == 'phone') {
+				$type = 'varchar(20)';
+			} elseif ($type == 'ip') {
+				$type = 'varchar(32)';
 			}
+
 			$texttoinsert .= "\t".$key." ".$type;
 			if ($key == 'rowid') {
 				$texttoinsert .= ' AUTO_INCREMENT PRIMARY KEY';
@@ -421,7 +429,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
  * Get list of existing objects from directory
  *
  * @param	string      $destdir		Directory
- * @return 	array|int                    <=0 if KO, array if OK
+ * @return 	array|int                    Return integer <=0 if KO, array if OK
  */
 function dolGetListOfObjectClasses($destdir)
 {
@@ -456,7 +464,6 @@ function dolGetListOfObjectClasses($destdir)
  */
 function checkExistComment($file, $number)
 {
-
 	if (!file_exists($file)) {
 		return -1;
 	}
@@ -590,8 +597,8 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $
 			$permissions[$i][4] = "\$this->rights[\$r][4] = '".$permissions[$i][4]."'";
 			$permissions[$i][5] = "\$this->rights[\$r][5] = '".$permissions[$i][5]."';\n\t\t";
 		}
-			// for group permissions by object
-			$perms_grouped = array();
+		// for group permissions by object
+		$perms_grouped = array();
 		foreach ($permissions as $perms) {
 			$object = $perms[4];
 			if (!isset($perms_grouped[$object])) {
@@ -650,7 +657,6 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $
  */
 function parsePropertyString($string)
 {
-
 	$string = str_replace("'", '', $string);
 
 	// Uses a regular expression to capture keys and values
@@ -699,7 +705,7 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 {
 
 	// stock all properties in array
-	$attributesUnique = array ('type','label', 'enabled', 'position', 'notnull', 'visible', 'noteditable', 'index', 'default' , 'foreignkey', 'arrayofkeyval', 'alwayseditable','validate', 'searchall','comment', 'isameasure', 'css', 'cssview','csslist', 'help', 'showoncombobox','picto' );
+	$attributesUnique = array('type','label', 'enabled', 'position', 'notnull', 'visible', 'noteditable', 'index', 'default' , 'foreignkey', 'arrayofkeyval', 'alwayseditable','validate', 'searchall','comment', 'isameasure', 'css', 'cssview','csslist', 'help', 'showoncombobox','picto' );
 
 	$start = "public \$fields=array(";
 	$end = ");";
@@ -787,26 +793,30 @@ function writePropsInAsciiDoc($file, $objectname, $destfile)
 
 
 /**
- * Delete property and permissions from documentation if we delete object
+ * Delete property and permissions from documentation ascii file if we delete an object
+ *
  * @param  string  $file         file or path
  * @param  string  $objectname   name of object wants to deleted
  * @return void
  */
 function deletePropsAndPermsFromDoc($file, $objectname)
 {
+	if (dol_is_file($file)) {
+		$start = "== Table of fields and their properties for object *".ucfirst($objectname)."* : ";
+		$end = "__ end table for object ".ucfirst($objectname);
 
-	$start = "== Table of fields and their properties for object *".ucfirst($objectname)."* : ";
-	$end = "__ end table for object ".ucfirst($objectname);
-	$str = file_get_contents($file);
-	$search = '/' . preg_quote($start, '/') . '(.*?)' . preg_quote($end, '/') . '/s';
-	$new_contents = preg_replace($search, '', $str);
-	file_put_contents($file, $new_contents);
+		$str = file_get_contents($file);
 
-	//perms If Exist
-	$perms = "|*".strtolower($objectname)."*|";
-	$search_pattern_perms = '/' . preg_quote($perms, '/') . '.*?\n/';
-	$new_contents = preg_replace($search_pattern_perms, '', $new_contents);
-	file_put_contents($file, $new_contents);
+		$search = '/' . preg_quote($start, '/') . '(.*?)' . preg_quote($end, '/') . '/s';
+		$new_contents = preg_replace($search, '', $str);
+		file_put_contents($file, $new_contents);
+
+		//perms If Exist
+		$perms = "|*".strtolower($objectname)."*|";
+		$search_pattern_perms = '/' . preg_quote($perms, '/') . '.*?\n/';
+		$new_contents = preg_replace($search_pattern_perms, '', $new_contents);
+		file_put_contents($file, $new_contents);
+	}
 }
 
 
@@ -1090,30 +1100,33 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
 
 		//prepare each menu and stock them in string
 		$str_menu = "";
-		foreach ($menus as $index =>$menu) {
+		foreach ($menus as $index => $menu) {
 			$menu['position'] = "1000 + \$r";
 			if ($menu['type'] === 'left') {
 				$start = "\t\t".'/* LEFTMENU '.strtoupper($menu['titre']).' */';
 				$end   = "\t\t".'/* END LEFTMENU '.strtoupper($menu['titre']).' */';
+
 				$val_actuel = $menu;
-				$next_val = $menus[$index + 1];
+				$next_val = empty($menus[$index + 1]) ? null : $menus[$index + 1];
+				//var_dump(dol_escape_php($menu['perms'], 1)); exit;
+
 				$str_menu .= $start."\n";
 				$str_menu.= "\t\t\$this->menu[\$r++]=array(\n";
-				$str_menu.= "\t\t\t 'fk_menu' =>'".$menu['fk_menu']."',\n";
-				$str_menu.= "\t\t\t 'type' =>'".$menu['type']."',\n";
-				$str_menu.= "\t\t\t 'titre' =>'".$menu['titre']."',\n";
-				$str_menu.= "\t\t\t 'mainmenu' =>'".$menu['mainmenu']."',\n";
-				$str_menu.= "\t\t\t 'leftmenu' =>'".$menu['leftmenu']."',\n";
-				$str_menu.= "\t\t\t 'url' =>'".$menu['url']."',\n";
-				$str_menu.= "\t\t\t 'langs' =>'".$menu['langs']."',\n";
-				$str_menu.= "\t\t\t 'position' =>".$menu['position'].",\n";
-				$str_menu.= "\t\t\t 'enabled' =>'".$menu['enabled']."',\n";
-				$str_menu.= "\t\t\t 'perms' =>'".$menu['perms']."',\n";
-				$str_menu.= "\t\t\t 'target' =>'".$menu['target']."',\n";
-				$str_menu.= "\t\t\t 'user' =>".$menu['user'].",\n";
+				$str_menu.= "\t\t\t 'fk_menu' => '".dol_escape_php($menu['fk_menu'], 1)."',\n";
+				$str_menu.= "\t\t\t 'type' => '".dol_escape_php($menu['type'], 1)."',\n";
+				$str_menu.= "\t\t\t 'titre' => '".dol_escape_php($menu['titre'], 1)."',\n";
+				$str_menu.= "\t\t\t 'mainmenu' => '".dol_escape_php($menu['mainmenu'], 1)."',\n";
+				$str_menu.= "\t\t\t 'leftmenu' => '".dol_escape_php($menu['leftmenu'], 1)."',\n";
+				$str_menu.= "\t\t\t 'url' => '".dol_escape_php($menu['url'], 1)."',\n";
+				$str_menu.= "\t\t\t 'langs' => '".dol_escape_php($menu['langs'], 1)."',\n";
+				$str_menu.= "\t\t\t 'position' => ".((int) $menu['position']).",\n";
+				$str_menu.= "\t\t\t 'enabled' => '".dol_escape_php($menu['enabled'], 1)."',\n";
+				$str_menu.= "\t\t\t 'perms' => '".dol_escape_php($menu['perms'], 1)."',\n";
+				$str_menu.= "\t\t\t 'target' => '".dol_escape_php($menu['target'], 1)."',\n";
+				$str_menu.= "\t\t\t 'user' => ".((int) $menu['user']).",\n";
 				$str_menu.= "\t\t);\n";
 
-				if ($val_actuel['leftmenu'] !== $next_val['leftmenu']) {
+				if (is_null($next_val) || $val_actuel['leftmenu'] !== $next_val['leftmenu']) {
 					$str_menu .= $end."\n";
 				}
 			}
@@ -1121,7 +1134,8 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
 
 		dolReplaceInFile($file, array($beginMenu => $beginMenu."\n".$str_menu."\n"));
 		return 1;
-	}return -1;
+	}
+	return -1;
 }
 
 /**
@@ -1134,7 +1148,6 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
  */
 function updateDictionaryInFile($module, $file, $dicts)
 {
-
 	$isEmpty = false;
 	$dicData = "\t\t\$this->dictionaries=array(\n";
 	$module = strtolower($module);
@@ -1154,7 +1167,7 @@ function updateDictionaryInFile($module, $file, $dicts)
 			$dicData .= "array(" . implode(",", $conditions) . ")";
 		} elseif ($key === 'tabhelp') {
 			$helpItems = array();
-			foreach ($value as $key => $helpValue) {
+			foreach ($value as $helpValue) {
 				$helpItems[] = "array('code'=>\$langs->trans('".$helpValue['code']."'), 'field2' => 'field2tooltip')";
 			}
 			$dicData .= "array(" . implode(",", $helpItems) . ")";
@@ -1187,7 +1200,7 @@ function updateDictionaryInFile($module, $file, $dicts)
  * @param string $file The file path to the Dolibarr module builder file where the dictionaries are defined.
  * @param string $namedic The name of the dictionary, which will also be used as the base for the table name.
  * @param array|null $dictionnaires An optional array containing pre-existing dictionary data, including 'tabname', 'tablib', 'tabsql', etc.
- * @return void
+ * @return int|void Return int < 0 if error, return nothing on success
  */
 function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = null)
 {
@@ -1256,7 +1269,7 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 	$dictionnaires['tabhelp'][] = (array_key_exists('code', $columns) ? array('code'=>$langs->trans('CodeTooltipHelp'), 'field2' => 'field2tooltip') : '');
 
 	// Build the dictionary string
-		$writeInfile = updateDictionaryInFile($modulename, $file, $dictionnaires);
+	$writeInfile = updateDictionaryInFile($modulename, $file, $dictionnaires);
 	if ($writeInfile > 0) {
 		setEventMessages($langs->trans("DictionariesCreated", ucfirst(substr($namedic, 2))), null);
 	}

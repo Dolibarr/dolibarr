@@ -40,7 +40,7 @@ $action = GETPOST('action', 'aZ09');
 // dolibarr_readonly
 // dolibarr_mailings
 // Full (not sure this one is used)
-$mode = GETPOST('mode') ?GETPOST('mode', 'alpha') : 'dolibarr_notes';
+$mode = GETPOST('mode') ? GETPOST('mode', 'alpha') : 'dolibarr_notes';
 
 if (!$user->admin) {
 	accessforbidden();
@@ -57,7 +57,7 @@ $modules = array(
 	'MAILING' => 'FCKeditorForMailing',
 	'MAIL' => 'FCKeditorForMail',
 	'TICKET' => 'FCKeditorForTicket',
-	'SPECIALCHAR' => 'SpecialChar activation',
+	'SPECIALCHAR' => 'SpecialCharActivation',
 );
 // Conditions for the option to be offered
 $conditions = array(
@@ -100,13 +100,9 @@ foreach ($modules as $const => $desc) {
 		if ($const == 'PRODUCTDESC' && getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
 			dolibarr_set_const($db, "FCKEDITOR_ENABLE_DETAILS", "1", 'chaine', 0, '', $conf->entity);
 		}
-		header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
 	}
 	if ($action == 'disable_'.strtolower($const)) {
 		dolibarr_set_const($db, "FCKEDITOR_ENABLE_".$const, "0", 'chaine', 0, '', $conf->entity);
-		header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
 	}
 }
 
@@ -177,11 +173,11 @@ if (empty($conf->use_javascript_ajax)) {
 		}
 		print '</td>';
 		print '<td class="center centpercent width100">';
-		$value = (isset($conf->global->$constante) ? $conf->global->$constante : 0);
+		$value = getDolGlobalInt($constante, 0);
 		if ($value == 0) {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=enable_'.strtolower($const).'&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=enable_'.strtolower($const).'&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 		} elseif ($value == 1) {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=disable_'.strtolower($const).'&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
+			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=disable_'.strtolower($const).'&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
 		}
 
 		print "</td>";

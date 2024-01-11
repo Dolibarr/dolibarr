@@ -140,8 +140,14 @@ class DiscountTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
+		$soc = new Societe($db);
+		$soc->name = "CommandeTest Unittest";
+		$socid = $soc->create($user);
+		$this->assertLessThan($socid, 0, $soc->errorsToString());
+
 		$localobject=new DiscountAbsolute($db);
 		$localobject->initAsSpecimen();
+		$localobject->fk_soc = $socid;
 		$result=$localobject->create($user);
 
 		$this->assertLessThan($result, 0);

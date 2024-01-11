@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 $langs->loadlangs(array('users', 'other', 'holiday', 'hrm'));
 
 $action = GETPOST('action', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'defineholidaylist';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'defineholidaylist';
 $massaction = GETPOST('massaction', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('optioncss', 'aZ');
@@ -44,7 +44,7 @@ $search_name = GETPOST('search_name', 'alpha');
 $search_supervisor = GETPOST('search_supervisor', 'int');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
@@ -82,7 +82,7 @@ if ($user->socid > 0) {
 }
 
 // If the user does not have perm to read the page
-if (empty($user->rights->holiday->read)) {
+if (!$user->hasRight('holiday', 'read')) {
 	accessforbidden();
 }
 
@@ -99,7 +99,8 @@ $arrayfields = array(
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
@@ -292,7 +293,7 @@ $filters = '';
 
 // Filter on array of ids of all childs
 $userchilds = array();
-if (empty($user->rights->holiday->readall)) {
+if (!$user->hasRight('holiday', 'readall')) {
 	$userchilds = $user->getAllChildIds(1);
 	$filters .= ' AND u.rowid IN ('.$db->sanitize(join(', ', $userchilds)).')';
 }
@@ -320,7 +321,7 @@ if (count($typeleaves) == 0) {
 	//print '</div>';
 } else {
 	$canedit = 0;
-	if (!empty($user->rights->holiday->define_holiday)) {
+	if ($user->hasRight('holiday', 'define_holiday')) {
 		$canedit = 1;
 	}
 
@@ -405,7 +406,7 @@ if (count($typeleaves) == 0) {
 		}
 	}
 	if (!empty($arrayfields['cp.note_public']['checked'])) {
-		print_liste_field_titre((empty($user->rights->holiday->define_holiday) ? '' : 'Note'), $_SERVER["PHP_SELF"]);
+		print_liste_field_titre((!$user->hasRight('holiday', 'define_holiday') ? '' : 'Note'), $_SERVER["PHP_SELF"]);
 	}
 	print_liste_field_titre('');
 	// Action column
@@ -419,7 +420,7 @@ if (count($typeleaves) == 0) {
 		$arrayofselected = is_array($toselect) ? $toselect : array();
 
 		// If user has not permission to edit/read all, we must see only subordinates
-		if (empty($user->rights->holiday->readall)) {
+		if (!$user->hasRight('holiday', 'readall')) {
 			if (($users['rowid'] != $user->id) && (!in_array($users['rowid'], $userchilds))) {
 				continue; // This user is not into hierarchy of current user, we hide it.
 			}
@@ -504,7 +505,7 @@ if (count($typeleaves) == 0) {
 
 		// Button modify
 		print '<td class="center">';
-		if (!empty($user->rights->holiday->define_holiday)) {	// Allowed to set the balance of any user
+		if ($user->hasRight('holiday', 'define_holiday')) {	// Allowed to set the balance of any user
 			print '<input type="submit" name="update_cp['.$users['rowid'].']" value="'.dol_escape_htmltag($langs->trans("Save")).'" class="button smallpaddingimp"/>';
 		}
 		print '</td>'."\n";
@@ -533,7 +534,7 @@ if (count($typeleaves) == 0) {
 		foreach ($arrayfields as $key => $val) {
 			if (!empty($val['checked'])) {
 				if ($key == 'cp.nbHoliday') {
-					foreach ($typeleaves as $key => $val) {
+					foreach ($typeleaves as $leave_key => $leave_val) {
 						$colspan++;
 					}
 				} else {

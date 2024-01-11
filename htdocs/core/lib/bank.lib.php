@@ -36,7 +36,7 @@
  */
 function bank_prepare_head(Account $object)
 {
-	global $db, $langs, $conf, $user;
+	global $db, $langs, $conf;
 	$h = 0;
 	$head = array();
 
@@ -68,7 +68,7 @@ function bank_prepare_head(Account $object)
 	$head[$h][2] = 'graph';
 	$h++;
 
-	if ($object->courant != Account::TYPE_CASH || !empty($conf->global->BANK_CAN_RECONCILIATE_CASHACCOUNT)) {
+	if ($object->courant != Account::TYPE_CASH || getDolGlobalString('BANK_CAN_RECONCILIATE_CASHACCOUNT')) {
 		$nbReceipts = 0;
 
 		// List of all standing receipts
@@ -131,7 +131,9 @@ function bank_prepare_head(Account $object)
  */
 function bank_admin_prepare_head($object)
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $db;
+
+	$langs->loadLangs(array("compta"));
 
 	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('bank_account');
@@ -191,7 +193,7 @@ function bank_admin_prepare_head($object)
  */
 function account_statement_prepare_head($object, $num)
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $db;
 	$h = 0;
 	$head = array();
 
@@ -327,7 +329,7 @@ function getIbanHumanReadable(Account $account)
 {
 	if ($account->getCountryCode() == 'FR') {
 		require_once DOL_DOCUMENT_ROOT.'/includes/php-iban/oophp-iban.php';
-		$ibantoprint = preg_replace('/[^a-zA-Z0-9]/', '', empty($account->iban)?'':$account->iban);
+		$ibantoprint = preg_replace('/[^a-zA-Z0-9]/', '', empty($account->iban) ? '' : $account->iban);
 		$iban = new PHP_IBAN\IBAN($ibantoprint);
 		return $iban->HumanFormat();
 	}

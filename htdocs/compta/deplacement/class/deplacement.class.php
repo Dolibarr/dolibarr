@@ -134,7 +134,7 @@ class Deplacement extends CommonObject
 	 * TODO Add ref number
 	 *
 	 * @param	User	$user	User that creates
-	 * @return 	int				<0 if KO, >0 if OK
+	 * @return 	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user)
 	{
@@ -210,7 +210,7 @@ class Deplacement extends CommonObject
 	 *	Update record
 	 *
 	 *	@param	User	$user		User making update
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user)
 	{
@@ -266,7 +266,7 @@ class Deplacement extends CommonObject
 	 *
 	 * @param	int		$id		Id of record to load
 	 * @param	string	$ref	Ref of record
-	 * @return	int				<0 if KO, >0 if OK
+	 * @return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $ref = '')
 	{
@@ -309,7 +309,7 @@ class Deplacement extends CommonObject
 	 *	Delete record
 	 *
 	 *	@param	User	$user		USer that Delete
-	 *	@return	int				<0 if KO, >0 if OK
+	 *	@return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user)
 	{
@@ -457,6 +457,7 @@ class Deplacement extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_author;

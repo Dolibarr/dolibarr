@@ -29,7 +29,7 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	require '../main.inc.php';
 
 	// Get parameters
-	$action     = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
+	$action     = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 	$massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 
 	$mode = GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : 'graph';
@@ -1079,7 +1079,7 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 		}
 	}
 	// Add extrafields to Measures
-	if (!empty($object->isextrafieldmanaged)) {
+	if (!empty($object->isextrafieldmanaged) && isset($extrafields->attributes[$object->table_element]['label'])) {
 		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 			if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key]) && (!isset($extrafields->attributes[$object->table_element]['enabled'][$key]) || dol_eval($extrafields->attributes[$object->table_element]['enabled'][$key], 1, 1, '1'))) {
 				$position = (!empty($val['position']) ? $val['position'] : 0);
@@ -1236,7 +1236,7 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
 	}
 
 	// Add extrafields to X-Axis
-	if (!empty($object->isextrafieldmanaged)) {
+	if (!empty($object->isextrafieldmanaged) && isset($extrafields->attributes[$object->table_element]['label'])) {
 		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 			if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate') {
 				continue;
@@ -1398,7 +1398,7 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 	}
 
 	// Add extrafields to Group by
-	if (!empty($object->isextrafieldmanaged)) {
+	if (!empty($object->isextrafieldmanaged) && isset($extrafields->attributes[$object->table_element]['label'])) {
 		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 			if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate') {
 				continue;

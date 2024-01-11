@@ -65,8 +65,10 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 
 	/**
 	 *	Constructor
+	 *
+	 *	@param DoliDB		$db		Database object
 	 */
-	public function __construct()
+	public function __construct($db)
 	{
 		$this->code_null = 1;
 		$this->code_modifiable = 1;
@@ -135,9 +137,9 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 		$result = 0;
 		$code = trim($code);
 
-		if (empty($code) && $this->code_null && empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) {
+		if (empty($code) && $this->code_null && !getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED')) {
 			$result = 0;
-		} elseif (empty($code) && (!$this->code_null || !empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED))) {
+		} elseif (empty($code) && (!$this->code_null || getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED'))) {
 			$result = -2;
 		}
 

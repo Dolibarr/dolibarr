@@ -156,6 +156,16 @@ class dolReceiptPrinter extends Printer
 	public $listprinterstemplates;
 
 	/**
+	 * @var string
+	 */
+	public $profileresprint;
+
+	/**
+	 * @var string
+	 */
+	public $resprint;
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
@@ -608,7 +618,8 @@ class dolReceiptPrinter extends Printer
 	 */
 	public function sendToPrinter($object, $templateid, $printerid)
 	{
-		global $conf, $mysoc, $langs, $user;
+		global $mysoc, $langs, $user;
+		global $hookmanager;
 
 		$langs->load('bills');
 
@@ -664,17 +675,36 @@ class dolReceiptPrinter extends Printer
 		$this->template = str_replace('{dol_value_vendor_lastname}', $user->lastname, $this->template);
 		$this->template = str_replace('{dol_value_vendor_mail}', $user->email, $this->template);
 
+		$parameters = array('object' => $object);
+		$action = '';
+		$reshook = $hookmanager->executeHooks('sendToPrinterBefore', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook < 0) {
+			$this->error = "Error in hook dolReceiptPrinter sendToPrinterBefore ".$reshook;
+			dol_syslog("dolReceiptPrinter::sendToPrinter: error=".$this->error, LOG_ERR);
+			return $reshook;
+		}
+
 		// parse template
 		$this->template = str_replace("{", "<", $this->template);
 		$this->template = str_replace("}", ">", $this->template);
+
+		if (LIBXML_VERSION < 20900) {
+			// Avoid load of external entities (security problem).
+			// Required only if LIBXML_VERSION < 20900
+			libxml_disable_entity_loader(true);
+		}
+
+		$vals = array();
+		$index = array();
+
 		$p = xml_parser_create();
 		xml_parse_into_struct($p, $this->template, $vals, $index);
 		xml_parser_free($p);
+
 		//print '<pre>'.print_r($index, true).'</pre>';
 		//print '<pre>'.print_r($vals, true).'</pre>';
 		// print ticket
-		$level = 0;
-		$nbcharactbyline = (!empty($conf->global->RECEIPT_PRINTER_NB_CHARACT_BY_LINE) ? $conf->global->RECEIPT_PRINTER_NB_CHARACT_BY_LINE : 48);
+		$nbcharactbyline = getDolGlobalInt('RECEIPT_PRINTER_NB_CHARACT_BY_LINE', 48);
 		$ret = $this->initPrinter($printerid);
 		if ($ret > 0) {
 			setEventMessages($this->error, $this->errors, 'errors');
@@ -760,8 +790,11 @@ class dolReceiptPrinter extends Printer
 						$this->printer->text($title.$spaces.str_pad(price($object->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
 						break;
 					case 'DOL_PRINT_CURR_DATE':
-						if (strlen($vals[$tplline]['value'])<2) $this->printer->text(date('d/m/Y H:i:s')."\n");
-						else $this->printer->text(date($vals[$tplline]['value'])."\n");
+						if (strlen($vals[$tplline]['value'])<2) {
+							$this->printer->text(date('d/m/Y H:i:s')."\n");
+						} else {
+							$this->printer->text(date($vals[$tplline]['value'])."\n");
+						}
 						break;
 					case 'DOL_LINE_FEED':
 						$this->printer->feed();
@@ -900,17 +933,23 @@ class dolReceiptPrinter extends Printer
 						}
 						break;
 					default:
-						$this->printer->text($vals[$tplline]['tag']);
-						$this->printer->text($vals[$tplline]['value']);
-						$this->errors[] = 'UnknowTag: &lt;'.strtolower($vals[$tplline]['tag']).'&gt;';
-						$error++;
+						$parameters = array('vals' => $vals[$tplline],'object' => $object,'nbcharactbyline' => $nbcharactbyline);
+						$action = '';
+						$reshook = $hookmanager->executeHooks('sendToPrinterAfter', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+
+						if (!$reshook || $reshook < 0) {
+							$this->printer->text($vals[$tplline]['tag']);
+							$this->printer->text($vals[$tplline]['value']);
+							$this->errors[] = 'UnknowTag: &lt;'.strtolower($vals[$tplline]['tag']).'&gt;';
+							$error++;
+						}
 						break;
 				}
 			}
 			// If is DummyPrintConnector send to log to debugging
-			if ($this->printer->connector instanceof DummyPrintConnector || $conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
+			if ($this->printer->connector instanceof DummyPrintConnector || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
 				$data = $this->printer->connector->getData();
-				if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
+				if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
 					echo rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
 				}
 				dol_syslog($data);

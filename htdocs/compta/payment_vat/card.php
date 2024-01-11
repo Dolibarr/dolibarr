@@ -46,7 +46,7 @@ $confirm = GETPOST('confirm');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-// TODO ajouter regle pour restreindre acces paiement
+// TODO ajouter regle pour restreindre access paiement
 //$result = restrictedArea($user, 'facture', $id,'');
 
 $object = new PaymentVAT($db);
@@ -63,7 +63,7 @@ if ($id > 0) {
  */
 
 // Delete payment
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->tax->charges->supprimer) {
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('tax', 'charges', 'supprimer')) {
 	$db->begin();
 
 	$result = $object->delete($user);
@@ -102,7 +102,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->tax->char
 				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 			}
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-				$fac->generateDocument($fac->modelpdf, $outputlangs);
+				$fac->generateDocument($fac->model_pdf, $outputlangs);
 			}
 		}
 
@@ -210,7 +210,7 @@ print dol_get_fiche_end();
 
 
 /*
- * List of social contributions payed
+ * List of social contributions paid
  */
 
 $disable_delete = 0;
@@ -257,7 +257,7 @@ if ($resql) {
 			print '<td class="right"><span class="amount">'.price($objp->tva_amount).'</span></td>';
 			// Status
 			print '<td class="center">'.$tva->getLibStatut(4, $objp->amount).'</td>';
-			// Amount payed
+			// Amount paid
 			print '<td class="right"><span class="amount">'.price($objp->amount).'</span></td>';
 			print "</tr>\n";
 			if ($objp->paye == 1) {	// If at least one invoice is paid, disable delete
@@ -295,7 +295,7 @@ if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 */
 
 if ($action == '') {
-	if ($user->rights->tax->charges->supprimer) {
+	if ($user->hasRight('tax', 'charges', 'supprimer')) {
 		if (!$disable_delete) {
 			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 1);
 		} else {

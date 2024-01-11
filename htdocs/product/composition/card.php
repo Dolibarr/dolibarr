@@ -231,17 +231,17 @@ if ($id > 0 || !empty($ref)) {
 	/*
 	 * Product card
 	 */
-	if ($user->rights->produit->lire || $user->hasRight('service', 'lire')) {
+	if ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire')) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		$shownav = 1;
-		if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+		if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 			$shownav = 0;
 		}
 
 		dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', '');
 
-		if ($object->type != Product::TYPE_SERVICE || !empty($conf->global->STOCK_SUPPORTS_SERVICES) || empty($conf->global->PRODUIT_MULTIPRICES)) {
+		if ($object->type != Product::TYPE_SERVICE || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || !getDolGlobalString('PRODUIT_MULTIPRICES')) {
 			print '<div class="fichecenter">';
 			print '<div class="fichehalfleft">';
 			print '<div class="underbanner clearboth"></div>';
@@ -252,7 +252,7 @@ if ($id > 0 || !empty($ref)) {
 			if (isModEnabled("product") && isModEnabled("service")) {
 				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 				print '<tr><td class="titlefield">';
-				print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat) : $langs->trans('Type');
+				print (!getDolGlobalString('PRODUCT_DENY_CHANGE_PRODUCT_TYPE')) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat) : $langs->trans('Type');
 				print '</td><td>';
 				print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat);
 				print '</td></tr>';
@@ -267,7 +267,7 @@ if ($id > 0 || !empty($ref)) {
 
 			// Nature
 			if ($object->type != Product::TYPE_SERVICE) {
-				if (empty($conf->global->PRODUCT_DISABLE_NATURE)) {
+				if (!getDolGlobalString('PRODUCT_DISABLE_NATURE')) {
 					print '<tr><td>'.$form->textwithpicto($langs->trans("NatureOfProductShort"), $langs->trans("NatureOfProductDesc")).'</td><td>';
 					print $object->getLibFinished();
 					//print $formproduct->selectProductNature('finished', $object->finished);
@@ -275,7 +275,7 @@ if ($id > 0 || !empty($ref)) {
 				}
 			}
 
-			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 				// Price
 				print '<tr><td class="titlefield">'.$langs->trans("SellingPrice").'</td><td>';
 				if ($object->price_base_type == 'TTC') {
@@ -389,6 +389,10 @@ if ($id > 0 || !empty($ref)) {
 		if (isModEnabled('stock')) {
 			print '<td class="right">'.$langs->trans('Stock').'</td>';
 		}
+		// Hook fields
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
 		// Qty in kit
 		print '<td class="right">'.$langs->trans('Qty').'</td>';
 		// Stoc inc/dev
@@ -399,8 +403,8 @@ if ($id > 0 || !empty($ref)) {
 
 		$totalsell = 0;
 		$total = 0;
-		if (count($prods_arbo))	{
-			foreach ($prods_arbo as $value)	{
+		if (count($prods_arbo)) {
+			foreach ($prods_arbo as $value) {
 				$productstatic->fetch($value['id']);
 
 				if ($value['level'] <= 1) {
@@ -425,7 +429,9 @@ if ($id > 0 || !empty($ref)) {
 						if ($product_fourn->product_fourn_price_id > 0) {
 							print $product_fourn->display_price_product_fournisseur(0, 0);
 						} else {
-							print $langs->trans("NotDefined"); $notdefined++; $atleastonenotdefined++;
+							print $langs->trans("NotDefined");
+							$notdefined++;
+							$atleastonenotdefined++;
 						}
 					}
 					print '</td>';
@@ -440,19 +446,19 @@ if ($id > 0 || !empty($ref)) {
 					$total +=  $totalline;
 
 					print '<td class="right nowraponall">';
-					print ($notdefined ? '' : ($value['nb'] > 1 ? $value['nb'].'x ' : '').'<span class="amount">'.price($unitline, '', '', 0, 0, -1, $conf->currency)).'</span>';
+					print($notdefined ? '' : ($value['nb'] > 1 ? $value['nb'].'x ' : '').'<span class="amount">'.price($unitline, '', '', 0, 0, -1, $conf->currency)).'</span>';
 					print '</td>';
 
 					// Best selling price
 					$pricesell = $productstatic->price;
-					if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+					if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 						$pricesell = 'Variable';
 					} else {
 						$totallinesell = price2num($value['nb'] * ($pricesell), 'MT');
 						$totalsell += $totallinesell;
 					}
 					print '<td class="right" colspan="2">';
-					print ($notdefined ? '' : ($value['nb'] > 1 ? $value['nb'].'x ' : ''));
+					print($notdefined ? '' : ($value['nb'] > 1 ? $value['nb'].'x ' : ''));
 					if (is_numeric($pricesell)) {
 						print '<span class="amount">'.price($pricesell, '', '', 0, 0, -1, $conf->currency).'</span>';
 					} else {
@@ -464,6 +470,11 @@ if ($id > 0 || !empty($ref)) {
 					if (isModEnabled('stock')) {
 						print '<td class="right">'.$value['stock'].'</td>'; // Real stock
 					}
+
+					// Hook fields
+					$parameters = array();
+					$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $productstatic); // Note that $action and $object may have been modified by hook
+					print $hookmanager->resPrint;
 
 					// Qty + IncDec
 					if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
@@ -480,7 +491,7 @@ if ($id > 0 || !empty($ref)) {
 					print '</tr>'."\n";
 				} else {
 					$hide = '';
-					if (empty($conf->global->PRODUCT_SHOW_SUB_SUB_PRODUCTS)) {
+					if (!getDolGlobalString('PRODUCT_SHOW_SUB_SUB_PRODUCTS')) {
 						$hide = ' hideobject'; // By default, we do not show this. It makes screen very difficult to understand
 					}
 
@@ -514,6 +525,11 @@ if ($id > 0 || !empty($ref)) {
 					if (isModEnabled('stock')) {
 						print '<td></td>'; // Real stock
 					}
+
+					// Hook fields
+					$parameters = array();
+					$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $productstatic); // Note that $action and $object may have been modified by hook
+					print $hookmanager->resPrint;
 
 					// Qty in kit
 					print '<td class="right">'.dol_escape_htmltag($value['nb']).'</td>';
@@ -551,7 +567,7 @@ if ($id > 0 || !empty($ref)) {
 			if ($atleastonenotdefined) {
 				print $langs->trans("Unknown").' ('.$langs->trans("SomeSubProductHaveNoPrices").')';
 			}
-			print ($atleastonenotdefined ? '' : price($total, '', '', 0, 0, -1, $conf->currency));
+			print($atleastonenotdefined ? '' : price($total, '', '', 0, 0, -1, $conf->currency));
 			print '</td>';
 
 			// Minimum selling price
@@ -563,7 +579,7 @@ if ($id > 0 || !empty($ref)) {
 			if ($atleastonenotdefined) {
 				print $langs->trans("Unknown").' ('.$langs->trans("SomeSubProductHaveNoPrices").')';
 			}
-			print ($atleastonenotdefined ? '' : price($totalsell, '', '', 0, 0, -1, $conf->currency));
+			print($atleastonenotdefined ? '' : price($totalsell, '', '', 0, 0, -1, $conf->currency));
 			print '</td>';
 
 			// Stock
@@ -668,21 +684,23 @@ if ($id > 0 || !empty($ref)) {
 						$prod_arbo = new Product($db);
 						$prod_arbo->id = $objp->rowid;
 						// This type is not supported (not required to have virtual products working).
-						if ($prod_arbo->type == Product::TYPE_ASSEMBLYKIT || $prod_arbo->type == Product::TYPE_STOCKKIT) {
-							$is_pere = 0;
-							$prod_arbo->get_sousproduits_arbo();
-							// associations sousproduits
-							$prods_arbo = $prod_arbo->get_arbo_each_prod();
-							if (count($prods_arbo) > 0) {
-								foreach ($prods_arbo as $key => $value) {
-									if ($value[1] == $id) {
-										$is_pere = 1;
+						if (getDolGlobalString('PRODUCT_USE_DEPRECATED_ASSEMBLY_AND_STOCK_KIT_TYPE')) {
+							if ($prod_arbo->type == 2 || $prod_arbo->type == 3) {
+								$is_pere = 0;
+								$prod_arbo->get_sousproduits_arbo();
+								// associations sousproduits
+								$prods_arbo = $prod_arbo->get_arbo_each_prod();
+								if (count($prods_arbo) > 0) {
+									foreach ($prods_arbo as $key => $value) {
+										if ($value[1] == $id) {
+											$is_pere = 1;
+										}
 									}
 								}
-							}
-							if ($is_pere == 1) {
-								$i++;
-								continue;
+								if ($is_pere == 1) {
+									$i++;
+									continue;
+								}
 							}
 						}
 

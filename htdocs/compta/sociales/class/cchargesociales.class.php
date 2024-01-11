@@ -95,7 +95,7 @@ class Cchargesociales
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
 	 *
-	 * @return int <0 if KO, Id of created object if OK
+	 * @return int Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -179,7 +179,7 @@ class Cchargesociales
 	 * @param int    $id  Id object
 	 * @param string $ref Ref
 	 *
-	 * @return int <0 if KO, 0 if not found, >0 if OK
+	 * @return int Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -239,7 +239,7 @@ class Cchargesociales
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
 	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
@@ -286,13 +286,13 @@ class Cchargesociales
 		}
 
 		//if (!$error && !$notrigger) {
-			// Uncomment this and change MYOBJECT to your own tag if you
-			// want this action calls a trigger.
+		// Uncomment this and change MYOBJECT to your own tag if you
+		// want this action calls a trigger.
 
-			//// Call triggers
-			//$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-			//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-			//// End call triggers
+		//// Call triggers
+		//$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+		//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+		//// End call triggers
 		//}
 
 		// Commit or rollback
@@ -313,7 +313,7 @@ class Cchargesociales
 	 * @param User $user      User that deletes
 	 * @param bool $notrigger false=launch triggers after, true=disable triggers
 	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
@@ -324,15 +324,15 @@ class Cchargesociales
 		$this->db->begin();
 
 		//if (!$error) {
-			//if (!$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
+		//if (!$notrigger) {
+		// Uncomment this and change MYOBJECT to your own tag if you
+		// want this action calls a trigger.
 
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_DELETE',$user);
-				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-				//// End call triggers
-			//}
+		//// Call triggers
+		//$result=$this->call_trigger('MYOBJECT_DELETE',$user);
+		//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+		//// End call triggers
+		//}
 		//}
 
 		if (!$error) {
@@ -366,7 +366,7 @@ class Cchargesociales
 	 * @param   int     $fromid     Id of object to clone
 	 * @return  int                 New id of clone
 	 */
-	public function createFromClone(User $user, $fromid)
+	/*public function createFromClone(User $user, $fromid)
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -406,10 +406,10 @@ class Cchargesociales
 
 			return -1;
 		}
-	}
+	}*/
 
 	/**
-	 *  Return a link to the user card (with optionaly the picto)
+	 *  Return a link to the user card (with optionally the picto)
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
 	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
@@ -419,7 +419,7 @@ class Cchargesociales
 	 *  @param  string  $morecss            Add more css on link
 	 *	@return	string						String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '')
+	/*public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '')
 	{
 		global $langs, $conf, $db;
 		global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -446,7 +446,7 @@ class Cchargesociales
 		}
 		$result .= $link.$this->ref.$linkend;
 		return $result;
-	}
+	}*/
 
 	/**
 	 *  Return the label of the status
@@ -454,10 +454,10 @@ class Cchargesociales
 	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return	string 			       Label of status
 	 */
-	public function getLibStatut($mode = 0)
+	/*public function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->status, $mode);
-	}
+	}*/
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**

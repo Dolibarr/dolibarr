@@ -89,8 +89,10 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 
 	/**
 	 *	Constructor
+	 *
+	 *	@param DoliDB		$db		Database object
 	 */
-	public function __construct()
+	public function __construct($db)
 	{
 		$this->code_null = 0;
 		$this->code_modifiable = 1;
@@ -227,10 +229,10 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		// Get Mask value
 		$mask = '';
 		if ($type == 0) {
-			$mask = empty($conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER) ? '' : $conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER;
+			$mask = !getDolGlobalString('COMPANY_ELEPHANT_MASK_CUSTOMER') ? '' : $conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER;
 		}
 		if ($type == 1) {
-			$mask = empty($conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER) ? '' : $conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER;
+			$mask = !getDolGlobalString('COMPANY_ELEPHANT_MASK_SUPPLIER') ? '' : $conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER;
 		}
 		if (!$mask) {
 			$this->error = 'NotConfigured';
@@ -268,12 +270,12 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		// phpcs:enable
 		global $conf;
 
-		$mask = $conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER;
+		$mask = getDolGlobalString('COMPANY_ELEPHANT_MASK_CUSTOMER');
 		if (preg_match('/\{pre\}/i', $mask)) {
 			return 1;
 		}
 
-		$mask = $conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER;
+		$mask = getDolGlobalString('COMPANY_ELEPHANT_MASK_SUPPLIER');
 		if (preg_match('/\{pre\}/i', $mask)) {
 			return 1;
 		}
@@ -306,18 +308,18 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		$result = 0;
 		$code = strtoupper(trim($code));
 
-		if (empty($code) && $this->code_null && empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) {
+		if (empty($code) && $this->code_null && !getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED')) {
 			$result = 0;
-		} elseif (empty($code) && (!$this->code_null || !empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED))) {
+		} elseif (empty($code) && (!$this->code_null || getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED'))) {
 			$result = -2;
 		} else {
 			// Get Mask value
 			$mask = '';
 			if ($type == 0) {
-				$mask = empty($conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER) ? '' : $conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER;
+				$mask = !getDolGlobalString('COMPANY_ELEPHANT_MASK_CUSTOMER') ? '' : $conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER;
 			}
 			if ($type == 1) {
-				$mask = empty($conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER) ? '' : $conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER;
+				$mask = !getDolGlobalString('COMPANY_ELEPHANT_MASK_SUPPLIER') ? '' : $conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER;
 			}
 			if (!$mask) {
 				$this->error = 'NotConfigured';
@@ -329,7 +331,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 				return -6;
 			} else {
 				$is_dispo = $this->verif_dispo($db, $code, $soc, $type);
-				if ($is_dispo <> 0) {
+				if ($is_dispo != 0) {
 					$result = -3;
 				}
 			}

@@ -60,7 +60,7 @@ if ($reshook < 0) {
 
 
 //var_dump($extrafields->attributes[$object->table_element]);
-if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label'])) {
+if (empty($reshook) && !empty($object->table_element) && isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label'])) {
 	$lastseparatorkeyfound = '';
 	$extrafields_collapse_num = '';
 	$extrafields_collapse_num_old = '';
@@ -163,14 +163,14 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 				$permok = $user->hasRight($keyforperm, 'creer') || $user->hasRight($keyforperm, 'create') || $user->hasRight($keyforperm, 'write');
 			}
 			if ($object->element == 'order_supplier') {
-				if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
+				if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 					$permok = $user->hasRight('fournisseur', 'commande', 'creer');
 				} else {
 					$permok = $user->hasRight('supplier_order', 'creer');
 				}
 			}
 			if ($object->element == 'invoice_supplier') {
-				if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
+				if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 					$permok = $user->hasRight('fournisseur', 'facture', 'creer');
 				} else {
 					$permok = $user->hasRight('supplier_invoice', 'creer');

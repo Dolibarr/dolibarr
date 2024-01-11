@@ -49,7 +49,14 @@ class PriceExpression
 	 */
 	public $id;
 
+	/**
+	 * @var string title
+	 */
 	public $title;
+
+	/**
+	 * @var string math expression
+	 */
 	public $expression;
 
 	/**
@@ -73,9 +80,9 @@ class PriceExpression
 	 *
 	 *  @param	User	$user        User that creates
 	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return int      		   	 <0 if KO, Id of created object if OK
+	 *  @return int      		   	 Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create($user, $notrigger = 0)
+	public function create(User $user, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -100,7 +107,8 @@ class PriceExpression
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -126,7 +134,7 @@ class PriceExpression
 	 *  Load object in memory from the database
 	 *
 	 *  @param		int		$id    	Id object
-	 *  @return		int			    < 0 if KO, 0 if OK but not found, > 0 if OK
+	 *  @return		int			    Return integer < 0 if KO, 0 if OK but not found, > 0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -153,7 +161,7 @@ class PriceExpression
 				return 0;
 			}
 		} else {
-			  $this->error = "Error ".$this->db->lasterror();
+			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
 	}
@@ -162,7 +170,7 @@ class PriceExpression
 	/**
 	 *    List all price expressions
 	 *
-	 *    @return	array|int				Array of price expressions, <0 if ko
+	 *    @return	PriceExpression[]|int				Array of price expressions, <0 if ko
 	 */
 	public function list_price_expression()
 	{
@@ -197,8 +205,8 @@ class PriceExpression
 	/**
 	 *  Returns any existing rowid with specified title
 	 *
-	 *  @param		String	$title  Title of expression
-	 *  @return		int			    < 0 if KO, 0 if OK but not found, > 0 rowid
+	 *  @param		string	$title  Title of expression
+	 *  @return		int			    Return integer < 0 if KO, 0 if OK but not found, > 0 rowid
 	 */
 	public function find_title($title)
 	{
@@ -217,7 +225,7 @@ class PriceExpression
 				return 0;
 			}
 		} else {
-			  $this->error = "Error ".$this->db->lasterror();
+			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
 	}
@@ -228,9 +236,9 @@ class PriceExpression
 	 *
 	 *  @param	User	$user        User that modifies
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 <0 if KO, >0 if OK
+	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
 	 */
-	public function update($user = 0, $notrigger = 0)
+	public function update(User $user, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -253,7 +261,8 @@ class PriceExpression
 		dol_syslog(__METHOD__);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// Commit or rollback
@@ -271,13 +280,13 @@ class PriceExpression
 	}
 
 
-	 /**
-	  *  Delete object in database
-	  *
-	  *	@param  User	$user        User that deletes
-	  *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	  *  @return	int					 <0 if KO, >0 if OK
-	  */
+	/**
+	 *  Delete object in database
+	 *
+	 *	@param  User	$user        User that deletes
+	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
+	 *  @return	int					 Return integer <0 if KO, >0 if OK
+	 */
 	public function delete(User $user, $notrigger = 0)
 	{
 		$error = 0;
@@ -293,7 +302,8 @@ class PriceExpression
 			dol_syslog(__METHOD__);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 

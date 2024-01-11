@@ -371,7 +371,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	}
 
 	// If rounding is not using base 10 (rare)
-	if (!empty($conf->global->MAIN_ROUNDING_RULE_TOT)) {
+	if (getDolGlobalString('MAIN_ROUNDING_RULE_TOT')) {
 		if ($price_base_type == 'HT') {
 			$result[0] = price2num(round($result[0] / $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * $conf->global->MAIN_ROUNDING_RULE_TOT, 'MT');
 			$result[1] = price2num(round($result[1] / $conf->global->MAIN_ROUNDING_RULE_TOT, 0) * $conf->global->MAIN_ROUNDING_RULE_TOT, 'MT');
@@ -390,18 +390,18 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	// Multicurrency
 	if ($multicurrency_tx != 1) {
 		if ($multicurrency_code) {
-			$savMAIN_MAX_DECIMALS_UNIT = $conf->global->MAIN_MAX_DECIMALS_UNIT;
-			$savMAIN_MAX_DECIMALS_TOT = $conf->global->MAIN_MAX_DECIMALS_TOT;
-			$savMAIN_ROUNDING_RULE_TOT = $conf->global->MAIN_ROUNDING_RULE_TOT;
+			$savMAIN_MAX_DECIMALS_UNIT = getDolGlobalString('MAIN_MAX_DECIMALS_UNIT');
+			$savMAIN_MAX_DECIMALS_TOT = getDolGlobalString('MAIN_MAX_DECIMALS_TOT');
+			$savMAIN_ROUNDING_RULE_TOT = getDolGlobalString('MAIN_ROUNDING_RULE_TOT');
 
 			// Set parameter for currency accurency according to the value of $multicurrency_code (this is because a foreign currency may have different rounding rules)
 			$keyforforeignMAIN_MAX_DECIMALS_UNIT = 'MAIN_MAX_DECIMALS_UNIT_'.$multicurrency_code;
 			$keyforforeignMAIN_MAX_DECIMALS_TOT = 'MAIN_MAX_DECIMALS_TOT_'.$multicurrency_code;
 			$keyforforeignMAIN_ROUNDING_RULE_TOT = 'MAIN_ROUNDING_RULE_TOT_'.$multicurrency_code;
 			if (!empty($conf->global->$keyforforeignMAIN_ROUNDING_RULE_TOT)) {
-				$conf->global->MAIN_MAX_DECIMALS_UNIT = $conf->global->$keyforforeignMAIN_MAX_DECIMALS_UNIT;
-				$conf->global->MAIN_MAX_DECIMALS_TOT = $conf->global->$keyforforeignMAIN_MAX_DECIMALS_TOT;
-				$conf->global->MAIN_ROUNDING_RULE_TOT = $conf->global->$keyforforeignMAIN_ROUNDING_RULE_TOT;
+				$conf->global->MAIN_MAX_DECIMALS_UNIT = getDolGlobalString($keyforforeignMAIN_MAX_DECIMALS_UNIT);
+				$conf->global->MAIN_MAX_DECIMALS_TOT = getDolGlobalString($keyforforeignMAIN_MAX_DECIMALS_TOT);
+				$conf->global->MAIN_ROUNDING_RULE_TOT = getDolGlobalString($keyforforeignMAIN_ROUNDING_RULE_TOT);
 			}
 		}
 
@@ -444,7 +444,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	// initialize result array
 	//for ($i=0; $i <= 18; $i++) $result[$i] = (float) $result[$i];
 
-	dol_syslog('Price.lib::calcul_price_total MAIN_ROUNDING_RULE_TOT='.(empty($conf->global->MAIN_ROUNDING_RULE_TOT) ? '' : $conf->global->MAIN_ROUNDING_RULE_TOT).' pu='.$pu.' qty='.$qty.' price_base_type='.$price_base_type.' total_ht='.$result[0].'-total_vat='.$result[1].'-total_ttc='.$result[2]);
+	dol_syslog('Price.lib::calcul_price_total MAIN_ROUNDING_RULE_TOT='.(!getDolGlobalString('MAIN_ROUNDING_RULE_TOT') ? '' : $conf->global->MAIN_ROUNDING_RULE_TOT).' pu='.$pu.' qty='.$qty.' price_base_type='.$price_base_type.' total_ht='.$result[0].'-total_vat='.$result[1].'-total_ttc='.$result[2]);
 
 	return $result;
 }

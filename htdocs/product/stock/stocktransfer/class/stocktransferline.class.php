@@ -114,6 +114,12 @@ class StockTransferLine extends CommonObjectLine
 	public $fk_stocktransfer;
 	public $fk_product;
 	public $batch;
+
+	/**
+	 * @var double pmp
+	 */
+	public $pmp;
+
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -128,8 +134,12 @@ class StockTransferLine extends CommonObjectLine
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) $this->fields['rowid']['visible'] = 0;
-		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) $this->fields['entity']['enabled'] = 0;
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
+			$this->fields['rowid']['visible'] = 0;
+		}
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
+			$this->fields['entity']['enabled'] = 0;
+		}
 
 		// Example to show how to set values of fields definition dynamically
 		/*if ($user->rights->stocktransfer->stocktransferline->read) {
@@ -147,7 +157,7 @@ class StockTransferLine extends CommonObjectLine
 		// Translate some data of arrayofkeyval
 		if (is_object($langs)) {
 			foreach ($this->fields as $key => $val) {
-				if (is_array($val['arrayofkeyval'])) {
+				if (isset($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 					foreach ($val['arrayofkeyval'] as $key2 => $val2) {
 						$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
 					}
@@ -161,7 +171,7 @@ class StockTransferLine extends CommonObjectLine
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -188,7 +198,9 @@ class StockTransferLine extends CommonObjectLine
 
 		// Load source object
 		$result = $object->fetchCommon($fromid);
-		if ($result > 0 && !empty($object->table_element_line)) $object->fetchLines();
+		if ($result > 0 && !empty($object->table_element_line)) {
+			$object->fetchLines();
+		}
 
 		// get lines so they will be clone
 		//foreach($this->lines as $line)
@@ -235,8 +247,9 @@ class StockTransferLine extends CommonObjectLine
 		if (!$error) {
 			// copy external contacts if same company
 			if (property_exists($this, 'socid') && $this->socid == $object->socid) {
-				if ($this->copy_linked_contact($object, 'external') < 0)
+				if ($this->copy_linked_contact($object, 'external') < 0) {
 					$error++;
+				}
 			}
 		}
 
@@ -257,19 +270,21 @@ class StockTransferLine extends CommonObjectLine
 	 *
 	 * @param int    $id   Id object
 	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
-		if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
+		if ($result > 0 && !empty($this->table_element_line)) {
+			$this->fetchLines();
+		}
 		return $result;
 	}
 
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchLines()
 	{
@@ -300,8 +315,11 @@ class StockTransferLine extends CommonObjectLine
 		$sql = 'SELECT ';
 		$sql .= $this->getFieldList();
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql .= ' WHERE t.entity IN ('.getEntity($this->element).')';
-		else $sql .= ' WHERE 1 = 1';
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
+			$sql .= ' WHERE t.entity IN ('.getEntity($this->element).')';
+		} else {
+			$sql .= ' WHERE 1 = 1';
+		}
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
@@ -358,7 +376,7 @@ class StockTransferLine extends CommonObjectLine
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
@@ -370,7 +388,7 @@ class StockTransferLine extends CommonObjectLine
 	 *
 	 * @param User $user       User that deletes
 	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
@@ -407,7 +425,6 @@ class StockTransferLine extends CommonObjectLine
 	 */
 	public function doStockMovement($label, $code_inv, $fk_entrepot, $direction = 1)
 	{
-
 		global $conf, $user, $langs;
 
 		require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
@@ -437,17 +454,19 @@ class StockTransferLine extends CommonObjectLine
 				$this->fk_stocktransfer
 			);*/
 
-			$result = $movementstock->_create($user,
-											 $p->id,
-											 $fk_entrepot,
-											 $op[$direction],
-											 $direction,
-											 empty($direction) ? $this->pmp : 0,
-											 $label,
-											 $code_inv);
+			$result = $movementstock->_create(
+				$user,
+				$p->id,
+				$fk_entrepot,
+				$op[$direction],
+				$direction,
+				empty($direction) ? $this->pmp : 0,
+				$label,
+				$code_inv
+			);
 
 			if ($result < 0) {
-				setEventMessages($p->errors, $p->errorss, 'errors');
+				setEventMessages($p->error, $p->errors, 'errors');
 				return 0;
 			}
 		} else {
@@ -476,21 +495,23 @@ class StockTransferLine extends CommonObjectLine
 					GETPOST("codemove")
 				);*/
 
-				$result = $movementstock->_create($user,
-												 $p->id,
-												 $fk_entrepot,
-												 $op[$direction],
-												 $direction,
-												 empty($direction) ? $this->pmp : 0,
-												 $label,
-												 $code_inv,
-												 '',
-												 $dlc,
-												 $dluo,
-												 $this->batch);
+				$result = $movementstock->_create(
+					$user,
+					$p->id,
+					$fk_entrepot,
+					$op[$direction],
+					$direction,
+					empty($direction) ? $this->pmp : 0,
+					$label,
+					$code_inv,
+					'',
+					$dlc,
+					$dluo,
+					$this->batch
+				);
 
 				if ($result < 0) {
-					setEventMessages($p->errors, $p->errorss, 'errors');
+					setEventMessages($p->error, $p->errors, 'errors');
 					return 0;
 				}
 			} else {
@@ -507,7 +528,7 @@ class StockTransferLine extends CommonObjectLine
 	 *
 	 *	@param		User	$user     		User making status change
 	 *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return  	int						<=0 if OK, 0=Nothing done, >0 if KO
+	 *	@return  	int						Return integer <=0 if OK, 0=Nothing done, >0 if KO
 	 */
 	public function validate($user, $notrigger = 0)
 	{
@@ -548,8 +569,12 @@ class StockTransferLine extends CommonObjectLine
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " SET ref = '".$this->db->escape($num)."',";
 			$sql .= " status = ".self::STATUS_VALIDATED;
-			if (!empty($this->fields['date_validation'])) $sql .= ", date_validation = '".$this->db->idate($now)."',";
-			if (!empty($this->fields['fk_user_valid'])) $sql .= ", fk_user_valid = ".((int) $user->id);
+			if (!empty($this->fields['date_validation'])) {
+				$sql .= ", date_validation = '".$this->db->idate($now)."',";
+			}
+			if (!empty($this->fields['fk_user_valid'])) {
+				$sql .= ", fk_user_valid = ".((int) $user->id);
+			}
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
@@ -563,7 +588,9 @@ class StockTransferLine extends CommonObjectLine
 			if (!$error && !$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('STOCKTRANSFERLINE_VALIDATE', $user);
-				if ($result < 0) $error++;
+				if ($result < 0) {
+					$error++;
+				}
 				// End call triggers
 			}
 		}
@@ -577,7 +604,17 @@ class StockTransferLine extends CommonObjectLine
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'stocktransferline/".$this->db->escape($this->newref)."'";
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'stocktransferline/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
-				if (!$resql) { $error++; $this->error = $this->db->lasterror(); }
+				if (!$resql) {
+					$error++;
+					$this->error = $this->db->lasterror();
+				}
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'stocktransferline/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'stocktransferline/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++;
+					$this->error = $this->db->lasterror();
+				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
@@ -624,7 +661,7 @@ class StockTransferLine extends CommonObjectLine
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setDraft($user, $notrigger = 0)
 	{
@@ -648,7 +685,7 @@ class StockTransferLine extends CommonObjectLine
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function cancel($user, $notrigger = 0)
 	{
@@ -672,7 +709,7 @@ class StockTransferLine extends CommonObjectLine
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function reopen($user, $notrigger = 0)
 	{
@@ -705,7 +742,9 @@ class StockTransferLine extends CommonObjectLine
 	{
 		global $conf, $langs, $hookmanager;
 
-		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1;
+		} // Force disable tooltips
 
 		$result = '';
 
@@ -731,13 +770,15 @@ class StockTransferLine extends CommonObjectLine
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowStockTransferLine");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		} else {
+			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		}
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
@@ -746,7 +787,9 @@ class StockTransferLine extends CommonObjectLine
 		$result .= $linkstart;
 
 		if (empty($this->showphoto_on_popup)) {
-			if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			if ($withpicto) {
+				$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			}
 		} else {
 			if ($withpicto) {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -772,7 +815,9 @@ class StockTransferLine extends CommonObjectLine
 			}
 		}
 
-		if ($withpicto != 2) $result .= $this->ref;
+		if ($withpicto != 2) {
+			$result .= $this->ref;
+		}
 
 		$result .= $linkend;
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
@@ -781,8 +826,11 @@ class StockTransferLine extends CommonObjectLine
 		$hookmanager->initHooks(array('stocktransferlinedao'));
 		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-		if ($reshook > 0) $result = $hookmanager->resPrint;
-		else $result .= $hookmanager->resPrint;
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 
 		return $result;
 	}
@@ -822,7 +870,9 @@ class StockTransferLine extends CommonObjectLine
 
 		$statusType = 'status'.$status;
 		//if ($status == self::STATUS_VALIDATED) $statusType = 'status1';
-		if ($status == self::STATUS_CANCELED) $statusType = 'status6';
+		if ($status == self::STATUS_CANCELED) {
+			$statusType = 'status6';
+		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
@@ -878,15 +928,15 @@ class StockTransferLine extends CommonObjectLine
 		global $langs, $conf;
 		$langs->load("stocks");
 
-		if (empty($conf->global->STOCKTRANSFER_STOCKTRANSFERLINE_ADDON)) {
+		if (!getDolGlobalString('STOCKTRANSFER_STOCKTRANSFERLINE_ADDON')) {
 			$conf->global->STOCKTRANSFER_STOCKTRANSFERLINE_ADDON = 'mod_stocktransferline_standard';
 		}
 
-		if (!empty($conf->global->STOCKTRANSFER_STOCKTRANSFERLINE_ADDON)) {
+		if (getDolGlobalString('STOCKTRANSFER_STOCKTRANSFERLINE_ADDON')) {
 			$mybool = false;
 
-			$file = $conf->global->STOCKTRANSFER_STOCKTRANSFERLINE_ADDON.".php";
-			$classname = $conf->global->STOCKTRANSFER_STOCKTRANSFERLINE_ADDON;
+			$file = getDolGlobalString('STOCKTRANSFER_STOCKTRANSFERLINE_ADDON') . ".php";
+			$classname = getDolGlobalString('STOCKTRANSFER_STOCKTRANSFERLINE_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -948,8 +998,8 @@ class StockTransferLine extends CommonObjectLine
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->STOCKTRANSFERLINE_ADDON_PDF)) {
-				$modele = $conf->global->STOCKTRANSFERLINE_ADDON_PDF;
+			} elseif (getDolGlobalString('STOCKTRANSFERLINE_ADDON_PDF')) {
+				$modele = getDolGlobalString('STOCKTRANSFERLINE_ADDON_PDF');
 			}
 		}
 

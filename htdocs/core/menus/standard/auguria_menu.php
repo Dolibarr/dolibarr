@@ -72,7 +72,7 @@ class MenuManager
 	{
 		global $conf, $user, $langs;
 
-		// On sauve en session le menu principal choisi
+		// We save into session the main menu selected
 		if (GETPOSTISSET("mainmenu")) {
 			$_SESSION["mainmenu"] = GETPOST("mainmenu", 'aZ09');
 		}
@@ -80,7 +80,7 @@ class MenuManager
 			$_SESSION["idmenu"] = GETPOST("idmenu", 'int');
 		}
 
-		// Read mainmenu and leftmenu that define which menu to show
+		// Read now mainmenu and leftmenu that define which menu to show
 		if (GETPOSTISSET("mainmenu")) {
 			// On sauve en session le menu principal choisi
 			$mainmenu = GETPOST("mainmenu", 'aZ09');
@@ -120,9 +120,7 @@ class MenuManager
 		$this->tabMenu = $tabMenu;
 		//var_dump($tabMenu);
 
-		//if ($forcemainmenu == 'all') {
-		//var_dump($this->tabMenu);
-		//}
+		//if ($forcemainmenu == 'all') { var_dump($this->tabMenu); exit; }
 	}
 
 
@@ -148,7 +146,7 @@ class MenuManager
 		require_once DOL_DOCUMENT_ROOT.'/core/class/menu.class.php';
 		$this->menu = new Menu();
 
-		if (empty($conf->global->MAIN_MENU_INVERT)) {
+		if (!getDolGlobalString('MAIN_MENU_INVERT')) {
 			if ($mode == 'top') {
 				print_auguria_menu($this->db, $this->atarget, $this->type_user, $this->tabMenu, $this->menu, 0, $mode);
 			}
@@ -176,6 +174,7 @@ class MenuManager
 			// $this->menu->liste is top menu
 			//var_dump($this->menu->liste);exit;
 			$lastlevel = array();
+			$showmenu = true;  // Is current menu shown - define here to keep static code checker happy
 			print '<!-- Generate menu list from menu handler '.$this->name.' -->'."\n";
 			foreach ($this->menu->liste as $key => $val) {		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
 				print '<ul class="ulmenu" data-inset="true">';
@@ -192,9 +191,7 @@ class MenuManager
 
 					// Add font-awesome
 					if ($val['level'] == 0 && !empty($val['prefix'])) {
-						print $val['prefix'];
-					} elseif ($val['level'] == 0 && $val['mainmenu'] == 'home') {
-						print '<span class="fa fa-home fa-fw paddingright pictofixedwidth" aria-hidden="true"></span>';
+						print str_replace('<span class="', '<span class="paddingright pictofixedwidth ', $val['prefix']);
 					}
 
 					print $val['titre'];
@@ -205,7 +202,11 @@ class MenuManager
 					$tmpleftmenu = 'all';
 					$submenu = new Menu();
 					print_left_auguria_menu($this->db, $this->menu_array, $this->menu_array_after, $this->tabMenu, $submenu, 1, $tmpmainmenu, $tmpleftmenu);
-					$nexturl = dol_buildpath($submenu->liste[0]['url'], 1);
+					if (!empty($submenu->liste[0]['url'])) {
+						$nexturl = dol_buildpath($submenu->liste[0]['url'], 1);
+					} else {
+						$nexturl = '';
+					}
 
 					$canonrelurl = preg_replace('/\?.*$/', '', $relurl);
 					$canonnexturl = preg_replace('/\?.*$/', '', $nexturl);
@@ -217,8 +218,13 @@ class MenuManager
 						// We add sub entry
 						print str_pad('', 1).'<li class="lilevel1 ui-btn-icon-right ui-btn">'; // ui-btn to highlight on clic
 						print '<a href="'.$relurl.'">';
+
+						if ($val['level'] == 0) {
+							print '<span class="fas fa-home fa-fw paddingright pictofixedwidth" aria-hidden="true"></span>';
+						}
+
 						if ($langs->trans(ucfirst($val['mainmenu'])."Dashboard") == ucfirst($val['mainmenu'])."Dashboard") {  // No translation
-							if (in_array($val['mainmenu'], array('cashdesk', 'externalsite', 'website', 'collab'))) {
+							if (in_array($val['mainmenu'], array('cashdesk', 'externalsite', 'website', 'collab', 'takepos'))) {
 								print $langs->trans("Access");
 							} else {
 								print $langs->trans("Dashboard");
@@ -243,7 +249,7 @@ class MenuManager
 					$lastlevel2 = array();
 					foreach ($submenu->liste as $key2 => $val2) {		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
 						$showmenu = true;
-						if (!empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED) && empty($val2['enabled'])) {
+						if (getDolGlobalString('MAIN_MENU_HIDE_UNAUTHORIZED') && empty($val2['enabled'])) {
 							$showmenu = false;
 						}
 

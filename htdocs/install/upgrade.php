@@ -79,9 +79,9 @@ if ($dolibarr_main_db_type == "mssql") {
 }
 
 
-dolibarr_install_syslog("--- upgrade: Entering upgrade.php page");
+dolibarr_install_syslog("--- upgrade: entering upgrade.php page ".$versionfrom." ".$versionto);
 if (!is_object($conf)) {
-	dolibarr_install_syslog("upgrade2: conf file not initialized", LOG_ERR);
+	dolibarr_install_syslog("upgrade: conf file not initialized", LOG_ERR);
 }
 
 
@@ -123,13 +123,13 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 		if (!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
 			$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
 			$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
-			$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially crypted
+			$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially encrypted
 		} else {
 			$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 		}
 	}
 
-	// $conf is already instancied inside inc.php
+	// $conf is already instantiated inside inc.php
 	$conf->db->type = $dolibarr_main_db_type;
 	$conf->db->host = $dolibarr_main_db_host;
 	$conf->db->port = $dolibarr_main_db_port;

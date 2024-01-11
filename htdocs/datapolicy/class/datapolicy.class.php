@@ -188,10 +188,10 @@ class DataPolicy
 		$la = 'TXTLINKDATAPOLICYACCEPT_'.$l;
 		$lr = 'TXTLINKDATAPOLICYREFUSE_'.$l;
 
-		$subject = $conf->global->$s;
-		$message = $conf->global->$ma;
-		$linka = $conf->global->$la;
-		$linkr = $conf->global->$lr;
+		$subject = getDolGlobalString($s);
+		$message = getDolGlobalString($ma);
+		$linka = getDolGlobalString($la);
+		$linkr = getDolGlobalString($lr);
 		$sendtocc = $sendtobcc = '';
 		$filepath = $mimetype = $filename = array();
 		$deliveryreceipt = 0;
@@ -212,9 +212,9 @@ class DataPolicy
 			if ($sendtocc) {
 				$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc').": ".$sendtocc);
 			}
-				$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic').": ".$subject);
-				$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody').":");
-				$actionmsg = dol_concatdesc($actionmsg, $message);
+			$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic').": ".$subject);
+			$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody').":");
+			$actionmsg = dol_concatdesc($actionmsg, $message);
 		}
 
 
@@ -267,10 +267,10 @@ class DataPolicy
 		$la = 'TXTLINKDATAPOLICYACCEPT_'.$l;
 		$lr = 'TXTLINKDATAPOLICYREFUSE_'.$l;
 
-		$subject = $conf->global->$s;
-		$message = $conf->global->$ma;
-		$linka = $conf->global->$la;
-		$linkr = $conf->global->$lr;
+		$subject = getDolGlobalString($s);
+		$message = getDolGlobalString($ma);
+		$linka = getDolGlobalString($la);
+		$linkr = getDolGlobalString($lr);
 		$sendtocc = $sendtobcc = '';
 		$filepath = $mimetype = $filename = array();
 		$deliveryreceipt = 0;
@@ -286,7 +286,7 @@ class DataPolicy
 		$actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
 		if ($message) {
 			if ($sendtocc) {
-				 $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc').": ".$sendtocc);
+				$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc').": ".$sendtocc);
 			}
 			$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic').": ".$subject);
 			$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody').":");
@@ -342,10 +342,10 @@ class DataPolicy
 		$la = 'TXTLINKDATAPOLICYACCEPT_'.$l;
 		$lr = 'TXTLINKDATAPOLICYREFUSE_'.$l;
 
-		$subject = $conf->global->$s;
-		$message = $conf->global->$ma;
-		$linka = $conf->global->$la;
-		$linkr = $conf->global->$lr;
+		$subject = getDolGlobalString($s);
+		$message = getDolGlobalString($ma);
+		$linka = getDolGlobalString($la);
+		$linkr = getDolGlobalString($lr);
 		$sendtocc = $sendtobcc = '';
 		$filepath = $mimetype = $filename = array();
 		$deliveryreceipt = 0;
@@ -372,6 +372,8 @@ class DataPolicy
 		// Send mail
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 		$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1);
+
+		$resultmasssend = '';
 		if ($mailfile->error) {
 			$resultmasssend .= '<div class="error">'.$mailfile->error.'</div>';
 		} else {

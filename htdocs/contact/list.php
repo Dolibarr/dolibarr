@@ -52,8 +52,12 @@ $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'contactlist';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'contactlist';
 $mode = GETPOST('mode', 'alpha');
+
+if ($contextpage == 'poslist') {
+	$_GET['optioncss'] = 'print';
+}
 
 // Security check
 $id = GETPOST('id', 'int');
@@ -64,7 +68,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'contact', $contactid, '');
 
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_cti = preg_replace('/^0+/', '', preg_replace('/[^0-9]/', '', GETPOST('search_cti', 'alphanohtml'))); // Phone number without any special chars
 $search_phone = GETPOST("search_phone", 'alpha');
 
@@ -118,6 +122,7 @@ if ($search_no_email === '') {
 
 $optioncss = GETPOST('optioncss', 'alpha');
 
+$place = GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'; // $place is string id of table for Bar or Restaurant
 
 $type = GETPOST("type", 'aZ');
 $view = GETPOST("view", 'alpha');
@@ -126,7 +131,7 @@ $userid = GETPOST('userid', 'int');
 $begin = GETPOST('begin');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -145,7 +150,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 
-$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 if ($type == "p") {
 	if (empty($contextpage) || $contextpage == 'contactlist') {
 		$contextpage = 'contactprospectlist';
@@ -199,7 +204,7 @@ foreach ($object->fields as $key => $val) {
 }
 
 // Add none object fields for "search in all"
-if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
 	$fieldstosearchall['s.nom'] = "ThirdParty";
 	$fieldstosearchall['s.name_alias'] = "AliasNames";
 }
@@ -230,7 +235,7 @@ foreach ($object->fields as $key => $val) {
 
 // Add none object fields to fields for list
 $arrayfields['country.code_iso'] = array('label'=>"Country", 'position'=>66, 'checked'=>0);
-if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
 	$arrayfields['s.nom'] = array('label'=>"ThirdParty", 'position'=>113, 'checked'=> 1);
 	$arrayfields['s.name_alias'] = array('label'=>"AliasNameShort", 'position'=>114, 'checked'=> 1);
 }
@@ -272,12 +277,61 @@ $permissiontoread = $user->hasRight('societe', 'lire');
 $permissiontodelete = $user->hasRight('societe', 'supprimer');
 $permissiontoadd = $user->hasRight('societe', 'creer');
 
-if (!$permissiontoread) accessforbidden();
+if (!$permissiontoread) {
+	accessforbidden();
+}
 
 
 /*
  * Actions
  */
+
+if ($action == "change" && $user->hasRight('takepos', 'run')) {	// Change customer for TakePOS
+	$idcustomer = GETPOST('idcustomer', 'int');
+	$idcontact = GETPOST('idcontact', 'int');
+
+	// Check if draft invoice already exists, if not create it
+	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' AND entity IN (".getEntity('invoice').")";
+	$result = $db->query($sql);
+	$num_lines = $db->num_rows($result);
+	if ($num_lines == 0) {
+		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+		$invoice = new Facture($db);
+		$constforthirdpartyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
+		$invoice->socid = getDolGlobalInt($constforthirdpartyid);
+		$invoice->date = dol_now();
+		$invoice->module_source = 'takepos';
+		$invoice->pos_source = $_SESSION["takeposterminal"];
+		$placeid = $invoice->create($user);
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' where rowid = ".((int) $placeid);
+		$db->query($sql);
+	}
+
+	$sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".((int) $idcustomer)." where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
+	$resql = $db->query($sql);
+
+	// set contact on invoice
+	if (!isset($invoice)) {
+		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+		$invoice = new Facture($db);
+		$invoice->fetch(null, "(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")");
+		$invoice->delete_linked_contact('external', 'BILLING');
+	}
+	$invoice->add_contact($idcontact, 'BILLING'); ?>
+		<script>
+		console.log("Reload page invoice.php with place=<?php print $place; ?>");
+		parent.$("#poslines").load("invoice.php?place=<?php print $place; ?>", function() {
+			//parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
+			<?php if (!$resql) { ?>
+				alert('Error failed to update customer on draft invoice.');
+			<?php } ?>
+			parent.$("#idcustomer").val(<?php echo $idcustomer; ?>);
+			parent.$.colorbox.close(); /* Close the popup */
+		});
+		</script>
+	<?php
+	exit;
+}
 
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
@@ -380,7 +434,7 @@ $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas';
 $morejs = array();
 $morecss = array();
 
-if (!empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES)) {
+if (getDolGlobalString('THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES')) {
 	$contactstatic->loadCacheOfProspStatus();
 }
 
@@ -441,7 +495,7 @@ if (isset($extrafields->attributes[$object->table_element]['label']) && is_array
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = p.fk_pays";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_stcommcontact as st ON st.id = p.fk_stcommcontact";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 }
 
@@ -450,7 +504,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= ' WHERE p.entity IN ('.getEntity('contact').')';
-if (empty($user->rights->societe->client->voir) && !$socid) { //restriction
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND (sc.fk_user = ".((int) $user->id)." OR p.fk_soc IS NULL)";
 }
 if (!empty($userid)) {    // propre au commercial
@@ -540,7 +594,7 @@ if (!empty($searchCategoryCustomerList)) {
 	}
 }
 
- // Search Supplier Categories
+// Search Supplier Categories
 $searchCategorySupplierList = $search_categ_supplier ? array($search_categ_supplier) : array();
 $searchCategorySupplierOperator = 0;
  // Search for tag/category ($searchCategorySupplierList is an array of ID)
@@ -694,6 +748,11 @@ $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $objec
 $sql .= $hookmanager->resPrint;
 //print $sql;
 
+// Add GroupBy from hooks
+$parameters = array('fieldstosearchall' => $fieldstosearchall);
+$reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
 // Count total nb of records
 $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
@@ -734,7 +793,7 @@ if (!$resql) {
 $num = $db->num_rows($resql);
 
 // Direct jump if only one record found
-if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && ($search_all != '' || $search_cti != '') && !$page) {
+if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && ($search_all != '' || $search_cti != '') && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	header("Location: ".DOL_URL_ROOT.'/contact/card.php?id='.$id);
@@ -744,7 +803,7 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && (
 
 // Output page
 // --------------------------------------------------------------------
-// Page Header
+
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
@@ -758,6 +817,9 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
+}
+if ($optioncss != '') {
+	$param .= '&optioncss='.urlencode($optioncss);
 }
 $param .= '&begin='.urlencode($begin).'&userid='.urlencode($userid).'&contactname='.urlencode($search_all);
 $param .= '&type='.urlencode($type).'&view='.urlencode($view);
@@ -838,13 +900,10 @@ if (is_array($search_level) && count($search_level)) {
 if ($search_import_key != '') {
 	$param .= '&search_import_key='.urlencode($search_import_key);
 }
-if ($optioncss != '') {
-	$param .= '&optioncss='.urlencode($optioncss);
-}
 if (count($search_roles) > 0) {
 	$param .= implode('&search_roles[]=', $search_roles);
 }
-if ($search_birthday_start)	{
+if ($search_birthday_start) {
 	$param .= '&search_birthday_start='.urlencode(dol_print_date($search_birthday_start, '%d')).'&search_birthday_startmonth='.urlencode(dol_print_date($search_birthday_start, '%m')).'&search_birthday_startyear='.urlencode(dol_print_date($search_birthday_start, '%Y'));
 }
 if ($search_birthday_end) {
@@ -865,10 +924,12 @@ if (!empty($permissiontodelete)) {
 if (isModEnabled('category') && $user->hasRight('societe', 'creer')) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
-if (in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
+if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
 	$arrayofmassactions = array();
 }
-$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
+if ($contextpage != 'poslist') {
+	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
+}
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
 if ($optioncss != '') {
@@ -890,7 +951,13 @@ $newcardbutton  = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
-$newcardbutton .= dolGetButtonTitle($langs->trans('NewContactAddress'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contact/card.php?action=create', '', $permissiontoadd);
+if ($contextpage != 'poslist') {
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewContactAddress'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contact/card.php?action=create', '', $permissiontoadd);
+} elseif ($user->hasRight('societe', 'contact', 'creer')) {
+	$url = DOL_URL_ROOT . '/contact/card.php?action=create&type=t&contextpage=poslist&optioncss=print&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?token=' . newToken() . 'type=t&contextpage=poslist&nomassaction=1&optioncss=print&place='.$place);
+	$label = 'MenuNewCustomer';
+	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url);
+}
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'address', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
@@ -959,7 +1026,7 @@ print '</div>';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
-$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
+$selectedfields .= ((count($arrayofmassactions) && $contextpage != 'poslist') ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
 print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
@@ -969,7 +1036,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 print '<tr class="liste_titre_filter">';
 // Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print '<td class="liste_titre center maxwidthsearch">';
+	print '<td class="liste_titre center maxwidthsearch actioncolumn">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
 	print '</td>';
@@ -1282,7 +1349,7 @@ if (!empty($arrayfields['p.import_key']['checked'])) {
 	print_liste_field_titre($arrayfields['p.import_key']['label'], $_SERVER["PHP_SELF"], "p.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
-if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	$totalarray['nbfield']++;
 }
@@ -1323,6 +1390,8 @@ while ($i < $imaxinloop) {
 	$contactstatic->photo = $obj->photo;
 	$contactstatic->fk_prospectlevel = $obj->fk_prospectlevel;
 
+	$object = $contactstatic;
+
 	if ($mode == 'kanban') {
 		if ($i == 0) {
 			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
@@ -1346,7 +1415,11 @@ while ($i < $imaxinloop) {
 	} else {
 		// Show here line of result
 		$j = 0;
-		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven"';
+		if ($contextpage == 'poslist') {
+			print ' onclick="location.href=\'list.php?action=change&contextpage=poslist&idcustomer='.$obj->socid.'&idcontact='.$obj->rowid.'&place='.urlencode($place).'\'"';
+		}
+		print '>';
 
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -1377,7 +1450,11 @@ while ($i < $imaxinloop) {
 		// (Last) Name
 		if (!empty($arrayfields['p.lastname']['checked'])) {
 			print '<td class="middle tdoverflowmax150">';
-			print $contactstatic->getNomUrl(-1);
+			if ($contextpage == 'poslist') {
+				print $contactstatic->lastname;
+			} else {
+				print $contactstatic->getNomUrl(1);
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1484,7 +1561,13 @@ while ($i < $imaxinloop) {
 
 		// EMail
 		if (!empty($arrayfields['p.email']['checked'])) {
-			print '<td class="nowraponall tdoverflowmax300">'.dol_print_email($obj->email, $obj->rowid, $obj->socid, 'AC_EMAIL', 18, 0, 1).'</td>';
+			print '<td class="nowraponall tdoverflowmax300">';
+			if ($contextpage == 'poslist') {
+				print $obj->email;
+			} else {
+				print dol_print_email($obj->email, $obj->rowid, $obj->socid, 'AC_EMAIL', 18, 0, 1);
+			}
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1526,7 +1609,11 @@ while ($i < $imaxinloop) {
 				if ($objsoc->client == 0 && $objsoc->fournisseur > 0) {
 					$option_link = 'supplier';
 				}
-				print $objsoc->getNomUrl(1, $option_link, 100, 0, 1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
+				if ($contextpage == 'poslist') {
+					print $objsoc->name;
+				} else {
+					print $objsoc->getNomUrl(1, $option_link, 100, 0, 1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
+				}
 			} else {
 				print '&nbsp;';
 			}

@@ -52,8 +52,8 @@ print '</span>';
 print '<br><br>';
 
 if (function_exists('socket_create')) {
-	$address = ini_get('xdebug.remote_host') ?ini_get('xdebug.remote_host') : '127.0.0.1';
-	$port = ini_get('xdebug.remote_port') ?ini_get('xdebug.remote_port') : 9000;
+	$address = ini_get('xdebug.remote_host') ? ini_get('xdebug.remote_host') : '127.0.0.1';
+	$port = ini_get('xdebug.remote_port') ? ini_get('xdebug.remote_port') : 9000;
 
 	print "<strong>Current xdebug setup:</strong><br>\n";
 	print "* Remote debug setup:<br>\n";
@@ -64,7 +64,7 @@ if (function_exists('socket_create')) {
 	if (function_exists('xdebug_get_profiler_filename')) {
 		print xdebug_get_profiler_filename() ? "(currently on into file ".xdebug_get_profiler_filename().")" : "(currently off)";
 	} else {
-		print "(currenlty not available)";
+		print "(currently not available)";
 	}
 	print ":<br>\n";
 	print 'xdebug.profiler_enable = '.ini_get('xdebug.profiler_enable')."<br>\n";
