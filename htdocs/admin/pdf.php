@@ -403,7 +403,7 @@ if ($conf->use_javascript_ajax) {
 }
 print '</td></tr>';
 
-// Place customer adress to the ISO location
+// Place customer address to the ISO location
 
 print '<tr class="oddeven"><td>'.$langs->trans("PlaceCustomerAddressToIsoLocation").'</td><td>';
 if ($conf->use_javascript_ajax) {
@@ -568,7 +568,7 @@ if ($conf->use_javascript_ajax) {
 }
 print '</td></tr>';
 
-// Swicth in Bold
+// Switch in Bold
 
 print '<tr class="oddeven"><td>'.$langs->trans("BoldLabelOnPDF").'</td><td>';
 if ($conf->use_javascript_ajax) {
@@ -578,7 +578,7 @@ if ($conf->use_javascript_ajax) {
 }
 print '</td></tr>';
 
-// Swicth in Bold
+// Switch in Bold
 
 print '<tr class="oddeven"><td>'.$langs->trans("BoldRefAndPeriodOnPDF").'</td><td>';
 if ($conf->use_javascript_ajax) {

@@ -59,7 +59,7 @@ print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionLastUpgrade")
 print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionProgram").'</td><td>'.DOL_VERSION;
 // If current version differs from last upgrade
 if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')) {
-	// Compare version with last install database version (upgrades never occured)
+	// Compare version with last install database version (upgrades never occurred)
 	if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_INSTALL) {
 		print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, getDolGlobalString('MAIN_VERSION_LAST_INSTALL')));
 	}
@@ -262,7 +262,7 @@ if (empty($error) && !empty($xml)) {
 			}
 		}
 
-		// Files missings
+		// Files missing
 		$out .= load_fiche_titre($langs->trans("FilesMissing"));
 
 		$out .= '<div class="div-table-responsive-no-min">';

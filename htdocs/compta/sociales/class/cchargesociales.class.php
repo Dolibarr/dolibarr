@@ -409,7 +409,7 @@ class Cchargesociales
 	}*/
 
 	/**
-	 *  Return a link to the user card (with optionaly the picto)
+	 *  Return a link to the user card (with optionally the picto)
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
 	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
