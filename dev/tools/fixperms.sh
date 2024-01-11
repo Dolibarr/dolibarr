@@ -7,6 +7,8 @@
 # Usage: fixperms.sh (list|fix)
 #------------------------------------------------------
 
+# shellcheck disable=2166,2268
+
 # Syntax
 if [ "x$1" != "xlist" -a "x$1" != "xfix" ]
 then
