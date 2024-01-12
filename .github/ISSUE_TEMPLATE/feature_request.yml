@@ -21,7 +21,7 @@ body:
     attributes:
       label: Use case
       description: Verbose description
-      
+
   - type: textarea
     id: suggested-implementation
     attributes:
