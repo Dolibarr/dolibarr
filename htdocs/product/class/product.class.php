@@ -5237,8 +5237,18 @@ class Product extends CommonObject
 				$labelsurfacevolume .= ($labelsurfacevolume ? " - " : "")."<b>".$langs->trans("Volume").'</b>: '.$this->volume.' '.measuringUnitString(0, 'volume', $this->volume_units);
 			}
 			if ($labelsurfacevolume) {
-				$datas['surface']= "<br>" . $labelsurfacevolume;
+				$datas['surface'] = "<br>" . $labelsurfacevolume;
 			}
+		}
+		if ($this->type == Product::TYPE_SERVICE && !empty($this->duration_value)) {
+			// Duration
+			$datas['duration'] = '<br><b>'.$langs->trans("Duration").':</b> '.$this->duration_value;
+			if ($this->duration_value > 1) {
+				$dur = array("i"=>$langs->trans("Minutes"), "h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
+			} elseif ($this->duration_value > 0) {
+				$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
+			}
+			$datas['duration'] .= (!empty($this->duration_unit) && isset($dur[$this->duration_unit]) ? "&nbsp;".$langs->trans($dur[$this->duration_unit]) : '');
 		}
 		if (!empty($this->pmp) && $this->pmp) {
 			$datas['pmp'] = "<br><b>".$langs->trans("PMPValue").'</b>: '.price($this->pmp, 0, '', 1, -1, -1, $conf->currency);
