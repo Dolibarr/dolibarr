@@ -144,7 +144,7 @@ if (getDolGlobalString('PRODUIT_SOUSPRODUITS') && $object->element == 'product' 
 }
 
 // Serial / Eat-by date
-if (ismodEnabled('productbatch') &&
+if (isModEnabled('productbatch') &&
 (($object->element == 'product' && $object->hasbatch())
 || ($object->element == 'stock'))
 ) {

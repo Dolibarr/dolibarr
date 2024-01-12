@@ -344,7 +344,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 
 			$db->commit();
 
-			Header("Location: ".$redirection);
+			header("Location: ".$redirection);
 			exit;
 		}
 
@@ -609,7 +609,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 					}
 				}
 
-				Header("Location: ".$redirection);
+				header("Location: ".$redirection);
 				exit;
 			} else {
 				$db->rollback();
@@ -667,7 +667,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			$securekeyurl = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.$id, 2);
 			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.((int) $id).'&securekey='.urlencode($securekeyurl);
 
-			Header("Location: ".$redirection);
+			header("Location: ".$redirection);
 			exit;
 		}
 		//Header("Location: ".$urlback);

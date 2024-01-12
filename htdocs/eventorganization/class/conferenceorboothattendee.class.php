@@ -249,7 +249,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	{
 		global $langs;
 
-		if (!isValidEMail($this->email)) {
+		if (!isValidEmail($this->email)) {
 			$langs->load("errors");
 			$this->errors[] = $langs->trans("ErrorBadEMail", $this->email);
 			return -1;

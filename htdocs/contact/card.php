@@ -257,7 +257,7 @@ if (empty($reshook)) {
 			$action = 'create';
 		}
 
-		if (!empty($object->email) && !isValidEMail($object->email)) {
+		if (!empty($object->email) && !isValidEmail($object->email)) {
 			$langs->load("errors");
 			$error++;
 			$errors[] = $langs->trans("ErrorBadEMail", GETPOST('email', 'alpha'));
@@ -348,7 +348,7 @@ if (empty($reshook)) {
 			$action = 'edit';
 		}
 
-		if (!empty(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL)) && !isValidEMail(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL))) {
+		if (!empty(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL)) && !isValidEmail(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL))) {
 			$langs->load("errors");
 			$error++;
 			$errors[] = $langs->trans("ErrorBadEMail", GETPOST('email', 'alpha'));

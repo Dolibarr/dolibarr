@@ -1239,7 +1239,7 @@ class Societe extends CommonObject
 				//var_dump($conf->global->SOCIETE_EMAIL_MANDATORY);
 				if ($key == 'EMAIL') {
 					// Check for mandatory
-					if (getDolGlobalString('SOCIETE_EMAIL_MANDATORY') && !isValidEMail($this->email)) {
+					if (getDolGlobalString('SOCIETE_EMAIL_MANDATORY') && !isValidEmail($this->email)) {
 						$langs->load("errors");
 						$error++;
 						$this->errors[] = $langs->trans("ErrorBadEMail", $this->email).' ('.$langs->trans("ForbiddenBySetupRules").')';

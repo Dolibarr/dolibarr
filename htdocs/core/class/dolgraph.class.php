@@ -1342,7 +1342,7 @@ class DolGraph
 			if (empty($showlegend)) {
 				$this->stringtoshow .= 'legend: { display: false }, '."\n";
 			} else {
-				$this->stringtoshow .= 'legend: { maxWidth: '.round(intVal($this->width) / 2).', labels: { boxWidth: 15 }, position: \'' . (($showlegend && $showlegend == 2) ? 'right' : 'top') . '\' },'."\n";
+				$this->stringtoshow .= 'legend: { maxWidth: '.round(intval($this->width) / 2).', labels: { boxWidth: 15 }, position: \'' . (($showlegend && $showlegend == 2) ? 'right' : 'top') . '\' },'."\n";
 			}
 			if (is_array($this->tooltipsLabels) || is_array($this->tooltipsTitles)) {
 				$this->stringtoshow .= 'tooltip: { mode: \'nearest\',

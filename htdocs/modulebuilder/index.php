@@ -5036,7 +5036,7 @@ if ($module == 'initmodule') {
 			$dirins = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
 			$destdir = $dirins.'/'.strtolower($module);
 			$listofobject = dol_dir_list($destdir.'/class', 'files', 0, '\.class\.php$');
-			$objects = dolGetListOfObjectclasses($destdir);
+			$objects = dolGetListOfObjectClasses($destdir);
 
 			$leftmenus = array();
 
