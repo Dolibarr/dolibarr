@@ -201,3 +201,5 @@ CREATE TABLE llx_c_product_thirdparty_relation_type
 
 ALTER TABLE llx_c_tva ADD COLUMN type_vat smallint NOT NULL DEFAULT 0 AFTER fk_pays;
 
+ALTER TABLE llx_product DROP COLUMN onportal; 
+

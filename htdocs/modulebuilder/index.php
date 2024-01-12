@@ -3470,7 +3470,8 @@ if ($module == 'initmodule') {
 				foreach ($listofsetuppages as $setuppage) {
 					//var_dump($setuppage);
 					print '<tr><td>';
-					print '<span class="fa fa-file-o"></span> '.$langs->trans("SetupFile").' : <strong class="wordbreak">'.$modulelowercase.'/admin/'.$setuppage['relativename'].'</strong>';
+					print '<span class="fa fa-file-o"></span> '.$langs->trans("SetupFile").' : ';
+					print '<strong class="wordbreak bold"><a href="'.dol_buildpath($modulelowercase.'/admin/'.$setuppage['relativename'], 1).'" target="_test">'.$modulelowercase.'/admin/'.$setuppage['relativename'].'</a></strong>';
 					print '</td><td><a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&token='.newToken().'&format=php&file='.urlencode($modulelowercase.'/admin/'.$setuppage['relativename']).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 					print '</td></tr>';
 				}

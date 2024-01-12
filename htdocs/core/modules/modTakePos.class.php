@@ -295,11 +295,11 @@ class modTakePos extends DolibarrModules
 			}
 		}
 
-		//Create category if not exists
+		// Create product category DefaultPOSCatLabel if not exists
 		$categories = new Categorie($this->db);
 		$cate_arbo = $categories->get_full_arbo('product', 0, 1);
 		if (is_array($cate_arbo)) {
-			if (!count($cate_arbo)) {
+			if (!count($cate_arbo) || !getDolGlobalString('TAKEPOS_ROOT_CATEGORY_ID')) {
 				$category = new Categorie($this->db);
 
 				$category->label = $langs->trans("DefaultPOSCatLabel");
@@ -308,6 +308,8 @@ class modTakePos extends DolibarrModules
 				$result = $category->create($user);
 
 				if ($result > 0) {
+					dolibarr_set_const($this->db, 'TAKEPOS_ROOT_CATEGORY_ID', $result, 'chaine', 0, 'Id of category for products visible in TakePOS', $conf->entity);
+
 					/* TODO Create a generic product only if there is no product yet. If 0 product,  we create 1. If there is already product, it is better to show a message to ask to add product in the category */
 					/*
 					$product = new Product($this->db);
@@ -323,7 +325,7 @@ class modTakePos extends DolibarrModules
 			}
 		}
 
-		//Create cash account if not exists
+		// Create cash account CASH-POS / DefaultCashPOSLabel if not exists
 		if (!getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CASH1')) {
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 			$cashaccount = new Account($this->db);

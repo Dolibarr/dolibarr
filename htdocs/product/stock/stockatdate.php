@@ -442,7 +442,7 @@ if (GETPOST('dateyear', 'int') > 0) {
 // TODO Move this into the title line ?
 print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'stock', 0, '', '', $limit, 0, 0, 1);
 
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="liste centpercent">';
 
 $stocklabel = $langs->trans('StockAtDate');

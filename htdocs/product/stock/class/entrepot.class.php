@@ -23,7 +23,7 @@
 /**
  *  \file       htdocs/product/stock/class/entrepot.class.php
  *  \ingroup    stock
- *  \brief      Fichier de la classe de gestion des entrepots
+ *  \brief      File for class to manage warehouses
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
@@ -190,10 +190,10 @@ class Entrepot extends CommonObject
 	 *	Creation d'un entrepot en base
 	 *
 	 *	@param		User	$user		Object user that create the warehouse
-	 *	@param		bool	$notrigger	false=launch triggers after, true=disable triggers
+	 *	@param		bool	$notrigger	0=launch triggers after, 1=disable triggers
 	 *	@return		int					>0 if OK, =<0 if KO
 	 */
-	public function create($user, $notrigger = false)
+	public function create($user, $notrigger = 0)
 	{
 		global $conf;
 
@@ -271,10 +271,10 @@ class Entrepot extends CommonObject
 	 *
 	 *	@param		int		$id			id of warehouse to modify
 	 *	@param		User	$user		User object
-	 *	@param		bool 	$notrigger	false=launch triggers after, true=disable trigge
+	 *	@param		bool 	$notrigger	0=launch triggers after, 1=disable trigge
 	 *	@return		int				>0 if OK, <0 if KO
 	 */
-	public function update($id, $user, $notrigger = false)
+	public function update($id, $user, $notrigger = 0)
 	{
 		global $conf;
 

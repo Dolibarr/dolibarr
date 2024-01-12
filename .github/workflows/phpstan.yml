@@ -3,10 +3,7 @@
 name: PHPSTAN
 
 # Controls when the workflow will run
-on:
-  # Triggers the workflow on pull request events but only for the develop branch
-  pull_request:
-    branches: [ develop ]
+on: [push, pull_request ]
 concurrency:
     group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
     cancel-in-progress: true
@@ -45,9 +42,9 @@ jobs:
         uses: actions/cache/restore@v3
         with:
           path: ./.github/tmp
-          key: "phpstan-cache-PR-${{ matrix.php-version }}-${{ github.run_id }}"
+          key: "phpstan-cache-${{ matrix.php-version }}-${{ github.run_id }}"
           restore-keys: |
-            phpstan-cache-PR-${{ matrix.php-version }}-
+            phpstan-cache-${{ matrix.php-version }}-
       - name: Debug
         run: cd ./.github/tmp && ls -al
       - name: Run PHPSTAN
@@ -58,4 +55,4 @@ jobs:
         if: always()
         with:
           path: ./.github/tmp
-          key: "phpstan-cache-PR-${{ matrix.php-version }}-${{ github.run_id }}"
+          key: "phpstan-cache-${{ matrix.php-version }}-${{ github.run_id }}"

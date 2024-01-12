@@ -191,7 +191,7 @@ if (isModEnabled('project')) {
 }
 print '</tr>';
 
-// Label of mouvement of id of inventory
+// Label for movement of id of inventory
 $valformovementlabel = ((GETPOST("label") && (GETPOST('label') != $langs->trans("MovementCorrectStock", ''))) ? GETPOST("label") : $langs->trans("MovementCorrectStock", $productref));
 print '<tr>';
 print '<td>'.$langs->trans("MovementLabel").'</td>';
