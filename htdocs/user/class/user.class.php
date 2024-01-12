@@ -3334,7 +3334,7 @@ class User extends CommonObject
 		// When password is modified
 		if (!empty($this->pass)) {
 			if (getDolGlobalString('LDAP_FIELD_PASSWORD')) {
-				$info[getDolGlobalString('LDAP_FIELD_PASSWORD')] = $this->pass; // this->pass = mot de passe non crypte
+				$info[getDolGlobalString('LDAP_FIELD_PASSWORD')] = $this->pass; // this->pass = unencrypted password
 			}
 			if (getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED')) {
 				$info[getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED')] = dol_hash($this->pass, 'openldap'); // Create OpenLDAP password (see LDAP_PASSWORD_HASH_TYPE)
@@ -3352,7 +3352,7 @@ class User extends CommonObject
 			} elseif (!empty($this->pass_indatabase)) {
 				// Use $this->pass_indatabase value if exists
 				if (getDolGlobalString('LDAP_FIELD_PASSWORD')) {
-					$info[getDolGlobalString('LDAP_FIELD_PASSWORD')] = $this->pass_indatabase; // $this->pass_indatabase = mot de passe non crypte
+					$info[getDolGlobalString('LDAP_FIELD_PASSWORD')] = $this->pass_indatabase; // $this->pass_indatabase = unencrypted password
 				}
 				if (getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED')) {
 					$info[getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED')] = dol_hash($this->pass_indatabase, 'openldap'); // Create OpenLDAP password (see LDAP_PASSWORD_HASH_TYPE)

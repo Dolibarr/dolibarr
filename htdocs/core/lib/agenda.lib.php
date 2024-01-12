@@ -2,7 +2,7 @@
 /* Copyright (C) 2008-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022-2024  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,8 +48,26 @@
  * @param	int   			$resourceid	    Preselected value of resource for filter on resource
  * @return	void
  */
-function print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, $filtera, $filtert, $filterd, $pid, $socid, $action, $showextcals = array(), $actioncode = '', $usergroupid = '', $excludetype = '', $resourceid = 0)
-{
+function print_actions_filter(
+	$form,
+	$canedit,
+	$status,
+	$year,
+	$month,
+	$day,
+	$showbirthday,
+	$filtera,
+	$filtert,
+	$filterd,
+	$pid,
+	$socid,
+	$action,
+	$showextcals = array(),
+	$actioncode = '',
+	$usergroupid = 0,
+	$excludetype = '',
+	$resourceid = 0
+) {
 	global $user, $langs, $db, $hookmanager;
 	global $massaction;
 

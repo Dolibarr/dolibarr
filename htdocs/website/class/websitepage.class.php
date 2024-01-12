@@ -146,7 +146,7 @@ class WebsitePage extends CommonObject
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
-	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
 	 *  'css' is the CSS style to use on field. For example: 'maxwidth200'
@@ -236,7 +236,7 @@ class WebsitePage extends CommonObject
 	 *                                  - If this is 0, the value into $page will be used. If not found or $page not defined, the default page of website_id will be used or the first page found if not set.
 	 *                                  - If value is < 0, we must exclude this ID.
 	 * @param string    $website_id     Web site id (page name must also be filled if this parameter is used)
-	 * @param string    $page           Page name (website id must also be filled if this parameter is used). Exemple 'myaliaspage' or 'fr/myaliaspage'
+	 * @param string    $page           Page name (website id must also be filled if this parameter is used). Example 'myaliaspage' or 'fr/myaliaspage'
 	 * @param string    $aliasalt       Alternative alias to search page (slow)
 	 *
 	 * @return int Return integer <0 if KO, 0 if not found, >0 if OK
@@ -740,7 +740,7 @@ class WebsitePage extends CommonObject
 	}
 
 	/**
-	 *  Return a link to the user card (with optionaly the picto)
+	 *  Return a link to the user card (with optionally the picto)
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
 	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)

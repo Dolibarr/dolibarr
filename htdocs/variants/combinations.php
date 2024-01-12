@@ -497,7 +497,7 @@ if (!empty($id) || !empty($ref)) {
 
 	$listofvariantselected = '';
 
-	// Create or edit a varian
+	// Create or edit a variant
 	if ($action == 'add' || ($action == 'edit')) {
 		if ($action == 'add') {
 			$title = $langs->trans('NewProductCombination');

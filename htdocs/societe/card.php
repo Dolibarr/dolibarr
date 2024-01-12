@@ -1106,7 +1106,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
                         	$("#typent_id").change();
                         	$("#effectif_id").val(id_ef15);
                         	$("#effectif_id").change();
-							/* Force to recompute the width of a select2 field when it was hidden and then shown programatically */
+							/* Force to recompute the width of a select2 field when it was hidden and then shown programmatically */
 							if ($("#civility_id").data("select2")) {
 								$("#civility_id").select2({width: "resolve"});
 							}
@@ -1557,7 +1557,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			// Vat is used
 			print '<tr><td>'.$form->editfieldkey('VATIsUsed', 'assujtva_value', '', $object, 0).'</td>';
 			print '<td>';
-			print '<input id="assujtva_value" name="assujtva_value" type="checkbox" ' . (GETPOSTISSET('assujtva_value') ? 'checked="checked"' : 'checked="checked"') . ' value="1">'; // Assujeti par defaut en creation
+			print '<input id="assujtva_value" name="assujtva_value" type="checkbox" ' . (GETPOSTISSET('assujtva_value') ? 'checked="checked"' : 'checked="checked"') . ' value="1">'; // Assujeti par default en creation
 			print '</td>';
 			if ($conf->browser->layout == 'phone') {
 				print '</tr><tr>';

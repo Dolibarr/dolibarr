@@ -113,7 +113,7 @@ function recruitmentjobpositionPrepareHead($object)
 /**
  * Return string with full Url
  *
- * @param   int		$mode		      0=True url, 1=Url formated with colors
+ * @param   int		$mode		      0=True url, 1=Url formatted with colors
  * @param	string	$ref		      Ref of object
  * @param   int     $localorexternal  0=Url for browser, 1=Url for external access
  * @return	string				      Url string

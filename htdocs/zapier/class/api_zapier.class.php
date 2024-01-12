@@ -65,7 +65,7 @@ class Zapier extends DolibarrApi
 	/**
 	 * Get properties of a hook object
 	 *
-	 * Return an array with hook informations
+	 * Return an array with hook information
 	 *
 	 * @param   int             $id		ID of hook
 	 * @return  Object					Object with cleaned properties
@@ -94,7 +94,7 @@ class Zapier extends DolibarrApi
 	/**
 	 * Get list of possibles choices for module
 	 *
-	 * Return an array with hook informations
+	 * Return an array with hook information
 	 *
 	 * @return  array     data
 	 *
@@ -136,7 +136,7 @@ class Zapier extends DolibarrApi
 	 * @param int              $limit               Limit for list
 	 * @param int              $page                Page number
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-	 * @param string		   $properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of order objects
 	 *
 	 * @throws RestException
@@ -241,7 +241,7 @@ class Zapier extends DolibarrApi
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->hook->context['caller'] = $request_data['caller'];
 				continue;
 			}
