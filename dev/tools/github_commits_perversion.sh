@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 #
 # Count number of commits per user and per versions (using date for version detection)
 #
