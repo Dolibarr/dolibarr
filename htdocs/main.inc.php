@@ -1720,7 +1720,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		// Mobile appli like icon
 		$manifest = DOL_URL_ROOT.'/theme/'.$conf->theme.'/manifest.json.php';
 		$parameters = array('manifest'=>$manifest);
-		$resHook = $hookmanager->executeHooks('setManifest', $parameters); // Note that $action and $object may have been modified by some hooks
+		$resHook = $hookmanager->executeHooks('hookSetManifest', $parameters); // Note that $action and $object may have been modified by some hooks
 		if ($resHook > 0) {
 			$manifest = $hookmanager->resPrint; // Replace manifest.json
 		} else {
