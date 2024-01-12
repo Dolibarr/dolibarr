@@ -461,9 +461,9 @@ class KnowledgeRecord extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user       User that deletes
-	 * @param bool $notrigger  0=launch triggers after, 1=disable triggers
-	 * @return int             Return integer <0 if KO, >0 if OK
+	 * @param User 	$user       User that deletes
+	 * @param int 	$notrigger  0=launch triggers after, 1=disable triggers
+	 * @return int             	Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
@@ -503,8 +503,8 @@ class KnowledgeRecord extends CommonObject
 	 *
 	 *	@param  User	$user       User that delete
 	 *  @param	int		$idline		Id of line to delete
-	 *  @param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
-	 *  @return int         		>0 if OK, <0 if KO
+	 *  @param 	int 	$notrigger  0=launch triggers after, 1=disable triggers
+	 *  @return int         		Return >0 if OK, <0 if KO
 	 */
 	public function deleteLine(User $user, $idline, $notrigger = false)
 	{

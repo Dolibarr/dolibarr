@@ -1821,7 +1821,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	@param		float	$pu_ttc					Unit price TTC (used if $price_base_type is 'TTC')
 	 *	@param		int		$type					Type of line (0=product, 1=service)
 	 *	@param		int		$info_bits				More information
-	 *  @param		bool	$notrigger				Disable triggers
+	 *  @param		int		$notrigger				Disable triggers
 	 *  @param		int		$date_start				Date start of service
 	 *  @param		int		$date_end				Date end of service
 	 *  @param		array	$array_options			extrafields array
