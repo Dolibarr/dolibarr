@@ -110,7 +110,7 @@
 	</rule> -->
 
 
-	<!-- Check assignement have the = align on each line. Have 20 chars padding maximum and always show as errors -->
+	<!-- Check assignment have the = align on each line. Have 20 chars padding maximum and always show as errors -->
 	<!--  Disabled: Report some false warning
 		<rule ref="Generic.Formatting.MultipleStatementAlignment">
 		<properties>

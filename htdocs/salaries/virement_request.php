@@ -369,7 +369,7 @@ if ($resql) {
 	$i = 0;
 	$total = 0;
 
-	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder paymenttable">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("RefPayment").'</td>';
@@ -481,7 +481,7 @@ if ($object->paye == 0 && $hadRequest == 0) {
 			print '</form>';
 
 			if (getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT_SHOW_OLD_BUTTON')) {	// This is hidden, prefer to use mode enabled with STRIPE_SEPA_DIRECT_DEBIT
-				// TODO Replace this with a checkbox for each payment mode: "Send request to XXX immediatly..."
+				// TODO Replace this with a checkbox for each payment mode: "Send request to XXX immediately..."
 				print "<br>";
 				//add stripe sepa button
 				$buttonlabel = $langs->trans("MakeWithdrawRequestStripe");

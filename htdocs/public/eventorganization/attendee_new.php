@@ -350,7 +350,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 
 		$resultfetchthirdparty = 0;
 
-		$genericcompanyname = $langs->trans('EventParticipant').' '.($emailcompany ? $emailcompany : $email);	// Keep this label simple so we can retreive same thirdparty for another event
+		$genericcompanyname = $langs->trans('EventParticipant').' '.($emailcompany ? $emailcompany : $email);	// Keep this label simple so we can retrieve same thirdparty for another event
 
 		// Getting the thirdparty or creating it
 		$thirdparty = new Societe($db);
