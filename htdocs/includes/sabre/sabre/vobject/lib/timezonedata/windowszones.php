@@ -127,7 +127,7 @@ return [
   'Transbaikal Standard Time' => 'Asia/Chita',
   'Turkey Standard Time' => 'Europe/Istanbul',
   'Turks And Caicos Standard Time' => 'America/Grand_Turk',
-  'US Eastern Standard Time' => 'America/Indianapolis',
+  'US Eastern Standard Time' => 'America/Indiana/Indianapolis',
   'US Mountain Standard Time' => 'America/Phoenix',
   'UTC' => 'Etc/GMT',
   'UTC+12' => 'Etc/GMT-12',
