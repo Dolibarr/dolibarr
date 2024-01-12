@@ -78,7 +78,6 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 
-
 // Initialize technical objects
 $object = new CurrencyRate($db);
 $form = new Form($db);
@@ -346,7 +345,7 @@ if ($search_date_sync && $search_date_sync_end) {
 	$sql .= natural_search('cr.date_sync', $db->idate($search_date_sync));
 }
 if ($search_rate) {
-	$sql .= natural_search('cr.rate', $search_rate);
+	$sql .= natural_search('cr.rate', $search_rate, 1);
 }
 if ($search_code) {
 	$sql .= natural_search('m.code', $search_code);
