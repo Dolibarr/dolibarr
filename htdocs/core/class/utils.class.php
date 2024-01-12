@@ -2,6 +2,7 @@
 /* Copyright (C) 2016	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2021	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2022	Anthony Berton		<anthony.berton@bb2a.fr>
+ * Copyright (C) 2023	William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1404,7 +1405,7 @@ class Utils
 		}
 
 		$cron_job = new Cronjob($db);
-		$cron_job->fetchAll('DESC', 't.rowid', 100, 0, 1, '', 1);	// Fetch jobs that are currently running
+		$cron_job->fetchAll('DESC', 't.rowid', 100, 0, 1, [], 1);	// Fetch jobs that are currently running
 
 		// Iterate over all jobs in processing (this can't be this job since his state is set to 0 before)
 		foreach ($cron_job->lines as $job_line) {
