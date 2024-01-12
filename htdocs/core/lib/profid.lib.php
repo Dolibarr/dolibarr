@@ -183,15 +183,15 @@ function isValidTinForES($str)
 	if (!preg_match('/((^[A-Z]{1}[0-9]{7}[A-Z0-9]{1}$|^[T]{1}[A-Z0-9]{8}$)|^[0-9]{8}[A-Z]{1}$)/', $str)) {
 		return 0;
 	}
-	
+
 	$num = array();
 	for ($i = 0; $i < 9; $i++) {
 		$num[$i] = substr($str, $i, 1);
 	}
 
 	//Check NIF
-	if (preg_match('/(^[0-9]{8}[A-Z]{1}$)/', $string)) {
-		if ($num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr($string, 0, 8) % 23, 1)) {
+	if (preg_match('/(^[0-9]{8}[A-Z]{1}$)/', $str)) {
+		if ($num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr($str, 0, 8) % 23, 1)) {
 			return 1;
 		} else {
 			return -1;
@@ -206,8 +206,8 @@ function isValidTinForES($str)
 	$n = 10 - substr($sum, strlen($sum) - 1, 1);
 
 	//Check special NIF
-	if (preg_match('/^[KLM]{1}/', $string)) {
-		if ($num[8] == chr(64 + $n) || $num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr($string, 1, 8) % 23, 1)) {
+	if (preg_match('/^[KLM]{1}/', $str)) {
+		if ($num[8] == chr(64 + $n) || $num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr($str, 1, 8) % 23, 1)) {
 			return 1;
 		} else {
 			return -1;
@@ -215,7 +215,7 @@ function isValidTinForES($str)
 	}
 
 	//Check CIF
-	if (preg_match('/^[ABCDEFGHJNPQRSUVW]{1}/', $string)) {
+	if (preg_match('/^[ABCDEFGHJNPQRSUVW]{1}/', $str)) {
 		if ($num[8] == chr(64 + $n) || $num[8] == substr($n, strlen($n) - 1, 1)) {
 			return 2;
 		} else {
@@ -224,8 +224,8 @@ function isValidTinForES($str)
 	}
 
 	//Check NIE T
-	if (preg_match('/^[T]{1}/', $string)) {
-		if ($num[8] == preg_match('/^[T]{1}[A-Z0-9]{8}$/', $string)) {
+	if (preg_match('/^[T]{1}/', $str)) {
+		if ($num[8] == preg_match('/^[T]{1}[A-Z0-9]{8}$/', $str)) {
 			return 3;
 		} else {
 			return -3;
@@ -233,8 +233,8 @@ function isValidTinForES($str)
 	}
 
 	//Check NIE XYZ
-	if (preg_match('/^[XYZ]{1}/', $string)) {
-		if ($num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr(str_replace(array('X', 'Y', 'Z'), array('0', '1', '2'), $string), 0, 8) % 23, 1)) {
+	if (preg_match('/^[XYZ]{1}/', $str)) {
+		if ($num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr(str_replace(array('X', 'Y', 'Z'), array('0', '1', '2'), $str), 0, 8) % 23, 1)) {
 			return 3;
 		} else {
 			return -3;
