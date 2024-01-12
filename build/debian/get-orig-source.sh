@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# shellcheck disable=2034,2086,2103,2164
+
 tmpdir=$(mktemp -d)
 
 

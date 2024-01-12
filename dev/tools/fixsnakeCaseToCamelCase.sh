@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# shellcheck disable=2002,2004,2028,2034,2053,2068,2086,2116,2143,2207
+
 ## Need "rpl" package
 RPL_INSTALLED=$(dpkg -s rpl)
 if [[ -z ${RPL_INSTALLED} ]]; then

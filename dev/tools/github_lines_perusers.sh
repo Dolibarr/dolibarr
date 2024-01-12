@@ -3,6 +3,8 @@
 # Count number of lines modified per user for a given branch
 #
 
+# shellcheck disable=2002,2086,2268
+
 if [ "x$2" = "x" ]; then
 	echo "Usage: $0  origin/branchstart|tagnamestart|START  origin/branchend|tagnameend|HEAD"
 	exit

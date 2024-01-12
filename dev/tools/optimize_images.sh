@@ -2,6 +2,8 @@
 # Borrowed from https://gist.github.com/lgiraudel/6065155
 # Inplace mode added by Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
 
+# shellcheck disable=2003,2006,2034,2046,2086,2166,2268
+
 PROGNAME=${0##*/}
 INPUT=''
 QUIET='0'
