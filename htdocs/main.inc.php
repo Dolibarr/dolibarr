@@ -1721,8 +1721,10 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		$manifest = DOL_URL_ROOT.'/theme/'.$conf->theme.'/manifest.json.php';
 		$parameters = array('manifest'=>$manifest);
 		$resHook = $hookmanager->executeHooks('setManifest', $parameters); // Note that $action and $object may have been modified by some hooks
-		if ($resHook == 1) {
+		if ($resHook > 0) {
 			$manifest = $hookmanager->resPrint; // Replace manifest.json
+		} else {
+			$manifest .= $hookmanager->resPrint; // Concat to actual manifest declaration
 		}
 		if (!empty($manifest)) {
 			print '<link rel="manifest" href="'.$manifest.'" />'."\n";
