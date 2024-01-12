@@ -102,7 +102,7 @@ with
 * Replace in tcpdf.php
 
 			if (!@TCPDF_STATIC::file_exists($file)) {
-				return false;	
+				return false;
 			}
 
 with
@@ -116,7 +116,7 @@ with
 					$file = $tfile;
 				}
 			}
-			
+
 * Replace in tcpdf.php
 
 		if (($imgsrc[0] === '/') AND !empty($_SERVER['DOCUMENT_ROOT']) AND ($_SERVER['DOCUMENT_ROOT'] != '/')) {
@@ -138,7 +138,6 @@ with
 		}
 		elseif (($imgsrc[0] === '/') AND !empty($_SERVER['DOCUMENT_ROOT']) AND ($_SERVER['DOCUMENT_ROOT'] != '/')) {
 
-
 * In tecnickcom/tcpdf/include/tcpdf_static.php, in function fopenLocal, replace
 
 		if (strpos($filename, '://') === false) {
@@ -154,16 +153,16 @@ with
         elseif (strpos($filename, '://') === false)
 
 * To avoid to have QRcode changed because generated with a random mask, replace
-define('QR_FIND_FROM_RANDOM', 2);
-with
-define('QR_FIND_FROM_RANDOM', false);
+	define('QR_FIND_FROM_RANDOM', 2);
+	with:
+	define('QR_FIND_FROM_RANDOM', false);
 
 * Removed useless directories ("examples", "tools")
 
-* Optionnaly, removed all fonts except 
-    dejavusans* (used by greek, arab, persan, romanian, turkish), 
-    freemono* (russian), 
-    cid*+msungstdlight+stsongstdlight+uni2cid* (chinese), 
+* Optionnaly, removed all fonts except
+    dejavusans* (used by greek, arab, persan, romanian, turkish),
+    freemono* (russian),
+    cid*+msungstdlight+stsongstdlight+uni2cid* (chinese),
     helvetica* (all other languages),
     zapfdingbats.php (for special chars like form checkboxes)
 
@@ -175,15 +174,15 @@ In htdocs/includes/tecnickcom/tcpdf/tcpdf.php
 * In tecnickcom/tcpdf/include/tcpdf_static, in function intToRoman, right at the beginning
   of the function, replace:
 
-		$roman = '';
+	$roman = '';
 
-with:
+	with:
 
-		$roman = '';
-		if ($number >= 4000) {
-			// do not represent numbers above 4000 in Roman numerals
-			return strval($number);
-		}
+	$roman = '';
+	if ($number >= 4000) {
+		// do not represent numbers above 4000 in Roman numerals
+		return strval($number);
+	}
 
 
 
@@ -201,7 +200,7 @@ with:
 
 * Fix syntax error by replacing
 	} elseif (($key == '/Index') AND ($v[0] == PDF_TYPE_ARRAY AND count($v[1] >= 2))) {
-with
+	with
 	} elseif (($key == '/Index') AND ($v[0] == PDF_TYPE_ARRAY AND count($v[1]) >= 2)) {
 
 * Fix php fatal error on php 8.0 on tcpdi.php
@@ -292,6 +291,24 @@ RESTLER:
 	empty($value[0]) ? null :
 	empty($value[1]) ? null :
 
+* Add a test into AutoLoader.php to complete function loadThisLoader and test if property exists before calling it. For this replace code
+
+	if (false !== $file = $b::$loader[1]($className) && $this->exists($className, $b::$loader[1])) {
+        	return $file;
+        }
+
+	with:
+
+	//avoid PHP Fatal error:  Uncaught Error: Access to undeclared static property: Composer\\Autoload\\ClassLoader::$loader
+	//in case of multiple autoloader systems
+	if(property_exists($b, $loader[1])) {
+		if (false !== $file = $b::$loader[1]($className)
+			&& $this->exists($className, $b::$loader[1])) {
+			return $file;
+		}
+	}
+
+
 +With swagger 2 provided into /explorer:
 ----------------------------------------
 
@@ -305,16 +322,15 @@ PARSEDOWN
 * Add support of css by adding in Parsedown.php:
 
 	// @CHANGE LDR
-	'class' => $Link['element']['attributes']['class'] 
+	'class' => $Link['element']['attributes']['class']
 
 	...
-	
+
 	// @CHANGE LDR
-    if (preg_match('/{([^}]+)}/', $remainder, $matches2))
-    {
-        $Element['attributes']['class'] = $matches2[1];
-       	$remainder = preg_replace('/{'.preg_quote($matches2[1],'/').'}/', '', $remainder);
-    }
+	if (preg_match('/{([^}]+)}/', $remainder, $matches2)) {
+		$Element['attributes']['class'] = $matches2[1];
+       		$remainder = preg_replace('/{'.preg_quote($matches2[1],'/').'}/', '', $remainder);
+    	}
 
 
 	// @CHANGE LDR
@@ -347,7 +363,7 @@ Add into Class Google of file OAuth2/Service/Google:
         }
         $this->approvalPrompt = $prompt;
     }
-    
+
 
 
 JEDITABLE.JS
