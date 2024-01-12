@@ -45,36 +45,12 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 	 */
 	public function __construct($db)
 	{
-		$this->db = $db;
-
-		$this->name = preg_replace('/^Interface/i', '', get_class($this));
+		parent::__construct($db);
 		$this->family = "demo";
 		$this->description = "MyModule triggers.";
-		// 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'development';
+		$this->version = self::VERSIONS['dev'];
 		$this->picto = 'mymodule@mymodule';
 	}
-
-	/**
-	 * Trigger name
-	 *
-	 * @return string Name of trigger file
-	 */
-	public function getName()
-	{
-		return $this->name;
-	}
-
-	/**
-	 * Trigger description
-	 *
-	 * @return string Description of trigger file
-	 */
-	public function getDesc()
-	{
-		return $this->description;
-	}
-
 
 	/**
 	 * Function called when a Dolibarrr business event is done.
