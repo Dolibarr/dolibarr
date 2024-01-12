@@ -357,7 +357,7 @@ $sql .= " WHERE m.code <> '".$db->escape($conf->currency)."'";
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-$sql .= " GROUP BY cr.rowid, cr.date_sync, cr.rate, m.code, cr.entity, m.code, m.name";
+$sql .= " GROUP BY cr.rowid, cr.date_sync, cr.rate, cr.rate_indirect, m.code, cr.entity, m.code, m.name";
 
 // Add fields from hooks
 $parameters = array();
