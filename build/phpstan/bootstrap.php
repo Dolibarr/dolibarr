@@ -15,5 +15,6 @@ if (!defined("NOSESSION")) {
 if (!defined("NOHTTPSREDIRECT")) {
 	define("NOHTTPSREDIRECT", '1');
 }
+
 global $conf, $langs, $user, $db;
 include_once __DIR__ . '/../../htdocs/main.inc.php';

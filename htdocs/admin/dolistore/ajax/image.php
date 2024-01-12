@@ -25,7 +25,7 @@ if (!defined('NOTOKENRENEWAL')) {
 /**
  *      \file       htdocs/admin/dolistore/ajax/image.php
  *      \ingroup    admin
- *      \brief      Page des informations dolistore
+ *      \brief      Page des information dolistore
  */
 
 require "../../../main.inc.php";

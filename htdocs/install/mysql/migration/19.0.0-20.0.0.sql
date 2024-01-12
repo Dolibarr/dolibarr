@@ -161,6 +161,12 @@ ALTER TABLE llx_usergroup_extrafields ADD UNIQUE INDEX uk_usergroup_extrafields 
 
 UPDATE llx_categorie SET date_creation = tms, tms = tms WHERE date_creation IS NULL AND tms IS NOT NULL;
 
+ALTER TABLE llx_product_price ADD COLUMN price_label varchar(255) AFTER fk_user_author;
+ALTER TABLE llx_product_customer_price_log ADD COLUMN price_label varchar(255) AFTER fk_user;
+ALTER TABLE llx_product_customer_price ADD COLUMN price_label varchar(255) AFTER fk_user;
+ALTER TABLE llx_product ADD COLUMN price_label varchar(255) AFTER price_base_type;
+
+
 CREATE TABLE llx_product_thirdparty
 (
     rowid                               integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
@@ -192,6 +198,10 @@ CREATE TABLE llx_c_product_thirdparty_relation_type
     active tinyint default 1 NOT NULL
 ) ENGINE = innodb;
 
+
+ALTER TABLE llx_c_tva ADD COLUMN type_vat smallint NOT NULL DEFAULT 0 AFTER fk_pays;
+
+
 -- Dispatcher for virtual products
 ALTER TABLE llx_expeditiondet ADD COLUMN fk_parent integer NULL AFTER fk_origin_line;
 ALTER TABLE llx_expeditiondet ADD COLUMN fk_product integer NULL AFTER fk_parent;
@@ -199,3 +209,5 @@ ALTER TABLE llx_expeditiondet ADD INDEX idx_expeditiondet_fk_parent (fk_parent);
 ALTER TABLE llx_expeditiondet ADD INDEX idx_expeditiondet_fk_poduct (fk_product);
 ALTER TABLE llx_expeditiondet ADD CONSTRAINT fk_expeditiondet_fk_parent FOREIGN KEY (fk_parent) REFERENCES llx_expeditiondet (rowid);
 ALTER TABLE llx_expeditiondet ADD CONSTRAINT fk_expeditiondet_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
+
+UPDATE llx_expeditiondet as ed LEFT JOIN llx_commandedet as cd ON cd.rowid = ed.fk_origin_line SET ed.fk_product = cd.fk_product WHERE ed.fk_product IS NULL;

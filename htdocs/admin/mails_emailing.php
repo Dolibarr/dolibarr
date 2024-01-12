@@ -516,7 +516,7 @@ if ($action == 'edit') {
 	print '<span class="opacitymedium">'.$langs->trans("EMailsDesc")."</span><br>\n";
 	print "<br><br>\n";
 
-	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td></td></tr>';
 
@@ -733,7 +733,7 @@ if ($action == 'edit') {
 		$formmail->ckeditortoolbar = 'dolibarr_mailings';
 		// Tableau des substitutions
 		$formmail->substit = $substitutionarrayfortest;
-		// Tableau des parametres complementaires du post
+		// Tableau des parameters complementaires du post
 		$formmail->param["action"] = "send";
 		$formmail->param["models"] = "body";
 		$formmail->param["mailid"] = 0;

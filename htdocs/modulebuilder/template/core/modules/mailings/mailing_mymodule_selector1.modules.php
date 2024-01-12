@@ -15,12 +15,12 @@ dol_include_once("/mymodule/class/myobject.class.php");
 /**
  * mailing_mailinglist_mymodule
  */
-class mailing_mailinglist_mymodule_myobject extends MailingTargets
+class mailing_mailing_mymodule_selector1 extends MailingTargets
 {
 	// CHANGE THIS: Put here a name not already used
-	public $name = 'mailinglist_mymodule_myobject';
+	public $name = 'mailing_mymodule_selector1';
 	// CHANGE THIS: Put here a description of your selector module
-	public $desc = 'My object emailing target selector';
+	public $desc = 'Emailing target selector1';
 	// CHANGE THIS: Set to 1 if selector is available for admin users only
 	public $require_admin = 0;
 
@@ -29,9 +29,9 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 	public $require_module = array();
 
 	/**
-	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 * @var string 	String with the name of icon for myobject. Can be an image filename like 'object_myobject.png' of a font awesome code 'fa-...'.
 	 */
-	public $picto = 'mymodule@mymodule';
+	public $picto = 'generic';
 
 	/**
 	 * @var DoliDB Database handler.

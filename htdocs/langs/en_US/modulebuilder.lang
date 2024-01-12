@@ -183,3 +183,7 @@ DictionaryDeleted=Dictionary <b>%s</b> removed successfully
 PropertyModuleUpdated=Property <b>%s</b> has been update successfully
 InfoForApiFile=* When you generate file for the first time then all methods will be created <strong>for each object.</strong><br>* When you click in <strong>remove</strong> you just remove all methods for the <strong>selected object</strong>.
 SetupFile=Page for module setup 
+EmailingSelectors=Emailings selectors
+EmailingSelectorDesc=You can generate and edit here the class files to provide new email target selectors for the mass emailing module
+EmailingSelectorFile=Emails selector file
+NoEmailingSelector=No emails selector file

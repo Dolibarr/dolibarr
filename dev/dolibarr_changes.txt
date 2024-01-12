@@ -41,6 +41,14 @@ With
 	protected $connector;
 
 
+SABRE:
+------
+rm -fr ./htdocs/includes/sabre/sabre/bin;
+rm -fr ./htdocs/includes/sabre/sabre/*/bin;
+rm -fr ./htdocs/includes/sabre/sabre/*/*/bin;
+rm -fr ./htdocs/includes/sabre/sabre/*/*/*/bin;
+rm -fr ./htdocs/includes/sabre/sabre/*/*/*/*/bin;
+
 
 NUSOAP:
 -------
@@ -65,6 +73,20 @@ NUSOAP:
 
 TCPDF:
 ------
+* Modify in tcpdf.php: make TCPDF::_out public.
+  (htdocs/core/lib/pdf.lib.php uses it as a public method)
+
+  Change:
+      protected function _out($s)
+  to
+      public function _out($s)
+
+  Change in method's _out phpdoc:
+
+      * @protected
+  to
+      * @public
+
 * Replace in tcpdf.php:
             if (isset($this->imagekeys)) {
                 foreach($this->imagekeys as $file) {

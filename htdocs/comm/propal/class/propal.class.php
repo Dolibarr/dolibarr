@@ -18,6 +18,7 @@
  * Copyright (C) 2022       ATM Consulting          <contact@atm-consulting.fr>
  * Copyright (C) 2022       OpenDSI                 <support@open-dsi.fr>
  * Copyright (C) 2022      	Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,14 +137,14 @@ class Propal extends CommonObject
 	 * Status of the quote
 	 * @var int
 	 * @deprecated Try to use $status now
-	 * @see Propal::STATUS_DRAFT, Propal::STATUS_VALIDATED, Propal::STATUS_SIGNED, Propal::STATUS_NOTSIGNED, Propal::STATUS_BILLED
+	 * @see Propal::STATUS_DRAFT, Propal::STATUS_VALIDATED, Propal::STATUS_SIGNED, Propal::STATUS_NOTSIGNED, Propal::STATUS_BILLED, Propal::STATUS_CANCELED
 	 */
 	public $statut;
 
 	/**
 	 * Status of the quote
 	 * @var int
-	 * @see Propal::STATUS_DRAFT, Propal::STATUS_VALIDATED, Propal::STATUS_SIGNED, Propal::STATUS_NOTSIGNED, Propal::STATUS_BILLED
+	 * @see Propal::STATUS_DRAFT, Propal::STATUS_VALIDATED, Propal::STATUS_SIGNED, Propal::STATUS_NOTSIGNED, Propal::STATUS_BILLED, Propal::STATUS_CANCELED
 	 */
 	public $status;
 
@@ -373,6 +374,10 @@ class Propal extends CommonObject
 	);
 	// END MODULEBUILDER PROPERTIES
 
+	/**
+	 * Canceled status
+	 */
+	const STATUS_CANCELED = -1;
 	/**
 	 * Draft status
 	 */
@@ -2859,6 +2864,53 @@ class Propal extends CommonObject
 		}
 	}
 
+	/**
+	 *	Cancel the proposal
+	 *
+	 *	@param  	User	$user	Object user
+	 *	@return		int				Return integer if KO <0 , if OK >0
+	 */
+	public function setCancel(User $user)
+	{
+		$error = 0;
+
+		$this->db->begin();
+
+		$sql = "UPDATE ". MAIN_DB_PREFIX . "propal";
+		$sql .= " SET fk_statut = " . self::STATUS_CANCELED . ",";
+		$sql .= " fk_user_modif = " . ((int) $user->id);
+		$sql .= " WHERE rowid = " . ((int) $this->id);
+
+		dol_syslog(get_class($this)."::cancel", LOG_DEBUG);
+		if ($this->db->query($sql)) {
+			if (!$error) {
+				// Call trigger
+				$result = $this->call_trigger('PROPAL_CANCEL', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+
+			if (!$error) {
+				$this->statut = self::STATUS_CANCELED;
+				$this->db->commit();
+				return 1;
+			} else {
+				foreach ($this->errors as $errmsg) {
+					dol_syslog(get_class($this)."::cancel ".$errmsg, LOG_ERR);
+					$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+				}
+				$this->db->rollback();
+				return -1;
+			}
+		} else {
+			$this->error = $this->db->error();
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Set draft status
@@ -3410,11 +3462,13 @@ class Propal extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			$langs->load("propal");
+			$this->labelStatus[-1] = $langs->transnoentitiesnoconv("PropalStatusCanceled");
 			$this->labelStatus[0] = $langs->transnoentitiesnoconv("PropalStatusDraft");
 			$this->labelStatus[1] = $langs->transnoentitiesnoconv("PropalStatusValidated");
 			$this->labelStatus[2] = $langs->transnoentitiesnoconv("PropalStatusSigned");
 			$this->labelStatus[3] = $langs->transnoentitiesnoconv("PropalStatusNotSigned");
 			$this->labelStatus[4] = $langs->transnoentitiesnoconv("PropalStatusBilled");
+			$this->labelStatusShort[-1] = $langs->transnoentitiesnoconv("PropalStatusCanceledShort");
 			$this->labelStatusShort[0] = $langs->transnoentitiesnoconv("PropalStatusDraftShort");
 			$this->labelStatusShort[1] = $langs->transnoentitiesnoconv("PropalStatusValidatedShort");
 			$this->labelStatusShort[2] = $langs->transnoentitiesnoconv("PropalStatusSignedShort");
@@ -3423,7 +3477,9 @@ class Propal extends CommonObject
 		}
 
 		$statusType = '';
-		if ($status == self::STATUS_DRAFT) {
+		if ($status == self::STATUS_CANCELED) {
+			$statusType = 'status9';
+		} elseif ($status == self::STATUS_DRAFT) {
 			$statusType = 'status0';
 		} elseif ($status == self::STATUS_VALIDATED) {
 			$statusType = 'status1';

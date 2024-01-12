@@ -2746,7 +2746,7 @@ class Commande extends CommonOrder
 		}
 		$sql .= " WHERE c.entity IN (".getEntity('commande').")";
 		$sql .= " AND c.fk_soc = s.rowid";
-		if (!$user->hasRight('societe', 'client', 'voir')) { //restriction
+		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($socid) {
@@ -4020,6 +4020,8 @@ class Commande extends CommonOrder
 
 		$this->multicurrency_tx = 1;
 		$this->multicurrency_code = $conf->currency;
+
+		$this->status = $this::STATUS_DRAFT;
 
 		// Lines
 		$nbp = 5;

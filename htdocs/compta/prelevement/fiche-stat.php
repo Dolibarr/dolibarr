@@ -204,7 +204,7 @@ if ($id > 0 || $ref) {
 		print load_fiche_titre($langs->trans("StatisticsByLineStatus"), '', '');
 
 		print"\n<!-- debut table -->\n";
-		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Status").'</td><td class="right">'.$langs->trans("Amount").'</td><td class="right">%</td></tr>';

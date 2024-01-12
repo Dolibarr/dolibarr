@@ -49,7 +49,14 @@ class PriceExpression
 	 */
 	public $id;
 
+	/**
+	 * @var string title
+	 */
 	public $title;
+
+	/**
+	 * @var string math expression
+	 */
 	public $expression;
 
 	/**
@@ -75,7 +82,7 @@ class PriceExpression
 	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
 	 *  @return int      		   	 Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create($user, $notrigger = 0)
+	public function create(User $user, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -163,7 +170,7 @@ class PriceExpression
 	/**
 	 *    List all price expressions
 	 *
-	 *    @return	array|int				Array of price expressions, <0 if ko
+	 *    @return	PriceExpression[]|int				Array of price expressions, <0 if ko
 	 */
 	public function list_price_expression()
 	{
@@ -198,7 +205,7 @@ class PriceExpression
 	/**
 	 *  Returns any existing rowid with specified title
 	 *
-	 *  @param		String	$title  Title of expression
+	 *  @param		string	$title  Title of expression
 	 *  @return		int			    Return integer < 0 if KO, 0 if OK but not found, > 0 rowid
 	 */
 	public function find_title($title)
@@ -231,7 +238,7 @@ class PriceExpression
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
 	 */
-	public function update($user = 0, $notrigger = 0)
+	public function update(User $user, $notrigger = 0)
 	{
 		$error = 0;
 

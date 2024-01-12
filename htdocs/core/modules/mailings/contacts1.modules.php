@@ -67,7 +67,7 @@ class mailing_contacts1 extends MailingTargets
 	 */
 	public function getSqlArrayForStats()
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$langs->load("commercial");
 
