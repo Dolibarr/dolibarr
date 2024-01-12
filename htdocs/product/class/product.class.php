@@ -1438,11 +1438,11 @@ class Product extends CommonObject
 				}
 			}
 
-            // cancel delete in product on Bom
+            // Cancel delete product on Bom
             if(! $error) {
                 $sql = " SELECT fk_product";
                 $sql .= " FROM ".$this->db->prefix().'bom_bom';
-                $sql .= " WHERE fk_product =".$this->id;
+                $sql .= " WHERE fk_product =".(int) $this->id;
 
                 $result = $this->db->query($sql);
                 if($result) {
@@ -1453,10 +1453,12 @@ class Product extends CommonObject
                     }
                 }
             }
+
+            // Cancel delete product on BomLine
             if(! $error) {
                 $sql = " SELECT fk_product";
                 $sql .= " FROM ".$this->db->prefix().'bom_bomline';
-                $sql .= " WHERE fk_product =".$this->id;
+                $sql .= " WHERE fk_product =". (int) $this->id;
 
                 $result = $this->db->query($sql);
                 if($result) {
@@ -1467,9 +1469,6 @@ class Product extends CommonObject
                     }
                 }
             }
-
-            // cancel delete in product on BomLine
-
 
 			// Delete all child tables
 			if (!$error) {
