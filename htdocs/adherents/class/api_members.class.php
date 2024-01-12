@@ -46,7 +46,7 @@ class Members extends DolibarrApi
 	 */
 	public function __construct()
 	{
-		global $db, $conf;
+		global $db;
 		$this->db = $db;
 	}
 
