@@ -156,7 +156,7 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 		$localobject->initAsSpecimen();
 		$localobject->fetch_thirdparty();
 
-		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1915);	// we use year 1915 to be sure to not have existing invoice for this year (usefull only if numbering is {0000@1}
+		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1915);	// we use year 1915 to be sure to not have existing invoice for this year (useful only if numbering is {0000@1}
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
 		print __METHOD__." result=".$result."\n";
@@ -181,7 +181,7 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals('1915-0001', $result, "Test to get last value with param 'last'");
 		$result=$numbering->getNextValue($mysoc, $localobject2);
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('1916-0002', $result);				// counter must be now 2 (not reseted)
+		$this->assertEquals('1916-0002', $result);				// counter must be now 2 (not reset)
 		$result2=$localobject2->create($user, 1);
 		print __METHOD__." result2=".$result."\n";
 		$result3=$localobject2->validate($user, $result);		// create invoice by forcing ref
@@ -228,7 +228,7 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject3);
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('1911-0001', $result, 'Test for {yyyy}-{0000@1} 3nd invoice, same day');	// counter must be now 1
+		$this->assertEquals('1911-0001', $result, 'Test for {yyyy}-{0000@1} 3rd invoice, same day');	// counter must be now 1
 
 		// Same but we add month after year
 		$conf->global->FACTURE_MERCURE_MASK_CREDIT='{yyyy}{mm}-{0000@1}';
@@ -259,7 +259,7 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 		$result2=$localobject2->create($user, 1);
 		$result3=$localobject2->validate($user, $result);
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('192101-0001', $result);			// counter must be reseted to 1
+		$this->assertEquals('192101-0001', $result);			// counter must be reset to 1
 		$result=$localobject2->is_erasable();
 		print __METHOD__." is_erasable=".$result."\n";
 		$this->assertGreaterThanOrEqual(1, $result);						// Can be deleted
@@ -293,7 +293,7 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 		$result2=$localobject2->create($user, 1);
 		$result3=$localobject2->validate($user, $result);
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('0125-0002', $result, 'Test for {mm}{yy}-{0000@1} 2st invoice');			// counter must be now 2
+		$this->assertEquals('0125-0002', $result, 'Test for {mm}{yy}-{0000@1} 2nd invoice');			// counter must be now 2
 		$result=$localobject2->is_erasable();
 		print __METHOD__." is_erasable=".$result."\n";
 		$this->assertGreaterThanOrEqual(1, $result);						// Can be deleted
@@ -681,7 +681,7 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 		$localobject->initAsSpecimen();
 		$localobject->fetch_thirdparty();
 
-		$localobject->date_creation = dol_mktime(12, 0, 0, 1, 1, 1980);	// we use year 1915 to be sure to not have existing invoice for this year (usefull only if numbering is {0000@1}
+		$localobject->date_creation = dol_mktime(12, 0, 0, 1, 1, 1980);	// we use year 1915 to be sure to not have existing invoice for this year (useful only if numbering is {0000@1}
 		$numbering=new mod_expedition_safor();
 		$result=$numbering->getNextValue($mysoc, $localobject);
 

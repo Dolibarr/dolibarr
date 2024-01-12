@@ -597,7 +597,7 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 		dol_copy($file, $dirsrcpath.'/file.csv');
 		$result=dol_move_dir($dirsrcpath, $dirdestpath, 1, 1, 1);
 		print __METHOD__." result=".$result."\n";
-		$this->assertTrue($result, 'move of directory with file whitout rename needed in directory');
+		$this->assertTrue($result, 'move of directory with file without rename needed in directory');
 
 		// To test a move with a directory to rename in src directory
 		dol_mkdir($dirsrcpath);
@@ -613,6 +613,6 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 		dol_mkdir($dirsrcpath.'/notorename');
 		$result=dol_move_dir($dirsrcpath, $dirdestpath, 1, 1, 1);
 		print __METHOD__." result=".$result."\n";
-		$this->assertTrue($result, 'move of directory with directory whitout rename needed in directory');
+		$this->assertTrue($result, 'move of directory with directory without rename needed in directory');
 	}
 }
