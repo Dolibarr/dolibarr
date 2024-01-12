@@ -2574,12 +2574,12 @@ if (empty($reshook)) {
 				setEventMessages($mesg, null, 'warnings');
 				$error++;
 				$result = -1;
-			} elseif ($progress < $percent) {
-				$mesg = '<div class="warning">'.$langs->trans("CantBeLessThanMinPercent").'</div>';
-				setEventMessages($mesg, null, 'warnings');
-				$error++;
-				$result = -1;
 			}
+		} elseif ($object->situation_cycle_ref > 0 && $progress < $percent) {
+			$mesg = '<div class="warning">'.$langs->trans("CantBeLessThanMinPercent").'</div>';
+			setEventMessages($mesg, null, 'warnings');
+			$error++;
+			$result = -1;
 		}
 
 		$remise_percent = price2num(GETPOST('remise_percent'), '', 2);
