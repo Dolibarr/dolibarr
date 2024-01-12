@@ -792,7 +792,7 @@ class FormMail extends Form
 
 			// Ask delivery receipt
 			if (!empty($this->withdeliveryreceipt) && getDolGlobalInt('MAIN_EMAIL_SUPPORT_ACK')) {
-				$out .= $this->getHtmlForDeliveryReceipt();
+				$out .= $this->getHtmlForDeliveryreceipt();
 			}
 
 			// Topic

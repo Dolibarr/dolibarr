@@ -400,7 +400,7 @@ function LoadProducts(position, issubcat) {
 			}
 			$("#prowatermark"+ishow).hide();
 			ishow++; //Next product to show after print data product
-			idata++; //Next data everytime
+			idata++; //Next data every time
 		}
 	});
 
@@ -475,7 +475,7 @@ function MoreProducts(moreorless) {
 			}
 			$("#prowatermark"+ishow).hide();
 			ishow++; //Next product to show after print data product
-			idata++; //Next data everytime
+			idata++; //Next data every time
 		}
 	});
 

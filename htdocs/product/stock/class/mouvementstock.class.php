@@ -179,7 +179,7 @@ class MouvementStock extends CommonObject
 	 *	@param		string			$batch				batch number
 	 *	@param		boolean			$skip_batch			If set to true, stock movement is done without impacting batch record
 	 * 	@param		int				$id_product_batch	Id product_batch (when skip_batch is false and we already know which record of product_batch to use)
-	 *  @param		int				$disablestockchangeforsubproduct	Disable stock change for sub-products of kit (usefull only if product is a subproduct)
+	 *  @param		int				$disablestockchangeforsubproduct	Disable stock change for sub-products of kit (useful only if product is a subproduct)
 	 *  @param		int				$donotcleanemptylines				Do not clean lines in stock table with qty=0 (because we want to have this done by the caller)
 	 * 	@param		boolean			$force_update_batch	Allows to add batch stock movement even if $product doesn't use batch anymore
 	 *	@return		int									Return integer <0 if KO, 0 if fk_product is null or product id does not exists, >0 if OK
@@ -284,7 +284,7 @@ class MouvementStock extends CommonObject
 		}
 
 		// Define if we must make the stock change (If product type is a service or if stock is used also for services)
-		// Only record into stock tables wil be disabled by this (the rest like writing into lot table or movement of subproucts are done)
+		// Only record into stock tables will be disabled by this (the rest like writing into lot table or movement of subproucts are done)
 		$movestock = 0;
 		if ($product->type != Product::TYPE_SERVICE || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 			$movestock = 1;
@@ -633,7 +633,7 @@ class MouvementStock extends CommonObject
 			}
 			// End call triggers
 
-			// Check unicity for serial numbered equipments once all movement were done.
+			// Check unicity for serial numbered equipment once all movement were done.
 			if (!$error && isModEnabled('productbatch') && $product->hasbatch() && !$skip_batch) {
 				if ($product->status_batch == 2 && $qty > 0) {	// We check only if we increased qty
 					if ($this->getBatchCount($fk_product, $batch) > 1) {
@@ -1120,7 +1120,7 @@ class MouvementStock extends CommonObject
 	}
 
 	/**
-	 *  Return a link (with optionaly the picto)
+	 *  Return a link (with optionally the picto)
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
 	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
@@ -1243,22 +1243,22 @@ class MouvementStock extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user       User that deletes
-	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             Return integer <0 if KO, >0 if OK
+	 * @param User 	$user       User that deletes
+	 * @param int 	$notrigger  0=launch triggers after, 1=disable triggers
+	 * @return int             	Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false)
+	public function delete(User $user, $notrigger = 0)
 	{
 		return $this->deleteCommon($user, $notrigger);
 		//return $this->deleteCommon($user, $notrigger, 1);
 	}
 
 	/**
-	 * Retrieve number of equipments for a product lot/serial
+	 * Retrieve number of equipment for a product lot/serial
 	 *
 	 * @param 	int 		$fk_product 	Product id
 	 * @param 	string 		$batch  		batch number
-	 * @return 	int            				Return integer <0 if KO, number of equipments found if OK
+	 * @return 	int            				Return integer <0 if KO, number of equipment found if OK
 	 */
 	private function getBatchCount($fk_product, $batch)
 	{
@@ -1287,13 +1287,13 @@ class MouvementStock extends CommonObject
 	}
 
 	/**
-	 * reverse mouvement for object by updating infos
+	 * reverse movement for object by updating infos
 	 * @return int    1 if OK,-1 if KO
 	 */
 	public function reverseMouvement()
 	{
 		$formattedDate = "REVERTMV" .dol_print_date($this->datem, '%Y%m%d%His');
-		if ($this->label == 'Annulation mouvement ID'.$this->id) {
+		if ($this->label == 'Annulation movement ID'.$this->id) {
 			return -1;
 		}
 		if ($this->inventorycode == $formattedDate) {
@@ -1301,7 +1301,7 @@ class MouvementStock extends CommonObject
 		}
 
 		$sql = "UPDATE ".$this->db->prefix()."stock_mouvement SET";
-		$sql .= " label = 'Annulation mouvement ID ".((int) $this->id)."',";
+		$sql .= " label = 'Annulation movement ID ".((int) $this->id)."',";
 		$sql .= "inventorycode = '".($formattedDate)."'";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 

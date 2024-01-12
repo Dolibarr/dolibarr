@@ -158,10 +158,10 @@ class EmailSenderProfile extends CommonObject
 	 * Create object into database
 	 *
 	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
 	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = false)
+	public function create(User $user, $notrigger = 0)
 	{
 		return $this->createCommon($user, $notrigger);
 	}
@@ -251,10 +251,10 @@ class EmailSenderProfile extends CommonObject
 	 * Update object into database
 	 *
 	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
 	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = false)
+	public function update(User $user, $notrigger = 0)
 	{
 		return $this->updateCommon($user, $notrigger);
 	}
@@ -262,11 +262,11 @@ class EmailSenderProfile extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user       User that deletes
-	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             Return integer <0 if KO, >0 if OK
+	 * @param User 	$user       User that deletes
+	 * @param int 	$notrigger  0=launch triggers after, 1=disable triggers
+	 * @return int             	Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false)
+	public function delete(User $user, $notrigger = 0)
 	{
 		return $this->deleteCommon($user, $notrigger);
 	}

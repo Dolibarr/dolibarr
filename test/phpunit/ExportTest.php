@@ -455,7 +455,7 @@ class ExportTest extends PHPUnit\Framework\TestCase
 
 		$filterdatatoexport='';
 		//$filterdatatoexport='';
-		//$array_selected = array("s.rowid"=>1, "s.nom"=>2);	// Mut be fields found into declaration of dataset
+		//$array_selected = array("s.rowid"=>1, "s.nom"=>2);	// Must be fields found into declaration of dataset
 
 		// Load properties of arrays to make export
 		$objexport=new Export($db);

@@ -149,7 +149,7 @@ class Task extends CommonObjectLine
 	public $tobill;
 	public $billed;
 
-	// Properties to store project informations
+	// Properties to store project information
 	public $projectref;
 	public $projectstatus;
 	public $projectlabel;
@@ -1177,7 +1177,7 @@ class Task extends CommonObjectLine
 			return -1;
 		}
 
-		/* Liste des taches et role sur les projets ou taches */
+		/* Liste des taches et role sur les projects ou taches */
 		$sql = "SELECT pt.rowid as pid, ec.element_id, ctc.code, ctc.source";
 		if ($userp) {
 			$sql .= " FROM ".MAIN_DB_PREFIX."projet as pt";
@@ -1816,7 +1816,7 @@ class Task extends CommonObjectLine
 				}
 			}
 
-			// Update hourly rate of this time spent entry, but only if it was not set initialy
+			// Update hourly rate of this time spent entry, but only if it was not set initially
 			$res_update = 1;
 			if (empty($timespent->thm) || getDolGlobalString('TIMESPENT_ALWAYS_UPDATE_THM')) {
 				$resql_thm_user = $this->db->query("SELECT thm FROM " . MAIN_DB_PREFIX . "user WHERE rowid = " . ((int) $timespent->fk_user));
@@ -1977,15 +1977,15 @@ class Task extends CommonObjectLine
 			$projectstatic = new Project($this->db);
 			$projectstatic->fetch($ori_project_id);
 
-			//Origin project strat date
+			//Origin project start date
 			$orign_project_dt_start = $projectstatic->date_start;
 
-			//Calcultate new task start date with difference between origin proj start date and origin task start date
+			//Calculate new task start date with difference between origin proj start date and origin task start date
 			if (!empty($clone_task->date_start)) {
 				$clone_task->date_start = $now + $clone_task->date_start - $orign_project_dt_start;
 			}
 
-			//Calcultate new task end date with difference between origin proj end date and origin task end date
+			//Calculate new task end date with difference between origin proj end date and origin task end date
 			if (!empty($clone_task->date_end)) {
 				$clone_task->date_end = $now + $clone_task->date_end - $orign_project_dt_start;
 			}
@@ -2224,8 +2224,8 @@ class Task extends CommonObjectLine
 	/**
 	 *  Create an intervention document on disk using template defined into PROJECT_TASK_ADDON_PDF
 	 *
-	 *  @param	string		$modele			force le modele a utiliser ('' par defaut)
-	 *  @param	Translate	$outputlangs	objet lang a utiliser pour traduction
+	 *  @param	string		$modele			force le modele a utiliser ('' par default)
+	 *  @param	Translate	$outputlangs	object lang a utiliser pour traduction
 	 *  @param  int			$hidedetails    Hide details of lines
 	 *  @param  int			$hidedesc       Hide description
 	 *  @param  int			$hideref        Hide ref
@@ -2257,7 +2257,7 @@ class Task extends CommonObjectLine
 	/**
 	 * Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
-	 * @param	User	$user   Objet user
+	 * @param	User	$user   Object user
 	 * @return WorkboardResponse|int Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user)
@@ -2265,7 +2265,7 @@ class Task extends CommonObjectLine
 		// phpcs:enable
 		global $conf, $langs;
 
-		// For external user, no check is done on company because readability is managed by public status of project and assignement.
+		// For external user, no check is done on company because readability is managed by public status of project and assignment.
 		//$socid = $user->socid;
 		$socid = 0;
 
@@ -2331,7 +2331,7 @@ class Task extends CommonObjectLine
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Charge indicateurs this->nb de tableau de bord
+	 *      Load indicators this->nb for state board
 	 *
 	 *      @return     int         Return integer <0 if ko, >0 if ok
 	 */

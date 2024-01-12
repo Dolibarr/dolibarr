@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2012 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2021 		Gauthier VERDOL 	<gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -74,8 +74,20 @@ class pdf_eagle extends ModelePDFStockTransfer
 	 * @var int posx weightvol
 	 */
 	public $posxweightvol;
+
+	/**
+	 * @var int posx warehousesource
+	 */
 	public $posxwarehousesource;
+
+	/**
+	 * @var int posx warehousedestination
+	 */
 	public $posxwarehousedestination;
+
+	/**
+	 * @var int at Least One Batch
+	 */
 	public $atLeastOneBatch;
 
 	/**
@@ -83,7 +95,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 	 *
 	 *	@param	DoliDB	$db		Database handler
 	 */
-	public function __construct($db = 0)
+	public function __construct($db)
 	{
 		global $conf, $langs, $mysoc;
 

@@ -171,7 +171,7 @@ class Societe extends CommonObject
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
-	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
 	 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'maxwidth200', 'wordbreak', 'tdoverflowmax200'
@@ -880,7 +880,7 @@ class Societe extends CommonObject
 
 	/**
 	 *    Create third party in database.
-	 *    $this->code_client = -1 and $this->code_fournisseur = -1 means automatic assignement.
+	 *    $this->code_client = -1 and $this->code_fournisseur = -1 means automatic assignment.
 	 *
 	 *    @param	User	$user           Object of user that ask creation
 	 *    @param    int		$notrigger	    1=Does not execute triggers, 0= execute triggers
@@ -1070,7 +1070,7 @@ class Societe extends CommonObject
 	 * Create a contact/address from thirdparty
 	 *
 	 * @param 	User	$user		    Object user
-	 * @param 	int		$no_email	    1=Do not send mailing, 0=Ok to recieve mailling
+	 * @param 	int		$no_email	    1=Do not send mailing, 0=Ok to receive mailing
 	 * @param 	array	$tags		    Array of tag to affect to contact
 	 * @param   int     $notrigger	    1=Does not execute triggers, 0= execute triggers
 	 * @return 	int					    Return integer <0 if KO, >0 if OK
@@ -1239,7 +1239,7 @@ class Societe extends CommonObject
 				//var_dump($conf->global->SOCIETE_EMAIL_MANDATORY);
 				if ($key == 'EMAIL') {
 					// Check for mandatory
-					if (getDolGlobalString('SOCIETE_EMAIL_MANDATORY') && !isValidEMail($this->email)) {
+					if (getDolGlobalString('SOCIETE_EMAIL_MANDATORY') && !isValidEmail($this->email)) {
 						$langs->load("errors");
 						$error++;
 						$this->errors[] = $langs->trans("ErrorBadEMail", $this->email).' ('.$langs->trans("ForbiddenBySetupRules").')';
@@ -2208,7 +2208,7 @@ class Societe extends CommonObject
 				return -1;
 			}
 		} else {
-			dol_syslog("Can't remove thirdparty with id ".$id.". There is ".$objectisused." childs", LOG_WARNING);
+			dol_syslog("Can't remove thirdparty with id ".$id.". There are ".$objectisused." children", LOG_WARNING);
 		}
 		return 0;
 	}
@@ -2386,7 +2386,7 @@ class Societe extends CommonObject
 	 *    	@param	float	$remise     		Amount of discount
 	 *    	@param  User	$user       		User adding discount
 	 *    	@param  string	$desc				Reason of discount
-	 *      @param  string	$vatrate     		VAT rate (may contain the vat code too). Exemple: '1.23', '1.23 (ABC)', ...
+	 *      @param  string	$vatrate     		VAT rate (may contain the vat code too). Example: '1.23', '1.23 (ABC)', ...
 	 *      @param	int		$discount_type		0 => customer discount, 1 => supplier discount
 	 *      @param	string	$price_base_type	Price base type 'HT' or 'TTC'
 	 *		@return	int							Return integer <0 if KO, id of discount record if OK
@@ -3090,7 +3090,7 @@ class Societe extends CommonObject
 
 		$contact_phone = $this->contact_property_array('mobile');
 
-		if (!empty($this->phone)) {	// If a phone of thirdparty is defined, we add it ot mobile of contacts
+		if (!empty($this->phone)) {	// If a phone of thirdparty is defined, we add it to mobile of contacts
 			if (empty($this->name)) {
 				$this->name = $this->nom;
 			}
@@ -3726,7 +3726,7 @@ class Societe extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Returns if a profid sould be verified to be unique
+	 *  Returns if a profid should be verified to be unique
 	 *
 	 *  @param	int		$idprof		1,2,3,4,5,6 (Example: 1=siren, 2=siret, 3=naf, 4=rcs/rm, 5=eori, 6=idprof6)
 	 *  @return boolean         	true if the ID must be unique
@@ -3827,8 +3827,8 @@ class Societe extends CommonObject
 	/**
 	 *  Check the validity of a professional identifier according to the country of the company (siren, siret, ...)
 	 *
-	 *  @param	int			$idprof         1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
-	 *  @param  Societe		$soc            Objet societe
+	 *  @param	int			$idprof         1,2,3,4 (Example: 1=siren,2=siret,3=naf,4=rcs/rm)
+	 *  @param  Societe		$soc            Object societe
 	 *  @return int             			Return integer <=0 if KO, >0 if OK
 	 *  TODO better to have this in a lib than into a business class
 	 */
@@ -3889,7 +3889,7 @@ class Societe extends CommonObject
 			}
 			$n = 10 - substr($sum, strlen($sum) - 1, 1);
 
-			//Chek special NIF
+			//Check special NIF
 			if (preg_match('/^[KLM]{1}/', $string)) {
 				if ($num[8] == chr(64 + $n) || $num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr($string, 1, 8) % 23, 1)) {
 					return 1;
@@ -3930,45 +3930,18 @@ class Societe extends CommonObject
 		}
 
 		//Verify NIF if country is PT
-		//Returns: 1 if NIF ok, -1 if NIF bad, 0 if unexpected bad
-		if ($idprof == 1 && $soc->country_code == 'PT') {
-			$string = trim($this->idprof1);
-			$string = preg_replace('/(\s)/', '', $string);
-
-			//Check NIF
-			if (preg_match('/(^[0-9]{9}$)/', $string)) {
-				return 1;
-			} else {
-				return -1;
-			}
+		if ($idprof == 1 && $soc->country_code == 'PT' && !isValidTinForPT($this->idprof1)) {
+			return -1;
 		}
 
 		//Verify NIF if country is DZ
-		//Returns: 1 if NIF ok, -1 if NIF bad, 0 if unexpected bad
-		if ($idprof == 1 && $soc->country_code == 'DZ') {
-			$string = trim($this->idprof1);
-			$string = preg_replace('/(\s)/', '', $string);
-
-			//Check NIF
-			if (preg_match('/(^[0-9]{15}$)/', $string)) {
-				return 1;
-			} else {
-				return -1;
-			}
+		if ($idprof == 1 && $soc->country_code == 'DZ' && !isValidTinForDZ($this->idprof1)) {
+			return -1;
 		}
 
-		//Verify ID Prof 1 if country is BE (xxxx.xxx.xxx) (https://economie.fgov.be/fr/themes/entreprises/banque-carrefour-des/actualites/structure-du-numero)
-		//Returns: 1 if ok, -1 if bad, 0 if unexpected bad
-		if ($idprof == 1 && $soc->country_code == 'BE') {
-			$string = trim($this->idprof1);
-			$string = preg_replace('/(\s)/', '', $string);
-
-			//Check
-			if (preg_match('/(^[0-9]{4}\.[0-9]{3}\.[0-9]{3}$)/', $string)) {
-				return 1;
-			} else {
-				return -1;
-			}
+		//Verify ID Prof 1 if country is BE
+		if ($idprof == 1 && $soc->country_code == 'BE' && !isValidTinForBE($this->idprof1)) {
+			return -1;
 		}
 
 		return $ok;
@@ -4201,7 +4174,7 @@ class Societe extends CommonObject
 	/**
 	 *  Set "blacklist" mailing status
 	 *
-	 *  @param	int		$no_email	1=Do not send mailing, 0=Ok to recieve mailling
+	 *  @param	int		$no_email	1=Do not send mailing, 0=Ok to receive mailing
 	 *  @return int					Return integer <0 if KO, >0 if OK
 	 */
 	public function setNoEmail($no_email)
@@ -4257,7 +4230,7 @@ class Societe extends CommonObject
 
 	/**
 	 *  get "blacklist" mailing status
-	 * 	set no_email attribut to 1 or 0
+	 * 	set no_email attribute to 1 or 0
 	 *
 	 *  @return int					Return integer <0 if KO, >0 if OK
 	 */
@@ -4316,7 +4289,7 @@ class Societe extends CommonObject
 		$name = $socname;
 		$alias = $socalias ? $socalias : '';
 
-		// Positionne parametres
+		// Positionne parameters
 		$this->nom = $name; // TODO deprecated
 		$this->name = $name;
 		$this->name_alias = $alias;
@@ -4490,7 +4463,7 @@ class Societe extends CommonObject
 		$this->idprof4 = getDolGlobalString('MAIN_INFO_RCS');
 		$this->idprof5 = getDolGlobalString('MAIN_INFO_PROFID5');
 		$this->idprof6 = getDolGlobalString('MAIN_INFO_PROFID6');
-		$this->tva_intra = getDolGlobalString('MAIN_INFO_TVAINTRA'); // VAT number, not necessarly INTRA.
+		$this->tva_intra = getDolGlobalString('MAIN_INFO_TVAINTRA'); // VAT number, not necessarily INTRA.
 		$this->managers = getDolGlobalString('MAIN_INFO_SOCIETE_MANAGERS');
 		$this->capital = getDolGlobalString('MAIN_INFO_CAPITAL');
 		$this->forme_juridique_code = getDolGlobalString('MAIN_INFO_SOCIETE_FORME_JURIDIQUE');
@@ -4667,7 +4640,7 @@ class Societe extends CommonObject
 		global $langs;
 
 		$lib = $langs->trans("ProspectLevel".$fk_prospectlevel);
-		// If lib not found in language file, we get label from cache/databse
+		// If lib not found in language file, we get label from cache/database
 		if ($lib == $langs->trans("ProspectLevel".$fk_prospectlevel)) {
 			$lib = $langs->getLabelFromKey($this->db, $fk_prospectlevel, 'c_prospectlevel', 'code', 'label');
 		}
@@ -4758,7 +4731,7 @@ class Societe extends CommonObject
 	 *  Return amount of proposal not yet paid and total an dlist of all proposals
 	 *
 	 *  @param     string      $mode    'customer' or 'supplier'
-	 *  @return    array				array('opened'=>Amount including tax that remains to pay, 'total_ht'=>Total amount without tax of all objects paid or not, 'total_ttc'=>Total amunt including tax of all object paid or not)
+	 *  @return    array				array('opened'=>Amount including tax that remains to pay, 'total_ht'=>Total amount without tax of all objects paid or not, 'total_ttc'=>Total amount including tax of all object paid or not)
 	 */
 	public function getOutstandingProposals($mode = 'customer')
 	{
@@ -4802,7 +4775,7 @@ class Societe extends CommonObject
 	 *  Return amount of order not yet paid and total and list of all orders
 	 *
 	 *  @param     string      $mode    'customer' or 'supplier'
-	 *  @return    array				array('opened'=>Amount including tax that remains to pay, 'total_ht'=>Total amount without tax of all objects paid or not, 'total_ttc'=>Total amunt including tax of all object paid or not)
+	 *  @return    array				array('opened'=>Amount including tax that remains to pay, 'total_ht'=>Total amount without tax of all objects paid or not, 'total_ttc'=>Total amount including tax of all object paid or not)
 	 */
 	public function getOutstandingOrders($mode = 'customer')
 	{
@@ -4846,7 +4819,7 @@ class Societe extends CommonObject
 	 *
 	 *  @param     string   $mode    	'customer' or 'supplier'
 	 *  @param     int      $late    	0 => all invoice, 1=> only late
-	 *  @return    array				array('opened'=>Amount including tax that remains to pay, 'total_ht'=>Total amount without tax of all objects paid or not, 'total_ttc'=>Total amunt including tax of all object paid or not)
+	 *  @return    array				array('opened'=>Amount including tax that remains to pay, 'total_ht'=>Total amount without tax of all objects paid or not, 'total_ttc'=>Total amount including tax of all object paid or not)
 	 */
 	public function getOutstandingBills($mode = 'customer', $late = 0)
 	{
@@ -4903,9 +4876,9 @@ class Societe extends CommonObject
 
 				if ($obj->paye == 0
 					&& $obj->status != $tmpobject::STATUS_DRAFT    		// Not a draft
-					&& $obj->status != $tmpobject::STATUS_ABANDONED	    // Not abandonned
+					&& $obj->status != $tmpobject::STATUS_ABANDONED	    // Not abandoned
 					&& $obj->status != $tmpobject::STATUS_CLOSED) {		// Not classified as paid
-					//$sql .= " AND (status <> 3 OR close_code <> 'abandon')";		// Not abandonned for undefined reason
+					//$sql .= " AND (status <> 3 OR close_code <> 'abandon')";		// Not abandoned for undefined reason
 					$paiement = $tmpobject->getSommePaiement();
 					$creditnotes = $tmpobject->getSumCreditNotesUsed();
 					$deposits = $tmpobject->getSumDepositsUsed();
@@ -4975,7 +4948,7 @@ class Societe extends CommonObject
 	 *  Create a document onto disk according to template module.
 	 *
 	 *	@param	string		$modele			Generator to use. Caller must set it to obj->model_pdf or GETPOST('model','alpha') for example.
-	 *	@param	Translate	$outputlangs	objet lang a utiliser pour traduction
+	 *	@param	Translate	$outputlangs	object lang a utiliser pour traduction
 	 *  @param  int			$hidedetails    Hide details of lines
 	 *  @param  int			$hidedesc       Hide description
 	 *  @param  int			$hideref        Hide ref

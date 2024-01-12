@@ -197,7 +197,7 @@ class Translate
 	 *												then in htdocs/module/langs/code_CODE/file.lang instead of htdocs/langs/code_CODE/file.lang
 	 *  @param	integer	$alt         				0 (try xx_ZZ then 1), 1 (try xx_XX then 2), 2 (try en_US)
 	 * 	@param	int		$stopafterdirection			Stop when the DIRECTION tag is found (optimize speed)
-	 * 	@param	int		$forcelangdir				To force a different lang directory
+	 * 	@param	string	$forcelangdir				To force a different lang directory
 	 *  @param  int     $loadfromfileonly   		1=Do not load overwritten translation from file or old conf.
 	 *  @param  int     $forceloadifalreadynotfound	Force attempt to reload lang file if it was previously not found
 	 *	@return	int									Return integer <0 if KO, 0 if already loaded or loading not required, >0 if OK

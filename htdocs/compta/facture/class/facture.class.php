@@ -3242,7 +3242,7 @@ class Facture extends CommonInvoice
 				} else {
 					if ($key == 'EMAIL') {
 						// Check for mandatory
-						if (getDolGlobalString('SOCIETE_EMAIL_INVOICE_MANDATORY') && !isValidEMail($this->thirdparty->email)) {
+						if (getDolGlobalString('SOCIETE_EMAIL_INVOICE_MANDATORY') && !isValidEmail($this->thirdparty->email)) {
 							$langs->load("errors");
 							$this->error = $langs->trans("ErrorBadEMail", $this->thirdparty->email).' ('.$langs->trans("ForbiddenBySetupRules").') ['.$langs->trans('Company').' : '.$this->thirdparty->name.']';
 							dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
@@ -6623,10 +6623,10 @@ class FactureLigne extends CommonInvoiceLine
 	 * Delete line in database
 	 *
 	 * @param 	User 	$tmpuser    User that deletes
-	 * @param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
+	 * @param 	int 	$notrigger  0=launch triggers after, 1=disable triggers
 	 * @return 	int		           	Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($tmpuser = null, $notrigger = false)
+	public function delete($tmpuser = null, $notrigger = 0)
 	{
 		global $user;
 

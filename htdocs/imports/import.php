@@ -292,7 +292,7 @@ if ($step == 3 && $datatoimport) {
 		} else {
 			setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 		}
-		Header('Location: '.$_SERVER["PHP_SELF"].'?step='.$step.$param);
+		header('Location: '.$_SERVER["PHP_SELF"].'?step='.$step.$param);
 		exit;
 	}
 }
@@ -1084,10 +1084,9 @@ if ($step == 4 && $datatoimport) {
 
 	// List of source fields
 
-	$var = false;
 	$lefti = 1;
 	foreach ($fieldssource as $key => $val) {
-		show_elem($fieldssource, $key, $val, $var); // key is field number in source file
+		show_elem($fieldssource, $key, $val); // key is field number in source file
 		$listofkeys[$key] = 1;
 		$fieldsplaced[$key] = 1;
 		$valforsourcefieldnb[$lefti] = $key;
@@ -2406,11 +2405,9 @@ $db->close();
  * @param	array	$fieldssource	List of source fields
  * @param	int		$pos			Pos
  * @param	string	$key			Key
- * @param	boolean	$var			Line style (odd or not). No more used.
- * @param	int		$nostyle		Hide style
  * @return	void
  */
-function show_elem($fieldssource, $pos, $key, $var, $nostyle = '')
+function show_elem($fieldssource, $pos, $key)
 {
 	global $conf, $langs;
 

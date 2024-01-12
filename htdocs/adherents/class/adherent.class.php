@@ -586,7 +586,7 @@ class Adherent extends CommonObject
 		$this->import_key = trim($this->import_key);
 
 		// Check parameters
-		if (getDolGlobalString('ADHERENT_MAIL_REQUIRED') && !isValidEMail($this->email)) {
+		if (getDolGlobalString('ADHERENT_MAIL_REQUIRED') && !isValidEmail($this->email)) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorBadEMail", $this->email);
 			return -1;
@@ -730,7 +730,7 @@ class Adherent extends CommonObject
 		$this->url = $this->url ? clean_url($this->url, 0) : '';
 		$this->setUpperOrLowerCase();
 		// Check parameters
-		if (getDolGlobalString('ADHERENT_MAIL_REQUIRED') && !isValidEMail($this->email)) {
+		if (getDolGlobalString('ADHERENT_MAIL_REQUIRED') && !isValidEmail($this->email)) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorBadEMail", $this->email);
 			return -1;
@@ -1705,7 +1705,7 @@ class Adherent extends CommonObject
 
 			$insertid = $acct->addline($dateop, $operation, $label, $amount, $num_chq, '', $user, $emetteur_nom, $emetteur_banque);
 			if ($insertid > 0) {
-				$inserturlid = $acct->add_url_line($insertid, $this->id, DOL_URL_ROOT.'/adherents/card.php?rowid=', $this->getFullname($langs), 'member');
+				$inserturlid = $acct->add_url_line($insertid, $this->id, DOL_URL_ROOT.'/adherents/card.php?rowid=', $this->getFullName($langs), 'member');
 				if ($inserturlid > 0) {
 					// Update table subscription
 					$sql = "UPDATE ".MAIN_DB_PREFIX."subscription SET fk_bank=".((int) $insertid);

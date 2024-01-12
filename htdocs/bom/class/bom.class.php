@@ -296,10 +296,10 @@ class BOM extends CommonObject
 	 * Create object into database
 	 *
 	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @param  int 	$notrigger false=launch triggers after, true=disable triggers
 	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = false)
+	public function create(User $user, $notrigger = 1)
 	{
 		if ($this->efficiency <= 0 || $this->efficiency > 1) {
 			$this->efficiency = 1;
@@ -561,10 +561,10 @@ class BOM extends CommonObject
 	 * Update object into database
 	 *
 	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
 	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = false)
+	public function update(User $user, $notrigger = 1)
 	{
 		if ($this->efficiency <= 0 || $this->efficiency > 1) {
 			$this->efficiency = 1;
@@ -576,11 +576,11 @@ class BOM extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user       User that deletes
-	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             Return integer <0 if KO, >0 if OK
+	 * @param User $user       	User that deletes
+	 * @param int 	$notrigger  0=launch triggers after, 1=disable triggers
+	 * @return int             	Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false)
+	public function delete(User $user, $notrigger = 1)
 	{
 		return $this->deleteCommon($user, $notrigger);
 		//return $this->deleteCommon($user, $notrigger, 1);
@@ -819,10 +819,10 @@ class BOM extends CommonObject
 	 *
 	 *	@param  User	$user       User that delete
 	 *  @param	int		$idline		Id of line to delete
-	 *  @param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
+	 *  @param 	int 	$notrigger  0=launch triggers after, 1=disable triggers
 	 *  @return int         		>0 if OK, <0 if KO
 	 */
-	public function deleteLine(User $user, $idline, $notrigger = false)
+	public function deleteLine(User $user, $idline, $notrigger = 0)
 	{
 		if ($this->status < 0) {
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
@@ -1891,10 +1891,10 @@ class BOMLine extends CommonObjectLine
 	 * Create object into database
 	 *
 	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
 	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = false)
+	public function create(User $user, $notrigger = 0)
 	{
 		if ($this->efficiency < 0 || $this->efficiency > 1) {
 			$this->efficiency = 1;
@@ -1995,10 +1995,10 @@ class BOMLine extends CommonObjectLine
 	 * Update object into database
 	 *
 	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @param  int	$notrigger 0=launch triggers after, 1=disable triggers
 	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = false)
+	public function update(User $user, $notrigger = 0)
 	{
 		if ($this->efficiency < 0 || $this->efficiency > 1) {
 			$this->efficiency = 1;
@@ -2010,11 +2010,11 @@ class BOMLine extends CommonObjectLine
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user       User that deletes
-	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             Return integer <0 if KO, >0 if OK
+	 * @param User 	$user       User that deletes
+	 * @param int 	$notrigger  0=launch triggers after, 1=disable triggers
+	 * @return int             	Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false)
+	public function delete(User $user, $notrigger = 0)
 	{
 		return $this->deleteCommon($user, $notrigger);
 		//return $this->deleteCommon($user, $notrigger, 1);

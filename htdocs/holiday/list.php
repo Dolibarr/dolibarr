@@ -147,7 +147,7 @@ $permissiontoread = $user->hasRight('holiday', 'read');
 $permissiontodelete = $user->hasRight('holiday', 'delete');
 $permissiontoapprove = $user->hasRight('holiday', 'approve');
 
-if (!ismodEnabled('holiday')) {
+if (!isModEnabled('holiday')) {
 	accessforbidden('Module holiday not enabled');
 }
 

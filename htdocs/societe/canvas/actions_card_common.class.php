@@ -19,11 +19,11 @@
 /**
  *	\file       htdocs/societe/canvas/actions_card_common.class.php
  *	\ingroup    thirdparty
- *	\brief      Fichier de la classe Thirdparty card controller (common)
+ *	\brief      File for the abstract class to manage third parties
  */
 
 /**
- *	Classe permettant la gestion des tiers par defaut
+ *	Abstract class to manage third parties
  */
 abstract class ActionsCardCommon
 {
@@ -253,13 +253,13 @@ abstract class ActionsCardCommon
 			}
 
 			// VAT
-			$this->tpl['yn_assujtva'] = $form->selectyesno('assujtva_value', $this->tpl['tva_assuj'], 1); // Assujeti par defaut en creation
+			$this->tpl['yn_assujtva'] = $form->selectyesno('assujtva_value', $this->tpl['tva_assuj'], 1); // Assujeti par default en creation
 
 			// Select users
 			$this->tpl['select_users'] = $form->select_dolusers($this->object->commercial_id, 'commercial_id', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 
 			// Local Tax
-			// TODO mettre dans une classe propre au pays
+			// TODO Implement country specific action in country specific class
 			if ($mysoc->country_code == 'ES') {
 				$this->tpl['localtax'] = '';
 
@@ -357,7 +357,7 @@ abstract class ActionsCardCommon
 			}
 
 			// Local Tax
-			// TODO mettre dans une classe propre au pays
+			// TODO Implement country specific action in country specific class
 			if ($mysoc->country_code == 'ES') {
 				$this->tpl['localtax'] = '';
 
@@ -396,7 +396,7 @@ abstract class ActionsCardCommon
 		$this->object->code_client			= GETPOST("code_client");
 		$this->object->fournisseur			= GETPOST("fournisseur");
 		$this->object->code_fournisseur = GETPOST("code_fournisseur");
-		$this->object->address = GETPOST("adresse");
+		$this->object->address = GETPOST("address");
 		$this->object->zip = GETPOST("zipcode");
 		$this->object->town					= GETPOST("town");
 		$this->object->country_id = GETPOST("country_id") ? GETPOST("country_id") : $mysoc->country_id;

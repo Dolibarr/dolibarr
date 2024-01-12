@@ -1176,7 +1176,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		//($stripeacc ? ' (Stripe connection with StripeConnect account '.$stripeacc.')' : ' (Stripe connection with keys from Stripe module setup)')
 
 		print '<!-- List of card payments -->'."\n";
-		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print '<table class="liste centpercent">'."\n";
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans('Label').'</td>';

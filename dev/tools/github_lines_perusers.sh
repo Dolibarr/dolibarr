@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 #
 # Count number of lines modified per user for a given branch
 #

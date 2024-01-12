@@ -248,7 +248,7 @@ class SupplierProposal extends CommonObject
 	 * 	@param  int		$remise_percent  	Discount effected on Product
 	 *  @return	int							Return integer <0 if KO, >0 if OK
 	 *
-	 *	TODO	Remplacer les appels a cette fonction par generation objet Ligne
+	 *	TODO	Remplacer les appels a cette fonction par generation object Ligne
 	 */
 	public function add_product($idproduct, $qty, $remise_percent = 0)
 	{
@@ -362,7 +362,7 @@ class SupplierProposal extends CommonObject
 
 	/**
 	 *    	Add a proposal line into database (linked to product/service or not)
-	 * 		Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
+	 * 		Les parameters sont deja cense etre juste et avec valeurs finales a l'appel
 	 *		de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
 	 *		par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,'',produit)
 	 *		et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
@@ -586,7 +586,7 @@ class SupplierProposal extends CommonObject
 			$this->line->date_start = $date_start;
 			$this->line->date_end = $date_end;
 
-			// infos marge
+			// infos merge
 			if (!empty($fk_product) && $fk_product > 0 && empty($fk_fournprice) && empty($pa_ht)) {
 				// When fk_fournprice is 0, we take the lowest buying price
 				include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
@@ -628,7 +628,7 @@ class SupplierProposal extends CommonObject
 					}
 				}
 
-				// Mise a jour informations denormalisees au niveau de la propale meme
+				// Mise a jour information denormalisees au niveau de la propale meme
 				$result = $this->update_price(1, 'auto', 0, $this->thirdparty); // This method is designed to add line from user input so total calculation must be done using 'auto' mode.
 				if ($result > 0) {
 					$this->db->commit();
@@ -662,7 +662,7 @@ class SupplierProposal extends CommonObject
 	 *  @param	  	double		$txlocaltax2		Local tax 2 rate
 	 *  @param      string		$desc            	Description
 	 *	@param	  	double		$price_base_type	HT or TTC
-	 *	@param      int			$info_bits        	Miscellaneous informations
+	 *	@param      int			$info_bits        	Miscellaneous information
 	 *	@param		int			$special_code		Special code (also used by externals modules!)
 	 * 	@param		int			$fk_parent_line		Id of parent line (0 in most cases, used by modules adding sublevels into lines).
 	 * 	@param		int			$skip_update_total	Keep fields total_xxx to 0 (used for special lines by some modules)
@@ -789,7 +789,7 @@ class SupplierProposal extends CommonObject
 			$this->line->ref_fourn = $ref_supplier;
 			$this->line->fk_unit = $fk_unit;
 
-			// infos marge
+			// infos merge
 			if (!empty($fk_product) && $fk_product > 0 && empty($fk_fournprice) && empty($pa_ht)) {
 				// by external module, take lowest buying price
 				include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
@@ -1787,10 +1787,10 @@ class SupplierProposal extends CommonObject
 	}
 
 	/**
-	 *	Upate ProductFournisseur
+	 *	Update ProductFournisseur
 	 *
 	 * 	@param		int 	$idProductFournPrice	id of llx_product_fournisseur_price
-	 * 	@param		Product $product				contain informations to update
+	 * 	@param		Product $product				contain information to update
 	 *	@param      User	$user					Object user
 	 *	@return     int         					Return integer <0 if KO, >0 if OK
 	 */
@@ -1911,7 +1911,7 @@ class SupplierProposal extends CommonObject
 
 			if (!$error) {
 				$this->status = self::STATUS_DRAFT;
-				$this->statut = self::STATUS_DRAFT;	// dperecated
+				$this->statut = self::STATUS_DRAFT;	// deprecated
 				$this->db->commit();
 				return 1;
 			} else {
@@ -1931,7 +1931,7 @@ class SupplierProposal extends CommonObject
 	 *    @param	int		$shortlist			0=Return array[id]=ref, 1=Return array[](id=>id,ref=>ref,name=>name)
 	 *    @param	int		$draft				0=not draft, 1=draft
 	 *    @param	int		$notcurrentuser		0=all user, 1=not current user
-	 *    @param    int		$socid				Id third pary
+	 *    @param    int		$socid				Id third party
 	 *    @param    int		$limit				For pagination
 	 *    @param    int		$offset				For pagination
 	 *    @param    string	$sortfield			Sort criteria
@@ -2313,7 +2313,7 @@ class SupplierProposal extends CommonObject
 			}
 		}
 
-		// Initialise parametres
+		// Initialise parameters
 		$this->id = 0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
@@ -2500,7 +2500,7 @@ class SupplierProposal extends CommonObject
 	 *
 	 *	@param      int		$withpicto					Add picto into link
 	 *	@param      string	$option						Where point the link ('compta', 'expedition', 'document', ...)
-	 *	@param      string	$get_params    				Parametres added to url
+	 *	@param      string	$get_params    				Parameters added to url
 	 *  @param	    int   	$notooltip					1=Disable tooltip
 	 *  @param      int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *  @param		int		$addlinktonotes				Add link to show notes
@@ -2877,14 +2877,14 @@ class SupplierProposalLine extends CommonObjectLine
 	public $marge_tx;
 	public $marque_tx;
 
-	public $special_code; // Tag for special lines (exlusive tags)
+	public $special_code; // Tag for special lines (exclusive tags)
 	// 1: frais de port
 	// 2: ecotaxe
 	// 3: option line (when qty = 0)
 
 	public $info_bits = 0; // Liste d'options cumulables:
-	// Bit 0: 	0 si TVA normal - 1 si TVA NPR
-	// Bit 1:	0 ligne normale - 1 si ligne de remise fixe
+	// Bit 0: 	0 si TVA normal - 1 if TVA NPR
+	// Bit 1:	0 ligne normal - 1 if fixed reduction
 
 	public $total_ht; // Total HT de la ligne toute quantite et incluant la remise ligne
 	public $total_tva; // Total TVA de la ligne toute quantite et incluant la remise ligne
@@ -2955,7 +2955,7 @@ class SupplierProposalLine extends CommonObjectLine
 	public $multicurrency_total_ttc;
 
 	/**
-	 * 	Class line Contructor
+	 * 	Class line Constructor
 	 *
 	 * 	@param	DoliDB	$db	Database handler
 	 */

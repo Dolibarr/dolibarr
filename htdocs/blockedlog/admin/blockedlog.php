@@ -66,7 +66,7 @@ if (preg_match('/set_(.*)/', $action, $reg)) {
 if (preg_match('/del_(.*)/', $action, $reg)) {
 	$code = $reg[1];
 	if (dolibarr_del_const($db, $code, 0) > 0) {
-		Header("Location: ".$_SERVER["PHP_SELF"].($withtab ? '?withtab='.$withtab : ''));
+		header("Location: ".$_SERVER["PHP_SELF"].($withtab ? '?withtab='.$withtab : ''));
 		exit;
 	} else {
 		dol_print_error($db);
