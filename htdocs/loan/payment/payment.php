@@ -70,7 +70,7 @@ if ($res > 0) {
 	}
 }
 
-// Set current line with last unpaid line (only if shedule is used)
+// Set current line with last unpaid line (only if schedule is used)
 if (!empty($line_id)) {
 	$line = new LoanSchedule($db);
 	$res = $line->fetch($line_id);

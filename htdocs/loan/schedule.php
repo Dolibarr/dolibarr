@@ -198,7 +198,7 @@ $(document).ready(function() {
 		var idcap=echeance-1;
 		idcap = '#hi_capital'+idcap;
 		var capital=price2numjs($(idcap).val());
-		console.log("Change montly amount echeance="+echeance+" idcap="+idcap+" capital="+capital);
+		console.log("Change monthly amount echeance="+echeance+" idcap="+idcap+" capital="+capital);
 		$.ajax({
 			  method: "GET",
 			  dataType: 'json',

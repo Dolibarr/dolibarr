@@ -59,7 +59,7 @@ class MyModuleApi extends DolibarrApi
 	/**
 	 * Get properties of a myobject object
 	 *
-	 * Return an array with myobject informations
+	 * Return an array with myobject information
 	 *
 	 * @param	int		$id				ID of myobject
 	 * @return  Object					Object with cleaned properties
@@ -203,7 +203,7 @@ class MyModuleApi extends DolibarrApi
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->myobject->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -251,7 +251,7 @@ class MyModuleApi extends DolibarrApi
 				continue;
 			}
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->myobject->context['caller'] = $request_data['caller'];
 				continue;
 			}
