@@ -556,7 +556,7 @@ if (issetAndNoEmpty('totalchoixjour', $_SESSION) || $erreur) {
 		//affichage des cases d'horaires
 		for ($j = 0; $j < $_SESSION["nbrecaseshoraires"]; $j++) {
 			if (isset($errheure[$i][$j]) && $errheure[$i][$j]) {
-			    // When an error is found, the checkbox background is red
+				// When an error is found, the checkbox background is red
 				print '<td><input type=text size="10" maxlength="11" name=horaires'.$i.'[] value="'.$_SESSION["horaires$i"][$j].'" style="background-color:#FF6666;"></td>'."\n";
 			} else {
 				// Else the color is empty (in principle)
@@ -581,7 +581,7 @@ if (issetAndNoEmpty('totalchoixjour', $_SESSION) || $erreur) {
 
 print '</tr>'."\n";
 print '</table>'."\n";
-print '<a name=bas></a>'."\n";
+print '<a name="bas"></a>'."\n";
 //fin du formulaire et bandeau de pied
 print '</form>'."\n";
 //bandeau de pied

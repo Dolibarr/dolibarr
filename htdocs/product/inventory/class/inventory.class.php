@@ -257,11 +257,11 @@ class Inventory extends CommonObject
 	 * Validate inventory (start it)
 	 *
 	 * @param  	User 	$user      				User that creates
-	 * @param	bool 	$notrigger 				false=launch triggers after, true=disable triggers
+	 * @param	int 	$notrigger 				0=launch triggers after, 1=disable triggers
 	 * @param	int		$include_sub_warehouse	Include sub warehouses
 	 * @return 	int             				Return integer <0 if KO, Id of created object if OK
 	 */
-	public function validate(User $user, $notrigger = false, $include_sub_warehouse = 0)
+	public function validate(User $user, $notrigger = 0, $include_sub_warehouse = 0)
 	{
 		global $conf;
 		$this->db->begin();
@@ -401,10 +401,10 @@ class Inventory extends CommonObject
 	 * Set to inventory to status "Closed". It means all stock movements were recorded.
 	 *
 	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
 	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
-	public function setRecorded(User $user, $notrigger = false)
+	public function setRecorded(User $user, $notrigger = 0)
 	{
 		$this->db->begin();
 
@@ -539,7 +539,7 @@ class Inventory extends CommonObject
 	 * @param int 	$notrigger  0=launch triggers after, 1=disable triggers
 	 * @return int             	Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false)
+	public function delete(User $user, $notrigger = 0)
 	{
 		return $this->deleteCommon($user, $notrigger);
 	}

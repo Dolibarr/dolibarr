@@ -637,10 +637,10 @@ class Mo extends CommonObject
 	 * Update object into database
 	 *
 	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @param  bool $notrigger 0=launch triggers after, 1=disable triggers
 	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = false)
+	public function update(User $user, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -842,11 +842,11 @@ class Mo extends CommonObject
 	 * Delete object in database
 	 *
 	 * @param	User	$user										User that deletes
-	 * @param	bool	$notrigger									false=launch triggers after, true=disable triggers
+	 * @param	int		$notrigger									0=launch triggers after, 1=disable triggers
 	 * @param	bool	$also_cancel_consumed_and_produced_lines  	true if the consumed and produced lines will be deleted (and stocks incremented/decremented back) (false by default)
 	 * @return	int													Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false, $also_cancel_consumed_and_produced_lines = false)
+	public function delete(User $user, $notrigger = 0, $also_cancel_consumed_and_produced_lines = false)
 	{
 		$error = 0;
 		$this->db->begin();
