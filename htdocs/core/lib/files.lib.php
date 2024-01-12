@@ -2644,7 +2644,11 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping for miscellaneous medias files
-	if ($modulepart == 'medias' && !empty($dolibarr_main_data_root)) {
+	if ($modulepart == 'common') {
+		// Wrapping for some images
+		$accessallowed = 1;
+		$original_file = DOL_DOCUMENT_ROOT.'/public/theme/common/'.$original_file;
+	} elseif ($modulepart == 'medias' && !empty($dolibarr_main_data_root)) {
 		if (empty($entity) || empty($conf->medias->multidir_output[$entity])) {
 			return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		}
@@ -2662,7 +2666,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		// Wrapping for doctemplates of websites
 		$accessallowed = ($fuser->rights->website->write && preg_match('/\.jpg$/i', basename($original_file)));
 		$original_file = $dolibarr_main_data_root.'/doctemplates/websites/'.$original_file;
-	} elseif ($modulepart == 'packages' && !empty($dolibarr_main_data_root)) {
+	} elseif ($modulepart == 'packages' && !empty($dolibarr_main_data_root)) {	// To download zip of modules
 		// Wrapping for *.zip package files, like when used with url http://.../document.php?modulepart=packages&file=module_myfile.zip
 		// Dir for custom dirs
 		$tmp = explode(',', $dolibarr_main_document_root_alt);
