@@ -20,7 +20,7 @@ return [
     'America/Argentina/Buenos_Aires',
     'America/Argentina/Catamarca',
     'America/Argentina/Cordoba',
-    'America/Indianapolis',
+    'America/Indiana/Indianapolis',
     'America/Argentina/Jujuy',
     'America/Indiana/Knox',
     'America/Kentucky/Louisville',
