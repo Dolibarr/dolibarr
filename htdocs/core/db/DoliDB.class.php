@@ -114,18 +114,18 @@ abstract class DoliDB implements Database
 	/**
 	 *	Format a SQL REGEXP
 	 *
-	 *	@param	string	$subject        string tested
+	 *	@param	string	$subject        Field name to test
 	 *	@param	string  $pattern        SQL pattern to match
-	 *	@param	int		$sqlstring      whether or not the string being tested is an SQL expression
+	 *	@param	int		$sqlstring      0=the string being tested is a hard coded string, 1=the string is a field
 	 *	@return	string          		SQL string
 	 */
 	public function regexpsql($subject, $pattern, $sqlstring = 0)
 	{
 		if ($sqlstring) {
-			return "(". $subject ." REGEXP '" . $pattern . "')";
+			return "(". $subject ." REGEXP '" . $this->escape($pattern) . "')";
 		}
 
-		return "('". $subject ."' REGEXP '" . $pattern . "')";
+		return "('". $this->escape($subject) ."' REGEXP '" . $this->escape($pattern) . "')";
 	}
 
 

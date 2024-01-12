@@ -1,4 +1,6 @@
 <?php
+use Splash\Tests\WsObjects\O00ObjectBaseTest;
+
 /* Copyright (C) 2017 Laurent Destailleur	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -967,6 +969,85 @@ function getSocialNetworkSharingLinks()
 
 	return $out;
 }
+
+
+/**
+ * Return HTML content to add structured data for an article, news or Blog Post.
+ *
+ * @param	Object	$object			Object
+ * @param	int		$no				Numero of image (if there is several images. 1st one by default)
+ * @param   string  $extName        Extension to differentiate thumb file name ('', '_small', '_mini')
+ * @param	string	$morecss		More CSS
+ * @return  string					HTML img content or '' if no image found
+ */
+function getPublicImageOfObject($object, $no = 1, $extName = '', $morecss = '')
+{
+	global $db;
+
+	$result = '';
+	$image_path = '';
+	$filename = '';
+
+	include_once DOL_DOCOUMENT_ROOT.'/core/lib/images.lib.php';
+	$regexforimg = getListOfPossibleImageExt(0);
+	$regexforimg = '('.$regexforimg.')$';
+
+	$sql = "SELECT rowid, ref, share, filename, cover, position";
+	$sql .= " FROM ".MAIN_DB_PREFIX."ecm_files";
+	$sql .= " WHERE entity IN (".getEntity($object->element).")";
+	$sql .= " AND src_object_type = '".$db->escape($object->element)."' AND src_object_id = ".((int) $object->id);	// Filter on object
+	$sql .= " AND ".$db->regexpsql('filename', $regexforimg, 1);
+	$sql .= $db->order("cover,position,rowid", "ASC,ASC,ASC");
+
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num = $db->num_rows($resql);
+		$i = 0;
+		$found = 0;
+		$foundnotshared = 0;
+		while ($i < $num) {
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				if (empty($obj->share)) {
+					$foundnotshared++;
+				} else {
+					$found++;
+
+					$filename = $obj->filename;
+					$image_path = DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($obj->share);
+					if ($extName) {
+						$image_path .= '&extname='.urlencode($extName);
+					}
+				}
+			}
+			if ($found >= $no) {
+				break;
+			}
+			$i++;
+		}
+		if (!$found && $foundnotshared) {
+			$image_path = DOL_URL_ROOT.'/viewimage.php?modulepart=common&file=nophotopublic.png';
+		}
+	}
+
+	//getImageFileNameForSize($dir.$file, '_small')
+
+	if (empty($image_path)) {
+		$image_path = DOL_URL_ROOT.'/viewimage.php?modulepart=common&file=nophoto.png';
+	}
+
+	$result .= '<!-- pid='.$object->id;
+	if ($filename) {
+		$result .= ' file='.dol_escape_htmltag($filename);
+	}
+	$result .= ' -->';
+	if ($image_path) {
+		$result .= '<img src="'.$image_path.'"'.($morecss ? ' class="'.$morecss.'"' : '').'>';
+	}
+
+	return $result;
+}
+
 
 /**
  * Return list of containers object that match a criteria.
