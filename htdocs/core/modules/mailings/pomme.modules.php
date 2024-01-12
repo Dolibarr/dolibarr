@@ -176,7 +176,7 @@ class mailing_pomme extends MailingTargets
 		if (GETPOSTISSET("filter") && GETPOST("filter") == '0') {
 			$sql .= " AND u.statut=0";
 		}
-		if (GETPOSTISSET("filteremployee") && GETPOSt("filteremployee") == '1') {
+		if (GETPOSTISSET("filteremployee") && GETPOST("filteremployee") == '1') {
 			$sql .= " AND u.employee=1";
 		}
 		if (GETPOSTISSET("filteremployee") && GETPOST("filteremployee") == '0') {

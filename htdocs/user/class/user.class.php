@@ -1590,7 +1590,7 @@ class User extends CommonObject
 		$badCharUnauthorizedIntoLoginName = getDolGlobalString('MAIN_LOGIN_BADCHARUNAUTHORIZED', ',@<>"\'');
 
 		// Check parameters
-		if (getDolGlobalString('USER_MAIL_REQUIRED') && !isValidEMail($this->email)) {
+		if (getDolGlobalString('USER_MAIL_REQUIRED') && !isValidEmail($this->email)) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorBadEMail", $this->email);
 			return -1;
@@ -1993,7 +1993,7 @@ class User extends CommonObject
 		// Check parameters
 		$badCharUnauthorizedIntoLoginName = getDolGlobalString('MAIN_LOGIN_BADCHARUNAUTHORIZED', ',@<>"\'');
 
-		if (getDolGlobalString('USER_MAIL_REQUIRED') && !isValidEMail($this->email)) {
+		if (getDolGlobalString('USER_MAIL_REQUIRED') && !isValidEmail($this->email)) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorBadEMail", $this->email);
 			return -1;

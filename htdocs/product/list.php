@@ -1678,7 +1678,7 @@ while ($i < $imaxinloop) {
 			print '<td class="left">';
 			// Since description can be very large (several pages of HTML-
 			// code) we limit to the first two rows
-			print dolGetFirstLineofText($product_static->description, 2);
+			print dolGetFirstLineOfText($product_static->description, 2);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

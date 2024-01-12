@@ -348,7 +348,7 @@ if (($id || $ref) && $action == 'edit') {
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
 	$res = $object->fetch_optionals();
 
-	$head = recruitmentcandidaturePrepareHead($object);
+	$head = recruitmentCandidaturePrepareHead($object);
 	print dol_get_fiche_head($head, 'card', $langs->trans("RecruitmentCandidature"), -1, $object->picto);
 
 	$formconfirm = '';

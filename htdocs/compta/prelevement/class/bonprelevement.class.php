@@ -2084,7 +2084,7 @@ class BonPrelevement extends CommonObject
 		fputs($this->file, substr(strtoupper($client_nom)."                         ", 0, 24));
 
 		// Domiciliation facultative D1
-		$domiciliation = strtr($rib_dom, array(" " => "-", CHR(13) => " ", CHR(10) => ""));
+		$domiciliation = strtr($rib_dom, array(" " => "-", chr(13) => " ", chr(10) => ""));
 		fputs($this->file, substr($domiciliation."                         ", 0, 24));
 
 		// Zone Reservee D2
@@ -2189,8 +2189,8 @@ class BonPrelevement extends CommonObject
 			$XML_DEBITOR .= '					<Nm>'.dolEscapeXML(strtoupper(dol_string_nospecial(dol_string_unaccent($row_nom), ' '))).'</Nm>'.$CrLf;
 			$XML_DEBITOR .= '					<PstlAdr>'.$CrLf;
 			$XML_DEBITOR .= '						<Ctry>'.$row_country_code.'</Ctry>'.$CrLf;
-			$addressline1 = strtr($row_address, array(CHR(13) => ", ", CHR(10) => ""));
-			$addressline2 = strtr($row_zip.(($row_zip && $row_town) ? ' ' : (string) $row_town), array(CHR(13) => ", ", CHR(10) => ""));
+			$addressline1 = strtr($row_address, array(chr(13) => ", ", chr(10) => ""));
+			$addressline2 = strtr($row_zip.(($row_zip && $row_town) ? ' ' : (string) $row_town), array(chr(13) => ", ", chr(10) => ""));
 			if (trim($addressline1)) {
 				$XML_DEBITOR .= '						<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($addressline1), ' '), 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
 			}
@@ -2258,8 +2258,8 @@ class BonPrelevement extends CommonObject
 			$XML_CREDITOR .= '					<Nm>'.dolEscapeXML(strtoupper(dol_string_nospecial(dol_string_unaccent($row_nom), ' '))).'</Nm>'.$CrLf;
 			$XML_CREDITOR .= '					<PstlAdr>'.$CrLf;
 			$XML_CREDITOR .= '						<Ctry>'.$row_country_code.'</Ctry>'.$CrLf;
-			$addressline1 = strtr($row_address, array(CHR(13) => ", ", CHR(10) => ""));
-			$addressline2 = strtr($row_zip.(($row_zip && $row_town) ? ' ' : (string) $row_town), array(CHR(13) => ", ", CHR(10) => ""));
+			$addressline1 = strtr($row_address, array(chr(13) => ", ", chr(10) => ""));
+			$addressline2 = strtr($row_zip.(($row_zip && $row_town) ? ' ' : (string) $row_town), array(chr(13) => ", ", chr(10) => ""));
 			if (trim($addressline1)) {
 				$XML_CREDITOR .= '						<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($addressline1), ' '), 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
 			}
@@ -2436,8 +2436,8 @@ class BonPrelevement extends CommonObject
 				$XML_SEPA_INFO .= '				<Nm>'.dolEscapeXML(strtoupper(dol_string_nospecial(dol_string_unaccent($this->raison_sociale), ' '))).'</Nm>'.$CrLf;
 				$XML_SEPA_INFO .= '				<PstlAdr>'.$CrLf;
 				$XML_SEPA_INFO .= '					<Ctry>'.$country[1].'</Ctry>'.$CrLf;
-				$addressline1 = strtr($configuration->global->MAIN_INFO_SOCIETE_ADDRESS, array(CHR(13) => ", ", CHR(10) => ""));
-				$addressline2 = strtr($configuration->global->MAIN_INFO_SOCIETE_ZIP.(($configuration->global->MAIN_INFO_SOCIETE_ZIP || ' '.$configuration->global->MAIN_INFO_SOCIETE_TOWN) ? ' ' : '').$configuration->global->MAIN_INFO_SOCIETE_TOWN, array(CHR(13) => ", ", CHR(10) => ""));
+				$addressline1 = strtr($configuration->global->MAIN_INFO_SOCIETE_ADDRESS, array(chr(13) => ", ", chr(10) => ""));
+				$addressline2 = strtr($configuration->global->MAIN_INFO_SOCIETE_ZIP.(($configuration->global->MAIN_INFO_SOCIETE_ZIP || ' '.$configuration->global->MAIN_INFO_SOCIETE_TOWN) ? ' ' : '').$configuration->global->MAIN_INFO_SOCIETE_TOWN, array(chr(13) => ", ", chr(10) => ""));
 				if ($addressline1) {
 					$XML_SEPA_INFO .= '					<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($addressline1), ' '), 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
 				}
@@ -2502,8 +2502,8 @@ class BonPrelevement extends CommonObject
 				$XML_SEPA_INFO .= '				<Nm>'.dolEscapeXML(strtoupper(dol_string_nospecial(dol_string_unaccent($this->raison_sociale), ' '))).'</Nm>'.$CrLf;
 				$XML_SEPA_INFO .= '				<PstlAdr>'.$CrLf;
 				$XML_SEPA_INFO .= '					<Ctry>'.$country[1].'</Ctry>'.$CrLf;
-				$addressline1 = strtr($configuration->global->MAIN_INFO_SOCIETE_ADDRESS, array(CHR(13) => ", ", CHR(10) => ""));
-				$addressline2 = strtr($configuration->global->MAIN_INFO_SOCIETE_ZIP.(($configuration->global->MAIN_INFO_SOCIETE_ZIP || ' '.$configuration->global->MAIN_INFO_SOCIETE_TOWN) ? ' ' : '').$configuration->global->MAIN_INFO_SOCIETE_TOWN, array(CHR(13) => ", ", CHR(10) => ""));
+				$addressline1 = strtr($configuration->global->MAIN_INFO_SOCIETE_ADDRESS, array(chr(13) => ", ", chr(10) => ""));
+				$addressline2 = strtr($configuration->global->MAIN_INFO_SOCIETE_ZIP.(($configuration->global->MAIN_INFO_SOCIETE_ZIP || ' '.$configuration->global->MAIN_INFO_SOCIETE_TOWN) ? ' ' : '').$configuration->global->MAIN_INFO_SOCIETE_TOWN, array(chr(13) => ", ", chr(10) => ""));
 				if ($addressline1) {
 					$XML_SEPA_INFO .= '					<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($addressline1), ' '), 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
 				}

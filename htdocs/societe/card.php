@@ -430,7 +430,7 @@ if (empty($reshook)) {
 
 			// Check parameters
 			if (!GETPOST('cancel', 'alpha')) {
-				if (!empty($object->email) && !isValidEMail($object->email)) {
+				if (!empty($object->email) && !isValidEmail($object->email)) {
 					$langs->load("errors");
 					$error++;
 					setEventMessages($langs->trans("ErrorBadEMail", $object->email), null, 'errors');

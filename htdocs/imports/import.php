@@ -292,7 +292,7 @@ if ($step == 3 && $datatoimport) {
 		} else {
 			setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 		}
-		Header('Location: '.$_SERVER["PHP_SELF"].'?step='.$step.$param);
+		header('Location: '.$_SERVER["PHP_SELF"].'?step='.$step.$param);
 		exit;
 	}
 }
