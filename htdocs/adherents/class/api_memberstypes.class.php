@@ -46,7 +46,7 @@ class MembersTypes extends DolibarrApi
 	/**
 	 * Get properties of a member type object
 	 *
-	 * Return an array with member type informations
+	 * Return an array with member type information
 	 *
 	 * @param   int     $id				ID of member type
 	 * @return  Object					Object with cleaned properties
@@ -82,7 +82,7 @@ class MembersTypes extends DolibarrApi
 	 * @param int       $limit      Limit for list
 	 * @param int       $page       Page number
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.libelle:like:'SO-%') and (t.subscription:=:'1')"
-	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                Array of member type objects
 	 *
 	 * @throws RestException
@@ -157,7 +157,7 @@ class MembersTypes extends DolibarrApi
 		$membertype = new AdherentType($this->db);
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$membertype->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -198,7 +198,7 @@ class MembersTypes extends DolibarrApi
 				continue;
 			}
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$membertype->context['caller'] = $request_data['caller'];
 				continue;
 			}

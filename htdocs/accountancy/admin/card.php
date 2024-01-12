@@ -329,7 +329,7 @@ if ($action == 'create') {
 			// Account parent
 			print '<tr><td>'.$langs->trans("Accountparent").'</td>';
 			print '<td>';
-			// Note: We accept disabled account as parent account so we can build a hierarchy and use only childs
+			// Note: We accept disabled account as parent account so we can build a hierarchy and use only children
 			print $formaccounting->select_account($object->account_parent, 'account_parent', 1, array(), 0, 0, 'minwidth100 maxwidth300 maxwidthonsmartphone', 1, '');
 			print '</td></tr>';
 
