@@ -3930,45 +3930,18 @@ class Societe extends CommonObject
 		}
 
 		//Verify NIF if country is PT
-		//Returns: 1 if NIF ok, -1 if NIF bad, 0 if unexpected bad
-		if ($idprof == 1 && $soc->country_code == 'PT') {
-			$string = trim($this->idprof1);
-			$string = preg_replace('/(\s)/', '', $string);
-
-			//Check NIF
-			if (preg_match('/(^[0-9]{9}$)/', $string)) {
-				return 1;
-			} else {
-				return -1;
-			}
+		if ($idprof == 1 && $soc->country_code == 'PT' && !isValidTinForPT($this->idprof1)) {
+			return -1;
 		}
 
 		//Verify NIF if country is DZ
-		//Returns: 1 if NIF ok, -1 if NIF bad, 0 if unexpected bad
-		if ($idprof == 1 && $soc->country_code == 'DZ') {
-			$string = trim($this->idprof1);
-			$string = preg_replace('/(\s)/', '', $string);
-
-			//Check NIF
-			if (preg_match('/(^[0-9]{15}$)/', $string)) {
-				return 1;
-			} else {
-				return -1;
-			}
+		if ($idprof == 1 && $soc->country_code == 'DZ' && !isValidTinForDZ($this->idprof1)) {
+			return -1;
 		}
 
-		//Verify ID Prof 1 if country is BE (xxxx.xxx.xxx) (https://economie.fgov.be/fr/themes/entreprises/banque-carrefour-des/actualites/structure-du-numero)
-		//Returns: 1 if ok, -1 if bad, 0 if unexpected bad
-		if ($idprof == 1 && $soc->country_code == 'BE') {
-			$string = trim($this->idprof1);
-			$string = preg_replace('/(\s)/', '', $string);
-
-			//Check
-			if (preg_match('/(^[0-9]{4}\.[0-9]{3}\.[0-9]{3}$)/', $string)) {
-				return 1;
-			} else {
-				return -1;
-			}
+		//Verify ID Prof 1 if country is BE
+		if ($idprof == 1 && $soc->country_code == 'BE' && !isValidTinForBE($this->idprof1)) {
+			return -1;
 		}
 
 		return $ok;
