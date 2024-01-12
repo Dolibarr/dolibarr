@@ -25,7 +25,7 @@
 
 
 /**
- *	Class for accesing price expression table
+ *	Class for accessing price expression table
  */
 class PriceExpression
 {

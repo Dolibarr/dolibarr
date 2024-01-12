@@ -134,7 +134,7 @@ if (!$sortorder) {
 
 // Security check
 $socid = 0;
-//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 $result = restrictedArea($user, 'projet', $id, 'projet&project');
 
 $diroutputmassaction = $conf->project->dir_output.'/tasks/temp/massgeneration/'.$user->id;
@@ -1027,7 +1027,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 			print '</td>';
 		}
 	}
-	// Contacts of task, disabled because available by default jsut after
+	// Contacts of task, disabled because available by default just after
 	/*
 	if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) {
 		print '<td class="liste_titre"></td>';
@@ -1103,7 +1103,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 			print_liste_field_titre($arrayfields['t.billed']['label'], $_SERVER["PHP_SELF"], "t.billed", '', $param, '', $sortfield, $sortorder, 'right ');
 		}
 	}
-	// Contacts of task, disabled because available by default jsut after
+	// Contacts of task, disabled because available by default just after
 	/*
 	if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) {
 		print_liste_field_titre("TaskRessourceLinks", $_SERVER["PHP_SELF"], '', '', $param, $sortfield, $sortorder);

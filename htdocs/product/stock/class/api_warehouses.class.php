@@ -53,7 +53,7 @@ class Warehouses extends DolibarrApi
 	/**
 	 * Get properties of a warehouse object
 	 *
-	 * Return an array with warehouse informations
+	 * Return an array with warehouse information
 	 *
 	 * @param	int		$id				ID of warehouse
 	 * @return  Object					Object with cleaned properties
@@ -89,7 +89,7 @@ class Warehouses extends DolibarrApi
 	 * @param int		$page		Page number
 	 * @param  int    $category   Use this param to filter list by category
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'WH-%') and (t.date_creation:<:'20160101')"
-	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                Array of warehouse objects
 	 *
 	 * @throws RestException
@@ -172,7 +172,7 @@ class Warehouses extends DolibarrApi
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->warehouse->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -212,7 +212,7 @@ class Warehouses extends DolibarrApi
 				continue;
 			}
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->warehouse->context['caller'] = $request_data['caller'];
 				continue;
 			}

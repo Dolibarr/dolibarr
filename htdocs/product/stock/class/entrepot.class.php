@@ -23,7 +23,7 @@
 /**
  *  \file       htdocs/product/stock/class/entrepot.class.php
  *  \ingroup    stock
- *  \brief      Fichier de la classe de gestion des entrepots
+ *  \brief      File for class to manage warehouses
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';

@@ -25,7 +25,7 @@
 
 
 /**
- *	Class for accesing price global variables table
+ *	Class for accessing price global variables table
  */
 class PriceGlobalVariable
 {

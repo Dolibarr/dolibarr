@@ -22,7 +22,7 @@
  *		\ingroup    core
  *		\brief      File to show page after a failed payment.
  *                  This page is called by payment system with url provided to it competed with parameter TOKEN=xxx
- *                  This token can be used to get more informations.
+ *                  This token can be used to get more information.
  */
 
 if (!defined('NOLOGIN')) {

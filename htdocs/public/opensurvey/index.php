@@ -210,7 +210,7 @@ if (is_array($results)) {
 			print '</b><br>';
 
 			// Description
-			//print  $langs->trans("Desription").' : ';
+			//print  $langs->trans("Description").' : ';
 			print '<br>';
 			print '<div class="opensurveydescription centpercent">';
 			print dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->commentaires), 1, 1, 1));

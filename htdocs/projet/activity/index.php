@@ -163,7 +163,7 @@ print '</div>';
 print '</div><div class="fichetwothirdright">';
 
 
-/* Affichage de la liste des projets d'hier */
+/* Show list of yesterday's projects */
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
@@ -220,7 +220,7 @@ if ($db->type != 'pgsql')
 {
 	print '<br>';
 
-	// Affichage de la liste des projets de la semaine
+	// Show list of projects active this week
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
@@ -275,7 +275,7 @@ if ($db->type != 'pgsql')
 }
 */
 
-/* Affichage de la liste des projets du mois */
+/* Show list of projects active this month */
 if (getDolGlobalString('PROJECT_TASK_TIME_MONTH')) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
@@ -322,7 +322,7 @@ if (getDolGlobalString('PROJECT_TASK_TIME_MONTH')) {
 	print '</div>';
 }
 
-/* Affichage de la liste des projets de l'annee */
+/* Show list of projects that were active this year */
 if (getDolGlobalString('PROJECT_TASK_TIME_YEAR')) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<br><table class="noborder centpercent">';
