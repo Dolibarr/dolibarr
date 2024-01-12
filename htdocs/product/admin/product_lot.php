@@ -396,7 +396,7 @@ print '<td class="right" width="60">'.$langs->trans("Value").'</td>'."\n";
 print '</tr>'."\n";
 
 
-// Enable kits (subproducts)
+// force hard check on consistency serial number
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("StrictControlOfSerialvsBatch").'</td>';
