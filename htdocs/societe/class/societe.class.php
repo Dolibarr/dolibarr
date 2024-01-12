@@ -3857,76 +3857,8 @@ class Societe extends CommonObject
 		}
 
 		//Verify CIF/NIF/NIE if pays ES
-		//Returns: 1 if NIF ok, 2 if CIF ok, 3 if NIE ok, -1 if NIF bad, -2 if CIF bad, -3 if NIE bad, 0 if unexpected bad
 		if ($idprof == 1 && $soc->country_code == 'ES') {
-			$string = trim($this->idprof1);
-			$string = preg_replace('/(\s)/', '', $string);
-			$string = strtoupper($string);
-
-			//Check format
-			if (!preg_match('/((^[A-Z]{1}[0-9]{7}[A-Z0-9]{1}$|^[T]{1}[A-Z0-9]{8}$)|^[0-9]{8}[A-Z]{1}$)/', $string)) {
-				return 0;
-			}
-
-			$num = array();
-			for ($i = 0; $i < 9; $i++) {
-				$num[$i] = substr($string, $i, 1);
-			}
-
-			//Check NIF
-			if (preg_match('/(^[0-9]{8}[A-Z]{1}$)/', $string)) {
-				if ($num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr($string, 0, 8) % 23, 1)) {
-					return 1;
-				} else {
-					return -1;
-				}
-			}
-
-			//algorithm checking type code CIF
-			$sum = $num[2] + $num[4] + $num[6];
-			for ($i = 1; $i < 8; $i += 2) {
-				$sum += intval(substr((2 * $num[$i]), 0, 1)) + intval(substr((2 * $num[$i]), 1, 1));
-			}
-			$n = 10 - substr($sum, strlen($sum) - 1, 1);
-
-			//Check special NIF
-			if (preg_match('/^[KLM]{1}/', $string)) {
-				if ($num[8] == chr(64 + $n) || $num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr($string, 1, 8) % 23, 1)) {
-					return 1;
-				} else {
-					return -1;
-				}
-			}
-
-			//Check CIF
-			if (preg_match('/^[ABCDEFGHJNPQRSUVW]{1}/', $string)) {
-				if ($num[8] == chr(64 + $n) || $num[8] == substr($n, strlen($n) - 1, 1)) {
-					return 2;
-				} else {
-					return -2;
-				}
-			}
-
-			//Check NIE T
-			if (preg_match('/^[T]{1}/', $string)) {
-				if ($num[8] == preg_match('/^[T]{1}[A-Z0-9]{8}$/', $string)) {
-					return 3;
-				} else {
-					return -3;
-				}
-			}
-
-			//Check NIE XYZ
-			if (preg_match('/^[XYZ]{1}/', $string)) {
-				if ($num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr(str_replace(array('X', 'Y', 'Z'), array('0', '1', '2'), $string), 0, 8) % 23, 1)) {
-					return 3;
-				} else {
-					return -3;
-				}
-			}
-
-			//Can not be verified
-			return -4;
+			return isValidTinForES($this->idprof1);
 		}
 
 		//Verify NIF if country is PT
