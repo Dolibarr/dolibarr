@@ -819,7 +819,7 @@ class RssParser
  * @param string $ent
  * @param string|false $base
  * @param string $sysID
- * @param string[false $pubID
+ * @param string|false $pubID
  * @return bool
 function extEntHandler($parser, $ent, $base, $sysID, $pubID)  {
 	print 'extEntHandler ran';

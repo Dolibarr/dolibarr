@@ -1335,8 +1335,8 @@ class FormTicket
 		//var_dump($keytoavoidconflict);
 		if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelselected') && GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1')) {
 			if (!empty($arraydefaultmessage->joinfiles) && !empty($this->param['fileinit']) && is_array($this->param['fileinit'])) {
-				foreach ($this->param['fileinit'] as $file) {
-					$formmail->add_attached_files($file, basename($file), dol_mimetype($file));
+				foreach ($this->param['fileinit'] as $path) {
+					$formmail->add_attached_files($path, basename($path), dol_mimetype($path));
 				}
 			}
 		}

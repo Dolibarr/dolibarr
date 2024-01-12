@@ -905,7 +905,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		}
 
 		// Load object modCodeTiers
-		$module = (getDolGlobalString('SOCIETE_CODECLIENT_ADDON') ? $conf->global->SOCIETE_CODECLIENT_ADDON : 'mod_codeclient_leopard');
+		$module = getDolGlobalString('SOCIETE_CODECLIENT_ADDON', 'mod_codeclient_leopard');
 		if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php') {
 			$module = substr($module, 0, dol_strlen($module) - 4);
 		}
@@ -918,7 +918,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		}
 		$modCodeClient = new $module($db);
 		// Load object modCodeFournisseur
-		$module = (getDolGlobalString('SOCIETE_CODECLIENT_ADDON') ? $conf->global->SOCIETE_CODECLIENT_ADDON : 'mod_codeclient_leopard');
+		$module = getDolGlobalString('SOCIETE_CODECLIENT_ADDON', 'mod_codeclient_leopard');
 		if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php') {
 			$module = substr($module, 0, dol_strlen($module) - 4);
 		}
@@ -1800,7 +1800,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			$head = societe_prepare_head($object);
 
 			// Load object modCodeTiers
-			$module = (getDolGlobalString('SOCIETE_CODECLIENT_ADDON') ? $conf->global->SOCIETE_CODECLIENT_ADDON : 'mod_codeclient_leopard');
+			$module = getDolGlobalString('SOCIETE_CODECLIENT_ADDON', 'mod_codeclient_leopard');
 			if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php') {
 				$module = substr($module, 0, dol_strlen($module) - 4);
 			}

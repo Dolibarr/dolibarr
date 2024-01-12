@@ -322,7 +322,6 @@ if (!empty($force_install_noedit)) {
 					}
 
 					// Version min of database
-					$versionbasemin = explode('.', $class::VERSIONMIN);
 					$note = '('.$class::LABEL.' >= '.$class::VERSIONMIN.')';
 
 					// Switch to mysql if mysqli is not present
