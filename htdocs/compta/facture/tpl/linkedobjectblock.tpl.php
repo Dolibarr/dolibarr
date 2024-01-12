@@ -76,7 +76,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	print '<td class="linkedcol-amount right nowraponall">';
 	if (!empty($objectlink) && $objectlink->element == 'facture' && $user->hasRight('facture', 'lire')) {
 		if ($objectlink->statut != 3) {
-			// If not abandonned
+			// If not abandoned
 			$total += $objectlink->total_ht;
 			echo price($objectlink->total_ht);
 		} else {

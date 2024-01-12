@@ -240,7 +240,7 @@ if ($id > 0) {
 		if (empty($TData)) {
 			print '<tr class="oddeven"><td colspan="7">'.$langs->trans("NoInvoice").'</td></tr>';
 		} else {
-			// Sort array by date ASC to calucalte balance
+			// Sort array by date ASC to calculate balance
 			$TData = dol_sort_array($TData, 'datefieldforsort', 'ASC');
 
 			// Balance calculation

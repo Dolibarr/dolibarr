@@ -598,7 +598,7 @@ class ProductCustomerPrice extends CommonObject
 	 * @param int $forceupdateaffiliate update price on each soc child
 	 * @return int Return integer <0 if KO, >0 if OK
 	 */
-	public function update($user = 0, $notrigger = 0, $forceupdateaffiliate = 0)
+	public function update(User $user, $notrigger = 0, $forceupdateaffiliate = 0)
 	{
 		global $conf, $langs;
 		$error = 0;

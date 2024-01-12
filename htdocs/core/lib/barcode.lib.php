@@ -510,6 +510,8 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
 		header("Content-Type: image/png; name=\"barcode.png\"");
 		imagepng($im);
 	}
+
+	return;
 }
 
 /**

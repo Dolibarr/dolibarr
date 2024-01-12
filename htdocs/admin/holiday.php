@@ -134,7 +134,7 @@ if ($action == 'updateMask') {
 	}
 } elseif ($action == 'setmod') {
 	// TODO Verifier si module numerotation choisi peut etre active
-	// par appel methode canBeActivated
+	// par appel method canBeActivated
 
 	dolibarr_set_const($db, "HOLIDAY_ADDON", $value, 'chaine', 0, '', $conf->entity);
 } elseif ($action == 'set_other') {
