@@ -25,7 +25,6 @@ return [
     'America/Indiana/Knox',
     'America/Kentucky/Louisville',
     'America/Argentina/Mendoza',
-    'Antarctica/South_Pole',
     'Asia/Ashkhabad',
     'Asia/Calcutta',
     'Asia/Chungking',
