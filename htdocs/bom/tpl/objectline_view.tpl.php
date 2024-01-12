@@ -127,7 +127,7 @@ print '</td>';
 // Qty
 print '<td class="linecolqty nowrap right">';
 $coldisplay++;
-echo price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formating role of function price
+echo price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formatting role of function price
 print '</td>';
 
 if ($filtertype != 1) {
@@ -146,7 +146,7 @@ if ($filtertype != 1) {
 	print '</td>';
 	print '<td class="linecoldisablestockchange nowrap right">';
 	$coldisplay++;
-	echo $line->disable_stock_change ? yn($line->disable_stock_change) : ''; // Yes, it is a quantity, not a price, but we just want the formating role of function price
+	echo $line->disable_stock_change ? yn($line->disable_stock_change) : ''; // Yes, it is a quantity, not a price, but we just want the formatting role of function price
 	print '</td>';
 
 	print '<td class="linecolefficiency nowrap right">';
@@ -244,7 +244,7 @@ if ($action == 'selectlines') {
 print '</tr>';
 
 // Select of all the sub-BOM lines
-// From this pont to the end of the file, we only take care of sub-BOM lines
+// From this point to the end of the file, we only take care of sub-BOM lines
 $sql = 'SELECT rowid, fk_bom_child, fk_product, qty FROM '.MAIN_DB_PREFIX.'bom_bomline AS bl';
 $sql.= ' WHERE fk_bom ='. (int) $tmpbom->id;
 $resql = $object->db->query($sql);

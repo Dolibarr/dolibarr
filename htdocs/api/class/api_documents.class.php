@@ -633,7 +633,7 @@ class Documents extends DolibarrApi
 	 *
 	 * @param   string  $filename           	Name of file to create ('FA1705-0123.txt')
 	 * @param   string  $modulepart         	Name of module or area concerned by file upload ('product', 'service', 'invoice', 'proposal', 'project', 'project_task', 'supplier_invoice', 'expensereport', 'member', ...)
-	 * @param   string  $ref                	Reference of object (This will define subdir automatically and store submited file into it)
+	 * @param   string  $ref                	Reference of object (This will define subdir automatically and store submitted file into it)
 	 * @param   string  $subdir       			Subdirectory (Only if ref not provided)
 	 * @param   string  $filecontent        	File content (string with file content. An empty file will be created if this parameter is not provided)
 	 * @param   string  $fileencoding       	File encoding (''=no encoding, 'base64'=Base 64)

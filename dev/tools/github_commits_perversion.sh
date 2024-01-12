@@ -2,6 +2,7 @@
 #
 # Count number of commits per user and per versions (using date for version detection)
 #
+# shellcheck disable=1113,2002,2006,2086,2164,2219
 
 Releases=("3.9" "4.0" "5.0" "6.0" "7.0" "8.0" "9.0" "10.0" "11.0" "12.0" "13.0" "14.0" "15.0" "16.0" "17.0" "18.0" "develop")
 let "counter = 0"
