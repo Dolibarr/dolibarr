@@ -113,7 +113,7 @@ if ($action == 'delete') {
 $form = new Form($db);
 $formaccounting = new FormAccounting($db);
 
-llxheader('', $langs->trans('AccountingCategory'));
+llxHeader('', $langs->trans('AccountingCategory'));
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/accountancy/admin/categories_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 $titlepicto = 'setup';

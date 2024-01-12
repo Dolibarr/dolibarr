@@ -2073,6 +2073,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 						print $listofusertoshow;
 					}
 
+					$parameters = array();
 					$reshook = $hookmanager->executeHooks('eventOptions', $parameters, $event, $action); // Note that $action and $object may have been modified by some hooks
 					if ($reshook < 0) {
 						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');

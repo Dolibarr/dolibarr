@@ -117,7 +117,7 @@ class mymodulewidget1 extends ModeleBoxes
 			'target' => '',
 			// HTML class attached to the picto and link
 			'subclass' => 'center',
-			// Limit and truncate with "…" the displayed text lenght, 0 = disabled
+			// Limit and truncate with "…" the displayed text length, 0 = disabled
 			'limit' => 0,
 			// Adds translated " (Graph)" to a hidden form value's input (?)
 			'graph' => false
@@ -140,7 +140,7 @@ class mymodulewidget1 extends ModeleBoxes
 					'target' => '_blank',
 					// Fist line logo (deprecated. Include instead logo html code into text or text2, and set asis property to true to avoid HTML cleaning)
 					//'logo' => 'monmodule@monmodule',
-					// Unformatted text, added after text. Usefull to add/load javascript code
+					// Unformatted text, added after text. Useful to add/load javascript code
 					'textnoformat' => '',
 
 					// Main text for content of cell (other method)

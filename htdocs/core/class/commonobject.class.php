@@ -2926,12 +2926,11 @@ abstract class CommonObject
 	 *  Change the shipping method
 	 *
 	 *  @param      int     $shipping_method_id     Id of shipping method
-	 *  @param      bool    $notrigger              false=launch triggers after, true=disable triggers
+	 *  @param      int    	$notrigger              0=launch triggers after, 1=disable triggers
 	 *  @param      User	$userused               Object user
-	 *
-	 *  @return     int              1 if OK, 0 if KO
+	 *  @return     int              				1 if OK, 0 if KO
 	 */
-	public function setShippingMethod($shipping_method_id, $notrigger = false, $userused = null)
+	public function setShippingMethod($shipping_method_id, $notrigger = 0, $userused = null)
 	{
 		global $user;
 
@@ -3051,11 +3050,11 @@ abstract class CommonObject
 	 *  Change the bank account
 	 *
 	 *  @param		int		$fk_account		Id of bank account
-	 *  @param      bool    $notrigger      false=launch triggers after, true=disable triggers
+	 *  @param      int    	$notrigger      0=launch triggers after, 1=disable triggers
 	 *  @param      User	$userused		Object user
-	 *  @return		int				1 if OK, 0 if KO
+	 *  @return		int						1 if OK, 0 if KO
 	 */
-	public function setBankAccount($fk_account, $notrigger = false, $userused = null)
+	public function setBankAccount($fk_account, $notrigger = 0, $userused = null)
 	{
 		global $user;
 
@@ -9617,10 +9616,10 @@ abstract class CommonObject
 	 * Create object into database
 	 *
 	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
 	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
-	public function createCommon(User $user, $notrigger = false)
+	public function createCommon(User $user, $notrigger = 0)
 	{
 		global $langs;
 
@@ -9911,10 +9910,10 @@ abstract class CommonObject
 	 * Update object into database
 	 *
 	 * @param  User $user      	User that modifies
-	 * @param  bool $notrigger 	false=launch triggers after, true=disable triggers
+	 * @param  int 	$notrigger 	0=launch triggers after, 1=disable triggers
 	 * @return int             	Return integer <0 if KO, >0 if OK
 	 */
-	public function updateCommon(User $user, $notrigger = false)
+	public function updateCommon(User $user, $notrigger = 0)
 	{
 		dol_syslog(get_class($this)."::updateCommon update", LOG_DEBUG);
 
@@ -10013,11 +10012,11 @@ abstract class CommonObject
 	 * Delete object in database
 	 *
 	 * @param 	User 	$user       			User that deletes
-	 * @param 	bool 	$notrigger  			false=launch triggers after, true=disable triggers
+	 * @param 	int 	$notrigger  			0=launch triggers after, 1=disable triggers
 	 * @param	int		$forcechilddeletion		0=no, 1=Force deletion of children
 	 * @return 	int             				Return integer <0 if KO, 0=Nothing done because object has child, >0 if OK
 	 */
-	public function deleteCommon(User $user, $notrigger = false, $forcechilddeletion = 0)
+	public function deleteCommon(User $user, $notrigger = 0, $forcechilddeletion = 0)
 	{
 		dol_syslog(get_class($this)."::deleteCommon delete", LOG_DEBUG);
 
@@ -10225,13 +10224,11 @@ abstract class CommonObject
 	 *
 	 *	@param  User	$user       User that delete
 	 *  @param	int		$idline		Id of line to delete
-	 *  @param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
+	 *  @param 	int 	$notrigger  0=launch triggers after, 1=disable triggers
 	 *  @return int         		>0 if OK, <0 if KO
 	 */
-	public function deleteLineCommon(User $user, $idline, $notrigger = false)
+	public function deleteLineCommon(User $user, $idline, $notrigger = 0)
 	{
-		global $conf;
-
 		$error = 0;
 
 		$tmpforobjectclass = get_class($this);

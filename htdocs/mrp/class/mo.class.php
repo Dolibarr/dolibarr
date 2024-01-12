@@ -77,7 +77,7 @@ class Mo extends CommonObject
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
-	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
 	 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'maxwidth200', 'wordbreak', 'tdoverflowmax200'
@@ -293,10 +293,10 @@ class Mo extends CommonObject
 	 * Create object into database
 	 *
 	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
 	 * @return int             Return integer <=0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = false)
+	public function create(User $user, $notrigger = 0)
 	{
 		$error = 0;
 		$idcreated = 0;
@@ -637,10 +637,10 @@ class Mo extends CommonObject
 	 * Update object into database
 	 *
 	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
 	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = false)
+	public function update(User $user, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -671,10 +671,10 @@ class Mo extends CommonObject
 	 * Erase and update the line to consume and to produce.
 	 *
 	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
 	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
-	public function createProduction(User $user, $notrigger = true)
+	public function createProduction(User $user, $notrigger = 0)
 	{
 		$error = 0;
 		$role = "";
@@ -789,10 +789,10 @@ class Mo extends CommonObject
 	 * Update quantities in lines to consume and/or lines to produce.
 	 *
 	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
 	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
-	public function updateProduction(User $user, $notrigger = true)
+	public function updateProduction(User $user, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -842,11 +842,11 @@ class Mo extends CommonObject
 	 * Delete object in database
 	 *
 	 * @param	User	$user										User that deletes
-	 * @param	bool	$notrigger									false=launch triggers after, true=disable triggers
+	 * @param	int		$notrigger									0=launch triggers after, 1=disable triggers
 	 * @param	bool	$also_cancel_consumed_and_produced_lines  	true if the consumed and produced lines will be deleted (and stocks incremented/decremented back) (false by default)
 	 * @return	int													Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false, $also_cancel_consumed_and_produced_lines = false)
+	public function delete(User $user, $notrigger = 0, $also_cancel_consumed_and_produced_lines = false)
 	{
 		$error = 0;
 		$this->db->begin();
@@ -879,10 +879,10 @@ class Mo extends CommonObject
 	 *
 	 *	@param  User	$user       User that delete
 	 *  @param	int		$idline		Id of line to delete
-	 *  @param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
+	 *  @param 	int 	$notrigger  0=launch triggers after, 1=disable triggers
 	 *  @return int         		>0 if OK, <0 if KO
 	 */
-	public function deleteLine(User $user, $idline, $notrigger = false)
+	public function deleteLine(User $user, $idline, $notrigger = 0)
 	{
 		global $langs;
 		$langs->loadLangs(array('stocks', 'mrp'));
@@ -1024,7 +1024,7 @@ class Mo extends CommonObject
 
 		// Protection
 		if ($this->status == self::STATUS_VALIDATED) {
-			dol_syslog(get_class($this)."::validate action abandonned: already validated", LOG_WARNING);
+			dol_syslog(get_class($this)."::validate action abandoned: already validated", LOG_WARNING);
 			return 0;
 		}
 
@@ -1386,7 +1386,7 @@ class Mo extends CommonObject
 	}
 
 	/**
-	 *  Return a link to the object card (with optionaly the picto)
+	 *  Return a link to the object card (with optionally the picto)
 	 *
 	 *  @param  int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *  @param  string  $option                     On what the link point to ('nolink', '', 'production', ...)
@@ -1605,7 +1605,7 @@ class Mo extends CommonObject
 	 *  Create a document onto disk according to template module.
 	 *
 	 *  @param	    string		$modele			Force template to use ('' to not force)
-	 *  @param		Translate	$outputlangs	objet lang a utiliser pour traduction
+	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
@@ -2090,10 +2090,10 @@ class MoLine extends CommonObjectLine
 	 * Create object into database
 	 *
 	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
 	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = false)
+	public function create(User $user, $notrigger = 0)
 	{
 		if (empty($this->qty)) {
 			$this->error = 'BadValueForQty';
@@ -2198,10 +2198,10 @@ class MoLine extends CommonObjectLine
 	 * Update object into database
 	 *
 	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
 	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = false)
+	public function update(User $user, $notrigger = 0)
 	{
 		return $this->updateCommon($user, $notrigger);
 	}
@@ -2209,11 +2209,11 @@ class MoLine extends CommonObjectLine
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user       User that deletes
-	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             Return integer <0 if KO, >0 if OK
+	 * @param User 	$user       User that deletes
+	 * @param int 	$notrigger  0=launch triggers after, 1=disable triggers
+	 * @return int             	Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false)
+	public function delete(User $user, $notrigger = 0)
 	{
 		return $this->deleteCommon($user, $notrigger);
 		//return $this->deleteCommon($user, $notrigger, 1);

@@ -1047,7 +1047,7 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 	// Add main fields of object
 	foreach ($object->fields as $key => $val) {
 		if (!empty($val['isameasure']) && (!isset($val['enabled']) || dol_eval($val['enabled'], 1, 1, '1'))) {
-			$position = (empty($val['position']) ? 0 : intVal($val['position']));
+			$position = (empty($val['position']) ? 0 : intval($val['position']));
 			$arrayofmesures[$tablealias.'.'.$key.'-sum'] = array(
 				'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$langs->trans("Sum").')</span>',
 				'labelnohtml' => $labelofobject.': '.$langs->trans($val['label']),
@@ -1200,7 +1200,7 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
 				continue;
 			}
 			if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
-				$position = (empty($val['position']) ? 0 : intVal($val['position']));
+				$position = (empty($val['position']) ? 0 : intval($val['position']));
 				$arrayofxaxis[$tablealias.'.'.$key.'-year'] = array(
 					'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.')</span>',
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val['label']),
@@ -1223,7 +1223,7 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
 					'tablefromt' => $tablepath
 				);
 			} else {
-				$position = (empty($val['position']) ? 0 : intVal($val['position']));
+				$position = (empty($val['position']) ? 0 : intval($val['position']));
 				$arrayofxaxis[$tablealias.'.'.$key] = array(
 					'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']),
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val['label']),
@@ -1246,7 +1246,7 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
 			}
 
 			if (in_array($extrafields->attributes[$object->table_element]['type'][$key], array('timestamp', 'date', 'datetime'))) {
-				$position = (empty($extrafields->attributes[$object->table_element]['pos'][$key]) ? 0 : intVal($extrafields->attributes[$object->table_element]['pos'][$key]));
+				$position = (empty($extrafields->attributes[$object->table_element]['pos'][$key]) ? 0 : intval($extrafields->attributes[$object->table_element]['pos'][$key]));
 				$arrayofxaxis[preg_replace('/^t/', 'te', $tablealias).'.'.$key.'-year'] = array(
 					'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val).' <span class="opacitymedium">('.$YYYY.')</span>',
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val),
@@ -1362,7 +1362,7 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 				continue;
 			}
 			if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
-				$position = (empty($val['position']) ? 0 : intVal($val['position']));
+				$position = (empty($val['position']) ? 0 : intval($val['position']));
 				$arrayofgroupby[$tablealias.'.'.$key.'-year'] = array(
 					'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.')</span>',
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val['label']),
@@ -1385,7 +1385,7 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 					'tablefromt' => $tablepath
 				);
 			} else {
-				$position = (empty($val['position']) ? 0 : intVal($val['position']));
+				$position = (empty($val['position']) ? 0 : intval($val['position']));
 				$arrayofgroupby[$tablealias.'.'.$key] = array(
 					'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val['label']),
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val['label']),
@@ -1408,7 +1408,7 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 			}
 
 			if (in_array($extrafields->attributes[$object->table_element]['type'][$key], array('timestamp', 'date', 'datetime'))) {
-				$position = (empty($extrafields->attributes[$object->table_element]['pos'][$key]) ? 0 : intVal($extrafields->attributes[$object->table_element]['pos'][$key]));
+				$position = (empty($extrafields->attributes[$object->table_element]['pos'][$key]) ? 0 : intval($extrafields->attributes[$object->table_element]['pos'][$key]));
 				$arrayofgroupby[preg_replace('/^t/', 'te', $tablealias).'.'.$key.'-year'] = array(
 					'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': '.$langs->trans($val).' <span class="opacitymedium">('.$YYYY.')</span>',
 					'labelnohtml' => $labelofobject.': '.$langs->trans($val),

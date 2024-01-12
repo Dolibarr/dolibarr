@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2023		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -512,16 +513,16 @@ class Cronjob extends CommonObject
 	 *  Load list of cron jobs in a memory array from the database
 	 *  @TODO Use object CronJob and not CronJobLine.
 	 *
-	 *  @param	string		$sortorder      sort order
-	 *  @param	string		$sortfield      sort field
-	 *  @param	int			$limit		    limit page
-	 *  @param	int			$offset    	    page
-	 *  @param	int			$status    	    display active or not
-	 *  @param	array		$filter    	    filter output
-	 *  @param  int         $processing     Processing or not
-	 *  @return int          			    Return integer <0 if KO, >0 if OK
+	 *  @param	string		$sortorder		sort order
+	 *  @param	string		$sortfield		sort field
+	 *  @param	int			$limit			limit page
+	 *  @param	int			$offset			page
+	 *  @param	int			$status			display active or not
+	 *  @param	array		$filter			filter output
+	 *  @param	int			$processing		Processing or not
+	 *  @return	int							Return integer <0 if KO, >0 if OK
 	 */
-	public function fetchAll($sortorder = 'DESC', $sortfield = 't.rowid', $limit = 0, $offset = 0, $status = 1, $filter = '', $processing = -1)
+	public function fetchAll($sortorder = 'DESC', $sortfield = 't.rowid', $limit = 0, $offset = 0, $status = 1, $filter = [], $processing = -1)
 	{
 		$this->lines = array();
 

@@ -1813,7 +1813,7 @@ class FactureFournisseur extends CommonInvoice
 				} else {
 					if ($key == 'EMAIL') {
 						// Check for mandatory
-						if (getDolGlobalString('SOCIETE_EMAIL_INVOICE_MANDATORY') && !isValidEMail($this->thirdparty->email)) {
+						if (getDolGlobalString('SOCIETE_EMAIL_INVOICE_MANDATORY') && !isValidEmail($this->thirdparty->email)) {
 							$langs->load("errors");
 							$this->error = $langs->trans("ErrorBadEMail", $this->thirdparty->email).' ('.$langs->trans("ForbiddenBySetupRules").') ['.$langs->trans('Company').' : '.$this->thirdparty->name.']';
 							dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
@@ -2069,7 +2069,7 @@ class FactureFournisseur extends CommonInvoice
 	 *  @param    	int		$fk_remise_except	Id discount used
 	 *	@return    	int             			>0 if OK, <0 if KO
 	 */
-	public function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product = 0, $remise_percent = 0, $date_start = '', $date_end = '', $ventil = 0, $info_bits = '', $price_base_type = 'HT', $type = 0, $rang = -1, $notrigger = false, $array_options = 0, $fk_unit = null, $origin_id = 0, $pu_devise = 0, $ref_supplier = '', $special_code = '', $fk_parent_line = 0, $fk_remise_except = 0)
+	public function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product = 0, $remise_percent = 0, $date_start = '', $date_end = '', $ventil = 0, $info_bits = '', $price_base_type = 'HT', $type = 0, $rang = -1, $notrigger = 0, $array_options = 0, $fk_unit = null, $origin_id = 0, $pu_devise = 0, $ref_supplier = '', $special_code = '', $fk_parent_line = 0, $fk_remise_except = 0)
 	{
 		global $langs, $mysoc, $conf;
 
@@ -2332,7 +2332,7 @@ class FactureFournisseur extends CommonInvoice
 	 * @param	integer	$rang	line rank
 	 * @return    	int           					Return integer <0 if KO, >0 if OK
 	 */
-	public function updateline($id, $desc, $pu, $vatrate, $txlocaltax1 = 0, $txlocaltax2 = 0, $qty = 1, $idproduct = 0, $price_base_type = 'HT', $info_bits = 0, $type = 0, $remise_percent = 0, $notrigger = false, $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $pu_devise = 0, $ref_supplier = '', $rang = 0)
+	public function updateline($id, $desc, $pu, $vatrate, $txlocaltax1 = 0, $txlocaltax2 = 0, $qty = 1, $idproduct = 0, $price_base_type = 'HT', $info_bits = 0, $type = 0, $remise_percent = 0, $notrigger = 0, $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $pu_devise = 0, $ref_supplier = '', $rang = 0)
 	{
 		global $mysoc, $langs;
 
@@ -3715,8 +3715,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 	/**
 	 * Deletes a line
 	 *
-	 * @param     bool|int   $notrigger     1=Does not execute triggers, 0= execute triggers
-	 * @return    int                       0 if KO, 1 if OK
+	 * @param     int   $notrigger     1=Does not execute triggers, 0=execute triggers
+	 * @return    int                  0 if KO, 1 if OK
 	 */
 	public function delete($notrigger = 0)
 	{

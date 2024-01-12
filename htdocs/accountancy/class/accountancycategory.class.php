@@ -624,8 +624,8 @@ class AccountancyCategory // extends CommonObject
 	 * @param string 	$date_end			Date end
 	 * @param int 		$sens 				Sens of the account:  0: credit - debit (use this by default), 1: debit - credit
 	 * @param string	$thirdparty_code	Thirdparty code
-	 * @param int       $month 				Specifig month - Can be empty
-	 * @param int       $year 				Specifig year - Can be empty
+	 * @param int       $month 				Specific month - Can be empty
+	 * @param int       $year 				Specific year - Can be empty
 	 * @return integer 						Return integer <0 if KO, >= 0 if OK
 	 */
 	public function getSumDebitCredit($cpt, $date_start, $date_end, $sens, $thirdparty_code = 'nofilter', $month = 0, $year = 0)

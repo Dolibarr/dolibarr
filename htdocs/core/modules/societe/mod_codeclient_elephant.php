@@ -94,6 +94,8 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	 */
 	public function __construct($db)
 	{
+		$this->db = $db;
+
 		$this->code_null = 0;
 		$this->code_modifiable = 1;
 		$this->code_modifiable_invalide = 1;

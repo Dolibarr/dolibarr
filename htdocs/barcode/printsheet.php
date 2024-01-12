@@ -225,12 +225,12 @@ if (empty($reshook)) {
 			// For labels
 			if ($mode == 'label') {
 				$txtforsticker = "%PHOTO%"; // Photo will be barcode image, %BARCODE% posible when using TCPDF generator
-				$textleft = make_substitutions((!getDolGlobalString('BARCODE_LABEL_LEFT_TEXT') ? $txtforsticker : $conf->global->BARCODE_LABEL_LEFT_TEXT), $substitutionarray);
-				$textheader = make_substitutions((!getDolGlobalString('BARCODE_LABEL_HEADER_TEXT') ? '' : $conf->global->BARCODE_LABEL_HEADER_TEXT), $substitutionarray);
-				$textfooter = make_substitutions((!getDolGlobalString('BARCODE_LABEL_FOOTER_TEXT') ? '' : $conf->global->BARCODE_LABEL_FOOTER_TEXT), $substitutionarray);
-				$textright = make_substitutions((!getDolGlobalString('BARCODE_LABEL_RIGHT_TEXT') ? '' : $conf->global->BARCODE_LABEL_RIGHT_TEXT), $substitutionarray);
-				$forceimgscalewidth = (!getDolGlobalString('BARCODE_FORCEIMGSCALEWIDTH') ? 1 : $conf->global->BARCODE_FORCEIMGSCALEWIDTH);
-				$forceimgscaleheight = (!getDolGlobalString('BARCODE_FORCEIMGSCALEHEIGHT') ? 1 : $conf->global->BARCODE_FORCEIMGSCALEHEIGHT);
+				$textleft = make_substitutions(getDolGlobalString('BARCODE_LABEL_LEFT_TEXT', $txtforsticker), $substitutionarray);
+				$textheader = make_substitutions(getDolGlobalString('BARCODE_LABEL_HEADER_TEXT'), $substitutionarray);
+				$textfooter = make_substitutions(getDolGlobalString('BARCODE_LABEL_FOOTER_TEXT'), $substitutionarray);
+				$textright = make_substitutions(getDolGlobalString('BARCODE_LABEL_RIGHT_TEXT'), $substitutionarray);
+				$forceimgscalewidth = getDolGlobalString('BARCODE_FORCEIMGSCALEWIDTH', 1);
+				$forceimgscaleheight = getDolGlobalString('BARCODE_FORCEIMGSCALEHEIGHT', 1);
 
 				$MAXSTICKERS = 1000;
 				if ($numberofsticker <= $MAXSTICKERS) {

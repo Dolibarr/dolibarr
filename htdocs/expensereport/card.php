@@ -315,7 +315,7 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				$db->commit();
-				Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 				exit;
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');

@@ -204,7 +204,7 @@ if ($id > 0 || !empty($ref)) {
 			}
 		}
 
-		// additionnal list with adherents of company
+		// additional list with adherents of company
 		if (isModEnabled('adherent') && $user->hasRight('adherent', 'lire')) {
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';

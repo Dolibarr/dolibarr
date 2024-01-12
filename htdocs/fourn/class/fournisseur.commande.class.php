@@ -1821,7 +1821,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	@param		float	$pu_ttc					Unit price TTC (used if $price_base_type is 'TTC')
 	 *	@param		int		$type					Type of line (0=product, 1=service)
 	 *	@param		int		$info_bits				More information
-	 *  @param		bool	$notrigger				Disable triggers
+	 *  @param		int		$notrigger				Disable triggers
 	 *  @param		int		$date_start				Date start of service
 	 *  @param		int		$date_end				Date end of service
 	 *  @param		array	$array_options			extrafields array
@@ -1833,7 +1833,7 @@ class CommandeFournisseur extends CommonOrder
 	 * 	@param		int		$special_code			Special code
 	 *	@return     int             				Return integer <=0 if KO, >0 if OK
 	 */
-	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $fk_product = 0, $fk_prod_fourn_price = 0, $ref_supplier = '', $remise_percent = 0.0, $price_base_type = 'HT', $pu_ttc = 0.0, $type = 0, $info_bits = 0, $notrigger = false, $date_start = null, $date_end = null, $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $origin = '', $origin_id = 0, $rang = -1, $special_code = 0)
+	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $fk_product = 0, $fk_prod_fourn_price = 0, $ref_supplier = '', $remise_percent = 0.0, $price_base_type = 'HT', $pu_ttc = 0.0, $type = 0, $info_bits = 0, $notrigger = 0, $date_start = null, $date_end = null, $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $origin = '', $origin_id = 0, $rang = -1, $special_code = 0)
 	{
 		global $langs, $mysoc, $conf;
 

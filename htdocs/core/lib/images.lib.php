@@ -65,8 +65,6 @@ function getDefaultImageSizes()
  */
 function getListOfPossibleImageExt($acceptsvg = 0)
 {
-	global $conf;
-
 	$regeximgext = '\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.webp|\.xpm|\.xbm'; // See also into product.class.php
 	if ($acceptsvg || getDolGlobalString('MAIN_ALLOW_SVG_FILES_AS_IMAGES')) {
 		$regeximgext .= '|\.svg'; // Not allowed by default. SVG can contains javascript
@@ -453,7 +451,7 @@ function correctExifImageOrientation($fileSource, $fileDest, $quality = 95)
 					if ($infoImg[2] === IMAGETYPE_PNG) { // In fact there is no exif on PNG but just in case
 						imagealphablending($img, false);
 						imagesavealpha($img, true);
-						$img = imagerotate($img, $deg, imageColorAllocateAlpha($img, 0, 0, 0, 127));
+						$img = imagerotate($img, $deg, imagecolorallocatealpha($img, 0, 0, 0, 127));
 						imagealphablending($img, false);
 						imagesavealpha($img, true);
 					} else {
@@ -665,7 +663,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 		if ($infoImg[2] === 'IMAGETYPE_PNG') { // In fact there is no exif on PNG but just in case
 			imagealphablending($img, false);
 			imagesavealpha($img, true);
-			$rotated = imagerotate($img, $exifAngle, imageColorAllocateAlpha($img, 0, 0, 0, 127));
+			$rotated = imagerotate($img, $exifAngle, imagecolorallocatealpha($img, 0, 0, 0, 127));
 			imagealphablending($rotated, false);
 			imagesavealpha($rotated, true);
 		} else {

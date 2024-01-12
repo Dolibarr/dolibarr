@@ -150,7 +150,7 @@ if ($action == "create") {
 		$currencyRate_static->rate = $rateinput;
 		$currencyRate_static->rate_indirect = $rateindirectinput;
 
-		$result = $currencyRate_static->create(intval($fk_currency));
+		$result = $currencyRate_static->create($user, intval($fk_currency));
 		if ($result > 0) {
 			setEventMessages($langs->trans('successRateCreate', $multicurrency_code), null);
 		} else {
@@ -169,7 +169,7 @@ if ($action == 'update') {
 		$currencyRate->date_sync = $dateinput;
 		$currencyRate->fk_multicurrency = $fk_currency;
 		$currencyRate->rate = $rateinput;
-		$res = $currencyRate->update();
+		$res = $currencyRate->update($user);
 		if ($res) {
 			setEventMessages($langs->trans('successUpdateRate'), null);
 		} else {
@@ -182,7 +182,7 @@ if ($action == 'update') {
 
 if ($action == "deleteRate") {
 	$current_rate = new CurrencyRate($db);
-	$current_rate->fetch(intval($id_rate_selected));
+	$current_rate->fetch((int) $id_rate_selected);
 
 	if ($current_rate) {
 		$current_currency = new MultiCurrency($db);
@@ -207,7 +207,7 @@ if ($action == "deleteRate") {
 
 if ($action == "confirm_delete") {
 	$current_rate = new CurrencyRate($db);
-	$current_rate->fetch(intval($id_rate_selected));
+	$current_rate->fetch((int) $id_rate_selected);
 	if ($current_rate) {
 		$result = $current_rate->delete($user);
 		if ($result) {
@@ -357,7 +357,7 @@ $sql .= " WHERE m.code <> '".$db->escape($conf->currency)."'";
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-$sql .= " GROUP BY cr.rowid, cr.date_sync, cr.rate, m.code, cr.entity, m.code, m.name";
+$sql .= " GROUP BY cr.rowid, cr.date_sync, cr.rate, cr.rate_indirect, m.code, cr.entity, m.code, m.name";
 
 // Add fields from hooks
 $parameters = array();

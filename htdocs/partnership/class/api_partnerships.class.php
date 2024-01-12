@@ -56,7 +56,7 @@ class Partnerships extends DolibarrApi
 	/**
 	 * Get properties of a partnership object
 	 *
-	 * Return an array with partnership informations
+	 * Return an array with partnership information
 	 *
 	 * @param	int		$id				ID of partnership
 	 * @return  Object					Object with cleaned properties
@@ -199,7 +199,7 @@ class Partnerships extends DolibarrApi
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->partnership->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -247,7 +247,7 @@ class Partnerships extends DolibarrApi
 				continue;
 			}
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->partnership->context['caller'] = $request_data['caller'];
 				continue;
 			}

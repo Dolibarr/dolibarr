@@ -6,6 +6,8 @@
 #
 # Raphaël Doursenaud - rdoursenaud@gpcsolutions.fr
 
+# shellcheck disable=2006,2027,2044,2045,2046,2086,2155,2166,2268
+
 # Syntax
 if [ "x$1" != "xlist" -a "x$1" != "xfix" ]
 then

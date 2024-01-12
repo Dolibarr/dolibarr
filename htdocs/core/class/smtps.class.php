@@ -382,7 +382,7 @@ class SMTPs
 	public function buildRCPTlist()
 	{
 		// Pull TO list
-		$_aryToList = $this->getTO();
+		$_aryToList = $this->getTo();
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1425,7 +1425,7 @@ class SMTPs
 		global $conf;
 
 		$_header = 'From: '.$this->getFrom('org')."\r\n"
-		. 'To: '.$this->getTO()."\r\n";
+		. 'To: '.$this->getTo()."\r\n";
 
 		if ($this->getCC()) {
 			$_header .= 'Cc: '.$this->getCC()."\r\n";

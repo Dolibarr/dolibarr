@@ -1342,7 +1342,25 @@ class DolGraph
 			if (empty($showlegend)) {
 				$this->stringtoshow .= 'legend: { display: false }, '."\n";
 			} else {
-				$this->stringtoshow .= 'legend: { maxWidth: '.round(intVal($this->width) / 2).', labels: { boxWidth: 15 }, position: \'' . (($showlegend && $showlegend == 2) ? 'right' : 'top') . '\' },'."\n";
+				$this->stringtoshow .= 'legend: { maxWidth: '.round(intval($this->width) / 2).', labels: { boxWidth: 15 }, position: \'' . (($showlegend && $showlegend == 2) ? 'right' : 'top') . '\' },'."\n";
+			}
+			if (is_array($this->tooltipsLabels) || is_array($this->tooltipsTitles)) {
+				$this->stringtoshow .= 'tooltip: { mode: \'nearest\',
+					callbacks: {';
+				if (is_array($this->tooltipsTitles)) {
+					$this->stringtoshow .='
+							title: function(tooltipItem, data) {
+								var tooltipsTitle ='.json_encode($this->tooltipsTitles).'
+								return tooltipsTitle[tooltipItem[0].datasetIndex];
+							},';
+				}
+				if (is_array($this->tooltipsLabels)) {
+					$this->stringtoshow .= 'label: function(tooltipItem, data) {
+								var tooltipslabels ='.json_encode($this->tooltipsLabels).'
+								return tooltipslabels[tooltipItem.datasetIndex]
+							}';
+				}
+				$this->stringtoshow .='}},';
 			}
 			$this->stringtoshow .= "}, \n";
 

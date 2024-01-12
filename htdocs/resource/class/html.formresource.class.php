@@ -67,7 +67,7 @@ class FormResource
 	 *
 	 *	@param	int   	$selected       Preselected resource id
 	 *	@param  string	$htmlname       Name of field in form
-	 *  @param  string	$filter         Optionnal filters criteras (example: 's.rowid <> x')
+	 *  @param  string	$filter         Optional filters criteras (example: 's.rowid <> x')
 	 *	@param	int		$showempty		Add an empty field
 	 * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
 	 * 	@param	int		$forcecombo		Force to use combo box
@@ -76,7 +76,7 @@ class FormResource
 	 *  @param	int		$outputmode		0=HTML select string, 1=Array, 2=without form tag
 	 *  @param	int		$limit			Limit number of answers
 	 *  @param	string	$morecss		More css
-	 * 	@param	bool	$multiple       add [] in the name of element and add 'multiple' attribut
+	 * 	@param	bool	$multiple       add [] in the name of element and add 'multiple' attribute
 	 * 	@return	string|array			HTML string with
 	 */
 	public function select_resource_list($selected = '', $htmlname = 'fk_resource', $filter = '', $showempty = 0, $showtype = 0, $forcecombo = 0, $event = array(), $filterkey = '', $outputmode = 0, $limit = 20, $morecss = '', $multiple = false)
