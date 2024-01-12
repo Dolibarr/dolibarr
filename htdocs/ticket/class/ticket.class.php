@@ -627,7 +627,7 @@ class Ticket extends CommonObject
 	 *  @param	string		$email_msgid	Email msgid
 	 *  @return int              			Return integer <0 if KO, >0 if OK
 	 */
-	public function fetch($id = '', $ref = '', $track_id = '', $email_msgid = '')
+	public function fetch($id = 0, $ref = '', $track_id = '', $email_msgid = '')
 	{
 		global $langs;
 
@@ -762,7 +762,7 @@ class Ticket extends CommonObject
 	 * @param  array  $filter    	Filter for query
 	 * @return int 					Return integer <0 if KO, >0 if OK
 	 */
-	public function fetchAll($user, $sortorder = 'ASC', $sortfield = 't.datec', $limit = '', $offset = 0, $arch = '', $filter = '')
+	public function fetchAll($user, $sortorder = 'ASC', $sortfield = 't.datec', $limit = 0, $offset = 0, $arch = 0, $filter = [])
 	{
 		global $langs, $extrafields;
 
@@ -1944,7 +1944,7 @@ class Ticket extends CommonObject
 	 *     @param  string 		$clause  		Clause for filters
 	 *     @return array|int    		   		Array of thirdparties object
 	 */
-	public function searchSocidByEmail($email, $type = '0', $filters = array(), $clause = 'AND')
+	public function searchSocidByEmail($email, $type = 0, $filters = array(), $clause = 'AND')
 	{
 		$thirdparties = array();
 		$exact = 0;
@@ -2004,11 +2004,11 @@ class Ticket extends CommonObject
 	 *     Search and fetch contacts by email
 	 *
 	 *     @param  string 		$email 		Email
-	 *     @param  array  		$socid 		Limit to a thirdparty
+	 *     @param  int  		$socid 		Limit to a thirdparty
 	 *     @param  string 		$case  		Respect case
 	 *     @return array|int        		Array of contacts object
 	 */
-	public function searchContactByEmail($email, $socid = '', $case = '')
+	public function searchContactByEmail($email, $socid = 0, $case = '')
 	{
 		$contacts = array();
 
@@ -2339,7 +2339,7 @@ class Ticket extends CommonObject
 	 * @param	Societe		$thirdparty		Thirdparty
 	 * @return 	string   					Reference
 	 */
-	public function getDefaultRef($thirdparty = '')
+	public function getDefaultRef($thirdparty = null)
 	{
 		global $conf;
 

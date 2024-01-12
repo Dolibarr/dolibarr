@@ -82,6 +82,7 @@ class FormSetup
 	 */
 	public $errors = array();
 
+
 	/**
 	 * Constructor
 	 *
