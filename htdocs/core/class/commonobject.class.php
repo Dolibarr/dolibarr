@@ -9617,7 +9617,7 @@ abstract class CommonObject
 	 * Create object into database
 	 *
 	 * @param  User $user      User that creates
-	 * @param  bool $notrigger 0=launch triggers after, 1=disable triggers
+	 * @param  int  $notrigger 0=launch triggers after, 1=disable triggers, keep possibility of other value in future
 	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function createCommon(User $user, $notrigger = 0)
