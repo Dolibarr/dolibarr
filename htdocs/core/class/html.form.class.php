@@ -2638,10 +2638,10 @@ class Form
 			$sql .= " AND p.finished = ".((int) $finished);
 		} elseif ($finished == 1) {
 			$sql .= " AND p.finished = ".((int) $finished);
-			if ($status >= 0) {
+			if ($status >= 0 && $status_purchase != -1) {
 				$sql .= " AND p.tosell = ".((int) $status);
 			}
-		} elseif ($status >= 0) {
+		} elseif ($status >= 0 && $status_purchase != -1) {
 			$sql .= " AND p.tosell = ".((int) $status);
 		}
 		if ($status_purchase >= 0) {
