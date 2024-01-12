@@ -977,16 +977,13 @@ function getSocialNetworkSharingLinks()
  * @param	Object	$object			Object
  * @param	int		$no				Numero of image (if there is several images. 1st one by default)
  * @param   string  $extName        Extension to differentiate thumb file name ('', '_small', '_mini')
- * @param	string	$morecss		More CSS
  * @return  string					HTML img content or '' if no image found
  */
-function getPublicImageOfObject($object, $no = 1, $extName = '', $morecss = '')
+function getImagePublicURLOfObject($object, $no = 1, $extName = '')
 {
 	global $db;
 
-	$result = '';
 	$image_path = '';
-	$filename = '';
 
 	include_once DOL_DOCOUMENT_ROOT.'/core/lib/images.lib.php';
 	$regexforimg = getListOfPossibleImageExt(0);
@@ -1013,9 +1010,9 @@ function getPublicImageOfObject($object, $no = 1, $extName = '', $morecss = '')
 				} else {
 					$found++;
 
-					$filename = $obj->filename;
 					$image_path = DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($obj->share);
 					if ($extName) {
+						//getImageFileNameForSize($dir.$file, '_small')
 						$image_path .= '&extname='.urlencode($extName);
 					}
 				}
@@ -1030,22 +1027,11 @@ function getPublicImageOfObject($object, $no = 1, $extName = '', $morecss = '')
 		}
 	}
 
-	//getImageFileNameForSize($dir.$file, '_small')
-
 	if (empty($image_path)) {
 		$image_path = DOL_URL_ROOT.'/viewimage.php?modulepart=common&file=nophoto.png';
 	}
 
-	$result .= '<!-- pid='.$object->id;
-	if ($filename) {
-		$result .= ' file='.dol_escape_htmltag($filename);
-	}
-	$result .= ' -->';
-	if ($image_path) {
-		$result .= '<img src="'.$image_path.'"'.($morecss ? ' class="'.$morecss.'"' : '').'>';
-	}
-
-	return $result;
+	return $image_path;
 }
 
 
