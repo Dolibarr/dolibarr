@@ -473,7 +473,7 @@ if ($action == 'writebookkeeping' && !$error) {
 					$bookkeeping->date_creation = $now;
 					$bookkeeping->doc_type = 'customer_invoice';
 					$bookkeeping->fk_doc = $key;
-					$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
+					$bookkeeping->fk_docdet = $val["fk_facturedet"];
 					$bookkeeping->thirdparty_code = $companystatic->code_client;
 
 					$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
@@ -523,7 +523,7 @@ if ($action == 'writebookkeeping' && !$error) {
 				$bookkeeping->date_creation = $now;
 				$bookkeeping->doc_type = 'customer_invoice';
 				$bookkeeping->fk_doc = $key;
-				$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
+				$bookkeeping->fk_docdet = $val["fk_facturedet"];
 				$bookkeeping->thirdparty_code = $companystatic->code_client;
 
 				$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
@@ -584,7 +584,7 @@ if ($action == 'writebookkeeping' && !$error) {
 					$bookkeeping->date_creation = $now;
 					$bookkeeping->doc_type = 'customer_invoice';
 					$bookkeeping->fk_doc = $key;
-					$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
+					$bookkeeping->fk_docdet = $val["fk_facturedet"];
 					$bookkeeping->thirdparty_code = $companystatic->code_client;
 
 					if (getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_USE_AUXILIARY_ON_DEPOSIT')) {
@@ -658,7 +658,7 @@ if ($action == 'writebookkeeping' && !$error) {
 						$bookkeeping->date_creation = $now;
 						$bookkeeping->doc_type = 'customer_invoice';
 						$bookkeeping->fk_doc = $key;
-						$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
+						$bookkeeping->fk_docdet = $val["fk_facturedet"];
 						$bookkeeping->thirdparty_code = $companystatic->code_client;
 
 						$bookkeeping->subledger_account = '';
@@ -719,7 +719,7 @@ if ($action == 'writebookkeeping' && !$error) {
 						$bookkeeping->date_creation = $now;
 						$bookkeeping->doc_type = 'customer_invoice';
 						$bookkeeping->fk_doc = $key;
-						$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
+						$bookkeeping->fk_docdet = $val["fk_facturedet"];
 						$bookkeeping->thirdparty_code = $companystatic->code_client;
 
 						$bookkeeping->subledger_account = '';
