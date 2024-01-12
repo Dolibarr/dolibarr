@@ -62,7 +62,7 @@ if ($id) {
 	$caneditfield = ((($user->id == $id) && $user->hasRight("user", "self", "write"))
 	|| (($user->id != $id) && $user->hasRight("user", "user", "write")));
 	$caneditpassword = ((($user->id == $id) && $user->hasRight("user", "self", "password"))
-	|| (($user->id != $id) && $user->hasRight("user", "user", "passsword")));
+	|| (($user->id != $id) && $user->hasRight("user", "user", "password")));
 }
 
 $permissiontoadd = $caneditfield;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
@@ -199,7 +199,7 @@ if ($object->id) {
 	}
 	print '</tr>';
 
-	// Nunber of files
+	// Number of files
 	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td>'.count($filearray).'</td></tr>';
 
 	// Total size

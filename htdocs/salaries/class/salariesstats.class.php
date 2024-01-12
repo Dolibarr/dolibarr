@@ -20,13 +20,13 @@
 /**
  *  \file       htdocs/salaries/class/salariesstats.class.php
  *  \ingroup    salaries
- *  \brief      File of class for statistics on salaries
+ *  \brief      File of class to manage salary statistics
  */
 include_once DOL_DOCUMENT_ROOT.'/core/class/stats.class.php';
 include_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 
 /**
- *	Classe permettant la gestion des stats des salaires
+ *	Class to manage salary statistics
  */
 class SalariesStats extends Stats
 {
