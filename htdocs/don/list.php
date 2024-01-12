@@ -140,7 +140,7 @@ if ($search_status != '' && $search_status != '-4') {
 	$sql .= " AND d.fk_statut IN (".$db->sanitize($search_status).")";
 }
 if (trim($search_ref) != '') {
-	$sql .= natural_search('d.ref', $search_ref);
+	$sql .= natural_search(['d.ref', "d.rowid"], $search_ref);
 }
 if (trim($search_all) != '') {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
