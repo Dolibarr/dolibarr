@@ -20,7 +20,7 @@ return [
   'Arab Standard Time' => 'Asia/Riyadh',
   'Arabian Standard Time' => 'Asia/Dubai',
   'Arabic Standard Time' => 'Asia/Baghdad',
-  'Argentina Standard Time' => 'America/Buenos_Aires',
+  'Argentina Standard Time' => 'America/Argentina/Buenos_Aires',
   'Astrakhan Standard Time' => 'Europe/Astrakhan',
   'Atlantic Standard Time' => 'America/Halifax',
   'Aus Central W. Standard Time' => 'Australia/Eucla',
