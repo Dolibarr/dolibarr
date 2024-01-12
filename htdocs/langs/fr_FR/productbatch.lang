@@ -47,3 +47,5 @@ ToReplace=Remplacer
 CantMoveNonExistantSerial=Erreur : un numéro de série sur lequel vous avez demandé un mouvement n'existe plus. Peut-être avez-vous utilisé plusieurs fois le même numéro de série depuis le même entrepôt sur la même expédition, ou peut-être était-il utilisé sur une autre expédition. Supprimez cette expédition et préparez-en une autre.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Réparation incomplète de la table des lots, lancez le script repair avec le paramètre '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= Correction de stock requise, car Numéro de série unique.
+ProductLotOtherConf=Paramètres des Lots / Séries
+StrictControlOfSerialvsBatch=Lors de la modification d'un produit en gestion de lot multiple à gestion par série unique, bloquer la changement si il n'y a pas d'unicité des numéros de lot/série existant

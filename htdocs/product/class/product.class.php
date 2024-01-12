@@ -531,6 +531,8 @@ class Product extends CommonObject
 
 	public $mandatory_period;
 
+	private $batch_count = array();
+
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -995,7 +997,77 @@ class Product extends CommonObject
 			$result = -3;
 		}
 
+		if (isModEnabled('productbatch') && isModEnabled('stock') && !empty(getDolGlobalInt('PRODUCTBATCH_STRICT_SERIAL_UNITY'))) {
+			$rescode = $this->checkBatchConsistency();
+			if ($rescode) {
+				if ($rescode == -1) {
+					$result = $rescode;
+				} elseif ($rescode == -2) {
+					$this->errors[] = $langs->trans('TooManyQtyForSerialNumber', $this->ref);
+					$result = -5;
+				}
+			}
+		}
+
 		return $result;
+	}
+
+	/**
+	 * @return    int  Return integer <0 if KO, 1 if OK
+	 */
+	public function checkBatchConsistency()
+	{
+		if (!empty($this->id) && $this->status_batch==2) {
+			$current_batch_state = $this->getValueFrom($this->table_element, $this->id, 'tobatch');
+			if ($current_batch_state===false) {
+				$this->errors[] = 'ErrorFromgetValueFrom';
+				return -1;
+			}
+			if (empty($current_batch_state) || $current_batch_state=='1') {
+				$rescode = $this->getCountByBatch();
+				if ($rescode<0) {
+					return -1;
+				} elseif (!empty($this->batch_count)) {
+					foreach ($this->batch_count as $batch => $cnt) {
+						if ($cnt > 1) {
+							return -2;
+						}
+					}
+				}
+			}
+		}
+		return 0;
+	}
+
+	/**
+	 * Populate batch_count array with batch number as kay and count as value
+	 *
+	 * @return 	int  Return integer <0 if KO, 1 if OK
+	 */
+	private function getCountByBatch()
+	{
+		$this->batch_count = array();
+
+		$sql = "SELECT sum(pb.qty) as cpt,batch";
+		$sql .= " FROM ".$this->db->prefix()."product_batch as pb";
+		$sql .= " INNER JOIN ".$this->db->prefix()."product_stock as ps ON ps.rowid = pb.fk_product_stock";
+		$sql .= " WHERE ps.fk_product = " . ((int) $this->id);
+		$sql .= " AND batch IS NOT NULL";
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			if ($this->db->num_rows($result)) {
+				while ($obj = $this->db->fetch_object($result)) {
+					$this->batch_count[$obj->batch] = $obj->cpt;
+				}
+			}
+			$this->db->free($result);
+		} else {
+			$this->errors[] = $this->db->lasterror;
+			return -1;
+		}
+
+		return 1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

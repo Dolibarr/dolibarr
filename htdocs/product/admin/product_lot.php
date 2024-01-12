@@ -384,6 +384,29 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 	print "</table><br>\n";
 }
 
+
+print load_fiche_titre($langs->trans("ProductLotOtherConf"), '', '');
+
+
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameters").'</td>'."\n";
+print '<td class="right" width="60">'.$langs->trans("Value").'</td>'."\n";
+print '</tr>'."\n";
+
+
+// Enable kits (subproducts)
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("StrictControlOfSerialvsBatch").'</td>';
+print '<td class="right">';
+print ajax_constantonoff("PRODUCTBATCH_STRICT_SERIAL_UNITY", array(), $conf->entity);
+print '</td>';
+print '</tr>';
+
+print '</table>';
+
 // Module to build doc
 $def = array();
 $sql = "SELECT nom";
