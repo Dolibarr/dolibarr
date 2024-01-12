@@ -243,7 +243,7 @@ class Inventory extends CommonObject
 	 * Create object into database
 	 *
 	 * @param  User $user      User that creates
-	 * @param  bool $notrigger 0=launch triggers after, 1=disable triggers
+	 * @param  int $notrigger 0=launch triggers after, 1=disable triggers
 	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = 0)
@@ -257,7 +257,7 @@ class Inventory extends CommonObject
 	 * Validate inventory (start it)
 	 *
 	 * @param  	User 	$user      				User that creates
-	 * @param	bool 	$notrigger 				false=launch triggers after, true=disable triggers
+	 * @param	int 	$notrigger 				false=launch triggers after, true=disable triggers
 	 * @param	int		$include_sub_warehouse	Include sub warehouses
 	 * @return 	int             				Return integer <0 if KO, Id of created object if OK
 	 */
@@ -371,7 +371,7 @@ class Inventory extends CommonObject
 	 * Go back to draft
 	 *
 	 * @param  User $user      User that creates
-	 * @param  bool $notrigger 0=launch triggers after, 1=disable triggers
+	 * @param  int $notrigger 0=launch triggers after, 1=disable triggers
 	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function setDraft(User $user, $notrigger = 0)
@@ -401,7 +401,7 @@ class Inventory extends CommonObject
 	 * Set to inventory to status "Closed". It means all stock movements were recorded.
 	 *
 	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @param  int $notrigger false=launch triggers after, true=disable triggers
 	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function setRecorded(User $user, $notrigger = false)
@@ -423,7 +423,7 @@ class Inventory extends CommonObject
 	 * Set to Canceled
 	 *
 	 * @param  User $user      User that creates
-	 * @param  bool $notrigger 0=launch triggers after, 1=disable triggers
+	 * @param  int $notrigger 0=launch triggers after, 1=disable triggers
 	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function setCanceled(User $user, $notrigger = 0)
@@ -549,7 +549,7 @@ class Inventory extends CommonObject
 	 *
 	 *	@param  User	$user       User that delete
 	 *  @param	int		$idline		Id of line to delete
-	 *  @param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
+	 *  @param 	int 	$notrigger  false=launch triggers after, true=disable triggers
 	 *  @return int         		>0 if OK, <0 if KO
 	 */
 	public function deleteLine(User $user, $idline, $notrigger = false)
@@ -861,7 +861,7 @@ class InventoryLine extends CommonObjectLine
 	 * Create object in database
 	 *
 	 * @param User $user       User that creates
-	 * @param bool $notrigger  0=launch triggers after, 1=disable triggers
+	 * @param int $notrigger  0=launch triggers after, 1=disable triggers
 	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function create(User $user, $notrigger = 0)
@@ -887,7 +887,7 @@ class InventoryLine extends CommonObjectLine
 	 * Update object into database
 	 *
 	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger 0=launch triggers after, 1=disable triggers
+	 * @param  int $notrigger 0=launch triggers after, 1=disable triggers
 	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
@@ -899,7 +899,7 @@ class InventoryLine extends CommonObjectLine
 	 * Delete object in database
 	 *
 	 * @param User $user       User that deletes
-	 * @param bool $notrigger  0=launch triggers after, 1=disable triggers
+	 * @param int $notrigger  0=launch triggers after, 1=disable triggers
 	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 0)

@@ -72,7 +72,7 @@ class CGenericDic extends CommonDict
 	 * Create object into database
 	 *
 	 * @param  User $user      User that creates
-	 * @param  bool $notrigger 0=launch triggers after, 1=disable triggers
+	 * @param  int $notrigger 0=launch triggers after, 1=disable triggers
 	 * @return int Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = 0)
@@ -294,7 +294,7 @@ class CGenericDic extends CommonDict
 	 * Update object into database
 	 *
 	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger 0=launch triggers after, 1=disable triggers
+	 * @param  int $notrigger 0=launch triggers after, 1=disable triggers
 	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
@@ -369,7 +369,7 @@ class CGenericDic extends CommonDict
 	 * Delete object in database
 	 *
 	 * @param User $user      User that deletes
-	 * @param bool $notrigger 0=launch triggers after, 1=disable triggers
+	 * @param int $notrigger 0=launch triggers after, 1=disable triggers
 	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 0)

@@ -134,7 +134,7 @@ class Subscription extends CommonObject
 	 *	Function who permitted creation of the subscription
 	 *
 	 *	@param	User	$user			User that create
-	 *	@param  bool 	$notrigger 		0=launch triggers after, 1=disable triggers
+	 *	@param  int 	$notrigger 		0=launch triggers after, 1=disable triggers
 	 *	@return	int						Return integer <0 if KO, Id subscription created if OK
 	 */
 	public function create($user, $notrigger = false)

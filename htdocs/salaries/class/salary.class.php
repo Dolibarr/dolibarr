@@ -293,7 +293,7 @@ class Salary extends CommonObject
 	 *  Delete object in database
 	 *
 	 *	@param	User	$user       User that delete
-	 *  @param  bool 	$notrigger 	false=launch triggers after, true=disable triggers
+	 *  @param  int 	$notrigger 	false=launch triggers after, true=disable triggers
 	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
