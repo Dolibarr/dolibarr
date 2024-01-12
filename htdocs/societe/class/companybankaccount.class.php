@@ -415,7 +415,7 @@ class CompanyBankAccount extends Account
 	 *	@param	int		$id			Id of record
 	 * 	@param	int		$socid		Id of company. If this is filled, function will return the first entry found (matching $default and $type)
 	 *  @param	int		$default	If id of company filled, we say if we want first record among all (-1), default record (1) or non default record (0)
-	 *  @param	int		$type		If id of company filled, we say if we want record of this type only
+	 *  @param	string	$type		If id of company filled, we say if we want record of this type only
 	 * 	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $socid = 0, $default = 1, $type = 'ban')
