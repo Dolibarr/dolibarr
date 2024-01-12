@@ -983,7 +983,7 @@ function getImagePublicURLOfObject($object, $no = 1, $extName = '')
 
 	$image_path = '';
 
-	include_once DOL_DOCOUMENT_ROOT.'/core/lib/images.lib.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 	$regexforimg = getListOfPossibleImageExt(0);
 	$regexforimg = '('.$regexforimg.')$';
 
