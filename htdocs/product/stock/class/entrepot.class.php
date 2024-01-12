@@ -190,8 +190,8 @@ class Entrepot extends CommonObject
 	 *	Creation d'un entrepot en base
 	 *
 	 *	@param		User	$user		Object user that create the warehouse
-	 *	@param		bool	$notrigger	0=launch triggers after, 1=disable triggers
-	 *	@return		int					>0 if OK, =<0 if KO
+	 *	@param		int		$notrigger	0=launch triggers after, 1=disable triggers
+	 *	@return		int					Return >0 if OK, =<0 if KO
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -271,8 +271,8 @@ class Entrepot extends CommonObject
 	 *
 	 *	@param		int		$id			id of warehouse to modify
 	 *	@param		User	$user		User object
-	 *	@param		bool 	$notrigger	0=launch triggers after, 1=disable trigge
-	 *	@return		int				>0 if OK, <0 if KO
+	 *	@param		int 	$notrigger	0=launch triggers after, 1=disable trigge
+	 *	@return		int					Return >0 if OK, <0 if KO
 	 */
 	public function update($id, $user, $notrigger = 0)
 	{

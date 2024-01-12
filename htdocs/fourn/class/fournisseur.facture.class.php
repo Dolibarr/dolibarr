@@ -3715,8 +3715,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 	/**
 	 * Deletes a line
 	 *
-	 * @param     bool|int   $notrigger     1=Does not execute triggers, 0= execute triggers
-	 * @return    int                       0 if KO, 1 if OK
+	 * @param     int   $notrigger     1=Does not execute triggers, 0=execute triggers
+	 * @return    int                  0 if KO, 1 if OK
 	 */
 	public function delete($notrigger = 0)
 	{

@@ -470,10 +470,10 @@ class Position extends CommonObject
 	/**
 	 *  Delete a line of object in database
 	 *
-	 * @param User $user User that delete
-	 * @param int $idline Id of line to delete
-	 * @param bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int                >0 if OK, <0 if KO
+	 * @param User 	$user 		User that delete
+	 * @param int 	$idline 	Id of line to delete
+	 * @param int 	$notrigger 	0=launch triggers after, 1=disable triggers
+	 * @return int              Return >0 if OK, <0 if KO
 	 */
 	public function deleteLine(User $user, $idline, $notrigger = false)
 	{
