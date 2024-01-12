@@ -22,6 +22,7 @@ CREATE TABLE llx_product_lot (
   entity          integer DEFAULT 1,
   fk_product      integer NOT NULL,				-- Id of product
   batch           varchar(128) DEFAULT NULL,	-- Lot or serial number
+  batch_ref       varchar(128) DEFAULT NULL,	-- when product is manage by serial it can also have Lot number
   note_public     text DEFAULT NULL,
   note_private    text DEFAULT NULL,
   eatby           date DEFAULT NULL,			-- Eatby date

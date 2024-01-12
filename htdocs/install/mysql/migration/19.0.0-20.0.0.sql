@@ -201,3 +201,4 @@ CREATE TABLE llx_c_product_thirdparty_relation_type
 
 ALTER TABLE llx_c_tva ADD COLUMN type_vat smallint NOT NULL DEFAULT 0 AFTER fk_pays;
 
+ALTER TABLE llx_product_lot ADD COLUMN batch_ref varchar(128) DEFAULT NULL AFTER batch;
