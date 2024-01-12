@@ -60,7 +60,7 @@ return [
   'GMT Standard Time' => 'Europe/London',
   'GTB Standard Time' => 'Europe/Bucharest',
   'Georgian Standard Time' => 'Asia/Tbilisi',
-  'Greenland Standard Time' => 'America/Godthab',
+  'Greenland Standard Time' => 'America/Nuuk',
   'Greenwich Standard Time' => 'Atlantic/Reykjavik',
   'Haiti Standard Time' => 'America/Port-au-Prince',
   'Hawaiian Standard Time' => 'Pacific/Honolulu',
