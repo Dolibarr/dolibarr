@@ -70,6 +70,8 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 */
 	public function __construct($db)
 	{
+		$this->db = $db;
+
 		$this->code_null = 1;
 		$this->code_modifiable = 1;
 		$this->code_modifiable_invalide = 1;
@@ -114,7 +116,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 */
 	public function getNextValue($objsoc = 0, $type = -1)
 	{
-		global $db, $conf, $mc;
+		global $db;
 
 		$field = '';
 		$prefix = '';
@@ -178,8 +180,6 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 */
 	public function verif($db, &$code, $soc, $type)
 	{
-		global $conf;
-
 		$result = 0;
 		$code = strtoupper(trim($code));
 
@@ -222,8 +222,6 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	public function verif_dispo($db, $code, $soc, $type = 0)
 	{
 		// phpcs:enable
-		global $conf, $mc;
-
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe";
 		if ($type == 1) {
 			$sql .= " WHERE code_fournisseur = '".$db->escape($code)."'";

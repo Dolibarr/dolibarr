@@ -70,6 +70,8 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	 */
 	public function __construct($db)
 	{
+		$this->db = $db;
+
 		$this->code_null = 1;
 		$this->code_modifiable = 1;
 		$this->code_modifiable_invalide = 1;
@@ -112,7 +114,6 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	 */
 	public function getNextValue($objsoc = 0, $type = -1)
 	{
-		global $langs;
 		return '';
 	}
 
@@ -132,8 +133,6 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	 */
 	public function verif($db, &$code, $soc, $type)
 	{
-		global $conf;
-
 		$result = 0;
 		$code = trim($code);
 
