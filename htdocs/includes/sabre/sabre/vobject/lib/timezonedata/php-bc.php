@@ -16,8 +16,6 @@
  * @license http://sabre.io/license/ Modified BSD License
  */
 return [
-    'Africa/Asmera',
-    'Africa/Timbuktu',
     'America/Argentina/ComodRivadavia',
     'America/Atka',
     'America/Argentina/Buenos_Aires',
