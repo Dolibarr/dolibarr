@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 class pdf_strato extends ModelePDFContract
 {
 	/**
-	 * @var DoliDb Database handler
+	 * @var DoliDB Database handler
 	 */
 	public $db;
 

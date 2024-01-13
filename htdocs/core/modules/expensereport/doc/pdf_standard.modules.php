@@ -45,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/userbankaccount.class.php';
 class pdf_standard extends ModeleExpenseReport
 {
 	/**
-	 * @var DoliDb Database handler
+	 * @var DoliDB Database handler
 	 */
 	public $db;
 

@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 class pdf_rouget extends ModelePdfExpedition
 {
 	/**
-	 * @var DoliDb Database handler
+	 * @var DoliDB Database handler
 	 */
 	public $db;
 
