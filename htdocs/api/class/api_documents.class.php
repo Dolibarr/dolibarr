@@ -646,6 +646,7 @@ class Documents extends DolibarrApi
 	 *
 	 * @url POST /upload
 	 *
+	 * @throws	RestException	400		Bad Request
 	 * @throws	RestException	401		Access denied
 	 * @throws	RestException	404		Object not found
 	 * @throws	RestException	500		Error on file operationw
@@ -824,7 +825,7 @@ class Documents extends DolibarrApi
 				if (!empty($tmp['error'])) {
 					throw new RestException(401, 'Error returned by dol_check_secure_access_document: '.$tmp['error']);
 				} else {
-					throw new RestException(500, 'This value of modulepart ('.$modulepart.') is not allowed with this value of subdir ('.$relativefile.')');
+					throw new RestException(400, 'This value of modulepart ('.$modulepart.') is not allowed with this value of subdir ('.$relativefile.')');
 				}
 			}
 		}
@@ -844,11 +845,11 @@ class Documents extends DolibarrApi
 		//var_dump($original_file);exit;
 
 		if (!dol_is_dir(dirname($destfile))) {
-			throw new RestException(500, 'Directory not exists : '.dirname($destfile));
+			throw new RestException(400, 'Directory does not exists : '.dirname($destfile));
 		}
 
 		if (!$overwriteifexists && dol_is_file($destfile)) {
-			throw new RestException(500, "File with name '".$original_file."' already exists.");
+			throw new RestException(400, "File with name '".$original_file."' already exists.");
 		}
 
 		// in case temporary directory admin/temp doesn't exist
