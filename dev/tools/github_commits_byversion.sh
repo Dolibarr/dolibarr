@@ -37,7 +37,7 @@ do
 	echo "Checkout into version $i"
 	git checkout $i
 	#git shortlog -s -n  --after=YYYY-MM-DD --before=YYYY-MM-DD | tr '[:lower:]' '[:upper:]' > /tmp/github_commits_perversion.txt
-	git shortlog -s -n $commitidcommon.. | tr '[:lower:]' '[:upper:]' > /tmp/github_commits_perversion.txt
+	git shortlog -s -n $commitidcommon..  | iconv -f UTF-8 -t ASCII//TRANSLIT | tr '[:lower:]' '[:upper:]' > /tmp/github_commits_perversion.txt
 	#cat /tmp/github_commits_perversion.txt
 	echo "Total for version $i:"
 	echo -n "- Nb of commits: "
