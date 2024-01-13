@@ -479,6 +479,7 @@ $html .= '</div>';
 $html .= '</section>'."\n";
 
 $tmp = '';
+$tmp2 = '';
 $nblines = 0;
 foreach ($output_arrtd as $line) {
 	$reg = array();
@@ -506,8 +507,8 @@ $html .= '<table class="list_technical_debt">'."\n";
 $html .= '<tr class="trgroup"><td>File</td><td>Line</td><td>Type</td></tr>'."\n";
 $html .= $tmp;
 $html .= $tmp2;
+$html .= '<tr class=""><td colspan="3"><span class="seedetail" data-source="phpstan" id="sourcephpstan">Show all...</span></td></tr>';
 $html .= '</table>';
-$html .= '<span class="seedetail" data-source="phpstan" id="sourcephpstan">See all...</span>';
 $html .= '</div>';
 $html .= '</div>';
 
@@ -521,7 +522,7 @@ $html .= '
 $(document).ready(function() {
 $(".seedetail").on("click", function() {
 	var source = $(this).attr("data-source");
-  	console.log("Click on "+source);
+  	console.log("Click on "+source+" so we show class .source"+source);
 	jQuery(".source"+source).toggle();
 } );
 });
