@@ -60,11 +60,11 @@ class Documents extends DolibarrApi
 	 * @param   string  $original_file  Relative path with filename, relative to modulepart (for example: IN201701-999/IN201701-999.pdf)
 	 * @return  array                   List of documents
 	 *
-	 * @throws RestException 400
-	 * @throws RestException 401
-	 * @throws RestException 404
-	 *
 	 * @url GET /download
+	 *
+	 * @throws	RestException	400		Bad value for paramter modulepart or original_file
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	404		File not found
 	 */
 	public function index($modulepart, $original_file = '')
 	{
@@ -129,13 +129,14 @@ class Documents extends DolibarrApi
 	 * @param	string	$langcode		Language code like 'en_US', 'fr_FR', 'es_ES', ... (If not set, use the default language).
 	 * @return  array                   List of documents
 	 *
-	 * @throws RestException 500 System error
-	 * @throws RestException 501
-	 * @throws RestException 400
-	 * @throws RestException 401
-	 * @throws RestException 404
-	 *
 	 * @url PUT /builddoc
+	 *
+	 * @throws	RestException	400		Bad value for paramter modulepart or original_file
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	403		Generation not available for this modulepart
+	 * @throws	RestException	404		Invoice, Order, Proposal, Contract or Shipment not found
+	 * @throws	RestException	500		Error generating document
+	 * @throws	RestException	501		File not found
 	 */
 	public function builddoc($modulepart, $original_file = '', $doctemplate = '', $langcode = '')
 	{
@@ -296,12 +297,14 @@ class Documents extends DolibarrApi
 	 * @param	string	$sortorder		Sort order ('asc' or 'desc')
 	 * @return	array					Array of documents with path
 	 *
-	 * @throws RestException 400
-	 * @throws RestException 401
-	 * @throws RestException 404
-	 * @throws RestException 500 System error
-	 *
 	 * @url GET /
+	 *
+	 * @throws	RestException	400		Bad value for paramter modulepart, id or ref
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	403		Generation not available for this modulepart
+	 * @throws	RestException	404		Thirdparty, User, Member, Order, Invoice or Proposal not found
+	 * @throws	RestException	500		Error while fetching object
+	 * @throws	RestException	503		Error when retrieve ecm list
 	 */
 	public function getDocumentsListByElement($modulepart, $id = 0, $ref = '', $sortfield = '', $sortorder = '')
 	{
@@ -641,12 +644,11 @@ class Documents extends DolibarrApi
 	 * @param   int 	$createdirifnotexists  	Create subdirectories if the doesn't exists (1 by default)
 	 * @return  string
 	 *
-	 * @throws RestException 400
-	 * @throws RestException 401
-	 * @throws RestException 404
-	 * @throws RestException 500 System error
-	 *
 	 * @url POST /upload
+	 *
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	404		Object not found
+	 * @throws	RestException	500		Error on file operationw
 	 */
 	public function post($filename, $modulepart, $ref = '', $subdir = '', $filecontent = '', $fileencoding = '', $overwriteifexists = 0, $createdirifnotexists = 1)
 	{
@@ -842,7 +844,7 @@ class Documents extends DolibarrApi
 		//var_dump($original_file);exit;
 
 		if (!dol_is_dir(dirname($destfile))) {
-			throw new RestException(401, 'Directory not exists : '.dirname($destfile));
+			throw new RestException(500, 'Directory not exists : '.dirname($destfile));
 		}
 
 		if (!$overwriteifexists && dol_is_file($destfile)) {
@@ -928,11 +930,13 @@ class Documents extends DolibarrApi
 	 * @param   string  $original_file  Relative path with filename, relative to modulepart (for example: PRODUCT-REF-999/IMAGE-999.jpg)
 	 * @return  array                   List of documents
 	 *
-	 * @throws RestException 400
-	 * @throws RestException 401
-	 * @throws RestException 404
-	 *
 	 * @url DELETE /
+	 *
+	 * @throws	RestException	400  Bad value for parameter modulepart
+	 * @throws	RestException	400  Bad value for parameter original_file
+	 * @throws	RestException	401  Access denied
+	 * @throws	RestException	404  File not found
+	 * @throws	RestException	500  Error on file operation
 	 */
 	public function delete($modulepart, $original_file)
 	{
