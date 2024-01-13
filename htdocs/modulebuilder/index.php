@@ -1618,7 +1618,7 @@ if ($dirins && $action == 'initdic' && $module && empty($cancel)) {
 	}
 	if (!GETPOST('label')) {
 		$error++;
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Lable")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 	}
 	if (!$error) {
 		$newdicname = $dicname;

@@ -141,13 +141,13 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$result=dol_basename('adir/afile');
+		$result=dol_basename('adir/a_file');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('afile', $result);
+		$this->assertEquals('a_file', $result);
 
-		$result=dol_basename('adir/afile/');
+		$result=dol_basename('adir/a_file/');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('afile', $result);
+		$this->assertEquals('a_file', $result);
 
 		$result=dol_basename('adir/νεο');    // With cyrillic data. Here basename fails to return correct value
 		print __METHOD__." result=".$result."\n";

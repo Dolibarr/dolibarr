@@ -88,7 +88,7 @@ $resexec = shell_exec($commandcheck);
 $resexec = (int) (empty($resexec) ? 0 : trim($resexec));
 */
 
-// Retreive the .git informations
+// Retrieve the .git information
 $urlgit = 'https://github.com/Dolibarr/dolibarr/blob/develop/';
 
 

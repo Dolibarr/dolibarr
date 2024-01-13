@@ -19,7 +19,7 @@
 /**
  * \file    comm/mailing/class/html.formadvtargetemailing.class.php
  * \ingroup mailing
- * \brief   Fichier de la classe des fonctions predefinies de composant html advtargetemailing
+ * \brief   File for the class with functions for the building of HTML components for advtargetemailing
  */
 
 /**
@@ -339,7 +339,7 @@ class FormAdvTargetEmailing extends Form
 	 * Return a combo list to select emailing target selector
 	 *
 	 * @param	string 		$htmlname 		control name
-	 * @param	integer 	$selected  		defaut selected
+	 * @param	integer 	$selected  		default selected
 	 * @param	integer 	$showempty 		empty lines
 	 * @param	string		$type_element	Type element. Example: 'mailing'
 	 * @param	string		$morecss		More CSS

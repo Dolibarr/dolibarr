@@ -536,11 +536,11 @@ if (issetAndNoEmpty('totalchoixjour', $_SESSION) || $erreur) {
 
 	for ($i = 0; $i < $_SESSION["nbrecaseshoraires"]; $i++) {
 		$j = $i + 1;
-		print '<td classe="somme"><div class="center">'.$langs->trans("Time").' '.$j.'</div></td>'."\n";
+		print '<td class="somme"><div class="center">'.$langs->trans("Time").' '.$j.'</div></td>'."\n";
 	}
 
 	if ($_SESSION["nbrecaseshoraires"] < 10) {
-		print '<td classe="somme"><input type="image" name="ajoutcases" src="../img/add-16.png"></td>'."\n";
+		print '<td class="somme"><input type="image" name="ajoutcases" src="../img/add-16.png"></td>'."\n";
 	}
 
 	print '</tr>'."\n";

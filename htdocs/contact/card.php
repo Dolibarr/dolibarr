@@ -175,7 +175,7 @@ if (empty($reshook)) {
 	}
 
 
-	// Confirmation desactivation
+	// Confirmation deactivation
 	if ($action == 'disable' && !empty($permissiontoadd)) {
 		$object->fetch($id);
 		if ($object->setstatus(0) < 0) {
@@ -608,7 +608,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	 */
 	$head = array();
 	if ($id > 0) {
-		// Si edition contact deja existant
+		// Si edition contact deja existent
 		$object = new Contact($db);
 		$res = $object->fetch($id, $user);
 		if ($res < 0) {
@@ -896,7 +896,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			print '<hr style="margin-bottom: 20px">';
 
-			// Add personnal information
+			// Add personal information
 			print load_fiche_titre('<div class="comboperso">'.$langs->trans("PersonalInformations").'</div>', '', '');
 
 			print '<table class="border centpercent">';

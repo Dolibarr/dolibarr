@@ -318,7 +318,7 @@ if (empty($mode) || $mode == 'show_month') {
 	$max_day_in_prev_month = date("t", dol_mktime(12, 0, 0, $prev_month, 1, $prev_year, 'gmt')); // Nb of days in previous month
 	$max_day_in_month = date("t", dol_mktime(12, 0, 0, $month, 1, $year, 'gmt')); // Nb of days in next month
 	// tmpday is a negative or null cursor to know how many days before the 1st to show on month view (if tmpday=0, 1st is monday)
-	$tmpday = -date("w", dol_mktime(12, 0, 0, $month, 1, $year, 'gmt')) + 2; // date('w') is 0 fo sunday
+	$tmpday = -date("w", dol_mktime(12, 0, 0, $month, 1, $year, 'gmt')) + 2; // date('w') is 0 for sunday
 	$tmpday += ((isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1) - 1);
 	if ($tmpday >= 1) {
 		$tmpday -= 7; // If tmpday is 0 we start with sunday, if -6, we start with monday of previous week.
@@ -721,7 +721,7 @@ $sql .= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm as ca, '.MAIN_DB_PREFIX."actioncom
 if ($resourceid > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_resources as r";
 }
-// We must filter on assignement table
+// We must filter on assignment table
 if ($filtert > 0 || $usergroup > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."actioncomm_resources as ar";
 }
@@ -782,7 +782,7 @@ if ($search_sale && $search_sale != '-1') {
 if ($socid) {
 	$sql .= " AND a.fk_soc = ".((int) $socid);
 }
-// We must filter on assignement table
+// We must filter on assignment table
 if ($filtert > 0 || $usergroup > 0) {
 	$sql .= " AND ar.fk_actioncomm = a.id AND ar.element_type='user'";
 }
@@ -832,7 +832,7 @@ if ($status == 'done' || $status == '100') {
 if ($status == 'todo') {
 	$sql .= " AND (a.percent >= 0 AND a.percent < 100)";
 }
-// We must filter on assignement table
+// We must filter on assignment table
 if ($filtert > 0 || $usergroup > 0) {
 	$sql .= " AND (";
 	if ($filtert > 0) {
@@ -1029,7 +1029,7 @@ if ($showbirthday) {
 			$datebirth = dol_stringtotime($obj->birthday, 1);
 			//print 'ee'.$obj->birthday.'-'.$datebirth;
 			$datearray = dol_getdate($datebirth, true);
-			$event->datep = dol_mktime(0, 0, 0, $datearray['mon'], $datearray['mday'], $year, true); // For full day events, date are also GMT but they wont but converted during output
+			$event->datep = dol_mktime(0, 0, 0, $datearray['mon'], $datearray['mday'], $year, true); // For full day events, date are also GMT but they won't but converted during output
 			$event->datef = $event->datep;
 
 			$event->type_code = 'BIRTHDAY';
@@ -1213,7 +1213,7 @@ if (count($listofextcals)) {
 						// datecurstart and datecurend are now GMT date
 						//var_dump($datecurstart); var_dump($datecurend); exit;
 					} else {
-						// Not a recongized record
+						// Not a recognized record
 						dol_syslog("Found a not recognized repeatable record with unknown date start", LOG_ERR);
 						continue;
 					}
@@ -1243,7 +1243,7 @@ if (count($listofextcals)) {
 							}
 							$moreicalevents[] = $newevent;
 						}
-						// Jump on next occurence
+						// Jump on next occurrence
 						$numofevent++;
 						$savdatecurstart = $datecurstart;
 						if ($icalevent['RRULE']['FREQ'] == 'DAILY') {
@@ -1285,7 +1285,7 @@ if (count($listofextcals)) {
 				$event = new ActionComm($db);
 				$addevent = false;
 				if (isset($icalevent['DTSTART;VALUE=DATE'])) { // fullday event
-					// For full day events, date are also GMT but they wont but converted using tz during output
+					// For full day events, date are also GMT but they won't but converted using tz during output
 					$datestart = dol_stringtotime($icalevent['DTSTART;VALUE=DATE'], 1);
 					if (empty($icalevent['DTEND;VALUE=DATE'])) {
 						$dateend = $datestart + 86400 - 1;
@@ -1349,7 +1349,7 @@ if (count($listofextcals)) {
 
 					$event->icalname = $namecal;
 					$event->icalcolor = $colorcal;
-					$usertime = 0; // We dont modify date because we want to have date into memory datep and datef stored as GMT date. Compensation will be done during output.
+					$usertime = 0; // We don't modify date because we want to have date into memory datep and datef stored as GMT date. Compensation will be done during output.
 					$event->datep = $datestart + $usertime;
 					$event->datef = $dateend + $usertime;
 
@@ -1695,7 +1695,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	/* WIP View per hour */
 	$useviewhour = 0;
 	if ($useviewhour) {
-		print '<div class="div-table-responsive-no-min borderbottom">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<div class="div-table-responsive-no-min borderbottom">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 
 		$maxheightwin = (isset($_SESSION["dol_screenheight"]) && $_SESSION["dol_screenheight"] > 500) ? ($_SESSION["dol_screenheight"] - 200) : 660; // Also into index.php file
 
@@ -1734,7 +1734,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 
 		print '</div>';
 	} else {
-		print '<div class="div-table-responsive-no-min borderbottom">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<div class="div-table-responsive-no-min borderbottom">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 
 		show_day_events($db, $day, $month, $year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, 0, $bookcalcalendars);
 
@@ -1809,7 +1809,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 		print '</a>';
 		print '</div><div class="nowrap floatright inline-block marginrightonly">';
 		if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
-			print '<a class="cursoradd" href="'.$urltocreate.'">'; // Explicit link, usefull for nojs interfaces
+			print '<a class="cursoradd" href="'.$urltocreate.'">'; // Explicit link, useful for nojs interfaces
 			print img_picto($langs->trans("NewAction"), 'edit_add.png');
 			print '</a>';
 		}
@@ -2354,7 +2354,7 @@ function sort_events_by_date($a, $b)
 function sort_events_by_percentage($a, $b)
 {
 	// Sort events with no percentage before each other
-	// (usefull to sort holidays, sick days or similar on the top)
+	// (useful to sort holidays, sick days or similar on the top)
 
 	if ($a->percentage < 0) {
 		return -1;

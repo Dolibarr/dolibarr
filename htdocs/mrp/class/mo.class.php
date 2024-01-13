@@ -316,7 +316,7 @@ class Mo extends CommonObject
 		$this->db->begin();
 
 		if ($this->fk_bom > 0) {
-			// If there is a nown BOM, we force the type of MO to the type of BOM
+			// If there is a known BOM, we force the type of MO to the type of BOM
 			include_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 			$tmpbom = new BOM($this->db);
 			$tmpbom->fetch($this->fk_bom);
@@ -550,7 +550,7 @@ class Mo extends CommonObject
 	 * Get list of lines linked to current line for a defined role.
 	 *
 	 * @param  	string 	$role      	Get lines linked to current line with the selected role ('consumed', 'produced', ...)
-	 * @param	int		$lineid		Id of production line to filter childs
+	 * @param	int		$lineid		Id of production line to filter children
 	 * @return 	array             	Array of lines
 	 */
 	public function fetchLinesLinked($role, $lineid = 0)
@@ -1807,7 +1807,7 @@ class Mo extends CommonObject
 
 
 	/**
-	 * Function used to return childs of Mo
+	 * Function used to return children of Mo
 	 *
 	 * @return Mo[]|int 			array if OK, -1 if KO
 	 */
@@ -1893,7 +1893,7 @@ class Mo extends CommonObject
 
 
 	/**
-	 * Function used to return childs of Mo
+	 * Function used to return children of Mo
 	 *
 	 * @return Mo|int			MO object if OK, -1 if KO, 0 if not exist
 	 */

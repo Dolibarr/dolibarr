@@ -62,7 +62,7 @@ class Documents extends DolibarrApi
 	 *
 	 * @url GET /download
 	 *
-	 * @throws	RestException	400		Bad value for paramter modulepart or original_file
+	 * @throws	RestException	400		Bad value for parameter modulepart or original_file
 	 * @throws	RestException	401		Access denied
 	 * @throws	RestException	404		File not found
 	 */
@@ -131,7 +131,7 @@ class Documents extends DolibarrApi
 	 *
 	 * @url PUT /builddoc
 	 *
-	 * @throws	RestException	400		Bad value for paramter modulepart or original_file
+	 * @throws	RestException	400		Bad value for parameter modulepart or original_file
 	 * @throws	RestException	401		Access denied
 	 * @throws	RestException	403		Generation not available for this modulepart
 	 * @throws	RestException	404		Invoice, Order, Proposal, Contract or Shipment not found
@@ -299,7 +299,7 @@ class Documents extends DolibarrApi
 	 *
 	 * @url GET /
 	 *
-	 * @throws	RestException	400		Bad value for paramter modulepart, id or ref
+	 * @throws	RestException	400		Bad value for parameter modulepart, id or ref
 	 * @throws	RestException	401		Access denied
 	 * @throws	RestException	403		Generation not available for this modulepart
 	 * @throws	RestException	404		Thirdparty, User, Member, Order, Invoice or Proposal not found

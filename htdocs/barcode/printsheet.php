@@ -224,7 +224,7 @@ if (empty($reshook)) {
 
 			// For labels
 			if ($mode == 'label') {
-				$txtforsticker = "%PHOTO%"; // Photo will be barcode image, %BARCODE% posible when using TCPDF generator
+				$txtforsticker = "%PHOTO%"; // Photo will be barcode image, %BARCODE% possible when using TCPDF generator
 				$textleft = make_substitutions(getDolGlobalString('BARCODE_LABEL_LEFT_TEXT', $txtforsticker), $substitutionarray);
 				$textheader = make_substitutions(getDolGlobalString('BARCODE_LABEL_HEADER_TEXT'), $substitutionarray);
 				$textfooter = make_substitutions(getDolGlobalString('BARCODE_LABEL_FOOTER_TEXT'), $substitutionarray);

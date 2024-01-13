@@ -359,7 +359,7 @@ if (empty($reshook)) {
 
 			$objecttmp = new Facture($db);
 			if (!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) {
-				// If option "one bill per third" is set, and an invoice for this thirdparty was already created, we re-use it.
+				// If option "one bill per third" is set, and an invoice for this thirdparty was already created, we reuse it.
 				$objecttmp = $TFactThird[$cmd->socid];
 			} else {
 				// If we want one invoice per order or if there is no first invoice yet for this thirdparty.
@@ -1522,7 +1522,7 @@ if (GETPOST('autoselectall', 'int')) {
 	$selectedfields .= '</script>';
 }
 
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 // Fields title search
@@ -2660,7 +2660,7 @@ while ($i < $imaxinloop) {
 							} else {  // BUGGED CODE.
 								// DOES NOT TAKE INTO ACCOUNT MANUFACTURING. THIS CODE SHOULD BE USELESS. PREVIOUS CODE SEEMS COMPLETE.
 								// COUNT STOCK WHEN WE SHOULD ALREADY HAVE VALUE
-								// Detailed virtual stock, looks bugged, uncomplete and need heavy load.
+								// Detailed virtual stock, looks bugged, incomplete and need heavy load.
 								// stock order and stock order_supplier
 								$stock_order = 0;
 								$stock_order_supplier = 0;

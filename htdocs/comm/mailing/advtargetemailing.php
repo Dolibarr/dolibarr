@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014 Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2016 Laurent Destailleur  <eldy@uers.sourceforge.net>
+ * Copyright (C) 2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -256,7 +256,7 @@ if ($action == 'add') {
 }
 
 if ($action == 'clear') {
-	// Chargement de la classe
+	// Load a new class instance
 	$classname = "MailingTargets";
 	$obj = new $classname($db);
 	$obj->clear_target($id);
