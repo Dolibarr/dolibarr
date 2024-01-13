@@ -105,7 +105,7 @@ class ProductCustomerPrice extends CommonObject
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db handler
+	 * @param DoliDB $db handler
 	 */
 	public function __construct($db)
 	{
