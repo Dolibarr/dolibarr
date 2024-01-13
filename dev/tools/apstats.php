@@ -294,6 +294,9 @@ div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive
     width: 28px;
     vertical-align: middle;
 }
+.bargraph {
+	background-color: #008;
+}
 
 /* Force values for small screen 767 */
 @media only screen and (max-width: 767px)
@@ -358,7 +361,9 @@ foreach (array('proj', 'dep') as $source) {
 			$html .= '<td class="right nowrap">'.(empty($val['Files']) ? '' : formatNumber($val['Files'])).'</td>';
 			$html .= '<td class="right nowrap">'.(empty($val['Lines']) ? '' : formatNumber($val['Lines'])).'</td>';
 			$html .= '<td class="nowrap">';
-			$html .= round($val['Lines'] / $arrayofmetrics['Lines'] * 100).' %';
+			$percent = $val['Lines'] / $arrayofmetrics[$source]['Lines'];
+			$widthbar = round(200 * $percent);
+			$html .= '<div class="bargraph" style="width: '.$widthbar.'px"></div>';
 			$html .= '</td>';
 			$html .= '<td class="right nowrap">'.(empty($val['Blanks']) ? '' : formatNumber($val['Blanks'])).'</td>';
 			$html .= '<td class="right nowrap">'.(empty($val['Comments']) ? '' : formatNumber($val['Comments'])).'</td>';
