@@ -40,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/multicurrency.lib.php';
 
 
 // Load translation files required by the page
-$langs->loadLangs(array('multicurrency'));
+$langs->loadLangs(array('admin', 'multicurrency'));
 
 // Get Parameters
 $action				= GETPOST('action', 'alpha');
