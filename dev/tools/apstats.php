@@ -499,7 +499,7 @@ foreach ($output_arrtd as $line) {
 		}
 		$tmp .= '<td>'.$reg[1].'</td>';
 		$tmp .= '<td class="">';
-		$tmp .= '<a href="'.$urlgit.$reg[1].'#L'.$reg[2].'">'.$reg[2].'</a>';
+		$tmp .= '<a href="'.$urlgit.$reg[1].'#L'.$reg[2].'" target="_blank">'.$reg[2].'</a>';
 		$tmp .= '</td>';
 		$tmp .= '<td>'.$reg[4].'</td>';
 		$tmp .= '</tr>'."\n";
