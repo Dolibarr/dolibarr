@@ -268,7 +268,6 @@ class pdf_standard extends ModelePDFEvaluation
 				}
 
 				$iniY = $tab_top + 7;
-				$initialY = $tab_top + 7;
 				$nexY = $tab_top + 7;
 
 				$pdf->setTopMargin($tab_top_newpage);
@@ -454,7 +453,7 @@ class pdf_standard extends ModelePDFEvaluation
 	 * @param	Evaluation		$object             Object to show
 	 * @param   int         	$linenumber         line number
 	 * @param   int         	$curY               current y position
-	 * @param   int         	$default_font_size  default siez of font
+	 * @param   int         	$default_font_size  default font size
 	 * @param   Translate   	$outputlangs        Object lang for output
 	 * @param	int				$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
 	 * @return  void
@@ -583,7 +582,7 @@ class pdf_standard extends ModelePDFEvaluation
 			// Sender properties
 			$carac_emetteur = '';
 
-			// employee informations
+			// employee information
 			$employee = new User($this->db);
 			$employee->fetch($object->fk_user);
 			$carac_emetteur .= ($carac_emetteur ? "\n" : '').$outputlangs->transnoentities('Employee').' : '.$outputlangs->convToOutputCharset(ucfirst($employee->firstname) . ' ' . strtoupper($employee->lastname));

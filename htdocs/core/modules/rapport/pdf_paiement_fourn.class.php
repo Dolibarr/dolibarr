@@ -26,7 +26,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/rapport/pdf_paiement.class.php';
 
 /**
- *	Classe permettant de generer les rapports de paiement
+ *	Class permettant de generer les rapports de paiement
  */
 class pdf_paiement_fourn extends pdf_paiement
 {

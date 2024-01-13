@@ -1787,7 +1787,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 							$i++;
 						}
 					} else {
-						// Should not happend. Entries are added
+						// Should not happen. Entries are added
 						$newmenu->add('', $langs->trans("NoJournalDefined"), 2, $user->hasRight('accounting', 'comptarapport', 'lire'));
 					}
 				} else {
@@ -1901,7 +1901,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 				 $newmenu->add("/compta/stats/cumul.php?leftmenu=report","Cumule",2,$user->hasRight('compta',  'resultat', 'lire'));
 				 if (isModEnabled('propal')) {
 				 $newmenu->add("/compta/stats/prev.php?leftmenu=report","Previsionnel",2,$user->hasRight('compta',  'resultat', 'lire'));
-				 $newmenu->add("/compta/stats/comp.php?leftmenu=report","Transforme",2,$user->hasRight('compta',  'resultat', 'lire'));
+				 $newmenu->add("/compta/stats/comp.php?leftmenu=report","Transferred",2,$user->hasRight('compta',  'resultat', 'lire'));
 				 }
 				 */
 
@@ -2266,9 +2266,9 @@ function get_left_menu_projects($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 			$newmenu->add("/projet/card.php?leftmenu=projects&action=create".($search_project_user ? '&search_project_user='.$search_project_user : ''), $titlenew, 1, $user->hasRight('projet', 'creer'));
 
 			if (!getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
-				$newmenu->add("/projet/list.php?leftmenu=projets".($search_project_user ? '&search_project_user='.$search_project_user : '').'&search_status=99', $langs->trans("List"), 1, $showmode, '', 'project', 'list');
+				$newmenu->add("/projet/list.php?leftmenu=projects".($search_project_user ? '&search_project_user='.$search_project_user : '').'&search_status=99', $langs->trans("List"), 1, $showmode, '', 'project', 'list');
 			} elseif (getDolGlobalInt('PROJECT_USE_OPPORTUNITIES') == 1) {
-				$newmenu->add("/projet/list.php?leftmenu=projets".($search_project_user ? '&search_project_user='.$search_project_user : ''), $langs->trans("List"), 1, $showmode, '', 'project', 'list');
+				$newmenu->add("/projet/list.php?leftmenu=projects".($search_project_user ? '&search_project_user='.$search_project_user : ''), $langs->trans("List"), 1, $showmode, '', 'project', 'list');
 				$newmenu->add('/projet/list.php?mainmenu=project&amp;leftmenu=list&search_usage_opportunity=1&search_status=99&search_opp_status=openedopp&contextpage=lead', $langs->trans("ListOpenLeads"), 2, $showmode);
 				$newmenu->add('/projet/list.php?mainmenu=project&amp;leftmenu=list&search_opp_status=notopenedopp&search_status=99&contextpage=project', $langs->trans("ListOpenProjects"), 2, $showmode);
 			} elseif (getDolGlobalInt('PROJECT_USE_OPPORTUNITIES') == 2) {	// 2 = leads only

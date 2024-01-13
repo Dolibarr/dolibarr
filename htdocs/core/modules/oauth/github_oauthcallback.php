@@ -128,7 +128,7 @@ if (GETPOST('code')) {     // We are coming from oauth provider page
 
 		//$token = $apiService->requestAccessToken(GETPOST('code'), $state);
 		$token = $apiService->requestAccessToken(GETPOST('code'));
-		// Github is a service that does not need state to be stored as second paramater of requestAccessToken
+		// Github is a service that does not need state to be stored as second parameter of requestAccessToken
 
 		// Into constructor of GitHub, the call
 		// parent::__construct($credentials, $httpClient, $storage, $scopes, $baseApiUri)

@@ -300,7 +300,7 @@ if (is_array($search_groupby) && count($search_groupby)) {
 			$sql .= " FROM ".MAIN_DB_PREFIX.$tabletouse." as ".$tablealiastouse;
 		}
 
-		// Add a where here keeping only the citeria on $tabletouse
+		// Add a where here keeping only the criteria on $tabletouse
 		// TODO
 		/*$sqlfilters = ... GETPOST('search_component_params_hidden', 'alphanohtml');
 		if ($sqlfilters) {
@@ -642,7 +642,7 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 	// Init the list of tables added. We include by default always the main table.
 	$listoftablesalreadyadded = array($object->table_element => $object->table_element);
 
-	// Add LEFT JOIN for all parent tables mentionned into the Xaxis
+	// Add LEFT JOIN for all parent tables mentioned into the Xaxis
 	//var_dump($arrayofxaxis); var_dump($search_xaxis);
 	foreach ($search_xaxis as $key => $val) {
 		if (!empty($arrayofxaxis[$val])) {
@@ -669,7 +669,7 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 		}
 	}
 
-	// Add LEFT JOIN for all parent tables mentionned into the Group by
+	// Add LEFT JOIN for all parent tables mentioned into the Group by
 	//var_dump($arrayofgroupby); var_dump($search_groupby);
 	foreach ($search_groupby as $key => $val) {
 		if (!empty($arrayofgroupby[$val])) {
@@ -696,7 +696,7 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 		}
 	}
 
-	// Add LEFT JOIN for all parent tables mentionned into the Yaxis
+	// Add LEFT JOIN for all parent tables mentioned into the Yaxis
 	//var_dump($arrayofgroupby); var_dump($search_groupby);
 	foreach ($search_measures as $key => $val) {
 		if (!empty($arrayofmesures[$val])) {
@@ -1011,11 +1011,11 @@ $db->close();
  * @param 	mixed		$object			Any object
  * @param	string		$tablealias		Alias of table
  * @param	string		$labelofobject	Label of object
- * @param	array		$arrayofmesures	Array of mesures already filled
+ * @param	array		$arrayofmesures	Array of measures already filled
  * @param	int			$level 			Level
  * @param	int			$count			Count
  * @param	string		$tablepath		Path of all tables ('t' or 't,contract' or 't,contract,societe'...)
- * @return 	array						Array of mesures
+ * @return 	array						Array of measures
  */
 function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesures, $level = 0, &$count = 0, &$tablepath = '')
 {
@@ -1032,7 +1032,7 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 	}
 
 	if ($level == 0) {
-		// Add the count of record only for the main/first level object. Parents are necessarly unique for each record.
+		// Add the count of record only for the main/first level object. Parents are necessarily unique for each record.
 		$arrayofmesures[$tablealias.'.count'] = array(
 			'label' => img_picto('', $object->picto, 'class="pictofixedwidth"').' '.$labelofobject.': Count',
 			'labelnohtml' => $labelofobject.': Count',

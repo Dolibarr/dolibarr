@@ -460,7 +460,7 @@ class CUnits extends CommonDict
 			// TODO : add base col into unit dictionary table
 			$unit = $this->db->fetch_object($sql);
 			if ($unit) {
-				// TODO : if base exists in unit dictionary table, remove this convertion exception and update convertion infos in database.
+				// TODO : if base exists in unit dictionary table, remove this conversion exception and update conversion infos in database.
 				// Example time hour currently scale 3600 will become scale 2 base 60
 				if ($unit->unit_type == 'time') {
 					return (float) $unit->scale;

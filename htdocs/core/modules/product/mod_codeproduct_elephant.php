@@ -47,7 +47,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 
 	public $code_modifiable; // Code modifiable
 
-	public $code_modifiable_invalide; // Code modifiable si il est invalide
+	public $code_modifiable_invalide; // Code modifiable si il est invalid
 
 	public $code_modifiable_null; // Code modifiables si il est null
 
@@ -306,11 +306,11 @@ class mod_codeproduct_elephant extends ModeleProductCode
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoi si un code est pris ou non (par autre tiers)
+	 *  Indicate if the code is available or not (by another third party)
 	 *
-	 *  @param	DoliDB		$db			Handler acces base
+	 *  @param	DoliDB		$db			Handler access base
 	 *  @param	string		$code		Code a verifier
-	 *  @param	Product		$product		Objet product
+	 *  @param	Product		$product		Object product
 	 *  @return	int						0 if available, <0 if KO
 	 */
 	public function verif_dispo($db, $code, $product)

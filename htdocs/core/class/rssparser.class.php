@@ -599,7 +599,7 @@ class RssParser
 
 			array_unshift($this->stack, $el);
 		} elseif ($this->_format == 'atom' && $el == 'link') {
-			// Atom support many links per containging element.
+			// Atom support many links per containing element.
 			// Magpie treats link elements of type rel='alternate'
 			// as being equivalent to RSS's simple link element.
 			if (isset($attrs['rel']) && $attrs['rel'] == 'alternate') {
@@ -664,7 +664,7 @@ class RssParser
 			$this->inchannel = false;
 		} elseif ($this->_format == 'atom' and $this->incontent) {
 			// balance tags properly
-			// note:  i don't think this is actually neccessary
+			// note:  i don't think this is actually necessary
 			if ($this->stack[0] == $el) {
 				$this->append_content("</$el>");
 			} else {
@@ -836,7 +836,7 @@ function extEntHandler($parser, $ent, $base, $sysID, $pubID)  {
  */
 function xml2php($xml)
 {
-	$fils = 0;
+	$threads = 0;
 	$tab = false;
 	$array = array();
 	foreach ($xml->children() as $key => $value) {
@@ -863,11 +863,11 @@ function xml2php($xml)
 			$array[$key] = $child;
 		}
 
-		$fils++;
+		$threads++;
 	}
 
 
-	if ($fils == 0) {
+	if ($threads == 0) {
 		return (string) $xml;
 	}
 

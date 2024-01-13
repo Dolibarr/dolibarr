@@ -353,7 +353,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 						$curY = $tab_top_newpage;
 					}
 
-					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
+					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par default
 
 					// ref fourn
 					$pdf->SetXY($this->posxreffacturefourn, $curY);
@@ -487,7 +487,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	 *	@param	TCPDF			$pdf			Object PDF
 	 *	@param  PaiementFourn	$object         Object PaiementFourn
 	 *	@param	int				$posy			Position depart
-	 *	@param	Translate		$outputlangs	Objet langs
+	 *	@param	Translate		$outputlangs	Object langs
 	 *	@return int								Position pour suite
 	 */
 	protected function _tableau_cheque(&$pdf, $object, $posy, $outputlangs)

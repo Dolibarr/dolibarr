@@ -504,7 +504,7 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
 		header("Content-Type: image/gif; name=\"barcode.gif\"");
 		imagegif($im);
 	} elseif (!empty($filebarcode)) {
-		// To wxrite into  afile onto disk
+		// To write into  a file onto disk
 		imagepng($im, $filebarcode);
 	} else {
 		header("Content-Type: image/png; name=\"barcode.png\"");

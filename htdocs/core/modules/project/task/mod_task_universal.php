@@ -19,14 +19,14 @@
 /**
  *	\file       htdocs/core/modules/project/mod_project_universal.php
  *	\ingroup    project
- *	\brief      Fichier contenant la classe du modele de numerotation de reference de projet Universal
+ *	\brief      Fichier contenant la class du modele de numerotation de reference de projet Universal
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/project/task/modules_task.php';
 
 
 /**
- * 	Classe du modele de numerotation de reference de projet Universal
+ * 	Class du modele de numerotation de reference de projet Universal
  */
 class mod_task_universal extends ModeleNumRefTask
 {

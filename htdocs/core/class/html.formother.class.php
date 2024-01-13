@@ -28,12 +28,12 @@
 /**
  *	\file       htdocs/core/class/html.formother.class.php
  *  \ingroup    core
- *	\brief      Fichier de la classe des fonctions predefinie de composants html autre
+ *	\brief      Fichier de la class des functions predefinie de composants html autre
  */
 
 
 /**
- *	Classe permettant la generation de composants html autre
+ *	Class permettant la generation de composants html autre
  *	Only common components are here.
  */
 class FormOther
@@ -523,7 +523,7 @@ class FormOther
 			$sql_usr .= " AND u.fk_soc = ".((int) $user->socid);
 		}
 
-		//Add hook to filter on user (for exemple on usergroup define in custom modules)
+		//Add hook to filter on user (for example on usergroup define in custom modules)
 		if (!empty($reshook)) {
 			$sql_usr .= $hookmanager->resArray[0];
 		}
@@ -546,7 +546,7 @@ class FormOther
 
 			$sql_usr .= " AND u2.rowid = sc.fk_user AND sc.fk_soc = ".((int) $user->socid);
 
-			//Add hook to filter on user (for exemple on usergroup define in custom modules)
+			//Add hook to filter on user (for example on usergroup define in custom modules)
 			if (!empty($reshook)) {
 				$sql_usr .= $hookmanager->resArray[1];
 			}
@@ -1006,15 +1006,15 @@ class FormOther
 
 		$color = substr($color, 1, 6);
 
-		$rouge = hexdec(substr($color, 0, 2)); //conversion du canal rouge
-		$vert  = hexdec(substr($color, 2, 2)); //conversion du canal vert
-		$bleu  = hexdec(substr($color, 4, 2)); //conversion du canal bleu
+		$red = hexdec(substr($color, 0, 2));    // Red channel conversion
+		$green  = hexdec(substr($color, 2, 2)); // Green channel conversion
+		$blue  = hexdec(substr($color, 4, 2));  // Blue channel conversion
 
-		$couleur = imagecolorallocate($image, $rouge, $vert, $bleu);
-		//print $rouge.$vert.$bleu;
-		imagefill($image, 0, 0, $couleur); //on remplit l'image
-		// On cree la couleur et on l'attribue a une variable pour ne pas la perdre
-		imagepng($image, $file); //renvoie une image sous format png
+		$couleur = imagecolorallocate($image, $red, $green, $blue);
+		//print $red.$green.$blue;
+		imagefill($image, 0, 0, $couleur); // Fill the image
+		// Create the colr and store it in a variable to maintain it
+		imagepng($image, $file); // Returns an image in PNG format
 		imagedestroy($image);
 	}
 
@@ -1216,7 +1216,7 @@ class FormOther
 		$confuserzone = 'MAIN_BOXES_'.$areacode;
 
 		// $boxactivated will be array of boxes enabled into global setup
-		// $boxidactivatedforuser will be array of boxes choosed by user
+		// $boxidactivatedforuser will be array of boxes chose by user
 
 		$selectboxlist = '';
 		$boxactivated = InfoBox::listBoxes($db, 'activated', $areacode, (empty($user->conf->$confuserzone) ? null : $user), array(), 0); // Search boxes of common+user (or common only if user has no specific setup)

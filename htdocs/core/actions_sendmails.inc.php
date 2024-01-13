@@ -91,7 +91,7 @@ if (GETPOST('removAll', 'alpha')) {
 	foreach ($listofpaths as $key => $value) {
 		$pathtodelete = $value;
 		$filetodelete = $listofnames[$key];
-		$result = dol_delete_file($pathtodelete, 1); // Delete uploded Files
+		$result = dol_delete_file($pathtodelete, 1); // Delete uploaded Files
 
 		$langs->load("other");
 		setEventMessages($langs->trans("FileWasRemoved", $filetodelete), null, 'mesgs');
@@ -454,7 +454,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 						if (getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
 							$mesg .= '<br>Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
 						} else {
-							$mesg .= '<br>Unkown Error, please refers to your administrator';
+							$mesg .= '<br>Unknown Error, please refer to your administrator';
 						}
 					}
 					$mesg .= '</div>';

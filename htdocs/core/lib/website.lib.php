@@ -108,7 +108,7 @@ function dolKeepOnlyPhpCode($str)
 
 /**
  * Convert a page content to have correct links (based on DOL_URL_ROOT) into an html content. It replaces also dynamic content with '...php...'
- * Used to ouput the page on the Preview from backoffice.
+ * Used to output the page on the Preview from backoffice.
  *
  * @param	Website		$website			Web site object
  * @param	string		$content			Content to replace
@@ -271,7 +271,7 @@ function dolReplaceSmileyCodeWithUTF8($content)
 
 /**
  * Render a string of an HTML content and output it.
- * Used to ouput the page when viewed from a server (Dolibarr or Apache).
+ * Used to output the page when viewed from a server (Dolibarr or Apache).
  *
  * @param   string  $content    	Content string
  * @param	string	$contenttype	Content type
@@ -637,7 +637,7 @@ function includeContainer($containerref)
  */
 function getStructuredData($type, $data = array())
 {
-	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs; // Very important. Required to have var available when running inluded containers.
+	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs; // Very important. Required to have var available when running included containers.
 
 	$type = strtolower($type);
 
@@ -842,7 +842,7 @@ function getStructuredData($type, $data = array())
  */
 function getSocialNetworkHeaderCards($params = null)
 {
-	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running inluded containers.
+	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running included containers.
 
 	$out = '';
 
@@ -916,7 +916,7 @@ function getSocialNetworkHeaderCards($params = null)
  */
 function getSocialNetworkSharingLinks()
 {
-	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running inluded containers.
+	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running included containers.
 
 	$out = '<!-- section for social network sharing of page -->'."\n";
 
@@ -1086,7 +1086,7 @@ function getImagePublicURLOfObject($object, $no = 1, $extName = '')
  */
 function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield = 'date_creation', $sortorder = 'DESC', $langcode = '', $otherfilters = 'null', $status = 1)
 {
-	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running inluded containers.
+	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running included containers.
 
 	$error = 0;
 	$arrayresult = array('code'=>'', 'list'=>array());
@@ -1241,7 +1241,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
  *
  * @param 	Website	 	$object			Object website
  * @param 	WebsitePage	$objectpage		Object website page
- * @param 	string		$urltograb		URL to grab (exemple: http://www.nltechno.com/ or http://www.nltechno.com/dir1/ or http://www.nltechno.com/dir1/mapage1)
+ * @param 	string		$urltograb		URL to grab (example: http://www.nltechno.com/ or http://www.nltechno.com/dir1/ or http://www.nltechno.com/dir1/mapage1)
  * @param 	string		$tmp			Content to parse
  * @param 	string		$action			Var $action
  * @param	string		$modifylinks	0=Do not modify content, 1=Replace links with a link to viewimage
@@ -1315,7 +1315,7 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 					setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
 					$action = 'create';
 				} else {
-					$alreadygrabbed[$urltograbbis] = 1; // Track that file was alreay grabbed.
+					$alreadygrabbed[$urltograbbis] = 1; // Track that file was already grabbed.
 
 					dol_mkdir(dirname($filetosave));
 
@@ -1384,7 +1384,7 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 					setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
 					$action = 'create';
 				} else {
-					$alreadygrabbed[$urltograbbis] = 1; // Track that file was alreay grabbed.
+					$alreadygrabbed[$urltograbbis] = 1; // Track that file was already grabbed.
 
 					dol_mkdir(dirname($filetosave));
 
