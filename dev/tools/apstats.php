@@ -113,8 +113,8 @@ exec($commandcheck, $output_arrtd, $resexectd);
 
 
 // Count lines of code of dependencies
-$commandcheck = 'dev/tools/github_lines_perusers.sh';
-print 'Execute github_lines_perusers to count lines of code in dependencies: '.$commandcheck."\n";
+$commandcheck = 'dev/tools/github_authors_and_commits_bydate.sh bymonth';
+print 'Execute github_authors_and_commits_bydate to count number of commits per month: '.$commandcheck."\n";
 $output_arrglpu = array();
 $resexecglpu = 0;
 exec($commandcheck, $output_arrglpu, $resexecglpu);
@@ -432,7 +432,9 @@ $html .= '<h2><span class="fas fa-dollar-sign pictofixedwidth"></span>Contributi
 
 $html .= '<div class="boxallwidth">'."\n";
 
-$html .= 'TODO...';
+foreach ($output_arrglpu as $line) {
+	$html .= $line."\n";
+}
 
 $html .= '</div>';
 
