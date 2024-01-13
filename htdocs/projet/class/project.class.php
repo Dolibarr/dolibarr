@@ -8,6 +8,7 @@
  * Copyright (C) 2019      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2022      Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023      Vincent de Grandpré  <vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1630,13 +1631,13 @@ class Project extends CommonObject
 		if ($mode == 0) {
 			$sql .= " AND ( p.public = 1";
 			$sql .= " OR ( ec.fk_c_type_contact IN (".$this->db->sanitize(join(',', array_keys($listofprojectcontacttype))).")";
-			$sql .= " AND ec.fk_socpeople = ".((int) $user->id).")";
+			$sql .= " AND ( ec.fk_socpeople = ".((int) $user->id)." ) OR ( ec.fk_socpeople = ".((int) $user->contact_id)." ))";
 			$sql .= " )";
 		} elseif ($mode == 1) {
 			$sql .= " AND ec.element_id = p.rowid";
 			$sql .= " AND (";
 			$sql .= "  ( ec.fk_c_type_contact IN (".$this->db->sanitize(join(',', array_keys($listofprojectcontacttype))).")";
-			$sql .= " AND ec.fk_socpeople = ".((int) $user->id).")";
+			$sql .= " AND ( ec.fk_socpeople = ".((int) $user->id)." ) OR ( ec.fk_socpeople = ".((int) $user->contact_id)." ))";
 			$sql .= " )";
 		} elseif ($mode == 2) {
 			// No filter. Use this if user has permission to see all project
