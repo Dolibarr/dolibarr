@@ -10,6 +10,7 @@ if [ "x$2" = "x" ]; then
 	echo "Return the number of lines of code produced by each contributor between 2 versions"
 	echo "Usage:   $0  origin/branchstart|tagnamestart|START  origin/branchend|tagnameend|HEAD"
 	echo "Example: $0  origin/18.0 origin/19.0"
+	echo "Example: $0  origin/18.0 HEAD"
 	exit
 fi
 
