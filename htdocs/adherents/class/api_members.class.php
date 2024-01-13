@@ -58,7 +58,8 @@ class Members extends DolibarrApi
 	 * @param   int     $id				ID of member
 	 * @return  Object					Object with cleaned properties
 	 *
-	 * @throws  RestException
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	404		Member not found
 	 */
 	public function get($id)
 	{
@@ -94,8 +95,8 @@ class Members extends DolibarrApi
 	 *
 	 * @url GET thirdparty/{thirdparty}
 	 *
-	 * @throws RestException 401
-	 * @throws RestException 404
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	404		Member not found
 	 */
 	public function getByThirdparty($thirdparty)
 	{
@@ -127,8 +128,8 @@ class Members extends DolibarrApi
 	 *
 	 * @url GET thirdparty/email/{email}
 	 *
-	 * @throws RestException 401
-	 * @throws RestException 404
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	404		Member or ThirdParty not found
 	 */
 	public function getByThirdpartyEmail($email)
 	{
@@ -166,8 +167,8 @@ class Members extends DolibarrApi
 	 *
 	 * @url GET thirdparty/barcode/{barcode}
 	 *
-	 * @throws RestException 401
-	 * @throws RestException 404
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	404		Member or ThirdParty not found
 	 */
 	public function getByThirdpartyBarcode($barcode)
 	{
@@ -210,7 +211,10 @@ class Members extends DolibarrApi
 	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                Array of member objects
 	 *
-	 * @throws RestException
+	 * @throws	RestException	400		Error on SQL filters
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	404		No Member found
+	 * @throws	RestException	503		Error when retrieving Member list
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $typeid = '', $category = 0, $sqlfilters = '', $properties = '')
 	{
@@ -283,6 +287,9 @@ class Members extends DolibarrApi
 	 *
 	 * @param array $request_data   Request data
 	 * @return int  ID of member
+	 *
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	500		Error when creating Member
 	 */
 	public function post($request_data = null)
 	{
@@ -314,6 +321,10 @@ class Members extends DolibarrApi
 	 * @param int   $id             ID of member to update
 	 * @param array $request_data   Datas
 	 * @return Object				Updated object
+	 *
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	404		Member not found
+	 * @throws	RestException	500		Error when resiliating, validating, excluding, updating a Member
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -379,6 +390,10 @@ class Members extends DolibarrApi
 	 *
 	 * @param int $id   member ID
 	 * @return array
+	 *
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	404		Member not found
+	 * @throws	RestException	500		Error when deleting a Member
 	 */
 	public function delete($id)
 	{
@@ -399,8 +414,6 @@ class Members extends DolibarrApi
 		$res = $member->delete($member->id, DolibarrApiAccess::$user);
 		if ($res < 0) {
 			throw new RestException(500, "Can't delete, error occurs");
-		} elseif ($res == 0) {
-			throw new RestException(409, "Can't delete, that product is probably used");
 		}
 
 		return array(
@@ -468,9 +481,10 @@ class Members extends DolibarrApi
 	 * @param int $id ID of member
 	 * @return array Array of subscription objects
 	 *
-	 * @throws RestException
-	 *
 	 * @url GET {id}/subscriptions
+	 *
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	404		Member not found
 	 */
 	public function getSubscriptions($id)
 	{
@@ -504,6 +518,9 @@ class Members extends DolibarrApi
 	 * @return int  ID of subscription
 	 *
 	 * @url POST {id}/subscriptions
+	 *
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	404		Member not found
 	 */
 	public function createSubscription($id, $start_date, $end_date, $amount, $label = '')
 	{
@@ -532,6 +549,10 @@ class Members extends DolibarrApi
 	 * @return mixed
 	 *
 	 * @url GET {id}/categories
+	 *
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	404		Category not found
+	 * @throws	RestException	503		Error when retrieving Category list
 	 */
 	public function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
 	{
