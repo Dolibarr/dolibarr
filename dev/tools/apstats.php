@@ -295,9 +295,11 @@ div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive
     vertical-align: middle;
 }
 .bargraph {
-	background-color: #008;
+	background-color: #358;
 }
-
+.small {
+	font-size: smaller;
+}
 /* Force values for small screen 767 */
 @media only screen and (max-width: 767px)
 {
@@ -401,11 +403,11 @@ $html .= '<h2><span class="fas fa-dollar-sign pictofixedwidth"></span>Project va
 
 $html .= '<div class="boxallwidth">'."\n";
 $html .= '<div class="box inline-box back1">';
-$html .= 'COCOMO value<br><span class="small">(Basic organic model)</span><br>';
+$html .= 'COCOMO value<br><span class="small opacitymedium">(Basic organic model)</span><br>';
 $html .= '<b>$'.formatNumber((empty($arraycocomo['proj']['currency']) ? 0 : $arraycocomo['proj']['currency']) + (empty($arraycocomo['dep']['currency']) ? 0 : $arraycocomo['dep']['currency']), 2).'</b>';
 $html .= '</div>';
 $html .= '<div class="box inline-box back2">';
-$html .= 'COCOMO effort<br><span class="small">(Basic organic model)</span><br>';
+$html .= 'COCOMO effort<br><span class="small opacitymedium">(Basic organic model)</span><br>';
 $html .= '<b>'.formatNumber($arraycocomo['proj']['people'] * $arraycocomo['proj']['effort'] + $arraycocomo['dep']['people'] * $arraycocomo['dep']['effort']);
 $html .= ' months people</b>';
 $html .= '</div>';
@@ -431,7 +433,7 @@ $html .= '<h2><span class="fas fa-book-dead pictofixedwidth"></span>Technical de
 $html .= '<div class="div-table-responsive">'."\n";
 $html .= '<div class="boxallwidth">'."\n";
 $html .= '<table class="list_technical_debt">'."\n";
-$html .= '<tr><td>File</td><td>Line</td><td>Type</td></tr>'."\n";
+$html .= '<tr class="trgroup"><td>File</td><td>Line</td><td>Type</td></tr>'."\n";
 $html .= $tmp;
 $html .= '</table>';
 $html .= '</div>';
