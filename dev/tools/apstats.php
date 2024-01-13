@@ -239,7 +239,7 @@ th,td {
 	display: none;
 }
 .trgroup {
-	background-bottom: 1px solid #aaa;
+	border-bottom: 1px solid #aaa;
 }
 .seedetail {
 	color: #000088;
@@ -358,7 +358,7 @@ foreach (array('proj', 'dep') as $source) {
 			$html .= '<td class="right nowrap">'.(empty($val['Files']) ? '' : formatNumber($val['Files'])).'</td>';
 			$html .= '<td class="right nowrap">'.(empty($val['Lines']) ? '' : formatNumber($val['Lines'])).'</td>';
 			$html .= '<td class="nowrap">';
-			$html .= round($val['Lines'] / $arrayofmetrics['Lines']).' %';
+			$html .= round($val['Lines'] / $arrayofmetrics['Lines'] * 100).' %';
 			$html .= '</td>';
 			$html .= '<td class="right nowrap">'.(empty($val['Blanks']) ? '' : formatNumber($val['Blanks'])).'</td>';
 			$html .= '<td class="right nowrap">'.(empty($val['Comments']) ? '' : formatNumber($val['Comments'])).'</td>';
@@ -378,11 +378,12 @@ $html .= '<td class="left">Total</td>';
 $html .= '<td class="right nowrap">'.formatNumber($arrayofmetrics['proj']['Bytes'] + $arrayofmetrics['dep']['Bytes']).'</td>';
 $html .= '<td class="right nowrap">'.formatNumber($arrayofmetrics['proj']['Files'] + $arrayofmetrics['dep']['Files']).'</td>';
 $html .= '<td class="right nowrap">'.formatNumber($arrayofmetrics['proj']['Lines'] + $arrayofmetrics['dep']['Lines']).'</td>';
+$html .= '<td></td>';
 $html .= '<td class="right nowrap">'.formatNumber($arrayofmetrics['proj']['Blanks'] + $arrayofmetrics['dep']['Blanks']).'</td>';
 $html .= '<td class="right nowrap">'.formatNumber($arrayofmetrics['proj']['Comments'] + $arrayofmetrics['dep']['Comments']).'</td>';
 $html .= '<td class="right nowrap">'.formatNumber($arrayofmetrics['proj']['Code'] + $arrayofmetrics['dep']['Code']).'</td>';
 //$html .= '<td>'.$arrayofmetrics['Complexity'].'</td>';
-$html .= '<td></td>';
+//$html .= '<td></td>';
 $html .= '</tr>';
 $html .= '</table>';
 $html .= '</div>';
