@@ -485,7 +485,11 @@ foreach ($output_arrtd as $line) {
 	//print $line."\n";
 	preg_match('/^::error file=(.*),line=(\d+),col=(\d+)::(.*)$/', $line, $reg);
 	if (!empty($reg[1])) {
-		$tmp .= '<tr><td>'.$reg[1].'</td><td>'.$reg[2].'</td><td>'.$reg[4].'</td></tr>'."\n";
+		if ($nblines < 20) {
+			$tmp .= '<tr class="nohidden"><td>'.$reg[1].'</td><td>'.$reg[2].'</td><td>'.$reg[4].'</td></tr>'."\n";
+		} else {
+			$tmp2 .= '<tr class="hidden" class="sourcephpstan"><td>'.$reg[1].'</td><td>'.$reg[2].'</td><td>'.$reg[4].'</td></tr>'."\n";
+		}
 		$nblines++;
 	}
 }
@@ -501,7 +505,9 @@ $html .= '<div class="boxallwidth">'."\n";
 $html .= '<table class="list_technical_debt">'."\n";
 $html .= '<tr class="trgroup"><td>File</td><td>Line</td><td>Type</td></tr>'."\n";
 $html .= $tmp;
+$html .= $tmp2;
 $html .= '</table>';
+$html .= '<span class="seedetail" data-source="phpstan" id="sourcephpstan">See all...</span>';
 $html .= '</div>';
 $html .= '</div>';
 
@@ -513,7 +519,7 @@ $html .= '</section>'."\n";
 $html .= '
 <script>
 $(document).ready(function() {
-$( ".seedetail" ).on( "click", function() {
+$(".seedetail").on("click", function() {
 	var source = $(this).attr("data-source");
   	console.log("Click on "+source);
 	jQuery(".source"+source).toggle();
