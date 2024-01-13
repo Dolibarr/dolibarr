@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/db/DoliDB.class.php';
 class TraceableDB extends DoliDB
 {
 	/**
-	 * @var DoliDb Database handler
+	 * @var DoliDB Database handler
 	 */
 	public $db; // cannot be protected because of parent declaration
 	/**

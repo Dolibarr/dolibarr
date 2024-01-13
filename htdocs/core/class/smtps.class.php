@@ -1825,7 +1825,7 @@ class SMTPs
 	/**
 	 * Set flag which determines whether to calculate message MD5 checksum.
 	 *
-	 * @param 	string 	$_flag		Message Priority
+	 * @param 	boolean 	$_flag		MD5flag
 	 * @return 	void
 	 */
 	public function setMD5flag($_flag = false)
@@ -1836,7 +1836,7 @@ class SMTPs
 	/**
 	 * Gets flag which determines whether to calculate message MD5 checksum.
 	 *
-	 * @return 	boolean 				Message Priority
+	 * @return 	boolean 				MD5flag
 	 */
 	public function getMD5flag()
 	{

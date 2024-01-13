@@ -427,7 +427,7 @@ if (!empty($search_fk_warehouse)) {
 	}
 }
 if ($productid > 0) {
-	$param .= '&productid='.$productid;
+	$param .= '&productid='.(int) $productid;
 }
 if (GETPOST('dateday', 'int') > 0) {
 	$param .= '&dateday='.GETPOST('dateday', 'int');

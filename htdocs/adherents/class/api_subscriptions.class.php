@@ -54,7 +54,8 @@ class Subscriptions extends DolibarrApi
 	 * @param   int     $id				ID of subscription
 	 * @return  Object					Object with cleaned properties
 	 *
-	 * @throws  RestException
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	404		No Subscription found
 	 */
 	public function get($id)
 	{
@@ -84,7 +85,9 @@ class Subscriptions extends DolibarrApi
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array Array of subscription objects
 	 *
-	 * @throws RestException
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	404		No Subscription found
+	 * @throws	RestException	503		Error when retrieving Subscription list
 	 */
 	public function index($sortfield = "dateadh", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
@@ -142,6 +145,9 @@ class Subscriptions extends DolibarrApi
 	 *
 	 * @param array $request_data   Request data
 	 * @return int  ID of subscription
+	 *
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	500		Error when creating Subscription
 	 */
 	public function post($request_data = null)
 	{
@@ -162,7 +168,7 @@ class Subscriptions extends DolibarrApi
 			$subscription->$field = $value;
 		}
 		if ($subscription->create(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500, 'Error when creating contribution', array_merge(array($subscription->error), $subscription->errors));
+			throw new RestException(500, 'Error when creating subscription', array_merge(array($subscription->error), $subscription->errors));
 		}
 		return $subscription->id;
 	}
@@ -173,6 +179,10 @@ class Subscriptions extends DolibarrApi
 	 * @param int   $id             ID of subscription to update
 	 * @param array $request_data   Datas
 	 * @return Object
+	 *
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	404		No Subscription found
+	 * @throws	RestException	500		Error when updating Subscription
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -211,6 +221,11 @@ class Subscriptions extends DolibarrApi
 	 *
 	 * @param int $id   ID of subscription to delete
 	 * @return array
+	 *
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	404		No Subscription found
+	 * @throws	RestException	409		No Subscription deleted
+	 * @throws	RestException	500		Error when deleting Subscription
 	 */
 	public function delete($id)
 	{
@@ -228,7 +243,7 @@ class Subscriptions extends DolibarrApi
 		if ($res < 0) {
 			throw new RestException(500, "Can't delete, error occurs");
 		} elseif ($res == 0) {
-			throw new RestException(409, "Can't delete, that product is probably used");
+			throw new RestException(409, "No subscription whas deleted");
 		}
 
 		return array(

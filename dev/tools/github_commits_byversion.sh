@@ -7,7 +7,7 @@
 Releases=("3.9" "4.0" "5.0" "6.0" "7.0" "8.0" "9.0" "10.0" "11.0" "12.0" "13.0" "14.0" "15.0" "16.0" "17.0" "18.0" "develop")
 let "counter = 0"
 
-echo "Copy script into /tmp/github_commits_perversion.sh"
+echo "Copy script into /tmp/github_commits_byversion.sh"
 cp $0 /tmp/github_commits_perversion.sh
 
 echo "Delete /tmp/git"
@@ -37,7 +37,7 @@ do
 	echo "Checkout into version $i"
 	git checkout $i
 	#git shortlog -s -n  --after=YYYY-MM-DD --before=YYYY-MM-DD | tr '[:lower:]' '[:upper:]' > /tmp/github_commits_perversion.txt
-	git shortlog -s -n $commitidcommon.. | tr '[:lower:]' '[:upper:]' > /tmp/github_commits_perversion.txt
+	git shortlog -s -n $commitidcommon..  | iconv -f UTF-8 -t ASCII//TRANSLIT | tr '[:lower:]' '[:upper:]' > /tmp/github_commits_perversion.txt
 	#cat /tmp/github_commits_perversion.txt
 	echo "Total for version $i:"
 	echo -n "- Nb of commits: "

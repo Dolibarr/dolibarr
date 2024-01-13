@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2020  Lenin Rivas		   <lenin@leninrivas.com>
- * Copyright (C) 2023       Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2023-2024  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -257,7 +257,7 @@ class Mo extends CommonObject
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -1234,7 +1234,7 @@ class Mo extends CommonObject
 	 *	Cancel consumed and produced lines (movement stocks)
 	 *
 	 *	@param	User	$user					Object user that modify
-	 *  @param  bool	$mode  					Type line supported (0 by default) (0: consumed and produced lines; 1: consumed lines; 2: produced lines)
+	 *  @param  int 	$mode  					Type line supported (0 by default) (0: consumed and produced lines; 1: consumed lines; 2: produced lines)
 	 *  @param  bool	$also_delete_lines  	true if the consumed/produced lines is deleted (false by default)
 	 *  @param	int		$notrigger				1=Does not execute triggers, 0=Execute triggers
 	 *	@return	int								Return integer <0 if KO, 0=Nothing done, >0 if OK
@@ -2052,7 +2052,7 @@ class MoLine extends CommonObjectLine
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{

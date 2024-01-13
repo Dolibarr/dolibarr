@@ -250,8 +250,8 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
 	require_once DOL_DOCUMENT_ROOT."/core/db/".$type.'.class.php';
 
 	$class = 'DoliDB'.ucfirst($type);
-	$dolidb = new $class($type, $host, $user, $pass, $name, $port);
-	return $dolidb;
+	$DoliDB = new $class($type, $host, $user, $pass, $name, $port);
+	return $DoliDB;
 }
 
 /**

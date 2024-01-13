@@ -274,7 +274,7 @@ class Link extends CommonObject
 	/**
 	 *  Return nb of links
 	 *
-	 *  @param  DoliDb  $dbs		Database handler
+	 *  @param  DoliDB  $dbs		Database handler
 	 *  @param  string  $objecttype Type of the associated object in dolibarr
 	 *  @param  int     $objectid   Id of the associated object in dolibarr
 	 *  @return int                 Nb of links, -1 if error
