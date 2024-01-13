@@ -1,36 +1,36 @@
 # Dolibarr language file - Source file is en_US - resource
-MenuResourceIndex=Resources
-MenuResourceAdd=New resource
-DeleteResource=Delete resource
-ConfirmDeleteResourceElement=Confirm delete the resource for this element
-NoResourceInDatabase=No resource in database.
-NoResourceLinked=No resource linked
+MenuResourceIndex=משאבים
+MenuResourceAdd=משאב חדש
+DeleteResource=מחיקת משאב
+ConfirmDeleteResourceElement=אשר מחיקת המשאב עבור אלמנט זה
+NoResourceInDatabase=אין משאבים במסד נתונים
+NoResourceLinked=אין משאבים מקושרים
 
-ResourcePageIndex=Resources list
-ResourceSingular=Resource
-ResourceCard=Resource card
-AddResource=Create a resource
-ResourceFormLabel_ref=Resource name
-ResourceType=Resource type
-ResourceFormLabel_description=Resource description
+ResourcePageIndex=רשימת משאבים
+ResourceSingular=משאב
+ResourceCard=כרטיס משאב
+AddResource=יצירת משאב
+ResourceFormLabel_ref=שם המשאב
+ResourceType=סוג המשאב
+ResourceFormLabel_description=תיאור המשאב
 
-ResourcesLinkedToElement=Resources linked to element
+ResourcesLinkedToElement=משאבים המקושרים לאלמנט
 
-ShowResource=Show resource
+ShowResource=הצג משאב
 
-ResourceElementPage=Element resources
-ResourceCreatedWithSuccess=Resource successfully created
-RessourceLineSuccessfullyDeleted=Resource line successfully deleted
-RessourceLineSuccessfullyUpdated=Resource line successfully updated
-ResourceLinkedWithSuccess=Resource linked with success
+ResourceElementPage=משאבים לאלמנט
+ResourceCreatedWithSuccess=משאב נוצר בהצלחה
+RessourceLineSuccessfullyDeleted=שורת המשאב נמחקה בהצלחה
+RessourceLineSuccessfullyUpdated=שורת המשאב עודכנה בהצלחה
+ResourceLinkedWithSuccess=המשאב מקושר בהצלחה
 
-ConfirmDeleteResource=Confirm to delete this resource
-RessourceSuccessfullyDeleted=Resource successfully deleted
-DictionaryResourceType=Type of resources
+ConfirmDeleteResource=אשר מחיקת המשאב
+RessourceSuccessfullyDeleted=המשאב נמחק בהצלחה
+DictionaryResourceType=סוגי משאבים
 
-SelectResource=Select resource
+SelectResource=בחר משאב
 
-IdResource=Id resource
-AssetNumber=Serial number
-ResourceTypeCode=Resource type code
-ImportDataset_resource_1=Resources
+IdResource=מזהה משאב
+AssetNumber=מספר סידורי
+ResourceTypeCode=קוד סוג המשאב
+ImportDataset_resource_1=משאבים
