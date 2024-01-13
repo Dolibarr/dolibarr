@@ -19,7 +19,7 @@
 
 /**
  * \file    dev/tools/apstats.php
- * \brief   Script to report Advanced Statistics on a coding project
+ * \brief   Script to report Advanced Statistics on a coding PHP project
  */
 
 
@@ -257,6 +257,13 @@ th,td {
 	text-align: center;
 	margin-left: 10px;
 }
+.boxallwidth {
+    border-radius: 9px;
+    border-color: #000;
+    border-width: 2px;
+    padding: 5px;
+    border-style: solid;
+}
 .back1 {
 	background-color: #884466;
 	color: #FFF;
@@ -279,7 +286,14 @@ div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive
     overflow-x: auto;
     min-height: 0.01%;
 }
-
+.list_technical_debt {
+	font-size: smaller
+}
+.pictofixedwidth {
+	font-size: smaller;
+    width: 28px;
+    vertical-align: middle;
+}
 
 /* Force values for small screen 767 */
 @media only screen and (max-width: 767px)
@@ -303,7 +317,7 @@ $html .= '<span class="opacitymedium">Generated on '.$currentDate.' in '.($timee
 $html .= '</header>'."\n";
 
 $html .= '<section class="chapter" id="linesofcode">'."\n";
-$html .= '<h2>Lines of code</h2>'."\n";
+$html .= '<h2><span class="fas fa-code pictofixedwidth"></span>Lines of code</h2>'."\n";
 
 $html .= '<div class="div-table-responsive">'."\n";
 $html .= '<div class="boxallwidth">'."\n";
@@ -369,7 +383,7 @@ $html .= '</div>';
 $html .= '</section>'."\n";
 
 $html .= '<section class="chapter" id="projectvalue">'."\n";
-$html .= '<h2>Project value</h2><br>'."\n";
+$html .= '<h2><span class="fas fa-dollar-sign pictofixedwidth"></span>Project value</h2><br>'."\n";
 
 $html .= '<div class="boxallwidth">'."\n";
 $html .= '<div class="box inline-box back1">';
@@ -398,7 +412,7 @@ foreach ($output_arrtd as $line) {
 }
 
 $html .= '<section class="chapter" id="technicaldebt">'."\n";
-$html .= '<h2>Technical debt <span class="opacitymedium">(PHPStan level '.$phpstanlevel.' -> '.$nblines.' warnings)</span></h2><br>'."\n";
+$html .= '<h2><span class="fas fa-book-dead pictofixedwidth"></span>Technical debt <span class="opacitymedium">(PHPStan level '.$phpstanlevel.' -> '.$nblines.' warnings)</span></h2><br>'."\n";
 
 $html .= '<div class="div-table-responsive">'."\n";
 $html .= '<div class="boxallwidth">'."\n";
