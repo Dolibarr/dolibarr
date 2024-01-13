@@ -324,6 +324,9 @@ div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive
 .small {
 	font-size: smaller;
 }
+.fr {
+	float: right;
+}
 /* Force values for small screen 767 */
 @media only screen and (max-width: 767px)
 {
@@ -375,7 +378,7 @@ foreach (array('proj', 'dep') as $source) {
 	} elseif ($source == 'dep') {
 		$html .= '<td>All files of dependencies only';
 	}
-	$html .= ' &nbsp; &nbsp; <span class="seedetail" data-source="'.$source.'">(See detail per file type...)</span>';
+	$html .= ' &nbsp; &nbsp; <div class="seedetail fr" data-source="'.$source.'"><span class="fas fa-graph pictofixedwidth"></span>See detail per file type...</span>';
 	$html .= '<td class="right">'.formatNumber($arrayofmetrics[$source]['Bytes']).'</td>';
 	$html .= '<td class="right">'.formatNumber($arrayofmetrics[$source]['Files']).'</td>';
 	$html .= '<td class="right">'.formatNumber($arrayofmetrics[$source]['Lines']).'</td>';
@@ -495,8 +498,8 @@ foreach ($output_arrtd as $line) {
 			$tmp .= '<tr class="hidden sourcephpstan">';
 		}
 		$tmp .= '<td>'.$reg[1].'</td>';
-		$tmp .= '<td>';
-		$tmp .= '<a href="'.$urlgit.$reg[1].'#'.$reg[2].'">'.$reg[2].'</a>';
+		$tmp .= '<td class="">';
+		$tmp .= '<a href="'.$urlgit.$reg[1].'#L'.$reg[2].'">'.$reg[2].'</a>';
 		$tmp .= '</td>';
 		$tmp .= '<td>'.$reg[4].'</td>';
 		$tmp .= '</tr>'."\n";
