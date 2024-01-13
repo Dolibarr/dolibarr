@@ -27,10 +27,10 @@ if [ "x$3" != "x" ]; then
 fi
 
 echo "--- Number of different contributors for the year"
-echo "git log --since $FROM --before $TO | grep ^Author | awk -F'<' '{ print $1 }' | iconv -f UTF-8 -t ASCII//TRANSLIT | sort -u -f -i -b | wc -l"
+echo "git log --since $FROM --before $TO | iconv -f UTF-8 -t ASCII//TRANSLIT | grep ^Author | awk -F'<' '{ print $1 }' | sort -u -f -i -b | wc -l"
 git log --since $FROM --before $TO | iconv -f UTF-8 -t ASCII//TRANSLIT | grep '^Author' | awk -F"<" '{ print $1 }' | sort -u -f -i -b | wc -l
 
 
 echo "--- Number of commit $1"
-echo "git log --pretty='format:%cd' --date=format:'$DATEFORMAT' | sort | uniq -c | awk '{ if (\$2 >= '"$1"') { print \"Year: \"\$2\", commits: \"\$1 } }'"
+echo "git log --pretty='format:%cd' --date=format:'$DATEFORMAT' | iconv -f UTF-8 -t ASCII//TRANSLIT | sort | uniq -c | awk '{ if (\$2 >= '"$1"') { print \"Year: \"\$2\", commits: \"\$1 } }'"
 git log --pretty='format:%cd' --date=format:"$DATEFORMAT" | iconv -f UTF-8 -t ASCII//TRANSLIT | sort | uniq -c | awk '{ if ($2 >= '$1') { print "Year: "$2", commits: "$1 } }'
