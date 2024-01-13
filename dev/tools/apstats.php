@@ -489,7 +489,7 @@ foreach ($output_arrtd as $line) {
 		if ($nblines < 20) {
 			$tmp .= '<tr class="nohidden"><td>'.$reg[1].'</td><td>'.$reg[2].'</td><td>'.$reg[4].'</td></tr>'."\n";
 		} else {
-			$tmp2 .= '<tr class="hidden" class="sourcephpstan"><td>'.$reg[1].'</td><td>'.$reg[2].'</td><td>'.$reg[4].'</td></tr>'."\n";
+			$tmp2 .= '<tr class="hidden sourcephpstan"><td>'.$reg[1].'</td><td>'.$reg[2].'</td><td>'.$reg[4].'</td></tr>'."\n";
 		}
 		$nblines++;
 	}
