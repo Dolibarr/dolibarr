@@ -239,7 +239,7 @@ th,td {
 	display: none;
 }
 .trgroup {
-	background-color: #EEE;
+	background-bottom: 1px solid #aaa;
 }
 .seedetail {
 	color: #000088;
@@ -327,6 +327,7 @@ $html .= '<th class="left">Language</th>';
 $html .= '<th class="right">Bytes</th>';
 $html .= '<th class="right">Files</th>';
 $html .= '<th class="right">Lines</th>';
+$html .= '<th></th>';
 $html .= '<th class="right">Blanks</th>';
 $html .= '<th class="right">Comments</th>';
 $html .= '<th class="right">Code</th>';
@@ -343,10 +344,11 @@ foreach (array('proj', 'dep') as $source) {
 	$html .= '<td class="right">'.formatNumber($arrayofmetrics[$source]['Bytes']).'</td>';
 	$html .= '<td class="right">'.formatNumber($arrayofmetrics[$source]['Files']).'</td>';
 	$html .= '<td class="right">'.formatNumber($arrayofmetrics[$source]['Lines']).'</td>';
+	$html .= '<td></td>';
 	$html .= '<td class="right">'.formatNumber($arrayofmetrics[$source]['Blanks']).'</td>';
 	$html .= '<td class="right">'.formatNumber($arrayofmetrics[$source]['Comments']).'</td>';
 	$html .= '<td class="right">'.formatNumber($arrayofmetrics[$source]['Code']).'</td>';
-	$html .= '<td></td>';
+	//$html .= '<td></td>';
 	$html .= '</tr>';
 	if (!empty($arrayoflineofcode[$source])) {
 		foreach ($arrayoflineofcode[$source] as $key => $val) {
@@ -355,17 +357,23 @@ foreach (array('proj', 'dep') as $source) {
 			$html .= '<td class="right"></td>';
 			$html .= '<td class="right nowrap">'.(empty($val['Files']) ? '' : formatNumber($val['Files'])).'</td>';
 			$html .= '<td class="right nowrap">'.(empty($val['Lines']) ? '' : formatNumber($val['Lines'])).'</td>';
+			$html .= '<td class="nowrap">';
+			$html .= round($val['Lines'] / $arrayofmetrics['Lines']).' %';
+			$html .= '</td>';
 			$html .= '<td class="right nowrap">'.(empty($val['Blanks']) ? '' : formatNumber($val['Blanks'])).'</td>';
 			$html .= '<td class="right nowrap">'.(empty($val['Comments']) ? '' : formatNumber($val['Comments'])).'</td>';
 			$html .= '<td class="right nowrap">'.(empty($val['Code']) ? '' : formatNumber($val['Code'])).'</td>';
 			//$html .= '<td class="right">'.(empty($val['Complexity']) ? '' : $val['Complexity']).'</td>';
-			$html .= '<td class="nowrap">TODO graph here...</td>';
+			/*$html .= '<td class="nowrap">';
+			$html .= '';
+			$html .= '</td>';
+			*/
 			$html .= '</tr>';
 		}
 	}
 }
 
-$html .= '<tr class="trgroup">';
+$html .= '<tr class="trgrouptotal">';
 $html .= '<td class="left">Total</td>';
 $html .= '<td class="right nowrap">'.formatNumber($arrayofmetrics['proj']['Bytes'] + $arrayofmetrics['dep']['Bytes']).'</td>';
 $html .= '<td class="right nowrap">'.formatNumber($arrayofmetrics['proj']['Files'] + $arrayofmetrics['dep']['Files']).'</td>';
