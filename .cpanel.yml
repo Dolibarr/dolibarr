@@ -1,5 +1,0 @@
----
-deployment:
-  tasks:
-    - export DEPLOYPATH=/home/alonand1/repositories/dolibarr
-    - /bin/cp -R dolibarr/htdocs $DEPLOYPATH
