@@ -7,17 +7,20 @@
 
 echo "***** github_authors_and_commits_bydate.sh *****"
 if [ "x$1" = "x" ]; then
-	echo "Usage: $0  (byyear|bymonth)  YEARSTART  [YEAREND]"
+	echo "Usage: $0  (byyear|bymonth|byday)  YEARSTART  [YEAREND]"
 	exit
 fi
-if [ "x$1" != "xbyyear" -a "x$1" != "xbymonth" ]; then
-	echo "Usage: $0  (byyear|bymonth|perday)  YEARSTART  [YEAREND]"
+if [ "x$1" != "xbyyear" -a "x$1" != "xbymonth" -a "x$1" != "xbyday" ]; then
+	echo "Usage: $0  (byyear|bymonth|byday)  YEARSTART  [YEAREND]"
 	exit
 fi
 
 DATEFORMAT="%Y"
 if [ "x$1" = "xbymonth" ]; then
 	DATEFORMAT="%Y%m"
+fi
+if [ "x$1" = "xbyday" ]; then
+	DATEFORMAT="%Y%m%d"
 fi
 
 FROM=$2-01-01
