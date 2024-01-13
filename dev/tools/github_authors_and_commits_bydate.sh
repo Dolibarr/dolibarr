@@ -15,13 +15,13 @@ if [ "x$1" != "xbyyear" -a "x$1" != "xbymonth" ]; then
 	exit
 fi
 
-FROM=$1-01-01
-TO=$1-12-31
 DATEFORMAT="%Y"
 if [ "x$1" = "xbymonth" ]; then
-        DATEFORMAT="%Y%m"
+	DATEFORMAT="%Y%m"
 fi
 
+FROM=$2-01-01
+TO=$2-12-31
 if [ "x$3" != "x" ]; then
 	TO=$2-12-31
 fi
