@@ -409,7 +409,7 @@ $html .= '</div>';
 $html .= '</section>'."\n";
 
 $html .= '<section class="chapter" id="projectvalue">'."\n";
-$html .= '<h2><span class="fas fa-dollar-sign pictofixedwidth"></span>Project value</h2><br>'."\n";
+$html .= '<h2><span class="fas fa-dollar-sign pictofixedwidth"></span>Project value</h2>'."\n";
 
 $html .= '<div class="boxallwidth">'."\n";
 $html .= '<div class="box inline-box back1">';
@@ -438,7 +438,7 @@ foreach ($output_arrtd as $line) {
 }
 
 $html .= '<section class="chapter" id="technicaldebt">'."\n";
-$html .= '<h2><span class="fas fa-book-dead pictofixedwidth"></span>Technical debt <span class="opacitymedium">(PHPStan level '.$phpstanlevel.' -> '.$nblines.' warnings)</span></h2><br>'."\n";
+$html .= '<h2><span class="fas fa-book-dead pictofixedwidth"></span>Technical debt <span class="opacitymedium">(PHPStan level '.$phpstanlevel.' -> '.$nblines.' warnings)</span></h2>'."\n";
 
 $html .= '<div class="div-table-responsive">'."\n";
 $html .= '<div class="boxallwidth">'."\n";
