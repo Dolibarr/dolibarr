@@ -88,6 +88,10 @@ $resexec = shell_exec($commandcheck);
 $resexec = (int) (empty($resexec) ? 0 : trim($resexec));
 */
 
+// Retreive the .git informations
+$urlgit = 'https://github.com/Dolibarr/dolibarr/blob/develop/';
+
+
 // Count lines of code of application
 $commandcheck = ($dirscc ? $dirscc.'/' : '').'scc . --exclude-dir=htdocs/includes,htdocs/custom,htdocs/theme/common/fontawesome-5,htdocs/theme/common/octicons';
 print 'Execute SCC to count lines of code in project: '.$commandcheck."\n";
@@ -307,7 +311,7 @@ div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive
     min-height: 0.01%;
 }
 .list_technical_debt {
-	font-size: smaller
+	/* font-size: smaller */
 }
 .pictofixedwidth {
 	font-size: smaller;
@@ -479,7 +483,6 @@ $html .= '</div>';
 $html .= '</section>'."\n";
 
 $tmp = '';
-$tmp2 = '';
 $nblines = 0;
 foreach ($output_arrtd as $line) {
 	$reg = array();
@@ -487,10 +490,16 @@ foreach ($output_arrtd as $line) {
 	preg_match('/^::error file=(.*),line=(\d+),col=(\d+)::(.*)$/', $line, $reg);
 	if (!empty($reg[1])) {
 		if ($nblines < 20) {
-			$tmp .= '<tr class="nohidden"><td>'.$reg[1].'</td><td>'.$reg[2].'</td><td>'.$reg[4].'</td></tr>'."\n";
+			$tmp .= '<tr class="nohidden">';
 		} else {
-			$tmp2 .= '<tr class="hidden sourcephpstan"><td>'.$reg[1].'</td><td>'.$reg[2].'</td><td>'.$reg[4].'</td></tr>'."\n";
+			$tmp .= '<tr class="hidden sourcephpstan">';
 		}
+		$tmp .= '<td>'.$reg[1].'</td>';
+		$tmp .= '<td>';
+		$tmp .= '<a href="'.$urlgit.$reg[1].'#'.$reg[2].'">'.$reg[2].'</a>';
+		$tmp .= '</td>';
+		$tmp .= '<td>'.$reg[4].'</td>';
+		$tmp .= '</tr>'."\n";
 		$nblines++;
 	}
 }
@@ -503,10 +512,9 @@ $html .= '<h2><span class="fas fa-book-dead pictofixedwidth"></span>Technical de
 
 $html .= '<div class="div-table-responsive">'."\n";
 $html .= '<div class="boxallwidth">'."\n";
-$html .= '<table class="list_technical_debt">'."\n";
+$html .= '<table class="list_technical_debt centpercent">'."\n";
 $html .= '<tr class="trgroup"><td>File</td><td>Line</td><td>Type</td></tr>'."\n";
 $html .= $tmp;
-$html .= $tmp2;
 $html .= '<tr class="sourcephpstan"><td colspan="3"><span class="seedetail" data-source="phpstan" id="sourcephpstan">Show all...</span></td></tr>';
 $html .= '</table>';
 $html .= '</div>';
