@@ -16,77 +16,77 @@
 #
 # Generic
 #
-ModulePartnershipName=Partnership management
-PartnershipDescription=Module Partnership management
-PartnershipDescriptionLong= Module Partnership management
-Partnership=Partnership
-AddPartnership=Add partnership
-CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
-PartnershipCheckBacklink=Partnership: Check referring backlink
+ModulePartnershipName=ניהול שותפויות
+PartnershipDescription=מודול ניהול שותפויות
+PartnershipDescriptionLong=מודול ניהול שותפויות
+Partnership=שותפות
+AddPartnership=הוסף שותפות
+CancelPartnershipForExpiredMembers=שותפות: ביטול שותפות לחברים עם מינויים שפגו תוקף
+PartnershipCheckBacklink=שותפות: בדיקת קישור הפנייה
 
 #
 # Menu
 #
-NewPartnership=New Partnership
-ListOfPartnerships=List of partnership
+NewPartnership=שותפות חדשה
+ListOfPartnerships=רשימת שותפויות
 
 #
 # Admin page
 #
-PartnershipSetup=Partnership setup
-PartnershipAbout=About Partnership
-PartnershipAboutPage=Partnership about page
-partnershipforthirdpartyormember=Partner status must be set on a 'thirdparty' or a 'member'
-PARTNERSHIP_IS_MANAGED_FOR=Partnership managed for
-PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks to check
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cancelling status of a partnership when a subscription has expired
-ReferingWebsiteCheck=Check of website referring
-ReferingWebsiteCheckDesc=You can enable a feature to check that your partners has added a backlink to your website domains on their own website.
+PartnershipSetup=הגדרות שותפות
+PartnershipAbout=אודות שותפות
+PartnershipAboutPage=דף אודות שותפות
+partnershipforthirdpartyormember=סטטוס השותף חייב להיות מוגדר על "thirdparty" או "member"
+PARTNERSHIP_IS_MANAGED_FOR=ניהול שותפויות עבור
+PARTNERSHIP_BACKLINKS_TO_CHECK=קישורים חזרה לבדיקה
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=מספר הימים לפני ביטול סטטוס השותפות כשמינוי פג תוקף
+ReferingWebsiteCheck=בדיקת אתר הפנייה
+ReferingWebsiteCheckDesc=ניתן להפעיל תכלית לבדיקה שהשותפים שלך הוסיפו קישור חזרה לדומיינים של האתר שלך באתרם.
 
 #
 # Object
 #
-DeletePartnership=Delete a partnership
-PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party
-PartnershipDedicatedToThisMember=Partnership dedicated to this member
-DatePartnershipStart=Start date
-DatePartnershipEnd=End date
-ReasonDecline=Decline reason
-ReasonDeclineOrCancel=Decline reason
-PartnershipAlreadyExist=Partnership already exist
-ManagePartnership=Manage partnership
-BacklinkNotFoundOnPartnerWebsite=Backlink not found on partner website
-ConfirmClosePartnershipAsk=Are you sure you want to cancel this partnership?
-PartnershipType=Partnership type
-PartnershipRefApproved=Partnership %s approved
+DeletePartnership=מחק שותפות
+PartnershipDedicatedToThisThirdParty=שותפות מוקדשת לספק זה
+PartnershipDedicatedToThisMember=שותפות מוקדשת לחבר זה
+DatePartnershipStart=תאריך התחלה
+DatePartnershipEnd=תאריך סיום
+ReasonDecline=סיבת דחייה
+ReasonDeclineOrCancel=סיבת דחייה
+PartnershipAlreadyExist=שותפות כבר קיימת
+ManagePartnership=ניהול שותפות
+BacklinkNotFoundOnPartnerWebsite=קישור חזרה לא נמצא באתר השותף
+ConfirmClosePartnershipAsk=האם אתה בטוח שברצונך לבטל את השותפות הזו?
+PartnershipType=סוג השותפות
+PartnershipRefApproved=שותפות %s אושרה
 
 #
 # Template Mail
 #
-SendingEmailOnPartnershipWillSoonBeCanceled=Partnership will soon be canceled
-SendingEmailOnPartnershipRefused=Partnership refused
-SendingEmailOnPartnershipAccepted=Partnership accepted
-SendingEmailOnPartnershipCanceled=Partnership canceled
+SendingEmailOnPartnershipWillSoonBeCanceled=השותפות תבוטל בקרוב
+SendingEmailOnPartnershipRefused=השותפות נדחתה
+SendingEmailOnPartnershipAccepted=השותפות אושרה
+SendingEmailOnPartnershipCanceled=השותפות בוטלה
 
-YourPartnershipWillSoonBeCanceledTopic=Partnership will soon be canceled
-YourPartnershipRefusedTopic=Partnership refused
-YourPartnershipAcceptedTopic=Partnership accepted
-YourPartnershipCanceledTopic=Partnership canceled
+YourPartnershipWillSoonBeCanceledTopic=השותפות שלך תבוטל בקרוב
+YourPartnershipRefusedTopic=השותפות שלך נדחתה
+YourPartnershipAcceptedTopic=השותפות שלך אושרה
+YourPartnershipCanceledTopic=השותפות שלך בוטלה
 
-YourPartnershipWillSoonBeCanceledContent=We inform you that your partnership will soon be canceled (Backlink not found)
-YourPartnershipRefusedContent=We inform you that your partnership request has been refused.
-YourPartnershipAcceptedContent=We inform you that your partnership request has been accepted.
-YourPartnershipCanceledContent=We inform you that your partnership has been canceled.
+YourPartnershipWillSoonBeCanceledContent=אנו מיידעים אותך שהשותפות שלך תבוטל בקרוב (קישור לא נמצא)
+YourPartnershipRefusedContent=אנו מיידעים אותך שבקשת השותפות שלך נדחתה.
+YourPartnershipAcceptedContent=אנו מיידעים אותך שבקשת השותפות שלך אושרה.
+YourPartnershipCanceledContent=אנו מיידעים אותך שהשותפות שלך בוטלה.
 
-CountLastUrlCheckError=Number of errors for last URL check
-LastCheckBacklink=Date of last URL check
-ReasonDeclineOrCancel=Decline reason
+CountLastUrlCheckError=מספר שגיאות בבדיקת URL האחרונה
+LastCheckBacklink=תאריך בדיקת URL האחרונה
+ReasonDeclineOrCancel=סיבת דחייה
 
 #
 # Status
 #
-PartnershipDraft=Draft
-PartnershipAccepted=Accepted
-PartnershipRefused=Refused
-PartnershipCanceled=Canceled
-PartnershipManagedFor=Partners are
+PartnershipDraft=טיוטה
+PartnershipAccepted=אושרה
+PartnershipRefused=נדחתה
+PartnershipCanceled=בוטלה
+PartnershipManagedFor=ננהלים עבור

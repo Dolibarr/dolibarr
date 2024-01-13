@@ -1,32 +1,32 @@
-# Dolibarr language file - Source file is en_US - oauth
-ConfigOAuth=OAuth Configuration
-OAuthServices=OAuth Services
-ManualTokenGeneration=Manual token generation
-TokenManager=Token Manager
-IsTokenGenerated=Is token generated ?
-NoAccessToken=No access token saved into local database
-HasAccessToken=A token was generated and saved into local database
-NewTokenStored=Token received and saved
-ToCheckDeleteTokenOnProvider=Click here to check/delete authorization saved by %s OAuth provider
-TokenDeleted=Token deleted
-RequestAccess=Click here to request/renew access and receive a new token to save
-DeleteAccess=Click here to delete token
-UseTheFollowingUrlAsRedirectURI=Use the following URL as the Redirect URI when creating your credentials with your OAuth provider:
-ListOfSupportedOauthProviders=Enter the credentials provided by your OAuth2 provider. Only supported OAuth2 providers are listedd here. These services may be used by other modules that need OAuth2 authentication.
-OAuthSetupForLogin=Page to generate an OAuth token
-SeePreviousTab=See previous tab
-OAuthIDSecret=OAuth ID and Secret
-TOKEN_REFRESH=Token Refresh Present
-TOKEN_EXPIRED=Token expired
-TOKEN_EXPIRE_AT=Token expire at
-TOKEN_DELETE=Delete saved token
-OAUTH_GOOGLE_NAME=OAuth Google service
-OAUTH_GOOGLE_ID=OAuth Google Id
-OAUTH_GOOGLE_SECRET=OAuth Google Secret
-OAUTH_GOOGLE_DESC=Go to <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">this page</a> then "Credentials" to create OAuth credentials
-OAUTH_GITHUB_NAME=OAuth GitHub service
-OAUTH_GITHUB_ID=OAuth GitHub Id
-OAUTH_GITHUB_SECRET=OAuth GitHub Secret
-OAUTH_GITHUB_DESC=Go to <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">this page</a> then "Register a new application" to create OAuth credentials
-OAUTH_STRIPE_TEST_NAME=OAuth Stripe Test
-OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live
+# Dolibarr language file - Translated file to Hebrew - oauth
+ConfigOAuth=תצורת OAuth
+OAuthServices=שירותי OAuth
+ManualTokenGeneration=יצירת טוקן ידנית
+TokenManager=מנהל הטוקן
+IsTokenGenerated=?האם הטוקן נוצר
+NoAccessToken=לא נשמר טוקן גישה במסד הנתונים המקומי
+HasAccessToken=נוצר טוקן ונשמר במסד הנתונים המקומי
+NewTokenStored=טוקן התקבל ונשמר
+ToCheckDeleteTokenOnProvider=לחץ כאן כדי לבדוק/מחוק הרשאה שנשמרה על ידי ספק ה- OAuth של %s
+TokenDeleted=טוקן נמחק
+RequestAccess=לחץ כאן כדי לבקש/לחדש גישה ולקבל טוקן חדש לשמירה
+DeleteAccess=לחץ כאן כדי למחוק טוקן
+UseTheFollowingUrlAsRedirectURI=השתמש בכתובת ה-URL הבאה כ-Redirect URI כאשר אתה יוצר את ההרשאות שלך עם ספק ה- OAuth שלך:
+ListOfSupportedOauthProviders=הזן את הפרטים שספק ה- OAuth2 שלך מספק. רק ספקים נתמכים מוצגים כאן. שירותים אלו עשויים לשמש על ידי מודולים אחרים שדורשים אימות OAuth2.
+OAuthSetupForLogin=דף ליצירת טוקן OAuth
+SeePreviousTab=ראה לשונית קודמת
+OAuthIDSecret=OAuth ID וסיסמא
+TOKEN_REFRESH=רענון טוקן נוכחי
+TOKEN_EXPIRED=טוקן פג תוקף
+TOKEN_EXPIRE_AT=תוקף הטוקן יפוג ב
+TOKEN_DELETE=מחק טוקן שנשמר
+OAUTH_GOOGLE_NAME=שירות OAuth של Google
+OAUTH_GOOGLE_ID=מזהה OAuth של Google
+OAUTH_GOOGLE_SECRET=סוד OAuth של Google
+OAUTH_GOOGLE_DESC=עבור ל- <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">דף זה</a> ואז "Credentials" כדי ליצור כרטיסיות OAuth
+OAUTH_GITHUB_NAME=שירות OAuth של GitHub
+OAUTH_GITHUB_ID=מזהה OAuth של GitHub
+OAUTH_GITHUB_SECRET=סוד OAuth של GitHub
+OAUTH_GITHUB_DESC=עבור ל- <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">דף זה</a> ואז "Register a new application" כדי ליצור כרטיסיות OAuth
+OAUTH_STRIPE_TEST_NAME=בדיקת OAuth של Stripe
+OAUTH_STRIPE_LIVE_NAME=OAuth של Stripe בפעולה

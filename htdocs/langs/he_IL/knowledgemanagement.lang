@@ -18,37 +18,38 @@
 #
 
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = מערכת ניהול ידע
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
+ModuleKnowledgeManagementDesc=ניהול מערכת ניהול ידע או דף עזר
 
 #
 # Admin page
 #
-KnowledgeManagementSetup = Knowledge Management System setup
-Settings = Settings
-KnowledgeManagementSetupPage = Knowledge Management System setup page
+KnowledgeManagementSetup = הגדרות מערכת ניהול ידע
+Settings = הגדרות
+KnowledgeManagementSetupPage = דף הגדרות מערכת ניהול ידע
 
 
 #
 # About page
 #
-About = About
-KnowledgeManagementAbout = About Knowledge Management
-KnowledgeManagementAboutPage = Knowledge Management about page
+About = אודות
+KnowledgeManagementAbout = אודות מערכת ניהול ידע
+KnowledgeManagementAboutPage = דף אודות מערכת ניהול ידע
 
-KnowledgeManagementArea = Knowledge Management
-MenuKnowledgeRecord = Knowledge base
-ListKnowledgeRecord = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
-KnowledgeRecords = Articles
-KnowledgeRecord = Article
-KnowledgeRecordExtraFields = Extrafields for Article
-GroupOfTicket=Group of tickets
-YouCanLinkArticleToATicketCategory=You can link an article to a ticket group (so the article will be suggested during qualification of new tickets)
-SuggestedForTicketsInGroup=Suggested for tickets when group is
+KnowledgeManagementArea = מערכת ניהול ידע
+MenuKnowledgeRecord = בסיס ידע
+ListKnowledgeRecord = רשימת מאמרים
+NewKnowledgeRecord = מאמר חדש
+ValidateReply = אימות פתרון
+KnowledgeRecords = מאמרים
+KnowledgeRecord = מאמר
+KnowledgeRecordExtraFields = שדות נוספים למאמר
+GroupOfTicket=קבוצת כרטיסים
+YouCanLinkArticleToATicketCategory=ניתן לקשר מאמר לקבוצת כרטיסים (בכך שהמאמר יוצג כאשר יש לזהות כרטיסים חדשים)
+SuggestedForTicketsInGroup=מומלץ עבור כרטיסים בקבוצה
 
-SetObsolete=Set as obsolete
-ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
-ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+SetObsolete=קבע כמיושן
+ConfirmCloseKM=האם אתה בטוח שברצונך לסגור מאמר זה כמיושן?
+ConfirmReopenKM=האם ברצונך לשחזר את המאמר למצב "מאומת"?
+
