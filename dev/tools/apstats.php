@@ -111,6 +111,16 @@ $output_arrtd = array();
 $resexectd = 0;
 exec($commandcheck, $output_arrtd, $resexectd);
 
+
+// Count lines of code of dependencies
+$commandcheck = 'dev/tools/github_lines_perusers.sh';
+print 'Execute github_lines_perusers to count lines of code in dependencies: '.$commandcheck."\n";
+$output_arrglpu = array();
+$resexecglpu = 0;
+exec($commandcheck, $output_arrglpu, $resexecglpu);
+
+
+
 $arrayoflineofcode = array();
 $arraycocomo = array();
 $arrayofmetrics = array(
@@ -325,11 +335,17 @@ div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive
 
 $html .= '<body>'."\n";
 
+
+// Header
+
 $html .= '<header>'."\n";
 $html .= '<h1>Advanced Project Statistics</h1>'."\n";
 $currentDate = date("Y-m-d H:i:s"); // Format: Year-Month-Day Hour:Minute:Second
 $html .= '<span class="opacitymedium">Generated on '.$currentDate.' in '.($timeend - $timestart).' seconds</span>'."\n";
 $html .= '</header>'."\n";
+
+
+// Lines of code
 
 $html .= '<section class="chapter" id="linesofcode">'."\n";
 $html .= '<h2><span class="fas fa-code pictofixedwidth"></span>Lines of code</h2>'."\n";
@@ -408,6 +424,37 @@ $html .= '</div>';
 
 $html .= '</section>'."\n";
 
+
+// Contributions
+
+$html .= '<section class="chapter" id="projectvalue">'."\n";
+$html .= '<h2><span class="fas fa-dollar-sign pictofixedwidth"></span>Contributions</h2>'."\n";
+
+$html .= '<div class="boxallwidth">'."\n";
+
+$html .= 'TODO...';
+
+$html .= '</div>';
+
+$html .= '</section>'."\n";
+
+
+// Contributor
+
+$html .= '<section class="chapter" id="projectvalue">'."\n";
+$html .= '<h2><span class="fas fa-tasks pictofixedwidth"></span>Contributors</h2>'."\n";
+
+$html .= '<div class="boxallwidth">'."\n";
+
+$html .= 'TODO...';
+
+$html .= '</div>';
+
+$html .= '</section>'."\n";
+
+
+// Project value
+
 $html .= '<section class="chapter" id="projectvalue">'."\n";
 $html .= '<h2><span class="fas fa-dollar-sign pictofixedwidth"></span>Project value</h2>'."\n";
 
@@ -437,6 +484,9 @@ foreach ($output_arrtd as $line) {
 	}
 }
 
+
+// Technical debt
+
 $html .= '<section class="chapter" id="technicaldebt">'."\n";
 $html .= '<h2><span class="fas fa-book-dead pictofixedwidth"></span>Technical debt <span class="opacitymedium">(PHPStan level '.$phpstanlevel.' -> '.$nblines.' warnings)</span></h2>'."\n";
 
@@ -450,6 +500,9 @@ $html .= '</div>';
 $html .= '</div>';
 
 $html .= '</section>'."\n";
+
+
+// JS code
 
 $html .= '
 <script>
@@ -465,6 +518,7 @@ $( ".seedetail" ).on( "click", function() {
 $html .= '</body>';
 $html .= '</html>';
 
+// Output report into a HTML file
 $fh = fopen($outputpath, 'w');
 if ($fh) {
 	fwrite($fh, $html);
