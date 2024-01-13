@@ -102,7 +102,7 @@ class ProductAttributeValue extends CommonObjectLine
 		$this->db = $db;
 		$this->entity = $conf->entity;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -133,7 +133,7 @@ class ProductAttributeValue extends CommonObjectLine
 	 *
 	 * @param  User $user      Object user
 	 * @param  int  $notrigger Do not execute trigger
-	 * @return int <0 KO >0 OK
+	 * @return int Return integer <0 KO >0 OK
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
@@ -209,7 +209,7 @@ class ProductAttributeValue extends CommonObjectLine
 	 * Gets a product attribute value
 	 *
 	 * @param int $id Product attribute value id
-	 * @return int <0 KO, >0 OK
+	 * @return int Return integer <0 KO, >0 OK
 	 */
 	public function fetch($id)
 	{
@@ -315,7 +315,7 @@ class ProductAttributeValue extends CommonObjectLine
 	 *
 	 * @param  User	$user	   Object user
 	 * @param  int  $notrigger Do not execute trigger
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -386,7 +386,7 @@ class ProductAttributeValue extends CommonObjectLine
 	 *
 	 * @param  User $user      Object user
 	 * @param  int  $notrigger Do not execute trigger
-	 * @return int <0 KO, >0 OK
+	 * @return int Return integer <0 KO, >0 OK
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
@@ -448,7 +448,7 @@ class ProductAttributeValue extends CommonObjectLine
 	/**
 	 * Test if used by a product
 	 *
-	 * @return int <0 KO, =0 if No, =1 if Yes
+	 * @return int Return integer <0 KO, =0 if No, =1 if Yes
 	 */
 	public function isUsed()
 	{

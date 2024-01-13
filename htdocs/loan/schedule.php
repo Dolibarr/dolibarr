@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017      Franck Moreau        <franck.moreau@theobald.com>
- * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2018-2023 Alexandre Spangaro   <aspangaro@easya.solutions>
  * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,7 +42,7 @@ if (GETPOSTISSET('socid')) {
 if ($user->socid) {
 	$socid = $user->socid;
 }
-if (empty($user->rights->loan->calc)) {
+if (!$user->hasRight('loan', 'calc')) {
 	accessforbidden();
 }
 
@@ -143,7 +143,7 @@ $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
 llxHeader("", $title, $help_url);
 
 $head = loan_prepare_head($object);
-print dol_get_fiche_head($head, 'FinancialCommitment', $langs->trans("Loan"), -1, 'bill');
+print dol_get_fiche_head($head, 'FinancialCommitment', $langs->trans("Loan"), -1, 'money-bill-alt');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/loan/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -155,7 +155,7 @@ $morehtmlref .= $form->editfieldval("Label", 'label', $object->label, $object, 0
 if (isModEnabled('project')) {
 	$langs->loadLangs(array("projects"));
 	$morehtmlref .= '<br>'.$langs->trans('Project').' : ';
-	if ($user->rights->loan->write) {
+	if ($user->hasRight('loan', 'write')) {
 		if ($action != 'classify') {
 			//$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 			if ($action == 'classify') {

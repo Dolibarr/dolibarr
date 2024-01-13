@@ -40,10 +40,10 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'inventorycard'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'inventorycard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $listoffset = GETPOST('listoffset', 'alpha');
-$limit = GETPOST('limit', 'int') > 0 ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') > 0 ? GETPOST('limit', 'int') : $conf->liste_limit;
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -58,7 +58,7 @@ $lineid = GETPOST('lineid', 'int');
 $batch = GETPOST('batch', 'alphanohtml');
 $totalExpectedValuation = 0;
 $totalRealValuation = 0;
-if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$result = restrictedArea($user, 'stock', $id);
 } else {
 	$result = restrictedArea($user, 'stock', $id, '', 'inventory_advance');
@@ -103,7 +103,7 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 }
 
 
-if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$permissiontoadd = $user->rights->stock->creer;
 	$permissiontodelete = $user->rights->stock->supprimer;
 } else {
@@ -138,7 +138,7 @@ if (empty($reshook)) {
 	}
 
 	// Close inventory by recording the stock movements
-	if ($action == 'update' && !empty($user->rights->stock->mouvement->creer) && $object->status == $object::STATUS_VALIDATED) {
+	if ($action == 'update' && $user->hasRight('stock', 'mouvement', 'creer') && $object->status == $object::STATUS_VALIDATED) {
 		$stockmovment = new MouvementStock($db);
 		$stockmovment->setOrigin($object->element, $object->id);
 
@@ -197,7 +197,9 @@ if (empty($reshook)) {
 						//$inventorycode = 'INV'.$object->id;
 						$inventorycode = 'INV-'.$object->ref;
 						$price = 0;
-						if (!empty($line->pmp_real) && !empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) $price = $line->pmp_real;
+						if (!empty($line->pmp_real) && getDolGlobalString('INVENTORY_MANAGE_REAL_PMP')) {
+							$price = $line->pmp_real;
+						}
 
 						$idstockmove = $stockmovment->_create($user, $line->fk_product, $line->fk_warehouse, $stock_movement_qty, $movement_type, $price, $langs->trans('LabelOfInventoryMovemement', $object->ref), $inventorycode, $datemovement, '', '', $line->batch);
 						if ($idstockmove < 0) {
@@ -221,7 +223,7 @@ if (empty($reshook)) {
 						}
 					}
 
-					if (!empty($line->pmp_real) && !empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
+					if (!empty($line->pmp_real) && getDolGlobalString('INVENTORY_MANAGE_REAL_PMP')) {
 						$sqlpmp = 'UPDATE '.MAIN_DB_PREFIX.'product SET pmp = '.((float) $line->pmp_real).' WHERE rowid = '.((int) $line->fk_product);
 						$resqlpmp = $db->query($sqlpmp);
 						if (! $resqlpmp) {
@@ -229,7 +231,7 @@ if (empty($reshook)) {
 							setEventMessages($db->lasterror(), null, 'errors');
 							break;
 						}
-						if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+						if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 							$sqlpmp = 'UPDATE '.MAIN_DB_PREFIX.'product_perentity SET pmp = '.((float) $line->pmp_real).' WHERE fk_product = '.((int) $line->fk_product).' AND entity='.$conf->entity;
 							$resqlpmp = $db->query($sqlpmp);
 							if (! $resqlpmp) {
@@ -468,6 +470,17 @@ if ($action == 'confirm_cancel') {
 	$action = 'view';
 }
 
+if ($action == 'validate') {
+	$form = new Form($db);
+	$formquestion = '';
+	if (getDolGlobalInt('INVENTORY_INCLUDE_SUB_WAREHOUSE') && !empty($object->fk_warehouse)) {
+		$formquestion = array(
+			array('type' => 'checkbox', 'name' => 'include_sub_warehouse', 'label' => $langs->trans("IncludeSubWarehouse"), 'value' => 1, 'size' => '10'),
+		);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateInventory'), $langs->trans('IncludeSubWarehouseExplanation'), 'confirm_validate', $formquestion, '', 1);
+	}
+}
+
 // Call Hook formConfirm
 $parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
 $reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -573,7 +586,11 @@ if ($action != 'record') {
 	if (empty($reshook)) {
 		if ($object->status == Inventory::STATUS_DRAFT) {
 			if ($permissiontoadd) {
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_validate&confirm=yes&token='.newToken().'">'.$langs->trans("Validate").' ('.$langs->trans("Start").')</a>'."\n";
+				if (getDolGlobalInt('INVENTORY_INCLUDE_SUB_WAREHOUSE') && !empty($object->fk_warehouse)) {
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=validate&token='.newToken().'">'.$langs->trans("Validate").' ('.$langs->trans("Start").')</a>';
+				} else {
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes&token='.newToken().'">'.$langs->trans("Validate").' ('.$langs->trans("Start").')</a>';
+				}
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Validate').' ('.$langs->trans("Start").')</a>'."\n";
 			}
@@ -810,7 +827,7 @@ if ($action == 'updatebyscaning') {
 			result=false;
 			tabproduct.forEach(product => {
 				$.ajax({ url: \''.DOL_URL_ROOT.'/product/inventory/ajax/searchfrombarcode.php\',
-					data: { "token":"'.newToken().'", "action":"existbarcode", '.(!empty($object->fk_warehouse)?'"fk_entrepot":'.$object->fk_warehouse.', ':'').(!empty($object->fk_product)?'"fk_product":'.$object->fk_product.', ':'').'"barcode":element, "product":product, "mode":mode},
+					data: { "token":"'.newToken().'", "action":"existbarcode", '.(!empty($object->fk_warehouse) ? '"fk_entrepot":'.$object->fk_warehouse.', ' : '').(!empty($object->fk_product) ? '"fk_product":'.$object->fk_product.', ' : '').'"barcode":element, "product":product, "mode":mode},
 					type: \'POST\',
 					async: false,
 					success: function(response) {
@@ -910,7 +927,7 @@ if (isModEnabled('productbatch')) {
 	print '</td>';
 }
 print '<td class="right">'.$langs->trans("ExpectedQty").'</td>';
-if (!empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
+if (getDolGlobalString('INVENTORY_MANAGE_REAL_PMP')) {
 	print '<td class="right">'.$langs->trans('PMPExpected').'</td>';
 	print '<td class="right">'.$langs->trans('ExpectedValuation').'</td>';
 	print '<td class="right">'.$form->textwithpicto($langs->trans("RealQty"), $langs->trans("InventoryRealQtyHelp")).'</td>';
@@ -948,7 +965,7 @@ if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STAT
 		print '</td>';
 	}
 	print '<td class="right"></td>';
-	if (!empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
+	if (getDolGlobalString('INVENTORY_MANAGE_REAL_PMP')) {
 		print '<td class="right">';
 		print '</td>';
 		print '<td class="right">';
@@ -1048,9 +1065,9 @@ if ($resql) {
 		// For inventory not yet close, we overwrite with the real value in stock now
 		if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_VALIDATED) {
 			if (isModEnabled('productbatch') && $product_static->hasbatch()) {
-				$valuetoshow = $product_static->stock_warehouse[$obj->fk_warehouse]->detail_batch[$obj->batch]->qty;
+				$valuetoshow = $product_static->stock_warehouse[$obj->fk_warehouse]->detail_batch[$obj->batch]->qty ?? 0;
 			} else {
-				$valuetoshow = $product_static->stock_warehouse[$obj->fk_warehouse]->real;
+				$valuetoshow = $product_static->stock_warehouse[$obj->fk_warehouse]->real ?? 0;
 			}
 		}
 		print price2num($valuetoshow, 'MS');
@@ -1066,10 +1083,13 @@ if ($resql) {
 				$hasinput = true;
 			}
 
-			if (!empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
+			if (getDolGlobalString('INVENTORY_MANAGE_REAL_PMP')) {
 				//PMP Expected
-				if (!empty($obj->pmp_expected)) $pmp_expected = $obj->pmp_expected;
-				else $pmp_expected = $product_static->pmp;
+				if (!empty($obj->pmp_expected)) {
+					$pmp_expected = $obj->pmp_expected;
+				} else {
+					$pmp_expected = $product_static->pmp;
+				}
 				$pmp_valuation = $pmp_expected * $valuetoshow;
 				print '<td class="right">';
 				print price($pmp_expected);
@@ -1090,8 +1110,11 @@ if ($resql) {
 				print '<td class="right">';
 
 
-				if (!empty($obj->pmp_real)) $pmp_real = $obj->pmp_real;
-				else $pmp_real = $product_static->pmp;
+				if (!empty($obj->pmp_real)) {
+					$pmp_real = $obj->pmp_real;
+				} else {
+					$pmp_real = $product_static->pmp;
+				}
 				$pmp_valuation_real = $pmp_real * $qty_view;
 				print '<input type="text" class="maxwidth75 right realpmp'.$obj->fk_product.'" name="realpmp_'.$obj->rowid.'" id="id_'.$obj->rowid.'_input_pmp" value="'.price2num($pmp_real).'">';
 				print '</td>';
@@ -1117,10 +1140,13 @@ if ($resql) {
 			print '<input type="hidden" class="maxwidth50 right realqty" name="id_'.$obj->rowid.'_input_tmp" id="id_'.$obj->rowid.'_input_tmp" value="'.$qty_tmp.'">';
 			print '</td>';
 		} else {
-			if (!empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
+			if (getDolGlobalString('INVENTORY_MANAGE_REAL_PMP')) {
 				//PMP Expected
-				if (!empty($obj->pmp_expected)) $pmp_expected = $obj->pmp_expected;
-				else $pmp_expected = $product_static->pmp;
+				if (!empty($obj->pmp_expected)) {
+					$pmp_expected = $obj->pmp_expected;
+				} else {
+					$pmp_expected = $product_static->pmp;
+				}
 				$pmp_valuation = $pmp_expected * $valuetoshow;
 				print '<td class="right">';
 				print price($pmp_expected);
@@ -1135,8 +1161,11 @@ if ($resql) {
 
 				//PMP Real
 				print '<td class="right">';
-				if (!empty($obj->pmp_real)) $pmp_real = $obj->pmp_real;
-				else $pmp_real = $product_static->pmp;
+				if (!empty($obj->pmp_real)) {
+					$pmp_real = $obj->pmp_real;
+				} else {
+					$pmp_real = $product_static->pmp;
+				}
 				$pmp_valuation_real = $pmp_real * $obj->qty_view;
 				print price($pmp_real);
 				print '</td>';
@@ -1167,7 +1196,7 @@ if ($resql) {
 } else {
 	dol_print_error($db);
 }
-if (!empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
+if (getDolGlobalString('INVENTORY_MANAGE_REAL_PMP')) {
 	print '<tr class="liste_total">';
 	print '<td colspan="4">'.$langs->trans("Total").'</td>';
 	print '<td class="right" colspan="2">'.price($totalExpectedValuation).'</td>';
@@ -1243,7 +1272,7 @@ print '<script type="text/javascript">
 </script>';
 
 
-if (!empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
+if (getDolGlobalString('INVENTORY_MANAGE_REAL_PMP')) {
 	?>
 <script type="text/javascript">
 $('.realqty').on('change', function () {

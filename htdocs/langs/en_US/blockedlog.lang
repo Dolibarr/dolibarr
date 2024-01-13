@@ -22,7 +22,7 @@ Fingerprint=Fingerprint
 DownloadLogCSV=Export archived logs (CSV)
 logDOC_PREVIEW=Preview of a validated document in order to print or download
 logDOC_DOWNLOAD=Download of a validated document in order to print or send
-DataOfArchivedEvent=Full datas of archived event
+DataOfArchivedEvent=Full data of archived event
 ImpossibleToReloadObject=Original object (type %s, id %s) not linked (see 'Full datas' column to get unalterable saved data)
 BlockedLogAreRequiredByYourCountryLegislation=Unalterable Logs module may be required by the legislation of your country. Disabling this module may render any future transactions invalid with respect to the law and the use of legal software as they can not be validated by a tax audit.
 BlockedLogActivatedBecauseRequiredByYourCountryLegislation=Unalterable Logs module was activated because of the legislation of your country. Disabling this module may render any future transactions invalid with respect to the law and the use of legal software as they cannot be validated by a tax audit.
@@ -33,6 +33,7 @@ RestrictYearToExport=Restrict month / year to export
 BlockedLogEnabled=System to track events into unalterable logs has been enabled
 BlockedLogDisabled=System to track events into unalterable logs has been disabled after some recording were done. We saved a special Fingerprint to track the chain as broken
 BlockedLogDisabledBis=System to track events into unalterable logs has been disabled. This is possible because no record were done yet.
+LinkHasBeenDisabledForPerformancePurpose=For performance purpose, direct link to the document is not shown after the 100th line. 
 
 ## logTypes
 logBILL_DELETE=Customer invoice logically deleted

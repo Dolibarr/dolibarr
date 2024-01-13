@@ -1,39 +1,39 @@
 # Dolibarr language file - Source file is en_US - resource
-MenuResourceIndex=Resources
-MenuResourceAdd=New resource
-DeleteResource=Delete resource
-ConfirmDeleteResourceElement=Confirm delete the resource for this element
-NoResourceInDatabase=No resource in database.
-NoResourceLinked=No resource linked
-ActionsOnResource=Events about this resource
-ResourcePageIndex=Resources list
-ResourceSingular=Resource
-ResourceCard=Resource card
-AddResource=Create a resource
-ResourceFormLabel_ref=Resource name
-ResourceType=Resource type
-ResourceFormLabel_description=Resource description
+MenuResourceIndex=সম্পদ
+MenuResourceAdd=নতুন সম্পদ
+DeleteResource=সম্পদ মুছুন
+ConfirmDeleteResourceElement=এই উপাদানের জন্য সম্পদ মুছে ফেলা নিশ্চিত করুন
+NoResourceInDatabase=ডাটাবেসে কোন সম্পদ নেই।
+NoResourceLinked=কোন সম্পদ লিঙ্ক করা
+ActionsOnResource=এই সম্পদ সম্পর্কে ইভেন্ট
+ResourcePageIndex=সম্পদ তালিকা
+ResourceSingular=সম্পদ
+ResourceCard=রিসোর্স কার্ড
+AddResource=একটি সম্পদ তৈরি করুন
+ResourceFormLabel_ref=সম্পদের নাম
+ResourceType=সম্পদের ধরন
+ResourceFormLabel_description=সম্পদের বিবরণ
 
-ResourcesLinkedToElement=Resources linked to element
+ResourcesLinkedToElement=উপাদানের সাথে সংযুক্ত সম্পদ
 
-ShowResource=Show resource
+ShowResource=সম্পদ দেখান
 
-ResourceElementPage=Element resources
-ResourceCreatedWithSuccess=Resource successfully created
-RessourceLineSuccessfullyDeleted=Resource line successfully deleted
-RessourceLineSuccessfullyUpdated=Resource line successfully updated
-ResourceLinkedWithSuccess=Resource linked with success
+ResourceElementPage=উপাদান সম্পদ
+ResourceCreatedWithSuccess=সম্পদ সফলভাবে তৈরি করা হয়েছে
+RessourceLineSuccessfullyDeleted=রিসোর্স লাইন সফলভাবে মুছে ফেলা হয়েছে
+RessourceLineSuccessfullyUpdated=রিসোর্স লাইন সফলভাবে আপডেট করা হয়েছে
+ResourceLinkedWithSuccess=সম্পদ সাফল্যের সাথে যুক্ত
 
-ConfirmDeleteResource=Confirm to delete this resource
-RessourceSuccessfullyDeleted=Resource successfully deleted
-DictionaryResourceType=Type of resources
+ConfirmDeleteResource=এই সম্পদ মুছে ফেলার জন্য নিশ্চিত করুন
+RessourceSuccessfullyDeleted=সম্পদ সফলভাবে মুছে ফেলা হয়েছে
+DictionaryResourceType=সম্পদের ধরন
 
-SelectResource=Select resource
+SelectResource=সম্পদ নির্বাচন করুন
 
-IdResource=Id resource
-AssetNumber=Serial number
-ResourceTypeCode=Resource type code
-ImportDataset_resource_1=Resources
+IdResource=আইডি সম্পদ
+AssetNumber=ক্রমিক সংখ্যা
+ResourceTypeCode=রিসোর্স টাইপ কোড
+ImportDataset_resource_1=সম্পদ
 
-ErrorResourcesAlreadyInUse=Some resources are in use
-ErrorResourceUseInEvent=%s used in %s event
+ErrorResourcesAlreadyInUse=কিছু সম্পদ ব্যবহার করা হয়
+ErrorResourceUseInEvent=%s %s ইভেন্টে ব্যবহৃত

@@ -1,7 +1,7 @@
 # How to use it ?
 
 The docker-compose.yml file is a sample of a config file to use to build and run Dolibarr in the current workspace with Docker.
-This docker image is intended for developpement usage.
+This docker image is intended for development usage.
 For production usage you should consider other contributor reference like https://hub.docker.com/r/tuxgasy/dolibarr 
 
 Before build/run, define the variable HOST_USER_ID as following:

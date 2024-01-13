@@ -19,22 +19,21 @@
  */
 
 /**
- * \file       htdocs/core/boxes/box_supplier_orders.php
+ * \file       htdocs/core/boxes/box_supplier_orders_awaiting_reception.php
  * \ingroup    fournisseurs
  * \brief      Module that generates the latest supplier orders box
  */
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 /**
- * Class that manages the box showing latest supplier orders
+ * Class to manage the box to show last supplier orders awaiting reception
  */
 class box_supplier_orders_awaiting_reception extends ModeleBoxes
 {
-
-	public $boxcode = "supplierordersawaitingreception";
-	public $boximg = "object_order";
+	public $boxcode  = "supplierordersawaitingreception";
+	public $boximg   = "object_order";
 	public $boxlabel = "BoxLatestSupplierOrdersAwaitingReception";
-	public $depends = array("fournisseur");
+	public $depends  = array("fournisseur");
 
 	/**
 	 * @var DoliDB Database handler.
@@ -81,7 +80,7 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleSupplierOrdersAwaitingReception", $max));
 
-		if ($user->rights->fournisseur->commande->lire) {
+		if ($user->hasRight('fournisseur', 'commande', 'lire')) {
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
 			$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
 			$sql .= ", s.logo, s.email, s.entity";
@@ -92,20 +91,20 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 			$sql .= ", c.fk_statut as status";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ", ".MAIN_DB_PREFIX."commande_fournisseur as c";
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE c.fk_soc = s.rowid";
 			$sql .= " AND c.entity IN (".getEntity('supplier_order').")";
 			$sql .= " AND c.date_livraison IS NOT NULL";
 			$sql .= " AND c.fk_statut IN (".CommandeFournisseur::STATUS_ORDERSENT.", ".CommandeFournisseur::STATUS_RECEIVED_PARTIALLY.")";
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {
 				$sql .= " AND s.rowid = ".((int) $user->socid);
 			}
-			if (!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE)) {
+			if (getDolGlobalString('MAIN_LASTBOX_ON_OBJECT_DATE')) {
 				$sql .= " ORDER BY c.date_commande DESC, c.ref DESC";
 			} else {
 				$sql .= " ORDER BY c.date_livraison ASC, c.fk_statut ASC";
@@ -186,7 +185,7 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][] = array(
-				'td' => 'class="nohover opacitymedium left"',
+				'td' => 'class="nohover left"',
 				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}

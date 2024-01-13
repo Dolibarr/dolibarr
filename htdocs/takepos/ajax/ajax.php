@@ -50,7 +50,7 @@ $id = GETPOST('id', 'int');
 $search_start = GETPOST('search_start', 'int');
 $search_limit = GETPOST('search_limit', 'int');
 
-if (empty($user->rights->takepos->run)) {
+if (!$user->hasRight('takepos', 'run')) {
 	accessforbidden();
 }
 
@@ -130,14 +130,14 @@ if ($action == 'getProducts') {
 
 	if ($result && $thirdparty->id > 0) {
 		$rows = array();
-			$rows[] = array(
+		$rows[] = array(
 				'rowid' => $thirdparty->id,
 				'name' => $thirdparty->name,
 				'barcode' => $thirdparty->barcode,
 				'object' => 'thirdparty'
 			);
-			echo json_encode($rows);
-			exit;
+		echo json_encode($rows);
+		exit;
 	}
 
 	// Search
@@ -150,7 +150,7 @@ if ($action == 'getProducts') {
 
 	// Define $filteroncategids, the filter on category ID if there is a Root category defined.
 	$filteroncategids = '';
-	if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) {	// A root category is defined, we must filter on products inside this category tree
+	if (getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') > 0) {	// A root category is defined, we must filter on products inside this category tree
 		$object = new Categorie($db);
 		//$result = $object->fetch($conf->global->TAKEPOS_ROOT_CATEGORY_ID);
 		$arrayofcateg = $object->get_full_arbo('product', $conf->global->TAKEPOS_ROOT_CATEGORY_ID, 1);
@@ -212,14 +212,14 @@ if ($action == 'getProducts') {
 							if (isset($barcode_value_list['qd'])) {
 								$qty_str .= '.' . $barcode_value_list['qd'];
 							}
-							$qty = floatval($qty_str);
+							$qty = (float) $qty_str;
 						}
 
 						$objProd = new Product($db);
 						$objProd->fetch($obj->rowid);
 
 						$ig = '../public/theme/common/nophoto.png';
-						if (empty($conf->global->TAKEPOS_HIDE_PRODUCT_IMAGES)) {
+						if (!getDolGlobalString('TAKEPOS_HIDE_PRODUCT_IMAGES')) {
 							$image = $objProd->show_photos('product', $conf->product->multidir_output[$objProd->entity], 'small', 1);
 
 							$match = array();
@@ -262,7 +262,11 @@ if ($action == 'getProducts') {
 
 	$sql = 'SELECT p.rowid, p.ref, p.label, p.tosell, p.tobuy, p.barcode, p.price, p.price_ttc' ;
 	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1) {
-		$sql .= ', ps.reel';
+		if (getDolGlobalInt('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal'])) {
+			$sql .= ', ps.reel';
+		} else {
+			$sql .= ', SUM(ps.reel) as reel';
+		}
 	}
 	/* this will be possible when field archive will be supported into llx_product_price
 	if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
@@ -282,9 +286,11 @@ if ($action == 'getProducts') {
 		$sql .= " AND archive = 0";
 	}*/
 	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1) {
-		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'product_stock as ps';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as ps';
 		$sql .= ' ON (p.rowid = ps.fk_product';
-		$sql .= " AND ps.fk_entrepot = ".((int) getDolGlobalInt("CASHDESK_ID_WAREHOUSE".$_SESSION['takeposterminal']));
+		if (getDolGlobalString('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal'])) {
+			$sql .= " AND ps.fk_entrepot = ".((int) getDolGlobalInt("CASHDESK_ID_WAREHOUSE".$_SESSION['takeposterminal']));
+		}
 		$sql .= ')';
 	}
 
@@ -300,7 +306,7 @@ if ($action == 'getProducts') {
 		$sql .= ' AND EXISTS (SELECT cp.fk_product FROM '.MAIN_DB_PREFIX.'categorie_product as cp WHERE cp.fk_product = p.rowid AND cp.fk_categorie IN ('.$db->sanitize($filteroncategids).'))';
 	}
 	$sql .= ' AND p.tosell = 1';
-	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1) {
+	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1 && getDolGlobalInt('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal'])) {
 		$sql .= ' AND ps.reel > 0';
 	}
 	$sql .= natural_search(array('ref', 'label', 'barcode'), $term);
@@ -309,6 +315,17 @@ if ($action == 'getProducts') {
 	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters);
 	if ($reshook >= 0) {
 		$sql .= $hookmanager->resPrint;
+	}
+
+	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1 && !getDolGlobalInt('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal'])) {
+		$sql .= ' GROUP BY p.rowid, p.ref, p.label, p.tosell, p.tobuy, p.barcode, p.price, p.price_ttc';
+		// Add fields from hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters);
+		if ($reshook >= 0) {
+			$sql .= $hookmanager->resPrint;
+		}
+		$sql .= ' HAVING SUM(ps.reel) > 0';
 	}
 
 	// load only one page of products
@@ -364,6 +381,7 @@ if ($action == 'getProducts') {
 				} else {
 					$row = array();
 				}
+				$rows[] = $row;
 			} else {
 				// add
 				if (count($hookmanager->resArray)) {

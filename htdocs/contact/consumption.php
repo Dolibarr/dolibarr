@@ -81,7 +81,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 }
 // Customer or supplier selected in drop box
 $thirdTypeSelect = GETPOST("third_select_id");
-$type_element = GETPOSTISSET('type_element') ?GETPOST('type_element') : '';
+$type_element = GETPOSTISSET('type_element') ? GETPOST('type_element') : '';
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "bills", "orders", "suppliers", "propal", "interventions", "contracts", "products"));
@@ -111,7 +111,7 @@ $formother = new FormOther($db);
 $productstatic = new Product($db);
 $objsoc = new Societe($db);
 
-$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
 
@@ -130,7 +130,7 @@ $morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 
 $morehtmlref .= '</a>';
 
 $morehtmlref .= '<div class="refidno">';
-if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
 	$objsoc->fetch($socid);
 	// Thirdparty
 	if ($objsoc->id > 0) {
@@ -175,10 +175,10 @@ if (isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'lire')) {
 
 if ($object->thirdparty->fournisseur) {
 	$thirdTypeArray['supplier'] = $langs->trans("supplier");
-	if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->lire) || (isModEnabled("supplier_invoice") && $user->rights->supplier_invoice->lire)) {
+	if ((isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->hasRight('fournisseur', 'facture', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
 		$elementTypeArray['supplier_invoice'] = $langs->transnoentitiesnoconv('SuppliersInvoices');
 	}
-	if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->commande->lire) || (isModEnabled("supplier_order") && $user->rights->supplier_order->lire)) {
+	if ((isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->hasRight('fournisseur', 'commande', 'lire')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire'))) {
 		$elementTypeArray['supplier_order'] = $langs->transnoentitiesnoconv('SuppliersOrders');
 	}
 
@@ -451,10 +451,11 @@ if ($sql_select) {
 		$documentstatic->id = $objp->doc_id;
 		$documentstatic->ref = $objp->doc_number;
 		$documentstatic->type = $objp->doc_type;
+
 		$documentstatic->fk_statut = $objp->status;
-		$documentstatic->fk_status = $objp->status;
 		$documentstatic->statut = $objp->status;
 		$documentstatic->status = $objp->status;
+
 		$documentstatic->paye = $objp->paid;
 		$documentstatic->paid = $objp->paid;
 
@@ -480,7 +481,9 @@ if ($sql_select) {
 		print '<td>';
 
 		// Define text, description and type
-		$text = ''; $description = ''; $type = 0;
+		$text = '';
+		$description = '';
+		$type = 0;
 
 		// Code to show product duplicated from commonobject->printObjectLine
 		if ($objp->fk_product > 0) {
@@ -496,7 +499,7 @@ if ($sql_select) {
 		// Product
 		if ($objp->fk_product > 0) {
 			// Define output language
-			if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
 				$prod = new Product($db);
 				$prod->fetch($objp->fk_product);
 
@@ -540,26 +543,26 @@ if ($sql_select) {
 				if ($objp->description == '(CREDIT_NOTE)' && $objp->fk_remise_except > 0) {
 					$discount = new DiscountAbsolute($db);
 					$discount->fetch($objp->fk_remise_except);
-					echo ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromCreditNote", $discount->getNomUrl(0));
+					echo($txt ? ' - ' : '').$langs->transnoentities("DiscountFromCreditNote", $discount->getNomUrl(0));
 				}
 				if ($objp->description == '(EXCESS RECEIVED)' && $objp->fk_remise_except > 0) {
 					$discount = new DiscountAbsolute($db);
 					$discount->fetch($objp->fk_remise_except);
-					echo ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessReceived", $discount->getNomUrl(0));
+					echo($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessReceived", $discount->getNomUrl(0));
 				} elseif ($objp->description == '(EXCESS PAID)' && $objp->fk_remise_except > 0) {
 					$discount = new DiscountAbsolute($db);
 					$discount->fetch($objp->fk_remise_except);
-					echo ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessPaid", $discount->getNomUrl(0));
+					echo($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessPaid", $discount->getNomUrl(0));
 				} elseif ($objp->description == '(DEPOSIT)' && $objp->fk_remise_except > 0) {
 					$discount = new DiscountAbsolute($db);
 					$discount->fetch($objp->fk_remise_except);
-					echo ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromDeposit", $discount->getNomUrl(0));
+					echo($txt ? ' - ' : '').$langs->transnoentities("DiscountFromDeposit", $discount->getNomUrl(0));
 					// Add date of deposit
-					if (!empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) {
+					if (getDolGlobalString('INVOICE_ADD_DEPOSIT_DATE')) {
 						echo ' ('.dol_print_date($discount->datec).')';
 					}
 				} else {
-					echo ($txt ? ' - ' : '').dol_htmlentitiesbr($objp->description);
+					echo($txt ? ' - ' : '').dol_htmlentitiesbr($objp->description);
 				}
 			}
 		} else {

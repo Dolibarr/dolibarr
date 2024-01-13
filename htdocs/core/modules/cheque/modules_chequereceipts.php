@@ -27,102 +27,16 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // Requis car utilise dans les classes qui heritent
 
 /**
- *  \class      ModeleNumRefChequeReceipts
- *  \brief      Cheque Receipts numbering references mother class
+ *  Class parent for cheque Receipts numbering references mother class
  */
-abstract class ModeleNumRefChequeReceipts
+abstract class ModeleNumRefChequeReceipts extends CommonNumRefGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 *	Return if a module can be used or not
-	 *
-	 *	@return		boolean     true if module can be used
-	 */
-	public function isEnabled()
-	{
-		return true;
-	}
-
-	/**
-	 *	Return the default description of numbering module
-	 *
-	 *	@return     string      Descriptive text
-	 */
-	public function info()
-	{
-		global $langs;
-		$langs->load("bills");
-		return $langs->trans("NoDescription");
-	}
-
-	/**
-	 *	Return numbering example
-	 *
-	 *	@return     string      Example
-	 */
-	public function getExample()
-	{
-		global $langs;
-		$langs->load("bills");
-		return $langs->trans("NoExample");
-	}
-
-	/**
-	 *  Checks if the numbers already in the database do not
-	 *  cause conflicts that would prevent this numbering working.
-	 *
-	 *	@return     boolean     false if conflict, true if ok
-	 */
-	public function canBeActivated()
-	{
-		return true;
-	}
-
-	/**
-	 *	Returns the next value
-	 *
-	 *	@param	Societe		$objsoc     Object thirdparty
-	 *	@param	Object		$object		Object we need next value for
-	 *	@return	string      Valeur
-	 */
-	public function getNextValue($objsoc, $object)
-	{
-		global $langs;
-		return $langs->trans("NotAvailable");
-	}
-
-	/**
-	 *	Returns the module numbering version
-	 *
-	 *	@return     string      Value
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
-
-		if ($this->version == 'development') {
-			return $langs->trans("VersionDevelopment");
-		}
-		if ($this->version == 'experimental') {
-			return $langs->trans("VersionExperimental");
-		}
-		if ($this->version == 'dolibarr') {
-			return DOL_VERSION;
-		}
-		if ($this->version) {
-			return $this->version;
-		}
-		return $langs->trans("NotAvailable");
-	}
+	// No overload code
 }
 
 /**
@@ -167,7 +81,7 @@ abstract class ModeleChequeReceipts extends CommonDocGenerator
  *	@param	string		$message		Message
  *	@param	string		$modele			Force le modele a utiliser ('' to not force)
  *	@param	Translate	$outputlangs	Object lang a utiliser pour traduction
- *	@return int        					<0 if KO, >0 if OK
+ *	@return int        					Return integer <0 if KO, >0 if OK
  * 	TODO Use commonDocGenerator
  */
 function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
@@ -179,7 +93,7 @@ function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 
 	// Positionne modele sur le nom du modele a utiliser
 	if (!dol_strlen($modele)) {
-		if (!empty($conf->global->CHEQUERECEIPT_ADDON_PDF)) {
+		if (getDolGlobalString('CHEQUERECEIPT_ADDON_PDF')) {
 			$modele = $conf->global->CHEQUERECEIPT_ADDON_PDF;
 		} else {
 			//print $langs->trans("Error")." ".$langs->trans("Error_FACTURE_ADDON_PDF_NotDefined");

@@ -421,7 +421,7 @@ if ($action != 'edit') {
 	// Actions buttons
 	print '<div class="tabsAction">';
 
-	if ($user->rights->ecm->setup) {
+	if ($user->hasRight('ecm', 'setup')) {
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&section='.urlencode($section).'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Edit').'</a>';
 	}
 

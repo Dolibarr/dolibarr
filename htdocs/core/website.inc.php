@@ -82,7 +82,7 @@ if ($pageid > 0) {
 		header("X-Content-Type-Options: nosniff");
 
 		// X-Frame-Options
-		if (empty($websitepage->allowed_in_frames) && empty($conf->global->WEBSITE_ALLOW_FRAMES_ON_ALL_PAGES)) {
+		if (empty($websitepage->allowed_in_frames) && !getDolGlobalString('WEBSITE_ALLOW_FRAMES_ON_ALL_PAGES')) {
 			header("X-Frame-Options: SAMEORIGIN");
 		}
 
@@ -100,7 +100,7 @@ if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 	header("X-Content-Type-Options: nosniff");
 
 	// X-Frame-Options
-	if (empty($websitepage->allowed_in_frames) && empty($conf->global->WEBSITE_ALLOW_FRAMES_ON_ALL_PAGES)) {
+	if (empty($websitepage->allowed_in_frames) && !getDolGlobalString('WEBSITE_ALLOW_FRAMES_ON_ALL_PAGES')) {
 		header("X-Frame-Options: SAMEORIGIN");
 	}
 
@@ -252,7 +252,7 @@ if (!defined('USEDOLIBARREDITOR') && empty($website->status)) {
 	header("X-Content-Type-Options: nosniff");
 
 	// X-Frame-Options
-	if (empty($websitepage->allowed_in_frames) && empty($conf->global->WEBSITE_ALLOW_FRAMES_ON_ALL_PAGES)) {
+	if (empty($websitepage->allowed_in_frames) && !getDolGlobalString('WEBSITE_ALLOW_FRAMES_ON_ALL_PAGES')) {
 		header("X-Frame-Options: SAMEORIGIN");
 	}
 

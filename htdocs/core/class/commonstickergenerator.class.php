@@ -54,12 +54,13 @@
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 
 
 /**
  *	Class to generate stick sheet with format Avery or other personalised
  */
-abstract class CommonStickerGenerator
+abstract class CommonStickerGenerator extends CommonDocGenerator
 {
 	/**
 	 * @var DoliDB Database handler.
@@ -68,45 +69,12 @@ abstract class CommonStickerGenerator
 
 	public $code; // Code of format
 
-	/**
-	 * @var int page_largeur
-	 */
-	public $page_largeur;
-
-	/**
-	 * @var int page_hauteur
-	 */
-	public $page_hauteur;
-
-	/**
-	 * @var array format
-	 */
-	public $format;
-
-	/**
-	 * @var int marge_gauche
-	 */
-	public $marge_gauche;
-
-	/**
-	 * @var int marge_droite
-	 */
-	public $marge_droite;
-
-	/**
-	 * @var int marge_haute
-	 */
-	public $marge_haute;
-
-	/**
-	 * @var int marge_basse
-	 */
-	public $marge_basse;
-
 	// phpcs:disable PEAR.NamingConventions.ValidVariableName.PublicUnderscore
 	// protected
-	// Nom du format de l'etiquette
+	// Name of stick
 	protected $_Avery_Name = '';
+	// Code of stick
+	protected $_Avery_Code = '';
 	// Marge de gauche de l'etiquette
 	protected $_Margin_Left = 0;
 	// marge en haut de la page avant la premiere etiquette
@@ -136,8 +104,12 @@ abstract class CommonStickerGenerator
 	protected $_First = 1;
 	public $Tformat;
 
-
+	/**
+	 * @var array
+	 */
+	public $_Avery_Labels;
 	// phpcs:enable
+
 	/**
 	 *	Constructor
 	 *
@@ -326,7 +298,7 @@ abstract class CommonStickerGenerator
 		// phpcs:enable
 		$this->_Metric = $format['metric'];
 		$this->_Avery_Name = $format['name'];
-		$this->_Avery_Code = empty($format['code'])?'':$format['code'];
+		$this->_Avery_Code = empty($format['code']) ? '' : $format['code'];
 		$this->_Margin_Left = $this->convertMetric($format['marginLeft'], $this->_Metric, $this->_Metric_Doc);
 		$this->_Margin_Top = $this->convertMetric($format['marginTop'], $this->_Metric, $this->_Metric_Doc);
 		$this->_X_Space = $this->convertMetric($format['SpaceX'], $this->_Metric, $this->_Metric_Doc);

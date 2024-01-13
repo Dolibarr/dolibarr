@@ -60,8 +60,8 @@ class KnowledgeManagement extends DolibarrApi
 	 *
 	 * Return an array with knowledgerecord informations
 	 *
-	 * @param 	int 	$id 			ID of knowledgerecord
-	 * @return  Object              	Object with cleaned properties
+	 * @param	int		$id				ID of knowledgerecord
+	 * @return  Object					Object with cleaned properties
 	 *
 	 * @url	GET knowledgerecords/{id}
 	 *
@@ -109,10 +109,6 @@ class KnowledgeManagement extends DolibarrApi
 
 		$result = $categories->getListForItem($id, 'knowledgemanagement', $sortfield, $sortorder, $limit, $page);
 
-		if (empty($result)) {
-			throw new RestException(404, 'No category found');
-		}
-
 		if ($result < 0) {
 			throw new RestException(503, 'Error when retrieve category list : '.join(',', array_merge(array($categories->error), $categories->errors)));
 		}
@@ -125,19 +121,20 @@ class KnowledgeManagement extends DolibarrApi
 	 *
 	 * Get a list of knowledgerecords
 	 *
-	 * @param string	       	$sortfield	        Sort field
-	 * @param string	       	$sortorder	        Sort order
-	 * @param int		       	$limit		        Limit for list
-	 * @param int		       	$page		        Page number
-	 * @param int				$category   		Use this param to filter list by category
-	 * @param string           	$sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string			$sortfield			Sort field
+	 * @param string			$sortorder			Sort order
+	 * @param int				$limit				Limit for list
+	 * @param int				$page				Page number
+	 * @param int				$category			Use this param to filter list by category
+	 * @param string			$sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string			$properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of order objects
 	 *
 	 * @throws RestException
 	 *
 	 * @url	GET /knowledgerecords/
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $category = 0, $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $category = 0, $sqlfilters = '', $properties = '')
 	{
 		global $db, $conf;
 
@@ -223,16 +220,14 @@ class KnowledgeManagement extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$tmp_object = new KnowledgeRecord($this->db);
 				if ($tmp_object->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($tmp_object);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($tmp_object), $properties);
 				}
 				$i++;
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieving knowledgerecord list: '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No knowledgerecord found');
-		}
+
 		return $obj_ret;
 	}
 
@@ -256,6 +251,12 @@ class KnowledgeManagement extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->knowledgerecord->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->knowledgerecord->$field = $this->_checkValForAPI($field, $value, $this->knowledgerecord);
 		}
 
@@ -298,6 +299,12 @@ class KnowledgeManagement extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->knowledgerecord->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->knowledgerecord->$field = $this->_checkValForAPI($field, $value, $this->knowledgerecord);
 		}
 

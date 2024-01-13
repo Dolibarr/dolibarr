@@ -203,35 +203,38 @@ class modMyModule extends DolibarrModules
 		// 'user'             to add a tab in user view
 
 		// Dictionaries
-		$this->dictionaries = array();
 		/* Example:
-		$this->dictionaries=array(
-			'langs'=>'mymodule@mymodule',
-			// List of tables we want to see into dictonnary editor
-			'tabname'=>array("table1", "table2", "table3"),
-			// Label of tables
-			'tablib'=>array("Table1", "Table2", "Table3"),
-			// Request to select fields
-			'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table1 as f', 'SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table2 as f', 'SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table3 as f'),
-			// Sort order
-			'tabsqlsort'=>array("label ASC", "label ASC", "label ASC"),
-			// List of fields (result of select to show dictionary)
-			'tabfield'=>array("code,label", "code,label", "code,label"),
-			// List of fields (list of fields to edit a record)
-			'tabfieldvalue'=>array("code,label", "code,label", "code,label"),
-			// List of fields (list of fields for insert)
-			'tabfieldinsert'=>array("code,label", "code,label", "code,label"),
-			// Name of columns with primary key (try to always name it 'rowid')
-			'tabrowid'=>array("rowid", "rowid", "rowid"),
-			// Condition to show each dictionary
-			'tabcond'=>array(isModEnabled('mymodule'), isModEnabled('mymodule'), isModEnabled('mymodule')),
-			// Tooltip for every fields of dictionaries: DO NOT PUT AN EMPTY ARRAY
-			'tabhelp'=>array(array('code'=>$langs->trans('CodeTooltipHelp'), 'field2' => 'field2tooltip'), array('code'=>$langs->trans('CodeTooltipHelp'), 'field2' => 'field2tooltip'), ...),
-		);
-		*/
+		 $this->dictionaries=array(
+		 'langs'=>'mymodule@mymodule',
+		 // List of tables we want to see into dictonnary editor
+		 'tabname'=>array("table1", "table2", "table3"),
+		 // Label of tables
+		 'tablib'=>array("Table1", "Table2", "Table3"),
+		 // Request to select fields
+		 'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table1 as f', 'SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table2 as f', 'SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table3 as f'),
+		 // Sort order
+		 'tabsqlsort'=>array("label ASC", "label ASC", "label ASC"),
+		 // List of fields (result of select to show dictionary)
+		 'tabfield'=>array("code,label", "code,label", "code,label"),
+		 // List of fields (list of fields to edit a record)
+		 'tabfieldvalue'=>array("code,label", "code,label", "code,label"),
+		 // List of fields (list of fields for insert)
+		 'tabfieldinsert'=>array("code,label", "code,label", "code,label"),
+		 // Name of columns with primary key (try to always name it 'rowid')
+		 'tabrowid'=>array("rowid", "rowid", "rowid"),
+		 // Condition to show each dictionary
+		 'tabcond'=>array(isModEnabled('mymodule'), isModEnabled('mymodule'), isModEnabled('mymodule')),
+		 // Tooltip for every fields of dictionaries: DO NOT PUT AN EMPTY ARRAY
+		 'tabhelp'=>array(array('code'=>$langs->trans('CodeTooltipHelp'), 'field2' => 'field2tooltip'), array('code'=>$langs->trans('CodeTooltipHelp'), 'field2' => 'field2tooltip'), ...),
+		 );
+		 */
+		/* BEGIN MODULEBUILDER DICTIONARIES */
+		$this->dictionaries = array();
+		/* END MODULEBUILDER DICTIONARIES */
 
 		// Boxes/Widgets
 		// Add here list of php file(s) stored in mymodule/core/boxes that contains a class to show a widget.
+		/* BEGIN MODULEBUILDER WIDGETS */
 		$this->boxes = array(
 			//  0 => array(
 			//      'file' => 'mymodulewidget1.php@mymodule',
@@ -240,9 +243,11 @@ class modMyModule extends DolibarrModules
 			//  ),
 			//  ...
 		);
+		/* END MODULEBUILDER WIDGETS */
 
 		// Cronjobs (List of cron jobs entries to add when module is enabled)
 		// unit_frequency must be 60 for minute, 3600 for hour, 86400 for day, 604800 for week
+		/* BEGIN MODULEBUILDER CRON */
 		$this->cronjobs = array(
 			//  0 => array(
 			//      'label' => 'MyJob label',
@@ -259,6 +264,7 @@ class modMyModule extends DolibarrModules
 			//      'priority' => 50,
 			//  ),
 		);
+		/* END MODULEBUILDER CRON */
 		// Example: $this->cronjobs=array(
 		//    0=>array('label'=>'My label', 'jobtype'=>'method', 'class'=>'/dir/class/file.class.php', 'objectname'=>'MyClass', 'method'=>'myMethod', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>2, 'unitfrequency'=>3600, 'status'=>0, 'test'=>'isModEnabled("mymodule")', 'priority'=>50),
 		//    1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600*24, 'status'=>0, 'test'=>'isModEnabled("mymodule")', 'priority'=>50)
@@ -269,26 +275,24 @@ class modMyModule extends DolibarrModules
 		$r = 0;
 		// Add here entries to declare new permissions
 		/* BEGIN MODULEBUILDER PERMISSIONS */
-		/*$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
+		/*
+		$o = 1;
+		$this->rights[$r][0] = $this->numero . sprintf("%02d", ($o * 10) + 1); // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Read objects of MyModule'; // Permission label
 		$this->rights[$r][4] = 'myobject';
 		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->hasRight('mymodule', 'myobject', 'read'))
 		$r++;
-		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
+		$this->rights[$r][0] = $this->numero . sprintf("%02d", ($o * 10) + 2); // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Create/Update objects of MyModule'; // Permission label
 		$this->rights[$r][4] = 'myobject';
 		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->hasRight('mymodule', 'myobject', 'write'))
 		$r++;
-		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
+		$this->rights[$r][0] = $this->numero . sprintf("%02d", ($o * 10) + 3); // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Delete objects of MyModule'; // Permission label
 		$this->rights[$r][4] = 'myobject';
-
 		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->mymodule->myobject->delete)
-		$r++;*/
-
-
-
-
+		$r++;
+		*/
 		/* END MODULEBUILDER PERMISSIONS */
 
 		// Main menu entries to add
@@ -300,7 +304,7 @@ class modMyModule extends DolibarrModules
 			'fk_menu'=>'', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'top', // This is a Top menu entry
 			'titre'=>'ModuleMyModuleName',
-			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth valignmiddle"'),
+			'prefix' => img_picto('', $this->picto, 'class="pictofixedwidth valignmiddle"'),
 			'mainmenu'=>'mymodule',
 			'leftmenu'=>'',
 			'url'=>'/mymodule/mymoduleindex.php',
@@ -317,7 +321,7 @@ class modMyModule extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=mymodule',      // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left',                          // This is a Left menu entry
 			'titre'=>'MyObject',
-			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth valignmiddle"'),
+			'prefix' => img_picto('', $this->picto, 'class="pictofixedwidth valignmiddle paddingright"'),
 			'mainmenu'=>'mymodule',
 			'leftmenu'=>'myobject',
 			'url'=>'/mymodule/mymoduleindex.php',

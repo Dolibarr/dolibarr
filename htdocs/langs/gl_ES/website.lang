@@ -61,7 +61,7 @@ YouCanCreatePageOrImportTemplate=Pode crear unha nova páxina ou importar un mod
 SyntaxHelp=Axuda sobre consellos específicos de sintaxe
 YouCanEditHtmlSourceckeditor=Pode editar o código fonte HTML empregando o botón "Fonte" do editor.
 YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> Pode incluír código PHP nesta fonte empregando etiquetas <strong>&lt;?php ?&gt;</strong>. Están dispoñibles as seguintes variables: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug"></span> Tamén podes incluír contido doutra páxina/contedor coa seguinte sintaxe: <br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span>  Pode facer unha redirección a outra páxina / contedor coa seguinte sintaxe (Nota: non publique ningún contido antes dunha redirección): <br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span>  Para engadir unha ligazón a outra páxina, use a sintaxe: :<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> Para incluír unha <strong> ligazón para descargar </strong> un ficheiro almacenado no directorio <strong> documentos </strong>, use o envoltorio <strong> document.php</strong> wrapper:<br>Exemplo, para un ficheiro en documentos / ecm (hai que rexistralo), a sintaxe é :<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>Para un ficheiro en documentos/medios (abrir o directorio para acceso público), a sintaxe é: <br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>Para un ficheiro compartido con unha ligazón para compartir (acceso aberto empregando a chave hash para compartir ficheiro), a sintaxe é: <br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> Para incluír unha <strong> imaxe </strong> almacenada no directorio <strong> documentos </strong>, use o envoltorio <strong>viewimage.php</strong> <br>Exemplo, para unha imaxe en documentos/medios (directorio aberto para acceso público), a sintaxe é:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
-#YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+#YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource2=Para unha imaxe compartida cunha ligazón de uso compartido (acceso aberto mediante a chave hash para compartir ficheiro), a sintaxe é: <br><strong>&lt;img src =" viewimage.php? Hashp=12345679012 ..."&gt;<br></strong>
 YouCanEditHtmlSourceMore=<br>Máis exemplos de código HTML ou dinámico dispoñibles na <a href="%s" target="_blank" rel="noopener noreferrer external">documentación wiki</a><br>
 ClonePage=Clonar páxina/contedor
@@ -112,8 +112,8 @@ GoTo=Ir a
 DynamicPHPCodeContainsAForbiddenInstruction=Engade un código PHP dinámico que contén a instrución PHP '<strong>%s </strong>' que está prohibida por defecto como contido dinámico (ver as opcións ocultas WEBSITE_PHP_ALLOW_xxx para aumentar a lista de comandos permitidos).
 NotAllowedToAddDynamicContent=Non ten permiso para engadir ou editar contido dinámico PHP en sitios web. Solicite permiso ou simplemente manteña o código nas etiquetas PHP sen modificar.
 ReplaceWebsiteContent=Buscar ou substituír contido do sitio web
-DeleteAlsoJs=¿Eliminar tamén todos os ficheiros javascript específicos deste sitio web?
-DeleteAlsoMedias=¿Quere eliminar tamén todos os ficheiros multimedia específicos deste sitio web?
+DeleteAlsoJs=Eliminar tamén todos os ficheiros javascript específicos deste sitio web?
+DeleteAlsoMedias=Quere eliminar tamén todos os ficheiros multimedia específicos deste sitio web?
 MyWebsitePages=Páxinas do sitio web
 SearchReplaceInto=Buscar|Substituir por
 ReplaceString=Nova cadea
@@ -160,3 +160,6 @@ PagesViewedTotal=Páxinas vistas (total)
 Visibility=Visibilidade
 Everyone=Todos
 AssignedContacts=Contactos asignados
+WebsiteTypeLabel=Tipo de sitio web
+WebsiteTypeDolibarrWebsite=Sitio web (CMS Dolibarr)
+WebsiteTypeDolibarrPortal=Portal nativo de Dolibarr

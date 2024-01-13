@@ -64,7 +64,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 			$this->prefixcreditnote = 'IC';
 		}
 
-		if (!empty($conf->global->INVOICE_NUMBERING_MARS_FORCE_PREFIX)) {
+		if (getDolGlobalString('INVOICE_NUMBERING_MARS_FORCE_PREFIX')) {
 			$this->prefixinvoice = $conf->global->INVOICE_NUMBERING_MARS_FORCE_PREFIX;
 		}
 	}
@@ -72,9 +72,10 @@ class mod_facture_mars extends ModeleNumRefFactures
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Descriptive text
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs;
 		$langs->load("bills");
@@ -95,9 +96,10 @@ class mod_facture_mars extends ModeleNumRefFactures
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *  @return     boolean     false if conflict, true if ok
+	 *  @param  Object		$object		Object we need next value for
+	 *  @return boolean     			false if conflict, true if ok
 	 */
-	public function canBeActivated()
+	public function canBeActivated($object)
 	{
 		global $langs, $conf, $db;
 
@@ -221,7 +223,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 			return $ref;
 		} elseif ($mode == 'next') {
 			$date = $invoice->date; // This is invoice date (not creation date)
-			$yymm = strftime("%y%m", $date);
+			$yymm = dol_print_date($date, "%y%m");
 
 			if ($max >= (pow(10, 4) - 1)) {
 				$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is

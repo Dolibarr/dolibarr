@@ -56,6 +56,9 @@ $bankid = GETPOST('bankid', 'int');
 $action = GETPOST("action", 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('usercardBank', 'globalcard'));
+
 // Security check
 $socid = 0;
 if ($user->socid > 0) {
@@ -92,13 +95,13 @@ $ok = false;
 if ($user->id == $id) {
 	$ok = true; // A user can always read its own card
 }
-if (!empty($user->rights->salaries->read)) {
+if ($user->hasRight('salaries', 'read')) {
 	$ok = true;
 }
-if (!empty($user->rights->hrm->read)) {
+if ($user->hasRight('hrm', 'read')) {
 	$ok = true;
 }
-if (!empty($user->rights->expensereport->lire) && ($user->id == $object->id || $user->rights->expensereport->readall)) {
+if ($user->hasRight('expensereport', 'lire') && ($user->id == $object->id || $user->hasRight('expensereport', 'readall'))) {
 	$ok = true;
 }
 if (!$ok) {
@@ -238,7 +241,7 @@ if ($action == 'setnational_registration_number' && $canadduser && !$cancel) {
 	}
 }
 
-if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
+if (getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 	// update default_c_exp_tax_cat
 	if ($action == 'setdefault_c_exp_tax_cat' && $canadduser) {
 		$object->default_c_exp_tax_cat = GETPOST('default_c_exp_tax_cat', 'int');
@@ -275,7 +278,7 @@ llxHeader('', $title, $help_url);
 
 $head = user_prepare_head($object);
 
-if ($id && $bankid && $action == 'edit' && ($user->hasRight('user', 'user', 'creer') || $user->rights->hrm->write_personal_information->write)) {
+if ($id && $bankid && $action == 'edit' && ($user->hasRight('user', 'user', 'creer') || $user->hasRight('hrm', 'write_personal_information', 'write'))) {
 	if ($conf->use_javascript_ajax) {
 		print "\n<script>";
 		print 'jQuery(document).ready(function () {
@@ -325,7 +328,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 	$linkback = '';
 
-	if ($user->rights->user->user->lire || $user->admin) {
+	if ($user->hasRight('user', 'user', 'lire') || $user->admin) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
@@ -334,9 +337,9 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	$morehtmlref .= '</a>';
 
 	$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
-	$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->trans("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
+	$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->transnoentitiesnoconv("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
 
-	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin, 'rowid', 'ref', $morehtmlref);
+	dol_banner_tab($object, 'id', $linkback, $user->hasRight('user', 'user', 'lire') || $user->admin, 'rowid', 'ref', $morehtmlref);
 
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 
@@ -428,14 +431,14 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 	// Sensitive salary/value information
 	if ((empty($user->socid) && in_array($id, $childids))	// A user can always see salary/value information for its subordinates
-		|| (isModEnabled('salaries') && !empty($user->rights->salaries->readall))
-		|| (isModEnabled('hrm') && !empty($user->rights->hrm->employee->read))) {
+		|| (isModEnabled('salaries') && $user->hasRight('salaries', 'readall'))
+		|| (isModEnabled('hrm') && $user->hasRight('hrm', 'employee', 'read'))) {
 		$langs->load("salaries");
 
 		// Salary
 		print '<tr><td>'.$langs->trans("Salary").'</td>';
 		print '<td>';
-		print ($object->salary != '' ? img_picto('', 'salary', 'class="pictofixedwidth paddingright"').'<span class="amount">'.price($object->salary, '', $langs, 1, -1, -1, $conf->currency) : '').'</span>';
+		print($object->salary != '' ? img_picto('', 'salary', 'class="pictofixedwidth paddingright"').'<span class="amount">'.price($object->salary, '', $langs, 1, -1, -1, $conf->currency) : '').'</span>';
 		print '</td>';
 		print "</tr>\n";
 
@@ -445,7 +448,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		print $form->textwithpicto($text, $langs->trans("THMDescription"), 1, 'help', 'classthm');
 		print '</td>';
 		print '<td>';
-		print ($object->thm != '' ?price($object->thm, '', $langs, 1, -1, -1, $conf->currency) : '');
+		print($object->thm != '' ? price($object->thm, '', $langs, 1, -1, -1, $conf->currency) : '');
 		print '</td>';
 		print "</tr>\n";
 
@@ -455,7 +458,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		print $form->textwithpicto($text, $langs->trans("TJMDescription"), 1, 'help', 'classtjm');
 		print '</td>';
 		print '<td>';
-		print ($object->tjm != '' ?price($object->tjm, '', $langs, 1, -1, -1, $conf->currency) : '');
+		print($object->tjm != '' ? price($object->tjm, '', $langs, 1, -1, -1, $conf->currency) : '');
 		print '</td>';
 		print "</tr>\n";
 	}
@@ -489,9 +492,9 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	if ($user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write')) {
 		print '<tr class="nowrap">';
 		print '<td>';
-		print $form->editfieldkey("UserPersonalEmail", 'personal_email', $object->personal_email, $object, $user->hasRight('user', 'user', 'creer') || $user->rights->hrm->write_personal_information->write);
+		print $form->editfieldkey("UserPersonalEmail", 'personal_email', $object->personal_email, $object, $user->hasRight('user', 'user', 'creer') || $user->hasRight('hrm', 'write_personal_information', 'write'));
 		print '</td><td>';
-		print $form->editfieldval("UserPersonalEmail", 'personal_email', $object->personal_email, $object, $user->hasRight('user', 'user', 'creer') || $user->rights->hrm->write_personal_information->write, 'email', '', null, null, '', 0, '');
+		print $form->editfieldval("UserPersonalEmail", 'personal_email', $object->personal_email, $object, $user->hasRight('user', 'user', 'creer') || $user->hasRight('hrm', 'write_personal_information', 'write'), 'email', '', null, null, '', 0, '');
 		print '</td>';
 		print '</tr>';
 	}
@@ -500,14 +503,14 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	if ($user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write')) {
 		print '<tr class="nowrap">';
 		print '<td>';
-		print $form->editfieldkey("UserPersonalMobile", 'personal_mobile', $object->personal_mobile, $object, $user->hasRight('user', 'user', 'creer') || $user->rights->hrm->write_personal_information->write);
+		print $form->editfieldkey("UserPersonalMobile", 'personal_mobile', $object->personal_mobile, $object, $user->hasRight('user', 'user', 'creer') || $user->hasRight('hrm', 'write_personal_information', 'write'));
 		print '</td><td>';
-		print $form->editfieldval("UserPersonalMobile", 'personal_mobile', $object->personal_mobile, $object, $user->hasRight('user', 'user', 'creer') || $user->rights->hrm->write_personal_information->write, 'phone', '', null, null, '', 0, '');
+		print $form->editfieldval("UserPersonalMobile", 'personal_mobile', $object->personal_mobile, $object, $user->hasRight('user', 'user', 'creer') || $user->hasRight('hrm', 'write_personal_information', 'write'), 'phone', '', null, null, '', 0, '');
 		print '</td>';
 		print '</tr>';
 	}
 
-	if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
+	if (getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 		print '<tr class="nowrap">';
 		print '<td>';
 		print $form->editfieldkey("DefaultCategoryCar", 'default_c_exp_tax_cat', $object->default_c_exp_tax_cat, $object, $user->hasRight('user', 'user', 'creer'));
@@ -597,7 +600,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 	// Latest payments of salaries
 	if (isModEnabled('salaries') &&
-		(($user->rights->salaries->read && (in_array($object->id, $childids) || $object->id == $user->id)) || (!empty($user->rights->salaries->readall)))
+		(($user->hasRight('salaries', 'read') && (in_array($object->id, $childids) || $object->id == $user->id)) || ($user->hasRight('salaries', 'readall')))
 		) {
 		$payment_salary = new PaymentSalary($db);
 		$salary = new Salary($db);
@@ -662,7 +665,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	}
 
 	// Latest leave requests
-	if (isModEnabled('holiday') && ($user->rights->holiday->readall || ($user->rights->holiday->read && $object->id == $user->id))) {
+	if (isModEnabled('holiday') && ($user->hasRight('holiday', 'readall') || ($user->hasRight('holiday', 'read') && $object->id == $user->id))) {
 		$holiday = new Holiday($db);
 
 		$sql = "SELECT h.rowid, h.statut as status, h.fk_type, h.date_debut, h.date_fin, h.halfday";
@@ -719,7 +722,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 	// Latest expense report
 	if (isModEnabled('expensereport') &&
-		($user->rights->expensereport->readall || ($user->rights->expensereport->lire && $object->id == $user->id))
+		($user->hasRight('expensereport', 'readall') || ($user->hasRight('expensereport', 'lire') && $object->id == $user->id))
 		) {
 		$exp = new ExpenseReport($db);
 
@@ -834,21 +837,22 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		print $stringescaped;
 		print '</td>';
 		// IBAN
-		print '<td>'.getIbanHumanReadable($account);
+		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag(getIbanHumanReadable($account)).'">';
 		if (!empty($account->iban)) {
 			if (!checkIbanForAccount($account)) {
 				print ' '.img_picto($langs->trans("IbanNotValid"), 'warning');
 			}
 		}
+		print getIbanHumanReadable($account);
 		print '</td>';
 		// BIC
-		print '<td>';
-		print dol_escape_htmltag($account->bic);
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($account->bic).'">';
 		if (!empty($account->bic)) {
 			if (!checkSwiftForAccount($account)) {
 				print ' '.img_picto($langs->trans("SwiftNotValid"), 'warning');
 			}
 		}
+		print dol_escape_htmltag($account->bic);
 		print '</td>';
 
 		// Currency
@@ -876,8 +880,14 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoBANRecord").'</span></td></tr>';
 	}
 
+
+
 	print '</table>';
 	print '</div>';
+
+	// Add hook in fields
+	$parameters = array('colspan' => ' colspan="2"');
+	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 }
 
 // Edit
@@ -887,17 +897,17 @@ if ($id && ($action == 'edit' || $action == 'create') && $user->hasRight('user',
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
-
-	//print '<div class="fichecenter">';
+	dol_banner_tab($object, 'id', $linkback, $user->hasRight('user', 'user', 'lire') || $user->admin);
 
 	print '<div class="underbanner clearboth"></div>';
+	print '<br>';
+
 	print '<table class="border centpercent">';
 
-	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("LabelRIB").'</td>';
-	print '<td colspan="4"><input size="30" type="text" name="label" value="'.$account->label.'"></td></tr>';
+	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Label").'</td>';
+	print '<td><input size="30" type="text" name="label" value="'.$account->label.'" autofocus></td></tr>';
 
-	print '<tr><td class="fieldrequired">'.$langs->trans("BankName").'</td>';
+	print '<tr><td class="">'.$langs->trans("BankName").'</td>';
 	print '<td><input size="30" type="text" name="bank" value="'.$account->bank.'"></td></tr>';
 
 	// Currency
@@ -941,37 +951,57 @@ if ($id && ($action == 'edit' || $action == 'create') && $user->hasRight('user',
 	}
 	print '</td></tr>';
 
+
 	// Show fields of bank account
-	foreach ($account->getFieldsToShow() as $val) {
+	$bankaccount = $account;
+	// Code here is similare than into paymentmodes.php for third-parties
+	foreach ($bankaccount->getFieldsToShow(1) as $val) {
+		$require = false;
+		$tooltip = '';
 		if ($val == 'BankCode') {
 			$name = 'code_banque';
 			$size = 8;
-			$content = $account->code_banque;
+			$content = $bankaccount->code_banque;
 		} elseif ($val == 'DeskCode') {
 			$name = 'code_guichet';
 			$size = 8;
-			$content = $account->code_guichet;
+			$content = $bankaccount->code_guichet;
 		} elseif ($val == 'BankAccountNumber') {
 			$name = 'number';
 			$size = 18;
-			$content = $account->number;
+			$content = $bankaccount->number;
 		} elseif ($val == 'BankAccountNumberKey') {
 			$name = 'cle_rib';
 			$size = 3;
-			$content = $account->cle_rib;
+			$content = $bankaccount->cle_rib;
+		} elseif ($val == 'IBAN') {
+			$name = 'iban';
+			$size = 30;
+			$content = $bankaccount->iban;
+			if ($bankaccount->needIBAN()) {
+				$require = true;
+			}
+			$tooltip = $langs->trans("Example").':<br>CH93 0076 2011 6238 5295 7<br>LT12 1000 0111 0100 1000<br>FR14 2004 1010 0505 0001 3M02 606<br>LU28 0019 4006 4475 0000<br>DE89 3704 0044 0532 0130 00';
+		} elseif ($val == 'BIC') {
+			$name = 'bic';
+			$size = 12;
+			$content = $bankaccount->bic;
+			if ($bankaccount->needIBAN()) {
+				$require = true;
+			}
+			$tooltip = $langs->trans("Example").': LIABLT2XXXX';
 		}
-
-		print '<td>'.$langs->trans($val).'</td>';
+		print '<tr>';
+		print '<td'.($require ? ' class="fieldrequired" ' : '').'>';
+		if ($tooltip) {
+			print $form->textwithpicto($langs->trans($val), $tooltip, 4, 'help', '', 0, 3, $name);
+		} else {
+			print $langs->trans($val);
+		}
+		print '</td>';
 		print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" value="'.$content.'"></td>';
 		print '</tr>';
 	}
-
-	// IBAN
-	print '<tr><td class="fieldrequired">'.$langs->trans("IBAN").'</td>';
-	print '<td colspan="4"><input size="30" type="text" name="iban" value="'.$account->iban.'"></td></tr>';
-
-	print '<tr><td class="fieldrequired">'.$langs->trans("BIC").'</td>';
-	print '<td colspan="4"><input size="12" type="text" name="bic" value="'.$account->bic.'"></td></tr>';
 
 	print '<tr><td class="tdtop">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
 	print '<textarea name="domiciliation" rows="4" class="quatrevingtpercent">';
@@ -993,7 +1023,7 @@ if ($id && ($action == 'edit' || $action == 'create') && $user->hasRight('user',
 
 	print dol_get_fiche_end();
 
-	print $form->buttonsSaveCancel("Modify");
+	print $form->buttonsSaveCancel($action == 'create' ? "Create" : "Modify");
 }
 
 if ($id && $action == 'edit' && $user->hasRight('user', 'user', 'creer')) {

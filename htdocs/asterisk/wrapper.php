@@ -97,7 +97,7 @@ if (!isset($conf->global->ASTERISK_INDICATIF)) {
 if (!isset($conf->global->ASTERISK_PORT)) {
 	$conf->global->ASTERISK_PORT = 5038;
 }
-if ($conf->global->ASTERISK_INDICATIF == 'NONE') {
+if (getDolGlobalString('ASTERISK_INDICATIF') == 'NONE') {
 	$conf->global->ASTERISK_INDICATIF = '';
 }
 if (!isset($conf->global->ASTERISK_CONTEXT)) {
@@ -121,20 +121,27 @@ $called = GETPOST('called', 'alphanohtml');
 
 // IP address of Asterisk server
 $strHost = $conf->global->ASTERISK_HOST;
-// Spécifiez le type d'extension par laquelle vous poste est connecte.
+
+// Specify the type of extension through which your extension is connected.
 // ex: SIP/, IAX2/, ZAP/, etc
 $channel = $conf->global->ASTERISK_TYPE;
-// Indicatif de la ligne sortante
+
+// Outgoing call sign
 $prefix = $conf->global->ASTERISK_INDICATIF;
-// Port
+
+// Asterisk Port
 $port = $conf->global->ASTERISK_PORT;
+
 // Context ( generalement from-internal )
 $strContext = $conf->global->ASTERISK_CONTEXT;
-// Delai d'attente avant de raccrocher
+
+// Waiting time before hanging up
 $strWaitTime = $conf->global->ASTERISK_WAIT_TIME;
+
 // Priority
 $strPriority = $conf->global->ASTERISK_PRIORITY;
-// Nomber of try
+
+// Number of call attempts
 $strMaxRetry = $conf->global->ASTERISK_MAX_RETRY;
 
 

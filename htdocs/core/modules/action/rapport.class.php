@@ -44,7 +44,6 @@ class CommActionRapport
 
 	public $errors;
 
-
 	/**
 	 * @var string description
 	 */
@@ -76,6 +75,10 @@ class CommActionRapport
 
 	public $page_largeur;
 
+	/**
+	 * @var array
+	 */
+	public $result;
 
 	/**
 	 * Constructor
@@ -86,7 +89,7 @@ class CommActionRapport
 	 */
 	public function __construct($db, $month, $year)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("commercial", "projects"));
@@ -121,7 +124,7 @@ class CommActionRapport
 	 *      @param  Translate	$outputlangs    Lang object for output language
 	 *      @return int             			1=OK, 0=KO
 	 */
-	public function write_file($socid = 0, $catid = 0, $outputlangs = '')
+	public function write_file($socid = 0, $catid = 0, $outputlangs = null)
 	{
 		// phpcs:enable
 		global $user, $conf, $langs, $hookmanager;
@@ -130,7 +133,7 @@ class CommActionRapport
 			$outputlangs = $langs;
 		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!empty($conf->global->MAIN_USE_FPDF)) {
+		if (getDolGlobalString('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
@@ -320,7 +323,7 @@ class CommActionRapport
 
 				// Action code
 				$code = $obj->code;
-				if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
+				if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 					if ($code == 'AC_OTH') {
 						$code = 'AC_MANUAL';
 					}

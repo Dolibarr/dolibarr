@@ -67,18 +67,18 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
-$max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
 
 // Maximum elements of the tables
-$maxDraftCount = empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD;
+$maxDraftCount = !getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD;
 $maxLatestEditCount = 5;
-$maxOpenCount = empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD;
+$maxOpenCount = !getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD;
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('invoiceindex'));
 
 
-$maxofloop = (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD);
+$maxofloop = (!getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD);
 
 
 /*
@@ -142,12 +142,12 @@ if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
 	$sql .= ", sum(pf.amount) as am";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s LEFT JOIN ".MAIN_DB_PREFIX."c_country as cc ON cc.rowid = s.fk_pays, ".MAIN_DB_PREFIX."facture as f";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE s.rowid = f.fk_soc";
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
@@ -173,7 +173,7 @@ if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("BoxTitleLastCustomerBills", $max).'</th>';
-		if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
+		if (getDolGlobalString('MAIN_SHOW_HT_ON_SUMMARY')) {
 			print '<th class="right">'.$langs->trans("AmountHT").'</th>';
 		}
 		print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
@@ -240,7 +240,7 @@ if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
 				print '<td class="tdoverflowmax150">';
 				print $thirdpartystatic->getNomUrl(1, 'customer', 44);
 				print '</td>';
-				if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
+				if (getDolGlobalString('MAIN_SHOW_HT_ON_SUMMARY')) {
 					print '<td class="nowrap right"><span class="amount">'.price($obj->total_ht).'</span></td>';
 				}
 				print '<td class="nowrap right"><span class="amount">'.price($obj->total_ttc).'</span></td>';
@@ -267,7 +267,7 @@ if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
 			}
 		} else {
 			$colspan = 5;
-			if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
+			if (getDolGlobalString('MAIN_SHOW_HT_ON_SUMMARY')) {
 				$colspan++;
 			}
 			print '<tr class="oddeven"><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoInvoice").'</span></td></tr>';
@@ -281,7 +281,7 @@ if (isModEnabled('facture') && $user->hasRight('facture', 'lire')) {
 
 
 // Last modified supplier invoices
-if ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->hasRight("fournisseur", "facture", "lire")) || (isModEnabled('supplier_invoice') && $user->hasRight("supplier_invoice", "lire"))) {
+if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->hasRight("fournisseur", "facture", "lire")) || (isModEnabled('supplier_invoice') && $user->hasRight("supplier_invoice", "lire"))) {
 	$langs->load("boxes");
 	$facstatic = new FactureFournisseur($db);
 
@@ -292,12 +292,12 @@ if ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMO
 	$sql .= ", SUM(pf.amount) as am";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as ff";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf on ff.rowid=pf.fk_facturefourn";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE s.rowid = ff.fk_soc";
 	$sql .= " AND ff.entity = ".$conf->entity;
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
@@ -320,7 +320,7 @@ if ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMO
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("BoxTitleLastSupplierBills", $max).'</th>';
-		if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
+		if (getDolGlobalString('MAIN_SHOW_HT_ON_SUMMARY')) {
 			print '<th class="right">'.$langs->trans("AmountHT").'</th>';
 		}
 		print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
@@ -371,7 +371,7 @@ if ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMO
 				print '<td class="nowrap tdoverflowmax100">';
 				print $thirdpartystatic->getNomUrl(1, 'supplier');
 				print '</td>';
-				if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
+				if (getDolGlobalString('MAIN_SHOW_HT_ON_SUMMARY')) {
 					print '<td class="right"><span class="amount">'.price($obj->total_ht).'</span></td>';
 				}
 				print '<td class="nowrap right"><span class="amount">'.price($obj->total_ttc).'</span></td>';
@@ -394,7 +394,7 @@ if ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMO
 			}
 		} else {
 			$colspan = 5;
-			if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
+			if (getDolGlobalString('MAIN_SHOW_HT_ON_SUMMARY')) {
 				$colspan++;
 			}
 			print '<tr class="oddeven"><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoInvoice").'</span></td></tr>';
@@ -499,7 +499,7 @@ if (isModEnabled('don') && $user->hasRight('don', 'lire')) {
 /**
  * Social contributions to pay
  */
-if (isModEnabled('tax') && !empty($user->rights->tax->charges->lire)) {
+if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 	if (!$socid) {
 		$chargestatic = new ChargeSociales($db);
 
@@ -591,7 +591,7 @@ if (isModEnabled('tax') && !empty($user->rights->tax->charges->lire)) {
 /*
  * Customers orders to be billed
  */
-if (isModEnabled('facture') && isModEnabled('commande') && $user->hasRight("commande", "lire") && empty($conf->global->WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER)) {
+if (isModEnabled('facture') && isModEnabled('commande') && $user->hasRight("commande", "lire") && !getDolGlobalString('WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER')) {
 	$commandestatic = new Commande($db);
 	$langs->load("orders");
 
@@ -602,7 +602,7 @@ if (isModEnabled('facture') && isModEnabled('commande') && $user->hasRight("comm
 	$sql .= ", c.rowid, c.ref, c.facture, c.fk_statut as status, c.total_ht, c.total_tva, c.total_ttc,";
 	$sql .= " cc.rowid as country_id, cc.code as country_code";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s LEFT JOIN ".MAIN_DB_PREFIX."c_country as cc ON cc.rowid = s.fk_pays";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= ", ".MAIN_DB_PREFIX."commande as c";
@@ -610,7 +610,7 @@ if (isModEnabled('facture') && isModEnabled('commande') && $user->hasRight("comm
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture AS f ON el.fk_target = f.rowid AND el.targettype = 'facture'";
 	$sql .= " WHERE c.fk_soc = s.rowid";
 	$sql .= " AND c.entity = ".$conf->entity;
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
@@ -644,7 +644,7 @@ if (isModEnabled('facture') && isModEnabled('commande') && $user->hasRight("comm
 			print '</a>';
 			print '</th>';
 
-			if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
+			if (getDolGlobalString('MAIN_SHOW_HT_ON_SUMMARY')) {
 				print '<th class="right">'.$langs->trans("AmountHT").'</th>';
 			}
 			print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
@@ -703,7 +703,7 @@ if (isModEnabled('facture') && isModEnabled('commande') && $user->hasRight("comm
 				print '<td class="nowrap tdoverflowmax100">';
 				print $societestatic->getNomUrl(1, 'customer');
 				print '</td>';
-				if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
+				if (getDolGlobalString('MAIN_SHOW_HT_ON_SUMMARY')) {
 					print '<td class="right"><span class="amount">'.price($obj->total_ht).'</span></td>';
 				}
 				print '<td class="nowrap right"><span class="amount">'.price($obj->total_ttc).'</span></td>';
@@ -726,7 +726,7 @@ if (isModEnabled('facture') && isModEnabled('commande') && $user->hasRight("comm
 			}
 
 			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <span style="font-weight: normal">('.$langs->trans("RemainderToBill").': '.price($tot_tobill).')</span> </td>';
-			if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
+			if (getDolGlobalString('MAIN_SHOW_HT_ON_SUMMARY')) {
 				print '<td class="right">'.price($tot_ht).'</td>';
 			}
 			print '<td class="nowrap right">'.price($tot_ttc).'</td>';

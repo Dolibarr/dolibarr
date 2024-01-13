@@ -67,7 +67,9 @@ class IntracommReport extends CommonObject
 	 */
 	public $declaration_number;
 
-	public $type_declaration;		// deb or des
+	public $exporttype;			// deb or des
+	public $type_declaration;	// 'introduction' or 'expedition'
+	public $numero_declaration;
 
 
 	/**
@@ -176,7 +178,7 @@ class IntracommReport extends CommonObject
 		$declaration->addChild('PSIId', $psiId);
 		$function = $declaration->addChild('Function');
 		$functionCode = $function->addChild('functionCode', $mode);
-		$declaration->addChild('declarationTypeCode', $conf->global->{'INTRACOMMREPORT_NIV_OBLIGATION_'.strtoupper($type)});
+		$declaration->addChild('declarationTypeCode', getDolGlobalString('INTRACOMMREPORT_NIV_OBLIGATION_'.strtoupper($type)));
 		$declaration->addChild('flowCode', ($type == 'introduction' ? 'A' : 'D'));
 		$declaration->addChild('currencyCode', $conf->global->MAIN_MONNAIE);
 		/********************************************************************/
@@ -199,7 +201,7 @@ class IntracommReport extends CommonObject
 	 *
 	 * @param int		$period_year		Year of declaration
 	 * @param int		$period_month		Month of declaration
-	 * @param string	$type_declaration	Declaration type by default - introduction or expedition (always 'expedition' for Des)
+	 * @param string	$type_declaration	Declaration type by default - 'introduction' or 'expedition' (always 'expedition' for Des)
 	 * @return SimpleXMLElement|int
 	 */
 	public function getXMLDes($period_year, $period_month, $type_declaration = 'expedition')
@@ -214,9 +216,8 @@ class IntracommReport extends CommonObject
 		$declaration_des->addChild('mois_des', $period_month);
 		$declaration_des->addChild('an_des', $period_year);
 
-		/**************Ajout des lignes de factures**************************/
+		// Add invoice lines
 		$res = $this->addItemsFact($declaration_des, $type_declaration, $period_year.'-'.$period_month, 'des');
-		/********************************************************************/
 
 		$this->errors = array_unique($this->errors);
 
@@ -231,10 +232,10 @@ class IntracommReport extends CommonObject
 	 *  Add line from invoice
 	 *
 	 *  @param	SimpleXMLElement	$declaration		Reference declaration
-	 *  @param	string				$type				Declaration type by default - introduction or expedition (always 'expedition' for Des)
+	 *  @param	string				$type				Declaration type by default - 'introduction' or 'expedition' (always 'expedition' for Des)
 	 *  @param	int					$period_reference	Reference period
-	 *  @param	string				$exporttype	    	deb=DEB, des=DES
-	 *  @return	int       			  					<0 if KO, >0 if OK
+	 *  @param	string				$exporttype	    	'deb' for DEB, 'des' for DES
+	 *  @return	int       			  					Return integer <0 if KO, >0 if OK
 	 */
 	public function addItemsFact(&$declaration, $type, $period_reference, $exporttype = 'deb')
 	{
@@ -254,7 +255,7 @@ class IntracommReport extends CommonObject
 				return 0;
 			}
 
-			if ($exporttype == 'deb' && $conf->global->INTRACOMMREPORT_CATEG_FRAISDEPORT > 0) {
+			if ($exporttype == 'deb' && getDolGlobalInt('INTRACOMMREPORT_CATEG_FRAISDEPORT') > 0) {
 				$categ_fraisdeport = new Categorie($this->db);
 				$categ_fraisdeport->fetch($conf->global->INTRACOMMREPORT_CATEG_FRAISDEPORT);
 				$TLinesFraisDePort = array();
@@ -268,7 +269,7 @@ class IntracommReport extends CommonObject
 						// We don't stop the loop because we want to know all the third parties who don't have an informed country
 						$this->errors[] = 'Country not filled in for the third party <a href="'.dol_buildpath('/societe/soc.php', 1).'?socid='.$res->id_client.'">'.$res->nom.'</a>';
 					} else {
-						if ($conf->global->INTRACOMMREPORT_CATEG_FRAISDEPORT > 0 && $categ_fraisdeport->containsObject('product', $res->id_prod)) {
+						if (getDolGlobalInt('INTRACOMMREPORT_CATEG_FRAISDEPORT') > 0 && $categ_fraisdeport->containsObject('product', $res->id_prod)) {
 							$TLinesFraisDePort[] = $res;
 						} else {
 							$this->addItemXMl($declaration, $res, $i, '');
@@ -297,7 +298,7 @@ class IntracommReport extends CommonObject
 	 *  @param      string	$type				Declaration type by default - introduction or expedition (always 'expedition' for Des)
 	 *  @param      int		$period_reference	Reference declaration
 	 *  @param      string	$exporttype	    	deb=DEB, des=DES
-	 *  @return     string       			  		<0 if KO, >0 if OK
+	 *  @return     string       			  	Return integer <0 if KO, >0 if OK
 	 */
 	public function getSQLFactLines($type, $period_reference, $exporttype = 'deb')
 	{
@@ -401,7 +402,6 @@ class IntracommReport extends CommonObject
 	 */
 	public function addItemFraisDePort(&$declaration, &$TLinesFraisDePort, $type, &$categ_fraisdeport, $i)
 	{
-
 		global $conf;
 
 		if ($type == 'expedition') {
@@ -455,7 +455,8 @@ class IntracommReport extends CommonObject
 	 */
 	public function getNextDeclarationNumber()
 	{
-		$sql = "SELECT MAX(numero_declaration) as max_declaration_number FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql = "SELECT MAX(numero_declaration) as max_declaration_number";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " WHERE exporttype = '".$this->db->escape($this->exporttype)."'";
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -479,14 +480,18 @@ class IntracommReport extends CommonObject
 	/**
 	 *	Generate XML file
 	 *
+	 *  @param		string		$content_xml	Content
 	 *	@return		void
 	 */
-	public function generateXMLFile()
+	public function generateXMLFile($content_xml)
 	{
-		$name = $this->periode.'.xml';
+		$name = $this->period.'.xml';
+
+		// TODO Must be stored into a dolibarr temp directory
 		$fname = sys_get_temp_dir().'/'.$name;
+
 		$f = fopen($fname, 'w+');
-		fwrite($f, $this->content_xml);
+		fwrite($f, $content_xml);
 		fclose($f);
 
 		header('Content-Description: File Transfer');
@@ -496,6 +501,7 @@ class IntracommReport extends CommonObject
 		header('Cache-Control: must-revalidate');
 		header('Pragma: public');
 		header('Content-Length: '.filesize($fname));
+
 		readfile($fname);
 		exit;
 	}

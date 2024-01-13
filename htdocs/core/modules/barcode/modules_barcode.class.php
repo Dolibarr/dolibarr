@@ -22,6 +22,7 @@
  *   \brief      File with parent classes for barcode document modules and numbering modules
  */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
 
 
 /**
@@ -50,44 +51,18 @@ abstract class ModeleBarCode
 /**
  *	Parent class for barcode numbering models
  */
-abstract class ModeleNumRefBarCode
+abstract class ModeleNumRefBarCode extends CommonNumRefGenerator
 {
 	/**
-	 * @var string Error code (or message)
+	 * @var int Code facultatif
 	 */
-	public $error = '';
+	public $code_null;
 
-	/**     Return default description of numbering model
-	 *
-	 *		@param	Translate	$langs		Object langs
-	 *      @return string      			Descriptive text
+	/**
+	 * @var int Automatic numbering
 	 */
-	public function info($langs)
-	{
-		$langs->load("bills");
-		return $langs->trans("NoDescription");
-	}
+	public $code_auto;
 
-	/**     Return model name
-	 *
-	 *		@param	Translate	$langs		Object langs
-	 *      @return string      			Model name
-	 */
-	public function getNom($langs)
-	{
-		return empty($this->name) ? get_class($this) : $this->name;
-	}
-
-	/**     Return a numbering example
-	 *
-	 *		@param	Translate	$langs		Object langs
-	 *      @return string      			Example
-	 */
-	public function getExample($langs)
-	{
-		$langs->load("bills");
-		return $langs->trans("NoExample");
-	}
 
 	/**
 	 *  Return next value available
@@ -100,30 +75,6 @@ abstract class ModeleNumRefBarCode
 	{
 		global $langs;
 		return $langs->trans("Function_getNextValue_InModuleNotWorking");
-	}
-
-	/**     Return version of module
-	 *
-	 *      @return     string      Version
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
-
-		if ($this->version == 'development') {
-			return $langs->trans("VersionDevelopment");
-		}
-		if ($this->version == 'experimental') {
-			return $langs->trans("VersionExperimental");
-		}
-		if ($this->version == 'dolibarr') {
-			return DOL_VERSION;
-		}
-		if ($this->version) {
-			return $this->version;
-		}
-		return $langs->trans("NotAvailable");
 	}
 
 	/**
@@ -150,33 +101,33 @@ abstract class ModeleNumRefBarCode
 		$s .= '<u>'.$langs->trans("ThisIsModuleRules").':</u><br>';
 		if ($type == 0) {
 			$s .= $langs->trans("RequiredIfProduct").': ';
-			if (!empty($conf->global->MAIN_BARCODE_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) {
+			if (getDolGlobalString('MAIN_BARCODE_CODE_ALWAYS_REQUIRED') && !empty($this->code_null)) {
 				$s .= '<strike>';
 			}
 			$s .= yn(!$this->code_null, 1, 2);
-			if (!empty($conf->global->MAIN_BARCODE_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) {
+			if (getDolGlobalString('MAIN_BARCODE_CODE_ALWAYS_REQUIRED') && !empty($this->code_null)) {
 				$s .= '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
 			}
 			$s .= '<br>';
 		}
 		if ($type == 1) {
 			$s .= $langs->trans("RequiredIfService").': ';
-			if (!empty($conf->global->MAIN_BARCODE_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) {
+			if (getDolGlobalString('MAIN_BARCODE_CODE_ALWAYS_REQUIRED') && !empty($this->code_null)) {
 				$s .= '<strike>';
 			}
 			$s .= yn(!$this->code_null, 1, 2);
-			if (!empty($conf->global->MAIN_BARCODE_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) {
+			if (getDolGlobalString('MAIN_BARCODE_CODE_ALWAYS_REQUIRED') && !empty($this->code_null)) {
 				$s .= '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
 			}
 			$s .= '<br>';
 		}
 		if ($type == -1) {
 			$s .= $langs->trans("Required").': ';
-			if (!empty($conf->global->MAIN_BARCODE_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) {
+			if (getDolGlobalString('MAIN_BARCODE_CODE_ALWAYS_REQUIRED') && !empty($this->code_null)) {
 				$s .= '<strike>';
 			}
 			$s .= yn(!$this->code_null, 1, 2);
-			if (!empty($conf->global->MAIN_BARCODE_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) {
+			if (getDolGlobalString('MAIN_BARCODE_CODE_ALWAYS_REQUIRED') && !empty($this->code_null)) {
 				$s .= '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
 			}
 			$s .= '<br>';

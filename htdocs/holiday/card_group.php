@@ -48,8 +48,8 @@ $cancel 		= GETPOST('cancel', 'alpha');
 $confirm 		= GETPOST('confirm', 'alpha');
 $id 			= GETPOST('id', 'int');
 $ref 			= GETPOST('ref', 'alpha');
-$fuserid 		= (GETPOST('fuserid', 'int') ?GETPOST('fuserid', 'int') : $user->id);
-$users 			=  (GETPOST('users', 'array') ?GETPOST('users', 'array') : array($user->id));
+$fuserid 		= (GETPOST('fuserid', 'int') ? GETPOST('fuserid', 'int') : $user->id);
+$users 			=  (GETPOST('users', 'array') ? GETPOST('users', 'array') : array($user->id));
 $groups 		= GETPOST('groups', 'array');
 $socid 			= GETPOST('socid', 'int');
 $autoValidation 	= GETPOST('autoValidation', 'int');
@@ -64,7 +64,7 @@ $now = dol_now();
 $childids = $user->getAllChildIds(1);
 
 $morefilter = '';
-if (!empty($conf->global->HOLIDAY_HIDE_FOR_NON_SALARIES)) {
+if (getDolGlobalString('HOLIDAY_HIDE_FOR_NON_SALARIES')) {
 	$morefilter = 'AND employee = 1';
 }
 
@@ -80,10 +80,10 @@ if (($id > 0) || $ref) {
 
 	// Check current user can read this leave request
 	$canread = 0;
-	if (!empty($user->rights->holiday->readall)) {
+	if ($user->hasRight('holiday', 'readall')) {
 		$canread = 1;
 	}
-	if (!empty($user->rights->holiday->read) && in_array($object->fk_user, $childids)) {
+	if ($user->hasRight('holiday', 'read') && in_array($object->fk_user, $childids)) {
 		$canread = 1;
 	}
 	if (!$canread) {
@@ -96,19 +96,19 @@ $hookmanager->initHooks(array('holidaycard', 'globalcard'));
 
 $cancreate = 0;
 $cancreateall = 0;
-if (!empty($user->rights->holiday->write) && in_array($fuserid, $childids)) {
+if ($user->hasRight('holiday', 'write') && in_array($fuserid, $childids)) {
 	$cancreate = 1;
 }
-if (!empty($user->rights->holiday->writeall)) {
+if ($user->hasRight('holiday', 'writeall')) {
 	$cancreate = 1;
 	$cancreateall = 1;
 }
 
 $candelete = 0;
-if (!empty($user->rights->holiday->delete)) {
+if ($user->hasRight('holiday', 'delete')) {
 	$candelete = 1;
 }
-if ($object->statut == Holiday::STATUS_DRAFT && $user->rights->holiday->write && in_array($object->fk_user, $childids)) {
+if ($object->statut == Holiday::STATUS_DRAFT && $user->hasRight('holiday', 'write') && in_array($object->fk_user, $childids)) {
 	$candelete = 1;
 }
 
@@ -188,8 +188,8 @@ if (empty($reshook)) {
 
 			// Check that leave is for a user inside the hierarchy or advanced permission for all is set
 			if (!$cancreateall) {
-				if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
-					if (empty($user->rights->holiday->write)) {
+				if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+					if (!$user->hasRight('holiday', 'write')) {
 						$error++;
 						setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
 					} elseif (!in_array($fuserid, $childids)) {
@@ -198,10 +198,10 @@ if (empty($reshook)) {
 						$action = 'create';
 					}
 				} else {
-					if (empty($user->rights->holiday->write) && empty($user->rights->holiday->writeall_advance)) {
+					if (!$user->hasRight('holiday', 'write') && !$user->hasRight('holiday', 'writeall_advance')) {
 						$error++;
 						setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
-					} elseif (empty($user->rights->holiday->writeall_advance) && !in_array($fuserid, $childids)) {
+					} elseif (!$user->hasRight('holiday', 'writeall_advance') && !in_array($fuserid, $childids)) {
 						$error++;
 						setEventMessages($langs->trans("UserNotInHierachy"), null, 'errors');
 						$action = 'create';
@@ -277,7 +277,7 @@ if (empty($reshook)) {
 				/** USERS  */
 				if (is_array($users) && count($users) > 0) {
 					foreach ($users as $u) {
-							$TusersToProcess[$u] = $u;
+						$TusersToProcess[$u] = $u;
 					}
 				}
 				foreach ($TusersToProcess as $u) {
@@ -327,7 +327,7 @@ if (empty($reshook)) {
 								$htemp->statut = Holiday::STATUS_VALIDATED;
 								$resultValidated = $htemp->update($approverid);
 
-								if ($resultValidated < 0 ) {
+								if ($resultValidated < 0) {
 									setEventMessages($object->error, $object->errors, 'errors');
 									$error++;
 								}
@@ -336,7 +336,9 @@ if (empty($reshook)) {
 								if ($AutoSendMail && !$error) {
 									// send a mail to the user
 									$returnSendMail = sendMail($result, $cancreate, $now, $autoValidation);
-									if (!empty($returnSendMail->msg))  setEventMessage($returnSendMail->msg, $returnSendMail->style);
+									if (!empty($returnSendMail->msg)) {
+										setEventMessage($returnSendMail->msg, $returnSendMail->style);
+									}
 								}
 							}
 						}
@@ -373,7 +375,7 @@ llxHeader('', $title, $help_url);
 
 if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 	// If user has no permission to create a leave
-	if ((in_array($fuserid, $childids) && empty($user->rights->holiday->writeall)) || (!in_array($fuserid, $childids) && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->holiday->writeall_advance)))) {
+	if ((in_array($fuserid, $childids) && !$user->hasRight('holiday', 'writeall')) || (!in_array($fuserid, $childids) && (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || !$user->hasRight('holiday', 'writeall_advance')))) {
 		$errors[] = $langs->trans('CantCreateCP');
 	} else {
 		// Form to add a leave request
@@ -538,7 +540,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			$labeltoshow .= ($val['delay'] > 0 ? ' ('.$langs->trans("NoticePeriod").': '.$val['delay'].' '.$langs->trans("days").')' : '');
 			$arraytypeleaves[$val['rowid']] = $labeltoshow;
 		}
-		print $form->selectarray('type', $arraytypeleaves, (GETPOST('type', 'alpha') ?GETPOST('type', 'alpha') : ''), 1, 0, 0, '', 0, 0, 0, '', '', true);
+		print $form->selectarray('type', $arraytypeleaves, (GETPOST('type', 'alpha') ? GETPOST('type', 'alpha') : ''), 1, 0, 0, '', 0, 0, 0, '', '', true);
 		if ($user->admin) {
 			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
@@ -559,7 +561,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			print $form->selectDate($tmpdate, 'date_debut_', 0, 0, 0, '', 1, 1);
 		}
 		print ' &nbsp; &nbsp; ';
-		print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday', 'alpha') ?GETPOST('starthalfday', 'alpha') : 'morning'));
+		print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday', 'alpha') ? GETPOST('starthalfday', 'alpha') : 'morning'));
 		print '</td>';
 		print '</tr>';
 
@@ -576,7 +578,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			print $form->selectDate($tmpdate, 'date_fin_', 0, 0, 0, '', 1, 1);
 		}
 		print ' &nbsp; &nbsp; ';
-		print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday', 'alpha') ?GETPOST('endhalfday', 'alpha') : 'afternoon'));
+		print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday', 'alpha') ? GETPOST('endhalfday', 'alpha') : 'afternoon'));
 		print '</td>';
 		print '</tr>';
 
@@ -593,7 +595,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			// Defined default approver (the forced approved of user or the supervisor if no forced value defined)
 			// Note: This use will be set only if the deinfed approvr has permission to approve so is inside include_users
 			$defaultselectuser = (empty($user->fk_user_holiday_validator) ? $user->fk_user : $user->fk_user_holiday_validator);
-			if (!empty($conf->global->HOLIDAY_DEFAULT_VALIDATOR)) {
+			if (getDolGlobalString('HOLIDAY_DEFAULT_VALIDATOR')) {
 				$defaultselectuser = $conf->global->HOLIDAY_DEFAULT_VALIDATOR; // Can force default approver
 			}
 			if (GETPOST('valideur', 'int') > 0) {
@@ -681,7 +683,7 @@ function sendMail($id, $cancreate, $now, $autoValidation)
 	if ($result) {
 		// If draft and owner of leave
 		if ($object->statut == Holiday::STATUS_VALIDATED && $cancreate) {
-			$object->oldcopy = dol_clone($object);
+			$object->oldcopy = dol_clone($object, 2);
 
 			//if ($autoValidation) $object->statut = Holiday::STATUS_VALIDATED;
 
@@ -712,7 +714,7 @@ function sendMail($id, $cancreate, $now, $autoValidation)
 
 				// Subject
 				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
-				if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+				if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 					$societeName = $conf->global->MAIN_APPLICATION_TITLE;
 				}
 
@@ -725,7 +727,7 @@ function sendMail($id, $cancreate, $now, $autoValidation)
 
 
 				// option to warn the validator in case of too short delay
-				if (empty($conf->global->HOLIDAY_HIDE_APPROVER_ABOUT_TOO_LOW_DELAY)) {
+				if (!getDolGlobalString('HOLIDAY_HIDE_APPROVER_ABOUT_TOO_LOW_DELAY')) {
 					$delayForRequest = 0;		// TODO Set delay depending of holiday leave type
 					if ($delayForRequest) {
 						$nowplusdelay = dol_time_plus_duree($now, $delayForRequest, 'd');
@@ -737,7 +739,7 @@ function sendMail($id, $cancreate, $now, $autoValidation)
 				}
 
 				// option to notify the validator if the balance is less than the request
-				if (empty($conf->global->HOLIDAY_HIDE_APPROVER_ABOUT_NEGATIVE_BALANCE)) {
+				if (!getDolGlobalString('HOLIDAY_HIDE_APPROVER_ABOUT_NEGATIVE_BALANCE')) {
 					$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
 
 					if ($nbopenedday > $object->getCPforUser($object->fk_user, $object->fk_type)) {
@@ -745,11 +747,29 @@ function sendMail($id, $cancreate, $now, $autoValidation)
 					}
 				}
 
+				$typeleaves = $object->getTypes(1, -1);
+				$labeltoshow = (($typeleaves[$object->fk_type]['code'] && $langs->trans($typeleaves[$object->fk_type]['code']) != $typeleaves[$object->fk_type]['code']) ? $langs->trans($typeleaves[$object->fk_type]['code']) : $typeleaves[$object->fk_type]['label']);
+
+				if ($object->halfday == 2) {
+					$starthalfdaykey = "Afternoon";
+					$endhalfdaykey = "Morning";
+				} elseif ($object->halfday == -1) {
+					$starthalfdaykey = "Afternoon";
+					$endhalfdaykey = "Afternoon";
+				} elseif ($object->halfday == 1) {
+					$starthalfdaykey = "Morning";
+					$endhalfdaykey = "Morning";
+				} elseif ($object->halfday == 0 || $object->halfday == 2) {
+					$starthalfdaykey = "Morning";
+					$endhalfdaykey = "Afternoon";
+				}
+
 				$link = dol_buildpath("/holiday/card.php", 3) . '?id='.$object->id;
 
 				$message .= "<ul>";
 				$message .= "<li>".$langs->transnoentitiesnoconv("Name")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."</li>\n";
-				$message .= "<li>".$langs->transnoentitiesnoconv("Period")." : ".dol_print_date($object->date_debut, 'day')." ".$langs->transnoentitiesnoconv("To")." ".dol_print_date($object->date_fin, 'day')."</li>\n";
+				$message .= "<li>".$langs->transnoentitiesnoconv("Type")." : ".(empty($labeltoshow) ? $langs->trans("TypeWasDisabledOrRemoved", $object->fk_type) : $labeltoshow)."</li>\n";
+				$message .= "<li>".$langs->transnoentitiesnoconv("Period")." : ".dol_print_date($object->date_debut, 'day')." ".$langs->transnoentitiesnoconv($starthalfdaykey)." ".$langs->transnoentitiesnoconv("To")." ".dol_print_date($object->date_fin, 'day')." ".$langs->transnoentitiesnoconv($endhalfdaykey)."</li>\n";
 				$message .= "<li>".$langs->transnoentitiesnoconv("Link").' : <a href="'.$link.'" target="_blank">'.$link."</a></li>\n";
 				$message .= "</ul>\n";
 

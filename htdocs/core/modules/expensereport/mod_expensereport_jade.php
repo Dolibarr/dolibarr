@@ -57,9 +57,10 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 	/**
 	 *  Return description of numbering model
 	 *
-	 *  @return     string      Text with description
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs;
 		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
@@ -81,9 +82,10 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *  @return     boolean     false if conflict, true if ok
+	 *  @param  Object		$object		Object we need next value for
+	 *  @return boolean     			false if conflict, true if ok
 	 */
-	public function canBeActivated()
+	public function canBeActivated($object)
 	{
 		global $conf, $langs, $db;
 
@@ -124,15 +126,15 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 		global $db, $conf;
 
 		// For backward compatibility and restore old behavior to get ref of expense report
-		if (!empty($conf->global->EXPENSEREPORT_USE_OLD_NUMBERING_RULE)) {
+		if (getDolGlobalString('EXPENSEREPORT_USE_OLD_NUMBERING_RULE')) {
 			$fuser = null;
 			if ($object->fk_user_author > 0) {
 				$fuser = new User($db);
 				$fuser->fetch($object->fk_user_author);
 			}
 
-			$expld_car = (empty($conf->global->NDF_EXPLODE_CHAR)) ? "-" : $conf->global->NDF_EXPLODE_CHAR;
-			$num_car = (empty($conf->global->NDF_NUM_CAR_REF)) ? "5" : $conf->global->NDF_NUM_CAR_REF;
+			$expld_car = (!getDolGlobalString('NDF_EXPLODE_CHAR')) ? "-" : $conf->global->NDF_EXPLODE_CHAR;
+			$num_car = (!getDolGlobalString('NDF_NUM_CAR_REF')) ? "5" : $conf->global->NDF_NUM_CAR_REF;
 
 			$sql = 'SELECT MAX(de.ref_number_int) as max';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'expensereport de';
@@ -158,7 +160,7 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 			$user_author_infos = dolGetFirstLastname($fuser->firstname, $fuser->lastname);
 
 			$prefix = "ER";
-			if (!empty($conf->global->EXPENSE_REPORT_PREFIX)) {
+			if (getDolGlobalString('EXPENSE_REPORT_PREFIX')) {
 				$prefix = $conf->global->EXPENSE_REPORT_PREFIX;
 			}
 			$newref = str_replace(' ', '_', $user_author_infos).$expld_car.$prefix.$newref.$expld_car.dol_print_date($object->date_debut, '%y%m%d');
@@ -200,7 +202,7 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 			return 0;
 		}
 
-		$yymm = strftime("%y%m", $date);
+		$yymm = dol_print_date($date, "%y%m");
 
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is

@@ -47,12 +47,12 @@ $object->fetch($id, '', true);
 $object->getrights();
 
 // Users/Groups management only in master entity if transverse mode
-if (isModEnabled('multicompany') && $conf->entity > 1 && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+if (isModEnabled('multicompany') && $conf->entity > 1 && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 	accessforbidden();
 }
 
 $canreadperms = true;
-if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$canreadperms = (!empty($user->admin) || !empty($user->rights->user->group_advance->read));
 }
 
@@ -103,7 +103,7 @@ print dol_get_fiche_head($head, 'ldap', $langs->trans("Group"), -1, 'group');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/user/group/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-dol_banner_tab($object, 'id', $linkback, (!empty($user->rights->user->user->lire) || !empty($user->admin)));
+dol_banner_tab($object, 'id', $linkback, ($user->hasRight('user', 'user', 'lire') || !empty($user->admin)));
 
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';

@@ -55,11 +55,11 @@ class Mos extends DolibarrApi
 	 *
 	 * Return an array with MO informations
 	 *
-	 * @param 	int 	$id 			ID of MO
-	 * @return  Object              	Object with cleaned properties
+	 * @param	int		$id				ID of MO
+	 * @return  Object					Object with cleaned properties
 	 *
 	 * @url	GET {id}
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	public function get($id)
 	{
@@ -85,16 +85,17 @@ class Mos extends DolibarrApi
 	 *
 	 * Get a list of MOs
 	 *
-	 * @param string	       $sortfield	        Sort field
-	 * @param string	       $sortorder	        Sort order
-	 * @param int		       $limit		        Limit for list
-	 * @param int		       $page		        Page number
+	 * @param string		   $sortfield			Sort field
+	 * @param string		   $sortorder			Sort order
+	 * @param int			   $limit				Limit for list
+	 * @param int			   $page				Page number
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string		   $properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of order objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
 		global $db, $conf;
 
@@ -172,16 +173,14 @@ class Mos extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$tmp_object = new Mo($this->db);
 				if ($tmp_object->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($tmp_object);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($tmp_object), $properties);
 				}
 				$i++;
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieve MO list');
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No MO found');
-		}
+
 		return $obj_ret;
 	}
 
@@ -200,6 +199,12 @@ class Mos extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->mo->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->mo->$field = $value;
 		}
 
@@ -238,6 +243,12 @@ class Mos extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->mo->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->mo->$field = $value;
 		}
 
@@ -295,8 +306,8 @@ class Mos extends DolibarrApi
 	 *   "arraytoproduce": []
 	 * }
 	 *
-	 * @param int       $id        		ID of state
-	 * @param array 	$request_data   Request datas
+	 * @param int       $id				ID of state
+	 * @param array		$request_data   Request datas
 	 *
 	 * @url     POST {id}/produceandconsume
 	 *
@@ -320,6 +331,13 @@ class Mos extends DolibarrApi
 			throw new RestException(401, 'Error bad status of MO');
 		}
 
+		// Code for consume and produce...
+		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/mrp/lib/mrp_mo.lib.php';
+
+		$stockmove = new MouvementStock($this->db);
+
 		$labelmovement = '';
 		$codemovement = '';
 		$autoclose = 1;
@@ -342,6 +360,11 @@ class Mos extends DolibarrApi
 			if ($field == 'arraytoproduce') {
 				$arraytoproduce = $value;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$stockmove->context['caller'] = $request_data['caller'];
+				continue;
+			}
 		}
 
 		if (empty($labelmovement)) {
@@ -351,13 +374,6 @@ class Mos extends DolibarrApi
 			throw new RestException(500, "Field inventorycode not provided");
 		}
 
-		// Code for consume and produce...
-		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
-		dol_include_once('/mrp/lib/mrp_mo.lib.php');
-
-		$stockmove = new MouvementStock($this->db);
-
 		$consumptioncomplete = true;
 		$productioncomplete = true;
 
@@ -365,7 +381,7 @@ class Mos extends DolibarrApi
 			$pos = 0;
 			$arrayofarrayname = array("arraytoconsume","arraytoproduce");
 			foreach ($arrayofarrayname as $arrayname) {
-				foreach ($arrayname as $value) {
+				foreach (${$arrayname} as $value) {
 					$tmpproduct = new Product($this->db);
 					if (empty($value["objectid"])) {
 						throw new RestException(500, "Field objectid required in ".$arrayname);
@@ -374,7 +390,7 @@ class Mos extends DolibarrApi
 					if (empty($value["qty"])) {
 						throw new RestException(500, "Field qty required in ".$arrayname);
 					}
-					if ($value["qty"]!=0) {
+					if ($value["qty"] != 0) {
 						$qtytoprocess = $value["qty"];
 						if (isset($value["fk_warehouse"])) {	// If there is a warehouse to set
 							if (!($value["fk_warehouse"] > 0)) {	// If there is no warehouse set.
@@ -647,8 +663,8 @@ class Mos extends DolibarrApi
 	/**
 	 * Clean sensible object datas
 	 *
-	 * @param   Object  $object     Object to clean
-	 * @return  Object              Object with cleaned properties
+	 * @param   Object  $object			Object to clean
+	 * @return  Object					Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{

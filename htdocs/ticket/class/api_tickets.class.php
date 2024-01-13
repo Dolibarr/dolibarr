@@ -65,8 +65,8 @@ class Tickets extends DolibarrApi
 	 *
 	 * Return an array with ticket informations
 	 *
-	 * @param	int 			$id 		ID of ticket
-	 * @return  Object              		Object with cleaned properties
+	 * @param	int				$id			ID of ticket
+	 * @return  Object						Object with cleaned properties
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 403
@@ -82,14 +82,14 @@ class Tickets extends DolibarrApi
 	 *
 	 * Return an array with ticket informations
 	 *
-	 * @param	string  		$track_id 	Tracking ID of ticket
-	 * @return 	array|mixed 				Data without useless information
+	 * @param	string			$track_id	Tracking ID of ticket
+	 * @return	array|mixed					Data without useless information
 	 *
 	 * @url GET track_id/{track_id}
 	 *
-	 * @throws RestException 	401
-	 * @throws RestException 	403
-	 * @throws RestException 	404
+	 * @throws RestException	401
+	 * @throws RestException	403
+	 * @throws RestException	404
 	 */
 	public function getByTrackId($track_id)
 	{
@@ -101,8 +101,8 @@ class Tickets extends DolibarrApi
 	 *
 	 * Return an array with ticket informations
 	 *
-	 * @param	string  		$ref    	Reference for ticket
-	 * @return 	array|mixed 				Data without useless information
+	 * @param	string			$ref		Reference for ticket
+	 * @return	array|mixed					Data without useless information
 	 *
 	 * @url GET ref/{ref}
 	 *
@@ -119,10 +119,10 @@ class Tickets extends DolibarrApi
 	 * Get properties of a Ticket object
 	 * Return an array with ticket informations
 	 *
-	 * @param	int 			$id 		ID of ticket
-	 * @param	string  		$track_id 	Tracking ID of ticket
-	 * @param	string  		$ref    	Reference for ticket
-	 * @return 	array|mixed 				Data without useless information
+	 * @param	int				$id			ID of ticket
+	 * @param	string			$track_id	Tracking ID of ticket
+	 * @param	string			$ref		Reference for ticket
+	 * @return	array|mixed					Data without useless information
 	 */
 	private function getCommon($id = 0, $track_id = '', $ref = '')
 	{
@@ -194,11 +194,12 @@ class Tickets extends DolibarrApi
 	 * @param int		$limit		Limit for list
 	 * @param int		$page		Page number
 	 * @param string	$sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101') and (t.fk_statut:=:1)"
+	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 *
 	 * @return array Array of ticket objects
 	 *
 	 */
-	public function index($socid = 0, $sortfield = "t.rowid", $sortorder = "ASC", $limit = 100, $page = 0, $sqlfilters = '')
+	public function index($socid = 0, $sortfield = "t.rowid", $sortorder = "ASC", $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
 		global $db, $conf;
 
@@ -277,17 +278,15 @@ class Tickets extends DolibarrApi
 						$userStatic->fetch($ticket_static->fk_user_assign);
 						$ticket_static->fk_user_assign_string = $userStatic->firstname.' '.$userStatic->lastname;
 					}
-					$obj_ret[] = $this->_cleanObjectDatas($ticket_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($ticket_static), $properties);
 				}
 				$i++;
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieve ticket list');
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No ticket found');
-		}
-			return $obj_ret;
+
+		return $obj_ret;
 	}
 
 	/**
@@ -306,6 +305,12 @@ class Tickets extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->ticket->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->ticket->$field = $value;
 		}
 		if (empty($this->ticket->ref)) {
@@ -339,6 +344,12 @@ class Tickets extends DolibarrApi
 		$result = $this->_validateMessage($request_data);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->ticket->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->ticket->$field = $value;
 		}
 		$ticketMessageText = $this->ticket->message;
@@ -377,10 +388,16 @@ class Tickets extends DolibarrApi
 		}
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->ticket->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->ticket->$field = $value;
 		}
 
-		if ($this->ticket->update($id, DolibarrApiAccess::$user)) {
+		if ($this->ticket->update(DolibarrApiAccess::$user)) {
 			return $this->get($id);
 		}
 
@@ -519,8 +536,8 @@ class Tickets extends DolibarrApi
 			"cache_types_tickets",
 			"cache_category_tickets",
 			"regeximgext",
-			"statuts_short",
-			"statuts"
+			"labelStatus",
+			"labelStatusShort"
 		);
 		foreach ($attr2clean as $toclean) {
 			unset($object->$toclean);

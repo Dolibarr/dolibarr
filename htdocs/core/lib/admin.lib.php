@@ -164,7 +164,7 @@ function versiondolibarrarray()
  *  @param		int			$colspan					2=Add a colspan=2 on td
  *  @param		int			$onlysqltoimportwebsite		Only sql resquests used to import a website template are allowed
  *  @param		string		$database					Database (replace __DATABASE__ with this value)
- * 	@return		int										<=0 if KO, >0 if OK
+ * 	@return		int										Return integer <=0 if KO, >0 if OK
  */
 function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler = '', $okerror = 'default', $linelengthlimit = 32768, $nocommentremoval = 0, $offsetforchartofaccount = 0, $colspan = 0, $onlysqltoimportwebsite = 0, $database = '')
 {
@@ -218,8 +218,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 							if (!count($versionrequest) || !count($versionarray) || versioncompare($versionrequest, $versionarray) > 0) {
 								$qualified = 0;
 							}
-						} else // This is a test on a constant. For example when we have -- VMYSQLUTF8UNICODE, we test constant $conf->global->UTF8UNICODE
-						{
+						} else { // This is a test on a constant. For example when we have -- VMYSQLUTF8UNICODE, we test constant $conf->global->UTF8UNICODE
 							$dbcollation = strtoupper(preg_replace('/_/', '', $conf->db->dolibarr_main_db_collation));
 							//var_dump($reg[2]);
 							//var_dump($dbcollation);
@@ -243,7 +242,9 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 				if (empty($nocommentremoval)) {
 					$buf = preg_replace('/([,;ERLT\)])\s*--.*$/i', '\1', $buf); //remove comment from a line that not start with -- before add it to the buffer
 				}
-				if ($buffer) $buffer .= ' ';
+				if ($buffer) {
+					$buffer .= ' ';
+				}
 				$buffer .= trim($buf);
 			}
 
@@ -555,7 +556,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
  *	@param	    DoliDB		$db         Database handler
  *	@param	    string|int	$name		Name of constant or rowid of line
  *	@param	    int			$entity		Multi company id, -1 for all entities
- *	@return     int         			<0 if KO, >0 if OK
+ *	@return     int         			Return integer <0 if KO, >0 if OK
  *
  *	@see		dolibarr_get_const(), dolibarr_set_const(), dol_set_user_param()
  */
@@ -716,7 +717,7 @@ function modules_prepare_head($nbofactivatedmodules, $nboftotalmodules, $nbmodul
 
 	$h = 0;
 	$head = array();
-	$mode = empty($conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT) ? 'commonkanban' : $conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT;
+	$mode = getDolGlobalString('MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT', 'commonkanban');
 	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$mode;
 	if ($nbmodulesnotautoenabled <= getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled)
 		//$head[$h][1] = $form->textwithpicto($langs->trans("AvailableModules"), $desc);
@@ -843,7 +844,7 @@ function security_prepare_head()
 	$sql .= " WHERE r.libelle NOT LIKE 'tou%'"; // On ignore droits "tous"
 	$sql .= " AND entity = ".((int) $conf->entity);
 	$sql .= " AND bydefault = 1";
-	if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+	if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 		$sql .= " AND r.perms NOT LIKE '%_advance'"; // Hide advanced perms if option is not enabled
 	}
 	$resql = $db->query($sql);
@@ -859,7 +860,7 @@ function security_prepare_head()
 	$head[$h][0] = DOL_URL_ROOT."/admin/perms.php";
 	$head[$h][1] = $langs->trans("DefaultRights");
 	if ($nbPerms > 0) {
-		$head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">'.$nbPerms.'</span>' : '');
+		$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.$nbPerms.'</span>' : '');
 	}
 	$head[$h][2] = 'default';
 	$h++;
@@ -869,12 +870,13 @@ function security_prepare_head()
 
 /**
  * Prepare array with list of tabs
- * @param object $object descriptor class
+ *
+ * @param 	object 	$object 	Descriptor class
  * @return  array				Array of tabs to show
  */
 function modulehelp_prepare_head($object)
 {
-	global $langs, $conf, $user;
+	global $langs, $conf;
 	$h = 0;
 	$head = array();
 
@@ -912,7 +914,7 @@ function modulehelp_prepare_head($object)
  */
 function translation_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf;
 	$h = 0;
 	$head = array();
 
@@ -1067,7 +1069,7 @@ function purgeSessions($mysessionid)
 
 					if (preg_match('/dol_login/i', $sessValues) && // limit to dolibarr session
 					preg_match('/dol_entity\|s:([0-9]+):"('.$conf->entity.')"/i', $sessValues) && // limit to current entity
-					preg_match('/dol_company\|s:([0-9]+):"('.$conf->global->MAIN_INFO_SOCIETE_NOM.')"/i', $sessValues)) { // limit to company name
+					preg_match('/dol_company\|s:([0-9]+):"(' . getDolGlobalString('MAIN_INFO_SOCIETE_NOM').')"/i', $sessValues)) { // limit to company name
 						$tmp = explode('_', $file);
 						$idsess = $tmp[1];
 						// We remove session if it's not ourself
@@ -1158,7 +1160,7 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0)
 
 	$const_name = $objMod->const_name;
 	if ($noconfverification == 0) {
-		if (!empty($conf->global->$const_name)) {
+		if (getDolGlobalString($const_name)) {
 			return $ret;
 		}
 	}
@@ -1230,7 +1232,7 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0)
 
 	if (!count($ret['errors'])) {
 		$ret['nbmodules']++;
-		$ret['nbperms'] += (is_array($objMod->rights)?count($objMod->rights):0);
+		$ret['nbperms'] += (is_array($objMod->rights) ? count($objMod->rights) : 0);
 	}
 
 	return $ret;
@@ -1277,8 +1279,7 @@ function unActivateModule($value, $requiredby = 1)
 		if ($result <= 0) {
 			$ret = $objMod->error;
 		}
-	} else // We come here when we try to unactivate a module when module does not exists anymore in sources
-	{
+	} else { // We come here when we try to unactivate a module when module does not exists anymore in sources
 		//print $dir.$modFile;exit;
 		// TODO Replace this after DolibarrModules is moved as abstract class with a try catch to show module we try to disable has not been found or could not be loaded
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -1514,13 +1515,13 @@ function activateModulesRequiredByCountry($country_code)
 						// We discard modules according to features level (PS: if module is activated we always show it)
 						$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
 
-						if ($objMod->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+						if ($objMod->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 							$modulequalified = 0;
 						}
-						if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+						if ($objMod->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 							$modulequalified = 0;
 						}
-						if (!empty($conf->global->$const_name)) {
+						if (getDolGlobalString($const_name)) {
 							$modulequalified = 0; // already activated
 						}
 
@@ -1595,14 +1596,14 @@ function complete_elementList_with_modules(&$elementList)
 
 						// We discard modules according to features level (PS: if module is activated we always show it)
 						$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
-						if ($objMod->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2 && getDolGlobalString($const_name)) {
+						if ($objMod->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2 && getDolGlobalString($const_name)) {
 							$modulequalified = 0;
 						}
-						if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && getDolGlobalString($const_name)) {
+						if ($objMod->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1 && getDolGlobalString($const_name)) {
 							$modulequalified = 0;
 						}
-						//If module is not activated disqualified
-						if (empty($conf->global->$const_name)) {
+						// If module is not activated disqualified
+						if (!getDolGlobalString($const_name)) {
 							$modulequalified = 0;
 						}
 
@@ -1745,7 +1746,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Valu
 			if (!empty($tableau[$key]['tooltip'])) {
 				print $form->textwithpicto($label ? $label : $langs->trans('Desc'.$const), $tableau[$key]['tooltip']);
 			} else {
-				print ($label ? $label : $langs->trans('Desc'.$const));
+				print($label ? $label : $langs->trans('Desc'.$const));
 			}
 
 			if ($const == 'ADHERENT_MAILMAN_URL') {
@@ -1870,7 +1871,7 @@ function showModulesExludedForExternal($modules)
 	global $conf, $langs;
 
 	$text = $langs->trans("OnlyFollowingModulesAreOpenedToExternalUsers");
-	$listofmodules = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);	// List of modules qualified for external user management
+	$listofmodules = explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL'));	// List of modules qualified for external user management
 
 	$i = 0;
 	if (!empty($modules)) {
@@ -1913,7 +1914,7 @@ function showModulesExludedForExternal($modules)
  *	@param		string	$type			Model type
  *	@param		string	$label			Model label
  *	@param		string	$description	Model description
- *	@return		int						<0 if KO, >0 if OK
+ *	@return		int						Return integer <0 if KO, >0 if OK
  */
 function addDocumentModel($name, $type, $label = '', $description = '')
 {
@@ -1944,7 +1945,7 @@ function addDocumentModel($name, $type, $label = '', $description = '')
  *
  *	@param		string	$name			Model name
  *	@param		string	$type			Model type
- *	@return		int						<0 if KO, >0 if OK
+ *	@return		int						Return integer <0 if KO, >0 if OK
  */
 function delDocumentModel($name, $type)
 {

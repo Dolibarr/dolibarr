@@ -363,7 +363,7 @@ div.cadre td.ok {
 }
 /*Case de tableau NON dans affichage de sondage*/
 div.cadre td.non {
-	background-color: #FF7777;
+	background-color: #FFBBBB;
 	min-width: 60px;
 }
 /*Case de tableau VIDE dans affichage de sondage*/
@@ -377,6 +377,9 @@ div.cadre td.nom {
 	background-color: #DDDDDD;
 	text-align:center;
 	padding: 8px;
+}
+div.cadre td.sujet, div.cadre td.annee, div.cadre td.mois, div.cadre td.jour {
+	padding: 8px !important;
 }
 div.cadre td.casevide {
 	background-color: white;

@@ -61,6 +61,7 @@ class Import
 	public $array_import_entities;
 	public $array_import_regex;
 	public $array_import_updatekeys;
+	public $array_import_preselected_updatekeys;
 	public $array_import_examplevalues;
 	public $array_import_convertvalue;
 	public $array_import_run_sql_after;
@@ -90,7 +91,7 @@ class Import
 	 *
 	 *  @param		User	$user      	Object user making import
 	 *  @param  	string	$filter		Load a particular dataset only. Index will start to 0.
-	 *  @return		int					<0 if KO, >0 if OK
+	 *  @return		int					Return integer <0 if KO, >0 if OK
 	 */
 	public function load_arrays($user, $filter = '')
 	{
@@ -191,6 +192,8 @@ class Import
 						$this->array_import_regex[$i] = (isset($module->import_regex_array[$r]) ? $module->import_regex_array[$r] : '');
 						// Array of columns allowed as UPDATE options
 						$this->array_import_updatekeys[$i] = (isset($module->import_updatekeys_array[$r]) ? $module->import_updatekeys_array[$r] : '');
+						// Array of columns preselected as UPDATE options
+						$this->array_import_preselected_updatekeys[$i] = (isset($module->import_preselected_updatekeys_array[$r]) ? $module->import_preselected_updatekeys_array[$r] : '');
 						// Array of examples
 						$this->array_import_examplevalues[$i] = (isset($module->import_examplevalues_array[$r]) ? $module->import_examplevalues_array[$r] : '');
 						// Tableau des regles de conversion d'une valeur depuis une autre source (cle=champ, valeur=tableau des regles)
@@ -221,7 +224,7 @@ class Import
 	 *  @param      string	$headerlinefields   Array of values for first line of example file
 	 *  @param      string	$contentlinevalues	Array of values for content line of example file
 	 *  @param		string	$datatoimport		Dataset to import
-	 *  @return		string						<0 if KO, >0 if OK
+	 *  @return		string						Return integer <0 if KO, >0 if OK
 	 */
 	public function build_example_file($model, $headerlinefields, $contentlinevalues, $datatoimport)
 	{
@@ -261,7 +264,7 @@ class Import
 	 *  Save an export model in database
 	 *
 	 *  @param		User	$user 	Object user that save
-	 *  @return		int				<0 if KO, >0 if OK
+	 *  @return		int				Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user)
 	{
@@ -271,13 +274,16 @@ class Import
 
 		// Check parameters
 		if (empty($this->model_name)) {
-			$this->error = 'ErrorWrongParameters'; return -1;
+			$this->error = 'ErrorWrongParameters';
+			return -1;
 		}
 		if (empty($this->datatoimport)) {
-			$this->error = 'ErrorWrongParameters'; return -1;
+			$this->error = 'ErrorWrongParameters';
+			return -1;
 		}
 		if (empty($this->hexa)) {
-			$this->error = 'ErrorWrongParameters'; return -1;
+			$this->error = 'ErrorWrongParameters';
+			return -1;
 		}
 
 		$this->db->begin();
@@ -311,7 +317,7 @@ class Import
 	 *  Load an import profil from database
 	 *
 	 *  @param		int		$id		Id of profil to load
-	 *  @return		int				<0 if KO, >0 if OK
+	 *  @return		int				Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -345,7 +351,7 @@ class Import
 	 *
 	 *	@param      User	$user        	User that delete
 	 *  @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -359,7 +365,8 @@ class Import
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {

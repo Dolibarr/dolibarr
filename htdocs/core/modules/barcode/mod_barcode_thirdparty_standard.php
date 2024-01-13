@@ -109,8 +109,8 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 		// Mask parameter
 		//$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("BarCodeModel").'):</td>';
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value1" value="'.(!empty($conf->global->BARCODE_STANDARD_THIRDPARTY_MASK) ? $conf->global->BARCODE_STANDARD_THIRDPARTY_MASK : '').'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition small" name="modify" value="'.$langs->trans("Modify").'"'.$disabled.'></td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value1" value="'.(getDolGlobalString('BARCODE_STANDARD_THIRDPARTY_MASK') ? $conf->global->BARCODE_STANDARD_THIRDPARTY_MASK : '').'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.$langs->trans("Modify").'"'.$disabled.'></td>';
 		$texte .= '</tr>';
 
 		$texte .= '</table>';
@@ -192,7 +192,7 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 
 		// Get Mask value
 		$mask = '';
-		if (!empty($conf->global->BARCODE_STANDARD_THIRDPARTY_MASK)) {
+		if (getDolGlobalString('BARCODE_STANDARD_THIRDPARTY_MASK')) {
 			$mask = $conf->global->BARCODE_STANDARD_THIRDPARTY_MASK;
 		}
 
@@ -216,8 +216,8 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 					if (strlen($numFinal)==13) {// be sure that the mask length is correct for EAN13
 						$ean = substr($numFinal, 0, 12); //take first 12 digits
 							$eansum = barcode_gen_ean_sum($ean);
-							$ean .= $eansum; //substitute the las character by the key
-							$numFinal = $ean;
+						$ean .= $eansum; //substitute the las character by the key
+						$numFinal = $ean;
 					}
 					break;
 				// Other barcode cases with key could be written here
@@ -255,14 +255,14 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 		$result = 0;
 		$code = strtoupper(trim($code));
 
-		if (empty($code) && $this->code_null && empty($conf->global->BARCODE_STANDARD_THIRDPARTY_MASK)) {
+		if (empty($code) && $this->code_null && !getDolGlobalString('BARCODE_STANDARD_THIRDPARTY_MASK')) {
 			$result = 0;
-		} elseif (empty($code) && (!$this->code_null || !empty($conf->global->BARCODE_STANDARD_THIRDPARTY_MASK))) {
+		} elseif (empty($code) && (!$this->code_null || getDolGlobalString('BARCODE_STANDARD_THIRDPARTY_MASK'))) {
 			$result = -2;
 		} else {
 			if ($this->verif_syntax($code, $type) >= 0) {
 				$is_dispo = $this->verif_dispo($db, $code, $thirdparty);
-				if ($is_dispo <> 0) {
+				if ($is_dispo != 0) {
 					$result = -3;
 				} else {
 					$result = 0;
@@ -327,7 +327,7 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 		$result = 0;
 
 		// Get Mask value
-		$mask = empty($conf->global->BARCODE_STANDARD_THIRDPARTY_MASK) ? '' : $conf->global->BARCODE_STANDARD_THIRDPARTY_MASK;
+		$mask = !getDolGlobalString('BARCODE_STANDARD_THIRDPARTY_MASK') ? '' : $conf->global->BARCODE_STANDARD_THIRDPARTY_MASK;
 		if (!$mask) {
 			$this->error = 'NotConfigured';
 			return -1;

@@ -29,7 +29,6 @@
  */
 class ExpenseReports extends DolibarrApi
 {
-
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
@@ -59,9 +58,9 @@ class ExpenseReports extends DolibarrApi
 	 * Return an array with Expense Report informations
 	 *
 	 * @param   int         $id         ID of Expense Report
-	 * @return  Object              	Object with cleaned properties
+	 * @return  Object					Object with cleaned properties
 	 *
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	public function get($id)
 	{
@@ -91,11 +90,12 @@ class ExpenseReports extends DolibarrApi
 	 * @param string	$sortorder	Sort order
 	 * @param int		$limit		Limit for list
 	 * @param int		$page		Page number
-	 * @param string   	$user_ids   User ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
+	 * @param string	$user_ids   User ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array               Array of Expense Report objects
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = 0, $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = 0, $sqlfilters = '', $properties = '')
 	{
 		global $db, $conf;
 
@@ -144,16 +144,14 @@ class ExpenseReports extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$expensereport_static = new ExpenseReport($this->db);
 				if ($expensereport_static->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($expensereport_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($expensereport_static), $properties);
 				}
 				$i++;
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieve Expense Report list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No Expense Report found');
-		}
+
 		return $obj_ret;
 	}
 
@@ -173,6 +171,12 @@ class ExpenseReports extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->expensereport->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->expensereport->$field = $value;
 		}
 		/*if (isset($request_data["lines"])) {
@@ -420,6 +424,12 @@ class ExpenseReports extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->expensereport->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->expensereport->$field = $value;
 		}
 

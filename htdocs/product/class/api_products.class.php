@@ -162,20 +162,21 @@ class Products extends DolibarrApi
 	 *
 	 * Get a list of products
 	 *
-	 * @param  string $sortfield  			Sort field
-	 * @param  string $sortorder  			Sort order
-	 * @param  int    $limit      			Limit for list
-	 * @param  int    $page       			Page number
-	 * @param  int    $mode       			Use this param to filter list (0 for all, 1 for only product, 2 for only service)
-	 * @param  int    $category   			Use this param to filter list by category
-	 * @param  string $sqlfilters 			Other criteria to filter answers separated by a comma. Syntax example "(t.tobuy:=:0) and (t.tosell:=:1)"
-	 * @param  bool   $ids_only   			Return only IDs of product instead of all properties (faster, above all if list is long)
-	 * @param  int    $variant_filter   	Use this param to filter list (0 = all, 1=products without variants, 2=parent of variants, 3=variants only)
-	 * @param  bool   $pagination_data   	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0
+	 * @param  string $sortfield			Sort field
+	 * @param  string $sortorder			Sort order
+	 * @param  int    $limit				Limit for list
+	 * @param  int    $page					Page number
+	 * @param  int    $mode					Use this param to filter list (0 for all, 1 for only product, 2 for only service)
+	 * @param  int    $category				Use this param to filter list by category
+	 * @param  string $sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.tobuy:=:0) and (t.tosell:=:1)"
+	 * @param  bool   $ids_only				Return only IDs of product instead of all properties (faster, above all if list is long)
+	 * @param  int    $variant_filter		Use this param to filter list (0 = all, 1=products without variants, 2=parent of variants, 3=variants only)
+	 * @param  bool   $pagination_data		If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0
 	 * @param  int    $includestockdata		Load also information about stock (slower)
-	 * @return array                		Array of product objects
+	 * @param string  $properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @return array						Array of product objects
 	 */
-	public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $ids_only = false, $variant_filter = 0, $pagination_data = false, $includestockdata = 0)
+	public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $ids_only = false, $variant_filter = 0, $pagination_data = false, $includestockdata = 0, $properties = '')
 	{
 		global $db, $conf;
 
@@ -266,7 +267,7 @@ class Products extends DolibarrApi
 						}
 
 
-						$obj_ret[] = $this->_cleanObjectDatas($product_static);
+						$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($product_static), $properties);
 					}
 				} else {
 					$obj_ret[] = $obj->rowid;
@@ -275,9 +276,6 @@ class Products extends DolibarrApi
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieve product list : '.$this->db->lasterror());
-		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No product found');
 		}
 
 		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
@@ -315,6 +313,12 @@ class Products extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->product->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->product->$field = $value;
 		}
 		if ($this->product->create(DolibarrApiAccess::$user) < 0) {
@@ -361,6 +365,12 @@ class Products extends DolibarrApi
 			if ($field == 'stock_reel') {
 				throw new RestException(400, 'Stock reel cannot be updated here. Use the /stockmovements endpoint instead');
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->product->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->product->$field = $value;
 		}
 
@@ -372,7 +382,7 @@ class Products extends DolibarrApi
 		$result = $this->product->update($id, DolibarrApiAccess::$user, 1, 'update', $updatetype);
 
 		// If price mode is 1 price per product
-		if ($result > 0 && !empty($conf->global->PRODUCT_PRICE_UNIQ)) {
+		if ($result > 0 && getDolGlobalString('PRODUCT_PRICE_UNIQ')) {
 			// We update price only if it was changed
 			$pricemodified = false;
 			if ($this->product->price_base_type != $oldproduct->price_base_type) {
@@ -431,7 +441,7 @@ class Products extends DolibarrApi
 	/**
 	 * Delete product
 	 *
-	 * @param  int 		$id 		Product ID
+	 * @param  int		$id			Product ID
 	 * @return array
 	 */
 	public function delete($id)
@@ -588,10 +598,6 @@ class Products extends DolibarrApi
 
 		$result = $categories->getListForItem($id, 'product', $sortfield, $sortorder, $limit, $page);
 
-		if (empty($result)) {
-			throw new RestException(404, 'No category found');
-		}
-
 		if ($result < 0) {
 			throw new RestException(503, 'Error when retrieve category list : '.join(',', array_merge(array($categories->error), $categories->errors)));
 		}
@@ -616,7 +622,7 @@ class Products extends DolibarrApi
 			throw new RestException(401);
 		}
 
-		if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+		if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 			throw new RestException(400, 'API not available: this mode of pricing is not enabled by setup');
 		}
 
@@ -643,8 +649,8 @@ class Products extends DolibarrApi
 	/**
 	 * Get prices per customer for a product
 	 *
-	 * @param int 		$id 				ID of product
-	 * @param string   	$thirdparty_id	  	Thirdparty id to filter orders of (example '1') {@pattern /^[0-9,]*$/i}
+	 * @param int		$id					ID of product
+	 * @param string	$thirdparty_id		Thirdparty id to filter orders of (example '1') {@pattern /^[0-9,]*$/i}
 	 *
 	 * @return mixed
 	 *
@@ -658,7 +664,7 @@ class Products extends DolibarrApi
 			throw new RestException(401);
 		}
 
-		if (empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+		if (!getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 			throw new RestException(400, 'API not available: this mode of pricing is not enabled by setup');
 		}
 
@@ -674,7 +680,7 @@ class Products extends DolibarrApi
 
 		if ($result > 0) {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
-			$prodcustprice = new Productcustomerprice($this->db);
+			$prodcustprice = new ProductCustomerPrice($this->db);
 			$filter = array();
 			$filter['t.fk_product'] = $id;
 			if ($thirdparty_id) {
@@ -707,7 +713,7 @@ class Products extends DolibarrApi
 			throw new RestException(401);
 		}
 
-		if (empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) {
+		if (!getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY')) {
 			throw new RestException(400, 'API not available: this mode of pricing is not enabled by setup');
 		}
 
@@ -730,28 +736,28 @@ class Products extends DolibarrApi
 	 * Add/Update purchase prices for a product.
 	 *
 	 * @param   int         $id                             ID of Product
-	 * @param  	float		$qty				            Min quantity for which price is valid
-	 * @param  	float		$buyprice			            Purchase price for the quantity min
-	 * @param  	string		$price_base_type	            HT or TTC
-	 * @param  	int		    $fourn_id                       Supplier ID
-	 * @param  	int			$availability		            Product availability
-	 * @param	string		$ref_fourn			            Supplier ref
-	 * @param	float		$tva_tx				            New VAT Rate (For example 8.5. Should not be a string)
-	 * @param  	string		$charges			            costs affering to product
-	 * @param  	float		$remise_percent		            Discount  regarding qty (percent)
-	 * @param  	float		$remise				            Discount  regarding qty (amount)
-	 * @param  	int			$newnpr				            Set NPR or not
-	 * @param	int			$delivery_time_days	            Delay in days for delivery (max). May be '' if not defined.
+	 * @param	float		$qty							Min quantity for which price is valid
+	 * @param	float		$buyprice						Purchase price for the quantity min
+	 * @param	string		$price_base_type				HT or TTC
+	 * @param	int			$fourn_id                       Supplier ID
+	 * @param	int			$availability					Product availability
+	 * @param	string		$ref_fourn						Supplier ref
+	 * @param	float		$tva_tx							New VAT Rate (For example 8.5. Should not be a string)
+	 * @param	string		$charges						costs affering to product
+	 * @param	float		$remise_percent					Discount  regarding qty (percent)
+	 * @param	float		$remise							Discount  regarding qty (amount)
+	 * @param	int			$newnpr							Set NPR or not
+	 * @param	int			$delivery_time_days				Delay in days for delivery (max). May be '' if not defined.
 	 * @param   string      $supplier_reputation            Reputation with this product to the defined supplier (empty, FAVORITE, DONOTORDER)
-	 * @param   array		$localtaxes_array	            Array with localtaxes info array('0'=>type1,'1'=>rate1,'2'=>type2,'3'=>rate2) (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
-	 * @param   string  	$newdefaultvatcode              Default vat code
-	 * @param  	float		$multicurrency_buyprice 	    Purchase price for the quantity min in currency
-	 * @param  	string		$multicurrency_price_base_type	HT or TTC in currency
-	 * @param  	float		$multicurrency_tx	            Rate currency
-	 * @param  	string		$multicurrency_code	            Currency code
-	 * @param  	string		$desc_fourn     	            Custom description for product_fourn_price
-	 * @param  	string		$barcode     	                Barcode
-	 * @param  	int		    $fk_barcode_type     	        Barcode type
+	 * @param   array		$localtaxes_array				Array with localtaxes info array('0'=>type1,'1'=>rate1,'2'=>type2,'3'=>rate2) (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
+	 * @param   string		$newdefaultvatcode              Default vat code
+	 * @param	float		$multicurrency_buyprice			Purchase price for the quantity min in currency
+	 * @param	string		$multicurrency_price_base_type	HT or TTC in currency
+	 * @param	float		$multicurrency_tx				Rate currency
+	 * @param	string		$multicurrency_code				Currency code
+	 * @param	string		$desc_fourn						Custom description for product_fourn_price
+	 * @param	string		$barcode						Barcode
+	 * @param	int			$fk_barcode_type				Barcode type
 	 * @return int
 	 *
 	 * @throws RestException 500	System error
@@ -940,9 +946,7 @@ class Products extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve product list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No product found');
-		}
+
 		return $obj_ret;
 	}
 
@@ -1010,6 +1014,7 @@ class Products extends DolibarrApi
 	 * @param  int    $limit      Limit for list
 	 * @param  int    $page       Page number
 	 * @param  string $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:color)"
+	 * @param string  $properties Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return array
 	 *
 	 * @throws RestException 401
@@ -1018,7 +1023,7 @@ class Products extends DolibarrApi
 	 *
 	 * @url GET attributes
 	 */
-	public function getAttributes($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+	public function getAttributes($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
 		if (!DolibarrApiAccess::$user->rights->produit->lire) {
 			throw new RestException(401);
@@ -1063,11 +1068,7 @@ class Products extends DolibarrApi
 			$tmp->position = $obj->position;
 			$tmp->entity = $obj->entity;
 
-			$return[] = $this->_cleanObjectDatas($tmp);
-		}
-
-		if (!count($return)) {
-			throw new RestException(404, 'No product attribute found');
+			$return[] = $this->_filterObjectProperties($this->_cleanObjectDatas($tmp), $properties);
 		}
 
 		return $return;
@@ -1076,8 +1077,8 @@ class Products extends DolibarrApi
 	/**
 	 * Get attribute by ID.
 	 *
-	 * @param  	int 		$id	 		ID of Attribute
-	 * @return 	Object    				Object with cleaned properties
+	 * @param	int			$id			ID of Attribute
+	 * @return	Object					Object with cleaned properties
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
@@ -1251,9 +1252,9 @@ class Products extends DolibarrApi
 	/**
 	 * Update attributes by id.
 	 *
-	 * @param  	int 	$id    			ID of Attribute
-	 * @param  	array 	$request_data 	Datas
-	 * @return 	Object    				Object with cleaned properties
+	 * @param	int		$id				ID of Attribute
+	 * @param	array	$request_data	Datas
+	 * @return	Object					Object with cleaned properties
 	 *
 	 * @throws RestException
 	 * @throws RestException 401
@@ -1280,6 +1281,12 @@ class Products extends DolibarrApi
 			if ($field == 'rowid') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$prodattr->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$prodattr->$field = $value;
 		}
 
@@ -1299,7 +1306,7 @@ class Products extends DolibarrApi
 	/**
 	 * Delete attributes by id.
 	 *
-	 * @param  int $id 	ID of Attribute
+	 * @param  int $id	ID of Attribute
 	 * @return int		Result of deletion
 	 *
 	 * @throws RestException 500	System error
@@ -1559,9 +1566,9 @@ class Products extends DolibarrApi
 	/**
 	 * Update attribute value.
 	 *
-	 * @param  	int 	$id 			ID of Attribute
-	 * @param  	array 	$request_data 	Datas
-	 * @return 	Object    				Object with cleaned properties
+	 * @param	int		$id				ID of Attribute
+	 * @param	array	$request_data	Datas
+	 * @return	Object					Object with cleaned properties
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 500	System error
@@ -1587,6 +1594,12 @@ class Products extends DolibarrApi
 			if ($field == 'rowid') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$objectval->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$objectval->$field = $value;
 		}
 
@@ -1632,7 +1645,7 @@ class Products extends DolibarrApi
 	/**
 	 * Get product variants.
 	 *
-	 * @param  int 	$id 			ID of Product
+	 * @param  int	$id				ID of Product
 	 * @param  int  $includestock   Default value 0. If parameter is set to 1 the response will contain stock data of each variant
 	 * @return array
 	 *
@@ -1844,6 +1857,12 @@ class Products extends DolibarrApi
 			if ($field == 'rowid') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$prodcomb->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$prodcomb->$field = $value;
 		}
 
@@ -1857,7 +1876,7 @@ class Products extends DolibarrApi
 	/**
 	 * Delete product variants.
 	 *
-	 * @param  int $id 	ID of Variant
+	 * @param  int $id	ID of Variant
 	 * @return int		Result of deletion
 	 *
 	 * @throws RestException 500	System error
@@ -1915,10 +1934,6 @@ class Products extends DolibarrApi
 					unset($stockData[$warehouse_id]);
 				}
 			}
-		}
-
-		if (empty($stockData)) {
-			throw new RestException(404, 'No stock found');
 		}
 
 		return array('stock_warehouses'=>$stockData);
@@ -2014,16 +2029,16 @@ class Products extends DolibarrApi
 	 * Get properties of 1 product object.
 	 * Return an array with product information.
 	 *
-	 * @param  int    $id                 		ID of product
-	 * @param  string $ref                		Ref of element
-	 * @param  string $ref_ext            		Ref ext of element
-	 * @param  string $barcode            		Barcode of element
-	 * @param  int    $includestockdata   		Load also information about stock (slower)
-	 * @param  bool   $includesubproducts 		Load information about subproducts (if product is a virtual product)
-	 * @param  bool   $includeparentid    		Load also ID of parent product (if product is a variant of a parent product)
+	 * @param  int    $id						ID of product
+	 * @param  string $ref						Ref of element
+	 * @param  string $ref_ext					Ref ext of element
+	 * @param  string $barcode					Barcode of element
+	 * @param  int    $includestockdata			Load also information about stock (slower)
+	 * @param  bool   $includesubproducts		Load information about subproducts (if product is a virtual product)
+	 * @param  bool   $includeparentid			Load also ID of parent product (if product is a variant of a parent product)
 	 * @param  bool   $includeifobjectisused	Check if product object is used and set property 'is_object_used' with result.
 	 * @param  bool   $includetrans				Load also the translations of product label and description
-	 * @return array|mixed                		Data without useless information
+	 * @return array|mixed						Data without useless information
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 403

@@ -35,15 +35,16 @@ require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 $langs->loadlangs(array('users', 'other', 'holiday', 'hrm'));
 
 $action = GETPOST('action', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'defineholidaylist';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'defineholidaylist';
 $massaction = GETPOST('massaction', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
+$mode = GETPOST('optioncss', 'aZ');
 
 $search_name = GETPOST('search_name', 'alpha');
 $search_supervisor = GETPOST('search_supervisor', 'int');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
@@ -81,9 +82,16 @@ if ($user->socid > 0) {
 }
 
 // If the user does not have perm to read the page
-if (empty($user->rights->holiday->read)) {
+if (!$user->hasRight('holiday', 'read')) {
 	accessforbidden();
 }
+
+$arrayfields = array(
+	'cp.rowid'=>array('label'=>$langs->trans("Employee"), 'checked'=>1, 'position'=>20),
+	'cp.fk_user'=>array('label'=>$langs->trans("Supervisor"), 'checked'=>1, 'position'=>30),
+	'cp.nbHoliday'=>array('label'=>$langs->trans("MenuConfCP"), 'checked'=>1, 'position'=>40),
+	'cp.note_public'=>array('label'=>$langs->trans("Note"), 'checked'=>1, 'position'=>50),
+);
 
 
 /*
@@ -91,7 +99,8 @@ if (empty($user->rights->holiday->read)) {
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
@@ -157,8 +166,6 @@ if (empty($reshook)) {
 				if ($result < 0) {
 					setEventMessages($holiday->error, $holiday->errors, 'errors');
 					$error++;
-				} elseif ($result == 0) {
-					setEventMessages($langs->trans("HolidayQtyNotModified", $user->login), null, 'warnings');
 				}
 
 				// Update of the days of the employee
@@ -182,6 +189,10 @@ if (empty($reshook)) {
 				$result = $db->query($sql);
 				*/
 			}
+		}
+
+		if (!$error && !$nbok) {
+			setEventMessages($langs->trans("HolidayQtyNotModified", $user->login), null, 'warnings');
 		}
 
 		if (!$error) {
@@ -282,7 +293,7 @@ $filters = '';
 
 // Filter on array of ids of all childs
 $userchilds = array();
-if (empty($user->rights->holiday->readall)) {
+if (!$user->hasRight('holiday', 'readall')) {
 	$userchilds = $user->getAllChildIds(1);
 	$filters .= ' AND u.rowid IN ('.$db->sanitize(join(', ', $userchilds)).')';
 }
@@ -302,6 +313,7 @@ if (is_numeric($listUsers) && $listUsers < 0) {
 $i = 0;
 
 
+
 if (count($typeleaves) == 0) {
 	//print '<div class="info">';
 	print $langs->trans("NoLeaveWithCounterDefined")."<br>\n";
@@ -309,75 +321,106 @@ if (count($typeleaves) == 0) {
 	//print '</div>';
 } else {
 	$canedit = 0;
-	if (!empty($user->rights->holiday->define_holiday)) {
+	if ($user->hasRight('holiday', 'define_holiday')) {
 		$canedit = 1;
 	}
 
 	$moreforfilter = '';
+
+	$selectedfields = '';
+	if ($massactionbutton) {
+		$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+		$selectedfields .= ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
+		$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
+	}
 
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'" id="tablelines3">'."\n";
 
 	print '<tr class="liste_titre_filter">';
 
+	// Action column
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="liste_titre maxwidthsearch center">';
+		$searchpicto = $form->showFilterButtons();
+		print $searchpicto;
+		print '</td>';
+	}
+
 	// User
-	print '<td class="liste_titre">';
-	print '<input type="text" name="search_name" value="'.dol_escape_htmltag($search_name).'" class="maxwidth100">';
-	print '</td>';
-
+	if (!empty($arrayfields['cp.rowid']['checked'])) {
+		print '<td class="liste_titre">';
+		print '<input type="text" name="search_name" value="'.dol_escape_htmltag($search_name).'" class="maxwidth100">';
+		print '</td>';
+	}
 	// Supervisor
-	print '<td class="liste_titre">';
-	print $form->select_dolusers($search_supervisor, 'search_supervisor', 1, null, 0, null, null, 0, 0, 0, '', 0, '', 'maxwidth150');
-	print '</td>';
-
+	if (!empty($arrayfields['cp.fk_user']['checked'])) {
+		print '<td class="liste_titre">';
+		print $form->select_dolusers($search_supervisor, 'search_supervisor', 1, null, 0, null, null, 0, 0, 0, '', 0, '', 'maxwidth150');
+		print '</td>';
+	}
 	// Type of leave request
-	if (count($typeleaves)) {
-		foreach ($typeleaves as $key => $val) {
-			print '<td class="liste_titre" style="text-align:center"></td>';
+	if (!empty($arrayfields['cp.nbHoliday']['checked'])) {
+		if (count($typeleaves)) {
+			foreach ($typeleaves as $key => $val) {
+				print '<td class="liste_titre" style="text-align:center"></td>';
+			}
+		} else {
+			print '<td class="liste_titre"></td>';
 		}
-	} else {
+	}
+	if (!empty($arrayfields['cp.note_public']['checked'])) {
 		print '<td class="liste_titre"></td>';
 	}
 	print '<td class="liste_titre"></td>';
-	print '<td class="liste_titre"></td>';
 
 	// Action column
-	print '<td class="liste_titre maxwidthsearch center">';
-	$searchpicto = $form->showFilterButtons();
-	print $searchpicto;
-	print '</td>';
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="liste_titre maxwidthsearch center">';
+		$searchpicto = $form->showFilterButtons();
+		print $searchpicto;
+		print '</td>';
+	}
 
 	print '</tr>';
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre('Employee', $_SERVER["PHP_SELF"]);
-	print_liste_field_titre('Supervisor', $_SERVER["PHP_SELF"]);
-	if (count($typeleaves)) {
-		foreach ($typeleaves as $key => $val) {
-			$labeltype = ($langs->trans($val['code']) != $val['code']) ? $langs->trans($val['code']) : $langs->trans($val['label']);
-			print_liste_field_titre($labeltype, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'center ');
+	// Action column
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+	}
+	if (!empty($arrayfields['cp.rowid']['checked'])) {
+		print_liste_field_titre('Employee', $_SERVER["PHP_SELF"]);
+	}
+	if (!empty($arrayfields['cp.fk_user']['checked'])) {
+		print_liste_field_titre('Supervisor', $_SERVER["PHP_SELF"]);
+	}
+	if (!empty($arrayfields['cp.nbHoliday']['checked'])) {
+		if (count($typeleaves)) {
+			foreach ($typeleaves as $key => $val) {
+				$labeltype = ($langs->trans($val['code']) != $val['code']) ? $langs->trans($val['code']) : $langs->trans($val['label']);
+				print_liste_field_titre($labeltype, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'center ');
+			}
+		} else {
+			print_liste_field_titre('NoLeaveWithCounterDefined', $_SERVER["PHP_SELF"], '', '', '', '');
 		}
-	} else {
-		print_liste_field_titre('NoLeaveWithCounterDefined', $_SERVER["PHP_SELF"], '', '', '', '');
 	}
-	print_liste_field_titre((empty($user->rights->holiday->define_holiday) ? '' : 'Note'), $_SERVER["PHP_SELF"]);
+	if (!empty($arrayfields['cp.note_public']['checked'])) {
+		print_liste_field_titre((!$user->hasRight('holiday', 'define_holiday') ? '' : 'Note'), $_SERVER["PHP_SELF"]);
+	}
 	print_liste_field_titre('');
-
-	$selectedfields = '';
-	if ($massactionbutton) {
-		$selectedfields = $form->showCheckAddButtons('checkforselect', 1);
+	// Action column
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	}
-
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	print '</tr>';
-
 	$usersupervisor = new User($db);
 
 	foreach ($listUsers as $users) {
 		$arrayofselected = is_array($toselect) ? $toselect : array();
 
 		// If user has not permission to edit/read all, we must see only subordinates
-		if (empty($user->rights->holiday->readall)) {
+		if (!$user->hasRight('holiday', 'readall')) {
 			if (($users['rowid'] != $user->id) && (!in_array($users['rowid'], $userchilds))) {
 				continue; // This user is not into hierarchy of current user, we hide it.
 			}
@@ -398,66 +441,108 @@ if (count($typeleaves) == 0) {
 
 		print '<tr class="oddeven">';
 
-		// User
-		print '<td>';
-		print $userstatic->getNomUrl(-1);
-		print '</td>';
+		// Action column
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td class="nowrap center">';
 
-		// Supervisor
-		print '<td>';
-		if ($userstatic->fk_user > 0) {
-			print $usersupervisor->getNomUrl(-1);
+			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				$selected = 0;
+				if (in_array($userstatic->id, $arrayofselected)) {
+					$selected = 1;
+				}
+				print '<input id="cb'.$userstatic->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$userstatic->id.'"'.($selected ? ' checked="checked"' : '').'>';
+			}
+			print '</td>';
 		}
-		print '</td>';
+
+		// User
+		if (!empty($arrayfields['cp.rowid']['checked'])) {
+			print '<td>';
+			print $userstatic->getNomUrl(-1);
+			print '</td>';
+		}
+		// Supervisor
+		if (!empty($arrayfields['cp.fk_user']['checked'])) {
+			print '<td>';
+			if ($userstatic->fk_user > 0) {
+				print $usersupervisor->getNomUrl(-1);
+			}
+			print '</td>';
+		}
 
 		// Amount for each type
-		if (count($typeleaves)) {
-			foreach ($typeleaves as $key => $val) {
-				$nbtoshow = '';
-				if ($holiday->getCPforUser($users['rowid'], $val['rowid']) != '') {
-					$nbtoshow = price2num($holiday->getCPforUser($users['rowid'], $val['rowid']), 5);
-				}
+		if (!empty($arrayfields['cp.nbHoliday']['checked'])) {
+			if (count($typeleaves)) {
+				foreach ($typeleaves as $key => $val) {
+					$nbtoshow = '';
+					if ($holiday->getCPforUser($users['rowid'], $val['rowid']) != '') {
+						$nbtoshow = price2num($holiday->getCPforUser($users['rowid'], $val['rowid']), 5);
+					}
 
-				//var_dump($users['rowid'].' - '.$val['rowid']);
-				print '<td style="text-align:center">';
-				if ($canedit) {
-					print '<input type="text"'.($canedit ? '' : ' disabled="disabled"').' value="'.$nbtoshow.'" name="nb_holiday_'.$val['rowid'].'['.$users['rowid'].']" class="width75 center" />';
-				} else {
-					print $nbtoshow;
+					//var_dump($users['rowid'].' - '.$val['rowid']);
+					print '<td style="text-align:center">';
+					if ($canedit) {
+						print '<input type="text"'.($canedit ? '' : ' disabled="disabled"').' value="'.$nbtoshow.'" name="nb_holiday_'.$val['rowid'].'['.$users['rowid'].']" class="width75 center" />';
+					} else {
+						print $nbtoshow;
+					}
+					//print ' '.$langs->trans('days');
+					print '</td>'."\n";
 				}
-				//print ' '.$langs->trans('days');
-				print '</td>'."\n";
+			} else {
+				print '<td></td>';
 			}
-		} else {
-			print '<td></td>';
 		}
 
 		// Note
-		print '<td>';
-		if ($canedit) {
-			print '<input type="text"'.($canedit ? '' : ' disabled="disabled"').' class="maxwidthonsmartphone" value="" name="note_holiday['.$users['rowid'].']" size="30"/>';
+		if (!empty($arrayfields['cp.note_public']['checked'])) {
+			print '<td>';
+			if ($canedit) {
+				print '<input type="text"'.($canedit ? '' : ' disabled="disabled"').' class="maxwidthonsmartphone" value="" name="note_holiday['.$users['rowid'].']" size="30"/>';
+			}
+			print '</td>';
 		}
-		print '</td>';
 
 		// Button modify
 		print '<td class="center">';
-		if (!empty($user->rights->holiday->define_holiday)) {	// Allowed to set the balance of any user
+		if ($user->hasRight('holiday', 'define_holiday')) {	// Allowed to set the balance of any user
 			print '<input type="submit" name="update_cp['.$users['rowid'].']" value="'.dol_escape_htmltag($langs->trans("Save")).'" class="button smallpaddingimp"/>';
 		}
 		print '</td>'."\n";
-		print '<td class="nowrap center">';
 
-		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-			$selected = 0;
-			if (in_array($userstatic->id, $arrayofselected)) {
-				$selected = 1;
+		// Action column
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td class="nowrap center">';
+
+			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				$selected = 0;
+				if (in_array($userstatic->id, $arrayofselected)) {
+					$selected = 1;
+				}
+				print '<input id="cb'.$userstatic->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$userstatic->id.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
-			print '<input id="cb'.$userstatic->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$userstatic->id.'"'.($selected ? ' checked="checked"' : '').'>';
+			print '</td>';
 		}
-		print '</td>';
+
 		print '</tr>';
 
 		$i++;
+	}
+
+	if (count($listUsers) <= 0) {
+		$colspan = 2;
+		foreach ($arrayfields as $key => $val) {
+			if (!empty($val['checked'])) {
+				if ($key == 'cp.nbHoliday') {
+					foreach ($typeleaves as $leave_key => $leave_val) {
+						$colspan++;
+					}
+				} else {
+					$colspan++;
+				}
+			}
+		}
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 
 	print '</table>';
