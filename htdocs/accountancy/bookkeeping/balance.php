@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2016       Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2016       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2016-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2016-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -248,7 +248,9 @@ if ($type == 'sub') {
 	$title_page = $langs->trans("AccountBalance");
 }
 
-llxHeader('', $title_page);
+$help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double';
+
+llxHeader('', $title_page, $help_url);
 
 
 if ($action != 'export_csv') {
