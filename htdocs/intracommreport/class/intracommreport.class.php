@@ -138,7 +138,7 @@ class IntracommReport extends CommonObject
 	/**
 	 * Generate XML file
 	 *
-	 * @param int			$mode 				O for create, R for regenerate (Look always 0 ment toujours 0 within the framework of XML exchanges according to documentation)
+	 * @param int			$mode 				O for create, R for regenerate (Look always 0 meant toujours 0 within the framework of XML exchanges according to documentation)
 	 * @param string		$type 				Declaration type by default - introduction or expedition (always 'expedition' for Des)
 	 * @param string		$period_reference	Period of reference
 	 * @return SimpleXMLElement|int
@@ -156,18 +156,18 @@ class IntracommReport extends CommonObject
 		/**************Construction du fichier XML***************************/
 		$e = new SimpleXMLElement('<?xml version="1.0" encoding="utf-8" standalone="yes"?><INSTAT></INSTAT>');
 
-		$enveloppe = $e->addChild('Envelope');
-		$enveloppe->addChild('envelopeId', $conf->global->INTRACOMMREPORT_NUM_AGREMENT);
-		$date_time = $enveloppe->addChild('DateTime');
+		$envelope = $e->addChild('Envelope');
+		$envelope->addChild('envelopeId', $conf->global->INTRACOMMREPORT_NUM_AGREMENT);
+		$date_time = $envelope->addChild('DateTime');
 		$date_time->addChild('date', date('Y-m-d'));
 		$date_time->addChild('time', date('H:i:s'));
-		$party = $enveloppe->addChild('Party');
+		$party = $envelope->addChild('Party');
 		$party->addAttribute('partyType', $conf->global->INTRACOMMREPORT_TYPE_ACTEUR);
 		$party->addAttribute('partyRole', $conf->global->INTRACOMMREPORT_ROLE_ACTEUR);
 		$party->addChild('partyId', $party_id);
 		$party->addChild('partyName', $declarant);
-		$enveloppe->addChild('softwareUsed', 'Dolibarr');
-		$declaration = $enveloppe->addChild('Declaration');
+		$envelope->addChild('softwareUsed', 'Dolibarr');
+		$declaration = $envelope->addChild('Declaration');
 		$declaration->addChild('declarationId', $id_declaration);
 		$declaration->addChild('referencePeriod', $period_reference);
 		if ($conf->global->INTRACOMMREPORT_TYPE_ACTEUR === 'PSI') {

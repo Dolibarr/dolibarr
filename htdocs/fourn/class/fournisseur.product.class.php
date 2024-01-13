@@ -370,7 +370,7 @@ class ProductFournisseur extends Product
 			$localtax1 = $localtaxes_array['1'];
 			$localtaxtype2 = $localtaxes_array['2'];
 			$localtax2 = $localtaxes_array['3'];
-		} else { // old method. deprecated because ot can't retrieve type
+		} else { // old method. deprecated because it can't retrieve type
 			$localtaxtype1 = '0';
 			$localtax1 = get_localtax($newvat, 1);
 			$localtaxtype2 = '0';
@@ -1172,7 +1172,7 @@ class ProductFournisseur extends Product
 
 
 	/**
-	 *  Return a link to the object card (with optionaly the picto).
+	 *  Return a link to the object card (with optionally the picto).
 	 *  Used getNomUrl of ProductFournisseur if a specific supplier ref is loaded. Otherwise use Product->getNomUrl().
 	 *
 	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)

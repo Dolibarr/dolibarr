@@ -2077,7 +2077,7 @@ if ($action == 'create') {
 				print '<td>';
 				print '</td>';
 
-				// Information if theres a rule restriction
+				// Information if there's a rule restriction
 				print '<td>';
 				print '</td>';
 
@@ -2179,7 +2179,7 @@ if ($action == 'create') {
 								$relativepath = preg_replace('/expensereport\//', '', $ecmfilesstatic->filepath);
 								$fileinfo = pathinfo($ecmfilesstatic->filepath.'/'.$ecmfilesstatic->filename);
 								if (image_format_supported($fileinfo['basename']) > 0) {
-									$minifile = getImageFileNameForSize($fileinfo['basename'], '_mini'); // For new thumbs using same ext (in lower case howerver) than original
+									$minifile = getImageFileNameForSize($fileinfo['basename'], '_mini'); // For new thumbs using same ext (in lower case however) than original
 									if (!dol_is_file($conf->expensereport->dir_output.'/'.$relativepath.'/'.$minifile)) {
 										$minifile = getImageFileNameForSize($fileinfo['basename'], '_mini', '.png'); // For backward compatibility of old thumbs that were created with filename in lower case and with .png extension
 									}
@@ -2203,7 +2203,7 @@ if ($action == 'create') {
 
 										$pdfexists = file_exists($filepdf);
 										if ($pdfexists) {
-											// Conversion du PDF en image png si fichier png non existant
+											// Conversion du PDF en image png si fichier png non existent
 											if (!file_exists($fileimage) || (filemtime($fileimage) < filemtime($filepdf))) {
 												if (!getDolGlobalString('MAIN_DISABLE_PDF_THUMBS')) {		// If you experience trouble with pdf thumb generation and imagick, you can disable here.
 													include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -2389,7 +2389,7 @@ if ($action == 'create') {
 						print '<td class="center">';
 						//print $line->fk_ecm_files;
 						print '</td>';
-						// Information if theres a rule restriction
+						// Information if there's a rule restriction
 						print '<td class="center">';
 						print '</td>';
 

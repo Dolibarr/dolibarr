@@ -199,8 +199,8 @@ class FactureFournisseur extends CommonInvoice
 	 */
 	public $tva;
 
-	// Warning: Do not set default value into property defintion. it must stay null.
-	// For example to avoid to have substition done when object is generic and not yet defined.
+	// Warning: Do not set default value into property definition. it must stay null.
+	// For example to avoid to have substitution done when object is generic and not yet defined.
 	public $localtax1;
 	public $localtax2;
 	public $total_ht;
@@ -344,7 +344,7 @@ class FactureFournisseur extends CommonInvoice
 	 * If paid partially, $this->close_code can be:
 	 * - CLOSECODE_DISCOUNTVAT
 	 * - CLOSECODE_BADCREDIT
-	 * If paid completelly, this->close_code will be null
+	 * If paid completely, this->close_code will be null
 	 */
 	const STATUS_CLOSED = 2;
 
@@ -1552,8 +1552,8 @@ class FactureFournisseur extends CommonInvoice
 	 *	@deprecated
 	 *  @see setPaid()
 	 *	@param  User	$user       Object user
-	 *	@param  string	$close_code	Code indicates whether the class has paid in full while payment is incomplete. Not implementd yet.
-	 *	@param  string	$close_note	Comment informs if the class has been paid while payment is incomplete. Not implementd yet.
+	 *	@param  string	$close_code	Code indicates whether the class has paid in full while payment is incomplete. Not implemented yet.
+	 *	@param  string	$close_note	Comment informs if the class has been paid while payment is incomplete. Not implemented yet.
 	 *	@return int         		Return integer <0 si ko, >0 si ok
 	 */
 	public function set_paid($user, $close_code = '', $close_note = '')
@@ -1567,8 +1567,8 @@ class FactureFournisseur extends CommonInvoice
 	 *  Tag invoice as a paid invoice
 	 *
 	 *	@param  User	$user       Object user
-	 *	@param  string	$close_code	Code indicates whether the class has paid in full while payment is incomplete. Not implementd yet.
-	 *	@param  string	$close_note	Comment informs if the class has been paid while payment is incomplete. Not implementd yet.
+	 *	@param  string	$close_code	Code indicates whether the class has paid in full while payment is incomplete. Not implemented yet.
+	 *	@param  string	$close_note	Comment informs if the class has been paid while payment is incomplete. Not implemented yet.
 	 *	@return int         		Return integer <0 si ko, >0 si ok
 	 */
 	public function setPaid($user, $close_code = '', $close_note = '')
@@ -2286,7 +2286,7 @@ class FactureFournisseur extends CommonInvoice
 					}
 				}
 
-				// Mise a jour informations denormalisees au niveau de la facture meme
+				// Mise a jour information denormalisees au niveau de la facture meme
 				$result = $this->update_price(1, 'auto', 0, $this->thirdparty); // The addline method is designed to add line from user input so total calculation with update_price must be done using 'auto' mode.
 				if ($result > 0) {
 					$this->db->commit();
@@ -2319,7 +2319,7 @@ class FactureFournisseur extends CommonInvoice
 	 * @param     	double		$qty           		Quantity
 	 * @param     	int			$idproduct			Id produit
 	 * @param	  	double		$price_base_type	HT or TTC
-	 * @param	  	int			$info_bits			Miscellaneous informations of line
+	 * @param	  	int			$info_bits			Miscellaneous information of line
 	 * @param		int			$type				Type of line (0=product, 1=service)
 	 * @param     	double		$remise_percent  	Percentage discount of the line
 	 * @param		int			$notrigger			Disable triggers
@@ -2595,7 +2595,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " AND f.entity = ".$conf->entity;
 		$sql .= " AND f.paye = 0"; // Pas classee payee completement
 		$sql .= " AND pf.fk_paiementfourn IS NULL"; // Aucun paiement deja fait
-		$sql .= " AND ff.fk_statut IS NULL"; // Renvoi vrai si pas facture de remplacement
+		$sql .= " AND ff.fk_statut IS NULL"; // Renvoi vrai si pas facture de replacement
 		if ($socid > 0) {
 			$sql .= " AND f.fk_soc = ".((int) $socid);
 		}
@@ -3022,7 +3022,7 @@ class FactureFournisseur extends CommonInvoice
 			}
 		}
 
-		// Initialise parametres
+		// Initialise parameters
 		$this->id = 0;
 		$this->ref = 'SPECIMEN';
 		$this->ref_supplier = 'SUPPLIER_REF_SPECIMEN';
@@ -3376,7 +3376,7 @@ class FactureFournisseur extends CommonInvoice
 	public function setVATReverseCharge($vatreversecharge)
 	{
 		if (!$this->table_element) {
-			dol_syslog(get_class($this)."::setVATReverseCharge was called on objet with property table_element not defined", LOG_ERR);
+			dol_syslog(get_class($this)."::setVATReverseCharge was called on object with property table_element not defined", LOG_ERR);
 			return -1;
 		}
 

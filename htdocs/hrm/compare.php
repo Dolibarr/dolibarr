@@ -318,7 +318,7 @@ function diff(&$TMergedSkills)
 }
 
 /**
- * 	Return a html list with rank informations
+ * 	Return a html list with rank information
  * 		@param array $TMergedSkills skill list for display
  * 		@param string $field which column of comparison we are working with
  * 		@return string
@@ -379,7 +379,7 @@ function skillList(&$TMergedSkills)
 }
 
 /**
- *  create an array of lines [ skillLabel,dscription, maxrank on group1 , minrank needed for this skill ]
+ *  create an array of lines [ skillLabel,description, maxrank on group1 , minrank needed for this skill ]
  *
  * @param array $TSkill1 skill list of first column
  * @param array $TSkill2 skill list of second column
