@@ -173,10 +173,10 @@ foreach (array('proj', 'dep') as $source) {
 }
 
 // Search the max
-$arrayofmax = array();
+$arrayofmax = array('Lines'=>0);
 foreach (array('proj', 'dep') as $source) {
-	foreach ($source as $val) {
-		$arrayofmax['Lines'] = max($arrayofmax, $val['Lines']);
+	foreach ($arrayoflineofcode[$source] as $val) {
+		$arrayofmax['Lines'] = max($arrayofmax['Lines'], $val['Lines']);
 	}
 }
 
@@ -272,6 +272,7 @@ th,td {
     border-width: 2px;
     padding: 5px;
     border-style: solid;
+	background-color: #f8f8f8;
 }
 .back1 {
 	background-color: #884466;
@@ -372,7 +373,7 @@ foreach (array('proj', 'dep') as $source) {
 			$html .= '<td class="right nowrap">'.(empty($val['Files']) ? '' : formatNumber($val['Files'])).'</td>';
 			$html .= '<td class="right nowrap">'.(empty($val['Lines']) ? '' : formatNumber($val['Lines'])).'</td>';
 			$html .= '<td class="nowrap">';
-			$percent = $val['Lines'] / $arrayofmetrics[$source]['Lines'];
+			$percent = $val['Lines'] / $arrayofmax['Lines'];
 			$widthbar = round(200 * $percent);
 			$html .= '<div class="bargraph" style="width: '.max(1, $widthbar).'px">&nbsp;</div>';
 			$html .= '</td>';
