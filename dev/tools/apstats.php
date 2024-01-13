@@ -172,6 +172,15 @@ foreach (array('proj', 'dep') as $source) {
 	}
 }
 
+// Search the max
+$arrayofmax = array();
+foreach (array('proj', 'dep') as $source) {
+	foreach ($source as $val) {
+		$arrayofmax['Lines'] = max($arrayofmax, $val['Lines']);
+	}
+}
+
+
 $timeend = time();
 
 
@@ -365,7 +374,7 @@ foreach (array('proj', 'dep') as $source) {
 			$html .= '<td class="nowrap">';
 			$percent = $val['Lines'] / $arrayofmetrics[$source]['Lines'];
 			$widthbar = round(200 * $percent);
-			$html .= '<div class="bargraph" style="width: '.$widthbar.'px">&nbsp;</div>';
+			$html .= '<div class="bargraph" style="width: '.max(1, $widthbar).'px">&nbsp;</div>';
 			$html .= '</td>';
 			$html .= '<td class="right nowrap">'.(empty($val['Blanks']) ? '' : formatNumber($val['Blanks'])).'</td>';
 			$html .= '<td class="right nowrap">'.(empty($val['Comments']) ? '' : formatNumber($val['Comments'])).'</td>';
