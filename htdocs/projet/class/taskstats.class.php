@@ -36,7 +36,7 @@ class TaskStats extends Stats
 	/**
 	 * Constructor of the class
 	 *
-	 * @param   DoliDb  $db     Database handler
+	 * @param   DoliDB  $db     Database handler
 	 */
 	public function __construct($db)
 	{

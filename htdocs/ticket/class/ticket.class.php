@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
 class Ticket extends CommonObject
 {
 	/**
-	 * @var DoliDb Database handler
+	 * @var DoliDB Database handler
 	 */
 	public $db;
 
@@ -353,7 +353,7 @@ class Ticket extends CommonObject
 	/**
 	 *  Constructor
 	 *
-	 *  @param DoliDb $db Database handler
+	 *  @param DoliDB $db Database handler
 	 */
 	public function __construct($db)
 	{

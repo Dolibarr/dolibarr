@@ -71,7 +71,7 @@ return [
     'Mid-Atlantic' => 'America/Noronha',
     'Brasilia' => 'America/Sao_Paulo', // Best guess
     'Buenos Aires' => 'America/Argentina/Buenos_Aires',
-    'Greenland' => 'America/Godthab',
+    'Greenland' => 'America/Nuuk',
     'Newfoundland' => 'America/St_Johns',
     'Atlantic Time (Canada)' => 'America/Halifax',
     'Caracas, La Paz' => 'America/Caracas',

@@ -51,7 +51,8 @@ class MembersTypes extends DolibarrApi
 	 * @param   int     $id				ID of member type
 	 * @return  Object					Object with cleaned properties
 	 *
-	 * @throws  RestException
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	404		No Member Type found
 	 */
 	public function get($id)
 	{
@@ -85,7 +86,9 @@ class MembersTypes extends DolibarrApi
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                Array of member type objects
 	 *
-	 * @throws RestException
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	404		No Member Type found
+	 * @throws	RestException	503		Error when retrieving Member list
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
@@ -145,6 +148,9 @@ class MembersTypes extends DolibarrApi
 	 *
 	 * @param array $request_data   Request data
 	 * @return int  ID of member type
+	 *
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	500		Error when creating Member Type
 	 */
 	public function post($request_data = null)
 	{
@@ -176,6 +182,10 @@ class MembersTypes extends DolibarrApi
 	 * @param int   $id             ID of member type to update
 	 * @param array $request_data   Datas
 	 * @return int
+	 *
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	404		No Member Type found
+	 * @throws	RestException	500		Error when updating Member Type
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -222,6 +232,10 @@ class MembersTypes extends DolibarrApi
 	 *
 	 * @param int $id   member type ID
 	 * @return array
+	 *
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	404		No Member Type found
+	 * @throws	RestException	500		Error when deleting Member Type
 	 */
 	public function delete($id)
 	{
@@ -241,8 +255,6 @@ class MembersTypes extends DolibarrApi
 		$res = $membertype->delete(DolibarrApiAccess::$user);
 		if ($res < 0) {
 			throw new RestException(500, "Can't delete, error occurs");
-		} elseif ($res == 0) {
-			throw new RestException(409, "Can't delete, that product is probably used");
 		}
 
 		return array(
