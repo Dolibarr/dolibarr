@@ -103,7 +103,7 @@ class mod_codeproduct_leopard extends ModeleProductCode
 	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string					Return string example
 	 */
-	public function getExample($langs, $objproduct = 0, $type = -1)
+	public function getExample($langs, $objproduct = null, $type = -1)
 	{
 		return '';
 	}
@@ -115,7 +115,7 @@ class mod_codeproduct_leopard extends ModeleProductCode
 	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string					Return next value
 	 */
-	public function getNextValue($objproduct = 0, $type = -1)
+	public function getNextValue($objproduct = null, $type = -1)
 	{
 		return '';
 	}
