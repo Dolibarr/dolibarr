@@ -428,7 +428,7 @@ $html .= '</section>'."\n";
 // Contributions
 
 $html .= '<section class="chapter" id="projectvalue">'."\n";
-$html .= '<h2><span class="fas fa-dollar-sign pictofixedwidth"></span>Contributions</h2>'."\n";
+$html .= '<h2><span class="fas fa-tasks pictofixedwidth"></span>Contributions</h2>'."\n";
 
 $html .= '<div class="boxallwidth">'."\n";
 
@@ -445,10 +445,10 @@ $html .= '</div>';
 $html .= '</section>'."\n";
 
 
-// Contributor
+// Contributors
 
 $html .= '<section class="chapter" id="projectvalue">'."\n";
-$html .= '<h2><span class="fas fa-tasks pictofixedwidth"></span>Contributors</h2>'."\n";
+$html .= '<h2><span class="fas fa-user pictofixedwidth"></span>Contributors</h2>'."\n";
 
 $html .= '<div class="boxallwidth">'."\n";
 
