@@ -2214,12 +2214,11 @@ function pdf_getlineqty_keeptoship($object, $i, $outputlangs, $hidedetails = 0)
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- *  @param	HookManager	$hookmanager		Hook manager instance
  *  @return	string							Value for unit cell
  */
-function pdf_getlineunit($object, $i, $outputlangs, $hidedetails = 0, $hookmanager = false)
+function pdf_getlineunit($object, $i, $outputlangs, $hidedetails = 0)
 {
-	global $langs;
+	global $hookmanager, $langs;
 
 	$reshook = 0;
 	$result = '';
