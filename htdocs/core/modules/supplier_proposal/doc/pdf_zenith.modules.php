@@ -604,7 +604,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 
 					// Unit
 					if ($this->getColumnStatus('unit')) {
-						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails, $hookmanager);
+						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $curY, 'unit', $unit);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
