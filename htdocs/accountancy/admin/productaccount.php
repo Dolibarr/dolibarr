@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2022 Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2014      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
- * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+/* Copyright (C) 2013-2014  Olivier Geffroy     <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
+ * Copyright (C) 2014       Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
+ * Copyright (C) 2015       Ari Elbaz (elarifr) <github@accedinfo.com>
+ * Copyright (C) 2021       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -293,14 +293,14 @@ $aacompta_prodsell_export   = getDolGlobalString('ACCOUNTING_PRODUCT_SOLD_EXPORT
 
 
 $title = $langs->trans("ProductsBinding");
-$helpurl = '';
+$help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
 
 $paramsCat = '';
 foreach ($searchCategoryProductList as $searchCategoryProduct) {
 	$paramsCat .= "&search_category_product_list[]=".urlencode($searchCategoryProduct);
 }
 
-llxHeader('', $title, $helpurl, '', 0, 0, array(), array(), $paramsCat, '');
+llxHeader('', $title, $help_url, '', 0, 0, array(), array(), $paramsCat, '');
 
 $pcgverid = getDolGlobalString('CHARTOFACCOUNTS');
 $pcgvercode = dol_getIdFromCode($db, $pcgverid, 'accounting_system', 'rowid', 'pcg_version');

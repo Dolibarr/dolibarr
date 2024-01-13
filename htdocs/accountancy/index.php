@@ -79,7 +79,7 @@ if (GETPOST('addbox')) {
  * View
  */
 
-$help_url = 'EN:Module_Double_Entry_Accounting#Setup';
+$help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
 
 llxHeader('', $langs->trans("AccountancyArea"), $help_url);
 

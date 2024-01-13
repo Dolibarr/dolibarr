@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
+/* Copyright (C) 2017-2024  Alexandre Spangaro   <aspangaro@easya.solutions>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -351,7 +351,9 @@ if ($action == $acts[1]) {
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
 
-llxHeader();
+$title = $langs->trans('AccountingJournals');
+$help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
+llxHeader('', $title, $help_url);
 
 $titre = $langs->trans("DictionarySetup");
 $linkback = '';
@@ -367,7 +369,6 @@ print load_fiche_titre($titre, $linkback, $titlepicto);
 if ($action == 'delete') {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid.'&code='.$code.'&id='.$id, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
 }
-//var_dump($elementList);
 
 /*
  * Show a dictionary

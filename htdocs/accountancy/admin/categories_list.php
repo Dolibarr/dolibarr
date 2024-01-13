@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2004-2023  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2011-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+/* Copyright (C) 2004-2023  Laurent Destailleur      <eldy@users.sourceforge.net>
+ * Copyright (C) 2011-2024  Alexandre Spangaro       <aspangaro@easya.solutions>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -414,7 +414,9 @@ if ($action == 'disable_favorite') {
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
 
-llxHeader('', $langs->trans('DictionaryAccountancyCategory'));
+$help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
+
+llxHeader('', $langs->trans('DictionaryAccountancyCategory'), $help_url);
 
 $titre = $langs->trans($tablib[$id]);
 $linkback = '';
