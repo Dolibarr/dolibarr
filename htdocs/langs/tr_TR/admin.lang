@@ -34,7 +34,7 @@ PurgeSessions=Oturumları Temizle
 ConfirmPurgeSessions=Tüm oturumları temizlemek istediğinizden emin misiniz? Bu işlem (kendiniz hariç), tüm kullanıcıların bağlantılarını kesecektir.
 NoSessionListWithThisHandler=PHP’nizde yapılandırılmış olan oturum yürütücüsü, çalışan tüm oturumlar listelenmesine izin vermiyor.
 LockNewSessions=Yeni bağlantıları bloke et
-ConfirmLockNewSessions=Herhangi bir yeni Dolibar bağlantısını kendinize kısıtlamak istediğinizden emin misiniz? Bundan sonra sadece <b>%s</b> kullanıcısı bağlanabilecektir.
+ConfirmLockNewSessions=Herhangi bir yeni Dolibarr bağlantısını kendinize kısıtlamak istediğinizden emin misiniz? Bundan sonra sadece <b>%s</b> kullanıcısı bağlanabilecektir.
 UnlockNewSessions=Bağlantı kilidini kaldır
 YourSession=Oturumunuz
 Sessions=Kullanıcı Oturumları
@@ -270,7 +270,7 @@ SocialNetworks=Sosyal Ağlar
 SocialNetworkId=Sosyal Ağ Kimliği
 ForDocumentationSeeWiki=For user or developer documentation (Doc, FAQs...),<br>take a look at the Dolibarr Wiki:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
 ForAnswersSeeForum=For any other questions/help, you can use the Dolibarr forum:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
-HelpCenterDesc1=Burada Dolibar ile ilgili yardım ve destek almak için bazı kaynaklar bulabilirsiniz.
+HelpCenterDesc1=Burada Dolibarr ile ilgili yardım ve destek almak için bazı kaynaklar bulabilirsiniz.
 HelpCenterDesc2=Bazı kaynaklar sadece <b>İngilizce</b> dilinde mevcuttur.
 CurrentMenuHandler=Geçerli menü işlemcisi
 MeasuringUnit=Ölçü birimi
@@ -1427,7 +1427,7 @@ HRMSetup=İK modülü ayarları
 CompanySetup=Firmalar modülü kurulumu
 CompanyCodeChecker=Müşteri/tedarikçi kodlarının otomatik olarak üretilmesi için seçenekler
 AccountCodeManager=Müşteri/tedarikçi muhasebe kodlarının otomatik olarak üretilmesi için seçenekler
-NotificationsDesc=Bazı Dolibar etkinlikleri için e-posta bildirimleri otomatik olarak gönderilebilir. <br>Bildirimlerin alıcıları şu şekilde tanımlanabilir:
+NotificationsDesc=Bazı Dolibarr etkinlikleri için e-posta bildirimleri otomatik olarak gönderilebilir. <br>Bildirimlerin alıcıları şu şekilde tanımlanabilir:
 NotificationsDescUser=* kullanıcı başına, her seferde bir kullanıcı.
 NotificationsDescContact=* cari kişisi başına (müşteri veya tedarikçiler), her seferinde bir cari kişisi.
 NotificationsDescGlobal=* or by setting global email addresses in the setup page of the module.

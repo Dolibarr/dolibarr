@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=PayBox modul beállítás
 PayBoxDesc=Ez a nodul lehetővé teszi az oldalak számára a <a href="http://www.paybox.com" target="_blank">Paybox</a>-on keresztüli fizetést az ügyfelek számára. Ingyenes fizetési megoldás.
-FollowingUrlAreAvailableToMakePayments=Következő URL-ek elérhetők a vevő részére egy oldal felajánlásához a Dollibar objektumok kifizetéséhez
+FollowingUrlAreAvailableToMakePayments=Következő URL-ek elérhetők a vevő részére egy oldal felajánlásához a Dolibarr objektumok kifizetéséhez
 PaymentForm=Fizetési ürlap
 WelcomeOnPaymentPage=Üdvözöljük online fizetési szolgáltatásunkban
 ThisScreenAllowsYouToPay=Ez az oldal lehetővé teszi az online fizetést %s számára.

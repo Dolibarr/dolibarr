@@ -1576,7 +1576,7 @@ LDAPMemberDn=DN dos membros
 LDAPMemberDnExample=DN completo (ex: ou=members,dc=society,dc=com)
 LDAPMemberObjectClassList=Listaxe de objectClass
 LDAPMemberObjectClassListExample=Listaxe de ObjectClass que definen os atributos dun rexistro (ex: top,inetOrgPerson o top,user para active directory)
-LDAPMemberTypeDn=Tipos DN de membros de Dolibar
+LDAPMemberTypeDn=Tipos DN de membros de Dolibarr
 LDAPMemberTypepDnExample=DN completo (ex: ou=memberstypes, dc=example, dc=com)
 LDAPMemberTypeObjectClassList=Listaxe de objectClass
 LDAPMemberTypeObjectClassListExample=Listaxe de ObjectClass que definen os atributos dun rexistro (ex: top,groupOfUniqueNames)

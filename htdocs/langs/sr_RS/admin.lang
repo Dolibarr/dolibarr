@@ -345,7 +345,7 @@ ThisIsAlternativeProcessToFollow=This is an alternative setup to process manuall
 StepNb=Korak %s
 FindPackageFromWebSite=Pronađite paket koji obezbeđuje mogućnosti koje su vam potrebne (na primer na zvaničnom web sajtu %s).
 DownloadPackageFromWebSite=Preuzmite paket (na primer sa zvaničnog web sajta %s).
-UnpackPackageInDolibarrRoot=Raspakujte zapakovane fajlove na vaš Dolibar server folder: <b>%s</b>
+UnpackPackageInDolibarrRoot=Raspakujte zapakovane fajlove na vaš Dolibarr server folder: <b>%s</b>
 UnpackPackageInModulesRoot=To deploy/install an external module, you must unpack/unzip the archive file into the server directory dedicated to external modules:<br><b>%s</b>
 SetupIsReadyForUse=Instaliranje modula je završeno. Morate ipak omogućiti i postaviti vrednosti za modul u svojoj aplikaciji tako što ćete otići na stranu za postavku modula: <a href="%s">%s</a>.
 NotExistsDirect=Alternativni root folder nije definisan u postojećem folderu.<br>
