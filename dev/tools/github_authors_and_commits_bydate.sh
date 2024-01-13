@@ -11,7 +11,7 @@ if [ "x$1" = "x" ]; then
 	exit
 fi
 if [ "x$1" != "xbyyear" -a "x$1" != "xbymonth" ]; then
-	echo "Usage: $0  (byyear|bymonth)  YEARSTART  [YEAREND]"
+	echo "Usage: $0  (byyear|bymonth|perday)  YEARSTART  [YEAREND]"
 	exit
 fi
 
