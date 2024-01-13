@@ -117,7 +117,7 @@ exec($commandcheck, $output_arrtd, $resexectd);
 
 
 // Count lines of code of dependencies
-$commandcheck = 'dev/tools/github_authors_and_commits_bydate.sh byday';
+$commandcheck = "git log --shortstat --use-mailmap --pretty='format:%cI;%H;%aN;%ae;%ce'";	// --since=  --until=...
 print 'Execute github_authors_and_commits_bydate to count number of commits by day: '.$commandcheck."\n";
 $output_arrglpu = array();
 $resexecglpu = 0;
