@@ -378,7 +378,7 @@ foreach (array('proj', 'dep') as $source) {
 	} elseif ($source == 'dep') {
 		$html .= '<td>All files of dependencies only';
 	}
-	$html .= ' &nbsp; &nbsp; <div class="seedetail fr" data-source="'.$source.'"><span class="fas fa-graph pictofixedwidth"></span>See detail per file type...</span>';
+	$html .= ' &nbsp; &nbsp; <div class="seedetail fr" data-source="'.$source.'"><span class="fas fa-chart-bar pictofixedwidth"></span>See detail per file type...</span>';
 	$html .= '<td class="right">'.formatNumber($arrayofmetrics[$source]['Bytes']).'</td>';
 	$html .= '<td class="right">'.formatNumber($arrayofmetrics[$source]['Files']).'</td>';
 	$html .= '<td class="right">'.formatNumber($arrayofmetrics[$source]['Lines']).'</td>';
