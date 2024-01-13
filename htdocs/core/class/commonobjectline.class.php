@@ -195,7 +195,7 @@ abstract class CommonObjectLine extends CommonObject
 	}
 
 	/**
-	 * Empty function to prevent errors on call of this function must be overload if usefull
+	 * Empty function to prevent errors on call of this function must be overload if useful
 	 *
 	 * @param string $sortorder Sort Order
 	 * @param string $sortfield Sort field

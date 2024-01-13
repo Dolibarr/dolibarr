@@ -24,7 +24,7 @@
 
 
 /**
- *  Check if a string passes the Luhn agorithm test.
+ *  Check if a string passes the Luhn algorithm test.
  *  @param		string|int		$str		string to check
  *  @return		bool						True if the string passes the Luhn algorithm check, False otherwise
  *  @since		Dolibarr V20

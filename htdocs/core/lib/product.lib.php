@@ -23,7 +23,7 @@
 
 /**
  * \file       htdocs/core/lib/product.lib.php
- * \brief      Ensemble de fonctions de base pour le module produit et service
+ * \brief      Ensemble de functions de base pour le module produit et service
  * \ingroup	product
  */
 
@@ -313,7 +313,7 @@ function productlot_prepare_head($object)
 
 
 /**
-*  Return array head with list of tabs to view object informations.
+*  Return array head with list of tabs to view object information.
 *
 *  @return	array   	        head array with tabs
 */
@@ -374,7 +374,7 @@ function product_admin_prepare_head()
 
 
 /**
- * Return array head with list of tabs to view object informations.
+ * Return array head with list of tabs to view object information.
  *
  * @return	array   	        head array with tabs
  */

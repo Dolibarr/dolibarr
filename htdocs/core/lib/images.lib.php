@@ -61,7 +61,7 @@ function getDefaultImageSizes()
  *      Return if a filename is file name of a supported image format
  *
  *      @param	int		$acceptsvg	0=Default (depends on setup), 1=Always accept SVG as image files
- *      @return string				Return list fo image format
+ *      @return string				Return list of image formats
  */
 function getListOfPossibleImageExt($acceptsvg = 0)
 {
@@ -121,7 +121,7 @@ function image_format_supported($file, $acceptsvg = 0)
 	}
 	if ($imgfonction) {
 		if (!function_exists($imgfonction)) {
-			// Fonctions of conversion not available in this PHP
+			// Functions of conversion not available in this PHP
 			return 0;
 		}
 
@@ -197,7 +197,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 		// Si le fichier n'a pas ete indique
 		return 'Bad parameter file';
 	} elseif (!file_exists($file)) {
-		// Si le fichier passe en parametre n'existe pas
+		// Si le fichier passe en parameter n'existe pas
 		return $langs->trans("ErrorFileNotFound", $file);
 	} elseif (image_format_supported($file) < 0) {
 		return 'This filename '.$file.' does not seem to be an image filename.';
@@ -253,7 +253,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 	}
 	if ($imgfonction) {
 		if (!function_exists($imgfonction)) {
-			// Fonctions de conversion non presente dans ce PHP
+			// Functions de conversion non presente dans ce PHP
 			return 'Read of image not possible. This PHP does not support GD functions '.$imgfonction;
 		}
 	}
@@ -281,7 +281,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 		}
 		if ($imgfonction) {
 			if (!function_exists($imgfonction)) {
-				// Fonctions de conversion non presente dans ce PHP
+				// Functions de conversion non presente dans ce PHP
 				return 'Write of image not possible. This PHP does not support GD functions '.$imgfonction;
 			}
 		}
@@ -333,7 +333,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 	$trans_colour = -1;	// By default, undefined
 	switch ($newExt) {
 		case 'gif':	// Gif
-			$trans_colour = imagecolorallocate($imgTarget, 255, 255, 255); // On procede autrement pour le format GIF
+			$trans_colour = imagecolorallocate($imgTarget, 255, 255, 255); // The method is different for the GIF format
 			imagecolortransparent($imgTarget, $trans_colour);
 			break;
 		case 'jpg':	// Jpg
@@ -341,7 +341,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 			$trans_colour = imagecolorallocatealpha($imgTarget, 255, 255, 255, 0);
 			break;
 		case 'png':	// Png
-			imagealphablending($imgTarget, false); // Pour compatibilite sur certain systeme
+			imagealphablending($imgTarget, false); // For compatibility with certain systems
 			$trans_colour = imagecolorallocatealpha($imgTarget, 255, 255, 255, 127); // Keep transparent channel
 			break;
 		case 'bmp':	// Bmp

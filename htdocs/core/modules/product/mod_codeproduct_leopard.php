@@ -20,7 +20,7 @@
 /**
  *       \file       htdocs/core/modules/product/mod_codeproduct_leopard.php
  *       \ingroup    product
- *       \brief      Fichier de la classe des gestion leopard des codes produits
+ *       \brief      Fichier de la class des gestion leopard des codes produits
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php';
@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php'
 
 /**
  *	\class 		mod_codeproduct_leopard
- *	\brief 		Classe permettant la gestion leopard des codes produits
+ *	\brief 		Class permettant la gestion leopard des codes produits
  */
 class mod_codeproduct_leopard extends ModeleProductCode
 {
@@ -52,7 +52,7 @@ class mod_codeproduct_leopard extends ModeleProductCode
 
 	public $code_modifiable; // Code modifiable
 
-	public $code_modifiable_invalide; // Code modifiable si il est invalide
+	public $code_modifiable_invalide; // Code modifiable si il est invalid
 
 	public $code_modifiable_null; // Code modifiables si il est null
 

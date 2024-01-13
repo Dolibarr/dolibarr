@@ -37,7 +37,7 @@
  * @param 	int				$showbirthday	Show birthday
  * @param 	string			$filtera		Filter on create by user
  * @param 	string			$filtert		Filter on assigned to user
- * @param 	string			$filterd		Filter of done by user
+ * @param 	string			$filtered		Filter of done by user
  * @param 	int				$pid			Product id
  * @param 	int				$socid			Third party id
  * @param	string			$action			Action string
@@ -58,7 +58,7 @@ function print_actions_filter(
 	$showbirthday,
 	$filtera,
 	$filtert,
-	$filterd,
+	$filtered,
 	$pid,
 	$socid,
 	$action,

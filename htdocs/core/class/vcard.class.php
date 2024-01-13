@@ -83,7 +83,7 @@ function dol_quoted_printable_encode($input, $line_max = 76)
 
 
 /**
- *	Class to buld vCard files
+ *	Class to build vCard files
  */
 class vCard
 {
@@ -139,7 +139,7 @@ class vCard
 	}
 
 	/**
-	 *	mise en forme du nom formate
+	 *	mise en forme du nom format
 	 *
 	 *	@param	string	$name			Name
 	 *	@return	void
@@ -150,7 +150,7 @@ class vCard
 	}
 
 	/**
-	 *	mise en forme du nom complet
+	 *	mise en forme du nom complete
 	 *
 	 *	@param	string	$family			Family name
 	 *	@param	string	$first			First name

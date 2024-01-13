@@ -216,7 +216,7 @@ class Utils
 	 *  @param  string      $file              'auto' or filename to build
 	 *  @param  int         $keeplastnfiles    Keep only last n files (not used yet)
 	 *  @param	int		    $execmethod		   0=Use default method (that is 1 by default), 1=Use the PHP 'exec' - need size of dump in memory, but low memory method is used if GETPOST('lowmemorydump') is set, 2=Use the 'popen' method (low memory method)
-	 *  @param	int			$lowmemorydump	   1=Use the low memory method. If $lowmemorydump is set, it means we want to make the compression using an external pipe instead retreiving the content of the dump in PHP memory array $output_arr and then print it into the PHP pipe open with xopen().
+	 *  @param	int			$lowmemorydump	   1=Use the low memory method. If $lowmemorydump is set, it means we want to make the compression using an external pipe instead retrieving the content of the dump in PHP memory array $output_arr and then print it into the PHP pipe open with xopen().
 	 *  @return	int						       0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
 	public function dumpDatabase($compression = 'none', $type = 'auto', $usedefault = 1, $file = 'auto', $keeplastnfiles = 0, $execmethod = 0, $lowmemorydump = 0)
@@ -295,7 +295,7 @@ class Utils
 			$outputerror = $outputfile.'.err';
 			dol_mkdir($conf->admin->dir_output.'/backup');
 
-			// Parameteres execution
+			// Parameters execution
 			$command = $cmddump;
 			$command = preg_replace('/(\$|%)/', '', $command); // We removed chars that can be used to inject vars that contains space inside path of command without seeing there is a space to bypass the escapeshellarg.
 			if (preg_match("/\s/", $command)) {
@@ -543,7 +543,7 @@ class Utils
 					//print "$outputfile -> $outputerror";
 					@dol_delete_file($outputerror, 1, 0, 0, null, false, 0);
 					@rename($outputfile, $outputerror);
-					// Si safe_mode on et command hors du parametre exec, on a un fichier out vide donc errormsg vide
+					// Si safe_mode on et command hors du parameter exec, on a un fichier out vide donc errormsg vide
 					if (!$errormsg) {
 						$langs->load("errors");
 						$errormsg = $langs->trans("ErrorFailedToRunExternalCommand");
@@ -601,7 +601,7 @@ class Utils
 			$outputerror = $outputfile.'.err';
 			dol_mkdir($conf->admin->dir_output.'/backup');
 
-			// Parameteres execution
+			// Parameters execution
 			$command = $cmddump;
 			$command = preg_replace('/(\$|%)/', '', $command); // We removed chars that can be used to inject vars that contains space inside path of command without seeing there is a space to bypass the escapeshellarg.
 			if (preg_match("/\s/", $command)) {
@@ -686,7 +686,7 @@ class Utils
 	 * @param 	string	$outputfile			A path for an output file (used only when method is 2). For example: $conf->admin->dir_temp.'/out.tmp';
 	 * @param	int		$execmethod			0=Use default method (that is 1 by default), 1=Use the PHP 'exec', 2=Use the 'popen' method
 	 * @param	string	$redirectionfile	If defined, a redirection of output to this file is added.
-	 * @param	int		$noescapecommand	1=Do not escape command. Warning: Using this parameter needs you alreay have sanitized the $command parameter. If not, it will lead to security vulnerability.
+	 * @param	int		$noescapecommand	1=Do not escape command. Warning: Using this parameter needs you already have sanitized the $command parameter. If not, it will lead to security vulnerability.
 	 * 										This parameter is provided for backward compatibility with external modules. Always use 0 in core.
 	 * @param	string	$redirectionfileerr	If defined, a redirection of error is added to this file instead of to channel 1.
 	 * @return	array						array('result'=>...,'output'=>...,'error'=>...). result = 0 means OK.
@@ -1173,7 +1173,7 @@ class Utils
 			$resqldrop = $db->query('SHOW CREATE TABLE '.$table);
 			$row2 = $db->fetch_row($resqldrop);
 			if (empty($row2[1])) {
-				fwrite($handle, "\n-- WARNING: Show create table ".$table." return empy string when it should not.\n");
+				fwrite($handle, "\n-- WARNING: Show create table ".$table." return empty string when it should not.\n");
 			} else {
 				fwrite($handle, $row2[1].";\n");
 				//fwrite($handle,"/*!40101 SET character_set_client = @saved_cs_client */;\n\n");
