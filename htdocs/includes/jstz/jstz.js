@@ -30,12 +30,10 @@ var jstz = (function () {
             MAX_SCORE: 864000000, // 10 days
             AMBIGUITIES: {
                 'America/Denver':       ['America/Mazatlan'],
-                'Europe/London':        ['Africa/Casablanca'],
                 'America/Chicago':      ['America/Mexico_City'],
                 'America/Asuncion':     ['America/Campo_Grande', 'America/Santiago'],
                 'America/Montevideo':   ['America/Sao_Paulo', 'America/Santiago'],
-                // Europe/Minsk should not be in this list... but Windows.
-                'Asia/Beirut':          ['Asia/Amman', 'Asia/Jerusalem', 'Europe/Helsinki', 'Asia/Damascus', 'Africa/Cairo', 'Asia/Gaza', 'Europe/Minsk'],
+                'Asia/Beirut':          ['Asia/Amman', 'Asia/Jerusalem', 'Europe/Helsinki', 'Asia/Damascus', 'Africa/Cairo', 'Asia/Gaza', 'Europe/Minsk', 'Africa/Windhoek'],
                 'Pacific/Auckland':     ['Pacific/Fiji'],
                 'America/Los_Angeles':  ['America/Santa_Isabel'],
                 'America/New_York':     ['America/Havana'],
@@ -47,7 +45,6 @@ var jstz = (function () {
                 'Australia/Sydney':     ['Australia/Lord_Howe'],
                 'Asia/Tokyo':           ['Asia/Yakutsk'],
                 'Asia/Dhaka':           ['Asia/Omsk'],
-                // In the real world Yerevan is not ambigous for Baku... but Windows.
                 'Asia/Baku':            ['Asia/Yerevan'],
                 'Australia/Brisbane':   ['Asia/Vladivostok'],
                 'Pacific/Noumea':       ['Asia/Vladivostok'],
@@ -69,6 +66,24 @@ var jstz = (function () {
             return (offset !== null ? offset : 0);
         },
 
+
+        get_offsets = function get_offsets() {
+            var offsets = [];
+
+            for (var month = 0; month <= 11; month++) {
+                for (var date = 1; date <= 28; date++) {
+                    var currentOffset = get_date_offset(new Date(consts.BASELINE_YEAR, month, date));
+                    if (!offsets) {
+                        offsets.push();
+                    } else if (offsets && offsets[offsets.length-1] !== currentOffset) {
+                        offsets.push(currentOffset);
+                    }
+                }
+            }
+
+            return offsets;
+        },
+
         /**
          * This function does some basic calculations to create information about
          * the user's timezone. It uses REFERENCE_YEAR as a solid year for which
@@ -81,17 +96,22 @@ var jstz = (function () {
          * @returns {String}
          */
         lookup_key = function lookup_key() {
-            var january_offset = get_date_offset(new Date(consts.BASELINE_YEAR, 0, 2)),
-                june_offset = get_date_offset(new Date(consts.BASELINE_YEAR, 5, 2)),
-                diff = january_offset - june_offset;
+            var diff = 0;
+            var offsets = get_offsets();
 
-            if (diff < 0) {
-                return january_offset + ",1";
-            } else if (diff > 0) {
-                return june_offset + ",1," + HEMISPHERE_SOUTH;
+            if (offsets.length > 1) {
+                diff = offsets[0] - offsets[1];
             }
 
-            return january_offset + ",0";
+            if (offsets.length > 3) {
+                return offsets[0] + ",1,weird";
+            } else if (diff < 0) {
+                return offsets[0] + ",1";
+            } else if (diff > 0) {
+                return offsets[1] + ",1," + HEMISPHERE_SOUTH;
+            }
+
+            return offsets[0] + ",0";
         },
 
 
@@ -101,7 +121,7 @@ var jstz = (function () {
          */
         get_from_internationalization_api = function get_from_internationalization_api() {
             var format, timezone;
-            if (typeof Intl === "undefined" || typeof Intl.DateTimeFormat === "undefined") {
+            if (!Intl || typeof Intl === "undefined" || typeof Intl.DateTimeFormat === "undefined") {
                 return;
             }
 
@@ -385,11 +405,15 @@ var jstz = (function () {
          *
          * @returns Object
          */
-        determine = function determine() {
-            var preliminary_tz = get_from_internationalization_api();
+        determine = function determine(using_intl) {
+            var preliminary_tz = false;
+            var needle = lookup_key();
+            if (using_intl || typeof using_intl === 'undefined') {
+                preliminary_tz = get_from_internationalization_api();
+            }
 
             if (!preliminary_tz) {
-                preliminary_tz = jstz.olson.timezones[lookup_key()];
+                preliminary_tz = jstz.olson.timezones[needle];
 
                 if (typeof consts.AMBIGUITIES[preliminary_tz] !== 'undefined') {
                     preliminary_tz = get_by_dst(preliminary_tz);
@@ -399,7 +423,10 @@ var jstz = (function () {
             return {
                 name: function () {
                     return preliminary_tz;
-                }
+                },
+                using_intl: using_intl || typeof using_intl === 'undefined',
+                needle: needle,
+                offsets: get_offsets()
             };
         };
 
@@ -449,7 +476,7 @@ jstz.olson.timezones = {
     '-240,1,s': 'America/Asuncion',
     '-210,1': 'America/St_Johns',
     '-180,1': 'America/Godthab',
-    '-180,0': 'America/Argentina/Buenos_Aires',
+    '-180,0': 'America/Buenos_Aires',
     '-180,1,s': 'America/Montevideo',
     '-120,0': 'America/Noronha',
     '-120,1': 'America/Noronha',
@@ -457,10 +484,12 @@ jstz.olson.timezones = {
     '-60,0': 'Atlantic/Cape_Verde',
     '0,0': 'UTC',
     '0,1': 'Europe/London',
+    '0,1,weird': 'Africa/Casablanca',
     '60,1': 'Europe/Berlin',
     '60,0': 'Africa/Lagos',
-    '60,1,s': 'Africa/Windhoek',
+    '60,1,weird': 'Africa/Casablanca',
     '120,1': 'Asia/Beirut',
+    '120,1,weird': 'Africa/Cairo',
     '120,0': 'Africa/Johannesburg',
     '180,0': 'Asia/Baghdad',
     '180,1': 'Europe/Moscow',
@@ -470,8 +499,8 @@ jstz.olson.timezones = {
     '270,0': 'Asia/Kabul',
     '300,1': 'Asia/Yekaterinburg',
     '300,0': 'Asia/Karachi',
-    '330,0': 'Asia/Kolkata',
-    '345,0': 'Asia/Kathmandu',
+    '330,0': 'Asia/Calcutta',
+    '345,0': 'Asia/Katmandu',
     '360,0': 'Asia/Dhaka',
     '360,1': 'Asia/Omsk',
     '390,0': 'Asia/Rangoon',
@@ -500,7 +529,7 @@ jstz.olson.timezones = {
     '840,0': 'Pacific/Kiritimati'
 };
 
-/* Build time: 2015-11-02 13:01:00Z Build by invoking python utilities/dst.py generate */
+/* Build time: 2019-09-09 11:29:41Z Build by invoking python utilities/dst.py generate */
 jstz.olson.dst_rules = {
     "years": [
         2008,
@@ -533,39 +562,6 @@ jstz.olson.dst_rules = {
                 {
                     "e": 1411678800000,
                     "s": 1406844000000
-                }
-            ]
-        },
-        {
-            "name": "Africa/Casablanca",
-            "rules": [
-                {
-                    "e": 1220223600000,
-                    "s": 1212278400000
-                },
-                {
-                    "e": 1250809200000,
-                    "s": 1243814400000
-                },
-                {
-                    "e": 1281222000000,
-                    "s": 1272758400000
-                },
-                {
-                    "e": 1312066800000,
-                    "s": 1301788800000
-                },
-                {
-                    "e": 1348970400000,
-                    "s": 1345428000000
-                },
-                {
-                    "e": 1382839200000,
-                    "s": 1376100000000
-                },
-                {
-                    "e": 1414288800000,
-                    "s": 1406944800000
                 }
             ]
         },
@@ -812,24 +808,24 @@ jstz.olson.dst_rules = {
                     "s": 1238925600000
                 },
                 {
-                    "e": 1288515600000,
-                    "s": 1270375200000
+                    "e": 1289120400000,
+                    "s": 1268560800000
                 },
                 {
-                    "e": 1319965200000,
-                    "s": 1301824800000
+                    "e": 1320570000000,
+                    "s": 1300010400000
                 },
                 {
-                    "e": 1351414800000,
-                    "s": 1333274400000
+                    "e": 1352019600000,
+                    "s": 1331460000000
                 },
                 {
-                    "e": 1382864400000,
-                    "s": 1365328800000
+                    "e": 1383469200000,
+                    "s": 1362909600000
                 },
                 {
-                    "e": 1414314000000,
-                    "s": 1396778400000
+                    "e": 1414918800000,
+                    "s": 1394359200000
                 }
             ]
         },
@@ -1412,6 +1408,39 @@ jstz.olson.dst_rules = {
                 {
                     "e": 1414285200000,
                     "s": 1396141200000
+                }
+            ]
+        },
+        {
+            "name": "Africa/Windhoek",
+            "rules": [
+                {
+                    "e": 1220749200000,
+                    "s": 1207440000000
+                },
+                {
+                    "e": 1252198800000,
+                    "s": 1238889600000
+                },
+                {
+                    "e": 1283648400000,
+                    "s": 1270339200000
+                },
+                {
+                    "e": 1315098000000,
+                    "s": 1301788800000
+                },
+                {
+                    "e": 1346547600000,
+                    "s": 1333238400000
+                },
+                {
+                    "e": 1377997200000,
+                    "s": 1365292800000
+                },
+                {
+                    "e": 1410051600000,
+                    "s": 1396742400000
                 }
             ]
         }
