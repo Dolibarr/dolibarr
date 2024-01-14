@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - main
-DIRECTION=ltr
-# Default for FONTFORPDF=helvetica
+DIRECTION=rtl
+# Default for FONTFORPDF=pdfatimes
 # Note for Chinese:
 # msungstdlight or cid0ct are for traditional Chinese zh_TW (traditional does not render with Ubuntu pdf reader)
 # stsongstdlight or cid0cs are for simplified Chinese zh_CN
@@ -10,12 +10,12 @@ DIRECTION=ltr
 # DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
 # freemono is for ru_RU or uk_UA, uz_UZ
 # freeserif is for Tamil
-FONTFORPDF=helvetica
+FONTFORPDF=freeserifb
 FONTSIZEFORPDF=10
 SeparatorDecimal=.
 SeparatorThousand=None
-FormatDateShort=%m/%d/%Y
-FormatDateShortInput=%m/%d/%Y
+FormatDateShort=%d/%m/%Y
+FormatDateShortInput%d/%m/%Y
 FormatDateShortJava=MM/dd/yyyy
 FormatDateShortJavaInput=MM/dd/yyyy
 FormatDateShortJQuery=mm/dd/yy
@@ -514,32 +514,32 @@ NotAvailable=Not available
 Categories=Tags/categories
 Category=Tag/category
 By=By
-From=From
-FromDate=From
-FromLocation=From
-to=to
-To=to
-ToDate=to
-ToLocation=to
-at=at
-and=and
-or=or
+From=מאת
+FromDate=מתאריך
+FromLocation=ממקום
+to=אל
+To=אל
+ToDate=עד
+ToLocation=עד
+at=ב
+and=ו
+or=או
 Other=אחר
-Others=Others
-OtherInformations=Other information
-Workflow=Workflow
-Quantity=Quantity
-Qty=Qty
-ChangedBy=Changed by
-ApprovedBy=Approved by
-ApprovedBy2=Approved by (second approval)
-Approved=Approved
-Refused=Refused
-ReCalculate=Recalculate
+Others=אחרים
+OtherInformations=מידע נוסף
+Workflow=תהליך
+Quantity=איכות
+Qty=כמות
+ChangedBy=שונה על ידי
+ApprovedBy=אושר על ידי
+ApprovedBy2=אושר על ידי (מאשר נוסף)
+Approved=אושר
+Refused=נדחה
+ReCalculate=מחושב בשנית
 ResultKo=Failure
 Reporting=Reporting
 Reportings=Reporting
-Draft=Draft
+Draft=טיוטא
 Drafts=Drafts
 StatusInterInvoiced=Invoiced
 Validated=Validated
