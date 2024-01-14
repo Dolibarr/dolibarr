@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015       ATM Consulting          <support@atm-consulting.fr>
  * Copyright (C) 2019-2020  Open-DSI                <support@open-dsi.fr>
- * Copyright (C) 2020       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2020-2024  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -138,7 +138,7 @@ class IntracommReport extends CommonObject
 	/**
 	 * Generate XML file
 	 *
-	 * @param int			$mode 				O for create, R for regenerate (Look always 0 meant toujours 0 within the framework of XML exchanges according to documentation)
+	 * @param string		$mode 				'O' for create, R for regenerate (Look always 0 meant toujours 0 within the framework of XML exchanges according to documentation)
 	 * @param string		$type 				Declaration type by default - introduction or expedition (always 'expedition' for Des)
 	 * @param string		$period_reference	Period of reference
 	 * @return SimpleXMLElement|int
@@ -170,7 +170,7 @@ class IntracommReport extends CommonObject
 		$declaration = $envelope->addChild('Declaration');
 		$declaration->addChild('declarationId', $id_declaration);
 		$declaration->addChild('referencePeriod', $period_reference);
-		if ($conf->global->INTRACOMMREPORT_TYPE_ACTEUR === 'PSI') {
+		if (getDolGlobalString('INTRACOMMREPORT_TYPE_ACTEUR') === 'PSI') {
 			$psiId = $party_id;
 		} else {
 			$psiId = 'NA';
