@@ -237,7 +237,7 @@ function isModEnabled($module)
 /**
  * isDolValidTms check if a timestamp is valid.
  *
- * @param  int|string|null $timestamp
+ * @param  int|string|null $timestamp timestamp to check
  * @return bool
  */
 function isDolValidTms($timestamp)
