@@ -814,8 +814,8 @@ class Project extends CommonObject
 	 * 	@param		string		$type			'propal','order','invoice','order_supplier','invoice_supplier',...
 	 * 	@param		string		$tablename		name of table associated of the type
 	 * 	@param		string		$datefieldname	name of date field for filter
-	 *  @param		int			$date_start		Start date
-	 *  @param		int			$date_end		End date
+	 *  @param		int|string	$date_start		Start date
+	 *  @param		int|string	$date_end		End date
 	 *	@param		string		$projectkey		Equivalent key  to fk_projet for actual type
 	 * 	@return		mixed						Array list of object ids linked to project, < 0 or string if error
 	 */
