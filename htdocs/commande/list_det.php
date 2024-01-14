@@ -473,9 +473,9 @@ if ($search_billed != '' && $search_billed >= 0) {
 if ($search_status != '') {
 	if ($search_status <= 3 && $search_status >= -1) {	// status from -1 to 3 are real status (other are virtual combination)
 		if ($search_status == 1 && !isModEnabled('expedition')) {
-			$sql .= ' AND c.fk_statut IN (1,2)'; // If module expedition disabled, we include order with status 'sending in process' into 'validated'
+			$sql .= ' AND c.fk_statut IN (1,2)'; // If module expedition disabled, we include order with status "sent" into "validated"
 		} else {
-			$sql .= ' AND c.fk_statut = '.((int) $search_status); // brouillon, validee, en cours, annulee
+			$sql .= ' AND c.fk_statut = '.((int) $search_status); // draft, validated, in process or canceled
 		}
 	}
 	if ($search_status == -2) {	// To process
