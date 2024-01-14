@@ -31,7 +31,7 @@ jobs:
         with:
           path: ~/.cache/pre-commit/
           key: pre-commit-4|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
-      # Run alls the precommit tools (defined into pre-commit-config.yaml). We can force exclusion of some of them here.
+      # Run all the precommit tools (defined into pre-commit-config.yaml). We can force exclusion of some of them here.
       - name: Run pre-commit hooks
         env:
           # SKIP is used by pre-commit to not execute certain hooks
