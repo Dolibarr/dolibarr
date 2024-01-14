@@ -1,6 +1,7 @@
 ---
 exclude: (?x)^( htdocs/includes/ckeditor/.* )
 repos:
+  # Several miscellaneous checks and fix (on yaml files, end of files fix)
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
     hooks:
@@ -24,13 +25,16 @@ repos:
           |build/debian/dolibarr.config )$
       - id: fix-byte-order-marker
       - id: check-case-conflict
-      - id: check-toml
+
+  # Beautify shell scripts
   - repo: https://github.com/lovesegfault/beautysh.git
     rev: v6.2.1
     hooks:
       - id: beautysh
         exclude: (?x)^(dev/setup/git/hooks/pre-commit)$
         args: [--tab]
+
+  # Run local script
   - repo: local
     hooks:
       - id: local-precommit-script
@@ -38,6 +42,8 @@ repos:
         language: system
         entry: bash -c '[ ! -x local.sh ] || ./local.sh'
         pass_filenames: false
+
+  # Check PHP syntax
   - repo: https://github.com/bolovsky/pre-commit-php
     rev: 1.5.1
     hooks:
@@ -46,6 +52,8 @@ repos:
         args: [-p]
       - id: php-cs
       - id: php-lint
+      
+  # Prettier (format code, only for non common files)
   - repo: https://github.com/pre-commit/mirrors-prettier
     rev: v3.0.3
     hooks:
@@ -66,6 +74,8 @@ repos:
           - scss
           - css
           - yaml
+          
+  # Check format of yam files        
   - repo: https://github.com/adrienverge/yamllint.git
     rev: v1.32.0
     hooks:
@@ -74,6 +84,8 @@ repos:
           - --no-warnings
           - -d
           - '{extends: relaxed, rules: {line-length: {max: 120}}}'
+          
+  # Execute codespell to fix typo errors (setup of codespell into dev/tools/codespell/)
   - repo: https://github.com/codespell-project/codespell
     rev: v2.2.5
     hooks:
@@ -85,6 +97,8 @@ repos:
         additional_dependencies: [tomli]
       - alias: codespell-lang-en_US
         # Only for translations with specialised exceptions
+        # -D contains predefined conversion dictionaries
+        # -L is to ignore some words
         id: codespell
         files: ^htdocs/langs/en_US/.*$
         args:
@@ -95,8 +109,9 @@ repos:
           - -L
           - informations,medias,uptodate,reenable,crypted,developpers
           - -L
-          - "creat,unitl,alltime,datas,referers,process'"
+          - "creat,unitl,alltime,datas,referers"
 
+  # Check some shell scripts
   - repo: https://github.com/shellcheck-py/shellcheck-py
     rev: v0.9.0.5
     hooks:
