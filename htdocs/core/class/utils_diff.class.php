@@ -31,7 +31,7 @@ class Diff
 	 *
 	 * @param	string	$string1            First string
 	 * @param	string	$string2            Second string
-	 * @param	string	$compareCharacters  true to compare characters, and false to compare lines; this optional parameter defaults to false
+	 * @param	boolean	$compareCharacters  true to compare characters, and false to compare lines; this optional parameter defaults to false
 	 * @return	array						Array of diff
 	 */
 	public static function compare($string1, $string2, $compareCharacters = false)
