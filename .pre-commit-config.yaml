@@ -101,7 +101,7 @@ repos:
           - dev/tools/codespell/codespell-dict.txt
           - -I
           - dev/tools/codespell/codespell-ignore.txt
-          - X
+          - -X
           - dev/tools/codespell/codespell-lines-ignore.txt
           - --uri-ignore-words-list
           - ned
@@ -124,7 +124,7 @@ repos:
           - "creat,unitl,alltime,datas,referers"
           - -I
           - dev/tools/codespell/codespell-ignore.txt
-          - X
+          - -X
           - dev/tools/codespell/codespell-lines-ignore.txt
           - --uri-ignore-words-list
           - ned
