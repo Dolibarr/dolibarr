@@ -17,8 +17,8 @@ composer require --dev phpstan/phpstan
 
 In dolibarr/
 mv htdocs/custom /tmp/
-php build/phpstan/phpstan/vendor/bin/phpstan -v analyze -c ./phpstan.neon --memory-limit 4G --error-format=table htdocs/commande/class
-php build/phpstan/phpstan/vendor/bin/phpstan -v analyze -c ./phpstan.neon --memory-limit 4G --error-format=table htdocs/
+php build/phpstan/phpstan/vendor/bin/phpstan -v analyze -c ./phpstan.neon -a build/phpstan/bootstrap.php --memory-limit 4G --error-format=table htdocs/commande/class
+php build/phpstan/phpstan/vendor/bin/phpstan -v analyze -c ./phpstan.neon -a build/phpstan/bootstrap.php --memory-limit 4G --error-format=table htdocs/
 mv /tmp/custom htdocs
 
 Build HTML report from Cron:

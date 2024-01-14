@@ -1,6 +1,4 @@
 parameters:
-	bootstrapFiles:
-		- build/phpstan/bootstrap.php
 	tmpDir: ./.github/tmp
 	parallel:
 		jobSize: 20
@@ -18,14 +16,11 @@ parameters:
 	excludePaths:
 		analyseAndScan:
 		- htdocs/custom/*
-		- htdocs/dev/*
-		- htdocs/doc/*
 		- htdocs/documents/*
 		- htdocs/install/doctemplates/*
 		- htdocs/langs/*
 		- htdocs/modulebuilder/template/test/*
 		- htdocs/support/*
-		- htdocs/test/*
 		analyse:
 		- htdocs/includes/*
 	checkAlwaysTrueCheckTypeFunctionCall: false
