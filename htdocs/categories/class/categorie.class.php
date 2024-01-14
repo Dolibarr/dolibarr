@@ -260,7 +260,7 @@ class Categorie extends CommonObject
 	public $motherof = array();
 
 	/**
-	 * @var array Childs
+	 * @var array children
 	 */
 	public $childs = array();
 
@@ -1055,7 +1055,7 @@ class Categorie extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Return direct childs id of a category into an array
+	 * Return direct children ids of a category into an array
 	 *
 	 * @return	array|int   Return integer <0 KO, array ok
 	 */
@@ -1119,8 +1119,8 @@ class Categorie extends CommonObject
 	 *                id_mere = id de la categorie mere
 	 *                id_children = tableau des id enfant
 	 *                label = nom de la categorie
-	 *                fulllabel = nom avec chemin complet de la categorie
-	 *                fullpath = chemin complet compose des id
+	 *                fulllabel = Name with full path for the category
+	 *                fullpath = Full path built with the id's
 	 *
 	 * @param   string              $type               Type of categories ('customer', 'supplier', 'contact', 'product', 'member', ...)
 	 * @param   int|string|array	$markafterid        Keep only or removed all categories including the leaf $markafterid in category tree (exclude) or Keep only of category is inside the leaf starting with this id.
@@ -1228,7 +1228,7 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 *	For category id_categ and its childs available in this->cats, define property fullpath and fulllabel.
+	 *	For category id_categ and its children available in this->cats, define property fullpath and fulllabel.
 	 *  It is called by get_full_arbo()
 	 *  This function is a memory scan only from $this->cats and $this->motherof, no database access must be done here.
 	 *
@@ -1393,8 +1393,8 @@ class Categorie extends CommonObject
 		// phpcs:enable
 		$ways = array();
 
-		$allways = $this->get_all_ways(); // Load array of categories
-		foreach ($allways as $way) {
+		$all_ways = $this->get_all_ways(); // Load array of categories
+		foreach ($all_ways as $way) {
 			$w = array();
 			$i = 0;
 			$forced_color = '';
@@ -1481,8 +1481,8 @@ class Categorie extends CommonObject
 		$parents = $this->get_meres();
 		if (is_array($parents)) {
 			foreach ($parents as $parent) {
-				$allways = $parent->get_all_ways();
-				foreach ($allways as $way) {
+				$all_ways = $parent->get_all_ways();
+				foreach ($all_ways as $way) {
 					$w = $way;
 					$w[] = $this;
 					$ways[] = $w;
@@ -1722,9 +1722,9 @@ class Categorie extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Deplace fichier uploade sous le nom $file dans le repertoire sdir
+	 *  Add the image uploaded as $file to the directory $sdir/<category>-<id>/photos/
 	 *
-	 *  @param      string	$sdir       Final destination directory
+	 *  @param      string	$sdir       Root destination directory
 	 *  @param      array	$file		Uploaded file name
 	 *	@return		void
 	 */
@@ -1801,7 +1801,7 @@ class Categorie extends CommonObject
 							$photo_vignette = preg_replace('/'.$regs[0].'/i', '', $photo).'_small'.$regs[0];
 						}
 
-						// Objet
+						// Object
 						$obj = array();
 						$obj['photo'] = $photo;
 						if ($photo_vignette && is_file($dirthumb.$photo_vignette)) {
@@ -1998,7 +1998,7 @@ class Categorie extends CommonObject
 	{
 		dol_syslog(get_class($this)."::initAsSpecimen");
 
-		// Initialise parametres
+		// Initialise parameters
 		$this->id = 0;
 		$this->fk_parent = 0;
 		$this->label = 'SPECIMEN';
@@ -2026,7 +2026,7 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 * Return the addtional SQL JOIN query for filtering a list by a category
+	 * Return the additional SQL JOIN query for filtering a list by a category
 	 *
 	 * @param string	$type			The category type (e.g Categorie::TYPE_WAREHOUSE)
 	 * @param string	$rowIdName		The name of the row id inside the whole sql query (e.g. "e.rowid")
@@ -2043,7 +2043,7 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 * Return the addtional SQL SELECT query for filtering a list by a category
+	 * Return the additional SQL SELECT query for filtering a list by a category
 	 *
 	 * @param string	$type			The category type (e.g Categorie::TYPE_WAREHOUSE)
 	 * @param string	$rowIdName		The name of the row id inside the whole sql query (e.g. "e.rowid")

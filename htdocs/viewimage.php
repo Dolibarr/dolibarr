@@ -261,7 +261,7 @@ if (!empty($hashp)) {
 	if (getDolGlobalString('TAKEPOS_AUTO_ORDER') && in_array($modulepart, array('product', 'category'))) {
 		$accessallowed = 1; // When TakePOS Public Auto Order is enabled, we accept to see all images of product and categories with no login
 		// TODO Replace this with a call of getPublicImageOfObject like used by website so
-		// only share images are visibles
+		// only shared images are visible
 	}
 } else {
 	// Basic protection (against external users only)

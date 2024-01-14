@@ -3007,7 +3007,7 @@ class Facture extends CommonInvoice
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Tags the invoice as incompletely paied and call the trigger BILL_UNPAYED
+	 *  Tags the invoice as incompletely paid and call the trigger BILL_UNPAYED
 	 *	This method is used when a direct debit (fr:prelevement) is refused
 	 * 	or when a canceled invoice is reopened.
 	 *

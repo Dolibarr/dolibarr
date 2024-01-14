@@ -2119,7 +2119,7 @@ if ($resql) {
 						} else {  // BUGGED CODE.
 							// DOES NOT TAKE INTO ACCOUNT MANUFACTURING. THIS CODE SHOULD BE USELESS. PREVIOUS CODE SEEMS COMPLETE.
 							// COUNT STOCK WHEN WE SHOULD ALREADY HAVE VALUE
-							// Detailed virtual stock, looks bugged, uncomplete and need heavy load.
+							// Detailed virtual stock, looks bugged, incomplete and need heavy load.
 							// stock order and stock order_supplier
 							$stock_order = 0;
 							$stock_order_supplier = 0;

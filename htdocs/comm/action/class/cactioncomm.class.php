@@ -162,9 +162,9 @@ class CActionComm
 		global $langs, $conf, $user;
 		$langs->load("commercial");
 
-		$repid = array();
-		$repcode = array();
-		$repall = array();
+		$rep_id = array();
+		$rep_code = array();
+		$rep_all = array();
 
 		$sql = "SELECT id, code, libelle as label, module, type, color, picto";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
@@ -301,7 +301,7 @@ class CActionComm
 									$module = $obj->module;
 								}
 								$label = '&nbsp;&nbsp; '.$label;
-								if (!isset($repcode['AC_ALL_'.strtoupper($module)])) {	// If first time for this module
+								if (!isset($rep_code['AC_ALL_'.strtoupper($module)])) {	// If first time for this module
 									$idforallfornewmodule--;
 								}
 								$TModule['id'][$idforallfornewmodule] = $langs->trans("ActionAC_ALL_".strtoupper($module));

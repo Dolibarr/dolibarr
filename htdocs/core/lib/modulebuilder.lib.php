@@ -1317,7 +1317,7 @@ function writeApiUrlsInDoc($file_api, $file_doc)
 
 	// build format asciidoc for urls in table
 	if (!$error) {
-		$asciiDocTable = "[options=\"header\"]\n|===\n|Objet | URLs\n";
+		$asciiDocTable = "[options=\"header\"]\n|===\n|Object | URLs\n";  // phpcs:ignore
 		foreach ($groupedUrls as $objectName => $urls) {
 			$urlsList = implode(" +\n*", $urls);
 			$asciiDocTable .= "|$objectName | \n*$urlsList +\n";

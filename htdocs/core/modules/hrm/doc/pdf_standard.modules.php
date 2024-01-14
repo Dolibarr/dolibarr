@@ -610,7 +610,7 @@ class pdf_standard extends ModelePDFEvaluation
 			/*$pdf->SetTextColor(0, 0, 0);
 			$pdf->SetFont('', 'B', $default_font_size - 2);
 			$pdf->SetXY($posx, $posy - 5);
-			$pdf->MultiCell(190, 5, $outputlangs->transnoentities("Informations"), '', 'L');*/
+			$pdf->MultiCell(190, 5, $outputlangs->transnoentities("Information"), '', 'L');*/
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetFillColor(224, 224, 224);
 			$pdf->MultiCell(190, $hautcadre, "", 0, 'R', 1);
