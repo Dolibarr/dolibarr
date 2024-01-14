@@ -31,7 +31,7 @@ jobs:
       - name: Run pre-commit hooks
         env:
           # SKIP is used by pre-commit to not execute certain hooks
-          SKIP: php-cs,php-cbf,trailing-whitespace,end-of-file-fixer
+          SKIP: no-commit-to-branch,php-cs,php-cbf,trailing-whitespace,end-of-file-fixer
         run: |
           set -o pipefail
           pre-commit gc
