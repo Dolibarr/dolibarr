@@ -94,14 +94,14 @@ repos:
         # we can specify two dicts only on the CLI.
         # You can update the contents of the exclude-file codespell-lines-ignore with the script
         # dev/tools/codespell/addCodespellIgnores.sh
-        args: 
+        args:
           - -D
           - '-'
           - -D
           - dev/tools/codespell/codespell-dict.txt
           - -I
           - dev/tools/codespell/codespell-ignore.txt
-          - -X
+          - -x
           - dev/tools/codespell/codespell-lines-ignore.txt
           - --uri-ignore-words-list
           - ned
@@ -124,7 +124,7 @@ repos:
           - "creat,unitl,alltime,datas,referers"
           - -I
           - dev/tools/codespell/codespell-ignore.txt
-          - -X
+          - -x
           - dev/tools/codespell/codespell-lines-ignore.txt
           - --uri-ignore-words-list
           - ned
