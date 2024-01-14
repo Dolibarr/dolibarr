@@ -75,7 +75,7 @@ class GuessFromMsTzId implements TimezoneGuesser
         30 => 'America/Noronha',
         8 => 'America/Sao_Paulo', // Best guess
         32 => 'America/Argentina/Buenos_Aires',
-        60 => 'America/Godthab',
+        60 => 'America/Nuuk',
         28 => 'America/St_Johns',
         9 => 'America/Halifax',
         33 => 'America/Caracas',
