@@ -26,7 +26,7 @@ if [ -z "${0##*.sh}" ] ; then
 		[ -r "${PROJECT_ROOT}/${codespell_ignore_file}" ] && break
 		PROJECT_ROOT=$(dirname "${PROJECT_ROOT}")
 	done
-	if [ "${PROJECT_ROOT}" == "" ] ; then
+	if [ "${PROJECT_ROOT}" == "/" ] ; then
 		echo "Project root not found from '${script}'"
 		exit 1
 	fi
