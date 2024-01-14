@@ -38,7 +38,7 @@ if (isModEnabled('project')) {
 // Load translation files required by the page
 $langs->loadLangs(array("suppliers", "orders", "companies", "stocks"));
 
-// Get Paramters
+// Get Parameters
 $id     = GETPOST('id', 'int');
 $ref    = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');

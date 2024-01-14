@@ -178,7 +178,7 @@ if ($pageid == 'css') {   // No more used ?
 $refname = basename(dirname($original_file)."/");
 
 // Security:
-// Limite acces si droits non corrects
+// Limit access if permissions are insufficient
 if (!$accessallowed) {
 	accessforbidden();
 }

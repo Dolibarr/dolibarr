@@ -52,7 +52,7 @@ if ($search_project_user == $user->id) {
 
 // Security check
 $socid = 0;
-//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 if (!$user->hasRight('projet', 'lire')) {
 	accessforbidden();
 }
@@ -200,7 +200,7 @@ print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 0, $listofoppst
 print '</div><div class="fichetwothirdright">';
 
 // Latest modified projects
-$sql = "SELECT p.rowid, p.ref, p.title, p.dateo, p.datee, p.fk_statut as status, p.tms as datem";
+$sql = "SELECT p.rowid, p.ref, p.title, p.dateo as date_start, p.datee as date_end, p.fk_statut as status, p.tms as datem";
 $sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 $sql .= ", s.code_client, s.code_compta, s.client";
 $sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
@@ -241,6 +241,8 @@ if ($resql) {
 			$projectstatic->title = $obj->title;
 			$projectstatic->thirdparty_name = $obj->name;
 			$projectstatic->status = $obj->status;
+			$projectstatic->date_start = $db->jdate($obj->date_start);
+			$projectstatic->date_end = $db->jdate($obj->date_end);
 
 			$companystatic->id = $obj->socid;
 			$companystatic->name = $obj->name;

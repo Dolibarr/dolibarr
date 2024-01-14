@@ -250,8 +250,8 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
 	require_once DOL_DOCUMENT_ROOT."/core/db/".$type.'.class.php';
 
 	$class = 'DoliDB'.ucfirst($type);
-	$dolidb = new $class($type, $host, $user, $pass, $name, $port);
-	return $dolidb;
+	$db = new $class($type, $host, $user, $pass, $name, $port);
+	return $db;
 }
 
 /**
@@ -10847,8 +10847,6 @@ function ajax_autoselect($htmlname, $addlink = '', $textonlink = 'Link')
  */
 function dolIsAllowedForPreview($file)
 {
-	global $conf;
-
 	// Check .noexe extension in filename
 	if (preg_match('/\.noexe$/i', $file)) {
 		return 0;
@@ -12936,7 +12934,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 					$result = $contactaction->fetchResources();
 					if ($result < 0) {
 						dol_print_error($db);
-						setEventMessage("actions.lib::show_actions_messaging Error fetch ressource", 'errors');
+						setEventMessage("actions.lib::show_actions_messaging Error fetch resource", 'errors');
 					}
 
 					//if ($donetodo == 'todo') $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";

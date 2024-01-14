@@ -46,7 +46,7 @@ class mod_contract_olive extends ModelNumRefContracts
 
 	public $code_modifiable = 1; // Code modifiable
 
-	public $code_modifiable_invalide = 1; // Code modifiable si il est invalide
+	public $code_modifiable_invalide = 1; // Code modifiable si il est invalid
 
 	public $code_modifiable_null = 1; // Code modifiables si il est null
 

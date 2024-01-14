@@ -128,7 +128,7 @@ ob_start();
                         <p>
                             Lorem ipsum dolor, sit amet consectetur adipisicing
                             elit. Ab fuga nobis omnis alias, aliquid iste cumque
-                            tempora nam reprehenderit quia itaque debitis,
+                            tempora nim reprehenderit quia itaque debitis,
                             nostrum labore rerum reiciendis laboriosam unde,
                             tempore corporis.
                         </p>
@@ -162,7 +162,7 @@ ob_start();
                         <p>
                             Lorem ipsum dolor, sit amet consectetur adipisicing
                             elit. Ab fuga nobis omnis alias, aliquid iste cumque
-                            tempora nam reprehenderit quia itaque debitis,
+                            tempora nim reprehenderit quia itaque debitis,
                             nostrum labore rerum reiciendis laboriosam unde,
                             tempore corporis.
                         </p>                        

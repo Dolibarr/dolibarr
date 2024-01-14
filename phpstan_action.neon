@@ -30,7 +30,7 @@ parameters:
 	checkAlwaysTrueStrictComparison: false
 	checkClassCaseSensitivity: false
 	checkFunctionArgumentTypes: false
-	checkFunctionNameCase: false
+	checkFunctionNameCase: true
 	checkArgumentsPassedByReference: false
 	checkMaybeUndefinedVariables: false
 	checkNullables: false

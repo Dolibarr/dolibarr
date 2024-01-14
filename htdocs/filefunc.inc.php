@@ -324,7 +324,7 @@ define('MAIN_DB_PREFIX', $dolibarr_main_db_prefix);
 
 /*
  * Define PATH to external libraries
- * To use other version than embeded libraries, define here constant to path. Use '' to use include class path autodetect.
+ * To use other version than embedded libraries, define here constant to path. Use '' to use include class path autodetect.
  */
 // Path to root libraries
 if (!defined('TCPDF_PATH')) {

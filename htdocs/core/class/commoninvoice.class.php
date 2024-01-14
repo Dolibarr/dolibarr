@@ -196,7 +196,7 @@ abstract class CommonInvoice extends CommonObject
 	 * If paid partially, $this->close_code can be:
 	 * - CLOSECODE_DISCOUNTVAT
 	 * - CLOSECODE_BADDEBT
-	 * If paid completelly, this->close_code will be null
+	 * If paid completely, this->close_code will be null
 	 */
 	const STATUS_CLOSED = 2;
 
@@ -765,7 +765,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  Return label of object status
 	 *
 	 *  @param      int		$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
-	 *  @param      integer	$alreadypaid    0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
+	 *  @param      integer	$alreadypaid    0=No payment already done, >0=Some payments were already done (we recommend to put here amount paid if you have it, 1 otherwise)
 	 *  @return     string			        Label of status
 	 */
 	public function getLibStatut($mode = 0, $alreadypaid = -1)
@@ -780,7 +780,7 @@ abstract class CommonInvoice extends CommonObject
 	 *	@param    	int  	$paye          	Status field paye
 	 *	@param      int		$status        	Id status
 	 *	@param      int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=long label + picto
-	 *	@param		integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, -1 otherwise)
+	 *	@param		integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommend to put here amount paid if you have it, -1 otherwise)
 	 *	@param		int		$type			Type invoice. If -1, we use $this->type
 	 *	@return     string        			Label of status
 	 */
@@ -905,7 +905,7 @@ abstract class CommonInvoice extends CommonObject
 		}
 		$this->db->free($resqltemp);
 
-		/* Definition de la date limite */
+		/* Definition de la date limit */
 
 		// 0 : adding the number of days
 		if ($cdr_type == 0) {
@@ -1230,7 +1230,7 @@ abstract class CommonInvoice extends CommonObject
 								$result = $this->db->query($sql);
 								if ($result < 0) {
 									$error++;
-									$this->errors[] = "Error on updateing fk_prelevement_bons to ".$bon->id;
+									$this->errors[] = "Error on updating fk_prelevement_bons to ".$bon->id;
 								}
 							}
 							*/
@@ -1333,7 +1333,7 @@ abstract class CommonInvoice extends CommonObject
 										$stripecard = null;
 										if ($companypaymentmode->type == 'ban') {
 											// Check into societe_rib if a payment mode for Stripe and ban payment exists
-											// To make a Stripe SEPA payment request, we must have the payment mode source already saved into societe_rib and retreived with ->sepaStripe
+											// To make a Stripe SEPA payment request, we must have the payment mode source already saved into societe_rib and retrieved with ->sepaStripe
 											// The payment mode source is created when we create the bank account on Stripe with paymentmodes.php?action=create
 											$stripecard = $stripe->sepaStripe($customer, $companypaymentmode, $stripeacc, $servicestatus, 0);
 										} else {
@@ -1436,7 +1436,7 @@ abstract class CommonInvoice extends CommonObject
 
 												$postactionmessages[] = 'Success to request '.$type.' (' . $charge->id . ' with ' . $stripearrayofkeys['publishable_key'] . ')';
 
-												// Save a stripe payment was done in realy life so later we will be able to force a commit on recorded payments
+												// Save a stripe payment was done in real life so later we will be able to force a commit on recorded payments
 												// even if in batch mode (method doTakePaymentStripe), we will always make all action in one transaction with a forced commit.
 												$this->stripechargedone++;
 
@@ -1758,7 +1758,7 @@ abstract class CommonInvoice extends CommonObject
 			$s .= "\n";
 		}
 		if ($bankaccount->id > 0 && getDolGlobalString('PDF_SWISS_QRCODE_USE_OWNER_OF_ACCOUNT_AS_CREDITOR')) {
-			// If a bank account is prodived and we ask to use it as creditor, we use the bank address
+			// If a bank account is provided and we ask to use it as creditor, we use the bank address
 			// TODO In a future, we may always use this address, and if name/address/zip/town/country differs from $mysoc, we can use the address of $mysoc into the final seller field ?
 			$s .= "S\n";
 			$s .= dol_trunc($bankaccount->proprio, 70, 'right', 'UTF-8', 1)."\n";

@@ -43,7 +43,7 @@ class FormFile
 	public $error;
 
 	public $numoffiles;
-	public $infofiles; // Used to return informations by function getDocumentsLink
+	public $infofiles; // Used to return information by function getDocumentsLink
 
 
 	/**
@@ -1183,7 +1183,7 @@ class FormFile
 	 *  @param   string 		$sortorder          Sort order ('ASC' or 'DESC')
 	 *  @param   int    		$disablemove        1=Disable move button, 0=Position move is possible.
 	 *  @param	 int			$addfilterfields	Add the line with filters
-	 *  @param	 int			$disablecrop		Disable crop feature on images (-1 = auto, prefer to set it explicitely to 0 or 1)
+	 *  @param	 int			$disablecrop		Disable crop feature on images (-1 = auto, prefer to set it explicitly to 0 or 1)
 	 *  @param	 string			$moreattrondiv		More attributes on the div for responsive. Example 'style="height:280px; overflow: auto;"'
 	 * 	@return	 int								Return integer <0 if KO, nb of files shown if OK
 	 *  @see list_of_autoecmfiles()
@@ -1213,7 +1213,7 @@ class FormFile
 				$relativepath = 'Call_not_supported_._Call_function_using_a_defined_relative_path_.';
 			}
 		}
-		// For backward compatiblity, we detect file stored into an old path
+		// For backward compatibility, we detect file stored into an old path
 		if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO') && isset($filearray[0]) && $filearray[0]['level1name'] == 'photos') {
 			$relativepath = preg_replace('/^.*\/produit\//', '', $filearray[0]['path']).'/';
 		}
@@ -1248,7 +1248,7 @@ class FormFile
 			return $reshook;
 		} else {
 			if (!is_object($form)) {
-				include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php'; // The compoent may be included into ajax page that does not include the Form class
+				include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php'; // The component may be included into ajax page that does not include the Form class
 				$form = new Form($this->db);
 			}
 

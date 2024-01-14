@@ -187,7 +187,7 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 		} else {
 			// Disable the module
 			$this->byHref('modTakePos')->click();
-			// Reenable the module
+			// Re-enable the module
 			$this->byHref('modTakePos')->click();
 		}
 		// Page reloaded, we need a new Xpath

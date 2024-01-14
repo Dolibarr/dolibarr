@@ -21,7 +21,7 @@
 
 /**
  *  \file       htdocs/core/lib/order.lib.php
- *  \brief      Ensemble de fonctions de base pour le module commande
+ *  \brief      Ensemble de functions de base pour le module commande
  *  \ingroup    commande
  */
 
@@ -171,7 +171,7 @@ function commande_prepare_head(Commande $object)
 }
 
 /**
- *  Return array head with list of tabs to view object informations.
+ *  Return array head with list of tabs to view object information.
  *
  *  @return	array   	    		    head array with tabs
  */

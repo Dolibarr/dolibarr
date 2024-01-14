@@ -294,7 +294,7 @@ class DiscountAbsolute extends CommonObject
 
 
 	/**
-	 *  Delete object in database. If fk_facture_source is defined, we delete all familiy with same fk_facture_source. If not, only with id is removed
+	 *  Delete object in database. If fk_facture_source is defined, we delete all family with same fk_facture_source. If not, only with id is removed
 	 *
 	 *  @param      User    $user       Object of user asking to delete
 	 *  @return     int                 Return integer <0 if KO, >0 if OK
@@ -354,9 +354,9 @@ class DiscountAbsolute extends CommonObject
 		// Delete but only if not used
 		$sql = "DELETE FROM ".$this->db->prefix()."societe_remise_except ";
 		if ($this->fk_facture_source) {
-			$sql .= " WHERE fk_facture_source = ".((int) $this->fk_facture_source); // Delete all lines of same serie
+			$sql .= " WHERE fk_facture_source = ".((int) $this->fk_facture_source); // Delete all lines of same series
 		} elseif ($this->fk_invoice_supplier_source) {
-			$sql .= " WHERE fk_invoice_supplier_source = ".((int) $this->fk_invoice_supplier_source); // Delete all lines of same serie
+			$sql .= " WHERE fk_invoice_supplier_source = ".((int) $this->fk_invoice_supplier_source); // Delete all lines of same series
 		} else {
 			$sql .= " WHERE rowid = ".((int) $this->id); // Delete only line
 		}

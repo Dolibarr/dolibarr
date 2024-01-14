@@ -153,8 +153,8 @@ function getAttachments($jk, $mbox)
  */
 function getFileData($jk, $fpos, $type, $mbox)
 {
-	$mege = imap_fetchbody($mbox, $jk, $fpos, FT_UID);
-	$data = getDecodeValue($mege, $type);
+	$merge = imap_fetchbody($mbox, $jk, $fpos, FT_UID);
+	$data = getDecodeValue($merge, $type);
 
 	return $data;
 }

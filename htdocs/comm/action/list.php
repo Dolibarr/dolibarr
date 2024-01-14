@@ -445,7 +445,7 @@ $sql .= " ,".MAIN_DB_PREFIX."c_actioncomm as c";
 if ($resourceid > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_resources as r";
 }
-// We must filter on assignement table
+// We must filter on assignment table
 if ($filtert > 0 || $usergroup > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."actioncomm_resources as ar";
 }
@@ -506,7 +506,7 @@ if ($search_sale && $search_sale != '-1') {
 if ($socid) {
 	$sql .= " AND a.fk_soc = ".((int) $socid);
 }
-// We must filter on assignement table
+// We must filter on assignment table
 if ($filtert > 0 || $usergroup > 0) {
 	$sql .= " AND ar.fk_actioncomm = a.id AND ar.element_type='user'";
 }
@@ -540,7 +540,7 @@ if ($search_title) {
 if ($search_note) {
 	$sql .= natural_search('a.note', $search_note);
 }
-// We must filter on assignement table
+// We must filter on assignment table
 if ($filtert > 0 || $usergroup > 0) {
 	$sql .= " AND (";
 	if ($filtert > 0) {

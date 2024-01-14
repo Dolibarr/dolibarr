@@ -30,7 +30,7 @@
  *
  * @param	string	  $url 				    URL to call.
  * @param	string    $postorget		    'POST', 'GET', 'HEAD', 'PUT', 'PUTALREADYFORMATED', 'POSTALREADYFORMATED', 'DELETE'
- * @param	string    $param			    Parameters of URL (x=value1&y=value2) or may be a formated content with $postorget='PUTALREADYFORMATED'
+ * @param	string    $param			    Parameters of URL (x=value1&y=value2) or may be a formatted content with $postorget='PUTALREADYFORMATED'
  * @param	integer   $followlocation		0=Do not follow, 1=Follow location.
  * @param	string[]  $addheaders			Array of string to add into header. Example: ('Accept: application/xrds+xml', ....)
  * @param	string[]  $allowedschemes		List of schemes that are allowed ('http' + 'https' only by default)
@@ -69,7 +69,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	}
 	curl_setopt($ch, CURLINFO_HEADER_OUT, true); // To be able to retrieve request header and log it
 
-	// By default use tls decied by PHP.
+	// By default use the TLS version decided by PHP.
 	// You can force, if supported a version like TLSv1 or TLSv1.2
 	if (getDolGlobalString('MAIN_CURL_SSLVERSION')) {
 		curl_setopt($ch, CURLOPT_SSLVERSION, $conf->global->MAIN_CURL_SSLVERSION);
@@ -239,11 +239,11 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 	dol_syslog("getURLContent request=".$request);
 	if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
-		// This may contains binary data, so we dont output reponse by default.
+		// This may contains binary data, so we don't output response by default.
 		dol_syslog("getURLContent request=".$request, LOG_DEBUG, 0, '_curl');
 		dol_syslog("getURLContent response =".$response, LOG_DEBUG, 0, '_curl');
 	}
-	dol_syslog("getURLContent response size=".strlen($response)); // This may contains binary data, so we dont output it
+	dol_syslog("getURLContent response size=".strlen($response)); // This may contains binary data, so we don't output it
 
 	$rep = array();
 	if (curl_errno($ch)) {

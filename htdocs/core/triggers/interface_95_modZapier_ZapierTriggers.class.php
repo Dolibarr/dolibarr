@@ -195,7 +195,7 @@ class InterfaceZapierTriggers extends DolibarrTriggers
 			// case 'PRODUCT_SET_MULTILANGS':
 			// case 'PRODUCT_DEL_MULTILANGS':
 
-			//Stock mouvement
+			//Stock movement
 			// case 'STOCK_MOVEMENT':
 
 			//MYECMDIR

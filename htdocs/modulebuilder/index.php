@@ -1068,7 +1068,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 			 *  'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
 			 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 			 *  'index' if we want an index in database.
-			 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+			 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 			 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 			 *  'isameasure' must be set to 1 or 2 if field can be used for measure. Field type must be summable like integer or double(24,8). Use 1 in most cases, or 2 if you don't want to see the column total into list (for example for percentage)
 			 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'cssview'=>'wordbreak', 'csslist'=>'tdoverflowmax200'
@@ -1618,7 +1618,7 @@ if ($dirins && $action == 'initdic' && $module && empty($cancel)) {
 	}
 	if (!GETPOST('label')) {
 		$error++;
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Lable")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 	}
 	if (!$error) {
 		$newdicname = $dicname;
@@ -2258,7 +2258,7 @@ if ($dirins && $action == 'addright' && !empty($module) && empty($cancel)) {
 		}
 	}
 
-	// verify informations entred
+	// verify information entered
 	if (!GETPOST('label', 'alpha')) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
@@ -2353,7 +2353,7 @@ if ($dirins && GETPOST('action') == 'update_right' && GETPOST('modifyright')&& e
 			dol_print_error($db, $e->getMessage());
 		}
 	}
-	// verify informations entred
+	// verify information entered
 	if (!GETPOST('label', 'alpha')) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
@@ -3470,7 +3470,8 @@ if ($module == 'initmodule') {
 				foreach ($listofsetuppages as $setuppage) {
 					//var_dump($setuppage);
 					print '<tr><td>';
-					print '<span class="fa fa-file-o"></span> '.$langs->trans("SetupFile").' : <strong class="wordbreak">'.$modulelowercase.'/admin/'.$setuppage['relativename'].'</strong>';
+					print '<span class="fa fa-file-o"></span> '.$langs->trans("SetupFile").' : ';
+					print '<strong class="wordbreak bold"><a href="'.dol_buildpath($modulelowercase.'/admin/'.$setuppage['relativename'], 1).'" target="_test">'.$modulelowercase.'/admin/'.$setuppage['relativename'].'</a></strong>';
 					print '</td><td><a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&token='.newToken().'&format=php&file='.urlencode($modulelowercase.'/admin/'.$setuppage['relativename']).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 					print '</td></tr>';
 				}
@@ -5035,7 +5036,7 @@ if ($module == 'initmodule') {
 			$dirins = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
 			$destdir = $dirins.'/'.strtolower($module);
 			$listofobject = dol_dir_list($destdir.'/class', 'files', 0, '\.class\.php$');
-			$objects = dolGetListOfObjectclasses($destdir);
+			$objects = dolGetListOfObjectClasses($destdir);
 
 			$leftmenus = array();
 
