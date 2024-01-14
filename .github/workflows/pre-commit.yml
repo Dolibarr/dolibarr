@@ -30,8 +30,7 @@ jobs:
       - uses: actions/cache/restore@v3
         with:
           path: ~/.cache/pre-commit/
-          key: pre-commit-4|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml')
-            }}
+          key: pre-commit-4|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
       # Run alls the precommit tools (defined into pre-commit-config.yaml). We can force exclusion of some of them here.
       - name: Run pre-commit hooks
         env:
@@ -54,7 +53,6 @@ jobs:
           files: ${{ env.CS_XML }}
           notices-as-warnings: true  # optional
           prepend-filename: true  # optional
-          
       # Save the precommit cache
       - uses: actions/cache/save@v3
         if: ${{ always() }}
