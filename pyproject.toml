@@ -7,10 +7,6 @@ skip = "*/langs/*,*/build/exe/*,**.log,*.pdf,*dev/resources/*,*.phar,*.z,*.gz,*.
 
 quiet-level=2
 ignore-regex = '\\[fnrstv]'
-# You can update the contents of the exclude-file with the script
-# dev/tools/codespell/addCodespellIgnores.sh
-exclude-file = "dev/tools/codespell/codespell-lines-ignore.txt"
-uri-ignore-words-list="ned"
 builtin = "clear,rare,informal,usage,code,names"
 #D = "-"
 #dictionary = "dev/tools/codespell/codespell-dict.txt"
