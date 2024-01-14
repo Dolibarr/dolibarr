@@ -815,13 +815,13 @@ class Reception extends CommonObject
 	 * @param 	int			$qty				Quantity
 	 * @param	array		$array_options		extrafields array
 	 * @param	string		$comment			Comment for stock movement
-	 * @param	int|string	$eatby				eat-by date
-	 * @param	int|string	$sellby				sell-by date
+	 * @param	int			$eatby				eat-by date
+	 * @param	int			$sellby				sell-by date
 	 * @param	string		$batch				Lot number
 	 * @param	double		$cost_price			Line cost
 	 * @return	int							Return integer <0 if KO, index of line if OK
 	 */
-	public function addline($entrepot_id, $id, $qty, $array_options = [], $comment = '', $eatby = '', $sellby = '', $batch = '', $cost_price = 0)
+	public function addline($entrepot_id, $id, $qty, $array_options = [], $comment = '', $eatby = null, $sellby = null, $batch = '', $cost_price = 0)
 	{
 		global $conf, $langs, $user;
 
