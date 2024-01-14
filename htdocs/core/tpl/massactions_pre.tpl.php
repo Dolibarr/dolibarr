@@ -250,7 +250,7 @@ if ($massaction == 'presend') {
 	$formmail->withto = empty($liste) ? (GETPOST('sendto', 'alpha') ? GETPOST('sendto', 'alpha') : array()) : $liste;
 	$formmail->withtofree = empty($liste) ? 1 : 0;
 	$formmail->withtocc = 1;
-	$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
+	$formmail->withtoccc = getDolGlobalString('MAIN_EMAIL_USECCC');
 	if (!empty($topicmail)) {
 		$formmail->withtopic = $langs->transnoentities($topicmail, '__REF__', '__REF_CLIENT__');
 	} else {
@@ -295,7 +295,7 @@ if ($massaction == 'presend') {
 	// Array of substitutions
 	$formmail->substit = $substitutionarray;
 
-	// Tableau des parametres complementaires du post
+	// Tableau des parameters complementaires du post
 	$formmail->param['action'] = $action;
 	$formmail->param['models'] = $modelmail;	// the filter to know which kind of template emails to show. 'none' means no template suggested.
 	$formmail->param['models_id'] = GETPOST('modelmailselected', 'int') ? GETPOST('modelmailselected', 'int') : '-1';
@@ -304,7 +304,7 @@ if ($massaction == 'presend') {
 	if (getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && count($listofselectedrecipientobjid) > $conf->global->MAILING_LIMIT_SENDBYWEB) {
 		// Note: MAILING_LIMIT_SENDBYWEB may be forced by conf.php file and variable $dolibarr_mailing_limit_sendbyweb
 		$langs->load("errors");
-		print img_warning().' '.$langs->trans('WarningNumberOfRecipientIsRestrictedInMassAction', $conf->global->MAILING_LIMIT_SENDBYWEB);
+		print img_warning().' '.$langs->trans('WarningNumberOfRecipientIsRestrictedInMassAction', getDolGlobalString('MAILING_LIMIT_SENDBYWEB'));
 		print ' - <a href="javascript: window.history.go(-1)">'.$langs->trans("GoBack").'</a>';
 		$arrayofmassactions = array();
 	} else {

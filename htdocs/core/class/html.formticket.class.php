@@ -845,7 +845,7 @@ class FormTicket
 					}
 
 					$label = ($arraycategories['label'] != '-' ? $arraycategories['label'] : '');
-					if ($outputlangs->trans("TicketCategoryShort".$arraycategories['code']) != ("TicketCategoryShort".$arraycategories['code'])) {
+					if ($outputlangs->trans("TicketCategoryShort".$arraycategories['code']) != "TicketCategoryShort".$arraycategories['code']) {
 						$label = $outputlangs->trans("TicketCategoryShort".$arraycategories['code']);
 					} elseif ($outputlangs->trans($arraycategories['code']) != $arraycategories['code']) {
 						$label = $outputlangs->trans($arraycategories['code']);
@@ -907,7 +907,7 @@ class FormTicket
 			}
 
 			print ajax_combobox('select'.$htmlname);
-		} elseif ($htmlname!='') {
+		} elseif ($htmlname != '') {
 			$selectedgroups = array();
 			$groupvalue = "";
 			$groupticket=GETPOST($htmlname, 'aZ09');
@@ -958,7 +958,7 @@ class FormTicket
 					$obj = $this->db->fetch_object($resql);
 					if ($obj) {
 						$label = ($obj->label != '-' ? $obj->label : '');
-						if ($outputlangs->trans("TicketCategoryShort".$obj->code) != ("TicketCategoryShort".$obj->code)) {
+						if ($outputlangs->trans("TicketCategoryShort".$obj->code) != "TicketCategoryShort".$obj->code) {
 							$label = $outputlangs->trans("TicketCategoryShort".$obj->code);
 						} elseif ($outputlangs->trans($obj->code) != $obj->code) {
 							$label = $outputlangs->trans($obj->code);
@@ -1029,7 +1029,7 @@ class FormTicket
 						$obj = $this->db->fetch_object($resql);
 						if ($obj) {
 							$label = ($obj->label != '-' ? $obj->label : '');
-							if ($outputlangs->trans("TicketCategoryShort".$obj->code) != ("TicketCategoryShort".$obj->code)) {
+							if ($outputlangs->trans("TicketCategoryShort".$obj->code) != "TicketCategoryShort".$obj->code) {
 								$label = $outputlangs->trans("TicketCategoryShort".$obj->code);
 							} elseif ($outputlangs->trans($obj->code) != $obj->code) {
 								$label = $outputlangs->trans($obj->code);
@@ -1055,10 +1055,10 @@ class FormTicket
 							if (empty($tabscript[$groupcodefather])) {
 								$tabscript[$groupcodefather] = 'if ($("#'.$htmlname.($levelid > 1 ? '_child_'.($levelid-1) : '').'").val() == "'.dol_escape_js($groupcodefather).'"){
 									$(".'.$htmlname.'_'.dol_escape_htmltag($fatherid).'_child_'.$levelid.'").show()
-									console.log("We show childs tickets of '.$groupcodefather.' group ticket")
+									console.log("We show child tickets of '.$groupcodefather.' group ticket")
 								}else{
 									$(".'.$htmlname.'_'.dol_escape_htmltag($fatherid).'_child_'.$levelid.'").hide()
-									console.log("We hide childs tickets of '.$groupcodefather.' group ticket")
+									console.log("We hide child tickets of '.$groupcodefather.' group ticket")
 								}';
 							}
 						}
@@ -1335,8 +1335,8 @@ class FormTicket
 		//var_dump($keytoavoidconflict);
 		if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelselected') && GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1')) {
 			if (!empty($arraydefaultmessage->joinfiles) && !empty($this->param['fileinit']) && is_array($this->param['fileinit'])) {
-				foreach ($this->param['fileinit'] as $file) {
-					$formmail->add_attached_files($file, basename($file), dol_mimetype($file));
+				foreach ($this->param['fileinit'] as $path) {
+					$formmail->add_attached_files($path, basename($path), dol_mimetype($path));
 				}
 			}
 		}

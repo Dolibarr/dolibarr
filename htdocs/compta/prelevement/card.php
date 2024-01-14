@@ -71,7 +71,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 $hookmanager->initHooks(array('directdebitprevcard', 'globalcard', 'directdebitprevlist'));
 
 $type = $object->type;
-// chek if salary pl
+// check if salary pl
 $salaryBonPl = $object->checkIfSalaryBonPrelevement();
 if ($type == 'bank-transfer') {
 	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
@@ -136,7 +136,7 @@ if (empty($reshook)) {
 		}
 		else
 		{
-			dol_syslog("Fichier invalide",LOG_WARNING);
+			dol_syslog("File invalid",LOG_WARNING);
 			$mesg='BadFile';
 		}*/
 
@@ -312,7 +312,7 @@ if ($id > 0 || $ref) {
 	print "</td>";
 	print '</tr>';
 
-	// Donwload file
+	// Download file
 	print '<tr><td class="titlefieldcreate">';
 	$labelfororderfield = 'WithdrawalFile';
 	if ($object->type == 'bank-transfer') {
@@ -529,7 +529,7 @@ if ($id > 0 || $ref) {
 		}
 		print_barre_liste($langs->trans("Lines"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
-		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print '<table class="noborder liste centpercent">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre("Lines", $_SERVER["PHP_SELF"], "pl.rowid", '', $urladd, '', $sortfield, $sortorder);

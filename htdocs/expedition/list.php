@@ -265,7 +265,7 @@ if ($search_all || $search_user > 0) {
 }
 $sql .= " e.rowid, e.ref, e.ref_customer, e.date_expedition as date_expedition, e.weight, e.weight_units, e.date_delivery as delivery_date, e.fk_statut, e.billed, e.tracking_number, e.fk_shipping_method,";
 if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
-	// Link for delivery fields ref and date. Does not duplicate the line because we should always have ony 1 link or 0 per shipment
+	// Link for delivery fields ref and date. Does not duplicate the line because we should always have only 1 link or 0 per shipment
 	$sql .= " l.date_delivery as date_reception,";
 }
 $sql .= " s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, ";
@@ -299,7 +299,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
 if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
-	// Link for delivery fields ref and date. Does not duplicate the line because we should always have ony 1 link or 0 per shipment
+	// Link for delivery fields ref and date. Does not duplicate the line because we should always have only 1 link or 0 per shipment
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as ee ON e.rowid = ee.fk_source AND ee.sourcetype = 'shipping' AND ee.targettype = 'delivery'";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."delivery as l ON l.rowid = ee.fk_target";
 }
@@ -325,7 +325,7 @@ if ($socid > 0) {
 if ($socid) {
 	$sql .= " AND e.fk_soc = ".((int) $socid);
 }
-if ($search_status <> '' && $search_status >= 0) {
+if ($search_status != '' && $search_status >= 0) {
 	$sql .= " AND e.fk_statut = ".((int) $search_status);
 }
 if ($search_ref_customer != '') {
@@ -1080,7 +1080,7 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// Date delivery planed
+		// Date delivery planned
 		if (!empty($arrayfields['e.date_delivery']['checked'])) {
 			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->delivery_date), "dayhour");

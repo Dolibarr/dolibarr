@@ -50,8 +50,8 @@ class FormExpenseReport
 
 
 	/**
-	 *    Retourne la liste deroulante des differents etats d'une note de frais.
-	 *    Les valeurs de la liste sont les id de la table c_expensereport_statuts
+	 *    Return the combobox for the different statuses of an expense report
+	 *    The list values are the ids for the table c_expensereport_statuts
 	 *
 	 *    @param    int     $selected       preselect status
 	 *    @param    string  $htmlname       Name of HTML select

@@ -98,7 +98,7 @@ class Dolresource extends CommonObject
 	/**
 	 *  Constructor
 	 *
-	 *  @param	DoliDb		$db      Database handler
+	 *  @param	DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -509,7 +509,7 @@ class Dolresource extends CommonObject
 	 *  @param	array		$filter    	  	filter output
 	 *  @return int          				Return integer <0 if KO, Number of lines loaded if OK
 	 */
-	public function fetchAll($sortorder, $sortfield, $limit, $offset, $filter = '')
+	public function fetchAll($sortorder, $sortfield, $limit, $offset, $filter = [])
 	{
 		// phpcs:enable
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -669,13 +669,13 @@ class Dolresource extends CommonObject
 	 * @param string    $element        Element
 	 * @param int       $element_id     Id
 	 * @param string    $resource_type  Type
-	 * @return array                    Aray of resources
+	 * @return array                    Array of resources
 	 */
 	public function getElementResources($element, $element_id, $resource_type = '')
 	{
 		$resources = array();
 
-		// Links beetween objects are stored in this table
+		// Links between objects are stored in this table
 		$sql = 'SELECT rowid, resource_id, resource_type, busy, mandatory';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'element_resources';
 		$sql .= " WHERE element_id=".((int) $element_id)." AND element_type='".$this->db->escape($element)."'";
@@ -754,7 +754,7 @@ class Dolresource extends CommonObject
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
-				$label = ($langs->trans("ResourceTypeShort".$obj->code) != ("ResourceTypeShort".$obj->code) ? $langs->trans("ResourceTypeShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
+				$label = ($langs->trans("ResourceTypeShort".$obj->code) != "ResourceTypeShort".$obj->code ? $langs->trans("ResourceTypeShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
 				$this->cache_code_type_resource[$obj->rowid]['code'] = $obj->code;
 				$this->cache_code_type_resource[$obj->rowid]['label'] = $label;
 				$this->cache_code_type_resource[$obj->rowid]['active'] = $obj->active;
@@ -799,7 +799,7 @@ class Dolresource extends CommonObject
 	 *
 	 *	@param      int		$withpicto					Add picto into link
 	 *	@param      string	$option						Where point the link ('compta', 'expedition', 'document', ...)
-	 *	@param      string	$get_params    				Parametres added to url
+	 *	@param      string	$get_params    				Parameters added to url
 	 *	@param		int  	$notooltip					1=Disable tooltip
 	 *  @param  	string  $morecss                    Add more css on link
 	 *  @param  	int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
@@ -904,7 +904,7 @@ class Dolresource extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Charge indicateurs this->nb de tableau de bord
+	 *      Load indicators this->nb for state board
 	 *
 	 *      @return     int         Return integer <0 if KO, >0 if OK
 	 */

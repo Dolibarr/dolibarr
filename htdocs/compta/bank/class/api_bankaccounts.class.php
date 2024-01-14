@@ -58,7 +58,7 @@ class BankAccounts extends DolibarrApi
 	 * @param int       $page       Page number
 	 * @param  int		$category   Use this param to filter list by category
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.import_key:<:'20160101')"
-	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                List of account objects
 	 *
 	 * @throws RestException
@@ -159,7 +159,7 @@ class BankAccounts extends DolibarrApi
 		$account = new Account($this->db);
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$account->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -245,7 +245,7 @@ class BankAccounts extends DolibarrApi
 		$result = 0;
 		$user = DolibarrApiAccess::$user;
 
-		// By default, electronic transfert from bank to bank
+		// By default, electronic transfer from bank to bank
 		$typefrom = 'PRE';
 		$typeto = 'VIR';
 
@@ -340,7 +340,7 @@ class BankAccounts extends DolibarrApi
 				continue;
 			}
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$account->context['caller'] = $request_data['caller'];
 				continue;
 			}

@@ -459,7 +459,7 @@ class FormAccounting extends Form
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Return list of auxilary accounts. Cumulate list from customers, suppliers and users.
+	 * Return list of auxiliary accounts. Cumulate list from customers, suppliers and users.
 	 *
 	 * @param string   		$selectid       Preselected pcg_type
 	 * @param string   		$htmlname       Name of field in html form
@@ -559,7 +559,7 @@ class FormAccounting extends Form
 	 * @param string 	$selected 		Preselected value
 	 * @param string 	$htmlname 		Name of HTML select object
 	 * @param int 		$useempty 		Affiche valeur vide dans liste
-	 * @param string 	$output_format 	(html/opton (for option html only)/array (to return options arrays
+	 * @param string 	$output_format 	(html/option (for option html only)/array (to return options arrays
 	 * @return string|array				HTML select component or array of select options
 	 */
 	public function selectyear_accountancy_bookkepping($selected = '', $htmlname = 'yearid', $useempty = 0, $output_format = 'html')

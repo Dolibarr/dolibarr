@@ -107,7 +107,7 @@ if ($object->element == 'product') {
 	print '<td>';
 	$ident = (GETPOST("dwid") ? GETPOST("dwid", 'int') : (GETPOST('id_entrepot') ? GETPOST('id_entrepot', 'int') : ($object->element == 'product' && $object->fk_default_warehouse ? $object->fk_default_warehouse : 'ifone')));
 	if (empty($ident) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE')) {
-		$ident = $conf->global->MAIN_DEFAULT_WAREHOUSE;
+		$ident = getDolGlobalString('MAIN_DEFAULT_WAREHOUSE');
 	}
 	print img_picto('', 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($ident, 'id_entrepot', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, null, 'minwidth100 maxwidth300 widthcentpercentminusx');
 	print '</td>';
@@ -144,7 +144,7 @@ if (getDolGlobalString('PRODUIT_SOUSPRODUITS') && $object->element == 'product' 
 }
 
 // Serial / Eat-by date
-if (ismodEnabled('productbatch') &&
+if (isModEnabled('productbatch') &&
 (($object->element == 'product' && $object->hasbatch())
 || ($object->element == 'stock'))
 ) {
@@ -191,7 +191,7 @@ if (isModEnabled('project')) {
 }
 print '</tr>';
 
-// Label of mouvement of id of inventory
+// Label for movement of id of inventory
 $valformovementlabel = ((GETPOST("label") && (GETPOST('label') != $langs->trans("MovementCorrectStock", ''))) ? GETPOST("label") : $langs->trans("MovementCorrectStock", $productref));
 print '<tr>';
 print '<td>'.$langs->trans("MovementLabel").'</td>';

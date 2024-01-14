@@ -122,11 +122,11 @@ function getServerTimeZoneInt($refgmtdate = 'now')
 function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforendofmonth = 0)
 {
 	global $conf;
+	if (empty($duration_value)) {
+		return $time;
+	}
 	if ($duration_unit == 's') {
 		return $time + ($duration_value);
-	}
-	if ($duration_value == 0) {
-		return $time;
 	}
 	if ($duration_unit == 'i') {
 		return $time + (60 * $duration_value);
@@ -233,7 +233,7 @@ function convertTime2Seconds($iHours = 0, $iMinutes = 0, $iSeconds = 0)
  *                                          - 'year': only year part);
  *      @param      int		$lengthOfDay    Length of day (default 86400 seconds for 1 day, 28800 for 8 hour)
  *      @param      int		$lengthOfWeek   Length of week (default 7)
- *    	@return     string		 		 	Formated text of duration
+ *    	@return     string		 		 	Formatted text of duration
  * 	                                		Example: 0 return 00:00, 3600 return 1:00, 86400 return 1d, 90000 return 1 Day 01:00
  *      @see convertTime2Seconds()
  */
@@ -368,7 +368,7 @@ function convertDurationtoHour($duration_value, $duration_unit)
  * @param      int|string	$year_date			Year date
  * @param	   int      	$excludefirstand	Exclude first and
  * @param	   mixed		$gm					False or 0 or 'tzserver' = Input date fields are date info in the server TZ. True or 1 or 'gmt' = Input are date info in GMT TZ.
- * 												Note: In database, dates are always fot the server TZ.
+ * 												Note: In database, dates are always for the server TZ.
  * @return     string		$sqldate			String with SQL filter
  */
 function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date, $excludefirstand = 0, $gm = false)
@@ -764,7 +764,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 	$nbFerie = 0;
 
 	// Check to ensure we use correct parameters
-	if ((($timestampEnd - $timestampStart) % 86400) != 0) {
+	if (($timestampEnd - $timestampStart) % 86400 != 0) {
 		return 'Error Dates must use same hours and must be GMT dates';
 	}
 

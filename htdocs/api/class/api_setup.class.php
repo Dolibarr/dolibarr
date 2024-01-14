@@ -727,7 +727,7 @@ class Setup extends DolibarrApi
 	 * @param object   $object    Object with label to translate
 	 * @param string   $lang      Code of the language the name of the object must be translated to
 	 * @param string   $prefix 	  Prefix for translation key
-	 * @param array    $dict      Array of dictionnary for translation
+	 * @param array    $dict      Array of dictionary for translation
 	 * @return void
 	 */
 	private function translateLabel($object, $lang, $prefix = 'Country', $dict = array('dict'))
@@ -1154,10 +1154,6 @@ class Setup extends DolibarrApi
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieving list of extra fields : '.$this->db->lasterror());
-		}
-
-		if (!count($list)) {
-			throw new RestException(404, 'No extrafield found');
 		}
 
 		return $list;
@@ -1989,7 +1985,7 @@ class Setup extends DolibarrApi
 			throw new RestException(404, 'Error Bad or unknown value for constantname');
 		}
 		if (isASecretKey($constantname)) {
-			throw new RestException(403, 'Forbidden. This parameter cant be read with APIs');
+			throw new RestException(403, 'Forbidden. This parameter can not be read with APIs');
 		}
 
 		return getDolGlobalString($constantname);
@@ -2034,7 +2030,7 @@ class Setup extends DolibarrApi
 		// Remote file to compare to
 		$xmlremote = ($target == 'default' ? '' : $target);
 		if (empty($xmlremote) && getDolGlobalString('MAIN_FILECHECK_URL')) {
-			$xmlremote = $conf->global->MAIN_FILECHECK_URL;
+			$xmlremote = getDolGlobalString('MAIN_FILECHECK_URL');
 		}
 		$param = 'MAIN_FILECHECK_URL_'.DOL_VERSION;
 		if (empty($xmlremote) && getDolGlobalString($param)) {
@@ -2050,6 +2046,12 @@ class Setup extends DolibarrApi
 		if ($xmlremote && !preg_match('/\.xml$/', $xmlremote)) {
 			$langs->load("errors");
 			throw new RestException(500, $langs->trans("ErrorURLMustEndWith", $xmlremote, '.xml'));
+		}
+
+		if (LIBXML_VERSION < 20900) {
+			// Avoid load of external entities (security problem).
+			// Required only if LIBXML_VERSION < 20900
+			libxml_disable_entity_loader(true);
 		}
 
 		if ($target == 'local') {
@@ -2142,7 +2144,7 @@ class Setup extends DolibarrApi
 					}
 				}
 
-				// Files missings
+				// Files missing
 				$out .= load_fiche_titre($langs->trans("FilesMissing"));
 
 				$out .= '<div class="div-table-responsive-no-min">';

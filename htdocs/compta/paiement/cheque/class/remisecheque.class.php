@@ -258,7 +258,7 @@ class RemiseCheque extends CommonObject
 			}
 
 			if ($this->id > 0 && $this->errno == 0) {
-				if ($this->updateAmount() <> 0) {
+				if ($this->updateAmount() != 0) {
 					$this->errno = -1027;
 					dol_syslog("RemiseCheque::Create Error update amount ".$this->errno, LOG_ERR);
 				}
@@ -291,7 +291,7 @@ class RemiseCheque extends CommonObject
 	 *	@param  User	$user 		User that delete
 	 *	@return	int
 	 */
-	public function delete($user = null)
+	public function delete($user)
 	{
 		global $conf;
 
@@ -307,7 +307,7 @@ class RemiseCheque extends CommonObject
 		if ($resql) {
 			$num = $this->db->affected_rows($resql);
 
-			if ($num <> 1) {
+			if ($num != 1) {
 				$this->errno = -2;
 				dol_syslog("Remisecheque::Delete Erreur Lecture ID ($this->errno)");
 			}
@@ -412,7 +412,7 @@ class RemiseCheque extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('CHEQUERECEIPTS_ADDON') . ".php";
-			$classname = $conf->global->CHEQUERECEIPTS_ADDON;
+			$classname = getDolGlobalString('CHEQUERECEIPTS_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -473,7 +473,7 @@ class RemiseCheque extends CommonObject
 	/**
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
-	 *      @param  User	$user       Objet user
+	 *      @param  User	$user       Object user
 	 *      @param	string	$type		Type of payment mode deposit ('CHQ', 'TRA', ...)
 	 *      @return WorkboardResponse|int Return integer <0 if KO, WorkboardResponse if OK
 	 */
@@ -526,7 +526,7 @@ class RemiseCheque extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Charge indicateurs this->nb de tableau de bord
+	 *      Load indicators this->nb for the state board
 	 *
 	 *      @param	string	$type		Type of payment mode deposit ('CHQ', 'TRA', ...)
 	 *      @return int         		Return integer <0 if ko, >0 if ok
@@ -647,7 +647,7 @@ class RemiseCheque extends CommonObject
 	/**
 	 *	Mets a jour le montant total
 	 *
-	 *	@return 	int		0 en cas de succes
+	 *	@return 	int		0 en cas de success
 	 */
 	public function updateAmount()
 	{

@@ -320,6 +320,15 @@ class BlockedLog
 			} else {
 				$this->error++;
 			}
+		} elseif ($this->element === 'project') {
+			require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+
+			$object = new Project($this->db);
+			if ($object->fetch($this->fk_object) > 0) {
+				return $object->getNomUrl(1);
+			} else {
+				$this->error++;
+			}
 		} elseif ($this->action == 'MODULE_SET') {
 			return '<i class="opacitymedium">'.$langs->trans("BlockedLogEnabled").'</i>';
 		} elseif ($this->action == 'MODULE_RESET') {
@@ -903,7 +912,7 @@ class BlockedLog
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 
-		$this->signature_line = dol_hash($keyforsignature, '5'); // Not really usefull
+		$this->signature_line = dol_hash($keyforsignature, '5'); // Not really useful
 		$this->signature = dol_hash($previoushash.$keyforsignature, '5');
 		if ($forcesignature) {
 			$this->signature = $forcesignature;
@@ -990,7 +999,7 @@ class BlockedLog
 		// Recalculate hash
 		$keyforsignature = $this->buildKeyForSignature();
 
-		//$signature_line = dol_hash($keyforsignature, '5'); // Not really usefull
+		//$signature_line = dol_hash($keyforsignature, '5'); // Not really useful
 		$signature = dol_hash($previoushash.$keyforsignature, 'sha256');
 		//var_dump($previoushash); var_dump($keyforsignature); var_dump($signature_line); var_dump($signature);
 
@@ -1016,7 +1025,7 @@ class BlockedLog
 	/**
 	 * Return a string for signature.
 	 * Note: rowid of line not included as it is not a business data and this allow to make backup of a year
-	 * and restore it into another database with different id wihtout comprimising checksums
+	 * and restore it into another database with different id without comprimising checksums
 	 *
 	 * @return string		Key for signature
 	 */
@@ -1072,7 +1081,7 @@ class BlockedLog
 	}
 
 	/**
-	 *	Return array of log objects (with criterias)
+	 *	Return array of log objects (with criteria)
 	 *
 	 *	@param	string 	$element      	element to search
 	 *	@param	int 	$fk_object		id of object to search

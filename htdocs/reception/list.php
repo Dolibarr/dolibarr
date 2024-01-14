@@ -243,7 +243,7 @@ if (empty($reshook)) {
 
 			$objecttmp = new FactureFournisseur($db);
 			if (!empty($createbills_onebythird) && !empty($TFactThird[$rcp->socid])) {
-				// If option "one bill per third" is set, and an invoice for this thirdparty was already created, we re-use it.
+				// If option "one bill per third" is set, and an invoice for this thirdparty was already created, we reuse it.
 				$objecttmp = $TFactThird[$rcp->socid];
 
 				// Add all links of this new reception to the existing invoice
@@ -251,7 +251,7 @@ if (empty($reshook)) {
 				$rcp->fetchObjectLinked();
 				if (count($rcp->linkedObjectsIds['order_supplier']) > 0) {
 					foreach ($rcp->linkedObjectsIds['order_supplier'] as $key => $value) {
-						if (empty($objecttmp->linkedObjectsIds['order_supplier']) || !in_array($value, $objecttmp->linkedObjectsIds['order_supplier'])) { //Dont try to link if already linked
+						if (empty($objecttmp->linkedObjectsIds['order_supplier']) || !in_array($value, $objecttmp->linkedObjectsIds['order_supplier'])) { //Don't try to link if already linked
 							$objecttmp->add_object_linked('order_supplier', $value); // add supplier order linked object
 						}
 					}
@@ -629,7 +629,7 @@ $sql .= " WHERE e.entity IN (".getEntity('reception').")";
 if ($socid) {
 	$sql .= " AND e.fk_soc = ".((int) $socid);
 }
-if ($search_status <> '' && $search_status >= 0) {
+if ($search_status != '' && $search_status >= 0) {
 	$sql .= " AND e.fk_statut = ".((int) $search_status);
 }
 if ($search_billed != '' && $search_billed >= 0) {
@@ -1311,7 +1311,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 
-		// Date delivery planed
+		// Date delivery planned
 		if (!empty($arrayfields['e.date_delivery']['checked'])) {
 			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->delivery_date), "day");

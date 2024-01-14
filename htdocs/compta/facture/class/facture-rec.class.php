@@ -6,7 +6,7 @@
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2017-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2017-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2023       Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -153,7 +153,7 @@ class FactureRec extends CommonInvoice
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
-	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
 	 *  'css' is the CSS style to use on field. For example: 'maxwidth200'
@@ -637,7 +637,7 @@ class FactureRec extends CommonInvoice
 					}
 				}
 
-				// Retreive lines
+				// Retrieve lines
 				if (empty($nolines)) {
 					$result = $this->fetch_lines();
 					if ($result < 0) {
@@ -1272,7 +1272,7 @@ class FactureRec extends CommonInvoice
 	 *  Create all recurrents invoices (for all entities if multicompany is used).
 	 *  A result may also be provided into this->output.
 	 *
-	 *  WARNING: This method change temporarly context $conf->entity to be in correct context for each recurring invoice found.
+	 *  WARNING: This method change temporarily context $conf->entity to be in correct context for each recurring invoice found.
 	 *
 	 *  @param	int		$restrictioninvoiceid		0=All qualified template invoices found. > 0 = restrict action on invoice ID
 	 *  @param	int		$forcevalidation		1=Force validation of invoice whatever is template auto_validate flag.
@@ -1453,7 +1453,7 @@ class FactureRec extends CommonInvoice
 
 		$result = '';
 
-		$label = '<u>'.$langs->trans("RepeatableInvoice").'</u>';
+		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("RepeatableInvoice").'</u>';
 		if (!empty($this->ref)) {
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		}
@@ -1879,12 +1879,12 @@ class FactureRec extends CommonInvoice
 		global $user;
 
 		if (!$this->table_element) {
-			dol_syslog(get_class($this)."::setFrequencyAndUnit was called on objet with property table_element not defined", LOG_ERR);
+			dol_syslog(get_class($this)."::setFrequencyAndUnit was called on object with property table_element not defined", LOG_ERR);
 			return -1;
 		}
 
 		if (!empty($frequency) && empty($unit)) {
-			dol_syslog(get_class($this)."::setFrequencyAndUnit was called on objet with params frequency defined but unit not defined", LOG_ERR);
+			dol_syslog(get_class($this)."::setFrequencyAndUnit was called on object with params frequency defined but unit not defined", LOG_ERR);
 			return -2;
 		}
 
@@ -1931,7 +1931,7 @@ class FactureRec extends CommonInvoice
 		global $user;
 
 		if (!$this->table_element) {
-			dol_syslog(get_class($this)."::setNextDate was called on objet with property table_element not defined", LOG_ERR);
+			dol_syslog(get_class($this)."::setNextDate was called on object with property table_element not defined", LOG_ERR);
 			return -1;
 		}
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
@@ -1975,7 +1975,7 @@ class FactureRec extends CommonInvoice
 		global $user;
 
 		if (!$this->table_element) {
-			dol_syslog(get_class($this)."::setMaxPeriod was called on objet with property table_element not defined", LOG_ERR);
+			dol_syslog(get_class($this)."::setMaxPeriod was called on object with property table_element not defined", LOG_ERR);
 			return -1;
 		}
 
@@ -2019,7 +2019,7 @@ class FactureRec extends CommonInvoice
 		global $user;
 
 		if (!$this->table_element) {
-			dol_syslog(get_class($this)."::setAutoValidate was called on objet with property table_element not defined", LOG_ERR);
+			dol_syslog(get_class($this)."::setAutoValidate was called on object with property table_element not defined", LOG_ERR);
 			return -1;
 		}
 
@@ -2059,7 +2059,7 @@ class FactureRec extends CommonInvoice
 		global $user;
 
 		if (!$this->table_element) {
-			dol_syslog(get_class($this)."::setGeneratePdf was called on objet with property table_element not defined", LOG_ERR);
+			dol_syslog(get_class($this)."::setGeneratePdf was called on object with property table_element not defined", LOG_ERR);
 			return -1;
 		}
 
@@ -2098,7 +2098,7 @@ class FactureRec extends CommonInvoice
 	{
 		global $user;
 		if (!$this->table_element) {
-			dol_syslog(get_class($this)."::setModelPdf was called on objet with property table_element not defined", LOG_ERR);
+			dol_syslog(get_class($this)."::setModelPdf was called on object with property table_element not defined", LOG_ERR);
 			return -1;
 		}
 

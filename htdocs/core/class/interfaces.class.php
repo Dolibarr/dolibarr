@@ -20,7 +20,7 @@
 /**
  *   \file		    htdocs/core/class/interfaces.class.php
  *   \ingroup		core
- *   \brief			Fichier de la classe de gestion des triggers
+ *   \brief			Fichier de la class de gestion des triggers
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
@@ -59,10 +59,10 @@ class Interfaces
 	 *   This function call all qualified triggers.
 	 *
 	 *   @param		string		$action     Trigger event code
-	 *   @param     object		$object     Objet concerned. Some context information may also be provided into array property object->context.
-	 *   @param     User		$user       Objet user
-	 *   @param     Translate	$langs      Objet lang
-	 *   @param     Conf		$conf       Objet conf
+	 *   @param     object		$object     Object concerned. Some context information may also be provided into array property object->context.
+	 *   @param     User		$user       Object user
+	 *   @param     Translate	$langs      Object lang
+	 *   @param     Conf		$conf       Object conf
 	 *   @return    int         			Nb of triggers ran if no error, -Nb of triggers with errors otherwise.
 	 */
 	public function run_triggers($action, $object, $user, $langs, $conf)

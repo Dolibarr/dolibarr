@@ -224,7 +224,7 @@ if ($action == 'install') {
 				$modulenamearrays[$modulename] = $modulename;
 				//var_dump($modulenamearrays);exit;
 
-				// Lop on each packacge of the metapackage
+				// Lop on each package of the metapackage
 				foreach ($modulenamearrays as $modulenameval) {
 					if (strpos($modulenameval, '#') === 0) {
 						continue; // Discard comments
@@ -558,7 +558,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		$deschelp .= '<div class="info hideonsmartphone">'.$desc."<br></div>\n";
 	}
 	if (getDolGlobalString('MAIN_SETUP_MODULES_INFO')) {	// Show a custom message
-		$deschelp .= '<div class="info">'.$langs->trans($conf->global->MAIN_SETUP_MODULES_INFO)."<br></div>\n";
+		$deschelp .= '<div class="info">'.$langs->trans(getDolGlobalString('MAIN_SETUP_MODULES_INFO'))."<br></div>\n";
 	}
 	if ($deschelp) {
 		$deschelp .= '<br>';
@@ -940,7 +940,12 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		} else { // Module not yet activated
 			// Set $codeenabledisable
 			if (!empty($objMod->always_enabled)) {
-				// Should never happened
+				// A 'always_enabled' module should not never be disabled. If this happen, we keep a link to re-enable it.
+				$codeenabledisable .= '<!-- Message to show: an always_enabled module has been disabled -->'."\n";
+				$codeenabledisable .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&token='.newToken().'&module_position='.$module_position.'&action=set&token='.newToken().'&value='.$modName.'&mode='.$mode.$param.'"';
+				$codeenabledisable .= '>';
+				$codeenabledisable .= img_picto($langs->trans("Disabled"), 'switch_off');
+				$codeenabledisable .= "</a>\n";
 			} elseif (!empty($objMod->disabled)) {
 				$codeenabledisable .= $langs->trans("Disabled");
 			} else {
@@ -1114,7 +1119,7 @@ if ($mode == 'marketplace') {
 	print '<br>';
 
 	if (!getDolGlobalString('MAIN_DISABLE_DOLISTORE_SEARCH') && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
-		// $options is array with filter criterias
+		// $options is array with filter criteria
 		//var_dump($options);
 		$dolistore->getRemoteCategories();
 		$dolistore->getRemoteProducts($options);
@@ -1143,9 +1148,9 @@ if ($mode == 'marketplace') {
 		print $nextlink;
 		print '</form>';
 
-
 		print '</div></div>';
-		print '<div class="clearboth"></div>'; ?>
+		print '<div class="clearboth"></div>';
+		?>
 
 			<div id="category-tree-left">
 				<ul class="tree">
@@ -1242,7 +1247,7 @@ if ($mode == 'deploy') {
 
 			print $langs->trans("YouCanSubmitFile").'<br><br>';
 
-			$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
+			$max = getDolGlobalString('MAIN_UPLOAD_DOC'); // In Kb
 			$maxphp = @ini_get('upload_max_filesize'); // In unknown
 			if (preg_match('/k$/i', $maxphp)) {
 				$maxphp = preg_replace('/k$/i', '', $maxphp);

@@ -441,7 +441,7 @@ if (empty($reshook)) {
 				$sql .= ")";
 
 				if (!$db->query($sql)) {
-					$erorr++;
+					$error++;
 				}
 
 				if (!$error) {
@@ -519,7 +519,7 @@ if (empty($reshook)) {
 								$lines[$i]->info_bits,
 								'HT',
 								$product_type,
-								// we dont use the rank from orderline because we may have lines from several orders
+								// we don't use the rank from orderline because we may have lines from several orders
 								-1,
 								false,
 								$lines[$i]->array_options,
@@ -1021,6 +1021,7 @@ if ($resql) {
 	}
 
 	llxHeader('', $title, $help_url);
+	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-supplier-order page-list');
 
 	$param = '';
 	if (!empty($mode)) {

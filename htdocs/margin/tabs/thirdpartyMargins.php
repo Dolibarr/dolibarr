@@ -185,7 +185,7 @@ if ($socid > 0) {
 	$sql .= " AND f.fk_soc = $socid";
 	$sql .= " AND d.buy_price_ht IS NOT NULL";
 	// We should not use this here. Option ForceBuyingPriceIfNull should have effect only when inserting data. Once data is recorded, it must be used as it is for report.
-	// We keep it with value ForceBuyingPriceIfNull = 2 for retroactive effect but results are unpredicable.
+	// We keep it with value ForceBuyingPriceIfNull = 2 for retroactive effect but results are unpredictable.
 	if (getDolGlobalInt('ForceBuyingPriceIfNull') == 2) {
 		$sql .= " AND d.buy_price_ht <> 0";
 	}
@@ -202,7 +202,7 @@ if ($socid > 0) {
 		print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], "&amp;socid=".$object->id, $sortfield, $sortorder, '', $num, $num, '');
 
 		$i = 0;
-		print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print "<table class=\"noborder\" width=\"100%\">";
 
 		print '<tr class="liste_titre">';

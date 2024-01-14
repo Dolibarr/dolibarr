@@ -258,25 +258,25 @@ print '</form>';
 print '<br>';
 
 
-// ARBORESCENCE
+// MENU TREE
 
 
 /*-------------------- MAIN -----------------------
-tableau des elements de l'arbre:
-c'est un tableau a 2 dimensions.
-Une ligne represente un element : data[$x]
-chaque ligne est decomposee en 3 donnees:
-  - l'index de l'élément
-  - l'index de l'élément parent
-  - la chaine a afficher
-ie: data[]= array (index, index parent, chaine )
+Array of the menu tree:
+- Is an array in with 2 dimensions.
+- A single line represents an item : data[$x]
+- Each line has 3 data items:
+  - The index of the item;
+  - The index of the item's parent;
+  - The string to show
+i.e.: data[]= array (index, parent index, string )
 */
 
-//il faut d'abord declarer un element racine de l'arbre
+// First the root item of the tree must be declared:
 
 $data[] = array('rowid'=>0, 'fk_menu'=>-1, 'title'=>"racine", 'mainmenu'=>'', 'leftmenu'=>'', 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
 
-//puis tous les elements enfants
+// Then all child items must be declared
 
 $sql = "SELECT m.rowid, m.titre, m.langs, m.mainmenu, m.leftmenu, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.position, m.module";
 $sql .= " FROM ".MAIN_DB_PREFIX."menu as m";

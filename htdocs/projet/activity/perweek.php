@@ -56,7 +56,7 @@ $hookmanager->initHooks(array('timesheetperweekcard'));
 
 // Security check
 $socid = 0;
-// For external user, no check is done on company because readability is managed by public status of project and assignement.
+// For external user, no check is done on company because readability is managed by public status of project and assignment.
 // if ($user->socid > 0) $socid=$user->socid;
 $result = restrictedArea($user, 'projet', $projectid);
 
@@ -725,7 +725,7 @@ if ($conf->use_javascript_ajax) {
 		} elseif (!$isavailable[$tmpday]['afternoon']) {
 			$cssonholiday .= 'onholidayafternoon ';
 		}
-		print '<td class="liste_total hide'.$idw.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'" align="center"><div class="totalDay'.$idw.'">&nbsp;</div></td>';
+		print '<td class="liste_total center hide'.$idw.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'"><div class="totalDay'.$idw.'">&nbsp;</div></td>';
 	}
 	print '<td class="liste_total center"><div class="totalDayAll">&nbsp;</div></td>';
 	print '</tr>';
@@ -805,7 +805,7 @@ if (count($tasksarray) > 0) {
 			$tmpday = dol_time_plus_duree($firstdaytoshow, $idw, 'd');
 			$timeonothertasks = ($totalforeachday[$tmpday] - $totalforvisibletasks[$tmpday]);
 			if ($timeonothertasks) {
-				print '<span class="timesheetalreadyrecorded" title="texttoreplace"><input type="text" class="center smallpadd" size="2" disabled="" id="timespent[-1]['.$idw.']" name="task[-1]['.$idw.']" value="';
+				print '<span class="timesheetalreadyrecorded" title="texttoreplace"><input type="text" class="center smallpadd width40" disabled="" id="timespent[-1]['.$idw.']" name="task[-1]['.$idw.']" value="';
 				print convertSecondToTime($timeonothertasks, 'allhourmin');
 				print '"></span>';
 			}
@@ -877,7 +877,7 @@ if ($conf->use_javascript_ajax) {
 
 	$idw = 0;
 	while ($idw < 7) {
-		print '    updateTotal('.$idw.',\''.$modeinput.'\');';
+		print "    updateTotal(".((int) $idw).", '".dol_escape_js($modeinput)."');";
 		$idw++;
 	}
 	print "\n});\n";

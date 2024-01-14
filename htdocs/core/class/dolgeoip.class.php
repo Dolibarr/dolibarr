@@ -53,7 +53,7 @@ class DolGeoIP
 
 		$geoipversion = '2'; // 'php', or geoip version '2'
 		if (getDolGlobalString('GEOIP_VERSION')) {
-			$geoipversion = $conf->global->GEOIP_VERSION;
+			$geoipversion = getDolGlobalString('GEOIP_VERSION');
 		}
 
 		if ($type == 'country') {
@@ -122,7 +122,7 @@ class DolGeoIP
 
 		$geoipversion = '2'; // 'php', or '2'
 		if (getDolGlobalString('GEOIP_VERSION')) {
-			$geoipversion = $conf->global->GEOIP_VERSION;
+			$geoipversion = getDolGlobalString('GEOIP_VERSION');
 		}
 
 		if (empty($this->gi)) {
@@ -180,7 +180,7 @@ class DolGeoIP
 
 		$geoipversion = '2'; // 'php', or '2'
 		if (getDolGlobalString('GEOIP_VERSION')) {
-			$geoipversion = $conf->global->GEOIP_VERSION;
+			$geoipversion = getDolGlobalString('GEOIP_VERSION');
 		}
 
 		if (empty($this->gi)) {
@@ -201,7 +201,7 @@ class DolGeoIP
 	}
 
 	/**
-	 * Return verion of data file
+	 * Return version of data file
 	 *
 	 * @return  string      Version of datafile
 	 */
@@ -211,7 +211,7 @@ class DolGeoIP
 
 		$geoipversion = '2'; // 'php', or '2'
 		if (getDolGlobalString('GEOIP_VERSION')) {
-			$geoipversion = $conf->global->GEOIP_VERSION;
+			$geoipversion = getDolGlobalString('GEOIP_VERSION');
 		}
 
 		if ($geoipversion == 'php') {

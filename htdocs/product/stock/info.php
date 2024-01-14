@@ -18,7 +18,7 @@
 /**
  *	\file       htdocs/product/stock/info.php
  *	\ingroup    stock
- *	\brief      Page des informations d'un entrepot
+ *	\brief      Page des information d'un entrepot
  */
 
 // Load Dolibarr environment

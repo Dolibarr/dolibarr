@@ -165,7 +165,7 @@ class ProductCombination
 		}
 
 		if (!is_array($this->combination_price_levels)
-			|| empty($fk_price_level) // if fetch an unique level dont erase all already fetched
+			|| empty($fk_price_level) // if fetch an unique level don't erase all already fetched
 		) {
 			$this->combination_price_levels = array();
 		}
@@ -530,8 +530,8 @@ class ProductCombination
 					if ($parent->multiprices[$i] != '' || isset($this->combination_price_levels[$i]->variation_price)) {
 						$new_type = empty($parent->multiprices_base_type[$i]) ? 'HT' : $parent->multiprices_base_type[$i];
 						$new_min_price = $parent->multiprices_min[$i];
-						$variation_price = floatval(!isset($this->combination_price_levels[$i]->variation_price) ? $this->variation_price : $this->combination_price_levels[$i]->variation_price);
-						$variation_price_percentage = floatval(!isset($this->combination_price_levels[$i]->variation_price_percentage) ? $this->variation_price_percentage : $this->combination_price_levels[$i]->variation_price_percentage);
+						$variation_price = (float) (!isset($this->combination_price_levels[$i]->variation_price) ? $this->variation_price : $this->combination_price_levels[$i]->variation_price);
+						$variation_price_percentage = (float) (!isset($this->combination_price_levels[$i]->variation_price_percentage) ? $this->variation_price_percentage : $this->combination_price_levels[$i]->variation_price_percentage);
 
 						if ($parent->prices_by_qty_list[$i]) {
 							$new_psq = 1;
@@ -1144,9 +1144,9 @@ class ProductCombinationLevel
 		}
 
 		$this->id = $obj->rowid;
-		$this->fk_product_attribute_combination = floatval($obj->fk_product_attribute_combination);
+		$this->fk_product_attribute_combination = (float) $obj->fk_product_attribute_combination;
 		$this->fk_price_level = intval($obj->fk_price_level);
-		$this->variation_price = floatval($obj->variation_price);
+		$this->variation_price = (float) $obj->variation_price;
 		$this->variation_price_percentage = (bool) $obj->variation_price_percentage;
 
 		return 1;
@@ -1183,7 +1183,7 @@ class ProductCombinationLevel
 		// Update
 		if (!empty($this->id)) {
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' SET variation_price = '.floatval($this->variation_price).' , variation_price_percentage = '.intval($this->variation_price_percentage);
+			$sql .= ' SET variation_price = '.(float) $this->variation_price.' , variation_price_percentage = '.intval($this->variation_price_percentage);
 			$sql .= ' WHERE rowid = '.((int) $this->id);
 
 			$res = $this->db->query($sql);
@@ -1201,7 +1201,7 @@ class ProductCombinationLevel
 			$sql .= ") VALUES (";
 			$sql .= (int) $this->fk_product_attribute_combination;
 			$sql .= ", ".intval($this->fk_price_level);
-			$sql .= ", ".floatval($this->variation_price);
+			$sql .= ", ".(float) $this->variation_price;
 			$sql .= ", ".intval($this->variation_price_percentage);
 			$sql .= ")";
 
