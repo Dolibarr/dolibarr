@@ -3,7 +3,6 @@
 # Count number of lines modified per user for a given branch
 #
 
-# shellcheck disable=2002,2086,2268
 DEBUG=${DEBUG:=0}
 
 if [ "$2" = "" ]; then
@@ -21,9 +20,13 @@ if [ "$START" = "START.." ]; then
 	START=""
 fi
 
-[ "$DEBUG" ] && echo "git log '${START}${END}' --shortstat | grep ... | perl ... > /tmp/github_lines_perusers.tmp"
-git log "${START}${END}" --shortstat --use-mailmap | iconv -f UTF-8 -t ASCII//TRANSLIT | grep -e 'Author:' -e 'Date:' -e ' changed' -e ' insertion' -e ' deletion' | perl -n -e '/^(.*)$/; $line = $1; if ($line =~ /(changed|insertion|deletion)/) { $line =~ s/[^0-9\s]//g; my @arr=split /\s+/, $line; $tot=0; for (1..@arr) { $tot += $arr[$_]; }; print $tot."\n"; } else { print $line."\n"; };' > /tmp/github_lines_perusers.tmp
+TMPFILE=/tmp/github_lines_perusers.tmp
+
+[ "$DEBUG" ] && echo "git log '${START}${END}' --shortstat --use-mailmap | grep ... | perl ... > '${TMPFILE}'"
+git log "${START}${END}" --shortstat --use-mailmap | iconv -f UTF-8 -t ASCII//TRANSLIT --byte-subst='?' -c | grep -e 'Author:' -e 'Date:' -e ' changed' -e ' insertion' -e ' deletion' | perl -n -e '/^(.*)$/; $line = $1; if ($line =~ /(changed|insertion|deletion)/) { $line =~ s/[^0-9\s]//g; my @arr=split /\s+/, $line; $tot=0; for (1..@arr) { $tot += $arr[$_]; }; print $tot."\n"; } else { print $line."\n"; };' > "${TMPFILE}"
 
 echo "Users and nb of lines";
-cat /tmp/github_lines_perusers.tmp | awk 'BEGIN { FS="\n"; lastuser=""; } { if ($1 ~ /^Author:/) { sub(/<.*/, ""); lastuser=tolower($1) }; if ($1 ~ /^[0-9]+$/) { aaa[lastuser]+=$1; } } END { for (var in aaa) print var," ",aaa[var]; } ' | sort
+awk < "${TMPFILE}" 'BEGIN { FS="\n"; lastuser=""; } { if ($1 ~ /^Author:/) { sub(/<.*/, ""); lastuser=tolower($1) }; if ($1 ~ /^[0-9]+$/) { aaa[lastuser]+=$1; } } END { for (var in aaa) print var," ",aaa[var]; } ' | sort
 
+# Clean up
+rm "${TMPFILE}"
