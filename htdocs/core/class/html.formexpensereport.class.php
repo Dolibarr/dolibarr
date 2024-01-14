@@ -59,7 +59,7 @@ class FormExpenseReport
 	 *    @param    int     $useshortlabel  Use short labels
 	 *    @return   string                  HTML select with status
 	 */
-	public function selectExpensereportStatus($selected = '', $htmlname = 'fk_statut', $useempty = 1, $useshortlabel = 0)
+	public function selectExpensereportStatus($selected = 0, $htmlname = 'fk_statut', $useempty = 1, $useshortlabel = 0)
 	{
 		global $langs;
 
@@ -74,7 +74,7 @@ class FormExpenseReport
 			$arrayoflabels = $tmpep->labelStatusShort;
 		}
 		foreach ($arrayoflabels as $key => $val) {
-			if ($selected != '' && $selected == $key) {
+			if (!empty($selected) && $selected == $key) {
 				$html .= '<option value="'.$key.'" selected>';
 			} else {
 				$html .=  '<option value="'.$key.'">';
@@ -97,7 +97,7 @@ class FormExpenseReport
 	 *  @param      int     $active         1=Active only, 0=Unactive only, -1=All
 	 *  @return     string                  Select html
 	 */
-	public function selectTypeExpenseReport($selected = '', $htmlname = 'type', $showempty = 0, $active = 1)
+	public function selectTypeExpenseReport($selected = 0, $htmlname = 'type', $showempty = 0, $active = 1)
 	{
 		// phpcs:enable
 		global $langs, $user;
