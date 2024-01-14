@@ -68,7 +68,7 @@ if (empty($dolibarr_nocache)) {
 function addDispatchLine(index, type, mode) {
 	mode = mode || 'qtymissing'
 
-	console.log("fourn/js/lib_dispatch.js.php addDispatchLine Split line type="+type+" index="+index+" mode="+mode);
+	console.log("expedition/js/lib_dispatch.js.php addDispatchLine Split line type="+type+" index="+index+" mode="+mode);
 
 	var $row0 = $("tr[name='"+type+'_0_'+index+"']");
 	var $dpopt = $row0.find('.hasDatepicker').first().datepicker('option', 'all'); // get current datepicker options to apply the same to the cloned datepickers
@@ -81,7 +81,7 @@ function addDispatchLine(index, type, mode) {
 		qty = '';
 	}
 
-	console.log("fourn/js/lib_dispatch.js.php addDispatchLine Split line nbrTrs="+nbrTrs+" qtyOrdered="+qtyOrdered+" qty="+qty);
+	console.log("expedition/js/lib_dispatch.js.php addDispatchLine Split line nbrTrs="+nbrTrs+" qtyOrdered="+qtyOrdered+" qty="+qty);
 
 	var	qtyDispatched;
 
@@ -96,7 +96,7 @@ function addDispatchLine(index, type, mode) {
 			mode = 'lessone';
 		}
 	}
-	console.log("qtyDispatched=" + qtyDispatched + " qtyOrdered=" + qtyOrdered+ " qty=" + qty);
+	console.log("expedition/js/lib_dispatch.js.php qtyDispatched=" + qtyDispatched + " qtyOrdered=" + qtyOrdered+ " qty=" + qty);
 
 	if (qty <= 1) {
 		window.alert("Remain quantity to dispatch is too low to be split");
@@ -146,17 +146,18 @@ function addDispatchLine(index, type, mode) {
 		$("tr[name^='" + type + "_'][name$='_" + index + "'] .splitbutton").hide();
 		$("tr[name^='" + type + "_'][name$='_" + index + "']:last .splitbutton").show();
 
-		$("#reset_" + (nbrTrs) + "_" + index).click(function () {
+		$("#reset_" + (nbrTrs) + "_" + index).click(function (event) {
+			event.preventDefault();
 			id = $(this).attr("id");
 			id = id.split("reset_");
 			idrow = id[1];
 			idlast = $("tr[name^='" + type + "_'][name$='_" + index + "']:last .qtydispatchinput").attr("id");
 			if (idlast == $("#qty_" + idrow).attr("id")) {
-				console.log("Remove trigger for tr name = " + type + "_" + idrow);
+				console.log("expedition/js/lib_dispatch.js.php Remove trigger for tr name = " + type + "_" + idrow);
 				$('tr[name="' + type + '_' + idrow + '"').remove();
 				$("tr[name^='" + type + "_'][name$='_" + index + "']:last .splitbutton").show();
 			} else {
-				console.log("Reset trigger for id = #qty_" + idrow);
+				console.log("expedition/js/lib_dispatch.js.php Reset trigger for id = qty_" + idrow);
 				$("#qty_" + idrow).val("");
 			}
 		});

@@ -356,7 +356,7 @@ if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
 	print '<td>'.$langs->trans("AGENDA_USE_EVENT_TYPE_DEFAULT").'</td>'."\n";
 	print '<td class="center">&nbsp;</td>'."\n";
 	print '<td class="right nowrap">'."\n";
-	$formactions->select_type_actions($conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT, "AGENDA_USE_EVENT_TYPE_DEFAULT", 'systemauto', 0, 1);
+	$formactions->select_type_actions(getDolGlobalString('AGENDA_USE_EVENT_TYPE_DEFAULT'), "AGENDA_USE_EVENT_TYPE_DEFAULT", 'systemauto', 0, 1);
 	print '</td></tr>'."\n";
 }
 
@@ -386,7 +386,7 @@ if (!empty($conf->global->MAIN_ENABLE_MULTISELECT_TYPE)) {
 	// We use an option here because it adds bugs when used on agenda page "peruser" and "list"
 	$multiselect = (!empty($conf->global->AGENDA_USE_EVENT_TYPE));
 }
-$formactions->select_type_actions($conf->global->AGENDA_DEFAULT_FILTER_TYPE, "AGENDA_DEFAULT_FILTER_TYPE", '', (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1), 1, $multiselect);
+$formactions->select_type_actions(getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE'), "AGENDA_DEFAULT_FILTER_TYPE", '', (getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? -1 : 1), 1, $multiselect);
 print '</td></tr>'."\n";
 
 // AGENDA_DEFAULT_FILTER_STATUS

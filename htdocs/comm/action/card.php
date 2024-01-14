@@ -270,11 +270,11 @@ if (empty($reshook) && $action == 'add') {
 	if ($fulldayevent) {
 		$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
 		// For "full day" events, we must store date in GMT (It must be viewed as same moment everywhere)
-		$datep = dol_mktime($fulldayevent ? '00' : GETPOST("aphour", 'int'), $fulldayevent ? '00' : GETPOST("apmin", 'int'), $fulldayevent ? '00' : GETPOST("apsec", 'int'), GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), $tzforfullday ? $tzforfullday : 'tzuserrel');
-		$datef = dol_mktime($fulldayevent ? '23' : GETPOST("p2hour", 'int'), $fulldayevent ? '59' : GETPOST("p2min", 'int'), $fulldayevent ? '59' : GETPOST("apsec", 'int'), GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), $tzforfullday ? $tzforfullday : 'tzuserrel');
+		$datep = dol_mktime('00', '00', '00', GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), $tzforfullday ? $tzforfullday : 'tzuserrel');
+		$datef = dol_mktime('23', '59', '59', GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), $tzforfullday ? $tzforfullday : 'tzuserrel');
 	} else {
-		$datep = dol_mktime($fulldayevent ? '00' : GETPOST("aphour", 'int'), $fulldayevent ? '00' : GETPOST("apmin", 'int'), $fulldayevent ? '00' : GETPOST("apsec", 'int'), GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), 'tzuserrel');
-		$datef = dol_mktime($fulldayevent ? '23' : GETPOST("p2hour", 'int'), $fulldayevent ? '59' : GETPOST("p2min", 'int'), $fulldayevent ? '59' : GETPOST("apsec", 'int'), GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), 'tzuserrel');
+		$datep = dol_mktime(GETPOST("aphour", 'int'), GETPOST("apmin", 'int'), GETPOST("apsec", 'int'), GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), 'tzuserrel');
+		$datef = dol_mktime(GETPOST("p2hour", 'int'), GETPOST("p2min", 'int'), GETPOST("apsec", 'int'), GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), 'tzuserrel');
 	}
 
 	// Check parameters
@@ -769,7 +769,8 @@ if (empty($reshook) && $action == 'update') {
 		}
 
 		if (!$datef && $percentage == 100) {
-			$error++; $donotclearsession = 1;
+			$error++;
+			$donotclearsession = 1;
 			setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateEnd")), $object->errors, 'errors');
 			$action = 'edit';
 		}
@@ -901,15 +902,19 @@ if (empty($reshook) && $action == 'update') {
 				$object->setCategories($categories);
 
 				$object->loadReminders($remindertype, 0, false);
-				if (!empty($object->reminders) && $object->datep > dol_now()) {
+
+				// If there is reminders, we remove them
+				if (!empty($object->reminders)) {
 					foreach ($object->reminders as $reminder) {
-						$reminder->delete($user);
+						if ($reminder->status < 1) {	// If already sent, we never remove it
+							$reminder->delete($user);
+						}
 					}
 					$object->reminders = array();
 				}
 
-				//Create reminders
-				if ($addreminder == 'on' && $object->datep > dol_now()) {
+				// Create reminders for every assigned user if reminder is on
+				if ($addreminder == 'on') {
 					$actionCommReminder = new ActionCommReminder($db);
 
 					$dateremind = dol_time_plus_duree($datep, -$offsetvalue, $offsetunit);
@@ -1587,17 +1592,23 @@ if ($action == 'create') {
 							$("#selectremindertype").select2();
 							$("#select_offsetunittype_duration").select2("destroy");
 							$("#select_offsetunittype_duration").select2();
+							selectremindertype();
 	            		 });
 
 	            		$("#selectremindertype").change(function(){
-							console.log("Change on selectremindertype");
+							selectremindertype();
+	            		});
+
+						function selectremindertype() {
+							console.log("Call selectremindertype");
 	            	        var selected_option = $("#selectremindertype option:selected").val();
 	            		    if(selected_option == "email") {
 	            		        $("#select_actioncommsendmodel_mail").closest("tr").show();
 	            		    } else {
 	            			    $("#select_actioncommsendmodel_mail").closest("tr").hide();
 	            		    }
-	            		});
+						}
+
                    })';
 		print '</script>'."\n";
 	}
@@ -2050,8 +2061,12 @@ if ($id > 0) {
 				$actionCommReminder->offsetunit = 'i';
 				$actionCommReminder->typeremind = 'email';
 			}
+			$disabled = '';
+			if ($object->datep < dol_now()) {
+				//$disabled = 'disabled title="'.dol_escape_htmltag($langs->trans("EventExpired")).'"';
+			}
 
-			print '<label for="addreminder">'.img_picto('', 'bell', 'class="pictofixedwidth"').$langs->trans("AddReminder").'</label> <input type="checkbox" id="addreminder" name="addreminder" '.$checked.'><br>';
+			print '<label for="addreminder">'.img_picto('', 'bell', 'class="pictofixedwidth"').$langs->trans("AddReminder").'</label> <input type="checkbox" id="addreminder" name="addreminder"'.($checked ? ' '.$checked : '').($disabled ? ' '.$disabled : '').'><br>';
 
 			print '<div class="reminderparameters" '.(empty($checked) ? 'style="display: none;"' : '').'>';
 
@@ -2441,6 +2456,7 @@ if ($id > 0) {
 						print ' ('.$tmpuserstatic->getNomUrl(0, '', 0, 0, 16).')';
 					}
 					print ' - '.$actioncommreminder->offsetvalue.' '.$TDurationTypes[$actioncommreminder->offsetunit];
+
 					if ($actioncommreminder->status == $actioncommreminder::STATUS_TODO) {
 						print ' - <span class="opacitymedium">';
 						print $langs->trans("NotSent");
@@ -2448,6 +2464,10 @@ if ($id > 0) {
 					} elseif ($actioncommreminder->status == $actioncommreminder::STATUS_DONE) {
 						print ' - <span class="opacitymedium">';
 						print $langs->trans("Done");
+						print ' </span>';
+					} elseif ($actioncommreminder->status == $actioncommreminder::STATUS_ERROR) {
+						print ' - <span class="opacitymedium">';
+						print $form->textwithpicto($langs->trans("Error"), $actioncommreminder->lasterror);
 						print ' </span>';
 					}
 					print '<br>';

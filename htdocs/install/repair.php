@@ -241,7 +241,7 @@ if ($ok && GETPOST('standard', 'alpha')) {
 				'fichinter'=>'fichinter', 'fichinterdet'=>'fichinterdet',
 				'inventory'=>'inventory',
 				'actioncomm'=>'actioncomm', 'bom_bom'=>'bom_bom', 'mrp_mo'=>'mrp_mo',
-				'adherent_type'=>'adherent_type', 'user'=>'user', 'partnershiap'=>'partnershiap', 'projet'=>'projet', 'projet_task'=>'projet_task', 'ticket'=>'ticket');
+				'adherent_type'=>'adherent_type', 'user'=>'user', 'partnership'=>'partnership', 'projet'=>'projet', 'projet_task'=>'projet_task', 'ticket'=>'ticket');
 	//$listofmodulesextra = array('fichinter'=>'fichinter');
 
 	print '<tr><td colspan="2"><br>*** Check fields into extra table structure match table of definition. If not add column into table</td></tr>';

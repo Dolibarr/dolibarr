@@ -92,6 +92,7 @@ if ($id > 0 || !empty($ref)) {
 	if (!empty($user->rights->salaries->read) && $object->fk_user > 0 && in_array($object->fk_user, $childids)) {
 		$canread = 1;
 	}
+
 	if (!$canread) {
 		accessforbidden();
 	}

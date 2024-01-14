@@ -1641,6 +1641,7 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 				'position'=>GETPOST('propposition', 'int'),
 				'notnull'=>GETPOST('propnotnull', 'int'),
 				'index'=>GETPOST('propindex', 'int'),
+				'foreignkey'=>GETPOST('propforeignkey', 'alpha'),
 				'searchall'=>GETPOST('propsearchall', 'int'),
 				'isameasure'=>GETPOST('propisameasure', 'int'),
 				'comment'=>GETPOST('propcomment', 'alpha'),

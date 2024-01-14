@@ -72,7 +72,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_all = "";
 	$search_ref = "";
 	$search_company = "";
-	$search_thirdparty  = "";
+	$search_thirdparty = "";
 	$search_name = "";
 	$search_amount = "";
 	$search_status = '';
@@ -135,18 +135,24 @@ $sql .= " p.rowid as pid, p.ref, p.title, p.public";
 $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= " FROM ".MAIN_DB_PREFIX."don as d LEFT JOIN ".MAIN_DB_PREFIX."projet AS p";
-$sql .= " ON p.rowid = d.fk_projet WHERE d.entity IN (".getEntity('donation').")";
+$sql .= " ON p.rowid = d.fk_projet";
+$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe AS s ON s.rowid = d.fk_soc";
+$sql .= " WHERE d.entity IN (". getEntity('donation') . ")";
+
 if ($search_status != '' && $search_status != '-4') {
 	$sql .= " AND d.fk_statut IN (".$db->sanitize($search_status).")";
 }
 if (trim($search_ref) != '') {
-	$sql .= natural_search('d.ref', $search_ref);
+	$sql .= natural_search(['d.ref', "d.rowid"], $search_ref);
 }
 if (trim($search_all) != '') {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
 if (trim($search_company) != '') {
 	$sql .= natural_search('d.societe', $search_company);
+}
+if (trim($search_thirdparty) != '') {
+	$sql .= natural_search("s.nom", $search_thirdparty);
 }
 if (trim($search_name) != '') {
 	$sql .= natural_search(array('d.lastname', 'd.firstname'), $search_name);

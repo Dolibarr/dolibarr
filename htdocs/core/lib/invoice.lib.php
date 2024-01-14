@@ -580,7 +580,7 @@ function getCustomerInvoiceDraftTable($maxCount = 500, $socid = 0)
 				$result .= '<td colspan="2" class="right">'.price($tot_ttc).'</td>';
 				$result .= '</tr>';
 			} else {
-				$result .= '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
+				$result .= '<tr class="oddeven"><td colspan="3"><span class="opacitymedium">'.$langs->trans("NoInvoice").'</span></td></tr>';
 			}
 			$result .= "</table></div>";
 			$db->free($resql);
@@ -712,7 +712,7 @@ function getDraftSupplierTable($maxCount = 500, $socid = 0)
 				$result .= '<td colspan="2" class="right">'.price($tot_ttc).'</td>';
 				$result .= '</tr>';
 			} else {
-				$result .= '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
+				$result .= '<tr class="oddeven"><td colspan="3"><span class="opacitymedium">'.$langs->trans("NoInvoice").'</span></td></tr>';
 			}
 			$result .= "</table></div>";
 			$db->free($resql);
