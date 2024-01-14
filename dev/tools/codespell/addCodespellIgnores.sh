@@ -40,7 +40,7 @@ fi
 #   - Run codespell;
 #   - For each line, create a grep command to find the lines;
 #   - Execute that command by evaluation
-codespell . | perl -p -e 's@^(.*?):\d+:\s(\S+)\s.*@grep -P '"'"'\\b$2\\b'"'"' "$1" >> '"${codespell_ignore_file}"'@;' | \
+codespell . | sed -n -E 's@^([^:]+):[[:digit:]]+:[[:space:]](\S+)[[:space:]].*@grep -P '\''\\b\2\\b'\'' "\1" >> '"${codespell_ignore_file}"'@p' | \
 	while read -r line ; do eval "$line" ; done
 
 # Finally, sort and remove duplicates to make merges easier.
