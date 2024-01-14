@@ -2120,7 +2120,7 @@ class SupplierProposal extends CommonObject
 	public function info($id)
 	{
 		$sql = "SELECT c.rowid, ";
-		$sql .= " c.datec, c.date_valid as datev, c.date_cloture as dateo,";
+		$sql .= " c.datec as date_creation, c.date_valid as date_validation, c.date_cloture as date_closure,";
 		$sql .= " c.fk_user_author, c.fk_user_valid, c.fk_user_cloture";
 		$sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposal as c";
 		$sql .= " WHERE c.rowid = ".((int) $id);
@@ -2133,9 +2133,9 @@ class SupplierProposal extends CommonObject
 
 				$this->id                = $obj->rowid;
 
-				$this->date_creation     = $this->db->jdate($obj->datec);
-				$this->date_validation   = $this->db->jdate($obj->datev);
-				$this->date_cloture      = $this->db->jdate($obj->dateo);
+				$this->date_creation     = $this->db->jdate($obj->date_creation);
+				$this->date_validation   = $this->db->jdate($obj->date_validation);
+				$this->date_cloture      = $this->db->jdate($obj->date_closure);
 
 				$this->user_creation_id = $obj->fk_user_author;
 				$this->user_validation_id = $obj->fk_user_valid;

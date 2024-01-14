@@ -83,14 +83,21 @@ class Task extends CommonObjectLine
 	public $duration_effective; // total of time spent on this task
 	public $planned_workload;
 	public $date_c;
-	public $date_start;
-	public $date_end;
 	public $progress;
+
+	/**
+	 * @deprecated Use date_start instead
+	 */
+	public $dateo;
+
+	public $date_start;
 
 	/**
 	 * @deprecated Use date_end instead
 	 */
 	public $datee;
+
+	public $date_end;
 
 	/**
 	 * @var int ID
@@ -324,8 +331,8 @@ class Task extends CommonObjectLine
 		$sql .= " t.duration_effective,";
 		$sql .= " t.planned_workload,";
 		$sql .= " t.datec,";
-		$sql .= " t.dateo,";
-		$sql .= " t.datee,";
+		$sql .= " t.dateo as date_start,";
+		$sql .= " t.datee as date_end,";
 		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_valid,";
 		$sql .= " t.fk_statut,";
@@ -369,8 +376,8 @@ class Task extends CommonObjectLine
 				$this->duration_effective = $obj->duration_effective;
 				$this->planned_workload = $obj->planned_workload;
 				$this->date_c = $this->db->jdate($obj->datec);
-				$this->date_start = $this->db->jdate($obj->dateo);
-				$this->date_end				= $this->db->jdate($obj->datee);
+				$this->date_start = $this->db->jdate($obj->date_start);
+				$this->date_end				= $this->db->jdate($obj->date_end);
 				$this->fk_user_creat		= $obj->fk_user_creat;
 				$this->fk_user_valid		= $obj->fk_user_valid;
 				$this->fk_statut			= $obj->fk_statut;
@@ -2275,7 +2282,7 @@ class Task extends CommonObjectLine
 		// List of tasks (does not care about permissions. Filtering will be done later)
 		$sql = "SELECT p.rowid as projectid, p.fk_statut as projectstatus,";
 		$sql .= " t.rowid as taskid, t.progress as progress, t.fk_statut as status,";
-		$sql .= " t.dateo as date_start, t.datee as datee";
+		$sql .= " t.dateo as date_start, t.datee as date_end";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 		//$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 		//if (! $user->rights->societe->client->voir && ! $socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
@@ -2314,7 +2321,8 @@ class Task extends CommonObjectLine
 				$task_static->projectstatus = $obj->projectstatus;
 				$task_static->progress = $obj->progress;
 				$task_static->fk_statut = $obj->status;
-				$task_static->date_end = $this->db->jdate($obj->datee);
+				$task_static->date_start = $this->db->jdate($obj->date_start);
+				$task_static->date_end = $this->db->jdate($obj->date_end);
 
 				if ($task_static->hasDelay()) {
 					$response->nbtodolate++;

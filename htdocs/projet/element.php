@@ -150,14 +150,14 @@ if (isModEnabled('eventorganization')) {
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$datesrfc = GETPOST('datesrfc');
-$dateerfc = GETPOST('dateerfc');
+$datesrfc = GETPOST('datesrfc');	// deprecated
+$dateerfc = GETPOST('dateerfc');	// deprecated
 $dates = dol_mktime(0, 0, 0, GETPOST('datesmonth'), GETPOST('datesday'), GETPOST('datesyear'));
 $datee = dol_mktime(23, 59, 59, GETPOST('dateemonth'), GETPOST('dateeday'), GETPOST('dateeyear'));
-if (empty($dates) && !empty($datesrfc)) {
+if (empty($dates) && !empty($datesrfc)) {	// deprecated
 	$dates = dol_stringtotime($datesrfc);
 }
-if (empty($datee) && !empty($dateerfc)) {
+if (empty($datee) && !empty($dateerfc)) {	// deprecated
 	$datee = dol_stringtotime($dateerfc);
 }
 if (!GETPOSTISSET('datesrfc') && !GETPOSTISSET('datesday') && getDolGlobalString('PROJECT_LINKED_ELEMENT_DEFAULT_FILTER_YEAR')) {
