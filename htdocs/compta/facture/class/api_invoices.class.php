@@ -367,27 +367,27 @@ class Invoices extends DolibarrApi
 	* @throws RestException 400
 	* @throws RestException 401
 	* @throws RestException 404
-    * @throws RestException 405
-    */
+	* @throws RestException 405
+	*/
 	public function createInvoiceFromContract($contractid)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
-    	if (!DolibarrApiAccess::$user->hasRight('contrat', 'lire')) {
-        	throw new RestException(401);
-        }
-    	if (!DolibarrApiAccess::$user->rights->facture->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('contrat', 'lire')) {
 			throw new RestException(401);
 		}
-        if (empty($contractid)) {
+		if (!DolibarrApiAccess::$user->rights->facture->creer) {
+			throw new RestException(401);
+		}
+		if (empty($contractid)) {
 			throw new RestException(400, 'Contract ID is mandatory');
-        }
+		}
 
 		$contract = new Contrat($this->db);
 		$result = $contract->fetch($contractid);
 		if (!$result) {
 			throw new RestException(404, 'Contract not found');
-        }
+		}
 
 		$result = $this->invoice->createFromContract($contract, DolibarrApiAccess::$user);
 		if ($result < 0) {
@@ -666,10 +666,9 @@ class Invoices extends DolibarrApi
 			$this->invoice->$field = $value;
 
 			// If cond reglement => update date lim reglement
-            if ($field == 'cond_reglement_id') {
-                $this->invoice->date_lim_reglement = $this->invoice->calculate_date_lim_reglement();
-            }
-			
+			if ($field == 'cond_reglement_id') {
+				$this->invoice->date_lim_reglement = $this->invoice->calculate_date_lim_reglement();
+			}
 		}
 
 		// update bank account
