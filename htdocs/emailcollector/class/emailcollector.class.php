@@ -2661,6 +2661,22 @@ class EmailCollector extends CommonObject
 										$errorforactions++;
 										$this->errors = $actioncomm->errors;
 									} else {
+										if (($fk_element_type == 'ticket') && (!empty($attachments))) {
+											// There is an attachment for the ticket -> store attachment
+											$ticket = New Ticket($this->db);
+											$ticket->fetch($fk_element_id);
+											$destdir = $conf->ticket->dir_output.'/'.$ticket->ref;
+											if (!dol_is_dir($destdir)) {
+												dol_mkdir($destdir);
+											}
+											if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+												foreach ($attachments as $attachment) {
+													$attachment->save($destdir.'/');
+												}
+											} else {
+												$this->getmsg($connection, $imapemail, $destdir);
+											}
+										}
 										$operationslog .= '<br>Event created -> id='.dol_escape_htmltag($actioncomm->id);
 									}
 								}
