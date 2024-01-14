@@ -814,14 +814,14 @@ class Reception extends CommonObject
 	 * @param 	int			$id					Id of source line (supplier order line)
 	 * @param 	int			$qty				Quantity
 	 * @param	array		$array_options		extrafields array
-	 * @param	string		$comment				Comment for stock movement
-	 * @param	integer		$eatby					eat-by date
-	 * @param	integer		$sellby					sell-by date
-	 * @param	string		$batch					Lot number
+	 * @param	string		$comment			Comment for stock movement
+	 * @param	int			$eatby				eat-by date
+	 * @param	int			$sellby				sell-by date
+	 * @param	string		$batch				Lot number
 	 * @param	double		$cost_price			Line cost
 	 * @return	int							Return integer <0 if KO, index of line if OK
 	 */
-	public function addline($entrepot_id, $id, $qty, $array_options = 0, $comment = '', $eatby = '', $sellby = '', $batch = '', $cost_price = 0)
+	public function addline($entrepot_id, $id, $qty, $array_options = [], $comment = '', $eatby = null, $sellby = null, $batch = '', $cost_price = 0)
 	{
 		global $conf, $langs, $user;
 
@@ -1516,7 +1516,7 @@ class Reception extends CommonObject
 	 *  @param  int      $id     only this carrier, all if none
 	 *  @return void
 	 */
-	public function list_delivery_methods($id = '')
+	public function list_delivery_methods($id = 0)
 	{
 		// phpcs:enable
 		global $langs;
@@ -1526,7 +1526,7 @@ class Reception extends CommonObject
 
 		$sql = "SELECT em.rowid, em.code, em.libelle, em.description, em.tracking, em.active";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
-		if ($id != '') {
+		if (!empty($id)) {
 			$sql .= " WHERE em.rowid = ".((int) $id);
 		}
 
