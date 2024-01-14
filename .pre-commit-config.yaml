@@ -92,13 +92,19 @@ repos:
       - id: codespell
         # Due to a current limitation of configuration files,
         # we can specify two dicts only on the CLI.
-        args: 
+        # You can update the contents of the exclude-file codespell-lines-ignore with the script
+        # dev/tools/codespell/addCodespellIgnores.sh
+        args:
           - -D
           - '-'
           - -D
           - dev/tools/codespell/codespell-dict.txt
           - -I
           - dev/tools/codespell/codespell-ignore.txt
+          - -x
+          - dev/tools/codespell/codespell-lines-ignore.txt
+          - --uri-ignore-words-list
+          - ned
         exclude: (?x)^(.phan/stubs/.*)$
         additional_dependencies: [tomli]
       - alias: codespell-lang-en_US
@@ -118,6 +124,10 @@ repos:
           - "creat,unitl,alltime,datas,referers"
           - -I
           - dev/tools/codespell/codespell-ignore.txt
+          - -x
+          - dev/tools/codespell/codespell-lines-ignore.txt
+          - --uri-ignore-words-list
+          - ned
 
   # Check some shell scripts
   - repo: https://github.com/shellcheck-py/shellcheck-py
