@@ -89,6 +89,7 @@ def convert_text_to_checkstyle(text, root_path=None):
 
 ANY_REGEX = r".*?"
 FILE_REGEX = r"\s*(?P<file_name>\S.*?)\s*?"
+FILEGROUP_REGEX = r"\s*(?P<file_group>\S.*?)\s*?"
 EOL_REGEX = r"[\r\n]"
 LINE_REGEX = r"\s*(?P<line>\d+?)\s*?"
 COLUMN_REGEX = r"\s*(?P<column>\d+?)\s*?"
@@ -109,6 +110,17 @@ PATTERNS = [
         f" {MSG_REGEX} in line {LINE_REGEX}.$"
     ),
     # beautysh
+    #  File socks4echo.sh: error: indent/outdent mismatch: -2.
+    re.compile(f"^File {FILE_REGEX}:{SEVERITY_REGEX}: {MSG_REGEX}$"),
+    # yamllint
+    # ##[group].pre-commit-config.yaml
+    # ##[error]97:14 [trailing-spaces] trailing spaces
+    # ##[endgroup]
+    re.compile(rf"^##\[group\]{FILEGROUP_REGEX}$"),  # Start file group
+    re.compile(
+        rf"^##\[{SEVERITY_REGEX}\]{LINE_REGEX}:{COLUMN_REGEX}{MSG_REGEX}$"
+    ),  # Msg
+    re.compile(r"^##(?P<file_endgroup>\[endgroup\])$"),  # End file group
     #  File socks4echo.sh: error: indent/outdent mismatch: -2.
     re.compile(f"^File {FILE_REGEX}:{SEVERITY_REGEX}: {MSG_REGEX}$"),
     # ESLint (JavaScript Linter), RoboCop, shellcheck
@@ -169,6 +181,7 @@ def parse_file(text):
 
     Returns the fields in a dict.
     """
+    # pylint: disable=too-many-branches
     # regex required to allow same group names
     try:
         import regex  # pylint: disable=import-outside-toplevel
@@ -180,6 +193,7 @@ def parse_file(text):
     patterns = [pattern.pattern for pattern in PATTERNS]
     # patterns = [PATTERNS[0].pattern]
 
+    file_group = None  # The file name for the group (if any)
     full_regex = "(?:(?:" + (")|(?:".join(patterns)) + "))"
     results = []
 
@@ -192,8 +206,29 @@ def parse_file(text):
 
         if len(result) == 0:
             continue
+
         severity = result.get("severity", None)
+        file_name = result.get("file_name", None)
         confidence = result.pop("confidence", None)
+        new_file_group = result.pop("file_group", None)
+        file_endgroup = result.pop("file_endgroup", None)
+
+        if new_file_group is not None:
+            # Start of file_group, just store file
+            file_group = new_file_group
+            continue
+
+        if file_endgroup is not None:
+            file_group = None
+            continue
+
+        if file_name is None:
+            if file_group is not None:
+                file_name = file_group
+                result["file_name"] = file_name
+            else:
+                # No filename, skip
+                continue
 
         if confidence is not None:
             # Convert confidence level of cpplint
