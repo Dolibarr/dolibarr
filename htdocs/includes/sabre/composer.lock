@@ -1,9 +1,14 @@
 {
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "fffed375dc9f645f46fc681f0b1b7f07",
     "packages": [
         {
             "name": "psr/log",
             "version": "1.1.4",
-            "version_normalized": "1.1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/log.git",
@@ -18,14 +23,12 @@
             "require": {
                 "php": ">=5.3.0"
             },
-            "time": "2021-05-03T11:20:27+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
                     "dev-master": "1.1.x-dev"
                 }
             },
-            "installation-source": "dist",
             "autoload": {
                 "psr-4": {
                     "Psr\\Log\\": "Psr/Log/"
@@ -51,12 +54,11 @@
             "support": {
                 "source": "https://github.com/php-fig/log/tree/1.1.4"
             },
-            "install-path": "../psr/log"
+            "time": "2021-05-03T11:20:27+00:00"
         },
         {
             "name": "sabre/dav",
             "version": "4.6.0",
-            "version_normalized": "4.6.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sabre-io/dav.git",
@@ -99,13 +101,11 @@
                 "ext-imap": "*",
                 "ext-pdo": "*"
             },
-            "time": "2023-12-11T13:01:23+00:00",
             "bin": [
                 "bin/sabredav",
                 "bin/naturalselection"
             ],
             "type": "library",
-            "installation-source": "dist",
             "autoload": {
                 "psr-4": {
                     "Sabre\\": "lib/"
@@ -137,12 +137,11 @@
                 "issues": "https://github.com/sabre-io/dav/issues",
                 "source": "https://github.com/fruux/sabre-dav"
             },
-            "install-path": "../sabre/dav"
+            "time": "2023-12-11T13:01:23+00:00"
         },
         {
             "name": "sabre/event",
             "version": "5.1.4",
-            "version_normalized": "5.1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sabre-io/event.git",
@@ -162,9 +161,7 @@
                 "phpstan/phpstan": "^0.12",
                 "phpunit/phpunit": "^7.5 || ^8.5 || ^9.0"
             },
-            "time": "2021-11-04T06:51:17+00:00",
             "type": "library",
-            "installation-source": "dist",
             "autoload": {
                 "files": [
                     "lib/coroutine.php",
@@ -206,12 +203,11 @@
                 "issues": "https://github.com/sabre-io/event/issues",
                 "source": "https://github.com/fruux/sabre-event"
             },
-            "install-path": "../sabre/event"
+            "time": "2021-11-04T06:51:17+00:00"
         },
         {
             "name": "sabre/http",
             "version": "5.1.10",
-            "version_normalized": "5.1.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sabre-io/http.git",
@@ -239,9 +235,7 @@
             "suggest": {
                 "ext-curl": " to make http requests with the Client class"
             },
-            "time": "2023-08-18T01:55:28+00:00",
             "type": "library",
-            "installation-source": "dist",
             "autoload": {
                 "files": [
                     "lib/functions.php"
@@ -272,12 +266,11 @@
                 "issues": "https://github.com/sabre-io/http/issues",
                 "source": "https://github.com/fruux/sabre-http"
             },
-            "install-path": "../sabre/http"
+            "time": "2023-08-18T01:55:28+00:00"
         },
         {
             "name": "sabre/uri",
             "version": "2.2.4",
-            "version_normalized": "2.2.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sabre-io/uri.git",
@@ -297,9 +290,7 @@
                 "phpstan/phpstan": "^0.12",
                 "phpunit/phpunit": "^7.5 || ^8.5 || ^9.0"
             },
-            "time": "2022-09-19T12:25:28+00:00",
             "type": "library",
-            "installation-source": "dist",
             "autoload": {
                 "files": [
                     "lib/functions.php"
@@ -332,12 +323,11 @@
                 "issues": "https://github.com/sabre-io/uri/issues",
                 "source": "https://github.com/fruux/sabre-uri"
             },
-            "install-path": "../sabre/uri"
+            "time": "2022-09-19T12:25:28+00:00"
         },
         {
             "name": "sabre/vobject",
             "version": "4.5.4",
-            "version_normalized": "4.5.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sabre-io/vobject.git",
@@ -363,7 +353,6 @@
             "suggest": {
                 "hoa/bench": "If you would like to run the benchmark scripts"
             },
-            "time": "2023-11-09T12:54:37+00:00",
             "bin": [
                 "bin/vobject",
                 "bin/generate_vcards"
@@ -374,7 +363,6 @@
                     "dev-master": "4.0.x-dev"
                 }
             },
-            "installation-source": "dist",
             "autoload": {
                 "psr-4": {
                     "Sabre\\VObject\\": "lib/"
@@ -439,12 +427,11 @@
                 "issues": "https://github.com/sabre-io/vobject/issues",
                 "source": "https://github.com/fruux/sabre-vobject"
             },
-            "install-path": "../sabre/vobject"
+            "time": "2023-11-09T12:54:37+00:00"
         },
         {
             "name": "sabre/xml",
             "version": "2.2.6",
-            "version_normalized": "2.2.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sabre-io/xml.git",
@@ -469,9 +456,7 @@
                 "phpstan/phpstan": "^0.12",
                 "phpunit/phpunit": "^7.5 || ^8.5 || ^9.0"
             },
-            "time": "2023-06-28T12:56:05+00:00",
             "type": "library",
-            "installation-source": "dist",
             "autoload": {
                 "files": [
                     "lib/Deserializer/functions.php",
@@ -511,9 +496,18 @@
                 "issues": "https://github.com/sabre-io/xml/issues",
                 "source": "https://github.com/fruux/sabre-xml"
             },
-            "install-path": "../sabre/xml"
+            "time": "2023-06-28T12:56:05+00:00"
         }
     ],
-    "dev": false,
-    "dev-package-names": []
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {
+        "php": ">=7.1.0"
+    },
+    "platform-dev": [],
+    "plugin-api-version": "2.2.0"
 }
