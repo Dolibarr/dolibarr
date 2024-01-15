@@ -6458,8 +6458,8 @@ class Form
 	 *                         Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
 	 *                         Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
 	 *                         Si (vendeur et acheteur dans Communaute europeenne) et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
-	 *                         Si vendeur et acheteur dans Communauté européenne et acheteur= particulier alors TVA par défaut=TVA du produit vendu. Fin de règle.
-	 *                         Si vendeur et acheteur dans Communauté européenne et acheteur= entreprise alors TVA par défaut=0. Fin de règle.
+	 *                         Si vendeur et acheteur dans Communauté européenne et acheteur=particulier alors TVA par défaut=TVA du produit vendu. Fin de règle.
+	 *                         Si vendeur et acheteur dans Communauté européenne et acheteur=entreprise alors TVA par défaut=0. Fin de règle.
 	 *                         Sinon la TVA proposee par defaut=0. Fin de regle.
 	 * @param bool $options_only Return HTML options lines only (for ajax treatment)
 	 * @param int $mode 0=Use vat rate as key in combo list, 1=Add VAT code after vat rate into key, -1=Use id of vat line as key
@@ -6528,7 +6528,7 @@ class Form
 		}
 
 		// Now we get list
-		$num = $this->load_cache_vatrates($code_country); // If no vat defined, return -1 with message into this->error
+		$num = $this->load_cache_vatrates($code_country); // If no vat at all defined for this country, return -1 with message into this->error
 
 		if ($num > 0) {
 			// Definition du taux a pre-selectionner (si defaulttx non force et donc vaut -1 ou '')
