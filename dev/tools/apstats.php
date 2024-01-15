@@ -121,7 +121,7 @@ $commandcheck = "git log --shortstat --no-renames --no-merges --use-mailmap --pr
 print 'Execute git log to count number of commits by day: '.$commandcheck."\n";
 $output_arrglpu = array();
 $resexecglpu = 0;
-exec($commandcheck, $output_arrglpu, $resexecglpu);
+//exec($commandcheck, $output_arrglpu, $resexecglpu);
 
 
 
