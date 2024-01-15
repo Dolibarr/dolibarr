@@ -572,14 +572,14 @@ function dol_get_next_week($day, $week, $month, $year)
  * 										True or 1 or 'gmt' to compare with GMT date.
  *                          			Example: dol_get_first_day(1970,1,false) will return -3600 with TZ+1, a dol_print_date on it will return 1970-01-01 00:00:00
  *                          			Example: dol_get_first_day(1970,1,true) will return 0 whatever is TZ, a dol_print_date on it will return 1970-01-01 00:00:00
- *  @return		int						Date for first day, '' if error
+ *  @return		int|string				Date as a timestamp, '' if error
  */
 function dol_get_first_day($year, $month = 1, $gm = false)
 {
 	if ($year > 9999) {
 		return '';
 	}
-	return (int) dol_mktime(0, 0, 0, $month, 1, $year, $gm);
+	return dol_mktime(0, 0, 0, $month, 1, $year, $gm);
 }
 
 
@@ -591,7 +591,7 @@ function dol_get_first_day($year, $month = 1, $gm = false)
  * 	@param		int			$month		Month
  * 	@param		mixed		$gm			False or 0 or 'tzserver' = Return date to compare with server TZ,
  * 										True or 1 or 'gmt' to compare with GMT date.
- *	@return		int						Date for first day, '' if error
+ *	@return		int|string				Date as a timestamp, '' if error
  */
 function dol_get_last_day($year, $month = 12, $gm = false)
 {
