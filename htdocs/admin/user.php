@@ -116,25 +116,6 @@ if ($action == 'set_default') {
 	} else {
 		dol_print_error($db);
 	}
-} elseif ($action == 'sethideexternaluser') {
-	//Set hide external user into combox or select
-	$status = GETPOST('status', 'alpha');
-	if (dolibarr_set_const($db, "USER_HIDE_EXTERNAL_IN_COMBOBOX", $status, 'chaine', 0, '', $conf->entity) > 0) {
-		header("Location: " . $_SERVER["PHP_SELF"]);
-		exit;
-	} else {
-		dol_print_error($db);
-	}
-} elseif ($action == 'sethidenonemployeeuser') {
-	//Set hide non employee user into combox or select
-	$status = GETPOST('status', 'alpha');
-
-	if (dolibarr_set_const($db, "USER_HIDE_NONEMPLOYEE_IN_COMBOBOX", $status, 'chaine', 0, '', $conf->entity) > 0) {
-		header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
-	} else {
-		dol_print_error($db);
-	}
 }
 
 
