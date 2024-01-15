@@ -1223,6 +1223,46 @@ class Cronjob extends CommonObject
 
 		// Run a method
 		if ($this->jobtype == 'method') {
+
+			// Deny to launch a method from a deactivated module
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			$modulesdir = dolGetModulesDirs();
+			foreach ($modulesdir as $dir) {
+				$handle = @opendir($dir);
+				if (is_resource($handle)) {
+					while (($file = readdir($handle)) !== false) {
+						if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php') {
+							$modName = substr($file, 0, dol_strlen($file) - 10);
+							if ($modName) {
+								try {
+									$res = include_once $dir.$file; // A class already exists in a different file will send a non catchable fatal error.
+									if (class_exists($modName)) {
+										try {
+											$objMod = new $modName($this->db);
+											if ($this->objectname == $objMod->getName()) {
+												$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
+												if (empty($conf->global->$const_name)) {
+													$this->error = $langs->transnoentitiesnoconv('CronMethodNotAllowed', $this->methodename, $this->objectname);
+													dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
+													$this->lastoutput = $this->error;
+													$this->lastresult = -1;
+													$retval = $this->lastresult;
+													$error++;
+												}
+											}
+										} catch (Exception $e) {
+											dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
+										}
+									}
+								} catch (Exception $e) {
+									dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
+								}
+							}
+						}
+					}
+				}
+			}
+
 			// load classes
 			if (!$error) {
 				$ret = dol_include_once($this->classesname);
