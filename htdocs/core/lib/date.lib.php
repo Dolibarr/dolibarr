@@ -370,6 +370,7 @@ function convertDurationtoHour($duration_value, $duration_unit)
  * @param	   mixed		$gm					False or 0 or 'tzserver' = Input date fields are date info in the server TZ. True or 1 or 'gmt' = Input are date info in GMT TZ.
  * 												Note: In database, dates are always for the server TZ.
  * @return     string		$sqldate			String with SQL filter
+ * @see forgeSQLFromUniversalSearchCriteria()
  */
 function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date, $excludefirstand = 0, $gm = false)
 {

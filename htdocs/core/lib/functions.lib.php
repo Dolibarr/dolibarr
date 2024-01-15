@@ -12439,6 +12439,7 @@ function jsonOrUnserialize($stringtodecode)
  * @param	int			$nopar		1=Do not add the perenthesis around the condition string.
  * @param	int			$noerror	1=If search criteria is not valid, does not return an error string but invalidate the SQL
  * @return	string					Return forged SQL string
+ * @see dolSqlDateFilter()
  */
 function forgeSQLFromUniversalSearchCriteria($filter, &$errorstr = '', $noand = 0, $nopar = 0, $noerror = 0)
 {
