@@ -2281,7 +2281,7 @@ class Form
 	 *  @param		int|string	$filtertype				Filter on product type (''=nofilter, 0=product, 1=service)
 	 *  @param		int			$limit					Limit on number of returned lines
 	 *  @param		int			$price_level			Level of price to show
-	 *  @param		int			$status					Sell status -1=Return all products, 0=Products not on sell, 1=Products on sell
+	 *  @param		int			$status					Sell status: -1=No filter on sell status, 0=Products not on sell, 1=Products on sell
 	 *  @param		int			$finished				2=all, 1=finished, 0=raw material
 	 *  @param		string		$selected_input_value	Value of preselected input text (for use with ajax)
 	 *  @param		int			$hidelabel				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
@@ -2297,7 +2297,7 @@ class Form
 	 *										            'warehouseinternal' = count products from warehouses for internal correct/transfer only
 	 *  @param 		array 		$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
 	 *  @param		string		$nooutput				No print, return the output into a string
-	 *  @param		int			$status_purchase		Purchase status -1=Return all products, 0=Products not on purchase, 1=Products on purchase
+	 *  @param		int			$status_purchase		Purchase status: -1=No filter on purchase status, 0=Products not on purchase, 1=Products on purchase
 	 *  @return		void|string
 	 */
 	public function select_produits($selected = '', $htmlname = 'productid', $filtertype = '', $limit = 0, $price_level = 0, $status = 1, $finished = 2, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $selected_combinations = null, $nooutput = 0, $status_purchase = -1)
@@ -2673,10 +2673,8 @@ class Form
 			$sql .= " AND p.finished = ".((int) $finished);
 		} elseif ($finished == 1) {
 			$sql .= " AND p.finished = ".((int) $finished);
-			if ($status >= 0) {
-				$sql .= " AND p.tosell = ".((int) $status);
-			}
-		} elseif ($status >= 0) {
+		}
+		if ($status >= 0) {
 			$sql .= " AND p.tosell = ".((int) $status);
 		}
 		if ($status_purchase >= 0) {
