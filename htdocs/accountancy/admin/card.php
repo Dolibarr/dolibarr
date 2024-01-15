@@ -154,17 +154,17 @@ if ($action == 'add' && $user->hasRight('accounting', 'chartofaccount')) {
 				$account_number = clean_account($account_number);
 			}
 
-			if (GETPOST('account_parent', 'int') <= 0) {
+			if (GETPOSTINT('account_parent') <= 0) {
 				$account_parent = 0;
 			} else {
-				$account_parent = GETPOST('account_parent', 'int');
+				$account_parent = GETPOSTINT('account_parent');
 			}
 
 			$object->fk_pcg_version = $obj->pcg_version;
 			$object->pcg_type = GETPOST('pcg_type', 'alpha');
 			$object->account_number = $account_number;
 			$object->account_parent = $account_parent;
-			$object->account_category = GETPOST('account_category', 'alpha');
+			$object->account_category = GETPOSTINT('account_category');
 			$object->label = $label;
 			$object->labelshort = GETPOST('labelshort', 'alpha');
 
