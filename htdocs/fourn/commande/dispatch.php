@@ -44,7 +44,6 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
-require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("bills", "orders", "sendings", "companies", "deliveries", "products", "stocks", "receptions"));
