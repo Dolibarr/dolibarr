@@ -560,7 +560,7 @@ if (empty($reshook)) {
 
 				$desc = $prod->description;
 
-				//If text set in desc is the same as product descpription (as now it's preloaded) whe add it only one time
+				//If text set in desc is the same as product descpription (as now it's preloaded) we add it only one time
 				if ($product_desc == $desc && getDolGlobalString('PRODUIT_AUTOFILL_DESC')) {
 					$product_desc = '';
 				}
@@ -1690,7 +1690,7 @@ if ($action == 'create') {
 						$colspan++;
 					}
 
-					// Dates of service planed and real
+					// Dates of service planned and real
 					if ($objp->subprice >= 0) {
 						print '<tr class="oddeven" '.$moreparam.'>';
 						print '<td colspan="'.$colspan.'">';
@@ -1820,7 +1820,7 @@ if ($action == 'create') {
 						$colspan++;
 					}
 
-					// Line dates planed
+					// Line dates planned
 					print '<tr class="oddeven">';
 					print '<td colspan="'.$colspan.'">';
 					print $langs->trans("DateStartPlanned").' ';
@@ -1971,7 +1971,7 @@ if ($action == 'create') {
 
 				print '<table class="noborder tableforservicepart2'.($cursorline < $nbofservices ? ' boxtablenobottom' : '').' centpercent">';
 
-				// Definie date debut et fin par defaut
+				// Definie date debut et fin par default
 				$dateactstart = $objp->date_start;
 				if (GETPOST('remonth')) {
 					$dateactstart = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
@@ -2028,7 +2028,7 @@ if ($action == 'create') {
 
 				print '<table class="noborder tableforservicepart2'.($cursorline < $nbofservices ? ' boxtablenobottom' : '').' centpercent">';
 
-				// Definie date debut et fin par defaut
+				// Definie date debut et fin par default
 				$dateactstart = $objp->date_start_real;
 				if (GETPOST('remonth')) {
 					$dateactstart = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));

@@ -114,7 +114,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 					if ($cryptType == 'auto') {
 						if ($passcrypted && dol_verifyHash($passtyped, $passcrypted, '0')) {
 							$passok = true;
-							dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ok - hash ".$cryptType." of pass is ok");
+							dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentication ok - hash ".$cryptType." of pass is ok");
 						}
 					}
 
@@ -123,7 +123,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 						if ((!$passcrypted || $passtyped)
 							&& ($passclear && ($passtyped == $passclear))) {
 							$passok = true;
-							dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ok - found old pass in database", LOG_WARNING);
+							dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentication ok - found old pass in database", LOG_WARNING);
 						}
 					}
 

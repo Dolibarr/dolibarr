@@ -534,7 +534,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *	@param	TCPDF				$pdf           	Object PDF
 	 *	@param  CompanyBankAccount	$object         Object invoice
 	 *	@param	int					$posy			Position depart
-	 *	@param	Translate			$outputlangs	Objet langs
+	 *	@param	Translate			$outputlangs	Object langs
 	 *	@return int									Position pour suite
 	 */
 	protected function _signature_area(&$pdf, $object, $posy, $outputlangs)

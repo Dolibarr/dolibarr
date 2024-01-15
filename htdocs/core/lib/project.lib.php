@@ -593,7 +593,7 @@ function project_admin_prepare_head()
  * @param   int         $projectidfortotallink  0 or Id of project to use on total line (link to see all time consumed for project)
  * @param   string      $dummy					Not used.
  * @param   int         $showbilltime           Add the column 'TimeToBill' and 'TimeBilled'
- * @param   array       $arrayfields            Array with displayed coloumn information
+ * @param   array       $arrayfields            Array with displayed column information
  * @param   array       $arrayofselected        Array with selected fields
  * @return	int									Nb of tasks shown
  */
@@ -625,12 +625,12 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 	for ($i = 0; $i < $numlines; $i++) {
 		if ($parent == 0 && $level >= 0) {
-			$level = 0; // if $level = -1, we dont' use sublevel recursion, we show all lines
+			$level = 0; // if $level = -1, we don't use sublevel recursion, we show all lines
 		}
 
 		// Process line
 		// print "i:".$i."-".$lines[$i]->fk_project.'<br>';
-		if ($lines[$i]->fk_task_parent == $parent || $level < 0) {       // if $level = -1, we dont' use sublevel recursion, we show all lines
+		if ($lines[$i]->fk_task_parent == $parent || $level < 0) {       // if $level = -1, we don't use sublevel recursion, we show all lines
 			// Show task line.
 			$showline = 1;
 			$showlineingray = 0;
@@ -656,8 +656,8 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					// User is not allowed on this project and project is not public, so we hide line
 					if (!in_array($lines[$i]->fk_project, $projectsArrayId)) {
 						// Note that having a user assigned to a task into a project user has no permission on, should not be possible
-						// because assignement on task can be done only on contact of project.
-						// If assignement was done and after, was removed from contact of project, then we can hide the line.
+						// because assignment on task can be done only on contact of project.
+						// If assignment was done and after, was removed from contact of project, then we can hide the line.
 						$showline = 0;
 					}
 				}
@@ -1031,7 +1031,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 			$totalAverageDeclaredProgress = round(100 * $total_projectlinesa_declared_if_planned / $total_projectlinesa_planned, 2);
 			$totalCalculatedProgress = round(100 * $total_projectlinesa_spent / $total_projectlinesa_planned, 2);
 
-			// this conf is actually hidden, by default we use 10% for "be carefull or warning"
+			// this conf is actually hidden, by default we use 10% for "be careful or warning"
 			$warningRatio = getDolGlobalString('PROJECT_TIME_SPEND_WARNING_PERCENT') ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.10;
 
 			// define progress color according to time spend vs workload
@@ -1141,7 +1141,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 
 /**
- * Output a task line into a pertime intput mode
+ * Output a task line into a pertime input mode
  *
  * @param	string	   	$inc					Line number (start to 0, then increased by recursive call)
  * @param   string		$parent					Id of parent task to show (0 to show all)
@@ -1155,7 +1155,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
  * @param	int			$preselectedday			Preselected day
  * @param   array       $isavailable			Array with data that say if user is available for several days for morning and afternoon
  * @param	int			$oldprojectforbreak		Old project id of last project break
- * @return  array								Array with time spent for $fuser for each day of week on tasks in $lines and substasks
+ * @return  array								Array with time spent for $fuser for each day of week on tasks in $lines and subtasks
  */
 function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, $preselectedday, &$isavailable, $oldprojectforbreak = 0)
 {
@@ -1362,7 +1362,7 @@ function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projec
 
 
 /**
- * Output a task line into a pertime intput mode
+ * Output a task line into a pertime input mode
  *
  * @param	string	   	$inc					Line number (start to 0, then increased by recursive call)
  * @param   string		$parent					Id of parent task to show (0 to show all)
@@ -1378,7 +1378,7 @@ function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projec
  * @param	int			$oldprojectforbreak		Old project id of last project break
  * @param	array		$arrayfields		    Array of additional column
  * @param	Extrafields	$extrafields		    Object extrafields
- * @return  array								Array with time spent for $fuser for each day of week on tasks in $lines and substasks
+ * @return  array								Array with time spent for $fuser for each day of week on tasks in $lines and subtasks
  */
 function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, $preselectedday, &$isavailable, $oldprojectforbreak = 0, $arrayfields = array(), $extrafields = null)
 {
@@ -1759,7 +1759,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 
 
 /**
- * Output a task line into a perday intput mode
+ * Output a task line into a perday input mode
  *
  * @param	string	   	$inc					Line output identificator (start to 0, then increased by recursive call)
  * @param	int			$firstdaytoshow			First day to show
@@ -1775,7 +1775,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
  * @param	int			$oldprojectforbreak		Old project id of last project break
  * @param	array		$arrayfields		    Array of additional column
  * @param	Extrafields	$extrafields		    Object extrafields
- * @return  array								Array with time spent for $fuser for each day of week on tasks in $lines and substasks
+ * @return  array								Array with time spent for $fuser for each day of week on tasks in $lines and subtasks
  */
 function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, &$isavailable, $oldprojectforbreak = 0, $arrayfields = array(), $extrafields = null)
 {
@@ -2157,7 +2157,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 }
 
 /**
- * Output a task line into a perday intput mode
+ * Output a task line into a perday input mode
  *
  * @param	string	   	$inc					Line output identificator (start to 0, then increased by recursive call)
  * @param	int			$firstdaytoshow			First day to show
@@ -2172,7 +2172,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
  * @param   array       $isavailable			Array with data that say if user is available for several days for morning and afternoon
  * @param	int			$oldprojectforbreak		Old project id of last project break
  * @param	array		$TWeek					Array of week numbers
- * @return  array								Array with time spent for $fuser for each day of week on tasks in $lines and substasks
+ * @return  array								Array with time spent for $fuser for each day of week on tasks in $lines and subtasks
  */
 function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, &$isavailable, $oldprojectforbreak = 0, $TWeek = array())
 {
@@ -2826,8 +2826,8 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 
 /**
  * @param   Task        $task               the task object
- * @param   bool|string $label              true = auto, false = dont display, string = replace output
- * @param   bool|string $progressNumber     true = auto, false = dont display, string = replace output
+ * @param   bool|string $label              true = auto, false = don't display, string = replace output
+ * @param   bool|string $progressNumber     true = auto, false = don't display, string = replace output
  * @param   bool        $hideOnProgressNull hide if progress is null
  * @param   bool        $spaced             used to add space at bottom (made by css)
  * @return string
@@ -2862,7 +2862,7 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 	if ($task->planned_workload) {
 		$progressCalculated = round(100 * (float) $task->duration_effective / (float) $task->planned_workload, 2);
 
-		// this conf is actually hidden, by default we use 10% for "be carefull or warning"
+		// this conf is actually hidden, by default we use 10% for "be careful or warning"
 		$warningRatio = getDolGlobalString('PROJECT_TIME_SPEND_WARNING_PERCENT') ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.10;
 
 		$diffTitle = '<br>'.$langs->trans('ProgressDeclared').' : '.$task->progress.(isset($task->progress) ? '%' : '');
@@ -2979,7 +2979,7 @@ function getTaskProgressBadge($task, $label = '', $tooltip = '')
 		if ($task->planned_workload) {
 			$progressCalculated = round(100 * (float) $task->duration_effective / (float) $task->planned_workload, 2);
 
-			// this conf is actually hidden, by default we use 10% for "be carefull or warning"
+			// this conf is actually hidden, by default we use 10% for "be careful or warning"
 			$warningRatio = getDolGlobalString('PROJECT_TIME_SPEND_WARNING_PERCENT') ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.10;
 
 			if ((float) $progressCalculated > (float) ($task->progress * $warningRatio)) {

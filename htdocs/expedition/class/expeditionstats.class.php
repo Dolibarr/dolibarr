@@ -21,7 +21,7 @@
 /**
  *  \file       htdocs/expedition/class/expeditionstats.class.php
  *  \ingroup    expedition
- *  \brief      File of class fo tmanage shipment statistics
+ *  \brief      File of class to manage shipment statistics
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/class/stats.class.php';

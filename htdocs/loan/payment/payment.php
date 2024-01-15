@@ -70,7 +70,7 @@ if ($res > 0) {
 	}
 }
 
-// Set current line with last unpaid line (only if shedule is used)
+// Set current line with last unpaid line (only if schedule is used)
 if (!empty($line_id)) {
 	$line = new LoanSchedule($db);
 	$res = $line->fetch($line_id);
@@ -125,7 +125,7 @@ if ($action == 'add_payment') {
 		$remaindertopay = price2num(GETPOST('remaindertopay'));
 		$amount = $pay_amount_capital + $pay_amount_insurance + $pay_amount_interest;
 
-		// This term is allready paid
+		// This term is already paid
 		if (!empty($line) && !empty($line->fk_bank)) {
 			setEventMessages($langs->trans('TermPaidAllreadyPaid'), null, 'errors');
 			$error++;

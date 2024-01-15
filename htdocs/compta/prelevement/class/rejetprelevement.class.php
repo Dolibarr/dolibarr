@@ -67,7 +67,7 @@ class RejetPrelevement
 	/**
 	 *  Constructor
 	 *
-	 *  @param	DoliDb	$db			Database handler
+	 *  @param	DoliDB	$db			Database handler
 	 *  @param 	User	$user       Object user
 	 *  @param	string	$type		Type ('direct-debit' for direct debit or 'bank-transfer' for credit transfer)
 	 */

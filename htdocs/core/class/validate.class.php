@@ -28,7 +28,7 @@
 class Validate
 {
 	/**
-	 * @var DoliDb		Database handler (result of a new DoliDB)
+	 * @var DoliDB		Database handler (result of a new DoliDB)
 	 */
 	public $db;
 
@@ -94,10 +94,10 @@ class Validate
 	 * Check for e-mail validity
 	 *
 	 * @param 	string 	$email 		e-mail address to validate
-	 * @param 	int   	$maxLength 	string max length
+	 * @param 	int   	$maxLength 	string max length (not used)
 	 * @return 	boolean 			Validity is ok or not
 	 */
-	public function isEmail($email, $maxLength = false)
+	public function isEmail($email, $maxLength = 0)
 	{
 		if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 			$this->error = $this->outputLang->trans('RequireValidEmail');

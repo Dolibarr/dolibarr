@@ -124,7 +124,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 		// Get source company
 		$this->emetteur = $mysoc;
 		if (!$this->emetteur->country_code) {
-			$this->emetteur->country_code = substr($langs->defaultlang, -2); // Par defaut, si n'etait pas defini
+			$this->emetteur->country_code = substr($langs->defaultlang, -2); // Par default, si n'etait pas defini
 		}
 	}
 
@@ -592,7 +592,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 				// Recipient name
 				$contactobject = null;
 				if (!empty($usecontact)) {
-					// if we have a PROJECTLEADER contact and we dont use it as recipient we store the contact object for later use
+					// if we have a PROJECTLEADER contact and we don't use it as recipient we store the contact object for later use
 					$contactobject = $object->contact;
 				}
 
@@ -742,7 +742,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 							}
 						}
 
-						//Time ressources
+						//Time resources
 						$sql = "SELECT t.rowid, t.element_date as task_date, t.element_duration as task_duration, t.fk_user, t.note";
 						$sql .= ", u.lastname, u.firstname, t.thm";
 						$sql .= " FROM ".MAIN_DB_PREFIX."element_time as t";

@@ -285,9 +285,9 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 	/**
 	 *	Return if a code is used (by other element)
 	 *
-	 *	@param	DoliDB		$db			Handler acces base
+	 *	@param	DoliDB		$db			Handler access base
 	 *	@param	string		$code		Code to check
-	 *	@param	Societe		$thirdparty	Objet third-party
+	 *	@param	Societe		$thirdparty	Object third-party
 	 *	@return	int						0 if available, <0 if KO
 	 */
 	public function verif_dispo($db, $code, $thirdparty)

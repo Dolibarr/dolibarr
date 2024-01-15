@@ -88,7 +88,7 @@ class box_validated_projects extends ModeleBoxes
 			$projectstatic = new Project($this->db);
 
 			$socid = 0;
-			//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+			//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 
 			// Get list of project id allowed to user (in a string list separated by coma)
 			$projectsListId = '';

@@ -66,7 +66,7 @@ $object = new Ticket($db);
 // Security check
 //$result = restrictedArea($user, 'ticket|knowledgemanagement', 0, '', '', '', '');
 if (!$user->hasRight('ticket', 'read') && !$user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
-	accessforbidden('Not enought permissions');
+	accessforbidden('Not enough permissions');
 }
 
 
@@ -123,7 +123,7 @@ if (empty($endyear)) {
 
 $startyear = $endyear - 1;
 
-// Change default WIDHT and HEIGHT (we need a smaller than default for both desktop and smartphone)
+// Change default WIDTH and HEIGHT (we need a smaller than default for both desktop and smartphone)
 $WIDTH = (($shownb && $showtot) || !empty($conf->dol_optimize_smallscreen)) ? '100%' : '80%';
 if (empty($conf->dol_optimize_smallscreen)) {
 	$HEIGHT = '200';

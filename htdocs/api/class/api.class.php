@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 class DolibarrApi
 {
 	/**
-	 * @var DoliDb        $db Database object
+	 * @var DoliDB        $db Database object
 	 */
 	protected $db;
 
@@ -42,7 +42,7 @@ class DolibarrApi
 	/**
 	 * Constructor
 	 *
-	 * @param	DoliDb	$db		        Database handler
+	 * @param	DoliDB	$db		        Database handler
 	 * @param   string  $cachedir       Cache dir
 	 * @param   boolean $refreshCache   Update cache
 	 */

@@ -26,13 +26,13 @@
 /**
  *       \file       htdocs/core/class/html.formmail.class.php
  *       \ingroup    core
- *       \brief      Fichier de la classe permettant la generation du formulaire html d'envoi de mail unitaire
+ *       \brief      Fichier de la class permettant la generation du formulaire html d'envoi de mail unitaire
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 
 /**
- *      Classe permettant la generation du formulaire html d'envoi de mail unitaire
+ *      Class permettant la generation du formulaire html d'envoi de mail unitaire
  *      Usage: $formail = new FormMail($db)
  *             $formmail->proprietes=1 ou chaine ou tableau de valeurs
  *             $formmail->show_form() affiche le formulaire
@@ -708,7 +708,7 @@ class FormMail extends Form
 				$out .= $langs->trans("MailToUsers");
 				$out .= '</td><td>';
 
-				// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
+				// multiselect array convert html entities into options tags, even if we don't want this, so we encode them a second time
 				$tmparray = $this->withtouser;
 				foreach ($tmparray as $key => $val) {
 					$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
@@ -757,7 +757,7 @@ class FormMail extends Form
 				$out .= $langs->trans("MailToCCUsers");
 				$out .= '</td><td>';
 
-				// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
+				// multiselect array convert html entities into options tags, even if we don't want this, so we encode them a second time
 				$tmparray = $this->withtoccuser;
 				foreach ($tmparray as $key => $val) {
 					$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
@@ -792,7 +792,7 @@ class FormMail extends Form
 
 			// Ask delivery receipt
 			if (!empty($this->withdeliveryreceipt) && getDolGlobalInt('MAIN_EMAIL_SUPPORT_ACK')) {
-				$out .= $this->getHtmlForDeliveryReceipt();
+				$out .= $this->getHtmlForDeliveryreceipt();
 			}
 
 			// Topic
@@ -1123,7 +1123,7 @@ class FormMail extends Form
 
 					$tmparray[$key]['label'] = $label;
 					$tmparray[$key]['label'] = str_replace(array('<', '>'), array('(', ')'), $tmparray[$key]['label']);
-					// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
+					// multiselect array convert html entities into options tags, even if we don't want this, so we encode them a second time
 					$tmparray[$key]['label'] = dol_htmlentities($tmparray[$key]['label'], ENT_QUOTES|ENT_SUBSTITUTE, 'UTF-8', true);
 
 					$tmparray[$key]['labelhtml'] = $label;
@@ -1176,7 +1176,7 @@ class FormMail extends Form
 
 					$tmparray[$key]['label'] = $label;
 					$tmparray[$key]['label'] = str_replace(array('<', '>'), array('(', ')'), $tmparray[$key]['label']);
-					// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
+					// multiselect array convert html entities into options tags, even if we don't want this, so we encode them a second time
 					$tmparray[$key]['label'] = dol_htmlentities($tmparray[$key]['label'], ENT_QUOTES|ENT_SUBSTITUTE, 'UTF-8', true);
 
 					$tmparray[$key]['labelhtml'] = $label;
@@ -1223,7 +1223,7 @@ class FormMail extends Form
 
 					$tmparray[$key]['label'] = $label;
 					$tmparray[$key]['label'] = str_replace(array('<', '>'), array('(', ')'), $tmparray[$key]['label']);
-					// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
+					// multiselect array convert html entities into options tags, even if we don't want this, so we encode them a second time
 					$tmparray[$key]['label'] = dol_htmlentities($tmparray[$key]['label'], ENT_QUOTES|ENT_SUBSTITUTE, 'UTF-8', true);
 
 					$tmparray[$key]['labelhtml'] = $label;

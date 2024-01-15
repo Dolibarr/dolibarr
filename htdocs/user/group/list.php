@@ -102,7 +102,7 @@ if (!$user->hasRight("user", "user", "read") && !$user->admin) {
 	accessforbidden();
 }
 
-// Defini si peux lire/modifier utilisateurs et permisssions
+// Defini si peux lire/modifier utilisateurs et permissions
 $caneditperms = ($user->admin || $user->hasRight("user", "user", "write"));
 $permissiontodelete = ($user->admin || $user->hasRight("user", "user", "write"));
 // Advanced permissions
