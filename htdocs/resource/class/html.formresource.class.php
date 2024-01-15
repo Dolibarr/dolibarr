@@ -67,16 +67,16 @@ class FormResource
 	 *
 	 *	@param	int		$selected		Preselected resource id
 	 *	@param	string	$htmlname		Name of field in form
-	 *  @param	array	$filter			Optionnal filters criteras (example: 's.rowid <> x')
+	 *  @param	array	$filter			Optional filters criteria (example: 's.rowid <> x')
 	 *	@param	int		$showempty		Add an empty field
-	 * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
+	 * 	@param	int		$showtype		Show third party type in combo list (customer, prospect or supplier)
 	 * 	@param	int		$forcecombo		Force to use combo box
 	 *  @param	array	$event			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 *  @param	string	$filterkey		Filter on key value
 	 *  @param	int		$outputmode		0=HTML select string, 1=Array, 2=without form tag
 	 *  @param	int		$limit			Limit number of answers
 	 *  @param	string	$morecss		More css
-	 * 	@param	bool	$multiple		add [] in the name of element and add 'multiple' attribut
+	 * 	@param	bool	$multiple		add [] in the name of element and add 'multiple' attribute
 	 * 	@return	string|array			HTML string with
 	 */
 	public function select_resource_list($selected = 0, $htmlname = 'fk_resource', $filter = [], $showempty = 0, $showtype = 0, $forcecombo = 0, $event = array(), $filterkey = '', $outputmode = 0, $limit = 20, $morecss = '', $multiple = false)
@@ -164,7 +164,7 @@ class FormResource
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Return html list of tickets type
+	 *  Return html list of tickets type // TODO translate PHPDoc to english
 	 *
 	 *  @param	string	$selected       Id du type pre-selectionne
 	 *  @param  string	$htmlname       Nom de la zone select
