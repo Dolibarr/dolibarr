@@ -1,5 +1,6 @@
+--- HOW TO USE COMPOSER
 
-* Swith to the minimal version of PHP
+* Switch to the minimal version of PHP
 
 	update-alternatives --config php
 
