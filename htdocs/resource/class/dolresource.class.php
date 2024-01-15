@@ -502,12 +502,12 @@ class Dolresource extends CommonObject
 	/**
 	 *	Load resource objects into $this->lines
 	 *
-	 *  @param	string		$sortorder    	sort order
-	 *  @param	string		$sortfield    	sort field
-	 *  @param	int			$limit		  	limit page
-	 *  @param	int			$offset    	  	page
-	 *  @param	array		$filter    	  	filter output
-	 *  @return int          				Return integer <0 if KO, Number of lines loaded if OK
+	 *  @param	string		$sortorder		sort order
+	 *  @param	string		$sortfield		sort field
+	 *  @param	int			$limit			limit page
+	 *  @param	int			$offset			page
+	 *  @param	array		$filter			filter output
+	 *  @return	int							Return integer <0 if KO, Number of lines loaded if OK
 	 */
 	public function fetchAll($sortorder, $sortfield, $limit, $offset, $filter = [])
 	{

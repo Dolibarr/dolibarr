@@ -38,7 +38,7 @@ error_reporting(E_ALL & ~E_DEPRECATED);
 define('PRODUCT', "apstats");
 define('VERSION', "1.0");
 
-$phpstanlevel = 2;
+$phpstanlevel = 3;
 
 
 print '***** '.constant('PRODUCT').' - '.constant('VERSION').' *****'."\n";
@@ -117,11 +117,11 @@ exec($commandcheck, $output_arrtd, $resexectd);
 
 
 // Count lines of code of dependencies
-$commandcheck = "git log --shortstat --use-mailmap --pretty='format:%cI;%H;%aN;%ae;%ce'";	// --since=  --until=...
-print 'Execute github_authors_and_commits_bydate to count number of commits by day: '.$commandcheck."\n";
+$commandcheck = "git log --shortstat --no-renames --no-merges --use-mailmap --pretty='format:%cI;%H;%aN;%ae;%ce'";	// --since=  --until=...
+print 'Execute git log to count number of commits by day: '.$commandcheck."\n";
 $output_arrglpu = array();
 $resexecglpu = 0;
-exec($commandcheck, $output_arrglpu, $resexecglpu);
+//exec($commandcheck, $output_arrglpu, $resexecglpu);
 
 
 
