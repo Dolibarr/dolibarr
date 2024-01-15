@@ -203,3 +203,5 @@ ALTER TABLE llx_categorie ADD COLUMN position integer DEFAULT 0 AFTER color;
 
 ALTER TABLE llx_product DROP COLUMN onportal;
 
+RENAME TABLE llx_commande_fournisseur_dispatch_extrafields TO llx_receptiondet_batch_extrafields;
+RENAME TABLE llx_commande_fournisseur_dispatch TO llx_receptiondet_batch;
