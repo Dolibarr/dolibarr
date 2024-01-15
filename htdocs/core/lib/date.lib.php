@@ -579,7 +579,7 @@ function dol_get_first_day($year, $month = 1, $gm = false)
 	if ($year > 9999) {
 		return '';
 	}
-	return dol_mktime(0, 0, 0, $month, 1, $year, $gm);
+	return (int) dol_mktime(0, 0, 0, $month, 1, $year, $gm);
 }
 
 
@@ -1170,5 +1170,5 @@ function getWeekNumber($day, $month, $year)
 {
 	$date = new DateTime($year.'-'.$month.'-'.$day);
 	$week = $date->format("W");
-	return $week;
+	return (int) $week;
 }
