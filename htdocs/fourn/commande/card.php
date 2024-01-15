@@ -350,8 +350,8 @@ if (empty($reshook)) {
 				$newstatus = 3;
 			} elseif ($object->statut == 5) {
 				//$newstatus=2;    // Ordered
-				// TODO Can we set it to submited ?
-				//$newstatus=3;  // Submited
+				// TODO Can we set it to submitted ?
+				//$newstatus=3;  // Submitted
 				// TODO If there is at least one reception, we can set to Received->Received partially
 				$newstatus = 4; // Received partially
 			} elseif ($object->statut == 6) {
@@ -551,7 +551,7 @@ if (empty($reshook)) {
 					$desc = $productsupplier->desc_supplier;
 				}
 
-				//If text set in desc is the same as product descpription (as now it's preloaded) whe add it only one time
+				//If text set in desc is the same as product descpription (as now it's preloaded) we add it only one time
 				if (trim($product_desc) == trim($desc) && getDolGlobalString('PRODUIT_AUTOFILL_DESC')) {
 					$product_desc='';
 				}
@@ -1714,7 +1714,7 @@ if ($action == 'create') {
 		} else {
 			$filter = '((s.fournisseur:=:1) AND (s.status:=:1))';
 			print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company((empty($socid) ? '' : $socid), 'socid', $filter, 'SelectThirdParty', 1, 0, null, 0, 'minwidth175 maxwidth500 widthcentpercentminusxx');
-			// reload page to retrieve customer informations
+			// reload page to retrieve customer information
 			if (!getDolGlobalString('RELOAD_PAGE_ON_SUPPLIER_CHANGE_DISABLED')) {
 				print '<script>
 				$(document).ready(function() {
@@ -2139,8 +2139,8 @@ if ($action == 'create') {
 
 		// Relative and absolute discounts
 		if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
-			$filterabsolutediscount = "fk_invoice_supplier_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
-			$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+			$filterabsolutediscount = "fk_invoice_supplier_source IS NULL"; // If we want deposit to be subtracted to payments only and not to total of final invoice
+			$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL"; // If we want deposit to be subtracted to payments only and not to total of final invoice
 		} else {
 			$filterabsolutediscount = "fk_invoice_supplier_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS PAID)%')";
 			$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS PAID)%')";
@@ -2273,7 +2273,7 @@ if ($action == 'create') {
 		print '<td>'.$object->getMaxDeliveryTimeDay($langs).'</td>';
 		print '</tr>';
 
-		// Delivery date planed
+		// Delivery date planned
 		print '<tr><td>';
 		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('DateDeliveryPlanned');

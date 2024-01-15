@@ -526,7 +526,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes') {
 	} else {
 		setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 	}
-	Header('Location: '.$_SERVER["PHP_SELF"]);
+	header('Location: '.$_SERVER["PHP_SELF"]);
 	exit;
 }
 

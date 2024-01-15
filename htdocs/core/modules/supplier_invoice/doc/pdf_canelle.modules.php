@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 class pdf_canelle extends ModelePDFSuppliersInvoices
 {
 	/**
-	 * @var DoliDb Database handler
+	 * @var DoliDB Database handler
 	 */
 	public $db;
 
@@ -444,7 +444,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 					// Unit
 					if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
-						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails, $hookmanager);
+						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails);
 						$pdf->SetXY($this->posxunit, $curY);
 						$pdf->MultiCell($this->posxdiscount - $this->posxunit - 0.8, 4, $unit, 0, 'L');
 					}
@@ -610,7 +610,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 *	@param  FactureFournisseur	$object         Object invoice
 	 *	@param  int					$deja_regle     Amount already paid (in the currency of invoice)
 	 *	@param	int					$posy			Position depart
-	 *	@param	Translate			$outputlangs	Objet langs
+	 *	@param	Translate			$outputlangs	Object langs
 	 *	@return int									Position of cursor after output
 	 */
 	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)

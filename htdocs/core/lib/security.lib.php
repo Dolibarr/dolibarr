@@ -107,7 +107,7 @@ function dolGetRandomBytes($length)
 }
 
 /**
- *	Encode a string with a symetric encryption. Used to encrypt sensitive data into database.
+ *	Encode a string with a symmetric encryption. Used to encrypt sensitive data into database.
  *  Note: If a backup is restored onto another instance with a different $conf->file->instance_unique_id, then decoded value will differ.
  *  This function is called for example by dol_set_const() when saving a sensible data into database configuration table llx_const.
  *
@@ -169,7 +169,7 @@ function dolEncrypt($chain, $key = '', $ciphering = 'AES-256-CTR', $forceseed = 
 }
 
 /**
- *	Decode a string with a symetric encryption. Used to decrypt sensitive data saved into database.
+ *	Decode a string with a symmetric encryption. Used to decrypt sensitive data saved into database.
  *  Note: If a backup is restored onto another instance with a different $conf->file->instance_unique_id, then decoded value will differ.
  *
  *	@param   string		$chain		string to decode
@@ -223,8 +223,8 @@ function dolDecrypt($chain, $key = '')
 
 /**
  * 	Returns a hash (non reversible encryption) of a string.
- *  If constant MAIN_SECURITY_HASH_ALGO is defined, we use this function as hashing function (recommanded value is 'password_hash')
- *  If constant MAIN_SECURITY_SALT is defined, we use it as a salt (used only if hashing algorightm is something else than 'password_hash').
+ *  If constant MAIN_SECURITY_HASH_ALGO is defined, we use this function as hashing function (recommended value is 'password_hash')
+ *  If constant MAIN_SECURITY_SALT is defined, we use it as a salt (used only if hashing algorithm is something else than 'password_hash').
  *
  * 	@param 		string		$chain		String to hash
  * 	@param		string		$type		Type of hash ('0':auto will use MAIN_SECURITY_HASH_ALGO else md5, '1':sha1, '2':sha1+md5, '3':md5, '4': for OpenLdap, '5':sha256, '6':password_hash).
@@ -357,7 +357,7 @@ function dolGetLdapPasswordHash($password, $type = 'md5')
  *  @param  string				$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional). Can use '' if NA.
  *  @param  string				$dbt_select     Field rowid name, for select into tableandshare if not "rowid". Not used if objectid is null (optional)
  *  @param	int					$isdraft		1=The object with id=$objectid is a draft
- *  @param	int					$mode			Mode (0=default, 1=return without dieing)
+ *  @param	int					$mode			Mode (0=default, 1=return without dying)
  * 	@return	int									If mode = 0 (default): Always 1, die process if not allowed. If mode = 1: Return 0 if access not allowed.
  *  @see dol_check_secure_access_document(), checkUserAccessToObject()
  */

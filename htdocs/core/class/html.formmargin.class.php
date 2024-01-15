@@ -18,12 +18,12 @@
 /**
  *	\file       htdocs/core/class/html.formmargin.class.php
  *  \ingroup    core
- *	\brief      Fichier de la classe des fonctions predefinie de composants html autre
+ *	\brief      Fichier de la class des functions predefinie de composants html autre
  */
 
 
 /**
- *	Classe permettant la generation de composants html autre
+ *	Class permettant la generation de composants html autre
  *	Only common components are here.
  */
 class FormMargin
@@ -98,7 +98,7 @@ class FormMargin
 			}
 
 			$pv = $line->total_ht;
-			// We choosed to have line->pa_ht always positive in database, so we guess the correct sign
+			// We chose to have line->pa_ht always positive in database, so we guess the correct sign
 			$pa_ht = (($pv < 0 || ($pv == 0 && in_array($object->element, array('facture', 'facture_fourn')) && $object->type == $object::TYPE_CREDIT_NOTE)) ? -$line->pa_ht : $line->pa_ht);
 			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {	// Special case for old situation mode
 				if (($object->element == 'facture' && $object->type == $object::TYPE_SITUATION)

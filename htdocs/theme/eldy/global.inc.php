@@ -1587,7 +1587,7 @@ div.fiche {
 .thumbstat150 {
 	min-width: 168px;
 	max-width: 169px;
-	/* width: 168px; If I use with, there is trouble on size of flex boxes solved with min+max that is a little bit higer than min */
+	/* width: 168px; If I use with, there is trouble on size of flex boxes solved with min+max that is a little bit higher than min */
 }
 .thumbstat, .thumbstat150 {
 <?php if ($conf->browser->name == 'ie') { ?>
@@ -1934,7 +1934,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 		width: <?php print dol_size(300, 'width'); ?>px;
 	}
 
-	/* intput, input[type=text], */
+	/* input, input[type=text], */
 	select {
 		width: 98%;
 		min-width: 40px;
@@ -2308,7 +2308,7 @@ div.secondcolumn div.box {
 }*/
 
 
-/* Force values on one colum for small screen */
+/* Force values on one column for small screen */
 @media only screen and (max-width: 1000px)
 {
 	div.fiche {
@@ -2351,7 +2351,7 @@ div.secondcolumn div.box {
 	}
 }
 
-/* Force values on one colum for small screen */
+/* Force values on one column for small screen */
 @media only screen and (max-width: 1499px)
 {
 	div.fichehalfleft-lg {
@@ -4314,7 +4314,7 @@ div.liste_titre .tagtd {
 	vertical-align: middle;
 }
 div.liste_titre {
-	min-height: 26px !important;	/* We cant use height because it's a div and it should be higher if content is more. but min-height does not work either for div */
+	min-height: 26px !important;	/* We can't use height because it's a div and it should be higher if content is more. but min-height does not work either for div */
 
 	padding-top: 2px;
 	padding-bottom: 2px;
@@ -4645,7 +4645,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 		margin-bottom: 8px;
 		min-width: <?php echo isset($_SESSION['dol_screenwidth']) ? min(160, round((int) $_SESSION['dol_screenwidth'] / 2 - 20)) : 160; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
 		max-width: <?php echo isset($_SESSION['dol_screenwidth']) ? min(161, round((int) $_SESSION['dol_screenwidth'] / 2 - 20)) : 161; ?>px;	/* on screen < 320, we guaranty to have 2 columns */
-		/* width: ...px; If I use with, there is trouble on size of flex boxes solved with min + (max that is a little bit higer than min) */
+		/* width: ...px; If I use with, there is trouble on size of flex boxes solved with min + (max that is a little bit higher than min) */
 	}
 	.dashboardlineindicator {
 		float: left;
@@ -7023,7 +7023,7 @@ a.ui-link {
 	text-overflow: clip; /* "hidden" : do not exists as a text-overflow value (https://developer.mozilla.org/fr/docs/Web/CSS/text-overflow) */
 }
 
-/* Warning: setting this may make screen not beeing refreshed after a combo selection */
+/* Warning: setting this may make screen not being refreshed after a combo selection */
 /*.ui-body-c {
 	background: #fff;
 }*/
@@ -7604,7 +7604,7 @@ span.clipboardCPValueToPrint, div.clipboardCPValueToPrint  {
 }
 span.clipboardCPValue.hidewithsize {
 	width: 0 !important;
-	display: inline-block;	/* this will be modifiy on the fly by the copy-paste js code in lib_foot.js.php to have copy feature working */
+	display: inline-block;	/* this will be modify on the fly by the copy-paste js code in lib_foot.js.php to have copy feature working */
 	color: transparent;
 	white-space: nowrap;
 	overflow-x: hidden;
@@ -7621,7 +7621,7 @@ div.clipboardCPValue.hidewithsize {
 	display: none;
 }
 
-/* To make a div popup, we must use a position aboluste inside a position relative */
+/* To make a div popup, we must use a position absolute inside a position relative */
 .clipboardCPText {
 	position: relative;
 }

@@ -21,7 +21,7 @@
 /**
  *	\file       htdocs/adherents/class/adherentstats.class.php
  *	\ingroup    member
- *	\brief      Fichier de la classe de gestion des stats des adhérents
+ *	\brief      File for class managing statistics of members
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/class/stats.class.php';

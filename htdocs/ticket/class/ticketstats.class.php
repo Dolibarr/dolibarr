@@ -18,14 +18,14 @@
 /**
  *       \file       /ticket/class/ticketstats.class.php
  *       \ingroup    ticket
- *       \brief      Fichier de la classe de gestion des stats des tickets
+ *       \brief      File for class to manage the ticket stats
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/stats.class.php';
 require_once 'ticket.class.php';
 
 
 /**
- * Classe permettant la gestion des stats des deplacements et notes de frais
+ * Class to manage the ticket stats
  */
 class TicketStats extends Stats
 {

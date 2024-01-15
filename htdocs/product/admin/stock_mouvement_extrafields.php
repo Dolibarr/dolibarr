@@ -23,7 +23,7 @@
 /**
  *      \file       htdocs/product/admin/stock_mouvement_extrafields.php
  *		\ingroup    stock
- *		\brief      Page to setup extra fields of stock mouvement
+ *		\brief      Page to setup extra fields of stock movement
  */
 
 // Load Dolibarr environment

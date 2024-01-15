@@ -157,7 +157,7 @@ if ($action == 'deletecontact' && $user->hasRight('ticket', 'write')) {
 		$result = $object->delete_contact($lineid);
 
 		if ($result >= 0) {
-			Header("Location: ".$url_page_current."?id=".$object->id);
+			header("Location: ".$url_page_current."?id=".$object->id);
 			exit;
 		}
 	}

@@ -10,6 +10,8 @@
 # with explanation on its goal, for inclusion in main branch.
 #----------------------------------------------------------------------------
 
+# shellcheck disable=2086,2291
+
 echo ----- Building patch file mypatch.patch -----
 if [ -z "$1" ] || [ -z "$2" ];
 then

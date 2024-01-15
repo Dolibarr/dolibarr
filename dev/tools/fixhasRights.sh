@@ -1,7 +1,8 @@
-#/bin/bash
+#!/bin/bash
 #
 # Example of script to fix code writing of permissions
 #
+# shellcheck disable=2013,2016,2086
 
 for f in $(grep -l -e 'user->rights' -R); do
 	sed -i -r 's/!empty\(\$user->rights->([_a-z0-9]+)->([_a-z0-9]+)->([_a-z0-9]+)\) *\? *\$user->rights->\1->\2->\3 *: *0;/$user->hasRight("\1", "\2", "\3");/' $f
