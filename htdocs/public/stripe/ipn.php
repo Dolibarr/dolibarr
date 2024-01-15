@@ -237,7 +237,7 @@ if ($event->type == 'payout.created') {
 			$bank_line_id_to = 0;
 			$result = 0;
 
-			// By default, electronic transfert from bank to bank
+			// By default, electronic transfer from bank to bank
 			$typefrom = 'PRE';
 			$typeto = 'VIR';
 

@@ -374,7 +374,7 @@ if ($resql) {
 			<script type="text/javascript">
 			$(document).ready(function () {
 		    	$("#change_chart").on("click", function (e) {
-					console.log("chartofaccounts seleted = "+$("#chartofaccounts").val());
+					console.log("chartofaccounts selected = "+$("#chartofaccounts").val());
 					// reload page
 					window.location.href = "'.$_SERVER["PHP_SELF"].'?valid_change_chart=1&chartofaccounts="+$("#chartofaccounts").val();
 			    });
@@ -667,7 +667,7 @@ if ($resql) {
 				print '<!-- obj->account_parent = '.$obj->account_parent.' obj->rowid2 = '.$obj->rowid2.' -->';
 				$accountparent->id = $obj->rowid2;
 				$accountparent->label = $obj->label2;
-				$accountparent->account_number = $obj->account_number2; // Sotre an account number for output
+				$accountparent->account_number = $obj->account_number2; // Store an account number for output
 				print $accountparent->getNomUrl(1);
 				print "</td>\n";
 				if (!$i) {

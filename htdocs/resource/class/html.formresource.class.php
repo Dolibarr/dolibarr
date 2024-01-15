@@ -164,7 +164,7 @@ class FormResource
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Return html list of tickets type // TODO translate PHPDoc to english
+	 *  Return html list of tickets type
 	 *
 	 *  @param	string	$selected       Id du type pre-selectionne
 	 *  @param  string	$htmlname       Nom de la zone select

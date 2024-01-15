@@ -3,6 +3,8 @@
 #
 # see: dh_installdeb(1)
 
+# shellcheck disable=1091,2006,2034,2086,2089,2090
+
 #set -e
 set +e
 

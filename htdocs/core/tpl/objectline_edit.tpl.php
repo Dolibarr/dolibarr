@@ -143,7 +143,7 @@ $coldisplay++;
 	}
 
 	// Do not allow editing during a situation cycle
-	// but in some situations that is required (update legal informations for example)
+	// but in some situations that is required (update legal information for example)
 	if (getDolGlobalString('INVOICE_SITUATION_CAN_FORCE_UPDATE_DESCRIPTION')) {
 		$situationinvoicelinewithparent = 0;
 	}
@@ -178,7 +178,7 @@ $coldisplay++;
 		}
 	}
 
-	// Show autofill date for recuring invoices
+	// Show autofill date for recurring invoices
 	if (isModEnabled("service") && $line->product_type == 1 && ($line->element == 'facturedetrec' || $line->element == 'invoice_supplier_det_rec')) {
 		if ($line->element == 'invoice_supplier_det_rec') {
 			$line->date_start_fill = $line->date_start;
@@ -321,7 +321,7 @@ $coldisplay++;
 		if ($user->hasRight('margins', 'creer')) {
 			if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
 				$margin_rate = (GETPOSTISSET("np_marginRate") ? GETPOST("np_marginRate", "alpha", 2) : (($line->pa_ht == 0) ? '' : price($line->marge_tx)));
-				// if credit note, dont allow to modify margin
+				// if credit note, don't allow to modify margin
 				if ($line->subprice < 0) {
 					echo '<td class="right nowrap margininfos">'.$margin_rate.'<span class="opacitymedium hideonsmartphone">%</span></td>';
 				} else {
@@ -331,7 +331,7 @@ $coldisplay++;
 			}
 			if (getDolGlobalString('DISPLAY_MARK_RATES')) {
 				$mark_rate = (GETPOSTISSET("np_markRate") ? GETPOST("np_markRate", 'alpha', 2) : price($line->marque_tx));
-				// if credit note, dont allow to modify margin
+				// if credit note, don't allow to modify margin
 				if ($line->subprice < 0) {
 					echo '<td class="right nowrap margininfos">'.$mark_rate.'<span class="opacitymedium hideonsmartphone">%</span></td>';
 				} else {
@@ -469,7 +469,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 			else if (npRate == "np_markRate")
 				price = ((bpjs / (1 - ratejs / 100)) / (1 - remisejs / 100));
 		}
-		$("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formated value
+		$("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formatted value
 
 		return true;
 	}
@@ -515,11 +515,11 @@ jQuery(document).ready(function()
 	if (isModEnabled('margin')) {
 		?>
 		/* Add rule to clear margin when we change some data, so when we change sell or buy price, margin will be recalculated after submitting form */
-		jQuery("#tva_tx").click(function() {						/* somtimes field is a text, sometimes a combo */
+		jQuery("#tva_tx").click(function() {						/* sometimes field is a text, sometimes a combo */
 			jQuery("input[name='np_marginRate']:first").val('');
 			jQuery("input[name='np_markRate']:first").val('');
 		});
-		jQuery("#tva_tx").keyup(function() {						/* somtimes field is a text, sometimes a combo */
+		jQuery("#tva_tx").keyup(function() {						/* sometimes field is a text, sometimes a combo */
 			jQuery("input[name='np_marginRate']:first").val('');
 			jQuery("input[name='np_markRate']:first").val('');
 		});

@@ -21,7 +21,7 @@
 /**
  *       \file       htdocs/contact/perso.php
  *       \ingroup    societe
- *       \brief      Onglet informations personnelles d'un contact
+ *       \brief      Onglet information personnelles d'un contact
  */
 
 // Load Dolibarr environment

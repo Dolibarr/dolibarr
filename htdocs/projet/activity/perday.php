@@ -56,7 +56,7 @@ $hookmanager->initHooks(array('timesheetperdaycard'));
 
 // Security check
 $socid = 0;
-// For external user, no check is done on company because readability is managed by public status of project and assignement.
+// For external user, no check is done on company because readability is managed by public status of project and assignment.
 //if ($user->socid > 0) $socid=$user->socid;
 $result = restrictedArea($user, 'projet', $projectid);
 
@@ -90,7 +90,7 @@ $yearofday = GETPOST('addtimeyear');
 
 $daytoparse = $now;
 if ($year && $month && $day) {
-	$daytoparse = dol_mktime(0, 0, 0, $month, $day, $year); // this are value submited after submit of action 'submitdateselect'
+	$daytoparse = dol_mktime(0, 0, 0, $month, $day, $year); // this are value submitted after submit of action 'submitdateselect'
 } elseif ($yearofday && $monthofday && $dayofday) {
 	$daytoparse = dol_mktime(0, 0, 0, $monthofday, $dayofday, $yearofday); // xxxofday is value of day after submit action 'addtime'
 }
@@ -100,7 +100,7 @@ if ($yearofday && $monthofday && $dayofday) {
 	$daytoparsegmt = dol_mktime(0, 0, 0, $monthofday, $dayofday, $yearofday, 'gmt');
 } elseif ($year && $month && $day) { // xxxofday is value of day after submit action 'addtime'
 	$daytoparsegmt = dol_mktime(0, 0, 0, $month, $day, $year, 'gmt');
-} // this are value submited after submit of action 'submitdateselect'
+} // this are value submitted after submit of action 'submitdateselect'
 
 if (empty($search_usertoprocessid) || $search_usertoprocessid == $user->id) {
 	$usertoprocess = $user;

@@ -406,7 +406,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 					print '</td>';
 				}
 
-				// Batch number managment
+				// Batch number management
 				/*TODO Add link to expeditiondet_batch
 				if (!empty($conf->productbatch->enabled))
 				{
@@ -438,7 +438,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 					}
 				}*/
 
-				// Informations on receipt
+				// Information on receipt
 				if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
 					include_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';
 					$expedition->fetchObjectLinked($expedition->id, $expedition->element);

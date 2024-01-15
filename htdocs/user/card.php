@@ -680,7 +680,7 @@ if (empty($reshook)) {
 			// Echec
 			setEventMessages($langs->trans("ErrorFailedToSetNewPassword"), null, 'errors');
 		} else {
-			// Succes
+			// Success
 			if ($action == 'confirm_passwordsend' && $confirm == 'yes') {
 				if ($object->send_password($user, $newpassword) > 0) {
 					setEventMessages($langs->trans("PasswordChangedAndSentTo", $object->email), null, 'mesgs');
@@ -1411,7 +1411,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 		}
 
-		// Connexion ldap
+		// Connection ldap
 		// pour recuperer passDoNotExpire et userChangePassNextLogon
 		if (isModEnabled('ldap') && !empty($object->ldap_sid)) {
 			$ldap = new Ldap();
@@ -1463,14 +1463,14 @@ if ($action == 'create' || $action == 'adduserldap') {
 		$head = user_prepare_head($object);
 
 		/*
-		 * Confirmation reinitialisation mot de passe
+		 * Confirmation reinitialisation password
 		 */
 		if ($action == 'password') {
 			print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("ReinitPassword"), $langs->trans("ConfirmReinitPassword", $object->login), "confirm_password", '', 0, 1);
 		}
 
 		/*
-		 * Confirmation envoi mot de passe
+		 * Confirmation envoi password
 		 */
 		if ($action == 'passwordsend') {
 			print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("SendNewPassword"), $langs->trans("ConfirmSendNewPassword", $object->login), "confirm_passwordsend", '', 0, 1);
@@ -2087,7 +2087,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 					print load_fiche_titre($langs->trans("ListOfGroupsForUser"), '', '');
 
-					// On selectionne les groupes auquel fait parti le user
+					// We select the groups that the users belongs to
 					$exclude = array();
 
 					$usergroup = new UserGroup($db);
