@@ -21,7 +21,7 @@
  * \file        product/stock/productlot_list.php
  * \ingroup     stock
  * \brief       This file is an example of a php page
- *              Initialy built by build_class_from_table on 2016-05-17 12:22
+ *              Initially built by build_class_from_table on 2016-05-17 12:22
  */
 
 // Load Dolibarr environment
@@ -85,7 +85,7 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
 $search = array();
 foreach ($object->fields as $key => $val) {

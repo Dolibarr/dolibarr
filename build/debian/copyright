@@ -64,7 +64,7 @@ License: GPL-3+
 Files: htdocs/includes/ckeditor/*
 Copyright: 2003-2012 CKSource - Frederico Knabben
 License: GPL-2+
- The ckeditor is tripple licensed under the GNU General Public License (GPL),
+ The ckeditor is triple licensed under the GNU General Public License (GPL),
  GNU Lesser General Public License (LGPL), and Mozilla Public License (MPL).
  In Debian, it is distributed under the GNU General Public License (GPL).
  .

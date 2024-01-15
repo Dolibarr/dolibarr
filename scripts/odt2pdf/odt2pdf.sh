@@ -18,6 +18,8 @@
 # If you got this error: javaldx failed! Warning: failed to read path from javaldx with no return to prompt when running soffice --headless -env:UserInstallation=file:"/tmp" --convert-to pdf --outdir xxx ./yyy.odt,
 # check that directory defined into env:UserInstallation parameters exists and is writeable.
 
+# shellcheck disable=2046,2086,2268
+
 
 if [ "x$1" == "x" ]
 then

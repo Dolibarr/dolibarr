@@ -9,7 +9,7 @@
 # Usage: savedemo.sh
 # usage: savedemo.sh mysqldump_dolibarr_x.x.x.sql database port login pass
 #------------------------------------------------------
-
+# shellcheck disable=2012,2006,2034,2046,2064,2086,2155,2166,2186,2172,2268
 
 export mydir=`echo "$0" | sed -e 's/savedemo.sh//'`;
 if [ "x$mydir" = "x" ]

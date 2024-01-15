@@ -83,7 +83,7 @@ function dol_quoted_printable_encode($input, $line_max = 76)
 
 
 /**
- *	Class to buld vCard files
+ *	Class to build vCard files
  */
 class vCard
 {
@@ -139,7 +139,7 @@ class vCard
 	}
 
 	/**
-	 *	mise en forme du nom formate
+	 *	mise en forme du nom format
 	 *
 	 *	@param	string	$name			Name
 	 *	@return	void
@@ -150,7 +150,7 @@ class vCard
 	}
 
 	/**
-	 *	mise en forme du nom complet
+	 *	mise en forme du nom complete
 	 *
 	 *	@param	string	$family			Family name
 	 *	@param	string	$first			First name
@@ -396,7 +396,7 @@ class vCard
 
 		$this->setProdId('Dolibarr '.DOL_VERSION);
 
-		$this->setUid('DOLIBARR-USERID-'.dol_trunc(md5('vcard'.$dolibarr_main_instance_unique_id), 8, 'right', 'UTF-8', 1).'-'.$object->id);
+		$this->setUID('DOLIBARR-USERID-'.dol_trunc(md5('vcard'.$dolibarr_main_instance_unique_id), 8, 'right', 'UTF-8', 1).'-'.$object->id);
 		$this->setName($object->lastname, $object->firstname, "", $object->civility_code, "");
 		$this->setFormattedName($object->getFullName($langs, 1));
 

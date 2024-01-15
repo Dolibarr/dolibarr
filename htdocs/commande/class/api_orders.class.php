@@ -54,7 +54,7 @@ class Orders extends DolibarrApi
 	/**
 	 * Get properties of an order object by id
 	 *
-	 * Return an array with order informations
+	 * Return an array with order information
 	 *
 	 * @param       int         $id            ID of order
 	 * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
@@ -70,7 +70,7 @@ class Orders extends DolibarrApi
 	/**
 	 * Get properties of an order object by ref
 	 *
-	 * Return an array with order informations
+	 * Return an array with order information
 	 *
 	 * @param       string		$ref			Ref of object
 	 * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
@@ -88,7 +88,7 @@ class Orders extends DolibarrApi
 	/**
 	 * Get properties of an order object by ref_ext
 	 *
-	 * Return an array with order informations
+	 * Return an array with order information
 	 *
 	 * @param       string		$ref_ext			External reference of object
 	 * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
@@ -106,7 +106,7 @@ class Orders extends DolibarrApi
 	/**
 	 * Get properties of an order object
 	 *
-	 * Return an array with order informations
+	 * Return an array with order information
 	 *
 	 * @param       int         $id				ID of order
 	 * @param		string		$ref			Ref of object
@@ -157,7 +157,7 @@ class Orders extends DolibarrApi
 	 * @param string		   $thirdparty_ids		Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param string           $sqlfilterlines      Other criteria to filter answers separated by a comma. Syntax example "(tl.fk_product:=:'17') and (tl.price:<:'250')"
-	 * @param string		   $properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of order objects
 	 *
 	 * @throws RestException 404 Not found
@@ -257,7 +257,7 @@ class Orders extends DolibarrApi
 	/**
 	 * Create a sale order
 	 *
-	 * Exemple: { "socid": 2, "date": 1595196000, "type": 0, "lines": [{ "fk_product": 2, "qty": 1 }] }
+	 * Example: { "socid": 2, "date": 1595196000, "type": 0, "lines": [{ "fk_product": 2, "qty": 1 }] }
 	 *
 	 * @param   array   $request_data   Request data
 	 * @return  int     ID of order
@@ -272,7 +272,7 @@ class Orders extends DolibarrApi
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->commande->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -496,7 +496,7 @@ class Orders extends DolibarrApi
 	/**
 	 * Get contacts of given order
 	 *
-	 * Return an array with contact informations
+	 * Return an array with contact information
 	 *
 	 * @param	int		$id			ID of order
 	 * @param	string	$type		Type of the contact (BILLING, SHIPPING, CUSTOMER)
@@ -648,7 +648,7 @@ class Orders extends DolibarrApi
 				continue;
 			}
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->commande->context['caller'] = $request_data['caller'];
 				continue;
 			}

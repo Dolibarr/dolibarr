@@ -25,7 +25,7 @@
 /**
  *  \file       htdocs/fichinter/class/fichinterrec.class.php
  *  \ingroup    fichinter
- *  \brief      Fichier de la classe des factures recurentes
+ *  \brief      File for class to manage recurring invoices/templates (models)
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 
 
 /**
- *	Classe de gestion des factures recurrentes/Modeles
+ * Class to manage recurring invoices/templates (models)
  */
 class FichinterRec extends Fichinter
 {
@@ -768,7 +768,7 @@ class FichinterRec extends Fichinter
 	public function setNextDate($date, $increment_nb_gen_done = 0)
 	{
 		if (!$this->table_element) {
-			dol_syslog(get_class($this)."::setNextDate was called on objet with property table_element not defined", LOG_ERR);
+			dol_syslog(get_class($this)."::setNextDate was called on object with property table_element not defined", LOG_ERR);
 			return -1;
 		}
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
@@ -800,7 +800,7 @@ class FichinterRec extends Fichinter
 	public function setMaxPeriod($nb)
 	{
 		if (!$this->table_element) {
-			dol_syslog(get_class($this)."::setMaxPeriod was called on objet with property table_element not defined", LOG_ERR);
+			dol_syslog(get_class($this)."::setMaxPeriod was called on object with property table_element not defined", LOG_ERR);
 			return -1;
 		}
 

@@ -163,7 +163,7 @@ class mailing_partnership extends MailingTargets
 	 */
 	public function getSqlArrayForStats()
 	{
-		// CHANGE THIS: Optionnal
+		// CHANGE THIS: Optional
 
 		//var $statssql=array();
 		//$this->statssql[0]="SELECT field1 as label, count(distinct(email)) as nb FROM mytable WHERE email IS NOT NULL";

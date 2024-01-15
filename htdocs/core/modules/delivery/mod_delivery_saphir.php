@@ -21,13 +21,13 @@
 /**
  *	\file       htdocs/core/modules/delivery/mod_delivery_saphir.php
  *	\ingroup    expedition
- *	\brief      Fichier contenant la classe du modele de numerotation de reference de livraison Saphir
+ *	\brief      Fichier contenant la class du modele de numerotation de reference de livraison Saphir
  */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/delivery/modules_delivery.php';
 
 /**
  *	\class      mod_delivery_saphir
- *	\brief      Classe du modele de numerotation de reference de livraison Saphir
+ *	\brief      Class du modele de numerotation de reference de livraison Saphir
  */
 class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 {
@@ -162,7 +162,7 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 	 *  Return next free ref
 	 *
 	 *  @param	Societe		$objsoc      	Object thirdparty
-	 *  @param  Object		$object			Objet livraison
+	 *  @param  Object		$object			Object livraison
 	 *  @return string      				Descriptive text
 	 */
 	public function delivery_get_num($objsoc = 0, $object = '')

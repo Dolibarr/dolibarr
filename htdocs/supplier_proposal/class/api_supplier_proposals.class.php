@@ -54,7 +54,7 @@ class SupplierProposals extends DolibarrApi
 	/**
 	 * Get properties of a supplier proposal (price request) object
 	 *
-	 * Return an array with supplier proposal informations
+	 * Return an array with supplier proposal information
 	 *
 	 * @param       int         $id         ID of supplier proposal
 	 * @return		Object					Object with cleaned properties
@@ -91,7 +91,7 @@ class SupplierProposals extends DolibarrApi
 	 * @param int		$page				Page number
 	 * @param string	$thirdparty_ids		Thirdparty ids to filter supplier proposals (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.datec:<:'20160101')"
-	 * @param string    $properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string    $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                       Array of order objects
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '')

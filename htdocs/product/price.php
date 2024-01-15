@@ -138,17 +138,18 @@ if (empty($reshook)) {
 		$localtax2 = 0;
 		$localtax1_type = '0';
 		$localtax2_type = '0';
-		// If value contains the unique code of vat line (new recommanded method), we use it to find npr and local taxes
+		// If value contains the unique code of vat line (new recommended method), we use it to find npr and local taxes
 
 		if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg)) {
 			// We look into database using code (we can't use get_localtax() because it depends on buyer that is not known). Same in create product.
 			$vatratecode = $reg[1];
 			// Get record from code
-			$sql = "SELECT t.rowid, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
+			$sql = "SELECT t.rowid, t.type_vat, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
 			$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($mysoc->country_code)."'";
 			$sql .= " AND t.taux = ".((float) $tva_tx)." AND t.active = 1";
 			$sql .= " AND t.code = '".$db->escape($vatratecode)."'";
+			$sql .= " AND t.type_vat IN (0, 1)";	// Use only VAT rates type all or i.e. the sales type VAT rates.
 			$sql .= " AND t.entity IN (".getEntity('c_tva').")";
 			$resql = $db->query($sql);
 			if ($resql) {
@@ -396,7 +397,7 @@ if (empty($reshook)) {
 			$localtax2 = 0;
 			$localtax1_type = '0';
 			$localtax2_type = '0';
-			// If value contains the unique code of vat line (new recommanded method), we use it to find npr and local taxes
+			// If value contains the unique code of vat line (new recommended method), we use it to find npr and local taxes
 			if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg)) {
 				// We look into database using code
 				$vatratecode = $reg[1];
@@ -653,7 +654,7 @@ if (empty($reshook)) {
 		$localtax2 = 0;
 		$localtax1_type = '0';
 		$localtax2_type = '0';
-		// If value contains the unique code of vat line (new recommanded method), we use it to find npr and local taxes
+		// If value contains the unique code of vat line (new recommended method), we use it to find npr and local taxes
 		if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg)) {
 			// We look into database using code
 			$vatratecode = $reg[1];
@@ -776,7 +777,7 @@ if (empty($reshook)) {
 		$localtax2 = 0;
 		$localtax1_type = '0';
 		$localtax2_type = '0';
-		// If value contains the unique code of vat line (new recommanded method), we use it to find npr and local taxes
+		// If value contains the unique code of vat line (new recommended method), we use it to find npr and local taxes
 		if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg)) {
 			// We look into database using code
 			$vatratecode = $reg[1];
@@ -1021,7 +1022,7 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 			print '<!-- Default VAT Rate -->';
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("DefaultTaxRate").'</td><td>';
 
-			// TODO We show localtax from $object, but this properties may not be correct. Only value $object->default_vat_code is guaranted.
+			// TODO We show localtax from $object, but this properties may not be correct. Only value $object->default_vat_code is guaranteed.
 			$positiverates = '';
 			if (price2num($object->tva_tx)) {
 				$positiverates .= ($positiverates ? '<span class="opacitymedium">/</span>' : '').price2num($object->tva_tx);
@@ -1937,7 +1938,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 		$sortfield = "soc.nom";
 	}
 
-	// Build filter to diplay only concerned lines
+	// Build filter to display only concerned lines
 	$filter = array('t.fk_product' => $object->id);
 
 	if (!empty($search_soc)) {

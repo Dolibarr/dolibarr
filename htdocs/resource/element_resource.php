@@ -193,7 +193,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Update ressource
+	// Update resource
 	if ($action == 'update_linked_resource' && $user->hasRight('resource', 'write') && !GETPOST('cancel', 'alpha')) {
 		$res = $object->fetchElementResource($lineid);
 		if ($res) {

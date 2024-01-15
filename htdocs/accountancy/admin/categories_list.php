@@ -495,7 +495,7 @@ if ($tabname[$id]) {
 	foreach ($fieldlist as $field => $value) {
 		// Determine le nom du champ par rapport aux noms possibles
 		// dans les dictionnaires de donnees
-		$valuetoshow = ucfirst($fieldlist[$field]); // Par defaut
+		$valuetoshow = ucfirst($fieldlist[$field]); // By default
 		$valuetoshow = $langs->trans($valuetoshow); // try to translate
 		$class = "left";
 		if ($fieldlist[$field] == 'type') {
@@ -629,7 +629,7 @@ if ($resql) {
 
 	$filterfound = 0;
 	foreach ($fieldlist as $field => $value) {
-		$showfield = 1; // By defaut
+		$showfield = 1; // By default
 		if ($fieldlist[$field] == 'region_id' || $fieldlist[$field] == 'country_id') {
 			$showfield = 0;
 		}
@@ -655,7 +655,7 @@ if ($resql) {
 
 	$filterfound = 0;
 	foreach ($fieldlist as $field => $value) {
-		$showfield = 1; // By defaut
+		$showfield = 1; // By default
 
 		if ($fieldlist[$field] == 'region_id' || $fieldlist[$field] == 'country_id') {
 			$showfield = 0;
@@ -955,7 +955,7 @@ $db->close();
  * 	@param		array	$fieldlist		Array of fields
  * 	@param		Object	$obj			If we show a particular record, obj is filled with record fields
  *  @param		string	$tabname		Name of SQL table
- *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
+ *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we don't want it to be rendered
  *	@return		void
  */
 function fieldListAccountingCategories($fieldlist, $obj = null, $tabname = '', $context = '')

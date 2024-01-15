@@ -347,7 +347,7 @@ class pdf_standard extends ModelePDFStock
 							$curY = $tab_top_newpage;
 						}
 
-						$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
+						$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par default
 
 						$productstatic->id = $objp->rowid;
 						$productstatic->ref = $objp->ref;

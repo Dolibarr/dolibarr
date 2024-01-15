@@ -82,7 +82,7 @@ print load_fiche_titre($title, '', 'title_setup');
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="titlefieldcreate">'.$langs->trans("Version").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
-print '<tr class="oddeven"><td>'.$langs->trans("CurrentVersion").' ('.$langs->trans("Programs").')</td><td>'.DOL_VERSION;
+print '<tr class="oddeven"><td>'.$langs->trans("CurrentVersion").'<br><span class="opacitymedium">('.$langs->trans("Programs").')</span></td><td>'.DOL_VERSION;
 // If current version differs from last upgrade
 if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')) {
 	// Compare version with last install database version (upgrades never occurred)
@@ -146,8 +146,8 @@ if (preg_match('/[a-z]+/i', $version)) {
 }
 
 print '</td></tr>'."\n";
-print '<tr class="oddeven"><td>'.$langs->trans("VersionLastUpgrade").' ('.$langs->trans("Database").')</td><td>'.getDolGlobalString('MAIN_VERSION_LAST_UPGRADE').'</td></tr>'."\n";
-print '<tr class="oddeven"><td>'.$langs->trans("VersionLastInstall").'</td><td>'.getDolGlobalString('MAIN_VERSION_LAST_INSTALL').'</td></tr>'."\n";
+print '<tr class="oddeven"><td>'.$langs->trans("VersionLastUpgrade").'<br><span class="opacitymedium">('.$langs->trans("Database").')</span></td><td>'.getDolGlobalString('MAIN_VERSION_LAST_UPGRADE').'</td></tr>'."\n";
+print '<tr class="oddeven"><td>'.$langs->trans("VersionLastInstall").'<br><span class="opacitymedium">('.$langs->trans("Database").')</span></td><td>'.getDolGlobalString('MAIN_VERSION_LAST_INSTALL').'</td></tr>'."\n";
 print '</table>';
 print '</div>';
 print '<br>';
@@ -159,13 +159,15 @@ print '<tr class="liste_titre"><td class="titlefieldcreate">'.$langs->trans("Ses
 print '<tr class="oddeven"><td>'.$langs->trans("SessionSavePath").'</td><td>'.session_save_path().'</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("SessionName").'</td><td>'.session_name().'</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("SessionId").'</td><td>'.session_id().'</td></tr>'."\n";
-print '<tr class="oddeven"><td>'.$langs->trans("CurrentSessionTimeOut").' (session.gc_maxlifetime)</td>';
+print '<tr class="oddeven"><td>';
+print $langs->trans("CurrentSessionTimeOut");
+print '</td>';
 print '<td>';
 print ini_get('session.gc_maxlifetime').' '.$langs->trans("seconds");
 print '<!-- session.gc_maxlifetime = '.ini_get("session.gc_maxlifetime").' -->'."\n";
 print '<!-- session.gc_probability = '.ini_get("session.gc_probability").' -->'."\n";
 print '<!-- session.gc_divisor = '.ini_get("session.gc_divisor").' -->'."\n";
-print $form->textwithpicto('', $langs->trans("SessionExplanation", ini_get("session.gc_probability"), ini_get("session.gc_divisor")));
+print $form->textwithpicto('', $langs->trans("Parameter").' <b>php.ini</b>: <b>session.gc_maxlifetime</b><br>'.$langs->trans("SessionExplanation", ini_get("session.gc_probability"), ini_get("session.gc_divisor")));
 print "</td></tr>\n";
 print '<tr class="oddeven"><td>'.$langs->trans("CurrentTheme").'</td><td>'.$conf->theme.'</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("CurrentMenuHandler").'</td><td>';

@@ -1,6 +1,8 @@
 #!/bin/sh
 # postinst script for dolibarr
 
+# shellcheck disable=1091,2086,2154
+
 set -e
 
 # summary of how this script can be called:

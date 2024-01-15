@@ -284,9 +284,9 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	/**
 	 *	Return if a code is used (by other element)
 	 *
-	 *	@param	DoliDB		$db			Handler acces base
+	 *	@param	DoliDB		$db			Handler access base
 	 *	@param	string		$code		Code to check
-	 *	@param	Product		$product	Objet product
+	 *	@param	Product		$product	Object product
 	 *	@return	int						0 if available, <0 if KO
 	 */
 	public function verif_dispo($db, $code, $product)

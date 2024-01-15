@@ -238,7 +238,7 @@ class MailmanSpip
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Fonction qui dit si cet utilisateur est un redacteur existant dans spip
+	 *  Indicate if the user is an existing editor in spip
 	 *
 	 *	@param	object	$object		Object with data (->login)
 	 *  @return int     			1=exists, 0=does not exists, -1=error
@@ -257,11 +257,11 @@ class MailmanSpip
 
 					if ($result) {
 						if ($mydb->num_rows($result)) {
-							// nous avons au moins une reponse
+							// At least one result for the login query
 							$mydb->close();
 							return 1;
 						} else {
-							// nous n'avons pas de reponse => n'existe pas
+							// No result for the login query
 							$mydb->close();
 							return 0;
 						}

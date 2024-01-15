@@ -147,7 +147,7 @@ if ($id > 0 || !empty($ref)) {
 		dol_print_error($db);
 	}
 } else {
-	Header('Location: index.php');
+	header('Location: index.php');
 	exit;
 }
 

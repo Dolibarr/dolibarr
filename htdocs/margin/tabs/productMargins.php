@@ -168,7 +168,7 @@ if ($id > 0 || !empty($ref)) {
 			}
 			$sql .= " AND d.buy_price_ht IS NOT NULL";
 			// We should not use this here. Option ForceBuyingPriceIfNull should have effect only when inserting data. Once data is recorded, it must be used as it is for report.
-			// We keep it with value ForceBuyingPriceIfNull = 2 for retroactive effect but results are unpredicable.
+			// We keep it with value ForceBuyingPriceIfNull = 2 for retroactive effect but results are unpredictable.
 			if (getDolGlobalInt('ForceBuyingPriceIfNull') == 2) {
 				$sql .= " AND d.buy_price_ht <> 0";
 			}

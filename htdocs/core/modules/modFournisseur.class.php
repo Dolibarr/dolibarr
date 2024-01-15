@@ -295,7 +295,7 @@ class modFournisseur extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 1236;
-		$this->rights[$r][1] = 'Exporter les factures fournisseurs, attributs et reglements';
+		$this->rights[$r][1] = 'Exporter les factures fournisseurs, attributes et reglements';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'facture';

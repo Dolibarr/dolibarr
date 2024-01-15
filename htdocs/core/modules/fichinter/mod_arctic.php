@@ -28,7 +28,7 @@
 require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/modules_fichinter.php';
 
 /**
- *	Class to manage numbering of intervention cards with rule Artic.
+ *	Class to manage numbering of intervention cards with rule Arctic.
  */
 class mod_arctic extends ModeleNumRefFicheinter
 {

@@ -474,7 +474,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$resql = $db->query($sql);
 		$num = $db->num_rows($resql);
 
-		print_barre_liste($langs->trans("Evaluations"), $page, $_SERVER["PHP_SELF"], '', '', '', '', $num, $num, $evaltmp->picto, 0);
+		//num of evaluations for each user
+		$sqlEval = "SELECT rowid FROM ".MAIN_DB_PREFIX."hrm_evaluation as e";
+		$sqlEval .= " WHERE e.fk_user = ".((int) $id);
+		$rslt = $db->query($sqlEval);
+		$numEval = $db->num_rows($sqlEval);
+
+		print_barre_liste($langs->trans("Evaluations"), $page, $_SERVER["PHP_SELF"], '', '', '', '', $numEval, $numEval, $evaltmp->picto, 0);
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table id="tablelines" class="noborder centpercent" width="100%">';
@@ -524,6 +530,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print $evaltmp->getLibStatut(2);
 				print '</td>';
 				print '<td class="linecolrank tdoverflowmax300">';
+
 				if (!is_array($object)) {
 					print $object->result;
 				} else {

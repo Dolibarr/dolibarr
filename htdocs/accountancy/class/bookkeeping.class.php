@@ -206,7 +206,7 @@ class BookKeeping extends CommonObject
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -217,10 +217,10 @@ class BookKeeping extends CommonObject
 	 * Create object into database
 	 *
 	 * @param  User	$user		User that creates
-	 * @param  bool	$notrigger	false=launch triggers after, true=disable triggers
+	 * @param  int	$notrigger	false=launch triggers after, true=disable triggers
 	 * @return int				Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = false)
+	public function create(User $user, $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -567,12 +567,12 @@ class BookKeeping extends CommonObject
 	/**
 	 * Create object into database
 	 *
-	 * @param  User	$user	   User that creates
-	 * @param  bool	$notrigger  false=launch triggers after, true=disable triggers
-	 * @param  string  $mode 	   Mode
-	 * @return int				 Return integer <0 if KO, Id of created object if OK
+	 * @param  User		$user	   	User that creates
+	 * @param  int		$notrigger  false=launch triggers after, true=disable triggers
+	 * @param  string  	$mode 	   	Mode
+	 * @return int				 	Return integer <0 if KO, Id of created object if OK
 	 */
-	public function createStd(User $user, $notrigger = false, $mode = '')
+	public function createStd(User $user, $notrigger = 0, $mode = '')
 	{
 		global $conf, $langs;
 
@@ -1304,12 +1304,12 @@ class BookKeeping extends CommonObject
 	/**
 	 * Update object into database
 	 *
-	 * @param  User    $user       User that modifies
-	 * @param  bool    $notrigger  false=launch triggers after, true=disable triggers
-	 * @param  string  $mode       Mode ('' or _tmp')
-	 * @return int                 Return integer <0 if KO, >0 if OK
+	 * @param  User    	$user       User that modifies
+	 * @param  int		$notrigger  false=launch triggers after, true=disable triggers
+	 * @param  string  	$mode       Mode ('' or _tmp')
+	 * @return int                 	Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = false, $mode = '')
+	public function update(User $user, $notrigger = 0, $mode = '')
 	{
 		global $langs;
 		$error = 0;
@@ -1491,12 +1491,12 @@ class BookKeeping extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user User that deletes
-	 * @param bool $notrigger false=launch triggers after, true=disable triggers
-	 * @param string $mode Mode
-	 * @return int Return integer <0 if KO, >0 if OK
+	 * @param User 		$user 		User that deletes
+	 * @param int 		$notrigger 	false=launch triggers after, true=disable triggers
+	 * @param string 	$mode 		Mode
+	 * @return int 					Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false, $mode = '')
+	public function delete(User $user, $notrigger = 0, $mode = '')
 	{
 		global $langs;
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -1854,7 +1854,7 @@ class BookKeeping extends CommonObject
 	}
 
 	/**
-	 * Load all informations of accountancy document
+	 * Load all information of accountancy document
 	 *
 	 * @param  int     $piecenum   Id of line to get
 	 * @param  string  $mode       Mode

@@ -696,11 +696,11 @@ if ($action == 'create') {
 			print '</div></div>';
 		} else {
 			/* Expedition non trouvee */
-			print "Expedition inexistante ou acces refuse";
+			print "Expedition inexistante ou access refuse";
 		}
 	} else {
 		/* Expedition non trouvee */
-		print "Expedition inexistante ou acces refuse";
+		print "Expedition inexistante ou access refuse";
 	}
 }
 

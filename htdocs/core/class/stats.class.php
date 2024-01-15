@@ -178,7 +178,7 @@ abstract class Stats
 
 	/**
 	 * Return amount of elements by month for several years.
-	 * Criterias used to build request are defined into the constructor of parent class into xxx/class/xxxstats.class.php
+	 * Criteria used to build request are defined into the constructor of parent class into xxx/class/xxxstats.class.php
 	 * The caller of class can add more filters into sql request by adding criteris into the $stats->where property just after
 	 * calling constructor.
 	 *

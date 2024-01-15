@@ -194,7 +194,7 @@ class ActionComm extends CommonObject
 	public $datep2;
 
 	/**
-	 * @var int -1=Unkown duration
+	 * @var int -1=Unknown duration
 	 * @deprecated
 	 */
 	public $durationp = -1;
@@ -382,7 +382,7 @@ class ActionComm extends CommonObject
 	/**
 	 * Properties to manage the recurring events
 	 */
-	public $recurid;		/* A string YYYYMMDDHHMMSS shared by allevent of same serie */
+	public $recurid;		/* A string YYYYMMDDHHMMSS shared by allevent of same series */
 	public $recurrule;		/* Rule of recurring */
 	public $recurdateend;	/* Repeat until this date */
 
@@ -1406,7 +1406,7 @@ class ActionComm extends CommonObject
 	/**
 	 * Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
-	 * @param	User	$user   			Objet user
+	 * @param	User	$user   			Object user
 	 * @param	int		$load_state_board	Load indicator array this->nb
 	 * @return WorkboardResponse|int 		Return integer <0 if KO, WorkboardResponse if OK
 	 */
@@ -1491,7 +1491,7 @@ class ActionComm extends CommonObject
 
 
 	/**
-	 *  Charge les informations d'ordre info dans l'objet facture
+	 *  Charge les information d'ordre info dans l'objet facture
 	 *
 	 *  @param	int		$id       	Id de la facture a charger
 	 *  @return	void
@@ -1645,7 +1645,7 @@ class ActionComm extends CommonObject
 			if (!empty($this->email_tocc)) {
 				$datas['mailcc'] = '<br><b>'.$langs->trans('MailCC').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), $this->email_tocc);
 			}
-			/* Disabled because bcc must remain by defintion not visible
+			/* Disabled because bcc must remain by definition not visible
 			if (!empty($this->email_tobcc)) {
 				$datas['mailccc'] = '<br><b>'.$langs->trans('MailCCC').':</b> '.$this->email_tobcc;
 			} */
@@ -1674,7 +1674,7 @@ class ActionComm extends CommonObject
 	 *  Use $this->id, $this->type_code, $this->label and $this->type_label
 	 *
 	 *  @param	int		$withpicto				0 = No picto, 1 = Include picto into link, 2 = Only picto
-	 *  @param	int		$maxlength				Max number of charaters into label. If negative, use the ref as label.
+	 *  @param	int		$maxlength				Max number of characters into label. If negative, use the ref as label.
 	 *  @param	string	$classname				Force style class on a link
 	 *  @param	string	$option					'' = Link to action, 'birthday'= Link to contact, 'holiday' = Link to leave
 	 *  @param	int		$overwritepicto			1 = Overwrite picto with this one
@@ -1749,7 +1749,7 @@ class ActionComm extends CommonObject
 			if (!empty($this->email_tocc)) {
 				$tooltip .= '<br><b>'.$langs->trans('MailCC').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), $this->email_tocc);
 			}
-			/* Disabled because bcc must remain by defintion not visible
+			/* Disabled because bcc must remain by definition not visible
 			if (!empty($this->email_tobcc)) {
 				$tooltip .= '<br><b>'.$langs->trans('MailCCC').':</b> '.$this->email_tobcc;
 			} */
@@ -2045,7 +2045,7 @@ class ActionComm extends CommonObject
 			$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters); // Note that $action and $object may have been modified by hook
 			$sql .= $hookmanager->resPrint;
 
-			// We must filter on assignement table
+			// We must filter on assignment table
 			if ($filters['logint']) {
 				$sql .= ", ".MAIN_DB_PREFIX."actioncomm_resources as ar";
 			}
@@ -2076,7 +2076,7 @@ class ActionComm extends CommonObject
 				if ($key == 'notactiontype') {
 					$sql .= " AND c.type <> '".$this->db->escape($value)."'";
 				}
-				// We must filter on assignement table
+				// We must filter on assignment table
 				if ($key == 'logint') {
 					$sql .= " AND ar.fk_actioncomm = a.id AND ar.element_type='user'";
 				}
@@ -2351,7 +2351,7 @@ class ActionComm extends CommonObject
 
 		$now = dol_now();
 
-		// Initialise parametres
+		// Initialise parameters
 		$this->id = 0;
 		$this->specimen = 1;
 
@@ -2667,7 +2667,7 @@ class ActionComm extends CommonObject
 	}
 
 	/**
-	 * Udpate the percent value of a event with the given id
+	 * Update the percent value of a event with the given id
 	 *
 	 * @param int		$id			The id of the event
 	 * @param int		$percent	The new percent value for the event

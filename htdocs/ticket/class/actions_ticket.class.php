@@ -179,7 +179,7 @@ class ActionsTicket extends CommonHookActions
 	/**
 	 * Show ticket original message
 	 *
-	 * @param 	User		$user		User wich display
+	 * @param 	User		$user		User which display
 	 * @param 	string 		$action    	Action mode
 	 * @param	Ticket		$object		Object ticket
 	 * @return	void
@@ -198,7 +198,7 @@ class ActionsTicket extends CommonHookActions
 		}
 
 		// Initial message
-		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print '<table class="noborder centpercent margintable margintable">';
 		print '<tr class="liste_titre trforfield"><td class="nowrap titlefield">';
 		print $langs->trans("InitialMessage");

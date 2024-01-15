@@ -110,7 +110,7 @@ class Dolresource extends CommonObject
 	/**
 	 *  Constructor
 	 *
-	 *  @param DoliDb $db      Database handler
+	 *  @param	DoliDB		$db      Database handler
 	 */
 	public function __construct(DoliDb $db)
 	{
@@ -691,16 +691,16 @@ class Dolresource extends CommonObject
 	/**
 	 * Return an array with resources linked to the element
 	 *
-	 * @param string	$element		Element
-	 * @param int		$element_id		Id
-	 * @param string	$resource_type	Type
-	 * @return array					Array of resources
+	 * @param string    $element        Element
+	 * @param int       $element_id     Id
+	 * @param string    $resource_type  Type
+	 * @return array                    Array of resources
 	 */
 	public function getElementResources($element, $element_id, $resource_type = '')
 	{
 		$resources = array();
 
-		// Links beetween objects are stored in this table
+		// Links between objects are stored in this table
 		$sql = 'SELECT rowid, resource_id, resource_type, busy, mandatory';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'element_resources';
 		$sql .= " WHERE element_id=".((int) $element_id)." AND element_type='".$this->db->escape($element)."'";
@@ -819,13 +819,13 @@ class Dolresource extends CommonObject
 	/**
 	 * Return clickable link of object (with optional picto)
 	 *
-	 * @param	int		$withpicto					Add picto into link
-	 * @param	string	$option						Where point the link ('compta', 'expedition', 'document', ...)
-	 * @param	string	$get_params					Parametres added to url
-	 * @param	int		$notooltip					1=Disable tooltip
-	 * @param	string	$morecss					Add more css on link
-	 * @param	int		$save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 * @return	string								String with URL
+	 *	@param      int		$withpicto					Add picto into link
+	 *	@param      string	$option						Where point the link ('compta', 'expedition', 'document', ...)
+	 *	@param      string	$get_params    				Parameters added to url
+	 *	@param		int  	$notooltip					1=Disable tooltip
+	 *  @param  	string  $morecss                    Add more css on link
+	 *  @param  	int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@return     string          					String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $get_params = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
@@ -923,7 +923,7 @@ class Dolresource extends CommonObject
 	}
 
 	/**
-	 * Load dashboard indicators this->nb de tableau de bord
+	 *      Load indicators this->nb for state board
 	 *
 	 * @return	int		Return integer if KO: <0, if OK: >0
 	 */

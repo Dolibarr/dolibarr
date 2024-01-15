@@ -95,7 +95,7 @@ class AccountancyExport
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -838,7 +838,7 @@ class AccountancyExport
 
 		$end_line = "\r\n";
 
-		// We should use dol_now function not time however this is wrong date to transfert in accounting
+		// We should use dol_now function not time however this is wrong date to transfer in accounting
 		foreach ($objectLines as $line) {
 			// Clean some data
 			$line->doc_ref = dol_string_unaccent($line->doc_ref);
@@ -907,7 +907,7 @@ class AccountancyExport
 			$tab['code_journal'] = str_pad(self::trunc($line->code_journal, 2), 2);
 			$tab['folio'] = '000';
 
-			// We use invoice date $line->doc_date not $date_ecriture which is the transfert date
+			// We use invoice date $line->doc_date not $date_ecriture which is the transfer date
 			// maybe we should set an option for customer who prefer to keep in accounting software the tranfert date instead of invoice date ?
 			//$tab['date_ecriture'] = $date_ecriture;
 			$tab['date_ecriture'] = dol_print_date($line->doc_date, '%d%m%y');
@@ -965,7 +965,7 @@ class AccountancyExport
 			$tab['libelle_ecriture2'] = str_pad(self::trunc($line->label_operation, 30), 30);
 			$tab['codetva'] = str_repeat(' ', 2);
 
-			// We need to keep the 10 lastest number of invoice doc_ref not the beginning part that is the unusefull almost same part
+			// We need to keep the 10 latest number of invoices doc_ref not the beginning part that is the useless almost same part
 			// $tab['num_piece3'] = str_pad(self::trunc($line->piece_num, 10), 10);
 			$tab['num_piece3'] = substr(self::trunc($line->doc_ref, 20), -10);
 			$tab['reserved'] = str_repeat(' ', 10); // position 159
@@ -1070,7 +1070,7 @@ class AccountancyExport
 			//$tab['type_ligne'] = 'M';
 			$tab['code_journal'] = str_pad(dol_trunc($line->code_journal, 2, 'right', 'UTF-8', 1), 2);
 
-			//We use invoice date $line->doc_date not $date_ecriture which is the transfert date
+			//We use invoice date $line->doc_date not $date_ecriture which is the transfer date
 			//maybe we should set an option for customer who prefer to keep in accounting software the tranfert date instead of invoice date ?
 			//$tab['date_ecriture'] = $date_ecriture;
 			$tab['date_operation'] = dol_print_date($line->doc_date, '%d%m%Y');
@@ -1954,7 +1954,7 @@ class AccountancyExport
 			} else {
 				$tab[] = "";
 			}
-			// CNAT
+			// C.N.A.T
 			if ($line->doc_type == 'supplier_invoice' && !empty($line->subledger_account)) {
 				$tab[] = 'F';
 			} elseif ($line->doc_type == 'customer_invoice' && !empty($line->subledger_account)) {
@@ -2231,7 +2231,7 @@ class AccountancyExport
 			} else {
 				$tab[] = "";
 			}
-			// CNAT
+			// C.N.A.T
 			if ($line->doc_type == 'supplier_invoice' && !empty($line->subledger_account)) {
 				$tab[] = 'F';
 			} elseif ($line->doc_type == 'customer_invoice' && !empty($line->subledger_account)) {
@@ -2452,7 +2452,7 @@ class AccountancyExport
 				//Libellé Auto
 				$tab[] = "";
 				//print '"'.dol_trunc(str_replace('"', '', $line->label_operation),40,'right','UTF-8',1).'"';
-				//Libellé manuel
+				//Libellé manual
 				$tab[] = dol_trunc(str_replace('"', '', $invoice_ref . (!empty($company_name) ? ' - ' : '') . $company_name), 40, 'right', 'UTF-8', 1);
 				//Numéro de pièce
 				$tab[] = dol_trunc(str_replace('"', '', $line->piece_num), 10, 'right', 'UTF-8', 1);
@@ -2603,7 +2603,7 @@ class AccountancyExport
 	/**
 	 * toAnsi
 	 *
-	 * @param string	$str 		Original string to encode and optionaly truncate
+	 * @param string	$str 		Original string to encode and optionally truncate
 	 * @param integer 	$size 		Truncate string after $size characters
 	 * @return string 				String encoded in Windows-1251 charset
 	 */

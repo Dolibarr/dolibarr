@@ -85,7 +85,7 @@ class AdherentType extends CommonObject
 	public $duration_unit;
 
 	/**
-	 * @var int Subsription required (0 or 1)
+	 * @var int Subscription required (0 or 1)
 	 */
 	public $subscription;
 
@@ -95,7 +95,7 @@ class AdherentType extends CommonObject
 	public $amount;
 
 	/**
-	 * @var int Amount can be choosen by the visitor during subscription (0 or 1)
+	 * @var int Amount can be chosen by the visitor during subscription (0 or 1)
 	 */
 	public $caneditamount;
 
@@ -858,7 +858,7 @@ class AdherentType extends CommonObject
 	/**
 	 *	Initialize the info array (array of LDAP values) that will be used to call LDAP functions
 	 *
-	 *	@return		array		Tableau info des attributs
+	 *	@return		array		Tableau info des attributes
 	 */
 	public function _load_ldap_info()
 	{
@@ -905,7 +905,7 @@ class AdherentType extends CommonObject
 	{
 		global $user;
 
-		// Initialise parametres
+		// Initialise parameters
 		$this->id = 0;
 		$this->ref = 'MTSPEC';
 		$this->specimen = 1;

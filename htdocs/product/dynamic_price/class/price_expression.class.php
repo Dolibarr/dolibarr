@@ -25,7 +25,7 @@
 
 
 /**
- *	Class for accesing price expression table
+ *	Class for accessing price expression table
  */
 class PriceExpression
 {
@@ -67,7 +67,7 @@ class PriceExpression
 	/**
 	 *  Constructor
 	 *
-	 *  @param	DoliDb		$db      Database handler
+	 *  @param	DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{
