@@ -38,7 +38,7 @@ error_reporting(E_ALL & ~E_DEPRECATED);
 define('PRODUCT', "apstats");
 define('VERSION', "1.0");
 
-$phpstanlevel = 2;
+$phpstanlevel = 3;
 
 
 print '***** '.constant('PRODUCT').' - '.constant('VERSION').' *****'."\n";
