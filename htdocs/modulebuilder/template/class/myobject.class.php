@@ -440,12 +440,12 @@ class MyObject extends CommonObject
 	 * @param  string      	$sortfield    	Sort field
 	 * @param  int         	$limit        	Limit the number of lines returned
 	 * @param  int         	$offset       	Offset
-	 * @param  string		$filter       	Filter as an Universal Search string.
+	 * @param  string|array	$filter       	Filter as an Universal Search string. Array is deprecated
 	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
 	 * @param  string      	$filtermode   	Filter mode (AND or OR)
 	 * @return array|int                 	int <0 if KO, array of pages if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 1000, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 1000, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
