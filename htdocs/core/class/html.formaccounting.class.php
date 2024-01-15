@@ -228,7 +228,7 @@ class FormAccounting extends Form
 	 *	Return list of accounting category.
 	 * 	Use mysoc->country_id or mysoc->country_code so they must be defined.
 	 *
-	 *	@param	string	$selected       Preselected type
+	 *	@param	int		$selected       Preselected type
 	 *	@param  string	$htmlname       Name of field in form
 	 * 	@param	int		$useempty		Set to 1 if we want an empty value
 	 * 	@param	int		$maxlen			Max length of text in combo box
@@ -236,7 +236,7 @@ class FormAccounting extends Form
 	 *  @param  int     $allcountries   All countries
 	 * 	@return	string					HTML component with the select
 	 */
-	public function select_accounting_category($selected = '', $htmlname = 'account_category', $useempty = 0, $maxlen = 0, $help = 1, $allcountries = 0)
+	public function select_accounting_category($selected = 0, $htmlname = 'account_category', $useempty = 0, $maxlen = 0, $help = 1, $allcountries = 0)
 	{
 		// phpcs:enable
 		global $langs, $mysoc;

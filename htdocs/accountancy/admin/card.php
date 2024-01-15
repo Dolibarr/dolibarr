@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014  Olivier Geffroy     <jeff@jeffinfo.com>
- * Copyright (C) 2013-2020  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
  * Copyright (C) 2014       Florian Henry       <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -91,17 +91,17 @@ if ($action == 'add' && $user->hasRight('accounting', 'chartofaccount')) {
 				$account_number = clean_account($account_number);
 			}
 
-			if (GETPOST('account_parent', 'int') <= 0) {
+			if (GETPOSTINT('account_parent') <= 0) {
 				$account_parent = 0;
 			} else {
-				$account_parent = GETPOST('account_parent', 'int');
+				$account_parent = GETPOSTINT('account_parent');
 			}
 
 			$object->fk_pcg_version = $obj->pcg_version;
 			$object->pcg_type = GETPOST('pcg_type', 'alpha');
 			$object->account_number = $account_number;
 			$object->account_parent = $account_parent;
-			$object->account_category = GETPOST('account_category', 'alpha');
+			$object->account_category = GETPOSTINT('account_category');
 			$object->label = $label;
 			$object->labelshort = GETPOST('labelshort', 'alpha');
 			$object->active = 1;
@@ -154,17 +154,17 @@ if ($action == 'add' && $user->hasRight('accounting', 'chartofaccount')) {
 				$account_number = clean_account($account_number);
 			}
 
-			if (GETPOST('account_parent', 'int') <= 0) {
+			if (GETPOSTINT('account_parent') <= 0) {
 				$account_parent = 0;
 			} else {
-				$account_parent = GETPOST('account_parent', 'int');
+				$account_parent = GETPOSTINT('account_parent');
 			}
 
 			$object->fk_pcg_version = $obj->pcg_version;
 			$object->pcg_type = GETPOST('pcg_type', 'alpha');
 			$object->account_number = $account_number;
 			$object->account_parent = $account_parent;
-			$object->account_category = GETPOST('account_category', 'alpha');
+			$object->account_category = GETPOSTINT('account_category');
 			$object->label = $label;
 			$object->labelshort = GETPOST('labelshort', 'alpha');
 
@@ -215,7 +215,7 @@ $accountsystem->fetch(getDolGlobalInt('CHARTOFACCOUNTS'));
 
 $title = $langs->trans('AccountAccounting')." - ".$langs->trans('Card');
 
-$help_url = 'EN:Category:Accounting';
+$help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
 
 llxHeader('', $title, $help_url);
 

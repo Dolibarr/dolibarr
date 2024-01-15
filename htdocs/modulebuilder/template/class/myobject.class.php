@@ -432,17 +432,20 @@ class MyObject extends CommonObject
 
 
 	/**
-	 * Load list of objects in memory from the database. Using a fetchAll is a bad practice, instead try to forge you optimized and limited SQL request.
+	 * Load list of objects in memory from the database.
+	 * Using a fetchAll() with limit = 0 is a very bad practice. Instead try to forge yourself an optimized SQL request with
+	 * your own loop with start and stop pagination.
 	 *
-	 * @param  string      $sortorder    Sort Order
-	 * @param  string      $sortfield    Sort field
-	 * @param  int         $limit        limit
-	 * @param  int         $offset       Offset
-	 * @param  array       $filter       Filter array. Example array('mystringfield'=>'value', 'myintfield'=>4, 'customsql'=>...)
-	 * @param  string      $filtermode   Filter mode (AND or OR)
-	 * @return array|int                 int <0 if KO, array of pages if OK
+	 * @param  string      	$sortorder    	Sort Order
+	 * @param  string      	$sortfield    	Sort field
+	 * @param  int         	$limit        	Limit the number of lines returned
+	 * @param  int         	$offset       	Offset
+	 * @param  string		$filter       	Filter as an Universal Search string.
+	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+	 * @param  string      	$filtermode   	Filter mode (AND or OR)
+	 * @return array|int                 	int <0 if KO, array of pages if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 1000, $offset = 0, string $filter = '', $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -452,7 +455,7 @@ class MyObject extends CommonObject
 		$sql .= $this->getFieldList('t');
 		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
 		if (isset($this->isextrafieldmanaged) && $this->isextrafieldmanaged == 1) {
-			$sql .= " LEFT JOIN ".$this->db->prefix().$this->table_element."_extrafields as te ON tf.fk_object = t.rowid";
+			$sql .= " LEFT JOIN ".$this->db->prefix().$this->table_element."_extrafields as te ON te.fk_object = t.rowid";
 		}
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
 			$sql .= " WHERE t.entity IN (".getEntity($this->element).")";
@@ -460,12 +463,14 @@ class MyObject extends CommonObject
 			$sql .= " WHERE 1 = 1";
 		}
 		// Manage filter
+		/* We keep this part of code that is still used by a lot of old class. The 'else" shows how to switch to Universal Search filters
 		$sqlwhere = array();
-		if (count($filter) > 0) {
+		if (is_array($filter) && count($filter) > 0) {
+			dol_syslog("Warning: Use of an array  as filter is now forbidden and deprecated. Use an universal SQL filter string instead", LOG_WARNING);
 			foreach ($filter as $key => $value) {
 				$columnName = preg_replace('/^t\./', '', $key);
 				if ($key === 'customsql') {
-					// Never use 'customsql' with a value from user input since it is injected as is. The value must be hard coded.
+					// Never use 'customsql' with a value from a user input since it is injected as is. The value must be hard coded.
 					$sqlwhere[] = $value;
 					continue;
 				} elseif (isset($this->fields[$columnName])) {
@@ -501,10 +506,19 @@ class MyObject extends CommonObject
 					}
 				}
 			}
+		} else { */
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+
+			return -1;
 		}
+		/*}
 		if (count($sqlwhere) > 0) {
 			$sql .= " AND (".implode(" ".$filtermode." ", $sqlwhere).")";
-		}
+		}*/
 
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
