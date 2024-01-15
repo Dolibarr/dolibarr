@@ -2198,7 +2198,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 						}
 					} else {
 						foreach ($value as $value2) {
-							if ($value2 !== '') {
+							if (($value2 !== '') && (!is_array($value2))) {
 								$qs .= '&'.$key.'[]='.urlencode($value2);
 							}
 						}
