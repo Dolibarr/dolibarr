@@ -300,7 +300,7 @@ class FormResource
 
 		$out = '';
 
-		// Serch departements/cantons/province active d'une region et pays actif
+		// Search active departements/cantons/province of a region and actif country
 		$sql = "SELECT d.rowid, d.code_departement as code, d.nom as name, d.active, c.label as country, c.code as country_code, r.nom as region_name FROM";
 		$sql .= " " . $this->db->prefix() . "c_departements as d, " . $this->db->prefix() . "c_regions as r," . $this->db->prefix() . "c_country as c";
 		$sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid";
@@ -345,7 +345,7 @@ class FormResource
 							$out .= '<option value="' . $obj->rowid . '">';
 						}
 
-						// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
+						// If translation exists use it, otherwise use default name
 						if (
 							!empty($conf->global->MAIN_SHOW_STATE_CODE) &&
 							(getDolGlobalInt('MAIN_SHOW_STATE_CODE') == 1 || getDolGlobalInt('MAIN_SHOW_STATE_CODE') == 2 || $conf->global->MAIN_SHOW_STATE_CODE === 'all')
