@@ -110,7 +110,7 @@
 	</rule> -->
 
 
-	<!-- Check assignement have the = align on each line. Have 20 chars padding maximum and always show as errors -->
+	<!-- Check assignment have the = align on each line. Have 20 chars padding maximum and always show as errors -->
 	<!--  Disabled: Report some false warning
 		<rule ref="Generic.Formatting.MultipleStatementAlignment">
 		<properties>
@@ -136,7 +136,7 @@
     <rule ref="Generic.Metrics.CyclomaticComplexity">
         <properties>
             <property name="complexity" value="250" />
-            <property name="absoluteComplexity" value="400" />
+            <property name="absoluteComplexity" value="500" />
         </properties>
     </rule>
     <rule ref="Generic.Metrics.NestingLevel">

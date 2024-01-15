@@ -24,7 +24,7 @@
 /**
  *	\file       htdocs/core/modules/delivery/doc/pdf_typhon.modules.php
  *	\ingroup    livraison
- *	\brief      File of class to manage receving receipts with template Typhon
+ *	\brief      File of class to manage receiving receipts with template Typhon
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/delivery/modules_delivery.php';
@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 class pdf_typhon extends ModelePDFDeliveryOrder
 {
 	/**
-	 * @var DoliDb Database handler
+	 * @var DoliDB Database handler
 	 */
 	public $db;
 
@@ -382,7 +382,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 						$curY = $tab_top_newpage;
 					}
 
-					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
+					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par default
 
 					/*
 					 // TVA

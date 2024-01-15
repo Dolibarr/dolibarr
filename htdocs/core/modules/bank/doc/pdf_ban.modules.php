@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 
 /**
- *	Classe permettant de generer les projets au modele Ban
+ *	Class permettant de generer les projects au modele Ban
  */
 
 class pdf_ban extends ModeleBankAccountDoc

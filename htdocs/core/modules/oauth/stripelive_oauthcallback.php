@@ -138,7 +138,7 @@ if (GETPOST('code')) {     // We are coming from oauth provider page
 
 		//$token = $apiService->requestAccessToken(GETPOST('code'), $state);
 		$token = $apiService->requestAccessToken(GETPOST('code'));
-		// Stripe is a service that does not need state to be stored as second paramater of requestAccessToken
+		// Stripe is a service that does not need state to be stored as second parameter of requestAccessToken
 
 		setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs'); // Stored into object managed by class DoliStorage so into table oauth_token
 

@@ -89,7 +89,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontodelete) {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$action = 'edit';
 	} else {
-		Header("Location: ".DOL_URL_ROOT.'/cron/list.php');
+		header("Location: ".DOL_URL_ROOT.'/cron/list.php');
 		exit;
 	}
 }

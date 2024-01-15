@@ -31,7 +31,7 @@
  *
  * Boxes parent class
  */
-class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" boxes
+class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" boxes
 {
 	/**
 	 * @var DoliDB Database handler
@@ -207,7 +207,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		$MAXLENGTHBOX = 60; // Mettre 0 pour pas de limite
+		$MAXLENGTHBOX = 60; // When set to 0: no length limit
 
 		$cachetime = 900; // 900 : 15mn
 		$cachedir = DOL_DATA_ROOT.'/boxes/temp';
@@ -273,7 +273,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 					//$out.= '<td class="nocellnopadd boxclose right nowraponall">';
 					$out .= '<div class="nocellnopadd boxclose floatright nowraponall">';
 					$out .= $sublink;
-					// The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
+					// The image must have the class 'boxhandle' because it's value used in DOM draggable objects to define the area used to catch the full object
 					$out .= img_picto($langs->trans("MoveBox", $this->box_id), 'grip_title', 'class="opacitymedium boxhandle hideonsmartphone cursormove marginleftonly"');
 					$out .= img_picto($langs->trans("CloseBox", $this->box_id), 'close_title', 'class="opacitymedium boxclose cursorpointer marginleftonly" rel="x:y" id="imgclose'.$this->box_id.'"');
 					$label = $head['text'];

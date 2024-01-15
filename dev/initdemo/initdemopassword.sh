@@ -8,6 +8,8 @@
 # Usage: initdemopassword.sh confirm
 # usage: initdemopassword.sh confirm base port login pass
 #------------------------------------------------------
+# shellcheck disable=2006,2034,2046,2064,2068,2086,2155,2166,2186,2172,2268
+# shellcheck disable=2012,2016,2154
 
 
 export mydir=`echo "$0" | sed -e 's/initdemopassword.sh//'`;

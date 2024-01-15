@@ -293,7 +293,7 @@ class Salary extends CommonObject
 	 *  Delete object in database
 	 *
 	 *	@param	User	$user       User that delete
-	 *  @param  bool 	$notrigger 	false=launch triggers after, true=disable triggers
+	 *  @param  int 	$notrigger 	0=launch triggers after, 1=disable triggers
 	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
@@ -676,7 +676,7 @@ class Salary extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Tag social contribution as payed completely
+	 *    Tag social contribution as paid completely
 	 *
 	 *	  @deprecated
 	 *    @see setPaid()
@@ -691,7 +691,7 @@ class Salary extends CommonObject
 	}
 
 	/**
-	 *    Tag social contribution as payed completely
+	 *    Tag social contribution as paid completely
 	 *
 	 *    @param    User    $user       Object user making change
 	 *    @return   int					Return integer <0 if KO, >0 if OK
@@ -714,7 +714,7 @@ class Salary extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Remove tag payed on social contribution
+	 *    Remove tag paid on social contribution
 	 *
 	 *    @param	User	$user       Object user making change
 	 *    @return	int					Return integer <0 if KO, >0 if OK
@@ -741,7 +741,7 @@ class Salary extends CommonObject
 	 * Return label of current status
 	 *
 	 * @param	int			$mode       	0=label long, 1=labels short, 2=Picto + Label short, 3=Picto, 4=Picto + Label long, 5=Label short + Picto
-	 * @param   double		$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
+	 * @param   double		$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommend to put here amount paid if you have it, 1 otherwise)
 	 * @return  string						Label
 	 */
 	public function getLibStatut($mode = 0, $alreadypaid = -1)
@@ -755,7 +755,7 @@ class Salary extends CommonObject
 	 *
 	 *  @param	int		$status        	Id status
 	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
-	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
+	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommend to put here amount paid if you have it, 1 otherwise)
 	 *  @return string        			Label
 	 */
 	public function LibStatut($status, $mode = 0, $alreadypaid = -1)

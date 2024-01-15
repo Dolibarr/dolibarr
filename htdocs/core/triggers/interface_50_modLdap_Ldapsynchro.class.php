@@ -259,7 +259,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 				}
 			}
 		} elseif ($action == 'USERGROUP_CREATE') {
-			// Groupes
+			// Groups
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (getDolGlobalString('LDAP_SYNCHRO_ACTIVE') && getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 				$ldap = new Ldap();

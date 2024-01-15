@@ -163,7 +163,7 @@ print '</td></tr>';
 
 // Title input
 print '<tr><td class="fieldrequired">'.$langs->trans("Name").'</td><td>';
-print '<input class="flat" name="expression_title" size="15" value="'.($price_expression->title ? $price_expression->title : '').'">';
+print '<input class="flat" name="expression_title" size="15" value="'.(GETPOSTISSET('expression_title') ? GETPOST('expression_title') : ($price_expression->title ? $price_expression->title : '')).'">';
 print '</td></tr>';
 
 //Help text

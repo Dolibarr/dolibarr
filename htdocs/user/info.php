@@ -19,7 +19,7 @@
 /**
  *      \file       htdocs/user/info.php
  *      \ingroup    core
- *		\brief      Page des informations d'un utilisateur
+ *		\brief      Page des information d'un utilisateur
  */
 
 // Load Dolibarr environment

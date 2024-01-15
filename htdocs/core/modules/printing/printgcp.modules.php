@@ -233,7 +233,7 @@ class printing_printgcp extends PrintingDriver
 			$html .= '<td>'.$printer_det['status'].'</td>';
 			$html .= '<td>'.$langs->trans('STATE_'.$printer_det['connectionStatus']).'</td>';
 			$html .= '<td>'.$langs->trans('TYPE_'.$printer_det['type']).'</td>';
-			// Defaut
+			// Default
 			$html .= '<td class="center">';
 			if ($conf->global->PRINTING_GCP_DEFAULT == $printer_det['id']) {
 				$html .= img_picto($langs->trans("Default"), 'on');
@@ -308,7 +308,7 @@ class printing_printgcp extends PrintingDriver
 		$printers = $responsedata['printers'];
 		// Check if we have printers?
 		if (is_array($printers) && count($printers) == 0) {
-			// We dont have printers so return blank array
+			// We don't have printers so return blank array
 			$ret['available'] = array();
 		} else {
 			// We have printers so returns printers as array

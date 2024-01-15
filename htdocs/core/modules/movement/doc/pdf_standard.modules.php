@@ -530,7 +530,7 @@ class pdf_standard extends ModelePDFMovement
 							$curY = $tab_top_newpage;
 						}
 
-						$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
+						$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par default
 
 						// $objp = $this->db->fetch_object($resql);
 
@@ -579,7 +579,7 @@ class pdf_standard extends ModelePDFMovement
 						$pdf->SetXY($this->posxlabel + 0.8, $curY);
 						$pdf->MultiCell($this->posxqty - $this->posxlabel - 0.8, 6, $productstatic->label, 0, 'L');
 
-						// Lot/serie
+						// Lot/series
 						$pdf->SetXY($this->posxqty, $curY);
 						$pdf->MultiCell($this->posxup - $this->posxqty - 0.8, 3, $productlot->batch, 0, 'R');
 
@@ -587,7 +587,7 @@ class pdf_standard extends ModelePDFMovement
 						$pdf->SetXY($this->posxup, $curY);
 						$pdf->MultiCell($this->posxunit - $this->posxup - 0.8, 3, $objp->inventorycode, 0, 'R');
 
-						// Label mouvement
+						// Label movement
 						$pdf->SetXY($this->posxunit, $curY);
 						$pdf->MultiCell($this->posxdiscount - $this->posxunit - 0.8, 3, $objp->label, 0, 'R');
 						$totalvalue += price2num($objp->ppmp * $objp->value, 'MT');
@@ -856,7 +856,7 @@ class pdf_standard extends ModelePDFMovement
 			$pdf->MultiCell($this->posxqty - $this->posxlabel, 2, $outputlangs->transnoentities("Label"), '', 'C');
 		}
 
-		//Lot/serie Product
+		//Lot/series Product
 		//$pdf->line($this->posxqty - 1, $tab_top, $this->posxqty - 1, $tab_top + $tab_height);
 		if (empty($hidetop)) {
 			$pdf->SetXY($this->posxqty, $tab_top + 1);
@@ -870,11 +870,11 @@ class pdf_standard extends ModelePDFMovement
 			$pdf->MultiCell($this->posxunit - $this->posxup, 2, $outputlangs->transnoentities("Inventory Code"), '', 'C');
 		}
 
-		//Label mouvement
+		//Label movement
 		//$pdf->line($this->posxunit, $tab_top, $this->posxunit, $tab_top + $tab_height);
 		if (empty($hidetop)) {
 			$pdf->SetXY($this->posxunit, $tab_top + 1);
-			$pdf->MultiCell($this->posxdiscount - $this->posxunit, 2, $outputlangs->transnoentities("Label Mouvement"), '', 'C');
+			$pdf->MultiCell($this->posxdiscount - $this->posxunit, 2, $outputlangs->transnoentities("Label Movement"), '', 'C');
 		}
 
 		//Origin

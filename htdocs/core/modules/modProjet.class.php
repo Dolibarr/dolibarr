@@ -53,7 +53,7 @@ class modProjet extends DolibarrModules
 		$this->module_position = '14';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
-		$this->description = "Gestion des projets";
+		$this->description = "Gestion des projects";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
 
@@ -142,60 +142,60 @@ class modProjet extends DolibarrModules
 		$r++;
 		$this->rights[$r][0] = 41; // id de la permission
 		$this->rights[$r][1] = "Read projects and tasks (shared projects or projects I am contact for)"; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
 		$this->rights[$r][0] = 42; // id de la permission
 		$this->rights[$r][1] = "Create/modify projects and tasks (shared projects or projects I am contact for)"; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'creer';
 
 		$r++;
 		$this->rights[$r][0] = 44; // id de la permission
 		$this->rights[$r][1] = "Delete project and tasks (shared projects or projects I am contact for)"; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'supprimer';
 
 		$r++;
 		$this->rights[$r][0] = 45; // id de la permission
 		$this->rights[$r][1] = "Export projects"; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'export';
 
 		$r++;
 		$this->rights[$r][0] = 141; // id de la permission
 		$this->rights[$r][1] = "Read all projects and tasks (also private projects I am not contact for)"; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'all';
 		$this->rights[$r][5] = 'lire';
 
 		$r++;
 		$this->rights[$r][0] = 142; // id de la permission
 		$this->rights[$r][1] = "Create/modify all projects and tasks (also private projects I am not contact for)"; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'all';
 		$this->rights[$r][5] = 'creer';
 
 		$r++;
 		$this->rights[$r][0] = 144; // id de la permission
 		$this->rights[$r][1] = "Delete all projects and tasks (also private projects I am not contact for)"; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'all';
 		$this->rights[$r][5] = 'supprimer';
 
 		$r++;
 		$this->rights[$r][0] = 145; // id de la permission
 		$this->rights[$r][1] = "Can enter time consumed on assigned tasks (timesheet)"; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'time';
 
 		// Menus

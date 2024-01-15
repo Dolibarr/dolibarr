@@ -131,7 +131,7 @@ if (preg_match('/api\/index\.php\/explorer/', $url) && getDolGlobalString('API_E
 }
 
 
-// This 2 lines are usefull only if we want to exclude some Urls from the explorer
+// This 2 lines are useful only if we want to exclude some Urls from the explorer
 //use Luracast\Restler\Explorer;
 //Explorer::$excludedPaths = array('/categories');
 
@@ -170,7 +170,7 @@ $api = new DolibarrApi($db, '', $refreshcache);
 if (getDolGlobalString('MAIN_API_DEBUG')) {
 	$r = $api->r;
 	$r->onCall(function () use ($r) {
-		// Don't log Luracast Restler Explorer recources calls
+		// Don't log Luracast Restler Explorer resources calls
 		//if (!preg_match('/^explorer/', $r->url)) {
 		//	'method'  => $api->r->requestMethod,
 		//	'url'     => $api->r->url,
@@ -405,7 +405,7 @@ if ($usecompression) {
 	}
 }
 
-//dol_syslog('We found some compression algoithm: '.$foundonealgorithm.' -> usecompression='.$usecompression, LOG_DEBUG);
+//dol_syslog('We found some compression algorithm: '.$foundonealgorithm.' -> usecompression='.$usecompression, LOG_DEBUG);
 
 Luracast\Restler\Defaults::$returnResponse = $usecompression;
 

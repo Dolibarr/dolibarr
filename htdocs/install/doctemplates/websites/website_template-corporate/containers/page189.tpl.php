@@ -147,7 +147,7 @@ CKEDITOR.inline( 'sectionimage' , { toolbar: ['Bold','Italic'] } );
       </section>
 
 
-      <!-- Looking for our sevices -->
+      <!-- Looking for our services -->
       <section id="sectionfirstclass" contenteditable="true" class="section-with-counters bg-accent text-center">
         <div class="container bg-cape-cod context-dark section-60 section-lg-90">
           <h2 class="text-rolling-stone font-weight-bold text-uppercase">Looking for</h2>
@@ -215,7 +215,7 @@ CKEDITOR.inline( 'sectionimage' , { toolbar: ['Bold','Italic'] } );
                                                     </ul>
                                                 </div>
                                                 <div class="plan-btn plan-picker">
-                                                    <a href="plan-a.php" class="btn btn-rect btn-primary d-block d-md-inline-block" id="plana">Subcribe</a>
+                                                    <a href="plan-a.php" class="btn btn-rect btn-primary d-block d-md-inline-block" id="plana">Subscribe</a>
                                                 </div>
                                             </div>  
                                     </div>
@@ -487,7 +487,7 @@ CKEDITOR.inline( 'sectionimage' , { toolbar: ['Bold','Italic'] } );
                           <div class="divider-fullwidth"></div>
                           <div>
                             <span class="fa fa-quote-left"><!-- Keep this comment --></span>
-                            <q>We were skeptical to work with a consultant to optimize our sales emails, but they were highly recommended by many other startups we knew. They helped us to reach our objective of 20% turnover increase, in 4 monthes.</q>
+                            <q>We were skeptical to work with a consultant to optimize our sales emails, but they were highly recommended by many other startups we knew. They helped us to reach our objective of 20% turnover increase, in 4 months.</q>
                             <span class="fa fa-quote-right"><!-- Keep this comment --></span>
                           </div>
                         </blockquote>
