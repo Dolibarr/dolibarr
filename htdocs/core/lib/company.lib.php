@@ -2360,7 +2360,7 @@ function addEventTypeSQL(&$sql, $actioncode, $sqlANDOR = "AND")
  *		@param	string		$sql		    $sql modified
  * 		@param	string		$donetodo		donetodo
  * 		@param	string		$now		    now
- * 		@param	string		$filters		array
+ * 		@param	array		$filters		array
  * 		@return	string      sql request
  */
 function addOtherFilterSQL(&$sql, $donetodo, $now, $filters)
