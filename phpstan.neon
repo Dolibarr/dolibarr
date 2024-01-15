@@ -1,7 +1,7 @@
 parameters:
 	tmpDir: ./.github/tmp
 	parallel:
-		jobSize: 20
+		jobSize: 8
 		processTimeout: 600.0
 		maximumNumberOfProcesses: 20
 		minimumNumberOfJobsPerProcess: 2
