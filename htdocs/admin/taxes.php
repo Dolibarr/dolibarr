@@ -197,7 +197,7 @@ if (empty($mysoc->tva_assuj)) {
 
 	print '<table class="noborder centpercent">';
 
-	// Cas des parametres TAX_MODE_SELL/BUY_SERVICE/PRODUCT
+	// Case for the parameters TAX_MODE_SELL/BUY_SERVICE/PRODUCT
 	print '<tr class="liste_titre">';
 	print '<td class="titlefield">'.$langs->trans('OptionVatMode').'</td><td>'.$langs->trans('Description').'</td>';
 	print "</tr>\n";
@@ -209,7 +209,7 @@ if (empty($mysoc->tva_assuj)) {
 	print '<tr class="oddeven"><td><input type="radio" name="tax_mode" value="1"'.($tax_mode == 1 ? ' checked' : '').'> '.$langs->trans('OptionVATDebitOption').'</td>';
 	print '<td>'.nl2br($langs->trans('OptionVatDebitOptionDesc'))."</td></tr>\n";
 	// On payment for both products and services
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 1) {
+	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
 		print '<tr class="oddeven"><td><input type="radio" name="tax_mode" value="2"'.($tax_mode == 2 ? ' checked' : '').'> '.$langs->trans('OptionPaymentForProductAndServices').'</td>';
 		print '<td>'.nl2br($langs->trans('OptionPaymentForProductAndServicesDesc'))."</td></tr>\n";
 	}

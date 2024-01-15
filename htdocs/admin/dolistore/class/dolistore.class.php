@@ -48,7 +48,7 @@ class Dolistore
 	public $url; // the url of this page
 	public $shop_url; // the url of the shop
 	public $lang; // the integer representing the lang in the store
-	public $debug_api; // usefull if no dialog
+	public $debug_api; // useful if no dialog
 
 	public $api;
 	public $products;
@@ -86,9 +86,9 @@ class Dolistore
 		global $conf;
 
 		try {
-			$this->api = new PrestaShopWebservice($conf->global->MAIN_MODULE_DOLISTORE_API_SRV, $conf->global->MAIN_MODULE_DOLISTORE_API_KEY, $this->debug_api);
+			$this->api = new PrestaShopWebservice(getDolGlobalString('MAIN_MODULE_DOLISTORE_API_SRV'), getDolGlobalString('MAIN_MODULE_DOLISTORE_API_KEY'), $this->debug_api);
 			dol_syslog("Call API with MAIN_MODULE_DOLISTORE_API_SRV = ".getDolGlobalString('MAIN_MODULE_DOLISTORE_API_SRV'));
-			// $conf->global->MAIN_MODULE_DOLISTORE_API_KEY is for the login of basic auth. There is no password as it is public data.
+			// conf MAIN_MODULE_DOLISTORE_API_KEY is for the login of basic auth. There is no password as it is public data.
 
 			// Here we set the option array for the Webservice : we want categories resources
 			$opt              = array();
@@ -136,9 +136,9 @@ class Dolistore
 		}
 
 		try {
-			$this->api = new PrestaShopWebservice($conf->global->MAIN_MODULE_DOLISTORE_API_SRV, $conf->global->MAIN_MODULE_DOLISTORE_API_KEY, $this->debug_api);
+			$this->api = new PrestaShopWebservice(getDolGlobalString('MAIN_MODULE_DOLISTORE_API_SRV'), getDolGlobalString('MAIN_MODULE_DOLISTORE_API_KEY'), $this->debug_api);
 			dol_syslog("Call API with MAIN_MODULE_DOLISTORE_API_SRV = ".getDolGlobalString('MAIN_MODULE_DOLISTORE_API_SRV'));
-			// $conf->global->MAIN_MODULE_DOLISTORE_API_KEY is for the login of basic auth. There is no password as it is public data.
+			// conf MAIN_MODULE_DOLISTORE_API_KEY is for the login of basic auth. There is no password as it is public data.
 
 			// Here we set the option array for the Webservice : we want products resources
 			$opt             = array();
@@ -177,7 +177,7 @@ class Dolistore
 			$opt['sort']           = 'id_desc';
 			$opt['filter[active]'] = '[1]';
 			$opt['limit']          = "$this->start,$this->end";
-			// $opt['filter[id]'] contais list of product id that are result of search
+			// $opt['filter[id]'] contains list of product id that are result of search
 
 			// Call API to get the detail
 			dol_syslog("Call API with opt = ".var_export($opt, true));
@@ -246,7 +246,7 @@ class Dolistore
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Return list of product formated for output
+	 * Return list of product formatted for output
 	 *
 	 * @return string			HTML output
 	 */

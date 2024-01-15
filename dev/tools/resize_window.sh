@@ -4,6 +4,7 @@
 # be able to make size fixed screenshots using
 # ALT+Print screen.
 #----------------------------------------------------
+# shellcheck disable=2086,2166,2268
 
 # Syntax
 if [ "x$1" = "x" ]

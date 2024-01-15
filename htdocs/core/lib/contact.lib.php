@@ -21,7 +21,7 @@
 
 /**
  *	    \file       htdocs/core/lib/contact.lib.php
- *		\brief      Ensemble de fonctions de base pour les contacts
+ *		\brief      Ensemble de functions de base pour les contacts
  */
 
 /**
@@ -42,8 +42,8 @@ function contact_prepare_head(Contact $object)
 	$head[$tab][2] = 'card';
 	$tab++;
 
-	if ((!empty($conf->ldap->enabled) && !empty($conf->global->LDAP_CONTACT_ACTIVE))
-		&& (empty($conf->global->MAIN_DISABLE_LDAP_TAB) || !empty($user->admin))) {
+	if ((!empty($conf->ldap->enabled) && getDolGlobalString('LDAP_CONTACT_ACTIVE'))
+		&& (!getDolGlobalString('MAIN_DISABLE_LDAP_TAB') || !empty($user->admin))) {
 		$langs->load("ldap");
 
 		$head[$tab][0] = DOL_URL_ROOT.'/contact/ldap.php?id='.$object->id;
@@ -107,7 +107,7 @@ function contact_prepare_head(Contact $object)
 	complete_head_from_modules($conf, $langs, $object, $head, $tab, 'contact', 'add', 'core');
 
 	// Notes
-	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
+	if (!getDolGlobalString('MAIN_DISABLE_NOTES_TAB')) {
 		$nbNote = (empty($object->note_private) ? 0 : 1) + (empty($object->note_public) ? 0 : 1);
 		$head[$tab][0] = DOL_URL_ROOT.'/contact/note.php?id='.$object->id;
 		$head[$tab][1] = $langs->trans("Note");

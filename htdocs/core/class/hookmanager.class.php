@@ -69,10 +69,10 @@ class HookManager
 
 
 	/**
-	 *	Init array $this->hooks with instantiated action controlers.
+	 *	Init array $this->hooks with instantiated action controllers.
 	 *  First, a hook is declared by a module by adding a constant MAIN_MODULE_MYMODULENAME_HOOKS with value 'nameofcontext1:nameofcontext2:...' into $this->const of module descriptor file.
 	 *  This makes $conf->hooks_modules loaded with an entry ('modulename'=>array(nameofcontext1,nameofcontext2,...))
-	 *  When initHooks function is called, with initHooks(list_of_contexts), an array $this->hooks is defined with instance of controler
+	 *  When initHooks function is called, with initHooks(list_of_contexts), an array $this->hooks is defined with instance of controller
 	 *  class found into file /mymodule/class/actions_mymodule.class.php (if module has declared the context as a managed context).
 	 *  Then when a hook executeHooks('aMethod'...) is called, the method aMethod found into class will be executed.
 	 *
@@ -127,7 +127,7 @@ class HookManager
 				}
 			}
 		}
-		// Log the init of hook but only for hooks thare are declared to be managed
+		// Log the init of hook but only for hooks there are declared to be managed
 		if (count($arraytolog) > 0) {
 			dol_syslog(get_class($this)."::initHooks Loading hooks: ".join(', ', $arraytolog), LOG_DEBUG);
 		}
@@ -150,10 +150,10 @@ class HookManager
 	 *  @param		string	$action			Action code on calling page ('create', 'edit', 'view', 'add', 'update', 'delete'...)
 	 *  @return		int						For 'addreplace' hooks (doActions, formConfirm, formObjectOptions, pdf_xxx,...): 	Return 0 if we want to keep standard actions, >0 if we want to stop/replace standard actions, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
 	 *                                      For 'output' hooks (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...):	Return 0 if we want to keep standard actions, >0 uf we want to stop/replace standard actions (at least one > 0 and replacement will be done), <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
-	 *                                      All types can also return some values into an array ->results that will be finaly merged into this->resArray for caller.
+	 *                                      All types can also return some values into an array ->results that will be merged into this->resArray for caller.
 	 *                                      $this->error or this->errors are also defined by class called by this function if error.
 	 */
-	public function executeHooks($method, $parameters = array(), &$object = '', &$action = '')
+	public function executeHooks($method, $parameters = array(), &$object = null, &$action = '')
 	{
 		if (!is_array($this->hooks) || empty($this->hooks)) {
 			return 0; // No hook available, do nothing.
@@ -168,7 +168,7 @@ class HookManager
 
 		// Define type of hook ('output' or 'addreplace').
 		$hooktype = 'addreplace';
-		// TODO Remove hooks with type 'output' (exemple createFrom). All hooks must be converted into 'addreplace' hooks.
+		// TODO Remove hooks with type 'output' (example createFrom). All hooks must be converted into 'addreplace' hooks.
 		if (in_array($method, array(
 			'createFrom',
 			'dashboardAccountancy',

@@ -60,18 +60,18 @@ class Documents extends DolibarrApi
 	 * @param   string  $original_file  Relative path with filename, relative to modulepart (for example: IN201701-999/IN201701-999.pdf)
 	 * @return  array                   List of documents
 	 *
-	 * @throws RestException 400
-	 * @throws RestException 401
-	 * @throws RestException 404
-	 *
 	 * @url GET /download
+	 *
+	 * @throws	RestException	400		Bad value for parameter modulepart or original_file
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	404		File not found
 	 */
 	public function index($modulepart, $original_file = '')
 	{
 		global $conf;
 
 		if (empty($modulepart)) {
-				throw new RestException(400, 'bad value for parameter modulepart');
+			throw new RestException(400, 'bad value for parameter modulepart');
 		}
 		if (empty($original_file)) {
 			throw new RestException(400, 'bad value for parameter original_file');
@@ -129,13 +129,14 @@ class Documents extends DolibarrApi
 	 * @param	string	$langcode		Language code like 'en_US', 'fr_FR', 'es_ES', ... (If not set, use the default language).
 	 * @return  array                   List of documents
 	 *
-	 * @throws RestException 500 System error
-	 * @throws RestException 501
-	 * @throws RestException 400
-	 * @throws RestException 401
-	 * @throws RestException 404
-	 *
 	 * @url PUT /builddoc
+	 *
+	 * @throws	RestException	400		Bad value for parameter modulepart or original_file
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	403		Generation not available for this modulepart
+	 * @throws	RestException	404		Invoice, Order, Proposal, Contract or Shipment not found
+	 * @throws	RestException	500		Error generating document
+	 * @throws	RestException	501		File not found
 	 */
 	public function builddoc($modulepart, $original_file = '', $doctemplate = '', $langcode = '')
 	{
@@ -296,12 +297,14 @@ class Documents extends DolibarrApi
 	 * @param	string	$sortorder		Sort order ('asc' or 'desc')
 	 * @return	array					Array of documents with path
 	 *
-	 * @throws RestException 400
-	 * @throws RestException 401
-	 * @throws RestException 404
-	 * @throws RestException 500 System error
-	 *
 	 * @url GET /
+	 *
+	 * @throws	RestException	400		Bad value for parameter modulepart, id or ref
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	403		Generation not available for this modulepart
+	 * @throws	RestException	404		Thirdparty, User, Member, Order, Invoice or Proposal not found
+	 * @throws	RestException	500		Error while fetching object
+	 * @throws	RestException	503		Error when retrieve ecm list
 	 */
 	public function getDocumentsListByElement($modulepart, $id = 0, $ref = '', $sortfield = '', $sortorder = '')
 	{
@@ -538,7 +541,7 @@ class Documents extends DolibarrApi
 			$upload_dir = $conf->categorie->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'category').$object->id."/photos/".dol_sanitizeFileName($object->ref);
 		} elseif ($modulepart == 'ecm') {
 			throw new RestException(500, 'Modulepart Ecm not implemented yet.');
-			// // require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
+			// require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
 			// if (!DolibarrApiAccess::$user->rights->ecm->read) {
 			// 	throw new RestException(401);
@@ -583,7 +586,7 @@ class Documents extends DolibarrApi
 			$objectType = $object->table_element;
 		}
 
-		$filearray = dol_dir_list($upload_dir, $type, $recursive, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+		$filearray = dol_dir_list($upload_dir, $type, $recursive, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 		if (empty($filearray)) {
 			throw new RestException(404, 'Search for modulepart '.$modulepart.' with Id '.$object->id.(!empty($object->ref) ? ' or Ref '.$object->ref : '').' does not return any document.');
 		} else {
@@ -633,7 +636,7 @@ class Documents extends DolibarrApi
 	 *
 	 * @param   string  $filename           	Name of file to create ('FA1705-0123.txt')
 	 * @param   string  $modulepart         	Name of module or area concerned by file upload ('product', 'service', 'invoice', 'proposal', 'project', 'project_task', 'supplier_invoice', 'expensereport', 'member', ...)
-	 * @param   string  $ref                	Reference of object (This will define subdir automatically and store submited file into it)
+	 * @param   string  $ref                	Reference of object (This will define subdir automatically and store submitted file into it)
 	 * @param   string  $subdir       			Subdirectory (Only if ref not provided)
 	 * @param   string  $filecontent        	File content (string with file content. An empty file will be created if this parameter is not provided)
 	 * @param   string  $fileencoding       	File encoding (''=no encoding, 'base64'=Base 64)
@@ -641,12 +644,12 @@ class Documents extends DolibarrApi
 	 * @param   int 	$createdirifnotexists  	Create subdirectories if the doesn't exists (1 by default)
 	 * @return  string
 	 *
-	 * @throws RestException 400
-	 * @throws RestException 401
-	 * @throws RestException 404
-	 * @throws RestException 500 System error
-	 *
 	 * @url POST /upload
+	 *
+	 * @throws	RestException	400		Bad Request
+	 * @throws	RestException	401		Access denied
+	 * @throws	RestException	404		Object not found
+	 * @throws	RestException	500		Error on file operationw
 	 */
 	public function post($filename, $modulepart, $ref = '', $subdir = '', $filecontent = '', $fileencoding = '', $overwriteifexists = 0, $createdirifnotexists = 1)
 	{
@@ -694,15 +697,15 @@ class Documents extends DolibarrApi
 				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 				$object = new FactureFournisseur($this->db);
 			} elseif ($modulepart == 'commande' || $modulepart == 'order') {
-					$modulepart = 'commande';
+				$modulepart = 'commande';
 
-					require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-					$object = new Commande($this->db);
+				require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+				$object = new Commande($this->db);
 			} elseif ($modulepart == 'commande_fournisseur' || $modulepart == 'supplier_order') {
-					$modulepart = 'supplier_order';
+				$modulepart = 'supplier_order';
 
-					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-					$object = new CommandeFournisseur($this->db);
+				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+				$object = new CommandeFournisseur($this->db);
 			} elseif ($modulepart == 'projet' || $modulepart == 'project') {
 				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 				$object = new Project($this->db);
@@ -822,7 +825,7 @@ class Documents extends DolibarrApi
 				if (!empty($tmp['error'])) {
 					throw new RestException(401, 'Error returned by dol_check_secure_access_document: '.$tmp['error']);
 				} else {
-					throw new RestException(500, 'This value of modulepart ('.$modulepart.') is not allowed with this value of subdir ('.$relativefile.')');
+					throw new RestException(400, 'This value of modulepart ('.$modulepart.') is not allowed with this value of subdir ('.$relativefile.')');
 				}
 			}
 		}
@@ -842,11 +845,11 @@ class Documents extends DolibarrApi
 		//var_dump($original_file);exit;
 
 		if (!dol_is_dir(dirname($destfile))) {
-			throw new RestException(401, 'Directory not exists : '.dirname($destfile));
+			throw new RestException(400, 'Directory does not exists : '.dirname($destfile));
 		}
 
 		if (!$overwriteifexists && dol_is_file($destfile)) {
-			throw new RestException(500, "File with name '".$original_file."' already exists.");
+			throw new RestException(400, "File with name '".$original_file."' already exists.");
 		}
 
 		// in case temporary directory admin/temp doesn't exist
@@ -870,7 +873,7 @@ class Documents extends DolibarrApi
 		// Security:
 		// If we need to make a virus scan
 		if (empty($disablevirusscan) && file_exists($src_file)) {
-			$checkvirusarray = dolCheckVirus($src_file);
+			$checkvirusarray = dolCheckVirus($src_file, $dest_file);
 			if (count($checkvirusarray)) {
 				dol_syslog('Files.lib::dol_move_uploaded_file File "'.$src_file.'" (target name "'.$dest_file.'") KO with antivirus: errors='.join(',', $checkvirusarray), LOG_WARNING);
 				throw new RestException(500, 'ErrorFileIsInfectedWithAVirus: '.join(',', $checkvirusarray));
@@ -928,11 +931,13 @@ class Documents extends DolibarrApi
 	 * @param   string  $original_file  Relative path with filename, relative to modulepart (for example: PRODUCT-REF-999/IMAGE-999.jpg)
 	 * @return  array                   List of documents
 	 *
-	 * @throws RestException 400
-	 * @throws RestException 401
-	 * @throws RestException 404
-	 *
 	 * @url DELETE /
+	 *
+	 * @throws	RestException	400  Bad value for parameter modulepart
+	 * @throws	RestException	400  Bad value for parameter original_file
+	 * @throws	RestException	401  Access denied
+	 * @throws	RestException	404  File not found
+	 * @throws	RestException	500  Error on file operation
 	 */
 	public function delete($modulepart, $original_file)
 	{

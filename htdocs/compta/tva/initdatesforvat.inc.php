@@ -23,7 +23,7 @@
 
 $now = dol_now();
 $current_date = dol_getdate($now);
-if (empty($conf->global->SOCIETE_FISCAL_MONTH_START)) {
+if (!getDolGlobalInt('SOCIETE_FISCAL_MONTH_START')) {
 	$conf->global->SOCIETE_FISCAL_MONTH_START = 1;
 }
 
@@ -46,7 +46,7 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 			$date_start = dol_get_first_day($year_start, GETPOST("month", 'int'), 'tzserver');
 			$date_end = dol_get_last_day($year_start, GETPOST("month", 'int'), 'tzserver');
 		} else {
-			if (empty($conf->global->MAIN_INFO_VAT_RETURN) || getDolGlobalInt('MAIN_INFO_VAT_RETURN') == 2) { // quaterly vat, we take last past complete quarter
+			if (!getDolGlobalString('MAIN_INFO_VAT_RETURN') || getDolGlobalInt('MAIN_INFO_VAT_RETURN') == 2) { // quaterly vat, we take last past complete quarter
 				$date_start = dol_time_plus_duree(dol_get_first_day($year_start, $current_date['mon'], false), -3 - (($current_date['mon'] - $conf->global->SOCIETE_FISCAL_MONTH_START) % 3), 'm');
 				$date_end = dol_time_plus_duree($date_start, 3, 'm') - 1;
 			} elseif (getDolGlobalInt('MAIN_INFO_VAT_RETURN') == 3) { // yearly vat

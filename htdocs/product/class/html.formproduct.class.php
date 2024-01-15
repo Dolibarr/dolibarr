@@ -18,7 +18,7 @@
 
 /**
  *	\file       htdocs/product/class/html.formproduct.class.php
- *	\brief      Fichier de la classe des fonctions predefinie de composants html
+ *	\brief      File for class with methods for building product related HTML components
  */
 
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
@@ -290,7 +290,7 @@ class FormProduct
 		dol_syslog(get_class($this)."::selectWarehouses $selected, $htmlname, $filterstatus, $empty, $disabled, $fk_product, $empty_label, $showstock, $forcecombo, $morecss", LOG_DEBUG);
 
 		$out = '';
-		if (empty($conf->global->ENTREPOT_EXTRA_STATUS)) {
+		if (!getDolGlobalString('ENTREPOT_EXTRA_STATUS')) {
 			$filterstatus = '';
 		}
 		if (!empty($fk_product) && $fk_product > 0) {
@@ -308,18 +308,18 @@ class FormProduct
 
 		if (strpos($htmlname, 'search_') !== 0) {
 			if (empty($user->fk_warehouse) || $user->fk_warehouse == -1) {
-				if (is_scalar($selected) && ($selected == '-2' || $selected == 'ifone') && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) {
-					$selected = $conf->global->MAIN_DEFAULT_WAREHOUSE;
+				if (is_scalar($selected) && ($selected == '-2' || $selected == 'ifone') && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE')) {
+					$selected = getDolGlobalString('MAIN_DEFAULT_WAREHOUSE');
 				}
 			} else {
-				if (is_scalar($selected) && ($selected == '-2' || $selected == 'ifone') && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) {
+				if (is_scalar($selected) && ($selected == '-2' || $selected == 'ifone') && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) {
 					$selected = $user->fk_warehouse;
 				}
 			}
 		}
 
 		$out .= '<select '.($multiselect ? 'multiple ' : '').'class="flat'.($morecss ? ' '.$morecss : '').'"'.($disabled ? ' disabled' : '');
-		$out .= ' id="'.$htmlname.'" name="'.($htmlname.($multiselect?'[]':'').($disabled ? '_disabled' : '')).'"';
+		$out .= ' id="'.$htmlname.'" name="'.($htmlname.($multiselect ? '[]' : '').($disabled ? '_disabled' : '')).'"';
 		//$out .= ' placeholder="todo"'; 	// placeholder for select2 must be added by setting the id+placeholder js param when calling select2
 		$out .= '>';
 		if ($empty) {
@@ -430,11 +430,11 @@ class FormProduct
 
 		if (strpos($htmlname, 'search_') !== 0) {
 			if (empty($user->fk_workstation) || $user->fk_workstation == -1) {
-				if (($selected == '-2' || $selected == 'ifone') && !empty($conf->global->MAIN_DEFAULT_WORKSTATION)) {
-					$selected = $conf->global->MAIN_DEFAULT_WORKSTATION;
+				if (($selected == '-2' || $selected == 'ifone') && getDolGlobalString('MAIN_DEFAULT_WORKSTATION')) {
+					$selected = getDolGlobalString('MAIN_DEFAULT_WORKSTATION');
 				}
 			} else {
-				if (($selected == '-2' || $selected == 'ifone') && !empty($conf->global->MAIN_DEFAULT_WORKSTATION)) {
+				if (($selected == '-2' || $selected == 'ifone') && getDolGlobalString('MAIN_DEFAULT_WORKSTATION')) {
 					$selected = $user->fk_workstation;
 				}
 			}
@@ -524,7 +524,7 @@ class FormProduct
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Output a combo box with list of units
-	 *  pour l'instant on ne definit pas les unites dans la base
+	 *  Currently the units are not define in the DB
 	 *
 	 *  @param	string		$name               Name of HTML field
 	 *  @param	string		$measuring_style    Unit to show: weight, size, surface, volume, time

@@ -92,7 +92,7 @@ class FormProjets extends Form
 
 		$out = '';
 
-		if (!empty($conf->use_javascript_ajax) && !empty($conf->global->PROJECT_USE_SEARCH_TO_SELECT)) {
+		if (!empty($conf->use_javascript_ajax) && getDolGlobalString('PROJECT_USE_SEARCH_TO_SELECT')) {
 			$placeholder = '';
 
 			if ($selected && empty($selected_input_value)) {
@@ -163,7 +163,7 @@ class FormProjets extends Form
 		$outarray = array();
 
 		$hideunselectables = false;
-		if (!empty($conf->global->PROJECT_HIDE_UNSELECTABLES)) {
+		if (getDolGlobalString('PROJECT_HIDE_UNSELECTABLES')) {
 			$hideunselectables = true;
 		}
 
@@ -184,9 +184,9 @@ class FormProjets extends Form
 			$sql .= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
 		}
 		if ($socid > 0) {
-			if (empty($conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY)) {
+			if (!getDolGlobalString('PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY')) {
 				$sql .= " AND (p.fk_soc=" . ((int) $socid) . " OR p.fk_soc IS NULL)";
-			} elseif ($conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY != 'all') {    // PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY is 'all' or a list of ids separated by coma.
+			} elseif (getDolGlobalString('PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY') != 'all') {    // PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY is 'all' or a list of ids separated by coma.
 				$sql .= " AND (p.fk_soc IN (" . $this->db->sanitize(((int) $socid) . ", " . getDolGlobalString('PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY')) . ") OR p.fk_soc IS NULL)";
 			}
 		}
@@ -247,7 +247,7 @@ class FormProjets extends Form
 								$disabled = 1;
 							}
 							$labeltoshow .= ' - ' . $langs->trans("Closed");
-						} elseif (empty($conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY) && $socid > 0 && (!empty($obj->fk_soc) && $obj->fk_soc != $socid)) {
+						} elseif (!getDolGlobalString('PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY') && $socid > 0 && (!empty($obj->fk_soc) && $obj->fk_soc != $socid)) {
 							$disabled = 1;
 							$labeltoshow .= ' - ' . $langs->trans("LinkedToAnotherCompany");
 						}
@@ -347,7 +347,7 @@ class FormProjets extends Form
 		$out = '';
 
 		$hideunselectables = false;
-		if (!empty($conf->global->PROJECT_HIDE_UNSELECTABLES)) {
+		if (getDolGlobalString('PROJECT_HIDE_UNSELECTABLES')) {
 			$hideunselectables = true;
 		}
 
@@ -537,7 +537,9 @@ class FormProjets extends Form
 		}
 
 		$linkedtothirdparty = false;
-		if (!in_array($table_element, array(
+		if (!in_array(
+			$table_element,
+			array(
 				'don',
 				'expensereport_det',
 				'expensereport', 'loan',
@@ -758,7 +760,7 @@ class FormProjets extends Form
 	}
 
 	/**
-	 *  Return combo list of differents status of a orders
+	 *  Return combo list of different statuses of orders
 	 *
 	 *  @param	string	$selected   Preselected value
 	 *  @param	int		$short		Use short labels

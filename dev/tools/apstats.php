@@ -19,7 +19,7 @@
 
 /**
  * \file    dev/tools/apstats.php
- * \brief   Script to report Advanced Statistics on a coding project
+ * \brief   Script to report Advanced Statistics on a coding PHP project
  */
 
 
@@ -34,9 +34,11 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 	exit();
 }
 
-error_reporting(E_ALL & ~ E_DEPRECATED);
+error_reporting(E_ALL & ~E_DEPRECATED);
 define('PRODUCT', "apstats");
 define('VERSION', "1.0");
+
+$phpstanlevel = 3;
 
 
 print '***** '.constant('PRODUCT').' - '.constant('VERSION').' *****'."\n";
@@ -51,7 +53,7 @@ $outputpath = $argv[1];
 $outputdir = dirname($outputpath);
 $outputfile = basename($outputpath);
 
-if (! is_dir($outputdir)) {
+if (!is_dir($outputdir)) {
 	print 'Error: dir '.$outputdir.' does not exists or is not writable'."\n";
 	exit(1);
 }
@@ -71,6 +73,7 @@ while ($i < $argc) {
 	$i++;
 }
 
+$timestart = time();
 
 // Count lines of code of Dolibarr itself
 /*
@@ -85,8 +88,12 @@ $resexec = shell_exec($commandcheck);
 $resexec = (int) (empty($resexec) ? 0 : trim($resexec));
 */
 
+// Retrieve the .git information
+$urlgit = 'https://github.com/Dolibarr/dolibarr/blob/develop/';
+
+
 // Count lines of code of application
-$commandcheck = ($dirscc ? $dirscc.'/' : '').'scc . --exclude-dir=includes,custom';
+$commandcheck = ($dirscc ? $dirscc.'/' : '').'scc . --exclude-dir=htdocs/includes,htdocs/custom,htdocs/theme/common/fontawesome-5,htdocs/theme/common/octicons';
 print 'Execute SCC to count lines of code in project: '.$commandcheck."\n";
 $output_arrproj = array();
 $resexecproj = 0;
@@ -94,7 +101,7 @@ exec($commandcheck, $output_arrproj, $resexecproj);
 
 
 // Count lines of code of dependencies
-$commandcheck = ($dirscc ? $dirscc.'/' : '').'scc htdocs/includes';
+$commandcheck = ($dirscc ? $dirscc.'/' : '').'scc htdocs/includes htdocs/theme/common/fontawesome-5 htdocs/theme/common/octicons';
 print 'Execute SCC to count lines of code in dependencies: '.$commandcheck."\n";
 $output_arrdep = array();
 $resexecdep = 0;
@@ -102,17 +109,27 @@ exec($commandcheck, $output_arrdep, $resexecdep);
 
 
 // Get technical debt
-$commandcheck = ($dirphpstan ? $dirphpstan.'/' : '').'phpstan -v analyze -a build/phpstan/bootstrap.php --memory-limit 5G --error-format=github';
+$commandcheck = ($dirphpstan ? $dirphpstan.'/' : '').'phpstan --level='.$phpstanlevel.' -v analyze -a build/phpstan/bootstrap.php --memory-limit 5G --error-format=github';
 print 'Execute PHPStan to get the technical debt: '.$commandcheck."\n";
 $output_arrtd = array();
 $resexectd = 0;
 exec($commandcheck, $output_arrtd, $resexectd);
 
+
+// Count lines of code of dependencies
+$commandcheck = "git log --shortstat --no-renames --no-merges --use-mailmap --pretty='format:%cI;%H;%aN;%ae;%ce'";	// --since=  --until=...
+print 'Execute git log to count number of commits by day: '.$commandcheck."\n";
+$output_arrglpu = array();
+$resexecglpu = 0;
+//exec($commandcheck, $output_arrglpu, $resexecglpu);
+
+
+
 $arrayoflineofcode = array();
 $arraycocomo = array();
 $arrayofmetrics = array(
-	'proj'=>array('Bytes'=>0, 'Files'=>0, 'Lines'=>0, 'Blanks'=>0, 'Comments'=>0, 'Code'=>0, 'Complexity'=>0),
-	'dep'=>array('Bytes'=>0, 'Files'=>0, 'Lines'=>0, 'Blanks'=>0, 'Comments'=>0, 'Code'=>0, 'Complexity'=>0)
+	'proj' => array('Bytes' => 0, 'Files' => 0, 'Lines' => 0, 'Blanks' => 0, 'Comments' => 0, 'Code' => 0, 'Complexity' => 0),
+	'dep' => array('Bytes' => 0, 'Files' => 0, 'Lines' => 0, 'Blanks' => 0, 'Comments' => 0, 'Code' => 0, 'Complexity' => 0)
 );
 
 // Analyse $output_arrproj
@@ -169,6 +186,17 @@ foreach (array('proj', 'dep') as $source) {
 	}
 }
 
+// Search the max
+$arrayofmax = array('Lines'=>0);
+foreach (array('proj', 'dep') as $source) {
+	foreach ($arrayoflineofcode[$source] as $val) {
+		$arrayofmax['Lines'] = max($arrayofmax['Lines'], $val['Lines']);
+	}
+}
+
+
+$timeend = time();
+
 
 /*
  * View
@@ -176,6 +204,7 @@ foreach (array('proj', 'dep') as $source) {
 
 $html = '<html>'."\n";
 $html .= '<meta charset="utf-8">'."\n";
+$html .= '<meta http-equiv="refresh" content="300">'."\n";
 $html .= '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";
 $html .= '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css" integrity="sha512-q3eWabyZPc1XTCmF+8/LuE1ozpg5xxn7iO89yfSOd5/oKvyqLngoNGsx8jq92Y8eXJ/IRxQbEC+FGSYxtk2oiw==" crossorigin="anonymous" referrerpolicy="no-referrer" />'."\n";
 $html .= '<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>'."\n";
@@ -223,7 +252,7 @@ th,td {
 .nowrap {
 	white-space: nowrap;
 }
-.opacity {
+.opacitymedium {
 	opacity: 0.5;
 }
 .centpercent {
@@ -233,10 +262,11 @@ th,td {
 	display: none;
 }
 .trgroup {
-	background-color: #EEE;
+	border-bottom: 1px solid #aaa;
 }
 .seedetail {
 	color: #000088;
+	cursor: pointer;
 }
 .box {
 	padding: 20px;
@@ -249,6 +279,14 @@ th,td {
     display: inline-block;
 	text-align: center;
 	margin-left: 10px;
+}
+.boxallwidth {
+    border-radius: 9px;
+    border-color: #000;
+    border-width: 2px;
+    padding: 5px;
+    border-style: solid;
+	background-color: #f8f8f8;
 }
 .back1 {
 	background-color: #884466;
@@ -272,8 +310,23 @@ div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive
     overflow-x: auto;
     min-height: 0.01%;
 }
-
-
+.list_technical_debt {
+	/* font-size: smaller */
+}
+.pictofixedwidth {
+	font-size: smaller;
+    width: 28px;
+    vertical-align: middle;
+}
+.bargraph {
+	background-color: #358;
+}
+.small {
+	font-size: smaller;
+}
+.fr {
+	float: right;
+}
 /* Force values for small screen 767 */
 @media only screen and (max-width: 767px)
 {
@@ -289,42 +342,51 @@ div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive
 
 $html .= '<body>'."\n";
 
+
+// Header
+
 $html .= '<header>'."\n";
 $html .= '<h1>Advanced Project Statistics</h1>'."\n";
 $currentDate = date("Y-m-d H:i:s"); // Format: Year-Month-Day Hour:Minute:Second
-$html .= '<span class="opacity">Generated on '.$currentDate.'</span>'."\n";
+$html .= '<span class="opacitymedium">Generated on '.$currentDate.' in '.($timeend - $timestart).' seconds</span>'."\n";
 $html .= '</header>'."\n";
 
-$html .= '<section class="chapter">'."\n";
-$html .= '<h2>Lines of code</h2>'."\n";
+
+// Lines of code
+
+$html .= '<section class="chapter" id="linesofcode">'."\n";
+$html .= '<h2><span class="fas fa-code pictofixedwidth"></span>Lines of code</h2>'."\n";
 
 $html .= '<div class="div-table-responsive">'."\n";
+$html .= '<div class="boxallwidth">'."\n";
 $html .= '<table class="centpercent">';
 $html .= '<tr class="loc">';
-$html .= '<th class="left">Language</td>';
+$html .= '<th class="left">Language</th>';
 $html .= '<th class="right">Bytes</th>';
 $html .= '<th class="right">Files</th>';
 $html .= '<th class="right">Lines</th>';
+$html .= '<th></th>';
 $html .= '<th class="right">Blanks</th>';
 $html .= '<th class="right">Comments</th>';
 $html .= '<th class="right">Code</th>';
 //$html .= '<td class="right">'.$val['Complexity'].'</td>';
-$html .= '</th>';
+$html .= '</tr>';
 foreach (array('proj', 'dep') as $source) {
 	$html .= '<tr class="trgroup" id="source'.$source.'">';
 	if ($source == 'proj') {
-		$html .= '<td>All files from project only';
+		$html .= '<td>All files without dependencies';
 	} elseif ($source == 'dep') {
-		$html .= '<td>All files from dependencies';
+		$html .= '<td>All files of dependencies only';
 	}
-	$html .= ' &nbsp; &nbsp; <span class="seedetail" data-source="'.$source.'">(See detail per file type...)</span>';
+	$html .= ' &nbsp; &nbsp; <div class="seedetail fr" data-source="'.$source.'"><span class="fas fa-chart-bar pictofixedwidth"></span>See detail per file type...</span>';
 	$html .= '<td class="right">'.formatNumber($arrayofmetrics[$source]['Bytes']).'</td>';
 	$html .= '<td class="right">'.formatNumber($arrayofmetrics[$source]['Files']).'</td>';
 	$html .= '<td class="right">'.formatNumber($arrayofmetrics[$source]['Lines']).'</td>';
+	$html .= '<td></td>';
 	$html .= '<td class="right">'.formatNumber($arrayofmetrics[$source]['Blanks']).'</td>';
 	$html .= '<td class="right">'.formatNumber($arrayofmetrics[$source]['Comments']).'</td>';
 	$html .= '<td class="right">'.formatNumber($arrayofmetrics[$source]['Code']).'</td>';
-	$html .= '<td></td>';
+	//$html .= '<td></td>';
 	$html .= '</tr>';
 	if (!empty($arrayoflineofcode[$source])) {
 		foreach ($arrayoflineofcode[$source] as $key => $val) {
@@ -333,75 +395,154 @@ foreach (array('proj', 'dep') as $source) {
 			$html .= '<td class="right"></td>';
 			$html .= '<td class="right nowrap">'.(empty($val['Files']) ? '' : formatNumber($val['Files'])).'</td>';
 			$html .= '<td class="right nowrap">'.(empty($val['Lines']) ? '' : formatNumber($val['Lines'])).'</td>';
+			$html .= '<td class="nowrap">';
+			$percent = $val['Lines'] / $arrayofmax['Lines'];
+			$widthbar = round(200 * $percent);
+			$html .= '<div class="bargraph" style="width: '.max(1, $widthbar).'px">&nbsp;</div>';
+			$html .= '</td>';
 			$html .= '<td class="right nowrap">'.(empty($val['Blanks']) ? '' : formatNumber($val['Blanks'])).'</td>';
 			$html .= '<td class="right nowrap">'.(empty($val['Comments']) ? '' : formatNumber($val['Comments'])).'</td>';
 			$html .= '<td class="right nowrap">'.(empty($val['Code']) ? '' : formatNumber($val['Code'])).'</td>';
 			//$html .= '<td class="right">'.(empty($val['Complexity']) ? '' : $val['Complexity']).'</td>';
-			$html .= '<td class="nowrap">TODO graph here...</td>';
+			/*$html .= '<td class="nowrap">';
+			$html .= '';
+			$html .= '</td>';
+			*/
 			$html .= '</tr>';
 		}
 	}
 }
 
-$html .= '<tr class="trgroup">';
+$html .= '<tr class="trgrouptotal">';
 $html .= '<td class="left">Total</td>';
 $html .= '<td class="right nowrap">'.formatNumber($arrayofmetrics['proj']['Bytes'] + $arrayofmetrics['dep']['Bytes']).'</td>';
 $html .= '<td class="right nowrap">'.formatNumber($arrayofmetrics['proj']['Files'] + $arrayofmetrics['dep']['Files']).'</td>';
 $html .= '<td class="right nowrap">'.formatNumber($arrayofmetrics['proj']['Lines'] + $arrayofmetrics['dep']['Lines']).'</td>';
+$html .= '<td></td>';
 $html .= '<td class="right nowrap">'.formatNumber($arrayofmetrics['proj']['Blanks'] + $arrayofmetrics['dep']['Blanks']).'</td>';
 $html .= '<td class="right nowrap">'.formatNumber($arrayofmetrics['proj']['Comments'] + $arrayofmetrics['dep']['Comments']).'</td>';
 $html .= '<td class="right nowrap">'.formatNumber($arrayofmetrics['proj']['Code'] + $arrayofmetrics['dep']['Code']).'</td>';
 //$html .= '<td>'.$arrayofmetrics['Complexity'].'</td>';
-$html .= '<td></td>';
+//$html .= '<td></td>';
 $html .= '</tr>';
 $html .= '</table>';
 $html .= '</div>';
+$html .= '</div>';
 
 $html .= '</section>'."\n";
 
-$html .= '<section class="chapter">'."\n";
-$html .= '<h2>Project value</h2><br>'."\n";
+
+// Contributions
+
+$html .= '<section class="chapter" id="projectvalue">'."\n";
+$html .= '<h2><span class="fas fa-tasks pictofixedwidth"></span>Contributions</h2>'."\n";
+
+$html .= '<div class="boxallwidth">'."\n";
+
+$html .= 'TODO...';
+
+$html .= '<!-- ';
+foreach ($output_arrglpu as $line) {
+	$html .= $line."\n";
+}
+$html .= ' -->';
+
+$html .= '</div>';
+
+$html .= '</section>'."\n";
+
+
+// Contributors
+
+$html .= '<section class="chapter" id="projectvalue">'."\n";
+$html .= '<h2><span class="fas fa-user pictofixedwidth"></span>Contributors</h2>'."\n";
+
+$html .= '<div class="boxallwidth">'."\n";
+
+$html .= 'TODO...';
+
+$html .= '</div>';
+
+$html .= '</section>'."\n";
+
+
+// Project value
+
+$html .= '<section class="chapter" id="projectvalue">'."\n";
+$html .= '<h2><span class="fas fa-dollar-sign pictofixedwidth"></span>Project value</h2>'."\n";
+
+$html .= '<div class="boxallwidth">'."\n";
 $html .= '<div class="box inline-box back1">';
-$html .= 'COCOMO (Basic organic model) value:<br>';
+$html .= 'COCOMO value<br><span class="small opacitymedium">(Basic organic model)</span><br>';
 $html .= '<b>$'.formatNumber((empty($arraycocomo['proj']['currency']) ? 0 : $arraycocomo['proj']['currency']) + (empty($arraycocomo['dep']['currency']) ? 0 : $arraycocomo['dep']['currency']), 2).'</b>';
 $html .= '</div>';
 $html .= '<div class="box inline-box back2">';
-$html .= 'COCOMO (Basic organic model) effort<br>';
+$html .= 'COCOMO effort<br><span class="small opacitymedium">(Basic organic model)</span><br>';
 $html .= '<b>'.formatNumber($arraycocomo['proj']['people'] * $arraycocomo['proj']['effort'] + $arraycocomo['dep']['people'] * $arraycocomo['dep']['effort']);
-$html .= ' monthes people</b><br>';
+$html .= ' months people</b>';
+$html .= '</div>';
+$html .= '</div>';
+
 $html .= '</section>'."\n";
 
-$html .= '<section class="chapter">'."\n";
-$html .= '<h2>Technical debt ('.count($output_arrtd).')</h2><br>'."\n";
-$html .= '<div class="div-table-responsive">'."\n";
-$html .= '<table class="list_technical_debt">'."\n";
-$html .= '<tr><td>File</td><td>Line</td><td>Type</td></tr>'."\n";
+$tmp = '';
+$nblines = 0;
 foreach ($output_arrtd as $line) {
 	$reg = array();
 	//print $line."\n";
 	preg_match('/^::error file=(.*),line=(\d+),col=(\d+)::(.*)$/', $line, $reg);
 	if (!empty($reg[1])) {
-		$html .= '<tr><td>'.$reg[1].'</td><td>'.$reg[2].'</td><td>'.$reg[4].'</td></tr>'."\n";
+		if ($nblines < 20) {
+			$tmp .= '<tr class="nohidden">';
+		} else {
+			$tmp .= '<tr class="hidden sourcephpstan">';
+		}
+		$tmp .= '<td>'.$reg[1].'</td>';
+		$tmp .= '<td class="">';
+		$tmp .= '<a href="'.$urlgit.$reg[1].'#L'.$reg[2].'" target="_blank">'.$reg[2].'</a>';
+		$tmp .= '</td>';
+		$tmp .= '<td>'.$reg[4].'</td>';
+		$tmp .= '</tr>'."\n";
+		$nblines++;
 	}
 }
+
+
+// Technical debt
+
+$html .= '<section class="chapter" id="technicaldebt">'."\n";
+$html .= '<h2><span class="fas fa-book-dead pictofixedwidth"></span>Technical debt <span class="opacitymedium">(PHPStan level '.$phpstanlevel.' -> '.$nblines.' warnings)</span></h2>'."\n";
+
+$html .= '<div class="div-table-responsive">'."\n";
+$html .= '<div class="boxallwidth">'."\n";
+$html .= '<table class="list_technical_debt centpercent">'."\n";
+$html .= '<tr class="trgroup"><td>File</td><td>Line</td><td>Type</td></tr>'."\n";
+$html .= $tmp;
+$html .= '<tr class="sourcephpstan"><td colspan="3"><span class="seedetail" data-source="phpstan" id="sourcephpstan">Show all...</span></td></tr>';
 $html .= '</table>';
 $html .= '</div>';
+$html .= '</div>';
+
 $html .= '</section>'."\n";
+
+
+// JS code
 
 $html .= '
 <script>
 $(document).ready(function() {
-$( ".seedetail" ).on( "click", function() {
+$(".seedetail").on("click", function() {
 	var source = $(this).attr("data-source");
-  	console.log("Click on "+source);
+  	console.log("Click on "+source+" so we show class .source"+source);
 	jQuery(".source"+source).toggle();
 } );
 });
 </script>
 ';
-$html .= '</boby>';
+$html .= '</body>';
 $html .= '</html>';
 
+// Output report into a HTML file
 $fh = fopen($outputpath, 'w');
 if ($fh) {
 	fwrite($fh, $html);
@@ -409,7 +550,7 @@ if ($fh) {
 
 	print 'Generation of output file '.$outputfile.' done.'."\n";
 } else {
-	print 'Failed to open '.$outputfile.' for ouput.'."\n";
+	print 'Failed to open '.$outputfile.' for output.'."\n";
 }
 
 
@@ -418,7 +559,7 @@ if ($fh) {
  *
  * @param	string|int		$number			Number to format
  * @param	int				$nbdec			Number of decimal digits
- * @return	string							Formated string
+ * @return	string							Formatted string
  */
 function formatNumber($number, $nbdec = 0)
 {

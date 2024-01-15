@@ -1,6 +1,13 @@
 parameters:
+	tmpDir: ./.github/tmp
+	parallel:
+		jobSize: 20
+		processTimeout: 600.0
+		maximumNumberOfProcesses: 8
+		minimumNumberOfJobsPerProcess: 2
+		buffer: 134217728 # 128 MB
 	customRulesetUsed: true
-	level: 0
+	level: 2
 	fileExtensions:
 		- php
 	paths:
@@ -8,15 +15,12 @@ parameters:
 	    - scripts
 	excludePaths:
 		analyseAndScan:
-		- htdocs/custom
-		- htdocs/dev/*
-		- htdocs/doc/*
+		- htdocs/custom/*
 		- htdocs/documents/*
 		- htdocs/install/doctemplates/*
 		- htdocs/langs/*
 		- htdocs/modulebuilder/template/test/*
 		- htdocs/support/*
-		- htdocs/test/*
 		analyse:
 		- htdocs/includes/*
 	checkAlwaysTrueCheckTypeFunctionCall: false
@@ -24,14 +28,13 @@ parameters:
 	checkAlwaysTrueStrictComparison: false
 	checkClassCaseSensitivity: false
 	checkFunctionArgumentTypes: false
-	checkFunctionNameCase: false
+	checkFunctionNameCase: true
 	checkArgumentsPassedByReference: false
 	checkMaybeUndefinedVariables: false
 	checkNullables: false
 	checkThisOnly: true
 	checkUnionTypes: false
 	checkExplicitMixedMissingReturn: false
-	checkPhpDocMissingReturn: false
 	reportMaybes: false
 	reportMaybesInMethodSignatures: false
 	reportStaticMethodSignatures: false
@@ -40,30 +43,16 @@ parameters:
 	reportMagicMethods: false
 	reportMagicProperties: false
 	ignoreErrors:
-		- '#Undefined variable: \$langs#'
-		- '#Undefined variable: \$user#'
-		- '#Undefined variable: \$db#'
-		- '#Undefined variable: \$conf#'
-		- '#Undefined variable: \$hookmanager#'
-		- '#Undefined variable: \$mysoc#'
-		- '#Undefined variable: \$error#'
-		- '#Undefined variable: \$errors#'
-		- '#Undefined variable: \$form#'
 		- '#Result of function fieldList#'
 		- '#Caught class Stripe#'
-		- '#Function llxHeader invoked with#'
-		- '#Function llxHeaderVierge invoked with#'
-		- '#If condition is always true#'
+		- '#Function llx.* invoked with#'
 		- '#always exists and is not falsy#'
-		- '#has no return type specified#'
-		- '#is always true#'
 		- '#is always fal#'
 		- '#always exists and is not nullable#'
-		- '#PHPDoc tag @return has invalid value#'
-		- '#type has no value type specified in iterable type array#'
-		- '#with no value type specified in iterable type array#'
-		- '#Empty array passed to foreach#'
-		- '#in isset\(\) is not nullable#'
+		- '#(\$force_dolibarr_lib|\$dolibarr_main_db).*in empty\(\) is never defined.#'
+		- '#Sprain\\SwissQrBill\\#'
+		- '#Constructor of class .* has an unused parameter #'
+		- '#Default value of the parameter#'
 	internalErrorsCountLimit: 50
 	cache:
 	    nodesByFileCountMax: 512

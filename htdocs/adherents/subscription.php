@@ -6,6 +6,7 @@
  * Copyright (C) 2015-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
+ * Copyright (C) 2023		Waël Almoman			<info@almoman.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +54,7 @@ $typeid = GETPOST('typeid', 'int');
 $cancel = GETPOST('cancel');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -207,7 +208,7 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'subscripti
 	$result = $object->fetch($rowid);
 	$result = $adht->fetch($object->typeid);
 
-	// Subscription informations
+	// Subscription information
 	$datesubscription = 0;
 	$datesubend = 0;
 	$defaultdelay = !empty($adht->duration_value) ? $adht->duration_value : 1;
@@ -225,7 +226,7 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'subscripti
 	$amount = price2num(GETPOST("subscription", 'alpha')); // Amount of subscription
 	$label = GETPOST("label");
 
-	// Payment informations
+	// Payment information
 	$accountid = GETPOST("accountid", 'int');
 	$operation = GETPOST("operation", "alphanohtml"); // Payment mode
 	$num_chq = GETPOST("num_chq", "alphanohtml");
@@ -372,7 +373,7 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'subscripti
 
 					// Get email content from template
 					$arraydefaultmessage = null;
-					$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION;
+					$labeltouse = getDolGlobalString('ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION');
 
 					if (!empty($labeltouse)) {
 						$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
@@ -868,7 +869,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 	print "\n\n<!-- Form add subscription -->\n";
 
 	if ($conf->use_javascript_ajax) {
-		//var_dump($bankdirect.'-'.$bankviainvoice.'-'.$invoiceonly.'-'.empty($conf->global->ADHERENT_BANK_USE));
+		//var_dump($bankdirect.'-'.$bankviainvoice.'-'.$invoiceonly);
 		print "\n".'<script type="text/javascript">';
 		print '$(document).ready(function () {
 					$(".bankswitchclass, .bankswitchclass2").'.(($bankdirect || $bankviainvoice) ? 'show()' : 'hide()').';
@@ -960,8 +961,6 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 	print '<table class="border centpercent">'."\n";
 	print '<tbody>';
 
-	$now = dol_now();
-
 	// Date payment
 	if (GETPOST('paymentyear') && GETPOST('paymentmonth') && GETPOST('paymentday')) {
 		$paymentdate = dol_mktime(0, 0, 0, GETPOST('paymentmonth'), GETPOST('paymentday'), GETPOST('paymentyear'));
@@ -977,10 +976,16 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 	}
 	if (!$datefrom) {
 		$datefrom = $object->datevalid;
-		if ($object->datefin > 0 && dol_time_plus_duree($object->datefin, $defaultdelay, $defaultdelayunit) > dol_now()) {
+		if (getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER')) {
+			$datefrom = dol_time_plus_duree($now, (int) substr(getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER'), 0, -1), substr(getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER'), -1));
+		} elseif ($object->datefin > 0 && dol_time_plus_duree($object->datefin, $defaultdelay, $defaultdelayunit) > $now) {
 			$datefrom = dol_time_plus_duree($object->datefin, 1, 'd');
-		} else {
-			$datefrom = dol_get_first_day($currentyear);
+		}
+
+		if (getDolGlobalString('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF') === "m") {
+			$datefrom = dol_get_first_day(dol_print_date($datefrom, "%Y"), dol_print_date($datefrom, "%m"));
+		} elseif (getDolGlobalString('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF') === "Y") {
+			$datefrom = dol_get_first_day(dol_print_date($datefrom, "%Y"));
 		}
 	}
 	print $form->selectDate($datefrom, '', '', '', '', "subscription", 1, 1);
@@ -1029,7 +1034,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 
 			print '<input type="radio" class="moreaction" id="none" name="paymentsave" value="none"'.(empty($bankdirect) && empty($invoiceonly) && empty($bankviainvoice) ? ' checked' : '').'>';
 			print '<label for="none"> '.$langs->trans("None").'</label><br>';
-			// Add entry into bank accoun
+			// Add entry into bank account
 			if (isModEnabled('banque')) {
 				print '<input type="radio" class="moreaction" id="bankdirect" name="paymentsave" value="bankdirect"'.(!empty($bankdirect) ? ' checked' : '');
 				print '><label for="bankdirect">  '.$langs->trans("MoreActionBankDirect").'</label><br>';
@@ -1051,12 +1056,12 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 					print $langs->trans("CreateDolibarrThirdParty");
 					print '</a>)';
 				}
-				if (!getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS') || $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS != 'defaultforfoundationcountry') {
+				if (!getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS') || getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS') != 'defaultforfoundationcountry') {
 					print '. <span class="opacitymedium">'.$langs->trans("NoVatOnSubscription", 0).'</span>';
 				}
 				if (getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') && (isModEnabled('product') || isModEnabled('service'))) {
 					$prodtmp = new Product($db);
-					$result = $prodtmp->fetch($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
+					$result = $prodtmp->fetch(getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS'));
 					if ($result < 0) {
 						setEventMessage($prodtmp->error, 'errors');
 					}
@@ -1081,12 +1086,12 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 					print $langs->trans("CreateDolibarrThirdParty");
 					print '</a>)';
 				}
-				if (!getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS') || $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS != 'defaultforfoundationcountry') {
+				if (!getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS') || getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS') != 'defaultforfoundationcountry') {
 					print '. <span class="opacitymedium">'.$langs->trans("NoVatOnSubscription", 0).'</span>';
 				}
 				if (getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') && (isModEnabled('product')|| isModEnabled('service'))) {
 					$prodtmp = new Product($db);
-					$result = $prodtmp->fetch($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
+					$result = $prodtmp->fetch(getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS'));
 					if ($result < 0) {
 						setEventMessage($prodtmp->error, 'errors');
 					}
@@ -1153,7 +1158,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 		$outputlangs->loadLangs(array("main", "members"));
 		// Get email content from template
 		$arraydefaultmessage = null;
-		$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION;
+		$labeltouse = getDolGlobalString('ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION');
 
 		if (!empty($labeltouse)) {
 			$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);

@@ -411,7 +411,7 @@ class doc_generic_task_odt extends ModelePDFTask
 
 		// Scan directories
 		$nbofiles = count($listoffiles);
-		if (!empty($conf->global->PROJECT_TASK_ADDON_PDF_ODT_PATH)) {
+		if (getDolGlobalString('PROJECT_TASK_ADDON_PDF_ODT_PATH')) {
 			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>';
 			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
 			$texte .= $nbofiles;
@@ -586,8 +586,7 @@ class doc_generic_task_odt extends ModelePDFTask
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}
-						} else // Text
-						{
+						} else { // Text
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
 					} catch (OdfException $e) {
@@ -658,7 +657,7 @@ class doc_generic_task_odt extends ModelePDFTask
 						$odfHandler->mergeSegment($listlinestaskres);
 					}
 
-					// Time ressources
+					// Time resources
 					$sql = "SELECT t.rowid, t.element_date as task_date, t.element_duration as task_duration, t.fk_user, t.note";
 					$sql .= ", u.lastname, u.firstname";
 					$sql .= " FROM ".MAIN_DB_PREFIX."element_time as t";
@@ -823,7 +822,7 @@ class doc_generic_task_odt extends ModelePDFTask
 
 
 				// Write new file
-				if (!empty($conf->global->MAIN_ODT_AS_PDF)) {
+				if (getDolGlobalString('MAIN_ODT_AS_PDF')) {
 					try {
 						$odfHandler->exportAsAttachedPDF($file);
 					} catch (Exception $e) {

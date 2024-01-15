@@ -20,13 +20,13 @@
 /**
  *       \file       htdocs/expensereport/class/expensereportstats.class.php
  *       \ingroup    expensereport
- *       \brief      Fichier de la classe de gestion des stats des expensereport et notes de frais
+ *       \brief      File of lass to manage the statistics of the expensereports et expense notes
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/stats.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
 /**
- *  Classe permettant la gestion des stats des expensereports et notes de frais
+ *  Class to manage the statistics of the expensereports and expense notes
  */
 class ExpenseReportStats extends Stats
 {
@@ -75,7 +75,7 @@ class ExpenseReportStats extends Stats
 		}
 
 		// Only me and subordinates
-		if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)) {
+		if (!$user->hasRight('expensereport', 'readall') && !$user->hasRight('expensereport', 'lire_tous')) {
 			$childids = $user->getAllChildIds();
 			$childids[] = $user->id;
 			$this->where .= " AND e.fk_user_author IN (".$this->db->sanitize(join(',', $childids)).")";

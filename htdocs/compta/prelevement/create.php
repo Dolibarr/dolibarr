@@ -46,7 +46,7 @@ $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies', 'bill
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
-$mode = GETPOST('mode', 'alpha') ?GETPOST('mode', 'alpha') : 'real';
+$mode = GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : 'real';
 
 $type = GETPOST('type', 'aZ09');
 $sourcetype = GETPOST('sourcetype', 'aZ09');
@@ -54,7 +54,7 @@ $format = GETPOST('format', 'aZ09');
 $id_bankaccount = GETPOST('id_bankaccount', 'int');
 $executiondate = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -111,7 +111,7 @@ if (empty($reshook)) {
 	*/
 	if ($action == 'create' && $permissiontocreate) {
 		$default_account = ($type == 'bank-transfer' ? 'PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT' : 'PRELEVEMENT_ID_BANKACCOUNT');
-		//var_dump($default_account);var_dump($conf->global->$default_account);var_dump($id_bankaccount);exit;
+		//var_dump($default_account);var_dump(getDolGlobalString($default_account));var_dump($id_bankaccount);exit;
 
 		if ($id_bankaccount != getDolGlobalInt($default_account)) {
 			$res = dolibarr_set_const($db, $default_account, $id_bankaccount, 'chaine', 0, '', $conf->entity); // Set as default
@@ -406,7 +406,7 @@ if ($sourcetype != 'salary') {
 	$sql .= " ".MAIN_DB_PREFIX."prelevement_demande as pd";
 	$sql .= " WHERE s.rowid = f.fk_soc";
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
-	if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {
+	if (!getDolGlobalString('WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS')) {
 		$sql .= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
 	}
 	//$sql .= " AND pd.amount > 0";
@@ -493,9 +493,9 @@ if ($resql) {
 	$tradinvoice = "Invoice";
 	if ($type == 'bank-transfer') {
 		if ($sourcetype != 'salary') {
-			  $tradinvoice = "SupplierInvoice";
+			$tradinvoice = "SupplierInvoice";
 		} else {
-			  $tradinvoice = "RefSalary";
+			$tradinvoice = "RefSalary";
 		}
 	}
 

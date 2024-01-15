@@ -59,7 +59,7 @@ abstract class ModelePDFMember extends CommonDocGenerator
 
 
 /**
- *  Classe mere des modeles de numerotation des references de members
+ *  Class mere des modeles de numerotation des references de members
  */
 abstract class ModeleNumRefMembers extends CommonNumRefGenerator
 {
@@ -70,6 +70,8 @@ abstract class ModeleNumRefMembers extends CommonNumRefGenerator
 	public $code_modifiable_null; // Modified code if it is null
 
 	public $code_null; //
+
+	public $code_auto;
 
 
 	/**
@@ -87,7 +89,7 @@ abstract class ModeleNumRefMembers extends CommonNumRefGenerator
 
 		$strikestart = '';
 		$strikeend = '';
-		if (!empty($conf->global->MAIN_MEMBER_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) {
+		if (getDolGlobalString('MAIN_MEMBER_CODE_ALWAYS_REQUIRED') && !empty($this->code_null)) {
 			$strikestart = '<strike>';
 			$strikeend = '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
 		}
@@ -116,5 +118,17 @@ abstract class ModeleNumRefMembers extends CommonNumRefGenerator
 		$s .= $langs->trans("NextValue").' ('.$langs->trans("Member").'): <b>'.$nextval.'</b><br>';
 
 		return $s;
+	}
+
+	/**
+	 *  Return next value
+	 *
+	 *  @param  Societe		$objsoc		Object third party
+	 *  @param  Adherent	$object		Object we need next value for
+	 *  @return	string					next value
+	 */
+	public function getNextValue($objsoc, $object)
+	{
+		return '';
 	}
 }

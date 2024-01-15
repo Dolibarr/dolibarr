@@ -98,7 +98,7 @@ class Dolresource extends CommonObject
 	/**
 	 *  Constructor
 	 *
-	 *  @param	DoliDb		$db      Database handler
+	 *  @param	DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -110,7 +110,7 @@ class Dolresource extends CommonObject
 	 *
 	 *  @param	User    $user        User that creates
 	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return int      		   	 <0 if KO, Id of created object if OK
+	 *  @return int      		   	 Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -163,7 +163,8 @@ class Dolresource extends CommonObject
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -210,7 +211,7 @@ class Dolresource extends CommonObject
 	 *
 	 *    @param    int		$id     Id of object
 	 *    @param	string	$ref	Ref of object
-	 *    @return   int         	<0 if KO, >0 if OK
+	 *    @return   int         	Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $ref = '')
 	{
@@ -270,7 +271,7 @@ class Dolresource extends CommonObject
 	 *
 	 *  @param	User	$user        User that modifies
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 <0 if KO, >0 if OK
+	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -310,7 +311,8 @@ class Dolresource extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -371,7 +373,7 @@ class Dolresource extends CommonObject
 	 *    Load data of resource links in memory from database
 	 *
 	 *    @param      int	$id         Id of link element_resources
-	 *    @return     int         		<0 if KO, >0 if OK
+	 *    @return     int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_element_resource($id)
 	{
@@ -500,14 +502,14 @@ class Dolresource extends CommonObject
 	/**
 	 *	Load resource objects into $this->lines
 	 *
-	 *  @param	string		$sortorder    	sort order
-	 *  @param	string		$sortfield    	sort field
-	 *  @param	int			$limit		  	limit page
-	 *  @param	int			$offset    	  	page
-	 *  @param	array		$filter    	  	filter output
-	 *  @return int          				<0 if KO, Number of lines loaded if OK
+	 *  @param	string		$sortorder		sort order
+	 *  @param	string		$sortfield		sort field
+	 *  @param	int			$limit			limit page
+	 *  @param	int			$offset			page
+	 *  @param	array		$filter			filter output
+	 *  @return	int							Return integer <0 if KO, Number of lines loaded if OK
 	 */
-	public function fetchAll($sortorder, $sortfield, $limit, $offset, $filter = '')
+	public function fetchAll($sortorder, $sortfield, $limit, $offset, $filter = [])
 	{
 		// phpcs:enable
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -586,7 +588,7 @@ class Dolresource extends CommonObject
 	 *
 	 *  @param	User	$user        User that modifies
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 <0 if KO, >0 if OK
+	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update_element_resource($user = null, $notrigger = 0)
 	{
@@ -631,7 +633,8 @@ class Dolresource extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -666,13 +669,13 @@ class Dolresource extends CommonObject
 	 * @param string    $element        Element
 	 * @param int       $element_id     Id
 	 * @param string    $resource_type  Type
-	 * @return array                    Aray of resources
+	 * @return array                    Array of resources
 	 */
 	public function getElementResources($element, $element_id, $resource_type = '')
 	{
 		$resources = array();
 
-		// Links beetween objects are stored in this table
+		// Links between objects are stored in this table
 		$sql = 'SELECT rowid, resource_id, resource_type, busy, mandatory';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'element_resources';
 		$sql .= " WHERE element_id=".((int) $element_id)." AND element_type='".$this->db->escape($element)."'";
@@ -751,7 +754,7 @@ class Dolresource extends CommonObject
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
-				$label = ($langs->trans("ResourceTypeShort".$obj->code) != ("ResourceTypeShort".$obj->code) ? $langs->trans("ResourceTypeShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
+				$label = ($langs->trans("ResourceTypeShort".$obj->code) != "ResourceTypeShort".$obj->code ? $langs->trans("ResourceTypeShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
 				$this->cache_code_type_resource[$obj->rowid]['code'] = $obj->code;
 				$this->cache_code_type_resource[$obj->rowid]['label'] = $label;
 				$this->cache_code_type_resource[$obj->rowid]['active'] = $obj->active;
@@ -796,7 +799,7 @@ class Dolresource extends CommonObject
 	 *
 	 *	@param      int		$withpicto					Add picto into link
 	 *	@param      string	$option						Where point the link ('compta', 'expedition', 'document', ...)
-	 *	@param      string	$get_params    				Parametres added to url
+	 *	@param      string	$get_params    				Parameters added to url
 	 *	@param		int  	$notooltip					1=Disable tooltip
 	 *  @param  	string  $morecss                    Add more css on link
 	 *  @param  	int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
@@ -836,11 +839,11 @@ class Dolresource extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -901,9 +904,9 @@ class Dolresource extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Charge indicateurs this->nb de tableau de bord
+	 *      Load indicators this->nb for state board
 	 *
-	 *      @return     int         <0 if KO, >0 if OK
+	 *      @return     int         Return integer <0 if KO, >0 if OK
 	 */
 	public function load_state_board()
 	{

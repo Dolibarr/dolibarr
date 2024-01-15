@@ -7,7 +7,7 @@ body:
     attributes:
       value: |
         This is a template to help you report good issues. You may use [Github Markdown](https://help.github.com/articles/getting-started-with-writing-and-formatting-on-github/) syntax to format your issue report.
-        
+
   - type: textarea
     id: bug
     attributes:
@@ -27,19 +27,19 @@ body:
     attributes:
       label: Environment OS
       description: Server OS type and version
-      
+
   - type: input
     id: environment-webserver
     attributes:
       label: Environment Web server
       description: Webserver type and version
-      
+
   - type: input
     id: environment-php
     attributes:
       label: Environment PHP
       description: PHP version
-      
+
   - type: input
     id: environment-database
     attributes:
@@ -63,9 +63,9 @@ body:
     attributes:
       label: Steps to reproduce the behavior
       description: Verbose description
-      
+
   - type: textarea
     id: files
     attributes:
       label: Attached files
-      description: Screenshots, screencasts, dolibarr.log, debugging informations
+      description: Screenshots, screencasts, dolibarr.log, debugging information

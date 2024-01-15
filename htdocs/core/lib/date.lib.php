@@ -122,11 +122,11 @@ function getServerTimeZoneInt($refgmtdate = 'now')
 function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforendofmonth = 0)
 {
 	global $conf;
+	if (empty($duration_value)) {
+		return $time;
+	}
 	if ($duration_unit == 's') {
 		return $time + ($duration_value);
-	}
-	if ($duration_value == 0) {
-		return $time;
 	}
 	if ($duration_unit == 'i') {
 		return $time + (60 * $duration_value);
@@ -159,7 +159,7 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforend
 	}
 
 	$date = new DateTime();
-	if (!empty($conf->global->MAIN_DATE_IN_MEMORY_ARE_GMT)) {
+	if (getDolGlobalString('MAIN_DATE_IN_MEMORY_ARE_GMT')) {
 		$date->setTimezone(new DateTimeZone('UTC'));
 	}
 	$date->setTimestamp($time);
@@ -233,7 +233,7 @@ function convertTime2Seconds($iHours = 0, $iMinutes = 0, $iSeconds = 0)
  *                                          - 'year': only year part);
  *      @param      int		$lengthOfDay    Length of day (default 86400 seconds for 1 day, 28800 for 8 hour)
  *      @param      int		$lengthOfWeek   Length of week (default 7)
- *    	@return     string		 		 	Formated text of duration
+ *    	@return     string		 		 	Formatted text of duration
  * 	                                		Example: 0 return 00:00, 3600 return 1:00, 86400 return 1d, 90000 return 1 Day 01:00
  *      @see convertTime2Seconds()
  */
@@ -333,13 +333,27 @@ function convertDurationtoHour($duration_value, $duration_unit)
 {
 	$result = 0;
 
-	if ($duration_unit == 's') $result = $duration_value / 3600;
-	if ($duration_unit == 'i') $result = $duration_value / 60;
-	if ($duration_unit == 'h') $result = $duration_value;
-	if ($duration_unit == 'd') $result = $duration_value * 24;
-	if ($duration_unit == 'w') $result = $duration_value * 24 * 7;
-	if ($duration_unit == 'm') $result = $duration_value * 730.484;
-	if ($duration_unit == 'y') $result = $duration_value * 365 * 24;
+	if ($duration_unit == 's') {
+		$result = $duration_value / 3600;
+	}
+	if ($duration_unit == 'i') {
+		$result = $duration_value / 60;
+	}
+	if ($duration_unit == 'h') {
+		$result = $duration_value;
+	}
+	if ($duration_unit == 'd') {
+		$result = $duration_value * 24;
+	}
+	if ($duration_unit == 'w') {
+		$result = $duration_value * 24 * 7;
+	}
+	if ($duration_unit == 'm') {
+		$result = $duration_value * 730.484;
+	}
+	if ($duration_unit == 'y') {
+		$result = $duration_value * 365 * 24;
+	}
 
 	return $result;
 }
@@ -354,8 +368,9 @@ function convertDurationtoHour($duration_value, $duration_unit)
  * @param      int|string	$year_date			Year date
  * @param	   int      	$excludefirstand	Exclude first and
  * @param	   mixed		$gm					False or 0 or 'tzserver' = Input date fields are date info in the server TZ. True or 1 or 'gmt' = Input are date info in GMT TZ.
- * 												Note: In database, dates are always fot the server TZ.
+ * 												Note: In database, dates are always for the server TZ.
  * @return     string		$sqldate			String with SQL filter
+ * @see forgeSQLFromUniversalSearchCriteria()
  */
 function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date, $excludefirstand = 0, $gm = false)
 {
@@ -750,7 +765,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 	$nbFerie = 0;
 
 	// Check to ensure we use correct parameters
-	if ((($timestampEnd - $timestampStart) % 86400) != 0) {
+	if (($timestampEnd - $timestampStart) % 86400 != 0) {
 		return 'Error Dates must use same hours and must be GMT dates';
 	}
 
@@ -789,6 +804,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 		$sql = "SELECT code, entity, fk_country, dayrule, year, month, day, active";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_hrm_public_holiday";
 		$sql .= " WHERE active = 1 and fk_country IN (0".($country_id > 0 ? ", ".$country_id : 0).")";
+		$sql .= " AND entity IN (0," .getEntity('holiday') .")";
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -931,7 +947,9 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 				$date_1sunsept = strtotime('next thursday', strtotime('next sunday', mktime(0, 0, 0, 9, 1, $annee)));
 				$jour_1sunsept = date("d", $date_1sunsept);
 				$mois_1sunsept = date("m", $date_1sunsept);
-				if ($jour_1sunsept == $jour && $mois_1sunsept == $mois) $ferie=true;
+				if ($jour_1sunsept == $jour && $mois_1sunsept == $mois) {
+					$ferie=true;
+				}
 				// Geneva fast in Switzerland
 			}
 		}
@@ -944,7 +962,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 				$jour_semaine = jddayofweek($jour_julien, 0);
 				if ($includefriday) {					//Friday (5), Saturday (6) and Sunday (0)
 					if ($jour_semaine == 5) {
-							$ferie = true;
+						$ferie = true;
 					}
 				}
 				if ($includesaturday) {					//Friday (5), Saturday (6) and Sunday (0)

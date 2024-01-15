@@ -33,6 +33,9 @@
  */
 class DolGeoIP
 {
+	/**
+	 * @var GeoIp2\Database\Reader
+	 */
 	public $gi;
 
 	public $error;
@@ -49,8 +52,8 @@ class DolGeoIP
 		global $conf;
 
 		$geoipversion = '2'; // 'php', or geoip version '2'
-		if (!empty($conf->global->GEOIP_VERSION)) {
-			$geoipversion = $conf->global->GEOIP_VERSION;
+		if (getDolGlobalString('GEOIP_VERSION')) {
+			$geoipversion = getDolGlobalString('GEOIP_VERSION');
 		}
 
 		if ($type == 'country') {
@@ -71,29 +74,30 @@ class DolGeoIP
 			}
 		} else {
 			print 'ErrorBadParameterInConstructor';
-			return 0;
+			return;
 		}
 
 		// Here, function exists (embedded into PHP or exists because we made include)
 		if (empty($type) || empty($datfile)) {
 			$this->errorlabel = 'Constructor was called with no datafile parameter';
 			dol_syslog('DolGeoIP '.$this->errorlabel, LOG_ERR);
-			return 0;
+			return;
 		}
 		if (!file_exists($datfile) || !is_readable($datfile)) {
 			$this->error = 'ErrorGeoIPClassNotInitialized';
 			$this->errorlabel = "Datafile ".$datfile." not found";
 			dol_syslog('DolGeoIP '.$this->errorlabel, LOG_ERR);
-			return 0;
+			return;
 		}
 
 		if ($geoipversion == '2') {
 			try {
+				// @phpstan-ignore-next-line
 				$this->gi = new GeoIp2\Database\Reader($datfile); // '/usr/local/share/GeoIP/GeoIP2-City.mmdb'
 			} catch (Exception $e) {
 				$this->error = $e->getMessage();
 				dol_syslog('DolGeoIP '.$this->errorlabel, LOG_ERR);
-				return 0;
+				return;
 			}
 		} elseif (function_exists('geoip_open') && defined('GEOIP_STANDARD')) {
 			$this->gi = geoip_open($datfile, constant('GEOIP_STANDARD'));
@@ -117,8 +121,8 @@ class DolGeoIP
 		global $conf;
 
 		$geoipversion = '2'; // 'php', or '2'
-		if (!empty($conf->global->GEOIP_VERSION)) {
-			$geoipversion = $conf->global->GEOIP_VERSION;
+		if (getDolGlobalString('GEOIP_VERSION')) {
+			$geoipversion = getDolGlobalString('GEOIP_VERSION');
 		}
 
 		if (empty($this->gi)) {
@@ -175,8 +179,8 @@ class DolGeoIP
 		global $conf;
 
 		$geoipversion = '2'; // 'php', or '2'
-		if (!empty($conf->global->GEOIP_VERSION)) {
-			$geoipversion = $conf->global->GEOIP_VERSION;
+		if (getDolGlobalString('GEOIP_VERSION')) {
+			$geoipversion = getDolGlobalString('GEOIP_VERSION');
 		}
 
 		if (empty($this->gi)) {
@@ -197,7 +201,7 @@ class DolGeoIP
 	}
 
 	/**
-	 * Return verion of data file
+	 * Return version of data file
 	 *
 	 * @return  string      Version of datafile
 	 */
@@ -206,8 +210,8 @@ class DolGeoIP
 		global $conf;
 
 		$geoipversion = '2'; // 'php', or '2'
-		if (!empty($conf->global->GEOIP_VERSION)) {
-			$geoipversion = $conf->global->GEOIP_VERSION;
+		if (getDolGlobalString('GEOIP_VERSION')) {
+			$geoipversion = getDolGlobalString('GEOIP_VERSION');
 		}
 
 		if ($geoipversion == 'php') {

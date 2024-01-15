@@ -82,13 +82,14 @@ class FormSetup
 	 */
 	public $errors = array();
 
+
 	/**
 	 * Constructor
 	 *
 	 * @param DoliDB $db Database handler
 	 * @param Translate $outputLangs if needed can use another lang
 	 */
-	public function __construct($db, $outputLangs = false)
+	public function __construct($db, $outputLangs = null)
 	{
 		global $langs;
 		$this->db = $db;
@@ -112,7 +113,7 @@ class FormSetup
 	 * @param 	array 	$attributes 	an array of attributes keys and values,
 	 * @return 	string					attribute string
 	 */
-	static public function generateAttributesStringFromArray($attributes)
+	public static function generateAttributesStringFromArray($attributes)
 	{
 		$Aattr = array();
 		if (is_array($attributes)) {
@@ -124,7 +125,7 @@ class FormSetup
 			}
 		}
 
-		return !empty($Aattr)?implode(' ', $Aattr):'';
+		return !empty($Aattr) ? implode(' ', $Aattr) : '';
 	}
 
 
@@ -305,7 +306,6 @@ class FormSetup
 	 */
 	public function generateLineOutput($item, $editMode = false)
 	{
-
 		$out = '';
 		if ($item->enabled==1) {
 			$trClass = 'oddeven';
@@ -344,14 +344,16 @@ class FormSetup
 
 
 	/**
-	 * Method used to test  module builder convertion to this form usage
+	 * Method used to test  module builder conversion to this form usage
 	 *
 	 * @param 	array 	$params 	an array of arrays of params from old modulBuilder params
 	 * @return 	boolean
 	 */
 	public function addItemsFromParamsArray($params)
 	{
-		if (!is_array($params) || empty($params)) { return false; }
+		if (!is_array($params) || empty($params)) {
+			return false;
+		}
 		foreach ($params as $confKey => $param) {
 			$this->addItemFromParams($confKey, $param); // todo manage error
 		}
@@ -361,7 +363,7 @@ class FormSetup
 
 	/**
 	 * From old
-	 * Method was used to test  module builder convertion to this form usage.
+	 * Method was used to test  module builder conversion to this form usage.
 	 *
 	 * @param 	string 	$confKey 	the conf name to store
 	 * @param 	array 	$params 	an array of params from old modulBuilder params
@@ -369,10 +371,12 @@ class FormSetup
 	 */
 	public function addItemFromParams($confKey, $params)
 	{
-		if (empty($confKey) || empty($params['type'])) { return false; }
+		if (empty($confKey) || empty($params['type'])) {
+			return false;
+		}
 
 		/*
-		 * Exemple from old module builder setup page
+		 * Example from old module builder setup page
 		 * 	// 'MYMODULE_MYPARAM1'=>array('type'=>'string', 'css'=>'minwidth500' ,'enabled'=>1),
 			// 'MYMODULE_MYPARAM2'=>array('type'=>'textarea','enabled'=>1),
 			//'MYMODULE_MYPARAM3'=>array('type'=>'category:'.Categorie::TYPE_CUSTOMER, 'enabled'=>1),
@@ -384,7 +388,7 @@ class FormSetup
 		 */
 
 		$item = new FormSetupItem($confKey);
-		// need to be ignored from scrutinizer setTypeFromTypeString was created as deprecated to incite developper to use object oriented usage
+		// need to be ignored from scrutinizer setTypeFromTypeString was created as deprecated to incite developer to use object oriented usage
 		/** @scrutinizer ignore-deprecated */ $item->setTypeFromTypeString($params['type']);
 
 		if (!empty($params['enabled'])) {
@@ -402,7 +406,7 @@ class FormSetup
 
 	/**
 	 * Used to export param array for /core/actions_setmoduleoptions.inc.php template
-	 * Method exists only for manage setup convertion
+	 * Method exists only for manage setup conversion
 	 *
 	 * @return array $arrayofparameters for /core/actions_setmoduleoptions.inc.php
 	 */
@@ -427,8 +431,9 @@ class FormSetup
 	 */
 	public function reloadConfs()
 	{
-
-		if (!array($this->items)) { return false; }
+		if (!array($this->items)) {
+			return false;
+		}
 		foreach ($this->items as $item) {
 			$item->loadValueFromConf();
 		}
@@ -446,7 +451,7 @@ class FormSetup
 	 * @param bool		$insertAfterTarget		insert before or after target item ?
 	 * @return FormSetupItem the new setup item created
 	 */
-	public function newItem($confKey, $targetItemKey = false, $insertAfterTarget = false)
+	public function newItem($confKey, $targetItemKey = '', $insertAfterTarget = false)
 	{
 		$item = new FormSetupItem($confKey);
 
@@ -680,7 +685,7 @@ class FormSetupItem
 	}
 
 	/**
-	 * reload conf value from databases is an aliase of loadValueFromConf
+	 * reload conf value from databases is an alias of loadValueFromConf
 	 *
 	 * @deprecated
 	 * @return bool
@@ -799,7 +804,9 @@ class FormSetupItem
 	 */
 	public function getHelpText()
 	{
-		if (!empty($this->helpText)) { return $this->helpText; }
+		if (!empty($this->helpText)) {
+			return $this->helpText;
+		}
 		return (($this->langs->trans($this->confKey . 'Tooltip') != $this->confKey . 'Tooltip') ? $this->langs->trans($this->confKey . 'Tooltip') : '');
 	}
 
@@ -810,7 +817,9 @@ class FormSetupItem
 	 */
 	public function getNameText()
 	{
-		if (!empty($this->nameText)) { return $this->nameText; }
+		if (!empty($this->nameText)) {
+			return $this->nameText;
+		}
 		return (($this->langs->trans($this->confKey) != $this->confKey) ? $this->langs->trans($this->confKey) : $this->langs->trans('MissingTranslationForConfKey', $this->confKey));
 	}
 
@@ -892,7 +901,9 @@ class FormSetupItem
 	 */
 	public function generateInputFieldText()
 	{
-		if (empty($this->fieldAttr)) { $this->fieldAttr['class'] = 'flat '.(empty($this->cssClass) ? 'minwidth200' : $this->cssClass); }
+		if (empty($this->fieldAttr)) {
+			$this->fieldAttr['class'] = 'flat '.(empty($this->cssClass) ? 'minwidth200' : $this->cssClass);
+		}
 		return '<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' />';
 	}
 
@@ -934,7 +945,7 @@ class FormSetupItem
 
 		$tmp = explode(':', $this->type);
 		$out = img_picto('', 'category', 'class="pictofixedwidth"');
-		$out .= $formother->select_categories($tmp[1],  $this->fieldValue, $this->confKey, 0, $this->langs->trans('CustomersProspectsCategoriesShort'));
+		$out .= $formother->select_categories($tmp[1], $this->fieldValue, $this->confKey, 0, $this->langs->trans('CustomersProspectsCategoriesShort'));
 
 		return $out;
 	}
@@ -980,7 +991,7 @@ class FormSetupItem
 	public function generateInputFieldSecureKey()
 	{
 		global $conf;
-		$out = '<input required="required" type="text" class="flat" id="'.$this->confKey.'" name="'.$this->confKey.'" value="'.(GETPOST($this->confKey, 'alpha') ?GETPOST($this->confKey, 'alpha') : $this->fieldValue).'" size="40">';
+		$out = '<input required="required" type="text" class="flat" id="'.$this->confKey.'" name="'.$this->confKey.'" value="'.(GETPOST($this->confKey, 'alpha') ? GETPOST($this->confKey, 'alpha') : $this->fieldValue).'" size="40">';
 		if (!empty($conf->use_javascript_ajax)) {
 			$out.= '&nbsp;'.img_picto($this->langs->trans('Generate'), 'refresh', 'id="generate_token'.$this->confKey.'" class="linkobject"');
 		}
@@ -1045,7 +1056,7 @@ class FormSetupItem
 	 * to be sure we can manage evolution easily
 	 *
 	 * @param string $type possible values based on old module builder setup : 'string', 'textarea', 'category:'.Categorie::TYPE_CUSTOMER', 'emailtemplate', 'thirdparty_type'
-	 * @deprecated yes this setTypeFromTypeString came deprecated because it exists only for manage setup convertion
+	 * @deprecated yes this setTypeFromTypeString came deprecated because it exists only for manage setup conversion
 	 * @return bool
 	 */
 	public function setTypeFromTypeString($type)
@@ -1072,6 +1083,7 @@ class FormSetupItem
 		} elseif (!empty($errors)) {
 			$this->errors[] = $errors;
 		}
+		return;
 	}
 
 	/**
@@ -1137,7 +1149,7 @@ class FormSetupItem
 			if ($result < 0) {
 				$this->setErrors($c->errors);
 			}
-			$ways = $c->print_all_ways(' &gt;&gt; ', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formated text
+			$ways = $c->print_all_ways(' &gt;&gt; ', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
 			$toprint = array();
 			foreach ($ways as $way) {
 				$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #bbb"') . '>' . $way . '</li>';

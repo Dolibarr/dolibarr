@@ -35,17 +35,7 @@ class box_graph_ticket_by_severity extends ModeleBoxes
 	public $boxlabel;
 	public $depends = array("ticket");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 	public $widgettype = 'graph';
-
 
 	/**
 	 * Constructor

@@ -727,7 +727,7 @@ class Setup extends DolibarrApi
 	 * @param object   $object    Object with label to translate
 	 * @param string   $lang      Code of the language the name of the object must be translated to
 	 * @param string   $prefix 	  Prefix for translation key
-	 * @param array    $dict      Array of dictionnary for translation
+	 * @param array    $dict      Array of dictionary for translation
 	 * @return void
 	 */
 	private function translateLabel($object, $lang, $prefix = 'Country', $dict = array('dict'))
@@ -1154,10 +1154,6 @@ class Setup extends DolibarrApi
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieving list of extra fields : '.$this->db->lasterror());
-		}
-
-		if (!count($list)) {
-			throw new RestException(404, 'No extrafield found');
 		}
 
 		return $list;
@@ -1598,22 +1594,22 @@ class Setup extends DolibarrApi
 		return $list;
 	}
 
-	 /**
-	  * Get the list of tickets categories.
-	  *
-	  * @param string    $sortfield  Sort field
-	  * @param string    $sortorder  Sort order
-	  * @param int       $limit      Number of items per page
-	  * @param int       $page       Page number (starting from zero)
-	  * @param int       $active     Payment term is active or not {@min 0} {@max 1}
-	  * @param string    $lang       Code of the language the label of the category must be translated to
-	  * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
-	  * @return array				List of ticket categories
-	  *
-	  * @url     GET dictionary/ticket_categories
-	  *
-	  * @throws RestException
-	  */
+	/**
+	 * Get the list of tickets categories.
+	 *
+	 * @param string    $sortfield  Sort field
+	 * @param string    $sortorder  Sort order
+	 * @param int       $limit      Number of items per page
+	 * @param int       $page       Page number (starting from zero)
+	 * @param int       $active     Payment term is active or not {@min 0} {@max 1}
+	 * @param string    $lang       Code of the language the label of the category must be translated to
+	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
+	 * @return array				List of ticket categories
+	 *
+	 * @url     GET dictionary/ticket_categories
+	 *
+	 * @throws RestException
+	 */
 	public function getTicketsCategories($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $lang = '', $sqlfilters = '')
 	{
 		$list = array();
@@ -1862,7 +1858,7 @@ class Setup extends DolibarrApi
 
 		if (!DolibarrApiAccess::$user->admin
 			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_COMPANY') || DolibarrApiAccess::$user->login != $conf->global->API_LOGINS_ALLOWED_FOR_GET_COMPANY)) {
-				throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_GET_COMPANY');
+			throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_GET_COMPANY');
 		}
 
 		unset($mysoc->pays);
@@ -1989,7 +1985,7 @@ class Setup extends DolibarrApi
 			throw new RestException(404, 'Error Bad or unknown value for constantname');
 		}
 		if (isASecretKey($constantname)) {
-			throw new RestException(403, 'Forbidden. This parameter cant be read with APIs');
+			throw new RestException(403, 'Forbidden. This parameter can not be read with APIs');
 		}
 
 		return getDolGlobalString($constantname);
@@ -2034,11 +2030,11 @@ class Setup extends DolibarrApi
 		// Remote file to compare to
 		$xmlremote = ($target == 'default' ? '' : $target);
 		if (empty($xmlremote) && getDolGlobalString('MAIN_FILECHECK_URL')) {
-			$xmlremote = $conf->global->MAIN_FILECHECK_URL;
+			$xmlremote = getDolGlobalString('MAIN_FILECHECK_URL');
 		}
 		$param = 'MAIN_FILECHECK_URL_'.DOL_VERSION;
-		if (empty($xmlremote) && !empty($conf->global->$param)) {
-			$xmlremote = $conf->global->$param;
+		if (empty($xmlremote) && getDolGlobalString($param)) {
+			$xmlremote = getDolGlobalString($param);
 		}
 		if (empty($xmlremote)) {
 			$xmlremote = 'https://www.dolibarr.org/files/stable/signatures/filelist-'.DOL_VERSION.'.xml';
@@ -2050,6 +2046,12 @@ class Setup extends DolibarrApi
 		if ($xmlremote && !preg_match('/\.xml$/', $xmlremote)) {
 			$langs->load("errors");
 			throw new RestException(500, $langs->trans("ErrorURLMustEndWith", $xmlremote, '.xml'));
+		}
+
+		if (LIBXML_VERSION < 20900) {
+			// Avoid load of external entities (security problem).
+			// Required only if LIBXML_VERSION < 20900
+			libxml_disable_entity_loader(true);
 		}
 
 		if ($target == 'local') {
@@ -2097,8 +2099,8 @@ class Setup extends DolibarrApi
 					$constvalue = (empty($constvalue) ? '0' : $constvalue);
 					// Value found
 					$value = '';
-					if ($constname && $conf->global->$constname != '') {
-						$value = $conf->global->$constname;
+					if ($constname && getDolGlobalString($constname) != '') {
+						$value = getDolGlobalString($constname);
 					}
 					$valueforchecksum = (empty($value) ? '0' : $value);
 
@@ -2142,7 +2144,7 @@ class Setup extends DolibarrApi
 					}
 				}
 
-				// Files missings
+				// Files missing
 				$out .= load_fiche_titre($langs->trans("FilesMissing"));
 
 				$out .= '<div class="div-table-responsive-no-min">';

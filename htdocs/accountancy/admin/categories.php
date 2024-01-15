@@ -113,7 +113,7 @@ if ($action == 'delete') {
 $form = new Form($db);
 $formaccounting = new FormAccounting($db);
 
-llxheader('', $langs->trans('AccountingCategory'));
+llxHeader('', $langs->trans('AccountingCategory'));
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/accountancy/admin/categories_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 $titlepicto = 'setup';
@@ -135,6 +135,7 @@ $s = $formaccounting->select_accounting_category($cat_id, 'account_category', 1,
 if ($formaccounting->nbaccounts_category <= 0) {
 	print '<span class="opacitymedium">'.$s.'</span>';
 } else {
+	print $s;
 	print '<input type="submit" class="button small" value="'.$langs->trans("Select").'">';
 }
 print '</td></tr>';

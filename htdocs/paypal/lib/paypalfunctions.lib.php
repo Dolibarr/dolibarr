@@ -47,7 +47,7 @@ $API_version = "56";
  ' For the sandbox, the URL is       https://www.sandbox.paypal.com/webscr&cmd=_express-checkout&token=
  ' For the live site, the URL is        https://www.paypal.com/webscr&cmd=_express-checkout&token=
  */
-if (!empty($conf->global->PAYPAL_API_SANDBOX) || GETPOST('forcesandbox', 'alpha')) {		// We can force sand box with param 'forcesandbox'
+if (getDolGlobalString('PAYPAL_API_SANDBOX') || GETPOST('forcesandbox', 'alpha')) {		// We can force sand box with param 'forcesandbox'
 	$API_Endpoint = "https://api-3t.sandbox.paypal.com/nvp";
 	$API_Url = "https://www.sandbox.paypal.com/webscr?cmd=_express-checkout&token=";
 } else {
@@ -57,25 +57,25 @@ if (!empty($conf->global->PAYPAL_API_SANDBOX) || GETPOST('forcesandbox', 'alpha'
 
 // Clean parameters
 $PAYPAL_API_USER = "";
-if (!empty($conf->global->PAYPAL_API_USER)) {
-	$PAYPAL_API_USER = $conf->global->PAYPAL_API_USER;
+if (getDolGlobalString('PAYPAL_API_USER')) {
+	$PAYPAL_API_USER = getDolGlobalString('PAYPAL_API_USER');
 }
 $PAYPAL_API_PASSWORD = "";
-if (!empty($conf->global->PAYPAL_API_PASSWORD)) {
-	$PAYPAL_API_PASSWORD = $conf->global->PAYPAL_API_PASSWORD;
+if (getDolGlobalString('PAYPAL_API_PASSWORD')) {
+	$PAYPAL_API_PASSWORD = getDolGlobalString('PAYPAL_API_PASSWORD');
 }
 $PAYPAL_API_SIGNATURE = "";
-if (!empty($conf->global->PAYPAL_API_SIGNATURE)) {
-	$PAYPAL_API_SIGNATURE = $conf->global->PAYPAL_API_SIGNATURE;
+if (getDolGlobalString('PAYPAL_API_SIGNATURE')) {
+	$PAYPAL_API_SIGNATURE = getDolGlobalString('PAYPAL_API_SIGNATURE');
 }
 $PAYPAL_API_SANDBOX = "";
-if (!empty($conf->global->PAYPAL_API_SANDBOX)) {
-	$PAYPAL_API_SANDBOX = $conf->global->PAYPAL_API_SANDBOX;
+if (getDolGlobalString('PAYPAL_API_SANDBOX')) {
+	$PAYPAL_API_SANDBOX = getDolGlobalString('PAYPAL_API_SANDBOX');
 }
 
 // Proxy
-$PROXY_HOST = $conf->global->MAIN_PROXY_HOST;
-$PROXY_PORT = $conf->global->MAIN_PROXY_PORT;
-$PROXY_USER = $conf->global->MAIN_PROXY_USER;
-$PROXY_PASS = $conf->global->MAIN_PROXY_PASS;
-$USE_PROXY = empty($conf->global->MAIN_PROXY_USE) ?false:true;
+$PROXY_HOST = getDolGlobalString('MAIN_PROXY_HOST');
+$PROXY_PORT = getDolGlobalString('MAIN_PROXY_PORT');
+$PROXY_USER = getDolGlobalString('MAIN_PROXY_USER');
+$PROXY_PASS = getDolGlobalString('MAIN_PROXY_PASS');
+$USE_PROXY = !getDolGlobalString('MAIN_PROXY_USE') ? false : true;

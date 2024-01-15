@@ -79,7 +79,7 @@ $extrafields = new ExtraFields($db);
  */
 
 $morehead = '';
-if (!empty($conf->global->MEMBER_PUBLIC_CSS)) {
+if (getDolGlobalString('MEMBER_PUBLIC_CSS')) {
 	$morehead = '<link rel="stylesheet" type="text/css" href="' . getDolGlobalString('MEMBER_PUBLIC_CSS').'">';
 } else {
 	$morehead = '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/eldy/style.css.php">';
@@ -93,14 +93,15 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 if ($id > 0) {
 	$res = $object->fetch($id);
 	if ($res < 0) {
-		dol_print_error($db, $object->error); exit;
+		dol_print_error($db, $object->error);
+		exit;
 	}
 	$res = $object->fetch_optionals();
 
 	print load_fiche_titre($langs->trans("MemberCard"), '', '');
 
 	if (empty($object->public)) {
-		 print $langs->trans("ErrorThisMemberIsNotPublic");
+		print $langs->trans("ErrorThisMemberIsNotPublic");
 	} else {
 		print '<table class="public_border" width="100%" cellpadding="3">';
 

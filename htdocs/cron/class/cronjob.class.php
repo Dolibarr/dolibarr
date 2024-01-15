@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2023		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -192,7 +193,7 @@ class Cronjob extends CommonObject
 	/**
 	 *  Constructor
 	 *
-	 *  @param	DoliDb		$db      Database handler
+	 *  @param	DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -205,7 +206,7 @@ class Cronjob extends CommonObject
 	 *
 	 *  @param	User	$user        User that creates
 	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return int      		   	 <0 if KO, Id of created object if OK
+	 *  @return int      		   	 Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -409,7 +410,7 @@ class Cronjob extends CommonObject
 	 *  @param	int		$id    			Id object
 	 *  @param	string	$objectname		Object name
 	 *  @param	string	$methodname		Method name
-	 *  @return int          			<0 if KO, >0 if OK
+	 *  @return int          			Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $objectname = '', $methodname = '')
 	{
@@ -512,16 +513,16 @@ class Cronjob extends CommonObject
 	 *  Load list of cron jobs in a memory array from the database
 	 *  @TODO Use object CronJob and not CronJobLine.
 	 *
-	 *  @param	string		$sortorder      sort order
-	 *  @param	string		$sortfield      sort field
-	 *  @param	int			$limit		    limit page
-	 *  @param	int			$offset    	    page
-	 *  @param	int			$status    	    display active or not
-	 *  @param	array		$filter    	    filter output
-	 *  @param  int         $processing     Processing or not
-	 *  @return int          			    <0 if KO, >0 if OK
+	 *  @param	string		$sortorder		sort order
+	 *  @param	string		$sortfield		sort field
+	 *  @param	int			$limit			limit page
+	 *  @param	int			$offset			page
+	 *  @param	int			$status			display active or not
+	 *  @param	array		$filter			filter output
+	 *  @param	int			$processing		Processing or not
+	 *  @return	int							Return integer <0 if KO, >0 if OK
 	 */
-	public function fetchAll($sortorder = 'DESC', $sortfield = 't.rowid', $limit = 0, $offset = 0, $status = 1, $filter = '', $processing = -1)
+	public function fetchAll($sortorder = 'DESC', $sortfield = 't.rowid', $limit = 0, $offset = 0, $status = 1, $filter = [], $processing = -1)
 	{
 		$this->lines = array();
 
@@ -657,7 +658,7 @@ class Cronjob extends CommonObject
 	 *
 	 *  @param	User	$user        User that modifies
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 <0 if KO, >0 if OK
+	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -737,6 +738,9 @@ class Cronjob extends CommonObject
 		}
 		if (empty($this->email_alert)) {
 			$this->email_alert = '';
+		}
+		if (empty($this->datenextrun)) {
+			$this->datenextrun = dol_now();
 		}
 
 		// Check parameters
@@ -819,7 +823,8 @@ class Cronjob extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// Commit or rollback
@@ -842,7 +847,7 @@ class Cronjob extends CommonObject
 	 *
 	 *	@param  User	$user        User that deletes
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 <0 if KO, >0 if OK
+	 *  @return	int					 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -1019,7 +1024,7 @@ class Cronjob extends CommonObject
 	}
 
 	/**
-	 *  Return a link to the object card (with optionaly the picto)
+	 *  Return a link to the object card (with optionally the picto)
 	 *
 	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *	@param	string	$option						On what the link point to ('nolink', ...)
@@ -1067,11 +1072,11 @@ class Cronjob extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowCronJob");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -1099,7 +1104,7 @@ class Cronjob extends CommonObject
 	 *	Load object information
 	 *
 	 *  @param	int		$id		ID
-	 *	@return	int				<0 if KO, >0 if OK
+	 *	@return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function info($id)
 	{
@@ -1138,7 +1143,7 @@ class Cronjob extends CommonObject
 	 * This function does not plan the next run. This is done by function ->reprogram_jobs
 	 *
 	 * @param   string		$userlogin    	User login
-	 * @return	int					 		<0 if KO, >0 if OK
+	 * @return	int					 		Return integer <0 if KO, >0 if OK
 	 */
 	public function run_jobs($userlogin)
 	{
@@ -1419,7 +1424,7 @@ class Cronjob extends CommonObject
 			$result = $cmailfile->sendfile();	// Do not test result
 		}
 
-		return $error ?-1 : 1;
+		return $error ? -1 : 1;
 	}
 
 
@@ -1429,7 +1434,7 @@ class Cronjob extends CommonObject
 	 *
 	 * @param  string		$userlogin      User login
 	 * @param  integer      $now            Date returned by dol_now()
-	 * @return int					        <0 if KO, >0 if OK
+	 * @return int					        Return integer <0 if KO, >0 if OK
 	 */
 	public function reprogram_jobs($userlogin, $now)
 	{
@@ -1566,7 +1571,6 @@ class Cronjob extends CommonObject
  */
 class Cronjobline
 {
-
 	/**
 	 * @var int ID
 	 */

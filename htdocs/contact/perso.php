@@ -21,7 +21,7 @@
 /**
  *       \file       htdocs/contact/perso.php
  *       \ingroup    societe
- *       \brief      Onglet informations personnelles d'un contact
+ *       \brief      Onglet information personnelles d'un contact
  */
 
 // Load Dolibarr environment
@@ -119,8 +119,8 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('societe', 'con
 
 $now = dol_now();
 
-$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/contactnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->lastname) {
+$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/contactnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->lastname) {
 	$title = $object->lastname;
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
@@ -157,7 +157,7 @@ if ($action == 'edit') {
 	print '<tr><td>'.$langs->trans("Firstname").'</td><td>'.$object->firstname.'</td>';
 
 	// Company
-	if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+	if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
 		if ($object->socid > 0) {
 			$objsoc = new Societe($db);
 			$objsoc->fetch($object->socid);
@@ -239,7 +239,7 @@ if ($action == 'edit') {
 	$morehtmlref .= '</a>';
 
 	$morehtmlref .= '<div class="refidno">';
-	if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+	if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
 		$objsoc = new Societe($db);
 		$objsoc->fetch($object->socid);
 		// Thirdparty

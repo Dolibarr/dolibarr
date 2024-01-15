@@ -33,3 +33,4 @@ DONATION_ART978=Show article 978 from CGI if you are concerned
 DonationPayment=Donation payment
 DonationValidated=Donation %s validated
 DonationUseThirdparties=Use the address of an existing thirdparty as the address of the donor
+DonationsStatistics=Donation's statistics

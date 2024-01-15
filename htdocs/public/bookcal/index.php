@@ -53,10 +53,10 @@ $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
 $id_availability = GETPOST('id_availability', 'int');
 
-$year = GETPOST("year", "int") ?GETPOST("year", "int") : date("Y");
-$month = GETPOST("month", "int") ?GETPOST("month", "int") : date("m");
-$week = GETPOST("week", "int") ?GETPOST("week", "int") : date("W");
-$day = GETPOST("day", "int") ?GETPOST("day", "int") : date("d");
+$year = GETPOST("year", "int") ? GETPOST("year", "int") : date("Y");
+$month = GETPOST("month", "int") ? GETPOST("month", "int") : date("m");
+$week = GETPOST("week", "int") ? GETPOST("week", "int") : date("W");
+$day = GETPOST("day", "int") ? GETPOST("day", "int") : date("d");
 $dateselect = dol_mktime(0, 0, 0, GETPOST('dateselectmonth', 'int'), GETPOST('dateselectday', 'int'), GETPOST('dateselectyear', 'int'), 'tzuserrel');
 if ($dateselect > 0) {
 	$day = GETPOST('dateselectday', 'int');
@@ -89,7 +89,7 @@ $next_month = $next['month'];
 $max_day_in_prev_month = date("t", dol_mktime(0, 0, 0, $prev_month, 1, $prev_year, 'gmt')); // Nb of days in previous month
 $max_day_in_month = date("t", dol_mktime(0, 0, 0, $month, 1, $year)); // Nb of days in next month
 // tmpday is a negative or null cursor to know how many days before the 1st to show on month view (if tmpday=0, 1st is monday)
-$tmpday = -date("w", dol_mktime(12, 0, 0, $month, 1, $year, 'gmt')) + 2; // date('w') is 0 fo sunday
+$tmpday = -date("w", dol_mktime(12, 0, 0, $month, 1, $year, 'gmt')) + 2; // date('w') is 0 for sunday
 $tmpday += ((isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1) - 1);
 if ($tmpday >= 1) {
 	$tmpday -= 7; // If tmpday is 0 we start with sunday, if -6, we start with monday of previous week.
@@ -107,7 +107,7 @@ $datetimechosen = GETPOST('datetimechosen', 'int');
 $isdatechosen = false;
 $timebooking = GETPOST("timebooking");
 $datetimebooking = GETPOST("datetimebooking", 'int');
-
+$durationbooking = GETPOST("durationbooking", 'int');
 /**
  * Show header for booking
  *
@@ -119,7 +119,7 @@ $datetimebooking = GETPOST("datetimebooking", 'int');
  * @param 	array  		$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '')
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
 {
 	global $user, $conf, $langs, $mysoc;
 
@@ -231,16 +231,16 @@ if ($action == 'add') {
 	}
 
 	if (!$error) {
-		$dateend = dol_time_plus_duree(GETPOST("datetimebooking", 'int'), GETPOST("duration"), 'i');
+		$dateend = dol_time_plus_duree(GETPOST("datetimebooking", 'int'), GETPOST("durationbooking"), 'i');
 
-		$actioncomm->label = "test";
+		$actioncomm->label = $langs->trans("BookcalBookingTitle");
 		$actioncomm->type = 'AC_RDV';
 		$actioncomm->type_id = 5;
 		$actioncomm->datep = GETPOST("datetimebooking", 'int');
 		$actioncomm->datef = $dateend;
 		$actioncomm->note_private = GETPOST("description");
 		$actioncomm->percentage = -1;
-		$actioncomm->fk_bookcal_availability = GETPOST("id_availability", 'int');
+		$actioncomm->fk_bookcal_calendar = $id;
 		$actioncomm->userownerid = $calendar->visibility;
 		$actioncomm->contact_id = $contact->id;
 		$actioncomm->socpeopleassigned = $contact->id;
@@ -338,22 +338,21 @@ if ($action == 'afteradd') {
 	print '</tr>';
 
 	print '<tr>';
-	/*print '<td>';
 
-	//print '<h2>'.(!empty($availability->label) ? $availability->label : $availability->ref).'</h2>';
-	$defaultduration = 30;
-	print '<span>'.$langs->trans("AppointmentDuration", $defautduration).'</span>';
 
 	if ($action == 'create') {
+		print '<td>';
 		print '<br>';
 		if (empty($datetimebooking)) {
-			$timebookingarray = explode(":", $timebooking);
-			$datetimebooking = dol_time_plus_duree($datetimechosen, intval($timebookingarray[0]), "h");
-			$datetimebooking = dol_time_plus_duree($datetimebooking, intval($timebookingarray[1]), "i");
+			$timebookingarray = explode(" - ", $timebooking);
+			$timestartarray = explode(":", $timebookingarray[0]);
+			$timeendarray = explode(":", $timebookingarray[1]);
+			$datetimebooking = dol_time_plus_duree($datetimechosen, intval($timestartarray[0]), "h");
+			$datetimebooking = dol_time_plus_duree($datetimebooking, intval($timestartarray[1]), "i");
 		}
 		print '<span>'.img_picto("", "calendar")."&nbsp;".dol_print_date($datetimebooking, 'dayhourtext').'</span>';
+		print '</td>';
 	}
-	print '</td>'; */
 
 	print '<td>';
 	if ($action == "create") {
@@ -364,7 +363,7 @@ if ($action == 'afteradd') {
 		print '<input type="hidden" name="datetimebooking" value="'.$datetimebooking.'">';
 		print '<input type="hidden" name="datechosen" value="'.$datechosen.'">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
-		print '<input type="hidden" name="duration" value="'.$availability->duration.'">';
+		print '<input type="hidden" name="durationbooking" value="'.$durationbooking.'">';
 
 		// Lastname
 		print '<tr><td>'.$langs->trans("Lastname").' <span class="star">*</span></td><td><input type="text" name="lastname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('lastname')).'"></td></tr>'."\n";
@@ -407,15 +406,20 @@ if ($action == 'afteradd') {
 		$todayarray = dol_getdate($now, 'fast');
 		$todaytms = dol_mktime(0, 0, 0, $todayarray['mon'], $todayarray['mday'], $todayarray['year']);
 
-		// TODO Load into an array all days with availabilities of the calendar for the current month $todayarray['mon'] and $todayarray['year']
+		// Load into an array all days with availabilities of the calendar for the current month $todayarray['mon'] and $todayarray['year']
 		$arrayofavailabledays = array();
 
-		$arrayofavailabledays[dol_mktime(0, 0, 0, 4, 9, 2024)] = dol_mktime(0, 0, 0, 4, 9, 2023);
-		$arrayofavailabledays[dol_mktime(0, 0, 0, 11, 9, 2024)] = dol_mktime(0, 0, 0, 11, 9, 2023);
+		$arrayofavailabilities = $availability->fetchAll('', '', 0, 0, array('status' => '1', 'fk_bookcal_calendar' => $id));
 
-		// TODO Now complete the array with units already reserved and set transparency to 0
-		// select in actioncomm all events for user linked to an availability range into the calendar $id
-
+		foreach ($arrayofavailabilities as $key => $value) {
+			$startarray = dol_getdate($value->start);
+			$endarray = dol_getdate($value->end);
+			for ($i = $startarray['mday']; $i <= $endarray['mday']; $i++) {
+				if ($todayarray['mon'] >= $startarray['mon'] && $todayarray['mon'] <= $endarray['mon']) {
+					$arrayofavailabledays[dol_mktime(0, 0, 0, $todayarray['mon'], $i, $todayarray['year'])] = dol_mktime(0, 0, 0, $todayarray['mon'], $i, $todayarray['year']);
+				}
+			}
+		}
 
 		for ($iter_week = 0; $iter_week < 6; $iter_week++) {
 			echo " <tr>\n";
@@ -487,25 +491,16 @@ if ($action == 'afteradd') {
 
 		print '<td>'; // Column visible after selection of a day
 		print '<div class="center hidden bookingtab" style="height:50%">';
-		print '<div  style="margin-top:8px;max-height:330px" class="div-table-responsive-no-min">';
-		print '<form name="formbooking" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<div style="margin-top:8px;max-height:330px" class="div-table-responsive-no-min">';
+		print '<form id="formbooking" name="formbooking" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="create">';
 		print '<input type="hidden" id="datechosen" name="datechosen" value="">';
 		print '<input type="hidden" id="datetimechosen" name="datetimechosen" value="">';
+		print '<input type="hidden" id="durationbooking" name="durationbooking" value="">';
 
-		//var_dump($availability);
-		$hoursavailabilities_start = $availability->startHour;
-		$hoursavailabilities_end = $availability->endHour;
-		$hoursavailabilities_duration = $availability->duration;
-		for ($i=$hoursavailabilities_start; $i < $hoursavailabilities_end; $i++) {
-			for ($j=0; $j < 60 ; $j += $hoursavailabilities_duration) {
-				$timestring = ($i < 10 ? '0'.$i : $i).':'.($j < 10 ? '0'.$j : $j);
-				$timestringid = ($i < 10 ? '0'.$i : $i).''.($j < 10 ? '0'.$j : $j);
-				print '<span id="'.$timestringid.'" data-availability="'.$availability->id.'" class="btnformbooking"><input type="submit" class="button" name="timebooking" value="'.$timestring.'"><br></span>';
-			}
-		}
+		print '<div id="buttonlistbooking"></div>';
 		print '</form>';
 		print '</div>';
 		print '</div>';
@@ -520,15 +515,37 @@ if ($action == 'afteradd') {
 
 	print '<script>';
 	print '
-	function hideTimeBooking(time){
-		console.log("#"+time);
-		$("#"+time).hide();
+	function generateBookingButtons(timearray, datestring){
+		console.log("We generate all booking buttons of "+datestring);
+		str = "";
+		for(index in timearray){
+			let hour = new Date("2000-01-01T" + index + ":00");
+			duration = timearray[index];
+			isalreadybooked = false;
+			if (duration < 0) {
+				duration *= -1;
+				isalreadybooked = true;
+			}
+			hour.setMinutes(hour.getMinutes() + duration);
+
+			let hours = hour.getHours().toString().padStart(2, "0"); // Formatter pour obtenir deux chiffres
+			let mins = hour.getMinutes().toString().padStart(2, "0"); // Formatter pour obtenir deux chiffres
+
+			timerange = index + " - " + `${hours}:${mins}`;
+			str += "<input class=\'button btnsubmitbooking "+(isalreadybooked == true ? "btnbookcalbooked" : "")+"\' type=\'submit\' name=\'timebooking\' value=\'"+timerange+"\' data-duration=\'"+duration+"\'><br>";
+		}
+		$("#buttonlistbooking").html(str);
+		$(".btnsubmitbooking").on("click", function(){
+			duration = $(this).data("duration");
+			$("#durationbooking").val(duration);
+		})
 	}';
 	print '$(document).ready(function() {
 		$(".cal_available").on("click", function(){
 			console.log("We click on cal_available");
 			$(".cal_chosen").removeClass("cal_chosen");
 			$(this).addClass("cal_chosen");
+			datestring = $(this).children("div").data("date");
 			$.ajax({
 				type: "POST",
 				url: "'.DOL_URL_ROOT.'/public/bookcal/bookcalAjax.php",
@@ -539,13 +556,14 @@ if ($action == 'afteradd') {
 					token: "'.currentToken().'",
 				}
 			}).done(function (data) {
-				$(".btnformbooking").show();
 				console.log("We show all booking");
 				if (data["code"] == "SUCCESS") {
 					/* TODO Replace this with a creating of allavailable hours button */
-					timearray = data["content"];
-					timearray.forEach((time) => hideTimeBooking(time));
-					console.log("We hide all taken time for booking");
+					console.log(data)
+					timearray = data["availability"];
+					console.log(timearray);
+					generateBookingButtons(timearray, datestring);
+					$(".btnbookcalbooked").prop("disabled", true);
 				} else {
 					if(data["code"] == "NO_DATA_FOUND"){
 						console.log("No booking to hide");

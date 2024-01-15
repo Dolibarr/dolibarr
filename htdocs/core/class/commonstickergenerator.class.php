@@ -34,11 +34,11 @@
 // 1.1  : +	: Added unit in the constructor
 //	  + : Now Positions start @ (1,1).. then the first image @top-left of a page is (1,1)
 //	  + : Added in the description of a label :
-//		font-size	: defaut char size (can be changed by calling Set_Char_Size(xx);
+//		font-size	: default char size (can be changed by calling Set_Char_Size(xx);
 //		paper-size	: Size of the paper for this sheet (thanx to Al Canton)
 //		metric		: type of unit used in this description
 //				  You can define your label properties in inches by setting metric to 'in'
-//				  and printing in millimiter by setting unit to 'mm' in constructor.
+//				  and printing in millimeter by setting unit to 'mm' in constructor.
 //	  Added some labels :
 //	        5160, 5161, 5162, 5163,5164 : thanx to Al Canton : acanton@adams-blake.com
 //		8600 						: thanx to Kunal Walia : kunal@u.washington.edu
@@ -93,7 +93,7 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 	protected $_Height = 0;
 	// Hauteur des caracteres
 	protected $_Char_Size = 10;
-	// Hauteur par defaut d'une ligne
+	// Hauteur par default d'une ligne
 	protected $_Line_Height = 10;
 	// Type of metric.. Will help to calculate good values
 	protected $_Metric = 'mm';
@@ -104,8 +104,12 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 	protected $_First = 1;
 	public $Tformat;
 
-
+	/**
+	 * @var array
+	 */
+	public $_Avery_Labels;
 	// phpcs:enable
+
 	/**
 	 *	Constructor
 	 *
@@ -118,9 +122,9 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Function to build PDF on disk, then output on HTTP strem.
+	 *  Function to build PDF on disk, then output on HTTP stream.
 	 *
-	 *  @param	array		$arrayofrecords  	Array of record informations (array('textleft'=>,'textheader'=>, ..., 'id'=>,'photo'=>)
+	 *  @param	array		$arrayofrecords  	Array of record information (array('textleft'=>,'textheader'=>, ..., 'id'=>,'photo'=>)
 	 *  @param  Translate	$outputlangs     	Lang object for output language
 	 *  @param	string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *	@param	string		$outputdir			Output directory for pdf file
@@ -294,7 +298,7 @@ abstract class CommonStickerGenerator extends CommonDocGenerator
 		// phpcs:enable
 		$this->_Metric = $format['metric'];
 		$this->_Avery_Name = $format['name'];
-		$this->_Avery_Code = empty($format['code'])?'':$format['code'];
+		$this->_Avery_Code = empty($format['code']) ? '' : $format['code'];
 		$this->_Margin_Left = $this->convertMetric($format['marginLeft'], $this->_Metric, $this->_Metric_Doc);
 		$this->_Margin_Top = $this->convertMetric($format['marginTop'], $this->_Metric, $this->_Metric_Doc);
 		$this->_X_Space = $this->convertMetric($format['SpaceX'], $this->_Metric, $this->_Metric_Doc);

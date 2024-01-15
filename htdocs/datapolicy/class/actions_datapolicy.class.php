@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseom.com>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@ class ActionsDatapolicy extends CommonHookActions
 	 * @param   array           $parameters		Array of parameters
 	 * @param   CommonObject    $object         The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
 	 * @param   string          $action      	'add', 'update', 'view'
-	 * @return  int         					<0 if KO,
+	 * @return  int         					Return integer <0 if KO,
 	 *                           				=0 if OK but we want to process standard actions too,
 	 *                            				>0 if OK and we want to replace standard actions.
 	 */
@@ -87,7 +87,7 @@ class ActionsDatapolicy extends CommonHookActions
 	 * @param   Societe|CommonObject    $object         The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
 	 * @param   string         			$action         Current action (if set). Generally create or edit or null
 	 * @param   HookManager     		$hookmanager    Hook manager propagated to allow calling another hook
-	 * @return  int                     		        < 0 on error, 0 on success, 1 to replace standard code
+	 * @return  int                     		        Return integer < 0 on error, 0 on success, 1 to replace standard code
 	 */
 	public function doActions($parameters, &$object, &$action, $hookmanager)
 	{
@@ -102,7 +102,7 @@ class ActionsDatapolicy extends CommonHookActions
 
 		// FIXME Removed hard coded id, use codes
 		if ($parameters['currentcontext'] == 'thirdpartycard' && $action == 'anonymiser' && (in_array($object->forme_juridique_code, array(11, 12, 13, 15, 17, 18, 19, 35, 60, 200, 311, 312, 316, 401, 600, 700, 1005)) || $object->typent_id == 8)) {
-			// on verifie si l'objet est utilisé
+			// Verify if the object is used
 			if ($object->isObjectUsed(GETPOST('socid'))) {
 				$object->name = $langs->trans('ANONYME');
 				$object->name_alias = '';
@@ -127,6 +127,7 @@ class ActionsDatapolicy extends CommonHookActions
 
 					setEventMessages($langs->trans('ANONYMISER_SUCCESS'), array());
 					header('Location:'.$_SERVER["PHP_SELF"]."?socid=".$object->id);
+					exit;
 				}
 			}
 		} elseif ($parameters['currentcontext'] == 'contactcard' && $action == 'send_datapolicy') {
@@ -136,7 +137,7 @@ class ActionsDatapolicy extends CommonHookActions
 			require_once  DOL_DOCUMENT_ROOT.'/datapolicy/class/datapolicy.class.php';
 			DataPolicy::sendMailDataPolicyContact($object);
 		} elseif ($parameters['currentcontext'] == 'membercard' && $action == 'send_datapolicy') {
-			 $object->fetch(GETPOST('id'));
+			$object->fetch(GETPOST('id'));
 			require_once  DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 			require_once  DOL_DOCUMENT_ROOT.'/datapolicy/class/datapolicy.class.php';
 			DataPolicy::sendMailDataPolicyAdherent($object);
@@ -158,66 +159,6 @@ class ActionsDatapolicy extends CommonHookActions
 	}
 
 	/**
-	 * Overloading the doMassActions function : replacing the parent's function with the one below
-	 *
-	 * @param   array           $parameters     Hook metadatas (context, etc...)
-	 * @param   CommonObject    $object         The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
-	 * @param   string          $action         Current action (if set). Generally create or edit or null
-	 * @param   HookManager     $hookmanager    Hook manager propagated to allow calling another hook
-	 * @return  int                             < 0 on error, 0 on success, 1 to replace standard code
-	 */
-	public function doMassActions($parameters, &$object, &$action, $hookmanager)
-	{
-		$error = 0; // Error counter
-
-		/* print_r($parameters); print_r($object); echo "action: " . $action; */
-		//if (in_array($parameters['currentcontext'], array('somecontext1', 'somecontext2'))) {
-		//    // do something only for the context 'somecontext1' or 'somecontext2'
-		//    foreach ($parameters['toselect'] as $objectid) {
-		//        // Do action on each object id
-		//    }
-		//}
-
-		if (!$error) {
-			$this->results = array('myreturn' => 999);
-			$this->resprints = 'A text to show';
-			return 0; // or return 1 to replace standard code
-		} else {
-			$this->errors[] = 'Error message';
-			return -1;
-		}
-	}
-
-	/**
-	 * Overloading the addMoreMassActions function : replacing the parent's function with the one below
-	 *
-	 * @param   array           $parameters		Hook metadatas (context, etc...)
-	 * @param   CommonObject    $object         The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
-	 * @param   string          $action         Current action (if set). Generally create or edit or null
-	 * @param   HookManager     $hookmanager    Hook manager propagated to allow calling another hook
-	 * @return  int                             < 0 on error, 0 on success, 1 to replace standard code
-	 */
-	public function addMoreMassActions($parameters, &$object, &$action, $hookmanager)
-	{
-		global $langs;
-
-		$error = 0; // Error counter
-
-		/* print_r($parameters); print_r($object); echo "action: " . $action; */
-		if (in_array($parameters['currentcontext'], array('somecontext1', 'somecontext2'))) {  // do something only for the context 'somecontext1' or 'somecontext2'
-			$this->resprints = '<option value="0"'.($disabled ? ' disabled="disabled"' : '').'>'.$langs->trans("datapolicyMassAction").'</option>';
-		}
-
-		if (!$error) {
-			return 0; // or return 1 to replace standard code
-		} else {
-			$this->errors[] = 'Error message';
-			return -1;
-		}
-	}
-
-
-	/**
 	 * addMoreActionsButtons
 	 *
 	 * @param array 		$parameters		array of parameters
@@ -231,7 +172,7 @@ class ActionsDatapolicy extends CommonHookActions
 		global $conf, $langs;
 		$langs->load('datapolicy@datapolicy');
 
-		if (!empty($conf->global->DATAPOLICY_ENABLE_EMAILS)) {
+		if (getDolGlobalString('DATAPOLICY_ENABLE_EMAILS')) {
 			$dialog = '<div id="dialogdatapolicy" style="display:none;" title="'.$langs->trans('DATAPOLICY_PORTABILITE_TITLE').'">';
 			$dialog .= '<div class="confirmmessage">'.img_help('', '').' '.$langs->trans('DATAPOLICY_PORTABILITE_CONFIRMATION').'</div>';
 			$dialog .= "</div>";
@@ -311,7 +252,7 @@ class ActionsDatapolicy extends CommonHookActions
 			}
 
 			if (GETPOST('socid')) {
-				/* Removed due to awful harcoded values
+				/* Removed due to awful hardcoded values
 				require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 				$societe = new Societe($this->db);
 				$societe->fetch(GETPOST('socid'));

@@ -53,7 +53,7 @@ function jsUnEscape($source)
 				$unicodeHexVal = substr($source, $pos, 4);
 				$unicode = hexdec($unicodeHexVal);
 				$entity = "&#".$unicode.';';
-				$decodedStr .= utf8_encode($entity);
+				$decodedStr .= mb_convert_encoding($entity, 'UTF-8', 'ISO-8859-1');
 				$pos += 4;
 			} else {
 				// we have an escaped ascii character
@@ -97,7 +97,7 @@ function dolGetModulesDirs($subdir = '')
 					continue; // We discard module if it contains disabled into name.
 				}
 
-				if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes') {
+				if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS' && $file != 'includes') {
 					if (is_dir($dirroot.'/'.$file.'/core/modules'.$subdir.'/')) {
 						$modulesdir[$dirroot.'/'.$file.'/core/modules'.$subdir.'/'] = $dirroot.'/'.$file.'/core/modules'.$subdir.'/';
 					}
@@ -134,71 +134,12 @@ function dol_getDefaultFormat(Translate $outputlangs = null)
 	return $selected;
 }
 
-/**
- *  Output content of a file $filename in version of current language (otherwise may use an alternate language)
- *
- *  @param	Translate	$langs          Object language to use for output
- *  @param  string		$filename       Relative filename to output
- *  @param  int			$searchalt      1=Search also in alternative languages
- *	@return	boolean						true if OK, false if KO
- */
-function dol_print_file($langs, $filename, $searchalt = 0)
-{
-	global $conf;
-
-	// Test if file is in lang directory
-	foreach ($langs->dir as $searchdir) {
-		$formfile = ($searchdir."/langs/".$langs->defaultlang."/".$filename);
-		dol_syslog('functions2::dol_print_file search file '.$formfile, LOG_DEBUG);
-		if (is_readable($formfile)) {
-			$content = file_get_contents($formfile);
-			$isutf8 = utf8_check($content);
-			if (!$isutf8 && $conf->file->character_set_client == 'UTF-8') {
-				print utf8_encode($content);
-			} elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') {
-				print utf8_decode($content);
-			} else {
-				print $content;
-			}
-			return true;
-		} else {
-			dol_syslog('functions2::dol_print_file not found', LOG_DEBUG);
-		}
-
-		if ($searchalt) {
-			// Test si fichier dans repertoire de la langue alternative
-			if ($langs->defaultlang != "en_US") {
-				$formfilealt = $searchdir."/langs/en_US/".$filename;
-			} else {
-				$formfilealt = $searchdir."/langs/fr_FR/".$filename;
-			}
-			dol_syslog('functions2::dol_print_file search alt file '.$formfilealt, LOG_DEBUG);
-			//print 'getcwd='.getcwd().' htmlfilealt='.$formfilealt.' X '.file_exists(getcwd().'/'.$formfilealt);
-			if (is_readable($formfilealt)) {
-				$content = file_get_contents($formfilealt);
-				$isutf8 = utf8_check($content);
-				if (!$isutf8 && $conf->file->character_set_client == 'UTF-8') {
-					print mb_convert_encoding($content, 'UTF-8', 'ISO-8859-1');
-				} elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') {
-					print mb_convert_encoding($content, 'ISO-8859-1', 'UTF-8');
-				} else {
-					print $content;
-				}
-				return true;
-			} else {
-				dol_syslog('functions2::dol_print_file not found', LOG_DEBUG);
-			}
-		}
-	}
-
-	return false;
-}
 
 /**
- *	Show informations on an object
+ *	Show information on an object
  *  TODO Move this into html.formother
  *
- *	@param	object	$object			Objet to show
+ *	@param	object	$object			Object to show
  *  @param  int     $usetable       Output into a table
  *	@return	void
  */
@@ -813,7 +754,7 @@ function isValidVATID($company)
  */
 function clean_url($url, $http = 1)
 {
-	// Fixed by Matelli (see http://matelli.fr/showcases/patchs-dolibarr/fix-cleaning-url.html)
+	// Fixed by Matelli (see http://matelli.fr/showcases/patch%73-dolibarr/fix-cleaning-url.html)
 	// To include the minus sign in a char class, we must not escape it but put it at the end of the class
 	// Also, there's no need of escape a dot sign in a class
 	$regs = array();
@@ -849,7 +790,7 @@ function clean_url($url, $http = 1)
  * 	Returns an email value with obfuscated parts.
  *
  * 	@param 		string		$mail				Email
- * 	@param 		string		$replace			Replacement character (defaul: *)
+ * 	@param 		string		$replace			Replacement character (default: *)
  * 	@param 		int			$nbreplace			Number of replacement character (default: 8)
  * 	@param 		int			$nbdisplaymail		Number of character unchanged (default: 4)
  * 	@param 		int			$nbdisplaydomain	Number of character unchanged of domain (default: 3)
@@ -947,7 +888,7 @@ function array2table($data, $tableMarkup = 1, $tableoptions = '', $troptions = '
  * @param   string		$mask			Mask to use
  * @param   string		$table			Table containing field with counter
  * @param   string		$field			Field containing already used values of counter
- * @param   string		$where			To add a filter on selection (for exemple to filter on invoice types)
+ * @param   string		$where			To add a filter on selection (for example to filter on invoice types)
  * @param   Societe		$objsoc			The company that own the object we need a counter for
  * @param   string		$date			Date to use for the {y},{m},{d} tags.
  * @param   string		$mode			'next' for next value or 'last' for last value
@@ -1002,7 +943,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$maskraz = -1;
 	$maskoffset = 0;
 	$resetEveryMonth = false;
-	if (dol_strlen($maskcounter) < 3 && empty($conf->global->MAIN_COUNTER_WITH_LESS_3_DIGITS)) {
+	if (dol_strlen($maskcounter) < 3 && !getDolGlobalString('MAIN_COUNTER_WITH_LESS_3_DIGITS')) {
 		return 'ErrorCounterMustHaveMoreThan3Digits';
 	}
 
@@ -1117,8 +1058,8 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	//print "yearoffset=".$yearoffset." yearoffsettype=".$yearoffsettype;
 	if (is_numeric($yearoffsettype) && $yearoffsettype >= 1) {
 		$maskraz = $yearoffsettype; // For backward compatibility
-	} elseif ($yearoffsettype === '0' || (!empty($yearoffsettype) && !is_numeric($yearoffsettype) && $conf->global->SOCIETE_FISCAL_MONTH_START > 1)) {
-		$maskraz = $conf->global->SOCIETE_FISCAL_MONTH_START;
+	} elseif ($yearoffsettype === '0' || (!empty($yearoffsettype) && !is_numeric($yearoffsettype) && getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') > 1)) {
+		$maskraz = getDolGlobalString('SOCIETE_FISCAL_MONTH_START');
 	}
 	//print "maskraz=".$maskraz;	// -1=no reset
 
@@ -1146,8 +1087,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			if (dol_strlen($reg[$posy]) < 2) {
 				return 'ErrorCantUseRazWithYearOnOneDigit';
 			}
-		} else // if reset is for a specific month in year, we need year
-		{
+		} else { // if reset is for a specific month in year, we need year
 			if (preg_match('/^(.*)\{(m+)\}\{(y+)\}/i', $maskwithonlyymcode, $reg)) {
 				$posy = 3;
 				$posm = 2;
@@ -1162,8 +1102,8 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			}
 		}
 		// Define length
-		$yearlen = $posy ?dol_strlen($reg[$posy]) : 0;
-		$monthlen = $posm ?dol_strlen($reg[$posm]) : 0;
+		$yearlen = $posy ? dol_strlen($reg[$posy]) : 0;
+		$monthlen = $posm ? dol_strlen($reg[$posm]) : 0;
 		// Define pos
 		$yearpos = (dol_strlen($reg[1]) + 1);
 		$monthpos = ($yearpos + $yearlen);
@@ -1245,7 +1185,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$maskLike = dol_string_nospecial($mask);
 	$maskLike = str_replace("%", "_", $maskLike);
 
-	// Replace protected special codes with matching number of _ as wild card caracter
+	// Replace protected special codes with matching number of _ as wild card character
 	$maskLike = preg_replace('/\{yyyy\}/i', '____', $maskLike);
 	$maskLike = preg_replace('/\{yy\}/i', '__', $maskLike);
 	$maskLike = preg_replace('/\{y\}/i', '_', $maskLike);
@@ -1269,13 +1209,13 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$counter = 0;
 	$sql = "SELECT MAX(".$sqlstring.") as val";
 	$sql .= " FROM ".MAIN_DB_PREFIX.$table;
-	$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike) . (!empty($conf->global->SEARCH_FOR_NEXT_VAL_ON_START_ONLY) ? "%" : "") . "'";
+	$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike) . (getDolGlobalString('SEARCH_FOR_NEXT_VAL_ON_START_ONLY') ? "%" : "") . "'";
 	$sql .= " AND ".$field." NOT LIKE '(PROV%)'";
 
 	// To ensure that all variables within the MAX() brackets are integers
 	// This avoid bad detection of max when data are noised with non numeric values at the position of the numero
 	if (getDolGlobalInt('MAIN_NUMBERING_FILTER_ON_INT_ONLY')) {
-		$sql .= " AND ". $db->regexpsql($sqlstring, '^[0-9]+$', true);
+		$sql .= " AND ". $db->regexpsql($sqlstring, '^[0-9]+$', 1);
 	}
 
 	if ($bentityon) { // only if entity enable
@@ -1306,7 +1246,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	} elseif (preg_match('/[^0-9]/i', $counter)) {
 		dol_syslog("Error, the last counter found is '".$counter."' so is not a numeric value. We will restart to 1.", LOG_ERR);
 		$counter = 0;
-	} elseif ($counter < $maskoffset && empty($conf->global->MAIN_NUMBERING_OFFSET_ONLY_FOR_FIRST)) {
+	} elseif ($counter < $maskoffset && !getDolGlobalString('MAIN_NUMBERING_OFFSET_ONLY_FOR_FIRST')) {
 		$counter = $maskoffset;
 	}
 
@@ -1316,7 +1256,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		// Define $maskLike
 		$maskLike = dol_string_nospecial($mask);
 		$maskLike = str_replace("%", "_", $maskLike);
-		// Replace protected special codes with matching number of _ as wild card caracter
+		// Replace protected special codes with matching number of _ as wild card character
 		$maskLike = preg_replace('/\{yyyy\}/i', '____', $maskLike);
 		$maskLike = preg_replace('/\{yy\}/i', '__', $maskLike);
 		$maskLike = preg_replace('/\{y\}/i', '_', $maskLike);
@@ -1336,7 +1276,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		$ref = '';
 		$sql = "SELECT ".$field." as ref";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$table;
-		$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike) . (!empty($conf->global->SEARCH_FOR_NEXT_VAL_ON_START_ONLY) ? "%" : "") . "'";
+		$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike) . (getDolGlobalString('SEARCH_FOR_NEXT_VAL_ON_START_ONLY') ? "%" : "") . "'";
 		$sql .= " AND ".$field." NOT LIKE '%PROV%'";
 		if ($bentityon) { // only if entity enable
 			$sql .= " AND entity IN (".getEntity($sharetable).")";
@@ -1385,7 +1325,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			// Define $maskrefclient_maskLike
 			$maskrefclient_maskLike = dol_string_nospecial($mask);
 			$maskrefclient_maskLike = str_replace("%", "_", $maskrefclient_maskLike);
-			// Replace protected special codes with matching number of _ as wild card caracter
+			// Replace protected special codes with matching number of _ as wild card character
 			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{yyyy}'), '____', $maskrefclient_maskLike);
 			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{yy}'), '__', $maskrefclient_maskLike);
 			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{y}'), '_', $maskrefclient_maskLike);
@@ -1398,7 +1338,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$maskrefclient_sql = "SELECT MAX(".$maskrefclient_sqlstring.") as val";
 			$maskrefclient_sql .= " FROM ".MAIN_DB_PREFIX.$table;
 			//$sql.= " WHERE ".$field." not like '(%'";
-			$maskrefclient_sql .= " WHERE ".$field." LIKE '".$db->escape($maskrefclient_maskLike) . (!empty($conf->global->SEARCH_FOR_NEXT_VAL_ON_START_ONLY) ? "%" : "") . "'";
+			$maskrefclient_sql .= " WHERE ".$field." LIKE '".$db->escape($maskrefclient_maskLike) . (getDolGlobalString('SEARCH_FOR_NEXT_VAL_ON_START_ONLY') ? "%" : "") . "'";
 			if ($bentityon) { // only if entity enable
 				$maskrefclient_sql .= " AND entity IN (".getEntity($sharetable).")";
 			} elseif (!empty($forceentity)) {
@@ -1435,8 +1375,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$numFinal = preg_replace('/\{yyyy\}/i', date("Y", $date) + $yearoffset, $numFinal);
 			$numFinal = preg_replace('/\{yy\}/i', date("y", $date) + $yearoffset, $numFinal);
 			$numFinal = preg_replace('/\{y\}/i', substr(date("y", $date), 1, 1) + $yearoffset, $numFinal);
-		} else // we want yyyy to be current year
-		{
+		} else { // we want yyyy to be current year
 			$numFinal = preg_replace('/\{yyyy\}/i', date("Y", $date), $numFinal);
 			$numFinal = preg_replace('/\{yy\}/i', date("y", $date), $numFinal);
 			$numFinal = preg_replace('/\{y\}/i', substr(date("y", $date), 1, 1), $numFinal);
@@ -1491,13 +1430,13 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 function get_string_between($string, $start, $end)
 {
 	$string = " ".$string;
-	 $ini = strpos($string, $start);
+	$ini = strpos($string, $start);
 	if ($ini == 0) {
 		return "";
 	}
-	 $ini += strlen($start);
-	 $len = strpos($string, $end, $ini) - $ini;
-	 return substr($string, $ini, $len);
+	$ini += strlen($start);
+	$len = strpos($string, $end, $ini) - $ini;
+	return substr($string, $ini, $len);
 }
 
 /**
@@ -1505,7 +1444,7 @@ function get_string_between($string, $start, $end)
  *
  * @param 	string	$mask		Mask to use
  * @param 	string	$value		Value
- * @return	int|string		    <0 or error string if KO, 0 if OK
+ * @return	int|string		    Return integer <0 or error string if KO, 0 if OK
  */
 function check_value($mask, $value)
 {
@@ -1684,9 +1623,9 @@ function numero_semaine($time)
 
 	/*
 	 * Norme ISO-8601:
-	 * - La semaine 1 de toute annee est celle qui contient le 4 janvier ou que la semaine 1 de toute annee est celle qui contient le 1er jeudi de janvier.
-	 * - La majorite des annees ont 52 semaines mais les annees qui commence un jeudi et les annees bissextiles commencant un mercredi en possede 53.
-	 * - Le 1er jour de la semaine est le Lundi
+	 * - Week 1 of the year contains Jan 4th, or contains the first Thursday of January.
+	 * - Most years have 52 weeks, but 53 weeks for years starting on a Thursday and bisectile years that start on a Wednesday.
+	 * - The first day of a week is Monday
 	 */
 
 	// Definition du Jeudi de la semaine
@@ -1707,15 +1646,14 @@ function numero_semaine($time)
 		$premierJeudiAnnee = mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)) + (4 - date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)))) * 24 * 60 * 60;
 	} elseif (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))) > 4) { // du Vendredi au Samedi
 		$premierJeudiAnnee = mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)) + (7 - (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))) - 4)) * 24 * 60 * 60;
-	} else // Jeudi
-	{
+	} else { // Jeudi
 		$premierJeudiAnnee = mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine));
 	}
 
 	// Definition du numero de semaine: nb de jours entre "premier Jeudi de l'annee" et "Jeudi de la semaine";
 	$numeroSemaine = (
-	(
-	date("z", mktime(12, 0, 0, date("m", $jeudiSemaine), date("d", $jeudiSemaine), date("Y", $jeudiSemaine)))
+		(
+		date("z", mktime(12, 0, 0, date("m", $jeudiSemaine), date("d", $jeudiSemaine), date("Y", $jeudiSemaine)))
 	-
 	date("z", mktime(12, 0, 0, date("m", $premierJeudiAnnee), date("d", $premierJeudiAnnee), date("Y", $premierJeudiAnnee)))
 	) / 7
@@ -1752,7 +1690,7 @@ function weight_convert($weight, &$from_unit, $to_unit)
 	 *
 	 */
 	$weight = is_numeric($weight) ? $weight : 0;
-	while ($from_unit <> $to_unit) {
+	while ($from_unit != $to_unit) {
 		if ($from_unit > $to_unit) {
 			$weight = $weight * 10;
 			$from_unit = $from_unit - 1;
@@ -1769,19 +1707,19 @@ function weight_convert($weight, &$from_unit, $to_unit)
 }
 
 /**
- *	Save personnal parameter
+ *	Save personal parameter
  *
  *	@param	DoliDB	$db         Handler database
  *	@param	Conf	$conf		Object conf
  *	@param	User	$user      	Object user
  *	@param	array	$tab        Array (key=>value) with all parameters to save/update
- *	@return int         		<0 if KO, >0 if OK
+ *	@return int         		Return integer <0 if KO, >0 if OK
  *
  *	@see		dolibarr_get_const(), dolibarr_set_const(), dolibarr_del_const()
  */
 function dol_set_user_param($db, $conf, &$user, $tab)
 {
-	// Verification parametres
+	// Verification parameters
 	if (count($tab) < 1) {
 		return -1;
 	}
@@ -1837,11 +1775,11 @@ function dol_set_user_param($db, $conf, &$user, $tab)
 }
 
 /**
- *	Returns formated reduction
+ *	Returns formatted reduction
  *
  *	@param	int			$reduction		Reduction percentage
  *	@param	Translate	$langs			Output language
- *	@return	string						Formated reduction
+ *	@return	string						Formatted reduction
  */
 function dol_print_reduction($reduction, $langs)
 {
@@ -1857,7 +1795,7 @@ function dol_print_reduction($reduction, $langs)
 
 /**
  * 	Return OS version.
- *  Note that PHP_OS returns only OS (not version) and OS PHP was built on, not necessarly OS PHP runs on.
+ *  Note that PHP_OS returns only OS (not version) and OS PHP was built on, not necessarily OS PHP runs on.
  *
  *  @param 		string		$option 	Option string
  * 	@return		string					OS version
@@ -1881,6 +1819,20 @@ function version_os($option = '')
 function version_php()
 {
 	return phpversion();
+}
+
+/**
+ * 	Return DB version
+ *
+ * 	@return		string			PHP version
+ */
+function version_db()
+{
+	global $db;
+	if (is_object($db) && method_exists($db, 'getVersion')) {
+		return $db->getVersion();
+	}
+	return '';
 }
 
 /**
@@ -1941,8 +1893,7 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 				$const = $obj->description;
-				//irtoscan.=($dirtoscan?',':'').preg_replace('/[\r\n]+/',',',trim($conf->global->$const));
-				$dirtoscan = preg_replace('/[\r\n]+/', ',', trim($conf->global->$const));
+				$dirtoscan = preg_replace('/[\r\n]+/', ',', trim(getDolGlobalString($const)));
 
 				$listoffiles = array();
 
@@ -2000,7 +1951,7 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
 
 /**
  * This function evaluates a string that should be a valid IPv4
- * Note: For ip 169.254.0.0, it returns 0 with some PHP (5.6.24) and 2 with some minor patchs of PHP (5.6.25). See https://github.com/php/php-src/pull/1954.
+ * Note: For ip 169.254.0.0, it returns 0 with some PHP (5.6.24) and 2 with some minor patches of PHP (5.6.25). See https://github.com/php/php-src/pull/1954.
  *
  * @param	string $ip IP Address
  * @return	int 0 if not valid or reserved range, 1 if valid and public IP, 2 if valid and private range IP
@@ -2064,13 +2015,13 @@ function getSoapParams()
 	global $conf;
 
 	$params = array();
-	$proxyuse = (empty($conf->global->MAIN_PROXY_USE) ?false:true);
-	$proxyhost = (empty($conf->global->MAIN_PROXY_USE) ?false:$conf->global->MAIN_PROXY_HOST);
-	$proxyport = (empty($conf->global->MAIN_PROXY_USE) ?false:$conf->global->MAIN_PROXY_PORT);
-	$proxyuser = (empty($conf->global->MAIN_PROXY_USE) ?false:$conf->global->MAIN_PROXY_USER);
-	$proxypass = (empty($conf->global->MAIN_PROXY_USE) ?false:$conf->global->MAIN_PROXY_PASS);
-	$timeout = (empty($conf->global->MAIN_USE_CONNECT_TIMEOUT) ? 10 : $conf->global->MAIN_USE_CONNECT_TIMEOUT); // Connection timeout
-	$response_timeout = (empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT) ? 30 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT); // Response timeout
+	$proxyuse = (!getDolGlobalString('MAIN_PROXY_USE') ? false : true);
+	$proxyhost = (!getDolGlobalString('MAIN_PROXY_USE') ? false : $conf->global->MAIN_PROXY_HOST);
+	$proxyport = (!getDolGlobalString('MAIN_PROXY_USE') ? false : $conf->global->MAIN_PROXY_PORT);
+	$proxyuser = (!getDolGlobalString('MAIN_PROXY_USE') ? false : $conf->global->MAIN_PROXY_USER);
+	$proxypass = (!getDolGlobalString('MAIN_PROXY_USE') ? false : $conf->global->MAIN_PROXY_PASS);
+	$timeout = (!getDolGlobalString('MAIN_USE_CONNECT_TIMEOUT') ? 10 : $conf->global->MAIN_USE_CONNECT_TIMEOUT); // Connection timeout
+	$response_timeout = (!getDolGlobalString('MAIN_USE_RESPONSE_TIMEOUT') ? 30 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT); // Response timeout
 	//print extension_loaded('soap');
 	if ($proxyuse) {
 		$params = array('connection_timeout'=>$timeout,
@@ -2471,8 +2422,7 @@ function colorAgressiveness($hex, $ratio = -50, $brightness = 0)
 			if ($color < 128) {
 				$color -= ($color * ($ratio / 100));
 			}
-		} else // We decrease agressiveness
-		{
+		} else { // We decrease aggressiveness
 			if ($color > 128) {
 				$color -= (($color - 128) * (abs($ratio) / 100));
 			}
@@ -2563,7 +2513,7 @@ function colorHexToRgb($hex, $alpha = false, $returnArray = false)
 	$rgb['g'] = hexdec($length == 6 ? substr($hex, 2, 2) : ($length == 3 ? str_repeat(substr($hex, 1, 1), 2) : 0));
 	$rgb['b'] = hexdec($length == 6 ? substr($hex, 4, 2) : ($length == 3 ? str_repeat(substr($hex, 2, 1), 2) : 0));
 	if ($alpha !== false) {
-		$rgb['a'] = floatval($alpha);
+		$rgb['a'] = (float) $alpha;
 		$string = 'rgba('.implode(',', $rgb).')';
 	} else {
 		$string = 'rgb('.implode(',', $rgb).')';
@@ -2740,14 +2690,14 @@ function price2fec($amount)
 	if (empty($amount)) {
 		$amount = 0; // To have a numeric value if amount not defined or = ''
 	}
-	$amount = (is_numeric($amount) ? $amount : 0); // Check if amount is numeric, for example, an error occured when amount value = o (letter) instead 0 (number)
+	$amount = (is_numeric($amount) ? $amount : 0); // Check if amount is numeric, for example, an error occurred when amount value = o (letter) instead 0 (number)
 
 	// Output decimal number by default
-	$nbdecimal = (empty($conf->global->ACCOUNTING_FEC_DECIMAL_LENGTH) ? 2 : $conf->global->ACCOUNTING_FEC_DECIMAL_LENGTH);
+	$nbdecimal = (!getDolGlobalString('ACCOUNTING_FEC_DECIMAL_LENGTH') ? 2 : $conf->global->ACCOUNTING_FEC_DECIMAL_LENGTH);
 
 	// Output separators by default
-	$dec = (empty($conf->global->ACCOUNTING_FEC_DECIMAL_SEPARATOR) ? ',' : $conf->global->ACCOUNTING_FEC_DECIMAL_SEPARATOR);
-	$thousand = (empty($conf->global->ACCOUNTING_FEC_THOUSAND_SEPARATOR) ? '' : $conf->global->ACCOUNTING_FEC_THOUSAND_SEPARATOR);
+	$dec = (!getDolGlobalString('ACCOUNTING_FEC_DECIMAL_SEPARATOR') ? ',' : $conf->global->ACCOUNTING_FEC_DECIMAL_SEPARATOR);
+	$thousand = (!getDolGlobalString('ACCOUNTING_FEC_THOUSAND_SEPARATOR') ? '' : $conf->global->ACCOUNTING_FEC_THOUSAND_SEPARATOR);
 
 	// Format number
 	$output = number_format($amount, $nbdecimal, $dec, $thousand);
@@ -2880,10 +2830,12 @@ function acceptLocalLinktoMedia()
 		}
 
 		//var_dump($iptocheck.' '.$acceptlocallinktomedia);
-		if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+		$allowParamName = 'MAIN_ALLOW_WYSIWYG_LOCAL_MEDIAS_ON_PRIVATE_NETWORK';
+		$allowPrivateNetworkIP = getDolGlobalInt($allowParamName);
+		if (!$allowPrivateNetworkIP && !filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
 			// If ip of public url is a private network IP, we do not allow this.
 			$acceptlocallinktomedia = 0;
-			// TODO Show a warning
+			//dol_syslog("WYSIWYG Editor : local media not allowed (checked IP: {$iptocheck}). Use {$allowParamName} = 1 to allow local URL into WYSIWYG html content");
 		}
 
 		if (preg_match('/http:/i', $urlwithouturlroot)) {
@@ -2918,7 +2870,8 @@ function removeGlobalParenthesis($string)
 	}
 
 	$nbofchars = dol_strlen($string);
-	$i = 0; $g = 0;
+	$i = 0;
+	$g = 0;
 	$countparenthesis = 0;
 	while ($i < $nbofchars) {
 		$char = dol_substr($string, $i, 1);

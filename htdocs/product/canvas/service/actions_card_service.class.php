@@ -34,6 +34,11 @@ class ActionsCardService
 	public $db;
 
 	public $dirmodule;
+	public $module;
+	public $label;
+	public $price_base_type;
+	public $accountancy_code_sell;
+	public $accountancy_code_buy;
 	public $targetmodule;
 	public $canvas;
 	public $card;
@@ -49,7 +54,7 @@ class ActionsCardService
 	//! Template container
 	public $tpl = array();
 
-	// List of fiels for action=list
+	// List of fields for action=list
 	public $field_list = array();
 
 	public $id;

@@ -67,7 +67,7 @@ class modCommande extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array("commande.php");
 
-		// Dependancies
+		// Dependencies
 		$this->depends = array("modSociete");
 		$this->requiredby = array("modExpedition");
 		$this->conflictwith = array();
@@ -218,7 +218,7 @@ class modCommande extends DolibarrModules
 			$this->export_fields_array[$r]['c.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
 		}
 		// Add multicompany field
-		if (!empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {
+		if (getDolGlobalString('MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED')) {
 			$nbofallowedentities = count(explode(',', getEntity('commande')));
 			if (isModEnabled('multicompany') && $nbofallowedentities > 1) {
 				$this->export_fields_array[$r]['c.entity'] = 'Entity';
@@ -350,8 +350,8 @@ class modCommande extends DolibarrModules
 		$this->import_convertvalue_array[$r] = array(
 			'c.ref' => array(
 				'rule'=>'getrefifauto',
-				'class'=>(empty($conf->global->COMMANDE_ADDON) ? 'mod_commande_marbre' : $conf->global->COMMANDE_ADDON),
-				'path'=>"/core/modules/commande/".(empty($conf->global->COMMANDE_ADDON) ? 'mod_commande_marbre' : $conf->global->COMMANDE_ADDON).'.php',
+				'class'=>(!getDolGlobalString('COMMANDE_ADDON') ? 'mod_commande_marbre' : $conf->global->COMMANDE_ADDON),
+				'path'=>"/core/modules/commande/".(!getDolGlobalString('COMMANDE_ADDON') ? 'mod_commande_marbre' : $conf->global->COMMANDE_ADDON).'.php',
 				'classobject'=>'Commande',
 				'pathobject'=>'/commande/class/commande.class.php',
 			),

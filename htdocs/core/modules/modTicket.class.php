@@ -184,44 +184,44 @@ class modTicket extends DolibarrModules
 		$r = 0;
 		$this->rights[$r][0] = 56001; // id de la permission
 		$this->rights[$r][1] = "Read ticket"; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'read';
 
 		$r++;
 		$this->rights[$r][0] = 56002; // id de la permission
 		$this->rights[$r][1] = "Create les tickets"; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'write';
 
 		$r++;
 		$this->rights[$r][0] = 56003; // id de la permission
 		$this->rights[$r][1] = "Delete les tickets"; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'delete';
 
 		$r++;
 		$this->rights[$r][0] = 56004; // id de la permission
 		$this->rights[$r][1] = "Manage tickets"; // libelle de la permission
-		//$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		//$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'manage';
 
 		$r++;
 		$this->rights[$r][0] = 56006; // id de la permission
 		$this->rights[$r][1] = "Export ticket"; // libelle de la permission
-		//$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		//$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'export';
 
 		/* Seems not used and in conflict with societe->client->voir (see all thirdparties)
 		$r++;
 		$this->rights[$r][0] = 56005; // id de la permission
 		$this->rights[$r][1] = 'See all tickets, even if not assigned to (not effective for external users, always restricted to the thirdpardy they depends on)'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'view';
 		$this->rights[$r][5] = 'all';
 		*/
@@ -337,9 +337,13 @@ class modTicket extends DolibarrModules
 		$this->export_label[$r]='ExportDataset_ticket_1';	// Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_permission[$r] = array(array("ticket", "export"));
 		$this->export_icon[$r]='ticket';
-		$keyforclass = 'Ticket';$keyforclassfile='/ticket/class/ticket.class.php';$keyforelement='ticket';
+		$keyforclass = 'Ticket';
+		$keyforclassfile='/ticket/class/ticket.class.php';
+		$keyforelement='ticket';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
-		$keyforselect='ticket'; $keyforaliasextra='extra'; $keyforelement='ticket';
+		$keyforselect='ticket';
+		$keyforaliasextra='extra';
+		$keyforelement='ticket';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'ticket as t';

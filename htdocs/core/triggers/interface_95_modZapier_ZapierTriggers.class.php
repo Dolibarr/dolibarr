@@ -56,7 +56,7 @@ class InterfaceZapierTriggers extends DolibarrTriggers
 	 * @param User          $user       Object user
 	 * @param Translate     $langs      Object langs
 	 * @param Conf          $conf       Object conf
-	 * @return int                      <0 if KO, 0 if no triggered ran, >0 if OK
+	 * @return int                      Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
@@ -195,7 +195,7 @@ class InterfaceZapierTriggers extends DolibarrTriggers
 			// case 'PRODUCT_SET_MULTILANGS':
 			// case 'PRODUCT_DEL_MULTILANGS':
 
-			//Stock mouvement
+			//Stock movement
 			// case 'STOCK_MOVEMENT':
 
 			//MYECMDIR
@@ -470,10 +470,8 @@ function cleanObjectDatas($toclean)
 	unset($toclean->timespent_fk_user);
 	unset($toclean->timespent_note);
 
-	unset($toclean->statuts);
-	unset($toclean->statuts_short);
-	unset($toclean->statuts_logo);
-	unset($toclean->statuts_long);
+	unset($toclean->labelStatus);
+	unset($toclean->labelStatusShort);
 
 	unset($toclean->element);
 	unset($toclean->fk_element);

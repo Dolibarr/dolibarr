@@ -65,21 +65,21 @@ class FormResource
 	/**
 	 *  Output html form to select a resource
 	 *
-	 *	@param	int   	$selected       Preselected resource id
-	 *	@param  string	$htmlname       Name of field in form
-	 *  @param  string	$filter         Optionnal filters criteras (example: 's.rowid <> x')
+	 *	@param	int		$selected		Preselected resource id
+	 *	@param	string	$htmlname		Name of field in form
+	 *  @param	array	$filter			Optional filters criteria (example: 's.rowid <> x')
 	 *	@param	int		$showempty		Add an empty field
-	 * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
+	 * 	@param	int		$showtype		Show third party type in combo list (customer, prospect or supplier)
 	 * 	@param	int		$forcecombo		Force to use combo box
 	 *  @param	array	$event			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 *  @param	string	$filterkey		Filter on key value
 	 *  @param	int		$outputmode		0=HTML select string, 1=Array, 2=without form tag
 	 *  @param	int		$limit			Limit number of answers
 	 *  @param	string	$morecss		More css
-	 * 	@param	bool	$multiple       add [] in the name of element and add 'multiple' attribut
+	 * 	@param	bool	$multiple		add [] in the name of element and add 'multiple' attribute
 	 * 	@return	string|array			HTML string with
 	 */
-	public function select_resource_list($selected = '', $htmlname = 'fk_resource', $filter = '', $showempty = 0, $showtype = 0, $forcecombo = 0, $event = array(), $filterkey = '', $outputmode = 0, $limit = 20, $morecss = '', $multiple = false)
+	public function select_resource_list($selected = 0, $htmlname = 'fk_resource', $filter = [], $showempty = 0, $showtype = 0, $forcecombo = 0, $event = array(), $filterkey = '', $outputmode = 0, $limit = 20, $morecss = '', $multiple = false)
 	{
 		// phpcs:enable
 		global $conf, $user, $langs;
@@ -140,7 +140,7 @@ class FormResource
 			}
 			$out .= '</select>'."\n";
 
-			if (!empty($conf->use_javascript_ajax) && !empty($conf->global->RESOURCE_USE_SEARCH_TO_SELECT) && !$forcecombo) {
+			if (!empty($conf->use_javascript_ajax) && getDolGlobalString('RESOURCE_USE_SEARCH_TO_SELECT') && !$forcecombo) {
 				//$minLength = (is_numeric($conf->global->RESOURCE_USE_SEARCH_TO_SELECT)?$conf->global->RESOURCE_USE_SEARCH_TO_SELECT:2);
 				$out .= ajax_combobox($htmlname, $event, $conf->global->RESOURCE_USE_SEARCH_TO_SELECT);
 			} else {
@@ -219,11 +219,11 @@ class FormResource
 				}
 				print '>';
 				if ($format == 0) {
-					$value = ($maxlength ?dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
+					$value = ($maxlength ? dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
 				} elseif ($format == 1) {
 					$value = $arraytypes['code'];
 				} elseif ($format == 2) {
-					$value = ($maxlength ?dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
+					$value = ($maxlength ? dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
 				} elseif ($format == 3) {
 					$value = $arraytypes['code'];
 				}

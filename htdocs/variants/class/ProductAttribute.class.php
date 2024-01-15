@@ -82,7 +82,7 @@ class ProductAttribute extends CommonObject
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
-	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
 	 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'maxwidth200', 'wordbreak', 'tdoverflowmax200'
@@ -100,7 +100,7 @@ class ProductAttribute extends CommonObject
 	 */
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
-		'ref' => array('type'=>'varchar(255)', 'label'=>'Ref', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'css'=>''),
+		'ref' => array('type'=>'varchar(255)', 'label'=>'Ref', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'css'=>'width200'),
 		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'ExternalRef', 'enabled' => 1, 'visible' => 0, 'position' => 20, 'searchall'=>1),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth300', 'help'=>"", 'showoncombobox'=>'1',),
 		'position' => array('type'=>'integer', 'label'=>'Rank', 'enabled'=>1, 'visible'=>0, 'default'=>0, 'position'=>40, 'notnull'=>1,),
@@ -156,7 +156,7 @@ class ProductAttribute extends CommonObject
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -165,7 +165,7 @@ class ProductAttribute extends CommonObject
 		$this->db = $db;
 		$this->entity = $conf->entity;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -196,7 +196,7 @@ class ProductAttribute extends CommonObject
 	 *
 	 * @param   User    $user      Object user
 	 * @param   int     $notrigger Do not execute trigger
-	 * @return 					int <0 KO, Id of new variant if OK
+	 * @return 					int Return integer <0 KO, Id of new variant if OK
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
@@ -274,7 +274,7 @@ class ProductAttribute extends CommonObject
 	 * Fetches the properties of a product attribute
 	 *
 	 * @param int $id Attribute id
-	 * @return int <1 KO, >1 OK
+	 * @return int Return integer <1 KO, >1 OK
 	 */
 	public function fetch($id)
 	{
@@ -366,7 +366,7 @@ class ProductAttribute extends CommonObject
 	 *
 	 * @param   User    $user      Object user
 	 * @param   int     $notrigger Do not execute trigger
-	 * @return 	int 				<0 KO, >0 OK
+	 * @return 	int 				Return integer <0 KO, >0 OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -437,7 +437,7 @@ class ProductAttribute extends CommonObject
 	 *
 	 * @param   User    $user      Object user
 	 * @param   int     $notrigger Do not execute trigger
-	 * @return 	int <0 KO, >0 OK
+	 * @return 	int Return integer <0 KO, >0 OK
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
@@ -515,7 +515,7 @@ class ProductAttribute extends CommonObject
 	 * Load array lines
 	 *
 	 * @param	string		$filters	Filter on other fields
-	 * @return	int						<0 if KO, >0 if OK
+	 * @return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_lines($filters = '')
 	{
@@ -827,7 +827,7 @@ class ProductAttribute extends CommonObject
 	/**
 	 * Test if used by a product
 	 *
-	 * @return int <0 KO, =0 if No, =1 if Yes
+	 * @return int Return integer <0 KO, =0 if No, =1 if Yes
 	 */
 	public function isUsed()
 	{
@@ -870,7 +870,7 @@ class ProductAttribute extends CommonObject
 	 *
 	 * @param	boolean		$renum			   True to renum all already ordered lines, false to renum only not already ordered lines.
 	 * @param	string		$rowidorder		   ASC or DESC
-	 * @return	int                            <0 if KO, >0 if OK
+	 * @return	int                            Return integer <0 if KO, >0 if OK
 	 */
 	public function attributeOrder($renum = false, $rowidorder = 'ASC')
 	{
@@ -930,7 +930,7 @@ class ProductAttribute extends CommonObject
 	 *
 	 * @param	int		$rowid		Id of line
 	 * @param	int		$position	Position
-	 * @return	int					<0 if KO, >0 if OK
+	 * @return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function updatePositionOfAttribute($rowid, $position)
 	{
@@ -976,7 +976,7 @@ class ProductAttribute extends CommonObject
 	 * 	Update a attribute to have a higher position
 	 *
 	 * @param	int		$rowid		Id of line
-	 * @return	int					<0 KO, >0 OK
+	 * @return	int					Return integer <0 KO, >0 OK
 	 */
 	public function attributeMoveUp($rowid)
 	{
@@ -995,7 +995,7 @@ class ProductAttribute extends CommonObject
 	 * 	Update a attribute to have a lower position
 	 *
 	 * @param	int		$rowid		Id of line
-	 * @return	int					<0 KO, >0 OK
+	 * @return	int					Return integer <0 KO, >0 OK
 	 */
 	public function attributeMoveDown($rowid)
 	{
@@ -1100,7 +1100,7 @@ class ProductAttribute extends CommonObject
 	}
 
 	/**
-	 *  Return a link to the object card (with optionaly the picto)
+	 *  Return a link to the object card (with optionally the picto)
 	 *
 	 *  @param  int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *  @param  string  $option                     On what the link point to ('nolink', ...)
@@ -1144,7 +1144,7 @@ class ProductAttribute extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowProductAttribute");
 				$linkclose .= ' alt="' . dol_escape_htmltag($label, 1) . '"';
 			}
@@ -1354,9 +1354,12 @@ class ProductAttribute extends CommonObject
 
 					$parameters = array();
 					$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-					if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-					if (empty($reshook))
+					if ($reshook < 0) {
+						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+					}
+					if (empty($reshook)) {
 						$object->formAddObjectLine(1, $mysoc, $buyer);
+					}
 				}
 			}
 		}

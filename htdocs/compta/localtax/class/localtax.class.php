@@ -102,7 +102,7 @@ class Localtax extends CommonObject
 	 *  Create in database
 	 *
 	 *  @param      User	$user       User that create
-	 *  @return     int      			<0 if KO, >0 if OK
+	 *  @return     int      			Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user)
 	{
@@ -171,7 +171,7 @@ class Localtax extends CommonObject
 	 *
 	 *	@param		User	$user        	User that modify
 	 *	@param		int		$notrigger		0=no, 1=yes (no update trigger)
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -230,7 +230,7 @@ class Localtax extends CommonObject
 	 *	Load object in memory from database
 	 *
 	 *	@param		int		$id		Object id
-	 *	@return		int				<0 if KO, >0 if OK
+	 *	@return		int				Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -290,7 +290,7 @@ class Localtax extends CommonObject
 	 *	Delete object in database
 	 *
 	 *	@param		User	$user		User that delete
-	 *	@return		int					<0 if KO, >0 if OK
+	 *	@return		int					Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user)
 	{
@@ -342,7 +342,7 @@ class Localtax extends CommonObject
 
 
 	/**
-	 *	Hum la fonction s'appelle 'Solde' elle doit a mon avis calcluer le solde de localtax, non ?
+	 *	Hum la function s'appelle 'Solde' elle doit a mon avis calcluer le solde de localtax, non ?
 	 *
 	 *	@param	int		$year		Year
 	 *	@return	int					???
@@ -467,7 +467,7 @@ class Localtax extends CommonObject
 	 *	Add a payment of localtax
 	 *
 	 *	@param		User	$user		Object user that insert
-	 *	@return		int					<0 if KO, rowid in localtax table if OK
+	 *	@return		int					Return integer <0 if KO, rowid in localtax table if OK
 	 */
 	public function addPayment($user)
 	{
@@ -570,10 +570,10 @@ class Localtax extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Update the link betwen localtax payment and the line into llx_bank
+	 *	Update the link between localtax payment and the line into llx_bank
 	 *
 	 *	@param		int		$id		Id bank account
-	 *	@return		int				<0 if KO, >0 if OK
+	 *	@return		int				Return integer <0 if KO, >0 if OK
 	 */
 	public function update_fk_bank($id)
 	{

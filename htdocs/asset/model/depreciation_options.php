@@ -57,11 +57,17 @@ $permissiontoread = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->h
 $permissiontoadd = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'write')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'model_advance', 'write'))); // Used by the include of actions_addupdatedelete.inc.php
 
 // Security check (enable the most restrictive one)
-if ($user->socid > 0) accessforbidden();
+if ($user->socid > 0) {
+	accessforbidden();
+}
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 restrictedArea($user, 'asset', $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (!isModEnabled('asset')) accessforbidden();
-if (!$permissiontoread) accessforbidden();
+if (!isModEnabled('asset')) {
+	accessforbidden();
+}
+if (!$permissiontoread) {
+	accessforbidden();
+}
 
 $object->asset_depreciation_options = &$assetdepreciationoptions;
 $result = $assetdepreciationoptions->fetchDeprecationOptions(0, $object->id);
@@ -105,7 +111,9 @@ if (empty($reshook)) {
 
 	if ($action == "update") {
 		$result = $assetdepreciationoptions->setDeprecationOptionsFromPost(1);
-		if ($result > 0) $result = $assetdepreciationoptions->updateDeprecationOptions($user, 0, $object->id);
+		if ($result > 0) {
+			$result = $assetdepreciationoptions->updateDeprecationOptions($user, 0, $object->id);
+		}
 		if ($result < 0) {
 			setEventMessages($assetdepreciationoptions->error, $assetdepreciationoptions->errors, 'errors');
 			$action = 'edit';
@@ -125,7 +133,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 
 $help_url = '';
-llxHeader('', $langs->trans('AssetModel'), $help_url);
+llxHeader('', $langs->trans('AssetModel'), $help_url, '', 0, 0, '', '', '', 'mod-asset page-model-card_depreciation_options');
 
 if ($id > 0 || !empty($ref)) {
 	$head = assetModelPrepareHead($object);

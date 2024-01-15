@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2005-2019	Laurent Destailleur		<eldy@uers.sourceforge.net>
+ * Copyright (C) 2005-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2016	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2021		Waël Almoman            <info@almoman.com>
  *
@@ -66,7 +66,7 @@ $object->substitutionarray = FormMail::getAvailableSubstitKey('emailing');
 
 
 // Set $object->substitutionarrayfortest
-$signature = ((!empty($user->signature) && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? $user->signature : '');
+$signature = ((!empty($user->signature) && !getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? $user->signature : '');
 
 $targetobject = null; // Not defined with mass emailing
 
@@ -86,7 +86,7 @@ if (version_compare(phpversion(), '7.0', '>=')) {
 }
 
 // Security check
-if (!$user->hasRight('mailing', 'lire') || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) {
+if (!$user->hasRight('mailing', 'lire') || (!getDolGlobalString('EXTERNAL_USERS_ARE_AUTHORIZED') && $user->socid > 0)) {
 	accessforbidden();
 }
 if (empty($action) && empty($object->id)) {
@@ -152,13 +152,13 @@ if (empty($reshook)) {
 
 	// Action send emailing for everybody
 	if ($action == 'sendallconfirmed' && $confirm == 'yes') {
-		if (empty($conf->global->MAILING_LIMIT_SENDBYWEB)) {
+		if (!getDolGlobalString('MAILING_LIMIT_SENDBYWEB')) {
 			// As security measure, we don't allow send from the GUI
 			setEventMessages($langs->trans("MailingNeedCommand"), null, 'warnings');
 			setEventMessages('<textarea cols="70" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.'</textarea>', null, 'warnings');
 			setEventMessages($langs->trans("MailingNeedCommand2"), null, 'warnings');
 			$action = '';
-		} elseif ($conf->global->MAILING_LIMIT_SENDBYWEB < 0) {
+		} elseif (getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') < 0) {
 			setEventMessages($langs->trans("NotEnoughPermissions"), null, 'warnings');
 			$action = '';
 		} else {
@@ -182,7 +182,8 @@ if (empty($reshook)) {
 			// Warning, we must not use begin-commit transaction here
 			// because we want to save update for each mail sent.
 
-			$nbok = 0; $nbko = 0;
+			$nbok = 0;
+			$nbko = 0;
 
 			// We choose mails not already sent for this mailing (statut=0)
 			// or sent in error (statut=-1)
@@ -224,13 +225,18 @@ if (empty($reshook)) {
 
 						// Make substitutions on topic and body. From (AA=YY;BB=CC;...) we keep YY, CC, ...
 						$other = explode(';', $obj->other);
-						$tmpfield = explode('=', $other[0], 2); $other1 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
-						$tmpfield = explode('=', $other[1], 2); $other2 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
-						$tmpfield = explode('=', $other[2], 2); $other3 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
-						$tmpfield = explode('=', $other[3], 2); $other4 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
-						$tmpfield = explode('=', $other[4], 2); $other5 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
+						$tmpfield = explode('=', $other[0], 2);
+						$other1 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
+						$tmpfield = explode('=', $other[1], 2);
+						$other2 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
+						$tmpfield = explode('=', $other[2], 2);
+						$other3 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
+						$tmpfield = explode('=', $other[3], 2);
+						$other4 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
+						$tmpfield = explode('=', $other[4], 2);
+						$other5 = (isset($tmpfield[1]) ? $tmpfield[1] : $tmpfield[0]);
 
-						$signature = ((!empty($user->signature) && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? $user->signature : '');
+						$signature = ((!empty($user->signature) && !getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? $user->signature : '');
 
 						$parameters = array('mode'=>'emailing');
 						$substitutionarray = getCommonSubstitutionArray($langs, 0, array('object', 'objectamount'), $targetobject); // Note: On mass emailing, this is null because be don't know object
@@ -271,7 +277,7 @@ if (empty($reshook)) {
 						if (isModEnabled('stripe')) {
 							$onlinepaymentenabled++;
 						}
-						if ($onlinepaymentenabled && !empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
+						if ($onlinepaymentenabled && getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
 							require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 							$substitutionarray['__ONLINEPAYMENTLINK_MEMBER__'] = getHtmlOnlinePaymentLink('member', $obj->source_id);
 							$substitutionarray['__ONLINEPAYMENTLINK_DONATION__'] = getHtmlOnlinePaymentLink('donation', $obj->source_id);
@@ -279,13 +285,13 @@ if (empty($reshook)) {
 							$substitutionarray['__ONLINEPAYMENTLINK_INVOICE__'] = getHtmlOnlinePaymentLink('invoice', $obj->source_id);
 							$substitutionarray['__ONLINEPAYMENTLINK_CONTRACTLINE__'] = getHtmlOnlinePaymentLink('contractline', $obj->source_id);
 
-							$substitutionarray['__SECUREKEYPAYMENT__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
-							if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-								$substitutionarray['__SECUREKEYPAYMENT_MEMBER__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
-								$substitutionarray['__SECUREKEYPAYMENT_DONATION__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
-								$substitutionarray['__SECUREKEYPAYMENT_ORDER__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
-								$substitutionarray['__SECUREKEYPAYMENT_INVOICE__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
-								$substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
+							$substitutionarray['__SECUREKEYPAYMENT__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), 2);
+							if (!getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
+								$substitutionarray['__SECUREKEYPAYMENT_MEMBER__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), 2);
+								$substitutionarray['__SECUREKEYPAYMENT_DONATION__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), 2);
+								$substitutionarray['__SECUREKEYPAYMENT_ORDER__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), 2);
+								$substitutionarray['__SECUREKEYPAYMENT_INVOICE__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), 2);
+								$substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), 2);
 							} else {
 								$substitutionarray['__SECUREKEYPAYMENT_MEMBER__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . 'member'.$obj->source_id, 2);
 								$substitutionarray['__SECUREKEYPAYMENT_DONATION__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . 'donation'.$obj->source_id, 2);
@@ -294,33 +300,33 @@ if (empty($reshook)) {
 								$substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . 'contractline'.$obj->source_id, 2);
 							}
 						}
-						if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
+						if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 							$substitutionarray['__PUBLICLINK_NEWMEMBERFORM__'] = '<a target="_blank" rel="noopener noreferrer" href="'.DOL_MAIN_URL_ROOT.'/public/members/new.php'.((isModEnabled('multicompany')) ? '?entity='.$conf->entity : '').'">'.$langs->trans('BlankSubscriptionForm'). '</a>';
 						}
 						/* For backward compatibility, deprecated */
-						if (isModEnabled('paypal') && !empty($conf->global->PAYPAL_SECURITY_TOKEN)) {
-							$substitutionarray['__SECUREKEYPAYPAL__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
+						if (isModEnabled('paypal') && getDolGlobalString('PAYPAL_SECURITY_TOKEN')) {
+							$substitutionarray['__SECUREKEYPAYPAL__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN'), 2);
 
-							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) {
-								$substitutionarray['__SECUREKEYPAYPAL_MEMBER__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
+							if (!getDolGlobalString('PAYPAL_SECURITY_TOKEN_UNIQUE')) {
+								$substitutionarray['__SECUREKEYPAYPAL_MEMBER__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN'), 2);
 							} else {
 								$substitutionarray['__SECUREKEYPAYPAL_MEMBER__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN') . 'membersubscription'.$obj->source_id, 2);
 							}
 
-							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) {
-								$substitutionarray['__SECUREKEYPAYPAL_ORDER__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
+							if (!getDolGlobalString('PAYPAL_SECURITY_TOKEN_UNIQUE')) {
+								$substitutionarray['__SECUREKEYPAYPAL_ORDER__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN'), 2);
 							} else {
 								$substitutionarray['__SECUREKEYPAYPAL_ORDER__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN') . 'order'.$obj->source_id, 2);
 							}
 
-							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) {
-								$substitutionarray['__SECUREKEYPAYPAL_INVOICE__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
+							if (!getDolGlobalString('PAYPAL_SECURITY_TOKEN_UNIQUE')) {
+								$substitutionarray['__SECUREKEYPAYPAL_INVOICE__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN'), 2);
 							} else {
 								$substitutionarray['__SECUREKEYPAYPAL_INVOICE__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN') . 'invoice'.$obj->source_id, 2);
 							}
 
-							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) {
-								$substitutionarray['__SECUREKEYPAYPAL_CONTRACTLINE__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
+							if (!getDolGlobalString('PAYPAL_SECURITY_TOKEN_UNIQUE')) {
+								$substitutionarray['__SECUREKEYPAYPAL_CONTRACTLINE__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN'), 2);
 							} else {
 								$substitutionarray['__SECUREKEYPAYPAL_CONTRACTLINE__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN') . 'contractline'.$obj->source_id, 2);
 							}
@@ -403,7 +409,7 @@ if (empty($reshook)) {
 								}
 							}
 
-							if (!empty($conf->global->MAILING_DELAY)) {
+							if (getDolGlobalString('MAILING_DELAY')) {
 								dol_syslog("Wait a delay of MAILING_DELAY=".((float) $conf->global->MAILING_DELAY));
 								usleep((float) $conf->global->MAILING_DELAY * 1000000);
 							}
@@ -476,12 +482,12 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			// Is the message in html
-			$msgishtml = -1; // Unknow = autodetect by default
+			$msgishtml = -1; // Unknown = autodetect by default
 			if (preg_match('/[\s\t]*<html>/i', $object->body)) {
 				$msgishtml = 1;
 			}
 
-			$signature = ((!empty($user->signature) && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? $user->signature : '');
+			$signature = ((!empty($user->signature) && !getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? $user->signature : '');
 
 			$parameters = array('mode'=>'emailing');
 			$substitutionarray = getCommonSubstitutionArray($langs, 0, array('object', 'objectamount'), $targetobject); // Note: On mass emailing, this is null because be don't know object
@@ -846,10 +852,10 @@ if ($action == 'create') {
 			 * View mode mailing
 			 */
 			if ($action == 'sendall') {
-				// Define message to recommand from command line
-				$sendingmode = $conf->global->EMAILING_MAIL_SENDMODE;
+				// Define message to recommend from command line
+				$sendingmode = getDolGlobalString('EMAILING_MAIL_SENDMODE');
 				if (empty($sendingmode)) {
-					$sendingmode = $conf->global->MAIN_MAIL_SENDMODE;
+					$sendingmode = getDolGlobalString('MAIN_MAIL_SENDMODE');
 				}
 				if (empty($sendingmode)) {
 					$sendingmode = 'mail'; // If not defined, we use php mail function
@@ -857,9 +863,9 @@ if ($action == 'create') {
 
 				// MAILING_NO_USING_PHPMAIL may be defined or not.
 				// MAILING_LIMIT_SENDBYWEB is always defined to something != 0 (-1=forbidden).
-				// MAILING_LIMIT_SENDBYCLI may be defined ot not (-1=forbidden, 0 or undefined=no limit).
-				// MAILING_LIMIT_SENDBYDAY may be defined ot not (0 or undefined=no limit).
-				if (!empty($conf->global->MAILING_NO_USING_PHPMAIL) && $sendingmode == 'mail') {
+				// MAILING_LIMIT_SENDBYCLI may be defined or not (-1=forbidden, 0 or undefined=no limit).
+				// MAILING_LIMIT_SENDBYDAY may be defined or not (0 or undefined=no limit).
+				if (getDolGlobalString('MAILING_NO_USING_PHPMAIL') && $sendingmode == 'mail') {
 					// EMailing feature may be a spam problem, so when you host several users/instance, having this option may force each user to use their own SMTP agent.
 					// You ensure that every user is using its own SMTP server when using the mass emailing module.
 					$linktoadminemailbefore = '<a href="'.DOL_URL_ROOT.'/admin/mails_emailing.php">';
@@ -872,43 +878,43 @@ if ($action == 'create') {
 					$messagetoshow = str_replace('{s4}', $listofmethods['smtps'], $messagetoshow);
 					setEventMessages($messagetoshow, null, 'warnings');
 
-					if (!empty($conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS)) {
-						setEventMessages($langs->trans("MailSendSetupIs3", $conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS), null, 'warnings');
+					if (getDolGlobalString('MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS')) {
+						setEventMessages($langs->trans("MailSendSetupIs3", getDolGlobalString('MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS')), null, 'warnings');
 					}
 					$_GET["action"] = '';
-				} elseif ($conf->global->MAILING_LIMIT_SENDBYWEB < 0) {
-					if (!empty($conf->global->MAILING_LIMIT_WARNING_PHPMAIL) && $sendingmode == 'mail') {
+				} elseif (getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') < 0) {
+					if (getDolGlobalString('MAILING_LIMIT_WARNING_PHPMAIL') && $sendingmode == 'mail') {
 						setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_PHPMAIL), null, 'warnings');
 					}
-					if (!empty($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL) && $sendingmode != 'mail') {
+					if (getDolGlobalString('MAILING_LIMIT_WARNING_NOPHPMAIL') && $sendingmode != 'mail') {
 						setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL), null, 'warnings');
 					}
 
 					// The feature is forbidden from GUI, we show just message to use from command line.
 					setEventMessages($langs->trans("MailingNeedCommand"), null, 'warnings');
 					setEventMessages('<textarea cols="60" rows="'.ROWS_1.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.'</textarea>', null, 'warnings');
-					if ($conf->file->mailing_limit_sendbyweb != '-1') {  // MAILING_LIMIT_SENDBYWEB was set to -1 in database, but it is allowed ot increase it.
+					if ($conf->file->mailing_limit_sendbyweb != '-1') {  // MAILING_LIMIT_SENDBYWEB was set to -1 in database, but it is allowed to increase it.
 						setEventMessages($langs->trans("MailingNeedCommand2"), null, 'warnings'); // You can send online with constant...
 					}
 					$_GET["action"] = '';
 				} else {
-					if (!empty($conf->global->MAILING_LIMIT_WARNING_PHPMAIL) && $sendingmode == 'mail') {
+					if (getDolGlobalString('MAILING_LIMIT_WARNING_PHPMAIL') && $sendingmode == 'mail') {
 						setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_PHPMAIL), null, 'warnings');
 					}
-					if (!empty($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL) && $sendingmode != 'mail') {
+					if (getDolGlobalString('MAILING_LIMIT_WARNING_NOPHPMAIL') && $sendingmode != 'mail') {
 						setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL), null, 'warnings');
 					}
 
 					$text = '';
 
-					if (isset($conf->global->MAILING_LIMIT_SENDBYDAY) && $conf->global->MAILING_LIMIT_SENDBYDAY >= 0) {
-						$text .= $langs->trans('WarningLimitSendByDay', $conf->global->MAILING_LIMIT_SENDBYDAY);
+					if (getDolGlobalInt('MAILING_LIMIT_SENDBYDAY') > 0) {
+						$text .= $langs->trans('WarningLimitSendByDay', getDolGlobalInt('MAILING_LIMIT_SENDBYDAY'));
 						$text .= '<br><br>';
 					}
 					$text .= $langs->trans('ConfirmSendingEmailing').'<br>';
-					$text .= $langs->trans('LimitSendingEmailing', $conf->global->MAILING_LIMIT_SENDBYWEB);
+					$text .= $langs->trans('LimitSendingEmailing', getDolGlobalString('MAILING_LIMIT_SENDBYWEB'));
 
-					if (!isset($conf->global->MAILING_LIMIT_SENDBYCLI) || $conf->global->MAILING_LIMIT_SENDBYCLI >= 0) {
+					if (!isset($conf->global->MAILING_LIMIT_SENDBYCLI) || getDolGlobalInt('MAILING_LIMIT_SENDBYCLI') >= 0) {
 						$text .= '<br><br>';
 						$text .= $langs->trans("MailingNeedCommand");
 						$text .= '<br><textarea class="quatrevingtpercent" rows="'.ROWS_2.'" wrap="soft" disabled>php ./scripts/emailings/mailing-send.php '.$object->id.' '.$user->login.'</textarea>';
@@ -992,9 +998,9 @@ if ($action == 'create') {
 			$nbemail = ($object->nbemail ? $object->nbemail : 0);
 			if (is_numeric($nbemail)) {
 				$text = '';
-				if ((!empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) && ($object->statut == 1 || ($object->statut == 2 && $nbtry < $nbemail))) {
-					if ($conf->global->MAILING_LIMIT_SENDBYWEB > 0) {
-						$text .= $langs->trans('LimitSendingEmailing', $conf->global->MAILING_LIMIT_SENDBYWEB);
+				if ((getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) && ($object->statut == 1 || ($object->statut == 2 && $nbtry < $nbemail))) {
+					if (getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') > 0) {
+						$text .= $langs->trans('LimitSendingEmailing', getDolGlobalString('MAILING_LIMIT_SENDBYWEB'));
 					} else {
 						$text .= $langs->trans('SendingFromWebInterfaceIsNotAllowed');
 					}
@@ -1063,7 +1069,7 @@ if ($action == 'create') {
 				}
 
 				if (($object->statut == 0 || $object->statut == 1 || $object->statut == 2) && $user->hasRight('mailing', 'creer')) {
-					if (isModEnabled('fckeditor') && !empty($conf->global->FCKEDITOR_ENABLE_MAILING)) {
+					if (isModEnabled('fckeditor') && getDolGlobalString('FCKEDITOR_ENABLE_MAILING')) {
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("EditWithEditor").'</a>';
 					} else {
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("EditWithTextEditor").'</a>';
@@ -1076,7 +1082,7 @@ if ($action == 'create') {
 
 				//print '<a class="butAction" href="card.php?action=test&amp;id='.$object->id.'">'.$langs->trans("PreviewMailing").'</a>';
 
-				if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->hasRight('mailing', 'mailing_advance', 'send')) {
+				if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('mailing', 'mailing_advance', 'send')) {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("TestMailing").'</a>';
 				} else {
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=test&token='.newToken().'&id='.$object->id.'">'.$langs->trans("TestMailing").'</a>';
@@ -1093,9 +1099,9 @@ if ($action == 'create') {
 				}
 
 				if (($object->statut == 1 || $object->statut == 2) && $object->nbemail > 0 && $user->hasRight('mailing', 'valider')) {
-					if ($conf->global->MAILING_LIMIT_SENDBYWEB < 0) {
+					if (getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') < 0) {
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("SendingFromWebInterfaceIsNotAllowed")).'">'.$langs->trans("SendMailing").'</a>';
-					} elseif (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->hasRight('mailing', 'mailing_advance', 'send')) {
+					} elseif (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('mailing', 'mailing_advance', 'send')) {
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("SendMailing").'</a>';
 					} else {
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=sendall&amp;id='.$object->id.'">'.$langs->trans("SendMailing").'</a>';
@@ -1107,7 +1113,7 @@ if ($action == 'create') {
 				}
 
 				if (($object->statut == 2 || $object->statut == 3) && $user->hasRight('mailing', 'valider')) {
-					if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->hasRight('mailing', 'mailing_advance', 'send')) {
+					if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('mailing', 'mailing_advance', 'send')) {
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("ResetMailing").'</a>';
 					} else {
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=reset&amp;id='.$object->id.'">'.$langs->trans("ResetMailing").'</a>';
@@ -1115,7 +1121,7 @@ if ($action == 'create') {
 				}
 
 				if (($object->statut <= 1 && $user->hasRight('mailing', 'creer')) || $user->hasRight('mailing', 'supprimer')) {
-					if ($object->statut > 0 && (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->hasRight('mailing', 'mailing_advance', 'delete'))) {
+					if ($object->statut > 0 && (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('mailing', 'mailing_advance', 'delete'))) {
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("DeleteMailing").'</a>';
 					} else {
 						print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$object->id.(!empty($urlfrom) ? '&urlfrom='.$urlfrom : '').'">'.$langs->trans("DeleteMailing").'</a>';
@@ -1141,7 +1147,7 @@ if ($action == 'create') {
 				$formmail->withfrom = 0;
 				$formmail->withto = $user->email ? $user->email : 1;
 				$formmail->withtocc = 0;
-				$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
+				$formmail->withtoccc = getDolGlobalString('MAIN_EMAIL_USECCC');
 				$formmail->withtopic = 0;
 				$formmail->withtopicreadonly = 1;
 				$formmail->withfile = 0;
@@ -1210,7 +1216,7 @@ if ($action == 'create') {
 				$readonly = 1;
 				// wysiwyg editor
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', false, true, empty($conf->global->FCKEDITOR_ENABLE_MAILING) ? 0 : 1, 20, '90%', $readonly);
+				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', false, true, !getDolGlobalString('FCKEDITOR_ENABLE_MAILING') ? 0 : 1, 20, '90%', $readonly);
 				$doleditor->Create();
 			} else {
 				print dol_htmlentitiesbr($object->body);
@@ -1282,9 +1288,9 @@ if ($action == 'create') {
 			$nbemail = ($object->nbemail ? $object->nbemail : 0);
 			if (is_numeric($nbemail)) {
 				$text = '';
-				if ((!empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) && ($object->statut == 1 || $object->statut == 2)) {
-					if ($conf->global->MAILING_LIMIT_SENDBYWEB > 0) {
-						$text .= $langs->trans('LimitSendingEmailing', $conf->global->MAILING_LIMIT_SENDBYWEB);
+				if ((getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) && ($object->statut == 1 || $object->statut == 2)) {
+					if (getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') > 0) {
+						$text .= $langs->trans('LimitSendingEmailing', getDolGlobalString('MAILING_LIMIT_SENDBYWEB'));
 					} else {
 						$text .= $langs->trans('SendingFromWebInterfaceIsNotAllowed');
 					}

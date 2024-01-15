@@ -189,7 +189,6 @@ class RssParser
 		return $this->_rssarray;
 	}
 
-
 	/**
 	 * 	Parse rss URL
 	 *
@@ -197,12 +196,10 @@ class RssParser
 	 * 	@param	int		$maxNb		Max nb of records to get (0 for no limit)
 	 * 	@param	int		$cachedelay	0=No cache, nb of seconds we accept cache files (cachedir must also be defined)
 	 * 	@param	string	$cachedir	Directory where to save cache file (For example $conf->externalrss->dir_temp)
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function parser($urlRSS, $maxNb = 0, $cachedelay = 60, $cachedir = '')
 	{
-		global $conf;
-
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
@@ -257,10 +254,16 @@ class RssParser
 
 		if ($str !== false) {
 			// Convert $str into xml
-			if (!empty($conf->global->EXTERNALRSS_USE_SIMPLEXML)) {
+			if (getDolGlobalString('EXTERNALRSS_USE_SIMPLEXML')) {
 				//print 'xx'.LIBXML_NOCDATA;
 				libxml_use_internal_errors(false);
-				$rss = simplexml_load_string($str, "SimpleXMLElement", LIBXML_NOCDATA|LIBXML_NOCDATA);
+				if (LIBXML_VERSION < 20900) {
+					// Avoid load of external entities (security problem).
+					// Required only if LIBXML_VERSION < 20900
+					libxml_disable_entity_loader(true);
+				}
+
+				$rss = simplexml_load_string($str, "SimpleXMLElement", LIBXML_NOCDATA);
 			} else {
 				if (!function_exists('xml_parser_create')) {
 					$this->error = 'Function xml_parser_create are not supported by your PHP';
@@ -269,6 +272,11 @@ class RssParser
 
 				try {
 					$xmlparser = xml_parser_create(null);
+
+					xml_parser_set_option($xmlparser, XML_OPTION_CASE_FOLDING, 0);
+					xml_parser_set_option($xmlparser, XML_OPTION_SKIP_WHITE, 1);
+					xml_parser_set_option($xmlparser, XML_OPTION_TARGET_ENCODING, "UTF-8");
+					//xml_set_external_entity_ref_handler($xmlparser, 'extEntHandler');	// Seems to have no effect even when function extEntHandler exists.
 
 					if (!is_resource($xmlparser) && !is_object($xmlparser)) {
 						$this->error = "ErrorFailedToCreateParser";
@@ -282,6 +290,7 @@ class RssParser
 					$status = xml_parse($xmlparser, $str, false);
 
 					xml_parser_free($xmlparser);
+
 					$rss = $this;
 					//var_dump($status.' '.$rss->_format);exit;
 				} catch (Exception $e) {
@@ -324,7 +333,7 @@ class RssParser
 			// Save description entries
 			if ($rss->_format == 'rss') {
 				//var_dump($rss);
-				if (!empty($conf->global->EXTERNALRSS_USE_SIMPLEXML)) {
+				if (getDolGlobalString('EXTERNALRSS_USE_SIMPLEXML')) {
 					if (!empty($rss->channel->language)) {
 						$this->_language = sanitizeVal((string) $rss->channel->language);
 					}
@@ -377,7 +386,7 @@ class RssParser
 					}
 				}
 
-				if (!empty($conf->global->EXTERNALRSS_USE_SIMPLEXML)) {
+				if (getDolGlobalString('EXTERNALRSS_USE_SIMPLEXML')) {
 					$items = $rss->channel->item; // With simplexml
 				} else {
 					$items = $rss->items; // With xmlparse
@@ -385,7 +394,7 @@ class RssParser
 				//var_dump($items);exit;
 			} elseif ($rss->_format == 'atom') {
 				//var_dump($rss);
-				if (!empty($conf->global->EXTERNALRSS_USE_SIMPLEXML)) {
+				if (getDolGlobalString('EXTERNALRSS_USE_SIMPLEXML')) {
 					if (!empty($rss->generator)) {
 						$this->_generator = sanitizeVal((string) $rss->generator);
 					}
@@ -423,7 +432,7 @@ class RssParser
 						$this->_imageurl = sanitizeVal($this->getAtomImageUrl($rss->channel));
 					}
 				}
-				if (!empty($conf->global->EXTERNALRSS_USE_SIMPLEXML)) {
+				if (getDolGlobalString('EXTERNALRSS_USE_SIMPLEXML')) {
 					$tmprss = xml2php($rss);
 					$items = $tmprss['entry'];
 				} else {
@@ -440,7 +449,7 @@ class RssParser
 				foreach ($items as $item) {
 					//var_dump($item);exit;
 					if ($rss->_format == 'rss') {
-						if (!empty($conf->global->EXTERNALRSS_USE_SIMPLEXML)) {
+						if (getDolGlobalString('EXTERNALRSS_USE_SIMPLEXML')) {
 							$itemLink = sanitizeVal((string) $item->link);
 							$itemTitle = sanitizeVal((string) $item->title);
 							$itemDescription = sanitizeVal((string) $item->description);
@@ -464,7 +473,7 @@ class RssParser
 							}
 						}
 					} elseif ($rss->_format == 'atom') {
-						if (!empty($conf->global->EXTERNALRSS_USE_SIMPLEXML)) {
+						if (getDolGlobalString('EXTERNALRSS_USE_SIMPLEXML')) {
 							$itemLink = (isset($item['link']) ? sanitizeVal((string) $item['link']) : '');
 							$itemTitle = sanitizeVal((string) $item['title']);
 							$itemDescription = sanitizeVal($this->getAtomItemDescription($item));
@@ -590,7 +599,7 @@ class RssParser
 
 			array_unshift($this->stack, $el);
 		} elseif ($this->_format == 'atom' && $el == 'link') {
-			// Atom support many links per containging element.
+			// Atom support many links per containing element.
 			// Magpie treats link elements of type rel='alternate'
 			// as being equivalent to RSS's simple link element.
 			if (isset($attrs['rel']) && $attrs['rel'] == 'alternate') {
@@ -655,7 +664,7 @@ class RssParser
 			$this->inchannel = false;
 		} elseif ($this->_format == 'atom' and $this->incontent) {
 			// balance tags properly
-			// note:  i don't think this is actually neccessary
+			// note:  i don't think this is actually necessary
 			if ($this->stack[0] == $el) {
 				$this->append_content("</$el>");
 			} else {
@@ -803,6 +812,22 @@ class RssParser
 }
 
 
+/*
+ * A method for the xml_set_external_entity_ref_handler()
+ *
+ * @param XMLParser $parser
+ * @param string $ent
+ * @param string|false $base
+ * @param string $sysID
+ * @param string|false $pubID
+ * @return bool
+function extEntHandler($parser, $ent, $base, $sysID, $pubID)  {
+	print 'extEntHandler ran';
+	return true;
+}
+*/
+
+
 /**
  * Function to convert an XML object into an array
  *
@@ -811,7 +836,7 @@ class RssParser
  */
 function xml2php($xml)
 {
-	$fils = 0;
+	$threads = 0;
 	$tab = false;
 	$array = array();
 	foreach ($xml->children() as $key => $value) {
@@ -838,11 +863,11 @@ function xml2php($xml)
 			$array[$key] = $child;
 		}
 
-		$fils++;
+		$threads++;
 	}
 
 
-	if ($fils == 0) {
+	if ($threads == 0) {
 		return (string) $xml;
 	}
 

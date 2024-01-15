@@ -79,7 +79,7 @@ $actl[0] = img_picto($langs->trans("Disabled"), 'switch_off', 'class="size15x"')
 $actl[1] = img_picto($langs->trans("Activated"), 'switch_on', 'class="size15x"');
 
 $listoffset = GETPOST('listoffset', 'alpha');
-$listlimit = GETPOST('listlimit', 'alpha') > 0 ?GETPOST('listlimit', 'alpha') : 1000;
+$listlimit = GETPOST('listlimit', 'alpha') > 0 ? GETPOST('listlimit', 'alpha') : 1000;
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -715,7 +715,7 @@ if ($action == 'create') {
 	foreach ($fieldlist as $field => $value) {
 		// Determine le nom du champ par rapport aux noms possibles
 		// dans les dictionnaires de donnees
-		$valuetoshow = ucfirst($fieldlist[$field]); // Par defaut
+		$valuetoshow = ucfirst($fieldlist[$field]); // Par default
 		$valuetoshow = $langs->trans($valuetoshow); // try to translate
 		$css = "left";
 		if ($fieldlist[$field] == 'module') {
@@ -740,7 +740,8 @@ if ($action == 'create') {
 			$valuetoshow = $langs->trans("Code");
 		}
 		if ($fieldlist[$field] == 'type_template') {
-			$valuetoshow = $langs->trans("TypeOfTemplate"); $css = "center";
+			$valuetoshow = $langs->trans("TypeOfTemplate");
+			$css = "center";
 		}
 		if (in_array($fieldlist[$field], array('private', 'private', 'defaultfortype'))) {
 			$css = 'center';
@@ -974,7 +975,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print getTitleFieldOfList('');
 }
 foreach ($fieldlist as $field => $value) {
-	$showfield = 1; // By defaut
+	$showfield = 1; // By default
 	$css = "left";
 	$sortable = 1;
 	$valuetoshow = '';
@@ -986,7 +987,7 @@ foreach ($fieldlist as $field => $value) {
 	$css=$tmp['align'];
 	$sortable=$tmp['sortable'];
 	*/
-	$valuetoshow = ucfirst($fieldlist[$field]); // By defaut
+	$valuetoshow = ucfirst($fieldlist[$field]); // By default
 	$valuetoshow = $langs->trans($valuetoshow); // try to translate
 	if ($fieldlist[$field] == 'module') {
 		$css = 'tdoverflowmax100';
@@ -1020,10 +1021,12 @@ foreach ($fieldlist as $field => $value) {
 		$forcenowrap = 0;
 	}
 	if ($fieldlist[$field] == 'content') {
-		$valuetoshow = $langs->trans("Content"); $showfield = 0;
+		$valuetoshow = $langs->trans("Content");
+		$showfield = 0;
 	}
 	if ($fieldlist[$field] == 'content_lines') {
-		$valuetoshow = $langs->trans("ContentForLines"); $showfield = 0;
+		$valuetoshow = $langs->trans("ContentForLines");
+		$showfield = 0;
 	}
 
 	// Show fields
@@ -1064,7 +1067,8 @@ if ($num) {
 				$tmpaction = 'edit';
 				$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
 				$reshook = $hookmanager->executeHooks('editEmailTemplateFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
-				$error = $hookmanager->error; $errors = $hookmanager->errors;
+				$error = $hookmanager->error;
+				$errors = $hookmanager->errors;
 
 				// Action column
 				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -1176,14 +1180,16 @@ if ($num) {
 				$nbqualified++;
 
 				// Can an entry be erased or disabled ?
-				$iserasable = 1; $canbedisabled = 1; $canbemodified = 1; // true by default
+				$iserasable = 1;
+				$canbedisabled = 1;
+				$canbemodified = 1; // true by default
 				if (!$user->admin && $obj->fk_user != $user->id) {
 					$iserasable = 0;
 					$canbedisabled = 0;
 					$canbemodified = 0;
 				}
 
-				$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).'&code='.(!empty($obj->code) ?urlencode($obj->code) : '');
+				$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).'&code='.(!empty($obj->code) ? urlencode($obj->code) : '');
 				if ($param) {
 					$url .= '&'.$param;
 				}
@@ -1207,7 +1213,8 @@ if ($num) {
 				$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
 				$reshook = $hookmanager->executeHooks('viewEmailTemplateFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 
-				$error = $hookmanager->error; $errors = $hookmanager->errors;
+				$error = $hookmanager->error;
+				$errors = $hookmanager->errors;
 
 				if (empty($reshook)) {
 					foreach ($fieldlist as $field => $value) {
@@ -1344,10 +1351,10 @@ $db->close();
  * 	@param		array	$fieldlist		Array of fields
  * 	@param		Object	$obj			If we show a particular record, obj is filled with record fields
  *  @param		string	$tabname		Name of SQL table
- *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
+ *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we don't want it to be rendered
  *	@return		void
  */
-function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
+function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 {
 	global $langs, $user, $db;
 	global $form;
@@ -1384,7 +1391,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 		} elseif ($value == 'lang') {
 			print '<td>';
 			if (getDolGlobalInt('MAIN_MULTILANGS')) {
-				$selectedlang = GETPOSTISSET('langcode') ?GETPOST('langcode', 'aZ09') : $langs->defaultlang;
+				$selectedlang = GETPOSTISSET('langcode') ? GETPOST('langcode', 'aZ09') : $langs->defaultlang;
 				if ($context == 'edit') {
 					$selectedlang = $obj->lang;
 				}
@@ -1408,7 +1415,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 				print '<input type="hidden" name="type_template" value="'.$obj->type_template.'">';
 				print $obj->type_template;
 			} else {
-				print $form->selectarray('type_template', $elementList, (!empty($obj->type_template) ? $obj->type_template:''), 1, 0, 0, '', 0, 0, 0, '', 'minwidth75 maxwidth125', 1, '', 0, 1);
+				print $form->selectarray('type_template', $elementList, (!empty($obj->type_template) ? $obj->type_template : ''), 1, 0, 0, '', 0, 0, 0, '', 'minwidth75 maxwidth125', 1, '', 0, 1);
 			}
 			print '</td>';
 		} elseif ($context == 'add' && in_array($value, array('topic', 'joinfiles', 'content', 'content_lines'))) {
@@ -1418,7 +1425,9 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 		} elseif ($context == 'hide' && in_array($value, array('topic', 'joinfiles', 'content', 'content_lines'))) {
 			//print '<td></td>';
 		} else {
-			$size = ''; $class = ''; $classtd = '';
+			$size = '';
+			$class = '';
+			$classtd = '';
 			if ($value == 'code') {
 				$class = 'maxwidth100';
 			}

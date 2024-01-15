@@ -39,7 +39,7 @@ if (empty($user->id)) {
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
-if (!empty($conf->global->MAIN_ROUNDING_RULE_TOT)) {
+if (getDolGlobalString('MAIN_ROUNDING_RULE_TOT')) {
 	print "Parameter MAIN_ROUNDING_RULE_TOT must be set to 0 or not set.\n";
 	exit(1);
 }
