@@ -3889,8 +3889,10 @@ class Product extends CommonObject
 		}
 
 		if (empty($year)) {
-			$year = strftime('%Y', time());
-			$month = strftime('%m', time());
+			// Avoid having bad year on 31/12/YYYY 23:59:59 to new year transition
+			$time = time();
+			$year = date('Y', $time);
+			$month = date('m', $time);
 		} elseif ($year == -1) {
 			$year = '';
 			$month = 12; // We imagine we are at end of year, so we get last 12 month before, so all correct year.
