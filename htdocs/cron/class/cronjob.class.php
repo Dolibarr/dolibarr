@@ -1223,7 +1223,6 @@ class Cronjob extends CommonObject
 
 		// Run a method
 		if ($this->jobtype == 'method') {
-
 			// Deny to launch a method from a deactivated module
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			$modulesdir = dolGetModulesDirs();
