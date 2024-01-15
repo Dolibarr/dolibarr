@@ -6,6 +6,7 @@ CountryES=ספרד
 CountryDE=גרמניה
 CountryCH=שווייץ
 # Warning, country code GB is for United Kingdom. UK Does not exists as country code in ISO standard.
+
 CountryGB=ממלכה המאוחדת
 CountryUK=ממלכה המאוחדת
 CountryIE=אירלנד
