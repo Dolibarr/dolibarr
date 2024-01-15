@@ -455,7 +455,7 @@ class MyObject extends CommonObject
 		$sql .= $this->getFieldList('t');
 		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
 		if (isset($this->isextrafieldmanaged) && $this->isextrafieldmanaged == 1) {
-			$sql .= " LEFT JOIN ".$this->db->prefix().$this->table_element."_extrafields as te ON tf.fk_object = t.rowid";
+			$sql .= " LEFT JOIN ".$this->db->prefix().$this->table_element."_extrafields as te ON te.fk_object = t.rowid";
 		}
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
 			$sql .= " WHERE t.entity IN (".getEntity($this->element).")";
