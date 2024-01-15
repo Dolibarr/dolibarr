@@ -229,7 +229,7 @@ function dolDecrypt($chain, $key = '')
  * 	@param 		string		$chain		String to hash
  * 	@param		string		$type		Type of hash ('0':auto will use MAIN_SECURITY_HASH_ALGO else md5, '1':sha1, '2':sha1+md5, '3':md5, '4': for OpenLdap, '5':sha256, '6':password_hash).
  * 										Use 'md5' if hash is not needed for security purpose. For security need, prefer 'auto'.
- * 	@param 		string		$nosalt		Do not include any salt
+ * 	@param 		int 		$nosalt		Do not include any salt
  * 	@return		string					Hash of string
  *  @see getRandomPassword(), dol_verifyHash()
  */
@@ -1159,7 +1159,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
  *  @return	void
  *  @see accessforbidden()
  */
-function httponly_accessforbidden($message = 1, $http_response_code = 403, $stringalreadysanitized = 0)
+function httponly_accessforbidden($message = '1', $http_response_code = 403, $stringalreadysanitized = 0)
 {
 	top_httphead();
 	http_response_code($http_response_code);
