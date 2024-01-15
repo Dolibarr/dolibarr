@@ -21,7 +21,7 @@ jobs:
         run: |-
           [ -r requirements.txt ] || [ -r pyproject.toml ] || touch requirements.txt
       # Install python and pre-commit tool
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           cache: pip
           python-version: '3.11'
@@ -62,7 +62,7 @@ jobs:
             }}
       # Upload result log files of precommit into the Artifact shared store
       - name: Provide log as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
           name: precommit-logs

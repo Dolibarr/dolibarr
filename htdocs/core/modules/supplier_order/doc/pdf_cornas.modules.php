@@ -5,7 +5,7 @@
  * Copyright (C) 2010-2014 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet         <fmarcet@2byte.es>
- * Copyright (C) 2018-2022 Frédéric France       <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024 Frédéric France       <frederic.france@netlogic.fr>
  * Copyright (C) 2023		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -144,7 +144,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	 *  @param		int					$hideref			Do not show ref
 	 *  @return		int										1=OK, 0=KO
 	 */
-	public function write_file($object, $outputlangs = '', $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	public function write_file($object, $outputlangs = null, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		// phpcs:enable
 		global $user, $langs, $conf, $hookmanager, $mysoc, $nblines;

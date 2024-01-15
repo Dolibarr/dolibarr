@@ -587,28 +587,28 @@ abstract class CommonObject
 
 	// Dates
 	/**
-	 * @var integer|string date_creation
+	 * @var integer|string|null date_creation
 	 */
 	public $date_creation;
 
 	/**
-	 * @var integer|string $date_validation;
+	 * @var integer|string|null $date_validation;
 	 */
 	public $date_validation; // Date validation
 
 	/**
-	 * @var integer|string $date_modification;
+	 * @var integer|string|null $date_modification;
 	 */
 	public $date_modification; // Date last change (tms field)
 
 	/**
-	 * @var integer|string $date_modification;
+	 * @var integer|string|null $date_modification;
 	 * @deprecated 		Use date_modification
 	 */
 	public $date_update;
 
 	/**
-	 * @var integer|string $date_cloture;
+	 * @var integer|string|null $date_cloture;
 	 */
 	public $date_cloture; // Date closing (tms field)
 
