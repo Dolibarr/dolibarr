@@ -543,9 +543,9 @@ DAV_ALLOW_PUBLIC_DIRTooltip=The generic public directory is a WebDAV directory a
 DAV_ALLOW_ECM_DIR=Enable the DMS/ECM private directory (root directory of the DMS/ECM module - login required)
 DAV_ALLOW_ECM_DIRTooltip=The root directory where all files are manually uploaded when using the DMS/ECM module. Similarly as access from the web interface, you will need a valid login/password with adecuate permissions to access it.
 ##### Modules #####
-Module0Name=Users & Groups
+Module0Name=משתמשים וקבוצות
 Module0Desc=Users / Employees and Groups management
-Module1Name=Third Parties
+Module1Name=שותפים עסקיים
 Module1Desc=Companies and contacts management (customers, prospects...)
 Module2Name=מסחרי
 Module2Desc=מסחרי וניהול
