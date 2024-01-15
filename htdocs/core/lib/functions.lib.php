@@ -235,14 +235,14 @@ function isModEnabled($module)
 }
 
 /**
- * isDolValidTms check if a timestamp is valid.
+ * isDolTms check if a timestamp is valid.
  *
  * @param  int|string|null $timestamp timestamp to check
  * @return bool
  */
-function isDolValidTms($timestamp)
+function isDolTms($timestamp)
 {
-	if ($timestamp == '') {
+	if ($timestamp === '') {
 		dol_syslog('Using empty string for a timestamp is deprecated, prefer use of null when calling page '.$_SERVER["PHP_SELF"], LOG_NOTICE);
 		return false;
 	}
