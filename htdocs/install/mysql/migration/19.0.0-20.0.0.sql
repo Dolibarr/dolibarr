@@ -198,3 +198,10 @@ CREATE TABLE llx_c_product_thirdparty_relation_type
     active tinyint default 1 NOT NULL
 ) ENGINE = innodb;
 
+
+ALTER TABLE llx_c_tva ADD COLUMN type_vat smallint NOT NULL DEFAULT 0 AFTER fk_pays;
+
+ALTER TABLE llx_categorie ADD COLUMN position integer DEFAULT 0 AFTER color;
+
+ALTER TABLE llx_product DROP COLUMN onportal; 
+

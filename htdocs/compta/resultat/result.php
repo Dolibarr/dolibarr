@@ -182,7 +182,7 @@ $months = array(
 	$langs->trans("MonthShort12"),
 );
 
-llxheader('', $langs->trans('ReportInOut'));
+llxHeader('', $langs->trans('ReportInOut'));
 
 $formaccounting = new FormAccounting($db);
 $form = new Form($db);

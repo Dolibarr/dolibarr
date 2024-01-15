@@ -162,7 +162,7 @@ class PaymentSalary extends CommonObject
 	 *  Use this->amounts to have list of lines for the payment
 	 *
 	 *  @param      User	$user   				User making payment
-	 *	@param		int		$closepaidcontrib   	1=Also close payed contributions to paid, 0=Do nothing more
+	 *	@param		int		$closepaidcontrib   	1=Also close paid contributions to paid, 0=Do nothing more
 	 *  @return     int     						Return integer <0 if KO, id of payment if OK
 	 */
 	public function create($user, $closepaidcontrib = 0)
@@ -181,7 +181,7 @@ class PaymentSalary extends CommonObject
 			$this->datep = $this->datepaye;
 		}
 
-		// Validate parametres
+		// Validate parameters
 		if (empty($this->datep)) {
 			$this->error = 'ErrorBadValueForParameterCreatePaymentSalary';
 			return -1;
@@ -252,7 +252,7 @@ class PaymentSalary extends CommonObject
 						$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_salary");
 					}
 
-					// If we want to closed payed invoices
+					// If we want to closed paid invoices
 					if ($closepaidcontrib) {
 						$tmpsalary = new Salary($this->db);
 						$tmpsalary->fetch($salary_id);

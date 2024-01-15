@@ -455,7 +455,7 @@ if ($result) {
 					$tabpay[$obj->rowid]["lib"] .= ' '.$paymentsalstatic->getNomUrl(2);
 					$tabpay[$obj->rowid]["paymentsalid"] = $paymentsalstatic->id;
 
-					// This part of code is no more required. it is here to solve case where a link were missing (ith v14.0.0) and keep writing in accountancy complete.
+					// This part of code is no more required. it is here to solve case where a link were missing (with v14.0.0) and keep writing in accountancy complete.
 					// Note: A better way to fix this is to delete payment of salary and recreate it, or to fix the bookkeeping table manually after.
 					if (getDolGlobalString('ACCOUNTANCY_AUTOFIX_MISSING_LINK_TO_USER_ON_SALARY_BANK_PAYMENT')) {
 						$tmpsalary = new Salary($db);
@@ -544,7 +544,7 @@ if ($result) {
 
 		// If no links were found to know the amount on thirdparty, we try to guess it.
 		// This may happens on bank entries without the links lines to 'company'.
-		if (empty($tabtp[$obj->rowid]) && !empty($tabmoreinfo[$obj->rowid]['withdraw'])) {	// If we dont find 'company' link because it is an old 'withdraw' record
+		if (empty($tabtp[$obj->rowid]) && !empty($tabmoreinfo[$obj->rowid]['withdraw'])) {	// If we don't find 'company' link because it is an old 'withdraw' record
 			foreach ($links as $key => $val) {
 				if ($links[$key]['type'] == 'payment') {
 					// Get thirdparty
@@ -1018,7 +1018,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 					print "\n";
 				}
 			}
-		} else {	// If thirdparty unkown, output the waiting account
+		} else {	// If thirdparty unknown, output the waiting account
 			foreach ($tabbq[$key] as $k => $mt) {
 				if ($mt) {
 					$reflabel = '';

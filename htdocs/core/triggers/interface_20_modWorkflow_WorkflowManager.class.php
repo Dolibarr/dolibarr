@@ -416,7 +416,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				//Compare array
 				$diff_array = array_diff_assoc($qtyordred, $qtyshipped);
 				if (count($diff_array) == 0) {
-					//No diff => mean everythings is shipped
+					//No diff => mean everything is shipped
 					$ret = $order->setStatut(Commande::STATUS_CLOSED, $object->origin_id, $object->origin, 'ORDER_CLOSE');
 					if ($ret < 0) {
 						$this->setErrorsFromObject($order);
@@ -486,7 +486,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				//Compare array
 				$diff_array = array_diff_assoc($qtyordred, $qtyshipped);
 				if (count($diff_array) == 0) {
-					//No diff => mean everythings is received
+					//No diff => mean everything is received
 					$ret = $order->setStatut(CommandeFournisseur::STATUS_RECEIVED_COMPLETELY, null, null, 'SUPPLIER_ORDER_CLOSE');
 					if ($ret < 0) {
 						$this->setErrorsFromObject($order);

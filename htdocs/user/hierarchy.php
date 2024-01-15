@@ -197,7 +197,7 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 	print '<input type="hidden" name="mode" value="'.$mode.'">';
 
-	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="liste nohover centpercent">';
 
 	print '<tr class="liste_titre_filter">';

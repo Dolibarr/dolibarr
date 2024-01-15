@@ -29,7 +29,7 @@
 
 /**
  * Make a basename working with all page code (default PHP basenamed fails with cyrillic).
- * We supose dir separator for input is '/'.
+ * We suppose dir separator for input is '/'.
  *
  * @param	string	$pathfile	String to find basename.
  * @return	string				Basename of input
@@ -306,7 +306,7 @@ function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $s
 
 /**
  * Complete $filearray with data from database.
- * This will call doldir_list_indatabase to complate filearray.
+ * This will call doldir_list_indatabase to complete filearray.
  *
  * @param	array	$filearray			Array of files obtained using dol_dir_list
  * @param	string	$relativedir		Relative dir from DOL_DATA_ROOT
@@ -859,7 +859,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
 	//if (! $overwriteifexists && $destexists) return 0;	// The overwriteifexists is for files only, so propagated to dol_copy only.
 
 	if (!$destexists) {
-		// We must set mask just before creating dir, becaause it can be set differently by dol_copy
+		// We must set mask just before creating dir, because it can be set differently by dol_copy
 		umask(0);
 		$dirmaskdec = octdec($newmask);
 		if (empty($newmask) && getDolGlobalString('MAIN_UMASK')) {
@@ -1084,7 +1084,7 @@ function dol_move($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $te
 		}
 
 		// Currently method is restricted to files (dol_delete_files previously used is for files, and mask usage if for files too)
-		// to allow mask usage for dir, we shoul introduce a new param "isdir" to 1 to complete newmask like this
+		// to allow mask usage for dir, we should introduce a new param "isdir" to 1 to complete newmask like this
 		// if ($isdir) $newmaskdec |= octdec('0111');  // Set x bit required for directories
 		dolChmod($newpathofdestfile, $newmask);
 	}
@@ -2067,7 +2067,7 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 }
 
 /**
- *  Delete files into database index using search criterias.
+ *  Delete files into database index using search criteria.
  *
  *  @param      string	$dir			Directory name (full real path without ending /)
  *  @param		string	$file			File name
@@ -2143,7 +2143,7 @@ function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '', $page = ''
 			$ret = $image->readImage($filetoconvert);
 		} catch (Exception $e) {
 			$ext = pathinfo($fileinput, PATHINFO_EXTENSION);
-			dol_syslog("Failed to read image using Imagick (Try to install package 'apt-get install php-imagick ghostscript' and check there is no policy to disable ".$ext." convertion in /etc/ImageMagick*/policy.xml): ".$e->getMessage(), LOG_WARNING);
+			dol_syslog("Failed to read image using Imagick (Try to install package 'apt-get install php-imagick ghostscript' and check there is no policy to disable ".$ext." conversion in /etc/ImageMagick*/policy.xml): ".$e->getMessage(), LOG_WARNING);
 			return 0;
 		}
 		if ($ret) {
@@ -2575,7 +2575,7 @@ function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(
  * Security check when accessing to a document (used by document.php, viewimage.php and webservices to get documents).
  * TODO Replace code that set $accessallowed by a call to restrictedArea()
  *
- * @param	string	$modulepart			Module of document ('module', 'module_user_temp', 'module_user' or 'module_temp'). Exemple: 'medias', 'invoice', 'logs', 'tax-vat', ...
+ * @param	string	$modulepart			Module of document ('module', 'module_user_temp', 'module_user' or 'module_temp'). Example: 'medias', 'invoice', 'logs', 'tax-vat', ...
  * @param	string	$original_file		Relative path with filename, relative to modulepart.
  * @param	string	$entity				Restrict onto entity (0=no restriction)
  * @param  	User	$fuser				User object (forced)
@@ -2644,7 +2644,11 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping for miscellaneous medias files
-	if ($modulepart == 'medias' && !empty($dolibarr_main_data_root)) {
+	if ($modulepart == 'common') {
+		// Wrapping for some images
+		$accessallowed = 1;
+		$original_file = DOL_DOCUMENT_ROOT.'/public/theme/common/'.$original_file;
+	} elseif ($modulepart == 'medias' && !empty($dolibarr_main_data_root)) {
 		if (empty($entity) || empty($conf->medias->multidir_output[$entity])) {
 			return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		}
@@ -2662,7 +2666,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		// Wrapping for doctemplates of websites
 		$accessallowed = ($fuser->rights->website->write && preg_match('/\.jpg$/i', basename($original_file)));
 		$original_file = $dolibarr_main_data_root.'/doctemplates/websites/'.$original_file;
-	} elseif ($modulepart == 'packages' && !empty($dolibarr_main_data_root)) {
+	} elseif ($modulepart == 'packages' && !empty($dolibarr_main_data_root)) {	// To download zip of modules
 		// Wrapping for *.zip package files, like when used with url http://.../document.php?modulepart=packages&file=module_myfile.zip
 		// Dir for custom dirs
 		$tmp = explode(',', $dolibarr_main_document_root_alt);
@@ -3031,7 +3035,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->commande->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('order').")";
 	} elseif ($modulepart == 'project' && !empty($conf->project->multidir_output[$entity])) {
-		// Wrapping pour les projets
+		// Wrapping pour les projects
 		if ($fuser->hasRight('projet', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 			// If we known $id of project, call checkUserAccessToObject to check permission on properties and contact of project

@@ -24,9 +24,9 @@
  *     	\file       htdocs/public/payment/paymentok.php
  *		\ingroup    core
  *		\brief      File to show page after a successful payment on a payment line system.
- *					The payment was already really recorded. So an error here must send warning to admin but must still infor user that payment is ok.
+ *					The payment was already really recorded. So an error here must send warning to admin but must still info user that payment is ok.
  *                  This page is called by payment system with url provided to it completed with parameter TOKEN=xxx
- *                  This token and session can be used to get more informations.
+ *                  This token and session can be used to get more information.
  */
 
 if (!defined('NOLOGIN')) {
@@ -313,7 +313,7 @@ if (isModEnabled('paypal')) {
 				}
 			} else {
 				$ErrorCode = "SESSIONEXPIRED";
-				$ErrorLongMsg = "Session expired. Can't retreive PaymentType. Payment has not been validated.";
+				$ErrorLongMsg = "Session expired. Can't retrieve PaymentType. Payment has not been validated.";
 				$ErrorShortMsg = "Session expired";
 
 				dol_syslog($ErrorLongMsg, LOG_WARNING, 0, '_payment');
@@ -375,7 +375,7 @@ if (empty($FinalPaymentAmt)) {
 if (empty($currencyCodeType)) {
 	$currencyCodeType = $_SESSION['currencyCodeType'];
 }
-// Seems used onyl by Paypal
+// Seems used only by Paypal
 if (empty($paymentType)) {
 	$paymentType     = $_SESSION["paymentType"];
 }
@@ -521,7 +521,7 @@ if ($ispaymentok) {
 					}
 				}
 
-				// Subscription informations
+				// Subscription information
 				$datesubscription = $object->datevalid; // By default, the subscription start date is the payment date
 				if ($object->datefin > 0) {
 					$datesubscription = dol_time_plus_duree($object->datefin, 1, 'd');
@@ -554,7 +554,7 @@ if ($ispaymentok) {
 				$formatteddate = dol_print_date($paymentdate, 'dayhour', 'auto', $outputlangs);
 				$label = $langs->trans("OnlineSubscriptionPaymentLine", $formatteddate, $paymentmethod, $ipaddress, $TRANSACTIONID);
 
-				// Payment informations
+				// Payment information
 				$accountid = 0;
 				if ($paymentmethod == 'paybox') {
 					$accountid = getDolGlobalString('PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS');
@@ -705,7 +705,7 @@ if ($ispaymentok) {
 									}
 								} else {	// should not happen
 									$error++;
-									$errmsg = 'Failed to retreive paymentintent or charge from id';
+									$errmsg = 'Failed to retrieve paymentintent or charge from id';
 									dol_syslog($errmsg, LOG_ERR, 0, '_payment');
 									$postactionmessages[] = $errmsg;
 									$ispostactionok = -1;
@@ -1107,7 +1107,7 @@ if ($ispaymentok) {
 					$paiement->amounts = array($object->id => $totalpaid); // Array with all payments dispatching with donation
 				} else {
 					// PaymentDonation does not support multi currency
-					$postactionmessages[] = 'Payment donation can\'t be payed with diffent currency than '.$conf->currency;
+					$postactionmessages[] = 'Payment donation can\'t be paid with different currency than '.$conf->currency;
 					$ispostactionok = -1;
 					$error++; // Not yet supported
 				}
@@ -1757,7 +1757,7 @@ if ($ispaymentok) {
 		}
 		// End call triggers
 	} elseif (get_class($object) == 'stdClass') {
-		//In some case $object is not instanciate (for paiement on custom object) We need to deal with payment
+		//In some case $object is not instantiate (for paiement on custom object) We need to deal with payment
 		include_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 		$paiement = new Paiement($db);
 		$result = $paiement->call_trigger('PAYMENTONLINE_PAYMENT_OK', $user);

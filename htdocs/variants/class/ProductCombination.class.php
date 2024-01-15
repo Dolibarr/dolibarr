@@ -165,7 +165,7 @@ class ProductCombination
 		}
 
 		if (!is_array($this->combination_price_levels)
-			|| empty($fk_price_level) // if fetch an unique level dont erase all already fetched
+			|| empty($fk_price_level) // if fetch an unique level don't erase all already fetched
 		) {
 			$this->combination_price_levels = array();
 		}

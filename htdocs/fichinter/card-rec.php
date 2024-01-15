@@ -189,10 +189,10 @@ if ($action == 'add') {
 } elseif ($action == 'createfrommodel') {
 	$newinter = new Fichinter($db);
 
-	// on récupère les enregistrements
+	// Fetch the stored data
 	$object->fetch($id);
 	$res = $object->fetch_lines();
-	// on transfert les données de l'un vers l'autre
+	// Transfer the data from one to the other
 	if ($object->socid > 0) {
 		$newinter->socid = $object->socid;
 		$newinter->fk_project = $object->fk_project;
@@ -606,7 +606,7 @@ if ($action == 'create') {
 
 			print '<table class="border centpercent">';
 
-			// if "frequency" is empty or = 0, the reccurence is disabled
+			// if "frequency" is empty or = 0, the recurrence is disabled
 			print '<tr><td class="titlefield">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('Frequency');

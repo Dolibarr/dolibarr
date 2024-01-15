@@ -53,7 +53,7 @@ class Mos extends DolibarrApi
 	/**
 	 * Get properties of a MO object
 	 *
-	 * Return an array with MO informations
+	 * Return an array with MO information
 	 *
 	 * @param	int		$id				ID of MO
 	 * @return  Object					Object with cleaned properties
@@ -90,7 +90,7 @@ class Mos extends DolibarrApi
 	 * @param int			   $limit				Limit for list
 	 * @param int			   $page				Page number
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-	 * @param string		   $properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of order objects
 	 *
 	 * @throws RestException
@@ -187,7 +187,7 @@ class Mos extends DolibarrApi
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->mo->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -231,7 +231,7 @@ class Mos extends DolibarrApi
 				continue;
 			}
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->mo->context['caller'] = $request_data['caller'];
 				continue;
 			}
@@ -348,7 +348,7 @@ class Mos extends DolibarrApi
 				$arraytoproduce = $value;
 			}
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$stockmove->context['caller'] = $request_data['caller'];
 				continue;
 			}

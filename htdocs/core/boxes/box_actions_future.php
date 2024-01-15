@@ -22,7 +22,7 @@
 /**
  *	\file       htdocs/core/boxes/box_actions_future.php
  *	\ingroup    actions
- *	\brief      Module to build boxe for events
+ *	\brief      Module to build box for events
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';

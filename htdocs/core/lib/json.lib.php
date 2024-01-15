@@ -115,7 +115,7 @@ function dol_json_encode($elements)
  * Return text according to type
  *
  * @param 	mixed	$val	Value to show
- * @return	string			Formated value
+ * @return	string			Formatted value
  */
 function _val($val)
 {
@@ -308,7 +308,7 @@ function dol_json_decode($json, $assoc = false)
  * Return text according to type
  *
  * @param   string  $val    Value to decode
- * @return  string          Formated value
+ * @return  string          Formatted value
  */
 function _unval($val)
 {
@@ -327,7 +327,7 @@ function _unval($val)
  *
  * Normally should be handled by mb_convert_encoding, but
  * provides a slower PHP-only method for installations
- * that lack the multibye string extension.
+ * that lack the multibyte string extension.
  *
  * @param    string  $utf16		UTF-16 character
  * @return   string  			UTF-8 character
@@ -370,7 +370,7 @@ function utf162utf8($utf16)
  *
  * Normally should be handled by mb_convert_encoding, but
  * provides a slower PHP-only method for installations
- * that lack the multibye string extension.
+ * that lack the multibyte string extension.
  *
  * @param    string  $utf8		UTF-8 character
  * @return   string  			UTF-16 character
