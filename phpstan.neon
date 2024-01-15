@@ -3,7 +3,7 @@ parameters:
 	parallel:
 		jobSize: 20
 		processTimeout: 600.0
-		maximumNumberOfProcesses: 8
+		maximumNumberOfProcesses: 20
 		minimumNumberOfJobsPerProcess: 2
 		buffer: 134217728 # 128 MB
 	customRulesetUsed: true
