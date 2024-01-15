@@ -17,151 +17,153 @@
 #
 # Generic
 #
-ModuleEventOrganizationName = Event Organization
-EventOrganizationDescription = Event Organization through Module Project
-EventOrganizationDescriptionLong= Manage the organization of an event (show, conferences, attendees or speakers, with public pages for suggestion, vote or registration)
+ModuleEventOrganizationName = ארגון אירוע
+EventOrganizationDescription = ארגון אירוע דרך מודול פרויקט
+EventOrganizationDescriptionLong= ניהול הארגון של אירוע (הופעה, כנסים, משתתפים או דוברים, עם דפים ציבוריים להצעה, הצבעה או הרשמה)
 #
 # Menu
 #
-EventOrganizationMenuLeft = Organized events
-EventOrganizationConferenceOrBoothMenuLeft = Conference Or Booth
+EventOrganizationMenuLeft = ארועים מאורגנים
+EventOrganizationConferenceOrBoothMenuLeft = כנס או דוכן
 
-PaymentEvent=Payment of event
+PaymentEvent=תשלום לאירוע
 
 #
 # Admin page
 #
-NewRegistration=Registration
-EventOrganizationSetup=Event Organization setup
-EventOrganization=Event organization
-Settings=Settings
-EventOrganizationSetupPage = Event Organization setup page
-EVENTORGANIZATION_TASK_LABEL = Label of tasks to create automatically when project is validated
-EVENTORGANIZATION_TASK_LABELTooltip = When you validate an organized event, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conference<br>Send Call for Booth<br>Receive call for conferences<br>Receive call for Booth<br>Open subscriptions to events for attendees<br>Send remind of event to speakers<br>Send remind of event to Booth hoster<br>Send remind of event to attendees
-EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Category to add to third-parties automatically created when someone suggests a conference
-EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Category to add to third-parties automatically created when they suggests a booth
-EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Template of email to send after receiving a suggestion of a conference.
-EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Template of email to send after receiving a suggestion of a booth.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send after a registration to a booth has been paid.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Template of email to send after a registration to an event has been paid.
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template of email to use when sending emails from the massaction "Send emails" to speakers
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email to use when sending emails from the massaction "Send emails" on attendee list
-EVENTORGANIZATION_FILTERATTENDEES_CAT = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties in the category
-EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties with the nature
+NewRegistration=הרשמה חדשה
+EventOrganizationSetup=הגדרות ארגון אירוע
+EventOrganization=ארגון אירוע
+Settings=הגדרות
+EventOrganizationSetupPage = עמוד הגדרות ארגון אירוע
+EVENTORGANIZATION_TASK_LABEL = תווית של משימות ליצירה אוטומטית כאשר הפרויקט מאושר
+EVENTORGANIZATION_TASK_LABELTooltip = כאשר אתה מאשר ארוע מאורגן, ישנן משימות שיכולות להיוצר אוטומטית בתוך הפרויקט<br><br>לדוגמה: <br>שליחת קריאה לכנס<br>שליחת קריאה לדוכן<br>קבלת קריאה לכנסים<br>קבלת קריאה לדוכנים<br>פתיחת רישום לארועים עבור משתתפים<br>שליחת תזכורת לדוברים<br>שליחת תזכורת למארחי דוכנים<br>שליחת תזכורת למשתתפים
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = קטגוריה להוספת צדדים שנוצרו אוטומטית כאשר מישהו מציע כנס
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = קטגוריה להוספת צדדים שנוצרו אוטומטית כאשר הם מציעים דוכן
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = תבנית אימייל לשליחה לאחר קבלת הצעה לכנס.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = תבנית אימייל לשליחה לאחר קבלת הצעה לדוכן.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = תבנית אימייל לשליחה לאחר הרשמה לדוכן שולמה.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = תבנית אימייל לשליחה לאחר הרשמה לארוע שולמה.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = תבנית אימייל לשימוש בעת שליחת אימיילים מהפעולה המרובה "שליחת אימיילים" לדוברים
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = תבנית אימייל לשימוש בעת שליחת אימיילים מהפעולה המרובה "שליחת אימיילים" ברשימת המשתתפים
+EVENTORGANIZATION_FILTERATTENDEES_CAT = בטופס ליצירת/הוספת משתתף, מגביל את הרשימה של הצדדים לצדדים בקטגוריה
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = בטופס ליצירת/הוספת משתתף, מגביל את הרשימה של הצדדים לצדדים עם הטבע
 
 #
 # Object
 #
-EventOrganizationConfOrBooth= Conference Or Booth
-ManageOrganizeEvent = Manage the organization of an event
-ConferenceOrBooth = Conference Or Booth
-ConferenceOrBoothTab = Conference Or Booth
-AmountPaid = Amount paid
-DateOfRegistration = Date of registration
-ConferenceOrBoothAttendee = Conference Or Booth Attendee
+EventOrganizationConfOrBooth=כנס או דוכן
+ManageOrganizeEvent=ניהול ארגון אירוע
+ConferenceOrBooth=כנס או דוכן
+ConferenceOrBoothTab=כנס או דוכן
+AmountPaid=סכום ששולם
+DateOfRegistration=תאריך הרשמה
+ConferenceOrBoothAttendee=משתתף בכנס או דוכן
 
 #
 # Template Mail
 #
-YourOrganizationEventConfRequestWasReceived = Your request for conference was received
-YourOrganizationEventBoothRequestWasReceived = Your request for booth was received
-EventOrganizationEmailAskConf = Request for conference
-EventOrganizationEmailAskBooth = Request for booth
-EventOrganizationEmailBoothPayment = Payment of your booth
-EventOrganizationEmailRegistrationPayment = Registration for an event
-EventOrganizationMassEmailAttendees = Communication to attendees
-EventOrganizationMassEmailSpeakers = Communication to speakers
-ToSpeakers=To speakers
+YourOrganizationEventConfRequestWasReceived = הבקשה שלך לכנס התקבלה
+YourOrganizationEventBoothRequestWasReceived = הבקשה שלך לדוכן התקבלה
+EventOrganizationEmailAskConf = בקשה לכנס
+EventOrganizationEmailAskBooth = בקשה לדוכן
+EventOrganizationEmailBoothPayment = תשלום עבור דוכן שלך
+EventOrganizationEmailRegistrationPayment = תשלום עבור הרשמה לאירוע
+EventOrganizationMassEmailAttendees = תקשורת למשתתפים
+EventOrganizationMassEmailSpeakers = תקשורת לדוברים
+ToSpeakers=לדוברים
 
 #
 # Event
 #
-AllowUnknownPeopleSuggestConf=Allow people to suggest conferences
-AllowUnknownPeopleSuggestConfHelp=Allow unknown people to suggest a conference they want to do
-AllowUnknownPeopleSuggestBooth=Allow people to apply for a booth
-AllowUnknownPeopleSuggestBoothHelp=Allow unknown people to apply for a booth
-PriceOfRegistration=Price of registration
-PriceOfRegistrationHelp=Price to pay to register or participate in the event
-PriceOfBooth=Subscription price to stand a booth
-PriceOfBoothHelp=Subscription price to stand a booth
-EventOrganizationICSLink=Link ICS for conferences
-ConferenceOrBoothInformation=Conference Or Booth informations
-Attendees=Attendees
-ListOfAttendeesOfEvent=List of attendees of the event project
-DownloadICSLink = Download ICS link
-EVENTORGANIZATION_SECUREKEY = Seed to secure the key for the public registration page to suggest a conference
-SERVICE_BOOTH_LOCATION = Service used for the invoice row about a booth location
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to an event
-NbVotes=Number of votes
+AllowUnknownPeopleSuggestConf=אפשר לאנשים להציע כנסים
+AllowUnknownPeopleSuggestConfHelp=אפשר לאנשים לא מוכרים להציע כנס שהם רוצים להעביר
+AllowUnknownPeopleSuggestBooth=אפשר לאנשים להגיש בקשה לדוכן
+AllowUnknownPeopleSuggestBoothHelp=אפשר לאנשים לא מוכרים להגיש בקשה לדוכן
+PriceOfRegistration=מחיר הרשמה
+PriceOfRegistrationHelp=המחיר לשלם כדי להירשם או להשתתף באירוע
+PriceOfBooth=מחיר מנוי להקמת דוכן
+PriceOfBoothHelp=מחיר מנוי להקמת דוכן
+EventOrganizationICSLink=קישור ICS לכנסים
+ConferenceOrBoothInformation=מידע על כנס או דוכן
+Attendees=משתתפים
+ListOfAttendeesOfEvent=רשימת המשתתפים בפרויקט האירוע
+DownloadICSLink=קישור הורדת ICS
+EVENTORGANIZATION_SECUREKEY=זרע לאבטחת המפתח לדף ההרשמה הציבורי להצעת כנס
+SERVICE_BOOTH_LOCATION=שירות המשמש לשורת החשבונית על מיקום דוכן
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=שירות המשמש לשורת החשבונית על מנוי משתתף לאירוע
+NbVotes=מספר הצבעות
+
 #
 # Status
 #
-EvntOrgDraft = Draft
-EvntOrgSuggested = Suggested
-EvntOrgConfirmed = Confirmed
-EvntOrgNotQualified = Not Qualified
-EvntOrgDone = Done
-EvntOrgCancelled = Cancelled
+EvntOrgDraft = טיוטה
+EvntOrgSuggested = מוצע
+EvntOrgConfirmed = מאושר
+EvntOrgNotQualified = לא מאומת
+EvntOrgDone = בוצע
+EvntOrgCancelled = בוטל
 #
 # Public page
 #
-SuggestForm = Suggestion page
-SuggestOrVoteForConfOrBooth = Page for suggestion or vote
-EvntOrgRegistrationHelpMessage = Here, you can vote for a conference or suggest a new one for the event. You can also apply to have a booth during the event.
-EvntOrgRegistrationConfHelpMessage = Here, you can suggest a new conference to animate during the event.
-EvntOrgRegistrationBoothHelpMessage = Here, you can apply to have a booth during the event.
-ListOfSuggestedConferences = List of suggested conferences
-ListOfSuggestedBooths = List of suggested booths
-ListOfConferencesOrBooths=List of conferences or booths of event project
-SuggestConference = Suggest a new conference
-SuggestBooth = Suggest a booth
-ViewAndVote = View and vote for suggested events
-PublicAttendeeSubscriptionGlobalPage = Public link for registration to the event
-PublicAttendeeSubscriptionPage = Public link for registration to this event only
-MissingOrBadSecureKey = The security key is invalid or missing
-EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event : <b>%s</b>
-EvntOrgDuration = This conference starts on %s and ends on %s.
-ConferenceAttendeeFee = Conference attendee fee for the event : '%s' occurring from %s to %s.
-BoothLocationFee = Booth location for the event : '%s' occurring from %s to %s
-EventType = Event type
-LabelOfBooth=Booth label
-LabelOfconference=Conference label
-ConferenceIsNotConfirmed=Registration not available, conference is not confirmed yet
-DateMustBeBeforeThan=%s must be before %s
-DateMustBeAfterThan=%s must be after %s
+SuggestForm = דף הצעה
+SuggestOrVoteForConfOrBooth = דף להצעה או הצבעה
+EvntOrgRegistrationHelpMessage = כאן, תוכל להצביע לכנס או להציע כנס חדש לאירוע. תוכל גם לבקש לקבל דוכן במהלך האירוע.
+EvntOrgRegistrationConfHelpMessage = כאן, תוכל להציע כנס חדש להופעה במהלך האירוע.
+EvntOrgRegistrationBoothHelpMessage = כאן, תוכל לבקש לקבל דוכן במהלך האירוע.
+ListOfSuggestedConferences = רשימת כנסים מוצעים
+ListOfSuggestedBooths = רשימת דוכנים מוצעים
+ListOfConferencesOrBooths=רשימת כנסים או דוכנים של פרויקט אירוע
+SuggestConference = להציע כנס חדש
+SuggestBooth = להציע דוכן
+ViewAndVote = לצפות ולהצביע על אירועים מוצעים
+PublicAttendeeSubscriptionGlobalPage = קישור ציבורי להרשמה לאירוע
+PublicAttendeeSubscriptionPage = קישור ציבורי להרשמה לאירוע זה בלבד
+MissingOrBadSecureKey = המפתח האבטחתי לא תקין או חסר
+EvntOrgWelcomeMessage = טופס זה מאפשר לך להירשם כמשתתף חדש לאירוע: <b>%s</b>
+EvntOrgDuration = הכנס מתחיל ב-%s ונגמר ב-%s.
+ConferenceAttendeeFee = דמי משתתף בכנס לאירוע: '%s' התרחשות מ-%s עד %s.
+BoothLocationFee = דמי השכרת דוכן לאירוע: '%s' התרחשות מ-%s עד %s
+EventType = סוג אירוע
+LabelOfBooth=תווית דוכן
+LabelOfconference=תווית כנס
+ConferenceIsNotConfirmed=ההרשמה אינה זמינה, הכנס עדיין לא אושר
+DateMustBeBeforeThan=%s חייב להיות לפני %s
+DateMustBeAfterThan=%s חייב להיות אחרי %s
 
-NewSubscription=Registration
-OrganizationEventConfRequestWasReceived=Your suggestion for a conference has been received
-OrganizationEventBoothRequestWasReceived=Your request for a booth has been received
-OrganizationEventPaymentOfBoothWasReceived=Your payment for your booth has been recorded
-OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your event registration has been recorded
-OrganizationEventBulkMailToAttendees=This is a remind about your participation in the event as an attendee
-OrganizationEventBulkMailToSpeakers=This is a reminder on your participation in the event as a speaker
-OrganizationEventLinkToThirdParty=Link to third party (customer, supplier or partner)
+NewSubscription=הרשמה
+OrganizationEventConfRequestWasReceived=ההצעה שלך לכנס התקבלה
+OrganizationEventBoothRequestWasReceived=הבקשה שלך לדוכן התקבלה
+OrganizationEventPaymentOfBoothWasReceived=התשלום שלך עבור הדוכן שלך הוקלט
+OrganizationEventPaymentOfRegistrationWasReceived=התשלום שלך עבור הרשמת האירוע הוקלט
+OrganizationEventBulkMailToAttendees=זוהי תזכורת לגבי ההשתתפותך באירוע כמשתתף
+OrganizationEventBulkMailToSpeakers=זוהי תזכורת על השתתפותך באירוע כדובר
+OrganizationEventLinkToThirdParty=קישור לצד שלישי (לקוח, ספק או שותף)
 
-NewSuggestionOfBooth=Application for a booth
-NewSuggestionOfConference=Application for a conference
+NewSuggestionOfBooth=בקשה לדוכן
+NewSuggestionOfConference=בקשה לכנס
 
 #
 # Vote page
 #
-EvntOrgRegistrationWelcomeMessage = Welcome on the conference or booth suggestion page.
-EvntOrgRegistrationConfWelcomeMessage = Welcome on the conference suggestion page.
-EvntOrgRegistrationBoothWelcomeMessage = Welcome on the booth suggestion page.
-EvntOrgVoteHelpMessage = Here, you can view and vote for the suggested events for the project
-VoteOk = Your vote has been accepted.
-AlreadyVoted = You have already voted for this event.
-VoteError = An error has occurred during the vote, please try again.
+EvntOrgRegistrationWelcomeMessage = ברוך הבא לדף הצעת כנס או דוכן.
+EvntOrgRegistrationConfWelcomeMessage = ברוך הבא לדף הצעת כנס.
+EvntOrgRegistrationBoothWelcomeMessage = ברוך הבא לדף הצעת דוכן.
+EvntOrgVoteHelpMessage = כאן, תוכל לצפות ולהצביע על האירועים המוצעים לפרויקט.
+VoteOk = ההצבעה שלך הושלמה בהצלחה.
+AlreadyVoted = כבר הצבעת לאירוע זה.
+VoteError = אירעה שגיאה במהלך ההצבעה, אנא נסה שוב.
 
-SubscriptionOk = Your registration has been validated
-ConfAttendeeSubscriptionConfirmation = Confirmation of your subscription to an event
-Attendee = Attendee
-PaymentConferenceAttendee = Conference attendee payment
-PaymentBoothLocation = Booth location payment
-DeleteConferenceOrBoothAttendee=Remove attendee
-RegistrationAndPaymentWereAlreadyRecorder=A registration and a payment were already recorded for the email <b>%s</b>
-EmailAttendee=Attendee email
-EmailCompanyForInvoice=Company email (for invoice, if different of attendee email)
-ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
-ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
-NoPublicActionsAllowedForThisEvent=No public actions are open to public for this event
+SubscriptionOk = ההרשמה שלך אושרה.
+ConfAttendeeSubscriptionConfirmation = אישור הרשמתך לאירוע.
+Attendee = משתתף
+PaymentConferenceAttendee = תשלום למשתתף בכנס
+PaymentBoothLocation = תשלום עבור השכרת מקום דוכן
+DeleteConferenceOrBoothAttendee=הסר משתתף
+RegistrationAndPaymentWereAlreadyRecorder=הרשמה ותשלום כבר הוקלדו עבור האימייל <b>%s</b>
+EmailAttendee=דוא"ל של המשתתף
+EmailCompanyForInvoice=דוא"ל החברה (לחשבונית, אם שונה מדוא"ל המשתתף)
+ErrorSeveralCompaniesWithEmailContactUs=נמצאו מספר חברות עם כתובת הדוא"ל הזו ולכן לא ניתן לאשר את ההרשמה אוטומטית. נא ליצור קשר איתנו ב-%s לאישור ידני.
+ErrorSeveralCompaniesWithNameContactUs=נמצאו מספר חברות עם השם הזה ולכן לא ניתן לאשר את ההרשמה אוטומטית. נא ליצור קשר איתנו ב-%s לאישור ידני.
+NoPublicActionsAllowedForThisEvent=אין פעולות ציבוריות פתוחות לציבור עבור אירוע זה.
+
