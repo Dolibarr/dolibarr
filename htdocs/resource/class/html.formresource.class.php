@@ -79,7 +79,7 @@ class FormResource
 	 * 	@param	bool	$multiple		add [] in the name of element and add 'multiple' attribut
 	 * 	@return	string|array			HTML string with
 	 */
-	public function select_resource_list($selected = '', $htmlname = 'fk_resource', $filter = [], $showempty = 0, $showtype = 0, $forcecombo = 0, $event = array(), $filterkey = '', $outputmode = 0, $limit = 20, $morecss = '', $multiple = false)
+	public function select_resource_list($selected = 0, $htmlname = 'fk_resource', $filter = [], $showempty = 0, $showtype = 0, $forcecombo = 0, $event = array(), $filterkey = '', $outputmode = 0, $limit = 20, $morecss = '', $multiple = false)
 	{
 		// phpcs:enable
 		global $conf, $user, $langs;
