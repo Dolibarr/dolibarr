@@ -21,7 +21,7 @@
 
 /**
  *	    \file       htdocs/core/lib/contact.lib.php
- *		\brief      Ensemble de fonctions de base pour les contacts
+ *		\brief      Ensemble de functions de base pour les contacts
  */
 
 /**

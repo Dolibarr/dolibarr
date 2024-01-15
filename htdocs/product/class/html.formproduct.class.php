@@ -18,7 +18,7 @@
 
 /**
  *	\file       htdocs/product/class/html.formproduct.class.php
- *	\brief      Fichier de la classe des fonctions predefinie de composants html
+ *	\brief      File for class with methods for building product related HTML components
  */
 
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
@@ -524,7 +524,7 @@ class FormProduct
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Output a combo box with list of units
-	 *  pour l'instant on ne definit pas les unites dans la base
+	 *  Currently the units are not define in the DB
 	 *
 	 *  @param	string		$name               Name of HTML field
 	 *  @param	string		$measuring_style    Unit to show: weight, size, surface, volume, time

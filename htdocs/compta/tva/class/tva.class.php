@@ -275,7 +275,7 @@ class Tva extends CommonObject
 	}
 
 	/**
-	 *    Tag TVA as payed completely
+	 *    Tag TVA as paid completely
 	 *
 	 *    @param    User    $user       Object user making change
 	 *    @return   int					Return integer <0 if KO, >0 if OK
@@ -295,7 +295,7 @@ class Tva extends CommonObject
 	}
 
 	/**
-	 *    Remove tag payed on TVA
+	 *    Remove tag paid on TVA
 	 *
 	 *    @param	User	$user       Object user making change
 	 *    @return	int					Return integer <0 if KO, >0 if OK
@@ -486,7 +486,7 @@ class Tva extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * 	VAT payed
+	 * 	VAT paid
 	 *
 	 *	@param	int		$year		Year
 	 *	@return	double				Amount
@@ -521,7 +521,7 @@ class Tva extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * 	Total of the VAT payed
+	 * 	Total of the VAT paid
 	 *
 	 *	@param	int		$year		Year
 	 *	@return	double				Amount
@@ -639,7 +639,7 @@ class Tva extends CommonObject
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."tva"); // TODO should be called 'payment_vat'
 
 			// Call trigger
-			//XXX: Should be done just befor commit no ?
+			//XXX: Should be done just before commit no ?
 			$result = $this->call_trigger('TVA_ADDPAYMENT', $user);
 			if ($result < 0) {
 				$this->id = 0;
@@ -822,7 +822,7 @@ class Tva extends CommonObject
 	}
 
 	/**
-	 *	Informations of vat payment object
+	 *	Information of vat payment object
 	 *
 	 *	@param	int		$id     Id of vat payment
 	 *	@return	void
@@ -857,7 +857,7 @@ class Tva extends CommonObject
 	 *  Return the label of the VAT status f object
 	 *
 	 *  @param	int		$mode       	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
-	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
+	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommend to put here amount paid if you have it, 1 otherwise)
 	 *  @return	string        			Label
 	 */
 	public function getLibStatut($mode = 0, $alreadypaid = -1)
@@ -871,7 +871,7 @@ class Tva extends CommonObject
 	 *
 	 *  @param	int		$status        	Id status
 	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
-	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
+	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommend to put here amount paid if you have it, 1 otherwise)
 	 *  @return string        			Label
 	 */
 	public function LibStatut($status, $mode = 0, $alreadypaid = -1)

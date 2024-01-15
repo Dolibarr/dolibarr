@@ -233,7 +233,7 @@ function convertTime2Seconds($iHours = 0, $iMinutes = 0, $iSeconds = 0)
  *                                          - 'year': only year part);
  *      @param      int		$lengthOfDay    Length of day (default 86400 seconds for 1 day, 28800 for 8 hour)
  *      @param      int		$lengthOfWeek   Length of week (default 7)
- *    	@return     string		 		 	Formated text of duration
+ *    	@return     string		 		 	Formatted text of duration
  * 	                                		Example: 0 return 00:00, 3600 return 1:00, 86400 return 1d, 90000 return 1 Day 01:00
  *      @see convertTime2Seconds()
  */
@@ -368,8 +368,9 @@ function convertDurationtoHour($duration_value, $duration_unit)
  * @param      int|string	$year_date			Year date
  * @param	   int      	$excludefirstand	Exclude first and
  * @param	   mixed		$gm					False or 0 or 'tzserver' = Input date fields are date info in the server TZ. True or 1 or 'gmt' = Input are date info in GMT TZ.
- * 												Note: In database, dates are always fot the server TZ.
+ * 												Note: In database, dates are always for the server TZ.
  * @return     string		$sqldate			String with SQL filter
+ * @see forgeSQLFromUniversalSearchCriteria()
  */
 function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date, $excludefirstand = 0, $gm = false)
 {

@@ -261,7 +261,7 @@ class CMailFile
 			if (getDolGlobalString('MAIN_MAIL_ADD_INLINE_IMAGES_IF_IN_MEDIAS')) {	// Off by default
 				// Search into the body for <img tags of links in medias files to replace them with an embedded file
 				// Note because media links are public, this should be useless, except avoid blocking images with email browser.
-				// This convert an embedd file with src="/viewimage.php?modulepart... into a cid link
+				// This converts an embed file with src="/viewimage.php?modulepart... into a cid link
 				// TODO Exclude viewimage used for the read tracker ?
 				$findimg = $this->findHtmlImages($dolibarr_main_data_root.'/medias');
 				if ($findimg<0) {
@@ -382,7 +382,7 @@ class CMailFile
 
 		dol_syslog("CMailFile::CMailfile: sendmode=".$this->sendmode." addr_bcc=$addr_bcc, replyto=$replyto", LOG_DEBUG);
 
-		// We set all data according to choosed sending method.
+		// We set all data according to chose sending method.
 		// We also set a value for ->msgid
 		if ($this->sendmode == 'mail') {
 			// Use mail php function (default PHP method)
@@ -421,7 +421,7 @@ class CMailFile
 
 			// We now define $this->headers and $this->message
 			$this->headers = $smtp_headers.$mime_headers;
-			// On nettoie le header pour qu'il ne se termine pas par un retour chariot.
+			// Clean the header to avoid that it terminates with a CR character.
 			// This avoid also empty lines at end that can be interpreted as mail injection by email servers.
 			$this->headers = preg_replace("/([\r\n]+)$/i", "", $this->headers);
 
@@ -774,7 +774,7 @@ class CMailFile
 				}
 			}
 
-			// Action according to choosed sending method
+			// Action according to chose sending method
 			if ($this->sendmode == 'mail') {
 				// Use mail php function (default PHP method)
 				// ------------------------------------------
@@ -826,7 +826,7 @@ class CMailFile
 					}
 
 					if (getDolGlobalString('MAIN_MAIL_SENDMAIL_FORCE_ADDPARAM')) {
-						$additionnalparam .= ($additionnalparam ? ' ' : '').'-U '.$additionnalparam; // Use -U to add additionnal params
+						$additionnalparam .= ($additionnalparam ? ' ' : '').'-U '.$additionnalparam; // Use -U to add additional params
 					}
 
 					$linuxlike = 1;
@@ -1357,7 +1357,7 @@ class CMailFile
 
 
 	/**
-	 * Correct an uncomplete html string
+	 * Correct an incomplete html string
 	 *
 	 * @param	string	$msg	String
 	 * @return	string			Completed string
@@ -1800,7 +1800,7 @@ class CMailFile
 	/**
 	 * Search images into html message and init array this->images_encoded if found
 	 *
-	 * @param	string	$images_dir		Location of physical images files. For example $dolibarr_main_data_root.'/medias'
+	 * @param	string	$images_dir		Path to store physical images files. For example $dolibarr_main_data_root.'/medias'
 	 * @return	int 		        	>0 if OK, <0 if KO
 	 */
 	private function findHtmlImages($images_dir)
@@ -1814,7 +1814,7 @@ class CMailFile
 		$matches = array();
 		preg_match_all('/(?:"|\')([^"\']+\.('.implode('|', $extensions).'))(?:"|\')/Ui', $this->html, $matches); // If "xxx.ext" or 'xxx.ext' found
 
-		if (!empty($matches)) {
+		if (!empty($matches) && !empty($matches[1])) {
 			$i = 0;
 			// We are interested in $matches[1] only (the second set of parenthesis into regex)
 			foreach ($matches[1] as $full) {
@@ -1888,7 +1888,7 @@ class CMailFile
 	 * Seearch images with data:image format into html message.
 	 * If we find some, we create it on disk.
 	 *
-	 * @param	string	$images_dir		Location of where to store physicaly images files. For example $dolibarr_main_data_root.'/medias'
+	 * @param	string	$images_dir		Location of where to store physically images files. For example $dolibarr_main_data_root.'/medias'
 	 * @return	int 		        	>0 if OK, <0 if KO
 	 */
 	private function findHtmlImagesIsSrcData($images_dir)
@@ -1919,7 +1919,7 @@ class CMailFile
 
 		if (!empty($matches) && !empty($matches[1])) {
 			if (empty($images_dir)) {
-				// No temp directory provided, so we are not able to support convertion of data:image into physical images.
+				// No temp directory provided, so we are not able to support conversion of data:image into physical images.
 				$this->error = 'NoTempDirProvidedInCMailConstructorSoCantConvertDataImgOnDisk';
 				return -1;
 			}
@@ -1992,7 +1992,7 @@ class CMailFile
 
 		$arrayaddress = explode(',', $address);
 
-		// Boucle sur chaque composant de l'adresse
+		// Boucle sur chaque composant de l'address
 		$i = 0;
 		foreach ($arrayaddress as $val) {
 			$regs = array();
@@ -2061,7 +2061,7 @@ class CMailFile
 
 		$arrayaddress = explode(',', $address);
 
-		// Boucle sur chaque composant de l'adresse
+		// Boucle sur chaque composant de l'address
 		foreach ($arrayaddress as $val) {
 			if (preg_match('/^(.*)<(.*)>$/i', trim($val), $regs)) {
 				$name  = trim($regs[1]);

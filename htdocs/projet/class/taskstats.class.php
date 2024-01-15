@@ -36,7 +36,7 @@ class TaskStats extends Stats
 	/**
 	 * Constructor of the class
 	 *
-	 * @param   DoliDb  $db     Database handler
+	 * @param   DoliDB  $db     Database handler
 	 */
 	public function __construct($db)
 	{
@@ -138,7 +138,7 @@ class TaskStats extends Stats
 		if (!empty($this->userid)) {
 			$sqlwhere[] = ' t.fk_user_resp = '.((int) $this->userid);
 		}
-		// Forced filter on socid is similar to forced filter on project. TODO Use project assignement to allow to not use filter on project
+		// Forced filter on socid is similar to forced filter on project. TODO Use project assignment to allow to not use filter on project
 		if (!empty($this->socid)) {
 			$sqlwhere[] = ' p.fk_soc = '.((int) $this->socid); // Link on thirdparty is on project, not on task
 		}

@@ -401,7 +401,7 @@ if ($action == 'create') {
 
 			print load_fiche_titre($langs->trans("ListOfUsersInGroup"), '', 'user');
 
-			// On selectionne les users qui ne sont pas deja dans le groupe
+			// Select the users that do not belong to the group yet
 			$exclude = array();
 
 			if (!empty($object->members)) {
@@ -420,7 +420,7 @@ if ($action == 'create') {
 					print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">'."\n";
 					print '<input type="hidden" name="token" value="'.newToken().'">';
 					print '<input type="hidden" name="action" value="adduser">';
-					print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+					print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 					print '<table class="noborder centpercent">'."\n";
 					print '<tr class="liste_titre"><td class="titlefield liste_titre">'.$langs->trans("NonAffectedUsers").'</td>'."\n";
 					print '<td class="liste_titre">';
@@ -439,7 +439,7 @@ if ($action == 'create') {
 				 * Group members
 				 */
 
-				print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+				print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre">';
 				print '<td class="liste_titre">'.$langs->trans("Login").'</td>';

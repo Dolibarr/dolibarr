@@ -651,8 +651,8 @@ function showWebsiteTemplates(Website $website)
  * - Block if bad code in the new string.
  * - Block also if user has no permission to change PHP code.
  *
- * @param	string		$phpfullcodestringold		PHP old string. For exemple "<?php echo 'a' ?><php echo 'b' ?>"
- * @param	string		$phpfullcodestring			PHP new string. For exemple "<?php echo 'a' ?><php echo 'c' ?>"
+ * @param	string		$phpfullcodestringold		PHP old string. For example "<?php echo 'a' ?><php echo 'b' ?>"
+ * @param	string		$phpfullcodestring			PHP new string. For example "<?php echo 'a' ?><php echo 'c' ?>"
  * @return	int										Error or not
  * @see dolKeepOnlyPhpCode()
  */

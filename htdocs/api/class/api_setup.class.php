@@ -727,7 +727,7 @@ class Setup extends DolibarrApi
 	 * @param object   $object    Object with label to translate
 	 * @param string   $lang      Code of the language the name of the object must be translated to
 	 * @param string   $prefix 	  Prefix for translation key
-	 * @param array    $dict      Array of dictionnary for translation
+	 * @param array    $dict      Array of dictionary for translation
 	 * @return void
 	 */
 	private function translateLabel($object, $lang, $prefix = 'Country', $dict = array('dict'))
@@ -1985,7 +1985,7 @@ class Setup extends DolibarrApi
 			throw new RestException(404, 'Error Bad or unknown value for constantname');
 		}
 		if (isASecretKey($constantname)) {
-			throw new RestException(403, 'Forbidden. This parameter cant be read with APIs');
+			throw new RestException(403, 'Forbidden. This parameter can not be read with APIs');
 		}
 
 		return getDolGlobalString($constantname);
@@ -2144,7 +2144,7 @@ class Setup extends DolibarrApi
 					}
 				}
 
-				// Files missings
+				// Files missing
 				$out .= load_fiche_titre($langs->trans("FilesMissing"));
 
 				$out .= '<div class="div-table-responsive-no-min">';

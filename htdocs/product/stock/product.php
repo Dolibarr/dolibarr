@@ -859,7 +859,7 @@ if ($id > 0 || $ref) {
 			}
 
 
-			// Calculating a theorical value
+			// Calculating a theoretical value
 			print '<tr><td>';
 			print $form->textwithpicto($langs->trans("VirtualStock"), $langs->trans("VirtualStockDesc"));
 			print '</td>';

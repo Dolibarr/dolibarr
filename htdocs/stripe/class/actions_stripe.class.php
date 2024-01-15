@@ -165,7 +165,7 @@ class ActionsStripeconnect extends CommonHookActions
 		global $conf, $langs;
 
 		if (is_object($object) && $object->element == 'facture') {
-			// On verifie si la facture a des paiements
+			// Verify if the invoice has payments
 			$sql = 'SELECT pf.amount';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf';
 			$sql .= ' WHERE pf.fk_facture = '.((int) $object->id);

@@ -29,7 +29,14 @@
  */
 class FormAdmin
 {
+	/**
+	 * @var DoliDB Database handler.
+	 */
 	public $db;
+
+	/**
+	 * @var string error message
+	 */
 	public $error;
 
 
@@ -55,7 +62,7 @@ class FormAdmin
 	 *  @param      int				$showwarning    Show a warning if language is not complete
 	 *  @param		int				$disabled		Disable edit of select
 	 *  @param		string			$morecss		Add more css styles
-	 *  @param      int         	$showcode       1=Add language code into label at begining, 2=Add language code into label at end
+	 *  @param      int         	$showcode       1=Add language code into label at beginning, 2=Add language code into label at end
 	 *  @param		int				$forcecombo		Force to use combo box (so no ajax beautify effect)
 	 *  @param		int				$multiselect	Make the combo a multiselect
 	 *  @param		array			$onlykeys		Array of language keys to restrict list with the following keys (opposite of $filter). Example array('fr', 'es', ...)
@@ -217,7 +224,7 @@ class FormAdmin
 
 								$filelib = preg_replace('/\.php$/i', '', $file);
 								$prefix = '';
-								// 0=Recommanded, 1=Experimental, 2=Developpement, 3=Other
+								// 0=Recommended, 1=Experimental, 2=Development, 3=Other
 								if (preg_match('/^eldy/i', $file)) {
 									$prefix = '0';
 								} elseif (preg_match('/^smartphone/i', $file)) {
@@ -273,6 +280,8 @@ class FormAdmin
 			print $val."\n"; // Show menu entry
 		}
 		print '</select>';
+
+		return;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -419,7 +428,7 @@ class FormAdmin
 	 * 	@param		int		$forcecombo		Force to load all values and output a standard combobox (with no beautification)
 	 *  @return		string					Return HTML output
 	 */
-	public function select_paper_format($selected = '', $htmlname = 'paperformat_id', $filter = 0, $showempty = 0, $forcecombo = 0)
+	public function select_paper_format($selected = '', $htmlname = 'paperformat_id', $filter = '', $showempty = 0, $forcecombo = 0)
 	{
 		// phpcs:enable
 		global $langs;
@@ -478,11 +487,11 @@ class FormAdmin
 
 
 	/**
-	 * Function to shwo the combo select to chose a type of field (varchar, int, email, ...)
+	 * Function to show the combo select to chose a type of field (varchar, int, email, ...)
 	 *
 	 * @param	string	$htmlname				Name of HTML select component
 	 * @param	string	$type					Type preselected
-	 * @param	string	$typewecanchangeinto	Array of possible switch combination from 1 type to another one. This will grey not possible combinations.
+	 * @param	array   $typewecanchangeinto	Array of possible switch combination from 1 type to another one. This will grey not possible combinations.
 	 * @return 	string							The combo HTML select component
 	 */
 	public function selectTypeOfFields($htmlname, $type, $typewecanchangeinto = array())

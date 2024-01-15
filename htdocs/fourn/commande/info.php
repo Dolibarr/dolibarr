@@ -38,7 +38,7 @@ if (isModEnabled('project')) {
 // Load translation files required by the page
 $langs->loadLangs(array("suppliers", "orders", "companies", "stocks"));
 
-// Get Paramters
+// Get Parameters
 $id     = GETPOST('id', 'int');
 $ref    = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
@@ -125,7 +125,7 @@ if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', $co
 	$title = $object->ref.' '.$object->name.' - '.$langs->trans("Info");
 }
 $help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-supplier-order page-info');
 
 $now = dol_now();
 

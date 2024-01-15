@@ -160,7 +160,7 @@ function facture_prepare_head($object)
 }
 
 /**
- * Return array head with list of tabs to view object informations.
+ * Return array head with list of tabs to view object information.
  *
  * @return array head array with tabs
  */
@@ -243,7 +243,7 @@ function invoice_admin_prepare_head()
 
 
 /**
- * Return array head with list of tabs to view object informations.
+ * Return array head with list of tabs to view object information.
  *
  * @param   Facture     $object     Invoice object
  * @return array                    head array with tabs
@@ -306,7 +306,7 @@ function invoice_rec_prepare_head($object)
 }
 
 /**
- * Return array head with list of tabs to view object informations.
+ * Return array head with list of tabs to view object information.
  *
  * @param   Facture     $object     Invoice object
  * @return array                    head array with tabs
@@ -981,7 +981,7 @@ function getPurchaseInvoiceLatestEditTable($maxCount = 5, $socid = 0)
  *
  * @param	int		$maxCount	(Optional) The maximum count of elements inside the table
  * @param	int		$socid		(Optional) Show only results from the supplier with this id
- * @return	string				A HTML table that conatins a list with open (unpaid) supplier invoices
+ * @return	string				A HTML table that contains a list with open (unpaid) supplier invoices
  */
 function getCustomerInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 {
@@ -1169,7 +1169,7 @@ function getCustomerInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
  *
  * @param	int		$maxCount	(Optional) The maximum count of elements inside the table
  * @param	int		$socid		(Optional) Show only results from the supplier with this id
- * @return	string				A HTML table that conatins a list with open (unpaid) supplier invoices
+ * @return	string				A HTML table that contains a list with open (unpaid) supplier invoices
  */
 function getPurchaseInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 {

@@ -56,7 +56,7 @@ $langs->loadLangs(array("boxes", "commercial", "contracts", "orders", "propal", 
 $action = GETPOST('action', 'aZ09');
 $bid = GETPOST('bid', 'int');
 
-// Securite acces client
+// Securite access client
 $socid = GETPOST('socid', 'int');
 if (isset($user->socid) && $user->socid > 0) {
 	$action = '';

@@ -83,7 +83,7 @@ print '<td class="right">'.$langs->trans("Value").'</td>'."\n";
 print '<td></td>';
 
 
-// Utilisation formulaire Ajax sur choix produit
+// Use an Ajax form for the product choice
 print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("UseSearchToSelectResource").'</td>';
 if (empty($conf->use_javascript_ajax)) {

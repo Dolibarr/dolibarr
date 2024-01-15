@@ -513,7 +513,7 @@ if ($object->id > 0) {
 
 	if ($object->client) {
 		if (isModEnabled('commande') && getDolGlobalString('ORDER_MANAGE_MIN_AMOUNT')) {
-			print '<!-- Minimim amount for orders -->'."\n";
+			print '<!-- Minimum amount for orders -->'."\n";
 			print '<tr class="nowrap">';
 			print '<td>';
 			print $form->editfieldkey("OrderMinAmount", 'order_min_amount', $object->order_min_amount, $object, $user->hasRight('societe', 'creer'));

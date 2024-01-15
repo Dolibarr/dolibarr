@@ -457,9 +457,9 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
 	}
 	$im = imagecreate($total_x, $total_y);
 	/* create two images */
-	$col_bg = ImageColorAllocate($im, $bg_color[0], $bg_color[1], $bg_color[2]);
-	$col_bar = ImageColorAllocate($im, $bar_color[0], $bar_color[1], $bar_color[2]);
-	$col_text = ImageColorAllocate($im, $text_color[0], $text_color[1], $text_color[2]);
+	$col_bg = imagecolorallocate($im, $bg_color[0], $bg_color[1], $bg_color[2]);
+	$col_bar = imagecolorallocate($im, $bar_color[0], $bar_color[1], $bar_color[2]);
+	$col_text = imagecolorallocate($im, $text_color[0], $text_color[1], $text_color[2]);
 	$height = round($total_y - ($scale * 10));
 	$height2 = round($total_y - $space['bottom']);
 
@@ -504,12 +504,14 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
 		header("Content-Type: image/gif; name=\"barcode.gif\"");
 		imagegif($im);
 	} elseif (!empty($filebarcode)) {
-		// To wxrite into  afile onto disk
+		// To write into  a file onto disk
 		imagepng($im, $filebarcode);
 	} else {
 		header("Content-Type: image/png; name=\"barcode.png\"");
 		imagepng($im);
 	}
+
+	return;
 }
 
 /**

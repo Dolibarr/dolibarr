@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=61.2"]
+build-backend = "setuptools.build_meta"
+
+[tool.codespell]
+skip = "*/langs/*,*/build/exe/*,**.log,*.pdf,*dev/resources/*,*.phar,*.z,*.gz,*.sql,*htdocs/includes/*,*/textiso.txt,*.js,*README-*,*build/rpm/*spec,*build/pad/*ml,*htdocs/includes/phpoffice/*,*htdocs/includes/tecnickcom/*,*dev/initdemo/removeconfdemo.sh,*dev/tools/codespell/*,*pyproject.toml,*build/exe/*,*fontawe*,*htdocs/theme/*/flags-sprite.inc.php,*dev/setup/codetemplates/codetemplates.xml,*/php.ini,*/html_cerfafr.*,*/lessc.class.php,*.asciidoc,*.xml,*opensurvey/css/style.css"
+
+quiet-level=2
+ignore-regex = '\\[fnrstv]'
+builtin = "clear,rare,informal,usage,code,names"
+#D = "-"
+#dictionary = "dev/tools/codespell/codespell-dict.txt"
+
+[tool.setuptools]
+include-package-data = false

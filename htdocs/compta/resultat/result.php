@@ -182,7 +182,7 @@ $months = array(
 	$langs->trans("MonthShort12"),
 );
 
-llxheader('', $langs->trans('ReportInOut'));
+llxHeader('', $langs->trans('ReportInOut'));
 
 $formaccounting = new FormAccounting($db);
 $form = new Form($db);
@@ -315,7 +315,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 		// Loop on each custom group of accounts
 		foreach ($cats as $cat) {
 			if (!empty($cat['category_type'])) {
-				// category calculed
+				// category calculated
 				// When we enter here, $sommes was filled by group of accounts
 
 				$formula = $cat['formula'];
@@ -491,7 +491,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 				}
 
 				// Set value into column N and month M ($totCat)
-				// This make 12 calls for each accountancy account (12 monthes M)
+				// This make 12 calls for each accountancy account (12 months M)
 				foreach ($cpts as $i => $cpt) {    // Loop on each account.
 					// We make 1 loop for each account because we may want detail per account.
 					// @todo Optimize to ask a 'group by' account and a filter with account in (..., ...) in request
