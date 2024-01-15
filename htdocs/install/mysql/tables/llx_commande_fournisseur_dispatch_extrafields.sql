@@ -17,7 +17,7 @@
 -- This table should have been named llx_receptiondet_batch_extrafields
 -- ===================================================================
 
-create table llx_commande_fournisseur_dispatch_extrafields
+create table llx_receptiondet_batch_extrafields
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
   tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

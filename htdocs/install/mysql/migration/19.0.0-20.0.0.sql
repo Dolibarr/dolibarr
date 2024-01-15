@@ -50,8 +50,6 @@ ALTER TABLE llx_categories_extrafields DROP INDEX idx_categories_extrafields;
 ALTER TABLE llx_categories_extrafields ADD UNIQUE INDEX uk_categories_extrafields (fk_object);
 ALTER TABLE llx_commande_extrafields DROP INDEX idx_commande_extrafields;
 ALTER TABLE llx_commande_extrafields ADD UNIQUE INDEX uk_commande_extrafields (fk_object);
-ALTER TABLE llx_commande_fournisseur_dispatch_extrafields DROP INDEX idx_commande_fournisseur_dispatch_extrafields;
-ALTER TABLE llx_commande_fournisseur_dispatch_extrafields ADD UNIQUE INDEX uk_commande_fournisseur_dispatch_extrafields (fk_object);
 ALTER TABLE llx_commande_fournisseur_extrafields DROP INDEX idx_commande_fournisseur_extrafields;
 ALTER TABLE llx_commande_fournisseur_extrafields ADD UNIQUE INDEX uk_commande_fournisseur_extrafields (fk_object);
 ALTER TABLE llx_commande_fournisseurdet_extrafields DROP INDEX idx_commande_fournisseurdet_extrafields;
@@ -203,5 +201,5 @@ ALTER TABLE llx_c_tva ADD COLUMN type_vat smallint NOT NULL DEFAULT 0 AFTER fk_p
 
 ALTER TABLE llx_categorie ADD COLUMN position integer DEFAULT 0 AFTER color;
 
-ALTER TABLE llx_product DROP COLUMN onportal; 
+ALTER TABLE llx_product DROP COLUMN onportal;
 

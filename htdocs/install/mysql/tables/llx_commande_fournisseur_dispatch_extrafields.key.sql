@@ -17,4 +17,4 @@
 -- ===================================================================
 
 
-ALTER TABLE llx_commande_fournisseur_dispatch_extrafields ADD UNIQUE INDEX uk_commande_fournisseur_dispatch_extrafields (fk_object);
+ALTER TABLE llx_receptiondet_batch_extrafields ADD UNIQUE INDEX uk_receptiondet_batch_extrafields (fk_object);
